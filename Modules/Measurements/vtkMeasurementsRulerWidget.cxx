@@ -112,7 +112,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   // 3d elements
   this->ViewerWidget = NULL;
 
-  this->DistanceWidget = vtkMeasurementsDistanceWidgetClass::New();
+//  this->DistanceWidget = vtkMeasurementsDistanceWidgetClass::New();
   
   
  
@@ -124,6 +124,8 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->Updating3DWidget = 0;
   this->ProcessingMRMLEvent = 0;
   this->ProcessingWidgetEvent = 0;
+
+//  this->DebugOn();
 }
 
 
@@ -252,12 +254,14 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     }
 
   // 3d widgets
-  if (this->DistanceWidget)
+  std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+  for (iter = this->DistanceWidgets.begin();
+       iter != this->DistanceWidgets.end();
+       iter++)
     {
-    this->DistanceWidget->Delete();
-    this->DistanceWidget = NULL;
+    iter->second->Delete();
     }
- 
+  this->DistanceWidgets.clear(); 
 
   this->SetRulerNodeID(NULL);
   this->SetViewerWidget(NULL);
@@ -273,10 +277,11 @@ void vtkMeasurementsRulerWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "vtkMeasurementsRulerWidget: " << this->GetClassName ( ) << "\n";
     // print widgets?
-    if (this->DistanceWidget->GetWidget())
+    std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+    for (iter = this->DistanceWidgets.begin(); iter !=  this->DistanceWidgets.end(); iter++)
       {
-      os << indent << "Distance Widget:\n";
-      this->DistanceWidget->GetWidget()->PrintSelf(os, indent);
+      os << indent << "Distance Widget: " << iter->first.c_str() << "\n";
+      iter->second->GetWidget()->PrintSelf(os, indent);
       }
 }
 
@@ -323,7 +328,7 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
     }
   else
     {
-    vtkDebugMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
+    vtkDebugMacro ("ERROR: unable to get the mrml ruler node to observe!\n");
     }
 }
 
@@ -387,7 +392,7 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     /*
       not allowing spontaneous creation of a ruler
-    vtkDebugMacro ("ERROR: No Fiducial List, adding one first!\n");
+    vtkDebugMacro ("ERROR: No ruler node, adding one first!\n");
       vtkMRMLMeasurementsRulerNode *newList = this->GetLogic()->AddRuler();      
       if (newList != NULL)
         {
@@ -396,7 +401,7 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       else
         {
-        vtkErrorMacro("Unable to add a new fid list via the logic\n");
+        vtkErrorMacro("Unable to add a new ruler via the logic\n");
         }
       // now get the newly active node 
       activeRulerNode = (vtkMRMLMeasurementsRulerNode *)this->MRMLScene->GetNodeByID(this->GetRulerNodeID());
@@ -647,28 +652,35 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
     return;
     }
 
-  if (this->DistanceWidget->GetWidget())
+  vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
+  if (!distanceWidget)
     {
-    activeRulerNode->SetVisibility(this->DistanceWidget->GetWidget()->GetEnabled());
+    vtkErrorMacro("No distance widget found for rulernode " << activeRulerNode->GetID());
+    this->UpdatingMRML = 0;
+    return;
     }
-  if ( this->DistanceWidget->GetRepresentation())
+  if (distanceWidget->GetWidget())
+    {
+    activeRulerNode->SetVisibility(distanceWidget->GetWidget()->GetEnabled());
+    }
+  if ( distanceWidget->GetRepresentation())
     {
     double *p;
-    p = this->DistanceWidget->GetRepresentation()->GetPoint1WorldPosition();
+    p = distanceWidget->GetRepresentation()->GetPoint1WorldPosition();
     activeRulerNode->SetPosition1(p);
-    p = this->DistanceWidget->GetRepresentation()->GetPoint2WorldPosition();
+    p = distanceWidget->GetRepresentation()->GetPoint2WorldPosition();
     activeRulerNode->SetPosition2(p);
 
-    double *rgb = this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->GetColor();
+    double *rgb = distanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->GetColor();
     activeRulerNode->SetPointColour(rgb);
-    rgb = this->DistanceWidget->GetRepresentation()->GetLineProperty()->GetColor();
+    rgb = distanceWidget->GetRepresentation()->GetLineProperty()->GetColor();
     activeRulerNode->SetLineColour(rgb);
 
-    activeRulerNode->SetDistanceAnnotationVisibility(this->DistanceWidget->GetRepresentation()->GetDistanceAnnotationVisibility());
-    activeRulerNode->SetDistanceAnnotationFormat(this->DistanceWidget->GetRepresentation()->GetDistanceAnnotationFormat());
-    activeRulerNode->SetDistanceAnnotationScale(this->DistanceWidget->GetRepresentation()->GetDistanceAnnotationScale());
+    activeRulerNode->SetDistanceAnnotationVisibility(distanceWidget->GetRepresentation()->GetDistanceAnnotationVisibility());
+    activeRulerNode->SetDistanceAnnotationFormat(distanceWidget->GetRepresentation()->GetDistanceAnnotationFormat());
+    activeRulerNode->SetDistanceAnnotationScale(distanceWidget->GetRepresentation()->GetDistanceAnnotationScale());
 
-    activeRulerNode->SetResolution(this->DistanceWidget->GetRepresentation()->GetResolution());
+    activeRulerNode->SetResolution(distanceWidget->GetRepresentation()->GetResolution());
     }
 
   // skip the models for now
@@ -680,10 +692,8 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
 void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-  if ( !this->RulerNodeID )
-    {
-    return;
-    }
+  // up front check of all events worried about
+  
   if (this->ProcessingMRMLEvent != 0)
     {
     vtkDebugMacro("ProcessMRMLEvents already processing mrml event " << this->ProcessingMRMLEvent);
@@ -698,58 +708,78 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
   
   this->ProcessingMRMLEvent = event;
   
-// first check to see if there was a fiducial list node deleted
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+ vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
+
+ // the scene was closed, don't get node removed events so clear up here
+  if (callScene != NULL &&
+      event == vtkMRMLScene::SceneCloseEvent)
+    {
+    vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
+    // the lists are already gone from the scene, so need to clear out all the
+    // widget properties, can't call remove with a node
+    this->Update3DWidgetsFromMRML();
+    this->ProcessingMRMLEvent = 0;
+    return;
+    }
+
+// first check to see if there was a ruler list node deleted
+  if (callScene != NULL &&
+      callScene == this->MRMLScene &&
       event == vtkMRMLScene::NodeRemovedEvent)
     {
-    vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: got a node deleted event on scene");
+    vtkDebugMacro("ProcessMRMLEvents: got a node deleted event on scene");
     // check to see if it was the current node that was deleted
     if (callData != NULL)
       {
-      vtkMRMLNode *delNode = (vtkMRMLNode *)callData;
+      vtkMRMLMeasurementsRulerNode *delNode = reinterpret_cast<vtkMRMLMeasurementsRulerNode*>(callData);
       if (delNode != NULL &&
-          delNode->GetID() == this->GetRulerNodeID())
+          delNode->IsA("vtkMRMLMeasurementsRulerNode"))
         {
-        vtkDebugMacro("My node got deleted " << this->GetRulerNodeID());
+        vtkDebugMacro("A ruler node got deleted " << (delNode->GetID() == NULL ? "null" : delNode->GetID()));
+        this->RemoveDistanceWidget(delNode);
         }
       }
     }
 
   vtkMRMLMeasurementsRulerNode *node = vtkMRMLMeasurementsRulerNode::SafeDownCast(caller);
   vtkMRMLMeasurementsRulerNode *activeRulerNode = (vtkMRMLMeasurementsRulerNode *)this->MRMLScene->GetNodeByID(this->GetRulerNodeID());
-    
+
   // check for a node added event
-  if (//vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      //vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-      node != NULL &&
+  if (callScene != NULL &&
+      callScene == this->MRMLScene &&
+      callData != NULL &&
       event == vtkMRMLScene::NodeAddedEvent)
     {
-    vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: got a node added event on scene");
+    vtkDebugMacro("ProcessMRMLEvents: got a node added event on scene");
     // check to see if it was a ruler node    
-    if (callData != NULL)
+    vtkMRMLMeasurementsRulerNode *addNode = reinterpret_cast<vtkMRMLMeasurementsRulerNode*>(callData);
+    if (addNode != NULL &&
+        addNode->IsA("vtkMRMLMeasurementsRulerNode"))
       {
-      //vtkMRMLNode *addNode = (vtkMRMLNode *)callData;
-      vtkMRMLMeasurementsRulerNode *addNode = reinterpret_cast<vtkMRMLMeasurementsRulerNode*>(callData);
-      if (addNode != NULL &&
-          addNode->IsA("vtkMRMLMeasurementsRulerNode"))
+//      this->DebugOn();
+      vtkDebugMacro("Got a node added event with a ruler node " << addNode->GetID());
+      // is it currently the active one?
+      if (addNode == activeRulerNode)
         {
-        vtkDebugMacro("Got a node added event on a ruler node " << addNode->GetID());
-        // is it the currently active one?
-        if (addNode == activeRulerNode)
-          {
-          UpdateWidget(activeRulerNode);
-          this->ProcessingMRMLEvent = 0;
-          return;
-          }
+        vtkDebugMacro("Calling Update widget to set up the ui since this is the active one");
+        this->UpdateWidget(addNode);
         }
+      // if it's not the current one, just update the 3d widget
+      vtkDebugMacro("Calling Update 3D widget to set up a new distance widget");
+      this->Update3DWidget(addNode);
+      // for now, since missing some of the add calls when open a scene, make sure we're current with the scene
+      this->Update3DWidgetsFromMRML();
+      this->ProcessingMRMLEvent = 0;
+//      this->DebugOff();
+      return;
       }
     }
+
   if (node == activeRulerNode)
     {
     if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
       {
-      vtkDebugMacro("Modified or node added or removed event on the fiducial list node.\n");
+      vtkDebugMacro("Modified or node added or removed event on the ruler node.\n");
       if (node == NULL)
         {
         vtkDebugMacro("\tBUT: the node is null\n");
@@ -775,7 +805,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       {
       return;
       }
-      vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve fid list node");
+      vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve ruler node");
       SetGUIFromList(activeRulerNode);
       return;
       }
@@ -798,7 +828,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *activeRulerNode)
-{
+{ 
   if (this->UpdatingMRML || this->UpdatingWidget)
     {
     vtkDebugMacro("UpdateWidget: updating mrml = " << this->UpdatingMRML << ", updating widget = " <<  this->UpdatingWidget);
@@ -814,15 +844,16 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
     {
     // don't need to do anything yet, especially don't set the node selector to
     // null, as it causes a crash
+    vtkDebugMacro("UpdateWidget: The passed in node is null, returning.");
     this->UpdatingWidget = 0;
     return;
     }
   
   if ( this->RulerSelectorWidget->GetSelected() == NULL )
     {
-    vtkDebugMacro("Null selected fid list, selecting it");
-    this->RulerSelectorWidget->SetSelected(activeRulerNode);
+    vtkDebugMacro("Null selected ruler, selecting it and returning");
     this->UpdatingWidget = 0;
+    this->RulerSelectorWidget->SetSelected(activeRulerNode);    
     return;
     }
 
@@ -831,7 +862,6 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
                this->RulerSelectorWidget->GetSelected()->GetName()) != 0)
       {
       vtkDebugMacro("UpdateWidget: input ruler " << activeRulerNode->GetName() << " doesn't match selector widget value: " << this->RulerSelectorWidget->GetSelected()->GetName());
-      //this->RulerSelectorWidget->GetWidget()->GetWidget()->SetValue(activeRulerNode->GetName());
       this->RulerSelectorWidget->SetSelected(activeRulerNode);
       vtkDebugMacro("... returning, hoping for a invoke event");
       this->UpdatingWidget = 0;
@@ -910,12 +940,25 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     vtkDebugMacro("Already updating 3d widget");
     return;
     }
-  if (this->DistanceWidget->GetWidget() == NULL)
+  vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
+  if (!distanceWidget)
+    {
+    vtkDebugMacro("No distance widget found for rulernode " << activeRulerNode->GetID() << ", have " << this->DistanceWidgets.size() << " widgets, adding one for this one");
+    this->AddDistanceWidget(activeRulerNode);
+    distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
+    if (!distanceWidget)
+      {
+      vtkErrorMacro("Error adding a new distance widget for ruler node " << activeRulerNode->GetID());
+      this->Updating3DWidget = 0;
+      return;
+      }
+    }
+  if (distanceWidget->GetWidget() == NULL)
     {
     vtkDebugMacro("Update3D widget: distance widget is null");
     return;
     }
-  if (this->DistanceWidget->GetRepresentation() == NULL)
+  if (distanceWidget->GetRepresentation() == NULL)
     {
     vtkDebugMacro("Update3D widget: distance representation is null");
     return;
@@ -927,57 +970,57 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
   // visibility
   if ( activeRulerNode->GetVisibility() )
     {
-    if (this->DistanceWidget->GetWidget()->GetInteractor() == NULL &&
+    if (distanceWidget->GetWidget()->GetInteractor() == NULL &&
         this->GetViewerWidget())
       {
-      this->DistanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+      distanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
       double p1[3] = {-250.0, 50.0, 0.0};
       double p2[3] = {250.0,  50.0, 0.0};
-      this->DistanceWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
-      this->DistanceWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
+      distanceWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
+      distanceWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
       }
     vtkDebugMacro("UpdateWidget: distance widget on");
-    this->DistanceWidget->GetWidget()->On();
+    distanceWidget->GetWidget()->On();
     }
   else
     {
     vtkDebugMacro("UpdateWidget: distance widget off");
-    this->DistanceWidget->GetWidget()->Off();
+    distanceWidget->GetWidget()->Off();
     }
 
-  if (this->DistanceWidget->GetRepresentation())
+  if (distanceWidget->GetRepresentation())
     {
     // end point colour
     double *rgb1 = activeRulerNode->GetPointColour();
-    this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
-    this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    distanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    distanceWidget->GetRepresentation()->GetPoint2Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // line colour
     rgb1 = activeRulerNode->GetLineColour();
-    this->DistanceWidget->GetRepresentation()->GetLineProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    distanceWidget->GetRepresentation()->GetLineProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // position
     double *p = activeRulerNode->GetPosition1();
     if (p)
       {
-      this->DistanceWidget->GetRepresentation()->SetPoint1WorldPosition(p);
+      distanceWidget->GetRepresentation()->SetPoint1WorldPosition(p);
       }
     p =  activeRulerNode->GetPosition2();
     if (p)
       {
-      this->DistanceWidget->GetRepresentation()->SetPoint2WorldPosition(p);
+      distanceWidget->GetRepresentation()->SetPoint2WorldPosition(p);
       }
 
     // distance annotation
-    this->DistanceWidget->GetRepresentation()->SetDistanceAnnotationVisibility(activeRulerNode->GetDistanceAnnotationVisibility());
-    this->DistanceWidget->GetRepresentation()->SetDistanceAnnotationFormat(activeRulerNode->GetDistanceAnnotationFormat());
+    distanceWidget->GetRepresentation()->SetDistanceAnnotationVisibility(activeRulerNode->GetDistanceAnnotationVisibility());
+    distanceWidget->GetRepresentation()->SetDistanceAnnotationFormat(activeRulerNode->GetDistanceAnnotationFormat());
     double *scale = activeRulerNode->GetDistanceAnnotationScale();
     if (scale)
       {
-      this->DistanceWidget->GetRepresentation()->SetDistanceAnnotationScale(scale);
+      distanceWidget->GetRepresentation()->SetDistanceAnnotationScale(scale);
       }
     // resolution
-    this->DistanceWidget->GetRepresentation()->SetResolution(activeRulerNode->GetResolution());
+    distanceWidget->GetRepresentation()->SetResolution(activeRulerNode->GetResolution());
     }
   // first point constraint
   if (activeRulerNode->GetModelID1())
@@ -990,38 +1033,38 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
         model->GetDisplayNode())
       {
       // is it already set to constrain the point placer?
-      if (!this->DistanceWidget->GetModel1PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
+      if (!distanceWidget->GetModel1PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
         {
-        this->DistanceWidget->GetModel1PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
-        this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->ConstrainedOff();
-        this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(this->DistanceWidget->GetModel1PointPlacer());
+        distanceWidget->GetModel1PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
+        distanceWidget->GetRepresentation()->GetPoint1Representation()->ConstrainedOff();
+        distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(distanceWidget->GetModel1PointPlacer());
         // check if need to snap to it
         // TODO: figure out why not snapping
         double pos[3];
-        this->DistanceWidget->GetRepresentation()->GetPoint1WorldPosition(pos);
-        if (!this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->GetPointPlacer()->ValidateWorldPosition(pos))
+        distanceWidget->GetRepresentation()->GetPoint1WorldPosition(pos);
+        if (!distanceWidget->GetRepresentation()->GetPoint1Representation()->GetPointPlacer()->ValidateWorldPosition(pos))
           {
           if (model->GetPolyData())
             {
             model->GetPolyData()->GetPoint(0, pos);
             vtkDebugMacro("Snapping point 1 to " << pos[0] << ", " << pos[1] << ", " << pos[2]);
-            this->DistanceWidget->GetRepresentation()->SetPoint1WorldPosition(pos);
+            distanceWidget->GetRepresentation()->SetPoint1WorldPosition(pos);
             }
           }
         }
       }
     else
       {
-      this->DistanceWidget->GetModel1PointPlacer()->RemoveAllProps();
-//      this->DistanceWidget->GetHandleRepresentation->ConstrainedOn();
-      this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(NULL);
+      distanceWidget->GetModel1PointPlacer()->RemoveAllProps();
+//      distanceWidget->GetHandleRepresentation->ConstrainedOn();
+      distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(NULL);
       }
     }
   else
     {
     // make sure it's not constrained
-    this->DistanceWidget->GetModel1PointPlacer()->RemoveAllProps();
-    this->DistanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(NULL);
+    distanceWidget->GetModel1PointPlacer()->RemoveAllProps();
+    distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(NULL);
     }
 
   // second point constraint
@@ -1035,53 +1078,53 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
         model->GetDisplayNode())
       {
       // is it already set to constrain the point placer?
-      if (!this->DistanceWidget->GetModel2PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
+      if (!distanceWidget->GetModel2PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
         {
-        this->DistanceWidget->GetModel2PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
-        this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->ConstrainedOff();
-        this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(this->DistanceWidget->GetModel2PointPlacer());
+        distanceWidget->GetModel2PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
+        distanceWidget->GetRepresentation()->GetPoint2Representation()->ConstrainedOff();
+        distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(distanceWidget->GetModel2PointPlacer());
         // check if need to snap to it
         // TODO: figure out why not snapping
         double pos[3];
-        this->DistanceWidget->GetRepresentation()->GetPoint2WorldPosition(pos);
-        if (!this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->GetPointPlacer()->ValidateWorldPosition(pos))
+        distanceWidget->GetRepresentation()->GetPoint2WorldPosition(pos);
+        if (!distanceWidget->GetRepresentation()->GetPoint2Representation()->GetPointPlacer()->ValidateWorldPosition(pos))
           {
           if (model->GetPolyData())
             {
             model->GetPolyData()->GetPoint(0, pos);
             vtkDebugMacro("Snapping point 2 to " << pos[0] << ", " << pos[1] << ", " << pos[2]);
-            this->DistanceWidget->GetRepresentation()->SetPoint2WorldPosition(pos);
+            distanceWidget->GetRepresentation()->SetPoint2WorldPosition(pos);
             }
           }
         }
       }
     else
       {
-      this->DistanceWidget->GetModel2PointPlacer()->RemoveAllProps();
-//      this->DistanceWidget->GetHandleRepresentation->ConstrainedOn();
-      this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(NULL);
+      distanceWidget->GetModel2PointPlacer()->RemoveAllProps();
+//      distanceWidget->GetHandleRepresentation->ConstrainedOn();
+      distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(NULL);
       }
     }
   else
     {
     // make sure it's not constrained
-    this->DistanceWidget->GetModel2PointPlacer()->RemoveAllProps();
-    this->DistanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(NULL);
+    distanceWidget->GetModel2PointPlacer()->RemoveAllProps();
+    distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(NULL);
     }
 
   // set up call back
   // temp: remove observers
-  this->DistanceWidget->GetWidget()->RemoveObservers(vtkCommand::InteractionEvent);
-  this->DistanceWidget->GetWidget()->RemoveObservers(vtkCommand::StartInteractionEvent);
+  distanceWidget->GetWidget()->RemoveObservers(vtkCommand::InteractionEvent);
+  distanceWidget->GetWidget()->RemoveObservers(vtkCommand::StartInteractionEvent);
 
   // now add call back
   vtkMeasurementsRulerWidgetCallback *myCallback = vtkMeasurementsRulerWidgetCallback::New();
 //  std::string rulerID = std::string(activeRulerNode->GetID());
 //  myCallback->RulerID = rulerID;
   myCallback->RulerNode = activeRulerNode;
-//  myCallback->Representation = this->DistanceWidget->GetRepresentation();
-  this->DistanceWidget->GetWidget()->AddObserver(vtkCommand::InteractionEvent,myCallback);
-  this->DistanceWidget->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
+//  myCallback->Representation = distanceWidget->GetRepresentation();
+  distanceWidget->GetWidget()->AddObserver(vtkCommand::InteractionEvent,myCallback);
+  distanceWidget->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
   myCallback->Delete();
 
   // request a render
@@ -1096,7 +1139,23 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::AddMRMLObservers ( )
 {
-  // should I register my mrml node classes here?
+  // the widget as a whole needs to keep track of ruler nodes in the scene
+  if (this->MRMLScene)
+    {
+    vtkDebugMacro("AddMRMLObservers: watching for node removed, added, scene close events on the scene");
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1111,6 +1170,23 @@ void vtkMeasurementsRulerWidget::RemoveMRMLObservers ( )
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     vtkSetAndObserveMRMLNodeEventsMacro(rulerNode, NULL, events);
     events->Delete();
+    }
+
+  if (this->MRMLScene)
+    {
+    vtkDebugMacro("RemoveMRMLObservers: stopping watching for node removed, added, scene close events on the scene");
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      {
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
     }
 }
 
@@ -1185,23 +1261,8 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     {
     this->ResolutionEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  
-  // observe the scene for node deleted events
-  if (this->MRMLScene)
-    {
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
-    }
+
+//  this->AddMRMLObservers();
 }
 
 //---------------------------------------------------------------------------
@@ -1274,13 +1335,8 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( ) {
     {
     this->ResolutionEntry->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  
-  if (this->MRMLScene)
-    {
-    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    }
+
+//  this->RemoveMRMLObservers();
 }
 
 
@@ -1559,4 +1615,108 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 void vtkMeasurementsRulerWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
 {
   this->ViewerWidget = viewerWidget;
+}
+
+//---------------------------------------------------------------------------
+vtkMeasurementsDistanceWidgetClass *vtkMeasurementsRulerWidget::GetDistanceWidget(const char *nodeID)
+{
+  std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+  for (iter = this->DistanceWidgets.begin();
+       iter != this->DistanceWidgets.end();
+       iter++)
+    {
+    if (iter->first.c_str() && !strcmp(iter->first.c_str(), nodeID))
+      {
+      return iter->second;
+      }
+    }
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::AddDistanceWidget(vtkMRMLMeasurementsRulerNode *rulerNode)
+{
+  if (!rulerNode)
+    {
+    return;
+    }
+  if (this->GetDistanceWidget(rulerNode->GetID()) != NULL)
+    {
+    vtkDebugMacro("Already have widgets for ruler node " << rulerNode->GetID());
+    return;
+    }
+
+  vtkMeasurementsDistanceWidgetClass *c = vtkMeasurementsDistanceWidgetClass::New();
+  this->DistanceWidgets[rulerNode->GetID()] = c;
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::RemoveDistanceWidget(vtkMRMLMeasurementsRulerNode *rulerNode)
+{
+  if (!rulerNode)
+    {
+    return;
+    }
+  if (this->GetDistanceWidget(rulerNode->GetID()) != NULL)
+    {
+    this->DistanceWidgets[rulerNode->GetID()]->Delete();
+    this->DistanceWidgets.erase(rulerNode->GetID());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::Update3DWidgetsFromMRML()
+{
+  if (!this->MRMLScene)
+    {
+      vtkDebugMacro("UpdateFromMRML: no mrml scene from which to update!");
+      return;
+    }
+
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLMeasurementsRulerNode");
+  vtkDebugMacro("UpdateFromMRML: have " << nnodes << " ruler nodes in the scene, " << this->DistanceWidgets.size() << " widgets defined already");
+
+  for (int n=0; n<nnodes; n++)
+    {
+    vtkMRMLMeasurementsRulerNode *rnode = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLMeasurementsRulerNode"));
+    if (rnode)
+      {
+      // this call will create one if it's missing
+      this->Update3DWidget(rnode);
+      // let go of the pointer
+      rnode = NULL;
+      }
+    }
+
+  // now have a widget for each node, check that don't have too many widgets
+  if (this->DistanceWidgets.size() != nnodes)
+    {
+    vtkDebugMacro("UpdateFromMRML: after adding widgets for scene nodes, have " << this->DistanceWidgets.size() << " instead of " << nnodes);
+    // find ones that aren't in the scene, be careful using an iterator because calling erase gets it messed up
+    int numWidgets = this->DistanceWidgets.size();
+    std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+    std::vector<std::string> idsToDelete;
+    for (iter = this->DistanceWidgets.begin();
+         iter != this->DistanceWidgets.end();
+         iter++)
+      {
+      if (this->MRMLScene->GetNodeByID(iter->first.c_str()) == NULL)
+        {
+        vtkDebugMacro("UpdateFromMRML: found an extra widget with id " << iter->first.c_str());
+        // add it to a list and do delete and erase in a second round
+        idsToDelete.push_back(iter->first);
+        }
+      }
+    for (int i = 0; i < idsToDelete.size(); i++)
+      {
+      std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator delIter;
+      delIter = this->DistanceWidgets.find(idsToDelete[i]);
+      if (delIter != this->DistanceWidgets.end())
+        {
+        // can't call this->RemoveDistanceWidget because we don't have a node!
+        this->DistanceWidgets[delIter->first.c_str()]->Delete();
+        this->DistanceWidgets.erase(delIter->first.c_str());
+        }
+      }
+    }
 }

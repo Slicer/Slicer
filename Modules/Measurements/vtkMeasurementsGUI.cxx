@@ -468,6 +468,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
     this->RulerWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
     }
   else { vtkWarningMacro("Unable to pass the viewer widget to the ruler widget"); }
+  this->RulerWidget->AddMRMLObservers();
   this->RulerWidget->SetParent ( page );
   this->RulerWidget->Create ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -537,7 +538,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::Init ( )
-{
+{ 
 }
 
 //---------------------------------------------------------------------------

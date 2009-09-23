@@ -93,9 +93,23 @@ public:
 //BTX
   // Description:
   // encapsulated 3d widgets for each ruler node
-  vtkMeasurementsDistanceWidgetClass *DistanceWidget;
+  std::map<std::string, vtkMeasurementsDistanceWidgetClass *> DistanceWidgets;
 //ETX
- protected:
+  // Description:
+  // get a distance widget by ruler node id
+  vtkMeasurementsDistanceWidgetClass *GetDistanceWidget(const char * nodeID);
+
+  // Description:
+  // set up a new distance widget for this node
+  void AddDistanceWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
+  // Description:
+  // remove distance widget for this node
+  void RemoveDistanceWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
+  // Description:
+  // check scene to make sure that have a widget for each ruler node, and no extra widgets...
+  void Update3DWidgetsFromMRML();
+
+protected:
   vtkMeasurementsRulerWidget();
   virtual ~vtkMeasurementsRulerWidget();
 
