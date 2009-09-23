@@ -52,7 +52,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->Initialized          =  0;
   this->RayCastInitialized   =  0;
   this->Technique            =  0;//by default composit with shading
-  
+
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
   this->InternalVolumeSize      =  256; //by default 256^3
@@ -69,7 +69,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
 
   this->ICPEScale            = 1.0f;
   this->ICPESmoothness       = 0.5f;
-  
+
   this->GlobalAlpha          = 1.0f;
 }
 
@@ -77,8 +77,8 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::~vtkSlicerGPURayCastVolumeTextureMappe
 {
 }
 
-// Release the graphics resources used by this texture.  
-void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindow 
+// Release the graphics resources used by this texture.
+void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindow
                                 *renWin)
 {
   if (( this->Volume1Index || this->Volume2Index || this->ColorLookupIndex ) && renWin)
@@ -88,7 +88,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindo
     // free any textures
     this->DeleteTextureIndex( &this->Volume1Index );
     this->DeleteTextureIndex( &this->Volume2Index );
-    this->DeleteTextureIndex( &this->ColorLookupIndex );   
+    this->DeleteTextureIndex( &this->ColorLookupIndex );
 #endif
     }
   if ( this->RayCastVertexShader || this->RayCastFragmentShader || this->RayCastProgram)
@@ -97,7 +97,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindo
     vtkgl::DeleteShader(this->RayCastFragmentShader);
     vtkgl::DeleteProgram(this->RayCastProgram);
   }
-    
+
   this->Volume1Index     = 0;
   this->Volume2Index     = 0;
   this->ColorLookupIndex = 0;
@@ -109,56 +109,56 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindo
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *vol)
-{  
+{
   ren->GetRenderWindow()->MakeCurrent();
-    
+
   if ( !this->Initialized )
     {
     this->Initialize();
     }
-  
+
   if ( !this->RayCastInitialized || this->ReloadShaderFlag)
     {
     this->InitializeRayCast();
     }
-    
+
   // Start the timer now
   this->Timer->StartTimer();
 
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
-  
+
   //setup material based on volume property
   float ambient = vol->GetProperty()->GetAmbient();
   float specular = vol->GetProperty()->GetSpecular();
   float diffuse = vol->GetProperty()->GetDiffuse();
   float power = 128*vol->GetProperty()->GetSpecularPower()/50;
-  
+
 //  cout<<ambient<<" "<<diffuse<<" "<<specular<<endl;
 //  cout.flush();
-  
+
   float ambientMaterial[4];
   float diffuseMaterial[4];
   float specularMaterial[4];
-  
+
   ambientMaterial[0] = ambient; ambientMaterial[1] = ambient; ambientMaterial[2] = ambient; ambientMaterial[3] = 1.0;
   diffuseMaterial[0] = diffuse; diffuseMaterial[1] = diffuse; diffuseMaterial[2] = diffuse; diffuseMaterial[3] = 1.0;
   specularMaterial[0] = specular; specularMaterial[1] = specular; specularMaterial[2] = specular; specularMaterial[3] = 1.0;
-  
+
   glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterial);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specularMaterial);
-  glMaterialf(GL_FRONT, GL_SHININESS, power); 
- 
+  glMaterialf(GL_FRONT, GL_SHININESS, power);
+
   glDisable(GL_LIGHTING);
- 
+
   this->RenderGLSL(ren, vol);
-  
+
   glPopAttrib();
 
   glFlush();
   glFinish();
-      
-  this->Timer->StopTimer();      
+
+  this->Timer->StopTimer();
 
   this->TimeToDraw = static_cast<float>(this->Timer->GetElapsedTime());
 
@@ -168,12 +168,12 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
     {
     this->TimeToDraw = 0.0001;
     }
-  
+
   //adjust ray steps based on requrestd frame rate
   this->AdaptivePerformanceControl();
-  
+
   //printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
-  
+
   double progress = 1;
   this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
 }
@@ -194,7 +194,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   }
   else if (this->TimeToDraw < 0.75/this->Framerate)
   {
-    this->RaySteps *= 1.3f; 
+    this->RaySteps *= 1.3f;
   }
   else if (this->TimeToDraw < 0.9/this->Framerate)
   {
@@ -204,21 +204,21 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   {
     this->RaySteps *= 0.75f;
   }
-  
+
   int dim[3];
   this->GetVolumeDimensions(dim);
 
   float maxRaysteps = dim[0];
-  maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
-  maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
+  maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];
+  maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];
   maxRaysteps *= 128.0f; //make sure we have enough sampling rate to recover details
-  
+
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
-  
+
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
   if (this->RaySteps < 150.0f)       this->RaySteps = 150.0f;
-  
+
 //  cout<<this->Framerate<<" "<<this->TimeToDraw<<" "<<this->RaySteps<<endl;
 //  cout.flush();
 }
@@ -228,10 +228,10 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
 {
   double bounds[6];
   this->GetInput()->GetBounds(bounds);
-  
+
   vtkMatrix4x4       *matrix = vtkMatrix4x4::New();
 
-  // build transformation 
+  // build transformation
   pVol->GetMatrix(matrix);
 
   //transform volume bbox vertices
@@ -239,33 +239,33 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
   //Yanling, ABCC, NCI-Frederick, 20081124
   //
   //Problem:
-  //Failed to implement the original GPU ray casting algorithm in Slicer: 
+  //Failed to implement the original GPU ray casting algorithm in Slicer:
   // unable to get correct texture when rendering both volume and 3D slices
   // back and aux buffer tested
   //The original GPU ray casting algorithm incompatible with quad-buffer stereo rendering
   // which buffer to read in stereo rendering?
-  
+
   //Solution:
   // draw front face of volume bbox only
   // one-pass GPU ray casting
   // no need for render-to-buffer and buffer reading
-  
+
   //Known problem:
   // one-pass GPU ray casting assumes volume bbox is axis-aligned
   // when volume bbox is not axis-aligned, distorted image rendered when clipping enabled
-  
+
   double vertices[8][4] = {
     {bounds[0], bounds[2], bounds[4], 1.0},
     {bounds[1], bounds[2], bounds[4], 1.0},
     {bounds[1], bounds[3], bounds[4], 1.0},
     {bounds[0], bounds[3], bounds[4], 1.0},
-        
+
     {bounds[0], bounds[2], bounds[5], 1.0},
     {bounds[1], bounds[2], bounds[5], 1.0},
     {bounds[1], bounds[3], bounds[5], 1.0},
     {bounds[0], bounds[3], bounds[5], 1.0},
   };
-    
+
   for (int i = 0; i < 8; i++)
   {
     vtkMatrix4x4::MultiplyPoint(*(matrix->Element), vertices[i], vertices[i]);
@@ -279,25 +279,25 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
     clipPlanes = this->ClippingPlanes;
     if ( clipPlanes && this->Clipping)
     {
-        numClipPlanes = clipPlanes->GetNumberOfItems();
-        if (numClipPlanes > 6)
-        {
-      vtkErrorMacro(<< "OpenGL guarantees only 6 additional clipping planes");
-        }
-        
+      numClipPlanes = clipPlanes->GetNumberOfItems();
+      if (numClipPlanes > 6)
+      {
+        vtkErrorMacro(<< "OpenGL guarantees only 6 additional clipping planes");
+      }
+
         double lowerBounds[3];
         double upperBounds[3];
-    
-    double *pNormal = NULL;
-    double *pOrigin = NULL;
-  /*  
+
+        double *pNormal = NULL;
+        double *pOrigin = NULL;
+  /*
     //find out clip box
     for (int i = 0; i < numClipPlanes; i++)
     {
         plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
         pNormal = plane->GetNormal();
         pOrigin = plane->GetOrigin();
-                
+
         if (pNormal[0] > 0.85 || pNormal[0] < -0.85)//x
         {
             if (pNormal[0] > 0.0)//+x: min
@@ -320,57 +320,57 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
                 upperBounds[2] = pOrigin[2];
         }
     }*/
-    
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    lowerBounds[0] = pOrigin[0];
-        
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(1));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    upperBounds[0] = pOrigin[0];
-        
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(2));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    lowerBounds[1] = pOrigin[1];
-        
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(3));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    upperBounds[1] = pOrigin[1];
-        
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(4));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    lowerBounds[2] = pOrigin[2];
-       
-    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(5));
-    pNormal = plane->GetNormal();
-    pOrigin = plane->GetOrigin();
-        
-    upperBounds[2] = pOrigin[2];
-    
-    //clip vertices
-    //correct when volume is axis-aligned
-    //not correct when volume is rotated to be non-axis-aligned
-    for (int i = 0; i < 8; i++)
-    {
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      lowerBounds[0] = pOrigin[0];
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(1));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      upperBounds[0] = pOrigin[0];
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(2));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      lowerBounds[1] = pOrigin[1];
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(3));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      upperBounds[1] = pOrigin[1];
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(4));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      lowerBounds[2] = pOrigin[2];
+
+      plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(5));
+      pNormal = plane->GetNormal();
+      pOrigin = plane->GetOrigin();
+
+      upperBounds[2] = pOrigin[2];
+
+      //clip vertices
+      //correct when volume is axis-aligned
+      //not correct when volume is rotated to be non-axis-aligned
+      for (int i = 0; i < 8; i++)
+      {
         for (int j = 0; j < 3; j++)
         {
             vertices[i][j] = vertices[i][j] < lowerBounds[j] ? lowerBounds[j] : vertices[i][j];
             vertices[i][j] = vertices[i][j] > upperBounds[j] ? upperBounds[j] : vertices[i][j];
         }
-    }
+      }
     }
   }
-   
+
   {//volume bbox vertices coords
     for (int i = 0; i < 8; i++)
     {
@@ -380,7 +380,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
       }
     }
   }
-  
+
   {//volume bbox vertices colors
     //transfer clipped vertices back for color(texture coord)
     matrix->Invert();
@@ -388,37 +388,37 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
     {
         vtkMatrix4x4::MultiplyPoint(*(matrix->Element), vertices[i], vertices[i]);
     }
-    
+
     double verticesColor[8][3];
     double bboxLen[3] = {
         bounds[1] - bounds[0],
         bounds[3] - bounds[2],
         bounds[5] - bounds[4],
     };
-        
+
     double lowerBounds[3] = {bounds[0], bounds[2], bounds[4]};
-    
+
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 3; j++)
             verticesColor[i][j] = (vertices[i][j] - lowerBounds[j])/bboxLen[j];
     }
-    
+
     memcpy(VolumeBBoxVerticesColor, verticesColor, sizeof(double)*24);
   }
-  
-  //ParaMatrix:                                                             
-  //EyePos.x,      EyePos.y,      EyePos.z,     Step                        
-  //VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x               
-  //VolBBoxHigh.y, VolBBoxHigh.z, MinDist,      DepthPeelingThreshold,                
+
+  //ParaMatrix:
+  //EyePos.x,      EyePos.y,      EyePos.z,     Step
+  //VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x
+  //VolBBoxHigh.y, VolBBoxHigh.z, MinDist,      DepthPeelingThreshold,
   //ICPE_s,        GlobalAlpha,   MinMaxLen,    ICPE_t
-  
+
   double modelViewMat[16];
   glGetDoublev(GL_MODELVIEW_MATRIX, modelViewMat);
-  
+
   double invModelViewMat[16];
   vtkMatrix4x4::Invert(modelViewMat, invModelViewMat);
-  
+
   double zero[4] = {0.0, 0.0, 0.0, 1.0};
   double eye[4];
   vtkMatrix4x4::PointMultiply(invModelViewMat, zero, eye);
@@ -429,23 +429,23 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
     bounds[3] - bounds[2],
     bounds[5] - bounds[4],
   };
-        
+
   double lowerBounds[3] = {bounds[0], bounds[2], bounds[4]};
-  
+
   for (int i = 0; i < 3; i++)
   {
     eye[i] = (eye[i] - lowerBounds[i])/bboxLen[i];//eye pos in texture space
   }
-  
+
   this->ParaMatrix[0] = (GLfloat)eye[0];
   this->ParaMatrix[1] = (GLfloat)eye[1];
   this->ParaMatrix[2] = (GLfloat)eye[2];
   this->ParaMatrix[3] = (GLfloat)(1.0f/RaySteps);
-  
+
   //recalculate texcoord/color bounds in case volume is not axis aligned
   double clrLowerBounds[3] = {VolumeBBoxVerticesColor[0][0], VolumeBBoxVerticesColor[0][1], VolumeBBoxVerticesColor[0][2]};
   double clrUpperBounds[3] = {VolumeBBoxVerticesColor[0][0], VolumeBBoxVerticesColor[0][1], VolumeBBoxVerticesColor[0][2]};
-  
+
   for (int i = 0; i < 8; i++)
   {
     for (int j = 0; j < 3; j++)
@@ -454,76 +454,76 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
         clrUpperBounds[j] = clrUpperBounds[j] < VolumeBBoxVerticesColor[i][j] ? VolumeBBoxVerticesColor[i][j] : clrUpperBounds[j];
     }
   }
-  
+
   this->ParaMatrix[4] = (GLfloat)clrLowerBounds[0] < 0.0f ? 0.0f : (GLfloat)clrLowerBounds[0];
   this->ParaMatrix[5] = (GLfloat)clrLowerBounds[1] < 0.0f ? 0.0f : (GLfloat)clrLowerBounds[1];
   this->ParaMatrix[6] = (GLfloat)clrLowerBounds[2] < 0.0f ? 0.0f : (GLfloat)clrLowerBounds[2];
-  
+
   this->ParaMatrix[7] = (GLfloat)clrUpperBounds[0] > 1.0f ? 1.0f : (GLfloat)clrUpperBounds[0];
   this->ParaMatrix[8] = (GLfloat)clrUpperBounds[1] > 1.0f ? 1.0f : (GLfloat)clrUpperBounds[1];
   this->ParaMatrix[9] = (GLfloat)clrUpperBounds[2] > 1.0f ? 1.0f : (GLfloat)clrUpperBounds[2];
-  
+
   float maxDist, minDist;
-  
+
   {
     float x = VolumeBBoxVerticesColor[0][0] - eye[0];
     float y = VolumeBBoxVerticesColor[0][1] - eye[1];
     float z = VolumeBBoxVerticesColor[0][2] - eye[2];
     float dist = sqrtf(x*x + y*y + z*z);
-    
+
     maxDist = dist;
     minDist = dist;
   }
-    
+
   for (int i = 1; i < 8; i++)
   {
     float x = VolumeBBoxVerticesColor[i][0] - eye[0];
     float y = VolumeBBoxVerticesColor[i][1] - eye[1];
     float z = VolumeBBoxVerticesColor[i][2] - eye[2];
     float dist = sqrtf(x*x + y*y + z*z);
-    
+
     maxDist = maxDist < dist ? dist : maxDist;
     minDist = minDist > dist ? dist : minDist;
   }
-  
+
   this->ParaMatrix[10] = minDist;
-  
+
   //scalar range is 0 ~ 255
   this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale )/255.0f;
   this->ParaMatrix[12] = this->ICPESmoothness;
-  
+
   this->ParaMatrix[13] = GlobalAlpha;
-  
+
   this->ParaMatrix[14] = maxDist - minDist;
-  
+
 //  cout<<eye[0]<<" "<<eye[1]<<" "<<eye[2]<<" "<<minDist<<" "<<maxDist<<endl;cout.flush();
-  
+
   this->ParaMatrix[15] = this->ICPEScale;
-  
+
   GLfloat volMat[16];
   for (int i = 0; i < 16; i++)
     volMat[i] = (GLfloat)(*(matrix->Element))[i];
-    
+
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "ParaMatrix");
   if (loc >= 0)
     vtkgl::UniformMatrix4fv(loc, 1, false, this->ParaMatrix);
   loc = vtkgl::GetUniformLocation(RayCastProgram, "VolumeMatrix");
   if (loc >= 0)
-    vtkgl::UniformMatrix4fv(loc, 1, false, volMat);  
+    vtkgl::UniformMatrix4fv(loc, 1, false, volMat);
   matrix->Delete();
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderGLSL( vtkRenderer *ren, vtkVolume *vol )
 {
-  vtkgl::UseProgram(RayCastProgram);    
-  
+  vtkgl::UseProgram(RayCastProgram);
+
   this->SetupTextures( ren, vol );
   this->SetupRayCastParameters(ren, vol);
-  
+
   glEnable(GL_CULL_FACE);
 
   this->DrawVolumeBBox();
-  
+
   vtkgl::UseProgram(0);
 }
 
@@ -540,7 +540,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DeleteTextureIndex( GLuint *index
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::CreateTextureIndex( GLuint *index )
 {
-  GLuint tempIndex=0;    
+  GLuint tempIndex=0;
   glGenTextures(1, &tempIndex);
   *index = static_cast<long>(tempIndex);
 }
@@ -569,17 +569,17 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures( vtkRenderer *vtkNo
   //7, 6, 5, 4
   // Update the volume containing the 2 byte scalar / gradient magnitude
   if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index )
-    {    
+    {
     int dim[3];
     this->GetVolumeDimensions(dim);
-    
+
     vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
     this->DeleteTextureIndex(&this->Volume1Index);
     this->CreateTextureIndex(&this->Volume1Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
     vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
                GL_RGBA, GL_UNSIGNED_BYTE, this->Volume1 );
-    
+
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
     this->DeleteTextureIndex(&this->Volume2Index);
@@ -587,45 +587,45 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures( vtkRenderer *vtkNo
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);
     vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
                GL_RGBA, GL_UNSIGNED_BYTE, this->Volume2 );
-               
+
     delete [] this->Volume1;
     delete [] this->Volume2;
-    
+
     this->Volume1 = NULL;
     this->Volume2 = NULL;
     }
-  
+
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
-  glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);   
+  glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
   this->Setup3DTextureParameters( vol->GetProperty() );
 
   vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
-  glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);   
+  glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);
   this->Setup3DTextureParameters( vol->GetProperty() );
 
   vtkgl::ActiveTexture( vtkgl::TEXTURE6 );
- 
+
   // Update the dependent 2D color table mapping scalar value and
   // gradient magnitude to RGBA
   if ( this->UpdateColorLookup( vol ) || !this->ColorLookupIndex )
     {
     this->DeleteTextureIndex( &this->ColorLookupIndex );
-    
+
     this->CreateTextureIndex( &this->ColorLookupIndex );
-    glBindTexture(GL_TEXTURE_2D, this->ColorLookupIndex);   
+    glBindTexture(GL_TEXTURE_2D, this->ColorLookupIndex);
 
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );    
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0,
-          GL_RGBA, GL_UNSIGNED_BYTE, this->ColorLookup );    
+          GL_RGBA, GL_UNSIGNED_BYTE, this->ColorLookup );
     }
-  
+
   vtkgl::ActiveTexture( vtkgl::TEXTURE6 );
   glBindTexture(GL_TEXTURE_2D, this->ColorLookupIndex);
-  
+
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "TextureVol");
   if (loc >= 0)
     vtkgl::Uniform1i(loc, 7);
@@ -643,28 +643,28 @@ int  vtkSlicerGPURayCastVolumeTextureMapper3D::IsRenderSupported(vtkVolumeProper
     {
     this->Initialize();
     }
-  
+
   if ( !this->RayCastSupported )
     {
     return 0;
     }
-  
+
   if ( !this->GetInput() )
     {
     return 0;
     }
-  
+
   if ( this->GetInput()->GetNumberOfScalarComponents() > 1 &&
        property->GetIndependentComponents() )
     {
     return 0;
     }
-  
+
   GLint num = 0;
   glGetIntegerv(vtkgl::MAX_TEXTURE_IMAGE_UNITS, &num);
   if (num < 8)//we use texture unit 4,5,6,7 to avoid conflict with slice planes
     return 0;
-  
+
   num = 0;
   glGetIntegerv(vtkgl::MAX_FRAGMENT_UNIFORM_COMPONENTS, &num);
   if (num < 32)
@@ -677,32 +677,32 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Initialize()
   this->Initialized = 1;
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
   extensions->SetRenderWindow(NULL); // set render window to the current one.
-  
+
   int supports_2_0=extensions->ExtensionSupported( "GL_VERSION_2_0" );
   if(supports_2_0)
-    {   
+    {
     extensions->LoadExtension("GL_VERSION_2_0");//printf("GL_2_0\n");
     }
-  
+
   int supports_2_1=extensions->ExtensionSupported( "GL_VERSION_2_1" );
   if(supports_2_1)
-    {   
+    {
     extensions->LoadExtension("GL_VERSION_2_1");//printf("GL_2_1\n");
     }
-    
+
   int supports_3_0=extensions->ExtensionSupported( "GL_VERSION_3_0" );
   if(supports_3_0)
-    {   
+    {
     extensions->LoadExtension("GL_VERSION_3_0");//printf("GL_3_0\n");
     }
-    
+
     if (supports_2_0 || supports_2_1 || supports_3_0)
         RayCastSupported = 1;
     else
         RayCastSupported = 0;
-    
+
     extensions->Delete();
-    
+
 //  GLint num;
 //  glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &num);
 //  printf("%d \n", num);
@@ -715,7 +715,7 @@ int vtkSlicerGPURayCastVolumeTextureMapper3D::IsTextureSizeSupported( int size[3
   if ( this->GetInput()->GetNumberOfScalarComponents() < 4 )
     {
     long maxSize = this->InternalVolumeSize * this->InternalVolumeSize * this->InternalVolumeSize;
-            
+
     if ( size[0]*size[1]*size[2] > maxSize )//need to test graphics memory to determine volume size
       {
       return 0;
@@ -728,7 +728,7 @@ int vtkSlicerGPURayCastVolumeTextureMapper3D::IsTextureSizeSupported( int size[3
       return 0;
       }
     }
-    
+
   return 1;
 }
 
@@ -738,39 +738,39 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PrintSelf(ostream& os, vtkIndent 
 
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
   extensions->SetRenderWindow(NULL); // set render window to current render window
-  
+
   os << indent << "Initialized " << this->Initialized << endl;
   if ( this->Initialized )
     {
-    os << indent << "Supports GL_VERSION_1_2:" 
+    os << indent << "Supports GL_VERSION_1_2:"
        << extensions->ExtensionSupported( "GL_VERSION_1_2" ) << endl;
-    os << indent << "Supports GL_EXT_texture3D:" 
+    os << indent << "Supports GL_EXT_texture3D:"
        << extensions->ExtensionSupported( "GL_EXT_texture3D" ) << endl;
-    os << indent << "Supports GL_VERSION_1_3:" 
+    os << indent << "Supports GL_VERSION_1_3:"
        << extensions->ExtensionSupported( "GL_VERSION_1_3" ) << endl;
-    os << indent << "Supports GL_VERSION_1_5:" 
+    os << indent << "Supports GL_VERSION_1_5:"
        << extensions->ExtensionSupported( "GL_VERSION_1_5" ) << endl;
-    os << indent << "Supports GL_VERSION_2_0:" 
+    os << indent << "Supports GL_VERSION_2_0:"
        << extensions->ExtensionSupported( "GL_VERSION_2_0" ) << endl;
-    os << indent << "Supports GL_ARB_multitexture: " 
+    os << indent << "Supports GL_ARB_multitexture: "
        << extensions->ExtensionSupported( "GL_ARB_multitexture" ) << endl;
-    os << indent << "Supports GL_NV_texture_shader2: " 
+    os << indent << "Supports GL_NV_texture_shader2: "
        << extensions->ExtensionSupported( "GL_NV_texture_shader2" ) << endl;
-    os << indent << "Supports GL_NV_register_combiners2: " 
+    os << indent << "Supports GL_NV_register_combiners2: "
        << extensions->ExtensionSupported( "GL_NV_register_combiners2" ) << endl;
-    os << indent << "Supports GL_ATI_fragment_shader: " 
+    os << indent << "Supports GL_ATI_fragment_shader: "
        << extensions->ExtensionSupported( "GL_ATI_fragment_shader" ) << endl;
     os << indent << "Supports GL_ARB_fragment_program: "
        << extensions->ExtensionSupported( "GL_ARB_fragment_program" ) << endl;
     }
   extensions->Delete();
-  
+
   this->Superclass::PrintSelf(os,indent);
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
-{       
-    glBegin(GL_QUADS);      
+{
+    glBegin(GL_QUADS);
         glColor3dv(VolumeBBoxVerticesColor[4]);
         glVertex3dv(VolumeBBoxVertices[4]);
         glColor3dv(VolumeBBoxVerticesColor[5]);
@@ -779,7 +779,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[6]);
         glColor3dv(VolumeBBoxVerticesColor[7]);
         glVertex3dv(VolumeBBoxVertices[7]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[3]);
         glVertex3dv(VolumeBBoxVertices[3]);
         glColor3dv(VolumeBBoxVerticesColor[2]);
@@ -788,7 +788,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[1]);
         glColor3dv(VolumeBBoxVerticesColor[0]);
         glVertex3dv(VolumeBBoxVertices[0]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[5]);
         glVertex3dv(VolumeBBoxVertices[5]);
         glColor3dv(VolumeBBoxVerticesColor[1]);
@@ -797,7 +797,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[2]);
         glColor3dv(VolumeBBoxVerticesColor[6]);
         glVertex3dv(VolumeBBoxVertices[6]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[7]);
         glVertex3dv(VolumeBBoxVertices[7]);
         glColor3dv(VolumeBBoxVerticesColor[3]);
@@ -806,7 +806,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[0]);
         glColor3dv(VolumeBBoxVerticesColor[4]);
         glVertex3dv(VolumeBBoxVertices[4]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[7]);
         glVertex3dv(VolumeBBoxVertices[7]);
         glColor3dv(VolumeBBoxVerticesColor[6]);
@@ -815,7 +815,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[2]);
         glColor3dv(VolumeBBoxVerticesColor[3]);
         glVertex3dv(VolumeBBoxVertices[3]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[5]);
         glVertex3dv(VolumeBBoxVertices[5]);
         glColor3dv(VolumeBBoxVerticesColor[4]);
@@ -824,7 +824,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[0]);
         glColor3dv(VolumeBBoxVerticesColor[1]);
         glVertex3dv(VolumeBBoxVertices[1]);
-  
+
         //also draw backface in case of negative scaling matrix
         glColor3dv(VolumeBBoxVerticesColor[2]);
         glVertex3dv(VolumeBBoxVertices[2]);
@@ -834,7 +834,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[0]);
         glColor3dv(VolumeBBoxVerticesColor[1]);
         glVertex3dv(VolumeBBoxVertices[1]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[6]);
         glVertex3dv(VolumeBBoxVertices[6]);
         glColor3dv(VolumeBBoxVerticesColor[7]);
@@ -843,7 +843,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[3]);
         glColor3dv(VolumeBBoxVerticesColor[2]);
         glVertex3dv(VolumeBBoxVertices[2]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[7]);
         glVertex3dv(VolumeBBoxVertices[7]);
         glColor3dv(VolumeBBoxVerticesColor[4]);
@@ -852,7 +852,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[0]);
         glColor3dv(VolumeBBoxVerticesColor[3]);
         glVertex3dv(VolumeBBoxVertices[3]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[5]);
         glVertex3dv(VolumeBBoxVertices[5]);
         glColor3dv(VolumeBBoxVerticesColor[6]);
@@ -861,7 +861,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[2]);
         glColor3dv(VolumeBBoxVerticesColor[1]);
         glVertex3dv(VolumeBBoxVertices[1]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[6]);
         glVertex3dv(VolumeBBoxVertices[6]);
         glColor3dv(VolumeBBoxVerticesColor[5]);
@@ -870,7 +870,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
         glVertex3dv(VolumeBBoxVertices[4]);
         glColor3dv(VolumeBBoxVerticesColor[7]);
         glVertex3dv(VolumeBBoxVertices[7]);
-        
+
         glColor3dv(VolumeBBoxVerticesColor[5]);
         glVertex3dv(VolumeBBoxVertices[5]);
         glColor3dv(VolumeBBoxVerticesColor[1]);
@@ -885,17 +885,17 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
 void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
 {
     RayCastInitialized = 1;
-    
+
     vtkgl::DeleteShader(this->RayCastVertexShader);
     vtkgl::DeleteShader(this->RayCastFragmentShader);
     vtkgl::DeleteProgram(this->RayCastProgram);
-    
+
     this->RayCastVertexShader = vtkgl::CreateShader(vtkgl::VERTEX_SHADER);
     this->RayCastFragmentShader = vtkgl::CreateShader(vtkgl::FRAGMENT_SHADER);
     this->RayCastProgram = vtkgl::CreateProgram();
-    
+
     LoadVertexShader();
-    
+
     switch(this->Technique)
     {
     case 0://composit shading
@@ -982,7 +982,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
         }
         break;
     }
-        
+
     LoadRayCastProgram();
 }
 
@@ -991,13 +991,13 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadRayCastProgram()
   vtkgl::AttachShader(RayCastProgram, RayCastVertexShader);
   vtkgl::AttachShader(RayCastProgram, RayCastFragmentShader);
   vtkgl::LinkProgram(RayCastProgram);
-  
+
   GLint result;
   vtkgl::GetProgramiv(RayCastProgram, vtkgl::LINK_STATUS, &result);
-  
+
   if (!result)
     printf("Program Link Status: FALSE\n");
-    
+
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadVertexShader()
@@ -1012,19 +1012,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadVertexShader()
         "    ViewDir = vec3(gl_ModelViewMatrix * gl_Vertex);                                         \n"
         "}                                                                                          \n";
 
-        
+
     std::string source = vp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastVertexShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastVertexShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastVertexShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result )
         printf("Vertex Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastVertexShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1060,7 +1060,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPFou
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1089,7 +1089,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPFou
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1152,19 +1152,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPFou
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1200,7 +1200,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPF
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1229,7 +1229,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPF
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1292,19 +1292,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPF
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1340,7 +1340,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1369,7 +1369,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1445,19 +1445,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderFour()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1493,7 +1493,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1522,7 +1522,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1563,7 +1563,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -1604,7 +1604,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -1617,19 +1617,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1665,7 +1665,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1694,7 +1694,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMFour()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1735,7 +1735,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMFour()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -1776,7 +1776,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMFour()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -1789,19 +1789,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMFour()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1837,7 +1837,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPTwo
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -1866,7 +1866,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPTwo
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -1929,19 +1929,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPTwo
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -1977,7 +1977,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPT
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2006,7 +2006,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPT
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2069,19 +2069,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPT
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2117,7 +2117,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2146,7 +2146,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2222,19 +2222,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderTwo()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2270,7 +2270,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2299,7 +2299,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2346,7 +2346,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -2362,7 +2362,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    rayDir = normalize(rayDir);                                                             \n"
         "                                                                                        \n"
         "    //debug mode                                                                        \n"
-        " /*   if (ParaMatrix[3][2] > 1.5)                                                             \n"                                      
+        " /*   if (ParaMatrix[3][2] > 1.5)                                                             \n"
         "    {                                                                                       \n"
         "        gl_FragColor = rayEnd;                                                          \n"
         "        return;                                                                         \n"
@@ -2399,7 +2399,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -2412,19 +2412,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2460,7 +2460,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2489,7 +2489,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2530,7 +2530,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -2571,7 +2571,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -2584,19 +2584,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2632,7 +2632,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2661,7 +2661,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2720,19 +2720,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2768,7 +2768,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2797,7 +2797,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -2856,19 +2856,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -2905,7 +2905,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                         \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -2934,7 +2934,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -3014,19 +3014,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -3062,7 +3062,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -3091,7 +3091,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                           \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -3137,7 +3137,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -3178,7 +3178,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -3191,19 +3191,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -3239,7 +3239,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -3268,7 +3268,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                           \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -3304,7 +3304,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "    vec4   specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4   diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL)*color;   \n"
@@ -3316,7 +3316,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "   float gradMag = texture3D(TextureVol, coord).w;                                       \n"
         "   float base = shading*ParaMatrix[3][3]*(1.0-dist)*(1.0-alpha);                         \n"
         "   if (base > 0.0)                                                                       \n"
-        "     return pow(gradMag, pow(base, ParaMatrix[3][0]));                                    \n"                                  
+        "     return pow(gradMag, pow(base, ParaMatrix[3][0]));                                    \n"
         "   else                                                                                  \n"
         "     return 1.0;                                                                         \n"
         "}                                                                                        \n"
@@ -3327,7 +3327,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "   float NdotL = max( dot( normal, lightDir ), 0.0);                                       \n"
         "   if (NdotL > 0.0)                                                                        \n"
         "   {                                                                                     \n"
-        "     float NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "     float NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "     return NdotL + pow(NdotHV, gl_FrontMaterial.shininess);                           \n"
         "   }                                                                                    \n"
         "   else                                                                                \n"
@@ -3369,7 +3369,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "            {                                                                              \n"
         "               nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
         "               float icpe = ICPE(nextRayOrigin, length(nextColor), alpha, t/rayLen);         \n"
-        "                                                                                             \n" 
+        "                                                                                             \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha*icpe;                                         \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -3382,19 +3382,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderICPE()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -3430,7 +3430,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                        \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                   \n"
         "        return gl_TexCoord[0];                                                          \n"
@@ -3459,7 +3459,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
         "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
         "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
         "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
-        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"
         "                                                                                           \n"
         "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
         "        return vec4(o, 1.0);                                                            \n"
@@ -3495,7 +3495,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
         "    vec4    specular = vec4(0);                                                            \n"
         "    if (NdotL > 0.0)                                                                     \n"
         "    {                                                                                      \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n"
         "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess)*color;   \n"
         "    }                                                                                   \n"
         "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
@@ -3536,7 +3536,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
-        "                                                                                              \n"      
+        "                                                                                              \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha*texture3D(TextureVol, nextRayOrigin).w;       \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -3549,19 +3549,19 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
         "                                                                                        \n"
         "}                                                                                          \n";
-        
+
     std::string source = fp_oss.str();
     const char* pSourceText = source.c_str();
-    
+
     vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
     vtkgl::CompileShader(RayCastFragmentShader);
-    
+
     GLint result;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
-    
+
     if (!result)
         printf("Fragment Shader Compile Status: FALSE\n");
-        
+
     GLint infoLogLen;
     vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
     try
@@ -3577,14 +3577,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOM()
 void vtkSlicerGPURayCastVolumeTextureMapper3D::PrintGLErrorString()
 {
     GLenum error = glGetError();
-        
+
     switch(error)
     {
     case GL_NO_ERROR: printf("GL_NO_ERROR\n");break;
     case GL_INVALID_ENUM: printf("GL_INVALID_ENUM\n");break;
     case GL_INVALID_VALUE: printf("GL_INVALID_VALUE\n");break;
     case GL_INVALID_OPERATION: printf("GL_INVALID_OPERATION\n");break;
-        
+
     case GL_STACK_OVERFLOW: printf("GL_STACK_OVERFLOW\n");break;
     case GL_STACK_UNDERFLOW: printf("GL_STACK_UNDERFLOW\n");break;
     case GL_OUT_OF_MEMORY: printf("GL_OUT_OF_MEMORY\n");break;
