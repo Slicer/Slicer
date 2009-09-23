@@ -1,0 +1,26 @@
+
+scm       svn
+svnpath   https://www.nitrc.org/svn/brainsroiauto/trunk
+name      BRAINSROIAuto
+cmakeproject      BRAINSROIAuto
+svnusername slicerbot
+svnpassword slicer
+
+
+#
+# list dependencies
+# - these should be names of other modules that have .s3ext files 
+# - the dependencies will be built first
+
+# homepage
+homepage http://www.nitrc.org/projects/brainsroiauto/
+
+# match category in the xml description of the module (where it shows up in Modules menu)
+category  Segmentation
+
+# give people an idea what to expect from this code
+# - is it just a test or something you stand beind?
+status    Development
+
+# One line description of what the module does
+description BRAINSROIAuto is a tool that helps to identify the bask of the head. 
