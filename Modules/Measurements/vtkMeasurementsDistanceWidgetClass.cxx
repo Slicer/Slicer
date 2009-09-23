@@ -46,33 +46,44 @@ vtkMeasurementsDistanceWidgetClass::vtkMeasurementsDistanceWidgetClass()
 //---------------------------------------------------------------------------
 vtkMeasurementsDistanceWidgetClass::~vtkMeasurementsDistanceWidgetClass()
 {
-  if (this->Model1PointPlacer)
-     {
-    this->Model1PointPlacer->Delete();
-    this->Model1PointPlacer = NULL;
-    }
-  if (this->Model2PointPlacer)
+  if (this->Widget)
     {
-    this->Model2PointPlacer->Delete();
-    this->Model2PointPlacer = NULL;
+      // enabled off should remove observers
+      this->Widget->EnabledOff();
+      this->Widget->SetInteractor(NULL);
+    this->Widget->SetRepresentation(NULL);
+    this->Widget->Delete();
+    this->Widget = NULL;
+    }
+  if (this->Representation)
+    {
+    this->Representation->SetHandleRepresentation(NULL);
+    this->Representation->GetPoint1Representation()->SetPointPlacer(NULL);
+    this->Representation->GetPoint2Representation()->SetPointPlacer(NULL);
+    //this->Representation->SetPointRepresentation(NULL);
+    this->Representation->Delete();
+    this->Representation = NULL;
     }
   if (this->HandleRepresentation)
     {
     this->HandleRepresentation->Delete();
     this->HandleRepresentation = NULL;
     }
-  if (this->Representation)
-    {
-    this->Representation->SetHandleRepresentation(NULL);
-    this->Representation->Delete();
-    this->Representation = NULL;
+  if (this->Model1PointPlacer)
+     {
+       this->Model1PointPlacer->RemoveAllProps();
+    this->Model1PointPlacer->Delete();
+    this->Model1PointPlacer = NULL;
     }
-  if (this->Widget)
+  if (this->Model2PointPlacer)
     {
-    this->Widget->SetRepresentation(NULL);
-    this->Widget->Delete();
-    this->Widget = NULL;
+      this->Model2PointPlacer->RemoveAllProps();
+    this->Model2PointPlacer->Delete();
+    this->Model2PointPlacer = NULL;
     }
+  
+  
+  
 }
 
 //---------------------------------------------------------------------------
