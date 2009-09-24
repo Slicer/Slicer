@@ -1289,10 +1289,11 @@ namespace eval ChangeTrackerTcl {
  
       set WORK_DIR [$NODE GetWorkingDir]
 
-      set SCAN1_TO_SCAN2_SEGM_NAME           "$WORK_DIR/TG_Deformable_Scan1SegmentationAlignedToScan2.nhdr"
-      set SCAN1_TO_SCAN2_DEFORM_NAME         "$WORK_DIR/TG_Deformable_Deformation.mha"
-      set SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME "$WORK_DIR/TG_Deformable_Deformation_Inverse.mha"
-      set SCAN1_TO_SCAN2_RESAMPLED_NAME      "$WORK_DIR/TG_Deformable_Scan1AlignedToScan2.nhdr"
+      set SCAN1_TO_SCAN2_SEGM_NAME           "$WORK_DIR/TG_Deformable_Scan1SegmentationAlignedToScan2.nrrd"
+      set SCAN1_TO_SCAN2_DEFORM_NAME         "$WORK_DIR/TG_Deformable_Deformation_1-2.nrrd"
+      set SCAN2_TO_SCAN1_DEFORM_NAME         "$WORK_DIR/TG_Deformable_Deformation_2-1.nrrd"
+      set SCAN1_TO_SCAN2_RESAMPLED_NAME      "$WORK_DIR/TG_Deformable_Scan1AlignedToScan2.nrrd"
+      set SCAN2_TO_SCAN1_RESAMPLED_NAME      "$WORK_DIR/TG_Deformable_Scan2AlignedToScan1.nrrd"
       set ANALYSIS_SEGM_FILE                 "$WORK_DIR/Analysis_Deformable_Sementation_Result.txt"    
       set ANALYSIS_JACOBIAN_FILE             "$WORK_DIR/Analysis_Deformable_Jaccobian_Result.txt"    
       set ANALYSIS_JACOBIAN_IMAGE            "$WORK_DIR/TG_Analysis_Deformable_Jacobian.nrrd"
@@ -1303,7 +1304,7 @@ namespace eval ChangeTrackerTcl {
       # -------------------------------------
       # For Debugging
       # !([file exists $ANALYSIS_SEGM_FILE] && [file exists $ANALYSIS_JACOBIAN_FILE] || 1)    
-      Analysis_Deformable_Fct $SCAN1_IMAGE_NAME $SCAN1_SEGM_NAME $SCAN2_IMAGE_NAME $SCAN1_TO_SCAN2_SEGM_NAME $SCAN1_TO_SCAN2_DEFORM_NAME $SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME $SCAN1_TO_SCAN2_RESAMPLED_NAME $ANALYSIS_SEGM_FILE $ANALYSIS_JACOBIAN_FILE $ANALYSIS_JACOBIAN_IMAGE
+      Analysis_Deformable_Fct $SCAN1_IMAGE_NAME $SCAN1_SEGM_NAME $SCAN2_IMAGE_NAME $SCAN1_TO_SCAN2_SEGM_NAME $SCAN1_TO_SCAN2_DEFORM_NAME $SCAN2_TO_SCAN1_DEFORM_NAME $SCAN1_TO_SCAN2_RESAMPLED_NAME $ANALYSIS_SEGM_FILE $ANALYSIS_JACOBIAN_FILE $ANALYSIS_JACOBIAN_IMAGE $SCAN2_TO_SCAN1_RESAMPLED_NAME
 
       # ======================================
       # Read Parameters and save to Node 
@@ -1380,7 +1381,7 @@ namespace eval ChangeTrackerTcl {
   }
 
 
-  proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile AnalysisJacobianImage} { 
+  proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile AnalysisJacobianImage Scan2ToScan1Image} { 
     global env
 
     # Print "Run Deformable Analaysis with automatically computed segmentation"
@@ -1414,15 +1415,13 @@ namespace eval ChangeTrackerTcl {
     # set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
       set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+      eval exec $CMD
 
+      set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan1Image --moving_image $Scan2Image --output_image $Scan2ToScan1Image --output_field $Scan1ToScan2DeformationInverse --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+      eval exec $CMD
 
     # Print "=== Deformable Registration ==" 
     # Print "$CMD"
-
-    if {1} { 
-      eval exec $CMD 
-    }
-    
 
     # ---------------------------------------------
     # SEGMENTATION Metric
@@ -1442,10 +1441,10 @@ namespace eval ChangeTrackerTcl {
     # ---------------------------------------------
     # JACOBIAN Metric
     #eval exec ${scriptDirectory}/applyDeformationITK $SegmentationFilePrefix ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,Field)}.mha ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,InverseField)}.mha 0
-    set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2DeformationInverse 0"
+#    set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2DeformationInverse 0"
     #Print "=== Deformable Jacobian Growth Metric ==" 
     #Print "$CMD"
-    eval exec $CMD 
+#    eval exec $CMD 
 
     # ${scriptDirectory}/DetectGrowth ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,InverseField)}.mha $SegmentationFilePrefix
     set CMD "$EXE_DIR/DetectGrowth $Scan1ToScan2DeformationInverse $Scan1Segmentation $AnalysisJaccobianFile $AnalysisJacobianImage"
