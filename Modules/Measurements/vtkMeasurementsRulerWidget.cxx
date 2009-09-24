@@ -1175,18 +1175,9 @@ void vtkMeasurementsRulerWidget::RemoveMRMLObservers ( )
   if (this->MRMLScene)
     {
     vtkDebugMacro("RemoveMRMLObservers: stopping watching for node removed, added, scene close events on the scene");
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
-    if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
-      {
-      this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
-      }
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
 }
 
@@ -1689,11 +1680,11 @@ void vtkMeasurementsRulerWidget::Update3DWidgetsFromMRML()
     }
 
   // now have a widget for each node, check that don't have too many widgets
-  if (this->DistanceWidgets.size() != nnodes)
+  if ((int)(this->DistanceWidgets.size()) != nnodes)
     {
     vtkDebugMacro("UpdateFromMRML: after adding widgets for scene nodes, have " << this->DistanceWidgets.size() << " instead of " << nnodes);
     // find ones that aren't in the scene, be careful using an iterator because calling erase gets it messed up
-    int numWidgets = this->DistanceWidgets.size();
+    //int numWidgets = this->DistanceWidgets.size();
     std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
     std::vector<std::string> idsToDelete;
     for (iter = this->DistanceWidgets.begin();
@@ -1707,7 +1698,7 @@ void vtkMeasurementsRulerWidget::Update3DWidgetsFromMRML()
         idsToDelete.push_back(iter->first);
         }
       }
-    for (int i = 0; i < idsToDelete.size(); i++)
+    for (int i = 0; i < (int)(idsToDelete.size()); i++)
       {
       std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator delIter;
       delIter = this->DistanceWidgets.find(idsToDelete[i]);
