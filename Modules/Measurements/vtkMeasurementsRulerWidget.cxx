@@ -1028,14 +1028,17 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     // get the model node
     vtkMRMLModelNode *model = 
       vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeRulerNode->GetModelID1()));
+   
     // is it a valid model?
     if (model &&
         model->GetDisplayNode())
       {
+      vtkProp *prop = vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()));
       // is it already set to constrain the point placer?
-      if (!distanceWidget->GetModel1PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
+      if (prop &&
+          !distanceWidget->GetModel1PointPlacer()->HasProp(prop))
         {
-        distanceWidget->GetModel1PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
+        distanceWidget->GetModel1PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint1Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(distanceWidget->GetModel1PointPlacer());
         // check if need to snap to it
@@ -1077,10 +1080,12 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     if (model &&
         model->GetDisplayNode())
       {
+      vtkProp *prop = vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()));
       // is it already set to constrain the point placer?
-      if (!distanceWidget->GetModel2PointPlacer()->HasProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()))))
+      if (prop &&
+          !distanceWidget->GetModel2PointPlacer()->HasProp(prop))
         {
-        distanceWidget->GetModel2PointPlacer()->AddProp(vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID())));
+        distanceWidget->GetModel2PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint2Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(distanceWidget->GetModel2PointPlacer());
         // check if need to snap to it
