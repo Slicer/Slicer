@@ -503,7 +503,7 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
       sprintf(VolumeOutputName, "%s_VOI_SuperSampled", this->GetInputScanName(0));
       break;
     case 0:
-      sprintf(VolumeOutputName, "Scan1Segmented_VOI_SuperSampled");
+      sprintf(VolumeOutputName, "%s_Segmented_VOI_SuperSampled", this->GetInputScanName(0));
       break;
     }
 
