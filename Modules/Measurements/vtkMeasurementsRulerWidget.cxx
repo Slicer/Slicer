@@ -872,7 +872,47 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   // first update the GUI, then update the 3d elements
   // visibility
   this->VisibilityButton->GetWidget()->SetSelectedState(activeRulerNode->GetVisibility());
- 
+
+  // end point positions
+  double *position = activeRulerNode->GetPosition1();
+  if (position)
+    {
+    this->Position1XEntry->SetValueAsDouble(position[0]);
+    this->Position1YEntry->SetValueAsDouble(position[1]);
+    this->Position1ZEntry->SetValueAsDouble(position[2]);
+    }
+  position = activeRulerNode->GetPosition2();
+  if (position)
+    {
+    this->Position2XEntry->SetValueAsDouble(position[0]);
+    this->Position2YEntry->SetValueAsDouble(position[1]);
+    this->Position2ZEntry->SetValueAsDouble(position[2]);
+    }
+
+  // constraints
+  const char *modelID1 = activeRulerNode->GetModelID1();
+  if (modelID1)
+    {
+    // get the model node
+    vtkMRMLModelNode *model = 
+      vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(modelID1));
+    if (model)
+      {
+      this->RulerModel1SelectorWidget->SetSelected(model);
+      }
+    }
+  const char *modelID2 = activeRulerNode->GetModelID2();
+  if (modelID2)
+    {
+    // get the second model node 
+    vtkMRMLModelNode *model = 
+      vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(modelID2));
+    if (model)
+      {
+      this->RulerModel2SelectorWidget->SetSelected(model);
+      }
+    }
+  
   // end point colour
   double *rgb = this->PointColourButton->GetColor();
   double *rgb1 = activeRulerNode->GetPointColour();
@@ -893,21 +933,7 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
     this->LineColourButton->SetColor(activeRulerNode->GetLineColour());
     }
 
-  // end point position
-  double *position = activeRulerNode->GetPosition1();
-  if (position)
-    {
-    this->Position1XEntry->SetValueAsDouble(position[0]);
-    this->Position1YEntry->SetValueAsDouble(position[1]);
-    this->Position1ZEntry->SetValueAsDouble(position[2]);
-    }
-  position = activeRulerNode->GetPosition2();
-  if (position)
-    {
-    this->Position2XEntry->SetValueAsDouble(position[0]);
-    this->Position2YEntry->SetValueAsDouble(position[1]);
-    this->Position2ZEntry->SetValueAsDouble(position[2]);
-    }
+ 
 
   // distance annotation
   this->DistanceAnnotationVisibilityButton->GetWidget()->SetSelectedState(activeRulerNode->GetDistanceAnnotationVisibility());
