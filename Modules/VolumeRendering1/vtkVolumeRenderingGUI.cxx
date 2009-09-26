@@ -32,6 +32,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
+#include "vtkSlicerROIDisplayWidget.h"
 #include "vtkTexture.h"
 #include "vtkTimerLog.h"
 #include "vtkVolume.h"
@@ -47,6 +48,7 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->UpdatingGUI = 0;
   this->ProcessingGUIEvents = 0;
   this->ProcessingMRMLEvents = 0;
+  this->AddingVolumePropertyNode = 0;
 
   this->Logic = NULL;
   this->ParametersNode = NULL;
@@ -57,7 +59,12 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->DetailsFrame=NULL;
   this->HideSurfaceModelsButton = NULL;
   this->VolumeNodeSelector = NULL;
+  this->VolumePropertyNodeSelector = NULL;
+  this->ROINodeSelector = NULL;
   this->VolumeRenderingParameterSelector = NULL;
+  this->GradientMagnitude = NULL;
+  this->VolumePropertyWidget =NULL;
+  this->ROIWidget = NULL;
 
    // :NOTE: 20080515 tgl: To use as a loadable module, initialize
   // the volume rendering replacements TCL wrappers.
@@ -84,17 +91,59 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->HideSurfaceModelsButton=NULL;
     }
 
+  if (this->VolumeRenderingParameterSelector)
+    {
+    this->VolumeRenderingParameterSelector->SetParent(NULL);
+    this->VolumeRenderingParameterSelector->Delete();
+    this->VolumeRenderingParameterSelector=NULL;
+    }
   if (this->VolumeNodeSelector)
     {
     this->VolumeNodeSelector->SetParent(NULL);
     this->VolumeNodeSelector->Delete();
     this->VolumeNodeSelector=NULL;
     }
-  if (this->VolumeRenderingParameterSelector)
+  if (this->VolumePropertyNodeSelector)
     {
-    this->VolumeRenderingParameterSelector->SetParent(NULL);
-    this->VolumeRenderingParameterSelector->Delete();
-    this->VolumeRenderingParameterSelector=NULL;
+    this->VolumePropertyNodeSelector->SetParent(NULL);
+    this->VolumePropertyNodeSelector->Delete();
+    this->VolumePropertyNodeSelector=NULL;
+    }
+  if (this->ROINodeSelector)
+    {
+    this->ROINodeSelector->SetParent(NULL);
+    this->ROINodeSelector->Delete();
+    this->ROINodeSelector=NULL;
+    }
+  //Remove Volume
+
+  if (this->GradientHistogram)
+    {
+    this->GradientHistogram->Delete();
+    }
+  if (this->Histograms)
+    {
+    this->Histograms->Delete();
+    }
+  if (this->GradientMagnitude)
+    {
+    this->GradientMagnitude->Delete();
+    }
+
+  if(this->VolumePropertyWidget!=NULL)
+    {
+    this->VolumePropertyWidget->SetHistogramSet(NULL);
+    this->VolumePropertyWidget->SetVolumeProperty(NULL);
+    this->VolumePropertyWidget->SetDataSet(NULL);
+    this->VolumePropertyWidget->SetParent(NULL);
+    this->VolumePropertyWidget->Delete();
+    this->VolumePropertyWidget=NULL;
+    }
+  if (this->ROIWidget)
+    {
+    this->ROIWidget->SetParent(NULL);
+    this->ROIWidget->Delete();
+    this->ROIWidget=NULL;
     }
 
 
@@ -154,6 +203,98 @@ void vtkVolumeRenderingGUI::UpdateVolumeActor()
     }
 }
 
+void vtkVolumeRenderingGUI::UpdateHistogram()
+{
+  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNodeSelector->GetSelected());
+  if (volumeNode)
+    {
+    if (volumeNode->GetImageData() && volumeNode->GetImageData()->GetPointData())
+    {
+        this->Histograms->AddHistograms(volumeNode->GetImageData()->GetPointData()->GetScalars());
+    }
+    
+    this->GradientMagnitude->SetInput(volumeNode->GetImageData());
+    this->VolumePropertyWidget->SetDataSet(volumeNode->GetImageData());
+    //Build the gradient histogram
+    this->GradientMagnitude->Update();
+    this->GradientHistogram->BuildHistogram(GradientMagnitude->GetOutput()->GetPointData()->GetScalars(),0);
+    this->VolumePropertyWidget->SetHistogramSet(this->Histograms);
+    if (this->ParametersNode &&  this->ParametersNode->GetVolumePropertyNode())
+      {
+      this->VolumePropertyWidget->SetVolumeProperty(this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty());
+      }
+    }
+}
+
+void vtkVolumeRenderingGUI::InitTransferFunction()
+{
+    if (this->ParametersNode &&  this->ParametersNode->GetVolumePropertyNode())
+      {
+      this->VolumePropertyWidget->SetVolumeProperty(this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty());
+      }
+
+    vtkKWHistogram *histogram=this->Histograms->GetHistogramWithName("0");
+    if(histogram==NULL)
+    {
+        vtkErrorMacro("Problems with HistogramSet");
+        return;
+    }
+    double totalOccurance=histogram->GetTotalOccurence();
+    double thresholdLow=totalOccurance*0.2;
+    double thresholdHigh=totalOccurance*0.8;
+    double range[2];
+
+    histogram->GetRange(range);
+    double thresholdLowIndex=range[0];
+    double sumLowIndex=0;
+    double thresholdHighIndex=range[0];
+    double sumHighIndex=0;
+    //calculate distance
+    double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
+    while (sumLowIndex<thresholdLow)
+    {
+        sumLowIndex+=histogram->GetOccurenceAtValue(thresholdLowIndex);
+        thresholdLowIndex+=bin_width;
+    }
+    while(sumHighIndex<thresholdHigh)
+    {
+        sumHighIndex+=histogram->GetOccurenceAtValue(thresholdHighIndex);
+        thresholdHighIndex+=bin_width;
+
+    }
+
+    if (this->ParametersNode &&
+        this->ParametersNode->GetVolumePropertyNode() &&
+        this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty())
+    {
+      vtkVolumeProperty *vprop = this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty();
+      vprop->SetInterpolationTypeToLinear();
+      vtkPiecewiseFunction *opacity=vprop->GetScalarOpacity();
+      opacity->RemoveAllPoints();
+      opacity->AddPoint(range[0],0.);
+      opacity->AddPoint(thresholdLowIndex,0.0);
+      opacity->AddPoint(thresholdHighIndex,0.2);
+      opacity->AddPoint(range[1],0.2);
+      vtkColorTransferFunction *colorTransfer=vprop->GetRGBTransferFunction();
+      colorTransfer->RemoveAllPoints();
+      colorTransfer->AddRGBPoint(range[0],.3,.3,1.);
+      colorTransfer->AddRGBPoint(thresholdLowIndex,.3,.3,1.);
+      colorTransfer->AddRGBPoint(thresholdLowIndex+.5*(thresholdHighIndex-thresholdLowIndex),.3,1.,.3);
+      colorTransfer->AddRGBPoint(thresholdHighIndex,1.,.3,.3);
+      colorTransfer->AddRGBPoint(range[1],1,.3,.3);
+
+      //Enable shading as default
+      vprop->ShadeOn();
+      vprop->SetAmbient(.20);
+      vprop->SetDiffuse(.80);
+      vprop->SetSpecular(.50);
+      vprop->SetSpecularPower(40);
+    }
+    this->VolumePropertyWidget->SetHSVColorSelectorVisibility(1);
+    this->VolumePropertyWidget->Update();
+
+}
+
 void vtkVolumeRenderingGUI::BuildGUI(void)
 {
 
@@ -176,7 +317,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   loadSaveDataFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
   loadSaveDataFrame->Create();
   loadSaveDataFrame->ExpandFrame();
-  loadSaveDataFrame->SetLabelText("Load and Save");
+  loadSaveDataFrame->SetLabelText("Input");
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 loadSaveDataFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
@@ -220,7 +361,86 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->VolumeNodeSelector->SetLabelWidth(labelWidth);
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->VolumeNodeSelector->GetWidgetName());
 
+  //
+  //Transfer function
+  //
+  vtkSlicerModuleCollapsibleFrame *volumePropertyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  volumePropertyFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
+  volumePropertyFrame->Create();
+  //volumePropertyFrame->ExpandFrame();
+  volumePropertyFrame->SetLabelText("Volume Properties");
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                volumePropertyFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
+
+  this->VolumePropertyNodeSelector=vtkSlicerNodeSelectorWidget::New();
+  this->VolumePropertyNodeSelector->SetNodeClass("vtkMRMLVolumePropertyNode", NULL, NULL, "Volume Property");
+  this->VolumePropertyNodeSelector->SetNewNodeEnabled(1);
+  this->VolumePropertyNodeSelector->NoneEnabledOff();
+  this->VolumePropertyNodeSelector->SetShowHidden(1);
+  this->VolumePropertyNodeSelector->SetParent(volumePropertyFrame->GetFrame());
+  this->VolumePropertyNodeSelector->Create();
+  this->VolumePropertyNodeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->VolumePropertyNodeSelector->UpdateMenu();
+  this->VolumePropertyNodeSelector->SetBorderWidth(2);
+  this->VolumePropertyNodeSelector->SetLabelText( "Volume Property");
+  this->VolumePropertyNodeSelector->SetBalloonHelpString("select a volume property node from the current mrml scene.");
+
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->VolumePropertyNodeSelector->GetWidgetName());
+
+  this->VolumePropertyWidget=vtkSlicerVolumePropertyWidget::New();
+  this->VolumePropertyWidget->SetParent(volumePropertyFrame->GetFrame());
+  this->VolumePropertyWidget->Create();
+  this->VolumePropertyWidget->ScalarOpacityUnitDistanceVisibilityOff ();
+  this->VolumePropertyWidget->InteractiveApplyModeOn ();
+
+  this->Histograms=vtkKWHistogramSet::New();
+  this->GradientMagnitude=vtkImageGradientMagnitude::New();
+  this->GradientMagnitude->SetDimensionality(3);
+
+  this->GradientHistogram=vtkKWHistogram::New();
+  this->Histograms->AddHistogram(GradientHistogram, "0gradient");
+
+  //this->VolumePropertyWidget->SetHistogramSet(this->Histograms);
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VolumePropertyWidget->GetWidgetName());
+  
+  
+  //
+  //ROI frame
+  //
+  vtkSlicerModuleCollapsibleFrame *ROIframe = vtkSlicerModuleCollapsibleFrame::New ( );
+  ROIframe->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
+  ROIframe->Create();
+  //ROIframe->ExpandFrame();
+  ROIframe->SetLabelText("Volume ROI");
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                ROIframe->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
+
+
+  this->ROINodeSelector=vtkSlicerNodeSelectorWidget::New();
+  this->ROINodeSelector->SetNodeClass("vtkMRMLROINode", NULL, NULL, "ROI");
+  this->ROINodeSelector->SetNewNodeEnabled(1);
+  this->ROINodeSelector->NoneEnabledOff();
+  this->ROINodeSelector->SetShowHidden(1);
+  this->ROINodeSelector->SetParent(ROIframe->GetFrame());
+  this->ROINodeSelector->Create();
+  this->ROINodeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->ROINodeSelector->UpdateMenu();
+  this->ROINodeSelector->SetBorderWidth(2);
+  this->ROINodeSelector->SetLabelText( "ROI");
+  this->ROINodeSelector->SetBalloonHelpString("select a roi  node from the current mrml scene.");
+
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->ROINodeSelector->GetWidgetName());
+
+  this->ROIWidget=vtkSlicerROIDisplayWidget::New();
+  this->ROIWidget->SetParent(ROIframe->GetFrame());
+  this->ROIWidget->Create();
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ROIWidget->GetWidgetName());
+  
+  
+  
   //Details frame
   this->DetailsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   this->DetailsFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
@@ -245,6 +465,8 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
   
   loadSaveDataFrame->Delete();
+  volumePropertyFrame->Delete();
+  ROIframe->Delete();
   this->Built=true;
 }
 
@@ -272,14 +494,20 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
 
   this->VolumeNodeSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VolumeRenderingParameterSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->VolumePropertyNodeSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ROINodeSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HideSurfaceModelsButton->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
+  this->VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
 
 }
 void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
 {
   this->VolumeNodeSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->VolumeRenderingParameterSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->VolumePropertyNodeSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ROINodeSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HideSurfaceModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
+  this->VolumePropertyWidget->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
 }
 void vtkVolumeRenderingGUI::AddMRMLObservers(void)
 {
@@ -309,7 +537,7 @@ void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
 
 void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
 {
-//  if (this->ProcessingGUIEvents || this->ProcessingMRMLEvents)
+  //if (this->ProcessingGUIEvents || this->ProcessingMRMLEvents)
   if (this->ProcessingGUIEvents )
     {
     return;
@@ -362,6 +590,12 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
       this->Logic->UpdateTransform(volumeNode);
       this->ParametersNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
+
+      vtkMRMLVolumePropertyNode *vpNode = this->CreateVolumePropertyNode();
+      this->ParametersNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
+
+      this->UpdateHistogram();
+      this->InitTransferFunction();
       }
     else
       {
@@ -380,6 +614,30 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     this->UpdateGUIFromMRML();
     }
 
+  if(callerObjectNS == this->VolumePropertyNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+    {
+    vtkMRMLVolumeRenderingParametersNode *paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    vtkMRMLVolumePropertyNode *propertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->VolumePropertyNodeSelector->GetSelected());
+    if (paramNode )
+      {
+      paramNode->SetAndObserveVolumePropertyNodeID(propertyNode->GetID());
+      this->VolumePropertyWidget->SetVolumeProperty(propertyNode->GetVolumeProperty());
+      if ( this->AddingVolumePropertyNode  )
+        {
+        this->UpdateHistogram();
+        this->AddingVolumePropertyNode = 0;
+        }
+      this->VolumePropertyWidget->Update();
+      }
+    }
+
+  vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
+  if(callerObjectSVP == this->VolumePropertyWidget && event == vtkKWEvent::VolumePropertyChangingEvent)
+    {
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->ProcessingGUIEvents = 0;
+    return;
+    }
 
   //Update GUI
   this->UpdateMRMLFromGUI();
@@ -408,6 +666,12 @@ void vtkVolumeRenderingGUI::UpdateMRMLFromGUI(void)
   else
     {
     this->ParametersNode->SetAndObserveVolumeNodeID(NULL);
+    }
+  if (this->ParametersNode && this->ParametersNode->GetVolumePropertyNode())
+    {
+    this->VolumePropertyWidget->SetVolumeProperty(this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty());
+    this->VolumePropertyWidget->SetHSVColorSelectorVisibility(1);
+    this->VolumePropertyWidget->Update();
     }
 
 }
@@ -441,14 +705,13 @@ void vtkVolumeRenderingGUI::UpdateParametersNode(void)
       this->ParametersNode->SetAndObserveVolumeNodeID(this->VolumeNodeSelector->GetSelected()->GetID());
     }
 
+    /**
     if (this->ParametersNode->GetVolumePropertyNode() == NULL)
       {
-      vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
-      this->Logic->GetMRMLScene()->AddNode(vpNode);
-      vpNode->Delete();
-      //vpNode->CreateDefaultStorageNode();
+      vtkMRMLVolumePropertyNode *vpNode = this->CreateVolumePropertyNode();
       this->ParametersNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
       }
+      **/
     /**
     if (this->ParametersNode->GetROINode() == NULL)
       {
@@ -459,6 +722,16 @@ void vtkVolumeRenderingGUI::UpdateParametersNode(void)
       }
       **/
     }
+}
+
+vtkMRMLVolumePropertyNode* vtkVolumeRenderingGUI::CreateVolumePropertyNode(void)
+{
+  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+  this->Logic->GetMRMLScene()->AddNode(vpNode);
+  vpNode->Delete();
+  vpNode->CreateDefaultStorageNode();
+  //this->ParametersNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
+  return vpNode;
 }
 
 void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
@@ -492,6 +765,13 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       {
       volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
       }
+    }
+
+
+  else if (event == vtkMRMLScene::NodeAddedEvent && addedNode &&
+      addedNode->IsA("vtkMRMLVolumePropertyNode"))
+    {
+    this->AddingVolumePropertyNode = 1;
     }
   else if (event == vtkMRMLScene::NodeAddedEvent)
     {
@@ -546,12 +826,25 @@ void vtkVolumeRenderingGUI::UpdateGUIFromMRML(void)
     {                
     this->VolumeNodeSelector->SetSelected( vtkMRMLVolumeNode::SafeDownCast(
                                               this->MRMLScene->GetNodeByID(this->ParametersNode->GetVolumeNodeID()) ) );
+    this->VolumePropertyNodeSelector->SetSelected( vtkMRMLVolumePropertyNode::SafeDownCast(
+                                              this->MRMLScene->GetNodeByID(this->ParametersNode->GetVolumePropertyNodeID()) ) );
+    this->ROINodeSelector->SetSelected( vtkMRMLROINode::SafeDownCast(
+                                              this->MRMLScene->GetNodeByID(this->ParametersNode->GetROINodeID() ) ) );
     this->VolumeRenderingParameterSelector->SetSelected( this->ParametersNode);
-    
+
+    if (this->ParametersNode->GetVolumePropertyNode()) 
+      {
+      this->VolumePropertyWidget->SetVolumeProperty(this->ParametersNode->GetVolumePropertyNode()->GetVolumeProperty());
+      this->VolumePropertyWidget->SetHSVColorSelectorVisibility(1);
+      this->UpdateHistogram();
+      this->VolumePropertyWidget->Update();
+      }
     }
   else
     {
     this->VolumeNodeSelector->SetSelected(NULL);
+    this->VolumePropertyNodeSelector->SetSelected(NULL);
+    this->ROINodeSelector->SetSelected(NULL);
     this->VolumeRenderingParameterSelector->SetSelected(NULL);
     }
 

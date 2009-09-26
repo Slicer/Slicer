@@ -33,6 +33,12 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerVRHelper;
 class vtkSlicerVolumePropertyWidget;
+class vtkKWHistogramSet;
+class vtkKWHistogram;
+class vtkImageGradientMagnitude;
+class vtkSlicerROIDisplayWidget;
+
+
 class VTK_SLICERVOLUMERENDERING1_EXPORT vtkVolumeRenderingGUI :public vtkSlicerModuleGUI
 {
 public:
@@ -142,7 +148,11 @@ protected:
 
     void UpdateParametersNode();
 
+    vtkMRMLVolumePropertyNode* CreateVolumePropertyNode(void);
+
     void UpdateVolumeActor();
+
+    void InitTransferFunction();
 
     // Description:
     // Pointer to the module's logic class
@@ -167,10 +177,27 @@ protected:
     vtkSlicerNodeSelectorWidget *VolumeNodeSelector;
 
     vtkSlicerNodeSelectorWidget *VolumeRenderingParameterSelector;
-    
+
+    vtkSlicerNodeSelectorWidget *VolumePropertyNodeSelector;
+
+    vtkSlicerNodeSelectorWidget *ROINodeSelector;
+
+    vtkSlicerVolumePropertyWidget *VolumePropertyWidget;
+
+    vtkSlicerROIDisplayWidget  *ROIWidget;
+
+    // Description:
+    // A set of histograms used in the volume property widget
+    vtkKWHistogramSet         *Histograms;
+    vtkKWHistogram            *GradientHistogram;
+    vtkImageGradientMagnitude *GradientMagnitude;
+
+    void UpdateHistogram();
+
     int UpdatingGUI;
     int ProcessingGUIEvents;
     int ProcessingMRMLEvents;
+    int AddingVolumePropertyNode;
 };
 
 #endif
