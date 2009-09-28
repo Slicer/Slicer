@@ -31,6 +31,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --relwithdebinfo : compile with optimization flags and debugging symbols"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     set msg "$msg\n   --quiet : turns off debugging messages"
+    set msg "$msg\n   --no-extension-update : disables svn checkout for the extension"
     puts stderr $msg
 }
 
@@ -39,6 +40,7 @@ set ::EXTEND(release) ""
 set ::EXTEND(verbose) "true"
 set ::EXTEND(test-type) ""
 set ::EXTEND(buildList) ""
+set ::EXTEND(no-extension-update) ""
 
 if {[info exists ::env(CVS)]} {
     set ::CVS "{$::env(CVS)}"
@@ -82,6 +84,9 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--quiet" {
             set ::EXTEND(verbose) "false"
+        }
+        "--no-extension-update" {
+            set ::EXTEND(no-extension-update) "true"
         }
         "--help" -
         "-h" {
@@ -477,7 +482,9 @@ proc buildExtension {s3ext} {
   cd $::Slicer3_EXT/$::ext(name)
   switch $::ext(scm) {
     "cvs" {
-      runcmd $::CVS -d $::ext(cvsroot) co $::ext(cvsmodule)
+      if { $::EXTEND(no-extension-update) == "" } {
+        runcmd $::CVS -d $::ext(cvsroot) co $::ext(cvsmodule)
+      }
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
@@ -489,7 +496,9 @@ proc buildExtension {s3ext} {
         set svncmd "$svncmd --password $::ext(svnpassword)"
       }
       set svncmd "$svncmd $::ext(svnpath) $::ext(name)"
-      eval runcmd $svncmd
+      if { $::EXTEND(no-extension-update) == ""} {
+        eval runcmd $svncmd
+      }
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(name)
     }
     default {
