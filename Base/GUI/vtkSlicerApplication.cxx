@@ -230,6 +230,12 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->HomeModule, "");
     strcpy(this->IgnoreModuleNames, "");
 
+    strcpy(this->Platform, "");
+    strcpy(this->BinDir, "");
+    strcpy(this->BuildDate, "");
+    strcpy(this->SvnUrl, "");
+    strcpy(this->SvnRevision, "");
+
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
     this->IgnoreModules = vtkStringArray::New();
@@ -1567,10 +1573,10 @@ void vtkSlicerApplication::InitializeSlicer3Version()
   txtfile += "/";
   txtfile += "Slicer3Version.txt";
   
-  std::string platform;
-  std::string build_date;
-  std::string svnurl;
-  std::string svnrevision;
+  std::string platform("");
+  std::string build_date("");
+  std::string svnurl("");
+  std::string svnrevision("");
   
   std::ifstream ifs(txtfile.c_str());
   
