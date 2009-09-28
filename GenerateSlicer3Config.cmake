@@ -25,7 +25,7 @@ SET(LoadableModule_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
 SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
 
 SET(Slicer3_Libs_INCLUDE_DIRS_CONFIG ${Slicer3_Libs_INCLUDE_DIRS})
-SET(Slicer3_Libs_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
+SET(Slicer3_Libs_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin ${Slicer3_BINARY_DIR}/lib)
 
 SET(Slicer3_Base_INCLUDE_DIRS_CONFIG ${Slicer3_Base_INCLUDE_DIRS})
 SET(Slicer3_Base_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
