@@ -941,6 +941,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   defaultExtensionMap[".hdr.gz"] = "Analyze or NIFTI";
   defaultExtensionMap[".nii"] = "NIFTI";
   defaultExtensionMap[".nii.gz"] = "NIFTI";
+  defaultExtensionMap[".mnc"] = "MINC";
 
   defaultExtensionMap[".pic"] = "Bio-Rad";
   defaultExtensionMap[".lsm"] = "LSM (Zeiss)";
