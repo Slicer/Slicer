@@ -43,8 +43,6 @@ public:
                                   unsigned long /*event*/,
                                   void * /*callData*/ );
 
-  double EstimateSampleDistances(void);
-
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();
