@@ -70,108 +70,109 @@ vtkStandardNewMacro(vtkSlicerVolumeRenderingHelper);
 
 vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
 {
-    this->VolumeRenderingCallbackCommand = vtkCallbackCommand::New();
-    this->VolumeRenderingCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
-    this->VolumeRenderingCallbackCommand->SetCallback(vtkSlicerVolumeRenderingHelper::VolumeRenderingCallback);
-    this->Volume = NULL;
+  this->VolumeRenderingCallbackCommand = vtkCallbackCommand::New();
+  this->VolumeRenderingCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->VolumeRenderingCallbackCommand->SetCallback(vtkSlicerVolumeRenderingHelper::VolumeRenderingCallback);
+  this->Volume = NULL;
 
-    this->Histograms=NULL;
-    this->HistogramsFg=NULL;
+  this->Histograms=NULL;
+  this->HistogramsFg=NULL;
 
-    this->MapperTexture=NULL;
-    this->MapperCUDARaycast=NULL;
-    this->MapperGPURaycast=NULL;
-    this->MapperGPURaycastII=NULL;
-    this->MapperRaycast=NULL;
-    this->RenderingMethod = -1;//users are required to select a mapper
+  this->MapperTexture=NULL;
+  this->MapperCUDARaycast=NULL;
+  this->MapperGPURaycast=NULL;
+  this->MapperGPURaycastII=NULL;
+  this->MapperRaycast=NULL;
 
-    //GUI:
-    this->CB_CUDARayCastShading=NULL;
+  //GUI:
+  this->CB_CUDARayCastShading=NULL;
 
-    this->MB_GPURayCastTechnique=NULL;
-    this->MB_GPURayCastTechniqueII=NULL;
-    this->SC_GPURayCastDepthPeelingThreshold=NULL;
-    this->SC_GPURayCastICPEkt=NULL;
-    this->SC_GPURayCastICPEks=NULL;
-    this->MB_GPUMemorySize=NULL;
-    this->MB_GPURayCastColorOpacityFusion=NULL;
+  this->MB_GPURayCastTechnique=NULL;
+  this->MB_GPURayCastTechniqueII=NULL;
+  this->SC_GPURayCastDepthPeelingThreshold=NULL;
+  this->SC_GPURayCastICPEkt=NULL;
+  this->SC_GPURayCastICPEks=NULL;
+  this->MB_GPUMemorySize=NULL;
+  this->MB_GPURayCastColorOpacityFusion=NULL;
 
-    this->SC_ExpectedFPS=NULL;
-    this->SC_GPURayCastIIFgBgRatio=NULL;
-    this->MB_Mapper= NULL;
-    this->SVP_VolumeProperty=NULL;
-    this->SVP_VolumePropertyFg=NULL;
+  this->SC_ExpectedFPS=NULL;
+  this->SC_GPURayCastIIFgBgRatio=NULL;
+  this->MB_Mapper= NULL;
+  this->SVP_VolumeProperty=NULL;
+  this->SVP_VolumePropertyFg=NULL;
 
-    this->FrameFPS = NULL;
-    this->FrameGPURayCasting = NULL;
-    this->FramePolygonBlending = NULL;
-    this->FrameCPURayCasting = NULL;
-    this->FramePerformance = NULL;
+  this->FrameFPS = NULL;
+  this->FrameGPURayCasting = NULL;
+  this->FramePolygonBlending = NULL;
+  this->FrameCPURayCasting = NULL;
+  this->FramePerformance = NULL;
 
-    this->VolumePropertyGPURaycastII = NULL;
+  this->VolumePropertyGPURaycastII = NULL;
 
-    //Cropping:
-    this->CB_Cropping=NULL;
-    this->RA_Cropping[0]=NULL;
-    this->RA_Cropping[1]=NULL;
-    this->RA_Cropping[2]=NULL;
-    this->CurrentTransformNodeCropping=NULL;
+  this->PB_HideSurfaceModels = NULL;
 
-    //ThresholdGUI
-    this->MB_ThresholdMode=NULL;
-    this->VRMB_ColorMode=NULL;
-    this->RA_RampRectangleScalar=NULL;
-    this->RA_RampRectangleOpacity=NULL;
-    this->ThresholdMode=0;
-    this->PB_Reset=NULL;
-    this->PB_ThresholdZoomIn=NULL;
+  //Cropping:
+  this->CB_Cropping=NULL;
+  this->RA_Cropping[0]=NULL;
+  this->RA_Cropping[1]=NULL;
+  this->RA_Cropping[2]=NULL;
+  this->CurrentTransformNodeCropping=NULL;
 
-    //Clipping
-    this->BW_Clipping_Widget=NULL;
-    this->BW_Clipping_Representation = NULL;
-    this->AdditionalClippingTransform=NULL;
-    this->InverseAdditionalClippingTransform=NULL;
+  //ThresholdGUI
+  this->MB_ThresholdMode=NULL;
+  this->VRMB_ColorMode=NULL;
+  this->RA_RampRectangleScalar=NULL;
+  this->RA_RampRectangleOpacity=NULL;
+  this->ThresholdMode=0;
+  this->PB_Reset=NULL;
+  this->PB_ThresholdZoomIn=NULL;
 
-    //Set Standard Clipping Colors
-    ColorsClippingHandles[0][0]=1;
-    ColorsClippingHandles[0][1]=0;
-    ColorsClippingHandles[0][2]=1;
+  //Clipping
+  this->BW_Clipping_Widget=NULL;
+  this->BW_Clipping_Representation = NULL;
+  this->AdditionalClippingTransform=NULL;
+  this->InverseAdditionalClippingTransform=NULL;
 
-    ColorsClippingHandles[1][0]=1;
-    ColorsClippingHandles[1][1]=0;
-    ColorsClippingHandles[1][2]=0;
+  //Set Standard Clipping Colors
+  ColorsClippingHandles[0][0]=1;
+  ColorsClippingHandles[0][1]=0;
+  ColorsClippingHandles[0][2]=1;
 
-    ColorsClippingHandles[2][0]=1;
-    ColorsClippingHandles[2][1]=1;
-    ColorsClippingHandles[2][2]=1;
+  ColorsClippingHandles[1][0]=1;
+  ColorsClippingHandles[1][1]=0;
+  ColorsClippingHandles[1][2]=0;
 
-    ColorsClippingHandles[3][0]=.89;
-    ColorsClippingHandles[3][1]=.6;
-    ColorsClippingHandles[3][2]=.07;
+  ColorsClippingHandles[2][0]=1;
+  ColorsClippingHandles[2][1]=1;
+  ColorsClippingHandles[2][2]=1;
 
-    ColorsClippingHandles[4][0]=0;
-    ColorsClippingHandles[4][1]=0;
-    ColorsClippingHandles[4][2]=1;
+  ColorsClippingHandles[3][0]=.89;
+  ColorsClippingHandles[3][1]=.6;
+  ColorsClippingHandles[3][2]=.07;
 
-    ColorsClippingHandles[5][0]=0;
-    ColorsClippingHandles[5][1]=0;
-    ColorsClippingHandles[5][2]=0;
+  ColorsClippingHandles[4][0]=0;
+  ColorsClippingHandles[4][1]=0;
+  ColorsClippingHandles[4][2]=1;
 
-    //PauseResume
-    this->PB_PauseResume=NULL;
-    this->RenderingPaused=0;
-    this->VI_PauseResume=NULL;
-    this->BW_Clipping_Widget = NULL;
+  ColorsClippingHandles[5][0]=0;
+  ColorsClippingHandles[5][1]=0;
+  ColorsClippingHandles[5][2]=0;
 
-    this->UpdateingGUI = 0;
+  //PauseResume
+  this->PB_PauseResume=NULL;
+  this->RenderingPaused=0;
+  this->VI_PauseResume=NULL;
+  this->BW_Clipping_Widget = NULL;
 
-    this->IsTextureMappingSupported = 0;
-    this->IsGPURayCastingSupported = 0;
-    this->IsCUDARayCastingSupported = 0;
+  this->UpdateingGUI = 0;
 
-    this->ButtonDown = 0;
+  this->IsTextureMappingSupported = 0;
+  this->IsGPURayCastingSupported = 0;
+  this->IsCUDARayCastingSupported = 0;
 
-    this->CPURayCastingInteractionFlag = 0;
+  this->ButtonDown = 0;
+
+  this->CPURayCastingInteractionFlag = 0;
 }
 
 vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
@@ -215,6 +216,8 @@ vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
   this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
   this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
   this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+
+  this->PB_HideSurfaceModels->RemoveObservers(vtkKWPushButton::InvokedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
   this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
   this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -321,6 +324,12 @@ vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
     this->VI_PauseResume=NULL;
   }
 
+  if(this->PB_HideSurfaceModels)
+  {
+    this->PB_HideSurfaceModels->SetParent(NULL);
+    this->PB_HideSurfaceModels->Delete();
+    this->PB_HideSurfaceModels = NULL;
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::VolumeRenderingCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
@@ -405,6 +414,17 @@ void vtkSlicerVolumeRenderingHelper::BuildRenderingFrameGUI()
   this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
   this->Script("pack %s -side top -anchor n -padx 2 -pady 2", this->PB_PauseResume->GetWidgetName());
   this->PB_PauseResume->GetWidget()->SetCommand(this, "ProcessPauseResume");
+
+  //Hide surface models pushbutton
+  this->PB_HideSurfaceModels = vtkKWPushButton::New();
+  this->PB_HideSurfaceModels->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
+  this->PB_HideSurfaceModels->Create();
+  this->PB_HideSurfaceModels->SetText("Hide Surface Models");
+  this->PB_HideSurfaceModels->SetBalloonHelpString("Make all surface models invisible. Go to models module to enable, disable only some of them.");
+//  this->PB_HideSurfaceModels->SetWidth(labelWidth);
+  this->Script("pack %s -side top -anchor ne -fill x -padx 2 -pady 2",this->PB_HideSurfaceModels->GetWidgetName());
+
+  this->PB_HideSurfaceModels->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
 
   //Create a notebook
   this->NB_Details=vtkKWNotebook::New();
@@ -1406,13 +1426,13 @@ void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumeProperty()
 
 void vtkSlicerVolumeRenderingHelper::Rendering(void)
 {
-  if(this->Volume!=NULL)
+  if(this->Volume != NULL)
   {
     vtkErrorMacro("Rendering already called, use update Rendering instead");
     return;
   }
 
-  if(this->Gui==NULL)
+  if(this->Gui == NULL)
   {
     vtkErrorMacro("Call init before calling rendering");
     return;
@@ -1449,7 +1469,7 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
     this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
 
-    //we must have source input, but may or maybe not have background and labelmap inputs
+    //we must have source input, but may or maybe not have foreground and labelmap inputs
     if (this->Gui->GetNS_ImageDataFg()->GetSelected())
       this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData());
     if (this->Gui->GetNS_ImageDataLabelmap()->GetSelected())
@@ -1464,9 +1484,6 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     this->MapperRaycast->SetMinimumImageSampleDistance(1.0f);
     this->MapperRaycast->SetMaximumImageSampleDistance(20.0f);
   }
-
-  // create default(safe) GUI in case user messed up parameters
-  // do not save/load registration table
 
   //check if mappers are supported
   {
@@ -1508,113 +1525,46 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
   }
 
-  //choose default mapper
+  //--------------------
+  //setup mapper
+  //--------------------
   {
-    //Try to load from the registry
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_GPUMemorySize"))
+    //select GPU/internal volume size
     {
-      int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_GPUMemorySize");
+      int id = 1;//256M
+
+      if (this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_GPUMemorySize"))
+        id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_GPUMemorySize");
+
       this->MB_GPUMemorySize->GetWidget()->GetMenu()->SelectItem(id);
 
-      switch(id)
-      {
-      case 0://128M
-      this->MapperGPURaycast->SetInternalVolumeSize(200);
-      this->MapperGPURaycastII->SetInternalVolumeSize(200);
-      this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
-      break;
-      case 1://256M
-        this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
-        this->MapperGPURaycastII->SetInternalVolumeSize(256);
-        this->MapperTexture->SetInternalVolumeSize(256);
-        break;
-      case 2://512M
-        this->MapperGPURaycast->SetInternalVolumeSize(320);
-        this->MapperGPURaycastII->SetInternalVolumeSize(320);
-        this->MapperTexture->SetInternalVolumeSize(256);
-        break;
-      case 3://1024M
-        this->MapperGPURaycast->SetInternalVolumeSize(400);
-        this->MapperGPURaycastII->SetInternalVolumeSize(400);
-        this->MapperTexture->SetInternalVolumeSize(256);
-        break;
-      case 4://1.5G
-        this->MapperGPURaycast->SetInternalVolumeSize(460);
-        this->MapperGPURaycastII->SetInternalVolumeSize(460);
-        this->MapperTexture->SetInternalVolumeSize(256);
-        break;
-      case 5://2.0G
-        this->MapperGPURaycast->SetInternalVolumeSize(512);
-        this->MapperGPURaycastII->SetInternalVolumeSize(512);
-        this->MapperTexture->SetInternalVolumeSize(512);
-        break;
-      }
+      this->ComputeInternalVolumeSize(id);
     }
 
-    this->FrameCPURayCasting->CollapseFrame();
-    this->FrameCUDARayCasting->CollapseFrame();
-    this->FrameGPURayCasting->CollapseFrame();
-    this->FrameGPURayCastingII->CollapseFrame();
-    this->FramePolygonBlending->CollapseFrame();
-
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_Mapper"))
+    //select mapper based on parameter node
     {
-      int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_Mapper");
-      this->RenderingMethod = id;
+      int id = this->Gui->GetParametersNode()->GetCurrentVolumeMapper();
+
+      if (id == -1)
+      {
+        if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_Mapper"))
+          id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_Mapper");
+        else
+          id = 0;//CPU ray cast
+      }
+
       this->MB_Mapper->GetWidget()->GetMenu()->SelectItem(id);
 
-      switch(id)
-      {
-      case 0:
-        this->Volume->SetMapper(this->MapperRaycast);
-        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
-        this->FrameCPURayCasting->ExpandFrame();
-        break;
-      case 1:
-        this->Volume->SetMapper(this->MapperGPURaycast);
-        if (this->IsGPURayCastingSupported)
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting");
-        else
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU Raycasting not supported on your computer!");
-        this->FrameGPURayCasting->ExpandFrame();
-        break;
-      case 2:
-        this->Volume->SetMapper(this->MapperGPURaycastII);
-        if (this->IsGPURayCastingSupported)
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
-        else
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU Raycasting not supported on your computer!");
-        this->FrameGPURayCastingII->ExpandFrame();
-        break;
-      case 3:
-        this->Volume->SetMapper(this->MapperTexture);
-        if (this->IsTextureMappingSupported)
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using OpenGL Polygon Texture 3D");
-        else
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D not supported on your computer!");
-        this->FramePolygonBlending->ExpandFrame();
-        break;
-      case 4:
-        this->Volume->SetMapper(this->MapperCUDARaycast);
-        if (this->IsCUDARayCastingSupported)
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CUDA");
-        else
-          this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("CUDA not supported on your computer!");
-        this->FrameCUDARayCasting->ExpandFrame();
-        break;
-      }
-    }
-    else//first time enable CPU ray casting
-    {
-      this->MB_Mapper->GetWidget()->GetMenu()->SelectItem(0);
-      this->Volume->SetMapper(this->MapperRaycast);
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
-      this->FrameCPURayCasting->ExpandFrame();
-      this->RenderingMethod = 0;
+      this->SetMapperFromSelection(id);
     }
   }
 
-  if (this->RenderingMethod == 2)
+  //-------------------------------
+  //setup volume property
+  //-------------------------------
+
+  //take care gpu ray cast II
+  if (this->Gui->GetParametersNode()->GetCurrentVolumeMapper() == 2)
   {
     this->Volume->SetProperty(NULL);
     CreateVolumePropertyGPURaycastII();
@@ -1625,11 +1575,10 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     this->Volume->SetProperty(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty());
   }
 
-  vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   this->CalculateMatrix(matrix);
   this->Volume->PokeMatrix(matrix);
 
-  //For Performance
   this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
   matrix->Delete();
 
@@ -1680,7 +1629,7 @@ void vtkSlicerVolumeRenderingHelper::UpdateRendering()
   }
 
   //Update Property
-  if (this->RenderingMethod == 2)
+  if (this->Gui->GetParametersNode()->GetCurrentVolumeMapper() == 2)
   {
     this->Volume->SetProperty(NULL);
     CreateVolumePropertyGPURaycastII();
@@ -1799,6 +1748,16 @@ void vtkSlicerVolumeRenderingHelper::ProcessVolumeRenderingEvents(vtkObject *cal
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
     }
+  }
+
+  //Check PushButtons
+  vtkKWPushButton *callerObject=vtkKWPushButton::SafeDownCast(caller);
+  // hide surface models to reveal volume rendering
+  if(callerObject == this->PB_HideSurfaceModels && eid == vtkKWPushButton::InvokedEvent)
+  {
+    int count=this->Gui->GetLogic()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
+    for(int i = 0; i < count; i++)
+      (vtkMRMLModelNode::SafeDownCast(this->Gui->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLModelNode")))->GetModelDisplayNode()->VisibilityOff();
   }
 
   //Check the checkbuttons
@@ -2209,15 +2168,15 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
   this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
-void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
+void vtkSlicerVolumeRenderingHelper::ComputeInternalVolumeSize(int index)
 {
-  switch(id)
+  switch(index)
   {
   case 0://128M
-  this->MapperGPURaycast->SetInternalVolumeSize(200);
-  this->MapperGPURaycastII->SetInternalVolumeSize(200);
-  this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
-  break;
+    this->MapperGPURaycast->SetInternalVolumeSize(200);
+    this->MapperGPURaycastII->SetInternalVolumeSize(200);
+    this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
+    break;
   case 1://256M
     this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
     this->MapperGPURaycastII->SetInternalVolumeSize(256);
@@ -2244,14 +2203,17 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
     this->MapperTexture->SetInternalVolumeSize(512);
     break;
   }
+}
+
+void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
+{
+  this->ComputeInternalVolumeSize(id);
 
   this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
-void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
+void vtkSlicerVolumeRenderingHelper::SetMapperFromSelection(int id)
 {
-  this->RenderingMethod = id;
-
   this->FrameCUDARayCasting->CollapseFrame();
   this->FrameGPURayCasting->CollapseFrame();
   this->FrameGPURayCastingII->CollapseFrame();
@@ -2313,6 +2275,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
       this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("CUDA is not supported by your computer.");
     break;
   }
+}
+
+void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
+{
+  this->Gui->GetParametersNode()->SetCurrentVolumeMapper(id);
+
+  this->SetMapperFromSelection(id);
 
   //update expected framerate
   this->MapperTexture->SetFramerate(this->SC_ExpectedFPS->GetValue());

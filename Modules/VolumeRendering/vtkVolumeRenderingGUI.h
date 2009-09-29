@@ -123,18 +123,15 @@ public:
 
     // Description:
     // Get methods on class members ( no Set methods required. )
-    vtkGetObjectMacro (PB_HideSurfaceModels,vtkKWPushButton);
-    vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
-    vtkGetObjectMacro (PB_CreateNewVolumeRenderingNodeFg,vtkKWPushButton);
     vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_ImageDataFg,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_ImageDataLabelmap,vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro (NS_VolumeRenderingDataPresets,vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro (EWL_CreateNewVolumePropertyNode,vtkKWEntryWithLabel);
-    vtkGetObjectMacro (NS_VolumeRenderingDataPresetsFg,vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro (NS_VolumeRenderingDataSceneFg,vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro (EWL_CreateNewVolumePropertyNodeFg,vtkKWEntryWithLabel);
+
+    vtkGetObjectMacro (NS_VolumePropertyPresets,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_VolumeProperty,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_VolumePropertyPresetsFg,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_VolumePropertyFg,vtkSlicerNodeSelectorWidget);
+
     vtkGetObjectMacro (RenderingFrame, vtkSlicerModuleCollapsibleFrame);
     vtkGetObjectMacro (Presets, vtkMRMLScene);
     vtkGetObjectMacro (Helper, vtkSlicerVolumeRenderingHelper);
@@ -186,21 +183,16 @@ protected:
     //OWN GUI Elements
 
     //Frame Save/Load
-    vtkKWPushButton *PB_HideSurfaceModels;
-    vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
-    vtkKWPushButton *PB_CreateNewVolumeRenderingNodeFg;
     vtkSlicerNodeSelectorWidget *NS_ImageData;
     vtkSlicerNodeSelectorWidget *NS_ImageDataFg;
     vtkSlicerNodeSelectorWidget *NS_ImageDataLabelmap;
 
     //ETX
-    vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataPresets;
-    vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
-    vtkKWEntryWithLabel *EWL_CreateNewVolumePropertyNode;
+    vtkSlicerNodeSelectorWidget *NS_VolumePropertyPresets;
+    vtkSlicerNodeSelectorWidget *NS_VolumeProperty;
 
-    vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataPresetsFg;
-    vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSceneFg;
-    vtkKWEntryWithLabel *EWL_CreateNewVolumePropertyNodeFg;
+    vtkSlicerNodeSelectorWidget *NS_VolumePropertyPresetsFg;
+    vtkSlicerNodeSelectorWidget *NS_VolumePropertyFg;
 
     //Frame Details
     vtkSlicerModuleCollapsibleFrame *RenderingFrame;

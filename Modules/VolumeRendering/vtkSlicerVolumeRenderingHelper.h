@@ -236,6 +236,8 @@ protected:
     // Adjust the frame for interactive rendering methods
     vtkKWScale *SC_ExpectedFPS;
 
+    vtkKWPushButton *PB_HideSurfaceModels;
+
     //--------------------------------------------------------------------------
     // Treshold
     //--------------------------------------------------------------------------
@@ -271,10 +273,6 @@ protected:
     //--------------------------------------------------------------------------
     // Performance/Quality
     //--------------------------------------------------------------------------
-
-    // Description:
-    // internal saving of the rendering method (mapper)
-    int RenderingMethod;//move to parameters node
 
     // Description:
     // Menu button to select which mapper to use
@@ -521,5 +519,13 @@ private:
     // Description:
     // default sample distances
     void EstimateSampleDistances(void);
+
+    // Description:
+    // determine intermal volume storage size
+    void ComputeInternalVolumeSize(int index);
+
+    // Description:
+    // hook up mapper to volume actor and update frames
+    void SetMapperFromSelection(int id);
 };
 #endif

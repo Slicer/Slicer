@@ -74,6 +74,10 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
   // Description:
+  // Reset all variables (scene closing)
+  void Reset();
+
+  // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (VolumeNodeID);
   void SetAndObserveVolumeNodeID(const char *volumeNodeID);
@@ -149,9 +153,8 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetMacro(ExpectedFPS,int);
   vtkGetMacro(ExpectedFPS,int);
 
-  vtkGetStringMacro (CurrentVolumeMapper);
-  vtkSetStringMacro (CurrentVolumeMapper);
-
+  vtkGetMacro (CurrentVolumeMapper, int);
+  vtkSetMacro (CurrentVolumeMapper, int);
 
 protected:
   vtkMRMLVolumeRenderingParametersNode();
@@ -190,8 +193,15 @@ protected:
   double  EstimatedSampleDistance;
   int     ExpectedFPS;
 
-  char *CurrentVolumeMapper;
-
+  /* values of CurrentVolumeMapper
+   * -1: not initilized (default value)
+   * 0: CPU ray cast
+   * 1: GPU ray cast
+   * 2: GPU ray cast II
+   * 3: GPU texture mapping
+   * 4: CUDA ray cast
+   */
+  int CurrentVolumeMapper;
 };
 
 #endif

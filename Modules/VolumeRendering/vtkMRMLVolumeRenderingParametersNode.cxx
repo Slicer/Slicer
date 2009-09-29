@@ -79,8 +79,7 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->ExpectedFPS = 5;
   this->EstimatedSampleDistance = 1.0;
 
-  this->CurrentVolumeMapper = NULL;
-  this->SetCurrentVolumeMapper("MapperRaycast");
+  this->CurrentVolumeMapper = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -119,53 +118,67 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "volumeNodeID"))
-      {
+    {
       this->SetVolumeNodeID(attValue);
-      }
-    if (!strcmp(attName, "presetsNodeID"))
-      {
-      this->SetPresetsNodeID(attValue);
-      }
-    if (!strcmp(attName, "fgVolumeNodeID"))
-      {
-      this->SetFgVolumeNodeID(attValue);
-      }
-    if (!strcmp(attName, "fgPresetsNodeID"))
-      {
-      this->SetFgPresetsNodeID(attValue);
-      }
-    if (!strcmp(attName, "ROINodeID"))
-      {
-      this->SetROINodeID(attValue);
-      }
-    if (!strcmp(attName, "volumePropertyNodeID"))
-      {
-      this->SetVolumePropertyNodeID(attValue);
-      }
-    if (!strcmp(attName, "fgVolumePropertyNodeID"))
-      {
-      this->SetFgVolumePropertyNodeID(attValue);
-      }
-    else if (!strcmp(attName,"croppingEnabled"))
-      {
-      std::stringstream ss;
-      ss<<attValue;
-      ss>>this->CroppingEnabled;
-      }
-    else if (!strcmp(attName,"croppingRegionPlanes"))
-      {
-        std::stringstream ss;
-        ss << attValue;
-        for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
-        {
-          ss>>this->CroppingRegionPlanes[i];
-        }
-      }
+      continue;
     }
+    if (!strcmp(attName, "presetsNodeID"))
+    {
+      this->SetPresetsNodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "fgVolumeNodeID"))
+    {
+      this->SetFgVolumeNodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "fgPresetsNodeID"))
+    {
+      this->SetFgPresetsNodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "ROINodeID"))
+    {
+      this->SetROINodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "volumePropertyNodeID"))
+    {
+      this->SetVolumePropertyNodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "fgVolumePropertyNodeID"))
+    {
+      this->SetFgVolumePropertyNodeID(attValue);
+      continue;
+    }
+    if (!strcmp(attName, "currentVolumeMapper"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CurrentVolumeMapper;
+      continue;
+    }
+    if (!strcmp(attName,"croppingEnabled"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CroppingEnabled;
+      continue;
+    }
+    if (!strcmp(attName,"croppingRegionPlanes"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
+        ss >> this->CroppingRegionPlanes[i];
+      continue;
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -177,14 +190,15 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " volumeNodeID=\"" << (this->VolumeNodeID ? this->VolumeNodeID : "NULL") << "\"";
   of << indent << " fgVolumeNodeID=\"" << (this->FgVolumeNodeID ? this->FgVolumeNodeID : "NULL") << "\"";
-  of << " croppingEnabled=\""<< this->CroppingEnabled<< "\"";
+  of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
+  of << indent << " croppingEnabled=\""<< this->CroppingEnabled << "\"";
   of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
   of << indent << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
   of << indent << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
   of << indent << " presetsNodeID=\"" << (this->PresetsNodeID ? this->PresetsNodeID : "NULL") << "\"";
   of << indent << " fgPresetsNodeID=\"" << (this->FgPresetsNodeID ? this->FgPresetsNodeID : "NULL") << "\"";
 
-  of << " croppingRegionPlanes=\"";
+  of << indent << " croppingRegionPlanes=\"";
   for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
   {
     of << this->CroppingRegionPlanes[i];
@@ -274,11 +288,12 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumeNodeID(const char 
 {
   vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
 
-  this->SetVolumeNodeID(volumeNodeID);
-
-  vtkMRMLVolumeNode *node = this->GetVolumeNode();
-
-  vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, node);
+  if (volumeNodeID != NULL)
+  {
+    this->SetVolumeNodeID(volumeNodeID);
+    vtkMRMLVolumeNode *node = this->GetVolumeNode();
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, node);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -286,11 +301,12 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumeNodeID(const cha
 {
   vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, NULL);
 
-  this->SetFgVolumeNodeID(volumeNodeID);
-
-  vtkMRMLVolumeNode *node = this->GetFgVolumeNode();
-
-  vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, node);
+  if (volumeNodeID != NULL)
+  {
+    this->SetFgVolumeNodeID(volumeNodeID);
+    vtkMRMLVolumeNode *node = this->GetFgVolumeNode();
+    vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, node);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -332,11 +348,12 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumePropertyNodeID(con
 {
   vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
 
-  this->SetVolumePropertyNodeID(VolumePropertyNodeID);
-
-  vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
-
-  vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, node);
+  if (VolumePropertyNodeID != NULL)
+  {
+    this->SetVolumePropertyNodeID(VolumePropertyNodeID);
+    vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
+    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, node);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -344,11 +361,12 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumePropertyNodeID(c
 {
   vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, NULL);
 
-  this->SetFgVolumePropertyNodeID(VolumePropertyNodeID);
-
-  vtkMRMLVolumePropertyNode *node = this->GetFgVolumePropertyNode();
-
-  vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, node);
+  if (VolumePropertyNodeID != NULL)
+  {
+    this->SetFgVolumePropertyNodeID(VolumePropertyNodeID);
+    vtkMRMLVolumePropertyNode *node = this->GetFgVolumePropertyNode();
+    vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, node);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -425,6 +443,28 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateScene(vtkMRMLScene *scene)
   this->SetAndObserveROINodeID(this->ROINodeID);
 }
 
+void vtkMRMLVolumeRenderingParametersNode::Reset()
+{
+  this->SetAndObserveVolumeNodeID(NULL);
+  this->SetAndObserveVolumePropertyNodeID(NULL);
+  this->SetPresetsNodeID(NULL);
+
+  this->SetAndObserveROINodeID(NULL);
+
+  this->SetAndObserveFgVolumeNodeID(NULL);
+  this->SetAndObserveFgVolumePropertyNodeID(NULL);
+  this->SetFgPresetsNodeID(NULL);
+
+  this->CroppingEnabled = 0;
+  for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
+    this->CroppingRegionPlanes[i] = 0;
+
+  this->ExpectedFPS = 5;
+  this->EstimatedSampleDistance = 1.0;
+
+  this->CurrentVolumeMapper = -1;
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingParametersNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     unsigned long event,
@@ -449,6 +489,5 @@ void vtkMRMLVolumeRenderingParametersNode::PrintSelf(ostream& os, vtkIndent inde
   os << "FgVolumePropertyNodeID: " << ( (this->FgVolumePropertyNodeID) ? this->FgVolumePropertyNodeID : "None" ) << "\n";
   os << "CroppingEnabled: " << this->CroppingEnabled << "\n";
 }
-
 
 // End
