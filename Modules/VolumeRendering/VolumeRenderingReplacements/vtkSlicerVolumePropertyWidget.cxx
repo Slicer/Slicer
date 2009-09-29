@@ -1502,13 +1502,23 @@ int vtkSlicerVolumePropertyWidget::GetDataSetAdjustedScalarRange(
   if (this->DataSet)
     {
     vtkDataArray *scalars = this->DataSet->GetPointData()->GetScalars();
-    if (scalars &&
-        (scalars->GetDataType() == VTK_UNSIGNED_SHORT ||
-         scalars->GetDataType() == VTK_UNSIGNED_CHAR))
+    if (scalars)
       {
-      // GetAdjustedScalarRange only works on arrays of unsigned shrot or
-      // char, otherwise an assert fails and Slicer crashes Aug/09
-      return vtkMath::GetAdjustedScalarRange(scalars, comp, range);
+      // workaround assert() in GetAdjustedScalarRange for other data types
+      if (scalars->GetDataType() == VTK_UNSIGNED_CHAR || 
+          scalars->GetDataType() == VTK_UNSIGNED_SHORT)
+        {
+        return vtkMath::GetAdjustedScalarRange(scalars, comp, range);
+        }
+      else 
+        {
+        if (comp < 0 || comp >= scalars->GetNumberOfComponents())
+          {
+          return 0;
+          }
+        scalars->GetRange(range, comp);
+        return 1;
+        }
       }
     }
   return 0;

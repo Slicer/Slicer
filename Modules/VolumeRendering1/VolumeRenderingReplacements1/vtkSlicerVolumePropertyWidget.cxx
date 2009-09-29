@@ -1512,6 +1512,11 @@ int vtkSlicerVolumePropertyWidget::GetDataSetAdjustedScalarRange(
         }
       else 
         {
+        if (comp < 0 || comp >= scalars->GetNumberOfComponents())
+          {
+          return 0;
+          }
+        scalars->GetRange(range, comp);
         return 1;
         }
       }
