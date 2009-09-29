@@ -47,7 +47,13 @@ int main(int argc, char * argv[])
   callback->SetCallback( Callback ); 
   callback->SetClientData( reinterpret_cast<void *> (viewer) );
 
-  broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
+  int i, numberOfObservations = 1;
+  for (i = 0; i < numberOfObservations; i++)
+    {
+    broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
+    }
+
+  broker->AddObservation( ellip, vtkCommand::ModifiedEvent, ellip, callback);
 
   if ( logFileName != "" )
     {
@@ -80,10 +86,64 @@ int main(int argc, char * argv[])
     {
     broker->GenerateGraphFile( graphFile.c_str() );
     }
+    broker->GenerateGraphFile( "/tmp/1.dot" );
+
+  // Get observations
+  // - check that we can find the one we have created
+  std::vector< vtkObservation *> obs;
+  obs = broker->GetObservationsForSubjectByTag (ellip, 0);
+  if ( obs.size() != numberOfObservations + 1 )
+    {
+    std::cerr << "Couldn't find observations for ellip\n";
+    }
+  obs = broker->GetObservations (ellip, ellip);
+  if ( obs.size() != 1 )
+    {
+    std::cerr << "Couldn't find observation for ellip on itself\n";
+    }
+  obs = broker->GetObservations (ellip, viewer);
+  if ( obs.size() != numberOfObservations )
+    {
+    std::cerr << "Couldn't find observations for viewer\n";
+    }
+
+
+  viewer->SetInput( NULL );
+  obs = broker->GetObservationsForSubjectByTag (ellip, 0);
+  if ( obs.size() != numberOfObservations + 1 )
+    {
+    std::cerr << "Couldn't find observations for ellip\n";
+    }
+  ellip->Delete();
+
+
+  // Get observations
+  // - check that everything cleaned up
+  obs = broker->GetObservationsForSubjectByTag (ellip, 0);
+  if ( obs.size() != 0 )
+    {
+    std::cerr << "observations still exist for ellip\n";
+    }
+  obs = broker->GetObservations (ellip, ellip);
+  if ( obs.size() != 0 )
+    {
+    std::cerr << "observations still exist for ellip on itself\n";
+    }
+  obs = broker->GetObservations (ellip, viewer);
+  if ( obs.size() != 0 )
+    {
+    std::cerr << "observations still exist for viewer\n";
+    }
+
+  if ( graphFile != "" )
+    {
+    broker->GenerateGraphFile( graphFile.c_str() );
+    }
+    broker->GenerateGraphFile( "/tmp/2.dot" );
 
   viewer->Delete();
-  ellip->Delete();
   callback->Delete();
+
   broker->Delete();
 
   return (EXIT_SUCCESS);
