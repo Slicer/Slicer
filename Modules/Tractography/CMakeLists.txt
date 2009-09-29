@@ -19,6 +19,7 @@ subdirs(
   Settings
   Display
   FiducialSeeding
+  Editor
   )
 
 # --------------------------------------------------------------------------
