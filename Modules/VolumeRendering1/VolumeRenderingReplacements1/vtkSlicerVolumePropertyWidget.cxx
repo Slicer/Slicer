@@ -1504,7 +1504,16 @@ int vtkSlicerVolumePropertyWidget::GetDataSetAdjustedScalarRange(
     vtkDataArray *scalars = this->DataSet->GetPointData()->GetScalars();
     if (scalars)
       {
-      return vtkMath::GetAdjustedScalarRange(scalars, comp, range);
+      // workaround assert() in GetAdjustedScalarRange for other data types
+      if (scalars->GetDataType() == VTK_UNSIGNED_CHAR || 
+          scalars->GetDataType() == VTK_UNSIGNED_SHORT)
+        {
+        return vtkMath::GetAdjustedScalarRange(scalars, comp, range);
+        }
+      else 
+        {
+        return 1;
+        }
       }
     }
   return 0;
