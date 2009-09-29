@@ -18,7 +18,7 @@ Version:   $Revision: 1.3 $
 #include "vtkVolumeRendering.h"
 #include "vtkVolumeRenderingLogic.h"
 
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRendering1ParametersNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkKWLabel.h"
@@ -121,7 +121,7 @@ public:
     vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
     virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
 
-   vtkGetObjectMacro(ParametersNode, vtkMRMLVolumeRenderingParametersNode);
+   vtkGetObjectMacro(ParametersNode, vtkMRMLVolumeRendering1ParametersNode);
 
 
     // Description:
@@ -158,7 +158,7 @@ protected:
     // Pointer to the module's logic class
     vtkVolumeRenderingLogic *Logic;
 
-    vtkMRMLVolumeRenderingParametersNode *ParametersNode;
+    vtkMRMLVolumeRendering1ParametersNode *ParametersNode;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking

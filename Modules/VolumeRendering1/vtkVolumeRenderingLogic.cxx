@@ -7,7 +7,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkPlanes.h"
 
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRendering1ParametersNode.h"
 #include "vtkMRMLTransformNode.h"
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
@@ -101,7 +101,7 @@ void vtkVolumeRenderingLogic::RegisterNodes()
 {
   if (this->MRMLScene && this->First)
     {
-      vtkMRMLVolumeRenderingParametersNode *vrpNode=vtkMRMLVolumeRenderingParametersNode::New();
+      vtkMRMLVolumeRendering1ParametersNode *vrpNode=vtkMRMLVolumeRendering1ParametersNode::New();
       this->MRMLScene->RegisterNodeClass(vrpNode);
       vrpNode->Delete();
             
@@ -110,17 +110,17 @@ void vtkVolumeRenderingLogic::RegisterNodes()
 }
 
 
-vtkMRMLVolumeRenderingParametersNode* vtkVolumeRenderingLogic::GetParametersNode()
+vtkMRMLVolumeRendering1ParametersNode* vtkVolumeRenderingLogic::GetParametersNode()
 {
-  vtkMRMLVolumeRenderingParametersNode *node = NULL;
+  vtkMRMLVolumeRendering1ParametersNode *node = NULL;
   if (this->MRMLScene) 
     {
-    node = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingParametersNode"));
+    node = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLVolumeRendering1ParametersNode"));
     /**
     if (node == NULL)
       {
-      node = vtkMRMLVolumeRenderingParametersNode::New();
-      vtkMRMLVolumeRenderingParametersNode *snode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->MRMLScene->AddNode(node));
+      node = vtkMRMLVolumeRendering1ParametersNode::New();
+      vtkMRMLVolumeRendering1ParametersNode *snode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->MRMLScene->AddNode(node));
       if (snode == node)
         {
         node->Delete();
@@ -140,7 +140,7 @@ void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
-void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRenderingParametersNode *node)
+void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRendering1ParametersNode *node)
 {
   if (node == NULL)
     {

@@ -332,7 +332,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
   //VolumeRenderingParameterSelector for Node from MRML Scene
   this->VolumeRenderingParameterSelector=vtkSlicerNodeSelectorWidget::New();
-  this->VolumeRenderingParameterSelector->SetNodeClass("vtkMRMLVolumeRenderingParametersNode", NULL, NULL, "Parameters");
+  this->VolumeRenderingParameterSelector->SetNodeClass("vtkMRMLVolumeRendering1ParametersNode", NULL, NULL, "Parameters");
   this->VolumeRenderingParameterSelector->SetNewNodeEnabled(1);
   this->VolumeRenderingParameterSelector->NoneEnabledOff();
   this->VolumeRenderingParameterSelector->SetShowHidden(1);
@@ -460,7 +460,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
     
-  //vtkMRMLVolumeRenderingParametersNode* parametersNode = this->GetLogic()->GetParametersNode();
+  //vtkMRMLVolumeRendering1ParametersNode* parametersNode = this->GetLogic()->GetParametersNode();
   //vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, parametersNode);
 
   
@@ -605,7 +605,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
 
   if(callerObjectNS == this->VolumeRenderingParameterSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
     {
-    vtkMRMLVolumeRenderingParametersNode *paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    vtkMRMLVolumeRendering1ParametersNode *paramNode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
     if (paramNode != this->GetParametersNode())
       {
       this->UpdateParametersNode();
@@ -616,7 +616,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
 
   if(callerObjectNS == this->VolumePropertyNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
     {
-    vtkMRMLVolumeRenderingParametersNode *paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    vtkMRMLVolumeRendering1ParametersNode *paramNode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
     vtkMRMLVolumePropertyNode *propertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->VolumePropertyNodeSelector->GetSelected());
     if (paramNode )
       {
@@ -650,13 +650,13 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
 
 void vtkVolumeRenderingGUI::UpdateMRMLFromGUI(void)
 {
-  vtkMRMLVolumeRenderingParametersNode* node = this->GetParametersNode();
+  vtkMRMLVolumeRendering1ParametersNode* node = this->GetParametersNode();
   if (node == NULL)
     {
     this->CreateParametersNode();
     }
 
-  vtkMRMLVolumeRenderingParametersNode *paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+  vtkMRMLVolumeRendering1ParametersNode *paramNode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
   vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, paramNode);
 
   if(this->VolumeNodeSelector->GetSelected() != NULL)
@@ -678,13 +678,13 @@ void vtkVolumeRenderingGUI::UpdateMRMLFromGUI(void)
 
 void vtkVolumeRenderingGUI::CreateParametersNode(void)
 {
-  vtkMRMLVolumeRenderingParametersNode* n = this->GetParametersNode();
+  vtkMRMLVolumeRendering1ParametersNode* n = this->GetParametersNode();
   if (n == NULL)
     {
     // no parameter node selected yet, create new
-    this->VolumeRenderingParameterSelector->SetSelectedNew("vtkMRMLVolumeRenderingParametersNode");
-    this->VolumeRenderingParameterSelector->ProcessNewNodeCommand("vtkMRMLVolumeRenderingParametersNode", "Parameters");
-    n = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    this->VolumeRenderingParameterSelector->SetSelectedNew("vtkMRMLVolumeRendering1ParametersNode");
+    this->VolumeRenderingParameterSelector->ProcessNewNodeCommand("vtkMRMLVolumeRendering1ParametersNode", "Parameters");
+    n = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
 
     vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, n);
 
@@ -751,7 +751,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     }
         
   if (event == vtkMRMLScene::NodeAddedEvent && addedNode &&
-      addedNode->IsA("vtkMRMLVolumeRenderingParametersNode"))
+      addedNode->IsA("vtkMRMLVolumeRendering1ParametersNode"))
     {
     if (this->ParametersNode && this->ParametersNode->GetVolumeNode() )
       {
