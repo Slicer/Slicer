@@ -631,6 +631,7 @@ subdirs ( Realign )
 subdirs( DiffusionApplications )
 #subdirs( EndoNavTracking )
 subdirs( ExtractSkeleton )
+# subdirs( Java )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
