@@ -129,8 +129,7 @@ UpdateReferences()
   Superclass::UpdateReferences();
 
   for (KeyIterator i = this->KeyList.begin();
-      i != this->KeyList.end();
-      i++)
+      i != this->KeyList.end(); )
   {
     std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
 
@@ -143,7 +142,11 @@ UpdateReferences()
       this->KeyToVolumeNodeIDMap.erase(*i);
 
       // remove key/value pair from list
-      this->KeyList.erase(i);
+      this->KeyList.erase(i++);
+    }
+    else
+    {
+      ++i;
     }
   }
 }
