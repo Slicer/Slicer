@@ -415,6 +415,7 @@ int vtkMRMLModelStorageNode::SupportedFileType(const char *fileName)
   if (extension.compare(".vtk") == 0 ||
     extension.compare(".vtp") == 0 ||
     extension.compare(".g") == 0 ||
+    extension.compare(".byu") == 0 ||
     extension.compare(".meta") == 0 ||
     extension.compare(".stl") == 0 )
   {
