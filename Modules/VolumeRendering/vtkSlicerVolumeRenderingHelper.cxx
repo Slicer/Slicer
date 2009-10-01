@@ -698,7 +698,12 @@ void vtkSlicerVolumeRenderingHelper::CreatePerformanceTab()
 
     //get scalar range
     double scalarRange[2];
+    scalarRange[0] = 0.0;
+    scalarRange[1] = 0.0;
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+    }
     this->SC_GPURayCastDepthPeelingThreshold=vtkKWScaleWithEntry::New();
     this->SC_GPURayCastDepthPeelingThreshold->SetParent(this->FrameGPURayCasting->GetFrame());
     this->SC_GPURayCastDepthPeelingThreshold->Create();
@@ -983,14 +988,21 @@ void vtkSlicerVolumeRenderingHelper::CreateThresholdTab()
   this->RA_RampRectangleOpacity->SetCommand(this, "ProcessThresholdRange");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->RA_RampRectangleOpacity->GetWidgetName());
 
-  vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  vtkImageData *iData=NULL;
+  if (this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  }
   this->RA_RampRectangleScalar=vtkKWRange::New();
   this->RA_RampRectangleScalar->SetParent(thresholdFrame->GetFrame());
   this->RA_RampRectangleScalar->Create();
   this->RA_RampRectangleScalar->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
   this->RA_RampRectangleScalar->SetLabelText("Threshold");
+  if (iData)
+  {
   this->RA_RampRectangleScalar->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
   this->RA_RampRectangleScalar->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+  }
   this->RA_RampRectangleScalar->SetCommand(this, "ProcessThresholdRange");
   this->RA_RampRectangleScalar->EnabledOff();
   this->Script("pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", this->RA_RampRectangleScalar->GetWidgetName());
@@ -1117,23 +1129,29 @@ void vtkSlicerVolumeRenderingHelper::CreateCroppingTab()
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
   }
 
-  vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  vtkImageData *iData=NULL;
+  if (this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  }
   this->RA_Cropping[0]->SetLabelText("I");
   this->RA_Cropping[0]->SetWholeRange(-500,500);
   this->RA_Cropping[0]->SetSlider1Color(this->ColorsClippingHandles[0]);
   this->RA_Cropping[0]->SetSlider2Color(this->ColorsClippingHandles[1]);
-  this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
   this->RA_Cropping[1]->SetLabelText("J");
   this->RA_Cropping[1]->SetWholeRange(-500,500);
   this->RA_Cropping[1]->SetSlider1Color(this->ColorsClippingHandles[2]);
   this->RA_Cropping[1]->SetSlider2Color(this->ColorsClippingHandles[3]);
-  this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
   this->RA_Cropping[2]->SetLabelText("K");
   this->RA_Cropping[2]->SetWholeRange(-500,500);
   this->RA_Cropping[2]->SetSlider1Color(this->ColorsClippingHandles[4]);
   this->RA_Cropping[2]->SetSlider2Color(this->ColorsClippingHandles[5]);
+  if (iData)
+  {
+  this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+  this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
   this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
-
+  }
   //Now we have the cropping ranges
   //Build GUI
   this->NS_TransformNode=vtkSlicerNodeSelectorWidget::New();
@@ -1226,6 +1244,10 @@ void vtkSlicerVolumeRenderingHelper::SetupHistogramFg()
   vtkImageData *imageDataFg = NULL;
   vtkMRMLScalarVolumeNode *volumeFg = NULL;
 
+  if (this->Gui->GetNS_ImageDataFg()->GetSelected() == NULL)
+  {
+      return;
+  }
   volumeFg = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected());
   imageDataFg = volumeFg->GetImageData();
 
@@ -1309,7 +1331,11 @@ void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumePropertyFg()
   //Set cropping
   this->Gui->GetParametersNode()->CroppingEnabledOff();
 
-  vtkImageData *iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData();
+  vtkImageData *iData = NULL;
+  if (this->Gui->GetNS_ImageDataFg()->GetSelected())
+  {
+      iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData();
+  
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   double pointA[4];
   double pointB[4];
@@ -1328,10 +1354,11 @@ void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumePropertyFg()
   matrix->MultiplyPoint(pointB,pointB);
 
   this->Gui->GetParametersNode()->SetCroppingRegionPlanes(pointA[0],pointB[0], pointA[1],pointB[1], pointA[2],pointB[2]);
-
+  matrix->Delete();
+  }
   this->UpdateGUIElements();
 
-  matrix->Delete();
+  
 }
 
 void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumeProperty()
@@ -1399,7 +1426,10 @@ void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumeProperty()
   //Set cropping
   this->Gui->GetParametersNode()->CroppingEnabledOff();
 
-  vtkImageData *iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  vtkImageData *iData = NULL;
+  if (this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   double pointA[4];
   double pointB[4];
@@ -1418,10 +1448,11 @@ void vtkSlicerVolumeRenderingHelper::InitializePipelineNewVolumeProperty()
   matrix->MultiplyPoint(pointB,pointB);
 
   this->Gui->GetParametersNode()->SetCroppingRegionPlanes(pointA[0],pointB[0], pointA[1],pointB[1], pointA[2],pointB[2]);
-
+  matrix->Delete();
+  }
   this->UpdateGUIElements();
 
-  matrix->Delete();
+  
 }
 
 void vtkSlicerVolumeRenderingHelper::Rendering(void)
@@ -1447,28 +1478,37 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     //Init the texture mapper
     this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
     this->MapperTexture->SetSampleDistance(this->EstimatedSampleDistance);
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
     this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-
+    }
     //create the CUDA raycast mapper
 
     this->MapperCUDARaycast = vtkCudaVolumeMapper::New();
     this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
     this->MapperCUDARaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    }
 
     //create the raycast mapper
     this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
-    this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
+        this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    
     double scalarRange[2];
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
     this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
-
+    }
     //create the raycast mapper II
     this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
     this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
-    this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
+        this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    }
     //we must have source input, but may or maybe not have foreground and labelmap inputs
     if (this->Gui->GetNS_ImageDataFg()->GetSelected())
       this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData());
@@ -1477,7 +1517,10 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
 
     //Also take care about Ray Cast
     this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
+    if (this->Gui->GetNS_ImageData()->GetSelected())
+    {
     this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    }
     this->MapperRaycast->SetSampleDistance(this->EstimatedSampleDistance);
     this->MapperRaycast->ManualInteractiveOff();
     this->MapperRaycast->SetImageSampleDistance(1.0f);
@@ -1486,6 +1529,9 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
   }
 
   //check if mappers are supported
+  if (this->Gui->GetParametersNode() &&
+      this->Gui->GetParametersNode()->GetVolumePropertyNode() &&
+      this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty())
   {
     this->IsTextureMappingSupported =
       this->MapperTexture->IsRenderSupported(
@@ -1572,7 +1618,11 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
   }
   else
   {
-    this->Volume->SetProperty(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty());
+      if (this->Gui->GetParametersNode() &&
+          this->Gui->GetParametersNode()->GetVolumePropertyNode())
+      {
+      this->Volume->SetProperty(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty());
+      }
   }
 
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
@@ -1596,8 +1646,11 @@ void vtkSlicerVolumeRenderingHelper::UpdateRendering()
   }
 
   //Update mapper
-  vtkImageData *input= vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-
+  vtkImageData *input= NULL;
+  if (this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      input = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  }
   if (this->MapperCUDARaycast->GetInput() != input)
     this->MapperCUDARaycast->SetInput(input);
 
@@ -1964,7 +2017,11 @@ void vtkSlicerVolumeRenderingHelper::UpdateSVP(void)
     this->ProcessEnableDisableCropping(this->Gui->GetParametersNode()->GetCroppingEnabled());
   }
 
+  if (this->Gui->GetParametersNode() &&
+      this->Gui->GetParametersNode()->GetVolumePropertyNode())
+  {
   this->SVP_VolumeProperty->SetVolumeProperty(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty());
+  }
   this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
   this->SVP_VolumeProperty->Update();
 }
@@ -2051,9 +2108,15 @@ void vtkSlicerVolumeRenderingHelper::UpdateGUIElements(void)
   }
 
   this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetParametersNode()->GetCroppingEnabled());
+  if (this->Gui->GetParametersNode()->GetVolumePropertyNode() &&
+      this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty())
+  {
   this->VRMB_ColorMode->SetColorTransferFunction(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty()->GetRGBTransferFunction());
+  }
+  if (this->Gui->GetNS_ImageData()->GetSelected())
+  {
   this->VRMB_ColorMode->SetRange(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange());
-
+  }
   this->UpdateingGUI = 0;
   this->ProcessCropping(0,0,0);
   this->ProcessEnableDisableCropping(this->Gui->GetParametersNode()->GetCroppingEnabled());
@@ -2063,10 +2126,12 @@ void vtkSlicerVolumeRenderingHelper::AdjustMappingFg()
 {
   //Update Color
   vtkColorTransferFunction *functionColor = this->Gui->GetParametersNode()->GetFgVolumePropertyNode()->GetVolumeProperty()->GetRGBTransferFunction();
+  if (this->Gui->GetNS_ImageDataFg()->GetSelected())
+  {
   double rangeNew[2];
   vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(rangeNew);
   functionColor->AdjustRange(rangeNew);
-
+  
   //Update Opacity
   vtkPiecewiseFunction *function = this->Gui->GetParametersNode()->GetFgVolumePropertyNode()->GetVolumeProperty()->GetScalarOpacity();
   function->AdjustRange(rangeNew);
@@ -2078,6 +2143,7 @@ void vtkSlicerVolumeRenderingHelper::AdjustMappingFg()
   function->RemovePoint(255);//Remove the standard value
   //this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
   function->AdjustRange(rangeNew);
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::AdjustMapping()
@@ -2572,6 +2638,10 @@ void vtkSlicerVolumeRenderingHelper::ProcessClippingModified(void)
 
 void vtkSlicerVolumeRenderingHelper::EstimateSampleDistances(void)
 {
+    if (!this->Gui->GetNS_ImageData()->GetSelected())
+    {
+        return;
+    }
   double *spacing = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetSpacing();
 
   if (spacing)
@@ -2597,6 +2667,10 @@ void vtkSlicerVolumeRenderingHelper::ConvertWorldToBoxCoordinates(double *inputO
 {
   int pointAint[3];
   double pointA[4];
+  if (!this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      return;
+  }
   vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointAint);
   for(int i=0;i<3;i++)
   {
@@ -2618,6 +2692,10 @@ void vtkSlicerVolumeRenderingHelper::ConvertBoxCoordinatesToWorld(double* inputO
 {
   int pointAint[3];
   double pointA[4];
+  if (!this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      return;
+  }
   vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointAint);
   for(int i=0;i<3;i++)
   {
@@ -2661,6 +2739,11 @@ void vtkSlicerVolumeRenderingHelper::CalculateBoxCoordinatesBoundaries(void)
   //Calculate dimension in box coordinates
   int pointBint[3];
   double pointB[4];
+  if (!this->Gui->GetNS_ImageData()->GetSelected())
+  {
+      matrix->Delete();
+      return;
+  }
   vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointBint);
   for(int i=0;i<3;i++)
   {
@@ -2748,7 +2831,12 @@ void vtkSlicerVolumeRenderingHelper::CreateVolumePropertyGPURaycastII()
   this->VolumePropertyGPURaycastII = vtkVolumeProperty::New();
 
   //copy bg property into 1st compoent property
-  vtkVolumeProperty* prop = this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty();
+  vtkVolumeProperty* prop = NULL;
+  if (this->Gui->GetParametersNode()->GetVolumePropertyNode())
+  {
+  prop = this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty();
+  }
+  if (prop)
   {
     int colorChannels = prop->GetColorChannels(0);
 
