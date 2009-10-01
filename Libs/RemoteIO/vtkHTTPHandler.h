@@ -30,6 +30,14 @@ class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
   virtual int CanHandleURI ( const char *uri );
 
   // Description:
+  // Some web servers don't handle 'keep alive' socket transactions
+  // in a way that's compatible with curl on windows.  When this flag is set
+  // curl will do one transaction per connection with the side-effect
+  // that more network resources are used (so avoid this if you can).
+  vtkSetMacro(ForbidReuse, int);
+  vtkGetMacro(ForbidReuse, int);
+
+  // Description:
   // This function wraps curl functionality to download a specified URL to a specified dir
   void StageFileRead(const char * source, const char * destination);
   void StageFileWrite(const char * source, const char * destination);
@@ -45,6 +53,8 @@ class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
   virtual ~vtkHTTPHandler();
   vtkHTTPHandler(const vtkHTTPHandler&);
   void operator=(const vtkHTTPHandler&);
+
+  int ForbidReuse;
 
 };
 

@@ -978,6 +978,7 @@ void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
                                               ManifestEntry* entry)
 {
   vtkHTTPHandler *handler = vtkHTTPHandler::New();
+  handler->SetForbidReuse(1);
 
   if (0 != handler->CanHandleURI(s3ext.c_str()))
     {
@@ -1068,6 +1069,7 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
   bool result = false;
 
   vtkHTTPHandler *handler = vtkHTTPHandler::New();
+  handler->SetForbidReuse(1);
 
   if (0 != handler->CanHandleURI(ExtensionBinaryURL.c_str()))
     {

@@ -63,6 +63,7 @@ size_t ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double u
 vtkHTTPHandler::vtkHTTPHandler()
 {
   this->CurlHandle = NULL;
+  this->ForbidReuse = 0;
 }
 
 
@@ -158,6 +159,11 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
 */
   this->InitTransfer( );
   
+  
+  if ( this->ForbidReuse )
+    {
+    curl_easy_setopt(this->CurlHandle, CURLOPT_FORBID_REUSE, 1);
+    }
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);

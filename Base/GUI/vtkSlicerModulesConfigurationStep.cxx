@@ -420,6 +420,7 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
       }
 
     vtkHTTPHandler *handler = vtkHTTPHandler::New();
+    handler->SetForbidReuse(1);
       
     if (0 != handler->CanHandleURI(url.c_str()))
       {
