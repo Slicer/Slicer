@@ -45,7 +45,6 @@
 #include "vtkAxisActor2D.h"
 
 #include "vtkTransform.h"
-#include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMeasurementsRulerWidget.h"
 
