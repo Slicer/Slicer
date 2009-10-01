@@ -65,6 +65,8 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->GradientMagnitude = NULL;
   this->VolumePropertyWidget =NULL;
   this->ROIWidget = NULL;
+  this->GradientHistogram = NULL;
+  this->Histograms = NULL;
 
    // :NOTE: 20080515 tgl: To use as a loadable module, initialize
   // the volume rendering replacements TCL wrappers.
