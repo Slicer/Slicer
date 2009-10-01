@@ -66,6 +66,7 @@ float vtkPichonFastMarching::speed( int index )
 {
   int I;
   int H;
+  static bool warned = false;
 
   getMedianInhomo( index, I, H );
 
@@ -83,7 +84,10 @@ float vtkPichonFastMarching::speed( int index )
   if(!finite(s))
     {
     s = 1.;
-    std::cerr << "WARNING: s set to 1.0, since it was not finite()" << std::endl;
+    if(!warned){
+      std::cerr << "WARNING: s set to 1.0, since it was not finite()" << std::endl;
+      warned = true;
+    }
     }
 
 
