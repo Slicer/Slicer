@@ -1,13 +1,9 @@
 #ifndef __vtkMRMLMeasurementsRulerNode_h
 #define __vtkMRMLMeasurementsRulerNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-
 #include "vtkMeasurementsWin32Header.h"
 
 #include "vtkMRMLMeasurementsNode.h"
-
 class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasurementsNode
 {
   public:
@@ -85,7 +81,13 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "MeasurementsRuler"; };
 
- protected:
+  // Description:
+  // transform utility functions
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+protected:
   vtkMRMLMeasurementsRulerNode();
   ~vtkMRMLMeasurementsRulerNode();
   vtkMRMLMeasurementsRulerNode(const vtkMRMLMeasurementsRulerNode&);

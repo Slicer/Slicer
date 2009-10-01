@@ -30,6 +30,9 @@
 #include "vtkSlicerApplicationGUI.h"
 
 
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
+
 class vtkMeasurementsRulerWidgetCallback : public vtkCommand
 {
 public:
@@ -60,8 +63,35 @@ public:
             rep->GetPoint2WorldPosition(p2);
             if (this->RulerNode)
               {
-              this->RulerNode->SetPosition1(p1);
-              this->RulerNode->SetPosition2(p2);
+              // does the ruler node have a transform?
+              vtkMRMLTransformNode* tnode = this->RulerNode->GetParentTransformNode();
+              vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+              transformToWorld->Identity();
+              if (tnode != NULL && tnode->IsLinear())
+                {
+                vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+                lnode->GetMatrixTransformToWorld(transformToWorld);
+                }
+              // convert by the inverted parent transform
+              double  xyzw[4];
+              xyzw[0] = p1[0];
+              xyzw[1] = p1[1];
+              xyzw[2] = p1[2];
+              xyzw[3] = 1.0;
+              double worldxyz[4], *worldp = &worldxyz[0];
+              transformToWorld->Invert();
+              transformToWorld->MultiplyPoint(xyzw, worldp);
+              this->RulerNode->SetPosition1(worldxyz[0], worldxyz[1], worldxyz[2]);
+              // second point
+              xyzw[0] = p2[0];
+              xyzw[1] = p2[1];
+              xyzw[2] = p2[2];
+              xyzw[3] = 1.0;
+              transformToWorld->MultiplyPoint(xyzw, worldp);
+              this->RulerNode->SetPosition2(worldxyz[0], worldxyz[1], worldxyz[2]);
+              transformToWorld->Delete();
+              transformToWorld = NULL;
+              tnode = NULL;
               }
             }
           }
@@ -297,8 +327,8 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
     return;
     }
   
-  // get the old node
-  vtkMRMLMeasurementsRulerNode *oldRuler = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetRulerNodeID()));
+  // get the old node - needed to remove events from it
+//  vtkMRMLMeasurementsRulerNode *oldRuler = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetRulerNodeID()));
  
   // set the id properly - see the vtkSetStringMacro
   this->RulerNodeID = id;
@@ -312,16 +342,17 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
   
   // get the new node
   vtkMRMLMeasurementsRulerNode *newRuler = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetRulerNodeID()));
-  // set up observers on the new node
+  // set up observers on the new node - now done in adddistancewidget
   if (newRuler != NULL)
     {
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
+//    vtkIntArray *events = vtkIntArray::New();
+//    events->InsertNextValue(vtkCommand::ModifiedEvent);
 //    events->InsertNextValue(vtkMRMLMeasurementsRulerNode::DisplayModifiedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(oldRuler, newRuler, events);
-    events->Delete();
+//    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+//    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+//    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+//    vtkSetAndObserveMRMLNodeEventsMacro(oldRuler, newRuler, events);
+//    events->Delete();
 
     // set up the GUI
     this->UpdateWidget(newRuler);
@@ -822,6 +853,12 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     this->UpdateWidget(activeRulerNode);
     }
+  if (node != NULL &&
+      event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    vtkDebugMacro("Got transform modified event on node " << node->GetID());
+    this->Update3DWidget(node);
+    }
   this->ProcessingMRMLEvent = 0;
 }
 
@@ -1026,16 +1063,44 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     distanceWidget->GetRepresentation()->GetLineProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // position
+    // get any transform on the node
+    vtkMRMLTransformNode* tnode = activeRulerNode->GetParentTransformNode();
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    if (tnode != NULL && tnode->IsLinear())
+      {
+      vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+      lnode->GetMatrixTransformToWorld(transformToWorld);
+      }
     double *p = activeRulerNode->GetPosition1();
     if (p)
       {
-      distanceWidget->GetRepresentation()->SetPoint1WorldPosition(p);
+      // convert by the parent transform
+      double xyzw[4];
+      xyzw[0] = p[0];
+      xyzw[1] = p[1];
+      xyzw[2] = p[2];
+      xyzw[3] = 1.0;
+      double worldxyz[4], *worldp = &worldxyz[0];
+      transformToWorld->MultiplyPoint(xyzw, worldp);
+      distanceWidget->GetRepresentation()->SetPoint1WorldPosition(worldp);
       }
     p =  activeRulerNode->GetPosition2();
     if (p)
       {
-      distanceWidget->GetRepresentation()->SetPoint2WorldPosition(p);
+      // convert by the parent transform
+      double xyzw[4];
+      xyzw[0] = p[0];
+      xyzw[1] = p[1];
+      xyzw[2] = p[2];
+      xyzw[3] = 1.0;
+      double worldxyz[4], *worldp = &worldxyz[0];
+      transformToWorld->MultiplyPoint(xyzw, worldp);
+      distanceWidget->GetRepresentation()->SetPoint2WorldPosition(worldp);
       }
+    tnode = NULL;
+    transformToWorld->Delete();
+    transformToWorld = NULL;
 
     // distance annotation
     distanceWidget->GetRepresentation()->SetDistanceAnnotationVisibility(activeRulerNode->GetDistanceAnnotationVisibility());
@@ -1067,6 +1132,7 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
         distanceWidget->GetModel1PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint1Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(distanceWidget->GetModel1PointPlacer());
+        /*
         // check if need to snap to it
         // TODO: figure out why not snapping
         double pos[3];
@@ -1080,6 +1146,7 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
             distanceWidget->GetRepresentation()->SetPoint1WorldPosition(pos);
             }
           }
+        */
         }
       }
     else
@@ -1114,6 +1181,7 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
         distanceWidget->GetModel2PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint2Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(distanceWidget->GetModel2PointPlacer());
+        /*
         // check if need to snap to it
         // TODO: figure out why not snapping
         double pos[3];
@@ -1127,6 +1195,7 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
             distanceWidget->GetRepresentation()->SetPoint2WorldPosition(pos);
             }
           }
+        */
         }
       }
     else
@@ -1192,16 +1261,28 @@ void vtkMeasurementsRulerWidget::AddMRMLObservers ( )
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::RemoveMRMLObservers ( )
 {
-  if (this->GetRulerNodeID())
+  // remove observers on the ruler nodes
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLMeasurementsRulerNode");
+  //vtkIntArray *events = vtkIntArray::New();
+  //events->InsertNextValue(vtkCommand::ModifiedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  //events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  for (int n=0; n<nnodes; n++)
     {
-    vtkMRMLMeasurementsRulerNode *rulerNode = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetRulerNodeID()));
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(rulerNode, NULL, events);
-    events->Delete();
+    vtkMRMLMeasurementsRulerNode *rulerNode = vtkMRMLMeasurementsRulerNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLMeasurementsRulerNode"));
+    //vtkSetAndObserveMRMLNodeEventsMacro(rulerNode, NULL, events);
+    if (rulerNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand))
+      {
+      rulerNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    if (rulerNode->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand))
+      {
+      rulerNode->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+    rulerNode = NULL;
     }
+  //events->Delete();
 
   if (this->MRMLScene)
     {
@@ -1670,6 +1751,22 @@ void vtkMeasurementsRulerWidget::AddDistanceWidget(vtkMRMLMeasurementsRulerNode 
 
   vtkMeasurementsDistanceWidgetClass *c = vtkMeasurementsDistanceWidgetClass::New();
   this->DistanceWidgets[rulerNode->GetID()] = c;
+  // make sure we're observing the node for transform changes
+  if (rulerNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+    {
+    rulerNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+  if (rulerNode->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+    {
+    rulerNode->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+  //vtkIntArray *events = vtkIntArray::New();
+  //events->InsertNextValue(vtkCommand::ModifiedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  //events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  //vtkSetAndObserveMRMLNodeEventsMacro(NULL, rulerNode, events);
+  //events->Delete();
 }
 
 //---------------------------------------------------------------------------

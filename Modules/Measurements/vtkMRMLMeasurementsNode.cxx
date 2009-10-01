@@ -81,7 +81,7 @@ void vtkMRMLMeasurementsNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementsNode::ReadXMLAttributes(const char** atts)
 {
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   // Read all MRML node attributes from two arrays of names and values
   const char* attName;
@@ -113,8 +113,7 @@ void vtkMRMLMeasurementsNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementsNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
   os << indent << "Visibility: " << this->GetVisibility() << "\n";
 }
 

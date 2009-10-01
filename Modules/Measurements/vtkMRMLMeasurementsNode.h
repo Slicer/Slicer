@@ -4,18 +4,18 @@
 #include "vtkStringArray.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLNode.h"
+#include "vtkMRMLTransformableNode.h"
 
 #include "vtkMeasurementsWin32Header.h"
 #include <string>
 #include <vector>
 
 
-class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLNode
+class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLTransformableNode
 {
   public:
   static vtkMRMLMeasurementsNode *New();
-  vtkTypeRevisionMacro(vtkMRMLMeasurementsNode, vtkMRMLNode);
+  vtkTypeRevisionMacro(vtkMRMLMeasurementsNode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -39,6 +39,11 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLNode
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
+  // Description:
+  // transform utility functions, need to be defined by subclasses
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix) {};
+  virtual void ApplyTransform(vtkAbstractTransform* transform) {};
   
   
   // Description:
