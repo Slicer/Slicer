@@ -290,6 +290,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
     col_index = the_list->AddColumn("Description");
     the_list->SetColumnFormatCommandToEmptyOutput(col_index);
+    the_list->SetColumnWidth(col_index, 12);
 
     this->HomePageColIndex = col_index = the_list->AddColumn("HomePage");
     the_list->SetColumnWidth(col_index, 0);
@@ -722,7 +723,8 @@ void vtkSlicerModulesStep::DescriptionCommand(const char *notused,
     std::string summary = description.substr(0, 12);
     summary += "...";
 
-    child->SetText(summary.c_str());
+    //child->SetText(summary.c_str());
+    child->SetText(description.c_str());
     child->SetBalloonHelpString(description.c_str());
     }
 }
