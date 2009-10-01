@@ -1094,7 +1094,12 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       }
     else
       {
-      app->Script("eval $::_fixed_zip_code; vfs::zip::Mount %s /zipfile; file copy -force /zipfile/* %s; vfs::zip::Unmount %s /zipfile", tmpfile.c_str(), libdir.c_str(), tmpfile.c_str());
+      app->Script("package require vfs::zip");
+      app->Script("set ::ZIPFD [vfs::zip::Mount \"%s\" /zipfile]", tmpfile.c_str());
+      app->Script("set ::ZIPFILES [glob /zipfile/*]");
+      app->Script("foreach direntry $::ZIPFILES {file copy -force $direntry \"%s\"}", 
+        libdir.c_str());
+      app->Script("vfs::zip::Unmount $::ZIPFD /zipfile");
       result = true;
       }
 
