@@ -118,7 +118,7 @@ if { [itcl::find class Loader] == "" } {
     variable col ;# array of the column indices for easy (and readable) access
 
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .nii .gz .mgz"
-    variable _modelExtensions ".vtk .vtp .g .stl .orig .inflated .sphere .white .smoothwm .pial"
+    variable _modelExtensions ".vtk .vtp .g .byu .stl .orig .inflated .sphere .white .smoothwm .pial"
     variable _qdecExtensions ".qdec"
     variable _xcedeExtensions ".xcat"
     variable _fiducialExtensions ".fcsv"

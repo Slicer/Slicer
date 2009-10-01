@@ -163,7 +163,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   int result = 1;
   try
   {
-    if ( extension == std::string(".g")) 
+    if ( extension == std::string(".g") || extension == std::string(".byu") ) 
     {
       vtkBYUReader *reader = vtkBYUReader::New();
       reader->SetGeometryFileName(fullName.c_str());
