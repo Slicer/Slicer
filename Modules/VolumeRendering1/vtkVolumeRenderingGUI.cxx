@@ -5,12 +5,20 @@
 #include "vtkBMPReader.h"
 #include "vtkBMPWriter.h"
 #include "vtkCellArray.h"
-#include "vtkCylinderSource.h"
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkImageGradientMagnitude.h"
 #include "vtkImageMapper.h"
 #include "vtkIndent.h"
+#include "vtkPiecewiseFunction.h"
+#include "vtkPlaneSource.h"
+#include "vtkPointData.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkTexture.h"
+#include "vtkTimerLog.h"
+#include "vtkVolume.h"
+
 #include "vtkKWCheckButton.h"
 #include "vtkKWColorTransferFunctionEditor.h"
 #include "vtkKWEntry.h"
@@ -20,11 +28,8 @@
 #include "vtkKWPiecewiseFunctionEditor.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkKWTkUtilities.h"
-#include "vtkPiecewiseFunction.h"
-#include "vtkPlaneSource.h"
-#include "vtkPointData.h"
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
+#include "vtkKWCheckButtonWithLabel.h"
+
 #include "vtkRendererCollection.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
@@ -33,9 +38,7 @@
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerROIDisplayWidget.h"
-#include "vtkTexture.h"
-#include "vtkTimerLog.h"
-#include "vtkVolume.h"
+#include "vtkSlicerSliceLogic.h"
 
 extern "C" int Volumerenderingreplacements1_Init(Tcl_Interp *interp);
 
@@ -52,6 +55,7 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
   this->Logic = NULL;
   this->ParametersNode = NULL;
+  this->ROINode = NULL;
   this->ViewerWidget = NULL;
   this->InteractorStyle = NULL;
 
@@ -65,10 +69,12 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->GradientMagnitude = NULL;
   this->VolumePropertyWidget =NULL;
   this->ROIWidget = NULL;
+  this->CroppingButton = NULL;
+  this->FitROIButton = NULL;
   this->GradientHistogram = NULL;
   this->Histograms = NULL;
 
-   // :NOTE: 20080515 tgl: To use as a loadable module, initialize
+  // :NOTE: 20080515 tgl: To use as a loadable module, initialize
   // the volume rendering replacements TCL wrappers.
   Tcl_Interp *interp = NULL;
   interp = vtkKWApplication::GetMainInterp();
@@ -117,6 +123,12 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->ROINodeSelector->Delete();
     this->ROINodeSelector=NULL;
     }
+  if (this->CroppingButton)
+    {
+    this->CroppingButton->SetParent(NULL);
+    this->CroppingButton->Delete();
+    this->CroppingButton=NULL;
+    }
   //Remove Volume
 
   if (this->GradientHistogram)
@@ -148,6 +160,11 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->ROIWidget=NULL;
     }
 
+  if ( this->FitROIButton ) {
+      this->FitROIButton->SetParent(NULL);
+      this->FitROIButton->Delete();
+      this->FitROIButton = NULL;
+  }
 
   if(this->DetailsFrame)
     {
@@ -419,9 +436,16 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 ROIframe->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
+  this->CroppingButton = vtkKWCheckButtonWithLabel::New();
+  this->CroppingButton->SetParent ( ROIframe->GetFrame() );
+  this->CroppingButton->Create ( );
+  this->CroppingButton->SetLabelText("Cropping Enabled");
+  this->CroppingButton->SetBalloonHelpString("Enable cropping.");
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->CroppingButton->GetWidgetName());
+
 
   this->ROINodeSelector=vtkSlicerNodeSelectorWidget::New();
-  this->ROINodeSelector->SetNodeClass("vtkMRMLROINode", NULL, NULL, "ROI");
+  this->ROINodeSelector->SetNodeClass("vtkMRMLROINode", NULL, NULL, "VolumeRenderingROI");
   this->ROINodeSelector->SetNewNodeEnabled(1);
   this->ROINodeSelector->NoneEnabledOff();
   this->ROINodeSelector->SetShowHidden(1);
@@ -434,6 +458,12 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->ROINodeSelector->SetBalloonHelpString("select a roi  node from the current mrml scene.");
 
   this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->ROINodeSelector->GetWidgetName());
+
+  this->FitROIButton = vtkKWPushButton::New();
+  this->FitROIButton->SetParent( ROIframe->GetFrame() );
+  this->FitROIButton->Create();
+  this->FitROIButton->SetText("Fit ROI To Volume");
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->FitROIButton->GetWidgetName());
 
   this->ROIWidget=vtkSlicerROIDisplayWidget::New();
   this->ROIWidget->SetParent(ROIframe->GetFrame());
@@ -500,6 +530,8 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
   this->ROINodeSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HideSurfaceModelsButton->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
   this->VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
+  this->CroppingButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FitROIButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
@@ -510,6 +542,9 @@ void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
   this->ROINodeSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HideSurfaceModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
   this->VolumePropertyWidget->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
+  this->CroppingButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FitROIButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 void vtkVolumeRenderingGUI::AddMRMLObservers(void)
 {
@@ -633,12 +668,40 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       }
     }
 
+  if(callerObjectNS == this->ROINodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+    {
+    vtkMRMLVolumeRendering1ParametersNode *paramNode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(this->ROINodeSelector->GetSelected());
+    if (paramNode )
+      {
+      paramNode->SetAndObserveROINodeID(roiNode->GetID());
+      this->ROIWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+      this->ROIWidget->SetROINode(roiNode);
+      vtkSetAndObserveMRMLNodeMacro(this->ROINode, roiNode);
+      }
+   }
+
   vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
   if(callerObjectSVP == this->VolumePropertyWidget && event == vtkKWEvent::VolumePropertyChangingEvent)
     {
     this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->ProcessingGUIEvents = 0;
     return;
+    }
+  
+  if (vtkKWPushButton::SafeDownCast(caller) == this->FitROIButton && event == vtkKWPushButton::InvokedEvent ) 
+    {
+    this->FitROIToVolume();
+    }
+
+  if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
+          this->CroppingButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
+    {
+    vtkMRMLVolumeRendering1ParametersNode *paramNode = vtkMRMLVolumeRendering1ParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    if (paramNode)
+      {
+      paramNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
+      }
     }
 
   //Update GUI
@@ -797,9 +860,9 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     this->Logic->UpdateTransform(volumeNode);    
     } 
 
-  if(event == vtkCommand::ModifiedEvent)
+  if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
     {
-    // this is from parameters node
+    // this is from ROI node
     }
 
   this->UpdateVolumeActor();
@@ -885,6 +948,22 @@ void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *i
 {
 }
 
+void vtkVolumeRenderingGUI::FitROIToVolume()
+{
+  // resize the ROI to fit the volume
+  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(this->ROINodeSelector->GetSelected());
+  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNodeSelector->GetSelected());
+  if (volumeNode && roiNode)
+    {
+    double xyz[3];
+    double center[3];
 
-
-
+    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
+    for (int i=0; i<3; i++)
+      {
+      xyz[i] /= 2;
+      }
+    roiNode->SetXYZ(center);
+    roiNode->SetRadiusXYZ(xyz);
+    }
+}

@@ -19,6 +19,7 @@ Version:   $Revision: 1.3 $
 #include "vtkVolumeRenderingLogic.h"
 
 #include "vtkMRMLVolumeRendering1ParametersNode.h"
+#include "vtkMRMLROINode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkKWLabel.h"
@@ -37,6 +38,7 @@ class vtkKWHistogramSet;
 class vtkKWHistogram;
 class vtkImageGradientMagnitude;
 class vtkSlicerROIDisplayWidget;
+class vtkKWCheckButtonWithLabel;
 
 
 class VTK_SLICERVOLUMERENDERING1_EXPORT vtkVolumeRenderingGUI :public vtkSlicerModuleGUI
@@ -123,6 +125,8 @@ public:
 
    vtkGetObjectMacro(ParametersNode, vtkMRMLVolumeRendering1ParametersNode);
 
+   vtkGetObjectMacro(ROINode, vtkMRMLROINode);
+
 
     // Description:
     // Get methods on class members ( no Set methods required. )
@@ -154,11 +158,15 @@ protected:
 
     void InitTransferFunction();
 
+    void FitROIToVolume();
+
     // Description:
     // Pointer to the module's logic class
     vtkVolumeRenderingLogic *Logic;
 
     vtkMRMLVolumeRendering1ParametersNode *ParametersNode;
+
+    vtkMRMLROINode *ROINode;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking
@@ -185,6 +193,10 @@ protected:
     vtkSlicerVolumePropertyWidget *VolumePropertyWidget;
 
     vtkSlicerROIDisplayWidget  *ROIWidget;
+ 
+    vtkKWCheckButtonWithLabel *CroppingButton;
+  
+    vtkKWPushButton            *FitROIButton;
 
     // Description:
     // A set of histograms used in the volume property widget

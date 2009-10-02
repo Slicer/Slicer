@@ -196,6 +196,9 @@ void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRendering1Parameter
   vtkMRMLROINode *roiNode = node->GetROINode();
   if (roiNode && node->GetCroppingEnabled() )
     {
+    roiNode->SetDisableModifiedEvent(1);
+    roiNode->SetInsideOut(1);
+    roiNode->SetDisableModifiedEvent(0);
     vtkPlanes *planes = vtkPlanes::New();
     roiNode->GetTransformedPlanes(planes);
 
@@ -207,6 +210,7 @@ void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRendering1Parameter
     }
   else
     {
+    this->CurrentVolumeMapper->RemoveAllClippingPlanes();
     //this->CurrentVolumeMapper->SetClippingPlanes((vtkPlanes *)NULL);
     this->MapperCUDARaycast->ClippingOff();
     this->MapperGPURaycast->ClippingOff();

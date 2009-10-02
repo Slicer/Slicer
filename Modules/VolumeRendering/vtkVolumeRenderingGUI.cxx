@@ -997,3 +997,4 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 
   this->PipelineInitializedFgOn();
 }
+
