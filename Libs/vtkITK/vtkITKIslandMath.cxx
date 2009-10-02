@@ -168,8 +168,6 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
       ((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR >= 14))
     switch (inScalars->GetDataType())
       {
-      vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
-      vtkTemplateMacroCase(VTK_FLOAT, float, CALL);                             \
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
       vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
       vtkTemplateMacroCase(VTK_INT, int, CALL);                                 \
