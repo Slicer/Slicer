@@ -938,16 +938,6 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->SetApplicationGUI ( appGUI );
   slicerApp->ConfigureRemoteIOSettingsFromRegistry();
 
-  bool FullDisk = false;
-  //--- perform a check for a
-  if ( slicerApp->FullFileSystemCheck() )
-    {
-    FullDisk = true;
-    //--- if there's no room on disk,
-    //--- ditch building anything that adds to cache.
-    NoModules = true;
-    }
-
 
   // set a pointer to vtkSlicerSlicesGUI in vtkSlicerApplicationGUI
   slicesGUI->SetApplication ( slicerApp );
@@ -962,6 +952,16 @@ int Slicer3_main(int argc, char *argv[])
   slicesGUI->BuildGUI ();
   slicesGUI->AddGUIObservers ( );
 #endif
+
+  bool FullDisk = false;
+  //--- perform a check for a
+  if ( slicerApp->FullFileSystemCheck() )
+    {
+    FullDisk = true;
+    //--- if there's no room on disk,
+    //--- ditch building anything that adds to cache.
+    NoModules = true;
+    }
 
   // get the module paths that the user has configured
   std::string userModulePaths;
