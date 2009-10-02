@@ -54,7 +54,7 @@ class VTK_SLICERVOLUMERENDERING1_EXPORT vtkMRMLVolumeRendering1ParametersNode : 
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeRenderingParameters";};
+  virtual const char* GetNodeTagName() {return "VolumeRendering1Parameters";};
 
   // Description:
   // Update the stored reference to another node in the scene

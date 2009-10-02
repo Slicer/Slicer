@@ -738,6 +738,10 @@ void vtkVolumeRenderingGUI::UpdateMRMLFromGUI(void)
     this->VolumePropertyWidget->SetHSVColorSelectorVisibility(1);
     this->VolumePropertyWidget->Update();
     }
+  if (this->ParametersNode)
+    {
+    this->ParametersNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
+    }
 
 }
 
@@ -904,6 +908,8 @@ void vtkVolumeRenderingGUI::UpdateGUIFromMRML(void)
       this->UpdateHistogram();
       this->VolumePropertyWidget->Update();
       }
+    this->CroppingButton->GetWidget()->SetSelectedState(this->ParametersNode->GetCroppingEnabled());
+
     }
   else
     {
