@@ -418,7 +418,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if ( cb == this->StartWithWelcome->GetWidget() )
       {
-      app->SetUseWelcomeModuleAtStartup ( this->StartWithWelcome->GetWidget()->GetSelectedState() );
+      app->SetUseWelcomeModuleAtStartup ( this->StartWithWelcome->GetWidget()->GetSelectedState() ? 0 : 1 );
       }
     }
   
