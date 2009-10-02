@@ -909,7 +909,7 @@ void vtkVolumeRenderingGUI::UpdateGUIFromMRML(void)
       this->VolumePropertyWidget->Update();
       }
     this->CroppingButton->GetWidget()->SetSelectedState(this->ParametersNode->GetCroppingEnabled());
-
+    this->ROIWidget->SetROINode(this->ParametersNode->GetROINode());
     }
   else
     {
