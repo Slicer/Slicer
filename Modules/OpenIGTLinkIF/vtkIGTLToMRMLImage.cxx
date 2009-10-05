@@ -163,8 +163,9 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   imgMsg->Copy(buffer); // !! TODO: copy makes performance issue.
 
   // Deserialize the transform data
-  // If you want to skip CRC check, call Unpack() without argument.
-  int c = imgMsg->Unpack(1);
+  // If CheckCRC==0, CRC check is skipped.
+  std::cerr << " vtkIGTLToMRMLImage::IGTLToMRML() CRC = " << this->CheckCRC << std::endl;
+  int c = imgMsg->Unpack(this->CheckCRC);
 
   if ((c & igtl::MessageHeader::UNPACK_BODY) == 0) // if CRC check fails
     {

@@ -89,6 +89,8 @@ vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()
   this->OutgoingMRMLNodeList.clear();
   this->IncomingMRMLNodeList.clear();
 
+  this->CheckCRC = 1;
+
 }
 
 //----------------------------------------------------------------------------
@@ -315,6 +317,31 @@ int vtkMRMLIGTLConnectorNode::SetTypeClient(std::string hostname, int port)
   this->ServerHostname = hostname;
   this->Modified();
   return 1;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLIGTLConnectorNode::SetCheckCRC(int c)
+{
+
+  if (c == 0)
+    {
+    this->CheckCRC = 0;
+    }
+  else
+    {
+    this->CheckCRC = 1;
+    }
+
+  // Set CheckCRC flag in each converter
+  MessageConverterListType::iterator iter;
+  for (iter = this->MessageConverterList.begin();
+       iter != this->MessageConverterList.end();
+       iter ++)
+    {
+    (*iter)->SetCheckCRC(this->CheckCRC);
+    }
+
 }
 
 
@@ -820,6 +847,9 @@ int vtkMRMLIGTLConnectorNode::RegisterMessageConverter(vtkIGTLToMRMLBase* conver
         }
       
       }
+
+    // Set CRC check flag
+    converter->SetCheckCRC(this->CheckCRC);
 
     // Add the converter to the list
     this->MessageConverterList.push_back(converter);

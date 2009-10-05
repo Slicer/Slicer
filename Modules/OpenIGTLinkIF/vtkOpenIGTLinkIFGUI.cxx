@@ -53,6 +53,7 @@
 #include "vtkKWEvent.h"
 #include "vtkKWOptions.h"
 #include "vtkKWComboBox.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
 
 #include "vtkKWTreeWithScrollbars.h"
 #include "vtkKWTree.h"
@@ -134,6 +135,7 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   this->ConnectorStatusCheckButton = NULL;
   this->ConnectorAddressEntry = NULL;
   this->ConnectorPortEntry = NULL;
+  this->CheckCRCButtonSet = NULL;
 
   //----------------------------------------------------------------
   // Data I/O Configuration frame
@@ -311,6 +313,12 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
     this->ConnectorPortEntry->Delete();
     }
 
+  if (this->CheckCRCButtonSet)
+    {
+    this->CheckCRCButtonSet->SetParent(NULL);
+    this->CheckCRCButtonSet->Delete();
+    }
+
   //----------------------------------------------------------------
   // Etc Frame
 
@@ -437,6 +445,15 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
     this->ConnectorPortEntry
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+
+  if (this->CheckCRCButtonSet)
+    {
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(0)
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(1)
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+
 
   //----------------------------------------------------------------
   // Data I/O Configuration frame
@@ -607,6 +624,11 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
     ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ConnectorPortEntry
     ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+  this->CheckCRCButtonSet->GetWidget()->GetWidget(0)
+    ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->CheckCRCButtonSet->GetWidget()->GetWidget(1)
+    ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   //----------------------------------------------------------------
   // Data I/O Configuration frame
@@ -900,7 +922,38 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
       }
     UpdateConnectorList(UPDATE_SELECTED_ONLY);
     }
-
+  else if (this->CheckCRCButtonSet->GetWidget()->GetWidget(0)
+           == vtkKWRadioButton::SafeDownCast(caller)
+           && event == vtkKWRadioButton::SelectedStateChangedEvent
+           && this->CheckCRCButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1)
+    {
+    int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
+    if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
+      {
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
+      if (connector)
+        {
+        connector->SetCheckCRC(1);
+        }
+      }
+    }
+  else if (this->CheckCRCButtonSet->GetWidget()->GetWidget(1)
+           == vtkKWRadioButton::SafeDownCast(caller)
+           && event == vtkKWRadioButton::SelectedStateChangedEvent
+           && this->CheckCRCButtonSet->GetWidget()->GetWidget(1)->GetSelectedState() == 1)
+    {
+    int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
+    if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
+      {
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
+      if (connector)
+        {
+        connector->SetCheckCRC(0);
+        }
+      }
+    }
   else if (this->EnableAdvancedSettingButton == vtkKWCheckButton::SafeDownCast(caller)
            && event == vtkKWCheckButton::SelectedStateChangedEvent )
     {
@@ -1658,6 +1711,23 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               portLabel->GetWidgetName() , this->ConnectorPortEntry->GetWidgetName());
 
+  this->CheckCRCButtonSet = vtkKWRadioButtonSetWithLabel::New();
+  this->CheckCRCButtonSet->SetParent( controlFrame->GetFrame() );
+  this->CheckCRCButtonSet->Create();
+  this->CheckCRCButtonSet->SetLabelWidth(8);
+  this->CheckCRCButtonSet->SetLabelText("CRC: ");
+  this->CheckCRCButtonSet->GetWidget()->PackHorizontallyOn();
+
+  vtkKWRadioButton* bt0 = this->CheckCRCButtonSet->GetWidget()->AddWidget(0);
+  vtkKWRadioButton* bt1 = this->CheckCRCButtonSet->GetWidget()->AddWidget(1);
+
+  bt0->SetText("Check");
+  bt1->SetText("Ignore");
+  bt0->SelectedStateOn();
+
+  this->Script("pack %s -side left -anchor w -fill x -padx 2 -pady 2", 
+               this->CheckCRCButtonSet->GetWidgetName());
+
   portFrame->Delete();
   portLabel->Delete();
   typeLabel->Delete();
@@ -1958,8 +2028,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   visCtrlFrame->Delete();
   driverFrame->Delete();
   imageSourceFrame->Delete();
-  //imageSourceLabel->Delete();
   displayFrame->Delete();
+
 }
 
 
@@ -2567,6 +2637,12 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorPropertyFrame(int i)
     this->ConnectorPortEntry->EnabledOff();
     this->ConnectorPortEntry->UpdateEnableState();
 
+    // CRC
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(0)->SelectedStateOff();
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(1)->SelectedStateOff();
+    this->CheckCRCButtonSet->GetWidget()->EnabledOff();
+    this->CheckCRCButtonSet->GetWidget()->UpdateEnableState();
+
     return;
     }
 
@@ -2682,6 +2758,19 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorPropertyFrame(int i)
     this->ConnectorPortEntry->EnabledOn();
     }
   this->ConnectorPortEntry->UpdateEnableState();
+
+
+  // CRC Check
+  if (connector->GetCheckCRC())
+    {
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(0)->SelectedStateOn();
+    }
+  else
+    {
+    this->CheckCRCButtonSet->GetWidget()->GetWidget(1)->SelectedStateOn();
+    }
+  this->CheckCRCButtonSet->GetWidget()->EnabledOn();
+  this->CheckCRCButtonSet->GetWidget()->UpdateEnableState();
 
 }
 

@@ -41,6 +41,7 @@ class vtkKWFrame;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWTreeWithScrollbars;
 class vtkSlicerNodeSelectorWidget;
+class vtkKWRadioButtonSetWithLabel;
 
 class vtkTransform;
 
@@ -233,6 +234,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWCheckButton*    ConnectorStatusCheckButton;
   vtkKWEntry*          ConnectorAddressEntry;
   vtkKWEntry*          ConnectorPortEntry;
+  vtkKWRadioButtonSetWithLabel* CheckCRCButtonSet;
 
   //----------------------------------------------------------------
   // Data I/O Configuration frame
@@ -262,6 +264,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWCheckButton* LocatorCheckButton;
   bool              IsSliceOrientationAdded;
   // Module logic and mrml pointers
+
 
   //----------------------------------------------------------------
   // Logic Values

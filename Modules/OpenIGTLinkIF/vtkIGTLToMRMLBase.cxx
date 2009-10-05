@@ -28,6 +28,7 @@ vtkCxxRevisionMacro(vtkIGTLToMRMLBase, "$Revision$");
 //---------------------------------------------------------------------------
 vtkIGTLToMRMLBase::vtkIGTLToMRMLBase()
 {
+  this->CheckCRC = 1;
 }
 
 

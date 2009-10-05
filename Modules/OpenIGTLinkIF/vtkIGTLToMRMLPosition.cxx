@@ -86,8 +86,9 @@ int vtkIGTLToMRMLPosition::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRML
   positionMsg->Copy(buffer);  // !! TODO: copy makes performance issue.
 
   // Deserialize the transform data
-  // If you want to skip CRC check, call Unpack() without argument.
-  int c = positionMsg->Unpack(1);
+  // If CheckCRC==0, CRC check is skipped.
+  int c = positionMsg->Unpack(this->CheckCRC);
+
   if (!(c & igtl::MessageHeader::UNPACK_BODY)) // if CRC check fails
     {
     // TODO: error handling

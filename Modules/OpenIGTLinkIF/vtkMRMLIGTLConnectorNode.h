@@ -161,6 +161,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   int SetTypeClient(std::string hostname, int port);
   //ETX
 
+  vtkGetMacro( CheckCRC, int );
+  void SetCheckCRC(int c);
+
+  
   //----------------------------------------------------------------
   // Thread Control
   //----------------------------------------------------------------
@@ -300,6 +304,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   MRMLNodeListType          OutgoingMRMLNodeList;
   MRMLNodeListType          IncomingMRMLNodeList;
   
+  int CheckCRC;
   
 };
 

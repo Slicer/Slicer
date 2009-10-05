@@ -61,6 +61,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   //ETX
   virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg) { return 0; };
 
+  vtkGetMacro( CheckCRC, int );
+  vtkSetMacro( CheckCRC, int );
 
  protected:
   vtkIGTLToMRMLBase();
@@ -72,7 +74,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   // list of IGTL names (used only when the class supports multiple IGTL names)
   std::vector<std::string>  IGTLNames;
   //ETX
-
+  
+  int CheckCRC;
   
 };
 
