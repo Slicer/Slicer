@@ -441,6 +441,7 @@ void vtkSlicerMRMLTreeWidget::HardenTransformCallback(const char *id)
 
   tbnode->SetAndObserveTransformNodeID(NULL);
   tbnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+  tbnode->SetModifiedSinceRead(1);
   this->UpdateTreeFromMRML();
 }
  

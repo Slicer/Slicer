@@ -215,6 +215,7 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL)
       {
       this->MRMLScene->SaveStateForUndo(node);
+      node->SetModifiedSinceRead(1);
       }
     if (this->MatrixWidget->GetMatrix4x4() == NULL)
       {
@@ -232,6 +233,7 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL)
       {
       this->MRMLScene->SaveStateForUndo(node);
+      node->SetModifiedSinceRead(1);
       }
 
     if (this->MatrixWidget->GetMatrix4x4() == NULL)
@@ -568,6 +570,7 @@ void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
   if (node != NULL)
     {
     this->MRMLScene->SaveStateForUndo(node);
+    node->SetModifiedSinceRead(1);
     this->TransformChangedCallback(val);
     }
 }
@@ -671,6 +674,7 @@ void vtkSlicerTransformEditorWidget::RotationChangingCallback(int axis, double v
   if (node != NULL)
     {
     this->MRMLScene->SaveStateForUndo(node);
+    node->SetModifiedSinceRead(1);
     this->RotationChangedCallback(axis, val);
     }
 }
