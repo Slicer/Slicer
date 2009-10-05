@@ -56,6 +56,7 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   set o(cutter) [vtkNew vtkCutter]
   set o(plane) [vtkNew vtkPlane]
   $o(cutter) SetCutFunction $o(plane)
+  $o(cutter) SetGenerateCutScalars 0 ;# these would be value of the plane at 0, not cut input scalars
   set o(cutTransform) [vtkNew vtkTransform]
   set o(cutTransformFilter) [vtkNew vtkTransformPolyDataFilter]
   $o(cutTransformFilter) SetInputConnection [$o(cutter) GetOutputPort]
@@ -176,6 +177,48 @@ itcl::body ModelSWidget::highlight { } {
     set displayNode [$modelNode GetDisplayNode]
     if { $displayNode != "" } {
       set color [$displayNode GetColor]
+      $o(mapper) SetScalarVisibility 0
+
+
+      #
+      # code below follows vtkSlicerViewerWidget::SetModelDisplayProperty
+      # - it cannot be used, because vtkCutter does not generate 
+      #   cut versions of the scalar fields of the polydata
+      # - also vtkTransformPolyDataFilter may interfere with the scalars
+      #   (not investigated)
+      # - even if the scalars were preserved, for point data there would be a problem with 
+      #   discrete values (label maps) since they would be interpolated
+      #   before being mapped through the color lookup table
+      #
+      if { 0 } {
+        $o(mapper) SetScalarVisibility [$displayNode GetScalarVisibility]
+        set colorNode [$displayNode GetColorNode]
+        if { $colorNode != "" } {
+          set lut [$colorNode GetLookupTable]
+          $o(mapper) SetLookupTable $lut
+        }
+        set polyData [$modelNode GetPolyData]
+        set scalarName [$displayNode GetActiveScalarName]
+        if { $scalarName != "" } {
+          set pointData [$polyData GetPointData]
+          set pointScalars [$pointData GetScalars $scalarName]
+          set cellData [$polyData GetCellData]
+          set cellScalars [$cellData GetScalars $scalarName]
+          if { $pointScalars != "" } {
+            $o(mapper) SetScalarModeToUsePointData
+            $o(mapper) SetColorModeToMapScalars
+            $o(mapper) UseLookupTableScalarRangeOff
+            eval $o(mapper) SetScalarRange [$displayNode GetScalarRange]
+          } elseif { $cellScalars != "" } {
+            $o(mapper) SetScalarModeToUseCellData
+            $o(mapper) SetColorModeToDefault
+            $o(mapper) UseLookupTableScalarRangeOff
+            eval $o(mapper) SetScalarRange [$displayNode GetScalarRange]
+          } else {
+            $o(mapper) SetScalarModeToDefault
+          }
+        }
+      }
     }
   }
 
