@@ -700,10 +700,15 @@ void vtkSlicerVolumeRenderingHelper::CreatePerformanceTab()
     double scalarRange[2];
     scalarRange[0] = 0.0;
     scalarRange[1] = 0.0;
-    if (this->Gui->GetNS_ImageData()->GetSelected())
-    {
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-    }
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+    if (volumeNode)
+      {
+      vtkImageData *imageData = volumeNode->GetImageData();
+      if (imageData)
+        {
+        imageData->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+        }
+      }
     this->SC_GPURayCastDepthPeelingThreshold=vtkKWScaleWithEntry::New();
     this->SC_GPURayCastDepthPeelingThreshold->SetParent(this->FrameGPURayCasting->GetFrame());
     this->SC_GPURayCastDepthPeelingThreshold->Create();
@@ -1495,13 +1500,25 @@ void vtkSlicerVolumeRenderingHelper::Rendering(void)
     this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
     if (this->Gui->GetNS_ImageData()->GetSelected())
-    {
-        this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+      {
+      this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     
-    double scalarRange[2];
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-    this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
-    }
+      double scalarRange[2];
+      scalarRange[0] = 0;
+      scalarRange[1] = 1;
+      vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+      if (volumeNode)
+        {
+        vtkImageData *imageData = volumeNode->GetImageData();
+        if (imageData)
+          {
+          this->VRMB_ColorMode->SetRange(imageData->GetPointData()->GetScalars()->GetRange());
+          imageData->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+          }
+        }
+      this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
+      }
+
     //create the raycast mapper II
     this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
     this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
@@ -2113,10 +2130,16 @@ void vtkSlicerVolumeRenderingHelper::UpdateGUIElements(void)
   {
   this->VRMB_ColorMode->SetColorTransferFunction(this->Gui->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty()->GetRGBTransferFunction());
   }
-  if (this->Gui->GetNS_ImageData()->GetSelected())
-  {
-  this->VRMB_ColorMode->SetRange(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange());
-  }
+
+  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+  if (volumeNode)
+    {
+    vtkImageData *imageData = volumeNode->GetImageData();
+    if (imageData)
+      {
+      this->VRMB_ColorMode->SetRange(imageData->GetPointData()->GetScalars()->GetRange());
+      }
+    }
   this->UpdateingGUI = 0;
   this->ProcessCropping(0,0,0);
   this->ProcessEnableDisableCropping(this->Gui->GetParametersNode()->GetCroppingEnabled());
