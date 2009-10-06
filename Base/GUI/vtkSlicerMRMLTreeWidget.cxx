@@ -495,11 +495,16 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateTreeFromMRML();
     }
-  if ( this->MRMLScene && (event == vtkMRMLScene::SceneEditedEvent) )
+  else if (this->MRMLScene && (event == vtkMRMLScene::NodeAddedEvent) && 
+     calldata_tnode)
     {
     this->UpdateTreeFromMRML();
     }
-  if (caller_node  && event == vtkMRMLDisplayableNode::DisplayModifiedEvent) 
+  else if ( this->MRMLScene && (event == vtkMRMLScene::SceneEditedEvent) )
+    {
+    this->UpdateTreeFromMRML();
+    }
+  else if (caller_node  && event == vtkMRMLDisplayableNode::DisplayModifiedEvent) 
     {
     this->UpdateNodeInTree(caller_node);
     }
@@ -643,6 +648,8 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
                                             (vtkCommand *)this->GUICallbackCommand );
 
   frame->Delete();
+
+  this->AddMRMLObservers();
 }
 
 //---------------------------------------------------------------------------
