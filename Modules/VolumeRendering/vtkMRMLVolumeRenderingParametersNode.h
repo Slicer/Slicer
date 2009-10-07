@@ -156,6 +156,24 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (CurrentVolumeMapper, int);
   vtkSetMacro (CurrentVolumeMapper, int);
 
+  vtkGetMacro (GPUMemorySize, int);
+  vtkSetMacro (GPUMemorySize, int);
+
+  vtkGetMacro (CPURaycastMode, int);
+  vtkSetMacro (CPURaycastMode, int);
+
+  vtkGetMacro (DepthPeelingThreshold, float);
+  vtkSetMacro (DepthPeelingThreshold, float);
+
+  vtkGetMacro (ICPEScale, float);
+  vtkSetMacro (ICPEScale, float);
+
+  vtkGetMacro (ICPESmoothness, float);
+  vtkSetMacro (ICPESmoothness, float);
+
+  vtkGetMacro (GPURaycastTechnique, int);
+  vtkSetMacro (GPURaycastTechnique, int);
+
 protected:
   vtkMRMLVolumeRenderingParametersNode();
   ~vtkMRMLVolumeRenderingParametersNode();
@@ -193,8 +211,10 @@ protected:
   double  EstimatedSampleDistance;
   int     ExpectedFPS;
 
-  /* values of CurrentVolumeMapper
-   * -1: not initilized (default value)
+  /* tracking which mapper to use, not saved into scene file
+   * because different machines may or maybe not support the same mapper
+   * values of CurrentVolumeMapper
+   *-1: not initialized (default)
    * 0: CPU ray cast
    * 1: GPU ray cast
    * 2: GPU ray cast II
@@ -202,6 +222,39 @@ protected:
    * 4: CUDA ray cast
    */
   int CurrentVolumeMapper;
+
+  /* tracking GPU memory size, not saved into scene file
+   * because different machines may have different GPU memory
+   * values
+   * 0: 128M
+   * 1: 256M (default)
+   * 2: 512M
+   * 3: 1.0G
+   * 4: 1.5G
+   * 5: 2.0G
+   */
+  int GPUMemorySize;
+
+  /* possible values
+   * 0: composite (default)
+   * 1: MIP
+   */
+  int CPURaycastMode;
+
+  float DepthPeelingThreshold;
+
+  float ICPEScale;
+  float ICPESmoothness;
+
+  /* techniques in GPU ray cast
+   * 0: composite with directional lighting (default)
+   * 1: composite with fake lighting (edge coloring, faster)
+   * 2: MIP
+   * 3: MINIP
+   * 4: Gradient Magnitude Opacity Modulation
+   * 5: Illustrative Context Preserving Exploration
+   * */
+  int GPURaycastTechnique;
 };
 
 #endif

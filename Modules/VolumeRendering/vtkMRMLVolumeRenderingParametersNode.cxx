@@ -80,6 +80,16 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->EstimatedSampleDistance = 1.0;
 
   this->CurrentVolumeMapper = -1;
+  this->GPUMemorySize = 1;
+
+  this->CPURaycastMode = 0;
+
+  this->DepthPeelingThreshold = 0.0f;
+
+  this->ICPEScale = 1.0f;
+  this->ICPESmoothness = 0.5f;
+
+  this->GPURaycastTechnique = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -109,6 +119,11 @@ vtkMRMLVolumeRenderingParametersNode::~vtkMRMLVolumeRenderingParametersNode()
     {
     SetAndObserveROINodeID(NULL);
     }
+
+  if (this->PresetsNodeID)
+    delete [] this->PresetsNodeID;
+  if (this->FgPresetsNodeID)
+    delete [] this->FgPresetsNodeID;
 }
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
@@ -156,13 +171,6 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       this->SetFgVolumePropertyNodeID(attValue);
       continue;
     }
-    if (!strcmp(attName, "currentVolumeMapper"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->CurrentVolumeMapper;
-      continue;
-    }
     if (!strcmp(attName,"croppingEnabled"))
     {
       std::stringstream ss;
@@ -178,6 +186,48 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
         ss >> this->CroppingRegionPlanes[i];
       continue;
     }
+    if (!strcmp(attName,"currentVolumeMapper"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CurrentVolumeMapper;
+      continue;
+    }
+    if (!strcmp(attName,"cpuRaycastMode"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CPURaycastMode;
+      continue;
+    }
+    if (!strcmp(attName,"depthPeelingThreshold"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->DepthPeelingThreshold;
+      continue;
+    }
+    if (!strcmp(attName,"icpeScale"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->ICPEScale;
+      continue;
+    }
+    if (!strcmp(attName,"icpeSmoothness"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->ICPESmoothness;
+      continue;
+    }
+    if (!strcmp(attName,"gpuRaycastTechnique"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->GPURaycastTechnique;
+      continue;
+    }
   }
 }
 
@@ -190,7 +240,6 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " volumeNodeID=\"" << (this->VolumeNodeID ? this->VolumeNodeID : "NULL") << "\"";
   of << indent << " fgVolumeNodeID=\"" << (this->FgVolumeNodeID ? this->FgVolumeNodeID : "NULL") << "\"";
-  of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
   of << indent << " croppingEnabled=\""<< this->CroppingEnabled << "\"";
   of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
   of << indent << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
@@ -206,6 +255,13 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
       of<<" ";
   }
   of << "\"";
+
+  of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
+  of << indent << " cpuRaycastMode=\"" << this->CPURaycastMode << "\"";
+  of << indent << " depthPeelingThreshold=\"" << this->DepthPeelingThreshold << "\"";
+  of << indent << " icpeScale=\"" << this->ICPEScale << "\"";
+  of << indent << " icpeSmoothness=\"" << this->ICPESmoothness << "\"";
+  of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -277,6 +333,14 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetFgVolumePropertyNodeID(node->GetFgVolumePropertyNodeID());
   this->SetROINodeID(node->GetROINodeID());
   this->SetCroppingEnabled(node->GetCroppingEnabled());
+  this->SetCurrentVolumeMapper(node->GetCurrentVolumeMapper());
+  this->SetGPUMemorySize(node->GetGPUMemorySize());
+  this->SetEstimatedSampleDistance(node->GetEstimatedSampleDistance());
+  this->SetDepthPeelingThreshold(node->GetDepthPeelingThreshold());
+  this->SetICPEScale(node->GetICPEScale());
+  this->SetICPESmoothness(node->GetICPESmoothness());
+  this->SetCPURaycastMode(node->GetCPURaycastMode());
+  this->SetGPURaycastTechnique(node->GetGPURaycastTechnique());
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
