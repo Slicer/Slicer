@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
 #include <string>
@@ -113,14 +114,6 @@ public:
     vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
     virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
 
-    vtkSetMacro(PipelineInitialized,int);
-    vtkGetMacro(PipelineInitialized,int);
-    vtkBooleanMacro(PipelineInitialized,int);
-
-    vtkSetMacro(PipelineInitializedFg,int);
-    vtkGetMacro(PipelineInitializedFg,int);
-    vtkBooleanMacro(PipelineInitializedFg,int);
-
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
@@ -135,7 +128,8 @@ public:
     vtkGetObjectMacro (RenderingFrame, vtkSlicerModuleCollapsibleFrame);
     vtkGetObjectMacro (Presets, vtkMRMLScene);
     vtkGetObjectMacro (Helper, vtkSlicerVolumeRenderingHelper);
-    vtkGetObjectMacro (ParametersNode, vtkMRMLVolumeRenderingParametersNode);
+
+    vtkMRMLVolumeRenderingParametersNode* GetCurrentParametersNode();
 
 protected:
     vtkVolumeRenderingGUI();
@@ -149,7 +143,7 @@ protected:
 
     // Description:
     // Updates parameters values in MRML node based on GUI widgets
-    void UpdateMRML();
+//    void UpdateMRML();
 
     // Description:
     // GUI elements
@@ -158,7 +152,7 @@ protected:
     // Pointer to the module's logic class
     vtkVolumeRenderingLogic *Logic;
 
-    vtkMRMLVolumeRenderingParametersNode *ParametersNode;
+    vtkMRMLVolumeRenderingScenarioNode *ScenarioNode;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking
@@ -167,9 +161,6 @@ protected:
     // Description:
     // A poitner to the interactor style, useful for picking
     vtkSlicerViewerInteractorStyle *InteractorStyle;
-
-    int PipelineInitialized;//0=no,1=Yes
-    int PipelineInitializedFg;//0=no,1=Yes
 
     void InitializePipelineNewVolumeProperty();
     void InitializePipelineNewVolumePropertyFg();
@@ -180,9 +171,16 @@ protected:
     void InitializePipelineFromImageData();
     void InitializePipelineFromImageDataFg();
 
+    void InitializePipelineFromParametersNode();
+
+    void LoadPresets();
+
     //OWN GUI Elements
 
-    //Frame Save/Load
+    //Frame input
+
+    vtkSlicerNodeSelectorWidget *NS_ParametersSet;
+
     vtkSlicerNodeSelectorWidget *NS_ImageData;
     vtkSlicerNodeSelectorWidget *NS_ImageDataFg;
     vtkSlicerNodeSelectorWidget *NS_ImageDataLabelmap;
@@ -202,12 +200,16 @@ protected:
 
     void CreateRenderingFrame(void);
     void DeleteRenderingFrame(void);
+
     vtkSlicerVolumeRenderingHelper *Helper;
 
-
     int UpdatingGUI;
+
     int ProcessingGUIEvents;
     int ProcessingMRMLEvents;
+
+    // check abort event
+    void CheckAbort(void);
 };
 
 #endif
