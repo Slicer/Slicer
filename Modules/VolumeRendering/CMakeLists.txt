@@ -47,6 +47,7 @@ set(VolumeRendering_SRCS
   vtkVolumeRenderingGUI.cxx
   vtkVolumeRenderingLogic.cxx
   vtkMRMLVolumeRenderingParametersNode.cxx
+  vtkMRMLVolumeRenderingScenarioNode.cxx
   vtkSlicerVolumeRenderingHelper.cxx
   vtkSlicerVRMenuButtonColorMode.cxx
   )
