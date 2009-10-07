@@ -11,6 +11,15 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
+
+//---------------------------------------------------------------------------
+// Slicer3_USE_QT
+//
+#ifdef Slicer3_USE_QT
+#include "qSlicerModuleTransform.h"
+#include "qSlicerApplication.h"
+#endif
+
 #include "vtkOpenGLRenderWindow.h"
 #include "vtkRenderWindow.h"
 
@@ -60,6 +69,9 @@
 #include "vtkSlicerROILogic.h"
 #include "vtkSlicerROIGUI.h"
 
+//---------------------------------------------------------------------------
+// Slicer3_USE_PYTHON
+//
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"
 
@@ -70,8 +82,6 @@ extern "C" {
 #include "vtkTclUtil.h"
 
 #endif
-
-//#define Slicer3_USE_QT
 
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Directory.hxx>
@@ -831,6 +841,10 @@ int Slicer3_main(int argc, char *argv[])
   vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
+  slicerApp->SetMRMLScene( scene );
+  #ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->setMRMLScene( scene ); 
+  #endif
     
   // Create the application Logic object, 
   // Create the application GUI object
@@ -1414,6 +1428,12 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->InitializeSlicesControlGUI();
   appGUI->InitializeViewControlGUI();
   //    appGUI->InitializeNavigationWidget();
+  
+#ifdef Slicer3_USE_QT
+  // --- Transforms2 module
+  slicerApp->SplashMessage("Initializing Transforms2 Module...");
+  slicerApp->AddAndShowModule(new qSlicerModuleTransform());
+#endif
 
  // --- First scene needs a crosshair to be added manually
   vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
@@ -1538,7 +1558,7 @@ int Slicer3_main(int argc, char *argv[])
   // get the Tcl name so the vtk class will be registered in the interpreter
   // as a byproduct
   // - set some handy variables so it will be easy to access these classes
-  ///  from   the tkcon
+  //  from the tkcon
   // - all the variables are put in the slicer3 tcl namespace for easy access
   // - note, slicerApp is loaded as $::slicer3::Application above, so it
   //   can be used from scripts that run without the GUI

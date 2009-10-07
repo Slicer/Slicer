@@ -4,8 +4,12 @@
 #   include "PythonQt.h"
 #   include "PythonQt_QtAll.h"
 # endif
-#include <QApplication>
+
+#include "qSlicerApplication.h"
+#include "qSlicerAbstractModule.h"
 #include "QtSlicerWebKit.h"
+#include <QHash>
+
 #endif
 
 #include <sstream>
@@ -32,6 +36,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRegistryHelper.h"
 #include "vtkSlicerGUILayout.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLLayoutNode.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerTheme.h"
@@ -213,10 +218,36 @@ private:
 //
 // vtkStandardNewMacro(vtkSlicerOutputWindow);
 
+//----------------------------------------------------------------------------
+class vtkSlicerApplication::vtkInternal
+{
+public:
+  #ifdef Slicer3_USE_QT
+  typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
+  typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
+  #endif
+  
+  vtkInternal()
+    {
+    #ifdef Slicer3_USE_QT
+    this->qApplication = 0; 
+    #endif
+    
+    this->MRMLScene = 0; 
+    }
+  vtkMRMLScene*       MRMLScene; 
+  
+  #ifdef Slicer3_USE_QT
+  qSlicerApplication*                    qApplication;
+  QHash<QString, qSlicerAbstractModule*> ModuleList; 
+  #endif
+};
+
 //---------------------------------------------------------------------------
 vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     this->ApplicationGUI = NULL;
+    this->Internal = new vtkInternal;
 
     // note: these are fixed size arrays, not pointers,
     // so initializing them to null string is correct
@@ -334,18 +365,23 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 #ifdef Slicer3_USE_QT
   char *argv = NULL;
   int argc = 0;
-  this->qapp = new QApplication(argc, &argv);
+  this->Internal->qApplication = new qSlicerApplication(argc, &argv);
 
-#ifdef Slicer3_USE_PYTHONQT
+ #ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
   PythonQt_QtAll::init();
-#endif
+ #endif
 #endif
 
 }
 
 //---------------------------------------------------------------------------
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
+
+#ifdef Slicer3_USE_QT
+    this->Internal->qApplication->quit(); 
+#endif
+    delete this->Internal;
 
     if ( this->DefaultGeometry )
       {
@@ -626,6 +662,82 @@ vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name 
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplication::SetMRMLScene( vtkMRMLScene* scene)
+{
+  this->Internal->MRMLScene = scene; 
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
+{
+  return this->Internal->MRMLScene; 
+}
+
+#ifdef Slicer3_USE_QT
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::AddAndShowModule(qSlicerAbstractModule * module)
+{
+  this->AddModule( module ); 
+  module->setMRMLScene( this->GetMRMLScene() ); 
+  module->show(); 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::AddModule(qSlicerAbstractModule * module)
+{
+  if (!module)
+    {
+    return;
+    }
+  QString name = module->moduleName(); 
+  
+  if (this->Internal->ModuleList.contains(name))
+    {
+    return;
+    }
+  this->Internal->ModuleList[name] = module; 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::RemoveModule(qSlicerAbstractModule * module)
+{
+  if (!module)
+    {
+    return;
+    }
+  QString name = module->moduleName(); 
+  vtkInternal::ModuleListConstIterator iter = this->Internal->ModuleList.find( name ); 
+  
+  if ( iter == this->Internal->ModuleList.constEnd())
+    {
+    return;
+    }
+}
+
+//---------------------------------------------------------------------------
+qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *name )
+{
+  vtkInternal::ModuleListConstIterator iter = this->Internal->ModuleList.find( name ); 
+  if ( iter == this->Internal->ModuleList.constEnd())
+    {
+    return 0;
+    }
+  return *iter; 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::ShowModule ( const char *name )
+{
+  qSlicerAbstractModule * module = this->GetModule(name);
+  if (!name)
+    {
+    return; 
+    }
+  module->show(); 
+}
+#endif
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplication::ConfigureApplication ( ) {
 
     this->PromptBeforeExitOn ( );
@@ -694,7 +806,7 @@ void vtkSlicerApplication::DoOneTclEvent ( )
     broker->ProcessEventQueue();
     }
 #ifdef Slicer3_USE_QT
-  this->qapp->processEvents();
+  this->Internal->qApplication->processEvents();
 #endif
 }
 
@@ -2326,7 +2438,6 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
   
   return Superclass::GetColorPickerDialog();
 }
-
 
 //----------------------------------------------------------------------------
 // Temporary test method

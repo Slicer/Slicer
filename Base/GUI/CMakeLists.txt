@@ -13,6 +13,10 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
+  ${SlicerBaseGUI2_SOURCE_DIR}
+  ${SlicerBaseGUI2_BINARY_DIR}
+  ${QMRMLWidgets_SOURCE_DIR}
+  ${QMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}

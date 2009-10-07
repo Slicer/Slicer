@@ -1,0 +1,7 @@
+<RCC>
+  <qresource>
+    <file>Icons/edit.png</file>
+    <file>Icons/minus-16.png</file>
+    <file>Icons/plus-16.png</file>
+  </qresource>
+</RCC>

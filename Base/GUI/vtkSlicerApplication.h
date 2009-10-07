@@ -9,6 +9,13 @@
 
 #include "vtkSlicerApplicationGUI.h"
 
+#ifdef Slicer3_USE_QT
+//BTX
+class qSlicerApplication;
+class qSlicerAbstractModule; 
+//ETX
+#endif
+
 class vtkSlicerModuleGUI;
 class vtkSlicerGUILayout;
 class vtkSlicerTheme;
@@ -17,11 +24,6 @@ class vtkSlicerGUICollection;
 class DisplayMessageQueue;
 //ETX
 
-//BTX
-#ifdef Slicer3_USE_QT
-class QApplication;
-#endif
-//ETX
 
 // Description:
 // Contains slicer's style, application and collection of associated guis.
@@ -62,6 +64,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     virtual void AddModuleGUI ( vtkSlicerModuleGUI *gui );
     virtual void RemoveModuleGUI ( vtkSlicerModuleGUI *gui );
     virtual vtkSlicerModuleGUI* GetModuleGUIByName ( const char *name );
+    
+    // Description:
+    // Set/Get MRML scene
+    void SetMRMLScene( vtkMRMLScene* scene); 
+    vtkMRMLScene* GetMRMLScene(); 
+    
+#ifdef Slicer3_USE_QT
+    // Description:
+    //BTX
+    virtual void AddModule(qSlicerAbstractModule * module); 
+    virtual void AddAndShowModule(qSlicerAbstractModule * module); 
+    virtual void RemoveModule(qSlicerAbstractModule * module); 
+    virtual qSlicerAbstractModule* GetModule( const char *name ); 
+    virtual void ShowModule ( const char *name ); 
+    //ETX
+#endif
 
     // Description:
     // These methods manage windows associated with the application
@@ -395,12 +413,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetSvnUrl();
   const char* GetSvnRevision();
 
-#ifdef Slicer3_USE_QT
-//BTX
-  QApplication* GetQApplication()
-    {return this->qapp;};
-//ETX
-#endif
   void TestQtSlicerWebKit(const char *url);
 
  protected:
@@ -504,11 +516,12 @@ private:
 
   // have we added the mrml color table nodes to the color picker dialog yet?
   int ColorSwatchesAdded;
+
 //BTX
-#ifdef Slicer3_USE_QT
-  QApplication *qapp;
-#endif
+  class vtkInternal;
+  vtkInternal* Internal;
 //ETX
+
 }; 
 
 #endif

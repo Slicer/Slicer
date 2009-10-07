@@ -29,6 +29,19 @@ set(dirs ${dirs}
   #SIGN
   )
 
+#-----------------------------------------------------------------------------
+# QT related libraries
+#
+IF(Slicer3_USE_QT)
+set(dirs ${dirs}
+  QCTKWidgets
+  QMRMLWidgets
+  )
+ENDIF(Slicer3_USE_QT)
+
+#-----------------------------------------------------------------------------
+# CUDA
+#
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
 IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
@@ -41,6 +54,9 @@ IF(CUDA_SUPPORT_ENABLED)
   set (dirs ${dirs} CudaSupport)
 ENDIF(CUDA_SUPPORT_ENABLED)
 
+#-----------------------------------------------------------------------------
+# Set library properties
+#
 set(include_dirs)
 set(libs)
 

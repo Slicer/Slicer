@@ -87,6 +87,9 @@ set(CMAKE_MODULE_PATH "${VTK_CMAKE_DIR}" ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_D
 
 include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 
+## QT
+INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3FindQT.cmake)
+
 #-----------------------------------------------------------------------------
 # Top level slicer3 configurations
 #
@@ -162,19 +165,33 @@ endif(NOT KWWidgets_FOUND)
 include(${KWWidgets_USE_FILE})
 
 ## Qt
-SET(DESIRED_QT_VERSION 4)
-OPTION(Slicer3_USE_QT 
-  "Use Qt as an extra GUI library"
-  OFF)
-IF(Slicer3_USE_QT)
-  FIND_PACKAGE(Qt)
-  # use what QVTK built with
-  INCLUDE(${QT_USE_FILE})
-  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
-  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
-  SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
-  add_definitions(-DSlicer3_USE_QT)
-ENDIF(Slicer3_USE_QT)
+#
+# Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
+#
+SLICER3_SETUP_QT()
+
+#SET(DESIRED_QT_VERSION 4)
+# OPTION(Slicer3_USE_QT 
+#   "Use Qt as an extra GUI library"
+#   OFF)
+# IF(Slicer3_USE_QT)
+#   ## QT
+#   IF(VTK_USE_QVTK)
+#     #This find package should NOT be needed.
+#     FIND_PACKAGE(Qt4)
+#     IF(QT4_FOUND)
+#       SET(QT_USE_QTNETWORK ON)
+#       INCLUDE(${QT_USE_FILE})
+#       SET(Slicer3_USE_QT ON)
+#       ADD_DEFINITIONS(-DSlicer3_USE_QT)
+#     ELSE(QT4_FOUND)
+#       MESSAGE("Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
+#     ENDIF(QT4_FOUND)
+#   ELSE(VTK_USE_QVTK)
+#      MESSAGE("VTK was not configured to use QT, no QT-based code will be compiled in Slicer")
+#      SET(Slicer3_USE_QT OFF)
+#   ENDIF(VTK_USE_QVTK)
+# ENDIF(Slicer3_USE_QT)
 
 ## Teem
 find_package(Teem REQUIRED)
