@@ -1,19 +1,25 @@
 #ifndef __vtkVolumeRenderingLogic_h
 #define __vtkVolumeRenderingLogic_h
+
 #include "vtkSlicerModuleLogic.h"
 #include "vtkVolumeRendering.h"
 #include "vtkVolumeMapper.h"
 #include "vtkVolume.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
+class vtkSlicerGPURayCastVolumeMapper;
 class vtkCudaVolumeMapper;
+
+class vtkKWHistogramSet;
 
 class vtkRenderer;
 class vtkTimerLog;
+class vtkMatrix4x4;
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
 {
@@ -34,14 +40,45 @@ public:
   // Register local MRML nodes
   virtual void RegisterNodes();
 
+  void Reset();
 
-  vtkMRMLVolumeRenderingParametersNode* GetParametersNode();
+  void SetGUICallbackCommand(vtkCommand* callback);
+
+  vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
+  vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
+
+   /* setup mapper based on current parameters node
+    * return values:
+    * -1: requested mapper not supported
+    *  0: invalid input parameter
+    *  1: success
+    */
+  int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  // prepare volume property based on bg input volume
+  void SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   // Description:
   // Update MRML events
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                   unsigned long /*event*/,
                                   void * /*callData*/ );
+
+  vtkVolume* GetVolumeActor(){return this->Volume;}
+
+  void SetupHistograms(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
+
+  void SetExpectedFPS(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  /* return values:
+   * 0: cpu ray cast not used
+   * 1: success
+   */
+  int SetupCPURayCastInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
 
 protected:
   vtkVolumeRenderingLogic();
@@ -50,6 +87,41 @@ protected:
   void operator=(const vtkVolumeRenderingLogic&);
 
   static bool First;
+
+  // Description:
+  // The hardware accelerated texture mapper.
+  vtkSlicerVolumeTextureMapper3D *MapperTexture;
+
+  // Description:
+  // The hardware accelerated gpu ray cast mapper.
+  vtkCudaVolumeMapper *MapperCUDARaycast;
+
+  // Description:
+  // The hardware accelerated gpu ray cast mapper.
+  vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
+
+  // Description:
+  // The hardware accelerated multi-volume gpu ray cast mapper.
+  vtkSlicerGPURayCastVolumeMapper *MapperGPURaycastII;
+
+  // Description:
+  // The software accelerated software mapper
+  vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
+
+  // Description:
+  // Actor used for Volume Rendering
+  vtkVolume *Volume;
+
+  // Description:
+  // internal histogram instance (bg)
+  vtkKWHistogramSet *Histograms;
+
+  vtkCommand* GUICallback;
+
+protected:
+  void ComputeInternalVolumeSize(int index);
+  void CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output);
+  void EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode);
 };
 
 #endif
