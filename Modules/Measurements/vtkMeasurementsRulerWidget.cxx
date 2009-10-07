@@ -139,6 +139,8 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
 
   this->ResolutionEntry = NULL;
 
+  this->AllVisibilityMenuButton = NULL;
+
   // 3d elements
   this->ViewerWidget = NULL;
 
@@ -166,6 +168,12 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
   this->RemoveWidgetObservers();
 
   // gui elements
+  if ( this->AllVisibilityMenuButton )
+    {
+    this->AllVisibilityMenuButton->SetParent ( NULL );
+    this->AllVisibilityMenuButton->Delete();
+    this->AllVisibilityMenuButton = NULL;
+    }
   if (this->RulerSelectorWidget)
     {
     this->RulerSelectorWidget->SetParent(NULL);
@@ -387,12 +395,32 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
   vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
   if ( !appGUI )
     {
-    vtkErrorMacro ( "BuildGUI: got Null SlicerApplicationGUI" );
+    vtkErrorMacro ( "ProcessWidgetEvents: got Null SlicerApplicationGUI" );
     return;
     }
   
   this->ProcessingWidgetEvent = event;
 
+  // process events that apply to all lists
+  vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
+  if (menu != NULL)
+    {
+    if ( menu == this->AllVisibilityMenuButton->GetMenu() )
+      {
+      // set visibility on all rulers
+      if ( menu->GetItemSelectedState ( "All Rulers Visible" ) == 1 )
+        {
+        this->ModifyAllRulerVisibility (1 );
+        }
+      else if ( menu->GetItemSelectedState ( "All Rulers Invisible" ) == 1 )
+        {
+        this->ModifyAllRulerVisibility (0 );
+        }
+      // call the update here as modifying the mrml nodes will bounce on the
+      // check in process mrml events for process this widget event
+      this->Update3DWidgetsFromMRML();
+      }
+    }
   // process ruler node selector events
   if (this->RulerSelectorWidget ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
@@ -730,13 +758,12 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("ProcessMRMLEvents already processing mrml event " << this->ProcessingMRMLEvent);
     return;
     }
-
   if (this->ProcessingWidgetEvent != 0)
     {
     vtkDebugMacro("ProcessMRMLEvents already processing widget event " << this->ProcessingWidgetEvent);
     return;
     }
-  
+
   this->ProcessingMRMLEvent = event;
   
  vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
@@ -753,7 +780,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     return;
     }
 
-// first check to see if there was a ruler list node deleted
+  // first check to see if there was a ruler list node deleted
   if (callScene != NULL &&
       callScene == this->MRMLScene &&
       event == vtkMRMLScene::NodeRemovedEvent)
@@ -806,7 +833,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     }
 
-  if (node == activeRulerNode)
+  else if (node == activeRulerNode)
     {
     if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
       {
@@ -829,31 +856,15 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->ProcessingMRMLEvent = 0;
       return;
       }
-    /*
-      else if ( event == an event that signals the end of moving a widget
-      {
-      if (node == NULL)
-      {
-      return;
-      }
-      vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve ruler node");
-      SetGUIFromList(activeRulerNode);
-      return;
-      }
-    */
     } // end of events on the active ruler node
-  
-  if (node == vtkMRMLMeasurementsRulerNode::SafeDownCast(this->RulerSelectorWidget->GetSelected()) &&// vtkMRMLMeasurementsRulerNode::SafeDownCast(caller) &&
-      event == vtkCommand::ModifiedEvent)
+  else if (node != NULL &&
+           event == vtkCommand::ModifiedEvent)
     {
-    if (activeRulerNode !=  vtkMRMLMeasurementsRulerNode::SafeDownCast(this->RulerSelectorWidget->GetSelected()))
-      {
-      // select it first off
-      this->SetRulerNodeID(vtkMRMLMeasurementsRulerNode::SafeDownCast(this->RulerSelectorWidget->GetSelected())->GetID());
-      }
-    this->UpdateWidget(activeRulerNode);
-    }
-  if (node != NULL &&
+    // it's a modified event on a ruler node that's not being displayed in the
+    // 2d gui, so update the 3d widget
+    this->Update3DWidget(node);
+    }  
+  else if (node != NULL &&
       event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
     vtkDebugMacro("Got transform modified event on node " << node->GetID());
@@ -1296,6 +1307,10 @@ void vtkMeasurementsRulerWidget::RemoveMRMLObservers ( )
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::AddWidgetObservers()
 {
+  if (this->AllVisibilityMenuButton)
+    {
+    this->AllVisibilityMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1369,7 +1384,12 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
 }
 
 //---------------------------------------------------------------------------
-void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( ) {
+void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
+{
+  if (this->AllVisibilityMenuButton)
+    {
+    this->AllVisibilityMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1458,17 +1478,73 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   
   this->Superclass::CreateWidget();
 
+  // to get at some top level icons
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkErrorMacro ( "CreateWidget: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkErrorMacro ( "CreateWidget: got Null SlicerApplicationGUI" );
+    return;
+    }
+  
+  // ---
+  // GLOBAL CONTROLS FRAME
+  vtkSlicerModuleCollapsibleFrame *controlAllFrame = vtkSlicerModuleCollapsibleFrame::New();
+  controlAllFrame->SetParent ( this->GetParent() );
+  controlAllFrame->Create();
+  controlAllFrame->SetLabelText ("Modify All Ruler Nodes" );
+  controlAllFrame->ExpandFrame();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                controlAllFrame->GetWidgetName(),
+                this->GetParent()->GetWidgetName());
+
+  //---
+  //--- create all visibility menu button and set up menu
+  //---
+  int index = 0;
+  this->AllVisibilityMenuButton = vtkKWMenuButton::New();
+  this->AllVisibilityMenuButton->SetParent ( controlAllFrame->GetFrame() );
+  this->AllVisibilityMenuButton->Create();
+  this->AllVisibilityMenuButton->SetBorderWidth(0);
+  this->AllVisibilityMenuButton->SetReliefToFlat();
+  this->AllVisibilityMenuButton->IndicatorVisibilityOff();
+  this->AllVisibilityMenuButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleOrInvisibleIcon() );
+  this->AllVisibilityMenuButton->SetBalloonHelpString ( "Set visibility on all ruler nodes." );
+  this->AllVisibilityMenuButton->GetMenu()->AddRadioButton ( "All Rulers Visible");
+  index = this->AllVisibilityMenuButton->GetMenu()->GetIndexOfItem ("All Rulers Visible");
+  this->AllVisibilityMenuButton->GetMenu()->SetItemImageToIcon (index, appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon()  );
+  this->AllVisibilityMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->AllVisibilityMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AllVisibilityMenuButton->GetMenu()->AddRadioButton ( "All Rulers Invisible");
+  index = this->AllVisibilityMenuButton->GetMenu()->GetIndexOfItem ("All Rulers Invisible");
+  this->AllVisibilityMenuButton->GetMenu()->SetItemImageToIcon (index, appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon()  );
+  this->AllVisibilityMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->AllVisibilityMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AllVisibilityMenuButton->GetMenu()->AddSeparator();
+  this->AllVisibilityMenuButton->GetMenu()->AddRadioButton ( "close");
+  index = this->AllVisibilityMenuButton->GetMenu()->GetIndexOfItem ("close");
+  this->AllVisibilityMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2",
+              this->AllVisibilityMenuButton->GetWidgetName() );
+  
   // ---
   // CHOOSE Ruler Node FRAME
-  vtkKWFrame *pickRulerNodeFrame = vtkKWFrame::New ( );
+  vtkSlicerModuleCollapsibleFrame *pickRulerNodeFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   pickRulerNodeFrame->SetParent ( this->GetParent() );
   pickRulerNodeFrame->Create ( );
+  pickRulerNodeFrame->SetLabelText("Modify Selected Ruler Node");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  pickRulerNodeFrame->GetWidgetName() );
   
    // a selector to pick a ruler
   this->RulerSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerSelectorWidget->SetParent ( pickRulerNodeFrame );
+  this->RulerSelectorWidget->SetParent ( pickRulerNodeFrame->GetFrame() );
   this->RulerSelectorWidget->Create ( );
   this->RulerSelectorWidget->SetNodeClass("vtkMRMLMeasurementsRulerNode", NULL, NULL, NULL);
   this->RulerSelectorWidget->NewNodeEnabledOn();
@@ -1486,7 +1562,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
   
   this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( pickRulerNodeFrame );
+  this->VisibilityButton->SetParent ( pickRulerNodeFrame->GetFrame() );
   this->VisibilityButton->Create ( );
   this->VisibilityButton->SetLabelText("Toggle Visibility");
   this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
@@ -1495,7 +1571,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
     // position 1 frame
   vtkKWFrame *position1Frame = vtkKWFrame::New();
-  position1Frame->SetParent(pickRulerNodeFrame);
+  position1Frame->SetParent(pickRulerNodeFrame->GetFrame());
   position1Frame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  position1Frame->GetWidgetName() );
@@ -1534,7 +1610,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
   // position 2 frame
   vtkKWFrame *position2Frame = vtkKWFrame::New();
-  position2Frame->SetParent(pickRulerNodeFrame);
+  position2Frame->SetParent(pickRulerNodeFrame->GetFrame());
   position2Frame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  position2Frame->GetWidgetName() );
@@ -1702,6 +1778,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   position1Frame->Delete();
   position2Frame->Delete();
   pickRulerNodeFrame->Delete();
+  controlAllFrame->Delete();
   annotationFrame->Delete();
   
   // register node classes
@@ -1836,6 +1913,37 @@ void vtkMeasurementsRulerWidget::Update3DWidgetsFromMRML()
         this->DistanceWidgets[delIter->first.c_str()]->Delete();
         this->DistanceWidgets.erase(delIter->first.c_str());
         }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::ModifyAllRulerVisibility( int visibilityState)
+{
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "ModifyAllRulerVisibility: got NULL MRMLScene." );
+    return;
+    }
+  if ( visibilityState != 0 && visibilityState != 1 )
+    {
+    vtkErrorMacro ( "ModifyAllRulerVisibility: got bad value for lock state; should be 0 or 1" );
+    return;
+    }
+  
+  vtkMRMLMeasurementsRulerNode *rulerNode;
+  
+  // save state for undo:
+  // maybe we should just make a list of all the ruler nodes
+  // and save their state here instead of the entire scene?
+  this->MRMLScene->SaveStateForUndo();
+  int numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLMeasurementsRulerNode" );
+  for ( int nn=0; nn<numnodes; nn++ )
+    {
+    rulerNode = vtkMRMLMeasurementsRulerNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLMeasurementsRulerNode" ));
+    if ( rulerNode != NULL )
+      {
+      rulerNode->SetVisibility ( visibilityState );
       }
     }
 }

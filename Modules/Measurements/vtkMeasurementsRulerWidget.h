@@ -51,7 +51,7 @@ public:
 
   // access methods
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
-
+  vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
 
   // Description:
   // Getting the mrml ruler node id
@@ -132,7 +132,11 @@ protected:
   // update the mrml node passed in, or the selected in the node selector if
   // null, to match the 3d widget
   void UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNode *rulerNode = NULL);
-  
+
+  // Description:
+  // Set visibility on all ruler nodes in the scene to the passed in visibility flag
+  void ModifyAllRulerVisibility (int visibilityState);
+
   // Description:
   // the id of the mrml node currently displayed in the widget
   char* RulerNodeID;
@@ -178,6 +182,11 @@ protected:
   vtkSlicerNodeSelectorWidget* RulerModel1SelectorWidget;
   vtkSlicerNodeSelectorWidget* RulerModel2SelectorWidget;
 
+  // Description:
+  // menu button whose menu exposes options for
+  // setting visibility of all ruler nodes
+  vtkKWMenuButton *AllVisibilityMenuButton;
+    
   // Description:
   // Set this when processing an event
   int ProcessingMRMLEvent;
