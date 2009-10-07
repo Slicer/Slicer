@@ -74,6 +74,8 @@ public:
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
+  void SetVolumeVisibility(int isVisible);
+
   /* return values:
    * 0: cpu ray cast not used
    * 1: success

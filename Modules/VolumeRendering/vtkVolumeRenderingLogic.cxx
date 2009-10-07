@@ -613,6 +613,15 @@ int vtkVolumeRenderingLogic::SetupCPURayCastInteractive(vtkMRMLVolumeRenderingPa
 
   return 1;
 }
+
+void vtkVolumeRenderingLogic::SetVolumeVisibility(int isVisible)
+{
+  if (isVisible)
+    this->Volume->VisibilityOn();
+  else
+    this->Volume->VisibilityOff();
+}
+
 //----------------------------------------------------------------------------
 void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller,
                                             unsigned long event,

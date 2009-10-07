@@ -209,6 +209,10 @@ protected:
     // if cpu ray casting is in interaction mode
     int CPURayCastingInteractionFlag;
 
+    // Description:
+    // Indicates if the VolumeRendering is Paused or not
+    int RenderingPaused;
+
 private:
     // Description:
     // Caution: Not implemented
@@ -237,6 +241,11 @@ private:
     // Create/Destroy ROI page
     void CreateROITab(void);
     void DestroyROITab(void);
+
+    // Description:
+    // Create/Destroy Misc page
+    void CreateMiscTab(void);
+    void DestroyMiscTab(void);
 
     void SetupGUIFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
 

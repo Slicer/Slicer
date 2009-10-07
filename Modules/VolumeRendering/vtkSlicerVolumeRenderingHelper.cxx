@@ -106,6 +106,8 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->VI_PauseResume = NULL;
 
   this->CPURayCastingInteractionFlag = 0;
+
+  this->RenderingPaused = 0;
 }
 
 vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
@@ -114,8 +116,9 @@ vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
   this->Gui->Script("bind all <Any-ButtonRelease> {}",this->GetTclName());
 
   this->DestroyTechniquesTab();
-  this->DestroyROITab();
   this->DestroyPropertyTab();
+  this->DestroyROITab();
+  this->DestroyMiscTab();
 
   if(this->GUICallbackCommand != NULL)
   {
@@ -123,34 +126,12 @@ vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
     this->GUICallbackCommand = NULL;
   }
 
-  this->PB_HideSurfaceModels->RemoveObservers(vtkKWPushButton::InvokedEvent,(vtkCommand *) this->GUICallbackCommand);
-
   if(this->NB_Details)
   {
     this->Script("pack forget %s", this->NB_Details->GetWidgetName());
     this->NB_Details->SetParent(NULL);
     this->NB_Details->Delete();
     this->NB_Details = NULL;
-  }
-
-  if(this->PB_PauseResume)
-  {
-    this->PB_PauseResume->SetParent(NULL);
-    this->PB_PauseResume->Delete();
-    this->PB_PauseResume = NULL;
-  }
-
-  if(this->VI_PauseResume)
-  {
-    this->VI_PauseResume->Delete();
-    this->VI_PauseResume=NULL;
-  }
-
-  if(this->PB_HideSurfaceModels)
-  {
-    this->PB_HideSurfaceModels->SetParent(NULL);
-    this->PB_HideSurfaceModels->Delete();
-    this->PB_HideSurfaceModels = NULL;
   }
 }
 
@@ -178,41 +159,21 @@ void vtkSlicerVolumeRenderingHelper::BuildRenderingFrameGUI()
   if (!this->Gui->GetRenderingFrame() )
     return;
 
-  //pause/resume button
-  this->VI_PauseResume = vtkSlicerVisibilityIcons::New();
-  this->PB_PauseResume = vtkKWPushButtonWithLabel::New();
-  this->PB_PauseResume->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
-  this->PB_PauseResume->Create();
-  this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
-  this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
-  this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
-  this->Script("pack %s -side top -anchor n -padx 2 -pady 2", this->PB_PauseResume->GetWidgetName());
-  this->PB_PauseResume->GetWidget()->SetCommand(this, "ProcessPauseResume");
-
-  //Hide surface models pushbutton
-  this->PB_HideSurfaceModels = vtkKWPushButton::New();
-  this->PB_HideSurfaceModels->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
-  this->PB_HideSurfaceModels->Create();
-  this->PB_HideSurfaceModels->SetText("Hide Surface Models");
-  this->PB_HideSurfaceModels->SetBalloonHelpString("Make all surface models invisible. Go to models module to enable, disable only some of them.");
-//  this->PB_HideSurfaceModels->SetWidth(labelWidth);
-  this->Script("pack %s -side top -anchor ne -fill x -padx 2 -pady 2",this->PB_HideSurfaceModels->GetWidgetName());
-
-  this->PB_HideSurfaceModels->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *) this->GUICallbackCommand);
-
   //Create a notebook
   this->NB_Details = vtkKWNotebook::New();
   this->NB_Details->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
   this->NB_Details->UseFrameWithScrollbarsOn();
   this->NB_Details->Create();
   this->NB_Details->AddPage("Techniques","Volume rendering techniques and parameters.");
-  this->NB_Details->AddPage("ROI","Define ROI for volume rendering.");
   this->NB_Details->AddPage("Volume Property","Color/opacity transfer functions, shading, interpolation etc.");
+  this->NB_Details->AddPage("ROI","Define ROI for volume rendering.");
+  this->NB_Details->AddPage("Misc","Misc options.");
   this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 2 -pady 2", this->NB_Details->GetWidgetName());
 
   this->CreateTechniquesTab();
-  this->CreateROITab();
   this->CreatePropertyTab();
+  this->CreateROITab();
+  this->CreateMiscTab();
 
   this->SetupGUIFromParametersNode(this->Gui->GetCurrentParametersNode());
 }
@@ -604,6 +565,63 @@ void vtkSlicerVolumeRenderingHelper::DestroyROITab()
 {
 }
 
+void vtkSlicerVolumeRenderingHelper::CreateMiscTab()
+{
+  vtkKWFrameWithLabel *mainFrame = vtkKWFrameWithLabel::New();
+  mainFrame->SetParent(this->NB_Details->GetFrame("Misc"));
+  mainFrame->Create();
+  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
+
+  //pause/resume button
+  this->VI_PauseResume = vtkSlicerVisibilityIcons::New();
+  this->PB_PauseResume = vtkKWPushButtonWithLabel::New();
+  this->PB_PauseResume->SetParent(mainFrame->GetFrame());
+  this->PB_PauseResume->Create();
+  this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
+  this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
+  this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
+  this->Script("pack %s -side top -anchor n -padx 2 -pady 2", this->PB_PauseResume->GetWidgetName());
+  this->PB_PauseResume->GetWidget()->SetCommand(this, "ProcessPauseResume");
+
+  //Hide surface models pushbutton
+  this->PB_HideSurfaceModels = vtkKWPushButton::New();
+  this->PB_HideSurfaceModels->SetParent(mainFrame->GetFrame());
+  this->PB_HideSurfaceModels->Create();
+  this->PB_HideSurfaceModels->SetText("Hide Surface Models");
+  this->PB_HideSurfaceModels->SetBalloonHelpString("Make all surface models invisible. Go to models module to enable, disable only some of them.");
+//  this->PB_HideSurfaceModels->SetWidth(labelWidth);
+  this->Script("pack %s -side top -anchor ne -fill x -padx 2 -pady 2",this->PB_HideSurfaceModels->GetWidgetName());
+
+  this->PB_HideSurfaceModels->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *) this->GUICallbackCommand);
+
+  mainFrame->Delete();
+}
+
+void vtkSlicerVolumeRenderingHelper::DestroyMiscTab()
+{
+  this->PB_HideSurfaceModels->RemoveObservers(vtkKWPushButton::InvokedEvent,(vtkCommand *) this->GUICallbackCommand);
+
+  if(this->PB_PauseResume)
+  {
+    this->PB_PauseResume->SetParent(NULL);
+    this->PB_PauseResume->Delete();
+    this->PB_PauseResume = NULL;
+  }
+
+  if(this->VI_PauseResume)
+  {
+    this->VI_PauseResume->Delete();
+    this->VI_PauseResume=NULL;
+  }
+
+  if(this->PB_HideSurfaceModels)
+  {
+    this->PB_HideSurfaceModels->SetParent(NULL);
+    this->PB_HideSurfaceModels->Delete();
+    this->PB_HideSurfaceModels = NULL;
+  }
+}
+
 void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
 {
   vtkKWFrameWithLabel *mainFrame = vtkKWFrameWithLabel::New();
@@ -894,7 +912,22 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
 
 void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
 {
-
+  //Resume Rendering
+  if(this->RenderingPaused == 1)
+  {
+    this->RenderingPaused = 0;
+    this->Gui->GetLogic()->SetVolumeVisibility(1);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());;
+  }
+  //Pause Rendering
+  else
+  {
+    this->RenderingPaused = 1;
+    this->Gui->GetLogic()->SetVolumeVisibility(0);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetInvisibleIcon());
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
