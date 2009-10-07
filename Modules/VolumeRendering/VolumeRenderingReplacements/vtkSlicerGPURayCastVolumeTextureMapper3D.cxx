@@ -680,28 +680,32 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Initialize()
 
   int supports_2_0=extensions->ExtensionSupported( "GL_VERSION_2_0" );
   if(supports_2_0)
-    {
+  {
+    extensions->LoadExtension("GL_VERSION_1_2");
+    extensions->LoadExtension("GL_VERSION_1_3");
+    extensions->LoadExtension("GL_VERSION_1_4");
+    extensions->LoadExtension("GL_VERSION_1_5");
     extensions->LoadExtension("GL_VERSION_2_0");//printf("GL_2_0\n");
-    }
+  }
 
   int supports_2_1=extensions->ExtensionSupported( "GL_VERSION_2_1" );
   if(supports_2_1)
-    {
+  {
     extensions->LoadExtension("GL_VERSION_2_1");//printf("GL_2_1\n");
-    }
+  }
 
   int supports_3_0=extensions->ExtensionSupported( "GL_VERSION_3_0" );
   if(supports_3_0)
-    {
+  {
     extensions->LoadExtension("GL_VERSION_3_0");//printf("GL_3_0\n");
-    }
+  }
 
-    if (supports_2_0 || supports_2_1 || supports_3_0)
-        RayCastSupported = 1;
-    else
-        RayCastSupported = 0;
+  if (supports_2_0 || supports_2_1 || supports_3_0)
+    RayCastSupported = 1;
+  else
+    RayCastSupported = 0;
 
-    extensions->Delete();
+  extensions->Delete();
 
 //  GLint num;
 //  glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &num);
