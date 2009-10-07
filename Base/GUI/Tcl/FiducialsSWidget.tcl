@@ -79,6 +79,11 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
 
 itcl::body FiducialsSWidget::destructor {} {
 
+  foreach seed $_seedSWidgets {
+    ::SWidget::ProtectedDelete ::FiducialsSWidget::$seed
+  }
+  set _seedSWidgets ""
+
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
     if { [info command $fidListNode] != "" } {
