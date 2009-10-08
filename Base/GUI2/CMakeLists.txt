@@ -17,6 +17,8 @@ SET(qSlicerGUI2_SRCS
   qSlicerApplication.cxx
   qSlicerIOManager.h
   qSlicerIOManager.cxx
+  #qSlicerKwInterfaceWrapper.h
+  #qSlicerKwInterfaceWrapper.cxx
   )
 
 # Headers that should run through moc
@@ -24,6 +26,7 @@ SET(qSlicerGUI2_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerModuleTransform.h
   qSlicerApplication.h
+  #qSlicerKwInterfaceWrapper.h
   )
   
 # UI files
@@ -74,9 +77,6 @@ SET(QT_LIBRARIES
 set(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 include_directories(${include_dirs})
 
-slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${include_dirs})
-
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qSlicerBaseGUI2Configure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/qSlicerBaseGUI2Configure.h
@@ -87,6 +87,9 @@ configure_file(
 # Build the library
 
 set(lib_name "SlicerBaseGUI2")
+
+slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
 add_library(${lib_name} 
   ${qSlicerGUI2_SRCS}
@@ -105,9 +108,6 @@ SET(GUI2_LIBRARIES
 target_link_libraries(${lib_name} 
   ${GUI2_LIBRARIES}
   )
-  
-slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
