@@ -47,7 +47,7 @@ int main(int argc, char * argv[])
   callback->SetCallback( Callback ); 
   callback->SetClientData( reinterpret_cast<void *> (viewer) );
 
-  int i, numberOfObservations = 1;
+  size_t i, numberOfObservations = 1;
   for (i = 0; i < numberOfObservations; i++)
     {
     broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);

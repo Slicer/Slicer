@@ -119,7 +119,7 @@ public:
 
   // Description:
   // Add child class to exclude
-  void AddExcludedChildClass(char *className)
+  void AddExcludedChildClass(const char *className)
     {
     this->ExcludedChildClasses.push_back(className);
     };

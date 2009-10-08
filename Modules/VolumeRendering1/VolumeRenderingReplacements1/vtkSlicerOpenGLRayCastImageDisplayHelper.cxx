@@ -141,7 +141,7 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
   vtkTransform *perspectiveTransform = vtkTransform::New();
   perspectiveTransform->Identity();
   perspectiveTransform->Concatenate(
-    cam->GetPerspectiveTransformMatrix(aspect[0]/aspect[1], 
+    cam->GetProjectionTransformMatrix(aspect[0]/aspect[1], 
                                        0.0, 1.0 ));
   perspectiveTransform->Concatenate(cam->GetViewTransformMatrix());
   
