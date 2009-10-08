@@ -8,7 +8,7 @@
 class QCTK_WIDGETS_EXPORT qCTKMatrixWidget : public QTableWidget
 {
   Q_OBJECT
-  
+    
 public:
   // Superclass typedef
   typedef QTableWidget Superclass;
@@ -22,14 +22,17 @@ public:
   double value(int i, int j);
   void setValue(int i, int j, double value); 
   void setVector(const QVector<double> & vector); 
-
-public slots:
+  
+  virtual QSize minimumSizeHint() const;
+  virtual QSize sizeHint() const;
+                                
+ public slots:
   
   // Description:
   // Reset to zero
   void reset(); 
-
-private:
+  
+ private:
   class qInternal; 
   qInternal* Internal; 
 };

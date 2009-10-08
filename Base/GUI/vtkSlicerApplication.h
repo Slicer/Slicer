@@ -74,10 +74,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     //BTX
     virtual void AddModule(qSlicerAbstractModule * module); 
-    virtual void AddAndShowModule(qSlicerAbstractModule * module); 
     virtual void RemoveModule(qSlicerAbstractModule * module); 
     virtual qSlicerAbstractModule* GetModule( const char *name ); 
     virtual void ShowModule ( const char *name ); 
+    virtual void HideModule ( const char *name ); 
     //ETX
 #endif
 

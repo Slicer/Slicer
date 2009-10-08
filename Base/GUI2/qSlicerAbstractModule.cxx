@@ -22,9 +22,9 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModule::qSlicerAbstractModule(QWidget *parent):Superclass(parent)
+qSlicerAbstractModule::qSlicerAbstractModule(QWidget *parent)
+ :Superclass(parent, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint)
 {
-  qDebug() << "qSlicerAbstractModule::qSlicerAbstractModule";
   this->Internal = new qInternal;
 }
 
@@ -44,6 +44,18 @@ void qSlicerAbstractModule::dumpObjectInfo()
 QString qSlicerAbstractModule::moduleName()
 {
   return this->metaObject()->className();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModule::setTitle(const QString& title)
+{
+  this->Title = title;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModule::title()const
+{
+  return this->Title;
 }
 
 //-----------------------------------------------------------------------------

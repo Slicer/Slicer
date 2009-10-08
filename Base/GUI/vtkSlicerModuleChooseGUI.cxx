@@ -1,3 +1,9 @@
+
+#ifdef Slicer3_USE_QT
+#include "qSlicerAbstractModule.h"
+#include "QApplication"
+#endif
+
 #include <map>
 #include <set>
 #include <vector>
@@ -24,6 +30,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
+#include "vtkKWTkUtilities.h"
 
 #define convertToUpper( s ) { while (*s) {*s = toupper(*s); s++; } }
 
@@ -224,6 +231,9 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
         }
+#ifdef Slicer3_USE_QT
+        app->HideModule( currentModuleName );
+#endif
       }
 
     // Move current module backward in navigation list
@@ -257,6 +267,9 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
         }
+#ifdef Slicer3_USE_QT
+      app->HideModule( currentModuleName );
+#endif
       }
 
     // move current module forward in navigation list
@@ -357,7 +370,47 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-        } 
+        }
+#ifdef Slicer3_USE_QT
+      if (app->GetModule(moduleName))
+        {
+        //--- feedback to user
+        std::string statusText = "...raising module ";
+        statusText += moduleName;
+        statusText += "...";
+        p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
+        this->Script ( "update idletasks");
+
+        //--- raise the panel
+        //m->GetUIPanel()->Raise();
+        //app->ShowModule(moduleName);
+        qSlicerAbstractModule* module = app->GetModule(moduleName);
+        int pos[2] = {0,0};
+        int size[2];
+        if (m)
+          {
+          vtkKWWidget* widget = m->GetUIPanel()->GetPagesParentWidget();
+          //vtkKWTkUtilities::GetGeometry(widget, &size[0], &size[1], &pos[0], &pos[1]);
+          //std::cout << " pos: " << pos[1] << std::endl;
+          vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
+          vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
+          //std::cout << " pos: " << pos[1] << std::endl;
+          module->resize(size[0], size[1]);
+          module->move(pos[0], pos[1]);
+          }
+        module->show();
+        QApplication::processEvents();
+        //module->move(topLevelPos[0] + pos[0], topLevelPos[1] + pos[1]);
+        module->move(pos[0], pos[1]);
+
+        p->GetMainSlicerWindow()->SetStatusText ( moduleName );
+        this->GetModulesMenuButton()->SetValue( moduleName );
+
+        //--- feedback to user
+        p->GetMainSlicerWindow()->SetStatusText ( moduleName );
+        this->Script ( "update idletasks");
+        }
+#endif
       } 
     }
 }
@@ -420,6 +473,9 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
               }
             currentModule->Exit ( );
             }
+#ifdef Slicer3_USE_QT
+          app->HideModule( currentModuleName );
+#endif
           }
         // Enter selected module.
         vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );        

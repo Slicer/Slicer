@@ -23,6 +23,11 @@ public:
   
   // Description:
   virtual QString moduleName();
+  // Description:
+  // todo: title is a property
+  // Title is the name of the module displayed in the module list.
+  void setTitle(const QString&);
+  QString title()const;
   
   // Description:
   // Set MRML scene
@@ -47,6 +52,8 @@ protected:
   // Description:
   // Get MRML scene
   virtual vtkMRMLScene* getMRMLScene(); 
+  
+  QString Title;
 
 private:
   class qInternal;

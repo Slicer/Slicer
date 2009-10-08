@@ -363,8 +363,10 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ColorSwatchesAdded = 0;
 
 #ifdef Slicer3_USE_QT
-  char *argv = NULL;
-  int argc = 0;
+  // Since Qt 4.5, argc must be valid for the whole life of the
+  // application
+  static char *argv = NULL;
+  static int argc = 0;
   this->Internal->qApplication = new qSlicerApplication(argc, &argv);
 
  #ifdef Slicer3_USE_PYTHONQT
@@ -662,7 +664,7 @@ vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::SetMRMLScene( vtkMRMLScene* scene)
+void vtkSlicerApplication::SetMRMLScene ( vtkMRMLScene* scene )
 {
   this->Internal->MRMLScene = scene; 
 }
@@ -675,50 +677,36 @@ vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
 
 #ifdef Slicer3_USE_QT
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::AddAndShowModule(qSlicerAbstractModule * module)
+void vtkSlicerApplication::AddModule ( qSlicerAbstractModule * module )
 {
-  this->AddModule( module ); 
+  if (!module)
+    {
+    return;
+    }
+  if (this->Internal->ModuleList.contains(module->title()))
+    {
+    return;
+    }
   module->setMRMLScene( this->GetMRMLScene() ); 
-  module->show(); 
+  this->Internal->ModuleList[module->title()] = module; 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::AddModule(qSlicerAbstractModule * module)
+void vtkSlicerApplication::RemoveModule ( qSlicerAbstractModule * module )
 {
   if (!module)
     {
     return;
     }
-  QString name = module->moduleName(); 
-  
-  if (this->Internal->ModuleList.contains(name))
-    {
-    return;
-    }
-  this->Internal->ModuleList[name] = module; 
+  this->Internal->ModuleList.remove(module->title());
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::RemoveModule(qSlicerAbstractModule * module)
+qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *title )
 {
-  if (!module)
-    {
-    return;
-    }
-  QString name = module->moduleName(); 
-  vtkInternal::ModuleListConstIterator iter = this->Internal->ModuleList.find( name ); 
-  
-  if ( iter == this->Internal->ModuleList.constEnd())
-    {
-    return;
-    }
-}
-
-//---------------------------------------------------------------------------
-qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *name )
-{
-  vtkInternal::ModuleListConstIterator iter = this->Internal->ModuleList.find( name ); 
-  if ( iter == this->Internal->ModuleList.constEnd())
+  vtkInternal::ModuleListConstIterator iter = 
+    this->Internal->ModuleList.find( title ); 
+  if ( iter == this->Internal->ModuleList.constEnd() )
     {
     return 0;
     }
@@ -726,14 +714,26 @@ qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *name )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::ShowModule ( const char *name )
+void vtkSlicerApplication::ShowModule ( const char *title )
 {
-  qSlicerAbstractModule * module = this->GetModule(name);
-  if (!name)
+  qSlicerAbstractModule * module = this->GetModule(title);
+  if (!module)
     {
     return; 
     }
   module->show(); 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::HideModule ( const char *title )
+{
+  std::cout << " Hide module: " << title << std::endl;
+  qSlicerAbstractModule * module = this->GetModule(title);
+  if (!module)
+    {
+    return; 
+    }
+  module->hide(); 
 }
 #endif
 

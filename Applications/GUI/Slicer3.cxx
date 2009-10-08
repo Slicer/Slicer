@@ -358,7 +358,7 @@ static void SplashMessage(const char *msg)
 }
 
 
-int Slicer3_main(int argc, char *argv[])
+int Slicer3_main(int& argc, char *argv[])
 {
 
 #if WIN32
@@ -1432,7 +1432,10 @@ int Slicer3_main(int argc, char *argv[])
 #ifdef Slicer3_USE_QT
   // --- Transforms2 module
   slicerApp->SplashMessage("Initializing Transforms2 Module...");
-  slicerApp->AddAndShowModule(new qSlicerModuleTransform());
+  qSlicerModuleTransform* transformModule = 
+    new qSlicerModuleTransform();
+  transformModule->setTitle("Transforms");
+  slicerApp->AddModule(transformModule);
 #endif
 
  // --- First scene needs a crosshair to be added manually

@@ -7,6 +7,8 @@
 #include <QTableWidgetItem>
 #include <QDebug>
 
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 class qCTKMatrixWidget::qInternal
 {
@@ -25,10 +27,13 @@ qCTKMatrixWidget::qCTKMatrixWidget(QWidget* parent) : Superclass(4, 4, parent)
   this->setEditTriggers(qCTKMatrixWidget::NoEditTriggers);
   
   // Hide headers + enable last section stretch
-  this->verticalHeader()->hide(); 
-  this->verticalHeader()->setStretchLastSection(true);
-  this->horizontalHeader()->hide(); 
-  this->horizontalHeader()->setStretchLastSection(true);
+  //this->verticalHeader()->hide(); 
+  //this->verticalHeader()->setStretchLastSection(true);
+  //this->horizontalHeader()->hide(); 
+  //this->horizontalHeader()->setStretchLastSection(true);
+  //QTableWidgetItem item;
+  //this->setSizeHintForColumn( 30 );
+  //this->setSizeHintForColumn( 30 );
   
   // Define prototype item 
   QTableWidgetItem* item = new QTableWidgetItem(); 
@@ -62,6 +67,8 @@ void qCTKMatrixWidget::reset()
         }
       }
     }
+  //this->resizeColumnsToContents();
+  this->resizeRowsToContents();
 }
 
 // --------------------------------------------------------------------------
@@ -91,4 +98,30 @@ void qCTKMatrixWidget::setVector(const QVector<double> & vector)
       }
     }
     
+}
+
+// --------------------------------------------------------------------------
+QSize qCTKMatrixWidget::minimumSizeHint() const
+{
+  QSize size( QTableWidget::sizeHint() );
+  int width = 0;
+  int height = 0;
+  
+  for (int c = 0; c < this->columnCount(); ++c)
+    {
+    width += this->columnWidth( c );
+    }
+  for (int r = 0; r < this->rowCount(); ++r)
+    {
+    height += this->rowHeight( r );
+    }
+  size.setHeight( height + 4 );
+  //size.setWidth( width + 4 );
+  return size;
+}
+
+// --------------------------------------------------------------------------
+QSize qCTKMatrixWidget::sizeHint() const
+{
+  return this->minimumSizeHint();
 }

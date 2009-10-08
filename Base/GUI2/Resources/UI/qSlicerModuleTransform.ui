@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
+    <width>418</width>
     <height>468</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Transform Module</string>
@@ -31,7 +37,7 @@
      <property name="title">
       <string>Transform Matrix view</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
        <number>2</number>
       </property>
@@ -39,7 +45,23 @@
        <number>2</number>
       </property>
       <item>
-       <widget class="qMRMLMatrixWidget" name="MatrixWidget" native="true"/>
+       <widget class="qMRMLMatrixWidget" name="MatrixWidget">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -136,9 +158,8 @@
   </customwidget>
   <customwidget>
    <class>qMRMLMatrixWidget</class>
-   <extends>QWidget</extends>
+   <extends>QTableWidget</extends>
    <header>qMRMLMatrixWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
