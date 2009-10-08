@@ -296,26 +296,12 @@ void vtkPatientToImageRegistrationGUI::HandleMouseEvent(vtkSlicerInteractorStyle
   vtkSlicerInteractorStyle *istyle0 = 
     vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
                                            ->GetRenderWindowInteractor()->GetInteractorStyle());
-
   vtkSlicerInteractorStyle *istyle1 = 
     vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
                                            ->GetRenderWindowInteractor()->GetInteractorStyle());
-
   vtkSlicerInteractorStyle *istyle2 = 
     vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
                                            ->GetRenderWindowInteractor()->GetInteractorStyle());
-
-
-/*
-    vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Red")->GetSliceViewer()
-                                           ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
-  vtkSlicerInteractorStyle *istyle1 = 
-    vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()
-                                           ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
-  vtkSlicerInteractorStyle *istyle2 = 
-    vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()
-                                           ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
-*/
 
   vtkCornerAnnotation *anno = NULL;
   if (style == istyle0)
@@ -328,7 +314,7 @@ void vtkPatientToImageRegistrationGUI::HandleMouseEvent(vtkSlicerInteractorStyle
     }
   else if (style == istyle2)
     {
-    anno = appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
+    anno = appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
     }
 
   if (anno)
