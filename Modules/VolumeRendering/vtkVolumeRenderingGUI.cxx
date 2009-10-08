@@ -389,9 +389,9 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
   this->LoadPresets();
 
-  this->AddMRMLObservers();
-
   this->GetLogic()->SetGUICallbackCommand(this->GUICallbackCommand);
+
+  this->AddMRMLObservers();
 
   this->Built = true;
 }
@@ -797,6 +797,7 @@ void vtkVolumeRenderingGUI::UpdateGUI()
     this->NS_VolumeProperty->SetSelected( vspNode->GetVolumePropertyNode()) ;
     this->NS_VolumePropertyFg->SetSelected( vspNode->GetFgVolumePropertyNode()) ;
 
+    this->NS_ROI->SetSelected(vspNode->GetROINode());
     /*presets is a little bit complicated here*/
 
     //---------remove none from menu
