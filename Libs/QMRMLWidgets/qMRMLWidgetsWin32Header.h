@@ -22,7 +22,7 @@
 #include <qMRMLWidgetsConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
- #if defined(qMRMLWidgets_EXPORTS)
+ #if defined(QMRMLWidgets_EXPORTS)
   #define QMRML_WIDGETS_EXPORT __declspec( dllexport ) 
  #else
   #define QMRML_WIDGETS_EXPORT __declspec( dllimport ) 
