@@ -506,10 +506,21 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else
       {
-      // remove the constraint by setting it to null
-      if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
-      activeRulerNode->SetModelID1(NULL);
-      this->Update3DWidget(activeRulerNode);
+      // is it a slice node?
+      vtkMRMLSliceNode *slice = vtkMRMLSliceNode::SafeDownCast(this->RulerModel1SelectorWidget->GetSelected());
+      if (slice != NULL && slice->GetID())
+        {
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetModelID1(slice->GetID());
+        this->Update3DWidget(activeRulerNode);
+        }
+      else
+        {
+        // remove the constraint by setting it to null
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetModelID1(NULL);
+        this->Update3DWidget(activeRulerNode);
+        }
       }
     }
   else if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->RulerModel2SelectorWidget &&
@@ -526,10 +537,21 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else
       {
-      // remove the constraint by setting it to null
-      if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
-      activeRulerNode->SetModelID2(NULL);
-      this->Update3DWidget(activeRulerNode);
+      // is it a slice node?
+      vtkMRMLSliceNode *slice = vtkMRMLSliceNode::SafeDownCast(this->RulerModel2SelectorWidget->GetSelected());
+      if (slice != NULL && slice->GetID())
+        {
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetModelID2(slice->GetID());
+        this->Update3DWidget(activeRulerNode);
+        }
+      else
+        {
+        // remove the constraint by setting it to null
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetModelID2(NULL);
+        this->Update3DWidget(activeRulerNode);
+        }
       }
     }
   else if (activeRulerNode == vtkMRMLMeasurementsRulerNode::SafeDownCast(this->RulerSelectorWidget->GetSelected()) &&
@@ -941,9 +963,8 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   const char *modelID1 = activeRulerNode->GetModelID1();
   if (modelID1)
     {
-    // get the model node
-    vtkMRMLModelNode *model = 
-      vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(modelID1));
+    // get the node
+    vtkMRMLNode *model = this->GetMRMLScene()->GetNodeByID(modelID1);
     if (model)
       {
       this->RulerModel1SelectorWidget->SetSelected(model);
@@ -952,9 +973,8 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   const char *modelID2 = activeRulerNode->GetModelID2();
   if (modelID2)
     {
-    // get the second model node 
-    vtkMRMLModelNode *model = 
-      vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(modelID2));
+    // get the second  node 
+    vtkMRMLNode *model = this->GetMRMLScene()->GetNodeByID(modelID2);
     if (model)
       {
       this->RulerModel2SelectorWidget->SetSelected(model);
@@ -1124,46 +1144,60 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     // resolution
     distanceWidget->GetRepresentation()->SetResolution(activeRulerNode->GetResolution());
     }
+
   // first point constraint
   if (activeRulerNode->GetModelID1())
     {
     // get the model node
     vtkMRMLModelNode *model = 
       vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeRulerNode->GetModelID1()));
-   
+    vtkMRMLSliceNode *slice =
+      vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeRulerNode->GetModelID1()));
+    // is it a slice node?
+    if (slice)
+      {
+      // get the model node associated with it
+      vtkDebugMacro("Update3DWidget: Have a slice node, id = " << slice->GetID());
+      // get the model node associated with it
+      std::string modelName = std::string(slice->GetName()) + std::string(" Volume Slice");
+      vtkCollection *modelCollection = this->GetMRMLScene()->GetNodesByName(modelName.c_str());
+      if (modelCollection &&
+          modelCollection->GetNumberOfItems() > 0)
+        {
+        model = vtkMRMLModelNode::SafeDownCast(modelCollection->GetItemAsObject(0));
+        }
+      }
     // is it a valid model?
     if (model &&
         model->GetDisplayNode())
       {
+      if (model->GetDisplayNode()->GetVisibility() == 0)
+        {
+        if (slice)
+          {
+          vtkWarningMacro("The " <<  slice->GetName() << " slice is not visible, you won't be able to move the end point.");
+          }
+        else
+          {
+          vtkWarningMacro("The " <<  model->GetName() << " model is not visible, you won't be able to move the end point");
+          }
+        }
       vtkProp *prop = vtkProp::SafeDownCast(this->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()));
       // is it already set to constrain the point placer?
       if (prop &&
           !distanceWidget->GetModel1PointPlacer()->HasProp(prop))
         {
+        // clear out any others
+        distanceWidget->GetModel1PointPlacer()->RemoveAllProps();
+        // add this one
         distanceWidget->GetModel1PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint1Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(distanceWidget->GetModel1PointPlacer());
-        /*
-        // check if need to snap to it
-        // TODO: figure out why not snapping
-        double pos[3];
-        distanceWidget->GetRepresentation()->GetPoint1WorldPosition(pos);
-        if (!distanceWidget->GetRepresentation()->GetPoint1Representation()->GetPointPlacer()->ValidateWorldPosition(pos))
-          {
-          if (model->GetPolyData())
-            {
-            model->GetPolyData()->GetPoint(0, pos);
-            vtkDebugMacro("Snapping point 1 to " << pos[0] << ", " << pos[1] << ", " << pos[2]);
-            distanceWidget->GetRepresentation()->SetPoint1WorldPosition(pos);
-            }
-          }
-        */
         }
       }
     else
       {
       distanceWidget->GetModel1PointPlacer()->RemoveAllProps();
-//      distanceWidget->GetHandleRepresentation->ConstrainedOn();
       distanceWidget->GetRepresentation()->GetPoint1Representation()->SetPointPlacer(NULL);
       }
     }
@@ -1180,6 +1214,22 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     // get the model node
     vtkMRMLModelNode *model = 
       vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeRulerNode->GetModelID2()));
+     vtkMRMLSliceNode *slice =
+      vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(activeRulerNode->GetModelID2()));
+    // is it a slice node?
+    if (slice)
+      {
+      // get the model node associated with it
+      vtkDebugMacro("Update3DWidget: Have a slice node, id = " << slice->GetID());
+      // get the model node associated with it
+      std::string modelName = std::string(slice->GetName()) + std::string(" Volume Slice");
+      vtkCollection *modelCollection = this->GetMRMLScene()->GetNodesByName(modelName.c_str());
+      if (modelCollection &&
+          modelCollection->GetNumberOfItems() > 0)
+        {
+        model = vtkMRMLModelNode::SafeDownCast(modelCollection->GetItemAsObject(0));
+        }
+      }
     // is it a valid model?
     if (model &&
         model->GetDisplayNode())
@@ -1189,6 +1239,9 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
       if (prop &&
           !distanceWidget->GetModel2PointPlacer()->HasProp(prop))
         {
+        // clear out any others
+        distanceWidget->GetModel2PointPlacer()->RemoveAllProps();
+        // add this one
         distanceWidget->GetModel2PointPlacer()->AddProp(prop);
         distanceWidget->GetRepresentation()->GetPoint2Representation()->ConstrainedOff();
         distanceWidget->GetRepresentation()->GetPoint2Representation()->SetPointPlacer(distanceWidget->GetModel2PointPlacer());
@@ -1662,7 +1715,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
   this->RulerModel1SelectorWidget->Create ( );
   this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-//  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
   this->RulerModel1SelectorWidget->SetChildClassesEnabled(1);
   this->RulerModel1SelectorWidget->NoneEnabledOn();
   this->RulerModel1SelectorWidget->SetShowHidden(1);
@@ -1682,7 +1735,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
   this->RulerModel2SelectorWidget->Create ( );
   this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-//  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
   this->RulerModel2SelectorWidget->SetChildClassesEnabled(1);
   this->RulerModel2SelectorWidget->NoneEnabledOn();
   this->RulerModel2SelectorWidget->SetShowHidden(1);
