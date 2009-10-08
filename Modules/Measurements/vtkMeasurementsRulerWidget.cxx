@@ -1662,7 +1662,8 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
   this->RulerModel1SelectorWidget->Create ( );
   this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->RulerModel1SelectorWidget->SetChildClassesEnabled(0);
+//  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel1SelectorWidget->SetChildClassesEnabled(1);
   this->RulerModel1SelectorWidget->NoneEnabledOn();
   this->RulerModel1SelectorWidget->SetShowHidden(1);
   this->RulerModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
@@ -1681,7 +1682,8 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
   this->RulerModel2SelectorWidget->Create ( );
   this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->RulerModel2SelectorWidget->SetChildClassesEnabled(0);
+//  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel2SelectorWidget->SetChildClassesEnabled(1);
   this->RulerModel2SelectorWidget->NoneEnabledOn();
   this->RulerModel2SelectorWidget->SetShowHidden(1);
   this->RulerModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
