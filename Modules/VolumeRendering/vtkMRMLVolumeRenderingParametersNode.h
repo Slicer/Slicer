@@ -74,28 +74,14 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
   // Description:
-  // Reset all variables (scene closing)
-  void Reset();
-
-  // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (VolumeNodeID);
   void SetAndObserveVolumeNodeID(const char *volumeNodeID);
 
   // Description:
-  // the ID of a MRMLVolumeRenderingPresetsNode (presets)
-  vtkGetStringMacro (PresetsNodeID);
-  vtkSetStringMacro (PresetsNodeID);
-
-  // Description:
   // the ID of a MRMLVolumeNode (fg volume)
   vtkGetStringMacro (FgVolumeNodeID);
   void SetAndObserveFgVolumeNodeID(const char *volumeNodeID);
-
-  // Description:
-  // the ID of a MRMLVolumeRenderingPresetsNode (fg presets)
-  vtkGetStringMacro (FgPresetsNodeID);
-  vtkSetStringMacro (FgPresetsNodeID);
 
   // Description:
   // Associated transform MRML node
@@ -184,8 +170,6 @@ protected:
   vtkSetReferenceStringMacro(VolumeNodeID);
   vtkMRMLVolumeNode* VolumeNode;
 
-  char *PresetsNodeID;
-
   char *VolumePropertyNodeID;
   vtkSetReferenceStringMacro(VolumePropertyNodeID);
   vtkMRMLVolumePropertyNode* VolumePropertyNode;
@@ -193,8 +177,6 @@ protected:
   char *FgVolumeNodeID;
   vtkSetReferenceStringMacro(FgVolumeNodeID);
   vtkMRMLVolumeNode* FgVolumeNode;
-
-  char *FgPresetsNodeID;
 
   char *FgVolumePropertyNodeID;
   vtkSetReferenceStringMacro(FgVolumePropertyNodeID);

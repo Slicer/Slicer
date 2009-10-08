@@ -963,3 +963,11 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   }
 }
 
+void vtkSlicerVolumeRenderingHelper::UpdateVolumeProperty()
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
+  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidget->Update();
+}

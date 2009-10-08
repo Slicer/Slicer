@@ -101,6 +101,11 @@ public:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
 
+    //--------------------------------------------------------
+    // Utility functions
+    //--------------------------------------------------------
+    void UpdateVolumeProperty();
+
 protected:
     // Description:
     // Use ::New() to get a new instance.

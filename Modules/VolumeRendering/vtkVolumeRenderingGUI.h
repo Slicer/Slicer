@@ -165,13 +165,12 @@ protected:
     void InitializePipelineNewVolumeProperty();
     void InitializePipelineNewVolumePropertyFg();
 
-    void InitializePipelineFromMRMLScene();
-    void InitializePipelineFromSlicer();
-
     void InitializePipelineFromImageData();
     void InitializePipelineFromImageDataFg();
 
     void InitializePipelineFromParametersNode();
+
+    void UpdatePipelineByVolumeProperty();
 
     void LoadPresets();
 
@@ -210,6 +209,8 @@ protected:
 
     // check abort event
     void CheckAbort(void);
+
+    int NewVolumePropertyAddedFlag;
 };
 
 #endif
