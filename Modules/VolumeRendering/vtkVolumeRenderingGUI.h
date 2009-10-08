@@ -75,11 +75,12 @@ public:
     // Description:
     // Add obsereves to GUI widgets
     virtual void AddGUIObservers ( );
+    virtual void AddMRMLObservers ( );
 
     // Description:
     // Remove obsereves to GUI widgets
     virtual void RemoveGUIObservers ( );
-    virtual void RemoveMRMLNodeObservers ( );
+    virtual void RemoveMRMLObservers ( );
     virtual void RemoveLogicObservers ( );
 
     // Description:

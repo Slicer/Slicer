@@ -89,6 +89,8 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
 vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 {
+  this->RemoveMRMLObservers();
+
   if (this->NS_ParametersSet)
   {
     this->NS_ParametersSet->SetParent(NULL);
@@ -163,14 +165,6 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
   {
     this->Helper->Delete();
     this->Helper=NULL;
-  }
-
-  //Remove the MRML observer
-  if ( this->GetApplicationGUI() )
-  {
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
 
   this->SetViewerWidget(NULL);
@@ -389,19 +383,13 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       this->RenderingFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
-  //set subnodes
-  if ( this->GetApplicationGUI() &&  this->GetApplicationGUI()->GetMRMLScene())
-  {
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  }
-
   //create a empty scenario node
   vtkMRMLVolumeRenderingScenarioNode* scenarioNode = this->GetLogic()->CreateScenarioNode();
   this->ScenarioNode = scenarioNode;
 
   this->LoadPresets();
+
+  this->AddMRMLObservers();
 
   this->GetLogic()->SetGUICallbackCommand(this->GUICallbackCommand);
 
@@ -425,6 +413,28 @@ void vtkVolumeRenderingGUI::CreateModuleEventBindings(void)
 void vtkVolumeRenderingGUI::ReleaseModuleEventBindings(void)
 {
   vtkDebugMacro("VolumeRendering: ReleaseModuleEventBindings: No ModuleEventBindings to remove yet");
+}
+
+void vtkVolumeRenderingGUI::AddMRMLObservers(void)
+{
+  //Remove the MRML observer
+  if ( this->GetApplicationGUI() )
+  {
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
+  }
+}
+
+void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
+{
+  //Remove the MRML observer
+  if ( this->GetApplicationGUI() )
+  {
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
+  }
 }
 
 void vtkVolumeRenderingGUI::AddGUIObservers(void)
@@ -469,10 +479,6 @@ void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent, (vtkCommand*)this->GUICallbackCommand);
-}
-
-void vtkVolumeRenderingGUI::RemoveMRMLNodeObservers(void)
-{
 }
 
 void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
@@ -657,6 +663,8 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 {
   if (this->ProcessingGUIEvents || this->ProcessingMRMLEvents)
     return;
+if(event == vtkCommand::ModifiedEvent)
+  vtkErrorMacro("vtkCommand::ModifiedEvent");
 
   this->ProcessingMRMLEvents = 1;
 
