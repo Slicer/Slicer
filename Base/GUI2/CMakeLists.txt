@@ -69,7 +69,6 @@ SET(QT_LIBRARIES
   ${QT_QTCORE_LIBRARY} 
   ${QT_QTGUI_LIBRARY} 
   ${QT_QTWEBKIT_LIBRARY} 
-  QVTK
   )
 
 set(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
@@ -94,11 +93,17 @@ add_library(${lib_name}
   ${qSlicerGUI2_UI_CXX}
   ${qSlicerGUI2_QRC_SRCS}
 )
-target_link_libraries(${lib_name} 
-  ${QT_LIBRARIES}
+
+SET(GUI2_LIBRARIES
   SlicerBaseLogic
+  ${QT_LIBRARIES}
+  QVTK
   QCTKWidgets
   QMRMLWidgets
+  )
+  
+target_link_libraries(${lib_name} 
+  ${GUI2_LIBRARIES}
   )
   
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)

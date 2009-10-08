@@ -16,9 +16,9 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
-#ifdef Slicer3_USE_QT
-#include "QtGADModule.h"
-#endif
+// #ifdef Slicer3_USE_QT
+// #include "QtGADModule.h"
+// #endif
 
 #include "vtkObjectFactory.h"
 
@@ -287,11 +287,11 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *ca
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( ) 
 {
-#ifdef Slicer3_USE_QT
-  QtGADModule *QtGAD = new QtGADModule();
-  QtGAD->SetMRMLScene(this->GetMRMLScene());
-  QtGAD->BuildGUI();
-#endif
+// #ifdef Slicer3_USE_QT
+//   QtGADModule *QtGAD = new QtGADModule();
+//   QtGAD->SetMRMLScene(this->GetMRMLScene());
+//   QtGAD->BuildGUI();
+// #endif
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 

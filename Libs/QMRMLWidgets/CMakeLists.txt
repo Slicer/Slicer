@@ -69,13 +69,6 @@ SET(QT_INCLUDE_DIRS
   ${QT_QTCORE_INCLUDE_DIR} 
   )
 
-SET(QT_LIBRARIES 
-  ${QT_QTCORE_LIBRARY} 
-  ${QT_QTGUI_LIBRARY} 
-  ${QT_QTWEBKIT_LIBRARY} 
-  QVTK
-  )
-  
 FOREACH(package 
     QCTKWidgets
     )
@@ -121,10 +114,13 @@ ADD_LIBRARY(${lib_name}
   ${QMRMLWidgets_UI_CXX}
   ${QMRMLWidgets_QRC_SRCS}
 )
-TARGET_LINK_LIBRARIES(${lib_name} 
+
+SET(QMRMLWidgets_LIBRARIES 
   ${QT_LIBRARIES}
   MRML
   )
+  
+TARGET_LINK_LIBRARIES(${lib_name} ${QMRMLWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)

@@ -63,8 +63,7 @@ SET(QT_INCLUDE_DIRS
 SET(QT_LIBRARIES 
   ${QT_QTCORE_LIBRARY} 
   ${QT_QTGUI_LIBRARY} 
-  ${QT_QTWEBKIT_LIBRARY} 
-  QVTK
+  ${QT_QTWEBKIT_LIBRARY}
   )
 
 SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
@@ -93,8 +92,13 @@ ADD_LIBRARY(${lib_name}
   ${QCTKWidgets_UI_CXX}
   ${QCTKWidgets_QRC_SRCS}
 )
-TARGET_LINK_LIBRARIES(${lib_name} 
+
+SET(QCTKWidgets_LIBRARIES
   ${QT_LIBRARIES}
+  )
+  
+TARGET_LINK_LIBRARIES(${lib_name} 
+  ${QCTKWidgets_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.
@@ -108,7 +112,6 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 # --------------------------------------------------------------------------
 # Install
 #
-
 INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries

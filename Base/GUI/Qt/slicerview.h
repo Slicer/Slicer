@@ -51,7 +51,7 @@ class vtkKWApplication;
 
 
 
-class SlicerView : public QVTKWidget
+class VTK_SLICER_BASE_GUI_QT_EXPORT SlicerView : public QVTKWidget
 {
     Q_OBJECT
 

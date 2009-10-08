@@ -46,7 +46,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
 
-class VTKView : public QVTKWidget
+class VTK_SLICER_BASE_GUI_QT_EXPORT VTKView : public QVTKWidget
 {
     Q_OBJECT
 

@@ -44,7 +44,7 @@
 class QWebView;
 class vtkKWApplication;
 
-class QSlicerFactory : public QWebPluginFactory
+class VTK_SLICER_BASE_GUI_QT_EXPORT QSlicerFactory : public QWebPluginFactory
 {
     Q_OBJECT
 

@@ -4,12 +4,12 @@
 #include <sstream>
 #include <string>
 
-#ifdef Slicer3_USE_QT
-#include <QApplication>
-#include <QGroupBox>
-#include <QVBoxLayout>
-#include <QtWebKit>
-#endif
+// #ifdef Slicer3_USE_QT
+// #include <QApplication>
+// #include <QGroupBox>
+// #include <QVBoxLayout>
+// #include <QtWebKit>
+// #endif
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWTextWithHyperlinksWithScrollbars);
@@ -59,21 +59,21 @@ void vtkKWTextWithHyperlinksWithScrollbars::SetText(const char *s)
 void vtkKWTextWithHyperlinksWithScrollbars::OpenLink(const char *url)
 {
 
-#ifdef Slicer3_USE_QT
-  QGroupBox *group = new QGroupBox();
-  group->setTitle("WebView");
-  QVBoxLayout *box = new QVBoxLayout(group);
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
-  group->setLayout(box);
-  QWebView *webView = new QWebView(group);
-  box->addWidget(webView);
-  webView->load(QUrl(url));
-  group->show();
-  group->raise();
-  group->activateWindow();
-  //QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
-  //webView->page()->setPluginFactory(factory);
-#else
+// #ifdef Slicer3_USE_QT
+//   QGroupBox *group = new QGroupBox();
+//   group->setTitle("WebView");
+//   QVBoxLayout *box = new QVBoxLayout(group);
+//   QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+//   group->setLayout(box);
+//   QWebView *webView = new QWebView(group);
+//   box->addWidget(webView);
+//   webView->load(QUrl(url));
+//   group->show();
+//   group->raise();
+//   group->activateWindow();
+//   //QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+//   //webView->page()->setPluginFactory(factory);
+// #else
     this->Script("\
 \
     if { \"%s\" != \"\" } {\n\
@@ -108,7 +108,7 @@ void vtkKWTextWithHyperlinksWithScrollbars::OpenLink(const char *url)
         }\n\
     }\n\
         ",url,url,url);
-#endif
+// #endif
 }
 
 void vtkKWTextWithHyperlinksWithScrollbars::CreateWidget(void)

@@ -29,14 +29,14 @@ set(include_dirs
   )
 
 
-IF(Slicer3_USE_QT)
-  subdirs(Qt)
-  set(include_dirs ${include_dirs} 
-    ${SlicerBaseGUIQt_SOURCE_DIR}
-    ${SlicerBaseGUIQt_BINARY_DIR}
-    ${QT_INCLUDES}
-    )
-ENDIF(Slicer3_USE_QT)
+# IF(Slicer3_USE_QT)
+#   subdirs(Qt)
+#   set(include_dirs ${include_dirs} 
+#     ${SlicerBaseGUIQt_SOURCE_DIR}
+#     ${SlicerBaseGUIQt_BINARY_DIR}
+#     ${QT_INCLUDES}
+#     )
+# ENDIF(Slicer3_USE_QT)
 
 include_directories(${include_dirs})
 
@@ -185,9 +185,9 @@ set(libraries
   RemoteIO
   )
 
-IF(Slicer3_USE_QT)
-  set(libraries ${libraries} SlicerBaseGUIQt ${QT_LIBRARIES})
-ENDIF(Slicer3_USE_QT)
+# IF(Slicer3_USE_QT)
+#   set(libraries ${libraries} SlicerBaseGUIQt ${QT_LIBRARIES})
+# ENDIF(Slicer3_USE_QT)
 
 target_link_libraries(${lib_name} ${libraries})
 

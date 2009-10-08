@@ -413,7 +413,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetSvnUrl();
   const char* GetSvnRevision();
 
-  void TestQtSlicerWebKit(const char *url);
+//   void TestQtSlicerWebKit(const char *url);
 
  protected:
   vtkSlicerApplication ( );
