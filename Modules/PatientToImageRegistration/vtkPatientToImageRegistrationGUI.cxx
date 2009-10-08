@@ -328,12 +328,12 @@ void vtkPatientToImageRegistrationGUI::HandleMouseEvent(vtkSlicerInteractorStyle
     }
   else if (style == istyle2)
     {
-    // ??!?!?! this would /never/ work!
-    //anno = appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
+    anno = appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
     }
 
   if (anno)
     {
+    anno->Print(cout);
     const char *rasText = anno->GetText(1);
     if ( rasText != NULL )
       {
@@ -616,11 +616,11 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
                 regFrame->GetWidgetName(), page->GetWidgetName());
 
 
-  // add a point pair 
+  // add a landmark 
   vtkKWFrameWithLabel *addFrame = vtkKWFrameWithLabel::New();
   addFrame->SetParent ( regFrame->GetFrame() );
   addFrame->Create ( );
-  addFrame->SetLabelText ("Acquire landmarks");
+  addFrame->SetLabelText ("Add a landmark");
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                 addFrame->GetWidgetName());
 
@@ -629,6 +629,12 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   patFrame->Create ( );
   this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                 patFrame->GetWidgetName());
+
+  vtkKWFrame *imageFrame = vtkKWFrame::New();
+  imageFrame->SetParent ( addFrame->GetFrame() );
+  imageFrame->Create ( );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                imageFrame->GetWidgetName());
 
   vtkKWFrame *okFrame = vtkKWFrame::New();
   okFrame->SetParent ( addFrame->GetFrame() );
@@ -640,44 +646,43 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->PatCoordinatesEntry->SetParent(patFrame);
   this->PatCoordinatesEntry->Create();
   this->PatCoordinatesEntry->SetWidth(35);
-  this->PatCoordinatesEntry->SetLabelWidth(16);
-  this->PatCoordinatesEntry->SetLabelText("Patient landmark:");
+  this->PatCoordinatesEntry->SetLabelWidth(12);
+  this->PatCoordinatesEntry->SetLabelText("Patient Side:");
   this->PatCoordinatesEntry->GetWidget()->SetValue ( "" );
-
-  this->GetPatCoordinatesPushButton = vtkKWPushButton::New();
-  this->GetPatCoordinatesPushButton->SetParent(patFrame);
-  this->GetPatCoordinatesPushButton->Create();
-  this->GetPatCoordinatesPushButton->SetText("Get");
-  this->GetPatCoordinatesPushButton->SetWidth (10);
-
-  this->Script(
-               "pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
-               this->PatCoordinatesEntry->GetWidgetName(),
-               this->GetPatCoordinatesPushButton->GetWidgetName());
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+               this->PatCoordinatesEntry->GetWidgetName());
 
   this->SlicerCoordinatesEntry = vtkKWEntryWithLabel::New();
-  this->SlicerCoordinatesEntry->SetParent(okFrame);
+  this->SlicerCoordinatesEntry->SetParent(imageFrame);
   this->SlicerCoordinatesEntry->Create();
   this->SlicerCoordinatesEntry->SetWidth(35);
-  this->SlicerCoordinatesEntry->SetLabelWidth(16);
-  this->SlicerCoordinatesEntry->SetLabelText("Image landmark:");
+  this->SlicerCoordinatesEntry->SetLabelWidth(12);
+  this->SlicerCoordinatesEntry->SetLabelText("Image Side:");
   this->SlicerCoordinatesEntry->GetWidget()->SetValue ( "" );
   this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                 this->SlicerCoordinatesEntry->GetWidgetName());
 
+
+  this->GetPatCoordinatesPushButton = vtkKWPushButton::New();
+  this->GetPatCoordinatesPushButton->SetParent(okFrame);
+  this->GetPatCoordinatesPushButton->Create();
+  this->GetPatCoordinatesPushButton->SetText("Get");
+  this->GetPatCoordinatesPushButton->SetWidth ( 12 );
   this->AddPointPairPushButton = vtkKWPushButton::New();
   this->AddPointPairPushButton->SetParent(okFrame);
   this->AddPointPairPushButton->Create();
   this->AddPointPairPushButton->SetText( "Add" );
-  this->AddPointPairPushButton->SetWidth (10);
-  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+  this->AddPointPairPushButton->SetWidth ( 12 );
+
+  this->Script( "pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+                this->GetPatCoordinatesPushButton->GetWidgetName(),
                 this->AddPointPairPushButton->GetWidgetName());
 
   // list of defined point pairs 
   vtkKWFrameWithLabel *listFrame = vtkKWFrameWithLabel::New();
   listFrame->SetParent ( regFrame->GetFrame() );
   listFrame->Create ( );
-  listFrame->SetLabelText ("Acquired landmarks");
+  listFrame->SetLabelText ("Defined landmark(s)");
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                 listFrame->GetWidgetName());
 
@@ -692,8 +697,8 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->PointPairMultiColumnList->GetWidget()->MovableColumnsOff();
   // set up the columns of data for each point
   // refer to the header file for order
-  this->PointPairMultiColumnList->GetWidget()->AddColumn("On patient");
-  this->PointPairMultiColumnList->GetWidget()->AddColumn("On image");
+  this->PointPairMultiColumnList->GetWidget()->AddColumn("Patient Side");
+  this->PointPairMultiColumnList->GetWidget()->AddColumn("Image Side");
 
   // make the selected column editable by checkbox
   //    this->PointPairMultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(this->SelectedColumn);
@@ -701,7 +706,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   // now set the attributes that are equal across the columns
   for (int col = 0; col < 2; col++)
     {
-    this->PointPairMultiColumnList->GetWidget()->SetColumnWidth(col, 22);
+    this->PointPairMultiColumnList->GetWidget()->SetColumnWidth(col, 23);
     this->PointPairMultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
     this->PointPairMultiColumnList->GetWidget()->ColumnEditableOff(col);
     }
@@ -750,7 +755,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->DeletePointPairPushButton = vtkKWPushButton::New ( );
   this->DeletePointPairPushButton->SetParent ( buttonFrame );
   this->DeletePointPairPushButton->Create ( );
-  this->DeletePointPairPushButton->SetText ("Delete");
+  this->DeletePointPairPushButton->SetText ("Delete One");
   this->DeletePointPairPushButton->SetWidth (12);
   this->DeletePointPairPushButton->SetBalloonHelpString("Delete the selected landmarks.");
 
@@ -758,7 +763,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->DeleteAllPointPairPushButton = vtkKWPushButton::New ( );
   this->DeleteAllPointPairPushButton->SetParent ( buttonFrame );
   this->DeleteAllPointPairPushButton->Create ( );
-  this->DeleteAllPointPairPushButton->SetText ("Delete all");
+  this->DeleteAllPointPairPushButton->SetText ("Delete All");
   this->DeleteAllPointPairPushButton->SetWidth (12);
   this->DeleteAllPointPairPushButton->SetBalloonHelpString("Delete all landmarks.");
 
@@ -787,9 +792,9 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->ResetPushButton = vtkKWPushButton::New ( );
   this->ResetPushButton->SetParent ( actionFrame );
   this->ResetPushButton->Create ( );
-  this->ResetPushButton->SetText ("Reset");
+  this->ResetPushButton->SetText ("Remove");
   this->ResetPushButton->SetWidth (12);
-  this->ResetPushButton->SetBalloonHelpString("Ignore the current registration.");
+  this->ResetPushButton->SetBalloonHelpString("Remove the current registration.");
 
 
   app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2", 
@@ -800,6 +805,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   regFrame->Delete ();
   addFrame->Delete ();
   patFrame->Delete ();
+  imageFrame->Delete ();
   okFrame->Delete ();
   listFrame->Delete ();
   buttonFrame->Delete ();
