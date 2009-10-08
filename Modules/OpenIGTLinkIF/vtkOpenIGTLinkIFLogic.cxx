@@ -216,6 +216,28 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkOpenIGTLinkIFLogic::ImportEvents()
+{
+  //ConnectorMapType::iterator cmiter;
+  std::vector<vtkMRMLNode*> nodes;
+  const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
+  this->GetMRMLScene()->GetNodesByClass(className, nodes);
+
+  std::vector<vtkMRMLNode*>::iterator iter;
+  
+  //for (cmiter = this->ConnectorMap.begin(); cmiter != this->ConnectorMap.end(); cmiter ++)
+  for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+    {
+    vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
+    if (connector == NULL)
+      {
+      continue;
+      }
+
+    connector->ImportEventsFromEventBuffer();
+    }
+}
 
 //---------------------------------------------------------------------------
 int vtkOpenIGTLinkIFLogic::SetLocatorDriver(const char* nodeID)

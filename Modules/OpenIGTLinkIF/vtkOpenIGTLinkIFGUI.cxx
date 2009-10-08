@@ -1411,6 +1411,7 @@ void vtkOpenIGTLinkIFGUI::ProcessTimerEvents()
 
     // -----------------------------------------
     // Check incomming new data
+    this->GetLogic()->ImportEvents();
     this->GetLogic()->ImportFromCircularBuffers();
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
                                          this->TimerInterval,

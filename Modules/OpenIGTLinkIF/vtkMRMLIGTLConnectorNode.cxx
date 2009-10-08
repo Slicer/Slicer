@@ -78,6 +78,8 @@ vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()
   this->CircularBufferMutex = vtkMutexLock::New();
   this->RestrictDeviceName = 0;
 
+  this->EventQueueMutex = vtkMutexLock::New();
+
   this->IncomingDeviceIDSet.clear();
   this->OutgoingDeviceIDSet.clear();
   this->UnspecifiedDeviceIDSet.clear();
@@ -429,11 +431,11 @@ void* vtkMRMLIGTLConnectorNode::ThreadFunction(void* ptr)
     if (igtlcon->Socket.IsNotNull())
       {
       igtlcon->State = STATE_CONNECTED;
-      igtlcon->InvokeEvent(vtkMRMLIGTLConnectorNode::ConnectedEvent);
+      igtlcon->RequestInvokeEvent(vtkMRMLIGTLConnectorNode::ConnectedEvent); // need to Request the InvokeEvent, because we are not on the main thread now
       //vtkErrorMacro("vtkOpenIGTLinkIFLogic::ThreadFunction(): Client Connected.");
       igtlcon->ReceiveController();
       igtlcon->State = STATE_WAIT_CONNECTION;
-      igtlcon->InvokeEvent(vtkMRMLIGTLConnectorNode::DisconnectedEvent);
+      igtlcon->RequestInvokeEvent(vtkMRMLIGTLConnectorNode::DisconnectedEvent); // need to Request the InvokeEvent, because we are not on the main thread now
       }
     }
 
@@ -449,12 +451,19 @@ void* vtkMRMLIGTLConnectorNode::ThreadFunction(void* ptr)
   
   igtlcon->ThreadID = -1;
   igtlcon->State = STATE_OFF;
-  igtlcon->InvokeEvent(vtkMRMLIGTLConnectorNode::DeactivatedEvent);
+  igtlcon->RequestInvokeEvent(vtkMRMLIGTLConnectorNode::DeactivatedEvent); // need to Request the InvokeEvent, because we are not on the main thread now
 
   return NULL;
 
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLIGTLConnectorNode::RequestInvokeEvent(unsigned long eventId)
+{
+  this->EventQueueMutex->Lock();
+  this->EventQueue.push_back(eventId);
+  this->EventQueueMutex->Unlock();
+}
 
 //----------------------------------------------------------------------------
 int vtkMRMLIGTLConnectorNode::WaitForConnection()
@@ -774,6 +783,32 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
       }
     circBuffer->EndPull();
     }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLIGTLConnectorNode::ImportEventsFromEventBuffer()
+{
+  // Invoke all events in the EventQueue
+
+  bool emptyQueue=true;
+  unsigned long eventId=0;
+  do
+  {
+    emptyQueue=true;
+    this->EventQueueMutex->Lock();
+    if (this->EventQueue.size()>0)
+    {
+      eventId=this->EventQueue.front();
+      this->EventQueue.pop_front();
+      emptyQueue=false;
+    }
+    this->EventQueueMutex->Unlock();
+
+    // Invoke the event
+    this->InvokeEvent(eventId);
+
+  } while (!emptyQueue);
 
 }
 

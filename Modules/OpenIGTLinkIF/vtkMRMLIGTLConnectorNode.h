@@ -201,6 +201,11 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   void ImportDataFromCircularBuffer();
 
   // Description:
+  // Import events from the event buffer to the MRML scene.
+  // This is currently called by vtkOpenIGTLinkIFLogic class.
+  void ImportEventsFromEventBuffer();
+
+  // Description:
   // Register IGTL to MRML message converter.
   // This is used by vtkOpenIGTLinkIFLogic class.
   int RegisterMessageConverter(vtkIGTLToMRMLBase* converter);
@@ -248,6 +253,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   vtkIGTLToMRMLBase* GetConverterByMRMLTag(const char* tag);
   vtkIGTLToMRMLBase* GetConverterByIGTLDeviceType(const char* type);
 
+  // Description:
+  // Inserts the eventId to the EventQueue, and the event will be invoked from the main thread
+  void RequestInvokeEvent(unsigned long eventId);
 
  private:
   //----------------------------------------------------------------
@@ -289,6 +297,14 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
 
   vtkMutexLock* CircularBufferMutex;
   int           RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
+
+  //BTX
+  // Event queueing mechanism is needed to send all event notifications from the main thread
+  // Events can be pushed to the back of the EventQueue by calling RequestInvoke from any thread,
+  // and they will be Invoked in the main thread.
+  std::list<unsigned long> EventQueue;
+  vtkMutexLock* EventQueueMutex;
+  //ETX
 
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
   DeviceIDSetType   IncomingDeviceIDSet;
