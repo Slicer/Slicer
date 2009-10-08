@@ -22,7 +22,7 @@
 #include <qCTKWidgetsConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
- #if defined(SlicerBaseQWidgets_EXPORTS)
+ #if defined(QCTKWidgets_EXPORTS)
   #define QCTK_WIDGETS_EXPORT __declspec( dllexport ) 
  #else
   #define QCTK_WIDGETS_EXPORT __declspec( dllimport ) 
