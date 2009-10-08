@@ -62,6 +62,8 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWRange.h"
 
+#include "vtkSlicerROIDisplayWidget.h"
+
 //Compiler
 #include <math.h>
 
@@ -100,6 +102,10 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->PB_HideSurfaceModels = NULL;
 
   this->SVP_VolumePropertyWidget = NULL;
+
+  this->ROIWidget = NULL;
+  this->CroppingButton = NULL;
+  this->FitROIButton = NULL;
 
   //PauseResume
   this->PB_PauseResume = NULL;
@@ -559,10 +565,47 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
 
 void vtkSlicerVolumeRenderingHelper::CreateROITab()
 {
+  vtkKWFrameWithLabel *mainFrame = vtkKWFrameWithLabel::New();
+  mainFrame->SetParent(this->NB_Details->GetFrame("ROI"));
+  mainFrame->SetLabelText("ROI (Clipping)");
+  mainFrame->Create();
+  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
+
+  this->CroppingButton = vtkKWCheckButtonWithLabel::New();
+  this->CroppingButton->SetParent ( mainFrame->GetFrame() );
+  this->CroppingButton->Create ( );
+  this->CroppingButton->SetLabelText("Cropping Enabled");
+  this->CroppingButton->SetBalloonHelpString("Enable cropping.");
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->CroppingButton->GetWidgetName());
+
+  this->CroppingButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->FitROIButton = vtkKWPushButton::New();
+  this->FitROIButton->SetParent( mainFrame->GetFrame() );
+  this->FitROIButton->Create();
+  this->FitROIButton->SetText("Fit ROI To Volume");
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->FitROIButton->GetWidgetName());
+
+  this->FitROIButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->ROIWidget = vtkSlicerROIDisplayWidget::New();
+  this->ROIWidget->SetParent(mainFrame->GetFrame());
+  this->ROIWidget->Create();
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ROIWidget->GetWidgetName());
 }
 
 void vtkSlicerVolumeRenderingHelper::DestroyROITab()
 {
+  this->CroppingButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FitROIButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  if (this->ROIWidget)
+  {
+    this->ROIWidget->SetParent(NULL);
+    this->ROIWidget->Delete();
+    this->ROIWidget = NULL;
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::CreateMiscTab()
@@ -570,6 +613,7 @@ void vtkSlicerVolumeRenderingHelper::CreateMiscTab()
   vtkKWFrameWithLabel *mainFrame = vtkKWFrameWithLabel::New();
   mainFrame->SetParent(this->NB_Details->GetFrame("Misc"));
   mainFrame->Create();
+  mainFrame->SetLabelText("Options");
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
 
   //pause/resume button
@@ -727,6 +771,25 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetCPURaycastMode(this->CB_CPURayCastMIP->GetWidget()->GetSelectedState());
 
       this->Gui->GetLogic()->SetCPURaycastParameters(vspNode);
+
+      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      return;
+    }
+    else if (eid == vtkKWCheckButton::SelectedStateChangedEvent && this->CroppingButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
+    {
+      vspNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
+      this->Gui->GetLogic()->SetROI(vspNode);
+
+      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      return;
+    }
+  }
+
+  {//push button
+    if (vtkKWPushButton::SafeDownCast(caller) == this->FitROIButton && eid == vtkKWPushButton::InvokedEvent )
+    {
+      this->Gui->GetLogic()->FitROIToVolume(vspNode);
+      this->Gui->GetLogic()->SetROI(vspNode);
 
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
@@ -963,6 +1026,17 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   }
 }
 
+void vtkSlicerVolumeRenderingHelper::UpdateROI()
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  vtkMRMLROINode *roiNode = vspNode->GetROINode();
+
+  this->ROIWidget->SetROINode(roiNode);
+
+  this->CroppingButton->GetWidget()->SetSelectedState(vspNode->GetCroppingEnabled());
+}
+
 void vtkSlicerVolumeRenderingHelper::UpdateVolumeProperty()
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
@@ -971,3 +1045,4 @@ void vtkSlicerVolumeRenderingHelper::UpdateVolumeProperty()
   this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
   this->SVP_VolumePropertyWidget->Update();
 }
+

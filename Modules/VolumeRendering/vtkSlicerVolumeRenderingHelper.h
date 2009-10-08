@@ -45,6 +45,7 @@ class vtkKWComboBox;
 class vtkKWEntry;
 class vtkVolumeProperty;
 class vtkKWRange;
+class vtkSlicerROIDisplayWidget;
 
 class vtkMRMLVolumeRenderingParametersNode;
 
@@ -105,6 +106,7 @@ public:
     // Utility functions
     //--------------------------------------------------------
     void UpdateVolumeProperty();
+    void UpdateROI();
 
 protected:
     // Description:
@@ -205,7 +207,12 @@ protected:
     //--------------------------------------------------------------------------
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidget;
 
-
+    //-----------------------------------------------------------
+    // ROI (clipping)
+    //-----------------------------------------------------------
+    vtkSlicerROIDisplayWidget  *ROIWidget;
+    vtkKWCheckButtonWithLabel  *CroppingButton;
+    vtkKWPushButton            *FitROIButton;
     //--------------------------------------------------------------------------
     // Rendering Logic
     //--------------------------------------------------------------------------

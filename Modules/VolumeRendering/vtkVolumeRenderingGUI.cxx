@@ -21,7 +21,7 @@
 #include "vtkKWProgressGauge.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWFrameWithLabel.h"
-#include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLROINode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkPlaneSource.h"
@@ -67,6 +67,8 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->NS_VolumePropertyPresetsFg=NULL;
   this->NS_VolumePropertyFg=NULL;
 
+  this->NS_ROI = NULL;
+
   //Frame Details
   this->RenderingFrame=NULL;
 
@@ -92,6 +94,12 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->NS_ParametersSet->SetParent(NULL);
     this->NS_ParametersSet->Delete();
     this->NS_ParametersSet=NULL;
+  }
+  if (this->NS_ROI)
+  {
+    this->NS_ROI->SetParent(NULL);
+    this->NS_ROI->Delete();
+    this->NS_ROI = NULL;
   }
   if (this->NS_ImageData)
   {
@@ -193,7 +201,7 @@ void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkVolumeRenderingGUI::BuildGUI(void)
 {
-  int labelWidth = 12;
+  int labelWidth = 10;
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   this->GetUIPanel()->AddPage("VolumeRendering", "VolumeRendering", NULL);
 
@@ -229,6 +237,21 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ParametersSet->GetWidgetName());
 
+  this->NS_ROI = vtkSlicerNodeSelectorWidget::New();
+  this->NS_ROI->SetNodeClass("vtkMRMLROINode", "", "", "");
+  this->NS_ROI->SetNewNodeEnabled(1);
+  this->NS_ROI->NoneEnabledOff();
+  this->NS_ROI->SetShowHidden(1);
+  this->NS_ROI->SetParent(loadSaveDataFrame->GetFrame());
+  this->NS_ROI->Create();
+  this->NS_ROI->SetMRMLScene(this->GetMRMLScene());
+  this->NS_ROI->UpdateMenu();
+  this->NS_ROI->SetBorderWidth(2);
+  this->NS_ROI->SetLabelText( "ROI:     ");
+  this->NS_ROI->SetBalloonHelpString("ROI node for current volume rendering scenario.");
+
+  app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ROI->GetWidgetName());
+
   {//background input volume
     vtkKWFrameWithLabel *inputVolumeFrame = vtkKWFrameWithLabel::New();
     inputVolumeFrame->SetParent(loadSaveDataFrame->GetFrame());
@@ -237,12 +260,12 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", inputVolumeFrame->GetWidgetName() );
 
     //NodeSelector for Node from MRML Scene
-    this->NS_ImageData=vtkSlicerNodeSelectorWidget::New();
+    this->NS_ImageData = vtkSlicerNodeSelectorWidget::New();
     this->NS_ImageData->SetParent(inputVolumeFrame->GetFrame());
     this->NS_ImageData->Create();
     this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->SetLabelText("Source: ");
-    this->NS_ImageData->SetBalloonHelpString("Select volume to render. Only one volume at the some time is possible.");
+    this->NS_ImageData->SetBalloonHelpString("Background (default) volume input.");
     this->NS_ImageData->SetLabelWidth(labelWidth);
     this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     this->NS_ImageData->SetChildClassesEnabled(0);
@@ -255,7 +278,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_VolumeProperty->SetNewNodeEnabled(1);
     this->NS_VolumeProperty->NoneEnabledOff();
     this->NS_VolumeProperty->SetLabelText("Property:");
-    this->NS_VolumeProperty->SetBalloonHelpString("Select how the volume should be displayed. Multi-property per volume are possible");
+    this->NS_VolumeProperty->SetBalloonHelpString("Volume rendering property for current volume.");
     this->NS_VolumeProperty->SetLabelWidth(labelWidth);
     this->NS_VolumeProperty->EnabledOff();//By default off
     this->NS_VolumeProperty->SetShowHidden(1);
@@ -267,7 +290,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_VolumePropertyPresets->SetParent(inputVolumeFrame->GetFrame());
     this->NS_VolumePropertyPresets->Create();
     this->NS_VolumePropertyPresets->SetLabelText("Presets:");
-    this->NS_VolumePropertyPresets->SetBalloonHelpString("Select one of the existing parameter sets or presets.");
+    this->NS_VolumePropertyPresets->SetBalloonHelpString("Use pre-defined opacity/color mapping functions.");
     this->NS_VolumePropertyPresets->SetLabelWidth(labelWidth);
     this->NS_VolumePropertyPresets->EnabledOff();//By default off
     this->NS_VolumePropertyPresets->NoneEnabledOn();
@@ -286,26 +309,26 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", inputVolumeFrame->GetWidgetName() );
 
     //NodeSelector for Node from MRML Scene
-    this->NS_ImageDataFg=vtkSlicerNodeSelectorWidget::New();
+    this->NS_ImageDataFg = vtkSlicerNodeSelectorWidget::New();
     this->NS_ImageDataFg->SetParent(inputVolumeFrame->GetFrame());
     this->NS_ImageDataFg->Create();
     this->NS_ImageDataFg->NoneEnabledOn();
     this->NS_ImageDataFg->EnabledOff();
     this->NS_ImageDataFg->SetLabelText("Source:");
-    this->NS_ImageDataFg->SetBalloonHelpString("Select background volume to render");
+    this->NS_ImageDataFg->SetBalloonHelpString("Foreground volume input.");
     this->NS_ImageDataFg->SetLabelWidth(labelWidth);
     this->NS_ImageDataFg->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     this->NS_ImageDataFg->SetChildClassesEnabled(0);
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageDataFg->GetWidgetName());
 
     //NodeSelector for VolumePropertyNode
-    this->NS_VolumePropertyFg=vtkSlicerNodeSelectorWidget::New();
+    this->NS_VolumePropertyFg = vtkSlicerNodeSelectorWidget::New();
     this->NS_VolumePropertyFg->SetParent(inputVolumeFrame->GetFrame());
     this->NS_VolumePropertyFg->Create();
     this->NS_VolumePropertyFg->SetNewNodeEnabled(1);
     this->NS_VolumePropertyFg->NoneEnabledOff();
     this->NS_VolumePropertyFg->SetLabelText("Property:");
-    this->NS_VolumePropertyFg->SetBalloonHelpString("Select how the volume should be displayed. Several parameter sets per volume are possible");
+    this->NS_VolumePropertyFg->SetBalloonHelpString("Volume rendering property for current volume.");
     this->NS_VolumePropertyFg->SetLabelWidth(labelWidth);
     this->NS_VolumePropertyFg->EnabledOff();//By default off
     this->NS_VolumePropertyFg->SetShowHidden(1);
@@ -313,11 +336,11 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_VolumePropertyFg->GetWidgetName());
 
     //NodeSelector for VolumePropertyNode Preset
-    this->NS_VolumePropertyPresetsFg=vtkSlicerNodeSelectorWidget::New();
+    this->NS_VolumePropertyPresetsFg = vtkSlicerNodeSelectorWidget::New();
     this->NS_VolumePropertyPresetsFg->SetParent(inputVolumeFrame->GetFrame());
     this->NS_VolumePropertyPresetsFg->Create();
     this->NS_VolumePropertyPresetsFg->SetLabelText("Presets:");
-    this->NS_VolumePropertyPresetsFg->SetBalloonHelpString("Select one of the existing parameter sets or presets.");
+    this->NS_VolumePropertyPresetsFg->SetBalloonHelpString("Use pre-defined opacity/color mapping functions.");
     this->NS_VolumePropertyPresetsFg->SetLabelWidth(labelWidth);
     this->NS_VolumePropertyPresetsFg->EnabledOff();//By default off
     this->NS_VolumePropertyPresetsFg->NoneEnabledOn();
@@ -338,13 +361,13 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", inputVolumeFrame->GetWidgetName() );
 
     //NodeSelector for Node from MRML Scene
-    this->NS_ImageDataLabelmap=vtkSlicerNodeSelectorWidget::New();
+    this->NS_ImageDataLabelmap = vtkSlicerNodeSelectorWidget::New();
     this->NS_ImageDataLabelmap->SetParent(inputVolumeFrame->GetFrame());
     this->NS_ImageDataLabelmap->Create();
     this->NS_ImageDataLabelmap->NoneEnabledOn();
     this->NS_ImageDataLabelmap->EnabledOff();
     this->NS_ImageDataLabelmap->SetLabelText("Source:");
-    this->NS_ImageDataLabelmap->SetBalloonHelpString("Select labelmap volume to render.");
+    this->NS_ImageDataLabelmap->SetBalloonHelpString("Labelmap volume input.");
     this->NS_ImageDataLabelmap->SetLabelWidth(labelWidth);
     this->NS_ImageDataLabelmap->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     this->NS_ImageDataLabelmap->SetChildClassesEnabled(0);
@@ -412,6 +435,8 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
   this->NS_ImageDataFg->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   //  this->NS_ImageDataLabelmap->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->NS_ROI->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->NS_VolumeProperty->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NS_VolumeProperty->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -431,6 +456,8 @@ void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
   this->NS_ImageData->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_ImageDataFg->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   //  this->NS_ImageDataLabelmap->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+  this->NS_ROI->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->NS_VolumeProperty->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_VolumeProperty->RemoveObservers(vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -516,6 +543,13 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
           this->InitializePipelineFromParametersNode();
         }
       }
+    }
+  }
+  else if(callerObjectNS == this->NS_ROI && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+  {
+    if (this->NS_ROI->GetSelected())
+    {
+      this->UpdatePipelineByROI();
     }
   }//----------------------------------bg volume---------------------------------------------------------
   else if(callerObjectNS == this->NS_ImageData && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
@@ -672,6 +706,17 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   {
 
   }
+  else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
+  {vtkErrorMacro("ROI modified");
+    vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(caller);
+    vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+
+    if (roiNode == vspNode->GetROINode())
+    {
+      this->GetLogic()->SetROI(vspNode);
+      this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    }
+  }
 
   this->ProcessingMRMLEvents = 0;
 }
@@ -792,6 +837,11 @@ void vtkVolumeRenderingGUI::UpdateGUI()
     this->NS_VolumePropertyPresetsFg->EnabledOff();
   }
 
+  if (this->NS_ParametersSet->GetSelected() == NULL)
+    this->NS_ROI->EnabledOff();
+  else
+    this->NS_ROI->EnabledOn();
+
   this->UpdatingGUI = 0;
 }
 
@@ -801,6 +851,23 @@ void vtkVolumeRenderingGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
 
 void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
 {
+}
+
+void vtkVolumeRenderingGUI::UpdatePipelineByROI()
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+
+  if (vspNode != NULL && vspNode->GetROINodeID() != NULL &&
+      strcmp(this->NS_ROI->GetSelected()->GetID(), vspNode->GetROINodeID()) == 0)
+  {
+      return;// return if the node already selected
+  }
+
+//  vtkMRMLROINode::SafeDownCast(this->NS_ROI->GetSelected())->SetAndObserveMRMLScene(this->GetMRMLScene());
+
+  vspNode->SetAndObserveROINodeID(this->NS_ROI->GetSelected()->GetID());
+
+  this->Helper->UpdateROI();
 }
 
 void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()

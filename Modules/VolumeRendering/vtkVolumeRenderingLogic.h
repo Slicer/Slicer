@@ -20,6 +20,7 @@ class vtkKWHistogramSet;
 class vtkRenderer;
 class vtkTimerLog;
 class vtkMatrix4x4;
+class vtkPlanes;
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
 {
@@ -73,6 +74,9 @@ public:
   void SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void SetVolumeVisibility(int isVisible);
 

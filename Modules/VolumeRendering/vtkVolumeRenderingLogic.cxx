@@ -5,10 +5,12 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkMatrix4x4.h"
+#include "vtkPlanes.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkMRMLROINode.h"
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
@@ -622,10 +624,51 @@ void vtkVolumeRenderingLogic::SetVolumeVisibility(int isVisible)
     this->Volume->VisibilityOff();
 }
 
+void vtkVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  // resize the ROI to fit the volume
+  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
+  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+
+  if (volumeNode && roiNode)
+  {
+    double xyz[3];
+    double center[3];
+
+    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
+    for (int i = 0; i < 3; i++)
+    {
+      xyz[i] *= 0.5;
+    }
+
+    roiNode->SetXYZ(center);
+    roiNode->SetRadiusXYZ(xyz);
+  }
+}
+
+void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  if (vspNode->GetROINode() == NULL)
+    return;
+
+  vtkPlanes *planes=vtkPlanes::New();
+  vspNode->GetROINode()->GetTransformedPlanes(planes);
+
+  this->MapperTexture->SetClippingPlanes(planes);
+  this->MapperRaycast->SetClippingPlanes(planes);
+
+  this->MapperGPURaycast->SetClippingPlanes(planes);
+
+  if (vspNode->GetCroppingEnabled())
+    this->MapperGPURaycast->ClippingOn();
+  else
+    this->MapperGPURaycast->ClippingOff();
+
+  planes->Delete();
+}
+
 //----------------------------------------------------------------------------
-void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData)
+void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
 }
 

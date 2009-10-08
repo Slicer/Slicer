@@ -463,9 +463,9 @@ vtkMRMLROINode* vtkMRMLVolumeRenderingParametersNode::GetROINode()
     {
     vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
     }
-  else if (this->GetScene() && this->ROINodeID != NULL &&
+  else if (this->GetScene() &&
            ((this->ROINode != NULL && strcmp(this->ROINode->GetID(), this->ROINodeID)) ||
-            (this->ROINode = NULL)) )
+            (this->ROINode == NULL)) )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ROINodeID);
     vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLROINode::SafeDownCast(snode));

@@ -171,6 +171,7 @@ protected:
     void InitializePipelineFromParametersNode();
 
     void UpdatePipelineByVolumeProperty();
+    void UpdatePipelineByROI();
 
     void LoadPresets();
 
@@ -190,6 +191,8 @@ protected:
 
     vtkSlicerNodeSelectorWidget *NS_VolumePropertyPresetsFg;
     vtkSlicerNodeSelectorWidget *NS_VolumePropertyFg;
+
+    vtkSlicerNodeSelectorWidget *NS_ROI;
 
     //Frame Details
     vtkSlicerModuleCollapsibleFrame *RenderingFrame;
