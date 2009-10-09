@@ -124,7 +124,7 @@ int vtkPolyDataTensorToColor::RequestData(
   vtkDataArray *inTensors = pd->GetTensors();
   inScalars = pd->GetScalars();
 
-  if (!inTensors)
+  if (numPts > 0 && !inTensors)
   {
     this->ColorMode = vtkTensorGlyph::COLOR_BY_SCALARS; 
     //this->ExtractScalarOff();
