@@ -178,16 +178,15 @@ add_library(${lib_name}
 
 set(libraries 
   ${KWWidgets_LIBRARIES}
-  ${QT_LIBRARIES}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
   RemoteIO
   )
 
-# IF(Slicer3_USE_QT)
-#   set(libraries ${libraries} SlicerBaseGUIQt ${QT_LIBRARIES})
-# ENDIF(Slicer3_USE_QT)
+IF(Slicer3_USE_QT)
+  set(libraries ${libraries} SlicerBaseGUI2 ${QT_LIBRARIES})
+ENDIF(Slicer3_USE_QT)
 
 target_link_libraries(${lib_name} ${libraries})
 
