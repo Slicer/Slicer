@@ -6,6 +6,7 @@
 #include "vtkPointData.h"
 #include "vtkMatrix4x4.h"
 #include "vtkPlanes.h"
+#include "vtkPlane.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"

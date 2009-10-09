@@ -687,6 +687,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
         if (this->GetCurrentParametersNode() != NULL)
         {
           this->InitializePipelineFromParametersNode();
+          this->UpdatePipelineByROI();
         }
       }
     }
@@ -882,6 +883,10 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
   }
 
   vspNode->SetAndObserveROINodeID(this->NS_ROI->GetSelected()->GetID());
+
+  if (!vspNode->GetROINode())
+    return;
+
   vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
   vspNode->GetROINode()->VisibilityOn();
 
@@ -1050,6 +1055,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
 
+
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
@@ -1084,6 +1090,8 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
   //prepare rendering frame
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
+
+  this->UpdatePipelineByROI();
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
