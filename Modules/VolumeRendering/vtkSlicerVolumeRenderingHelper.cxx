@@ -11,8 +11,6 @@
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkSlicerBoxWidget2.h"
-#include "vtkSlicerBoxRepresentation.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerVRMenuButtonColorMode.h"
 

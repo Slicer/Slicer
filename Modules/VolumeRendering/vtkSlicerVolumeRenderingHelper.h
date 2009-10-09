@@ -31,8 +31,6 @@ class vtkKWFrameWithLabel;
 class vtkKWNotebook;
 class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
-class vtkSlicerBoxWidget2;
-class vtkSlicerBoxRepresentation;
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLLinearTransformNode;
