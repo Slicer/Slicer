@@ -62,7 +62,7 @@ subdirs(
   Volumes
   ChangeTracker # AF: refactoring TumorGrowth...
   VolumeRendering
-  VolumeRendering1
+#  VolumeRendering1 <- merged into VolumeRendering
 # WFEngineModule  <- can't work with 2.6 and Win32??
 # MRAblation <- not working either
   ModelMirror
