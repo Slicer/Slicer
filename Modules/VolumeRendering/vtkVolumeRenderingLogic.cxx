@@ -651,20 +651,24 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
   if (vspNode->GetROINode() == NULL)
     return;
 
-  vtkPlanes *planes=vtkPlanes::New();
-  vspNode->GetROINode()->GetTransformedPlanes(planes);
-
-  this->MapperTexture->SetClippingPlanes(planes);
-  this->MapperRaycast->SetClippingPlanes(planes);
-
-  this->MapperGPURaycast->SetClippingPlanes(planes);
+  this->MapperTexture->RemoveAllClippingPlanes();
+  this->MapperRaycast->RemoveAllClippingPlanes();
+  this->MapperGPURaycast->RemoveAllClippingPlanes();
+  this->MapperGPURaycast->ClippingOff();
 
   if (vspNode->GetCroppingEnabled())
-    this->MapperGPURaycast->ClippingOn();
-  else
-    this->MapperGPURaycast->ClippingOff();
+  {
+    vtkPlanes *planes = vtkPlanes::New();
+    vspNode->GetROINode()->GetTransformedPlanes(planes);
 
-  planes->Delete();
+    this->MapperTexture->SetClippingPlanes(planes);
+    this->MapperRaycast->SetClippingPlanes(planes);
+
+    this->MapperGPURaycast->SetClippingPlanes(planes);
+    this->MapperGPURaycast->ClippingOn();
+
+    planes->Delete();
+  }
 }
 
 //----------------------------------------------------------------------------

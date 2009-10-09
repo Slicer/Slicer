@@ -68,10 +68,6 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->ROINodeID = NULL;
   this->ROINode = NULL;
 
-  this->CroppingEnabled = 0;
-  for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
-    this->CroppingRegionPlanes[i] = 0;
-
   this->ExpectedFPS = 5;
   this->EstimatedSampleDistance = 1.0;
 
@@ -159,14 +155,6 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->CroppingEnabled;
       continue;
     }
-    if (!strcmp(attName,"croppingRegionPlanes"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
-        ss >> this->CroppingRegionPlanes[i];
-      continue;
-    }
     if (!strcmp(attName,"currentVolumeMapper"))
     {
       std::stringstream ss;
@@ -225,16 +213,6 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
   of << indent << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
   of << indent << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
-
-  of << indent << " croppingRegionPlanes=\"";
-  for(int i = 0; i < COUNT_CROPPING_REGION_PLANES; i++)
-  {
-    of << this->CroppingRegionPlanes[i];
-    if(i != COUNT_CROPPING_REGION_PLANES - 1)
-      of<<" ";
-  }
-  of << "\"";
-
   of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
   of << indent << " cpuRaycastMode=\"" << this->CPURaycastMode << "\"";
   of << indent << " depthPeelingThreshold=\"" << this->DepthPeelingThreshold << "\"";

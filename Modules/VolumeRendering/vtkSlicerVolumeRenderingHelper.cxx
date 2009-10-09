@@ -593,6 +593,8 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
   this->ROIWidget->Create();
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ROIWidget->GetWidgetName());
+
+  this->UpdateROI();
 }
 
 void vtkSlicerVolumeRenderingHelper::DestroyROITab()

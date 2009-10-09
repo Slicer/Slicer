@@ -31,8 +31,6 @@
 
 #include "vtkMatrix4x4.h"
 
-#define COUNT_CROPPING_REGION_PLANES 6
-
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLNode
 {
   public:
@@ -125,11 +123,6 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkBooleanMacro(CroppingEnabled,int);
 
   // Description:
-  // Set/get cropping planes
-  vtkSetVector6Macro(CroppingRegionPlanes, double);
-  vtkGetVectorMacro(CroppingRegionPlanes, double, 6);
-
-  // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
   vtkGetMacro(EstimatedSampleDistance,double);
@@ -187,8 +180,6 @@ protected:
   vtkMRMLROINode* ROINode;
 
   int CroppingEnabled;
-
-  double CroppingRegionPlanes[COUNT_CROPPING_REGION_PLANES];
 
   double  EstimatedSampleDistance;
   int     ExpectedFPS;

@@ -663,8 +663,6 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 {
   if (this->ProcessingGUIEvents || this->ProcessingMRMLEvents)
     return;
-if(event == vtkCommand::ModifiedEvent)
-  vtkErrorMacro("vtkCommand::ModifiedEvent");
 
   this->ProcessingMRMLEvents = 1;
 
@@ -715,7 +713,7 @@ if(event == vtkCommand::ModifiedEvent)
 
   }
   else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
-  {vtkErrorMacro("ROI modified");
+  {
     vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(caller);
     vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
 
@@ -761,6 +759,9 @@ void vtkVolumeRenderingGUI::UpdateGUI()
   //update menu first
   this->NS_ParametersSet->SetMRMLScene(this->GetLogic()->GetMRMLScene());
   this->NS_ParametersSet->UpdateMenu();
+
+  this->NS_ROI->SetMRMLScene(this->GetLogic()->GetMRMLScene());
+  this->NS_ROI->UpdateMenu();
 
   this->NS_ImageData->SetMRMLScene(this->GetLogic()->GetMRMLScene());
   this->NS_ImageData->UpdateMenu();
@@ -872,11 +873,22 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
       return;// return if the node already selected
   }
 
-//  vtkMRMLROINode::SafeDownCast(this->NS_ROI->GetSelected())->SetAndObserveMRMLScene(this->GetMRMLScene());
+  //remove existing observers
+  vtkMRMLROINode *roi = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
+  if (roi)
+  {
+    roi->RemoveObserver(vtkCommand::ModifiedEvent);
+    roi->VisibilityOff();
+  }
 
   vspNode->SetAndObserveROINodeID(this->NS_ROI->GetSelected()->GetID());
+  vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
+  vspNode->GetROINode()->VisibilityOn();
 
   this->Helper->UpdateROI();
+  this->GetLogic()->SetROI(vspNode);
+
+  this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
 void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
@@ -977,8 +989,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   if (vspNode)
   {
     //remove existing observers
-    vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(
-      this->GetLogic()->GetMRMLScene()->GetNodeByID(vspNode->GetVolumeNodeID()));
+    vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
 
     //remove observer to trigger update of transform
     selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
