@@ -434,6 +434,17 @@ public:
   vtkGetMacro( IsClosed, int );
   vtkSetMacro( IsClosed, int );
   
+  // Description:
+  // the version of the last loaded scene file
+  vtkGetStringMacro(LastLoadedVersion);
+  vtkSetStringMacro(LastLoadedVersion);
+
+  // Description:
+  // the current software version
+  vtkGetStringMacro(Version);
+  vtkSetStringMacro(Version);
+
+
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene();
@@ -495,6 +506,11 @@ protected:
 
   vtkSetStringMacro(ClassNameList);
   vtkGetStringMacro(ClassNameList);
+
+  char *Version;
+
+  char *LastLoadedVersion;
+
   
 private:
   // hide the standard AddItem from the user and the compiler.

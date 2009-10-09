@@ -24,7 +24,6 @@
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerModuleChooseGUI.h"
 #include "vtkSlicerLogoDisplayGUI.h"
-
 #include "vtkSlicerSliceLogic.h"
 
 #include "vtkSlicerWindow.h"
@@ -58,6 +57,7 @@ class vtkSlicerROIViewerWidget;
 class vtkSlicerSlicesGUI;
 class vtkSlicerSlicesControlGUI;
 class vtkSlicerModulesWizardDialog;
+class vtkSlicerApplication;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -323,6 +323,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // would cause event loops (since it calls the tk 'update' command
     // to force display)
     void SetExternalProgress(char *message, float progress);
+
+    // Description:
+    // Get SlicerApplication
+    vtkSlicerApplication* GetSlicerApplication();
 
 protected:
     vtkSlicerApplicationGUI ( );

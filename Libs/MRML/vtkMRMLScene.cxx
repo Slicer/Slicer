@@ -108,6 +108,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->ErrorCode = 0;
   this->IsClosed = 0;
 
+  this->LastLoadedVersion = NULL;
+  this->Version = NULL;
+
   //
   // Register all the 'built-in' nodes for the library
   // - note: the scene will maintain a registered pointer to the nodes,
@@ -805,6 +808,12 @@ int vtkMRMLScene::Commit(const char* url)
   //file << "<MRML>\n";
   file << "<MRML ";
   
+  // write version
+  if (this->GetVersion())
+    {
+    file << " version=\"" << this->GetVersion() << "\" ";
+    }
+
   //---write any user tags.
   std::stringstream ss;
   if ( this->GetUserTagTable() != NULL )

@@ -259,6 +259,12 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
 }
 
+vtkSlicerApplication* 
+vtkSlicerApplicationGUI::GetSlicerApplication()
+{
+  return vtkSlicerApplication::SafeDownCast(this->GetApplication());
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::TearDownViewers()
 {
@@ -418,6 +424,23 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       dialog->Invoke();
       dialog->Delete();
       }
+    if (  this->GetMRMLScene()->GetLastLoadedVersion() && this->GetSlicerApplication()->GetSvnRevision() &&
+        strcmp(this->GetMRMLScene()->GetLastLoadedVersion(), this->GetSlicerApplication()->GetSvnRevision()) > 0 ) 
+      {
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent (  this->MainSlicerWindow );
+      dialog->SetStyleToMessage();
+      std::string msg = std::string("Warning: scene file ") + std::string( fileName) + 
+        std::string(" has vesrion ") + std::string( this->GetMRMLScene()->GetLastLoadedVersion()) +
+        std::string(" greater than Slicer3 version ") + std::string(this->GetSlicerApplication()->GetSvnRevision());
+      dialog->SetText(msg.c_str());
+      dialog->Create ( );
+      dialog->SetMasterWindow( this->MainSlicerWindow );
+      dialog->ModalOn();
+      dialog->Invoke();
+      dialog->Delete();
+      }
+
     }
   progressDialog->SetParent(NULL);
   progressDialog->Delete();
@@ -827,6 +850,7 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
   this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
   this->SaveDataWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SaveDataWidget->SetVersion(this->GetSlicerApplication()->GetSvnRevision());
   this->SaveDataWidget->Invoke();  
 
   this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );

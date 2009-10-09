@@ -46,6 +46,7 @@ vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
 {
   this->SaveDialog = NULL;
   this->ChangeAllSelectedDirButton = NULL;
+  this->Version = NULL;
 
   this->SelectAllButton = NULL;
   this->SelectNoneButton = NULL;
@@ -483,6 +484,7 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
     this->SetSnapshotsRootDirectory();
     
     this->GetMRMLScene()->SetURL(fileName.c_str());
+    this->GetMRMLScene()->SetVersion(this->GetVersion());
     this->GetMRMLScene()->Commit();  
     return 1;
     }

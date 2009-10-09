@@ -67,6 +67,11 @@ public:
   vtkSetStringMacro(DataDirectoryName);
   
   // Description:
+  // version for saving the scene
+  vtkGetStringMacro(Version);
+  vtkSetStringMacro(Version);
+
+  // Description:
   // update list from MRML, return number of nodes need to save
   // TODO: make update event driven so that we don't have to call this
   int UpdateFromMRML();
@@ -260,6 +265,8 @@ private:
   
   char *DataDirectoryName;
   
+  char *Version;
+
   //BTX
   std::vector<std::string> Nodes;
   std::vector<std::string> StorageNodes;
