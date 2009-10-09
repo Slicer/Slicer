@@ -21,7 +21,7 @@ BaseClassType *CreateObject()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename UniqueIdType>
-class Q_SLICER_BASE_GUI2_EXPORT qCTKAbstractObjectFactory
+class QCTK_WIDGETS_EXPORT qCTKAbstractObjectFactory
 {
 protected:
   typedef BaseClassType *(*CreateObjectFunc)();

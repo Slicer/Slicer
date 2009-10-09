@@ -118,6 +118,7 @@ ADD_LIBRARY(${lib_name}
 SET(QMRMLWidgets_LIBRARIES 
   ${QT_LIBRARIES}
   MRML
+  QCTKWidgets
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${QMRMLWidgets_LIBRARIES})
