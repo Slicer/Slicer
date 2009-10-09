@@ -37,8 +37,8 @@ public:
   
 private:
   // Not implemented
-  qMRMLUtils();
-  virtual ~qMRMLUtils();
+  qMRMLUtils(){}
+  virtual ~qMRMLUtils(){}
 
 };
 

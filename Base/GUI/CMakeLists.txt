@@ -185,7 +185,11 @@ set(libraries
   )
 
 IF(Slicer3_USE_QT)
-  set(libraries ${libraries} SlicerBaseGUI2 ${QT_LIBRARIES})
+  set(libraries 
+    ${libraries} 
+    ${QT_LIBRARIES}
+    SlicerBaseGUI2
+    )
 ENDIF(Slicer3_USE_QT)
 
 target_link_libraries(${lib_name} ${libraries})

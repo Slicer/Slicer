@@ -17,8 +17,8 @@ SET(qSlicerGUI2_SRCS
   qSlicerApplication.cxx
   qSlicerIOManager.h
   qSlicerIOManager.cxx
-  #qSlicerKwInterfaceWrapper.h
-  #qSlicerKwInterfaceWrapper.cxx
+  #qSlicerKwUIWrapper.h
+  #qSlicerKwUIWrapper.cxx
   )
 
 # Headers that should run through moc
@@ -26,7 +26,7 @@ SET(qSlicerGUI2_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerModuleTransform.h
   qSlicerApplication.h
-  #qSlicerKwInterfaceWrapper.h
+  #qSlicerKwUIWrapper.h
   )
   
 # UI files
@@ -67,15 +67,11 @@ set(QT_INCLUDE_DIRS
   ${QT_QTCORE_INCLUDE_DIR} 
   )
 
-
-SET(QT_LIBRARIES 
-  ${QT_QTCORE_LIBRARY} 
-  ${QT_QTGUI_LIBRARY} 
-  ${QT_QTWEBKIT_LIBRARY} 
-  )
-
 set(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qSlicerBaseGUI2Configure.h.in 
@@ -97,6 +93,12 @@ add_library(${lib_name}
   ${qSlicerGUI2_QRC_SRCS}
 )
 
+SET(QT_LIBRARIES 
+  ${QT_QTCORE_LIBRARY} 
+  ${QT_QTGUI_LIBRARY} 
+  ${QT_QTWEBKIT_LIBRARY} 
+  )
+  
 SET(GUI2_LIBRARIES
   SlicerBaseLogic
   ${QT_LIBRARIES}
