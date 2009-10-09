@@ -151,11 +151,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   
   this->SetRulerNodeID(NULL);
   
-  this->UpdatingMRML = 0;
-  this->UpdatingWidget = 0;
   this->Updating3DWidget = 0;
-  this->ProcessingMRMLEvent = 0;
-  this->ProcessingWidgetEvent = 0;
 
 //  this->DebugOn();
 }
@@ -375,17 +371,6 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
 void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
-  if (this->ProcessingMRMLEvent != 0)
-    {
-    vtkDebugMacro("ProcessWidgetEvents: already processing mrml event " << this->ProcessingMRMLEvent);
-    return;
-    }
-   if (this->ProcessingWidgetEvent != 0)
-    {
-    vtkDebugMacro("ProcessWidgetEvents: already processing widget event " << this->ProcessingWidgetEvent);
-    return;
-    }
-  
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   if ( !app )
     {
@@ -398,8 +383,6 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
     vtkErrorMacro ( "ProcessWidgetEvents: got Null SlicerApplicationGUI" );
     return;
     }
-  
-  this->ProcessingWidgetEvent = event;
 
   // process events that apply to all lists
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
@@ -436,7 +419,6 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         vtkDebugMacro("ProcessWidgetEvent: the selected node is null!");
         }
-      this->ProcessingWidgetEvent = 0;
       return;
     }
 
@@ -447,7 +429,6 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (activeRulerNode == NULL)
     {
     vtkDebugMacro("No selected ruler");
-    this->ProcessingWidgetEvent = 0;
     return;
     /*
       not allowing spontaneous creation of a ruler
@@ -564,7 +545,6 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->SetRulerNodeID(vtkMRMLMeasurementsRulerNode::SafeDownCast(this->RulerSelectorWidget->GetSelected())->GetID());
       }
     vtkDebugMacro("Setting gui from ruler node");
-    this->ProcessingWidgetEvent = 0;
     this->UpdateWidget(activeRulerNode);
     return;
     }
@@ -604,9 +584,36 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
         entry == this->Position1YEntry ||
         entry == this->Position1ZEntry)
       {
-      double x = this->Position1XEntry->GetValueAsDouble();
-      double y = this->Position1YEntry->GetValueAsDouble();
-      double z = this->Position1ZEntry->GetValueAsDouble();
+      double x, y, z;
+      double *position = activeRulerNode->GetPosition1();
+      // make sure don't undo the changes in the node by getting the gui
+      // elements since that would trigger an update to the gui with the old
+      // values
+      if (entry == this->Position1XEntry)
+        {
+        x = this->Position1XEntry->GetValueAsDouble();
+        }
+      else
+        {
+        // grab the value from the node
+        x = position[0];
+        }
+      if (entry ==  this->Position1YEntry)
+        {
+        y = this->Position1YEntry->GetValueAsDouble();
+        }
+      else
+        {
+        y = position[1];
+        }
+      if (entry == this->Position1ZEntry)
+        {
+        z = this->Position1ZEntry->GetValueAsDouble();
+        }
+      else
+        {
+        z = position[2];
+        }
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
       activeRulerNode->SetPosition1(x, y, z);
       }
@@ -614,9 +621,32 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
              entry == this->Position2YEntry ||
              entry == this->Position2ZEntry)
       {
-      double x = this->Position2XEntry->GetValueAsDouble();
-      double y = this->Position2YEntry->GetValueAsDouble();
-      double z = this->Position2ZEntry->GetValueAsDouble();
+      double x, y, z;
+      double *position = activeRulerNode->GetPosition2();
+      if (entry == this->Position2XEntry)
+        {
+        x = this->Position2XEntry->GetValueAsDouble();
+        }
+      else
+        {
+        x = position[0];
+        }
+      if (entry == this->Position2YEntry)
+        {
+        y = this->Position2YEntry->GetValueAsDouble();
+        }
+      else
+        {
+        y = position[1];
+        }
+      if (entry == this->Position2ZEntry)
+        {
+        z = this->Position2ZEntry->GetValueAsDouble();
+        }
+      else
+        {
+        z = position[2];
+        }
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
       activeRulerNode->SetPosition2(x, y, z);
       }
@@ -638,84 +668,11 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     this->Update3DWidget(activeRulerNode);
     }
-  // now update the mrml node with all the changed values from the GUI
-  //this->UpdateMRML();
-
-  this->ProcessingWidgetEvent = 0;
-}
-
-
-//---------------------------------------------------------------------------
-void vtkMeasurementsRulerWidget::UpdateMRMLFromGUI()
-{
-  if (this->UpdatingMRML || this->UpdatingWidget)
-    {
-    return;
-    }
-
-  this->UpdatingMRML = 1;
-
-  // is there a ruler node?
-  vtkMRMLMeasurementsRulerNode *activeRulerNode = (vtkMRMLMeasurementsRulerNode *)this->MRMLScene->GetNodeByID(this->GetRulerNodeID());
-  if (activeRulerNode == NULL)
-    {
-    vtkErrorMacro("No selected ruler");
-    this->UpdatingMRML = 0;
-    return;
-    }
-  
-  int visibility = this->VisibilityButton->GetWidget()->GetSelectedState();
-  activeRulerNode->SetVisibility(visibility);
-  
-    
-  double *rgb = this->PointColourButton->GetColor();
-  double *rgb1 = activeRulerNode->GetPointColour();
-  if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
-      fabs(rgb[1]-rgb1[1]) > 0.001 ||
-      fabs(rgb[2]-rgb1[2]) > 0.001)
-    {
-    activeRulerNode->SetPointColour(this->PointColourButton->GetColor());
-    }
-  rgb = this->LineColourButton->GetColor();
-  rgb1 = activeRulerNode->GetLineColour();
-  if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
-      fabs(rgb[1]-rgb1[1]) > 0.001 ||
-      fabs(rgb[2]-rgb1[2]) > 0.001)
-    {
-    activeRulerNode->SetLineColour(this->LineColourButton->GetColor());
-    }
-
-  double x = this->Position1XEntry->GetValueAsDouble();
-  double y = this->Position1YEntry->GetValueAsDouble();
-  double z = this->Position1ZEntry->GetValueAsDouble();
-  activeRulerNode->SetPosition1(x, y, z);
-
-  x = this->Position2XEntry->GetValueAsDouble();
-  y = this->Position2YEntry->GetValueAsDouble();
-  z = this->Position2ZEntry->GetValueAsDouble();
-  activeRulerNode->SetPosition2(x, y, z);
-      
-  activeRulerNode->SetDistanceAnnotationFormat(this->DistanceAnnotationFormatEntry->GetWidget()->GetValue());
-  
-  double scale = this->DistanceAnnotationScaleEntry->GetWidget()->GetValueAsDouble();
-  activeRulerNode->SetDistanceAnnotationScale(scale, scale, scale);
-  
-  activeRulerNode->SetResolution(this->ResolutionEntry->GetWidget()->GetValueAsInt());
-                                 
-  this->UpdatingMRML = 0;
-
 }
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNode *rulerNode)
 {
-  if (this->UpdatingMRML || this->Updating3DWidget)
-    {
-    return;
-    }
-
-  this->UpdatingMRML = 1;
-
   // is there a ruler node?
   vtkMRMLMeasurementsRulerNode *activeRulerNode;
   if (rulerNode == NULL)
@@ -729,7 +686,6 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
   if (activeRulerNode == NULL)
     {
     vtkErrorMacro("No selected ruler");
-    this->UpdatingMRML = 0;
     return;
     }
 
@@ -737,7 +693,6 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
   if (!distanceWidget)
     {
     vtkErrorMacro("No distance widget found for rulernode " << activeRulerNode->GetID());
-    this->UpdatingMRML = 0;
     return;
     }
   if (distanceWidget->GetWidget())
@@ -766,27 +721,12 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
 
   // skip the models for now
   
-  this->UpdatingMRML = 0;
 }
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-  // up front check of all events worried about
-  
-  if (this->ProcessingMRMLEvent != 0)
-    {
-    vtkDebugMacro("ProcessMRMLEvents already processing mrml event " << this->ProcessingMRMLEvent);
-    return;
-    }
-  if (this->ProcessingWidgetEvent != 0)
-    {
-    vtkDebugMacro("ProcessMRMLEvents already processing widget event " << this->ProcessingWidgetEvent);
-    return;
-    }
-
-  this->ProcessingMRMLEvent = event;
   
  vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
@@ -798,7 +738,6 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     // the lists are already gone from the scene, so need to clear out all the
     // widget properties, can't call remove with a node
     this->Update3DWidgetsFromMRML();
-    this->ProcessingMRMLEvent = 0;
     return;
     }
 
@@ -836,7 +775,6 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     if (addNode != NULL &&
         addNode->IsA("vtkMRMLMeasurementsRulerNode"))
       {
-//      this->DebugOn();
       vtkDebugMacro("Got a node added event with a ruler node " << addNode->GetID());
       // is it currently the active one?
       if (addNode == activeRulerNode)
@@ -849,8 +787,6 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->Update3DWidget(addNode);
       // for now, since missing some of the add calls when open a scene, make sure we're current with the scene
       this->Update3DWidgetsFromMRML();
-      this->ProcessingMRMLEvent = 0;
-//      this->DebugOff();
       return;
       }
     }
@@ -869,13 +805,11 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
           {
           this->SetRulerNodeID(NULL);
           }
-        this->ProcessingMRMLEvent = 0;
         return;
         }
       vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
       // update the gui
       UpdateWidget(activeRulerNode);
-      this->ProcessingMRMLEvent = 0;
       return;
       }
     } // end of events on the active ruler node
@@ -892,20 +826,12 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("Got transform modified event on node " << node->GetID());
     this->Update3DWidget(node);
     }
-  this->ProcessingMRMLEvent = 0;
 }
 
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *activeRulerNode)
 { 
-  if (this->UpdatingMRML || this->UpdatingWidget)
-    {
-    vtkDebugMacro("UpdateWidget: updating mrml = " << this->UpdatingMRML << ", updating widget = " <<  this->UpdatingWidget);
-    return;
-    }
-  this->UpdatingWidget = 1;
-
 
   vtkDebugMacro("UpdateWidget: active ruler node is " << (activeRulerNode == NULL ? "null" : activeRulerNode->GetName()));
   
@@ -915,14 +841,12 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
     // don't need to do anything yet, especially don't set the node selector to
     // null, as it causes a crash
     vtkDebugMacro("UpdateWidget: The passed in node is null, returning.");
-    this->UpdatingWidget = 0;
     return;
     }
   
   if ( this->RulerSelectorWidget->GetSelected() == NULL )
     {
     vtkDebugMacro("Null selected ruler, selecting it and returning");
-    this->UpdatingWidget = 0;
     this->RulerSelectorWidget->SetSelected(activeRulerNode);    
     return;
     }
@@ -934,7 +858,6 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
       vtkDebugMacro("UpdateWidget: input ruler " << activeRulerNode->GetName() << " doesn't match selector widget value: " << this->RulerSelectorWidget->GetSelected()->GetName());
       this->RulerSelectorWidget->SetSelected(activeRulerNode);
       vtkDebugMacro("... returning, hoping for a invoke event");
-      this->UpdatingWidget = 0;
       return;
       }
 
@@ -1014,8 +937,6 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
 
   // resolution
   this->ResolutionEntry->GetWidget()->SetValueAsInt(activeRulerNode->GetResolution());
-
-  this->UpdatingWidget = 0;
 
   this->Update3DWidget(activeRulerNode);
    

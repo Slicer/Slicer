@@ -124,10 +124,7 @@ protected:
   // update the 3d distance widget from the settings in teh passed in
   // rulerNode
   void Update3DWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
-
-  // Description:
-  // update the mrml node selected in the node selector to match the gui elements
-  void UpdateMRMLFromGUI();
+  
   // Description:
   // update the mrml node passed in, or the selected in the node selector if
   // null, to match the 3d widget
@@ -186,18 +183,7 @@ protected:
   // menu button whose menu exposes options for
   // setting visibility of all ruler nodes
   vtkKWMenuButton *AllVisibilityMenuButton;
-    
-  // Description:
-  // Set this when processing an event
-  int ProcessingMRMLEvent;
-  int ProcessingWidgetEvent;
 
-  // Description:
-  // flag to set when updating the mrml node
-  int UpdatingMRML;
-  // Description:
-  // flag set to 1 when updating the widget GUI
-  int UpdatingWidget;
   // Description:
   // flag set to 1 when updating a 3d widget (todo: set it to the index of the
   // ruler node / 3d widget once have more than one)
