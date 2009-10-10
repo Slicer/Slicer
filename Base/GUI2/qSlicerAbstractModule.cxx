@@ -47,18 +47,6 @@ QString qSlicerAbstractModule::moduleName()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::setTitle(const QString& title)
-{
-  this->Title = title;
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::title()const
-{
-  return this->Title;
-}
-
-//-----------------------------------------------------------------------------
 bool qSlicerAbstractModule::moduleEnabled()
 {
   return this->Internal->ModuleEnabled; 

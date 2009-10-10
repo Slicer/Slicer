@@ -26,16 +26,19 @@ qSlicerModuleFactory::qSlicerModuleFactory() : Superclass()
 {
   this->Internal = new qInternal;
   
-  // register core modules
-  this->registerModule<qSlicerModuleTransform>("Transforms");
-  
-  
+  this->registerCoreModules(); 
 }
 
 //-----------------------------------------------------------------------------
 qSlicerModuleFactory::~qSlicerModuleFactory()
 {
   delete this->Internal; 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactory::registerCoreModules()
+{
+  this->registerModule<qSlicerModuleTransform>("Transforms");
 }
 
 //-----------------------------------------------------------------------------
@@ -123,7 +126,7 @@ qSlicerAbstractModule* qSlicerModuleFactory::createModule(const QString& moduleN
     return 0; 
     }
     
-  module->setTitle(moduleTitle); 
+  module->setWindowTitle(moduleTitle); 
   
   qDebug() << module << " - title:" << moduleTitle; 
   return module; 
