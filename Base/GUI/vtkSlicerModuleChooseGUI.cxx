@@ -1,7 +1,8 @@
 
 #ifdef Slicer3_USE_QT
+#include "qSlicerModuleManager.h"
 #include "qSlicerAbstractModule.h"
-#include "QApplication"
+#include <QApplication>
 #endif
 
 #include <map>
@@ -232,7 +233,8 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         currentModule->Exit ( );
         }
 #ifdef Slicer3_USE_QT
-        app->HideModule( currentModuleName );
+      //qDebug() << "Attempt to show module:" << currentModuleName; 
+      qSlicerModuleManager::instance()->showModule(currentModuleName);
 #endif
       }
 
@@ -268,7 +270,8 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         currentModule->Exit ( );
         }
 #ifdef Slicer3_USE_QT
-      app->HideModule( currentModuleName );
+      //qDebug() << "Attempting to hide module:" << currentModuleName; 
+      qSlicerModuleManager::instance()->hideModule(currentModuleName);
 #endif
       }
 
@@ -372,7 +375,9 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
         }
 #ifdef Slicer3_USE_QT
-      if (app->GetModule(moduleName))
+      //qDebug() << "Attempt to raise module:" << moduleName; 
+      qSlicerAbstractModule * module = qSlicerModuleManager::instance()->getModule(moduleName); 
+      if (module)
         {
         //--- feedback to user
         std::string statusText = "...raising module ";
@@ -384,7 +389,6 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
         //--- raise the panel
         //m->GetUIPanel()->Raise();
         //app->ShowModule(moduleName);
-        qSlicerAbstractModule* module = app->GetModule(moduleName);
         int pos[2] = {0,0};
         int size[2];
         if (m)
@@ -474,7 +478,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
             currentModule->Exit ( );
             }
 #ifdef Slicer3_USE_QT
-          app->HideModule( currentModuleName );
+          qSlicerModuleManager::instance()->hideModule(currentModuleName);
 #endif
           }
         // Enter selected module.

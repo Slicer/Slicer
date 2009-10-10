@@ -17,8 +17,12 @@ SET(qSlicerGUI2_SRCS
   qSlicerApplication.cxx
   qSlicerIOManager.h
   qSlicerIOManager.cxx
-  #qSlicerKwUIWrapper.h
-  #qSlicerKwUIWrapper.cxx
+  qSlicerKwUIWrapper.h
+  qSlicerKwUIWrapper.cxx
+  qSlicerModuleFactory.h
+  qSlicerModuleFactory.cxx
+  qSlicerModuleManager.h
+  qSlicerModuleManager.cxx
   )
 
 # Headers that should run through moc
@@ -26,7 +30,7 @@ SET(qSlicerGUI2_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerModuleTransform.h
   qSlicerApplication.h
-  #qSlicerKwUIWrapper.h
+  qSlicerKwUIWrapper.h
   )
   
 # UI files

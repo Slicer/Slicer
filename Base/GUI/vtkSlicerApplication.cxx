@@ -7,6 +7,7 @@
 
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
+#include "qSlicerModuleManager.h"
 //#include "QtSlicerWebKit.h"
 #include <QHash>
 
@@ -222,11 +223,6 @@ private:
 class vtkSlicerApplication::vtkInternal
 {
 public:
-  #ifdef Slicer3_USE_QT
-  typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
-  typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
-  #endif
-  
   vtkInternal()
     {
     #ifdef Slicer3_USE_QT
@@ -239,7 +235,6 @@ public:
   
   #ifdef Slicer3_USE_QT
   qSlicerApplication*                    qApplication;
-  QHash<QString, qSlicerAbstractModule*> ModuleList; 
   #endif
 };
 
@@ -676,65 +671,69 @@ vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
 }
 
 #ifdef Slicer3_USE_QT
-//---------------------------------------------------------------------------
-void vtkSlicerApplication::AddModule ( qSlicerAbstractModule * module )
-{
-  if (!module)
-    {
-    return;
-    }
-  if (this->Internal->ModuleList.contains(module->title()))
-    {
-    return;
-    }
-  module->setMRMLScene( this->GetMRMLScene() ); 
-  this->Internal->ModuleList[module->title()] = module; 
-}
+
+// //---------------------------------------------------------------------------
+// void vtkSlicerApplication::AddModule ( qSlicerAbstractModule * module )
+// {
+//   if (!module)
+//     {
+//     return;
+//     }
+//   if (this->Internal->ModuleList.contains(module->title()))
+//     {
+//     return;
+//     }
+//   module->setMRMLScene( this->GetMRMLScene() ); 
+//   this->Internal->ModuleList[module->title()] = module; 
+// }
+
+
+// //---------------------------------------------------------------------------
+// void vtkSlicerApplication::RemoveModule ( qSlicerAbstractModule * module )
+// {
+//   if (!module)
+//     {
+//     return;
+//     }
+//   this->Internal->ModuleList.remove(module->title());
+// }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::RemoveModule ( qSlicerAbstractModule * module )
-{
-  if (!module)
-    {
-    return;
-    }
-  this->Internal->ModuleList.remove(module->title());
-}
+// qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *title )
+// {
+//   vtkInternal::ModuleListConstIterator iter = 
+//     this->Internal->ModuleList.find( title ); 
+//   if ( iter == this->Internal->ModuleList.constEnd() )
+//     {
+//     return 0;
+//     }
+//   return *iter; 
+// }
 
-//---------------------------------------------------------------------------
-qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *title )
-{
-  vtkInternal::ModuleListConstIterator iter = 
-    this->Internal->ModuleList.find( title ); 
-  if ( iter == this->Internal->ModuleList.constEnd() )
-    {
-    return 0;
-    }
-  return *iter; 
-}
+// //---------------------------------------------------------------------------
+// void vtkSlicerApplication::ShowModule ( const char *title )
+// {
+//   qSlicerAbstractModule * module = this->GetModule(title);
+//   if (!module)
+//     {
+//     return; 
+//     }
+//   module->show(); 
+// }
+// 
+// //---------------------------------------------------------------------------
+// void vtkSlicerApplication::HideModule ( const char *title )
+// {
+//   std::cout << " Hide module: " << title << std::endl;
+//   qSlicerAbstractModule * module = this->GetModule(title);
+//   if (!module)
+//     {
+//     return; 
+//     }
+//   module->hide(); 
+// }
 
-//---------------------------------------------------------------------------
-void vtkSlicerApplication::ShowModule ( const char *title )
-{
-  qSlicerAbstractModule * module = this->GetModule(title);
-  if (!module)
-    {
-    return; 
-    }
-  module->show(); 
-}
 
-//---------------------------------------------------------------------------
-void vtkSlicerApplication::HideModule ( const char *title )
-{
-  std::cout << " Hide module: " << title << std::endl;
-  qSlicerAbstractModule * module = this->GetModule(title);
-  if (!module)
-    {
-    return; 
-    }
-  module->hide(); 
-}
 #endif
 
 //---------------------------------------------------------------------------

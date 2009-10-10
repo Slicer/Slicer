@@ -69,6 +69,8 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 
   this->Internal->MRMLTransformNode = transformNode; 
   
+  this->reset(); 
+  
   // Enable/Disable the widget
   this->setEnabled(transformNode != 0); 
 }

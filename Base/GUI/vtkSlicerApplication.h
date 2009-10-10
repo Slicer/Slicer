@@ -12,7 +12,7 @@
 #ifdef Slicer3_USE_QT
 //BTX
 class qSlicerApplication;
-class qSlicerAbstractModule; 
+class qSlicerModuleManager; 
 //ETX
 #endif
 
@@ -73,11 +73,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 #ifdef Slicer3_USE_QT
     // Description:
     //BTX
-    virtual void AddModule(qSlicerAbstractModule * module); 
-    virtual void RemoveModule(qSlicerAbstractModule * module); 
-    virtual qSlicerAbstractModule* GetModule( const char *name ); 
-    virtual void ShowModule ( const char *name ); 
-    virtual void HideModule ( const char *name ); 
+    qSlicerModuleManager* moduleManager(); 
+    //virtual void AddModule(qSlicerAbstractModule * module); 
+    //virtual void RemoveModule(qSlicerAbstractModule * module); 
+    //virtual qSlicerAbstractModule* GetModule( const char *name ); 
+    //virtual void ShowModule ( const char *name ); 
+    //virtual void HideModule ( const char *name ); 
     //ETX
 #endif
 

@@ -2,8 +2,6 @@
 
 #include "ui_qSlicerModuleTransform.h" 
 
-#include "qSlicerApplication.h"
-
 #include "vtkMRMLLinearTransformNode.h"
 
 #include <QVector>

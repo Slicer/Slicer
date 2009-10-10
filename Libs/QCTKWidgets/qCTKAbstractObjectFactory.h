@@ -7,13 +7,13 @@
 
 #include <iostream>
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qCTKWidgetsWin32Header.h"
 
 //----------------------------------------------------------------------------
 namespace{
 // Description:
 template<typename BaseClassType, typename ClassType>
-BaseClassType *CreateObject()
+BaseClassType *createObject()
 {
   return new ClassType;
 }
@@ -48,24 +48,31 @@ public:
   template<typename ClassType>
   void registerObject(UniqueIdType uniqueId)
     {
-    this->registeredObjectMap[ uniqueId ] = &CreateObject<BaseClassType, ClassType>; 
+    this->RegisteredObjectMap[ uniqueId ] = &createObject<BaseClassType, ClassType>; 
     }
   
   // Description:
   // Create an instance of the object
-  BaseClassType *Create(UniqueIdType uniqueId)
+  virtual BaseClassType *create(UniqueIdType uniqueId)
     {
-    ConstIterator iter = this->registeredObjectMap.find(uniqueId); 
+    ConstIterator iter = this->RegisteredObjectMap.find(uniqueId); 
     
-    if ( iter == this->registeredObjectMap.constEnd())
+    if ( iter == this->RegisteredObjectMap.constEnd())
       {
       return NULL;
       }
     return (iter.value())();
     }
+    
+  // Description:
+  // List all registered objects
+  void dumpObjectInfo()
+  {
+    // TODO 
+  }
 
 private:
-  QHash<UniqueIdType, CreateObjectFunc> registeredObjectMap;
+  QHash<UniqueIdType, CreateObjectFunc> RegisteredObjectMap;
 }; 
 
 #endif
