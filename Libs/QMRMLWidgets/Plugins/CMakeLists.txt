@@ -1,0 +1,40 @@
+PROJECT(QMRMLWidgetsPlugin)
+
+# Find QT
+FIND_PACKAGE(Qt4 REQUIRED)
+
+INCLUDE_DIRECTORIES(
+  ${QT_INCLUDE_DIR}
+  ${QT_QTGUI_INCLUDE_DIR}
+  ${QT_QTCORE_INCLUDE_DIR}
+  ${QT_QTDESIGNER_INCLUDE_DIR}
+)
+
+# Create the plugin for Qt Designer
+SET(QMRMLWidgetsPlugin_SRCS
+  qMRMLLinearTransformSliderPlugin.cxx
+  qMRMLWidgetsPlugins.cxx  
+  qMRMLWidgetsPlugin.cxx
+  )
+
+SET(QMRMLWidgetsPlugin_MOC_SRCS
+  qMRMLLinearTransformSliderPlugin.h
+  qMRMLWidgetsPlugins.h
+  )
+
+QT4_WRAP_CPP(QMRMLWidgetsPlugin_SRCS ${QMRMLWidgetsPlugin_MOC_SRCS})
+SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/designer)
+SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/designer)
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/designer)
+
+ADD_LIBRARY(QMRMLWidgetsPlugin SHARED ${QMRMLWidgetsPlugin_SRCS})
+SET_TARGET_PROPERTIES(QMRMLWidgetsPlugin  PROPERTIES 
+                      COMPILE_FLAGS "-DQT_PLUGIN -DQT_NO_DEBUG")
+
+TARGET_LINK_LIBRARIES(QMRMLWidgetsPlugin 
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${QT_QTDESIGNER_LIBRARY}
+  QMRMLWidgets
+  QCTKWidgets
+  )

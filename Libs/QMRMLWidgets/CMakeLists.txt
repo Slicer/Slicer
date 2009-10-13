@@ -146,3 +146,8 @@ INSTALL(TARGETS ${lib_name}
 #
 IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Sub directories
+#
+ADD_SUBDIRECTORY(Plugins)
