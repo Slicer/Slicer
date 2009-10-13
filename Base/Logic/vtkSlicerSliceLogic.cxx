@@ -64,6 +64,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceModelNode = NULL;
   this->SliceModelTransformNode = NULL;
   this->Name = NULL;
+  this->SetName("");
   this->SliceModelDisplayNode = NULL;
   this->ImageData = NULL;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
