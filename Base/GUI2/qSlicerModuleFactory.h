@@ -1,9 +1,10 @@
 #ifndef __qSlicerModuleFactory_h
 #define __qSlicerModuleFactory_h 
 
-#include <qCTKAbstractObjectFactory.h>
-#include <qCTKAbstractModule.h>
+#include "qSlicerAbstractModule.h"
 #include "qSlicerBaseGUI2Win32Header.h"
+
+#include <qCTKAbstractObjectFactory.h>
 
 class Q_SLICER_BASE_GUI2_EXPORT qSlicerModuleFactory : 
   protected qCTKAbstractObjectFactory<qSlicerAbstractModule, QString>
