@@ -503,6 +503,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
         sourcePathComponents.pop_back();
         }
       }
+    // delete the temporary dir and all remaining contents
+    bool dirRemoved = vtksys::SystemTools::RemoveADirectory(moveFromDir.c_str());
+    if (!dirRemoved)
+      {
+      vtkWarningMacro("Failed to remove temporary write directory " << moveFromDir);
+      }
     
     }
   else
