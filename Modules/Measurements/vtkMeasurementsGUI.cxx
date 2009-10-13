@@ -460,6 +460,13 @@ void vtkMeasurementsGUI::BuildGUI ( )
   //
   // Ruler
   //
+  vtkSlicerModuleCollapsibleFrame *rulerFrame = vtkSlicerModuleCollapsibleFrame::New();
+  rulerFrame->SetParent(page);
+  rulerFrame->Create();
+  rulerFrame->SetLabelText("Ruler Widget");
+  rulerFrame->ExpandFrame();
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", rulerFrame->GetWidgetName());
+  
   this->RulerWidget = vtkMeasurementsRulerWidget::New ( );
   this->RulerWidget->SetMRMLScene(this->GetMRMLScene() );
   if (this->GetApplicationGUI()->GetViewerWidget())
@@ -468,7 +475,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
     }
   else { vtkWarningMacro("Unable to pass the viewer widget to the ruler widget"); }
   this->RulerWidget->AddMRMLObservers();
-  this->RulerWidget->SetParent ( page );
+  this->RulerWidget->SetParent ( rulerFrame->GetFrame() );
   this->RulerWidget->Create ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                 this->RulerWidget->GetWidgetName());
@@ -531,6 +538,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->TransformableNodeSelectorWidget->GetWidgetName());
 
+  rulerFrame->Delete();
   angleFrame->Delete();
   transformFrame->Delete();
 }

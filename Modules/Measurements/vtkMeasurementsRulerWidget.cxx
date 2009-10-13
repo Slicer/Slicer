@@ -1666,7 +1666,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   // Pick Models Frame
   //
   vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
-  modelFrame->SetParent(this->GetParent());
+  modelFrame->SetParent( pickRulerNodeFrame->GetFrame() );
   modelFrame->Create();
   modelFrame->SetLabelText("Constrain Ruler to Models");
   modelFrame->ExpandFrame();
@@ -1717,7 +1717,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   // ---
   // DISPLAY FRAME            
   vtkKWFrameWithLabel *rulerDisplayFrame = vtkKWFrameWithLabel::New ( );
-  rulerDisplayFrame->SetParent ( this->GetParent() );
+  rulerDisplayFrame->SetParent ( pickRulerNodeFrame->GetFrame() );
   rulerDisplayFrame->SetLabelText("Display Options");
   rulerDisplayFrame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
