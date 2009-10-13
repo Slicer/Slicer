@@ -1,0 +1,17 @@
+<MRML userTags="">
+ <Slice
+  id="vtkMRMLSliceNode2"  name="Red"  hideFromEditors="true"  selectable="true"  selected="false"  fieldOfView="201.6 283.472 1.5"  dimensions="229 322 1"  activeSlice="0"  layoutGridRows="1"  layoutGridColumns="1"  sliceToRAS="-1 0 -0 -100.8 0 1 0 -100.8 -0 0 1 69 0 -0 0 1"  layoutName="Red"  orientation="Axial"  jumpMode="1"  sliceVisibility="false"  widgetVisibility="false"  useLabelOutline="false"  sliceSpacingMode="0"  prescribedSliceSpacing="1 1 1" ></Slice>
+
+ <SliceComposite
+  id="vtkMRMLSliceCompositeNode2"  name="vtkMRMLSliceCompositeNode2"  hideFromEditors="true"  selectable="true"  selected="false"  backgroundVolumeID="vtkMRMLScalarVolumeNode1"  foregroundVolumeID=""  labelVolumeID=""  compositing="0"  labelOpacity="1"  linkedControl="0"  foregroundGrid="0"  backgroundGrid="0"  labelGrid="1"  fiducialVisibility="1"  fiducialLabelVisibility="1"  sliceIntersectionVisibility="0"  layoutName="Red"  annotationMode="All"  doPropagateVolumeSelection="1" ></SliceComposite>
+
+ <VolumeArchetypeStorage
+  id="vtkMRMLVolumeArchetypeStorageNode1"  name="vtkMRMLVolumeArchetypeStorageNode1"  hideFromEditors="true"  selectable="true"  selected="false"  fileName="TestData/fixed.nrrd"  useCompression="1"  readState="0"  writeState="0"  centerImage="0"  singleFile="0"  UseOrientationFromFile="1" ></VolumeArchetypeStorage>
+
+ <Volume
+  id="vtkMRMLScalarVolumeNode1"  name="fixed"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1"  userTags=""  displayNodeRef="vtkMRMLScalarVolumeDisplayNode1"  ijkToRASDirections="-1   0   0 -0   -1   0 0 -0 1 "  spacing="3.2 3.2 1.5"  origin="-0 -0 -0"  labelMap="0" ></Volume>
+
+ <VolumeDisplay
+  id="vtkMRMLScalarVolumeDisplayNode1"  name="vtkMRMLScalarVolumeDisplayNode1"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.5 0.5 0.5"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  autoScalarRange="true"  scalarRange="0 100"  colorNodeRef="vtkMRMLColorTableNodeGrey"   window="1204"  level="602"  upperThreshold="32767"  lowerThreshold="-32768"  interpolate="1"  autoWindowLevel="1"  applyThreshold="0"  autoThreshold="0" ></VolumeDisplay>
+
+</MRML>
