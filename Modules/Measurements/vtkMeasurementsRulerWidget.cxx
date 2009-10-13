@@ -122,6 +122,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->RulerModel2SelectorWidget = NULL;
   this->PointColourButton = NULL;
   this->LineColourButton = NULL;
+  this->TextColourButton = NULL;
  
   this->Position1Label = NULL;
   this->Position1XEntry = NULL;
@@ -209,6 +210,12 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     this->LineColourButton->SetParent(NULL);
     this->LineColourButton->Delete();
     this->LineColourButton= NULL;
+    }
+  if (this->TextColourButton)
+    {
+    this->TextColourButton->SetParent(NULL);
+    this->TextColourButton->Delete();
+    this->TextColourButton= NULL;
     }
   if (this->Position1Label)
     {
@@ -576,6 +583,19 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
         activeRulerNode->SetLineColour(this->LineColourButton->GetColor());
         }
       }
+    else if (ccbutton == this->TextColourButton)
+      {
+      double *guiRGB = this->TextColourButton->GetColor();
+      double *nodeRGB = activeRulerNode->GetDistanceAnnotationTextColour();
+      if (nodeRGB == NULL ||
+          (fabs(guiRGB[0]-nodeRGB[0]) > 0.001 ||
+           fabs(guiRGB[1]-nodeRGB[1]) > 0.001 ||
+           fabs(guiRGB[2]-nodeRGB[2]) > 0.001))
+        {
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetDistanceAnnotationTextColour(this->TextColourButton->GetColor());
+        }
+      }
     this->Update3DWidget(activeRulerNode);
     }
   else if (entry && event == vtkKWEntry::EntryValueChangedEvent)
@@ -711,6 +731,8 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
     activeRulerNode->SetPointColour(rgb);
     rgb = distanceWidget->GetRepresentation()->GetLineProperty()->GetColor();
     activeRulerNode->SetLineColour(rgb);
+    //rgb = distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->GetColor();
+    //activeRulerNode->SetDistanceAnnotationTextColour(rgb);
 
     activeRulerNode->SetDistanceAnnotationVisibility(distanceWidget->GetRepresentation()->GetDistanceAnnotationVisibility());
     activeRulerNode->SetDistanceAnnotationFormat(distanceWidget->GetRepresentation()->GetDistanceAnnotationFormat());
@@ -927,6 +949,14 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
  
 
   // distance annotation
+  rgb = this->TextColourButton->GetColor();
+  rgb1 = activeRulerNode->GetDistanceAnnotationTextColour();
+  if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
+      fabs(rgb[1]-rgb1[1]) > 0.001 ||
+      fabs(rgb[2]-rgb1[2]) > 0.001)
+    {
+    this->TextColourButton->SetColor(activeRulerNode->GetDistanceAnnotationTextColour());
+    }
   this->DistanceAnnotationVisibilityButton->GetWidget()->SetSelectedState(activeRulerNode->GetDistanceAnnotationVisibility());
   this->DistanceAnnotationFormatEntry->GetWidget()->SetValue(activeRulerNode->GetDistanceAnnotationFormat());
   double *scale = activeRulerNode->GetDistanceAnnotationScale();
@@ -1013,6 +1043,10 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     // line colour
     rgb1 = activeRulerNode->GetLineColour();
     distanceWidget->GetRepresentation()->GetLineProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+
+    // text colour
+    rgb1 = activeRulerNode->GetDistanceAnnotationTextColour();
+//    distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // position
     // get any transform on the node
@@ -1297,6 +1331,10 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     {
     this->LineColourButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if ( this->TextColourButton)
+    {
+    this->TextColourButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->RulerSelectorWidget)
     {
     this->RulerSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1375,6 +1413,10 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
   if ( this->LineColourButton)
     {
     this->LineColourButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->TextColourButton)
+    {
+    this->TextColourButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->RulerSelectorWidget)
     {
@@ -1703,7 +1745,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->LineColourButton->SetBalloonHelpString("set line color.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->LineColourButton->GetWidgetName() );
-
+  
   // distance annotation frame
   vtkKWFrame *annotationFrame = vtkKWFrame::New();
   annotationFrame->SetParent(rulerDisplayFrame->GetFrame());
@@ -1718,6 +1760,18 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->DistanceAnnotationVisibilityButton->SetBalloonHelpString("set distance annotation visibility.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->DistanceAnnotationVisibilityButton->GetWidgetName() );
+
+  this->TextColourButton = vtkKWChangeColorButton::New();
+  this->TextColourButton->SetParent ( annotationFrame );
+  this->TextColourButton->Create ( );
+  this->TextColourButton->SetColor(1.0, 1.0, 1.0);
+  this->TextColourButton->LabelOutsideButtonOn();
+  this->TextColourButton->SetLabelPositionToRight();
+  this->TextColourButton->SetLabelText("Set Text Color");
+  this->TextColourButton->SetBalloonHelpString("set text color.");
+  // commented out until VTK supports getting the distance annotation text propery
+  //this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+  //               this->TextColourButton->GetWidgetName() );
   
   this->DistanceAnnotationFormatEntry = vtkKWEntryWithLabel::New();
   this->DistanceAnnotationFormatEntry->SetParent(annotationFrame);

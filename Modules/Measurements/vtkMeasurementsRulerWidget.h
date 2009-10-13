@@ -150,8 +150,10 @@ protected:
   // Description:
   // Change the colour of the line
   vtkKWChangeColorButton *LineColourButton;
-
-
+  // Description:
+  // Change the colour of the distance annotation text
+  vtkKWChangeColorButton *TextColourButton;
+  
   // Description:
   // point position entry
   vtkKWLabel *Position1Label;

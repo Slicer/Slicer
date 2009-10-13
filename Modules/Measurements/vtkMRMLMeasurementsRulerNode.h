@@ -53,6 +53,11 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   vtkSetVector3Macro(LineColour, double);
 
   // Description:
+  // get/set the distance annotation text colour
+  vtkGetVector3Macro(DistanceAnnotationTextColour, double);
+  vtkSetVector3Macro(DistanceAnnotationTextColour, double);
+
+  // Description:
   // get/set the id of the model the first and second end of the ruler is constrained upon
   vtkGetStringMacro(ModelID1);
   vtkSetStringMacro(ModelID1);
@@ -108,9 +113,10 @@ protected:
   int DistanceAnnotationVisibility;
 
   // Description:
-  // colours of the actors representing the end points and the line
+  // colours of the actors representing the end points and the line and the text
   double PointColour[3];
   double LineColour[3];
+  double DistanceAnnotationTextColour[3];
 
   // Description:
   // number of subdivisions on the line
