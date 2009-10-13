@@ -1,11 +1,13 @@
 #ifndef __qSlicerApplication_h
 #define __qSlicerApplication_h 
 
+#include "qSlicerBaseGUI2Win32Header.h"
+
 #include <QApplication>
 
 class vtkMRMLScene; 
 
-class qSlicerApplication : public QApplication
+class Q_SLICER_BASE_GUI2_EXPORT qSlicerApplication : public QApplication
 {
   Q_OBJECT
 

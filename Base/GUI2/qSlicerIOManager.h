@@ -1,9 +1,10 @@
 #ifndef __qSlicerIOManager_h
 #define __qSlicerIOManager_h 
 
+#include "qSlicerBaseGUI2Win32Header.h"
 #include <QString>
 
-class qSlicerIOManager
+class Q_SLICER_BASE_GUI2_EXPORT qSlicerIOManager
 {
 
 public:
