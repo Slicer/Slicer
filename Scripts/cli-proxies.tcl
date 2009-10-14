@@ -113,7 +113,11 @@ file mkdir $::CLIPROXY(realdir)
 set ignoreExts {".dylib" ".so" ".dll" ".py" ".pyc" ".tcl" ".m" ".sh"}
 
 foreach candidate [glob $::CLIPROXY(dir)/*] {
-  vputs "checking $candidate"
+  vputs "\n\nchecking $candidate"
+  if { [file isdirectory $candidate] } {
+    vputs "skipping directory"
+    continue
+  }
   if { [lsearch $ignoreExts [file extension $candidate]] == -1 } {
     vputs "*********************"
     set exename [file tail $candidate]
@@ -124,7 +128,8 @@ foreach candidate [glob $::CLIPROXY(dir)/*] {
       file rename -force $candidate $::CLIPROXY(realdir)/$exename
       switch $::CLIPROXY(scriptType) {
         "tcl" {
-          set fp [open "$candidate-proxy" "w"]
+          set proxyName $candidate-proxy.tcl
+          set fp [open "$proxyName" "w"]
           puts $fp "#!/bin/sh"
           puts $fp "# the next line restarts using tclsh \\"
           puts $fp "    exec tclsh \"\$0\" \"\$@\""
@@ -138,7 +143,8 @@ foreach candidate [glob $::CLIPROXY(dir)/*] {
           puts $fp "  return $ret"
           puts $fp "\}"
           close $fp
-          file attributes "$candidate-proxy" -permissions ugo+x 
+          file attributes "$proxyName" -permissions ugo+x 
+          vputs "created $proxyName"
         }
         default {
           puts "unsupported script type"
@@ -149,7 +155,6 @@ foreach candidate [glob $::CLIPROXY(dir)/*] {
     } else {
       vputs "Could not execute $candidate"
     }
-    break
   } else {
     vputs "ignoring $candidate because of file extension"
   }
