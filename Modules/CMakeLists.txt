@@ -77,6 +77,7 @@ subdirs(
   FourDImage
 # FourDAnalysis
   ExtractSubvolumeROI
+  PETCTFusion
   )
 
 if(Slicer3_USE_OPENIGTLINK)
