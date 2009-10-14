@@ -321,7 +321,7 @@ void vtkChangeTrackerLogic::DeleteSuperSample(int ScanNum) {
   } 
 }
 
-double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], int resampleChoice) {
+double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], double resampleConst, int resampleChoice) {
     double SuperSampleSpacing = -1.;
 
     switch(resampleChoice){
@@ -349,7 +349,7 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
         minSpacing = inputSpacing[1];
       if(minSpacing>inputSpacing[2])
         minSpacing = inputSpacing[2];
-      SuperSampleSpacing = minSpacing*this->ChangeTrackerNode->GetResampleConst();
+      SuperSampleSpacing = minSpacing*resampleConst;
       break;}
     default:
       std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
@@ -449,7 +449,7 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   double SuperSampleSpacing = -1;
   if (ScanNum == 1) {
     double *Spacing = volumeNode->GetSpacing();
-    SuperSampleSpacing = this->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 
+    SuperSampleSpacing = this->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, this->ChangeTrackerNode->GetResampleConst(),
       this->ChangeTrackerNode->GetResampleChoice());
     double SuperSampleVol = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
     this->ChangeTrackerNode->SetSuperSampled_Spacing(SuperSampleSpacing);    

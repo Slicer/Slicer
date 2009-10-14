@@ -370,7 +370,7 @@ int main(int argc, char* argv[])
     {
          Spacing =  tg.Scan1Data->GetSpacing();
              
-         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, ResampleChoice);
+         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, ResampleChoice);
          SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
          Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
          SuperSampleRatio   = SuperSampleVol/Scan1Vol;

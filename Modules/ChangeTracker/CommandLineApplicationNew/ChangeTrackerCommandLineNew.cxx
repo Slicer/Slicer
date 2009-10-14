@@ -318,6 +318,7 @@ int main(int argc, char* argv[])
     tgVtkDefineMacro(Scan2LocalNormalized,vtkImageData);
     tgVtkDefineMacro(Scan2Local,vtkImageData); 
     tgVtkDefineMacro(Scan1PreSegment,vtkImageThreshold); 
+    tgVtkDefineMacro(Scan1PreSegmentImage,vtkImageData);
     tgVtkDefineMacro(Scan1Segment,vtkImageIslandFilter); 
     tgVtkDefineMacro(Scan1SegmentOutput,vtkImageData);
     tgVtkDefineMacro(Scan1SuperSample,vtkImageData);  
@@ -380,7 +381,7 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE;
       }
 
-    cerr << "Resampling with the input transform is complete" << endl;
+    cerr << "Resampling with the input transform is complete. Destination is " << Scan2Global_fname << endl;
 
     // Read back the resampled result
     vtkMatrix4x4* matrix = vtkMatrix4x4::New();
@@ -396,21 +397,46 @@ int main(int argc, char* argv[])
     int ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
 
     Spacing =  tg.Scan1Data->GetSpacing();
-    SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, RESCHOICE_ISO);
+    cerr << "Before DefineSupersampleSize " << ROIMax[0] << ", " << ROIMax[1] << " " << ROIMax[2] << std::endl;
+    // TODO: pass resampling const in the cmdline
+    SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
+    cerr << "Super sample size defined to be " << SuperSampleSpacing << endl;
 
     if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
+    cerr << "Scan1 ROI resampled" << endl;
+
     if (logic->CreateSuperSampleFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
+    cerr << "Scan2 ROI resampled" << endl;
+
     // this one with nn interpolator
-    if (logic->CreateSuperSampleFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1SegmentationSuperSample,0)) {
+    if (logic->CreateSuperSampleFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1PreSegmentImage,false)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
+    cerr << "Scan1 segmentation resampled" << endl;
+
+    // run island removal on the input segmentation
+    int range[2] = {1,255}; // assume label value is under 255    
+    vtkChangeTrackerLogic::DefinePreSegment(Scan1PreSegmentImage,range,Scan1PreSegment);
+    vtkChangeTrackerLogic::DefineSegment(Scan1PreSegment->GetOutput(),Scan1Segment);
+    Scan1SegmentOutput->DeepCopy(Scan1Segment->GetOutput());
+
+    // normalize intensities to scan1
+    std::string CMD = "::ChangeTrackerTcl::HistogramNormalization_FCT " + Scan1SuperSampleTcl + " " + Scan1SegmentOutputTcl + " " 
+      + Scan2SuperSampleTcl + " " + Scan2LocalNormalizedTcl;
+    cout << "Scan 2 normalized" << endl;
+    app->Script(CMD.c_str()); 
+    
+    
+    tgWriteVolume("scan1roi.nrrd",tg.Scan1Matrix,Scan1SuperSample);    
+    tgWriteVolume("scan2roi.nrrd",tg.Scan1Matrix,Scan2SuperSample);    
+    tgWriteVolume("scan1segmroi.nrrd",tg.Scan1Matrix,Scan1SegmentOutput);    
 
 
     cerr << "Success so far!" << endl;

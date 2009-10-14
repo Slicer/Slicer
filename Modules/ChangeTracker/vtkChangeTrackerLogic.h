@@ -65,7 +65,7 @@ public:
   // special testing functions
   void DeleteSuperSample(int ScanNum);
   vtkMRMLScalarVolumeNode* CreateSuperSample(int ScanNum);
-  double DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], int resampleChoice); 
+  double DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], double resampleConst, int resampleChoice); 
 
   int CheckROI(vtkMRMLVolumeNode* volumeNode);
 
