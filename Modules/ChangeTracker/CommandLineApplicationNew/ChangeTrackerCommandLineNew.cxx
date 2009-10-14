@@ -327,6 +327,11 @@ int main(int argc, char* argv[])
 
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
 
+    if(tgROIMin[0]>=tgROIMax[0] || tgROIMin[1]>=tgROIMax[1] || tgROIMin[2]>=tgROIMax[2]){
+      cerr << "ERROR: invalid ROI coordinates!" << endl;
+      return EXIT_FAILURE;
+    }
+
     if (tg.SetScan1Data(tgScan1.c_str())) 
       {
       cerr << "ERROR: Failed to read Scan 1" << endl;
@@ -391,15 +396,55 @@ int main(int argc, char* argv[])
 
     // supersample ROIs
     //
+    //
+    // Necessary for creating matrix with correct origin
+    // 
     double *Spacing;
     double SuperSampleSpacing; 
+    double SuperSampleVol;     
+    double Scan1Vol;     
+    double SuperSampleRatio;
+    vtkMatrix4x4 *supersampleMatrix = vtkMatrix4x4::New(); 
     int ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
     int ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
 
+    {
+         Spacing =  tg.Scan1Data->GetSpacing();
+             
+         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, ResampleChoice);
+         SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
+         Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
+         SuperSampleRatio   = SuperSampleVol/Scan1Vol;
+
+
+         int *EXTENT = Scan1SuperSample->GetExtent();
+         int dims[3] = {EXTENT[1] - EXTENT[0] + 1, EXTENT[3] - EXTENT[2] + 1,EXTENT[5] - EXTENT[4] + 1};
+   
+         double newIJKOrigin[4] = {ROIMin[0],ROIMin[1],ROIMin[2], 1.0 };
+         double newRASOrigin[4];
+         char ScanOrder[100];
+   
+         vtkMatrix4x4 *Scan1MatrixIJKToRAS = vtkMatrix4x4::New();
+           Scan1MatrixIJKToRAS->DeepCopy(tg.Scan1Matrix);
+           Scan1MatrixIJKToRAS->Invert();
+           Scan1MatrixIJKToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
+           strcpy(ScanOrder, vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(Scan1MatrixIJKToRAS));
+           
+         Scan1MatrixIJKToRAS->Delete();
+    
+     double SuperSampleSpacingArray[3] = {SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing};
+         vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,SuperSampleSpacingArray,dims,1,supersampleMatrix);
+         // vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,Scan1SuperSample->GetSpacing(),dims,1,supersampleMatrix);
+         supersampleMatrix->SetElement(0,3,newRASOrigin[0]);
+         supersampleMatrix->SetElement(1,3,newRASOrigin[1]);
+         supersampleMatrix->SetElement(2,3,newRASOrigin[2]);
+         supersampleMatrix->Invert();
+    }
+
     Spacing =  tg.Scan1Data->GetSpacing();
-    cerr << "Before DefineSupersampleSize " << ROIMax[0] << ", " << ROIMax[1] << " " << ROIMax[2] << std::endl;
+    cerr << "Before DefineSupersampleSize Min:" << ROIMin[0] << ", " << ROIMin[1] << ", " << ROIMin[2] << std::endl;
+    cerr << "Before DefineSupersampleSize Max:" << ROIMax[0] << ", " << ROIMax[1] << ", " << ROIMax[2] << std::endl;
     // TODO: pass resampling const in the cmdline
-    SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
     cerr << "Super sample size defined to be " << SuperSampleSpacing << endl;
 
     if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
@@ -434,9 +479,9 @@ int main(int argc, char* argv[])
     app->Script(CMD.c_str()); 
     
     
-    tgWriteVolume("scan1roi.nrrd",tg.Scan1Matrix,Scan1SuperSample);    
-    tgWriteVolume("scan2roi.nrrd",tg.Scan1Matrix,Scan2SuperSample);    
-    tgWriteVolume("scan1segmroi.nrrd",tg.Scan1Matrix,Scan1SegmentOutput);    
+    tgWriteVolume("scan1roi.nrrd",supersampleMatrix,Scan1SuperSample);    
+    tgWriteVolume("scan2roi.nrrd",supersampleMatrix,Scan2SuperSample);    
+    tgWriteVolume("scan1segmroi.nrrd",supersampleMatrix,Scan1SegmentOutput);    
 
 
     cerr << "Success so far!" << endl;
