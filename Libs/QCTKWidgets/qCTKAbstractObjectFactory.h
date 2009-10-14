@@ -1,13 +1,13 @@
 #ifndef __qCTKAbstractObjectFactory_h
 #define __qCTKAbstractObjectFactory_h 
 
+#include "qCTKWidgetsWin32Header.h"
+
 #include <QString>
 #include <QHash>
 #include <QDebug>
 
 #include <iostream>
-
-#include "qCTKWidgetsWin32Header.h"
 
 //----------------------------------------------------------------------------
 namespace{
