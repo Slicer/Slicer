@@ -22,7 +22,7 @@ QString qMRMLLinearTransformSliderPlugin::domXml() const
           "   <x>0</x>\n"
           "   <y>0</y>\n"
           "   <width>200</width>\n"
-          "   <height>20</height>\n"
+          "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
           "</widget>\n";

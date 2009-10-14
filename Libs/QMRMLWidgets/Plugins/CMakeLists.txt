@@ -13,12 +13,18 @@ INCLUDE_DIRECTORIES(
 # Create the plugin for Qt Designer
 SET(QMRMLWidgetsPlugin_SRCS
   qMRMLLinearTransformSliderPlugin.cxx
+  qMRMLMatrixWidgetPlugin.cxx
+  qMRMLNodeSelectorPlugin.cxx
+  qMRMLTransformSlidersPlugin.cxx
   qMRMLWidgetsPlugins.cxx  
   qMRMLWidgetsPlugin.cxx
   )
 
 SET(QMRMLWidgetsPlugin_MOC_SRCS
   qMRMLLinearTransformSliderPlugin.h
+  qMRMLMatrixWidgetPlugin.h
+  qMRMLNodeSelectorPlugin.h
+  qMRMLTransformSlidersPlugin.h
   qMRMLWidgetsPlugins.h
   )
 

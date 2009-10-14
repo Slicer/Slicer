@@ -2,6 +2,9 @@
 #define __qMRMLWidgetsPlugins_h
 
 #include "qMRMLLinearTransformSliderPlugin.h"
+#include "qMRMLMatrixWidgetPlugin.h"
+#include "qMRMLNodeSelectorPlugin.h"
+#include "qMRMLTransformSlidersPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
 
@@ -16,7 +19,10 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLLinearTransformSliderPlugin;
+    plugins << new qMRMLLinearTransformSliderPlugin
+            << new qMRMLMatrixWidgetPlugin
+            << new qMRMLNodeSelectorPlugin
+            << new qMRMLTransformSlidersPlugin;
     return plugins;
     }
 };

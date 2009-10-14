@@ -14,6 +14,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(QString Title READ title WRITE setTitle)
   Q_PROPERTY(CoordinateReferenceType CoordinateReference READ coordinateReference WRITE setCoordinateReference)
   Q_ENUMS(CoordinateReferenceType)
   Q_PROPERTY(TransformType TypeOfTransform READ typeOfTransform WRITE setTypeOfTransform)
@@ -48,26 +49,26 @@ public:
   TransformType typeOfTransform() const;
   
   // Description:
-  // Set/Get Title
+  // Set/Get Title of the group box
   void setTitle(const QString& title); 
-  QString title(); 
+  QString title()const; 
   
   // Description:
   // Set sliders range
-  double minimum();
-  double maximum(); 
+  double minimum()const;
+  double maximum()const; 
   void setRange(double min, double max);
   
   // Description:
   // Set sliders single step 
-  double singleStep(); 
+  double singleStep()const; 
   void setSingleStep(double step); 
   
   // Description:
   // Get/Set slider's label
-  QString getLRLabel(); 
-  QString getPALabel(); 
-  QString getISLabel(); 
+  QString getLRLabel()const; 
+  QString getPALabel()const; 
+  QString getISLabel()const; 
   void setLRLabel(const QString& label);
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);

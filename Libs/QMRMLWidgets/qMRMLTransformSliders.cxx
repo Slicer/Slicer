@@ -22,7 +22,6 @@ public:
     this->MRMLTransformNode = 0; 
     }
   TransformType                          TypeOfTransform;
-  QString                                Title; 
   
   vtkMRMLLinearTransformNode*            MRMLTransformNode; 
 };
@@ -127,20 +126,20 @@ void qMRMLTransformSliders::setTitle(const QString& title)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::title()
+QString qMRMLTransformSliders::title()const
 {
   return this->Internal->SlidersGroupBox->title(); 
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::minimum()
+double qMRMLTransformSliders::minimum()const
 {
   // Assumes settings of the sliders are all the same
   return this->Internal->PASlider->minimum(); 
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::maximum()
+double qMRMLTransformSliders::maximum()const
 {
   // Assumes settings of the sliders are all the same
   return this->Internal->PASlider->maximum(); 
@@ -155,7 +154,7 @@ void qMRMLTransformSliders::setRange(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::singleStep()
+double qMRMLTransformSliders::singleStep()const
 {
   // Assumes settings of the sliders are all the same
   return this->Internal->PASlider->singleStep(); 
@@ -170,19 +169,19 @@ void qMRMLTransformSliders::setSingleStep(double step)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getLRLabel()
+QString qMRMLTransformSliders::getLRLabel()const
 {
   return this->Internal->LRSlider->labelText();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getPALabel()
+QString qMRMLTransformSliders::getPALabel()const
 {
   return this->Internal->PASlider->labelText();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getISLabel()
+QString qMRMLTransformSliders::getISLabel()const
 {
   return this->Internal->ISSlider->labelText();
 }
