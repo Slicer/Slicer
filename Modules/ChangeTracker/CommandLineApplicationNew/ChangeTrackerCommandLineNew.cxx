@@ -114,7 +114,7 @@ class tgCMDLineStructure {
 
   tgSetDataMacro(Scan1Data,Scan1Matrix);
   tgSetDataMacro(Scan2Data,Scan2Matrix);
-
+  tgSetDataMacro(Scan1SegmentedData,Scan1Matrix);
 
 
   void SetWorkingDir(vtkKWApplication *app, const char* fileNameScan1) {
@@ -137,6 +137,10 @@ class tgCMDLineStructure {
   vtkImageData *Scan2Data; 
   std::string Scan2DataTcl;
   vtkMatrix4x4 *Scan2Matrix; 
+
+  vtkImageData *Scan1SegmentedData; 
+  std::string Scan1SegmentedDataTcl;
+  vtkMatrix4x4 *Scan1SegmentedMatrix; 
 
   std::string WorkingDir;
 
@@ -316,8 +320,10 @@ int main(int argc, char* argv[])
     tgVtkDefineMacro(Scan1PreSegment,vtkImageThreshold); 
     tgVtkDefineMacro(Scan1Segment,vtkImageIslandFilter); 
     tgVtkDefineMacro(Scan1SegmentOutput,vtkImageData);
-    tgVtkDefineMacro(Scan1SuperSample,vtkImageData); 
+    tgVtkDefineMacro(Scan1SuperSample,vtkImageData);  
+    tgVtkDefineMacro(Scan1SegmentationSuperSample,vtkImageData); 
     tgVtkDefineMacro(Scan2SuperSample,vtkImageData); 
+
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
 
     if (tg.SetScan1Data(tgScan1.c_str())) 
@@ -332,15 +338,21 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE;
       }
 
+    if (tg.SetScan1SegmentedData(tgScan1segmented.c_str()))
+      {
+      cerr << "ERROR: Failed to read Scan 1 segmentation" << endl;
+      return EXIT_FAILURE;
+      }
+
     if (TerminationStep && tgOutput=="")
       {
       cerr << "ERROR: non-zero termination step implies non-empty output image" << endl;
       return EXIT_FAILURE;
       }
     
-    if (!tg.Scan1Data || !tg.Scan2Data ) 
+    if (!tg.Scan1Data || !tg.Scan2Data || !tg.Scan1SegmentedData) 
       {
-      cerr << "ERROR: --scan1 and --scan2 have to be defined" << endl;
+      cerr << "ERROR: --scan1, --scan2 and --scan1segmented have to be defined" << endl;
       return EXIT_FAILURE; 
       }
        
@@ -356,7 +368,61 @@ int main(int argc, char* argv[])
     
     std::cerr << "After loading the data" << std::endl;
 
+    // resample the second image with the supplied transform
+    std::ostringstream cmdStream;
+    std::string Scan2Global_fname = std::string(tg.GetWorkingDir())+std::string("/Scan2_Global.nrrd");
+    cmdStream << slicerHome << "/Slicer3 --launch ResampleVolume2 --Reference " << tgScan1.c_str() <<
+      " --transformationFile " << scan2tfm.c_str() << " " << tgScan2.c_str() << " " << Scan2Global_fname;
+    
+    if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
+      {
+      cerr << "ERROR: Resampling of the second scan failed" << endl;
+      return EXIT_FAILURE;
+      }
+
+    cerr << "Resampling with the input transform is complete" << endl;
+
+    // Read back the resampled result
+    vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+    tgReadVolume(Scan2Global_fname.c_str(), Scan2Global, matrix);
+    matrix->Delete();
+    matrix = NULL;
+
+    // supersample ROIs
+    //
+    double *Spacing;
+    double SuperSampleSpacing; 
+    int ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
+    int ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
+
+    Spacing =  tg.Scan1Data->GetSpacing();
+    SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, RESCHOICE_ISO);
+
+    if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
+      cerr << "ERROR: Could not super sample scan1 " << endl;
+      return EXIT_FAILURE; 
+    }
+    if (logic->CreateSuperSampleFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample)) {
+      cerr << "ERROR: Could not super sample scan1 " << endl;
+      return EXIT_FAILURE; 
+    }
+    // this one with nn interpolator
+    if (logic->CreateSuperSampleFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1SegmentationSuperSample,0)) {
+      cerr << "ERROR: Could not super sample scan1 " << endl;
+      return EXIT_FAILURE; 
+    }
+
+
+    cerr << "Success so far!" << endl;
+    return EXIT_SUCCESS;
+  } catch (...){
+    cerr << "There was some error!" << std::endl;
+  }
+}
+
+#if 0
     // Necessary for creating matrix with correct origin
+    // AF: what is this?
     // 
     double *Spacing;
     double SuperSampleSpacing; 
@@ -367,38 +433,39 @@ int main(int argc, char* argv[])
     int ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
     int ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
 
-    {
-         Spacing =  tg.Scan1Data->GetSpacing();
+    Spacing =  tg.Scan1Data->GetSpacing();
              
-         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, ResampleChoice);
-         SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
-         Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
-         SuperSampleRatio   = SuperSampleVol/Scan1Vol;
+    SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, RESCHOICE_ISO);
+#if 0
+    SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
+    Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
+    SuperSampleRatio   = SuperSampleVol/Scan1Vol;
 
 
-         int *EXTENT = Scan1SuperSample->GetExtent();
-         int dims[3] = {EXTENT[1] - EXTENT[0] + 1, EXTENT[3] - EXTENT[2] + 1,EXTENT[5] - EXTENT[4] + 1};
-   
-         double newIJKOrigin[4] = {ROIMin[0],ROIMin[1],ROIMin[2], 1.0 };
-         double newRASOrigin[4];
-         char ScanOrder[100];
-   
-         vtkMatrix4x4 *Scan1MatrixIJKToRAS = vtkMatrix4x4::New();
-           Scan1MatrixIJKToRAS->DeepCopy(tg.Scan1Matrix);
-           Scan1MatrixIJKToRAS->Invert();
-           Scan1MatrixIJKToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
-           strcpy(ScanOrder, vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(Scan1MatrixIJKToRAS));
-           
-         Scan1MatrixIJKToRAS->Delete();
-    
-     double SuperSampleSpacingArray[3] = {SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing};
-         vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,SuperSampleSpacingArray,dims,1,supersampleMatrix);
-         // vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,Scan1SuperSample->GetSpacing(),dims,1,supersampleMatrix);
-         supersampleMatrix->SetElement(0,3,newRASOrigin[0]);
-         supersampleMatrix->SetElement(1,3,newRASOrigin[1]);
-         supersampleMatrix->SetElement(2,3,newRASOrigin[2]);
-         supersampleMatrix->Invert();
-    }
+    int *EXTENT = Scan1SuperSample->GetExtent();
+    int dims[3] = {EXTENT[1] - EXTENT[0] + 1, EXTENT[3] - EXTENT[2] + 1,EXTENT[5] - EXTENT[4] + 1};
+
+    double newIJKOrigin[4] = {ROIMin[0],ROIMin[1],ROIMin[2], 1.0 };
+    double newRASOrigin[4];
+    char ScanOrder[100];
+
+    vtkMatrix4x4 *Scan1MatrixIJKToRAS = vtkMatrix4x4::New();
+    Scan1MatrixIJKToRAS->DeepCopy(tg.Scan1Matrix);
+    Scan1MatrixIJKToRAS->Invert();
+    Scan1MatrixIJKToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
+    strcpy(ScanOrder, vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(Scan1MatrixIJKToRAS));
+
+    Scan1MatrixIJKToRAS->Delete();
+
+    double SuperSampleSpacingArray[3] = {SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing};
+    vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,SuperSampleSpacingArray,dims,1,supersampleMatrix);
+    // vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,Scan1SuperSample->GetSpacing(),dims,1,supersampleMatrix);
+    supersampleMatrix->SetElement(0,3,newRASOrigin[0]);
+    supersampleMatrix->SetElement(1,3,newRASOrigin[1]);
+    supersampleMatrix->SetElement(2,3,newRASOrigin[2]);
+    supersampleMatrix->Invert();
+  }
+#endif // 0
 
     // -------------------------------------
     // Run pipeline 
@@ -853,3 +920,4 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;  
 }
+#endif // 0

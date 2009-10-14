@@ -3,9 +3,11 @@
   <category> Filtering </category>
   <title>ChangeTracker Command-line </title>
   <description>
-  ChangeTracker command-line module description and help.
+  ChangeTracker command-line module description and help. This is the new
+  version of the command line module to reflect the changes that took place in
+  the workflow in Slicer 3.5
   </description>
-  <contributor>Kilian Pohl, Andriy Fedorov</contributor>
+  <contributor>Andriy Fedorov, Kilian Pohl</contributor>
   <acknowledgements>Brain Science Foundation</acknowledgements>
    <parameters>
     <label>Inputs and Outputs</label>
@@ -26,6 +28,24 @@
       <description>Second Scan</description> 
       <default>None</default>
     </image>
+
+    <transform>
+      <name>scan2tfm</name>
+      <label>Transform aligning Scan2 with Scan1</label>
+      <channel>input</channel>
+      <longflag>scan2tfm</longflag>
+      <description>Transform that brings Scan2 in alignment with Scan1</description>
+    </transform>
+
+    <image type="label">
+      <name>tgScan1segmented</name>
+      <label>Scan 1 segmentation</label>
+      <channel>input</channel>
+      <longflag>scan1segmentation</longflag>
+      <description>Segmentation of the structure of interest in the First Scan</description> 
+      <default>None</default>
+    </image>
+
     <image>
       <name>tgOutput</name>
       <longflag>output</longflag>
@@ -61,14 +81,14 @@
     <integer-vector>
      <name>tgROIMin</name>
      <longflag>roi_min</longflag>
-     <description>Lower extent of region of interest</description> 
+     <description>Lower extent of region of interest in pixel space</description> 
      <label>ROI Min</label>
      <default>1,1,1</default>
     </integer-vector> 
     <integer-vector>
      <name>tgROIMax</name>
      <longflag>roi_max</longflag>
-     <description>Upper extent of region of interest</description> 
+     <description>Upper extent of region of interest in pixel space</description> 
      <label>ROI Max</label>
      <default>256,256,100</default>
    </integer-vector> 
