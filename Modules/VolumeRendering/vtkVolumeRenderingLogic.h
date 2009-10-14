@@ -76,6 +76,7 @@ public:
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
+  void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void SetVolumeVisibility(int isVisible);

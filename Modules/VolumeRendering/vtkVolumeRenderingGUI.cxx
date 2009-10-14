@@ -902,6 +902,7 @@ void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistograms(vspNode);
+  this->GetLogic()->UpdateVolumePropertyScalarRange(vspNode);
   this->GetLogic()->SetupMapperFromParametersNode(vspNode);
 
   //update rendering frame

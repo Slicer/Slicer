@@ -82,6 +82,8 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->ICPESmoothness = 0.5f;
 
   this->GPURaycastTechnique = 0;
+  
+  this->CroppingEnabled = 0;//by default cropping is not enabled
 }
 
 //----------------------------------------------------------------------------

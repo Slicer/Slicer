@@ -326,7 +326,7 @@ void vtkVolumeRenderingLogic::SetupHistograms(vtkMRMLVolumeRenderingParametersNo
   gradHisto->Delete();
 }
 
-void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkVolumeRenderingLogic::UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
@@ -347,7 +347,11 @@ void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRend
   functionOpacity = prop->GetGradientOpacity();
   functionOpacity->RemovePoint(255);//Remove the standard value
   functionOpacity->AdjustRange(rangeNew);
+}
 
+void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  this->UpdateVolumePropertyScalarRange(vspNode);
   this->SetupHistograms(vspNode);
 
   //add points into transfer functions
@@ -380,6 +384,7 @@ void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRend
     thresholdHighIndex += bin_width;
   }
 
+  vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
   prop->SetInterpolationTypeToLinear();
   vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
 
