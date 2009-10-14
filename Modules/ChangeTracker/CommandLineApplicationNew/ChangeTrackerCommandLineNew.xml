@@ -53,6 +53,15 @@
       <label>Output image</label>
       <description>Result of the processing. The output depends on the selection of the termination step. If the complete workflow is run, the output will be the final analysis image. If both intensity- and deformation-based analyses are requested, only intensity-based results are saved.</description>
     </image>
+    
+    <directory>
+      <name>tmpDirName</name>
+      <longflag>--tmpdirname</longflag>
+      <description>Location of the directory on disk where temporary files
+      will be stored</description>
+      <label>Temporary directory</label>
+    </directory>
+
   </parameters> 
   <parameters> 
     <label>Parameters</label>
