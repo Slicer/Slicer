@@ -15,4 +15,7 @@ if {[file exists $cpath] == 0} {
 }
 # puts "cpath = $cpath"
 # puts "argv = \"$argv\""
-return [exec java -classpath $cpath Examples.${CLP}App $argv &]
+set ret [catch "exec java -classpath $cpath Examples.${CLP}App $argv" res]
+puts $res
+exit $ret
+
