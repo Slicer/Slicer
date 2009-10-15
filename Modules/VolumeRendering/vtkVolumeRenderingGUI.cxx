@@ -1042,9 +1042,11 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     
     vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
     this->GetLogic()->GetMRMLScene()->AddNode(roiNode);
-    roiNode->Delete();
     roiNode->VisibilityOff();
+    roiNode->InsideOutOn();
     vspNode->SetAndObserveROINodeID(roiNode->GetID());
+    
+    roiNode->Delete();
     
     this->GetLogic()->FitROIToVolume(vspNode);
     this->GetLogic()->SetupVolumePropertyFromImageData(vspNode);
