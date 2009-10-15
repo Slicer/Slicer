@@ -676,10 +676,6 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     {
       if (addedNode->IsA("vtkMRMLVolumeRenderingScenarioNode") )//first time empty node or loaded from scene file
       {
-        //newly loaded scenario node replaces any existing one
-        if (this->ScenarioNode)
-          this->GetLogic()->GetMRMLScene()->RemoveNode(this->ScenarioNode);
-
         //remember the newly added scenarioNode
         vtkMRMLVolumeRenderingScenarioNode *sNode = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(addedNode);
         this->ScenarioNode = sNode;
@@ -687,7 +683,6 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
         if (this->GetCurrentParametersNode() != NULL)
         {
           this->InitializePipelineFromParametersNode();
-          this->UpdatePipelineByROI();
         }
       }
     }
@@ -698,12 +693,12 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   }
   else if (event == vtkMRMLScene::SceneCloseEvent)
   {
+    this->DeleteRenderingFrame();
+    
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
     this->GetLogic()->Reset();
-
-    this->DeleteRenderingFrame();
 
     this->ScenarioNode = NULL;
 
@@ -813,6 +808,7 @@ void vtkVolumeRenderingGUI::UpdateGUI()
   {
     this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->UpdateMenu();
+    this->NS_ImageData->SetSelected(NULL);
   }
 
   //Disable/Enable after Volume is selected
@@ -984,6 +980,10 @@ void vtkVolumeRenderingGUI::InitializePipelineNewVolumeProperty()
 
 void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 {
+  //when scene closed this->ScenarioNode would be NULL
+  if (this->ScenarioNode == NULL)
+    this->ScenarioNode = vtkMRMLVolumeRenderingScenarioNode::New();
+    
   vtkMRMLVolumeRenderingParametersNode *vspNode = this->GetCurrentParametersNode();
 
   if (vspNode != NULL && vspNode->GetVolumeNodeID() != NULL &&
@@ -1053,9 +1053,16 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
   selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
 
+  if (vspNode->GetROINode())
+  {
+    vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
+    vspNode->GetROINode()->VisibilityOn();
+
+    this->GetLogic()->SetROI(vspNode);
+  }
+  
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
-
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
@@ -1078,22 +1085,28 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
   //init mappers, transfer functions, and so on
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
-  vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
-  //Add observer to trigger update of transform
-  selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
-  selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand );
-
-  this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
-
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistograms(vspNode);
 
+  if (vspNode->GetROINode())
+  {
+    vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
+    vspNode->GetROINode()->VisibilityOn();
+
+    this->GetLogic()->SetROI(vspNode);
+  }
+  
   //prepare rendering frame
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
 
-  this->UpdatePipelineByROI();
-
+  vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
+  //Add observer to trigger update of transform
+  selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+  selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand );
+  
+  this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
+  
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
