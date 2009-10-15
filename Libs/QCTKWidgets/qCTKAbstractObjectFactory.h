@@ -21,7 +21,7 @@ BaseClassType *createObject()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename UniqueIdType>
-class QCTK_WIDGETS_EXPORT qCTKAbstractObjectFactory
+class qCTKAbstractObjectFactory
 {
 protected:
   typedef BaseClassType *(*CreateObjectFunc)();
@@ -33,6 +33,7 @@ public:
   // Description:
   // Constructor
   qCTKAbstractObjectFactory(){}
+  qCTKAbstractObjectFactory(qCTKAbstractObjectFactory<typename BaseClassType, typename UniqueIdType> const &){};
   virtual ~qCTKAbstractObjectFactory(){}
   
   // Description:
