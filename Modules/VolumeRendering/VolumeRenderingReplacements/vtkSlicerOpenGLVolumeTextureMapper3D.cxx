@@ -159,9 +159,9 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
 
-      planeEquation[0] = plane->GetNormal()[0]; 
-      planeEquation[1] = plane->GetNormal()[1]; 
-      planeEquation[2] = plane->GetNormal()[2];
+      planeEquation[0] = -plane->GetNormal()[0]; 
+      planeEquation[1] = -plane->GetNormal()[1]; 
+      planeEquation[2] = -plane->GetNormal()[2];
       planeEquation[3] = -(planeEquation[0]*plane->GetOrigin()[0]+
                            planeEquation[1]*plane->GetOrigin()[1]+
                            planeEquation[2]*plane->GetOrigin()[2]);
