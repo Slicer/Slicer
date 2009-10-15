@@ -988,7 +988,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 {
   //when scene closed this->ScenarioNode would be NULL
   if (this->ScenarioNode == NULL)
-    this->ScenarioNode = vtkMRMLVolumeRenderingScenarioNode::New();
+    this->ScenarioNode = this->GetLogic()->CreateScenarioNode();
     
   vtkMRMLVolumeRenderingParametersNode *vspNode = this->GetCurrentParametersNode();
 
@@ -1093,15 +1093,22 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 //initialize pipeline from a loaded or user selected parameters node
 void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
 {
+  char buf[32] = "Loading...";
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
+  
   //update input frame (all node selectors)
   this->UpdateGUI();
-
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
+  
   //init mappers, transfer functions, and so on
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistograms(vspNode);
-
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.3);
+  
   if (vspNode->GetROINode())
   {
     vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
@@ -1111,10 +1118,14 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
     this->GetLogic()->SetROI(vspNode);
   }
   
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
+  
   //prepare rendering frame
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
 
+  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
+  
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
