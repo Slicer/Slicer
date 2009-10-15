@@ -998,6 +998,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
       return;// return if the node already selected
   }
 
+  char buf[32] = "Initializing...";
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
+  
   if (vspNode)
   {
     //remove existing observers
@@ -1007,7 +1010,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
     selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
   }
-
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
+  
   vspNode = NULL;//reset vspNode for remaining process
 
   //first loop though MRML to see if we have a parameters node matching input volumes
@@ -1035,7 +1040,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
       break;
     }
   }
-
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.3);
+  
   if ( !vspNode )//no match
   {
     vspNode = this->GetLogic()->CreateParametersNode();
@@ -1057,9 +1064,13 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     this->GetLogic()->SetupVolumePropertyFromImageData(vspNode);
   }
 
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
+  
   this->ScenarioNode->SetParametersNodeID(vspNode->GetID());
   this->UpdateGUI();
-
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
+  
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
@@ -1075,8 +1086,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     this->GetLogic()->SetROI(vspNode);
   }
   
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.6);
+  
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
+  
+  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
