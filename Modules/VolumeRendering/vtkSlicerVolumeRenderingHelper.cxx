@@ -104,6 +104,12 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->ROIWidget = NULL;
   this->CroppingButton = NULL;
   this->FitROIButton = NULL;
+  
+  this->CB_UseThreshold = NULL;
+  
+  this->FrameThresholding = NULL;
+  
+  this->RA_Threshold = NULL;
 
   //PauseResume
   this->PB_PauseResume = NULL;
@@ -673,7 +679,37 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   mainFrame->Create();
   mainFrame->SetLabelText("Background Volume");
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
+  
+  this->CB_UseThreshold = vtkKWCheckButtonWithLabel::New();
+  this->CB_UseThreshold->SetParent(mainFrame->GetFrame());
+  this->CB_UseThreshold->Create();
+  this->CB_UseThreshold->SetBalloonHelpString("Enable/Disable thresholding.");
+  this->CB_UseThreshold->SetLabelText("Use Thresholding");
+  this->CB_UseThreshold->SetLabelWidth(20);
+  this->CB_UseThreshold->GetWidget()->SetSelectedState(0);
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_UseThreshold->GetWidgetName() );
+  this->CB_UseThreshold->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+  
+  {
+    this->FrameThresholding = vtkKWFrameWithLabel::New();
+    this->FrameThresholding->SetParent(mainFrame->GetFrame());
+    this->FrameThresholding->Create();
+    this->FrameThresholding->AllowFrameToCollapseOff();
+    this->FrameThresholding->SetLabelText("Thresholding");
+    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameThresholding->GetWidgetName() );
 
+    this->RA_Threshold = vtkKWRange::New();
+    this->RA_Threshold->SetParent(this->FrameThresholding->GetFrame());
+    this->RA_Threshold->Create();
+    this->RA_Threshold->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
+    this->RA_Threshold->SetWholeRange(0, 1);
+    this->RA_Threshold->SetRange(0, 1);
+    this->RA_Threshold->SetCommand(this, "ProcessThreshold");
+    this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_Threshold->GetWidgetName());
+        
+    this->FrameThresholding->CollapseFrame();
+  }
+  
   this->SVP_VolumePropertyWidget = vtkSlicerVolumePropertyWidget::New();
   this->SVP_VolumePropertyWidget->SetParent(mainFrame->GetFrame());
   this->SVP_VolumePropertyWidget->Create();
@@ -685,8 +721,6 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->SVP_VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 
   mainFrame->Delete();
-
-//  this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
 }
 
 void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
@@ -701,6 +735,28 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->SVP_VolumePropertyWidget->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
     this->SVP_VolumePropertyWidget->Delete();
     this->SVP_VolumePropertyWidget = NULL;
+  }
+  
+  if(this->CB_UseThreshold != NULL)
+  {
+    this->CB_UseThreshold->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
+    this->CB_UseThreshold->SetParent(NULL);
+    this->CB_UseThreshold->Delete();
+    this->CB_UseThreshold = NULL;
+  }
+  
+  if(this->FrameThresholding != NULL)
+  {
+    this->FrameThresholding->SetParent(NULL);
+    this->FrameThresholding->Delete();
+    this->FrameThresholding = NULL;
+  }
+  
+  if(this->RA_Threshold)
+  {
+    this->RA_Threshold->SetParent(NULL);
+    this->RA_Threshold->Delete();
+    this->RA_Threshold = NULL;
   }
 }
 
@@ -781,6 +837,20 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->Gui->GetLogic()->SetROI(vspNode);
 
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      return;
+    }
+    else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())
+    {
+      if (this->CB_UseThreshold->GetWidget()->GetSelectedState())
+      {
+        this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
+        this->FrameThresholding->ExpandFrame();
+      }
+      else
+      {
+        this->SVP_VolumePropertyWidget->GetEditorFrame()->ExpandFrame();
+        this->FrameThresholding->CollapseFrame();
+      }
       return;
     }
   }
@@ -991,6 +1061,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetInvisibleIcon());
   }
+}
+void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
+{
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)

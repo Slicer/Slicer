@@ -99,7 +99,12 @@ public:
     // Description:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
-
+    
+    //--------------------------------------------------------
+    // Property
+    //--------------------------------------------------------
+    void ProcessThreshold(double, double);
+    
     //--------------------------------------------------------
     // Utility functions
     //--------------------------------------------------------
@@ -204,6 +209,13 @@ protected:
     // Volume Property
     //--------------------------------------------------------------------------
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidget;
+    
+    // Description:
+    // Enable/Disable thresholding
+    vtkKWCheckButtonWithLabel *CB_UseThreshold;
+    
+    vtkKWFrameWithLabel       *FrameThresholding;
+    vtkKWRange                *RA_Threshold;
 
     //-----------------------------------------------------------
     // ROI (clipping)
