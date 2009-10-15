@@ -2689,7 +2689,8 @@ void vtkSlicerApplicationGUI::PackCompareView()
         g->GetSliceViewer()->SetWidth(geom->GetDefaultSliceGUIFrameWidth());
         this->Script ("grid rowconfigure %s %d -weight 1", this->GridFrame2->GetWidgetName(), ncount );
 
-        if (g->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID() == 0)
+        vtkMRMLSliceCompositeNode *compNode = g->GetLogic()->GetSliceCompositeNode();
+        if (compNode && compNode->GetBackgroundVolumeID() == 0)
           {
           // no volume assigned. use the background of Red viewer for
           // first compare viewer, the foreground of Red Viewer for
