@@ -219,7 +219,12 @@ void qCTKComboBoxAddRemove::updateItemName(const QString& itemName, const QStrin
 // --------------------------------------------------------------------------
 void qCTKComboBoxAddRemove::removeItem(int index, bool notify)
 {
-  Q_ASSERT(index >= 0);
+//  Q_ASSERT(index >= 0);
+    // asserts cause Slicer to crash, just return
+  if (index  <= 0)
+    {
+    return;
+    }
   if (this->Internal->Empty)
     {
     return; 
