@@ -161,11 +161,20 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (GPURaycastTechnique, int);
   vtkSetMacro (GPURaycastTechnique, int);
   
+  vtkGetMacro (GPURaycastTechniqueII, int);
+  vtkSetMacro (GPURaycastTechniqueII, int);
+  
+  vtkGetMacro (GPURaycastTechniqueIIFg, int);
+  vtkSetMacro (GPURaycastTechniqueIIFg, int);
+  
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
   
   vtkSetVector2Macro(ThresholdFg, double);
   vtkGetVectorMacro(ThresholdFg, double, 2);
+  
+  vtkGetMacro (GPURaycastIIBgFgRatio, float);
+  vtkSetMacro (GPURaycastIIBgFgRatio, float);
 
 protected:
   vtkMRMLVolumeRenderingParametersNode();
@@ -243,7 +252,7 @@ protected:
    * */
   int GPURaycastTechnique;
   
-  /* techniques in GPU ray cast II
+  /* techniques in GPU ray cast II (bg)
    * 0: composite with directional lighting (default)
    * 1: composite with fake lighting (edge coloring, faster)
    * 2: MIP
@@ -251,13 +260,25 @@ protected:
    * 4: Gradient Magnitude Opacity Modulation
    * 5: Illustrative Context Preserving Exploration
    * */
-  int GPURaycastIITechnique;
+  int GPURaycastTechniqueII;
+  
+  /* techniques in GPU ray cast II (fg)
+   * 0: composite with directional lighting (default)
+   * 1: composite with fake lighting (edge coloring, faster)
+   * 2: MIP
+   * 3: MINIP
+   * 4: Gradient Magnitude Opacity Modulation
+   * 5: Illustrative Context Preserving Exploration
+   * */
+  int GPURaycastTechniqueIIFg;
   
   double Threshold[2];
   double ThresholdFg[2];
   
   int UseThreshold;
   int UseFgThreshold;
+  
+  float GPURaycastIIBgFgRatio;
 };
 
 #endif

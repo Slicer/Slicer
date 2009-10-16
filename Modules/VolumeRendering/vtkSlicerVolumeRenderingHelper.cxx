@@ -1024,7 +1024,29 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
       this->MB_GPURayCastTechnique->GetWidget()->SetValue("Illustrative Context Preserving Exploration");
       break;
   }
-
+  
+  switch(vspNode->GetGPURaycastTechniqueII())
+  {
+    case 0:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Composite With Shading");
+      break;
+    case 1:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Composite With Fast Psuedo Shading");
+      break;
+    case 2:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Maximum Intensity Projection");
+      break;
+    case 3:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Minimum Intensity Projection");
+      break;
+    case 4:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Gradient Magnitude Opacity Modulation");
+      break;
+    case 5:
+      this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Illustrative Context Preserving Exploration");
+      break;
+  }
+  
   this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10);
   this->SC_GPURayCastICPEkt->GetWidget()->SetResolution(0.01);
   this->SC_GPURayCastICPEkt->SetValue(vspNode->GetICPEScale());
