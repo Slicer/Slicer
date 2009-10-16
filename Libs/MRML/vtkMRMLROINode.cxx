@@ -69,8 +69,6 @@ vtkMRMLROINode::vtkMRMLROINode()
   // so that the SetLabelText macro won't try to free memory
   this->LabelText = NULL;
   this->SetLabelText(""); 
-  this->ID = NULL;
-  this->SetID("");
   this->Selected = 0;
   this->VolumeNodeID = NULL;
   this->Visibility = 1;
@@ -108,32 +106,26 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->ID != NULL) 
-    {
-    of << indent << " ID=\"" << this->ID << "\"";
-    }
   if (this->VolumeNodeID != NULL)
     {
-    of << indent << " VolumeNodeID=\"" << this->VolumeNodeID << "\"";
+    of << indent << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
   if (this->LabelText != NULL)
     {
-    of << indent << " LabelText=\"" << this->LabelText << "\"";
+    of << indent << " labelText=\"" << this->LabelText << "\"";
     }
 
-  of << indent << " XYZ=\"" 
+  of << indent << " xyz=\"" 
     << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
 
-  of << indent << " RadiusXYZ=\"" 
+  of << indent << " radiusXYZ=\"" 
     << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
 
-  of << indent << " InsideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
+  of << indent << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
 
-  of << indent << " Selected=\"" << (this->Selected ? "true" : "false") << "\"";
+  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
 
-  of << indent << " Visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
-
-  of << indent << " InteractiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
+  of << indent << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
 
 
   return;
@@ -142,7 +134,9 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
 {
- int disabledModify = this->StartModify();
+  int disabledModify = this->StartModify();
+
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -152,7 +146,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "XYZ")) 
+    if (!strcmp(attName, "XYZ") || !strcmp(attName, "xyz")) 
       {
       std::stringstream ss;
       double val;
@@ -163,7 +157,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->XYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "RadiusXYZ")) 
+    if (!strcmp(attName, "RadiusXYZ") || !strcmp(attName, "radiusXYZ")) 
       {
       std::stringstream ss;
       double val;
@@ -174,7 +168,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->RadiusXYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "Selected"))       
+    if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))       
       {
       if (!strcmp(attValue,"true")) 
         {
@@ -185,19 +179,15 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->Selected = 0;
         }
       }
-    else if (!strcmp(attName, "ROINodeID")) 
-      {
-      this->SetID(attValue);
-      }
-    else if (!strcmp(attName, "VolumeNodeID")) 
+    else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID")) 
       {
       this->SetVolumeNodeID(attValue);
       }
-    else if (!strcmp(attName, "LabelText"))
+    else if (!strcmp(attName, "LabelText") || !strcmp(attName, "labelText"))
       {
       this->SetLabelText(attValue);
       }
-    else if (!strcmp(attName, "Visibility")) 
+    else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility")) 
       {
       if (!strcmp(attValue,"true")) 
         {
@@ -208,7 +198,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->Visibility = 0;
         }
       }
-    else if (!strcmp(attName, "InteractiveMode")) 
+    else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode")) 
       {
       if (!strcmp(attValue,"true")) 
         {
@@ -219,7 +209,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->InteractiveMode = 0;
         }
       }
-    else if (!strcmp(attName, "InsideOut")) 
+    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut")) 
       {
       if (!strcmp(attValue,"true")) 
         {
@@ -306,7 +296,6 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   this->SetXYZ(node->XYZ);
   this->SetRadiusXYZ(node->RadiusXYZ);
   this->SetLabelText(node->GetLabelText());
-  this->SetID(node->ID);
   this->SetSelected(node->GetSelected());
   this->SetVisibility(node->Visibility);
   this->SetInteractiveMode(node->InteractiveMode);

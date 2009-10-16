@@ -102,11 +102,6 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  // Description:
-  // Get/Set for ID
-  vtkGetStringMacro(ID);
-  vtkSetStringMacro(ID);
-
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   vtkGetStringMacro(VolumeNodeID);
@@ -148,7 +143,6 @@ protected:
   // Control the orientation of the normals
   int InsideOut;
 
-  char *ID;
   char *LabelText;
 
   // Description:

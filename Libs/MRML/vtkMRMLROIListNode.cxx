@@ -309,7 +309,7 @@ int vtkMRMLROIListNode::AddROI()
   ss << "-P";
   std::string nameString;
   ss >> nameString;
-  ROINode->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
+  //ROINode->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
   // use the same for the label text for now
   ROINode->SetLabelText(ROINode->GetID());
 
@@ -779,7 +779,7 @@ int vtkMRMLROIListNode::SetNthROIID(int n, const char *id)
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
     }
-  node->SetID(id);
+  //node->SetID(id);
   node = NULL;
   // the list contents have been modified
   this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, NULL);
