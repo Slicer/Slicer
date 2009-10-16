@@ -221,7 +221,7 @@ void qCTKComboBoxAddRemove::removeItem(int index, bool notify)
 {
 //  Q_ASSERT(index >= 0);
     // asserts cause Slicer to crash, just return
-  if (index  <= 0)
+  if (index  < 0)
     {
     return;
     }
