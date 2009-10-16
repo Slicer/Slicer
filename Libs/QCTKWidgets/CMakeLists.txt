@@ -14,22 +14,25 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #
 SET(QCTKWidgets_SRCS
   qCTKAbstractObjectFactory.h
-  qCTKComboBoxAddRemove.h
+  qCTKCollapsibleGroupBox.h
+  qCTKCollapsibleGroupBox.cxx
   qCTKComboBoxAddRemove.cxx
-  qCTKSlider.h
-  qCTKSlider.cxx
-  qCTKSliderSpinBoxLabel.h
-  qCTKSliderSpinBoxLabel.cxx
-  qCTKMatrixWidget.h
+  qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.cxx
+  qCTKMatrixWidget.h
+  qCTKSlider.cxx
+  qCTKSlider.h
+  qCTKSliderSpinBoxLabel.cxx
+  qCTKSliderSpinBoxLabel.h
   )
 
 # Headers that should run through moc
 SET(QCTKWidgets_MOC_SRCS
+  qCTKCollapsibleGroupBox.h
   qCTKComboBoxAddRemove.h
+  qCTKMatrixWidget.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
-  qCTKMatrixWidget.h
   )
   
 # UI files
@@ -108,7 +111,6 @@ IF(Slicer3_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
-
 # --------------------------------------------------------------------------
 # Install
 #
@@ -123,3 +125,8 @@ INSTALL(TARGETS ${lib_name}
 #
 IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Subdirectories
+#
+ADD_SUBDIRECTORY(Plugins)

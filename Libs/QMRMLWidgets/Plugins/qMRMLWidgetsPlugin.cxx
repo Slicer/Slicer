@@ -6,7 +6,7 @@ qMRMLWidgetsPlugin::qMRMLWidgetsPlugin()
 
 QString qMRMLWidgetsPlugin::group() const 
 { 
-  return "Slicer [MRML Widgetss]"; 
+  return "Slicer [MRML Widgets]"; 
 }
 
 QIcon qMRMLWidgetsPlugin::icon() const
