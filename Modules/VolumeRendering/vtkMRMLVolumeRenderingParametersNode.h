@@ -122,6 +122,10 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro(CroppingEnabled,int);
   vtkBooleanMacro(CroppingEnabled,int);
 
+  vtkSetMacro(UseThreshold,int);
+  vtkGetMacro(UseThreshold,int);
+  vtkBooleanMacro(UseThreshold,int);
+  
   // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
@@ -152,6 +156,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
 
   vtkGetMacro (GPURaycastTechnique, int);
   vtkSetMacro (GPURaycastTechnique, int);
+  
+  vtkSetVector2Macro(Threshold, double);
+  vtkGetVectorMacro(Threshold, double, 6);
 
 protected:
   vtkMRMLVolumeRenderingParametersNode();
@@ -228,6 +235,10 @@ protected:
    * 5: Illustrative Context Preserving Exploration
    * */
   int GPURaycastTechnique;
+  
+  double Threshold[2];
+  
+  int UseThreshold;
 };
 
 #endif

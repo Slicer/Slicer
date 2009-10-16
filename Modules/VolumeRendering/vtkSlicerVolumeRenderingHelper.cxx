@@ -686,7 +686,6 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->CB_UseThreshold->SetBalloonHelpString("Enable/Disable thresholding.");
   this->CB_UseThreshold->SetLabelText("Use Thresholding");
   this->CB_UseThreshold->SetLabelWidth(20);
-  this->CB_UseThreshold->GetWidget()->SetSelectedState(0);
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_UseThreshold->GetWidgetName() );
   this->CB_UseThreshold->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
   
@@ -702,8 +701,6 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
     this->RA_Threshold->SetParent(this->FrameThresholding->GetFrame());
     this->RA_Threshold->Create();
     this->RA_Threshold->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
-    this->RA_Threshold->SetWholeRange(0, 1);
-    this->RA_Threshold->SetRange(0, 1);
     this->RA_Threshold->SetCommand(this, "ProcessThreshold");
     this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_Threshold->GetWidgetName());
         
@@ -841,6 +838,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     }
     else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())
     {
+      vspNode->SetUseThreshold(this->CB_UseThreshold->GetWidget()->GetSelectedState());
+      
       if (this->CB_UseThreshold->GetWidget()->GetSelectedState())
       {
         this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
@@ -849,6 +848,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       else
       {
         this->SVP_VolumePropertyWidget->GetEditorFrame()->ExpandFrame();
+        this->SVP_VolumePropertyWidget->Update();
         this->FrameThresholding->CollapseFrame();
       }
       return;
@@ -906,7 +906,7 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   double scalarRange[2];
   vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
   this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetRange(scalarRange[0],scalarRange[1]);
-  this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetResolution(1);
+  this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
   this->SC_GPURayCastDepthPeelingThreshold->SetValue(vspNode->GetDepthPeelingThreshold());
 
   //-------------------------bg volume property--------------------
@@ -915,7 +915,13 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
   this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
   this->SVP_VolumePropertyWidget->Update();
-
+  
+  //-------------------------bg threshold--------------------------
+  this->CB_UseThreshold->GetWidget()->SetSelectedState(vspNode->GetUseThreshold());
+  this->RA_Threshold->SetWholeRange(scalarRange);
+  this->RA_Threshold->SetRange(vspNode->GetThreshold());
+  this->RA_Threshold->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
+    
   //------------------------gpu memory size------------------------
   //default 256M
   int id = 1;
@@ -1064,6 +1070,27 @@ void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
 }
 void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 {
+  vtkImageData *iData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+  
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+  
+  //Delete all old Mapping Points
+  vtkPiecewiseFunction *opacity = vspNode->GetVolumePropertyNode()->GetVolumeProperty()->GetScalarOpacity();
+  opacity->RemoveAllPoints();
+  
+  double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.01;
+  
+  opacity->AddPoint(iData->GetScalarRange()[0], 0.0);
+  opacity->AddPoint(iData->GetScalarRange()[1], 0.0);
+  
+  opacity->AddPoint(this->RA_Threshold->GetRange()[0], 0.0);
+  opacity->AddPoint(this->RA_Threshold->GetRange()[0] + step, 1.0);
+  opacity->AddPoint(this->RA_Threshold->GetRange()[1] - step, 1.0);
+  opacity->AddPoint(this->RA_Threshold->GetRange()[1], 0.0);
+  
+  vspNode->SetThreshold(this->RA_Threshold->GetRange());
+  
+  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)

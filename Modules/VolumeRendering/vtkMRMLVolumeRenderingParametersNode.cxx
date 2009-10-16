@@ -84,6 +84,11 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->GPURaycastTechnique = 0;
   
   this->CroppingEnabled = 0;//by default cropping is not enabled
+  
+  this->Threshold[0] = 0.0;
+  this->Threshold[1] = 1.0;
+  
+  this->UseThreshold = 0; // by default volume property widget is used
 }
 
 //----------------------------------------------------------------------------
@@ -114,6 +119,7 @@ vtkMRMLVolumeRenderingParametersNode::~vtkMRMLVolumeRenderingParametersNode()
     SetAndObserveROINodeID(NULL);
     }
 }
+
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
 {
@@ -155,6 +161,13 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->CroppingEnabled;
+      continue;
+    }
+    if (!strcmp(attName,"useThreshold"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->UseThreshold;
       continue;
     }
     if (!strcmp(attName,"currentVolumeMapper"))
@@ -199,6 +212,14 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->GPURaycastTechnique;
       continue;
     }
+    if (!strcmp(attName,"threshold"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->Threshold[0];
+      ss >> this->Threshold[1];
+      continue;
+    }
   }
 }
 
@@ -221,6 +242,8 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " icpeScale=\"" << this->ICPEScale << "\"";
   of << indent << " icpeSmoothness=\"" << this->ICPESmoothness << "\"";
   of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
+  of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
+  of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -298,7 +321,9 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetICPESmoothness(node->GetICPESmoothness());
   this->SetCPURaycastMode(node->GetCPURaycastMode());
   this->SetGPURaycastTechnique(node->GetGPURaycastTechnique());
-
+  this->SetThreshold(node->GetThreshold());
+  this->SetUseThreshold(node->GetUseThreshold());
+  
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
 

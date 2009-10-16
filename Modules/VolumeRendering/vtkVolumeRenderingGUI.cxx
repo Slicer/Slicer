@@ -1062,6 +1062,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     
     this->GetLogic()->FitROIToVolume(vspNode);
     this->GetLogic()->SetupVolumePropertyFromImageData(vspNode);
+    
+    double scalarRange[2];
+    vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+    vspNode->SetDepthPeelingThreshold(scalarRange[0]);
+    
+    vspNode->SetThreshold(scalarRange);
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
@@ -1091,7 +1097,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
   
-  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
@@ -1108,7 +1114,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 //initialize pipeline from a loaded or user selected parameters node
 void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
 {
-  char buf[32] = "Loading...";
+  char buf[32] = "Initializing...";
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
   
   //update input frame (all node selectors)
@@ -1139,7 +1145,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
 
-  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
+  this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
   
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
