@@ -491,11 +491,11 @@ int main(int argc, char* argv[])
 
     vtkImageMathematics* mult = vtkImageMathematics::New();
     vtkImageThreshold* thresh = vtkImageThreshold::New();
-    thresh->SetInput(mask);
+    thresh->SetInput(Scan1SegmentOutput);
     thresh->ThresholdByLower(1);
     thresh->SetInValue(1);
     thresh->SetOutValue(0);
-    mult->SetInput(0, image);
+    mult->SetInput(0, Scan1SuperSample);
     mult->SetInput(1, thresh->GetOutput());
     mult->SetOperationToMultiply();
 
@@ -513,6 +513,8 @@ int main(int argc, char* argv[])
     hist->SetComponentSpacing(1.,0.,0.);
     hist->IgnoreZeroOn();
     hist->Update();
+
+    tgWriteVolume("hist_debug.nrrd",tg.Scan1Matrix,cast->GetOutput());
 
     std::cerr << "Histogram min: " << hist->GetMin()[0] << std::endl;
     std::cerr << "Histogram max: " << hist->GetMax()[0] << std::endl;
@@ -543,6 +545,7 @@ int main(int argc, char* argv[])
     Analysis_Intensity_Total = Analysis_Intensity_Growth + Analysis_Intensity_Shrink; 
     CMD = tg.WorkingDir + "/TG_Analysis_Intensity.nhdr";
     tgWriteVolume(CMD.c_str(),supersampleMatrix,logic->GetAnalysis_Intensity_ROIBinCombine());
+    cout << "Intensity analysis sensitivity: " << tgSensitivity << endl;
     cout << "Analysis Intensity: Shrinkage " << -Analysis_Intensity_Shrink << " Growth " << Analysis_Intensity_Growth << " Total " <<  Analysis_Intensity_Total << "Super sample " << SuperSampleVol << endl;
 
     cout << "Intensity Metric:\n" << endl;

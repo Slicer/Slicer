@@ -113,7 +113,7 @@
      <longflag>sensitivity</longflag>
      <description>Sensitivity Parameter (between 0 and 1) - only relevant for 'Analyze Intensity Pattern'</description>
      <label>Threshold</label>
-     <default>0.5</default>
+     <default>0.96</default>
    </double> 
     <boolean>
      <name>tgSaveFlag</name>
