@@ -42,8 +42,11 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
   this->Volume = vtkVolume::New();
 
   this->Histograms = vtkKWHistogramSet::New();
+  this->HistogramsFg = vtkKWHistogramSet::New();
 
   this->GUICallback = NULL;
+  
+  this->VolumePropertyGPURaycastII = NULL;
 }
 
 vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
@@ -101,6 +104,17 @@ vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
     this->Histograms->RemoveAllHistograms();
     this->Histograms->Delete();
     this->Histograms = NULL;
+  }
+  if(this->HistogramsFg != NULL)
+  {
+    this->HistogramsFg->RemoveAllHistograms();
+    this->HistogramsFg->Delete();
+    this->HistogramsFg = NULL;
+  }
+  if (this->VolumePropertyGPURaycastII != NULL)
+  {
+    this->VolumePropertyGPURaycastII->Delete();
+    this->VolumePropertyGPURaycastII = NULL;
   }
 }
 
@@ -227,6 +241,17 @@ void vtkVolumeRenderingLogic::Reset()
     this->Histograms->Delete();
     this->Histograms = NULL;
   }
+  if(this->HistogramsFg != NULL)
+  {
+    this->HistogramsFg->RemoveAllHistograms();
+    this->HistogramsFg->Delete();
+    this->HistogramsFg = NULL;
+  }
+  if (this->VolumePropertyGPURaycastII != NULL)
+  {
+    this->VolumePropertyGPURaycastII->Delete();
+    this->VolumePropertyGPURaycastII = NULL;
+  }
 
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
@@ -243,6 +268,7 @@ void vtkVolumeRenderingLogic::Reset()
   this->Volume = vtkVolume::New();
 
   this->Histograms = vtkKWHistogramSet::New();
+  this->HistogramsFg = vtkKWHistogramSet::New();
 
   this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
   this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
@@ -326,10 +352,64 @@ void vtkVolumeRenderingLogic::SetupHistograms(vtkMRMLVolumeRenderingParametersNo
   gradHisto->Delete();
 }
 
+void vtkVolumeRenderingLogic::SetupHistogramsFg(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData();
+
+  //-----------------------------------------
+  //  remove old histogram
+  //-----------------------------------------
+  if(this->HistogramsFg != NULL)
+  {
+    this->HistogramsFg->RemoveAllHistograms();
+    this->HistogramsFg->Delete();
+    this->HistogramsFg = vtkKWHistogramSet::New();
+  }
+
+  //setup histograms
+  this->HistogramsFg->AddHistograms(input->GetPointData()->GetScalars());
+
+  //gradient histogram
+  vtkImageGradientMagnitude *grad = vtkImageGradientMagnitude::New();
+  grad->SetDimensionality(3);
+  grad->SetInput(input);
+  grad->Update();
+
+  vtkKWHistogram *gradHisto = vtkKWHistogram::New();
+  gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(), 0);
+  this->HistogramsFg->AddHistogram(gradHisto, "0gradient");
+
+  grad->Delete();
+  gradHisto->Delete();
+}
+
 void vtkVolumeRenderingLogic::UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+
+  //update scalar range
+  vtkColorTransferFunction *functionColor = prop->GetRGBTransferFunction();
+
+  double rangeNew[2];
+  input->GetPointData()->GetScalars()->GetRange(rangeNew);
+  functionColor->AdjustRange(rangeNew);
+
+  vtkPiecewiseFunction *functionOpacity = prop->GetScalarOpacity();
+  functionOpacity->AdjustRange(rangeNew);
+
+  rangeNew[1] = (rangeNew[1] - rangeNew[0])*0.25;
+  rangeNew[0] = 0;
+
+  functionOpacity = prop->GetGradientOpacity();
+  functionOpacity->RemovePoint(255);//Remove the standard value
+  functionOpacity->AdjustRange(rangeNew);
+}
+
+void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData();
+  vtkVolumeProperty *prop = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
 
   //update scalar range
   vtkColorTransferFunction *functionColor = prop->GetRGBTransferFunction();
@@ -385,6 +465,67 @@ void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRend
   }
 
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  prop->SetInterpolationTypeToLinear();
+  vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
+
+  opacity->RemoveAllPoints();
+  opacity->AddPoint(range[0], 0.0);
+  opacity->AddPoint(thresholdLowIndex, 0.0);
+  opacity->AddPoint(thresholdHighIndex, 0.2);
+  opacity->AddPoint(range[1], 0.2);
+
+  vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
+
+  colorTransfer->RemoveAllPoints();
+  colorTransfer->AddRGBPoint(range[0], 0.3, 0.3, 1.0);
+  colorTransfer->AddRGBPoint(thresholdLowIndex, 0.3, 0.3, 1.0);
+  colorTransfer->AddRGBPoint(thresholdLowIndex + 0.5 * (thresholdHighIndex - thresholdLowIndex), 0.3, 1.0, 0.3);
+  colorTransfer->AddRGBPoint(thresholdHighIndex, 1.0, 0.3, 0.3);
+  colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
+
+  prop->ShadeOn();
+  prop->SetAmbient(0.20);
+  prop->SetDiffuse(0.80);
+  prop->SetSpecular(0.50);
+  prop->SetSpecularPower(40);
+}
+
+void vtkVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  this->UpdateFgVolumePropertyScalarRange(vspNode);
+  this->SetupHistogramsFg(vspNode);
+
+  //add points into transfer functions
+  vtkKWHistogram *histogram = this->HistogramsFg->GetHistogramWithName("0");
+
+  double totalOccurance = histogram->GetTotalOccurence();
+  double thresholdLow = totalOccurance * 0.2;
+  double thresholdHigh = totalOccurance * 0.8;
+  double range[2];
+
+  histogram->GetRange(range);
+
+  double thresholdLowIndex = range[0];
+  double sumLowIndex = 0;
+  double thresholdHighIndex = range[0];
+  double sumHighIndex = 0;
+
+  //calculate distance
+  double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
+
+  while(sumLowIndex < thresholdLow)
+  {
+    sumLowIndex += histogram->GetOccurenceAtValue(thresholdLowIndex);
+    thresholdLowIndex += bin_width;
+  }
+
+  while(sumHighIndex < thresholdHigh)
+  {
+    sumHighIndex += histogram->GetOccurenceAtValue(thresholdHighIndex);
+    thresholdHighIndex += bin_width;
+  }
+
+  vtkVolumeProperty *prop = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
   prop->SetInterpolationTypeToLinear();
   vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
 
@@ -564,6 +705,17 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
       return -1;
     break;
   case 2:
+    this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
+    if (vspNode->GetFgVolumeNode())
+      this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
+    this->MapperGPURaycastII->SetFramerate(vspNode->GetExpectedFPS());
+    if (this->MapperGPURaycast->IsRenderSupported(this->VolumePropertyGPURaycastII))
+    {
+      this->Volume->SetMapper(this->MapperGPURaycastII);
+      this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
+    }
+    else
+      return -1;
     break;
   case 3:
     this->MapperTexture->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
@@ -674,6 +826,75 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
     this->MapperGPURaycast->ClippingOn();
 
     planes->Delete();
+  }
+}
+
+void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  if (vspNode->GetCurrentVolumeMapper() == 2)
+  {
+    this->CreateVolumePropertyGPURaycastII(vspNode);
+    this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
+  }
+}
+
+void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  if (this->VolumePropertyGPURaycastII != NULL)
+    this->VolumePropertyGPURaycastII->Delete();
+
+  this->VolumePropertyGPURaycastII = vtkVolumeProperty::New();
+
+  //copy bg property into 1st compoent property
+  vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  {
+    int colorChannels = prop->GetColorChannels(0);
+
+    switch(colorChannels)
+    {
+    case 1:
+      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetGrayTransferFunction(0));
+      break;
+    case 3:
+      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetRGBTransferFunction(0));
+      break;
+    }
+
+    this->VolumePropertyGPURaycastII->SetScalarOpacity(0, prop->GetScalarOpacity(0));
+    this->VolumePropertyGPURaycastII->SetGradientOpacity(0, prop->GetGradientOpacity(0));
+    this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(0, prop->GetScalarOpacityUnitDistance(0));
+
+    this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(0, prop->GetDisableGradientOpacity(0));
+
+    this->VolumePropertyGPURaycastII->SetShade(0, prop->GetShade(0));
+    this->VolumePropertyGPURaycastII->SetAmbient(0, prop->GetAmbient(0));
+    this->VolumePropertyGPURaycastII->SetDiffuse(0, prop->GetDiffuse(0));
+    this->VolumePropertyGPURaycastII->SetSpecular(0, prop->GetSpecular(0));
+    this->VolumePropertyGPURaycastII->SetSpecularPower(0, prop->GetSpecularPower(0));
+
+    this->VolumePropertyGPURaycastII->SetIndependentComponents(prop->GetIndependentComponents());
+    this->VolumePropertyGPURaycastII->SetInterpolationType(prop->GetInterpolationType());
+  }
+
+  if (vspNode->GetFgVolumePropertyNode())//copy fg property into 2nd component property
+  {
+    vtkVolumeProperty* propFg = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
+    int colorChannels = propFg->GetColorChannels(0);
+
+    switch(colorChannels)
+    {
+    case 1:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
+      break;
+    case 3:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
+      break;
+    }
+
+    this->VolumePropertyGPURaycastII->SetScalarOpacity(1, propFg->GetScalarOpacity(0));
+    this->VolumePropertyGPURaycastII->SetGradientOpacity(1, propFg->GetGradientOpacity(0));
+    this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
+    this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
   }
 }
 

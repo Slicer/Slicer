@@ -89,6 +89,11 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->Threshold[1] = 1.0;
   
   this->UseThreshold = 0; // by default volume property widget is used
+  
+  this->ThresholdFg[0] = 0.0;
+  this->ThresholdFg[1] = 1.0;
+  
+  this->UseFgThreshold = 0; // by default volume property widget is used
 }
 
 //----------------------------------------------------------------------------
@@ -170,6 +175,13 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->UseThreshold;
       continue;
     }
+    if (!strcmp(attName,"useFgThreshold"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->UseFgThreshold;
+      continue;
+    }
     if (!strcmp(attName,"currentVolumeMapper"))
     {
       std::stringstream ss;
@@ -220,6 +232,14 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->Threshold[1];
       continue;
     }
+    if (!strcmp(attName,"thresholdFg"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->ThresholdFg[0];
+      ss >> this->ThresholdFg[1];
+      continue;
+    }
   }
 }
 
@@ -244,6 +264,8 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
   of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
   of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
+  of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
+  of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -323,6 +345,8 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetGPURaycastTechnique(node->GetGPURaycastTechnique());
   this->SetThreshold(node->GetThreshold());
   this->SetUseThreshold(node->GetUseThreshold());
+  this->SetThresholdFg(node->GetThresholdFg());
+  this->SetUseFgThreshold(node->GetUseFgThreshold());
   
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();

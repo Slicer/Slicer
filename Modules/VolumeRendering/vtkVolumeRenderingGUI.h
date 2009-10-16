@@ -172,6 +172,8 @@ protected:
     void InitializePipelineFromParametersNode();
 
     void UpdatePipelineByVolumeProperty();
+    void UpdatePipelineByFgVolumeProperty();
+    
     void UpdatePipelineByROI();
 
     void LoadPresets();
@@ -215,6 +217,7 @@ protected:
     void CheckAbort(void);
 
     int NewVolumePropertyAddedFlag;
+    int NewFgVolumePropertyAddedFlag;
 };
 
 #endif

@@ -100,16 +100,19 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->PB_HideSurfaceModels = NULL;
 
   this->SVP_VolumePropertyWidget = NULL;
+  this->SVP_VolumePropertyWidgetFg = NULL;
 
   this->ROIWidget = NULL;
   this->CroppingButton = NULL;
   this->FitROIButton = NULL;
   
   this->CB_UseThreshold = NULL;
-  
   this->FrameThresholding = NULL;
-  
   this->RA_Threshold = NULL;
+  
+  this->CB_UseThresholdFg = NULL;
+  this->FrameThresholdingFg = NULL;
+  this->RA_ThresholdFg = NULL;
 
   //PauseResume
   this->PB_PauseResume = NULL;
@@ -592,12 +595,21 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
 
   this->FitROIButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  vtkKWFrame *roiFrame = vtkKWFrame::New();
+  roiFrame->SetParent(mainFrame->GetFrame());
+  roiFrame->Create();
+  roiFrame->SetReliefToGroove();
+  roiFrame->SetBorderWidth(2);
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", roiFrame->GetWidgetName());
+  
   this->ROIWidget = vtkSlicerROIDisplayWidget::New();
-  this->ROIWidget->SetParent(mainFrame->GetFrame());
+  this->ROIWidget->SetParent(roiFrame);
   this->ROIWidget->Create();
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ROIWidget->GetWidgetName());
-
+  
+  roiFrame->Delete();
+  
   this->UpdateROI();
 }
 
@@ -716,8 +728,52 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SVP_VolumePropertyWidget->GetWidgetName());
 
   this->SVP_VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
-
+  
   mainFrame->Delete();
+  
+  //---------------fg volume property-----------------------------------
+  vtkKWFrameWithLabel *mainFrameFg = vtkKWFrameWithLabel::New();
+  mainFrameFg->SetParent(this->NB_Details->GetFrame("Volume Property"));
+  mainFrameFg->Create();
+  mainFrameFg->SetLabelText("Foreground Volume");
+  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrameFg->GetWidgetName() );
+  
+  this->CB_UseThresholdFg = vtkKWCheckButtonWithLabel::New();
+  this->CB_UseThresholdFg->SetParent(mainFrameFg->GetFrame());
+  this->CB_UseThresholdFg->Create();
+  this->CB_UseThresholdFg->SetBalloonHelpString("Enable/Disable thresholding.");
+  this->CB_UseThresholdFg->SetLabelText("Use Thresholding");
+  this->CB_UseThresholdFg->SetLabelWidth(20);
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_UseThresholdFg->GetWidgetName() );
+  this->CB_UseThresholdFg->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+  
+  {
+    this->FrameThresholdingFg = vtkKWFrameWithLabel::New();
+    this->FrameThresholdingFg->SetParent(mainFrameFg->GetFrame());
+    this->FrameThresholdingFg->Create();
+    this->FrameThresholdingFg->AllowFrameToCollapseOff();
+    this->FrameThresholdingFg->SetLabelText("Thresholding");
+    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameThresholdingFg->GetWidgetName() );
+
+    this->RA_ThresholdFg = vtkKWRange::New();
+    this->RA_ThresholdFg->SetParent(this->FrameThresholdingFg->GetFrame());
+    this->RA_ThresholdFg->Create();
+    this->RA_ThresholdFg->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
+    this->RA_ThresholdFg->SetCommand(this, "ProcessThresholdFg");
+    this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_ThresholdFg->GetWidgetName());
+        
+    this->FrameThresholdingFg->CollapseFrame();
+  }
+  
+  this->SVP_VolumePropertyWidgetFg = vtkSlicerVolumePropertyWidget::New();
+  this->SVP_VolumePropertyWidgetFg->SetParent(mainFrameFg->GetFrame());
+  this->SVP_VolumePropertyWidgetFg->Create();
+  this->SVP_VolumePropertyWidgetFg->ScalarOpacityUnitDistanceVisibilityOff ();
+  this->SVP_VolumePropertyWidgetFg->InteractiveApplyModeOn ();
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SVP_VolumePropertyWidgetFg->GetWidgetName());
+
+  this->SVP_VolumePropertyWidgetFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 }
 
 void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
@@ -732,6 +788,18 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->SVP_VolumePropertyWidget->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
     this->SVP_VolumePropertyWidget->Delete();
     this->SVP_VolumePropertyWidget = NULL;
+  }
+  
+  if(this->SVP_VolumePropertyWidgetFg != NULL)
+  {
+    this->Gui->Script("pack forget %s", this->SVP_VolumePropertyWidgetFg->GetWidgetName());
+    this->SVP_VolumePropertyWidgetFg->SetHistogramSet(NULL);
+    this->SVP_VolumePropertyWidgetFg->SetVolumeProperty(NULL);
+    this->SVP_VolumePropertyWidgetFg->SetDataSet(NULL);
+    this->SVP_VolumePropertyWidgetFg->SetParent(NULL);
+    this->SVP_VolumePropertyWidgetFg->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
+    this->SVP_VolumePropertyWidgetFg->Delete();
+    this->SVP_VolumePropertyWidgetFg = NULL;
   }
   
   if(this->CB_UseThreshold != NULL)
@@ -755,6 +823,28 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->RA_Threshold->Delete();
     this->RA_Threshold = NULL;
   }
+  
+  if(this->CB_UseThresholdFg != NULL)
+  {
+    this->CB_UseThresholdFg->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
+    this->CB_UseThresholdFg->SetParent(NULL);
+    this->CB_UseThresholdFg->Delete();
+    this->CB_UseThresholdFg = NULL;
+  }
+  
+  if(this->FrameThresholdingFg != NULL)
+  {
+    this->FrameThresholdingFg->SetParent(NULL);
+    this->FrameThresholdingFg->Delete();
+    this->FrameThresholdingFg = NULL;
+  }
+  
+  if(this->RA_ThresholdFg)
+  {
+    this->RA_ThresholdFg->SetParent(NULL);
+    this->RA_ThresholdFg->Delete();
+    this->RA_ThresholdFg = NULL;
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned long eid,void *callData)
@@ -768,11 +858,12 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
     }
-    /*if(callerObjectSVP == this->SVP_VolumePropertyFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
+    if(callerObjectSVP == this->SVP_VolumePropertyWidgetFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
+      this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
-    }*/
+    }
   }
 
   //scales
@@ -921,7 +1012,25 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->RA_Threshold->SetWholeRange(scalarRange);
   this->RA_Threshold->SetRange(vspNode->GetThreshold());
   this->RA_Threshold->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
+  
+  if (vspNode->GetFgVolumeNode())
+  {
+    //-------------------------fg volume property--------------------
+    this->SVP_VolumePropertyWidgetFg->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
+
+    this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSetFg());
+    this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetFgVolumePropertyNode()->GetVolumeProperty());
+    this->SVP_VolumePropertyWidget->Update();
     
+    vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+    
+    //-------------------------fg threshold--------------------------
+    this->CB_UseThresholdFg->GetWidget()->SetSelectedState(vspNode->GetUseThreshold());
+    this->RA_ThresholdFg->SetWholeRange(scalarRange);
+    this->RA_ThresholdFg->SetRange(vspNode->GetThresholdFg());
+    this->RA_ThresholdFg->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
+  }
+  
   //------------------------gpu memory size------------------------
   //default 256M
   int id = 1;
@@ -1013,13 +1122,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
       this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting is not supported by your computer.");
     break;
   case 2://gpu ray casting II
-/*    if (success)
+    if (success)
     {
       this->FrameGPURayCastingII->ExpandFrame();
       this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
     }
-    else*/
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Under construction");
+    else
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("PU ray casting II is not supported by your computer.");
     break;
   case 3://old school opengl 2D Polygon Texture 3D
     if (success)
@@ -1146,3 +1255,11 @@ void vtkSlicerVolumeRenderingHelper::UpdateVolumeProperty()
   this->SVP_VolumePropertyWidget->Update();
 }
 
+void vtkSlicerVolumeRenderingHelper::UpdateVolumePropertyFg()
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSetFg());
+  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetFgVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidget->Update();
+}

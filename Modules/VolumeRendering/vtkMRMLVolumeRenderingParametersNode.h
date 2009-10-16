@@ -126,6 +126,10 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro(UseThreshold,int);
   vtkBooleanMacro(UseThreshold,int);
   
+  vtkSetMacro(UseFgThreshold,int);
+  vtkGetMacro(UseFgThreshold,int);
+  vtkBooleanMacro(UseFgThreshold,int);
+  
   // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
@@ -158,7 +162,10 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetMacro (GPURaycastTechnique, int);
   
   vtkSetVector2Macro(Threshold, double);
-  vtkGetVectorMacro(Threshold, double, 6);
+  vtkGetVectorMacro(Threshold, double, 2);
+  
+  vtkSetVector2Macro(ThresholdFg, double);
+  vtkGetVectorMacro(ThresholdFg, double, 2);
 
 protected:
   vtkMRMLVolumeRenderingParametersNode();
@@ -236,9 +243,21 @@ protected:
    * */
   int GPURaycastTechnique;
   
+  /* techniques in GPU ray cast II
+   * 0: composite with directional lighting (default)
+   * 1: composite with fake lighting (edge coloring, faster)
+   * 2: MIP
+   * 3: MINIP
+   * 4: Gradient Magnitude Opacity Modulation
+   * 5: Illustrative Context Preserving Exploration
+   * */
+  int GPURaycastIITechnique;
+  
   double Threshold[2];
+  double ThresholdFg[2];
   
   int UseThreshold;
+  int UseFgThreshold;
 };
 
 #endif

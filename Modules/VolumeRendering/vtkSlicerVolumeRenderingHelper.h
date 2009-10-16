@@ -109,6 +109,8 @@ public:
     // Utility functions
     //--------------------------------------------------------
     void UpdateVolumeProperty();
+    void UpdateVolumePropertyFg();
+    
     void UpdateROI();
 
 protected:
@@ -209,6 +211,7 @@ protected:
     // Volume Property
     //--------------------------------------------------------------------------
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidget;
+    vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidgetFg;
     
     // Description:
     // Enable/Disable thresholding
@@ -216,6 +219,11 @@ protected:
     
     vtkKWFrameWithLabel       *FrameThresholding;
     vtkKWRange                *RA_Threshold;
+    
+    vtkKWCheckButtonWithLabel *CB_UseThresholdFg;
+    
+    vtkKWFrameWithLabel       *FrameThresholdingFg;
+    vtkKWRange                *RA_ThresholdFg;
 
     //-----------------------------------------------------------
     // ROI (clipping)
