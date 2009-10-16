@@ -1337,6 +1337,11 @@ void vtkChangeTrackerROIStep::TransitionCallback()
          roiNode->SetVisibility(0);
        ResetROIRender();
 
+       std::cout << "Final ROI in IJK:  X " << Node->GetROIMin(0) << "," << Node->GetROIMax(0) 
+            << "                   Y " << Node->GetROIMin(1) << "," << Node->GetROIMax(1) 
+            << "                   Z " << Node->GetROIMin(2) << "," << Node->GetROIMax(2) << std::endl;
+
+
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
        vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), 
@@ -1353,6 +1358,7 @@ void vtkChangeTrackerROIStep::TransitionCallback()
                                       "Please define VOI correctly before proceeding", 
                                       vtkKWMessageDialog::ErrorIcon);
    }
+  
 }
 
 
