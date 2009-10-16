@@ -1641,21 +1641,21 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Position2XEntry->Create();
   this->Position2XEntry->SetWidth(8);
   this->Position2XEntry->SetRestrictValueToDouble();
-  this->Position2XEntry->SetBalloonHelpString("First end of the line, X position");
+  this->Position2XEntry->SetBalloonHelpString("Second end of the line, X position");
 
   this->Position2YEntry = vtkKWEntry::New();
   this->Position2YEntry->SetParent(position2Frame);
   this->Position2YEntry->Create();
   this->Position2YEntry->SetWidth(8);
   this->Position2YEntry->SetRestrictValueToDouble();
-  this->Position2YEntry->SetBalloonHelpString("First end of the line, Y position");
+  this->Position2YEntry->SetBalloonHelpString("Second end of the line, Y position");
 
   this->Position2ZEntry = vtkKWEntry::New();
   this->Position2ZEntry->SetParent(position2Frame);
   this->Position2ZEntry->Create();
   this->Position2ZEntry->SetWidth(8);
   this->Position2ZEntry->SetRestrictValueToDouble();
-  this->Position2ZEntry->SetBalloonHelpString("First end of the line, Z position");
+  this->Position2ZEntry->SetBalloonHelpString("Second end of the line, Z position");
   this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
                   this->Position2Label->GetWidgetName(),
                   this->Position2XEntry->GetWidgetName(),
