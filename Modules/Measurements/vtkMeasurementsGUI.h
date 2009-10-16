@@ -14,15 +14,11 @@
 
 class vtkKWFrame;
 class vtkKWCheckButton;
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-class vtkAngleWidget;
-class vtkAngleRepresentation3D;
-class vtkPointHandleRepresentation3D;
-#endif
 class vtkAffineWidget;
 class vtkAffineRepresentation2D;
 class vtkSlicerNodeSelectorWidget;
 class vtkMeasurementsRulerWidget;
+class vtkMeasurementsAngleWidget;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
 {
   public:
@@ -71,13 +67,9 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
 
   // Description:
   // Access widgets
-  vtkGetObjectMacro(AngleCheckButton, vtkKWCheckButton);
   vtkGetObjectMacro(RulerWidget, vtkMeasurementsRulerWidget);
-  
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
-  
-#endif
+  vtkGetObjectMacro(AngleWidget, vtkMeasurementsAngleWidget);
+
   // Description:
   // assign the mrml node that's selected in the TransformableNodeSelectorWidget to the TransformWidget to be manipulated via it's transform node 
   void UpdateTransformableNode();
@@ -93,23 +85,11 @@ protected:
   void SetStatusText( const char *txt);
   vtkMeasurementsLogic *Logic;
 
-  
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  // Description:
-  // the angle widget
-  vtkPointHandleRepresentation3D *AngleHandleRepresentation;
-  vtkAngleRepresentation3D *AngleRepresentation;
-  vtkAngleWidget *AngleWidget;
-#endif
   // Description
   // transform widget
   vtkAffineRepresentation2D *TransformRepresentation;
   vtkAffineWidget *TransformWidget;
 
-
-  // Description:
-  // Angle GUI elements
-  vtkKWCheckButton *AngleCheckButton;
 
   // Description:
   // Transform GUI elements
@@ -118,7 +98,11 @@ protected:
 
   // Description:
   // ruler gui elements
-  vtkMeasurementsRulerWidget *RulerWidget; 
+  vtkMeasurementsRulerWidget *RulerWidget;
+
+  // Description:
+  // angle widget gui elements
+  vtkMeasurementsAngleWidget *AngleWidget;
 };
 
 #endif

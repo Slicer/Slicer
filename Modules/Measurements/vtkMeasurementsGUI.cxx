@@ -28,13 +28,7 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkGeneralTransform.h"
 
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-
-#include "vtkPointHandleRepresentation3D.h"
-#include "vtkAngleWidget.h"
-#include "vtkAngleRepresentation3D.h"
-
-#endif
+#include "vtkMeasurementsAngleWidget.h"
 
 #include "vtkAffineWidget.h"
 #include "vtkAffineRepresentation2D.h"
@@ -148,25 +142,9 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
 {
   this->Logic = NULL;
 
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
   // Ruler Widget set up
   this->RulerWidget = NULL;
   
-
-
-  // Angle Widget set up
-  this->AngleHandleRepresentation = vtkPointHandleRepresentation3D::New();
-  this->AngleHandleRepresentation->GetProperty()->SetColor(1, 0, 0);
-
-  this->AngleRepresentation = vtkAngleRepresentation3D::New();
-  this->AngleRepresentation->SetHandleRepresentation(this->AngleHandleRepresentation);
-  double textscale[3] = {10.0, 10.0, 10.0};
-  this->AngleRepresentation->SetTextActorScale(textscale);
-
-  this->AngleWidget = vtkAngleWidget::New();
-  this->AngleWidget->CreateDefaultRepresentation();
-  this->AngleWidget->SetRepresentation(this->AngleRepresentation);
-#endif
   // Affine Widget set up
   this->TransformRepresentation = vtkAffineRepresentation2D::New();
   this->TransformRepresentation->SetBoxWidth(100);
@@ -177,7 +155,8 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
   this->TransformWidget = vtkAffineWidget::New();
   this->TransformWidget->SetRepresentation(this->TransformRepresentation);
 
-  this->AngleCheckButton = NULL;
+  this->AngleWidget = NULL;
+
   this->TransformCheckButton = NULL;
   this->TransformableNodeSelectorWidget = NULL;
 }
@@ -195,28 +174,13 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
     this->RulerWidget->Delete();
     this->RulerWidget = NULL;
     }
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  
 
-
-  if (this->AngleHandleRepresentation)
-    {
-    this->AngleHandleRepresentation->Delete();
-    this->AngleHandleRepresentation = NULL;
-    }
-  if (this->AngleRepresentation)
-    {
-    this->AngleRepresentation->SetHandleRepresentation(NULL);
-    this->AngleRepresentation->Delete();
-    this->AngleRepresentation = NULL;
-    }
   if (this->AngleWidget)
     {
-    this->AngleWidget->SetRepresentation(NULL);
+    this->AngleWidget->SetParent(NULL);
     this->AngleWidget->Delete();
     this->AngleWidget = NULL;
     }
-#endif
   if (this->TransformRepresentation)
     {
     this->TransformRepresentation->Delete();
@@ -229,13 +193,6 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
     this->TransformWidget = NULL;
     }
 
-
-  if ( this->AngleCheckButton )
-    {
-    this->AngleCheckButton->SetParent(NULL);
-    this->AngleCheckButton->Delete();
-    this->AngleCheckButton = NULL;
-    }
   if (this->TransformCheckButton)
     {
     this->TransformCheckButton->SetParent(NULL);
@@ -287,26 +244,17 @@ void vtkMeasurementsGUI::TearDownGUI ( )
 //----------------------------------------------------------------------------
 void vtkMeasurementsGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  if (this->AngleWidget)
+  if (this->TransformWidget)
     {
-    os << indent << "Angle Widget:\n";
-    this->AngleWidget->PrintSelf(os, indent);
+    os << indent << "Transform Widget:\n";
+    this->TransformWidget->PrintSelf(os, indent);
     }
-#else
-  os << indent << "Measurements GUI: incompatible VTK version " <<  VTK_MAJOR_VERSION << "." << VTK_MINOR_VERSION << ", these widgets are only available in VTK 5.4 or later\n";
-#endif
 }
 
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::AddGUIObservers ( ) 
 {
-  if ( this->AngleCheckButton )
-    {
-    this->AngleCheckButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-
   if (this->TransformCheckButton)
     {
     this->TransformCheckButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -322,11 +270,6 @@ void vtkMeasurementsGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::RemoveGUIObservers ( )
 {
-  if ( this->AngleCheckButton )
-    {
-    this->AngleCheckButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-
   if (this->TransformCheckButton)
     {
     this->TransformCheckButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -360,27 +303,7 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 
   
-  vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
-
-  if (b == this->AngleCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) 
-    {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-    if (this->AngleCheckButton->GetSelectedState())
-      {
-      if (this->AngleWidget->GetInteractor() == NULL)
-        {
-        this->AngleWidget->SetInteractor(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
-        }
-      this->AngleWidget->On();
-      }
-    else
-      {
-      this->AngleWidget->Off();
-      }
-#else
-    vtkWarningMacro("Angle widget only availalbe with VTK version 5.4 or higher");
-#endif
-    }
+  vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller ); 
 
   if (b == this->TransformCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) 
     {
@@ -452,7 +375,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Measurements" );    
 
   // HELP
-  const char* help_text = "The Measurements module allows you to add 3d rulers, a 3d angle widget, or a 2d affine transform editor widget to the 3D window.\nThe first time you toggle on the angle or affine transform widget, you have to click once to render the transform widget, and three times to place the angle widget end points. After that, you can move the widgets around by dragging the handles.\nIn order to get the end points of the ruler to move along a selected model surface, you currently need to rotate the view so that the handle is rendered on top of the model, the next click will snap it to the model surface. If you move the model or slice plane, the measurement point won't move with it, the constraint only works when moving the end point handle. If you make the model or slice invisible, the end point cannot be moved, as the constraint will always be false.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\n\n\nUNDER CONSTRUCTION";
+  const char* help_text = "The Measurements module allows you to add 3d rulers, 3d angle widgets, or a 2d affine transform editor widget to the 3D window.\nThe first time you toggle on the angle or affine transform widget, you have to click once to render the transform widget, and three times to place the angle widget end points. After that, you can move the widgets around by dragging the handles.\nIn order to get the end points of the ruler or the angle to move along a selected model surface, you currently need to rotate the view so that the handle is rendered on top of the model, the next click will snap it to the model surface. If you move the model or slice plane, the measurement point won't move with it, the constraint only works when moving the end point handle. If you make the model or slice invisible, the end point cannot be moved, as the constraint will always be false.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\n\n\nUNDER CONSTRUCTION";
   const char* ack_text = "Measurements was developed by Nicole Aucoin with help from Kitware, Inc.";
   this->BuildHelpAndAboutFrame(page, help_text, ack_text);
 
@@ -464,7 +387,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   rulerFrame->SetParent(page);
   rulerFrame->Create();
   rulerFrame->SetLabelText("Ruler Widget");
-  rulerFrame->ExpandFrame();
+  rulerFrame->CollapseFrame();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", rulerFrame->GetWidgetName());
   
   this->RulerWidget = vtkMeasurementsRulerWidget::New ( );
@@ -490,15 +413,18 @@ void vtkMeasurementsGUI::BuildGUI ( )
   angleFrame->ExpandFrame();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", angleFrame->GetWidgetName());
   
-  // Angle 
-  this->AngleCheckButton = vtkKWCheckButton::New();
-  this->AngleCheckButton->SetParent( angleFrame->GetFrame() );
-  this->AngleCheckButton->Create();
-  this->AngleCheckButton->SetText("Toggle Angle Widget");
-  this->AngleCheckButton->SelectedStateOff();
-  this->AngleCheckButton->IndicatorVisibilityOff();
-  app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
-              this->AngleCheckButton->GetWidgetName());
+  this->AngleWidget = vtkMeasurementsAngleWidget::New ( );
+  this->AngleWidget->SetMRMLScene(this->GetMRMLScene() );
+  if (this->GetApplicationGUI()->GetViewerWidget())
+    {
+    this->AngleWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
+    }
+  else { vtkWarningMacro("Unable to pass the viewer widget to the ruler widget"); }
+  this->AngleWidget->AddMRMLObservers();
+  this->AngleWidget->SetParent ( angleFrame->GetFrame() );
+  this->AngleWidget->Create ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                this->AngleWidget->GetWidgetName());
 
   //
   // Transform Frame
