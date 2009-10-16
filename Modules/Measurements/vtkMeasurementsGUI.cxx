@@ -387,7 +387,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   rulerFrame->SetParent(page);
   rulerFrame->Create();
   rulerFrame->SetLabelText("Ruler Widget");
-  rulerFrame->CollapseFrame();
+  rulerFrame->ExpandFrame();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", rulerFrame->GetWidgetName());
   
   this->RulerWidget = vtkMeasurementsRulerWidget::New ( );
@@ -410,7 +410,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   angleFrame->SetParent(page);
   angleFrame->Create();
   angleFrame->SetLabelText("Angle Widget");
-  angleFrame->ExpandFrame();
+  angleFrame->CollapseFrame();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", angleFrame->GetWidgetName());
   
   this->AngleWidget = vtkMeasurementsAngleWidget::New ( );

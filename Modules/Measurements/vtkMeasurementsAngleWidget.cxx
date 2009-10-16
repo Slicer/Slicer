@@ -1871,37 +1871,6 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->VisibilityButton->GetWidgetName() );
-
-  // sub component visibility
-  vtkKWFrame *visibilityFrame = vtkKWFrame::New();
-  visibilityFrame->SetParent(pickAngleNodeFrame->GetFrame());
-  visibilityFrame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 visibilityFrame->GetWidgetName() );
-
-  this->Ray1VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->Ray1VisibilityButton->SetParent ( visibilityFrame );
-  this->Ray1VisibilityButton->Create ( );
-  this->Ray1VisibilityButton->SetLabelText("Toggle Ray 1 Visibility");
-  this->Ray1VisibilityButton->SetBalloonHelpString("set ray 1 visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Ray1VisibilityButton->GetWidgetName() );
-
-  this->Ray2VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->Ray2VisibilityButton->SetParent ( visibilityFrame );
-  this->Ray2VisibilityButton->Create ( );
-  this->Ray2VisibilityButton->SetLabelText("Toggle Ray 2 Visibility");
-  this->Ray2VisibilityButton->SetBalloonHelpString("set ray 2 visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Ray2VisibilityButton->GetWidgetName() );
-
-  this->ArcVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->ArcVisibilityButton->SetParent ( visibilityFrame );
-  this->ArcVisibilityButton->Create ( );
-  this->ArcVisibilityButton->SetLabelText("Toggle Arc Visibility");
-  this->ArcVisibilityButton->SetBalloonHelpString("set arc visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->ArcVisibilityButton->GetWidgetName() );
   
   // position 1 frame
   vtkKWFrame *position1Frame = vtkKWFrame::New();
@@ -2126,13 +2095,45 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  annotationFrame->GetWidgetName() );
 
+  // sub component visibility
+  vtkKWFrame *visibilityFrame = vtkKWFrame::New();
+  visibilityFrame->SetParent(annotationFrame);
+  visibilityFrame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 visibilityFrame->GetWidgetName() );
+
   this->LabelVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->LabelVisibilityButton->SetParent ( annotationFrame );
+  this->LabelVisibilityButton->SetParent ( visibilityFrame );
   this->LabelVisibilityButton->Create ( );
   this->LabelVisibilityButton->SetLabelText("Toggle Angle Annotation Visibility");
   this->LabelVisibilityButton->SetBalloonHelpString("set angle annotation visibility.");
 //  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
 //                 this->LabelVisibilityButton->GetWidgetName() );
+  
+  this->Ray1VisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->Ray1VisibilityButton->SetParent ( visibilityFrame );
+  this->Ray1VisibilityButton->Create ( );
+  this->Ray1VisibilityButton->SetLabelText("Toggle Ray 1 Visibility");
+  this->Ray1VisibilityButton->SetBalloonHelpString("set ray 1 visibility.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->Ray1VisibilityButton->GetWidgetName() );
+
+  this->Ray2VisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->Ray2VisibilityButton->SetParent ( visibilityFrame );
+  this->Ray2VisibilityButton->Create ( );
+  this->Ray2VisibilityButton->SetLabelText("Toggle Ray 2 Visibility");
+  this->Ray2VisibilityButton->SetBalloonHelpString("set ray 2 visibility.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->Ray2VisibilityButton->GetWidgetName() );
+
+  this->ArcVisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->ArcVisibilityButton->SetParent ( visibilityFrame );
+  this->ArcVisibilityButton->Create ( );
+  this->ArcVisibilityButton->SetLabelText("Toggle Arc Visibility");
+  this->ArcVisibilityButton->SetBalloonHelpString("set arc visibility.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->ArcVisibilityButton->GetWidgetName() );
+  
 
   this->TextColourButton = vtkKWChangeColorButton::New();
   this->TextColourButton->SetParent ( annotationFrame );
