@@ -58,15 +58,14 @@ def common_prefix(strings):
 def slicer_matches( text ):
         """Compute matches when text is a slicer MRMLNode or name
         """
-        sys.stdout.write('Slicer comp ')
-        sys.stdout.flush()
         try:
           from Slicer import slicer
         except ImportError:
           return []
 
-        ids = map( lambda l:l.GetID(), slicer.ListNodes().values() )
-        names = map( lambda l:l.GetName(), slicer.ListNodes().values() )
+        slicer.MRML = slicer.ListNodes()
+        ids = map( lambda l:l.GetID(), slicer.MRML.values() )
+        names = map( lambda l:l.GetName(), slicer.MRML.values() )
 
         n = len(text)
 
