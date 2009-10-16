@@ -80,7 +80,10 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->CB_CUDARayCastShading = NULL;
 
   this->MB_GPURayCastTechnique = NULL;
+  
   this->MB_GPURayCastTechniqueII = NULL;
+  this->MB_GPURayCastTechniqueIIFg = NULL;
+  
   this->SC_GPURayCastDepthPeelingThreshold = NULL;
   this->SC_GPURayCastICPEkt = NULL;
   this->SC_GPURayCastICPEks = NULL;
@@ -323,7 +326,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
 
-    this->SC_GPURayCastICPEkt=vtkKWScaleWithEntry::New();
+    this->SC_GPURayCastICPEkt = vtkKWScaleWithEntry::New();
     this->SC_GPURayCastICPEkt->SetParent(this->FrameGPURayCasting->GetFrame());
     this->SC_GPURayCastICPEkt->Create();
     this->SC_GPURayCastICPEkt->SetLabelText("ICPE Scale:");
@@ -334,7 +337,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastICPEkt->SetEntryWidth(5);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastICPEkt->GetWidgetName() );
 
-    this->SC_GPURayCastICPEks=vtkKWScaleWithEntry::New();
+    this->SC_GPURayCastICPEks = vtkKWScaleWithEntry::New();
     this->SC_GPURayCastICPEks->SetParent(this->FrameGPURayCasting->GetFrame());
     this->SC_GPURayCastICPEks->Create();
     this->SC_GPURayCastICPEks->SetLabelText("ICPE Smoothness:");
@@ -368,10 +371,10 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     //set technique
     this->MB_GPURayCastTechniqueII = vtkKWMenuButtonWithLabel::New();
     this->MB_GPURayCastTechniqueII->SetParent(this->FrameGPURayCastingII->GetFrame());
-    this->MB_GPURayCastTechniqueII->SetLabelText("Rendering Technique");
+    this->MB_GPURayCastTechniqueII->SetLabelText("Technique (Bg):");
     this->MB_GPURayCastTechniqueII->Create();
     this->MB_GPURayCastTechniqueII->SetLabelWidth(labelWidth);
-    this->MB_GPURayCastTechniqueII->SetBalloonHelpString("Select different techniques in GPU ray casting");
+    this->MB_GPURayCastTechniqueII->SetBalloonHelpString("Select GPU ray casting technique for bg volume");
     this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
     this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueII 0");
     this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
@@ -383,9 +386,27 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechniqueII->GetWidgetName() );
 
+    //set technique
+    this->MB_GPURayCastTechniqueIIFg = vtkKWMenuButtonWithLabel::New();
+    this->MB_GPURayCastTechniqueIIFg->SetParent(this->FrameGPURayCastingII->GetFrame());
+    this->MB_GPURayCastTechniqueIIFg->SetLabelText("Technique (Fg):");
+    this->MB_GPURayCastTechniqueIIFg->Create();
+    this->MB_GPURayCastTechniqueIIFg->SetLabelWidth(labelWidth);
+    this->MB_GPURayCastTechniqueIIFg->SetBalloonHelpString("Select GPU ray casting technique for fg volume");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueII 0");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechniqueII 1");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechniqueII 2");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechniqueII 3");
+
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechniqueIIFg->GetWidgetName() );
+    
     this->MB_GPURayCastColorOpacityFusion = vtkKWMenuButtonWithLabel::New();
     this->MB_GPURayCastColorOpacityFusion->SetParent(this->FrameGPURayCastingII->GetFrame());
-    this->MB_GPURayCastColorOpacityFusion->SetLabelText("Color/Opacity Fusion");
+    this->MB_GPURayCastColorOpacityFusion->SetLabelText("Fusion:");
     this->MB_GPURayCastColorOpacityFusion->Create();
     this->MB_GPURayCastColorOpacityFusion->SetLabelWidth(labelWidth);
     this->MB_GPURayCastColorOpacityFusion->SetBalloonHelpString("Select color fusion method in multi-volume rendering");
@@ -394,14 +415,12 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastColorOpacityFusion->GetWidgetName() );
 
-    this->SC_GPURayCastIIFgBgRatio=vtkKWScale::New();
+    this->SC_GPURayCastIIFgBgRatio = vtkKWScaleWithEntry::New();
     this->SC_GPURayCastIIFgBgRatio->SetParent(this->FrameGPURayCastingII->GetFrame());
     this->SC_GPURayCastIIFgBgRatio->Create();
-    this->SC_GPURayCastIIFgBgRatio->SetLabelText("                 [Bg <--         --> Fg]");
-    this->SC_GPURayCastIIFgBgRatio->SetRange(0,1);
-    this->SC_GPURayCastIIFgBgRatio->SetResolution(0.01);
-    this->SC_GPURayCastIIFgBgRatio->SetValue(0.0);
-    this->SC_GPURayCastIIFgBgRatio->ValueVisibilityOff();
+    this->SC_GPURayCastIIFgBgRatio->SetLabelText("Bg|Fg Ratio:");
+    this->SC_GPURayCastIIFgBgRatio->SetLabelWidth(labelWidth);
+    this->SC_GPURayCastIIFgBgRatio->SetEntryWidth(5);
     this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastIIFgBgRatio->GetWidgetName() );
@@ -466,7 +485,28 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->MB_GPUMemorySize->Delete();
     this->MB_GPUMemorySize=NULL;
   }
-
+  
+  if(this->MB_GPURayCastTechnique != NULL)
+  {
+    this->MB_GPURayCastTechnique->SetParent(NULL);
+    this->MB_GPURayCastTechnique->Delete();
+    this->MB_GPURayCastTechnique = NULL;
+  }
+  
+  if(this->MB_GPURayCastTechniqueII != NULL)
+  {
+    this->MB_GPURayCastTechniqueII->SetParent(NULL);
+    this->MB_GPURayCastTechniqueII->Delete();
+    this->MB_GPURayCastTechniqueII = NULL;
+  }
+  
+  if(this->MB_GPURayCastTechniqueIIFg != NULL)
+  {
+    this->MB_GPURayCastTechniqueIIFg->SetParent(NULL);
+    this->MB_GPURayCastTechniqueIIFg->Delete();
+    this->MB_GPURayCastTechniqueIIFg = NULL;
+  }
+  
   if(this->SC_ExpectedFPS != NULL)
   {
     this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
@@ -1000,6 +1040,10 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
   this->SC_GPURayCastDepthPeelingThreshold->SetValue(vspNode->GetDepthPeelingThreshold());
 
+  this->SC_GPURayCastIIFgBgRatio->SetRange(0, 1);
+  this->SC_GPURayCastIIFgBgRatio->SetResolution(0.01);
+  this->SC_GPURayCastIIFgBgRatio->SetValue(0.0);
+    
   //-------------------------bg volume property--------------------
   this->SVP_VolumePropertyWidget->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
 

@@ -227,7 +227,8 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_ParametersSet->UpdateMenu();
 
   this->NS_ParametersSet->SetBorderWidth(2);
-  this->NS_ParametersSet->SetLabelText("Scenario: ");
+  this->NS_ParametersSet->SetLabelText("Scenario:");
+  this->NS_ParametersSet->SetLabelWidth(8);
   this->NS_ParametersSet->SetBalloonHelpString("select a volume rendering scenario.");
 
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ParametersSet->GetWidgetName());
@@ -242,7 +243,8 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_ROI->SetMRMLScene(this->GetMRMLScene());
   this->NS_ROI->UpdateMenu();
   this->NS_ROI->SetBorderWidth(2);
-  this->NS_ROI->SetLabelText( "ROI:     ");
+  this->NS_ROI->SetLabelText( "ROI:");
+  this->NS_ROI->SetLabelWidth(8);
   this->NS_ROI->SetBalloonHelpString("ROI node for current volume rendering scenario.");
 
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ROI->GetWidgetName());

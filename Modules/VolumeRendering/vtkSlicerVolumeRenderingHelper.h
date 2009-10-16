@@ -184,7 +184,9 @@ protected:
     // Description:
     // Menu button to select rendering technique
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique;
+    
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueII;
+    vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueIIFg;
 
     // Description:
     // Menu button to select color/opacity fusion method in multi-volume rendering
@@ -196,7 +198,7 @@ protected:
 
     // Description:
     // Adjust the frame for interactive rendering methods
-    vtkKWScale *SC_GPURayCastIIFgBgRatio;
+    vtkKWScaleWithEntry *SC_GPURayCastIIFgBgRatio;
 
     // Description:
     // Depth peeling threshold for GPU ray casting
