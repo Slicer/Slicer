@@ -154,7 +154,10 @@ void qCTKComboBoxAddRemove::removeItemNoNotify(const QString & text)
 // --------------------------------------------------------------------------
 void qCTKComboBoxAddRemove::removeItem(const QString & text, bool notify)
 {
-  this->removeItem(this->Internal->ComboBox->findText(text), notify);
+  if (this->Internal->ComboBox->findText(text)  >= 0)
+    {
+    this->removeItem(this->Internal->ComboBox->findText(text), notify);
+    }
 }
 
 // --------------------------------------------------------------------------
