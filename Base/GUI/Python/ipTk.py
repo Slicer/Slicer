@@ -13,11 +13,14 @@ All rights reserved. This program and the accompanying materials are made
 available under the terms of the BSD which accompanies this distribution, and 
 is available at U{http://www.opensource.org/licenses/bsd-license.php}
 
-cd Slicer3-build
-wget http://ipython.scipy.org/dist/ipython-0.9.1.tar.gz
-tar xvfz ipython-0.9.1.tar.gz
-cd ipython-0.9.1
-../Slicer3 --launch ../../Slicer3-lib/python-build/bin/python setup.py install
+See:
+http://www.slicer.org/slicerWiki/index.php/Slicer3:Python:ipython
+
+cd Slicer3-lib
+wget http://ipython.scipy.org/dist/ipython-0.10.tar.gz
+tar xvfz ipython-0.10.tar.gz
+cd ipython-0.10
+../../Slicer3-build/Slicer3 --launch ../python-build/bin/python setup.py install
 
 """
 
@@ -53,9 +56,9 @@ def common_prefix(strings):
 
 
 def slicer_matches( text ):
-        """Compute matches when text is a slicer MRMLNode 
+        """Compute matches when text is a slicer MRMLNode or name
         """
-        sys.stdout.write('Slicer comp')
+        sys.stdout.write('Slicer comp ')
         sys.stdout.flush()
         try:
           from Slicer import slicer
@@ -63,6 +66,7 @@ def slicer_matches( text ):
           return []
 
         ids = map( lambda l:l.GetID(), slicer.ListNodes().values() )
+        names = map( lambda l:l.GetName(), slicer.ListNodes().values() )
 
         n = len(text)
 
@@ -72,6 +76,10 @@ def slicer_matches( text ):
         for id in ids:
           if id[:n] == text:
             match_append(id)
+
+        for name in names:
+          if name[:n] == text:
+            match_append(name)
 
         return matches
 
