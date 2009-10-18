@@ -144,7 +144,7 @@ def __getTclName(self):
 def __convertArgumentList(self,a):
     aTcl = []
     for arg in a:
-        if hasattr(arg,'__dict__') and arg.__dict__.has_key('GetTclName') != -1:
+        if hasattr(arg,'__dict__') and arg.__dict__.has_key('SlicerWrapper'):
             arg = arg.GetTclName()
         aTcl.append(arg)
     return aTcl
