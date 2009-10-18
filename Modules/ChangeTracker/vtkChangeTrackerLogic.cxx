@@ -1376,7 +1376,7 @@ void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
   vtkImageMathematics* mult = vtkImageMathematics::New();
   vtkImageThreshold* thresh = vtkImageThreshold::New();
   thresh->SetInput(mask);
-  thresh->ThresholdByLower(1);
+  thresh->ThresholdBetween(1,255);
   thresh->SetInValue(1);
   thresh->SetOutValue(0);
   mult->SetInput(0, image);

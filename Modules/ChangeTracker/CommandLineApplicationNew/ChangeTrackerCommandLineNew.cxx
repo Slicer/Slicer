@@ -416,8 +416,9 @@ int main(int argc, char* argv[])
 
     {
          Spacing =  tg.Scan1Data->GetSpacing();
+         std::cout << "Spacing: " << Spacing[0] << " " << Spacing[1] << " " << Spacing[2] << std::endl;
              
-         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, ResampleChoice);
+         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
          SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
          Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
          SuperSampleRatio   = SuperSampleVol/Scan1Vol;
@@ -478,6 +479,7 @@ int main(int argc, char* argv[])
     vtkChangeTrackerLogic::DefineSegment(Scan1PreSegment->GetOutput(),Scan1Segment);
     Scan1SegmentOutput->DeepCopy(Scan1Segment->GetOutput());
 
+
     // normalize intensities to scan1
     std::string CMD = "::ChangeTrackerTcl::HistogramNormalization_FCT " + Scan1SuperSampleTcl + " " + Scan1SegmentOutputTcl + " " 
       + Scan2SuperSampleTcl + " " + Scan2LocalNormalizedTcl;
@@ -492,7 +494,7 @@ int main(int argc, char* argv[])
     vtkImageMathematics* mult = vtkImageMathematics::New();
     vtkImageThreshold* thresh = vtkImageThreshold::New();
     thresh->SetInput(Scan1SegmentOutput);
-    thresh->ThresholdByLower(1);
+    thresh->ThresholdBetween(1,255);
     thresh->SetInValue(1);
     thresh->SetOutValue(0);
     mult->SetInput(0, Scan1SuperSample);
