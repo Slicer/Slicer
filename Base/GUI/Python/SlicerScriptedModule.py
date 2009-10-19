@@ -1,5 +1,6 @@
 import sys, os
 from Slicer import slicer
+from Slicer import SlicerWrapper
 
 class ScriptedModuleGUI(object):
 
@@ -39,6 +40,8 @@ class SlicerScriptedModuleImporter(object):
                 continue
             try:
                 gui = ScriptedModuleGUIClass()
+                gui.SlicerWrapper = SlicerWrapper(gui.__dict__['vtkScriptedModuleGUI'])
+                gui.OwnWrapper = False
             except Exception, e:
                 print>>sys.stderr, "Cannot instantiate ScriptedModuleGUIClass: error ", e
                 continue

@@ -354,6 +354,8 @@ class Slicer(object):
     def ListNodesByClass(self,nodeClass):
         return ListNodesByClass(nodeClass)
 
+    def exit(self):
+        tk.tk.call('exit')
 
 slicer = Slicer()
 
