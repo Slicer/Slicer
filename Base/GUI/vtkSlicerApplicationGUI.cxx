@@ -3440,8 +3440,8 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 
   if ( !progress_initialized )
     {
-    // look for mac/linux style or windows style name for wish
-    this->Script("set wish_candidates [list $::env(TCL_DIR)/bin/wish8.4 $::env(TCL_DIR)/bin/wish84.exe]");
+    // look for mac/linux style or windows style name for wish version 8.4 or 8.5
+    this->Script("set wish_candidates [list $::env(TCL_DIR)/bin/wish8.4 $::env(TCL_DIR)/bin/wish84.exe $::env(TCL_DIR)/bin/wish8.5 $::env(TCL_DIR)/bin/wish85.exe]");
     this->Script("foreach wc $wish_candidates {if { [file exists $wc] } {set extprog_wish $wc} }");
     this->Script("set extprog_script $::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ExternalProgress.tcl");
     this->Script("set extprog_fp [open \"| $extprog_wish\" \"w\"]");
@@ -3462,6 +3462,6 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
   char progressString[BUFSIZ];
   sprintf(progressString, "%3.f", progress * 100);
 
-  this->Script("puts $extprog_fp \"progress_Window %s %s %s\"; flush $extprog_fp",
+  this->Script("puts $extprog_fp \"progress_Window %s {%s} %s\"; flush $extprog_fp",
                     newGeometry, message, progressString);
 }
