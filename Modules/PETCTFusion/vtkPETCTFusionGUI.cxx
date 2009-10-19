@@ -1349,8 +1349,8 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
       }
     }
 
-  vtkMRMLScalarVolumeNode *n = NULL;
-  vtkMRMLVolumeDisplayNode *dnode = NULL;
+  //vtkMRMLScalarVolumeNode *n = NULL; FIXME: unused variable
+  //vtkMRMLVolumeDisplayNode *dnode = NULL; FIXME: unused variable
   if ( this->CTSelector )
     {
     //--- update the menu & selection
@@ -2869,7 +2869,7 @@ void vtkPETCTFusionGUI::UpdateDICOMPanel()
         {
         tmp = n->GetStorageNode()->GetFileName();
         filename = vtksys::SystemTools::GetFilenameName ( tmp );
-        int index = tmp.find(filename);
+        size_t index = tmp.find(filename);
         if ( index  != std::string::npos )
           {
           path = tmp.substr ( 0, index );

@@ -271,7 +271,8 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
       {
       const char *fn = filenames[0].c_str();
       f->SetFileName( fn );
-      bool res = f->Load();   // handle res
+      //bool res = f->Load();   // FIXME: commented out for now to avoid compile warnings
+      f->Load();   // FIXME: handle res
 
       gdcm::SeqEntry *seq = f->GetSeqEntry(0x0054,0x0016);
       gdcm::SQItem *sqItem = seq->GetFirstSQItem();
@@ -298,7 +299,7 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
         //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
         //---2. "1010" represents a time of 10 hours, and 10 minutes.
         //---3. "021" is an invalid value. 
-        if ( tag.c_str() == NULL || tag.c_str() == "" )
+        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
           {
           this->PETCTFusionNode->SetRadiopharmaceuticalStartTime ("no value found");
           }
@@ -345,14 +346,15 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
         //--- Radionuclide Total Dose 
         tag.clear();
         tag = sqItem->GetEntryValue(0x0018,0x1074);
-        if ( tag.c_str() == NULL || tag.c_str() == "" )
+        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
           {
           this->PETCTFusionNode->SetInjectedDose( 0.0 );
           }
         else
           {
           this->PETCTFusionNode->SetInjectedDose( atof ( tag.c_str() ) );
-          float testcomp = this->PETCTFusionNode->GetInjectedDose() / 10.0;
+          // FIXME: this calculation is not used - commenting it out to avoid compile warning - SP
+          //float testcomp = this->PETCTFusionNode->GetInjectedDose() / 10.0;
           }
 
 
@@ -369,7 +371,7 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
         //--- as defined in ANSI X3.9, with an "E" or "e" to indicate the start
         //--- of the exponent. Decimal Strings may be padded with leading
         //--- or trailing spaces. Embedded spaces are not allowed. 
-        if ( tag.c_str() == NULL || tag.c_str() == "" )
+        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
           {
           this->PETCTFusionNode->SetRadionuclideHalfLife( "no value found" );
           }
@@ -702,8 +704,8 @@ void vtkPETCTFusionLogic::ComputeSUV()
     }
   
 
-  const double *spacing = maskVolume->GetSpacing();
-  double cubicMMPerVoxel = spacing[0] * spacing[1] * spacing[2];
+  //const double *spacing = maskVolume->GetSpacing(); FIXME: unused variable
+  //double cubicMMPerVoxel = spacing[0] * spacing[1] * spacing[2]; FIXME: unused variable
   this->PETCTFusionNode->SetMessageText ( "Starting SUV calculation...." );
   this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
 
@@ -758,7 +760,7 @@ void vtkPETCTFusionLogic::ComputeSUV()
     int voxNumber = labelstat->GetVoxelCount();
     if ( voxNumber > 0 )
       {
-      double Volume = voxNumber * cubicMMPerVoxel;
+      //double Volume = voxNumber * cubicMMPerVoxel; FIXME: unused variable warning
       double CPETmin = (labelstat->GetMin())[0];
       double CPETmax = (labelstat->GetMax())[0];
       double CPETmean = (labelstat->GetMean())[0];
