@@ -123,6 +123,11 @@ vtkMRMLIGTLConnectorNode::~vtkMRMLIGTLConnectorNode()
     {
     this->CircularBufferMutex->Delete();
     }
+
+  if (this->EventQueueMutex)
+    {
+    this->EventQueueMutex->Delete();
+    }
 }
 
 
