@@ -93,11 +93,13 @@ set ::OpenCV_TAG "http://sourceforge.net/projects/opencvlibrary/files/opencv-uni
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
 # set 8.5 for Solaris explicitly, because 8.4 complains 
 # when built 64 bit with gcc. Suncc/CC is fine, however.
-  if {$tcl_platform(os) == "SunOS"} {
-    set ::TCL_VERSION tcl85
-  } else {
-    set ::TCL_VERSION tcl
-  }
+if {$tcl_platform(os) == "SunOS"} {
+  set ::TCL_VERSION tcl85
+  set ::TCL_MINOR_VERSION 5
+} else {
+  set ::TCL_VERSION tcl
+  set ::TCL_MINOR_VERSION 4
+}
 
 # Set library, binary, etc. paths...
 
@@ -232,8 +234,8 @@ switch $::tcl_platform(os) {
         set ::VTK_BUILD_SUBDIR ""
         set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin
 
-        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
-        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
+        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.$::TCL_MINOR_VERSION
+        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.$::TCL_MINOR_VERSION
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.dylib
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.dylib
         if { $::USE_SYSTEM_PYTHON } {
@@ -252,9 +254,9 @@ switch $::tcl_platform(os) {
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
         set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/libcv.$shared_lib_ext
-        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
-        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
-        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
+        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.$::TCL_MINOR_VERSION.$shared_lib_ext 
+        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.$::TCL_MINOR_VERSION.$shared_lib_ext
+        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.$::TCL_MINOR_VERSION
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
