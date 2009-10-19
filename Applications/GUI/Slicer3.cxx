@@ -870,6 +870,7 @@ int Slicer3_main(int& argc, char *argv[])
   appGUI->SetAndObserveMRMLSceneEvents ( scene, appGUIEvents );
   appGUIEvents->Delete();
 
+  slicerApp->Script ("update");
   slicerApp->SaveUserInterfaceGeometryOn();
 
   // Create Remote I/O and Cache handling mechanisms
