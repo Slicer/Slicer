@@ -376,9 +376,6 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
     int n;
     double rgb[3];
     double val;
-    float *inPtr;
-    unsigned char *ucPtr;
-    unsigned char ucVal;
     
     
     vtkDebugMacro( << "MapScalarsThroughTable2:\n");
@@ -410,14 +407,87 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
       return;
       }
     
+
     switch (inputDataType)
       {
+      case VTK_DOUBLE:
+        vtkDebugMacro(<<"Input data type is double.");
+        for (n = 0; n < numberOfValues; n++)
+          {
+          double *inPtr;
+          inPtr = static_cast<double *>(input);
+          inPtr += n*inputIncrement;
+          val = *inPtr;
+          this->GetColor(val, rgb);
+          if (n < 100) // (n % 10000 == 0)
+            {
+            vtkDebugMacro( << n << ": val = " << val << ", rgb = " << rgb[0] << "," << rgb[1] << "," << rgb[2] << "\noutput array index = " << n*outputIncrement*sizeof(unsigned char));
+            }
+          if (rgb[0] < 0.0 || rgb[0] > 1.0 ||
+              rgb[1] < 0.0 || rgb[1] > 1.0 ||
+              rgb[2] < 0.0 || rgb[2] > 1.0)
+            {
+            // invalid colour values, use 0
+            vtkDebugMacro(<<"Val " << val << " resulted in invalid rgb, out of range 0-1, using 0 0 0 instead of " << rgb[0] << " " << rgb[1] << " " << rgb[2] );
+            rgb[0] = 0.0;
+            rgb[1] = 0.0;
+            rgb[2] = 0.0;
+            }
+          // now save it to the output - should loop 0 to
+          // outputIncrement
+          
+          output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
+          output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
+          output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
+          if (outputIncrement == VTK_RGBA)
+            {
+            // opacity set to be always 1
+            output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned char)(255);
+            }
+          }
+        break;
       case VTK_FLOAT:
         vtkDebugMacro(<<"Input data type is float.");
         for (n = 0; n < numberOfValues; n++)
           {
+          float *inPtr;
           inPtr = static_cast<float *>(input);
-          //inPtr += n*inputIncrement*sizeof(float);
+          inPtr += n*inputIncrement;
+          val = *inPtr;
+          this->GetColor(val, rgb);
+          if (n < 100) // (n % 10000 == 0)
+            {
+            vtkDebugMacro( << n << ": val = " << val << ", rgb = " << rgb[0] << "," << rgb[1] << "," << rgb[2] << "\noutput array index = " << n*outputIncrement*sizeof(unsigned char));
+            }
+          if (rgb[0] < 0.0 || rgb[0] > 1.0 ||
+              rgb[1] < 0.0 || rgb[1] > 1.0 ||
+              rgb[2] < 0.0 || rgb[2] > 1.0)
+            {
+            // invalid colour values, use 0
+            vtkDebugMacro(<<"Val " << val << " resulted in invalid rgb, out of range 0-1, using 0 0 0 instead of " << rgb[0] << " " << rgb[1] << " " << rgb[2] );
+            rgb[0] = 0.0;
+            rgb[1] = 0.0;
+            rgb[2] = 0.0;
+            }
+          // now save it to the output - should loop 0 to
+          // outputIncrement
+          
+          output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
+          output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
+          output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
+          if (outputIncrement == VTK_RGBA)
+            {
+            // opacity set to be always 1
+            output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned char)(255);
+            }
+          }
+        break;
+      case VTK_INT:
+        vtkDebugMacro(<<"Input data type is int.");
+        for (n = 0; n < numberOfValues; n++)
+          {
+          int *inPtr;
+          inPtr = static_cast<int *>(input);
           inPtr += n*inputIncrement;
           val = *inPtr;
           this->GetColor(val, rgb);
@@ -450,6 +520,8 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
         break;
       case VTK_UNSIGNED_CHAR:
         vtkDebugMacro("Input data type is unsigned char.");
+        unsigned char *ucPtr;
+        unsigned char ucVal;
         for (n = 0; n < numberOfValues; n++)
           {
           ucPtr = static_cast<unsigned char*>(input);
