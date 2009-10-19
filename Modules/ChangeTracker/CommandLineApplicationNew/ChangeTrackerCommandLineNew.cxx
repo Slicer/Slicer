@@ -488,8 +488,8 @@ int main(int argc, char* argv[])
     
     // determine the thresholds as the intensity range of the first scan
     // masked by the tumor label
-    vtkImageData *image = tg.Scan1Data;
-    vtkImageData *mask = tg.Scan1SegmentedData;
+    //vtkImageData *image = tg.Scan1Data;
+    //vtkImageData *mask = tg.Scan1SegmentedData;
 
     vtkImageMathematics* mult = vtkImageMathematics::New();
     vtkImageThreshold* thresh = vtkImageThreshold::New();
