@@ -90,7 +90,7 @@ string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 
 # Those are not libs
 
-list(REMOVE_ITEM libs tclap GenerateCLP GenerateLM)
+list(REMOVE_ITEM libs tclap GenerateCLP GenerateLM slicerio)
 
 slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${libs})
