@@ -1045,7 +1045,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   if (vspNode != NULL && vspNode->GetVolumeNodeID() != NULL &&
       strcmp(this->NS_ImageData->GetSelected()->GetID(), vspNode->GetVolumeNodeID()) == 0)
   {
-      return;// return if the node already selected
+    return;// return if the node already selected
   }
 
   char buf[32] = "Initializing...";
@@ -1157,7 +1157,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 }
 
 /*
- * Fg volume is disable till a bg volume has been selected
+ * Fg volume is disabled till a bg volume has been selected
  * 
  * */
 void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
@@ -1167,7 +1167,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
   if (vspNode != NULL && vspNode->GetFgVolumeNodeID() != NULL &&
       strcmp(this->NS_ImageDataFg->GetSelected()->GetID(), vspNode->GetFgVolumeNodeID()) == 0)
   {
-      return;// return if the node already selected
+    return;// return if the node already selected
   }
 
   char buf[32] = "Initializing...";
@@ -1178,9 +1178,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
     //remove existing observers
     vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode());
 
-    //remove observer to trigger update of transform
-    selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
-    selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    if (selectedImageData)
+    {
+      //remove observer to trigger update of transform
+      selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
+      selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    }
   }
   
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
@@ -1224,7 +1227,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
     vspNode->SetThresholdFg(scalarRange);
   }
   else//there is a match, then use matched vsp node
+  {
     this->ScenarioNode->SetParametersNodeID(matchedVspNode->GetID());
+  }
     
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
 

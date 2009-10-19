@@ -99,6 +99,8 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->UseFgThreshold = 0; // by default volume property widget is used
   
   this->GPURaycastIIBgFgRatio = 0.0f;//default display bg volume
+  
+  this->GPURaycastIIFusion = 0;
 }
 
 //----------------------------------------------------------------------------

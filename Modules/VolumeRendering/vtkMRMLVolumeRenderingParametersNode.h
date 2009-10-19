@@ -167,6 +167,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (GPURaycastTechniqueIIFg, int);
   vtkSetMacro (GPURaycastTechniqueIIFg, int);
   
+  vtkGetMacro (GPURaycastIIFusion, int);
+  vtkSetMacro (GPURaycastIIFusion, int);
+  
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
   
@@ -271,6 +274,12 @@ protected:
    * 5: Illustrative Context Preserving Exploration
    * */
   int GPURaycastTechniqueIIFg;
+  
+  /*
+   * fusion method in GPU ray cast II
+   * 0: composite (default)
+   * */
+  int GPURaycastIIFusion;
   
   double Threshold[2];
   double ThresholdFg[2];

@@ -104,6 +104,7 @@ public:
     // Property
     //--------------------------------------------------------
     void ProcessThreshold(double, double);
+    void ProcessThresholdFg(double, double);
     
     //--------------------------------------------------------
     // Utility functions

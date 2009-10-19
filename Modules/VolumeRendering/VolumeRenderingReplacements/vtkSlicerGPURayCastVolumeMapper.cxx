@@ -661,28 +661,32 @@ void vtkSlicerGPURayCastVolumeMapper::Initialize()
   
   int supports_2_0=extensions->ExtensionSupported( "GL_VERSION_2_0" );
   if(supports_2_0)
-    {   
+  {
+    extensions->LoadExtension("GL_VERSION_1_2");
+    extensions->LoadExtension("GL_VERSION_1_3");
+    extensions->LoadExtension("GL_VERSION_1_4");
+    extensions->LoadExtension("GL_VERSION_1_5");
     extensions->LoadExtension("GL_VERSION_2_0");//printf("GL_2_0\n");
-    }
-  
+  }
+
   int supports_2_1=extensions->ExtensionSupported( "GL_VERSION_2_1" );
   if(supports_2_1)
-    {   
+  {
     extensions->LoadExtension("GL_VERSION_2_1");//printf("GL_2_1\n");
-    }
-    
+  }
+
   int supports_3_0=extensions->ExtensionSupported( "GL_VERSION_3_0" );
   if(supports_3_0)
-    {   
+  {
     extensions->LoadExtension("GL_VERSION_3_0");//printf("GL_3_0\n");
-    }
-    
-    if (supports_2_0 || supports_2_1 || supports_3_0)
-        RayCastSupported = 1;
-    else
-        RayCastSupported = 0;
-    
-    extensions->Delete();
+  }
+
+  if (supports_2_0 || supports_2_1 || supports_3_0)
+    RayCastSupported = 1;
+  else
+    RayCastSupported = 0;
+
+  extensions->Delete();
     
 //  GLint num;
 //  glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &num);
@@ -1563,35 +1567,45 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "    vec3 nextRayOrigin = rayOrigin.xyz;                                                     \n"
         "                                                                                        \n"
         "    vec4 pixelColor = vec4(0);                                                          \n"
-        "    float alpha = 0.0;                                                                      \n"
+        "    float alpha = 0.0;                                                                   \n"
+        "    float alphaA = 0.0;                                                                  \n"
+        "    float alphaB = 0.0;                                                                   \n"
         "    float t = 0.0;                                                                      \n"
         "    vec3  lightDir = normalize( gl_LightSource[0].position.xyz );                     \n"
         "                                                                                        \n"
         "    float fgRatio = ParaMatrix[2][2];                                                    \n"
         "    {                                                                                       \n"
-        "        while( (t < rayLen) && (alpha < 0.975) )                                          \n"
+        "        while( (t < rayLen) && (alpha < 0.975) )                                           \n"
         "        {                                                                                   \n"
         "            vec4 nextColorA = voxelColorA(nextRayOrigin);                                     \n"
         "            vec4 nextColorB = voxelColorB(nextRayOrigin);                                \n"
-        "            float tempAlpha = nextColorA.w*(1.0-fgRatio) + nextColorB.w*fgRatio;            \n"
+        "            float tempAlphaA = nextColorA.w;                                            \n"
+        "            float tempAlphaB = nextColorB.w;                                              \n"
         "                                                                                        \n"
-        "            if (tempAlpha > 0.0)                                                           \n"
+        "            if (tempAlphaA > 0.0)                                                           \n"
         "            {                                                                              \n"
         "               nextColorA = directionalLightA(nextRayOrigin, lightDir, nextColorA);           \n"
+        "                                                                                              \n"      
+        "               tempAlphaA = (1.0-alphaA)*tempAlphaA;                                          \n"
+        "               pixelColor += nextColorA*tempAlphaA*(1.0-fgRatio);                              \n"
+        "               alphaA += tempAlphaA;                                                           \n"
+        "            }                                                                               \n"
+        "            if (tempAlphaB > 0.0)                                                           \n"
+        "            {                                                                              \n"
         "               nextColorB = directionalLightB(nextRayOrigin, lightDir, nextColorB);           \n"
         "                                                                                              \n"      
-        "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "               pixelColor += nextColorA*tempAlpha*(1.0-fgRatio);                                      \n"
-        "               pixelColor += nextColorB*tempAlpha*fgRatio;                                 \n"
-        "               alpha += tempAlpha;                                                             \n"
+        "               tempAlphaB = (1.0-alphaB)*tempAlphaB;                                          \n"
+        "               pixelColor += nextColorB*tempAlphaB*fgRatio;                                 \n"
+        "               alphaB += tempAlphaB;                                                             \n"
         "            }                                                                               \n"
         "                                                                                           \n"
-        "            t += ParaMatrix[0][3];                                                      \n"
+        "            alpha += alphaA*(1.0-fgRatio) + alphaB*fgRatio;                                  \n"
+        "            t += ParaMatrix[0][3];                                                          \n"
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "    }                                                                                       \n"
-        "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
-        "                                                                                        \n"
+        "    gl_FragColor = vec4(pixelColor.xyz, alpha);                                             \n"
+        "                                                                                            \n"
         "}                                                                                          \n";
         
     std::string source = fp_oss.str();

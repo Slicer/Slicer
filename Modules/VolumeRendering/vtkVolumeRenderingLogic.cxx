@@ -648,6 +648,11 @@ void vtkVolumeRenderingLogic::SetGPURaycastParameters(vtkMRMLVolumeRenderingPara
   this->MapperGPURaycast->SetTechnique(vspNode->GetGPURaycastTechnique());
 }
 
+void vtkVolumeRenderingLogic::SetGPURaycastIIParameters(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  this->MapperGPURaycastII->SetFgBgRatio(vspNode->GetGPURaycastIIBgFgRatio());
+}
+
 void vtkVolumeRenderingLogic::EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   double *spacing = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetSpacing();
@@ -709,9 +714,10 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
     if (vspNode->GetFgVolumeNode())
       this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
     this->MapperGPURaycastII->SetFramerate(vspNode->GetExpectedFPS());
-    if (this->MapperGPURaycast->IsRenderSupported(this->VolumePropertyGPURaycastII))
+    if (this->MapperGPURaycastII->IsRenderSupported(vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
     {
       this->Volume->SetMapper(this->MapperGPURaycastII);
+      this->CreateVolumePropertyGPURaycastII(vspNode);
       this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
     }
     else
@@ -840,6 +846,9 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
 
 void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  if (vspNode->GetCurrentVolumeMapper() != 2)
+    return;
+  
   if (this->VolumePropertyGPURaycastII != NULL)
     this->VolumePropertyGPURaycastII->Delete();
 
@@ -896,6 +905,8 @@ void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
     this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
     this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
   }
+  
+  this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
 }
 
 //----------------------------------------------------------------------------

@@ -79,6 +79,7 @@ public:
   void SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
