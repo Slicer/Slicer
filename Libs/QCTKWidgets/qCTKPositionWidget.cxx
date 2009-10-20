@@ -2,7 +2,6 @@
 
 #include <QHBoxLayout>
 #include <QDoubleSpinBox>
-#include <iostream>
 
 qCTKPositionWidget::qCTKPositionWidget(QWidget* parent)
   :QWidget(parent)
@@ -129,12 +128,9 @@ QString qCTKPositionWidget::positionAsString()const
     if (i != 0)
       {
       res += ",";
-      std::cout << "," ;
       }
     res += QString::number(this->Position[i]);
-    std::cout << this->Position[i] ;
     }
-  std::cout << std::endl;
   return res;
 }
 

@@ -1,9 +1,9 @@
 #include "qCTKCollapsibleGroupBox.h"
+
 #include <QChildEvent>
 #include <QStylePainter>
 #include <QStyleOptionGroupBox>
 #include <QStyle>
-#include <iostream>
 #include <QMouseEvent>
 
 qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
@@ -104,7 +104,6 @@ void qCTKCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
 
     QStyleOptionGroupBox box;
     initStyleOption(&box);
-    std::cout << box.activeSubControls << std::endl;
     box.activeSubControls &= !QStyle::SC_GroupBoxCheckBox;
     QStyle::SubControl released = style()->hitTestComplexControl(QStyle::CC_GroupBox, &box,
                                                                  event->pos(), this);
