@@ -484,8 +484,8 @@ void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRend
   colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
 
   prop->ShadeOn();
-  prop->SetAmbient(0.20);
-  prop->SetDiffuse(0.80);
+  prop->SetAmbient(0.30);
+  prop->SetDiffuse(0.60);
   prop->SetSpecular(0.50);
   prop->SetSpecularPower(40);
 }
@@ -545,8 +545,8 @@ void vtkVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRe
   colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
 
   prop->ShadeOn();
-  prop->SetAmbient(0.20);
-  prop->SetDiffuse(0.80);
+  prop->SetAmbient(0.30);
+  prop->SetDiffuse(0.60);
   prop->SetSpecular(0.50);
   prop->SetSpecularPower(40);
 }
