@@ -20,6 +20,8 @@ SET(QCTKWidgets_SRCS
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.cxx
   qCTKMatrixWidget.h
+  qCTKPositionWidget.cxx
+  qCTKPositionWidget.h
   qCTKSlider.cxx
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.cxx
@@ -31,6 +33,7 @@ SET(QCTKWidgets_MOC_SRCS
   qCTKCollapsibleGroupBox.h
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.h
+  qCTKPositionWidget.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
   )
