@@ -1238,6 +1238,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
 
 void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
 {
+  //abort current (cpu ray cast) rendering 
+  this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+  
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
   vspNode->SetCurrentVolumeMapper(id);
