@@ -1044,7 +1044,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
         rgbFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );
   }
   
-  if (scalarOpacityFunc1)
+  if (scalarOpacityFunc1 && input1)
     scalarOpacityFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray21 );
 
   float goArray1[256];
