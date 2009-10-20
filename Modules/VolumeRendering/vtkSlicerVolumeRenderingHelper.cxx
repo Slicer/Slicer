@@ -394,13 +394,13 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_GPURayCastTechniqueIIFg->SetLabelWidth(labelWidth);
     this->MB_GPURayCastTechniqueIIFg->SetBalloonHelpString("Select GPU ray casting technique for fg volume");
     this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
-    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueII 0");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueIIFg 0");
     this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
-    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechniqueII 1");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechniqueIIFg 1");
     this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
-    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechniqueII 2");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechniqueIIFg 2");
     this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
-    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechniqueII 3");
+    this->MB_GPURayCastTechniqueIIFg->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechniqueIIFg 3");
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechniqueIIFg->GetWidgetName() );
     
@@ -1200,7 +1200,24 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechnique(int id)
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueII(int id)
 {
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
+  vspNode->SetGPURaycastTechniqueII(id);
+
+  this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
+
+  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+}
+
+void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  vspNode->SetGPURaycastTechniqueIIFg(id);
+
+  this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
+
+  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
@@ -1252,10 +1269,10 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     if (success)
     {
       this->FrameGPURayCastingII->ExpandFrame();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II (Experimental)");
     }
     else
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("PU ray casting II is not supported by your computer.");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting II is not supported by your computer.");
     break;
   case 3://old school opengl 2D Polygon Texture 3D
     if (success)

@@ -87,6 +87,7 @@ public:
     // Callback, that is processed when the GPU ray casting rendering technique is changed
     void ProcessGPURayCastTechnique(int id);
     void ProcessGPURayCastTechniqueII(int id);
+    void ProcessGPURayCastTechniqueIIFg(int id);
 
     // Description:
     // Callback, that is processed when the multi-volume rendering fusion method is changed
