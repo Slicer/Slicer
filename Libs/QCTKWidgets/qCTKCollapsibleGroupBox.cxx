@@ -12,6 +12,11 @@ qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
   this->setCheckable(true);
   connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
 
+#if QT_VERSION < 0x040600
+  // pb when the group box is empty.
+  this->setMinimumHeight(20);
+#endif
+  
   this->Width = this->width();
   this->Height = this->height();
 
