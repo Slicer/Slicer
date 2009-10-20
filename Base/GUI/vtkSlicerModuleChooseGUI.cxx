@@ -386,25 +386,18 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
         p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
         this->Script ( "update idletasks");
 
-        //--- raise the panel
-        //m->GetUIPanel()->Raise();
-        //app->ShowModule(moduleName);
         int pos[2] = {0,0};
         int size[2];
         if (m)
           {
           vtkKWWidget* widget = m->GetUIPanel()->GetPagesParentWidget();
-          //vtkKWTkUtilities::GetGeometry(widget, &size[0], &size[1], &pos[0], &pos[1]);
-          //std::cout << " pos: " << pos[1] << std::endl;
           vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
           vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
-          //std::cout << " pos: " << pos[1] << std::endl;
           module->resize(size[0], size[1]);
           module->move(pos[0], pos[1]);
           }
         module->show();
         QApplication::processEvents();
-        //module->move(topLevelPos[0] + pos[0], topLevelPos[1] + pos[1]);
         module->move(pos[0], pos[1]);
 
         p->GetMainSlicerWindow()->SetStatusText ( moduleName );

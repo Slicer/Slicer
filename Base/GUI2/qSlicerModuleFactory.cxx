@@ -2,7 +2,9 @@
 
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
+
 #include "qSlicerModuleTransform.h"
+#include "qSlicerMeasurementsModule.h"
 
 #include <QHash>
 #include <QDebug>
@@ -39,6 +41,7 @@ qSlicerModuleFactory::~qSlicerModuleFactory()
 void qSlicerModuleFactory::registerCoreModules()
 {
   this->registerModule<qSlicerModuleTransform>("Transforms");
+  // WIP: this->registerModule<qSlicerMeasurementsModule>("Measurements");
 }
 
 //-----------------------------------------------------------------------------
@@ -89,7 +92,7 @@ QString qSlicerModuleFactory::getModuleTitle(const QString & moduleName)
   
   if (iter == this->Internal->MapNameToTitle.constEnd())
     {
-    qCritical() << "Failed to retrieve module title given its name:" << moduleName; 
+    //qCritical() << "Failed to retrieve module title given its name:" << moduleName; 
     return QString(); 
     }
   return iter.value(); 
@@ -103,7 +106,7 @@ QString qSlicerModuleFactory::getModuleName(const QString & moduleTitle)
   
   if (iter == this->Internal->MapTitleToName.constEnd())
     {
-    qCritical() << "Failed to retrieve module name given its title:" << moduleTitle; 
+    //qCritical() << "Failed to retrieve module name given its title:" << moduleTitle; 
     return QString(); 
     }
   return iter.value(); 
@@ -115,7 +118,7 @@ qSlicerAbstractModule* qSlicerModuleFactory::createModule(const QString& moduleN
   qSlicerAbstractModule* module = this->create(moduleName); 
   if (!module)
     {
-    qCritical() << "Failed to instanciate module:" << moduleName; 
+    //qCritical() << "Failed to instanciate module:" << moduleName; 
     return 0;
     }
     

@@ -36,6 +36,10 @@ public:
   virtual void populateApplicationSettings(){}
   virtual void unPopulateApplicationSettings(){}
 
+#ifdef Slicer3_USE_KWWidgets
+  void synchronizeGeometryWithKWModule();
+#endif
+
 public slots:
 
   // Description:
