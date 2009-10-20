@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerMeasurementsModule</class>
+ <widget class="QWidget" name="qSlicerMeasurementsModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>444</width>
+    <height>825</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox">
+     <property name="title">
+      <string>Ruler Widget</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_4">
+        <property name="title">
+         <string>Modify All Ruler Nodes</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QComboBox" name="comboBox">
+           <item>
+            <property name="text">
+             <string>All Rulers Visible</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../qSlicerGUI2.qrc">
+              <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>All Rulers Invisible</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../qSlicerGUI2.qrc">
+              <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_5">
+        <property name="title">
+         <string>Modify Selected Ruler Nodes</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Ruler Node Select:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="qMRMLNodeSelector" name="MRMLNodeSelector">
+           <property name="NodeType">
+            <string>vtkMRMLRulerNode</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Ruler Visibility:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Position 1:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="qCTKPositionWidget" name="CTKPositionWidget">
+           <property name="Dimension">
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Position 2:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="qCTKPositionWidget" name="CTKPositionWidget_2"/>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_6">
+           <property name="title">
+            <string>Constrain Ruler To Models</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Select Ruler Model 1:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="qMRMLNodeSelector" name="MRMLNodeSelector_2">
+              <property name="NodeType">
+               <string>vtkMRMLModel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Select Ruler Model 2:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="qMRMLNodeSelector" name="MRMLNodeSelector_3">
+              <property name="NodeType">
+               <string>vtkMRMLModel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_7">
+           <property name="title">
+            <string>Display Options</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>End Point Color:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Line Color:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Distance Annotation Visibility:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="checkBox_2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Distance Annotation Format:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Distance Annotation Scale:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_2"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_2">
+     <property name="title">
+      <string>Angle Widget</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>223</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_3">
+        <property name="text">
+         <string>Angle Widget Visibility</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
+     <property name="title">
+      <string>Transform Widget</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <item row="0" column="0">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>198</width>
+          <height>21</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBox_4">
+        <property name="text">
+         <string>Transform Widget Visibility</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Select Data to Transform:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeSelector" name="MRMLNodeSelector_4"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qCTKCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qCTKPositionWidget</class>
+   <extends>QWidget</extends>
+   <header>qCTKPositionWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeSelector</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeSelector.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerGUI2.qrc"/>
+ </resources>
+ <connections/>
+</ui>

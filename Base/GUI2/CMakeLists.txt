@@ -9,32 +9,36 @@ endif(COMMAND cmake_policy)
 # Sources
 #
 SET(qSlicerGUI2_SRCS
-  qSlicerAbstractModule.h
   qSlicerAbstractModule.cxx
-  qSlicerModuleTransform.h
-  qSlicerModuleTransform.cxx
-  qSlicerApplication.h
+  qSlicerAbstractModule.h
   qSlicerApplication.cxx
-  qSlicerIOManager.h
+  qSlicerApplication.h
   qSlicerIOManager.cxx
-  qSlicerKwUIWrapper.h
+  qSlicerIOManager.h
   qSlicerKwUIWrapper.cxx
-  qSlicerModuleFactory.h
+  qSlicerKwUIWrapper.h
+  qSlicerMeasurementsModule.cxx
+  qSlicerMeasurementsModule.h
   qSlicerModuleFactory.cxx
-  qSlicerModuleManager.h
+  qSlicerModuleFactory.h
   qSlicerModuleManager.cxx
+  qSlicerModuleManager.h
+  qSlicerModuleTransform.cxx
+  qSlicerModuleTransform.h
   )
 
 # Headers that should run through moc
 SET(qSlicerGUI2_MOC_SRCS
   qSlicerAbstractModule.h
-  qSlicerModuleTransform.h
   qSlicerApplication.h
   qSlicerKwUIWrapper.h
+  qSlicerMeasurementsModule.h
+  qSlicerModuleTransform.h
   )
   
 # UI files
 SET(qSlicerGUI2_UI_SRCS
+  Resources/UI/qSlicerMeasurementsModule.ui
   Resources/UI/qSlicerModuleTransform.ui
 )
   
@@ -91,7 +95,7 @@ set(lib_name "SlicerBaseGUI2")
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
-add_library(${lib_name} 
+add_library(${lib_name}
   ${qSlicerGUI2_SRCS}
   ${qSlicerGUI2_UI_CXX}
   ${qSlicerGUI2_QRC_SRCS}

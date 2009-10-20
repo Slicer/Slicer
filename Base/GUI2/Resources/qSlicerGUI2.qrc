@@ -1,4 +1,6 @@
 <RCC>
   <qresource>
+    <file>Icons/InvisibleNoFrame.png</file>
+    <file>Icons/VisibleNoFrame.png</file>
   </qresource>
 </RCC>
