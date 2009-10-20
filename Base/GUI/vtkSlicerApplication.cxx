@@ -363,6 +363,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   static char *argv = NULL;
   static int argc = 0;
   this->Internal->qApplication = new qSlicerApplication(argc, &argv);
+#ifdef Slicer3_USE_KWWidgets
+  this->Internal->qApplication->setSlicerApplication(this);
+#endif
 
  #ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
@@ -644,7 +647,7 @@ void vtkSlicerApplication::RemoveModuleGUI ( vtkSlicerModuleGUI *gui ) {
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name )
 {
-    if ( this->ModuleGUICollection != NULL ) {
+    if ( this->ModuleGUICollection != NULL && name != NULL) {
         int n = this->ModuleGUICollection->GetNumberOfItems ( );
         int i;
         for (i = 0; i < n; i ++ ) {

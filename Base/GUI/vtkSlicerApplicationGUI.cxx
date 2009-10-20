@@ -13,6 +13,12 @@
 a
 =========================================================================auto=*/
 
+
+#ifdef Slicer3_USE_QT
+#include "qSlicerAbstractModule.h"
+#include "qSlicerModuleManager.h"
+#endif
+
 #include <sstream>
 #include <string>
 #include <vtksys/SystemTools.hxx> 
@@ -50,6 +56,7 @@ a
 #include "vtkKWProgressGauge.h"
 #include "vtkKWEntry.h"
 #include "vtkKWLabel.h"
+#include "vtkKWTkUtilities.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
@@ -888,6 +895,10 @@ void vtkSlicerApplicationGUI::ShowModulesWizard()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
+  this->MainSlicerWindow->SetBinding("<Configure>", this, "ConfigureCallback");
+  this->MainSlicerWindow->SetBinding("<Unmap>", this, "UnMapCallback");
+  this->MainSlicerWindow->SetBinding("<Map>", this, "MapCallback");
+
   this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1()->SetBinding("<Configure>", this, "MainSplitFrameConfigureCallback %w %h");
   this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1()->SetBinding("<Configure>", this, "SecondarySplitFrameConfigureCallback %w %h");
   
@@ -946,6 +957,9 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
+  this->MainSlicerWindow->RemoveBinding("<Configure>", this, "ConfigureCallback");
+  this->MainSlicerWindow->RemoveBinding("<UnMap>", this, "UnMapCallback");
+  this->MainSlicerWindow->RemoveBinding("<Map>", this, "MapCallback");
 
   this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1()->RemoveBinding("<Configure>", this, "MainSplitFrameConfigureCallback %w %h");
   this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1()->RemoveBinding("<Configure>", this, "SecondarySplitFrameConfigureCallback %w %h");
@@ -3467,4 +3481,113 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 
   this->Script("puts $extprog_fp \"progress_Window %s {%s} %s\"; flush $extprog_fp",
                     newGeometry, message, progressString);
+}
+
+void vtkSlicerApplicationGUI::ConfigureCallback()
+{
+#ifdef Slicer3_USE_QT
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+    {
+    return;
+    }
+  char * currentModuleName = this->GetApplicationToolbar()->GetModuleChooseGUI()
+    ->GetModuleNavigator()->GetCurrentModuleName();
+  
+  if (!currentModuleName)
+    {
+    return;
+    }
+  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+    ->GetModuleGUIByName(currentModuleName);
+  
+  qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
+  if (!module || !qModule)
+    {
+    return;
+    }
+  vtkKWWidget* widget = module->GetUIPanel()->GetPagesParentWidget();
+  int pos[2];
+  int size[2];
+  vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
+  vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
+  qModule->resize(size[0], size[1]);
+  qModule->move(pos[0], pos[1]);
+
+  /*
+  qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
+  if (qModule)
+    {
+#ifdef Slicer3_USE_KWWidgets
+    qModule->synchronizeGeometryWithKWModule();
+#endif
+    }
+  */
+#endif
+}
+
+void vtkSlicerApplicationGUI::UnMapCallback()
+{
+#ifdef Slicer3_USE_QT
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+    {
+    return;
+    }
+  char * currentModuleName = this->GetApplicationToolbar()->GetModuleChooseGUI()
+    ->GetModuleNavigator()->GetCurrentModuleName();
+  if (!currentModuleName)
+    {
+    return;
+    }
+  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+    ->GetModuleGUIByName(currentModuleName);
+  qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
+  if (!module || !qModule)
+    {
+    return;
+    }
+  qModule->hide();
+#endif
+}
+
+void vtkSlicerApplicationGUI::MapCallback()
+{
+#ifdef Slicer3_USE_QT
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+    {
+    return;
+    }
+  char * currentModuleName = this->GetApplicationToolbar()->GetModuleChooseGUI()
+    ->GetModuleNavigator()->GetCurrentModuleName();
+  
+  if (!currentModuleName)
+    {
+    return;
+    }
+  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+    ->GetModuleGUIByName(currentModuleName);
+  qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
+  if (!module || !qModule)
+    {
+    return;
+    }
+  vtkKWWidget* widget = module->GetUIPanel()->GetPagesParentWidget();
+  int pos[2];
+  int size[2];
+  vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
+  vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
+  qModule->resize(size[0], size[1]);
+  qModule->move(pos[0], pos[1]);
+  qModule->show();
+  
+  /*
+  qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
+  if (qModule)
+    {
+#ifdef Slicer3_USE_KWWidgets
+    qModule->synchronizeGeometryWithKWModule();
+#endif
+    qModule->show();
+    }
+  */
+#endif
 }

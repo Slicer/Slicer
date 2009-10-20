@@ -313,6 +313,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureRemoteIOSettings();
 
     // Description:
+    // Callback set on the configure event of main window
+    virtual void ConfigureCallback();
+    virtual void MapCallback();
+    virtual void UnMapCallback();
+
+    // Description:
     // Callbacks set on the configure events of the split frames
     void MainSplitFrameConfigureCallback(int width, int height);
     void SecondarySplitFrameConfigureCallback(int width, int height);
@@ -331,7 +337,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 protected:
     vtkSlicerApplicationGUI ( );
     virtual ~vtkSlicerApplicationGUI ( );
-
   
     // Description:
     // Main Slicer window
