@@ -33,7 +33,6 @@ public:
   // Description:
   // Constructor
   qCTKAbstractObjectFactory(){}
-  qCTKAbstractObjectFactory(qCTKAbstractObjectFactory<typename BaseClassType, typename UniqueIdType> const &){};
   virtual ~qCTKAbstractObjectFactory(){}
   
   // Description:
@@ -73,6 +72,9 @@ public:
   }
 
 private:
+  qCTKAbstractObjectFactory(const qCTKAbstractObjectFactory &);  // Not implemented
+  void operator=(const qCTKAbstractObjectFactory&); // Not implemented
+  
   QHash<UniqueIdType, CreateObjectFunc> RegisteredObjectMap;
 }; 
 
