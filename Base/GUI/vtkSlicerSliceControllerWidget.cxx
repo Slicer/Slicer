@@ -2894,7 +2894,7 @@ int vtkSlicerSliceControllerWidget::UpdateCompareView ( double newValue )
            strcmp(layoutname, "Green") == 0)
         continue;
       
-      if ( sgui->GetLogic() &&
+      if ( sgui->GetLogic() &&  sgui->GetSliceNode() &&
            !strcmp(this->SliceNode->GetOrientationString(), sgui->GetSliceNode()->GetOrientationString()))
         {
         sgui->GetLogic()->SetSliceOffset( newValue );
