@@ -122,6 +122,7 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->VI_PauseResume = NULL;
 
   this->CPURayCastingInteractionFlag = 0;
+  this->SetupGUIFromParametersNodeFlag = 0;
 
   this->RenderingPaused = 0;
 }
@@ -1033,6 +1034,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
 void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  this->SetupGUIFromParametersNodeFlag = 1;
+  
   //-------------------------techniques----------------------------
   this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(vspNode->GetCPURaycastMode());
 
@@ -1186,6 +1189,8 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->MB_Mapper->GetWidget()->GetMenu()->SelectItem(mapper);
 
   this->ProcessRenderingMethodEvents(vspNode->GetCurrentVolumeMapper());
+  
+  this->SetupGUIFromParametersNodeFlag = 0;
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechnique(int id)
@@ -1327,10 +1332,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
 }
 void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 {
+  if (this->SetupGUIFromParametersNodeFlag)
+    return;
+    
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
   if (!vspNode->GetUseThreshold())
     return;
-    
+   
   vtkImageData *iData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   
   //Delete all old Mapping Points
@@ -1354,6 +1362,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 
 void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
 {
+  if (this->SetupGUIFromParametersNodeFlag)
+    return;
+    
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
   if (!vspNode->GetUseFgThreshold())
     return;

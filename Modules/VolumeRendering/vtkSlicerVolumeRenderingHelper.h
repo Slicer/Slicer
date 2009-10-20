@@ -246,6 +246,8 @@ protected:
     // Description:
     // Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
+    
+    int SetupGUIFromParametersNodeFlag;
 
 private:
     // Description:
