@@ -914,12 +914,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->ProcessExpectedFPS();
       return;
     }
-  }
-  
-  //scales with entry
-  {
-    vtkKWScaleWithEntry *callerObjectSC = vtkKWScaleWithEntry::SafeDownCast(caller);
-    if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold)
+    if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold->GetWidget())
     {
       vspNode->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->GetValue());
 
@@ -929,7 +924,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       return;
     }
 
-    if(callerObjectSC == this->SC_GPURayCastICPEkt)
+    if(callerObjectSC == this->SC_GPURayCastICPEkt->GetWidget())
     {
       vspNode->SetICPEScale(this->SC_GPURayCastICPEkt->GetWidget()->GetValue());
 
@@ -939,7 +934,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       return;
     }
 
-    if(callerObjectSC == this->SC_GPURayCastICPEks)
+    if(callerObjectSC == this->SC_GPURayCastICPEks->GetWidget())
     {
       vspNode->SetICPESmoothness(this->SC_GPURayCastICPEks->GetWidget()->GetValue());
 
@@ -948,6 +943,12 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
     }
+  }
+  
+  //scales with entry
+  {
+    vtkKWScaleWithEntry *callerObjectSC = vtkKWScaleWithEntry::SafeDownCast(caller);
+    
     if(callerObjectSC == this->SC_GPURayCastIIFgBgRatio)
     {
       vspNode->SetGPURaycastIIBgFgRatio(this->SC_GPURayCastIIFgBgRatio->GetValue());
