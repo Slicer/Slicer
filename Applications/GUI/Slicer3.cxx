@@ -863,12 +863,7 @@ int Slicer3_main(int& argc, char *argv[])
   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
   appGUI->SetApplication ( slicerApp );
   appGUI->SetAndObserveApplicationLogic ( appLogic );
-  vtkIntArray *appGUIEvents = vtkIntArray::New();
-  appGUIEvents->InsertNextValue( vtkCommand::ModifiedEvent );
-  appGUIEvents->InsertNextValue( vtkMRMLScene::NodeAddedEvent );
-  appGUIEvents->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
-  appGUI->SetAndObserveMRMLSceneEvents ( scene, appGUIEvents );
-  appGUIEvents->Delete();
+  appGUI->SetAndObserveMRMLScene( scene ); // observers added in appGUI->BuildGUI
 
   slicerApp->Script ("update");
   slicerApp->SaveUserInterfaceGeometryOn();

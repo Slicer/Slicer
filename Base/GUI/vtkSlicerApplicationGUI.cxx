@@ -1390,6 +1390,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::LoadProgressFeedbackEvent);
   events->InsertNextValue(vtkMRMLScene::SaveProgressFeedbackEvent);
+  events->InsertNextValue( vtkMRMLScene::NodeAddedEvent );
+  events->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue( vtkCommand::ModifiedEvent );
   this->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
   events->Delete();
 
