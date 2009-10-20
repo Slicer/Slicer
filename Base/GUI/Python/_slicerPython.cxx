@@ -271,7 +271,7 @@ static PyObject* SlicerPython_vtkDataArrayToArray ( PyObject* self, PyObject* ar
   {
     char errmsg[256];
     sprintf( errmsg,  "vtkDataArrayToArray: Could not find unknown datatatype ( %s : %d )", da->GetDataTypeAsString(), da->GetDataType() );
-    PyErr_Format ( PyExc_TypeError, errmsg );
+    PyErr_Format ( PyExc_TypeError, "%s", errmsg );
   }
     
   npy_intp dim_ptrs[2];
