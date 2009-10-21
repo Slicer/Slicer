@@ -33,7 +33,7 @@ qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
 
 }
 
-bool qCTKCollapsibleGroupBox::expanded()
+bool qCTKCollapsibleGroupBox::isExpanded()
 {
   return this->Expanded; 
 }

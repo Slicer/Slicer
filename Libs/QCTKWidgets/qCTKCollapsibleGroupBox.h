@@ -8,7 +8,7 @@
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
-  Q_PROPERTY(bool Expanded READ expanded WRITE setExpanded)
+  Q_PROPERTY(bool Expanded READ isExpanded WRITE setExpanded)
   
   
 public:
@@ -16,7 +16,7 @@ public:
   virtual ~qCTKCollapsibleGroupBox();
   
 protected slots:
-  virtual bool expanded();
+  virtual bool isExpanded();
   virtual void setExpanded(bool expanded);
 
 protected:
