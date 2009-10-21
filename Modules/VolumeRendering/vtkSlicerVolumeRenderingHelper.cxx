@@ -619,15 +619,6 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
   mainFrame->Create();
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
 
-  this->CroppingButton = vtkKWCheckButtonWithLabel::New();
-  this->CroppingButton->SetParent ( mainFrame->GetFrame() );
-  this->CroppingButton->Create ( );
-  this->CroppingButton->SetLabelText("Cropping Enabled");
-  this->CroppingButton->SetBalloonHelpString("Enable cropping.");
-  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->CroppingButton->GetWidgetName());
-
-  this->CroppingButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
   this->FitROIButton = vtkKWPushButton::New();
   this->FitROIButton->SetParent( mainFrame->GetFrame() );
   this->FitROIButton->Create();
@@ -648,6 +639,15 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
   this->ROIWidget->Create();
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ROIWidget->GetWidgetName());
+  
+  this->CroppingButton = vtkKWCheckButtonWithLabel::New();
+  this->CroppingButton->SetParent ( mainFrame->GetFrame() );
+  this->CroppingButton->Create ( );
+  this->CroppingButton->SetLabelText("Cropping Enabled");
+  this->CroppingButton->SetBalloonHelpString("Enable cropping.");
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->CroppingButton->GetWidgetName());
+
+  this->CroppingButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   roiFrame->Delete();
   

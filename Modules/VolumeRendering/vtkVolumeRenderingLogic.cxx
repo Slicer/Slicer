@@ -841,6 +841,8 @@ void vtkVolumeRenderingLogic::TransformModified(vtkMRMLVolumeRenderingParameters
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   this->CalculateMatrix(vspNode, matrix);
   this->Volume->PokeMatrix(matrix);
+  
+  this->FitROIToVolume(vspNode);
 }
 
 void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
