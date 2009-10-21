@@ -726,7 +726,9 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   }
   else if(event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
-
+    vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+    this->GetLogic()->TransformModified(vspNode);
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
   }
   else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
   {

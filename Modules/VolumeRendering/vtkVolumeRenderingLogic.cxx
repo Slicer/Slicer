@@ -836,6 +836,13 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
   }
 }
 
+void vtkVolumeRenderingLogic::TransformModified(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  this->CalculateMatrix(vspNode, matrix);
+  this->Volume->PokeMatrix(matrix);
+}
+
 void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   if (vspNode->GetCurrentVolumeMapper() == 2)
