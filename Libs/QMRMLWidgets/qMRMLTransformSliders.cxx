@@ -35,10 +35,6 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* parent) : Superclass(paren
   this->setCoordinateReference(Self::GLOBAL); 
   this->setTypeOfTransform(Self::TRANSLATION);
   
-  this->Internal->LRSlider->setLabelText("LR");
-  this->Internal->PASlider->setLabelText("PA");
-  this->Internal->ISSlider->setLabelText("IS");
-  
   
   this->connect(this->Internal->LRSlider, SIGNAL(sliderMoved(double)), 
                 SLOT(onLRSliderPositionChanged(double)));
@@ -171,37 +167,37 @@ void qMRMLTransformSliders::setSingleStep(double step)
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::getLRLabel()const
 {
-  return this->Internal->LRSlider->labelText();
+  return this->Internal->LRLabel->text();
 }
 
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::getPALabel()const
 {
-  return this->Internal->PASlider->labelText();
+  return this->Internal->PALabel->text();
 }
 
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::getISLabel()const
 {
-  return this->Internal->ISSlider->labelText();
+  return this->Internal->ISLabel->text();
 }
   
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setLRLabel(const QString& label)
 {
-  this->Internal->LRSlider->setLabelText(label);
+  this->Internal->LRLabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setPALabel(const QString& label)
 {
-  this->Internal->PASlider->setLabelText(label);
+  this->Internal->PALabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setISLabel(const QString& label)
 {
-  this->Internal->ISSlider->setLabelText(label);
+  this->Internal->ISLabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
