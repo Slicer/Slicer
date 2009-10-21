@@ -5,6 +5,20 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
+namespace
+{
+int getDecimalCount(double d)
+  {
+  // Convert double to QString
+  QString dbl = QString::number(d);
+  
+  // Extract number of decimals
+  int decimalPointIndex = dbl.indexOf("."); 
+  return (decimalPointIndex == -1) ? 0 : (dbl.size() - 1 - decimalPointIndex); 
+  } 
+}
+
+//-----------------------------------------------------------------------------
 class qCTKSliderSpinBoxLabel::qInternal: public Ui::qCTKSliderSpinBoxLabel
 {
 public:
@@ -31,6 +45,18 @@ qCTKSliderSpinBoxLabel::qCTKSliderSpinBoxLabel(QWidget* parent) : Superclass(par
 qCTKSliderSpinBoxLabel::~qCTKSliderSpinBoxLabel()
 {
   delete this->Internal; 
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxLabel::setLabelTextVisible(bool visible)
+{
+  this->Internal->Label->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+bool qCTKSliderSpinBoxLabel::isLabelTextVisible()
+{
+  return this->Internal->Label->isVisible();
 }
 
 // --------------------------------------------------------------------------
@@ -109,6 +135,7 @@ void qCTKSliderSpinBoxLabel::setSingleStep(double step)
 {
   this->Internal->Slider->setSingleStep(step); 
   this->Internal->SpinBox->setSingleStep(step);
+  this->Internal->SpinBox->setDecimals(getDecimalCount(step));
 }
 
 // --------------------------------------------------------------------------

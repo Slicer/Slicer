@@ -8,6 +8,7 @@
 class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool LabelTextVisible READ isLabelTextVisible WRITE setLabelTextVisible)
   
 public:
   // Superclass typedef
@@ -17,6 +18,11 @@ public:
   qCTKSliderSpinBoxLabel(QWidget* parent = 0);
   virtual ~qCTKSliderSpinBoxLabel();
 
+  // Description:
+  // Set built-in label text visibility
+  void setLabelTextVisible(bool visible);
+  bool isLabelTextVisible(); 
+  
   // Description:
   // Set/Get label text
   QString labelText(); 
