@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#include <math.h>
+
 #define qCTKSlider_IS_DBL(X) (!(X == static_cast<double>(static_cast<int>(X))))
 
 //-----------------------------------------------------------------------------
@@ -125,10 +127,11 @@ int qCTKSlider::fromDoubleToInteger(double d)
   int res = static_cast<int>(d); 
   if (this->Internal->HandleDouble)
     {
-    res = static_cast<int>(d / this->Internal->SingleStep); 
+    double tmp = d / this->Internal->SingleStep; 
+    res = static_cast<int>( (tmp > 0) ? floor(tmp + 0.5) : ceil(tmp - 0.5) ); 
+    
     }
-  // TODO Validate that a cast to an integer from a double always rounds by default
-  return res;// + ((d<0) ? -1 : +1);
+  return res;
 }
 
 // --------------------------------------------------------------------------
