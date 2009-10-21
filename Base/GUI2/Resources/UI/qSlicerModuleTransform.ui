@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>715</height>
+    <width>546</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,6 +20,12 @@
    <string>Transform Module</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="margin">
+    <number>2</number>
+   </property>
    <item>
     <widget class="qMRMLNodeSelector" name="TransformNodeSelector">
      <property name="NodeType">
@@ -28,37 +34,31 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="MatrixViewGroupBox">
+    <widget class="qCTKCollapsibleGroupBox" name="MatrixViewGroupBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="title">
-      <string>Transform Matrix view</string>
+      <string>Transform Matrix</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
        <number>2</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
        <widget class="qMRMLMatrixWidget" name="MatrixWidget">
-        <property name="alternatingRowColors">
-         <bool>true</bool>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
         <row/>
         <row/>
         <row/>
@@ -237,6 +237,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qCTKCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qMRMLMatrixWidget</class>
    <extends>QTableWidget</extends>

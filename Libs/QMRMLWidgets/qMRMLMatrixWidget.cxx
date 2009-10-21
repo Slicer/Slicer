@@ -27,8 +27,7 @@ public:
 // --------------------------------------------------------------------------
 qMRMLMatrixWidget::qMRMLMatrixWidget(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal; 
-
+  this->Internal = new qInternal;
 
   this->setEnabled(false); 
 }
