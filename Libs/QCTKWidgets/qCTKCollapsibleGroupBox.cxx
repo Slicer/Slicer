@@ -9,16 +9,17 @@
 qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
   :QGroupBox(parent)
 {
-  this->setCheckable(true);
-  connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
-
-#if QT_VERSION < 0x040600
-  // pb when the group box is empty.
-  this->setMinimumHeight(20);
-#endif
-  
+  this->Expanded = true;
   this->Width = this->width();
   this->Height = this->height();
+  
+  this->setCheckable(this->Expanded);
+  connect(this, SIGNAL(toggled(bool)), this, SLOT(setExpanded(bool)));
+
+// #if QT_VERSION < 0x040600
+//   // pb when the group box is empty.
+//   this->setMinimumHeight(20);
+// #endif
 
   this->setStyleSheet(
     "qCTKCollapsibleGroupBox::indicator:checked{"
@@ -32,8 +33,14 @@ qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
 
 }
 
-void qCTKCollapsibleGroupBox::expand(bool unfold)
+bool qCTKCollapsibleGroupBox::expanded()
 {
+  return this->Expanded; 
+}
+
+void qCTKCollapsibleGroupBox::setExpanded(bool expanded)
+{
+  if (this->Expanded == expanded) { return; }
   QObjectList childList = this->children();
   for (int i = 0; i < childList.size(); ++i) 
     {
@@ -43,12 +50,12 @@ void qCTKCollapsibleGroupBox::expand(bool unfold)
       QWidget *w = static_cast<QWidget *>(o);
       if ( w )
         {
-        w->setVisible(unfold);
+        w->setVisible(expanded);
         }
       }
     }
   
-  if (unfold)
+  if (expanded)
     {
     this->setFixedSize(this->Width, this->Height);
     }
@@ -58,6 +65,7 @@ void qCTKCollapsibleGroupBox::expand(bool unfold)
     this->Height = this->height();
     this->setFixedSize(this->Width, 22);
     }
+  this->Expanded = expanded; 
 }
 
 void qCTKCollapsibleGroupBox::childEvent(QChildEvent* c)
