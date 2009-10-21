@@ -23,16 +23,22 @@ public:
   void setValue(int i, int j, double value); 
   void setVector(const QVector<double> & vector); 
   
-  virtual QSize minimumSizeHint() const;
-  virtual QSize sizeHint() const;
-                                
- public slots:
+public slots:
   
   // Description:
   // Reset to zero
   void reset(); 
   
- private:
+protected slots:
+  // Description:
+  // Adjust columns/rows size according to width/height
+  void adjustRowsColumnsSize(int width, int height);
+
+protected:
+  // Description:
+  virtual void resizeEvent(QResizeEvent * event); 
+
+private:
   class qInternal; 
   qInternal* Internal; 
 };

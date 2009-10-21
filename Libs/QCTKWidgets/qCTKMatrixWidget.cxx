@@ -5,6 +5,7 @@
 #include <QHeaderView>
 #include <QVariant>
 #include <QTableWidgetItem>
+#include <QResizeEvent>
 #include <QDebug>
 
 #include <iostream>
@@ -26,14 +27,13 @@ qCTKMatrixWidget::qCTKMatrixWidget(QWidget* parent) : Superclass(4, 4, parent)
   // Set Read-only
   this->setEditTriggers(qCTKMatrixWidget::NoEditTriggers);
   
-  // Hide headers + enable last section stretch
-  //this->verticalHeader()->hide(); 
-  //this->verticalHeader()->setStretchLastSection(true);
-  //this->horizontalHeader()->hide(); 
-  //this->horizontalHeader()->setStretchLastSection(true);
-  //QTableWidgetItem item;
-  //this->setSizeHintForColumn( 30 );
-  //this->setSizeHintForColumn( 30 );
+  // Hide headers
+  this->verticalHeader()->hide(); 
+  this->horizontalHeader()->hide(); 
+  
+  // Disable scrollBars
+  this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   
   // Define prototype item 
   QTableWidgetItem* item = new QTableWidgetItem(); 
@@ -53,12 +53,37 @@ qCTKMatrixWidget::~qCTKMatrixWidget()
 }
 
 // --------------------------------------------------------------------------
+void qCTKMatrixWidget::resizeEvent(QResizeEvent * event)
+{
+  this->Superclass::resizeEvent(event);
+  this->adjustRowsColumnsSize(event->size().width(), event->size().height());
+}
+
+// --------------------------------------------------------------------------
+void qCTKMatrixWidget::adjustRowsColumnsSize(int width, int height)
+{
+  int colwidth = width / this->columnCount();
+  //qDebug() << "width:" << width << ",col-width:" << colwidth;
+  for (int j=0; j < this->columnCount(); j++)
+    {
+    this->setColumnWidth(j, colwidth);
+    }
+    
+  int rowheight = height / this->rowCount();
+  //qDebug() << "height:" << height << ", row-height:" << rowheight;
+  for (int i=0; i < this->rowCount(); i++)
+    {
+    this->setRowHeight(i, rowheight); 
+    }
+}
+
+// --------------------------------------------------------------------------
 void qCTKMatrixWidget::reset()
 {
   // Initialize 4x4 matrix
-  for (int i=0; i < 4; i++)
+  for (int i=0; i < this->rowCount(); i++)
     {
-    for (int j=0; j < 4; j++)
+    for (int j=0; j < this->columnCount(); j++)
       {
       this->setItem(i, j, this->itemPrototype()->clone());
       if (i == j)
@@ -67,14 +92,12 @@ void qCTKMatrixWidget::reset()
         }
       }
     }
-  //this->resizeColumnsToContents();
-  this->resizeRowsToContents();
 }
 
 // --------------------------------------------------------------------------
 double qCTKMatrixWidget::value(int i, int j)
 {
-  if (i<0 || i>3 || j<0 || j>3) { return 0; }
+  if (i<0 || i>=(this->rowCount()) || j<0 || j>=this->columnCount()) { return 0; }
   
   return this->item(i, j)->data(Qt::DisplayRole).toDouble();
 }
@@ -82,7 +105,7 @@ double qCTKMatrixWidget::value(int i, int j)
 // --------------------------------------------------------------------------
 void qCTKMatrixWidget::setValue(int i, int j, double value)
 {
-  if (i<0 || i>3 || j<0 || j>3) { return; }
+  if (i<0 || i>=(this->rowCount()) || j<0 || j>=this->columnCount()) { return; }
   
   this->item(i, j)->setData(Qt::DisplayRole, QVariant(value)); 
 }
@@ -90,38 +113,11 @@ void qCTKMatrixWidget::setValue(int i, int j, double value)
 // --------------------------------------------------------------------------
 void qCTKMatrixWidget::setVector(const QVector<double> & vector)
 {
-  for (int i=0; i < 4; i++)
+  for (int i=0; i < this->rowCount(); i++)
     {
-    for (int j=0; j < 4; j++)
+    for (int j=0; j < this->columnCount(); j++)
       {
-      this->item(i,j)->setData(Qt::DisplayRole, QVariant(vector.at(i * 4 + j)));
+      this->item(i,j)->setData(Qt::DisplayRole, QVariant(vector.at(i * this->columnCount() + j)));
       }
     }
-    
-}
-
-// --------------------------------------------------------------------------
-QSize qCTKMatrixWidget::minimumSizeHint() const
-{
-  QSize size( QTableWidget::sizeHint() );
-  int width = 0;
-  int height = 0;
-  
-  for (int c = 0; c < this->columnCount(); ++c)
-    {
-    width += this->columnWidth( c );
-    }
-  for (int r = 0; r < this->rowCount(); ++r)
-    {
-    height += this->rowHeight( r );
-    }
-  size.setHeight( height + 4 );
-  //size.setWidth( width + 4 );
-  return size;
-}
-
-// --------------------------------------------------------------------------
-QSize qCTKMatrixWidget::sizeHint() const
-{
-  return this->minimumSizeHint();
 }
