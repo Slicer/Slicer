@@ -137,6 +137,13 @@ if { [itcl::find class SWidget] == "" } {
     method statusText {msg} {
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $msg
     }
+
+    # for debugging
+    method log {msg} {
+      set fp [open "swidget.log" "a"]
+      puts $fp "$this: $msg"
+      close $fp
+    }
   }
 }
 
