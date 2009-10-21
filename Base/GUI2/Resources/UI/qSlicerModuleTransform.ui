@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>468</height>
+    <width>634</width>
+    <height>715</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLNodeSelector" name="TransformNodeSelector" native="true"/>
+    <widget class="qMRMLNodeSelector" name="TransformNodeSelector">
+     <property name="NodeType">
+      <string>vtkMRMLLinearTransformNode</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="MatrixViewGroupBox">
@@ -55,22 +59,111 @@
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
         </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <item row="0" column="0">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="1" column="1">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="1" column="2">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="1" column="3">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="1">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="2">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="3">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="3" column="1">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="3" column="2">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
+        <item row="3" column="3">
+         <property name="textAlignment">
+          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="qMRMLTransformSliders" name="TranslationSliders" native="true"/>
+    <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
    </item>
    <item>
-    <widget class="qMRMLTransformSliders" name="RotationSliders" native="true"/>
+    <widget class="qMRMLTransformSliders" name="RotationSliders">
+     <property name="Title">
+      <string>Rotation</string>
+     </property>
+     <property name="TypeOfTransform">
+      <enum>qMRMLTransformSliders::ROTATION</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -145,6 +238,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLMatrixWidget</class>
+   <extends>QTableWidget</extends>
+   <header>qMRMLMatrixWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLNodeSelector</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeSelector.h</header>
@@ -155,11 +253,6 @@
    <extends>QWidget</extends>
    <header>qMRMLTransformSliders.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLMatrixWidget</class>
-   <extends>QTableWidget</extends>
-   <header>qMRMLMatrixWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

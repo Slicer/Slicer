@@ -26,23 +26,10 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
 {
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
-
-  // TODO After the TransformSliders widget is added to QtDesigner, 
-  // the TypeOfTransform, title property, singleStep will be set from the designer itself
-  this->Internal->TranslationSliders->setTypeOfTransform(qMRMLTransformSliders::TRANSLATION);
-  this->Internal->TranslationSliders->setSingleStep(0.1);
-  this->Internal->RotationSliders->setTypeOfTransform(qMRMLTransformSliders::ROTATION);
-  this->Internal->RotationSliders->setTitle("Rotation");
-  this->Internal->RotationSliders->setSingleStep(0.1);
   
   // TODO Range should be dynamic (function of the input data/transform OR set by the user)
   this->Internal->TranslationSliders->setRange(-200.00, 200.00);
   this->Internal->RotationSliders->setRange(-200.00, 200.00);
-
-  // TODO After the SelectorNode widget is added to QtDesigner
-  // the NodeType property will be set from the designed itself
-  // Set selector node type
-  this->Internal->TransformNodeSelector->setNodeType("vtkMRMLLinearTransformNode"); 
   
   // Add coordinate reference button to a button group
   this->Internal->CoordinateReferenceButtonGroup = 
