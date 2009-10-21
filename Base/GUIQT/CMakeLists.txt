@@ -1,4 +1,4 @@
-project(SlicerBaseGUI2)
+project(SlicerBaseGUIQT)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -8,7 +8,7 @@ endif(COMMAND cmake_policy)
 #-----------------------------------------------------------------------------
 # Sources
 #
-SET(qSlicerGUI2_SRCS
+SET(qSlicerGUIQT_SRCS
   qSlicerAbstractModule.cxx
   qSlicerAbstractModule.h
   qSlicerApplication.cxx
@@ -28,7 +28,7 @@ SET(qSlicerGUI2_SRCS
   )
 
 # Headers that should run through moc
-SET(qSlicerGUI2_MOC_SRCS
+SET(qSlicerGUIQT_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerApplication.h
   qSlicerKwUIWrapper.h
@@ -37,18 +37,18 @@ SET(qSlicerGUI2_MOC_SRCS
   )
   
 # UI files
-SET(qSlicerGUI2_UI_SRCS
+SET(qSlicerGUIQT_UI_SRCS
   Resources/UI/qSlicerMeasurementsModule.ui
   Resources/UI/qSlicerModuleTransform.ui
 )
   
-QT4_WRAP_CPP(qSlicerGUI2_SRCS ${qSlicerGUI2_MOC_SRCS})
-QT4_WRAP_UI(qSlicerGUI2_UI_CXX ${qSlicerGUI2_UI_SRCS})
-QT4_ADD_RESOURCES(qSlicerGUI2_QRC_SRCS Resources/qSlicerGUI2.qrc)
+QT4_WRAP_CPP(qSlicerGUIQT_SRCS ${qSlicerGUIQT_MOC_SRCS})
+QT4_WRAP_UI(qSlicerGUIQT_UI_CXX ${qSlicerGUIQT_UI_SRCS})
+QT4_ADD_RESOURCES(qSlicerGUIQT_QRC_SRCS Resources/qSlicerGUIQT.qrc)
 
 SET_SOURCE_FILES_PROPERTIES(
-  ${qSlicerGUI2_UI_CXX}
-  ${qSlicerGUI2_SRCS}
+  ${qSlicerGUIQT_UI_CXX}
+  ${qSlicerGUIQT_SRCS}
   WRAP_EXCLUDE
   )
 
@@ -82,23 +82,23 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
 slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qSlicerBaseGUI2Configure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/qSlicerBaseGUI2Configure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/qSlicerBaseGUIQTConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/qSlicerBaseGUIQTConfigure.h
   )
 
 
 # --------------------------------------------------------------------------
 # Build the library
 
-set(lib_name "SlicerBaseGUI2")
+set(lib_name "SlicerBaseGUIQT")
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
 add_library(${lib_name}
-  ${qSlicerGUI2_SRCS}
-  ${qSlicerGUI2_UI_CXX}
-  ${qSlicerGUI2_QRC_SRCS}
+  ${qSlicerGUIQT_SRCS}
+  ${qSlicerGUIQT_UI_CXX}
+  ${qSlicerGUIQT_QRC_SRCS}
 )
 
 SET(QT_LIBRARIES 
@@ -107,7 +107,7 @@ SET(QT_LIBRARIES
   ${QT_QTWEBKIT_LIBRARY} 
   )
   
-SET(GUI2_LIBRARIES
+SET(GUIQT_LIBRARIES
   SlicerBaseLogic
   ${QT_LIBRARIES}
   QVTK
@@ -116,7 +116,7 @@ SET(GUI2_LIBRARIES
   )
   
 target_link_libraries(${lib_name} 
-  ${GUI2_LIBRARIES}
+  ${GUIQT_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.
@@ -133,7 +133,7 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
 install(FILES 
   ${files}
-  ${CMAKE_CURRENT_BINARY_DIR}/qSlicerBaseGUI2Configure.h
+  ${CMAKE_CURRENT_BINARY_DIR}/qSlicerBaseGUIQTConfigure.h
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 

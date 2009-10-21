@@ -13,8 +13,8 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI2_SOURCE_DIR}
-  ${SlicerBaseGUI2_BINARY_DIR}
+  ${SlicerBaseGUIQT_SOURCE_DIR}
+  ${SlicerBaseGUIQT_BINARY_DIR}
   ${QMRMLWidgets_SOURCE_DIR}
   ${QMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
@@ -188,7 +188,7 @@ IF(Slicer3_USE_QT)
   set(libraries 
     ${libraries} 
     ${QT_LIBRARIES}
-    SlicerBaseGUI2
+    SlicerBaseGUIQT
     )
 ENDIF(Slicer3_USE_QT)
 

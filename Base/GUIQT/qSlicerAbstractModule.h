@@ -4,11 +4,11 @@
 #include <QWidget>
 #include "qVTKObject.h"
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMRMLScene; 
 
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerAbstractModule : public QWidget
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractModule : public QWidget
 {
   QVTK_OBJECT
   Q_OBJECT

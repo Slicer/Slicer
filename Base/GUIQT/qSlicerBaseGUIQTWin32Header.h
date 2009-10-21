@@ -16,19 +16,19 @@
 // The vtkSlicerBaseGUIQtWin32Header captures some system differences between Unix
 // and Windows operating systems. 
 
-#ifndef __qSlicerBaseGUI2Win32Header_h
-#define __qSlicerBaseGUI2Win32Header_h
+#ifndef __qSlicerBaseGUIQTWin32Header_h
+#define __qSlicerBaseGUIQTWin32Header_h
 
-#include <qSlicerBaseGUI2Configure.h>
+#include <qSlicerBaseGUIQTConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
- #if defined(SlicerBaseGUI2_EXPORTS)
-  #define Q_SLICER_BASE_GUI2_EXPORT __declspec( dllexport ) 
+ #if defined(SlicerBaseGUIQT_EXPORTS)
+  #define Q_SLICER_BASE_GUIQT_EXPORT __declspec( dllexport ) 
  #else
-  #define Q_SLICER_BASE_GUI2_EXPORT __declspec( dllimport ) 
+  #define Q_SLICER_BASE_GUIQT_EXPORT __declspec( dllimport ) 
  #endif
 #else
- #define Q_SLICER_BASE_GUI2_EXPORT
+ #define Q_SLICER_BASE_GUIQT_EXPORT
 #endif
 
 #endif

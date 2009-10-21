@@ -3,12 +3,12 @@
 
 #include <QObject>
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qSlicerBaseGUIQTWin32Header.h"
 
 class qSlicerAbstractModule; 
 class qSlicerModuleManagerInitialize; 
 
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerModuleManager
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleManager
 { 
 public:
   typedef qSlicerModuleManager Self; 
@@ -56,7 +56,7 @@ private:
 
 
 // Utility class to make sure qSlicerModuleManager is initialized before it is used.
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerModuleManagerInitialize
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleManagerInitialize
 {
 public:
   typedef qSlicerModuleManagerInitialize Self; 

@@ -9,7 +9,7 @@ subdirs(
   )
 
 IF(Slicer3_USE_QT)
-  subdirs(GUI2)
+  subdirs(GUIQT)
 ENDIF(Slicer3_USE_QT)
 
 subdirs(

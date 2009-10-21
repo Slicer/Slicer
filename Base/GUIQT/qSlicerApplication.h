@@ -3,14 +3,14 @@
 
 #include <QApplication>
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMRMLScene; 
 #ifdef Slicer3_USE_KWWidget
 class vtkSlicerApplication;
 #endif
 
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerApplication : public QApplication
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerApplication : public QApplication
 {
   Q_OBJECT
 

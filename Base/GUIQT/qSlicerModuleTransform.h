@@ -3,11 +3,11 @@
 
 #include "qSlicerAbstractModule.h"
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMRMLNode; 
 
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerModuleTransform : public qSlicerAbstractModule
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleTransform : public qSlicerAbstractModule
 { 
   Q_OBJECT
 

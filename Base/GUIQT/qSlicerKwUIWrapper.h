@@ -3,11 +3,11 @@
 
 #include <QWidget>
 
-#include "qSlicerBaseGUI2Win32Header.h"
+#include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMRMLNode; 
 
-class Q_SLICER_BASE_GUI2_EXPORT qSlicerKwUIWrapper : public QWidget
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerKwUIWrapper : public QWidget
 { 
   Q_OBJECT
 
