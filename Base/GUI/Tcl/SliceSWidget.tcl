@@ -98,7 +98,11 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   # observe NodeAdded events from the MRML scene to create
   # model intersection displays as needed
   set NodeAddedEvent 66000
+  set SceneCloseEvent 66003
+  set SceneClosingEvent 66004
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeAddedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeAddedEvent"
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneCloseEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneCloseEvent"
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneClosingEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosingEvent"
 
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
@@ -116,7 +120,9 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 itcl::body SliceSWidget::destructor {} {
 
   foreach sw $_swidgets {
-    ::SWidget::ProtectedDelete $sw
+    if { [info command $sw] != "" } {
+      itcl::delete object $sw
+    }
   }
 
   $_renderWidget RemoveAllRenderers
@@ -169,6 +175,7 @@ itcl::body SliceSWidget::updateModelSWidgets {} {
   foreach msw $modelSWidgets {
     if { [lsearch $usedModelSWidgets $msw] == -1 } {
       if { [$msw cget -sliceGUI] == $sliceGUI } {
+        set _swidgets [lremove -all $_swidgets $msw]
         itcl::delete object $msw
       }
     }
@@ -266,7 +273,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   # MRML Scene update probably means we need to create a new model intersection SWidget
-  if { $caller == $::slicer3::MRMLScene && $event == "NodeAddedEvent" } {
+  if { $caller == $::slicer3::MRMLScene && 
+       ($event == "NodeAddedEvent" || $event == "SceneCloseEvent" || $event == "SceneClosingEvent") } {
     $this updateModelSWidgets
   }
 
