@@ -688,7 +688,10 @@ proc ExtractSubvolumeROIApply {this} {
   $outVolumeNode SetIJKToRASMatrix $ijk2ras
   $outVolumeNode SetModifiedSinceRead 1
   
-  set newOrigin [lrange [eval $ijk2ras MultiplyPoint $bboxIJKMinX $bboxIJKMinY $bboxIJKMinZ 1] 0 2]
+  set newOriginI [expr $bboxIJKMinX+0.5*$userSpacing]
+  set newOriginJ [expr $bboxIJKMinY+0.5*$userSpacing]
+  set newOriginK [expr $bboxIJKMinZ+0.5*$userSpacing]
+  set newOrigin [lrange [eval $ijk2ras MultiplyPoint $newOriginI $newOriginJ $newOriginK 1] 0 2]
 
   set inputSpacing [$volumeNode GetSpacing]
 
