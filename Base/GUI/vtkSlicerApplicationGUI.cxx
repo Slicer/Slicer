@@ -3432,13 +3432,14 @@ void vtkSlicerApplicationGUI::UpdateRemoteIOConfigurationForRegistry()
     }
 }
 
-
+//-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int width, int height)
 {
-  // std::cout << "MainSplitFrameConfigureCallback" << std::endl;
+  std::cout << "MainSplitFrameConfigureCallback width:" << width << ", height:" << height << std::endl;
   this->GUILayoutNode->SetMainPanelSize( this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1Size() );
 }
 
+//-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int width, int height)
 {
   // std::cout << "SecondarySplitFrameConfigureCallback" << std::endl;
@@ -3483,10 +3484,12 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
                     newGeometry, message, progressString);
 }
 
+//-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ConfigureCallback()
 {
 #ifdef Slicer3_USE_QT
-  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI() 
+    || !this->GetMainSlicerWindow()->GetMainNotebook())
     {
     return;
     }
@@ -3497,15 +3500,18 @@ void vtkSlicerApplicationGUI::ConfigureCallback()
     {
     return;
     }
-  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
-    ->GetModuleGUIByName(currentModuleName);
+  //vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+  //  ->GetModuleGUIByName(currentModuleName);
   
   qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
-  if (!module || !qModule)
+  //std::cout << "ConfigureCalback::currentModuleName:" << currentModuleName << ", qvisible:" << (qModule?(qModule->isVisible()?"ON":"OFF"):"NULL") <<endl; 
+  
+  if (/* !module ||*/ !qModule || !qModule->isVisible())
     {
     return;
     }
-  vtkKWWidget* widget = module->GetUIPanel()->GetPagesParentWidget();
+    
+  vtkKWWidget* widget = this->GetMainSlicerWindow()->GetMainNotebook();//module->GetUIPanel()->GetPagesParentWidget();
   int pos[2];
   int size[2];
   vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
@@ -3525,10 +3531,12 @@ void vtkSlicerApplicationGUI::ConfigureCallback()
 #endif
 }
 
+//-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::UnMapCallback()
 {
 #ifdef Slicer3_USE_QT
-  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI() 
+    || !this->GetMainSlicerWindow()->GetMainNotebook())
     {
     return;
     }
@@ -3538,10 +3546,11 @@ void vtkSlicerApplicationGUI::UnMapCallback()
     {
     return;
     }
-  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
-    ->GetModuleGUIByName(currentModuleName);
+  //std::cout << "UnMapCallback::currentModuleName:" << currentModuleName<<endl; 
+  //vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+  //  ->GetModuleGUIByName(currentModuleName);
   qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
-  if (!module || !qModule)
+  if (/* !module ||*/ !qModule)
     {
     return;
     }
@@ -3549,10 +3558,12 @@ void vtkSlicerApplicationGUI::UnMapCallback()
 #endif
 }
 
+//-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::MapCallback()
 {
 #ifdef Slicer3_USE_QT
-  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI())
+  if (!this->GetApplication() || !this->GetApplicationToolbar()->GetModuleChooseGUI() 
+    || !this->GetMainSlicerWindow()->GetMainNotebook())
     {
     return;
     }
@@ -3563,14 +3574,15 @@ void vtkSlicerApplicationGUI::MapCallback()
     {
     return;
     }
-  vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
-    ->GetModuleGUIByName(currentModuleName);
+  //std::cout << "MapCallback::currentModuleName:" << currentModuleName<<endl; 
+  //vtkSlicerModuleGUI* module = vtkSlicerApplication::SafeDownCast(this->GetApplication())
+  //  ->GetModuleGUIByName(currentModuleName);
   qSlicerAbstractModule * qModule = qSlicerModuleManager::instance()->getModule(currentModuleName); 
-  if (!module || !qModule)
+  if (/* !module ||*/ !qModule)
     {
     return;
     }
-  vtkKWWidget* widget = module->GetUIPanel()->GetPagesParentWidget();
+  vtkKWWidget* widget = this->GetMainSlicerWindow()->GetMainNotebook();//module->GetUIPanel()->GetPagesParentWidget();
   int pos[2];
   int size[2];
   vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);

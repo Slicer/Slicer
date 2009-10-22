@@ -18,6 +18,7 @@
 #ifdef Slicer3_USE_QT
 #include "qSlicerModuleManager.h"
 #include "qSlicerApplication.h"
+// #include "vtkSlicerEmptyModuleGUI.h"
 #endif
 
 #include "vtkOpenGLRenderWindow.h"
@@ -1426,6 +1427,20 @@ int Slicer3_main(int& argc, char *argv[])
   //    appGUI->InitializeNavigationWidget();
   
 #ifdef Slicer3_USE_QT
+//   // --- Empty module
+//   slicerApp->SplashMessage("Initializing Empty Module...");
+// 
+//   vtkSlicerEmptyModuleGUI *emptyModuleGUI = vtkSlicerEmptyModuleGUI::New ( );
+//   emptyModuleGUI->SetApplication ( slicerApp );
+//   emptyModuleGUI->SetApplicationGUI ( appGUI );
+//   emptyModuleGUI->SetAndObserveApplicationLogic ( appLogic );
+//   emptyModuleGUI->SetAndObserveMRMLScene ( scene );
+//   emptyModuleGUI->SetGUIName( "EmptyModule" );
+//   emptyModuleGUI->GetUIPanel()->SetName ( emptyModuleGUI->GetGUIName ( ) );
+//   emptyModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+//   //emptyModuleGUI->GetUIPanel()->Create ( );
+//   slicerApp->AddModuleGUI ( emptyModuleGUI );
+  
   // --- Transforms2 module
   slicerApp->SplashMessage("Initializing Transforms2 Module...");
   std::cout << "Attempt to load module: qSlicerModuleTransform" << std::endl;

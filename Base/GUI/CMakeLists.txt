@@ -113,6 +113,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerApplicationGUI.cxx
   vtkSlicerDataTransferWidget.cxx
   vtkSlicerCacheAndDataIOManagerGUI.cxx
+  vtkSlicerEmptyModuleGUI.cxx
   # KW Widgets
   vtkKWTextWithHyperlinksWithScrollbars.cxx
   vtkSlicerModuleCollapsibleFrame.cxx
