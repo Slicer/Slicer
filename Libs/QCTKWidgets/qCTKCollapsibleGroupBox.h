@@ -8,16 +8,12 @@
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
-  Q_PROPERTY(bool Expanded READ isExpanded WRITE setExpanded)
-  
-  
 public:
   qCTKCollapsibleGroupBox(QWidget* parent = 0);
   virtual ~qCTKCollapsibleGroupBox();
   
 protected slots:
-  virtual bool isExpanded();
-  virtual void setExpanded(bool expanded);
+  virtual void collapse(bool collapse);
 
 protected:
   virtual void childEvent(QChildEvent*);
@@ -28,9 +24,7 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent*);
 #endif
 
-  int  Width;
   int  Height;
-  bool Expanded;
 };
 
 
