@@ -91,7 +91,9 @@ void vtkSlicerEmptyModuleGUI::TearDownGUI ( )
 void vtkSlicerEmptyModuleGUI::BuildGUI ( )
 {
   // Fill in *placeholder GUI*
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+  // you can use this call to access the slicer application:
+  //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
   // ---
   // MODULE GUI FRAME 
