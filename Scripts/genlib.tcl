@@ -613,11 +613,6 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       runcmd $::SVN co $::PYTHON_TAG python-build
       cd $Slicer3_LIB/python-build
 
-      # patch the socket module to accomodate newer visual studios
-      if { $::GENERATOR != "Visual Studio 7 .NET 2003" } {
-        file copy -force $::Slicer3_HOME/Base/GUI/Python/patched-socketmodule.c Modules/socketmodule.c
-      }
-
       # point the tkinter build file to the slicer tcl-build 
       replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
 
