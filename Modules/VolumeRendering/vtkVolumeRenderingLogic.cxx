@@ -820,6 +820,8 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
   this->MapperRaycast->RemoveAllClippingPlanes();
   this->MapperGPURaycast->RemoveAllClippingPlanes();
   this->MapperGPURaycast->ClippingOff();
+  this->MapperGPURaycastII->RemoveAllClippingPlanes();
+  this->MapperGPURaycastII->ClippingOff();
 
   if (vspNode->GetCroppingEnabled())
   {
@@ -831,6 +833,9 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
 
     this->MapperGPURaycast->SetClippingPlanes(planes);
     this->MapperGPURaycast->ClippingOn();
+    
+    this->MapperGPURaycastII->SetClippingPlanes(planes);
+    this->MapperGPURaycastII->ClippingOn();
 
     planes->Delete();
   }
