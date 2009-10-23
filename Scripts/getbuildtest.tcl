@@ -654,7 +654,7 @@ if {$::GETBUILDTEST(upload) == "true"} {
 if { $::GETBUILDTEST(extend) == "true" } {
   # build the slicer3 extensions
   cd $::Slicer3_HOME
-  set cmd "sh ./Scripts/extend.tcl"
+  set cmd "sh ./Scripts/extend.tcl $::GETBUILDTEST(test-type)"
   eval runcmd $cmd
 }
 
