@@ -466,6 +466,12 @@ int Slicer3_main(int& argc, char *argv[])
     return 1;
     }
 
+  // explicitly request full numerical precision so floating 
+  // point numbers will go to/from VTK correctly for tcl and python
+  // http://www.na-mic.org/Bug/view.php?id=668
+  // http://wiki.tcl.tk/1650
+  Slicer3_Tcl_Eval(interp, "set ::tcl_precision 17");
+
   //
   // turn off hardware antialiasing by default
   // - the QueryAtlas picker relies on this
