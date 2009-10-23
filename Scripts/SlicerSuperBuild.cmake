@@ -251,6 +251,11 @@ ExternalProject_Add_Step(${proj} Copy_ctypesPyd
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
   DEPENDEES install
   )
+  
+ExternalProject_Add_Step(${proj} CopyPythonDll
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
+  DEPENDEES install
+  )
 
 # Get and build netlib (blas and lapack)
 
