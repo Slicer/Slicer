@@ -11,21 +11,15 @@ qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
   :QGroupBox(parent)
 {
   this->setCheckable(true);
-  this->setChecked(false);
-  connect(this, SIGNAL(toggled(bool)), this, SLOT(collapse(bool)));
+  connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
 
-  this->Height = this->height();
-
-// #if QT_VERSION < 0x040600
-//   // pb when the group box is empty.
-//   this->setMinimumHeight(20);
-// #endif
+  this->MaxHeight = this->maximumHeight();
 
   this->setStyleSheet(
     "qCTKCollapsibleGroupBox::indicator:checked{"
-    "image: url(:/Icons/expand-down.png);}"
+    "image: url(:/Icons/expand-up.png);}"
     "qCTKCollapsibleGroupBox::indicator:unchecked{"
-    "image: url(:/Icons/expand-up.png);}");
+    "image: url(:/Icons/expand-down.png);}");
 }
 
 qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
@@ -33,8 +27,13 @@ qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
 
 }
 
-void qCTKCollapsibleGroupBox::collapse(bool hide)
+void qCTKCollapsibleGroupBox::expand(bool expand)
 {
+  if (!expand)
+    {
+    this->OldSize = this->size();
+    }
+
   QObjectList childList = this->children();
   for (int i = 0; i < childList.size(); ++i) 
     {
@@ -44,20 +43,20 @@ void qCTKCollapsibleGroupBox::collapse(bool hide)
       QWidget *w = static_cast<QWidget *>(o);
       if ( w )
         {
-        w->setVisible(!hide);
+        w->setVisible(expand);
         }
       }
     }
   
-  if (hide)
+  if (expand)
     {
-    this->Height = this->maximumHeight();
-    this->setMaximumHeight(22);
+    this->setMaximumHeight(this->MaxHeight);
+    this->resize(this->OldSize);
     }
   else
     {
-    this->setMaximumHeight(this->Height);
-    this->resize(this->sizeHint());
+    this->MaxHeight = this->maximumHeight();
+    this->setMaximumHeight(22);
     }
 }
 
@@ -115,99 +114,5 @@ void qCTKCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
       this->setChecked(!this->isChecked());
       }
 }
+
 #endif
-/*
-#include <QTreeWidget>
-#include <QVBoxLayout>
-#include <iostream>
-
-
-qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
-  :QFrame(parent)
-{
-  QVBoxLayout* verticalLayout = new QVBoxLayout(this);
-  this->GroupBoxHeader = new QTreeWidget(this);
-  this->GroupBoxHeader->setColumnCount(1);
-  this->GroupBoxHeader->setHeaderHidden(true);
-  this->GroupBoxHeader->setSelectionMode(QAbstractItemView::NoSelection);
-  this->GroupBoxHeader->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  this->GroupBoxHeader->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  QTreeWidgetItem* item = 0;
-  item = new QTreeWidgetItem(item, QStringList(QString("GroupBox")));
-  item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-  this->GroupBoxHeader->insertTopLevelItem(0, item);
-  verticalLayout->addWidget(this->GroupBoxHeader);
-  this->setLayout(verticalLayout);
-  this->GroupBoxHeader->setMaximumHeight(
-    this->GroupBoxHeader->sizeHintForRow(0) + 
-    2 * this->GroupBoxHeader->frameWidth());
-  this->GroupBoxHeader->setFrameStyle(QFrame::Panel | QFrame::Raised);
-  this->GroupBoxHeader->setBackgroundRole(QPalette::Window);
-  this->GroupBoxHeader->setFocusPolicy(Qt::NoFocus);
-
-  verticalLayout->setStretch(0, 0);
-  verticalLayout->setStretch(1, 1);
-  verticalLayout->setContentsMargins(0, 0, 0, 0);
-
-  this->setFrameShape(QFrame::Box);
-  this->setFrameShadow(QFrame::Sunken);
-
-  connect(this->GroupBoxHeader, SIGNAL(itemExpanded(QTreeWidgetItem*)),
-          this, SLOT(expandChildren()));
-  connect(this->GroupBoxHeader, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
-          this, SLOT(collapseChildren()));
-}
-
-qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
-{
-
-}
-
-void qCTKCollapsibleGroupBox::setTitle(QString title)
-{
-  this->GroupBoxHeader->topLevelItem(0)->setText(0, title);
-}
-
-QString qCTKCollapsibleGroupBox::title() const
-{
-  return this->GroupBoxHeader->topLevelItem(0)->text(0);
-}
-
-void qCTKCollapsibleGroupBox::expand()
-{
-  this->GroupBoxHeader->expandItem(
-    this->GroupBoxHeader->topLevelItem(0));
-}
-
-void qCTKCollapsibleGroupBox::collapse()
-{
-  this->GroupBoxHeader->collapseItem(
-    this->GroupBoxHeader->topLevelItem(0));  
-}
-
-void qCTKCollapsibleGroupBox::expandChildren()
-{                                             
-  int childrenCount = this->layout()->count();
-  for (int i = 0; i < childrenCount; ++i)
-    {
-    QWidget* item = this->layout()->itemAt(i)->widget();
-    if (item && item != this->GroupBoxHeader)
-      {
-      item->hide();
-      }
-    }
-}
-
-void qCTKCollapsibleGroupBox::collapseChildren()
-{
-  int childrenCount = this->layout()->count();
-  for (int i = 0; i < childrenCount; ++i)
-    {
-    QWidget* item = this->layout()->itemAt(i)->widget();
-    if (item && item != this->GroupBoxHeader)
-      {
-      item->show();
-      }
-    }
-}
-*/

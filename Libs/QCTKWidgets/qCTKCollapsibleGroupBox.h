@@ -13,7 +13,7 @@ public:
   virtual ~qCTKCollapsibleGroupBox();
   
 protected slots:
-  virtual void collapse(bool collapse);
+  virtual void expand(bool expand);
 
 protected:
   virtual void childEvent(QChildEvent*);
@@ -23,39 +23,8 @@ protected:
   virtual void mousePressEvent(QMouseEvent*);
   virtual void mouseReleaseEvent(QMouseEvent*);
 #endif
-
-  int  Height;
+  QSize OldSize;
+  int   MaxHeight;
 };
-
-
-/*
-#include <QFrame>
-class QTreeWidget;
-
-class QCTK_WIDGETS_EXPORT qCTKCollapsibleGroupBox : public QFrame
-{
-  Q_OBJECT
-  
-  Q_PROPERTY(QString title READ title WRITE setTitle)
-public:
-  qCTKCollapsibleGroupBox(QWidget* parent = 0);
-  virtual ~qCTKCollapsibleGroupBox();
-  
-  // Description:
-  // Set/Get title
-  void setTitle(QString);
-  QString title() const;
-public slots:
-  void expand();
-  void collapse();
-                 
-protected slots:
-  void expandChildren();
-  void collapseChildren();
-
-protected:
-  QTreeWidget* GroupBoxHeader;
-};
-*/
 
 #endif
