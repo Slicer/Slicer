@@ -314,9 +314,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Callback set on the configure event of main window
-    virtual void ConfigureCallback();
-    virtual void MapCallback();
-    virtual void UnMapCallback();
+    virtual void ConfigureCallback(char *);
+    virtual void MapCallback(char *);
+    virtual void UnMapCallback(char *);
 
     // Description:
     // Callbacks set on the configure events of the split frames
@@ -410,7 +410,7 @@ protected:
     // Description:
     // Used for user feedback during loading of datasets
     int DataCount;
-      
+
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
