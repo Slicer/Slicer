@@ -16,6 +16,10 @@ SET(QCTKWidgets_SRCS
   qCTKAbstractObjectFactory.h
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleGroupBox.cxx
+  qCTKCollapsibleWidget.h
+  qCTKCollapsibleWidget.cxx
+  qCTKColorPickerButton.h
+  qCTKColorPickerButton.cxx
   qCTKComboBoxAddRemove.cxx
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.cxx
@@ -31,6 +35,8 @@ SET(QCTKWidgets_SRCS
 # Headers that should run through moc
 SET(QCTKWidgets_MOC_SRCS
   qCTKCollapsibleGroupBox.h
+  qCTKCollapsibleWidget.h
+  qCTKColorPickerButton.h
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.h
   qCTKPositionWidget.h

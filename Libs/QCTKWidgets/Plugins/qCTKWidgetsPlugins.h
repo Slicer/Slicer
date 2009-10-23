@@ -2,6 +2,8 @@
 #define __qCTKWidgetsPlugins_h
 
 #include "qCTKCollapsibleGroupBoxPlugin.h"
+#include "qCTKCollapsibleWidgetPlugin.h"
+#include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKPositionWidgetPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -18,6 +20,8 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qCTKCollapsibleGroupBoxPlugin
+            << new qCTKCollapsibleWidgetPlugin
+            << new qCTKColorPickerButtonPlugin
             << new qCTKPositionWidgetPlugin;
     return plugins;
     }

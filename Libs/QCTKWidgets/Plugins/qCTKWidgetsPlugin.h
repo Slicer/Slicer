@@ -15,7 +15,9 @@ public:
   virtual QIcon icon() const;
   virtual QString toolTip() const;
   virtual QString whatsThis() const;
-
+  virtual void initialize(QDesignerFormEditorInterface *formEditor);
+protected:
+  bool Initialized;
 };
 
 #endif

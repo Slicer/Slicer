@@ -2,6 +2,7 @@
 
 qCTKWidgetsPlugin::qCTKWidgetsPlugin()
 {
+  this->Initialized = false;
 }
 
 QString qCTKWidgetsPlugin::group() const 
@@ -24,4 +25,11 @@ QString qCTKWidgetsPlugin::whatsThis() const
   return QString(); 
 }
 
-
+void qCTKWidgetsPlugin::initialize(QDesignerFormEditorInterface *formEditor)
+{
+  if (this->Initialized)
+    {
+    return;
+    }
+  this->Initialized = true;
+}
