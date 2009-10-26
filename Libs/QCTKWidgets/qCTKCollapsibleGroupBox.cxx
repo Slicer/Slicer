@@ -67,7 +67,7 @@ void qCTKCollapsibleGroupBox::childEvent(QChildEvent* c)
     if (c->child() && c->child()->isWidgetType())
       {
       QWidget *w = static_cast<QWidget*>(c->child());
-      w->setVisible(!this->isChecked());
+      w->setVisible(this->isChecked());
       }
     }
   QGroupBox::childEvent(c);
