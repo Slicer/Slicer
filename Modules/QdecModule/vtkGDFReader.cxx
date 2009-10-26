@@ -145,7 +145,11 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
   }
 
   // check that the first line is "GroupDescriptorFile 1"
-  fgets(input, 1024, fp);
+  char *retval = fgets(input, 1024, fp);
+  if (retval == NULL)
+    {
+    vtkErrorMacro("Error reading a header line from GDF header file " << filename);
+    }
   if( input[strlen(input)-1] == '\n' ) {
       input[strlen(input)-1] = '\0';
   }
@@ -176,7 +180,11 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
   while (!feof(fp))
   {
       // Get a line. Strip newline and skip initial spaces.
-      fgets( input, 1024, fp );
+      char *retval = fgets( input, 1024, fp );
+      if (retval == NULL)
+        {
+        vtkErrorMacro("Error reading a line from file " << filename);
+        }
       if( input[strlen(input)-1] == '\n' ) {
           input[strlen(input)-1] = '\0';
       }
