@@ -41,10 +41,19 @@ QdecUtilities::FileNamePath(const char *fname, char *pathName)
   char *slash ;
   strcpy(pathName, fname) ;
   slash = strrchr(pathName, '/') ;
-  if (slash) *slash = 0 ; /* remove file name */
+  if (slash)
+    {
+    *slash = 0 ; /* remove file name */
+    }
   else
+    {
 #ifndef Linux
-    getcwd((char*)pathName, MAXPATHLEN-1) ;  /* no path at all, must be cwd */
+    char *retval = getcwd((char*)pathName, MAXPATHLEN-1) ;  /* no path at all,
+                                                             * must be cwd */
+  if (retval == NULL)
+    {
+    throw runtime_error( string("Couldn't get current directory "));
+    }
 #else
 #if 0
   getcwd(pathName, MAXPATHLEN-1) ;
@@ -52,6 +61,6 @@ QdecUtilities::FileNamePath(const char *fname, char *pathName)
   sprintf((char*)pathName, ".") ;
 #endif
 #endif
-
+    }
   return(pathName) ;
 }
