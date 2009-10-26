@@ -86,15 +86,18 @@ int vtkFSSurfaceLabelReader::ReadLabel()
 
   // read the comment line
   char lineString[1024];
-  fgets (lineString, 1024, labelFile);
-  vtkDebugMacro("Comment string:" << lineString);
+  char *retval = fgets (lineString, 1024, labelFile);
+  if (retval > 0)
+    {
+    vtkDebugMacro("Comment string:" << lineString);
+    }
 
   // TODO: parse the comment string, there may be a label number before the
   // comma
   
   // This is the number of values in the label file.
-  fscanf (labelFile, "%d", &numValues);
-  if (numValues < 0) 
+  int numread = fscanf (labelFile, "%d", &numValues);
+  if (numValues < 0 || numread <= 0) 
     {
     vtkErrorMacro (<< "vtkFSSurfaceLabelReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
     return this->FS_ERROR_W_NUM_VALUES;

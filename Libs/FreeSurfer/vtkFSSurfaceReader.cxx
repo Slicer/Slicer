@@ -212,13 +212,19 @@ int vtkFSSurfaceReader::RequestData(
 
   // Triangle file has some kind of header string at the
   // beginning. Skip it.
-  if (vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER == magicNumber) {
-    fgets (line, 200, surfaceFile);
-    fscanf (surfaceFile, "\n");
-  }
+  if (vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER == magicNumber)
+    {
+    char *skipchars = fgets (line, 200, surfaceFile);
+    int skip = fscanf (surfaceFile, "\n");
+    if (skipchars == NULL || skip > 0)
+      {
+      // trying to avoid unused var warnings while checking return values
+      }
+    }
 
   // Triangle files use normal ints to store their number of vertices
   // and faces, while quad files use three byte ints.
+  size_t retval;
   switch (magicNumber) 
     {
     case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER: 
@@ -227,10 +233,24 @@ int vtkFSSurfaceReader::RequestData(
       vtkFSIO::ReadInt3 (surfaceFile, numFaces);
       break;
     case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER: 
-      fread (&numVertices, sizeof(int), 1, surfaceFile);
-      fread (&numFaces, sizeof(int), 1, surfaceFile);
-      vtkByteSwap::Swap4BE (&numVertices);
-      vtkByteSwap::Swap4BE (&numFaces);
+      retval = fread (&numVertices, sizeof(int), 1, surfaceFile);
+      if (retval == 1)
+        {
+        vtkByteSwap::Swap4BE (&numVertices);
+        }
+      else
+        {
+        vtkErrorMacro("Error reading number of vertices");
+        }
+      retval = fread (&numFaces, sizeof(int), 1, surfaceFile);
+      if (retval == 1)
+        {
+        vtkByteSwap::Swap4BE (&numFaces);
+        }
+      else
+        {
+        vtkErrorMacro("Error reading number of faces");
+        }
       break;
     }
 
@@ -358,6 +378,7 @@ int vtkFSSurfaceReader::RequestData(
        fIndex += faceIncrement) {
 
     // For each vertex in the face...
+  size_t retval;
     for (fvIndex = 0; fvIndex < numVerticesPerFace; fvIndex++) {
 
         thisStep++;
@@ -370,8 +391,15 @@ int vtkFSSurfaceReader::RequestData(
             vtkFSIO::ReadInt3 (surfaceFile, tmpfIndex);
             break;
         case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER: 
-            fread (&tmpfIndex, sizeof(int), 1, surfaceFile);
-            vtkByteSwap::Swap4BE (&tmpfIndex);
+            retval = fread (&tmpfIndex, sizeof(int), 1, surfaceFile);
+            if (retval == 1)
+              {
+              vtkByteSwap::Swap4BE (&tmpfIndex);
+              }
+            else
+              {
+              vtkErrorMacro("Error reading integer at index " << fvIndex);
+              }
             break;
         }
         

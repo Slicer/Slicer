@@ -83,13 +83,36 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   // of values if not. New style files also have a number of faces and
   // values per point, which aren't really used.
   vtkFSIO::ReadInt3 (scalarFile, magicNumber);
-  if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
-    fread (&numValues, sizeof(int), 1, scalarFile);
-    fread (&numFaces, sizeof(int), 1, scalarFile);
-    fread (&numValuesPerPoint, sizeof(int), 1, scalarFile);
-    vtkByteSwap::Swap4BE (&numValues);
-    vtkByteSwap::Swap4BE (&numFaces);
-    vtkByteSwap::Swap4BE (&numValuesPerPoint);
+  if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber)
+    {
+    size_t retval;
+    retval = fread (&numValues, sizeof(int), 1, scalarFile);
+    if (retval == 1)
+      {
+      vtkByteSwap::Swap4BE (&numValues);
+      }
+    else
+      {
+      vtkErrorMacro("Error reading number of values from file " << this->FileName);
+      }
+    retval = fread (&numFaces, sizeof(int), 1, scalarFile);
+    if (retval == 1)
+      {
+      vtkByteSwap::Swap4BE (&numFaces);
+      }
+    else
+      {
+      vtkErrorMacro("Error reading number of faces from file " << this->FileName);
+      }
+    retval = fread (&numValuesPerPoint, sizeof(int), 1, scalarFile);
+    if (retval == 1)
+      {
+      vtkByteSwap::Swap4BE (&numValuesPerPoint);
+      }
+    else
+      {
+      vtkErrorMacro("Error reading number of values per point, should be 1, in filename " << this->FileName);
+      }
     
     if (numValuesPerPoint != 1) {
       vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file.");
@@ -119,8 +142,15 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
     }
 
     if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
-      fread (&fvalue, sizeof(float), 1, scalarFile);
-      vtkByteSwap::Swap4BE (&fvalue);
+      size_t retval = fread (&fvalue, sizeof(float), 1, scalarFile);
+      if (retval == 1)
+        {
+        vtkByteSwap::Swap4BE (&fvalue);
+        }
+      else
+        {
+        vtkErrorMacro("Error reading fvalue from file " << this->FileName);
+        }
 
     } else {
       vtkFSIO::ReadInt2 (scalarFile, ivalue);

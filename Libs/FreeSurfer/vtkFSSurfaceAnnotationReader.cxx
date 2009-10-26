@@ -712,8 +712,15 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
           }
         name = (char*) malloc (len+1);
-        fread (name, sizeof(char), len, annotFile);
-        vtkDebugMacro("ReadEmbeddedColorTable: got name: " << name);
+        size_t retval = fread (name, sizeof(char), len, annotFile);
+        if (retval == (size_t)len)
+          {
+          vtkDebugMacro("ReadEmbeddedColorTable: got name: " << name);
+          }
+        else
+          {
+          vtkErrorMacro("ReadEmbeddedColorTable: failed to read name");
+          }
         // read the number of entries to read
         read = vtkFSIO::ReadInt(annotFile, num_entries_to_read);
         if (read != 1 || num_entries_to_read < 0)
