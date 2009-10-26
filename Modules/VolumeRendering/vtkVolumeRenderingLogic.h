@@ -13,7 +13,6 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkSlicerGPURayCastVolumeMapper;
-class vtkCudaVolumeMapper;
 
 class vtkKWHistogramSet;
 
@@ -60,7 +59,7 @@ public:
   void SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
   // prepare volume property based on bg input volume
   void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  
+
   // Description:
   // Update MRML events
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
@@ -71,10 +70,10 @@ public:
 
   void SetupHistograms(vtkMRMLVolumeRenderingParametersNode* vspNode);
   vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
-  
+
   void SetupHistogramsFg(vtkMRMLVolumeRenderingParametersNode* vspNode);
   vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
-  
+
   void SetExpectedFPS(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
@@ -85,12 +84,12 @@ public:
   void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  
+
   void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  
+
   void TransformModified(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  
+
   void SetVolumeVisibility(int isVisible);
 
   /* return values:
@@ -110,10 +109,6 @@ protected:
   // Description:
   // The hardware accelerated texture mapper.
   vtkSlicerVolumeTextureMapper3D *MapperTexture;
-
-  // Description:
-  // The hardware accelerated gpu ray cast mapper.
-  vtkCudaVolumeMapper *MapperCUDARaycast;
 
   // Description:
   // The hardware accelerated gpu ray cast mapper.
@@ -138,9 +133,9 @@ protected:
   // Description:
   // internal histogram instance (fg)
   vtkKWHistogramSet *HistogramsFg;
-  
+
   vtkCommand* GUICallback;
-  
+
   vtkVolumeProperty *VolumePropertyGPURaycastII;
 
 protected:

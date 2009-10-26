@@ -17,7 +17,6 @@
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
 #include "vtkSlicerGPURayCastVolumeMapper.h"
-#include "vtkCudaVolumeMapper.h"
 #include "vtkImageGradientMagnitude.h"
 
 #include "vtkKWHistogramSet.h"
@@ -29,8 +28,6 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
 {
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
-
-  this->MapperCUDARaycast = vtkCudaVolumeMapper::New();
 
   this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
 
@@ -45,7 +42,7 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
   this->HistogramsFg = vtkKWHistogramSet::New();
 
   this->GUICallback = NULL;
-  
+
   this->VolumePropertyGPURaycastII = NULL;
 }
 
@@ -59,14 +56,6 @@ vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
-  }
-  if (this->MapperCUDARaycast)
-  {
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
-    this->MapperCUDARaycast->Delete();
-    this->MapperCUDARaycast = NULL;
   }
   if (this->MapperGPURaycast)
   {
@@ -170,11 +159,6 @@ void vtkVolumeRenderingLogic::SetGUICallbackCommand(vtkCommand* callback)
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,callback);
 
-  //hook up the cuda mapper
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
-
   //hook up the gpu mapper
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
@@ -195,14 +179,6 @@ void vtkVolumeRenderingLogic::Reset()
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
-  }
-  if (this->MapperCUDARaycast)
-  {
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
-    this->MapperCUDARaycast->Delete();
-    this->MapperCUDARaycast = NULL;
   }
   if (this->MapperGPURaycast)
   {
@@ -256,8 +232,6 @@ void vtkVolumeRenderingLogic::Reset()
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
 
-  this->MapperCUDARaycast = vtkCudaVolumeMapper::New();
-
   this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
 
   this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
@@ -279,11 +253,6 @@ void vtkVolumeRenderingLogic::Reset()
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent, this->GUICallback);
-
-  //hook up the cuda mapper
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-  this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
 
   //hook up the gpu mapper
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
@@ -623,8 +592,6 @@ void vtkVolumeRenderingLogic::SetExpectedFPS(vtkMRMLVolumeRenderingParametersNod
   this->MapperTexture->SetFramerate(fps);
   this->MapperGPURaycast->SetFramerate(fps);
   this->MapperGPURaycastII->SetFramerate(fps);
-
-  this->MapperCUDARaycast->SetIntendedFrameRate(fps);
 }
 
 void vtkVolumeRenderingLogic::SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode)
@@ -833,7 +800,7 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
 
     this->MapperGPURaycast->SetClippingPlanes(planes);
     this->MapperGPURaycast->ClippingOn();
-    
+
     this->MapperGPURaycastII->SetClippingPlanes(planes);
     this->MapperGPURaycastII->ClippingOn();
 
@@ -846,7 +813,7 @@ void vtkVolumeRenderingLogic::TransformModified(vtkMRMLVolumeRenderingParameters
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   this->CalculateMatrix(vspNode, matrix);
   this->Volume->PokeMatrix(matrix);
-  
+
   this->FitROIToVolume(vspNode);
 }
 
@@ -863,7 +830,7 @@ void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
 {
   if (vspNode->GetCurrentVolumeMapper() != 2)
     return;
-  
+
   if (this->VolumePropertyGPURaycastII != NULL)
     this->VolumePropertyGPURaycastII->Delete();
 
@@ -920,7 +887,7 @@ void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
     this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
     this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
   }
-  
+
   this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
 }
 

@@ -24,8 +24,8 @@ include_directories(
   ${Slicer3_Base_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingReplacements
   ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingReplacements
-  ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingCuda
-  ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingCuda
+#  ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingCuda
+#  ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingCuda
   )
 
 configure_file(
@@ -68,7 +68,8 @@ generatelm(VolumeRendering_SRCS VolumeRendering.txt)
 # --------------------------------------------------------------------------
 # Build and install the library
 
-subdirs(VolumeRenderingReplacements VolumeRenderingCuda)
+subdirs(VolumeRenderingReplacements)
+#subdirs(VolumeRenderingReplacements VolumeRenderingCuda)
 
 set(lib_name VolumeRendering)
 add_library(${lib_name}
@@ -83,7 +84,7 @@ target_link_libraries(${lib_name}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   VolumeRenderingReplacements
-  VolumeRenderingCuda
+#  VolumeRenderingCuda
   )
 
 # Apply user-defined properties to the library target.

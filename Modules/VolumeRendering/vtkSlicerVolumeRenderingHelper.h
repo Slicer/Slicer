@@ -21,7 +21,6 @@ class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkSlicerGPURayCastVolumeMapper;
-class vtkCudaVolumeMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWScaleWithEntry;
@@ -100,19 +99,19 @@ public:
     // Description:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
-    
+
     //--------------------------------------------------------
     // Property
     //--------------------------------------------------------
     void ProcessThreshold(double, double);
     void ProcessThresholdFg(double, double);
-    
+
     //--------------------------------------------------------
     // Utility functions
     //--------------------------------------------------------
     void UpdateVolumeProperty();
     void UpdateVolumePropertyFg();
-    
+
     void UpdateROI();
 
 protected:
@@ -164,7 +163,6 @@ protected:
     // Frame to configure the mapping options
     // we save pointers here for dynamically collapse/expend these frames
     vtkKWFrameWithLabel *FrameTechniques;
-    vtkKWFrameWithLabel *FrameCUDARayCasting;
     vtkKWFrameWithLabel *FrameGPURayCasting;
     vtkKWFrameWithLabel *FrameGPURayCastingII;
     vtkKWFrameWithLabel *FramePolygonBlending;
@@ -186,7 +184,7 @@ protected:
     // Description:
     // Menu button to select rendering technique
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique;
-    
+
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueII;
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueIIFg;
 
@@ -216,16 +214,16 @@ protected:
     //--------------------------------------------------------------------------
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidget;
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidgetFg;
-    
+
     // Description:
     // Enable/Disable thresholding
     vtkKWCheckButtonWithLabel *CB_UseThreshold;
-    
+
     vtkKWFrameWithLabel       *FrameThresholding;
     vtkKWRange                *RA_Threshold;
-    
+
     vtkKWCheckButtonWithLabel *CB_UseThresholdFg;
-    
+
     vtkKWFrameWithLabel       *FrameThresholdingFg;
     vtkKWRange                *RA_ThresholdFg;
 
@@ -246,7 +244,7 @@ protected:
     // Description:
     // Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
-    
+
     int SetupGUIFromParametersNodeFlag;
 
 private:
