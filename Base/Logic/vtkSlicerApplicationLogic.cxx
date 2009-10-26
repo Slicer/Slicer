@@ -697,7 +697,8 @@ vtkSlicerApplicationLogic
 
 #ifdef ITK_USE_PTHREADS
   // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  nice(20);
+  int ret = nice(20);
+  ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
     
   // pull out the reference to the appLogic
@@ -771,7 +772,8 @@ vtkSlicerApplicationLogic
 
 #ifdef ITK_USE_PTHREADS
   // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  nice(20);
+  int ret = nice(20);
+  ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
     
   // pull out the reference to the appLogic
