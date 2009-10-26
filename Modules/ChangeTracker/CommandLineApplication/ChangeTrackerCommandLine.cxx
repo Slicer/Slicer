@@ -465,7 +465,7 @@ int main(int argc, char* argv[])
              std::ostringstream cmdStream;
              cout << "Global transform ========>" << endl;
              cmdStream << "cat " << tg.GetWorkingDir() << "/Global_transform.txt";
-             system(cmdStream.str().c_str());
+             int ret = system(cmdStream.str().c_str());
              cout << "==========================" << endl;
              }
            
@@ -615,7 +615,7 @@ int main(int argc, char* argv[])
              std::ostringstream cmdStream;
              cout << "Local transform ========>" << endl;
              cmdStream << "cat " << tg.GetWorkingDir() << "/Local_transform.txt";
-             system(cmdStream.str().c_str());
+             int ret = system(cmdStream.str().c_str());
              cout << "=========================" << endl;
              }
 
