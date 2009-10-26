@@ -466,6 +466,10 @@ int main(int argc, char* argv[])
              cout << "Global transform ========>" << endl;
              cmdStream << "cat " << tg.GetWorkingDir() << "/Global_transform.txt";
              int ret = system(cmdStream.str().c_str());
+             if(ret==-1)
+               {
+               std::cerr << "system() returned error" << std::endl;
+               }
              cout << "==========================" << endl;
              }
            
@@ -616,6 +620,10 @@ int main(int argc, char* argv[])
              cout << "Local transform ========>" << endl;
              cmdStream << "cat " << tg.GetWorkingDir() << "/Local_transform.txt";
              int ret = system(cmdStream.str().c_str());
+             if(ret==-1)
+               {
+               std::cerr << "system() returned error" << std::endl;
+               }
              cout << "=========================" << endl;
              }
 
