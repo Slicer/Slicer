@@ -20,12 +20,12 @@ SET(QCTKWidgets_SRCS
   qCTKCollapsibleWidget.cxx
   qCTKColorPickerButton.h
   qCTKColorPickerButton.cxx
+  qCTKCoordinatesWidget.h
+  qCTKCoordinatesWidget.cxx
   qCTKComboBoxAddRemove.cxx
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.cxx
   qCTKMatrixWidget.h
-  qCTKPositionWidget.cxx
-  qCTKPositionWidget.h
   qCTKSlider.cxx
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.cxx
@@ -37,9 +37,9 @@ SET(QCTKWidgets_MOC_SRCS
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleWidget.h
   qCTKColorPickerButton.h
+  qCTKCoordinatesWidget.h
   qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.h
-  qCTKPositionWidget.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
   )

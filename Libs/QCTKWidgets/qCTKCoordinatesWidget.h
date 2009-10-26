@@ -1,20 +1,20 @@
-#ifndef __qCTKPositionWidget_h
-#define __qCTKPositionWidget_h
+#ifndef __qCTKCoordinatesWidget_h
+#define __qCTKCoordinatesWidget_h
 
 #include "qCTKWidgetsWin32Header.h"
 
 #include <QWidget>
 
-class QCTK_WIDGETS_EXPORT qCTKPositionWidget : public QWidget
+class QCTK_WIDGETS_EXPORT qCTKCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
   Q_PROPERTY(int Dimension READ dimension WRITE setDimension)
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
-  Q_PROPERTY(QString position READ positionAsString WRITE setPositionAsString)
+  Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
     
 public:
-  qCTKPositionWidget(QWidget* parent = 0);
-  virtual ~qCTKPositionWidget();
+  qCTKCoordinatesWidget(QWidget* parent = 0);
+  virtual ~qCTKCoordinatesWidget();
 
   // Description:
   // Set/Get the dimension of the point (3D by default)
@@ -27,14 +27,14 @@ public:
   double singleStep() const;
 
   // Description:
-  // Set/Get the position. Use commas between numbers
-  void setPositionAsString(QString pos);
-  QString positionAsString()const;
+  // Set/Get the coordinates. Use commas between numbers
+  void setCoordinatesAsString(QString pos);
+  QString coordinatesAsString()const;
 
   // Description:
-  // Set/Get the position
-  void setPosition(double* pos);
-  double* position()const;
+  // Set/Get the coordinates
+  void setCoordinates(double* pos);
+  double* coordinates()const;
 
 signals:
   void valueChanged(double* pos);
@@ -45,7 +45,7 @@ protected slots:
 
 protected:
   int Dimension;
-  double* Position;
+  double* Coordinates;
 };
 
 #endif

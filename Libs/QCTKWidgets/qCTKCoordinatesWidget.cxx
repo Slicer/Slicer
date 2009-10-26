@@ -1,19 +1,19 @@
-#include "qCTKPositionWidget.h"
+#include "qCTKCoordinatesWidget.h"
 
 #include <QHBoxLayout>
 #include <QDoubleSpinBox>
 
-qCTKPositionWidget::qCTKPositionWidget(QWidget* parent)
+qCTKCoordinatesWidget::qCTKCoordinatesWidget(QWidget* parent)
   :QWidget(parent)
 {
   this->Dimension = 3;
-  this->Position = new double [this->Dimension];
+  this->Coordinates = new double [this->Dimension];
   
   QHBoxLayout* hboxLayout = new QHBoxLayout(this);
 
   for (int i = 0; i < this->Dimension; ++i)
     {
-    this->Position[i] = 0.;
+    this->Coordinates[i] = 0.;
     QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
     connect( spinBox, SIGNAL(valueChanged(double)), 
              this, SLOT(coordinateChanged(double)));
@@ -23,14 +23,14 @@ qCTKPositionWidget::qCTKPositionWidget(QWidget* parent)
   this->setLayout(hboxLayout);
 }
 
-qCTKPositionWidget::~qCTKPositionWidget()
+qCTKCoordinatesWidget::~qCTKCoordinatesWidget()
 {
-  delete [] this->Position;
+  delete [] this->Coordinates;
 }
 
 // Description:
 // Set/Get the dimension of the point (3D by default)
-void qCTKPositionWidget::setDimension(int dim)
+void qCTKCoordinatesWidget::setDimension(int dim)
 {
   if (dim < 1)
     {
@@ -39,7 +39,7 @@ void qCTKPositionWidget::setDimension(int dim)
   double* newPos = new double[dim];
   if (dim > this->Dimension)
     {
-    memcpy(newPos, this->Position, this->Dimension * sizeof(double));
+    memcpy(newPos, this->Coordinates, this->Dimension * sizeof(double));
     for (int i = this->Dimension; i < dim; ++i)
       {
       newPos[i] = 0.;
@@ -51,7 +51,7 @@ void qCTKPositionWidget::setDimension(int dim)
     }
   else
     {
-    memcpy(newPos, this->Position, dim * sizeof(double));
+    memcpy(newPos, this->Coordinates, dim * sizeof(double));
     for (int i = this->Dimension - 1 ; i >= dim; --i)
       {
       QLayoutItem* item = this->layout()->takeAt(i);
@@ -60,8 +60,8 @@ void qCTKPositionWidget::setDimension(int dim)
       delete widget;
       }
     }
-  delete [] this->Position;
-  this->Position = newPos;
+  delete [] this->Coordinates;
+  this->Coordinates = newPos;
   this->Dimension = dim;
 
   this->updateGeometry();
@@ -69,14 +69,14 @@ void qCTKPositionWidget::setDimension(int dim)
   this->coordinatesChanged();
 }
 
-int qCTKPositionWidget::dimension() const
+int qCTKCoordinatesWidget::dimension() const
 {
   return this->Dimension;
 }
 
 // Description:
 // Set/Get the single step of the QDoubleSpinBoxes 
-void qCTKPositionWidget::setSingleStep(double step)
+void qCTKCoordinatesWidget::setSingleStep(double step)
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
@@ -90,7 +90,7 @@ void qCTKPositionWidget::setSingleStep(double step)
     }
 }
 
-double qCTKPositionWidget::singleStep() const
+double qCTKCoordinatesWidget::singleStep() const
 {
   QLayoutItem* item = this->layout()->itemAt(0);
   QDoubleSpinBox* spinBox = item ?dynamic_cast<QDoubleSpinBox*>(
@@ -103,8 +103,8 @@ double qCTKPositionWidget::singleStep() const
 }
 
 // Description:
-// Set/Get the position. Use commas between numbers
-void qCTKPositionWidget::setPositionAsString(QString pos)
+// Set/Get the coordinates. Use commas between numbers
+void qCTKCoordinatesWidget::setCoordinatesAsString(QString pos)
 {
   QStringList posList = pos.split(',');
   if (posList.count() != this->Dimension)
@@ -116,11 +116,11 @@ void qCTKPositionWidget::setPositionAsString(QString pos)
     {
     newPos[i] = posList[i].toDouble();
     }
-  this->setPosition(newPos);
+  this->setCoordinates(newPos);
   delete [] newPos;
 }
 
-QString qCTKPositionWidget::positionAsString()const
+QString qCTKCoordinatesWidget::coordinatesAsString()const
 {
   QString res;
   for (int i = 0; i < this->Dimension; ++i)
@@ -129,18 +129,18 @@ QString qCTKPositionWidget::positionAsString()const
       {
       res += ",";
       }
-    res += QString::number(this->Position[i]);
+    res += QString::number(this->Coordinates[i]);
     }
   return res;
 }
 
 // Description:
-// Set/Get the position
-void qCTKPositionWidget::setPosition(double* pos)
+// Set/Get the coordinates
+void qCTKCoordinatesWidget::setCoordinates(double* pos)
 {
   for (int i = 0; i < this->Dimension; ++i)
     {
-    this->Position[i] = pos[i];
+    this->Coordinates[i] = pos[i];
     }
   bool blocked = this->blockSignals(true);
   for (int i = 0; i < this->Dimension; ++i)
@@ -150,19 +150,19 @@ void qCTKPositionWidget::setPosition(double* pos)
       item ? dynamic_cast<QDoubleSpinBox*>(item->widget()) : 0;
     if (spinBox)
       {
-      spinBox->setValue(this->Position[i]);
+      spinBox->setValue(this->Coordinates[i]);
       }
     }
   this->blockSignals(blocked);
-  emit valueChanged(this->Position);
+  emit valueChanged(this->Coordinates);
 }
 
-double* qCTKPositionWidget::position()const
+double* qCTKCoordinatesWidget::coordinates()const
 {
-  return this->Position;
+  return this->Coordinates;
 }
 
-void qCTKPositionWidget::coordinateChanged(double coordinate)
+void qCTKCoordinatesWidget::coordinateChanged(double coordinate)
 {
   for (int i = 0; i < this->Dimension; ++i)
     {
@@ -171,13 +171,13 @@ void qCTKPositionWidget::coordinateChanged(double coordinate)
       item ? dynamic_cast<QObject*>(item->widget()) : 0;
     if ( spinBox && spinBox == this->sender())
       {
-      this->Position[i] = coordinate;
+      this->Coordinates[i] = coordinate;
       }
     }
-  emit valueChanged(this->Position);
+  emit valueChanged(this->Coordinates);
 }
 
-void qCTKPositionWidget::coordinatesChanged()
+void qCTKCoordinatesWidget::coordinatesChanged()
 {
   for (int i = 0; i < this->Dimension; ++i)
     {
@@ -186,8 +186,8 @@ void qCTKPositionWidget::coordinatesChanged()
       item ? dynamic_cast<QSpinBox*>(item->widget()) : 0;
     if ( spinBox)
       {
-      this->Position[i] = spinBox->value();
+      this->Coordinates[i] = spinBox->value();
       }
     }
-  emit valueChanged(this->Position);
+  emit valueChanged(this->Coordinates);
 }
