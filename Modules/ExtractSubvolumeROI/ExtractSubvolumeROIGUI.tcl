@@ -329,24 +329,23 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
 #    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
     $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
 
-    set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-    $selectionNode SetReferenceActiveLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
-    $selectionNode Modified
-    [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
-
-    # set the label node
-    set redCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Red"] GetLogic ] GetSliceCompositeNode]
-    set greenCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Green"] GetLogic ] GetSliceCompositeNode]
-    set yellowCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Yellow"] GetLogic ] GetSliceCompositeNode]
-    $redCompositeNode SetLabelOpacity .6
-    $greenCompositeNode SetLabelOpacity .6
-    $yellowCompositeNode SetLabelOpacity .6
+    set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+    for { set j 0 } { $j < $numCnodes } { incr j } {
+      set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+      if { [expr [$inputVolume GetLabelMap]] } {
+        $cnode SetReferenceLabelVolumeID [$inputVolume GetID]
+      } else {
+        $cnode SetReferenceBackgroundVolumeID [$inputVolume GetID]
+      }
+      $cnode SetReferenceForegroundVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+      $cnode SetForegroundOpacity 0.6
+    }
 
     # trigger update of the label image contents
     ExtractSubvolumeROIUpdateLabelMap $this
   }
 
-
+  # TODO: account for the volume parent transform for mouse clicks
   if {$event == "LeftButtonPressEvent" || $event == "RightButtonPressEvent"} {
   
     set redStyle $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
@@ -614,27 +613,6 @@ proc ExtractSubvolumeROIApply {this} {
   if {$userSpacing <= 0.} {
     set errorText "Sampling must be a floating number greater than 0!"
   }
-  if { [$volumeNode GetParentTransformNode] != "" } {
-    set errorText "Input volume cannot be under transform!"
-  }
-  if { [$roiNode GetParentTransformNode] != "" } {
-    set errorText "ROI node cannot be under transform!"
-  }
-
-  set ijk2ras [vtkMatrix4x4 New]
-  $volumeNode GetIJKToRASMatrix $ijk2ras
-  set m01 [$ijk2ras GetElement 0 1]
-  set m02 [$ijk2ras GetElement 0 2]
-  set m12 [$ijk2ras GetElement 1 2]
-  $ijk2ras Delete
-
-  if {[expr abs($m01) || abs($m02) || abs($m12)]} {
-    set warningText "WARNING: The specified input volume is not axis-aligned! \
-    ExtractSubvolumeROI does not support non axis-aligned input images at this \
-    time.\n\nThe extracted subvolume will not be precisely what you \
-    selected... You may need to resample the input image to be axis-aligned to \
-    get precision."
-  }
 
   if { $errorText != "" } {
     set dialog [vtkKWMessageDialog New]
@@ -659,11 +637,6 @@ proc ExtractSubvolumeROIApply {this} {
     $dialog Delete
   }
 
-  set ijk2ras [vtkMatrix4x4 New]
-  set ras2ijk [vtkMatrix4x4 New]
-  $volumeNode GetIJKToRASMatrix $ijk2ras
-  $volumeNode GetRASToIJKMatrix $ras2ijk
-
   set bboxIJKMinX [expr int($::ExtractSubvolumeROI($this,bboxIJKMinX))]
   set bboxIJKMinY [expr int($::ExtractSubvolumeROI($this,bboxIJKMinY))]
   set bboxIJKMinZ [expr int($::ExtractSubvolumeROI($this,bboxIJKMinZ))]
@@ -683,106 +656,139 @@ proc ExtractSubvolumeROIApply {this} {
   }
 
   $outVolumeNode SetAndObserveStorageNodeID ""
-  $outVolumeNode SetAndObserveImageData ""
-  $outVolumeNode SetRASToIJKMatrix $ras2ijk
-  $outVolumeNode SetIJKToRASMatrix $ijk2ras
-  $outVolumeNode SetModifiedSinceRead 1
+
+  set inputRASToIJK [vtkMatrix4x4 New]
+  set inputIJKToRAS [vtkMatrix4x4 New]
+  set outputIJKToRAS [vtkMatrix4x4 New]
+  set outputRASToIJK [vtkMatrix4x4 New]
+  set volumeXform [vtkMatrix4x4 New]
+  set roiXform [vtkMatrix4x4 New]
+  set T [vtkMatrix4x4 New]
+
+  $volumeNode GetRASToIJKMatrix $inputRASToIJK
+  $volumeNode GetIJKToRASMatrix $inputIJKToRAS
+
+  $outputRASToIJK Identity
+  $outputIJKToRAS Identity
+
+  $T Identity
+  $roiXform Identity
+  $volumeXform Identity
   
-  set newOriginI [expr $bboxIJKMinX+0.5*$userSpacing]
-  set newOriginJ [expr $bboxIJKMinY+0.5*$userSpacing]
-  set newOriginK [expr $bboxIJKMinZ+0.5*$userSpacing]
-  set newOrigin [lrange [eval $ijk2ras MultiplyPoint $newOriginI $newOriginJ $newOriginK 1] 0 2]
+  set volumeTnode [$volumeNode GetParentTransformNode]
+  if { $volumeTnode != ""} {
+    $volumeTnode GetMatrixTransformToWorld $volumeXform
+    $volumeXform Invert
+  }
 
-  set inputSpacing [$volumeNode GetSpacing]
+  set roiTnode [$roiNode GetParentTransformNode]
+  if { $roiTnode != ""} {
+    $roiTnode GetMatrixTransformToWorld $roiXform
+  } 
 
-  set changeInf [vtkImageChangeInformation New]
-  $changeInf SetInput [$volumeNode GetImageData]
-  eval $changeInf SetOutputSpacing $inputSpacing
-  $changeInf Update
+  scan [$roiNode GetRadiusXYZ] "%f%f%f" rX rY rZ
+  scan [$roiNode GetXYZ] "%f%f%f" cX cY cZ
 
-  set imageClip [vtkImageClip New]
-  $imageClip SetInput [$changeInf GetOutput]
-  $imageClip SetOutputWholeExtent $bboxIJKMinX $bboxIJKMaxX $bboxIJKMinY \
-                                  $bboxIJKMaxY $bboxIJKMinZ $bboxIJKMaxZ
-  $imageClip ClipDataOn
-  $imageClip Update
+  scan [$volumeNode GetSpacing] "%f%f%f" inputSpacingX inputSpacingY inputSpacingZ
 
-  set changeInf2 [vtkImageChangeInformation New]
-  $changeInf2 SetInput [$imageClip GetOutput]
-  $changeInf2 SetOutputExtentStart 0 0 0
-  $changeInf2 Update
-  
+#  set outputSpacingX [expr $rX*2./100.]
+#  set outputSpacingY [expr $rY*2./100.]
+#  set outputSpacingZ [expr $rZ*2./100.]
 
-#  puts "Resampling spacing: $newSpacing"
+  # scale spacing in each dimension by user-defined value
+  set outputSpacingX [expr $inputSpacingX*$userSpacing]
+  set outputSpacingY [expr $inputSpacingY*$userSpacing]
+  set outputSpacingZ [expr $inputSpacingZ*$userSpacing]
 
-  set dimBefore [ [$changeInf2 GetOutput] GetDimensions]
-  
-  set resampler [vtkImageResample New]
-  $resampler SetDimensionality 3
+  set outputExtentX [expr int(2.*$rX/$outputSpacingX)]
+  set outputExtentY [expr int(2.*$rY/$outputSpacingY)]
+  set outputExtentZ [expr int(2.*$rZ/$outputSpacingZ)]
+
+  $outputIJKToRAS SetElement 0 0 $outputSpacingX
+  $outputIJKToRAS SetElement 1 1 $outputSpacingY
+  $outputIJKToRAS SetElement 2 2 $outputSpacingZ
+  $outputIJKToRAS SetElement 0 3 [expr $cX-$rX+$outputSpacingX*0.5]
+  $outputIJKToRAS SetElement 1 3 [expr $cY-$rY+$outputSpacingY*0.5]
+  $outputIJKToRAS SetElement 2 3 [expr $cZ-$rZ+$outputSpacingZ*0.5]
+
+  # account for the ROI parent transform
+  $outputIJKToRAS Multiply4x4 $roiXform $outputIJKToRAS $outputIJKToRAS
+
+  $outputRASToIJK DeepCopy $outputIJKToRAS
+  $outputRASToIJK Invert
+
+  $T DeepCopy $outputIJKToRAS
+  $T Multiply4x4 $volumeXform $T $T
+  $T Multiply4x4 $inputRASToIJK $T $T
+
+  set resliceT [vtkTransform New]
+  $resliceT SetMatrix $T
 
   set nnButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 0]
   set linButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 1]
   set cubButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 2]
 
+  set reslicer [vtkImageReslice New]
   if { [$nnButton GetSelectedState] } {
-    $resampler SetInterpolationModeToNearestNeighbor
+    $reslicer SetInterpolationModeToNearestNeighbor
   }
   if { [$linButton GetSelectedState] } {
-    $resampler SetInterpolationModeToLinear
+    $reslicer SetInterpolationModeToLinear
   }
   if { [$cubButton GetSelectedState] } {
-    $resampler SetInterpolationModeToCubic
+    $reslicer SetInterpolationModeToCubic
   }
- 
-  $resampler SetInput [$changeInf2 GetOutput]
+
+  set inImage [$volumeNode GetImageData]
+  $reslicer SetInput [$volumeNode GetImageData]
+  $reslicer SetOutputExtent  0 $outputExtentX 0 $outputExtentY 0 $outputExtentZ
+  $reslicer SetOutputSpacing 1. 1. 1.
+  $reslicer SetOutputOrigin 0. 0. 0.
+  $reslicer SetResliceTransform $resliceT
+  $reslicer UpdateWholeExtent
+
+  set changeInf [vtkImageChangeInformation New]
+  $changeInf SetInput [$reslicer GetOutput]
+  $changeInf SetOutputOrigin 0. 0. 0.
+  $changeInf SetOutputSpacing 1. 1. 1.
+  $changeInf Update
+
+  set outputImageData [vtkImageData New]
+  $outputImageData DeepCopy [$changeInf GetOutput]
+
+  $outVolumeNode SetAndObserveImageData $outputImageData
+  $outputImageData Delete
+  $outVolumeNode SetIJKToRASMatrix $outputIJKToRAS
+  $outVolumeNode SetRASToIJKMatrix $outputRASToIJK
   
-  set newSpacingX [expr [lindex $inputSpacing 0]*$userSpacing]
-  set newSpacingY [expr [lindex $inputSpacing 1]*$userSpacing]
-  set newSpacingZ [expr [lindex $inputSpacing 2]*$userSpacing]
-
-  $resampler SetAxisOutputSpacing 0 $newSpacingX
-  $resampler SetAxisOutputSpacing 1 $newSpacingY
-  $resampler SetAxisOutputSpacing 2 $newSpacingZ
-  $resampler ReleaseDataFlagOff 
-  $resampler Update
-
-  set dimAfter [ [$resampler GetOutput] GetDimensions]
-
-  set changeInf3 [vtkImageChangeInformation New]
-  $changeInf3 SetInput [$resampler GetOutput]
-  $changeInf3 SetOutputSpacing 1. 1. 1.
-  $changeInf3 Update
-
-  set output [vtkImageData New]
-  $output DeepCopy [$changeInf3 GetOutput]
-
-  $outVolumeNode SetAndObserveImageData $output
-  eval $outVolumeNode SetSpacing "$newSpacingX $newSpacingY $newSpacingZ"
-  eval $outVolumeNode SetOrigin $newOrigin
-  $outVolumeNode Modified
-
-  $ras2ijk Delete
-  $ijk2ras Delete
-
-  $changeInf Delete
-  $changeInf2 Delete
-  $changeInf3 Delete
-  $output Delete
-  $resampler Delete
-  $imageClip Delete
-
-  # set background volume to the resampled volume
-  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetReferenceActiveVolumeID [$outVolumeNode GetID]
-  $selectionNode SetReferenceActiveLabelVolumeID ""
-  $selectionNode Modified
-  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 1
-
   # set a descriptive name for the output volume
   set inputName [$volumeNode GetName]
   set outputName "${inputName}-Subvolume-resample_scale-${userSpacing}"
   $outVolumeNode SetName $outputName
+  $outVolumeNode SetLabelMap [$volumeNode GetLabelMap]
+
   $outVolumeNode Modified
+
+  $reslicer Delete
+  $changeInf Delete
+  $resliceT Delete
+  $inputRASToIJK Delete
+  $inputIJKToRAS Delete
+  $outputIJKToRAS Delete
+  $outputRASToIJK Delete
+  $volumeXform Delete
+  $roiXform Delete
+  $T Delete
+
+  set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+  for { set j 0 } { $j < $numCnodes } { incr j } {
+    set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+      if { [expr [$outVolumeNode GetLabelMap]] } {
+        $cnode SetReferenceLabelVolumeID [$outVolumeNode GetID]
+      } else {
+        $cnode SetReferenceForegroundVolumeID [$outVolumeNode GetID]
+      }
+  }
 
   set scene [[$this GetLogic] GetMRMLScene]
   $scene InvokeEvent 66000
@@ -832,8 +838,6 @@ proc ExtractSubvolumeROIUpdateLabelMap {this} {
     }
   }
 
-  
-
   $labelMap SetCenter [expr int([lindex $roiIJK 0])] [expr int([lindex $roiIJK 1])] [expr int([lindex $roiIJK 2])]
   set sizeX [expr int([expr $bboxIJK1(0)-$bboxIJK0(0)-1])]
   set sizeY [expr int([expr $bboxIJK1(1)-$bboxIJK0(1)-1])]
@@ -850,6 +854,8 @@ proc ExtractSubvolumeROIUpdateLabelMap {this} {
   set ::ExtractSubvolumeROI($this,bboxIJKMaxX) [expr int($bboxIJK1(0))]
   set ::ExtractSubvolumeROI($this,bboxIJKMaxY) [expr int($bboxIJK1(1))]
   set ::ExtractSubvolumeROI($this,bboxIJKMaxZ) [expr int($bboxIJK1(2))]
+
+  $labelMap Modified
 }
 
 proc ExtractSubvolumeROICreateOutputVolume {this} {
