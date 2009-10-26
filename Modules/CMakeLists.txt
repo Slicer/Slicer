@@ -69,7 +69,6 @@ subdirs(
   EMSegment
   DistanceTransformModel
   ClipModel
-  #VolumeRenderingCuda
   Measurements
   ModelIntoLabelVolume
   ExtractSubvolume
