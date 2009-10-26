@@ -863,6 +863,7 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
 void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.tfm)");
+  this->SupportedWriteFileTypes->InsertNextValue("Transform (.mat)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
 }
