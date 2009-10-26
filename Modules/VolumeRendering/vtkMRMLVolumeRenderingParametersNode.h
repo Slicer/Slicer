@@ -125,11 +125,11 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetMacro(UseThreshold,int);
   vtkGetMacro(UseThreshold,int);
   vtkBooleanMacro(UseThreshold,int);
-  
+
   vtkSetMacro(UseFgThreshold,int);
   vtkGetMacro(UseFgThreshold,int);
   vtkBooleanMacro(UseFgThreshold,int);
-  
+
   // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
@@ -160,22 +160,22 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
 
   vtkGetMacro (GPURaycastTechnique, int);
   vtkSetMacro (GPURaycastTechnique, int);
-  
+
   vtkGetMacro (GPURaycastTechniqueII, int);
   vtkSetMacro (GPURaycastTechniqueII, int);
-  
+
   vtkGetMacro (GPURaycastTechniqueIIFg, int);
   vtkSetMacro (GPURaycastTechniqueIIFg, int);
-  
+
   vtkGetMacro (GPURaycastIIFusion, int);
   vtkSetMacro (GPURaycastIIFusion, int);
-  
+
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
-  
+
   vtkSetVector2Macro(ThresholdFg, double);
   vtkGetVectorMacro(ThresholdFg, double, 2);
-  
+
   vtkGetMacro (GPURaycastIIBgFgRatio, float);
   vtkSetMacro (GPURaycastIIBgFgRatio, float);
 
@@ -254,7 +254,7 @@ protected:
    * 5: Illustrative Context Preserving Exploration
    * */
   int GPURaycastTechnique;
-  
+
   /* techniques in GPU ray cast II (bg)
    * 0: composite with directional lighting (default)
    * 1: composite with fake lighting (edge coloring, faster)
@@ -264,7 +264,7 @@ protected:
    * 5: Illustrative Context Preserving Exploration
    * */
   int GPURaycastTechniqueII;
-  
+
   /* techniques in GPU ray cast II (fg)
    * 0: composite with directional lighting (default)
    * 1: composite with fake lighting (edge coloring, faster)
@@ -274,19 +274,22 @@ protected:
    * 5: Illustrative Context Preserving Exploration
    * */
   int GPURaycastTechniqueIIFg;
-  
+
   /*
    * fusion method in GPU ray cast II
-   * 0: composite (default)
+   * 0: Alpha Blending (default)
+   * 1: Reversed Alpha Blending
+   * 2: Add
+   * 3: Subtract
    * */
   int GPURaycastIIFusion;
-  
+
   double Threshold[2];
   double ThresholdFg[2];
-  
+
   int UseThreshold;
   int UseFgThreshold;
-  
+
   float GPURaycastIIBgFgRatio;
 };
 

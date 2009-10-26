@@ -326,7 +326,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastICPEkt->Create();
     this->SC_GPURayCastICPEkt->SetLabelText("ICPE Scale:");
     this->SC_GPURayCastICPEkt->SetLabelWidth(labelWidth);
-    this->SC_GPURayCastICPEkt->SetBalloonHelpString("Parameter kt for Illustrative Context Preserving Exploration.");
+    this->SC_GPURayCastICPEkt->SetBalloonHelpString("Parameter scale (kt) for Illustrative Context Preserving Exploration, which simulates depth penerating into volume");
     this->SC_GPURayCastICPEkt->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastICPEkt->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastICPEkt->SetEntryWidth(5);
@@ -337,7 +337,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastICPEks->Create();
     this->SC_GPURayCastICPEks->SetLabelText("ICPE Smoothness:");
     this->SC_GPURayCastICPEks->SetLabelWidth(labelWidth);
-    this->SC_GPURayCastICPEks->SetBalloonHelpString("Parameter ks for Illustrative Context Preserving Exploration.");
+    this->SC_GPURayCastICPEks->SetBalloonHelpString("Parameter smoothness (ks) for Illustrative Context Preserving Exploration");
     this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastICPEks->SetEntryWidth(5);
@@ -405,7 +405,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_GPURayCastColorOpacityFusion->Create();
     this->MB_GPURayCastColorOpacityFusion->SetLabelWidth(labelWidth);
     this->MB_GPURayCastColorOpacityFusion->SetBalloonHelpString("Select color fusion method in multi-volume rendering");
-    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Composite");
+    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Alpha Blending");
     this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastColorOpacityFusion 0");
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastColorOpacityFusion->GetWidgetName() );
@@ -614,8 +614,21 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
 
 void vtkSlicerVolumeRenderingHelper::DestroyROITab()
 {
-  this->CroppingButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->FitROIButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (this->CroppingButton)
+  {
+    this->CroppingButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CroppingButton->SetParent(NULL);
+    this->CroppingButton->Delete();
+    this->CroppingButton = NULL;
+  }
+
+  if (this->FitROIButton)
+  {
+    this->FitROIButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FitROIButton->SetParent(NULL);
+    this->FitROIButton->Delete();
+    this->FitROIButton = NULL;
+  }
 
   if (this->ROIWidget)
   {
@@ -937,6 +950,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
       this->Gui->GetLogic()->SetROI(vspNode);
 
+      if (vspNode->GetROINode()->GetVisibility() == 0)
+        vspNode->GetROINode()->VisibilityOn();
+
       this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
       return;
     }
@@ -1066,8 +1082,18 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   switch(vspNode->GetGPURaycastIIFusion())
   {
     case 0:
-      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Composite");
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Alpha Blending");
       break;
+    case 1:
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Reversed Alpha Blending");
+      break;
+    case 2:
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Add");
+      break;
+    case 3:
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Subtract");
+      break;
+
   }
 
   this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10);

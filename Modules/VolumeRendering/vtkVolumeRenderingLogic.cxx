@@ -617,8 +617,8 @@ void vtkVolumeRenderingLogic::SetGPURaycastParameters(vtkMRMLVolumeRenderingPara
 
 void vtkVolumeRenderingLogic::SetGPURaycastIIParameters(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  this->MapperGPURaycastII->SetFgBgRatio(vspNode->GetGPURaycastIIBgFgRatio());
-  this->MapperGPURaycastII->SetTechnique(vspNode->GetGPURaycastTechniqueII());//for now ignore fg technique
+  this->MapperGPURaycastII->SetFgBgRatio(vspNode->GetGPURaycastIIBgFgRatio());//ratio may not be used depending on techniques selected
+  this->MapperGPURaycastII->SetTechniques(vspNode->GetGPURaycastTechniqueII(), vspNode->GetGPURaycastTechniqueIIFg());
 }
 
 void vtkVolumeRenderingLogic::EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode)

@@ -552,7 +552,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         }
       }
     }
-  }
+  }//----------------------------------ROI--------------------------------------------------------------
   else if(callerObjectNS == this->NS_ROI && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
   {
     if (this->NS_ROI->GetSelected())
@@ -617,13 +617,13 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     }
 
     vspNode->SetAndObserveFgVolumePropertyNodeID(this->NS_VolumePropertyFg->GetSelected()->GetID());
-    
+
     if (this->NewFgVolumePropertyAddedFlag)
     {
       this->GetLogic()->SetupFgVolumePropertyFromImageData(vspNode);
       this->NewFgVolumePropertyAddedFlag = 0;
     }
-    
+
     this->UpdatePipelineByFgVolumeProperty();
   }//-----------------------------------------new fg volume property--------------------------
   else if(callerObjectNS == this->NS_VolumeProperty && event == vtkSlicerNodeSelectorWidget::NewNodeEvent)
@@ -714,7 +714,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   else if (event == vtkMRMLScene::SceneCloseEvent)
   {
     this->DeleteRenderingFrame();
-    
+
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
@@ -810,7 +810,7 @@ void vtkVolumeRenderingGUI::UpdateGUI()
   if (vspNode)
   {
     this->NS_ParametersSet->SetSelected( vspNode );
-    
+
     if (vspNode->GetVolumeNode())
       this->NS_ImageData->SetSelected( vspNode->GetVolumeNode() );
     if (vspNode->GetFgVolumeNode())
@@ -823,7 +823,7 @@ void vtkVolumeRenderingGUI::UpdateGUI()
 
     if (vspNode->GetROINode())
       this->NS_ROI->SetSelected(vspNode->GetROINode());
-    
+
     /*presets is a little bit complicated here*/
 
     //---------remove none from menu
@@ -838,7 +838,7 @@ void vtkVolumeRenderingGUI::UpdateGUI()
     this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->UpdateMenu();
     this->NS_ImageData->SetSelected(NULL);
-    
+
     this->NS_ImageDataFg->NoneEnabledOn();
     this->NS_ImageDataFg->UpdateMenu();
     this->NS_ImageDataFg->SetSelected(NULL);
@@ -896,10 +896,10 @@ void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *i
 void vtkVolumeRenderingGUI::UpdatePipelineByROI()
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
-  
+
   if (vspNode == NULL)
     return;
-    
+
   if (vspNode->GetROINodeID() != NULL &&
       strcmp(this->NS_ROI->GetSelected()->GetID(), vspNode->GetROINodeID()) == 0)
   {
@@ -925,7 +925,7 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
 
   if (this->Helper)
     this->Helper->UpdateROI();
-    
+
   this->GetLogic()->SetROI(vspNode);
 
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
@@ -1041,7 +1041,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   //when scene closed this->ScenarioNode would be NULL
   if (this->ScenarioNode == NULL)
     this->ScenarioNode = this->GetLogic()->CreateScenarioNode();
-    
+
   vtkMRMLVolumeRenderingParametersNode *vspNode = this->GetCurrentParametersNode();
 
   if (vspNode != NULL && vspNode->GetVolumeNodeID() != NULL &&
@@ -1052,7 +1052,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   char buf[32] = "Initializing...";
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
-  
+
   if (vspNode)
   {
     //remove existing observers
@@ -1062,9 +1062,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
     selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
-  
+
   vspNode = NULL;//reset vspNode for remaining process
 
   //first loop though MRML to see if we have a parameters node matching input volumes
@@ -1092,9 +1092,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
       break;
     }
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.3);
-  
+
   if ( !vspNode )//no match
   {
     vspNode = this->GetLogic()->CreateParametersNode();
@@ -1104,31 +1104,31 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     this->GetLogic()->GetMRMLScene()->AddNode(vpNode);
     vpNode->Delete();
     vspNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
-    
+
     vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
     this->GetLogic()->GetMRMLScene()->AddNode(roiNode);
     roiNode->VisibilityOff();
     roiNode->InsideOutOn();
     vspNode->SetAndObserveROINodeID(roiNode->GetID());
     roiNode->Delete();
-    
+
     this->GetLogic()->FitROIToVolume(vspNode);
     this->GetLogic()->SetupVolumePropertyFromImageData(vspNode);
-    
+
     double scalarRange[2];
     vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
     vspNode->SetDepthPeelingThreshold(scalarRange[0]);
-    
+
     vspNode->SetThreshold(scalarRange);
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
-  
+
   this->ScenarioNode->SetParametersNodeID(vspNode->GetID());
   this->UpdateGUI();
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
-  
+
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
@@ -1139,16 +1139,15 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   if (vspNode->GetROINode())
   {
     vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
-    vspNode->GetROINode()->VisibilityOn();
 
     this->GetLogic()->SetROI(vspNode);
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.6);
-  
+
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
@@ -1156,11 +1155,13 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+
+  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
 
 /*
  * Fg volume is disabled till a bg volume has been selected
- * 
+ *
  * */
 void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 {
@@ -1174,7 +1175,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 
   char buf[32] = "Initializing...";
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
-  
+
   if (vspNode)
   {
     //remove existing observers
@@ -1187,9 +1188,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
       selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
     }
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
-  
+
   vtkMRMLVolumeRenderingParametersNode* matchedVspNode = NULL;
 
   //first loop though MRML to see if we have a parameters node matching input volumes
@@ -1209,9 +1210,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
       break;
     }
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.3);
-  
+
   if ( !matchedVspNode )//no match, fit in fg volume parameters into current vspNode
   {
     vspNode->SetAndObserveFgVolumeNodeID(this->NS_ImageDataFg->GetSelected()->GetID());
@@ -1220,9 +1221,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
     this->GetLogic()->GetMRMLScene()->AddNode(vpNode);
     vpNode->Delete();
     vspNode->SetAndObserveFgVolumePropertyNodeID(vpNode->GetID());
-    
+
     this->GetLogic()->SetupFgVolumePropertyFromImageData(vspNode);
-    
+
     double scalarRange[2];
     vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
 
@@ -1232,25 +1233,25 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
   {
     this->ScenarioNode->SetParametersNodeID(matchedVspNode->GetID());
   }
-    
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
 
   this->UpdateGUI();
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
-  
+
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageDataFg->GetSelected());
   //Add observer to trigger update of transform
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
   selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.6);
-  
+
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
@@ -1258,6 +1259,8 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+
+  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
 
 //initialize pipeline from a loaded or user selected parameters node
@@ -1265,23 +1268,23 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
 {
   char buf[32] = "Initializing...";
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
-  
+
   //update input frame (all node selectors)
   this->UpdateGUI();
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
-  
+
   //init mappers, transfer functions, and so on
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
-  
+
   this->GetLogic()->SetupHistograms(vspNode);
   if (vspNode->GetFgVolumeNode())
     this->GetLogic()->SetupHistogramsFg(vspNode);
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.3);
-  
+
   if (vspNode->GetROINode())
   {
     vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
@@ -1290,20 +1293,20 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
 
     this->GetLogic()->SetROI(vspNode);
   }
-  
+
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.4);
-  
+
   //prepare rendering frame
   this->DeleteRenderingFrame();
   this->CreateRenderingFrame();
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
-  
+
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
   selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand );
-  
+
   selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageDataFg->GetSelected());
   if (this->NS_ImageDataFg->GetSelected())
   {
@@ -1311,12 +1314,14 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
     selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
     selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand );
   }
-  
+
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
-  
+
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+
+  this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
 
 vtkMRMLVolumeRenderingParametersNode* vtkVolumeRenderingGUI::GetCurrentParametersNode()
