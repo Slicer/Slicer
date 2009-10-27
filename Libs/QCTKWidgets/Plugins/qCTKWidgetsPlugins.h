@@ -5,6 +5,7 @@
 #include "qCTKCollapsibleWidgetPlugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
+#include "qCTKTitleComboBoxPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
 
@@ -22,7 +23,8 @@ public:
     plugins << new qCTKCollapsibleGroupBoxPlugin
             << new qCTKCollapsibleWidgetPlugin
             << new qCTKColorPickerButtonPlugin
-            << new qCTKCoordinatesWidgetPlugin;
+            << new qCTKCoordinatesWidgetPlugin
+            << new qCTKTitleComboBoxPlugin;
     return plugins;
     }
 };

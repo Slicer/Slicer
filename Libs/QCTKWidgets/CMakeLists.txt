@@ -30,6 +30,8 @@ SET(QCTKWidgets_SRCS
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.cxx
   qCTKSliderSpinBoxLabel.h
+  qCTKTitleComboBox.cxx
+  qCTKTitleComboBox.h
   )
 
 # Headers that should run through moc
@@ -42,6 +44,7 @@ SET(QCTKWidgets_MOC_SRCS
   qCTKMatrixWidget.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
+  qCTKTitleComboBox.h
   )
   
 # UI files

@@ -18,6 +18,7 @@ SET(QCTKWidgetsPlugin_SRCS
   qCTKColorPickerButtonPlugin.cxx
   qCTKCoordinatesWidgetPlugin.cxx
   qCTKExtensionFactory.cxx
+  qCTKTitleComboBoxPlugin.cxx
   qCTKWidgetsPlugins.cxx  
   qCTKWidgetsPlugin.cxx
   )
@@ -29,6 +30,7 @@ SET(QCTKWidgetsPlugin_MOC_SRCS
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
   qCTKExtensionFactory.h
+  qCTKTitleComboBoxPlugin.h
   qCTKWidgetsPlugins.h
   )
 
