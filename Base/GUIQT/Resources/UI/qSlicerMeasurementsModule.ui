@@ -93,7 +93,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="qCTKPositionWidget" name="CTKPositionWidget">
+          <widget class="qCTKCoordinatesWidget" name="CTKCoordinatesWidget">
            <property name="Dimension">
             <number>3</number>
            </property>
@@ -107,7 +107,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="qCTKPositionWidget" name="CTKPositionWidget_2"/>
+          <widget class="qCTKCoordinatesWidget" name="CTKCoordinatesWidget_2"/>
          </item>
          <item row="4" column="0" colspan="2">
           <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_6">
@@ -301,9 +301,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKPositionWidget</class>
+   <class>qCTKCoordinatesWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKPositionWidget.h</header>
+   <header>qCTKCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>
