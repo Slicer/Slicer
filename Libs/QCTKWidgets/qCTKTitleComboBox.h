@@ -21,12 +21,19 @@ public:
   void setIcon(const QIcon&);
   QIcon icon()const;
 
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+
 protected:
   virtual void paintEvent(QPaintEvent*);
+  virtual QSize recomputeSizeHint(QSize &sh)const;
 
   QString Title;
   QIcon   Icon;
   
+private:
+  mutable QSize MinimumSizeHint;
+  mutable QSize SizeHint;
 };
 
 #endif
