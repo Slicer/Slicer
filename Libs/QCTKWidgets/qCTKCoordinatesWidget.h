@@ -9,8 +9,11 @@ class QCTK_WIDGETS_EXPORT qCTKCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
   Q_PROPERTY(int Dimension READ dimension WRITE setDimension)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
+
     
 public:
   qCTKCoordinatesWidget(QWidget* parent = 0);
@@ -25,6 +28,16 @@ public:
   // Set/Get the single step of the QDoubleSpinBoxes 
   void setSingleStep(double step);
   double singleStep() const;
+
+  // Description:
+  // Set/Get the minimum value of the QDoubleSpinBoxes 
+  void setMinimum(double minimum);
+  double minimum() const;
+
+  // Description:
+  // Set/Get the maximum value of the QDoubleSpinBoxes 
+  void setMaximum(double minimum);
+  double maximum() const;
 
   // Description:
   // Set/Get the coordinates. Use commas between numbers
@@ -44,7 +57,12 @@ protected slots:
   void coordinatesChanged();
 
 protected:
-  int Dimension;
+  void AddSpinBox();
+
+  double  Minimum;
+  double  Maximum;
+  double  SingleStep;
+  int     Dimension;
   double* Coordinates;
 };
 
