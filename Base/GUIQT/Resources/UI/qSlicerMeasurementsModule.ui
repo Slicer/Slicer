@@ -33,7 +33,7 @@
              <string>All Rulers Visible</string>
             </property>
             <property name="icon">
-             <iconset resource="../qSlicerGUI2.qrc">
+             <iconset resource="../qSlicerGUIQT.qrc">
               <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
             </property>
            </item>
@@ -42,7 +42,7 @@
              <string>All Rulers Invisible</string>
             </property>
             <property name="icon">
-             <iconset resource="../qSlicerGUI2.qrc">
+             <iconset resource="../qSlicerGUIQT.qrc">
               <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
             </property>
            </item>
@@ -312,7 +312,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerGUI2.qrc"/>
+  <include location="../qSlicerGUIQT.qrc"/>
  </resources>
  <connections/>
 </ui>
