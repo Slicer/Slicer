@@ -29,7 +29,7 @@ ADD_EXECUTABLE (VTKITKVectorReader ${VTKITKTESTVECTORREADER_SOURCE})
 TARGET_LINK_LIBRARIES (VTKITKVectorReader 
   vtkITK ITKCommon)
 ADD_TEST (VTKITKVectorReader 
-  ${Slicer3_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKVectorReader ${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd)
+  ${Slicer3_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKVectorReader ${MRML_TEST_DATA_DIR}/Testing/TestData/fixed.nrrd)
 
 
 SET (VTKITKBSPLINETRANSFORM_SOURCE VTKITKBSplineTransform.cxx)

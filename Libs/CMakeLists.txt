@@ -79,6 +79,9 @@ foreach(dir ${dirs})
   set(libs ${libs} ${dir})
 endforeach(dir)
 
+# vtkITK contains tests that uses MRML's test data.
+set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
+
 slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
 slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
 # Inconsistent library name vs. project/dir name :(
