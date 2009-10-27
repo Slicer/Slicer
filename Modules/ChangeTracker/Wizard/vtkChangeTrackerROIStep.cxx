@@ -606,9 +606,9 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
     vtkKWRadioButton *rc1 = this->ResamplingChoice->GetWidget()->AddWidget(1);
     rc1->SetValue("1");
-    rc1->SetText("Default resampling");
+    rc1->SetText("Legacy resampling");
     rc1->SetBalloonHelpString("Use the same resampling strategy as in Slicer 3.4 ChangeTracker");
-    rc1->SetSelectedState(1);
+    rc1->SetSelectedState(0);
 //    rc1->SetEnabled(0);
 
     vtkKWRadioButton *rc2 = this->ResamplingChoice->GetWidget()->AddWidget(2);
@@ -616,7 +616,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     rc2->SetText("Isotropic resampling");
     rc2->SetBalloonHelpString("Resample the ROI to isotropic pixel size equal to the original *minimum* spacing times the constant below");
     rc2->SetAnchorToWest();
-    rc2->SetSelectedState(0);
+    rc2->SetSelectedState(1);
 //    rc2->SetEnabled(0);
 
     if (node) 
@@ -640,7 +640,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->SpinResampleConst->SetParent(this->AdvancedFrame->GetFrame());
     this->SpinResampleConst->Create();
     this->SpinResampleConst->SetLabelText("Resampling constant:");
-    this->SpinResampleConst->GetWidget()->SetValue(1.);
+    this->SpinResampleConst->GetWidget()->SetValue(0.5);
     this->SpinResampleConst->SetBalloonHelpString("The value of isotropic sampling will be obtained by multiplying the smallest pixel dimension by the value defined here.");
     }
   
@@ -1175,15 +1175,26 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
       {
       
       roiUpdateGuard = true;
+      double *roiXYZ = roiNode->GetXYZ();
+      double *roiRadius = roiNode->GetRadiusXYZ();
+      double newROIXYZ[3], newROIRadius[3];
+      newROIXYZ[0] = ceil(roiXYZ[0]);
+      newROIXYZ[1] = ceil(roiXYZ[1]);
+      newROIXYZ[2] = ceil(roiXYZ[2]);
+      newROIRadius[0] = ceil(roiRadius[0]);
+      newROIRadius[1] = ceil(roiRadius[1]);
+      newROIRadius[2] = ceil(roiRadius[2]);
+      std::cerr << "ROI XYZ: " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << std::endl;
+      roiNode->SetXYZ(newROIXYZ);
+      roiNode->SetRadiusXYZ(newROIRadius);
       MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
       if(this->Render_Filter->GetSize())
         this->UpdateROIRender();
       roiUpdateGuard = false;
 
-      double *roiXYZ = roiNode->GetXYZ();
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
-      app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(roiXYZ[0], roiXYZ[1], roiXYZ[2]);
+      app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(newROIXYZ[0], newROIXYZ[1], newROIXYZ[2]);
 //      cerr << "Resetting focal point to " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << endl;
       }
 }
@@ -1288,6 +1299,11 @@ void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
 void vtkChangeTrackerROIStep::TransitionCallback() 
 {
   // cout << "vtkChangeTrackerROIStep::TransitionCallback() Start" << endl; 
+  double *roiXYZ, *roiRadius;
+  roiXYZ = roiNode->GetXYZ();
+  roiRadius = roiNode->GetRadiusXYZ();
+  std::cerr << "Final ROI center: " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << std::endl;
+  std::cerr << "Final ROI radius: " << roiRadius[0] << ", " << roiRadius[1] << ", " << roiRadius[2] << std::endl;
   if (this->ROICheck()) { 
     vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
     if (!Node) return;

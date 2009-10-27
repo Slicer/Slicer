@@ -87,20 +87,20 @@
       <description>If set, the results of the analysis will be saved in the working directory in the file AnalysisOutcome.log</description>
       <default>false</default>
     </boolean>
-    <integer-vector>
+    <double-vector>
      <name>tgROIMin</name>
      <longflag>roi_min</longflag>
      <description>Lower extent of region of interest in pixel space</description> 
      <label>ROI Min</label>
      <default>1,1,1</default>
-    </integer-vector> 
-    <integer-vector>
+    </double-vector> 
+    <double-vector>
      <name>tgROIMax</name>
      <longflag>roi_max</longflag>
      <description>Upper extent of region of interest in pixel space</description> 
      <label>ROI Max</label>
      <default>256,256,100</default>
-   </integer-vector> 
+   </double-vector> 
    <integer-vector> 
      <name>tgThreshold</name>
      <longflag>threshold</longflag>

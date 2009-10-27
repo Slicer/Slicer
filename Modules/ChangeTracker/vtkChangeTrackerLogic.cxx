@@ -19,6 +19,7 @@
 #include "vtkKWProgressGauge.h"
 #include "vtkImageMedian3D.h"
 #include "vtkImageAccumulate.h"
+#include "vtkImageShiftScale.h"
 //#include "vtkSlicerApplication.h"
 
 // CommandLineModule support
@@ -29,6 +30,7 @@
 #include "itksys/DynamicLoader.hxx"
 #include <assert.h>
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLROINode.h"
 #include "vtkNRRDWriter.h"
 #define ERROR_NODE_VTKID 0
 
@@ -322,6 +324,8 @@ void vtkChangeTrackerLogic::DeleteSuperSample(int ScanNum) {
 }
 
 double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], double resampleConst, int resampleChoice) {
+
+
     double SuperSampleSpacing = -1.;
 
     switch(resampleChoice){
@@ -344,12 +348,7 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
       if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
       break;}
     case RESCHOICE_ISO:{
-      double minSpacing = inputSpacing[0];
-      if(minSpacing>inputSpacing[1])
-        minSpacing = inputSpacing[1];
-      if(minSpacing>inputSpacing[2])
-        minSpacing = inputSpacing[2];
-      SuperSampleSpacing = minSpacing*resampleConst;
+      SuperSampleSpacing = fmin(inputSpacing[0],fmin(inputSpacing[1],inputSpacing[2]))*resampleConst;
       break;}
     default:
       std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
@@ -361,7 +360,9 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
 }
 
 int vtkChangeTrackerLogic::CreateSuperSampleFct(vtkImageData *input, const int ROIMin[3], const int ROIMax[3], const double SuperSampleSpacing, vtkImageData *output, bool LinearInterpolation) {
+  abort();
   if (SuperSampleSpacing <= 0.0) return 1;
+  static int counter = 1;
   // ---------------------------------
   // Just focus on region of interest
   vtkImageClip  *ROI = vtkImageClip::New();
@@ -370,6 +371,13 @@ int vtkChangeTrackerLogic::CreateSuperSampleFct(vtkImageData *input, const int R
      ROI->ClipDataOn();   
      ROI->Update(); 
 
+     char fname1[255], fname2[255];
+     sprintf(&fname1[0], "roi%d.nrrd", counter);
+     sprintf(&fname2[0], "input%d.nrrd", counter);
+     counter++;
+     cout << "CreateSuperSampleFct: "<< ROIMin[0] << "," << ROIMax[0] << " -- " 
+       << ROIMin[1] << "," << ROIMax[1] << " -- " <<
+       ROIMin[2] << "," << ROIMax[2] << endl;
   vtkImageChangeInformation *ROIExtent = vtkImageChangeInformation::New();
      ROIExtent->SetInput(ROI->GetOutput());
      ROIExtent->SetOutputExtentStart(0,0,0); 
@@ -380,7 +388,7 @@ int vtkChangeTrackerLogic::CreateSuperSampleFct(vtkImageData *input, const int R
   vtkImageResample *ROISuperSample = vtkImageResample::New(); 
      ROISuperSample->SetDimensionality(3);
      if(LinearInterpolation)
-       ROISuperSample->SetInterpolationModeToLinear();
+       ROISuperSample->SetInterpolationModeToCubic();
      else
        ROISuperSample->SetInterpolationModeToNearestNeighbor();
      ROISuperSample->SetInput(ROIExtent->GetOutput());
@@ -395,6 +403,17 @@ int vtkChangeTrackerLogic::CreateSuperSampleFct(vtkImageData *input, const int R
   cast->SetInput(ROISuperSample->GetOutput());
   cast->Update();
 
+  vtkNRRDWriter *iw = vtkNRRDWriter::New();
+  iw->SetInput(input);
+  iw->SetFileName(fname1);
+  iw->Update();
+  cout << "Saved input" << endl;
+
+  vtkNRRDWriter *rw = vtkNRRDWriter::New();
+  rw->SetInput(ROIExtent->GetOutput());
+  rw->SetFileName(fname2);
+  rw->Update();
+  cout << "Saved ROI" << endl;
   // ---------------------------------
   // Clean up 
 //  output->DeepCopy(ROISuperSample->GetOutput());
@@ -407,6 +426,114 @@ int vtkChangeTrackerLogic::CreateSuperSampleFct(vtkImageData *input, const int R
   return 0;
 }
 
+int vtkChangeTrackerLogic::CreateSuperSampleRASFct(vtkImageData *input, const double ROIXYZ[3], const double ROIRadius[3], const double SuperSampleSpacing, 
+  vtkImageData *output, vtkMatrix4x4 *inputRASToIJK, vtkMatrix4x4 *volumeXform, vtkMatrix4x4 *outputRASToIJK, bool LinearInterpolation) {
+  if (SuperSampleSpacing <= 0.0) return 1;
+
+  vtkImageData *inputImage = vtkImageData::New();
+  vtkImageChangeInformation *changeInfInput = vtkImageChangeInformation::New();
+  vtkImageShiftScale *shiftscale = vtkImageShiftScale::New();
+  changeInfInput->SetInput(input);
+  changeInfInput->SetOutputSpacing(1.,1.,1.);
+  changeInfInput->SetOutputOrigin(0.,0.,0.);
+  changeInfInput->Update();
+
+  inputImage->DeepCopy(changeInfInput->GetOutput());
+  changeInfInput->Delete();
+
+  vtkMatrix4x4 *inputIJKToRAS, *outputIJKToRAS, *volumeXformInv, *resampleXform;
+  vtkTransform *resampleTransform = vtkTransform::New();
+  vtkImageReslice *reslicer = vtkImageReslice::New();
+  vtkImageChangeInformation *changeInf = vtkImageChangeInformation::New();
+  inputIJKToRAS = vtkMatrix4x4::New();
+  outputIJKToRAS= vtkMatrix4x4::New();
+  resampleXform = vtkMatrix4x4::New();
+  volumeXformInv = vtkMatrix4x4::New();
+  
+  inputIJKToRAS->DeepCopy(inputRASToIJK);
+  inputIJKToRAS->Invert();
+
+  volumeXformInv->Identity();
+  if(volumeXform){
+    volumeXformInv->DeepCopy(volumeXform);
+    volumeXformInv->Invert();
+  }
+
+  outputRASToIJK->Identity();
+  outputIJKToRAS->Identity();
+
+  double outputOrigin[3];
+  int outputExtent[3];
+  outputOrigin[0] = ROIXYZ[0]-ROIRadius[0]+SuperSampleSpacing*.5;
+  outputOrigin[1] = ROIXYZ[1]-ROIRadius[1]+SuperSampleSpacing*.5;
+  outputOrigin[2] = ROIXYZ[2]-ROIRadius[2]+SuperSampleSpacing*.5;
+
+  outputExtent[0] = (int) ceil(2.*ROIRadius[0]/SuperSampleSpacing);
+  outputExtent[1] = (int) ceil(2.*ROIRadius[1]/SuperSampleSpacing);
+  outputExtent[2] = (int) ceil(2.*ROIRadius[2]/SuperSampleSpacing);
+
+  outputIJKToRAS->SetElement(0,0,SuperSampleSpacing);
+  outputIJKToRAS->SetElement(1,1,SuperSampleSpacing);
+  outputIJKToRAS->SetElement(2,2,SuperSampleSpacing);
+  outputIJKToRAS->SetElement(0,3, outputOrigin[0]);
+  outputIJKToRAS->SetElement(1,3, outputOrigin[1]);
+  outputIJKToRAS->SetElement(2,3, outputOrigin[2]);
+
+  outputRASToIJK->DeepCopy(outputIJKToRAS);
+  outputRASToIJK->Invert();
+
+  resampleXform->DeepCopy(outputIJKToRAS);
+  resampleXform->Multiply4x4(volumeXformInv, resampleXform, resampleXform);
+  resampleXform->Multiply4x4(inputRASToIJK, resampleXform, resampleXform);
+  
+  resampleTransform->SetMatrix(resampleXform);
+  reslicer->SetInput(inputImage);
+  if(LinearInterpolation){
+    reslicer->SetInterpolationModeToLinear();
+  } else {
+    reslicer->SetInterpolationModeToNearestNeighbor();
+  }
+
+  reslicer->SetResliceTransform(resampleTransform);
+  reslicer->SetOutputExtent(0, outputExtent[0]-1, 0, outputExtent[1]-1, 0, outputExtent[2]-1);
+  reslicer->SetOutputSpacing(1.,1.,1.);
+  reslicer->SetOutputOrigin(0.,0.,0.);
+  reslicer->UpdateWholeExtent();
+
+  changeInf->SetInput(reslicer->GetOutput());
+  changeInf->SetOutputOrigin(0.,0.,0.);
+  changeInf->SetOutputSpacing(1.,1.,1.);
+  changeInf->Update();
+
+  // rescale the output ROI, since the analysis scripts expect the input
+  // intensities are in a certain range
+  double range[2], scale=1., shift=0.;
+  reslicer->GetOutput()->GetScalarRange(range);
+  shiftscale->SetInput(changeInf->GetOutput());
+  shiftscale->SetOutputScalarType(4);
+  if(range[0]<0)
+    shift = fabs(range[0]);
+  if(range[1]-range[0]>255.)
+    scale = 255./(range[1]-range[0]);
+  shiftscale->SetScale(scale);
+  shiftscale->SetShift(shift);
+  shiftscale->Update();
+
+  output->DeepCopy(shiftscale->GetOutput());
+
+  shiftscale->Delete();
+  changeInf->Delete();
+  reslicer->Delete();
+  resampleTransform->Delete();
+  inputIJKToRAS->Delete();
+  outputIJKToRAS->Delete();
+  resampleXform->Delete();
+  volumeXformInv->Delete();
+  inputImage->Delete();
+
+  return 0;
+}
+
 vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   // ---------------------------------
   // Initialize Variables 
@@ -414,6 +541,9 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
 
   vtkMRMLVolumeNode* volumeNode = NULL;
   bool LinearInterpolation = true;
+  vtkMatrix4x4 *inputRASToIJK = vtkMatrix4x4::New(), *volumeXform = vtkMatrix4x4::New();
+  vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
+
   switch(ScanNum){
   case 0:
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(
@@ -430,6 +560,12 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
     break;
   default: vtkErrorMacro(<< "Internal error: unknown image requested for supersampling");
            return NULL;
+  }
+
+  volumeNode->GetRASToIJKMatrix(inputRASToIJK);
+  volumeXform->Identity();
+  if(volumeNode->GetParentTransformNode()){
+    volumeNode->GetParentTransformNode()->GetMatrixTransformToWorld(volumeXform);
   }
 
   // make sure the input image is valid!
@@ -460,30 +596,31 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
     SuperSampleSpacing = this->ChangeTrackerNode->GetSuperSampled_Spacing();
   }
 
+  vtkImageData *ROISuperSampleOutput = vtkImageData::New();
   vtkImageChangeInformation *ROISuperSampleInput = vtkImageChangeInformation::New();
+  vtkImageData *ROISuperSampleFinal = vtkImageData::New();
+  vtkImageChangeInformation *ROISuperSampleExtent = vtkImageChangeInformation::New();
+
+#if USE_IJK_ROI
+  
      ROISuperSampleInput->SetInput(volumeNode->GetImageData());
      ROISuperSampleInput->SetOutputSpacing(volumeNode->GetSpacing());
   ROISuperSampleInput->Update();
 
-  vtkImageData *ROISuperSampleOutput = vtkImageData::New();
   if (this->CreateSuperSampleFct(ROISuperSampleInput->GetOutput(), ROIMin, ROIMax, SuperSampleSpacing, ROISuperSampleOutput, LinearInterpolation)) {
     ROISuperSampleInput->Delete();
     ROISuperSampleOutput->Delete();
     return NULL;
   }
-
-  vtkImageChangeInformation *ROISuperSampleExtent = vtkImageChangeInformation::New();
      ROISuperSampleExtent->SetInput(ROISuperSampleOutput);
      ROISuperSampleExtent->SetOutputSpacing(1,1,1);
   ROISuperSampleExtent->Update();
 
   // We need to copy the result  bc ChangeInformation only has a pointer to the input data 
   // - which is later deleted and therefore will cause errors 
-  vtkImageData *ROISuperSampleFinal = vtkImageData::New();
      ROISuperSampleFinal->DeepCopy(ROISuperSampleExtent->GetOutput());
 
   // Compute new origin
-  vtkMatrix4x4 *ijkToRAS=vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(ijkToRAS);
   double newIJKOrigin[4] = 
     {this->ChangeTrackerNode->GetROIMin(0),this->ChangeTrackerNode->GetROIMin(1), this->ChangeTrackerNode->GetROIMin(2), 1.0 };
@@ -491,6 +628,24 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   ijkToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
   ijkToRAS->Delete();
 
+
+
+#else // USE_RAS_ROI
+  vtkMRMLROINode *roiNode;
+  roiNode = vtkMRMLROINode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetROI_Ref()));
+  if(!roiNode){
+    std::cerr << "ERROR: ROI Node not defined!" << std::endl;
+    return NULL;
+  }
+  double *roiXYZ = roiNode->GetXYZ();
+  double *roiRadius = roiNode->GetRadiusXYZ();
+  if (this->CreateSuperSampleRASFct(volumeNode->GetImageData(), roiXYZ, roiRadius, 
+      SuperSampleSpacing, ROISuperSampleFinal, inputRASToIJK, volumeXform, outputRASToIJK, LinearInterpolation)) {
+    ROISuperSampleInput->Delete();
+    ROISuperSampleOutput->Delete();
+    return NULL;
+  }
+#endif // USE_IJK_ROI
 
   // ---------------------------------
   // Now return results and clean up 
@@ -520,13 +675,34 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
     }
 
   VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);
+
+  // ROI should not be under transform -- reset in case inherited from the
+  // input volume
+  VolumeOutputNode->SetAndObserveTransformNodeID(NULL);
+  double range[2];
+  ROISuperSampleFinal->GetScalarRange(range);
+
+#if USE_IJK_ROI
   VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing);  
   VolumeOutputNode->SetOrigin(newRASOrigin[0],newRASOrigin[1],newRASOrigin[2]);
+#else // USE_RAS_ROI
+  vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
+  VolumeOutputNode->SetRASToIJKMatrix(outputRASToIJK);
+  outputIJKToRAS->DeepCopy(outputRASToIJK);
+  outputIJKToRAS->Invert();
+  VolumeOutputNode->SetIJKToRASMatrix(outputIJKToRAS);
+  outputIJKToRAS->Delete();
+#endif // USE_IJK_ROI
 
   ROISuperSampleFinal->Delete();
   ROISuperSampleExtent->Delete();
   ROISuperSampleOutput->Delete();
   ROISuperSampleInput->Delete();
+
+  inputRASToIJK->Delete();
+  volumeXform->Delete();
+  outputRASToIJK->Delete();
+
   return VolumeOutputNode;
 }
 
@@ -638,7 +814,9 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       // resample; assume transform has been initialized (this was checked
       // earlier)
       std::cerr << "REGCHOICE == RESAMPLE" << std::endl;      
-      ResampleScan2(vtkSlicerApplication::GetInstance());
+      this->ChangeTrackerNode->SetScan2_GlobalRef(this->ChangeTrackerNode->GetScan2_Ref());
+      // ResampleScan2(vtkSlicerApplication::GetInstance());
+      // nop -- resample will be done implicitly in CreateSuperSample(2)
       }
     else if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_ALIGNED)
       {

@@ -21,6 +21,10 @@
 #include "vtkImageMathematics.h"
 #include "vtkImageAccumulate.h"
 
+#include "itkAffineTransform.h"
+#include "itkTransformFileReader.h"
+#include "itkMatrixOffsetTransformBase.h"
+
 #include <vtksys/SystemTools.hxx>
 
 #define USE_ITK_REGISTRATION 1
@@ -333,10 +337,10 @@ int main(int argc, char* argv[])
 
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
 
-    if(tgROIMin[0]>=tgROIMax[0] || tgROIMin[1]>=tgROIMax[1] || tgROIMin[2]>=tgROIMax[2]){
-      cerr << "ERROR: invalid ROI coordinates!" << endl;
-      return EXIT_FAILURE;
-    }
+//    if(tgROIMin[0]>=tgROIMax[0] || tgROIMin[1]>=tgROIMax[1] || tgROIMin[2]>=tgROIMax[2]){
+//      cerr << "ERROR: invalid ROI coordinates!" << endl;
+//      return EXIT_FAILURE;
+//    }
 
     if (tg.SetScan1Data(tgScan1.c_str())) 
       {
@@ -380,25 +384,94 @@ int main(int argc, char* argv[])
     
     std::cerr << "After loading the data" << std::endl;
 
+           {
+           vtkIndent i;
+           std::cerr << "Scan1 matrix: " << std::endl;
+           tg.Scan1Matrix->PrintSelf(std::cerr, i);
+           std::cerr << "===" << std::endl;
+           }
+
+         vtkMatrix4x4 *scan2Tfm = vtkMatrix4x4::New();
+    {
+      int i, j;
+      typedef itk::MatrixOffsetTransformBase<double,3,3> DoubleMatrixOffsetType;
+      typedef itk::MatrixOffsetTransformBase<float,3,3> FloatMatrixOffsetType;
+      typedef itk::TransformFileReader TransformReader;
+      typedef itk::AffineTransform<double> TransformType;
+      // from MRMLTransformStorageNode
+      vtkMatrix4x4 *lps2ras = vtkMatrix4x4::New();
+      lps2ras->Identity();
+      (*lps2ras)[0][0] = (*lps2ras)[1][1] = -1.0;
+      
+      vtkMatrix4x4 *ras2lps = vtkMatrix4x4::New();
+      ras2lps->Identity();
+      (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
+
+      TransformType::Pointer transform = TransformType::New();
+      
+      TransformReader::Pointer tfmReader = TransformReader::New();
+      tfmReader->SetFileName(scan2tfm.c_str());
+      tfmReader->Update();
+
+      TransformReader::TransformType::Pointer tfm = *(tfmReader->GetTransformList()->begin());
+      DoubleMatrixOffsetType::Pointer da = dynamic_cast<DoubleMatrixOffsetType*>(tfm.GetPointer());
+      FloatMatrixOffsetType::Pointer fa = dynamic_cast<FloatMatrixOffsetType*>(tfm.GetPointer());
+      if (da)
+      {
+        for(i=0;i<3;i++){
+          for(j=0;j<3;j++){
+            (*scan2Tfm)[i][j] = da->GetMatrix()[i][j];
+          }
+          (*scan2Tfm)[i][3] = da->GetOffset()[i];
+        }
+      }
+      else if (fa)
+      {
+        for(i=0;i<3;i++){
+          for(j=0;j<3;j++){
+            (*scan2Tfm)[i][j] = da->GetMatrix()[i][j];
+          }
+          (*scan2Tfm)[i][3] = da->GetOffset()[i];
+        }
+      }
+     else
+      {
+      std::cout << "Initial transform is of an unsupported type" << std::endl;
+      }
+
+     vtkMatrix4x4::Multiply4x4(lps2ras, scan2Tfm, scan2Tfm);
+     vtkMatrix4x4::Multiply4x4(scan2Tfm, ras2lps, scan2Tfm);
+     scan2Tfm->Invert();
+
+     std::cout << "Initial transform: ";
+     vtkIndent indent;
+     scan2Tfm->PrintSelf(std::cerr, indent);
+     std::cout << "==================" << std::endl;
+     lps2ras->Delete();
+     ras2lps->Delete();
+    }
+
     // resample the second image with the supplied transform
+ 
     std::ostringstream cmdStream;
     std::string Scan2Global_fname = std::string(tg.GetWorkingDir())+std::string("/Scan2_Global.nrrd");
     cmdStream << slicerHome << "/Slicer3 --launch ResampleVolume2 --Reference " << tgScan1.c_str() <<
       " --transformationFile " << scan2tfm.c_str() << " " << tgScan2.c_str() << " " << Scan2Global_fname;
-    
-    if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
-      {
-      cerr << "ERROR: Resampling of the second scan failed" << endl;
-      return EXIT_FAILURE;
-      }
 
-    cerr << "Resampling with the input transform is complete. Destination is " << Scan2Global_fname << endl;
+//    if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
+//      {
+//      cerr << "ERROR: Resampling of the second scan failed" << endl;
+//      return EXIT_FAILURE;
+//      }
+
+//    cerr << "Resampling with the input transform is complete. Destination is " << Scan2Global_fname << endl;
+    
 
     // Read back the resampled result
-    vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-    tgReadVolume(Scan2Global_fname.c_str(), Scan2Global, matrix);
-    matrix->Delete();
-    matrix = NULL;
+//    vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+//    tgReadVolume(Scan2Global_fname.c_str(), Scan2Global, matrix);
+//    matrix->Delete();
+//    matrix = NULL;
 
     // supersample ROIs
     //
@@ -411,14 +484,15 @@ int main(int argc, char* argv[])
     double Scan1Vol;     
     double SuperSampleRatio;
     vtkMatrix4x4 *supersampleMatrix = vtkMatrix4x4::New(); 
-    int ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
-    int ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
+    double ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
+    double ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
 
     {
          Spacing =  tg.Scan1Data->GetSpacing();
          std::cout << "Spacing: " << Spacing[0] << " " << Spacing[1] << " " << Spacing[2] << std::endl;
              
-         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
+         SuperSampleSpacing = fmin(Spacing[0],fmin(Spacing[1], Spacing[2]))*.5;
+//         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
          SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
          Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
          SuperSampleRatio   = SuperSampleVol/Scan1Vol;
@@ -430,6 +504,7 @@ int main(int argc, char* argv[])
          double newIJKOrigin[4] = {ROIMin[0],ROIMin[1],ROIMin[2], 1.0 };
          double newRASOrigin[4];
          char ScanOrder[100];
+
    
          vtkMatrix4x4 *Scan1MatrixIJKToRAS = vtkMatrix4x4::New();
            Scan1MatrixIJKToRAS->DeepCopy(tg.Scan1Matrix);
@@ -449,25 +524,36 @@ int main(int argc, char* argv[])
     }
 
     Spacing =  tg.Scan1Data->GetSpacing();
-    cerr << "Before DefineSupersampleSize Min:" << ROIMin[0] << ", " << ROIMin[1] << ", " << ROIMin[2] << std::endl;
-    cerr << "Before DefineSupersampleSize Max:" << ROIMax[0] << ", " << ROIMax[1] << ", " << ROIMax[2] << std::endl;
     // TODO: pass resampling const in the cmdline
     cerr << "Super sample size defined to be " << SuperSampleSpacing << endl;
-
-    if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
+    // ROIMin == center, ROIMax == radius
+    vtkMatrix4x4 *outputMatrix = vtkMatrix4x4::New();
+    if (logic->CreateSuperSampleRASFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample, tg.Scan1Matrix,
+                                       NULL, outputMatrix)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
-    cerr << "Scan1 ROI resampled" << endl;
-
-    if (logic->CreateSuperSampleFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample)) {
+#if 0
+    if (logic->CreateSuperSampleFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample, tg.Scan1Matrix,
+                                       NULL, outputMatrix)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
+    tgWriteVolume("scan2roi.nrrd",outputMatrix, Scan2SuperSample);
+#else // USE_RAS_ROI
+//    if (logic->CreateSuperSampleRASFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample, tg.Scan1Matrix,
+//                                       NULL, outputMatrix)) {
+    if (logic->CreateSuperSampleRASFct(tg.Scan2Data,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample, tg.Scan2Matrix,
+                                       scan2Tfm, supersampleMatrix)) {
+      cerr << "ERROR: Could not super sample scan1 " << endl;
+      return EXIT_FAILURE; 
+    }
+#endif // USE_IJK_ROI
     cerr << "Scan2 ROI resampled" << endl;
 
     // this one with nn interpolator
-    if (logic->CreateSuperSampleFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1PreSegmentImage,false)) {
+    if (logic->CreateSuperSampleRASFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1PreSegmentImage, tg.Scan1Matrix,
+                                    NULL, supersampleMatrix, false)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
@@ -561,7 +647,11 @@ int main(int argc, char* argv[])
     double Analysis_SEGM_Growth = -1; 
     double Analysis_JACO_Growth = -1; 
 
-    if (1) { 
+    tgWriteVolume(Scan1SuperSampleFileName.c_str(), supersampleMatrix, Scan1SuperSample);
+    tgWriteVolume(Scan2LocalNormalizedFileName.c_str(), supersampleMatrix, Scan2LocalNormalized);
+    tgWriteVolume(Scan1SegmentFileName.c_str(), supersampleMatrix, Scan1SegmentOutput);
+
+    if (tgDeformableAnalysisFlag) { 
 
       std::string SCAN1_TO_SCAN2_SEGM_NAME           = tg.WorkingDir + "/TG_Deformable_Scan1SegmentationAlignedToScan2.nrrd";
       std::string SCAN1_TO_SCAN2_DEFORM_NAME         = tg.WorkingDir + "/TG_Deformable_Deformation_1-2.nrrd";
@@ -572,9 +662,6 @@ int main(int argc, char* argv[])
       std::string ANALYSIS_JACOBIAN_FILE             = tg.WorkingDir + "/Analysis_Deformable_Jacobian_Result.txt";  
       std::string ANALYSIS_JACOBIAN_IMAGE            = tg.WorkingDir + "/Analysis_Deformable_Jacobian.nrrd";  
 
-      tgWriteVolume(Scan1SuperSampleFileName.c_str(), supersampleMatrix, Scan1SuperSample);
-      tgWriteVolume(Scan2LocalNormalizedFileName.c_str(), supersampleMatrix, Scan2LocalNormalized);
-      tgWriteVolume(Scan1SegmentFileName.c_str(), supersampleMatrix, Scan1SegmentOutput);
 
       std::string CMD =  "::ChangeTrackerTcl::Analysis_Deformable_Fct " + Scan1SuperSampleFileName + " " + Scan1SegmentFileName + " " + Scan2LocalNormalizedFileName + " "
                                                                   + SCAN1_TO_SCAN2_SEGM_NAME + " " + SCAN1_TO_SCAN2_DEFORM_NAME + " " 

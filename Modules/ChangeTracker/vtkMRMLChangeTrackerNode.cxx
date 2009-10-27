@@ -106,8 +106,8 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    this->ROIRegistration = true;
    this->Scan2_TransformRef = NULL;
 
-   this->ResampleChoice = RESCHOICE_LEGACY;
-   this->ResampleConst = 1.;
+   this->ResampleChoice = RESCHOICE_ISO;
+   this->ResampleConst = 0.5;
 
    this->Scan1_InputSegmentRef = NULL;
    this->Scan1_InputSegmentSuperSampleRef = NULL;
