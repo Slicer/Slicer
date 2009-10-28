@@ -1151,6 +1151,25 @@ void vtkMeasurementsAngleWidget::Update3DWidget(vtkMRMLMeasurementsAngleNode *ac
       angleWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
       angleWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
       angleWidget->GetRepresentation()->SetCenterWorldPosition(pCenter);
+      // at this point the angle widget is still waiting for three clicks to
+      // start and define the angle, so fool it into thinking that the three
+      // clicks have happened
+      int *max;
+      max = angleWidget->GetWidget()->GetInteractor()->GetSize();
+      double x, y;
+      x = (double)max[0];
+      y = (double)max[1];
+      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.25,y*0.25);
+      angleWidget->GetWidget()->On();
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.5,y*0.5);
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.75,y*0.25);
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+      
       }
     vtkDebugMacro("UpdateWidget: angle widget on");
     angleWidget->GetWidget()->On();
