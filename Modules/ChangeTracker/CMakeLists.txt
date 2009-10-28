@@ -75,7 +75,7 @@ set(ChangeTracker_SRCS
 )
 
 # Enders work 
-subdirs(DeformableMetric CommandLineApplication CommandLineApplicationNew) 
+subdirs(DeformableMetric CommandLineApplication) 
 
 # Tools for diameter estimation
 #subdirs(TumorDiameterEstimation)
