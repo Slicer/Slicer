@@ -450,9 +450,13 @@ void vtkMeasurementsGUI::BuildGUI ( )
   this->TransformableNodeSelectorWidget->SetParent ( transformFrame->GetFrame() );
   this->TransformableNodeSelectorWidget->Create ( );
   this->TransformableNodeSelectorWidget->AddNodeClass("vtkMRMLTransformableNode", NULL, NULL, NULL);
+  // show all transformable nodes
   this->TransformableNodeSelectorWidget->SetChildClassesEnabled(1);
   this->TransformableNodeSelectorWidget->NoneEnabledOn();
-  this->TransformableNodeSelectorWidget->SetShowHidden(1);
+  // but don't show hidden ones, since we don't want to transform colour nodes
+  this->TransformableNodeSelectorWidget->SetShowHidden(0);
+  // and don't allow transform nodes themselves
+  this->TransformableNodeSelectorWidget->AddExcludedChildClass("vtkMRMLLinearTransformNode");
   this->TransformableNodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->TransformableNodeSelectorWidget->SetBorderWidth(2);
   this->TransformableNodeSelectorWidget->SetPadX(2);
