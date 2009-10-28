@@ -337,11 +337,6 @@ int main(int argc, char* argv[])
 
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
 
-//    if(tgROIMin[0]>=tgROIMax[0] || tgROIMin[1]>=tgROIMax[1] || tgROIMin[2]>=tgROIMax[2]){
-//      cerr << "ERROR: invalid ROI coordinates!" << endl;
-//      return EXIT_FAILURE;
-//    }
-
     if (tg.SetScan1Data(tgScan1.c_str())) 
       {
       cerr << "ERROR: Failed to read Scan 1" << endl;
@@ -372,7 +367,7 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE; 
       }
        
-    if ((tgROIMin.size() != 3) || (tgROIMax.size() != 3) ) {
+    if ((tgROIXYZ.size() != 3) || (tgROIRadius.size() != 3) ) {
       cerr << "ERROR: --ROIMin or --ROIMax are not corretly defined!" << endl;
       return EXIT_FAILURE; 
     }
@@ -484,51 +479,31 @@ int main(int argc, char* argv[])
     double Scan1Vol;     
     double SuperSampleRatio;
     vtkMatrix4x4 *supersampleMatrix = vtkMatrix4x4::New(); 
-    double ROIMin[3] = {tgROIMin[0], tgROIMin[1],  tgROIMin[2]};
-    double ROIMax[3] = {tgROIMax[0], tgROIMax[1],  tgROIMax[2]};
+    int ROIMin[3], ROIMax[3];
+    double ROIXYZ[3], ROIRadius[3];
+    ROIXYZ[0] = tgROIXYZ[0];
+    ROIRadius[0] = tgROIRadius[0];
+    ROIXYZ[1] = tgROIXYZ[1];
+    ROIRadius[1] = tgROIRadius[1];
+    ROIXYZ[2] = tgROIXYZ[2];
+    ROIRadius[2] = tgROIRadius[2];
 
     {
          Spacing =  tg.Scan1Data->GetSpacing();
          std::cout << "Spacing: " << Spacing[0] << " " << Spacing[1] << " " << Spacing[2] << std::endl;
              
-         SuperSampleSpacing = fmin(Spacing[0],fmin(Spacing[1], Spacing[2]))*.5;
-//         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
+         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 0.5, RESCHOICE_ISO);
          SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
          Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
          SuperSampleRatio   = SuperSampleVol/Scan1Vol;
 
-
-         int *EXTENT = Scan1SuperSample->GetExtent();
-         int dims[3] = {EXTENT[1] - EXTENT[0] + 1, EXTENT[3] - EXTENT[2] + 1,EXTENT[5] - EXTENT[4] + 1};
-   
-         double newIJKOrigin[4] = {ROIMin[0],ROIMin[1],ROIMin[2], 1.0 };
-         double newRASOrigin[4];
-         char ScanOrder[100];
-
-   
-         vtkMatrix4x4 *Scan1MatrixIJKToRAS = vtkMatrix4x4::New();
-           Scan1MatrixIJKToRAS->DeepCopy(tg.Scan1Matrix);
-           Scan1MatrixIJKToRAS->Invert();
-           Scan1MatrixIJKToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
-           strcpy(ScanOrder, vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(Scan1MatrixIJKToRAS));
-           
-         Scan1MatrixIJKToRAS->Delete();
-    
-     double SuperSampleSpacingArray[3] = {SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing};
-         vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,SuperSampleSpacingArray,dims,1,supersampleMatrix);
-         // vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(ScanOrder,Scan1SuperSample->GetSpacing(),dims,1,supersampleMatrix);
-         supersampleMatrix->SetElement(0,3,newRASOrigin[0]);
-         supersampleMatrix->SetElement(1,3,newRASOrigin[1]);
-         supersampleMatrix->SetElement(2,3,newRASOrigin[2]);
-         supersampleMatrix->Invert();
     }
 
     Spacing =  tg.Scan1Data->GetSpacing();
     // TODO: pass resampling const in the cmdline
     cerr << "Super sample size defined to be " << SuperSampleSpacing << endl;
-    // ROIMin == center, ROIMax == radius
     vtkMatrix4x4 *outputMatrix = vtkMatrix4x4::New();
-    if (logic->CreateSuperSampleRASFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample, tg.Scan1Matrix,
+    if (logic->CreateSuperSampleRASFct(tg.Scan1Data,ROIXYZ, ROIRadius, SuperSampleSpacing,Scan1SuperSample, tg.Scan1Matrix,
                                        NULL, outputMatrix)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
@@ -543,7 +518,7 @@ int main(int argc, char* argv[])
 #else // USE_RAS_ROI
 //    if (logic->CreateSuperSampleRASFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample, tg.Scan1Matrix,
 //                                       NULL, outputMatrix)) {
-    if (logic->CreateSuperSampleRASFct(tg.Scan2Data,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample, tg.Scan2Matrix,
+    if (logic->CreateSuperSampleRASFct(tg.Scan2Data,ROIXYZ, ROIRadius, SuperSampleSpacing,Scan2SuperSample, tg.Scan2Matrix,
                                        scan2Tfm, supersampleMatrix)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
@@ -552,7 +527,7 @@ int main(int argc, char* argv[])
     cerr << "Scan2 ROI resampled" << endl;
 
     // this one with nn interpolator
-    if (logic->CreateSuperSampleRASFct(tg.Scan1SegmentedData,ROIMin, ROIMax, SuperSampleSpacing,Scan1PreSegmentImage, tg.Scan1Matrix,
+    if (logic->CreateSuperSampleRASFct(tg.Scan1SegmentedData, ROIXYZ, ROIRadius, SuperSampleSpacing,Scan1PreSegmentImage, tg.Scan1Matrix,
                                     NULL, supersampleMatrix, false)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
@@ -704,8 +679,8 @@ int main(int argc, char* argv[])
       outFile  << "Scan1_Ref: " << tgScan1.c_str()     << "\n";
       outFile  << "Scan2_Ref: " << tgScan2.c_str()     << "\n";
       outFile  << "ROI:" << endl;
-      outFile  << "  Min: " << tgROIMin[0] << " " << tgROIMin[1] << " " << tgROIMin[2] << "\n";
-      outFile  << "  Max: " << tgROIMax[0] << " " << tgROIMax[1] << " " << tgROIMax[2] << "\n";
+      outFile  << "  ROI Center: " << tgROIXYZ[0] << " " << tgROIXYZ[1] << " " << tgROIXYZ[2] << "\n";
+      outFile  << "  ROI Radius: " << tgROIRadius[0] << " " << tgROIRadius[1] << " " << tgROIRadius[2] << "\n";
       outFile  << "Threshold: [" << tgThreshold[0] <<", " << tgThreshold[1] << "]\n";
       if (tgIntensityAnalysisFlag) {
         outFile  << "Analysis based on Intensity Pattern" << "\n";

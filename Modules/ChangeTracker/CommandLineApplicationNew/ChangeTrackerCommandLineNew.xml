@@ -88,18 +88,18 @@
       <default>false</default>
     </boolean>
     <double-vector>
-     <name>tgROIMin</name>
-     <longflag>roi_min</longflag>
-     <description>Lower extent of region of interest in pixel space</description> 
-     <label>ROI Min</label>
-     <default>1,1,1</default>
+     <name>tgROIXYZ</name>
+     <longflag>roi_xyz</longflag>
+     <description>Center of rectangular ROI in physical space</description> 
+     <label>ROI XYZ</label>
+     <default>0,0,0</default>
     </double-vector> 
     <double-vector>
-     <name>tgROIMax</name>
-     <longflag>roi_max</longflag>
-     <description>Upper extent of region of interest in pixel space</description> 
-     <label>ROI Max</label>
-     <default>256,256,100</default>
+     <name>tgROIRadius</name>
+     <longflag>roi_radius</longflag>
+     <description>Radius of the rectangular ROI in physical space units</description> 
+     <label>ROI Radius</label>
+     <default>10,10,10</default>
    </double-vector> 
    <integer-vector> 
      <name>tgThreshold</name>
