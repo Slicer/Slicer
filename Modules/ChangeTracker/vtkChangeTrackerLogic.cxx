@@ -470,16 +470,16 @@ int vtkChangeTrackerLogic::CreateSuperSampleRASFct(vtkImageData *input, const do
 
   double outputOrigin[3];
   int outputExtent[3];
-  outputOrigin[0] = ROIXYZ[0]-ROIRadius[0]+SuperSampleSpacing*.5;
-  outputOrigin[1] = ROIXYZ[1]-ROIRadius[1]+SuperSampleSpacing*.5;
+  outputOrigin[0] = ROIXYZ[0]+ROIRadius[0]+SuperSampleSpacing*.5;
+  outputOrigin[1] = ROIXYZ[1]+ROIRadius[1]+SuperSampleSpacing*.5;
   outputOrigin[2] = ROIXYZ[2]-ROIRadius[2]+SuperSampleSpacing*.5;
 
   outputExtent[0] = (int) ceil(2.*ROIRadius[0]/SuperSampleSpacing);
   outputExtent[1] = (int) ceil(2.*ROIRadius[1]/SuperSampleSpacing);
   outputExtent[2] = (int) ceil(2.*ROIRadius[2]/SuperSampleSpacing);
 
-  outputIJKToRAS->SetElement(0,0,SuperSampleSpacing);
-  outputIJKToRAS->SetElement(1,1,SuperSampleSpacing);
+  outputIJKToRAS->SetElement(0,0,-SuperSampleSpacing);
+  outputIJKToRAS->SetElement(1,1,-SuperSampleSpacing);
   outputIJKToRAS->SetElement(2,2,SuperSampleSpacing);
   outputIJKToRAS->SetElement(0,3, outputOrigin[0]);
   outputIJKToRAS->SetElement(1,3, outputOrigin[1]);
