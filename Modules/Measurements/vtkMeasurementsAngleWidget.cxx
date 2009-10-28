@@ -2151,7 +2151,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->LabelFormatEntry->SetParent(annotationFrame);
   this->LabelFormatEntry->Create();
   this->LabelFormatEntry->SetLabelText("Angle Annotation Format");
-  this->LabelFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out angle, plus any text you wish");
+  this->LabelFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out angle in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->LabelFormatEntry->GetWidgetName());
 
