@@ -607,6 +607,9 @@ int main(int argc, char* argv[])
     std::cerr << "Histogram min: " << hist->GetMin()[0] << std::endl;
     std::cerr << "Histogram max: " << hist->GetMax()[0] << std::endl;
 
+    tgThreshold[0] = hist->GetMin()[0];
+    tgThreshold[1] = hist->GetMax()[0];
+
     int histMin = (int) hist->GetMin()[0], histMax = (int) hist->GetMax()[0];
     hist->Delete();
     cast->Delete();
@@ -627,9 +630,11 @@ int main(int argc, char* argv[])
     double Analysis_Intensity_Shrink = -1;
     double Analysis_Intensity_Total = -1;   
     app->Script(CMD.c_str());
+    std::cout << "Analysis done" << std::endl;
 
     cout << "=========================" << endl;    
     logic->MeassureGrowth(tgThreshold[0], tgThreshold[1], Analysis_Intensity_Shrink, Analysis_Intensity_Growth);
+    cout << "After measure growth" << endl;
     Analysis_Intensity_Total = Analysis_Intensity_Growth + Analysis_Intensity_Shrink; 
     CMD = tg.WorkingDir + "/TG_Analysis_Intensity.nhdr";
     tgWriteVolume(CMD.c_str(),supersampleMatrix,logic->GetAnalysis_Intensity_ROIBinCombine());
