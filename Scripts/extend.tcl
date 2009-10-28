@@ -545,9 +545,9 @@ proc buildExtension {s3ext} {
     -DMAKECOMMAND:STRING=$makeCmd \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install]
   if { $::EXTEND(release) != "" } {
-    lappend cmakeCmd -DCMAKE_BUILD_TYPE:STRING=RELEASE
+    lappend cmakeCmd -DCMAKE_BUILD_TYPE:STRING=Release
   } else {
-    lappend cmakeCmd -DCMAKE_BUILD_TYPE:STRING=DEBUG
+    lappend cmakeCmd -DCMAKE_BUILD_TYPE:STRING=Debug
   }
   foreach dep $dependPaths {
     lappend cmakeCmd $dep
