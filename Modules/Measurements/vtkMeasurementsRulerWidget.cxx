@@ -731,8 +731,8 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
     activeRulerNode->SetPointColour(rgb);
     rgb = distanceWidget->GetRepresentation()->GetLineProperty()->GetColor();
     activeRulerNode->SetLineColour(rgb);
-    //rgb = distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->GetColor();
-    //activeRulerNode->SetDistanceAnnotationTextColour(rgb);
+//    rgb = distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->GetColor();
+//    activeRulerNode->SetDistanceAnnotationTextColour(rgb);
 
     activeRulerNode->SetDistanceAnnotationVisibility(distanceWidget->GetRepresentation()->GetDistanceAnnotationVisibility());
     activeRulerNode->SetDistanceAnnotationFormat(distanceWidget->GetRepresentation()->GetDistanceAnnotationFormat());
@@ -1769,15 +1769,14 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->TextColourButton->SetLabelPositionToRight();
   this->TextColourButton->SetLabelText("Set Text Color");
   this->TextColourButton->SetBalloonHelpString("set text color.");
-  // commented out until VTK supports getting the distance annotation text propery
-  //this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-  //               this->TextColourButton->GetWidgetName() );
+//  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+//                 this->TextColourButton->GetWidgetName() );
   
   this->DistanceAnnotationFormatEntry = vtkKWEntryWithLabel::New();
   this->DistanceAnnotationFormatEntry->SetParent(annotationFrame);
   this->DistanceAnnotationFormatEntry->Create();
   this->DistanceAnnotationFormatEntry->SetLabelText("Distance Annotation Format");
-  this->DistanceAnnotationFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out distance, plus any text you wish");
+  this->DistanceAnnotationFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out distance in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->DistanceAnnotationFormatEntry->GetWidgetName());
 
