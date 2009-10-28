@@ -32,6 +32,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLROINode.h"
 #include "vtkNRRDWriter.h"
+#include "vtkITKImageWriter.h"
 #define ERROR_NODE_VTKID 0
 
 //----------------------------------------------------------------------------
@@ -348,7 +349,11 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
       if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
       break;}
     case RESCHOICE_ISO:{
-      SuperSampleSpacing = fmin(inputSpacing[0],fmin(inputSpacing[1],inputSpacing[2]))*resampleConst;
+      SuperSampleSpacing = inputSpacing[0];
+      if(SuperSampleSpacing>inputSpacing[1])
+        SuperSampleSpacing = inputSpacing[1];
+      if(SuperSampleSpacing>inputSpacing[2])
+        SuperSampleSpacing = inputSpacing[2];
       break;}
     default:
       std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
@@ -494,6 +499,8 @@ int vtkChangeTrackerLogic::CreateSuperSampleRASFct(vtkImageData *input, const do
     reslicer->SetInterpolationModeToNearestNeighbor();
   }
 
+
+
   reslicer->SetResliceTransform(resampleTransform);
   reslicer->SetOutputExtent(0, outputExtent[0]-1, 0, outputExtent[1]-1, 0, outputExtent[2]-1);
   reslicer->SetOutputSpacing(1.,1.,1.);
@@ -504,6 +511,43 @@ int vtkChangeTrackerLogic::CreateSuperSampleRASFct(vtkImageData *input, const do
   changeInf->SetOutputOrigin(0.,0.,0.);
   changeInf->SetOutputSpacing(1.,1.,1.);
   changeInf->Update();
+
+  if(0)
+    {    // debug
+    vtkIndent indent;
+    static int counter = 1;
+    char logname[255], inputname[255], outputname[255];
+    std::ofstream logStream(logname);
+
+    sprintf(logname, "resample_%i.log", counter);
+    sprintf(inputname, "input_%i.nrrd", counter);
+    sprintf(outputname, "output_%i.nrrd", counter);
+    counter++;
+
+    logStream << "outputIJKToRAS: " << std::endl;
+    outputIJKToRAS->PrintSelf(logStream, indent);
+    logStream << "volumeXformInv: " << std::endl;
+    volumeXformInv->PrintSelf(logStream, indent);
+    logStream << "inputRASToIJK: " << std::endl;
+    inputRASToIJK->PrintSelf(logStream, indent);
+
+    vtkITKImageWriter *iwriter = vtkITKImageWriter::New(); 
+    iwriter->SetInput(inputImage); 
+    iwriter->SetFileName(inputname);
+    iwriter->SetRasToIJKMatrix(inputRASToIJK);
+    iwriter->SetUseCompression(1);
+    iwriter->Write();
+    iwriter->Delete();
+
+    vtkITKImageWriter *owriter = vtkITKImageWriter::New(); 
+    owriter->SetInput(changeInf->GetOutput()); 
+    owriter->SetFileName(outputname);
+    owriter->SetRasToIJKMatrix(outputRASToIJK);
+    owriter->SetUseCompression(1);
+    owriter->Write();
+    owriter->Delete();
+    }
+
 
   // rescale the output ROI, since the analysis scripts expect the input
   // intensities are in a certain range
