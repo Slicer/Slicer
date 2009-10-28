@@ -354,6 +354,7 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
         SuperSampleSpacing = inputSpacing[1];
       if(SuperSampleSpacing>inputSpacing[2])
         SuperSampleSpacing = inputSpacing[2];
+      SuperSampleSpacing *= 0.5;
       break;}
     default:
       std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
