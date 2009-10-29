@@ -1963,13 +1963,11 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
           snode = vtkMRMLSliceNode::SafeDownCast (
             this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceNode"));
           
-          if (!strcmp(snode->GetLayoutName(), "Red") ||
-              !strcmp(snode->GetLayoutName(), "Yellow") ||
-              !strcmp(snode->GetLayoutName(), "Green"))
-            continue;
-          
-          this->MRMLScene->SaveStateForUndo ( snode );
-          snode->SetSliceVisible ( !vis );
+          if (strncmp(snode->GetLayoutName(), "Compare", 7) == 0)
+            {
+            this->MRMLScene->SaveStateForUndo ( snode );
+            snode->SetSliceVisible ( !vis );
+            }
           }
         }
       else
@@ -1979,11 +1977,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
           snode = vtkMRMLSliceNode::SafeDownCast (
             this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceNode"));
           
-          if (!strcmp(snode->GetLayoutName(), "Red") ||
-              !strcmp(snode->GetLayoutName(), "Yellow") ||
-              !strcmp(snode->GetLayoutName(), "Green"))
-            {    
-            
+          if (strncmp(snode->GetLayoutName(), "Compare", 7) != 0)
+            {            
             this->MRMLScene->SaveStateForUndo ( snode );
             snode->SetSliceVisible ( !vis );
             }
@@ -2889,9 +2884,8 @@ int vtkSlicerSliceControllerWidget::UpdateCompareView ( double newValue )
         layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
         }
       
-      if ( strcmp(layoutname, "Red") == 0 ||
-           strcmp(layoutname, "Yellow") == 0 ||
-           strcmp(layoutname, "Green") == 0)
+      if ( strncmp(layoutname, "Compare", 7) != 0
+           && strcmp(layoutname, "Red") != 0 )
         continue;
       
       if ( sgui->GetLogic() &&  sgui->GetSliceNode() &&
