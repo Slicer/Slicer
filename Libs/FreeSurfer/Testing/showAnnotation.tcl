@@ -5,7 +5,7 @@ set fileName /projects/birn/freesurfer/data/bert/label/lh.aparc.annot
 set _id 4
 set model [$::slicer3::MRMLScene GetNodeByID vtkMRMLModelNode${_id}]
 set displaynode [$::slicer3::MRMLScene GetNodeByID vtkMRMLModelDisplayNode${_id}]
-set actor [[$::slicer3::ApplicationGUI GetViewerWidget] GetActorByID vtkMRMLModelNode${_id}]
+set actor [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetActorByID vtkMRMLModelNode${_id}]
 set mapper [$actor GetMapper]
 
 if [file exists $fileName] {

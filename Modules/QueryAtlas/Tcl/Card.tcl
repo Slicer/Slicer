@@ -46,7 +46,7 @@ proc randRange {min max} {
 }
 
 proc Slicer3TestCards {} {
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
   # TODO this line below was commented, if it is used make sure the corresponding
   # file is both configure'ed to the build dir and installed
   #set icondir $::env(Slicer3_HOME)/../Slicer3/Utilities/Launcher/3DSlicerLogoICOimages
@@ -60,7 +60,7 @@ proc Slicer3TestCards {} {
 }
 
 proc TestCards {} {
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
   set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
   foreach icon [glob $icondir/*.png] {
     set card [Card #auto $renderWidget]

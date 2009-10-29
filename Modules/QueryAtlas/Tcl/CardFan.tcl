@@ -1,6 +1,6 @@
 
 proc TestFan {} {
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
   set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
   set icons [lrange [glob $icondir/*.png] 0 4]
   set cardFan [CardFan #auto [llength $icons]]
@@ -69,7 +69,7 @@ foreach param {anchor radius spacing} {
 # ------------------------------------------------------------------
 itcl::body CardFan::constructor {count} {
 
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
 
   for {set c 0} {$c < $count} {incr c} {
     lappend _cards [Card ::#auto $renderWidget]

@@ -483,7 +483,7 @@ void vtkMimxModPointWidget::OnMouseMove()
         double focalPoint[4], pickPoint[4], prevPickPoint[4];
         double z;
 
-        vtkCamera *camera = this->CurrentRenderer->GetActiveCamera();
+        vtkCamera *camera = this->CurrentRenderer->IsActiveCameraCreated() ? this->CurrentRenderer->GetActiveCamera() : NULL;
         if ( !camera )
         {
                 return;

@@ -200,7 +200,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       // update number of input channels
       if (this->GetNumberOfTargetInputChannels() != tmpVec.size())
       {
-        this->SetNumberOfTargetInputChannels(tmpVec.size());
+      this->SetNumberOfTargetInputChannels((int)tmpVec.size());
       }
 
       // copy data
@@ -223,7 +223,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       // update number of input channels
       if (this->GetNumberOfTargetInputChannels() != tmpVec.size())
       {
-        this->SetNumberOfTargetInputChannels(tmpVec.size());
+      this->SetNumberOfTargetInputChannels((int)tmpVec.size());
       }
 
       // copy data
@@ -638,7 +638,7 @@ void vtkMRMLEMSTreeParametersLeafNode::SetLogCovariance(int row, int column,
 //----------------------------------------------------------------------------
 int vtkMRMLEMSTreeParametersLeafNode::GetNumberOfSamplePoints() const
 {
-  return this->DistributionSamplePointsRAS.size();
+  return (int)this->DistributionSamplePointsRAS.size();
 }
 
 //----------------------------------------------------------------------------

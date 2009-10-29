@@ -68,7 +68,7 @@ public:
   // Description:
   // Gets the number of reserved terms
   virtual int GetNumberOfReservedTerms() {
-    return reservedTerms.size();
+    return (int)reservedTerms.size();
   }
 
   // Description:

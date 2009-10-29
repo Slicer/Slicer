@@ -689,7 +689,8 @@ void vtkMimxBoundingBoxWidget::OnMouseMove()
   double z;
 
   vtkRenderer *renderer = this->Interactor->FindPokedRenderer(X,Y);
-  vtkCamera *camera = renderer->GetActiveCamera();
+  vtkCamera *camera = renderer->IsActiveCameraCreated() ? renderer->GetActiveCamera() : NULL;
+
   if ( !camera )
     {
     return;

@@ -962,7 +962,7 @@ void vtkMimxViewMergePointsWidget::CrtlMouseMoveCallback(vtkAbstractWidget *w)
   double z;
 
   vtkRenderer *renderer = Self->Interactor->FindPokedRenderer(X,Y);
-  vtkCamera *camera = renderer->GetActiveCamera();
+  vtkCamera *camera = renderer->IsActiveCameraCreated() ? renderer->GetActiveCamera() : NULL;
   if ( !camera )
     {
     return;

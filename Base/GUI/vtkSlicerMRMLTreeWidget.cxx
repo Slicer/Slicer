@@ -488,10 +488,12 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLNode *calldata_node = reinterpret_cast<vtkMRMLNode *>(callData);
   vtkMRMLTransformableNode *calldata_tnode = 
     vtkMRMLTransformableNode::SafeDownCast(calldata_node);
+  vtkMRMLCameraNode *camera_node = vtkMRMLCameraNode::SafeDownCast(calldata_node);
+  vtkMRMLViewNode *view_node = vtkMRMLViewNode::SafeDownCast(calldata_node);
   if (this->MRMLScene &&
       ((event == vtkMRMLScene::SceneCloseEvent) || 
        (vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
-        calldata_tnode)))
+        (calldata_tnode || view_node || camera_node))))
     {
     this->UpdateTreeFromMRML();
     }

@@ -26,7 +26,7 @@ namespace eval LoadVolume {
     if { $loaders != "" } {
       set loader [lindex $loaders 0]
       array set o [$loader objects]
-      raise [$o(toplevel) GetWidgetName]
+      $o(toplevel) Display
     } else {
       set loader [LoadVolume #auto]
     }
@@ -180,6 +180,7 @@ itcl::body LoadVolume::constructor {} {
   $o(toplevel) SetTitle "Add Volume"
   set parent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
   $o(toplevel) SetMasterWindow $parent
+  $o(toplevel) ModalOn
   $o(toplevel) Create
 
   # delete this instance when the window is closed

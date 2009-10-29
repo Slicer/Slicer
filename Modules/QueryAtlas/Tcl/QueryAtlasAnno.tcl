@@ -185,7 +185,7 @@ proc QueryAtlasAddNewPickModels { mid } {
     $win SetStatusText "Creating new pick model..."
     $prog SetValue 0
 
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
     set renderer [$renderWidget GetRenderer]
 
     #--- add pick model and trappings for all new annotated models.
@@ -412,7 +412,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     set p [expr $progress + ( $pinc/8.0 ) ]
                     $prog SetValue $p
                     
-                    set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+                    set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
                     unset -nocomplain  ::QA(labelMap_$id)
 
                     $viewer UpdateFromMRML
@@ -728,7 +728,7 @@ proc QueryAtlasInitialize { dataset annoPath } {
     #--- make sure the render window and interactor window
     #--- are the same size -- otherwise the annotations don't
     #--- seem to show up.
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
     set renderWindow [ $renderWidget GetRenderWindow ]
     set renderWindowInteractor [ $renderWindow GetInteractor ]
     set wsize [ $renderWindow GetSize ]

@@ -875,7 +875,8 @@ void vtkMimxMeshActor::EnableMeshCuttingPlane( )
   this->CuttingPlaneWidget->PlaceWidget();
   if(this->Renderer)
     {
-    vtkCamera *camera = Renderer->GetActiveCamera();
+    vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
+
     double normal[3];
     camera->GetViewPlaneNormal(normal);
     if(this->InvertCuttingPlane)
@@ -1640,7 +1641,7 @@ void vtkMimxMeshActor::EnableElementSetCuttingPlane( std::string setName )
       this->CuttingPlaneWidget->PlaceWidget();
       if(this->Renderer)
         {
-        vtkCamera *camera = Renderer->GetActiveCamera();
+        vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
         double normal[3];
         camera->GetViewPlaneNormal(normal);
         if(this->InvertCuttingPlane)

@@ -356,7 +356,12 @@ void vtkSlicerViewerInteractorStyle::Rotate()
     }
   else
     {
-    camera = this->CurrentRenderer->GetActiveCamera();
+    camera = this->CurrentRenderer->IsActiveCameraCreated() ? this->CurrentRenderer->GetActiveCamera() : NULL;
+    }
+
+  if (!camera)
+    {
+    return;
     }
 
   camera->Azimuth(rxf);
@@ -412,7 +417,12 @@ void vtkSlicerViewerInteractorStyle::Spin()
     }
   else
     {
-    camera = this->CurrentRenderer->GetActiveCamera();
+    camera = this->CurrentRenderer->IsActiveCameraCreated() ? this->CurrentRenderer->GetActiveCamera() : NULL;
+    }
+
+  if (!camera)
+    {
+    return;
     }
 
   camera->Roll(newAngle - oldAngle);
@@ -445,7 +455,12 @@ void vtkSlicerViewerInteractorStyle::Pan()
     }
   else
     {
-    camera = this->CurrentRenderer->GetActiveCamera();
+    camera = this->CurrentRenderer->IsActiveCameraCreated() ? this->CurrentRenderer->GetActiveCamera() : NULL;
+    }
+
+  if (!camera)
+    {
+    return;
     }
 
   camera->GetFocalPoint(viewFocus);
@@ -524,7 +539,12 @@ void vtkSlicerViewerInteractorStyle::Dolly(double factor)
     }
   else
     {
-    camera = this->CurrentRenderer->GetActiveCamera();
+    camera = this->CurrentRenderer->IsActiveCameraCreated() ? this->CurrentRenderer->GetActiveCamera() : NULL;
+    }
+
+  if (!camera)
+    {
+    return;
     }
 
   if (camera->GetParallelProjection())

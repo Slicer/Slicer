@@ -2,7 +2,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkSlicerViewerWidget.h"
 #include "vtkSlicerROIDisplayWidget.h"
 
 #include "vtkKWFrameWithLabel.h"

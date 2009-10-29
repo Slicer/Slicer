@@ -86,7 +86,7 @@ proc XcedeCatalogImport { xcedeFile } {
         
         #--- update main viewer and slice viewers.
         $::slicer3::MRMLScene Modified
-        [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
+        [$::slicer3::ApplicationGUI GetActiveViewerWidget ] RequestRender
         set ns [[$::slicer3::ApplicationGUI GetSlicesGUI] GetNumberOfSliceGUI]
 
         set slicesGUI [$::slicer3::ApplicationGUI GetSlicesGUI]

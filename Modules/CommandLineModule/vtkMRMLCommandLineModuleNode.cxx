@@ -419,7 +419,7 @@ int
 vtkMRMLCommandLineModuleNode
 ::GetNumberOfRegisteredModules ()
 { 
-  return RegisteredModules->size(); 
+  return (int)RegisteredModules->size(); 
 }
 
 const char* 

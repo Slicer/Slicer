@@ -134,7 +134,7 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
   vtkMatrix4x4 *viewToWorldMatrix = vtkMatrix4x4::New();
   float in[4], out[4];
 
-  vtkCamera *cam = ren->GetActiveCamera();
+  vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
   ren->ComputeAspect(); 
   double *aspect = ren->GetAspect();
   

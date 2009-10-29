@@ -2,19 +2,16 @@
 // .SECTION Description
 // Main Camera GUI and mediator methods for slicer3. 
 
-
 #ifndef __vtkSlicerCamerasGUI_h
 #define __vtkSlicerCamerasGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 
-
-#include "vtkMRMLCameraNode.h"
-
-#include "vtkSlicerNodeSelectorWidget.h"
-
+class vtkMRMLCameraNode;
+class vtkSlicerNodeSelectorWidget;
 class vtkKWCheckButton;
+class vtkSlicerCamerasGUIInternals;
 
 // Description:
 // This class implements Slicer's Camera GUI
@@ -37,26 +34,40 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCamerasGUI : public vtkSlicerModuleGUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-
     // Description:
     // Class's mediator methods for processing events invoked by
     // either the Logic, MRML or GUI.
-    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
-    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessGUIEvents(
+      vtkObject *caller, unsigned long event, void *callData);
+    virtual void ProcessMRMLEvents(
+      vtkObject *caller, unsigned long event, void *callData);
     
     // Description:
     // Describe behavior at module startup and exit.
     virtual void Enter ( );
     virtual void Exit ( );
 
-    void UpdateCameraSelector();
+    // Description:
+    // Update selectors
+    virtual void UpdateViewSelector();
+    virtual void UpdateCameraSelector();
+    virtual void ScheduleUpdateCameraSelector();
+
+    // Description:
+    // Callbacks
+    virtual void UpdateCameraSelectorCallback();
 
  protected:
     vtkSlicerCamerasGUI ( );
     virtual ~vtkSlicerCamerasGUI ( );
     
-    vtkKWCheckButton *ActiveCheckButton;
     vtkSlicerNodeSelectorWidget *CameraSelectorWidget;
+    vtkSlicerNodeSelectorWidget *ViewSelectorWidget;
+
+  // PIMPL Encapsulation for STL containers
+  //BTX
+  vtkSlicerCamerasGUIInternals *Internals;
+  //ETX
 
  private:
     vtkSlicerCamerasGUI ( const vtkSlicerCamerasGUI& ); // Not implemented.

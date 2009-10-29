@@ -1475,7 +1475,7 @@ void vtkChangeTrackerROIStep::UpdateROIRender()
                                                    node->GetROIMin(1), node->GetROIMax(1),
                                                    node->GetROIMin(2), node->GetROIMax(2));
       this->Render_Mapper->CroppingOn();
-      this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       }
 
     if(this->Render_Mapper)
@@ -1486,7 +1486,7 @@ void vtkChangeTrackerROIStep::UpdateROIRender()
                                                    node->GetROIMin(2), node->GetROIMax(2));
         
       this->Render_Mapper->CroppingOn();
-      this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       }
     }
 }

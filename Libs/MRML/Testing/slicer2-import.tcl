@@ -11,7 +11,7 @@
 #after idle {
 #  puts -nonewline "importing..."
 #  ImportSlicer2Scene c:/data/tutorial/tutorial.xml
-#  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+#  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
 #  [$viewer GetMainViewer] Reset
 #  puts "done"
 #}

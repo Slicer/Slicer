@@ -205,6 +205,15 @@ public:
   // Get/Set the enable renderer
   vtkGetMacro( EnableRender, int);
   vtkSetMacro( EnableRender, int);
+
+  // Description:
+  // Events
+  //BTX
+  enum
+  {
+    ActiveCameraChangedEvent   = 30000
+  };
+  //ETX
   
 protected:
   vtkSlicerViewerWidget();
@@ -239,7 +248,7 @@ protected:
   void AddAxisActors();
   void UpdateAxis();
 
-  int UpdateClipSlicesFormMRML();
+  int UpdateClipSlicesFromMRML();
 
   void CheckModelHierarchies();
   void AddHierarchiyObservers();
@@ -257,6 +266,9 @@ protected:
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
 
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
+
+  void AddCameraObservers();
+  void RemoveCameraObservers();
 
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
   
@@ -304,6 +316,8 @@ protected:
   vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
 
   vtkMRMLCameraNode *CameraNode;
+  int CameraNodeWasCreated;
+
   vtkMRMLViewNode *ViewNode;
 
   bool SceneClosing;

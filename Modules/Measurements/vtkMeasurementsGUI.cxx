@@ -311,7 +311,7 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if (this->TransformWidget->GetInteractor() == NULL)
         {
-        this->TransformWidget->SetInteractor(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+        this->TransformWidget->SetInteractor(appGUI->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
         double bounds[6] = {-50, 0, -50, 0, 0, 0};
         this->TransformRepresentation->PlaceWidget(bounds);
         }
@@ -392,9 +392,9 @@ void vtkMeasurementsGUI::BuildGUI ( )
   
   this->RulerWidget = vtkMeasurementsRulerWidget::New ( );
   this->RulerWidget->SetMRMLScene(this->GetMRMLScene() );
-  if (this->GetApplicationGUI()->GetViewerWidget())
+  if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {
-    this->RulerWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
+    this->RulerWidget->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
     }
   else { vtkWarningMacro("Unable to pass the viewer widget to the ruler widget"); }
   this->RulerWidget->AddMRMLObservers();
@@ -415,9 +415,9 @@ void vtkMeasurementsGUI::BuildGUI ( )
   
   this->AngleWidget = vtkMeasurementsAngleWidget::New ( );
   this->AngleWidget->SetMRMLScene(this->GetMRMLScene() );
-  if (this->GetApplicationGUI()->GetViewerWidget())
+  if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {
-    this->AngleWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
+    this->AngleWidget->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
     }
   else { vtkWarningMacro("Unable to pass the viewer widget to the ruler widget"); }
   this->AngleWidget->AddMRMLObservers();

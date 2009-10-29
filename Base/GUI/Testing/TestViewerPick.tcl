@@ -1,5 +1,5 @@
 
-set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
 set renderWindow [$renderWidget GetRenderWindow]
 set renderer [$renderWidget GetRenderer]
 

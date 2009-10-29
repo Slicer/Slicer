@@ -36,7 +36,7 @@ public:
   virtual void GetItemsToUse ( );
 
   virtual int GetNumberOfItemsToUse( ) {
-  return useTerms.size();
+    return (int)useTerms.size();
   }
   virtual const char *GetNthItemToUse ( int ind ) {
   return useTerms[ind].c_str();

@@ -1798,7 +1798,12 @@ int vtkSlicerFixedPointVolumeRayCastMapper::ComputeRowBounds(vtkRenderer *ren,
 
     int insideFlag = 0;
     double camPos[4];
+    vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+    if (camera)
+      {
     ren->GetActiveCamera()->GetPosition( camPos );
+      }
+
     camPos[3] = 1.0;
     this->WorldToVoxelsMatrix->MultiplyPoint( camPos, camPos );
     if ( camPos[3] )
@@ -2196,7 +2201,7 @@ void vtkSlicerFixedPointVolumeRayCastMapper::ComputeMatrices( double inputOrigin
                                                              vtkVolume *vol )
 {
     // Get the camera from the renderer
-    vtkCamera *cam = ren->GetActiveCamera();
+    vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
 
     // Get the aspect ratio from the renderer. This is needed for the
     // computation of the perspective matrix

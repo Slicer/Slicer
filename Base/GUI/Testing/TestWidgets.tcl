@@ -204,7 +204,7 @@ proc SlicePlaneNodeCallback {planeWidget} {
 
 proc TestPlaneWidget {} {
 
-  set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+  set rwi [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindowInteractor]
 
   set planeWidget [vtkImplicitPlaneWidget New]
   $planeWidget SetInteractor $rwi

@@ -21,11 +21,6 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-
-
-// for pick events
-#include "vtkSlicerViewerWidget.h"
-
 class vtkBoxWidgetCallback : public vtkCommand
 {
 public:
@@ -239,13 +234,19 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::RequestRender()
 {
+  if (this->MainViewerWidget)
+    {
   this->MainViewerWidget->RequestRender();
+}
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::Render()
 {
+  if (this->MainViewerWidget)
+    {
   this->MainViewerWidget->Render();
+}
 }
 
 //---------------------------------------------------------------------------

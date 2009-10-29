@@ -49,16 +49,12 @@ public:
   
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "View";};
-
-  // Description:
-  // When a view is set Active, make other views inactive.
-  virtual void MakeOthersInActive();
+  virtual const char* GetNodeTagName();
 
   // Description:
   // Indicates whether or not the view is active
   vtkGetMacro (Active, int );
-  vtkSetMacro (Active, int );
+  virtual void SetActive(int);
   
   // Description:
   // Indicates if the box is visible
@@ -199,6 +195,7 @@ public:
       StereoModeEvent,
       VisibilityEvent,
       BackgroundColorEvent,
+      ActiveModifiedEvent
     };
   //ETX 
 
@@ -252,6 +249,9 @@ protected:
   // Indicates whether or not the View is active
   int Active;
   
+  // Description:
+  // When a view is set Active, make other views inactive.
+  virtual void RemoveActiveFlagInScene();
 };
 
 #endif

@@ -867,13 +867,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     vtkSlicerVolumePropertyWidget *callerObjectSVP = vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
     if(callerObjectSVP == this->SVP_VolumePropertyWidget && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
     if(callerObjectSVP == this->SVP_VolumePropertyWidgetFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
       this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
   }
@@ -892,7 +892,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
 
@@ -902,7 +902,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
 
@@ -912,7 +912,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
   }
@@ -927,7 +927,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
       this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
   }
@@ -942,7 +942,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 
       this->Gui->GetLogic()->SetCPURaycastParameters(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
     else if (eid == vtkKWCheckButton::SelectedStateChangedEvent && this->CroppingButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
@@ -953,7 +953,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       if (vspNode->GetROINode()->GetVisibility() == 0)
         vspNode->GetROINode()->VisibilityOn();
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
     else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())
@@ -1000,7 +1000,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->Gui->GetLogic()->FitROIToVolume(vspNode);
       this->Gui->GetLogic()->SetROI(vspNode);
 
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
   }
@@ -1185,7 +1185,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechnique(int id)
 
   this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueII(int id)
@@ -1196,7 +1196,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueII(int id)
 
   this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
@@ -1207,7 +1207,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
 
   this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
@@ -1223,13 +1223,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
 
   this->Gui->GetLogic()->SetGPUMemorySize(vspNode);
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
 {
   //abort current (cpu ray cast) rendering
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
@@ -1291,7 +1291,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     break;
   }
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
@@ -1301,7 +1301,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
   {
     this->RenderingPaused = 0;
     this->Gui->GetLogic()->SetVolumeVisibility(1);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
     this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());;
   }
   //Pause Rendering
@@ -1309,7 +1309,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
   {
     this->RenderingPaused = 1;
     this->Gui->GetLogic()->SetVolumeVisibility(0);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
     this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetInvisibleIcon());
   }
 }
@@ -1340,7 +1340,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 
   vspNode->SetThreshold(this->RA_Threshold->GetRange());
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
@@ -1370,7 +1370,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
 
   vspNode->SetThreshold(this->RA_ThresholdFg->GetRange());
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
@@ -1381,7 +1381,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
 
-  this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
@@ -1400,7 +1400,7 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   {
     if (this->CPURayCastingInteractionFlag == 1)//avoid endless loop
     {
-      this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       this->CPURayCastingInteractionFlag = 0;
     }
   }

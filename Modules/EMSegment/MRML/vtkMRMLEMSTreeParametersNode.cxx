@@ -235,7 +235,7 @@ void vtkMRMLEMSTreeParametersNode::ReadXMLAttributes(const char** attrs)
       // update number of input channels
       if (this->NumberOfTargetInputChannels != tmpVec.size())
       {
-        this->SetNumberOfTargetInputChannels(tmpVec.size());
+      this->SetNumberOfTargetInputChannels((int)tmpVec.size());
       }
 
       // copy data

@@ -446,7 +446,7 @@ proc QueryAtlasSetStatistics { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddBIRNLogo {} {
 
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
   set interactor [$renderWidget GetRenderWindowInteractor] 
 
   #
@@ -521,7 +521,7 @@ proc QueryAtlasAddBIRNLogo {} {
   set logoFile $::Slicer3_HOME/share/FreeSurfer/Testing/birn-new-big.png
   set ::QA(logo,actor) $textureActor
 
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
   set renderWidget [$viewer GetMainViewer]
   set renderer [$renderWidget GetRenderer]
   $renderer AddActor2D $::QA(logo,actor)
@@ -673,7 +673,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
             set displayNodeID [$modelNode GetDisplayNodeID]
             set displayNode [$::slicer3::MRMLScene GetNodeByID $displayNodeID]
             set storageNode [ $modelNode GetStorageNode ]
-            set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+            set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
             unset -nocomplain  ::QA(labelMap_$mid)
 
             if { [ string first "lh." [$modelNode GetName]] >= 0 } {
@@ -931,7 +931,7 @@ proc QueryAtlasInitializePicker {} {
 
     QueryAtlasAddInteractorObservers
 
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
     set renderer [$renderWidget GetRenderer]    
     for { set m 0 } { $m < $numQmodels } { incr m } {
         #--- add the query actor to the scene and
@@ -962,7 +962,7 @@ proc QueryAtlasAddInteractorObservers { } {
     set ::QA(endRenderEventTag) ""
 
     if {[info exists ::QA(propPicker) ] } {
-        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+        set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
         set renderer [$renderWidget GetRenderer]
         set interactor [$renderWidget GetRenderWindowInteractor] 
         set style [$interactor GetInteractorStyle] 
@@ -984,7 +984,7 @@ proc QueryAtlasAddInteractorObservers { } {
 proc QueryAtlasRemoveInteractorObservers { } {
 
 
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
     set renderer [$renderWidget GetRenderer]
     set interactor [$renderWidget GetRenderWindowInteractor] 
     set style [$interactor GetInteractorStyle] 
@@ -1028,7 +1028,7 @@ proc QueryAtlasRenderView {} {
     #
     # get the renderer related instances
     #
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
     set renderWindow [$renderWidget GetRenderWindow]
     set renderer [$renderWidget GetRenderer]
 
@@ -1200,7 +1200,7 @@ proc QueryAtlasPCoordsToWorld {cell pCoords} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasWorldToScreen { r a s } {
 
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
   set renderWidget [$viewer GetMainViewer]
   set camera [[$renderWidget GetRenderer] GetActiveCamera]
   set tkwindow [$renderWidget  GetWidgetName]
@@ -1402,7 +1402,7 @@ proc QueryAtlasPickCallback {} {
     #
     # get access to the standard view parts
     #
-    set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+    set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
     set renderWidget [$viewer GetMainViewer]
     set renderWindow [$renderWidget GetRenderWindow]
     set interactor [$renderWidget GetRenderWindowInteractor] 
@@ -1591,7 +1591,7 @@ proc QueryAtlasPickCallback {} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasUpdateCursor {} {
 
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
   set renderWidget [$viewer GetMainViewer]
   set renderer [$renderWidget GetRenderer]
 
@@ -1744,7 +1744,7 @@ proc QueryAtlasCursorVisibility { onoff } {
         }        
     }
 
-    set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+    set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
     $viewer RequestRender
 }
 
@@ -1760,7 +1760,7 @@ proc QueryAtlasCursorVisibility { onoff } {
 proc QueryAtlasMenuCreate { state } {
 
     if { ($::QA(lastLabels) != "background") && ($::QA(lastLabels) != "Not Labeled") && ($::QA(lastLabels) != "Unknown") && ($::QA(lastLabels) != "") } {
-        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+        set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
         set interactor [$renderWidget GetRenderWindowInteractor] 
         set position [$interactor GetEventPosition]
         set ::QA(cardRASAnchor) $::QA(CurrentRASPoint)

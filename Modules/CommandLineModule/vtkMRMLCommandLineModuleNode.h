@@ -130,10 +130,10 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
   const char* GetModuleTitle () { return this->GetModuleDescription().GetTitle().c_str(); };
   const char* GetModuleTarget () { return this->GetModuleDescription().GetTarget().c_str(); };
   const char* GetModuleType () { return this->GetModuleDescription().GetType().c_str(); };
-  unsigned int GetNumberOfParameterGroups () { return this->GetModuleDescription().GetParameterGroups().size(); }
+  unsigned int GetNumberOfParameterGroups () { return (int)this->GetModuleDescription().GetParameterGroups().size(); }
   unsigned int GetNumberOfParametersInGroup ( unsigned int group ) { 
     if ( group >= this->GetModuleDescription().GetParameterGroups().size() ) { return 0; }
-    return this->GetModuleDescription().GetParameterGroups()[group].GetParameters().size();
+    return (unsigned int)this->GetModuleDescription().GetParameterGroups()[group].GetParameters().size();
   }
   const char* GetParameterGroupLabel ( unsigned int group ) { return this->GetModuleDescription().GetParameterGroups()[group].GetLabel().c_str(); }
   const char* GetParameterGroupDescription ( unsigned int group ) { return this->GetModuleDescription().GetParameterGroups()[group].GetDescription().c_str(); }

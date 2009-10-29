@@ -436,7 +436,11 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
     {
     // Get the camera position
     double camPos[4];
-    ren->GetActiveCamera()->GetPosition(camPos);
+    vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+    if (cam)
+      {
+      cam->GetPosition(camPos);
+      }
     
     double volBounds[6];
     this->GetInput()->GetBounds(volBounds);
@@ -1486,8 +1490,12 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::GetLightInformation(
   double cameraPosition[3];
   double cameraFocalPoint[3];
   
-  ren->GetActiveCamera()->GetPosition( cameraPosition );
-  ren->GetActiveCamera()->GetFocalPoint( cameraFocalPoint );
+  vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+  if (cam)
+    {
+    cam->GetPosition( cameraPosition );
+    cam->GetFocalPoint( cameraFocalPoint );
+    }
   
   double viewDirection[3];
   
@@ -1613,8 +1621,12 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupProgramLocalsForShadingFP(
   double cameraPosition[3];
   double cameraFocalPoint[3];
   
-  ren->GetActiveCamera()->GetPosition( cameraPosition );
-  ren->GetActiveCamera()->GetFocalPoint( cameraFocalPoint );
+  vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+  if (cam)
+    {
+    cam->GetPosition( cameraPosition );
+    cam->GetFocalPoint( cameraFocalPoint );
+    }
   
   volumeTransform->TransformPoint( cameraPosition, cameraPosition );
   volumeTransform->TransformPoint( cameraFocalPoint, cameraFocalPoint );

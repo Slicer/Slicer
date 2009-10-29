@@ -667,13 +667,9 @@ void vtkSlicerViewControlGUI::UpdateSliceGUIInteractorStyles ( )
     }
 }
 
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateFromMRML()
 {
-
-
   // called:
   // 1. whenever any new node is created or deleted
   // 2. when a new view or camera has been selected
@@ -687,9 +683,6 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
   this->UpdateSceneSnapshotsFromMRML();
   this->RequestNavigationRender ( );
 }
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
@@ -804,30 +797,38 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
     return;
     }
 
-  vtkMRMLViewNode *node =  vtkMRMLViewNode::SafeDownCast (
-       this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLViewNode"));
+  // WHY??? why can you set the ViewNode and there is still code all
+  // over this class that was picking the first View Node in the scene???
+  // Anyway...
+  // Let's find the active view (instead of the first view)
+  // IMHO, this design is still wrong. How do yo create two instances of
+  // this class that would control two different views?? It should up to
+  // the app object to assign it the correct view node...
 
-  if ( this->ViewNode != NULL && node != NULL && this->ViewNode != node)
+  vtkSlicerApplicationGUI *p = 
+    vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+  vtkMRMLViewNode *node = NULL;
+  int nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
+  for (int n=0; n<nnodes; n++)
     {
-    // local ViewNode is out of sync with the scene
-    vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
+    node = vtkMRMLViewNode::SafeDownCast (
+      p->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLViewNode"));
+    if (node && node->GetActive() && this->ViewNode != node)
+    {
+      break;
     }
-  if ( this->ViewNode != NULL && this->MRMLScene->GetNodeByID(this->ViewNode->GetID()) == NULL)
-    {
-    // local node not in the scene
-    vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
     }
-  if ( this->ViewNode == NULL )
+
+  if (this->ViewNode == node)
     {
-    if ( node == NULL )
-      {
-      // no view in the scene and local
-      // create an active camera
-      node = vtkMRMLViewNode::New();
-      this->MRMLScene->AddNode(node);
-      node->Delete();
+    return;
       }
 
+  vtkSetAndObserveMRMLNodeMacro(this->ViewNode, NULL);
+
+  if (node)
+    {
+    this->ViewNode = node;
     vtkIntArray  *events = vtkIntArray::New();
     events->InsertNextValue( vtkMRMLViewNode::AnimationModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::RenderModeEvent); 
@@ -839,8 +840,6 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
     events = NULL;
     }
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateSlicesFromMRML()
@@ -975,7 +974,7 @@ void vtkSlicerViewControlGUI::ResetNavigationCamera ( )
   double viewAngle = 20.0;
   
   vtkRenderer *ren = this->NavigationWidget->GetRenderer();
-  vtkCamera *cam = ren->GetActiveCamera();
+  vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
   
   ren->ComputeVisiblePropBounds( bounds );
   if (!vtkMath::AreBoundsInitialized(bounds))
@@ -1121,7 +1120,6 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
   // Right now this class contains state variables that will be moved
   // to a vtkMRMLViewNode in the next iteration.
 
-  
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
   if ( !app )
     {
@@ -1612,13 +1610,13 @@ void vtkSlicerViewControlGUI::MainViewZoom(double factor )
     {
     return;
     }
-    ren = appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer();    
-
+  vtkSlicerViewerWidget* viewer_widget = appGUI->GetActiveViewerWidget();
+  ren = viewer_widget ? viewer_widget->GetMainViewer()->GetRenderer() : NULL;    
   if ( !ren )
     {
     return;
     }
-  cam = ren->GetActiveCamera();
+  cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
 
   if ( !cam )
     {
@@ -1635,7 +1633,7 @@ void vtkSlicerViewControlGUI::MainViewZoom(double factor )
     ren->ResetCameraClippingRange();
     ren->UpdateLightsGeometryToFollowCamera();
     }
-  appGUI->GetViewerWidget()->GetMainViewer()->Render();
+  viewer_widget->GetMainViewer()->Render();
   this->RequestNavigationRender();
 
   cam = NULL;
@@ -1728,18 +1726,27 @@ void vtkSlicerViewControlGUI::InitializeNavigationWidgetCamera ( )
     vtkCamera *navcam;
     vtkRenderer *ren;
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
-    cam = ren->GetActiveCamera();
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    ren = viewer_widget ? viewer_widget->GetMainViewer()->GetRenderer() : NULL;
+    if (ren)
+      {
+    cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+    if (cam)
+      {
     cam->GetPosition (camPos );
     cam->GetFocalPoint ( focalPoint );
-
-    navcam = this->NavigationWidget->GetRenderer()->GetActiveCamera();
+      navcam = this->NavigationWidget->GetRenderer()->IsActiveCameraCreated() ? this->NavigationWidget->GetRenderer()->GetActiveCamera() : NULL;
+      if (navcam)
+        {
     navcam->SetPosition ( camPos );
     navcam->SetFocalPoint ( focalPoint );
     navcam->ComputeViewPlaneNormal();
     navcam->SetViewUp( cam->GetViewUp() );
     this->FOVBoxActor->SetCamera (navcam);
     this->FOVBox->SetBoxTypeToOriented ( );
+    }
+      }
+    }
     }
 #endif
 }
@@ -1763,8 +1770,13 @@ void vtkSlicerViewControlGUI::ConfigureNavigationWidgetRender ( )
 
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     // 3DViewer's renderer and its camera
-    vtkRenderer *ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
-    vtkCamera *cam = ren->GetActiveCamera();
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    vtkRenderer *ren = viewer_widget ? viewer_widget->GetMainViewer()->GetRenderer() : NULL;
+    vtkCamera *cam = ren ? (ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL) : NULL;
+    if (!cam)
+      {
+      return;
+      }
     
     // 3DViewer's camera configuration
     double *focalPoint = cam->GetFocalPoint ( );
@@ -1778,7 +1790,7 @@ void vtkSlicerViewControlGUI::ConfigureNavigationWidgetRender ( )
 
     // configure navcam based on main renderer's camera
     vtkRenderer *navren = this->NavigationWidget->GetRenderer();
-    vtkCamera *navcam = this->NavigationWidget->GetRenderer()->GetActiveCamera();
+    vtkCamera *navcam = this->NavigationWidget->GetRenderer()->IsActiveCameraCreated() ? this->NavigationWidget->GetRenderer()->GetActiveCamera() : NULL;
 
     if ( navcam != NULL )
       {
@@ -1890,7 +1902,12 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
 
     // get estimate of Main Viewer's visible scene max dimension;
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    ren = viewer_widget ? viewer_widget->GetMainViewer()->GetRenderer() : NULL;
+    if (!ren)
+      {
+      return;
+      }
     ren->ComputeVisiblePropBounds( bounds );
     x = bounds[1] - bounds[0];
     y = bounds[3] - bounds[2];
@@ -1955,36 +1972,42 @@ void vtkSlicerViewControlGUI::MainViewSetStereo ( )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( )); 
     vtkMRMLViewNode *vn = this->GetActiveView();
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    if (!viewer_widget)
+      {
+      return;
+      }
+
     if ( vn != NULL )
       {
       int s = vn->GetStereoType();
       switch ( s )
         {
         case vtkMRMLViewNode::NoStereo:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
           break;
         case vtkMRMLViewNode::RedBlue:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToRedBlue();
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->SetStereoTypeToRedBlue();
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
           break;
         case vtkMRMLViewNode::Anaglyph:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToAnaglyph();
-          //p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAnaglyphColorSaturation(0.1);
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->SetStereoTypeToAnaglyph();
+          //viewer_widget->GetMainViewer()->GetRenderWindow()->SetAnaglyphColorSaturation(0.1);
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
           break;
         case vtkMRMLViewNode::CrystalEyes:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToCrystalEyes();
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->SetStereoTypeToCrystalEyes();
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
           break;
         case vtkMRMLViewNode::Interlaced:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToInterlaced();
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->SetStereoTypeToInterlaced();
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
           break;
         default:
-          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+          viewer_widget->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
           break;
         }
-      p->GetViewerWidget()->GetMainViewer()->Render();
+      viewer_widget->GetMainViewer()->Render();
       }
     } 
 }
@@ -2255,8 +2278,14 @@ void vtkSlicerViewControlGUI::MainViewResetFocalPoint ( )
       vn->SetAxisLabelsVisible ( 0 );
       }
 
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
+    vtkSlicerApplicationGUI *p = 
+      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    if (!viewer_widget)
+      {
+      return;
+      }
+    ren = viewer_widget->GetMainViewer()->GetRenderer();
     ren->ComputeVisiblePropBounds( bounds );
     x_cen = (bounds[1] + bounds[0]) / 2.0;
     y_cen = (bounds[3] + bounds[2]) / 2.0;
@@ -2296,8 +2325,12 @@ void vtkSlicerViewControlGUI::MainViewSetFocalPoint ( double x, double y, double
         cam->SetFocalPoint( x, y, z );
         cam->ComputeViewPlaneNormal ( );
         cam->OrthogonalizeViewUp();
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->GetMainViewer()->Render();
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();
+          }
         }
       }
     }
@@ -2350,8 +2383,12 @@ void vtkSlicerViewControlGUI::RockView ( )
         cam->OrthogonalizeViewUp ( );
         
         //Make the lighting follow the camera to avoid illumination changes
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->RequestRender();
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();
+          }
         }
       }
     }
@@ -2415,8 +2452,12 @@ void vtkSlicerViewControlGUI::SpinView ( int dir, double degrees )
         cam->OrthogonalizeViewUp ( );
 
         //Make the lighting follow the camera to avoid illumination changes
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->RequestRender();
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();
+          }
         }
       }  
     }
@@ -2432,25 +2473,26 @@ void vtkSlicerViewControlGUI::MainViewBackgroundColor ( double *color )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     // set background color
-    p->GetViewerWidget()->GetMainViewer()->SetRendererBackgroundColor ( color );
+    vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+    if (!viewer_widget)
+      {
+      return;
+      }
+    viewer_widget->GetMainViewer()->SetRendererBackgroundColor ( color );
     this->GetNavigationWidget()->SetRendererBackgroundColor ( color );
     // set axis label colors (prevent white on white)
 
     if ( color[0] == 1.0 && color[1] == 1.0 && color[2] == 1.0 )
       {
-      p->GetViewerWidget()->ColorAxisLabelActors (0.0, 0.0, 0.0 );
+      viewer_widget->ColorAxisLabelActors (0.0, 0.0, 0.0 );
       }
     else
       {
-      p->GetViewerWidget()->ColorAxisLabelActors (1.0, 1.0, 1.0 );
+      viewer_widget->ColorAxisLabelActors (1.0, 1.0, 1.0 );
       }
-    p->GetViewerWidget()->UpdateFromMRML();
+    viewer_widget->UpdateFromMRML();
     }
 }
-
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewVisibility ( )
@@ -2461,14 +2503,15 @@ void vtkSlicerViewControlGUI::MainViewVisibility ( )
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
-      p->GetViewerWidget()->UpdateFromMRML();
+      vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+      if (viewer_widget)
+        {
+        viewer_widget->UpdateFromMRML();
+        }
       }
     }
 }
   
-
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 {
@@ -2496,7 +2539,11 @@ void vtkSlicerViewControlGUI::MainViewSetProjection ( )
           cam->SetParallelScale ( vn->GetFieldOfView() );
           this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
           }
-        p->GetViewerWidget()->GetMainViewer()->Render();
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->Render();
+          }
         }
       }
     }
@@ -2510,10 +2557,11 @@ void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 void vtkSlicerViewControlGUI::MainViewPitch ( )
 {
   double deg, negdeg;
-  if ( this->ApplicationGUI && this->ViewNode )
+  vtkMRMLViewNode *vn = this->GetActiveView();
+  if ( this->ApplicationGUI && vn )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    deg = this->ViewNode->GetRotateDegrees ( );
+    deg = vn->GetRotateDegrees ( );
     negdeg = -deg;
   
     vtkMRMLCameraNode *cn = this->GetActiveCamera();
@@ -2522,8 +2570,12 @@ void vtkSlicerViewControlGUI::MainViewPitch ( )
       vtkCamera *cam = cn->GetCamera();
       cam->Elevation ( deg );
       cam->OrthogonalizeViewUp();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+      if (viewer_widget)
+        {
+        viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+        viewer_widget->GetMainViewer()->GetRenderer()->Render();
+        }
       }
     }
 }
@@ -2531,10 +2583,11 @@ void vtkSlicerViewControlGUI::MainViewPitch ( )
 void vtkSlicerViewControlGUI::MainViewRoll ( )
 {
 double deg, negdeg;
-  if ( this->ApplicationGUI && this->ViewNode )
+vtkMRMLViewNode *vn = this->GetActiveView();
+if ( this->ApplicationGUI && vn )
 {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    deg = this->ViewNode->GetRotateDegrees ( );
+    deg = vn->GetRotateDegrees ( );
     negdeg = -deg;
   
     vtkMRMLCameraNode *cn = this->GetActiveCamera();
@@ -2543,20 +2596,25 @@ double deg, negdeg;
       vtkCamera *cam = cn->GetCamera();
       cam->Roll ( deg );
       cam->OrthogonalizeViewUp();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+      if (viewer_widget)
+        {
+        viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+        viewer_widget->GetMainViewer()->GetRenderer()->Render();
       // this->NavZoomRender();        
       }
     }
+}
 }
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewYaw ( )
 {
   double deg, negdeg;
-  if ( this->ApplicationGUI && this->ViewNode )
+  vtkMRMLViewNode *vn = this->GetActiveView();
+  if ( this->ApplicationGUI && vn )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    deg = this->ViewNode->GetRotateDegrees ( );
+    deg = vn->GetRotateDegrees ( );
     negdeg = -deg;
   
     vtkMRMLCameraNode *cn = this->GetActiveCamera();
@@ -2565,10 +2623,14 @@ void vtkSlicerViewControlGUI::MainViewYaw ( )
       vtkCamera *cam = cn->GetCamera();
       cam->Azimuth ( deg );
       cam->OrthogonalizeViewUp();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+      if (viewer_widget)
+        {
+        viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+        viewer_widget->GetMainViewer()->GetRenderer()->Render();
       // this->NavZoomRender();        
       }
+    }
     }
 
 }
@@ -2716,12 +2778,16 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( const char *axis )
           cam->GetViewUp(up);
           vtkDebugMacro( "ViewUp is: " << up[0] << up[1] << up[2] );          
           }
-        appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        appGUI->GetViewerWidget()->GetMainViewer()->Render();
+        vtkSlicerViewerWidget* viewer_widget = appGUI->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();
         this->RequestNavigationRender();
         }
       }
     }
+}
 }
 
 
@@ -2831,12 +2897,16 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
           }
         cam->OrthogonalizeViewUp();
         cam->GetFocalPoint(fp);
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->GetMainViewer()->Render();
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();
         this->RequestNavigationRender();
         }
       }
     }
+}
 }
 
 
@@ -2895,15 +2965,19 @@ void vtkSlicerViewControlGUI::MainViewLookFrom ( const char *dir )
           cam->SetPosition (fp[0], fp[1]-widefov, fp[2] );
           cam->SetViewUp ( 0, 0, 1 );
           }
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->ResetCameraClippingRange ( );
+        vtkSlicerViewerWidget* viewer_widget = p->GetActiveViewerWidget();
+        if (viewer_widget)
+          {
+          viewer_widget->GetMainViewer()->GetRenderer()->ResetCameraClippingRange ( );
         cam->ComputeViewPlaneNormal();
         cam->OrthogonalizeViewUp();
-        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->GetMainViewer()->Render();      
+          viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+          viewer_widget->GetMainViewer()->Render();      
         this->RequestNavigationRender();
         }
        }
      }
+}
 }
 
 
@@ -3016,8 +3090,6 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     return;
     }
 
-
-
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
@@ -3034,7 +3106,6 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
      this->UpdateNavigationWidgetViewActors ( );
     }    
 
-  
   // has view been manipulated?
   if ( vnode != NULL )
     {
@@ -3897,47 +3968,57 @@ void vtkSlicerViewControlGUI::RemoveSliceEventObservers()
     }
 }
 
-
-
 //---------------------------------------------------------------------------
 vtkMRMLViewNode *vtkSlicerViewControlGUI::GetActiveView ( )
 {
-
+  // WHY??? why can you set the ViewNode and there is still code all
+  // over this class that was picking the first View Node in the scene???
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    // TODO: make sure we get active view here, not 0th view, when active views are available.
-    vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(p->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLViewNode"));
-    if ( this->ViewNode != vn )
+    vtkSlicerApplicationGUI *p = 
+      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    vtkMRMLViewNode *node = NULL;
+    int nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      node = vtkMRMLViewNode::SafeDownCast (
+        p->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLViewNode"));
+      if (node && node->GetActive() && this->ViewNode != node)
       {
       this->UpdateFromMRML ();
       }
     }
+    }
     return ( this->ViewNode );
 }
-
-
 
 //---------------------------------------------------------------------------
 vtkMRMLCameraNode *vtkSlicerViewControlGUI::GetActiveCamera()
 {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    // TODO: make sure we get active view here, not 0th view, when active cameras are available.
-    vtkMRMLCameraNode *cn = vtkMRMLCameraNode::SafeDownCast(p->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLCameraNode"));
-    if ( cn != NULL )  
+    vtkSlicerApplicationGUI *p = 
+      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI());    
+    vtkMRMLViewNode *vn = this->GetActiveView();
+    if (vn != NULL)
       {
-      return (cn );
+      std::vector<vtkMRMLNode*> cnodes;
+      int nnodes = 
+        p->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+      for (int n = 0; n < nnodes; n++)
+        {
+        vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
+        if (node &&
+            node->GetActiveTag() && 
+            !strcmp(node->GetActiveTag(), vn->GetID()))
+      {
+          return node;
+          }
+        }
       }
     }
   return ( NULL );
 }
-
-
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
@@ -3950,17 +4031,19 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
     }
 
   // Find current MainViewer; if there is none, do nothing.
-  if (  this->GetApplicationGUI()->GetViewerWidget() == NULL )
+  vtkSlicerViewerWidget* viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (  viewer_widget == NULL )
     {
     return;
     }
-  if (  this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer() == NULL )
+  if (  viewer_widget->GetMainViewer() == NULL )
     {
     return;
     }
 
   // If the interactor and these references are out of sync...
-  if ( ( this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->
+  if ( ( viewer_widget->GetMainViewer()->
          GetRenderWindowInteractor()->GetInteractorStyle() != this->MainViewerEvents ) )
     {
     // tear down pointer assignment
@@ -3968,11 +4051,7 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
     this->SetMainViewerEvents(NULL );
     // reassign pointer
     this->SetMainViewerEvents( vtkSlicerViewerInteractorStyle::SafeDownCast(
-                                                                 this->GetApplicationGUI()->
-                                                                 GetViewerWidget()->
-                                                                 GetMainViewer()->
-                                                                 GetRenderWindowInteractor()->
-                                                                 GetInteractorStyle() ));
+                                 viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() ));
     // add observers on events
     this->AddMainViewerEventObservers();
     }
@@ -3981,7 +4060,10 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::CheckAbort(void)
 {
-    int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
+  vtkSlicerViewerWidget* viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  int pending=viewer_widget  && viewer_widget->GetMainViewer()->GetRenderWindow()->GetEventPending();
+  int pendingGUI=viewer_widget && vtkKWTkUtilities::CheckForPendingInteractionEvents(viewer_widget->GetMainViewer()->GetRenderWindow());
     if(pending!=0)//||pendingGUI!=0)
     {
         this->NavigationWidget->GetRenderWindow()->SetAbortRender(1);

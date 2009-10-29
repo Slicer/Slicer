@@ -251,7 +251,7 @@ void vtkSlicerBoxRepresentation::StartWidgetInteraction(double e[2])
 void vtkSlicerBoxRepresentation::WidgetInteraction(double e[2])
 {
   // Convert events to appropriate coordinate systems
-  vtkCamera *camera = this->Renderer->GetActiveCamera();
+  vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
   if ( !camera )
     {
     return;

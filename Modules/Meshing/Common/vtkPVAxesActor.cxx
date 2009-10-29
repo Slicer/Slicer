@@ -211,12 +211,13 @@ int vtkPVAxesActor::RenderOpaqueGeometry(vtkViewport *vp)
   int          renderedSomething = 0; 
 
   vtkRenderer *ren = vtkRenderer::SafeDownCast( vp );
+  vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
 
   this->UpdateProps();
   
-  this->XAxisLabel->SetCamera( ren->GetActiveCamera() );
-  this->YAxisLabel->SetCamera( ren->GetActiveCamera() );
-  this->ZAxisLabel->SetCamera( ren->GetActiveCamera() );
+  this->XAxisLabel->SetCamera( cam );
+  this->YAxisLabel->SetCamera( cam );
+  this->ZAxisLabel->SetCamera( cam );
   
   this->XAxisShaft->RenderOpaqueGeometry(vp);
   this->YAxisShaft->RenderOpaqueGeometry(vp);

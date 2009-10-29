@@ -947,7 +947,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkKWPushButton::InvokedEvent)
     {
     vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
-    fbrowse->SetParent(this->GetApplicationGUI()->GetViewerWidget());
+    fbrowse->SetParent(this->GetApplicationGUI()->GetActiveViewerWidget());
     fbrowse->Create();
     fbrowse->SetFileTypes("{{Array data} {.txt .csv}}");
     fbrowse->MultipleSelectionOff();
@@ -1101,7 +1101,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkKWPushButton::InvokedEvent)
     {
     vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
-    fbrowse->SetParent(this->GetApplicationGUI()->GetViewerWidget());
+    fbrowse->SetParent(this->GetApplicationGUI()->GetActiveViewerWidget());
     fbrowse->SaveDialogOn();
     fbrowse->Create();
     fbrowse->SetTitle("Save Curves");

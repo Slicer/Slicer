@@ -199,23 +199,23 @@ void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkVolumeRenderingGUI::UpdateVolumeActor()
 {
   if (this->GetApplicationGUI() && 
-      this->GetApplicationGUI()->GetViewerWidget() && 
+      this->GetApplicationGUI()->GetActiveViewerWidget() && 
       this->GetLogic() &&
       this->GetLogic()->GetVolume()
       )
     {
     if (this->VolumeNodeSelector->GetSelected())
       {
-      if (!this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
+      if (!this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
         {
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolume());
+        this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolume());
         }
       }
     else
       {
-      if (this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
+      if (this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
         {
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolume());
+        this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolume());
         }
       }
 
@@ -684,7 +684,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
   if(callerObjectSVP == this->VolumePropertyWidget && event == vtkKWEvent::VolumePropertyChangingEvent)
     {
-    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
     this->ProcessingGUIEvents = 0;
     return;
     }
@@ -707,7 +707,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   //Update GUI
   this->UpdateMRMLFromGUI();
   this->Logic->SetParametersNode(this->ParametersNode);
-  this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 
   this->ProcessingGUIEvents = 0;
 
@@ -872,7 +872,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   this->UpdateVolumeActor();
   this->UpdateGUIFromMRML();
   this->Logic->SetParametersNode(this->ParametersNode);
-  this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 
   this->ProcessingMRMLEvents = 0;
 

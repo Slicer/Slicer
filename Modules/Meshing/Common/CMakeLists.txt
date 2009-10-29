@@ -142,16 +142,8 @@ ADD_LIBRARY( ${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS} )
 #ADD_LIBRARY( ${LIB_NAME}  ${LIB_SRCS} )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkRendering
-  ITKCommon
-  ITKBasicFilters
-#  ITKIO
-  ITKAlgorithms
   ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
   #mimxAdapter
   MRML
   )

@@ -44,6 +44,7 @@
 #include "vtkMRMLProceduralColorNode.h"
 
 #include "vtkSlicerModelHierarchyLogic.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkKWWidget.h"
 
@@ -61,7 +62,6 @@
 vtkStandardNewMacro (vtkSlicerViewerWidget );
 vtkCxxRevisionMacro ( vtkSlicerViewerWidget, "$Revision: 1.0 $");
 
-
 //---------------------------------------------------------------------------
 vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 {
@@ -72,6 +72,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->UpdateFromMRMLRequested = 0;
 
   this->CameraNode = NULL;
+  this->CameraNodeWasCreated = 0;
 
   this->ClipModelsNode = NULL;
   this->RedSliceNode = NULL;
@@ -109,9 +110,6 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   
   this->EnableRender = 1;
 }
-
-
-
 
 //---------------------------------------------------------------------------
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
@@ -222,7 +220,6 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   this->BoxWidget->SetRepresentation(NULL);
   this->BoxWidgetRepresentation->Delete();
   this->BoxWidget->Delete();
-
 }
 
 //---------------------------------------------------------------------------
@@ -333,7 +330,6 @@ void vtkSlicerViewerWidget::CreateAxis()
   boxMapper->Delete();
 }
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::ColorAxisLabelActors ( double r, double g, double b)
 {
@@ -343,8 +339,6 @@ void vtkSlicerViewerWidget::ColorAxisLabelActors ( double r, double g, double b)
     }
 
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::AddAxisActors()
@@ -357,7 +351,8 @@ void vtkSlicerViewerWidget::AddAxisActors()
       }
     for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
       {
-      vtkCamera *camera = this->MainViewer->GetRenderer()->GetActiveCamera();
+      vtkCamera *camera = this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
+        this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
       this->AxisLabelActors[i]->SetCamera(camera);
       this->MainViewer->AddViewProp( this->AxisLabelActors[i]);
       }
@@ -384,7 +379,9 @@ void vtkSlicerViewerWidget::UpdateAxis()
     {
     this->AxisLabelActors[i]->SetScale(scale,scale,scale);
     this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
-    this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+    vtkCamera *camera = this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
+      this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
+    this->AxisLabelActors[i]->SetCamera(camera);
     }
 
   this->AxisLabelActors[0]->SetPosition(pos,0,0);
@@ -393,11 +390,10 @@ void vtkSlicerViewerWidget::UpdateAxis()
   this->AxisLabelActors[3]->SetPosition(-pos,0,0);
   this->AxisLabelActors[4]->SetPosition(0,-pos,0);
   this->AxisLabelActors[5]->SetPosition(0,0,-pos);
-
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML()
+int vtkSlicerViewerWidget::UpdateClipSlicesFromMRML()
 {
   if (this->MRMLScene == NULL)
     {
@@ -601,13 +597,16 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->RemoveHierarchyObservers(0);
     this->RemoveModelObservers(0);
+    this->RemoveCameraObservers();
     }
   else if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
+    this->CameraNodeWasCreated = 0;
     this->RemoveModelProps();
     this->RemoveHierarchyObservers(1);
     this->RemoveModelObservers(1);
+    this->RemoveCameraObservers();
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
     this->UpdateFromMRML();
@@ -630,8 +629,33 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->SceneClosing = false;
     }
 
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-    && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+  if (event == vtkMRMLScene::SceneRestoredEvent )
+    {
+    // Backward compatibility change: all scenes saved so far do have 
+    // camera nodes with an empty or false active tag. Restoring a snapshot
+    // will invalidate the current active camera. Try to catch that
+    // by grabbing the first available camera. Sounds like a hack, but
+    // too  much time was wasted on this thing.
+    if (this->ViewNode)
+      {
+      vtkMRMLCameraNode *camera_node = this->CameraNode;
+      if (!camera_node)
+        {
+        camera_node = vtkMRMLCameraNode::SafeDownCast(
+          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+        camera_node->SetActiveTag(this->ViewNode->GetID());
+        }
+      else if (!camera_node->GetActiveTag())
+        {
+        camera_node->SetActiveTag(this->ViewNode->GetID());
+        }
+      }
+    this->UpdateFromMRML();
+    }
+
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
+       (event == vtkMRMLScene::NodeAddedEvent || 
+        event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
     if (node != NULL && node->IsA("vtkMRMLDisplayableNode") )
@@ -674,9 +698,24 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->RequestRender();
       //this->UpdateFromMRML();
       }
+    else if (node != NULL && node->IsA("vtkMRMLCameraNode") )
+      {
+      if (event == vtkMRMLScene::NodeAddedEvent)
+        {
+        node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                          this->MRMLCallbackCommand );
+        }
+      else if (event == vtkMRMLScene::NodeRemovedEvent)
+        {
+        node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                              this->MRMLCallbackCommand );
+        this->UpdateCameraNode();
+        }
+      }
     }
   else if (vtkMRMLCameraNode::SafeDownCast(caller) != NULL &&
-           event == vtkCommand::ModifiedEvent)
+           (event == vtkCommand::ModifiedEvent ||
+            event == vtkMRMLCameraNode::ActiveTagModifiedEvent))
     {
     vtkDebugMacro("ProcessingMRML: got a camera node modified event");
     this->UpdateCameraNode();
@@ -723,7 +762,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         }
       if (updateModel) 
         {
-        this->UpdateClipSlicesFormMRML();
+        this->UpdateClipSlicesFromMRML();
         this->UpdateModifiedModel(modelNode);
         this->RequestRender( );
         }
@@ -748,7 +787,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     //this->UpdateFromMRML();
     }
   else if (vtkMRMLSliceNode::SafeDownCast(caller) != NULL &&
-           event == vtkCommand::ModifiedEvent && (this->UpdateClipSlicesFormMRML() || this->ClippingOn))
+           event == vtkCommand::ModifiedEvent && (this->UpdateClipSlicesFromMRML() || this->ClippingOn))
     {
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
@@ -771,6 +810,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   
   this->ProcessingMRMLEvent = 0;
 }
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateCameraNode()
 {
@@ -778,50 +818,68 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     {
     return;
     }
-  // find an active camera
-  // or any camera if none is active
-  vtkMRMLCameraNode *node = NULL;
   
+  vtkMRMLCameraNode *camera_node = NULL;
+  if (this->ViewNode && this->ViewNode->GetName())
+    {
   std::vector<vtkMRMLNode *> cnodes;
   int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+    vtkMRMLCameraNode *node = NULL;
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLCameraNode::SafeDownCast (cnodes[n]);
-    if (node->GetActive())
+      if (node &&
+          node->GetActiveTag() && 
+          !strcmp(node->GetActiveTag(), this->ViewNode->GetID()))
       {
+        camera_node = node;
       break;
       }
     }
+    }
 
-  if ( this->CameraNode != NULL && node != NULL && this->CameraNode != node)
+  //  if (this->CameraNode != NULL && 
+  //      this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
+  //    {
+  // local node not in the scene (what? how is that even possible??)
+  //    this->SetAndObserveCameraNode (NULL);
+
+  // No change? Bail.
+
+  if (this->CameraNode == camera_node)
     {
-    // local CameraNode is out of sync with the scene
-    this->SetAndObserveCameraNode (NULL);
+    if (this->CameraNode || this->CameraNodeWasCreated)
+    {
+      return;
     }
-  if ( this->CameraNode != NULL && this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
-    {
-    // local node not in the scene
-    this->SetAndObserveCameraNode (NULL);
-    }
-  if ( this->CameraNode == NULL )
-    {
-    if ( node == NULL )
-      {
-      // no camera in the scene and local
-      // create an active camera
-      node = vtkMRMLCameraNode::New();
-      node->SetActive(1);
-      this->MRMLScene->AddNode(node);
-      node->Delete();
-      }
-    this->SetAndObserveCameraNode (node);
+    // no camera in the scene, create an active camera
+    this->CameraNodeWasCreated = 1;
+    camera_node = vtkMRMLCameraNode::New();
+    camera_node->SetName(
+      this->MRMLScene->GetUniqueNameByString(camera_node->GetNodeTagName()));
+    camera_node->SetActiveTag(
+      this->ViewNode ? this->ViewNode->GetID() : NULL);
+    this->MRMLScene->AddNode(camera_node);
+    camera_node->Delete();
     }
  
-  vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
+  this->SetAndObserveCameraNode(camera_node);
+
+  vtkCamera *cam = this->CameraNode ? this->CameraNode->GetCamera() : NULL;
+  this->MainViewer->GetRenderer()->SetActiveCamera(cam);
+  if (cam) 
+    {
+    // do not call if no camera otherwise it will create a new one without a node
+    this->MainViewer->GetRenderer()->ResetCameraClippingRange();
+    }
+ 
+  vtkRenderWindowInteractor *rwi = 
+    this->MainViewer->GetRenderWindowInteractor();
   if (rwi)
     {
     vtkInteractorObserver *iobs = rwi->GetInteractorStyle();
-    vtkSlicerViewerInteractorStyle *istyle = vtkSlicerViewerInteractorStyle::SafeDownCast(iobs);
+    vtkSlicerViewerInteractorStyle *istyle = 
+      vtkSlicerViewerInteractorStyle::SafeDownCast(iobs);
     if (istyle)
       {
       istyle->SetCameraNode(this->CameraNode);
@@ -833,14 +891,70 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
         }
       }
     }
-  this->MainViewer->GetRenderer()->SetActiveCamera(this->CameraNode->GetCamera());
+
+  if (cam) 
+    {
+    // do not call if no camera otherwise it will create a new one without a node
+    this->UpdateAxis(); // make sure the axis follow the new camera
 }
 
+  this->InvokeEvent(vtkSlicerViewerWidget::ActiveCameraChangedEvent, NULL);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::AddCameraObservers()
+{
+  if (!this->MRMLScene || this->SceneClosing)
+    {
+    return;
+}
+
+  std::vector<vtkMRMLNode*> cnodes;
+  int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+  for (int n = 0; n < nnodes; n++)
+    {
+    vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
+    if (node && !node->HasObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                                   this->MRMLCallbackCommand))
+      {
+      node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                        this->MRMLCallbackCommand);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveCameraObservers()
+{
+  if (!this->MRMLScene)
+    {
+    return;
+    }
+
+  std::vector<vtkMRMLNode*> cnodes;
+  int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+  for (int n = 0; n < nnodes; n++)
+    {
+    vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
+    if (node && node->HasObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                                  this->MRMLCallbackCommand))
+      {
+      node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                            this->MRMLCallbackCommand);
+      }
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateViewNode()
 {
-  if (this->SceneClosing)
+#if 0
+  // This is not needed anymore, there is not one single vtkMRMLViewNode
+  // but multiple, therefore it's up to whoever created that widget
+  // to assign it the ViewNode properly, not this widget to pick the
+  // first one...
+
+  if (this->SceneClosing || !this->MRMLScene)
     {
     return;
     }
@@ -870,9 +984,8 @@ void vtkSlicerViewerWidget::UpdateViewNode()
       }
     this->SetAndObserveViewNode (node);
     }
- 
+#endif
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveWidgetObservers ( ) 
@@ -891,6 +1004,8 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // Call the superclass to create the whole widget
   
   this->Superclass::CreateWidget();
+
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   this->ViewerFrame = vtkKWFrame::New ( );
   this->ViewerFrame->SetParent ( this->GetParent ( ) );
@@ -924,6 +1039,9 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
+  this->MainViewer->SetRendererBackgroundColor(
+    app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+
   // tell the render widget not to respond to the Render() method
   // - this class turns on rendering explicitly when it's own
   //   Render() method is called.  This avoids redundant renders
@@ -956,7 +1074,12 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 
   // Set the viewer's minimum dimension to be the modifiedState as that for
   // the three main Slice viewers.
-  this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
+  vtkCamera *camera = this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
+    this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
+  if (camera)
+    {
+    camera->ParallelProjectionOff();
+    }
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();      
@@ -974,6 +1097,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   this->SetAndObserveMRMLSceneEvents(this->MRMLScene, events);
   events->Delete();
 
@@ -988,12 +1112,15 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  this->UpdateViewNode();
+
+  this->AddCameraObservers();
+  this->UpdateCameraNode();
+
+  this->AddAxisActors();
   this->UpdateAxis();
 
-  this->UpdateCameraNode();
-  this->AddAxisActors();
-
-  this->UpdateClipSlicesFormMRML();
+  this->UpdateClipSlicesFromMRML();
 
   this->RemoveModelProps ( );
   
@@ -1082,7 +1209,6 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
       this->UpdateModifiedModel(model);
       }
     } // end while
-
 }
 
 //---------------------------------------------------------------------------
@@ -1434,14 +1560,16 @@ void vtkSlicerViewerWidget::Render()
     {
     int currentRenderState = this->MainViewer->GetRenderState();
     this->MainViewer->RenderStateOn();
+  if (this->MainViewer->GetRenderer()->IsActiveCameraCreated())
+    {
     this->MainViewer->Render();
+    }
     vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
     //this->MainViewer->RenderStateOff();
     this->MainViewer->SetRenderState(currentRenderState);
     this->SetRenderPending(0);
     } 
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveModelProps()
@@ -1485,7 +1613,6 @@ void vtkSlicerViewerWidget::RemoveModelProps()
     this->RemoveDispalyedID(removedIDs[i]);
     }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveDisplayable(vtkMRMLDisplayableNode* model)
@@ -1552,10 +1679,13 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
 {
   this->RemoveModelObservers(1);
   this->RemoveHierarchyObservers(1);
+  this->RemoveCameraObservers();
 
   //this->RemoveFiducialObservers();
 
   this->SetAndObserveMRMLScene(NULL);
+  this->SetAndObserveViewNode (NULL);
+  this->SetAndObserveCameraNode(NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -1578,7 +1708,6 @@ void vtkSlicerViewerWidget::RemoveModelObservers(int clearCache)
     this->DisplayedClipState.clear();
     this->DisplayedVisibility.clear();
     }
-
 }
 
 //---------------------------------------------------------------------------
@@ -1609,7 +1738,6 @@ void vtkSlicerViewerWidget::RemoveHierarchyObservers(int clearCache)
     RegisteredModelHierarchies.clear();
     }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *model)
@@ -1793,7 +1921,6 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
 
 }
 
-
 //---------------------------------------------------------------------------
   // Description:
   // return the current actor corresponding to a give MRML ID
@@ -1841,7 +1968,6 @@ vtkSlicerViewerWidget::GetIDByActor (vtkProp3D *actor)
 }
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::PackWidget ( vtkKWFrame *f )
 {
@@ -1850,7 +1976,6 @@ void vtkSlicerViewerWidget::PackWidget ( vtkKWFrame *f )
   this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
                  this->MainViewer->GetWidgetName ( ) );
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::GridWidget ( vtkKWFrame *f, int row, int col )
@@ -1881,7 +2006,6 @@ void vtkSlicerViewerWidget::UnpackWidget ( )
   this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
 
-  
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UngridWidget ( )
 {

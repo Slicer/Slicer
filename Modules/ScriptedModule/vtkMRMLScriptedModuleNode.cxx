@@ -119,7 +119,7 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
     else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
       {
       std::string satt(attValue);
-      int space = satt.find(" ", 0);
+      int space = (int)satt.find(" ", 0);
       std::string sname = satt.substr(0,space);
       std::string svalue = satt.substr(space+1,satt.length()-space-1);
       this->SetParameter(sname, svalue);

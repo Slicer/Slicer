@@ -657,6 +657,11 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       }
     }
+  else if (event == vtkSlicerViewerWidget::ActiveCameraChangedEvent &&
+           vtkSlicerViewerWidget::SafeDownCast(caller) != NULL)
+    {
+    this->UpdateFiducialsCamera();
+    }
 } 
 
 //---------------------------------------------------------------------------
@@ -1408,7 +1413,9 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
           mapper = vtkPolyDataMapper::New ();
           mapper->SetInput ( glyph2d->GetOutput() );
           actor = vtkFollower::New ( );
-          if (mainViewer && mainViewer->GetRenderer())
+          if (mainViewer && 
+              mainViewer->GetRenderer() &&
+              mainViewer->GetRenderer()->IsActiveCameraCreated())
             {
             actor->SetCamera(mainViewer->GetRenderer()->GetActiveCamera());
             }
@@ -1571,7 +1578,9 @@ void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist
     textMapper->SetInput ( vtext->GetOutput() );
     
     textActor = vtkFollower::New();
-    if (mainViewer && mainViewer->GetRenderer())
+    if (mainViewer && 
+        mainViewer->GetRenderer() &&
+        mainViewer->GetRenderer()->IsActiveCameraCreated())
       {
       textActor->SetCamera(mainViewer->GetRenderer()->GetActiveCamera());
       }
@@ -1978,6 +1987,47 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::UpdateFiducialsCamera()
+{
+  vtkCamera *cam = NULL;
+  vtkKWRenderWidget *mainViewer = NULL;
+  if (this->GetViewerWidget())
+    {
+    mainViewer = this->GetViewerWidget()->GetMainViewer();
+    }
+
+  if (mainViewer && 
+      mainViewer->GetRenderer() &&
+      mainViewer->GetRenderer()->IsActiveCameraCreated())
+    {
+    cam = mainViewer->GetRenderer()->GetActiveCamera();
+    }
+
+  std::map< std::string, vtkFollower *>::iterator fIter;
+  for(fIter = this->DisplayedTextFiducials.begin();
+      fIter != this->DisplayedTextFiducials.end();
+      fIter++) 
+    {
+    if (fIter->second != NULL)
+      {
+      fIter->second->SetCamera(cam);
+      }
+    }
+  
+  std::map< std::string, vtkActor *>::iterator actorIter;
+  for(actorIter = this->DisplayedFiducials.begin();
+      actorIter != this->DisplayedFiducials.end();
+      actorIter++) 
+    {
+    if (actorIter->second != NULL && 
+        vtkFollower::SafeDownCast(actorIter->second))
+      {
+      vtkFollower::SafeDownCast(actorIter->second)->SetCamera(cam);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 std::string
 vtkSlicerFiducialListWidget::GetFiducialNodeID (const char *actorid, int &index)
 {
@@ -2041,9 +2091,27 @@ vtkSlicerFiducialListWidget::GetPointWidgetByID (const char *id)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerFiducialListWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
+void vtkSlicerFiducialListWidget::SetViewerWidget(
+  vtkSlicerViewerWidget *viewerWidget)
 {
+  if (this->ViewerWidget != NULL &&
+      this->ViewerWidget->HasObserver(
+        vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+        this->GUICallbackCommand) == 1)
+    {
+    this->InteractorStyle->RemoveObservers(
+      vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
+
   this->ViewerWidget = viewerWidget;
+  
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->AddObserver(
+      vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
 }
 
 //----------------------------------------------------------------------------

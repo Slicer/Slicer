@@ -130,7 +130,11 @@ void vtkCardManager::LoadSet() {
         c->CenterOffset();
 
         // v52 - add flag for Follower, and move its activation here (from BIRNCard)
-        if (this->UseFollower) c->SetCamera(this->Renderer->GetActiveCamera());
+        if (this->UseFollower) 
+          {
+          vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
+          c->SetCamera(camera);
+          }
 
         tmpCards->AddItem(c);
     }
@@ -210,9 +214,13 @@ void vtkCardManager::SetCardZoom(vtkFloatingPointType c) {
 
         //printf("angle scale: %g,  fov: %g\n", sc, fov);
 
-        this->Renderer->GetActiveCamera()->SetViewAngle(fov);
-        this->Renderer->GetActiveCamera()->SetPosition(0, 0, 40);
-        this->Renderer->GetActiveCamera()->SetFocalPoint(0, 0, 0);
+        vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
+        if (camera)
+          {
+          camera->SetViewAngle(fov);
+          camera->SetPosition(0, 0, 40);
+          camera->SetFocalPoint(0, 0, 0);
+          }
     }
 }
 

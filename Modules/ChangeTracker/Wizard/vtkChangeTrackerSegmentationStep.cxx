@@ -319,7 +319,7 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
 
   this->ShowSegmentedVolume(this->PreSegmentNode);
-  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
   
   return;
 }
@@ -398,8 +398,8 @@ void vtkChangeTrackerSegmentationStep::ThresholdRangeChangedCallback(double min 
   mrmlNode->SetSegmentThresholdMax(max);
 
   // 3D Render 
-  //this->ChangeRender_BandPassFilter(min,max);
-  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->ChangeRender_BandPassFilter(min,max);
+  this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 
 
   // set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
@@ -629,7 +629,7 @@ void vtkChangeTrackerSegmentationStep::ShowSegmentedVolume(vtkMRMLScalarVolumeNo
   this->CreateRender(segVol, 0);
   // assume the label value is between 1 and 255
   this->SetRender_BandPassFilter(1, 255, color, color);
-  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkChangeTrackerSegmentationStep::WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData )

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.5)
+cmake_minimum_required(VERSION 2.6)
 
 # ---------------------------------------------------------------------------
 # slicer_set_module_value: set a module value.

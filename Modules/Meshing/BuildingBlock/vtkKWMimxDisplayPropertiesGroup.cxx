@@ -404,8 +404,9 @@ void vtkKWMimxDisplayPropertiesGroup::PositiveXViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-           this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+
           camera->SetViewUp(0,1,0);
           camera->SetPosition(1,0,0);
           camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -420,8 +421,8 @@ void vtkKWMimxDisplayPropertiesGroup::PositiveYViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->SetViewUp(0,0,1);
           camera->SetPosition(0,1,0);
           camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -436,8 +437,8 @@ void vtkKWMimxDisplayPropertiesGroup::PositiveZViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
            camera->SetViewUp(0,1,0);
            camera->SetPosition(0,0,1);
            camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -452,8 +453,8 @@ void vtkKWMimxDisplayPropertiesGroup::NegativeXViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-        vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->SetViewUp(0,1,0);
         camera->SetPosition(-1,0,0);
         camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -468,8 +469,8 @@ void vtkKWMimxDisplayPropertiesGroup::NegativeYViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->SetViewUp(0,0,1);
           camera->SetPosition(0,-1,0);
           camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -484,8 +485,8 @@ void vtkKWMimxDisplayPropertiesGroup::NegativeZViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->SetViewUp(0,1,0);
           camera->SetPosition(0,0,-1);
           camera->SetFocalPoint(0.0, 0.0, 0.0);
@@ -500,8 +501,8 @@ void vtkKWMimxDisplayPropertiesGroup::PerspectiveViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->ParallelProjectionOff();
         }
         this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindowInteractor()->Render();
@@ -511,8 +512,8 @@ void vtkKWMimxDisplayPropertiesGroup::ParallelViewCallback()
 {
         for (int i=0;i<this->GetMimxMainWindow()->GetRenderWidget()->GetNumberOfRenderers();i++)
         {
-          vtkCamera *camera = 
-            this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i)->GetActiveCamera();
+        vtkRenderer *ren = this->GetMimxMainWindow()->GetRenderWidget()->GetNthRenderer(i);
+        vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
           camera->ParallelProjectionOn();
         }
         this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindowInteractor()->Render();

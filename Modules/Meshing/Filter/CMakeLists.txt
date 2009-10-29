@@ -90,24 +90,10 @@ SET ( FILTER_SRCS
 ADD_LIBRARY( ${LIB_NAME} ${FILTER_SRCS} )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkRendering
-  ITKCommon
-  ITKBasicFilters
-  ITKAlgorithms
-  mimxCommon
   ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
+  mimxCommon
   )
-
-# Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
   RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 

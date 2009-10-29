@@ -1342,7 +1342,7 @@ proc QueryAtlasTestFan { } {
 
     if { 0 } {
         #--- get the render widget and set the icon directory
-        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+        set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
         set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
 
         #--- create  a list of icon names

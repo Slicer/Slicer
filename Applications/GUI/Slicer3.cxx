@@ -106,7 +106,7 @@ extern "C" {
 //#define SCRIPTEDMODULE_DEBUG
 //#define SLICESMODULE_DEBUG
 
-#define CAMERA_DEBUG
+//#define CAMERA_DEBUG
 
 #include <LoadableModuleFactory.h>
 
@@ -1295,9 +1295,9 @@ int Slicer3_main(int& argc, char *argv[])
   modelsGUI->SetAndObserveMRMLScene ( scene );
   modelsGUI->SetModuleLogic ( modelsLogic );
   modelsGUI->SetModelHierarchyLogic( modelHierarchyLogic );
-  if (  appGUI->GetViewerWidget() )
+  if (  appGUI->GetActiveViewerWidget() )
     {
-    appGUI->GetViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
+    appGUI->GetActiveViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
     }
   modelsGUI->SetGUIName( "Models" );
   modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
@@ -1640,9 +1640,9 @@ int Slicer3_main(int& argc, char *argv[])
   name = transformsGUI->GetTclName();
   slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 
-  if ( appGUI->GetViewerWidget() )
+  if ( appGUI->GetActiveViewerWidget() )
     {
-    name = appGUI->GetViewerWidget()->GetTclName();
+    name = appGUI->GetActiveViewerWidget()->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
     }
 

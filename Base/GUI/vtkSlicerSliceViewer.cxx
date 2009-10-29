@@ -351,7 +351,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
         if (first)
           {
           first = false;
-          cam = renderer->GetActiveCamera();
+          cam = renderer->IsActiveCameraCreated() ? renderer->GetActiveCamera() : NULL;
           if (cam)
             {
             cam->ParallelProjectionOn();

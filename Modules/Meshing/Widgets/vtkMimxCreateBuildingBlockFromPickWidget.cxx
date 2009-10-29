@@ -332,7 +332,8 @@ void vtkMimxCreateBuildingBlockFromPickWidget::CrtlLeftButtonUpCallback(vtkAbstr
   if(self->WidgetEvent == vtkMimxCreateBuildingBlockFromPickWidget::CrtlLeftMouseButtonDown)
   {
           self->WidgetEvent = vtkMimxCreateBuildingBlockFromPickWidget::Start;
-          vtkCamera *camera = self->CurrentRenderer->GetActiveCamera();
+          vtkCamera *camera = self->CurrentRenderer->IsActiveCameraCreated() ? self->CurrentRenderer->GetActiveCamera() : NULL;
+
           double position[3], frustumPlanes[24];
           double viewFocus[3], firstPickPoint[4], secondPickPoint[4], 
                   firstPoint[4], secondPoint[4], positionDisplay[3];

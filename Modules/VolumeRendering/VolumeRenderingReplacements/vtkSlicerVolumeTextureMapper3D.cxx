@@ -706,7 +706,7 @@ void vtkSlicerVolumeTextureMapper3D::ComputePolygons( vtkRenderer *ren,
   // Get the camera position and focal point
   double focalPoint[4], position[4];
   double plane[4];
-  vtkCamera *camera = ren->GetActiveCamera();
+  vtkCamera *camera = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
 
   camera->GetPosition( position );
   camera->GetFocalPoint( focalPoint );

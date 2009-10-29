@@ -122,7 +122,8 @@ void vtkSorter::DepthSort() {
     // stripped down vtk 4.2: void vtkDepthSortPolyData::Execute() :
 
     vtkFloatingPointType vector[3], origin[3];
-    ComputeProjectionVector(r->GetActiveCamera(), vector, origin);
+    vtkCamera *camera = r->IsActiveCameraCreated() ? r->GetActiveCamera() : NULL;
+    ComputeProjectionVector(camera, vector, origin);
 
     int numCards = cards->GetNumberOfItems();
     int numTexts = texts->GetNumberOfItems();

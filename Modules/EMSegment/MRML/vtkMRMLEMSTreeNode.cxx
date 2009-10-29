@@ -246,7 +246,7 @@ void vtkMRMLEMSTreeNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkMRMLEMSTreeNode::GetNumberOfChildNodes()
 {
-  return this->ChildNodeIDs.size();
+  return (int)this->ChildNodeIDs.size();
 }
 
 //----------------------------------------------------------------------------

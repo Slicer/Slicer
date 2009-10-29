@@ -815,7 +815,7 @@ void vtkRealTimeImagingGUI::UpdateLocator()
     vtkTransform *transform = igtLogic->GetLocatorNormalTransform(); 
 
     vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-    vtkSlicerViewerWidget *viewerWidget = appGUI->GetViewerWidget();
+    vtkSlicerViewerWidget *viewerWidget = appGUI->GetActiveViewerWidget();
 
     const char *id = this->LocatorModelNode->GetID();    
     vtkProp3D *locatorActor = viewerWidget->GetActorByID(id);

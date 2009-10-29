@@ -47,7 +47,7 @@ public:
   virtual void ToggleQuotesOnSelectedSearchTerms ( );
 
   virtual int GetNumberOfSearchTermsToUse( ) {
-  return useTerms.size();
+    return (int)useTerms.size();
   }
   virtual const char *GetNthSearchTermToUse ( int ind ) {
   return useTerms[ind].c_str();
