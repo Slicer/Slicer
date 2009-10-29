@@ -426,10 +426,15 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               set sliceLogics [$this getLinkedSliceLogics]
               # save state for undo
                 
-              # set the field of view on each slice node
+              # set the field of view on each slice node. note that
+              # the Red viewer and Compare viewers may have different
+              # aspect ratios, so set the field of views in x the same
+              foreach {nfx nfy nfz} $newFOV {}
               foreach logic $sliceLogics {
                   set snode [$logic GetSliceNode]
-                  eval $snode SetFieldOfView $newFOV
+                  foreach {fx fy fz} [$snode GetFieldOfView] {}
+                  # new prescribed x fov, aspect corrected y fov, orig z fov
+                  $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
               }
             }
             $sliceGUI SetGUICommandAbortFlag 1
@@ -596,17 +601,27 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
           }
           "r" {
-            # use c++ version of calculation
+            # figure out the new field of view for the current slice
+            # node, then set that field of view on the linked slice
+            # nodes
+            set logic [$sliceGUI GetLogic]
+            $logic FitSliceToBackground $w $h
+            $_sliceNode UpdateMatrices
+            
+            foreach {nfx nfy nfz} [$_sliceNode GetFieldOfView] {}
 
             # get the linked logics (including self)
             set sliceLogics [$this getLinkedSliceLogics]
             # save state for undo
             
-            # fit the slice to the background for each logic/slice node
+            # can't call FitToBackground on linked nodes since they
+            # may have different aspect rations
             foreach logic $sliceLogics {
               set snode [$logic GetSliceNode]
-              $logic FitSliceToBackground $w $h
-              $snode UpdateMatrices            }
+              foreach {fx fy fz} [$snode GetFieldOfView] {}
+              # new prescribed x fov, aspect corrected y fov, orig z fov
+              $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
+            }
           }
           "b" - "Left" - "Down" {
             $this decrementSlice
@@ -1032,7 +1047,7 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { [$this isCompareView] == 1 && $link == 1 } {
+    if { ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareView] == 1) && $link == 1 } {
         set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
@@ -1048,7 +1063,7 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
                 set lname [$ssgui GetNextSliceGUILayoutName $lname]
             }
 
-            if { [string first "Compare" $lname] != 0 } {
+            if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
               continue
             } 
 
@@ -1079,7 +1094,7 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
     set guis ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { [$this isCompareView] == 1 && $link == 1 } {
+    if { ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareView] == 1) && $link == 1 } {
         set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
@@ -1095,7 +1110,7 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
                 set lname [$ssgui GetNextSliceGUILayoutName $lname]
             }
 
-            if { [string first "Compare" $lname] != 0 } {
+            if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
               continue
             } 
 
@@ -1120,6 +1135,9 @@ itcl::body SliceSWidget::isCompareView { } {
   set viewArrangement [$layout GetViewArrangement]
 
   if { $viewArrangement == 12 } {
+    # Is it enough to be in the compare view layout or do we want to
+    # restrict to just the compare slice viewers and exclude the Red
+    # viewer?
     set lname [$_sliceNode GetSingletonTag]
     if { [string first "Compare" $lname] != 0 } {
       return 0
