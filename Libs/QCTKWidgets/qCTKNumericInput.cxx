@@ -10,9 +10,9 @@ class qCTKNumericInput::qInternal
 public:
   qInternal()
     {
-    this->Text = "0";
+    //this->Text = "0";
     }
-  QString Text; 
+  //QString Text; 
 };
 
 // --------------------------------------------------------------------------
@@ -27,6 +27,8 @@ qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
     
 //   this->connect(this, SIGNAL(textChanged(const QString&)), 
 //     SLOT(onTextChanged(const QString&))); 
+
+  this->connect(this, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
 }
 
 // --------------------------------------------------------------------------
@@ -82,5 +84,11 @@ int qCTKNumericInput::decimals()
 void qCTKNumericInput::setDecimals(int count)
 {
   this->doubleValidator()->setDecimals(count);
+}
+
+// --------------------------------------------------------------------------
+void qCTKNumericInput::onReturnPressed()
+{
+  emit(this->valueEdited(this->value())); 
 }
 

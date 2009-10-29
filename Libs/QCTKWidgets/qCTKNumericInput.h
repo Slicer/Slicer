@@ -36,11 +36,21 @@ public:
   QDoubleValidator* doubleValidator(); 
    
 signals:
+  // Description:
+  // This signal is emitted whenever the value is edited, The value argument is the new value.
+  // This signal is not emitted when the value is changed programmatically, for example, 
+  // by calling setValue().
+  void valueEdited(double value); 
 
 protected slots:
   // Description:
-  // Ensuire the text is valid even if the value is set from the designer
+  // Make sure that the text is valid even if the value is set from the designer
 //   void onTextChanged(const QString & text); 
+
+  // Description:
+  // Triggered after the user hit 'Enter' and the input is a valid numeric data 
+  // Responsible to emit the signal 'valueEdited'.
+  void onReturnPressed(); 
   
 private:
   class qInternal; 
