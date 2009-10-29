@@ -147,7 +147,7 @@
     <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="TranslationLimitLayout">
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
@@ -165,6 +165,9 @@
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="MinTranslationLimitLabel">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -181,6 +184,9 @@
        </item>
        <item row="0" column="1">
         <widget class="qCTKNumericInput" name="MinTranslationLimitInput">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>-200</string>
          </property>
@@ -191,6 +197,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="MaxTranslationLimitLabel">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -207,6 +216,9 @@
        </item>
        <item row="1" column="1">
         <widget class="qCTKNumericInput" name="MaxTranslationLimitInput">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>200</string>
          </property>
@@ -230,7 +242,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="Layout">
+    <layout class="QHBoxLayout" name="horizontalLayout_1">
      <property name="spacing">
       <number>2</number>
      </property>

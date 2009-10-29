@@ -119,11 +119,16 @@ void qSlicerModuleTransform::onNodeSelected(vtkMRMLNode* node)
 {
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node); 
   
-  // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox
+  // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox, 
+  // Min/Max translation inputs
   this->Internal->CoordinateReferenceGroupBox->setEnabled(transformNode != 0); 
   this->Internal->IdentityPushButton->setEnabled(transformNode != 0); 
   this->Internal->InvertPushButton->setEnabled(transformNode != 0);
   this->Internal->MatrixViewGroupBox->setEnabled(transformNode != 0); 
+  this->Internal->MinTranslationLimitLabel->setEnabled(transformNode != 0); 
+  this->Internal->MaxTranslationLimitLabel->setEnabled(transformNode != 0); 
+  this->Internal->MinTranslationLimitInput->setEnabled(transformNode != 0); 
+  this->Internal->MaxTranslationLimitInput->setEnabled(transformNode != 0); 
   
   // Listen for Transform node changes
   this->qvtkReConnect(this->Internal->MRMLTransformNode, transformNode, 
