@@ -1497,10 +1497,14 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         {
         vtkDebugMacro("The selection node changed\n");
         // is the active fid list id out of synch with our selection?
-        if (selnode->GetActiveFiducialListID() != NULL &&
-            this->GetFiducialListNodeID() != NULL)
+        if (selnode->GetActiveFiducialListID() != NULL)
           {
-          if (strcmp(selnode->GetActiveFiducialListID(), this->GetFiducialListNodeID()) != 0)
+          if (this->GetFiducialListNodeID() == NULL)
+            {
+            // set the selection node's choice to be active here
+            this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
+            }
+          else if (strcmp(selnode->GetActiveFiducialListID(), this->GetFiducialListNodeID()) != 0)
             {
             vtkDebugMacro("Updating the fid gui's fid list node id\n");
             this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
