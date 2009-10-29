@@ -21,6 +21,7 @@ SET(QCTKWidgetsPlugin_SRCS
   qCTKTitleComboBoxPlugin.cxx
   qCTKWidgetsPlugins.cxx  
   qCTKWidgetsPlugin.cxx
+  qCTKNumericInputPlugin.cxx
   )
 
 SET(QCTKWidgetsPlugin_MOC_SRCS
@@ -32,6 +33,7 @@ SET(QCTKWidgetsPlugin_MOC_SRCS
   qCTKExtensionFactory.h
   qCTKTitleComboBoxPlugin.h
   qCTKWidgetsPlugins.h
+  qCTKNumericInputPlugin.h
   )
 
 QT4_WRAP_CPP(QCTKWidgetsPlugin_SRCS ${QCTKWidgetsPlugin_MOC_SRCS})
