@@ -192,7 +192,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       }
 
       if { $drg == false } {
-          #puts "[clock seconds] Slice node change $_sliceNode"
+          # puts "[clock seconds] Slice node change $_sliceNode"
 
           # No crosshairs are being dragged. So the slice node is changing through some
           # other mechanism. Move the crosshair RAS to keep it on the slice.
@@ -220,7 +220,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       # position crosshair actor
       foreach {r a s} [$_crosshairNode GetCrosshairRAS] {}
       $this setPosition $r $a $s
-
+      
       # jvm - Don't like having to request a render but it may be
       # needed for "cursor" (as opposed to "navigator") mode
       [$sliceGUI GetSliceViewer] RequestRender
@@ -593,13 +593,12 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
       $_renderer RemoveActor2D $o(crosshairActor)
       $_renderer RemoveActor2D $o(crosshairHighlightActor)
       set changed 1
-    }
 
-    set _renderer [$_renderWidget GetNthRenderer $k]
-    if { [info command $_renderer] != "" } {
-      $_renderer AddActor2D $o(crosshairActor)
-      $_renderer AddActor2D $o(crosshairHighlightActor)
-      set changed 1
+      set _renderer [$_renderWidget GetNthRenderer $k]
+      if { [info command $_renderer] != "" } {
+          $_renderer AddActor2D $o(crosshairActor)
+          $_renderer AddActor2D $o(crosshairHighlightActor)
+      }
     }
   }
   
