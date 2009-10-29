@@ -23,6 +23,12 @@ public:
   void setValue(int i, int j, double value); 
   void setVector(const QVector<double> & vector); 
   
+  // Description:
+  // Overloaded - See QWidget
+  virtual QSize minimumSizeHint () const; 
+  virtual QSize sizeHint () const; 
+  
+  
 public slots:
   
   // Description:

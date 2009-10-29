@@ -53,6 +53,18 @@ qCTKMatrixWidget::~qCTKMatrixWidget()
 }
 
 // --------------------------------------------------------------------------
+QSize qCTKMatrixWidget::minimumSizeHint () const
+{
+  return QSize(20,20);
+}
+
+// --------------------------------------------------------------------------
+QSize qCTKMatrixWidget::sizeHint () const
+{
+  return this->minimumSizeHint(); 
+}
+
+// --------------------------------------------------------------------------
 void qCTKMatrixWidget::resizeEvent(QResizeEvent * event)
 {
   this->Superclass::resizeEvent(event);
