@@ -9,6 +9,8 @@ endif(COMMAND cmake_policy)
 # Sources
 #
 SET(qSlicerGUIQT_SRCS
+  qSlicerWidget.h
+  qSlicerWidget.cxx
   qSlicerAbstractModule.cxx
   qSlicerAbstractModule.h
   qSlicerApplication.cxx
@@ -29,6 +31,7 @@ SET(qSlicerGUIQT_SRCS
 
 # Headers that should run through moc
 SET(qSlicerGUIQT_MOC_SRCS
+  qSlicerWidget.h
   qSlicerAbstractModule.h
   qSlicerApplication.h
   qSlicerKwUIWrapper.h
