@@ -18,10 +18,13 @@ public:
   virtual ~qSlicerModuleTransform(); 
   
   virtual void dumpObjectInfo();
+  
+  qSlicerGetModuleTitleDeclarationMacro();
 
 protected slots:
   void onCoordinateReferenceButtonPressed(int id); 
   void onIdentityButtonPressed(); 
+  void onInvertButtonPressed(); 
   void onNodeSelected(vtkMRMLNode* node);
 
 private:

@@ -16,7 +16,6 @@
 // Slicer3_USE_QT
 //
 #ifdef Slicer3_USE_QT
-#include "qSlicerModuleManager.h"
 #include "qSlicerApplication.h"
 // #include "vtkSlicerEmptyModuleGUI.h"
 #endif
@@ -1447,11 +1446,8 @@ int Slicer3_main(int& argc, char *argv[])
 //   //emptyModuleGUI->GetUIPanel()->Create ( );
 //   slicerApp->AddModuleGUI ( emptyModuleGUI );
   
-  // --- Transforms2 module
-  slicerApp->SplashMessage("Initializing Transforms2 Module...");
-  std::cout << "Attempt to load module: qSlicerModuleTransform" << std::endl;
-  qSlicerModuleManager::instance()->loadModuleByName("qSlicerModuleTransform");
-  //qSlicerModuleManager::instance()->dumpObjectInfo(); 
+  // --- Qt Transforms module
+  slicerApp->InitializeQtModule("qSlicerModuleTransform");
 #endif
 
  // --- First scene needs a crosshair to be added manually

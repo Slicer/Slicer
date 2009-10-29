@@ -319,6 +319,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void UnMapCallback(char *);
 
     // Description:
+    // Show/hide a QtModule. The position/size of the Qt widget 
+    // is mapped against the corresponding KwWidget
+    void SetQtModuleVisible(const char* moduleTitle, bool visible); 
+    void SetCurrentQtModuleVisible(bool visible); 
+
+    // Description:
     // Callbacks set on the configure events of the split frames
     void MainSplitFrameConfigureCallback(int width, int height);
     void SecondarySplitFrameConfigureCallback(int width, int height);

@@ -37,8 +37,10 @@ protected:
   
   // Description:
   // Add a module class to the factory
+  // Note: A valid module should expose a static method having the following signature:
+  //  static const QString moduleTitle(); 
   template<typename ClassType>
-  void registerModule(const QString& moduleTitle); 
+  void registerModule(/*const QString& moduleTitle*/); 
 
 private:
   class qInternal;

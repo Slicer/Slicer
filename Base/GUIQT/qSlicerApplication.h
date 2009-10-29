@@ -6,9 +6,6 @@
 #include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMRMLScene; 
-#ifdef Slicer3_USE_KWWidget
-class vtkSlicerApplication;
-#endif
 
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerApplication : public QApplication
 {
@@ -25,13 +22,18 @@ public:
   void setMRMLScene(vtkMRMLScene * scene);
   vtkMRMLScene* getMRMLScene();
 
-#ifdef Slicer3_USE_KWWidget
-  void setSlicerApplication(vtkSlicerApplication*);
-  vtkSlicerApplication* getSlicerApplication()const;
-#endif
-
   static qSlicerApplication* application();
+
+protected:
+  // Description:
+  // Initialize application Palette/Font
+  void initPalette(); 
+  void initFont(); 
   
+  // Description:
+  // Load application styleSheet
+  void loadStyleSheet(); 
+
 private:
   class qInternal;
   qInternal* Internal;

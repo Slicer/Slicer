@@ -10,6 +10,7 @@
 #include "qSlicerModuleManager.h"
 //#include "QtSlicerWebKit.h"
 #include <QHash>
+#include <QDebug>
 
 #endif
 
@@ -363,9 +364,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   static char *argv = NULL;
   static int argc = 0;
   this->Internal->qApplication = new qSlicerApplication(argc, &argv);
-#ifdef Slicer3_USE_KWWidgets
-  this->Internal->qApplication->setSlicerApplication(this);
-#endif
 
  #ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
@@ -673,71 +671,32 @@ vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
   return this->Internal->MRMLScene; 
 }
 
-#ifdef Slicer3_USE_QT
-
-// //---------------------------------------------------------------------------
-// void vtkSlicerApplication::AddModule ( qSlicerAbstractModule * module )
-// {
-//   if (!module)
-//     {
-//     return;
-//     }
-//   if (this->Internal->ModuleList.contains(module->title()))
-//     {
-//     return;
-//     }
-//   module->setMRMLScene( this->GetMRMLScene() ); 
-//   this->Internal->ModuleList[module->title()] = module; 
-// }
-
-
-// //---------------------------------------------------------------------------
-// void vtkSlicerApplication::RemoveModule ( qSlicerAbstractModule * module )
-// {
-//   if (!module)
-//     {
-//     return;
-//     }
-//   this->Internal->ModuleList.remove(module->title());
-// }
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
+{
+  #ifdef Slicer3_USE_QT
+  if (this->GetApplicationGUI())
+    {
+    // TODO Hide all visible Qt Widget
+    this->GetApplicationGUI()->SetCurrentQtModuleVisible(false);
+    }
+  #endif
+  this->Superclass::RegisterDialogUp(ptr);
+}
 
 //---------------------------------------------------------------------------
-// qSlicerAbstractModule* vtkSlicerApplication::GetModule ( const char *title )
-// {
-//   vtkInternal::ModuleListConstIterator iter = 
-//     this->Internal->ModuleList.find( title ); 
-//   if ( iter == this->Internal->ModuleList.constEnd() )
-//     {
-//     return 0;
-//     }
-//   return *iter; 
-// }
-
-// //---------------------------------------------------------------------------
-// void vtkSlicerApplication::ShowModule ( const char *title )
-// {
-//   qSlicerAbstractModule * module = this->GetModule(title);
-//   if (!module)
-//     {
-//     return; 
-//     }
-//   module->show(); 
-// }
-// 
-// //---------------------------------------------------------------------------
-// void vtkSlicerApplication::HideModule ( const char *title )
-// {
-//   std::cout << " Hide module: " << title << std::endl;
-//   qSlicerAbstractModule * module = this->GetModule(title);
-//   if (!module)
-//     {
-//     return; 
-//     }
-//   module->hide(); 
-// }
-
-
-#endif
+void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
+{
+  this->Superclass::UnRegisterDialogUp(ptr);
+  
+  #ifdef Slicer3_USE_QT
+  if (this->GetApplicationGUI())
+    {
+    // TODO Show all visible Qt Widget
+    this->GetApplicationGUI()->SetCurrentQtModuleVisible(true);
+    }
+  #endif
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::ConfigureApplication ( ) {
@@ -2455,3 +2414,21 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 //   vtkErrorMacro("Qt not available");
 // #endif
 // }
+
+//----------------------------------------------------------------------------
+#ifdef Slicer3_USE_QT
+void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
+{
+  QString splashMsg = "Initializing %1 Module...";
+  this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toAscii());
+  qDebug() << "Attempt to load module: " << moduleName;
+  qSlicerModuleManager::instance()->loadModuleByName(moduleName);
+  qSlicerAbstractModule* module = qSlicerModuleManager::instance()->getModuleByName(moduleName); 
+  if (module)
+    {
+    module->setScrollAreaAsParentContainer(true);
+    module->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    }
+  //qSlicerModuleManager::instance()->dumpObjectInfo(); 
+}
+#endif

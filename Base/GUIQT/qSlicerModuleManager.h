@@ -31,6 +31,10 @@ public:
   qSlicerAbstractModule* getModuleByName(const QString& moduleName); 
   
   // Description:
+  // Get module title given it's name
+  const QString moduleTitle(const QString& moduleName); 
+  
+  // Description:
   void showModule(const QString& moduleTitle); 
   void hideModule(const QString& moduleTitle); 
   

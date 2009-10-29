@@ -9,6 +9,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
+qSlicerGetModuleTitleDefinitionMacro(qSlicerModuleTransform, "Transforms"); 
+
+//-----------------------------------------------------------------------------
 class qSlicerModuleTransform::qInternal : public Ui::qSlicerModuleTransform
 {
 public:
@@ -28,8 +31,12 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
   this->Internal->setupUi(this);
   
   // TODO Range should be dynamic (function of the input data/transform OR set by the user)
-  this->Internal->TranslationSliders->setRange(-200.00, 200.00);
-  this->Internal->RotationSliders->setRange(-200.00, 200.00);
+  //double minRange = this->Internal->MinTranslationInput->text().toDouble(); 
+  double minRange = -200; 
+  //double maxRange = this->Internal->MaxTranslationInput->text().toDouble(); 
+  double maxRange = 200;
+  this->Internal->TranslationSliders->setRange(minRange, maxRange);
+  this->Internal->RotationSliders->setRange(minRange, maxRange);
   
   // Add coordinate reference button to a button group
   this->Internal->CoordinateReferenceButtonGroup = 
@@ -48,6 +55,11 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
   this->connect(this->Internal->IdentityPushButton, 
                 SIGNAL(pressed()),
                 SLOT(onIdentityButtonPressed()));
+                
+  // Connect revert button 
+  this->connect(this->Internal->InvertPushButton, 
+                SIGNAL(pressed()),
+                SLOT(onInvertButtonPressed()));
   
   // Connect node selector with translation sliders
   this->connect(this->Internal->TransformNodeSelector, SIGNAL(nodeSelected(vtkMRMLNode*)), 
@@ -101,6 +113,7 @@ void qSlicerModuleTransform::onNodeSelected(vtkMRMLNode* node)
   // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox
   this->Internal->CoordinateReferenceGroupBox->setEnabled(transformNode != 0); 
   this->Internal->IdentityPushButton->setEnabled(transformNode != 0); 
+  this->Internal->InvertPushButton->setEnabled(transformNode != 0);
   this->Internal->MatrixViewGroupBox->setEnabled(transformNode != 0); 
   
   this->Internal->MRMLTransformNode = transformNode; 
@@ -113,4 +126,13 @@ void qSlicerModuleTransform::onIdentityButtonPressed()
   
   this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->Identity(); 
   this->Internal->RotationSliders->reset(); 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleTransform::onInvertButtonPressed()
+{
+  if (!this->Internal->MRMLTransformNode) { return; }
+  
+  this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
+  this->Internal->RotationSliders->reset();
 }

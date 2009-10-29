@@ -14,6 +14,10 @@ public:
   typedef qSlicerAbstractModule Superclass;
   qSlicerMeasurementsModule(QWidget *parent=0);
   virtual ~qSlicerMeasurementsModule(); 
+  
+  virtual void dumpObjectInfo();
+  
+  qSlicerGetModuleTitleDeclarationMacro();
 
 private:
   class qInternal;

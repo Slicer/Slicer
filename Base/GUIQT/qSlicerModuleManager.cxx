@@ -161,6 +161,12 @@ qSlicerAbstractModule* qSlicerModuleManager::getModuleByName(const QString& modu
 }
 
 //---------------------------------------------------------------------------
+const QString qSlicerModuleManager::moduleTitle(const QString& moduleName)
+{
+  return this->Internal->ModuleFactory.getModuleTitle(moduleName);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleManager::showModule(const QString& moduleTitle)
 {
   qDebug() << "Show module:" << moduleTitle;
@@ -169,7 +175,8 @@ void qSlicerModuleManager::showModule(const QString& moduleTitle)
     {
     return; 
     }
-  module->show(); 
+  //module->show(); 
+  module->setParentVisible(true);
 }
 
 //---------------------------------------------------------------------------
@@ -181,7 +188,8 @@ void qSlicerModuleManager::hideModule(const QString& moduleTitle)
     {
     return; 
     }
-  module->hide(); 
+  //module->hide(); 
+  module->setParentVisible(false);
 }
 
 //----------------------------------------------------------------------------

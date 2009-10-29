@@ -7,6 +7,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
+qSlicerGetModuleTitleDefinitionMacro(qSlicerMeasurementsModule, "Measurements"); 
+
+//-----------------------------------------------------------------------------
 class qSlicerMeasurementsModule::qInternal : public Ui::qSlicerMeasurementsModule
 {
 public:
@@ -28,3 +31,8 @@ qSlicerMeasurementsModule::~qSlicerMeasurementsModule()
   delete this->Internal; 
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerMeasurementsModule::dumpObjectInfo()
+{
+  this->Superclass::dumpObjectInfo();
+}

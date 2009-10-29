@@ -72,15 +72,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     
 #ifdef Slicer3_USE_QT
     // Description:
-    //BTX
-    qSlicerModuleManager* moduleManager(); 
-    //virtual void AddModule(qSlicerAbstractModule * module); 
-    //virtual void RemoveModule(qSlicerAbstractModule * module); 
-    //virtual qSlicerAbstractModule* GetModule( const char *name ); 
-    //virtual void ShowModule ( const char *name ); 
-    //virtual void HideModule ( const char *name ); 
-    //ETX
+    // Initialize a qt Module given its name
+    void InitializeQtModule(const char* moduleName);
 #endif
+
+    // Description:
+    // Overloaded method from vtkKWApplication allowing to show/hide Qt modules
+    // when a Kw dialog is popup
+    //BTX
+    virtual void RegisterDialogUp(vtkKWWidget *ptr);
+    virtual void UnRegisterDialogUp(vtkKWWidget *ptr);
+    //ETX
 
     // Description:
     // These methods manage windows associated with the application

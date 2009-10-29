@@ -40,7 +40,7 @@ qSlicerModuleFactory::~qSlicerModuleFactory()
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerCoreModules()
 {
-  this->registerModule<qSlicerModuleTransform>("Transforms");
+  this->registerModule<qSlicerModuleTransform>();
   // WIP: this->registerModule<qSlicerMeasurementsModule>("Measurements");
 }
 
@@ -67,8 +67,10 @@ void qSlicerModuleFactory::dumpObjectInfo()
 
 //-----------------------------------------------------------------------------
 template<typename ClassType>
-void qSlicerModuleFactory::registerModule(const QString& moduleTitle)
+void qSlicerModuleFactory::registerModule(/*const QString& moduleTitle*/)
 {
+  const QString moduleTitle = ClassType::moduleTitle(); 
+  
   Q_ASSERT(!this->Internal->MapTitleToName.contains(moduleTitle)); 
   
   QString moduleName = ClassType::staticMetaObject.className(); 
@@ -80,7 +82,7 @@ void qSlicerModuleFactory::registerModule(const QString& moduleTitle)
   // Keep track of the relation Title -> moduleName
   this->Internal->MapTitleToName[moduleTitle] = moduleName;
    
-   // Keep track of the relation moduleName -> Title
+  // Keep track of the relation moduleName -> Title
   this->Internal->MapNameToTitle[moduleName] = moduleTitle; 
 }
 
