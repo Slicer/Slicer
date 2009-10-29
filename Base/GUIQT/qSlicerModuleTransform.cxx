@@ -2,7 +2,13 @@
 
 #include "ui_qSlicerModuleTransform.h" 
 
+#include "qMRMLUtils.h"
+
 #include "vtkMRMLLinearTransformNode.h"
+
+#include "vtkSmartPointer.h"
+#include "vtkTransform.h"
+#include "vtkMatrix4x4.h"
 
 #include <QVector>
 #include <QButtonGroup>
@@ -30,11 +36,9 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
   
-  // TODO Range should be dynamic (function of the input data/transform OR set by the user)
-  //double minRange = this->Internal->MinTranslationInput->text().toDouble(); 
-  double minRange = -200; 
-  //double maxRange = this->Internal->MaxTranslationInput->text().toDouble(); 
-  double maxRange = 200;
+  // Initialize translation min/max limit
+  double minRange = this->Internal->MinTranslationLimitInput->value(); 
+  double maxRange = this->Internal->MaxTranslationLimitInput->value(); 
   this->Internal->TranslationSliders->setRange(minRange, maxRange);
   this->Internal->RotationSliders->setRange(minRange, maxRange);
   
@@ -81,7 +85,12 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
   // Reset Rotation sliders if at least one of the translation sliders is moved
   this->connect(this->Internal->TranslationSliders, SIGNAL(sliderMoved()), 
                 this->Internal->RotationSliders, SLOT(reset())); 
-  
+                
+  // Connect min/max translation limit input with translation sliders
+  this->connect(this->Internal->MinTranslationLimitInput, SIGNAL(valueEdited(double)), 
+    this->Internal->TranslationSliders, SLOT(setMinimumRange(double))); 
+  this->connect(this->Internal->MaxTranslationLimitInput, SIGNAL(valueEdited(double)), 
+    this->Internal->TranslationSliders, SLOT(setMaximumRange(double))); 
 }
 
 //-----------------------------------------------------------------------------
@@ -116,6 +125,11 @@ void qSlicerModuleTransform::onNodeSelected(vtkMRMLNode* node)
   this->Internal->InvertPushButton->setEnabled(transformNode != 0);
   this->Internal->MatrixViewGroupBox->setEnabled(transformNode != 0); 
   
+  // Listen for Transform node changes
+  this->qvtkReConnect(this->Internal->MRMLTransformNode, transformNode, 
+    vtkMRMLTransformableNode::TransformModifiedEvent, 
+    this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
+  
   this->Internal->MRMLTransformNode = transformNode; 
 }
 
@@ -135,4 +149,49 @@ void qSlicerModuleTransform::onInvertButtonPressed()
   
   this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
   this->Internal->RotationSliders->reset();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleTransform::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
+{
+  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
+  if (!transformNode) { return; }
+  
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode, 
+    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
+  
+  vtkMatrix4x4 * mat = transform->GetMatrix();
+  double minmax[2] = {0, 0}; 
+  this->extractMinMaxTranslationValue(mat, minmax, 0.3);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleTransform::extractMinMaxTranslationValue(
+  vtkMatrix4x4 * mat, double minmax[2], float expand)
+{
+  Q_ASSERT(mat);
+  if (!mat)
+    {
+    return; 
+    }
+    
+  for (int i=0; i <3; i++)
+    {
+    if (mat->GetElement(i,3) < minmax[0])
+      {
+      minmax[0] = mat->GetElement(i,3) - expand * fabs(mat->GetElement(i,3));
+      }
+  
+    if (mat->GetElement(i,3) > minmax[1])
+      {
+      minmax[1] = mat->GetElement(i,3) + expand * fabs(mat->GetElement(i,3));
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerModuleTransform::coordinateReference()
+{
+  return this->Internal->CoordinateReferenceButtonGroup->checkedId(); 
 }

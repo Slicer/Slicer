@@ -42,7 +42,7 @@ public slots:
   
 protected slots:
   // Description:
-  // Triggered upon MRML scene updates
+  // Triggered upon MRML transform node updates
   void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
 
 private:
