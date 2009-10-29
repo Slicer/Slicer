@@ -3,6 +3,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractModule.h"
 #include <QApplication>
+#include <QDebug>
 #endif
 
 #include <map>
@@ -342,7 +343,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
       while (m != NULL )
         {
           mName = m->GetUIPanel()->GetName();
-          std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl; 
+          //std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl; 
           if ( !strcmp (moduleName, mName) ) 
            {
            //--- feedback to user

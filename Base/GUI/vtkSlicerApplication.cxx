@@ -228,6 +228,7 @@ public:
     {
     #ifdef Slicer3_USE_QT
     this->qApplication = 0; 
+    this->RegisteredDialogCount = 0; 
     #endif
     
     this->MRMLScene = 0; 
@@ -236,6 +237,7 @@ public:
   
   #ifdef Slicer3_USE_QT
   qSlicerApplication*                    qApplication;
+  int                                    RegisteredDialogCount; 
   #endif
 };
 
@@ -677,7 +679,11 @@ void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
   #ifdef Slicer3_USE_QT
   if (this->GetApplicationGUI())
     {
-    qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
+    if (this->Internal->RegisteredDialogCount == 0)
+      {
+      qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
+      }
+    this->Internal->RegisteredDialogCount++;
     }
   #endif
   this->Superclass::RegisterDialogUp(ptr);
@@ -691,7 +697,11 @@ void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
   #ifdef Slicer3_USE_QT
   if (this->GetApplicationGUI())
     {
-    qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
+    if (this->Internal->RegisteredDialogCount == 1)
+      {
+      qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
+      }
+    this->Internal->RegisteredDialogCount--;
     }
   #endif
 }
