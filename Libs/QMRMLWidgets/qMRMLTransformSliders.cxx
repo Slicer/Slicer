@@ -142,6 +142,18 @@ double qMRMLTransformSliders::maximum()const
 }
 
 // --------------------------------------------------------------------------
+void qMRMLTransformSliders::setMinimumRange(double min)
+{
+  this->setRange(min, this->maximum()); 
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::setMaximumRange(double max)
+{
+  this->setRange(this->minimum(), max); 
+}
+  
+// --------------------------------------------------------------------------
 void qMRMLTransformSliders::setRange(double min, double max)
 {
   this->Internal->LRSlider->setRange(min, max);

@@ -54,10 +54,9 @@ public:
   QString title()const; 
   
   // Description:
-  // Set sliders range
+  // Get sliders range
   double minimum()const;
   double maximum()const; 
-  void setRange(double min, double max);
   
   // Description:
   // Set sliders single step 
@@ -87,6 +86,12 @@ public slots:
   // Description:
   // Reset all sliders to their 0 position and value
   void reset(); 
+  
+  // Description:
+  // Set sliders range
+  void setMinimumRange(double min);
+  void setMaximumRange(double max);
+  void setRange(double min, double max);
   
 protected slots:
   void onLRSliderPositionChanged(double position); 

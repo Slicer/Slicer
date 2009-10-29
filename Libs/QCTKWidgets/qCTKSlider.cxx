@@ -42,6 +42,18 @@ qCTKSlider::~qCTKSlider()
 }
 
 // --------------------------------------------------------------------------
+void qCTKSlider::setMinimumRange(double min)
+{
+  this->setRange(min, this->maximumAsDbl()); 
+}
+
+// --------------------------------------------------------------------------
+void qCTKSlider::setMaximumRange(double max)
+{
+  this->setRange(this->minimumAsDbl(), max); 
+}
+
+// --------------------------------------------------------------------------
 void qCTKSlider::setRange(double min, double max)
 {
   if (this->Internal->HandleDouble)

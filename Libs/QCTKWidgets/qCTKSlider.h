@@ -22,8 +22,7 @@ public:
   virtual ~qCTKSlider();
   
   // Description:
-  // Set/Get range
-  void setRange(double min, double max); 
+  // Get range
   double minimumAsDbl();
   double maximumAsDbl();
   
@@ -52,6 +51,12 @@ public slots:
   // Description:
   // Reset the slider to zero (value and position)
   void reset(); 
+  
+  // Description:
+  // Set range
+  void setMinimumRange(double min); 
+  void setMaximumRange(double max); 
+  void setRange(double min, double max); 
 
 protected:
   int fromDoubleToInteger(double d);
