@@ -593,7 +593,6 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
     if ( this->GetGUILayoutNode() != NULL )
       {
       int layout = this->GetGUILayoutNode()->GetViewArrangement ();
@@ -2045,8 +2044,8 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     return;
     }
 
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  //vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
       
   // Create 3D viewer for the view nodes
       
@@ -2249,7 +2248,6 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
 
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2666,9 +2664,6 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2773,9 +2768,6 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
     if ( layout == NULL )
       {
@@ -2832,9 +2824,6 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2905,8 +2894,6 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
   // TODO: implement this and add an icon on the toolbar for it
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
