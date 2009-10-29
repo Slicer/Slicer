@@ -18,6 +18,12 @@ public:
   virtual ~qSlicerApplication();
   
   // Description:
+  // Set the visibility of the top level widgets. 
+  // If set to 'False', the state of the widget will be saved.
+  // If set to 'True, if possible the saved state will be restored.
+  void setTopLevelWidgetsVisible(bool visible); 
+  
+  // Description:
   // Set/Get MRML Scene
   void setMRMLScene(vtkMRMLScene * scene);
   vtkMRMLScene* getMRMLScene();

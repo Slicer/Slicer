@@ -5,6 +5,8 @@
 #include <QFont>
 #include <QFontInfo>
 #include <QFontDatabase>
+#include <QWidget>
+#include <QMap>
 
 #include "vtkMRMLScene.h"
 
@@ -17,6 +19,7 @@ public:
     this->MRMLScene = 0;
     }
   vtkMRMLScene * MRMLScene; 
+  QMap<QWidget*,bool> TopLevelWidgetsSavedVisibilityState; 
 };
 
 //-----------------------------------------------------------------------------
@@ -80,6 +83,37 @@ void qSlicerApplication::loadStyleSheet()
 //     "alternate-background-color: #e4e4fe;";
 //   
 //   this->setStyleSheet(styleSheet);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)
+{
+  foreach(QWidget * widget, this->topLevelWidgets())
+    {
+    // Store current visibility state
+    if (!visible)
+      {
+      this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible(); 
+      widget->hide();
+      }
+    else
+      {
+      QMap<QWidget*,bool>::const_iterator it = 
+        this->Internal->TopLevelWidgetsSavedVisibilityState.find(widget); 
+        
+      // If widget state was saved, restore it. Otherwise skip.
+      if (it != this->Internal->TopLevelWidgetsSavedVisibilityState.end())
+        {
+        widget->setVisible(it.value());
+        }
+      }
+    }
+  
+  // Each time widget are set visible. Internal Map can be cleared.
+  if (visible)
+    {
+    this->Internal->TopLevelWidgetsSavedVisibilityState.clear();
+    }
 }
 
 //-----------------------------------------------------------------------------

@@ -71,6 +71,9 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     
+    // Set window title
+    scrollArea->setWindowTitle(this->windowTitle());
+    
     // Layout vertically and add a spacer/stretcher
     QVBoxLayout * layout = new QVBoxLayout(scrollArea);
     layout->addWidget(this);

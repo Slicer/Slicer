@@ -677,8 +677,7 @@ void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
   #ifdef Slicer3_USE_QT
   if (this->GetApplicationGUI())
     {
-    // TODO Hide all visible Qt Widget
-    this->GetApplicationGUI()->SetCurrentQtModuleVisible(false);
+    qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
     }
   #endif
   this->Superclass::RegisterDialogUp(ptr);
@@ -692,8 +691,7 @@ void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
   #ifdef Slicer3_USE_QT
   if (this->GetApplicationGUI())
     {
-    // TODO Show all visible Qt Widget
-    this->GetApplicationGUI()->SetCurrentQtModuleVisible(true);
+    qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
     }
   #endif
 }
