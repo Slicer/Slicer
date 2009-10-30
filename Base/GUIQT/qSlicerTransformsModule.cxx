@@ -1,6 +1,6 @@
-#include "qSlicerModuleTransform.h" 
+#include "qSlicerTransformsModule.h" 
 
-#include "ui_qSlicerModuleTransform.h" 
+#include "ui_qSlicerTransformsModule.h" 
 
 #include "qMRMLUtils.h"
 
@@ -15,10 +15,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-qSlicerGetModuleTitleDefinitionMacro(qSlicerModuleTransform, "Transforms"); 
+qSlicerGetModuleTitleDefinitionMacro(qSlicerTransformsModule, "Transforms"); 
 
 //-----------------------------------------------------------------------------
-class qSlicerModuleTransform::qInternal : public Ui::qSlicerModuleTransform
+class qSlicerTransformsModule::qInternal : public Ui::qSlicerTransformsModule
 {
 public:
   qInternal()
@@ -31,7 +31,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(parent)
+qSlicerTransformsModule::qSlicerTransformsModule(QWidget *parent) : Superclass(parent)
 {
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
@@ -94,19 +94,19 @@ qSlicerModuleTransform::qSlicerModuleTransform(QWidget *parent) : Superclass(par
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleTransform::~qSlicerModuleTransform()
+qSlicerTransformsModule::~qSlicerTransformsModule()
 {
   delete this->Internal; 
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::dumpObjectInfo()
+void qSlicerTransformsModule::dumpObjectInfo()
 {
   this->Superclass::dumpObjectInfo();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleTransform::helpText()
+QString qSlicerTransformsModule::helpText()
 {
   QString help = 
     "The Volumes Module loads and adjusts display parameters of volume data.</br>"
@@ -121,7 +121,7 @@ QString qSlicerModuleTransform::helpText()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleTransform::aboutText()
+QString qSlicerTransformsModule::aboutText()
 {
   QString about = 
     "The Transforms Module creates and edits transforms.</br>"
@@ -131,7 +131,7 @@ QString qSlicerModuleTransform::aboutText()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::onCoordinateReferenceButtonPressed(int id)
+void qSlicerTransformsModule::onCoordinateReferenceButtonPressed(int id)
 {
   qMRMLTransformSliders::CoordinateReferenceType ref = 
     (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL; 
@@ -140,7 +140,7 @@ void qSlicerModuleTransform::onCoordinateReferenceButtonPressed(int id)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::onNodeSelected(vtkMRMLNode* node)
+void qSlicerTransformsModule::onNodeSelected(vtkMRMLNode* node)
 {
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node); 
   
@@ -164,7 +164,7 @@ void qSlicerModuleTransform::onNodeSelected(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::onIdentityButtonPressed()
+void qSlicerTransformsModule::onIdentityButtonPressed()
 {
   if (!this->Internal->MRMLTransformNode) { return; }
   
@@ -173,7 +173,7 @@ void qSlicerModuleTransform::onIdentityButtonPressed()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::onInvertButtonPressed()
+void qSlicerTransformsModule::onInvertButtonPressed()
 {
   if (!this->Internal->MRMLTransformNode) { return; }
   
@@ -182,7 +182,7 @@ void qSlicerModuleTransform::onInvertButtonPressed()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
+void qSlicerTransformsModule::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
 {
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
@@ -197,7 +197,7 @@ void qSlicerModuleTransform::onMRMLTransformNodeModified(void* /*call_data*/, vt
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleTransform::extractMinMaxTranslationValue(
+void qSlicerTransformsModule::extractMinMaxTranslationValue(
   vtkMatrix4x4 * mat, double minmax[2], float expand)
 {
   Q_ASSERT(mat);
@@ -221,7 +221,7 @@ void qSlicerModuleTransform::extractMinMaxTranslationValue(
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerModuleTransform::coordinateReference()
+int qSlicerTransformsModule::coordinateReference()
 {
   return this->Internal->CoordinateReferenceButtonGroup->checkedId(); 
 }

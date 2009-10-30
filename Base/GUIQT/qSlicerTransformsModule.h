@@ -1,5 +1,5 @@
-#ifndef __qSlicerModuleTransform_h
-#define __qSlicerModuleTransform_h 
+#ifndef __qSlicerTransformsModule_h
+#define __qSlicerTransformsModule_h 
 
 #include "qVTKObject.h"
 #include "qSlicerAbstractCoreModule.h"
@@ -9,7 +9,7 @@
 class vtkMatrix4x4;
 class vtkMRMLNode; 
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleTransform : public qSlicerAbstractCoreModule
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerTransformsModule : public qSlicerAbstractCoreModule
 { 
   Q_OBJECT
   QVTK_OBJECT
@@ -17,8 +17,8 @@ class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleTransform : public qSlicerAbstract
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerModuleTransform(QWidget *parent=0);
-  virtual ~qSlicerModuleTransform(); 
+  qSlicerTransformsModule(QWidget *parent=0);
+  virtual ~qSlicerTransformsModule(); 
   
   virtual void dumpObjectInfo();
   

@@ -3,7 +3,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 
-#include "qSlicerModuleTransform.h"
+#include "qSlicerTransformsModule.h"
 
 #include <QHash>
 #include <QDebug>
@@ -39,7 +39,7 @@ qSlicerModuleFactory::~qSlicerModuleFactory()
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerCoreModules()
 {
-  this->registerModule<qSlicerModuleTransform>();
+  this->registerModule<qSlicerTransformsModule>();
 }
 
 //-----------------------------------------------------------------------------

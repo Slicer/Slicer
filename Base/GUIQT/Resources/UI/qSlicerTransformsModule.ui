@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerModuleTransform</class>
- <widget class="QWidget" name="qSlicerModuleTransform">
+ <class>qSlicerTransformsModule</class>
+ <widget class="QWidget" name="qSlicerTransformsModule">
   <property name="geometry">
    <rect>
     <x>0</x>

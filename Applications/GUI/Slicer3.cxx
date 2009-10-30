@@ -1447,7 +1447,7 @@ int Slicer3_main(int& argc, char *argv[])
 //   slicerApp->AddModuleGUI ( emptyModuleGUI );
   
   // --- Qt Transforms module
-  slicerApp->InitializeQtModule("qSlicerModuleTransform");
+  slicerApp->InitializeQtModule("qSlicerTransformsModule");
 #endif
 
  // --- First scene needs a crosshair to be added manually
