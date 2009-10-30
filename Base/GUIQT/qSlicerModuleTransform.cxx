@@ -106,6 +106,31 @@ void qSlicerModuleTransform::dumpObjectInfo()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerModuleTransform::helpText()
+{
+  QString help = 
+    "The Volumes Module loads and adjusts display parameters of volume data.</br>"
+    "<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Volumes-Documentation-3.4</a></br>"
+    "</br>"
+    "The Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) "
+    "of DWI data and provides a quick way to interpret them. For that it estimates a tensor and "
+    "shows glyphs and tracts for visual exploration. Help for Diffusion Editor:"
+    "<a>%1/Modules:Volumes:Diffusion_Editor-Documentation</a>";
+    
+  return help.arg(this->slicerWikiUrl()); 
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerModuleTransform::aboutText()
+{
+  QString about = 
+    "The Transforms Module creates and edits transforms.</br>"
+    "<a>%1/Modules:Transforms-Documentation-3.4</a>"; 
+    
+  return about.arg(this->slicerWikiUrl()); 
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModuleTransform::onCoordinateReferenceButtonPressed(int id)
 {
   qMRMLTransformSliders::CoordinateReferenceType ref = 

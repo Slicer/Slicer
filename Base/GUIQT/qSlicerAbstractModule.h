@@ -2,7 +2,6 @@
 #define __qSlicerAbstractModule_h 
 
 #include "qSlicerWidget.h"
-#include "qVTKObject.h"
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
@@ -25,7 +24,6 @@ class vtkMRMLScene;
 
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
-  QVTK_OBJECT
   Q_OBJECT
   
 public:
@@ -50,6 +48,11 @@ public:
   // Description:
   virtual void populateApplicationSettings(){}
   virtual void unPopulateApplicationSettings(){}
+  
+  // Description:
+  // Return help/about text
+  virtual QString helpText() = 0;
+  virtual QString aboutText() = 0; 
 
 public slots:
 

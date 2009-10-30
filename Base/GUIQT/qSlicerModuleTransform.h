@@ -2,27 +2,31 @@
 #define __qSlicerModuleTransform_h 
 
 #include "qVTKObject.h"
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
 class vtkMatrix4x4;
 class vtkMRMLNode; 
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleTransform : public qSlicerAbstractModule
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleTransform : public qSlicerAbstractCoreModule
 { 
   Q_OBJECT
   QVTK_OBJECT
 
 public:
 
-  typedef qSlicerAbstractModule Superclass;
+  typedef qSlicerAbstractCoreModule Superclass;
   qSlicerModuleTransform(QWidget *parent=0);
   virtual ~qSlicerModuleTransform(); 
   
   virtual void dumpObjectInfo();
   
   qSlicerGetModuleTitleDeclarationMacro();
+  
+  // Return help/about text
+  virtual QString helpText();
+  virtual QString aboutText(); 
 
 protected slots:
   void onCoordinateReferenceButtonPressed(int id); 

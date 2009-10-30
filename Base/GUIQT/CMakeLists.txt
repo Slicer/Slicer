@@ -13,14 +13,14 @@ SET(qSlicerGUIQT_SRCS
   qSlicerWidget.cxx
   qSlicerAbstractModule.cxx
   qSlicerAbstractModule.h
+  qSlicerAbstractCoreModule.h
+  qSlicerAbstractCoreModule.cxx
   qSlicerApplication.cxx
   qSlicerApplication.h
   qSlicerIOManager.cxx
   qSlicerIOManager.h
   qSlicerKwUIWrapper.cxx
   qSlicerKwUIWrapper.h
-  qSlicerMeasurementsModule.cxx
-  qSlicerMeasurementsModule.h
   qSlicerModuleFactory.cxx
   qSlicerModuleFactory.h
   qSlicerModuleManager.cxx
@@ -33,15 +33,14 @@ SET(qSlicerGUIQT_SRCS
 SET(qSlicerGUIQT_MOC_SRCS
   qSlicerWidget.h
   qSlicerAbstractModule.h
+  qSlicerAbstractCoreModule.h
   qSlicerApplication.h
   qSlicerKwUIWrapper.h
-  qSlicerMeasurementsModule.h
   qSlicerModuleTransform.h
   )
   
 # UI files
 SET(qSlicerGUIQT_UI_SRCS
-  Resources/UI/qSlicerMeasurementsModule.ui
   Resources/UI/qSlicerModuleTransform.ui
 )
   

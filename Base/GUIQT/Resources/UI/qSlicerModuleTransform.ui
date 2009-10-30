@@ -147,7 +147,7 @@
     <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="TranslationLimitLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">

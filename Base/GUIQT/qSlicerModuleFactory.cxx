@@ -4,7 +4,6 @@
 #include "qSlicerAbstractModule.h"
 
 #include "qSlicerModuleTransform.h"
-#include "qSlicerMeasurementsModule.h"
 
 #include <QHash>
 #include <QDebug>
@@ -41,7 +40,6 @@ qSlicerModuleFactory::~qSlicerModuleFactory()
 void qSlicerModuleFactory::registerCoreModules()
 {
   this->registerModule<qSlicerModuleTransform>();
-  // WIP: this->registerModule<qSlicerMeasurementsModule>("Measurements");
 }
 
 //-----------------------------------------------------------------------------
