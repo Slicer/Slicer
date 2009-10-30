@@ -108,6 +108,9 @@ set(CMAKE_MODULE_PATH "${VTK_CMAKE_DIR}" ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_D
 
 include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 
+# See http://www.cmake.org/Wiki/CMakeMacroParseArguments
+include("${Slicer3_CMAKE_DIR}/Slicer3ParseArgumentsMacro.cmake")
+
 ## QT
 INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3FindQT.cmake)
 
@@ -133,10 +136,12 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES "")
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES "")
 slicer3_set_persistent_property(Slicer3_Modules_LIBRARIES "")
+slicer3_set_persistent_property(Slicer3_QTModules_LIBRARIES "")
 
 slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer3_Modules_INCLUDE_DIRS "")
+slicer3_set_persistent_property(Slicer3_QTModules_INCLUDE_DIRS "")
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
@@ -190,29 +195,6 @@ include(${KWWidgets_USE_FILE})
 # Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
 #
 SLICER3_SETUP_QT()
-
-#SET(DESIRED_QT_VERSION 4)
-# OPTION(Slicer3_USE_QT 
-#   "Use Qt as an extra GUI library"
-#   OFF)
-# IF(Slicer3_USE_QT)
-#   ## QT
-#   IF(VTK_USE_QVTK)
-#     #This find package should NOT be needed.
-#     FIND_PACKAGE(Qt4)
-#     IF(QT4_FOUND)
-#       SET(QT_USE_QTNETWORK ON)
-#       INCLUDE(${QT_USE_FILE})
-#       SET(Slicer3_USE_QT ON)
-#       ADD_DEFINITIONS(-DSlicer3_USE_QT)
-#     ELSE(QT4_FOUND)
-#       MESSAGE("Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
-#     ENDIF(QT4_FOUND)
-#   ELSE(VTK_USE_QVTK)
-#      MESSAGE("VTK was not configured to use QT, no QT-based code will be compiled in Slicer")
-#      SET(Slicer3_USE_QT OFF)
-#   ENDIF(VTK_USE_QVTK)
-# ENDIF(Slicer3_USE_QT)
 
 ## Teem
 find_package(Teem REQUIRED)
@@ -370,6 +352,16 @@ else(Slicer3_BUILD_MODULES)
     add_subdirectory(Modules/CommandLineModule)
   endif(Slicer3_BUILD_CLI)
 endif(Slicer3_BUILD_MODULES)
+
+#-----------------------------------------------------------------------------
+# Qt Modules
+#
+IF(Slicer3_USE_QT)
+  OPTION(Slicer3_BUILD_QTMODULES "Build Slicer3 QT Modules" ON)
+  IF(Slicer3_BUILD_QTMODULES)
+    add_subdirectory(QTModules)
+  ENDIF(Slicer3_BUILD_QTMODULES)
+ENDIF(Slicer3_USE_QT)
 
 #-----------------------------------------------------------------------------
 # Applications need to be built after Modules to capture the TractTracing in
