@@ -1,8 +1,10 @@
 # Module name (usually identique to the directory name)
-SET(qSlicerModule_name "Volumes")
+SET(qt_module_name "Volumes")
+
+SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 
 # Additional directories to include
-SET(qSlicerModule_include_directories
+SET(qt_module_include_directories
   #${CommandLineModule_SOURCE_DIR}
   #${CommandLineModule_BINARY_DIR}
   #${SlicerTractographyFiducialSeeding_SOURCE_DIR}
@@ -12,23 +14,23 @@ SET(qSlicerModule_include_directories
   )
 
 # Source files
-SET(qSlicerModule_SRCS
+SET(qt_module_SRCS
   qSlicerVolumesModule.h
   qSlicerVolumesModule.cxx
   )
 
 # Headers that should run through moc
-SET(qSlicerModule_MOC_SRCS
+SET(qt_module_MOC_SRCS
   qSlicerVolumesModule.h
   )
   
 # UI files
-SET(qSlicerModule_UI_SRCS
+SET(qt_module_UI_SRCS
   Resources/UI/qSlicerVolumesModule.ui
 )
 
 # Target libraries
-SET(qSlicerModule_target_libraries
+SET(qt_module_target_libraries
   #${KWWidgets_LIBRARIES}
   #${ITK_LIBRARIES}
   #CommandLineModule
@@ -38,11 +40,12 @@ SET(qSlicerModule_target_libraries
 
 
 Slicer3_build_qtmodule( 
-  NAME ${qSlicerModule_name}
-  INCLUDE_DIRECTORIES ${qSlicerModule_include_directories}
-  SRCS ${qSlicerModule_SRCS}
-  MOC_SRCS ${qSlicerModule_MOC_SRCS}
-  UI_SRCS ${qSlicerModule_UI_SRCS}
-  TARGET_LIBRARIES ${qSlicerModule_target_libraries}
+  NAME ${qt_module_name}
+  EXPORT_DIRECTIVE ${qt_module_export_directive}
+  INCLUDE_DIRECTORIES ${qt_module_include_directories}
+  SRCS ${qt_module_SRCS}
+  MOC_SRCS ${qt_module_MOC_SRCS}
+  UI_SRCS ${qt_module_UI_SRCS}
+  TARGET_LIBRARIES ${qt_module_target_libraries}
   NO_RESOURCES
   )

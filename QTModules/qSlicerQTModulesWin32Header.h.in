@@ -1,0 +1,21 @@
+// .NAME __@LIBNAME@Win32Header - manage Windows system differences
+// .SECTION Description
+// The __@LIBNAME@Win32Header captures some system differences between Unix
+// and Windows operating systems. 
+
+#ifndef __@LIBNAME@Win32Header_h
+#define __@LIBNAME@Win32Header_h
+
+#include <@LIBNAME@Configure.h>
+
+#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+ #if defined(@LIBNAME@_EXPORTS)
+  #define @QTMODULE_EXPORT_DIRECTIVE@ __declspec( dllexport ) 
+ #else
+  #define @QTMODULE_EXPORT_DIRECTIVE@ __declspec( dllimport ) 
+ #endif
+#else
+ #define @QTMODULE_EXPORT_DIRECTIVE@
+#endif
+
+#endif

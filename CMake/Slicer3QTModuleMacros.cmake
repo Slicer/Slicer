@@ -4,10 +4,22 @@
 
 MACRO(Slicer3_build_qtmodule)
   SLICER3_PARSE_ARGUMENTS(QTMODULE
-    "NAME;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
     "NO_RESOURCES"
     ${ARGN}
     )
+  
+  # Sanity checks
+  IF(NOT DEFINED QTMODULE_NAME)
+    MESSAGE(SEND_ERROR "NAME is mandatory")
+  ENDIF(NOT DEFINED QTMODULE_NAME)
+  
+  IF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
+    MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
+  ENDIF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
+  
+  # Define library name
+  SET(LIBNAME qSlicer${QTMODULE_NAME}Module)
   
   # --------------------------------------------------------------------------
   # Find Slicer3
@@ -28,18 +40,24 @@ MACRO(Slicer3_build_qtmodule)
     ${Slicer3_Base_INCLUDE_DIRS}
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
-
-  #configure_file(
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumesConfigure.h.in 
-  #  ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumesConfigure.h
-  #  )
   
-  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  #install(FILES 
-  #  ${headers} 
-  #  "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumesConfigure.h"
-  #  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-  #  )
+  CONFIGURE_FILE(
+    ${QTModules_SOURCE_DIR}/qSlicerQTModulesConfigure.h.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${QTMODULE_NAME}ModuleConfigure.h
+    )
+  
+  CONFIGURE_FILE(
+    ${QTModules_SOURCE_DIR}/qSlicerQTModulesWin32Header.h.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${QTMODULE_NAME}ModuleWin32Header.h
+    )
+  
+  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  INSTALL(FILES 
+    ${headers} 
+    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Configure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Win32Header.h"
+    DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    )
   
   #file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
   #install(FILES 
@@ -79,16 +97,15 @@ MACRO(Slicer3_build_qtmodule)
   # --------------------------------------------------------------------------
   # Build and install the library
 
-  SET(lib_name qSlicer${QTMODULE_NAME}Module)
-  ADD_LIBRARY(${lib_name}
+  ADD_LIBRARY(${LIBNAME}
     ${qSlicerModule_SRCS}
     ${qSlicerModule_UI_CXX}
     ${qSlicerModule_QRC_SRCS}
     #${qSlicerModule_TCL_SRCS}
     )
-  slicer3_set_modules_output_path(${lib_name})
+  slicer3_set_modules_output_path(${LIBNAME})
 
-  TARGET_LINK_LIBRARIES(${lib_name}
+  TARGET_LINK_LIBRARIES(${LIBNAME}
     ${Slicer3_Libs_LIBRARIES}
     ${Slicer3_Base_LIBRARIES}
     ${QTMODULE_TARGET_LIBRARIES}
@@ -101,12 +118,12 @@ MACRO(Slicer3_build_qtmodule)
 
   # Apply user-defined properties to the library target.
   IF(Slicer3_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+    SET_TARGET_PROPERTIES(${LIBNAME} PROPERTIES
       ${Slicer3_LIBRARY_PROPERTIES}
     )
   ENDIF(Slicer3_LIBRARY_PROPERTIES)
   
-  slicer3_install_modules(${lib_name})
+  slicer3_install_modules(${LIBNAME})
 
 ENDMACRO(Slicer3_build_qtmodule)
 

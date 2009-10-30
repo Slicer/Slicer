@@ -3,9 +3,10 @@
 
 #include "qSlicerAbstractLoadableModule.h"
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerMeasurementsModuleWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerMeasurementsModule : public qSlicerAbstractLoadableModule
+class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsModule : 
+  public qSlicerAbstractLoadableModule
 { 
   Q_OBJECT
 
