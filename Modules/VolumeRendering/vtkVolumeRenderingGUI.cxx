@@ -911,7 +911,6 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
   if (roi)
   {
     roi->RemoveObserver(vtkCommand::ModifiedEvent);
-    roi->VisibilityOff();
   }
 
   vspNode->SetAndObserveROINodeID(this->NS_ROI->GetSelected()->GetID());
@@ -920,7 +919,6 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
     return;
 
   vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
-  vspNode->GetROINode()->VisibilityOn();
   vspNode->GetROINode()->InsideOutOn();
 
   if (this->Helper)
@@ -1107,7 +1105,6 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
     vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
     this->GetLogic()->GetMRMLScene()->AddNode(roiNode);
-    roiNode->VisibilityOff();
     roiNode->InsideOutOn();
     vspNode->SetAndObserveROINodeID(roiNode->GetID());
     roiNode->Delete();
@@ -1288,7 +1285,6 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
   if (vspNode->GetROINode())
   {
     vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
-    vspNode->GetROINode()->VisibilityOn();
     vspNode->GetROINode()->InsideOutOn();
 
     this->GetLogic()->SetROI(vspNode);

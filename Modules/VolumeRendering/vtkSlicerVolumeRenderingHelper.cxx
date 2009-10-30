@@ -950,9 +950,6 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
       this->Gui->GetLogic()->SetROI(vspNode);
 
-      if (vspNode->GetROINode()->GetVisibility() == 0)
-        vspNode->GetROINode()->VisibilityOn();
-
       this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
