@@ -48,7 +48,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     method getLinkedSliceLogics {} {}
     method getLinkedSliceGUIs {} {}
     method addSliceModelSWidgets {} {}
-    method isCompareView {} {}
+    method isCompareViewer {} {}
+    method isCompareViewMode {} {}
     method getSliceSWidgetForGUI { gui } {}
   }
 }
@@ -376,7 +377,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - then handle modifying the view
       #
       set link [$_sliceCompositeNode GetLinkedControl]
-      if { $link == 1 && ([$this isCompareView] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
+      if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
         $this updateAnnotations $r $a $s
         set annotationsUpdated true
       } else {
@@ -600,7 +601,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       foreach gui $sliceGUIs {
         [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
         set snode [$gui GetSliceNode]
-        if { [$this isCompareView] == 1 } {
+        if { [$this isCompareViewMode] == 1 } {
           $snode SetSliceSpacingModeToAutomatic
         }
           
@@ -661,7 +662,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             set k [expr int($z + 0.5)]
             if { $k >= 0 && $k < [lindex [$_sliceNode GetDimensions] 2] } {
               $_sliceNode SetActiveSlice $k
-              if { [$this isCompareView] == 1 } {
+              if { [$this isCompareViewer] == 1 } {
                 # set the volume on the red viewer
                 set redGUI [$::slicer3::ApplicationGUI GetMainSliceGUI Red]
                 set redLogic [$redGUI GetLogic]
@@ -692,7 +693,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             set k [expr int($z + 0.5)]
             if { $k >= 0 && $k < [lindex [$_sliceNode GetDimensions] 2] } {
               $_sliceNode SetActiveSlice $k
-              if { [$this isCompareView] == 1 } {
+              if { [$this isCompareViewer] == 1 } {
                 # set the volume on the red viewer
                 set redGUI [$::slicer3::ApplicationGUI GetMainSliceGUI Red]
                 set redLogic [$redGUI GetLogic]
@@ -744,7 +745,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       foreach {r a s t} $ras {}
       $this updateAnnotation $r $a $s
   }
-
 }
 
 
@@ -1088,7 +1088,7 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareView] == 1) && $link == 1 } {
+    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
         set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
@@ -1135,7 +1135,7 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
     set guis ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareView] == 1) && $link == 1 } {
+    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
         set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
@@ -1170,24 +1170,29 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
 
 # Are we in a compare view mode?
-itcl::body SliceSWidget::isCompareView { } {
+itcl::body SliceSWidget::isCompareViewMode { } {
 
   set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
   set viewArrangement [$layout GetViewArrangement]
 
   if { $viewArrangement == 12 } {
-    # Is it enough to be in the compare view layout or do we want to
-    # restrict to just the compare slice viewers and exclude the Red
-    # viewer?
-    set lname [$_sliceNode GetSingletonTag]
-    if { [string first "Compare" $lname] != 0 } {
-      return 0
-    } 
     return 1
   } else {
     return 0
   }
 }
+
+# Is this a compare viewer? (not including the red viewer)
+itcl::body SliceSWidget::isCompareViewer { } {
+
+  set lname [$_sliceNode GetSingletonTag]
+  if { [string first "Compare" $lname] != 0 } {
+    return 0
+  } 
+
+  return 1
+}
+
 
 # Locate the SliceSWidget that works with a specific gui
 itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
