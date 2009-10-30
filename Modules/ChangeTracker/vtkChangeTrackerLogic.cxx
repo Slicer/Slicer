@@ -495,7 +495,7 @@ int vtkChangeTrackerLogic::CreateSuperSampleRASFct(vtkImageData *input, const do
   resampleTransform->SetMatrix(resampleXform);
   reslicer->SetInput(inputImage);
   if(LinearInterpolation){
-    reslicer->SetInterpolationModeToLinear();
+    reslicer->SetInterpolationModeToCubic();
   } else {
     reslicer->SetInterpolationModeToNearestNeighbor();
   }
