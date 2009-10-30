@@ -285,6 +285,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  
   # MRML Scene update probably means we need to create a new model intersection SWidget
   if { $caller == $::slicer3::MRMLScene && 
        ($event == "NodeAddedEvent" || $event == "SceneCloseEvent" || $event == "SceneClosingEvent") } {
@@ -365,6 +366,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this resizeSliceNode
   }
 
+  set annotationsUpdated false
   switch $event {
 
     "MouseMoveEvent" {
@@ -376,8 +378,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set link [$_sliceCompositeNode GetLinkedControl]
       if { $link == 1 && ([$this isCompareView] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
         $this updateAnnotations $r $a $s
+        set annotationsUpdated true
       } else {
         $this updateAnnotation $r $a $s
+        set annotationsUpdated true
       }
 
       if { [$_interactor GetShiftKey] } {
@@ -734,10 +738,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "ExitEvent" { }
   }
 
-  set xyToRAS [$_sliceNode GetXYToRAS]
-  set ras [$xyToRAS MultiplyPoint $x $y $z 1]
-  foreach {r a s t} $ras {}
-  $this updateAnnotation $r $a $s
+  if { $updatedAnnotations == false } {
+      set xyToRAS [$_sliceNode GetXYToRAS]
+      set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+      foreach {r a s t} $ras {}
+      $this updateAnnotation $r $a $s
+  }
 
 }
 
@@ -1193,3 +1199,4 @@ itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
       return ""
     }
 }
+
