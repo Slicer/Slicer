@@ -738,17 +738,18 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "ExitEvent" { }
   }
 
-#  if { $updatedAnnotations == false } {
+  if { $annotationsUpdated == false } {
       set xyToRAS [$_sliceNode GetXYToRAS]
       set ras [$xyToRAS MultiplyPoint $x $y $z 1]
       foreach {r a s t} $ras {}
       $this updateAnnotation $r $a $s
-#  }
+  }
 
 }
 
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
+#puts "updateAnnotations"
 
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
   $this queryLayers $x $y $z
@@ -889,6 +890,7 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
 }
 
 itcl::body SliceSWidget::updateAnnotation {r a s} {
+#puts "--updateAnnotation--"
 
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
   $this queryLayers $x $y $z
@@ -938,8 +940,13 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
 
   set labelText "Lb: $_layers(label,pixel) $colorName"
   set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
-  set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
-                $_layers(background,i) $_layers(background,j) $_layers(background,k)]
+  if { [string is integer $_layers(background,i)] } {
+      set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+                       $_layers(background,i) $_layers(background,j) $_layers(background,k)]
+    } else {
+      set ijkText ""
+    }
+
   set xyText "X: $x\nY:$y"
   set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
 
