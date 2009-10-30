@@ -223,7 +223,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       
       # jvm - Don't like having to request a render but it may be
       # needed for "cursor" (as opposed to "navigator") mode
-      [$sliceGUI GetSliceViewer] RequestRender
+#      [$sliceGUI GetSliceViewer] RequestRender
 
       return
   }
