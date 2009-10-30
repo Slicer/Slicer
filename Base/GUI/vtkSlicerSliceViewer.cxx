@@ -215,6 +215,11 @@ void vtkSlicerSliceViewer::RequestRender()
     return;
     }
 
+  if (!this->GetRenderWidget()->IsMapped())
+    {
+    return;
+    }
+
   this->SetRenderPending(1);
   this->Script("after idle \"%s Render\"", this->GetTclName());
 }
@@ -222,6 +227,14 @@ void vtkSlicerSliceViewer::RequestRender()
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::Render()
 {
+  // Jim's hokey way to track the number of renders that occur when
+  // something is changed
+//   static int sp = 0;
+//   for (int i=0; i < sp; ++i) std::cout << " ";
+//   ++sp;
+//   sp = sp % 8;
+//   std::cout << "Render " << this->GetTclName() << std::endl;
+
   this->GetRenderWidget()->RenderStateOn();
   this->GetRenderWidget()->Render();
   this->GetRenderWidget()->RenderStateOff();
