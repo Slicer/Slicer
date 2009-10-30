@@ -738,14 +738,15 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "ExitEvent" { }
   }
 
-  if { $updatedAnnotations == false } {
+#  if { $updatedAnnotations == false } {
       set xyToRAS [$_sliceNode GetXYToRAS]
       set ras [$xyToRAS MultiplyPoint $x $y $z 1]
       foreach {r a s t} $ras {}
       $this updateAnnotation $r $a $s
-  }
+#  }
 
 }
+
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
 
