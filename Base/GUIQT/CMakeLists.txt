@@ -19,8 +19,6 @@ SET(qSlicerGUIQT_SRCS
   qSlicerApplication.h
   qSlicerIOManager.cxx
   qSlicerIOManager.h
-  qSlicerKwUIWrapper.cxx
-  qSlicerKwUIWrapper.h
   qSlicerModuleFactory.cxx
   qSlicerModuleFactory.h
   qSlicerModuleManager.cxx
@@ -35,7 +33,6 @@ SET(qSlicerGUIQT_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
   qSlicerApplication.h
-  qSlicerKwUIWrapper.h
   qSlicerTransformsModule.h
   )
   
