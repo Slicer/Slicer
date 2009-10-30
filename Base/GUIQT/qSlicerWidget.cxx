@@ -70,17 +70,22 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
     QScrollArea * scrollArea = new QScrollArea(); 
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setWidgetResizable(true);
     
     // Set window title
     scrollArea->setWindowTitle(this->windowTitle());
     
+    // Add an content widget responsible for the layout
+    QWidget * scrollAreaWidgetContents = new QWidget();
+    this->setParent(scrollAreaWidgetContents);
+    
     // Layout vertically and add a spacer/stretcher
-    QVBoxLayout * layout = new QVBoxLayout(scrollArea);
-    layout->addWidget(this);
-    layout->addStretch();
+    QVBoxLayout * verticalLayout = new QVBoxLayout(scrollAreaWidgetContents);
+    verticalLayout->addWidget(this);
+    verticalLayout->addStretch();
   
-    // Add itself to scrollArea
-    scrollArea->setWidget(this);
+    // Add scrollAreaWidgetContents to the scrollArea
+    scrollArea->setWidget(scrollAreaWidgetContents);
     
     this->Internal->ParentContainer = scrollArea;
     }
@@ -91,6 +96,7 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
       return;
       }
     this->getScrollAreaParentContainer()->takeWidget();
+    this->setParent(0);
     this->Internal->ParentContainer->deleteLater();
     }
 }
