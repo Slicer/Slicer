@@ -55,7 +55,7 @@ qCTKMatrixWidget::~qCTKMatrixWidget()
 // --------------------------------------------------------------------------
 QSize qCTKMatrixWidget::minimumSizeHint () const
 {
-  return QSize(20,20);
+  return QSize(this->columnCount() * 25, this->rowCount() * 25);
 }
 
 // --------------------------------------------------------------------------
@@ -75,17 +75,21 @@ void qCTKMatrixWidget::resizeEvent(QResizeEvent * event)
 void qCTKMatrixWidget::adjustRowsColumnsSize(int width, int height)
 {
   int colwidth = width / this->columnCount();
+  int lastColwidth = colwidth + (width - colwidth * this->columnCount()); 
   //qDebug() << "width:" << width << ",col-width:" << colwidth;
   for (int j=0; j < this->columnCount(); j++)
     {
-    this->setColumnWidth(j, colwidth);
+    bool lastColumn = (j==(this->columnCount()-1)); 
+    this->setColumnWidth(j, lastColumn ? lastColwidth : colwidth);
     }
     
   int rowheight = height / this->rowCount();
+  int lastRowheight = rowheight + (height - rowheight * this->rowCount()); 
   //qDebug() << "height:" << height << ", row-height:" << rowheight;
   for (int i=0; i < this->rowCount(); i++)
     {
-    this->setRowHeight(i, rowheight); 
+    bool lastRow = (i==(this->rowCount()-1)); 
+    this->setRowHeight(i, lastRow ? lastRowheight : rowheight);
     }
 }
 
