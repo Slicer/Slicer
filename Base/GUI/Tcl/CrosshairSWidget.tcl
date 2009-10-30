@@ -593,12 +593,15 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
       $_renderer RemoveActor2D $o(crosshairActor)
       $_renderer RemoveActor2D $o(crosshairHighlightActor)
       set changed 1
+    }
 
-      set _renderer [$_renderWidget GetNthRenderer $k]
-      if { [info command $_renderer] != "" } {
-          $_renderer AddActor2D $o(crosshairActor)
-          $_renderer AddActor2D $o(crosshairHighlightActor)
-      }
+    # get the new viewport
+    set _renderer [$_renderWidget GetNthRenderer $k]
+
+    # add the actor, actor is only added if it is not already in the viewport
+    if { [info command $_renderer] != "" } {
+        $_renderer AddActor2D $o(crosshairActor)
+        $_renderer AddActor2D $o(crosshairHighlightActor)
     }
   }
   
