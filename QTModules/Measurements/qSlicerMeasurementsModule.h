@@ -15,7 +15,7 @@ public:
   qSlicerMeasurementsModule(QWidget *parent=0);
   virtual ~qSlicerMeasurementsModule(); 
   
-  virtual void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   qSlicerGetModuleTitleDeclarationMacro();
 

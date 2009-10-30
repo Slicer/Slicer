@@ -20,7 +20,7 @@ public:
   virtual ~qVTKConnection();
   
   // Description:
-  void dumpObjectInfo(); 
+  virtual void printAdditionalInfo(); 
   QString getShortDescription(); 
   static QString getShortDescription(vtkObject* vtk_obj, unsigned long vtk_event, 
     const QObject* qt_obj, QString qt_slot = ""); 

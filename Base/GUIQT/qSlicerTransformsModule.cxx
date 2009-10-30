@@ -100,9 +100,9 @@ qSlicerTransformsModule::~qSlicerTransformsModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModule::dumpObjectInfo()
+void qSlicerTransformsModule::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo();
+  this->Superclass::printAdditionalInfo();
 }
 
 //-----------------------------------------------------------------------------

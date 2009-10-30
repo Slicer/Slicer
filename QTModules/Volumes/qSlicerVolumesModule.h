@@ -15,7 +15,7 @@ public:
   qSlicerVolumesModule(QWidget *parent=0);
   virtual ~qSlicerVolumesModule(); 
   
-  virtual void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   qSlicerGetModuleTitleDeclarationMacro();
 

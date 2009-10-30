@@ -19,7 +19,7 @@ public:
   qSlicerWidget(QWidget *parent=0);
   virtual ~qSlicerWidget();
   
-  virtual void dumpObjectInfo(); 
+  virtual void printAdditionalInfo(); 
   
   // Description:
   // Convenient windows to return parent widget or Null if any

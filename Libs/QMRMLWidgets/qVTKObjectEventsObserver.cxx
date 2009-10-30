@@ -59,7 +59,7 @@ void qVTKObjectEventsObserver::setParent(QObject* parent)
 }
 
 //-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::dumpObjectInfo()
+void qVTKObjectEventsObserver::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo();
   qDebug() << "qVTKObjectEventsObserver:" << this << endl
@@ -72,7 +72,7 @@ void qVTKObjectEventsObserver::dumpObjectInfo()
   // Loop through all connection
   foreach (qVTKConnection* connection, this->Internal->ConnectionList)
     {
-    connection->dumpObjectInfo(); 
+    connection->printAdditionalInfo(); 
     }
 }
 
@@ -159,7 +159,7 @@ void qVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long v
 void qVTKObjectEventsObserver::blockAllConnection(bool block, bool recursive)
 {
   qDebug() << "blockAllConnection-recursive:" << recursive; 
-  this->dumpObjectInfo(); 
+  this->printAdditionalInfo(); 
   if (this->Internal->AllBlocked == block) { return; }
   
   foreach (qVTKConnection* connection, this->Internal->ConnectionList)

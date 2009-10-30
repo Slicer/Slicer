@@ -20,7 +20,7 @@ public:
   qSlicerTransformsModule(QWidget *parent=0);
   virtual ~qSlicerTransformsModule(); 
   
-  virtual void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   qSlicerGetModuleTitleDeclarationMacro();
   

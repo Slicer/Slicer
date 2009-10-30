@@ -17,7 +17,7 @@ public:
   qSlicerAbstractLoadableModule(QWidget *parent=0);
   virtual ~qSlicerAbstractLoadableModule();
   
-  virtual void dumpObjectInfo(); 
+  virtual void printAdditionalInfo(); 
 
   // Description:
   // Return help/about text

@@ -2437,6 +2437,6 @@ void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
     module->setScrollAreaAsParentContainer(true);
     module->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     }
-  //qSlicerModuleManager::instance()->dumpObjectInfo(); 
+  //qSlicerModuleManager::instance()->printAdditionalInfo(); 
 }
 #endif

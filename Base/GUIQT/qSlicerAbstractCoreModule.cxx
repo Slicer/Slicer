@@ -25,7 +25,7 @@ qSlicerAbstractCoreModule::~qSlicerAbstractCoreModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractCoreModule::dumpObjectInfo()
+void qSlicerAbstractCoreModule::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo(); 
+  this->Superclass::printAdditionalInfo(); 
 }

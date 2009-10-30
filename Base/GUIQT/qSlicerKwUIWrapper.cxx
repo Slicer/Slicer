@@ -26,7 +26,7 @@ qSlicerKwUIWrapper::~qSlicerKwUIWrapper()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerKwUIWrapper::dumpObjectInfo()
+void qSlicerKwUIWrapper::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo();
 }

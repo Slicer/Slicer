@@ -20,7 +20,7 @@ public:
   qVTKObjectEventsObserver(QObject* parent = 0);
   virtual ~qVTKObjectEventsObserver();
   
-  void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   // Description:
   // Enable / Disable all qVTKConnections

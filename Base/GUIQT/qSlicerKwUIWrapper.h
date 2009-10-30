@@ -17,7 +17,7 @@ public:
   qSlicerKwUIWrapper(QWidget *parent=0);
   virtual ~qSlicerKwUIWrapper(); 
   
-  virtual void dumpObjectInfo();
+  virtual void printAdditionalInfo();
 
 
 private:

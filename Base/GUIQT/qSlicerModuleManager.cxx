@@ -51,7 +51,7 @@ qSlicerModuleManager::~qSlicerModuleManager()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleManager::dumpObjectInfo()
+void qSlicerModuleManager::printAdditionalInfo()
 {
   qDebug() << "qSlicerModuleManager (" << this << ")"; 
   qDebug() << "ModuleList"; 
@@ -60,10 +60,10 @@ void qSlicerModuleManager::dumpObjectInfo()
   while(iter != this->Internal->ModuleList.constEnd())
     {
     qDebug() << "Name:" << iter.key(); 
-    iter.value()->dumpObjectInfo();
+    iter.value()->printAdditionalInfo();
     ++iter;
     }
-  this->Internal->ModuleFactory.dumpObjectInfo(); 
+  this->Internal->ModuleFactory.printAdditionalInfo(); 
 }
 
 //---------------------------------------------------------------------------

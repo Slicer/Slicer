@@ -78,9 +78,9 @@ qVTKConnection::~qVTKConnection()
 }
 
 //-----------------------------------------------------------------------------
-void qVTKConnection::dumpObjectInfo()
+void qVTKConnection::printAdditionalInfo()
 {
-  Superclass::dumpObjectInfo();
+  this->Superclass::dumpObjectInfo();
   qDebug() << "qVTKConnection:" << this << endl 
            << " VTKObject:" << this->Internal->VTKObject->GetClassName() 
              << "(" << this->Internal->VTKObject << ")" << endl

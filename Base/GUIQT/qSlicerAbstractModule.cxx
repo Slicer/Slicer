@@ -34,9 +34,9 @@ qSlicerAbstractModule::~qSlicerAbstractModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::dumpObjectInfo()
+void qSlicerAbstractModule::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo(); 
+  this->Superclass::printAdditionalInfo(); 
 }
 
 //-----------------------------------------------------------------------------

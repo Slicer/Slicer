@@ -15,7 +15,7 @@ public:
   qSlicerModuleFactory();
   virtual ~qSlicerModuleFactory(); 
   
-  virtual void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   // Description:
   // Get a moduleName given its title

@@ -16,7 +16,7 @@ public:
   // Description:
   static qSlicerModuleManager* instance();
   
-  void dumpObjectInfo();
+  virtual void printAdditionalInfo();
   
   // Description:
   qSlicerAbstractModule*  loadModule(const QString& moduleTitle); 

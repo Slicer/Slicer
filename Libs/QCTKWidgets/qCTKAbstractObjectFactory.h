@@ -66,7 +66,7 @@ public:
     
   // Description:
   // List all registered objects
-  void dumpObjectInfo()
+  virtual void printAdditionalInfo()
   {
     // TODO 
   }

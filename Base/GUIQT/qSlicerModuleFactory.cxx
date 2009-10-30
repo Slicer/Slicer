@@ -43,9 +43,9 @@ void qSlicerModuleFactory::registerCoreModules()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleFactory::dumpObjectInfo()
+void qSlicerModuleFactory::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo();
+  this->Superclass::printAdditionalInfo();
   qDebug() << "qSlicerModuleFactory (" << this << ")"; 
   qDebug() << "MapTitleToName";
   qInternal::MapConstIterator iter = this->Internal->MapTitleToName.constBegin();

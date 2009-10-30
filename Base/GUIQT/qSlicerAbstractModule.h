@@ -32,7 +32,7 @@ public:
   qSlicerAbstractModule(QWidget *parent=0);
   virtual ~qSlicerAbstractModule();
   
-  virtual void dumpObjectInfo(); 
+  virtual void printAdditionalInfo(); 
 
   // Description:
   virtual QString moduleName();

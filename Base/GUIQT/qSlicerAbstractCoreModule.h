@@ -17,7 +17,7 @@ public:
   qSlicerAbstractCoreModule(QWidget *parent=0);
   virtual ~qSlicerAbstractCoreModule();
   
-  virtual void dumpObjectInfo(); 
+  virtual void printAdditionalInfo(); 
   
 protected:
   // Description:

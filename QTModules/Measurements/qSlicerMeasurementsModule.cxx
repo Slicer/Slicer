@@ -30,7 +30,7 @@ qSlicerMeasurementsModule::~qSlicerMeasurementsModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMeasurementsModule::dumpObjectInfo()
+void qSlicerMeasurementsModule::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo();
+  this->Superclass::printAdditionalInfo();
 }

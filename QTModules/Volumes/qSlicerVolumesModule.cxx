@@ -30,7 +30,7 @@ qSlicerVolumesModule::~qSlicerVolumesModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumesModule::dumpObjectInfo()
+void qSlicerVolumesModule::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo();
+  this->Superclass::printAdditionalInfo();
 }

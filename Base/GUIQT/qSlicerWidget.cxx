@@ -29,7 +29,7 @@ qSlicerWidget::~qSlicerWidget()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWidget::dumpObjectInfo()
+void qSlicerWidget::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo(); 
 }
