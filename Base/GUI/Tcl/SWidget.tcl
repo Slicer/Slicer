@@ -224,6 +224,10 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
   # get the logic, node, image, ijk coords, and pixel for each layer
   # - store these in a layers array for easy access
   #
+
+  # determine which renderer based on z position
+  set lightboxK [expr int($z + 0.5)]
+      
   foreach layer {background foreground label} {
     set _layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]
     set _layers($layer,node) [$_layers($layer,logic) GetVolumeNode]
@@ -234,6 +238,14 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
         set _layers($layer,$v) 0
       }
       set _layers($layer,pixel) "None"
+    } elseif { $lightboxK < 0 || $lightboxK >= [$_renderWidget GetNumberOfRenderers] } {
+      # RAS position in not a visible slice, don't report pixel information
+      set _layers($layer,image) ""
+      set _layers($layer,xyToIJK) ""
+      foreach v {i j k} { 
+        set _layers($layer,$v) "-"
+      }
+      set _layers($layer,pixel) "Slice not shown"
     } else {
       set _layers($layer,image) [$_layers($layer,node) GetImageData]
       set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]

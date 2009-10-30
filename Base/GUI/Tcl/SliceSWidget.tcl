@@ -38,8 +38,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     method updateModelSWidgets {} {}
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
-    method updateAnnotation {x y z r a s} {}
-    method updateAnnotations {x y z r a s} {}
+    method updateAnnotation {r a s} {}
+    method updateAnnotations {r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
@@ -72,6 +72,19 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   # TODO:
   # create text actors for L/R, I/S, P/A
 
+  # setup the layers structure
+  foreach layer {background foreground label} {
+      set _layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]
+      set _layers($layer,node) [$_layers($layer,logic) GetVolumeNode]
+      if { $_layers($layer,node) == "" } {
+          set _layers($layer,image) ""
+          set _layers($layer,xyToIJK) ""
+          foreach v {i j k} { 
+              set _layers($layer,$v) 0
+          }
+          set _layers($layer,pixel) "None"
+      }
+  }
 
   $this processEvent
 
@@ -321,7 +334,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
   set renderer0 [$_renderWidget GetRenderer]
-
+  
   foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
 
   if { $x < 0 } { 
@@ -339,7 +352,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   foreach {w h} [$renderer0 GetSize] {}
   foreach {rox roy} [$pokedRenderer GetOrigin] {}
 
-  $this queryLayers $x $y $z
+#  $this queryLayers $x $y $z   # moved to inside updateAnnotation*
   set xyToRAS [$_sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y $z 1]
 
@@ -361,10 +374,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - then handle modifying the view
       #
       set link [$_sliceCompositeNode GetLinkedControl]
-      if { $link == 1 && [$this isCompareView] == 1 } {
-        $this updateAnnotations $x $y $z $r $a $s
+      if { $link == 1 && ([$this isCompareView] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
+        $this updateAnnotations $r $a $s
       } else {
-        $this updateAnnotation $x $y $z $r $a $s
+        $this updateAnnotation $r $a $s
       }
 
       if { [$_interactor GetShiftKey] } {
@@ -724,11 +737,15 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set xyToRAS [$_sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y $z 1]
   foreach {r a s t} $ras {}
-  $this updateAnnotation $x $y $z $r $a $s
+  $this updateAnnotation $r $a $s
 
 }
 
-itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
+itcl::body SliceSWidget::updateAnnotations {r a s} {
+
+  foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
+  $this queryLayers $x $y $z
+
   set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
   set numsgui [$ssgui GetNumberOfSliceGUI]
   for { set i 0 } { $i < $numsgui } { incr i } {
@@ -743,7 +760,7 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
     set logic [$sgui GetLogic]
     set sliceCompositeNode [$logic GetSliceCompositeNode]
 
-    if { [string first "Compare" $lname] != 0 } {
+    if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
       continue
     } 
     
@@ -761,8 +778,9 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
     set sw [$this getSliceSWidgetForGUI $sgui]
 
     if { $sw != "" } {
+      foreach {x y z} [$sw rasToXYZ "$r $a $s"] {}
       $sw queryLayers $x $y $z
-      
+
       array set slayers [$sw getLayers]
 
       set colorName ""
@@ -770,7 +788,8 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
             $slayers(label,node) != "" && \
             $slayers(label,pixel) != "" && \
             $slayers(label,pixel) != "Unknown" && \
-            $slayers(label,pixel) != "Out of Frame"} {
+            $slayers(label,pixel) != "Out of Frame" && \
+            $slayers(label,pixel) != "Slice not shown"} {
         set labelDisplayNode [$slayers(label,node) GetDisplayNode]
         if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
           set colorNode [$labelDisplayNode GetColorNode]
@@ -783,8 +802,12 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
       }
       set labelText "Lb: $slayers(label,pixel) $colorName"
       set voxelText "Fg: $slayers(foreground,pixel)\nBg: $slayers(background,pixel)"
-      set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+      if { [string is integer $slayers(background,i)] } {
+          set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
                      $slayers(background,i) $slayers(background,j) $slayers(background,k)]
+      } else {
+          set ijkText ""
+      }
       set xyText "X: $x\nY:$y"
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
 
@@ -858,7 +881,10 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
   }
 }
 
-itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
+itcl::body SliceSWidget::updateAnnotation {r a s} {
+
+  foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
+  $this queryLayers $x $y $z
 
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
@@ -875,7 +901,8 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
       $_layers(label,node) != "" && \
       $_layers(label,pixel) != "" && \
       $_layers(label,pixel) != "Unknown" && \
-      $_layers(label,pixel) != "Out of Frame"} {
+      $_layers(label,pixel) != "Out of Frame" && \
+      $_layers(label,pixel) != "Slice not shown"} {
       set labelDisplayNode [$_layers(label,node) GetDisplayNode]
       if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
           set colorNode [$labelDisplayNode GetColorNode]
