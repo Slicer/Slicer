@@ -9,9 +9,8 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLNodeSelector::qInternal
+struct qMRMLNodeSelector::qInternal
 {
-public:
   qInternal()
     {
     this->MRMLScene = 0; 
@@ -28,9 +27,6 @@ public:
 qMRMLNodeSelector::qMRMLNodeSelector(QWidget* parent) : Superclass(parent)
 {
   this->Internal = new qInternal; 
-  
-  // Get reference to the current MRML Scene
-  this->setMRMLScene(vtkMRMLScene::GetActiveScene());
   
   // Connect add button
   this->connect(this, SIGNAL(addPushButtonPressed()), 
@@ -56,7 +52,7 @@ qMRMLNodeSelector::~qMRMLNodeSelector()
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLNodeSelector::nodeType()
+QString qMRMLNodeSelector::nodeType()const
 {
   return this->Internal->NodeType;
 }
@@ -68,14 +64,14 @@ void qMRMLNodeSelector::setNodeType(const QString& nodeType)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeSelector::getSelectedNode()
+vtkMRMLNode* qMRMLNodeSelector::getSelectedNode()const
 {
   Q_ASSERT(this->count() > 0 ? (this->Internal->MRMLNodeSelected != 0) : true);
-  return this->Internal->MRMLNodeSelected; 
+  return this->Internal->MRMLNodeSelected;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLNodeSelector::getMRMLScene()
+vtkMRMLScene* qMRMLNodeSelector::mrmlScene()const
 {
   return this->Internal->MRMLScene;
 }
@@ -83,7 +79,10 @@ vtkMRMLScene* qMRMLNodeSelector::getMRMLScene()
 // --------------------------------------------------------------------------
 void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
 {
-  if (this->Internal->MRMLScene == scene) { return; }
+  if (this->Internal->MRMLScene == scene) 
+    { 
+    return; 
+    }
   
   // Connect MRML scene NodeAdded event
   this->qvtkReConnect(this->Internal->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent, 
@@ -120,7 +119,7 @@ void qMRMLNodeSelector::onMRMLNodeAdded(vtkObject * node)
   // Add the node the combobox
   this->addItemNoNotify(mrmlNode->GetID());
   
-  this->setSelected(this->getSelectedItemName()); 
+  this->setSelected(this->selectedItemName()); 
 }
 
 //-----------------------------------------------------------------------------
@@ -139,7 +138,7 @@ void qMRMLNodeSelector::onMRMLNodeRemoved(vtkObject * node)
   // Remove item from combo box
   this->removeItemNoNotify(QString::fromAscii(mrmlNode->GetID())); 
   
-  this->setSelected(this->getSelectedItemName());
+  this->setSelected(this->selectedItemName());
 }
 
 //-----------------------------------------------------------------------------
@@ -154,7 +153,7 @@ void qMRMLNodeSelector::onAddButtonPressed()
 { 
   // Update MRML Scene
   vtkMRMLNode * node = qMRMLUtils::createAndAddNodeToSceneByClass(
-      this->getMRMLScene(), this->nodeType().toAscii().data() ); 
+      this->Internal->MRMLScene, this->nodeType().toAscii().data() ); 
   
   Q_ASSERT(node);
 }
@@ -162,11 +161,11 @@ void qMRMLNodeSelector::onAddButtonPressed()
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onRemoveButtonPressed(const QString & selectedItemName)
 {
-  vtkMRMLNode * node = this->getMRMLScene()->GetNodeByID(selectedItemName.toStdString());
+  vtkMRMLNode * node = this->Internal->MRMLScene->GetNodeByID(selectedItemName.toStdString());
   Q_ASSERT(node);
   
   // Update MRML Scene
-  this->getMRMLScene()->RemoveNode(node);
+  this->Internal->MRMLScene->RemoveNode(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -178,7 +177,7 @@ void qMRMLNodeSelector::onSelectorItemSelected(const QString & itemName)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::setSelected(const QString& name)
 {
-  vtkMRMLNode * nodeSelected = this->getMRMLScene()->GetNodeByID(name.toStdString());
+  vtkMRMLNode * nodeSelected = this->Internal->MRMLScene->GetNodeByID(name.toStdString());
   
   this->Internal->MRMLNodeSelected = nodeSelected; 
   emit this->nodeSelected(nodeSelected);

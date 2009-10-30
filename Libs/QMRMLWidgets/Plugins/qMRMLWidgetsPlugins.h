@@ -7,9 +7,10 @@
 #include "qMRMLTransformSlidersPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
+#include "qMRMLWidgetsPluginWin32Header.h"
 
 // \class Group the plugins in one library 
-class qMRMLWidgetsPlugins : public QObject,
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugins : public QObject,
                            public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT

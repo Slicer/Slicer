@@ -2,8 +2,9 @@
 #define __qMRMLMatrixWidgetPlugin_h
 
 #include "qMRMLWidgetsPlugin.h"
+#include "qMRMLWidgetsPluginWin32Header.h"
 
-class qMRMLMatrixWidgetPlugin : public QObject,
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLMatrixWidgetPlugin : public QObject,
                                 public qMRMLWidgetsPlugin
 {
   Q_OBJECT

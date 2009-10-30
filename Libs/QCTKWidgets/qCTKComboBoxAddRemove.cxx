@@ -6,9 +6,8 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qCTKComboBoxAddRemove::qInternal : public Ui::qCTKComboBoxAddRemove
+struct qCTKComboBoxAddRemove::qInternal : public Ui::qCTKComboBoxAddRemove
 {
-public:
   qInternal()
     {
     this->Empty = true; 
@@ -173,19 +172,19 @@ void qCTKComboBoxAddRemove::removeItem(const QVariant & data, bool notify)
 }
 
 // --------------------------------------------------------------------------
-int qCTKComboBoxAddRemove::count()
+int qCTKComboBoxAddRemove::count()const
 {
   return (this->Internal->Empty ? 0 : this->Internal->ComboBox->count()); 
 }
 
 // --------------------------------------------------------------------------
-QString qCTKComboBoxAddRemove::getSelectedItemName()
+QString qCTKComboBoxAddRemove::selectedItemName()const
 {
   return this->Internal->ComboBox->currentText(); 
 }
 
 // --------------------------------------------------------------------------
-QVariant qCTKComboBoxAddRemove::getSelectedItemData()
+QVariant qCTKComboBoxAddRemove::selectedItemData()const
 {
   return this->Internal->ComboBox->itemData(this->Internal->ComboBox->currentIndex());
 }

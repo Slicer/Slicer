@@ -2,9 +2,10 @@
 #define __qCTKNumericInputPlugin_h
 
 #include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsPluginWin32Header.h"
 
-class qCTKNumericInputPlugin : public QObject,
-                                         public qCTKWidgetsPlugin
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKNumericInputPlugin : public QObject,
+                                                          public qCTKWidgetsPlugin
 {
   Q_OBJECT
 

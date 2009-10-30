@@ -2,11 +2,12 @@
 #define __qCTKCollapsibleWidgetContainerExtension_h
 
 #include <QtDesigner/QDesignerContainerExtension>
+#include "qCTKWidgetsPluginWin32Header.h"
 
 class QExtensionManager;
 class qCTKCollapsibleWidget;
 
-class qCTKCollapsibleWidgetContainerExtension: public QObject,
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCollapsibleWidgetContainerExtension: public QObject,
                                                public QDesignerContainerExtension
 {
     Q_OBJECT

@@ -2,8 +2,9 @@
 #define __qCTKCollapsibleWidgetPlugin_h
 
 #include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsPluginWin32Header.h"
 
-class qCTKCollapsibleWidgetPlugin : public QObject,
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCollapsibleWidgetPlugin : public QObject,
                                     public qCTKWidgetsPlugin
 {
   Q_OBJECT

@@ -2,8 +2,9 @@
 #define __qMRMLWidgetsPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
+#include "qMRMLWidgetsPluginWin32Header.h"
 
-class qMRMLWidgetsPlugin : public QDesignerCustomWidgetInterface
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface)
 public:

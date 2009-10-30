@@ -1,6 +1,7 @@
 #ifndef __qCTKWidgetsPlugins_h
 #define __qCTKWidgetsPlugins_h
 
+#include "qCTKWidgetsPluginWin32Header.h"
 #include "qCTKCollapsibleGroupBoxPlugin.h"
 #include "qCTKCollapsibleWidgetPlugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
@@ -11,7 +12,7 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // \class Group the plugins in one library 
-class qCTKWidgetsPlugins : public QObject,
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKWidgetsPlugins : public QObject,
                            public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT

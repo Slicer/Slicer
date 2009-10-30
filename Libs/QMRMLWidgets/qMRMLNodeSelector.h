@@ -27,17 +27,20 @@ public:
   
   // Description:
   // Return the node currently selected
-  vtkMRMLNode* getSelectedNode(); 
+  vtkMRMLNode* getSelectedNode()const;
   
   // Description:
   // Set/Get node type 
-  QString nodeType(); 
+  QString nodeType()const ; 
   void setNodeType(const QString& nodeType); 
   
   // Description:
   // Set/Get MRML scene
-  vtkMRMLScene* getMRMLScene();
+  vtkMRMLScene* mrmlScene()const;
+
+ public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+
 
 signals:
   // Description:
@@ -71,9 +74,8 @@ protected:
   void setSelected(const QString& itemName);
   
 private:
-  class qInternal; 
+  struct qInternal; 
   qInternal * Internal;
-
 };
 
 #endif

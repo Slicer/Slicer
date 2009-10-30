@@ -44,13 +44,12 @@ void qCTKTitleComboBox::paintEvent(QPaintEvent*)
   QStylePainter painter(this);
   painter.setPen(palette().color(QPalette::Text));
 
-  // draw the combobox frame, focusrect and selected etc.
   QStyleOptionComboBox opt;
   initStyleOption(&opt);
 
   opt.currentText = this->Title;
   opt.currentIcon = this->Icon;
-  if (!this->Icon.isNull())
+  if (!this->Icon.isNull() && !this->Icon.availableSizes().empty())
     {
     QList<QSize> sizes = this->Icon.availableSizes();
     // TODO: pick the best size (based on the pixelMetric maybe)
@@ -58,6 +57,7 @@ void qCTKTitleComboBox::paintEvent(QPaintEvent*)
     opt.iconSize = sizes[0];
     }
 
+  // draw the combobox frame, focusrect and selected etc.
   painter.drawComplexControl(QStyle::CC_ComboBox, opt);
   // draw the icon and text
   painter.drawControl(QStyle::CE_ComboBoxLabel, opt);

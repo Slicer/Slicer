@@ -2,8 +2,9 @@
 #define __qCTKCoordinatesWidgetPlugin_h
 
 #include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsPluginWin32Header.h"
 
-class qCTKCoordinatesWidgetPlugin : public QObject,
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCoordinatesWidgetPlugin : public QObject,
                                          public qCTKWidgetsPlugin
 {
   Q_OBJECT

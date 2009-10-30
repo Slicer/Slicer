@@ -46,12 +46,12 @@ public:
   
   // Description:
   // Return the number of item
-  int count(); 
+  int count()const;
   
   // Description:
   // Return the current item
-  QString getSelectedItemName(); 
-  QVariant getSelectedItemData(); 
+  QString selectedItemName()const; 
+  QVariant selectedItemData()const;
 
 signals:
   // Description:
@@ -115,7 +115,7 @@ protected slots:
   void removeItem(int index, bool notify = false); 
 
 private:
-  class qInternal; 
+  struct qInternal; 
   qInternal * Internal;
 
 };

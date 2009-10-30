@@ -2,8 +2,9 @@
 #define __qCTKTitleComboBoxPlugin_h
 
 #include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsPluginWin32Header.h"
 
-class qCTKTitleComboBoxPlugin : public QObject,
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKTitleComboBoxPlugin : public QObject,
                                          public qCTKWidgetsPlugin
 {
   Q_OBJECT

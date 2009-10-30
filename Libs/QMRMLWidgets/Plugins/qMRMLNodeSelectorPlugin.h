@@ -2,8 +2,9 @@
 #define __qMRMLNodeSelectorPlugin_h
 
 #include "qMRMLWidgetsPlugin.h"
+#include "qMRMLWidgetsPluginWin32Header.h"
 
-class qMRMLNodeSelectorPlugin : public QObject,
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLNodeSelectorPlugin : public QObject,
                                          public qMRMLWidgetsPlugin
 {
   Q_OBJECT

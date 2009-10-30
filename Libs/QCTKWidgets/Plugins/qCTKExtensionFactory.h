@@ -2,10 +2,11 @@
 #define __qCTKExtensionFactory_h
 
 #include <QtDesigner/QExtensionFactory>
+#include "qCTKWidgetsPluginWin32Header.h"
 
 class QExtensionManager;
 
-class qCTKExtensionFactory: public QExtensionFactory
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKExtensionFactory: public QExtensionFactory
 {
     Q_OBJECT
 
