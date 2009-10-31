@@ -15,8 +15,8 @@ set(include_dirs
   ${SlicerBaseLogic_BINARY_DIR}
   ${SlicerBaseGUIQT_SOURCE_DIR}
   ${SlicerBaseGUIQT_BINARY_DIR}
-  ${QMRMLWidgets_SOURCE_DIR}
-  ${QMRMLWidgets_BINARY_DIR}
+  ${qMRMLWidgets_SOURCE_DIR}
+  ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}

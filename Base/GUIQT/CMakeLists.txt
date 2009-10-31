@@ -59,10 +59,10 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
-  ${QCTKWidgets_SOURCE_DIR}
-  ${QCTKWidgets_BINARY_DIR}
-  ${QMRMLWidgets_SOURCE_DIR}
-  ${QMRMLWidgets_BINARY_DIR}
+  ${qCTKWidgets_SOURCE_DIR}
+  ${qCTKWidgets_BINARY_DIR}
+  ${qMRMLWidgets_SOURCE_DIR}
+  ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   )
@@ -110,8 +110,8 @@ SET(GUIQT_LIBRARIES
   SlicerBaseLogic
   ${QT_LIBRARIES}
   QVTK
-  QCTKWidgets
-  QMRMLWidgets
+  qCTKWidgets
+  qMRMLWidgets
   )
   
 target_link_libraries(${lib_name} 
@@ -136,11 +136,11 @@ install(FILES
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
-file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
-install(FILES 
-  ${files}
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
-  )
+#file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
+#install(FILES 
+#  ${files}
+#  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+#  )
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
@@ -148,19 +148,19 @@ install(TARGETS ${lib_name}
   ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
   )
 
-file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")
-foreach(pngfile ${PNGFILES})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${pngfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${pngfile}
-    COPYONLY
-    )
-endforeach(pngfile)
+#file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")
+#foreach(pngfile ${PNGFILES})
+#  configure_file(
+#    ${CMAKE_CURRENT_SOURCE_DIR}/${pngfile}
+#    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${pngfile}
+#    COPYONLY
+#    )
+#endforeach(pngfile)
 
-install(
-  FILES ${PNGFILES}
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources
-  )
+#install(
+#  FILES ${PNGFILES}
+#  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources
+#  )
 
 # --------------------------------------------------------------------------
 # Testing
@@ -170,3 +170,7 @@ if(BUILD_TESTING)
   #  add_test(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
 endif(BUILD_TESTING)
 
+# --------------------------------------------------------------------------
+# Subdirectories
+#
+ADD_SUBDIRECTORY(Plugins)

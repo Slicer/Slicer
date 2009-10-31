@@ -19,7 +19,7 @@ MACRO(Slicer3_build_qtmodule)
   ENDIF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
   
   # Define library name
-  SET(LIBNAME qSlicer${QTMODULE_NAME}Module)
+  SET(lib_name qSlicer${QTMODULE_NAME}Module)
   
   # --------------------------------------------------------------------------
   # Find Slicer3
@@ -40,6 +40,8 @@ MACRO(Slicer3_build_qtmodule)
     ${Slicer3_Base_INCLUDE_DIRS}
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
+  
+  SET(LIBNAME ${lib_name})
   
   CONFIGURE_FILE(
     ${QTModules_SOURCE_DIR}/qSlicerQTModulesConfigure.h.in 
@@ -97,15 +99,15 @@ MACRO(Slicer3_build_qtmodule)
   # --------------------------------------------------------------------------
   # Build and install the library
 
-  ADD_LIBRARY(${LIBNAME}
+  ADD_LIBRARY(${lib_name}
     ${qSlicerModule_SRCS}
     ${qSlicerModule_UI_CXX}
     ${qSlicerModule_QRC_SRCS}
     #${qSlicerModule_TCL_SRCS}
     )
-  slicer3_set_modules_output_path(${LIBNAME})
+  slicer3_set_modules_output_path(${lib_name})
 
-  TARGET_LINK_LIBRARIES(${LIBNAME}
+  TARGET_LINK_LIBRARIES(${lib_name}
     ${Slicer3_Libs_LIBRARIES}
     ${Slicer3_Base_LIBRARIES}
     ${QTMODULE_TARGET_LIBRARIES}
@@ -118,12 +120,12 @@ MACRO(Slicer3_build_qtmodule)
 
   # Apply user-defined properties to the library target.
   IF(Slicer3_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${LIBNAME} PROPERTIES
+    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
       ${Slicer3_LIBRARY_PROPERTIES}
     )
   ENDIF(Slicer3_LIBRARY_PROPERTIES)
   
-  slicer3_install_modules(${LIBNAME})
+  slicer3_install_modules(${lib_name})
 
 ENDMACRO(Slicer3_build_qtmodule)
 

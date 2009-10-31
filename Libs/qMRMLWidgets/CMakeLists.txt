@@ -1,4 +1,4 @@
-PROJECT(QMRMLWidgets)
+PROJECT(qMRMLWidgets)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 IF(COMMAND cmake_policy)
@@ -12,7 +12,7 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #-----------------------------------------------------------------------------
 # Sources
 #
-SET(QMRMLWidgets_SRCS
+SET(qMRMLWidgets_SRCS
   qVTKObject.h
   qVTKConnection.h
   qVTKConnection.cxx
@@ -31,7 +31,7 @@ SET(QMRMLWidgets_SRCS
   )
 
 # Headers that should run through moc
-SET(QMRMLWidgets_MOC_SRCS
+SET(qMRMLWidgets_MOC_SRCS
   qVTKConnection.h
   qVTKObjectEventsObserver.h
   qMRMLNodeSelector.h
@@ -41,13 +41,13 @@ SET(QMRMLWidgets_MOC_SRCS
   )
   
 # UI files
-SET(QMRMLWidgets_UI_SRCS
+SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLTransformSliders.ui
 )
   
-QT4_WRAP_CPP(QMRMLWidgets_SRCS ${QMRMLWidgets_MOC_SRCS})
-QT4_WRAP_UI(QMRMLWidgets_UI_CXX ${QMRMLWidgets_UI_SRCS})
-QT4_ADD_RESOURCES(QMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
+QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})
+QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
+QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
    
 
 
@@ -70,7 +70,7 @@ SET(QT_INCLUDE_DIRS
   )
 
 FOREACH(package 
-    QCTKWidgets
+    qCTKWidgets
     )
   # This is mostly to test building this lib as standalone outside Slicer3
   IF(NOT DEFINED ${package}_SOURCE_DIR)
@@ -107,21 +107,21 @@ INSTALL(FILES
 # Build the library
 #
 
-SET(lib_name "QMRMLWidgets")
+SET(lib_name "qMRMLWidgets")
 
 ADD_LIBRARY(${lib_name} 
-  ${QMRMLWidgets_SRCS}
-  ${QMRMLWidgets_UI_CXX}
-  ${QMRMLWidgets_QRC_SRCS}
+  ${qMRMLWidgets_SRCS}
+  ${qMRMLWidgets_UI_CXX}
+  ${qMRMLWidgets_QRC_SRCS}
 )
 
-SET(QMRMLWidgets_LIBRARIES 
+SET(qMRMLWidgets_LIBRARIES 
   ${QT_LIBRARIES}
   MRML
-  QCTKWidgets
+  qCTKWidgets
   )
   
-TARGET_LINK_LIBRARIES(${lib_name} ${QMRMLWidgets_LIBRARIES})
+TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)

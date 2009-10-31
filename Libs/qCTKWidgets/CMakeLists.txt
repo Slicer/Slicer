@@ -1,4 +1,4 @@
-PROJECT(QCTKWidgets)
+PROJECT(qCTKWidgets)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 IF(COMMAND cmake_policy)
@@ -12,7 +12,7 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #-----------------------------------------------------------------------------
 # Sources
 #
-SET(QCTKWidgets_SRCS
+SET(qCTKWidgets_SRCS
   qCTKAbstractObjectFactory.h
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleGroupBox.cxx
@@ -37,7 +37,7 @@ SET(QCTKWidgets_SRCS
   )
 
 # Headers that should run through moc
-SET(QCTKWidgets_MOC_SRCS
+SET(qCTKWidgets_MOC_SRCS
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleWidget.h
   qCTKColorPickerButton.h
@@ -51,14 +51,14 @@ SET(QCTKWidgets_MOC_SRCS
   )
   
 # UI files
-SET(QCTKWidgets_UI_SRCS
+SET(qCTKWidgets_UI_SRCS
   Resources/UI/qCTKComboBoxAddRemove.ui
   Resources/UI/qCTKSliderSpinBoxLabel.ui
 )
   
-QT4_WRAP_CPP(QCTKWidgets_SRCS ${QCTKWidgets_MOC_SRCS})
-QT4_WRAP_UI(QCTKWidgets_UI_CXX ${QCTKWidgets_UI_SRCS})
-QT4_ADD_RESOURCES(QCTKWidgets_QRC_SRCS Resources/qCTKWidgets.qrc)
+QT4_WRAP_CPP(qCTKWidgets_SRCS ${qCTKWidgets_MOC_SRCS})
+QT4_WRAP_UI(qCTKWidgets_UI_CXX ${qCTKWidgets_UI_SRCS})
+QT4_ADD_RESOURCES(qCTKWidgets_QRC_SRCS Resources/qCTKWidgets.qrc)
    
 
 
@@ -103,20 +103,20 @@ INSTALL(FILES
 # Build the library
 #
 
-SET(lib_name "QCTKWidgets")
+SET(lib_name "qCTKWidgets")
 
 ADD_LIBRARY(${lib_name} 
-  ${QCTKWidgets_SRCS}
-  ${QCTKWidgets_UI_CXX}
-  ${QCTKWidgets_QRC_SRCS}
+  ${qCTKWidgets_SRCS}
+  ${qCTKWidgets_UI_CXX}
+  ${qCTKWidgets_QRC_SRCS}
 )
 
-SET(QCTKWidgets_LIBRARIES
+SET(qCTKWidgets_LIBRARIES
   ${QT_LIBRARIES}
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} 
-  ${QCTKWidgets_LIBRARIES}
+  ${qCTKWidgets_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.
@@ -129,6 +129,7 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 # --------------------------------------------------------------------------
 # Install
 #
+
 INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries

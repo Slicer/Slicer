@@ -6,29 +6,29 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: qMRMLWidgetsPluginConfigure.h,v $
+  Module:    $RCSfile: qSlicerGUIPluginWin32Header.h,v $
   Date:      $Date: 2006/01/06 17:56:51 $
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME qMRMLWidgetsPluginWin32 - manage Windows system differences
+// .NAME qSlicerGUIPluginWin32Header - manage Windows system differences
 // .SECTION Description
-// The qMRMLWidgetsPluginWin32 captures some system differences between Unix
+// The qSlicerGUIPluginWin32Header captures some system differences between Unix
 // and Windows operating systems. 
 
-#ifndef __qMRMLWidgetsPluginWin32Header_h
-#define __qMRMLWidgetsPluginWin32Header_h
+#ifndef __qSlicerGUIQTPluginWin32Header_h
+#define __qSlicerGUIQTPluginWin32Header_h
 
-#include <qMRMLWidgetsConfigure.h>
+#include <qSlicerGUIQTPluginConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
- #if defined(QMRMLWidgetsPlugin_EXPORTS)
-  #define QMRML_WIDGETS_PLUGIN_EXPORT __declspec( dllexport ) 
+ #if defined(qSlicerGUIQTPlugin_EXPORTS)
+  #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllexport ) 
  #else
-  #define QMRML_WIDGETS_PLUGIN_EXPORT __declspec( dllimport ) 
+  #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllimport ) 
  #endif
 #else
- #define QMRML_WIDGETS_PLUGIN_EXPORT
+ #define Q_SLICER_GUIQT_PLUGIN_EXPORT
 #endif
 
 #endif
