@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerTransformsModule</class>
- <widget class="QWidget" name="qSlicerTransformsModule">
+ <widget class="qSlicerWidget" name="qSlicerTransformsModule">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -353,7 +353,30 @@
    <extends>QWidget</extends>
    <header>qMRMLTransformSliders.h</header>
   </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qSlicerTransformsModule</sender>
+   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <receiver>TransformNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>6</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
