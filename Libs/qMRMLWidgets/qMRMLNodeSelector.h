@@ -1,7 +1,7 @@
 #ifndef __qMRMLNodeSelector_h
 #define __qMRMLNodeSelector_h
 
-#include "qCTKComboBoxAddRemove.h"
+#include "qCTKAddRemoveComboBox.h"
 #include "qVTKObject.h"
 
 #include <QString>
@@ -11,7 +11,7 @@
 class vtkMRMLScene; 
 class vtkMRMLNode; 
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKComboBoxAddRemove
+class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -19,7 +19,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKComboBoxAddRemove
   
 public:
   // Superclass typedef
-  typedef qCTKComboBoxAddRemove Superclass;
+  typedef qCTKAddRemoveComboBox Superclass;
   
   // Constructors
   qMRMLNodeSelector(QWidget* parent = 0);

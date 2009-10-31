@@ -1,12 +1,12 @@
 
-#include "qCTKComboBoxAddRemove.h"
+#include "qCTKAddRemoveComboBox.h"
 
-#include "ui_qCTKComboBoxAddRemove.h" 
+#include "ui_qCTKAddRemoveComboBox.h" 
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKComboBoxAddRemove::qInternal : public Ui::qCTKComboBoxAddRemove
+struct qCTKAddRemoveComboBox::qInternal : public Ui::qCTKAddRemoveComboBox
 {
   qInternal()
     {
@@ -20,7 +20,7 @@ struct qCTKComboBoxAddRemove::qInternal : public Ui::qCTKComboBoxAddRemove
 };
 
 // --------------------------------------------------------------------------
-qCTKComboBoxAddRemove::qCTKComboBoxAddRemove(QWidget* parent) : Superclass(parent)
+qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* parent) : Superclass(parent)
 {
   this->Internal = new qInternal; 
   this->Internal->setupUi(this);
@@ -44,20 +44,20 @@ qCTKComboBoxAddRemove::qCTKComboBoxAddRemove(QWidget* parent) : Superclass(paren
 }
 
 // --------------------------------------------------------------------------
-qCTKComboBoxAddRemove::~qCTKComboBoxAddRemove()
+qCTKAddRemoveComboBox::~qCTKAddRemoveComboBox()
 {
   delete this->Internal; 
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::setDescription(const QString& text)
+void qCTKAddRemoveComboBox::setDescription(const QString& text)
 {
   this->Internal->DescriptionLabel->setVisible(!text.isEmpty()); 
   this->Internal->DescriptionLabel->setText(text); 
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::setEmptyText(const QString& text)
+void qCTKAddRemoveComboBox::setEmptyText(const QString& text)
 {
   this->Internal->EmptyText = text; 
   if (this->Internal->Empty)
@@ -67,7 +67,7 @@ void qCTKComboBoxAddRemove::setEmptyText(const QString& text)
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::setEditButtonEnabled(bool enable)
+void qCTKAddRemoveComboBox::setEditButtonEnabled(bool enable)
 {
   if (this->Internal->EditButtonEnabled == enable)
     {
@@ -94,14 +94,14 @@ void qCTKComboBoxAddRemove::setEditButtonEnabled(bool enable)
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::onEditPushButtonPressed()
+void qCTKAddRemoveComboBox::onEditPushButtonPressed()
 {
   emit this->itemEditRequested(this->Internal->ComboBox->currentText());
   emit this->itemEditRequested(
     this->Internal->ComboBox->itemData(this->Internal->ComboBox->currentIndex()));
 }
 
-void qCTKComboBoxAddRemove::onRemovePushButtonPressed()
+void qCTKAddRemoveComboBox::onRemovePushButtonPressed()
 {
   emit this->removePushButtonPressed(this->Internal->ComboBox->currentText());
   emit this->removePushButtonPressed(
@@ -109,13 +109,13 @@ void qCTKComboBoxAddRemove::onRemovePushButtonPressed()
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::addItemNoNotify(const QString & text, const QVariant & userData)
+void qCTKAddRemoveComboBox::addItemNoNotify(const QString & text, const QVariant & userData)
 {
   this->addItem(text, userData, false);
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::addItem(const QString & text, const QVariant & userData, bool notify)
+void qCTKAddRemoveComboBox::addItem(const QString & text, const QVariant & userData, bool notify)
 {
   if (this->Internal->Empty)
     {
@@ -145,13 +145,13 @@ void qCTKComboBoxAddRemove::addItem(const QString & text, const QVariant & userD
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeItemNoNotify(const QString & text)
+void qCTKAddRemoveComboBox::removeItemNoNotify(const QString & text)
 {
   this->removeItem(text, false); 
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeItem(const QString & text, bool notify)
+void qCTKAddRemoveComboBox::removeItem(const QString & text, bool notify)
 {
   if (this->Internal->ComboBox->findText(text)  >= 0)
     {
@@ -160,37 +160,37 @@ void qCTKComboBoxAddRemove::removeItem(const QString & text, bool notify)
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeItemNoNotify(const QVariant & data)
+void qCTKAddRemoveComboBox::removeItemNoNotify(const QVariant & data)
 {
   this->removeItem(data, false); 
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeItem(const QVariant & data, bool notify)
+void qCTKAddRemoveComboBox::removeItem(const QVariant & data, bool notify)
 {
   this->removeItem(this->Internal->ComboBox->findData(data), notify);
 }
 
 // --------------------------------------------------------------------------
-int qCTKComboBoxAddRemove::count()const
+int qCTKAddRemoveComboBox::count()const
 {
   return (this->Internal->Empty ? 0 : this->Internal->ComboBox->count()); 
 }
 
 // --------------------------------------------------------------------------
-QString qCTKComboBoxAddRemove::selectedItemName()const
+QString qCTKAddRemoveComboBox::selectedItemName()const
 {
   return this->Internal->ComboBox->currentText(); 
 }
 
 // --------------------------------------------------------------------------
-QVariant qCTKComboBoxAddRemove::selectedItemData()const
+QVariant qCTKAddRemoveComboBox::selectedItemData()const
 {
   return this->Internal->ComboBox->itemData(this->Internal->ComboBox->currentIndex());
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeSelectedItem()
+void qCTKAddRemoveComboBox::removeSelectedItem()
 {
   int index = this->Internal->ComboBox->currentIndex(); 
     
@@ -198,25 +198,25 @@ void qCTKComboBoxAddRemove::removeSelectedItem()
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::updateSelectedItemName(const QString& newItemName)
+void qCTKAddRemoveComboBox::updateSelectedItemName(const QString& newItemName)
 {
   this->Internal->ComboBox->setItemText(this->Internal->ComboBox->currentIndex(), newItemName);
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::updateItemName(const QVariant& itemData, const QString& newItemName)
+void qCTKAddRemoveComboBox::updateItemName(const QVariant& itemData, const QString& newItemName)
 {
   this->Internal->ComboBox->setItemText(this->Internal->ComboBox->findData(itemData), newItemName);
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::updateItemName(const QString& itemName, const QString& newItemName)
+void qCTKAddRemoveComboBox::updateItemName(const QString& itemName, const QString& newItemName)
 {
   this->Internal->ComboBox->setItemText(this->Internal->ComboBox->findText(itemName), newItemName);
 }
 
 // --------------------------------------------------------------------------
-void qCTKComboBoxAddRemove::removeItem(int index, bool notify)
+void qCTKAddRemoveComboBox::removeItem(int index, bool notify)
 {
 //  Q_ASSERT(index >= 0);
     // asserts cause Slicer to crash, just return

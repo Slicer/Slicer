@@ -1,5 +1,5 @@
-#ifndef __qCTKComboBoxAddRemove_h
-#define __qCTKComboBoxAddRemove_h
+#ifndef __qCTKAddRemoveComboBox_h
+#define __qCTKAddRemoveComboBox_h
 
 #include <QWidget>
 #include <QVariant>
@@ -8,7 +8,7 @@
 
 class QComboBox; 
 
-class QCTK_WIDGETS_EXPORT qCTKComboBoxAddRemove : public QWidget
+class QCTK_WIDGETS_EXPORT qCTKAddRemoveComboBox : public QWidget
 {
   Q_OBJECT
   
@@ -17,8 +17,8 @@ public:
   typedef QWidget Superclass;
   
   // Constructors
-  qCTKComboBoxAddRemove(QWidget* parent = 0);
-  virtual ~qCTKComboBoxAddRemove();
+  qCTKAddRemoveComboBox(QWidget* parent = 0);
+  virtual ~qCTKAddRemoveComboBox();
   
   // Description:
   // Set content of description label. If set to Null or empty string, the label is hidden.

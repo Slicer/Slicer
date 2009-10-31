@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qCTKComboBoxAddRemove</class>
- <widget class="QWidget" name="qCTKComboBoxAddRemove">
+ <class>qCTKAddRemoveComboBox</class>
+ <widget class="QWidget" name="qCTKAddRemoveComboBox">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>qCTKComboBoxAddRemove</string>
+   <string>qCTKAddRemoveComboBox</string>
   </property>
   <layout class="QHBoxLayout">
    <property name="spacing">
