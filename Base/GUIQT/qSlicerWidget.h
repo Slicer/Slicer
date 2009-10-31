@@ -44,14 +44,25 @@ public:
   // If possible, set parent container geometry otherwise set widget geometry
   void setParentGeometry(int ax, int ay, int aw, int ah); 
 
+  // Description:
+  // Return a pointer on the loaded scene
+  vtkMRMLScene* mrmlScene();
+
 public slots:
   
   // Description:
   // Overloaded method from QWidget
   virtual void setParentVisible(bool visible); 
+  
+  // Description:
+  // Set the current MRML scene to the widget
+  virtual void setMRMLScene(vtkMRMLScene*);
+
+signals:
+  void mrmlSceneLoaded(vtkMRMLScene*);
 
 private:
-  class qInternal;
+  struct qInternal;
   qInternal* Internal;
 };
 

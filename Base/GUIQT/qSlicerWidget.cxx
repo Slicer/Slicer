@@ -6,13 +6,14 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerWidget::qInternal
+struct qSlicerWidget::qInternal
 {
-public:
   qInternal()
     {
+    this->MRMLScene = 0;
     }
-  QPointer<QWidget>       ParentContainer; 
+  QPointer<QWidget>       ParentContainer;
+  vtkMRMLScene*           MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
@@ -26,6 +27,7 @@ qSlicerWidget::qSlicerWidget(QWidget *parent)
 qSlicerWidget::~qSlicerWidget()
 {
   delete this->Internal; 
+  // TBD: what to do with MRMLScene ?
 }
 
 //-----------------------------------------------------------------------------
@@ -136,4 +138,17 @@ void qSlicerWidget::setParentVisible(bool visible)
      {
      this->Superclass::setVisible(visible);
      }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  this->Internal->MRMLScene = scene;
+  emit mrmlSceneLoaded(scene);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLScene* qSlicerWidget::mrmlScene()
+{
+  return this->Internal->MRMLScene;
 }
