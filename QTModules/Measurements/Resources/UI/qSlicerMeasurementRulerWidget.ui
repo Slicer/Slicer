@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="qSlicerWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>477</width>
+    <height>314</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="qCTKCollapsibleWidget" name="ModifyAllRulerNodesGroupBox">
+     <property name="title">
+      <string>Modify All Ruler Nodes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="qCTKTitleComboBox" name="AllRulersVisibilityComboBox">
+        <property name="title">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerGUIQT.qrc">
+          <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
+        </property>
+        <item>
+         <property name="text">
+          <string>All Rulers Visible</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerGUIQT.qrc">
+           <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>All Rulers Invisible</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerGUIQT.qrc">
+           <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="qCTKCollapsibleWidget" name="ModifySelectedRulerNodesGroupBox">
+     <property name="title">
+      <string>Modify Selected Ruler Nodes</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="RulerNodeSelectLabel">
+        <property name="text">
+         <string>Ruler Node Select:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeSelector" name="RulerNodeSelector">
+        <property name="NodeType">
+         <string>vtkMRMLMeasurementsRulerNode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="RulerVisibilityLabel">
+        <property name="text">
+         <string>Visibility:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="RulerVisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="RulerPosition1Label">
+        <property name="text">
+         <string>Position 1:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qCTKCoordinatesWidget" name="RulerPosition1CoordinatesWidget">
+        <property name="Dimension">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="RulerPosition2Label">
+        <property name="text">
+         <string>Position 2:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qCTKCoordinatesWidget" name="RulerPosition2CoordinatesWidget"/>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="qCTKCollapsibleGroupBox" name="ConstrainRulerToModelsGroupBox">
+        <property name="title">
+         <string>Constrain Ruler To Models</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="SelectRulerModel1Label">
+           <property name="text">
+            <string>Select Ruler Model 1:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="SelectRulerModel2Label">
+           <property name="text">
+            <string>Select Ruler Model 2:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="SelectRulerModel1ComboBox"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="SelectRulerModel2ComboBox"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="qCTKCollapsibleGroupBox" name="RulerDisplayOptionsGroupBox">
+        <property name="title">
+         <string>Display Options</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="RulerEndPointsColorLabel">
+           <property name="text">
+            <string>End points:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="qCTKColorPickerButton" name="RulerEndPointsColorPicker"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="RulerLineColorLabel">
+           <property name="text">
+            <string>Line:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="qCTKColorPickerButton" name="CTKColorPickerButton_2"/>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QGroupBox" name="RulerDistanceAnnotationGroupBox">
+           <property name="title">
+            <string>Distance Annotation:</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="RulerAnnotationTextFormatLabel">
+              <property name="text">
+               <string>Text Format:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="RulerAnnotationTextFormatLineEdit"/>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="RulerAnnotationScaleLabel">
+              <property name="text">
+               <string>Scale:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QDoubleSpinBox" name="RulerAnnotationScaleSpinBox"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qCTKCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget
+  <customwidget>
+   <class>qCTKCollapsibleWidget</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleWidget.h</header>
+   <container>1</container>
+  </customwidget>>
+  <customwidget>
+   <class>qCTKColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>qCTKColorPickerButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qCTKCoordinatesWidget</class>
+   <extends>QWidget</extends>
+   <header>qCTKCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qCTKTitleComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qCTKTitleComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeSelector</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeSelector.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerGUIQT.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>Form</sender>
+   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <receiver>RulerNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>553</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>479</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
