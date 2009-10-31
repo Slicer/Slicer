@@ -1,7 +1,6 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h 
 
-#include "qVTKObject.h"
 #include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseGUIQTWin32Header.h"
@@ -12,7 +11,6 @@ class vtkMRMLNode;
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerTransformsModule : public qSlicerAbstractCoreModule
 { 
   Q_OBJECT
-  QVTK_OBJECT
 
 public:
 

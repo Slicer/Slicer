@@ -20,8 +20,6 @@
   const QString _CLASSTYPE::moduleTitle(){ return _CLASSTYPE::ModuleTitle; } \
   QString _CLASSTYPE::ModuleTitle = _TITLE; 
 
-class vtkMRMLScene; 
-
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
   Q_OBJECT
@@ -56,7 +54,6 @@ public slots:
   // Set/Get module enabled
   bool moduleEnabled(); 
   virtual void setModuleEnabled(bool value); 
-
 
 private:
   class qInternal;

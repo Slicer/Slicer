@@ -1,9 +1,5 @@
 #include "qSlicerAbstractModule.h" 
 
-#include "vtkMRMLScene.h"
-
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
 class qSlicerAbstractModule::qInternal
 {
