@@ -1,11 +1,11 @@
 #ifndef __qCTKCoordinatesWidgetPlugin_h
 #define __qCTKCoordinatesWidgetPlugin_h
 
-#include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsBasePlugin.h"
 #include "qCTKWidgetsPluginWin32Header.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCoordinatesWidgetPlugin : public QObject,
-                                         public qCTKWidgetsPlugin
+                                         public qCTKWidgetsBasePlugin
 {
   Q_OBJECT
 

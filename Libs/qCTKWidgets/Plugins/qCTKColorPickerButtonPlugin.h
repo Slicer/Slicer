@@ -1,11 +1,11 @@
 #ifndef __qCTKColorPickerButtonPlugin_h
 #define __qCTKColorPickerButtonPlugin_h
 
-#include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsBasePlugin.h"
 #include "qCTKWidgetsPluginWin32Header.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKColorPickerButtonPlugin : public QObject,
-                                    public qCTKWidgetsPlugin
+                                    public qCTKWidgetsBasePlugin
 {
   Q_OBJECT
 

@@ -1,11 +1,11 @@
 #ifndef __qCTKNumericInputPlugin_h
 #define __qCTKNumericInputPlugin_h
 
-#include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsBasePlugin.h"
 #include "qCTKWidgetsPluginWin32Header.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKNumericInputPlugin : public QObject,
-                                                          public qCTKWidgetsPlugin
+                                                          public qCTKWidgetsBasePlugin
 {
   Q_OBJECT
 

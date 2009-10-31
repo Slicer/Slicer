@@ -8,8 +8,8 @@ INCLUDE_DIRECTORIES(
 
 # Create the plugin for Qt Designer
 SET(qCTKWidgetsPlugin_SRCS
-  qCTKWidgetsPlugins.cxx  
-  qCTKWidgetsPlugin.cxx
+  qCTKWidgetsPlugin.cxx  
+  qCTKWidgetsBasePlugin.cxx
   qCTKCollapsibleGroupBoxPlugin.cxx
   qCTKCollapsibleWidgetPlugin.cxx
   qCTKCollapsibleWidgetContainerExtension.cxx
@@ -21,7 +21,7 @@ SET(qCTKWidgetsPlugin_SRCS
   )
 
 SET(qCTKWidgetsPlugin_MOC_SRCS
-  qCTKWidgetsPlugins.h
+  qCTKWidgetsPlugin.h
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKCollapsibleWidgetPlugin.h
   qCTKCollapsibleWidgetContainerExtension.h

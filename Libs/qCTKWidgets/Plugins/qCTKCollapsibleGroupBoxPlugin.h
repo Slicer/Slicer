@@ -1,11 +1,11 @@
 #ifndef __qCTKCollapsibleGroupBoxPlugin_h
 #define __qCTKCollapsibleGroupBoxPlugin_h
 
-#include "qCTKWidgetsPlugin.h"
+#include "qCTKWidgetsBasePlugin.h"
 #include "qCTKWidgetsPluginWin32Header.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCollapsibleGroupBoxPlugin : public QObject,
-                                         public qCTKWidgetsPlugin
+                                         public qCTKWidgetsBasePlugin
 {
   Q_OBJECT
 

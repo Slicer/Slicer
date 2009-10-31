@@ -66,7 +66,7 @@ void qCTKCollapsibleWidgetPlugin::initialize(QDesignerFormEditorInterface *formE
     return;
     }
   // set Initialized to true
-  this->qCTKWidgetsPlugin::initialize(formEditor);
+  this->qCTKWidgetsBasePlugin::initialize(formEditor);
 
   QExtensionManager *manager = formEditor->extensionManager();
   QExtensionFactory *factory = new qCTKExtensionFactory(manager);
