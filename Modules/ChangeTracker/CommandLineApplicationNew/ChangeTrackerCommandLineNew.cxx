@@ -120,7 +120,7 @@ class tgCMDLineStructure {
 
   tgSetDataMacro(Scan1Data,Scan1Matrix);
   tgSetDataMacro(Scan2Data,Scan2Matrix);
-  tgSetDataMacro(Scan1SegmentedData,Scan1Matrix);
+  tgSetDataMacro(Scan1SegmentedData,Scan1SegmentedMatrix);
 
 
   void SetWorkingDir(vtkKWApplication *app, const char* fileNameScan1) {
@@ -527,7 +527,7 @@ int main(int argc, char* argv[])
     cerr << "Scan2 ROI resampled" << endl;
 
     // this one with nn interpolator
-    if (logic->CreateSuperSampleRASFct(tg.Scan1SegmentedData, ROIXYZ, ROIRadius, SuperSampleSpacing,Scan1PreSegmentImage, tg.Scan1Matrix,
+    if (logic->CreateSuperSampleRASFct(tg.Scan1SegmentedData, ROIXYZ, ROIRadius, SuperSampleSpacing,Scan1PreSegmentImage, tg.Scan1SegmentedMatrix,
                                     NULL, supersampleMatrix, false)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
