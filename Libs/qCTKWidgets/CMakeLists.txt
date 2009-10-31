@@ -14,6 +14,8 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #
 SET(qCTKWidgets_SRCS
   qCTKAbstractObjectFactory.h
+  qCTKAddRemoveComboBox.h
+  qCTKAddRemoveComboBox.cxx
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleGroupBox.cxx
   qCTKCollapsibleWidget.h
@@ -22,8 +24,6 @@ SET(qCTKWidgets_SRCS
   qCTKColorPickerButton.cxx
   qCTKCoordinatesWidget.h
   qCTKCoordinatesWidget.cxx
-  qCTKComboBoxAddRemove.h
-  qCTKComboBoxAddRemove.cxx
   qCTKMatrixWidget.h
   qCTKMatrixWidget.cxx
   qCTKSlider.h
@@ -38,11 +38,11 @@ SET(qCTKWidgets_SRCS
 
 # Headers that should run through moc
 SET(qCTKWidgets_MOC_SRCS
+  qCTKAddRemoveComboBox.h
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleWidget.h
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
-  qCTKComboBoxAddRemove.h
   qCTKMatrixWidget.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
@@ -52,7 +52,7 @@ SET(qCTKWidgets_MOC_SRCS
   
 # UI files
 SET(qCTKWidgets_UI_SRCS
-  Resources/UI/qCTKComboBoxAddRemove.ui
+  Resources/UI/qCTKAddRemoveComboBox.ui
   Resources/UI/qCTKSliderSpinBoxLabel.ui
 )
   
