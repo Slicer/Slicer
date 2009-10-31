@@ -94,6 +94,12 @@ void qCTKAddRemoveComboBox::setEditButtonEnabled(bool enable)
 }
 
 // --------------------------------------------------------------------------
+void qCTKAddRemoveComboBox::setAddButtonEnabled(bool enable)
+{
+  this->Internal->AddPushButton->setEnabled(enable); 
+}
+
+// --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onEditPushButtonPressed()
 {
   emit this->itemEditRequested(this->Internal->ComboBox->currentText());
@@ -101,6 +107,7 @@ void qCTKAddRemoveComboBox::onEditPushButtonPressed()
     this->Internal->ComboBox->itemData(this->Internal->ComboBox->currentIndex()));
 }
 
+// --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onRemovePushButtonPressed()
 {
   emit this->removePushButtonPressed(this->Internal->ComboBox->currentText());

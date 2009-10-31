@@ -43,6 +43,9 @@ qMRMLNodeSelector::qMRMLNodeSelector(QWidget* parent) : Superclass(parent)
   // Connect comboBox
   this->connect(this, SIGNAL(itemSelected(const QString &)), 
     SLOT(onSelectorItemSelected(const QString &))); 
+
+  // as the Scene is empty, disable the "Add Button"
+  this->setAddButtonEnabled(false);
 }
 
 // --------------------------------------------------------------------------
@@ -91,7 +94,10 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   // Connect MRML scene NodeRemoved event
   this->qvtkReConnect(this->Internal->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent, 
     this, SLOT(onMRMLNodeRemoved(vtkObject*)));
-   
+  
+  // the Add button is valid only if the scene is non-empty
+  this->setAddButtonEnabled( scene != 0 );
+  
   this->Internal->MRMLScene = scene; 
 }
 

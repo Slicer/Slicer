@@ -31,6 +31,10 @@ public:
   // Description:
   // Enable/Disable the edit button. 
   void setEditButtonEnabled(bool enable); 
+
+  // Description:
+  // Enable/Disable the add button. 
+  void setAddButtonEnabled(bool enable); 
   
   // Description:
   // Add an item to the list. By default, notify is true, the signal 'itemAdded' is sent afterward.
