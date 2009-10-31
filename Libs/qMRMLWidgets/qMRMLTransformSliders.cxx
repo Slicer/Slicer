@@ -116,6 +116,12 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLLinearTransformNode* qMRMLTransformSliders::mrmlTransformNode()const
+{
+  return this->Internal->MRMLTransformNode;
+}
+
+// --------------------------------------------------------------------------
 void qMRMLTransformSliders::setTitle(const QString& title)
 {
   this->Internal->SlidersGroupBox->setTitle(title); 

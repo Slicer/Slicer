@@ -11,7 +11,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLMatrixWidget::qInternal
+struct qMRMLMatrixWidget::qInternal
 {
 public:
   qInternal()
@@ -72,6 +72,12 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
   
   // Enable/Disable the widget
   this->setEnabled(transformNode != 0); 
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
+{
+  return this->Internal->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------

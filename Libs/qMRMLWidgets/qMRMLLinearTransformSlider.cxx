@@ -79,7 +79,7 @@ qMRMLLinearTransformSlider::CoordinateReferenceType qMRMLLinearTransformSlider::
 {
   return this->Internal->CoordinateReference;
 }
-  
+ 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
@@ -93,6 +93,12 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
   
   // Enable/Disable the widget
   this->setEnabled(transformNode != 0); 
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
+{
+  return this->Internal->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------

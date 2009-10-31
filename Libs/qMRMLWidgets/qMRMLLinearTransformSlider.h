@@ -57,6 +57,10 @@ public:
   void applyTransformation(double sliderPosition);
   
   // Description:
+  // Return the current transform node
+  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+public slots:  
+  // Description:
   // Set the MRML node of interest
   // Note that setting transformNode to 0 will disable the widget
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode); 

@@ -72,6 +72,10 @@ public:
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
 
+  // Description:
+  // Return the current MRML node of interest
+  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+  
 signals:
   // Description:
   // Signal sent if at least one of the slider's position is updated

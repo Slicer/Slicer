@@ -34,6 +34,7 @@ public:
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
+  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 public slots:
   // Description:
   // Set the MRML node of interest
@@ -46,7 +47,7 @@ protected slots:
   void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
 
 private:
-  class qInternal; 
+  struct qInternal; 
   qInternal* Internal; 
 }; 
 
