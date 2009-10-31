@@ -38,10 +38,6 @@ public:
   virtual QString moduleName();
   
   // Description:
-  // Set MRML scene
-  virtual void setMRMLScene(vtkMRMLScene * scene);
-  
-  // Description:
   virtual void populateToolbar(){}
   virtual void unPopulateToolbar(){}
   
@@ -61,10 +57,6 @@ public slots:
   bool moduleEnabled(); 
   virtual void setModuleEnabled(bool value); 
 
-protected:
-  // Description:
-  // Get MRML scene
-  virtual vtkMRMLScene* getMRMLScene(); 
 
 private:
   class qInternal;

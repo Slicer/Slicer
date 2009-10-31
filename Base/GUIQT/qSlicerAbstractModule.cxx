@@ -11,13 +11,11 @@ public:
   qInternal()
     {
     this->ModuleEnabled = false; 
-    this->MRMLScene = vtkMRMLScene::GetActiveScene(); 
     }
   ~qInternal()
     {
     }
   bool                    ModuleEnabled; 
-  vtkMRMLScene *          MRMLScene; 
 };
 
 //-----------------------------------------------------------------------------
@@ -55,16 +53,4 @@ bool qSlicerAbstractModule::moduleEnabled()
 void qSlicerAbstractModule::setModuleEnabled(bool value)
 {
   this->Internal->ModuleEnabled = value;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene * object)
-{
-  this->Internal->MRMLScene = object; 
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerAbstractModule::getMRMLScene()
-{
-  return this->Internal->MRMLScene; 
 }
