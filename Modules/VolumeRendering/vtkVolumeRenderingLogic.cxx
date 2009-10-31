@@ -8,10 +8,15 @@
 #include "vtkPlanes.h"
 #include "vtkPlane.h"
 
+#include <itksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
+
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLROINode.h"
+#include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLVolumePropertyStorageNode.h"
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
@@ -897,3 +902,90 @@ void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long
 }
 
 
+
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumePropertyNode* vtkVolumeRenderingLogic::AddVolumePropertyFromFile (const char* filename)
+{
+  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+  vtkMRMLVolumePropertyStorageNode *vpStorageNode = vtkMRMLVolumePropertyStorageNode::New();
+
+  // check for local or remote files
+  int useURI = 0; // false;
+  if (this->GetMRMLScene()->GetCacheManager() != NULL)
+    {
+    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    }
+  
+  itksys_stl::string name;
+  const char *localFile;
+  if (useURI)
+    {
+    vpStorageNode->SetURI(filename);
+     // reset filename to the local file name
+    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    }
+  else
+    {
+    vpStorageNode->SetFileName(filename);
+    localFile = filename;
+    }
+  const itksys_stl::string fname(localFile);
+  // the model name is based on the file name (itksys call should work even if
+  // file is not on disk yet)
+  name = itksys::SystemTools::GetFilenameName(fname);
+  
+  // check to see which node can read this type of file
+  if (!vpStorageNode->SupportedFileType(name.c_str()))
+    {
+    vpStorageNode->Delete();
+    vpStorageNode = NULL;
+    }
+
+  /* don't read just yet, need to add to the scene first for remote reading
+  if (vpStorageNode->ReadData(vpNode) != 0)
+    {
+    storageNode = vpStorageNode;
+    }
+  */
+  if (vpStorageNode != NULL)
+    {
+    vpNode->SetName(name.c_str());
+
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    vpNode->SetScene(this->GetMRMLScene());
+    vpStorageNode->SetScene(this->GetMRMLScene());
+
+    this->GetMRMLScene()->AddNodeNoNotify(vpStorageNode);  
+    vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
+
+    this->GetMRMLScene()->AddNode(vpNode);  
+
+    //this->Modified();  
+
+    // the scene points to it still
+    vpNode->Delete();
+
+    // now set up the reading
+    int retval = vpStorageNode->ReadData(vpNode);
+    if (retval != 1)
+      {
+      vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
+      this->GetMRMLScene()->RemoveNode(vpNode);
+      this->GetMRMLScene()->RemoveNode(vpStorageNode);
+      vpNode = NULL;
+      }
+    }
+  else
+    {
+    vtkDebugMacro("Couldn't read file, returning null model node: " << filename);
+    vpNode->Delete();
+    vpNode = NULL;
+    }
+  if (vpStorageNode)
+    {
+    vpStorageNode->Delete();
+    }
+  return vpNode;  
+}

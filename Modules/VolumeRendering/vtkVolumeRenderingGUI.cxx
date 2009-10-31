@@ -279,7 +279,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_VolumeProperty->SetLabelWidth(labelWidth);
     this->NS_VolumeProperty->EnabledOff();//By default off
     this->NS_VolumeProperty->SetShowHidden(1);
-    this->NS_VolumeProperty->SetNodeClass("vtkMRMLVolumePropertyNode","","","");
+    this->NS_VolumeProperty->SetNodeClass("vtkMRMLVolumePropertyNode","","","VolumeProperty");
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_VolumeProperty->GetWidgetName());
 
     //NodeSelector for VolumePropertyNode Preset
@@ -987,7 +987,7 @@ void vtkVolumeRenderingGUI::InitializePipelineNewVolumePropertyFg()
 {
   vtkMRMLVolumePropertyNode *rnode =vtkMRMLVolumePropertyNode::New();
   //rnode->HideFromEditorsOff();
-
+  rnode->SetModifiedSinceRead(1);
   rnode->SetSelectable(1);
   //Add Node to Scene
   this->GetLogic()->GetMRMLScene()->AddNode(rnode);
@@ -1013,6 +1013,7 @@ void vtkVolumeRenderingGUI::InitializePipelineNewVolumeProperty()
 {
   vtkMRMLVolumePropertyNode *rnode = vtkMRMLVolumePropertyNode::New();
   //rnode->HideFromEditorsOff();
+  rnode->SetModifiedSinceRead(1);
   rnode->SetSelectable(1);
 
   //Add Node to Scene
@@ -1099,6 +1100,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     vspNode->SetAndObserveVolumeNodeID(this->NS_ImageData->GetSelected()->GetID());
 
     vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+    vpNode->SetModifiedSinceRead(1);
     this->GetLogic()->GetMRMLScene()->AddNode(vpNode);
     vpNode->Delete();
     vspNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
@@ -1215,6 +1217,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
     vspNode->SetAndObserveFgVolumeNodeID(this->NS_ImageDataFg->GetSelected()->GetID());
 
     vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+    vpNode->SetModifiedSinceRead(1);
     this->GetLogic()->GetMRMLScene()->AddNode(vpNode);
     vpNode->Delete();
     vspNode->SetAndObserveFgVolumePropertyNodeID(vpNode->GetID());
@@ -1346,3 +1349,24 @@ void vtkVolumeRenderingGUI::LoadPresets()
   this->Presets->Connect();
 }
 
+vtkMRMLVolumePropertyNode* vtkVolumeRenderingGUI::GetVolumePropertyNode()
+{
+  vtkMRMLVolumePropertyNode *vpNode = NULL;
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+  if (vspNode) 
+    {
+    vpNode = vspNode->GetVolumePropertyNode();
+    }
+  return vpNode;
+}
+
+vtkMRMLVolumePropertyNode* vtkVolumeRenderingGUI::GetFgVolumePropertyNode()
+{
+  vtkMRMLVolumePropertyNode *vpNode = NULL;
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+  if (vspNode) 
+    {
+    vpNode = vspNode->GetFgVolumePropertyNode();
+    }
+  return vpNode;
+}

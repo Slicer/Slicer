@@ -38,7 +38,7 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
     vtkVolumeProperty *node  = vtkVolumeProperty::New();
     vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, node);
     node->Delete();
-    this->HideFromEditors = 1;
+    this->HideFromEditors = 0;
 }
 
 vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)

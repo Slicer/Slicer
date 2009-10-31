@@ -98,6 +98,8 @@ public:
    */
   int SetupCPURayCastInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
 
+  vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
+
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();

@@ -56,6 +56,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWRange.h"
+#include "vtkKWLoadSaveButton.h"
 
 #include "vtkSlicerROIDisplayWidget.h"
 
@@ -98,6 +99,7 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
 
   this->SVP_VolumePropertyWidget = NULL;
   this->SVP_VolumePropertyWidgetFg = NULL;
+  this->LoadVolumePropertyButton = NULL;
 
   this->ROIWidget = NULL;
   this->CroppingButton = NULL;
@@ -786,10 +788,39 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SVP_VolumePropertyWidgetFg->GetWidgetName());
 
   this->SVP_VolumePropertyWidgetFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
-}
+
+   // ---
+  // LOAD FRAME            
+  vtkKWFrameWithLabel *loadFrame = vtkKWFrameWithLabel::New();
+  loadFrame->SetParent(this->NB_Details->GetFrame("Volume Property"));
+  loadFrame->Create();
+  loadFrame->SetLabelText("Load Volume Property");
+  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", loadFrame->GetWidgetName() );
+
+
+  // add a file browser 
+  this->LoadVolumePropertyButton = vtkKWLoadSaveButton::New ( );
+  this->LoadVolumePropertyButton->SetParent ( loadFrame->GetFrame() );
+  this->LoadVolumePropertyButton->Create ( );
+  this->LoadVolumePropertyButton->SetText ("Load Volume Property");
+  this->LoadVolumePropertyButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
+  this->LoadVolumePropertyButton->GetLoadSaveDialog()->SetFileTypes(
+                                                                 "{ {volume property} {*.*} }");
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+                this->LoadVolumePropertyButton->GetWidgetName());
+  this->LoadVolumePropertyButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+
+ }
 
 void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
 {
+  if (this->LoadVolumePropertyButton)
+    {
+    this->LoadVolumePropertyButton->SetParent(NULL);
+    this->LoadVolumePropertyButton->Delete ( );
+    this->LoadVolumePropertyButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if(this->SVP_VolumePropertyWidget != NULL)
   {
     this->Gui->Script("pack forget %s", this->SVP_VolumePropertyWidget->GetWidgetName());
@@ -863,15 +894,56 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
+  vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
+  if (loadSaveDialog && loadSaveDialog == this->LoadVolumePropertyButton->GetLoadSaveDialog() &&
+      eid== vtkKWTopLevel::WithdrawEvent  )
+    {
+    // If a file has been selected for loading...
+    const char *fileName = this->LoadVolumePropertyButton->GetFileName();
+    if ( fileName ) 
+      {      
+      vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetLogic()->AddVolumePropertyFromFile( fileName );
+
+      if ( vpNode == NULL ) 
+        {
+        // TODO: generate an error...
+        vtkErrorMacro("Unable to read volume property file " << fileName);
+        }
+      else
+        {
+        this->LoadVolumePropertyButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        
+        }
+
+      }
+    
+    // reset the file browse button text
+    this->LoadVolumePropertyButton->SetText ("Load Volume Property");
+
+    return;
+
+    }
+
   {//SVP
     vtkSlicerVolumePropertyWidget *callerObjectSVP = vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
     if(callerObjectSVP == this->SVP_VolumePropertyWidget && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
+      vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetVolumePropertyNode();
+      if (vpNode)
+        {
+        vpNode->SetModifiedSinceRead(1);
+        }
       this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;
     }
     if(callerObjectSVP == this->SVP_VolumePropertyWidgetFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
+      vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetFgVolumePropertyNode();
+      if (vpNode)
+        {
+        vpNode->SetModifiedSinceRead(1);
+        }
+
       this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
       this->Gui->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
       return;

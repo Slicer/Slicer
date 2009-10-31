@@ -141,9 +141,71 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
   char line[1024];
+  std::string sline;
 
   ifs.getline(line, 1024);
-  std::string sline(line);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    int value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetInterpolationType(value);
+    }
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    int value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetShade(value);
+    }
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    double value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetDiffuse(value);
+    }
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    double value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetAmbient(value);
+    }
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    double value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetSpecular(value);
+    }
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    double value;
+    std::stringstream ss;
+    ss << sline;
+    ss >> value;
+    vpNode->GetVolumeProperty()->SetSpecularPower(value);
+    }
+
+  ifs.getline(line, 1024);
+  sline = line;
   if (!sline.empty()) 
     {
     vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
@@ -181,13 +243,6 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  // test whether refNode is a valid node to hold a transform
-  if (!refNode->IsA("vtkMRMLTransformNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLTransformNode");
-    return 0;
-    }
-  
   if (!refNode->IsA("vtkMRMLVolumePropertyNode") ) 
     {
     //vtkErrorMacro("Reference node is not a vtkMRMLVolumePropertyNode");
@@ -200,7 +255,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("vtkMRMLTransformNode: File name not specified");
+    vtkErrorMacro("vtkMRMLVolumePropertyStorageNode: File name not specified");
     return 0;
     }
 
@@ -216,9 +271,15 @@ int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
     }
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity())  << "\"";
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity())<< "\"";
-  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction())<< "\"";
+  ofs << vpNode->GetVolumeProperty()->GetInterpolationType()  << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetShade()  << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetDiffuse()  << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetAmbient()  << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecular()  << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecularPower()  << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity())  << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity())<< std::endl;
+  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction())<< std::endl;
 
   ofs.close();
 

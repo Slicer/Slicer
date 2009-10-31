@@ -131,6 +131,8 @@ public:
     vtkGetObjectMacro (Helper, vtkSlicerVolumeRenderingHelper);
 
     vtkMRMLVolumeRenderingParametersNode* GetCurrentParametersNode();
+    vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
+    vtkMRMLVolumePropertyNode* GetFgVolumePropertyNode();
 
 protected:
     vtkVolumeRenderingGUI();

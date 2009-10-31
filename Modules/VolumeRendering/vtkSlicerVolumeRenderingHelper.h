@@ -43,7 +43,7 @@ class vtkKWEntry;
 class vtkVolumeProperty;
 class vtkKWRange;
 class vtkSlicerROIDisplayWidget;
-
+class vtkKWLoadSaveButton;
 class vtkMRMLVolumeRenderingParametersNode;
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVolumeRenderingHelper :public vtkKWObject
@@ -226,6 +226,7 @@ protected:
 
     vtkKWFrameWithLabel       *FrameThresholdingFg;
     vtkKWRange                *RA_ThresholdFg;
+    vtkKWLoadSaveButton       *LoadVolumePropertyButton;
 
     //-----------------------------------------------------------
     // ROI (clipping)
