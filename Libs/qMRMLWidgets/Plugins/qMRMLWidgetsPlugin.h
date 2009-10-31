@@ -1,22 +1,31 @@
 #ifndef __qMRMLWidgetsPlugin_h
 #define __qMRMLWidgetsPlugin_h
 
-#include <QDesignerCustomWidgetInterface>
+#include "qMRMLLinearTransformSliderPlugin.h"
+#include "qMRMLMatrixWidgetPlugin.h"
+#include "qMRMLNodeSelectorPlugin.h"
+#include "qMRMLTransformSlidersPlugin.h"
+
+#include <QDesignerCustomWidgetCollectionInterface>
 #include "qMRMLWidgetsPluginWin32Header.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QDesignerCustomWidgetInterface
+// \class Group the plugins in one library 
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QObject,
+                           public QDesignerCustomWidgetCollectionInterface
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface)
+  Q_OBJECT
+  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+
 public:
-
-  qMRMLWidgetsPlugin();
-  // Don't reimplement this method.
-  QString group() const;
-  // You can reimplement these methods
-  virtual QIcon icon() const;
-  virtual QString toolTip() const;
-  virtual QString whatsThis() const;
-
+  QList<QDesignerCustomWidgetInterface*> customWidgets() const
+    {
+    QList<QDesignerCustomWidgetInterface *> plugins;
+    plugins << new qMRMLLinearTransformSliderPlugin
+            << new qMRMLMatrixWidgetPlugin
+            << new qMRMLNodeSelectorPlugin
+            << new qMRMLTransformSlidersPlugin;
+    return plugins;
+    }
 };
 
 #endif

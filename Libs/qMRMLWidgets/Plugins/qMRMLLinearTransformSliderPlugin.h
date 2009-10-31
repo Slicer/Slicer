@@ -1,11 +1,11 @@
 #ifndef __qMRMLLinearTransformSliderPlugin_h
 #define __qMRMLLinearTransformSliderPlugin_h
 
-#include "qMRMLWidgetsPlugin.h"
+#include "qMRMLWidgetsBasePlugin.h"
 #include "qMRMLWidgetsPluginWin32Header.h"
 
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLLinearTransformSliderPlugin : public QObject,
-                                         public qMRMLWidgetsPlugin
+                                         public qMRMLWidgetsBasePlugin
 {
   Q_OBJECT
 
