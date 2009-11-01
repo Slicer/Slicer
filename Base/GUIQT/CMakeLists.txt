@@ -25,6 +25,8 @@ SET(qSlicerGUIQT_SRCS
   qSlicerModuleManager.h
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
+  qSlicerCameraModule.h
+  qSlicerCameraModule.cxx
   )
 
 # Headers that should run through moc
@@ -34,11 +36,13 @@ SET(qSlicerGUIQT_MOC_SRCS
   qSlicerAbstractCoreModule.h
   qSlicerApplication.h
   qSlicerTransformsModule.h
+  qSlicerCameraModule.h
   )
   
 # UI files
 SET(qSlicerGUIQT_UI_SRCS
   Resources/UI/qSlicerTransformsModule.ui
+  Resources/UI/qSlicerCameraModule.ui
 )
   
 QT4_WRAP_CPP(qSlicerGUIQT_SRCS ${qSlicerGUIQT_MOC_SRCS})

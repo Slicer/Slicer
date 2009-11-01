@@ -4,6 +4,7 @@
 #include "qSlicerAbstractModule.h"
 
 #include "qSlicerTransformsModule.h"
+#include "qSlicerCameraModule.h"
 
 #include <QHash>
 #include <QDebug>
@@ -40,6 +41,7 @@ qSlicerModuleFactory::~qSlicerModuleFactory()
 void qSlicerModuleFactory::registerCoreModules()
 {
   this->registerModule<qSlicerTransformsModule>();
+  this->registerModule<qSlicerCameraModule>();
 }
 
 //-----------------------------------------------------------------------------

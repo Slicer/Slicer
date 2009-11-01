@@ -53,6 +53,11 @@ public:
   int count()const;
   
   // Description:
+  // Returns the index of the item containing the given text; otherwise returns -1.
+  // The flags specify how the items in the combobox are searched.
+  int findText(const QString& text, Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive ) const;
+
+  // Description:
   // Return the current item
   QString selectedItemName()const; 
   QVariant selectedItemData()const;
@@ -109,6 +114,10 @@ public slots:
   // Description:
   // Update the name of the item matching itemName
   void updateItemName(const QString& itemName, const QString& newItemName); 
+
+  // Description:
+  // Select the current index
+  void setCurrentIndex(int index);
   
 protected slots:
   void onEditPushButtonPressed(); 

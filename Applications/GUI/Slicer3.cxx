@@ -1448,6 +1448,7 @@ int Slicer3_main(int& argc, char *argv[])
   
   // --- Qt Transforms module
   slicerApp->InitializeQtModule("qSlicerTransformsModule");
+  slicerApp->InitializeQtModule("qSlicerCameraModule");
 #endif
 
  // --- First scene needs a crosshair to be added manually

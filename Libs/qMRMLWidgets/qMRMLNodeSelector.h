@@ -27,7 +27,7 @@ public:
   
   // Description:
   // Return the node currently selected
-  vtkMRMLNode* getSelectedNode()const;
+  vtkMRMLNode* selectedNode()const;
   
   // Description:
   // Set/Get node type 
@@ -38,9 +38,14 @@ public:
   // Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
 
- public slots:
+public slots:
+  // Description:
+  // Set the scene the NodeSelector listens to.
   void setMRMLScene(vtkMRMLScene* scene);
-
+  
+  // Description:
+  // Set the selected node.
+  void setSelectedNode(vtkMRMLNode* node);
 
 signals:
   // Description:

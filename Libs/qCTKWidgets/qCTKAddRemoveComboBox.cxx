@@ -185,6 +185,18 @@ int qCTKAddRemoveComboBox::count()const
 }
 
 // --------------------------------------------------------------------------
+void qCTKAddRemoveComboBox::setCurrentIndex(int index)
+{
+  return this->Internal->ComboBox->setCurrentIndex(index); 
+}
+
+// --------------------------------------------------------------------------
+int qCTKAddRemoveComboBox::findText(const QString & text, Qt::MatchFlags flags)const
+{
+  return this->Internal->ComboBox->findText(text, flags); 
+}
+
+// --------------------------------------------------------------------------
 QString qCTKAddRemoveComboBox::selectedItemName()const
 {
   return this->Internal->ComboBox->currentText(); 

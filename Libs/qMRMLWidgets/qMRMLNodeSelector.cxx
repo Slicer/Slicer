@@ -67,7 +67,7 @@ void qMRMLNodeSelector::setNodeType(const QString& nodeType)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeSelector::getSelectedNode()const
+vtkMRMLNode* qMRMLNodeSelector::selectedNode()const
 {
   Q_ASSERT(this->count() > 0 ? (this->Internal->MRMLNodeSelected != 0) : true);
   return this->Internal->MRMLNodeSelected;
@@ -99,6 +99,18 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   this->setAddButtonEnabled( scene != 0 );
   
   this->Internal->MRMLScene = scene; 
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeSelector::setSelectedNode(vtkMRMLNode* node)
+{
+  if (!node)
+    {
+    return;
+    }
+
+  int index = this->findText(node->GetID());
+  this->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------

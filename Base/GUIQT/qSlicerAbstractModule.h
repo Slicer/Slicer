@@ -45,8 +45,8 @@ public:
   
   // Description:
   // Return help/about text
-  virtual QString helpText() = 0;
-  virtual QString aboutText() = 0; 
+  virtual QString helpText() {return "";}
+  virtual QString aboutText() { return "";} 
 
 public slots:
 
