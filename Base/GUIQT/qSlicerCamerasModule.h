@@ -1,5 +1,5 @@
-#ifndef __qSlicerCameraModule_h
-#define __qSlicerCameraModule_h 
+#ifndef __qSlicerCamerasModule_h
+#define __qSlicerCamerasModule_h 
 
 #include "qSlicerAbstractCoreModule.h"
 
@@ -7,15 +7,15 @@
 
 class vtkMRMLNode; 
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerCameraModule : 
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerCamerasModule : 
   public qSlicerAbstractCoreModule
 { 
   Q_OBJECT
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerCameraModule(QWidget *parent=0);
-  virtual ~qSlicerCameraModule(); 
+  qSlicerCamerasModule(QWidget *parent=0);
+  virtual ~qSlicerCamerasModule(); 
 
   virtual void printAdditionalInfo();
   

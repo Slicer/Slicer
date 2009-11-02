@@ -11,24 +11,24 @@ endif(COMMAND cmake_policy)
 SET(qSlicerGUIQT_SRCS
   qSlicerWidget.h
   qSlicerWidget.cxx
-  qSlicerAbstractModule.cxx
   qSlicerAbstractModule.h
+  qSlicerAbstractModule.cxx
   qSlicerAbstractCoreModule.h
   qSlicerAbstractCoreModule.cxx
   qSlicerAbstractLoadableModule.h
   qSlicerAbstractLoadableModule.cxx
-  qSlicerApplication.cxx
   qSlicerApplication.h
-  qSlicerIOManager.cxx
+  qSlicerApplication.cxx
   qSlicerIOManager.h
-  qSlicerModuleFactory.cxx
+  qSlicerIOManager.cxx
   qSlicerModuleFactory.h
-  qSlicerModuleManager.cxx
+  qSlicerModuleFactory.cxx
   qSlicerModuleManager.h
-  qSlicerTransformsModule.cxx
+  qSlicerModuleManager.cxx
   qSlicerTransformsModule.h
-  qSlicerCameraModule.h
-  qSlicerCameraModule.cxx
+  qSlicerTransformsModule.cxx
+  qSlicerCamerasModule.h
+  qSlicerCamerasModule.cxx
   )
 
 # Headers that should run through moc
@@ -38,14 +38,14 @@ SET(qSlicerGUIQT_MOC_SRCS
   qSlicerAbstractCoreModule.h
   qSlicerAbstractLoadableModule.h
   qSlicerApplication.h
-  qSlicerCameraModule.h
+  qSlicerCamerasModule.h
   qSlicerTransformsModule.h
   )
   
 # UI files
 SET(qSlicerGUIQT_UI_SRCS
   Resources/UI/qSlicerTransformsModule.ui
-  Resources/UI/qSlicerCameraModule.ui
+  Resources/UI/qSlicerCamerasModule.ui
 )
   
 QT4_WRAP_CPP(qSlicerGUIQT_SRCS ${qSlicerGUIQT_MOC_SRCS})

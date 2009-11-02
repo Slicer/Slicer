@@ -2429,7 +2429,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 void vtkSlicerApplication::InitializeQtCoreModules()
 {
   this->InitializeQtCoreModule("qSlicerTransformsModule");
-  this->InitializeQtCoreModule("qSlicerCameraModule");
+  this->InitializeQtCoreModule("qSlicerCamerasModule");
 }
 
 //----------------------------------------------------------------------------
