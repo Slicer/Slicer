@@ -5,21 +5,6 @@
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
-// Macro allowing to declare:
-//     - the static method 'moduleTitle()'
-//     - the member 'ModuleTitle'
-#define qSlicerGetModuleTitleDeclarationMacro() \
-  public: \
-  static const QString moduleTitle(); \
-  static QString ModuleTitle; 
-
-// Macro allowing to define
-//    - the static method 'moduleTitle()'
-//    - the associated module title
-#define qSlicerGetModuleTitleDefinitionMacro(_CLASSTYPE, _TITLE) \
-  const QString _CLASSTYPE::moduleTitle(){ return _CLASSTYPE::ModuleTitle; } \
-  QString _CLASSTYPE::ModuleTitle = _TITLE; 
-
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
   Q_OBJECT
@@ -31,6 +16,8 @@ public:
   virtual ~qSlicerAbstractModule();
   
   virtual void printAdditionalInfo(); 
+  
+  virtual QString moduleTitle() = 0; 
 
   // Description:
   virtual QString moduleName();

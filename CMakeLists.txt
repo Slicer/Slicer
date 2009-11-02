@@ -296,6 +296,20 @@ set(LoadableModule_DIR ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
 set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
+#-----------------------------------------------------------------------------
+# Qt Loadable Modules
+#
+IF(Slicer3_USE_QT)
+  OPTION(Slicer3_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
+  IF(Slicer3_BUILD_QTLOADABLEMODULES)
+    ADD_DEFINITIONS(-DSlicer3_BUILD_QTLOADABLEMODULES)
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer3_INSTALL_LIB_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer3_INSTALL_LIB_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer3_INSTALL_INCLUDE_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer3_INSTALL_SHARE_DIR}/QTLoadableModules")
+  ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+ENDIF(Slicer3_USE_QT)
+
 # --------------------------------------------------------------------------
 # Configure and install headers
 
@@ -354,14 +368,11 @@ else(Slicer3_BUILD_MODULES)
 endif(Slicer3_BUILD_MODULES)
 
 #-----------------------------------------------------------------------------
-# Qt Modules
+# Qt Loadable Modules
 #
-IF(Slicer3_USE_QT)
-  OPTION(Slicer3_BUILD_QTMODULES "Build Slicer3 QT Modules" ON)
-  IF(Slicer3_BUILD_QTMODULES)
-    add_subdirectory(QTModules)
-  ENDIF(Slicer3_BUILD_QTMODULES)
-ENDIF(Slicer3_USE_QT)
+IF(Slicer3_USE_QT AND Slicer3_BUILD_QTLOADABLEMODULES)
+  add_subdirectory(QTModules)
+ENDIF(Slicer3_USE_QT AND Slicer3_BUILD_QTLOADABLEMODULES)
 
 #-----------------------------------------------------------------------------
 # Applications need to be built after Modules to capture the TractTracing in

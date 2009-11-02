@@ -58,7 +58,7 @@ MACRO(Slicer3_build_qtmodule)
     ${headers} 
     "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Configure.h"
     "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Win32Header.h"
-    DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
   
   #file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
@@ -74,7 +74,7 @@ MACRO(Slicer3_build_qtmodule)
   QT4_WRAP_CPP(QTMODULE_SRCS ${QTMODULE_MOC_SRCS})
   QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
   IF (${QTMODULE_NO_RESOURCES} EQUAL FALSE)
-    QT4_ADD_RESOURCES(qSlicerModule_QRC_SRCS Resources/qSlicer${QTMODULE_NAME}Module.qrc)
+    QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS Resources/qSlicer${QTMODULE_NAME}Module.qrc)
   ENDIF(${QTMODULE_NO_RESOURCES} EQUAL FALSE)
 
   SET_SOURCE_FILES_PROPERTIES(
@@ -105,8 +105,18 @@ MACRO(Slicer3_build_qtmodule)
     ${QTMODULE_QRC_SRCS}
     #${qSlicerModule_TCL_SRCS}
     )
-  slicer3_set_modules_output_path(${lib_name})
-
+  
+  # Set qt loadable modules output path
+  SET_TARGET_PROPERTIES(${lib_name}
+    PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY 
+    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY 
+    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY 
+    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
+    )
+  
   TARGET_LINK_LIBRARIES(${lib_name}
     ${Slicer3_Libs_LIBRARIES}
     ${Slicer3_Base_LIBRARIES}
@@ -125,7 +135,12 @@ MACRO(Slicer3_build_qtmodule)
     )
   ENDIF(Slicer3_LIBRARY_PROPERTIES)
   
-  slicer3_install_modules(${lib_name})
+  # Install qt loadable modules
+  INSTALL(TARGETS ${lib_name}
+    RUNTIME DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+    )
 
 ENDMACRO(Slicer3_build_qtmodule)
 

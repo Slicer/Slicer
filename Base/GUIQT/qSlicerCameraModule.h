@@ -19,7 +19,7 @@ public:
 
   virtual void printAdditionalInfo();
   
-  qSlicerGetModuleTitleDeclarationMacro();
+  virtual QString moduleTitle();
   
   // Return help/about text
   virtual QString helpText();

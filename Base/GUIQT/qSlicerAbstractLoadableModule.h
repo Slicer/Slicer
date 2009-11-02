@@ -5,8 +5,6 @@
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
-class vtkMRMLScene; 
-
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractLoadableModule : public qSlicerAbstractModule
 {
   Q_OBJECT
@@ -28,5 +26,8 @@ private:
   class qInternal;
   qInternal* Internal;
 };
+
+Q_DECLARE_INTERFACE(qSlicerAbstractLoadableModule,
+                     "org.slicer.QTModules.qSlicerAbstractLoadableModule/1.0")
 
 #endif

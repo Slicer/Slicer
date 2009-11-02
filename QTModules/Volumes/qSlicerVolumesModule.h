@@ -9,6 +9,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
   public qSlicerAbstractLoadableModule
 { 
   Q_OBJECT
+  Q_INTERFACES(qSlicerAbstractLoadableModule)
 
 public:
 
@@ -18,7 +19,7 @@ public:
   
   virtual void printAdditionalInfo();
   
-  qSlicerGetModuleTitleDeclarationMacro();
+  virtual QString moduleTitle(); 
 
 private:
   class qInternal;

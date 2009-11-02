@@ -21,6 +21,7 @@ public:
     }
   QHash<QString, QString> MapTitleToName;
   QHash<QString, QString> MapNameToTitle;
+  QString                 SearchPath;
 };
 
 //-----------------------------------------------------------------------------
@@ -69,19 +70,30 @@ void qSlicerModuleFactory::printAdditionalInfo()
 template<typename ClassType>
 void qSlicerModuleFactory::registerModule(/*const QString& moduleTitle*/)
 {
-  const QString moduleTitle = ClassType::moduleTitle(); 
+  // Extract title from class name
+  QString className = ClassType::staticMetaObject.className();
+  const QString moduleTitle = className.replace("qSlicer","").replace("Module","");
+  qDebug() << "qSlicerModuleFactory::registerModule title:" << moduleTitle; 
   
+  // A given module should be registered only one time
   Q_ASSERT(!this->Internal->MapTitleToName.contains(moduleTitle)); 
+  if (this->Internal->MapTitleToName.contains(moduleTitle))
+    {
+    return;
+    }
   
   QString moduleName = ClassType::staticMetaObject.className(); 
   Q_ASSERT(!this->Internal->MapNameToTitle.contains(moduleName)); 
-  
+  if (this->Internal->MapNameToTitle.contains(moduleName))
+    {
+    return;
+    }
 
   this->registerQObject<ClassType>();
-  
+
   // Keep track of the relation Title -> moduleName
   this->Internal->MapTitleToName[moduleTitle] = moduleName;
-   
+
   // Keep track of the relation moduleName -> Title
   this->Internal->MapNameToTitle[moduleName] = moduleTitle; 
 }
@@ -135,4 +147,10 @@ qSlicerAbstractModule* qSlicerModuleFactory::createModule(const QString& moduleN
   
   qDebug() << module << " - title:" << moduleTitle; 
   return module; 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactory::setLoadableModuleSearchPath(const QString& searchPath)
+{
+  this->Internal->SearchPath = searchPath; 
 }

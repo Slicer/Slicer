@@ -18,6 +18,7 @@
 #ifdef Slicer3_USE_QT
 #include "qSlicerApplication.h"
 // #include "vtkSlicerEmptyModuleGUI.h"
+#include <QDebug>
 #endif
 
 #include "vtkOpenGLRenderWindow.h"
@@ -848,9 +849,9 @@ int Slicer3_main(int& argc, char *argv[])
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
   slicerApp->SetMRMLScene( scene );
-  #ifdef Slicer3_USE_QT
+#ifdef Slicer3_USE_QT
   qSlicerApplication::application()->setMRMLScene( scene ); 
-  #endif
+#endif
     
   // Create the application Logic object, 
   // Create the application GUI object
@@ -1015,6 +1016,27 @@ int Slicer3_main(int& argc, char *argv[])
   // add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
+
+#ifdef Slicer3_USE_QT
+  std::string qtModulePaths;
+  std::string defaultQTModulePaths;
+  
+  // On Win32, *both* paths have to be there, since scripts are installed
+  // in the install location, and exec/libs are *automatically* installed
+  // in intDir.
+  defaultQTModulePaths = slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  if (hasIntDir)
+    {
+    defaultQTModulePaths = defaultQTModulePaths + PathSep + 
+      slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + intDir;
+    }
+    
+  // add the default modules directory (based on the slicer
+  // installation or build tree) to the user paths
+  qtModulePaths = userModulePaths + PathSep + defaultQTModulePaths;
+  
+  cout << "qtModulePaths:" << qtModulePaths << endl; 
+#endif
 
   // =================== vvv
   // TODO: this is moved to the launcher since setting it at run 
@@ -1447,8 +1469,7 @@ int Slicer3_main(int& argc, char *argv[])
 //   slicerApp->AddModuleGUI ( emptyModuleGUI );
   
   // --- Qt Transforms module
-  slicerApp->InitializeQtModule("qSlicerTransformsModule");
-  slicerApp->InitializeQtModule("qSlicerCameraModule");
+  slicerApp->InitializeQtCoreModules(); 
 #endif
 
  // --- First scene needs a crosshair to be added manually

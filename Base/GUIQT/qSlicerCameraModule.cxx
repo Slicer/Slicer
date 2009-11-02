@@ -7,9 +7,6 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-qSlicerGetModuleTitleDefinitionMacro(qSlicerCameraModule, "Cameras"); 
-
-//-----------------------------------------------------------------------------
 class qSlicerCameraModule::qInternal : public Ui::qSlicerCameraModule
 {
 public:
@@ -39,6 +36,12 @@ qSlicerCameraModule::~qSlicerCameraModule()
 void qSlicerCameraModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCameraModule::moduleTitle()
+{
+  return "Cameras";
 }
 
 //-----------------------------------------------------------------------------

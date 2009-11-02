@@ -5,8 +5,6 @@
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
-class vtkMRMLScene; 
-
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractCoreModule : public qSlicerAbstractModule
 {
   Q_OBJECT

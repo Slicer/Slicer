@@ -72,9 +72,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     
 #ifdef Slicer3_USE_QT
     // Description:
-    // Initialize a qt Module given its name
+    // Initialize qt core Modules
     //BTX
-    void InitializeQtModule(const char* moduleName);
+    void InitializeQtCoreModules();
+    //ETX
+    
+    // Description:
+    // Initialize a qt core Module given its name
+    //BTX
+    void InitializeQtCoreModule(const char* moduleName);
     //ETX
 #endif
 

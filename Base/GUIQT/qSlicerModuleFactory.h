@@ -28,6 +28,10 @@ public:
   // Description:
   // Instanciate a module given its name
   qSlicerAbstractModule* createModule(const QString& moduleName); 
+  
+  // Description:
+  // Set path where the loadable modules are located
+  void setLoadableModuleSearchPath(const QString& searchPath); 
 
 protected:
   

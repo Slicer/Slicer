@@ -16,7 +16,7 @@ public:
     {
     }
     
-  QHash<QString, qSlicerAbstractModule*> ModuleList; 
+  QHash<QString, qSlicerAbstractModule*> ModuleList;  // Store Pair<ModuleName, ModuleObject>
   qSlicerModuleFactory                   ModuleFactory; 
 };
 

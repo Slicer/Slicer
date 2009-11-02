@@ -2425,7 +2425,15 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 
 //----------------------------------------------------------------------------
 #ifdef Slicer3_USE_QT
-void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeQtCoreModules()
+{
+  this->InitializeQtCoreModule("qSlicerTransformsModule");
+  this->InitializeQtCoreModule("qSlicerCameraModule");
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeQtCoreModule(const char* moduleName)
 {
   QString splashMsg = "Initializing %1 Module...";
   this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toAscii());

@@ -15,9 +15,6 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-qSlicerGetModuleTitleDefinitionMacro(qSlicerTransformsModule, "Transforms"); 
-
-//-----------------------------------------------------------------------------
 class qSlicerTransformsModule::qInternal : public Ui::qSlicerTransformsModule
 {
 public:
@@ -103,6 +100,12 @@ qSlicerTransformsModule::~qSlicerTransformsModule()
 void qSlicerTransformsModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerTransformsModule::moduleTitle()
+{
+  return "Transforms";
 }
 
 //-----------------------------------------------------------------------------

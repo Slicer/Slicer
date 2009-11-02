@@ -5,9 +5,6 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-qSlicerGetModuleTitleDefinitionMacro(qSlicerVolumesModule, "Volumes"); 
-
-//-----------------------------------------------------------------------------
 class qSlicerVolumesModule::qInternal: public Ui::qSlicerVolumesModule
 {
 public:
@@ -33,4 +30,10 @@ qSlicerVolumesModule::~qSlicerVolumesModule()
 void qSlicerVolumesModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerVolumesModule::moduleTitle()
+{
+  return "Volumes"; 
 }
