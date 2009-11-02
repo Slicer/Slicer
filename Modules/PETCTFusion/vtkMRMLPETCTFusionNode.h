@@ -1,6 +1,8 @@
 #ifndef __vtkMRMLPETCTFusionNode_h
 #define __vtkMRMLPETCTFusionNode_h
 
+#include <list>
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -15,6 +17,17 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   static vtkMRMLPETCTFusionNode *New();
   vtkTypeMacro(vtkMRMLPETCTFusionNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+//BTX
+  typedef struct SUVEntry {
+    int Label;
+    double Max;
+    double Mean;
+  } SUVEntry;
+
+  std::list <SUVEntry> LabelResults;
+//ETX
+
 
   // Description:
   // Save PETCTFusion result to text file
@@ -61,6 +74,9 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   vtkGetStringMacro (PETLUT);
   vtkSetStringMacro (PETLUT);
   
+  vtkGetStringMacro (CTLUT);
+  vtkSetStringMacro (CTLUT);
+  
   vtkGetStringMacro (Layout);
   vtkSetStringMacro (Layout);
 
@@ -88,6 +104,12 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   vtkGetMacro ( PatientWeight, double );
   vtkSetMacro ( PatientWeight, double );
 
+  vtkGetStringMacro ( PatientName );
+  vtkSetStringMacro ( PatientName );
+  
+  vtkGetStringMacro ( StudyDate );
+  vtkSetStringMacro ( StudyDate );
+  
   vtkGetStringMacro ( RadiopharmaceuticalStartTime );
   vtkSetStringMacro ( RadiopharmaceuticalStartTime );
 
@@ -138,6 +160,18 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   vtkGetMacro ( SUV_t2, float )
   vtkSetMacro ( SUV_t2, float )
     
+  vtkGetMacro ( CTRangeMin, double);
+  vtkSetMacro ( CTRangeMin, double);
+
+  vtkGetMacro ( CTRangeMax, double);
+  vtkSetMacro ( CTRangeMax, double);
+
+  vtkGetMacro ( CTMin, double);
+  vtkSetMacro ( CTMin, double);
+
+  vtkGetMacro ( CTMax, double);
+  vtkSetMacro ( CTMax, double);
+  
   vtkGetMacro ( ColorRangeMin, double );
   vtkSetMacro ( ColorRangeMin, double );  
 
@@ -149,17 +183,23 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
 
   vtkGetMacro ( PETMax, double );
   vtkSetMacro ( PETMax, double );
+
+  vtkGetMacro ( PETSUVmax, double );
+  vtkSetMacro ( PETSUVmax, double );
+  
   // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
   virtual void SetColorRange ( double min, double max );
- 
+  virtual void SetCTRange ( double min, double max );
+
 //BTX
   enum {
       ErrorEvent = 11000,
       ComputeDoneEvent,
       StartUpdatingDisplayEvent,
-      UpdateDisplayEvent,
+      UpdatePETDisplayEvent,
+      UpdateCTDisplayEvent,
       DICOMUpdateEvent,
       NonDICOMEvent,
       WaitEvent,
@@ -178,6 +218,7 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   char* InputPETReference;
   char *InputMask;
   char* PETLUT;
+  char* CTLUT;
   char* MessageText;
   char* Layout;
   int VolumeRendering;
@@ -190,6 +231,9 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   //--- other PET params of interest
   //--- Can have values: { kg g lb }
   char* WeightUnits;
+
+  char* PatientName;
+  char* StudyDate;
 
   //--- Can have values: { MBq kBq Bq mBq uBq MCi kCi Ci mCi uCi }
   char* DoseRadioactivityUnits;
@@ -223,7 +267,12 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   double ColorRangeMax;
   double PETMin;
   double PETMax;
- 
+  double PETSUVmax;
+
+  double CTRangeMin;
+  double CTRangeMax;
+  double CTMin;
+  double CTMax;
 };
 
 #endif

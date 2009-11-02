@@ -43,6 +43,7 @@ vtkMRMLPETCTFusionNode::vtkMRMLPETCTFusionNode()
    this->InputPETReference = NULL;
    this->InputMask = NULL;
    this->PETLUT = NULL;
+   this->CTLUT = NULL;
    this->MessageText = NULL;
    this->Layout = NULL;
    this->HideFromEditors = true;
@@ -53,6 +54,8 @@ vtkMRMLPETCTFusionNode::vtkMRMLPETCTFusionNode()
    this->VolumeRendering = 0;
    this->NumberOfTemporalPositions = 0;
    this->InjectedDose = 0.0;
+   this->PatientName = NULL;
+   this->StudyDate = NULL;
    this->PatientWeight = 0.0;
    this->SUV_t1 = 0.0;
    this->SUV_t2 = 0.0;
@@ -72,10 +75,15 @@ vtkMRMLPETCTFusionNode::vtkMRMLPETCTFusionNode()
   this->RadionuclideHalfLife =NULL;
   this->SeriesTime = NULL;
   this->PhilipsSUVFactor = NULL;
+  this->CTRangeMin = 0.0;
+  this->CTRangeMax = 255.0;
+  this->CTMin = 0.0;
+  this->CTMax = 255.0;
   this->ColorRangeMin = 0.0;
-  this->ColorRangeMax = 0.0;
+  this->ColorRangeMax = 255.0;
   this->PETMin = 0.0;
   this->PETMax = 255.0;
+  this->PETSUVmax = 255.0;
 }
 
 //----------------------------------------------------------------------------
@@ -101,6 +109,10 @@ vtkMRMLPETCTFusionNode::~vtkMRMLPETCTFusionNode()
     {
     this->SetPETLUT ( NULL );
     }
+  if ( this->CTLUT)
+    {
+    this->SetCTLUT ( NULL );
+    }
   if ( this->MessageText )
     {
     this->SetMessageText( NULL );
@@ -116,6 +128,14 @@ vtkMRMLPETCTFusionNode::~vtkMRMLPETCTFusionNode()
   if ( this->DoseRadioactivityUnits )
     {
     this->SetDoseRadioactivityUnits( NULL );
+    }
+  if ( this->PatientName )
+    {
+    this->SetPatientName ( NULL );
+    }
+  if ( this->StudyDate )
+    {
+    this->SetStudyDate ( NULL );
     }
   if ( this->TissueRadioactivityUnits )
     {
@@ -168,12 +188,15 @@ vtkMRMLPETCTFusionNode::~vtkMRMLPETCTFusionNode()
   this->SUVmean_t2 = 0.0;
   this->SUVmaxmean_t1 = 0.0;
   this->SUVmaxmean_t2 = 0.0;
+  this->CTRangeMin = 0.0;
+  this->CTRangeMax = 255.0;
+  this->CTMin = 0.0;
+  this->CTMax = 255.0;
   this->ColorRangeMin = 0.0;
-  this->ColorRangeMax = 0.0;  
+  this->ColorRangeMax = 255.0;  
   this->PETMin = 0.0;
   this->PETMax = 255.0;  
-
-  
+  this->PETSUVmax = 255.0;  
 }
 
 //----------------------------------------------------------------------------
@@ -215,6 +238,22 @@ void vtkMRMLPETCTFusionNode::WriteXML(ostream& of, int nIndent)
     {
     ss << this->MessageText;
     of << indent << " MessageText=\"" << ss.str() << "\"";
+    }
+
+  if ( this->PatientName )
+    {
+    ss.str("");
+    ss.clear();
+    ss << this->PatientName;
+    of << indent << " PatientName=\"" << ss.str() << "\"";
+    }
+
+  if ( this->StudyDate )
+    {
+    ss.str("");
+    ss.clear();
+    ss << this->StudyDate;
+    of << indent << " StudyDate=\"" << ss.str() << "\"";
     }
 
   ss.str("");
@@ -349,6 +388,26 @@ void vtkMRMLPETCTFusionNode::WriteXML(ostream& of, int nIndent)
 
   ss.str("");
   ss.clear();
+  ss << this->CTRangeMin;
+  of << indent << " CTRangeMin=\"" << ss.str() << "\"";
+
+  ss.str("");
+  ss.clear();
+  ss << this->CTRangeMax;
+  of << indent << " CTRangeMax=\"" << ss.str() << "\"";
+  
+  ss.str("");
+  ss.clear();
+  ss << this->CTMin;
+  of << indent << " CTMin=\"" << ss.str() << "\"";
+
+  ss.str("");
+  ss.clear();
+  ss << this->CTMax;
+  of << indent << " CTMax=\"" << ss.str() << "\"";
+
+  ss.str("");
+  ss.clear();
   ss << this->ColorRangeMin;
   of << indent << " ColorRangeMin=\"" << ss.str() << "\"";
 
@@ -367,6 +426,11 @@ void vtkMRMLPETCTFusionNode::WriteXML(ostream& of, int nIndent)
   ss << this->PETMax;
   of << indent << " PETMax=\"" << ss.str() << "\"";
   
+  ss.str("");
+  ss.clear();
+  ss << this->PETSUVmax;
+  of << indent << " PETSUVmax=\"" << ss.str() << "\"";
+
 }
 
 
@@ -387,6 +451,14 @@ void vtkMRMLPETCTFusionNode::ReadXMLAttributes(const char** atts)
       {
       this->SetInputCTReference(attValue);
       this->Scene->AddReferencedNodeID(this->InputCTReference, this);
+      }
+    else if ( !strcmp (attName, "PatientName"))
+      {
+      this->SetPatientName ( attValue);
+      }
+    else if ( !strcmp (attName, "StudyDate"))
+      {
+      this->SetStudyDate ( attValue );
       }
     else if (!strcmp(attName, "PatientWeightUnits"))
       {
@@ -472,13 +544,29 @@ void vtkMRMLPETCTFusionNode::ReadXMLAttributes(const char** atts)
       {
       this->SetCalibrationFactor (attValue );
       }
+    else if (!strcmp (attName, "CTRangeMin"))
+      {
+      this->SetCTRangeMin (atof (attValue));
+      }
+    else if (!strcmp (attName, "CTRangeMax"))
+      {
+      this->SetCTRangeMax (atof (attValue));
+      }
+    else if (!strcmp (attName, "CTMin"))
+      {
+      this->SetCTMin (atof (attValue));
+      }
+    else if (!strcmp (attName, "CTMax"))
+      {
+      this->SetCTMax (atof (attValue));
+      }
     else if (!strcmp(attName, "ColorRangeMin"))
       {
       this->SetColorRangeMin ( atof (attValue ));
       }
     else if (!strcmp(attName, "ColorRangeMax"))
       {
-      this->SetColorRangeMin ( atof (attValue ));
+      this->SetColorRangeMax ( atof (attValue ));
       }
     else if (!strcmp(attName, "PETMin"))
       {
@@ -486,7 +574,11 @@ void vtkMRMLPETCTFusionNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "PETMax"))
       {
-      this->SetPETMin ( atof (attValue ));
+      this->SetPETMax ( atof (attValue ));
+      }
+    else if (!strcmp(attName, "PETSUVmax"))
+      {
+      this->SetPETSUVmax ( atof (attValue ));
       }
     else if (!strcmp(attName, "DecayFactor"))
       {
@@ -523,6 +615,11 @@ void vtkMRMLPETCTFusionNode::ReadXMLAttributes(const char** atts)
       this->SetPETLUT(attValue);
       this->Scene->AddReferencedNodeID ( this->PETLUT, this);
       }
+    else if ( !strcmp (attName, "CTLUT"))
+      {
+      this->SetCTLUT(attValue);
+      this->Scene->AddReferencedNodeID ( this->CTLUT, this);
+      }
     else if (!strcmp(attName, "MessageText"))
       {
       this->SetMessageText(attValue);
@@ -543,6 +640,7 @@ void vtkMRMLPETCTFusionNode::Copy(vtkMRMLNode *anode)
   this->SetInputPETReference(node->InputPETReference);
   this->SetInputMask(node->InputMask);
   this->SetPETLUT(node->PETLUT);
+  this->SetCTLUT(node->CTLUT);
   this->SetMessageText(node->MessageText);
   this->SetWeightUnits ( node->GetWeightUnits() );
   this->SetVolumeUnits (node->GetVolumeUnits() );
@@ -552,6 +650,8 @@ void vtkMRMLPETCTFusionNode::Copy(vtkMRMLNode *anode)
   this->SetNumberOfTemporalPositions ( node->GetNumberOfTemporalPositions() );
   this->SetInjectedDose ( node->GetInjectedDose () );
   this->SetPatientWeight ( node->GetPatientWeight () );
+  this->SetPatientName ( node->GetPatientName() );
+  this->SetStudyDate ( node->GetStudyDate () );
   this->SetSUV_t1 (node->GetSUV_t1() );
   this->SetSUV_t2 (node->GetSUV_t2() );
   this->SetSUVmax_t1 (node->GetSUVmax_t1() );
@@ -570,10 +670,15 @@ void vtkMRMLPETCTFusionNode::Copy(vtkMRMLNode *anode)
   this->SetRadionuclideHalfLife (node->GetRadionuclideHalfLife ( ) );
   this->SetSeriesTime (node->GetSeriesTime ( ) );
   this->SetPhilipsSUVFactor (node->GetPhilipsSUVFactor ( ) );
+  this->SetCTRangeMin ( node->GetCTRangeMin() );
+  this->SetCTRangeMax ( node->GetCTRangeMax() );
+  this->SetCTMin ( node->GetCTMin() );
+  this->SetCTMax ( node->GetCTMax() );
   this->SetColorRangeMin ( node->GetColorRangeMin () );
   this->SetColorRangeMax ( node->GetColorRangeMax () );
   this->SetPETMin ( node->GetPETMin () );
   this->SetPETMax ( node->GetPETMax () );
+  this->SetPETSUVmax ( node->GetPETSUVmax () );
 }
 
 //----------------------------------------------------------------------------
@@ -590,6 +695,8 @@ void vtkMRMLPETCTFusionNode::PrintSelf(ostream& os, vtkIndent indent)
    (this->InputMask ? this->InputMask : "(none)") << "\n";
   os << indent << "PETLUT:   " << 
    (this->PETLUT ? this->PETLUT : "(none)") << "\n";
+  os << indent << "CTLUT:   " << 
+   (this->CTLUT ? this->CTLUT : "(none)") << "\n";
   os << indent << "MessageText:   " << 
     (this->MessageText ? this->MessageText : "(none)") << "\n";
   os << indent << "WeightUnits: " << 
@@ -601,6 +708,8 @@ void vtkMRMLPETCTFusionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TissueRadioactivityUnits: " << 
     (this->TissueRadioactivityUnits ? this->TissueRadioactivityUnits : "(none)") << "\n";
   os << indent << "InjectedDose: " << this->InjectedDose << "\n";
+  os << indent << "PatientName: " << this->PatientName << "\n";
+  os << indent << "StudyDate: " << this->StudyDate << "\n";
   os << indent << "PatientWeight: " << this->PatientWeight << "\n";
   os << indent << "VolumeRendering: " << this->VolumeRendering << "\n";
   os << indent << "NumberOfTemporalPositions: " << this->NumberOfTemporalPositions << "\n";
@@ -622,10 +731,15 @@ void vtkMRMLPETCTFusionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RadionuclideHalfLife: " << this->RadionuclideHalfLife << "\n";
   os << indent << "SeriesTime: " << this->SeriesTime << "\n";
   os << indent << "PhilipsSUVFactor: " << this->PhilipsSUVFactor << "\n";
+  os << indent << "CTRangeMin: " << this->CTRangeMin << "\n";
+  os << indent << "CTRangeMax: " << this->CTRangeMax << "\n";
+  os << indent << "CTMin: " << this->CTMin << "\n";
+  os << indent << "CTMax: " << this->CTMax << "\n";
   os << indent << "ColorRangeMin: " << this->ColorRangeMin << "\n";
   os << indent << "ColorRangeMax: " << this->ColorRangeMax << "\n";
   os << indent << "PETMin: " << this->PETMin << "\n";
   os << indent << "PETMax: " << this->PETMax << "\n";
+  os << indent << "PETSUVmax: " << this->PETSUVmax << "\n";
 
 }
 
@@ -648,14 +762,28 @@ void vtkMRMLPETCTFusionNode::UpdateReferenceID(const char *oldID, const char *ne
     {
     this->SetPETLUT(newID);
     }
+  if (!strcmp(oldID, this->CTLUT))
+    {
+    this->SetCTLUT(newID);
+    }
 }
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLPETCTFusionNode::SetCTRange ( double min, double max )
+{
+  this->CTRangeMin = min;
+  this->CTRangeMax = max;
+  this->InvokeEvent (UpdateCTDisplayEvent );
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLPETCTFusionNode::SetColorRange ( double min, double max )
 {
   this->ColorRangeMin = min;
   this->ColorRangeMax = max;
-  this->InvokeEvent (UpdateDisplayEvent );
+  this->InvokeEvent (UpdatePETDisplayEvent );
 }
 
 //----------------------------------------------------------------------------

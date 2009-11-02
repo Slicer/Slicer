@@ -36,9 +36,12 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
   
   virtual void GetParametersFromDICOMHeader( const char *path);
 
+  virtual void ComputeSUVmax();
   virtual void ComputeSUV();
   virtual void ComputePercentChange();
 
+  double ConvertSUVUnitsToImageUnits(double suvValue);
+  double ConvertImageUnitsToSUVUnits(double voxValue);
 
   virtual void SetAndScaleLUT();
 

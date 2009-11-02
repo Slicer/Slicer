@@ -9,6 +9,7 @@
 #include "vtkPETCTFusionWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkMRMLPETCTFusionNode.h"
+#include "vtkMRMLColorNode.h"
 #include "vtkPETCTFusionLogic.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include <string>
@@ -24,6 +25,9 @@ class vtkKWLabel;
 class vtkKWRange;
 class vtkKWMenuButton;
 class vtkSlicerPopUpHelpWidget;
+class vtkKWMultiColumnList;
+class vtkKWMultiColumnListWithScrollbars;
+class vtkKWRadioButtonSetWithLabel;
 
 class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
 {
@@ -41,39 +45,39 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkPETCTFusionLogic*> (logic)); 
   };
 
-   // Description: Get/Set MRML node
+  // Description:
+  // Get/Set on Module Logic
   vtkGetObjectMacro (Logic, vtkPETCTFusionLogic);
   vtkSetObjectMacro (Logic, vtkPETCTFusionLogic);
 
+   // Description:
+  // Get/Set on PETCTFusion MRML node
   vtkGetObjectMacro (PETCTFusionNode, vtkMRMLPETCTFusionNode );
   vtkSetObjectMacro (PETCTFusionNode, vtkMRMLPETCTFusionNode );
   
   // Description:
-  // Create widgets
+  // Get/Set on all module widgets
   vtkGetObjectMacro(CTSelector, vtkSlicerNodeSelectorWidget);
   vtkGetObjectMacro(PETSelector, vtkSlicerNodeSelectorWidget);
   vtkGetObjectMacro(MaskSelector, vtkSlicerNodeSelectorWidget);
-  vtkGetObjectMacro(LUTSelector, vtkSlicerNodeSelectorWidget);
   vtkGetObjectMacro(VolumeRenderCheckbox, vtkKWCheckButton);
-  vtkGetObjectMacro(BodyQuantifierSelector, vtkKWRadioButtonSet);
   vtkGetObjectMacro(TissueConcentrationEntry, vtkKWEntry);
   vtkGetObjectMacro(InjectedDoseEntry, vtkKWEntry);
-  vtkGetObjectMacro(LeanBodyMassEntry, vtkKWEntry);
-  vtkGetObjectMacro(BodySurfaceAreaEntry, vtkKWEntry);
   vtkGetObjectMacro(PatientWeightEntry, vtkKWEntry);
   vtkGetObjectMacro(ComputeButton, vtkKWPushButton);
   vtkGetObjectMacro(SaveButton, vtkKWPushButton);
   vtkGetObjectMacro (GetFromDICOMButton, vtkKWPushButton );
-  vtkGetObjectMacro(SUVmaxLabel, vtkKWLabel);
-  vtkGetObjectMacro(SUVminLabel, vtkKWLabel);
-  vtkGetObjectMacro(SUVmeanLabel, vtkKWLabel);
-  vtkGetObjectMacro(SUVmaxmeanLabel, vtkKWLabel);
   vtkGetObjectMacro(HelpButton, vtkSlicerPopUpHelpWidget);
-  vtkGetObjectMacro (ColorRange, vtkKWRange );
+  vtkGetObjectMacro (PETRange, vtkKWRange );
+  vtkGetObjectMacro (CTRange, vtkKWRange );  
   vtkGetObjectMacro (DoseUnitsMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro (TissueUnitsMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro (WeightUnitsMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( ColorSet, vtkKWRadioButtonSetWithLabel );
 
+  // Description:
+  // Methods for building the module GUI (main BuildGUI method
+  // and methods it calls for building each GUI sub-panel.
   virtual void BuildGUI ( );
   virtual void BuildDisplayFrame(vtkKWWidget *parent);
   virtual void BuildFusionFrame(vtkKWWidget *parent);
@@ -84,36 +88,69 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   // This method is called when GUI is created, when a new PET volume
   // is selected. It clears the nuclear medicine DICOM tags, and the results.
   virtual void InitializeGUI ( );
+
   // Description:
   // This method is called when any other MRML event triggers a need
-  // to update the GUI.  
+  // to update the GUI.  When updateDICOMevent = 1, the panel
+  // that displays SUV attributes collected from the DICOM header
+  // is also cleared and updated.
   virtual void UpdateGUIFromMRML ( int updateDICOMevent );
-  virtual void UpdateLUTFromMRML ();
+
+  // Description:
+  // Method is called when a new PET volume is selected;
+  // It updates the GUI panel to show what LUT
+  // is used to colorize the volume.
+  virtual void UpdateColorRadioButtonsFromMRML ();
+
+  // Description:
+  // Removes all GUI observers. Called when module exits.
   virtual void TearDownGUI ( );
+
+  // Description:
+  // Defines MRML Scene events that this module observes.
   vtkIntArray *NewObservableEvents();
 
-  virtual void ColorizePETVolume();
-  virtual void ProcessColorRangeCommand (double min, double max);
-  virtual void ProcessColorRangeStartCommand(double min, double max);
-  virtual void ProcessColorRangeStopCommand ( double min, double max);
+  // Description:
+  // Applies the selected LUT to the Pet Volume.
+  virtual void ColorizePETVolume(int type);
 
   // Description:
-  // Add obsereves to GUI widgets
+  // These methods are used to interactively update
+  // the window/level display of the PET volume as
+  // user adjusts the PETRange widget.
+  virtual void ProcessPETRangeCommand (double min, double max);
+  virtual void ProcessPETRangeStartCommand(double min, double max);
+  virtual void ProcessPETRangeStopCommand ( double min, double max);
+
+
+  // Description:
+  // These methods are used to interactively update
+  // the window/level display of the CT volume as
+  // user adjusts the CTRange widget.
+  virtual void ProcessCTRangeCommand (double min, double max);
+  virtual void ProcessCTRangeStartCommand(double min, double max);
+  virtual void ProcessCTRangeStopCommand ( double min, double max);
+
+  // Description:
+  // Add observers to GUI widgets
   virtual void AddGUIObservers ( );
-  virtual void AddMRMLNodeObservers ( );
 
   // Description:
-  // Remove obsereves to GUI widgets
+  // Remove observers to GUI widgets
   virtual void RemoveGUIObservers ( );
-  virtual void RemoveMRMLNodeObservers( );
-  
+
+  // Description:
+  // Methods to enable/disable volume rendering...
+  // NOT currently implemented.
   virtual void EnablePETCTVolumeRendering();
   virtual void DisablePETCTVolumeRendering();
 
   // Description:
-  // Pprocess events generated by GUI widgets
+  // Process observed events generated by GUI widgets
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                   void *callData );
+  // Description:
+  // Process observed events generated by the MRML scene.
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
                                   void *callData );
 
@@ -123,31 +160,125 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   virtual void Exit ( );
   virtual void Init ( );
 
+  // Description:
+  // Clears the GUI panel containing SUV
+  // attributes parsed from the PET volume's
+  // DICOM header.
   virtual void ClearDICOMInformation ( );
 
+  // Description:
+  // Clears the GUI panel that permits
+  // manual specification of SUV attributes.
   virtual void ResetManualEntryGUI ( );
 
   // Description:
-  // updates the panel containing information
-  // grabbed from the dicom header.
+  // updates the panel containing SUV attributes
+  // parsed from the dicom header.
   virtual void UpdateDICOMPanel ( );
 
-  // Description:
-  // updates node's color range based on GUI input
-  virtual void UpdateNodeColorRange ( );
   // Description:
   // updates the display of colorized pet based on changes to
   // mrml color range. Changes window, level of PET
   // volume's display node.
   virtual void UpdatePETDisplayFromMRML ( );
+
+  // Description:
+  // updates the display of colorized pet based on changes to
+  // mrml color range. Changes window, level of CT
+  // volume's display node.
+  virtual void UpdateCTDisplayFromMRML ( );
+
+  // Description:
+  // When a new CT volume is selected, this method
+  // changes its color LUT to Greyscale, if that LUT
+  // is not already selected, and references the LUT in
+  // MRML.
+  virtual void ApplyDefaultCTLUT();
+
+  // Description:
+  // When a new PET volume is selected, this method
+  // changes its color LUT to PETheat, if a valid PETLUT
+  // is not already selected, and references the LUT in
+  // MRML.
+  virtual void ApplyDefaultPETLUT();
   
   // Description:
+  // Clears the Results GUI panel of
+  // all SUV computation results.
+  virtual void ClearResultsTable();
+
+  // Description:
+  // Repopulates GUI panel with SUV statistics
+  // stored in PETCTFusionNode.
+  virtual void UpdateResultsTableFromMRML();
+  
+
+
+  // Description:
+  // Convenience method that returns a 
+  // vtkMRMLColorTableNodeID given its type.
+  const char *GetCTColorTableNodeIDByType (int type);
+  // Description:
+  // Convenience method that returns a
+  // vtkPETProceduralColorNode ID given its type.
+  const char *GetPETColorNodeIDByType(int type);
+
+  
+
+  // Description:
   // Sets the max and min values in the PET dataset.
+  // Method invoked when NO volume is selected.
   virtual void InitializePETMinAndMax();
-  virtual void UpdatePETRange();
+  // Description:
+  // Sets the max and min values in the CT dataset.
+  // Method invoked when NO volume is selected.
+  virtual void InitializeCTMinAndMax();
+
+
+
+
+  // Description:
+  // Gets the selected PET volume, and updates
+  // the window/level range from the volume's display node
+  virtual void UpdatePETRangeFromMRML();
+  // Description:
+  // Gets the selected CT volume, and updates
+  // the window/level range from the volume's display node
+  virtual void UpdateCTRangeFromMRML();
+
+
+
+  // Description:
+  // Method updates node's color range
+  // when user adjusts the module's win/lev
+  // range widget.
+  virtual void UpdateNodePETColorRange ( );
+  // Description:
+  // Method updates node's color range
+  // when user adjusts the module's win/lev
+  // range widget.
+  virtual void UpdateNodeCTColorRange ( );
+
+
+
+  // Description:
+  // Method is called from method Enter()
+  // If PET, CT, or Mask volumes have had 
+  // display adjusted in the volumes
+  // module, this method tracks those changes.
+  virtual void UpdateFusionDisplayFromMRML();
+
+  
+
   // Descriptoin:
-  // Scales the color lut over a range of selected values.
-  virtual void ScaleColormap(double min, double max);
+  // Scales the PET volume's color lut over a
+  // range of selected values.
+  virtual void ScalePETColormap(double min, double max);
+  // Descriptoin:
+  // Scales the CT volume's color lut over a
+  // range of selected values.
+  virtual void ScaleCTColormap(double min, double max);
+
 
 protected:
   vtkPETCTFusionGUI();
@@ -171,40 +302,31 @@ protected:
   vtkSlicerNodeSelectorWidget* CTSelector;
   vtkSlicerNodeSelectorWidget* PETSelector;
   vtkSlicerNodeSelectorWidget* MaskSelector;
-  vtkSlicerNodeSelectorWidget* LUTSelector;  
   vtkKWCheckButton *VolumeRenderCheckbox;
-  vtkKWRadioButtonSet *BodyQuantifierSelector;
   vtkKWEntry *TissueConcentrationEntry;
   vtkKWEntry *InjectedDoseEntry;
-  vtkKWEntry *LeanBodyMassEntry;
-  vtkKWEntry *BodySurfaceAreaEntry;
   vtkKWEntry *PatientWeightEntry;
   vtkKWPushButton *ComputeButton;
   vtkKWPushButton *GetFromDICOMButton;
   vtkKWPushButton *SaveButton;
-  vtkKWLabel *SUVmaxLabel;
-  vtkKWLabel *SUVminLabel;
-  vtkKWLabel *SUVmeanLabel;
-  vtkKWLabel *SUVmaxmeanLabel;
   vtkSlicerPopUpHelpWidget *HelpButton;
   vtkKWMenuButton *DoseUnitsMenuButton;
   vtkKWMenuButton *WeightUnitsMenuButton;
   vtkKWMenuButton *TissueUnitsMenuButton;  
-  vtkKWRange *ColorRange;
+  vtkKWRange *PETRange;
+  vtkKWRange *CTRange;
+  vtkKWRadioButtonSetWithLabel *ColorSet;
+
   bool Raised;
   
   //--- for internal use only.
   vtkKWLabel *PatientWeightLabel;
   vtkKWLabel *InjectedDoseLabel;
-  vtkKWLabel *NumberOfTemporalPositionsLabel;
-  vtkKWLabel *SeriesTimeLabel;
-  vtkKWLabel *RPStartTimeLabel;
-  vtkKWLabel *FrameReferenceTimeLabel;
-  vtkKWLabel *DecayCorrectionLabel;
-  vtkKWLabel *DecayFactorLabel;
-  vtkKWLabel *RTHalfLifeLabel;
-  vtkKWLabel *CalibrationFactorLabel;
-  vtkKWLabel *PhilipsSUVFactorLabel;
+  vtkKWLabel *PatientNameLabel;
+  vtkKWLabel *StudyDateLabel;
+  vtkKWMultiColumnList *ResultList;
+  vtkKWMultiColumnListWithScrollbars *ResultListWithScrollbars;
+
   
   double PETMin;
   double PETMax;

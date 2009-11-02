@@ -1,4 +1,3 @@
-
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
@@ -20,10 +19,13 @@
 #include <sstream>
 
 #include "vtkPointData.h"
+#include "vtkLookupTable.h"
+#include "vtkColorTransferFunction.h"
 
 #include "vtkKWCheckButton.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
@@ -34,6 +36,9 @@
 #include "vtkKWMenu.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWHistogram.h"
+#include "vtkKWMultiColumnList.h"
+#include "vtkKWMultiColumnListWithScrollbars.h"
+
 #include "vtkSlicerPopUpHelpWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
@@ -42,9 +47,11 @@
 #include "vtkSlicerColorGUI.h"
 
 #include "vtkMRMLSelectionNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLPETProceduralColorNode.h"
 
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkPETCTFusionGUI, "$Revision: 1.0 $");
@@ -79,54 +86,40 @@ vtkPETCTFusionGUI::vtkPETCTFusionGUI()
   this->CTSelector = NULL;
   this->PETSelector = NULL;
   this->MaskSelector = NULL;
-  this->LUTSelector = NULL;
   this->VolumeRenderCheckbox = NULL;
-  this->BodyQuantifierSelector = NULL;
   this->TissueConcentrationEntry = NULL;
   this->DoseUnitsMenuButton = NULL;
   this->TissueUnitsMenuButton = NULL;
   this->WeightUnitsMenuButton = NULL;
   this->InjectedDoseEntry = NULL;
-  this->LeanBodyMassEntry = NULL;
-  this->BodySurfaceAreaEntry = NULL;
   this->PatientWeightEntry = NULL;
   this->ComputeButton = NULL;
   this->GetFromDICOMButton = NULL;
   this->SaveButton = NULL;
-  this->SUVmaxLabel = NULL;
-  this->SUVminLabel = NULL;
-  this->SUVmaxmeanLabel = NULL;
-  this->SUVmeanLabel = NULL;
   this->HelpButton = NULL;
-  this->ColorRange = NULL;
+  this->PETRange = NULL;
+  this->CTRange = NULL;
   this->UpdatingLUT = 0;
   this->UpdatingGUI = 0;
 
+  this->ColorSet = NULL;
   this->PatientWeightLabel = NULL;
   this->InjectedDoseLabel = NULL;
-  this->NumberOfTemporalPositionsLabel = NULL;
-  this->SeriesTimeLabel = NULL;
-  this->RPStartTimeLabel = NULL;
-  this->FrameReferenceTimeLabel = NULL;
-  this->DecayCorrectionLabel = NULL;
-  this->DecayFactorLabel = NULL;
-  this->RTHalfLifeLabel = NULL;
-  this->PhilipsSUVFactorLabel = NULL;  
-  this->CalibrationFactorLabel = NULL;
+  this->PatientNameLabel = NULL;
+  this->StudyDateLabel = NULL;
+  this->ResultList = NULL;
+  this->ResultListWithScrollbars = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkPETCTFusionGUI::~vtkPETCTFusionGUI()
 {
-//    this->RemoveMRMLNodeObservers ( );
-//    this->RemoveLogicObservers ( );
   if ( this->Logic )
     {
     this->SetLogic ( NULL );
     }
   if ( this->PETCTFusionNode )
     {
-    this->RemoveMRMLNodeObservers();
     this->SetPETCTFusionNode ( NULL );
     }
   //---
@@ -150,23 +143,11 @@ vtkPETCTFusionGUI::~vtkPETCTFusionGUI()
     this->MaskSelector->Delete();
     this->MaskSelector = NULL;
     }
-  if ( this->LUTSelector)
-    {
-    this->LUTSelector->SetParent ( NULL );
-    this->LUTSelector->Delete();
-    this->LUTSelector = NULL;
-    }
   if ( this->VolumeRenderCheckbox)
     {
     this->VolumeRenderCheckbox->SetParent ( NULL );
     this->VolumeRenderCheckbox->Delete();
     this->VolumeRenderCheckbox = NULL;
-    }
-  if ( this->BodyQuantifierSelector)
-    {
-    this->BodyQuantifierSelector->SetParent ( NULL );
-    this->BodyQuantifierSelector->Delete();
-    this->BodyQuantifierSelector = NULL;
     }
   if ( this->TissueConcentrationEntry )
     {
@@ -198,18 +179,6 @@ vtkPETCTFusionGUI::~vtkPETCTFusionGUI()
     this->InjectedDoseEntry->Delete();
     this->InjectedDoseEntry = NULL;
     }
-  if ( this->LeanBodyMassEntry )
-    {
-    this->LeanBodyMassEntry->SetParent ( NULL );
-    this->LeanBodyMassEntry->Delete();
-    this->LeanBodyMassEntry = NULL;
-    }
-  if ( this->BodySurfaceAreaEntry )
-    {
-    this->BodySurfaceAreaEntry->SetParent ( NULL );
-    this->BodySurfaceAreaEntry->Delete();
-    this->BodySurfaceAreaEntry = NULL;
-    }
   if ( this->PatientWeightEntry )
     {
     this->PatientWeightEntry->SetParent ( NULL );
@@ -234,43 +203,24 @@ vtkPETCTFusionGUI::~vtkPETCTFusionGUI()
     this->SaveButton->Delete();
     this->SaveButton = NULL;
     }
-  if ( this->SUVmaxLabel )
-    {
-    this->SUVmaxLabel->SetParent ( NULL );
-    this->SUVmaxLabel->Delete();
-    this->SUVmaxLabel = NULL;
-    }
-  if ( this->SUVminLabel )
-    {
-    this->SUVminLabel->SetParent ( NULL );
-    this->SUVminLabel->Delete();
-    this->SUVminLabel = NULL;
-    }
-  if ( this->SUVmeanLabel )
-    {
-    this->SUVmeanLabel->SetParent (NULL);
-    this->SUVmeanLabel->Delete();
-    this->SUVmeanLabel = NULL;
-    }
-  if ( this->SUVmaxmeanLabel )
-    {
-    this->SUVmaxmeanLabel->SetParent ( NULL );
-    this->SUVmaxmeanLabel->Delete();
-    this->SUVmaxmeanLabel = NULL;
-    }
   if ( this->HelpButton )
     {
     this->HelpButton->SetParent ( NULL );
     this->HelpButton->Delete();
     this->HelpButton = NULL;
     }
-  if ( this->ColorRange )
+  if ( this->PETRange )
     {
-    this->ColorRange->SetParent ( NULL );
-    this->ColorRange->Delete();
-    this->ColorRange = NULL;
+    this->PETRange->SetParent ( NULL );
+    this->PETRange->Delete();
+    this->PETRange = NULL;
     }
-
+  if ( this->CTRange )
+    {
+    this->CTRange->SetParent ( NULL );
+    this->CTRange->Delete();
+    this->CTRange = NULL;
+    }
   if ( this->PatientWeightLabel)
     {
     this->PatientWeightLabel->SetParent ( NULL );
@@ -283,59 +233,33 @@ vtkPETCTFusionGUI::~vtkPETCTFusionGUI()
     this->InjectedDoseLabel->Delete();
     this->InjectedDoseLabel = NULL;    
     }
-  if ( this->NumberOfTemporalPositionsLabel)
+  if ( this->PatientNameLabel )
     {
-    this->NumberOfTemporalPositionsLabel->SetParent ( NULL );
-    this->NumberOfTemporalPositionsLabel->Delete();
-    this->NumberOfTemporalPositionsLabel = NULL;    
+    this->PatientNameLabel->SetParent ( NULL );
+    this->PatientNameLabel->Delete();
+    this->PatientNameLabel = NULL;
     }
-  if ( this->SeriesTimeLabel)
+  if ( this->StudyDateLabel )
     {
-    this->SeriesTimeLabel->SetParent ( NULL );
-    this->SeriesTimeLabel->Delete ();
-    this->SeriesTimeLabel = NULL;    
+    this->StudyDateLabel->SetParent ( NULL );
+    this->StudyDateLabel->Delete();
+    this->StudyDateLabel = NULL;    
     }
-  if ( this->RPStartTimeLabel)
+  if ( this->ResultList )
     {
-    this->RPStartTimeLabel->SetParent ( NULL);
-    this->RPStartTimeLabel->Delete();
-    this->RPStartTimeLabel = NULL;    
+    this->ResultList = NULL;
     }
-  if ( this->FrameReferenceTimeLabel)
+  if ( this->ResultListWithScrollbars )
     {
-    this->FrameReferenceTimeLabel->SetParent ( NULL );
-    this->FrameReferenceTimeLabel->Delete();
-    this->FrameReferenceTimeLabel = NULL;
+    this->ResultListWithScrollbars->SetParent ( NULL );
+    this->ResultListWithScrollbars->Delete();
+    this->ResultListWithScrollbars = NULL;
     }
-  if ( this->DecayCorrectionLabel)
+  if ( this->ColorSet )
     {
-    this->DecayCorrectionLabel->SetParent ( NULL );
-    this->DecayCorrectionLabel->Delete();
-    this->DecayCorrectionLabel = NULL;    
-    }
-  if ( this->DecayFactorLabel)
-    {
-    this->DecayFactorLabel->SetParent ( NULL );
-    this->DecayFactorLabel->Delete();
-    this->DecayFactorLabel = NULL;    
-    }
-  if ( this->RTHalfLifeLabel)
-    {
-    this->RTHalfLifeLabel->SetParent ( NULL );
-    this->RTHalfLifeLabel->Delete();
-    this->RTHalfLifeLabel = NULL;    
-    }
-  if ( this->PhilipsSUVFactorLabel)  
-    {
-    this->PhilipsSUVFactorLabel->SetParent ( NULL ); 
-    this->PhilipsSUVFactorLabel->Delete();
-    this->PhilipsSUVFactorLabel = NULL;
-    }
-  if ( this->CalibrationFactorLabel )
-    {
-    this->CalibrationFactorLabel->SetParent ( NULL );
-    this->CalibrationFactorLabel->Delete();
-    this->CalibrationFactorLabel = NULL;
+    this->ColorSet->SetParent ( NULL );
+    this->ColorSet->Delete();
+    this->ColorSet = NULL;
     }
 
   this->UpdatingLUT = 0;  
@@ -367,6 +291,15 @@ void vtkPETCTFusionGUI::Enter()
   this->AddGUIObservers();    
   this->CreateModuleEventBindings();  
   this->UpdateGUIFromMRML(0);
+
+  //---
+  //--- If PET, CT, or Mask volumes have had 
+  //--- display adjusted in the volumes
+  //--- module, make sure this module
+  //--- tracks those changes.
+  //---
+  this->UpdateFusionDisplayFromMRML();
+  
 }
 
 
@@ -420,23 +353,15 @@ void vtkPETCTFusionGUI::PrintSelf(ostream& os, vtkIndent indent)
   this->CTSelector
   this->PETSelector
   this->MaskSelector
-  this->LUTSelector
   this->VolumeRenderCheckbox
-  this->BodyQuantifierSelector
   this->TissueConcentrationEntry
   this->InjectedDoseEntry
   this->DoseUnitsMenuButton
   this->TissueUnitsMenuButton
   this->WeightUnitsMenuButton
-  this->LeanBodyMassEntry
-  this->BodySurfaceAreaEntry
   this->PatientWeightEntry
   this->ComputeButton
   this->SaveButton
-  this->SUVmaxLabel
-  this->SUVminLabel
-  this->SUVmaxmeanLabel
-  this->SUVmeanLabel
   this->HelpButton
   */
 
@@ -468,27 +393,9 @@ void vtkPETCTFusionGUI::AddGUIObservers ( )
     {
     this->MaskSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if ( this->LUTSelector )
-    {
-    this->LUTSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
   if ( this->VolumeRenderCheckbox )
     {
     this->VolumeRenderCheckbox->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->BodyQuantifierSelector )
-    {
-    int rbID;
-    vtkKWRadioButton *rb;
-    for ( int i=0; i < this->BodyQuantifierSelector->GetNumberOfWidgets(); i++ )
-      {
-      rbID = this->BodyQuantifierSelector->GetIdOfNthWidget(i);
-      rb = this->BodyQuantifierSelector->GetWidget(rbID);
-      if ( rb )
-        {
-        rb->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-        }
-      }
     }
   if (this->TissueConcentrationEntry )
     {
@@ -510,14 +417,6 @@ void vtkPETCTFusionGUI::AddGUIObservers ( )
     {
     this->InjectedDoseEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if ( this->LeanBodyMassEntry )
-    {
-    this->LeanBodyMassEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->BodySurfaceAreaEntry )
-    {
-    this->BodySurfaceAreaEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
   if ( this->PatientWeightEntry )
     {
     this->PatientWeightEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -533,6 +432,12 @@ void vtkPETCTFusionGUI::AddGUIObservers ( )
   if ( this->SaveButton )
     {
     this->SaveButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ColorSet )
+    {
+    this->ColorSet->GetWidget()->GetWidget(0)->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorSet->GetWidget()->GetWidget(1)->AddObserver (  vtkKWRadioButton::SelectedStateChangedEvent,(vtkCommand *)this->GUICallbackCommand );
+    this->ColorSet->GetWidget()->GetWidget(2)->AddObserver (  vtkKWRadioButton::SelectedStateChangedEvent,(vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -565,27 +470,9 @@ void vtkPETCTFusionGUI::RemoveGUIObservers ( )
     {
     this->MaskSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if ( this->LUTSelector )
-    {
-    this->LUTSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
   if ( this->VolumeRenderCheckbox )
     {
     this->VolumeRenderCheckbox->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->BodyQuantifierSelector )
-    {
-    int rbID;
-    vtkKWRadioButton *rb;
-    for ( int i=0; i < this->BodyQuantifierSelector->GetNumberOfWidgets(); i++ )
-      {
-      rbID = this->BodyQuantifierSelector->GetIdOfNthWidget(i);
-      rb = this->BodyQuantifierSelector->GetWidget(rbID);
-      if ( rb )
-        {
-        rb->RemoveObservers ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-        }
-      }
     }
   if (this->TissueConcentrationEntry )
     {
@@ -607,14 +494,6 @@ void vtkPETCTFusionGUI::RemoveGUIObservers ( )
     {
     this->InjectedDoseEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if ( this->LeanBodyMassEntry )
-    {
-    this->LeanBodyMassEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->BodySurfaceAreaEntry )
-    {
-    this->BodySurfaceAreaEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
   if ( this->PatientWeightEntry )
     {
     this->PatientWeightEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -631,20 +510,17 @@ void vtkPETCTFusionGUI::RemoveGUIObservers ( )
     {
     this->SaveButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if ( this->ColorSet )
+    {
+    this->ColorSet->GetWidget()->GetWidget(0)->RemoveObserver ( (vtkCommand *)this->GUICallbackCommand );
+    this->ColorSet->GetWidget()->GetWidget(1)->RemoveObserver ( (vtkCommand *)this->GUICallbackCommand );
+    this->ColorSet->GetWidget()->GetWidget(2)->RemoveObserver ( (vtkCommand *)this->GUICallbackCommand );
+    }
+
 
 }
 
 
-
-//---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::AddMRMLNodeObservers ()
-{
-}
-
-//---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::RemoveMRMLNodeObservers ()
-{
-}
 
 //---------------------------------------------------------------------------
 void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
@@ -700,67 +576,66 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       v = vtkMRMLVolumeNode::SafeDownCast (this->CTSelector->GetSelected() );
       if ( (v == NULL) || (v->GetID() == NULL) || (!strcmp(v->GetID(), "")) )
         {
+        this->PETCTFusionNode->SetInputCTReference ( NULL );
+        this->InitializeCTMinAndMax();
+        this->UpdateCTRangeFromMRML();
         return;
         }
-
       //--- put CT volume in BG layer.
       this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( v->GetID() );
-      this->ApplicationLogic->PropagateVolumeSelection();
+      this->ApplicationLogic->PropagateVolumeSelection(0);
       this->PETCTFusionNode->SetInputCTReference ( v->GetID() );
+      this->ApplyDefaultCTLUT();
+      //--- update display of PET
+      this->UpdateCTRangeFromMRML();
+      this->UpdateCTDisplayFromMRML();
       }
+
     else if  ( s == this->PETSelector )
       {
+      this->ClearResultsTable();
+      this->ResetManualEntryGUI();
+      this->ClearDICOMInformation();
       v = vtkMRMLVolumeNode::SafeDownCast (this->PETSelector->GetSelected() );
       if ( (v == NULL) || (v->GetID() == NULL) || (!strcmp(v->GetID(), "")) )
         {
-        this->ResetManualEntryGUI();
-        this->ClearDICOMInformation();
+        this->PETCTFusionNode->SetInputPETReference ( NULL );
+        this->InitializePETMinAndMax();
+        this->UpdatePETRangeFromMRML();        
         return;
         }
       //--- put PET volume in FG layer
       this->ApplicationLogic->GetSelectionNode()->SetSecondaryVolumeID( v->GetID() );
-      this->ApplicationLogic->PropagateVolumeSelection();
+      this->ApplicationLogic->PropagateVolumeSelection(0);
       this->PETCTFusionNode->SetInputPETReference ( v->GetID() );
+      this->ApplyDefaultPETLUT();
       this->InitializeGUI();
-
-      if ( !strcmp(v->GetID(), "None" ) )
-        {
-        this->InitializePETMinAndMax();
-        }
-      else
-        {
-        this->UpdatePETRange();
-        }
+      //--- update display of PET
       this->UpdateDICOMPanel();
-      this->UpdateLUTFromMRML();
+      this->UpdatePETRangeFromMRML();
+      this->UpdateColorRadioButtonsFromMRML();
       this->UpdatePETDisplayFromMRML();
       }
+
     else if ( s == this->MaskSelector )
       {
-      this->SUVmaxLabel->SetText ( "" );
-      this->SUVminLabel->SetText ( "");
-      this->SUVmeanLabel->SetText ( "" );
-      this->SUVmaxmeanLabel->SetText ( "" );
+      this->ClearResultsTable();
 
       v = vtkMRMLVolumeNode::SafeDownCast (this->MaskSelector->GetSelected() );
       if ( (v == NULL) || (v->GetID() == NULL) || (!strcmp(v->GetID(), "")) )
         {
+        this->PETCTFusionNode->SetInputMask ( NULL );
         return;
         }
-
       //--- put label volume in LB layer.
       this->ApplicationLogic->GetSelectionNode()->SetActiveLabelVolumeID( v->GetID() );
-      this->ApplicationLogic->PropagateVolumeSelection();
+      this->ApplicationLogic->PropagateVolumeSelection(0);
       this->PETCTFusionNode->SetInputMask(v->GetID());
-      }
-    else if ( s == this->LUTSelector )
-      {
-      this->ColorizePETVolume();
       }
     }
   
   //---
-  //--- checkboxes
+  //--- checkboxes (CURRENTLY NOT EXPOSED.)
   //---  
   if ( (cb != NULL ) && (cb == this->VolumeRenderCheckbox ) &&
        (event == vtkKWCheckButton::SelectedStateChangedEvent ))
@@ -777,7 +652,6 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       //--- if volume rendering is turned OFF
       this->DisablePETCTVolumeRendering ( );
       }
-
     //--- update node
     if ( this->PETCTFusionNode )
       {
@@ -787,22 +661,89 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
 
   //---
   //--- radiobuttons
-  //---
-  if ( (rb != NULL ) && (this->BodyQuantifierSelector != NULL ) &&
-       (event == vtkKWCheckButton::SelectedStateChangedEvent ))
+  //---  
+  if ( (rb != NULL) && ( this->ColorSet->GetWidget()->GetWidget(0) == rb ) &&
+            (event == vtkKWRadioButton::SelectedStateChangedEvent ) )
     {
-    int rbID;
-    vtkKWRadioButton *_rb;
-    for ( int i=0; i < this->BodyQuantifierSelector->GetNumberOfWidgets(); i++ )
+    //---
+    //--- Change the PET volume's color if setting is new
+    //---
+    if ( this->PETCTFusionNode->GetPETLUT() )
       {
-      rbID = this->BodyQuantifierSelector->GetIdOfNthWidget(i);
-      _rb = this->BodyQuantifierSelector->GetWidget(rbID);
-      if ( _rb == rb )
+      vtkMRMLPETProceduralColorNode *cnode = vtkMRMLPETProceduralColorNode::SafeDownCast( this->MRMLScene->GetNodeByID( this->PETCTFusionNode->GetPETLUT() ));
+      if ( cnode == NULL )
         {
-        //--- which is it?
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETMIP );
+        }
+      else 
+        {
+        if ( (cnode->GetType() != vtkMRMLPETProceduralColorNode::PETMIP) &&
+             (this->ColorSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1) )
+          {
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETMIP );
+          }
         }
       }
+    else
+      {
+      this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETMIP );
+      }
     }
+  else if ( (rb != NULL) && ( this->ColorSet->GetWidget()->GetWidget(1) == rb ) &&
+            (event == vtkKWRadioButton::SelectedStateChangedEvent ) )
+    {
+    //---
+    //--- Change the PET volume's color if setting is new
+    //---
+    if ( this->PETCTFusionNode->GetPETLUT() )
+      {
+      vtkMRMLPETProceduralColorNode *cnode = vtkMRMLPETProceduralColorNode::SafeDownCast( this->MRMLScene->GetNodeByID( this->PETCTFusionNode->GetPETLUT() ));
+      if ( cnode == NULL )
+        {
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETheat );
+        }
+      else
+        {
+        if ( (cnode->GetType() != vtkMRMLPETProceduralColorNode::PETheat) &&
+             (this->ColorSet->GetWidget()->GetWidget(1)->GetSelectedState() == 1) )
+          {
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETheat );
+          }
+        }
+      }
+    else
+      {
+      this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETheat );
+      }
+    }
+  else if ( (rb != NULL) && ( this->ColorSet->GetWidget()->GetWidget(2) == rb ) &&
+            (event == vtkKWRadioButton::SelectedStateChangedEvent ) )
+    {
+    //---
+    //--- Change the PET volume's color if setting is new
+    //---
+    if ( this->PETCTFusionNode->GetPETLUT() )
+      {
+      vtkMRMLPETProceduralColorNode *cnode = vtkMRMLPETProceduralColorNode::SafeDownCast( this->MRMLScene->GetNodeByID( this->PETCTFusionNode->GetPETLUT() ));
+      if ( cnode == NULL )
+        {
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETrainbow );
+        }
+      else
+        {
+        if ( (cnode->GetType() != vtkMRMLPETProceduralColorNode::PETrainbow) &&
+             (this->ColorSet->GetWidget()->GetWidget(2)->GetSelectedState() == 1) )
+          {
+          this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETrainbow );
+          }
+        }
+      }
+    else
+      {
+      this->ColorizePETVolume( vtkMRMLPETProceduralColorNode::PETrainbow );
+      }
+    }
+
 
   //---
   //--- menus
@@ -815,6 +756,7 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       ss.clear();
       ss = this->DoseUnitsMenuButton->GetValue();
 
+      this->ClearResultsTable();
       this->ClearDICOMInformation();
       if ( !strcmp ( ss.c_str(), "megabecquerels [MBq]" ))
         {
@@ -867,6 +809,7 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       ss.clear();
       ss = this->TissueUnitsMenuButton->GetValue();
 
+      this->ClearResultsTable();
       this->ClearDICOMInformation();
       if ( !strcmp ( ss.c_str(), "megabecquerels [MBq]" ))
         {
@@ -914,6 +857,7 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       ss.clear(); 
       ss = this->WeightUnitsMenuButton->GetValue();
 
+      this->ClearResultsTable();
       this->ClearDICOMInformation();
 
       if (!strcmp (ss.c_str(), "kilograms [kg]"))
@@ -946,12 +890,12 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else if ( e == this->InjectedDoseEntry )
       {
-      this->ClearDICOMInformation();
-
       if ( this->InjectedDoseEntry->GetValueAsDouble() )
         {
         if ( this->InjectedDoseEntry->GetValueAsDouble() != this->PETCTFusionNode->GetInjectedDose() )
           {
+          this->ClearResultsTable();
+          this->ClearDICOMInformation();
           this->PETCTFusionNode->SetInjectedDose(this->InjectedDoseEntry->GetValueAsDouble() );
           //--- make sure the units get set in the node too.
           if ( this->DoseUnitsMenuButton != NULL )
@@ -965,19 +909,14 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         this->PETCTFusionNode->SetInjectedDose(0.0);
         }
       }
-    else if ( e == this->LeanBodyMassEntry )
-      {
-      }
-    else if ( e == this->BodySurfaceAreaEntry )
-      {
-      }
     else if ( e == this->PatientWeightEntry )
       {
-      this->ClearDICOMInformation();
       if ( this->PatientWeightEntry->GetValueAsDouble() )
         {
         if ( this->PatientWeightEntry->GetValueAsDouble() != this->PETCTFusionNode->GetPatientWeight() )
           {
+          this->ClearResultsTable();
+          this->ClearDICOMInformation();
           this->PETCTFusionNode->SetPatientWeight(this->PatientWeightEntry->GetValueAsDouble() );
           //--- make sure the units get set in the node too.
           if ( this->WeightUnitsMenuButton != NULL )
@@ -1008,6 +947,12 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
            this->PETCTFusionNode->GetPatientWeight() != 0.0 &&
            this->PETCTFusionNode->GetInjectedDose() != 0.0 )
         {           
+        //--- empty report gui
+        this->ClearResultsTable();
+
+        //--- empty out node.
+        this->PETCTFusionNode->LabelResults.clear();
+        
         //--- compute stuff.
         this->Logic->ComputeSUV();
         }
@@ -1026,6 +971,7 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( b == this->GetFromDICOMButton)
       {
       this->ResetManualEntryGUI();
+      this->ClearResultsTable();
       this->ClearDICOMInformation();
       this->UpdateDICOMPanel();
       }
@@ -1038,39 +984,83 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ColorizePETVolume()
+void vtkPETCTFusionGUI::ColorizePETVolume(int type)
 {
-  vtkMRMLColorNode *c;
-  c = vtkMRMLColorNode::SafeDownCast (this->LUTSelector->GetSelected() );
-  if ( c && this->PETCTFusionNode->GetInputPETReference() )
+  //---
+  //--- Make sure we have what we need
+  //---
+  if ( this->MRMLScene == NULL )
     {
-    //--- get the PET volume display node
-    vtkMRMLScalarVolumeNode *svn;
-    svn = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputPETReference() ));
-    if ( svn )
-      {
-      vtkMRMLVolumeDisplayNode *dnode;
-      dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (svn->GetDisplayNode());
-      if ( dnode && dnode->GetColorNodeID() )
-        {
-        //--- check to see if the change is new
-        if ( strcmp (dnode->GetColorNodeID(), c->GetID() ) != 0 )
-          {
-          //--- apply LUT to PET volume
-          dnode->SetAndObserveColorNodeID (c->GetID() );
-          }
-        }
-      }
-    //--- and update the node.
-    this->PETCTFusionNode->SetPETLUT(c->GetID());
+    vtkErrorMacro ( "Got NULL MRMLScene" );
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->PETCTFusionNode->GetInputPETReference() == NULL )
+    {
+    return;
+    }
+  int numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLPETProceduralColorNode" );
+  if ( numnodes == 0 )
+    {
+    //--- no PET color nodes. can't use it to colorize pet data.
+    vtkErrorMacro ( "Can't find any vtkMRMLPETProceduralColorNodes in scene. Not colorizing PET volume." );
+    return;
+    }
+  
+  //---
+  //--- for the PET volume display node
+  //---
+  vtkMRMLScalarVolumeNode *svn;
+  svn = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputPETReference() ));
+  if ( svn == NULL )
+    {
+    return;
+    }
+  //---
+  //--- for the PET volume's display node
+  //---
+  vtkMRMLVolumeDisplayNode *dnode;
+  dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (svn->GetDisplayNode());
+  if ( dnode == NULL )
+    {
+    return;
+    }
+  //---
+  //--- for the PET volume's color node
+  //---
+  vtkMRMLColorNode *cnode;
+  cnode = vtkMRMLColorNode::SafeDownCast ( dnode->GetColorNode() );
+  if ( cnode == NULL )
+    {
+    return;
+    }
+
+  //---
+  //--- find the selected LUT by type.
+  //--- and change color node if it doesn't
+  //--- match the correct type or selection.
+  //--- Apply the LUT to the PET volume.
+  //---
+  vtkMRMLPETProceduralColorNode *pn = vtkMRMLPETProceduralColorNode::SafeDownCast ( cnode );
+  if ( pn==NULL || pn->GetType() !=type )
+    {
+    const char *id = this->GetPETColorNodeIDByType ( type );
+    dnode->SetAndObserveColorNodeID (id );
+    this->PETCTFusionNode->SetPETLUT(id);
     this->UpdatePETDisplayFromMRML();
     }
+  return;
 }
 
 
 
+
+
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::UpdateLUTFromMRML ()
+void vtkPETCTFusionGUI::UpdateColorRadioButtonsFromMRML ()
 {
   if ( this->PETCTFusionNode->GetInputPETReference() )
     {
@@ -1083,22 +1073,124 @@ void vtkPETCTFusionGUI::UpdateLUTFromMRML ()
       dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (svn->GetDisplayNode());
       if ( dnode )
         {
-        vtkMRMLColorNode *cnode = dnode->GetColorNode();
+        vtkMRMLPETProceduralColorNode *cnode = vtkMRMLPETProceduralColorNode::SafeDownCast(dnode->GetColorNode());
         if ( cnode )
           {
-          if ( this->LUTSelector->GetSelected() != cnode )
+          int type = cnode->GetType();
+          if ((type == vtkMRMLPETProceduralColorNode::PETMIP) &&
+              (this->ColorSet->GetWidget()->GetWidget(0)->GetSelectedState() != 1) )
             {
-            this->LUTSelector->SetSelected ( cnode );
+            this->ColorSet->GetWidget()->GetWidget(0)->SetSelectedState(1);
             }
-          if ( this->PETCTFusionNode->GetPETLUT() != cnode->GetID() )
+          if ((type == vtkMRMLPETProceduralColorNode::PETheat) &&
+              (this->ColorSet->GetWidget()->GetWidget(1)->GetSelectedState() != 1) )
             {
-            this->PETCTFusionNode->SetPETLUT(cnode->GetID());
+            this->ColorSet->GetWidget()->GetWidget(1)->SetSelectedState(1);
             }
+          if ((type == vtkMRMLPETProceduralColorNode::PETrainbow) &&
+              (this->ColorSet->GetWidget()->GetWidget(2)->GetSelectedState() != 1) )
+            {
+            this->ColorSet->GetWidget()->GetWidget(2)->SetSelectedState(1);
+            }          
+          }
+        else
+          {
+          //--- vtkErrorMacro ( "PET Volume has unexpected color node." );
+          return;
           }
         }
       }
     }
 }
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::UpdateFusionDisplayFromMRML()
+{
+  //---
+  //--- If PET, CT, or Mask volumes have had 
+  //--- display adjusted in the volumes
+  //--- module, make sure this module
+  //--- tracks those changes.
+  //--- Method is called from method Enter()
+  //---
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->PETSelector->GetSelected() != NULL )
+    {
+    //--- update PETCTNode (get vol's win lev and set node)
+    vtkMRMLScalarVolumeNode *vnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->PETSelector->GetSelected() );
+    if ( vnode != NULL )
+      {
+      vtkMRMLScalarVolumeDisplayNode *dnode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast (vnode->GetDisplayNode());
+      if ( dnode )
+        {
+        //--- get display node.
+        double win = dnode->GetWindow( );
+        double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
+        double ut = dnode->GetUpperThreshold();
+        double lt = dnode->GetLowerThreshold();
+        //--- compute settings for node
+        double lw = lev - (win/2.0);
+        double uw = lev + (win/2.0);
+        this->PETCTFusionNode->SetColorRangeMin (lw);
+        this->PETCTFusionNode->SetColorRangeMax (uw);
+        //this->PETCTFusionNode->SetPETMin ( lt );
+        //this->PETCTFusionNode->SetPETMax ( lt );
+        //--- if the LUT is not one of the normal PET luts,
+        //--- then assume user has selected something
+        //--- else, and uncheck all PET Color radiobuttons.
+        //---HERE
+        vtkMRMLPETProceduralColorNode *cnode =
+          vtkMRMLPETProceduralColorNode::SafeDownCast(dnode->GetColorNode());
+        if ( cnode == NULL )
+          {
+          this->ColorSet->GetWidget()->GetWidget(0)->SetSelectedState(0);
+          this->ColorSet->GetWidget()->GetWidget(1)->SetSelectedState(0);
+          this->ColorSet->GetWidget()->GetWidget(2)->SetSelectedState(0);
+          }
+        }
+      }
+    //--- update Display
+    this->UpdatePETDisplayFromMRML();
+    }
+  if ( this->CTSelector->GetSelected() != NULL )
+    {
+    //--- update PETCTNode (get vol's win lev, set node)
+    vtkMRMLScalarVolumeNode *vnode = vtkMRMLScalarVolumeNode::SafeDownCast ( this->CTSelector->GetSelected() );
+    if ( vnode != NULL )
+      {
+      vtkMRMLScalarVolumeDisplayNode *dnode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast (vnode->GetDisplayNode());
+      if ( dnode )
+        {
+        //--- get display node.
+        double win = dnode->GetWindow( );
+        double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
+        double ut = dnode->GetUpperThreshold();
+        double lt = dnode->GetLowerThreshold();
+        //--- compute settings for node
+        double lw = lev - (win/2.0);
+        double uw = lev + (win/2.0);
+        this->PETCTFusionNode->SetCTRangeMin (lw);
+        this->PETCTFusionNode->SetCTRangeMax (uw);
+        //this->PETCTFusionNode->SetCTMin ( lt );
+        //this->PETCTFusionNode->SetCTMax ( lt );
+        }
+      }
+    //--- update Display
+      this->UpdateCTDisplayFromMRML();
+    }
+  if ( this->MaskSelector->GetSelected() != NULL )
+    {
+    //--- update PETCTNode
+    }
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -1134,7 +1226,8 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
     node = vtkMRMLPETCTFusionNode::New();
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkMRMLPETCTFusionNode::ErrorEvent );
-    events->InsertNextValue ( vtkMRMLPETCTFusionNode::UpdateDisplayEvent );
+    events->InsertNextValue ( vtkMRMLPETCTFusionNode::UpdatePETDisplayEvent );
+    events->InsertNextValue ( vtkMRMLPETCTFusionNode::UpdateCTDisplayEvent );
     events->InsertNextValue ( vtkMRMLPETCTFusionNode::StartUpdatingDisplayEvent );
     events->InsertNextValue ( vtkMRMLPETCTFusionNode::ComputeDoneEvent );
     events->InsertNextValue ( vtkMRMLPETCTFusionNode::DICOMUpdateEvent );
@@ -1349,18 +1442,18 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
       }
     }
 
-  //vtkMRMLScalarVolumeNode *n = NULL; FIXME: unused variable
-  //vtkMRMLVolumeDisplayNode *dnode = NULL; FIXME: unused variable
   if ( this->CTSelector )
     {
     //--- update the menu & selection
     this->CTSelector->UpdateMenu();
     const char *nid = this->PETCTFusionNode->GetInputCTReference();
     //--- check to see if the change is new
-    if ( nid && strcmp(nid, this->CTSelector->GetSelected()->GetID()) )
+    if ( this->CTSelector->GetSelected() == NULL ||
+         ( nid && strcmp(nid, this->CTSelector->GetSelected()->GetID())) )
       {
       //--- make GUI match MRML
       this->CTSelector->SetSelected ( this->MRMLScene->GetNodeByID(nid) );
+      this->UpdateCTDisplayFromMRML();
       }
     }
     
@@ -1370,7 +1463,8 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
     this->PETSelector->UpdateMenu();
     const char *nid = this->PETCTFusionNode->GetInputPETReference();
     //--- check to see if the change is new
-    if (nid && strcmp(nid, this->PETSelector->GetSelected()->GetID()) )
+    if (this->PETSelector->GetSelected() == NULL ||
+        (nid && strcmp(nid, this->PETSelector->GetSelected()->GetID())) )
       {
       //--- make GUI match MRML
       this->PETSelector->SetSelected ( this->MRMLScene->GetNodeByID(nid) );
@@ -1384,49 +1478,11 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
     this->MaskSelector->UpdateMenu();
     const char *nid = this->PETCTFusionNode->GetInputMask();
     //--- check to see if the change is new
-    if ( nid && strcmp(nid, this->MaskSelector->GetSelected()->GetID()) )
+    if ( this->MaskSelector->GetSelected() == NULL ||
+         ( nid && strcmp(nid, this->MaskSelector->GetSelected()->GetID())) )
       {
       //--- make GUI match MRML
       this->MaskSelector->SetSelected ( this->MRMLScene->GetNodeByID(nid) );
-      }
-    }
-
-  if ( this->LUTSelector)
-    {
-    //--- makd sure PETLUT matches the display node's color node.
-    if ( this->PETCTFusionNode->GetInputPETReference() )
-      {
-      vtkMRMLScalarVolumeNode *n;
-      n = vtkMRMLScalarVolumeNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputPETReference()));
-      vtkMRMLVolumeDisplayNode *d = vtkMRMLVolumeDisplayNode::SafeDownCast(n->GetDisplayNode());
-      if ( d )
-        {
-        vtkMRMLColorNode *c = d->GetColorNode();
-        if ( c )
-          {
-          if ( c->GetID() != this->PETCTFusionNode->GetPETLUT() )
-            {
-            this->PETCTFusionNode->SetPETLUT(c->GetID() );
-            }
-          }
-        }
-      }
-    
-    //--- update the menu & make sure selection matches mrml
-    this->LUTSelector->UpdateMenu();
-    const char *nid = this->PETCTFusionNode->GetPETLUT();
-    //--- select inverted grey by default.
-    if ( this->LUTSelector->GetSelected() == NULL )
-      {
-      this->LUTSelector->SetSelected ( this->MRMLScene->GetNodeByID("vtkMRMLColorTableNodeInvertedGrey" ));      
-      }
-    if ( nid && this->LUTSelector->GetSelected() )
-      {
-      if (strcmp (nid, this->LUTSelector->GetSelected()->GetID()) )
-        {
-        //--- make GUI match MRML
-        this->LUTSelector->SetSelected ( this->MRMLScene->GetNodeByID(nid) );
-        }
       }
     }
 
@@ -1476,6 +1532,72 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
         }
       }
     }
+  
+  if ( this->PETCTFusionNode->GetPatientName() != NULL )
+    {
+    if ( this->PatientNameLabel )
+      {
+      sstr.clear();
+      sstr.str("");
+      sstr <<this->PETCTFusionNode->GetPatientName();
+      std::string tmpstr;
+      const char *tmpc;
+      tmpstr = sstr.str();
+      tmpc = tmpstr.c_str();
+      this->PatientNameLabel->SetText ( tmpc );
+      sstr.clear();
+      sstr.str("");
+      if ( this->PETCTFusionNode->GetPatientName() )
+        {
+        sstr <<this->PETCTFusionNode->GetPatientName();
+        std::string tmpstr;
+        const char *tmpc;
+        tmpstr = sstr.str();
+        tmpc = tmpstr.c_str();
+        this->PatientNameLabel->SetText ( tmpc );
+        }
+      else
+        {
+        this->PatientNameLabel->SetText ("no value found" );
+        }
+      }
+    }
+  else
+    {
+    if ( this->PatientNameLabel )
+      {
+      this->PatientNameLabel->SetText ("no value found");
+      }
+    }
+
+  if ( this->PETCTFusionNode->GetStudyDate() != NULL )
+    {
+    if ( this->StudyDateLabel )
+      {
+      sstr.clear();
+      sstr.str("");
+      if ( this->PETCTFusionNode->GetStudyDate() )
+        {
+        sstr <<this->PETCTFusionNode->GetStudyDate();
+        std::string tmpstr;
+        const char *tmpc;
+        tmpstr = sstr.str();
+        tmpc = tmpstr.c_str();
+        this->StudyDateLabel->SetText ( tmpc );
+        }
+      else
+        {
+        this->StudyDateLabel->SetText ( "no value found");
+        }
+      }
+    }
+  else
+    {
+    if ( this->StudyDateLabel )
+      {
+        this->StudyDateLabel->SetText ( "no value found");
+      }
+    }
 
   if ( this->PETCTFusionNode->GetInjectedDose() != 0.0 )
     {
@@ -1491,16 +1613,23 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
       {
       sstr.clear();
       sstr.str("");
-      sstr <<this->PETCTFusionNode->GetInjectedDose();
-      if ( this->PETCTFusionNode->GetDoseRadioactivityUnits() )
+      if ( this->PETCTFusionNode->GetDoseRadioactivityUnits())
         {
-        sstr << " (" << this->PETCTFusionNode->GetDoseRadioactivityUnits() << ")";
+        //sstr << " (" << this->PETCTFusionNode->GetDoseRadioactivityUnits() << ")";
+        double mbqs = this->Logic->ConvertRadioactivityUnits ( this->PETCTFusionNode->GetInjectedDose(),
+                                                  this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq" );
+        sstr << mbqs;
+        sstr << " (MBq)";
+        std::string tmpstr;
+        const char *tmpc;
+        tmpstr = sstr.str();
+        tmpc = tmpstr.c_str();
+        this->InjectedDoseLabel->SetText (tmpc );
         }
-      std::string tmpstr;
-      const char *tmpc;
-      tmpstr = sstr.str();
-      tmpc = tmpstr.c_str();
-      this->InjectedDoseLabel->SetText (tmpc );
+      else
+        {
+        this->InjectedDoseLabel->SetText ("");
+        }
       }
     }
   else
@@ -1522,229 +1651,6 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
         }
       }
     }
-
-  if (( this->PETCTFusionNode->GetNumberOfTemporalPositions() != 0)  &&
-      ( this->NumberOfTemporalPositionsLabel ) )
-    {
-    sstr.clear();
-    sstr.str("");
-    sstr << this->PETCTFusionNode->GetNumberOfTemporalPositions();
-    std::string tmpstr;
-    const char *tmpc;
-    tmpstr = sstr.str();
-    tmpc = tmpstr.c_str();
-    this->NumberOfTemporalPositionsLabel->SetText ( tmpc );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->NumberOfTemporalPositionsLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->NumberOfTemporalPositionsLabel->SetText ( "" );
-      }
-    }
-  
-  if ( (this->PETCTFusionNode->GetSeriesTime() != NULL ) &&
-       (this->SeriesTimeLabel ))
-    {
-    sstr.clear();
-    sstr.str("");
-    sstr << this->PETCTFusionNode->GetSeriesTime() << " (hh:mm:ss...)";
-    std::string tmpstr;
-    const char *tmpc;
-    tmpstr = sstr.str();
-    tmpc = tmpstr.c_str();
-    this->SeriesTimeLabel->SetText ( tmpc );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->SeriesTimeLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->SeriesTimeLabel->SetText ( "" );
-      }
-    }
-  
-  if ( (this->PETCTFusionNode->GetRadiopharmaceuticalStartTime() != NULL ) &&
-       (this->RPStartTimeLabel ) )
-    {
-    sstr.clear();
-    sstr.str("");
-    sstr << this->PETCTFusionNode->GetRadiopharmaceuticalStartTime() << " (hh:mm:ss...)";
-    std::string tmpstr;
-    const char *tmpc;
-    tmpstr = sstr.str();
-    tmpc = tmpstr.c_str();
-    this->RPStartTimeLabel->SetText ( tmpc );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->RPStartTimeLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->RPStartTimeLabel->SetText ( "" );
-      }
-    }
-  
-  if ( (this->PETCTFusionNode->GetFrameReferenceTime() != NULL ) &&
-       ( this->FrameReferenceTimeLabel ))
-    {
-    sstr.clear();
-    sstr.str("");
-    sstr << this->PETCTFusionNode->GetFrameReferenceTime() << " (msec)";
-    
-    std::string tmpstr;
-    const char *tmpc;
-    tmpstr = sstr.str();
-    tmpc = tmpstr.c_str();
-    this->FrameReferenceTimeLabel->SetText ( this->PETCTFusionNode->GetFrameReferenceTime());
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->FrameReferenceTimeLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->FrameReferenceTimeLabel->SetText ( "" );
-      }
-    }
-
-  if ( (this->PETCTFusionNode->GetDecayCorrection() != NULL ) &&
-       (this->DecayCorrectionLabel ))
-    {
-    this->DecayCorrectionLabel->SetText ( this->PETCTFusionNode->GetDecayCorrection() );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->DecayCorrectionLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->DecayCorrectionLabel->SetText ( "" );
-      }
-    }
-  
-  if (( this->PETCTFusionNode->GetDecayFactor() != NULL ) &&
-      (this->DecayFactorLabel ))
-    {
-    this->DecayFactorLabel->SetText ( this->PETCTFusionNode->GetDecayFactor() );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->DecayFactorLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->DecayFactorLabel->SetText ( "" );
-      }
-    }
-  
-  if ( ( this->PETCTFusionNode->GetRadionuclideHalfLife() != NULL ) &&
-       (this->RTHalfLifeLabel ))
-    {
-    sstr.clear();
-    sstr.str("");
-    sstr << this->PETCTFusionNode->GetRadionuclideHalfLife();
-    sstr << " (s)";
-    std::string tmpstr;
-    const char *tmpc;
-    tmpstr = sstr.str();
-    tmpc = tmpstr.c_str();
-    this->RTHalfLifeLabel->SetText ( tmpc );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->RTHalfLifeLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->RTHalfLifeLabel->SetText ( "" );
-      }
-    }
-    
-  if (( this->PETCTFusionNode->GetPhilipsSUVFactor()  != NULL ) &&
-      (this->PhilipsSUVFactorLabel ))
-    {
-    this->PhilipsSUVFactorLabel->SetText ( this->PETCTFusionNode->GetPhilipsSUVFactor() );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->PhilipsSUVFactorLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->PhilipsSUVFactorLabel->SetText ( "" );
-      }
-    }
-
-  if (( this->PETCTFusionNode->GetCalibrationFactor()  != NULL ) &&
-      (this->CalibrationFactorLabel ))
-    {
-    this->CalibrationFactorLabel->SetText ( this->PETCTFusionNode->GetCalibrationFactor() );
-    }
-  else
-    {
-    if ( updateDICOMevent )
-      {
-      this->CalibrationFactorLabel->SetText ( "no value found" );
-      }
-    else
-      {
-      this->CalibrationFactorLabel->SetText ( "" );
-      }
-    }
-
-  std::stringstream ss;
-  std::string s;
-  //--- either clear or refresh labels.
-  if ( this->SUVmaxLabel && this->PETCTFusionNode->GetSUVmax_t1() )
-    {
-    ss.str("");
-    ss << this->PETCTFusionNode->GetSUVmax_t1();
-    s = ss.str();
-    this->SUVmaxLabel->SetText ( s.c_str() );
-    }
-  if ( this->SUVminLabel && this->PETCTFusionNode->GetSUVmin_t1() )
-    {
-    ss.str("");
-    ss << this->PETCTFusionNode->GetSUVmin_t1();
-    s = ss.str();
-    this->SUVminLabel->SetText ( s.c_str() );
-    }
-  if ( this->SUVmeanLabel && this->PETCTFusionNode->GetSUVmean_t1() )
-    {
-    ss.str("");
-    ss << this->PETCTFusionNode->GetSUVmean_t1();
-    s = ss.str();
-    this->SUVmeanLabel->SetText (s.c_str() );
-    }
-  if ( this->SUVmaxmeanLabel && this->PETCTFusionNode->GetSUVmaxmean_t1() )
-    {
-    ss.str("");
-    ss << this->PETCTFusionNode->GetSUVmaxmean_t1();
-    s = ss.str();
-    this->SUVmaxmeanLabel->SetText ( s.c_str() );
-    }
-
   this->UpdatingGUI = 0;
 }
 
@@ -1769,12 +1675,21 @@ void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
     if ( event == vtkMRMLPETCTFusionNode::StartUpdatingDisplayEvent )
       {
       }
-    else if ( event == vtkMRMLPETCTFusionNode::UpdateDisplayEvent )
+    else if ( event == vtkMRMLPETCTFusionNode::UpdatePETDisplayEvent )
       {
       //--- adjust color lut.
       if ( !this->UpdatingLUT )
         {
         this->UpdatePETDisplayFromMRML();
+        return;
+        }
+      }
+    else if ( event == vtkMRMLPETCTFusionNode::UpdateCTDisplayEvent )
+      {
+      //--- adjust color lut.
+      if ( !this->UpdatingLUT )
+        {
+        this->UpdateCTDisplayFromMRML();
         return;
         }
       }
@@ -1785,7 +1700,7 @@ void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
         vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
         dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
         dialog->SetStyleToMessage();
-        dialog->SetText ( "The PET Volume is not a DICOM file,\nso parameters cannot be extracted automatically.\nParameters for computing SUV must be entered manually." );
+        dialog->SetText ( "The PET Volume appears not to be a DICOM file.\n Since parameters cannot be extracted automatically, parameters for computing SUV must be entered manually. Also note: Window/Level adjustments may not work properly for the selected PET volume.\n\nThe use of DICOM studies is recommended for this module." );
         dialog->Create();
         dialog->Invoke();
         dialog->Delete();
@@ -1806,6 +1721,17 @@ void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
       if ( (this->PETCTFusionNode->GetMessageText() != NULL) &&
            (strcmp(this->PETCTFusionNode->GetMessageText(), "" )) )
         {
+        if ( this->GetApplicationGUI () && this->GetApplicationGUI()->GetMainSlicerWindow() )
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->PETCTFusionNode->GetMessageText() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+          return;
+          }
         }
       else
         {
@@ -1828,37 +1754,159 @@ void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if ( event == vtkMRMLPETCTFusionNode::ComputeDoneEvent )
       {
-      //--- update results panel.
-      std::stringstream ss;
-      std::string s;
-      ss << this->PETCTFusionNode->GetSUVmax_t1();
-      s.clear();
-      s = ss.str();
-      const char *suvmax = s.c_str();
-      this->SUVmaxLabel->SetText ( suvmax );
-
-      ss.str("");
-      ss << this->PETCTFusionNode->GetSUVmin_t1();
-      s.clear();
-      s = ss.str();
-      const char *suvmin = s.c_str();
-      this->SUVminLabel->SetText ( suvmin );
-
-      ss.str("");
-      ss << this->PETCTFusionNode->GetSUVmean_t1();
-      s.clear();
-      s = ss.str();
-      const char *suvmean = s.c_str();
-      this->SUVmeanLabel->SetText ( suvmean );
-
-      ss.str("");
-      ss << this->PETCTFusionNode->GetSUVmaxmean_t1();
-      s.clear();
-      s = ss.str();
-      const char *suvmaxmean = s.c_str();
-      this->SUVmaxmeanLabel->SetText ( suvmaxmean );
+      this->UpdateResultsTableFromMRML();
       }
     return;    
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::UpdateResultsTableFromMRML()
+{
+  if ( this->ResultList == NULL )
+    {
+    return;
+    }
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    vtkErrorMacro ( "Got NULL PETCTFusionNode." );
+    return;
+    }
+
+
+
+  vtkMRMLPETCTFusionNode* n = this->GetPETCTFusionNode();
+  if(!n->LabelResults.empty()) 
+    { 
+
+    typedef std::list<vtkMRMLPETCTFusionNode::SUVEntry>::const_iterator LI;
+
+    int i = 0;
+    for (LI li = n->LabelResults.begin(); li != n->LabelResults.end(); ++li)
+      {
+      const vtkMRMLPETCTFusionNode::SUVEntry& label = *li;  
+      this->ResultList->InsertCellTextAsInt(i, 0, label.Label);
+      this->ResultList->InsertCellTextAsDouble(i, 2, label.Max);
+      this->ResultList->InsertCellTextAsDouble(i, 3, label.Mean);
+      int entry = this->ResultList->GetCellTextAsInt ( i, 0 );
+      
+      //---
+      //--- now fill the color cell background with color
+      //--- first, find the number of colors and the color range.
+      //--- which will depend on what kind of color node is selected.
+      bool isFSProcedural = false;
+      bool isProcedural = false;
+      int numColors = 0;
+      double *range = NULL;
+
+      if ( this->PETCTFusionNode->GetInputMask()==NULL )
+        {
+        return;
+        }
+      vtkMRMLVolumeNode *vn = vtkMRMLVolumeNode::SafeDownCast (
+                                                               this->MRMLScene->GetNodeByID(
+                                                                                            this->PETCTFusionNode->GetInputMask() ));
+      if ( vn == NULL )
+        {
+        return;
+        }
+      vtkMRMLDisplayNode *dn = vn->GetDisplayNode();
+      if ( dn == NULL )
+        {
+        return;
+        }
+      vtkMRMLColorNode *colorNode = dn->GetColorNode();
+      
+      if ( colorNode == NULL )
+        {
+        return;
+        }
+
+      if ( vtkMRMLColorTableNode::SafeDownCast (colorNode) != NULL )
+        {
+        //---
+        //--- color table node.
+        //---
+        numColors = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+        range = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetLookupTable()->GetRange();
+        }
+      else if ( vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+                vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL )
+        {
+        //---
+        //--- freesurfer procedural node
+        //---
+        isFSProcedural = true;
+        range = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast (colorNode)->GetLookupTable()->GetRange();
+        if ( range )
+          {
+          numColors = (int)floor(range[1]-range[0]);
+          if ( range[0] < 0 && range[1] >= 0)
+            {
+            numColors++;
+            }
+          }
+        }
+      else if ( vtkMRMLProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+                vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction() != NULL )
+        {
+        //---
+        //--- procedural node
+        //---
+        isProcedural = true;
+        range = vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetRange();
+        if ( range )
+          {
+          numColors = (int)floor(range[1]-range[0]);
+          if ( range[0] < 0 && range[1] >=0)
+            {
+            numColors++;
+            }
+          }
+        }
+      
+        //---
+        double color[3];
+        if (isFSProcedural)
+          {
+          if ( entry <= range[1] )
+            {
+            vtkMRMLFreeSurferProceduralColorNode::SafeDownCast ( colorNode)->GetLookupTable()->GetColor(entry, color);
+            this->ResultList->SetCellBackgroundColor(i, 1, color);
+            this->ResultList->SetCellSelectionBackgroundColor( i, 1, color);
+            }
+          }
+        else if ( isProcedural)
+          {
+          vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetColor(entry, color);
+          this->ResultList->SetCellBackgroundColor(i, 1, color);
+          this->ResultList->SetCellSelectionBackgroundColor( i, 1, color);
+          }
+        else if ( colorNode->GetLookupTable() != NULL )
+          {
+          colorNode->GetLookupTable()->GetColor((double)entry, color);
+          this->ResultList->SetCellBackgroundColor(i, 1, color);
+          this->ResultList->SetCellSelectionBackgroundColor( i, 1, color);
+          }
+        i++;
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ClearResultsTable()
+{
+  if ( this->ResultList != NULL )
+    {
+    this->ResultList->DeleteAllRows();
     }
 }
 
@@ -1965,6 +2013,48 @@ void vtkPETCTFusionGUI::BuildFusionFrame ( vtkKWWidget *page )
                  this->PETSelector->GetWidgetName(),
                  this->MaskSelector->GetWidgetName());
 
+
+  //--- AUTOMATIC parameterization from DICOM
+  vtkKWFrameWithLabel *cfCase = vtkKWFrameWithLabel::New();
+  cfCase->SetParent ( dataFusionFrame->GetFrame() );
+  cfCase->Create();
+  cfCase->SetLabelText ("Study Information" );
+  cfCase->ExpandFrame();
+  app->Script("pack %s -side top -fill x -expand y -padx 2 -pady 2", cfCase->GetWidgetName());
+
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent  ( cfCase->GetFrame() );
+  l1->Create();
+  l1->SetText ( "Patient Name:" );
+  this->PatientNameLabel = vtkKWLabel::New();
+  this->PatientNameLabel->SetParent  ( cfCase->GetFrame() );
+  this->PatientNameLabel->Create();
+  this->PatientNameLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
+  this->PatientNameLabel->SetText ( "" );  
+  this->PatientNameLabel->SetAnchorToWest();
+
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent  ( cfCase->GetFrame() );
+  l2->Create();
+  l2->SetText ( "Study Date:" );
+  this->StudyDateLabel = vtkKWLabel::New();
+  this->StudyDateLabel->SetParent  ( cfCase->GetFrame() );
+  this->StudyDateLabel->Create();
+  this->StudyDateLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
+  this->StudyDateLabel->SetText ( "" );  
+  this->StudyDateLabel->SetAnchorToWest();
+
+  //--- grid
+  app->Script ( "grid columnconfigure %s 0 -weight 0", cfCase->GetFrame()->GetWidgetName() );
+  app->Script ( "grid columnconfigure %s 1 -weight 1", cfCase->GetFrame()->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 0 -sticky e  -padx 2 -pady 2", l1->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 1 -sticky w -padx 4 -pady 2", this->PatientNameLabel->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 1 -sticky w -padx 4 -pady 2", this->StudyDateLabel->GetWidgetName() );
+
+  l1->Delete();
+  l2->Delete();
+  cfCase->Delete();
   dataFusionFrame->Delete();
 }
 
@@ -1983,46 +2073,100 @@ void vtkPETCTFusionGUI::BuildDisplayFrame (  vtkKWWidget *page )
   displayFrame->SetParent(page);
   displayFrame->Create();
   displayFrame->SetLabelText("Display");
-  displayFrame->CollapseFrame();
+  displayFrame->ExpandFrame();
   app->Script("pack %s -side top -expand y -fill x -padx 2 -pady 2", displayFrame->GetWidgetName());
-  //--- selector
-  this->LUTSelector = vtkSlicerNodeSelectorWidget::New() ;
-  this->LUTSelector->SetParent ( displayFrame->GetFrame() );
-  this->LUTSelector->Create ( );
-  this->LUTSelector->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
-  this->LUTSelector->AddNodeClass("vtkMRMLColorTableNode", NULL, NULL, NULL);
-  this->LUTSelector->AddNodeClass ("vtkMRMLPETProceduralColorNode", NULL, NULL, NULL );
-  this->LUTSelector->AddExcludedChildClass ( "vtkMRMLDiffusionTensorDisplayPropertiesNode");
-  this->LUTSelector->SetChildClassesEnabled(0);
-  this->LUTSelector->NoneEnabledOn();
-  this->LUTSelector->SetShowHidden(1);
-  this->LUTSelector->SetMRMLScene(this->GetMRMLScene());
-  this->LUTSelector->SetBorderWidth(2);
-  this->LUTSelector->SetPadX(2);
-  this->LUTSelector->SetPadY(2);
-  this->LUTSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->LUTSelector->GetWidget()->GetWidget()->SetWidth(24);
-  this->LUTSelector->SetLabelText( "Color LUT: ");
-  this->LUTSelector->GetLabel()->SetWidth ( 12);
-  this->LUTSelector->UpdateMenu();
-  this->LUTSelector->SetBalloonHelpString("Select a pseudocolor for PET volume (\"PETCT\" recommended).");
-  this->Script ( "pack %s  -side top -anchor ne -fill x -expand y -padx 2 -pady 2",
-                 this->LUTSelector->GetWidgetName() );
+
+  //--- colorizing options
+  this->ColorSet = vtkKWRadioButtonSetWithLabel::New();
+  this->ColorSet->SetParent ( displayFrame->GetFrame() );
+  this->ColorSet->Create();
+  this->ColorSet->SetLabelText ( "  PET Color:  ");
+  this->ColorSet->GetWidget()->PackHorizontallyOn();
+  this->ColorSet->GetWidget()->SetMaximumNumberOfWidgetsInPackingDirection ( 3 );
+  this->ColorSet->GetWidget()->UniformColumnsOn();
+  this->ColorSet->GetWidget()->UniformRowsOn();
+  this->ColorSet->GetWidget()->AddWidget(0);
+  this->ColorSet->GetWidget()->GetWidget(0)->SetText ( "MIP" );
+  this->ColorSet->GetWidget()->AddWidget(1);
+  this->ColorSet->GetWidget()->GetWidget(1)->SetText ( "Heat" );
+  this->ColorSet->GetWidget()->AddWidget(2);
+  this->ColorSet->GetWidget()->GetWidget(2)->SetText ( "Spectrum" );
+  this->ColorSet->GetWidget()->GetWidget(1)->SetSelectedState ( 1 );
+  app->Script ( "pack %s  -side top -anchor ne -fill x -expand y -padx 2 -pady 1",
+                this->ColorSet->GetWidgetName() );
+
+  //---
+  //--- Adjust PET display
+  //---
+  vtkKWFrameWithLabel *f1 = vtkKWFrameWithLabel::New();
+  f1->SetParent ( displayFrame->GetFrame() );
+  f1->Create();
+  f1->SetLabelText ( "Window/Level" );
+  f1->ExpandFrame();
+  this->Script ( "pack %s  -side top -anchor w -fill x -expand y -padx 2 -pady 0",
+                 f1->GetWidgetName() );
   //--- set range
-  this->ColorRange = vtkKWRange::New();
-  this->ColorRange->SetParent ( displayFrame->GetFrame() );
-  this->ColorRange->Create();
-  this->ColorRange->SetEntry1PositionToLeft();
-  this->ColorRange->SetEntry2PositionToRight();
-  this->ColorRange->SymmetricalInteractionOff();
-  this->ColorRange->SetOrientationToHorizontal();
-  this->ColorRange->SetCommand ( this, "ProcessColorRangeCommand" );
-  this->ColorRange->SetStartCommand ( this, "ProcessColorRangeStartCommand" );
-  this->ColorRange->SetEndCommand ( this, "ProcessColorRangeStopCommand" );
-  this->ColorRange->SetEntriesCommand ( this, "ProcessColorRangeCommand" );
-  this->Script ( "pack %s  -side top -anchor ne -fill x -expand y -padx 2 -pady 2",
-                 this->ColorRange->GetWidgetName() );
+  vtkKWLabel *minl  = vtkKWLabel::New();
+  minl->SetParent ( f1->GetFrame() );
+  minl->Create();
+  minl->SetText ( "PET:   min");
+
+  vtkKWLabel *maxl  = vtkKWLabel::New();
+  maxl->SetParent ( f1->GetFrame() );
+  maxl->Create();
+  maxl->SetText ( "max (SUV)");
+
+  this->PETRange = vtkKWRange::New();
+  this->PETRange->SetParent ( f1->GetFrame() );
+  this->PETRange->Create();
+  this->PETRange->SetEntry1PositionToTop();
+  this->PETRange->SetEntry2PositionToTop();
+  this->PETRange->SymmetricalInteractionOff();
+  this->PETRange->SetOrientationToHorizontal();
+  this->PETRange->SetCommand ( this, "ProcessPETRangeCommand" );
+  this->PETRange->SetStartCommand ( this, "ProcessPETRangeStartCommand" );
+  this->PETRange->SetEndCommand ( this, "ProcessPETRangeStopCommand" );
+  this->PETRange->SetEntriesCommand ( this, "ProcessPETRangeCommand" );
+  this->PETRange->SetWholeRange ( 0, 255 );
+  this->PETRange->SetRange ( 0, 255 );
   
+  //---
+  //--- Adjust CT display
+  //---
+  vtkKWLabel *minl2  = vtkKWLabel::New();
+  minl2->SetParent ( f1->GetFrame() );
+  minl2->Create();
+  minl2->SetText ( "CT:   min");
+
+  vtkKWLabel *maxl2  = vtkKWLabel::New();
+  maxl2->SetParent ( f1->GetFrame() );
+  maxl2->Create();
+  maxl2->SetText ( "max          ");
+
+  this->CTRange = vtkKWRange::New();
+  this->CTRange->SetParent ( f1->GetFrame() );
+  this->CTRange->Create();
+  this->CTRange->SetEntry1PositionToTop();
+  this->CTRange->SetEntry2PositionToTop();
+  this->CTRange->SymmetricalInteractionOff();
+  this->CTRange->SetOrientationToHorizontal();
+  this->CTRange->SetCommand ( this, "ProcessCTRangeCommand" );
+  this->CTRange->SetStartCommand ( this, "ProcessCTRangeStartCommand" );
+  this->CTRange->SetEndCommand ( this, "ProcessCTRangeStopCommand" );
+  this->CTRange->SetEntriesCommand ( this, "ProcessCTRangeCommand" );
+  this->CTRange->SetWholeRange ( 0, 255 );
+  this->CTRange->SetRange ( 0, 255 );
+
+  app->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetFrame()->GetWidgetName() );
+  app->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetFrame()->GetWidgetName() );
+  app->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetFrame()->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", minl->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 1 -sticky new -padx 2 -pady 2", this->PETRange->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2", maxl->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", minl2->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 1 -sticky new -padx 2 -pady 2", this->CTRange->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2", maxl2->GetWidgetName() );
+
   //--- Turn on/off volume rendering
   this->VolumeRenderCheckbox = vtkKWCheckButton::New();
   this->VolumeRenderCheckbox->SetParent ( displayFrame->GetFrame() );
@@ -2030,10 +2174,12 @@ void vtkPETCTFusionGUI::BuildDisplayFrame (  vtkKWWidget *page )
   this->VolumeRenderCheckbox->SelectedStateOff();
   this->VolumeRenderCheckbox->SetText ( "Volume Rendering:");
   this->VolumeRenderCheckbox->SetStateToDisabled();
-  this->Script ( "pack %s  -side top -anchor ne -fill x -expand y -padx 2 -pady 2",
-                 this->VolumeRenderCheckbox->GetWidgetName() );
+//  this->Script ( "pack %s  -side top -anchor ne -fill x -expand y -padx 2 -pady 2",
+//                 this->VolumeRenderCheckbox->GetWidgetName() );
 
-
+  minl->Delete();
+  maxl->Delete();
+  f1->Delete();
   displayFrame->Delete();
 }
 
@@ -2059,19 +2205,18 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
   vtkKWFrameWithLabel *cfAuto = vtkKWFrameWithLabel::New();
   cfAuto->SetParent ( analyzeFrame->GetFrame() );
   cfAuto->Create();
-  cfAuto->SetLabelText ("Parameters from DICOM" );
-  cfAuto->ExpandFrame();
+  cfAuto->SetLabelText ("Refresh SUV Attributes from DICOM" );
+  cfAuto->CollapseFrame();
   app->Script("pack %s -side top -fill x -expand y -padx 2 -pady 2", cfAuto->GetWidgetName());
   
   //--- MANUAL override.
   vtkKWFrameWithLabel *cfManual = vtkKWFrameWithLabel::New();
   cfManual->SetParent ( analyzeFrame->GetFrame() );
   cfManual->Create();
-  cfManual->SetLabelText ("Set Parameters Manually" );
+  cfManual->SetLabelText ("Set SUV Attributes Manually" );
   cfManual->CollapseFrame();
   app->Script("pack %s -side top -fill x -expand y -padx 2 -pady 2", cfManual->GetWidgetName());
 
-  
   //---
   //--- Populate AUTOMATIC frame
   //---
@@ -2081,186 +2226,54 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
   this->GetFromDICOMButton->SetReliefToGroove();
   this->GetFromDICOMButton->SetText ( "Refresh" );
 
-  vtkKWLabel *l5 = vtkKWLabel::New();
-  l5->SetParent  ( cfAuto->GetFrame() );
-  l5->Create();
-  l5->SetText ( "   Patient's Weight: " );
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent  ( cfAuto->GetFrame() );
+  l1->Create();
+  l1->SetText ( "   Patient's Weight:" );
   this->PatientWeightLabel = vtkKWLabel::New();
   this->PatientWeightLabel->SetParent  ( cfAuto->GetFrame() );
   this->PatientWeightLabel->Create();
   this->PatientWeightLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
   this->PatientWeightLabel->SetText ( "" );  
-//  this->PatientWeightLabel->SetWidth ( 24 );
   this->PatientWeightLabel->SetAnchorToWest();
 
-  vtkKWLabel *l6 = vtkKWLabel::New();
-  l6->SetParent  ( cfAuto->GetFrame() );
-  l6->Create();
-  l6->SetText ( "   Injected Dose: " );
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent  ( cfAuto->GetFrame() );
+  l2->Create();
+  l2->SetText ( "   Injected Dose:" );
   this->InjectedDoseLabel = vtkKWLabel::New();
   this->InjectedDoseLabel->SetParent  ( cfAuto->GetFrame() );
   this->InjectedDoseLabel->Create();
   this->InjectedDoseLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
   this->InjectedDoseLabel->SetText ( "" );  
-//  this->InjectedDoseLabel->SetWidth ( 24 );
   this->InjectedDoseLabel->SetAnchorToWest();
-
-  vtkKWLabel *l7 = vtkKWLabel::New();
-  l7->SetParent  ( cfAuto->GetFrame() );
-  l7->Create();
-  l7->SetText ( "   Temporal Positions: " );
-  this->NumberOfTemporalPositionsLabel = vtkKWLabel::New();
-  this->NumberOfTemporalPositionsLabel->SetParent  ( cfAuto->GetFrame() );
-  this->NumberOfTemporalPositionsLabel->Create();
-  this->NumberOfTemporalPositionsLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->NumberOfTemporalPositionsLabel->SetText ( "" );  
-//  this->NumberOfTemporalPositionsLabel->SetWidth ( 24 );
-  this->NumberOfTemporalPositionsLabel->SetAnchorToWest();
-  
-  vtkKWLabel *l8 = vtkKWLabel::New();
-  l8->SetParent  ( cfAuto->GetFrame() );
-  l8->Create();
-  l8->SetText ( "   Series Time: ");
-  this->SeriesTimeLabel = vtkKWLabel::New();
-  this->SeriesTimeLabel->SetParent  ( cfAuto->GetFrame() );
-  this->SeriesTimeLabel->Create();
-  this->SeriesTimeLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->SeriesTimeLabel->SetText ( "" );  
-//  this->SeriesTimeLabel->SetWidth ( 24 );
-  this->SeriesTimeLabel->SetAnchorToWest();
-  
-  vtkKWLabel *l9 = vtkKWLabel::New();
-  l9->SetParent  ( cfAuto->GetFrame() );
-  l9->Create();
-  l9->SetText ( "   Dose Time: ");
-  this->RPStartTimeLabel = vtkKWLabel::New();
-  this->RPStartTimeLabel->SetParent  ( cfAuto->GetFrame() );
-  this->RPStartTimeLabel->Create();
-  this->RPStartTimeLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->RPStartTimeLabel->SetText ( "" );  
-//  this->RPStartTimeLabel->SetWidth ( 24 );
-  this->RPStartTimeLabel->SetAnchorToWest();
-  
-  vtkKWLabel *l10 = vtkKWLabel::New();
-  l10->SetParent  ( cfAuto->GetFrame() );
-  l10->Create();
-  l10->SetText ( "   Reference Time: ");
-  this->FrameReferenceTimeLabel = vtkKWLabel::New();
-  this->FrameReferenceTimeLabel->SetParent  ( cfAuto->GetFrame() );
-  this->FrameReferenceTimeLabel->Create();
-  this->FrameReferenceTimeLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->FrameReferenceTimeLabel->SetText ( "" );  
-//  this->FrameReferenceTimeLabel->SetWidth ( 24 );
-  this->FrameReferenceTimeLabel->SetAnchorToWest();
-
-  vtkKWLabel *l11 = vtkKWLabel::New();
-  l11->SetParent  ( cfAuto->GetFrame() );
-  l11->Create();
-  l11->SetText ( "   Decay Correction: ");
-  this->DecayCorrectionLabel = vtkKWLabel::New();
-  this->DecayCorrectionLabel->SetParent  ( cfAuto->GetFrame() );
-  this->DecayCorrectionLabel->Create();
-  this->DecayCorrectionLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->DecayCorrectionLabel->SetText ( "" );  
-//  this->DecayCorrectionLabel->SetWidth ( 24 );
-  this->DecayCorrectionLabel->SetAnchorToWest();
-
-  vtkKWLabel *l12 = vtkKWLabel::New();
-  l12->SetParent  ( cfAuto->GetFrame() );
-  l12->Create();
-  l12->SetText ( "   Decay Factor: ");
-  this->DecayFactorLabel = vtkKWLabel::New();
-  this->DecayFactorLabel->SetParent  ( cfAuto->GetFrame() );
-  this->DecayFactorLabel->Create();
-  this->DecayFactorLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->DecayFactorLabel->SetText ( "" );  
-//  this->DecayFactorLabel->SetWidth ( 24 );
-  this->DecayFactorLabel->SetAnchorToWest();
-
-  vtkKWLabel *l13 = vtkKWLabel::New();
-  l13->SetParent  ( cfAuto->GetFrame() );
-  l13->Create();
-  l13->SetText ( "   Radionuclide Half Life: ");
-  this->RTHalfLifeLabel = vtkKWLabel::New();
-  this->RTHalfLifeLabel->SetParent  ( cfAuto->GetFrame() );
-  this->RTHalfLifeLabel->Create();
-  this->RTHalfLifeLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->RTHalfLifeLabel->SetText ( "" );  
-//  this->RTHalfLifeLabel->SetWidth ( 24 );
-  this->RTHalfLifeLabel->SetAnchorToWest();
-
-  vtkKWLabel *l14 = vtkKWLabel::New();
-  l14->SetParent  ( cfAuto->GetFrame() );
-  l14->Create();
-  l14->SetText ( "   Philips SUV Factor: ");
-  this->PhilipsSUVFactorLabel = vtkKWLabel::New();
-  this->PhilipsSUVFactorLabel->SetParent  ( cfAuto->GetFrame() );
-  this->PhilipsSUVFactorLabel->Create();
-  this->PhilipsSUVFactorLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->PhilipsSUVFactorLabel->SetText ( "" );  
-//  this->PhilipsSUVFactorLabel->SetWidth ( 24 );
-  this->PhilipsSUVFactorLabel->SetAnchorToWest();
-
-  vtkKWLabel *l15 = vtkKWLabel::New();
-  l15->SetParent  ( cfAuto->GetFrame() );
-  l15->Create();
-  l15->SetText ( "   Calibration Factor: ");
-  this->CalibrationFactorLabel = vtkKWLabel::New();
-  this->CalibrationFactorLabel->SetParent  ( cfAuto->GetFrame() );
-  this->CalibrationFactorLabel->Create();
-  this->CalibrationFactorLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  this->CalibrationFactorLabel->SetText ( "" );  
-//  this->CalibrationFactorLabel->SetWidth ( 24 );
-  this->CalibrationFactorLabel->SetAnchorToWest();
-
 
   //--- grid
   app->Script ( "grid columnconfigure %s 0 -weight 0", cfAuto->GetFrame()->GetWidgetName() );
   app->Script ( "grid columnconfigure %s 1 -weight 1", cfAuto->GetFrame()->GetWidgetName() );
-  app->Script("grid %s -row 0 -column 0 -sticky e  -padx 2 -pady 2", l5->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 0 -sticky e  -padx 2 -pady 2", l1->GetWidgetName() );
   app->Script("grid %s -row 0 -column 1 -sticky w -padx 4 -pady 2", this->PatientWeightLabel->GetWidgetName() );
-  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l6->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
   app->Script("grid %s -row 1 -column 1 -sticky w -padx 4 -pady 2", this->InjectedDoseLabel->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 0 -sticky e -padx 2 -pady 2", l8->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 1 -sticky w -padx 4 -pady 2", this->SeriesTimeLabel->GetWidgetName() );
-  app->Script("grid %s -row 3 -column 0 -sticky e -padx 2 -pady 2", l9->GetWidgetName() );
-  app->Script("grid %s -row 3 -column 1 -sticky w -padx 4 -pady 2", this->RPStartTimeLabel->GetWidgetName() );
-  app->Script("grid %s -row 4 -column 0 -sticky e -padx 2 -pady 2", l11->GetWidgetName() );
-  app->Script("grid %s -row 4 -column 1 -sticky w -padx 4 -pady 2", this->DecayCorrectionLabel->GetWidgetName() );
-  app->Script("grid %s -row 5 -column 0 -sticky e -padx 2 -pady 2", l12->GetWidgetName() );
-  app->Script("grid %s -row 5 -column 1 -sticky w -padx 4 -pady 2", this->DecayFactorLabel->GetWidgetName() );
-  app->Script("grid %s -row 6 -column 0 -sticky e -padx 2 -pady 2", l13->GetWidgetName() );
-  app->Script("grid %s -row 6 -column 1 -sticky w -padx 4 -pady 2", this->RTHalfLifeLabel->GetWidgetName() );
-  app->Script("grid %s -row 7 -column 0 -sticky e -padx 2 -pady 2", this->GetFromDICOMButton->GetWidgetName() );  
-/*
-  app->Script("grid %s -row 7 -column 0 -sticky e -padx 2 -pady 2", l10->GetWidgetName() );
-  app->Script("grid %s -row 7 -column 1 -sticky w -padx 4 -pady 2", this->FrameReferenceTimeLabel->GetWidgetName() );
-  app->Script("grid %s -row 8 -column 0 -sticky e -padx 2 -pady 2", l7->GetWidgetName() );
-  app->Script("grid %s -row 8 -column 1 -sticky w -padx 4 -pady 2", this->NumberOfTemporalPositionsLabel->GetWidgetName() );
-  app->Script("grid %s -row 9 -column 0 -sticky e -padx 2 -pady 2", l15->GetWidgetName() );
-  app->Script("grid %s -row 9 -column 1 -sticky w -padx 4 -pady 2", this->CalibrationFactorLabel->GetWidgetName() );
-  app->Script("grid %s -row 10 -column 0 -sticky e -padx 2 -pady 2", l14->GetWidgetName() );
-  app->Script("grid %s -row 10 -column 1 -sticky w -padx 4 -pady 2", this->PhilipsSUVFactorLabel->GetWidgetName() );
-*/
-
+  app->Script("grid %s -row 2 -column 0 -sticky ew -padx 2 -pady 2", this->GetFromDICOMButton->GetWidgetName() );  
 
   //---
   //--- Populate MANUAL frame
   //---
 
   //--- injected dose labels, entry, unit menu
-  vtkKWLabel *l1 = vtkKWLabel::New();
-  l1->SetParent ( cfManual->GetFrame() );
-  l1->Create();
-  l1->SetText ( "Injected Dose:" );
+  vtkKWLabel *l3 = vtkKWLabel::New();
+  l3->SetParent ( cfManual->GetFrame() );
+  l3->Create();
+  l3->SetText ( "Injected Dose:" );
   this->InjectedDoseEntry = vtkKWEntry::New();
   this->InjectedDoseEntry->SetParent ( cfManual->GetFrame() );
   this->InjectedDoseEntry->Create();
   this->InjectedDoseEntry->SetWidth ( 11 );
-  vtkKWLabel *l2 = vtkKWLabel::New();
-  l2->SetParent ( cfManual->GetFrame() );
-  l2->Create();
-  l2->SetText ( "Units:" );
+  vtkKWLabel *l4 = vtkKWLabel::New();
+  l4->SetParent ( cfManual->GetFrame() );
+  l4->Create();
+  l4->SetText ( "Units:" );
   this->DoseUnitsMenuButton = vtkKWMenuButton::New ( );
   this->DoseUnitsMenuButton->SetParent ( cfManual->GetFrame() );
   this->DoseUnitsMenuButton->Create();  
@@ -2282,10 +2295,10 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
 
 
   //--- injected dose labels, entry, unit menu
-  vtkKWLabel *l16 = vtkKWLabel::New();
-  l16->SetParent ( cfManual->GetFrame() );
-  l16->Create();
-  l16->SetText ( "Tissue Radioactivity Units:" );
+  vtkKWLabel *l7 = vtkKWLabel::New();
+  l7->SetParent ( cfManual->GetFrame() );
+  l7->Create();
+  l7->SetText ( "Tissue Radioactivity Units:" );
   this->TissueUnitsMenuButton = vtkKWMenuButton::New ( );
   this->TissueUnitsMenuButton->SetParent ( cfManual->GetFrame() );
   this->TissueUnitsMenuButton->Create();  
@@ -2307,18 +2320,18 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
 
 
   //-- patient weight labels, entry, unit menu
-  vtkKWLabel *l3 = vtkKWLabel::New();
-  l3->SetParent ( cfManual->GetFrame() );
-  l3->Create();
-  l3->SetText ( "Patient Weight:" );
+  vtkKWLabel *l5 = vtkKWLabel::New();
+  l5->SetParent ( cfManual->GetFrame() );
+  l5->Create();
+  l5->SetText ( "Patient Weight:" );
   this->PatientWeightEntry = vtkKWEntry::New();
   this->PatientWeightEntry->SetParent ( cfManual->GetFrame() );
   this->PatientWeightEntry->Create();
   this->PatientWeightEntry->SetWidth ( 11 );
-  vtkKWLabel *l4 = vtkKWLabel::New();
-  l4->SetParent ( cfManual->GetFrame() );
-  l4->Create();
-  l4->SetText ( "Units:" );
+  vtkKWLabel *l6 = vtkKWLabel::New();
+  l6->SetParent ( cfManual->GetFrame() );
+  l6->Create();
+  l6->SetText ( "Units:" );
   this->WeightUnitsMenuButton = vtkKWMenuButton::New ( );
   this->WeightUnitsMenuButton->SetParent ( cfManual->GetFrame() );
   this->WeightUnitsMenuButton->Create();  
@@ -2335,15 +2348,15 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
   app->Script ( "grid columnconfigure %s 2 -weight 0", cfManual->GetFrame()->GetWidgetName() );
   app->Script ( "grid columnconfigure %s 3 -weight 1", cfManual->GetFrame()->GetWidgetName() );
 
-  app->Script("grid %s -row 0 -column 0 -columnspan 3 -sticky e -padx 2 -pady 2", l16->GetWidgetName() );
+  app->Script("grid %s -row 0 -column 0 -columnspan 3 -sticky e -padx 2 -pady 2", l7->GetWidgetName() );
   app->Script("grid %s -row 0 -column 3 -sticky e -padx 2 -pady 2", this->TissueUnitsMenuButton->GetWidgetName() );
-  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l3->GetWidgetName() );
   app->Script("grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 2", this->InjectedDoseEntry->GetWidgetName() );
-  app->Script("grid %s -row 1 -column 2 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
+  app->Script("grid %s -row 1 -column 2 -sticky e -padx 2 -pady 2", l4->GetWidgetName() );
   app->Script("grid %s -row 1 -column 3 -sticky ew -padx 2 -pady 2", this->DoseUnitsMenuButton->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 0 -sticky e -padx 2 -pady 2", l3->GetWidgetName() );
+  app->Script("grid %s -row 2 -column 0 -sticky e -padx 2 -pady 2", l5->GetWidgetName() );
   app->Script("grid %s -row 2 -column 1 -sticky ew -padx 2 -pady 2", this->PatientWeightEntry->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 2 -sticky e -padx 2 -pady 2", l4->GetWidgetName() );
+  app->Script("grid %s -row 2 -column 2 -sticky e -padx 2 -pady 2", l6->GetWidgetName() );
   app->Script("grid %s -row 2 -column 3 -sticky ew -padx 2 -pady 2", this->WeightUnitsMenuButton->GetWidgetName() );
 
   //--- clean up
@@ -2354,15 +2367,6 @@ void vtkPETCTFusionGUI::BuildAnalysisFrame ( vtkKWWidget *page  )
   l5->Delete();
   l6->Delete();
   l7->Delete();
-  l8->Delete();
-  l9->Delete();
-  l10->Delete();
-  l11->Delete();
-  l12->Delete();
-  l13->Delete();
-  l14->Delete();  
-  l15->Delete();  
-  l16->Delete();  
   cfManual->Delete();
   cfAuto->Delete();
   analyzeFrame->Delete();
@@ -2382,85 +2386,49 @@ void vtkPETCTFusionGUI::BuildReportFrame ( vtkKWWidget *page  )
   vtkSlicerModuleCollapsibleFrame *outputFrame = vtkSlicerModuleCollapsibleFrame::New();
   outputFrame->SetParent(page);
   outputFrame->Create();
-  outputFrame->SetLabelText("Compute & View Results");
+  outputFrame->SetLabelText("Quantitative Measures");
   outputFrame->ExpandFrame();
   app->Script("pack %s -side top -fill x -expand y -padx 2 -pady 2", outputFrame->GetWidgetName());
   
+  
+  //--- mc list with results per label.
+  this->ResultListWithScrollbars = vtkKWMultiColumnListWithScrollbars::New();
+  this->ResultListWithScrollbars->SetParent ( outputFrame->GetFrame() );
+  this->ResultListWithScrollbars->Create();
+  this->ResultList = this->ResultListWithScrollbars->GetWidget();
+  this->ResultList->SetHeight(3);
+  this->ResultList->SetWidth(4);
+  int col_index;
+
+  // Add the columns (make some of them editable)
+  col_index = this->ResultList->AddColumn("Label");
+  this->ResultList->ColumnEditableOff(col_index);
+
+  // Add the columns (make some of them editable)
+  col_index = this->ResultList->AddColumn("Color");
+  this->ResultList->ColumnEditableOff(col_index);
+
+  col_index = this->ResultList->AddColumn("SUVMax (g/ml)     ");
+  this->ResultList->ColumnEditableOff(col_index);
+  
+  col_index = this->ResultList->AddColumn("SUVMean (g/ml)     ");
+  this->ResultList->ColumnEditableOff(col_index);
+  app->Script(
+    "pack %s -side top -anchor w -fill x -expand y -padx 2 -pady 2", 
+    this->ResultListWithScrollbars->GetWidgetName());
+
   //--- get from dicom button
   this->ComputeButton = vtkKWPushButton::New();
   this->ComputeButton->SetParent ( outputFrame->GetFrame() );
   this->ComputeButton->Create();
   this->ComputeButton->SetReliefToGroove();
-  this->ComputeButton->SetText ( "Compute SUV" );
+  this->ComputeButton->SetText ( "Compute / Refresh" );
 
-  //--- suv max
-  vtkKWLabel *l1 = vtkKWLabel::New();
-  l1->SetParent ( outputFrame->GetFrame() );
-  l1->Create();
-  l1->SetText ( "SUV_max: " );
-  l1->SetWidth (14);
-  l1->SetAnchorToEast();
-  this->SUVmaxLabel = vtkKWLabel::New();
-  this->SUVmaxLabel->SetParent ( outputFrame->GetFrame() );
-  this->SUVmaxLabel->Create();
-  this->SUVmaxLabel->SetWidth ( 11 );  
-  this->SUVmaxLabel->SetText ( "" );  
-  this->SUVmaxLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  vtkKWLabel *l4 = vtkKWLabel::New();
-  l4->SetParent ( outputFrame->GetFrame() );
-  l4->Create();
-  l4->SetText ( "SUV_min: " );
-  l4->SetWidth (14);
-  l4->SetAnchorToEast();
-  this->SUVminLabel = vtkKWLabel::New();
-  this->SUVminLabel->SetParent ( outputFrame->GetFrame() );
-  this->SUVminLabel->Create();
-  this->SUVminLabel->SetWidth ( 11 );  
-  this->SUVminLabel->SetText ( "" );
-  this->SUVminLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  //--- normalized value
-  vtkKWLabel *l2 = vtkKWLabel::New();
-  l2->SetParent ( outputFrame->GetFrame() );
-  l2->Create();
-  l2->SetText ( "SUV_mean: " );
-  l2->SetWidth (14);
-  l2->SetAnchorToEast();  
-  this->SUVmeanLabel = vtkKWLabel::New();
-  this->SUVmeanLabel->SetParent ( outputFrame->GetFrame() );
-  this->SUVmeanLabel->Create();
-  this->SUVmeanLabel->SetWidth ( 11 );  
-  this->SUVmeanLabel->SetText ( "" );  
-  this->SUVmeanLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  
-  vtkKWLabel *l3 = vtkKWLabel::New();
-  l3->SetParent ( outputFrame->GetFrame() );
-  l3->Create();
-  l3->SetText ( "SUV_max_mean: " );
-  l3->SetWidth (14);
-  l3->SetAnchorToEast();
-  this->SUVmaxmeanLabel = vtkKWLabel::New();
-  this->SUVmaxmeanLabel->SetParent ( outputFrame->GetFrame() );
-  this->SUVmaxmeanLabel->Create();
-  this->SUVmaxmeanLabel->SetWidth ( 11 );  
-  this->SUVmaxmeanLabel->SetText ( "" );  
-  this->SUVmaxmeanLabel->SetForegroundColor ( 0.0, 0.2, 0.6 );
-  
-  app->Script("grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", this->ComputeButton->GetWidgetName() );
-  app->Script("grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
-  app->Script("grid %s -row 1 -column 1 -sticky w -padx 2 -pady 2", SUVmaxLabel->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 0 -sticky e -padx 2 -pady 2", l4->GetWidgetName() );
-  app->Script("grid %s -row 2 -column 1 -sticky w -padx 2 -pady 2", SUVminLabel->GetWidgetName() );
-  app->Script("grid %s -row 3 -column 0 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
-  app->Script("grid %s -row 3 -column 1 -sticky w -padx 2 -pady 2", SUVmeanLabel->GetWidgetName() );
-//  app->Script("grid %s -row 4 -column 0 -sticky e -padx 2 -pady 2", l3->GetWidgetName() );
-//  app->Script("grid %s -row 4 -column 1 -sticky w -padx 2 -pady 2", SUVmaxmeanLabel->GetWidgetName() );
-  app->Script ( "grid columnconfigure %s 0 -weight 0", outputFrame->GetFrame()->GetWidgetName() );  
-  app->Script ( "grid columnconfigure %s 1 -weight 1", outputFrame->GetFrame()->GetWidgetName() );  
-  
-  l1->Delete();
-  l2->Delete();
-  l3->Delete();
-  l4->Delete();
+  app->Script(
+    "pack %s -side top -anchor w  -padx 2 -pady 2", 
+    this->ComputeButton->GetWidgetName());
+
+
   outputFrame->Delete();
     
 }
@@ -2498,21 +2466,13 @@ void vtkPETCTFusionGUI::InitializeGUI ( )
     return;
     }
   
-  if ( this->SUVmaxLabel )
+  if ( this->PatientNameLabel )
     {
-    this->SUVmaxLabel->SetText ( "" );
+    this->PatientNameLabel->SetText ("");
     }
-  if ( this->SUVminLabel )
+  if ( this->StudyDateLabel )
     {
-    this->SUVminLabel->SetText ( "" );
-    }
-  if ( this->SUVmeanLabel )
-    {
-    this->SUVmeanLabel->SetText ( "" );
-    }
-  if ( this->SUVmaxmeanLabel )
-    {
-    this->SUVmaxmeanLabel->SetText ( "" );
+    this->StudyDateLabel->SetText ( "" );
     }
   if ( this->PatientWeightLabel )
     {
@@ -2521,42 +2481,6 @@ void vtkPETCTFusionGUI::InitializeGUI ( )
   if ( this->InjectedDoseLabel )
     {
     this->InjectedDoseLabel->SetText ( "" );
-    }
-  if ( this->NumberOfTemporalPositionsLabel )
-    {
-    this->NumberOfTemporalPositionsLabel->SetText ( "" );
-    }
-  if ( this->SeriesTimeLabel )
-    {
-    this->SeriesTimeLabel->SetText ( "" );
-    }
-  if ( this->RPStartTimeLabel )
-    {
-    this->RPStartTimeLabel->SetText ( "" );
-    }
-  if ( this->FrameReferenceTimeLabel )
-    {
-    this->FrameReferenceTimeLabel->SetText ( "" );
-    }
-  if ( this->DecayCorrectionLabel )
-    {
-    this->DecayCorrectionLabel->SetText ( "" );
-    }
-  if ( this->DecayFactorLabel )
-    {
-    this->DecayFactorLabel->SetText ( "" );
-    }
-  if ( this->RTHalfLifeLabel )
-    {  
-    this->RTHalfLifeLabel->SetText ( "" );
-    }
-  if ( this->PhilipsSUVFactorLabel )
-    {
-    this->PhilipsSUVFactorLabel->SetText ( "" );
-    }
-  if ( this->CalibrationFactorLabel )
-    {
-    this->CalibrationFactorLabel->SetText ( "" );
     }
 }
 
@@ -2591,8 +2515,8 @@ void vtkPETCTFusionGUI::BuildGUI ( )
   //---
   //--- HELP
   //---
-  const char* help_text = "The PETCTFusion displays PET/CT data and performs some PET quantifications.\n\nFrom: http://www.turkupetcentre.net/modelling/methods/suv.html: \n\nThe PET quantifier \"Standardized Uptake Value\", SUV, (or \"Dose Uptake Ratio\", DUR) is calculated as a ratio of tissue radioactivity concentration CPET(t)  at time t and in units (kBq/ml), and injected dose in units (MBq) at the time of injection divided by body weight (kg).\n\nForumula implemented: SUVbw = CPET(t) / (Injected dose / Patient's weight)\n\nThe input units are converted to those above, and the resulting SUV values are in units (g/ml).\n\nThe injected dose may also be corrected by the lean body mass, or body surface area (BSA) (Kim et al., 1994). Verbraecken et al. (2006) review the different formulas for calculating the BSA.\n\nForumula to be implemented: SUVbsa= CPET(T) / (Injected dose / BSA)\n\nCancer treatment responce is usually assessed with FDG PET by calculating the SUV on the highest image pixel in the tumour regions (SUVmax). Alternatively, tumour volume can be estimated using threshold or region growing techniques, and average SUV inside the region is reported as such or multiplied by tumour volume to calculate the total glycolytic volume, TGV (Boucek et al., 2008). Nahmias and Wahl (2008) reported that the use of SUVmax has worse reproducibility (3% ± 11%) than does the SUVmean value (1% ± 7%).\n\nCalculation of SUV does not require blood sampling or dynamic imaging. The imaging must take place at a late time point, and always at the same time point, if results are to be compared (Eckelman et al., 2000). \n\n The PET image should contain only one (late) frame. If the PET image contains more than one frame, the frames can be averaged together (check correctness of this). \n\n\nThis module is new and will be extended.";
-  const char* ack_text = "PETCTFusion was developed by Wendy Plesniak with help from Jeffrey Yapp and Ron Kikinis. This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\n";
+  const char* help_text = "The PETCTFusion Module displays PET/CT data and performs some PET quantitative measurements (Standardized Uptake Value).\n\nFrom: http://www.turkupetcentre.net/modelling/methods/suv.html: \n\nThe PET quantifier \"Standardized Uptake Value\", SUV, (or \"Dose Uptake Ratio\", DUR) is calculated as a ratio of tissue radioactivity concentration CPET(t)  at time t and in units (kBq/ml), and injected dose in units (MBq) at the time of injection divided by body weight (kg).\n\nForumula implemented: SUVbw = CPET(t) / (Injected dose / Patient's weight)\n\nThe input units are converted to those above, and the resulting SUV values are in units (g/ml).\n\nThe Data Fusion panel allows the CT volume, PET volume and a tumor mask to be selected. It is recommended that the PET volume be a DICOM study so that SUV attributes can be extracted automatically from the DICOM header. The tumor mask may contain multiple tumor labels; each label ID/color will receive a separate SUVmax and SUVmean computation.\n\nThe Display panel allows the selection of different colorizing treatments for the PET volume, and Window/Level adjustments for the PET and CT volumes. The PET color range is displayed in SUV units, from 0 to the volume's SUVmax.\n\nThe Quantitative Measures panel provides a button for the computation of SUVmax and SUVmean for each label in the Tumor Mask. The Study Parameters panel allows review of SUV attributes extracted from the DICOM header (and used in the SUV computations) and a panel for setting attributes manually if the PET Volume is a non-DICOM study.\n\n";
+  const char* ack_text = "PETCTFusion was developed by Wendy Plesniak with help from Jeffrey Yapp and Ron Kikinis. This work was supported by NA-MIC, NAC, BIRN, NCIGT, Harvard CTSC, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\n";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PETCTFusion" );    
   this->BuildHelpAndAboutFrame(page, help_text, ack_text);
@@ -2654,13 +2578,15 @@ void vtkPETCTFusionGUI::BuildGUI ( )
     this->BuildDisplayFrame ( page );
 
     //
-    //--- Analyze Frame
-    this->BuildAnalysisFrame ( page );
-
-    //
     //--- Output Frame
     this->BuildReportFrame ( page );
 
+    //
+    //--- Analyze Frame
+    this->BuildAnalysisFrame ( page );
+
+
+    this->InitializeCTMinAndMax();
     this->InitializePETMinAndMax();
     this->InitializeGUI();
     this->Built = true;
@@ -2673,20 +2599,90 @@ void vtkPETCTFusionGUI::Init ( )
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessColorRangeCommand ( double min, double max)
+ void vtkPETCTFusionGUI::ProcessPETRangeCommand ( double min, double max)
 {
-  this->UpdateNodeColorRange();
+  if ( this->UpdatingLUT )
+    {
+    this->UpdateNodePETColorRange();
+    }
 }
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessColorRangeStartCommand( double min, double max)
+ void vtkPETCTFusionGUI::ProcessPETRangeStartCommand( double min, double max)
 {
   if ( this->PETCTFusionNode == NULL )
     {
     return;
     }
-  if ( this->ColorRange == NULL )
+  if ( this->PETRange == NULL )
+    {
+    return;
+    }
+
+  //--- Turn on UpdatingLUT
+  this->UpdatingLUT = 1;
+
+  double mmin = this->Logic->ConvertSUVUnitsToImageUnits(this->PETRange->GetEntry1()->GetValueAsDouble());
+  double mmax = this->Logic->ConvertSUVUnitsToImageUnits(this->PETRange->GetEntry2()->GetValueAsDouble());
+  double nodeMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMin() );
+  double nodeMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMax() );
+
+  //--- make sure node captures GUI
+  //--- changes during interaction.
+  if ( this->PETRange->GetEntry1()->GetValueAsDouble() != nodeMin )
+    {
+    this->PETCTFusionNode->SetColorRangeMin (mmin);
+    }
+  if ( this->PETRange->GetEntry2()->GetValueAsDouble() != nodeMax )
+    {
+    this->PETCTFusionNode->SetColorRangeMax ( mmax );
+    }
+}
+
+
+
+//--------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ProcessPETRangeStopCommand ( double min, double max)
+{
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->PETRange == NULL )
+    {
+    return;
+    }
+
+  double mmin = this->Logic->ConvertSUVUnitsToImageUnits(this->PETRange->GetEntry1()->GetValueAsDouble());
+  double mmax = this->Logic->ConvertSUVUnitsToImageUnits(this->PETRange->GetEntry2()->GetValueAsDouble());
+
+  //--- make sure node captures GUI
+  //--- at interaction end.
+  this->PETCTFusionNode->SetColorRange ( mmin, mmax );
+
+  //--- Turn off UpdatingLUT
+  this->UpdatingLUT = 0;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+ void vtkPETCTFusionGUI::ProcessCTRangeCommand ( double min, double max)
+{
+  this->UpdateNodeCTColorRange();
+}
+
+
+//---------------------------------------------------------------------------
+ void vtkPETCTFusionGUI::ProcessCTRangeStartCommand( double min, double max)
+{
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->CTRange == NULL )
     {
     return;
     }
@@ -2695,41 +2691,39 @@ void vtkPETCTFusionGUI::Init ( )
   this->UpdatingLUT = 1;
 
   //--- make sure node and gui are in synch.
-  if ( this->ColorRange->GetEntry1()->GetValueAsDouble() !=
-       this->PETCTFusionNode->GetColorRangeMin() )
+  if ( this->CTRange->GetEntry1()->GetValueAsDouble() !=
+       this->PETCTFusionNode->GetCTRangeMin() )
     {
-    this->PETCTFusionNode->SetColorRangeMin ( this->ColorRange->GetEntry1()->GetValueAsDouble() );
+    this->PETCTFusionNode->SetCTRangeMin ( this->CTRange->GetEntry1()->GetValueAsDouble() );
     }
   
-  if ( this->ColorRange->GetEntry2()->GetValueAsDouble() !=
-       this->PETCTFusionNode->GetColorRangeMax() )
+  if ( this->CTRange->GetEntry2()->GetValueAsDouble() !=
+       this->PETCTFusionNode->GetCTRangeMax() )
     {
-    this->PETCTFusionNode->SetColorRangeMax ( this->ColorRange->GetEntry2()->GetValueAsDouble() );
+    this->PETCTFusionNode->SetCTRangeMax ( this->CTRange->GetEntry2()->GetValueAsDouble() );
     }
 }
 
 
 
 //--------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ProcessColorRangeStopCommand ( double min, double max)
+void vtkPETCTFusionGUI::ProcessCTRangeStopCommand ( double min, double max)
 {
   if ( this->PETCTFusionNode == NULL )
     {
     return;
     }
-  if ( this->ColorRange == NULL )
+  if ( this->CTRange == NULL )
     {
     return;
     }
   //--- make sure node and gui are in synch.
-  this->PETCTFusionNode->SetColorRange (this->ColorRange->GetEntry1()->GetValueAsDouble(),
-                                        this->ColorRange->GetEntry2()->GetValueAsDouble() );
+  this->PETCTFusionNode->SetCTRange (this->CTRange->GetEntry1()->GetValueAsDouble(),
+                                        this->CTRange->GetEntry2()->GetValueAsDouble() );
 
   //--- Turn off UpdatingLUT
   this->UpdatingLUT = 0;
 }
-
-
 
 
 
@@ -2770,6 +2764,14 @@ void vtkPETCTFusionGUI::ClearDICOMInformation()
     {
     return;
     }
+  if ( this->PatientNameLabel )
+    {
+    this->PatientNameLabel->SetText ("");
+    }
+  if ( this->StudyDateLabel )
+    {
+    this->StudyDateLabel->SetText ("");
+    }
   if ( this->PatientWeightLabel )
     {
     this->PatientWeightLabel->SetText ("");
@@ -2778,43 +2780,6 @@ void vtkPETCTFusionGUI::ClearDICOMInformation()
     {
     this->InjectedDoseLabel->SetText ( "");
     }
-  if ( this->NumberOfTemporalPositionsLabel )
-    {
-    this->NumberOfTemporalPositionsLabel->SetText ( "" );
-    }
-  if ( this->SeriesTimeLabel )
-    {
-    this->SeriesTimeLabel->SetText ("");
-    }
-  if ( this->RPStartTimeLabel )
-    {
-    this->RPStartTimeLabel->SetText ("");
-    }
-  if ( this->FrameReferenceTimeLabel )
-    {
-    this->FrameReferenceTimeLabel->SetText ("");
-    }
-  if ( this->DecayCorrectionLabel )
-    {
-    this->DecayCorrectionLabel->SetText ("");
-    }
-  if ( this->DecayFactorLabel )
-    {
-    this->DecayFactorLabel->SetText ("");
-    }
-  if ( this->RTHalfLifeLabel )
-    {
-    this->RTHalfLifeLabel->SetText ("");
-    }
-  if ( this->PhilipsSUVFactorLabel )
-    {
-    this->PhilipsSUVFactorLabel->SetText ("");
-    }
-  if ( this->CalibrationFactorLabel )
-    {
-    this->CalibrationFactorLabel->SetText ("");
-    }
-    
 }
 
 
@@ -2910,73 +2875,425 @@ void vtkPETCTFusionGUI::UpdateDICOMPanel()
 
 
 //---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::UpdateCTDisplayFromMRML ()
+{
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->CTRange == NULL )
+    {
+    return;
+    }
+  this->CTRange->SetWholeRange ( this->PETCTFusionNode->GetCTMin(), this->PETCTFusionNode->GetCTMax());
+  //---
+  //--- Method gets called if CTSelector changes
+  //--- Scales current LUT to span the desired range of values
+  //--- as specified in state.
+  //---
+  double tmpMin, tmpMax;
+  tmpMin = this->CTRange->GetEntry1()->GetValueAsDouble();
+  tmpMax = this->CTRange->GetEntry2()->GetValueAsDouble();
+  
+  if ( (tmpMin != this->PETCTFusionNode->GetCTRangeMin()) ||
+       tmpMax != this->PETCTFusionNode->GetCTRangeMax() )
+    {
+    this->CTRange->GetEntry1()->SetValueAsDouble ( this->PETCTFusionNode->GetCTRangeMin() );
+    this->CTRange->GetEntry2()->SetValueAsDouble ( this->PETCTFusionNode->GetCTRangeMax() );
+    this->CTRange->SetWholeRange(this->PETCTFusionNode->GetCTMin(), this->PETCTFusionNode->GetCTMax());
+    this->CTRange->SetRange(this->PETCTFusionNode->GetCTRangeMin(), this->PETCTFusionNode->GetCTRangeMax());
+    this->ScaleCTColormap( this->PETCTFusionNode->GetCTRangeMin(),
+                         this->PETCTFusionNode->GetCTRangeMax());
+    }
+}
+
+
+
+
+
+
+//---------------------------------------------------------------------------
 void vtkPETCTFusionGUI::UpdatePETDisplayFromMRML ()
 {
   if ( this->PETCTFusionNode == NULL )
     {
     return;
     }
-  if ( this->ColorRange == NULL )
+  if ( this->Logic == NULL )
     {
     return;
     }
-  this->ColorRange->SetWholeRange ( this->PETCTFusionNode->GetPETMin(), this->PETCTFusionNode->GetPETMax());
+  if ( this->PETRange == NULL )
+    {
+    return;
+    }
 
   //---
   //--- Method gets called if PETSelector changes
   //--- Scales current LUT to span the desired range of values
   //--- as specified in state.
   //---
-
   double tmpMin, tmpMax;
-  tmpMin = this->ColorRange->GetEntry1()->GetValueAsDouble();
-  tmpMax = this->ColorRange->GetEntry2()->GetValueAsDouble();
+  tmpMin = this->PETRange->GetEntry1()->GetValueAsDouble();
+  tmpMax = this->PETRange->GetEntry2()->GetValueAsDouble();
   
-  if ( (tmpMin != this->PETCTFusionNode->GetColorRangeMin()) ||
-       tmpMax != this->PETCTFusionNode->GetColorRangeMax() )
+  double nodeColorMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMin());
+  double nodeColorMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMax() );
+  double nodePETMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetPETMin());
+  double nodePETMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetPETMax() );
+
+  if ( (tmpMin != nodeColorMin) || (tmpMax != nodeColorMax) )
     {
-    this->ColorRange->GetEntry1()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMin() );
-    this->ColorRange->GetEntry2()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMax() );
-    this->ScaleColormap( this->PETCTFusionNode->GetColorRangeMin(),
+    this->PETRange->GetEntry1()->SetValueAsDouble ( nodeColorMin );
+    this->PETRange->GetEntry2()->SetValueAsDouble ( nodeColorMax );
+    this->PETRange->SetWholeRange( nodePETMin, nodePETMax );
+    this->PETRange->SetRange( nodeColorMin, nodeColorMax );
+    this->ScalePETColormap( this->PETCTFusionNode->GetColorRangeMin(),
                          this->PETCTFusionNode->GetColorRangeMax());
     }
 }
 
 
+
+
+
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::UpdateNodeColorRange ()
+void vtkPETCTFusionGUI::UpdateNodePETColorRange ()
 {
   if ( this->PETCTFusionNode == NULL )
     {
     return;
     }
-  if ( this->ColorRange == NULL )
+  if ( this->Logic == NULL )
+    {
+    return;
+    }
+  if ( this->PETRange == NULL )
     {
     return;
     }
 
   //---
-  //--- Method gets called if LUTSelector changes
+  //--- Method gets called if LUT for PET volume changes
+  //--- or if Window/Level are adjusted.
   //--- Scales current LUT to span the desired range of values
   //--- as specified by GUI interaction
   //---
   double tmpMin, tmpMax;
 
-  tmpMin = this->ColorRange->GetEntry1()->GetValueAsDouble();
-  tmpMax = this->ColorRange->GetEntry2()->GetValueAsDouble();
-  if ( (tmpMin != this->PETCTFusionNode->GetColorRangeMin()) ||
-       tmpMax != this->PETCTFusionNode->GetColorRangeMax() )
+  tmpMin = this->PETRange->GetEntry1()->GetValueAsDouble();
+  tmpMax = this->PETRange->GetEntry2()->GetValueAsDouble();
+  double nodeColorMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMin());
+  double nodeColorMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMax() );
+  
+  if ( (tmpMin != nodeColorMin)  ||   (tmpMax != nodeColorMax) )
     {
-    this->PETCTFusionNode->SetColorRange (tmpMin, tmpMax );
-    this->ScaleColormap ( this->PETCTFusionNode->GetColorRangeMin(),
+    this->PETCTFusionNode->SetColorRange (
+                                          this->Logic->ConvertSUVUnitsToImageUnits(tmpMin),
+                                          this->Logic->ConvertSUVUnitsToImageUnits(tmpMax) );
+    this->ScalePETColormap ( this->PETCTFusionNode->GetColorRangeMin(),
                           this->PETCTFusionNode->GetColorRangeMax() );
-    this->PETCTFusionNode->InvokeEvent (vtkMRMLPETCTFusionNode::UpdateDisplayEvent );
     }
 }
 
 
+
+
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ScaleColormap( double min, double max)
+void vtkPETCTFusionGUI::UpdateNodeCTColorRange ()
+{
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->CTRange == NULL )
+    {
+    return;
+    }
+  double tmpMin, tmpMax;
+
+  tmpMin = this->CTRange->GetEntry1()->GetValueAsDouble();
+  tmpMax = this->CTRange->GetEntry2()->GetValueAsDouble();
+  if ( (tmpMin != this->PETCTFusionNode->GetCTRangeMin()) ||
+       tmpMax != this->PETCTFusionNode->GetCTRangeMax() )
+    {
+    this->PETCTFusionNode->SetCTRange (tmpMin, tmpMax );
+    this->ScaleCTColormap ( this->PETCTFusionNode->GetCTRangeMin(),
+                          this->PETCTFusionNode->GetCTRangeMax() );
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------
+const char * vtkPETCTFusionGUI::GetCTColorTableNodeIDByType (int type)
+{
+  vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
+  basicNode->SetType(type);
+  const char *id = basicNode->GetTypeAsIDString();
+  basicNode->Delete();
+  return (id);
+}
+
+
+
+
+//---------------------------------------------------------------------------
+const char * vtkPETCTFusionGUI::GetPETColorNodeIDByType(int type)
+{
+  vtkMRMLPETProceduralColorNode *basicNode = vtkMRMLPETProceduralColorNode::New();
+  basicNode->SetType(type);
+  const char *id = basicNode->GetTypeAsIDString();
+  basicNode->Delete();
+  return (id);
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ApplyDefaultCTLUT()
+{
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultCTLUT: Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->GetApplication() == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultCTLUT: Got NULL Application." );
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultCTLUT: Got NULL PETCTFusionNode." );
+    return;
+    }
+
+  vtkMRMLScalarVolumeNode *node =
+    vtkMRMLScalarVolumeNode::SafeDownCast (
+                                           this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputCTReference() ));
+  if ( node == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultCTLUT: Got NULL CT volume node." );
+    return;
+    }
+  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node->GetDisplayNode());
+
+
+  //---
+  //--- check the volume --
+  //--- if it doesn't yet have a display node,
+  //--- we need to create one
+  //---
+  if (displayNode == NULL)
+    {
+    //--- assign default volumeColorNode.
+    const char *cID = this->GetCTColorTableNodeIDByType ( vtkMRMLColorTableNode::Grey);
+    if ( cID == NULL)
+      {
+      vtkErrorMacro ( "Could not find default greyscale color node in scene." );
+      return;
+      }
+    displayNode = vtkMRMLScalarVolumeDisplayNode::New ();
+    displayNode->SetScene(this->MRMLScene);
+    this->MRMLScene->AddNode (displayNode);
+    displayNode->SetAndObserveColorNodeID ( cID );
+    node->SetAndObserveDisplayNodeID( displayNode->GetID() );
+    displayNode->Delete();
+    }
+  
+
+  //---
+  //--- Default color display & valid overrides:
+  //--- Set the LUT to greyscale unless already specified.
+  //---
+  vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast ( displayNode->GetColorNode() );
+  vtkMRMLColorNode *c = vtkMRMLColorNode::SafeDownCast ( displayNode->GetColorNode() );
+  if ( c == NULL )
+    {
+    //--- TODO:
+    //--- create a color node here.
+    vtkErrorMacro ( "Display node has no color node!" );
+    return;
+    }
+
+
+  if ( cnode == NULL )
+    {
+    //--- set the color node to be default Grey
+    const char *id = this->GetCTColorTableNodeIDByType ( vtkMRMLColorTableNode::Grey);
+    if ( id != NULL )
+      {
+      displayNode->SetAndObserveColorNodeID ( id );
+      this->PETCTFusionNode->SetCTLUT(id);      
+      }
+    else
+      {
+      vtkErrorMacro ( "No Default (Grey) vtkMRMLColorTableNode found in scene. Cannot set color node." );
+      return;
+      }
+    }
+  else 
+    {
+    int type = cnode->GetType();
+    //--- if type is not Grey
+    const char *id = this->GetCTColorTableNodeIDByType ( vtkMRMLColorTableNode::Grey);
+    if ( type != vtkMRMLColorTableNode::Grey ) 
+      {
+      //--- ... then set it to be Grey by default.
+      if ( id == NULL )
+        {
+        vtkErrorMacro ( "No Default (Grey) vtkMRMLColorTableNode found in scene. Cannot set color node." );
+        return;
+        }
+      displayNode->SetAndObserveColorNodeID (id );
+      }
+    this->PETCTFusionNode->SetCTLUT(displayNode->GetColorNodeID());      
+    }
+
+  //---
+  //--- update win/lev sliders with recomputed values
+  //--- TODO: this will get caught by display widgets
+  //--- in volumes module: but ensure it gets caught
+  //--- in display panel here too.
+  //---
+  displayNode->DisableModifiedEventOn();
+  vtkMRMLScalarVolumeNode *svolumeNode = NULL;
+  svolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+  if (displayNode->GetAutoWindowLevel() )
+    {
+    svolumeNode->CalculateScalarAutoLevels(displayNode);
+    }
+  displayNode->DisableModifiedEventOff();
+  displayNode->InvokePendingModifiedEvent();
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ApplyDefaultPETLUT()
+{
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultPETLUT: Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->GetApplication() == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultPETLUT: Got NULL Application." );
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultPETLUT: Got NULL PETCTFusionNode." );
+    return;
+    }
+
+  vtkMRMLScalarVolumeNode *node =
+    vtkMRMLScalarVolumeNode::SafeDownCast (
+                                           this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputPETReference() ));
+  if ( node == NULL )
+    {
+    vtkErrorMacro ( "ApplyDefaultPETLUT: Got NULL PET volume node." );
+    return;
+    }
+  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node->GetDisplayNode());
+
+
+  //---
+  //--- check the volume --
+  //--- if it doesn't yet have a display node,
+  //--- we need to create one
+  //---
+  if (displayNode == NULL)
+    {
+    const char *cID = this->GetPETColorNodeIDByType ( vtkMRMLPETProceduralColorNode::PETheat);
+    if ( cID == NULL)
+      {
+      vtkErrorMacro ( "Could not find default PETheat color node in scene." );
+      return;
+      }
+    displayNode = vtkMRMLScalarVolumeDisplayNode::New ();
+    displayNode->SetScene(this->MRMLScene);
+    this->MRMLScene->AddNode (displayNode);
+    displayNode->SetAndObserveColorNodeID ( cID );
+    node->SetAndObserveDisplayNodeID( displayNode->GetID() );
+    displayNode->Delete();
+    }
+  
+
+  //---
+  //--- Default color display & valid overrides:
+  //--- If the node has a valid PET color LUT set, then allow it to
+  //--- stay that way. Otherwise, set the color LUT to PETheat.
+  //---
+  vtkMRMLPETProceduralColorNode *cnode = vtkMRMLPETProceduralColorNode::SafeDownCast ( displayNode->GetColorNode() );
+  vtkMRMLColorNode *c = vtkMRMLColorNode::SafeDownCast ( displayNode->GetColorNode() );
+  if ( c == NULL )
+    {
+    //--- TODO:
+    //--- create a color node here.
+    vtkErrorMacro ( "Display node has no color node!" );
+    return;
+    }
+
+
+  if ( cnode == NULL )
+    {
+    //--- set the color node to be default PETheat
+    const char *id = this->GetPETColorNodeIDByType ( vtkMRMLPETProceduralColorNode::PETheat);
+    if ( id != NULL )
+      {
+      displayNode->SetAndObserveColorNodeID ( id );
+      this->PETCTFusionNode->SetPETLUT(id);      
+      }
+    else
+      {
+      vtkErrorMacro ( "No Default (PETheat) vtkMRMLPETProceduralColorNode found in scene. Cannot set color node." );
+      return;
+      }
+    }
+  else 
+    {
+    int type = cnode->GetType();
+    //--- if type is not a PET LUT....
+    if ( ( type != vtkMRMLPETProceduralColorNode::PETheat ) &&
+         ( type != vtkMRMLPETProceduralColorNode::PETrainbow) &&
+         ( type != vtkMRMLPETProceduralColorNode::PETMIP) )
+      {
+      //--- ... then set it to be PETheat by default.
+      const char *id = this->GetPETColorNodeIDByType ( vtkMRMLPETProceduralColorNode::PETheat);
+      if ( id == NULL )
+        {
+        vtkErrorMacro ( "No Default (PETheat) vtkMRMLPETProceduralColorNode found in scene. Cannot set color node." );
+        return;
+        }
+      displayNode->SetAndObserveColorNodeID (id );
+      }
+    this->PETCTFusionNode->SetPETLUT(displayNode->GetColorNodeID());      
+    }
+
+  //---
+  //--- update win/lev sliders with recomputed values
+  //--- TODO: this will get caught by display widgets
+  //--- in volumes module: but ensure it gets caught
+  //--- in display panel here too.
+  //---
+  displayNode->DisableModifiedEventOn();
+  vtkMRMLScalarVolumeNode *svolumeNode = NULL;
+  svolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+  if (displayNode->GetAutoWindowLevel() )
+    {
+    svolumeNode->CalculateScalarAutoLevels(displayNode);
+    }
+  displayNode->DisableModifiedEventOff();
+  displayNode->InvokePendingModifiedEvent();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ScaleCTColormap( double min, double max)
 {
   //--- we want to scale the colors in the selected map
   //--- to span the range from:
@@ -2985,57 +3302,159 @@ void vtkPETCTFusionGUI::ScaleColormap( double min, double max)
 
   if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL MRMLScene." );
+    vtkErrorMacro ( "ScaleCTColorMap: Got NULL MRMLScene." );
     return;
     }
   if ( this->GetApplication() == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL Application." );
+    vtkErrorMacro ( "ScaleCTColorMap: Got NULL Application." );
     return;
     }
   if ( this->PETCTFusionNode == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL PETCTFusionNode." );
+    vtkErrorMacro ( "ScaleCTColorMap: Got NULL PETCTFusionNode." );
     return;
     }
+
+  if ( this->PETCTFusionNode->GetInputCTReference() == NULL )
+    {
+    return;
+    }
+  if ( this->PETCTFusionNode->GetCTLUT() == NULL )
+    {
+    return;
+    }
+
+  vtkMRMLScalarVolumeNode *node =
+    vtkMRMLScalarVolumeNode::SafeDownCast (
+                                           this->MRMLScene->GetNodeByID(this->PETCTFusionNode->GetInputCTReference() ));
+  if ( node == NULL )
+    {
+    vtkErrorMacro ( "ScaleCTColorMap: Got NULL CT volume node." );
+    return;
+    }
+
+  vtkMRMLScalarVolumeDisplayNode *displayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node->GetDisplayNode());
+  //---
+  //--- check the volume --
+  //--- if it doesn't yet have a display node,
+  //--- we need to create one
+  //---
+  if (displayNode == NULL)
+    {
+    const char *greyID = this->GetCTColorTableNodeIDByType ( vtkMRMLColorTableNode::Grey);
+    if ( greyID == NULL )
+      {
+        vtkErrorMacro ( "No vtkMRMLColorTableNode for Grey in scene; cannot set default color node." );
+        return;
+      }
+    displayNode = vtkMRMLScalarVolumeDisplayNode::New ();
+    displayNode->SetScene(this->MRMLScene);
+    this->MRMLScene->AddNode (displayNode);
+    displayNode->SetAndObserveColorNodeID ( greyID );
+    node->SetAndObserveDisplayNodeID( displayNode->GetID() );
+    displayNode->Delete();
+    }
+  
+  //---
+  //--- otherwise, modify win and lev
+  //--- in the node
+  //---
+  if ( displayNode )
+    {
+    displayNode->DisableModifiedEventOn();
+    if (displayNode->GetAutoWindowLevel() )
+      {
+      //update sliders with recomputed values
+      node->CalculateScalarAutoLevels(displayNode);
+      }
+
+    //--- Adjust node's window, level and threshold.
+    double min = this->PETCTFusionNode->GetCTRangeMin();
+    double max = this->PETCTFusionNode->GetCTRangeMax();
+    displayNode->SetWindow( max - min );
+    displayNode->SetLevel( min + (0.5 * (max - min)) );
+    //--- apply no threshold... (may need to change this for vol render)
+    displayNode->SetUpperThreshold(this->PETCTFusionNode->GetCTMax());
+    displayNode->SetLowerThreshold(this->PETCTFusionNode->GetCTMin());
+
+    displayNode->DisableModifiedEventOff();
+    displayNode->InvokePendingModifiedEvent();
+    }
+    return;
+}
+  
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::ScalePETColormap( double min, double max)
+{
+  //--- we want to scale the colors in the selected map
+  //--- to span the range from:
+  //--- PETCTFusionNode->GetColorRangeMin to
+  //--- PETCTFusionNode->GetcolorRangeMax.
+
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "ScalePETColormap: Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->GetApplication() == NULL )
+    {
+    vtkErrorMacro ( "ScalePETColormap: Got NULL Application." );
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    vtkErrorMacro ( "ScalePETColormap: Got NULL PETCTFusionNode." );
+    return;
+    }
+
   if ( this->PETCTFusionNode->GetInputPETReference() == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL PET volume reference." );
     return;
     }
   if ( this->PETCTFusionNode->GetPETLUT() == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL PET LUT." );
     return;
     }
+
   vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast (
                                                                          this->MRMLScene->GetNodeByID( this->PETCTFusionNode->GetInputPETReference() ));
   if ( node == NULL )
     {
-    vtkErrorMacro ( "ScaleColorMap: Got NULL PET volume node." );
+    vtkErrorMacro ( "ScalePETColormap: Got NULL PET volume node." );
     return;
     }
 
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node->GetDisplayNode());
-  //--- check the volume -- if it doesn't yet have a display node,
+  //---
+  //--- check the volume --
+  //--- if it doesn't yet have a display node,
   //--- we need to create one
+  //---
   if (displayNode == NULL)
     {
+    const char *petID = this->GetPETColorNodeIDByType (vtkMRMLPETProceduralColorNode::PETheat);
+    if ( petID == NULL )
+      {
+        vtkErrorMacro ( "No vtkMRMLPETProceduralColorNode in scene. Cannot set color node." );
+        return;
+      }
     displayNode = vtkMRMLScalarVolumeDisplayNode::New ();
     displayNode->SetScene(this->MRMLScene);
     this->MRMLScene->AddNode (displayNode);
-    displayNode->Delete();
-
-    //--- Set the color map to the one selected in the PETLUTSelector.
-    vtkMRMLColorNode *c;
-    c = vtkMRMLColorNode::SafeDownCast (this->LUTSelector->GetSelected() );
-    if ( c )
-      {
-      displayNode->SetAndObserveColorNodeID (c->GetID() );
-      }
+    displayNode->SetAndObserveColorNodeID ( petID );
     node->SetAndObserveDisplayNodeID( displayNode->GetID() );
+    displayNode->Delete();
     }
   
+  //---
+  //--- otherwise, modify win and lev
+  //--- in the node
+  //---
   if ( displayNode )
     {
     displayNode->DisableModifiedEventOn();
@@ -3053,8 +3472,9 @@ void vtkPETCTFusionGUI::ScaleColormap( double min, double max)
     double max = this->PETCTFusionNode->GetColorRangeMax();
     displayNode->SetWindow( max - min );
     displayNode->SetLevel( min + (0.5 * (max - min)) );
-    displayNode->SetUpperThreshold(max);
-    displayNode->SetLowerThreshold(min);
+    //--- apply no threshold... (may need to change this for vol render...)
+    displayNode->SetUpperThreshold(this->PETCTFusionNode->GetPETMax());
+    displayNode->SetLowerThreshold(this->PETCTFusionNode->GetPETMin());
 
     displayNode->DisableModifiedEventOff();
     displayNode->InvokePendingModifiedEvent();
@@ -3065,7 +3485,102 @@ void vtkPETCTFusionGUI::ScaleColormap( double min, double max)
 
 
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::UpdatePETRange ()
+void vtkPETCTFusionGUI::UpdatePETRangeFromMRML ()
+{
+  if (this->ApplicationLogic == NULL)
+    {
+    return;
+    }
+  if ( this->ApplicationLogic->GetSelectionNode() == NULL )
+    {
+    return;
+    }
+  if ( this->MRMLScene == NULL )
+    {
+    return;
+    }
+  if ( this->PETCTFusionNode == NULL )
+    {
+    return;
+    }
+  if ( this->Logic == NULL )
+    {
+    return;
+    }
+
+  //---
+  //--- Method gets called if PETSelector changes.
+  //--- Checks range of PET image values.
+  //---
+  //--- get image data for pet
+  vtkMRMLVolumeNode *v = vtkMRMLVolumeNode::SafeDownCast (this->PETSelector->GetSelected());
+  if ( v == NULL )
+    {
+    this->PETRange->GetEntry1()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMin() );
+    this->PETRange->GetEntry2()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMax() );
+    this->PETRange->SetWholeRange(this->PETCTFusionNode->GetPETMin(),
+                                  this->PETCTFusionNode->GetPETMax());
+    this->PETRange->SetRange(this->PETCTFusionNode->GetColorRangeMin(),
+                             this->PETCTFusionNode->GetColorRangeMax());
+    return;
+    }
+
+  
+  if ( v && v->GetImageData() && v->GetImageData()->GetPointData() )
+    {
+    //--- build a histogram
+    vtkKWHistogram *h = vtkKWHistogram::New();
+    h->BuildHistogram ( v->GetImageData()->GetPointData()->GetScalars(), 0);
+    double *range = h->GetRange();
+    this->PETCTFusionNode->SetPETMin( range[0]);
+    this->PETCTFusionNode->SetPETMax( range[1]);
+    this->Logic->ComputeSUVmax();
+
+    //--- Get Win/Lev from Volume node
+    //--- and initialize the display range
+    //--- from those values.
+    //--- First get display node.
+    vtkMRMLScalarVolumeDisplayNode *dnode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast( v->GetDisplayNode() );
+    if ( dnode )
+      {
+      double win = dnode->GetWindow( );
+      double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
+      double ut = dnode->GetUpperThreshold();
+      double lt = dnode->GetLowerThreshold();
+      //--- compute settings for node
+      double lw = lev - (win/2.0);
+      double uw = lev + (win/2.0);
+      //--- record max and min in node.
+      this->PETCTFusionNode->SetColorRangeMin (lw);
+      this->PETCTFusionNode->SetColorRangeMax (uw);
+      }
+    else
+      {
+      this->PETCTFusionNode->SetColorRangeMin ( this->PETCTFusionNode->GetPETMin() );
+      this->PETCTFusionNode->SetColorRangeMax ( this->PETCTFusionNode->GetPETMax() );
+      }
+
+    double nodeColorMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMin());
+    double nodeColorMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetColorRangeMax() );
+
+    double nodePETMin = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetPETMin());
+    double nodePETMax = this->Logic->ConvertImageUnitsToSUVUnits(this->PETCTFusionNode->GetPETMax() );
+
+    this->PETRange->GetEntry1()->SetValueAsDouble ( nodeColorMin );
+    this->PETRange->GetEntry2()->SetValueAsDouble ( nodeColorMax );
+    this->PETRange->SetWholeRange( nodePETMin, nodePETMax );
+    this->PETRange->SetRange( nodeColorMin,  nodeColorMax );
+
+    h->Delete();
+    }
+  return;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::UpdateCTRangeFromMRML ()
 {
   if (this->ApplicationLogic == NULL)
     {
@@ -3085,28 +3600,63 @@ void vtkPETCTFusionGUI::UpdatePETRange ()
     }
 
   //---
-  //--- Method gets called if PETSelector changes.
-  //--- Checks range of PET image values.
+  //--- Method gets called if CTSelector changes.
+  //--- Checks range of CT image values.
   //---
-  //--- get image data for pet
-  vtkMRMLVolumeNode *v = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID (this->ApplicationLogic->GetSelectionNode()->GetSecondaryVolumeID() ));
-  if ( v && v->GetImageData() )
+  //--- get image data for ct
+  vtkMRMLVolumeNode *v = vtkMRMLVolumeNode::SafeDownCast (this->CTSelector->GetSelected() );
+
+  if ( v == NULL )
+    {
+    this->PETCTFusionNode->SetCTRangeMin (this->PETCTFusionNode->GetCTMin() );
+    this->PETCTFusionNode->SetCTRangeMax (this->PETCTFusionNode->GetCTMin() );
+    this->CTRange->SetWholeRange(this->PETCTFusionNode->GetCTMin(), this->PETCTFusionNode->GetCTMax());
+    this->CTRange->SetRange(this->PETCTFusionNode->GetCTRangeMin(), this->PETCTFusionNode->GetCTRangeMax());
+    return;
+    }
+
+  if ( v && v->GetImageData() && v->GetImageData()->GetPointData() )
     {
     //--- build a histogram
     vtkKWHistogram *h = vtkKWHistogram::New();
     h->BuildHistogram ( v->GetImageData()->GetPointData()->GetScalars(), 0);
     double *range = h->GetRange();
-    this->PETCTFusionNode->SetPETMin( range[0]);
-    this->PETCTFusionNode->SetPETMax( range[1]);
+    this->PETCTFusionNode->SetCTMin( range[0]);
+    this->PETCTFusionNode->SetCTMax( range[1]);
 
-    //--- record max and min in node.
-    this->PETCTFusionNode->SetColorRangeMin ( this->PETCTFusionNode->GetPETMin() );
-    this->PETCTFusionNode->SetColorRangeMax ( this->PETCTFusionNode->GetPETMax() );
+    //--- Get Win/Lev from Volume node
+    //--- and initialize the display range
+    //--- from those values.
+    //--- First get display node.
+    vtkMRMLScalarVolumeDisplayNode *dnode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast( v->GetDisplayNode() );
+    if ( dnode )
+      {
+      double win = dnode->GetWindow( );
+      double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
+      double ut = dnode->GetUpperThreshold();
+      double lt = dnode->GetLowerThreshold();
+      //--- compute settings for node
+      double lw = lev - (win/2.0);
+      double uw = lev + (win/2.0);
+      //--- record max and min in node.
+      this->PETCTFusionNode->SetCTRangeMin (lw);
+      this->PETCTFusionNode->SetCTRangeMax (uw);
+      }
+    else
+      {
+      this->PETCTFusionNode->SetCTRangeMin (this->PETCTFusionNode->GetCTMin() );
+      this->PETCTFusionNode->SetCTRangeMax (this->PETCTFusionNode->GetCTMin() );
+      }
 
-    this->ColorRange->GetEntry1()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMin() );
-    this->ColorRange->GetEntry2()->SetValueAsDouble ( this->PETCTFusionNode->GetColorRangeMax() );
+    this->CTRange->GetEntry1()->SetValueAsDouble ( this->PETCTFusionNode->GetCTRangeMin() );
+    this->CTRange->GetEntry2()->SetValueAsDouble ( this->PETCTFusionNode->GetCTRangeMax() );
+
+    this->CTRange->SetWholeRange(this->PETCTFusionNode->GetCTMin(), this->PETCTFusionNode->GetCTMax());
+    this->CTRange->SetRange(this->PETCTFusionNode->GetCTRangeMin(), this->PETCTFusionNode->GetCTRangeMax());
+
     h->Delete();
     }
+  return;
 }
 
 
@@ -3124,3 +3674,16 @@ void vtkPETCTFusionGUI::InitializePETMinAndMax()
   this->PETCTFusionNode->SetPETMax(255.0);
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkPETCTFusionGUI::InitializeCTMinAndMax()
+{
+  if ( this->PETCTFusionNode ==  NULL )
+    {
+    return;
+    }
+
+  this->PETCTFusionNode->SetCTMin(0.0);
+  this->PETCTFusionNode->SetCTMax(255.0);
+}
