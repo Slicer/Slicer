@@ -724,7 +724,6 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
 double vtkPETCTFusionLogic::ConvertImageUnitsToSUVUnits( double voxValue )
 {
 
-
   //--- Units:
   //--- image data = CPET(t) (tissue radioactivity in pixels) -- kBq/ml
   //--- injected dose-- MBq and
@@ -756,7 +755,6 @@ double vtkPETCTFusionLogic::ConvertImageUnitsToSUVUnits( double voxValue )
 double vtkPETCTFusionLogic::ConvertSUVUnitsToImageUnits( double suvValue )
 {
 
-  
   //--- Units:
   //--- SUV should be in units g/ml
   //--- injected dose-- MBq and
@@ -772,11 +770,6 @@ double vtkPETCTFusionLogic::ConvertSUVUnitsToImageUnits( double suvValue )
     }
 
   double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
-  if ( tissueConversionFactor == 0.0 )
-    {
-    //--- what's best to do here?
-    dose = .000000000001;
-    }
   dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
   weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
 
@@ -798,25 +791,24 @@ void vtkPETCTFusionLogic::ComputeSUVmax()
     vtkErrorMacro ( "ComputeSUVMax: Got NULL PETCTFusionNode. ");
     return;
     }
+
+  //---
+  //--- set SUVmax to be the pixel data max if no SUV attributes have been assigned yet.
+  //---
   double weight = this->PETCTFusionNode->GetPatientWeight();
   double dose = this->PETCTFusionNode->GetInjectedDose();
+  if ( weight == 0.0 || dose == 0.0 || this->PETCTFusionNode->GetTissueRadioactivityUnits() == NULL )
+    {
+    this->PETCTFusionNode->SetPETSUVmax ( this->PETCTFusionNode->GetPETMax() );
+    return;
+    }
   double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
   dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
   weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
-  
-  //--- check a possible multiply by slope -- take intercept into account?
-  if ( dose != 0.0 )
-    {
-    double weightByDose = weight / dose;
-    double suvmax = (this->PETCTFusionNode->GetPETMax() * tissueConversionFactor) * weightByDose;
-    this->PETCTFusionNode->SetPETSUVmax ( suvmax );
-    }
-  else
-    {
-    this->PETCTFusionNode->SetPETSUVmax ( 0.0 );
-    this->PETCTFusionNode->SetMessageText ( "Got an injected dose of 0.0!\n SUV computations and PET Display controls\n will not be valid.\n Please refresh DICOM information or enter\n required parameters manually." );
-    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
-    }
+  double weightByDose = weight / dose;
+  double suvmax = (this->PETCTFusionNode->GetPETMax() * tissueConversionFactor) * weightByDose;
+  this->PETCTFusionNode->SetPETSUVmax ( suvmax );
+
 }
 
 

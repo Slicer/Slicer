@@ -38,6 +38,7 @@
 #include "vtkKWHistogram.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
+#include "vtkKWScale.h"
 
 #include "vtkSlicerPopUpHelpWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -45,6 +46,7 @@
 #include "vtkSlicerWaitMessageWidget.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkSlicerColorGUI.h"
+#include "vtkSlicerSlicesControlGUI.h"
 
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLVolumeNode.h"
@@ -612,9 +614,24 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
       this->InitializeGUI();
       //--- update display of PET
       this->UpdateDICOMPanel();
+      //--- little error checking and user-feedback...
+      double weight = this->PETCTFusionNode->GetPatientWeight();
+      double dose = this->PETCTFusionNode->GetInjectedDose();
+      if ( weight == 0.0 || dose == 0.0 || this->PETCTFusionNode->GetTissueRadioactivityUnits() == NULL )
+        {
+        this->PETCTFusionNode->SetMessageText ( "Not all parameters were found to compute SUVmax for the PET volume. The PET color range will operate in voxel units (not in SUV units) until SUV attributes are manually specified." );
+        this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
+        }
       this->UpdatePETRangeFromMRML();
       this->UpdateColorRadioButtonsFromMRML();
       this->UpdatePETDisplayFromMRML();
+      if ( appGUI->GetSlicesControlGUI() )
+        {
+        if ( appGUI->GetSlicesControlGUI()->GetSliceFadeScale())
+          {
+          appGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue ( 0.8 );
+          }
+        }
       }
 
     else if ( s == this->MaskSelector )
@@ -803,6 +820,9 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->InjectedDoseEntry->InvokeEvent ( vtkKWEntry::EntryValueChangedEvent );
         }
+      //TEST
+      this->UpdatePETRangeFromMRML();
+      this->UpdatePETDisplayFromMRML();
       }
     if ( this->TissueUnitsMenuButton != NULL && m == this->TissueUnitsMenuButton->GetMenu() )
       {
@@ -851,6 +871,9 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->PETCTFusionNode->SetTissueRadioactivityUnits ( "Ci" );
         }
+      //TEST
+      this->UpdatePETRangeFromMRML();
+      this->UpdatePETDisplayFromMRML();
       }
     if ( this->WeightUnitsMenuButton != NULL && m == this->WeightUnitsMenuButton->GetMenu())
       {
@@ -877,6 +900,9 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->PatientWeightEntry->InvokeEvent ( vtkKWEntry::EntryValueChangedEvent );
         }
+      //TEST
+      this->UpdatePETRangeFromMRML();
+      this->UpdatePETDisplayFromMRML();
       }
     }
 
@@ -908,6 +934,9 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->PETCTFusionNode->SetInjectedDose(0.0);
         }
+      //TEST
+      this->UpdatePETRangeFromMRML();
+      this->UpdatePETDisplayFromMRML();
       }
     else if ( e == this->PatientWeightEntry )
       {
@@ -929,6 +958,9 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->PETCTFusionNode->SetPatientWeight ( 0.0);
         }
+      //TEST
+      this->UpdatePETRangeFromMRML();
+      this->UpdatePETDisplayFromMRML();
       }
     }
 
@@ -961,7 +993,7 @@ void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
         vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
         dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
         dialog->SetStyleToMessage();
-        dialog->SetText ( "To compute the SUV, a valid PET volume\n and a Mask volume (label map) must be selected, \nand two parameters: Patient Weight and \nInjected Dose should be specified.\n \n At least one of these is missing." );
+        dialog->SetText ( "To compute the SUV, a valid PET volume\n and a Mask volume (label map) must be selected, \nand the following SUV attributes must be specified: Patient Weight,\nInjected Dose, and\nTissue Radioactivity Units.\nAt least one of these is missing.\n\n(Hint: if the PET study is non-DICOM, SUV attributes may have to be entered manually in the Study Parameters panel.)" );
         dialog->Create();
         dialog->Invoke();
         dialog->Delete();
@@ -1700,7 +1732,7 @@ void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
         vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
         dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
         dialog->SetStyleToMessage();
-        dialog->SetText ( "The PET Volume appears not to be a DICOM file.\n Since parameters cannot be extracted automatically, parameters for computing SUV must be entered manually. Also note: Window/Level adjustments may not work properly for the selected PET volume.\n\nThe use of DICOM studies is recommended for this module." );
+        dialog->SetText ( "The PET Volume appears not to be a DICOM file.\nSince parameters cannot be extracted automatically, SUV attributes must be entered manually.\n\nThe use of DICOM studies is recommended for easiest use of this module." );
         dialog->Create();
         dialog->Invoke();
         dialog->Delete();
@@ -3163,7 +3195,8 @@ void vtkPETCTFusionGUI::ApplyDefaultCTLUT()
   svolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
   if (displayNode->GetAutoWindowLevel() )
     {
-    svolumeNode->CalculateScalarAutoLevels(displayNode);
+    displayNode->SetAutoWindowLevel(0);
+//    svolumeNode->CalculateScalarAutoLevels(displayNode);
     }
   displayNode->DisableModifiedEventOff();
   displayNode->InvokePendingModifiedEvent();
@@ -3285,7 +3318,8 @@ void vtkPETCTFusionGUI::ApplyDefaultPETLUT()
   svolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
   if (displayNode->GetAutoWindowLevel() )
     {
-    svolumeNode->CalculateScalarAutoLevels(displayNode);
+    displayNode->SetAutoWindowLevel(0);
+//    svolumeNode->CalculateScalarAutoLevels(displayNode);
     }
   displayNode->DisableModifiedEventOff();
   displayNode->InvokePendingModifiedEvent();
@@ -3366,10 +3400,8 @@ void vtkPETCTFusionGUI::ScaleCTColormap( double min, double max)
     displayNode->DisableModifiedEventOn();
     if (displayNode->GetAutoWindowLevel() )
       {
-      //update sliders with recomputed values
-      node->CalculateScalarAutoLevels(displayNode);
+      displayNode->SetAutoWindowLevel(0);
       }
-
     //--- Adjust node's window, level and threshold.
     double min = this->PETCTFusionNode->GetCTRangeMin();
     double max = this->PETCTFusionNode->GetCTRangeMax();
@@ -3463,15 +3495,16 @@ void vtkPETCTFusionGUI::ScalePETColormap( double min, double max)
 
     if (displayNode->GetAutoWindowLevel() )
       {
-      //update sliders with recomputed values
-      svolumeNode->CalculateScalarAutoLevels(displayNode);
+      displayNode->SetAutoWindowLevel(0);
       }
 
     //--- Adjust node's window, level and threshold.
     double min = this->PETCTFusionNode->GetColorRangeMin();
     double max = this->PETCTFusionNode->GetColorRangeMax();
-    displayNode->SetWindow( max - min );
-    displayNode->SetLevel( min + (0.5 * (max - min)) );
+    double win = max - min;
+    double lev =  min + (0.5 * win);
+    displayNode->SetWindow( win );
+    displayNode->SetLevel( lev );
     //--- apply no threshold... (may need to change this for vol render...)
     displayNode->SetUpperThreshold(this->PETCTFusionNode->GetPETMax());
     displayNode->SetLowerThreshold(this->PETCTFusionNode->GetPETMin());
@@ -3535,6 +3568,10 @@ void vtkPETCTFusionGUI::UpdatePETRangeFromMRML ()
     this->PETCTFusionNode->SetPETMin( range[0]);
     this->PETCTFusionNode->SetPETMax( range[1]);
     this->Logic->ComputeSUVmax();
+    if ( this->PETCTFusionNode->GetPETSUVmax() < 0.0 )
+      {
+      this->PETCTFusionNode->SetPETSUVmax(0.0);
+      }
 
     //--- Get Win/Lev from Volume node
     //--- and initialize the display range
