@@ -128,6 +128,12 @@ void vtkMRMLPETProceduralColorNode::SetTypeToRainbow()
   this->SetType(this->PETrainbow);
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLPETProceduralColorNode::SetTypeToMIP()
+{
+  this->SetType(this->PETMIP);
+}
+
 
 //---------------------------------------------------------------------------
 const char *vtkMRMLPETProceduralColorNode::GetTypeAsIDString()
@@ -148,11 +154,15 @@ const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->PETheat)
     {
-    return "PET-heat";
+    return "PET-Heat";
     }
   else if (this->Type == this->PETrainbow)
     {
-    return "PET-rainbow";
+    return "PET-Rainbow";
+    }
+  else if ( this->Type == this->PETMIP )
+    {
+    return "PET-MaximumIntensityProjection";
     }
   return "(unknown)";
 }
@@ -238,6 +248,17 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     if (this->ColorTransferFunction->AddRGBPoint(255, 1.0, 1.0, 1.0) == -1)
       {
       vtkErrorMacro("SetType rainbowT: error adding point 255");      }
+    }
+  else if (this->Type == this->PETMIP)
+    {
+    this->SetDescription("Useful for displaying inverse grey PET data.");
+    if (this->ColorTransferFunction->AddRGBPoint(0, 1.0, 1.0, 1.0) == -1)
+      {
+      vtkErrorMacro("SetType MIP: error adding point 0");
+      }
+    if (this->ColorTransferFunction->AddRGBPoint(255, 0.0, 0.0, 0.0) == -1)
+      {
+      vtkErrorMacro("SetType MIP: error adding point 255");      }
     }
 
   // build it

@@ -83,21 +83,24 @@ public:
   // The list of valid types
   // PETheat to display PET overlay with red to orange to yellow to white.
   // PETrainbow to display PET overlay with cool to warm to white.
+  // PETMIP to display PET overlay  with white to black.
   enum
   {
     PETheat = 0,
     PETrainbow = 1,
+    PETMIP = 2,
   };
   //ETX
   // Description:
   // Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->PETheat; };
-  int GetLastType() { return this->PETrainbow; };
+  int GetLastType() { return this->PETMIP; };
   
   const char *GetTypeAsIDString();
   const char *GetTypeAsString();
   void SetTypeToHeat();
   void SetTypeToRainbow();
+  void SetTypeToMIP();
   
 protected:
   vtkMRMLPETProceduralColorNode();
