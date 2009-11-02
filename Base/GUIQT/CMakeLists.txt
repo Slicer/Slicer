@@ -15,6 +15,8 @@ SET(qSlicerGUIQT_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
   qSlicerAbstractCoreModule.cxx
+  qSlicerAbstractLoadableModule.h
+  qSlicerAbstractLoadableModule.cxx
   qSlicerApplication.cxx
   qSlicerApplication.h
   qSlicerIOManager.cxx
@@ -34,9 +36,10 @@ SET(qSlicerGUIQT_MOC_SRCS
   qSlicerWidget.h
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
+  qSlicerAbstractLoadableModule.h
   qSlicerApplication.h
-  qSlicerTransformsModule.h
   qSlicerCameraModule.h
+  qSlicerTransformsModule.h
   )
   
 # UI files

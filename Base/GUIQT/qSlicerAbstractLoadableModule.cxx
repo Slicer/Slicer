@@ -34,10 +34,12 @@ void qSlicerAbstractLoadableModule::printAdditionalInfo()
 QString qSlicerAbstractLoadableModule::helpText()
 {
   qDebug() << "qSlicerAbstractLoadableModule::helpText - Not implemented"; 
+  return QString();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::aboutText()
 {
   qDebug() << "qSlicerAbstractLoadableModule::aboutText - Not implemented"; 
+  return QString();
 }

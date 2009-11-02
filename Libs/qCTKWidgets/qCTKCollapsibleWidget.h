@@ -3,11 +3,13 @@
 
 #include <QFrame>
 
+#include "qCTKWidgetsWin32Header.h"
+
 class QPushButton;
 class QStackedWidget;
 class QVBoxLayout;
 
-class qCTKCollapsibleWidget : public QFrame
+class QCTK_WIDGETS_EXPORT qCTKCollapsibleWidget : public QFrame
 {
   Q_OBJECT
   

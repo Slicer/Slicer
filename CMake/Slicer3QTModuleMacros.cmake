@@ -71,15 +71,15 @@ MACRO(Slicer3_build_qtmodule)
   # Sources
   #
   
-  QT4_WRAP_CPP(qSlicerModule_SRCS ${QTMODULE_MOC_SRCS})
-  QT4_WRAP_UI(qSlicerModule_UI_CXX ${QTMODULE_UI_SRCS})
+  QT4_WRAP_CPP(QTMODULE_SRCS ${QTMODULE_MOC_SRCS})
+  QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
   IF (${QTMODULE_NO_RESOURCES} EQUAL FALSE)
     QT4_ADD_RESOURCES(qSlicerModule_QRC_SRCS Resources/qSlicer${QTMODULE_NAME}Module.qrc)
   ENDIF(${QTMODULE_NO_RESOURCES} EQUAL FALSE)
 
   SET_SOURCE_FILES_PROPERTIES(
-    ${qSlicerModule_UI_CXX}
-    ${qSlicerModule_SRCS}
+    ${QTMODULE_UI_CXX}
+    ${QTMODULE_SRCS}
     WRAP_EXCLUDE
     )
 
@@ -100,9 +100,9 @@ MACRO(Slicer3_build_qtmodule)
   # Build and install the library
 
   ADD_LIBRARY(${lib_name}
-    ${qSlicerModule_SRCS}
-    ${qSlicerModule_UI_CXX}
-    ${qSlicerModule_QRC_SRCS}
+    ${QTMODULE_SRCS}
+    ${QTMODULE_UI_CXX}
+    ${QTMODULE_QRC_SRCS}
     #${qSlicerModule_TCL_SRCS}
     )
   slicer3_set_modules_output_path(${lib_name})

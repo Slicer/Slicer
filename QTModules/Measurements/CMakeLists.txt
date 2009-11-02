@@ -1,3 +1,5 @@
+PROJECT(qSlicerMeasurementsModule)
+
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Measurements")
 
@@ -17,6 +19,10 @@ SET(qt_module_include_directories
 SET(qt_module_SRCS
   qSlicerMeasurementsModule.h
   qSlicerMeasurementsModule.cxx
+  qSlicerMeasurementsAngleWidget.h
+  qSlicerMeasurementsAngleWidget.cxx
+  qSlicerMeasurementsRulerWidget.h
+  qSlicerMeasurementsRulerWidget.cxx
   )
 
 # Headers that should run through moc
@@ -36,9 +42,9 @@ SET(qt_module_target_libraries ""
   #CommandLineModule
   #SlicerTractographyDisplay
   #SlicerTractographyFiducialSeeding
+  SlicerBaseGUIQT
   )
-
-
+  
 Slicer3_build_qtmodule( 
   NAME ${qt_module_name}
   EXPORT_DIRECTIVE ${qt_module_export_directive}

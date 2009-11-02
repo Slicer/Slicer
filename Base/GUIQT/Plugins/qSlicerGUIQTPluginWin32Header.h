@@ -22,7 +22,7 @@
 #include <qSlicerGUIQTPluginConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
- #if defined(qSlicerGUIQTPlugin_EXPORTS)
+ #if defined(SlicerGUIQTPlugin_EXPORTS)
   #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllexport ) 
  #else
   #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllimport ) 
