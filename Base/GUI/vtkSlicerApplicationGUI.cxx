@@ -3788,9 +3788,6 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 {
   static int progress_initialized = 0;
 
-  // Note (SB): this code won't work if you don't have TCL_DIR set, i.e. if
-  // you are not using getbuildtest
-
   if ( !progress_initialized )
     {
     // look for mac/linux style or windows style name for wish version 8.4 or 8.5
