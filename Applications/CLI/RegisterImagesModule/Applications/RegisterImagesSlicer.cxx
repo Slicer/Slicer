@@ -269,6 +269,12 @@ int DoIt( int argc, char *argv[] )
     reger->SetRigidMetricMethodEnum( RegerType
                                        ::OptimizedRegistrationMethodType
                                        ::NORMALIZED_CORRELATION_METRIC );
+    reger->SetAffineMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::NORMALIZED_CORRELATION_METRIC );
+    reger->SetBSplineMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::NORMALIZED_CORRELATION_METRIC );
     }
   else if( metric == "MeanSqrd" )
     {
@@ -279,6 +285,12 @@ int DoIt( int argc, char *argv[] )
     reger->SetRigidMetricMethodEnum( RegerType
                                        ::OptimizedRegistrationMethodType
                                        ::MEAN_SQUARED_ERROR_METRIC );
+    reger->SetAffineMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MEAN_SQUARED_ERROR_METRIC );
+    reger->SetBSplineMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MEAN_SQUARED_ERROR_METRIC );
     }
   else // if( metric == "MattesMI" )
     {
@@ -287,6 +299,12 @@ int DoIt( int argc, char *argv[] )
       std::cout << "### Metric: MattesMutualInformation" << std::endl;
       }
     reger->SetRigidMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MATTES_MI_METRIC );
+    reger->SetAffineMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MATTES_MI_METRIC );
+    reger->SetBSplineMetricMethodEnum( RegerType
                                        ::OptimizedRegistrationMethodType
                                        ::MATTES_MI_METRIC );
     }
