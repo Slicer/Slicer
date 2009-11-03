@@ -684,7 +684,10 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
   if(callerObjectSVP == this->VolumePropertyWidget && event == vtkKWEvent::VolumePropertyChangingEvent)
     {
-    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    if (this->GetApplicationGUI()->GetActiveViewerWidget())
+      {
+      this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+      }
     this->ProcessingGUIEvents = 0;
     return;
     }
@@ -707,7 +710,10 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   //Update GUI
   this->UpdateMRMLFromGUI();
   this->Logic->SetParametersNode(this->ParametersNode);
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+  if (this->GetApplicationGUI()->GetActiveViewerWidget())
+    {
+    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    }
 
   this->ProcessingGUIEvents = 0;
 
@@ -872,7 +878,10 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   this->UpdateVolumeActor();
   this->UpdateGUIFromMRML();
   this->Logic->SetParametersNode(this->ParametersNode);
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+  if (this->GetApplicationGUI()->GetActiveViewerWidget())
+    {
+    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    }
 
   this->ProcessingMRMLEvents = 0;
 

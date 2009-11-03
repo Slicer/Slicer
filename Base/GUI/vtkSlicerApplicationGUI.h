@@ -419,6 +419,7 @@ protected:
   // Called when a view node has been added/removed to/from the scene
   virtual void OnViewNodeAdded(vtkMRMLViewNode *node);
   virtual void OnViewNodeRemoved(vtkMRMLViewNode *node);
+  virtual void OnViewNodeNeeded();
      
  private:
 

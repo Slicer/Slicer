@@ -311,7 +311,10 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if (this->TransformWidget->GetInteractor() == NULL)
         {
-        this->TransformWidget->SetInteractor(appGUI->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+        if (appGUI->GetActiveViewerWidget())
+          {
+          this->TransformWidget->SetInteractor(appGUI->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+          }
         double bounds[6] = {-50, 0, -50, 0, 0, 0};
         this->TransformRepresentation->PlaceWidget(bounds);
         }

@@ -125,7 +125,7 @@ void vtkSlicerModelInfoWidget::SetModelNode ( vtkMRMLModelNode *modelNode )
   vtkIntArray  *events = vtkIntArray::New();
   events->InsertNextValue( vtkCommand::ModifiedEvent);
   events->InsertNextValue( vtkMRMLModelNode::DisplayModifiedEvent);
-  events->InsertNextValue( vtkMRMLModelNode::PolyDataModifiedEvent);
+  //  events->InsertNextValue( vtkMRMLModelNode::PolyDataModifiedEvent);
 
   vtkSetAndObserveMRMLNodeEventsMacro ( this->ModelNode, modelNode, events );
   events->Delete();

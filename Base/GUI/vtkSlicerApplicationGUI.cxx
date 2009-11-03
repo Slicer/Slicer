@@ -583,6 +583,7 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
     if (this->GetMRMLScene()) 
       {
       this->MRMLScene->Clear(false);
+      this->OnViewNodeNeeded();
       }
     }
   dialog->Delete();
@@ -1969,6 +1970,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
     this->GridFrame2->Create ( );            
     this->CreateMainSliceViewers ( );
     this->UpdateMain3DViewers ( );
+    this->OnViewNodeNeeded();
     this->PackMainViewer ( arrangementType , NULL );
     }
 }
@@ -2160,10 +2162,19 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     viewer_widget->SetParent(NULL);
     viewer_widget->Delete();
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OnViewNodeNeeded()
+{
+  if (this->GetApplication() == NULL || !this->MRMLScene)
+    {
+    return;
+    }
 
   // No 3D view node, let's add one for convenience
 
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode");
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode");
   if (!nnodes)
     {
     vtkMRMLViewNode *view_node = vtkMRMLViewNode::New();

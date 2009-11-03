@@ -457,8 +457,13 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
   this->NS_VolumePropertyFg->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NS_VolumePropertyPresetsFg->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent, (vtkCommand*)this->GUICallbackCommand);
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent, (vtkCommand*)this->GUICallbackCommand);
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent, (vtkCommand*)this->GUICallbackCommand);
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent, (vtkCommand*)this->GUICallbackCommand);
+    }
 }
 
 void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
@@ -479,8 +484,13 @@ void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
   this->NS_VolumePropertyFg->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_VolumePropertyPresetsFg->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent, (vtkCommand*)this->GUICallbackCommand);
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent, (vtkCommand *)this->GUICallbackCommand);
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent, (vtkCommand*)this->GUICallbackCommand);
+    }
 }
 
 void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
@@ -489,17 +499,24 @@ void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
 
 void vtkVolumeRenderingGUI::CheckAbort(void)
 {
-  int pending = this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (!slicer_viewer_widget)
+    {
+    return;
+    }
+
+  int pending = slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->GetEventPending();
   if(pending != 0)
   {
-    this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     return;
   }
 
-  int pendingGUI = vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow());
+  int pendingGUI = vtkKWTkUtilities::CheckForPendingInteractionEvents(slicer_viewer_widget->GetMainViewer()->GetRenderWindow());
   if(pendingGUI != 0)
   {
-    this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     return;
   }
 }
@@ -510,9 +527,11 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     return;
 
   this->ProcessingGUIEvents = 1;
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
 
   //check abort
-  if(caller == this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow() && event == vtkCommand::AbortCheckEvent)
+  if(slicer_viewer_widget && caller == slicer_viewer_widget->GetMainViewer()->GetRenderWindow() && event == vtkCommand::AbortCheckEvent)
   {
     this->CheckAbort();
   }
@@ -528,7 +547,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     char buf[32] = "Rendering...";
     this->GetApplicationGUI()->SetExternalProgress(buf, progress);
   }
-  else if (caller == this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindow() && event == vtkCommand::EndEvent)
+  else if (slicer_viewer_widget && caller == slicer_viewer_widget->GetMainViewer()->GetRenderWindow() && event == vtkCommand::EndEvent)
   {
     char buf[32] = "Done";
     this->GetApplicationGUI()->SetExternalProgress(buf, 0.);
@@ -687,6 +706,8 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   this->ProcessingMRMLEvents = 1;
 
   vtkMRMLNode *addedNode = NULL;
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
 
   if (event == vtkMRMLScene::NodeAddedEvent && this->MRMLScene)
   {
@@ -709,14 +730,20 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   }
   else if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
   {
-    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->RequestRender();
+    }
   }
   else if (event == vtkMRMLScene::SceneCloseEvent)
   {
     this->DeleteRenderingFrame();
 
-    this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
-    this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->Render();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
+    slicer_viewer_widget->Render();
+    }
 
     this->GetLogic()->Reset();
 
@@ -728,7 +755,10 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   {
     vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
     this->GetLogic()->TransformModified(vspNode);
-    this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    if (slicer_viewer_widget)
+      {
+      slicer_viewer_widget->RequestRender();
+      }
   }
   else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
   {
@@ -738,7 +768,10 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     if (roiNode == vspNode->GetROINode())
     {
       this->GetLogic()->SetROI(vspNode);
-      this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+      if (slicer_viewer_widget)
+        {
+        slicer_viewer_widget->RequestRender();
+        }
     }
   }
 
@@ -926,12 +959,22 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
 
   this->GetLogic()->SetROI(vspNode);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->RequestRender();
+    }
 }
 
 void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
 {
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+    }
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistograms(vspNode);
@@ -942,14 +985,22 @@ void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
   // at this place this->Helper should not be NULL
   this->Helper->UpdateVolumeProperty();
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+    slicer_viewer_widget->RequestRender();
+    }
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 }
 
 void vtkVolumeRenderingGUI::UpdatePipelineByFgVolumeProperty()
 {
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+    }
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistogramsFg(vspNode);
@@ -961,9 +1012,12 @@ void vtkVolumeRenderingGUI::UpdatePipelineByFgVolumeProperty()
   // at this place this->Helper should not be NULL
   this->Helper->UpdateVolumePropertyFg();
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    slicer_viewer_widget->RequestRender();
+    }
 }
 
 void vtkVolumeRenderingGUI::CreateRenderingFrame()
@@ -1128,7 +1182,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+    }
 
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
@@ -1149,11 +1208,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
-
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
-
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+    slicer_viewer_widget->RequestRender();
+    }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
@@ -1240,7 +1300,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+    }
 
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageDataFg->GetSelected());
   //Add observer to trigger update of transform
@@ -1254,11 +1319,14 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    slicer_viewer_widget->RequestRender();
+    }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
@@ -1275,7 +1343,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
 
   //init mappers, transfer functions, and so on
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+    }
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
 
@@ -1314,11 +1387,14 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
     selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand );
   }
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
 
-  this->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
+    slicer_viewer_widget->RequestRender();
+    }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }

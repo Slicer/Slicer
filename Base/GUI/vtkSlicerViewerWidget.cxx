@@ -1695,10 +1695,7 @@ void vtkSlicerViewerWidget::RemoveModelObservers(int clearCache)
 
   for (iter=this->DisplayableNodes.begin(); iter!=this->DisplayableNodes.end(); iter++)
     {
-    if (this->MRMLScene->GetNodeByID(iter->first))
-      {
-      this->RemoveModelObservers(iter->second);
-      }
+    this->RemoveModelObservers(iter->second);
     }
   if (clearCache)
     {

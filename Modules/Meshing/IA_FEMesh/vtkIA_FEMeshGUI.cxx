@@ -226,7 +226,10 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
   // widgets created below here are controllable through slicer's interface.
   
   this->MeshingUI = vtkKWMimxMainWindow::New();
-  this->MeshingUI->SetRenderWidget( this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer() );
+  if (this->GetApplicationGUI()->GetActiveViewerWidget())
+    {
+    this->MeshingUI->SetRenderWidget( this->GetApplicationGUI()->GetActiveViewerWidget()->GetMainViewer() );
+    }
   this->MeshingUI->SetMainWindow( this->GetApplicationGUI()->GetMainSlicerWindow() );
   this->MeshingUI->SetParent( moduleFrame );
   this->MeshingUI->Create();
