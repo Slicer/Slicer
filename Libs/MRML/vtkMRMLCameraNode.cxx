@@ -212,7 +212,12 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetViewUp(node->GetViewUp());
   this->SetParallelProjection(node->GetParallelProjection());
   this->SetParallelScale(node->GetParallelScale());
-  this->SetActiveTag(node->GetActiveTag());
+  // Important, do not call SetActiveTag() or the owner of the current tag
+  // (node) will lose its tag, and the active camera will be untagged, and
+  // a the active camera of the current view will be reset to NULL, and a 
+  // new camera will be created on the fly by VTK the next time an active
+  // camera is need, one completely disconnected from Slicer3's MRML/internals
+  this->SetInternalActiveTag(node->GetActiveTag()); 
 
   this->EndModify(disabledModify);
 

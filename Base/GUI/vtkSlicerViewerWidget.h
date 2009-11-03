@@ -97,7 +97,7 @@ public:
   vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
 
   vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
-  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
+  //vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   // Description:
