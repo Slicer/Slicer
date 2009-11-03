@@ -2211,6 +2211,8 @@ void vtkPETCTFusionGUI::BuildDisplayFrame (  vtkKWWidget *page )
 
   minl->Delete();
   maxl->Delete();
+  minl2->Delete();
+  maxl2->Delete();
   f1->Delete();
   displayFrame->Delete();
 }
