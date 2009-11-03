@@ -312,9 +312,11 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     rep->SetPlaceFactor( 1.0 );
     rep->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
 
-    vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
-    boxWidget->SetInteractor(interactor);
-    
+    if (this->MainViewerWidget && this->MainViewerWidget->GetMainViewer() )
+      {
+      vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
+      boxWidget->SetInteractor(interactor);
+      }
     vtkBoxWidgetCallback *myCallback = vtkBoxWidgetCallback::New();
     
     myCallback->ROINode = roi;
@@ -392,9 +394,11 @@ void vtkSlicerROIViewerWidget::UpdateROITransform(vtkMRMLROINode *roi)
     rep->SetPlaceFactor( 1.0 );
     rep->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
 
-    vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
-    boxWidget->SetInteractor(interactor);
-    
+    if (this->MainViewerWidget && this->MainViewerWidget->GetMainViewer() )
+      {
+      vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
+      boxWidget->SetInteractor(interactor);
+      }
     vtkBoxWidgetCallback *myCallback = vtkBoxWidgetCallback::New();
     
     myCallback->ROINode = roi;
