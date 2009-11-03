@@ -816,11 +816,13 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
 void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
 {
   if (this->LoadVolumePropertyButton)
-    {
+  {
+    this->LoadVolumePropertyButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LoadVolumePropertyButton->SetParent(NULL);
     this->LoadVolumePropertyButton->Delete ( );
-    this->LoadVolumePropertyButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
+    this->LoadVolumePropertyButton = NULL;
+  }
+  
   if(this->SVP_VolumePropertyWidget != NULL)
   {
     this->Gui->Script("pack forget %s", this->SVP_VolumePropertyWidget->GetWidgetName());
