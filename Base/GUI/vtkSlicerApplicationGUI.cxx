@@ -441,14 +441,24 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       dialog->Invoke();
       dialog->Delete();
       }
-    if (  this->GetMRMLScene()->GetLastLoadedVersion() && this->GetSlicerApplication()->GetSvnRevision() &&
-        strcmp(this->GetMRMLScene()->GetLastLoadedVersion(), this->GetSlicerApplication()->GetSvnRevision()) > 0 ) 
+    else
+      {
+      // Legacy scene did not save any view or camera: create one
+      if (this->GetActiveViewerWidget() == NULL)
+        {
+        this->OnViewNodeNeeded();
+        }
+      }
+    if (this->GetMRMLScene()->GetLastLoadedVersion() && 
+        this->GetSlicerApplication()->GetSvnRevision() &&
+        strcmp(this->GetMRMLScene()->GetLastLoadedVersion(), 
+               this->GetSlicerApplication()->GetSvnRevision()) > 0 ) 
       {
       vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
       dialog->SetParent (  this->MainSlicerWindow );
       dialog->SetStyleToMessage();
       std::string msg = std::string("Warning: scene file ") + std::string( fileName) + 
-        std::string(" has vesrion ") + std::string( this->GetMRMLScene()->GetLastLoadedVersion()) +
+        std::string(" has version ") + std::string( this->GetMRMLScene()->GetLastLoadedVersion()) +
         std::string(" greater than Slicer3 version ") + std::string(this->GetSlicerApplication()->GetSvnRevision());
       dialog->SetText(msg.c_str());
       dialog->Create ( );
@@ -3787,6 +3797,16 @@ void vtkSlicerApplicationGUI::SetIconImage (vtkKWIcon *icon, vtkImageData *image
 void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 {
   static int progress_initialized = 0;
+
+  /* If a) you can not use getbuildtest.tcl (say, it doesn't support your 
+           compiler, nmake, or GNU make on Win32),
+        b) you can not use the Slicer3.exe launcher (say, launch.tcl tries to
+           read a file that is created by getbuildtest.tcl, or it crashes
+           with a child killed 5936 on your platform, or can't be debugged),
+        c) therefore you are calling slicer-real.exe directly,
+     Then set TCL_DIR to see progress messages. 
+     Update: added catch() to avoid a stream the errors in the log dialog.
+  */
 
   if ( !progress_initialized )
     {
