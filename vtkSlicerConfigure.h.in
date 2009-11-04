@@ -62,3 +62,11 @@
 #define Slicer3_TCL_TK_MINOR_VERSION "@TCL_TK_MINOR_VERSION@"
 #define Slicer3_INCR_TCL_MAJOR_VERSION "@INCR_TCL_MAJOR_VERSION@"
 #define Slicer3_INCR_TCL_MINOR_VERSION "@INCR_TCL_MINOR_VERSION@"
+
+// Convenient macro to print info provided as argument
+// Note: No-op is Slicer3_USE_QT OFF
+#ifdef Slicer3_USE_QT
+#define SlicerQDebug(_arg) {qDebug() << _arg;}
+#else
+#define SlicerQDebug(_arg)
+#endif
