@@ -8,8 +8,6 @@
 #include <QResizeEvent>
 #include <QDebug>
 
-#include <iostream>
-
 //-----------------------------------------------------------------------------
 class qCTKMatrixWidget::qInternal
 {
@@ -40,6 +38,7 @@ qCTKMatrixWidget::qCTKMatrixWidget(QWidget* parent) : Superclass(4, 4, parent)
   item->setData(Qt::DisplayRole, QVariant(0.0)); 
   item->setTextAlignment(Qt::AlignCenter);
   
+  // The table takes ownership of the prototype.
   this->setItemPrototype(item);
   
   // Initialize 
