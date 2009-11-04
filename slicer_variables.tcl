@@ -72,7 +72,7 @@ puts "Slicer3_HOME is $::Slicer3_HOME"
 # changes in the "Files to test if library has already been built"
 # section below, or genlib will happily build the library again.
 
-set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
+set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/branches/Slicer3.5-RSNAWorkshop"
 set ::CMAKE_TAG "CMake-2-6"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
 set ::KWWidgets_TAG "Slicer-3-4"
