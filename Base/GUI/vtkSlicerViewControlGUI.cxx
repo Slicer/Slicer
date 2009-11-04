@@ -4063,7 +4063,7 @@ void vtkSlicerViewControlGUI::CheckAbort(void)
   vtkSlicerViewerWidget* viewer_widget = 
     this->GetApplicationGUI()->GetActiveViewerWidget();
   int pending=viewer_widget  && viewer_widget->GetMainViewer()->GetRenderWindow()->GetEventPending();
-  int pendingGUI=viewer_widget && vtkKWTkUtilities::CheckForPendingInteractionEvents(viewer_widget->GetMainViewer()->GetRenderWindow());
+  //int pendingGUI=viewer_widget && vtkKWTkUtilities::CheckForPendingInteractionEvents(viewer_widget->GetMainViewer()->GetRenderWindow());
     if(pending!=0)//||pendingGUI!=0)
     {
         this->NavigationWidget->GetRenderWindow()->SetAbortRender(1);
