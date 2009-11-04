@@ -1286,22 +1286,18 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       glyph3d = (vtkGlyph3D*)this->Glyph3DMap[id]; // ->GetItemAsObject(listNumber);
       if (glyph3d != NULL)
         {
-        if (actorExists)
-          {
-          // actor is in the list, get it and the mapper
-          glyph3d->SetOutput(actor->GetMapper()->GetInput());
-          }
-        else
+        if (!actorExists)
           {
           // no actor, allocate vars and set up the pipeline
           actor = vtkFollower::New();              
           actor->SetMapper ( this->GlyphMapperMap[id] );
-          
           if (mainViewer)
             {
             mainViewer->AddViewProp ( actor );
             }
           }
+        // actor is in the list, get it and the mapper
+        glyph3d->SetOutput(actor->GetMapper()->GetInput());
         /*
         // reset the fid list glyph actor's colours
         vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(0, unselectedColor[0],
@@ -2094,14 +2090,17 @@ vtkSlicerFiducialListWidget::GetPointWidgetByID (const char *id)
 void vtkSlicerFiducialListWidget::SetViewerWidget(
   vtkSlicerViewerWidget *viewerWidget)
 {
-  if (this->ViewerWidget != NULL &&
-      this->ViewerWidget->HasObserver(
-        vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
-        this->GUICallbackCommand) == 1)
+  if (this->ViewerWidget != NULL)
     {
-    this->InteractorStyle->RemoveObservers(
-      vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
-      (vtkCommand *)this->GUICallbackCommand);
+    this->RemoveFiducialProps();
+    if (this->ViewerWidget->HasObserver(
+          vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+          this->GUICallbackCommand) == 1)
+      {
+      this->InteractorStyle->RemoveObservers(
+        vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+        (vtkCommand *)this->GUICallbackCommand);
+      }
     }
 
   this->ViewerWidget = viewerWidget;
