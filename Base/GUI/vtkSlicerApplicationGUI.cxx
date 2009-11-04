@@ -2798,9 +2798,9 @@ void vtkSlicerApplicationGUI::PackDual3DView ( )
     layout->DisableModifiedEventOn();
     layout->SetBottomPanelVisibility(1);
     int cur = layout->GetViewArrangement();
-    if ( cur != vtkMRMLLayoutNode::SlicerLayoutConventionalView)
+    if ( cur != vtkMRMLLayoutNode::SlicerLayoutDual3DView)
       {
-      layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
+      layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutDual3DView );
       }
     layout->DisableModifiedEventOff();
     }
