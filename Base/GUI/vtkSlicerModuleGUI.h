@@ -100,6 +100,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 
   virtual void CreateModuleEventBindings ( ) { };
   virtual void ReleaseModuleEventBindings ( ) { };
+
+  virtual void SetActiveViewer(vtkSlicerViewerWidget *activeViewer){};
   
   // Description:
   // propagate events generated in logic layer to GUI

@@ -83,6 +83,8 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   virtual void Enter ( );
   virtual void Exit ( );
 
+  virtual void SetActiveViewer(vtkSlicerViewerWidget *activeViewer);
+
 //  vtkGetObjectMacro(ViewProperties, vtkKWMimxViewProperties);
 //  vtkGetObjectMacro(MainUserInterfacePanel, vtkKWMimxMainUserInterfacePanel);
 

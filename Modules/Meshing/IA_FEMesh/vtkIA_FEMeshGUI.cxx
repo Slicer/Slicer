@@ -240,6 +240,18 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
 
 }
 
+void vtkIA_FEMeshGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer)
+{
+  if (activeViewer)
+    {
+    this->MeshingUI->SetRenderWidget( activeViewer->GetMainViewer() );
+    }
+  else
+    {
+    this->MeshingUI->SetRenderWidget( NULL );
+    }
+}
+
 //---------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::TearDownGUI ( )
 {

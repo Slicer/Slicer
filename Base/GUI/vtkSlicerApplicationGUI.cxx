@@ -77,6 +77,7 @@ a
 
 #include "vtkSlicerFiducialListWidget.h"
 #include "vtkSlicerROIViewerWidget.h"
+
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
@@ -2231,7 +2232,14 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies(
   this->FiducialListWidget->UpdateFromMRML();
   
   this->ROIViewerWidget->SetMainViewerWidget(active_viewer);
-    this->ROIViewerWidget->UpdateFromMRML();
+  this->ROIViewerWidget->UpdateFromMRML();
+
+  // TODO this should be handled in a generic way for all modules.
+  vtkSlicerModuleGUI *FEMeshModule = this->GetSlicerApplication()->GetModuleGUIByName("IA_FEMesh");
+  if (FEMeshModule)
+    {
+    FEMeshModule->SetActiveViewer(active_viewer);
+    }
 
 #ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
