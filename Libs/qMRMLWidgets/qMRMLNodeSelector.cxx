@@ -171,7 +171,7 @@ void qMRMLNodeSelector::onAddButtonPressed()
 { 
   // Update MRML Scene
   vtkMRMLNode * node = qMRMLUtils::createAndAddNodeToSceneByClass(
-      this->Internal->MRMLScene, this->nodeType().toAscii().data() ); 
+      this->Internal->MRMLScene, this->nodeType().toLatin1().data() ); 
   
   Q_ASSERT(node);
 }

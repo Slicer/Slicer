@@ -217,25 +217,25 @@ void qVTKConnection::SetBlocked(bool block)
 QObject::connect(                               \
   this, SIGNAL(emitExecute(ARG1)),              \
   this->Internal->QtObject,                     \
-  this->Internal->QtSlot.toAscii().data());
+  this->Internal->QtSlot.toLatin1().data());
 
 #define QVTK_OBJECT_INTERNAL_CONNECT2(ARG1,ARG2)   \
 QObject::connect(                                  \
   this, SIGNAL(emitExecute(ARG1, ARG2)),           \
   this->Internal->QtObject,                        \
-  this->Internal->QtSlot.toAscii().data());
+  this->Internal->QtSlot.toLatin1().data());
 
 #define QVTK_OBJECT_INTERNAL_CONNECT3(ARG1,ARG2,ARG3)  \
 QObject::connect(                                      \
   this, SIGNAL(emitExecute(ARG1, ARG2, ARG3)),         \
   this->Internal->QtObject,                            \
-  this->Internal->QtSlot.toAscii().data());
+  this->Internal->QtSlot.toLatin1().data());
   
 #define QVTK_OBJECT_INTERNAL_CONNECT4(ARG1,ARG2,ARG3,ARG4)   \
 QObject::connect(                                            \
   this, SIGNAL(emitExecute(ARG1, ARG2, ARG3, ARG4)),         \
   this->Internal->QtObject,                                  \
-  this->Internal->QtSlot.toAscii().data());
+  this->Internal->QtSlot.toLatin1().data());
 
 //-----------------------------------------------------------------------------
 void qVTKConnection::EstablishConnection()
@@ -307,7 +307,7 @@ void qVTKConnection::BreakConnection()
   QObject::disconnect(
     this, SIGNAL(emitExecute(void*, vtkObject*)),
     this->Internal->QtObject,
-    this->Internal->QtSlot.toAscii().data());
+    this->Internal->QtSlot.toLatin1().data());
   
   QObject::disconnect(
     this->Internal->QtObject, 
@@ -432,7 +432,7 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
     {
     //qDebug("--------------------------> qVTKConnection::Execute - removeConnection <--------------------------");
     this->Internal->Parent->removeConnection( this->Internal->VTKObject, this->Internal->VTKEvent, 
-      this->Internal->QtObject, this->Internal->QtSlot.toAscii().data());  
+      this->Internal->QtObject, this->Internal->QtSlot.toLatin1().data());  
     }
 }
 

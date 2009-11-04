@@ -28,7 +28,7 @@ vtkMRMLNode* qMRMLUtils::createAndAddNodeToSceneByClass(vtkMRMLScene * scene, co
     }
 
   vtkSmartPointer<vtkMRMLNode> node; 
-  node.TakeReference( scene->CreateNodeByClass( className.toAscii().data() ) ); 
+  node.TakeReference( scene->CreateNodeByClass( className.toLatin1().data() ) ); 
   
   Q_ASSERT(node);
   if (node == NULL)
@@ -38,7 +38,7 @@ vtkMRMLNode* qMRMLUtils::createAndAddNodeToSceneByClass(vtkMRMLScene * scene, co
   
   node->SetScene( scene );
   node->SetName( scene->GetUniqueNameByString( 
-    scene->GetTagByClassName(className.toAscii().data()) ) );
+    scene->GetTagByClassName(className.toLatin1().data()) ) );
   /*
     // If there is a Attribute Name-Value specified, then set that
     // attribute on the node
