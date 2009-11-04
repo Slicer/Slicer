@@ -2,7 +2,11 @@
 
 #include "ui_qSlicerVolumesModule.h" 
 
+#include <QtPlugin>
 #include <QDebug>
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule)
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumesModule::qInternal: public Ui::qSlicerVolumesModule
