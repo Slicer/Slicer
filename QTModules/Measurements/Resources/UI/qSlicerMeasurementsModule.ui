@@ -14,8 +14,14 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
+   <property name="margin">
+    <number>6</number>
+   </property>
    <item>
     <widget class="qCTKCollapsibleWidget" name="RulerWidgetGroupBox">
+     <property name="title">
+      <string>Ruler Widget</string>
+     </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -27,6 +33,9 @@
    </item>
    <item>
     <widget class="qCTKCollapsibleWidget" name="AngleWidgetGroupBox">
+     <property name="title">
+      <string>Angle Widget</string>
+     </property>
      <widget class="QWidget" name="page_2">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -38,6 +47,9 @@
    </item>
    <item>
     <widget class="qCTKCollapsibleWidget" name="TransformWidgetGroupBox">
+     <property name="title">
+      <string>Transform Widget</string>
+     </property>
      <widget class="QWidget" name="page_3">
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0" rowspan="2">
