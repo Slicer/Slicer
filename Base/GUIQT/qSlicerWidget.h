@@ -13,7 +13,7 @@ class QScrollArea;
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerWidget : public QWidget
 {
   Q_OBJECT
-    QVTK_OBJECT
+  QVTK_OBJECT
   
 public:
   
