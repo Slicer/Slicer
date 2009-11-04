@@ -13,8 +13,8 @@ class QCTK_WIDGETS_EXPORT qCTKCollapsibleWidget : public QFrame
 {
   Q_OBJECT
   
-  Q_PROPERTY(QString title READ title WRITE setTitle STORED false)
-  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed STORED false)
+  Q_PROPERTY(QString title READ title WRITE setTitle)
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
   Q_PROPERTY(bool collapseChildren READ collapseChildren WRITE setCollapseChildren)
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
 
