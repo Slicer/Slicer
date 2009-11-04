@@ -7,42 +7,39 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT")
 
 # Additional directories to include
 SET(qt_module_include_directories
-  #${CommandLineModule_SOURCE_DIR}
-  #${CommandLineModule_BINARY_DIR}
-  #${SlicerTractographyFiducialSeeding_SOURCE_DIR}
-  #${SlicerTractographyFiducialSeeding_BINARY_DIR}
-  #${SlicerTractographyDisplay_SOURCE_DIR}
-  #${SlicerTractographyDisplay_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
 # Source files
 SET(qt_module_SRCS
   qSlicerMeasurementsModule.h
   qSlicerMeasurementsModule.cxx
-  qSlicerMeasurementsAngleWidget.h
-  qSlicerMeasurementsAngleWidget.cxx
-  qSlicerMeasurementsRulerWidget.h
-  qSlicerMeasurementsRulerWidget.cxx
+  Widgets/qSlicerMeasurementsAngleWidget.h
+  Widgets/qSlicerMeasurementsAngleWidget.cxx
+  #qSlicerMeasurementsRulerWidget.h
+  #qSlicerMeasurementsRulerWidget.cxx
   )
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
   qSlicerMeasurementsModule.h
+  Widgets/qSlicerMeasurementsAngleWidget.h
   )
   
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerMeasurementsModule.ui
+  Resources/UI/qSlicerMeasurementsAngleWidget.ui
 )
 
-# Target libraries
+# Additional Target libraries
 SET(qt_module_target_libraries ""
   #${KWWidgets_LIBRARIES}
   #${ITK_LIBRARIES}
   #CommandLineModule
   #SlicerTractographyDisplay
   #SlicerTractographyFiducialSeeding
-  SlicerBaseGUIQT
   )
   
 Slicer3_build_qtmodule( 

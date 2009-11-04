@@ -255,13 +255,13 @@
    <extends>QGroupBox</extends>
    <header>qCTKCollapsibleGroupBox.h</header>
    <container>1</container>
-  </customwidget
+  </customwidget>
   <customwidget>
    <class>qCTKCollapsibleWidget</class>
-   <extends>QGroupBox</extends>
+   <extends>QWidget</extends>
    <header>qCTKCollapsibleWidget.h</header>
    <container>1</container>
-  </customwidget>>
+  </customwidget>
   <customwidget>
    <class>qCTKColorPickerButton</class>
    <extends>QPushButton</extends>

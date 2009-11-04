@@ -2,7 +2,11 @@
 
 #include "ui_qSlicerMeasurementsModule.h" 
 
+#include <QtPlugin>
 #include <QDebug>
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule)
 
 //-----------------------------------------------------------------------------
 class qSlicerMeasurementsModule::qInternal : public Ui::qSlicerMeasurementsModule
