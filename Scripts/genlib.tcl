@@ -337,7 +337,7 @@ if {$isDarwin} {
 #
 
 # set in slicer_vars
-if { 0 && [BuildThis $::CMAKE "cmake"] == 1 } {
+if { [BuildThis $::CMAKE "cmake"] == 1 } {
     file mkdir $::CMAKE_PATH
     cd $Slicer3_LIB
 
