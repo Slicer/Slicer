@@ -661,6 +661,10 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
         {
         return ( "None" );
         }
+      else if (layout == vtkMRMLLayoutNode::SlicerLayoutDual3DView )
+        {
+        return ( "Dual 3D layout" );
+        }
       else
         {
         return (NULL);
@@ -744,6 +748,15 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
 #endif
     this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutConventionalView, NULL );
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
+    }
+  else if ( target == vtkMRMLLayoutNode::SlicerLayoutDual3DView &&
+      this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutDual3DView )
+    {
+#ifndef TOOLBAR_DEBUG
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
+    this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutDual3DView, NULL );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutDual3DView );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUp3DView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
@@ -2462,6 +2475,9 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
         case vtkMRMLLayoutNode::SlicerLayoutCompareView:
           this->PackCompareView();
           break;
+        case vtkMRMLLayoutNode::SlicerLayoutDual3DView:
+          this->PackDual3DView();
+          break;
         default:
           this->PackConventionalView ( );
           break;
@@ -2513,6 +2529,9 @@ void vtkSlicerApplicationGUI::UnpackMainViewer ( )
           break;
         case vtkMRMLLayoutNode::SlicerLayoutCompareView:
           this->UnpackCompareView();
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutDual3DView:
+          this->UnpackDual3DView();
           break;
         default:
           this->UnpackConventionalView ( );
@@ -2652,6 +2671,105 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       {
       viewer_widget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
       }
+
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
+    this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame2->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 2 -weight 1", this->GridFrame2->GetWidgetName() );
+    this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+      
+    //--- red slice viewer
+    g = this->SlicesGUI->GetSliceGUI("Red");
+    if (g) g->GridGUI( this->GridFrame2, 0, 0 );
+
+    //--- yellow slice viewer
+    g = this->SlicesGUI->GetSliceGUI("Yellow");
+    if (g) g->GridGUI( this->GridFrame2, 0, 1 );
+
+    //--- green slice viewer
+    g = this->SlicesGUI->GetSliceGUI("Green");
+    if (g) g->GridGUI( this->GridFrame2, 0, 2 );
+
+    
+#ifndef SLICESCONTROL_DEBUG
+    this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
+
+    // finally, modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility(1);
+    int cur = layout->GetViewArrangement();
+    if ( cur != vtkMRMLLayoutNode::SlicerLayoutConventionalView)
+      {
+      layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
+      }
+    layout->DisableModifiedEventOff();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PackDual3DView ( )
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
+    if ( layout == NULL )
+      {
+      return;
+      }
+
+    vtkSlicerSliceGUI *g = NULL;
+
+    // Note that the top panel is Frame2 of the SecondarySplitFrame
+    // and the bottom panel is Frame1 of the SecondarySplitFrame
+    //
+    // The frame we create in the top frame is GridFrame1 while
+    // the frame we create in the bottom frame is GridFrame2.
+    //
+    // So be careful with the sense of 1 and 2.
+    
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
+
+    // Show the bottom panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
+
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+    
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
+    this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
+
+    // Pack
+    vtkSlicerViewerWidget *viewer_widget = this->GetActiveViewerWidget();
+    if (viewer_widget)
+      {
+      viewer_widget->GridWidget(this->GridFrame1, 0, 0 );
+      }
+
+    // Need to make and pack a second 3D viewer
+    if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") < 2)
+      {
+      // Need another view node.  When the view node is added to the
+      // scene, a viewer widget will be constructed automatically
+      vtkMRMLViewNode *second = vtkMRMLViewNode::New();
+      this->MRMLScene->AddNode(second);
+      second->Delete();
+      this->OnViewNodeAdded(second);
+      }
+
+    if (this->Internals->ViewerWidgets.size() >= 2)
+      {
+      vtkSlicerViewerWidget *second_viewer_widget 
+        = this->Internals->ViewerWidgets[1];
+      if (second_viewer_widget)
+        {
+        second_viewer_widget->GridWidget(this->GridFrame1, 0, 1);
+        }
+      }
+    
 
     this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
@@ -3128,6 +3246,42 @@ void vtkSlicerApplicationGUI::UnpackConventionalView()
     this->MainSlicerWindow->GetViewFrame()->UnpackChildren();
     }
   
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+    }
+    // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::UnpackDual3DView()
+{
+  // Unpack the 3D viewer widget 
+  // (we don't know if it is the active widget or not)
+  this->GridFrame1->UnpackChildren();
+
   if (this->SlicesGUI)
     {
       vtkSlicerSliceGUI *g = NULL;
