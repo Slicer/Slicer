@@ -1,4 +1,4 @@
-<RCC>
+<!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file>Icons/InvisibleNoFrame.png</file>
     <file>Icons/VisibleNoFrame.png</file>
