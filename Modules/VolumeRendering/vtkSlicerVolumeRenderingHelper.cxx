@@ -407,8 +407,10 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_GPURayCastColorOpacityFusion->Create();
     this->MB_GPURayCastColorOpacityFusion->SetLabelWidth(labelWidth);
     this->MB_GPURayCastColorOpacityFusion->SetBalloonHelpString("Select color fusion method in multi-volume rendering");
-    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Alpha Blending");
+    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Alpha Blending (OR)");
     this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastColorOpacityFusion 0");
+    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Alpha Blending (AND)");
+    this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastColorOpacityFusion 1");
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastColorOpacityFusion->GetWidgetName() );
 
@@ -1182,18 +1184,14 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   switch(vspNode->GetGPURaycastIIFusion())
   {
     case 0:
-      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Alpha Blending");
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Alpha Blending (OR)");
       break;
     case 1:
-      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Reversed Alpha Blending");
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Alpha Blending (AND)");
       break;
     case 2:
-      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Add");
+      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Alpha Blending (NOT)");
       break;
-    case 3:
-      this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Subtract");
-      break;
-
   }
 
   this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10);
@@ -1327,7 +1325,18 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
 {
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
+  vspNode->SetGPURaycastIIFusion(id);
+
+  this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
+
+  vtkSlicerViewerWidget *slicer_viewer_widget = 
+    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+    {
+    slicer_viewer_widget->RequestRender();
+    }
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)

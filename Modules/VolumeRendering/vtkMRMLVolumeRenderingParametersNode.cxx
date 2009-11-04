@@ -245,11 +245,18 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->GPURaycastTechniqueII;
       continue;
     }
-    if (!strcmp(attName,"gpuRaycastTechniqueII"))
+    if (!strcmp(attName,"gpuRaycastTechniqueIIFg"))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GPURaycastTechniqueIIFg;
+      continue;
+    }
+    if (!strcmp(attName,"gpuRaycastIIFusion"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->GPURaycastIIFusion;
       continue;
     }
     if (!strcmp(attName,"threshold"))
@@ -292,6 +299,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
   of << indent << " gpuRaycastTechniqueII=\"" << this->GPURaycastTechniqueII << "\"";
   of << indent << " gpuRaycastTechniqueIIFg=\"" << this->GPURaycastTechniqueIIFg << "\"";
+  of << indent << " gpuRaycastIIFusion=\"" << this->GPURaycastIIFusion << "\"";
   of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
   of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
   of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
@@ -381,6 +389,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetThresholdFg(node->GetThresholdFg());
   this->SetUseFgThreshold(node->GetUseFgThreshold());
   this->SetGPURaycastIIBgFgRatio(node->GetGPURaycastIIBgFgRatio());
+  this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
   
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();

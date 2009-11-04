@@ -277,10 +277,9 @@ protected:
 
   /*
    * fusion method in GPU ray cast II
-   * 0: Alpha Blending (default)
-   * 1: Reversed Alpha Blending
-   * 2: Add
-   * 3: Subtract
+   * 0: Alpha Blending OR (default)
+   * 1: Alpha Blending AND
+   * 2: Alpha Blending NOT
    * */
   int GPURaycastIIFusion;
 

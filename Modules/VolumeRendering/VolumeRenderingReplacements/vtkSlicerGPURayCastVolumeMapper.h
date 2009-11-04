@@ -172,14 +172,6 @@ protected:
   void LoadVertexShader();
   void LoadBgFgFragmentShader();
 
-  // regular ray casting
-  void LoadFragmentShader();
-  void LoadNoShadingFragmentShader();
-
-  // mip ray casting
-  void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
-  void LoadNoShadingFragmentShaderMINIP();//lighting in MIP could be bad, so no shading here
-
   void LoadRayCastProgram();
 
   void AdaptivePerformanceControl();
