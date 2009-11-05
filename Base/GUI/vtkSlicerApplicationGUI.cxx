@@ -2742,14 +2742,7 @@ void vtkSlicerApplicationGUI::PackDual3DView ( )
     this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
 
-    // Pack
-    vtkSlicerViewerWidget *viewer_widget = this->GetActiveViewerWidget();
-    if (viewer_widget)
-      {
-      viewer_widget->GridWidget(this->GridFrame1, 0, 0 );
-      }
-
-    // Need to make and pack a second 3D viewer
+    // Do we need to make another 3D viewer?
     if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") < 2)
       {
       // Need another view node.  When the view node is added to the
@@ -2760,13 +2753,14 @@ void vtkSlicerApplicationGUI::PackDual3DView ( )
       this->OnViewNodeAdded(second);
       }
 
-    if (this->Internals->ViewerWidgets.size() >= 2)
+    // Pack the 3D viewers
+    for (int i=0; i < (this->Internals->ViewerWidgets.size() > 2 ? 2 : this->Internals->ViewerWidgets.size()); i++)
       {
-      vtkSlicerViewerWidget *second_viewer_widget 
-        = this->Internals->ViewerWidgets[1];
-      if (second_viewer_widget)
+      vtkSlicerViewerWidget *viewer_widget 
+        = this->Internals->ViewerWidgets[i];
+      if (viewer_widget)
         {
-        second_viewer_widget->GridWidget(this->GridFrame1, 0, 1);
+        viewer_widget->GridWidget(this->GridFrame1, 0, i);
         }
       }
     
