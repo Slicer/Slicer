@@ -888,7 +888,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
       }
 
       #
-      # Note - the two banches are identical down to the line starting -DOPENGL...
+      # Note - 
       # -- the text needs to be duplicated to avoid quoting problems with paths that have spaces
       #
       if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
@@ -899,8 +899,6 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_SKIP_RPATH:BOOL=ON \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
             -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
@@ -927,8 +925,6 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_SKIP_RPATH:BOOL=OFF \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
             -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
             -DBUILD_TESTING:BOOL=OFF \
@@ -957,8 +953,6 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_SKIP_RPATH:BOOL=ON \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_C_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
             -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
@@ -976,7 +970,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
-      } else {
+      } elseif { $isWindows } {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
@@ -986,6 +980,29 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DCMAKE_C_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_C_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DVTK_USE_CARBON:BOOL=OFF \
+            -DVTK_USE_X:BOOL=ON \
+            -DVTK_WRAP_TCL:BOOL=ON \
+            -DVTK_USE_HYBRID:BOOL=ON \
+            -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_USE_PARALLEL:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
+            -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
+            -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
+            -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
+            $USE_VTK_ANSI_STDLIB \
+            ../VTK
+      } else {
+        runcmd $::CMAKE \
+            -G$GENERATOR \
+            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=ON \
+            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
             -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
