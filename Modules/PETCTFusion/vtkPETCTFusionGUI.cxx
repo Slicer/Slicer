@@ -2146,7 +2146,7 @@ void vtkPETCTFusionGUI::BuildDisplayFrame (  vtkKWWidget *page )
   vtkKWLabel *maxl  = vtkKWLabel::New();
   maxl->SetParent ( f1->GetFrame() );
   maxl->Create();
-  maxl->SetText ( "max (SUV)");
+  maxl->SetText ( "max (SUVbw)");
 
   this->PETRange = vtkKWRange::New();
   this->PETRange->SetParent ( f1->GetFrame() );
@@ -2442,10 +2442,10 @@ void vtkPETCTFusionGUI::BuildReportFrame ( vtkKWWidget *page  )
   col_index = this->ResultList->AddColumn("Color");
   this->ResultList->ColumnEditableOff(col_index);
 
-  col_index = this->ResultList->AddColumn("SUVMax (g/ml)     ");
+  col_index = this->ResultList->AddColumn("Max SUVbw (g/ml)");
   this->ResultList->ColumnEditableOff(col_index);
   
-  col_index = this->ResultList->AddColumn("SUVMean (g/ml)     ");
+  col_index = this->ResultList->AddColumn("Mean SUVbw (g/ml)");
   this->ResultList->ColumnEditableOff(col_index);
   app->Script(
     "pack %s -side top -anchor w -fill x -expand y -padx 2 -pady 2", 
