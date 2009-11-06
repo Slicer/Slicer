@@ -119,7 +119,6 @@
       <string>
       <name>LoadDicomDir</name>
       <longflag>--load_dicom</longflag>
-      <flag>-d</flag>
       <description>Read dicom files from dir</description>
       <label>Load Dicom</label>
       </string>
