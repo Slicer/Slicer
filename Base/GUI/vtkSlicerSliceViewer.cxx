@@ -303,6 +303,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
 
         vtkSmartPointer< vtkActor2D > actor2D = vtkActor2D::New();
           actor2D->SetMapper( mapper );
+          actor2D->GetProperty()->SetDisplayLocationToBackground();
         actor2D->Delete();
 
         vtkSmartPointer< vtkRenderer > renderer = vtkRenderer::New();
