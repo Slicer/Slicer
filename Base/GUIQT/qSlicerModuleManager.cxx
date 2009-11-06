@@ -67,6 +67,12 @@ void qSlicerModuleManager::printAdditionalInfo()
 }
 
 //---------------------------------------------------------------------------
+qSlicerModuleFactory* qSlicerModuleManager::factory()
+{
+  return &this->Internal->ModuleFactory;
+}
+
+//---------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerModuleManager::loadModule(const QString& moduleTitle)
 {
   // Get corresponding module name
@@ -90,7 +96,7 @@ qSlicerAbstractModule* qSlicerModuleManager::loadModuleByName(const QString& mod
     }
   
   // Instanciate the module
-  qSlicerAbstractModule * module = this->Internal->ModuleFactory.createModule(moduleName); 
+  qSlicerAbstractModule * module = this->Internal->ModuleFactory.initializeModule(moduleName); 
   if (!module)
     {
     qWarning() << "Failed to load module: " << moduleName;

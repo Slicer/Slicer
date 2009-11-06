@@ -20,11 +20,14 @@ public:
   
   virtual void printAdditionalInfo();
   
-  virtual QString moduleTitle(); 
+  qSlicerGetModuleTitleMacro("Transforms");
   
   // Return help/about text
   virtual QString helpText();
   virtual QString aboutText();
+
+protected:
+  virtual void initializer(); 
 
 protected slots:
   void onCoordinateReferenceButtonPressed(int id); 

@@ -17,5 +17,5 @@ INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTModuleMacros.cmake)
 SUBDIRS(
   #SlicerWelcome
   Volumes
-  #Measurements
+  Measurements
   )

@@ -18,3 +18,5 @@
 #ifndef BUILD_SHARED_LIBS
 # define VTKSLICER_STATIC
 #endif
+
+#define QTMODULE_TITLE "@QTMODULE_TITLE@"

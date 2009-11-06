@@ -7,6 +7,7 @@
 
 class qSlicerAbstractModule; 
 class qSlicerModuleManagerInitialize; 
+class qSlicerModuleFactory;
 
 class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleManager
 { 
@@ -19,8 +20,11 @@ public:
   virtual void printAdditionalInfo();
   
   // Description:
-  qSlicerAbstractModule*  loadModule(const QString& moduleTitle); 
-  qSlicerAbstractModule*  loadModuleByName(const QString& moduleName);
+  qSlicerModuleFactory* factory();
+  
+  // Description:
+  qSlicerAbstractModule* loadModule(const QString& moduleTitle); 
+  qSlicerAbstractModule* loadModuleByName(const QString& moduleName);
   
   // Description:
   void unLoadModule(const QString& moduleTitle);
@@ -35,6 +39,7 @@ public:
   const QString moduleTitle(const QString& moduleName); 
   
   // Description:
+  // Hide / Show module
   void showModule(const QString& moduleTitle); 
   void hideModule(const QString& moduleTitle); 
   

@@ -79,13 +79,13 @@ void SlicerView::reset()
 
 void SlicerView::PythonCommand(const QString & command)
 {
-  QByteArray byteArray = command.toAscii();
+  QByteArray byteArray = command.toLatin1();
   //vtkSlicerApplication::GetInstance()->GetApplicationGUI()->PythonCommand(byteArray.constData());
 }
 
 void SlicerView::TclCommand(const QString & command)
 {
-  QByteArray byteArray = command.toAscii();
+  QByteArray byteArray = command.toLatin1();
   const char *result = this->kwapp->Script(byteArray.constData());
   emit this->TclResult(QString(result));
 }

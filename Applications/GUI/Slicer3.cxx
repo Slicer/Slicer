@@ -17,7 +17,10 @@
 //
 #ifdef Slicer3_USE_QT
 #include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactory.h"
 // #include "vtkSlicerEmptyModuleGUI.h"
+#include <QStringList>
 #include <QDebug>
 #endif
 
@@ -1035,7 +1038,9 @@ int Slicer3_main(int& argc, char *argv[])
   // installation or build tree) to the user paths
   qtModulePaths = userModulePaths + PathSep + defaultQTModulePaths;
   
-  cout << "qtModulePaths:" << qtModulePaths << endl; 
+  qSlicerModuleManager::instance()->factory()->setLoadableModuleSearchPaths(
+    QString::fromStdString(qtModulePaths).split(PathSep));
+  //cout << "qtModulePaths:" << qtModulePaths << endl; 
 #endif
 
   // =================== vvv
@@ -1216,6 +1221,9 @@ int Slicer3_main(int& argc, char *argv[])
   if (slicerApp->GetLoadModules() && !NoModules)
     {
     loadableModuleFactory.Scan();
+#ifdef Slicer3_USE_QT
+    qSlicerModuleManager::instance()->factory()->registerLoadableModules();
+#endif
     }
 
   std::vector<std::string> loadableModuleNames = 
@@ -1227,10 +1235,12 @@ int Slicer3_main(int& argc, char *argv[])
     vtkSmartPointer<vtkStringArray>::New();
 
   while (lmit != loadableModuleNames.end())
-    {
+    { 
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
     loadableModules->InsertNextValue(desc.GetName());
-
+#ifdef Slicer3_USE_QT
+    qDebug() << "Initialize loadable module:" << desc.GetName().c_str();
+#endif
     if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
       {
       slicerApp->SplashMessage(desc.GetMessage().c_str());
@@ -1302,8 +1312,8 @@ int Slicer3_main(int& argc, char *argv[])
   // ADD INDIVIDUAL MODULES
   // (these require appGUI to be built):
 
-
 #ifndef MODELS_DEBUG
+  SlicerQDebug("Initializing Models Module");
   slicerApp->SplashMessage("Initializing Models Module...");
 
   // --- Models module    
@@ -1330,6 +1340,7 @@ int Slicer3_main(int& argc, char *argv[])
 
 
 #ifndef FIDUCIALS_DEBUG
+  SlicerQDebug("Initializing Fiducials Module");
   slicerApp->SplashMessage("Initializing Fiducials Module...");
 
   // --- Fiducials module    
@@ -1349,7 +1360,7 @@ int Slicer3_main(int& argc, char *argv[])
 #endif
 
   slicerApp->SplashMessage("Initializing ROI Module...");
-
+  SlicerQDebug("Initializing ROI Module");
   // --- Fiducials module    
   vtkSlicerROILogic *ROILogic = vtkSlicerROILogic::New ( );
   ROILogic->SetAndObserveMRMLScene ( scene );
@@ -1367,7 +1378,8 @@ int Slicer3_main(int& argc, char *argv[])
 
 #ifndef COLORS_DEBUG
   slicerApp->SplashMessage("Initializing Colors Module...");
-
+  SlicerQDebug("Initializing Colors Module");
+  
   // -- Color module
   vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
   // observe the scene's new scene event
@@ -1397,7 +1409,8 @@ int Slicer3_main(int& argc, char *argv[])
 
   // --- Transforms module
   slicerApp->SplashMessage("Initializing Transforms Module...");
-
+  SlicerQDebug("Initializing Transforms Module");
+  
   vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
   transformsGUI->SetApplication ( slicerApp );
   transformsGUI->SetApplicationGUI ( appGUI );
@@ -1411,6 +1424,7 @@ int Slicer3_main(int& argc, char *argv[])
 
   //--- Data module
   slicerApp->SplashMessage( "Initializing Data Module...");
+  SlicerQDebug("Initializing Data Module");
 
   //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
   //dataLogic->SetAndObserveMRMLScene ( scene );
@@ -1429,7 +1443,8 @@ int Slicer3_main(int& argc, char *argv[])
     
 #ifndef CAMERA_DEBUG
   slicerApp->SplashMessage("Initializing Camera Module...");
-
+  SlicerQDebug("Initializing Camera Module");
+  
   // --- Camera module
   vtkSlicerCamerasGUI *cameraGUI = vtkSlicerCamerasGUI::New ( );
   cameraGUI->SetApplication ( slicerApp );
@@ -1448,6 +1463,7 @@ int Slicer3_main(int& argc, char *argv[])
 
   // --- Slices module
   slicerApp->SplashMessage("Initializing Slices Module...");
+  SlicerQDebug("Initializing Slices Module");
   appLogic->CreateSliceLogics();
   appGUI->InitializeSlicesControlGUI();
   appGUI->InitializeViewControlGUI();
@@ -1470,6 +1486,7 @@ int Slicer3_main(int& argc, char *argv[])
   
   // --- Qt Transforms module
   slicerApp->InitializeQtCoreModules(); 
+  slicerApp->InitializeQtLoadableModules();
 #endif
 
  // --- First scene needs a crosshair to be added manually

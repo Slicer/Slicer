@@ -16,12 +16,15 @@ public:
   virtual ~qSlicerAbstractLoadableModule();
   
   virtual void printAdditionalInfo(); 
-
+  
   // Description:
   // Return help/about text
   virtual QString helpText();
   virtual QString aboutText(); 
-  
+
+protected:
+  virtual void initializer();
+
 private:
   class qInternal;
   qInternal* Internal;

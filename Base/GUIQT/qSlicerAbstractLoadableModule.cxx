@@ -15,13 +15,18 @@ public:
 qSlicerAbstractLoadableModule::qSlicerAbstractLoadableModule(QWidget *parent)
  :Superclass(parent)
 {
-  this->Internal = new qInternal;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractLoadableModule::~qSlicerAbstractLoadableModule()
 {
-  delete this->Internal; 
+  if (this->initialized()) { delete this->Internal; }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractLoadableModule::initializer()
+{
+  this->Internal = new qInternal;
 }
 
 //-----------------------------------------------------------------------------

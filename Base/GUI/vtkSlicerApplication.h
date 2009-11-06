@@ -13,6 +13,7 @@
 //BTX
 class qSlicerApplication;
 class qSlicerModuleManager; 
+class QStringList;
 //ETX
 #endif
 
@@ -78,9 +79,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     //ETX
     
     // Description:
-    // Initialize a qt core Module given its name
+    // Initialize qt loadable Modules
     //BTX
-    void InitializeQtCoreModule(const char* moduleName);
+    void InitializeQtLoadableModules();
+    //ETX
+    
+    // Description:
+    // Initialize a list of QtModules given a list of names
+    //BTX
+    void InitializeQtModules(QStringList* names);
+    //ETX
+    
+    // Description:
+    // Initialize a qt Module given its name
+    //BTX
+    void InitializeQtModule(const char* moduleName);
     //ETX
 #endif
 

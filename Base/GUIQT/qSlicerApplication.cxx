@@ -1,5 +1,8 @@
 #include "qSlicerApplication.h" 
 
+#include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactory.h"
+
 #include <QPalette>
 #include <QColor>
 #include <QFont>
@@ -7,8 +10,11 @@
 #include <QFontDatabase>
 #include <QWidget>
 #include <QMap>
+#include <QDebug>
 
 #include "vtkMRMLScene.h"
+
+#include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerApplication::qInternal
@@ -20,6 +26,7 @@ public:
     }
   vtkMRMLScene * MRMLScene; 
   QMap<QWidget*,bool> TopLevelWidgetsSavedVisibilityState; 
+  QString             SlicerHome;
 };
 
 //-----------------------------------------------------------------------------
@@ -44,6 +51,49 @@ qSlicerApplication* qSlicerApplication::application()
   qSlicerApplication* app =
     qobject_cast<qSlicerApplication*>(QApplication::instance());
   return app;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerApplication::slicerHome()
+{
+  // TODO Use QCoreApplication::applicationDirPath
+  return this->Internal->SlicerHome;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setSlicerHome(const QString& slicerHome)
+{
+  this->Internal->SlicerHome = slicerHome; 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::initializeLoadableModulesPaths()
+{
+  // On Win32, *both* paths have to be there, since scripts are installed
+  // in the install location, and exec/libs are *automatically* installed
+  // in intDir.
+  QString defaultQTModulePaths = this->slicerHome() + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  
+//   if (hasIntDir)
+//     {
+//     defaultQTModulePaths = defaultQTModulePaths + PathSep + 
+//       slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + intDir;
+//     }
+    
+  // add the default modules directory (based on the slicer
+  // installation or build tree) to the user paths
+  QString qtModulePaths = /*userModulePaths + PathSep + */defaultQTModulePaths;
+  this->addLibraryPath(defaultQTModulePaths);
+  
+//   foreach (QString path, this->libraryPaths())
+//     {
+//     qDebug() << "libraryPath:" << path;
+//     }
+
+  QStringList paths; 
+  paths << qtModulePaths; 
+  qSlicerModuleManager::instance()->factory()->setLoadableModuleSearchPaths(paths);
+  //qDebug() << "initializeLoadableModulesPaths - qtModulePaths:" << qtModulePaths;
 }
 
 //-----------------------------------------------------------------------------

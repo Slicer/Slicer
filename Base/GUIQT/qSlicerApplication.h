@@ -29,6 +29,13 @@ public:
   vtkMRMLScene* getMRMLScene();
 
   static qSlicerApplication* application();
+  
+  // Description:
+  // Return slicer home directory
+  QString slicerHome();
+  void setSlicerHome(const QString& slicerHome);
+  
+  void initializeLoadableModulesPaths();
 
 protected:
   // Description:

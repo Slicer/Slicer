@@ -4,14 +4,12 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseGUIQTWin32Header.h"
 
-#include <qCTKAbstractObjectFactory.h>
+#include <QFileInfo>
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleFactory : 
-  protected qCTKAbstractObjectFactory<qSlicerAbstractModule, QString>
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleFactory
 { 
 public:
   
-  typedef qCTKAbstractObjectFactory<qSlicerAbstractModule, QString> Superclass;
   qSlicerModuleFactory();
   virtual ~qSlicerModuleFactory(); 
   
@@ -27,11 +25,37 @@ public:
   
   // Description:
   // Instanciate a module given its name
-  qSlicerAbstractModule* createModule(const QString& moduleName); 
+  qSlicerAbstractModule* initializeModule(const QString& moduleName); 
   
   // Description:
-  // Set path where the loadable modules are located
-  void setLoadableModuleSearchPath(const QString& searchPath); 
+  // Set/Get paths where the loadable modules are located
+  void setLoadableModuleSearchPaths(const QStringList& paths); 
+  QStringList loadableModuleSearchPaths();
+  
+  // Description:
+  // Register all loadable modules discovered using the loadableModuleSearchPaths.
+  // Note: For each entries in the searchPaths, if it's a valid library (check 
+  // execution flag and name), the method registerLoadableModule will be called.
+  void registerLoadableModules(); 
+  
+  // Description:
+  // Register a loadable module indicating its name
+  void registerLoadableModule(const QFileInfo& fileInfo);
+  
+  // Description:
+  // Set/Get paths where the loadable modules are located
+  void setCmdLineModuleSearchPaths(const QStringList& paths); 
+  QStringList cmdLineModuleSearchPaths();
+  
+  // Description:
+  void registerCmdLineModules(); 
+  void registerCmdLineModule(const QFileInfo& fileInfo);
+  
+  // Description:
+  // Return the list oC all core/loadable modules
+  QStringList coreModuleNames();
+  QStringList loadableModuleNames();
+  QStringList commandLineModuleNames();
 
 protected:
   
@@ -41,10 +65,9 @@ protected:
   
   // Description:
   // Add a module class to the factory
-  // Note: A valid module should expose a static method having the following signature:
-  //  static const QString moduleTitle(); 
   template<typename ClassType>
-  void registerModule(/*const QString& moduleTitle*/); 
+  void registerCoreModule(); 
+
 
 private:
   class qInternal;

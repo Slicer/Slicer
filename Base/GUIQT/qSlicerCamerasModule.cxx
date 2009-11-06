@@ -19,6 +19,19 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCamerasModule::qSlicerCamerasModule(QWidget *parent) : Superclass(parent)
 {
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCamerasModule::~qSlicerCamerasModule()
+{
+  if (this->initialized()) { delete this->Internal; }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCamerasModule::initializer()
+{
+  this->Superclass::initializer();
+  
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
 
@@ -27,21 +40,9 @@ qSlicerCamerasModule::qSlicerCamerasModule(QWidget *parent) : Superclass(parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCamerasModule::~qSlicerCamerasModule()
-{
-  delete this->Internal; 
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerCamerasModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::moduleTitle()
-{
-  return "Cameras";
 }
 
 //-----------------------------------------------------------------------------

@@ -8,9 +8,6 @@ public:
     {
     this->ModuleEnabled = false; 
     }
-  ~qInternal()
-    {
-    }
   bool                    ModuleEnabled; 
 };
 
@@ -25,6 +22,12 @@ qSlicerAbstractModule::qSlicerAbstractModule(QWidget *parent)
 qSlicerAbstractModule::~qSlicerAbstractModule()
 {
   delete this->Internal; 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModule::initialize()
+{
+  this->initializer();
 }
 
 //-----------------------------------------------------------------------------

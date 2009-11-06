@@ -19,12 +19,15 @@ public:
 
   virtual void printAdditionalInfo();
   
-  virtual QString moduleTitle();
+  qSlicerGetModuleTitleMacro("Cameras");
   
   // Return help/about text
   virtual QString helpText();
   virtual QString aboutText();
 
+protected:
+  virtual void initializer();
+  
 protected slots:
   void onViewNodeSelected(vtkMRMLNode*);
 

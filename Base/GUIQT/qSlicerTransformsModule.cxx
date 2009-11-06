@@ -30,6 +30,20 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerTransformsModule::qSlicerTransformsModule(QWidget *parent) : Superclass(parent)
 {
+}
+
+//-----------------------------------------------------------------------------
+qSlicerTransformsModule::~qSlicerTransformsModule()
+{
+  if (this->initialized()) { delete this->Internal; }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModule::initializer()
+{
+  qDebug() << "qSlicerTransformsModule::initializer";
+  this->Superclass::initializer();
+  
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
   
@@ -91,21 +105,9 @@ qSlicerTransformsModule::qSlicerTransformsModule(QWidget *parent) : Superclass(p
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsModule::~qSlicerTransformsModule()
-{
-  delete this->Internal; 
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerTransformsModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::moduleTitle()
-{
-  return "Transforms";
 }
 
 //-----------------------------------------------------------------------------

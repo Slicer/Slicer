@@ -20,24 +20,25 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerVolumesModule::qSlicerVolumesModule(QWidget *parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
-  this->Internal->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesModule::~qSlicerVolumesModule()
 {
-  delete this->Internal; 
+  if (this->initialized()) { delete this->Internal; }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerVolumesModule::initializer()
+{
+  this->Superclass::initializer();
+  
+  this->Internal = new qInternal;
+  this->Internal->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::moduleTitle()
-{
-  return "Volumes"; 
 }

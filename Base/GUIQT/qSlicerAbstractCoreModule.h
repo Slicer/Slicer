@@ -18,6 +18,8 @@ public:
   virtual void printAdditionalInfo(); 
   
 protected:
+  virtual void initializer(); 
+  
   // Description:
   // Convenient method to return slicer wiki URL
   QString slicerWikiUrl(){ return "http://www.slicer.org/slicerWiki/index.php"; }

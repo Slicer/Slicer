@@ -20,24 +20,25 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerMeasurementsModule::qSlicerMeasurementsModule(QWidget *parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
-  this->Internal->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerMeasurementsModule::~qSlicerMeasurementsModule()
 {
-  delete this->Internal; 
+  if (this->initialized()) { delete this->Internal; }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMeasurementsModule::initializer()
+{
+  this->Superclass::initializer();
+  
+  this->Internal = new qInternal;
+  this->Internal->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerMeasurementsModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerMeasurementsModule::moduleTitle()
-{
-  return "Measurements"; 
 }

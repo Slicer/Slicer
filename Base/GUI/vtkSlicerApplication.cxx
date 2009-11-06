@@ -8,6 +8,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactory.h"
 //#include "QtSlicerWebKit.h"
 #include <QHash>
 #include <QDebug>
@@ -2425,18 +2426,36 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 
 //----------------------------------------------------------------------------
 #ifdef Slicer3_USE_QT
+
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::InitializeQtCoreModules()
+void vtkSlicerApplication::InitializeQtLoadableModules()
 {
-  this->InitializeQtCoreModule("qSlicerTransformsModule");
-  this->InitializeQtCoreModule("qSlicerCamerasModule");
+  QStringList tmp(qSlicerModuleManager::instance()->factory()->loadableModuleNames());
+  this->InitializeQtModules(&tmp);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::InitializeQtCoreModule(const char* moduleName)
+void vtkSlicerApplication::InitializeQtCoreModules()
+{
+  QStringList tmp(qSlicerModuleManager::instance()->factory()->coreModuleNames());
+  this->InitializeQtModules(&tmp);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeQtModules(QStringList* names)
+{
+  QStringList moduleNames = qSlicerModuleManager::instance()->factory()->coreModuleNames();
+  foreach(const QString& name, *names)
+    {
+    this->InitializeQtModule(name.toLatin1());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
 {
   QString splashMsg = "Initializing %1 Module...";
-  this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toAscii());
+  this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toLatin1());
   qDebug() << "Attempt to load module: " << moduleName;
   qSlicerModuleManager::instance()->loadModuleByName(moduleName);
   qSlicerAbstractModule* module = qSlicerModuleManager::instance()->getModuleByName(moduleName); 
@@ -2445,6 +2464,5 @@ void vtkSlicerApplication::InitializeQtCoreModule(const char* moduleName)
     module->setScrollAreaAsParentContainer(true);
     module->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     }
-  //qSlicerModuleManager::instance()->printAdditionalInfo(); 
 }
 #endif
