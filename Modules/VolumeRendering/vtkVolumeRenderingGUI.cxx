@@ -1182,13 +1182,17 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.5);
 
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
+  int numViewer = this->GetApplicationGUI()->GetNumberOfViewerWidgets();
+  std::cerr<<"number of viewer: "<<numViewer<<endl;
+  for (int i = 0; i < numViewer; i++)
+  {
+    vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetNthViewerWidget(i);
+    if (slicer_viewer_widget)
     {
-    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+      slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
     }
-
+  }
+  
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
@@ -1208,12 +1212,17 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.9);
 
-  if (slicer_viewer_widget)
+  for (int i = 0; i < numViewer; i++)
+  {
+    vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetNthViewerWidget(i);
+    
+    if (slicer_viewer_widget)
     {
-    slicer_viewer_widget->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
-    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
-    slicer_viewer_widget->RequestRender();
+      slicer_viewer_widget->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolumeActor() );
+      slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+      slicer_viewer_widget->RequestRender();
     }
+  }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }

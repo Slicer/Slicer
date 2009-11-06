@@ -509,14 +509,13 @@ void vtkSlicerGPURayCastVolumeMapper::Setup3DTextureParameters( vtkVolumePropert
   glTexParameterf( vtkgl::TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 }
 
-void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren),
-            vtkVolume *vol )
+void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *ren, vtkVolume *vol )
 {
   //0, 1, 2, 3
   //7, 6, 5, 4
   // Update the volume containing the 2 byte scalar / gradient magnitude
   if ( this->UpdateVolumes( vol ) || !this->Volume1Index )
-    {
+  {
     int dim[3];
     this->GetVolumeDimensions(dim);
 
@@ -548,7 +547,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren
     this->Volume1 = NULL;
     this->Volume2 = NULL;
     this->Volume3 = NULL;
-    }
+  }
 
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
   glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
@@ -1273,7 +1272,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadBgFgFragmentShader()
   try
   {
     vtkgl::GetShaderInfoLog(RayCastFragmentShader, infoLogLen, NULL, pInfoLog);
-    std::cerr << pInfoLog << endl;
+    std::cerr << pInfoLog;
   }catch(...)
   {
   }

@@ -1426,9 +1426,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
   }
 
   if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  {
+    slicer_viewer_widget->Render();
+  }
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)

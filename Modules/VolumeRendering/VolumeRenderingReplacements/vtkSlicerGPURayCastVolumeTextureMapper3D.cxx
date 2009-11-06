@@ -562,8 +562,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Setup3DTextureParameters( vtkVolu
   glTexParameterf( vtkgl::TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures( vtkRenderer *vtkNotUsed(ren),
-            vtkVolume *vol )
+void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures( vtkRenderer *ren, vtkVolume *vol )
 {
   //0, 1, 2, 3
   //7, 6, 5, 4
