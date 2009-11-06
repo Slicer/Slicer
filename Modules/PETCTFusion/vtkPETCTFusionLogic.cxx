@@ -609,7 +609,7 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
       //---
       //--- SeriesTime
       tag.clear();
-      tag = f->GetEntryValue (0x0008,0x0032);
+      tag = f->GetEntryValue (0x0008,0x0031);
       if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
         {
         hourstr.clear();
@@ -739,6 +739,7 @@ double vtkPETCTFusionLogic::ConvertImageUnitsToSUVUnits( double voxValue )
 
   double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
   dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
+  dose = this->DecayCorrection (dose );
   weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
 
   double weightByDose = weight / dose;
@@ -771,6 +772,7 @@ double vtkPETCTFusionLogic::ConvertSUVUnitsToImageUnits( double suvValue )
 
   double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
   dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
+  dose = this->UndoDecayCorrection ( dose );
   weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
 
   double weightByDose = weight / dose;
@@ -779,6 +781,92 @@ double vtkPETCTFusionLogic::ConvertSUVUnitsToImageUnits( double suvValue )
   return ( voxValue);
 }
 
+
+
+
+
+//----------------------------------------------------------------------------
+double vtkPETCTFusionLogic::ConvertTimeToSeconds(const char *time)
+{
+  if ( time == NULL )
+    {
+    vtkErrorMacro ( "ConvertTimeToSeconds got a NULL time string." );
+    return (-1.0);
+    }
+
+  std::string h;
+  std::string m;
+  std::string minAndsecStr;
+  std::string secStr;  
+
+  double hours;
+  double minutes;
+  double seconds;
+  
+  //---
+  //--- time will be in format HH:MM:SS.SSSS
+  //--- convert to a double count of seconds.
+  //---
+  std::string timeStr = time;
+  size_t i = timeStr.find_first_of(":");
+  h = timeStr.substr ( 0, 2 );
+  hours = atof ( h.c_str() );
+
+  minAndsecStr = timeStr.substr ( 3 );
+  i = minAndsecStr.find_first_of ( ":" );
+  m = minAndsecStr.substr (0, 2 );
+  minutes = atof ( m.c_str() );
+
+  secStr = minAndsecStr.substr ( 3 );
+  seconds = atof ( secStr.c_str() );
+  
+  double retval = ( seconds +
+                    (60.0 * minutes) +
+                    (3600.0 * hours ));
+  return (retval);
+}
+
+
+
+
+
+//----------------------------------------------------------------------------
+double vtkPETCTFusionLogic::DecayCorrection ( double inVal )
+{
+  double scanTimeSeconds = this->ConvertTimeToSeconds (this->PETCTFusionNode->GetSeriesTime() );
+  double startTimeSeconds = this->ConvertTimeToSeconds ( this->PETCTFusionNode->GetRadiopharmaceuticalStartTime() );
+  if ( scanTimeSeconds < 0.0 || startTimeSeconds < 0.0 )
+    {
+    this->PETCTFusionNode->SetMessageText ( "Note: Scan start time and Radiopharmaceutical start time were not found or specified. SUV results will not be properly decay corrected." );
+    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
+    return ( inVal );
+    }
+
+  double halfLife = atof ( this->PETCTFusionNode->GetRadionuclideHalfLife() );
+  double decayTime = scanTimeSeconds-startTimeSeconds;
+  double correctedVal = inVal * (double)pow(2.0, -(decayTime/halfLife) );
+  return ( correctedVal );
+
+}
+
+
+//----------------------------------------------------------------------------
+double vtkPETCTFusionLogic::UndoDecayCorrection ( double inVal )
+{
+  double scanTimeSeconds = this->ConvertTimeToSeconds (this->PETCTFusionNode->GetSeriesTime() );
+  double startTimeSeconds = this->ConvertTimeToSeconds ( this->PETCTFusionNode->GetRadiopharmaceuticalStartTime() );
+  //--- check to see if RadiopharmaceuticalStartTime or ScanTime were not specified...
+  //--- if not, don't correct value.
+  if ( scanTimeSeconds < 0.0 || startTimeSeconds < 0.0 )
+    {
+    return ( inVal );
+    }
+  double halfLife = atof ( this->PETCTFusionNode->GetRadionuclideHalfLife() );
+  double decayTime = scanTimeSeconds-startTimeSeconds;
+  double correctedVal = inVal / (double)pow(2.0, -(decayTime/halfLife) );
+  return ( correctedVal );
+
+}
 
 
 
@@ -797,6 +885,10 @@ void vtkPETCTFusionLogic::ComputeSUVmax()
   //---
   double weight = this->PETCTFusionNode->GetPatientWeight();
   double dose = this->PETCTFusionNode->GetInjectedDose();
+  //---
+  //--- go no further if we haven't yet retrieved values from header,
+  //--- or have no manually entered values for dose and weight.
+  //---
   if ( weight == 0.0 || dose == 0.0 || this->PETCTFusionNode->GetTissueRadioactivityUnits() == NULL )
     {
     this->PETCTFusionNode->SetPETSUVmax ( this->PETCTFusionNode->GetPETMax() );
@@ -804,6 +896,8 @@ void vtkPETCTFusionLogic::ComputeSUVmax()
     }
   double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
   dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
+  dose = this->DecayCorrection ( dose );
+
   weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
   double weightByDose = weight / dose;
   double suvmax = (this->PETCTFusionNode->GetPETMax() * tissueConversionFactor) * weightByDose;
@@ -929,8 +1023,29 @@ void vtkPETCTFusionLogic::ComputeSUV()
       //--- computed SUV should be in units g/ml
       double weight = this->PETCTFusionNode->GetPatientWeight();
       double dose = this->PETCTFusionNode->GetInjectedDose();
+
+      //--- do some error checking and reporting.
+      if ( this->PETCTFusionNode->GetTissueRadioactivityUnits() == NULL )
+        {
+        this->PETCTFusionNode->SetMessageText ( "No Radioactivity Units were specified. Cannot compute a valid SUV." );
+        this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
+        return;
+        }
+      if ( dose == 0.0 )
+        {
+        this->PETCTFusionNode->SetMessageText ( "Injected dose was found to be 0.0. Cannot compute a valid SUV." );
+        this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
+        return;
+        }
+      if ( weight == 0.0 )
+        {
+        this->PETCTFusionNode->SetMessageText ( "Patient Weight was found to be 0.0. Cannot compute a valid SUV." );
+        this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ErrorEvent );
+        return;
+        }
       double tissueConversionFactor = this->ConvertRadioactivityUnits (1, this->PETCTFusionNode->GetTissueRadioactivityUnits(), "kBq");
       dose  = this->ConvertRadioactivityUnits ( dose, this->PETCTFusionNode->GetDoseRadioactivityUnits(), "MBq");
+      dose = this->DecayCorrection (dose);
       weight = this->ConvertWeightUnits ( weight, this->PETCTFusionNode->GetWeightUnits(), "kg");
 
       //--- check a possible multiply by slope -- take intercept into account?

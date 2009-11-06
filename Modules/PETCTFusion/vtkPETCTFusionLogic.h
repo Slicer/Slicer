@@ -42,6 +42,9 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
 
   double ConvertSUVUnitsToImageUnits(double suvValue);
   double ConvertImageUnitsToSUVUnits(double voxValue);
+  double ConvertTimeToSeconds(const char *time);
+  double DecayCorrection ( double inval );
+  double UndoDecayCorrection ( double inval );
 
   virtual void SetAndScaleLUT();
 
