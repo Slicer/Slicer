@@ -9,7 +9,7 @@ subdirs(
   )
 
 IF(Slicer3_USE_QT)
-  #SUBDIRS(SlicerQT)
+  SUBDIRS(SlicerQT)
 ENDIF(Slicer3_USE_QT)
 
 if(Slicer3_BUILD_TESTING)
