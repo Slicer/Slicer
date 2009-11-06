@@ -154,20 +154,20 @@ void vtkVolumeRenderingLogic::RegisterNodes()
 
 void vtkVolumeRenderingLogic::SetGUICallbackCommand(vtkCommand* callback)
 {
-  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
+//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
+//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
 
   //cpu ray casting
-  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
+//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
+//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,callback);
 
   //hook up the gpu mapper
-  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
+//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
+//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
 
   this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
 
