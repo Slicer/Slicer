@@ -13,7 +13,10 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qCTKWidgets_SRCS
+  qCTKAbstractFactory.h
   qCTKAbstractObjectFactory.h
+  qCTKAbstractPluginFactory.h
+  #qCTKAbstractLibraryFactory.h
   qCTKAddRemoveComboBox.h
   qCTKAddRemoveComboBox.cxx
   qCTKCollapsibleGroupBox.h

@@ -1,35 +1,49 @@
 #ifndef __qCTKAbstractObjectFactory_h
 #define __qCTKAbstractObjectFactory_h 
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKAbstractFactory.h"
 
-#include <QString>
-#include <QHash>
 #include <QDebug>
 
-#include <iostream>
+#include "qCTKWidgetsWin32Header.h"
 
 //----------------------------------------------------------------------------
 namespace{
 // Description:
 template<typename BaseClassType, typename ClassType>
-BaseClassType *createObject()
+BaseClassType *instanciateObject()
 {
   return new ClassType;
 }
 }
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType, typename UniqueIdType>
-class qCTKAbstractObjectFactory
+template<typename BaseClassType, typename ClassType>
+class qCTKFactoryObjectItem : public qCTKAbstractFactoryItem<BaseClassType>
 {
 protected:
-  typedef BaseClassType *(*CreateObjectFunc)();
-
+  typedef BaseClassType *(*InstanciateObjectFunc)();
 public:
-  typedef typename QHash<UniqueIdType, CreateObjectFunc>::const_iterator ConstIterator;
-  typedef typename QHash<UniqueIdType, CreateObjectFunc>::iterator Iterator;
+  qCTKFactoryObjectItem(const QString& key):qCTKAbstractFactoryItem<BaseClassType>(key){}
+  virtual bool load()
+    {
+    this->instanciateObjectFunc = &instanciateObject<BaseClassType, ClassType>;
+    return true; 
+    }
+protected:
+  virtual BaseClassType* instanciator()
+    {
+    return this->instanciateObjectFunc();
+    }
+private:
+  InstanciateObjectFunc instanciateObjectFunc; 
+};
 
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+class qCTKAbstractObjectFactory : public qCTKAbstractFactory<BaseClassType>
+{
+public:
   // Description:
   // Constructor
   qCTKAbstractObjectFactory(){}
@@ -38,44 +52,30 @@ public:
   // Description:
   // Register an object in the factory
   template<typename ClassType>
-  void registerQObject()
+  bool registerQObject()
     {
-    this->registerObject<ClassType>(ClassType::staticMetaObject.className());
+    return this->registerObject<ClassType>(ClassType::staticMetaObject.className());
     }
     
   // Description:
   // Register an object in the factory
   template<typename ClassType>
-  void registerObject(UniqueIdType uniqueId)
+  bool registerObject(const QString& key)
     {
-    this->RegisteredObjectMap[ uniqueId ] = &createObject<BaseClassType, ClassType>; 
-    }
-  
-  // Description:
-  // Create an instance of the object
-  virtual BaseClassType *create(UniqueIdType uniqueId)
-    {
-    ConstIterator iter = this->RegisteredObjectMap.find(uniqueId); 
-    
-    if ( iter == this->RegisteredObjectMap.constEnd())
-      {
-      return NULL;
+    // Check if already registered
+    if (this->get(key))
+      { 
+      return false; 
       }
-    return (iter.value())();
+    qCTKFactoryObjectItem<BaseClassType, ClassType> * objectItem = 
+      new qCTKFactoryObjectItem<BaseClassType, ClassType>(key);
+    this->registerItem(objectItem);
+    return true;
     }
-    
-  // Description:
-  // List all registered objects
-  virtual void printAdditionalInfo()
-  {
-    // TODO 
-  }
 
 private:
   qCTKAbstractObjectFactory(const qCTKAbstractObjectFactory &);  // Not implemented
-  void operator=(const qCTKAbstractObjectFactory&); // Not implemented
-  
-  QHash<UniqueIdType, CreateObjectFunc> RegisteredObjectMap;
+  void operator=(const qCTKAbstractObjectFactory&); // Not implemented 
 }; 
 
 #endif
