@@ -26,10 +26,6 @@ public:
   virtual ~qMRMLNodeSelector();
   
   // Description:
-  // Return the node currently selected
-  vtkMRMLNode* selectedNode()const;
-  
-  // Description:
   // Set/Get node type 
   QString nodeType()const ; 
   void setNodeType(const QString& nodeType); 
@@ -38,6 +34,10 @@ public:
   // Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
 
+  // Description:
+  // Return the node currently selected
+  vtkMRMLNode* currentNode()const;
+
 public slots:
   // Description:
   // Set the scene the NodeSelector listens to.
@@ -45,38 +45,38 @@ public slots:
   
   // Description:
   // Set the selected node.
-  void setSelectedNode(vtkMRMLNode* node);
+  void setCurrentNode(vtkMRMLNode* node);
 
 signals:
   // Description:
-  void nodeSelected(vtkMRMLNode* node); 
+  // emit the current displayed node. NULL if
+  // the list is empty.
+  void currentNodeChanged(vtkMRMLNode* node);
+
+  // emit true when the current node is changed.
+  // false when the list is empty. Useful to 
+  // enable/disable/show/hide other widgets
+  // depending on the validity of the current node.
+  void currentNodeChanged(bool);
 
 protected slots:
+  virtual void onAdd();
+  virtual void onRemove();
+  virtual void onEdit();
+  
   // Description:
   // Triggered upon MRML scene updates
   void onMRMLNodeAdded(vtkObject * node); 
   void onMRMLNodeRemoved(vtkObject * node); 
   void onMRMLNodeModified(void* call_data, vtkObject * caller);
   
-  // Description:
-  // Handle when NodeSelector 'add' button is pressed
-  void onAddButtonPressed(); 
-  
-  // Description:
-  // Handle when NodeSelector 'remove' button is pressed
-  void onRemoveButtonPressed(const QString & selectedItemName);
-  
-  // Description:
-  // Handle when NodeSelector item is selected
-  void onSelectorItemSelected(const QString & itemName); 
-  
-  // Description:
-  // Handle when NodeSelector 'edit' button is pressed
-  void onSelectorItemEditRequested(const QString & itemName); 
+  void onCurrentIndexChanged(int index);
+  void onItemAdded(int index);
+  //void onItemAboutToBeRemoved(int index);
+  void onItemRemoved(int index);
   
 protected:
-  
-  void setSelected(const QString& itemName);
+  virtual void nodeIdSelected(const QString& id);
   
 private:
   struct qInternal; 

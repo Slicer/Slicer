@@ -90,8 +90,9 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
     this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*))); 
 
   this->Internal->MRMLTransformNode = transformNode; 
-  
-  // Enable/Disable the widget
+  this->onMRMLTransformNodeModified(0, transformNode);
+  // If the node is NULL, any action on the widget is meaningless, this is why
+  // the widget is disabled
   this->setEnabled(transformNode != 0); 
 }
 
@@ -106,6 +107,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(void* /*call_data*/
 {
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
+  Q_ASSERT(this->Internal->MRMLTransformNode == transformNode);
   
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode, 

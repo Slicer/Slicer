@@ -26,6 +26,10 @@ public:
   virtual QString helpText();
   virtual QString aboutText();
 
+public slots:
+  void loadTransform();
+  void loadTransform(const QString& fileName);
+
 protected:
   virtual void initializer(); 
 

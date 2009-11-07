@@ -35,7 +35,7 @@ void qSlicerCamerasModule::initializer()
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
 
-  connect(this->Internal->ViewNodeSelector, SIGNAL(nodeSelected(vtkMRMLNode*)),
+  connect(this->Internal->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onViewNodeSelected(vtkMRMLNode*)));
 }
 
@@ -89,6 +89,6 @@ void qSlicerCamerasModule::onViewNodeSelected(vtkMRMLNode* mrmlNode)
       break;
       }
     }
-  this->Internal->CameraNodeSelector->setSelectedNode(found_camera_node);
+  this->Internal->CameraNodeSelector->setCurrentNode(found_camera_node);
 }
 

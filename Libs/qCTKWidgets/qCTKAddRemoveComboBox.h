@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVariant>
+#include <QModelIndex>
 
 #include "qCTKWidgetsWin32Header.h"
 
@@ -11,6 +12,10 @@ class QComboBox;
 class QCTK_WIDGETS_EXPORT qCTKAddRemoveComboBox : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString emptyText READ emptyText WRITE setEmptyText)
+  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
+  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
   
 public:
   // Superclass typedef
@@ -21,111 +26,100 @@ public:
   virtual ~qCTKAddRemoveComboBox();
   
   // Description:
-  // Set content of description label. If set to Null or empty string, the label is hidden.
-  void setDescription(const QString& text); 
-  
-  // Description:
   // Set text that should be displayed in the comboBox when it is empty
   void setEmptyText(const QString& text); 
+  QString emptyText()const;
+  
+  // Description:
+  // Enable/Disable the add button. 
+  void setComboBoxEnabled(bool enable);
+  bool comboBoxEnabled()const; 
+  
+  // Description:
+  // Enable/Disable the add button. 
+  void setAddEnabled(bool enable);
+  bool addEnabled()const; 
+  
+  // Description:
+  // Enable/Disable the add button. 
+  void setRemoveEnabled(bool enable);
+  bool removeEnabled()const; 
   
   // Description:
   // Enable/Disable the edit button. 
-  void setEditButtonEnabled(bool enable); 
-
-  // Description:
-  // Enable/Disable the add button. 
-  void setAddButtonEnabled(bool enable); 
+  void setEditEnabled(bool enable); 
+  bool editEnabled()const;
   
-  // Description:
-  // Add an item to the list. By default, notify is true, the signal 'itemAdded' is sent afterward.
-  void addItem(const QString & text, const QVariant & userData = QVariant(), bool notify = true); 
-  void addItemNoNotify(const QString & text, const QVariant & userData = QVariant()); 
-  
-  // Description:
-  // Remove an item from the list. By default, notify is true, the signal 'itemRemoved' is sent afterward.
-  void removeItem(const QString & text, bool notify = true); 
-  void removeItemNoNotify(const QString & text);
-  void removeItem(const QVariant & data, bool notify = true); 
-  void removeItemNoNotify(const QVariant & data);  
+  inline void addItem(const QString &text, const QVariant &userData = QVariant() )
+    {this->insertItem(this->count(), text, userData);}
+  inline void addItem(const QIcon &icon, const QString &text, const QVariant &userData = QVariant() )
+    {this->insertItem(this->count(), icon, text, userData);}
+  inline void addItems(const QStringList &texts )
+    {this->insertItems(this->count(), texts);}
+    
+  void insertItem(int index, const QString &text, const QVariant &userData = QVariant() );
+  void insertItem(int index, const QIcon &icon, const QString &text, const QVariant &userData = QVariant() );
+  void insertItems(int index, const QStringList &texts);  
   
   // Description:
   // Return the number of item
   int count()const;
-  
+  bool empty()const;
+    
   // Description:
   // Returns the index of the item containing the given text; otherwise returns -1.
   // The flags specify how the items in the combobox are searched.
   int findText(const QString& text, Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive ) const;
+  int findData(const QVariant & data, int role = Qt::UserRole, Qt::MatchFlags flags = Qt::MatchExactly | Qt::MatchCaseSensitive ) const;
+
+  // Description:
+  QString   itemText(int index) const;
+  QVariant  itemData(int index, int role = Qt::UserRole) const;
+
+  void setItemText(int index, const QString& text);
+  void setItemData(int index, const QVariant& data, int role = Qt::UserRole);
 
   // Description:
   // Return the current item
-  QString selectedItemName()const; 
-  QVariant selectedItemData()const;
+  int       currentIndex() const;
+  inline QString  currentText() const
+    {return this->itemText(this->currentIndex());}
+  inline QVariant currentData(int role = Qt::UserRole) const
+    {return this->itemData(this->currentIndex(), role);}
 
-signals:
-  // Description:
-  // This signal is sent when the user press the 'add' push button
-  void addPushButtonPressed();
-  
-  // Description:
-  // This signal is sent when the user press the 'add' push button
-  void removePushButtonPressed(const QString & selectedItemName);
-  void removePushButtonPressed(const QVariant & selectedItemData);
-  
-  // Description:
-  // This signal is sent when the user select an item in the combo box
-  void itemSelected(const QString & itemName); 
-  void itemSelected(const QVariant & itemData); 
-  
-  // Description:
-  // This signal is sent after the method 'addItem' has been called programmatically
-  void itemAdded(const QString & itemName);
-  void itemAdded(const QVariant & itemData);
-  
-  // Description:
-  // This signal is sent after the method 'removeItem' or 'removeSelectedItem' 
-  // has been called programmatically.
-  // If the last item of the list is removed, isLastItem is True
-  void itemRemoved(const QString & itemName, bool isLastItem);
-  void itemRemoved(const QVariant & itemData, bool isLastItem);
-  
-  // Description:
-  // This signal is sent after the last item has been removed
-  bool lastItemRemoved(); 
-  
-  // Description:
-  // This signal is sent after the user presses the 'edit' button
-  void itemEditRequested(const QString & itemName); 
-  void itemEditRequested(const QVariant & itemData); 
-
-public slots:
   // Description:
   // Remove the item currently selected. See signal 'itemRemoved'
-  void removeSelectedItem();
-  
-  // Description:
-  // Update the item of the selected Item
-  void updateSelectedItemName(const QString& newItemName); 
-  
-  // Description:
-  // Update the name of the item matching itemData
-  void updateItemName(const QVariant& itemData, const QString& newItemName); 
-  
-  // Description:
-  // Update the name of the item matching itemName
-  void updateItemName(const QString& itemName, const QString& newItemName); 
+  void removeItem(int index);
+  inline void removeCurrentItem()
+    {this->removeItem(this->currentIndex());}
 
+signals:
+  void currentIndexChanged(int index);
+  void activated(int index);
+
+  // Description:
+  // This signal is sent after the method 'addItem' has been called programmatically
+  void itemAdded(int index);
+  
+  // Description:
+  void itemAboutToBeRemoved(int index);
+  void itemRemoved(int index);
+    
+public slots:
   // Description:
   // Select the current index
   void setCurrentIndex(int index);
-  
-protected slots:
-  void onEditPushButtonPressed(); 
-  void onRemovePushButtonPressed(); 
 
+protected slots:
   // Description:
-  // Remove an item from the list. By default, No signal are sent.
-  void removeItem(int index, bool notify = false); 
+  virtual void onAdd();
+  virtual void onRemove();
+  virtual void onEdit();
+private slots:
+  //void onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end );
+  void onRowsAboutToBeRemoved(const QModelIndex & parent, int start, int end);
+  void onRowsInserted(const QModelIndex & parent, int start, int end);
+  void onRowsRemoved(const QModelIndex & parent, int start, int end);
 
 private:
   struct qInternal; 

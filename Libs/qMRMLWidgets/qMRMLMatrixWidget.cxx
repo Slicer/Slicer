@@ -68,8 +68,9 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 
   this->Internal->MRMLTransformNode = transformNode; 
   
-  this->reset(); 
-  
+  //this->reset(); 
+  this->onMRMLTransformNodeModified(0, transformNode);
+
   // Enable/Disable the widget
   this->setEnabled(transformNode != 0); 
 }
@@ -85,6 +86,7 @@ void qMRMLMatrixWidget::onMRMLTransformNodeModified(void* /*call_data*/, vtkObje
 {
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
+  Q_ASSERT( this->Internal->MRMLTransformNode == transformNode);
   
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode, 

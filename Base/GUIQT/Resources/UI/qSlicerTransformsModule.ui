@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
-    <height>588</height>
+    <width>366</width>
+    <height>730</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,297 +18,365 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLNodeSelector" name="TransformNodeSelector">
-     <property name="NodeType">
-      <string>vtkMRMLLinearTransformNode</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="qCTKCollapsibleGroupBox" name="MatrixViewGroupBox">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="qCTKCollapsibleWidget" name="LoadCollapsibleWidget">
      <property name="title">
-      <string>Transform Matrix</string>
+      <string>Load</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="spacing">
-       <number>2</number>
-      </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>6</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
-       <number>2</number>
-      </property>
-      <item>
-       <widget class="qMRMLMatrixWidget" name="MatrixWidget">
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <item row="0" column="0">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="0" column="1">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="0" column="2">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="0" column="3">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="1" column="0">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="1" column="1">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="1" column="2">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="1" column="3">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="2" column="0">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="2" column="1">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="2" column="2">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="2" column="3">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="3" column="0">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="3" column="1">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="3" column="2">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-        <item row="3" column="3">
-         <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="MinTranslationLimitLabel">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+     <property name="contentsLineWidth">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="page">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="LoadTransformPushButton">
          <property name="text">
-          <string>Min Translation limit</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <string>Load Transform</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="qCTKNumericInput" name="MinTranslationLimitInput">
-         <property name="enabled">
-          <bool>false</bool>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="text">
-          <string>-200</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>213</width>
+           <height>20</height>
+          </size>
          </property>
-         <property name="Value">
-          <double>-200.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="MaxTranslationLimitLabel">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Max Translation limit</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="qCTKNumericInput" name="MaxTranslationLimitInput">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>200</string>
-         </property>
-         <property name="Value">
-          <double>200.000000000000000</double>
-         </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="qMRMLTransformSliders" name="RotationSliders">
-     <property name="Title">
-      <string>Rotation</string>
-     </property>
-     <property name="TypeOfTransform">
-      <enum>qMRMLTransformSliders::ROTATION</enum>
-     </property>
+     </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_1">
-     <property name="spacing">
-      <number>2</number>
+    <widget class="qCTKCollapsibleWidget" name="DisplayEditCollapsibleWidget">
+     <property name="title">
+      <string>Display &amp;&amp; Edit</string>
      </property>
-     <item>
-      <widget class="QGroupBox" name="CoordinateReferenceGroupBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="title">
-        <string>Coordinate Reference</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QRadioButton" name="GlobalRadioButton">
-          <property name="text">
-           <string>Global</string>
+     <property name="contentsLineWidth">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="page_2">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="TransformNodeSelectorLabel">
+           <property name="text">
+            <string>Transform Node:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="qMRMLNodeSelector" name="TransformNodeSelector">
+           <property name="editEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="NodeType">
+            <string>vtkMRMLLinearTransformNode</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="qCTKCollapsibleGroupBox" name="MatrixViewGroupBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="title">
+          <string>Transform Matrix</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>2</number>
           </property>
-          <property name="checked">
-           <bool>true</bool>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="LocalRadioButton">
-          <property name="text">
-           <string>Local</string>
+          <property name="topMargin">
+           <number>6</number>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="IdentityPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Identity</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="InvertPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Revert</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="qMRMLMatrixWidget" name="MatrixWidget">
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+            <item row="0" column="0">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="0" column="3">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="1" column="2">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="1" column="3">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="2" column="0">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="2" column="1">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="2" column="2">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="2" column="3">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="3" column="0">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="3" column="1">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="3" column="2">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+            <item row="3" column="3">
+             <property name="textAlignment">
+              <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="0">
+            <widget class="QLabel" name="MaxTranslationLimitLabel">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Max Translation limit</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="MinTranslationLimitInput">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>-200.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="MaxTranslationLimitInput">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>200.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="MinTranslationLimitLabel">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Min Translation limit</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="qMRMLTransformSliders" name="RotationSliders">
+         <property name="Title">
+          <string>Rotation</string>
+         </property>
+         <property name="TypeOfTransform">
+          <enum>qMRMLTransformSliders::ROTATION</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_1">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="CoordinateReferenceGroupBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>Coordinate Reference</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QRadioButton" name="GlobalRadioButton">
+              <property name="text">
+               <string>Global</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="LocalRadioButton">
+              <property name="text">
+               <string>Local</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="IdentityPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Identity</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="InvertPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Revert</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -318,7 +386,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>0</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -334,9 +402,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKNumericInput</class>
-   <extends>QLineEdit</extends>
-   <header>qCTKNumericInput.h</header>
+   <class>qCTKCollapsibleWidget</class>
+   <extends>QWidget</extends>
+   <header>qCTKCollapsibleWidget.h</header>
+   <addpagemethod>setWidget</addpagemethod>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLMatrixWidget</class>
@@ -352,6 +422,7 @@
    <class>qMRMLTransformSliders</class>
    <extends>QWidget</extends>
    <header>qMRMLTransformSliders.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -374,7 +445,263 @@
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
-     <y>20</y>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MatrixWidget</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>186</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>RotationSliders</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TranslationSliders</sender>
+   <signal>sliderMoved()</signal>
+   <receiver>RotationSliders</receiver>
+   <slot>reset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>70</x>
+     <y>540</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MinTranslationLimitInput</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setMinimumRange(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>276</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MaxTranslationLimitInput</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setMaximumRange(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>448</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>MatrixViewGroupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>128</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>MinTranslationLimitInput</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>355</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>MaxTranslationLimitInput</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>442</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>RotationSliders</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>238</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>280</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>CoordinateReferenceGroupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>120</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>IdentityPushButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>362</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>642</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>InvertPushButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>644</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>MinTranslationLimitLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>MaxTranslationLimitLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>243</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>440</y>
     </hint>
    </hints>
   </connection>

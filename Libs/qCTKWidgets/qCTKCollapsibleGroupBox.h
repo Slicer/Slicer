@@ -23,6 +23,7 @@ protected:
   virtual void mousePressEvent(QMouseEvent*);
   virtual void mouseReleaseEvent(QMouseEvent*);
 #endif
+
   QSize OldSize;
   int   MaxHeight;
 };

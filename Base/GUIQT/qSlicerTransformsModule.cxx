@@ -4,14 +4,17 @@
 
 #include "qMRMLUtils.h"
 
+#include "vtkSlicerTransformLogic.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-#include "vtkSmartPointer.h"
-#include "vtkTransform.h"
-#include "vtkMatrix4x4.h"
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
+#include <vtkMatrix4x4.h>
 
-#include <QVector>
 #include <QButtonGroup>
+#include <QFileDialog>
+#include <QVector>
+
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -76,32 +79,38 @@ void qSlicerTransformsModule::initializer()
                 SIGNAL(pressed()),
                 SLOT(onInvertButtonPressed()));
   
-  // Connect node selector with translation sliders
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(nodeSelected(vtkMRMLNode*)), 
+  /* Connect node selector with translation sliders
+  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), 
                 this->Internal->TranslationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
-    
-  // Connect node selector with rotation sliders
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(nodeSelected(vtkMRMLNode*)), 
+  */
+  /* Connect node selector with rotation sliders
+  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), 
                 this->Internal->RotationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
-    
+  */
   // Connect node selector with module itself
   this->connect(this->Internal->TransformNodeSelector, 
-                SIGNAL(nodeSelected(vtkMRMLNode*)), 
+                SIGNAL(currentNodeChanged(vtkMRMLNode*)), 
                 SLOT(onNodeSelected(vtkMRMLNode*)));
-    
-  // Connect node selector with matrix widget
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(nodeSelected(vtkMRMLNode*)), 
-                this->Internal->MatrixWidget, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
   
-  // Reset Rotation sliders if at least one of the translation sliders is moved
+  /* Connect node selector with matrix widget
+  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), 
+                this->Internal->MatrixWidget, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
+  */
+  /* Reset Rotation sliders if at least one of the translation sliders is moved
   this->connect(this->Internal->TranslationSliders, SIGNAL(sliderMoved()), 
                 this->Internal->RotationSliders, SLOT(reset())); 
-                
-  // Connect min/max translation limit input with translation sliders
+  */          
+  /* Connect min/max translation limit input with translation sliders
   this->connect(this->Internal->MinTranslationLimitInput, SIGNAL(valueEdited(double)), 
     this->Internal->TranslationSliders, SLOT(setMinimumRange(double))); 
   this->connect(this->Internal->MaxTranslationLimitInput, SIGNAL(valueEdited(double)), 
     this->Internal->TranslationSliders, SLOT(setMaximumRange(double))); 
+  */
+  this->connect(this->Internal->LoadTransformPushButton, SIGNAL(clicked()),
+                SLOT(loadTransform()));
+  QIcon openIcon = 
+    QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
+  this->Internal->LoadTransformPushButton->setIcon(openIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -229,4 +238,23 @@ void qSlicerTransformsModule::extractMinMaxTranslationValue(
 int qSlicerTransformsModule::coordinateReference()
 {
   return this->Internal->CoordinateReferenceButtonGroup->checkedId(); 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModule::loadTransform()
+{
+  QString fileName = QFileDialog::getOpenFileName(this);
+  this->loadTransform(fileName);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModule::loadTransform(const QString& fileName)
+{
+  if (fileName.isEmpty())
+    {
+    return;
+    }
+  vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
+  logic->AddTransform(fileName.toLatin1(), this->mrmlScene());
+  logic->Delete();
 }

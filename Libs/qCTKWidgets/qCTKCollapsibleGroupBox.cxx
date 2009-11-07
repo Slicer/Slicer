@@ -7,6 +7,31 @@
 #include <QStyleOptionGroupBox>
 #include <QStyle>
 
+#if QT_VERSION >= 0x040600
+#include <QProxyStyle>
+
+class qCTKCollapsibleGroupBoxStyle:public QProxyStyle
+{
+  public:
+
+  virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
+  {
+    if (pe == QStyle::PE_IndicatorCheckBox)
+      {
+      const QGroupBox* groupBox= qobject_cast<const QGroupBox*>(widget);
+      if (groupBox)
+        {
+        this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowUp : QStyle::PE_IndicatorArrowDown, opt, p, widget);
+        return;
+        }
+      }
+    this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
+  }
+};
+#else
+  
+#endif
+
 qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
   :QGroupBox(parent)
 {
@@ -14,12 +39,15 @@ qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
   connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
 
   this->MaxHeight = this->maximumHeight();
-
+#if QT_VERSION >= 0x040600
+  this->setStyle(new qCTKCollapsibleGroupBoxStyle);
+#else
   this->setStyleSheet(
     "qCTKCollapsibleGroupBox::indicator:checked{"
     "image: url(:/Icons/expand-up.png);}"
     "qCTKCollapsibleGroupBox::indicator:unchecked{"
     "image: url(:/Icons/expand-down.png);}");
+#endif
 }
 
 qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()

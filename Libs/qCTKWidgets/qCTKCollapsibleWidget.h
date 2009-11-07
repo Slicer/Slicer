@@ -55,11 +55,18 @@ public:
 
 public slots:
   void setWidget(QWidget *);
+  void toggleCollapse();
 
 protected slots:
   virtual void collapse(bool c);
-
+  
+signals:
+  void contentsCollapsed(bool);
+  
 private:
+  struct qInternal;
+  qInternal* Internal;
+  
   bool  CollapseChildren;
   int   CollapsedHeight;
   QSize OldSize;
