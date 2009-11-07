@@ -2754,7 +2754,7 @@ void vtkSlicerApplicationGUI::PackDual3DView ( )
       }
 
     // Pack the 3D viewers
-    for (int i=0; i < (this->Internals->ViewerWidgets.size() > 2 ? 2 : this->Internals->ViewerWidgets.size()); i++)
+    for (size_t i=0; i < (this->Internals->ViewerWidgets.size() > 2 ? 2 : this->Internals->ViewerWidgets.size()); i++)
       {
       vtkSlicerViewerWidget *viewer_widget 
         = this->Internals->ViewerWidgets[i];
