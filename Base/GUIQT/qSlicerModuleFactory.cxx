@@ -4,7 +4,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qCTKAbstractObjectFactory.h"
 #include "qCTKAbstractPluginFactory.h"
-#include "qCTKAbstractLibraryFactory.h"
+//#include "qCTKAbstractLibraryFactory.h"
 
 #include "qSlicerTransformsModule.h"
 #include "qSlicerCamerasModule.h"
