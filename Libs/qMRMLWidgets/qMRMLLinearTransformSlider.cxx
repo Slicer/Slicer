@@ -85,7 +85,7 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
 {
   if (this->Internal->MRMLTransformNode == transformNode) { return; }
 
-  this->qvtkReConnect(this->Internal->MRMLTransformNode, transformNode, 
+  this->qvtkReconnect(this->Internal->MRMLTransformNode, transformNode, 
     vtkMRMLTransformableNode::TransformModifiedEvent, 
     this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*))); 
 

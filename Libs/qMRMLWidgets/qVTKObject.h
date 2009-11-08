@@ -18,7 +18,7 @@ void qvtkConnect(vtkObject* vtk_obj, unsigned long vtk_event,           \
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_RECONNECT_METHOD                                    \
-void qvtkReConnect(vtkObject* old_vtk_obj, vtkObject* vtk_obj,          \
+void qvtkReconnect(vtkObject* old_vtk_obj, vtkObject* vtk_obj,          \
   unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot)  \
 {                                                                       \
   MyQVTK.setParent( this );                                             \
