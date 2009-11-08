@@ -170,7 +170,7 @@ void qSlicerTransformsModule::onNodeSelected(vtkMRMLNode* node)
   this->Internal->MaxTranslationLimitInput->setEnabled(transformNode != 0); 
   
   // Listen for Transform node changes
-  this->qvtkReConnect(this->Internal->MRMLTransformNode, transformNode, 
+  this->qvtkReconnect(this->Internal->MRMLTransformNode, transformNode, 
     vtkMRMLTransformableNode::TransformModifiedEvent, 
     this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
   
