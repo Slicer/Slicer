@@ -516,6 +516,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
+      $_renderWidget CornerAnnotationVisibilityOff
       if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
         set _actionState "Rotate"
       } else {
@@ -532,6 +533,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "RightButtonReleaseEvent" { 
+      $_renderWidget CornerAnnotationVisibilityOn
       set _actionState ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
@@ -552,6 +554,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "LeftButtonReleaseEvent" { 
     }
     "MiddleButtonPressEvent" {
+      $_renderWidget CornerAnnotationVisibilityOff
       set _actionState "Translate"
       set _actionStartXY "$x $y"
       set _actionStartWindowXY "$windowx $windowy"
@@ -564,6 +567,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "MiddleButtonReleaseEvent" { 
+      $_renderWidget CornerAnnotationVisibilityOn
       set _actionState ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1

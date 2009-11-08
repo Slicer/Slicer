@@ -242,6 +242,7 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
 
   switch $event {
     "LeftButtonPressEvent" {
+      $_renderWidget CornerAnnotationVisibilityOff
       set _actionState "painting"
       foreach {x y} [$_interactor GetEventPosition] {}
       if { $smudge } {
@@ -268,6 +269,7 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeftButtonReleaseEvent" {
+      $_renderWidget CornerAnnotationVisibilityOn
       $this paintApply
       [$_renderWidget GetRenderWindow] ShowCursor
       foreach {x y} [$_interactor GetEventPosition] {}
