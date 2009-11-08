@@ -32,6 +32,12 @@ QString qCTKCollapsibleWidgetPlugin::domXml() const
          <height>100</height>                                           \
         </rect>                                                         \
        </property>                                                      \
+       <property name=\"contentsFrameShape\">                           \
+         <enum>QFrame::StyledPanel</enum>                               \
+       </property>                                                      \
+       <property name=\"contentsFrameShadow\">                          \
+         <enum>QFrame::Raised</enum>                                    \
+       </property>                                                      \
        <widget class=\"QWidget\" name=\"page\" />                       \
      </widget>                                                          \
      <customwidgets>                                                    \

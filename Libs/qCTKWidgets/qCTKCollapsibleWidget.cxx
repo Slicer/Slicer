@@ -58,7 +58,6 @@ qCTKCollapsibleWidget::qCTKCollapsibleWidget(QWidget* parent)
 
   // Slicer Custom
   this->CollapsedHeight = 10;
-  this->setContentsFrameShape(QFrame::Box);
 }
 
 qCTKCollapsibleWidget::~qCTKCollapsibleWidget()

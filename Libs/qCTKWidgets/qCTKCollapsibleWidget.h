@@ -25,7 +25,7 @@ class QCTK_WIDGETS_EXPORT qCTKCollapsibleWidget : public QFrame
 
 public:
   qCTKCollapsibleWidget(QWidget *parent = 0);
-  ~qCTKCollapsibleWidget();
+  virtual ~qCTKCollapsibleWidget();
   
   QWidget *widget();
   QFrame* contents();
@@ -42,8 +42,15 @@ public:
   void setCollapsedHeight(int);
   int collapsedHeight()const;
 
+  // Description:
+  // Set the frame shape of the contents
+  // Hint: StyledPanel is probably the shape you are looking for
   Shape contentsFrameShape() const;
   void setContentsFrameShape(Shape);
+
+  // Description:
+  // Set the frame shadow of the contents
+  // Hint: Raised is probably the shadow you are looking for
   Shadow contentsFrameShadow() const;
   void setContentsFrameShadow(Shadow);
   
