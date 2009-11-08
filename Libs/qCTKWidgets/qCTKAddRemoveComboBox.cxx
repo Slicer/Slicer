@@ -43,19 +43,27 @@ qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* parent) : Superclass(paren
   this->Internal->HasEmptyItem = true;
 
   // connect 
-  this->connect(this->Internal->ComboBox, SIGNAL(activated(int)), SIGNAL(activated(int)));
-  this->connect(this->Internal->ComboBox, SIGNAL(currentIndexChanged(int)), SIGNAL(currentIndexChanged(int)));
+  this->connect(this->Internal->ComboBox, 
+                SIGNAL(activated(int)), 
+                SIGNAL(activated(int)));
+  this->connect(this->Internal->ComboBox, 
+                SIGNAL(currentIndexChanged(int)), 
+                SIGNAL(currentIndexChanged(int)));
   /*
-  this->connect(this->Internal->ComboBox->model(), SIGNAL(rowsAboutToBeInserted(const QModelIndex & parent, int start, int end )),
-    SLOT(onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end )));
-    */
-  this->connect(this->Internal->ComboBox->model(), SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-    SLOT(onRowsAboutToBeRemoved(const QModelIndex & , int , int  )));  
+  this->connect(this->Internal->ComboBox->model(), 
+  SIGNAL(rowsAboutToBeInserted(const QModelIndex & parent, int start, int end )),
+  SLOT(onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end )));
+  */
+  this->connect(this->Internal->ComboBox->model(), 
+                SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
+                SLOT(onRowsAboutToBeRemoved(const QModelIndex & , int , int  )));  
   
-  this->connect(this->Internal->ComboBox->model(), SIGNAL(rowsInserted(const QModelIndex &, int, int )),
+  this->connect(this->Internal->ComboBox->model(), 
+                SIGNAL(rowsInserted(const QModelIndex &, int, int )),
                 SLOT(onRowsInserted(const QModelIndex &, int, int)));
-  this->connect(this->Internal->ComboBox->model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-    SLOT(onRowsRemoved(const QModelIndex &, int, int )));
+  this->connect(this->Internal->ComboBox->model(), 
+                SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
+                SLOT(onRowsRemoved(const QModelIndex &, int, int )));
     
   this->connect(this->Internal->AddPushButton, SIGNAL(pressed()), SLOT(onAdd()));
   this->connect(this->Internal->RemovePushButton, SIGNAL(pressed()), SLOT(onRemove())); 
@@ -89,7 +97,6 @@ QString qCTKAddRemoveComboBox::emptyText()const
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & parent, int start, int end)
 {
-  qDebug() << __FUNCTION__ ;
   if (parent != this->Internal->ComboBox->rootModelIndex())
     {//rows that are to be added in the model are not displayed by the combobox
     return;
@@ -127,7 +134,6 @@ void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & parent, int start
       emit this->itemAdded(i);
       }
     }
-  qDebug() << "end " << __FUNCTION__ ;
  }
 
 // --------------------------------------------------------------------------
@@ -153,7 +159,6 @@ void qCTKAddRemoveComboBox::onRowsAboutToBeRemoved(const QModelIndex & parent, i
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onRowsRemoved(const QModelIndex & parent, int start, int end)
 {
-  qDebug() << __FUNCTION__ ;
   if (parent != this->Internal->ComboBox->rootModelIndex())
     {//rows that are to be added in the model are not displayed by the combobox
     return;
@@ -182,8 +187,6 @@ void qCTKAddRemoveComboBox::onRowsRemoved(const QModelIndex & parent, int start,
       emit this->itemRemoved(i);
       }
     }
-
-  qDebug() << "end " << __FUNCTION__ ;
 }
 
 // --------------------------------------------------------------------------
@@ -282,7 +285,7 @@ void qCTKAddRemoveComboBox::setCurrentIndex(int index)
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::insertItem(int index, const QString &text, const QVariant &userData)
 {
-  qDebug() << __FUNCTION__ << " " << index <<  " " << text << " " << userData ;
+  //qDebug() << __FUNCTION__ << " " << index <<  " " << text << " " << userData ;
   this->Internal->ComboBox->insertItem(index, text, userData);
 }
 
