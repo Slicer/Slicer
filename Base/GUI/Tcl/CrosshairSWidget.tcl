@@ -32,6 +32,7 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     public variable rgba "1.0 0.8 0.1 1.0"  ;# crosshair color
 
     variable _crosshairNode
+    variable _annotationTaskID ""
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -42,6 +43,8 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     method pick { } {}
     method highlight { } {}
     method unhighlight { } {}
+    method requestAnnotation {} {}
+    method cancelAnnotation {} {}
 
     # set the position of the crosshair actor (does not modify the crosshair node)
     method setPosition { r a s } {}
@@ -323,6 +326,8 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               switch $event {
 
                   "LeftButtonPressEvent" {
+                      $_renderWidget CornerAnnotationVisibilityOff
+                      $this requestAnnotation
                       set _actionState "dragging"
                       set state $_actionState
                       #$sliceGUI SetGrabID $this
@@ -330,6 +335,8 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
                   }
 
                   "LeftButtonReleaseEvent" {
+                      $this cancelAnnotation
+                      $_renderWidget CornerAnnotationVisibilityOn
                       set _actionState ""
                       set state $_actionState
                       $sliceGUI SetGrabID ""
@@ -339,6 +346,9 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
                   "MouseMoveEvent" {
                       if { $_pickState == "over" } {
                           if { $_actionState == "dragging" } {
+                              $this cancelAnnotation
+                              $_renderWidget CornerAnnotationVisibilityOff
+                              $this requestAnnotation
                               #puts "MoveEvent ($_sliceNode)"
                               # get the event position and convert to RAS
                               foreach {windowx windowy} [$_interactor GetEventPosition] {}
@@ -363,6 +373,9 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
                           }
                       } elseif { $_pickState == "vertical" } {
                           if { $_actionState == "dragging" } {
+                              $this cancelAnnotation
+                              $_renderWidget CornerAnnotationVisibilityOff
+                              $this requestAnnotation
                               # get the event position in xyz
                               foreach {windowx windowy} [$_interactor GetEventPosition] {}
                               foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
@@ -387,6 +400,9 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
                           }
                       } elseif { $_pickState == "horizontal" } {
                           if { $_actionState == "dragging" } {
+                              $this cancelAnnotation
+                              $_renderWidget CornerAnnotationVisibilityOff
+                              $this requestAnnotation
                               # get the event position in xyz
                               foreach {windowx windowy} [$_interactor GetEventPosition] {}
                               foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
@@ -671,6 +687,18 @@ itcl::body CrosshairSWidget::highlight { } {
 
 itcl::body CrosshairSWidget::unhighlight { } {
     $o(crosshairHighlightActor) VisibilityOff
+}
+
+itcl::body CrosshairSWidget::requestAnnotation { } {
+    set _annotationTaskID [after 500 "\
+                                $_renderWidget CornerAnnotationVisibilityOn; \
+                                [$sliceGUI GetSliceViewer] RequestRender; \
+                                $this cancelAnnotation"]
+}
+
+itcl::body CrosshairSWidget::cancelAnnotation { } {
+    after cancel $_annotationTaskID
+    set _annotationTaskID ""
 }
 
 proc CrosshairSWidget::AddCrosshair {} {
