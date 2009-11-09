@@ -31,6 +31,23 @@ static const unsigned char image_ToolbarConventionalView[] =
 
 /* 
  * Resource generated for file:
+ *    ToolbarTwinView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarTwinView_width          = 21;
+static const unsigned int  image_ToolbarTwinView_height         = 21;
+static const unsigned int  image_ToolbarTwinView_pixel_size     = 3;
+static const unsigned long image_ToolbarTwinView_length         = 224;
+static const unsigned long image_ToolbarTwinView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarTwinView[] = 
+  "eNrlktsNgzAMRQmDZLB2gQ4TqSzR30rMURnDGCV/naBXUCJDQkByxQ/oyArXPuGhGFOYda"
+  "y1JjsAXvQGxD2xH+qPpvXQp9Djlpoek133GRl15CCEEujJXOqZgT06t/5yvcXw8PKZrtTv"
+  "1SNsi/VCT3aljhy1rimspZ7sLnR0Q431uPvHpyu/XfPneeXkHHBslLqGsiycc8/5hXwzgQ"
+  "X35LqGL7RArOk=";
+
+
+/* 
+ * Resource generated for file:
  *    ToolbarFourUpView.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarFourUpView_width          = 21;

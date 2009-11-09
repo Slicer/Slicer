@@ -23,6 +23,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->SaveSceneIcon = vtkKWIcon::New();
     this->LoadSceneIcon = vtkKWIcon::New();
     this->ChooseLayoutIcon = vtkKWIcon::New ( );
+    this->TwinViewIcon = vtkKWIcon::New();
     this->ConventionalViewIcon = vtkKWIcon::New();
     this->CompareViewIcon = vtkKWIcon::New();
     this->OneUp3DViewIcon = vtkKWIcon::New();
@@ -125,6 +126,11 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     {
     this->ChooseLayoutIcon->Delete();
     this->ChooseLayoutIcon = NULL;
+    }
+  if ( this->TwinViewIcon )
+    {
+    this->TwinViewIcon->Delete();
+    this->TwinViewIcon = NULL;    
     }
   if ( this->ConventionalViewIcon )
     {
@@ -337,6 +343,12 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarLoadScene_pixel_size,
                                    image_ToolbarLoadScene_length, 0 );
     
+    this->TwinViewIcon->SetImage ( image_ToolbarTwinView,
+                                   image_ToolbarTwinView_width,
+                                   image_ToolbarTwinView_height,
+                                   image_ToolbarTwinView_pixel_size,
+                                   image_ToolbarTwinView_length, 0);
+    
     this->ConventionalViewIcon->SetImage( image_ToolbarConventionalView,
                                           image_ToolbarConventionalView_width,
                                           image_ToolbarConventionalView_height,
@@ -509,6 +521,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
+    os << indent << "TwinViewIcon" << this->GetTwinViewIcon() << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";
     os << indent << "ChooseLayoutIcon" << this->GetChooseLayoutIcon ( ) << "\n";
     os << indent << "CompareViewIcon" << this->GetCompareViewIcon() << "\n";

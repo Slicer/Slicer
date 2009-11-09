@@ -35,6 +35,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (LoadSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (ChooseLayoutIcon, vtkKWIcon );
+    vtkGetObjectMacro (TwinViewIcon, vtkKWIcon );
     vtkGetObjectMacro (ConventionalViewIcon, vtkKWIcon);
     vtkGetObjectMacro (OneUp3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (CompareViewIcon, vtkKWIcon );
@@ -81,6 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *SaveSceneIcon;
     vtkKWIcon *LoadSceneIcon;
     vtkKWIcon *ChooseLayoutIcon;
+    vtkKWIcon *TwinViewIcon;
     vtkKWIcon *ConventionalViewIcon;
     vtkKWIcon *OneUp3DViewIcon;
     vtkKWIcon *CompareViewIcon;
