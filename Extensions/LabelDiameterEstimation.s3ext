@@ -1,0 +1,28 @@
+
+scm       svn
+svnpath http://svn.na-mic.org/NAMICSandBox/trunk/ChangeTrackerExtra/LabelDiameterEstimation
+name     LabelDiameterEstimation
+cmakeproject      LabelDiameterEstimation
+svnusername slicerbot
+svnpassword slicer
+
+
+#
+# list dependencies
+# - these should be names of other modules that have .s3ext files 
+# - the dependencies will be built first
+
+# homepage
+http://wiki.slicer.org/slicerWiki/index.php/Modules:LabelDiameterEstimation-Documentation-3.5
+
+# match category in the xml description of the module (where it shows up in Modules menu)
+category  Statistics
+
+# give people an idea what to expect from this code 
+# - is it just a test or something you stand beind?
+status    Development
+
+# One line description of what the module does
+Estimate three perpendicular largest diameters of a labeled structure from
+the image.
+
