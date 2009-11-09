@@ -158,8 +158,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $select SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $select UpdateMenu
   $select SetLabelText "Input volume:"
+  $select SetLabelWidth 15
   $select SetBalloonHelpString "The Source Volume to operate on"
-  pack [$select GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$select GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   set ::FastMarchingSegmentation($this,fiducialsSelector) [vtkSlicerNodeSelectorWidget New]
   set fiducials $::FastMarchingSegmentation($this,fiducialsSelector)
@@ -170,8 +171,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $fiducials SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $fiducials UpdateMenu
   $fiducials SetLabelText "Input seeds:"
+  $fiducials SetLabelWidth 15
   $fiducials SetBalloonHelpString "List of fiducials to be used as seeds for segmentation"
-  pack [$fiducials GetWidgetName] -side top -anchor e -padx 2 -pady 2
+  pack [$fiducials GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   set ::FastMarchingSegmentation($this,outputSelector) [vtkSlicerNodeSelectorWidget New]
   set outselect $::FastMarchingSegmentation($this,outputSelector)
@@ -182,8 +184,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $outselect SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $outselect UpdateMenu
   $outselect SetLabelText "Output volume:"
+  $outselect SetLabelWidth 15
   $outselect SetBalloonHelpString "The Output Volume to keep segmentation result"
-  pack [$outselect GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$outselect GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
  
   set ::FastMarchingSegmentation($this,segVolumeThumbWheel) [vtkKWThumbWheel New]
   set segvolume $::FastMarchingSegmentation($this,segVolumeThumbWheel)
@@ -199,7 +202,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $segvolume SetValue 0
   [$segvolume GetLabel] SetText "Target segmented volume (mL):"
   $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume"
-  pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   set ::FastMarchingSegmentation($this,labelColorSpin) [vtkKWScaleWithEntry New]
   set outColor $::FastMarchingSegmentation($this,labelColorSpin)
@@ -207,12 +210,13 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $outColor PopupModeOn
   $outColor Create
   $outColor SetLabelText "Output label value:"
+  $outColor SetLabelWidth 20
   $outColor RangeVisibilityOn
   $outColor SetResolution 1
   $outColor SetRange 1 255
   $outColor SetValue 6.0
   $outColor SetBalloonHelpString "Specify color for the output label"
-  pack [$outColor GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$outColor GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   set ::FastMarchingSegmentation($this,runButton) [vtkKWPushButton New]
   set run $::FastMarchingSegmentation($this,runButton)
