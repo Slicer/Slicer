@@ -899,36 +899,32 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
   vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
+  
   if (loadSaveDialog && loadSaveDialog == this->LoadVolumePropertyButton->GetLoadSaveDialog() &&
       eid== vtkKWTopLevel::WithdrawEvent  )
     {
     // If a file has been selected for loading...
     const char *fileName = this->LoadVolumePropertyButton->GetFileName();
     if ( fileName ) 
-      {      
+    {      
       vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetLogic()->AddVolumePropertyFromFile( fileName );
 
       if ( vpNode == NULL ) 
-        {
+      {
         // TODO: generate an error...
         vtkErrorMacro("Unable to read volume property file " << fileName);
-        }
-      else
-        {
-        this->LoadVolumePropertyButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        
-        }
-
       }
-    
+      else
+      {
+        this->LoadVolumePropertyButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      }
+    }
+
     // reset the file browse button text
     this->LoadVolumePropertyButton->SetText ("Load Volume Property");
-
     return;
 
-    }
+  }
 
   {//SVP
     vtkSlicerVolumePropertyWidget *callerObjectSVP = vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
@@ -936,28 +932,22 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     {
       vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetVolumePropertyNode();
       if (vpNode)
-        {
+      {
         vpNode->SetModifiedSinceRead(1);
-        }
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      }
+      this->Gui->RequestRender();
       return;
     }
     if(callerObjectSVP == this->SVP_VolumePropertyWidgetFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
     {
       vtkMRMLVolumePropertyNode *vpNode = this->Gui->GetFgVolumePropertyNode();
       if (vpNode)
-        {
+      {
         vpNode->SetModifiedSinceRead(1);
-        }
+      }
 
       this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
   }
@@ -975,11 +965,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->GetValue());
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
 
@@ -988,11 +974,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetICPEScale(this->SC_GPURayCastICPEkt->GetWidget()->GetValue());
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
 
@@ -1001,11 +983,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetICPESmoothness(this->SC_GPURayCastICPEks->GetWidget()->GetValue());
 
       this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
   }
@@ -1019,11 +997,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetGPURaycastIIBgFgRatio(this->SC_GPURayCastIIFgBgRatio->GetValue());
 
       this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
   }
@@ -1037,22 +1011,14 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       vspNode->SetCPURaycastMode(this->CB_CPURayCastMIP->GetWidget()->GetSelectedState());
 
       this->Gui->GetLogic()->SetCPURaycastParameters(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
     else if (eid == vtkKWCheckButton::SelectedStateChangedEvent && this->CroppingButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
     {
       vspNode->SetCroppingEnabled(this->CroppingButton->GetWidget()->GetSelectedState());
       this->Gui->GetLogic()->SetROI(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
     else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())
@@ -1098,11 +1064,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     {
       this->Gui->GetLogic()->FitROIToVolume(vspNode);
       this->Gui->GetLogic()->SetROI(vspNode);
-
-      if (slicer_viewer_widget)
-        {
-        slicer_viewer_widget->RequestRender();
-        }
+      this->Gui->RequestRender();
       return;
     }
   }
@@ -1282,13 +1244,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechnique(int id)
   vspNode->SetGPURaycastTechnique(id);
 
   this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
-
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueII(int id)
@@ -1298,13 +1254,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueII(int id)
   vspNode->SetGPURaycastTechniqueII(id);
 
   this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
-
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
@@ -1314,13 +1264,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
   vspNode->SetGPURaycastTechniqueIIFg(id);
 
   this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
-
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
@@ -1330,13 +1274,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
   vspNode->SetGPURaycastIIFusion(id);
 
   this->Gui->GetLogic()->SetGPURaycastIIParameters(vspNode);
-
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
@@ -1346,24 +1284,22 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPUMemorySize(int id)
   vspNode->SetGPUMemorySize(id);
 
   this->Gui->GetLogic()->SetGPUMemorySize(vspNode);
-
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
 {
   //abort current (cpu ray cast) rendering
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
+  int numViewer = this->Gui->GetApplicationGUI()->GetNumberOfViewerWidgets();
+  
+  for (int i = 0; i < numViewer; i++)
+  {
+    vtkSlicerViewerWidget *slicer_viewer_widget = this->Gui->GetApplicationGUI()->GetNthViewerWidget(i);
+    if (slicer_viewer_widget)
     {
-    slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+      slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     }
+  }
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
@@ -1425,38 +1361,28 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     break;
   }
 
-  if (slicer_viewer_widget)
-  {
-    slicer_viewer_widget->Render();
-  }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessPauseResume(void)
 {
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
   //Resume Rendering
   if(this->RenderingPaused == 1)
   {
     this->RenderingPaused = 0;
     this->Gui->GetLogic()->SetVolumeVisibility(1);
-    if (slicer_viewer_widget)
-      {
-      slicer_viewer_widget->RequestRender();
-      }
+    
     this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());;
   }
-  //Pause Rendering
-  else
+  else//Pause Rendering
   {
     this->RenderingPaused = 1;
     this->Gui->GetLogic()->SetVolumeVisibility(0);
-    if (slicer_viewer_widget)
-      {
-      slicer_viewer_widget->RequestRender();
-      }
+    
     this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetInvisibleIcon());
   }
+
+  this->Gui->RequestRender();
 }
 void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 {
@@ -1485,12 +1411,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
 
   vspNode->SetThreshold(this->RA_Threshold->GetRange());
 
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
@@ -1520,12 +1441,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
 
   vspNode->SetThreshold(this->RA_ThresholdFg->GetRange());
 
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
@@ -1536,12 +1452,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
 
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-  if (slicer_viewer_widget)
-    {
-    slicer_viewer_widget->RequestRender();
-    }
+  this->Gui->RequestRender();
 }
 
 void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
@@ -1560,13 +1471,8 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   {
     if (this->CPURayCastingInteractionFlag == 1)//avoid endless loop
     {
-    vtkSlicerViewerWidget *slicer_viewer_widget = 
-      this->Gui->GetApplicationGUI()->GetActiveViewerWidget();
-    if (slicer_viewer_widget)
-      {
-      slicer_viewer_widget->RequestRender();
-      }
-    this->CPURayCastingInteractionFlag = 0;
+      this->Gui->RequestRender();
+      this->CPURayCastingInteractionFlag = 0;
     }
   }
 }

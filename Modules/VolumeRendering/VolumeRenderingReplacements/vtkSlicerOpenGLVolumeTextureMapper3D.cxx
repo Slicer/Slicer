@@ -636,7 +636,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupOneIndependentTextures( vtkRende
     }
 
   // Update the volume containing the 2 byte scalar / gradient magnitude
-  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index )
+  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index || vol->GetNumberOfConsumers() > 1)
     {    
     int dim[3];
     this->GetVolumeDimensions(dim);
@@ -680,7 +680,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupOneIndependentTextures( vtkRende
 
   // Update the dependent 2D color table mapping scalar value and
   // gradient magnitude to RGBA
-  if ( this->UpdateColorLookup( vol ) || !this->ColorLookupIndex )
+  if ( this->UpdateColorLookup( vol ) || !this->ColorLookupIndex || vol->GetNumberOfConsumers() > 1)
     {
     this->DeleteTextureIndex( &this->ColorLookupIndex );
     this->DeleteTextureIndex( &this->AlphaLookupIndex );
@@ -1045,7 +1045,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupTwoDependentTextures(
     }
 
   // Update the volume containing the 3 byte scalars / gradient magnitude
-  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index )
+  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index || vol->GetNumberOfConsumers() > 1)
     {    
     int dim[3];
     this->GetVolumeDimensions(dim);
@@ -1099,7 +1099,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupTwoDependentTextures(
   // Update the dependent 2D color table mapping scalar value and
   // gradient magnitude to RGBA
   if ( this->UpdateColorLookup( vol ) || 
-       !this->ColorLookupIndex || !this->AlphaLookupIndex )
+       !this->ColorLookupIndex || !this->AlphaLookupIndex || vol->GetNumberOfConsumers() > 1)
     {    
     vtkgl::ActiveTexture( vtkgl::TEXTURE1 );
     glBindTexture(GL_TEXTURE_2D,0);
@@ -1194,7 +1194,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupFourDependentTextures(
 
   // Update the volume containing the 3 byte scalars / gradient magnitude
   if ( this->UpdateVolumes( vol ) || !this->Volume1Index || 
-       !this->Volume2Index || !this->Volume3Index )
+       !this->Volume2Index || !this->Volume3Index || vol->GetNumberOfConsumers() > 1)
     {    
     int dim[3];
     this->GetVolumeDimensions(dim);
@@ -1250,7 +1250,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupFourDependentTextures(
 
   // Update the dependent 2D table mapping scalar value and
   // gradient magnitude to opacity
-  if ( this->UpdateColorLookup( vol ) || !this->AlphaLookupIndex )
+  if ( this->UpdateColorLookup( vol ) || !this->AlphaLookupIndex || vol->GetNumberOfConsumers() > 1)
     {    
     this->DeleteTextureIndex(&this->ColorLookupIndex);
     

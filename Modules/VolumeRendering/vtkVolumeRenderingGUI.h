@@ -104,6 +104,7 @@ public:
     virtual void Enter ( );
     virtual void Exit ( );
 
+    void RequestRender();
 
     // Description:
     // Get/Set the main slicer viewer widget, for picking

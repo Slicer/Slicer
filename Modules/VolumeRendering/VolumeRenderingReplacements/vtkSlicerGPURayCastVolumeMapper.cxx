@@ -514,7 +514,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *ren, vtkVolume
   //0, 1, 2, 3
   //7, 6, 5, 4
   // Update the volume containing the 2 byte scalar / gradient magnitude
-  if ( this->UpdateVolumes( vol ) || !this->Volume1Index )
+  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || vol->GetNumberOfConsumers() > 1)
   {
     int dim[3];
     this->GetVolumeDimensions(dim);
@@ -539,14 +539,6 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *ren, vtkVolume
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume3Index);
     vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
                GL_RGBA, GL_UNSIGNED_BYTE, this->Volume3 );
-
-    delete [] this->Volume1;
-    delete [] this->Volume2;
-    delete [] this->Volume3;
-
-    this->Volume1 = NULL;
-    this->Volume2 = NULL;
-    this->Volume3 = NULL;
   }
 
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
@@ -563,7 +555,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *ren, vtkVolume
 
   // Update the dependent 2D color table mapping scalar value and
   // gradient magnitude to RGBA
-  if ( this->UpdateColorLookup( vol ) || !this->ColorLookupIndex )
+  if ( this->UpdateColorLookup( vol ) || !this->ColorLookupIndex || vol->GetNumberOfConsumers() > 1)
   {
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE6 );
