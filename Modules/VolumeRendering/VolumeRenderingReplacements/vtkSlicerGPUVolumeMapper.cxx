@@ -505,21 +505,35 @@ vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
 
 vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
 {
-    if (this->Volume1)
-        delete [] this->Volume1;
-    if (this->Volume2)
-        delete [] this->Volume2;
-    if (this->Volume3)
-        delete [] this->Volume3;
+  if (this->Volume1)
+  {
+    delete [] this->Volume1;
+    this->Volume1 = NULL;
+  }
+
+  if (this->Volume2)
+  {
+    delete [] this->Volume2;
+    this->Volume2 = NULL;
+  }
+  
+  if (this->Volume3)
+  {
+    delete [] this->Volume3;
+    this->Volume3 = NULL;
+  }
         
-    if (this->GradientsArgs)
-        delete this->GradientsArgs;
+  if (this->GradientsArgs)
+  {
+    delete this->GradientsArgs;
+    this->GradientsArgs = NULL;
+  }
         
-    if (this->Threader)
-    {
-      this->Threader->Delete();
-      this->Threader = NULL;
-    }
+  if (this->Threader)
+  {
+    this->Threader->Delete();
+    this->Threader = NULL;
+  }
 }
 
 vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()

@@ -664,19 +664,29 @@ vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
 
 vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
 {
-    if (this->Volume1)
-        delete [] this->Volume1;
-    if (this->Volume2)
-        delete [] this->Volume2;
+  if (this->Volume1)
+  {
+    delete [] this->Volume1;
+    this->Volume1 = NULL;
+  }
+  
+  if (this->Volume2)
+  {
+    delete [] this->Volume2;
+    this->Volume2 = NULL;
+  }
 
-    if (this->GradientsArgs)
-        delete this->GradientsArgs;
+  if (this->GradientsArgs)
+  {
+    delete this->GradientsArgs;
+    this->GradientsArgs = NULL;
+  }
 
-    if (this->Threader)
-    {
-      this->Threader->Delete();
-      this->Threader = NULL;
-    }
+  if (this->Threader)
+  {
+    this->Threader->Delete();
+    this->Threader = NULL;
+  }
 }
 
 
@@ -835,73 +845,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 
   //copy out scalar as float array for multithreading
   //or maybe later multithreading with template...
-  switch(scalarType)
-  {
-  case VTK_SIGNED_CHAR:
-  case VTK_CHAR:
-    {
-      char* tempDataPtr = (char*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_UNSIGNED_CHAR:
-    {
-      unsigned char* tempDataPtr = (unsigned char*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_SHORT:
-    {
-      short* tempDataPtr = (short*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_UNSIGNED_SHORT:
-    {
-      unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_INT:
-    {
-      int* tempDataPtr = (int*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_UNSIGNED_INT:
-    {
-      unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_DOUBLE:
-    {
-      double* tempDataPtr = (double*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_FLOAT:
-    {
-      float* tempDataPtr = (float*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  case VTK_LONG:
-    {
-      long* tempDataPtr = (long*)input->GetScalarPointer();
-      for (int i = 0; i < dataPtrSize; i++)
-        floatDataPtr[i] = (float)tempDataPtr[i];
-    }
-    break;
-  }
+  CopyToFloatBuffer(input, floatDataPtr, dataPtrSize);
 
   if (this->GradientsArgs)
         delete this->GradientsArgs;
@@ -924,6 +868,78 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   return 1;
 }
 
+void vtkSlicerGPUVolumeTextureMapper3D::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
+{
+  int scalarType = input->GetScalarType();
+  
+  switch(scalarType)
+  {
+  case VTK_SIGNED_CHAR:
+  case VTK_CHAR:
+    {
+      char* tempDataPtr = (char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }
+    break;
+  case VTK_UNSIGNED_CHAR:
+    {
+      unsigned char* tempDataPtr = (unsigned char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }
+    break;
+  case VTK_SHORT:
+    {
+      short* tempDataPtr = (short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_SHORT:
+    {
+      unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_INT:
+    {
+      int* tempDataPtr = (int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_INT:
+    {
+      unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_DOUBLE:
+    {
+      double* tempDataPtr = (double*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_FLOAT:
+    {
+      float* tempDataPtr = (float*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_LONG:
+    {
+      long* tempDataPtr = (long*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  }
+}
 
 int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
 {

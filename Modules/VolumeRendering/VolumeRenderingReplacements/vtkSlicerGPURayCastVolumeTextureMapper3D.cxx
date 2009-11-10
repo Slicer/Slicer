@@ -113,17 +113,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   ren->GetRenderWindow()->MakeCurrent();
 
   if ( !this->Initialized )
-    {
+  {
     this->Initialize();
-    }
+  }
 
   if ( !this->RayCastInitialized || this->ReloadShaderFlag)
-    {
+  {
     this->InitializeRayCast();
-    }
-
-  // Start the timer now
-  this->Timer->StartTimer();
+  }
 
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
 
@@ -155,19 +152,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
 
   glPopAttrib();
 
-  glFlush();
-  glFinish();
-
-  this->Timer->StopTimer();
-
   this->TimeToDraw = static_cast<float>(this->Timer->GetElapsedTime());
 
   // If the timer is not accurate enough, set it to a small
   // time so that it is not zero
   if ( this->TimeToDraw == 0.0 )
-    {
+  {
     this->TimeToDraw = 0.0001;
-    }
+  }
 
   //adjust ray steps based on requrestd frame rate
   this->AdaptivePerformanceControl();
@@ -515,6 +507,10 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderGLSL( vtkRenderer *ren, vtkVolume *vol )
 {
+  //force shader program reinit in dual 3D view mode
+  if (vol->GetNumberOfConsumers() > 1)
+    this->InitializeRayCast();
+    
   vtkgl::UseProgram(RayCastProgram);
 
   this->SetupTextures( ren, vol );
@@ -522,20 +518,26 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderGLSL( vtkRenderer *ren, vtk
 
   glEnable(GL_CULL_FACE);
 
+  // Start the timer now
+  this->Timer->StartTimer();
+  
   this->DrawVolumeBBox();
+  glFinish();
 
+  this->Timer->StopTimer();
+  
   vtkgl::UseProgram(0);
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::DeleteTextureIndex( GLuint *index )
 {
   if (glIsTexture(*index))
-    {
+  {
     GLuint tempIndex;
     tempIndex = *index;
     glDeleteTextures(1, &tempIndex);
     *index = 0;
-    }
+  }
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::CreateTextureIndex( GLuint *index )

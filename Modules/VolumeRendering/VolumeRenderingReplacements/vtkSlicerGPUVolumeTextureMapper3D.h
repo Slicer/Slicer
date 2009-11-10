@@ -64,13 +64,14 @@ class vtkVolumeProperty;
 VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients(void *arg);
 
 class vtkSlicerGPUVolumeTextureMapper3D;
-typedef struct{
-    float *dataPtr;
-    vtkSlicerGPUVolumeTextureMapper3D *me;
-    double scalarRange[2];
-    unsigned char *volume1;
-    unsigned char *volume2;
-}GradientsArgsType;
+struct GradientsArgsType
+{
+  float *dataPtr;
+  vtkSlicerGPUVolumeTextureMapper3D *me;
+  double scalarRange[2];
+  unsigned char *volume1;
+  unsigned char *volume2;
+};
 
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeTextureMapper3D : public vtkVolumeMapper
 {
@@ -152,6 +153,8 @@ protected:
   int    UpdateVolumes( vtkVolume * );
   int    UpdateColorLookup( vtkVolume * );
 
+  void CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize);
+  
   // Description:
   // Impemented in subclass - check is texture size is OK.
   //BTX

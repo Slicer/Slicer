@@ -733,7 +733,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     this->RequestRender();
   }
   else if (event == vtkMRMLScene::SceneCloseEvent)
-  {
+  {vtkErrorMacro("closing");
     this->DeleteRenderingFrame();
 
     int numViewer = this->GetApplicationGUI()->GetNumberOfViewerWidgets();
@@ -753,6 +753,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     this->ScenarioNode = NULL;
 
     this->UpdateGUI();
+    vtkErrorMacro("closed");
   }
   else if(event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
@@ -1445,9 +1446,9 @@ vtkMRMLVolumePropertyNode* vtkVolumeRenderingGUI::GetVolumePropertyNode()
   vtkMRMLVolumePropertyNode *vpNode = NULL;
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   if (vspNode) 
-    {
+  {
     vpNode = vspNode->GetVolumePropertyNode();
-    }
+  }
   return vpNode;
 }
 
@@ -1456,9 +1457,9 @@ vtkMRMLVolumePropertyNode* vtkVolumeRenderingGUI::GetFgVolumePropertyNode()
   vtkMRMLVolumePropertyNode *vpNode = NULL;
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   if (vspNode) 
-    {
+  {
     vpNode = vspNode->GetFgVolumePropertyNode();
-    }
+  }
   return vpNode;
 }
 
