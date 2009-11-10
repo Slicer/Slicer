@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>758</height>
+    <width>366</width>
+    <height>732</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,6 +33,12 @@
      </property>
      <widget class="QWidget" name="page">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="spacing">
+        <number>7</number>
+       </property>
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QPushButton" name="LoadTransformPushButton">
          <property name="text">
@@ -74,10 +80,10 @@
      <widget class="QWidget" name="page_2">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
-        <number>6</number>
+        <number>7</number>
        </property>
        <property name="margin">
-        <number>9</number>
+        <number>10</number>
        </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -231,7 +237,7 @@
           <enum>qMRMLTransformSliders::ROTATION</enum>
          </property>
          <property name="minMaxVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -323,7 +329,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="2" margin="2"/>
  <customwidgets>
   <customwidget>
    <class>qCTKCollapsibleGroupBox</class>
