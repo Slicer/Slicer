@@ -670,15 +670,6 @@ void vtkSlicerViewControlGUI::UpdateSliceGUIInteractorStyles ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateFromMRML()
 {
-  // called:
-  // 1. whenever any new node is created or deleted
-  // 2. when a new view or camera has been selected
-  // Needs to remove old observers, put new
-  // observers on the current camera and view,
-  // repopulate the NavigationZoom widget's actors, etc.,
-  // and rerender the NavigationZoom widget's view.
-
-  this->UpdateViewFromMRML();
   this->UpdateSlicesFromMRML();
   this->UpdateSceneSnapshotsFromMRML();
   this->RequestNavigationRender ( );
@@ -790,55 +781,35 @@ void vtkSlicerViewControlGUI::DeleteSceneSnapshot(const char *nom )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::UpdateViewFromMRML()
+void vtkSlicerViewControlGUI::SetViewNode(vtkMRMLViewNode *node)
 {
-  if (this->SceneClosing)
+  if (this->SceneClosing || this->ViewNode == node)
     {
     return;
     }
-
-  // WHY??? why can you set the ViewNode and there is still code all
-  // over this class that was picking the first View Node in the scene???
-  // Anyway...
-  // Let's find the active view (instead of the first view)
-  // IMHO, this design is still wrong. How do yo create two instances of
-  // this class that would control two different views?? It should up to
-  // the app object to assign it the correct view node...
-
-  vtkSlicerApplicationGUI *p = 
-    vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-  vtkMRMLViewNode *node = NULL;
-  int nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLViewNode::SafeDownCast (
-      p->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLViewNode"));
-    if (node && node->GetActive() && this->ViewNode != node)
-    {
-      break;
-    }
-    }
-
-  if (this->ViewNode == node)
-    {
-    return;
-      }
 
   vtkSetAndObserveMRMLNodeMacro(this->ViewNode, NULL);
 
   if (node)
     {
-    this->ViewNode = node;
     vtkIntArray  *events = vtkIntArray::New();
     events->InsertNextValue( vtkMRMLViewNode::AnimationModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::RenderModeEvent); 
     events->InsertNextValue( vtkMRMLViewNode::StereoModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::VisibilityEvent);
     events->InsertNextValue( vtkMRMLViewNode::BackgroundColorEvent);    
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->ViewNode, node, events );
+    vtkSetAndObserveMRMLNodeEventsMacro(this->ViewNode, node, events);
     events->Delete();
     events = NULL;
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateViewFromMRML()
+{
+  // For backward compat, keep UpdateViewFromMRML; 
+  // GetActiveView essentially triggers the same code, i.e. update ViewNode
+  this->GetActiveView(); 
 }
 
 //---------------------------------------------------------------------------
@@ -965,7 +936,7 @@ void vtkSlicerViewControlGUI::NavigationRender()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::ResetNavigationCamera ( )
+void vtkSlicerViewControlGUI::ResetNavigationCamera()
 {
   double center[3];
   double distance;
@@ -1598,7 +1569,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewZoom(double factor )
+void vtkSlicerViewControlGUI::MainViewZoom(double factor)
 {
 
 #ifndef NAVZOOMWIDGET_DEBUG
@@ -3971,53 +3942,45 @@ void vtkSlicerViewControlGUI::RemoveSliceEventObservers()
 //---------------------------------------------------------------------------
 vtkMRMLViewNode *vtkSlicerViewControlGUI::GetActiveView ( )
 {
-  // WHY??? why can you set the ViewNode and there is still code all
-  // over this class that was picking the first View Node in the scene???
-  if ( this->ApplicationGUI)
+  if (this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = 
-      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *node = NULL;
-    int nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
-    for (int n=0; n<nnodes; n++)
+    if (this->ApplicationGUI->GetActiveViewerWidget())
       {
-      node = vtkMRMLViewNode::SafeDownCast (
-        p->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLViewNode"));
-      if (node && node->GetActive() && this->ViewNode != node)
+      node = this->ApplicationGUI->GetActiveViewerWidget()->GetViewNode();
+      }
+    if (node && node->GetActive() && this->ViewNode != node)
       {
-      this->UpdateFromMRML ();
+      this->SetViewNode(node);
       }
     }
-    }
-    return ( this->ViewNode );
+  return this->ViewNode;
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLCameraNode *vtkSlicerViewControlGUI::GetActiveCamera()
 {
-  if ( this->ApplicationGUI)
+  if (this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = 
-      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI());    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if (vn != NULL)
       {
       std::vector<vtkMRMLNode*> cnodes;
-      int nnodes = 
-        p->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+      int nnodes = this->ApplicationGUI->GetMRMLScene()->GetNodesByClass(
+        "vtkMRMLCameraNode", cnodes);
       for (int n = 0; n < nnodes; n++)
         {
         vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
-        if (node &&
+        if (node && 
             node->GetActiveTag() && 
             !strcmp(node->GetActiveTag(), vn->GetID()))
-      {
+          {
           return node;
           }
         }
       }
     }
-  return ( NULL );
+  return NULL;
 }
 
 //---------------------------------------------------------------------------

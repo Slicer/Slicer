@@ -185,8 +185,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Methods for Get/Set the MRMLViewNode (probably
   // will be modified or phased out), or refactored into
   // an accompanying Logic class.
+  virtual void SetViewNode(vtkMRMLViewNode*);
   vtkGetObjectMacro ( ViewNode, vtkMRMLViewNode );
-  vtkSetObjectMacro ( ViewNode, vtkMRMLViewNode );
   vtkGetObjectMacro ( RedSliceNode, vtkMRMLSliceNode );
   vtkGetObjectMacro ( YellowSliceNode, vtkMRMLSliceNode );  
   vtkGetObjectMacro ( GreenSliceNode, vtkMRMLSliceNode );

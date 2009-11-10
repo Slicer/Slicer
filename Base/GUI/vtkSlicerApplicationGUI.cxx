@@ -2098,6 +2098,8 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
         viewer_widget->UpdateFromMRML();
         viewer_widget->SetApplicationLogic(this->GetApplicationLogic());
         this->Internals->ViewerWidgets.push_back(viewer_widget);
+        node->InvokeEvent(
+          vtkMRMLViewNode::GraphicalResourcesCreatedEvent, viewer_widget);
         nb_added++;
         }
       }
