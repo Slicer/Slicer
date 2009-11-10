@@ -126,10 +126,22 @@ void qSlicerApplication::initializeCmdLineModulesPaths()
 void qSlicerApplication::initPalette()
 {
   QPalette p = this->palette();
+  /* Old palette that makes a high contrast in Windows.
   p.setColor(QPalette::Window, Qt::white);
   p.setColor(QPalette::Base, Qt::white);
   p.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
   p.setColor(QPalette::Button, Qt::white);
+  */
+  p.setColor(QPalette::Button, "#fcfcfc");
+  p.setColor(QPalette::Light, "#c8c8c8");
+  p.setColor(QPalette::Midlight, "#e6e6e6");
+  p.setColor(QPalette::Dark, "#aaaaaa");
+  p.setColor(QPalette::Mid, "#c8c8c8");
+  p.setColor(QPalette::Base, Qt::white);
+  p.setColor(QPalette::Window, Qt::white);
+  p.setColor(QPalette::Shadow, "#5a5a5a");
+  p.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+
   this->setPalette(p);
 }
 
