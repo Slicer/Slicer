@@ -67,8 +67,10 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   set o(scratchMatrix) [$this vtkNew vtkMatrix4x4]
 
   # set the annotation property
+  # but have the actual text be off by default
   [$_annotation GetTextProperty] SetColor 1 1 1
   [$_annotation GetTextProperty] SetShadow 1
+  $_renderWidget CornerAnnotationVisibilityOff
 
   # TODO:
   # create text actors for L/R, I/S, P/A
