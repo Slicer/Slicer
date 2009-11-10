@@ -5,11 +5,10 @@
 
 #include <QDebug>
 
-#include "qCTKWidgetsWin32Header.h"
-
 //----------------------------------------------------------------------------
 namespace{
 // Description:
+// Function in charge of instanciating an object of type: ClassType
 template<typename BaseClassType, typename ClassType>
 BaseClassType *instanciateObject()
 {
@@ -44,11 +43,13 @@ template<typename BaseClassType>
 class qCTKAbstractObjectFactory : public qCTKAbstractFactory<BaseClassType>
 {
 public:
+  //-----------------------------------------------------------------------------
   // Description:
   // Constructor
   qCTKAbstractObjectFactory(){}
   virtual ~qCTKAbstractObjectFactory(){}
   
+  //-----------------------------------------------------------------------------
   // Description:
   // Register an object in the factory
   template<typename ClassType>
@@ -56,7 +57,8 @@ public:
     {
     return this->registerObject<ClassType>(ClassType::staticMetaObject.className());
     }
-    
+
+  //-----------------------------------------------------------------------------
   // Description:
   // Register an object in the factory
   template<typename ClassType>

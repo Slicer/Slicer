@@ -7,8 +7,6 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#include "qCTKWidgetsWin32Header.h"
-
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 class qCTKFactoryPluginItem : public qCTKAbstractFactoryItem<BaseClassType>
@@ -51,7 +49,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType>
+template<typename BaseClassType, typename FactoryItemType = qCTKFactoryPluginItem<BaseClassType> >
 class qCTKAbstractPluginFactory : public qCTKAbstractFactory<BaseClassType>
 {
 public:
@@ -69,7 +67,7 @@ public:
       { 
       return false; 
       }
-    qCTKFactoryPluginItem<BaseClassType> * item = new qCTKFactoryPluginItem<BaseClassType>(key, path);
+    FactoryItemType * item = new FactoryItemType(key, path);
     this->registerItem(item);
     return true;
     }

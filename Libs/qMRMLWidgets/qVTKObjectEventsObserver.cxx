@@ -53,7 +53,7 @@ void qVTKObjectEventsObserver::setParent(QObject* parent)
   if (parent && !this->Internal->ParentSet)
     {
     this->Superclass::setParent(parent);
-    qDebug() << "qVTKObjectEventsObserver::setParent:" << this->parent(); 
+    //qDebug() << "qVTKObjectEventsObserver::setParent:" << this->parent(); 
     this->Internal->ParentSet = true; 
     }
 }

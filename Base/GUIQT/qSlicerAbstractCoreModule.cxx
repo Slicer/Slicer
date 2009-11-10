@@ -12,16 +12,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule::qSlicerAbstractCoreModule(QWidget *parent)
- :Superclass(parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule::~qSlicerAbstractCoreModule()
-{
-  if (this->initialized()) { delete this->Internal; }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerAbstractCoreModule);
+qSlicerCxxDestructorMacro(qSlicerAbstractCoreModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractCoreModule::initializer()

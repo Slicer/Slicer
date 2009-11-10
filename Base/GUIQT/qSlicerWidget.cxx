@@ -27,7 +27,6 @@ qSlicerWidget::qSlicerWidget(QWidget *parent)
 qSlicerWidget::~qSlicerWidget()
 {
   delete this->Internal; 
-  // TBD: what to do with MRMLScene ?
 }
 
 //-----------------------------------------------------------------------------

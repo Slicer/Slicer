@@ -1,21 +1,25 @@
-#ifndef __qSlicerAbstractLoadableModule_h
-#define __qSlicerAbstractLoadableModule_h 
+#ifndef __qSlicerCmdLineModule_h
+#define __qSlicerCmdLineModule_h 
 
 #include "qSlicerAbstractModule.h"
 
 #include "qSlicerBaseGUIQTWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractLoadableModule : public qSlicerAbstractModule
+class Q_SLICER_BASE_GUIQT_EXPORT qSlicerCmdLineModule : public qSlicerAbstractModule
 {
   Q_OBJECT
   
 public:
   
   typedef qSlicerAbstractModule Superclass;
-  qSlicerAbstractLoadableModule(QWidget *parent=0);
-  virtual ~qSlicerAbstractLoadableModule();
+  qSlicerCmdLineModule(QWidget *parent=0);
+  virtual ~qSlicerCmdLineModule();
   
   virtual void printAdditionalInfo(); 
+  
+  void setXmlModuleDescription(const char* xmlModuleDescription);
+  
+  virtual QString moduleTitle();
   
   // Description:
   // Return help/acknowledgement text
@@ -29,8 +33,5 @@ private:
   class qInternal;
   qInternal* Internal;
 };
-
-Q_DECLARE_INTERFACE(qSlicerAbstractLoadableModule,
-                     "org.slicer.QTModules.qSlicerAbstractLoadableModule/1.0")
 
 #endif

@@ -97,6 +97,32 @@ void qSlicerApplication::initializeLoadableModulesPaths()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerApplication::initializeCmdLineModulesPaths()
+{
+  QString defaultCmdLineModulePaths;
+  
+  // On Win32, *both* paths have to be there, since scripts are installed
+  // in the install location, and exec/libs are *automatically* installed
+  // in intDir.
+  defaultCmdLineModulePaths = this->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR;
+//   if (hasIntDir)
+//     {
+//     defaultQTModulePaths = defaultCmdLineModulePaths + PathSep + 
+//       slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "/" + intDir;
+//     }
+    
+  // add the default modules directory (based on the slicer
+  // installation or build tree) to the user paths
+  QString cmdLineModulePaths = /*userModulePaths + PathSep +*/ defaultCmdLineModulePaths;
+  this->addLibraryPath(defaultCmdLineModulePaths);
+  
+  QStringList paths; 
+  paths << cmdLineModulePaths; 
+  qSlicerModuleManager::instance()->factory()->setCmdLineModuleSearchPaths(paths);
+  //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerApplication::initPalette()
 {
   QPalette p = this->palette();

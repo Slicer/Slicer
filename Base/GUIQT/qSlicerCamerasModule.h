@@ -22,9 +22,10 @@ public:
   
   qSlicerGetModuleTitleMacro("Cameras");
   
-  // Return help/about text
+  // Return help/acknowledgement text
   virtual QString helpText();
-  virtual QString aboutText();
+  virtual QString acknowledgementText();
+  
 public slots:
   // Description:
   // Inherited from qSlicerWidget. Reimplemented for refresh issues.

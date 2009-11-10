@@ -12,16 +12,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractLoadableModule::qSlicerAbstractLoadableModule(QWidget *parent)
- :Superclass(parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractLoadableModule::~qSlicerAbstractLoadableModule()
-{
-  if (this->initialized()) { delete this->Internal; }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerAbstractLoadableModule);
+qSlicerCxxDestructorMacro(qSlicerAbstractLoadableModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::initializer()
@@ -43,8 +35,8 @@ QString qSlicerAbstractLoadableModule::helpText()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::aboutText()
+QString qSlicerAbstractLoadableModule::acknowledgementText()
 {
-  qDebug() << "qSlicerAbstractLoadableModule::aboutText - Not implemented"; 
+  qDebug() << "qSlicerAbstractLoadableModule::acknowledgementText - Not implemented"; 
   return QString();
 }

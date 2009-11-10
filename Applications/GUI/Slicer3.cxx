@@ -1090,6 +1090,12 @@ int Slicer3_main(int& argc, char *argv[])
   // add the default plugins directory (based on the slicer
   // installation or build tree) to the user paths
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
+  
+#ifdef Slicer3_USE_QT
+  qSlicerModuleManager::instance()->factory()->setCmdLineModuleSearchPaths(
+    QString::fromStdString(pluginsPaths).split(PathSep));
+  //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl; 
+#endif
 
 
   vtksys_stl::vector<vtksys_stl::string> pluginsPathsList;
@@ -1558,6 +1564,9 @@ int Slicer3_main(int& argc, char *argv[])
       moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
       }      
     moduleFactory.Scan();
+#ifdef Slicer3_USE_QT
+    qSlicerModuleManager::instance()->factory()->registerCmdLineModules();
+#endif
 
     // Register the node type for the command line modules
     vtkMRMLCommandLineModuleNode* clmNode = vtkMRMLCommandLineModuleNode::New();
@@ -1569,7 +1578,11 @@ int Slicer3_main(int& argc, char *argv[])
     mit = moduleNames.begin();
     while (mit != moduleNames.end())
       {
-      // slicerCerr(moduleFactory.GetModuleDescription(*mit) << endl);
+      ModuleDescription desc = moduleFactory.GetModuleDescription(*mit);
+      // slicerCerr(desc << endl);
+#ifdef Slicer3_USE_QT
+      qDebug() << "Initialize command line module:" << mit->c_str() << "/" << desc.GetTitle().c_str() << "/" <<desc.GetLocation().c_str() ;
+#endif
 
       vtkCommandLineModuleGUI *commandLineModuleGUI
         = vtkCommandLineModuleGUI::New();
@@ -1583,11 +1596,10 @@ int Slicer3_main(int& argc, char *argv[])
         }
 
       // Set the ModuleDescripton on the gui
-      commandLineModuleGUI
-        ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
+      commandLineModuleGUI->SetModuleDescription( desc );
 
       // Register the module description in the master list
-      vtkMRMLCommandLineModuleNode::RegisterModuleDescription( moduleFactory.GetModuleDescription(*mit) );
+      vtkMRMLCommandLineModuleNode::RegisterModuleDescription( desc );
         
       // Configure the Logic, GUI, and add to app
       commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
@@ -1596,7 +1608,7 @@ int Slicer3_main(int& argc, char *argv[])
       commandLineModuleGUI->SetApplication ( slicerApp );
       commandLineModuleGUI->SetApplicationLogic ( appLogic );
       commandLineModuleGUI->SetApplicationGUI ( appGUI );
-      commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
+      commandLineModuleGUI->SetGUIName( desc.GetTitle().c_str() );
       commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
       commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
       commandLineModuleGUI->GetUIPanel()->Create ( );

@@ -4,8 +4,9 @@
 #include "qSlicerAbstractModule.h"
 #include "qCTKAbstractObjectFactory.h"
 #include "qCTKAbstractPluginFactory.h"
-//#include "qCTKAbstractLibraryFactory.h"
+#include "qCTKAbstractLibraryFactory.h"
 
+#include "qSlicerCmdLineModule.h"
 #include "qSlicerTransformsModule.h"
 #include "qSlicerCamerasModule.h"
 
@@ -21,25 +22,43 @@ public:
   typedef QHash<QString, QString>::const_iterator MapConstIterator;
   typedef QHash<QString, QString>::iterator       MapIterator;
   
+  typedef QHash<QString, int>::const_iterator     Map2ConstIterator;
+  typedef QHash<QString, int>::iterator           Map2Iterator;
+
+  class qSlicerFactoryLoadableCmdLineModuleItem; 
+  class qSlicerFactoryExecutableCmdLineModuleItem;
+
   typedef qCTKAbstractObjectFactory<qSlicerAbstractModule>  CoreModuleFactoryType;
   typedef qCTKAbstractPluginFactory<qSlicerAbstractModule>  LoadableModuleFactoryType;
-  //typedef qCTKAbstractLibraryFactory<qSlicerAbstractModule> CmdLineModuleFactoryType;
+  typedef qCTKAbstractLibraryFactory<qSlicerAbstractModule, qSlicerFactoryLoadableCmdLineModuleItem> CmdLineLoadableModuleFactoryType;
+  typedef qCTKAbstractPluginFactory<qSlicerAbstractModule, qSlicerFactoryExecutableCmdLineModuleItem> CmdLineExecutableModuleFactoryType;
   
-  qInternal(){}
-  
+  // List of existing factory
   enum FactoryType 
     {
-    LoadableModule = 0x0, 
-    CmdLineModule = 0x1,
+    CoreModule              = 0x0,
+    LoadableModule          = 0x1, 
+    CmdLineLoadableModule   = 0x2,
+    CmdLineExecutableModule = 0x3,
+    CmdLinePythonModule     = 0x4,
     };
-  
+    
+  qInternal()
+    {
+    // Set the list of required symbols for CmdLineLoadableModule, 
+    // if one of these symbols can't be resolved, the library won't be registered.
+    QStringList cmdLineModuleSymbols; 
+    cmdLineModuleSymbols << "XMLModuleDescription";
+    this->CmdLineLoadableModuleFactory.setSymbols(cmdLineModuleSymbols);
+    }
+
   // Description:
   // Keep track of the mapping between module title and module name
   void updateInternalMaps(const QString& moduleTitle, const QString& moduleName);
   
   // Description:
   // Convenient function used to register a library in the appropriate factory.
-  // Either using the loadableModuleFactory or the CmdLineModuleFactory
+  // Either using the LoadableModuleFactory or the CmdLineLoadableModuleFactory
   void registerLibraries(int factoryType, const QStringList& paths);
   
   // Description:
@@ -58,9 +77,11 @@ public:
   QStringList             CmdLineModuleSearchPaths;
   
   //
-  CoreModuleFactoryType      CoreModuleFactory;
-  LoadableModuleFactoryType  LoadableModuleFactory;
-  //CmdLineModuleFactoryType   CmdLineModuleFactory;
+  CoreModuleFactoryType              CoreModuleFactory;
+  LoadableModuleFactoryType          LoadableModuleFactory;
+  CmdLineLoadableModuleFactoryType   CmdLineLoadableModuleFactory;
+  
+  QHash<QString, int> MapModuleNameToFactoryType;
 };
 
 //-----------------------------------------------------------------------------
@@ -118,6 +139,10 @@ void qSlicerModuleFactory::registerCoreModule()
   if (this->Internal->CoreModuleFactory.registerQObject<ClassType>())
     {
     this->Internal->updateInternalMaps(moduleTitle, moduleName);
+    
+    // Keep track of the factory type associated with the module
+    this->Internal->MapModuleNameToFactoryType[moduleName] = qInternal::CoreModule; 
+    
     qDebug() << "qSlicerModuleFactory::registerCoreModule - title:" << moduleTitle; 
     }
 }
@@ -138,13 +163,14 @@ void qSlicerModuleFactory::registerLoadableModule(const QFileInfo& fileInfo)
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerCmdLineModules()
 {
-  // TODO Not yet implemented
+  this->Internal->registerLibraries(qInternal::CmdLineLoadableModule, 
+    this->cmdLineModuleSearchPaths());
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerCmdLineModule(const QFileInfo& fileInfo)
 {
-  // TODO Not yet implemented
+  this->Internal->registerLibrary(qInternal::CmdLineLoadableModule, fileInfo);
 }
 
 //-----------------------------------------------------------------------------
@@ -189,8 +215,7 @@ QStringList qSlicerModuleFactory::loadableModuleNames()
 //-----------------------------------------------------------------------------
 QStringList qSlicerModuleFactory::commandLineModuleNames()
 {
-  // TODO Not yet implemented
-  return QStringList();
+  return this->Internal->CmdLineLoadableModuleFactory.names();
 }
 
 //-----------------------------------------------------------------------------
@@ -253,24 +278,60 @@ qSlicerAbstractModule* qSlicerModuleFactory::initializeModule(const QString& mod
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerModuleFactory::qInternal::instanciateModule(const QString& moduleName)
 {
-  // Try to instanciate a core module
-  qSlicerAbstractModule* module = this->CoreModuleFactory.instanciate(moduleName); 
-  if (!module)
+  // Retrieve the factoryType associated with the module
+  qInternal::Map2ConstIterator iter = this->MapModuleNameToFactoryType.constFind(moduleName); 
+  
+  qSlicerAbstractModule* module = 0;
+  
+  Q_ASSERT(iter != this->MapModuleNameToFactoryType.constEnd());
+  if (iter == this->MapModuleNameToFactoryType.constEnd())
+    {
+    qWarning() << "Failed to retrieve factory type for module:" << moduleName;
+    return 0;
+    }
+  
+  int factoryType = iter.value();
+  
+  if (factoryType == CoreModule)
+    {
+    // Try to instanciate a core module
+    module = this->CoreModuleFactory.instanciate(moduleName); 
+    }
+  else if (factoryType == LoadableModule)
     {
     // Try to instanciate a loadable module
     module = this->LoadableModuleFactory.instanciate(moduleName);
-    if (!module)
-      {
-      //qCritical() << "Failed to instanciate module:" << moduleName; 
-      return 0;
-      }
+    }
+  else if (factoryType == CmdLineLoadableModule)
+    {
+    // Try to instanciate a loadable command line module
+    module = this->CmdLineLoadableModuleFactory.instanciate(moduleName);
+    }
+  else if (factoryType == CmdLineExecutableModule)
+    {
+    // Try to instanciate an executable command line module
+    qDebug() << "CmdLineExecutableModule - instanciate - Not implemented";
+    }
+  else if (factoryType == CmdLinePythonModule)
+    {
+    // Try to instanciate a python command line module
+    qDebug() << "CmdLinePythonModule - instanciate - Not implemented";
+    }
+  
+  if (!module)
+    {
+    //qCritical() << "Failed to instanciate module:" << moduleName; 
     }
   return module;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleFactory::qInternal::updateInternalMaps(const QString& moduleTitle, const QString& moduleName)
+void qSlicerModuleFactory::qInternal::updateInternalMaps(
+  const QString& moduleTitle, const QString& moduleName)
 {
+  // Sanity checks
+  Q_ASSERT(!moduleTitle.isEmpty() && !moduleName.isEmpty());
+    
   // Keep track of the relation Title -> moduleName
   this->MapTitleToName[moduleTitle] = moduleName;
 
@@ -305,25 +366,104 @@ void qSlicerModuleFactory::qInternal::registerLibraries(int factoryType, const Q
 void qSlicerModuleFactory::qInternal::registerLibrary(int factoryType, const QFileInfo& fileInfo)
 {
   QString libraryName = fileInfo.fileName();
+  qDebug() << "Attempt to register library" << fileInfo.filePath();
   if (!QLibrary::isLibrary(libraryName))
     {
-    qDebug() << "Failed to register:" << libraryName << " - Library name incorrect."; 
+    //qDebug() << "-->Skiped"; 
     return;
     }
-  
+    
   if (factoryType == qInternal::LoadableModule)
     {
     if (this->LoadableModuleFactory.registerLibrary(libraryName, fileInfo.filePath()))
       {
+      // Keep track of the factory type associated with the module
+      this->MapModuleNameToFactoryType[libraryName] = factoryType;
+    
       // Instanciate the object and retrieve nodule title
       qSlicerAbstractModule* module = this->instanciateModule(libraryName);
       Q_ASSERT(module);
       this->updateInternalMaps(module->moduleTitle(), libraryName);
-      qDebug() << "qSlicerModuleFactory::registerLibrary - title:" << module->moduleTitle(); 
+      qDebug() << "qSlicerModuleFactory::registerLoadableModule - title:" << module->moduleTitle(); 
       }
     }
-  else if (factoryType == qInternal::CmdLineModule)
+  else if (factoryType == qInternal::CmdLineLoadableModule)
     {
-    // TODO  
+    if (this->CmdLineLoadableModuleFactory.registerLibrary(libraryName, fileInfo.filePath()))
+      {
+      // Keep track of the factory type associated with the module
+      this->MapModuleNameToFactoryType[libraryName] = factoryType;
+      
+      // Instanciate the object and retrieve nodule title
+      qSlicerAbstractModule* module = this->instanciateModule(libraryName);
+      Q_ASSERT(module);
+      module->initialize();
+      this->updateInternalMaps(module->moduleTitle(), libraryName);
+      qDebug() << "qSlicerModuleFactory::registerCmdLineModule - title:" << module->moduleTitle();
+      }
     }
 }
+
+//-----------------------------------------------------------------------------
+// Internal classes
+
+//-----------------------------------------------------------------------------
+class qSlicerModuleFactory::qInternal::qSlicerFactoryLoadableCmdLineModuleItem : 
+  public qCTKFactoryLibraryItem<qSlicerAbstractModule>
+{
+public:
+  qSlicerFactoryLoadableCmdLineModuleItem(const QString& key, const QString& path):
+    qCTKFactoryLibraryItem<qSlicerAbstractModule>(key,path){}
+
+protected:
+  // To make the cast code cleaner to read.
+  //typedef char * (*XMLModuleDescriptionFunction)();
+  //typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+  
+  virtual qSlicerAbstractModule* instanciator()
+    {
+    qDebug() << "CmdLineLoadableModuleItem::instanciate - name:" << this->path(); 
+    qSlicerCmdLineModule * module = new qSlicerCmdLineModule();
+
+    // Resolve symbols
+    char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription"); 
+    
+    // Retrieve 
+    //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
+    
+    if (!xmlDescription)
+      {
+      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+      delete module; // Clean memory
+      return 0;
+      }
+    module->setXmlModuleDescription(xmlDescription);
+    return module;
+    }
+};
+
+//-----------------------------------------------------------------------------
+class qSlicerModuleFactory::qInternal::qSlicerFactoryExecutableCmdLineModuleItem : 
+  public qCTKAbstractFactoryItem<qSlicerAbstractModule>
+{
+public:
+  qSlicerFactoryExecutableCmdLineModuleItem(const QString& key, const QString& path):
+    qCTKAbstractFactoryItem<qSlicerAbstractModule>(key),Path(path){}
+    
+  virtual bool load()
+    { 
+    return false; 
+    }
+  QString path() { return this->Path; }
+  
+protected:
+  virtual qSlicerAbstractModule* instanciator()
+    {
+    qDebug() << "CmdLineExecutableModuleItem::instanciate - name:" << this->path(); 
+    
+    return 0;
+    }
+    
+private:
+  QString          Path;
+};

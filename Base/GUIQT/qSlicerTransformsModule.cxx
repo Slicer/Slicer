@@ -31,21 +31,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsModule::qSlicerTransformsModule(QWidget *parent) : Superclass(parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerTransformsModule::~qSlicerTransformsModule()
-{
-  if (this->initialized()) { delete this->Internal; }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerTransformsModule);
+qSlicerCxxDestructorMacro(qSlicerTransformsModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::initializer()
 {
-  qDebug() << "qSlicerTransformsModule::initializer";
   this->Superclass::initializer();
+  
+  Q_ASSERT(this->Internal == 0);
   
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
@@ -135,13 +129,13 @@ QString qSlicerTransformsModule::helpText()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::aboutText()
+QString qSlicerTransformsModule::acknowledgementText()
 {
-  QString about = 
+  QString acknowledgement = 
     "The Transforms Module creates and edits transforms.</br>"
     "<a>%1/Modules:Transforms-Documentation-3.4</a>"; 
     
-  return about.arg(this->slicerWikiUrl()); 
+  return acknowledgement.arg(this->slicerWikiUrl()); 
 }
 
 //-----------------------------------------------------------------------------

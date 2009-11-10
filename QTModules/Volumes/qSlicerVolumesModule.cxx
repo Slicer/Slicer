@@ -18,15 +18,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesModule::qSlicerVolumesModule(QWidget *parent) : Superclass(parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerVolumesModule::~qSlicerVolumesModule()
-{
-  if (this->initialized()) { delete this->Internal; }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerVolumesModule);
+qSlicerCxxDestructorMacro(qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModule::initializer()

@@ -13,23 +13,11 @@ public:
   qInternal()
     {
     }
-
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCamerasModule::qSlicerCamerasModule(QWidget *parent) : Superclass(parent)
-{
-  this->Internal = 0;
-}
-
-//-----------------------------------------------------------------------------
-qSlicerCamerasModule::~qSlicerCamerasModule()
-{
-  if (this->Internal) 
-    { 
-    delete this->Internal; 
-    }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerCamerasModule);
+qSlicerCxxDestructorMacro(qSlicerCamerasModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModule::initializer()
@@ -69,7 +57,7 @@ QString qSlicerCamerasModule::helpText()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::aboutText()
+QString qSlicerCamerasModule::acknowledgementText()
 {
   QString about = 
     "To be updated %1"; 

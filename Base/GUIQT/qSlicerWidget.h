@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerMacros.h"
 #include "qVTKObject.h"
 
 class vtkMRMLScene; 

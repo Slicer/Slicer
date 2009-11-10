@@ -6,8 +6,6 @@
 #include <QSharedPointer>
 #include <QDebug>
 
-#include "qCTKWidgetsWin32Header.h"
-
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 class qCTKAbstractFactoryItem
@@ -40,12 +38,13 @@ class qCTKAbstractFactory
 {
 protected:
   typedef typename QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > >::const_iterator ConstIterator;
-  typedef typename QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > >::iterator Iterator;
+  typedef typename QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > >::iterator       Iterator;
   
 public:
   qCTKAbstractFactory(){}
   virtual ~qCTKAbstractFactory(){}
   
+  //----------------------------------------------------------------------------
   // Description:
   // Call the load method associated with the item. 
   // If succesfully loaded, add it to the internal map.
@@ -72,6 +71,7 @@ public:
     this->RegisteredItemMap[item->key()] = sharedItem;
     }
   
+  //----------------------------------------------------------------------------
   // Description:
   // Create an instance of the object
   BaseClassType * instanciate(const QString& itemKey)
@@ -80,6 +80,7 @@ public:
     return (item ? item->instanciate() : 0);
     }
   
+  //----------------------------------------------------------------------------
   // Description:
   // Get a Factory item given its itemKey. Return 0 if any.
   qCTKAbstractFactoryItem<BaseClassType> * get(const QString& itemKey)
@@ -92,7 +93,8 @@ public:
       }
     return iter.value().data();
     }
-    
+
+  //----------------------------------------------------------------------------
   // Description:
   // Get list of all registered item names
   QStringList names() 

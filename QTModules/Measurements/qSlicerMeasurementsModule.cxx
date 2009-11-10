@@ -18,15 +18,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMeasurementsModule::qSlicerMeasurementsModule(QWidget *parent) : Superclass(parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerMeasurementsModule::~qSlicerMeasurementsModule()
-{
-  if (this->initialized()) { delete this->Internal; }
-}
+qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerMeasurementsModule);
+qSlicerCxxDestructorMacro(qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerMeasurementsModule::initializer()

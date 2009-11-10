@@ -3,8 +3,8 @@
 
 #include "qSlicerWidget.h"
 
-#define qSlicerGetModuleTitleMacro(_TITLE) \
-  static QString staticModuleTitle() { return _TITLE; } \
+#define qSlicerGetModuleTitleMacro(_TITLE)               \
+  static QString staticModuleTitle() { return _TITLE; }  \
   virtual QString moduleTitle() { return _TITLE; }
 
 #include "qSlicerBaseGUIQTWin32Header.h"
@@ -39,9 +39,9 @@ public:
   virtual void unPopulateApplicationSettings(){}
   
   // Description:
-  // Return help/about text
+  // Return help/acknowledgement text
   virtual QString helpText() {return "";}
-  virtual QString aboutText() { return "";} 
+  virtual QString acknowledgementText() { return "";} 
 
 public slots:
 

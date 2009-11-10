@@ -5,18 +5,43 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+
+#-----------------------------------------------------------------------------
+# CmdLineModule Sources
+#
+
+SET(qSlicerGUIQTCmdLineModule_SRCS
+  CmdLineModule/qSlicerCmdLineModule.h
+  CmdLineModule/qSlicerCmdLineModule.cxx
+  CmdLineModule/qSlicerCmdLineModuleUILoader.h
+  CmdLineModule/qSlicerCmdLineModuleUILoader.cxx
+  CmdLineModule/qSlicerCmdLineModuleLogic.h
+  CmdLineModule/qSlicerCmdLineModuleLogic.cxx
+  )
+
+# Headers that should run through moc
+SET(qSlicerGUIQTCmdLineModule_MOC_SRCS
+  CmdLineModule/qSlicerCmdLineModule.h
+  CmdLineModule/qSlicerCmdLineModuleLogic.h
+  )
+  
 #-----------------------------------------------------------------------------
 # Sources
 #
 SET(qSlicerGUIQT_SRCS
+  ${qSlicerGUIQTCmdLineModule_SRCS}
   qSlicerWidget.h
   qSlicerWidget.cxx
+  qSlicerUtils.h
+  qSlicerUtils.cxx
   qSlicerAbstractModule.h
   qSlicerAbstractModule.cxx
   qSlicerAbstractCoreModule.h
   qSlicerAbstractCoreModule.cxx
   qSlicerAbstractLoadableModule.h
   qSlicerAbstractLoadableModule.cxx
+  qSlicerModuleLogic.h
+  qSlicerModuleLogic.cxx
   qSlicerApplication.h
   qSlicerApplication.cxx
   qSlicerIOManager.h
@@ -33,10 +58,12 @@ SET(qSlicerGUIQT_SRCS
 
 # Headers that should run through moc
 SET(qSlicerGUIQT_MOC_SRCS
+  ${qSlicerGUIQTCmdLineModule_MOC_SRCS}
   qSlicerWidget.h
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
   qSlicerAbstractLoadableModule.h
+  qSlicerModuleLogic.h
   qSlicerApplication.h
   qSlicerCamerasModule.h
   qSlicerTransformsModule.h
@@ -47,7 +74,7 @@ SET(qSlicerGUIQT_UI_SRCS
   Resources/UI/qSlicerTransformsModule.ui
   Resources/UI/qSlicerCamerasModule.ui
 )
-  
+
 QT4_WRAP_CPP(qSlicerGUIQT_SRCS ${qSlicerGUIQT_MOC_SRCS})
 QT4_WRAP_UI(qSlicerGUIQT_UI_CXX ${qSlicerGUIQT_UI_SRCS})
 QT4_ADD_RESOURCES(qSlicerGUIQT_QRC_SRCS Resources/qSlicerGUIQT.qrc)
@@ -64,6 +91,8 @@ SET_SOURCE_FILES_PROPERTIES(
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CmdLineModule
+  ${CMAKE_CURRENT_BINARY_DIR}/CmdLineModule
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
   ${qCTKWidgets_SOURCE_DIR}
@@ -72,6 +101,8 @@ set(include_dirs
   ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
 
 set(QT_INCLUDE_DIRS
@@ -119,6 +150,7 @@ SET(GUIQT_LIBRARIES
   QVTK
   qCTKWidgets
   qMRMLWidgets
+  ModuleDescriptionParser # Used to parse the command line module xml description
   )
   
 target_link_libraries(${lib_name} 

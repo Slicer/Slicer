@@ -36,6 +36,7 @@ public:
   void setSlicerHome(const QString& slicerHome);
   
   void initializeLoadableModulesPaths();
+  void initializeCmdLineModulesPaths();
 
 protected:
   // Description:
