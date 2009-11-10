@@ -195,7 +195,8 @@ public:
       StereoModeEvent,
       VisibilityEvent,
       BackgroundColorEvent,
-      ActiveModifiedEvent
+      ActiveModifiedEvent,
+      GraphicalResourcesCreatedEvent
     };
   //ETX 
 
