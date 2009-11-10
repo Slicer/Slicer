@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>366</width>
-    <height>730</height>
+    <width>364</width>
+    <height>758</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,6 +19,12 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="qCTKCollapsibleWidget" name="LoadCollapsibleWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Load</string>
      </property>
@@ -53,6 +59,12 @@
    </item>
    <item>
     <widget class="qCTKCollapsibleWidget" name="DisplayEditCollapsibleWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Display &amp;&amp; Edit</string>
      </property>
@@ -61,6 +73,12 @@
      </property>
      <widget class="QWidget" name="page_2">
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="margin">
+        <number>9</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -205,103 +223,15 @@
         <widget class="qMRMLTransformSliders" name="TranslationSliders"/>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
-            <widget class="QLabel" name="MaxTranslationLimitLabel">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Max Translation limit</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QDoubleSpinBox" name="MinTranslationLimitInput">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="minimum">
-              <double>-1000000000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000000000.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>-200.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="MaxTranslationLimitInput">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="minimum">
-              <double>-1000000000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000000000.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>200.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="MinTranslationLimitLabel">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Min Translation limit</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
         <widget class="qMRMLTransformSliders" name="RotationSliders">
          <property name="Title">
           <string>Rotation</string>
          </property>
          <property name="TypeOfTransform">
           <enum>qMRMLTransformSliders::ROTATION</enum>
+         </property>
+         <property name="minMaxVisible">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -514,38 +444,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>MinTranslationLimitInput</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>TranslationSliders</receiver>
-   <slot>setMinimumRange(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>303</x>
-     <y>412</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>249</x>
-     <y>276</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MaxTranslationLimitInput</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>TranslationSliders</receiver>
-   <slot>setMaximumRange(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>321</x>
-     <y>448</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>326</x>
-     <y>290</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(bool)</signal>
    <receiver>MatrixViewGroupBox</receiver>
@@ -574,38 +472,6 @@
     <hint type="destinationlabel">
      <x>223</x>
      <y>265</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>MinTranslationLimitInput</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>355</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>351</x>
-     <y>417</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>MaxTranslationLimitInput</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>310</x>
-     <y>103</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>307</x>
-     <y>442</y>
     </hint>
    </hints>
   </connection>
@@ -670,38 +536,6 @@
     <hint type="destinationlabel">
      <x>354</x>
      <y>644</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>MinTranslationLimitLabel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>180</x>
-     <y>89</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>175</x>
-     <y>414</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>MaxTranslationLimitLabel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>243</x>
-     <y>89</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>205</x>
-     <y>440</y>
     </hint>
    </hints>
   </connection>

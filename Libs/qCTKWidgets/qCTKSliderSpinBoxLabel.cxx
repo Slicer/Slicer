@@ -70,24 +70,38 @@ void qCTKSliderSpinBoxLabel::setLabelText(const QString & label)
 {
   this->Internal->Label->setText(label); 
 }
+
+// --------------------------------------------------------------------------
+double qCTKSliderSpinBoxLabel::minimum()const
+{
+  return this->Internal->Slider->minimumAsDbl();
+}
+
+// --------------------------------------------------------------------------
+double qCTKSliderSpinBoxLabel::maximum()const
+{
+  return this->Internal->Slider->maximumAsDbl(); 
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxLabel::setMinimum(double min)
+{
+  this->Internal->Slider->setMinimum(min);
+  this->Internal->SpinBox->setMinimum(min);
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxLabel::setMaximum(double max)
+{
+  this->Internal->Slider->setMaximum(max); 
+  this->Internal->SpinBox->setMaximum(max); 
+}
   
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setRange(double min, double max)
 {
   this->Internal->Slider->setRange(min, max);
   this->Internal->SpinBox->setRange(min, max);
-}
-
-// --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::minimum()
-{
-  return this->Internal->Slider->minimumAsDbl();
-}
-
-// --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::maximum()
-{
-  return this->Internal->Slider->maximumAsDbl(); 
 }
   
 // --------------------------------------------------------------------------

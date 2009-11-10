@@ -23,6 +23,10 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_PROPERTY(QString PALabel READ getPALabel WRITE setPALabel)
   Q_PROPERTY(QString ISLabel READ getISLabel WRITE setISLabel)
   Q_PROPERTY(double SingleStep READ singleStep WRITE setSingleStep)
+
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
+  Q_PROPERTY(bool minMaxVisible READ isMinMaxVisible WRITE setMinMaxVisible)
   
 public:
   
@@ -57,7 +61,22 @@ public:
   // Get sliders range
   double minimum()const;
   double maximum()const; 
-  
+
+  // Description:
+  // Set sliders range
+  void setMinimum(double min);
+  void setMaximum(double max);
+  // Description:
+  // Utility function that set min/max in once
+  void setRange(double min, double max);
+
+  // Description:
+  // Set the visibility property of the minimum QSpinBox and maximum QSpinBox.
+  // Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
+  // setMaximum() manually
+  void setMinMaxVisible(bool visible);
+  bool isMinMaxVisible()const;
+
   // Description:
   // Set sliders single step 
   double singleStep()const; 
@@ -90,17 +109,14 @@ public slots:
   // Description:
   // Reset all sliders to their 0 position and value
   void reset(); 
-  
-  // Description:
-  // Set sliders range
-  void setMinimumRange(double min);
-  void setMaximumRange(double max);
-  void setRange(double min, double max);
-  
+    
 protected slots:
   void onLRSliderPositionChanged(double position); 
   void onPASliderPositionChanged(double position); 
   void onISSliderPositionChanged(double position); 
+  
+  void onMinimumChanged(double min);
+  void onMaximumChanged(double max);
 
 private:
   class qInternal; 

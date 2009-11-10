@@ -42,8 +42,17 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* parent) : Superclass(paren
                 SLOT(onPASliderPositionChanged(double)));
   this->connect(this->Internal->ISSlider, SIGNAL(sliderMoved(double)), 
                 SLOT(onISSliderPositionChanged(double)));
-  
-  this->setEnabled(false); 
+
+  this->connect(this->Internal->MinValueSpinBox, SIGNAL(valueChanged(double)), 
+                SLOT(onMinimumChanged(double)));
+  this->connect(this->Internal->MaxValueSpinBox, SIGNAL(valueChanged(double)), 
+                SLOT(onMaximumChanged(double)));
+  // the default values of min and max are set in the .ui file
+  this->onMinimumChanged(this->Internal->MinValueSpinBox->value());
+  this->onMaximumChanged(this->Internal->MaxValueSpinBox->value());
+
+  // disable as there is not MRML Node associated with the widget
+  this->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
@@ -136,35 +145,63 @@ QString qMRMLTransformSliders::title()const
 // --------------------------------------------------------------------------
 double qMRMLTransformSliders::minimum()const
 {
-  // Assumes settings of the sliders are all the same
-  return this->Internal->PASlider->minimum(); 
+  return this->Internal->MinValueSpinBox->value();
 }
 
 // --------------------------------------------------------------------------
 double qMRMLTransformSliders::maximum()const
 {
-  // Assumes settings of the sliders are all the same
-  return this->Internal->PASlider->maximum(); 
+  return this->Internal->MaxValueSpinBox->value(); 
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setMinimumRange(double min)
+void qMRMLTransformSliders::setMinimum(double min)
 {
-  this->setRange(min, this->maximum()); 
+  this->Internal->MinValueSpinBox->setValue(min); 
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setMaximumRange(double max)
+void qMRMLTransformSliders::setMaximum(double max)
 {
-  this->setRange(this->minimum(), max); 
+  this->Internal->MaxValueSpinBox->setValue(max);
 }
-  
+
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setRange(double min, double max)
 {
-  this->Internal->LRSlider->setRange(min, max);
-  this->Internal->PASlider->setRange(min, max);
-  this->Internal->ISSlider->setRange(min, max);
+  // Could be optimized here by blocking signals on spinboxes and manually
+  // call the setRange method on the sliders. Does it really worth it ?
+  this->Internal->MinValueSpinBox->setValue(min);
+  this->Internal->MaxValueSpinBox->setValue(max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onMinimumChanged(double min)
+{
+  this->Internal->LRSlider->setMinimum(min);
+  this->Internal->PASlider->setMinimum(min);
+  this->Internal->ISSlider->setMinimum(min);
+}
+ 
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onMaximumChanged(double max)
+{
+  this->Internal->LRSlider->setMaximum(max);
+  this->Internal->PASlider->setMaximum(max);
+  this->Internal->ISSlider->setMaximum(max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::setMinMaxVisible(bool visible)
+{
+  this->Internal->MinMaxWidget->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLTransformSliders::isMinMaxVisible()const
+{
+  return this->Internal->MinMaxWidget->isVisibleTo(
+    const_cast<qMRMLTransformSliders*>(this));
 }
 
 // --------------------------------------------------------------------------

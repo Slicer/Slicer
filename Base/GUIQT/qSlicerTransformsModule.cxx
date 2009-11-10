@@ -44,11 +44,12 @@ void qSlicerTransformsModule::initializer()
   this->Internal = new qInternal;
   this->Internal->setupUi(this);
   
-  // Initialize translation min/max limit
+  /* Initialize translation min/max limit
   double minRange = this->Internal->MinTranslationLimitInput->value(); 
   double maxRange = this->Internal->MaxTranslationLimitInput->value(); 
   this->Internal->TranslationSliders->setRange(minRange, maxRange);
   this->Internal->RotationSliders->setRange(minRange, maxRange);
+  */
   
   // Add coordinate reference button to a button group
   this->Internal->CoordinateReferenceButtonGroup = 
@@ -158,10 +159,10 @@ void qSlicerTransformsModule::onNodeSelected(vtkMRMLNode* node)
   this->Internal->IdentityPushButton->setEnabled(transformNode != 0); 
   this->Internal->InvertPushButton->setEnabled(transformNode != 0);
   this->Internal->MatrixViewGroupBox->setEnabled(transformNode != 0); 
-  this->Internal->MinTranslationLimitLabel->setEnabled(transformNode != 0); 
-  this->Internal->MaxTranslationLimitLabel->setEnabled(transformNode != 0); 
-  this->Internal->MinTranslationLimitInput->setEnabled(transformNode != 0); 
-  this->Internal->MaxTranslationLimitInput->setEnabled(transformNode != 0); 
+  //this->Internal->MinTranslationLimitLabel->setEnabled(transformNode != 0); 
+  //this->Internal->MaxTranslationLimitLabel->setEnabled(transformNode != 0); 
+  //this->Internal->MinTranslationLimitInput->setEnabled(transformNode != 0); 
+  //this->Internal->MaxTranslationLimitInput->setEnabled(transformNode != 0); 
   
   // Listen for Transform node changes
   this->qvtkReconnect(this->Internal->MRMLTransformNode, transformNode, 
@@ -199,9 +200,9 @@ void qSlicerTransformsModule::onMRMLTransformNodeModified(void* /*call_data*/, v
   qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode, 
     this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
   
-  vtkMatrix4x4 * mat = transform->GetMatrix();
-  double minmax[2] = {0, 0}; 
-  this->extractMinMaxTranslationValue(mat, minmax, 0.3);
+  //vtkMatrix4x4 * mat = transform->GetMatrix();
+  //double minmax[2] = {0, 0}; 
+  //this->extractMinMaxTranslationValue(mat, minmax, 0.3);
 }
 
 //-----------------------------------------------------------------------------

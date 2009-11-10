@@ -9,7 +9,9 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool LabelTextVisible READ isLabelTextVisible WRITE setLabelTextVisible)
-  
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
+
 public:
   // Superclass typedef
   typedef QWidget Superclass;
@@ -30,9 +32,13 @@ public:
    
   // Description:
   // Set/Get range
+  double minimum()const;
+  double maximum()const;
+  void setMinimum(double minimum);
+  void setMaximum(double maximum);
+  // Description
+  // Utility function that set the min/max in once
   void setRange(double min, double max); 
-  double minimum();
-  double maximum();
   
   // Description:
   // Set/Get slider position
