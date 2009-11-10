@@ -56,34 +56,25 @@ vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
   //delete instances
   if (this->MapperTexture)
   {
-//    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
   }
   if (this->MapperGPURaycast)
   {
-//    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperGPURaycast->Delete();
     this->MapperGPURaycast = NULL;
   }
   if (this->MapperGPURaycastII)
   {
-//    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
-
     this->MapperGPURaycastII->Delete();
     this->MapperGPURaycastII = NULL;
   }
   if (this->MapperRaycast)
   {
-//    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GUICallback);
     this->MapperRaycast->Delete();
     this->MapperRaycast = NULL;
@@ -126,7 +117,7 @@ vtkVolumeRenderingLogic* vtkVolumeRenderingLogic::New()
 
 void vtkVolumeRenderingLogic::PrintSelf(std::ostream &os, vtkIndent indent)
 {
-    os<<indent<<"Print logic"<<endl;
+  os<<indent<<"Print logic"<<endl;
 }
 
 void vtkVolumeRenderingLogic::SetMRMLScene(vtkMRMLScene *scene)
@@ -154,20 +145,14 @@ void vtkVolumeRenderingLogic::RegisterNodes()
 
 void vtkVolumeRenderingLogic::SetGUICallbackCommand(vtkCommand* callback)
 {
-//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
 
   //cpu ray casting
-//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,callback);
 
   //hook up the gpu mapper
-//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, callback);
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, callback);
 
   this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
 
@@ -179,34 +164,25 @@ void vtkVolumeRenderingLogic::Reset()
   //delete instances
   if (this->MapperTexture)
   {
-//    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
   }
   if (this->MapperGPURaycast)
   {
-//    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperGPURaycast->Delete();
     this->MapperGPURaycast = NULL;
   }
   if (this->MapperGPURaycastII)
   {
-//    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
-
     this->MapperGPURaycastII->Delete();
     this->MapperGPURaycastII = NULL;
   }
   if (this->MapperRaycast)
   {
-//    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
     this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GUICallback);
     this->MapperRaycast->Delete();
     this->MapperRaycast = NULL;
@@ -242,27 +218,21 @@ void vtkVolumeRenderingLogic::Reset()
   this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
 
   this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
-
+  
   //create instance of the actor
   this->Volume = vtkVolume::New();
 
   this->Histograms = vtkKWHistogramSet::New();
   this->HistogramsFg = vtkKWHistogramSet::New();
 
-//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
   this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
 
   //cpu ray casting
-//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent, this->GUICallback);
 
   //hook up the gpu mapper
-//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent, this->GUICallback);
   this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-//  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent, this->GUICallback);
 
   this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
 }
