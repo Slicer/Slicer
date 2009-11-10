@@ -16,7 +16,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerCamerasModule);
+qSlicerCxxZeroInitConstructor1Macro(qSlicerCamerasModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerCamerasModule);
 
 //-----------------------------------------------------------------------------

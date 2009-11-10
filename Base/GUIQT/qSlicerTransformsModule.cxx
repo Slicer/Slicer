@@ -31,7 +31,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerTransformsModule);
+qSlicerCxxZeroInitConstructor1Macro(qSlicerTransformsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerTransformsModule);
 
 //-----------------------------------------------------------------------------

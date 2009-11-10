@@ -26,16 +26,15 @@
 // Slicer widget constructor declaration. 
 // Also make sure Internal is initialized to zero
 //
-#define qSlicerWidgetCxxZeroInitConstructorMacro(_CLASSTYPE) \
-  _CLASSTYPE::_CLASSTYPE(QWidget *parent) :                  \
-    Superclass(parent), Internal(){}
+#define qSlicerCxxZeroInitConstructorMacro(_CLASSTYPE) \
+  _CLASSTYPE::_CLASSTYPE() : Internal(){}
     
 //
 // Slicer widget constructor declaration. 
 // Also make sure Internal is initialized to zero
 //
-#define qSlicerWidgetCxxZeroInitConstructor1Macro(_CLASSTYPE, _ARG1) \
-  _CLASSTYPE::_CLASSTYPE(_ARG1 parent) :                             \
+#define qSlicerCxxZeroInitConstructor1Macro(_CLASSTYPE, _ARG1) \
+  _CLASSTYPE::_CLASSTYPE(_ARG1 parent) :                       \
     Superclass(parent), Internal(){}
 
     

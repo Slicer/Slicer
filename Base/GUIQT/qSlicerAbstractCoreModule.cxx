@@ -12,7 +12,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerAbstractCoreModule);
+qSlicerCxxZeroInitConstructor1Macro(qSlicerAbstractCoreModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerAbstractCoreModule);
 
 //-----------------------------------------------------------------------------

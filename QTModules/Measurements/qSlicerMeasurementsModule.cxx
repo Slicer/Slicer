@@ -18,7 +18,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidgetCxxZeroInitConstructorMacro(qSlicerMeasurementsModule);
+qSlicerCxxZeroInitConstructor1Macro(qSlicerMeasurementsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
