@@ -49,7 +49,7 @@ protected:
   // Parameter expand allows to specify (using a value between 0 and 1) 
   // which percentage of the found min/max value should be substracted/added 
   // to the min/max value found.
-  void extractMinMaxTranslationValue(vtkMatrix4x4 * mat, double minmax[2], float expand); 
+  void extractMinMaxTranslationValue(vtkMatrix4x4 * mat, double& min, double& max); 
   
   // Description:
   // Convenient method to return the coordinate system currently selected

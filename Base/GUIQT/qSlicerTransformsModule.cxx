@@ -200,32 +200,37 @@ void qSlicerTransformsModule::onMRMLTransformNodeModified(void* /*call_data*/, v
   qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode, 
     this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
   
-  //vtkMatrix4x4 * mat = transform->GetMatrix();
-  //double minmax[2] = {0, 0}; 
-  //this->extractMinMaxTranslationValue(mat, minmax, 0.3);
+  // The matrix can be changed externally. The min/max values shall be updated accordingly to
+  // the new matrix if needed.
+  vtkMatrix4x4 * mat = transform->GetMatrix();
+  double min = 0.;
+  double max = 0.;
+  this->extractMinMaxTranslationValue(mat, min, max);
+  if (min < this->Internal->TranslationSliders->minimum())
+    {
+    min = min - 0.3 * fabs(min);
+    this->Internal->TranslationSliders->setMinimum(min);
+    }
+  if (max > this->Internal->TranslationSliders->maximum())
+    {
+    max = max + 0.3 * fabs(max);
+    this->Internal->TranslationSliders->setMaximum(max);
+    }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::extractMinMaxTranslationValue(
-  vtkMatrix4x4 * mat, double minmax[2], float expand)
+  vtkMatrix4x4 * mat, double& min, double& max)
 {
-  Q_ASSERT(mat);
   if (!mat)
     {
+    Q_ASSERT(mat);
     return; 
     }
-    
   for (int i=0; i <3; i++)
     {
-    if (mat->GetElement(i,3) < minmax[0])
-      {
-      minmax[0] = mat->GetElement(i,3) - expand * fabs(mat->GetElement(i,3));
-      }
-  
-    if (mat->GetElement(i,3) > minmax[1])
-      {
-      minmax[1] = mat->GetElement(i,3) + expand * fabs(mat->GetElement(i,3));
-      }
+    min = qMin(min, mat->GetElement(i,3));
+    max = qMin(max, mat->GetElement(i,3));
     }
 }
 
