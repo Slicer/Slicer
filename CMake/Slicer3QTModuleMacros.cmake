@@ -51,19 +51,20 @@ MACRO(Slicer3_build_qtmodule)
   
   CONFIGURE_FILE(
     ${QTModules_SOURCE_DIR}/qSlicerQTModulesConfigure.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Configure.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h
     )
   
   CONFIGURE_FILE(
     ${QTModules_SOURCE_DIR}/qSlicerQTModulesWin32Header.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Win32Header.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h
     )
   
+  # Install headers
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   INSTALL(FILES 
     ${headers} 
-    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Configure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTModules${QTMODULE_NAME}Win32Header.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h"
     DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
   
@@ -149,5 +150,3 @@ MACRO(Slicer3_build_qtmodule)
     )
 
 ENDMACRO(Slicer3_build_qtmodule)
-
-

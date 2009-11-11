@@ -61,14 +61,23 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   
   CONFIGURE_FILE(
     ${SlicerBase_SOURCE_DIR}/qSlicerBaseConfigure.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Configure.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h
     )
   
   CONFIGURE_FILE(
     ${SlicerBase_SOURCE_DIR}/qSlicerBaseWin32Header.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Win32Header.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h
     )
   
+  # Install headers
+  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  INSTALL(FILES 
+    ${headers} 
+    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h"
+    DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    )
+    
   #-----------------------------------------------------------------------------
   # Sources
   #
@@ -127,14 +136,6 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   # --------------------------------------------------------------------------
   # Install the library
   
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES 
-    ${headers} 
-    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerBase${SLICERQTBASELIB_NAME}Configure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/qSlicerBase${SLICERQTBASELIB_NAME}Win32Header.h"
-    DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-    )
-
   INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
