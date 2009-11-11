@@ -329,7 +329,7 @@ proc EditorProcessGUIEvents {this caller event} {
           }
           if { $selectionNode != "" } {
               $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
-              [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
+              [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
           } else {
               EditorErrorDialog "Error trying to display label map in the lable layer. Please try to do this manually."
           }
@@ -654,7 +654,7 @@ proc EditorCreateLabelVolume {this} {
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
   $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
-  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
+  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
   
   #--- new test
   set id [ $labelNode GetID ]
