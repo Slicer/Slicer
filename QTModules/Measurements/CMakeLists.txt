@@ -50,5 +50,4 @@ Slicer3_build_qtmodule(
   MOC_SRCS ${qt_module_MOC_SRCS}
   UI_SRCS ${qt_module_UI_SRCS}
   TARGET_LIBRARIES ${qt_module_target_libraries}
-  NO_RESOURCES
   )
