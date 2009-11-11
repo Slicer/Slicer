@@ -1,3 +1,5 @@
+#include <string>
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
@@ -1308,7 +1310,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   urtb->AddWidget ( this->RedoIconButton );
 
   // Layout choose menu
-  const char *imageName;
+  std::string imageName;
   this->ChooseLayoutIconMenuButton->SetParent ( vtb->GetFrame ( ) );
   this->ChooseLayoutIconMenuButton->Create ( );
   this->ChooseLayoutIconMenuButton->SetReliefToFlat ( );
@@ -1320,82 +1322,92 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Conventional layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Conventional layout");
+  imageName.clear();
   imageName = "SlicerConventionalLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetConventionalViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetConventionalViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Conventional layout", vtkMRMLLayoutNode::SlicerLayoutConventionalView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Four-up layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Four-up layout");
+  imageName.clear();
   imageName = "SlicerFourUpLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetFourUpViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetFourUpViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Four-up layout", vtkMRMLLayoutNode::SlicerLayoutFourUpView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Dual 3D layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Dual 3D layout");
-  imageName = "SlicerFourUpLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetFourUpViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  imageName.clear();
+  imageName = "SlicerTwin3DLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetTwinViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt
 //  ( "Dual 3D layout", vtkMRMLLayoutNode::SlicerLayoutDual3DView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "3D only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "3D only layout");
+  imageName.clear();
   imageName = "Slicer3DOnlyLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUp3DViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetOneUp3DViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "3D only layout", vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Red slice only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Red slice only layout");
+  imageName.clear();
   imageName = "SlicerRedSliceOnlyLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpRedSliceViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetOneUpRedSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Red slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Yellow slice only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Yellow slice only layout");
+  imageName.clear();
   imageName = "SlicerYellowSliceOnlyLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpYellowSliceViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetOneUpYellowSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Yellow slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Green slice only layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Green slice only layout");
+  imageName.clear();
   imageName = "SlicerGreenSliceOnlyLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpGreenSliceViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetOneUpGreenSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Green slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed 3D layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed 3D layout");
+  imageName.clear(); 
   imageName = "SlicerTabbed3DLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbed3DViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetTabbed3DViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed 3D layout", vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed slice layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed slice layout");
+  imageName.clear();
   imageName = "SlicerTabbedSliceLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbedSliceViewIcon(), 0 );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetTabbedSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str());
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Compare layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Compare layout");
+  imageName.clear();
   imageName = "SlicerCompareViewLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetCompareViewIcon(), 0);
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName );
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName.c_str(), this->SlicerToolbarIcons->GetCompareViewIcon(), 0);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName.c_str() );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 
 
