@@ -17,20 +17,22 @@ SET(qt_module_SRCS
   qSlicerMeasurementsModule.cxx
   Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsAngleWidget.cxx
-  #qSlicerMeasurementsRulerWidget.h
-  #qSlicerMeasurementsRulerWidget.cxx
+  Widgets/qSlicerMeasurementsRulerWidget.h
+  Widgets/qSlicerMeasurementsRulerWidget.cxx
   )
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
   qSlicerMeasurementsModule.h
   Widgets/qSlicerMeasurementsAngleWidget.h
+  Widgets/qSlicerMeasurementsRulerWidget.h
   )
   
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerMeasurementsModule.ui
   Resources/UI/qSlicerMeasurementsAngleWidget.ui
+  Resources/UI/qSlicerMeasurementsRulerWidget.ui
 )
 
 # Additional Target libraries
