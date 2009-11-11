@@ -16,17 +16,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxZeroInitConstructor1Macro(qSlicerCamerasModule, QWidget*);
+qSlicerCxxInternalConstructor1Macro(qSlicerCamerasModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerCamerasModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModule::initializer()
 {
   this->Superclass::initializer();
-  
-  Q_ASSERT(this->Internal == 0);
+  Q_ASSERT(this->Internal != 0);
 
-  this->Internal = new qInternal;
   this->Internal->setupUi(this);
 
   connect(this->Internal->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),

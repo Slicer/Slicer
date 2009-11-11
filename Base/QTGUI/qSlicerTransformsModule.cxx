@@ -31,17 +31,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxZeroInitConstructor1Macro(qSlicerTransformsModule, QWidget*);
+qSlicerCxxInternalConstructor1Macro(qSlicerTransformsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerTransformsModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::initializer()
 {
   this->Superclass::initializer();
-  
   Q_ASSERT(this->Internal == 0);
   
-  this->Internal = new qInternal;
   this->Internal->setupUi(this);
   
   /* Initialize translation min/max limit

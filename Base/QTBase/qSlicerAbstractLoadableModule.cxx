@@ -12,13 +12,13 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxZeroInitConstructor1Macro(qSlicerAbstractLoadableModule, QWidget*);
+qSlicerCxxInternalConstructor1Macro(qSlicerAbstractLoadableModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerAbstractLoadableModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::initializer()
 {
-  this->Internal = new qInternal;
+  Q_ASSERT(this->Internal != 0);
 }
 
 //-----------------------------------------------------------------------------

@@ -18,15 +18,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxZeroInitConstructor1Macro(qSlicerMeasurementsModule, QWidget*);
+qSlicerCxxInternalConstructor1Macro(qSlicerMeasurementsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
 void qSlicerMeasurementsModule::initializer()
 {
   this->Superclass::initializer();
+  Q_ASSERT(this->Internal != 0);
   
-  this->Internal = new qInternal;
   this->Internal->setupUi(this);
 }
 
