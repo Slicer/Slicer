@@ -10,6 +10,8 @@ SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 SET(slicer_qtbase_include_directories
   ${SlicerBaseQTBase_SOURCE_DIR}
   ${SlicerBaseQTBase_BINARY_DIR}
+  ${SlicerBaseQTCLI_SOURCE_DIR}
+  ${SlicerBaseQTCLI_BINARY_DIR}
   )
   
 # Source files
