@@ -8,8 +8,6 @@ SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTBASE_EXPORT")
 
 # Additional directories to include
 SET(slicer_qtbase_include_directories
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
   )
   
 # Source files
@@ -47,7 +45,6 @@ SET(slicer_qtbase_UI_SRCS
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
   SlicerBaseLogic
-  ModuleDescriptionParser
   )
 
 Slicer3_build_slicer_qtbase_library( 

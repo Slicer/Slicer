@@ -1,19 +1,19 @@
-#ifndef __qSlicerCmdLineModule_h
-#define __qSlicerCmdLineModule_h 
+#ifndef __qSlicerCLIModule_h
+#define __qSlicerCLIModule_h 
 
 #include "qSlicerAbstractModule.h"
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTCLIWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerCmdLineModule : public qSlicerAbstractModule
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
   Q_OBJECT
   
 public:
   
   typedef qSlicerAbstractModule Superclass;
-  qSlicerCmdLineModule(QWidget *parent=0);
-  virtual ~qSlicerCmdLineModule();
+  qSlicerCLIModule(QWidget *parent=0);
+  virtual ~qSlicerCLIModule();
   
   virtual void printAdditionalInfo(); 
   

@@ -1,9 +1,9 @@
-#include "qSlicerCmdLineModuleLogic.h" 
+#include "qSlicerCLIModuleLogic.h" 
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerCmdLineModuleLogic::qInternal
+class qSlicerCLIModuleLogic::qInternal
 {
 public:
   qInternal()
@@ -12,17 +12,17 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerCmdLineModuleLogic, QObject*);
-qSlicerCxxDestructorMacro(qSlicerCmdLineModuleLogic);
+qSlicerCxxInternalConstructor1Macro(qSlicerCLIModuleLogic, QObject*);
+qSlicerCxxDestructorMacro(qSlicerCLIModuleLogic);
 
 //-----------------------------------------------------------------------------
-void qSlicerCmdLineModuleLogic::printAdditionalInfo()
+void qSlicerCLIModuleLogic::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo(); 
 }
 
 //----------------------------------------------------------------------------
-QString qSlicerCmdLineModuleLogic::constructTemporaryFileName(const QString& tag,
+QString qSlicerCLIModuleLogic::constructTemporaryFileName(const QString& tag,
                              const QString& type,
                              const QString& name,
                              const QStringList& extensions/*,

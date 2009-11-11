@@ -1,4 +1,4 @@
-#include "qSlicerCmdLineModule.h" 
+#include "qSlicerCLIModule.h" 
 
 // Libs/ModuleDescriptionParser headers
 #include "ModuleDescription.h"
@@ -7,7 +7,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerCmdLineModule::qInternal
+class qSlicerCLIModule::qInternal
 {
 public:
   qInternal()
@@ -19,16 +19,16 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerCmdLineModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerCmdLineModule);
+qSlicerCxxInternalConstructor1Macro(qSlicerCLIModule, QWidget*);
+qSlicerCxxDestructorMacro(qSlicerCLIModule);
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerCmdLineModule, QString, moduleTitle, Title);
-qSlicerGetInternalCxxMacro(qSlicerCmdLineModule, QString, acknowledgementText, Acknowledgement);
-qSlicerGetInternalCxxMacro(qSlicerCmdLineModule, QString, helpText, Help);
+qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, moduleTitle, Title);
+qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
+qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, helpText, Help);
 
 //-----------------------------------------------------------------------------
-void qSlicerCmdLineModule::setXmlModuleDescription(const char* xmlModuleDescription)
+void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 {
   //qDebug() << "xmlModuleDescription:" << xmlModuleDescription; 
   
@@ -56,13 +56,13 @@ void qSlicerCmdLineModule::setXmlModuleDescription(const char* xmlModuleDescript
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCmdLineModule::initializer()
+void qSlicerCLIModule::initializer()
 {
   
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCmdLineModule::printAdditionalInfo()
+void qSlicerCLIModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo(); 
 }

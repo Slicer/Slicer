@@ -1,48 +1,45 @@
-PROJECT(SlicerBaseQTGUI)
+PROJECT(SlicerBaseQTCLI)
 
 #
 # See CMake/Slicer3QTBaseLibraryMacros.cmake for details
 #
 
-SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
+SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTCLI_EXPORT")
 
 # Additional directories to include
 SET(slicer_qtbase_include_directories
   ${SlicerBaseQTBase_SOURCE_DIR}
   ${SlicerBaseQTBase_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
   
 # Source files
 SET(slicer_qtbase_SRCS
-  qSlicerModuleFactory.h
-  qSlicerModuleFactory.cxx
-  qSlicerModuleManager.h
-  qSlicerModuleManager.cxx
-  qSlicerApplication.h
-  qSlicerApplication.cxx
-  qSlicerCamerasModule.h
-  qSlicerCamerasModule.cxx
-  qSlicerTransformsModule.h
-  qSlicerTransformsModule.cxx
+  qSlicerCLIModule.h
+  qSlicerCLIModule.cxx
+  qSlicerCLIModuleUILoader.h
+  qSlicerCLIModuleUILoader.cxx
+  qSlicerCLIModuleLogic.h
+  qSlicerCLIModuleLogic.cxx
   )
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
-  qSlicerApplication.h
-  qSlicerCamerasModule.h
-  qSlicerTransformsModule.h
+  qSlicerCLIModule.h
+  qSlicerCLIModuleLogic.h
   )
 
 # UI files
 SET(slicer_qtbase_UI_SRCS
-  Resources/UI/qSlicerCamerasModule.ui
-  Resources/UI/qSlicerTransformsModule.ui
+  #Resources/UI/xxx.ui
 )
 
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
-  SlicerBaseQTCLI
-  qMRMLWidgets
+  qCTKWidgets
+  SlicerBaseLogic
+  ModuleDescriptionParser
   )
 
 Slicer3_build_slicer_qtbase_library( 
@@ -53,7 +50,10 @@ Slicer3_build_slicer_qtbase_library(
   MOC_SRCS ${slicer_qtbase_MOC_SRCS}
   UI_SRCS ${slicer_qtbase_UI_SRCS}
   TARGET_LIBRARIES ${slicer_qtbase_target_libraries}
+  NO_RESOURCES
   )
 
-# Sub directories
-ADD_SUBDIRECTORY(Plugins)
+# --------------------------------------------------------------------------
+# Subdirectories
+#
+#ADD_SUBDIRECTORY(Plugins)

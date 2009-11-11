@@ -1,11 +1,11 @@
-#include "qSlicerCmdLineModuleUILoader.h" 
+#include "qSlicerCLIModuleUILoader.h" 
 
 #include "qSlicerMacros.h"
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerCmdLineModuleUILoader::qInternal
+struct qSlicerCLIModuleUILoader::qInternal
 {
   qInternal()
     {
@@ -13,11 +13,11 @@ struct qSlicerCmdLineModuleUILoader::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructorMacro(qSlicerCmdLineModuleUILoader);
-qSlicerCxxDestructorMacro(qSlicerCmdLineModuleUILoader);
+qSlicerCxxInternalConstructorMacro(qSlicerCLIModuleUILoader);
+qSlicerCxxDestructorMacro(qSlicerCLIModuleUILoader);
 
 //-----------------------------------------------------------------------------
-void qSlicerCmdLineModuleUILoader::printAdditionalInfo()
+void qSlicerCLIModuleUILoader::printAdditionalInfo()
 {
   //this->Superclass::dumpObjectInfo(); 
 }
