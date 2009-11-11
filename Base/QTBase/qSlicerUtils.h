@@ -3,10 +3,9 @@
 
 #include <QString>
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 
-
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerUtils
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerUtils
 {
   
 public:

@@ -4,9 +4,9 @@
 #include <QObject>
 #include "qSlicerMacros.h"
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleLogic : public QObject
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic : public QObject
 { 
   Q_OBJECT
 public:

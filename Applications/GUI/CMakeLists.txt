@@ -309,6 +309,6 @@ add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash
 # --------------------------------------------------------------------------
 # Testing
 #
-if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
-endif(Slicer3_BUILD_TESTING)
+IF(Slicer3_BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(Slicer3_BUILD_TESTING)

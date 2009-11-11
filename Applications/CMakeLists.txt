@@ -1,17 +1,15 @@
-project(Applications)
+PROJECT(Applications)
 
-if(Slicer3_BUILD_CLI)
-  subdirs(CLI)
-endif(Slicer3_BUILD_CLI)
+IF(Slicer3_BUILD_CLI)
+  ADD_SUBDIRECTORY(CLI)
+ENDIF(Slicer3_BUILD_CLI)
 
-subdirs(
-  GUI
-  )
+ADD_SUBDIRECTORY(GUI)
 
 IF(Slicer3_USE_QT)
-  SUBDIRS(SlicerQT)
+  ADD_SUBDIRECTORY(SlicerQT)
 ENDIF(Slicer3_USE_QT)
 
-if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
-endif(Slicer3_BUILD_TESTING)
+IF(Slicer3_BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(Slicer3_BUILD_TESTING)

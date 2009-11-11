@@ -7,9 +7,9 @@
   static QString staticModuleTitle() { return _TITLE; }  \
   virtual QString moduleTitle() { return _TITLE; }
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractModule : public qSlicerWidget
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
   Q_OBJECT
   

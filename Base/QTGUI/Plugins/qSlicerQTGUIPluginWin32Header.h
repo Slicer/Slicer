@@ -16,19 +16,19 @@
 // The qSlicerGUIPluginWin32Header captures some system differences between Unix
 // and Windows operating systems. 
 
-#ifndef __qSlicerGUIQTPluginWin32Header_h
-#define __qSlicerGUIQTPluginWin32Header_h
+#ifndef __qSlicerQTGUIPluginWin32Header_h
+#define __qSlicerQTGUIPluginWin32Header_h
 
-#include <qSlicerGUIQTPluginConfigure.h>
+#include <qSlicerQTGUIPluginConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
  #if defined(SlicerGUIQTPlugin_EXPORTS)
-  #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllexport ) 
+  #define Q_SLICER_QTGUI_PLUGIN_EXPORT __declspec( dllexport ) 
  #else
-  #define Q_SLICER_GUIQT_PLUGIN_EXPORT __declspec( dllimport ) 
+  #define Q_SLICER_QTGUI_PLUGIN_EXPORT __declspec( dllimport ) 
  #endif
 #else
- #define Q_SLICER_GUIQT_PLUGIN_EXPORT
+ #define Q_SLICER_QTGUI_PLUGIN_EXPORT
 #endif
 
 #endif

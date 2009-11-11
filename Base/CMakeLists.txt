@@ -1,18 +1,23 @@
-project(SlicerBase)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
 
-if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
-endif(Slicer3_BUILD_TESTING)
+# Calling PROJECT() defines projectname_SOURCE_DIR and projectname_BINARY_DIR
+PROJECT(SlicerBase)
 
-subdirs(
-  Logic
-  )
+INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTBaseLibraryMacros.cmake)
+
+ADD_SUBDIRECTORY(Logic)
 
 IF(Slicer3_USE_QT)
-  subdirs(GUIQT)
+  ADD_SUBDIRECTORY(QTBase)
+  ADD_SUBDIRECTORY(QTGUI)
 ENDIF(Slicer3_USE_QT)
 
-subdirs(
-  GUI
-  CLI
-  )
+ADD_SUBDIRECTORY(GUI)
+ADD_SUBDIRECTORY(CLI)
+
+IF(Slicer3_BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(Slicer3_BUILD_TESTING)

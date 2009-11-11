@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 #include "qSlicerMacros.h"
 #include "qVTKObject.h"
 
@@ -11,7 +11,7 @@ class vtkMRMLScene;
 
 class QScrollArea; 
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerWidget : public QWidget
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT

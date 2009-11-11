@@ -1,12 +1,12 @@
 #ifndef __qSlicerWidgetPlugin_h
 #define __qSlicerWidgetPlugin_h
 
-#include "qSlicerGUIQTPlugin.h"
-#include "qSlicerGUIQTPluginWin32Header.h"
+#include "qSlicerQTGUIPlugin.h"
+#include "qSlicerQTGUIPluginWin32Header.h"
 
-class Q_SLICER_GUIQT_PLUGIN_EXPORT qSlicerWidgetPlugin : 
+class Q_SLICER_QTGUI_PLUGIN_EXPORT qSlicerWidgetPlugin : 
   public QObject,
-  public qSlicerGUIQTPlugin
+  public qSlicerQTGUIPlugin
 {
   Q_OBJECT
 

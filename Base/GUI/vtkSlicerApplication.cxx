@@ -2437,6 +2437,7 @@ void vtkSlicerApplication::InitializeQtLoadableModules()
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtCoreModules()
 {
+  // Register core modules
   QStringList tmp(qSlicerModuleManager::instance()->factory()->coreModuleNames());
   this->InitializeQtModules(&tmp);
 }

@@ -45,16 +45,18 @@ MACRO(Slicer3_build_qtmodule)
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
   
-  SET(LIBNAME ${lib_name})
+  SET(MY_LIBRARY_EXPORT_DIRECTIVE ${QTMODULE_EXPORT_DIRECTIVE})
+  SET(MY_WIN32_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
+  SET(MY_LIBNAME ${lib_name})
   
   CONFIGURE_FILE(
     ${QTModules_SOURCE_DIR}/qSlicerQTModulesConfigure.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${QTMODULE_NAME}ModuleConfigure.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Configure.h
     )
   
   CONFIGURE_FILE(
     ${QTModules_SOURCE_DIR}/qSlicerQTModulesWin32Header.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${QTMODULE_NAME}ModuleWin32Header.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${WIN32_HEADER_PREFIX}Win32Header.h
     )
   
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")

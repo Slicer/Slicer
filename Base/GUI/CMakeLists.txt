@@ -13,8 +13,10 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUIQT_SOURCE_DIR}
-  ${SlicerBaseGUIQT_BINARY_DIR}
+  ${SlicerBaseQTBase_SOURCE_DIR}
+  ${SlicerBaseQTBase_BINARY_DIR}
+  ${SlicerBaseQTGUI_SOURCE_DIR}
+  ${SlicerBaseQTGUI_BINARY_DIR}
   ${qMRMLWidgets_SOURCE_DIR}
   ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
@@ -189,7 +191,7 @@ IF(Slicer3_USE_QT)
   set(libraries 
     ${libraries} 
     ${QT_LIBRARIES}
-    SlicerBaseGUIQT
+    SlicerBaseQTGUI
     )
 ENDIF(Slicer3_USE_QT)
 
@@ -278,7 +280,7 @@ install(
 # --------------------------------------------------------------------------
 # Python support
 
-if(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
-  subdirs(Python)
-endif(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+IF(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  ADD_SUBDIRECTORY(Python)
+ENDIF(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 

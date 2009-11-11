@@ -3,12 +3,12 @@
 
 #include "qSlicerAbstractCoreModule.h"
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTGUIWin32Header.h"
 
 class vtkMRMLNode; 
 class vtkMRMLViewNode;
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerCamerasModule : 
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCamerasModule : 
   public qSlicerAbstractCoreModule
 { 
   Q_OBJECT

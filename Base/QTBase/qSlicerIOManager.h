@@ -1,10 +1,10 @@
 #ifndef __qSlicerIOManager_h
 #define __qSlicerIOManager_h 
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 #include <QString>
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerIOManager
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerIOManager
 {
 
 public:

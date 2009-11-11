@@ -1,16 +1,16 @@
-#ifndef __qSlicerGUIQTPlugin_h
-#define __qSlicerGUIQTPlugin_h
+#ifndef __qSlicerQTGUIPlugin_h
+#define __qSlicerQTGUIPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qSlicerGUIQTPluginWin32Header.h"
+#include "qSlicerQTGUIPluginWin32Header.h"
 
-class Q_SLICER_GUIQT_PLUGIN_EXPORT qSlicerGUIQTPlugin : 
+class Q_SLICER_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugin : 
   public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface)
 public:
 
-  qSlicerGUIQTPlugin();
+  qSlicerQTGUIPlugin();
   // Don't reimplement this method.
   QString group() const;
   // You can reimplement these methods

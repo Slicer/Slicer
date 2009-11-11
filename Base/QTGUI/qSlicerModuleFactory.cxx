@@ -1,12 +1,11 @@
 #include "qSlicerModuleFactory.h" 
 
-#include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qCTKAbstractObjectFactory.h"
 #include "qCTKAbstractPluginFactory.h"
 #include "qCTKAbstractLibraryFactory.h"
 
-#include "qSlicerCmdLineModule.h"
+//#include "qSlicerCmdLineModule.h"
 #include "qSlicerTransformsModule.h"
 #include "qSlicerCamerasModule.h"
 
@@ -423,22 +422,23 @@ protected:
   virtual qSlicerAbstractModule* instanciator()
     {
     qDebug() << "CmdLineLoadableModuleItem::instanciate - name:" << this->path(); 
-    qSlicerCmdLineModule * module = new qSlicerCmdLineModule();
-
-    // Resolve symbols
-    char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription"); 
-    
-    // Retrieve 
-    //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
-    
-    if (!xmlDescription)
-      {
-      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
-      delete module; // Clean memory
-      return 0;
-      }
-    module->setXmlModuleDescription(xmlDescription);
-    return module;
+//     qSlicerCmdLineModule * module = new qSlicerCmdLineModule();
+// 
+//     // Resolve symbols
+//     char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription"); 
+//     
+//     // Retrieve 
+//     //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
+//     
+//     if (!xmlDescription)
+//       {
+//       qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+//       delete module; // Clean memory
+//       return 0;
+//       }
+//     module->setXmlModuleDescription(xmlDescription);
+//     return module;
+    return 0;
     }
 };
 

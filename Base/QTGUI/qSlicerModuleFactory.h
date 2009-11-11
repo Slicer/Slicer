@@ -2,11 +2,11 @@
 #define __qSlicerModuleFactory_h 
 
 #include "qSlicerAbstractModule.h"
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTGUIWin32Header.h"
 
 #include <QFileInfo>
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerModuleFactory
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactory
 { 
 public:
   
@@ -52,22 +52,22 @@ public:
   void registerCmdLineModule(const QFileInfo& fileInfo);
   
   // Description:
-  // Return the list oC all core/loadable modules
+  // Return the list of all core/loadable modules
   QStringList coreModuleNames();
   QStringList loadableModuleNames();
   QStringList commandLineModuleNames();
-
+  
+  
 protected:
   
   // Description:
   // Register the list of available core modules
   void registerCoreModules();
-  
+
   // Description:
-  // Add a module class to the factory
+  // Add a module class to the core module factory
   template<typename ClassType>
   void registerCoreModule(); 
-
 
 private:
   class qInternal;

@@ -3,9 +3,9 @@
 
 #include "qSlicerAbstractModule.h"
 
-#include "qSlicerBaseGUIQTWin32Header.h"
+#include "qSlicerBaseQTBaseWin32Header.h"
 
-class Q_SLICER_BASE_GUIQT_EXPORT qSlicerAbstractLoadableModule : public qSlicerAbstractModule
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractLoadableModule : public qSlicerAbstractModule
 {
   Q_OBJECT
   
