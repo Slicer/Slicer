@@ -46,6 +46,8 @@ TARGET_LINK_LIBRARIES(${lib_name}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTDESIGNER_LIBRARY}
+  SlicerBaseQTBase
+  SlicerBaseQTCLI
   SlicerBaseQTGUI
   )
   
