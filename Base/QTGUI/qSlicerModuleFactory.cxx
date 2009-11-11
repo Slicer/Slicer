@@ -248,7 +248,6 @@ QString qSlicerModuleFactory::getModuleName(const QString & moduleTitle)
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerModuleFactory::initializeModule(const QString& moduleName)
 {
-  
   qSlicerAbstractModule* module = this->Internal->instanciateModule(moduleName);
   Q_ASSERT(module);
   if (!module)
@@ -421,7 +420,6 @@ protected:
   
   virtual qSlicerAbstractModule* instanciator()
     {
-    qDebug() << "CmdLineLoadableModuleItem::instanciate - name:" << this->path(); 
     qSlicerCLIModule * module = new qSlicerCLIModule();
 
     // Resolve symbols
