@@ -38,7 +38,7 @@ qSlicerCxxDestructorMacro(qSlicerTransformsModule);
 void qSlicerTransformsModule::initializer()
 {
   this->Superclass::initializer();
-  Q_ASSERT(this->Internal == 0);
+  Q_ASSERT(this->Internal != 0);
   
   this->Internal->setupUi(this);
   
