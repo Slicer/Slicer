@@ -67,9 +67,9 @@ public:
       { 
       return false; 
       }
-    FactoryItemType * item = new FactoryItemType(key, path);
-    this->registerItem(item);
-    return true;
+    QSharedPointer<FactoryItemType> item = 
+      QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
+    return this->registerItem(item);
     }
     
 

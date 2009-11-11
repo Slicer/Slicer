@@ -11,7 +11,7 @@ template<typename BaseClassType>
 class qCTKAbstractFactoryItem
 {
 public:
-  qCTKAbstractFactoryItem(const QString& key):Key(key),Instance(0){}
+  qCTKAbstractFactoryItem(const QString& key):Key(key),Instance(){}
   
   virtual bool load() = 0;
   BaseClassType* instanciate()
@@ -48,27 +48,24 @@ public:
   // Description:
   // Call the load method associated with the item. 
   // If succesfully loaded, add it to the internal map.
-  void registerItem(qCTKAbstractFactoryItem<BaseClassType>* item)
+  bool registerItem(const QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > & item)
     {
     // Sanity checks
     if (!item || item->key().isEmpty() || this->get(item->key()))
       {
-      return; 
+      return false; 
       }
-    
-    // Let's take ownership
-    QSharedPointer< qCTKAbstractFactoryItem<BaseClassType> > sharedItem = 
-      QSharedPointer< qCTKAbstractFactoryItem<BaseClassType> >(item);
       
     // Attempt to load it
-    if (!sharedItem->load())
+    if (!item->load())
       {
       qWarning() << "Failed to load object:" << item->key();
-      return;
+      return false;
       }
       
     // Store its reference using a QSharedPointer
-    this->RegisteredItemMap[item->key()] = sharedItem;
+    this->RegisteredItemMap[item->key()] = item;
+    return true;
     }
   
   //----------------------------------------------------------------------------

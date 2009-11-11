@@ -109,11 +109,10 @@ public:
       { 
       return false; 
       }
-    FactoryItemType * item = 
-      new FactoryItemType(key, path);
+    QSharedPointer<FactoryItemType> item = 
+      QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
     item->setSymbols(this->Symbols);
-    this->registerItem(item);
-    return true;
+    return this->registerItem(item);
     }
     
 

@@ -69,10 +69,10 @@ public:
       { 
       return false; 
       }
-    qCTKFactoryObjectItem<BaseClassType, ClassType> * objectItem = 
-      new qCTKFactoryObjectItem<BaseClassType, ClassType>(key);
-    this->registerItem(objectItem);
-    return true;
+    QSharedPointer<qCTKFactoryObjectItem<BaseClassType, ClassType> > objectItem = 
+      QSharedPointer<qCTKFactoryObjectItem<BaseClassType, ClassType> >(
+        new qCTKFactoryObjectItem<BaseClassType, ClassType>(key) );
+    return this->registerItem(objectItem);
     }
 
 private:
