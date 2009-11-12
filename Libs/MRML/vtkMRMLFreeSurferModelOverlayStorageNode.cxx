@@ -395,6 +395,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         reader->SetNumberOfVertices(numVertices);
         int retval = reader->ReadWFile();
         result = retval;
+        vtkDebugMacro("Result from reading w file = " << result);
         if (retval != 0)
           {
           result = 0;
@@ -426,6 +427,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           }
         else
           {
+          result = 1;
           std::cout << "Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node" << endl;
           modelNode->AddPointScalars(floatArray);
           vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
