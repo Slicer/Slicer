@@ -335,14 +335,14 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
   // Loop through all the data and compute the encoded normal and
   // gradient magnitude for each scalar location
   for ( z = z_start; z < z_limit; z++ )
-    {
+  {
     floc[2] = z*sampleRate[2];
     floc[2] = (floc[2]>=(dim[2]-1))?(dim[2]-1.001):(floc[2]);
     loc[2]  = vtkMath::Floor(floc[2]);
     wz = floc[2] - loc[2];
 
     for ( y = y_start; y < y_limit; y++ )
-      {
+    {
       floc[1] = y*sampleRate[1];
       floc[1] = (floc[1]>=(dim[1]-1))?(dim[1]-1.001):(floc[1]);
       loc[1]  = vtkMath::Floor(floc[1]);
@@ -356,7 +356,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
       outPtr = normals + 4*outputOffset;
 
       for ( x = xlow; x < xhigh; x++ )
-        {
+      {
         floc[0] = x*sampleRate[0];
         floc[0] = (floc[0]>=(dim[0]-1))?(dim[0]-1.001):(floc[0]);
         loc[0]  = vtkMath::Floor(floc[0]);
@@ -379,7 +379,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
 
         float sample[6];
         for ( int i = 0; i < 6; i++ )
-          {
+        {
           float A, B, C, D, E, F, G, H;
           float *samplePtr = dptr + sampleOffset[i];
 
@@ -401,7 +401,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
             (    wx)*(1.0-wy)*(    wz)*F +
             (1.0-wx)*(    wy)*(    wz)*G +
             (    wx)*(    wy)*(    wz)*H;
-          }
+        }
 
         n[0] = ((sampleOffset[0]==0 || sampleOffset[1]==0)?(2.0):(1.0))*(sample[0] -sample[1]);
         n[1] = ((sampleOffset[2]==0 || sampleOffset[3]==0)?(2.0):(1.0))*(sample[2] -sample[3]);
@@ -429,16 +429,16 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
 
         // Normalize the gradient direction
         if ( t > zeroNormalThreshold )
-          {
+        {
           float t_rev = 1.0/t;
           n[0] *= t_rev;
           n[1] *= t_rev;
           n[2] *= t_rev;
-          }
+        }
         else
-          {
+        {
           n[0] = n[1] = n[2] = 0.0;
-          }
+        }
 
         int nx = static_cast<int>((n[0] * 0.5 + 0.5)*255.0 + 0.5);
         int ny = static_cast<int>((n[1] * 0.5 + 0.5)*255.0 + 0.5);
@@ -457,19 +457,26 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
         *(outPtr+2) = nz;
 
         outPtr += 4;
-        }
-      }
-    if ( z%8 == 7 )
-      {
-      float args[1];
-      args[0] = 
-        static_cast<float>(z - z_start) / 
-        static_cast<float>(z_limit - z_start - 1);
-        if (thread_id == 0)
-          me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
       }
     }
-    return VTK_THREAD_RETURN_VALUE;
+    if ( z%8 == 7 )
+    {
+      float args[1];
+      args[0] = static_cast<float>(z - z_start) / static_cast<float>(z_limit - z_start - 1);
+
+      if (thread_id == 0)
+        me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
+    }
+  }
+
+  {
+    float args[1] = {1.0f};
+
+    if (thread_id == 0)
+      me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
+  }
+
+  return VTK_THREAD_RETURN_VALUE;
 }
 
 vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()

@@ -426,7 +426,6 @@ void vtkVolumeRenderingGUI::AddMRMLObservers(void)
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, this->MRMLCallbackCommand);
   }
 }
 
@@ -438,7 +437,6 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, this->MRMLCallbackCommand);
   }
 }
 
@@ -557,6 +555,11 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     float progress=*((float*)callData);
     char buf[32] = "Rendering...";
     this->GetApplicationGUI()->SetExternalProgress(buf, progress);
+  }
+  else if (event == vtkCommand::EndEvent)
+  {
+    char buf[32] = "Done.";
+    this->GetApplicationGUI()->SetExternalProgress(buf, 0.0);
   }
 
   //Check Node Selectors
@@ -730,6 +733,11 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
           this->InitializePipelineFromParametersNode();
         }
       }
+      else if (addedNode->IsA("vtkMRMLViewNode"))
+      {
+        vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(addedNode);
+        viewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->MRMLCallbackCommand);
+      }
     }
   }
   else if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
@@ -778,9 +786,9 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     }
   }
   else if (event == vtkMRMLViewNode::GraphicalResourcesCreatedEvent)
-  {vtkErrorMacro("new view node");
+  {
     int numViewer = this->GetApplicationGUI()->GetNumberOfViewerWidgets();
-    std::cerr << "numViewer " << numViewer <<endl;
+    
     for (int i = 0; i < numViewer; i++)
     {
       vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetNthViewerWidget(i);
