@@ -664,7 +664,8 @@ int main(int argc, char* argv[])
                 tag[n] = *(tagString+n);
               }
             }
-            else if (geVR.find("IS") != std::string::npos)
+            else if (geVR.find("DS") != std::string::npos ||
+              geVR.find("IS") != std::string::npos )
             {
               valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
               tag = valEntry->GetValue();
@@ -687,7 +688,8 @@ int main(int argc, char* argv[])
                 tag[n] = *(tagString+n);
               }
             }
-            else if (geVR.find("IS") != std::string::npos)
+            else if (geVR.find("DS") != std::string::npos ||
+              geVR.find("IS") != std::string::npos )
             {
               valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
               tag = valEntry->GetValue();
@@ -734,7 +736,8 @@ int main(int argc, char* argv[])
                 tag[n] = *(tagString+n);
               }
             }
-            else if (geVR.find("IS") != std::string::npos)
+            else if (geVR.find("DS") != std::string::npos ||
+              geVR.find("IS") != std::string::npos )
             {
               valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
               tag = valEntry->GetValue();
