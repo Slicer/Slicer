@@ -632,6 +632,7 @@ int main(int argc, char* argv[])
       {
       gdcm::File *header0 = new gdcm::File;
       gdcm::BinEntry* binEntry;
+      gdcm::ValEntry* valEntry;
       
       header0->SetMaxSizeLoadEntry(65536);
       header0->SetFileName( filenames[k] );
@@ -647,63 +648,99 @@ int main(int argc, char* argv[])
       gdcm::DocEntry* docEntry = header0->GetFirstEntry();
       
       while(docEntry)
-        {
+        {     
         if ( docEntry->GetKey() == "0043|1039"  )
           {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-          
-          for (int n = 0; n < binLength; n++)
+            std::string geVR = docEntry->GetVR();
+            if (geVR.find("UN") != std::string::npos)
             {
-            tag[n] = *(tagString+n);
-          }
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
 
-          b = atof( tag.c_str() );
-          nValueParsed ++;
+              for (int n = 0; n < binLength; n++)
+              {
+                tag[n] = *(tagString+n);
+              }
+            }
+            else if (geVR.find("IS") != std::string::npos)
+            {
+              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
+              tag = valEntry->GetValue();
+            }
+            b = atof( tag.c_str() );
+            nValueParsed ++;
           }
         else if ( docEntry->GetKey() == "0019|10bb"  )
           {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-          
-          for (int n = 0; n < binLength; n++)
+            std::string geVR = docEntry->GetVR();
+            if (geVR.find("UN") != std::string::npos)
             {
-            tag[n] = *(tagString+n);
-          }
-          vect3d[0] = atof( tag.c_str() );
-          nValueParsed ++;
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
+
+              for (int n = 0; n < binLength; n++)
+              {
+                tag[n] = *(tagString+n);
+              }
+            }
+            else if (geVR.find("IS") != std::string::npos)
+            {
+              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
+              tag = valEntry->GetValue();
+            }
+            vect3d[0] = atof( tag.c_str() );
+            nValueParsed ++;
           }
         else if ( docEntry->GetKey() == "0019|10bc"  )
           {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-          
-          for (int n = 0; n < binLength; n++)
+            std::string geVR = docEntry->GetVR();
+            if (geVR.find("UN") != std::string::npos)  // software version before 14.0
             {
-            tag[n] = *(tagString+n);
-          }
-          vect3d[1] = atof( tag.c_str() );
-          nValueParsed ++;
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
+
+              for (int n = 0; n < binLength; n++)
+              {
+                tag[n] = *(tagString+n);
+              }
+            }
+            else if (geVR.find("DS") != std::string::npos || // for software version 15.0
+              geVR.find("IS") != std::string::npos)          // for software version 20.0
+            {
+              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
+              tag = valEntry->GetValue();
+            }
+            vect3d[1] = atof( tag.c_str() );
+            nValueParsed ++;
           }
         else if ( docEntry->GetKey() == "0019|10bd"  )
           {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-          
-          for (int n = 0; n < binLength; n++)
+            std::string geVR = docEntry->GetVR();
+            if (geVR.find("UN") != std::string::npos)
             {
-            tag[n] = *(tagString+n);
-          }
-          vect3d[2] = atof( tag.c_str() );
-          nValueParsed ++;
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
+
+              for (int n = 0; n < binLength; n++)
+              {
+                tag[n] = *(tagString+n);
+              }
+            }
+            else if (geVR.find("IS") != std::string::npos)
+            {
+              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
+              tag = valEntry->GetValue();
+            }
+            vect3d[2] = atof( tag.c_str() );
+            nValueParsed ++;
           }
 
         if (nValueParsed == 4)
