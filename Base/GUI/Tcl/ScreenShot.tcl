@@ -5,7 +5,7 @@
 proc SlicerSaveLargeImage { fileName resolutionFactor } {
     
   set appGUI $::slicer3::ApplicationGUI
-  set viewerWidget [$appGUI GetViewerWidget]
+  set viewerWidget [$appGUI GetActiveViewerWidget]
   set mainViewer [$viewerWidget GetMainViewer]
   set window [ $mainViewer GetRenderWindow ]
   set renderer [$mainViewer GetRenderer]
