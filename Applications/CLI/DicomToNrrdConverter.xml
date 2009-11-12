@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>
-  Converters
+  BRAINS.GTRACT
   </category>
   <title>
   Dicom to Nrrd
   </title>
   <description>
-  Converts diffusion weighted MR images in dicom series into Nrrd format.
+  Converts diffusion weighted MR images in dicom series into Nrrd format.  This program has been tested on only a limited subset of DTI dicom formats available from Siemens, GE, and Phillips scanners.  It does not yet support dicom multi-frame data.
   </description>
-  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <version>0.2.0.$Revision: 916 $(alpha)</version>
   <documentation-url></documentation-url>
-  <license></license>
+  <license>http://www.slicer.org/copyright/copyright.txt</license>
   <contributor>Xiaodong Tao</contributor>
 <acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.
 </acknowledgements>
 
   <parameters>
@@ -23,19 +23,38 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 
     <directory>
       <name>inputDicomDirectory</name>
-      <label>Input Dicom Directory</label>
+      <longflag>--inputDicomDirectory</longflag> 
+      <label>Dicom Directory</label>
       <channel>input</channel>
-      <index>0</index>
       <description>Directory holding Dicom series</description>
     </directory>
 
-    <string>
+    <directory>
       <name>outputVolume</name>
-      <label>Nrrd header file(.nhdr)</label>
+      <longflag>--outputVolume</longflag> 
+      <label>Output Image Volume</label>
       <channel>output</channel>
-      <index>1</index>
-      <description>Nrrd header file name</description>
-    </string>
+      <description>Output Image in NRRD format (.nhdr)</description>
+    </directory>
+
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Output Options</label>
+    <description> Options to control the output. </description>
+    <boolean>
+      <name>useLPS</name>
+      <longflag>--useLPS</longflag>
+      <description> Specifies that the output should be in LPS space like the original DICOM data.  The default is to use Slicer3 consistent RAS space. </description>
+      <default>false</default>
+    </boolean>
+
+    <boolean>
+      <name>writeProtocolGradientsFile</name>
+      <longflag>--writeProtocolGradientsFile</longflag>
+      <description> Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary. </description>
+      <default>false</default>
+    </boolean>
   </parameters>
 
 </executable>
