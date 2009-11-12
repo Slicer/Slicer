@@ -1,14 +1,13 @@
-#include "qSlicerAbstractModule.h" 
+#include "qSlicerAbstractModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractModule::qInternal
+struct qSlicerAbstractModule::qInternal
 {
-public:
   qInternal()
     {
-    this->ModuleEnabled = false; 
+    this->ModuleEnabled = false;
     }
-  bool                    ModuleEnabled; 
+  bool                    ModuleEnabled;
 };
 
 //-----------------------------------------------------------------------------
@@ -21,7 +20,7 @@ qSlicerAbstractModule::qSlicerAbstractModule(QWidget *parent)
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule::~qSlicerAbstractModule()
 {
-  delete this->Internal; 
+  delete this->Internal;
 }
 
 //-----------------------------------------------------------------------------
@@ -33,7 +32,7 @@ void qSlicerAbstractModule::initialize()
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::printAdditionalInfo()
 {
-  this->Superclass::printAdditionalInfo(); 
+  this->Superclass::printAdditionalInfo();
 }
 
 //-----------------------------------------------------------------------------
@@ -45,7 +44,7 @@ QString qSlicerAbstractModule::moduleName()
 //-----------------------------------------------------------------------------
 bool qSlicerAbstractModule::moduleEnabled()
 {
-  return this->Internal->ModuleEnabled; 
+  return this->Internal->ModuleEnabled;
 }
 
 //-----------------------------------------------------------------------------

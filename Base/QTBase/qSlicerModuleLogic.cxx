@@ -1,15 +1,11 @@
-#include "qSlicerModuleLogic.h" 
+#include "qSlicerModuleLogic.h"
 #include "qSlicerMacros.h"
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerModuleLogic::qInternal
+struct qSlicerModuleLogic::qInternal
 {
-public:
-  qInternal()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -19,5 +15,5 @@ qSlicerCxxDestructorMacro(qSlicerModuleLogic);
 //-----------------------------------------------------------------------------
 void qSlicerModuleLogic::printAdditionalInfo()
 {
-  //this->Superclass::printAdditionalInfo(); 
+  //this->Superclass::printAdditionalInfo();
 }

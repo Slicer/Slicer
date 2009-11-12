@@ -1,14 +1,10 @@
-#include "qSlicerAbstractCoreModule.h" 
+#include "qSlicerAbstractCoreModule.h"
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractCoreModule::qInternal
+struct qSlicerAbstractCoreModule::qInternal
 {
-public:
-  qInternal()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -24,5 +20,5 @@ void qSlicerAbstractCoreModule::initializer()
 //-----------------------------------------------------------------------------
 void qSlicerAbstractCoreModule::printAdditionalInfo()
 {
-  this->Superclass::printAdditionalInfo(); 
+  this->Superclass::printAdditionalInfo();
 }

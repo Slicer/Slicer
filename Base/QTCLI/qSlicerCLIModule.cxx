@@ -1,4 +1,4 @@
-#include "qSlicerCLIModule.h" 
+#include "qSlicerCLIModule.h"
 
 // Libs/ModuleDescriptionParser headers
 #include "ModuleDescription.h"
@@ -7,12 +7,8 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModule::qInternal
+struct qSlicerCLIModule::qInternal
 {
-public:
-  qInternal()
-    {
-    }
   QString           Title;
   QString           Acknowledgement;
   QString           Help;
@@ -30,8 +26,8 @@ qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, helpText, Help);
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 {
-  //qDebug() << "xmlModuleDescription:" << xmlModuleDescription; 
-  
+  //qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
+
   // Parse module description
   ModuleDescription desc;
   ModuleDescriptionParser parser;
@@ -40,29 +36,29 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
     qWarning() << "Failed to parse xml module description";
     return;
     }
-    
+
   // Set properties
   this->Internal->Title = QString::fromStdString(desc.GetTitle());
   this->Internal->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
-  
-  QString help = 
+
+  QString help =
     "%1<br>"
     "For more detailed documentation see:<br>"
     "%2";
-  
+
   this->Internal->Help = help.arg(
     QString::fromStdString(desc.GetDescription())).arg(
-    QString::fromStdString(desc.GetDocumentationURL())); 
+    QString::fromStdString(desc.GetDocumentationURL()));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::initializer()
 {
-  
+
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::printAdditionalInfo()
 {
-  this->Superclass::printAdditionalInfo(); 
+  this->Superclass::printAdditionalInfo();
 }

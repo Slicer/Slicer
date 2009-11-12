@@ -1,4 +1,4 @@
-#include "qSlicerWidget.h" 
+#include "qSlicerWidget.h"
 
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -26,13 +26,13 @@ qSlicerWidget::qSlicerWidget(QWidget *parent)
 //-----------------------------------------------------------------------------
 qSlicerWidget::~qSlicerWidget()
 {
-  delete this->Internal; 
+  delete this->Internal;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerWidget::printAdditionalInfo()
 {
-  this->Superclass::dumpObjectInfo(); 
+  this->Superclass::dumpObjectInfo();
 }
 
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ QWidget* qSlicerWidget::parentWidget()
 //-----------------------------------------------------------------------------
 bool qSlicerWidget::isParentContainerScrollArea()
 {
-  return (qobject_cast<QScrollArea*>(this->Internal->ParentContainer)!=0); 
+  return (qobject_cast<QScrollArea*>(this->Internal->ParentContainer)!=0);
 }
 
 //-----------------------------------------------------------------------------
@@ -66,28 +66,28 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
       {
       return;
       }
-      
+
     // Instanciate a scrollArea
-    QScrollArea * scrollArea = new QScrollArea(); 
+    QScrollArea * scrollArea = new QScrollArea();
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setWidgetResizable(true);
-    
+
     // Set window title
     scrollArea->setWindowTitle(this->windowTitle());
-    
+
     // Add an content widget responsible for the layout
     QWidget * scrollAreaWidgetContents = new QWidget();
     this->setParent(scrollAreaWidgetContents);
-    
+
     // Layout vertically and add a spacer/stretcher
     QVBoxLayout * verticalLayout = new QVBoxLayout(scrollAreaWidgetContents);
     verticalLayout->addWidget(this);
     verticalLayout->addStretch();
-  
+
     // Add scrollAreaWidgetContents to the scrollArea
     scrollArea->setWidget(scrollAreaWidgetContents);
-    
+
     this->Internal->ParentContainer = scrollArea;
     }
   else
@@ -115,11 +115,11 @@ void qSlicerWidget::setWindowFlags(Qt::WindowFlags type)
 
 //---------------------------------------------------------------------------
 void qSlicerWidget::setParentGeometry(int ax, int ay, int aw, int ah)
-{ 
-  if (this->parentWidget()) 
+{
+  if (this->parentWidget())
     {
     this->parentWidget()->setGeometry(QRect(ax, ay, aw, ah));
-    } 
+    }
   else
     {
     this->setGeometry(QRect(ax, ay, aw, ah));

@@ -15,7 +15,7 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 public:
   // Superclass typedef
   typedef QWidget Superclass;
-  
+
   // Constructors
   qCTKSliderSpinBoxLabel(QWidget* parent = 0);
   virtual ~qCTKSliderSpinBoxLabel();
@@ -23,13 +23,13 @@ public:
   // Description:
   // Set built-in label text visibility
   void setLabelTextVisible(bool visible);
-  bool isLabelTextVisible(); 
-  
+  bool isLabelTextVisible();
+
   // Description:
   // Set/Get label text
-  QString labelText(); 
-  void setLabelText(const QString & label); 
-   
+  QString labelText();
+  void setLabelText(const QString & label);
+
   // Description:
   // Set/Get range
   double minimum()const;
@@ -38,45 +38,45 @@ public:
   void setMaximum(double maximum);
   // Description
   // Utility function that set the min/max in once
-  void setRange(double min, double max); 
-  
+  void setRange(double min, double max);
+
   // Description:
   // Set/Get slider position
   double sliderPosition();
-  void setSliderPosition(double position); 
-  double previousSliderPosition(); 
-  
+  void setSliderPosition(double position);
+  double previousSliderPosition();
+
   // Description:
   // Set/Get value
-  double value(); 
+  double value();
   void setValue(double value);
-  
+
   // Description:
   // Set/Get single step
   double singleStep();
-  void setSingleStep(double step); 
-  
+  void setSingleStep(double step);
+
   // Description:
-  // Set/Get tick interval 
-  double tickInterval(); 
+  // Set/Get tick interval
+  double tickInterval();
   void setTickInterval(double ti);
 
 public slots:
   // Description:
   // Reset the slider and spinbox to zero (value and position)
-  void reset(); 
-  
+  void reset();
+
 signals:
-  void sliderMoved(double position); 
-  void valueChanged(double value); 
+  void sliderMoved(double position);
+  void valueChanged(double value);
 
 protected slots:
-  void onSpinBoxValueChanged(double value); 
+  void onSpinBoxValueChanged(double value);
 
 private:
-  class qInternal; 
-  qInternal* Internal; 
+  struct qInternal;
+  qInternal* Internal;
 
-}; 
+};
 
 #endif

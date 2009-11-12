@@ -5,28 +5,27 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qCTKNumericInput::qInternal
+struct qCTKNumericInput::qInternal
 {
-public:
   qInternal()
     {
     //this->Text = "0";
     }
-  //QString Text; 
+  //QString Text;
 };
 
 // --------------------------------------------------------------------------
 qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal; 
-  
+  this->Internal = new qInternal;
+
   this->setValidator(new QDoubleValidator(this));
-  this->setDecimals(2); 
+  this->setDecimals(2);
   this->setValue(0);
-  //this->setText(this->Internal->Text); 
-    
-//   this->connect(this, SIGNAL(textChanged(const QString&)), 
-//     SLOT(onTextChanged(const QString&))); 
+  //this->setText(this->Internal->Text);
+
+//   this->connect(this, SIGNAL(textChanged(const QString&)),
+//     SLOT(onTextChanged(const QString&)));
 
   this->connect(this, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
 }
@@ -34,29 +33,29 @@ qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
 // --------------------------------------------------------------------------
 qCTKNumericInput::~qCTKNumericInput()
 {
-  delete this->Internal; 
+  delete this->Internal;
 }
 
 // // --------------------------------------------------------------------------
 // void qCTKNumericInput::onTextChanged(const QString & text)
 // {
-//   int pos = 0; 
-//   QString newText = this->Internal->Text; 
+//   int pos = 0;
+//   QString newText = this->Internal->Text;
 //   if (this->doubleValidator()->validate(
 //     const_cast<QString&>(text), pos) == QValidator::Acceptable)
 //     {
-//     newText = text; 
-//     this->Internal->Text = text; 
+//     newText = text;
+//     this->Internal->Text = text;
 //     }
-//   this->blockSignals(true); 
+//   this->blockSignals(true);
 //   this->Superclass::setText(newText);
-//   this->blockSignals(false); 
+//   this->blockSignals(false);
 // }
 
 // --------------------------------------------------------------------------
 double qCTKNumericInput::value()
 {
-  return this->text().toDouble(); 
+  return this->text().toDouble();
 }
 
 // --------------------------------------------------------------------------
@@ -71,13 +70,13 @@ QDoubleValidator* qCTKNumericInput::doubleValidator()
   Q_ASSERT(this->validator());
   QDoubleValidator* doubleValidator = qobject_cast<QDoubleValidator*>(const_cast<QValidator*>(this->validator()));
   Q_ASSERT(doubleValidator);
-  return doubleValidator; 
+  return doubleValidator;
 }
 
 // --------------------------------------------------------------------------
 int qCTKNumericInput::decimals()
 {
-  return this->doubleValidator()->decimals(); 
+  return this->doubleValidator()->decimals();
 }
 
 // --------------------------------------------------------------------------
@@ -89,6 +88,6 @@ void qCTKNumericInput::setDecimals(int count)
 // --------------------------------------------------------------------------
 void qCTKNumericInput::onReturnPressed()
 {
-  emit(this->valueEdited(this->value())); 
+  emit(this->valueEdited(this->value()));
 }
 

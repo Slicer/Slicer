@@ -1,14 +1,10 @@
-#include "qSlicerAbstractLoadableModule.h" 
+#include "qSlicerAbstractLoadableModule.h"
 
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractLoadableModule::qInternal
+struct qSlicerAbstractLoadableModule::qInternal
 {
-public:
-  qInternal()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -24,19 +20,19 @@ void qSlicerAbstractLoadableModule::initializer()
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::printAdditionalInfo()
 {
-  this->Superclass::printAdditionalInfo(); 
+  this->Superclass::printAdditionalInfo();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::helpText()
 {
-  qDebug() << "qSlicerAbstractLoadableModule::helpText - Not implemented"; 
+  qDebug() << "qSlicerAbstractLoadableModule::helpText - Not implemented";
   return QString();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::acknowledgementText()
 {
-  qDebug() << "qSlicerAbstractLoadableModule::acknowledgementText - Not implemented"; 
+  qDebug() << "qSlicerAbstractLoadableModule::acknowledgementText - Not implemented";
   return QString();
 }

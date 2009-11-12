@@ -5,9 +5,9 @@
 #include "qVTKObject.h"
 
 #include "qMRMLWidgetsWin32Header.h"
- 
-class vtkMRMLLinearTransformNode; 
-class vtkMatrix4x4; 
+
+class vtkMRMLLinearTransformNode;
+class vtkMatrix4x4;
 
 class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBoxLabel
 {
@@ -17,61 +17,61 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBox
   Q_ENUMS(TransformType)
   Q_PROPERTY(CoordinateReferenceType CoordinateReference READ coordinateReference WRITE setCoordinateReference)
   Q_ENUMS(CoordinateReferenceType)
-  
+
 public:
-  
+
   // Self/Superclass typedef
   typedef qMRMLLinearTransformSlider  Self;
   typedef qCTKSliderSpinBoxLabel      Superclass;
-  
+
   // Constructors
   qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider();
-  
+
   // Description:
   // Set/Get Transform type
   // By default, the slider transform type will be set to TRANSLATION_LR
   // X axis:LR, Y axis:PA, Z axis:IS
-  enum TransformType 
-  { 
-    TRANSLATION_LR, TRANSLATION_PA, TRANSLATION_IS, 
+  enum TransformType
+  {
+    TRANSLATION_LR, TRANSLATION_PA, TRANSLATION_IS,
     ROTATION_LR, ROTATION_PA, ROTATION_IS
   };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
-  
+
   // Description:
   // Convenience method allowing to get which familly of transform is set
-  bool isRotation(); 
+  bool isRotation();
   bool isTranslation();
-  
+
   // Description:
   // Set/Get Coordinate system
   // By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
-  
+
   // Description:
   // Apply the appropriate rotation/translation according to the typeOfTransform of the slider.
   void applyTransformation(double sliderPosition);
-  
+
   // Description:
   // Return the current transform node
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
-public slots:  
+public slots:
   // Description:
   // Set the MRML node of interest
   // Note that setting transformNode to 0 will disable the widget
-  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode); 
+  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
 
 protected slots:
   // Description:
   // Triggered upon MRML scene updates
-  void onMRMLTransformNodeModified(void* call_data, vtkObject* caller); 
- 
+  void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
+
 private:
-  class qInternal; 
+  struct qInternal;
   qInternal * Internal;
 
 };

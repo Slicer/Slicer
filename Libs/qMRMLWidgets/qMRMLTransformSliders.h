@@ -5,10 +5,10 @@
 #include "qVTKObject.h"
 
 #include "qMRMLWidgetsWin32Header.h"
- 
-class vtkMRMLNode; 
-class vtkMRMLLinearTransformNode; 
-class vtkMatrix4x4; 
+
+class vtkMRMLNode;
+class vtkMRMLLinearTransformNode;
+class vtkMatrix4x4;
 
 class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
 {
@@ -27,40 +27,40 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(bool minMaxVisible READ isMinMaxVisible WRITE setMinMaxVisible)
-  
+
 public:
-  
+
   // Self/Superclass typedef
   typedef qMRMLTransformSliders  Self;
   typedef QWidget                Superclass;
-  
+
   // Constructors
   qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders();
-  
+
   // Description:
   // Set/Get Coordinate system
   // By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
-  
+
   // Description:
   // Set/Get TypeOfTransform
   // By default, the selector coordinate system will be set to TRANSLATION
   enum TransformType { ROTATION, TRANSLATION };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
-  
+
   // Description:
   // Set/Get Title of the group box
-  void setTitle(const QString& title); 
-  QString title()const; 
-  
+  void setTitle(const QString& title);
+  QString title()const;
+
   // Description:
   // Get sliders range
   double minimum()const;
-  double maximum()const; 
+  double maximum()const;
 
   // Description:
   // Set sliders range
@@ -78,15 +78,15 @@ public:
   bool isMinMaxVisible()const;
 
   // Description:
-  // Set sliders single step 
-  double singleStep()const; 
-  void setSingleStep(double step); 
-  
+  // Set sliders single step
+  double singleStep()const;
+  void setSingleStep(double step);
+
   // Description:
   // Get/Set slider's label
-  QString getLRLabel()const; 
-  QString getPALabel()const; 
-  QString getISLabel()const; 
+  QString getLRLabel()const;
+  QString getPALabel()const;
+  QString getISLabel()const;
   void setLRLabel(const QString& label);
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
@@ -94,32 +94,32 @@ public:
   // Description:
   // Return the current MRML node of interest
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
-  
+
 signals:
   // Description:
   // Signal sent if at least one of the slider's position is updated
-  void sliderMoved(); 
+  void sliderMoved();
 
 public slots:
   // Description:
   // Set the MRML node of interest
-  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode); 
-  void setMRMLTransformNode(vtkMRMLNode* node); 
-  
+  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
+  void setMRMLTransformNode(vtkMRMLNode* node);
+
   // Description:
   // Reset all sliders to their 0 position and value
-  void reset(); 
-    
+  void reset();
+
 protected slots:
-  void onLRSliderPositionChanged(double position); 
-  void onPASliderPositionChanged(double position); 
-  void onISSliderPositionChanged(double position); 
-  
+  void onLRSliderPositionChanged(double position);
+  void onPASliderPositionChanged(double position);
+  void onISSliderPositionChanged(double position);
+
   void onMinimumChanged(double min);
   void onMaximumChanged(double max);
 
 private:
-  class qInternal; 
+  struct qInternal;
   qInternal * Internal;
 
 };

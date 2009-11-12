@@ -1,5 +1,5 @@
 #ifndef __qSlicerCLIModule_h
-#define __qSlicerCLIModule_h 
+#define __qSlicerCLIModule_h
 
 #include "qSlicerAbstractModule.h"
 
@@ -7,30 +7,30 @@
 
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
-  Q_OBJECT
-  
+  //Q_OBJECT
+
 public:
-  
+
   typedef qSlicerAbstractModule Superclass;
   qSlicerCLIModule(QWidget *parent=0);
   virtual ~qSlicerCLIModule();
-  
-  virtual void printAdditionalInfo(); 
-  
+
+  virtual void printAdditionalInfo();
+
   void setXmlModuleDescription(const char* xmlModuleDescription);
-  
+
   virtual QString moduleTitle();
-  
+
   // Description:
   // Return help/acknowledgement text
   virtual QString helpText();
-  virtual QString acknowledgementText(); 
+  virtual QString acknowledgementText();
 
 protected:
   virtual void initializer();
 
 private:
-  class qInternal;
+  struct qInternal;
   qInternal* Internal;
 };
 

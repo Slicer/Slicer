@@ -1,5 +1,5 @@
-#include "qSlicerCamerasModule.h" 
-#include "ui_qSlicerCamerasModule.h" 
+#include "qSlicerCamerasModule.h"
+#include "ui_qSlicerCamerasModule.h"
 
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLCameraNode.h"
@@ -7,12 +7,8 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModule::qInternal : public Ui::qSlicerCamerasModule
+struct qSlicerCamerasModule::qInternal : public Ui::qSlicerCamerasModule
 {
-public:
-  qInternal()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -28,7 +24,7 @@ void qSlicerCamerasModule::initializer()
   this->Internal->setupUi(this);
 
   connect(this->Internal->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(onCurrentViewNodeChanged(vtkMRMLNode*))); 
+          this, SLOT(onCurrentViewNodeChanged(vtkMRMLNode*)));
   connect(this->Internal->CameraNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onCurrentCameraNodeChanged(vtkMRMLNode*)));
   connect(this->Internal->CameraNodeSelector, SIGNAL(nodeAdded(vtkMRMLNode*)),
@@ -48,19 +44,19 @@ QString qSlicerCamerasModule::helpText()
 {
   // TODO Format text properly .. see transform module for example
   //return "**Cameras Module:** Create new views and cameras. The view pulldown menu below can be used to create new views and select the active view. Switch the layout to \"Tabbed 3D Layout\" from the layout icon in the toolbar to access multiple views. The view selected in \"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in all other layouts. The camera pulldown menu below can be used to set the active camera for the selected view. WARNING: this is rather experimental at the moment (fiducials, IO/data, closing the scene are probably broken for new views). ";
-  QString help = 
+  QString help =
     "To be updated %1";
-    
-  return help.arg(this->slicerWikiUrl()); 
+
+  return help.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::acknowledgementText()
 {
-  QString about = 
-    "To be updated %1"; 
-    
-  return about.arg(this->slicerWikiUrl()); 
+  QString about =
+    "To be updated %1";
+
+  return about.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
@@ -91,8 +87,8 @@ void qSlicerCamerasModule::synchronizeCameraWithView(vtkMRMLViewNode* currentVie
   for (int n = 0; n < nnodes; n++)
     {
     vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(cameraNodes[n]);
-    if (cameraNode && 
-        cameraNode->GetActiveTag() && 
+    if (cameraNode &&
+        cameraNode->GetActiveTag() &&
         !strcmp(cameraNode->GetActiveTag(), currentViewNode->GetID()))
       {
       found_camera_node = cameraNode;
@@ -106,7 +102,7 @@ void qSlicerCamerasModule::synchronizeCameraWithView(vtkMRMLViewNode* currentVie
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModule::onCurrentCameraNodeChanged(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *currentCameraNode = 
+  vtkMRMLCameraNode *currentCameraNode =
         vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!currentCameraNode)
     {// if the camera list is empty, there is no current camera
@@ -123,29 +119,29 @@ void qSlicerCamerasModule::onCurrentCameraNodeChanged(vtkMRMLNode* mrmlNode)
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModule::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode = 
+  vtkMRMLCameraNode *cameraNode =
     vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
     Q_ASSERT(cameraNode);
     return;
     }
-  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
                     this, SLOT(synchronizeCameraWithView(void*)));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModule::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode = 
+  vtkMRMLCameraNode *cameraNode =
     vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
     Q_ASSERT(cameraNode);
     return;
     }
-  this->qvtkDisconnect(cameraNode, 
-    vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+  this->qvtkDisconnect(cameraNode,
+    vtkMRMLCameraNode::ActiveTagModifiedEvent,
     this, SLOT(synchronizeCameraWithView(void*)));
 }
 

@@ -1,4 +1,4 @@
-#include "qSlicerCLIModuleUILoader.h" 
+#include "qSlicerCLIModuleUILoader.h"
 
 #include "qSlicerMacros.h"
 
@@ -7,9 +7,6 @@
 //-----------------------------------------------------------------------------
 struct qSlicerCLIModuleUILoader::qInternal
 {
-  qInternal()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -19,5 +16,5 @@ qSlicerCxxDestructorMacro(qSlicerCLIModuleUILoader);
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleUILoader::printAdditionalInfo()
 {
-  //this->Superclass::dumpObjectInfo(); 
+  //this->Superclass::dumpObjectInfo();
 }
