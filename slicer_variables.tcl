@@ -73,7 +73,7 @@ puts "Slicer3_HOME is $::Slicer3_HOME"
 # section below, or genlib will happily build the library again.
 
 set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
-set ::CMAKE_TAG "CMake-2-6"
+set ::CMAKE_TAG "CMake-2-8-0"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
 set ::KWWidgets_TAG "Slicer-3-4"
 set ::VTK_TAG "VTK-5-4"
@@ -541,7 +541,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005"   ;# do NOT use the 64 bit target
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/VC/bin"
-            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for other Visual Studio 2005 configuration for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
+            #error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for other Visual Studio 2005 configuration for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
         }
         #
         ## for Visual Studio 9
