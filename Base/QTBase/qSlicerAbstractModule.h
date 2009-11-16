@@ -3,9 +3,9 @@
 
 #include "qSlicerWidget.h"
 
-#define qSlicerGetModuleTitleMacro(_TITLE)               \
-  static QString staticModuleTitle() { return _TITLE; }  \
-  virtual QString moduleTitle() { return _TITLE; }
+#define qSlicerGetTitleMacro(_TITLE)               \
+  static QString staticTitle() { return _TITLE; }  \
+  virtual QString title()const { return _TITLE; }
 
 #include "qSlicerBaseQTBaseWin32Header.h"
 
@@ -27,8 +27,8 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   // Description:
-  virtual QString moduleName();
-  virtual QString moduleTitle() = 0;
+  virtual QString name()const;
+  virtual QString title()const = 0;
 
   // Description:
   virtual void populateToolbar(){}
@@ -40,8 +40,8 @@ public:
 
   // Description:
   // Return help/acknowledgement text
-  virtual QString helpText() {return "";}
-  virtual QString acknowledgementText() { return "";}
+  virtual QString helpText()const {return "";}
+  virtual QString acknowledgementText()const { return "";} 
 
 public slots:
 

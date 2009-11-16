@@ -46,7 +46,7 @@
   
 
 #define qSlicerGetInternalCxxMacro(_CLASSTYPE, _TYPE, _NAME, _VARNAME)  \
-  _TYPE _CLASSTYPE::_NAME()                                             \
+  _TYPE _CLASSTYPE::_NAME()const                                        \
   {                                                                     \
     Q_ASSERT(this->Internal);                                           \
     return this->Internal->_VARNAME;                                    \

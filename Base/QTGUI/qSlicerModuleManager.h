@@ -9,8 +9,9 @@ class qSlicerAbstractModule;
 class qSlicerModuleManagerInitialize;
 class qSlicerModuleFactory;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager : public QObject
 {
+  Q_OBJECT
 public:
   typedef qSlicerModuleManager Self;
 
@@ -40,8 +41,11 @@ public:
 
   // Description:
   // Hide / Show module
-  void showModule(const QString& moduleTitle);
-  void hideModule(const QString& moduleTitle);
+  void showModule(const QString& moduleTitle); 
+  void hideModule(const QString& moduleTitle); 
+
+signals:
+  void showModule(qSlicerAbstractModule* module);
 
 protected:
   qSlicerModuleManager();

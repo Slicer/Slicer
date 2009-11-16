@@ -1,9 +1,11 @@
 #include "qSlicerModuleManager.h"
 
-#include "qSlicerModuleFactory.h"
+#include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModulePanel.h"
+#include "qSlicerModuleFactory.h"
 
-#include "vtkMRMLScene.h"
+#include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
 struct qSlicerModuleManager::qInternal
@@ -172,17 +174,22 @@ void qSlicerModuleManager::showModule(const QString& moduleTitle)
 {
   qDebug() << "Show module:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
+  /*
   if (!module)
     {
     return;
     }
-  //module->show();
-  module->setParentVisible(true);
+  */
+  //module->show(); 
+  //module->setParentVisible(true);
+  //emit this->showModule(module);  
+  qSlicerApplication::application()->modulePanel()->addModule(module);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleManager::hideModule(const QString& moduleTitle)
 {
+  /* Obsolete
   qDebug() << "Hide module:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
   if (!module)
@@ -191,6 +198,7 @@ void qSlicerModuleManager::hideModule(const QString& moduleTitle)
     }
   //module->hide();
   module->setParentVisible(false);
+  */
 }
 
 //----------------------------------------------------------------------------

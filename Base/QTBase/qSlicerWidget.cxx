@@ -17,8 +17,8 @@ struct qSlicerWidget::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidget::qSlicerWidget(QWidget *parent)
- :Superclass(parent)
+qSlicerWidget::qSlicerWidget(QWidget *parent, Qt::WindowFlags f)
+  :Superclass(parent, f)
 {
   this->Internal = new qInternal;
 }
@@ -89,6 +89,9 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
     scrollArea->setWidget(scrollAreaWidgetContents);
 
     this->Internal->ParentContainer = scrollArea;
+
+    this->Internal->ParentContainer->setWindowFlags(this->windowFlags());
+    this->QWidget::setWindowFlags(0);
     }
   else
     {
@@ -99,6 +102,9 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
     this->getScrollAreaParentContainer()->takeWidget();
     this->setParent(0);
     this->Internal->ParentContainer->deleteLater();
+
+    this->QWidget::setWindowFlags(this->Internal->ParentContainer->windowFlags());
+    this->Internal->ParentContainer->setWindowFlags(0);
     }
 }
 

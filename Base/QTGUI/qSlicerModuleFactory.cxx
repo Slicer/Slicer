@@ -131,7 +131,7 @@ template<typename ClassType>
 void qSlicerModuleFactory::registerCoreModule()
 {
   // Extract title from class name
-  const QString moduleTitle = ClassType::staticModuleTitle();
+  const QString moduleTitle = ClassType::staticTitle();
   QString moduleName = ClassType::staticMetaObject.className();
 
   if (this->Internal->CoreModuleFactory.registerQObject<ClassType>())
@@ -380,8 +380,8 @@ void qSlicerModuleFactory::qInternal::registerLibrary(int factoryType, const QFi
       // Instanciate the object and retrieve nodule title
       qSlicerAbstractModule* module = this->instanciateModule(libraryName);
       Q_ASSERT(module);
-      this->updateInternalMaps(module->moduleTitle(), libraryName);
-      qDebug() << "qSlicerModuleFactory::registerLoadableModule - title:" << module->moduleTitle();
+      this->updateInternalMaps(module->title(), libraryName);
+      qDebug() << "qSlicerModuleFactory::registerLoadableModule - title:" << module->title(); 
       }
     }
   else if (factoryType == qInternal::CmdLineLoadableModule)
@@ -395,8 +395,8 @@ void qSlicerModuleFactory::qInternal::registerLibrary(int factoryType, const QFi
       qSlicerAbstractModule* module = this->instanciateModule(libraryName);
       Q_ASSERT(module);
       module->initialize();
-      this->updateInternalMaps(module->moduleTitle(), libraryName);
-      qDebug() << "qSlicerModuleFactory::registerCmdLineModule - title:" << module->moduleTitle();
+      this->updateInternalMaps(module->title(), libraryName);
+      qDebug() << "qSlicerModuleFactory::registerCmdLineModule - title:" << module->title();
       }
     }
 }

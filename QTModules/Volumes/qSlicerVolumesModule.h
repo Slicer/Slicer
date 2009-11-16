@@ -19,7 +19,7 @@ public:
   
   virtual void printAdditionalInfo();
   
-  qSlicerGetModuleTitleMacro(QTMODULE_TITLE);
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:
   virtual void initializer();

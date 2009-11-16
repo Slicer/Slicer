@@ -16,22 +16,29 @@ SET(slicer_qtbase_include_directories
   
 # Source files
 SET(slicer_qtbase_SRCS
-  qSlicerModuleFactory.h
-  qSlicerModuleFactory.cxx
-  qSlicerModuleManager.h
-  qSlicerModuleManager.cxx
+  qSlicerAbstractModulePanel.h
+  qSlicerAbstractModulePanel.cxx
   qSlicerApplication.h
   qSlicerApplication.cxx
   qSlicerCamerasModule.h
   qSlicerCamerasModule.cxx
+  qSlicerModuleFactory.h
+  qSlicerModuleFactory.cxx
+  qSlicerModuleManager.h
+  qSlicerModuleManager.cxx
+  qSlicerModulePanel.h
+  qSlicerModulePanel.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModule.cxx
   )
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
+  qSlicerAbstractModulePanel.h
   qSlicerApplication.h
   qSlicerCamerasModule.h
+  qSlicerModuleManager.h
+  qSlicerModulePanel.h
   qSlicerTransformsModule.h
   )
 

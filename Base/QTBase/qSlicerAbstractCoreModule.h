@@ -22,7 +22,7 @@ protected:
 
   // Description:
   // Convenient method to return slicer wiki URL
-  QString slicerWikiUrl(){ return "http://www.slicer.org/slicerWiki/index.php"; }
+  QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
 
 private:
   struct qInternal;

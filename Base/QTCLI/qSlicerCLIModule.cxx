@@ -19,7 +19,7 @@ qSlicerCxxInternalConstructor1Macro(qSlicerCLIModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerCLIModule);
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, moduleTitle, Title);
+qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, title, Title);
 qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
 qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, helpText, Help);
 

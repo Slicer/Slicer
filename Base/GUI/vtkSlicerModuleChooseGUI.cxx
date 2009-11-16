@@ -224,8 +224,8 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
 #ifdef Slicer3_USE_QT
-        qDebug() << "Attempt to hide Qt module:" << currentModuleName; 
-        this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
+        //qDebug() << "Attempt to hide Qt module:" << currentModuleName; 
+        //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
         }
       }
@@ -261,8 +261,8 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
 #ifdef Slicer3_USE_QT
-        qDebug() << "Attempting to hide Qt module:" << currentModuleName; 
-        this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
+        //qDebug() << "Attempting to hide Qt module:" << currentModuleName; 
+        //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
         }
       }
@@ -358,8 +358,9 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            p->GetMainSlicerWindow()->SetStatusText ( mName );
            this->GetModulesMenuButton()->SetValue( mName );
 #ifdef Slicer3_USE_QT
-           qDebug() << "Attempt to show Qt module:" << moduleName; 
-           this->GetApplicationGUI()->SetQtModuleVisible(moduleName, true);
+           //qDebug() << "Attempt to show Qt module:" << moduleName; 
+           //this->GetApplicationGUI()->SetQtModuleVisible(moduleName, true);
+           this->GetApplicationGUI()->SetCurrentQtModule(moduleName);
 #endif
            //--- feedback to user
            p->GetMainSlicerWindow()->SetStatusText ( mName );

@@ -6,6 +6,9 @@
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class vtkMRMLScene; 
+class qSlicerAbstractModule;
+class qSlicerAbstractModulePanel;
+class qSlicerWidget;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public QApplication
 {
@@ -37,6 +40,12 @@ public:
   
   void initializeLoadableModulesPaths();
   void initializeCmdLineModulesPaths();
+
+  qSlicerAbstractModulePanel* modulePanel();
+  void setTopLevelWidgetVisibility(qSlicerWidget* widget, bool visible);
+
+public slots:
+  void showModule(qSlicerAbstractModule*);
 
 protected:
   // Description:

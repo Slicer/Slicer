@@ -19,7 +19,7 @@ class Q_SLICER_BASE_QTBASE_EXPORT qSlicerWidget : public QWidget
 public:
   
   typedef QWidget Superclass;
-  qSlicerWidget(QWidget *parent=0);
+  qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
   virtual ~qSlicerWidget();
   
   virtual void printAdditionalInfo(); 

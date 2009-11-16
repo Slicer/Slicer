@@ -60,27 +60,23 @@ public:
   int contentsMidLineWidth() const;
   void setContentsMidLineWidth(int);
 
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+  virtual int heightForWidth(int w) const;
 public slots:
   void setWidget(QWidget *);
   void toggleCollapse();
 
 protected slots:
   virtual void collapse(bool c);
-  
+protected:
+  virtual void resizeEvent(QResizeEvent*);
 signals:
   void contentsCollapsed(bool);
   
 private:
   struct qInternal;
   qInternal* Internal;
-  
-  bool  CollapseChildren;
-  int   CollapsedHeight;
-  QSize OldSize;
-  int   MaxHeight;
-
-  QPushButton* Header;
-  QStackedWidget *StackWidget;
 };
 
 #endif

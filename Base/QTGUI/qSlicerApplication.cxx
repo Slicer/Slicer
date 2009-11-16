@@ -2,7 +2,9 @@
 
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
+#include "qSlicerModulePanel.h"
 
+#include <QRect>
 #include <QPalette>
 #include <QColor>
 #include <QFont>
@@ -23,10 +25,12 @@ public:
   qInternal()
     {
     this->MRMLScene = 0;
+    this->ModulePanel = 0;
     }
-  vtkMRMLScene * MRMLScene; 
-  QMap<QWidget*,bool> TopLevelWidgetsSavedVisibilityState; 
-  QString             SlicerHome;
+  vtkMRMLScene *              MRMLScene; 
+  QMap<QWidget*,bool>         TopLevelWidgetsSavedVisibilityState; 
+  QString                     SlicerHome;
+  qSlicerAbstractModulePanel* ModulePanel;
 };
 
 //-----------------------------------------------------------------------------
@@ -37,6 +41,17 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   this->initFont(); 
   this->initPalette(); 
   this->loadStyleSheet(); 
+
+  this->Internal->ModulePanel = 
+    new qSlicerModulePanel(0, 
+                           Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+  //this->Internal->ModulePanel->setScrollAreaAsParentContainer(true);
+
+  QObject::connect(this->Internal->ModulePanel, 
+                   SIGNAL(moduleAdded(qSlicerAbstractModule*)),
+                   this, 
+                   SLOT(showModule(qSlicerAbstractModule*)));
+  //this->Internal->ModulePanel->show();
 }
 
 //-----------------------------------------------------------------------------
@@ -181,7 +196,10 @@ void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)
     // Store current visibility state
     if (!visible)
       {
-      this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible(); 
+      if (!this->Internal->TopLevelWidgetsSavedVisibilityState.contains(widget))
+        {
+        this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible(); 
+        }
       widget->hide();
       }
     else
@@ -214,4 +232,49 @@ void qSlicerApplication::setMRMLScene(vtkMRMLScene * scene)
 vtkMRMLScene* qSlicerApplication::getMRMLScene()
 {
   return this->Internal->MRMLScene; 
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModulePanel* qSlicerApplication::modulePanel()
+{
+  return this->Internal->ModulePanel;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::showModule(qSlicerAbstractModule* module)
+{
+  this->setTopLevelWidgetVisibility(this->Internal->ModulePanel, module != 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setTopLevelWidgetVisibility(qSlicerWidget* widget, bool visibility)
+{  
+  if (visibility)
+    {// is a valid Module
+    if (widget->isVisible() == false)
+      {
+      if (this->Internal->TopLevelWidgetsSavedVisibilityState.empty())
+        {
+        widget->setVisible(true);
+        }
+      else
+        {
+        this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = true;
+        }
+      }
+    }
+  else
+    {// is not a module, we want to hide the ModulePanel
+    if (widget->isVisible() == false)
+      {
+      if (this->Internal->TopLevelWidgetsSavedVisibilityState.empty() == false)
+        {
+        this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = false;
+        }
+      }
+    else
+      {
+      widget->setVisible(false);
+      }
+    }
 }

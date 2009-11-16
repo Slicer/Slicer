@@ -36,7 +36,7 @@ void qSlicerAbstractModule::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::moduleName()
+QString qSlicerAbstractModule::name()const
 {
   return this->metaObject()->className();
 }

@@ -316,8 +316,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Show/hide a QtModule. The position/size of the Qt widget 
     // is mapped against the corresponding KwWidget
-    void SetQtModuleVisible(const char* moduleTitle, bool visible); 
-    void SetCurrentQtModuleVisible(bool visible); 
+    //void SetQtModuleVisible(const char* moduleTitle, bool visible); 
+    //void SetCurrentQtModuleVisible(bool visible); 
+    void SetCurrentQtModule(const char* moduleTitle);
 
     // Description:
     // Callbacks set on the configure events of the split frames
@@ -423,6 +424,13 @@ protected:
   virtual void OnViewNodeRemoved(vtkMRMLViewNode *node);
   virtual void OnViewNodeNeeded();
      
+  // Description:
+  // Synchronize the position of the Qt module panel with the KWWidget
+  // module panel
+  //BTX
+  void ReposModulePanel();
+  //ETX
+
  private:
 
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

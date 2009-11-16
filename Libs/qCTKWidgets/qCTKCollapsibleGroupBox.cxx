@@ -144,3 +144,27 @@ void qCTKCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
 }
 
 #endif
+
+QSize qCTKCollapsibleGroupBox::minimumSizeHint() const
+{
+  //qDebug() << "qCTKCollapsibleGroupBox::minimumSizeHint::" << this->QGroupBox::minimumSizeHint() ;
+  return this->QGroupBox::minimumSizeHint();
+}
+
+QSize qCTKCollapsibleGroupBox::sizeHint() const
+{
+  //qDebug() << "qCTKCollapsibleGroupBox::sizeHint::" << this->QGroupBox::sizeHint() ;
+  return this->QGroupBox::sizeHint();
+}
+
+int qCTKCollapsibleGroupBox::heightForWidth(int w) const
+{
+  //qDebug() << "qCTKCollapsibleGroupBox::heightForWidth::" << this->QGroupBox::heightForWidth(w) ;
+  return this->QGroupBox::heightForWidth(w);
+}
+
+void qCTKCollapsibleGroupBox::resizeEvent ( QResizeEvent * event )
+{
+  //qDebug() << "qCTKCollapsibleGroupBox::resizeEvent::" << event->oldSize() << event->size() ;
+  return this->QGroupBox::resizeEvent(event);
+}

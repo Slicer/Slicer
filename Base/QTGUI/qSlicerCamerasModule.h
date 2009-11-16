@@ -20,11 +20,11 @@ public:
 
   virtual void printAdditionalInfo();
 
-  qSlicerGetModuleTitleMacro("Cameras");
+  qSlicerGetTitleMacro("Cameras");
 
   // Return help/acknowledgement text
-  virtual QString helpText();
-  virtual QString acknowledgementText();
+  virtual QString helpText()const;
+  virtual QString acknowledgementText()const;
 
 public slots:
   // Description:

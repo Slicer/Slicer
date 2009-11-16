@@ -87,11 +87,11 @@ QSize qCTKTitleComboBox::recomputeSizeHint(QSize &sh) const
     return sh.expandedTo(QApplication::globalStrut());
     }
   const QFontMetrics &fm = this->fontMetrics();
-  if (!this->Icon.isNull()) 
+  QList<QSize> iconSizes = this->Icon.availableSizes();
+  if (!this->Icon.isNull() && !iconSizes.empty()) 
     {
-    QList<QSize> sizes = this->Icon.availableSizes();
     // TODO: pick the best size (based on the pixelMetric maybe)
-    QSize iconSize = sizes[0];
+    QSize iconSize = iconSizes[0];
     sh.setWidth(qMax(sh.width(), fm.boundingRect(this->Title).width() + iconSize.width() + 4));
     }
   else
@@ -101,11 +101,10 @@ QSize qCTKTitleComboBox::recomputeSizeHint(QSize &sh) const
 
   // height
   sh.setHeight(qMax(fm.lineSpacing(), 14) + 2);
-  if (!this->Icon.isNull()) 
+  if (!this->Icon.isNull() && !iconSizes.empty()) 
     {
-    QList<QSize> sizes = this->Icon.availableSizes();
     // TODO: pick the best size (based on the pixelMetric maybe)
-    QSize iconSize = sizes[0];
+    QSize iconSize = iconSizes[0];
     sh.setHeight(qMax(sh.height(), iconSize.height() + 2));
     }
 

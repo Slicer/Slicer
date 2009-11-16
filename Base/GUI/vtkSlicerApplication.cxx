@@ -682,7 +682,7 @@ void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
     {
     if (this->Internal->RegisteredDialogCount == 0)
       {
-      qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
+      //qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
       }
     this->Internal->RegisteredDialogCount++;
     }
@@ -700,7 +700,7 @@ void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
     {
     if (this->Internal->RegisteredDialogCount == 1)
       {
-      qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
+      //qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
       }
     this->Internal->RegisteredDialogCount--;
     }
@@ -2459,11 +2459,13 @@ void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
   this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toLatin1());
   qDebug() << "Attempt to load module: " << moduleName;
   qSlicerModuleManager::instance()->loadModuleByName(moduleName);
+  /* it's too QT specific, it needs to be done somewhere else.
   qSlicerAbstractModule* module = qSlicerModuleManager::instance()->getModuleByName(moduleName); 
   if (module)
     {
     module->setScrollAreaAsParentContainer(true);
     module->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     }
+  */
 }
 #endif
