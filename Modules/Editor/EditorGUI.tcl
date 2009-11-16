@@ -166,8 +166,9 @@ proc EditorBuildGUI {this} {
   $::Editor($this,labelMapDerive) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::Editor($this,labelMapDerive) UpdateMenu
   $::Editor($this,labelMapDerive) SetLabelText "Create Label Map From:"
+  $::Editor($this,labelMapDerive) SetLabelWidth 20
   $::Editor($this,labelMapDerive) SetBalloonHelpString "Create a new label map wth dimensions and directions from an existing volume."
-  pack [$::Editor($this,labelMapDerive) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$::Editor($this,labelMapDerive) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   set ::Editor($this,labelMapSelect) [vtkSlicerNodeSelectorWidget New]
   $::Editor($this,labelMapSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
@@ -178,8 +179,9 @@ proc EditorBuildGUI {this} {
   $::Editor($this,labelMapSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::Editor($this,labelMapSelect) UpdateMenu
   $::Editor($this,labelMapSelect) SetLabelText "Select Label Map to Edit:"
+  $::Editor($this,labelMapSelect) SetLabelWidth 20
   $::Editor($this,labelMapSelect) SetBalloonHelpString "Choose from existing label maps in the scene."
-  pack [$::Editor($this,labelMapSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  pack [$::Editor($this,labelMapSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   #
   # Tool Frame
