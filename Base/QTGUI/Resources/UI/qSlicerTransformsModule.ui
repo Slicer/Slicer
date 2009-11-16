@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>366</width>
-    <height>732</height>
+    <height>756</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,53 +18,36 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qCTKCollapsibleWidget" name="LoadCollapsibleWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+    <widget class="qCTKCollapsibleWidget2" name="LoadCollapsibleWidget">
      <property name="title">
       <string>Load</string>
      </property>
-     <property name="contentsLineWidth">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="page">
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <property name="spacing">
-        <number>7</number>
-       </property>
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="LoadTransformPushButton">
-         <property name="text">
-          <string>Load Transform</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>213</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QPushButton" name="LoadTransformPushButton">
+        <property name="text">
+         <string>Load Transform</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>213</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleWidget" name="DisplayEditCollapsibleWidget">
+    <widget class="qCTKCollapsibleWidget2" name="DisplayEditCollapsibleWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -77,7 +60,6 @@
      <property name="contentsLineWidth">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="page_2">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
         <number>7</number>
@@ -311,7 +293,6 @@
         </layout>
        </item>
       </layout>
-     </widget>
     </widget>
    </item>
    <item>
@@ -337,10 +318,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleWidget</class>
+   <class>qCTKCollapsibleWidget2</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget.h</header>
-   <addpagemethod>setWidget</addpagemethod>
+   <header>qCTKCollapsibleWidget2.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

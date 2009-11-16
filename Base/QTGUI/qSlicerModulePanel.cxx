@@ -1,7 +1,7 @@
 #include "qSlicerModulePanel.h"
 
 #include "qSlicerAbstractModule.h"
-#include "qCTKCollapsibleWidget.h"
+#include "qCTKCollapsibleWidget2.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -12,7 +12,6 @@
 struct qSlicerModulePanel::qInternal
 {
   QLabel*                HelpLabel;
-  //QStackedWidget*        ModuleContainer;
   QBoxLayout*            Layout;
   QScrollArea*           ScrollArea;
 };
@@ -23,15 +22,14 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
 {
   this->Internal = new qInternal;
   QWidget* panel = new QWidget;
-  qCTKCollapsibleWidget* help = new qCTKCollapsibleWidget;
-  help->setTitle("Help");
+  qCTKCollapsibleWidget2* help = new qCTKCollapsibleWidget2("Help");
   help->setCollapsed(true);
   help->setSizePolicy(
     QSizePolicy::Ignored, help->sizePolicy().verticalPolicy());
   this->Internal->HelpLabel = new QLabel;
   this->Internal->HelpLabel->setWordWrap(true);
   this->Internal->HelpLabel->setTextFormat(Qt::RichText);
-  QGridLayout* helpLayout = new QGridLayout(help->widget());
+  QGridLayout* helpLayout = new QGridLayout(help);
   helpLayout->addWidget(this->Internal->HelpLabel);
 
   this->Internal->Layout = new QVBoxLayout(panel);
@@ -58,7 +56,7 @@ qSlicerModulePanel::~qSlicerModulePanel()
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
 {
-  qDebug() << "qSlicerModulePanel::" << __FUNCTION__ << ": " << (module ? module->title() : "0");
+  //qDebug() << "qSlicerModulePanel::" << __FUNCTION__ << ": " << (module ? module->title() : "0");
   QLayoutItem* item = this->Internal->Layout->itemAt(1);
   QWidget* widget = item ? item->widget() : 0;
   if (widget)
@@ -81,6 +79,8 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
     {
     module->layout()->setContentsMargins(0, 0, 0, 0);
     this->Internal->Layout->insertWidget(1, module);
+    module->setSizePolicy(
+      QSizePolicy::Ignored, module->sizePolicy().verticalPolicy());
     // If the module was invisible, make it visible in the panel.
     // (the panel might be invisible though. but this is another story).
     module->setVisible(true);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>398</height>
+    <width>473</width>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,261 +18,276 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="qCTKCollapsibleWidget" name="ModifyAllAngleGroupBox">
+    <widget class="qCTKCollapsibleWidget2" name="ModifyAllAngleGroupBox">
      <property name="title">
       <string>Modify All Angle Nodes</string>
      </property>
-     <widget class="qCTKTitleComboBox" name="AllAnglesVisibilityComboBox">
-      <property name="title">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
-      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <property name="text">
-        <string>All Rulers Visible</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
-       </property>
+       <widget class="qCTKTitleComboBox" name="AllAnglesVisibilityComboBox">
+        <property name="title">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
+        </property>
+        <item>
+         <property name="text">
+          <string>All Rulers Visible</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>All Rulers Invisible</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
+         </property>
+        </item>
+       </widget>
       </item>
       <item>
-       <property name="text">
-        <string>All Rulers Invisible</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
-       </property>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
-     </widget>
+     </layout>
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleWidget" name="ModifySelectedAngleNodeGroupBox">
+    <widget class="qCTKCollapsibleWidget2" name="ModifySelectedAngleNodeGroupBox">
      <property name="title">
       <string>Modify Selected Angle Node</string>
      </property>
-     <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QLabel" name="AngleNodeSelectLabel">
+          <property name="text">
+           <string>Angle Node Select:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="qMRMLNodeSelector" name="AngleNodeSelector">
+          <property name="NodeType">
+           <string>vtkMRMLMeasurementsAngleNode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="AngleVisibilityLabel">
+          <property name="text">
+           <string>Visibility:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="AngleVisibilityCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="AnglePosition1Label">
+          <property name="text">
+           <string>Position 1:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="qCTKCoordinatesWidget" name="AnglePosition1CoordinatesWidget">
+          <property name="Dimension">
+           <number>3</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="AnglePosition2Label">
+          <property name="text">
+           <string>Position 2:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="qCTKCoordinatesWidget" name="AnglePosition2CoordinatesWidget"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="AnglePositionCenterLabel">
+          <property name="text">
+           <string>Center:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="qCTKCoordinatesWidget" name="AnglePositionCenterCoordinatesWidget"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="qCTKCollapsibleGroupBox" name="ConstrainAngleToModelsGroupBox">
+        <property name="title">
+         <string>Constrain Angle To Models</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
-          <widget class="QLabel" name="AngleNodeSelectLabel">
+          <widget class="QLabel" name="SelectAngleModel1Label">
            <property name="text">
-            <string>Angle Node Select:</string>
+            <string>Select Angle Model 1:</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="qMRMLNodeSelector" name="AngleNodeSelector">
-           <property name="NodeType">
-            <string>vtkMRMLMeasurementsAngleNode</string>
-           </property>
-          </widget>
+          <widget class="QComboBox" name="AngleModel1ComboBox"/>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="AngleVisibilityLabel">
+          <widget class="QLabel" name="SelectAngleModel2Label">
            <property name="text">
-            <string>Visibility:</string>
+            <string>Select Angle Model 2:</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QCheckBox" name="AngleVisibilityCheckBox">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
+          <widget class="QComboBox" name="AngleModel2ComboBox"/>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="AnglePosition1Label">
+          <widget class="QLabel" name="SelectAngleModelCenterLabel">
            <property name="text">
-            <string>Position 1:</string>
+            <string>Select Angle Model Center:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="qCTKCoordinatesWidget" name="AnglePosition1CoordinatesWidget">
-           <property name="Dimension">
-            <number>3</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="AnglePosition2Label">
-           <property name="text">
-            <string>Position 2:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="qCTKCoordinatesWidget" name="AnglePosition2CoordinatesWidget"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="AnglePositionCenterLabel">
-           <property name="text">
-            <string>Center:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="qCTKCoordinatesWidget" name="AnglePositionCenterCoordinatesWidget"/>
+          <widget class="QComboBox" name="AngleModelCenterComboBox"/>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="qCTKCollapsibleGroupBox" name="ConstrainAngleToModelsGroupBox">
-         <property name="title">
-          <string>Constrain Angle To Models</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QLabel" name="SelectAngleModel1Label">
-            <property name="text">
-             <string>Select Angle Model 1:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="AngleModel1ComboBox"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="SelectAngleModel2Label">
-            <property name="text">
-             <string>Select Angle Model 2:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="AngleModel2ComboBox"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="SelectAngleModelCenterLabel">
-            <property name="text">
-             <string>Select Angle Model Center:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="AngleModelCenterComboBox"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="qCTKCollapsibleGroupBox" name="DisplayOptionsGroupBox">
-         <property name="title">
-          <string>Display Options</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+       </widget>
+      </item>
+      <item>
+       <widget class="qCTKCollapsibleGroupBox" name="DisplayOptionsGroupBox">
+        <property name="title">
+         <string>Display Options</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="AngleEndPointColorLabel">
+             <property name="text">
+              <string>End points:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="qCTKColorPickerButton" name="AngleEndPointsColorPicker"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="AngleLineColorLabel">
+             <property name="text">
+              <string>Line:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="qCTKColorPickerButton" name="AngleLineColorPicker"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="Ray1VisibilityCheckBox">
+             <property name="text">
+              <string>Ray 1 Visibility</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="Ray2VisibilityCheckBox">
+             <property name="text">
+              <string>Ray 2 Visibility</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="ArcVisibilityCheckBox">
+             <property name="text">
+              <string>Arc Visibility</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="AngleAnnotationGroupBox">
+           <property name="title">
+            <string>Angle Annotation</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="AngleEndPointColorLabel">
+             <widget class="QLabel" name="AngleAnnotationFormatLabel">
               <property name="text">
-               <string>End points:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <string>Text Format:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="qCTKColorPickerButton" name="AngleEndPointsColorPicker"/>
+             <widget class="QLineEdit" name="AngleAnnotationFormatLineEdit"/>
             </item>
             <item>
-             <widget class="QLabel" name="AngleLineColorLabel">
+             <widget class="QLabel" name="AngleAnnotationScaleLabel">
               <property name="text">
-               <string>Line:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <string>Scale:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="qCTKColorPickerButton" name="AngleLineColorPicker"/>
+             <widget class="QDoubleSpinBox" name="AngleAnnotationScaleSpinBox"/>
             </item>
            </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QCheckBox" name="Ray1VisibilityCheckBox">
-              <property name="text">
-               <string>Ray 1 Visibility</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="Ray2VisibilityCheckBox">
-              <property name="text">
-               <string>Ray 2 Visibility</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="ArcVisibilityCheckBox">
-              <property name="text">
-               <string>Arc Visibility</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="AngleAnnotationGroupBox">
-            <property name="title">
-             <string>Angle Annotation</string>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QLabel" name="AngleAnnotationFormatLabel">
-               <property name="text">
-                <string>Text Format:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="AngleAnnotationFormatLineEdit"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="AngleAnnotationScaleLabel">
-               <property name="text">
-                <string>Scale:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDoubleSpinBox" name="AngleAnnotationScaleSpinBox"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -298,10 +313,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleWidget</class>
+   <class>qCTKCollapsibleWidget2</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget.h</header>
-   <addpagemethod>setWidget</addpagemethod>
+   <header>qCTKCollapsibleWidget2.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

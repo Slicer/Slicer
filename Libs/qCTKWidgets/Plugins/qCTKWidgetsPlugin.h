@@ -4,6 +4,7 @@
 #include "qCTKWidgetsPluginWin32Header.h"
 #include "qCTKCollapsibleGroupBoxPlugin.h"
 #include "qCTKCollapsibleWidgetPlugin.h"
+#include "qCTKCollapsibleWidget2Plugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
@@ -24,6 +25,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qCTKCollapsibleGroupBoxPlugin
             << new qCTKCollapsibleWidgetPlugin
+            << new qCTKCollapsibleWidget2Plugin
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin
             << new qCTKTitleComboBoxPlugin

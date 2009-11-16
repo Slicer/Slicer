@@ -13,6 +13,7 @@ SET(qCTKWidgetsPlugin_SRCS
   qCTKWidgetsBasePlugin.cxx
   qCTKCollapsibleGroupBoxPlugin.cxx
   qCTKCollapsibleWidgetPlugin.cxx
+  qCTKCollapsibleWidget2Plugin.cxx
   qCTKCollapsibleWidgetContainerExtension.cxx
   qCTKColorPickerButtonPlugin.cxx
   qCTKCoordinatesWidgetPlugin.cxx
@@ -24,7 +25,8 @@ SET(qCTKWidgetsPlugin_SRCS
 SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKWidgetsPlugin.h
   qCTKCollapsibleGroupBoxPlugin.h
-  qCTKCollapsibleWidgetPlugin.h
+  qCTKCollapsibleWidgetPlugin.h 
+  qCTKCollapsibleWidget2Plugin.h
   qCTKCollapsibleWidgetContainerExtension.h
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
