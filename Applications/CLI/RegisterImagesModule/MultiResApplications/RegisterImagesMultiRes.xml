@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Register Images MultiRes (Experimental)</title>
+  <description>Provides affine registration using multiple resolution levels and decomposed affine transforms</description>
+  <version>0.1.0.$Revision: 2104 $(alpha)</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.4</documentation-url>
+  <license></license>
+  <contributor>Casey B Goodlett</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description>Input and output parameters</description>
+    <image>
+      <name>fixedImage</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Image which defines the space into which the moving image is registered</description>
+    </image>
+    <image>
+      <name>movingImage</name>
+      <label>Moving Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>The transform goes from the fixed image's space into the moving image's space</description>
+    </image>
+    <image>
+      <name>resampledImage</name>
+      <label>Resample image</label>
+      <channel>output</channel>
+      <longflag>resampledImage</longflag>
+      <description>Registration results</description>
+      <default></default>
+    </image>
+    <image type="label">
+      <name>fixedImageMask</name>
+      <label>Fixed Image Mask image</label>
+      <channel>input</channel>
+      <longflag>fixedImageMask</longflag>
+      <description>Label image which defines a mask of interest for the fixed image</description>
+      <default></default>
+    </image>
+  </parameters>
+</executable>

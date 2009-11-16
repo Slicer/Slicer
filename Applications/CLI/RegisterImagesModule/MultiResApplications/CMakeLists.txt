@@ -1,0 +1,39 @@
+
+PROJECT( RegisterImagesMultiResApplications )
+
+  # Find ITK
+  FIND_PACKAGE( ITK REQUIRED )
+  INCLUDE( ${ITK_USE_FILE} )
+    
+  # Find GenerateCLP
+  FIND_PACKAGE( GenerateCLP REQUIRED )
+  INCLUDE( ${GenerateCLP_USE_FILE} )
+
+  # Setup the source and paths
+  SET( RegisterImagesMultiRes_SOURCE RegisterImagesMultiRes.cxx )
+  GENERATECLP( RegisterImagesMultiRes_SOURCE
+               RegisterImagesMultiRes.xml )
+  INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_BINARY_DIR} )
+
+  # Build the library / plugin
+  ADD_LIBRARY( RegisterImagesMultiResModule
+               SHARED 
+               ${RegisterImagesMultiRes_SOURCE} )
+  SET_TARGET_PROPERTIES( RegisterImagesMultiResModule
+                         PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+  TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ${ITK_LIBRARIES} MRML )
+
+  # Build the command line
+  ADD_EXECUTABLE( RegisterImagesMultiRes ${RegisterImagesMultiRes_SOURCE} )
+  TARGET_LINK_LIBRARIES( RegisterImagesMultiRes ${ITK_LIBRARIES} MRML )
+
+  IF( Slicer3_SOURCE_DIR )
+    slicer3_set_plugins_output_path( RegisterImagesMultiResModule )
+    slicer3_set_plugins_output_path( RegisterImagesMultiRes )
+
+    SET(TARGETS
+         RegisterImagesMultiResModule
+         RegisterImagesMultiRes
+         )
+    slicer3_install_plugins( ${TARGETS} )
+  ENDIF( Slicer3_SOURCE_DIR )

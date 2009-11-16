@@ -10,3 +10,4 @@ PROJECT ( RegisterImagesModule )
        ${RegisterImagesModule_SOURCE_DIR} )
 
   ADD_SUBDIRECTORY( Applications )
+  ADD_SUBDIRECTORY( MultiResApplications )
