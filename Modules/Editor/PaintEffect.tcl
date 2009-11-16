@@ -310,7 +310,9 @@ itcl::body PaintEffect::buildOptions {} {
   $o(radius) DisplayEntryAndLabelOnTopOn
   $o(radius) DisplayEntryOn
   $o(radius) DisplayLabelOn
-  $o(radius) SetValue [[EditorGetParameterNode] GetParameter Paint,radius] 
+  $o(radius) SetValue [[EditorGetParameterNode] GetParameter Paint,radius]
+  $o(radius) SetMinimumValue 1
+  $o(radius) ClampMinimumValueOn
   [$o(radius) GetLabel] SetText "Radius: "
   $o(radius) SetBalloonHelpString "Set the radius of the paint brush in millimeters"
   pack [$o(radius) GetWidgetName] \
