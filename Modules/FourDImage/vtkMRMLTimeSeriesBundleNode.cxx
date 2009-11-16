@@ -625,6 +625,7 @@ vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetDisplayBufferNode(int bufferIndex)
 void vtkMRMLTimeSeriesBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
   // this function should be implemented in the child class
 {
+
   vtkMRMLScalarVolumeNode* frame = 
     vtkMRMLScalarVolumeNode::SafeDownCast(this->GetFrameNode(i));
 
@@ -636,7 +637,7 @@ void vtkMRMLTimeSeriesBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
     vtkImageData* imageData = displayBuffer->GetImageData();
     if ( imageData )
       {
-      imageData->DeepCopy(frame->GetImageData());
+      displayBuffer->SetAndObserveImageData(frame->GetImageData());
       displayBuffer->Modified();
       displayBuffer->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
       }
