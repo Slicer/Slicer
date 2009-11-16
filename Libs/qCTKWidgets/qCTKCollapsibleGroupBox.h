@@ -25,8 +25,8 @@ protected:
   virtual void paintEvent(QPaintEvent*);
   virtual void mousePressEvent(QMouseEvent*);
   virtual void mouseReleaseEvent(QMouseEvent*);
-  virtual void resizeEvent(QResizeEvent*);
 #endif
+  virtual void resizeEvent(QResizeEvent*);
 
   QSize OldSize;
   int   MaxHeight;
