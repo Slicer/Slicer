@@ -42,12 +42,17 @@ void qSlicerCamerasModule::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::helpText()const
 {
-  // TODO Format text properly .. see transform module for example
-  //return "**Cameras Module:** Create new views and cameras. The view pulldown menu below can be used to create new views and select the active view. Switch the layout to \"Tabbed 3D Layout\" from the layout icon in the toolbar to access multiple views. The view selected in \"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in all other layouts. The camera pulldown menu below can be used to set the active camera for the selected view. WARNING: this is rather experimental at the moment (fiducials, IO/data, closing the scene are probably broken for new views). ";
-  QString help =
-    "To be updated %1";
-
-  return help.arg(this->slicerWikiUrl());
+  QString help = 
+    "Create new views and cameras.<br>"
+    "The view pulldown menu below can be used to create new views and select "
+    "the active view. Switch the layout to \"Tabbed 3D Layout\" from the "
+    "layout icon in the toolbar to access multiple views. The view selected in "
+    "\"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in "
+    "all other layouts. The camera pulldown menu below can be used to set the "
+    "active camera for the selected view. <br>"
+    "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
+    "closing the scene are probably broken for new views).";
+  return help;
 }
 
 //-----------------------------------------------------------------------------

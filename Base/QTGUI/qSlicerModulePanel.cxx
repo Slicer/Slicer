@@ -8,10 +8,11 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QResizeEvent>
+#include <QTextBrowser>
 //---------------------------------------------------------------------------
 struct qSlicerModulePanel::qInternal
 {
-  QLabel*                HelpLabel;
+  QTextBrowser*                HelpLabel;
   QBoxLayout*            Layout;
   QScrollArea*           ScrollArea;
 };
@@ -26,9 +27,17 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
   help->setCollapsed(true);
   help->setSizePolicy(
     QSizePolicy::Ignored, help->sizePolicy().verticalPolicy());
-  this->Internal->HelpLabel = new QLabel;
-  this->Internal->HelpLabel->setWordWrap(true);
-  this->Internal->HelpLabel->setTextFormat(Qt::RichText);
+  // QTextBrowser instead of QLabel because QLabel don't word wrap links 
+  // correctly
+  this->Internal->HelpLabel = new QTextBrowser;
+  this->Internal->HelpLabel->setOpenExternalLinks(true);
+  this->Internal->HelpLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->Internal->HelpLabel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->Internal->HelpLabel->setFrameShape(QFrame::NoFrame);
+  QPalette p = this->Internal->HelpLabel->palette();
+  p.setBrush(QPalette::Window, QBrush ());
+  this->Internal->HelpLabel->setPalette(p);
+  
   QGridLayout* helpLayout = new QGridLayout(help);
   helpLayout->addWidget(this->Internal->HelpLabel);
 
@@ -84,11 +93,11 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
     // If the module was invisible, make it visible in the panel.
     // (the panel might be invisible though. but this is another story).
     module->setVisible(true);
-    this->Internal->HelpLabel->setText(module->helpText());
+    this->Internal->HelpLabel->setHtml(module->helpText());
     }
   else
     {
-    this->Internal->HelpLabel->setText("");
+    this->Internal->HelpLabel->setHtml("");
     }
   emit moduleAdded(module);
 }

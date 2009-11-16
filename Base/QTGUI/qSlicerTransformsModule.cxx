@@ -115,14 +115,8 @@ void qSlicerTransformsModule::printAdditionalInfo()
 QString qSlicerTransformsModule::helpText()const
 {
   QString help =
-    "The Volumes Module loads and adjusts display parameters of volume data.<br>"
-    "<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Volumes-Documentation-3.4</a><br>"
-    "<br>"
-    "The Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) "
-    "of DWI data and provides a quick way to interpret them. For that it estimates a tensor and "
-    "shows glyphs and tracts for visual exploration. Help for Diffusion Editor:<br>"
-    "<a>%1/Modules:Volumes:Diffusion_Editor-Documentation</a>";
-
+    "The Transforms Module creates and edits transforms. \n"
+    "<a href=%1/Modules:Transforms-Documentation-3.4>%1/Modules:Transforms-Documentation-3.4</a>";
   return help.arg(this->slicerWikiUrl());
 }
 
@@ -130,10 +124,11 @@ QString qSlicerTransformsModule::helpText()const
 QString qSlicerTransformsModule::acknowledgementText()const
 {
   QString acknowledgement =
-    "The Transforms Module creates and edits transforms.<br>"
-    "<a>%1/Modules:Transforms-Documentation-3.4</a>";
-
-  return acknowledgement.arg(this->slicerWikiUrl());
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
+    "See <a href=\"http://www.slicer.org\">http://www.slicer.org</a> for details.\n"
+    "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. with "
+    "help from others at SPL, BWH (Ron Kikinis)";
+  return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
