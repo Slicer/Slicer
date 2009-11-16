@@ -6,7 +6,7 @@
 
 # scm is source code manager (i.e. svn)
 scm       svn
-svnpath   https://zeus.ia.unc.edu/NeuroLib/Release/ARCTIC
+svnpath   https://skylla.ia.unc.edu/NeuroLib/Release/ARCTIC
 
 # list dependencies 
 # - these should be names of other modules that have .s3ext files 
