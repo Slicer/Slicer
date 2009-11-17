@@ -155,6 +155,31 @@ namespace {
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
+
+  bool ExtractBinValEntry( gdcm::File * header, uint16_t group, uint16_t elem, std::string& tag )
+  {
+    tag.clear();
+    if ( header->GetBinEntry(group, elem) )
+    {
+      gdcm::BinEntry* binEntry = header->GetBinEntry(group, elem);
+      int binLength = binEntry->GetFullLength();
+      tag.resize( binLength );
+      uint8_t * tagString = binEntry->GetBinArea();
+
+      for (int n = 0; n < binLength; n++)
+      {
+        tag[n] = *(tagString+n);
+      }
+      return true;
+    }
+    else if ( header->GetValEntry(group, elem) )
+    {
+      tag = header->GetValEntry(group, elem)->GetValue();
+      return true;
+    }
+    return false;
+  }
+
   int ExtractSiemensDiffusionInformation( std::string tagString, std::string nameString, std::vector<double>& valueArray )
     {
     ::size_t atPosition = tagString.find( nameString );
@@ -270,7 +295,6 @@ int main(int argc, char* argv[])
 #endif
 
   bool SliceOrderIS = true;
-  std::string vendor;
   bool SliceMosaic = false;
   bool SingleSeries = true;
 
@@ -351,36 +375,18 @@ int main(int argc, char* argv[])
       }
     }
 
-
-
-  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
-  typedef itk::ImageFileReader< SliceType > SliceReaderType;
-
-  ImageIOType::Pointer gdcmIO = ImageIOType::New();
-  gdcmIO->LoadPrivateTagsOn();
-  gdcmIO->SetMaxSizeLoadEntry( 65536 );
-
-  SliceReaderType::Pointer sReader = SliceReaderType::New();
-  sReader->SetImageIO( gdcmIO );
-  sReader->SetFileName( filenames[0] );
-  try
-    {
-    sReader->Update();
-    }
-  catch (itk::ExceptionObject &excp)
-    {
-    std::cerr << "Exception thrown while reading the first file in the series" << std::endl;
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
-    }
+  gdcm::File * headerLite = new gdcm::File;
+  headerLite->SetFileName( filenames[0] );
+  headerLite->SetMaxSizeLoadEntry( 65535 );
+  headerLite->SetLoadMode( gdcm::LD_NOSEQ );
+  headerLite->Load();
 
   // check the tag 0008|0070 for vendor information
-  itk::MetaDataDictionary sliceDict = sReader->GetMetaDataDictionary();
-
-  itk::ExposeMetaData<std::string> ( sliceDict, "0008|0070", vendor );
+  std::string vendor;
+  ExtractBinValEntry( headerLite, 0x0008, 0x0070, vendor );
 
   std::string ImageType;
-  itk::ExposeMetaData<std::string> ( sliceDict, "0008|0008", ImageType );
+  ExtractBinValEntry( headerLite, 0x0008, 0x0008, ImageType );
   std::cout << ImageType << std::endl;
 
   //////////////////////////////////////////////////////////////////
@@ -436,6 +442,7 @@ int main(int argc, char* argv[])
   //////////////////////////////////////////////////
   // 1) Read the input series as an array of slices
   ReaderType::Pointer reader = ReaderType::New();
+  itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
   reader->SetImageIO( gdcmIO );
   reader->SetFileNames( filenames );
   try
@@ -582,7 +589,7 @@ int main(int argc, char* argv[])
   if ( vendor.find("GE") != std::string::npos ||
     (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
-    MeasurementFrame.SetIdentity(); //The DICOM version of SIEMENS that uses private tags
+      MeasurementFrame=LPSDirCos;
     // has the measurement frame represented as an identity matrix.
     tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
@@ -606,7 +613,7 @@ int main(int argc, char* argv[])
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
-    MeasurementFrame.SetIdentity(); //The DICOM version of SIEMENS that uses private tags
+    MeasurementFrame = LPSDirCos; //The DICOM version of SIEMENS that uses private tags
     // has the measurement frame represented as an identity matrix.
     std::cout << "Siemens SliceMosaic......" << std::endl;
 
@@ -615,7 +622,6 @@ int main(int argc, char* argv[])
     // for siemens mosaic image, figure out mosaic slice order from 0029|1010
     tag.clear();
     gdcm::File *header0 = new gdcm::File;
-    gdcm::BinEntry* binEntry;
 
     header0->SetMaxSizeLoadEntry(65536);
     header0->SetFileName( filenames[0] );
@@ -623,24 +629,7 @@ int main(int argc, char* argv[])
     header0->Load();
 
     // copy information stored in 0029,1010 into a string for parsing
-    gdcm::DocEntry* docEntry = header0->GetFirstEntry();
-    while(docEntry)
-      {
-      if ( docEntry->GetKey() == "0029|1010"  )
-        {
-        binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-        int binLength = binEntry->GetFullLength();
-        tag.resize( binLength );
-        uint8_t * tagString = binEntry->GetBinArea();
-
-        for (int k = 0; k < binLength; k++)
-          {
-          tag[k] = *(tagString+k);
-          }
-        break;
-        }
-      docEntry = header0->GetNextEntry();
-      }
+    ExtractBinValEntry( header0, 0x0029, 0x1010, tag );
 
     // parse SliceNormalVector from 0029,1010 tag
     std::vector<double> valueArray(0);
@@ -756,8 +745,6 @@ int main(int argc, char* argv[])
     for (unsigned int k = 0; k < nSlice; k += nSliceInVolume)
       {
       gdcm::File *header0 = new gdcm::File;
-      gdcm::BinEntry* binEntry;
-      gdcm::ValEntry* valEntry;
 
       header0->SetMaxSizeLoadEntry(65536);
       header0->SetFileName( filenames[k] );
@@ -765,118 +752,23 @@ int main(int argc, char* argv[])
       header0->Load();
 
       // parsing bvalue and gradient directions
-      int nValueParsed = 0;
       vnl_vector_fixed<double, 3> vect3d;
       vect3d.fill( 0 );
       float b = 0;
 
       gdcm::DocEntry* docEntry = header0->GetFirstEntry();
 
-      while(docEntry)
-        {
-        if ( docEntry->GetKey() == "0043|1039"  )
-          {
-            std::string geVR = docEntry->GetVR();
-            if (geVR.find("UN") != std::string::npos)
-            {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
+      ExtractBinValEntry( header0, 0x0043, 0x1039, tag );
+      b = atof( tag.c_str() );
 
-          for (int n = 0; n < binLength; n++)
-            {
-            tag[n] = *(tagString+n);
-            }
-            }
-            else if (geVR.find("DS") != std::string::npos ||
-              geVR.find("IS") != std::string::npos )
-            {
-              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
-              tag = valEntry->GetValue();
-            }
-          b = atof( tag.c_str() );
-          nValueParsed ++;
-          }
-        else if ( docEntry->GetKey() == "0019|10bb"  )
-          {
-            std::string geVR = docEntry->GetVR();
-            if (geVR.find("UN") != std::string::npos)
-            {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
+      ExtractBinValEntry( header0, 0x0019, 0x10bb, tag );
+      vect3d[0] = atof( tag.c_str() );
 
-          for (int n = 0; n < binLength; n++)
-            {
-            tag[n] = *(tagString+n);
-            }
-            }
-            else if (geVR.find("DS") != std::string::npos ||
-              geVR.find("IS") != std::string::npos )
-            {
-              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
-              tag = valEntry->GetValue();
-            }
-          vect3d[0] = atof( tag.c_str() );
-          nValueParsed ++;
-          }
-        else if ( docEntry->GetKey() == "0019|10bc"  )
-          {
-            std::string geVR = docEntry->GetVR();
-            if (geVR.find("UN") != std::string::npos)  // software version before 14.0
-            {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
+      ExtractBinValEntry( header0, 0x0019, 0x10bc, tag );
+      vect3d[1] = atof( tag.c_str() );
 
-          for (int n = 0; n < binLength; n++)
-            {
-            tag[n] = *(tagString+n);
-            }
-            }
-            else if (geVR.find("DS") != std::string::npos || // for software version 15.0
-              geVR.find("IS") != std::string::npos)          // for software version 20.0
-            {
-              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
-              tag = valEntry->GetValue();
-            }
-          vect3d[1] = atof( tag.c_str() );
-          nValueParsed ++;
-          }
-        else if ( docEntry->GetKey() == "0019|10bd"  )
-          {
-            std::string geVR = docEntry->GetVR();
-            if (geVR.find("UN") != std::string::npos)
-            {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-
-          for (int n = 0; n < binLength; n++)
-            {
-            tag[n] = *(tagString+n);
-            }
-            }
-            else if (geVR.find("DS") != std::string::npos ||
-              geVR.find("IS") != std::string::npos )
-            {
-              valEntry = dynamic_cast<gdcm::ValEntry*> ( docEntry );
-              tag = valEntry->GetValue();
-            }
-          vect3d[2] = atof( tag.c_str() );
-          nValueParsed ++;
-          }
-
-        if (nValueParsed == 4)
-          {
-          break;
-          }
-        docEntry = header0->GetNextEntry();
-        }
+      ExtractBinValEntry( header0, 0x0019, 0x10bd, tag );
+      vect3d[2] = atof( tag.c_str() );
 
       bValues.push_back( b );
       if (b == 0)
