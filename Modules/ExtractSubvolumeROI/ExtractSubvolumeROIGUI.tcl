@@ -646,14 +646,6 @@ proc ExtractSubvolumeROIApply {this} {
 
   # prepare the output volume node
 #  $outVolumeNode CopyWithScene $volumeNode
-  if { [$outVolumeNode GetDisplayNode] == ""} {
-    set outDisplayNode [vtkMRMLScalarVolumeDisplayNode New]
-    $outDisplayNode CopyWithScene [$volumeNode GetDisplayNode]
-    set scene [[$this GetLogic] GetMRMLScene]
-    $scene AddNodeNoNotify $outDisplayNode
-    $outVolumeNode SetAndObserveDisplayNodeID [$outDisplayNode GetID]
-    $outDisplayNode Delete
-  }
 
   $outVolumeNode SetAndObserveStorageNodeID ""
 
@@ -789,6 +781,20 @@ proc ExtractSubvolumeROIApply {this} {
         $cnode SetReferenceForegroundVolumeID [$outVolumeNode GetID]
       }
   }
+
+  # setup the display node -- may be reset, if the output volume
+  # exists, but it's ok
+  # Warning: only scalar and label volumes are supported!
+  if { [eval $volumeNode GetLabelMap] == 0 } {
+    set outDisplayNode [vtkMRMLScalarVolumeDisplayNode New]
+  } else {
+    set outDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
+  }
+  $outDisplayNode Copy [$volumeNode GetDisplayNode]
+  set scene [[$this GetLogic] GetMRMLScene]
+  $scene AddNode $outDisplayNode
+  $outVolumeNode SetAndObserveDisplayNodeID [$outDisplayNode GetID]
+  $outDisplayNode Delete
 
   set scene [[$this GetLogic] GetMRMLScene]
   $scene InvokeEvent 66000
