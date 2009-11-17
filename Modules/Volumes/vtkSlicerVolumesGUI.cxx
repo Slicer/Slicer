@@ -859,7 +859,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->NameEntry->SetParent(this->LoadFrame->GetFrame());
   this->NameEntry->Create();
   this->NameEntry->SetWidth(20);
-  this->NameEntry->SetLabelWidth(12);
+  this->NameEntry->SetLabelWidth(15);
   this->NameEntry->SetLabelText("Volume Name:");
   this->NameEntry->GetWidget()->SetValue ( "" );
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
@@ -870,7 +870,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->CenterImageMenu->SetParent(this->LoadFrame->GetFrame());
   this->CenterImageMenu->Create();
   this->CenterImageMenu->SetWidth(20);
-  this->CenterImageMenu->SetLabelWidth(12);
+  this->CenterImageMenu->SetLabelWidth(15);
   this->CenterImageMenu->SetLabelText("Image Origin:");
   this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "Centered");
   this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
@@ -883,7 +883,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->OrientImageMenu->SetParent(this->LoadFrame->GetFrame());
   this->OrientImageMenu->Create();
   this->OrientImageMenu->SetWidth(20);
-  this->OrientImageMenu->SetLabelWidth(12);
+  this->OrientImageMenu->SetLabelWidth(15);
   this->OrientImageMenu->SetLabelText("Image Orientation:");
   this->OrientImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "Use IJK");
   this->OrientImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
