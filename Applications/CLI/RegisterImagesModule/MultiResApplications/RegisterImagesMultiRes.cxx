@@ -292,7 +292,7 @@ int main( int argc, char * argv[] )
   // Resample both images to 8x8x8
   typedef RecursiveMultiResolutionPyramidImageFilter<FileImage, ProcessingImage> ImagePyramid;
 
-  const unsigned int numberoflevels = ceil(log(8.0/ fabs(freader->GetOutput()->GetSpacing()[2]))/log(2));
+  const unsigned int numberoflevels = ceil(std::log(8.0/ fabs(freader->GetOutput()->GetSpacing()[2]))/std::log(2));
   if(DEBUG)
     std::cout << "nl: " << numberoflevels << std::endl;
 
