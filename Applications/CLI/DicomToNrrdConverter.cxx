@@ -250,29 +250,6 @@ namespace {
       }
     }
 
-  void InsertUnique( std::vector<float> & vec, float value )
-    {
-    ::size_t n = vec.size();
-    if (n == 0)
-      {
-      vec.push_back( value );
-      return;
-      }
-
-    for (::size_t k = 0; k < n ; k++)
-      {
-      if (vec[k] == value)
-        {
-        return;
-        }
-      }
-
-    // if we get here, it means value is not in vec.
-    vec.push_back( value );
-    return;
-
-    }
-
 } // end of anonymous namespace
 
 
@@ -445,6 +422,7 @@ int main(int argc, char* argv[])
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
   reader->SetImageIO( gdcmIO );
   reader->SetFileNames( filenames );
+  const unsigned int nSlice = filenames.size();
   try
     {
     reader->Update();
@@ -456,69 +434,56 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+  //////////////////////////////////////////////////
+  // 1-A) Read the input dicom headers
+  std::vector<gdcm::File *> allHeaders( filenames.size() );
+  for (unsigned int k = 0; k < filenames.size(); k ++)
+  {
+    allHeaders[k] = new gdcm::File;
+    allHeaders[k]->SetFileName( filenames[k] );
+    allHeaders[k]->SetMaxSizeLoadEntry( 65535 );
+    allHeaders[k]->SetLoadMode( gdcm::LD_NOSEQ );
+    allHeaders[k]->Load();
+  }
+
   /////////////////////////////////////////////////////
   // 2) Analyze the DICOM header to determine the
   //    number of gradient directions, gradient
   //    vectors, and form volume based on this info
 
-  ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
 
   // load in all public tags
-  const unsigned int nSlice = inputDict->size();
   std::string tag;
 
-  tag.clear();
   // number of rows is the number of pixels in the second dimension
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0010", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0028, 0x0010, tag );
   int nRows = atoi( tag.c_str() );
 
-  tag.clear();
   // number of columns is the number of pixels in the first dimension
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0011", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0028, 0x0011, tag );
   int nCols = atoi( tag.c_str() );
 
-  tag.clear();
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0030", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0028, 0x0030, tag );
   float xRes;
   float yRes;
   sscanf( tag.c_str(), "%f\\%f", &xRes, &yRes );
 
-  tag.clear();
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0020, 0x0032, tag );
   itk::Vector<double,3> ImageOrigin;
   sscanf( tag.c_str(), "%lf\\%lf\\%lf", &(ImageOrigin[0]), &(ImageOrigin[1]), &(ImageOrigin[2]) );
 
-  tag.clear();
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0050", tag );
-  //  float sliceThickness = atof( tag.c_str() );
-
-  tag.clear();
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0088", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0018, 0x0088, tag );
   const float sliceSpacing = atof( tag.c_str() );
 
-#if 0 // NOTE: SliceLocation is an optional value that does not exist in newer Philips DTI dicom data.
-  // figure out how many slices are there in a volume, each unique
-  // SliceLocation represent one slice
-  std::vector<float> sliceLocations(0);
-  for (unsigned int k = 0; k < nSlice; k++)
-    {
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|1041",  tag);
-    const float sliceLocation = atof( tag.c_str() );
-    InsertUnique( sliceLocations, sliceLocation );
-    }
-#else
   //Make a hash of the sliceLocations in order to get the correct count.  This is more reliable since SliceLocation may not be available.
   std::map<std::string,int> sliceLocations;
   for (unsigned int k = 0; k < nSlice; k++)
     {
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|0032",  tag);
-    sliceLocations[tag]++;
+      ExtractBinValEntry( allHeaders[k], 0x0020, 0x0032, tag );
+      sliceLocations[tag]++;
     }
   const unsigned int numberOfSlicesPerVolume=sliceLocations.size();
   std::cout << "=================== numberOfSlicesPerVolume:" << numberOfSlicesPerVolume << std::endl;
-#endif
 
   itk::Matrix<double,3,3> MeasurementFrame;
   MeasurementFrame.SetIdentity();
@@ -527,8 +492,7 @@ int main(int argc, char* argv[])
   // L-P-I (right-handed) system.
   // In Dicom, the coordinate frame is L-P by default. Look at
   // http://medical.nema.org/dicom/2007/07_03pu.pdf ,  page 301
-  tag.clear();
-  itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0037", tag );
+  ExtractBinValEntry( allHeaders[0], 0x0020, 0x0037, tag );
   itk::Matrix<double,3,3> LPSDirCos;
   sscanf( tag.c_str(), "%lf\\%lf\\%lf\\%lf\\%lf\\%lf",
     &(LPSDirCos[0][0]), &(LPSDirCos[1][0]), &(LPSDirCos[2][0]),
@@ -549,7 +513,6 @@ int main(int argc, char* argv[])
   SpacingMatrix[2][2]=sliceSpacing;
   std::cout << "SpacingMatrix" << std::endl;
   std::cout << SpacingMatrix << std::endl;
-
 
   itk::Matrix<double,3,3> OrientationMatrix;
   OrientationMatrix.SetIdentity();
@@ -591,16 +554,14 @@ int main(int argc, char* argv[])
     {
       MeasurementFrame=LPSDirCos;
     // has the measurement frame represented as an identity matrix.
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
-    float x0, y0, z0;
+      ExtractBinValEntry( allHeaders[0], 0x0020, 0x0032, tag );
+      float x0, y0, z0;
     sscanf( tag.c_str(), "%f\\%f\\%f", &x0, &y0, &z0 );
     std::cout << "Slice 0: " << tag << std::endl;
-    tag.clear();
 
     // assume volume interleaving, i.e. the second dicom file stores
     // the second slice in the same volume as the first dicom file
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[1], "0020|0032", tag );
+      ExtractBinValEntry( allHeaders[1], 0x0020, 0x0032, tag );
     float x1, y1, z1;
     sscanf( tag.c_str(), "%f\\%f\\%f", &x1, &y1, &z1 );
     std::cout << "Slice 1: " << tag << std::endl;
@@ -620,16 +581,8 @@ int main(int argc, char* argv[])
     SliceOrderIS = false;
 
     // for siemens mosaic image, figure out mosaic slice order from 0029|1010
-    tag.clear();
-    gdcm::File *header0 = new gdcm::File;
-
-    header0->SetMaxSizeLoadEntry(65536);
-    header0->SetFileName( filenames[0] );
-    header0->SetLoadMode( gdcm::LD_ALL );
-    header0->Load();
-
     // copy information stored in 0029,1010 into a string for parsing
-    ExtractBinValEntry( header0, 0x0029, 0x1010, tag );
+    ExtractBinValEntry( allHeaders[0], 0x0029, 0x1010, tag );
 
     // parse SliceNormalVector from 0029,1010 tag
     std::vector<double> valueArray(0);
@@ -660,7 +613,8 @@ int main(int argc, char* argv[])
       }
     std::cout << "Mosaic in " << mMosaic << " X " << nMosaic << " blocks (total number of blocks = " << valueArray[0] << ").\n";
     }
-  else if ( vendor.find("Philips") != std::string::npos )
+  else if ( vendor.find("Philips") != std::string::npos 
+    && nSlice > 1) // so this is not a philips multi-frame single dicom file
     {
     MeasurementFrame=LPSDirCos; //Philips oblique scans list the gradients with respect to the ImagePatientOrientation.
     SliceOrderIS = true;
@@ -670,14 +624,12 @@ int main(int argc, char* argv[])
 
     float x0, y0, z0;
     float x1, y1, z1;
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
+    ExtractBinValEntry( allHeaders[0], 0x0020, 0x0032, tag );
     sscanf( tag.c_str(), "%f\\%f\\%f", &x0, &y0, &z0 );
     std::cout << "Slice 0: " << tag << std::endl;
-    tag.clear();
 
     // b-value volume interleaving
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[nVolume], "0020|0032", tag );
+    ExtractBinValEntry( allHeaders[nVolume], 0x0020, 0x0032, tag );
     sscanf( tag.c_str(), "%f\\%f\\%f", &x1, &y1, &z1 );
     std::cout << "Slice 1: " << tag << std::endl;
     x1 -= x0; y1 -= y0; z1 -= z0;
@@ -744,30 +696,21 @@ int main(int argc, char* argv[])
 
     for (unsigned int k = 0; k < nSlice; k += nSliceInVolume)
       {
-      gdcm::File *header0 = new gdcm::File;
-
-      header0->SetMaxSizeLoadEntry(65536);
-      header0->SetFileName( filenames[k] );
-      header0->SetLoadMode( gdcm::LD_ALL );
-      header0->Load();
-
       // parsing bvalue and gradient directions
       vnl_vector_fixed<double, 3> vect3d;
       vect3d.fill( 0 );
       float b = 0;
 
-      gdcm::DocEntry* docEntry = header0->GetFirstEntry();
-
-      ExtractBinValEntry( header0, 0x0043, 0x1039, tag );
+      ExtractBinValEntry( allHeaders[k], 0x0043, 0x1039, tag );
       b = atof( tag.c_str() );
 
-      ExtractBinValEntry( header0, 0x0019, 0x10bb, tag );
+      ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bb, tag );
       vect3d[0] = atof( tag.c_str() );
 
-      ExtractBinValEntry( header0, 0x0019, 0x10bc, tag );
+      ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bc, tag );
       vect3d[1] = atof( tag.c_str() );
 
-      ExtractBinValEntry( header0, 0x0019, 0x10bd, tag );
+      ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bd, tag );
       vect3d[2] = atof( tag.c_str() );
 
       bValues.push_back( b );
@@ -798,71 +741,33 @@ int main(int argc, char* argv[])
     //NOTE:  Philips interleaves the directions, so the all gradient directions can be
     //determined in the first "nVolume" slices which represents the first slice from each
     //of the gradient volumes.
-    tag.clear();
     for (unsigned int k = 0; k < nVolume; k++ /*nSliceInVolume*/)
       {
-      const bool useSuppplement49Definitions = itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0018|9075",  tag);
+      const bool useSuppplement49Definitions = ExtractBinValEntry( allHeaders[k], 0x0018, 0x9075, tag );
       std::string DiffusionDirectionality(tag);//This is either NONE or DIRECTIONAL (or ISOTROPIC or "" if the tag is not found)
 
-      gdcm::File *header = new gdcm::File;
-      if(useSuppplement49Definitions) //The Supplement49 definitions are not properly propogated through itkgdcmIO MetaDataDictionary.
-        {
-        header->SetMaxSizeLoadEntry(65536);
-        header->SetFileName( filenames[k] );
-        //        header->SetLoadMode( );
-        const bool headerLoaded = header->Load();
-        if( headerLoaded == false )
-          {
-          std::cout << "ERROR:  Could not load file: " << filenames[k] << std::endl;
-          exit(-1);
-          }
-        //header->Print();
-        }
-
-      tag.clear();
       bool B0FieldFound = false;
       float b=0.0;
       if (useSuppplement49Definitions == true )
-        {
-        gdcm::BinEntry *binEnt=header->GetBinEntry(0x0018,0x9087);
-        gdcm::ValEntry *valEnt=header->GetValEntry(0x0018,0x9087);
-        if(binEnt != NULL)
-          {
-          B0FieldFound=true;
-          double temp_b=0.0;
-          memcpy(&temp_b,binEnt->GetBinArea(),8);
-          b=temp_b;
-          //itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0018|9087",  tag);
-          }
-        else if(valEnt != NULL)
-          {
-          B0FieldFound=true;
-          double temp_b=0.0;
-          memcpy(&temp_b,valEnt->GetValue().c_str(),8);//This seems very strange to me, it should have been a binary value.
-//          std::cout << "HACK valEnt bValue:  " << valEnt->GetValue() << "  " << temp_b <<std::endl;
-          b=temp_b;
-          //itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0018|9087",  tag);
-          }
-        else
-          {
-          //ENTRY NOT FOUND!
-          std::cout << "No BValue found for image " << filenames[k] << std::endl;
-          }
-        }
+      {
+        B0FieldFound=ExtractBinValEntry( allHeaders[k], 0x0018, 0x9087, tag );;
+        double temp_b=0.0;
+        memcpy(&temp_b,tag.c_str(),8);//This seems very strange to me, it should have been a binary value.
+        b=temp_b;
+      }
       else
-        {
-        B0FieldFound=itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "2001|1003",  tag);;
+      {
+        B0FieldFound=ExtractBinValEntry( allHeaders[k], 0x2001, 0x1003, tag );
         //HJJ -- VAM -- HACK:  This indicates that this field is store in binaryj format.
         //it seems that this would not work consistently across differnt endedness machines.
         memcpy(&b, tag.c_str(), 4);
-        tag.clear();
-        itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "2001|1004",  tag);
+        ExtractBinValEntry( allHeaders[k], 0x2001, 0x1004, tag );
         if((tag.find("I") != std::string::npos) && (b != 0) )
-          {
+        {
           DiffusionDirectionality="ISOTROPIC";
-          }
-        // char const * const temp=tag.c_str();
         }
+        // char const * const temp=tag.c_str();
+      }
 
       vnl_vector_fixed<double, 3> vect3d;
       vect3d.fill( 0 );
@@ -895,12 +800,12 @@ int main(int argc, char* argv[])
         if (useSuppplement49Definitions == true )
           {
           //Use alternate method to get value out of a sequence header (Some Phillips Data).
-          const bool exposedSuccedded=itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0018|9089", tag );
+          const bool exposedSuccedded=ExtractBinValEntry( allHeaders[k], 0x0018, 0x9089, tag );
           if(exposedSuccedded == false)
             {
             //std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
 
-            gdcm::SeqEntry * DiffusionSeqEntry=header->GetSeqEntry(0x0018,0x9076);
+            gdcm::SeqEntry * DiffusionSeqEntry=allHeaders[k]->GetSeqEntry(0x0018,0x9076);
             if(DiffusionSeqEntry == NULL)
               {
               std::cout << "ERROR:  0018|9089 could not be found in Seq Entry 0018|9076" << std::endl;
@@ -972,19 +877,19 @@ int main(int argc, char* argv[])
           {
           float value;
           /*const bool b0exist =*/
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "2005|10b0",  tag);
+          ExtractBinValEntry( allHeaders[k], 0x2005, 0x10b0, tag );
           memcpy(&value, tag.c_str(), 4); //HACK:  VAM -- this does not seem to be endedness compliant.
           vect3d[0] = value;
           tag.clear();
 
           /*const bool b1exist =*/
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "2005|10b1",  tag);
+          ExtractBinValEntry( allHeaders[k], 0x2005, 0x10b1, tag );
           memcpy(&value, tag.c_str(), 4); //HACK:  VAM -- this does not seem to be endedness compliant.
           vect3d[1] = value;
           tag.clear();
 
           /*const bool b2exist =*/
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "2005|10b2",  tag);
+          ExtractBinValEntry( allHeaders[k], 0x2005, 0x10b2, tag );
           memcpy(&value, tag.c_str(), 4); //HACK:  VAM -- this does not seem to be endedness compliant.
           vect3d[2] = value;
           }
@@ -1023,33 +928,7 @@ int main(int argc, char* argv[])
     for (unsigned int k = 0; k < nSlice; k += nStride )
       {
 
-      gdcm::File *header0 = new gdcm::File;
-      gdcm::BinEntry* binEntry;
-
-      header0->SetMaxSizeLoadEntry(65536);
-      header0->SetFileName( filenames[k] );
-      header0->SetLoadMode( gdcm::LD_ALL );
-      header0->Load();
-
-      // copy information stored in 0029,1010 into a string for parsing
-      gdcm::DocEntry* docEntry = header0->GetFirstEntry();
-      while(docEntry)
-        {
-        if ( docEntry->GetKey() == "0029|1010"  )
-          {
-          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-          int binLength = binEntry->GetFullLength();
-          tag.resize( binLength );
-          uint8_t * tagString = binEntry->GetBinArea();
-
-          for (int n = 0; n < binLength; n++)
-            {
-            tag[n] = *(tagString+n);
-            }
-          break;
-          }
-        docEntry = header0->GetNextEntry();
-        }
+      ExtractBinValEntry( allHeaders[k], 0x0029, 0x1010, tag );
 
       // parse B_value from 0029,1010 tag
       std::vector<double> valueArray(0);
