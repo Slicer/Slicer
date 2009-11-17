@@ -513,6 +513,9 @@ int main(int argc, char* argv[])
   std::cout << "=================== numberOfSlicesPerVolume:" << numberOfSlicesPerVolume << std::endl;
 #endif
 
+  itk::Matrix<double,3,3> MeasurementFrame;
+  MeasurementFrame.SetIdentity();
+
   // check ImageOrientationPatient and figure out slice direction in
   // L-P-I (right-handed) system.
   // In Dicom, the coordinate frame is L-P by default. Look at
@@ -579,6 +582,8 @@ int main(int argc, char* argv[])
   if ( vendor.find("GE") != std::string::npos ||
     (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
+    MeasurementFrame.SetIdentity(); //The DICOM version of SIEMENS that uses private tags
+    // has the measurement frame represented as an identity matrix.
     tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
     float x0, y0, z0;
@@ -601,6 +606,8 @@ int main(int argc, char* argv[])
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
+    MeasurementFrame.SetIdentity(); //The DICOM version of SIEMENS that uses private tags
+    // has the measurement frame represented as an identity matrix.
     std::cout << "Siemens SliceMosaic......" << std::endl;
 
     SliceOrderIS = false;
@@ -666,6 +673,7 @@ int main(int argc, char* argv[])
     }
   else if ( vendor.find("Philips") != std::string::npos )
     {
+    MeasurementFrame=LPSDirCos; //Philips oblique scans list the gradients with respect to the ImagePatientOrientation.
     //SliceOrderIS = true;
 
     nSliceInVolume = numberOfSlicesPerVolume;
@@ -695,6 +703,8 @@ int main(int argc, char* argv[])
     }
   else
     {
+    std::cout << " ERROR vendor type not valid" << std::endl;
+    exit(-1);
     }
 
   if ( SliceOrderIS )
@@ -1455,9 +1465,9 @@ int main(int argc, char* argv[])
     // it is necessary to multiply each of the recorded diffusion gradient directions by
     // the inverse of the LPSDirCos.
     header << "measurement frame: "
-      << "(" << (LPSDirCos[0][0]) << ","<< (LPSDirCos[1][0]) << ","<< (LPSDirCos[2][0]) << ") "
-      << "(" << (LPSDirCos[0][1]) << ","<< (LPSDirCos[1][1]) << ","<< (LPSDirCos[2][1]) << ") "
-      << "(" << (LPSDirCos[0][2]) << ","<< (LPSDirCos[1][2]) << ","<< (LPSDirCos[2][2]) << ")"
+      << "(" << (MeasurementFrame[0][0]) << ","<< (MeasurementFrame[1][0]) << ","<< (MeasurementFrame[2][0]) << ") "
+      << "(" << (MeasurementFrame[0][1]) << ","<< (MeasurementFrame[1][1]) << ","<< (MeasurementFrame[2][1]) << ") "
+      << "(" << (MeasurementFrame[0][2]) << ","<< (MeasurementFrame[1][2]) << ","<< (MeasurementFrame[2][2]) << ")"
       << std::endl;
 
     header << "modality:=DWMRI" << std::endl;
@@ -1517,7 +1527,7 @@ int main(int argc, char* argv[])
     protocolGradientsFile << "==================================" << std::endl; 
     protocolGradientsFile << "Direction Cosines: \n" << LPSDirCos << std::endl;
     protocolGradientsFile << "==================================" << std::endl; 
-    protocolGradientsFile << "Inverse Direction Cosines: \n" << LPSDirCos.GetInverse() << std::endl;
+    protocolGradientsFile << "MeasurementFrame: \n" << MeasurementFrame << std::endl;
     protocolGradientsFile << "==================================" << std::endl; 
     for (unsigned int k = 0; k < nUsableVolumes; k++)
       {
@@ -1531,7 +1541,6 @@ int main(int argc, char* argv[])
         << DiffusionVectors[k-nBaseline][1] * scaleFactor << ";"
         << DiffusionVectors[k-nBaseline][2] * scaleFactor << "]" <<std::endl;
       }
-#if 0  // this does not produce anything meaningful
     protocolGradientsFile << "==================================" << std::endl; 
     for (unsigned int k = 0; k < nUsableVolumes; k++)
       {
@@ -1540,23 +1549,8 @@ int main(int argc, char* argv[])
         {
         scaleFactor = sqrt( bValues[k]/maxBvalue );
         }
-      const vnl_vector_fixed<double, 3u> ProtocolGradient= LPSDirCos*DiffusionVectors[k-nBaseline];
-      protocolGradientsFile << "Corrected_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
-        << ProtocolGradient[0] * scaleFactor << ";"
-        << ProtocolGradient[1] * scaleFactor << ";"
-        << ProtocolGradient[2] * scaleFactor << "]" <<std::endl;
-      }
-#endif
-    protocolGradientsFile << "==================================" << std::endl; 
-    for (unsigned int k = 0; k < nUsableVolumes; k++)
-      {
-      float scaleFactor = 0;
-      if (maxBvalue > 0)
-        {
-        scaleFactor = sqrt( bValues[k]/maxBvalue );
-        }
-      const vnl_vector_fixed<double, 3u> InvProtocolGradient= LPSDirCos.GetInverse()*DiffusionVectors[k-nBaseline];
-      protocolGradientsFile << "InvCorrected_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
+      const vnl_vector_fixed<double, 3u> InvProtocolGradient= MeasurementFrame.GetInverse()*DiffusionVectors[k-nBaseline];
+      protocolGradientsFile << "Protocol_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
         << InvProtocolGradient[0] * scaleFactor << ";"
         << InvProtocolGradient[1] * scaleFactor << ";"
         << InvProtocolGradient[2] * scaleFactor << "]" <<std::endl;
