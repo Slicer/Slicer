@@ -758,11 +758,16 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vol)
   
   this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
   this->Threader->SingleMethodExecute();
+
+  delete [] floatDataPtr;
+  floatDataPtr = new float[dataPtrSize];
   
   //handle second volume
   if (input1)
   {
     CopyToFloatBuffer(input1, floatDataPtr, dataPtrSize);
+    this->GradientsArgs->scalarRange[0] = scalarRange1[0];
+    this->GradientsArgs->scalarRange[1] = scalarRange1[1];
     this->GradientsArgs->volume = this->Volume3;
     
     this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
