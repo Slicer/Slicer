@@ -663,7 +663,7 @@ int main(int argc, char* argv[])
   else if ( vendor.find("Philips") != std::string::npos )
     {
     MeasurementFrame=LPSDirCos; //Philips oblique scans list the gradients with respect to the ImagePatientOrientation.
-    //SliceOrderIS = true;
+    SliceOrderIS = true;
 
     nSliceInVolume = numberOfSlicesPerVolume;
     nVolume = nSlice/nSliceInVolume;
@@ -784,6 +784,8 @@ int main(int argc, char* argv[])
         DiffusionVectors.push_back(vect3d);
         }
 
+      std::cout << "B-value: " << b << 
+        "; diffusion direction: " << vect3d[0] << ", " << vect3d[1] << ", " << vect3d[2] << std::endl;
       }
     }
   else if ( vendor.find("Philips") != std::string::npos )
@@ -1105,15 +1107,22 @@ int main(int argc, char* argv[])
     exit(-1);
     }
 
-  // transform gradient directions into RAS frame
-  for (unsigned int k = 0; k < nVolume; k++)
+  // transform gradient directions into RAS frame, it seems that GE 
+  // gradient directions from dicom header is already on RAS system.
+  if ( vendor.find( "GE" ) == std::string::npos )
+  {
+    for (unsigned int k = 0; k < DiffusionVectors.size(); k++)
     {
-    if ( !SliceOrderIS || SliceMosaic )
-      {
-      DiffusionVectors[k][2] = -DiffusionVectors[k][2];  // I -> S
-      DiffusionVectorsOrig[k][2] = -DiffusionVectorsOrig[k][2];  // I -> S
-      }
+      // convert gradient direction represened in L-P-S into R-A-S.
+      // this is independent of slice orders, which seems to make sense.
+      // this can also be done by just negating z component. We choose to
+      // negating both x, and y components.
+      DiffusionVectors[k][0] = -DiffusionVectors[k][0];  // L -> R
+      DiffusionVectorsOrig[k][0] = -DiffusionVectorsOrig[k][0];  // L -> R
+      DiffusionVectors[k][1] = -DiffusionVectors[k][1];  // P -> A
+      DiffusionVectorsOrig[k][1] = -DiffusionVectorsOrig[k][1];  // P -> A
     }
+  }
 
   ///////////////////////////////////////////////
   // write volumes in raw format
