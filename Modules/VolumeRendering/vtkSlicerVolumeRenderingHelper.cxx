@@ -108,10 +108,12 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->CB_UseThreshold = NULL;
   this->FrameThresholding = NULL;
   this->RA_Threshold = NULL;
+  this->SC_ThresholdOpacity = NULL;
 
   this->CB_UseThresholdFg = NULL;
   this->FrameThresholdingFg = NULL;
   this->RA_ThresholdFg = NULL;
+  this->SC_ThresholdOpacityFg = NULL;
 
   //PauseResume
   this->PB_PauseResume = NULL;
@@ -730,7 +732,18 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
     this->RA_Threshold->Create();
     this->RA_Threshold->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
     this->RA_Threshold->SetCommand(this, "ProcessThreshold");
-    this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_Threshold->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_Threshold->GetWidgetName());
+
+    this->SC_ThresholdOpacity = vtkKWScaleWithEntry::New();
+    this->SC_ThresholdOpacity->SetParent(this->FrameThresholding->GetFrame());
+    this->SC_ThresholdOpacity->Create();
+    this->SC_ThresholdOpacity->SetLabelText("Opacity:");
+    this->SC_ThresholdOpacity->SetLabelWidth(8);
+    this->SC_ThresholdOpacity->SetBalloonHelpString("Opacity in thresholding mode.");
+    this->SC_ThresholdOpacity->SetEntryWidth(5);
+    this->SC_ThresholdOpacity->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacity->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ThresholdOpacity->GetWidgetName() );
 
     this->FrameThresholding->CollapseFrame();
   }
@@ -776,8 +789,19 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
     this->RA_ThresholdFg->Create();
     this->RA_ThresholdFg->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
     this->RA_ThresholdFg->SetCommand(this, "ProcessThresholdFg");
-    this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_ThresholdFg->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -expand yes -fill x -padx 2 -pady 2", this->RA_ThresholdFg->GetWidgetName());
 
+    this->SC_ThresholdOpacityFg = vtkKWScaleWithEntry::New();
+    this->SC_ThresholdOpacityFg->SetParent(this->FrameThresholdingFg->GetFrame());
+    this->SC_ThresholdOpacityFg->Create();
+    this->SC_ThresholdOpacityFg->SetLabelText("Opacity:");
+    this->SC_ThresholdOpacityFg->SetLabelWidth(8);
+    this->SC_ThresholdOpacityFg->SetBalloonHelpString("Opacity in thresholding mode.");
+    this->SC_ThresholdOpacityFg->SetEntryWidth(5);
+    this->SC_ThresholdOpacityFg->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacityFg->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ThresholdOpacityFg->GetWidgetName() );
+    
     this->FrameThresholdingFg->CollapseFrame();
   }
 
@@ -871,6 +895,15 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->RA_Threshold = NULL;
   }
 
+  if(this->SC_ThresholdOpacity != NULL)
+  {
+    this->SC_ThresholdOpacity->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacity->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacity->SetParent(NULL);
+    this->SC_ThresholdOpacity->Delete();
+    this->SC_ThresholdOpacity = NULL;
+  }
+  
   if(this->CB_UseThresholdFg != NULL)
   {
     this->CB_UseThresholdFg->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
@@ -891,6 +924,15 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->RA_ThresholdFg->SetParent(NULL);
     this->RA_ThresholdFg->Delete();
     this->RA_ThresholdFg = NULL;
+  }
+
+  if(this->SC_ThresholdOpacityFg != NULL)
+  {
+    this->SC_ThresholdOpacityFg->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacityFg->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_ThresholdOpacityFg->SetParent(NULL);
+    this->SC_ThresholdOpacityFg->Delete();
+    this->SC_ThresholdOpacityFg = NULL;
   }
 }
 
@@ -986,6 +1028,18 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
       this->Gui->RequestRender();
       return;
     }
+
+    if(callerObjectSC == this->SC_ThresholdOpacity->GetWidget())
+    {
+      this->ProcessThreshold(0,0);
+      return;
+    }
+
+    if(callerObjectSC == this->SC_ThresholdOpacityFg->GetWidget())
+    {
+      this->ProcessThresholdFg(0,0);
+      return;
+    }
   }
 
   //scales with entry
@@ -1041,6 +1095,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     }
     else if(callerObjectCheckButton == this->CB_UseThresholdFg->GetWidget())
     {
+      if (vspNode->GetFgVolumeNode() == NULL)
+        return;
+        
       vspNode->SetUseFgThreshold(this->CB_UseThresholdFg->GetWidget()->GetSelectedState());
 
       if (this->CB_UseThresholdFg->GetWidget()->GetSelectedState())
@@ -1188,6 +1245,10 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
   this->SVP_VolumePropertyWidget->Update();
 
+  this->SC_ThresholdOpacity->GetWidget()->SetRange(0, 1);
+  this->SC_ThresholdOpacity->GetWidget()->SetResolution(.001);
+  this->SC_ThresholdOpacity->SetValue(0.95);
+  
   if (vspNode->GetFgVolumeNode())
   {
     vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
@@ -1204,6 +1265,10 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
     this->SVP_VolumePropertyWidgetFg->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSetFg());
     this->SVP_VolumePropertyWidgetFg->SetVolumeProperty(vspNode->GetFgVolumePropertyNode()->GetVolumeProperty());
     this->SVP_VolumePropertyWidgetFg->Update();
+
+    this->SC_ThresholdOpacityFg->GetWidget()->SetRange(0, 1);
+    this->SC_ThresholdOpacityFg->GetWidget()->SetResolution(.001);
+    this->SC_ThresholdOpacityFg->SetValue(0.95);
   }
 
   //------------------------gpu memory size------------------------
@@ -1405,8 +1470,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
   opacity->AddPoint(iData->GetScalarRange()[1], 0.0);
 
   opacity->AddPoint(this->RA_Threshold->GetRange()[0], 0.0);
-  opacity->AddPoint(this->RA_Threshold->GetRange()[0] + step, 1.0);
-  opacity->AddPoint(this->RA_Threshold->GetRange()[1] - step, 1.0);
+  opacity->AddPoint(this->RA_Threshold->GetRange()[0] + step, this->SC_ThresholdOpacity->GetWidget()->GetValue());
+  opacity->AddPoint(this->RA_Threshold->GetRange()[1] - step, this->SC_ThresholdOpacity->GetWidget()->GetValue());
   opacity->AddPoint(this->RA_Threshold->GetRange()[1], 0.0);
 
   vspNode->SetThreshold(this->RA_Threshold->GetRange());
@@ -1435,8 +1500,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
   opacity->AddPoint(iData->GetScalarRange()[1], 0.0);
 
   opacity->AddPoint(this->RA_ThresholdFg->GetRange()[0], 0.0);
-  opacity->AddPoint(this->RA_ThresholdFg->GetRange()[0] + step, 1.0);
-  opacity->AddPoint(this->RA_ThresholdFg->GetRange()[1] - step, 1.0);
+  opacity->AddPoint(this->RA_ThresholdFg->GetRange()[0] + step, this->SC_ThresholdOpacityFg->GetWidget()->GetValue());
+  opacity->AddPoint(this->RA_ThresholdFg->GetRange()[1] - step, this->SC_ThresholdOpacityFg->GetWidget()->GetValue());
   opacity->AddPoint(this->RA_ThresholdFg->GetRange()[1], 0.0);
 
   vspNode->SetThreshold(this->RA_ThresholdFg->GetRange());

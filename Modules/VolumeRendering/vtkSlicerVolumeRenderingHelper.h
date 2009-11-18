@@ -221,11 +221,14 @@ protected:
 
     vtkKWFrameWithLabel       *FrameThresholding;
     vtkKWRange                *RA_Threshold;
+    vtkKWScaleWithEntry       *SC_ThresholdOpacity;
 
     vtkKWCheckButtonWithLabel *CB_UseThresholdFg;
 
     vtkKWFrameWithLabel       *FrameThresholdingFg;
     vtkKWRange                *RA_ThresholdFg;
+    vtkKWScaleWithEntry       *SC_ThresholdOpacityFg;
+    
     vtkKWLoadSaveButton       *LoadVolumePropertyButton;
 
     //-----------------------------------------------------------
