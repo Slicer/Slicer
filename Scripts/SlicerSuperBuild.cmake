@@ -5,7 +5,7 @@ project(Slicer3)
 enable_language(C)
 enable_language(CXX)
 
-cmake_minimum_required(VERSION 2.7)
+cmake_minimum_required(VERSION 2.8)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
@@ -56,74 +56,168 @@ if(APPLE)
     )
 endif()
 
+set(parallelism_level)
+set(build_dir ${CMAKE_CURRENT_BINARY_DIR})
+
 set(proj tcl)
 
-ExternalProject_Add(${proj}
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl"
-  SOURCE_DIR tcl/tcl
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-)
+set(tcl_SVN_REPOSITORY)
+set(tcl_SOURCE_DIR "")
+set(tcl_BINARY_DIR "")
+set(tcl_BUILD_IN_SOURCE 0)
+set(tcl_CONFIGURE_COMMAND "")
+set(tcl_BUILD_COMMAND "")
+set(tcl_INSTALL_COMMAND "")
+set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
+set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
-set(proj tcl-build)
 
-# just download prebuilt binaries of tcl, tk, itcl, widgets on windows.
+if(WIN32)
+  set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
+  set(tcl_SOURCE_DIR tcl-build)
+else()
+  set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
+  set(tcl_SOURCE_DIR tcl/tcl)
+  set(tcl_BUILD_IN_SOURCE 1)
+  set(tcl_CONFIGURE_COMMAND ./unix/configure --prefix=${tcl_build})
+  set(tcl_BUILD_COMMAND make ${parallelism_level})
+  set(tcl_INSTALL_COMMAND make install)
+endif()
+
 ExternalProject_Add(${proj}
-  DEPENDS tcl
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build"
-  SOURCE_DIR tcl-build
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
+  SOURCE_DIR ${tcl_SOURCE_DIR}
+  BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${tcl_CONFIGURE_COMMAND}
+  BUILD_COMMAND ${tcl_BUILD_COMMAND}
+  INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
 )
 
 set(proj tk)
 
+set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
+set(tk_SOURCE_DIR "")
+set(tk_BINARY_DIR "")
+set(tk_BUILD_IN_SOURCE 0)
+set(tk_CONFIGURE_COMMAND "")
+set(tk_BUILD_COMMAND "")
+set(tk_INSTALL_COMMAND "")
+
+if(WIN32)
+  set(tk_SOURCE_DIR tcl/tk)
+elseif(APPLE)
+# uncmd ./configure --with-tcl=./tcl-build/lib --prefix=./tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+  set(tk_DEPENDS tcl)
+  set(tk_SOURCE_DIR tcl/tk)
+  set(tk_BUILD_IN_SOURCE 1)
+  set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
+  set(tk_BUILD_COMMAND make ${parallelism_level})
+  set(tk_INSTALL_COMMAND make install)
+else()
+  set(tk_DEPENDS tcl)
+  set(tk_SOURCE_DIR tcl/tk)
+  set(tk_BUILD_IN_SOURCE 1)
+  set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
+  set(tk_BUILD_COMMAND make ${parallelism_level})
+  set(tk_INSTALL_COMMAND make install)
+endif()
+
 ExternalProject_Add(${proj}
-  DEPENDS tcl-build
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk"
-  SOURCE_DIR tcl/tk
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  DEPENDS tcl
+  SVN_REPOSITORY ${tk_SVN_REPOSITORY}
+  SOURCE_DIR ${tk_SOURCE_DIR}
+  BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
+  BUILD_COMMAND ${tk_BUILD_COMMAND}
+  INSTALL_COMMAND ${tk_INSTALL_COMMAND}
 )
 
 set(proj itcl)
 
-ExternalProject_Add(${proj}
-  DEPENDS tcl-build
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl"
-  SOURCE_DIR tcl/incrTcl
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-)
+set(itcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
+set(itcl_BUILD_IN_SOURCE 0)
+set(itcl_CONFIGURE_COMMAND "")
+set(itcl_BUILD_COMMAND "")
+set(itcl_INSTALL_COMMAND "")
 
+if(WIN32)
+elseif(APPLE)
+  set(itcl_BUILD_IN_SOURCE 1)
+  set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+  set(itcl_BUILD_COMMAND make ${parallelism_level} all)
+  set(itcl_INSTALL_COMMAND make install)
+else()
+  set(itcl_BUILD_IN_SOURCE 1)
+  set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+  set(itcl_BUILD_COMMAND make ${parallelism_level} all)
+  set(itcl_INSTALL_COMMAND make install)
+endif()
+
+ExternalProject_Add(${proj}
+  DEPENDS tk
+  SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
+  SOURCE_DIR tcl/incrTcl
+  BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
+  BUILD_COMMAND ${itcl_BUILD_COMMAND}
+  INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
+)
 
 set(proj iwidgets)
 
+set(iwidgets_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets")
+set(iwidgets_BUILD_IN_SOURCE 0)
+set(iwidgets_CONFIGURE "")
+set(iwidgets_BUILD "")
+set(iwidgets_INSTALL "")
+
+if(WIN32)
+else()
+  set(iwidgets_BUILD_IN_SOURCE 1)
+  set(iwidgets_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --with-itcl=${tcl_base}/incrTcl --prefix=${tcl_build})
+  set(iwidgets_BUILD make all) # iwidgets doesn't build in parallel
+  set(iwidgets_INSTAL make install)
+endif()
+
 ExternalProject_Add(${proj}
-  DEPENDS tcl-build
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets"
+  DEPENDS tcl
+  SVN_REPOSITORY ${iwidgets_SVN}
   SOURCE_DIR tcl/iwidgets
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  BUILD_IN_SOURCE ${iwidgets_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${iwidgets_CONFIGURE}
+  BUILD_COMMAND ${iwidgets_BUILD}
+  INSTALL_COMMAND ${iwidgets_INSTALL}
 )
 
 set(proj blt)
 
+set(blt_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt")
+set(blt_BUILD_IN_SOURCE 0)
+set(blt_CONFIGURE "")
+set(blt_BUILD "")
+set(blt_INSTALL "")
+
+if(WIN32)
+else()
+  set(blt_BUILD_IN_SOURCE 1)
+  set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+  set(blt_BUILD make ${parallelism_level})
+  set(blt_INSTAL make install)
+endif()
+
 ExternalProject_Add(${proj}
-  DEPENDS tcl-build
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt"
+  DEPENDS tcl tk
+  SVN_REPOSITORY ${blt_SVN}
   SOURCE_DIR tcl/blt
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  BUILD_IN_SOURCE ${blt_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${blt_CONFIGURE}
+  BUILD_COMMAND ${blt_BUILD}
+  INSTALL_COMMAND ${btl_INSTALL}
 )
 
 set(proj python)
+
+if(WIN32)
 
 set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
 string(REPLACE "/" "\\" python_sln ${python_sln})
@@ -256,19 +350,58 @@ ExternalProject_Add_Step(${proj} CopyPythonDll
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
   DEPENDEES install
   )
+else(WIN32)
+
+  set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
+  set(python_BUILD_IN_SOURCE 1)
+  set(python_CONFIGURE sh configure --prefix=${build_dir}/python-build --with-tcl=${tcl_build} --enable-shared)
+  set(python_BUILD make)
+  set(python_INSTALL make install)
+
+  ExternalProject_Add(${proj}
+    DEPENDS tcl tk
+    SVN_REPOSITORY ${python_SVN}
+    SOURCE_DIR python
+    BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${python_CONFIGURE}
+    BUILD_COMMAND ${python_BUILD}
+    INSTALL_COMMAND ${python_INSTALL}
+  )
+endif(WIN32)
 
 # Get and build netlib (blas and lapack)
 
 set(proj blas)
 
+set(blas_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS")
+set(blas_BUILD_IN_SOURCE 0)
+set(blas_CONFIGURE "")
+set(blas_BUILD "")
+set(blas_INSTALL "")
+
+if(WIN32)
+else()
+  set(blas_BUILD_IN_SOURCE 1)
+#  set(blas_CONFIGURE sh configure)
+  set(blas_BUILD gfortran -O3 -fno-second-underscore -fPIC -m64 -c *f)
+#  set(blas_INSTAL make install)
+endif()
+
 ExternalProject_Add(${proj}
   DEPENDS python
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS"
+  SVN_REPOSITORY ${blas_SVN}
   SOURCE_DIR netlib/BLAS
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  BUILD_IN_SOURCE ${blas_BUILD_IN_SOURCE}
+  CONFIGURE_COMMAND ${blas_CONFIGURE}
+  BUILD_COMMAND ${blas_BUILD}
+  INSTALL_COMMAND ${blas_INSTALL}
 )
+
+if(NOT WIN32)
+  
+endif(NOT WIN32)
+
+return()
 
 set(proj lapack)
 
