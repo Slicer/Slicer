@@ -115,6 +115,14 @@ protected slots:
   virtual void onAdd();
   virtual void onRemove();
   virtual void onEdit();
+
+protected:
+  void setComboBox(QComboBox* comboBox);
+  QModelIndex rootModelIndex()const;
+  void setRootModelIndex(const QModelIndex& root);
+  int modelColumn()const;
+  QAbstractItemModel* model()const;
+
 private slots:
   //void onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end );
   void onRowsAboutToBeRemoved(const QModelIndex & parent, int start, int end);
@@ -122,6 +130,8 @@ private slots:
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
 
 private:
+  void connectComboBox(QComboBox*);
+
   struct qInternal; 
   qInternal * Internal;
 

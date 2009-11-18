@@ -16,6 +16,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QString NodeType READ nodeType WRITE setNodeType)
+  Q_PROPERTY(bool ShowHidden READ showHidden WRITE setShowHidden)
   
 public:
   // Superclass typedef
@@ -29,6 +30,12 @@ public:
   // Set/Get node type 
   QString nodeType()const ; 
   void setNodeType(const QString& nodeType); 
+
+  // Description:
+  // If a vtkMRMLNode has the property HideFromEditors set to true,
+  // bypass the property and show the node anyway.
+  void setShowHidden(bool);
+  bool showHidden()const;
   
   // Description:
   // Set/Get MRML scene
@@ -98,6 +105,7 @@ protected slots:
   void onItemRemoved(int index);
   
 protected:
+  virtual void addNodeInternal(vtkMRMLNode* mrmlNode);
   virtual void nodeIdSelected(int index);
   vtkMRMLNode* node(int index)const;
   vtkMRMLNode* node(const QString& id)const;

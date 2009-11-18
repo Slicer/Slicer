@@ -13,6 +13,7 @@ SET(qMRMLWidgetsPlugin_SRCS
   qMRMLLinearTransformSliderPlugin.cxx
   qMRMLMatrixWidgetPlugin.cxx
   qMRMLNodeSelectorPlugin.cxx
+  qMRMLNodeTreeSelectorPlugin.cxx
   qMRMLTransformSlidersPlugin.cxx
   )
 
@@ -21,6 +22,7 @@ SET(qMRMLWidgetsPlugin_MOC_SRCS
   qMRMLLinearTransformSliderPlugin.h
   qMRMLMatrixWidgetPlugin.h
   qMRMLNodeSelectorPlugin.h
+  qMRMLNodeTreeSelectorPlugin.h
   qMRMLTransformSlidersPlugin.h
   )
 

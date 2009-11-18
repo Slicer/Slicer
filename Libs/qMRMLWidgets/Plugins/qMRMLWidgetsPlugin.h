@@ -4,6 +4,7 @@
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLNodeSelectorPlugin.h"
+#include "qMRMLNodeTreeSelectorPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -23,6 +24,7 @@ public:
     plugins << new qMRMLLinearTransformSliderPlugin
             << new qMRMLMatrixWidgetPlugin
             << new qMRMLNodeSelectorPlugin
+            << new qMRMLNodeTreeSelectorPlugin
             << new qMRMLTransformSlidersPlugin;
     return plugins;
     }

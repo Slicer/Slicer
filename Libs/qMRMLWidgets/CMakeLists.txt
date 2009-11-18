@@ -22,6 +22,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLUtils.cxx
   qMRMLNodeSelector.h
   qMRMLNodeSelector.cxx
+  qMRMLNodeTreeSelector.h
+  qMRMLNodeTreeSelector.cxx
   qMRMLLinearTransformSlider.h
   qMRMLLinearTransformSlider.cxx
   qMRMLTransformSliders.h
@@ -35,6 +37,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qVTKConnection.h
   qVTKObjectEventsObserver.h
   qMRMLNodeSelector.h
+  qMRMLNodeTreeSelector.h
   qMRMLLinearTransformSlider.h
   qMRMLTransformSliders.h
   qMRMLMatrixWidget.h
