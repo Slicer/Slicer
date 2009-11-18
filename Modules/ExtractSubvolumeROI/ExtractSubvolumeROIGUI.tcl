@@ -309,6 +309,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
 
     set inputVolume [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
     if {$inputVolume == "" || $inputVolume == $::ExtractSubvolumeROI($this,inputVolume) || $roiNode == ""} {
+      puts "Something not set, returning"
       return
     }
     set ::ExtractSubvolumeROI($this,inputVolume) $inputVolume
@@ -323,7 +324,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       $roilabelImage SetExtent 0 1 0 1 0 1
       $roilabelImage SetDimensions 1 1 1
       $roilabelImage SetScalarTypeToChar
-      $roilabelImage SetScalarComponentFromFloat 0 0 0 0 1
+      $roilabelImage SetScalarComponentFromFloat 0 0 0 0 17
       $roilabelImage AllocateScalars
       $::ExtractSubvolumeROI($this,roilabelNode) SetAndObserveImageData $roilabelImage
       $roilabelImage Delete
