@@ -11,6 +11,7 @@ INCLUDE_DIRECTORIES(
 SET(qCTKWidgetsPlugin_SRCS
   qCTKWidgetsPlugin.cxx  
   qCTKWidgetsBasePlugin.cxx
+
   qCTKCollapsibleGroupBoxPlugin.cxx
   qCTKCollapsibleWidgetPlugin.cxx
   qCTKCollapsibleWidget2Plugin.cxx
@@ -18,12 +19,14 @@ SET(qCTKWidgetsPlugin_SRCS
   qCTKColorPickerButtonPlugin.cxx
   qCTKCoordinatesWidgetPlugin.cxx
   qCTKExtensionFactory.cxx
-  qCTKTitleComboBoxPlugin.cxx
   qCTKNumericInputPlugin.cxx
+  qCTKTitleComboBoxPlugin.cxx
+  qCTKTreeComboBoxPlugin.cxx
   )
 
 SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKWidgetsPlugin.h
+
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKCollapsibleWidgetPlugin.h 
   qCTKCollapsibleWidget2Plugin.h
@@ -31,8 +34,9 @@ SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
   qCTKExtensionFactory.h
-  qCTKTitleComboBoxPlugin.h
   qCTKNumericInputPlugin.h
+  qCTKTitleComboBoxPlugin.h
+  qCTKTreeComboBoxPlugin.h
   )
 
 QT4_WRAP_CPP(qCTKWidgetsPlugin_SRCS ${qCTKWidgetsPlugin_MOC_SRCS})

@@ -31,14 +31,16 @@ SET(qCTKWidgets_SRCS
   qCTKCoordinatesWidget.cxx
   qCTKMatrixWidget.h
   qCTKMatrixWidget.cxx
+  qCTKNumericInput.h
+  qCTKNumericInput.cxx
   qCTKSlider.h
   qCTKSlider.cxx
   qCTKSliderSpinBoxLabel.h
   qCTKSliderSpinBoxLabel.cxx
   qCTKTitleComboBox.h
   qCTKTitleComboBox.cxx
-  qCTKNumericInput.h
-  qCTKNumericInput.cxx
+  qCTKTreeComboBox.h
+  qCTKTreeComboBox.cxx
   )
 
 # Headers that should run through moc
@@ -50,10 +52,11 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
   qCTKMatrixWidget.h
+  qCTKNumericInput.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
   qCTKTitleComboBox.h
-  qCTKNumericInput.h
+  qCTKTreeComboBox.h
   )
   
 # UI files
