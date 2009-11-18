@@ -552,7 +552,14 @@ int main(int argc, char* argv[])
   if ( vendor.find("GE") != std::string::npos ||
     (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
+    if(vendor.find("GE") != std::string::npos)
+      {
       MeasurementFrame=LPSDirCos;
+      }
+    else //SIEMENS data assumes a measurement frame that is the identity matrix.
+      {
+      MeasurementFrame.SetIdentity();
+      }
     // has the measurement frame represented as an identity matrix.
       ExtractBinValEntry( allHeaders[0], 0x0020, 0x0032, tag );
       float x0, y0, z0;
@@ -574,7 +581,7 @@ int main(int argc, char* argv[])
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
-    MeasurementFrame = LPSDirCos; //The DICOM version of SIEMENS that uses private tags
+    MeasurementFrame.SetIdentity(); //The DICOM version of SIEMENS that uses private tags
     // has the measurement frame represented as an identity matrix.
     std::cout << "Siemens SliceMosaic......" << std::endl;
 
@@ -655,10 +662,6 @@ int main(int argc, char* argv[])
   else
     {
     std::cout << "Slice order is SI\n";
-    }
-
-  if (!SliceOrderIS)
-    {
     (NRRDSpaceDirection[0][2]) = -(NRRDSpaceDirection[0][2]);
     (NRRDSpaceDirection[1][2]) = -(NRRDSpaceDirection[1][2]);
     (NRRDSpaceDirection[2][2]) = -(NRRDSpaceDirection[2][2]);
@@ -677,9 +680,9 @@ int main(int argc, char* argv[])
   float maxBvalue = 0;
   int nBaseline = 0;
 
-  // DiffusionVectorsOrig is only of debug purposes.
+  // UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem is only of debug purposes.
   std::vector< vnl_vector_fixed<double, 3> > DiffusionVectors;
-  std::vector< vnl_vector_fixed<double, 3> > DiffusionVectorsOrig;
+  std::vector< vnl_vector_fixed<double, 3> > UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem;
   ////////////////////////////////////////////////////////////
   // vendor dependent tags.
   // read in gradient vectors and determin nBaseline and nMeasurement
@@ -717,12 +720,12 @@ int main(int argc, char* argv[])
       if (b == 0)
         {
         vect3d.fill( 0 );
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         DiffusionVectors.push_back(vect3d);
-        DiffusionVectorsOrig.push_back(vect3d);
         }
       else
         {
-        DiffusionVectorsOrig.push_back(vect3d);
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         }
@@ -785,8 +788,8 @@ int main(int argc, char* argv[])
       else if (( !B0FieldFound || b == 0 ) || ( DiffusionDirectionality.find("NONE") != std::string::npos )   )
         { //Deal with b0 images
         bValues.push_back(b);
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         DiffusionVectors.push_back(vect3d);
-        DiffusionVectorsOrig.push_back(vect3d);
         useVolume.push_back(1);
         continue;
         }
@@ -894,7 +897,7 @@ int main(int argc, char* argv[])
           vect3d[2] = value;
           }
 
-        DiffusionVectorsOrig.push_back(vect3d);
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         }
@@ -942,8 +945,8 @@ int main(int argc, char* argv[])
         std::cout << "Warning: Cannot find complete information on B_value in 0029|1010\n";
         bValues.push_back( 0.0 );
         vect3d.fill( 0.0 );
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         DiffusionVectors.push_back(vect3d);
-        DiffusionVectorsOrig.push_back(vect3d);
         continue;
         }
       else
@@ -962,15 +965,15 @@ int main(int argc, char* argv[])
         {
         std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010\n";
         vect3d.fill( 0 );
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         DiffusionVectors.push_back(vect3d);
-        DiffusionVectorsOrig.push_back(vect3d);
         }
       else
         {
         vect3d[0] = valueArray[0];
         vect3d[1] = valueArray[1];
         vect3d[2] = valueArray[2];
-        DiffusionVectorsOrig.push_back(vect3d);
+        UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
         vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         int p = bValues.size();
@@ -980,28 +983,29 @@ int main(int argc, char* argv[])
     }
   else
     {
-    //HACK: --VAM  is this even a valid state?  Should a warning be created and thrown here?
     std::cout << "ERROR: Unknown scanner vendor " << vendor << std::endl;
     std::cout << "       this dti file format is properly handled." << std::endl;
     exit(-1);
     }
 
-  // transform gradient directions into RAS frame, it seems that GE 
-  // gradient directions from dicom header is already on RAS system.
-  if ( vendor.find( "GE" ) == std::string::npos )
-  {
-    for (unsigned int k = 0; k < DiffusionVectors.size(); k++)
+  // transform gradient directions into RAS frame if requested
+  if ( vendor.find( "GE" ) != std::string::npos ) //HACK: THIS JUST SEEMS WRONG TO ME!
     {
+    // it seems that GE 
+    // gradient directions from dicom header is already on RAS system.
+    }
+  else
+    {
+    for (unsigned int k = 0; k < DiffusionVectors.size(); k++)
+      {
       // convert gradient direction represened in L-P-S into R-A-S.
       // this is independent of slice orders, which seems to make sense.
       // this can also be done by just negating z component. We choose to
       // negating both x, and y components.
-      DiffusionVectors[k][0] = -DiffusionVectors[k][0];  // L -> R
-      DiffusionVectorsOrig[k][0] = -DiffusionVectorsOrig[k][0];  // L -> R
-      DiffusionVectors[k][1] = -DiffusionVectors[k][1];  // P -> A
-      DiffusionVectorsOrig[k][1] = -DiffusionVectorsOrig[k][1];  // P -> A
+      DiffusionVectors[k]=OrientationMatrix*DiffusionVectors[k];
+      MeasurementFrame=OrientationMatrix*MeasurementFrame;
+      }
     }
-  }
 
   ///////////////////////////////////////////////
   // write volumes in raw format
@@ -1178,9 +1182,9 @@ int main(int argc, char* argv[])
       std::cout << "ERROR:  DiffusionVectors are the wrong size." <<  count << " != " << DiffusionVectors.size() << std::endl;
       exit(-1);
       }
-    if( count != DiffusionVectorsOrig.size() )
+    if( count != UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.size() )
       {
-      std::cout << "ERROR:  DiffusionVectorsOrig are the wrong size." <<  count << " != " << DiffusionVectorsOrig.size() << std::endl;
+      std::cout << "ERROR:  UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem are the wrong size." <<  count << " != " << UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.size() << std::endl;
       exit(-1);
       }
     }
@@ -1191,6 +1195,7 @@ int main(int argc, char* argv[])
     }
 
 
+    const vnl_matrix_fixed<double,3,3> InverseMeasurementFrame= MeasurementFrame.GetInverse();
     {
     //////////////////////////////////////////////
     // write header file
@@ -1244,11 +1249,22 @@ int main(int argc, char* argv[])
     // In order to compare two different scans to determine if the same protocol was prosribed,
     // it is necessary to multiply each of the recorded diffusion gradient directions by
     // the inverse of the LPSDirCos.
-    header << "measurement frame: "
-      << "(" << (MeasurementFrame[0][0]) << ","<< (MeasurementFrame[1][0]) << ","<< (MeasurementFrame[2][0]) << ") "
-      << "(" << (MeasurementFrame[0][1]) << ","<< (MeasurementFrame[1][1]) << ","<< (MeasurementFrame[2][1]) << ") "
-      << "(" << (MeasurementFrame[0][2]) << ","<< (MeasurementFrame[1][2]) << ","<< (MeasurementFrame[2][2]) << ")"
-      << std::endl;
+    if(useIdentityMeaseurementFrame)
+      {
+      header << "measurement frame: "
+        << "(" << 1 << ","<< 0 << ","<< 0 << ") "
+        << "(" << 0 << ","<< 1 << ","<< 0 << ") "
+        << "(" << 0 << ","<< 0 << ","<< 1 << ")"
+        << std::endl;
+      }
+    else
+      {
+      header << "measurement frame: "
+        << "(" << (MeasurementFrame[0][0]) << ","<< (MeasurementFrame[1][0]) << ","<< (MeasurementFrame[2][0]) << ") "
+        << "(" << (MeasurementFrame[0][1]) << ","<< (MeasurementFrame[1][1]) << ","<< (MeasurementFrame[2][1]) << ") "
+        << "(" << (MeasurementFrame[0][2]) << ","<< (MeasurementFrame[1][2]) << ","<< (MeasurementFrame[2][2]) << ")"
+        << std::endl;
+      }
 
     header << "modality:=DWMRI" << std::endl;
     //  float bValue = 0;
@@ -1276,10 +1292,21 @@ int main(int argc, char* argv[])
         scaleFactor = sqrt( bValues[k]/maxBvalue );
         }
       //std::cout << "For Multiple BValues: " << k << ": " << scaleFactor << std::endl;
-      header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
-        << DiffusionVectors[k-nBaseline][0] * scaleFactor << "   "
-        << DiffusionVectors[k-nBaseline][1] * scaleFactor << "   "
-        << DiffusionVectors[k-nBaseline][2] * scaleFactor << std::endl;
+      if(useIdentityMeaseurementFrame)
+        {
+        vnl_vector_fixed<double,3> RotatedDiffusionVectors=InverseMeasurementFrame*(DiffusionVectors[k-nBaseline]);
+        header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
+          << RotatedDiffusionVectors[0] * scaleFactor << "   "
+          << RotatedDiffusionVectors[1] * scaleFactor << "   "
+          << RotatedDiffusionVectors[2] * scaleFactor << std::endl;
+        }
+      else
+        {
+        header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
+          << DiffusionVectors[k-nBaseline][0] * scaleFactor << "   "
+          << DiffusionVectors[k-nBaseline][1] * scaleFactor << "   "
+          << DiffusionVectors[k-nBaseline][2] * scaleFactor << std::endl;
+        }
 
       //std::cout << "Consistent Orientation Checks." << std::endl;
       //std::cout << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
@@ -1329,11 +1356,11 @@ int main(int argc, char* argv[])
         {
         scaleFactor = sqrt( bValues[k]/maxBvalue );
         }
-      const vnl_vector_fixed<double, 3u> InvProtocolGradient= MeasurementFrame.GetInverse()*DiffusionVectors[k-nBaseline];
+      const vnl_vector_fixed<double, 3u> ProtocolGradient= InverseMeasurementFrame*DiffusionVectors[k-nBaseline];
       protocolGradientsFile << "Protocol_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
-        << InvProtocolGradient[0] * scaleFactor << ";"
-        << InvProtocolGradient[1] * scaleFactor << ";"
-        << InvProtocolGradient[2] * scaleFactor << "]" <<std::endl;
+        << ProtocolGradient[0] * scaleFactor << ";"
+        << ProtocolGradient[1] * scaleFactor << ";"
+        << ProtocolGradient[2] * scaleFactor << "]" <<std::endl;
       }
     protocolGradientsFile << "==================================" << std::endl; 
     protocolGradientsFile.close();
