@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>243</width>
-    <height>132</height>
+    <width>304</width>
+    <height>94</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,35 +26,35 @@
       <string>Camera</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="ViewNodeLabel">
-         <property name="text">
-          <string>View:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="qMRMLNodeSelector" name="ViewNodeSelector">
-         <property name="NodeType">
-          <string>vtkMRMLViewNode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="CameraNodeLabel">
-         <property name="text">
-          <string>Camera:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="qMRMLNodeSelector" name="CameraNodeSelector">
-         <property name="NodeType">
-          <string>vtkMRMLCameraNode</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <item row="0" column="0">
+       <widget class="QLabel" name="ViewNodeLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeSelector" name="ViewNodeSelector">
+        <property name="NodeType">
+         <string>vtkMRMLViewNode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="CameraNodeLabel">
+        <property name="text">
+         <string>Camera:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeSelector" name="CameraNodeSelector">
+        <property name="NodeType">
+         <string>vtkMRMLCameraNode</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="1" column="0">
@@ -100,7 +100,7 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>297</x>
+     <x>286</x>
      <y>74</y>
     </hint>
     <hint type="destinationlabel">
@@ -120,8 +120,8 @@
      <y>144</y>
     </hint>
     <hint type="destinationlabel">
-     <x>110</x>
-     <y>123</y>
+     <x>179</x>
+     <y>86</y>
     </hint>
    </hints>
   </connection>
