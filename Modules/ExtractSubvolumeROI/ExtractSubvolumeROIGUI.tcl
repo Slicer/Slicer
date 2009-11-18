@@ -42,8 +42,6 @@ proc ExtractSubvolumeROITearDownGUI {this} {
   }
 
   unset ::ExtractSubvolumeROI(singleton)
-
-  catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
 }
 
 proc ExtractSubvolumeROIBuildGUI {this} {
@@ -225,6 +223,8 @@ proc ExtractSubvolumeROIBuildGUI {this} {
 
   set ::ExtractSubvolumeROI($this,resliceFilter) [vtkImageReslice New]
   set ::ExtractSubvolumeROI($this,inputVolume) ""
+  set ::ExtractSubvolumeROI($this,roilabelNode) ""
+  set ::ExtractSubvolumeROI($this,roilabelImage) ""
 
   #  set up pointers, observers will be initialized on module enter
   set appGUI $::slicer3::ApplicationGUI
@@ -244,6 +244,8 @@ proc ExtractSubvolumeROIAddGUIObservers {this} {
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,inputSelector)  11000
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
+  # observe TransformModifiedEvent
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 15000
   $this AddObserverByNumber [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] 10000
 #  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 33
     
@@ -310,24 +312,22 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       return
     }
     set ::ExtractSubvolumeROI($this,inputVolume) $inputVolume
-    set dim [[$inputVolume GetImageData] GetWholeExtent]
-    catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
-    set ::ExtractSubvolumeROI($this,labelMap) [vtkImageRectangularSource New]
-    set labelMap $::ExtractSubvolumeROI($this,labelMap)
-    $labelMap SetWholeExtent 0 [expr [lindex $dim 1]] 0 [expr [lindex $dim 3]] 0 [expr [lindex $dim 5]]
-    $labelMap SetOutputScalarTypeToShort
-    $labelMap SetInsideGraySlopeFlag 0
-    $labelMap SetInValue 17
-    $labelMap SetOutValue 0
-    $labelMap Update
 
-    # create label volume to keep ROI visualization
-    # TODO: delete the older label volume if it existed
+    # ROI label visualization
     set scene [[$this GetLogic] GetMRMLScene]
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-    set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "Subvolume_ROI_Label"]
-#    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
-    $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
+    if { $::ExtractSubvolumeROI($this,roilabelNode) == "" } {
+      set ::ExtractSubvolumeROI($this,roilabelNode) [$volumesLogic \
+        CreateLabelVolume $scene $inputVolume "Subvolume_ROI_Label"]
+      set roilabelImage [vtkImageData New]
+      $roilabelImage SetExtent 0 1 0 1 0 1
+      $roilabelImage SetDimensions 1 1 1
+      $roilabelImage SetScalarTypeToChar
+      $roilabelImage SetScalarComponentFromFloat 0 0 0 0 1
+      $roilabelImage AllocateScalars
+      $::ExtractSubvolumeROI($this,roilabelNode) SetAndObserveImageData $roilabelImage
+      $roilabelImage Delete
+    }
 
     set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
     for { set j 0 } { $j < $numCnodes } { incr j } {
@@ -337,7 +337,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       } else {
         $cnode SetReferenceBackgroundVolumeID [$inputVolume GetID]
       }
-      $cnode SetReferenceForegroundVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+      $cnode SetReferenceForegroundVolumeID [$::ExtractSubvolumeROI($this,roilabelNode) GetID]
       $cnode SetForegroundOpacity 0.6
     }
 
@@ -345,7 +345,6 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     ExtractSubvolumeROIUpdateLabelMap $this
   }
 
-  # TODO: account for the volume parent transform for mouse clicks
   if {$event == "LeftButtonPressEvent" || $event == "RightButtonPressEvent"} {
   
     set redStyle $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
@@ -570,9 +569,6 @@ proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
     } else {
       [$roiVisibility GetWidget] SetImageToIcon [$visIcons GetInvisibleIcon]
     }
-    if { $::ExtractSubvolumeROI($this,labelMap) == ""} {
-      return
-    }
     ExtractSubvolumeROIUpdateLabelMap $this
   }
 }
@@ -636,13 +632,6 @@ proc ExtractSubvolumeROIApply {this} {
     $dialog Invoke
     $dialog Delete
   }
-
-  set bboxIJKMinX [expr int($::ExtractSubvolumeROI($this,bboxIJKMinX))]
-  set bboxIJKMinY [expr int($::ExtractSubvolumeROI($this,bboxIJKMinY))]
-  set bboxIJKMinZ [expr int($::ExtractSubvolumeROI($this,bboxIJKMinZ))]
-  set bboxIJKMaxX [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxX))]
-  set bboxIJKMaxY [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxY))]
-  set bboxIJKMaxZ [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxZ))]
 
   # prepare the output volume node
 #  $outVolumeNode CopyWithScene $volumeNode
@@ -812,115 +801,38 @@ proc ExtractSubvolumeROIErrorDialog {this errorText} {
 }
 
 proc ExtractSubvolumeROIUpdateLabelMap {this} {
-  set labelMap $::ExtractSubvolumeROI($this,labelMap)
-  set roiNode $::ExtractSubvolumeROI($this,observedROINode)
-  set volumeNode $::ExtractSubvolumeROI($this,inputVolume)
+  set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
 
-  set roiXYZ [$roiNode GetXYZ]
-  set roiRadiusXYZ [$roiNode GetRadiusXYZ]
+  set roiTnode [$roiNode GetParentTransformNode]
+  set roiXform [vtkMatrix4x4 New]
+  $roiXform Identity
 
-  set bboxRAS0(0) {[expr [lindex $roiXYZ 0] - [lindex $roiRadiusXYZ 0]]}
-  set bboxRAS0(1) {[expr [lindex $roiXYZ 1] - [lindex $roiRadiusXYZ 1]]}
-  set bboxRAS0(2) {[expr [lindex $roiXYZ 2] - [lindex $roiRadiusXYZ 2]]}
-
-  set bboxRAS1(0) {[expr [lindex $roiXYZ 0] + [lindex $roiRadiusXYZ 0]]}
-  set bboxRAS1(1) {[expr [lindex $roiXYZ 1] + [lindex $roiRadiusXYZ 1]]}
-  set bboxRAS1(2) {[expr [lindex $roiXYZ 2] + [lindex $roiRadiusXYZ 2]]}
-
-  set ras2ijk [vtkMatrix4x4 New]
-  $volumeNode GetRASToIJKMatrix $ras2ijk
-  scan [lrange [eval $ras2ijk MultiplyPoint $bboxRAS0(0) $bboxRAS0(1) $bboxRAS0(2) 1 ] 0 2] "%f%f%f" \
-    bboxIJK0(0) bboxIJK0(1) bboxIJK0(2)
-  scan [lrange [eval $ras2ijk MultiplyPoint $bboxRAS1(0) $bboxRAS1(1) $bboxRAS1(2) 1 ] 0 2] "%f%f%f" \
-    bboxIJK1(0) bboxIJK1(1) bboxIJK1(2)
-  set roiIJK [lrange [eval $ras2ijk MultiplyPoint [lindex $roiXYZ 0] [lindex $roiXYZ 1] [lindex $roiXYZ 2] 1] 0 2]
-  $ras2ijk Delete
-
-  for {set i 0} {$i<3} {incr i} {
-    if {$bboxIJK0($i) > $bboxIJK1($i)} {
-      set tmp $bboxIJK0($i)
-      set bboxIJK0($i) $bboxIJK1($i)
-      set bboxIJK1($i) $tmp
-    }
+  if { $roiTnode != "" } {
+    $roiTnode GetMatrixTransformToWorld $roiXform
   }
 
-  $labelMap SetCenter [expr int([lindex $roiIJK 0])] [expr int([lindex $roiIJK 1])] [expr int([lindex $roiIJK 2])]
-  set sizeX [expr int([expr $bboxIJK1(0)-$bboxIJK0(0)-1])]
-  set sizeY [expr int([expr $bboxIJK1(1)-$bboxIJK0(1)-1])]
-  set sizeZ [expr int([expr $bboxIJK1(2)-$bboxIJK0(2)-1])]
+  scan [$roiNode GetRadiusXYZ] "%f%f%f" rX rY rZ
+  scan [$roiNode GetXYZ] "%f%f%f" cX cY cZ
 
-  $labelMap SetSize $sizeX $sizeY $sizeZ
-  $labelMap Update
-  $::ExtractSubvolumeROI($this,labelMapNode) Modified
+  set outputSpacingX [expr $rX*2.]
+  set outputSpacingY [expr $rY*2.]
+  set outputSpacingZ [expr $rZ*2.]
 
-  set ::ExtractSubvolumeROI($this,bboxIJKMinX) [expr int($bboxIJK0(0))]
-  set ::ExtractSubvolumeROI($this,bboxIJKMinY) [expr int($bboxIJK0(1))]
-  set ::ExtractSubvolumeROI($this,bboxIJKMinZ) [expr int($bboxIJK0(2))]
+  set outputIJKToRAS [vtkMatrix4x4 New]
+  $outputIJKToRAS SetElement 0 0 $outputSpacingX
+  $outputIJKToRAS SetElement 1 1 $outputSpacingY
+  $outputIJKToRAS SetElement 2 2 $outputSpacingZ
+  $outputIJKToRAS SetElement 0 3 [expr $cX]
+  $outputIJKToRAS SetElement 1 3 [expr $cY]
+  $outputIJKToRAS SetElement 2 3 [expr $cZ]
 
-  set ::ExtractSubvolumeROI($this,bboxIJKMaxX) [expr int($bboxIJK1(0))]
-  set ::ExtractSubvolumeROI($this,bboxIJKMaxY) [expr int($bboxIJK1(1))]
-  set ::ExtractSubvolumeROI($this,bboxIJKMaxZ) [expr int($bboxIJK1(2))]
-
-  $labelMap Modified
-}
-
-proc ExtractSubvolumeROICreateOutputVolume {this} {
-
-  set volumeNode [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
-  set outputVolumeNode [$::ExtractSubvolumeROI($this,outputSelector) GetSelected]
-
-  set inputVolumeName [$volumeNode GetName]
-  set outputVolumeName [$outputVolumeNode GetName]
-  $outputVolumeNode SetName "ResampledVolume"
-
-  # from vtkSlicerVolumesLogic
-  set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
-  set scene [[$this GetLogic] GetMRMLScene]
-  $scene AddNode $outputDisplayNode
-
-#  $outputDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
-
-  $outputVolumeNode SetAndObserveDisplayNodeID [$outputDisplayNode GetID]
-  $outputVolumeNode SetModifiedSinceRead 1
-#  $outputVolumeNode SetLabelMap 1
+  $outputIJKToRAS Multiply4x4 $roiXform $outputIJKToRAS $outputIJKToRAS
   
-  set thresh [vtkImageThreshold New]
-  $thresh SetReplaceIn 1
-  $thresh SetReplaceOut 1
-  $thresh SetInValue 0
-  $thresh SetOutValue 0
-  $thresh SetOutputScalarTypeToShort
-  $thresh SetInput [$volumeNode GetImageData]
-  [$thresh GetOutput] Update
-  $outputVolumeNode SetAndObserveImageData [$thresh GetOutput]
+  $::ExtractSubvolumeROI($this,roilabelNode) SetIJKToRASMatrix $outputIJKToRAS
+  $::ExtractSubvolumeROI($this,roilabelNode) Modified
 
-  $thresh Delete
-  $outputDisplayNode Delete
-
-  set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
-
-  set ras2ijk [vtkMatrix4x4 New]
-  set ijk2ras [vtkMatrix4x4 New]
-  $volumeNode GetRASToIJKMatrix $ras2ijk
-  $volumeNode GetIJKToRASMatrix $ijk2ras
-
-  $outputVolumeNode SetRASToIJKMatrix $ras2ijk
-  $outputVolumeNode SetIJKToRASMatrix $ijk2ras
-  
-  $ras2ijk Delete
-  $ijk2ras Delete
-
-  scan [$volumeNode GetOrigin] "%f%f%f" originX originY originZ
-  $outputVolumeNode SetOrigin $originX $originY $originZ
-
-  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
-  $selectionNode Modified
-  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
-
-  # this is here to trigger updates on node selectors
-  $scene InvokeEvent 66000
-  return
+  $outputIJKToRAS Delete
+  $roiXform Delete
 }
 
 proc ExtractSubvolumeROIEnter {this} {
