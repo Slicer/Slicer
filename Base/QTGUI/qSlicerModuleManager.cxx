@@ -227,15 +227,6 @@ void qSlicerModuleManager::showModule(const QString& moduleTitle)
   qDebug() << "Show module:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
   Q_ASSERT(module);
-//   // ----- [To be removed] -----
-//   this->setModulePanelVisible(module);
-//   if (!module)
-//     {
-//     qWarning() << "Failed to show module:" << moduleTitle;
-//     this->setModulePanelVisible(false);
-//     return;
-//     }
-//   // ----- [/To be removed] -----
   this->Internal->ModulePanel->setModule(module);
 }
 
