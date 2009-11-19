@@ -32,8 +32,8 @@ struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
   typedef std::vector<ModuleParameter>::iterator       ParameterIterator;
 
   // Description:
-  void addParamerterGroups(QWidget * parent);
-  void addParamerterGroup(QWidget * parent, QBoxLayout* layout,
+  void addParameterGroups(QWidget * parent);
+  void addParameterGroup(QBoxLayout* layout,
                           const ModuleParameterGroup& parameterGroup);
 
   // Description:
@@ -133,36 +133,32 @@ void qSlicerCLIModule::setupUi()
 
   // TODO
 
-  this->Internal->addParamerterGroups(this);
+  this->Internal->addParameterGroups(this);
 }
 
 //-----------------------------------------------------------------------------
 // Internal methods
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParamerterGroups(QWidget * parent)
+void qSlicerCLIModule::qInternal::addParameterGroups(QWidget * parent)
 {
   // iterate over each parameter group
   for (ParameterGroupConstIterator pgIt = this->ParameterGroups.begin();
        pgIt != this->ParameterGroups.end(); ++pgIt)
     {
-    this->addParamerterGroup(parent, this->VerticalLayout, *pgIt);
+    this->addParameterGroup(this->VerticalLayout, *pgIt);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParamerterGroup(QWidget * parent,
-  QBoxLayout* layout, const ModuleParameterGroup& parameterGroup)
+void qSlicerCLIModule::qInternal::addParameterGroup(QBoxLayout* layout,
+                                                     const ModuleParameterGroup& parameterGroup)
 {
-  Q_ASSERT(parent);
   Q_ASSERT(layout);
 
-  //qCTKCollapsibleWidget2 * collapsibleWidget = new qCTKCollapsibleWidget2(parent);
-  // TODO qCTKCollapsibleWidget2 isn't displayed when added dynamically ?
-  QGroupBox * collapsibleWidget = new QGroupBox();
-  collapsibleWidget->setCheckable(true);
+  qCTKCollapsibleWidget2 * collapsibleWidget = new qCTKCollapsibleWidget2();
   collapsibleWidget->setTitle(QString::fromStdString(parameterGroup.GetLabel()));
-  collapsibleWidget->setChecked(parameterGroup.GetAdvanced() == "true");
+  collapsibleWidget->setCollapsed(parameterGroup.GetAdvanced() == "true");
 
   // Create a vertical layout and add parameter to it
   QVBoxLayout *vbox = new QVBoxLayout;
