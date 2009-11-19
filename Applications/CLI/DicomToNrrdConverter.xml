@@ -45,7 +45,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <boolean>
       <name>useLPS</name>
       <longflag>--useLPS</longflag>
-      <description> Specifies that the output should be in LPS space like the original DICOM data.  The default is to use Slicer3 consistent RAS space. </description>
+      <description> For GE data only.  Specifies that the output should be in LPS space like the original DICOM data.  The default is to use Slicer3 consistent RAS space. </description>
       <default>false</default>
     </boolean>
 
@@ -53,6 +53,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>writeProtocolGradientsFile</name>
       <longflag>--writeProtocolGradientsFile</longflag>
       <description> Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary. </description>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>useIdentityMeaseurementFrame</name>
+      <longflag>--useIdentityMeaseurementFrame</longflag>
+      <description>Adjust all the gradients so that the measurement frame is an identity matrix.</description>
       <default>false</default>
     </boolean>
   </parameters>
