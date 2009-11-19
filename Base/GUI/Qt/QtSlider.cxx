@@ -1,15 +1,13 @@
-
-
 #include "QtSlider.h"
 
-// Qt includes
+// QT includes
 #include <QLineEdit>
 #include <QSlider>
 #include <QHBoxLayout>
 #include <QDoubleValidator>
 
 QtSlider::QtSlider(QWidget* p)
-  : QWidget(p) 
+  : QWidget(p)
 {
   this->BlockUpdate = false;
   this->Value = 0;
@@ -36,7 +34,7 @@ QtSlider::QtSlider(QWidget* p)
                    this, SLOT(textChanged(const QString&)));
   QObject::connect(this->LineEdit, SIGNAL(editingFinished()),
                    this, SLOT(editingFinished()));
-  
+
 }
 
 //-----------------------------------------------------------------------------
@@ -71,12 +69,12 @@ void QtSlider::setValue(double val)
     {
     return;
     }
-  
+
   this->Value = val;
 
   if(!this->BlockUpdate)
     {
-    // set the slider 
+    // set the slider
     this->updateSlider();
 
     // set the text
@@ -175,7 +173,7 @@ void QtSlider::textChanged(const QString& text)
     this->BlockUpdate = false;
     }
 }
-  
+
 //-----------------------------------------------------------------------------
 void QtSlider::editingFinished()
 {

@@ -1,5 +1,3 @@
-
-
 #include "QtSlicerWebKit.h"
 
 // Qt includes
@@ -12,7 +10,7 @@
 #include "vtkKWApplication.h"
 
 QtSlicerWebKit::QtSlicerWebKit(QWidget* p, vtkKWApplication *kwapp)
-  : QWidget(p) 
+  : QWidget(p)
 {
 
   this->kwapp = kwapp;
@@ -45,7 +43,7 @@ QtSlicerWebKit::QtSlicerWebKit(QWidget* p, vtkKWApplication *kwapp)
   QObject::connect(this->LineEdit, SIGNAL(editingFinished()),
                    this, SLOT(editingFinished()));
   */
-  
+
 }
 
 //-----------------------------------------------------------------------------
