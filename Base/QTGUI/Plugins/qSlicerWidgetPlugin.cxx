@@ -1,8 +1,7 @@
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerWidget.h"
 
-qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+qSlicerWidgetPlugin::qSlicerWidgetPlugin()
 {
 }
 

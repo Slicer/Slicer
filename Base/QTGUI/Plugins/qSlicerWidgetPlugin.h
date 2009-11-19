@@ -5,13 +5,10 @@
 #include "qSlicerQTGUIPluginWin32Header.h"
 
 class Q_SLICER_QTGUI_PLUGIN_EXPORT qSlicerWidgetPlugin : 
-  public QObject,
   public qSlicerQTGUIPlugin
 {
-  Q_OBJECT
-
 public:
-  qSlicerWidgetPlugin(QObject *_parent = 0);
+  qSlicerWidgetPlugin();
   
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;
@@ -21,4 +18,3 @@ public:
 };
 
 #endif
-

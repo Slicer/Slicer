@@ -2,11 +2,11 @@
 #define __qSlicerQTGUIPlugins_h
 
 #include "qSlicerWidgetPlugin.h"
-
+#include "qSlicerQTGUIPluginWin32Header.h"
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // \class Group the plugins in one library 
-class qSlicerQTGUIPlugins : public QObject,
+class Q_SLICER_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugins : public QObject,
                          public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT

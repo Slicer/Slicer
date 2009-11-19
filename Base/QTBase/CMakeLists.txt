@@ -45,6 +45,7 @@ SET(slicer_qtbase_UI_SRCS
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
   SlicerBaseLogic
+  qMRMLWidgets
   )
 
 Slicer3_build_slicer_qtbase_library( 
