@@ -385,37 +385,39 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
 #ifdef Slicer3_USE_QT
-    this->Internal->qApplication->quit();
+  Q_ASSERT(this->Internal->qApplication);
+  this->Internal->qApplication->quit();
+  delete this->Internal->qApplication;
 #endif
-    delete this->Internal;
+  delete this->Internal;
 
-    if ( this->DefaultGeometry )
-      {
-      this->DefaultGeometry->Delete ( );
-      this->DefaultGeometry = NULL;
-      }
-    if ( this->SlicerTheme )
-      {
-      this->SlicerTheme->Delete ( );
-      this->SlicerTheme = NULL;
-      }
-    if ( this->ModuleGUICollection )
-      {
-      this->ModuleGUICollection->RemoveAllItems ( );
-      this->ModuleGUICollection->Delete ( );
-      this->ModuleGUICollection = NULL;
-      }
-    this->ApplicationGUI = NULL;
+  if ( this->DefaultGeometry )
+    {
+    this->DefaultGeometry->Delete ( );
+    this->DefaultGeometry = NULL;
+    }
+  if ( this->SlicerTheme )
+    {
+    this->SlicerTheme->Delete ( );
+    this->SlicerTheme = NULL;
+    }
+  if ( this->ModuleGUICollection )
+    {
+    this->ModuleGUICollection->RemoveAllItems ( );
+    this->ModuleGUICollection->Delete ( );
+    this->ModuleGUICollection = NULL;
+    }
+  this->ApplicationGUI = NULL;
 
-    delete this->InternalDisplayMessageQueue;
-    this->InternalDisplayMessageQueue = 0;
+  delete this->InternalDisplayMessageQueue;
+  this->InternalDisplayMessageQueue = 0;
 
-    this->DisplayMessageQueueActiveLock->Lock();
-    this->DisplayMessageQueueActive = false;
-    this->DisplayMessageQueueActiveLock->Unlock();
+  this->DisplayMessageQueueActiveLock->Lock();
+  this->DisplayMessageQueueActive = false;
+  this->DisplayMessageQueueActiveLock->Unlock();
 
-    this->IgnoreModules->Delete();
-    this->LoadableModules->Delete();
+  this->IgnoreModules->Delete();
+  this->LoadableModules->Delete();
 }
 
 //----------------------------------------------------------------------------
