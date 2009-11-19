@@ -521,7 +521,6 @@ runcmd $::CMAKE \
         -DCPACK_RPM_SPEC_MORE_DEFINE=$::GETBUILDTEST(rpm-spec) \
         -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
-        -DCTEST_TEST_TIMEOUT=120 \
         $Slicer3_HOME
 
 
@@ -573,7 +572,7 @@ if { $isWindows } {
             runcmd $::MAKE Slicer3.SLN /out buildlog.txt /build $::VTK_BUILD_TYPE
         } else {
             # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-            runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
+            runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE --test-timeout 180
         }
 
         if { $::GETBUILDTEST(pack) == "true" } {
