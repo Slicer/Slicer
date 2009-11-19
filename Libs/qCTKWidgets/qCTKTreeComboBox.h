@@ -2,6 +2,7 @@
 #define __qCTKTreeComboBox_h
 
 #include<QComboBox>
+#include "qCTKWidgetsWin32Header.h"
 
 // Description:
 // ComboBox that displays the items as a tree view.
@@ -17,7 +18,7 @@
 //    combo.setModel(&model);
 //    combo.show();
 //
-class qCTKTreeComboBox : public QComboBox
+class QCTK_WIDGETS_EXPORT qCTKTreeComboBox : public QComboBox
 {
   Q_OBJECT
 public:
