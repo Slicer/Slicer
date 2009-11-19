@@ -17,9 +17,12 @@
 //---------------------------------------------------------------------------
 struct qSlicerModulePanel::qInternal
 {
-  QTextBrowser*          HelpLabel;
-  QBoxLayout*            Layout;
-  QScrollArea*           ScrollArea;
+  void setupUi(QWidget * widget);
+
+  QTextBrowser*           HelpLabel;
+  QBoxLayout*             Layout;
+  QScrollArea*            ScrollArea;
+  qCTKCollapsibleWidget2* HelpCollabsibleWidget;
 };
 
 //---------------------------------------------------------------------------
@@ -27,38 +30,7 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
   :qSlicerAbstractModulePanel(parent, f)
 {
   this->Internal = new qInternal;
-  QWidget* panel = new QWidget;
-  qCTKCollapsibleWidget2* help = new qCTKCollapsibleWidget2("Help");
-  help->setCollapsed(true);
-  help->setSizePolicy(
-    QSizePolicy::Ignored, help->sizePolicy().verticalPolicy());
-  // QTextBrowser instead of QLabel because QLabel don't word wrap links
-  // correctly
-  this->Internal->HelpLabel = new QTextBrowser;
-  this->Internal->HelpLabel->setOpenExternalLinks(true);
-  this->Internal->HelpLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  this->Internal->HelpLabel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  this->Internal->HelpLabel->setFrameShape(QFrame::NoFrame);
-  QPalette p = this->Internal->HelpLabel->palette();
-  p.setBrush(QPalette::Window, QBrush ());
-  this->Internal->HelpLabel->setPalette(p);
-
-  QGridLayout* helpLayout = new QGridLayout(help);
-  helpLayout->addWidget(this->Internal->HelpLabel);
-
-  this->Internal->Layout = new QVBoxLayout(panel);
-  this->Internal->Layout->addWidget(help);
-  this->Internal->Layout->addStretch(1);
-
-  this->Internal->ScrollArea = new QScrollArea;
-  this->Internal->ScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  this->Internal->ScrollArea->setWidget(panel);
-  this->Internal->ScrollArea->setWidgetResizable(true);
-
-  QGridLayout* gridLayout = new QGridLayout(this);
-  gridLayout->addWidget(this->Internal->ScrollArea);
-  gridLayout->setContentsMargins(0,0,0,0);
-  this->setLayout(gridLayout);
+  this->Internal->setupUi(this);
 }
 
 //---------------------------------------------------------------------------
@@ -118,6 +90,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
   module->setSizePolicy(QSizePolicy::Ignored, module->sizePolicy().verticalPolicy());
   module->setVisible(true);
 
+  this->Internal->HelpCollabsibleWidget->setVisible(!module->helpText().isEmpty());
   this->Internal->HelpLabel->setHtml(module->helpText());
 
   emit moduleAdded(module);
@@ -157,4 +130,46 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
 void qSlicerModulePanel::removeAllModule()
 {
   this->clear();
+}
+
+//---------------------------------------------------------------------------
+// Internal methods
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
+{
+  QWidget* panel = new QWidget;
+  this->HelpCollabsibleWidget = new qCTKCollapsibleWidget2("Help");
+  this->HelpCollabsibleWidget->setCollapsed(true);
+  this->HelpCollabsibleWidget->setSizePolicy(
+    QSizePolicy::Ignored,
+    this->HelpCollabsibleWidget->sizePolicy().verticalPolicy());
+  // QTextBrowser instead of QLabel because QLabel don't word wrap links
+  // correctly
+  this->HelpLabel = new QTextBrowser;
+  this->HelpLabel->setOpenExternalLinks(true);
+  this->HelpLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->HelpLabel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->HelpLabel->setFrameShape(QFrame::NoFrame);
+  QPalette p = this->HelpLabel->palette();
+  p.setBrush(QPalette::Window, QBrush ());
+  this->HelpLabel->setPalette(p);
+
+  QGridLayout* helpLayout = new QGridLayout(this->HelpCollabsibleWidget);
+  helpLayout->addWidget(this->HelpLabel);
+
+  this->Layout = new QVBoxLayout(panel);
+  this->Layout->addWidget(this->HelpCollabsibleWidget);
+  this->Layout->addStretch(1);
+
+  this->ScrollArea = new QScrollArea;
+  this->ScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->ScrollArea->setWidget(panel);
+  this->ScrollArea->setWidgetResizable(true);
+
+  QGridLayout* gridLayout = new QGridLayout(widget);
+  gridLayout->addWidget(this->ScrollArea);
+
+  gridLayout->setContentsMargins(0,0,0,0);
+  widget->setLayout(gridLayout);
 }
