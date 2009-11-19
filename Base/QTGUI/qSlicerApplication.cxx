@@ -3,7 +3,6 @@
 // SlicerQT includes
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
-#include "qSlicerModulePanel.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
@@ -71,9 +70,6 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
 //-----------------------------------------------------------------------------
 qSlicerApplication::~qSlicerApplication()
 {
-  // Make sure all modules are unparented
-  qSlicerModuleManager::instance()->modulePanel()->removeAllModule();
-
   // Uninstantiate modules
   qSlicerModuleManager::instance()->factory()->uninstantiateAll();
 
