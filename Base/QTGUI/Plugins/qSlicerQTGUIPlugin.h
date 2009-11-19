@@ -4,7 +4,7 @@
 #include <QDesignerCustomWidgetInterface>
 #include "qSlicerQTGUIPluginWin32Header.h"
 
-class Q_SLICER_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugin : 
+class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugin : 
   public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface)

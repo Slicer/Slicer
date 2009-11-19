@@ -1,4 +1,4 @@
-PROJECT(SlicerQTGUIPlugin)
+PROJECT(SlicerBaseQTGUIPlugin)
 INCLUDE_DIRECTORIES(  
   ${QT_INCLUDE_DIR}
   ${QT_QTGUI_INCLUDE_DIR}
@@ -38,7 +38,7 @@ INSTALL(FILES
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
-SET(lib_name "SlicerQTGUIPlugin")
+SET(lib_name "SlicerBaseQTGUIPlugin")
 
 ADD_LIBRARY(${lib_name} SHARED ${qSlicerQTGUIPlugin_SRCS})
 SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES 
