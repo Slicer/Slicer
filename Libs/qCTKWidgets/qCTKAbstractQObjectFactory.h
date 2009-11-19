@@ -6,29 +6,6 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType, typename ClassType>
-class qCTKFactoryQObjectItem : public qCTKFactoryObjectItem<BaseClassType, ClassType>
-{
-public:
-  qCTKFactoryQObjectItem(const QString& key):qCTKFactoryObjectItem<BaseClassType, ClassType>(key){}
-
-  virtual void uninstantiate()
-    {
-    if (!this->Instance)
-      {
-      return;
-      }
-    Q_ASSERT(!this->Instance->parent());
-    if (this->Instance->parent())
-      {
-      return;
-      }
-    delete this->Instance;
-    this->Instance = 0;
-    }
-};
-
-//----------------------------------------------------------------------------
 template<typename BaseClassType>
 class qCTKAbstractQObjectFactory : protected qCTKAbstractObjectFactory<BaseClassType>
 {
@@ -70,16 +47,7 @@ public:
   bool registerQObject()
     {
     QString key = QString::fromLatin1(ClassType::staticMetaObject.className());
-
-    // Check if already registered
-    if (this->getItem(key))
-      {
-      return false;
-      }
-    QSharedPointer<qCTKFactoryQObjectItem<BaseClassType, ClassType> > objectItem =
-      QSharedPointer<qCTKFactoryQObjectItem<BaseClassType, ClassType> >(
-        new qCTKFactoryQObjectItem<BaseClassType, ClassType>(key) );
-    return this->registerItem(objectItem);
+    return this->qCTKAbstractObjectFactory<BaseClassType>::template registerObject<ClassType>(key);
     }
 
 private:

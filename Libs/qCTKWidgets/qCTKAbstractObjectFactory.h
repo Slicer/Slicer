@@ -29,12 +29,6 @@ public:
     this->instantiateObjectFunc = &instantiateObject<BaseClassType, ClassType>;
     return true;
     }
-  virtual void uninstantiate()
-    {
-    Q_ASSERT(this->Instance);
-    delete this->Instance;
-    this->Instance = 0;
-    }
 protected:
   virtual BaseClassType* instanciator()
     {
@@ -54,15 +48,6 @@ public:
   // Constructor
   qCTKAbstractObjectFactory(){}
   virtual ~qCTKAbstractObjectFactory(){}
-
-//   //-----------------------------------------------------------------------------
-//   // Description:
-//   // Register an object in the factory
-//   template<typename ClassType>
-//   bool registerQObject()
-//     {
-//     return this->registerObject<ClassType>(ClassType::staticMetaObject.className());
-//     }
 
   //-----------------------------------------------------------------------------
   // Description:

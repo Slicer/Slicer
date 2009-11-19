@@ -30,7 +30,14 @@ public:
     }
   bool instantiated() { return (this->Instance != 0); }
   QString key() { return this->Key; }
-  virtual void uninstantiate() = 0;
+  virtual void uninstantiate()
+    {
+    if (!this->Instance)
+      {
+      return;
+      }
+    delete this->Instance;
+    }
 
 protected:
   virtual BaseClassType* instanciator() = 0;

@@ -32,20 +32,6 @@ public:
   QString path() { return this->Path; }
   QString loadErrorString() { return this->Library.errorString();}
 
-  virtual void uninstantiate()
-    {
-    if (!this->Instance)
-      {
-      return;
-      }
-    Q_ASSERT(!this->Instance->parent());
-    if (this->Instance->parent())
-      {
-      return;
-      }
-    delete this->Instance;
-    }
-
   void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
 
   //-----------------------------------------------------------------------------
