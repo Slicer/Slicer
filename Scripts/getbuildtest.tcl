@@ -521,6 +521,7 @@ runcmd $::CMAKE \
         -DCPACK_RPM_SPEC_MORE_DEFINE=$::GETBUILDTEST(rpm-spec) \
         -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
+        -DCTEST_TEST_TIMEOUT=120 \
         $Slicer3_HOME
 
 
