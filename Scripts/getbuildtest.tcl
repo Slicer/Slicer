@@ -566,13 +566,13 @@ if { $isWindows } {
     } else {
         # tell cmake explicitly what command line to run when doing the ctest builds
         set makeCmd "$::MAKE Slicer3.sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD"
-        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $Slicer3_HOME
+        runcmd $::CMAKE -DCTEST_TEST_TIMEOUT=180 -DMAKECOMMAND:STRING=$makeCmd $Slicer3_HOME 
 
         if { $::GETBUILDTEST(test-type) == "" } {
             runcmd $::MAKE Slicer3.SLN /out buildlog.txt /build $::VTK_BUILD_TYPE
         } else {
             # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-            runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE --test-timeout 180
+            runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
         }
 
         if { $::GETBUILDTEST(pack) == "true" } {
