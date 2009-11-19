@@ -12,7 +12,7 @@ qSlicerCxxInternalConstructor1Macro(qSlicerAbstractLoadableModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerAbstractLoadableModule);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractLoadableModule::initializer()
+void qSlicerAbstractLoadableModule::setup()
 {
   Q_ASSERT(this->Internal != 0);
 }

@@ -32,7 +32,7 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected:
-  virtual void initializer();
+  virtual void setup();
   void synchronizeCameraWithView(vtkMRMLViewNode* currentViewNode);
 
 protected slots:

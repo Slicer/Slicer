@@ -16,9 +16,9 @@ qSlicerCxxInternalConstructor1Macro(qSlicerCamerasModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerCamerasModule);
 
 //-----------------------------------------------------------------------------
-void qSlicerCamerasModule::initializer()
+void qSlicerCamerasModule::setup()
 {
-  this->Superclass::initializer();
+  this->Superclass::setup();
   Q_ASSERT(this->Internal != 0);
 
   this->Internal->setupUi(this);
@@ -42,7 +42,7 @@ void qSlicerCamerasModule::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::helpText()const
 {
-  QString help = 
+  QString help =
     "Create new views and cameras.<br>"
     "The view pulldown menu below can be used to create new views and select "
     "the active view. Switch the layout to \"Tabbed 3D Layout\" from the "
@@ -154,6 +154,7 @@ void qSlicerCamerasModule::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
 void  qSlicerCamerasModule::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
+
   // When the view and camera selectors populate their items, the view might populate
   // its items before the camera, and the synchronizeCameraWithView() might do nothing.
   // Let's resync here.

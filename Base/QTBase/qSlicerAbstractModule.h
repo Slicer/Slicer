@@ -9,6 +9,9 @@
 
 #include "qSlicerBaseQTBaseWin32Header.h"
 
+class vtkSlicerApplicationLogic;
+class vtkMRMLScene;
+
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
   Q_OBJECT
@@ -23,12 +26,14 @@ public:
 
   // Description:
   // All initialization code should be done in the initialize function
-  void initialize();
+  void initialize(vtkSlicerApplicationLogic* appLogic);
   inline bool initialized() { return this->Initialized; }
 
   // Description:
   virtual QString name()const;
   virtual QString title()const = 0;
+  virtual QString category()const { return QString(); }
+  virtual QString contributor()const { return QString(); }
 
   // Description:
   virtual void populateToolbar(){}
@@ -41,7 +46,7 @@ public:
   // Description:
   // Return help/acknowledgement text
   virtual QString helpText()const {return "";}
-  virtual QString acknowledgementText()const { return "";} 
+  virtual QString acknowledgementText()const { return "";}
 
 public slots:
 
@@ -52,8 +57,8 @@ public slots:
 
 protected:
   // Description:
-  // All inialization code should be done in the initializer
-  virtual void initializer() = 0;
+  // All inialization code should be done in the setup
+  virtual void setup() = 0;
 
 private:
   struct qInternal;

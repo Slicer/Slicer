@@ -23,7 +23,7 @@ public:
   virtual QString acknowledgementText();
 
 protected:
-  virtual void initializer();
+  virtual void setup();
 
 private:
   struct qInternal;

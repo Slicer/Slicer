@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>473</width>
-    <height>336</height>
+    <height>339</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../qSlicerMeasurementsModule.qrc">
           <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
         </property>
         <item>
@@ -37,7 +37,7 @@
           <string>All Rulers Visible</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerMeasurementsModule.qrc">
            <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
          </property>
         </item>
@@ -46,7 +46,7 @@
           <string>All Rulers Invisible</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerMeasurementsModule.qrc">
            <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
          </property>
         </item>

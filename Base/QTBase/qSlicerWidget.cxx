@@ -1,5 +1,12 @@
 #include "qSlicerWidget.h"
 
+// SlicerLogic includes
+#include "vtkSlicerApplicationLogic.h"
+
+// VTK includes
+#include "vtkSmartPointer.h"
+
+// QT includes
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QPointer>
@@ -8,12 +15,9 @@
 //-----------------------------------------------------------------------------
 struct qSlicerWidget::qInternal
 {
-  qInternal()
-    {
-    this->MRMLScene = 0;
-    }
-  QPointer<QWidget>       ParentContainer;
-  vtkMRMLScene*           MRMLScene;
+  QPointer<QWidget>                          ParentContainer;
+  vtkSmartPointer<vtkMRMLScene>              MRMLScene;
+  vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
 };
 
 //-----------------------------------------------------------------------------
@@ -67,7 +71,7 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
       return;
       }
 
-    // Instanciate a scrollArea
+    // Instantiate a scrollArea
     QScrollArea * scrollArea = new QScrollArea();
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -149,11 +153,13 @@ void qSlicerWidget::setParentVisible(bool visible)
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Internal->MRMLScene = scene;
+  // TODO Rename signal
   emit mrmlSceneLoaded(scene);
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerWidget::mrmlScene()
-{
-  return this->Internal->MRMLScene;
-}
+qSlicerGetInternalCxxMacro(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
+
+//-----------------------------------------------------------------------------
+qSlicerSetInternalCxxMacro(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+qSlicerGetInternalCxxMacro(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);

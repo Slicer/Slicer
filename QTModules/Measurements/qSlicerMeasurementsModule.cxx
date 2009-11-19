@@ -1,6 +1,6 @@
-#include "qSlicerMeasurementsModule.h" 
+#include "qSlicerMeasurementsModule.h"
 
-#include "ui_qSlicerMeasurementsModule.h" 
+#include "ui_qSlicerMeasurementsModule.h"
 
 #include <QtPlugin>
 #include <QDebug>
@@ -22,11 +22,11 @@ qSlicerCxxInternalConstructor1Macro(qSlicerMeasurementsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-void qSlicerMeasurementsModule::initializer()
+void qSlicerMeasurementsModule::setup()
 {
-  this->Superclass::initializer();
+  this->Superclass::setup();
   Q_ASSERT(this->Internal != 0);
-  
+
   this->Internal->setupUi(this);
 }
 

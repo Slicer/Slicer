@@ -1,5 +1,5 @@
 #ifndef __qCTKAbstractLibraryFactory_h
-#define __qCTKAbstractLibraryFactory_h 
+#define __qCTKAbstractLibraryFactory_h
 
 #include "qCTKAbstractFactory.h"
 
@@ -14,7 +14,7 @@ class qCTKFactoryLibraryItem : public qCTKAbstractFactoryItem<BaseClassType>
 protected:
   typedef typename QHash<QString, void*>::const_iterator ConstIterator;
   typedef typename QHash<QString, void*>::iterator       Iterator;
-  
+
 public:
   qCTKFactoryLibraryItem(const QString& key, const QString& path):
     qCTKAbstractFactoryItem<BaseClassType>(key),Path(path){}
@@ -31,26 +31,40 @@ public:
     }
   QString path() { return this->Path; }
   QString loadErrorString() { return this->Library.errorString();}
-  
+
+  virtual void uninstantiate()
+    {
+    if (!this->Instance)
+      {
+      return;
+      }
+    Q_ASSERT(!this->Instance->parent());
+    if (this->Instance->parent())
+      {
+      return;
+      }
+    delete this->Instance;
+    }
+
   void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
-  
+
   //-----------------------------------------------------------------------------
   // Description:
   // Resolve symbols
   void resolve()
     {
-    foreach(const QString symbol, this->Symbols)
+    foreach(const QString& symbol, this->Symbols)
       {
       // Sanity checks
       if (symbol.isEmpty()) { continue; }
-      
+
       // Make sure the symbols haven't been registered
       if (this->ResolvedSymbols.contains(symbol))
         {
-        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path; 
+        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path;
         continue;
         }
-      
+
       void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
       if (!resolvedSymbol)
         {
@@ -59,14 +73,14 @@ public:
       this->ResolvedSymbols[symbol] = resolvedSymbol;
       }
     }
-    
+
     //-----------------------------------------------------------------------------
     // Description:
     // Get symbol address
     void * symbolAddress(const QString& symbol)
     {
-      ConstIterator iter = this->ResolvedSymbols.find(symbol); 
-      
+      ConstIterator iter = this->ResolvedSymbols.find(symbol);
+
       Q_ASSERT(iter != this->ResolvedSymbols.constEnd());
       if ( iter == this->ResolvedSymbols.constEnd())
         {
@@ -78,8 +92,8 @@ public:
 private:
   QLibrary              Library;
   QString               Path;
-  QHash<QString, void*> ResolvedSymbols; 
-  QStringList           Symbols; 
+  QHash<QString, void*> ResolvedSymbols;
+  QStringList           Symbols;
 };
 
 //----------------------------------------------------------------------------
@@ -98,29 +112,29 @@ public:
   // Description:
   // Set the list of symbols
   void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
-  
+
   //-----------------------------------------------------------------------------
   // Description:
   // Register a plugin in the factory
   virtual bool registerLibrary(const QString& key, const QString& path)
     {
     // Check if already registered
-    if (this->get(key))
-      { 
-      return false; 
+    if (this->getItem(key))
+      {
+      return false;
       }
-    QSharedPointer<FactoryItemType> item = 
+    QSharedPointer<FactoryItemType> item =
       QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
     item->setSymbols(this->Symbols);
     return this->registerItem(item);
     }
-    
+
 
 private:
   qCTKAbstractLibraryFactory(const qCTKAbstractLibraryFactory &);  // Not implemented
   void operator=(const qCTKAbstractLibraryFactory&); // Not implemented
 
   QStringList Symbols;
-}; 
+};
 
 #endif

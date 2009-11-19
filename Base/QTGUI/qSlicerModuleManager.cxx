@@ -2,19 +2,29 @@
 
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModulePanel.h"
 #include "qSlicerModuleFactory.h"
+#include "qSlicerModulePanel.h"
 
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
 struct qSlicerModuleManager::qInternal
 {
+  qInternal()
+    {
+    this->ModulePanel = 0;
+    }
+
+  // Description:
+  // Instantiate a module panel
+  void instantiateModulePanel();
+
   typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
   typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
 
   QHash<QString, qSlicerAbstractModule*> ModuleList;  // Store Pair<ModuleName, ModuleObject>
   qSlicerModuleFactory                   ModuleFactory;
+  qSlicerModulePanel*                    ModulePanel;
 };
 
 //----------------------------------------------------------------------------
@@ -70,7 +80,19 @@ qSlicerModuleFactory* qSlicerModuleManager::factory()
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::loadModule(const QString& moduleTitle)
+bool qSlicerModuleManager::isLoaded(const QString& moduleTitle)
+{
+  // Get corresponding module name
+  QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
+  if (moduleName.isEmpty())
+    {
+    return false;
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModuleManager::loadModule(const QString& moduleTitle)
 {
   // Get corresponding module name
   QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
@@ -83,59 +105,86 @@ qSlicerAbstractModule* qSlicerModuleManager::loadModule(const QString& moduleTit
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::loadModuleByName(const QString& moduleName)
+bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
 {
   // Check if module has been loaded already
   qInternal::ModuleListConstIterator iter = this->Internal->ModuleList.constFind(moduleName);
   if (iter != this->Internal->ModuleList.constEnd())
     {
-    return iter.value();
+    //return iter.value();
+    return true;
     }
 
-  // Instanciate the module
-  qSlicerAbstractModule * module = this->Internal->ModuleFactory.initializeModule(moduleName);
+  // Instantiate the module
+  qSlicerAbstractModule * module = this->Internal->ModuleFactory.instantiateModule(moduleName);
   if (!module)
     {
-    qWarning() << "Failed to load module: " << moduleName;
+    qWarning() << "Failed to instanciate module: " << moduleName;
     return 0;
     }
-
-  // Set the MRML scene
-  module->setMRMLScene(vtkMRMLScene::GetActiveScene());
 
   // Update internal Map
   this->Internal->ModuleList[moduleName] = module;
 
-  return module;
+  // Initialize module
+  module->initialize(qSlicerApplication::application()->appLogic());
+
+  // Retrieve module title
+  QString moduleTitle = this->Internal->ModuleFactory.getModuleTitle(moduleName);
+  Q_ASSERT(!moduleTitle.isEmpty());
+  if (moduleTitle.isEmpty())
+    {
+    qWarning() << "Failed to retrieve module title: " << moduleName;
+    return 0;
+    }
+
+  // Set module title
+  module->setWindowTitle(moduleTitle);
+  qDebug() << module << " - title:" << moduleTitle;
+
+  // Set the MRML scene
+  module->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+
+  // Module should also be aware if current MRML scene has changed
+  this->connect(qSlicerApplication::application(),
+                SIGNAL(currentMRMLSceneChanged(vtkMRMLScene*)),
+                module,
+                SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  return true;
+  //return module;
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleManager::unLoadModule(const QString& moduleTitle)
+bool qSlicerModuleManager::unLoadModule(const QString& moduleTitle)
 {
   // Get corresponding module name
   QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
   if (moduleName.isEmpty())
     {
-    return;
+    return false;
     }
 
-  this->unLoadModuleByName(moduleName);
+  return this->unLoadModuleByName(moduleName);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
+bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
 {
   qInternal::ModuleListConstIterator iter =
     this->Internal->ModuleList.find( moduleName );
   if (iter == this->Internal->ModuleList.constEnd())
     {
     qWarning() << "Failed to unload module: " << moduleName << " - Module wasn't loaded";
-    return;
+    return false;
     }
   // Tells Qt to delete the object when appropriate
   iter.value()->deleteLater();
+
   // Remove the object from the list
   this->Internal->ModuleList.remove(iter.key());
+
+  return true;
 }
 
 
@@ -172,33 +221,56 @@ const QString qSlicerModuleManager::moduleTitle(const QString& moduleName)
 //---------------------------------------------------------------------------
 void qSlicerModuleManager::showModule(const QString& moduleTitle)
 {
+  this->Internal->instantiateModulePanel();
+  Q_ASSERT(this->Internal->ModulePanel);
+
   qDebug() << "Show module:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
-  /*
-  if (!module)
-    {
-    return;
-    }
-  */
-  //module->show(); 
-  //module->setParentVisible(true);
-  //emit this->showModule(module);  
-  qSlicerApplication::application()->modulePanel()->addModule(module);
+  Q_ASSERT(module);
+//   // ----- [To be removed] -----
+//   this->setModulePanelVisible(module);
+//   if (!module)
+//     {
+//     qWarning() << "Failed to show module:" << moduleTitle;
+//     this->setModulePanelVisible(false);
+//     return;
+//     }
+//   // ----- [/To be removed] -----
+  this->Internal->ModulePanel->setModule(module);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleManager::hideModule(const QString& moduleTitle)
+void qSlicerModuleManager::setModulePanelVisible(bool visible)
 {
-  /* Obsolete
-  qDebug() << "Hide module:" << moduleTitle;
-  qSlicerAbstractModule * module = this->getModule(moduleTitle);
-  if (!module)
+  this->Internal->instantiateModulePanel();
+  Q_ASSERT(this->Internal->ModulePanel);
+
+  this->Internal->ModulePanel->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleManager::setModulePanelGeometry(int ax, int ay, int aw, int ah)
+{
+  this->Internal->instantiateModulePanel();
+  Q_ASSERT(this->Internal->ModulePanel);
+
+  this->Internal->ModulePanel->setGeometry(QRect(ax, ay, aw, ah));
+}
+
+//---------------------------------------------------------------------------
+qSlicerGetInternalCxxMacro(qSlicerModuleManager, qSlicerAbstractModulePanel*,
+                           modulePanel, ModulePanel);
+
+//---------------------------------------------------------------------------
+// Internal methods
+//---------------------------------------------------------------------------
+void qSlicerModuleManager::qInternal::instantiateModulePanel()
+{
+  if (!this->ModulePanel)
     {
-    return;
+    this->ModulePanel =
+      new qSlicerModulePanel(0, qSlicerApplication::application()->defaultWindowFlags());
     }
-  //module->hide();
-  module->setParentVisible(false);
-  */
 }
 
 //----------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 class qSlicerAbstractModule;
 class qSlicerModuleManagerInitialize;
 class qSlicerModuleFactory;
+class qSlicerAbstractModulePanel;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager : public QObject
 {
@@ -24,12 +25,15 @@ public:
   qSlicerModuleFactory* factory();
 
   // Description:
-  qSlicerAbstractModule* loadModule(const QString& moduleTitle);
-  qSlicerAbstractModule* loadModuleByName(const QString& moduleName);
+  bool loadModule(const QString& moduleTitle);
+  bool loadModuleByName(const QString& moduleName);
 
   // Description:
-  void unLoadModule(const QString& moduleTitle);
-  void unLoadModuleByName(const QString& moduleName);
+  bool unLoadModule(const QString& moduleTitle);
+  bool unLoadModuleByName(const QString& moduleName);
+
+  // Description:
+  bool isLoaded(const QString& moduleTitle);
 
   // Description:
   qSlicerAbstractModule* getModule(const QString& moduleTitle);
@@ -40,12 +44,24 @@ public:
   const QString moduleTitle(const QString& moduleName);
 
   // Description:
-  // Hide / Show module
-  void showModule(const QString& moduleTitle); 
-  void hideModule(const QString& moduleTitle); 
+  // Show a module
+  // Note: A module is contained in the module panel associated with the module manager.
+  // The module panel will update itself each time a module is shown.
+  void showModule(const QString& moduleTitle);
 
-signals:
-  void showModule(qSlicerAbstractModule* module);
+  // Description:
+  // Hide/Show the module panel.
+  // Note: The module panel contains a module and is responsible to display
+  // the help and about frames.
+  void setModulePanelVisible(bool visible);
+
+  // Description:
+  // Set module panel geometry
+  void setModulePanelGeometry(int ax, int ay, int aw, int ah);
+
+  // Description:
+  // Return a reference to the Module Panel
+  qSlicerAbstractModulePanel* modulePanel() const;
 
 protected:
   qSlicerModuleManager();

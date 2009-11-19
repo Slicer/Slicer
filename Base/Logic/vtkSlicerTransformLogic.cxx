@@ -14,8 +14,8 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
+#include <itksys/SystemTools.hxx>
+#include <itksys/Directory.hxx>
 
 
 #include "vtkSlicerTransformLogic.h"
@@ -43,16 +43,16 @@ vtkSlicerTransformLogic::~vtkSlicerTransformLogic()
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filename, vtkMRMLScene *scene)
-{ 
+{
   vtkMRMLTransformStorageNode *storageNode = vtkMRMLTransformStorageNode::New();
-    
+
   // check for local or remote files
   int useURI = 0; // false;
   if (scene->GetCacheManager() != NULL)
     {
     useURI = scene->GetCacheManager()->IsRemoteReference(filename);
     }
-  
+
   itksys_stl::string name;
   const char *localFile;
   if (useURI)
@@ -106,10 +106,10 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
     if (tnode)
       {
       tnode->SetName(name.c_str());
-      scene->AddNodeNoNotify(storageNode);  
-      scene->AddNode(tnode); 
+      scene->AddNodeNoNotify(storageNode);
+      scene->AddNode(tnode);
 
-      tnode->SetAndObserveStorageNodeID(storageNode->GetID());    
+      tnode->SetAndObserveStorageNodeID(storageNode->GetID());
       }
     gridTfm->Delete();
     bsplineTfm->Delete();

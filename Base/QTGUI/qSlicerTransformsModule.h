@@ -31,7 +31,7 @@ public slots:
   void loadTransform(const QString& fileName);
 
 protected:
-  virtual void initializer();
+  virtual void setup();
 
 protected slots:
   void onCoordinateReferenceButtonPressed(int id);

@@ -58,7 +58,7 @@ struct ModuleCompare
     return false;
   }
 };
-  
+
 typedef std::set<ModuleItem, ModuleCompare> ModuleSet;
 typedef std::map<std::string, ModuleSet> CategoryToModuleVector;
 typedef CategoryToModuleVector::iterator CategoryIterator;
@@ -206,12 +206,12 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
 {
 
   char *moduleName;
-  
+
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast ( caller );
-  
+
   if ( pushb == this->ModulesPrev && event == vtkKWPushButton::InvokedEvent )
     {
 
@@ -224,7 +224,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
 #ifdef Slicer3_USE_QT
-        //qDebug() << "Attempt to hide Qt module:" << currentModuleName; 
+        //qDebug() << "Attempt to hide Qt module:" << currentModuleName;
         //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
         }
@@ -237,7 +237,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
     if ( currentModuleName != NULL )
       {
-      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );        
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
       if ( currentModule )
         {
         currentModule->Enter ( );
@@ -261,7 +261,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         currentModule->Exit ( );
 #ifdef Slicer3_USE_QT
-        //qDebug() << "Attempting to hide Qt module:" << currentModuleName; 
+        //qDebug() << "Attempting to hide Qt module:" << currentModuleName;
         //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
         }
@@ -274,7 +274,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
     if ( currentModuleName != NULL )
       {
-      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );        
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
       if ( currentModule )
         {
         currentModule->Enter ( );
@@ -343,8 +343,8 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
       while (m != NULL )
         {
           mName = m->GetUIPanel()->GetName();
-          //std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl; 
-          if ( !strcmp (moduleName, mName) ) 
+          //std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl;
+          if ( !strcmp (moduleName, mName) )
            {
            //--- feedback to user
            std::string statusText = "...raising module ";
@@ -358,7 +358,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            p->GetMainSlicerWindow()->SetStatusText ( mName );
            this->GetModulesMenuButton()->SetValue( mName );
 #ifdef Slicer3_USE_QT
-           //qDebug() << "Attempt to show Qt module:" << moduleName; 
+           //qDebug() << "Attempt to show Qt module:" << moduleName;
            //this->GetApplicationGUI()->SetQtModuleVisible(moduleName, true);
            this->GetApplicationGUI()->SetCurrentQtModule(moduleName);
 #endif
@@ -370,7 +370,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
         }
 //#ifdef Slicer3_USE_QT
-//       qSlicerAbstractModule * module = qSlicerModuleManager::instance()->getModule(moduleName); 
+//       qSlicerAbstractModule * module = qSlicerModuleManager::instance()->getModule(moduleName);
 //       if (module)
 //         {
 // //         //--- feedback to user
@@ -379,7 +379,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 // //         statusText += "...";
 // //         p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
 // //         this->Script ( "update idletasks");
-// 
+//
 //         int pos[2] = {0,0};
 //         int size[2] = {0,0};
 //         vtkKWWidget* widget = this->GetApplicationGUI()->GetMainSlicerWindow()->GetMainNotebook();
@@ -387,7 +387,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 //         vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
 //         module->resize(size[0], size[1]);
 //         module->move(pos[0], pos[1]);
-// 
+//
 //         module->show();
 //         QApplication::processEvents();
 
@@ -399,7 +399,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 //         this->Script ( "update idletasks");
 //        }
 //#endif
-      } 
+      }
     }
 }
 
@@ -436,7 +436,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
 void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNode *node )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  
+
   if ( app )
     {
     if ( this->GetApplicationGUI() != NULL )
@@ -461,13 +461,13 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
               }
             currentModule->Exit ( );
             }
-#ifdef Slicer3_USE_QT
-          qDebug() << "Attempt to hide module:" << currentModuleName; 
-          qSlicerModuleManager::instance()->hideModule(currentModuleName);
-#endif
+// #ifdef Slicer3_USE_QT
+//           qDebug() << "Attempt to hide module:" << currentModuleName;
+//           qSlicerModuleManager::instance()->hideModule(currentModuleName);
+// #endif
           }
         // Enter selected module.
-        vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );        
+        vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );
         if ( currentModule )
           {
           if ( node )
@@ -478,7 +478,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
             {
             currentModule->Enter ( );
             }
-          
+
           this->RaiseModule ( moduleName );
           this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
           this->PopulateHistoryListMenu ( );
@@ -574,7 +574,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearchEntry->SetCommandTriggerToAnyChange();
       this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
       this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
-      
+
       //--- Next and previous module button
       this->ModulesNext->SetParent ( this->ModuleNavigationFrame );
       this->ModulesNext->Create ( );
@@ -587,7 +587,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesPrev->SetBorderWidth ( 0 );
       this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
       this->ModulesPrev->SetBalloonHelpString ("Go to previous visited module.");
-        
+
       this->ModulesHistory->SetParent ( this->ModuleNavigationFrame );
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetBorderWidth ( 0 );
@@ -613,7 +613,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       colonLabel->SetParent ( this->ModuleNavigationFrame );
       colonLabel->Create ( );
       colonLabel->SetText (":");
-      
+
       //--- pack everything up.
       app->Script ( "grid %s -row 1 -column 0 -ipadx 0 -padx 0 -pady 0", this->ModulesLabel->GetWidgetName ( ) );
       app->Script ( "grid %s -row 1 -column 1 -ipady 0 -padx 0 -pady 0", this->ModulesMenuButton->GetWidgetName ( ) );
@@ -624,7 +624,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesSearchEntry->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesPrev->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesNext->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );      
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
 
       colonLabel->Delete ( );
@@ -636,7 +636,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
 {
-  
+
   //--- Populate the Slice Control Frame
   if ( tb != NULL )
     {
@@ -655,7 +655,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesMenuButton->IndicatorVisibilityOn ( );
       this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
       tb->AddWidget ( this->ModulesMenuButton );
-      
+
       this->ModulesPrev->SetParent ( tb->GetFrame() );
       this->ModulesPrev->Create ( );
       this->ModulesPrev->SetReliefToFlat();
@@ -690,7 +690,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
         if ( p->GetSlicerFoundationIcons() == NULL )
           {
           vtkErrorMacro ( "BuildGUI got NULL Foundation Icons from ApplicationGUI" );
-          return;          
+          return;
           }
         }
       this->ModulesRefresh->SetParent ( tb->GetFrame() );
@@ -735,7 +735,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
 
 
 }
-  
+
 
 
 
@@ -765,10 +765,10 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
       // Delete and recreate moduleSearchMenu
       // Include modules whose name contains the search term
       // and modules whose category contains the search term.
-      if ( (this->GetApplication( )  != NULL ) ) 
+      if ( (this->GetApplication( )  != NULL ) )
         {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-        if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+        if ( (app->GetModuleGUICollection ( ) != NULL) )
           {
           // Delete all items from menu
           this->GetModulesSearch()->GetMenu( )->DeleteAllItems();
@@ -814,12 +814,12 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
             }
           }
 
-      
+
         // construct a menu of matching module names
         //
         ModuleSet::iterator mit;
         mit = matchingModuleNames.begin();
-      
+
         while (mit != matchingModuleNames.end())
           {
           this->GetModulesSearch()->GetMenu()->AddRadioButton( (*mit).c_str() );
@@ -840,16 +840,16 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
   CategoryToModuleVector categoryToModuleName;
 
-  if ( (this->GetApplication( )  != NULL ) ) 
+  if ( (this->GetApplication( )  != NULL ) )
     {
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
     //
-    //--- ALL modules pull-down menu 
+    //--- ALL modules pull-down menu
     // - remove any existing items
     // - add one menu button per module
     // - set the Data Module as default
     //
-    if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+    if ( (app->GetModuleGUICollection ( ) != NULL) )
       {
       this->GetModulesMenuButton()->GetMenu( )->DeleteAllItems();
 
@@ -893,7 +893,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
       typedef std::map<std::string, std::string > AllMap;
       AllMap allMap;
-      
+
       while (mit0 != categoryToModuleName["None"].end())
         {
         std::stringstream methodString;
@@ -963,7 +963,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
               vtkKWMenu* menu = vtkKWMenu::New();
               menu->SetParent( pos );
               menu->Create();
-              
+
               pos->AddCascade( path[i].c_str(), menu );
               menu->Delete();
               }
@@ -988,7 +988,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
             ++mit;
             }
           }
-        
+
         ++cit;
         }
 
@@ -1006,12 +1006,12 @@ void vtkSlicerModuleChooseGUI::Populate( )
           all->SetItemColumnBreak(numLines - 1, 1);
           }
         }
-      
+
       }
     //--- TODO: make the initial value be module user sets as "home"
     this->GetModulesMenuButton()->SetValue ("Data");
     }
-  
+
 }
 
 

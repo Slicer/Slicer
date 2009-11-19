@@ -18,7 +18,7 @@ public:
   virtual void printAdditionalInfo();
 
 protected:
-  virtual void initializer();
+  virtual void setup();
 
   // Description:
   // Convenient method to return slicer wiki URL

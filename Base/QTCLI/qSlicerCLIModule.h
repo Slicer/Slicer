@@ -20,14 +20,19 @@ public:
   void setXmlModuleDescription(const char* xmlModuleDescription);
 
   virtual QString title()const;
+  virtual QString category()const;
+  virtual QString contributor()const;
 
   // Description:
   // Return help/acknowledgement text
   virtual QString helpText()const;
-  virtual QString acknowledgementText()const; 
+  virtual QString acknowledgementText()const;
+
+  // Description:
+  void setupUi();
 
 protected:
-  virtual void initializer();
+  virtual void setup();
 
 private:
   struct qInternal;

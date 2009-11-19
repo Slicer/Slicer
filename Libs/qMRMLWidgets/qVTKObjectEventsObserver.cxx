@@ -145,7 +145,7 @@ void qVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long v
     return;
     }
 
-  // Instanciate a new connection, set its parameters and add it to the list
+  // Instantiate a new connection, set its parameters and add it to the list
   qVTKConnection * connection = new qVTKConnection(this);
   connection->SetParameters(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
   this->Internal->ConnectionList.append(connection);

@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -123,19 +123,17 @@
       <widget class="QWidget" name="ModuleWidgetContainer" native="true"/>
      </item>
      <item>
-      <widget class="qCTKCollapsibleWidget" name="SliceControlsCollapsibleWidget">
+      <widget class="qCTKCollapsibleWidget2" name="SliceControlsCollapsibleWidget">
        <property name="title">
         <string>Manipulate Slice Views</string>
        </property>
-       <widget class="QWidget" name="page"/>
       </widget>
      </item>
      <item>
-      <widget class="qCTKCollapsibleWidget" name="View3DControlsCollapsibleWidget">
+      <widget class="qCTKCollapsibleWidget2" name="View3DControlsCollapsibleWidget">
        <property name="title">
         <string>Manipulate 3D View</string>
        </property>
-       <widget class="QWidget" name="page_2"/>
       </widget>
      </item>
     </layout>
@@ -371,10 +369,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleWidget</class>
+   <class>qCTKCollapsibleWidget2</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget.h</header>
-   <addpagemethod>setWidget</addpagemethod>
+   <header>qCTKCollapsibleWidget2.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

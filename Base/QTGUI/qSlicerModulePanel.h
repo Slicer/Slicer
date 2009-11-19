@@ -11,7 +11,14 @@ public:
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerModulePanel();
 
+  void setModule(qSlicerAbstractModule* module);
+  void clear();
+
+protected:
+
   virtual void addModule(qSlicerAbstractModule* module);
+  virtual void removeModule(qSlicerAbstractModule* module);
+  virtual void removeAllModule();
 
 private:
   class qInternal;

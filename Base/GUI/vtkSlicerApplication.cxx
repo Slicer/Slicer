@@ -110,7 +110,7 @@ class DisplayMessageQueue : public std::queue<AddRecordType> {};
 //----------------------------------------------------------------------------
 // Slicer needs its own version of itk::OutputWindow to ensure that
 // only the application thread controlling the gui tries to display a
-// message. 
+// message.
 namespace itk {
 
 class SlicerOutputWindow : public OutputWindow
@@ -129,29 +129,29 @@ public:
   itkNewMacro(Self);
 
   void DisplayDebugText(const char* t)
-    { 
-      vtkSlicerApplication::GetInstance()->DebugMessage(t); 
+    {
+      vtkSlicerApplication::GetInstance()->DebugMessage(t);
     }
   void DisplayWarningText(const char* t)
-    { 
-      vtkSlicerApplication::GetInstance()->WarningMessage(t); 
+    {
+      vtkSlicerApplication::GetInstance()->WarningMessage(t);
     }
   void DisplayErrorText(const char* t)
-    { 
-      vtkSlicerApplication::GetInstance()->ErrorMessage(t); 
+    {
+      vtkSlicerApplication::GetInstance()->ErrorMessage(t);
     }
   void DisplayText(const char* t)
-    { 
-      vtkSlicerApplication::GetInstance()->InformationMessage(t); 
+    {
+      vtkSlicerApplication::GetInstance()->InformationMessage(t);
     }
   void DisplayGenericWarningText(const char* t)
-    { 
-      this->DisplayWarningText(t); 
+    {
+      this->DisplayWarningText(t);
     }
-  
+
 protected:
   SlicerOutputWindow()
-    { 
+    {
     }
 
 private:
@@ -173,7 +173,7 @@ private:
 // vtkSlicerApplication are enough to ensure that we display messages
 // in a thread safe manner.
 //
-// 
+//
 // class vtkSlicerOutputWindow : public vtkOutputWindow
 // {
 // public:
@@ -181,35 +181,35 @@ private:
 //   static vtkSlicerOutputWindow* New();
 //
 //   void DisplayDebugText(const char* t)
-//     { 
-//       this->Application->DebugMessage(t); 
+//     {
+//       this->Application->DebugMessage(t);
 //     }
 //   void DisplayWarningText(const char* t)
-//     { 
-//       this->Application->WarningMessage(t); 
+//     {
+//       this->Application->WarningMessage(t);
 //     }
 //   void DisplayErrorText(const char* t)
-//     { 
-//       this->Application->ErrorMessage(t); 
+//     {
+//       this->Application->ErrorMessage(t);
 //     }
 //   void DisplayText(const char* t)
-//     { 
-//       this->Application->InformationMessage(t); 
+//     {
+//       this->Application->InformationMessage(t);
 //     }
 //   void DisplayGenericWarningText(const char* t)
-//     { 
-//       this->DisplayWarningText(t); 
+//     {
+//       this->DisplayWarningText(t);
 //     }
-//  
+//
 //   void SetApplication(vtkSlicerApplication *app)
-//     { 
-//       this->Application = app; 
+//     {
+//       this->Application = app;
 //     }
 //
 // protected:
 //   vtkSlicerOutputWindow()
-//     { 
-//       this->Application = NULL; 
+//     {
+//       this->Application = NULL;
 //     }
 //   vtkSlicerApplication *Application;
 //
@@ -228,17 +228,17 @@ public:
   vtkInternal()
     {
     #ifdef Slicer3_USE_QT
-    this->qApplication = 0; 
-    this->RegisteredDialogCount = 0; 
+    this->qApplication = 0;
+    this->RegisteredDialogCount = 0;
     #endif
-    
-    this->MRMLScene = 0; 
+
+    this->MRMLScene = 0;
     }
-  vtkMRMLScene*       MRMLScene; 
-  
+  vtkMRMLScene*       MRMLScene;
+
   #ifdef Slicer3_USE_QT
   qSlicerApplication*                    qApplication;
-  int                                    RegisteredDialogCount; 
+  int                                    RegisteredDialogCount;
   #endif
 };
 
@@ -272,7 +272,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->LoadableModules = vtkStringArray::New();
     this->NameSeparator = ";";
     this->EnableDaemon = 0;
-   
+
     this->DefaultGeometry = vtkSlicerGUILayout::New ( );
     // defaults
     strcpy (this->ApplicationFontSize, "small" );
@@ -289,7 +289,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 //    this->EnableRemoteCacheOverwriting = 1;
     this->RemoteCacheLimit = 200;
     this->RemoteCacheFreeBufferSize = 10;
-    
+
     this->UseWelcomeModuleAtStartup = 1;
 
     // configure the application before creating
@@ -297,13 +297,13 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->SetName ( "3D Slicer Version 3.5 Alpha" );
 
 #ifdef _WIN32
-    vtkKWWin32RegistryHelper *regHelper = 
+    vtkKWWin32RegistryHelper *regHelper =
         vtkKWWin32RegistryHelper::SafeDownCast( this->GetRegistryHelper() );
     regHelper->SetOrganization("NA-MIC");
 #endif
 
     this->RestoreApplicationSettingsFromRegistry ( );
-    
+
 
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
@@ -315,7 +315,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->DisplayMessageQueueActive = false;
     this->DisplayMessageQueueActiveLock = itk::MutexLock::New();
     this->DisplayMessageQueueLock = itk::MutexLock::New();
-    
+
     this->InternalDisplayMessageQueue = new DisplayMessageQueue;
 
     this->DisplayMessageQueueActiveLock->Lock();
@@ -340,11 +340,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     // InformationMessage(), WarningMessage(), etc. in
     // vtkSlicerApplication are enough to ensure that we display messages
     // in a thread safe manner.
-    
+
     //vtkSlicerOutputWindow *vtkoutput = vtkSlicerOutputWindow::New();
     //vtkoutput->SetApplication(this);
     //vtkOutputWindow::SetInstance( vtkoutput );
-    
+
     itk::SlicerOutputWindow::SetInstance( itk::SlicerOutputWindow::New() );
 
     // Use the splash screen by default - needs to be overridden before
@@ -355,8 +355,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->SetStereoEnabled(0);
 
 #ifdef Slicer3_USE_PYTHON
-    this->PythonModule = NULL; 
-    this->PythonDictionary = NULL; 
+    this->PythonModule = NULL;
+    this->PythonDictionary = NULL;
 #endif
 
     this->ColorSwatchesAdded = 0;
@@ -367,6 +367,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   static char *argv = NULL;
   static int argc = 0;
   this->Internal->qApplication = new qSlicerApplication(argc, &argv);
+  Q_CHECK_PTR(this->Internal->qApplication);
+
+  // Set window flags used to display top level widgets
+  this->Internal->qApplication->setDefaultWindowFlags(
+    Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
 
  #ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
@@ -380,7 +385,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
 #ifdef Slicer3_USE_QT
-    this->Internal->qApplication->quit(); 
+    this->Internal->qApplication->quit();
 #endif
     delete this->Internal;
 
@@ -401,7 +406,7 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
       this->ModuleGUICollection = NULL;
       }
     this->ApplicationGUI = NULL;
-    
+
     delete this->InternalDisplayMessageQueue;
     this->InternalDisplayMessageQueue = 0;
 
@@ -459,7 +464,7 @@ int vtkSlicerApplication::FullFileSystemCheck ( ) {
   std::string temporaryDirectory;
   std::string testFile;
   bool dirGone;
-  
+
   if (this->GetTemporaryDirectory() )
     {
     temporaryDirectory = this->GetTemporaryDirectory();
@@ -629,7 +634,7 @@ void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
     // Create if it doesn't exist already
     if ( this->ModuleGUICollection == NULL ) {
         this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
-    } 
+    }
     // Add a gui
     this->ModuleGUICollection->AddItem ( gui );
 }
@@ -640,7 +645,7 @@ void vtkSlicerApplication::RemoveModuleGUI ( vtkSlicerModuleGUI *gui ) {
     // Create if it doesn't exist already
     if ( this->ModuleGUICollection == NULL ) {
         this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
-    } 
+    }
     // Remove a gui
     this->ModuleGUICollection->RemoveItem ( gui );
 }
@@ -665,13 +670,13 @@ vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::SetMRMLScene ( vtkMRMLScene* scene )
 {
-  this->Internal->MRMLScene = scene; 
+  this->Internal->MRMLScene = scene;
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
 {
-  return this->Internal->MRMLScene; 
+  return this->Internal->MRMLScene;
 }
 
 //---------------------------------------------------------------------------
@@ -694,7 +699,7 @@ void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
 void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
 {
   this->Superclass::UnRegisterDialogUp(ptr);
-  
+
   #ifdef Slicer3_USE_QT
   if (this->GetApplicationGUI())
     {
@@ -732,7 +737,7 @@ void vtkSlicerApplication::InstallTheme ( vtkKWTheme *theme )
 void vtkSlicerApplication::CloseAllWindows ( ) {
     int n, i;
     vtkKWWindowBase *win;
-    
+
     n= this->GetNumberOfWindows ( );
     for (i=0; i<n; i++) {
         win = this->GetNthWindow ( n );
@@ -755,7 +760,7 @@ int vtkSlicerApplication::StartApplication ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::DoOneTclEvent ( ) 
+void vtkSlicerApplication::DoOneTclEvent ( )
 {
   //
   // First, handle system-level events such as mouse moves, keys,
@@ -764,7 +769,7 @@ void vtkSlicerApplication::DoOneTclEvent ( )
   Tcl_DoOneEvent(0);
 
   //
-  // Then handle application-level events that were queued in 
+  // Then handle application-level events that were queued in
   // response to the system events
   // - only do this if event broker is in asynchronous mode
   // - have tcl first handle all its pending events (e.g. click and drag events)
@@ -830,7 +835,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   temporaryDirectory
     = itksys::SystemTools::GetActualCaseForPath(temporaryDirectory.c_str());
   itksys::SystemTools::ConvertToUnixSlashes( temporaryDirectory );
-  
+
   std::vector<std::string> pathcomponents;
   std::string pathWithSlicer;
   itksys::SystemTools::SplitPath(temporaryDirectory.c_str(), pathcomponents);
@@ -845,7 +850,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   pathcomponents.push_back(dirName);
 #endif
   pathWithSlicer = itksys::SystemTools::JoinPath(pathcomponents);
-  
+
   itksys::SystemTools::MakeDirectory(pathWithSlicer.c_str());
   if (pathWithSlicer.size() < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
     {
@@ -866,7 +871,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << " Using unmodified temporary directory path "
                     << this->TemporaryDirectory);
     }
-  
+
   //--- Set up the cache directory -- use the temporary directory initially.
   strcpy ( this->RemoteCacheDirectory, this->TemporaryDirectory);
 
@@ -877,7 +882,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   // long path names and unix slashes
   std::string webBrowser = this->WebBrowser;
 /*
-  webBrowser 
+  webBrowser
     = itksys::SystemTools::GetActualCaseForPath(webBrowser.c_str());
   itksys::SystemTools::ConvertToUnixSlashes( webBrowser );
     strcpy(this->WebBrowser, webBrowser.c_str());
@@ -887,7 +892,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << " is too long to be stored in the registry."
                     << " You will have to set the browser location each time you launch Slicer to use modules that require it.");
     }
-*/  
+*/
 
   //--- unzip
   strcpy(this->Unzip, "");
@@ -897,9 +902,9 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   strcpy(this->Rm, "");
 
   Superclass::RestoreApplicationSettingsFromRegistry();
-  
+
   char temp_reg_value[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-  
+
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey))
     {
@@ -907,7 +912,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey,
       this->ConfirmDelete);
     }
-  
+
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::HomeModuleRegKey))
     {
@@ -939,7 +944,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       2, "RunTime", vtkSlicerApplication::ModulePathsRegKey,
       temp_reg_value);
     // Use SetModulePaths so that PotentialModulePaths is updated too
-    this->SetModulePaths(temp_reg_value); 
+    this->SetModulePaths(temp_reg_value);
     }
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey))
@@ -948,7 +953,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey,
       temp_reg_value);
     // Use SetColorFilePaths so that PotentialColorFilePaths is updated too
-    this->SetColorFilePaths(temp_reg_value); 
+    this->SetColorFilePaths(temp_reg_value);
     }
 
   if (this->HasRegistryValue(
@@ -990,7 +995,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->GetRegistryValue(2, "RunTime", vtkSlicerApplication::RmRegKey,
                            this->Rm);
     }
-      
+
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey))
     {
@@ -1007,7 +1012,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
-    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey))     
+    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey))
     {
     this->LoadModules = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::LoadModulesRegKey);
@@ -1120,7 +1125,7 @@ void vtkSlicerApplication::UpdateRemoteIOSettingsForRegistry()
 {
   if ( this->ApplicationGUI )
     {
-    //--- update values from MRML, through the GUI 
+    //--- update values from MRML, through the GUI
     this->ApplicationGUI->UpdateRemoteIOConfigurationForRegistry();
     }
 }
@@ -1152,15 +1157,15 @@ void vtkSlicerApplication::SaveApplicationWindowConfiguration()
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
-{ 
+{
   Superclass::SaveApplicationSettingsToRegistry();
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey, "%s",
     this->ConfirmDelete);
-  
+
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::HomeModuleRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::HomeModuleRegKey, "%s",
     this->HomeModule);
 
   this->SetRegistryValue ( 2, "RunTime", vtkSlicerApplication::ApplicationFontFamilyRegKey, "%s",
@@ -1169,61 +1174,61 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
                            this->ApplicationFontSize);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::PotentialModulePathsRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::PotentialModulePathsRegKey, "%s",
     this->PotentialModulePaths);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::PotentialColorFilePathsRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::PotentialColorFilePathsRegKey, "%s",
     this->PotentialColorFilePaths);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ModulePathsRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::ModulePathsRegKey, "%s",
     this->ModulePaths);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey, "%s",
     this->ColorFilePaths);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ExtensionsInstallPathRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::ExtensionsInstallPathRegKey, "%s",
     this->ExtensionsInstallPath);
-  
+
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s",
     this->TemporaryDirectory);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::WebBrowserRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::WebBrowserRegKey, "%s",
     this->WebBrowser);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::UnzipRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::UnzipRegKey, "%s",
     this->Unzip);
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ZipRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::ZipRegKey, "%s",
     this->Zip);
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::RmRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::RmRegKey, "%s",
     this->Rm);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
+    2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d",
     this->LoadCommandLineModules);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey, "%d", 
+    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey, "%d",
     this->LoadModules);
 
-  
-  this->ArrayToString(this->IgnoreModules, this->NameSeparator, this->IgnoreModuleNames, 
+
+  this->ArrayToString(this->IgnoreModules, this->NameSeparator, this->IgnoreModuleNames,
                       vtkKWRegistryHelper::RegistryKeyValueSizeMax);
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey, "%s", 
+    2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey, "%s",
     this->IgnoreModuleNames);
-  
+
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey, "%d", 
+    2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey, "%d",
     this->EnableDaemon);
 
   this->SaveApplicationWindowConfiguration();
@@ -1241,24 +1246,24 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
                          this->ApplicationSlicesFrameHeight );
 
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey, "%s", 
+                         2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey, "%s",
                          this->RemoteCacheDirectory);
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::EnableAsynchronousIORegKey, "%d", 
+                         2, "RunTime", vtkSlicerApplication::EnableAsynchronousIORegKey, "%d",
                          this->EnableAsynchronousIO);
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::EnableForceRedownloadRegKey, "%d", 
+                         2, "RunTime", vtkSlicerApplication::EnableForceRedownloadRegKey, "%d",
                          this->EnableForceRedownload);
 /*
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey, "%d", 
+                         2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey, "%d",
                          this->EnableRemoteCacheOverwriting);
 */
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::RemoteCacheLimitRegKey, "%d", 
+                         2, "RunTime", vtkSlicerApplication::RemoteCacheLimitRegKey, "%d",
                          this->RemoteCacheLimit);
   this->SetRegistryValue(
-                         2, "RunTime", vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey, "%d", 
+                         2, "RunTime", vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey, "%d",
                          this->RemoteCacheFreeBufferSize);
   this->SetRegistryValue (
                           2, "RunTime", vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey, "%d",
@@ -1440,7 +1445,7 @@ void vtkSlicerApplication::AppendPotentialModulePath(const char* path,
 
   if (!paths.empty())
     {
-    paths += "|";  
+    paths += "|";
     }
   paths += path;
   paths += "|";
@@ -1464,7 +1469,7 @@ void vtkSlicerApplication::SetColorFilePaths(const char* paths)
     if (strcmp(this->ColorFilePaths, paths) != 0
         && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
-      strcpy(this->ColorFilePaths, paths);      
+      strcpy(this->ColorFilePaths, paths);
       char *str = new char [strlen(this->PotentialColorFilePaths) + 1];
       strcpy(str, this->PotentialColorFilePaths);
       int count = vtkKWDirectoryPresetSelector::
@@ -1472,7 +1477,7 @@ void vtkSlicerApplication::SetColorFilePaths(const char* paths)
           &str, '|', this->ColorFilePaths, delim);
       if (count)
         {
-        strcpy(this->PotentialColorFilePaths, str);       
+        strcpy(this->PotentialColorFilePaths, str);
         }
       delete [] str;
       this->Modified();
@@ -1654,14 +1659,14 @@ void vtkSlicerApplication::InitializeSlicer3Version()
   txtfile += Slicer3_INSTALL_LIB_DIR;
   txtfile += "/";
   txtfile += "Slicer3Version.txt";
-  
+
   std::string platform("");
   std::string build_date("");
   std::string svnurl("");
   std::string svnrevision("");
-  
+
   std::ifstream ifs(txtfile.c_str());
-  
+
   std::string line;
   while (std::getline(ifs, line, '\n')) {
     if (line.find("build ") == 0) {
@@ -1890,7 +1895,7 @@ bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *
 //     std::cout << " [" << (*this->InternalDisplayMessageQueue).size()
 //               << "] " << std::endl;
     this->DisplayMessageQueueLock->Unlock();
-    
+
     return true;
     }
 
@@ -1904,15 +1909,15 @@ void vtkSlicerApplication::ProcessDisplayMessage()
   bool active = true;
   AddRecordType record;
   record.first = "";
-  
+
   // Check to see if we should be shutting down
   this->DisplayMessageQueueActiveLock->Lock();
   active = this->DisplayMessageQueueActive;
   this->DisplayMessageQueueActiveLock->Unlock();
-  
+
   if (active)
     {
-    // pull an object off the queue 
+    // pull an object off the queue
     this->DisplayMessageQueueLock->Lock();
     if ((*this->InternalDisplayMessageQueue).size() > 0)
       {
@@ -2043,7 +2048,7 @@ void vtkSlicerApplication::AddAboutCopyrights(ostream &os)
 }
 
 //----------------------------------------------------------------------------
-//  override default behavior of KWWidgets so that toplevel window 
+//  override default behavior of KWWidgets so that toplevel window
 //  can be on top of the tcl interactor (i.e. so it's not 'transient')
 //
 void vtkSlicerApplication::DisplayTclInteractor(vtkKWTopLevel *master)
@@ -2073,7 +2078,7 @@ void vtkSlicerApplication::DisplayTclInteractor(vtkKWTopLevel *master)
 }
 
 //----------------------------------------------------------------------------
-//  override default behavior of KWWidgets so that toplevel window 
+//  override default behavior of KWWidgets so that toplevel window
 //  can be on top of the log dialog (i.e. so it's not 'transient')
 //
 void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
@@ -2132,7 +2137,7 @@ void vtkSlicerApplication::SetEnableForceRedownload ( int val )
     if ( val == 0 || val == 1 )
       {
       this->EnableForceRedownload = val;
-      this->ConfigureRemoteIOSettingsFromRegistry();    
+      this->ConfigureRemoteIOSettingsFromRegistry();
       }
     }
   return;
@@ -2147,7 +2152,7 @@ void vtkSlicerApplication::SetEnableRemoteCacheOverwriting ( int val )
     if ( val == 0 || val == 1 )
       {
       this->EnableRemoteCacheOverwriting = val;
-      this->ConfigureRemoteIOSettingsFromRegistry();    
+      this->ConfigureRemoteIOSettingsFromRegistry();
       }
     }
   return;
@@ -2270,26 +2275,26 @@ const char* vtkSlicerApplication::GetRemoteCacheDirectory() const
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializePython(void* mod, void* dict)
-{ 
-  this->PythonModule = mod; 
-  this->PythonDictionary = dict; 
+{
+  this->PythonModule = mod;
+  this->PythonDictionary = dict;
 }
 
 //----------------------------------------------------------------------------
 void* vtkSlicerApplication::GetPythonModule()
-{ 
-  return this->PythonModule; 
+{
+  return this->PythonModule;
 }
 
 //----------------------------------------------------------------------------
 void* vtkSlicerApplication::GetPythonDictionary()
-{ 
-  return this->PythonDictionary; 
+{
+  return this->PythonDictionary;
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::StringToArray(std::string s, char separator, vtkStringArray *array)
-{ 
+{
   std::string sr = s;
   std::replace( sr.begin(), sr.end(), ' ', '?' );
   std::replace( sr.begin(), sr.end(), separator, ' ' );
@@ -2297,9 +2302,9 @@ void vtkSlicerApplication::StringToArray(std::string s, char separator, vtkStrin
   for( ;; )
     {
     std::string word;
-    if( !( stream >> word ) ) 
-      { 
-      break; 
+    if( !( stream >> word ) )
+      {
+      break;
       }
     std::replace( word.begin(), word.end(), '?', ' ');
     array->InsertNextValue(word);
@@ -2307,7 +2312,7 @@ void vtkSlicerApplication::StringToArray(std::string s, char separator, vtkStrin
 }
 
 void vtkSlicerApplication::ArrayToString(vtkStringArray *array, std::string sep, char *string, int maxLength )
-{ 
+{
   int len=0;
   std::string res = "";
   for (int i=0; i<array->GetNumberOfValues(); i++)
@@ -2317,7 +2322,7 @@ void vtkSlicerApplication::ArrayToString(vtkStringArray *array, std::string sep,
       break;
       }
     std::string s(array->GetValue(i).c_str());
-    if (i) 
+    if (i)
       {
       res = res + sep;
       }
@@ -2333,7 +2338,7 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   this->Superclass::PrintSelf ( os, indent );
 
   vtkIndent nextIndent = indent.GetNextIndent();
-  
+
   os << indent << "Registry:\n";
   os << nextIndent << "ConfirmDelete: " << ConfirmDelete << "\n";
   os << nextIndent << "ModulePaths: " << ModulePaths << "\n";
@@ -2405,7 +2410,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
         }
       }
     }
-  
+
   return Superclass::GetColorPickerDialog();
 }
 
@@ -2428,6 +2433,14 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 #ifdef Slicer3_USE_QT
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeQtCoreModules()
+{
+  // Register core modules
+  QStringList tmp(qSlicerModuleManager::instance()->factory()->coreModuleNames());
+  this->InitializeQtModules(&tmp);
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtLoadableModules()
 {
   QStringList tmp(qSlicerModuleManager::instance()->factory()->loadableModuleNames());
@@ -2435,10 +2448,9 @@ void vtkSlicerApplication::InitializeQtLoadableModules()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::InitializeQtCoreModules()
+void vtkSlicerApplication::InitializeQtCommandLineModules()
 {
-  // Register core modules
-  QStringList tmp(qSlicerModuleManager::instance()->factory()->coreModuleNames());
+  QStringList tmp(qSlicerModuleManager::instance()->factory()->commandLineModuleNames());
   this->InitializeQtModules(&tmp);
 }
 
@@ -2456,16 +2468,9 @@ void vtkSlicerApplication::InitializeQtModules(QStringList* names)
 void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
 {
   QString splashMsg = "Initializing %1 Module...";
-  this->SplashMessage(splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toLatin1());
+  this->SplashMessage(
+    splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toLatin1());
   qDebug() << "Attempt to load module: " << moduleName;
   qSlicerModuleManager::instance()->loadModuleByName(moduleName);
-  /* it's too QT specific, it needs to be done somewhere else.
-  qSlicerAbstractModule* module = qSlicerModuleManager::instance()->getModuleByName(moduleName); 
-  if (module)
-    {
-    module->setScrollAreaAsParentContainer(true);
-    module->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
-    }
-  */
 }
 #endif

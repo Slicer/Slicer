@@ -12,7 +12,7 @@
 #ifdef Slicer3_USE_QT
 //BTX
 class qSlicerApplication;
-class qSlicerModuleManager; 
+class qSlicerModuleManager;
 class QStringList;
 //ETX
 #endif
@@ -53,7 +53,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     virtual void DoOneTclEvent();
 
     // Description:
-    // Get the layout, theme, GUI collection and main application GUI 
+    // Get the layout, theme, GUI collection and main application GUI
     vtkGetObjectMacro ( DefaultGeometry, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
@@ -65,31 +65,37 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     virtual void AddModuleGUI ( vtkSlicerModuleGUI *gui );
     virtual void RemoveModuleGUI ( vtkSlicerModuleGUI *gui );
     virtual vtkSlicerModuleGUI* GetModuleGUIByName ( const char *name );
-    
+
     // Description:
     // Set/Get MRML scene
-    void SetMRMLScene( vtkMRMLScene* scene); 
-    vtkMRMLScene* GetMRMLScene(); 
-    
+    void SetMRMLScene( vtkMRMLScene* scene);
+    vtkMRMLScene* GetMRMLScene();
+
 #ifdef Slicer3_USE_QT
     // Description:
     // Initialize qt core Modules
     //BTX
     void InitializeQtCoreModules();
     //ETX
-    
+
     // Description:
     // Initialize qt loadable Modules
     //BTX
     void InitializeQtLoadableModules();
     //ETX
-    
+
+    // Description:
+    // Initialize qt command line Modules
+    //BTX
+    void InitializeQtCommandLineModules();
+    //ETX
+
     // Description:
     // Initialize a list of QtModules given a list of names
     //BTX
     void InitializeQtModules(QStringList* names);
     //ETX
-    
+
     // Description:
     // Initialize a qt Module given its name
     //BTX
@@ -108,7 +114,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     // These methods manage windows associated with the application
     virtual void CloseAllWindows ( ) ;
-    
+
     // Description:
     // Sets application behavior.
     virtual void ConfigureApplication ( );
@@ -190,10 +196,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get the confirm delete flag
   void SetConfirmDelete(const char* state);
   const char* GetConfirmDelete() const;
-  
+
   // Description:
   // Set/Get the search paths for modules.
-  // This is a list of paths delimited by a specific separator: ';' on 
+  // This is a list of paths delimited by a specific separator: ';' on
   // Windows, ':' on Unix/MacOSX platforms.
   void SetModulePaths(const char *paths);
   const char* GetModulePaths() const;
@@ -201,11 +207,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   // Description:
   // Set/Get the potential search paths for modules.
-  // This is a list of directories that can be used as module paths. 
-  // Each item in this list is a directory and a boolean flag (0 or 1) 
+  // This is a list of directories that can be used as module paths.
+  // Each item in this list is a directory and a boolean flag (0 or 1)
   // specifying if that directory is actually to be used as a module path
   // (see ModulePaths, which is the subset of the paths in PotentialModulePaths
-  // that are enabled, with a different delimiter between each path). 
+  // that are enabled, with a different delimiter between each path).
   // This variable is used for GUI purposes, in that it lets people keep a
   // list of directories and enable/disable them at will, without having
   // to re-enter/re-pick them one by one using a file browser. It is used
@@ -234,12 +240,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get the cache path for modules.
   void SetExtensionsInstallPath(const char *path);
   const char* GetExtensionsInstallPath();
-  
+
   // Description:
   // Set/Get a user's home module.
   void SetHomeModule (const char *name);
   const char *GetHomeModule() const;
-  
+
   // Description:
   // Set/Get an executable firefox browser for modules that need one.
   void SetWebBrowser ( const char *browser);
@@ -256,7 +262,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get an executable rm for modules that need one
   void SetRm ( const char *rm );
   const char *GetRm() const;
-  
+
   // Description:
   // Set/Get a directory for temporary file storage
   void SetTemporaryDirectory(const char *path);
@@ -354,7 +360,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Description:
   // Control the remote cache directory free buffer size, in Mb
   void SetRemoteCacheFreeBufferSize ( int );
-  vtkGetMacro (RemoteCacheFreeBufferSize, int);  
+  vtkGetMacro (RemoteCacheFreeBufferSize, int);
 
   // Description:
   // Evaluate a string as a tcl expression
@@ -367,7 +373,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // of message ("Error", "Warning", "Information", "Debug").  Second
   // argument is the message to display.
   bool RequestDisplayMessage( const char *type, const char* message );
-  
+
   // Description:
   // Process a request to place a message on the log widget. This
   // method is called in the main thread of the application because
@@ -384,7 +390,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   virtual void ErrorMessage(const char* message);
   virtual void DebugMessage(const char* message);
   virtual void InformationMessage(const char* message);
-  
+
   // Description:
   // Override the KWWidgets default behavior of setting the 'transient'
   // flag on the interactor, which prevents it from being hidden
@@ -408,18 +414,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro (UseSplashScreen, int);
   vtkGetMacro (UseSplashScreen, int);
 
-  
+
   // Description:
   // Control stereo render capability
   vtkSetMacro (StereoEnabled, int);
   vtkGetMacro (StereoEnabled, int);
-  
+
   // Description:
   // Control the state of the splash screen
   void SplashMessage (const char * message);
 
   // Description:
-  // Entry point to the interpreter that can be used 
+  // Entry point to the interpreter that can be used
   // by an external application tro trigger
   // performance analysis
   // Also entry point for KWWidget callbacks that need to execute
@@ -459,7 +465,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 //BTX
   void StringToArray(std::string string, char separator, vtkStringArray *array);
   void ArrayToString(vtkStringArray *array, std::string sep, char *string, int maxLength );
-//ETX  
+//ETX
 
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
@@ -508,11 +514,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   int RemoteCacheFreeBufferSize;
 
   int UseWelcomeModuleAtStartup;
-  
+
   // Description:
   // print out local vars
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
   void operator = ( const vtkSlicerApplication& ); //Not implemented.
@@ -522,7 +528,7 @@ private:
   // Helper method to setup Platform, Build Date, SVN URL and SVN Revision
   void InitializeSlicer3Version();
   //ETX
-    
+
   //BTX
   itk::MutexLock::Pointer DisplayMessageQueueActiveLock;
   itk::MutexLock::Pointer DisplayMessageQueueLock;
@@ -532,7 +538,7 @@ private:
   bool DisplayMessageQueueActive;
 
   DisplayMessageQueue* InternalDisplayMessageQueue;
-  
+
   static vtkSlicerApplication* Instance;
 
   int UseSplashScreen;
@@ -546,6 +552,6 @@ private:
   vtkInternal* Internal;
 //ETX
 
-}; 
+};
 
 #endif

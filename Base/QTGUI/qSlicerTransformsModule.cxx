@@ -34,9 +34,9 @@ qSlicerCxxInternalConstructor1Macro(qSlicerTransformsModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerTransformsModule);
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModule::initializer()
+void qSlicerTransformsModule::setup()
 {
-  this->Superclass::initializer();
+  this->Superclass::setup();
   Q_ASSERT(this->Internal != 0);
 
   this->Internal->setupUi(this);

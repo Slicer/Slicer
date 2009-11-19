@@ -13,11 +13,13 @@ public:
   qSlicerAbstractModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerAbstractModulePanel();
   virtual void addModule(qSlicerAbstractModule* module) = 0;
+  virtual void removeModule(qSlicerAbstractModule* module) = 0;
+  virtual void removeAllModule() = 0;
 
 signals:
   void moduleAdded(qSlicerAbstractModule* module);
-  void moduleAboutToBeHidden(qSlicerAbstractModule* module);
-  void moduleHidden(qSlicerAbstractModule* module);
+  //void moduleAboutToBeRemoved(qSlicerAbstractModule* module);
+  void moduleRemoved(qSlicerAbstractModule* module);
 };
 
 #endif

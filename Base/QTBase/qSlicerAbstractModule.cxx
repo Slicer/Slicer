@@ -1,5 +1,11 @@
 #include "qSlicerAbstractModule.h"
 
+// SlicerLogic includes
+#include "vtkSlicerApplicationLogic.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractModule::qInternal
 {
@@ -11,11 +17,7 @@ struct qSlicerAbstractModule::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModule::qSlicerAbstractModule(QWidget *parent)
- :Superclass(parent)
-{
-  this->Internal = new qInternal;
-}
+qSlicerCxxInternalConstructor1Macro(qSlicerAbstractModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule::~qSlicerAbstractModule()
@@ -24,9 +26,11 @@ qSlicerAbstractModule::~qSlicerAbstractModule()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::initialize()
+void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
 {
-  this->initializer();
+  Q_ASSERT(appLogic);
+  this->setAppLogic(appLogic);
+  this->setup();
 }
 
 //-----------------------------------------------------------------------------

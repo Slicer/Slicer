@@ -10,6 +10,9 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactory
 {
 public:
 
+  // Description:
+  // Instantiate the factory
+  // Note: Core modules are registred when the factory is instantiated
   qSlicerModuleFactory();
   virtual ~qSlicerModuleFactory();
 
@@ -17,20 +20,32 @@ public:
 
   // Description:
   // Get a moduleName given its title
-  QString getModuleName(const QString & moduleTitle);
+  QString getModuleName(const QString & moduleTitle) const;
 
   // Description:
   // Get a module title given its name
-  QString getModuleTitle(const QString & moduleName);
+  QString getModuleTitle(const QString & moduleName) const;
 
   // Description:
-  // Instanciate a module given its name
-  qSlicerAbstractModule* initializeModule(const QString& moduleName);
+  // Instantiate a module given its name
+  qSlicerAbstractModule* instantiateModule(const QString& moduleName);
+
+  // Description:
+  // Uninstantiate a module given its name
+  void uninstantiateModule(const QString& moduleName);
+
+  // Description:
+  // Uninstantiate all registered modules
+  void uninstantiateAll();
+
+  // Description:
+  // Register the list of available core modules
+  void registerCoreModules();
 
   // Description:
   // Set/Get paths where the loadable modules are located
   void setLoadableModuleSearchPaths(const QStringList& paths);
-  QStringList loadableModuleSearchPaths();
+  QStringList loadableModuleSearchPaths() const;
 
   // Description:
   // Register all loadable modules discovered using the loadableModuleSearchPaths.
@@ -45,24 +60,24 @@ public:
   // Description:
   // Set/Get paths where the loadable modules are located
   void setCmdLineModuleSearchPaths(const QStringList& paths);
-  QStringList cmdLineModuleSearchPaths();
+  QStringList cmdLineModuleSearchPaths() const;
 
   // Description:
   void registerCmdLineModules();
   void registerCmdLineModule(const QFileInfo& fileInfo);
 
   // Description:
-  // Return the list of all core/loadable modules
-  QStringList coreModuleNames();
-  QStringList loadableModuleNames();
-  QStringList commandLineModuleNames();
+  // Return the list of all core/loadable/commandLine module names
+  QStringList coreModuleNames() const;
+  QStringList loadableModuleNames() const;
+  QStringList commandLineModuleNames() const;
+
+  // Description:
+  // Convenient method returning the list of all module names
+  QStringList moduleNames() const;
 
 
 protected:
-
-  // Description:
-  // Register the list of available core modules
-  void registerCoreModules();
 
   // Description:
   // Add a module class to the core module factory

@@ -13,26 +13,32 @@ SET(slicer_qtbase_include_directories
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   )
-  
+
 # Source files
 SET(slicer_qtbase_SRCS
   qSlicerCLIModule.h
   qSlicerCLIModule.cxx
-  qSlicerCLIModuleUILoader.h
-  qSlicerCLIModuleUILoader.cxx
   qSlicerCLIModuleLogic.h
   qSlicerCLIModuleLogic.cxx
+  #ui_qSlicerCLIModule.h
+  #ui_qSlicerCLIModule.cxx
+  #qSlicerCLIModuleUILoader.h
+  #qSlicerCLIModuleUILoader.cxx
+  #qSlicerExecutableCLIModuleLogic.h
+  #qSlicerExecutableCLIModuleLogic.cxx
+  #qSlicerPythonCLIModuleLogic.h
+  #qSlicerPythonCLIModuleLogic.cxx
+  vtkMRMLCommandLineModuleNode.h
+  vtkMRMLCommandLineModuleNode.cxx
   )
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
-  qSlicerCLIModule.h
-  qSlicerCLIModuleLogic.h
   )
 
 # UI files
 SET(slicer_qtbase_UI_SRCS
-  #Resources/UI/xxx.ui
+  Resources/UI/qSlicerCLIModule.ui
 )
 
 # Additional Target libraries (QT libs already included)
@@ -43,7 +49,7 @@ SET(slicer_qtbase_target_libraries
   ModuleDescriptionParser
   )
 
-Slicer3_build_slicer_qtbase_library( 
+Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${slicer_qtbase_export_directive}
   INCLUDE_DIRECTORIES ${slicer_qtbase_include_directories}
