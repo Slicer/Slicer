@@ -1,11 +1,10 @@
 #ifndef __qCTKTitleComboBoxPlugin_h
 #define __qCTKTitleComboBoxPlugin_h
 
-#include "qCTKWidgetsBasePlugin.h"
-#include "qCTKWidgetsPluginWin32Header.h"
+#include "qCTKWidgetsAbstractPlugin.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKTitleComboBoxPlugin : public QObject,
-                                         public qCTKWidgetsBasePlugin
+                                         public qCTKWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -17,7 +16,6 @@ public:
   QString includeFile() const;
   bool isContainer() const;
   QString name() const;
-  
 };
 
 #endif

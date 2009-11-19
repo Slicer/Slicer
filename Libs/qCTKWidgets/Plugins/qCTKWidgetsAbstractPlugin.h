@@ -1,15 +1,15 @@
-#ifndef __qCTKWidgetsBasePlugin_h
-#define __qCTKWidgetsBasePlugin_h
+#ifndef __qCTKWidgetsAbstractPlugin_h
+#define __qCTKWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
 #include "qCTKWidgetsPluginWin32Header.h"
 
-class QCTK_WIDGETS_PLUGIN_EXPORT qCTKWidgetsBasePlugin : public QDesignerCustomWidgetInterface
+class QCTK_WIDGETS_PLUGIN_EXPORT qCTKWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface)
 public:
 
-  qCTKWidgetsBasePlugin();
+  qCTKWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const;
   // You can reimplement these methods

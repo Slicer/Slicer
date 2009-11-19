@@ -10,8 +10,18 @@ INCLUDE_DIRECTORIES(
 # Create the plugin for Qt Designer
 SET(qCTKWidgetsPlugin_SRCS
   qCTKWidgetsPlugin.cxx  
-  qCTKWidgetsBasePlugin.cxx
+  qCTKWidgetsAbstractPlugin.cxx
 
+  qCTKCollapsibleGroupBoxPlugin.h
+  qCTKCollapsibleWidgetPlugin.h
+  qCTKCollapsibleWidget2Plugin.h
+  qCTKCollapsibleWidgetContainerExtension.h
+  qCTKColorPickerButtonPlugin.h
+  qCTKCoordinatesWidgetPlugin.h
+  qCTKExtensionFactory.h
+  qCTKNumericInputPlugin.h
+  qCTKTitleComboBoxPlugin.h
+  qCTKTreeComboBoxPlugin.h
   qCTKCollapsibleGroupBoxPlugin.cxx
   qCTKCollapsibleWidgetPlugin.cxx
   qCTKCollapsibleWidget2Plugin.cxx

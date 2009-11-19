@@ -1,11 +1,10 @@
 #ifndef __qMRMLNodeSelectorPlugin_h
 #define __qMRMLNodeSelectorPlugin_h
 
-#include "qMRMLWidgetsBasePlugin.h"
-#include "qMRMLWidgetsPluginWin32Header.h"
+#include "qMRMLWidgetsAbstractPlugin.h"
 
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLNodeSelectorPlugin : public QObject,
-                                         public qMRMLWidgetsBasePlugin
+                                         public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
