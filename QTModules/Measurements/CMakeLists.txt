@@ -27,12 +27,17 @@ SET(qt_module_MOC_SRCS
   Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsRulerWidget.h
   )
-  
+
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerMeasurementsModule.ui
   Resources/UI/qSlicerMeasurementsAngleWidget.ui
   Resources/UI/qSlicerMeasurementsRulerWidget.ui
+)
+
+# Resources
+SET(qt_module_resources
+  Resources/qSlicerMeasurementsModule.qrc
 )
 
 # Additional Target libraries
@@ -43,8 +48,8 @@ SET(qt_module_target_libraries ""
   #SlicerTractographyDisplay
   #SlicerTractographyFiducialSeeding
   )
-  
-Slicer3_build_qtmodule( 
+
+Slicer3_build_qtmodule(
   NAME ${qt_module_name}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}
@@ -52,4 +57,5 @@ Slicer3_build_qtmodule(
   MOC_SRCS ${qt_module_MOC_SRCS}
   UI_SRCS ${qt_module_UI_SRCS}
   TARGET_LIBRARIES ${qt_module_target_libraries}
+  RESOURCES ${qt_module_resources}
   )

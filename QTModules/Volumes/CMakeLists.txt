@@ -19,7 +19,7 @@ SET(qt_module_SRCS
 SET(qt_module_MOC_SRCS
   qSlicerVolumesModule.h
   )
-  
+
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerVolumesModule.ui
@@ -35,7 +35,7 @@ SET(qt_module_target_libraries
   )
 
 
-Slicer3_build_qtmodule( 
+Slicer3_build_qtmodule(
   NAME ${qt_module_name}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}
@@ -43,5 +43,4 @@ Slicer3_build_qtmodule(
   MOC_SRCS ${qt_module_MOC_SRCS}
   UI_SRCS ${qt_module_UI_SRCS}
   TARGET_LIBRARIES ${qt_module_target_libraries}
-  NO_RESOURCES
   )
