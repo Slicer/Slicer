@@ -12,26 +12,28 @@ SET(qCTKWidgetsPlugin_SRCS
   qCTKWidgetsPlugin.cxx  
   qCTKWidgetsAbstractPlugin.cxx
 
-  qCTKCollapsibleGroupBoxPlugin.h
-  qCTKCollapsibleWidgetPlugin.h
-  qCTKCollapsibleWidget2Plugin.h
-  qCTKCollapsibleWidgetContainerExtension.h
-  qCTKColorPickerButtonPlugin.h
-  qCTKCoordinatesWidgetPlugin.h
-  qCTKExtensionFactory.h
-  qCTKNumericInputPlugin.h
-  qCTKTitleComboBoxPlugin.h
-  qCTKTreeComboBoxPlugin.h
   qCTKCollapsibleGroupBoxPlugin.cxx
-  qCTKCollapsibleWidgetPlugin.cxx
+  qCTKCollapsibleGroupBoxPlugin.h
   qCTKCollapsibleWidget2Plugin.cxx
+  qCTKCollapsibleWidget2Plugin.h
   qCTKCollapsibleWidgetContainerExtension.cxx
+  qCTKCollapsibleWidgetContainerExtension.h
+  qCTKCollapsibleWidgetPlugin.cxx
+  qCTKCollapsibleWidgetPlugin.h
   qCTKColorPickerButtonPlugin.cxx
+  qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.cxx
+  qCTKCoordinatesWidgetPlugin.h
   qCTKExtensionFactory.cxx
+  qCTKExtensionFactory.h
+  qCTKFittedTextBrowserPlugin.cxx
+  qCTKFittedTextBrowserPlugin.h
   qCTKNumericInputPlugin.cxx
+  qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.cxx
+  qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.cxx
+  qCTKTreeComboBoxPlugin.h
   )
 
 SET(qCTKWidgetsPlugin_MOC_SRCS
@@ -44,6 +46,7 @@ SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
   qCTKExtensionFactory.h
+  qCTKFittedTextBrowserPlugin.h
   qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.h

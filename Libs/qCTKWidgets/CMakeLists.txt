@@ -29,6 +29,8 @@ SET(qCTKWidgets_SRCS
   qCTKColorPickerButton.cxx
   qCTKCoordinatesWidget.h
   qCTKCoordinatesWidget.cxx
+  qCTKFittedTextBrowser.h
+  qCTKFittedTextBrowser.cxx
   qCTKMatrixWidget.h
   qCTKMatrixWidget.cxx
   qCTKNumericInput.h
@@ -51,6 +53,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKCollapsibleWidget2.h
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
+  qCTKFittedTextBrowser.h
   qCTKMatrixWidget.h
   qCTKNumericInput.h
   qCTKSlider.h
