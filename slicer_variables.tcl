@@ -541,7 +541,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005"   ;# do NOT use the 64 bit target
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/VC/bin"
-            #error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for other Visual Studio 2005 configuration for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
+            set ::MSSDK_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/SDK/v2.0"
         }
         #
         ## for Visual Studio 9
