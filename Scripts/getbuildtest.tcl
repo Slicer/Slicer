@@ -580,7 +580,7 @@ if { $isWindows } {
         }
     }
 } else {
-    set buildReturn [catch "eval runcmd $::MAKE -DCTEST_TEST_TIMEOUT=180 $::GETBUILDTEST(test-type)"]
+    set buildReturn [catch "eval runcmd $::MAKE $::GETBUILDTEST(test-type)"]
     if { $::GETBUILDTEST(pack) == "true" } {
         set packageReturn [catch "eval runcmd $::MAKE package"]
     }
