@@ -248,6 +248,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
       fIter->second->Delete();
       }
     }
+  this->DisplayedTextFiducials.clear();
 
   /*
   std::map< std::string, vtkPointWidget*>::iterator pointIter;
