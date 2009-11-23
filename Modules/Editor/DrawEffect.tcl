@@ -131,6 +131,7 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
       "LeftButtonPressEvent" {
         $_renderWidget CornerAnnotationVisibilityOff
         set _actionState "drawing"
+        $o(cursorActor) VisibilityOff
         $sliceGUI SetGrabID $this
         eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
@@ -159,6 +160,7 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
       }
       "LeftButtonReleaseEvent" {
         $_renderWidget CornerAnnotationVisibilityOn
+        $o(cursorActor) VisibilityOn
         set _actionState ""
         $sliceGUI SetGrabID ""
         $sliceGUI SetGUICommandAbortFlag 1
