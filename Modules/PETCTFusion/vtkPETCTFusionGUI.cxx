@@ -1165,8 +1165,8 @@ void vtkPETCTFusionGUI::UpdateFusionDisplayFromMRML()
         //--- get display node.
         double win = dnode->GetWindow( );
         double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
-        double ut = dnode->GetUpperThreshold();
-        double lt = dnode->GetLowerThreshold();
+        //double ut = dnode->GetUpperThreshold();
+        //double lt = dnode->GetLowerThreshold();
         //--- compute settings for node
         double lw = lev - (win/2.0);
         double uw = lev + (win/2.0);
@@ -1203,8 +1203,8 @@ void vtkPETCTFusionGUI::UpdateFusionDisplayFromMRML()
         //--- get display node.
         double win = dnode->GetWindow( );
         double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
-        double ut = dnode->GetUpperThreshold();
-        double lt = dnode->GetLowerThreshold();
+        //double ut = dnode->GetUpperThreshold();
+        //double lt = dnode->GetLowerThreshold();
         //--- compute settings for node
         double lw = lev - (win/2.0);
         double uw = lev + (win/2.0);
@@ -3584,8 +3584,8 @@ void vtkPETCTFusionGUI::UpdatePETRangeFromMRML ()
       {
       double win = dnode->GetWindow( );
       double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
-      double ut = dnode->GetUpperThreshold();
-      double lt = dnode->GetLowerThreshold();
+      //double ut = dnode->GetUpperThreshold();
+      //double lt = dnode->GetLowerThreshold();
       //--- compute settings for node
       double lw = lev - (win/2.0);
       double uw = lev + (win/2.0);
@@ -3672,8 +3672,8 @@ void vtkPETCTFusionGUI::UpdateCTRangeFromMRML ()
       {
       double win = dnode->GetWindow( );
       double lev = dnode->GetLevel( ); //min + (0.5 * (max - min)) );
-      double ut = dnode->GetUpperThreshold();
-      double lt = dnode->GetLowerThreshold();
+      //double ut = dnode->GetUpperThreshold();
+      //double lt = dnode->GetLowerThreshold();
       //--- compute settings for node
       double lw = lev - (win/2.0);
       double uw = lev + (win/2.0);
