@@ -2645,7 +2645,7 @@ void vtkEMSegmentNodeParametersStep::ProcessComputeWeightsButtonGUIEvents(
 
     int control = 1;
     int position = 0;
-    int positionF;
+    int positionF = 0;
 
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
