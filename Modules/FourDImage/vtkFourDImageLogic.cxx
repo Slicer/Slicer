@@ -422,7 +422,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
         // Slice Location
       itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|1041",  tag);
       float firstSliceLocation = atof( tag.c_str() ); // first slice location
-      int nSlicesInVolume;
+      int nSlicesInVolume = 1;
       
       statusMessage.progress = 0.0;
       statusMessage.message = "Checking slice locations...";
@@ -506,9 +506,9 @@ void vtkFourDImageLogic::CreateFileListFromDir(const char* path,
     return;
     }
   
-  int tOffset;  // increment for time point index
-  int cOffset;  // increment for channel index
-  int sOffset;  // increment for slicer index
+  int tOffset = 1;  // increment for time point index
+  int cOffset = 1;  // increment for channel index
+  int sOffset = 1;  // increment for slicer index
 
   if (strcmp(order, "T-S-C") == 0)
     {
