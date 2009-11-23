@@ -591,7 +591,12 @@ void vtkSlicerDiffusionTestingWidget::CreateTracts()
 
     //get the existing GUI of the "Tractography Fiducial Seeding Module"
     vtkSlicerTractographyFiducialSeedingGUI *moduleGUI = vtkSlicerTractographyFiducialSeedingGUI::SafeDownCast(
-      this->Application->GetModuleGUIByName("FiducialSeeding"));    
+      this->Application->GetModuleGUIByName("FiducialSeeding"));
+    if (moduleGUI == NULL)
+      {
+      vtkErrorMacro("CreateTracts: Unable to get the FiducialSeeding module");
+      return;
+      }
     moduleGUI->Enter();
 
     //create new fiber node
