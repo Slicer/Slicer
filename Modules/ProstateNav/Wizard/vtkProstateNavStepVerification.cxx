@@ -307,7 +307,7 @@ void vtkProstateNavStepVerification::ProcessMRMLEvents(vtkObject *caller,
     return;
     }
 
-  vtkMRMLSelectionNode *selnode;
+  vtkMRMLSelectionNode *selnode = NULL;
   if (this->GetGUI()->GetApplicationLogic())
     {
     selnode = this->GetGUI()->GetApplicationLogic()->GetSelectionNode();
