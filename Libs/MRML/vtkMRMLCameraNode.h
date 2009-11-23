@@ -20,14 +20,14 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+#include "vtkMRMLTransformableNode.h"
 #include "vtkCamera.h"
 
-class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLCameraNode *New();
-  vtkTypeMacro(vtkMRMLCameraNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLCameraNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -156,6 +156,11 @@ public:
   // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
+  // Reimplement from parent
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
 
 protected:
   vtkMRMLCameraNode();

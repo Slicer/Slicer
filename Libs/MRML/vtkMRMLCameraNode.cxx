@@ -19,8 +19,10 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkTransform.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLCameraNode::New()
@@ -72,6 +74,10 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::~vtkMRMLCameraNode()
 {
+  if (this->Camera)
+    {
+    this->Camera->SetUserTransform(NULL);
+    }
   this->SetAndObserveCamera(NULL);
   delete [] this->InternalActiveTag;
 }
@@ -270,11 +276,32 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event, 
                                             void *callData )
 {
-  Superclass::ProcessMRMLEvents ( caller, event, callData );
+  Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->Camera != NULL && this->Camera == vtkCamera::SafeDownCast(caller) &&
+  if (this->Camera != NULL && 
+      this->Camera == vtkCamera::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
+
+  vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
+  if (this->Camera != NULL &&
+      tnode == vtkMRMLTransformNode::SafeDownCast(caller) && 
+      event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    vtkTransform *user_transform = 
+      vtkTransform::SafeDownCast(this->Camera->GetUserTransform());
+    if (!user_transform)
+      {
+      user_transform = vtkTransform::New();
+      this->Camera->SetUserTransform(user_transform);
+      user_transform->Delete();
+      }
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    tnode->GetMatrixTransformToWorld(transformToWorld);
+    user_transform->SetMatrix(transformToWorld);
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
 }
@@ -369,3 +396,8 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char *tag)
   return NULL;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::ApplyTransform(vtkAbstractTransform* )
+{
+  // I'm not quite sure what ApplyTransform is used for
+}
