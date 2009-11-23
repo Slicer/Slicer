@@ -427,7 +427,10 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
   double size2 = 0;
   double xyPt[4];
   double ijkPt[3];
-  double begin[2];
+  int begin[2];
+
+  begin[0] = 0;
+  begin[1] = 0;
   
   xyPt[1] = round(dim1/2);
   xyPt[2] = 0;
