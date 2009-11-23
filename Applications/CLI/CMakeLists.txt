@@ -737,8 +737,8 @@ if (Slicer3_SOURCE_DIR)
     GaussianBlurImageFilterLib
     DicomToNrrdConverter
     DicomToNrrdConverterLib
-    DWIDicomLoad
-    DWIDicomLoadLib
+#    DWIDicomLoad
+#    DWIDicomLoadLib
     FreesurferSurfaceSectionExtraction
     ZeroCrossingBasedEdgeDetectionImageFilter
     ZeroCrossingBasedEdgeDetectionImageFilterLib
