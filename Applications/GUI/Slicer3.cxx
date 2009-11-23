@@ -1454,6 +1454,9 @@ int Slicer3_main(int& argc, char *argv[])
   dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
   dataGUI->GetUIPanel()->Create ( );
   slicerApp->AddModuleGUI ( dataGUI );
+  // Set up observers here so appGUI will be notified from menu
+  // events in the tree widget
+  dataGUI->AddObserver(vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand());
 
 #ifndef CAMERA_DEBUG
   slicerApp->SplashMessage("Initializing Camera Module...");
@@ -2099,6 +2102,7 @@ int Slicer3_main(int& argc, char *argv[])
   cameraGUI->RemoveGUIObservers ( );
 #endif
 
+  dataGUI->RemoveObservers(vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand());
   dataGUI->TearDownGUI ( );
 
   appGUI->RemoveGUIObservers ( );

@@ -523,11 +523,6 @@ void vtkSlicerDataGUI::UnpackInformationFrame ( vtkKWFrame *f, vtkKWPushButton *
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::RemoveGUIObservers ( )
 {
-  if (! this->Built )
-    {
-    return;
-    }
-
   this->MRMLTreeWidget->RemoveObservers (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SceneInformationButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -567,10 +562,6 @@ void vtkSlicerDataGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::AddGUIObservers ( )
 {
-  if ( this->Built )
-    {
-    return;
-    }
   this->MRMLTreeWidget->AddObserver (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->MRMLTreeWidget->AddMRMLObservers();
 
@@ -634,10 +625,13 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
   //--- node?
-  vtkMRMLNode *node = (vtkMRMLNode *)callData;
-  if (node)
+  if (caller == this->MRMLTreeWidget)
     {
-    this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, node);
+    vtkMRMLNode *node = (vtkMRMLNode *)callData;
+    if (node)
+      {
+      this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, node);
+      }
     }
 
   //--- node selector widget?
@@ -1322,7 +1316,6 @@ void vtkSlicerDataGUI::Enter ( )
     this->BuildGUI();
     this->AddGUIObservers();
     this->Built = true;
-    this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
 
     // temporary for the load interface.
     if ( this->ModelSelector != NULL )

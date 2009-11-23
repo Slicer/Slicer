@@ -1085,6 +1085,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     this->MainSlicerWindow->GetApplicationSettingsInterface()->Update();
     }
 
+  // Event observer is added in Slicer3.cxx
   if (event == vtkSlicerModuleGUI::ModuleSelectedEvent)
     {
     this->SelectModuleForNode((vtkMRMLNode *)callData);
