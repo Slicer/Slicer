@@ -536,14 +536,14 @@ target_link_libraries(${CLP}Test ITKIO)
 
 ##################################
 # DWIDicomLoad tests
-add_test(DWIDicomLoadTest ${Slicer3_EXE} --launch DWIDicomLoadTest
-  DWIDicomLoadTest --help
-  )
+# add_test(DWIDicomLoadTest ${Slicer3_EXE} --launch DWIDicomLoadTest
+#  DWIDicomLoadTest --help
+#  )
 
-set (CLP DWIDicomLoad)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+# set (CLP DWIDicomLoad)
+# add_executable(${CLP}Test ${CLP}Test.cxx)
+# add_dependencies(${CLP}Test ${CLP})
+# target_link_libraries(${CLP}Test ITKIO)
 
 ##################################
 # ExecutionModelTour tests
