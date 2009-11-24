@@ -13,6 +13,7 @@
 #include <QStackedWidget>
 #include <QResizeEvent>
 #include <QTextBrowser>
+#include <QSpacerItem>
 
 //---------------------------------------------------------------------------
 struct qSlicerModulePanel::qInternal
@@ -143,7 +144,7 @@ void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
   this->HelpCollabsibleWidget->setCollapsed(true);
   this->HelpCollabsibleWidget->setSizePolicy(
     QSizePolicy::Ignored,
-    this->HelpCollabsibleWidget->sizePolicy().verticalPolicy());
+    QSizePolicy::MinimumExpanding);
   // QTextBrowser instead of QLabel because QLabel don't word wrap links
   // correctly
   this->HelpLabel = new QTextBrowser;
@@ -160,7 +161,8 @@ void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
 
   this->Layout = new QVBoxLayout(panel);
   this->Layout->addWidget(this->HelpCollabsibleWidget);
-  this->Layout->addStretch(1);
+  this->Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Minimum));
+  //this->Layout->addStretch(1);
 
   this->ScrollArea = new QScrollArea;
   this->ScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

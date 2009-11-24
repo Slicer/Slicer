@@ -350,7 +350,7 @@ void qCTKCollapsibleWidget2::childEvent(QChildEvent* c)
     if (c->child() && c->child()->isWidgetType())
       {
       QWidget *w = static_cast<QWidget*>(c->child());
-      w->setVisible(this->Internal->Collapsed);
+      w->setVisible(!this->Internal->Collapsed);
       }
     }
   QWidget::childEvent(c);
