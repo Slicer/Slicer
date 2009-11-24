@@ -1,0 +1,43 @@
+#! /usr/bin/env python
+"""
+This module allows to:
+ - update the environement variable QT_PLUGIN_PATH with Slicer QT Plugin path
+ - update PATH with Slicer libraries
+ - start the designer
+"""
+
+import os
+import sys
+  
+def startDesigner(argv):
+  "Start QT Designer"
+  
+  addEnvVariable('QT_PLUGIN_PATH', '@LIBRARY_OUTPUT_DIRECTORY@')
+  addEnvVariable('PATH', '@LIBRARY_OUTPUT_DIRECTORY@')
+  os.execv('@QT_BINARY_DIR@/'+argv[0], argv)
+
+def addEnvVariable(name, value):
+  "Add variable to environement"
+  
+  if (name in os.environ):
+    sep = ''
+    if (os.environ[name] != ""):
+      sep = os.pathsep
+  
+    os.environ[name] += (sep + value)
+  
+  else:
+    os.environ[name] = value
+
+# Entry point
+if __name__ == "__main__":
+  if (len(sys.argv) > 2):
+    print """
+designer.py - Start QT Designer with Slicer plugins
+
+Use: python designer.py [UI file]
+"""
+  else:
+    # Update first value to match executable name
+    sys.argv[0] ='designer'
+    startDesigner(sys.argv);
