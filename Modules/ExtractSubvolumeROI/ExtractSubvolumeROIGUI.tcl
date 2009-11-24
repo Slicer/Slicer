@@ -320,6 +320,8 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     if { $::ExtractSubvolumeROI($this,roilabelNode) == "" } {
       set ::ExtractSubvolumeROI($this,roilabelNode) [$volumesLogic \
         CreateLabelVolume $scene $inputVolume "Subvolume_ROI_Label"]
+      $::ExtractSubvolumeROI($this,roilabelNode) SetAndObserveTransformNodeID 0
+
       set roilabelImage [vtkImageData New]
       $roilabelImage SetExtent 0 1 0 1 0 1
       $roilabelImage SetDimensions 1 1 1
