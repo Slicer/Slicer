@@ -6,7 +6,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule)
+Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumesModule::qInternal: public Ui::qSlicerVolumesModule

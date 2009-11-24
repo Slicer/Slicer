@@ -2,4 +2,4 @@
 
 #include <QtPlugin>
 
-Q_EXPORT_PLUGIN2(customwidgetplugin, qCTKWidgetsPlugin)
+Q_EXPORT_PLUGIN2(customwidgetplugin, qCTKWidgetsPlugin);
