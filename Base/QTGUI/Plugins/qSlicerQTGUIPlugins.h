@@ -5,12 +5,12 @@
 #include "qSlicerQTGUIPluginWin32Header.h"
 #include <QDesignerCustomWidgetCollectionInterface>
 
-// \class Group the plugins in one library 
+// \class Group the plugins in one library
 class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugins : public QObject,
                          public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const

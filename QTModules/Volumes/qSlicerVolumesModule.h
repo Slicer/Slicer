@@ -9,7 +9,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
   public qSlicerAbstractLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule)
+  Q_INTERFACES(qSlicerAbstractLoadableModule);
 
 public:
 

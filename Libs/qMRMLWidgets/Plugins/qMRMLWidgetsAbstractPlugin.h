@@ -6,7 +6,7 @@
 
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface)
+  Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
   qMRMLWidgetsAbstractPlugin();

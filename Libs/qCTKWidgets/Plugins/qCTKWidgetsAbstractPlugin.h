@@ -6,7 +6,7 @@
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface)
+  Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
   qCTKWidgetsAbstractPlugin();

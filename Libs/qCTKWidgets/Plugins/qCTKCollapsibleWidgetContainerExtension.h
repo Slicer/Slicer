@@ -11,7 +11,7 @@ class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCollapsibleWidgetContainerExtension: public
                                                public QDesignerContainerExtension
 {
     Q_OBJECT
-    Q_INTERFACES(QDesignerContainerExtension)
+    Q_INTERFACES(QDesignerContainerExtension);
 
 public:
     qCTKCollapsibleWidgetContainerExtension(qCTKCollapsibleWidget *widget, QObject *parent);

@@ -4,10 +4,10 @@
 #include <QDesignerCustomWidgetInterface>
 #include "qSlicerQTGUIPluginWin32Header.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin : 
+class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin :
   public QDesignerCustomWidgetInterface
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface)
+  Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
   qSlicerQTGUIAbstractPlugin();

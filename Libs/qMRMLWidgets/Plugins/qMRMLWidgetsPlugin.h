@@ -10,12 +10,12 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 #include "qMRMLWidgetsPluginWin32Header.h"
 
-// \class Group the plugins in one library 
+// \class Group the plugins in one library
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QObject,
                            public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
