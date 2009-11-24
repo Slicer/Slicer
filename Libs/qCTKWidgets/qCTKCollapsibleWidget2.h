@@ -8,7 +8,7 @@
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleWidget2 : public QWidget
 {
   Q_OBJECT
-  
+
   Q_PROPERTY(QString title READ title WRITE setTitle)
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
@@ -22,12 +22,12 @@ public:
   qCTKCollapsibleWidget2(QWidget *parent = 0);
   qCTKCollapsibleWidget2(const QString& title, QWidget *parent = 0);
   virtual ~qCTKCollapsibleWidget2();
-  
+
   // Description:
   // Button title.
   void setTitle(QString t);
   QString title()const;
-  
+
   // Description:
   // Property that describes if the widget is collapsed or not.
   // When collapsed, the children are invisible and the widget
@@ -51,7 +51,7 @@ public:
   // Hint: Raised is probably the shadow you are looking for
   QFrame::Shadow contentsFrameShadow() const;
   void setContentsFrameShadow(QFrame::Shadow);
-  
+
   // Description:
   // Set the line width of the frame around the contents
   int contentsLineWidth() const;
@@ -79,7 +79,7 @@ public slots:
 signals:
   // Description:
   // Signal emitted when the widget is collapsed or expanded
-  void contentsCollapsed(bool);  
+  void contentsCollapsed(bool);
 
 protected slots:
   // Description:
@@ -90,6 +90,7 @@ protected:
   virtual void paintEvent(QPaintEvent*);
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseReleaseEvent(QMouseEvent* event);
+  virtual void childEvent(QChildEvent* c);
 
 private:
   struct qInternal;

@@ -18,17 +18,17 @@ struct qCTKCollapsibleWidget2::qInternal
   void initStyle(QStyleOptionButton& opt);
 
   qCTKCollapsibleWidget2* Widget;
-  
+
   bool     Collapsed;
   int      CollapsedHeight;
   QString  Title;
 
-  // Contents frame 
+  // Contents frame
   QFrame::Shape  ContentsFrameShape;
   QFrame::Shadow ContentsFrameShadow;
   int            ContentsLineWidth;
   int            ContentsMidLineWidth;
-  
+
   // Is the button pressed
   bool PressedControl;
   int  MaximumHeight;
@@ -53,7 +53,7 @@ void qCTKCollapsibleWidget2::qInternal::init()
 
   this->PressedControl = 0;
   this->MaximumHeight = this->Widget->maximumHeight();
-  
+
   QStyleOptionButton opt;
   this->initStyle(opt);
   this->Widget->setContentsMargins(0, opt.rect.height(),0 , 0);
@@ -153,7 +153,7 @@ void qCTKCollapsibleWidget2::collapse(bool c)
     }
 
   this->Internal->Collapsed = c;
-  
+
   // we do that here as setVisible calls will correctly refresh the widget
   if (c)
     {
@@ -167,23 +167,23 @@ void qCTKCollapsibleWidget2::collapse(bool c)
   else
     {
     // restore maximumheight
-    this->setMaximumHeight(this->Internal->MaximumHeight);    
+    this->setMaximumHeight(this->Internal->MaximumHeight);
     this->updateGeometry();
     }
 
   QObjectList childList = this->children();
-  for (int i = 0; i < childList.size(); ++i) 
+  for (int i = 0; i < childList.size(); ++i)
     {
     QObject *o = childList.at(i);
-    if (!o->isWidgetType()) 
+    if (!o->isWidgetType())
       {
       continue;
       }
     QWidget *w = static_cast<QWidget *>(o);
     w->setVisible(!c);
     }
-  
-  // this might be too many updates... 
+
+  // this might be too many updates...
   this->updateGeometry();
   this->update(QRect(QPoint(0,0), this->sizeHint()));
   this->repaint(QRect(QPoint(0,0), this->sizeHint()));
@@ -213,7 +213,7 @@ void qCTKCollapsibleWidget2::setContentsFrameShadow(QFrame::Shadow s)
 {
   this->Internal->ContentsFrameShadow = s;
 }
-  
+
 //-----------------------------------------------------------------------------
 int qCTKCollapsibleWidget2:: contentsLineWidth() const
 {
@@ -320,7 +320,7 @@ void qCTKCollapsibleWidget2::mousePressEvent(QMouseEvent* event)
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::mouseReleaseEvent(QMouseEvent* event)
 {
-  if (event->button() != Qt::LeftButton) 
+  if (event->button() != Qt::LeftButton)
     {
     event->ignore();
     return;
@@ -341,4 +341,17 @@ void qCTKCollapsibleWidget2::mouseReleaseEvent(QMouseEvent* event)
     {
     this->update(opt.rect);
     }
+}
+
+void qCTKCollapsibleWidget2::childEvent(QChildEvent* c)
+{
+  if(c && c->type() == QEvent::ChildAdded)
+    {
+    if (c->child() && c->child()->isWidgetType())
+      {
+      QWidget *w = static_cast<QWidget*>(c->child());
+      w->setVisible(this->Internal->Collapsed);
+      }
+    }
+  QWidget::childEvent(c);
 }
