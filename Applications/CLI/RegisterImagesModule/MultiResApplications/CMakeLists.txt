@@ -10,7 +10,7 @@ PROJECT( RegisterImagesMultiResApplications )
   INCLUDE( ${GenerateCLP_USE_FILE} )
 
   # Setup the source and paths
-  SET( RegisterImagesMultiRes_SOURCE RegisterImagesMultiRes.cxx )
+  SET( RegisterImagesMultiRes_SOURCE RegisterImagesMultiRes.cxx ScalingHeuristics.cxx) 
   GENERATECLP( RegisterImagesMultiRes_SOURCE
                RegisterImagesMultiRes.xml )
   INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_BINARY_DIR} )

@@ -33,6 +33,18 @@
       <description>Registration results</description>
       <default></default>
     </image>
+    <transform fileExtensions=".txt">
+      <name>outputTransform</name>
+      <label>Output transform</label>
+      <description>Save the output transform from the registration</description>
+      <longflag>saveTransform</longflag>
+      <channel>output</channel>
+      <default></default>
+    </transform>
+  </parameters>
+  <parameters>
+    <label>Registration</label>
+    <description>Registration algorithm</description>
     <image type="label">
       <name>fixedImageMask</name>
       <label>Fixed Image Mask image</label>
@@ -41,5 +53,14 @@
       <description>Label image which defines a mask of interest for the fixed image</description>
       <default></default>
     </image>
+    <float>
+      <name>stepSize</name>
+      <label>Step Size (voxels)</label>
+      <channel>input</channel>
+      <longflag>stepSize</longflag>
+      <description>The maximum step size of the optimizer in voxels</description>
+      <default>5.0</default>
+    </float>
+      
   </parameters>
 </executable>

@@ -27,16 +27,17 @@ namespace itk
 /** \class EulerSimilarity3DTransform
  * \brief EulerSimilarity3DTransform of a vector space (e.g. space coordinates)
  *
- * This transform applies an euler angle rotation and translation & uniform scale
+ * This transform applies a versor rotation and translation & scale/skew
  * to the space
  *
  * The parameters for this transform can be set either using individual Set
  * methods or in serialized form using SetParameters() and SetFixedParameters().
  *
- * The serialization of the optimizable parameters is an array of 7 elements.
+ * The serialization of the optimizable parameters is an array of 25 elements.
  * The first 3 elements are the euler angles for the
  * 3D rotation. The next 3 parameters defines the translation in each
- * dimension. The next 1 parameter defines scaling.
+ * dimension. The next 3 parameters defines scaling in each dimension.
+ * The last 3 parameters defines the skew.
  *
  * The serialization of the fixed parameters is an array of 3 elements defining
  * the center of rotation.
