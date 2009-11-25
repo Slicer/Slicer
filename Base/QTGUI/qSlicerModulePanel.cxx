@@ -5,24 +5,27 @@
 
 // CTK includes
 #include "qCTKCollapsibleWidget2.h"
+#include "qCTKFittedTextBrowser.h"
 
 // QT includes
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QScrollArea>
+#include <QSpacerItem>
 #include <QStackedWidget>
 #include <QResizeEvent>
 #include <QTextBrowser>
-#include <QSpacerItem>
+#include <QWebView>
 
 //---------------------------------------------------------------------------
 struct qSlicerModulePanel::qInternal
 {
   void setupUi(QWidget * widget);
 
-  QTextBrowser*           HelpLabel;
-  QBoxLayout*             Layout;
-  QScrollArea*            ScrollArea;
+  QTextBrowser*          HelpLabel;
+  //QWebView*              HelpLabel;
+  QBoxLayout*            Layout;
+  QScrollArea*           ScrollArea;
   qCTKCollapsibleWidget2* HelpCollabsibleWidget;
 };
 
@@ -67,7 +70,7 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
     }
   else
     {
-    this->Internal->HelpLabel->setHtml("");
+    //this->Internal->HelpLabel->setHtml("");
     }
 }
 
@@ -93,6 +96,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
 
   this->Internal->HelpCollabsibleWidget->setVisible(!module->helpText().isEmpty());
   this->Internal->HelpLabel->setHtml(module->helpText());
+  //this->Internal->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
 
   emit moduleAdded(module);
 }
@@ -143,15 +147,16 @@ void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
   this->HelpCollabsibleWidget = new qCTKCollapsibleWidget2("Help");
   this->HelpCollabsibleWidget->setCollapsed(true);
   this->HelpCollabsibleWidget->setSizePolicy(
-    QSizePolicy::Ignored,
-    QSizePolicy::MinimumExpanding);
-  // QTextBrowser instead of QLabel because QLabel don't word wrap links
+    QSizePolicy::Ignored, QSizePolicy::Minimum);
+  // QTextBrowser instead of QLabel because QLabel doesn't word wrap links 
   // correctly
-  this->HelpLabel = new QTextBrowser;
+  //this->HelpLabel = new QWebView;
+  this->HelpLabel = static_cast<QTextBrowser*>(new qCTKFittedTextBrowser);
   this->HelpLabel->setOpenExternalLinks(true);
   this->HelpLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->HelpLabel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->HelpLabel->setFrameShape(QFrame::NoFrame);
+  
   QPalette p = this->HelpLabel->palette();
   p.setBrush(QPalette::Window, QBrush ());
   this->HelpLabel->setPalette(p);
@@ -161,17 +166,18 @@ void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
 
   this->Layout = new QVBoxLayout(panel);
   this->Layout->addWidget(this->HelpCollabsibleWidget);
-  this->Layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Minimum));
-  //this->Layout->addStretch(1);
+  this->Layout->addItem(
+    new QSpacerItem(0, 0, QSizePolicy::Minimum, 
+                    QSizePolicy::MinimumExpanding));
 
   this->ScrollArea = new QScrollArea;
   this->ScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->ScrollArea->setWidget(panel);
   this->ScrollArea->setWidgetResizable(true);
-
-  QGridLayout* gridLayout = new QGridLayout(widget);
+  
+  QGridLayout* gridLayout = new QGridLayout;
   gridLayout->addWidget(this->ScrollArea);
-
   gridLayout->setContentsMargins(0,0,0,0);
   widget->setLayout(gridLayout);
+
 }
