@@ -7,10 +7,10 @@
 #include "qCTKCollapsibleWidget2Plugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
+#include "qCTKFittedTextBrowserPlugin.h"
 #include "qCTKNumericInputPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
 #include "qCTKTreeComboBoxPlugin.h"
-#include "qCTKFittedTextBrowserPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
 
@@ -30,10 +30,10 @@ public:
             << new qCTKCollapsibleWidget2Plugin
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin
+            << new qCTKFittedTextBrowserPlugin
             << new qCTKNumericInputPlugin
             << new qCTKTitleComboBoxPlugin
-            << new qCTKTreeComboBoxPlugin
-            << new qCTKFittedTextBrowserPlugin;
+            << new qCTKTreeComboBoxPlugin;
     return plugins;
     }
 };
