@@ -1,0 +1,48 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>HTML/stylesheet.css</file>
+
+    <file>HTML/About.html</file>
+    <file>Images/WelcomeLogo.png</file>
+    
+    <file>HTML/Overview.html</file>
+    <file>Images/WelcomeMap.png</file>
+    
+    <file>HTML/BasicAndExtendedModules.html</file>
+    <file>Images/WelcomeModules.png</file>
+    <file>Images/WelcomeModuleNav.png</file>
+    
+    <file>HTML/LoadingScenesAndData.html</file>
+    <file>Images/WelcomeScene.png</file>
+    <file>Images/WelcomeLoad.png</file>
+    <file>Images/WelcomeSceneTree.png</file>
+
+    <file>HTML/SavingScenesAndLoadingData.html</file>
+    <file>Images/WelcomeSave.png</file>
+    
+    <file>HTML/AdjustingDataDisplay.html</file>
+    <file>Images/WelcomeVolumes.png</file>
+    <file>Images/WelcomeModels.png</file>
+    <file>Images/WelcomeFiducials.png</file>
+    <file>Images/WelcomeSceneSnapshots.png</file>
+    
+    <file>HTML/ConfiguringViewersAndLayout.html</file>
+    <file>Images/WelcomeLayout.png</file>
+    <file>Images/WelcomeSlicesControl.png</file>
+    <file>Images/Welcome3DControl.png</file>
+    
+    <file>HTML/MouseModes.html</file>
+    <file>Images/WelcomeMouseModes.png</file>    
+    
+    <file>HTML/CustomizingSlicer.html</file>
+    <file>Images/WelcomeConfigure.png</file>
+    
+    <file>HTML/OtherUsefulHints.html</file>
+    
+    <file>HTML/Community.html</file>
+    <file>Images/WelcomeCommunity.png</file>
+    
+    <file>HTML/Acknowledgment.html</file>
+
+  </qresource>
+</RCC>

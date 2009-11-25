@@ -1,0 +1,22 @@
+p
+{
+  margin: 6px;
+  margin-bottom:10px;
+}
+
+dt
+{
+  font-weight: bold;
+}
+
+dd, li
+{
+  margin-bottom: 6px;
+}
+
+table.subsection
+{
+  border-color: gray;
+  border-style: solid;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,33 @@
+<html>
+
+  <head>
+    <link rel="stylesheet" type="text/css" href="qrc:HTML/stylesheet.css" />
+  </head>
+
+  <body>
+    <p align="justify">
+      <b>MRML:</b> The Medical Reality Markup Language (MRML) scene file is an XML-based text file that references all data loaded into Slicer, and records its display and processing parameterization. Saving a MRML scene file will NOT save its reference data automatically. If you wish to save another instance of data in the scene, you must do so explicitly. Two ways to access Slicer's save interface are described below.
+    </p>
+    <br/>
+    <table class="subsection" border="1" cellpadding="10" cellspacing="0">
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeScene.png"/></td>
+        <td align="justify"><dl>
+          <dt>File->Save:</dt>
+          <dd>This option will raise Slicer's Save interface. This panel gives you the option to save the MRML scene file and all unsaved data by default. You may optionally choose to rename the scene, to change the destination directory for any or all of the data to be written, and to save data that has not been modified during your session too.</dd>
+        </dl></td>
+      </tr>
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeSave.png"/></td>
+        <td align="justify"><dl>
+          <dt>Save:</dt>
+          <dd>Clicking the icon shown at the left from Slicer's Toolbar raises the same interface described above.</dd>
+        </dl></td>
+      </tr>
+    </table>
+    
+    <p align="justify">
+      <b>IMPORTANT:</b> Once a MRML scene file is saved, deleting or moving any dataset that the scene references on disk will cause the scene description to become invalid. Loading a MRML scene that cannot locate its referenced data can cause unstable results.
+    </p>
+  </body>
+</html>
