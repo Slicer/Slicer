@@ -1190,6 +1190,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
     this->GetLogic()->GetMRMLScene()->AddNode(roiNode);
     roiNode->InsideOutOn();
+    roiNode->VisibilityOff();//by default not show new ROI node
     vspNode->SetAndObserveROINodeID(roiNode->GetID());
     roiNode->Delete();
 
