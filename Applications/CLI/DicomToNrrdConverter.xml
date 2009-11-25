@@ -10,7 +10,7 @@
   Converts diffusion weighted MR images in dicom series into Nrrd
   format for analysis in Slicer. This program has been tested on only
   a limited subset of DTI dicom formats available from Siemens, GE,
-  and Phillips scanners. It does not yet support dicom multi-frame
+  and Phillips scanners. Work in progress to support dicom multi-frame
   data. The program parses dicom header to extract necessary
   information about measurement frame, diffusion weighting directions,
   b-values, etc, and write out a nrrd image. 
