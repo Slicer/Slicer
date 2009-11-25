@@ -10,6 +10,7 @@
 #include "qCTKNumericInputPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
 #include "qCTKTreeComboBoxPlugin.h"
+#include "qCTKFittedTextBrowserPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
 
@@ -31,7 +32,8 @@ public:
             << new qCTKCoordinatesWidgetPlugin
             << new qCTKNumericInputPlugin
             << new qCTKTitleComboBoxPlugin
-            << new qCTKTreeComboBoxPlugin;
+            << new qCTKTreeComboBoxPlugin
+            << new qCTKFittedTextBrowserPlugin;
     return plugins;
     }
 };
