@@ -10,4 +10,4 @@ category  Segmentation
 
 status    Alpha
 
-description Skull sttipping for T1 weighted MR images.
+description Segmentation module to classify a brain MR image into different tissue type -- gray matter, white matter and cerebrospinal fluid.
