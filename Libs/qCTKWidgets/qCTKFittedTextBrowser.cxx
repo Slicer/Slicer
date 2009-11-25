@@ -51,7 +51,8 @@ QSize qCTKFittedTextBrowser::minimumSizeHint() const {
   QSize s(this->size().width(), 0);
   if (s.width() == 0)
     {
-    s.setWidth(400); // arbitrary value
+    //s.setWidth(400); // arbitrary value
+    return QTextBrowser::minimumSizeHint();
     }
   s.setHeight(this->heightForWidth(s.width()));
   return s;
