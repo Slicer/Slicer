@@ -34,6 +34,8 @@ SET(qCTKWidgetsPlugin_SRCS
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.cxx
   qCTKTreeComboBoxPlugin.h
+  qCTKSliderPlugin.cxx
+  qCTKSliderPlugin.h
   )
 
 SET(qCTKWidgetsPlugin_MOC_SRCS
@@ -50,6 +52,7 @@ SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.h
+  qCTKSliderPlugin.h
   )
 
 QT4_WRAP_CPP(qCTKWidgetsPlugin_SRCS ${qCTKWidgetsPlugin_MOC_SRCS})
