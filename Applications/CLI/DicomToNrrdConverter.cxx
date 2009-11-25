@@ -357,6 +357,9 @@ int main(int argc, char* argv[])
   headerLite->SetLoadMode( gdcm::LD_NOSEQ );
   headerLite->Load();
 
+  // 
+  std::vector<int> ignorePhilipsSliceMultiFrame;
+
   // check the tag 0008|0070 for vendor information
   std::string vendor;
   ExtractBinValEntry( headerLite, 0x0008, 0x0070, vendor );
@@ -475,7 +478,7 @@ int main(int argc, char* argv[])
   sscanf( tag.c_str(), "%lf\\%lf\\%lf", &(ImageOrigin[0]), &(ImageOrigin[1]), &(ImageOrigin[2]) );
 
   ExtractBinValEntry( allHeaders[0], 0x0018, 0x0088, tag );
-  const float sliceSpacing = atof( tag.c_str() );
+  float sliceSpacing = atof( tag.c_str() );
 
   //Make a hash of the sliceLocations in order to get the correct count.  This is more reliable since SliceLocation may not be available.
   std::map<std::string,int> sliceLocations;
@@ -484,7 +487,7 @@ int main(int argc, char* argv[])
       ExtractBinValEntry( allHeaders[k], 0x0020, 0x0032, tag );
       sliceLocations[tag]++;
     }
-  const unsigned int numberOfSlicesPerVolume=sliceLocations.size();
+  unsigned int numberOfSlicesPerVolume=sliceLocations.size();
   std::cout << "=================== numberOfSlicesPerVolume:" << numberOfSlicesPerVolume << std::endl;
 
   itk::Matrix<double,3,3> MeasurementFrame;
@@ -648,7 +651,12 @@ int main(int argc, char* argv[])
       {
       SliceOrderIS = false;
       }
-    }
+    }      
+  else if ( vendor.find("PHILIPS") != std::string::npos 
+    && nSlice == 1)
+  {
+    // special handling for philips multi-frame dicom later. 
+  }
   else
     {
     std::cout << " ERROR vendor type not valid" << std::endl;
@@ -734,7 +742,7 @@ int main(int argc, char* argv[])
         "; diffusion direction: " << vect3d[0] << ", " << vect3d[1] << ", " << vect3d[2] << std::endl;
       }
     }
-  else if ( vendor.find("PHILIPS") != std::string::npos )
+  else if ( vendor.find("PHILIPS") != std::string::npos && nSlice > 1 )
     {
     // assume volume interleaving
     std::cout << "Number of Slices: " << nSlice << std::endl;
@@ -927,7 +935,6 @@ int main(int argc, char* argv[])
       nStride = 1;
       }
 
-
     for (unsigned int k = 0; k < nSlice; k += nStride )
       {
 
@@ -981,6 +988,191 @@ int main(int argc, char* argv[])
         }
       }
     }
+  else if (vendor.find("PHILIPS") != std::string::npos && nSlice == 1) // multi-frame file, everything is inside
+  {
+
+    std::map<std::vector<double>, double> gradientDirectionAndBValue;
+    ignorePhilipsSliceMultiFrame.clear();
+    sliceLocations.clear();
+    gdcm::File *header = new gdcm::File;
+    header->SetMaxSizeLoadEntry(65535);
+    header->SetFileName( filenames[0] );
+    header->SetLoadMode( gdcm::LD_ALL );
+    header->Load();
+    gdcm::DocEntry* d = header->GetFirstEntry();
+
+    bValues.clear();
+    DiffusionVectors.clear();
+    useVolume.clear();
+
+    bool visited00280010 = false;
+    bool visited00280011 = false;
+    bool visited00180088 = false;
+    while(d)
+    {
+      if (d->GetKey() == "0028|0010")
+      {
+        visited00280010 = true;
+        gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*> (d);
+        d->Print( std::cout );
+        nRows = atoi(v->GetValue().c_str());
+      }
+      else if (d->GetKey() == "0028|0011")
+      {
+        visited00280011 = true;
+        gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*> (d);
+        d->Print( std::cout );
+        nCols = atoi(v->GetValue().c_str());
+      }
+      else if (d->GetKey() == "0018|0088")
+      {
+        visited00180088 = true;
+        gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*> (d);
+        d->Print( std::cout );
+        sliceSpacing = atof(v->GetValue().c_str());
+      }
+      else if (d->GetKey() == "5200|9230" && visited00180088 && visited00280011 && visited00280010)
+      {
+        break;
+      }
+      d = header->GetNextEntry();
+    }
+
+    gdcm::SeqEntry* sq = dynamic_cast<gdcm::SeqEntry*> (d);
+    int nItems = sq->GetNumberOfSQItems();
+    std::cout << "Total number of slices: " << nItems << std::endl;
+    gdcm::SQItem * sqi = sq->GetFirstSQItem();
+
+    // figure out 
+    // 1. size
+    // 2. space directions
+    // 3. space origin
+    // 4. measurement frame
+    // 5. slice order (SI or IS)
+    int k = 0;
+    while (sqi)
+    {
+
+      gdcm::SeqEntry* volEntry;
+      gdcm::SQItem * innerSqi;
+      gdcm::ValEntry* valEntry; 
+
+      if ( k == 0 )
+      {
+        volEntry = dynamic_cast<gdcm::SeqEntry*>( sqi->GetDocEntry( 0x0020, 0x9116) );
+        innerSqi = volEntry->GetFirstSQItem();
+        valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0020, 0x0037) );
+        sscanf( valEntry->GetValue().c_str(), "%lf\\%lf\\%lf\\%lf\\%lf\\%lf",
+          &(LPSDirCos[0][0]), &(LPSDirCos[1][0]), &(LPSDirCos[2][0]),
+          &(LPSDirCos[0][1]), &(LPSDirCos[1][1]), &(LPSDirCos[2][1]) );
+        // Cross product, this gives I-axis direction
+        LPSDirCos[0][2] = (LPSDirCos[1][0]*LPSDirCos[2][1]-LPSDirCos[2][0]*LPSDirCos[1][1]);
+        LPSDirCos[1][2] = (LPSDirCos[2][0]*LPSDirCos[0][1]-LPSDirCos[0][0]*LPSDirCos[2][1]);
+        LPSDirCos[2][2] = (LPSDirCos[0][0]*LPSDirCos[1][1]-LPSDirCos[1][0]*LPSDirCos[0][1]);
+
+        volEntry = dynamic_cast<gdcm::SeqEntry*>( sqi->GetDocEntry( 0x0028, 0x9110) );
+        innerSqi = volEntry->GetFirstSQItem();
+        valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0028, 0x0030) );
+        sscanf( valEntry->GetValue().c_str(), "%f\\%f", &xRes, &yRes );
+      }
+
+      volEntry = dynamic_cast<gdcm::SeqEntry*>( sqi->GetDocEntry( 0x0020, 0x9113) );
+      innerSqi = volEntry->GetFirstSQItem();
+      valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0020, 0x0032) );
+      sliceLocations[valEntry->GetValue()] ++;
+      if ( k == 0 )
+      {
+        sscanf( valEntry->GetValue().c_str(), "%lf\\%lf\\%lf",  &(ImageOrigin[0]), &(ImageOrigin[1]), &(ImageOrigin[2]) );
+      }
+
+      // figure out diffusion directions
+      volEntry = dynamic_cast<gdcm::SeqEntry*>( sqi->GetDocEntry( 0x0018, 0x9117) );
+      innerSqi = volEntry->GetFirstSQItem();
+      valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0018, 0x9075) );
+      std::string dirValue = valEntry->GetValue();
+
+      if ( dirValue.find("ISO") != std::string::npos )
+      {
+        useVolume.push_back(0);
+        ignorePhilipsSliceMultiFrame.push_back( k );
+      }
+      else if (dirValue.find("NONE") != std::string::npos)
+      {
+        useVolume.push_back(1);
+        std::vector<double> v(3);
+        v[0] = 0; v[1] = 0; v[2] = 0;
+        unsigned int nOld = gradientDirectionAndBValue.size();
+        gradientDirectionAndBValue[v] = 0;
+        unsigned int nNew = gradientDirectionAndBValue.size();
+
+        if (nOld != nNew)
+        {
+          vnl_vector_fixed<double, 3> vect3d;
+          vect3d.fill( 0 );
+          DiffusionVectors.push_back( vect3d );
+          UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+          bValues.push_back( 0 );
+
+        }
+      }
+      else
+      {
+        useVolume.push_back(1);
+        valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0018, 0x9087) );
+        std::string dwbValue = valEntry->GetValue();
+
+        volEntry = dynamic_cast<gdcm::SeqEntry*>( innerSqi->GetDocEntry( 0x0018, 0x9076) );
+        innerSqi = volEntry->GetFirstSQItem();
+        valEntry = dynamic_cast<gdcm::ValEntry*>( innerSqi->GetDocEntry( 0x0018, 0x9089) );
+        std::string dwgValue = valEntry->GetValue();
+        std::vector<double> v(3);
+        v[0] = *(double*)(dwgValue.c_str());
+        v[1] = *(double*)(dwgValue.c_str()+8);
+        v[2] = *(double*)(dwgValue.c_str()+16);
+        unsigned int nOld = gradientDirectionAndBValue.size();
+        gradientDirectionAndBValue[v] = *(double*)(dwbValue.c_str());
+        unsigned int nNew = gradientDirectionAndBValue.size();
+
+        if (nOld != nNew)
+        {
+          vnl_vector_fixed<double, 3> vect3d;
+          vect3d[0] = v[0]; vect3d[1] = v[1]; vect3d[2] = v[2];
+          UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+          vect3d.normalize();
+          DiffusionVectors.push_back( vect3d );
+
+          bValues.push_back( *(double*)(dwbValue.c_str()) );
+        }
+      }
+
+      sqi = sq->GetNextSQItem();
+      k ++;
+    }
+    numberOfSlicesPerVolume=sliceLocations.size();
+    std::cout << "LPS Matrix: \n" << LPSDirCos << std::endl;
+    std::cout << "Volume Origin: \n" << ImageOrigin[0] << "," << ImageOrigin[1] << ","  << ImageOrigin[2] << "," << std::endl;
+    std::cout << "Number of slices per volume: " << numberOfSlicesPerVolume << std::endl;
+    std::cout << "Slice matrix size: " << nRows << " X " << nCols << std::endl;
+    std::cout << "Image resolution: " << xRes << ", " << yRes << ", " << sliceSpacing << std::endl;
+
+    SpacingMatrix.Fill(0.0);
+    SpacingMatrix[0][0]=xRes;
+    SpacingMatrix[1][1]=yRes;
+    SpacingMatrix[2][2]=sliceSpacing;
+    NRRDSpaceDirection=LPSDirCos*OrientationMatrix*SpacingMatrix;
+
+    MeasurementFrame=LPSDirCos;
+
+    nSliceInVolume = sliceLocations.size();
+    nVolume = nItems/nSliceInVolume;
+    nIgnoreVolume = ignorePhilipsSliceMultiFrame.size()/nSliceInVolume;
+
+    for( unsigned int k = 0; k < bValues.size(); k++ ) 
+    {
+      std::cout << k << ": direction: " <<  DiffusionVectors[k][0] << ", " << DiffusionVectors[k][1] << ", " << DiffusionVectors[k][2] << ", b-value: " << bValues[k] << std::endl;
+    }
+
+  }
   else
     {
     std::cout << "ERROR: Unknown scanner vendor " << vendor << std::endl;
