@@ -1,0 +1,32 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Logos/MIT_NAMIC_PNL.png</file>
+    <file>Logos/MIT.png</file>
+    <file>Logos/CTSC.png</file>
+    <file>Logos/Bills.png</file>
+    <file>Logos/ITK.png</file>
+    <file>Logos/BIRN-NoText.png</file>
+    <file>Logos/BIRN.png</file>
+    <file>Logos/CIMIT.png</file>
+    <file>Logos/CISST.png</file>
+    <file>Logos/CSAIL.png</file>
+    <file>Logos/Gatech.png</file>
+    <file>Logos/Geresearch.png</file>
+    <file>Logos/HCNR.png</file>
+    <file>Logos/Isomics.png</file>
+    <file>Logos/Kitware.png</file>
+    <file>Logos/MC.png</file>
+    <file>Logos/NAC.png</file>
+    <file>Logos/NAMIC.png</file>
+    <file>Logos/NCIGT.png</file>
+    <file>Logos/NCI.png</file>
+    <file>Logos/NCRR.png</file>
+    <file>Logos/NIBIB.png</file>
+    <file>Logos/NIH.png</file>
+    <file>Logos/NITRC.png</file>
+    <file>Logos/PNL.png</file>
+    <file>Logos/SCI.png</file>
+    <file>Logos/SPL.png</file>
+    <file>Logos/TATRC.png</file>
+  </qresource>
+</RCC>
