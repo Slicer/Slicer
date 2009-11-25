@@ -15,7 +15,7 @@ struct qCTKCollapsibleWidget2::qInternal
 {
   qInternal( QWidget* widget);
   void init();
-  void initStyle(QStyleOptionButton& opt);
+  void initStyleOption(QStyleOptionButton& opt);
 
   qCTKCollapsibleWidget2* Widget;
 
@@ -43,6 +43,7 @@ qCTKCollapsibleWidget2::qInternal::qInternal(QWidget* widget)
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::qInternal::init()
 {
+  this->Title = "GroupBox";
   this->Collapsed = false;
   this->CollapsedHeight = 10;
 
@@ -55,12 +56,12 @@ void qCTKCollapsibleWidget2::qInternal::init()
   this->MaximumHeight = this->Widget->maximumHeight();
 
   QStyleOptionButton opt;
-  this->initStyle(opt);
+  this->initStyleOption(opt);
   this->Widget->setContentsMargins(0, opt.rect.height(),0 , 0);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleWidget2::qInternal::initStyle(QStyleOptionButton& opt)
+void qCTKCollapsibleWidget2::qInternal::initStyleOption(QStyleOptionButton& opt)
 {
   opt.init(this->Widget);
   if (!this->PressedControl)
@@ -160,7 +161,7 @@ void qCTKCollapsibleWidget2::collapse(bool c)
     this->Internal->MaximumHeight = this->maximumHeight();
 
     QStyleOptionButton opt;
-    this->Internal->initStyle(opt);
+    this->Internal->initStyleOption(opt);
     this->setMaximumHeight(this->Internal->CollapsedHeight + opt.rect.height());
     this->updateGeometry();
     }
@@ -241,7 +242,48 @@ void qCTKCollapsibleWidget2::setContentsMidLineWidth(int w)
 //-----------------------------------------------------------------------------
 QSize qCTKCollapsibleWidget2::minimumSizeHint()const
 {
-  return this->QWidget::minimumSizeHint();
+  // frame
+  QSize s = this->QWidget::minimumSizeHint(); 
+  if (!this->Internal->Collapsed)
+    {
+    return s;
+    }
+  qDebug() << s;
+  int w = 0, h = 0;
+
+  QStyleOptionButton opt;
+  this->Internal->initStyleOption(opt);
+  
+  // indicator
+  QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
+                              style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
+  int indicatorSpacing = style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
+  int ih = indicatorSize.height();
+  int iw = indicatorSize.width() + indicatorSpacing;
+  w += iw;
+  h = qMax(h, ih);
+  
+  // text 
+  QString string(this->Internal->Title);
+  bool empty = string.isEmpty();
+  if (empty)
+    {
+    string = QString::fromLatin1("XXXX");
+    }
+  QFontMetrics fm = this->fontMetrics();
+  QSize sz = fm.size(Qt::TextShowMnemonic, string);
+  if(!empty || !w)
+    {
+    w += sz.width();
+    }
+  if(!empty || !h)
+    {
+    h = qMax(h, sz.height());
+    }
+  opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
+  QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
+                      expandedTo(QApplication::globalStrut()));
+  return buttonSize + QSize(0,s.height());
 }
 
 //-----------------------------------------------------------------------------
@@ -254,16 +296,20 @@ QSize qCTKCollapsibleWidget2::sizeHint()const
 void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
 {
   QPainter p(this);
+  // Draw Button
   QStyleOptionButton opt;
-  this->Internal->initStyle(opt);
+  this->Internal->initStyleOption(opt);
+  QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
+                              style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
+  opt.iconSize = indicatorSize;
   style()->drawControl(QStyle::CE_PushButtonBevel, &opt, &p, this);
   int buttonHeight = opt.rect.height();
-  QSize iconSize = opt.iconSize;
-
+  // Draw Indicator
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
-  indicatorOpt.rect = QRect((buttonHeight - iconSize.width()) / 2, (buttonHeight - iconSize.height()) / 2,
-                            iconSize.width(), iconSize.height());
+  indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2, 
+                            (buttonHeight - indicatorSize.height()) / 2,
+                            indicatorSize.width(), indicatorSize.height());
   if (this->Internal->Collapsed)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
@@ -272,12 +318,13 @@ void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowUp, &indicatorOpt, &p, this);
     }
-
-  int indicatorSpacing = 4;
+  // Draw Text
+  int indicatorSpacing = style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   opt.rect.setLeft( indicatorOpt.rect.right() + indicatorSpacing);
   uint tf = Qt::AlignVCenter | Qt::TextShowMnemonic | Qt::AlignLeft;
   style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),
                         opt.text, QPalette::ButtonText);
+  // Draw Frame around contents
   QStyleOptionFrameV3 f;
   f.init(this);
   f.rect.setTop(buttonHeight);
@@ -309,7 +356,7 @@ void qCTKCollapsibleWidget2::mousePressEvent(QMouseEvent* event)
     }
 
   QStyleOptionButton opt;
-  this->Internal->initStyle(opt);
+  this->Internal->initStyleOption(opt);
   this->Internal->PressedControl = opt.rect.contains(event->pos());
   if (this->Internal->PressedControl)
     {
@@ -332,7 +379,7 @@ void qCTKCollapsibleWidget2::mouseReleaseEvent(QMouseEvent* event)
 
   this->Internal->PressedControl = false;
   QStyleOptionButton opt;
-  this->Internal->initStyle(opt);
+  this->Internal->initStyleOption(opt);
   if (opt.rect.contains(event->pos()))
     {
     this->toggleCollapse();
