@@ -3945,7 +3945,8 @@ void vtkSlicerApplicationGUI::UpdateRemoteIOConfigurationForRegistry()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int width, int height)
 {
-  std::cout << "MainSplitFrameConfigureCallback width:" << width << ", height:" << height << std::endl;
+  //std::cout << "MainSplitFrameConfigureCallback width:" << width
+  //          << ", height:" << height << std::endl;
   this->GUILayoutNode->SetMainPanelSize( this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1Size() );
 }
 //---------------------------------------------------------------------------
