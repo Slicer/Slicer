@@ -593,6 +593,14 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkDebugMacro("ProcessMRMLEvents: processing event " << event);
 
+  if (event == vtkCommand::DeleteEvent )
+    {
+    vtkMRMLDisplayableNode *modelNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
+    if (modelNode)
+      {
+      this->RemoveDisplayable(modelNode);
+      }
+    }
   if (event == vtkMRMLScene::SceneClosingEvent )
     {
     this->RemoveHierarchyObservers(0);
@@ -1390,6 +1398,11 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLDisplayableNode *model)
     {
     model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     }
+
+  if (!model->HasObserver ( vtkCommand::DeleteEvent, this->MRMLCallbackCommand ) )
+    {
+    model->AddObserver ( vtkCommand::DeleteEvent, this->MRMLCallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1643,6 +1656,7 @@ void vtkSlicerViewerWidget::RemoveDisplayable(vtkMRMLDisplayableNode* model)
     this->RemoveDispalyedID(removedIDs[i]);
     }
   this->RemoveModelObservers(model);
+  model->RemoveObservers ( vtkCommand::DeleteEvent, this->MRMLCallbackCommand );
   this->DisplayableNodes.erase(model->GetID());
 }
 
@@ -1715,6 +1729,7 @@ void vtkSlicerViewerWidget::RemoveModelObservers( vtkMRMLDisplayableNode *model)
     model->RemoveObservers ( vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
     model->RemoveObservers ( vtkMRMLDisplayableNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
     model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+    //model->RemoveObservers ( vtkCommand::DeleteEvent, this->MRMLCallbackCommand );
     }
 }
 

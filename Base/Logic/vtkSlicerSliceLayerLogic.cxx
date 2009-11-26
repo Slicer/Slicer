@@ -421,8 +421,10 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
   this->UpdatingTransforms = 0; 
 
-  this->Modified();
-
+  if (this->VolumeNode)
+    {
+    this->Modified();
+    }
 
 }
 
