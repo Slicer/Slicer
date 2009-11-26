@@ -4,8 +4,13 @@
 // SlicerQT includes
 #include "qSlicerCLIModuleLogic.h"
 
+// MRML includes
+#include "qMRMLNodeSelector.h"
+
 // CTK includes
 #include "qCTKCollapsibleWidget2.h"
+#include "qCTKSlider.h"
+#include "qCTKFlowLayout.h"
 
 // Libs/ModuleDescriptionParser includes
 #include "ModuleDescription.h"
@@ -14,15 +19,26 @@
 // QT includes
 #include <QGroupBox>
 #include <QLabel>
+#include <QFormLayout>
 #include <QDebug>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QRadioButton>
+
+// ITK includes
+#include "itkNumericTraits.h"
 
 //-----------------------------------------------------------------------------
 struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
 {
-  qInternal()
+  typedef qInternal Self; 
+  qInternal(qSlicerAbstractModule * backPointer)
     {
     this->Logic = 0;
     this->ProcessInformation = 0;
+    this->BackPointer = backPointer; 
     }
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
@@ -31,32 +47,56 @@ struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
   typedef std::vector<ModuleParameter>::const_iterator ParameterConstIterator;
   typedef std::vector<ModuleParameter>::iterator       ParameterIterator;
 
+  typedef std::vector<std::string>::const_iterator ElementConstIterator;
+  typedef std::vector<std::string>::iterator       ElementIterator;
+
+
   // Description:
-  void addParameterGroups(QWidget * parent);
+  // Initiliaze the maps containing the mapping
+  //   parameter type -> MRML node type (classname)
+  static void initializeMaps();
+
+  // Description:
+  // Convenient method allowing to retrieve the node type associated
+  // with the parameter type
+  static QString nodeTypeFromMap(const QString& defaultValue,
+                                 const QHash<QString, QString>& map,
+                                 const QString& attribute);
+                                 
+  // Description:
+  void addParameterGroups();
   void addParameterGroup(QBoxLayout* layout,
-                          const ModuleParameterGroup& parameterGroup);
+                         const ModuleParameterGroup& parameterGroup);
 
   // Description:
-  void addParameters(QBoxLayout* layout, const ModuleParameterGroup& parameterGroup);
-  void addParameter(QBoxLayout* layout, const ModuleParameter& moduleParameter);
+  void addParameters(QFormLayout* layout, const ModuleParameterGroup& parameterGroup);
+  void addParameter(QFormLayout* layout, const ModuleParameter& moduleParameter);
 
   // Description:
-  void addIntegerTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addBooleanTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addFloatTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addDoubleTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addStringTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addPointTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addRegionTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addImageTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addGeometryTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addTableTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addTransformTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addDirectoryTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addFileTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addEnumerationTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
-  void addDefaultTagWidget(QBoxLayout* layout, const ModuleParameter& moduleParameter);
+  // Create widget corresponding to the different parameters
+  QWidget* createIntegerTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createBooleanTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createFloatTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createDoubleTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createStringTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createPointTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createRegionTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createImageTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createGeometryTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createTableTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createTransformTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createDirectoryTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createFileTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createEnumerationTagWidget(const ModuleParameter& moduleParameter);
 
+  // Map used to store the different relation
+  //  parameter type -> MRML node type
+  static bool MapInitialized; 
+  static QHash<QString, QString> ImageTypeAttributeToNodeType;
+  static QHash<QString, QString> GeometryTypeAttributeToNodeType;
+  static QHash<QString, QString> TableTypeAttributeToNodeType;
+  static QHash<QString, QString> TransformTypeAttributeToNodeType;  
+  
   QString           Title;
   QString           Acknowledgement;
   QString           Help;
@@ -67,10 +107,18 @@ struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
   ModuleProcessInformation*         ProcessInformation;
 
   qSlicerCLIModuleLogic * Logic;
+  qSlicerAbstractModule * BackPointer;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerCLIModule, QWidget*);
+bool qSlicerCLIModule::qInternal::MapInitialized = false; 
+QHash<QString, QString> qSlicerCLIModule::qInternal::ImageTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModule::qInternal::GeometryTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModule::qInternal::TableTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModule::qInternal::TransformTypeAttributeToNodeType;
+
+//-----------------------------------------------------------------------------
+qSlicerCxxInternalBckPtrConstructor1Macro(qSlicerCLIModule, QWidget*);
 qSlicerCxxDestructorMacro(qSlicerCLIModule);
 
 //-----------------------------------------------------------------------------
@@ -131,16 +179,16 @@ void qSlicerCLIModule::setupUi()
 {
   this->Internal->setupUi(this);
 
-  // TODO
+  this->Internal->MainCollapsibleWidget->setTitle(this->title());
 
-  this->Internal->addParameterGroups(this);
+  this->Internal->addParameterGroups();
 }
 
 //-----------------------------------------------------------------------------
 // Internal methods
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameterGroups(QWidget * parent)
+void qSlicerCLIModule::qInternal::addParameterGroups()
 {
   // iterate over each parameter group
   for (ParameterGroupConstIterator pgIt = this->ParameterGroups.begin();
@@ -161,16 +209,17 @@ void qSlicerCLIModule::qInternal::addParameterGroup(QBoxLayout* layout,
   collapsibleWidget->setCollapsed(parameterGroup.GetAdvanced() == "true");
 
   // Create a vertical layout and add parameter to it
-  QVBoxLayout *vbox = new QVBoxLayout;
+  QFormLayout *vbox = new QFormLayout;
   this->addParameters(vbox, parameterGroup);
-  vbox->addStretch(1);
+  //vbox->addStretch(1);
+  vbox->setVerticalSpacing(1);
   collapsibleWidget->setLayout(vbox);
 
   layout->addWidget(collapsibleWidget);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameters(QBoxLayout* layout,
+void qSlicerCLIModule::qInternal::addParameters(QFormLayout* layout,
                                                 const ModuleParameterGroup& parameterGroup)
 {
   Q_ASSERT(layout);
@@ -185,11 +234,19 @@ void qSlicerCLIModule::qInternal::addParameters(QBoxLayout* layout,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameter(QBoxLayout* layout,
+void qSlicerCLIModule::qInternal::addParameter(QFormLayout* layout,
                                                const ModuleParameter& moduleParameter)
 {
   Q_ASSERT(layout);
 
+  if (moduleParameter.GetHidden() == "true")
+    {
+    return;
+    }
+
+  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString description = QString::fromStdString(moduleParameter.GetDescription());
+  
   // Parameters with flags can support the None node because they are optional
   int noneEnabled = 0;
   if (moduleParameter.GetLongFlag() != "" || moduleParameter.GetFlag() != "")
@@ -197,21 +254,24 @@ void qSlicerCLIModule::qInternal::addParameter(QBoxLayout* layout,
     noneEnabled = 1;
     }
 
+  QWidget * widget = 0;
+  bool defaultWidget = false;
+  
   if (moduleParameter.GetTag() == "integer")
     {
-    this->addIntegerTagWidget(layout, moduleParameter);
+    widget = this->createIntegerTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "boolean")
     {
-    this->addBooleanTagWidget(layout, moduleParameter);
+    widget = this->createBooleanTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "float")
     {
-    this->addFloatTagWidget(layout, moduleParameter);
+    widget = this->createFloatTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "double")
     {
-    this->addDoubleTagWidget(layout, moduleParameter);
+    widget = this->createDoubleTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "string" ||
            moduleParameter.GetTag() == "integer-vector" ||
@@ -219,143 +279,427 @@ void qSlicerCLIModule::qInternal::addParameter(QBoxLayout* layout,
            moduleParameter.GetTag() == "double-vector" ||
            moduleParameter.GetTag() == "string-vector")
     {
-    this->addStringTagWidget(layout, moduleParameter);
+    widget = this->createStringTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "point")
     {
-    this->addPointTagWidget(layout, moduleParameter);
+    widget = this->createPointTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "region")
     {
-    this->addRegionTagWidget(layout, moduleParameter);
+    widget = this->createRegionTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "image")
     {
-    this->addImageTagWidget(layout, moduleParameter);
+    widget = this->createImageTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "geometry")
     {
-    this->addGeometryTagWidget(layout, moduleParameter);
+    widget = this->createGeometryTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "table")
     {
-    this->addTableTagWidget(layout, moduleParameter);
+    widget = this->createTableTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "transform")
     {
-    this->addTransformTagWidget(layout, moduleParameter);
+    widget = this->createTransformTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "directory")
     {
-    this->addDirectoryTagWidget(layout, moduleParameter);
+    widget = this->createDirectoryTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "file")
     {
-    this->addFileTagWidget(layout, moduleParameter);
+    widget = this->createFileTagWidget(moduleParameter);
     }
   else if(moduleParameter.GetTag() == "string-enumeration" ||
           moduleParameter.GetTag() == "integer-enumeration" ||
           moduleParameter.GetTag() == "float-enumeration" ||
           moduleParameter.GetTag() == "double-enumeration")
     {
-    this->addEnumerationTagWidget(layout, moduleParameter);
+    widget = this->createEnumerationTagWidget(moduleParameter);
     }
   else
     {
-    this->addDefaultTagWidget(layout, moduleParameter);
+    defaultWidget = true;
+    QLabel * label = new QLabel(label); 
+    label->setToolTip(description);
+    layout->addWidget(label);
     }
 
-  // TODO Ballon help ?
+  Q_ASSERT(!defaultWidget && widget);
+  if (widget)
+    {
+    widget->setToolTip(description);
+    layout->addRow(new QLabel(label), widget);
+    }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addIntegerTagWidget(QBoxLayout* layout,
-                                                      const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createIntegerTagWidget(const ModuleParameter& moduleParameter)
 {
+  int value = QString::fromStdString(moduleParameter.GetDefault()).toInt();
+  int step = 1; 
+  int min = itk::NumericTraits<int>::NonpositiveMin();
+  int max = itk::NumericTraits<int>::max();
+  bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
+
+  QWidget * widget = 0; 
+  if (!withConstraints)
+    {
+    QSpinBox * spinBox = new QSpinBox;
+    spinBox->setSingleStep(step);
+    spinBox->setValue(value);
+    spinBox->setRange(min, max);
+    widget = spinBox;
+    }
+  else
+    {
+    QString minAsStr = QString::fromStdString(moduleParameter.GetMinimum());
+    if (!minAsStr.isEmpty()) { min = minAsStr.toInt(); }
+    
+    QString maxAsStr = QString::fromStdString(moduleParameter.GetMaximum());
+    if (!maxAsStr.isEmpty()) { max = maxAsStr.toInt(); }
+    
+    QString stepAsStr = QString::fromStdString(moduleParameter.GetStep());
+    if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
+    
+    QSlider * slider = new QSlider;
+    slider->setTickInterval(step);
+    slider->setRange(min, max);
+    slider->setValue(value);
+    widget = slider; 
+    }
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addBooleanTagWidget(QBoxLayout* layout,
-                                                      const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createBooleanTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QCheckBox * widget = new QCheckBox;
+  widget->setChecked(valueAsStr == "true");
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addFloatTagWidget(QBoxLayout* layout,
-                                                    const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createFloatTagWidget(const ModuleParameter& moduleParameter)
 {
+  float value = QString::fromStdString(moduleParameter.GetDefault()).toFloat();
+  float step = 0.1;
+  int min = itk::NumericTraits<float>::NonpositiveMin();
+  int max = itk::NumericTraits<float>::max();
+  bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
+
+  QWidget * widget = 0;
+  if (!withConstraints)
+    {
+    QDoubleSpinBox * spinBox = new QDoubleSpinBox;
+    spinBox->setSingleStep(step);
+    spinBox->setValue(value);
+    spinBox->setRange(min, max);
+    widget = spinBox; 
+    }
+  else
+    {
+    qCTKSlider * slider = new qCTKSlider;
+    slider->setOrientation(Qt::Horizontal);
+    slider->setTickInterval(step);
+    slider->setRange(min, max);
+    slider->setValue(value);
+    widget = slider;
+    }
+  return widget; 
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addDoubleTagWidget(QBoxLayout* layout,
-                                                     const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createDoubleTagWidget(const ModuleParameter& moduleParameter)
 {
+  double value = QString::fromStdString(moduleParameter.GetDefault()).toDouble();
+  double step = 0.1;
+  double min = itk::NumericTraits<double>::NonpositiveMin();
+  double max = itk::NumericTraits<double>::max();
+  bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
+
+  QWidget * widget = 0;
+  if (!withConstraints)
+    {
+    QDoubleSpinBox * spinBox = new QDoubleSpinBox;
+    spinBox->setSingleStep(step);
+    spinBox->setValue(value);
+    spinBox->setRange(min, max);
+    widget = spinBox; 
+    }
+  else
+    {
+    qCTKSlider * slider = new qCTKSlider;
+    slider->setOrientation(Qt::Horizontal);
+    slider->setTickInterval(step);
+    slider->setRange(min, max);
+    slider->setValue(value);
+    widget = slider; 
+    }
+  return widget; 
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addStringTagWidget(QBoxLayout* layout,
-                                                     const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createStringTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
+  QLineEdit * widget = new QLineEdit;
+  widget->setText(valueAsStr);
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addPointTagWidget(QBoxLayout* layout,
-                                                    const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createPointTagWidget(const ModuleParameter& moduleParameter)
 {
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setNodeType("vtkMRMLFiducialListNode");
+  //TODO - title + " FiducialList"
+  //TODO - tparameter->SetNewNodeEnabled(1);
+  //TODO - tparameter->SetNoneEnabled(noneEnabled);
+  //TODO - tparameter->SetNewNodeName((title+" output").c_str());
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addRegionTagWidget(QBoxLayout* layout,                                                                                                              const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createRegionTagWidget(const ModuleParameter& moduleParameter)
 {
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setNodeType("vtkMRMLROIListNode");
+  //TODO - title + " RegionList"
+  //TODO - tparameter->SetNewNodeEnabled(1);
+  //TODO - tparameter->SetNoneEnabled(noneEnabled);
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addImageTagWidget(QBoxLayout* layout,
-                                                    const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString type = QString::fromStdString(moduleParameter.GetType());
+  QString nodeType = Self::nodeTypeFromMap("vtkMRMLScalarVolumeNode",
+                                           Self::GeometryTypeAttributeToNodeType, type);
+  
+  QString channel = QString::fromStdString(moduleParameter.GetChannel());
+  if (channel == "input")
+    {
+    }
+  else if (channel == "output")
+    {
+    if (type == "any")
+      {
+//     // Add all of the other concrete volume node types
+//     tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
+//                               attrName, attrValue,
+//                               (title + " VectorVolume").c_str());
+//     tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
+//                               attrName, attrValue,
+//                               (title + " DiffusionTensorVolume").c_str());
+//     tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
+//                               attrName, attrValue,
+//                               (title + " DiffusionWeightedVolume").c_str());
+      }
+    }
+  else
+    {
+    qWarning() << "ImageTag - Unknown channel:" << channel;
+    return 0;
+    }
+    
+  // TODO - tparameter->SetNoneEnabled(noneEnabled);
+  // TODO - See attName/attrValue ... [LabelMap, 1]
+  // TODO - title + " Volume"
+  
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setNodeType(nodeType);
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+                   
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addGeometryTagWidget(QBoxLayout* layout,
-                                                       const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createGeometryTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString type = QString::fromStdString(moduleParameter.GetType());
+  QString nodeType = Self::nodeTypeFromMap("vtkMRMLModelNode",
+                                           Self::GeometryTypeAttributeToNodeType, type);
+                                           
+  bool multiple = (moduleParameter.GetMultiple() == "true");
+  bool aggregate = (moduleParameter.GetAggregate() == "true");
+  bool showHidden = (multiple && aggregate);
+
+  QString channel = QString::fromStdString(moduleParameter.GetChannel());
+  if (channel != "input" && channel != "output")
+    {
+    qWarning() << "GeometryTag - Unknown channel:" << channel;
+    return 0; 
+    }
+
+  if (showHidden)
+    {
+    nodeType = "vtkMRMLModelHierarchyNode";
+    }
+
+  // TODO - title + " Model"
+  // TODO - SetNoneEnabled(noneEnabled)
+  
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setShowHidden(showHidden);
+  widget->setNodeType(nodeType);
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addTableTagWidget(QBoxLayout* layout,
-                                                    const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createTableTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString type = QString::fromStdString(moduleParameter.GetType());
+  QString nodeType = Self::nodeTypeFromMap("", Self::TableTypeAttributeToNodeType, type);
+  if (nodeType.isEmpty())
+    {
+    qWarning() << "TableTag - Unknown type:" << type;
+    return 0; 
+    }
+
+  QString channel = QString::fromStdString(moduleParameter.GetChannel());
+  if (channel != "input" && channel != "output")
+    {
+    qWarning() << "GeometryTag - Unknown channel:" << channel;
+    return 0; 
+    }
+    
+  // TODO - title + " Table"
+  // TODO - SetNoneEnabled(1)
+  
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setNodeType(nodeType);
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+                   
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addTransformTagWidget(QBoxLayout* layout,
-                                                        const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createTransformTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString type = QString::fromStdString(moduleParameter.GetType());
+  QString nodeType = Self::nodeTypeFromMap("vtkMRMLTransformNode",
+                                           Self::TransformTypeAttributeToNodeType, type);
+
+  QString channel = QString::fromStdString(moduleParameter.GetChannel());
+  if (channel != "input" && channel != "output")
+    {
+    qWarning() << "GeometryTag - Unknown channel:" << channel;
+    return 0; 
+    }
+    
+  // TODO - title + " Transform"
+  // TODO - SetNoneEnabled(noneEnabled);
+
+  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  widget->setNodeType(nodeType);
+  widget->setMRMLScene(this->BackPointer->mrmlScene());
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+                   
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addDirectoryTagWidget(QBoxLayout* layout,
-                                                        const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createDirectoryTagWidget(const ModuleParameter& moduleParameter)
 {
+  QPushButton* widget = new QPushButton("Select directory ...");
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addFileTagWidget(QBoxLayout* layout,
-                                                   const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createFileTagWidget(const ModuleParameter& moduleParameter)
 {
+  QPushButton* widget = new QPushButton("Select file ...");
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addEnumerationTagWidget(QBoxLayout* layout,
-                                                          const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModule::qInternal::createEnumerationTagWidget(const ModuleParameter& moduleParameter)
 {
+  QString defaultValue = QString::fromStdString(moduleParameter.GetDefault());
+  
+  // iterate over each element in this parameter
+  ElementConstIterator sBeginIt = moduleParameter.GetElements().begin();
+  ElementConstIterator sEndIt = moduleParameter.GetElements().end();
+
+  QWidget * widget = new QWidget;
+  qCTKFlowLayout * layout = new qCTKFlowLayout;
+  widget->setLayout(layout);
+
+  for (ElementConstIterator sIt = sBeginIt; sIt != sEndIt; ++sIt)
+    {
+    QString value = QString::fromStdString(*sIt); 
+    QRadioButton * radio = new QRadioButton(value);
+    layout->addWidget(radio);
+    radio->setChecked(defaultValue == value);
+    }
+  return widget;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addDefaultTagWidget(QBoxLayout* layout,
-                                                      const ModuleParameter& moduleParameter)
+void qSlicerCLIModule::qInternal::initializeMaps()
 {
-  QLabel * label = new QLabel(QString::fromStdString(moduleParameter.GetLabel()));
-  qDebug() << "label:" << QString::fromStdString(moduleParameter.GetLabel());
-  layout->addWidget(label);
+  if (Self::MapInitialized)
+    {
+    return;
+    }
+    
+  // Image type attribute mapping
+  Self::ImageTypeAttributeToNodeType["scalar"] = "vtkMRMLScalarVolumeNode";
+  Self::ImageTypeAttributeToNodeType["label"] = "vtkMRMLScalarVolumeNode";
+  Self::ImageTypeAttributeToNodeType["vector"] = "vtkMRMLVectorVolumeNode";
+  Self::ImageTypeAttributeToNodeType["tensor"] = "vtkMRMLDiffusionTensorVolumeNode";
+  Self::ImageTypeAttributeToNodeType["diffusion-weighted"] = "vtkMRMLDiffusionWeightedVolumeNode";
+
+  // Geometry type attribute mapping
+  Self::GeometryTypeAttributeToNodeType["fiberBundle"] = "vtkMRMLFiberBundleNode";
+  Self::GeometryTypeAttributeToNodeType["model"] = "vtkMRMLModelNode";
+
+  // Table type attribute mapping
+  Self::TableTypeAttributeToNodeType["color"] = "vtkMRMLColorNode";
+
+  // Table type attribute mapping
+  Self::TransformTypeAttributeToNodeType["linear"] = "vtkMRMLLinearTransformNode";
+  Self::TransformTypeAttributeToNodeType["nonlinear"] = "vtkMRMLGridTransformNode";
+  Self::TransformTypeAttributeToNodeType["bspline"] = "vtkMRMLBSplineTransformNode";
+
+  Self::MapInitialized = true;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModule::qInternal::nodeTypeFromMap(const QString& defaultValue,
+  const QHash<QString, QString>& map, const QString& attribute)
+{
+  QHash<QString, QString>::const_iterator i = map.constFind(attribute);
+
+  if (i == map.constEnd())
+    {
+    return defaultValue; 
+    }
+  else
+    {
+    return i.value();
+    }
 }

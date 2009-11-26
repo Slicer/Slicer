@@ -7,8 +7,7 @@
 
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
-  //Q_OBJECT
-
+  
 public:
 
   typedef qSlicerAbstractModule Superclass;
@@ -17,6 +16,9 @@ public:
 
   virtual void printAdditionalInfo();
 
+  // Description:
+  // Assign the module XML description.
+  // Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const char* xmlModuleDescription);
 
   virtual QString title()const;
@@ -29,9 +31,14 @@ public:
   virtual QString acknowledgementText()const;
 
   // Description:
+  // Calling this method will loop trough the structure resulting
+  // from the XML parsing and generate the corresponding UI.
+  // Note: This method should be called after the XML description is set.
   void setupUi();
 
 protected:
+  // Description:
+  // Overloaded
   virtual void setup();
 
 private:

@@ -6,16 +6,40 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>139</height>
+    <width>458</width>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="MainVerticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="VerticalLayout"/>
+    <widget class="qCTKCollapsibleWidget2" name="MainCollapsibleWidget">
+     <property name="title">
+      <string>Module Title</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>15</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="VerticalLayout"/>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <spacer name="VerticalSpacer">
@@ -71,6 +95,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qCTKCollapsibleWidget2</class>
+   <extends>QWidget</extends>
+   <header>qCTKCollapsibleWidget2.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
