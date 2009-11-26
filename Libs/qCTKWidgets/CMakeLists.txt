@@ -31,6 +31,8 @@ SET(qCTKWidgets_SRCS
   qCTKCoordinatesWidget.cxx
   qCTKFittedTextBrowser.h
   qCTKFittedTextBrowser.cxx
+  qCTKFlowLayout.h
+  qCTKFlowLayout.cxx
   qCTKMatrixWidget.h
   qCTKMatrixWidget.cxx
   qCTKNumericInput.h
