@@ -248,7 +248,7 @@ QSize qCTKCollapsibleWidget2::minimumSizeHint()const
     {
     return s;
     }
-  qDebug() << s;
+    
   int w = 0, h = 0;
 
   QStyleOptionButton opt;
