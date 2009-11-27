@@ -1,66 +1,16 @@
-
 #include "qMRMLUtils.h"
 
-#include <vtkMRMLScene.h>
+// MRML includes
 #include <vtkMRMLNode.h>
-
 #include <vtkMRMLLinearTransformNode.h>
+
+// VTK includes
 #include <vtkTransform.h>
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
 
+// QT includes
 #include <QDebug>
-
-//------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLUtils::createAndAddNodeToSceneByClass(vtkMRMLScene * scene, const char* className)
-{
-  return qMRMLUtils::createAndAddNodeToSceneByClass(scene, QString::fromAscii(className) ); 
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLUtils::createAndAddNodeToSceneByClass(vtkMRMLScene * scene, const QString& className)
-{
-  Q_ASSERT(scene);
-  Q_ASSERT(!className.isEmpty());
-  if (!scene || className.isEmpty())
-    {
-    return 0; 
-    }
-
-  vtkSmartPointer<vtkMRMLNode> node; 
-  node.TakeReference( scene->CreateNodeByClass( className.toLatin1().data() ) ); 
-  
-  Q_ASSERT(node);
-  if (node == NULL)
-    {
-    return 0;
-    }
-  
-  node->SetScene( scene );
-  node->SetName( scene->GetUniqueNameByString( 
-    scene->GetTagByClassName(className.toLatin1().data()) ) );
-  /*
-    // If there is a Attribute Name-Value specified, then set that
-    // attribute on the node
-    for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
-      {
-      if (!strcmp(this->GetNodeClass(c), className))
-        {
-        if (this->GetNodeAttributeName(c) != NULL)
-          {
-          node->SetAttribute(this->GetNodeAttributeName(c),
-                            this->GetNodeAttributeValue(c));
-          }
-        break;
-        }
-      }
-  */
-  
-  vtkMRMLNode * nodeCreated = scene->AddNode(node);
-  qDebug() << "createAndAddNodeToSceneByClass - Set name to:" 
-           << nodeCreated->GetName() << "(" << nodeCreated->GetID() << ")"; 
-  return nodeCreated; 
-}
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)

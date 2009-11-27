@@ -1,11 +1,13 @@
 
 #include "qMRMLNodeSelector.h"
-#include "qMRMLUtils.h"
+#include "qMRMLNodeFactory.h"
 
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformNode.h"
 
+// QT includes
 #include <QDebug>
 #include <QComboBox>
 
@@ -17,14 +19,16 @@ struct qMRMLNodeSelector::qInternal
     this->MRMLScene = 0; 
     this->MRMLCurrentNode = 0; 
     this->MRMLNodeBeingRemoved = 0;
-    this->MRMLNodeModifiedEvent = vtkCommand::ModifiedEvent; 
+    this->MRMLNodeModifiedEvent = vtkCommand::ModifiedEvent;
+    this->MRMLNodeFactory = 0;
 
     this->ShowHidden = false;
     }
-  vtkMRMLScene* MRMLScene; 
-  vtkMRMLNode*  MRMLCurrentNode; 
-  vtkMRMLNode*  MRMLNodeBeingRemoved;
-  unsigned long MRMLNodeModifiedEvent; 
+  qMRMLNodeFactory* MRMLNodeFactory; 
+  vtkMRMLScene*     MRMLScene; 
+  vtkMRMLNode*      MRMLCurrentNode; 
+  vtkMRMLNode*      MRMLNodeBeingRemoved;
+  unsigned long     MRMLNodeModifiedEvent; 
 
   QString       NodeType; 
   bool          ShowHidden;
@@ -33,7 +37,9 @@ struct qMRMLNodeSelector::qInternal
 // --------------------------------------------------------------------------
 qMRMLNodeSelector::qMRMLNodeSelector(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal; 
+  this->Internal = new qInternal;
+
+  this->Internal->MRMLNodeFactory = new qMRMLNodeFactory(this); 
   
   // Connect comboBox
   this->connect(this, SIGNAL(currentIndexChanged(int)),
@@ -90,6 +96,19 @@ vtkMRMLNode* qMRMLNodeSelector::currentNode()const
 {
   Q_ASSERT(this->count() > 0 ? (this->Internal->MRMLCurrentNode != 0) : true);
   return this->Internal->MRMLCurrentNode;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* factory)
+{
+  Q_ASSERT(factory);
+  Q_ASSERT(this->mrmlScene() == factory->mrmlScene());
+  this->Internal->MRMLNodeFactory = factory; 
+}
+
+qMRMLNodeFactory* qMRMLNodeSelector::factory()
+{
+  return this->Internal->MRMLNodeFactory;
 }
 
 // --------------------------------------------------------------------------
@@ -155,6 +174,9 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
     {
     this->setComboBoxEnabled(false);
     }
+
+  // Update factory
+  this->Internal->MRMLNodeFactory->setMRMLScene(scene);
 
   // Scan the scene and populate the nodes
   if (scene)
@@ -225,15 +247,15 @@ void qMRMLNodeSelector::onMRMLNodeModified(void* call_data, vtkObject * caller)
     { 
     return; 
     }
-  //qDebug() << "qMRMLNodeSelector::onMRMLNodeModified:" << caller; 
+  //qDebug() << "qMRMLNodeSelector::onMRMLNodeModified:" << caller;
+  // TODO Check if the name of node changed and update accordingly
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onAdd()
 {
   // Create the MRML node via the MRML Scene
-  vtkMRMLNode * node = qMRMLUtils::createAndAddNodeToSceneByClass(
-      this->Internal->MRMLScene, this->nodeType().toLatin1().data() ); 
+  vtkMRMLNode * node = this->Internal->MRMLNodeFactory->createNode(this->nodeType());
   // The created node is appended at the bottom of the current list  
   Q_ASSERT(node);
   if (node)

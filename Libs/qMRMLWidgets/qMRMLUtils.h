@@ -1,12 +1,12 @@
 #ifndef __qMRMLUtils_h
 #define __qMRMLUtils_h
 
-#include "qMRMLWidgetsWin32Header.h"
-
+// QT includes
 #include <QString>
 #include <QVector>
 
-class vtkMRMLScene; 
+#include "qMRMLWidgetsWin32Header.h"
+
 class vtkMRMLNode; 
 class vtkMRMLLinearTransformNode; 
 class vtkTransform; 
@@ -19,11 +19,6 @@ class QMRML_WIDGETS_EXPORT qMRMLUtils
   
 public:
   typedef qMRMLUtils Self; 
-
-  // Description:
-  // Create and add a node using its classname
-  static vtkMRMLNode* createAndAddNodeToSceneByClass(vtkMRMLScene * scene, const char* className); 
-  static vtkMRMLNode* createAndAddNodeToSceneByClass(vtkMRMLScene * scene, const QString& className); 
   
   // Description:
   // Convert a vtkMatrix to a QVector

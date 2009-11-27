@@ -20,6 +20,8 @@ SET(qMRMLWidgets_SRCS
   qVTKObjectEventsObserver.cxx
   qMRMLUtils.h
   qMRMLUtils.cxx
+  qMRMLNodeFactory.h
+  qMRMLNodeFactory.cxx
   qMRMLNodeSelector.h
   qMRMLNodeSelector.cxx
   qMRMLNodeTreeSelector.h

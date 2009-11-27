@@ -8,8 +8,9 @@
 
 #include "qMRMLWidgetsWin32Header.h"
 
+class qMRMLNodeFactory; 
 class vtkMRMLScene; 
-class vtkMRMLNode; 
+class vtkMRMLNode;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
 {
@@ -48,6 +49,10 @@ public:
   // Description:
   // Add a node in the combobox
   void addNode(vtkMRMLNode* node);
+
+  // Set/Get MRML node factory
+  void setMRMLNodeFactory(qMRMLNodeFactory* factory);
+  qMRMLNodeFactory* factory(); 
 
 public slots:
   // Description:
