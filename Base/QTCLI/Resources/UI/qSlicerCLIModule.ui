@@ -58,6 +58,9 @@
     <layout class="QHBoxLayout" name="HorizontalLayout">
      <item>
       <widget class="QPushButton" name="DefaultPushButton">
+       <property name="toolTip">
+        <string>Reset parameters to default.</string>
+       </property>
        <property name="text">
         <string>Default</string>
        </property>
@@ -78,6 +81,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="CancelPushButton">
+       <property name="toolTip">
+        <string>Cancel the execution of the module</string>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -85,6 +91,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="ApplyPushButton">
+       <property name="toolTip">
+        <string>Execute the module</string>
+       </property>
        <property name="text">
         <string>Apply</string>
        </property>
