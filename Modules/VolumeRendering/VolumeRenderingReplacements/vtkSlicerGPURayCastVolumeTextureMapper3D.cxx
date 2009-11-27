@@ -1107,11 +1107,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
       "  vec4 scalar = texture3D(TextureVol, coord);                                        \n"
       "  return texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                    \n"
       "}                                                                                    \n"
-      "                                                                                     \n"
-      "float voxelScalar(vec3 coord)                                                        \n"
-      "{                                                                                    \n"
-      "  return texture3D(TextureVol, coord).x;                                             \n"
-      "}                                                                                    \n";
+      "                                                                                     \n";
     break;
   case 2:
     fp_oss <<
@@ -1123,11 +1119,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
       "  vec4 opacity = texture2D(TextureAlphaLookup, vec2(scalar.y, scalar.w));            \n"
       "  color.w = opacity.w;                                                               \n"
       "  return color;                                                                      \n"
-      "}                                                                                    \n"
-      "                                                                                     \n"
-      "float voxelScalar(vec3 coord)                                                        \n"
-      "{                                                                                    \n"
-      "  return texture3D(TextureVol, coord).x;                                             \n"
       "}                                                                                    \n";
     break;
   case 3:
@@ -1141,13 +1132,41 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
       "  vec4 opacity = texture2D(TextureAlphaLookup, vec2(color.w, scalar.w));             \n"
       "  color.w = opacity.w;                                                               \n"
       "  return color;                                                                      \n"
-      "}                                                                                    \n"
-      "                                                                                     \n"
-      "float voxelScalar(vec3 coord)                                                        \n"
-      "{                                                                                    \n"
-      "  return texture3D(TextureVol, coord).w;                                             \n"
       "}                                                                                    \n";
     break;
+  }
+
+  //scalar lookup (only for MIP and MINIP)
+  if (this->Technique == 2 || this->Technique == 3)
+  {
+    switch(this->GetInput()->GetNumberOfScalarComponents())
+    {
+    case 1:
+      fp_oss <<
+        "float voxelScalar(vec3 coord)                                                        \n"
+        "{                                                                                    \n"
+        "  return texture3D(TextureVol, coord).x;                                             \n"
+        "}                                                                                    \n";
+      break;
+    case 2:
+      fp_oss <<
+        "float voxelScalar(vec3 coord)                                                        \n"
+        "{                                                                                    \n"
+        "  return texture3D(TextureVol, coord).x;                                             \n"
+        "}                                                                                    \n";
+      break;
+    case 3:
+    case 4:
+      fp_oss <<
+        "float voxelScalar(vec3 coord)                                                        \n"
+        "{                                                                                    \n"
+        "  return texture3D(TextureVol, coord).w;                                             \n"
+        "}                                                                                    \n";
+      break;
+    }
+  }
+  else //normal lookup (not needed for MIP and MINIP)
+  {
   }
   
  /*     
@@ -2826,6 +2845,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderGMOMTwo()
     }catch(...)
     {
     }
+
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()

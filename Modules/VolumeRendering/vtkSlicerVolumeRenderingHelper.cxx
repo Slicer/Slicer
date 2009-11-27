@@ -355,6 +355,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastDepthPeelingThreshold->SetBalloonHelpString("Set threshold for Volumetric Depth Peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.");
     this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_GPURayCastDepthPeelingThreshold->SetEntryWidth(8);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDepthPeelingThreshold->GetWidgetName() );
   }
 
