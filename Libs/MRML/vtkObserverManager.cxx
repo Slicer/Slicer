@@ -112,10 +112,6 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     }
   if (nodePtrOld)
     {
-    if ((nodePtrOld)->GetReferenceCount() == 1)
-      {
-      (nodePtrOld)->RemoveAllObservers();
-      }
     (nodePtrOld)->UnRegister(this);
     }
 
@@ -144,10 +140,6 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
     }
   if (nodePtrOld)
     {
-    if ((nodePtrOld)->GetReferenceCount() == 1)
-      {
-      (nodePtrOld)->RemoveAllObservers();
-      }
     (nodePtrOld)->UnRegister(this);
     }
 }

@@ -244,29 +244,6 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
                                             unsigned long event, 
                                             void * callData )
 {
-
-  if (event == vtkCommand::DeleteEvent )
-    {
-    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
-    if (modelNode)
-      {
-      this->SliceModelNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelNode = NULL;
-      }
-    vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::SafeDownCast(caller);
-    if (displayNode)
-      {
-      this->SliceModelDisplayNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelDisplayNode = NULL;
-      }
-    vtkMRMLLinearTransformNode *transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
-    if (transformNode)
-      {
-      this->SliceModelTransformNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelTransformNode = NULL;
-      }
-    }    
-
  //
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
@@ -275,34 +252,10 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-
-    if (node && event == vtkMRMLScene::NodeRemovedEvent )
-      {
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(node);
-      if (modelNode && modelNode == this->SliceModelNode)
-        {
-        this->SliceModelNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-        this->SliceModelNode = NULL;
-        }
-      vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
-      if (displayNode && displayNode == this->SliceModelDisplayNode)
-        {
-        this->SliceModelDisplayNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-        this->SliceModelDisplayNode = NULL;
-        }
-      vtkMRMLLinearTransformNode *transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
-      if (transformNode && transformNode == this->SliceModelTransformNode)
-        {
-        this->SliceModelTransformNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-        this->SliceModelTransformNode = NULL;
-        }
-      }
-
     if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")) )
       {
       return;
       }
-
     }
 
   if (event == vtkMRMLScene::SceneCloseEvent) 
@@ -359,38 +312,6 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     scene->AddNode( crosshair );
     crosshair->Delete();
     }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::ProcessLogicEvents( vtkObject *caller, 
-                                  unsigned long event, 
-                                  void * callData ) 
-{
-  if (event == vtkCommand::DeleteEvent )
-    {
-    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
-    if (modelNode)
-      {
-      this->SliceModelNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelNode = NULL;
-      }
-    vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::SafeDownCast(caller);
-    if (displayNode)
-      {
-      this->SliceModelDisplayNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelDisplayNode = NULL;
-      }
-    vtkMRMLLinearTransformNode *transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
-    if (transformNode)
-      {
-      this->SliceModelTransformNode->RemoveObservers ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelTransformNode = NULL;
-      }
-    return;
-    }    
-
-  this->ProcessLogicEvents();
-
 }
 
 //----------------------------------------------------------------------------
@@ -905,9 +826,46 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::DeleteSliceModel()
 {
-  this->SliceModelNode = NULL;
-  this->SliceModelDisplayNode = NULL;
-  this->SliceModelTransformNode = NULL;
+  // Remove References
+  if (this->SliceModelNode != NULL)
+    {
+    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
+    this->SliceModelNode->SetAndObserveTransformNodeID(NULL);
+    this->SliceModelNode->SetAndObservePolyData(NULL);
+    }
+  if (this->SliceModelDisplayNode != NULL)
+    {
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+    }
+
+  // Remove Nodes 
+  if (this->SliceModelNode != NULL)
+    {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelNode);
+      }
+    this->SliceModelNode->Delete();
+    this->SliceModelNode = NULL;
+    }
+  if (this->SliceModelDisplayNode != NULL)
+    {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelDisplayNode);
+      }
+    this->SliceModelDisplayNode->Delete();
+    this->SliceModelDisplayNode = NULL;
+    }
+  if (this->SliceModelTransformNode != NULL)
+    {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelTransformNode);
+      }
+    this->SliceModelTransformNode->Delete();
+    this->SliceModelTransformNode = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -919,11 +877,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->DeleteSliceModel();
     }
 
-  bool sliceNodeCreated = false;
-
   if ( this->SliceModelNode == NULL) 
     {
-    sliceNodeCreated = true;
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
     this->SliceModelNode->SetDisableModifiedEvent(1);
@@ -1006,16 +961,6 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());
-    if (sliceNodeCreated)
-      {
-      this->SliceModelNode->AddObserver ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelDisplayNode->AddObserver ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-      this->SliceModelTransformNode->AddObserver ( vtkCommand::DeleteEvent, this->LogicCallbackCommand );
-
-      this->SliceModelNode->Delete();
-      this->SliceModelDisplayNode->Delete();
-      this->SliceModelTransformNode->Delete();
-      }
     }
 
   // update the description to refer back to the slice and composite nodes

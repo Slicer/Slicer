@@ -408,10 +408,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     this->SetOrientationString( orientationString );
 
     this->SetDisableModifiedEvent(modifiedWasDisabled);
-    if (modifiedWasDisabled == 0)
-      {
-      this->InvokePendingModifiedEvent ();
-      }
+    this->InvokePendingModifiedEvent ();
 }
 
 

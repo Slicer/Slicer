@@ -396,17 +396,6 @@ void vtkMRMLScene::Clear(int removeSingletons)
     }
   else
     {
-    // Remove all observers in this case
-    // to prevent DeleteEvent go off on a deleted GUI/Logic
-    vtkMRMLNode *node;
-    this->InitTraversal();
-    node = this->GetNextNode();
-    while(node)
-      {
-      node->RemoveObservers ( vtkCommand::DeleteEvent);
-      node = this->GetNextNode();
-      }
-
     this->CurrentScene->RemoveAllItems();
     // See comment below
     //  this->InvokeEvent(this->SceneCloseEvent, NULL);
