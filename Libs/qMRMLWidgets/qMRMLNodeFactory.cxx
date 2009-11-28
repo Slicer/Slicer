@@ -8,6 +8,7 @@
 #include "vtkSmartPointer.h"
 
 // QT includes
+#include <QHash>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -18,7 +19,8 @@ public:
     {
     this->MRMLScene = 0; 
     }
-  vtkMRMLScene * MRMLScene; 
+  vtkMRMLScene * MRMLScene;
+  QHash<QString, QString> Attributes;
 };
 
 // --------------------------------------------------------------------------
@@ -73,25 +75,25 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   node->SetScene( this->Internal->MRMLScene );
   node->SetName( this->Internal->MRMLScene->GetUniqueNameByString(
     this->Internal->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
-  /*
-    // If there is a Attribute Name-Value specified, then set that
-    // attribute on the node
-    for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
-      {
-      if (!strcmp(this->GetNodeClass(c), className))
-        {
-        if (this->GetNodeAttributeName(c) != NULL)
-          {
-          node->SetAttribute(this->GetNodeAttributeName(c),
-                            this->GetNodeAttributeValue(c));
-          }
-        break;
-        }
-      }
-  */
   
   vtkMRMLNode * nodeCreated = this->Internal->MRMLScene->AddNode(node);
   qDebug() << "createAndAddNodeToSceneByClass - Set name to:" 
-           << nodeCreated->GetName() << "(" << nodeCreated->GetID() << ")"; 
+           << nodeCreated->GetName() << "(" << nodeCreated->GetID() << ")";
+
+  Q_ASSERT(nodeCreated);
+  
+  // Set node attributes
+  QHashIterator<QString, QString> i(this->Internal->Attributes);
+  while (i.hasNext())
+    {
+    i.next();
+    nodeCreated->SetAttribute(i.key().toLatin1(), i.value().toLatin1());
+    }
   return nodeCreated; 
+}
+
+//------------------------------------------------------------------------------
+void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
+{
+  this->Internal->Attributes.insert(name, value);
 }

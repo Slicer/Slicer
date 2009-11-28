@@ -37,7 +37,7 @@ struct qSlicerModuleFactory::qInternal
   typedef qCTKAbstractLibraryFactory<qSlicerAbstractModule, qSlicerFactoryLoadableCmdLineModuleItem> CmdLineLoadableModuleFactoryType;
   typedef qCTKAbstractPluginFactory<qSlicerAbstractModule, qSlicerFactoryExecutableCmdLineModuleItem> CmdLineExecutableModuleFactoryType;
 
-  // List of existing factory
+  // List of available factory
   enum FactoryType
     {
     CoreModule              = 0x0,

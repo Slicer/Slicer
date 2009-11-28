@@ -33,6 +33,11 @@ public:
   vtkMRMLNode* createNode(const char* className);
   vtkMRMLNode* createNode(const QString& className);
 
+  // Description:
+  // Add attribute
+  // Note: If an attribute already exist, it's value will be overwritten.
+  void addAttribute(const QString& name, const QString& value);
+
 private:
   struct qInternal; 
   qInternal* Internal; 
