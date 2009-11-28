@@ -508,7 +508,7 @@ QWidget* qSlicerCLIModule::qInternal::createPointTagWidget(const ModuleParameter
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
   //TODO - tparameter->SetNewNodeName((title+" output").c_str());
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
@@ -523,7 +523,7 @@ QWidget* qSlicerCLIModule::qInternal::createRegionTagWidget(const ModuleParamete
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
@@ -568,7 +568,7 @@ QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Specify factory attributes
@@ -610,7 +610,7 @@ QWidget* qSlicerCLIModule::qInternal::createGeometryTagWidget(const ModuleParame
   widget->setShowHidden(showHidden);
   widget->setNodeType(nodeType);
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
@@ -640,7 +640,7 @@ QWidget* qSlicerCLIModule::qInternal::createTableTagWidget(const ModuleParameter
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
                    
   return widget;
@@ -666,7 +666,7 @@ QWidget* qSlicerCLIModule::qInternal::createTransformTagWidget(const ModuleParam
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
+  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
                    
   return widget;

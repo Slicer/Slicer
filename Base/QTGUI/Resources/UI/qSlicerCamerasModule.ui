@@ -95,7 +95,7 @@
  <connections>
   <connection>
    <sender>qSlicerCamerasModule</sender>
-   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ViewNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
@@ -111,7 +111,7 @@
   </connection>
   <connection>
    <sender>qSlicerCamerasModule</sender>
-   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>CameraNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>

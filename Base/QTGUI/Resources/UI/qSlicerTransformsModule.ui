@@ -350,7 +350,7 @@
  <connections>
   <connection>
    <sender>qSlicerTransformsModule</sender>
-   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TransformNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>

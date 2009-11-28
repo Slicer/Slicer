@@ -67,7 +67,7 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene*);
 
 signals:
-  void mrmlSceneLoaded(vtkMRMLScene*);
+  void mrmlSceneChanged(vtkMRMLScene*);
 
 private:
   struct qInternal;

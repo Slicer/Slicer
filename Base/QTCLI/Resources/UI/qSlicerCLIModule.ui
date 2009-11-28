@@ -154,7 +154,7 @@
  <connections>
   <connection>
    <sender>qSlicerCLIModule</sender>
-   <signal>mrmlSceneLoaded(vtkMRMLScene*)</signal>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>

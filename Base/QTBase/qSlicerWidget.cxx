@@ -154,7 +154,7 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Internal->MRMLScene = scene;
   // TODO Rename signal
-  emit mrmlSceneLoaded(scene);
+  emit mrmlSceneChanged(scene);
 }
 
 //-----------------------------------------------------------------------------
