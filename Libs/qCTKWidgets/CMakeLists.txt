@@ -13,6 +13,7 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qCTKWidgets_SRCS
+  qCTKPimpl.h
   qCTKAbstractFactory.h
   qCTKAbstractObjectFactory.h
   qCTKAbstractPluginFactory.h
