@@ -201,7 +201,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // process logic events
   virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
-                                  void * /*callData*/ ) {this->ProcessLogicEvents();};
+                                  void * /*callData*/ );
   void ProcessLogicEvents(); 
 
   // Description:
