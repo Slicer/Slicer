@@ -127,7 +127,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     vtkEMSegmentMRMLManagerTest
     ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml
     "EMSegment Tutorial Template"
     )
 
@@ -135,7 +135,7 @@ if(NOT DISABLE_CXX_TESTING)
   #add_test(
   #  vtkEMSegmentPreprocessingManagerTest
   #  ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
-  #  ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+  #  ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml
   #  "EMSegment Tutorial Template"
   #  )
 
@@ -144,7 +144,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
     ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     ${EMSegment_TUTORIAL_DIR}
     "EMSegment Tutorial Template"
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.mhd
@@ -305,7 +305,7 @@ if(NOT DISABLE_CXX_TESTING)
   set(test_args 
     ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose 
-    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/Template_small.mrml 
     --resultVolumeFileName "${test_file_prefix}.mhd"
     --disableCompression
     )
@@ -332,7 +332,7 @@ if(NOT DISABLE_CXX_TESTING)
   set(test_args 
     ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose 
-    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml 
     --resultVolumeFileName "${test_file_prefix}.mhd"
     --disableCompression
     )
@@ -359,7 +359,7 @@ if(NOT DISABLE_CXX_TESTING)
   set(test_args 
     ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose 
-    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/Template_small.mrml 
     --targetVolumeFileNames
     ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
     --atlasVolumeFileNames
@@ -381,7 +381,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_DisableMultithreading
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --disableMultithreading 
     )
   set_tests_properties(
@@ -395,7 +395,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_EFBogusParameterNode
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --parametersMRMLNodeName BogusNodeName  
     )
   set_tests_properties(
@@ -421,7 +421,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_EFBogusTargetImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
     ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/bogus.mhd
     )
@@ -436,7 +436,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_EFTooManyImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
     ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
     )
@@ -451,7 +451,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_EFTooFewImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
     ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd
     )
@@ -466,7 +466,7 @@ if(NOT DISABLE_CXX_TESTING)
     EMSegCL_EFBogusResultStandardImage
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --resultStandardVolumeFileName
     ${EMSegment_TEST_DIR}/bogus_file.mhd
     )
@@ -491,7 +491,7 @@ if(NOT DISABLE_CXX_TESTING)
     set(test_args 
       ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
       --verbose 
-      --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_large.mrml 
+      --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/Template_large.mrml 
       --resultVolumeFileName "${test_file_prefix}.mhd"
       )
     add_test(
@@ -542,7 +542,7 @@ if(NOT DISABLE_CXX_TESTING)
     set(test_exe         "${Slicer3_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.mrml")
-    set(test_std_file    "${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn_noImages.mrml")
+    set(test_std_file    "${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn_noImages.mrml")
     if(${EMSEG_REMOVE_TMP_TEST_DATA})
       set(test_rm_files    ${test_file_prefix}.mrml)
     else(${EMSEG_REMOVE_TMP_TEST_DATA})
@@ -574,7 +574,7 @@ if(NOT DISABLE_CXX_TESTING)
       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/EMSegmentCommandLine
       --verbose 
       --mrmlSceneFileName 
-      ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+      ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml
       --dontWriteResults
       )
   endif(EMSEG_RUN_VALGRIND_TESTS)
