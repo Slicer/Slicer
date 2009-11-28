@@ -11,13 +11,15 @@
 #include <QLayout>
 
 //-----------------------------------------------------------------------------
-struct qCTKCollapsibleWidget2::qInternal
+class qCTKCollapsibleWidget2Private : public qCTKPrivate<qCTKCollapsibleWidget2>
 {
-  qInternal( QWidget* widget);
+public:
+  QCTK_DECLARE_PUBLIC(qCTKCollapsibleWidget2)
+  //qInternal( QWidget* widget);
   void init();
-  void initStyleOption(QStyleOptionButton& opt);
+  void initStyleOption(QStyleOptionButton& opt)const;
 
-  qCTKCollapsibleWidget2* Widget;
+  //qCTKCollapsibleWidget2* Widget;
 
   bool     Collapsed;
   int      CollapsedHeight;
@@ -35,13 +37,13 @@ struct qCTKCollapsibleWidget2::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qCTKCollapsibleWidget2::qInternal::qInternal(QWidget* widget)
-{
-  this->Widget = qobject_cast<qCTKCollapsibleWidget2*>(widget);
-}
+// qCTKCollapsibleWidget2::qInternal::qInternal(QWidget* widget)
+// {
+//   this->Widget = qobject_cast<qCTKCollapsibleWidget2*>(widget);
+// }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleWidget2::qInternal::init()
+void qCTKCollapsibleWidget2Private::init()
 {
   this->Title = "GroupBox";
   this->Collapsed = false;
@@ -53,17 +55,17 @@ void qCTKCollapsibleWidget2::qInternal::init()
   this->ContentsMidLineWidth = 0;
 
   this->PressedControl = 0;
-  this->MaximumHeight = this->Widget->maximumHeight();
+  this->MaximumHeight = qctk_p().maximumHeight();
 
   QStyleOptionButton opt;
   this->initStyleOption(opt);
-  this->Widget->setContentsMargins(0, opt.rect.height(),0 , 0);
+  qctk_p().setContentsMargins(0, opt.rect.height(),0 , 0);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleWidget2::qInternal::initStyleOption(QStyleOptionButton& opt)
+void qCTKCollapsibleWidget2Private::initStyleOption(QStyleOptionButton& opt)const
 {
-  opt.init(this->Widget);
+  opt.init(&qctk_p());
   if (!this->PressedControl)
     {
     opt.state |= QStyle::State_Raised;
@@ -74,9 +76,9 @@ void qCTKCollapsibleWidget2::qInternal::initStyleOption(QStyleOptionButton& opt)
     }
   opt.state &= ~QStyle::State_HasFocus;
   opt.text = this->Title;
-  opt.iconSize = QSize(this->Widget->style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this->Widget),
-                       this->Widget->style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this->Widget));
-  int buttonHeight = qMax(this->Widget->fontMetrics().height(), opt.iconSize.height());
+  opt.iconSize = QSize(qctk_p().style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, &qctk_p()),
+                       qctk_p().style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, &qctk_p()));
+  int buttonHeight = qMax(qctk_p().fontMetrics().height(), opt.iconSize.height());
   opt.rect.setHeight(buttonHeight);
 }
 
@@ -84,35 +86,37 @@ void qCTKCollapsibleWidget2::qInternal::initStyleOption(QStyleOptionButton& opt)
 qCTKCollapsibleWidget2::qCTKCollapsibleWidget2(QWidget* parent)
   :QWidget(parent)
 {
-  this->Internal = new qCTKCollapsibleWidget2::qInternal(this);
-  this->Internal->init();
+  QCTK_INIT_PRIVATE(qCTKCollapsibleWidget2);
+  //this->Internal = new qCTKCollapsibleWidget2::qInternal(this);
+  qctk_d().init();
 }
 
 //-----------------------------------------------------------------------------
 qCTKCollapsibleWidget2::qCTKCollapsibleWidget2(const QString& title, QWidget* parent)
   :QWidget(parent)
 {
-  this->Internal = new qCTKCollapsibleWidget2::qInternal(this);
-  this->Internal->init();
+  QCTK_INIT_PRIVATE(qCTKCollapsibleWidget2);
+  //this->Internal = new qCTKCollapsibleWidget2::qInternal(this);
+  qctk_d().init();
   this->setTitle(title);
 }
 
 //-----------------------------------------------------------------------------
 qCTKCollapsibleWidget2::~qCTKCollapsibleWidget2()
 {
-  delete this->Internal;
+  //delete this->Internal;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setTitle(QString t)
 {
-  this->Internal->Title = t;
+  qctk_d().Title = t;
 }
 
 //-----------------------------------------------------------------------------
 QString qCTKCollapsibleWidget2::title()const
 {
-  return this->Internal->Title;
+  return qctk_d().Title;
 }
 
 //-----------------------------------------------------------------------------
@@ -124,51 +128,52 @@ void qCTKCollapsibleWidget2::setCollapsed(bool c)
 //-----------------------------------------------------------------------------
 bool qCTKCollapsibleWidget2::collapsed()const
 {
-  return this->Internal->Collapsed;
+  return qctk_d().Collapsed;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::toggleCollapse()
 {
-  this->collapse(!this->Internal->Collapsed);
+  this->collapse(!qctk_d().Collapsed);
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setCollapsedHeight(int h)
 {
-  this->Internal->CollapsedHeight = h;
+  qctk_d().CollapsedHeight = h;
 }
 
 //-----------------------------------------------------------------------------
 int qCTKCollapsibleWidget2::collapsedHeight()const
 {
-  return this->Internal->CollapsedHeight;
+  return qctk_d().CollapsedHeight;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::collapse(bool c)
 {
-  if (c == this->Internal->Collapsed)
+  QCTK_D(qCTKCollapsibleWidget2);
+  if (c == qctk_d().Collapsed)
     {
     return;
     }
 
-  this->Internal->Collapsed = c;
+  d.Collapsed = c;
 
   // we do that here as setVisible calls will correctly refresh the widget
   if (c)
     {
-    this->Internal->MaximumHeight = this->maximumHeight();
+    d.MaximumHeight = this->maximumHeight();
 
     QStyleOptionButton opt;
-    this->Internal->initStyleOption(opt);
-    this->setMaximumHeight(this->Internal->CollapsedHeight + opt.rect.height());
+    d.initStyleOption(opt);
+    this->setMaximumHeight(d.CollapsedHeight + opt.rect.height());
     this->updateGeometry();
     }
   else
     {
     // restore maximumheight
-    this->setMaximumHeight(this->Internal->MaximumHeight);
+    this->setMaximumHeight(d.MaximumHeight);
     this->updateGeometry();
     }
 
@@ -194,49 +199,49 @@ void qCTKCollapsibleWidget2::collapse(bool c)
 //-----------------------------------------------------------------------------
 QFrame::Shape qCTKCollapsibleWidget2::contentsFrameShape() const
 {
-  return this->Internal->ContentsFrameShape;
+  return qctk_d().ContentsFrameShape;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setContentsFrameShape(QFrame::Shape s)
 {
-  this->Internal->ContentsFrameShape = s;
+  qctk_d().ContentsFrameShape = s;
 }
 
 //-----------------------------------------------------------------------------
 QFrame::Shadow qCTKCollapsibleWidget2::contentsFrameShadow() const
 {
-  return this->Internal->ContentsFrameShadow;
+  return qctk_d().ContentsFrameShadow;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setContentsFrameShadow(QFrame::Shadow s)
 {
-  this->Internal->ContentsFrameShadow = s;
+  qctk_d().ContentsFrameShadow = s;
 }
 
 //-----------------------------------------------------------------------------
 int qCTKCollapsibleWidget2:: contentsLineWidth() const
 {
-  return this->Internal->ContentsLineWidth;
+  return qctk_d().ContentsLineWidth;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setContentsLineWidth(int w)
 {
-  this->Internal->ContentsLineWidth = w;
+  qctk_d().ContentsLineWidth = w;
 }
 
 //-----------------------------------------------------------------------------
 int qCTKCollapsibleWidget2::contentsMidLineWidth() const
 {
-  return this->Internal->ContentsMidLineWidth;
+  return qctk_d().ContentsMidLineWidth;
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleWidget2::setContentsMidLineWidth(int w)
 {
-  this->Internal->ContentsMidLineWidth = w;
+  qctk_d().ContentsMidLineWidth = w;
 }
 
 //-----------------------------------------------------------------------------
@@ -244,7 +249,7 @@ QSize qCTKCollapsibleWidget2::minimumSizeHint()const
 {
   // frame
   QSize s = this->QWidget::minimumSizeHint(); 
-  if (!this->Internal->Collapsed)
+  if (!qctk_d().Collapsed)
     {
     return s;
     }
@@ -252,7 +257,7 @@ QSize qCTKCollapsibleWidget2::minimumSizeHint()const
   int w = 0, h = 0;
 
   QStyleOptionButton opt;
-  this->Internal->initStyleOption(opt);
+  qctk_d().initStyleOption(opt);
   
   // indicator
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
@@ -264,7 +269,7 @@ QSize qCTKCollapsibleWidget2::minimumSizeHint()const
   h = qMax(h, ih);
   
   // text 
-  QString string(this->Internal->Title);
+  QString string(qctk_d().Title);
   bool empty = string.isEmpty();
   if (empty)
     {
@@ -298,7 +303,7 @@ void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
   QPainter p(this);
   // Draw Button
   QStyleOptionButton opt;
-  this->Internal->initStyleOption(opt);
+  qctk_d().initStyleOption(opt);
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
   opt.iconSize = indicatorSize;
@@ -310,7 +315,7 @@ void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
   indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2, 
                             (buttonHeight - indicatorSize.height()) / 2,
                             indicatorSize.width(), indicatorSize.height());
-  if (this->Internal->Collapsed)
+  if (qctk_d().Collapsed)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
     }
@@ -328,8 +333,8 @@ void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
   QStyleOptionFrameV3 f;
   f.init(this);
   f.rect.setTop(buttonHeight);
-  f.frameShape = this->Internal->ContentsFrameShape;
-  switch (this->Internal->ContentsFrameShadow)
+  f.frameShape = qctk_d().ContentsFrameShape;
+  switch (qctk_d().ContentsFrameShadow)
     {
     case QFrame::Sunken:
       f.state |= QStyle::State_Sunken;
@@ -341,8 +346,8 @@ void qCTKCollapsibleWidget2::paintEvent(QPaintEvent * event)
     case QFrame::Plain:
       break;
     }
-  f.lineWidth = this->Internal->ContentsLineWidth;
-  f.midLineWidth = this->Internal->ContentsMidLineWidth;
+  f.lineWidth = qctk_d().ContentsLineWidth;
+  f.midLineWidth = qctk_d().ContentsMidLineWidth;
   style()->drawControl(QStyle::CE_ShapedFrame, &f, &p, this);
 }
 
@@ -356,9 +361,9 @@ void qCTKCollapsibleWidget2::mousePressEvent(QMouseEvent* event)
     }
 
   QStyleOptionButton opt;
-  this->Internal->initStyleOption(opt);
-  this->Internal->PressedControl = opt.rect.contains(event->pos());
-  if (this->Internal->PressedControl)
+  qctk_d().initStyleOption(opt);
+  qctk_d().PressedControl = opt.rect.contains(event->pos());
+  if (qctk_d().PressedControl)
     {
     this->update(opt.rect);
     }
@@ -372,14 +377,14 @@ void qCTKCollapsibleWidget2::mouseReleaseEvent(QMouseEvent* event)
     event->ignore();
     return;
     }
-  if (!this->Internal->PressedControl)
+  if (!qctk_d().PressedControl)
     {
     return;
     }
 
-  this->Internal->PressedControl = false;
+  qctk_d().PressedControl = false;
   QStyleOptionButton opt;
-  this->Internal->initStyleOption(opt);
+  qctk_d().initStyleOption(opt);
   if (opt.rect.contains(event->pos()))
     {
     this->toggleCollapse();
@@ -397,7 +402,7 @@ void qCTKCollapsibleWidget2::childEvent(QChildEvent* c)
     if (c->child() && c->child()->isWidgetType())
       {
       QWidget *w = static_cast<QWidget*>(c->child());
-      w->setVisible(!this->Internal->Collapsed);
+      w->setVisible(!qctk_d().Collapsed);
       }
     }
   QWidget::childEvent(c);

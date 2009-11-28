@@ -3,7 +3,10 @@
 
 #include <QWidget>
 #include <QFrame>
+#include "qCTKPimpl.h"
 #include "qCTKWidgetsWin32Header.h"
+
+class qCTKCollapsibleWidget2Private;
 
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleWidget2 : public QWidget
 {
@@ -93,8 +96,9 @@ protected:
   virtual void childEvent(QChildEvent* c);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qCTKCollapsibleWidget2);
+  //struct qInternal;
+  //qInternal* Internal;
 };
 
 #endif
