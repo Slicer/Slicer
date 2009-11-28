@@ -34,6 +34,7 @@ SET(slicer_qtbase_SRCS
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
+  qSlicerCLIModule.h
   )
 
 # UI files

@@ -7,7 +7,7 @@
 
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
-  
+  Q_OBJECT
 public:
 
   typedef qSlicerAbstractModule Superclass;
@@ -40,6 +40,11 @@ protected:
   // Description:
   // Overloaded
   virtual void setup();
+
+protected slots:
+  void onApplyButtonPressed();
+  void onCancelButtonPressed();
+  void onDefaultButtonPressed();
 
 private:
   struct qInternal;

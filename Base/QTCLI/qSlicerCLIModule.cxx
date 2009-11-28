@@ -6,13 +6,14 @@
 
 // MRML includes
 #include "qMRMLNodeSelector.h"
+#include "qMRMLNodeFactory.h"
 
 // CTK includes
 #include "qCTKCollapsibleWidget2.h"
 #include "qCTKSlider.h"
 #include "qCTKFlowLayout.h"
 
-// Libs/ModuleDescriptionParser includes
+// ModuleDescriptionParser includes
 #include "ModuleDescription.h"
 #include "ModuleDescriptionParser.h"
 
@@ -182,6 +183,51 @@ void qSlicerCLIModule::setupUi()
   this->Internal->MainCollapsibleWidget->setTitle(this->title());
 
   this->Internal->addParameterGroups();
+
+  // Connect buttons
+  this->connect(this->Internal->ApplyPushButton,
+                SIGNAL(pressed()),
+                SLOT(onApplyButtonPressed()));
+                
+  this->connect(this->Internal->CancelPushButton,
+                SIGNAL(pressed()),
+                SLOT(onCancelButtonPressed()));
+                
+  this->connect(this->Internal->DefaultPushButton,
+                SIGNAL(pressed()),
+                SLOT(onDefaultButtonPressed()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::onApplyButtonPressed()
+{
+  qDebug() << "qSlicerCLIModule::onApplyButtonPressed";
+// // Apply button was pressed
+//     //std::cout << "  Apply" << std::endl;
+//     this->UpdateMRML();
+//     this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
+// 
+//     // Lazy evaluation of module target
+//     this->Logic->LazyEvaluateModuleTarget(this->ModuleDescriptionObject);
+// 
+//     // make sure the entry point is set on the node
+//     this->GetCommandLineModuleNode()->GetModuleDescription()
+//       .SetTarget( this->ModuleDescriptionObject.GetTarget() );
+//     
+//     // apply
+//     this->Logic->Apply();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::onCancelButtonPressed()
+{
+  qDebug() << "qSlicerCLIModule::onCancelButtonPressed";
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::onDefaultButtonPressed()
+{
+  qDebug() << "qSlicerCLIModule::onDefaultButtonPressed";
 }
 
 //-----------------------------------------------------------------------------
@@ -517,7 +563,6 @@ QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter
     }
     
   // TODO - tparameter->SetNoneEnabled(noneEnabled);
-  // TODO - See attName/attrValue ... [LabelMap, 1]
   // TODO - title + " Volume"
   
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
@@ -525,7 +570,13 @@ QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter
   widget->setMRMLScene(this->BackPointer->mrmlScene());
   QObject::connect(this->BackPointer, SIGNAL(mrmlSceneLoaded(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
-                   
+
+  // Specify factory attributes
+  if (type == "label")
+    {
+    widget->factory()->addAttribute("LabelMap","1");
+    }
+  
   return widget;
 }
 
