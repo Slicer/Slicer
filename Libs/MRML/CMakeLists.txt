@@ -160,11 +160,11 @@ set(MRML_SRCS
   vtkMRMLdGEMRICProceduralColorNode.cxx
   vtkMRMLPETProceduralColorNode.cxx
   # Classes for 2D Plotting
-  vtkMRMLArrayPlotNode.cxx
-  vtkMRMLXYPlotManagerNode.cxx
-  vtkMRMLDoubleArrayNode.cxx
-  vtkMRMLPlotNode.cxx
-  vtkMRMLOrthogonalLinePlotNode.cxx
+  #vtkMRMLArrayPlotNode.cxx
+  #vtkMRMLXYPlotManagerNode.cxx
+  #vtkMRMLDoubleArrayNode.cxx
+  #vtkMRMLPlotNode.cxx
+  #vtkMRMLOrthogonalLinePlotNode.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
