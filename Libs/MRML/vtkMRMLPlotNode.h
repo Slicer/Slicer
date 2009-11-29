@@ -22,7 +22,6 @@
 #include "vtkMRMLStorageNode.h"
 
 #include "vtkObject.h"
-#include "vtkFourDAnalysisWin32Header.h"
 
 #include "vtkDataObject.h"
 
@@ -30,7 +29,7 @@ class vtkSlicerXYPlotWidget;
 class vtkMRMLXYPlotManagerNode;
 
 
-class VTK_FourDAnalysis_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 {
 
   //----------------------------------------------------------------

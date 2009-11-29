@@ -20,7 +20,7 @@
 #ifndef __vtkSlicerXYPlotWidget_h
 #define __vtkSlicerXYPlotWidget_h
 
-#include "vtkFourDAnalysisWin32Header.h"
+#include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkMRMLXYPlotManagerNode.h"
 
@@ -70,7 +70,7 @@ class vtkDataObject;
 
 //ETX
 
-class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
 {
 
   //----------------------------------------------------------------

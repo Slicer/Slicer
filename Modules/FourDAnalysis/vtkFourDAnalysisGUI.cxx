@@ -24,7 +24,10 @@
 #include "vtkMath.h"
 #include "vtkCornerAnnotation.h"
 #include "vtkDoubleArray.h"
+
+#ifdef FourDAnalysis_USE_SCIPY
 #include "vtkCurveAnalysisPythonInterface.h"
+#endif //FourDAnalysis_USE_SCIPY
 
 // MRML
 #include "vtkMRMLColorNode.h"
@@ -86,7 +89,10 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->DataCallbackCommand->SetCallback(vtkFourDAnalysisGUI::DataCallback);
 
   this->IntensityCurves = vtkIntensityCurves::New();
+
+#ifdef FourDAnalysis_USE_SCIPY
   this->CurveAnalysisScript = NULL;
+#endif //FourDAnalysis_USE_SCIPY
 
   this->PlotManagerNode = NULL;
   this->InitialParameterListInputType.clear();
@@ -123,6 +129,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
 
   // -----------------------------------------
   // Model / Parameters
+#ifdef FourDAnalysis_USE_SCIPY  
   this->FittingTargetMenu             = NULL;
   this->CurveScriptSelectButton       = NULL;
   this->CurveScriptMethodName         = NULL;
@@ -130,14 +137,18 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->CurveFittingEndIndexSpinBox   = NULL;
   this->InitialParameterList          = NULL;
   this->PlotSelectPopUpMenu           = NULL;
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Curve Fitting
+#ifdef FourDAnalysis_USE_SCIPY  
   this->RunFittingButton              = NULL;
   this->ResultParameterList           = NULL;
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Parameter Map
+#ifdef FourDAnalysis_USE_SCIPY  
   this->ParameterMapRegionButtonSet   = NULL;
   this->MapRegionMaskSelectorWidget   = NULL;
   this->MapRegionMaskLabelEntry       = NULL;
@@ -149,6 +160,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->MapJMaxSpinBox                = NULL;
   this->MapKMinSpinBox                = NULL;
   this->MapKMaxSpinBox                = NULL;
+#endif //FourDAnalysis_USE_SCIPY
 
   //----------------------------------------------------------------
   // Time
@@ -269,6 +281,7 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
 
   // -----------------------------------------
   // Model / Parameters
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu->SetParent(NULL);
@@ -299,9 +312,12 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->InitialParameterList->SetParent(NULL);
     this->InitialParameterList->Delete();
     }
+#endif // FourDAnalysis_USE_SCIPY
+
 
   // -----------------------------------------
   // Curve Fitting
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->RunFittingButton)
     {
     this->RunFittingButton->SetParent(NULL);
@@ -312,9 +328,11 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->ResultParameterList->SetParent(NULL);
     this->ResultParameterList->Delete();
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Parameter Map
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->ParameterMapRegionButtonSet)
     {
     this->ParameterMapRegionButtonSet->SetParent(NULL);
@@ -370,6 +388,7 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->MapKMaxSpinBox->SetParent(NULL);
     this->MapKMaxSpinBox->Delete();
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   //----------------------------------------------------------------
   // Unregister Logic class
@@ -539,6 +558,7 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
 
   // -----------------------------------------
   // Model / Parameters
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu
@@ -559,17 +579,21 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->CurveFittingEndIndexSpinBox
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Curve Fitting
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->RunFittingButton)
     {
     this->RunFittingButton
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Parameter Map
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->GenerateMapButton)
     {
     this->GenerateMapButton
@@ -617,6 +641,7 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->MapKMaxSpinBox
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   //----------------------------------------------------------------
   // Remove logic observers
@@ -728,6 +753,7 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
 
   // -----------------------------------------
   // Model / Parameters
+#ifdef FourDAnalysis_USE_SCIPY
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu
@@ -748,17 +774,21 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->CurveFittingEndIndexSpinBox
       ->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Curve Fitting
+#ifdef FourDAnalysis_USE_SCIPY  
   if (this->RunFittingButton)
     {
     this->RunFittingButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Parameter Map
+#ifdef FourDAnalysis_USE_SCIPY  
   if (this->ParameterMapRegionButtonSet)
     {
     this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)
@@ -807,7 +837,7 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->MapKMaxSpinBox
       ->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
-
+#endif //FourDAnalysis_USE_SCIPY
 
   //----------------------------------------------------------------
   // Logic Observers
@@ -975,6 +1005,25 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     // TODO: If the MRML event handler works properly, The following call is not necessary.
     this->PlotManagerNode->Refresh();
     }
+  else if (this->SavePlotButton == vtkKWPushButton::SafeDownCast(caller)
+    //&& event == vtkKWLoadSaveDialog::FileNameChangedEvent)
+           && event == vtkKWPushButton::InvokedEvent)
+    {
+    vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
+    fbrowse->SetParent(this->GetApplicationGUI()->GetActiveViewerWidget());
+    fbrowse->SaveDialogOn();
+    fbrowse->Create();
+    fbrowse->SetTitle("Save Curves");
+    fbrowse->MultipleSelectionOff();
+    if (fbrowse->Invoke())
+      {
+      const char* filename = fbrowse->GetFileName();
+      SaveMarkedPlotNode(filename);
+      }
+    fbrowse->Delete();
+    }
+
+#ifdef FourDAnalysis_USE_SCIPY  
   else if (this->CurveScriptSelectButton->GetWidget()->GetLoadSaveDialog()
            == vtkKWLoadSaveDialog::SafeDownCast(caller)
            && event == vtkKWLoadSaveDialog::FileNameChangedEvent)
@@ -1095,23 +1144,6 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         plotNode->Delete();;
         }
       }
-    }
-  else if (this->SavePlotButton == vtkKWPushButton::SafeDownCast(caller)
-    //&& event == vtkKWLoadSaveDialog::FileNameChangedEvent)
-           && event == vtkKWPushButton::InvokedEvent)
-    {
-    vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
-    fbrowse->SetParent(this->GetApplicationGUI()->GetActiveViewerWidget());
-    fbrowse->SaveDialogOn();
-    fbrowse->Create();
-    fbrowse->SetTitle("Save Curves");
-    fbrowse->MultipleSelectionOff();
-    if (fbrowse->Invoke())
-      {
-      const char* filename = fbrowse->GetFileName();
-      SaveMarkedPlotNode(filename);
-      }
-    fbrowse->Delete();
     }
   else if (this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0) == vtkKWRadioButton::SafeDownCast(caller) &&
            event == vtkKWRadioButton::SelectedStateChangedEvent &&
@@ -1234,6 +1266,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         }
       }
     }
+#endif // FourDAnalysis_USE_SCIPY
 } 
 
 
@@ -1316,7 +1349,9 @@ void vtkFourDAnalysisGUI::ProcessMRMLEvents ( vtkObject *caller,
     if (this->PlotManagerNode == vtkMRMLXYPlotManagerNode::SafeDownCast(caller))
       {
       UpdatePlotList();
+#ifdef FourDAnalysis_USE_SCIPY
       UpdateFittingTargetMenu();
+#endif //FourDAnalysis_USE_SCIPY
       }
     //else if (vtkMRMLArrayPlotNode::SafeDownCast(caller))
     //  {
@@ -1353,9 +1388,11 @@ void vtkFourDAnalysisGUI::BuildGUI ( )
   BuildGUIForActiveBundleSelectorFrame();
   BuildGUIForFrameControlFrame(0);
   BuildGUIForFunctionViewer(0);
+#ifdef FourDAnalysis_USE_SCIPY  
   BuildGUIForScriptSetting(0);
   BuildGUIForCurveFitting(0);
   BuildGUIForMapGenerator(0);
+#endif // FourDAnalysis_USE_SCIPY
 
 }
 
@@ -1629,7 +1666,6 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  frame->GetWidgetName() );
   
-  //this->IntensityPlot = vtkKWPlotGraph::New();
   this->IntensityPlot = vtkSlicerXYPlotWidget::New();
   this->IntensityPlot->SetParent(frame->GetFrame());
   this->IntensityPlot->Create();
@@ -1756,6 +1792,7 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
 }
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
 {
@@ -1886,8 +1923,10 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   this->PlotSelectPopUpMenu->SetParent(this->GetApplicationGUI()->GetMainSlicerWindow());
   this->PlotSelectPopUpMenu->Create();
 }
+#endif //FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::BuildGUIForCurveFitting(int show)
 {
@@ -1971,8 +2010,9 @@ void vtkFourDAnalysisGUI::BuildGUIForCurveFitting(int show)
 
   conBrowsFrame->Delete();
 }
+#endif //FourDAnalysis_USE_SCIPY
 
-
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
 {
@@ -2230,7 +2270,7 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
   conBrowsFrame->Delete();
 
 }
-
+#endif //FourDAnalysis_USE_SCIPY
 
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdateAll()
@@ -2257,6 +2297,7 @@ void vtkFourDAnalysisGUI::SelectActive4DBundle(vtkMRMLTimeSeriesBundleNode* bund
   bundleNode->SwitchDisplayBuffer(1, volume);
   
   // plot
+#ifdef FourDAnalysis_USE_SCIPY
   this->CurveFittingStartIndexSpinBox->SetRange(0, n-1);
   this->CurveFittingEndIndexSpinBox->SetRange(0, n-1);
   this->CurveFittingStartIndexSpinBox->SetValue(0);
@@ -2286,6 +2327,7 @@ void vtkFourDAnalysisGUI::SelectActive4DBundle(vtkMRMLTimeSeriesBundleNode* bund
     this->MapKMaxSpinBox->SetValue(dimensions[2]-1);
     
     }
+#endif // FourDAnalysis_USE_SCIPY
 
   this->ForegroundVolumeSelectorScale->SetRange(0.0, (double) n-1);
   this->BackgroundVolumeSelectorScale->SetRange(0.0, (double) n-1);
@@ -2559,7 +2601,9 @@ void vtkFourDAnalysisGUI::UpdatePlotListElement(int row, int col, char * str)
         {
         const char* name = this->PlotList->GetWidget()->GetCellText(row, col);
         pnode->SetName(name);
+#ifdef FourDAnalysis_USE_SCIPY
         UpdateFittingTargetMenu();
+#endif //FourDAnalysis_USE_SCIPY
         }
       }
     }
@@ -2650,6 +2694,7 @@ void vtkFourDAnalysisGUI::DeselectAllPlots()
 }
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode)
 {
@@ -2717,8 +2762,9 @@ void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* c
     }
 
 }
+#endif //FourDAnalysis_USE_SCIPY
 
-
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode,
                                                              int start, int end)
@@ -2787,8 +2833,10 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
     }
 
 }
+#endif //FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY  
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::OnInitialParameterListSelected()
 {
@@ -2814,8 +2862,10 @@ void vtkFourDAnalysisGUI::OnInitialParameterListSelected()
       }
     }
 }
+#endif //FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY  
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::ProcPlotSelectPopUpMenu(int row, int col, const char* nodeID)
 {
@@ -2829,8 +2879,10 @@ void vtkFourDAnalysisGUI::ProcPlotSelectPopUpMenu(int row, int col, const char* 
       }
     }
 }
+#endif //FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdatePlotSelectPopUpMenu(const char* command)
 {
@@ -2882,7 +2934,10 @@ void vtkFourDAnalysisGUI::UpdatePlotSelectPopUpMenu(const char* command)
     }
   
 }
+#endif // FourDAnalysis_USE_SCIPY
 
+
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode)
 {
@@ -2909,6 +2964,7 @@ void vtkFourDAnalysisGUI::UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* cu
     }
 
 }
+#endif //FourDAnalysis_USE_SCIPY
 
 
 //----------------------------------------------------------------------------
@@ -3054,7 +3110,7 @@ void  vtkFourDAnalysisGUI::SaveMarkedPlotNode(const char* path)
 }
 
 
-
+#ifdef FourDAnalysis_USE_SCIPY
 //----------------------------------------------------------------------------
 void  vtkFourDAnalysisGUI::UpdateFittingTargetMenu()
 {
@@ -3112,4 +3168,4 @@ void  vtkFourDAnalysisGUI::UpdateFittingTargetMenu()
   //  }
 
 }
-
+#endif //FourDAnalysis_USE_SCIPY

@@ -330,6 +330,7 @@ int vtkFourDAnalysisLogic::SaveCurve(vtkDoubleArray* curve, const char* fileName
 }
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //---------------------------------------------------------------------------
 void vtkFourDAnalysisLogic::GenerateParameterMapMT(const char* scriptFile,
                                                    vtkMRMLCurveAnalysisNode* curveNode,
@@ -532,8 +533,10 @@ void vtkFourDAnalysisLogic::GenerateParameterMapMT(const char* scriptFile,
   std::cerr << "END " << std::endl;
 
 }
+#endif // FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //---------------------------------------------------------------------------
 void* vtkFourDAnalysisLogic::CurveAnalysisThread(void* ptr)
 {
@@ -623,9 +626,9 @@ void* vtkFourDAnalysisLogic::CurveAnalysisThread(void* ptr)
   std::cerr << "Thread: " << thread_id << " .... end" << std::endl;
   return (ptr );
 }
+#endif // FourDAnalysis_USE_SCIPY
 
-
-
+#ifdef FourDAnalysis_USE_SCIPY
 //---------------------------------------------------------------------------
 void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
                                                  vtkMRMLCurveAnalysisNode* curveNode,
@@ -803,8 +806,10 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
   
   std::cerr << "END " << std::endl;
 }
+#endif // FourDAnalysis_USE_SCIPY
 
 
+#ifdef FourDAnalysis_USE_SCIPY
 //---------------------------------------------------------------------------
 void vtkFourDAnalysisLogic::GenerateParameterMapInMask(vtkCurveAnalysisPythonInterface* script,
                                                        vtkMRMLCurveAnalysisNode* curveNode,
@@ -1000,3 +1005,4 @@ void vtkFourDAnalysisLogic::GenerateParameterMapInMask(vtkCurveAnalysisPythonInt
 
 }
   
+#endif FourDAnalysis_USE_SCIPY

@@ -11,8 +11,8 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkMRMLArrayPlotNode_h
-#define __vtkMRMLArrayPlotNode_h
+#ifndef __vtkMRMLOrthogonalLinePlotNode_h
+#define __vtkMRMLOrthogonalLinePlotNode_h
 
 #include <string>
 #include <vector>
@@ -21,12 +21,10 @@
 #include "vtkMRMLPlotNode.h"
 
 #include "vtkObject.h"
-#include "vtkFourDAnalysisWin32Header.h"
 
 #include "vtkDataObject.h"
-#include "vtkMRMLDoubleArrayNode.h"
 
-class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
+class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
 {
 
  public:
@@ -35,19 +33,21 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   // Constants
   //----------------------------------------------------------------
 
-  // Interpolation method
+  // Line direction
   //BTX
   enum {
-    INTERP_LINEAR = 0,
+    VERTICAL = 0,
+    HORIZONTAL
   };
   //ETX
+
 
   //----------------------------------------------------------------
   // Standard methods for MRML nodes
   //----------------------------------------------------------------
 
-  static vtkMRMLArrayPlotNode *New();
-  vtkTypeMacro(vtkMRMLArrayPlotNode,vtkMRMLPlotNode);
+  static vtkMRMLOrthogonalLinePlotNode *New();
+  vtkTypeMacro(vtkMRMLOrthogonalLinePlotNode, vtkMRMLPlotNode);
   
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -68,25 +68,31 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
-    {return "ArrayPlot";};
+    {return "OrthogonalLinePlot";};
 
   // Description:
   // Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //----------------------------------------------------------------
-  // Get and Set Methods
-  //----------------------------------------------------------------
 
-  //vtkSetObjectMacro ( Array, vtkMRMLDoubleArrayNode );
-  void SetAndObserveArray( vtkMRMLDoubleArrayNode* node );
-  vtkGetObjectMacro ( Array, vtkMRMLDoubleArrayNode );
+  //----------------------------------------------------------------
+  // Get and Set Macros
+  //----------------------------------------------------------------
+ public:
+  vtkSetVector2Macro ( Point, double );
+  vtkGetVector2Macro ( Point, double );
+
+  vtkSetMacro ( Direction, int );
+  vtkGetMacro ( Direction, int );
   
-  vtkSetMacro ( ErrorBar, int );
-  vtkGetMacro ( ErrorBar, int );
 
   //----------------------------------------------------------------
-  // Method for Plotting (called from friend classes)
+  // Access methods
+  //----------------------------------------------------------------
+ public:
+
+  //----------------------------------------------------------------
+  // Methods for plotting (called from friend classes)
   //----------------------------------------------------------------
  protected:
   // Description:
@@ -103,25 +109,15 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
   virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange);
 
-  //----------------------------------------------------------------
-  // Subroutines for drawing
-  //----------------------------------------------------------------
-  vtkDoubleArray* CreatePlotDataWithErrorBar(vtkDoubleArray* srcData, double* xrange, double* yrange);
-
- protected:
-
-  // Description:
-  // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
-  virtual vtkDataObject* GetDrawObject() {return NULL; };
 
   //----------------------------------------------------------------
   // Constructor and destroctor
   //----------------------------------------------------------------
  protected:
-  vtkMRMLArrayPlotNode();
-  ~vtkMRMLArrayPlotNode();
-  vtkMRMLArrayPlotNode(const vtkMRMLArrayPlotNode&);
-  void operator=(const vtkMRMLArrayPlotNode&);
+  vtkMRMLOrthogonalLinePlotNode();
+  ~vtkMRMLOrthogonalLinePlotNode();
+  vtkMRMLOrthogonalLinePlotNode(const vtkMRMLOrthogonalLinePlotNode&);
+  void operator=(const vtkMRMLOrthogonalLinePlotNode&);
 
 
  protected:
@@ -129,8 +125,8 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   // Data
   //----------------------------------------------------------------
   
-  vtkMRMLDoubleArrayNode* Array;
-  int ErrorBar;
+  double Point[2];   // A point on the line
+  int Direction;
 
 };
 

@@ -20,14 +20,10 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-
-
 #include "vtkObject.h"
-#include "vtkFourDAnalysisWin32Header.h"
-
 #include "vtkDoubleArray.h"
 
-class VTK_FourDAnalysis_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 {
 
  public:

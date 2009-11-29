@@ -19,7 +19,6 @@
 
 #include "vtkObject.h"
 #include "vtkCollection.h"
-#include "vtkFourDAnalysisWin32Header.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -30,7 +29,7 @@
 
 class vtkIntArray;
 
-class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
 {
 
  public:

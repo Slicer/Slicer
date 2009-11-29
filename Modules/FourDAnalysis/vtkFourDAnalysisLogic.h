@@ -91,6 +91,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   typedef std::map<std::string, vtkImageData*>            ParameterImageMapType;
   typedef std::map<std::string, vtkMRMLScalarVolumeNode*> ParameterVolumeNodeMapType;
 
+#ifdef FourDAnalysis_USE_SCIPY
   typedef struct {
     int                              id;
     vtkFourDAnalysisLogic*           ptr;
@@ -104,6 +105,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
     int rangej[2];
     int rangek[2];
   } ThreadInfo;
+#endif // FourDAnalysis_USE_SCIPY
+
   //ETX
 
  public:
@@ -138,15 +141,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   vtkSlicerApplication* GetApplication() { return this->Application; };
 
 
+#ifdef FourDAnalysis_USE_SCIPY
+  //BTX
+  // NOTE: We define the following functions inside BTX-ETX,
+  //  in order to avoid compilation error in Tcl code
+  //  when FourDAnalysis_USE_SCIPY is off.
   void GenerateParameterMapMT(const char* scriptFile,
                               vtkMRMLCurveAnalysisNode* curveNode,
                               vtkMRMLTimeSeriesBundleNode* bundleNode,
                               const char* outputNodeNamePrefix,
                               int start, int end,
                               int imin, int imax, int jmin, int jmax, int kmin, int kmax);
-  //BTX
   static void* CurveAnalysisThread(void* ptr);
-  //ETX
 
   void GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
                             vtkMRMLCurveAnalysisNode* curveNode,
@@ -161,7 +167,10 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
                                   const char* outputNodeNamePrefix,
                                   int start, int end,
                                   vtkMRMLScalarVolumeNode* mask, int label);
-  
+
+  //ETX
+#endif //FourDAnalysis_USE_SCIPY
+
  protected:
   
   vtkFourDAnalysisLogic();

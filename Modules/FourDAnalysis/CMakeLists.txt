@@ -6,6 +6,15 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # --------------------------------------------------------------------------
+# Option: use Scipy for curve fitting (SciPy must be installed)
+
+option(FourDAnalysis_USE_SCIPY "Use SciPy for curve fitting." OFF)
+
+if (FourDAnalysis_USE_SCIPY)
+  ADD_DEFINITIONS(-DFourDAnalysis_USE_SCIPY)
+endif (FourDAnalysis_USE_SCIPY)
+
+# --------------------------------------------------------------------------
 # Find Slicer3
 
 if(NOT Slicer3_SOURCE_DIR)
@@ -32,6 +41,7 @@ include_directories(
   ${PYTHON_INCLUDE_PATH}
   )
 
+
 #
 # Configure include file
 #
@@ -56,27 +66,27 @@ install(FILES
 set(FourDAnalysis_SRCS 
   vtkFourDAnalysisLogic.cxx
   vtkFourDAnalysisGUI.cxx
-  vtkKWPlotGraph.cxx
   vtkIntensityCurves.cxx
   vtkMRMLCurveAnalysisNode.cxx
-  vtkCurveAnalysisPythonInterface.cxx
-  vtkMRMLDoubleArrayNode.cxx
-  vtkMRMLXYPlotManagerNode.cxx
-  vtkMRMLPlotNode.cxx
-  vtkMRMLOrthogonalLinePlotNode.cxx
-  vtkMRMLArrayPlotNode.cxx
-  vtkSlicerXYPlotWidget.cxx
 )
+
+if (FourDAnalysis_USE_SCIPY)
+set (FourDAnalysis_SRCS
+  ${FourDAnalysis_SRCS}
+  vtkCurveAnalysisPythonInterface.cxx
+)
+endif (FourDAnalysis_USE_SCIPY)
 
 
 # --------------------------------------------------------------------------
 # Python files (must be in Python/ directory)
 
-set(FourDAnalysis_PYTHON_DIR Python)
-set(FourDAnalysis_PYTHON_FILES
-  FourDAnalysis.py
-)
-
+if (FourDAnalysis_USE_SCIPY)
+  set(FourDAnalysis_PYTHON_DIR Python)
+  set(FourDAnalysis_PYTHON_FILES
+    FourDAnalysis.py
+  )
+endif (FourDAnalysis_USE_SCIPY)
 
 
 # --------------------------------------------------------------------------
@@ -144,6 +154,7 @@ slicer3_install_modules(${lib_name})
 # --------------------------------------------------------------------------
 # Install the Python files
 
+if (FourDAnalysis_USE_SCIPY)
 foreach(file ${FourDAnalysis_PYTHON_FILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${FourDAnalysis_PYTHON_DIR}/${file}
@@ -157,5 +168,8 @@ install(
 )
 
 message("PYTHON FILES ARE INSTALLED IN : ${Slicer3_INSTALL_PLUGINS_BIN_DIR}")
+
+endif (FourDAnalysis_USE_SCIPY)
+
 
 

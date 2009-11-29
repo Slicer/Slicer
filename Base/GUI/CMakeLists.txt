@@ -159,6 +159,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerBoxRepresentation.cxx
   vtkSlicerBoxWidget2.cxx
   vtkSlicerWaitMessageWidget.cxx
+  vtkSlicerXYPlotWidget.cxx
   ${SRCS}
   )
 

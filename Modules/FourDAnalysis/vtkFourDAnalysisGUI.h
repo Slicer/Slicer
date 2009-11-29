@@ -25,11 +25,8 @@
 #include "vtkDoubleArray.h"
 
 #include "vtkFourDAnalysisLogic.h"
-//#include "vtkKWPlotGraph.h"
 #include "vtkSlicerNodeSelectorWidget.h"
-
 #include "vtkSlicerXYPlotWidget.h"
-
 
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -49,10 +46,14 @@ class vtkKWRange;
 class vtkKWEntryWithLabel;
 class vtkIntensityCurves;
 class vtkKWCheckButtonWithLabel;
-class vtkCurveAnalysisPythonInterface;
 class vtkSlicerNodeSelectorWidget;
 class vtkKWMenu;
 class vtkKWRadioButtonSetWithLabel;
+
+#ifdef FourDAnalysis_USE_SCIPY
+class vtkCurveAnalysisPythonInterface;
+#endif //FourDAnalysis_USE_SCIPY
+
 
 //class vtkFourDImageGUI;
 
@@ -129,13 +130,17 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   virtual void BuildGUI ( );
+  //BTX
   void BuildGUIForHelpFrame();
   void BuildGUIForActiveBundleSelectorFrame();
   void BuildGUIForFrameControlFrame(int show);
   void BuildGUIForFunctionViewer(int show);
+#ifdef FourDAnalysis_USE_SCIPY
   void BuildGUIForScriptSetting(int show);
   void BuildGUIForCurveFitting(int show);
   void BuildGUIForMapGenerator(int show);
+#endif //FourDAnalysis_USE_SCIPY
+  //ETX
 
   //----------------------------------------------------------------
   // Update routines
@@ -170,18 +175,24 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   // -----------------------------------------
   // Initial parameter list
+#ifdef FourDAnalysis_USE_SCIPY
+  //BTX
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
   void OnInitialParameterListSelected();
   void ProcPlotSelectPopUpMenu(int row, int col, const char* nodeID);
   void UpdatePlotSelectPopUpMenu(const char* command);
+  //ETX
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Output parameter list
+#ifdef FourDAnalysis_USE_SCIPY
+  //BTX
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
-
   void UpdateFittingTargetMenu();
-
+  //ETX
+#endif //FourDAnalysis_USE_SCIPY
 
  protected:
   
@@ -225,6 +236,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   // -----------------------------------------
   // Model / Parameters
+#ifdef FourDAnalysis_USE_SCIPY
   vtkKWMenuButton*                    FittingTargetMenu;
   vtkKWLoadSaveButtonWithLabel*       CurveScriptSelectButton;
   vtkKWEntryWithLabel*                CurveScriptMethodName;
@@ -232,14 +244,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkKWSpinBox*                       CurveFittingEndIndexSpinBox;
   vtkKWMultiColumnListWithScrollbars* InitialParameterList;
   vtkKWMenu*                          PlotSelectPopUpMenu;
+#endif //FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Curve Fitting
+#ifdef FourDAnalysis_USE_SCIPY
   vtkKWPushButton*                    RunFittingButton;
   vtkKWMultiColumnListWithScrollbars* ResultParameterList;
+#endif // FourDAnalysis_USE_SCIPY
 
   // -----------------------------------------
   // Parameter Map
+#ifdef FourDAnalysis_USE_SCIPY
   vtkKWRadioButtonSetWithLabel*       ParameterMapRegionButtonSet;
   vtkSlicerNodeSelectorWidget*        MapRegionMaskSelectorWidget;
   vtkKWEntryWithLabel*                MapRegionMaskLabelEntry;
@@ -251,6 +267,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkKWSpinBox*                       MapKMaxSpinBox;
   vtkKWPushButton*                    GenerateMapButton;
   vtkKWEntryWithLabel*                MapOutputVolumePrefixEntry;
+#endif // FourDAnalysis_USE_SCIPY
 
 
   //----------------------------------------------------------------
@@ -274,8 +291,11 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // -----------------------------------------
   // Curve / plot data
   vtkIntensityCurves*              IntensityCurves;
-  vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
   vtkMRMLXYPlotManagerNode*        PlotManagerNode;
+
+#ifdef FourDAnalysis_USE_SCIPY
+  vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
+#endif //FourDAnalysis_USE_SCIPY
 
 
   // -----------------------------------------
