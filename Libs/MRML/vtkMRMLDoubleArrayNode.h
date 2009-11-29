@@ -23,6 +23,7 @@
 #include "vtkObject.h"
 #include "vtkDoubleArray.h"
 
+
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 {
 

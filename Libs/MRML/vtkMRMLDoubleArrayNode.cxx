@@ -12,6 +12,7 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+
 #include "vtkObjectFactory.h"
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLScene.h"
@@ -41,7 +42,7 @@ vtkMRMLNode* vtkMRMLDoubleArrayNode::CreateNodeInstance()
     {
       return (vtkMRMLDoubleArrayNode*)ret;
     }
-  // If the factory was unable to create the object, then create it here.
+  // If The Factory was unable to create the object, then create it here.
   return new vtkMRMLDoubleArrayNode;
 }
 

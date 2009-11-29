@@ -66,6 +66,12 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
+#include "vtkMRMLArrayPlotNode.h"
+#include "vtkMRMLXYPlotManagerNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
+#include "vtkMRMLPlotNode.h"
+#include "vtkMRMLOrthogonalLinePlotNode.h"
+
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
@@ -329,6 +335,26 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLVolumePropertyStorageNode *vpsn = vtkMRMLVolumePropertyStorageNode::New();
   this->RegisterNodeClass( vpsn );
   vpsn->Delete();
+
+  vtkMRMLArrayPlotNode *apn = vtkMRMLArrayPlotNode::New();
+  this->RegisterNodeClass( apn );
+  apn->Delete();
+
+  vtkMRMLXYPlotManagerNode *xypmn = vtkMRMLXYPlotManagerNode::New();
+  this->RegisterNodeClass( xypmn );
+  xypmn->Delete();
+
+  vtkMRMLDoubleArrayNode *dan = vtkMRMLDoubleArrayNode::New();
+  this->RegisterNodeClass( dan );
+  dan->Delete();
+
+  vtkMRMLPlotNode *pn = vtkMRMLPlotNode::New();
+  this->RegisterNodeClass( pn );
+  pn->Delete();
+
+  vtkMRMLOrthogonalLinePlotNode *olpn = vtkMRMLOrthogonalLinePlotNode::New();
+  this->RegisterNodeClass( olpn );
+  olpn->Delete();
 
 }
 

@@ -82,7 +82,7 @@ void vtkMRMLPlotNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ssYerr;
 
   //int n = this->Array->GetNumberOfComponents();
-  double xy[3];
+  //double xy[3];
 
   //if (this->Array->GetNumberOfComponents() > 3)
   //  {
