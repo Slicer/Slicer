@@ -447,5 +447,5 @@ void vtkSlicerImageCrossHair2D::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "HashGap:                  " << this->HashGap << "\n";
   os << indent << "HashLength:               " << this->HashLength << "\n";
   os << indent << "Cursor Color:             " 
-    << this->CursorColor[0] << "," << this->CursorColor[2] << "," << this->CursorColor[3] << "\n";
+    << this->CursorColor[0] << "," << this->CursorColor[1] << "," << this->CursorColor[2] << "\n";
 }
