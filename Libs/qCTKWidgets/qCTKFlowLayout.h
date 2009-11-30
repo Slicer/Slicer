@@ -46,8 +46,9 @@
 #include <QRect>
 #include <QWidgetItem>
 #include <QStyle>
+#include "qCTKWidgetsWin32Header.h"
 
-class qCTKFlowLayout : public QLayout
+class QCTK_WIDGETS_EXPORT qCTKFlowLayout : public QLayout
 {
 public:
   qCTKFlowLayout(QWidget *parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
