@@ -180,7 +180,7 @@ void qSlicerCLIModule::setupUi()
 {
   this->Internal->setupUi(this);
 
-  this->Internal->MainCollapsibleWidget->setTitle(this->title());
+  this->Internal->MainCollapsibleWidget->setText(this->title());
 
   this->Internal->addParameterGroups();
 

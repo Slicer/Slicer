@@ -139,7 +139,7 @@ void MyTestPrivate::doQuux() {
  * This should be called from the public class's constructor,
  * before qctk_d() is used for the first time. The parameter is the name of the public class.
  */
-#define QCTK_INIT_PRIVATE(PUB) qctk_d.setPublic(this);
+#define QCTK_INIT_PRIVATE(PUB) qctk_d.setPublic(this)
 /*! \relates qCTKPimpl
  * Returns a reference in the current scope named "d" to the private class.
  *

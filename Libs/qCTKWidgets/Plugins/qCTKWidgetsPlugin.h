@@ -2,9 +2,10 @@
 #define __qCTKWidgetsPlugin_h
 
 #include "qCTKWidgetsPluginWin32Header.h"
+#include "qCTKCollapsibleButtonPlugin.h"
 #include "qCTKCollapsibleGroupBoxPlugin.h"
-#include "qCTKCollapsibleWidgetPlugin.h"
-#include "qCTKCollapsibleWidget2Plugin.h"
+//#include "qCTKCollapsibleWidgetPlugin.h"
+//#include "qCTKCollapsibleWidget2Plugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
 #include "qCTKFittedTextBrowserPlugin.h"
@@ -25,9 +26,10 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qCTKCollapsibleGroupBoxPlugin
-            << new qCTKCollapsibleWidgetPlugin
-            << new qCTKCollapsibleWidget2Plugin
+    plugins << new qCTKCollapsibleButtonPlugin
+            << new qCTKCollapsibleGroupBoxPlugin
+//            << new qCTKCollapsibleWidgetPlugin
+//            << new qCTKCollapsibleWidget2Plugin
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin
             << new qCTKFittedTextBrowserPlugin

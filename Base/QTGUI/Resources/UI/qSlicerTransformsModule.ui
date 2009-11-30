@@ -18,8 +18,8 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qCTKCollapsibleWidget2" name="LoadCollapsibleWidget">
-     <property name="title">
+    <widget class="qCTKCollapsibleButton" name="LoadCollapsibleWidget">
+     <property name="text">
       <string>Load</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -47,14 +47,14 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleWidget2" name="DisplayEditCollapsibleWidget">
+    <widget class="qCTKCollapsibleButton" name="DisplayEditCollapsibleWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title">
+     <property name="text">
       <string>Display &amp;&amp; Edit</string>
      </property>
      <property name="contentsLineWidth">
@@ -318,9 +318,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleWidget2</class>
+   <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget2.h</header>
+   <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -21,8 +21,8 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="qCTKCollapsibleWidget2" name="CameraCollapsibleWidget">
-     <property name="title">
+    <widget class="qCTKCollapsibleButton" name="CameraCollapsibleWidget">
+     <property name="text">
       <string>Camera</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -74,9 +74,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleWidget2</class>
+   <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget2.h</header>
+   <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

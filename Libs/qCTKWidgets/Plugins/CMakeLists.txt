@@ -12,6 +12,8 @@ SET(qCTKWidgetsPlugin_SRCS
   qCTKWidgetsPlugin.cxx  
   qCTKWidgetsAbstractPlugin.cxx
 
+  qCTKCollapsibleButtonPlugin.cxx
+  qCTKCollapsibleButtonPlugin.h
   qCTKCollapsibleGroupBoxPlugin.cxx
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKCollapsibleWidget2Plugin.cxx
@@ -41,6 +43,7 @@ SET(qCTKWidgetsPlugin_SRCS
 SET(qCTKWidgetsPlugin_MOC_SRCS
   qCTKWidgetsPlugin.h
 
+  qCTKCollapsibleButtonPlugin.h 
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKCollapsibleWidgetPlugin.h 
   qCTKCollapsibleWidget2Plugin.h

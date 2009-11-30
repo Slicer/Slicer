@@ -15,8 +15,8 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qCTKCollapsibleWidget2" name="MainCollapsibleWidget">
-     <property name="title">
+    <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget">
+     <property name="text">
       <string>Module Title</string>
      </property>
      <layout class="QVBoxLayout" name="VerticalLayout">
@@ -133,9 +133,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleWidget2</class>
+   <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget2.h</header>
+   <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
