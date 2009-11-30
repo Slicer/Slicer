@@ -64,7 +64,7 @@
 #include "vtkKWPopupFrame.h"
 #include "vtkKWRadioButtonSetWithLabel.h"
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef FourDAnalysis_USE_SCIPY
 #include <Python.h>
 #endif
 

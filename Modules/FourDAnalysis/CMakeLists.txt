@@ -50,9 +50,24 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/vtkFourDAnalysisConfigure.h
   )
 
-file(GLOB headers 
-  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+#file(GLOB headers 
+#  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+#  )
+
+set(headers
+  vtkFourDAnalysisGUI.h
+  vtkFourDAnalysisLogic.h
+  vtkFourDAnalysisWin32Header.h
+  vtkIntensityCurves.h
+  vtkMRMLCurveAnalysisNode.h
   )
+
+if (FourDAnalysis_USE_SCIPY)
+   set(headers
+     ${headers}
+     vtkCurveAnalysisPythonInterface.h
+     )
+endif (FourDAnalysis_USE_SCIPY)
 
 install(FILES 
   ${headers} 

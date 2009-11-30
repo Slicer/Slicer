@@ -40,7 +40,9 @@
 #include "itkImageSeriesReader.h"
 
 #include "vtkIntensityCurves.h"
+#ifdef FourDAnalysis_USE_SCIPY
 #include "vtkCurveAnalysisPythonInterface.h"
+#endif //FourDAnalysis_USE_SCIPY
 
 #include <string>
 #include <map>

@@ -294,7 +294,9 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkMRMLXYPlotManagerNode*        PlotManagerNode;
 
 #ifdef FourDAnalysis_USE_SCIPY
+  //BTX
   vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
+  //ETX
 #endif //FourDAnalysis_USE_SCIPY
 
 

@@ -22,7 +22,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef FourDAnalysis_USE_SCIPY
 #include <Python.h>
 #endif
 

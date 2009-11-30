@@ -24,9 +24,9 @@
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef FourDAnalysis_USE_SCIPY
 #include <Python.h>
-#endif
+#endif //FourDAnalysis_USE_SCIPY
 
 class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObject
 {
@@ -67,7 +67,7 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
   std::vector<vtkMRMLCurveAnalysisNode*> CurveAnalysisNodeVector;
   //ETX
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef FourDAnalysis_USE_SCIPY
   PyObject *CompiledObject;
 #endif // Slicer3_USE_PYTHON
 
