@@ -54,6 +54,9 @@ void qCTKCollapsibleButtonPrivate::init()
 
   QObject::connect(&p, SIGNAL(clicked(bool)),
                    &p, SLOT(onClicked(bool)));
+                   
+  QObject::connect(&p, SIGNAL(toggled(bool)),
+                   &p, SLOT(onClicked(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -143,7 +146,7 @@ void qCTKCollapsibleButton::onClicked(bool checked)
 {
   if (this->isCheckable())
     {
-    this->collapse(checked);
+    this->collapse(!checked);
     }
   else
     {
