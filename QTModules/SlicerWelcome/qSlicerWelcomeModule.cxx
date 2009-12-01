@@ -1,7 +1,12 @@
 #include "qSlicerWelcomeModule.h"
 #include "ui_qSlicerWelcomeModule.h"
 
+// CTK includes
+#include "qCTKCollapsibleButton.h"
+
 // QT includes
+#include <QButtonGroup>
+#include <QList>
 #include <QtPlugin>
 #include <QFontMetrics>
 #include <QDebug>
@@ -13,7 +18,7 @@ Q_EXPORT_PLUGIN2(qSlicerWelcomeModule, qSlicerWelcomeModule);
 class qSlicerWelcomeModule::qInternal: public Ui::qSlicerWelcomeModule
 {
 public:
-//   void setupUi(qSlicerWidget* widget);
+  void setupUi(qSlicerWidget* widget);
 };
 
 //-----------------------------------------------------------------------------
@@ -35,23 +40,22 @@ void qSlicerWelcomeModule::printAdditionalInfo()
   this->Superclass::printAdditionalInfo();
 }
 
-// //-----------------------------------------------------------------------------
-// // Internal methods
-//
-// //-----------------------------------------------------------------------------
-// void qSlicerWelcomeModule::qInternal::setupUi(qSlicerWidget* widget)
-// {
-//   this->Ui::qSlicerWelcomeModule::setupUi(widget);
-//
-//
-//   // Update veritcal size policy and minimum height of all text browsers
-// //   QList<QTextBrowser*> textBrowsers = widget->findChild<QTextBrowser*>();
-// //   foreach(QTextBrowser* textBrowser, textBrowsers)
-// //     {
-// //     // Overwrite vertical size policy
-// //     textBrowser->setSizePolicy(textBrowser->sizePolicy().horizontalPolicy(), QSizePolicy::Ignored);
-// //
-// //     textBrowser->setMinimumHeight(QFontMetrics fm(font).xHeight() * 28);
-// //     }
-//
-// }
+//-----------------------------------------------------------------------------
+// Internal methods
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModule::qInternal::setupUi(qSlicerWidget* widget)
+{
+  this->Ui::qSlicerWelcomeModule::setupUi(widget);
+
+  // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
+  QButtonGroup * group = new QButtonGroup(widget);
+  
+  // Add all collabsibleWidgetButton to a button group
+  QList<qCTKCollapsibleButton*> collapsibles = widget->findChildren<qCTKCollapsibleButton*>();
+  foreach(qCTKCollapsibleButton* collapsible, collapsibles)
+    {
+    collapsible->setCheckable(true);
+    group->addButton(collapsible);
+    }
+}
