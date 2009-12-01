@@ -24,10 +24,6 @@ SET(qCTKWidgets_SRCS
   qCTKCollapsibleButton.cxx
   qCTKCollapsibleGroupBox.h
   qCTKCollapsibleGroupBox.cxx
-  qCTKCollapsibleWidget.h
-  qCTKCollapsibleWidget.cxx
-  qCTKCollapsibleWidget2.h
-  qCTKCollapsibleWidget2.cxx
   qCTKColorPickerButton.h
   qCTKColorPickerButton.cxx
   qCTKCoordinatesWidget.h
@@ -55,8 +51,6 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKAddRemoveComboBox.h
   qCTKCollapsibleButton.h
   qCTKCollapsibleGroupBox.h
-  qCTKCollapsibleWidget.h
-  qCTKCollapsibleWidget2.h
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
   qCTKFittedTextBrowser.h
