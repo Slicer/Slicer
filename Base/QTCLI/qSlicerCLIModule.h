@@ -3,8 +3,10 @@
 
 #include "qSlicerAbstractModule.h"
 
+#include "qCTKPimpl.h"
 #include "qSlicerBaseQTCLIWin32Header.h"
 
+class qSlicerCLIModulePrivate;
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
   Q_OBJECT
@@ -47,8 +49,7 @@ protected slots:
   void onDefaultButtonPressed();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerCLIModule);
 };
 
 #endif

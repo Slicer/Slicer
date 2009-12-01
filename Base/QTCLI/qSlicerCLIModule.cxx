@@ -32,14 +32,15 @@
 #include "itkNumericTraits.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
+class qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
 {
-  typedef qInternal Self; 
-  qInternal(qSlicerAbstractModule * backPointer)
+public:
+  QCTK_DECLARE_PUBLIC(qSlicerCLIModule);
+  typedef qSlicerCLIModulePrivate Self;
+  qSlicerCLIModulePrivate()
     {
     this->Logic = 0;
     this->ProcessInformation = 0;
-    this->BackPointer = backPointer; 
     }
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
@@ -112,15 +113,22 @@ struct qSlicerCLIModule::qInternal: public Ui::qSlicerCLIModule
 };
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLIModule::qInternal::MapInitialized = false; 
-QHash<QString, QString> qSlicerCLIModule::qInternal::ImageTypeAttributeToNodeType;
-QHash<QString, QString> qSlicerCLIModule::qInternal::GeometryTypeAttributeToNodeType;
-QHash<QString, QString> qSlicerCLIModule::qInternal::TableTypeAttributeToNodeType;
-QHash<QString, QString> qSlicerCLIModule::qInternal::TransformTypeAttributeToNodeType;
+bool qSlicerCLIModulePrivate::MapInitialized = false;
+QHash<QString, QString> qSlicerCLIModulePrivate::ImageTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModulePrivate::GeometryTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModulePrivate::TableTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModulePrivate::TransformTypeAttributeToNodeType;
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalBckPtrConstructor1Macro(qSlicerCLIModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerCLIModule);
+//qSlicerCxxInternalBckPtrConstructor1Macro(qSlicerCLIModule, QWidget*);
+//qSlicerCxxDestructorMacro(qSlicerCLIModule);
+qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
+{
+  QCTK_INIT_PRIVATE(qSlicerCLIModule);
+}
+qSlicerCLIModule::~qSlicerCLIModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::printAdditionalInfo()
@@ -131,20 +139,22 @@ void qSlicerCLIModule::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
-  this->Internal->Logic = new qSlicerCLIModuleLogic(this);
-  this->Internal->Logic->initialize(this->appLogic());
+  QCTK_D(qSlicerCLIModule);
+  d->Logic = new qSlicerCLIModuleLogic(this);
+  d->Logic->initialize(this->appLogic());
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, title, Title);
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, category, Category);
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, contributor, Contributor);
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
-qSlicerGetInternalCxxMacro(qSlicerCLIModule, QString, helpText, Help);
+QCTK_GET_CXX(qSlicerCLIModule, QString, title, Title);
+QCTK_GET_CXX(qSlicerCLIModule, QString, category, Category);
+QCTK_GET_CXX(qSlicerCLIModule, QString, contributor, Contributor);
+QCTK_GET_CXX(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
+QCTK_GET_CXX(qSlicerCLIModule, QString, helpText, Help);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 {
+  QCTK_D(qSlicerCLIModule);
   //qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
 
   // Parse module description
@@ -157,20 +167,20 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
     }
 
   // Set properties
-  this->Internal->Title = QString::fromStdString(desc.GetTitle());
-  this->Internal->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
-  this->Internal->Contributor = QString::fromStdString(desc.GetContributor());
-  this->Internal->Category = QString::fromStdString(desc.GetCategory());
+  d->Title = QString::fromStdString(desc.GetTitle());
+  d->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
+  d->Contributor = QString::fromStdString(desc.GetContributor());
+  d->Category = QString::fromStdString(desc.GetCategory());
 
-  this->Internal->ProcessInformation = desc.GetProcessInformation();
-  this->Internal->ParameterGroups = desc.GetParameterGroups();
+  d->ProcessInformation = desc.GetProcessInformation();
+  d->ParameterGroups = desc.GetParameterGroups();
 
   QString help =
     "%1<br>"
     "For more detailed documentation see:<br>"
     "%2";
 
-  this->Internal->Help = help.arg(
+  d->Help = help.arg(
     QString::fromStdString(desc.GetDescription())).arg(
     QString::fromStdString(desc.GetDocumentationURL()));
 }
@@ -178,22 +188,23 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setupUi()
 {
-  this->Internal->setupUi(this);
+  QCTK_D(qSlicerCLIModule);
+  d->setupUi(this);
 
-  this->Internal->MainCollapsibleWidget->setText(this->title());
+  d->MainCollapsibleWidget->setText(this->title());
 
-  this->Internal->addParameterGroups();
+  d->addParameterGroups();
 
   // Connect buttons
-  this->connect(this->Internal->ApplyPushButton,
+  this->connect(d->ApplyPushButton,
                 SIGNAL(pressed()),
                 SLOT(onApplyButtonPressed()));
                 
-  this->connect(this->Internal->CancelPushButton,
+  this->connect(d->CancelPushButton,
                 SIGNAL(pressed()),
                 SLOT(onCancelButtonPressed()));
                 
-  this->connect(this->Internal->DefaultPushButton,
+  this->connect(d->DefaultPushButton,
                 SIGNAL(pressed()),
                 SLOT(onDefaultButtonPressed()));
 }
@@ -234,7 +245,7 @@ void qSlicerCLIModule::onDefaultButtonPressed()
 // Internal methods
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameterGroups()
+void qSlicerCLIModulePrivate::addParameterGroups()
 {
   // iterate over each parameter group
   for (ParameterGroupConstIterator pgIt = this->ParameterGroups.begin();
@@ -245,7 +256,7 @@ void qSlicerCLIModule::qInternal::addParameterGroups()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameterGroup(QBoxLayout* layout,
+void qSlicerCLIModulePrivate::addParameterGroup(QBoxLayout* layout,
                                                      const ModuleParameterGroup& parameterGroup)
 {
   Q_ASSERT(layout);
@@ -265,7 +276,7 @@ void qSlicerCLIModule::qInternal::addParameterGroup(QBoxLayout* layout,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameters(QFormLayout* layout,
+void qSlicerCLIModulePrivate::addParameters(QFormLayout* layout,
                                                 const ModuleParameterGroup& parameterGroup)
 {
   Q_ASSERT(layout);
@@ -280,7 +291,7 @@ void qSlicerCLIModule::qInternal::addParameters(QFormLayout* layout,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::addParameter(QFormLayout* layout,
+void qSlicerCLIModulePrivate::addParameter(QFormLayout* layout,
                                                const ModuleParameter& moduleParameter)
 {
   Q_ASSERT(layout);
@@ -383,7 +394,7 @@ void qSlicerCLIModule::qInternal::addParameter(QFormLayout* layout,
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createIntegerTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createIntegerTagWidget(const ModuleParameter& moduleParameter)
 {
   int value = QString::fromStdString(moduleParameter.GetDefault()).toInt();
   int step = 1; 
@@ -422,7 +433,7 @@ QWidget* qSlicerCLIModule::qInternal::createIntegerTagWidget(const ModuleParamet
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createBooleanTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createBooleanTagWidget(const ModuleParameter& moduleParameter)
 {
   QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
   QCheckBox * widget = new QCheckBox;
@@ -431,7 +442,7 @@ QWidget* qSlicerCLIModule::qInternal::createBooleanTagWidget(const ModuleParamet
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createFloatTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createFloatTagWidget(const ModuleParameter& moduleParameter)
 {
   float value = QString::fromStdString(moduleParameter.GetDefault()).toFloat();
   float step = 0.1;
@@ -461,7 +472,7 @@ QWidget* qSlicerCLIModule::qInternal::createFloatTagWidget(const ModuleParameter
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createDoubleTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createDoubleTagWidget(const ModuleParameter& moduleParameter)
 {
   double value = QString::fromStdString(moduleParameter.GetDefault()).toDouble();
   double step = 0.1;
@@ -491,7 +502,7 @@ QWidget* qSlicerCLIModule::qInternal::createDoubleTagWidget(const ModuleParamete
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createStringTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createStringTagWidget(const ModuleParameter& moduleParameter)
 {
   QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
   QLineEdit * widget = new QLineEdit;
@@ -500,7 +511,7 @@ QWidget* qSlicerCLIModule::qInternal::createStringTagWidget(const ModuleParamete
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createPointTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createPointTagWidget(const ModuleParameter& moduleParameter)
 {
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType("vtkMRMLFiducialListNode");
@@ -508,30 +519,33 @@ QWidget* qSlicerCLIModule::qInternal::createPointTagWidget(const ModuleParameter
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
   //TODO - tparameter->SetNewNodeName((title+" output").c_str());
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  QCTK_P(qSlicerCLIModule);
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                  widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createRegionTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createRegionTagWidget(const ModuleParameter& moduleParameter)
 {
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType("vtkMRMLROIListNode");
   //TODO - title + " RegionList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  QCTK_P(qSlicerCLIModule);
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createImageTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
   QString nodeType = Self::nodeTypeFromMap("vtkMRMLScalarVolumeNode",
@@ -565,11 +579,12 @@ QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter
     
   // TODO - tparameter->SetNoneEnabled(noneEnabled);
   // TODO - title + " Volume"
-  
+
+  QCTK_P(qSlicerCLIModule);
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Specify factory attributes
@@ -577,12 +592,12 @@ QWidget* qSlicerCLIModule::qInternal::createImageTagWidget(const ModuleParameter
     {
     widget->factory()->addAttribute("LabelMap","1");
     }
-  
+
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createGeometryTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createGeometryTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
   QString nodeType = Self::nodeTypeFromMap("vtkMRMLModelNode",
@@ -607,18 +622,19 @@ QWidget* qSlicerCLIModule::qInternal::createGeometryTagWidget(const ModuleParame
   // TODO - title + " Model"
   // TODO - SetNoneEnabled(noneEnabled)
   
+  QCTK_P(qSlicerCLIModule);
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setShowHidden(showHidden);
   widget->setNodeType(nodeType);
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createTableTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createTableTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
   QString nodeType = Self::nodeTypeFromMap("", Self::TableTypeAttributeToNodeType, type);
@@ -637,18 +653,19 @@ QWidget* qSlicerCLIModule::qInternal::createTableTagWidget(const ModuleParameter
     
   // TODO - title + " Table"
   // TODO - SetNoneEnabled(1)
-  
+
+  QCTK_P(qSlicerCLIModule);
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
                    
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createTransformTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createTransformTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
   QString nodeType = Self::nodeTypeFromMap("vtkMRMLTransformNode",
@@ -664,31 +681,32 @@ QWidget* qSlicerCLIModule::qInternal::createTransformTagWidget(const ModuleParam
   // TODO - title + " Transform"
   // TODO - SetNoneEnabled(noneEnabled);
 
+  QCTK_P(qSlicerCLIModule);
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
-  widget->setMRMLScene(this->BackPointer->mrmlScene());
-  QObject::connect(this->BackPointer, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  widget->setMRMLScene(p->mrmlScene());
+  QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
                    
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createDirectoryTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createDirectoryTagWidget(const ModuleParameter& moduleParameter)
 {
   QPushButton* widget = new QPushButton("Select directory ...");
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createFileTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createFileTagWidget(const ModuleParameter& moduleParameter)
 {
   QPushButton* widget = new QPushButton("Select file ...");
   return widget;
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerCLIModule::qInternal::createEnumerationTagWidget(const ModuleParameter& moduleParameter)
+QWidget* qSlicerCLIModulePrivate::createEnumerationTagWidget(const ModuleParameter& moduleParameter)
 {
   QString defaultValue = QString::fromStdString(moduleParameter.GetDefault());
   
@@ -711,7 +729,7 @@ QWidget* qSlicerCLIModule::qInternal::createEnumerationTagWidget(const ModulePar
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::qInternal::initializeMaps()
+void qSlicerCLIModulePrivate::initializeMaps()
 {
   if (Self::MapInitialized)
     {
@@ -741,7 +759,7 @@ void qSlicerCLIModule::qInternal::initializeMaps()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::qInternal::nodeTypeFromMap(const QString& defaultValue,
+QString qSlicerCLIModulePrivate::nodeTypeFromMap(const QString& defaultValue,
   const QHash<QString, QString>& map, const QString& attribute)
 {
   QHash<QString, QString>::const_iterator i = map.constFind(attribute);
