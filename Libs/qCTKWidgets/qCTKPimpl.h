@@ -122,6 +122,32 @@ void MyTestPrivate::doQuux() {
 #define __qCTKPimpl_h
 
 /*! \relates qCTKPimpl
+ * Define the setter in the public class.
+ *
+ * This should be put in the .cxx file of the public class. The parameter are
+ * the name of the public class (PUB), the type of the argument to return (_TYPE),
+ * the name of the getter(_NAME) and the name of the variable in the Private class(_VARNAME).
+ */
+#define QCTK_SET_CXX(PUB, _TYPE, _NAME, _VARNAME)   \
+  void PUB::_NAME(_TYPE var)                        \
+  {                                                 \
+    qctk_d.ref()._VARNAME =  var;                   \
+  }
+
+/*! \relates qCTKPimpl
+ * Define the setter in the public class.
+ *
+ * This should be put in the .cxx file of the public class. The parameter are
+ * the name of the public class (PUB), the type of the argument to return (_TYPE),
+ * the name of the setter(_NAME) and the name of the variable in the Private class(_VARNAME).
+ */
+#define QCTK_GET_CXX(PUB, _TYPE, _NAME, _VARNAME)  \
+  _TYPE PUB::_NAME()const                          \
+  {                                                \
+    return qctk_d.ref()._VARNAME;                  \
+  }
+
+/*! \relates qCTKPimpl
  * Declares that a public class has a related private class.
  *
  * This should be put in the private section of the public class. The parameter is the name of the public class.
@@ -145,13 +171,15 @@ void MyTestPrivate::doQuux() {
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
-#define QCTK_D(PUB) PUB##Private& d = qctk_d()
+#define QCTK_D(PUB) PUB##Private* d = qctk_d()
+#define QCTK_D_REF(PUB) PUB##Private& d = qctk_d.ref()
 /*! \relates qCTKPimpl
  * Creates a reference in the current scope named "q" to the public class.
  *
  * This macro only works in a class using \a QCTK_DECLARE_PUBLIC.
  */
-#define QCTK_P(PUB) PUB& p = qctk_p()
+#define QCTK_P(PUB) PUB* p = qctk_p()
+#define QCTK_P_REF(PUB) PUB& p = qctk_p_ref()
 
 #ifdef QCTK_DOXYGEN_RUN
 /*! \relates qCTKPimpl
@@ -159,7 +187,8 @@ void MyTestPrivate::doQuux() {
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
-qCTKPrivate<PUB>& qctk_d();
+qCTKPrivate<PUB>* qctk_d();
+//qCTKPrivate<PUB>& qctk_d::ref();
 
 /*! \relates qCTKPimpl
  * Returns a const reference to the private class.
@@ -167,14 +196,16 @@ qCTKPrivate<PUB>& qctk_d();
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  * This overload will be automatically used in const functions.
  */
-const qCTKPrivate<PUB>& qctk_d();
+const qCTKPrivate<PUB>* qctk_d();
+//const qCTKPrivate<PUB>& qctk_d::ref();
 
 /*! \relates qCTKPimpl
  * Returns a reference to the public class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
  */
-PUB& qctk_p();
+PUB& qctk_p_ref();
+PUB* qctk_p();
 
 /*! \relates qCTKPimpl
  * Returns a const reference to the public class.
@@ -182,7 +213,8 @@ PUB& qctk_p();
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
  * This overload will be automatically used in const functions.
  */
-const PUB& qctk_p();
+const PUB& qctk_p_ref();
+const PUB* qctk_p();
 #endif
 
 #ifndef QCTK_DOXYGEN_RUN
@@ -198,13 +230,22 @@ public:
     }
 
 protected:
-    inline PUB& qctk_p()
+    inline PUB& qctk_p_ref()
     {
         return *qctk_p_ptr;
     }
-    inline const PUB& qctk_p() const
+    inline const PUB& qctk_p_ref() const
     {
         return *qctk_p_ptr;
+    }
+
+    inline PUB* qctk_p()
+    {
+        return qctk_p_ptr;
+    }
+    inline const PUB* qctk_p() const
+    {
+        return qctk_p_ptr;
     }
 
 private:
@@ -229,13 +270,21 @@ public:
     {
         pvt->QCTK_setPublic(pub);
     }
-    inline PVT& operator()()
+    inline PVT& ref()
     {
         return *static_cast<PVT*>(pvt);
     }
-    inline const PVT& operator()() const
+    inline const PVT& ref() const
     {
         return *static_cast<PVT*>(pvt);
+    }
+    inline PVT* operator()()
+    {
+        return static_cast<PVT*>(pvt);
+    }
+    inline const PVT* operator()() const
+    {
+        return static_cast<PVT*>(pvt);
     }
 private:
     qCTKPrivate<PUB>* pvt;
