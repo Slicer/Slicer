@@ -48,6 +48,11 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   vtkSetVector3Macro(PointColour, double);
 
   // Description:
+  // get/set the second point representation colour 
+  vtkGetVector3Macro(Point2Colour, double);
+  vtkSetVector3Macro(Point2Colour, double);
+  
+  // Description:
   // get/set the line representation colour
   vtkGetVector3Macro(LineColour, double);
   vtkSetVector3Macro(LineColour, double);
@@ -115,6 +120,7 @@ protected:
   // Description:
   // colours of the actors representing the end points and the line and the text
   double PointColour[3];
+  double Point2Colour[3];
   double LineColour[3];
   double DistanceAnnotationTextColour[3];
 

@@ -65,9 +65,9 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
   this->SetDistanceAnnotationScale(10.0, 10.0, 10.0);
   this->DistanceAnnotationVisibilityOn();
 
-  // the end points of the line are blue, they're cloned so can't have a
-  // different colour for each end
+  // the end points of the line are blue and red
   this->SetPointColour(0.0, 0.0, 1.0);
+  this->SetPoint2Colour(1.0, 0.0, 0.0);
   // line colour
   this->SetLineColour(1.0, 1.0, 1.0);
 
@@ -121,6 +121,7 @@ void vtkMRMLMeasurementsRulerNode::WriteXML(ostream& of, int nIndent)
   of << indent << " distanceAnnotationVisibility=\"" << (this->DistanceAnnotationVisibility  ? "true" : "false") << "\"";
 
   of << indent << " pointColour=\"" << this->PointColour[0] << " " << this->PointColour[1] << " " << this->PointColour[2] << "\"";
+  of << indent << " point2Colour=\"" << this->Point2Colour[0] << " " << this->Point2Colour[1] << " " << this->Point2Colour[2] << "\"";
   of << indent << " lineColour=\"" << this->LineColour[0] << " " << this->LineColour[1] << " " << this->LineColour[2] << "\"";
   of << indent << " textColour=\"" << this->DistanceAnnotationTextColour[0] << " " << this->DistanceAnnotationTextColour[1] << " " << this->DistanceAnnotationTextColour[2] << "\"";
 
@@ -207,6 +208,17 @@ void vtkMRMLMeasurementsRulerNode::ReadXMLAttributes(const char** atts)
         this->PointColour[i] = val;
         }
       }
+    else if (!strcmp(attName, "point2Colour"))
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      for(int i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->Point2Colour[i] = val;
+        }
+      }
     else if (!strcmp(attName, "lineColour"))
       {
       std::stringstream ss;
@@ -265,6 +277,7 @@ void vtkMRMLMeasurementsRulerNode::Copy(vtkMRMLNode *anode)
   this->SetDistanceAnnotationVisibility(node->GetDistanceAnnotationVisibility());
 
   this->SetPointColour(node->GetPointColour());
+  this->SetPoint2Colour(node->GetPoint2Colour());
   this->SetLineColour(node->GetLineColour());
   this->SetDistanceAnnotationTextColour(node->GetDistanceAnnotationTextColour());
 
@@ -307,6 +320,7 @@ void vtkMRMLMeasurementsRulerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Distance Annotation Visibility: " << this->DistanceAnnotationVisibility << "\n";
 
   os << indent << "Point Colour: " << this->PointColour[0] << " " << this->PointColour[1] << " " << this->PointColour[2] << "\n";
+  os << indent << "Point 2 Colour: " << this->Point2Colour[0] << " " << this->Point2Colour[1] << " " << this->Point2Colour[2] << "\n";
   os << indent << "Line Colour: " << this->LineColour[0] << " " << this->LineColour[1] << " " << this->LineColour[2] << "\n";
   os << indent << "Text Colour: " << this->DistanceAnnotationTextColour[0] << " " << this->DistanceAnnotationTextColour[1] << " " << this->DistanceAnnotationTextColour[2] << "\n";
 
