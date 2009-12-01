@@ -107,8 +107,6 @@ protected:
 
 private:
   QCTK_DECLARE_PRIVATE(qCTKCollapsibleButton);
-  //struct qInternal;
-  //qInternal* Internal;
 };
 
 #endif
