@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>174</height>
+    <width>403</width>
+    <height>159</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget">
      <property name="text">
@@ -23,20 +23,30 @@
       <property name="spacing">
        <number>0</number>
       </property>
-      <property name="leftMargin">
+      <property name="margin">
        <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Parameter set</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -51,16 +61,55 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="qMRMLNodeSelector" name="MRMLNodeSelector">
+          <property name="NodeType">
+           <string>vtkMRMLCommandLineModuleNode</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Parameter set</string>
+           <string>Status:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="qMRMLNodeSelector" name="MRMLNodeSelector">
-          <property name="NodeType">
-           <string>vtkMRMLCommandLineModuleNode</string>
+         <widget class="QLabel" name="StatusLabel">
+          <property name="text">
+           <string>Idle</string>
           </property>
          </widget>
         </item>
@@ -83,7 +132,10 @@
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="HorizontalLayout">
+    <layout class="QHBoxLayout" name="ButtonLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QPushButton" name="DefaultPushButton">
        <property name="toolTip">
