@@ -46,7 +46,8 @@ int main(int argc, char* argv[])
   qSlicerModuleManager::instance()->setModulePanelVisible(true);
 
   QStringList modules;
-  modules << "Volumes" << "Measurements" << "Cameras" << "Add Images";
+  modules << "Volumes" << "Measurements" << "Cameras"
+          << "Add Images" << "SlicerWelcome";
 
   foreach(const QString& module, modules)
     {
