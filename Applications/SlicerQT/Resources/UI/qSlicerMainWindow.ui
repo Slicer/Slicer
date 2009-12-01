@@ -123,15 +123,15 @@
       <widget class="QWidget" name="ModuleWidgetContainer" native="true"/>
      </item>
      <item>
-      <widget class="qCTKCollapsibleWidget2" name="SliceControlsCollapsibleWidget">
-       <property name="title">
+      <widget class="qCTKCollapsibleButton" name="SliceControlsCollapsibleWidget">
+       <property name="text">
         <string>Manipulate Slice Views</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="qCTKCollapsibleWidget2" name="View3DControlsCollapsibleWidget">
-       <property name="title">
+      <widget class="qCTKCollapsibleButton" name="View3DControlsCollapsibleWidget">
+       <property name="text">
         <string>Manipulate 3D View</string>
        </property>
       </widget>
@@ -369,9 +369,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleWidget2</class>
+   <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleWidget2.h</header>
+   <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
