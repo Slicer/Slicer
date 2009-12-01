@@ -412,6 +412,7 @@ QWidget* qSlicerCLIModule::qInternal::createIntegerTagWidget(const ModuleParamet
     if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
     
     QSlider * slider = new QSlider;
+    slider->setOrientation(Qt::Horizontal);
     slider->setTickInterval(step);
     slider->setRange(min, max);
     slider->setValue(value);
