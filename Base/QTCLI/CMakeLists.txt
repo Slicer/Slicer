@@ -20,14 +20,6 @@ SET(slicer_qtbase_SRCS
   qSlicerCLIModule.cxx
   qSlicerCLIModuleLogic.h
   qSlicerCLIModuleLogic.cxx
-  #ui_qSlicerCLIModule.h
-  #ui_qSlicerCLIModule.cxx
-  #qSlicerCLIModuleUILoader.h
-  #qSlicerCLIModuleUILoader.cxx
-  #qSlicerExecutableCLIModuleLogic.h
-  #qSlicerExecutableCLIModuleLogic.cxx
-  #qSlicerPythonCLIModuleLogic.h
-  #qSlicerPythonCLIModuleLogic.cxx
   vtkMRMLCommandLineModuleNode.h
   vtkMRMLCommandLineModuleNode.cxx
   )
