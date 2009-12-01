@@ -4,7 +4,7 @@
 #include "qSlicerAbstractModule.h"
 
 // CTK includes
-#include "qCTKCollapsibleWidget2.h"
+#include "qCTKCollapsibleButton.h"
 #include "qCTKFittedTextBrowser.h"
 
 // QT includes
@@ -26,7 +26,7 @@ struct qSlicerModulePanel::qInternal
   //QWebView*              HelpLabel;
   QBoxLayout*            Layout;
   QScrollArea*           ScrollArea;
-  qCTKCollapsibleWidget2* HelpCollabsibleWidget;
+  qCTKCollapsibleButton* HelpCollapsibleButton;
 };
 
 //---------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
   module->setSizePolicy(QSizePolicy::Ignored, module->sizePolicy().verticalPolicy());
   module->setVisible(true);
 
-  this->Internal->HelpCollabsibleWidget->setVisible(!module->helpText().isEmpty());
+  this->Internal->HelpCollapsibleButton->setVisible(!module->helpText().isEmpty());
   this->Internal->HelpLabel->setHtml(module->helpText());
   //this->Internal->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
 
@@ -144,9 +144,9 @@ void qSlicerModulePanel::removeAllModule()
 void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
 {
   QWidget* panel = new QWidget;
-  this->HelpCollabsibleWidget = new qCTKCollapsibleWidget2("Help");
-  this->HelpCollabsibleWidget->setCollapsed(true);
-  this->HelpCollabsibleWidget->setSizePolicy(
+  this->HelpCollapsibleButton = new qCTKCollapsibleButton("Help");
+  this->HelpCollapsibleButton->setCollapsed(true);
+  this->HelpCollapsibleButton->setSizePolicy(
     QSizePolicy::Ignored, QSizePolicy::Minimum);
   // QTextBrowser instead of QLabel because QLabel doesn't word wrap links 
   // correctly
@@ -161,11 +161,11 @@ void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
   p.setBrush(QPalette::Window, QBrush ());
   this->HelpLabel->setPalette(p);
 
-  QGridLayout* helpLayout = new QGridLayout(this->HelpCollabsibleWidget);
+  QGridLayout* helpLayout = new QGridLayout(this->HelpCollapsibleButton);
   helpLayout->addWidget(this->HelpLabel);
 
   this->Layout = new QVBoxLayout(panel);
-  this->Layout->addWidget(this->HelpCollabsibleWidget);
+  this->Layout->addWidget(this->HelpCollapsibleButton);
   this->Layout->addItem(
     new QSpacerItem(0, 0, QSizePolicy::Minimum, 
                     QSizePolicy::MinimumExpanding));

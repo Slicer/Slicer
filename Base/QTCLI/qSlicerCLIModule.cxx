@@ -9,7 +9,7 @@
 #include "qMRMLNodeFactory.h"
 
 // CTK includes
-#include "qCTKCollapsibleWidget2.h"
+#include "qCTKCollapsibleButton.h"
 #include "qCTKSlider.h"
 #include "qCTKFlowLayout.h"
 
@@ -250,8 +250,8 @@ void qSlicerCLIModule::qInternal::addParameterGroup(QBoxLayout* layout,
 {
   Q_ASSERT(layout);
 
-  qCTKCollapsibleWidget2 * collapsibleWidget = new qCTKCollapsibleWidget2();
-  collapsibleWidget->setTitle(QString::fromStdString(parameterGroup.GetLabel()));
+  qCTKCollapsibleButton * collapsibleWidget = new qCTKCollapsibleButton();
+  collapsibleWidget->setText(QString::fromStdString(parameterGroup.GetLabel()));
   collapsibleWidget->setCollapsed(parameterGroup.GetAdvanced() == "true");
 
   // Create a vertical layout and add parameter to it
