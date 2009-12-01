@@ -2521,7 +2521,7 @@ void vtkFourDAnalysisGUI::UpdatePlotList()
     this->PlotList->GetWidget()->DeleteAllRows();
     this->PlotList->GetWidget()->AddRows(nodes.size());
     
-    for (int i = 0; i < nodes.size(); i ++)
+    for (unsigned int i = 0; i < nodes.size(); i ++)
       {
       vtkMRMLPlotNode* node = vtkMRMLPlotNode::SafeDownCast(nodes[i]);
       if (node)
@@ -3002,7 +3002,8 @@ void vtkFourDAnalysisGUI::GeneratePlotNodes()
     this->GetMRMLScene()->AddNode(cnode);
     cnode->SetAndObserveArray(anode);
     cnode->SetErrorBar(1);
-    int id = this->PlotManagerNode->AddPlotNode(cnode);
+    //int id = this->PlotManagerNode->AddPlotNode(cnode);
+    this->PlotManagerNode->AddPlotNode(cnode);
 
     double color[3];
     lt->GetColor(label, color);
