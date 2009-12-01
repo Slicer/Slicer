@@ -83,7 +83,7 @@ void vtkMRMLArrayPlotNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ssYerr;
 
   //int n = this->Array->GetNumberOfComponents();
-  double xy[3];
+  //double xy[3];
 
   //if (this->Array->GetNumberOfComponents() > 3)
   //  {
@@ -113,7 +113,7 @@ void vtkMRMLArrayPlotNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLArrayPlotNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  //int disabledModify = this->StartModify();
 
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -224,8 +224,7 @@ void vtkMRMLArrayPlotNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLArrayPlotNode *node = (vtkMRMLArrayPlotNode *) anode;
-
+  //vtkMRMLArrayPlotNode *node = (vtkMRMLArrayPlotNode *) anode;
   //int type = node->GetType();
   
 }

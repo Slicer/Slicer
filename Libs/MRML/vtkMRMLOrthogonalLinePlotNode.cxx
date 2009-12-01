@@ -107,7 +107,7 @@ void vtkMRMLOrthogonalLinePlotNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLOrthogonalLinePlotNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  //int disabledModify = this->StartModify();
 
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -218,7 +218,7 @@ void vtkMRMLOrthogonalLinePlotNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLOrthogonalLinePlotNode *node = (vtkMRMLOrthogonalLinePlotNode *) anode;
+  //vtkMRMLOrthogonalLinePlotNode *node = (vtkMRMLOrthogonalLinePlotNode *) anode;
 
   //int type = node->GetType();
   

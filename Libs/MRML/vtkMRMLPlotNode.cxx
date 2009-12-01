@@ -112,7 +112,7 @@ void vtkMRMLPlotNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  //int disabledModify = this->StartModify();
 
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -223,7 +223,7 @@ void vtkMRMLPlotNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLPlotNode *node = (vtkMRMLPlotNode *) anode;
+  //vtkMRMLPlotNode *node = (vtkMRMLPlotNode *) anode;
 
   //int type = node->GetType();
   

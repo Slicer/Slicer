@@ -132,7 +132,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       std::string s;
-      double val;
+      //double val;
 
       ss << attValue;
 
@@ -146,7 +146,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       std::string s;
-      double val;
+      //double val;
 
       ss << attValue;
 
@@ -160,7 +160,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       std::string s;
-      double val;
+      //double val;
 
       ss << attValue;
 
@@ -220,8 +220,7 @@ void vtkMRMLDoubleArrayNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLDoubleArrayNode *node = (vtkMRMLDoubleArrayNode *) anode;
-
+  //vtkMRMLDoubleArrayNode *node = (vtkMRMLDoubleArrayNode *) anode;
   //int type = node->GetType();
   
 }

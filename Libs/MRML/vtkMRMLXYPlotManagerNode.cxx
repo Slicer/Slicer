@@ -115,16 +115,16 @@ void vtkMRMLXYPlotManagerNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLXYPlotManagerNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  //int disabledModify = this->StartModify();
 
   vtkMRMLNode::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-
-  std::vector<double> valueX;
-  std::vector<double> valueY;
-  std::vector<double> valueYErr;
+  //const char* attName;
+  //const char* attValue;
+  //
+  //std::vector<double> valueX;
+  //std::vector<double> valueY;
+  //std::vector<double> valueYErr;
 
   //valueX.clear();
   //valueY.clear();
@@ -226,7 +226,7 @@ void vtkMRMLXYPlotManagerNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLXYPlotManagerNode *node = (vtkMRMLXYPlotManagerNode *) anode;
+  //vtkMRMLXYPlotManagerNode *node = (vtkMRMLXYPlotManagerNode *) anode;
 
   //int type = node->GetType();
   
