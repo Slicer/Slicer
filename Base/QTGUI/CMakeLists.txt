@@ -28,6 +28,8 @@ SET(slicer_qtbase_SRCS
   qSlicerModuleManager.h
   qSlicerModulePanel.cxx
   qSlicerModulePanel.h
+  qSlicerModuleSelectorWidget.cxx
+  qSlicerModuleSelectorWidget.h
   )
 
 # Headers that should run through moc
@@ -36,6 +38,7 @@ SET(slicer_qtbase_MOC_SRCS
   qSlicerApplication.h
   qSlicerModuleManager.h
   qSlicerModulePanel.h
+  qSlicerModuleSelectorWidget.h
   )
 
 # UI files
