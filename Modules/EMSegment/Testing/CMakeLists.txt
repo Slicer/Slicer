@@ -37,7 +37,7 @@ set(EMSEG_RUN_REG_TESTS   OFF
   )
 
 # Set to 1 to remove temporary test output files
-set(EMSEG_REMOVE_TMP_TEST_DATA   ON
+set(EMSEG_REMOVE_TMP_TEST_DATA   "1"
   CACHE BOOL "Remove EMSegment temporary test data." FORCE)
 mark_as_advanced(EMSEG_REMOVE_TMP_TEST_DATA)
 
