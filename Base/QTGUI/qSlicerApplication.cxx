@@ -48,8 +48,8 @@ struct qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
 
   ~qSlicerApplicationPrivate()
     {
-     this->AppLogic->Delete();
-     this->MRMLScene->Delete();
+     if (this->AppLogic) { this->AppLogic->Delete(); }
+     if (this->MRMLScene) { this->MRMLScene->Delete(); }
     }
 
   // Description:
