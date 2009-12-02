@@ -34,9 +34,7 @@ int main(int argc, char* argv[])
 #endif
 
   qSlicerModuleManager::instance()->factory()->registerCoreModules();
-
   qSlicerModuleManager::instance()->factory()->registerLoadableModules();
-
   qSlicerModuleManager::instance()->factory()->registerCmdLineModules();
 
   // Create and show main window
@@ -45,10 +43,6 @@ int main(int argc, char* argv[])
 
   // Show module panel - The module panel is a container for a module
   qSlicerModuleManager::instance()->setModulePanelVisible(true);
-
-//   QStringList modules;
-//   modules << "Volumes" << "Measurements" << "Cameras"
-//           << "Add Images" << "SlicerWelcome" << "Transforms";
 
   // Load all available modules
   QStringList moduleNames = qSlicerModuleManager::instance()->factory()->moduleNames();
