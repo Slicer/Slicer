@@ -21,6 +21,7 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCrosshairNode.h"
+#include "vtkEventBroker.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
@@ -37,9 +38,18 @@ struct qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
   QCTK_DECLARE_PUBLIC(qSlicerApplication);
   qSlicerApplicationPrivate()
     {
+    this->AppLogic = 0;
+    this->MRMLScene = 0;
+    
     this->initFont();
     this->initPalette();
     this->loadStyleSheet();
+    }
+
+  ~qSlicerApplicationPrivate()
+    {
+     this->AppLogic->Delete();
+     this->MRMLScene->Delete();
     }
 
   // Description:
@@ -51,8 +61,14 @@ struct qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
   // Load application styleSheet
   void loadStyleSheet();
 
-  vtkSmartPointer<vtkMRMLScene>               MRMLScene;
-  vtkSmartPointer<vtkSlicerApplicationLogic>  AppLogic;
+  // Description:
+  // MRMLScene and AppLogic pointers
+  // Note: Since the logic and the scene should be deleted before the EventBroker,
+  // they are not SmartPointer.
+  vtkMRMLScene*                        MRMLScene;
+  vtkSlicerApplicationLogic*           AppLogic;
+  
+  vtkSmartPointer<vtkEventBroker>      EventBroker;
 
   QMap<QWidget*,bool>           TopLevelWidgetsSavedVisibilityState;
   QString                       SlicerHome;
@@ -83,6 +99,11 @@ qSlicerApplication* qSlicerApplication::application()
 //-----------------------------------------------------------------------------
 void qSlicerApplication::initialize()
 {
+  // Take ownership of the vtkEventBroker instance.
+  // Note: Since EventBroker is a SmartPointer, the object will be deleted when
+  // qSlicerApplicationPrivate will be deleted
+  qctk_d()->EventBroker.TakeReference(vtkEventBroker::GetInstance());
+  
   // Create MRML scene
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
@@ -122,6 +143,7 @@ void qSlicerApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
     return;
     }
   d->MRMLScene = mrmlScene;
+  d->MRMLScene->Register(NULL);
   emit this->currentMRMLSceneChanged(mrmlScene);
 }
 
@@ -129,7 +151,14 @@ void qSlicerApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
 QCTK_GET_CXX(qSlicerApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+void qSlicerApplication::setAppLogic(vtkSlicerApplicationLogic* appLogic)
+{
+  QCTK_D(qSlicerApplication);
+  d->AppLogic = appLogic;
+  d->AppLogic->Register(NULL);
+}
+
+//-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
