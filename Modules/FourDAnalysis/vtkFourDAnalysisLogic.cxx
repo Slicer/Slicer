@@ -1005,4 +1005,4 @@ void vtkFourDAnalysisLogic::GenerateParameterMapInMask(vtkCurveAnalysisPythonInt
 
 }
   
-#endif FourDAnalysis_USE_SCIPY
+#endif // FourDAnalysis_USE_SCIPY
