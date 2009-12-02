@@ -4,6 +4,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
 #include "qSlicerMainWindow.h"
+#include "qSlicerModuleSelectorWidget.h"
 
 // QT includes
 #include <QWidget>
@@ -45,16 +46,26 @@ int main(int argc, char* argv[])
   // Show module panel - The module panel is a container for a module
   qSlicerModuleManager::instance()->setModulePanelVisible(true);
 
-  QStringList modules;
-  modules << "Volumes" << "Measurements" << "Cameras"
-          << "Add Images" << "SlicerWelcome";
+//   QStringList modules;
+//   modules << "Volumes" << "Measurements" << "Cameras"
+//           << "Add Images" << "SlicerWelcome" << "Transforms";
 
-  foreach(const QString& module, modules)
+  // Load all available modules
+  QStringList moduleNames = qSlicerModuleManager::instance()->factory()->moduleNames();
+  moduleNames.sort();
+  foreach(const QString& name, moduleNames)
     {
-    qSlicerModuleManager::instance()->loadModule(module);
+    qSlicerModuleManager::instance()->loadModuleByName(name);
     }
 
-  qSlicerModuleManager::instance()->showModule("Add Images");
+  // Add modules to the selector
+  qSlicerModuleSelectorWidget moduleSelector;
+  moduleSelector.addModules(moduleNames);
+  moduleSelector.show(); 
+
+  // Connect the selector with the module manager
+  QObject::connect(&moduleSelector, SIGNAL(moduleSelected(const QString&)),
+                   qSlicerModuleManager::instance(), SLOT(showModuleByName(const QString&)));
 
   return app.exec();
 }

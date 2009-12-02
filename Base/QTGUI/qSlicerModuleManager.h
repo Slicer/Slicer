@@ -49,12 +49,6 @@ public:
   const QString moduleTitle(const QString& moduleName);
 
   // Description:
-  // Show a module
-  // Note: A module is contained in the module panel associated with the module manager.
-  // The module panel will update itself each time a module is shown.
-  void showModule(const QString& moduleTitle);
-
-  // Description:
   // Hide/Show the module panel.
   // Note: The module panel contains a module and is responsible to display
   // the help and about frames.
@@ -67,6 +61,15 @@ public:
   // Description:
   // Return a reference to the Module Panel
   qSlicerAbstractModulePanel* modulePanel() const;
+
+public slots:
+
+  // Description:
+  // Show a module
+  // Note: A module is contained in the module panel associated with the module manager.
+  // The module panel will update itself each time a module is shown.
+  void showModule(const QString& moduleTitle);
+  void showModuleByName(const QString& moduleName);
 
 protected:
   qSlicerModuleManager();

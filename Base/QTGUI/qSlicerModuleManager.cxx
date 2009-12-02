@@ -230,6 +230,19 @@ void qSlicerModuleManager::showModule(const QString& moduleTitle)
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModuleManager::showModuleByName(const QString& moduleName)
+{
+  QCTK_D(qSlicerModuleManager);
+  d->instantiateModulePanel();
+  Q_ASSERT(d->ModulePanel);
+
+  qDebug() << "Show module:" << moduleName;
+  qSlicerAbstractModule * module = this->getModuleByName(moduleName);
+  Q_ASSERT(module);
+  d->ModulePanel->setModule(module);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleManager::setModulePanelVisible(bool visible)
 {
   QCTK_D(qSlicerModuleManager);
