@@ -610,20 +610,6 @@ target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
 
-set (CLP ConformalMappingProstateRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-#####################
 
 set (CLP FreesurferSurfaceSectionExtraction)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -636,33 +622,6 @@ target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKCommon)
 set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
-set (CLP WatershedSegmentation)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
-
-set (CLP DiscardDirectionCosines)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
-
-#####################
 
 subdirs ( SparseFieldLevelSetContour )
 subdirs ( Realign )
@@ -782,7 +741,6 @@ if (Slicer3_SOURCE_DIR)
     ZeroCrossingBasedEdgeDetectionImageFilterLib
     DiffusionTensorMathematics
     DiffusionTensorEstimation
-#    ConformalMappingProstateRegistration
     )
 
   slicer3_install_plugins(${TARGETS})
