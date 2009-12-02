@@ -30,7 +30,7 @@ public:
     return false;
     }
   QString path() { return this->Path; }
-  QString loadErrorString() { return this->Library.errorString();}
+  virtual QString loadErrorString() { return this->Library.errorString();}
 
   void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
 

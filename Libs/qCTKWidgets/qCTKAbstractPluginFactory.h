@@ -20,7 +20,7 @@ public:
     return this->Loader.load();
     }
   QString path() { return this->Path; }
-  QString loadErrorString() { return this->Loader.errorString();}
+  virtual QString loadErrorString() { return this->Loader.errorString();}
 
 protected:
   virtual BaseClassType* instanciator()

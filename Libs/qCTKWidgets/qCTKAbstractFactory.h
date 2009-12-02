@@ -18,6 +18,7 @@ class qCTKAbstractFactoryItem
 public:
   qCTKAbstractFactoryItem(const QString& key):Instance(),Key(key){}
 
+  virtual QString loadErrorString() { return QString(); }
   virtual bool load() = 0;
   BaseClassType* instantiate()
     {
@@ -115,7 +116,13 @@ protected:
     // Attempt to load it
     if (!item->load())
       {
-      qWarning() << "Failed to load object:" << item->key();
+      QString errorStr;
+      if (!item->loadErrorString().isEmpty())
+        {
+        errorStr = " - " + item->loadErrorString();
+        }
+      qCritical() << "Failed to load object:" << item->key()
+                  << errorStr ;
       return false;
       }
 
