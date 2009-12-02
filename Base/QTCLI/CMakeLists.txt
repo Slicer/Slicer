@@ -16,12 +16,12 @@ SET(slicer_qtbase_include_directories
 
 # Source files
 SET(slicer_qtbase_SRCS
-  qSlicerCLIModule.h
   qSlicerCLIModule.cxx
-  qSlicerCLIModuleLogic.h
+  qSlicerCLIModule.h
   qSlicerCLIModuleLogic.cxx
-  vtkMRMLCommandLineModuleNode.h
+  qSlicerCLIModuleLogic.h
   vtkMRMLCommandLineModuleNode.cxx
+  vtkMRMLCommandLineModuleNode.h
   )
 
 # Headers that should run through moc

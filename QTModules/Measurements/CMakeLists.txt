@@ -13,12 +13,12 @@ SET(qt_module_include_directories
 
 # Source files
 SET(qt_module_SRCS
-  qSlicerMeasurementsModule.h
   qSlicerMeasurementsModule.cxx
-  Widgets/qSlicerMeasurementsAngleWidget.h
+  qSlicerMeasurementsModule.h
   Widgets/qSlicerMeasurementsAngleWidget.cxx
-  Widgets/qSlicerMeasurementsRulerWidget.h
+  Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsRulerWidget.cxx
+  Widgets/qSlicerMeasurementsRulerWidget.h
   )
 
 # Headers that should run through moc

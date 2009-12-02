@@ -14,24 +14,24 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #
 SET(qMRMLWidgets_SRCS
   qVTKObject.h
-  qVTKConnection.h
   qVTKConnection.cxx
-  qVTKObjectEventsObserver.h
+  qVTKConnection.h
   qVTKObjectEventsObserver.cxx
-  qMRMLUtils.h
+  qVTKObjectEventsObserver.h
   qMRMLUtils.cxx
-  qMRMLNodeFactory.h
+  qMRMLUtils.h
   qMRMLNodeFactory.cxx
-  qMRMLNodeSelector.h
+  qMRMLNodeFactory.h
   qMRMLNodeSelector.cxx
-  qMRMLNodeTreeSelector.h
+  qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.cxx
-  qMRMLLinearTransformSlider.h
+  qMRMLNodeTreeSelector.h
   qMRMLLinearTransformSlider.cxx
-  qMRMLTransformSliders.h
+  qMRMLLinearTransformSlider.h
   qMRMLTransformSliders.cxx
-  qMRMLMatrixWidget.h
+  qMRMLTransformSliders.h
   qMRMLMatrixWidget.cxx
+  qMRMLMatrixWidget.h
   )
 
 # Headers that should run through moc

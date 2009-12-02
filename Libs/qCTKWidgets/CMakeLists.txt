@@ -18,32 +18,32 @@ SET(qCTKWidgets_SRCS
   qCTKAbstractObjectFactory.h
   qCTKAbstractPluginFactory.h
   qCTKAbstractLibraryFactory.h
-  qCTKAddRemoveComboBox.h
   qCTKAddRemoveComboBox.cxx
-  qCTKCollapsibleButton.h
+  qCTKAddRemoveComboBox.h
   qCTKCollapsibleButton.cxx
-  qCTKCollapsibleGroupBox.h
+  qCTKCollapsibleButton.h
   qCTKCollapsibleGroupBox.cxx
-  qCTKColorPickerButton.h
+  qCTKCollapsibleGroupBox.h
   qCTKColorPickerButton.cxx
-  qCTKCoordinatesWidget.h
+  qCTKColorPickerButton.h
   qCTKCoordinatesWidget.cxx
-  qCTKFittedTextBrowser.h
+  qCTKCoordinatesWidget.h
   qCTKFittedTextBrowser.cxx
-  qCTKFlowLayout.h
+  qCTKFittedTextBrowser.h
   qCTKFlowLayout.cxx
-  qCTKMatrixWidget.h
+  qCTKFlowLayout.h
   qCTKMatrixWidget.cxx
-  qCTKNumericInput.h
+  qCTKMatrixWidget.h
   qCTKNumericInput.cxx
-  qCTKSlider.h
+  qCTKNumericInput.h
   qCTKSlider.cxx
-  qCTKSliderSpinBoxLabel.h
+  qCTKSlider.h
   qCTKSliderSpinBoxLabel.cxx
-  qCTKTitleComboBox.h
+  qCTKSliderSpinBoxLabel.h
   qCTKTitleComboBox.cxx
-  qCTKTreeComboBox.h
+  qCTKTitleComboBox.h
   qCTKTreeComboBox.cxx
+  qCTKTreeComboBox.h
   )
 
 # Headers that should run through moc

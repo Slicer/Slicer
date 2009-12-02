@@ -14,10 +14,10 @@ SET(slicer_qtbase_include_directories
   
 # Source files
 SET(slicer_qtbase_SRCS
-  qSlicerCamerasModule.h
   qSlicerCamerasModule.cxx
-  qSlicerTransformsModule.h
+  qSlicerCamerasModule.h
   qSlicerTransformsModule.cxx
+  qSlicerTransformsModule.h
   )
 
 # Headers that should run through moc
