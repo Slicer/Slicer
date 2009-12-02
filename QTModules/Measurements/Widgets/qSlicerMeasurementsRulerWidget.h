@@ -19,7 +19,6 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerMeasurementsRulerWidget(QWidget *parent=0);
-  virtual ~qSlicerMeasurementsRulerWidget(); 
   
   virtual void printAdditionalInfo();
 

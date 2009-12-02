@@ -21,7 +21,6 @@ public:
 
   typedef qSlicerAbstractLoadableModule Superclass;
   qSlicerWelcomeModule(QWidget *parent=0);
-  virtual ~qSlicerWelcomeModule();
 
   virtual void printAdditionalInfo();
 

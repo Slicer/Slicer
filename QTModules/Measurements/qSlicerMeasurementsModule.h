@@ -21,7 +21,6 @@ public:
 
   typedef qSlicerAbstractLoadableModule Superclass;
   qSlicerMeasurementsModule(QWidget *parent=0);
-  virtual ~qSlicerMeasurementsModule();
 
   virtual void printAdditionalInfo();
 
