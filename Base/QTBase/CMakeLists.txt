@@ -42,6 +42,10 @@ SET(slicer_qtbase_UI_SRCS
   #Resources/UI/xxx.ui
 )
 
+# Resources
+SET(qt_module_resources
+)
+
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
   SlicerBaseLogic
@@ -57,7 +61,7 @@ Slicer3_build_slicer_qtbase_library(
   MOC_SRCS ${slicer_qtbase_MOC_SRCS}
   UI_SRCS ${slicer_qtbase_UI_SRCS}
   TARGET_LIBRARIES ${slicer_qtbase_target_libraries}
-  NO_RESOURCES
+  RESOURCES ${qt_module_resources}
   )
 
 # --------------------------------------------------------------------------

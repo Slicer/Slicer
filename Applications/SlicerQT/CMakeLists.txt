@@ -103,12 +103,17 @@ SET(qSlicerQT_MOC_SRCS
 SET(qSlicerQT_UI_SRCS
   Resources/UI/qSlicerMainWindow.ui
   )
-  
+
+# Resources
+SET(qt_module_resources
+  Resources/SlicerQT.qrc
+)
 #SET(qSlicerQT_RC_FILE Resources/SlicerQT.rc)
+
 
 QT4_WRAP_CPP(qSlicerQT_SRCS ${qSlicerQT_MOC_SRCS})
 QT4_WRAP_UI(qSlicerQT_UI_CXX ${qSlicerQT_UI_SRCS})
-#QT4_ADD_RESOURCES(qSlicerQT_QCC_SRCS Resources/SlicerQT.qrc)
+QT4_ADD_RESOURCES(qSlicerQT_QRC_SRCS ${qt_module_resources})
 
 # --------------------------------------------------------------------------
 # Find SLICERLIBCURL (slicercurl)
