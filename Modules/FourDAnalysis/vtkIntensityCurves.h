@@ -24,6 +24,15 @@
 
 class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 {
+ public:
+  //BTX
+  enum {
+    TYPE_MEAN,
+    TYPE_MAX,
+    TYPE_MIN
+  };
+  //ETX
+
  protected:
   //BTX
   typedef struct {
@@ -50,6 +59,9 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   vtkSetObjectMacro ( MRMLScene,  vtkMRMLScene );
   vtkGetObjectMacro ( MRMLScene,  vtkMRMLScene );
 
+  vtkSetMacro ( ValueType,  int );
+  vtkGetMacro ( ValueType,  int );
+
   //void            SetInterval(double interval) { this->Interval = interval; };
   int             Update();
   vtkIntArray*    GetLabelList();
@@ -66,19 +78,23 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   void   GenerateIndexMap(vtkImageData* mask, IndexTableMapType& indexTableMap);
   double GetMeanIntensity(vtkImageData* image, IndexTableType& indexTable);
   double GetSDIntensity(vtkImageData* image, double mean, IndexTableType& indexTable);
-
+  void   GetMeanMaxMinIntensity(vtkImageData* image, IndexTableType& indexTable,
+                                double& mean, double& max, double min);
  private:
 
   vtkMRMLTimeSeriesBundleNode*     BundleNode;
-  vtkMRMLScalarVolumeNode* MaskNode;
-
+  vtkMRMLScalarVolumeNode*         MaskNode;
   vtkMRMLTimeSeriesBundleNode*     PreviousBundleNode;
-  vtkMRMLScalarVolumeNode* PreviousMaskNode;
+  vtkMRMLScalarVolumeNode*         PreviousMaskNode;
+  IntensityCurveMapType            IntensityCurve;  // IntensityCurveMean[label]
 
-  IntensityCurveMapType IntensityCurve;  // IntensityCurveMean[label]
-  long                  PreviousUpdateTime;
+  // Description:
+  // CurveType specifies how to calculate the intensity value at given time point from
+  // the  region. Can be one of TYPE_MEAN, TYPE_MAX and TYPE_MIN
+  int                              ValueType;
 
-  vtkMRMLScene*         MRMLScene;
+  long                             PreviousUpdateTime;
+  vtkMRMLScene*                    MRMLScene;
 
 };
 

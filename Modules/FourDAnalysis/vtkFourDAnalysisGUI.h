@@ -224,6 +224,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // Intensity Plot
   vtkSlicerNodeSelectorWidget*        MaskNodeSelector;
   vtkKWPushButton*                    GenerateCurveButton;
+  vtkKWRadioButtonSetWithLabel*       ValueTypeButtonSet;
   vtkSlicerXYPlotWidget*              IntensityPlot;
   vtkKWCheckButtonWithLabel*          ErrorBarCheckButton;
   vtkKWMultiColumnListWithScrollbars* PlotList;

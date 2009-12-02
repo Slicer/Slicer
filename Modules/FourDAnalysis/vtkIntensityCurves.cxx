@@ -30,6 +30,8 @@ vtkIntensityCurves::vtkIntensityCurves()
   this->MaskNode   = NULL;
   this->PreviousBundleNode = NULL;
   this->PreviousMaskNode   = NULL;
+  this->ValueType = TYPE_MEAN;
+
   
   this->IntensityCurve.clear();
   this->PreviousUpdateTime = 0;
@@ -204,17 +206,38 @@ void vtkIntensityCurves::GenerateIntensityCurve()
           int label = iter2->first;
           //std::cerr << "    processing label = " << label << std::endl;
           IndexTableType& indexTable = iter2->second;
-          double meanvalue = GetMeanIntensity(inode->GetImageData(), indexTable);
-          double sdvalue   = GetSDIntensity(inode->GetImageData(), meanvalue, indexTable);
-          //std::cerr << "mean = " << meanvalue << ", sd = " << sdvalue << std::endl;
+
+          double value;
+          double sdvalue;
           
+          if (this->ValueType == TYPE_MEAN)
+            {
+            //std::cerr << "mean = " << meanvalue << ", sd = " << sdvalue << std::endl;
+            value   = GetMeanIntensity(inode->GetImageData(), indexTable);
+            sdvalue = GetSDIntensity(inode->GetImageData(), value, indexTable);
+            }
+          else if (this->ValueType == TYPE_MAX)
+            {
+            double mean, max, min;
+            GetMeanMaxMinIntensity(inode->GetImageData(), indexTable, mean, max, min);
+            value   = max;
+            sdvalue = 0;
+            }
+          else //if (this->ValueType == TYPE_MIN)
+            {
+            double mean, max, min;
+            GetMeanMaxMinIntensity(inode->GetImageData(), indexTable, mean, max, min);
+            value = min;
+            sdvalue = 0;
+            }
+
           // get time stamp
           vtkMRMLTimeSeriesBundleNode::TimeStamp ts;
           this->BundleNode->GetTimeStamp(i, &ts);
 
           double xy[3];
           xy[0] = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
-          xy[1] = meanvalue;
+          xy[1] = value;
           xy[2] = sdvalue;
           this->IntensityCurve[label]->GetArray()->InsertNextTuple(xy);
           }
@@ -273,6 +296,7 @@ double vtkIntensityCurves::GetMeanIntensity(vtkImageData* image, IndexTableType&
 }
 
 
+//---------------------------------------------------------------------------
 double vtkIntensityCurves::GetSDIntensity(vtkImageData* image, double mean, IndexTableType& indexTable)
 {
   double s = 0.0;
@@ -288,5 +312,32 @@ double vtkIntensityCurves::GetSDIntensity(vtkImageData* image, double mean, Inde
   return sigma;
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkIntensityCurves::GetMeanMaxMinIntensity(vtkImageData* image, IndexTableType& indexTable,
+                                                double& mean, double& max, double min)
+{
+  double sum = 0.0;
+  mean = 0.0;
+  max  = 0.0;
+  min  = 0.0;
+
+  if (indexTable.size() > 0)
+    {
+    IndexTableType::iterator iter;
+    iter = indexTable.begin();
+    max = image->GetScalarComponentAsDouble(iter->x, iter->y, iter->z, 0);
+    min = image->GetScalarComponentAsDouble(iter->x, iter->y, iter->z, 0);
+    for (iter ++; iter != indexTable.end(); iter ++)
+      {
+      double v = image->GetScalarComponentAsDouble(iter->x, iter->y, iter->z, 0);
+      sum += v;
+      if (v > max) max = v;
+      if (v < min) min = v;
+      }
+    mean = sum / (double)indexTable.size();
+    }
+}
 
 

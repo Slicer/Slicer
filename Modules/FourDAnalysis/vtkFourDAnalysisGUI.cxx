@@ -118,6 +118,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   // Intensity Plot
   this->MaskNodeSelector              = NULL;
   this->GenerateCurveButton           = NULL;
+  this->ValueTypeButtonSet            = NULL;
   this->IntensityPlot                 = NULL;
   this->ErrorBarCheckButton           = NULL;
   this->PlotList                      = NULL;
@@ -236,6 +237,11 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     {
     this->GenerateCurveButton->SetParent(NULL);
     this->GenerateCurveButton->Delete();
+    }
+  if (this->ValueTypeButtonSet)
+    {
+    this->ValueTypeButtonSet->SetParent(NULL);
+    this->ValueTypeButtonSet->Delete();
     }
   if (this->IntensityPlot)
     {
@@ -955,6 +961,21 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       this->IntensityCurves->SetMaskNode(maskNode);
       }
 
+    // check the value type for curve
+    
+    if (this->ValueTypeButtonSet->GetWidget()->GetWidget(0)->GetSelectedState())
+      {
+      this->IntensityCurves->SetValueType(vtkIntensityCurves::TYPE_MEAN);
+      }
+    else if (this->ValueTypeButtonSet->GetWidget()->GetWidget(1)->GetSelectedState())
+      {
+      this->IntensityCurves->SetValueType(vtkIntensityCurves::TYPE_MAX);
+      }
+    else if (this->ValueTypeButtonSet->GetWidget()->GetWidget(2)->GetSelectedState())
+      {
+      this->IntensityCurves->SetValueType(vtkIntensityCurves::TYPE_MIN);
+      }
+      
     GeneratePlotNodes();
     UpdatePlotList();
 
@@ -1653,7 +1674,34 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
                this->MaskNodeSelector->GetWidgetName(),
                this->GenerateCurveButton->GetWidgetName());
 
+  vtkKWFrame* cframe = vtkKWFrame::New();
+  cframe->SetParent(msframe->GetFrame());
+  cframe->Create();
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                 cframe->GetWidgetName() );
+
+  this->ValueTypeButtonSet = vtkKWRadioButtonSetWithLabel::New();
+  this->ValueTypeButtonSet->SetParent(cframe);
+  this->ValueTypeButtonSet->Create();
+  this->ValueTypeButtonSet->SetLabelText("Value type: ");
+  this->ValueTypeButtonSet->GetWidget()->PackHorizontallyOn();
+  //this->ValueTypeButtonSet->GetWidget()->SetMaximumNumberOfWidgetsInPackingDirection(3);
+  this->ValueTypeButtonSet->GetWidget()->UniformColumnsOn();
+  this->ValueTypeButtonSet->GetWidget()->UniformRowsOn();
+  this->ValueTypeButtonSet->GetWidget()->AddWidget(0);
+  this->ValueTypeButtonSet->GetWidget()->GetWidget(0)->SetText("Mean+SD");
+  this->ValueTypeButtonSet->GetWidget()->AddWidget(1);
+  this->ValueTypeButtonSet->GetWidget()->GetWidget(1)->SetText("Max");
+  this->ValueTypeButtonSet->GetWidget()->AddWidget(2);
+  this->ValueTypeButtonSet->GetWidget()->GetWidget(2)->SetText("Min");
+  this->ValueTypeButtonSet->GetWidget()->GetWidget(0)->SelectedStateOn();
+  
+  app->Script("pack %s -side top -anchor w -fill x -padx 2 -pady 2", 
+              this->ValueTypeButtonSet->GetWidgetName());
+
+  mframe->Delete();
   msframe->Delete();
+  cframe->Delete();
   //menuLabel->Delete();
 
   
