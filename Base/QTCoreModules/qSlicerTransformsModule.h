@@ -7,13 +7,14 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTCoreModulesWin32Header.h"
 
 class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModulePrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerTransformsModule : public qSlicerAbstractCoreModule
+class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerTransformsModule :
+  public qSlicerAbstractCoreModule
 {
   Q_OBJECT
 
