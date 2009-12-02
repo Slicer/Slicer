@@ -153,7 +153,7 @@ foreach candidate [glob $::CLIPROXY(dir)/*] {
       }
       vputs "*********************"
     } else {
-      vputs "Could not execute $candidate"
+      vputs "Could not execute $::CLIPROXY(slicer) --launch $candidate --xml"
     }
   } else {
     vputs "ignoring $candidate because of file extension"
