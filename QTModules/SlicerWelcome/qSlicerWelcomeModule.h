@@ -1,9 +1,15 @@
 #ifndef __qSlicerWelcomeModule_h
 #define __qSlicerWelcomeModule_h
 
+// Slicer includes
 #include "qSlicerAbstractLoadableModule.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qSlicerWelcomeModuleWin32Header.h"
+
+class qSlicerWelcomeModulePrivate;
 
 class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
   public qSlicerAbstractLoadableModule
@@ -25,8 +31,7 @@ protected:
   virtual void setup();
 
 private:
-  class qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerWelcomeModule);
 };
 
 #endif

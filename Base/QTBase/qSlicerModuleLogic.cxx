@@ -12,28 +12,22 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-#include "qSlicerMacros.h"
-
 //-----------------------------------------------------------------------------
-struct qSlicerModuleLogic::qInternal
+struct qSlicerModuleLogicPrivate: public qCTKPrivate<qSlicerModuleLogic>
 {
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerModuleLogic, vtkMRMLScene*, mrmlScene, MRMLScene);
-qSlicerSetInternalCxxMacro(qSlicerModuleLogic, vtkMRMLScene*, setMRMLScene, MRMLScene);
-qSlicerGetInternalCxxMacro(qSlicerModuleLogic, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+QCTK_GET_CXX(qSlicerModuleLogic, vtkMRMLScene*, mrmlScene, MRMLScene);
+QCTK_SET_CXX(qSlicerModuleLogic, vtkMRMLScene*, setMRMLScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerModuleLogic, QObject*);
-//qSlicerCxxDestructorMacro(qSlicerModuleLogic);
+QCTK_GET_CXX(qSlicerModuleLogic, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic::~qSlicerModuleLogic()
-{
-  delete this->Internal;
-}
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerModuleLogic, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleLogic::printAdditionalInfo()
@@ -45,7 +39,7 @@ void qSlicerModuleLogic::printAdditionalInfo()
 void qSlicerModuleLogic::initialize(vtkSlicerApplicationLogic* appLogic)
 {
   Q_ASSERT(appLogic);
-  this->Internal->AppLogic = appLogic;
+  qctk_d()->AppLogic = appLogic;
 
   this->setup();
 }

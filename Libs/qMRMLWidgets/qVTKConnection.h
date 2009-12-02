@@ -1,6 +1,10 @@
 #ifndef __qVTKConnection_h
 #define __qVTKConnection_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QObject>
 #include <QVector>
 
@@ -8,6 +12,7 @@
 
 class qVTKObjectEventsObserver;
 class vtkObject;
+class qVTKConnectionPrivate;
 
 class QMRML_WIDGETS_EXPORT qVTKConnection : public QObject
 {
@@ -17,7 +22,6 @@ public:
   typedef qVTKConnection Self;
   typedef QObject Superclass;
   qVTKConnection(qVTKObjectEventsObserver* parent);
-  virtual ~qVTKConnection();
 
   // Description:
   virtual void printAdditionalInfo();
@@ -44,7 +48,7 @@ public:
     const QObject* qt_obj, QString qt_slot);
 
   // Description:
-  int GetSlotType();
+  int GetSlotType()const;
 
   // Description:
   // VTK Callback
@@ -75,8 +79,7 @@ protected:
   void BreakConnection();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qVTKConnection);
 };
 
 #endif

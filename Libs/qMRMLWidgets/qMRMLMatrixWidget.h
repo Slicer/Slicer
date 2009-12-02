@@ -1,14 +1,19 @@
 #ifndef __qMRMLMatrixWidget_h
 #define __qMRMLMatrixWidget_h
 
-#include "qCTKMatrixWidget.h"
+// qMRML includes
 #include "qVTKObject.h"
+
+// qCTK includes
+#include <qCTKMatrixWidget.h>
+#include <qCTKPimpl.h>
 
 #include "qMRMLWidgetsWin32Header.h"
  
 class vtkMRMLNode; 
 class vtkMRMLLinearTransformNode; 
-class vtkMatrix4x4; 
+class vtkMatrix4x4;
+class qMRMLMatrixWidgetPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public qCTKMatrixWidget
 {
@@ -25,7 +30,6 @@ public:
   
   // Constructors
   qMRMLMatrixWidget(QWidget* parent);
-  virtual ~qMRMLMatrixWidget();
   
   // Description:
   // Set/Get Coordinate system
@@ -47,8 +51,7 @@ protected slots:
   void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
 
 private:
-  struct qInternal; 
-  qInternal* Internal; 
+  QCTK_DECLARE_PRIVATE(qMRMLMatrixWidget);
 }; 
 
 #endif

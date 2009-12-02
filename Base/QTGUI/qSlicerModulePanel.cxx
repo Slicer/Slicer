@@ -3,9 +3,9 @@
 // SlicerQT includes
 #include "qSlicerAbstractModule.h"
 
-// CTK includes
-#include "qCTKCollapsibleButton.h"
-#include "qCTKFittedTextBrowser.h"
+// qCTK includes
+#include <qCTKCollapsibleButton.h>
+#include <qCTKFittedTextBrowser.h>
 
 // QT includes
 #include <QLabel>
@@ -18,7 +18,7 @@
 #include <QWebView>
 
 //---------------------------------------------------------------------------
-struct qSlicerModulePanel::qInternal
+struct qSlicerModulePanelPrivate: public qCTKPrivate<qSlicerModulePanel>
 {
   void setupUi(QWidget * widget);
 
@@ -33,21 +33,18 @@ struct qSlicerModulePanel::qInternal
 qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
   :qSlicerAbstractModulePanel(parent, f)
 {
-  this->Internal = new qInternal;
-  this->Internal->setupUi(this);
-}
-
-//---------------------------------------------------------------------------
-qSlicerModulePanel::~qSlicerModulePanel()
-{
-  delete this->Internal;
+  QCTK_INIT_PRIVATE(qSlicerModulePanel);
+  QCTK_D(qSlicerModulePanel);
+  d->setupUi(this);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
 {
+  QCTK_D(qSlicerModulePanel);
+  
   // Retrieve current module associated with the module panel
-  QLayoutItem* item = this->Internal->Layout->itemAt(1);
+  QLayoutItem* item = d->Layout->itemAt(1);
   qSlicerAbstractModule* currentModule =
     item ? qobject_cast<qSlicerAbstractModule*>(item->widget()) : 0;
 
@@ -70,7 +67,7 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
     }
   else
     {
-    //this->Internal->HelpLabel->setHtml("");
+    //d->HelpLabel->setHtml("");
     }
 }
 
@@ -84,19 +81,21 @@ void qSlicerModulePanel::clear()
 void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
 {
   Q_ASSERT(module);
+  
+  QCTK_D(qSlicerModulePanel);
 
   // Update module layout
   module->layout()->setContentsMargins(0, 0, 0, 0);
 
   // Insert module in the panel
-  this->Internal->Layout->insertWidget(1, module);
+  d->Layout->insertWidget(1, module);
 
   module->setSizePolicy(QSizePolicy::Ignored, module->sizePolicy().verticalPolicy());
   module->setVisible(true);
 
-  this->Internal->HelpCollapsibleButton->setVisible(!module->helpText().isEmpty());
-  this->Internal->HelpLabel->setHtml(module->helpText());
-  //this->Internal->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
+  d->HelpCollapsibleButton->setVisible(!module->helpText().isEmpty());
+  d->HelpLabel->setHtml(module->helpText());
+  //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
 
   emit moduleAdded(module);
 }
@@ -106,7 +105,9 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
 {
   Q_ASSERT(module);
 
-  int index = this->Internal->Layout->indexOf(module);
+  QCTK_D(qSlicerModulePanel);
+
+  int index = d->Layout->indexOf(module);
   if (index == -1)
     {
     return;
@@ -115,14 +116,14 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
   //emit moduleAboutToBeRemoved(module);
 
   // Remove widget from layout
-  //this->Internal->Layout->removeWidget(module);
-  this->Internal->Layout->takeAt(index);
+  //d->Layout->removeWidget(module);
+  d->Layout->takeAt(index);
 
   module->setVisible(false);
   module->setParent(0);
 
 //   // if nobody took ownership of the module, make sure it both lost its parent and is hidden
-//   if (module->parent() == this->Internal->Layout->parentWidget())
+//   if (module->parent() == d->Layout->parentWidget())
 //     {
 //     module->setVisible(false);
 //     module->setParent(0);
@@ -138,10 +139,10 @@ void qSlicerModulePanel::removeAllModule()
 }
 
 //---------------------------------------------------------------------------
-// Internal methods
+// qSlicerModulePanelPrivate methods
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::qInternal::setupUi(QWidget * widget)
+void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
 {
   QWidget* panel = new QWidget;
   this->HelpCollapsibleButton = new qCTKCollapsibleButton("Help");

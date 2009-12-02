@@ -13,7 +13,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerWidget::qInternal
+struct qSlicerWidgetPrivate: public qCTKPrivate<qSlicerWidget>
 {
   QPointer<QWidget>                          ParentContainer;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
@@ -24,13 +24,7 @@ struct qSlicerWidget::qInternal
 qSlicerWidget::qSlicerWidget(QWidget *parent, Qt::WindowFlags f)
   :Superclass(parent, f)
 {
-  this->Internal = new qInternal;
-}
-
-//-----------------------------------------------------------------------------
-qSlicerWidget::~qSlicerWidget()
-{
-  delete this->Internal;
+  QCTK_INIT_PRIVATE(qSlicerWidget);
 }
 
 //-----------------------------------------------------------------------------
@@ -52,18 +46,19 @@ QWidget* qSlicerWidget::parentWidget()
 //-----------------------------------------------------------------------------
 bool qSlicerWidget::isParentContainerScrollArea()
 {
-  return (qobject_cast<QScrollArea*>(this->Internal->ParentContainer)!=0);
+  return (qobject_cast<QScrollArea*>(qctk_d()->ParentContainer)!=0);
 }
 
 //-----------------------------------------------------------------------------
 QScrollArea* qSlicerWidget::getScrollAreaParentContainer()
 {
-  return qobject_cast<QScrollArea*>(this->Internal->ParentContainer);
+  return qobject_cast<QScrollArea*>(qctk_d()->ParentContainer);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
 {
+  QCTK_D(qSlicerWidget);
   if (enable)
     {
     if (this->getScrollAreaParentContainer())
@@ -92,9 +87,9 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
     // Add scrollAreaWidgetContents to the scrollArea
     scrollArea->setWidget(scrollAreaWidgetContents);
 
-    this->Internal->ParentContainer = scrollArea;
+    d->ParentContainer = scrollArea;
 
-    this->Internal->ParentContainer->setWindowFlags(this->windowFlags());
+    d->ParentContainer->setWindowFlags(this->windowFlags());
     this->QWidget::setWindowFlags(0);
     }
   else
@@ -105,19 +100,20 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
       }
     this->getScrollAreaParentContainer()->takeWidget();
     this->setParent(0);
-    this->Internal->ParentContainer->deleteLater();
+    d->ParentContainer->deleteLater();
 
-    this->QWidget::setWindowFlags(this->Internal->ParentContainer->windowFlags());
-    this->Internal->ParentContainer->setWindowFlags(0);
+    this->QWidget::setWindowFlags(d->ParentContainer->windowFlags());
+    d->ParentContainer->setWindowFlags(0);
     }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setWindowFlags(Qt::WindowFlags type)
 {
-  if (this->Internal->ParentContainer)
+  QCTK_D(qSlicerWidget);
+  if (d->ParentContainer)
     {
-    this->Internal->ParentContainer->setWindowFlags(type);
+    d->ParentContainer->setWindowFlags(type);
     return;
     }
   this->setWindowFlags(type);
@@ -152,14 +148,14 @@ void qSlicerWidget::setParentVisible(bool visible)
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  this->Internal->MRMLScene = scene;
+  qctk_d()->MRMLScene = scene;
   // TODO Rename signal
   emit mrmlSceneChanged(scene);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
+QCTK_GET_CXX(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-qSlicerSetInternalCxxMacro(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-qSlicerGetInternalCxxMacro(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+QCTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+QCTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);

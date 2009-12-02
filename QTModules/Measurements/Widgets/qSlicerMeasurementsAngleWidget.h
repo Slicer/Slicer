@@ -1,9 +1,15 @@
 #ifndef __qSlicerMeasurementsAngleWidget_h
 #define __qSlicerMeasurementsAngleWidget_h 
 
+// Slicer includes
 #include "qSlicerWidget.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qSlicerMeasurementsModuleWin32Header.h"
+
+class qSlicerMeasurementsAngleWidgetPrivate;
 
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsAngleWidget : public qSlicerWidget
 { 
@@ -13,13 +19,11 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerMeasurementsAngleWidget(QWidget *parent=0);
-  virtual ~qSlicerMeasurementsAngleWidget(); 
   
   virtual void printAdditionalInfo();
 
 private:
-  class qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsAngleWidget);
 };
 
 #endif

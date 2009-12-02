@@ -1,9 +1,14 @@
 #ifndef __qMRMLNodeSelector_h
 #define __qMRMLNodeSelector_h
 
-#include "qCTKAddRemoveComboBox.h"
+// qMRML includes
 #include "qVTKObject.h"
 
+// qCTK includes
+#include <qCTKAddRemoveComboBox.h>
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QString>
 
 #include "qMRMLWidgetsWin32Header.h"
@@ -11,6 +16,7 @@
 class qMRMLNodeFactory; 
 class vtkMRMLScene; 
 class vtkMRMLNode;
+class qMRMLNodeSelectorPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
 {
@@ -25,7 +31,6 @@ public:
   
   // Constructors
   qMRMLNodeSelector(QWidget* parent = 0);
-  virtual ~qMRMLNodeSelector();
   
   // Description:
   // Set/Get node type 
@@ -52,7 +57,7 @@ public:
 
   // Set/Get MRML node factory
   void setMRMLNodeFactory(qMRMLNodeFactory* factory);
-  qMRMLNodeFactory* factory(); 
+  qMRMLNodeFactory* factory()const; 
 
 public slots:
   // Description:
@@ -116,8 +121,7 @@ protected:
   vtkMRMLNode* node(const QString& id)const;
 
 private:
-  struct qInternal; 
-  qInternal * Internal;
+  QCTK_DECLARE_PRIVATE(qMRMLNodeSelector);
 };
 
 #endif

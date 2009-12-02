@@ -1,11 +1,16 @@
 #ifndef __qCTKNumericInput_h
 #define __qCTKNumericInput_h
 
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
 #include <QLineEdit>
 
 #include "qCTKWidgetsWin32Header.h"
 
 class QDoubleValidator;
+class qCTKNumericInputPrivate;
 
 class QCTK_WIDGETS_EXPORT qCTKNumericInput : public QLineEdit
 {
@@ -19,7 +24,6 @@ public:
 
   // Constructors
   qCTKNumericInput(QWidget* parent = 0);
-  virtual ~qCTKNumericInput();
 
   // Description:
   // Set/Get value
@@ -53,8 +57,7 @@ protected slots:
   void onReturnPressed();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qCTKNumericInput);
 
 };
 

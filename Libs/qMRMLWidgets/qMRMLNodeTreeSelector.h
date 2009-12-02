@@ -1,8 +1,15 @@
 #ifndef __qMRMLNodeTreeSelector_h
 #define __qMRMLNodeTreeSelector_h
 
+// qMRML includes
 #include "qMRMLNodeSelector.h"
+
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qMRMLWidgetsWin32Header.h"
+
+class qMRMLNodeTreeSelectorPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeTreeSelector : public qMRMLNodeSelector
 {
@@ -13,16 +20,12 @@ public:
   
   // Constructors
   qMRMLNodeTreeSelector(QWidget* parent = 0);
-  virtual ~qMRMLNodeTreeSelector();
 
 protected:
   virtual void addNodeInternal(vtkMRMLNode* mrmlNode);
+  
 private:
-  void addItemInternal(int index, const QIcon &icon, 
-                       const QString &text, const QVariant &userData);
-
-  struct qInternal; 
-  qInternal * Internal;
+  QCTK_DECLARE_PRIVATE(qMRMLNodeTreeSelector);
 };
 
 #endif

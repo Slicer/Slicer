@@ -1,26 +1,31 @@
 #include "qSlicerTransformsModule.h"
-
 #include "ui_qSlicerTransformsModule.h"
 
-#include "qMRMLUtils.h"
-
+// Slicer Logic includes
 #include "vtkSlicerTransformLogic.h"
+
+// qMRML includes
+#include <qMRMLUtils.h>
+
+// MRML includes
 #include "vtkMRMLLinearTransformNode.h"
 
+// VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkMatrix4x4.h>
 
+// QT includes
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QVector>
-
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerTransformsModule::qInternal : public Ui::qSlicerTransformsModule
+struct qSlicerTransformsModulePrivate: public qCTKPrivate<qSlicerTransformsModule>,
+                                       public Ui_qSlicerTransformsModule
 {
-  qInternal()
+  qSlicerTransformsModulePrivate()
     {
     this->CoordinateReferenceButtonGroup = 0;
     this->MRMLTransformNode = 0;
@@ -30,79 +35,77 @@ struct qSlicerTransformsModule::qInternal : public Ui::qSlicerTransformsModule
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerTransformsModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerTransformsModule);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::setup()
 {
   this->Superclass::setup();
-  Q_ASSERT(this->Internal != 0);
-
-  this->Internal->setupUi(this);
+  QCTK_D(qSlicerTransformsModule);
+  d->setupUi(this);
 
   /* Initialize translation min/max limit
-  double minRange = this->Internal->MinTranslationLimitInput->value();
-  double maxRange = this->Internal->MaxTranslationLimitInput->value();
-  this->Internal->TranslationSliders->setRange(minRange, maxRange);
-  this->Internal->RotationSliders->setRange(minRange, maxRange);
+  double minRange = d->MinTranslationLimitInput->value();
+  double maxRange = d->MaxTranslationLimitInput->value();
+  d->TranslationSliders->setRange(minRange, maxRange);
+  d->RotationSliders->setRange(minRange, maxRange);
   */
 
   // Add coordinate reference button to a button group
-  this->Internal->CoordinateReferenceButtonGroup =
-    new QButtonGroup(this->Internal->CoordinateReferenceGroupBox);
-  this->Internal->CoordinateReferenceButtonGroup->addButton(
-    this->Internal->GlobalRadioButton, qMRMLTransformSliders::GLOBAL);
-  this->Internal->CoordinateReferenceButtonGroup->addButton(
-    this->Internal->LocalRadioButton, qMRMLTransformSliders::LOCAL);
+  d->CoordinateReferenceButtonGroup =
+    new QButtonGroup(d->CoordinateReferenceGroupBox);
+  d->CoordinateReferenceButtonGroup->addButton(
+    d->GlobalRadioButton, qMRMLTransformSliders::GLOBAL);
+  d->CoordinateReferenceButtonGroup->addButton(
+    d->LocalRadioButton, qMRMLTransformSliders::LOCAL);
 
   // Connect button group
-  this->connect(this->Internal->CoordinateReferenceButtonGroup,
+  this->connect(d->CoordinateReferenceButtonGroup,
                 SIGNAL(buttonPressed(int)),
                 SLOT(onCoordinateReferenceButtonPressed(int)));
 
   // Connect identity button
-  this->connect(this->Internal->IdentityPushButton,
+  this->connect(d->IdentityPushButton,
                 SIGNAL(pressed()),
                 SLOT(onIdentityButtonPressed()));
 
   // Connect revert button
-  this->connect(this->Internal->InvertPushButton,
+  this->connect(d->InvertPushButton,
                 SIGNAL(pressed()),
                 SLOT(onInvertButtonPressed()));
 
   /* Connect node selector with translation sliders
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                this->Internal->TranslationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
+  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                d->TranslationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
   */
   /* Connect node selector with rotation sliders
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                this->Internal->RotationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
+  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                d->RotationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
   */
   // Connect node selector with module itself
-  this->connect(this->Internal->TransformNodeSelector,
+  this->connect(d->TransformNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onNodeSelected(vtkMRMLNode*)));
 
   /* Connect node selector with matrix widget
-  this->connect(this->Internal->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                this->Internal->MatrixWidget, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
+  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                d->MatrixWidget, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
   */
   /* Reset Rotation sliders if at least one of the translation sliders is moved
-  this->connect(this->Internal->TranslationSliders, SIGNAL(sliderMoved()),
-                this->Internal->RotationSliders, SLOT(reset()));
+  this->connect(d->TranslationSliders, SIGNAL(sliderMoved()),
+                d->RotationSliders, SLOT(reset()));
   */
   /* Connect min/max translation limit input with translation sliders
-  this->connect(this->Internal->MinTranslationLimitInput, SIGNAL(valueEdited(double)),
-    this->Internal->TranslationSliders, SLOT(setMinimumRange(double)));
-  this->connect(this->Internal->MaxTranslationLimitInput, SIGNAL(valueEdited(double)),
-    this->Internal->TranslationSliders, SLOT(setMaximumRange(double)));
+  this->connect(d->MinTranslationLimitInput, SIGNAL(valueEdited(double)),
+    d->TranslationSliders, SLOT(setMinimumRange(double)));
+  this->connect(d->MaxTranslationLimitInput, SIGNAL(valueEdited(double)),
+    d->TranslationSliders, SLOT(setMaximumRange(double)));
   */
-  this->connect(this->Internal->LoadTransformPushButton, SIGNAL(clicked()),
+  this->connect(d->LoadTransformPushButton, SIGNAL(clicked()),
                 SLOT(loadTransform()));
   QIcon openIcon =
     QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
-  this->Internal->LoadTransformPushButton->setIcon(openIcon);
+  d->LoadTransformPushButton->setIcon(openIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -134,62 +137,72 @@ QString qSlicerTransformsModule::acknowledgementText()const
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onCoordinateReferenceButtonPressed(int id)
 {
+  QCTK_D(qSlicerTransformsModule);
+  
   qMRMLTransformSliders::CoordinateReferenceType ref =
     (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL;
-  this->Internal->TranslationSliders->setCoordinateReference(ref);
-  this->Internal->RotationSliders->setCoordinateReference(ref);
+  d->TranslationSliders->setCoordinateReference(ref);
+  d->RotationSliders->setCoordinateReference(ref);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onNodeSelected(vtkMRMLNode* node)
 {
+  QCTK_D(qSlicerTransformsModule);
+  
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
 
   // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox,
   // Min/Max translation inputs
-  this->Internal->CoordinateReferenceGroupBox->setEnabled(transformNode != 0);
-  this->Internal->IdentityPushButton->setEnabled(transformNode != 0);
-  this->Internal->InvertPushButton->setEnabled(transformNode != 0);
-  this->Internal->MatrixViewGroupBox->setEnabled(transformNode != 0);
-  //this->Internal->MinTranslationLimitLabel->setEnabled(transformNode != 0);
-  //this->Internal->MaxTranslationLimitLabel->setEnabled(transformNode != 0);
-  //this->Internal->MinTranslationLimitInput->setEnabled(transformNode != 0);
-  //this->Internal->MaxTranslationLimitInput->setEnabled(transformNode != 0);
+  d->CoordinateReferenceGroupBox->setEnabled(transformNode != 0);
+  d->IdentityPushButton->setEnabled(transformNode != 0);
+  d->InvertPushButton->setEnabled(transformNode != 0);
+  d->MatrixViewGroupBox->setEnabled(transformNode != 0);
+  //d->MinTranslationLimitLabel->setEnabled(transformNode != 0);
+  //d->MaxTranslationLimitLabel->setEnabled(transformNode != 0);
+  //d->MinTranslationLimitInput->setEnabled(transformNode != 0);
+  //d->MaxTranslationLimitInput->setEnabled(transformNode != 0);
 
   // Listen for Transform node changes
-  this->qvtkReconnect(this->Internal->MRMLTransformNode, transformNode,
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
     vtkMRMLTransformableNode::TransformModifiedEvent,
     this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
 
-  this->Internal->MRMLTransformNode = transformNode;
+  d->MRMLTransformNode = transformNode;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onIdentityButtonPressed()
 {
-  if (!this->Internal->MRMLTransformNode) { return; }
+  QCTK_D(qSlicerTransformsModule);
+  
+  if (!d->MRMLTransformNode) { return; }
 
-  this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
-  this->Internal->RotationSliders->reset();
+  d->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
+  d->RotationSliders->reset();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onInvertButtonPressed()
 {
-  if (!this->Internal->MRMLTransformNode) { return; }
+  QCTK_D(qSlicerTransformsModule);
+  
+  if (!d->MRMLTransformNode) { return; }
 
-  this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
-  this->Internal->RotationSliders->reset();
+  d->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
+  d->RotationSliders->reset();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
 {
+  QCTK_D(qSlicerTransformsModule);
+  
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
 
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode,
+  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
     this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
 
   // The matrix can be changed externally. The min/max values shall be updated accordingly to
@@ -198,15 +211,15 @@ void qSlicerTransformsModule::onMRMLTransformNodeModified(void* /*call_data*/, v
   double min = 0.;
   double max = 0.;
   this->extractMinMaxTranslationValue(mat, min, max);
-  if (min < this->Internal->TranslationSliders->minimum())
+  if (min < d->TranslationSliders->minimum())
     {
     min = min - 0.3 * fabs(min);
-    this->Internal->TranslationSliders->setMinimum(min);
+    d->TranslationSliders->setMinimum(min);
     }
-  if (max > this->Internal->TranslationSliders->maximum())
+  if (max > d->TranslationSliders->maximum())
     {
     max = max + 0.3 * fabs(max);
-    this->Internal->TranslationSliders->setMaximum(max);
+    d->TranslationSliders->setMaximum(max);
     }
 }
 
@@ -229,7 +242,7 @@ void qSlicerTransformsModule::extractMinMaxTranslationValue(
 //-----------------------------------------------------------------------------
 int qSlicerTransformsModule::coordinateReference()
 {
-  return this->Internal->CoordinateReferenceButtonGroup->checkedId();
+  return qctk_d()->CoordinateReferenceButtonGroup->checkedId();
 }
 
 //-----------------------------------------------------------------------------

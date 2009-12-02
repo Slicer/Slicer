@@ -9,25 +9,23 @@
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesModule::qInternal: public Ui::qSlicerVolumesModule
+struct qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>,
+                                    public Ui_qSlicerVolumesModule
 {
-public:
-  qInternal()
+  qSlicerVolumesModulePrivate()
     {
     }
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerVolumesModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerVolumesModule);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerVolumesModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
-  Q_ASSERT(this->Internal != 0);
-
-  this->Internal->setupUi(this);
+  QCTK_D(qSlicerVolumesModule);
+  d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------

@@ -2,50 +2,44 @@
 
 #include "ui_qSlicerMainWindow.h" 
 
+// SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerMainWindowCore.h"
 
+// QT includes
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMainWindow::qInternal : public Ui::qSlicerMainWindow
+struct qSlicerMainWindowPrivate: public qCTKPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
 {
-  qInternal()
+  QCTK_DECLARE_PUBLIC(qSlicerMainWindow);
+  qSlicerMainWindowPrivate()
     {
     this->Core = 0;
     }
-  qSlicerMainWindowCore* Core; 
+  qSlicerMainWindowCore* Core;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerMainWindow::qSlicerMainWindow(QWidget *parent)
  :Superclass(parent)
 {
-  this->Internal = new qInternal;
-  this->Internal->setupUi(this);
+  QCTK_INIT_PRIVATE(qSlicerMainWindow);
+  qctk_d()->setupUi(this);
   
   // Main window core helps to coordinate various widgets and panels
-  this->Internal->Core = new qSlicerMainWindowCore(this);
+  qctk_d()->Core = new qSlicerMainWindowCore(this);
   
-  this->setupMenuActions(); 
+  this->setupMenuActions();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindow::~qSlicerMainWindow()
-{
-  delete this->Internal; 
-}
-
-//-----------------------------------------------------------------------------
-qSlicerMainWindowCore* qSlicerMainWindow::core()
-{
-  return this->Internal->Core;
-}
+QCTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
 {
   this->connect(
-    this->Internal->actionFileExit, SIGNAL(triggered()), 
+    qctk_d()->actionFileExit, SIGNAL(triggered()),
     qSlicerApplication::instance(), SLOT(quit()));
 }

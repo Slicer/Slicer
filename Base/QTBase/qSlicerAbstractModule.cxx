@@ -7,9 +7,9 @@
 #include "vtkMRMLScene.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerAbstractModule::qInternal
+struct qSlicerAbstractModulePrivate: public qCTKPrivate<qSlicerAbstractModule>
 {
-  qInternal()
+  qSlicerAbstractModulePrivate()
     {
     this->ModuleEnabled = false;
     }
@@ -17,13 +17,7 @@ struct qSlicerAbstractModule::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerAbstractModule, QWidget*);
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractModule::~qSlicerAbstractModule()
-{
-  delete this->Internal;
-}
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
@@ -46,13 +40,6 @@ QString qSlicerAbstractModule::name()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractModule::moduleEnabled()
-{
-  return this->Internal->ModuleEnabled;
-}
+QCTK_GET_CXX(qSlicerAbstractModule, bool, moduleEnabled, ModuleEnabled);
+QCTK_SET_CXX(qSlicerAbstractModule, bool, setModuleEnabled, ModuleEnabled);
 
-//-----------------------------------------------------------------------------
-void qSlicerAbstractModule::setModuleEnabled(bool value)
-{
-  this->Internal->ModuleEnabled = value;
-}

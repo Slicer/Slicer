@@ -1,21 +1,23 @@
 #include "qMRMLNodeFactory.h"
+
+// qMRML includes
 #include "qMRMLUtils.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
+#include <vtkMRMLScene.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
+#include <vtkSmartPointer.h>
 
 // QT includes
 #include <QHash>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLNodeFactory::qInternal
+struct qMRMLNodeFactoryPrivate: public qCTKPrivate<qMRMLNodeFactory>
 {
 public:
-  qInternal()
+  qMRMLNodeFactoryPrivate()
     {
     this->MRMLScene = 0; 
     }
@@ -26,26 +28,12 @@ public:
 // --------------------------------------------------------------------------
 qMRMLNodeFactory::qMRMLNodeFactory(QObject* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
+  QCTK_INIT_PRIVATE(qMRMLNodeFactory);
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeFactory::~qMRMLNodeFactory()
-{
-  delete this->Internal; 
-}
-
-// --------------------------------------------------------------------------
-void qMRMLNodeFactory::setMRMLScene(vtkMRMLScene* mrmlScene)
-{
-  this->Internal->MRMLScene = mrmlScene;
-}
-
-// --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLNodeFactory::mrmlScene()
-{
-  return this->Internal->MRMLScene; 
-}
+QCTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
+QCTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(const char* className)
@@ -56,15 +44,17 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const char* className)
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
-  Q_ASSERT(this->Internal->MRMLScene);
+  QCTK_D(qMRMLNodeFactory);
+  
+  Q_ASSERT(d->MRMLScene);
   Q_ASSERT(!className.isEmpty());
-  if (!this->Internal->MRMLScene || className.isEmpty())
+  if (!d->MRMLScene || className.isEmpty())
     {
     return 0; 
     }
 
   vtkSmartPointer<vtkMRMLNode> node; 
-  node.TakeReference( this->Internal->MRMLScene->CreateNodeByClass( className.toLatin1().data() ) );
+  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1().data() ) );
   
   Q_ASSERT(node);
   if (node == NULL)
@@ -72,18 +62,18 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return 0;
     }
   
-  node->SetScene( this->Internal->MRMLScene );
-  node->SetName( this->Internal->MRMLScene->GetUniqueNameByString(
-    this->Internal->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
+  node->SetScene( d->MRMLScene );
+  node->SetName( d->MRMLScene->GetUniqueNameByString(
+    d->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
   
-  vtkMRMLNode * nodeCreated = this->Internal->MRMLScene->AddNode(node);
+  vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
   qDebug() << "createAndAddNodeToSceneByClass - Set name to:" 
            << nodeCreated->GetName() << "(" << nodeCreated->GetID() << ")";
 
   Q_ASSERT(nodeCreated);
   
   // Set node attributes
-  QHashIterator<QString, QString> i(this->Internal->Attributes);
+  QHashIterator<QString, QString> i(d->Attributes);
   while (i.hasNext())
     {
     i.next();
@@ -95,5 +85,5 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 //------------------------------------------------------------------------------
 void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
 {
-  this->Internal->Attributes.insert(name, value);
+  qctk_d()->Attributes.insert(name, value);
 }

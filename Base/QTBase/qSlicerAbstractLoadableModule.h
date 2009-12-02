@@ -3,7 +3,11 @@
 
 #include "qSlicerAbstractModule.h"
 
+#include <qCTKPimpl.h>
+
 #include "qSlicerBaseQTBaseWin32Header.h"
+
+class qSlicerAbstractLoadableModulePrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractLoadableModule : public qSlicerAbstractModule
 {
@@ -13,7 +17,6 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerAbstractLoadableModule(QWidget *parent=0);
-  virtual ~qSlicerAbstractLoadableModule();
 
   virtual void printAdditionalInfo();
 
@@ -26,8 +29,7 @@ protected:
   virtual void setup();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerAbstractLoadableModule);
 };
 
 Q_DECLARE_INTERFACE(qSlicerAbstractLoadableModule,

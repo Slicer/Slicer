@@ -1,9 +1,15 @@
 #ifndef __qSlicerVolumesModule_h
 #define __qSlicerVolumesModule_h
 
+// Slicer includes
 #include "qSlicerAbstractLoadableModule.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qSlicerVolumesModuleWin32Header.h"
+
+class qSlicerVolumesModulePrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
   public qSlicerAbstractLoadableModule
@@ -15,7 +21,6 @@ public:
 
   typedef qSlicerAbstractLoadableModule Superclass;
   qSlicerVolumesModule(QWidget *parent=0);
-  virtual ~qSlicerVolumesModule();
 
   virtual void printAdditionalInfo();
 
@@ -25,8 +30,7 @@ protected:
   virtual void setup();
 
 private:
-  class qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerVolumesModule);
 };
 
 #endif

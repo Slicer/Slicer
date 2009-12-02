@@ -66,19 +66,19 @@ struct DigitsToCharacters
 };
 
 //-----------------------------------------------------------------------------
-struct qSlicerCLIModuleLogic::qInternal
+struct qSlicerCLIModuleLogicPrivate: public qCTKPrivate<qSlicerCLIModuleLogic>
 {
-  qInternal(qSlicerCLIModuleLogic* moduleLogic): ModuleLogic(moduleLogic)
+  QCTK_DECLARE_PUBLIC(qSlicerCLIModuleLogic);
+  qSlicerCLIModuleLogicPrivate()
     {
     // For debug purposes
     this->RedirectModuleStreams = false;
     this->deleteTemporaryFiles = true;
 
     this->entryPointFunc = NULL;
-    this->commandType = CommandLineModule;
+    this->commandType = qSlicerCLIModuleLogic::CommandLineModule;
     this->commandLineModuleNode = 0;
     }
-  qSlicerCLIModuleLogic * ModuleLogic;
 
   std::string FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p);
 
@@ -87,7 +87,7 @@ struct qSlicerCLIModuleLogic::qInternal
   typedef int (*EntryPointFunc)(int argc, char* argv[]);
   EntryPointFunc entryPointFunc;
 
-  CommandLineModuleType commandType;
+  qSlicerCLIModuleLogic::CommandLineModuleType commandType;
 
   vtkMRMLCommandLineModuleNode* commandLineModuleNode;
 
@@ -102,8 +102,7 @@ struct qSlicerCLIModuleLogic::qInternal
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalBckPtrConstructor1Macro(qSlicerCLIModuleLogic, QObject*);
-qSlicerCxxDestructorMacro(qSlicerCLIModuleLogic);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCLIModuleLogic, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleLogic::printAdditionalInfo()
@@ -115,12 +114,6 @@ void qSlicerCLIModuleLogic::printAdditionalInfo()
 void qSlicerCLIModuleLogic::setup()
 {
 
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCLIModuleLogic::setDeleteTemporaryFiles(bool enable)
-{
-  this->Internal->deleteTemporaryFiles = enable;
 }
 
 //----------------------------------------------------------------------------
@@ -140,7 +133,8 @@ void qSlicerCLIModuleLogic::stringListToArray(const QStringList& list, std::vect
 //----------------------------------------------------------------------------
 void qSlicerCLIModuleLogic::ProgressCallback ( void *who )
 {
-  qInternal::LogicNodePair *lnp = reinterpret_cast<qInternal::LogicNodePair*>(who);
+  qSlicerCLIModuleLogicPrivate::LogicNodePair *lnp =
+    reinterpret_cast<qSlicerCLIModuleLogicPrivate::LogicNodePair*>(who);
   Q_ASSERT(lnp);
   if (!lnp)
     {
@@ -154,26 +148,16 @@ void qSlicerCLIModuleLogic::ProgressCallback ( void *who )
 }
 
 //----------------------------------------------------------------------------
-void qSlicerCLIModuleLogic::SetTemporaryDirectory(const char *tempdir)
-{
-  this->Internal->TemporaryDirectory = tempdir;
-}
+QCTK_SET_CXX(qSlicerCLIModuleLogic, const char *, SetTemporaryDirectory, TemporaryDirectory);
+QCTK_GET_CXX(qSlicerCLIModuleLogic, const char *, GetTemporaryDirectory, TemporaryDirectory.c_str());
 
-//----------------------------------------------------------------------------
-const char *qSlicerCLIModuleLogic::GetTemporaryDirectory() const
-{
-  return this->Internal->TemporaryDirectory.c_str();
-}
-
-//----------------------------------------------------------------------------
-bool qSlicerCLIModuleLogic::deleteTemporaryFiles()
-{
-  return this->Internal->deleteTemporaryFiles;
-}
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCLIModuleLogic, bool, setDeleteTemporaryFiles, deleteTemporaryFiles);
+QCTK_GET_CXX(qSlicerCLIModuleLogic, bool, deleteTemporaryFiles, deleteTemporaryFiles);
 
 //----------------------------------------------------------------------------
 std::string
-qSlicerCLIModuleLogic::qInternal::FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p)
+qSlicerCLIModuleLogicPrivate::FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p)
 {
   std::string id = "None";
 
@@ -193,7 +177,7 @@ qSlicerCLIModuleLogic::qInternal::FindHiddenNodeID(const ModuleDescription& d, c
             // go to the display node for the reference parameter and
             // get its color node
             vtkMRMLDisplayableNode *rn
-              = vtkMRMLDisplayableNode::SafeDownCast(this->ModuleLogic->mrmlScene()
+              = vtkMRMLDisplayableNode::SafeDownCast(qctk_p()->mrmlScene()
                                             ->GetNodeByID(reference.c_str()));
             if (rn)
               {
@@ -296,7 +280,7 @@ qSlicerCLIModuleLogic
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname + ".mrml";
+  fname = qctk_d()->TemporaryDirectory + "/" + pid + "_" + fname + ".mrml";
 
   return fname;
 }
@@ -363,7 +347,7 @@ std::string qSlicerCLIModuleLogic::constructTemporaryFileName(const std::string&
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname;
+  fname = qctk_d()->TemporaryDirectory + "/" + pid + "_" + fname;
 
   if (tag == "image")
     {
@@ -474,7 +458,7 @@ void qSlicerCLIModuleLogic::applyTask(void *clientdata)
 
   // Set the callback for progress.  This will only be used for the
   // scope of this function.
-  qInternal::LogicNodePair lnp( this, node0 );
+  qSlicerCLIModuleLogicPrivate::LogicNodePair lnp( this, node0 );
   node0->GetModuleDescription().GetProcessInformation()
     ->SetProgressCallback( qSlicerCLIModuleLogic::ProgressCallback, &lnp );
 
@@ -488,7 +472,7 @@ void qSlicerCLIModuleLogic::applyTask(void *clientdata)
 //    std::string::size_type pos = target.find("slicer:");
 //    if (pos != std::string::npos && pos == 0)
 //      {
-//      sscanf(target.c_str(), "slicer:%p", &this->Internal->entryPointFunc);
+//      sscanf(target.c_str(), "slicer:%p", &qctk_d()->entryPointFunc);
 //      }
 //
 //    // Assume that the modules correctly report themselves
@@ -549,15 +533,17 @@ void qSlicerCLIModuleLogic::applyTask(void *clientdata)
 
    QStringList commandLineAsString;
 
-   this->getModuleInputAndOutputNode(this->Internal->commandType, node0, this->NodesToWrite, this->NodesToReload);
-   this->generateInputDatasets(this->Internal->commandType, miniscene, sceneToMiniSceneMap, this->NodesToWrite);
+   QCTK_D(qSlicerCLIModuleLogic);
+
+   this->getModuleInputAndOutputNode(d->commandType, node0, this->NodesToWrite, this->NodesToReload);
+   this->generateInputDatasets(d->commandType, miniscene, sceneToMiniSceneMap, this->NodesToWrite);
    this->addOutputNodeToMiniScene(minisceneFilename, miniscene, sceneToMiniSceneMap, this->NodesToReload);
    this->buildCommandLine(minisceneFilename, node0, sceneToMiniSceneMap,
-     this->Internal->commandType, target, commandLineAsString); // TODO get the target
+     d->commandType, target, commandLineAsString); // TODO get the target
    this->processParametersWithIndices(minisceneFilename, node0, sceneToMiniSceneMap, commandLineAsString);
 //    this->generateCommand(node0, commandLineAsString);
 
-   this->runFilter(node0, commandLineAsString, this->Internal->commandType);
+   this->runFilter(node0, commandLineAsString, d->commandType);
 
    this->onExecutionTerminated(node0, sceneToMiniSceneMap);
    this->requestloadMinisceneLoading(minisceneFilename, node0, miniscene, sceneToMiniSceneMap);
@@ -594,7 +580,7 @@ void qSlicerCLIModuleLogic::getModuleInputAndOutputNode(CommandLineModuleType co
         // if the parameter is hidden, then deduce its value/id
         if ((*pit).GetHidden() == "true")
           {
-          id = this->Internal->FindHiddenNodeID(node0->GetModuleDescription(), *pit);
+          id = qctk_d()->FindHiddenNodeID(node0->GetModuleDescription(), *pit);
 
           // cache the id so we don't have to look for it later
           (*pit).SetDefault( id );
@@ -613,7 +599,7 @@ void qSlicerCLIModuleLogic::getModuleInputAndOutputNode(CommandLineModuleType co
                                              (*pit).GetFileExtensions(),
                                              commandType);
 
-        this->Internal->filesToDelete.insert(fname);
+        qctk_d()->filesToDelete.insert(fname);
 
         if ((*pit).GetChannel() == "input")
           {
@@ -1364,8 +1350,8 @@ void qSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode *
         // now, he/she will still be looking at the node by the time the
         // data is reloaded by the main thread.
         bool displayData = false;
-        bool deleteFile = this->Internal->deleteTemporaryFiles;
-        displayData = (node0 == this->Internal->commandLineModuleNode);
+        bool deleteFile = qctk_d()->deleteTemporaryFiles;
+        displayData = (node0 == qctk_d()->commandLineModuleNode);
         this->appLogic()->RequestReadData((*id2fn0).first.c_str(),
                                           (*id2fn0).second.c_str(),
                                           displayData, deleteFile);
@@ -1373,7 +1359,7 @@ void qSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode *
         // If we are reloading a file, then we know that it is a file
         // that needs to be removed.  It wouldn't make sense for two
         // outputs of a module to produce the same file to be reloaded.
-        this->Internal->filesToDelete.erase( (*id2fn0).second );
+        qctk_d()->filesToDelete.erase( (*id2fn0).second );
         }
       }
 
@@ -1448,7 +1434,7 @@ void qSlicerCLIModuleLogic::requestloadMinisceneLoading(const std::string& minis
   // if there was a miniscene that needs loading, request it
   if (miniscene->GetNumberOfNodes() > 0)
     {
-    bool displayData = (node0 == this->Internal->commandLineModuleNode);
+    bool displayData = (node0 == qctk_d()->commandLineModuleNode);
 //
     // Convert the index map to two vectors so that we can pass it to
     // a function in a different library (Win32 limitation)
@@ -1484,11 +1470,11 @@ void qSlicerCLIModuleLogic::cleanUp()
 
   // Remove any remaining temporary files.  At this point, these files
   // should be the files written as inputs to the module
-  if ( this->Internal->deleteTemporaryFiles )
+  if ( qctk_d()->deleteTemporaryFiles )
     {
     bool removed;
     std::set<std::string>::iterator fit;
-    for (fit = this->Internal->filesToDelete.begin(); fit != this->Internal->filesToDelete.end(); ++fit)
+    for (fit = qctk_d()->filesToDelete.begin(); fit != qctk_d()->filesToDelete.end(); ++fit)
       {
       if (itksys::SystemTools::FileExists((*fit).c_str()))
         {
@@ -1832,7 +1818,7 @@ void qSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode *
   int returnValue = 0;
   try
     {
-    if (this->Internal->RedirectModuleStreams)
+    if (qctk_d()->RedirectModuleStreams)
       {
       // redirect the streams
       std::cout.rdbuf( coutstringstream.rdbuf() );
@@ -1845,8 +1831,8 @@ void qSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode *
     Self::stringListToArray(argList, argv);
 
     // run the module
-    if ( this->Internal->entryPointFunc != NULL ) {
-      returnValue = this->Internal->entryPointFunc(argc, &argv[0]);
+    if ( qctk_d()->entryPointFunc != NULL ) {
+      returnValue = qctk_d()->entryPointFunc(argc, &argv[0]);
     }
 
     // report the output
@@ -1873,7 +1859,7 @@ void qSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode *
                   << QString::fromStdString(cerrstringstream.str());
       }
 
-    if (this->Internal->RedirectModuleStreams)
+    if (qctk_d()->RedirectModuleStreams)
       {
       // reset the streams
       std::cout.rdbuf( origcoutrdbuf );

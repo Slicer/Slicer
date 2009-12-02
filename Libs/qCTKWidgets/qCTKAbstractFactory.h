@@ -92,7 +92,7 @@ public:
   //----------------------------------------------------------------------------
   // Description:
   // Get list of all registered item names
-  QStringList names()
+  QStringList names() const
     {
     // Since by construction, we checked if a name was already in the QHash,
     // there is no need to call 'uniqueKeys'

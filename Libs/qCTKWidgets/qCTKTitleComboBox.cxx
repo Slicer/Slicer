@@ -4,17 +4,20 @@
 #include <QApplication>
 #include <QDebug>
 
+// -------------------------------------------------------------------------
 qCTKTitleComboBox::qCTKTitleComboBox(QWidget* parent)
   : QComboBox(parent)
 {
   this->Title = "Select an item...";
 }
 
+// -------------------------------------------------------------------------
 qCTKTitleComboBox::~qCTKTitleComboBox()
 {
   
 }
 
+// -------------------------------------------------------------------------
 void qCTKTitleComboBox::setTitle(const QString& title)
 {
   this->Title = title;
@@ -22,11 +25,13 @@ void qCTKTitleComboBox::setTitle(const QString& title)
   this->updateGeometry();
 }
 
+// -------------------------------------------------------------------------
 QString qCTKTitleComboBox::title()const
 {
   return this->Title;
 }
-  
+
+// -------------------------------------------------------------------------
 void qCTKTitleComboBox::setIcon(const QIcon& icon)
 {
   this->Icon = icon;
@@ -34,11 +39,13 @@ void qCTKTitleComboBox::setIcon(const QIcon& icon)
   this->updateGeometry();
 }
 
+// -------------------------------------------------------------------------
 QIcon qCTKTitleComboBox::icon()const
 {
   return this->Icon;
 }
 
+// -------------------------------------------------------------------------
 void qCTKTitleComboBox::paintEvent(QPaintEvent*)
 {
   QStylePainter painter(this);
@@ -63,11 +70,13 @@ void qCTKTitleComboBox::paintEvent(QPaintEvent*)
   painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
 }
 
+// -------------------------------------------------------------------------
 QSize qCTKTitleComboBox::minimumSizeHint() const
 {
   return this->recomputeSizeHint(this->SizeHint);
 }
 
+// -------------------------------------------------------------------------
 /*!
     \reimp
 
@@ -80,6 +89,7 @@ QSize qCTKTitleComboBox::sizeHint() const
   return this->recomputeSizeHint(this->SizeHint);
 }
 
+// -------------------------------------------------------------------------
 QSize qCTKTitleComboBox::recomputeSizeHint(QSize &sh) const
 {
   if (sh.isValid()) 

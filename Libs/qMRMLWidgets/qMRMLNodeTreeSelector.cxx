@@ -1,35 +1,35 @@
 
 #include "qMRMLNodeTreeSelector.h"
-#include "qCTKTreeComboBox.h"
+#include <qCTKTreeComboBox.h>
 
 #include <vtkMRMLNode.h>
 #include <QStandardItemModel>
 
 //-----------------------------------------------------------------------------
-struct qMRMLNodeTreeSelector::qInternal
+struct qMRMLNodeTreeSelectorPrivate: public qCTKPrivate<qMRMLNodeTreeSelector>
 {
-  qInternal()
+  qMRMLNodeTreeSelectorPrivate()
     {
     }
+
+  void addItemInternal(int index, const QIcon &icon, 
+                       const QString &text, const QVariant &userData);
 };
 
 // --------------------------------------------------------------------------
 qMRMLNodeTreeSelector::qMRMLNodeTreeSelector(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal; 
+  QCTK_INIT_PRIVATE(qMRMLNodeTreeSelector);
+  
   qCTKTreeComboBox* comboBox = new qCTKTreeComboBox;
   this->setComboBox(comboBox);
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeTreeSelector::~qMRMLNodeTreeSelector()
-{
-  delete this->Internal; 
-}
-
-// --------------------------------------------------------------------------
 void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
 {
+  QCTK_D(qMRMLNodeTreeSelector);
+
   QString categoryName = QString::fromAscii(mrmlNode->GetAttribute("Category"));
   if (categoryName.isEmpty())
     {// normal node, add it as a top-level node
@@ -54,7 +54,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
       QStandardItem* item = standardModel->itemFromIndex(categoryModelIndex);
       item->setSelectable(false);
       }
-    }  
+    }
   else
     {
     categoryModelIndex = this->model()->index(categoryIndex, this->modelColumn(), rootModelIndex);
@@ -62,18 +62,24 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
 
   this->setRootModelIndex(categoryModelIndex);
   int index = this->count();
-  // inserting the node through the combobox doesn't work as it doesn't 
+  // inserting the node through the combobox doesn't work as it doesn't
   // take into account the rootModeIndex. We have to do it manually
   //this->qMRMLNodeSelector::addNodeInternal(mrmlNode);
-  this->addItemInternal(index, QIcon(), 
-                  QString::fromAscii(mrmlNode->GetName()), QString::fromAscii(mrmlNode->GetID()));
+  d->addItemInternal(index, QIcon(),
+                     QString::fromAscii(mrmlNode->GetName()), QString::fromAscii(mrmlNode->GetID()));
   this->setRootModelIndex(rootModelIndex);
 }
 
-void qMRMLNodeTreeSelector::addItemInternal(int index, const QIcon &icon, 
-                                            const QString &text, const QVariant &userData)
+// --------------------------------------------------------------------------
+// qMRMLNodeTreeSelectorPrivate methods
+
+// --------------------------------------------------------------------------
+void qMRMLNodeTreeSelectorPrivate::addItemInternal(int index, const QIcon &icon, 
+                                                   const QString &text, const QVariant &userData)
 {
-  int itemCount = this->count();
+  QCTK_P(qMRMLNodeTreeSelector);
+  
+  int itemCount = p->count();
   index = qBound(0, index, itemCount);
   
   // if (index >= d->maxCount)
@@ -83,12 +89,12 @@ void qMRMLNodeTreeSelector::addItemInternal(int index, const QIcon &icon,
   
   //d->inserting = true;
 
-  if (this->model()->insertRows(index, 1, this->rootModelIndex())) 
+  if (p->model()->insertRows(index, 1, p->rootModelIndex()))
     {
-    QModelIndex item = this->model()->index(index, this->modelColumn(), this->rootModelIndex());
+    QModelIndex item = p->model()->index(index, p->modelColumn(), p->rootModelIndex());
     if (icon.isNull() && !userData.isValid()) 
       {
-      this->model()->setData(item, text, Qt::EditRole);
+      p->model()->setData(item, text, Qt::EditRole);
       } 
     else 
       {
@@ -96,7 +102,7 @@ void qMRMLNodeTreeSelector::addItemInternal(int index, const QIcon &icon,
       if (!text.isNull()) values.insert(Qt::EditRole, text);
       if (!icon.isNull()) values.insert(Qt::DecorationRole, icon);
       if (userData.isValid()) values.insert(Qt::UserRole, userData);
-      if (!values.isEmpty()) this->model()->setItemData(item, values);
+      if (!values.isEmpty()) p->model()->setItemData(item, values);
       }
     //d->inserting = false;
     //d->_q_rowsInserted(d->root, index, index);

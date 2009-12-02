@@ -3,6 +3,8 @@
 
 #include "qSlicerWidget.h"
 
+#include <qCTKPimpl.h>
+
 #define qSlicerGetTitleMacro(_TITLE)               \
   static QString staticTitle() { return _TITLE; }  \
   virtual QString title()const { return _TITLE; }
@@ -11,6 +13,7 @@
 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
+class qSlicerAbstractModulePrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public qSlicerWidget
 {
@@ -20,7 +23,6 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerAbstractModule(QWidget *parent=0);
-  virtual ~qSlicerAbstractModule();
 
   virtual void printAdditionalInfo();
 
@@ -52,7 +54,7 @@ public slots:
 
   // Description:
   // Set/Get module enabled
-  bool moduleEnabled();
+  bool moduleEnabled()const;
   virtual void setModuleEnabled(bool value);
 
 protected:
@@ -61,8 +63,7 @@ protected:
   virtual void setup() = 0;
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerAbstractModule);
 
   // Description:
   // Indicate if the module has already been initialized

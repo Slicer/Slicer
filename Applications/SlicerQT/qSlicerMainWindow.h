@@ -1,11 +1,16 @@
 #ifndef __qSlicerMainWindow_h
 #define __qSlicerMainWindow_h 
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QMainWindow>
 
 #include "qSlicerQTWin32Header.h"
 
-class qSlicerMainWindowCore; 
+class qSlicerMainWindowCore;
+class qSlicerMainWindowPrivate;
 
 class Q_SLICERQT_EXPORT qSlicerMainWindow : public QMainWindow
 {
@@ -15,11 +20,10 @@ public:
   
   typedef QMainWindow Superclass;
   qSlicerMainWindow(QWidget *parent=0);
-  virtual ~qSlicerMainWindow();
   
   // Description:
   // Return the main window core.
-  qSlicerMainWindowCore* core(); 
+  qSlicerMainWindowCore* core()const; 
   
 protected:
 
@@ -28,8 +32,7 @@ protected:
   void setupMenuActions();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerMainWindow);
 };
 
 #endif

@@ -1,13 +1,17 @@
 #ifndef __qMRMLNodeFactory_h
 #define __qMRMLNodeFactory_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 // QT includes
 #include <QObject>
 
 #include "qMRMLWidgetsWin32Header.h"
  
 class vtkMRMLNode;
-class vtkMRMLScene; 
+class vtkMRMLScene;
+class qMRMLNodeFactoryPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
@@ -20,12 +24,11 @@ public:
   
   // Constructors
   qMRMLNodeFactory(QObject* parent);
-  virtual ~qMRMLNodeFactory();
   
   // Description:
   // Set/Get MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
-  vtkMRMLScene* mrmlScene();
+  vtkMRMLScene* mrmlScene()const;
 
   // Description:
   // Create and add a node given its classname to the scene associated with the factory
@@ -39,8 +42,7 @@ public:
   void addAttribute(const QString& name, const QString& value);
 
 private:
-  struct qInternal; 
-  qInternal* Internal; 
+  QCTK_DECLARE_PRIVATE(qMRMLNodeFactory);
 }; 
 
 #endif

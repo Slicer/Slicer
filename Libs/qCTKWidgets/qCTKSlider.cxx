@@ -1,16 +1,19 @@
 
 #include "qCTKSlider.h"
 
+// QT includes
 #include <QDebug>
 
+// STL includes
 #include <math.h>
 
+// Helper Macro
 #define qCTKSlider_IS_DBL(X) (!(X == static_cast<double>(static_cast<int>(X))))
 
 //-----------------------------------------------------------------------------
-struct qCTKSlider::qInternal
+struct qCTKSliderPrivate: public qCTKPrivate<qCTKSlider>
 {
-  qInternal()
+  qCTKSliderPrivate()
     {
     this->SingleStep = 1;
     this->HandleDouble = false;
@@ -28,16 +31,10 @@ struct qCTKSlider::qInternal
 // --------------------------------------------------------------------------
 qCTKSlider::qCTKSlider(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
+  QCTK_INIT_PRIVATE(qCTKSlider);
 
   this->connect(this, SIGNAL(valueChanged(int)), SLOT(onValueChanged(int)));
   this->connect(this, SIGNAL(sliderMoved(int)), SLOT(onSliderMoved(int)));
-}
-
-// --------------------------------------------------------------------------
-qCTKSlider::~qCTKSlider()
-{
-  delete this->Internal;
 }
 
 // --------------------------------------------------------------------------
@@ -55,10 +52,12 @@ void qCTKSlider::setMaximumRange(double max)
 // --------------------------------------------------------------------------
 void qCTKSlider::setRange(double min, double max)
 {
-  if (this->Internal->HandleDouble)
+  QCTK_D(qCTKSlider);
+  
+  if (d->HandleDouble)
     {
-    min = min / this->Internal->SingleStep;
-    max = max / this->Internal->SingleStep;
+    min = min / d->SingleStep;
+    max = max / d->SingleStep;
     }
   this->Superclass::setRange(static_cast<int>(min), static_cast<int>(max));
 }
@@ -66,19 +65,19 @@ void qCTKSlider::setRange(double min, double max)
 // --------------------------------------------------------------------------
 double qCTKSlider::minimumAsDbl()
 {
-  return this->Superclass::minimum() * this->Internal->SingleStep;
+  return this->Superclass::minimum() * qctk_d()->SingleStep;
 }
 
 // --------------------------------------------------------------------------
 double qCTKSlider::maximumAsDbl()
 {
-  return this->Superclass::maximum() * this->Internal->SingleStep;
+  return this->Superclass::maximum() * qctk_d()->SingleStep;
 }
 
 // --------------------------------------------------------------------------
 double qCTKSlider::sliderPositionAsDbl()
 {
-  return this->Superclass::sliderPosition() * this->Internal->SingleStep;
+  return this->Superclass::sliderPosition() * qctk_d()->SingleStep;
 }
 
 // --------------------------------------------------------------------------
@@ -88,15 +87,12 @@ void qCTKSlider::setSliderPosition(double position)
 }
 
 // -------------------------------------------------------------------------
-double qCTKSlider::previousSliderPosition()
-{
-  return this->Internal->PreviousPosition;
-}
+QCTK_GET_CXX(qCTKSlider, double, previousSliderPosition, PreviousPosition);
 
 // --------------------------------------------------------------------------
-double qCTKSlider::valueAsDbl()
+double qCTKSlider::valueAsDbl()const
 {
-  return this->Superclass::value() * this->Internal->SingleStep;
+  return this->Superclass::value() * qctk_d()->SingleStep;
 }
 
 // --------------------------------------------------------------------------
@@ -104,26 +100,25 @@ void qCTKSlider::setValue(double value)
 {
   this->Superclass::setValue(this->fromDoubleToInteger(value));
   emit this->valueChanged(value);
-  this->Internal->PreviousPosition = value;
+  qctk_d()->PreviousPosition = value;
 }
 
 // --------------------------------------------------------------------------
-double qCTKSlider::singleStepAsDbl()
-{
-  return this->Internal->SingleStep;
-}
+QCTK_GET_CXX(qCTKSlider, double, singleStepAsDbl, SingleStep);
 
 // --------------------------------------------------------------------------
 void qCTKSlider::setSingleStep(double step)
 {
-  this->Internal->HandleDouble = qCTKSlider_IS_DBL(step);
-  this->Internal->SingleStep = step;
+  QCTK_D(qCTKSlider);
+  
+  d->HandleDouble = qCTKSlider_IS_DBL(step);
+  d->SingleStep = step;
 }
 
 // --------------------------------------------------------------------------
-double qCTKSlider::tickIntervalAsDbl()
+double qCTKSlider::tickIntervalAsDbl()const
 {
-  return this->Superclass::tickInterval() * this->Internal->SingleStep;
+  return this->Superclass::tickInterval() * qctk_d()->SingleStep;
 }
 
 // --------------------------------------------------------------------------
@@ -133,12 +128,14 @@ void qCTKSlider::setTickInterval(double ti)
 }
 
 // --------------------------------------------------------------------------
-int qCTKSlider::fromDoubleToInteger(double d)
+int qCTKSlider::fromDoubleToInteger(double value)
 {
-  int res = static_cast<int>(d);
-  if (this->Internal->HandleDouble)
+  QCTK_D(qCTKSlider);
+  
+  int res = static_cast<int>(value);
+  if (d->HandleDouble)
     {
-    double tmp = d / this->Internal->SingleStep;
+    double tmp = value / d->SingleStep;
     res = static_cast<int>( (tmp > 0) ? floor(tmp + 0.5) : ceil(tmp - 0.5) );
 
     }
@@ -148,21 +145,23 @@ int qCTKSlider::fromDoubleToInteger(double d)
 // --------------------------------------------------------------------------
 void qCTKSlider::onValueChanged(int value)
 {
-  emit this->valueChanged(value * this->Internal->SingleStep);
+  emit this->valueChanged(value * qctk_d()->SingleStep);
 }
 
 // --------------------------------------------------------------------------
 void qCTKSlider::onSliderMoved(int position)
 {
-  emit this->sliderMoved(position * this->Internal->SingleStep);
+  emit this->sliderMoved(position * qctk_d()->SingleStep);
 }
 
 // --------------------------------------------------------------------------
 void qCTKSlider::reset()
 {
+  QCTK_D(qCTKSlider);
+  
   this->setValue(0.0);
   this->setSliderPosition(0.0);
-  this->Internal->PreviousPosition = 0.0;
+  d->PreviousPosition = 0.0;
 }
 
 #undef qCTKSlider_IS_DBL

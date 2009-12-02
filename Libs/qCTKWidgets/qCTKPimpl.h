@@ -121,6 +121,31 @@ void MyTestPrivate::doQuux() {
 #ifndef __qCTKPimpl_h
 #define __qCTKPimpl_h
 
+#include <QtGlobal>
+
+/*! \relates qCTKPimpl
+ * Define a public class constructor with no argument
+ *
+ * Also make sure the Pimpl is initalized
+ */
+#define QCTK_CONSTRUCTOR_NO_ARG_CXX(PUB) \
+  PUB::PUB() :                           \
+    {                                    \
+    QCTK_INIT_PRIVATE(PUB);              \
+    }
+
+/*! \relates qCTKPimpl
+ * Define a public class constructor with one argument
+ *
+ * Also make sure the Pimpl is initalized
+ */
+#define QCTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)  \
+  PUB::PUB(_ARG1 parent) :                      \
+    Superclass(parent)                          \
+    {                                           \
+    QCTK_INIT_PRIVATE(PUB);                     \
+    }
+    
 /*! \relates qCTKPimpl
  * Define the setter in the public class.
  *
@@ -222,72 +247,81 @@ template <typename PUB>
 class qCTKPrivate
 {
 public:
-    virtual ~qCTKPrivate()
-    {}
-    inline void QCTK_setPublic(PUB* pub)
+  virtual ~qCTKPrivate(){}
+  inline void QCTK_setPublic(PUB* pub)
     {
-        qctk_p_ptr = pub;
+    Q_ASSERT(pub);
+    qctk_p_ptr = pub;
     }
 
 protected:
-    inline PUB& qctk_p_ref()
+  inline PUB& qctk_p_ref()
     {
-        return *qctk_p_ptr;
+    Q_ASSERT(this->qctk_p_ptr);
+    return *this->qctk_p_ptr;
     }
-    inline const PUB& qctk_p_ref() const
+  inline const PUB& qctk_p_ref() const
     {
-        return *qctk_p_ptr;
+    Q_ASSERT(this->qctk_p_ptr);
+    return *this->qctk_p_ptr;
     }
 
-    inline PUB* qctk_p()
+  inline PUB* qctk_p()
     {
-        return qctk_p_ptr;
+    Q_ASSERT(this->qctk_p_ptr);
+    return this->qctk_p_ptr;
     }
-    inline const PUB* qctk_p() const
+  inline const PUB* qctk_p() const
     {
-        return qctk_p_ptr;
+    Q_ASSERT(this->qctk_p_ptr);
+    return this->qctk_p_ptr;
     }
 
 private:
-    PUB* qctk_p_ptr;
+  PUB* qctk_p_ptr;
 };
 
 template <typename PUB, typename PVT>
 class qCTKPrivateInterface
 {
-    friend class qCTKPrivate<PUB>;
+  friend class qCTKPrivate<PUB>;
 public:
-    qCTKPrivateInterface()
+  qCTKPrivateInterface()
     {
-        pvt = new PVT;
+    this->pvt = new PVT;
     }
-    ~qCTKPrivateInterface()
+  ~qCTKPrivateInterface()
     {
-        delete pvt;
+    delete this->pvt;
     }
 
-    inline void setPublic(PUB* pub)
+  inline void setPublic(PUB* pub)
     {
-        pvt->QCTK_setPublic(pub);
+    Q_ASSERT(pub);
+    this->pvt->QCTK_setPublic(pub);
     }
-    inline PVT& ref()
+  inline PVT& ref()
     {
-        return *static_cast<PVT*>(pvt);
+    Q_ASSERT(this->pvt);
+    return *static_cast<PVT*>(this->pvt);
     }
-    inline const PVT& ref() const
+  inline const PVT& ref() const
     {
-        return *static_cast<PVT*>(pvt);
+    Q_ASSERT(this->pvt);
+    return *static_cast<PVT*>(this->pvt);
     }
-    inline PVT* operator()()
+  inline PVT* operator()()
     {
-        return static_cast<PVT*>(pvt);
+    Q_ASSERT(this->pvt);
+    return static_cast<PVT*>(this->pvt);
     }
-    inline const PVT* operator()() const
+  inline const PVT* operator()() const
     {
-        return static_cast<PVT*>(pvt);
+    Q_ASSERT(this->pvt);
+    return static_cast<PVT*>(this->pvt);
     }
 private:
-    qCTKPrivate<PUB>* pvt;
+  qCTKPrivate<PUB>* pvt;
 };
 #endif
 

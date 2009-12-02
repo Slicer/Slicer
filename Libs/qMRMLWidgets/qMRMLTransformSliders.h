@@ -1,14 +1,22 @@
 #ifndef __qMRMLTransformSliders_h
 #define __qMRMLTransformSliders_h
 
-#include <QWidget>
+
+// qMRML includes
 #include "qVTKObject.h"
+
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
+#include <QWidget>
 
 #include "qMRMLWidgetsWin32Header.h"
 
 class vtkMRMLNode;
 class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;
+class qMRMLTransformSlidersPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
 {
@@ -36,7 +44,6 @@ public:
 
   // Constructors
   qMRMLTransformSliders(QWidget* parent);
-  virtual ~qMRMLTransformSliders();
 
   // Description:
   // Set/Get Coordinate system
@@ -119,9 +126,7 @@ protected slots:
   void onMaximumChanged(double max);
 
 private:
-  struct qInternal;
-  qInternal * Internal;
-
+  QCTK_DECLARE_PRIVATE(qMRMLTransformSliders);
 };
 
 #endif

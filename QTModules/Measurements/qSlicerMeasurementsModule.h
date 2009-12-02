@@ -1,9 +1,15 @@
 #ifndef __qSlicerMeasurementsModule_h
 #define __qSlicerMeasurementsModule_h
 
+// Slicer includes
 #include "qSlicerAbstractLoadableModule.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qSlicerMeasurementsModuleWin32Header.h"
+
+class qSlicerMeasurementsModulePrivate;
 
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsModule :
   public qSlicerAbstractLoadableModule
@@ -25,8 +31,7 @@ protected:
   virtual void setup();
 
 private:
-  class qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsModule); 
 };
 
 #endif

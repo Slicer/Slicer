@@ -1,10 +1,18 @@
 #ifndef __qSlicerModuleFactory_h
 #define __qSlicerModuleFactory_h
 
+// Slicer includes
 #include "qSlicerAbstractModule.h"
+
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
+#include <QFileInfo>
+
 #include "qSlicerBaseQTGUIWin32Header.h"
 
-#include <QFileInfo>
+class qSlicerModuleFactoryPrivate; 
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactory
 {
@@ -14,7 +22,6 @@ public:
   // Instantiate the factory
   // Note: Core modules are registred when the factory is instantiated
   qSlicerModuleFactory();
-  virtual ~qSlicerModuleFactory();
 
   virtual void printAdditionalInfo();
 
@@ -85,8 +92,7 @@ protected:
   void registerCoreModule();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerModuleFactory);
 };
 
 #endif

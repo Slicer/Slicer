@@ -1,16 +1,18 @@
 #include "qSlicerModuleManager.h"
 
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleFactory.h"
 #include "qSlicerModulePanel.h"
 
+// MRML includes
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-struct qSlicerModuleManager::qInternal
+struct qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
 {
-  qInternal()
+  qSlicerModuleManagerPrivate()
     {
     this->ModulePanel = 0;
     }
@@ -48,42 +50,37 @@ void qSlicerModuleManager::classFinalize()
 //-----------------------------------------------------------------------------
 qSlicerModuleManager::qSlicerModuleManager()
 {
-  this->Internal = new qInternal;
-}
-
-//-----------------------------------------------------------------------------
-qSlicerModuleManager::~qSlicerModuleManager()
-{
-  delete this->Internal;
+  QCTK_INIT_PRIVATE(qSlicerModuleManager);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleManager::printAdditionalInfo()
 {
+  QCTK_D(qSlicerModuleManager);
   qDebug() << "qSlicerModuleManager (" << this << ")";
   qDebug() << "ModuleList";
 
-  qInternal::ModuleListConstIterator iter = this->Internal->ModuleList.constBegin();
-  while(iter != this->Internal->ModuleList.constEnd())
+  qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.constBegin();
+  while(iter != d->ModuleList.constEnd())
     {
     qDebug() << "Name:" << iter.key();
     iter.value()->printAdditionalInfo();
     ++iter;
     }
-  this->Internal->ModuleFactory.printAdditionalInfo();
+  d->ModuleFactory.printAdditionalInfo();
 }
 
 //---------------------------------------------------------------------------
 qSlicerModuleFactory* qSlicerModuleManager::factory()
 {
-  return &this->Internal->ModuleFactory;
+  return &qctk_d()->ModuleFactory;
 }
 
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::isLoaded(const QString& moduleTitle)
 {
   // Get corresponding module name
-  QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
+  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
   if (moduleName.isEmpty())
     {
     return false;
@@ -95,7 +92,7 @@ bool qSlicerModuleManager::isLoaded(const QString& moduleTitle)
 bool qSlicerModuleManager::loadModule(const QString& moduleTitle)
 {
   // Get corresponding module name
-  QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
+  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
   if (moduleName.isEmpty())
     {
     return 0;
@@ -107,16 +104,17 @@ bool qSlicerModuleManager::loadModule(const QString& moduleTitle)
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
 {
+  QCTK_D(qSlicerModuleManager);
   // Check if module has been loaded already
-  qInternal::ModuleListConstIterator iter = this->Internal->ModuleList.constFind(moduleName);
-  if (iter != this->Internal->ModuleList.constEnd())
+  qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.constFind(moduleName);
+  if (iter != d->ModuleList.constEnd())
     {
     //return iter.value();
     return true;
     }
 
   // Instantiate the module
-  qSlicerAbstractModule * module = this->Internal->ModuleFactory.instantiateModule(moduleName);
+  qSlicerAbstractModule * module = d->ModuleFactory.instantiateModule(moduleName);
   if (!module)
     {
     qWarning() << "Failed to instanciate module: " << moduleName;
@@ -124,13 +122,13 @@ bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
     }
 
   // Update internal Map
-  this->Internal->ModuleList[moduleName] = module;
+  d->ModuleList[moduleName] = module;
 
   // Initialize module
   module->initialize(qSlicerApplication::application()->appLogic());
 
   // Retrieve module title
-  QString moduleTitle = this->Internal->ModuleFactory.getModuleTitle(moduleName);
+  QString moduleTitle = d->ModuleFactory.getModuleTitle(moduleName);
   Q_ASSERT(!moduleTitle.isEmpty());
   if (moduleTitle.isEmpty())
     {
@@ -159,7 +157,7 @@ bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
 bool qSlicerModuleManager::unLoadModule(const QString& moduleTitle)
 {
   // Get corresponding module name
-  QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
+  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
   if (moduleName.isEmpty())
     {
     return false;
@@ -171,9 +169,9 @@ bool qSlicerModuleManager::unLoadModule(const QString& moduleTitle)
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
 {
-  qInternal::ModuleListConstIterator iter =
-    this->Internal->ModuleList.find( moduleName );
-  if (iter == this->Internal->ModuleList.constEnd())
+  QCTK_D(qSlicerModuleManager);
+  qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find( moduleName );
+  if (iter == d->ModuleList.constEnd())
     {
     qWarning() << "Failed to unload module: " << moduleName << " - Module wasn't loaded";
     return false;
@@ -182,7 +180,7 @@ bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
   iter.value()->deleteLater();
 
   // Remove the object from the list
-  this->Internal->ModuleList.remove(iter.key());
+  d->ModuleList.remove(iter.key());
 
   return true;
 }
@@ -192,7 +190,7 @@ bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
 qSlicerAbstractModule* qSlicerModuleManager::getModule(const QString& moduleTitle)
 {
   // Get corresponding module name
-  QString moduleName = this->Internal->ModuleFactory.getModuleName(moduleTitle);
+  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
   if (moduleName.isEmpty())
     {
     return 0;
@@ -203,9 +201,9 @@ qSlicerAbstractModule* qSlicerModuleManager::getModule(const QString& moduleTitl
 //---------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerModuleManager::getModuleByName(const QString& moduleName)
 {
-  qInternal::ModuleListConstIterator iter =
-    this->Internal->ModuleList.find( moduleName );
-  if ( iter == this->Internal->ModuleList.constEnd() )
+  QCTK_D(qSlicerModuleManager);
+  qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find( moduleName );
+  if ( iter == d->ModuleList.constEnd() )
     {
     return 0;
     }
@@ -215,47 +213,52 @@ qSlicerAbstractModule* qSlicerModuleManager::getModuleByName(const QString& modu
 //---------------------------------------------------------------------------
 const QString qSlicerModuleManager::moduleTitle(const QString& moduleName)
 {
-  return this->Internal->ModuleFactory.getModuleTitle(moduleName);
+  return qctk_d()->ModuleFactory.getModuleTitle(moduleName);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleManager::showModule(const QString& moduleTitle)
 {
-  this->Internal->instantiateModulePanel();
-  Q_ASSERT(this->Internal->ModulePanel);
+  QCTK_D(qSlicerModuleManager);
+  d->instantiateModulePanel();
+  Q_ASSERT(d->ModulePanel);
 
   qDebug() << "Show module:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
   Q_ASSERT(module);
-  this->Internal->ModulePanel->setModule(module);
+  d->ModulePanel->setModule(module);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleManager::setModulePanelVisible(bool visible)
 {
-  this->Internal->instantiateModulePanel();
-  Q_ASSERT(this->Internal->ModulePanel);
+  QCTK_D(qSlicerModuleManager);
+  
+  d->instantiateModulePanel();
+  Q_ASSERT(d->ModulePanel);
 
-  this->Internal->ModulePanel->setVisible(visible);
+  d->ModulePanel->setVisible(visible);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleManager::setModulePanelGeometry(int ax, int ay, int aw, int ah)
 {
-  this->Internal->instantiateModulePanel();
-  Q_ASSERT(this->Internal->ModulePanel);
+  QCTK_D(qSlicerModuleManager);
+  
+  d->instantiateModulePanel();
+  Q_ASSERT(d->ModulePanel);
 
-  this->Internal->ModulePanel->setGeometry(QRect(ax, ay, aw, ah));
+  d->ModulePanel->setGeometry(QRect(ax, ay, aw, ah));
 }
 
 //---------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerModuleManager, qSlicerAbstractModulePanel*,
-                           modulePanel, ModulePanel);
+QCTK_GET_CXX(qSlicerModuleManager, qSlicerAbstractModulePanel*, modulePanel, ModulePanel);
 
 //---------------------------------------------------------------------------
-// Internal methods
+// qSlicerModuleManagerPrivate methods
+
 //---------------------------------------------------------------------------
-void qSlicerModuleManager::qInternal::instantiateModulePanel()
+void qSlicerModuleManagerPrivate::instantiateModulePanel()
 {
   if (!this->ModulePanel)
     {

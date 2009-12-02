@@ -6,10 +6,12 @@
 #include <QTreeView>
 #include <QDebug>
 
-struct qCTKTreeComboBox::qInternal
+// -------------------------------------------------------------------------
+struct qCTKTreeComboBoxPrivate: public qCTKPrivate<qCTKTreeComboBox>
 {
   bool SkipNextHide;
   bool ResetPopupSize;
+  
   void init()
   {
     this->SkipNextHide = false;
@@ -17,11 +19,14 @@ struct qCTKTreeComboBox::qInternal
   }
 };
 
+// -------------------------------------------------------------------------
 qCTKTreeComboBox::qCTKTreeComboBox(QWidget* parent)
   :QComboBox(parent)
 {
-  this->Internal = new qCTKTreeComboBox::qInternal;
-  this->Internal->init();
+  QCTK_INIT_PRIVATE(qCTKTreeComboBox);
+  QCTK_D(qCTKTreeComboBox);
+  
+  d->init();
   QTreeView* treeView = new QTreeView(this);
   treeView->setHeaderHidden(true);
   this->setView(treeView);
@@ -34,13 +39,11 @@ qCTKTreeComboBox::qCTKTreeComboBox(QWidget* parent)
           this, SLOT(onExpanded(const QModelIndex&)));
 }
 
-qCTKTreeComboBox::~qCTKTreeComboBox()
-{
-  delete this->Internal;
-}
-
+// -------------------------------------------------------------------------
 bool qCTKTreeComboBox::eventFilter(QObject* object, QEvent* event)
 {
+  QCTK_D(qCTKTreeComboBox);
+  
   bool res = false;
   if (event->type() == QEvent::MouseButtonRelease && 
       object == this->view()->viewport())
@@ -56,7 +59,7 @@ bool qCTKTreeComboBox::eventFilter(QObject* object, QEvent* event)
       // popup. (we don't want to select the item, just expand it.)
       // of course, all that doesn't apply with unselectable items, as
       // they won't close the popup.
-      this->Internal->SkipNextHide = true;
+      d->SkipNextHide = true;
       }
 
     // we want to get rid of an odd behavior. 
@@ -72,26 +75,30 @@ bool qCTKTreeComboBox::eventFilter(QObject* object, QEvent* event)
       res = true;
       }
 
-    if (this->Internal->ResetPopupSize)
+    if (d->ResetPopupSize)
       {
-      this->Internal->ResetPopupSize = false;
+      d->ResetPopupSize = false;
       //this->QComboBox::showPopup();
       }
     }
   return res;
 }
- 
+
+// -------------------------------------------------------------------------
 void qCTKTreeComboBox::showPopup()
 {
   this->setRootModelIndex(QModelIndex());
   this->QComboBox::showPopup();
 }
- 
+
+// -------------------------------------------------------------------------
 void qCTKTreeComboBox::hidePopup()
 {
-  if (this->Internal->SkipNextHide)
+  QCTK_D(qCTKTreeComboBox);
+  
+  if (d->SkipNextHide)
     {// don't hide the popup if the selected item is a parent.
-    this->Internal->SkipNextHide = false;
+    d->SkipNextHide = false;
     //this->setCurrentIndex(-1);
     //qDebug() << "skip";
     //this->QComboBox::showPopup();
@@ -108,23 +115,28 @@ void qCTKTreeComboBox::hidePopup()
     //qDebug() << "after2: " << this->currentIndex() << this->view()->currentIndex();
     }
 }
- 
+
+// -------------------------------------------------------------------------
 void qCTKTreeComboBox::onCollapsed(const QModelIndex& index)
 {
+  QCTK_D(qCTKTreeComboBox);
+  
   if (this->view()->currentIndex().parent() == index)
     {
     // in the case the current item is a child of the collapsed/expanded item.
     // we don't want to resize the popup as it would undo the collapsed item.
     return;
     }
-  this->Internal->ResetPopupSize = true;
+  d->ResetPopupSize = true;
 }
 
+// -------------------------------------------------------------------------
 void qCTKTreeComboBox::onExpanded(const QModelIndex& index)
 {
-  this->Internal->ResetPopupSize = true;
+  qctk_d()->ResetPopupSize = true;
 }
 
+// -------------------------------------------------------------------------
 void qCTKTreeComboBox::paintEvent(QPaintEvent *p)
 {
   //qDebug() << __FUNCTION__ << " " << this->currentText() << " " << this->currentIndex() ;

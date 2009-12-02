@@ -1,15 +1,21 @@
 #ifndef __qSlicerWidget_h
 #define __qSlicerWidget_h
 
+// qMRML includes
+#include <qVTKObject.h>
+
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QWidget>
 
 #include "qSlicerBaseQTBaseWin32Header.h"
-#include "qSlicerMacros.h"
-#include "qVTKObject.h"
 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class QScrollArea;
+class qSlicerWidgetPrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerWidget : public QWidget
 {
@@ -20,7 +26,6 @@ public:
 
   typedef QWidget Superclass;
   qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
-  virtual ~qSlicerWidget();
 
   virtual void printAdditionalInfo();
 
@@ -70,8 +75,7 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerWidget);
 };
 
 #endif

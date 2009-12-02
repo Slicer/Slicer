@@ -1,14 +1,14 @@
 #include "qSlicerMeasurementsAngleWidget.h" 
+#include "ui_qSlicerMeasurementsAngleWidget.h"
 
-#include "ui_qSlicerMeasurementsAngleWidget.h" 
-
+// QT includes
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsAngleWidget::qInternal : public Ui::qSlicerMeasurementsAngleWidget
+struct qSlicerMeasurementsAngleWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsAngleWidget>,
+                                               public Ui_qSlicerMeasurementsAngleWidget
 {
-public:
-  qInternal()
+  qSlicerMeasurementsAngleWidgetPrivate()
     {
     }
 };
@@ -16,14 +16,9 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerMeasurementsAngleWidget::qSlicerMeasurementsAngleWidget(QWidget *parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
-  this->Internal->setupUi(this);
-}
-
-//-----------------------------------------------------------------------------
-qSlicerMeasurementsAngleWidget::~qSlicerMeasurementsAngleWidget()
-{
-  delete this->Internal; 
+  QCTK_INIT_PRIVATE(qSlicerMeasurementsAngleWidget);
+  QCTK_D(qSlicerMeasurementsAngleWidget);
+  d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------

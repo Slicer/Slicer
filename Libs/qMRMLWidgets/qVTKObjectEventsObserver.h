@@ -1,15 +1,21 @@
 #ifndef __qVTKObjectEventsObserver_h
 #define __qVTKObjectEventsObserver_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QObject>
 #include <QVector>
 
-#include "vtkCommand.h"
+// VTK includes
+#include <vtkCommand.h>
 
 #include "qMRMLWidgetsWin32Header.h"
 
 class qVTKConnection;
 class vtkObject;
+class qVTKObjectEventsObserverPrivate;
 
 class QMRML_WIDGETS_EXPORT qVTKObjectEventsObserver : public QObject
 {
@@ -18,7 +24,6 @@ Q_OBJECT
 public:
   typedef QObject Superclass;
   qVTKObjectEventsObserver(QObject* parent = 0);
-  virtual ~qVTKObjectEventsObserver();
 
   virtual void printAdditionalInfo();
 
@@ -90,8 +95,7 @@ protected slots:
     unsigned long vtk_event, const QObject* qt_obj);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qVTKObjectEventsObserver);
 
 };
 

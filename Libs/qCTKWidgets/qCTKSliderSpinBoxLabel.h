@@ -1,9 +1,15 @@
 #ifndef __qCTKSliderSpinBoxLabel_h
 #define __qCTKSliderSpinBoxLabel_h
 
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
 #include <QSlider>
 
 #include "qCTKWidgetsWin32Header.h"
+
+class qCTKSliderSpinBoxLabelPrivate;
 
 class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 {
@@ -18,7 +24,6 @@ public:
 
   // Constructors
   qCTKSliderSpinBoxLabel(QWidget* parent = 0);
-  virtual ~qCTKSliderSpinBoxLabel();
 
   // Description:
   // Set built-in label text visibility
@@ -74,8 +79,7 @@ protected slots:
   void onSpinBoxValueChanged(double value);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxLabel);
 
 };
 

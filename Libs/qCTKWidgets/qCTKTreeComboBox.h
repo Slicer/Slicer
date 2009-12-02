@@ -1,7 +1,12 @@
 #ifndef __qCTKTreeComboBox_h
 #define __qCTKTreeComboBox_h
 
-#include<QComboBox>
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
+#include <QComboBox>
+
 #include "qCTKWidgetsWin32Header.h"
 
 // Description:
@@ -18,12 +23,13 @@
 //    combo.setModel(&model);
 //    combo.show();
 //
+class qCTKTreeComboBoxPrivate;
+
 class QCTK_WIDGETS_EXPORT qCTKTreeComboBox : public QComboBox
 {
   Q_OBJECT
 public:
   qCTKTreeComboBox(QWidget* parent = 0);
-  virtual ~qCTKTreeComboBox();
 
   virtual bool eventFilter(QObject* object, QEvent* event);
   virtual void showPopup();
@@ -31,12 +37,13 @@ public:
 
 protected:
   virtual void paintEvent(QPaintEvent*);
+  
 protected slots:
   void onExpanded(const QModelIndex&);
   void onCollapsed(const QModelIndex&);
+  
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qCTKTreeComboBox);
 };
 
 #endif

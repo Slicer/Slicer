@@ -1,6 +1,10 @@
 #ifndef __qSlicerApplication_h
 #define __qSlicerApplication_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QApplication>
 
 #include "qSlicerBaseQTGUIWin32Header.h"
@@ -10,6 +14,7 @@ class qSlicerAbstractModule;
 class qSlicerWidget;
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
+class qSlicerApplicationPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public QApplication
 {
@@ -74,8 +79,7 @@ signals:
 //   void showModule(qSlicerAbstractModule*);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerApplication);
 };
 
 #endif

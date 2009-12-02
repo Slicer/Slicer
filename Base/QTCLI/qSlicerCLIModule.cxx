@@ -4,18 +4,18 @@
 // SlicerQT includes
 #include "qSlicerCLIModuleLogic.h"
 
-// MRML includes
-#include "qMRMLNodeSelector.h"
-#include "qMRMLNodeFactory.h"
+// qMRML includes
+#include <qMRMLNodeSelector.h>
+#include <qMRMLNodeFactory.h>
 
-// CTK includes
-#include "qCTKCollapsibleButton.h"
-#include "qCTKSlider.h"
-#include "qCTKFlowLayout.h"
+// qCTK includes
+#include <qCTKCollapsibleButton.h>
+#include <qCTKSlider.h>
+#include <qCTKFlowLayout.h>
 
 // ModuleDescriptionParser includes
-#include "ModuleDescription.h"
-#include "ModuleDescriptionParser.h"
+#include <ModuleDescription.h>
+#include <ModuleDescriptionParser.h>
 
 // QT includes
 #include <QGroupBox>
@@ -32,9 +32,8 @@
 #include "itkNumericTraits.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
+struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
 {
-public:
   QCTK_DECLARE_PUBLIC(qSlicerCLIModule);
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate()
@@ -242,7 +241,7 @@ void qSlicerCLIModule::onDefaultButtonPressed()
 }
 
 //-----------------------------------------------------------------------------
-// Internal methods
+// qSlicerCLIModulePrivate methods
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModulePrivate::addParameterGroups()

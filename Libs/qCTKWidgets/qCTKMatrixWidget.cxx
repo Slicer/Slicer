@@ -1,4 +1,3 @@
-
 #include "qCTKMatrixWidget.h"
 
 #include <Qt>
@@ -9,14 +8,14 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKMatrixWidget::qInternal
+struct qCTKMatrixWidgetPrivate: public qCTKPrivate<qCTKMatrixWidget>
 {
 };
 
 // --------------------------------------------------------------------------
 qCTKMatrixWidget::qCTKMatrixWidget(QWidget* parent) : Superclass(4, 4, parent)
 {
-  this->Internal = new qInternal;
+  QCTK_INIT_PRIVATE(qCTKMatrixWidget);
 
   // Set Read-only
   this->setEditTriggers(qCTKMatrixWidget::NoEditTriggers);
@@ -39,12 +38,6 @@ qCTKMatrixWidget::qCTKMatrixWidget(QWidget* parent) : Superclass(4, 4, parent)
 
   // Initialize
   this->reset();
-}
-
-// --------------------------------------------------------------------------
-qCTKMatrixWidget::~qCTKMatrixWidget()
-{
-  delete this->Internal;
 }
 
 // --------------------------------------------------------------------------

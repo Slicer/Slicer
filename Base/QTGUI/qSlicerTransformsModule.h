@@ -1,12 +1,17 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h
 
+// Slicer includes
 #include "qSlicerAbstractCoreModule.h"
+
+// qCTK includes
+#include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class vtkMatrix4x4;
 class vtkMRMLNode;
+class qSlicerTransformsModulePrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerTransformsModule : public qSlicerAbstractCoreModule
 {
@@ -16,7 +21,6 @@ public:
 
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerTransformsModule(QWidget *parent=0);
-  virtual ~qSlicerTransformsModule();
 
   virtual void printAdditionalInfo();
 
@@ -56,8 +60,7 @@ protected:
   int coordinateReference();
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerTransformsModule);
 };
 
 #endif

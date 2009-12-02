@@ -5,9 +5,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKNumericInput::qInternal
+struct qCTKNumericInputPrivate: public qCTKPrivate<qCTKNumericInput>
 {
-  qInternal()
+  qCTKNumericInputPrivate()
     {
     //this->Text = "0";
     }
@@ -17,7 +17,7 @@ struct qCTKNumericInput::qInternal
 // --------------------------------------------------------------------------
 qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
+  QCTK_INIT_PRIVATE(qCTKNumericInput);
 
   this->setValidator(new QDoubleValidator(this));
   this->setDecimals(2);
@@ -28,12 +28,6 @@ qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
 //     SLOT(onTextChanged(const QString&)));
 
   this->connect(this, SIGNAL(returnPressed()), SLOT(onReturnPressed()));
-}
-
-// --------------------------------------------------------------------------
-qCTKNumericInput::~qCTKNumericInput()
-{
-  delete this->Internal;
 }
 
 // // --------------------------------------------------------------------------

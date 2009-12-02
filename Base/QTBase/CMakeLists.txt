@@ -46,6 +46,7 @@ SET(slicer_qtbase_UI_SRCS
 SET(slicer_qtbase_target_libraries
   SlicerBaseLogic
   qMRMLWidgets
+  qCTKWidgets
   )
 
 Slicer3_build_slicer_qtbase_library( 

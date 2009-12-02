@@ -3,7 +3,7 @@
 
 #include "qSlicerAbstractModule.h"
 
-#include "qCTKPimpl.h"
+#include <qCTKPimpl.h>
 #include "qSlicerBaseQTCLIWin32Header.h"
 
 class qSlicerCLIModulePrivate;

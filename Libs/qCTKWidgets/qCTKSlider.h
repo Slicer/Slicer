@@ -1,9 +1,15 @@
 #ifndef __qCTKSlider_h
 #define __qCTKSlider_h
 
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
 #include <QSlider>
 
 #include "qCTKWidgetsWin32Header.h"
+
+class qCTKSliderPrivate;
 
 class QCTK_WIDGETS_EXPORT qCTKSlider : public QSlider
 {
@@ -19,7 +25,6 @@ public:
 
   // Constructors
   qCTKSlider(QWidget* parent = 0);
-  virtual ~qCTKSlider();
 
   // Description:
   // Get range
@@ -30,21 +35,21 @@ public:
   // Set/Get slider position
   double sliderPositionAsDbl();
   void setSliderPosition(double position);
-  double previousSliderPosition();
+  double previousSliderPosition()const;
 
   // Description:
   // Set/Get value
-  double valueAsDbl();
+  double valueAsDbl()const;
   void setValue(double value);
 
   // Description:
   // Set/Get single step
-  double singleStepAsDbl();
+  double singleStepAsDbl()const;
   void setSingleStep(double step);
 
   // Description:
   // Set/Get tick interval
-  double tickIntervalAsDbl();
+  double tickIntervalAsDbl()const;
   void setTickInterval(double ti);
 
 public slots:
@@ -59,7 +64,7 @@ public slots:
   void setRange(double min, double max);
 
 protected:
-  int fromDoubleToInteger(double d);
+  int fromDoubleToInteger(double value);
 
 protected slots:
   void onValueChanged(int value);
@@ -70,9 +75,7 @@ signals:
   void valueChanged(double value);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
-
+  QCTK_DECLARE_PRIVATE(qCTKSlider);
 };
 
 #endif

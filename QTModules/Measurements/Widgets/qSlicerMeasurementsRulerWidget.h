@@ -1,9 +1,15 @@
 #ifndef __qSlicerMeasurementsRulerWidget_h
 #define __qSlicerMeasurementsRulerWidget_h 
 
+// Slicer includes
 #include "qSlicerWidget.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 #include "qSlicerMeasurementsModuleWin32Header.h"
+
+class qSlicerMeasurementsRulerWidgetPrivate;
 
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsRulerWidget : public qSlicerWidget
 { 
@@ -18,8 +24,7 @@ public:
   virtual void printAdditionalInfo();
 
 private:
-  class qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsRulerWidget);
 };
 
 #endif

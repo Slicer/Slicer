@@ -1,13 +1,17 @@
 #ifndef __qSlicerModuleLogic_h
 #define __qSlicerModuleLogic_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QObject>
-#include "qSlicerMacros.h"
 
 #include "qSlicerBaseQTBaseWin32Header.h"
 
 class vtkMRMLScene;
 class vtkSlicerApplicationLogic;
+class qSlicerModuleLogicPrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic : public QObject
 {
@@ -16,7 +20,6 @@ public:
 
   typedef QObject Superclass;
   qSlicerModuleLogic(QObject *parent);
-  virtual ~qSlicerModuleLogic();
 
   virtual void printAdditionalInfo();
 
@@ -35,9 +38,7 @@ protected:
   vtkSlicerApplicationLogic* appLogic() const;
 
 private:
-
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerModuleLogic);
 };
 
 #endif

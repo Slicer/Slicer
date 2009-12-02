@@ -1,6 +1,10 @@
 #ifndef __qSlicerModuleManager_h
 #define __qSlicerModuleManager_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QObject>
 
 #include "qSlicerBaseQTGUIWin32Header.h"
@@ -9,6 +13,7 @@ class qSlicerAbstractModule;
 class qSlicerModuleManagerInitialize;
 class qSlicerModuleFactory;
 class qSlicerAbstractModulePanel;
+class qSlicerModuleManagerPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager : public QObject
 {
@@ -65,7 +70,7 @@ public:
 
 protected:
   qSlicerModuleManager();
-  ~qSlicerModuleManager();
+  ~qSlicerModuleManager(){}
 
   static qSlicerModuleManager* Instance;
 
@@ -79,8 +84,7 @@ private:
   qSlicerModuleManager(const qSlicerModuleManager&);  // Not implemented.
   void operator=(const qSlicerModuleManager&);  // Not implemented.
 
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerModuleManager);
 };
 
 

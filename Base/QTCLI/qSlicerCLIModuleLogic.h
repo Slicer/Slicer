@@ -4,6 +4,9 @@
 // SlicerLogic includes
 #include "qSlicerModuleLogic.h"
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
 // QT includes
 #include <QStringList>
 
@@ -18,6 +21,7 @@
 
 class vtkMRMLScene;
 class vtkMRMLCommandLineModuleNode;
+class qSlicerCLIModuleLogicPrivate;
 
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleLogic : public qSlicerModuleLogic
 {
@@ -28,7 +32,6 @@ public:
   typedef qSlicerCLIModuleLogic Self;
   typedef qSlicerModuleLogic Superclass;
   qSlicerCLIModuleLogic(QObject *parent);
-  virtual ~qSlicerCLIModuleLogic();
 
   virtual void printAdditionalInfo();
 
@@ -85,7 +88,7 @@ public:
 
   // For debug
   void setDeleteTemporaryFiles(bool enable);
-  bool deleteTemporaryFiles();
+  bool deleteTemporaryFiles()const;
 
   // Communicate progress back to the node
   static void ProgressCallback(void * who);
@@ -100,8 +103,7 @@ protected:
   static void stringListToArray(const QStringList& list, std::vector<char*>& argv);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerCLIModuleLogic);
 };
 
 #endif

@@ -32,10 +32,10 @@
 #include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerApplication::qInternal
+struct qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
 {
-  qInternal(qSlicerApplication* backPointer):
-    BackPointer(backPointer)
+  QCTK_DECLARE_PUBLIC(qSlicerApplication);
+  qSlicerApplicationPrivate()
     {
     this->initFont();
     this->initPalette();
@@ -54,7 +54,6 @@ struct qSlicerApplication::qInternal
   vtkSmartPointer<vtkMRMLScene>               MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic>  AppLogic;
 
-  qSlicerApplication*           BackPointer;
   QMap<QWidget*,bool>           TopLevelWidgetsSavedVisibilityState;
   QString                       SlicerHome;
   Qt::WindowFlags               DefaultWindowFlags;
@@ -64,7 +63,7 @@ struct qSlicerApplication::qInternal
 qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   : Superclass(argc, argv)
 {
-  this->Internal = new qInternal(this);
+  QCTK_INIT_PRIVATE(qSlicerApplication);
 }
 
 //-----------------------------------------------------------------------------
@@ -72,8 +71,6 @@ qSlicerApplication::~qSlicerApplication()
 {
   // Uninstantiate modules
   qSlicerModuleManager::instance()->factory()->uninstantiateAll();
-
-  delete this->Internal;
 }
 
 //-----------------------------------------------------------------------------
@@ -113,39 +110,37 @@ void qSlicerApplication::initialize()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSetInternalCxxMacro(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
-qSlicerGetInternalCxxMacro(qSlicerApplication, Qt::WindowFlags, defaultWindowFlags, DefaultWindowFlags);
+QCTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
+QCTK_GET_CXX(qSlicerApplication, Qt::WindowFlags, defaultWindowFlags, DefaultWindowFlags);
 
 //-----------------------------------------------------------------------------
 void qSlicerApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
 {
-  if (this->Internal->MRMLScene == mrmlScene)
+  QCTK_D(qSlicerApplication);
+  if (d->MRMLScene == mrmlScene)
     {
     return;
     }
-  this->Internal->MRMLScene = mrmlScene;
+  d->MRMLScene = mrmlScene;
   emit this->currentMRMLSceneChanged(mrmlScene);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGetInternalCxxMacro(qSlicerApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
+QCTK_GET_CXX(qSlicerApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-qSlicerSetInternalCxxMacro(qSlicerApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-qSlicerGetInternalCxxMacro(qSlicerApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+QCTK_SET_CXX(qSlicerApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+QCTK_GET_CXX(qSlicerApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
 QString qSlicerApplication::slicerHome()
 {
   // TODO Use QCoreApplication::applicationDirPath
-  return this->Internal->SlicerHome;
+  return qctk_d()->SlicerHome;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::setSlicerHome(const QString& slicerHome)
-{
-  this->Internal->SlicerHome = slicerHome;
-}
+QCTK_SET_CXX(qSlicerApplication, const QString&, setSlicerHome, SlicerHome);
 
 //-----------------------------------------------------------------------------
 void qSlicerApplication::initializeLoadableModulesPaths()
@@ -206,24 +201,24 @@ void qSlicerApplication::initializeCmdLineModulesPaths()
 //-----------------------------------------------------------------------------
 void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)
 {
+  QCTK_D(qSlicerApplication);
   foreach(QWidget * widget, this->topLevelWidgets())
     {
     // Store current visibility state
     if (!visible)
       {
-      if (!this->Internal->TopLevelWidgetsSavedVisibilityState.contains(widget))
+      if (!d->TopLevelWidgetsSavedVisibilityState.contains(widget))
         {
-        this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible();
+        d->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible();
         }
       widget->hide();
       }
     else
       {
-      QMap<QWidget*,bool>::const_iterator it =
-        this->Internal->TopLevelWidgetsSavedVisibilityState.find(widget);
+      QMap<QWidget*,bool>::const_iterator it = d->TopLevelWidgetsSavedVisibilityState.find(widget);
 
       // If widget state was saved, restore it. Otherwise skip.
-      if (it != this->Internal->TopLevelWidgetsSavedVisibilityState.end())
+      if (it != d->TopLevelWidgetsSavedVisibilityState.end())
         {
         widget->setVisible(it.value());
         }
@@ -233,7 +228,7 @@ void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)
   // Each time widget are set visible. Internal Map can be cleared.
   if (visible)
     {
-    this->Internal->TopLevelWidgetsSavedVisibilityState.clear();
+    d->TopLevelWidgetsSavedVisibilityState.clear();
     }
 }
 
@@ -242,45 +237,47 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
 {
   if (!widget) { return; }
   Q_ASSERT(!widget->parent());
+  QCTK_D(qSlicerApplication);
   // When internal Map is empty, it means top widget are visible
-  if (this->Internal->TopLevelWidgetsSavedVisibilityState.empty())
+  if (d->TopLevelWidgetsSavedVisibilityState.empty())
     {
     widget->setVisible(visible);
     }
   else
     {
-    this->Internal->TopLevelWidgetsSavedVisibilityState[widget] = visible;
+    d->TopLevelWidgetsSavedVisibilityState[widget] = visible;
     }
 }
 
 //-----------------------------------------------------------------------------
-// Internal methods
+// qSlicerApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::qInternal::initPalette()
+void qSlicerApplicationPrivate::initPalette()
 {
-  QPalette p = this->BackPointer->palette();
+  QCTK_P(qSlicerApplication);
+  QPalette palette = p->palette();
   /* Old palette that makes a high contrast in Windows.
   p.setColor(QPalette::Window, Qt::white);
   p.setColor(QPalette::Base, Qt::white);
   p.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
   p.setColor(QPalette::Button, Qt::white);
   */
-  p.setColor(QPalette::Button, "#fcfcfc");
-  p.setColor(QPalette::Light, "#c8c8c8");
-  p.setColor(QPalette::Midlight, "#e6e6e6");
-  p.setColor(QPalette::Dark, "#aaaaaa");
-  p.setColor(QPalette::Mid, "#c8c8c8");
-  p.setColor(QPalette::Base, Qt::white);
-  p.setColor(QPalette::Window, Qt::white);
-  p.setColor(QPalette::Shadow, "#5a5a5a");
-  p.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+  palette.setColor(QPalette::Button, "#fcfcfc");
+  palette.setColor(QPalette::Light, "#c8c8c8");
+  palette.setColor(QPalette::Midlight, "#e6e6e6");
+  palette.setColor(QPalette::Dark, "#aaaaaa");
+  palette.setColor(QPalette::Mid, "#c8c8c8");
+  palette.setColor(QPalette::Base, Qt::white);
+  palette.setColor(QPalette::Window, Qt::white);
+  palette.setColor(QPalette::Shadow, "#5a5a5a");
+  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
 
-  this->BackPointer->setPalette(p);
+  p->setPalette(palette);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::qInternal::initFont()
+void qSlicerApplicationPrivate::initFont()
 {
   /*
   QFont f("Verdana", 9);
@@ -298,7 +295,7 @@ void qSlicerApplication::qInternal::initFont()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::qInternal::loadStyleSheet()
+void qSlicerApplicationPrivate::loadStyleSheet()
 {
 //   QString styleSheet =
 //     "background-color: white;"

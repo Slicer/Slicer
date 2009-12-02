@@ -3,18 +3,17 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerAbstractLoadableModule::qInternal
+struct qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
 {
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerAbstractLoadableModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerAbstractLoadableModule);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::setup()
 {
-  Q_ASSERT(this->Internal != 0);
+  Q_ASSERT(qctk_d() != 0);
 }
 
 //-----------------------------------------------------------------------------

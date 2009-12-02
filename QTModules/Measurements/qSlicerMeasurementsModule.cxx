@@ -1,7 +1,7 @@
 #include "qSlicerMeasurementsModule.h"
-
 #include "ui_qSlicerMeasurementsModule.h"
 
+// QT includes
 #include <QtPlugin>
 #include <QDebug>
 
@@ -9,25 +9,23 @@
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsModule::qInternal : public Ui::qSlicerMeasurementsModule
+struct qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>,
+                                         public Ui_qSlicerMeasurementsModule
 {
-public:
-  qInternal()
+  qSlicerMeasurementsModulePrivate()
     {
     }
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCxxInternalConstructor1Macro(qSlicerMeasurementsModule, QWidget*);
-qSlicerCxxDestructorMacro(qSlicerMeasurementsModule);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerMeasurementsModule::setup()
 {
   this->Superclass::setup();
-  Q_ASSERT(this->Internal != 0);
-
-  this->Internal->setupUi(this);
+  QCTK_D(qSlicerMeasurementsModule);
+  d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------

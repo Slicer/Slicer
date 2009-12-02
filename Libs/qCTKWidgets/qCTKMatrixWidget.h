@@ -1,9 +1,15 @@
 #ifndef __qCTKMatrixWidget_h
 #define __qCTKMatrixWidget_h
 
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
 #include <QTableWidget>
 
 #include "qCTKWidgetsWin32Header.h"
+
+class qCTKMatrixWidgetPrivate;
 
 class QCTK_WIDGETS_EXPORT qCTKMatrixWidget : public QTableWidget
 {
@@ -15,7 +21,6 @@ public:
 
   // Constructors
   qCTKMatrixWidget(QWidget* parent = 0);
-  virtual ~qCTKMatrixWidget();
 
   // Description:
   // Set / Get values
@@ -45,8 +50,7 @@ protected:
   virtual void resizeEvent(QResizeEvent * event);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qCTKMatrixWidget);
 };
 
 #endif

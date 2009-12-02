@@ -1,53 +1,51 @@
-
 #include "qMRMLLinearTransformSlider.h"
+
+// qMRML includes
 #include "qMRMLUtils.h"
 
+// MRML includes
 #include "vtkMRMLLinearTransformNode.h"
 
+// VTK includes
 #include "vtkSmartPointer.h"
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 
+// QT includes
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLLinearTransformSlider::qInternal
+struct qMRMLLinearTransformSliderPrivate: public qCTKPrivate<qMRMLLinearTransformSlider>
 {
-  qInternal()
+  qMRMLLinearTransformSliderPrivate()
     {
-    this->TypeOfTransform = TRANSLATION_LR;
-    this->CoordinateReference = GLOBAL;
+    this->TypeOfTransform = qMRMLLinearTransformSlider::TRANSLATION_LR;
+    this->CoordinateReference = qMRMLLinearTransformSlider::GLOBAL;
     this->MRMLTransformNode = 0;
     this->PreviousPosition = 0;
     }
-  TransformType                          TypeOfTransform;
-  CoordinateReferenceType                CoordinateReference;
-  vtkMRMLLinearTransformNode*            MRMLTransformNode;
-  double                                 PreviousPosition;
+  qMRMLLinearTransformSlider::TransformType            TypeOfTransform;
+  qMRMLLinearTransformSlider::CoordinateReferenceType  CoordinateReference;
+  vtkMRMLLinearTransformNode*                          MRMLTransformNode;
+  double                                               PreviousPosition;
 };
 
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* parent) : Superclass(parent)
 {
-  this->Internal = new qInternal;
-}
-
-// --------------------------------------------------------------------------
-qMRMLLinearTransformSlider::~qMRMLLinearTransformSlider()
-{
-  delete this->Internal;
+  QCTK_INIT_PRIVATE(qMRMLLinearTransformSlider);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType typeOfTransform)
 {
-  this->Internal->TypeOfTransform = typeOfTransform;
+  qctk_d()->TypeOfTransform = typeOfTransform;
 }
 
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::TransformType qMRMLLinearTransformSlider::typeOfTransform() const
 {
-  return this->Internal->TypeOfTransform;
+  return qctk_d()->TypeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -70,25 +68,27 @@ bool qMRMLLinearTransformSlider::isTranslation()
 void qMRMLLinearTransformSlider::setCoordinateReference(CoordinateReferenceType coordinateReference)
 {
   this->reset();
-  this->Internal->CoordinateReference = coordinateReference;
+  qctk_d()->CoordinateReference = coordinateReference;
 }
 
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::CoordinateReferenceType qMRMLLinearTransformSlider::coordinateReference() const
 {
-  return this->Internal->CoordinateReference;
+  return qctk_d()->CoordinateReference;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
-  if (this->Internal->MRMLTransformNode == transformNode) { return; }
+  QCTK_D(qMRMLLinearTransformSlider);
+  
+  if (d->MRMLTransformNode == transformNode) { return; }
 
-  this->qvtkReconnect(this->Internal->MRMLTransformNode, transformNode,
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
     vtkMRMLTransformableNode::TransformModifiedEvent,
     this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
 
-  this->Internal->MRMLTransformNode = transformNode;
+  d->MRMLTransformNode = transformNode;
   this->onMRMLTransformNodeModified(0, transformNode);
   // If the node is NULL, any action on the widget is meaningless, this is why
   // the widget is disabled
@@ -98,19 +98,21 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
 // --------------------------------------------------------------------------
 vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
 {
-  return this->Internal->MRMLTransformNode;
+  return qctk_d()->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
 {
+  QCTK_D(qMRMLLinearTransformSlider);
+  
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
-  Q_ASSERT(this->Internal->MRMLTransformNode == transformNode);
+  Q_ASSERT(d->MRMLTransformNode == transformNode);
 
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode,
-    this->Internal->CoordinateReference == Self::GLOBAL, transform);
+  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
+    d->CoordinateReference == Self::GLOBAL, transform);
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
@@ -143,9 +145,11 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(void* /*call_data*/
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::applyTransformation(double sliderPosition)
 {
+  QCTK_D(qMRMLLinearTransformSlider);
+  
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  qMRMLUtils::getTransformInCoordinateSystem(this->Internal->MRMLTransformNode,
-    this->Internal->CoordinateReference == Self::GLOBAL, transform);
+  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
+    d->CoordinateReference == Self::GLOBAL, transform);
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
@@ -182,7 +186,6 @@ void qMRMLLinearTransformSlider::applyTransformation(double sliderPosition)
     transform->Translate(position);
     }
 
-  this->Internal->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(
+  d->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(
     transform->GetMatrix());
-
 }

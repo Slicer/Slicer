@@ -1,12 +1,17 @@
 #ifndef __qSlicerCamerasModule_h
 #define __qSlicerCamerasModule_h
 
+// Slicer includes
 #include "qSlicerAbstractCoreModule.h"
+
+// qCTK includes
+#include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class vtkMRMLNode;
 class vtkMRMLViewNode;
+class qSlicerCamerasModulePrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCamerasModule :
   public qSlicerAbstractCoreModule
@@ -16,7 +21,6 @@ public:
 
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerCamerasModule(QWidget *parent=0);
-  virtual ~qSlicerCamerasModule();
 
   virtual void printAdditionalInfo();
 
@@ -43,8 +47,7 @@ protected slots:
   void synchronizeCameraWithView(void * currentView= 0);
 
 private:
-  struct qInternal;
-  qInternal* Internal;
+  QCTK_DECLARE_PRIVATE(qSlicerCamerasModule);
 };
 
 #endif

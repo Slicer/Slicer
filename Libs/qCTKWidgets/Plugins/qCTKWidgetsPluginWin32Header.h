@@ -19,7 +19,7 @@
 #ifndef __qCTKWidgetsPluginWin32Header_h
 #define __qCTKWidgetsPluginWin32Header_h
 
-#include <qCTKWidgetsConfigure.h>
+#include "qCTKWidgetsConfigure.h"
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
  #if defined(qCTKWidgetsPlugin_EXPORTS)

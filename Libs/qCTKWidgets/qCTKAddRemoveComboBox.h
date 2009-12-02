@@ -1,13 +1,18 @@
 #ifndef __qCTKAddRemoveComboBox_h
 #define __qCTKAddRemoveComboBox_h
 
+// qCTK includes
+#include "qCTKPimpl.h"
+
+// QT includes
 #include <QWidget>
 #include <QVariant>
 #include <QModelIndex>
 
 #include "qCTKWidgetsWin32Header.h"
 
-class QComboBox; 
+class QComboBox;
+class qCTKAddRemoveComboBoxPrivate;
 
 class QCTK_WIDGETS_EXPORT qCTKAddRemoveComboBox : public QWidget
 {
@@ -23,7 +28,6 @@ public:
   
   // Constructors
   qCTKAddRemoveComboBox(QWidget* parent = 0);
-  virtual ~qCTKAddRemoveComboBox();
   
   // Description:
   // Set text that should be displayed in the comboBox when it is empty
@@ -132,9 +136,7 @@ private slots:
 private:
   void connectComboBox(QComboBox*);
 
-  struct qInternal; 
-  qInternal * Internal;
-
+  QCTK_DECLARE_PRIVATE(qCTKAddRemoveComboBox);
 };
 
 #endif

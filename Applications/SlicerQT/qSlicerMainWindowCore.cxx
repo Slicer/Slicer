@@ -1,34 +1,26 @@
 #include "qSlicerMainWindowCore.h" 
 
+// QT includes
 #include <QMainWindow>
 #include <QPointer>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMainWindowCore::qInternal
+struct qSlicerMainWindowCorePrivate: public qCTKPrivate<qSlicerMainWindowCore>
 {
-  qInternal()
+  QCTK_DECLARE_PUBLIC(qSlicerMainWindowCore);
+  qSlicerMainWindowCorePrivate()
     {
     }
   QPointer<QMainWindow> ParentWidget;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowCore::qSlicerMainWindowCore(QMainWindow* parent)
- :Superclass(parent)
+qSlicerMainWindowCore::qSlicerMainWindowCore(QMainWindow* parent):Superclass(parent)
 {
-  this->Internal = new qInternal;
-  this->Internal->ParentWidget = parent; 
+  QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
+  qctk_d()->ParentWidget = parent;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowCore::~qSlicerMainWindowCore()
-{
-  delete this->Internal; 
-}
-
-//-----------------------------------------------------------------------------
-QMainWindow* qSlicerMainWindowCore::widget()
-{
-  return this->Internal->ParentWidget; 
-}
+QCTK_GET_CXX(qSlicerMainWindowCore, QMainWindow*, widget, ParentWidget);
