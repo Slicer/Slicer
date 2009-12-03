@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>94</height>
+    <height>96</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Cameras</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+    <normaloff>:/Icons/Cameras.png</normaloff>:/Icons/Cameras.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -91,7 +95,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>qSlicerCamerasModule</sender>

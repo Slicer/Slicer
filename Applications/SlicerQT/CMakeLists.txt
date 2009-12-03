@@ -107,6 +107,8 @@ SET(qSlicerQT_UI_SRCS
 # Resources
 SET(qt_module_resources
   Resources/SlicerQT.qrc
+  ${SlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
+  ${SlicerBaseQTCoreModules_SOURCE_DIR}/Resources/qSlicerBaseQTCoreModules.qrc
 )
 #SET(qSlicerQT_RC_FILE Resources/SlicerQT.rc)
 

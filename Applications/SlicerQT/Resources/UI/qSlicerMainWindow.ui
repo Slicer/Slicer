@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -32,7 +32,7 @@
     <addaction name="actionFileAddData"/>
     <addaction name="actionFileAddVolume"/>
     <addaction name="actionFileAddTransform"/>
-    <addaction name="actionFileSave"/>
+    <addaction name="actionFileSaveScene"/>
     <addaction name="actionFileCloseScene"/>
     <addaction name="separator"/>
     <addaction name="actionFileExit"/>
@@ -139,7 +139,36 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="MainToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionFileLoadScene"/>
+   <addaction name="actionFileSaveScene"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="ModuleToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
   <action name="actionFileLoadScene">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/LoadScene.png</normaloff>:/Icons/LoadScene.png</iconset>
+   </property>
    <property name="text">
     <string>Load Scene</string>
    </property>
@@ -161,18 +190,30 @@
    </property>
   </action>
   <action name="actionFileAddVolume">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/LoadVolume.png</normaloff>:/Icons/LoadVolume.png</iconset>
+   </property>
    <property name="text">
     <string>Add Volume</string>
    </property>
   </action>
   <action name="actionFileAddTransform">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc">
+     <normaloff>:/Icons/LoadTransform.png</normaloff>:/Icons/LoadTransform.png</iconset>
+   </property>
    <property name="text">
     <string>Add Transform</string>
    </property>
   </action>
-  <action name="actionFileSave">
+  <action name="actionFileSaveScene">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+   </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save Scene</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -375,6 +416,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+  <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
+ </resources>
  <connections/>
 </ui>

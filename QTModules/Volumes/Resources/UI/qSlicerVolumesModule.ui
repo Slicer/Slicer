@@ -10,6 +10,13 @@
     <height>822</height>
    </rect>
   </property>
+  <property name="windowTitle">
+   <string>Volumes</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerVolumesModule.qrc">
+    <normaloff>:/Icons/Volumes.png</normaloff>:/Icons/Volumes.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
     <number>2</number>
@@ -27,7 +34,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../Measurements/Resources/qSlicerMeasurementsModule.qrc"/>
+  <include location="../qSlicerVolumesModule.qrc"/>
  </resources>
  <connections/>
 </ui>

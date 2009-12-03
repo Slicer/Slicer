@@ -1,4 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
+    <file>Icons/Transforms.png</file>
+    <file>Icons/LoadTransform.png</file>
+    <file>Icons/Cameras.png</file>
   </qresource>
 </RCC>
