@@ -33,3 +33,15 @@ void qSlicerMeasurementsModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
 }
+
+//-----------------------------------------------------------------------------
+QAction* qSlicerMeasurementsModule::showModuleAction()
+{
+  return new QAction(QIcon(":/Icons/Measurements.png"), tr("Show Measurements module"), this);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMeasurementsModule::showModuleActionVisibleByDefault()
+{
+  return true;
+}

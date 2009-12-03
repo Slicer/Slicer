@@ -26,6 +26,9 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
+  virtual QAction* showModuleAction();
+  virtual bool showModuleActionVisibleByDefault();
+
 protected:
   virtual void setup();
 

@@ -31,6 +31,9 @@ public:
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
+  virtual QAction* showModuleAction();
+  virtual bool showModuleActionVisibleByDefault();
+
 public slots:
   void loadTransform();
   void loadTransform(const QString& fileName);

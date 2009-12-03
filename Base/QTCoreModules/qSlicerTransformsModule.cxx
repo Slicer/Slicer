@@ -135,6 +135,18 @@ QString qSlicerTransformsModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QAction* qSlicerTransformsModule::showModuleAction()
+{
+  return new QAction(QIcon(":/Icons/Transforms.png"), tr("Show Transforms module"), this);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTransformsModule::showModuleActionVisibleByDefault()
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onCoordinateReferenceButtonPressed(int id)
 {
   QCTK_D(qSlicerTransformsModule);
