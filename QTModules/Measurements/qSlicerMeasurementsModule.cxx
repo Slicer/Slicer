@@ -41,7 +41,7 @@ QAction* qSlicerMeasurementsModule::showModuleAction()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerMeasurementsModule::showModuleActionVisibleByDefault()
+bool qSlicerMeasurementsModule::isShowModuleActionVisibleByDefault()
 {
   return true;
 }

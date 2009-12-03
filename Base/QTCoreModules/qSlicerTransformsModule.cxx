@@ -141,7 +141,7 @@ QAction* qSlicerTransformsModule::showModuleAction()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTransformsModule::showModuleActionVisibleByDefault()
+bool qSlicerTransformsModule::isShowModuleActionVisibleByDefault()
 {
   return true;
 }

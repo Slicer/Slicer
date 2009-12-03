@@ -334,7 +334,7 @@ void qSlicerModuleManagerPrivate::onModuleLoaded(qSlicerAbstractModule* module)
     QObject::connect(action, SIGNAL(triggered()), this->ShowModuleActionMapper, SLOT(map()));
 
     // Update action state
-    bool visible = module->showModuleActionVisibleByDefault();
+    bool visible = module->isShowModuleActionVisibleByDefault();
     action->setVisible(visible);
     action->setEnabled(visible);
 
