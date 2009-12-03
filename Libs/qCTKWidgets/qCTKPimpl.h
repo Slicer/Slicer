@@ -109,11 +109,11 @@ and MyTestPrivate has a member named foobar and a method named doQuux().
 The code might resemble this example:
 \code
 int MyTest::getFoobar() {
-    return qctk_d().foobar;
+    return qctk_d()->foobar;
 }
 
 void MyTestPrivate::doQuux() {
-    qctk_p().doBaz(foobar);
+    qctk_p()->doBaz(foobar);
 }
 \endcode
 */
@@ -192,14 +192,14 @@ void MyTestPrivate::doQuux() {
  */
 #define QCTK_INIT_PRIVATE(PUB) qctk_d.setPublic(this)
 /*! \relates qCTKPimpl
- * Returns a reference in the current scope named "d" to the private class.
+ * Returns a pointer (or reference) in the current scope named "d" to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
 #define QCTK_D(PUB) PUB##Private* d = qctk_d()
 #define QCTK_D_REF(PUB) PUB##Private& d = qctk_d.ref()
 /*! \relates qCTKPimpl
- * Creates a reference in the current scope named "q" to the public class.
+ * Creates a pointer ( or reference) in the current scope named "q" to the public class.
  *
  * This macro only works in a class using \a QCTK_DECLARE_PUBLIC.
  */
@@ -208,24 +208,22 @@ void MyTestPrivate::doQuux() {
 
 #ifdef QCTK_DOXYGEN_RUN
 /*! \relates qCTKPimpl
- * Returns a reference to the private class.
+ * Returns a pointer to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
 qCTKPrivate<PUB>* qctk_d();
-//qCTKPrivate<PUB>& qctk_d::ref();
 
 /*! \relates qCTKPimpl
- * Returns a const reference to the private class.
+ * Returns a const pointer to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  * This overload will be automatically used in const functions.
  */
 const qCTKPrivate<PUB>* qctk_d();
-//const qCTKPrivate<PUB>& qctk_d::ref();
 
 /*! \relates qCTKPimpl
- * Returns a reference to the public class.
+ * Returns a reference or pointer to the public class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
  */
@@ -233,7 +231,7 @@ PUB& qctk_p_ref();
 PUB* qctk_p();
 
 /*! \relates qCTKPimpl
- * Returns a const reference to the public class.
+ * Returns a const reference or pointer to the public class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
  * This overload will be automatically used in const functions.

@@ -25,6 +25,7 @@ public:
 
   // Constructors
   qCTKSlider(QWidget* parent = 0);
+  virtual ~qCTKSlider(){}
 
   // Description:
   // Get range

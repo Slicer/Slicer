@@ -21,6 +21,7 @@ public:
 
   // Constructors
   qCTKMatrixWidget(QWidget* parent = 0);
+  virtual ~qCTKMatrixWidget(){}
 
   // Description:
   // Set / Get values

@@ -30,6 +30,7 @@ class QCTK_WIDGETS_EXPORT qCTKTreeComboBox : public QComboBox
   Q_OBJECT
 public:
   qCTKTreeComboBox(QWidget* parent = 0);
+  virtual ~qCTKTreeComboBox(){}
 
   virtual bool eventFilter(QObject* object, QEvent* event);
   virtual void showPopup();

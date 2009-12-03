@@ -24,6 +24,7 @@ public:
 
   // Constructors
   qCTKSliderSpinBoxLabel(QWidget* parent = 0);
+  virtual ~qCTKSliderSpinBoxLabel(){}
 
   // Description:
   // Set built-in label text visibility

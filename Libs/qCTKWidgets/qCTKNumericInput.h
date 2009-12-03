@@ -24,6 +24,7 @@ public:
 
   // Constructors
   qCTKNumericInput(QWidget* parent = 0);
+  virtual ~qCTKNumericInput(){}
 
   // Description:
   // Set/Get value

@@ -14,6 +14,7 @@ public:
   qCTKColorPickerButton(QWidget* parent = 0);
   qCTKColorPickerButton(const QString& text, QWidget* parent = 0 );
   qCTKColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
+  virtual ~qCTKColorPickerButton(){}
   
   QColor color()const;
 
