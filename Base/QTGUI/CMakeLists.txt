@@ -39,10 +39,12 @@ SET(slicer_qtbase_MOC_SRCS
   qSlicerModuleManager.h
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.h
+  qSlicerModuleSelectorWidget_p.h
   )
 
 # UI files
 SET(slicer_qtbase_UI_SRCS
+  Resources/UI/qSlicerModuleSelectorWidget.ui
 )
 
 # Additional Target libraries (QT libs already included)

@@ -1,27 +1,11 @@
 #include "qSlicerModuleSelectorWidget.h"
 
+#include "qSlicerModuleSelectorWidget_p.h"
+
 // qCTK includes
 
 // QT includes
-#include <QComboBox>
-#include <QHBoxLayout>
-
-//---------------------------------------------------------------------------
-struct qSlicerModuleSelectorWidgetPrivate: public qCTKPrivate<qSlicerModuleSelectorWidget>
-{
-  QCTK_DECLARE_PUBLIC(qSlicerModuleSelectorWidget);
-  
-  qSlicerModuleSelectorWidgetPrivate()
-    {
-    this->ComboBox = 0;
-    }
-    
-  void setupUi(QWidget* widget);
-  
-  void removeModule(const QString& name);
-  
-  QComboBox * ComboBox; 
-};
+#include <QDebug>
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorWidget::qSlicerModuleSelectorWidget(QWidget* parent)
@@ -53,20 +37,37 @@ void qSlicerModuleSelectorWidget::removeModule(const QString& name)
 void qSlicerModuleSelectorWidgetPrivate::setupUi(QWidget* widget)
 {
   QCTK_P(qSlicerModuleSelectorWidget);
-  
-  this->ComboBox = new QComboBox;
-  
-  QHBoxLayout * layout = new QHBoxLayout;
-  layout->addWidget(this->ComboBox);
-  
-  widget->setLayout(layout);
+
+  this->Ui_qSlicerModuleSelectorWidget::setupUi(widget); 
 
   QObject::connect(this->ComboBox, SIGNAL(activated(const QString &)),
                    p, SIGNAL(moduleSelected(const QString &)));
+
+  this->connect(this->HistoryButton, SIGNAL(clicked()), SLOT(onHistoryButtonClicked()));
+  this->connect(this->PreviousButton, SIGNAL(clicked()), SLOT(onPreviousButtonClicked()));
+  this->connect(this->NextButton, SIGNAL(clicked()), SLOT(onNextButtonClicked()));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidgetPrivate::removeModule(const QString& name)
 {
   this->ComboBox->removeItem(this->ComboBox->findText(name));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorWidgetPrivate::onHistoryButtonClicked()
+{
+  qDebug() << "qSlicerModuleSelectorWidgetPrivate::onHistoryButtonClicked - Not implemented";
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorWidgetPrivate::onPreviousButtonClicked()
+{
+  qDebug() << "qSlicerModuleSelectorWidgetPrivate::onPreviousButtonClicked - Not implemented";
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorWidgetPrivate::onNextButtonClicked()
+{
+  qDebug() << "qSlicerModuleSelectorWidgetPrivate::onNextButtonClicked - Not implemented";
 }

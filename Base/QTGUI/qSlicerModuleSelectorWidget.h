@@ -28,7 +28,7 @@ public:
 
 signals:
   void moduleSelected(const QString& name);
-
+  
 private:
   QCTK_DECLARE_PRIVATE(qSlicerModuleSelectorWidget);
 };
