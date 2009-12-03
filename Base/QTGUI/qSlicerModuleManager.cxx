@@ -9,17 +9,33 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
+// QT includes
+#include <QToolBar>
+#include <QAction>
+#include <QSignalMapper>
+
 //-----------------------------------------------------------------------------
 struct qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
 {
+  QCTK_DECLARE_PUBLIC(qSlicerModuleManager);
+  
   qSlicerModuleManagerPrivate()
     {
     this->ModulePanel = 0;
+    this->ModuleToolBar = 0;
     }
 
   // Description:
   // Instantiate a module panel
   void instantiateModulePanel();
+
+  // Description:
+  // Handle post-load initialization
+  void onModuleLoaded(qSlicerAbstractModule* module);
+
+  // Description:
+  // Handle pre-unload operation
+  void onModuleAboutToBeUnloaded(qSlicerAbstractModule* module);
 
   typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
   typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
@@ -27,6 +43,8 @@ struct qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
   QHash<QString, qSlicerAbstractModule*> ModuleList;  // Store Pair<ModuleName, ModuleObject>
   qSlicerModuleFactory                   ModuleFactory;
   qSlicerModulePanel*                    ModulePanel;
+  QToolBar*                              ModuleToolBar;
+  QSignalMapper*                         ShowModuleActionMapper;
 };
 
 //----------------------------------------------------------------------------
@@ -51,6 +69,12 @@ void qSlicerModuleManager::classFinalize()
 qSlicerModuleManager::qSlicerModuleManager()
 {
   QCTK_INIT_PRIVATE(qSlicerModuleManager);
+  QCTK_D(qSlicerModuleManager);
+  d->ShowModuleActionMapper = new QSignalMapper(this);
+  
+  this->connect(d->ShowModuleActionMapper,
+                SIGNAL(mapped(const QString&)),
+                SLOT(showModuleByName(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -149,6 +173,9 @@ bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
                 module,
                 SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  // Handle post-load initialization
+  d->onModuleLoaded(module);
+  
   return true;
   //return module;
 }
@@ -176,8 +203,15 @@ bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
     qWarning() << "Failed to unload module: " << moduleName << " - Module wasn't loaded";
     return false;
     }
+
+  qSlicerAbstractModule * module = iter.value();
+  Q_ASSERT(module);
+  
+  // Handle pre-unload
+  d->onModuleAboutToBeUnloaded(module);
+  
   // Tells Qt to delete the object when appropriate
-  iter.value()->deleteLater();
+  module->deleteLater();
 
   // Remove the object from the list
   d->ModuleList.remove(iter.key());
@@ -223,7 +257,7 @@ void qSlicerModuleManager::showModule(const QString& moduleTitle)
   d->instantiateModulePanel();
   Q_ASSERT(d->ModulePanel);
 
-  qDebug() << "Show module:" << moduleTitle;
+  qDebug() << "Show module by title:" << moduleTitle;
   qSlicerAbstractModule * module = this->getModule(moduleTitle);
   Q_ASSERT(module);
   d->ModulePanel->setModule(module);
@@ -236,7 +270,7 @@ void qSlicerModuleManager::showModuleByName(const QString& moduleName)
   d->instantiateModulePanel();
   Q_ASSERT(d->ModulePanel);
 
-  qDebug() << "Show module:" << moduleName;
+  qDebug() << "Show module by name:" << moduleName;
   qSlicerAbstractModule * module = this->getModuleByName(moduleName);
   Q_ASSERT(module);
   d->ModulePanel->setModule(module);
@@ -268,6 +302,9 @@ void qSlicerModuleManager::setModulePanelGeometry(int ax, int ay, int aw, int ah
 QCTK_GET_CXX(qSlicerModuleManager, qSlicerAbstractModulePanel*, modulePanel, ModulePanel);
 
 //---------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerModuleManager, QToolBar*, setModuleToolBar, ModuleToolBar);
+
+//---------------------------------------------------------------------------
 // qSlicerModuleManagerPrivate methods
 
 //---------------------------------------------------------------------------
@@ -277,6 +314,48 @@ void qSlicerModuleManagerPrivate::instantiateModulePanel()
     {
     this->ModulePanel =
       new qSlicerModulePanel(0, qSlicerApplication::application()->defaultWindowFlags());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleManagerPrivate::onModuleLoaded(qSlicerAbstractModule* module)
+{
+  QCTK_P(qSlicerModuleManager);
+  Q_ASSERT(module);
+  if (!this->ModuleToolBar)
+    {
+    return;
+    }
+  QAction * action = module->showModuleAction();
+  if (action)
+    {
+    // Add action to signal mapper
+    this->ShowModuleActionMapper->setMapping(action, module->name());
+    QObject::connect(action, SIGNAL(triggered()), this->ShowModuleActionMapper, SLOT(map()));
+
+    // Update action state
+    bool visible = module->showModuleActionVisibleByDefault();
+    action->setVisible(visible);
+    action->setEnabled(visible);
+
+    // Add action to ToolBar
+    this->ModuleToolBar->addAction(action);
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void qSlicerModuleManagerPrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModule* module)
+{
+  Q_ASSERT(module);
+  if (!this->ModuleToolBar)
+    {
+    return;
+    }
+  QAction * action = module->showModuleAction();
+  if (action)
+    {
+    this->ModuleToolBar->removeAction(action);
     }
 }
 

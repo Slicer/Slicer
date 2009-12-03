@@ -13,6 +13,8 @@ class qSlicerAbstractModule;
 class qSlicerModuleManagerInitialize;
 class qSlicerModuleFactory;
 class qSlicerAbstractModulePanel;
+class QToolBar;
+
 class qSlicerModuleManagerPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager : public QObject
@@ -61,6 +63,10 @@ public:
   // Description:
   // Return a reference to the Module Panel
   qSlicerAbstractModulePanel* modulePanel() const;
+
+  // Description:
+  // Set module toolbar
+  void setModuleToolBar(QToolBar* toolBar); 
 
 public slots:
 
