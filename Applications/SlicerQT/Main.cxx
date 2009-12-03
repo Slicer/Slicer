@@ -67,6 +67,8 @@ int main(int argc, char* argv[])
     splash.repaint();
     }
 
+  splash.clearMessage();
+  
   // Create and show main window
   qSlicerMainWindow window;
   window.show();
