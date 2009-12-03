@@ -108,7 +108,7 @@ void vtkMRMLCurveAnalysisNode::Copy(vtkMRMLNode *anode)
 
   for (int i = 0; i < numInputParameters; i ++)
     {
-    int row = i + numParameters;
+    //int row = i + numParameters;
     const char* name = inputParamNames->GetValue(i);
     double value = node->GetConstant(name);
     this->SetConstant(name, value);
@@ -117,7 +117,7 @@ void vtkMRMLCurveAnalysisNode::Copy(vtkMRMLNode *anode)
 
   for (int i = 0; i < numInputCurves; i ++)
     {
-    int row = i + numParameters + numInputParameters;
+    //int row = i + numParameters + numInputParameters;
     const char* name = inputDataNames->GetValue(i);
     vtkDoubleArray* curve = node->GetInputArray(name);
 
