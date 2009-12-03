@@ -320,7 +320,6 @@ void qSlicerModuleManagerPrivate::instantiateModulePanel()
 //---------------------------------------------------------------------------
 void qSlicerModuleManagerPrivate::onModuleLoaded(qSlicerAbstractModule* module)
 {
-  QCTK_P(qSlicerModuleManager);
   Q_ASSERT(module);
   if (!this->ModuleToolBar)
     {
