@@ -9,7 +9,7 @@ class QCTK_WIDGETS_EXPORT qCTKCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
 public:
-  qCTKCollapsibleGroupBox(QWidget* parent = 0);
+  explicit qCTKCollapsibleGroupBox(QWidget* parent = 0);
   virtual ~qCTKCollapsibleGroupBox();
   virtual int heightForWidth(int w) const;
   virtual QSize minimumSizeHint()const;

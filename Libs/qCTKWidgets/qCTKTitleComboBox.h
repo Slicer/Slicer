@@ -12,7 +12,7 @@ class QCTK_WIDGETS_EXPORT qCTKTitleComboBox : public QComboBox
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
 
 public:
-  qCTKTitleComboBox(QWidget* parent = 0);
+  explicit qCTKTitleComboBox(QWidget* parent = 0);
   virtual ~qCTKTitleComboBox();
 
   void setTitle(const QString&);

@@ -16,7 +16,7 @@ class QCTK_WIDGETS_EXPORT qCTKCoordinatesWidget : public QWidget
 
     
 public:
-  qCTKCoordinatesWidget(QWidget* parent = 0);
+  explicit qCTKCoordinatesWidget(QWidget* parent = 0);
   virtual ~qCTKCoordinatesWidget();
 
   // Description:

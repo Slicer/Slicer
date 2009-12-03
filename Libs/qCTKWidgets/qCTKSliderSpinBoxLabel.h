@@ -23,7 +23,7 @@ public:
   typedef QWidget Superclass;
 
   // Constructors
-  qCTKSliderSpinBoxLabel(QWidget* parent = 0);
+  explicit qCTKSliderSpinBoxLabel(QWidget* parent = 0);
   virtual ~qCTKSliderSpinBoxLabel(){}
 
   // Description:

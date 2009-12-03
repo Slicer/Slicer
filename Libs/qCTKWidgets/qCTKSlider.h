@@ -24,7 +24,7 @@ public:
   typedef QSlider Superclass;
 
   // Constructors
-  qCTKSlider(QWidget* parent = 0);
+  explicit qCTKSlider(QWidget* parent = 0);
   virtual ~qCTKSlider(){}
 
   // Description:

@@ -27,7 +27,7 @@ public:
   typedef QWidget Superclass;
   
   // Constructors
-  qCTKAddRemoveComboBox(QWidget* parent = 0);
+  explicit qCTKAddRemoveComboBox(QWidget* parent = 0);
   virtual ~qCTKAddRemoveComboBox(){}
   
   // Description:

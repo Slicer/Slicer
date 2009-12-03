@@ -11,9 +11,9 @@ class QCTK_WIDGETS_EXPORT qCTKColorPickerButton : public QPushButton
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
 public:
-  qCTKColorPickerButton(QWidget* parent = 0);
-  qCTKColorPickerButton(const QString& text, QWidget* parent = 0 );
-  qCTKColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
+  explicit qCTKColorPickerButton(QWidget* parent = 0);
+  explicit qCTKColorPickerButton(const QString& text, QWidget* parent = 0 );
+  explicit qCTKColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
   virtual ~qCTKColorPickerButton(){}
   
   QColor color()const;

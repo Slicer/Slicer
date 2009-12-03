@@ -51,8 +51,8 @@
 class QCTK_WIDGETS_EXPORT qCTKFlowLayout : public QLayout
 {
 public:
-  qCTKFlowLayout(QWidget *parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
-  qCTKFlowLayout(int margin = -1, int hSpacing = -1, int vSpacing = -1);
+  explicit qCTKFlowLayout(QWidget *parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
+  explicit qCTKFlowLayout(int margin = -1, int hSpacing = -1, int vSpacing = -1);
   virtual ~qCTKFlowLayout();
 
   void addItem(QLayoutItem *item);

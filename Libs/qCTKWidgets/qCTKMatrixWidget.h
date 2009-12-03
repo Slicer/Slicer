@@ -20,7 +20,7 @@ public:
   typedef QTableWidget Superclass;
 
   // Constructors
-  qCTKMatrixWidget(QWidget* parent = 0);
+  explicit qCTKMatrixWidget(QWidget* parent = 0);
   virtual ~qCTKMatrixWidget(){}
 
   // Description:

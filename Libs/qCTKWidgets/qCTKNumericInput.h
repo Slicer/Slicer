@@ -23,7 +23,7 @@ public:
   typedef QLineEdit Superclass;
 
   // Constructors
-  qCTKNumericInput(QWidget* parent = 0);
+  explicit qCTKNumericInput(QWidget* parent = 0);
   virtual ~qCTKNumericInput(){}
 
   // Description:
