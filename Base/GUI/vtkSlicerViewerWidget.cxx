@@ -2191,19 +2191,19 @@ vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplay
 
     sliceMatrix = this->RedSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
     planeDirection = (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, redSlicePlane);
 
     sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
     planeDirection = (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, greenSlicePlane);
 
     sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
     planeDirection = (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, yellowSlicePlane);
 
