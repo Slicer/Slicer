@@ -34,6 +34,10 @@ SET(qt_module_target_libraries
   #SlicerTractographyFiducialSeeding
   )
 
+# Resources
+SET(qt_module_resources
+  Resources/qSlicerVolumesModule.qrc
+)
 
 Slicer3_build_qtmodule(
   NAME ${qt_module_name}
@@ -43,4 +47,5 @@ Slicer3_build_qtmodule(
   MOC_SRCS ${qt_module_MOC_SRCS}
   UI_SRCS ${qt_module_UI_SRCS}
   TARGET_LIBRARIES ${qt_module_target_libraries}
+  RESOURCES ${qt_module_resources}
   )
