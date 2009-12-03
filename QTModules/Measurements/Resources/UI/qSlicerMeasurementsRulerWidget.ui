@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Measurements</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerMeasurementsModule.qrc">
+    <normaloff>:/Icons/Measurements.png</normaloff>:/Icons/Measurements.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -27,7 +31,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
+          <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
         <item>
          <property name="text">
@@ -35,7 +39,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
+           <normaloff>:/Icons/Visible.png</normaloff>:/Icons/Visible.png</iconset>
          </property>
         </item>
         <item>
@@ -44,7 +48,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
+           <normaloff>:/Icons/Invisible.png</normaloff>:/Icons/Invisible.png</iconset>
          </property>
         </item>
        </widget>
@@ -255,15 +259,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>qCTKCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qCTKCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -295,6 +299,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerMeasurementsModule.qrc"/>
+  <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections/>
 </ui>

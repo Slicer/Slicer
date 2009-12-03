@@ -30,7 +30,7 @@
         </property>
         <property name="icon">
          <iconset resource="../qSlicerMeasurementsModule.qrc">
-          <normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</normaloff>:/Icons/VisibleOrInvisibleNoFrame.png</iconset>
+          <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
         <item>
          <property name="text">
@@ -38,7 +38,7 @@
          </property>
          <property name="icon">
           <iconset resource="../qSlicerMeasurementsModule.qrc">
-           <normaloff>:/Icons/VisibleNoFrame.png</normaloff>:/Icons/VisibleNoFrame.png</iconset>
+           <normaloff>:/Icons/Visible.png</normaloff>:/Icons/Visible.png</iconset>
          </property>
         </item>
         <item>
@@ -47,7 +47,7 @@
          </property>
          <property name="icon">
           <iconset resource="../qSlicerMeasurementsModule.qrc">
-           <normaloff>:/Icons/InvisibleNoFrame.png</normaloff>:/Icons/InvisibleNoFrame.png</iconset>
+           <normaloff>:/Icons/Invisible.png</normaloff>:/Icons/Invisible.png</iconset>
          </property>
         </item>
        </widget>

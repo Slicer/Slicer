@@ -1,7 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/InvisibleNoFrame.png</file>
-    <file>Icons/VisibleNoFrame.png</file>
-    <file>Icons/VisibleOrInvisibleNoFrame.png</file>
+    <file>Icons/Measurements.png</file>
   </qresource>
 </RCC>
