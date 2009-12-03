@@ -214,11 +214,11 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_Mapper->SetBalloonHelpString("Please select one rendering method");
     this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Software Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessRenderingMethodEvents 0");
-    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("GPU Ray Casting (GLSL)");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Single Volume GPU Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessRenderingMethodEvents 1");
-    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("GPU Ray Casting II (GLSL)");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Multi-volume GPU Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessRenderingMethodEvents 2");
-    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("OpenGL Polygon Texture 3D");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("OpenGL 3D Texture Mapping");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessRenderingMethodEvents 3");
 //    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
 //    this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessRenderingMethodEvents 4");
