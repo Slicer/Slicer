@@ -533,50 +533,39 @@ int vtkSlicerViewerWidget::UpdateClipSlicesFromMRML()
 
   // set slice plane normals and origins
   vtkMatrix4x4 *sliceMatrix = NULL;
+  int planeDirection = 1;
+
+  sliceMatrix = this->RedSliceNode->GetSliceToRAS();
+  planeDirection = (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->RedSlicePlane);
+
+  sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
+  planeDirection = (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->GreenSlicePlane);
+
+  sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
+  planeDirection = (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->YellowSlicePlane);
+
+  return modifiedState;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
+                                                   int planeDirection,
+                                                   vtkPlane *plane)
+{
   double normal[3];
   double origin[3];
   int i;
 
-  sliceMatrix = this->RedSliceNode->GetSliceToRAS();
   for (i=0; i<3; i++) 
     {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    if (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
-      {
-      normal[i] = - normal[i];
-      }
+    normal[i] = planeDirection * sliceMatrix->GetElement(i,2);
     origin[i] = sliceMatrix->GetElement(i,3);
     }
-  this->RedSlicePlane->SetNormal(normal);
-  this->RedSlicePlane->SetOrigin(origin);
-
-  sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
-  for (i=0; i<3; i++) 
-    {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    if (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
-      {
-      normal[i] = - normal[i];
-      }
-    origin[i] = sliceMatrix->GetElement(i,3);
-    }
-  this->GreenSlicePlane->SetNormal(normal);
-  this->GreenSlicePlane->SetOrigin(origin);
-
-  sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
-  for (i=0; i<3; i++) 
-    {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    if (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
-      {
-      normal[i] = - normal[i];
-      }
-    origin[i] = sliceMatrix->GetElement(i,3);
-    }
-  this->YellowSlicePlane->SetNormal(normal);
-  this->YellowSlicePlane->SetOrigin(origin);
-
-  return modifiedState;
+  plane->SetNormal(normal);
+  plane->SetOrigin(origin);
 }
 
 //---------------------------------------------------------------------------
@@ -1290,7 +1279,12 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
           mapper->SetInput(poly);
           }
         }
-      continue;
+      vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+      // clipped model could be transformed
+      if (clipping == 0 || tnode == NULL || !tnode->IsLinear())
+        {
+        continue;
+        }
       }
     }
 
@@ -1301,9 +1295,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     {
     if (this->ClippingOn && modelDisplayNode != NULL && clipping)
       {
-      clipper = vtkClipPolyData::New();
-      clipper->SetClipFunction(this->SlicePlanes);
-      clipper->SetValue( 0.0);
+      clipper = this->CreateTransformedClipper(model);
       }
 
     vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
@@ -2148,3 +2140,87 @@ void vtkSlicerViewerWidget::SetBoxWidgetInteractor ()
     this->BoxWidget->SetInteractor(interactor);
     }
 }
+
+vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplayableNode *model)
+{
+  vtkClipPolyData *clipper = vtkClipPolyData::New();
+  clipper->SetValue( 0.0);
+
+  vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  transformToWorld->Identity();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+
+    vtkImplicitBoolean *slicePlanes =   vtkImplicitBoolean::New();
+    if (this->ClipType == vtkMRMLClipModelsNode::ClipIntersection) 
+      {
+      slicePlanes->SetOperationTypeToIntersection();
+      }
+    else if (this->ClipType == vtkMRMLClipModelsNode::ClipUnion) 
+      {
+      slicePlanes->SetOperationTypeToUnion();
+      }
+
+    vtkPlane *redSlicePlane = vtkPlane::New();
+    vtkPlane *greenSlicePlane = vtkPlane::New();
+    vtkPlane *yellowSlicePlane = vtkPlane::New();
+
+
+    if (this->RedSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+      {
+      slicePlanes->AddFunction(redSlicePlane);
+      }
+
+    if (this->GreenSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+      {
+      slicePlanes->AddFunction(greenSlicePlane);
+      }
+
+    if (this->YellowSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+      {
+      slicePlanes->AddFunction(yellowSlicePlane);
+      }
+
+    vtkMatrix4x4 *sliceMatrix = NULL;
+    vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+    int planeDirection = 1;
+    transformToWorld->Invert();
+
+    sliceMatrix = this->RedSliceNode->GetSliceToRAS();
+    mat->Identity();
+    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    planeDirection = (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    this->SetClipPlaneFromMatrix(mat, planeDirection, redSlicePlane);
+
+    sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
+    mat->Identity();
+    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    planeDirection = (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    this->SetClipPlaneFromMatrix(mat, planeDirection, greenSlicePlane);
+
+    sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
+    mat->Identity();
+    vtkMatrix4x4::Multiply4x4(sliceMatrix, transformToWorld, mat);
+    planeDirection = (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    this->SetClipPlaneFromMatrix(mat, planeDirection, yellowSlicePlane);
+
+    clipper->SetClipFunction(slicePlanes);
+    
+    slicePlanes->Delete();
+    redSlicePlane->Delete();
+    greenSlicePlane->Delete();
+    yellowSlicePlane->Delete();
+    mat->Delete();
+
+    }
+  else 
+    {
+    clipper->SetClipFunction(this->SlicePlanes);
+    }
+
+  return clipper;
+}
+

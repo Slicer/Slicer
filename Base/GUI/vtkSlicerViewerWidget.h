@@ -52,6 +52,9 @@ class vtkWorldPointPicker;
 class vtkPropPicker;
 class vtkCellPicker;
 class vtkPointPicker;
+class vtkPlane;
+class vtkClipPolyData;
+class vtkPMatrix4x4;
 class vtkSlicerBoxWidget2;
 class vtkSlicerBoxRepresentation;
 
@@ -214,6 +217,10 @@ public:
     ActiveCameraChangedEvent   = 30000
   };
   //ETX
+
+  void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
+                             int planeDirection,
+                             vtkPlane *plane);
   
 protected:
   vtkSlicerViewerWidget();
@@ -271,6 +278,8 @@ protected:
   void RemoveCameraObservers();
 
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
+
+  vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
   
   //BTX
 
