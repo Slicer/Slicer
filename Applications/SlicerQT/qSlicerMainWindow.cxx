@@ -4,6 +4,7 @@
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
 
 // QT includes
@@ -25,12 +26,15 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *parent)
  :Superclass(parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMainWindow);
-  qctk_d()->setupUi(this);
+  QCTK_D(qSlicerMainWindow);
+  d->setupUi(this);
   
   // Main window core helps to coordinate various widgets and panels
-  qctk_d()->Core = new qSlicerMainWindowCore(this);
+  d->Core = new qSlicerMainWindowCore(this);
   
   this->setupMenuActions();
+
+  qSlicerModuleManager::instance()->setModuleToolBar(d->ModuleToolBar);
 }
 
 //-----------------------------------------------------------------------------

@@ -55,6 +55,9 @@ int main(int argc, char* argv[])
   qSlicerModuleManager::instance()->factory()->registerCoreModules();
   qSlicerModuleManager::instance()->factory()->registerLoadableModules();
   qSlicerModuleManager::instance()->factory()->registerCmdLineModules();
+
+  // Create main window
+  qSlicerMainWindow window;
   
   // Load all available modules
   QStringList moduleNames = qSlicerModuleManager::instance()->factory()->moduleNames();
@@ -69,8 +72,7 @@ int main(int argc, char* argv[])
 
   splash.clearMessage();
   
-  // Create and show main window
-  qSlicerMainWindow window;
+  // Show main window
   window.show();
   splash.finish(&window);
 
