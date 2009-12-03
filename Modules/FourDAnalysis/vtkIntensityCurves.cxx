@@ -316,7 +316,7 @@ double vtkIntensityCurves::GetSDIntensity(vtkImageData* image, double mean, Inde
 
 //---------------------------------------------------------------------------
 void vtkIntensityCurves::GetMeanMaxMinIntensity(vtkImageData* image, IndexTableType& indexTable,
-                                                double& mean, double& max, double min)
+                                                double& mean, double& max, double& min)
 {
   double sum = 0.0;
   mean = 0.0;

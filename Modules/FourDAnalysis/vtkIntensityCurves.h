@@ -79,7 +79,7 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   double GetMeanIntensity(vtkImageData* image, IndexTableType& indexTable);
   double GetSDIntensity(vtkImageData* image, double mean, IndexTableType& indexTable);
   void   GetMeanMaxMinIntensity(vtkImageData* image, IndexTableType& indexTable,
-                                double& mean, double& max, double min);
+                                double& mean, double& max, double& min);
  private:
 
   vtkMRMLTimeSeriesBundleNode*     BundleNode;
