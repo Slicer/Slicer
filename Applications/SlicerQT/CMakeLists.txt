@@ -1,4 +1,4 @@
-project(SlicerQT)
+PROJECT(SlicerQT)
 
 # --------------------------------------------------------------------------
 # Enable shared link forwarding support if needed.
@@ -20,102 +20,178 @@ project(SlicerQT)
 #   endforeach(dependency)
 # endif(NOT WIN32)
 
-# set(Slicer3_EXE_SUFFIX)
-# set(Slicer3_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
-# if(BUILD_SHARED_LIBS)
-#   set(Slicer3_NEED_SHARED_FORWARD 1)
-#   set(Slicer3_EXE_SUFFIX -real)
-#   set(Slicer3_EXE_INSTALL ".")
-#   set(Slicer3_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-#   set(Slicer3_FORWARD_DIR_INSTALL "${Slicer3_EXE_INSTALL}")
-#   if(WIN32)
-#     set(Slicer3_FORWARD_PATH_BUILD 
-#       "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${Teem_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
-#     set(Slicer3_FORWARD_PATH_INSTALL
-#       "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
-#     if(Slicer3_BUILD_MODULES)
-#       set(Slicer3_FORWARD_PATH_BUILD 
-#         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
-#     endif(Slicer3_BUILD_MODULES)
-#     if(Slicer3_BUILD_CLI)
-#       set(Slicer3_FORWARD_PATH_BUILD 
-#         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
-#     endif(Slicer3_BUILD_CLI)
-#   else(WIN32)
-#     set(Slicer3_FORWARD_PATH_BUILD 
-#       "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
-#     set(Slicer3_FORWARD_PATH_INSTALL
-#       "\"../${Slicer3_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
-#     if(Slicer3_BUILD_MODULES)
-#       set(Slicer3_FORWARD_PATH_BUILD 
-#         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
-#     endif(Slicer3_BUILD_MODULES)
-#     if(Slicer3_BUILD_CLI)
-#       set(Slicer3_FORWARD_PATH_BUILD 
-#         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
-#     endif(Slicer3_BUILD_CLI)
-#   endif(WIN32)
-#   if(Slicer3_BUILD_MODULES)
-#     set(Slicer3_FORWARD_PATH_INSTALL
+SET(SlicerQT_EXE_SUFFIX)
+SET(SlicerQT_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
+IF(BUILD_SHARED_LIBS)
+  SET(SlicerQT_NEED_SHARED_FORWARD 1)
+  SET(SlicerQT_EXE_SUFFIX -real)
+  SET(SlicerQT_EXE_INSTALL ".")
+  SET(SlicerQT_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+  SET(SlicerQT_FORWARD_DIR_INSTALL "${SlicerQT_EXE_INSTALL}")
+  if(WIN32)
+    #Nota: Removed the following
+    #\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,
+    #\"${TCL_DIR}/bin\",
+    #\"${INCR_TCL_LIBRARY_PATH}\",
+    #\"${INCR_TK_LIBRARY_PATH}\"
+    SET(SlicerQT_FORWARD_PATH_BUILD
+      "\"${SlicerQT_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,    \\
+       \"${VTK_DIR}/bin\" CONFIG_DIR_POST,                   \\
+       \"${ITK_DIR}/bin\" CONFIG_DIR_POST,                   \\
+       \"${Teem_DIR}/bin\" CONFIG_DIR_POST")
+
+    SET(SlicerQT_FORWARD_PATH_INSTALL "")
+    #SET(SlicerQT_FORWARD_PATH_INSTALL
+    #  "\"../lib/TclTk/bin\",
+    #   \"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",
+    #   \"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
+
+    IF(Slicer3_BUILD_QTLOADABLEMODULES)
+      SET(SlicerQT_FORWARD_PATH_BUILD
+        "${SlicerQT_FORWARD_PATH_BUILD},
+         \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)    
+    #IF(Slicer3_BUILD_MODULES)
+    #  SET(Slicer3_FORWARD_PATH_BUILD
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    #ENDIF(Slicer3_BUILD_MODULES)
+    
+    IF(Slicer3_BUILD_CLI)
+      SET(SlicerQT_FORWARD_PATH_BUILD
+        "${SlicerQT_FORWARD_PATH_BUILD},
+        \"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+    ENDIF(Slicer3_BUILD_CLI)
+    
+  ELSE(WIN32)
+  
+    #Nota: Removed the following
+    #\"${KWWidgets_RUNTIME_DIRS}\",
+    #\"${TCL_DIR}/bin\",
+    #\"${INCR_TCL_LIBRARY_PATH}\",
+    #\"${INCR_TK_LIBRARY_PATH}\",
+    SET(SlicerQT_FORWARD_PATH_BUILD
+      "\"${Slicer3_FORWARD_DIR_BUILD}\",  \\
+       \"${VTK_DIR}/bin\",                \\
+       \"${ITK_DIR}/bin\",                \\
+       \"${Teem_DIR}/bin\",               \\
+       \"${OPENGL_gl_LIBRARY_PATH}\"")
+
+    # Nota: Removed the following
+    #\"../lib/KWWidgets\",\"../lib/InsightToolkit\",
+    #\"../lib/TclTk/lib\",
+    #\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",
+    #\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",
+    SET(SlicerQT_FORWARD_PATH_INSTALL
+      "\"../${Slicer3_INSTALL_LIB_DIR}\",                           \\
+       \"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",    \\
+       \"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\", \\
+       \"../lib/FreeSurfer\",                                       \\
+       \"../lib/IGT\",                                              \\
+       \"../lib/ITKCommandIO\",                                     \\
+       \"../lib/LoadableModule\",                                   \\
+       \"../lib/MGHImageIO\",                                       \\
+       \"../lib/MRML\",                                             \\
+       \"../lib/ModuleDescriptionParser\",                          \\
+       \"../lib/MRMLIDImageIO\",                                    \\
+       \"../lib/Qdec\",                                             \\
+       \"../lib/RemoteIO\",                                         \\
+       \"../lib/SlicerIO\",                                         \\
+       \"../lib/tclap\",                                            \\
+       \"../lib/vtkITK\",                                           \\
+       \"../lib/vtkTeem\"")
+
+    IF(Slicer3_BUILD_QTLOADABLEMODULES)
+      SET(SlicerQT_FORWARD_PATH_BUILD
+        "${SlicerQT_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+    
+    #IF(Slicer3_BUILD_MODULES)
+    #  SET(Slicer3_FORWARD_PATH_BUILD
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+    #ENDIF(Slicer3_BUILD_MODULES)
+    
+    IF(Slicer3_BUILD_CLI)
+      SET(SlicerQT_FORWARD_PATH_BUILD
+        "${SlicerQT_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+    ENDIF(Slicer3_BUILD_CLI)
+  ENDIF(WIN32)
+
+  IF(Slicer3_BUILD_QTLOADABLEMODULES)
+    SET(SlicerQT_FORWARD_PATH_INSTALL
+      "${SlicerQT_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+  ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+
+#   IF(Slicer3_BUILD_MODULES)
+#     SET(Slicer3_FORWARD_PATH_INSTALL
 #       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
-#   endif(Slicer3_BUILD_MODULES)
-#   if(Slicer3_BUILD_CLI)
-#     set(Slicer3_FORWARD_PATH_INSTALL
-#       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
-#   endif(Slicer3_BUILD_CLI)
-# endif(BUILD_SHARED_LIBS)
+#   ENDIF(Slicer3_BUILD_MODULES)
+  
+  IF(Slicer3_BUILD_CLI)
+    SET(SlicerQT_FORWARD_PATH_INSTALL
+      "${SlicerQT_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+  ENDIF(Slicer3_BUILD_CLI)
+  
+ENDIF(BUILD_SHARED_LIBS)
+
+# --------------------------------------------------------------------------
+
+#MESSAGE(STATUS SlicerQT_FORWARD_DIR_BUILD:${SlicerQT_FORWARD_DIR_BUILD})
+#MESSAGE(STATUS SlicerQT_FORWARD_PATH_BUILD:${SlicerQT_FORWARD_PATH_BUILD})
+#MESSAGE(STATUS SlicerQT_FORWARD_PATH_INSTALL:${SlicerQT_FORWARD_PATH_INSTALL})
+#MESSAGE(STATUS SlicerQT_FORWARD_DIR_BUILD:${SlicerQT_FORWARD_DIR_BUILD})
+#MESSAGE(STATUS SlicerQT_FORWARD_DIR_INSTALL:${SlicerQT_FORWARD_DIR_INSTALL})
 
 # Add main server executables.
-# set(Slicer3_EXE_LIST Slicer3)
+SET(SlicerQT_EXE_LIST SlicerQT)
 
-# # Add shared link forwarding executables if necessary.
-# if(Slicer3_NEED_SHARED_FORWARD)
-#   foreach(slicer_exe ${Slicer3_EXE_LIST})
-#     set(Slicer3_FORWARD_EXE ${slicer_exe}${Slicer3_EXE_SUFFIX})
-#     configure_file(
-#       ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
-#       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
-#       @ONLY IMMEDIATE)
-#     add_executable(${slicer_exe} WIN32
-#       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
-#     add_dependencies(${slicer_exe} ${slicer_exe}${Slicer3_EXE_SUFFIX})
-#     install(TARGETS ${slicer_exe}
-#       DESTINATION ${Slicer3_INSTALL_BIN_DIR}
-#       COMPONENT Runtime)
-#   endforeach(slicer_exe)
-# endif(Slicer3_NEED_SHARED_FORWARD)
+# Add shared link forwarding executables if necessary.
+IF(SlicerQT_NEED_SHARED_FORWARD)
+  FOREACH(slicer_exe ${SlicerQT_EXE_LIST})
+    SET(SlicerQT_FORWARD_EXE ${slicer_exe}${SlicerQT_EXE_SUFFIX})
+    CONFIGURE_FILE(
+      ${CMAKE_CURRENT_SOURCE_DIR}/SlicerQT-forward.c.in
+      ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
+      @ONLY IMMEDIATE)
+    ADD_EXECUTABLE(${slicer_exe} WIN32
+      ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
+    ADD_DEPENDENCIES(${slicer_exe} ${slicer_exe}${SlicerQT_EXE_SUFFIX})
+    INSTALL(TARGETS ${slicer_exe}
+      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      COMPONENT Runtime)
+  ENDFOREACH(slicer_exe)
+ENDIF(SlicerQT_NEED_SHARED_FORWARD)
 
 # --------------------------------------------------------------------------
 # Sources
 #
-SET(qSlicerQT_SRCS
+SET(SlicerQT_SRCS
   qSlicerMainWindow.h
   qSlicerMainWindow.cxx
   qSlicerMainWindowCore.h
   qSlicerMainWindowCore.cxx
   )
 
-SET(qSlicerQT_MOC_SRCS
+SET(SlicerQT_MOC_SRCS
   qSlicerMainWindow.h
   qSlicerMainWindowCore.h
   )
   
-SET(qSlicerQT_UI_SRCS
+SET(SlicerQT_UI_SRCS
   Resources/UI/qSlicerMainWindow.ui
   )
 
 # Resources
 SET(qt_module_resources
   Resources/SlicerQT.qrc
-  ${SlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
-  ${SlicerBaseQTCoreModules_SOURCE_DIR}/Resources/qSlicerBaseQTCoreModules.qrc
+  ${qSlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
+  ${qSlicerBaseQTCoreModules_SOURCE_DIR}/Resources/qSlicerBaseQTCoreModules.qrc
 )
-#SET(qSlicerQT_RC_FILE Resources/SlicerQT.rc)
+#SET(SlicerQT_RC_FILE Resources/SlicerQT.rc)
 
 
-QT4_WRAP_CPP(qSlicerQT_SRCS ${qSlicerQT_MOC_SRCS})
-QT4_WRAP_UI(qSlicerQT_UI_CXX ${qSlicerQT_UI_SRCS})
-QT4_ADD_RESOURCES(qSlicerQT_QRC_SRCS ${qt_module_resources})
+QT4_WRAP_CPP(SlicerQT_SRCS ${SlicerQT_MOC_SRCS})
+QT4_WRAP_UI(SlicerQT_UI_CXX ${SlicerQT_UI_SRCS})
+QT4_ADD_RESOURCES(SlicerQT_QRC_SRCS ${qt_module_resources})
 
 # --------------------------------------------------------------------------
 # Find SLICERLIBCURL (slicercurl)
@@ -301,17 +377,17 @@ SET(lib_name "qSlicerQT")
 #slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
 ADD_LIBRARY(${lib_name}
-  ${qSlicerQT_SRCS}
-  ${qSlicerQT_UI_CXX}
-  ${qSlicerQT_QRC_SRCS}
+  ${SlicerQT_SRCS}
+  ${SlicerQT_UI_CXX}
+  ${SlicerQT_QRC_SRCS}
 )
 
-SET(qSlicerQT_LIBRARIES 
+SET(SlicerQT_LIBRARIES 
   ${Slicer3_Base_LIBRARIES}
   )
   
 target_link_libraries(${lib_name} 
-  ${qSlicerQT_LIBRARIES}
+  ${SlicerQT_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.
@@ -326,19 +402,19 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 # --------------------------------------------------------------------------
 # Build the executable
 
-ADD_EXECUTABLE(SlicerQT
+ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX}
   Main.cxx)
   
-TARGET_LINK_LIBRARIES(SlicerQT 
-  qSlicerQT
+TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
+  ${lib_name}
   )
   
 # --------------------------------------------------------------------------
 # Install
 #
-# install(TARGETS Slicer3${Slicer3_EXE_SUFFIX}
-#   DESTINATION ${Slicer3_INSTALL_BIN_DIR}
-#   COMPONENT Runtime)
+INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
+  DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+  COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
 # If needed, copy the Tcl/Tk support files required at run-time 
