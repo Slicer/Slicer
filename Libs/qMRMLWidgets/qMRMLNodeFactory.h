@@ -24,6 +24,7 @@ public:
   
   // Constructors
   qMRMLNodeFactory(QObject* parent);
+  virtual ~qMRMLNodeFactory(){}
   
   // Description:
   // Set/Get MRML scene

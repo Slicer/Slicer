@@ -31,6 +31,7 @@ public:
   
   // Constructors
   qMRMLNodeSelector(QWidget* parent = 0);
+  virtual ~qMRMLNodeSelector(){}
   
   // Description:
   // Set/Get node type 

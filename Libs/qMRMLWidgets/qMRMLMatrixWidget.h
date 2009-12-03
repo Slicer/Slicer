@@ -30,6 +30,7 @@ public:
   
   // Constructors
   qMRMLMatrixWidget(QWidget* parent);
+  virtual ~qMRMLMatrixWidget(){}
   
   // Description:
   // Set/Get Coordinate system

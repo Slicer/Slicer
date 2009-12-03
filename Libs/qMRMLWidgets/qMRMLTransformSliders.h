@@ -44,6 +44,7 @@ public:
 
   // Constructors
   qMRMLTransformSliders(QWidget* parent);
+  virtual ~qMRMLTransformSliders(){}
 
   // Description:
   // Set/Get Coordinate system

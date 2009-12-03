@@ -20,6 +20,7 @@ public:
   
   // Constructors
   qMRMLNodeTreeSelector(QWidget* parent = 0);
+  virtual ~qMRMLNodeTreeSelector(){}
 
 protected:
   virtual void addNodeInternal(vtkMRMLNode* mrmlNode);

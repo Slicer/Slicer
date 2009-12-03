@@ -31,6 +31,7 @@ public:
 
   // Constructors
   qMRMLLinearTransformSlider(QWidget* parent);
+  virtual ~qMRMLLinearTransformSlider(){}
 
   // Description:
   // Set/Get Transform type
