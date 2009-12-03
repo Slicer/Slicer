@@ -40,6 +40,7 @@ struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_
     {
     this->Logic = 0;
     this->ProcessInformation = 0;
+    this->Name = "NA"; 
     }
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
@@ -97,7 +98,8 @@ struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_
   static QHash<QString, QString> GeometryTypeAttributeToNodeType;
   static QHash<QString, QString> TableTypeAttributeToNodeType;
   static QHash<QString, QString> TransformTypeAttributeToNodeType;  
-  
+
+  QString           Name;
   QString           Title;
   QString           Acknowledgement;
   QString           Help;
@@ -144,6 +146,8 @@ void qSlicerCLIModule::setup()
 }
 
 //-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerCLIModule, QString, name, Name);
+QCTK_SET_CXX(qSlicerCLIModule, const QString&, setName, Name);
 QCTK_GET_CXX(qSlicerCLIModule, QString, title, Title);
 QCTK_GET_CXX(qSlicerCLIModule, QString, category, Category);
 QCTK_GET_CXX(qSlicerCLIModule, QString, contributor, Contributor);

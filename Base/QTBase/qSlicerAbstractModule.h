@@ -13,6 +13,7 @@
 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
+class QAction; 
 class qSlicerAbstractModulePrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public qSlicerWidget
@@ -32,14 +33,16 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   // Description:
-  virtual QString name()const;
+  virtual QString name()const = 0;
+  virtual void setName(const QString& name) = 0; 
   virtual QString title()const = 0;
   virtual QString category()const { return QString(); }
   virtual QString contributor()const { return QString(); }
 
   // Description:
-  virtual void populateToolbar(){}
-  virtual void unPopulateToolbar(){}
+  // Return the action allowing to show the module
+  virtual QAction* showModuleAction()  { return 0; }
+  virtual bool showModuleActionVisibleByDefault() { return false; }
 
   // Description:
   virtual void populateApplicationSettings(){}

@@ -20,8 +20,12 @@ public:
 
   virtual void printAdditionalInfo();
 
+  virtual QString name() const;
+
 protected:
   virtual void setup();
+
+  virtual void setName(const QString& name){}
 
   // Description:
   // Convenient method to return slicer wiki URL

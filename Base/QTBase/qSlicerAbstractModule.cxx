@@ -34,12 +34,6 @@ void qSlicerAbstractModule::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::name()const
-{
-  return this->metaObject()->className();
-}
-
-//-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerAbstractModule, bool, moduleEnabled, ModuleEnabled);
 QCTK_SET_CXX(qSlicerAbstractModule, bool, setModuleEnabled, ModuleEnabled);
 

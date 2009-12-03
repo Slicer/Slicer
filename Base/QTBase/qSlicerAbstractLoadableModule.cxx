@@ -5,6 +5,11 @@
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
 {
+  qSlicerAbstractLoadableModulePrivate()
+    {
+    this->Name = "NA";
+    }
+  QString Name;
 };
 
 //-----------------------------------------------------------------------------
@@ -21,6 +26,10 @@ void qSlicerAbstractLoadableModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
 }
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerAbstractLoadableModule, QString, name, Name);
+QCTK_SET_CXX(qSlicerAbstractLoadableModule, const QString&, setName, Name);
 
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::helpText()

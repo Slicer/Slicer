@@ -20,6 +20,9 @@ public:
 
   virtual void printAdditionalInfo();
 
+  virtual QString name() const;
+  virtual void setName(const QString&);
+
   // Description:
   // Return help/acknowledgement text
   virtual QString helpText();

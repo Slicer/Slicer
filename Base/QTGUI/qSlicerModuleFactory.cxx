@@ -323,6 +323,7 @@ qSlicerAbstractModule* qSlicerModuleFactoryPrivate::instantiateModule(const QStr
       {
       // Try to instantiate a loadable module
       module = this->LoadableModuleFactory.instantiate(moduleName);
+      module->setName(moduleName);
       }
     else
       {
@@ -335,6 +336,7 @@ qSlicerAbstractModule* qSlicerModuleFactoryPrivate::instantiateModule(const QStr
       {
       // Try to instantiate a loadable command line module
       module = this->CmdLineLoadableModuleFactory.instantiate(moduleName);
+      module->setName(moduleName);
       }
     else
       {
