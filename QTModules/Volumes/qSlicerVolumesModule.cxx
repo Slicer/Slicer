@@ -33,3 +33,15 @@ void qSlicerVolumesModule::printAdditionalInfo()
 {
   this->Superclass::printAdditionalInfo();
 }
+
+//-----------------------------------------------------------------------------
+QAction* qSlicerVolumesModule::showModuleAction()
+{
+  return new QAction(QIcon(":/Icons/Volumes.png"), tr("Show Volumes module"), this);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerVolumesModule::isShowModuleActionVisibleByDefault()
+{
+  return true;
+}

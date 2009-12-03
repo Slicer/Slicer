@@ -40,6 +40,18 @@ void qSlicerCamerasModule::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
+QAction* qSlicerCamerasModule::showModuleAction()
+{
+  return new QAction(QIcon(":/Icons/Cameras.png"), tr("Show Cameras module"), this);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCamerasModule::isShowModuleActionVisibleByDefault()
+{
+  return false;
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::helpText()const
 {
   QString help =
