@@ -1,4 +1,4 @@
-PROJECT(SlicerBaseQTBase)
+PROJECT(qSlicerBaseQTBase)
 
 #
 # See CMake/Slicer3QTBaseLibraryMacros.cmake for details

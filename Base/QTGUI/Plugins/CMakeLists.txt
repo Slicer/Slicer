@@ -1,4 +1,4 @@
-PROJECT(SlicerBaseQTGUIPlugin)
+PROJECT(qSlicerBaseQTGUIPlugin)
 INCLUDE_DIRECTORIES(  
   ${QT_INCLUDE_DIR}
   ${QT_QTGUI_INCLUDE_DIR}
@@ -38,7 +38,7 @@ INSTALL(FILES
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
-SET(lib_name "SlicerBaseQTGUIPlugin")
+SET(lib_name "qSlicerBaseQTGUIPlugin")
 
 ADD_LIBRARY(${lib_name} SHARED ${qSlicerQTGUIPlugin_SRCS})
 SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES 
@@ -48,9 +48,9 @@ TARGET_LINK_LIBRARIES(${lib_name}
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTDESIGNER_LIBRARY}
-  SlicerBaseQTBase
-  SlicerBaseQTCLI
-  SlicerBaseQTGUI
+  qSlicerBaseQTBase
+  qSlicerBaseQTCLI
+  qSlicerBaseQTGUI
   )
   
 

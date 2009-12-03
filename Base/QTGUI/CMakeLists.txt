@@ -1,4 +1,4 @@
-PROJECT(SlicerBaseQTGUI)
+PROJECT(qSlicerBaseQTGUI)
 
 #
 # See CMake/Slicer3QTBaseLibraryMacros.cmake for details
@@ -8,12 +8,12 @@ SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 
 # Additional directories to include
 SET(slicer_qtbase_include_directories
-  ${SlicerBaseQTBase_SOURCE_DIR}
-  ${SlicerBaseQTBase_BINARY_DIR}
-  ${SlicerBaseQTCLI_SOURCE_DIR}
-  ${SlicerBaseQTCLI_BINARY_DIR}
-  ${SlicerBaseQTCoreModules_SOURCE_DIR}
-  ${SlicerBaseQTCoreModules_BINARY_DIR}
+  ${qSlicerBaseQTBase_SOURCE_DIR}
+  ${qSlicerBaseQTBase_BINARY_DIR}
+  ${qSlicerBaseQTCLI_SOURCE_DIR}
+  ${qSlicerBaseQTCLI_BINARY_DIR}
+  ${qSlicerBaseQTCoreModules_SOURCE_DIR}
+  ${qSlicerBaseQTCoreModules_BINARY_DIR}
   )
   
 # Source files
@@ -49,9 +49,9 @@ SET(slicer_qtbase_UI_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
-  SlicerBaseQTCLI
-  SlicerBaseQTCoreModules
-  SlicerBaseQTBase
+  qSlicerBaseQTCLI
+  qSlicerBaseQTCoreModules
+  qSlicerBaseQTBase
   )
 
 # Resources
