@@ -43,7 +43,7 @@ public:
   typedef QWidget                Superclass;
 
   // Constructors
-  qMRMLTransformSliders(QWidget* parent);
+  explicit qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders(){}
 
   // Description:

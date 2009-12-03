@@ -23,7 +23,7 @@ public:
   typedef QObject           Superclass;
   
   // Constructors
-  qMRMLNodeFactory(QObject* parent);
+  explicit qMRMLNodeFactory(QObject* parent);
   virtual ~qMRMLNodeFactory(){}
   
   // Description:

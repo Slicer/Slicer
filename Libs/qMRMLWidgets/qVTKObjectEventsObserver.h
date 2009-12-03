@@ -23,7 +23,7 @@ Q_OBJECT
 
 public:
   typedef QObject Superclass;
-  qVTKObjectEventsObserver(QObject* parent = 0);
+  explicit qVTKObjectEventsObserver(QObject* parent = 0);
   virtual ~qVTKObjectEventsObserver(){}
 
   virtual void printAdditionalInfo();

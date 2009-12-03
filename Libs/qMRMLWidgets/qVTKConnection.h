@@ -21,7 +21,7 @@ Q_OBJECT
 public:
   typedef qVTKConnection Self;
   typedef QObject Superclass;
-  qVTKConnection(qVTKObjectEventsObserver* parent);
+  explicit qVTKConnection(qVTKObjectEventsObserver* parent);
   virtual ~qVTKConnection(){}
 
   // Description:

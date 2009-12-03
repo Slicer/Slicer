@@ -19,7 +19,7 @@ public:
   typedef qMRMLNodeSelector Superclass;
   
   // Constructors
-  qMRMLNodeTreeSelector(QWidget* parent = 0);
+  explicit qMRMLNodeTreeSelector(QWidget* parent = 0);
   virtual ~qMRMLNodeTreeSelector(){}
 
 protected:

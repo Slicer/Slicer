@@ -30,7 +30,7 @@ public:
   typedef qCTKSliderSpinBoxLabel      Superclass;
 
   // Constructors
-  qMRMLLinearTransformSlider(QWidget* parent);
+  explicit qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider(){}
 
   // Description:

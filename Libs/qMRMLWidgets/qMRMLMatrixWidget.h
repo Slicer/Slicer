@@ -29,7 +29,7 @@ public:
   typedef qCTKMatrixWidget   Superclass;
   
   // Constructors
-  qMRMLMatrixWidget(QWidget* parent);
+  explicit qMRMLMatrixWidget(QWidget* parent);
   virtual ~qMRMLMatrixWidget(){}
   
   // Description:

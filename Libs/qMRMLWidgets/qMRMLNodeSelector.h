@@ -30,7 +30,7 @@ public:
   typedef qCTKAddRemoveComboBox Superclass;
   
   // Constructors
-  qMRMLNodeSelector(QWidget* parent = 0);
+  explicit qMRMLNodeSelector(QWidget* parent = 0);
   virtual ~qMRMLNodeSelector(){}
   
   // Description:
