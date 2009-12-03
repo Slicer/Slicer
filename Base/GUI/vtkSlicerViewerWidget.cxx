@@ -1285,7 +1285,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
       if (actor)
         {
         vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
-        if (mapper)
+        if (mapper && mapper->GetInput() != poly && !(this->ClippingOn && clipping))
           {
           mapper->SetInput(poly);
           }

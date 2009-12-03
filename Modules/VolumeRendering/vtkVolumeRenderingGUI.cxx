@@ -508,6 +508,16 @@ void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
 
 void vtkVolumeRenderingGUI::CheckAbort(void)
 {
+  // return if nothing is selected to prevent 
+  // aborting rendering in other modulde
+  // must be a better way of doing this
+  // since something may be selectes while other module is running
+  if (this->NS_ImageData->GetSelected() == NULL &&
+      this->NS_ImageDataFg->GetSelected() == NULL &&
+      this->NS_ImageDataLabelmap->GetSelected() == NULL)
+    {
+    return;
+    }
   int numViewer = this->GetApplicationGUI()->GetNumberOfViewerWidgets();
   
   for (int i = 0; i < numViewer; i++)
