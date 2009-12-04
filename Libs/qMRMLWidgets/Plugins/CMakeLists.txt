@@ -9,29 +9,38 @@ INCLUDE_DIRECTORIES(
 
 # Create the plugin for Qt Designer
 SET(qMRMLWidgetsPlugin_SRCS
-  qMRMLWidgetsPlugin.h  
-  qMRMLWidgetsAbstractPlugin.h
-  qMRMLLinearTransformSliderPlugin.h
-  qMRMLMatrixWidgetPlugin.h
-  qMRMLNodeSelectorPlugin.h
-  qMRMLNodeTreeSelectorPlugin.h
-  qMRMLTransformSlidersPlugin.h
-  qMRMLWidgetsPlugin.cxx  
-  qMRMLWidgetsAbstractPlugin.cxx
   qMRMLLinearTransformSliderPlugin.cxx
+  qMRMLLinearTransformSliderPlugin.h
+  qMRMLListWidgetPlugin.cxx
+  qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.cxx
+  qMRMLMatrixWidgetPlugin.h
   qMRMLNodeSelectorPlugin.cxx
+  qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.cxx
+  qMRMLNodeTreeSelectorPlugin.h
   qMRMLTransformSlidersPlugin.cxx
+  qMRMLTransformSlidersPlugin.h
+  qMRMLTreeWidgetPlugin.cxx
+  qMRMLTreeWidgetPlugin.h
+  qMRMLSceneGeneratorPlugin.cxx
+  qMRMLSceneGeneratorPlugin.h
+  qMRMLWidgetsAbstractPlugin.cxx
+  qMRMLWidgetsAbstractPlugin.h
+  qMRMLWidgetsPlugin.cxx  
+  qMRMLWidgetsPlugin.h  
   )
 
 SET(qMRMLWidgetsPlugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
   qMRMLLinearTransformSliderPlugin.h
+  qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.h
   qMRMLTransformSlidersPlugin.h
+  qMRMLTreeWidgetPlugin.h
+  qMRMLSceneGeneratorPlugin.h
   )
 
 QT4_WRAP_CPP(qMRMLWidgetsPlugin_SRCS ${qMRMLWidgetsPlugin_MOC_SRCS})

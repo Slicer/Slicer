@@ -13,36 +13,45 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qMRMLWidgets_SRCS
-  qVTKObject.h
-  qVTKConnection.cxx
-  qVTKConnection.h
-  qVTKObjectEventsObserver.cxx
-  qVTKObjectEventsObserver.h
-  qMRMLUtils.cxx
-  qMRMLUtils.h
+  qMRMLItemModel.cxx
+  qMRMLItemModel.h
+  qMRMLLinearTransformSlider.cxx
+  qMRMLLinearTransformSlider.h
+  qMRMLListWidget.cxx
+  qMRMLListWidget.h
+  qMRMLMatrixWidget.cxx
+  qMRMLMatrixWidget.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
   qMRMLNodeSelector.cxx
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.cxx
   qMRMLNodeTreeSelector.h
-  qMRMLLinearTransformSlider.cxx
-  qMRMLLinearTransformSlider.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
-  qMRMLMatrixWidget.cxx
-  qMRMLMatrixWidget.h
+  qMRMLTreeWidget.cxx
+  qMRMLTreeWidget.h
+  qMRMLUtils.cxx
+  qMRMLUtils.h
+  qVTKConnection.cxx
+  qVTKConnection.h
+  qVTKObject.h
+  qVTKObjectEventsObserver.cxx
+  qVTKObjectEventsObserver.h
   )
 
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
-  qVTKConnection.h
-  qVTKObjectEventsObserver.h
+  qMRMLItemModel.h
+  qMRMLLinearTransformSlider.h
+  qMRMLListWidget.h
+  qMRMLMatrixWidget.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
-  qMRMLLinearTransformSlider.h
   qMRMLTransformSliders.h
-  qMRMLMatrixWidget.h
+  qMRMLTreeWidget.h
+  qVTKConnection.h
+  qVTKObjectEventsObserver.h
   )
   
 # UI files

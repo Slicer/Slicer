@@ -2,10 +2,13 @@
 #define __qMRMLWidgetsPlugin_h
 
 #include "qMRMLLinearTransformSliderPlugin.h"
+#include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLNodeSelectorPlugin.h"
 #include "qMRMLNodeTreeSelectorPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
+#include "qMRMLTreeWidgetPlugin.h"
+#include "qMRMLSceneGeneratorPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
 #include "qMRMLWidgetsPluginWin32Header.h"
@@ -22,10 +25,13 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLLinearTransformSliderPlugin
+            << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
             << new qMRMLNodeSelectorPlugin
             << new qMRMLNodeTreeSelectorPlugin
-            << new qMRMLTransformSlidersPlugin;
+            << new qMRMLTransformSlidersPlugin
+            << new qMRMLTreeWidgetPlugin
+            << new qMRMLSceneGeneratorPlugin;
     return plugins;
     }
 };
