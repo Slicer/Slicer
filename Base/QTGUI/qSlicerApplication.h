@@ -1,28 +1,23 @@
 #ifndef __qSlicerApplication_h
 #define __qSlicerApplication_h
 
+#include "qSlicerCoreApplication.h"
+
 // qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
-#include <QApplication>
-
 #include "qSlicerBaseQTGUIWin32Header.h"
 
-class qSlicerAbstractModule;
-// class qSlicerAbstractModulePanel;
 class qSlicerWidget;
-class vtkSlicerApplicationLogic;
-class vtkMRMLScene;
 class qSlicerApplicationPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public QApplication
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
 {
   Q_OBJECT
 
 public:
 
-  typedef QApplication Superclass;
+  typedef qSlicerCoreApplication Superclass;
   qSlicerApplication(int &argc, char **argv);
   virtual ~qSlicerApplication();
 
@@ -31,10 +26,6 @@ public:
   static qSlicerApplication* application();
 
   // Description:
-  // Instantiate MRMLScene and Application logic.
-  //  - Configure scene
-  //  - AppLogic is set as a scene observer.
-  //  - Create processing thread
   void initialize();
 
   // Description:
@@ -51,32 +42,6 @@ public:
   // Set/Get default window flags that could be used when displaying top level widgets
   void setDefaultWindowFlags(Qt::WindowFlags defaultWindowFlags);
   Qt::WindowFlags defaultWindowFlags() const;
-
-  // Description:
-  // Set/Get MRML Scene
-  void setMRMLScene(vtkMRMLScene * scene);
-  vtkMRMLScene* mrmlScene() const;
-
-  // Description:
-  // Set/Get application logic
-  void setAppLogic(vtkSlicerApplicationLogic* appLogic);
-  vtkSlicerApplicationLogic* appLogic() const;
-
-  // Description:
-  // Return slicer home directory
-  QString slicerHome();
-  void setSlicerHome(const QString& slicerHome);
-
-  // Description:
-  // Initialize paths
-  void initializeLoadableModulesPaths();
-  void initializeCmdLineModulesPaths();
-
-signals:
-  void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);
-
-// public slots:
-//   void showModule(qSlicerAbstractModule*);
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerApplication);
