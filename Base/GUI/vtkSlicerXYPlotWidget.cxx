@@ -95,6 +95,17 @@ vtkSlicerXYPlotWidget::~vtkSlicerXYPlotWidget()
     //    this->MRMLScene->Delete();
     }
 
+  if (this->MRMLObserverManager)
+    {
+    this->MRMLObserverManager->Delete();
+    this->MRMLObserverManager = NULL;
+    }
+
+  //if (this->PlotManagerNode)
+  //  {
+  //  this->PlotManagerNode->Delete();
+  //  this->PlotManagerNode = NULL;
+  //  }
 }
 
 //----------------------------------------------------------------------------
@@ -256,13 +267,14 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
   this->Updating = 1;
 
   unsigned int numPlots = this->PlotManagerNode->GetNumberOfPlotNodes();
-  vtkIntArray* idList = this->PlotManagerNode->GetPlotNodeIDList();
 
   if (numPlots <= 0)
     {
     this->Updating = 0;
     return;
     }
+
+  vtkIntArray* idList = this->PlotManagerNode->GetPlotNodeIDList();
 
   //--------------------------------------------------
   // Check automatic range adjustment flag
@@ -477,7 +489,7 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
 
     }
 
-
+  idList->Delete();
     
   this->Updating = 0;
 }

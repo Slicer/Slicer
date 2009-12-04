@@ -41,6 +41,27 @@ vtkIntensityCurves::vtkIntensityCurves()
 //---------------------------------------------------------------------------
 vtkIntensityCurves::~vtkIntensityCurves()
 {
+
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->Delete();
+    }
+  if (this->BundleNode)
+    {
+    this->BundleNode->Delete();
+    }
+  if (this->MaskNode)
+    {
+    this->MaskNode->Delete();
+    }
+  if (this->PreviousBundleNode)
+    {
+    this->PreviousBundleNode->Delete();
+    }
+  if (this->PreviousMaskNode)
+    {
+    this->PreviousMaskNode->Delete();
+    }
 }
 
 

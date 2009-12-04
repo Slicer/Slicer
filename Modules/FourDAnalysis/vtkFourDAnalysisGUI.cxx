@@ -396,10 +396,31 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     }
 #endif //FourDAnalysis_USE_SCIPY
 
-  this->IntensityCurves->Delete();
+  //----------------------------------------------------------------
+  // Intensity curve
+  if (this->IntensityCurves)
+    {
+    this->IntensityCurves->Delete();
+    }
+
+  //----------------------------------------------------------------
+  // Plot Manager Node
+  if (this->PlotManagerNode)
+    {
+    if (this->GetMRMLScene())
+      {
+      this->GetMRMLScene()->RemoveNode(this->PlotManagerNode);
+      }
+    this->PlotManagerNode->Delete();
+    }
 
   //----------------------------------------------------------------
   // Unregister Logic class
+
+  if (this->Logic)
+    {
+    this->Logic->Delete();
+    }
 
 }
 
@@ -410,38 +431,39 @@ void vtkFourDAnalysisGUI::Init()
 
   if (this->GetMRMLScene())
     {
+    
     // Register node classes. SmartPointer is used.
-    {
-      this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLArrayPlotNode >::New() );
+      {
       this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLCurveAnalysisNode >::New() );
-      this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayNode >::New() );
-      this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLOrthogonalLinePlotNode >::New() );
-      this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotNode >::New() );
-      this->GetMRMLScene()->RegisterNodeClass( vtkSmartPointer< vtkMRMLXYPlotManagerNode >::New() );
-    }
+      }
 
     if (this->IntensityCurves)
       {
       this->IntensityCurves->SetMRMLScene(this->GetMRMLScene());
       }
-    
+
     // Setup plot manager node
-    vtkMRMLXYPlotManagerNode* node = vtkMRMLXYPlotManagerNode::New();
-    this->GetMRMLScene()->AddNode(node);
-    
-    vtkIntArray  *events = vtkIntArray::New();
-    events->InsertNextValue ( vtkCommand::ModifiedEvent );
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->PlotManagerNode, node, events );
-    
-    node->Delete();
-    events->Delete();
-    node = NULL;
-    events = NULL;
-    
+    if (!this->PlotManagerNode)
+      {
+      vtkMRMLXYPlotManagerNode* node = vtkMRMLXYPlotManagerNode::New();
+      this->GetMRMLScene()->AddNode(node);
+      
+      vtkIntArray  *events = vtkIntArray::New();
+      events->InsertNextValue ( vtkCommand::ModifiedEvent );
+      vtkSetAndObserveMRMLNodeEventsMacro ( this->PlotManagerNode, node, events );
+      
+      node->Delete();
+      events->Delete();
+      node = NULL;
+      events = NULL;
+      this->PlotManagerNode->Refresh();
+      }
+
     this->IntensityPlot->SetAndObservePlotManagerNode(this->PlotManagerNode);
     this->PlotManagerNode->Refresh();
 
     }
+
     
 }
 
@@ -861,6 +883,8 @@ void vtkFourDAnalysisGUI::RemoveLogicObservers ( )
   if (this->GetLogic())
     {
     this->GetLogic()->RemoveObservers(vtkCommand::ModifiedEvent,
+                                  (vtkCommand *)this->LogicCallbackCommand);
+    this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::StatusUpdateEvent,
                                       (vtkCommand *)this->LogicCallbackCommand);
     }
 }
@@ -873,6 +897,8 @@ void vtkFourDAnalysisGUI::AddLogicObservers ( )
 
   if (this->GetLogic())
     {
+    this->GetLogic()->AddObserver(vtkCommand::ModifiedEvent,
+                                  (vtkCommand *)this->LogicCallbackCommand);
     this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::StatusUpdateEvent,
                                   (vtkCommand *)this->LogicCallbackCommand);
     }
@@ -1096,6 +1122,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     vtkMRMLArrayPlotNode* pnode = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
     if (pnode && pnode->GetArray())
       {
+      // This section need to be reviewd: New()s and Delete()s are not corresponding.
+
       vtkMRMLDoubleArrayNode* anode = pnode->GetArray();
       vtkDoubleArray* curve = anode->GetArray();
       if (curve)
@@ -1164,7 +1192,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         this->PlotManagerNode->Refresh();
         
         resultCurveNode->Delete();
-        plotNode->Delete();;
+        plotNode->Delete();
         }
       }
     }
@@ -1242,8 +1270,9 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
           }
         else
           {
-          // TODO printoug error message
+          // TODO print out error message
           }
+        //curveNode->Delete();
         }
       }
     else
@@ -1287,6 +1316,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         {
         // TODO: show error message here ..
         }
+      //curveNode->Delete();
       }
     }
 #endif // FourDAnalysis_USE_SCIPY
@@ -1612,6 +1642,14 @@ void vtkFourDAnalysisGUI::BuildGUIForFrameControlFrame(int show)
 
   conBrowsFrame->Delete();
   fframe->Delete();
+  fgframe->Delete();
+  bgframe->Delete();
+  apframe->Delete();
+  cframe->Delete();
+  lwframe->Delete();
+  lwLabel->Delete();
+  thframe->Delete();
+  thLabel->Delete();
   //sframe->Delete();
 
 }
@@ -1701,12 +1739,6 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   app->Script("pack %s -side top -anchor w -fill x -padx 2 -pady 2", 
               this->ValueTypeButtonSet->GetWidgetName());
 
-  mframe->Delete();
-  msframe->Delete();
-  cframe->Delete();
-  //menuLabel->Delete();
-
-  
   // -----------------------------------------
   // Plot frame
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New();
@@ -1723,6 +1755,10 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
 
   this->IntensityPlot->SetAxisLineColor(1.0, 1.0, 1.0);
   this->IntensityPlot->SetMRMLScene(this->GetMRMLScene());
+  if (this->PlotManagerNode)
+    {
+    this->IntensityPlot->SetAndObservePlotManagerNode(this->PlotManagerNode);
+    }
 
   this->ErrorBarCheckButton = vtkKWCheckButtonWithLabel::New();
   this->ErrorBarCheckButton->SetParent(frame->GetFrame());
@@ -1835,7 +1871,11 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   //this->PlotList->GetWidget()->SetRightClickCommand(this, "OnClickPlotList");
   //this->PlotList->GetWidget()->SetSelectionCommand( this, "CurveVisibilityToggle");
 
+  msframe->Delete();
+  mframe->Delete();
+  cframe->Delete();
   frame->Delete();
+  bframe->Delete();
   conBrowsFrame->Delete();
 
 
@@ -1894,9 +1934,6 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   this->Script("pack %s -side right -anchor w -padx 2 -pady 2", 
                scriptLabel->GetWidgetName());
 
-  scriptLabel->Delete();
-  scriptframe->Delete();
-
   this->CurveScriptMethodName = vtkKWEntryWithLabel::New();
   this->CurveScriptMethodName->SetParent(cframe->GetFrame());
   this->CurveScriptMethodName->Create();
@@ -1941,10 +1978,6 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
                endLabel->GetWidgetName(),
                this->CurveFittingEndIndexSpinBox->GetWidgetName());
 
-  startLabel->Delete();
-  endLabel->Delete();
-  rangeframe->Delete();
-  
   this->InitialParameterList = vtkKWMultiColumnListWithScrollbars::New();
   this->InitialParameterList->SetParent(cframe->GetFrame());
   this->InitialParameterList->Create();
@@ -1972,6 +2005,16 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   this->PlotSelectPopUpMenu = vtkKWMenu::New();
   this->PlotSelectPopUpMenu->SetParent(this->GetApplicationGUI()->GetMainSlicerWindow());
   this->PlotSelectPopUpMenu->Create();
+
+  cframe->Delete();
+  scriptframe->Delete();
+  scriptLabel->Delete();
+  rangeframe->Delete();
+  startLabel->Delete();
+  endLabel->Delete();
+  conBrowsFrame->Delete();
+
+
 }
 #endif //FourDAnalysis_USE_SCIPY
 
@@ -2055,9 +2098,9 @@ void vtkFourDAnalysisGUI::BuildGUIForCurveFitting(int show)
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  this->ResultParameterList->GetWidgetName() );
   
-
-
-
+  oframe->Delete();
+  runframe->Delete();
+  fittingLabelLabel->Delete();
   conBrowsFrame->Delete();
 }
 #endif //FourDAnalysis_USE_SCIPY
@@ -2131,9 +2174,6 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
                this->MapRegionMaskSelectorWidget->GetWidgetName(),
                this->MapRegionMaskLabelEntry->GetWidgetName());
   
-  rmframe->Delete();
-  rmframe = NULL;
-  
   // -----------------------------------------
   // Region by Index
 
@@ -2185,11 +2225,6 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
                ilabel3->GetWidgetName(),
                this->MapIMaxSpinBox->GetWidgetName());
 
-  iframe->Delete();
-  ilabel1->Delete();
-  ilabel2->Delete();
-  ilabel3->Delete();
-
 
   // j range
 
@@ -2232,12 +2267,6 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
                this->MapJMinSpinBox->GetWidgetName(),
                jlabel3->GetWidgetName(),
                this->MapJMaxSpinBox->GetWidgetName());
-
-  jframe->Delete();
-  jlabel1->Delete();
-  jlabel2->Delete();
-  jlabel3->Delete();
-
 
   // k range
 
@@ -2288,11 +2317,6 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
                klabel3->GetWidgetName(),
                this->MapKMaxSpinBox->GetWidgetName());
 
-  kframe->Delete();
-  klabel1->Delete();
-  klabel2->Delete();
-  klabel3->Delete();
-
   vtkKWFrame *outputFrame = vtkKWFrame::New();
   outputFrame->SetParent(conBrowsFrame->GetFrame());
   outputFrame->Create();
@@ -2315,7 +2339,20 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
                this->MapOutputVolumePrefixEntry->GetWidgetName(),
                this->GenerateMapButton->GetWidgetName());
 
+  rmframe->Delete();
   dframe->Delete();
+  iframe->Delete();
+  ilabel1->Delete();
+  ilabel2->Delete();
+  ilabel3->Delete();
+  jframe->Delete();
+  jlabel1->Delete();
+  jlabel2->Delete();
+  jlabel3->Delete();
+  kframe->Delete();
+  klabel1->Delete();
+  klabel2->Delete();
+  klabel3->Delete();
   outputFrame->Delete();
   conBrowsFrame->Delete();
 
@@ -3065,6 +3102,8 @@ void vtkFourDAnalysisGUI::GeneratePlotNodes()
       color[2] = 0.0;
       }
     cnode->SetColor(color[0], color[1], color[2]);
+    //cnode->Delete();
+    //anode->Delete();
     }
 
   this->PlotManagerNode->SetAutoXRange(1);
@@ -3086,6 +3125,8 @@ void vtkFourDAnalysisGUI::GeneratePlotNodes()
   //    this->FittingTargetMenuNodeList.push_back()
   //    }
   //  }
+
+  labels->Delete();
 }
 
 

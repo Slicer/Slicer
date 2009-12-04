@@ -290,13 +290,15 @@ int vtkFourDAnalysisLogic::SaveIntensityCurves(vtkIntensityCurves* curves, const
     fout.open(filename, std::ios::out);
     if (fout.fail())
       {
+      labels->Delete();
       vtkErrorMacro ("vtkFourDAnalysisLogic: could not open file " << filename );
       return 0;
       }
     curves->OutputDataInCSV(fout, label);
     fout.close();
     }
-  
+
+  labels->Delete();
   return 1;
 }
 

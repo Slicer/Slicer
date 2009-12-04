@@ -74,7 +74,7 @@ subdirs(
   ExtractSubvolume
   FastMarchingSegmentation
   FourDImage
-#  FourDAnalysis
+  FourDAnalysis
   ExtractSubvolumeROI
   PETCTFusion
   )
