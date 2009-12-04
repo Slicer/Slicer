@@ -7,23 +7,27 @@
 #include "qSlicerModuleSelectorWidget.h"
 
 // QT includes
-#include <QWidget>
 #include <QSplashScreen>
-#include <QThread>
 
-namespace
-{
-class SleeperThread : public QThread
-{
-public:
-static void msleep(unsigned long msecs)
-{
-QThread::msleep(msecs);
-}
-};
+//----------------------------------------------------------------------------
+// namespace
+// {
+// QString getSlicerHome()
+// {
+//   QString home = QString(getenv("Slicer3_HOME"));
+//   if (home.isEmpty())
+//     {
+//     home = slicerBinDir + "/..";
+//     //slicerHome = vtksys::SystemTools::CollapseFullPath(home.c_str());
+//     QString homeEnv = "Slicer3_HOME=%1";
+//     qDebug() << "Set environment: " << homeEnv.arg(home);
+//     //vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
+//     }
+//   return 
+// }
+// }
 
-}
-
+//----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
@@ -47,8 +51,6 @@ int main(int argc, char* argv[])
 
   app.initialize();
 
-  app.setSlicerHome("/home/jchris/Projects/Slicer3-build/");
-
   app.initializeLoadableModulesPaths();
   app.initializeCmdLineModulesPaths();
 
@@ -66,7 +68,6 @@ int main(int argc, char* argv[])
     {
     qSlicerModuleManager::instance()->loadModuleByName(name);
     splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
-    //SleeperThread::msleep(100);
     splash.repaint();
     }
 

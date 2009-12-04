@@ -8,6 +8,7 @@
 #include "vtkSlicerApplicationLogic.h"
 
 // QT includes
+#include <QVector>
 #include <QDebug>
 
 // MRML includes
@@ -28,6 +29,7 @@
 struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 {
   QCTK_DECLARE_PUBLIC(qSlicerCoreApplication);
+  typedef qSlicerCoreApplicationPrivate Self; 
   qSlicerCoreApplicationPrivate()
     {
     this->AppLogic = 0;
@@ -41,6 +43,17 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
     }
 
   // Description:
+  // Given the program name, should return Slicer Home Directory
+  void discoverSlicerHomeDirectory(const QString& programName);
+
+  // Description:
+  // Given the program name, attempt to return the corresponding binary directory
+  QString discoverSlicerBinDirectory(const QString& programName);
+
+  // Description:
+  int putEnv(const QString& value);
+
+  // Description:
   // MRMLScene and AppLogic pointers
   // Note: Since the logic and the scene should be deleted before the EventBroker,
   // they are not SmartPointer.
@@ -49,7 +62,26 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
   
   vtkSmartPointer<vtkEventBroker>      EventBroker;
 
-  QString                       SlicerHome;
+  QString                              SlicerHome;
+
+  // For ::PutEnv
+  struct DeletingCharVector : public QVector<char*>
+  {
+    ~DeletingCharVector()
+      {
+      for (int i = 0; i < this->size(); ++i)
+        {
+        delete []this->at(i); 
+        }
+      }
+  };
+
+  // On windows plateform, after the method 'discoverSlicerBinDirectory' has been called,
+  // HasIntDir should be set to true and IntDir should be set to either Debug,
+  // Release, RelWithDebInfo, MinSizeRel or any other custom build type.
+  bool               HasIntDir;
+  QString            IntDir; 
+  
 };
 
 //-----------------------------------------------------------------------------
@@ -76,12 +108,13 @@ qSlicerCoreApplication* qSlicerCoreApplication::application()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initialize()
 {
+  QCTK_D(qSlicerCoreApplication);
+  d->discoverSlicerHomeDirectory(this->arguments().at(0));
   
-  //this->setSlicerHome(); 
   // Take ownership of the vtkEventBroker instance.
   // Note: Since EventBroker is a SmartPointer, the object will be deleted when
   // qSlicerCoreApplicationPrivate will be deleted
-  qctk_d()->EventBroker.TakeReference(vtkEventBroker::GetInstance());
+  d->EventBroker.TakeReference(vtkEventBroker::GetInstance());
   
   // Create MRML scene
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
@@ -200,4 +233,93 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
   paths << cmdLineModulePaths;
   qSlicerModuleManager::instance()->factory()->setCmdLineModuleSearchPaths(paths);
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerCoreApplicationPrivate methods
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory(const QString& programName)
+{
+   // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
+  const char* homeFromEnv = getenv("Slicer3_HOME");
+  if (!homeFromEnv)
+    {
+    QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
+    if (slicerBinDir.isEmpty())
+      {
+      return;
+      }
+      
+    std::string home = vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1());
+
+    this->SlicerHome = QString::fromStdString(home); 
+
+    // Update env
+    QString homeEnv = "Slicer3_HOME=%1";
+    qDebug() << "Set environment: " << homeEnv.arg(this->SlicerHome);
+    this->putEnv(homeEnv.arg(this->SlicerHome));
+    //vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
+    }
+  else
+    {
+    this->SlicerHome = QString::fromLatin1(homeFromEnv);
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString& programName)
+{
+  std::string programPath;
+  std::string errorMessage;
+  if ( !vtksys::SystemTools::FindProgramPath(programName.toLatin1(), programPath, errorMessage) )
+    {
+    qCritical() << "Cannot find Slicer3 executable - " << errorMessage.c_str();
+    return "";
+    }
+
+  std::string slicerBinDir = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+
+  std::string intDir = "";
+  
+  // If the path: [slicerBinDir + Slicer3_INSTALL_LIB_DIR] isn't valid, try to
+  // discover the appropriate one
+  std::string tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
+  if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+    {
+    // Handle Visual Studio IntDir
+    std::vector<std::string> pathComponents;
+    vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
+
+    slicerBinDir = slicerBinDir + "/..";
+    tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
+    if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+      {
+      qCritical() << "Cannot find Slicer3 libraries";
+      return "";
+      }
+
+    if (pathComponents.size() > 0)
+      {
+      this->HasIntDir = true;
+      this->IntDir = QString::fromStdString(pathComponents[pathComponents.size()-1]);
+      }
+    }
+
+  slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
+
+  return QString::fromStdString(slicerBinDir);
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplicationPrivate::putEnv(const QString& value)
+{ 
+  static Self::DeletingCharVector local_environment;
+  char *env_var = new char[value.size() + 1];
+  strcpy(env_var, value.toLatin1());
+  int ret = putenv(env_var);
+  // Save the pointer in the static vector so that it can be deleted on exit
+  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
+  local_environment << env_var;
+  return ret == 0;
 }

@@ -45,8 +45,12 @@ public:
   vtkSlicerApplicationLogic* appLogic() const;
   
   // Description:
-  // Set/Get slicer home directory
+  // Get slicer home directory
   QString slicerHome();
+
+  // Description:
+  // Convenient method to set slicer home directory
+  // Note: SlicerHome should be auto-discovered. See implementation details.
   void setSlicerHome(const QString& slicerHome);
 
   // Description:
