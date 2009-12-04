@@ -396,6 +396,8 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     }
 #endif //FourDAnalysis_USE_SCIPY
 
+  this->IntensityCurves->Delete();
+
   //----------------------------------------------------------------
   // Unregister Logic class
 
