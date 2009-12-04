@@ -52,12 +52,11 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     {
     return 0; 
     }
-
   vtkSmartPointer<vtkMRMLNode> node; 
   node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1().data() ) );
   
   Q_ASSERT(node);
-  if (node == NULL)
+  if (node == 0)
     {
     return 0;
     }
