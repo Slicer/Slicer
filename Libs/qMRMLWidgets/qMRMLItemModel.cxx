@@ -32,7 +32,6 @@ qMRMLItemModel::qMRMLItemModel(QObject *parent)
 //------------------------------------------------------------------------------
 qMRMLItemModel::~qMRMLItemModel()
 {
-
 }
 
 //------------------------------------------------------------------------------
@@ -61,20 +60,19 @@ vtkMRMLNode* qMRMLItemModel::mrmlNodeFromIndex(const QModelIndex &index)const
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLItemModel::indexFromMRMLNode(vtkMRMLNode* node)const
+QModelIndex qMRMLItemModel::indexFromMRMLNode(vtkMRMLNode* node, int column)const
 {
   if (!node)
     {
     return QModelIndex();
     }
-  return this->createIndex(qMRMLUtils::nodeIndex(node), 0, node);
+  return this->createIndex(qMRMLUtils::nodeIndex(node), column, node);
 }
 
 //------------------------------------------------------------------------------
 int qMRMLItemModel::columnCount(const QModelIndex &parent)const
 {
-  //return parent.isValid() ? 0 : 1;
-  return 1;
+  return 2;
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +86,16 @@ QVariant qMRMLItemModel::data(const QModelIndex &index, int role)const
     {
     case Qt::EditRole:
     case Qt::DisplayRole:
-      data = QString(node->GetName());
+      switch(index.column())
+        {
+        default:
+        case 0:
+          data = QString(node->GetName());
+          break;
+        case 1:
+          data = QString(node->GetID());
+          break;
+        }
       break;
     default:
       break;
@@ -173,11 +180,14 @@ Qt::ItemFlags qMRMLItemModel::flags(const QModelIndex &index)const
     {
     f |= Qt::ItemIsDragEnabled;
     }
-  if (qMRMLUtils::canBeAParent(node))
+  if (index.column() == 0 && qMRMLUtils::canBeAParent(node))
     {
     f |= Qt::ItemIsDropEnabled;
     }
-  f |= Qt::ItemIsEditable;
+  if (index.column() == 0)
+    {
+    f |= Qt::ItemIsEditable;
+    }
   return f;
 }
 
@@ -192,20 +202,30 @@ bool qMRMLItemModel::hasChildren(const QModelIndex &parent)const
     return d->MRMLScene ? d->MRMLScene->GetNumberOfNodes() > 0 : false;
     }
   // canBeAParent() is faster to compute than childNode().
-  return qMRMLUtils::canBeAParent(node) && (qMRMLUtils::childNode(node) != 0);
+  return parent.column() == 0 && 
+    qMRMLUtils::canBeAParent(node) && 
+    (qMRMLUtils::childNode(node) != 0);
 }
 
 //------------------------------------------------------------------------------
 QVariant qMRMLItemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if (orientation == Qt::Vertical)
+  if (orientation == Qt::Vertical || role != Qt::DisplayRole)
     {
     return QVariant();
     }
-  if (section == 0 && role == Qt::DisplayRole)
+  switch (section)
     {
-    return QString("Mrml Nodes");
-    }
+    case 0:
+      return tr("Name");
+      break;
+    case 1:
+      return tr("Id");
+      break;
+    default:
+      break;
+    };
+
   return QVariant();
 }
 
@@ -251,7 +271,7 @@ QMimeData *qMRMLItemModel::mimeData(const QModelIndexList &indexes)const
   foreach (QModelIndex index, indexes) 
     {
     vtkMRMLNode* node = this->mrmlNodeFromIndex(index);
-    if (node)
+    if (node && index.column() == 0)
       {
       QString text = node->GetID();
       stream << text;
@@ -280,7 +300,7 @@ QModelIndex qMRMLItemModel::parent(const QModelIndex &index)const
   vtkMRMLNode* node = this->mrmlNodeFromIndex(index);
   Q_ASSERT(node);
   vtkMRMLNode* parentNode = qMRMLUtils::parentNode(node);
-  QModelIndex parent =  this->indexFromMRMLNode(parentNode);
+  QModelIndex parent =  this->indexFromMRMLNode(parentNode, 0);
   return parent;
 }
 
@@ -297,11 +317,15 @@ QModelIndex qMRMLItemModel::parent(const QModelIndex &index)const
 //------------------------------------------------------------------------------
 int qMRMLItemModel::rowCount(const QModelIndex &parent) const
 {
-  if (parent.isValid())
+  if (!parent.isValid())
     {
-    return qMRMLUtils::childCount(this->mrmlNodeFromIndex(parent));
+    return qMRMLUtils::childCount(qctk_d()->MRMLScene);
     }
-  return qMRMLUtils::childCount(qctk_d()->MRMLScene);
+  if (parent.column() != 0)
+    {
+    return 0;
+    }
+  return qMRMLUtils::childCount(this->mrmlNodeFromIndex(parent));
 }
 
 //------------------------------------------------------------------------------
@@ -309,7 +333,7 @@ bool qMRMLItemModel::setData(const QModelIndex &index, const QVariant &value, in
 {
   Q_ASSERT(qctk_d()->MRMLScene);
   vtkMRMLNode* node = this->mrmlNodeFromIndex(index);
-  if (!node)
+  if (!node || index.column() != 0)
     {
     return false;
     }
