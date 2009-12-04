@@ -22,7 +22,7 @@ public:
   // doesn't cost anything
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex &index)const;
   // cost a lot as we go through the tree
-  QModelIndex indexFromMRMLNode(vtkMRMLNode* node)const;
+  QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
 
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;
