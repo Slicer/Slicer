@@ -1,41 +1,24 @@
 #include "qSlicerMeasurementsModule.h"
-#include "ui_qSlicerMeasurementsModule.h"
+
+// SlicerQT includes
+#include "qSlicerMeasurementsModuleWidget.h"
 
 // QT includes
 #include <QtPlugin>
-#include <QDebug>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-struct qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>,
-                                         public Ui_qSlicerMeasurementsModule
+struct qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>
 {
-  qSlicerMeasurementsModulePrivate()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QWidget*);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerMeasurementsModule::setup()
+qSlicerAbstractModuleWidget * qSlicerMeasurementsModule::createWidgetRepresentation()
 {
-  this->Superclass::setup();
-  QCTK_D(qSlicerMeasurementsModule);
-  d->setupUi(this);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMeasurementsModule::printAdditionalInfo()
-{
-  this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QAction* qSlicerMeasurementsModule::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Measurements.png"), tr("Show Measurements module"), this);
+  return new qSlicerMeasurementsModuleWidget;
 }

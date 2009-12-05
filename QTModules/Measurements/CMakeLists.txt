@@ -15,6 +15,8 @@ SET(qt_module_include_directories
 SET(qt_module_SRCS
   qSlicerMeasurementsModule.cxx
   qSlicerMeasurementsModule.h
+  qSlicerMeasurementsModuleWidget.cxx
+  qSlicerMeasurementsModuleWidget.h
   Widgets/qSlicerMeasurementsAngleWidget.cxx
   Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsRulerWidget.cxx
@@ -23,7 +25,7 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
-  qSlicerMeasurementsModule.h
+  qSlicerMeasurementsModuleWidget.h
   Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsRulerWidget.h
   )

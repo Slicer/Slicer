@@ -13,11 +13,13 @@ SET(qt_module_include_directories
 SET(qt_module_SRCS
   qSlicerVolumesModule.cxx
   qSlicerVolumesModule.h
+  qSlicerVolumesModuleWidget.cxx
+  qSlicerVolumesModuleWidget.h
   )
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
-  qSlicerVolumesModule.h
+  qSlicerVolumesModuleWidget.h
   )
 
 # UI files

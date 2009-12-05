@@ -1,9 +1,11 @@
 #include "qSlicerVolumesModule.h"
 #include "ui_qSlicerVolumesModule.h"
 
+// SlicerQT includes
+#include "qSlicerVolumesModuleWidget.h"
+
 // QT includes
 #include <QtPlugin>
-#include <QDebug>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
@@ -12,30 +14,13 @@ Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 struct qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>,
                                     public Ui_qSlicerVolumesModule
 {
-  qSlicerVolumesModulePrivate()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerVolumesModule, QWidget*);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerVolumesModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumesModule::setup()
+qSlicerAbstractModuleWidget * qSlicerVolumesModule::createWidgetRepresentation()
 {
-  this->Superclass::setup();
-  QCTK_D(qSlicerVolumesModule);
-  d->setupUi(this);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerVolumesModule::printAdditionalInfo()
-{
-  this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
-QAction* qSlicerVolumesModule::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Volumes.png"), tr("Show Volumes module"), this);
+  return new qSlicerVolumesModuleWidget;
 }

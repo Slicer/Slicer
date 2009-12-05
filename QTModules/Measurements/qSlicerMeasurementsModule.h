@@ -14,22 +14,21 @@ class qSlicerMeasurementsModulePrivate;
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsModule :
   public qSlicerAbstractLoadableModule
 {
-  Q_OBJECT
   Q_INTERFACES(qSlicerAbstractLoadableModule);
 
 public:
 
   typedef qSlicerAbstractLoadableModule Superclass;
-  qSlicerMeasurementsModule(QWidget *parent=0);
-
-  virtual void printAdditionalInfo();
-
+  qSlicerMeasurementsModule(QObject *parent=0);
+  virtual ~qSlicerMeasurementsModule(){}
+  
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  virtual QAction* showModuleAction();
-
 protected:
-  virtual void setup();
+
+  // Description:
+  // Create and return a widget representation of the object
+  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerMeasurementsModule); 

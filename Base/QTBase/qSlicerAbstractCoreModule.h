@@ -18,8 +18,6 @@ public:
   typedef qSlicerAbstractModule Superclass;
   qSlicerAbstractCoreModule(QObject *parent=0);
 
-  virtual void printAdditionalInfo();
-
   virtual QString name() const;
 
 protected:

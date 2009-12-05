@@ -16,12 +16,6 @@ void qSlicerAbstractCoreModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractCoreModule::printAdditionalInfo()
-{
-  this->Superclass::printAdditionalInfo();
-}
-
-//-----------------------------------------------------------------------------
 QString qSlicerAbstractCoreModule::name()const
 {
   return this->metaObject()->className();
