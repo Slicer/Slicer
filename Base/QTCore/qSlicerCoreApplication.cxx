@@ -9,6 +9,7 @@
 
 // QT includes
 #include <QVector>
+#include <QStringList>
 #include <QDebug>
 
 // MRML includes

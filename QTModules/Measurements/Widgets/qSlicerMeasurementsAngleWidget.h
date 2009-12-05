@@ -1,7 +1,7 @@
 #ifndef __qSlicerMeasurementsAngleWidget_h
 #define __qSlicerMeasurementsAngleWidget_h 
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerWidget.h"
 
 // qCTK includes

@@ -37,7 +37,7 @@ SET(slicer_qtbase_MOC_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
-  qSlicerBaseQTCLI
+  #qSlicerBaseQTCLI
   qSlicerBaseQTCoreModules
   qSlicerBaseQTBase
   )

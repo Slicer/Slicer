@@ -4,6 +4,7 @@
 #include <QString>
 #include <QHash>
 #include <QSharedPointer>
+#include <QStringList>
 #include <QDebug>
 
 // Forward declaration

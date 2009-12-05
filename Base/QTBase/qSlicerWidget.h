@@ -53,13 +53,13 @@ public:
   void setParentGeometry(int ax, int ay, int aw, int ah);
 
   // Description:
-  // Return a pointer on the loaded scene
+  // Return a pointer on the MRML scene
   vtkMRMLScene* mrmlScene() const;
 
   // Description:
   // Set/Get the application logic
-  void setAppLogic(vtkSlicerApplicationLogic* appLogic);
-  vtkSlicerApplicationLogic* appLogic() const;
+  //void setAppLogic(vtkSlicerApplicationLogic* appLogic);
+  //vtkSlicerApplicationLogic* appLogic() const;
 
 public slots:
 

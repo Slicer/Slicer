@@ -21,7 +21,9 @@ SET(slicer_qtbase_SRCS
   qSlicerAbstractCoreModule.cxx
   qSlicerAbstractCoreModule.h
   qSlicerAbstractLoadableModule.cxx
-  qSlicerAbstractLoadableModule.h  
+  qSlicerAbstractLoadableModule.h
+  qSlicerAbstractModuleWidget.cxx
+  qSlicerAbstractModuleWidget.h
   qSlicerModuleLogic.cxx
   qSlicerModuleLogic.h
   qSlicerIOManager.cxx
@@ -34,7 +36,6 @@ SET(slicer_qtbase_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
   qSlicerAbstractLoadableModule.h
-  qSlicerModuleLogic.h
   )
 
 # UI files

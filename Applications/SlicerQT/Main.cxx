@@ -8,6 +8,7 @@
 
 // QT includes
 #include <QSplashScreen>
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 // namespace
@@ -58,8 +59,8 @@ int main(int argc, char* argv[])
   Q_ASSERT(moduleManager);
   
   moduleManager->factory()->registerCoreModules();
-  moduleManager->factory()->registerLoadableModules();
-  moduleManager->factory()->registerCmdLineModules();
+  //moduleManager->factory()->registerLoadableModules();
+  //moduleManager->factory()->registerCmdLineModules();
 
   // Create main window
   qSlicerMainWindow window;

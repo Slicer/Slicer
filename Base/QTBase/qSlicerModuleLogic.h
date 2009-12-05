@@ -13,9 +13,9 @@ class vtkMRMLScene;
 class vtkSlicerApplicationLogic;
 class qSlicerModuleLogicPrivate;
 
-class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic : public QObject
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic: public QObject
 {
-  Q_OBJECT
+//   Q_OBJECT
 public:
 
   typedef QObject Superclass;
@@ -24,7 +24,6 @@ public:
   virtual void printAdditionalInfo();
 
   void initialize(vtkSlicerApplicationLogic* appLogic);
-  virtual void setup() = 0;
 
 protected:
 
@@ -36,6 +35,8 @@ protected:
   // Description:
   // Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
+
+  virtual void setup() = 0;
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerModuleLogic);

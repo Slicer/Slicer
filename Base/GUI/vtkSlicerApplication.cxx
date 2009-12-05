@@ -12,6 +12,7 @@
 //#include "QtSlicerWebKit.h"
 #include <QHash>
 #include <QDebug>
+#include <QStringList>
 
 #endif
 

@@ -1,12 +1,16 @@
 #include "qSlicerCoreModuleManager.h"
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleFactory.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
+
+// QT includes
+#include <QHash>
+#include <QDebug>
 
 //-----------------------------------------------------------------------------
 struct qSlicerCoreModuleManagerPrivate: public qCTKPrivate<qSlicerCoreModuleManager>
@@ -115,8 +119,8 @@ bool qSlicerCoreModuleManager::loadModuleByName(const QString& moduleName)
     }
 
   // Set module title
-  module->setWindowTitle(moduleTitle);
-  qDebug() << module << " - title:" << moduleTitle;
+  //module->setWindowTitle(moduleTitle);
+  //qDebug() << module << " - title:" << moduleTitle;
 
   // Set the MRML scene
   module->setMRMLScene(qSlicerCoreApplication::application()->mrmlScene());

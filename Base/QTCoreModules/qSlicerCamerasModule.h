@@ -1,7 +1,7 @@
 #ifndef __qSlicerCamerasModule_h
 #define __qSlicerCamerasModule_h
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerAbstractCoreModule.h"
 
 // qCTK includes
@@ -9,8 +9,7 @@
 
 #include "qSlicerBaseQTCoreModulesWin32Header.h"
 
-class vtkMRMLNode;
-class vtkMRMLViewNode;
+class qSlicerAbstractModuleWidget; 
 class qSlicerCamerasModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModule :
@@ -18,36 +17,21 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModule :
 {
   Q_OBJECT
 public:
-
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerCamerasModule(QWidget *parent=0);
-
-  virtual void printAdditionalInfo();
+  qSlicerCamerasModule(QObject *parent=0);
 
   qSlicerGetTitleMacro("Cameras");
-
-  virtual QAction* showModuleAction();
 
   // Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
-public slots:
-  // Description:
-  // Inherited from qSlicerWidget. Reimplemented for refresh issues.
-  virtual void setMRMLScene(vtkMRMLScene*);
-
 protected:
-  virtual void setup();
-  void synchronizeCameraWithView(vtkMRMLViewNode* currentViewNode);
 
-protected slots:
-  void onCurrentViewNodeChanged(vtkMRMLNode*);
-  void onCurrentCameraNodeChanged(vtkMRMLNode*);
-  void onCameraNodeAdded(vtkMRMLNode*);
-  void onCameraNodeRemoved(vtkMRMLNode*);
-  void synchronizeCameraWithView(void * currentView= 0);
-
+  // Description:
+  // Create and return a widget representation of the object
+  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  
 private:
   QCTK_DECLARE_PRIVATE(qSlicerCamerasModule);
 };

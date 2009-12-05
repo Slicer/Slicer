@@ -1,7 +1,7 @@
 #ifndef __qSlicerMeasurementsRulerWidget_h
 #define __qSlicerMeasurementsRulerWidget_h 
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerWidget.h"
 
 // qCTK includes

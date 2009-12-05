@@ -16,20 +16,26 @@ SET(slicer_qtbase_include_directories
 SET(slicer_qtbase_SRCS
   qSlicerCamerasModule.cxx
   qSlicerCamerasModule.h
+  qSlicerCamerasModuleWidget.cxx
+  qSlicerCamerasModuleWidget.h
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
+  qSlicerTransformsModuleWidget.cxx
+  qSlicerTransformsModuleWidget.h
   )
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
   qSlicerCamerasModule.h
+  qSlicerCamerasModuleWidget.h
   qSlicerTransformsModule.h
+  qSlicerTransformsModuleWidget.h
   )
 
 # UI files
 SET(slicer_qtbase_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
-  Resources/UI/qSlicerTransformsModule.ui
+  #Resources/UI/qSlicerTransformsModule.ui
 )
 
 # Additional Target libraries (QT libs already included)

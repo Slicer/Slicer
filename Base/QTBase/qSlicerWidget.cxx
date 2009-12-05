@@ -17,7 +17,6 @@ struct qSlicerWidgetPrivate: public qCTKPrivate<qSlicerWidget>
 {
   QPointer<QWidget>                          ParentContainer;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
-  vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
 };
 
 //-----------------------------------------------------------------------------
@@ -149,7 +148,6 @@ void qSlicerWidget::setParentVisible(bool visible)
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   qctk_d()->MRMLScene = scene;
-  // TODO Rename signal
   emit mrmlSceneChanged(scene);
 }
 
@@ -157,5 +155,5 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 QCTK_GET_CXX(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-QCTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+//QCTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+//QCTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);

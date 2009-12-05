@@ -16,7 +16,7 @@ class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractLoadableModule : public qSlicer
 public:
 
   typedef qSlicerAbstractModule Superclass;
-  qSlicerAbstractLoadableModule(QWidget *parent=0);
+  qSlicerAbstractLoadableModule(QObject *parent=0);
 
   virtual void printAdditionalInfo();
 

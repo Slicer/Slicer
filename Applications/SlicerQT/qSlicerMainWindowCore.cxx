@@ -5,6 +5,7 @@
 // SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerModuleManager.h"
 
 // QT includes
@@ -58,7 +59,10 @@ void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
   Q_ASSERT(module);
   QCTK_P(qSlicerMainWindowCore);
 
-  QAction * action = module->showModuleAction();
+  qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
+  Q_ASSERT(moduleWidget);
+
+  QAction * action = moduleWidget->showModuleAction();
   if (action)
     {
     // Add action to signal mapper
@@ -81,7 +85,10 @@ void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModu
   Q_ASSERT(module);
   QCTK_P(qSlicerMainWindowCore);
 
-  QAction * action = module->showModuleAction();
+  qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
+  Q_ASSERT(moduleWidget);
+
+  QAction * action = moduleWidget->showModuleAction();
   if (action)
     {
     p->widget()->moduleToolBar()->removeAction(action);

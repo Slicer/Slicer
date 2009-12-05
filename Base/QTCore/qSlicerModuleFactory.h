@@ -1,7 +1,7 @@
 #ifndef __qSlicerModuleFactory_h
 #define __qSlicerModuleFactory_h
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 
 // qCTK includes

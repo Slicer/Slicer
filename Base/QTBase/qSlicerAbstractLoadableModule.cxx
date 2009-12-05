@@ -13,7 +13,7 @@ struct qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractL
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QWidget*);
+QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::setup()

@@ -2,6 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
 
 // qCTK includes
 #include <qCTKCollapsibleButton.h>
@@ -84,14 +85,17 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
   
   QCTK_D(qSlicerModulePanel);
 
+  QWidget * moduleWidget = module->widgetRepresentation();
+  Q_ASSERT(moduleWidget);
+  
   // Update module layout
-  module->layout()->setContentsMargins(0, 0, 0, 0);
+  moduleWidget->layout()->setContentsMargins(0, 0, 0, 0);
 
   // Insert module in the panel
-  d->Layout->insertWidget(1, module);
+  d->Layout->insertWidget(1, moduleWidget);
 
-  module->setSizePolicy(QSizePolicy::Ignored, module->sizePolicy().verticalPolicy());
-  module->setVisible(true);
+  moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
+  moduleWidget->setVisible(true);
 
   d->HelpCollapsibleButton->setVisible(!module->helpText().isEmpty());
   d->HelpLabel->setHtml(module->helpText());
@@ -107,7 +111,10 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
 
   QCTK_D(qSlicerModulePanel);
 
-  int index = d->Layout->indexOf(module);
+  QWidget * moduleWidget = module->widgetRepresentation();
+  Q_ASSERT(moduleWidget);
+
+  int index = d->Layout->indexOf(moduleWidget);
   if (index == -1)
     {
     return;
@@ -119,8 +126,8 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
   //d->Layout->removeWidget(module);
   d->Layout->takeAt(index);
 
-  module->setVisible(false);
-  module->setParent(0);
+  moduleWidget->setVisible(false);
+  moduleWidget->setParent(0);
 
 //   // if nobody took ownership of the module, make sure it both lost its parent and is hidden
 //   if (module->parent() == d->Layout->parentWidget())

@@ -1,6 +1,6 @@
 #include "qSlicerModuleManager.h"
 
-// Slicer includes
+// SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModulePanel.h"
