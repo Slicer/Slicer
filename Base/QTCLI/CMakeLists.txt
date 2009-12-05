@@ -18,6 +18,9 @@ SET(slicer_qtbase_include_directories
 SET(slicer_qtbase_SRCS
   qSlicerCLIModule.cxx
   qSlicerCLIModule.h
+  qSlicerCLIModuleWidget.cxx
+  qSlicerCLIModuleWidget.h
+  qSlicerCLIModuleWidget_p.h
   qSlicerCLIModuleLogic.cxx
   qSlicerCLIModuleLogic.h
   vtkMRMLCommandLineModuleNode.cxx
@@ -26,7 +29,8 @@ SET(slicer_qtbase_SRCS
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
-  qSlicerCLIModule.h
+  qSlicerCLIModuleWidget.h
+  qSlicerCLIModuleWidget_p.h
   )
 
 # UI files

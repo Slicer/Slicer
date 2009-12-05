@@ -6,11 +6,22 @@
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
-
+  qSlicerAbstractModule* Module; 
 };
 
 //-----------------------------------------------------------------------------
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModuleWidget, QWidget*);
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerAbstractModuleWidget, qSlicerAbstractModule*, setModule, Module);
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModule* qSlicerAbstractModuleWidget::module()
+{
+  QCTK_D(qSlicerAbstractModuleWidget);
+  Q_ASSERT(d->Module);
+  return d->Module;
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleWidget::initialize(/*vtkSlicerApplicationLogic* appLogic*/)

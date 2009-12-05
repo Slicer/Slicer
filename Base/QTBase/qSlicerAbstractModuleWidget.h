@@ -8,12 +8,14 @@
 #include "qSlicerBaseQTBaseWin32Header.h"
 
 // class vtkSlicerApplicationLogic;
+class qSlicerAbstractModule; 
 class vtkMRMLScene;
 class QAction; 
 class qSlicerAbstractModuleWidgetPrivate;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModuleWidget : public qSlicerWidget
 {
+  Q_OBJECT
 public:
 
   typedef qSlicerWidget Superclass;
@@ -28,6 +30,11 @@ public:
   // Description:
   // Return the action allowing to show the module
   virtual QAction* showModuleAction()  { return 0; }
+
+  // Description:
+  // Set/Get pointer to the associated module
+  void setModule(qSlicerAbstractModule* module);
+  qSlicerAbstractModule* module();
 
 protected:
   // Description:

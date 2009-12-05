@@ -36,6 +36,7 @@ SET(slicer_qtbase_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractCoreModule.h
   qSlicerAbstractLoadableModule.h
+  qSlicerAbstractModuleWidget.h
   )
 
 # UI files

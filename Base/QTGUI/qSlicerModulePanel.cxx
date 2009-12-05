@@ -46,25 +46,25 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
   
   // Retrieve current module associated with the module panel
   QLayoutItem* item = d->Layout->itemAt(1);
-  qSlicerAbstractModule* currentModule =
-    item ? qobject_cast<qSlicerAbstractModule*>(item->widget()) : 0;
+  qSlicerAbstractModuleWidget* currentModuleWidget = 
+    item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
   // If module is already set, return.
-  if (module == currentModule)
+  if (module->widgetRepresentation() == currentModuleWidget)
     {
     return;
     }
 
-  if (currentModule)
+  if (currentModuleWidget)
     {
     // Remove the current module
-    this->removeModule(currentModule);
+    this->removeModule(currentModuleWidget);
     }
 
   if (module)
     {
     // Add the new module
-    this->addModule(module);
+    this->addModule(module->widgetRepresentation());
     }
   else
     {
@@ -79,14 +79,10 @@ void qSlicerModulePanel::clear()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
+void qSlicerModulePanel::addModule(qSlicerAbstractModuleWidget* moduleWidget)
 {
-  Q_ASSERT(module);
-  
-  QCTK_D(qSlicerModulePanel);
-
-  QWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
+  QCTK_D(qSlicerModulePanel);
   
   // Update module layout
   moduleWidget->layout()->setContentsMargins(0, 0, 0, 0);
@@ -97,22 +93,19 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModule* module)
   moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
   moduleWidget->setVisible(true);
 
-  d->HelpCollapsibleButton->setVisible(!module->helpText().isEmpty());
-  d->HelpLabel->setHtml(module->helpText());
+  QString help = moduleWidget->module()->helpText(); 
+  d->HelpCollapsibleButton->setVisible(!help.isEmpty());
+  d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
 
-  emit moduleAdded(module);
+  emit moduleAdded(moduleWidget->module());
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
+void qSlicerModulePanel::removeModule(qSlicerAbstractModuleWidget* moduleWidget)
 {
-  Q_ASSERT(module);
-
-  QCTK_D(qSlicerModulePanel);
-
-  QWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
+  QCTK_D(qSlicerModulePanel);
 
   int index = d->Layout->indexOf(moduleWidget);
   if (index == -1)
@@ -120,7 +113,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
     return;
     }
 
-  //emit moduleAboutToBeRemoved(module);
+  //emit moduleAboutToBeRemoved(moduleWidget->module());
 
   // Remove widget from layout
   //d->Layout->removeWidget(module);
@@ -136,7 +129,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModule* module)
 //     module->setParent(0);
 //     }
 
-  emit moduleRemoved(module);
+  emit moduleRemoved(moduleWidget->module());
 }
 
 //---------------------------------------------------------------------------

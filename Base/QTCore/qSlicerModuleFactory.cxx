@@ -2,7 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerAbstractModule.h"
-// #include "qSlicerCLIModule.h"
+#include "qSlicerCLIModule.h"
 #include "qSlicerCoreApplication.h"
 
 // SlicerQTModules includes
@@ -474,24 +474,23 @@ protected:
 
   virtual qSlicerAbstractModule* instanciator()
     {
-//     qSlicerCLIModule * module = new qSlicerCLIModule();
-// 
-//     // Resolve symbols
-//     char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription");
-// 
-//     // Retrieve
-//     //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
-// 
-//     if (!xmlDescription)
-//       {
-//       qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
-//       delete module; // Clean memory
-//       return 0;
-//       }
-//     module->setXmlModuleDescription(xmlDescription);
+    qSlicerCLIModule * module = new qSlicerCLIModule();
+
+    // Resolve symbols
+    char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription");
+
+    // Retrieve
+    //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
+
+    if (!xmlDescription)
+      {
+      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+      delete module; // Clean memory
+      return 0;
+      }
+     module->setXmlModuleDescription(xmlDescription);
 //     module->setupUi();
-//     return module;
-       return 0;
+     return module;
     }
 };
 

@@ -76,9 +76,10 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
     {
     d->WidgetRepresentation = this->createWidgetRepresentation();
     Q_ASSERT(d->WidgetRepresentation);
+    d->WidgetRepresentation->setModule(this);
     d->WidgetRepresentation->initialize();
     d->WidgetRepresentation->setWindowTitle(this->title());
-    d->WidgetRepresentation->setMRMLScene(this->mrmlScene()); 
+    d->WidgetRepresentation->setMRMLScene(this->mrmlScene());
     }
   return d->WidgetRepresentation; 
 }
