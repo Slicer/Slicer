@@ -3,7 +3,7 @@
 // SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCLIModule.h"
-#include "qSlicerApplication.h"
+#include "qSlicerCoreApplication.h"
 
 // SlicerQTModules includes
 #include "qSlicerTransformsModule.h"
@@ -448,7 +448,7 @@ void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, const QFileIn
       qSlicerAbstractModule* module = this->instantiateModule(libraryName, true);
       Q_ASSERT(module);
 
-      module->initialize(qSlicerApplication::application()->appLogic());
+      module->initialize(qSlicerCoreApplication::application()->appLogic());
 
       this->updateInternalMaps(module->title(), libraryName);
       qDebug() << "qSlicerModuleFactory::registerCmdLineModule - title:" << module->title();

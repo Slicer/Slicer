@@ -1,0 +1,60 @@
+PROJECT(qSlicerBaseQTCore)
+
+#
+# See CMake/Slicer3QTBaseLibraryMacros.cmake for details
+#
+
+SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
+
+# Additional directories to include
+SET(slicer_qtbase_include_directories
+  ${qSlicerBaseQTBase_SOURCE_DIR}
+  ${qSlicerBaseQTBase_BINARY_DIR}
+  ${qSlicerBaseQTCLI_SOURCE_DIR}
+  ${qSlicerBaseQTCLI_BINARY_DIR}
+  ${qSlicerBaseQTCoreModules_SOURCE_DIR}
+  ${qSlicerBaseQTCoreModules_BINARY_DIR}
+  )
+  
+# Source files
+SET(slicer_qtbase_SRCS
+  qSlicerCoreApplication.cxx
+  qSlicerCoreApplication.h
+  qSlicerModuleFactory.cxx
+  qSlicerModuleFactory.h
+  qSlicerCoreModuleManager.cxx
+  qSlicerCoreModuleManager.h
+  )
+
+# Headers that should run through moc
+SET(slicer_qtbase_MOC_SRCS
+  qSlicerCoreApplication.h
+  qSlicerCoreModuleManager.h
+  )
+
+# UI files
+#SET(slicer_qtbase_UI_SRCS)
+
+# Additional Target libraries (QT libs already included)
+SET(slicer_qtbase_target_libraries
+  qSlicerBaseQTCLI
+  qSlicerBaseQTCoreModules
+  qSlicerBaseQTBase
+  )
+
+# Resources
+#SET(qt_module_resources)
+
+Slicer3_build_slicer_qtbase_library( 
+  NAME ${PROJECT_NAME}
+  EXPORT_DIRECTIVE ${slicer_qtbase_export_directive}
+  INCLUDE_DIRECTORIES ${slicer_qtbase_include_directories}
+  SRCS ${slicer_qtbase_SRCS}
+  MOC_SRCS ${slicer_qtbase_MOC_SRCS}
+  #UI_SRCS ${slicer_qtbase_UI_SRCS}
+  TARGET_LIBRARIES ${slicer_qtbase_target_libraries}
+  #RESOURCES ${qt_module_resources}
+  )
+
+# Sub directories
+#ADD_SUBDIRECTORY(Plugins)

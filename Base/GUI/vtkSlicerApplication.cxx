@@ -2437,29 +2437,41 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtCoreModules()
 {
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+
   // Register core modules
-  QStringList tmp(qSlicerModuleManager::instance()->factory()->coreModuleNames());
+  QStringList tmp(moduleManager->factory()->coreModuleNames());
   this->InitializeQtModules(&tmp);
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtLoadableModules()
 {
-  QStringList tmp(qSlicerModuleManager::instance()->factory()->loadableModuleNames());
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+
+  QStringList tmp(moduleManager->factory()->loadableModuleNames());
   this->InitializeQtModules(&tmp);
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtCommandLineModules()
 {
-  QStringList tmp(qSlicerModuleManager::instance()->factory()->commandLineModuleNames());
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+  
+  QStringList tmp(moduleManager->factory()->commandLineModuleNames());
   this->InitializeQtModules(&tmp);
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtModules(QStringList* names)
 {
-  QStringList moduleNames = qSlicerModuleManager::instance()->factory()->coreModuleNames();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+  
+  QStringList moduleNames = moduleManager->factory()->coreModuleNames();
   foreach(const QString& name, *names)
     {
     this->InitializeQtModule(name.toLatin1());
@@ -2469,10 +2481,13 @@ void vtkSlicerApplication::InitializeQtModules(QStringList* names)
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
 {
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+  
   QString splashMsg = "Initializing %1 Module...";
   this->SplashMessage(
-    splashMsg.arg(qSlicerModuleManager::instance()->moduleTitle(moduleName)).toLatin1());
+    splashMsg.arg(moduleManager->moduleTitle(moduleName)).toLatin1());
   qDebug() << "Attempt to load module: " << moduleName;
-  qSlicerModuleManager::instance()->loadModuleByName(moduleName);
+  moduleManager->loadModuleByName(moduleName);
 }
 #endif

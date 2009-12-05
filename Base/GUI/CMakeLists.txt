@@ -15,6 +15,8 @@ set(include_dirs
   ${SlicerBaseLogic_BINARY_DIR}
   ${qSlicerBaseQTBase_SOURCE_DIR}
   ${qSlicerBaseQTBase_BINARY_DIR}
+  ${qSlicerBaseQTCore_SOURCE_DIR}
+  ${qSlicerBaseQTCore_BINARY_DIR}
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
   ${qCTKWidgets_SOURCE_DIR}

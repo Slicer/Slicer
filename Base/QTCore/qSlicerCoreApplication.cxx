@@ -1,7 +1,7 @@
 #include "qSlicerCoreApplication.h"
 
 // SlicerQT includes
-#include "qSlicerModuleManager.h"
+#include "qSlicerCoreModuleManager.h"
 #include "qSlicerModuleFactory.h"
 
 // SlicerLogic includes
@@ -34,12 +34,18 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
     {
     this->AppLogic = 0;
     this->MRMLScene = 0;
+    this->ModuleManager = 0; 
     }
 
   ~qSlicerCoreApplicationPrivate()
     {
-     if (this->AppLogic) { this->AppLogic->Delete(); }
-     if (this->MRMLScene) { this->MRMLScene->Delete(); }
+    if (this->ModuleManager)
+      {
+      this->ModuleManager->factory()->uninstantiateAll();
+      delete this->ModuleManager; 
+      }
+    if (this->AppLogic) { this->AppLogic->Delete(); }
+    if (this->MRMLScene) { this->MRMLScene->Delete(); }
     }
 
   // Description:
@@ -51,6 +57,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
   QString discoverSlicerBinDirectory(const QString& programName);
 
   // Description:
+  // Accept argument of the form "FOO=BAR" and update the process environment
   int putEnv(const QString& value);
 
   // Description:
@@ -64,7 +71,12 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 
   QString                              SlicerHome;
 
+  // Description:
+  // ModuleManager - It should exist only one instance of the factory
+  qSlicerCoreModuleManager*            ModuleManager;
+
   // For ::PutEnv
+  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
   struct DeletingCharVector : public QVector<char*>
   {
     ~DeletingCharVector()
@@ -94,8 +106,6 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &argc, char **argv)
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication::~qSlicerCoreApplication()
 {
-  // Uninstantiate modules
-  qSlicerModuleManager::instance()->factory()->uninstantiateAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -182,6 +192,8 @@ QCTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initializeLoadableModulesPaths()
 {
+  QCTK_D(qSlicerCoreApplication);
+  
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
@@ -205,13 +217,15 @@ void qSlicerCoreApplication::initializeLoadableModulesPaths()
 
   QStringList paths;
   paths << qtModulePaths;
-  qSlicerModuleManager::instance()->factory()->setLoadableModuleSearchPaths(paths);
+  d->ModuleManager->factory()->setLoadableModuleSearchPaths(paths);
   //qDebug() << "initializeLoadableModulesPaths - qtModulePaths:" << qtModulePaths;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 {
+  QCTK_D(qSlicerCoreApplication);
+  
   QString defaultCmdLineModulePaths;
 
   // On Win32, *both* paths have to be there, since scripts are installed
@@ -231,9 +245,13 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 
   QStringList paths;
   paths << cmdLineModulePaths;
-  qSlicerModuleManager::instance()->factory()->setCmdLineModuleSearchPaths(paths);
+  d->ModuleManager->factory()->setCmdLineModuleSearchPaths(paths);
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
 }
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreModuleManager*, setModuleManager, ModuleManager);
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreModuleManager*, coreModuleManager, ModuleManager);
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods

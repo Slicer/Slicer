@@ -370,7 +370,9 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
         }
 //#ifdef Slicer3_USE_QT
-//       qSlicerAbstractModule * module = qSlicerModuleManager::instance()->getModule(moduleName);
+//       qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+//       Q_ASSERT(moduleManager);
+//       qSlicerAbstractModule * module = moduleManager->getModule(moduleName);
 //       if (module)
 //         {
 // //         //--- feedback to user
@@ -462,8 +464,10 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
             currentModule->Exit ( );
             }
 // #ifdef Slicer3_USE_QT
+//           qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+//           Q_ASSERT(moduleManager);
 //           qDebug() << "Attempt to hide module:" << currentModuleName;
-//           qSlicerModuleManager::instance()->hideModule(currentModuleName);
+//           moduleManager->hideModule(currentModuleName);
 // #endif
           }
         // Enter selected module.

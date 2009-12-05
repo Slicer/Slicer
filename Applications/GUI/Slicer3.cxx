@@ -1040,8 +1040,8 @@ int Slicer3_main(int& argc, char *argv[])
   // add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
   qtModulePaths = userModulePaths + PathSep + defaultQTModulePaths;
-
-  qSlicerModuleManager::instance()->factory()->setLoadableModuleSearchPaths(
+  
+  qSlicerApplication::application()->moduleManager()->factory()->setLoadableModuleSearchPaths(
     QString::fromStdString(qtModulePaths).split(PathSep));
   //cout << "qtModulePaths:" << qtModulePaths << endl;
 #endif
@@ -1095,7 +1095,7 @@ int Slicer3_main(int& argc, char *argv[])
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
 
 #ifdef Slicer3_USE_QT
-  qSlicerModuleManager::instance()->factory()->setCmdLineModuleSearchPaths(
+  qSlicerApplication::application()->moduleManager()->factory()->setCmdLineModuleSearchPaths(
     QString::fromStdString(pluginsPaths).split(PathSep));
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
 #endif
@@ -1231,7 +1231,7 @@ int Slicer3_main(int& argc, char *argv[])
     {
     loadableModuleFactory.Scan();
 #ifdef Slicer3_USE_QT
-    qSlicerModuleManager::instance()->factory()->registerLoadableModules();
+    qSlicerApplication::application()->moduleManager()->factory()->registerLoadableModules();
 #endif
     }
 
@@ -1324,7 +1324,7 @@ int Slicer3_main(int& argc, char *argv[])
 #ifndef MODELS_DEBUG
 
 #ifdef Slicer3_USE_QT
-  qSlicerModuleManager::instance()->factory()->registerCoreModules();
+  qSlicerApplication::application()->moduleManager()->factory()->registerCoreModules();
 #endif
 
   SlicerQDebug("Initializing Models Module");
@@ -1576,7 +1576,7 @@ int Slicer3_main(int& argc, char *argv[])
       }
     moduleFactory.Scan();
 #ifdef Slicer3_USE_QT
-    qSlicerModuleManager::instance()->factory()->registerCmdLineModules();
+    qSlicerApplication::application()->moduleManager()->factory()->registerCmdLineModules();
 #endif
 
     // Register the node type for the command line modules

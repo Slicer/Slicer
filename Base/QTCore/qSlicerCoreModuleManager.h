@@ -1,5 +1,5 @@
-#ifndef __qSlicerModuleManager_h
-#define __qSlicerModuleManager_h
+#ifndef __qSlicerCoreModuleManager_h
+#define __qSlicerCoreModuleManager_h
 
 // qCTK includes
 #include <qCTKPimpl.h>
@@ -7,28 +7,28 @@
 // QT includes
 #include <QObject>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTCoreWin32Header.h"
 
 class qSlicerAbstractModule;
-class qSlicerModuleManagerInitialize;
 class qSlicerModuleFactory;
-class qSlicerAbstractModulePanel;
-class QToolBar;
 
-class qSlicerModuleManagerPrivate;
+class qSlicerCoreModuleManagerPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManager : public QObject
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreModuleManager : public QObject
 {
   Q_OBJECT
 public:
-  typedef qSlicerModuleManager Self;
+  typedef qSlicerCoreModuleManager Self;
+  qSlicerCoreModuleManager();
+  virtual ~qSlicerCoreModuleManager(){}
 
   // Description:
-  static qSlicerModuleManager* instance();
+  static qSlicerCoreModuleManager* instance();
 
   virtual void printAdditionalInfo();
 
   // Description:
+  // Return a pointer to the current module factory
   qSlicerModuleFactory* factory();
 
   // Description:
@@ -50,68 +50,11 @@ public:
   // Get module title given it's name
   const QString moduleTitle(const QString& moduleName);
 
-  // Description:
-  // Hide/Show the module panel.
-  // Note: The module panel contains a module and is responsible to display
-  // the help and about frames.
-  void setModulePanelVisible(bool visible);
-
-  // Description:
-  // Set module panel geometry
-  void setModulePanelGeometry(int ax, int ay, int aw, int ah);
-
-  // Description:
-  // Return a reference to the Module Panel
-  qSlicerAbstractModulePanel* modulePanel() const;
-
-  // Description:
-  // Set module toolbar
-  void setModuleToolBar(QToolBar* toolBar); 
-
-public slots:
-
-  // Description:
-  // Show a module
-  // Note: A module is contained in the module panel associated with the module manager.
-  // The module panel will update itself each time a module is shown.
-  void showModule(const QString& moduleTitle);
-  void showModuleByName(const QString& moduleName);
-
-protected:
-  qSlicerModuleManager();
-  ~qSlicerModuleManager(){}
-
-  static qSlicerModuleManager* Instance;
-
-  // Description:
-  static void classInitialize();
-  static void classFinalize();
-
-  friend class qSlicerModuleManagerInitialize;
-
 private:
-  qSlicerModuleManager(const qSlicerModuleManager&);  // Not implemented.
-  void operator=(const qSlicerModuleManager&);  // Not implemented.
+  qSlicerCoreModuleManager(const qSlicerCoreModuleManager&);  // Not implemented.
+  void operator=(const qSlicerCoreModuleManager&);  // Not implemented.
 
-  QCTK_DECLARE_PRIVATE(qSlicerModuleManager);
+  QCTK_DECLARE_PRIVATE(qSlicerCoreModuleManager);
 };
-
-
-// Utility class to make sure qSlicerModuleManager is initialized before it is used.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleManagerInitialize
-{
-public:
-  typedef qSlicerModuleManagerInitialize Self;
-
-  qSlicerModuleManagerInitialize();
-  ~qSlicerModuleManagerInitialize();
-private:
-  static unsigned int Count;
-};
-
-// This instance will show up in any translation unit that uses
-// qSlicerModuleManager.  It will make sure qSlicerModuleManager is initialized
-// before it is used.
-static qSlicerModuleManagerInitialize qSlicerModuleManagerInitializer;
 
 #endif

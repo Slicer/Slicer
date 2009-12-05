@@ -34,7 +34,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *parent)
   
   this->setupMenuActions();
 
-  qSlicerModuleManager::instance()->setModuleToolBar(d->ModuleToolBar);
+  //qSlicerModuleManager::instance()->setModuleToolBar(d->ModuleToolBar);
 }
 
 //-----------------------------------------------------------------------------

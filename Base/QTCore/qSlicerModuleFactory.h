@@ -10,11 +10,11 @@
 // QT includes
 #include <QFileInfo>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTCoreWin32Header.h"
 
 class qSlicerModuleFactoryPrivate; 
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactory
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactory
 {
 public:
 

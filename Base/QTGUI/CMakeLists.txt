@@ -10,10 +10,8 @@ SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 SET(slicer_qtbase_include_directories
   ${qSlicerBaseQTBase_SOURCE_DIR}
   ${qSlicerBaseQTBase_BINARY_DIR}
-  ${qSlicerBaseQTCLI_SOURCE_DIR}
-  ${qSlicerBaseQTCLI_BINARY_DIR}
-  ${qSlicerBaseQTCoreModules_SOURCE_DIR}
-  ${qSlicerBaseQTCoreModules_BINARY_DIR}
+  ${qSlicerBaseQTCore_SOURCE_DIR}
+  ${qSlicerBaseQTCore_BINARY_DIR}
   )
   
 # Source files
@@ -22,10 +20,6 @@ SET(slicer_qtbase_SRCS
   qSlicerAbstractModulePanel.h
   qSlicerApplication.cxx
   qSlicerApplication.h
-  qSlicerCoreApplication.cxx
-  qSlicerCoreApplication.h
-  qSlicerModuleFactory.cxx
-  qSlicerModuleFactory.h
   qSlicerModuleManager.cxx
   qSlicerModuleManager.h
   qSlicerModulePanel.cxx
@@ -38,7 +32,6 @@ SET(slicer_qtbase_SRCS
 SET(slicer_qtbase_MOC_SRCS
   qSlicerAbstractModulePanel.h
   qSlicerApplication.h
-  qSlicerCoreApplication.h
   qSlicerModuleManager.h
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.h
@@ -52,9 +45,10 @@ SET(slicer_qtbase_UI_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
+  qSlicerBaseQTBase
   qSlicerBaseQTCLI
   qSlicerBaseQTCoreModules
-  qSlicerBaseQTBase
+  qSlicerBaseQTCore
   )
 
 # Resources

@@ -2,6 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerWidget.h"
+#include "qSlicerModuleManager.h"
 
 // QT includes
 #include <QRect>
@@ -45,6 +46,10 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   : Superclass(argc, argv)
 {
   QCTK_INIT_PRIVATE(qSlicerApplication);
+  qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
+  Q_ASSERT(moduleManager);
+  // The base class takes ownership of the moduleManager and will be responsible to delete it
+  this->setModuleManager(moduleManager);
 }
 
 //-----------------------------------------------------------------------------
@@ -57,6 +62,15 @@ qSlicerApplication* qSlicerApplication::application()
 {
   qSlicerApplication* app = qobject_cast<qSlicerApplication*>(QApplication::instance());
   return app;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerModuleManager* qSlicerApplication::moduleManager()
+{
+  qSlicerModuleManager* moduleManager =
+    qobject_cast<qSlicerModuleManager*>(this->coreModuleManager());
+  Q_ASSERT(moduleManager);
+  return moduleManager; 
 }
 
 //-----------------------------------------------------------------------------

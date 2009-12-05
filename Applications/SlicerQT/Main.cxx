@@ -54,19 +54,22 @@ int main(int argc, char* argv[])
   app.initializeLoadableModulesPaths();
   app.initializeCmdLineModulesPaths();
 
-  qSlicerModuleManager::instance()->factory()->registerCoreModules();
-  qSlicerModuleManager::instance()->factory()->registerLoadableModules();
-  qSlicerModuleManager::instance()->factory()->registerCmdLineModules();
+  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+  
+  moduleManager->factory()->registerCoreModules();
+  moduleManager->factory()->registerLoadableModules();
+  moduleManager->factory()->registerCmdLineModules();
 
   // Create main window
   qSlicerMainWindow window;
   
   // Load all available modules
-  QStringList moduleNames = qSlicerModuleManager::instance()->factory()->moduleNames();
+  QStringList moduleNames = moduleManager->factory()->moduleNames();
   moduleNames.sort();
   foreach(const QString& name, moduleNames)
     {
-    qSlicerModuleManager::instance()->loadModuleByName(name);
+    moduleManager->loadModuleByName(name);
     splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
     splash.repaint();
     }
@@ -78,8 +81,8 @@ int main(int argc, char* argv[])
   splash.finish(&window);
 
   // Show module panel - The module panel is a container for a module
-  qSlicerModuleManager::instance()->setModulePanelVisible(true);
-
+  moduleManager->setModulePanelVisible(true);
+  
   // Add modules to the selector
   qSlicerModuleSelectorWidget moduleSelector;
   moduleSelector.addModules(moduleNames);
@@ -87,7 +90,7 @@ int main(int argc, char* argv[])
 
   // Connect the selector with the module manager
   QObject::connect(&moduleSelector, SIGNAL(moduleSelected(const QString&)),
-                   qSlicerModuleManager::instance(), SLOT(showModuleByName(const QString&)));
+                   moduleManager, SLOT(showModuleByName(const QString&)));
   
   return app.exec();
 }

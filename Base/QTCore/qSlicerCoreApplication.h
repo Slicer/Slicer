@@ -7,13 +7,14 @@
 // QT includes
 #include <QApplication>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTCoreWin32Header.h"
 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
+class qSlicerCoreModuleManager; 
 class qSlicerCoreApplicationPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCoreApplication : public QApplication
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
   Q_OBJECT
 
@@ -58,6 +59,10 @@ public:
   void initializeLoadableModulesPaths();
   void initializeCmdLineModulesPaths();
 
+  // Description:
+  // Set/Get the module manager
+  qSlicerCoreModuleManager* coreModuleManager()const;
+  void setModuleManager(qSlicerCoreModuleManager* coreModuleManager);
 
 signals:
   void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);
