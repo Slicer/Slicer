@@ -42,7 +42,6 @@ public:
   // Description:
   // Return the action allowing to show the module
   virtual QAction* showModuleAction()  { return 0; }
-  virtual bool isShowModuleActionVisibleByDefault() { return false; }
 
   // Description:
   virtual void populateApplicationSettings(){}

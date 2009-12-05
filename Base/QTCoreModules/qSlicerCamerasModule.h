@@ -27,7 +27,6 @@ public:
   qSlicerGetTitleMacro("Cameras");
 
   virtual QAction* showModuleAction();
-  virtual bool isShowModuleActionVisibleByDefault();
 
   // Return help/acknowledgement text
   virtual QString helpText()const;

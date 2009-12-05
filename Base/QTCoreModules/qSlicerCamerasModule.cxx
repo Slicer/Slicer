@@ -46,12 +46,6 @@ QAction* qSlicerCamerasModule::showModuleAction()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCamerasModule::isShowModuleActionVisibleByDefault()
-{
-  return false;
-}
-
-//-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::helpText()const
 {
   QString help =

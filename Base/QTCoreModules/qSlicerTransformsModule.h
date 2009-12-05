@@ -32,7 +32,6 @@ public:
   virtual QString acknowledgementText()const;
 
   virtual QAction* showModuleAction();
-  virtual bool isShowModuleActionVisibleByDefault();
 
 public slots:
   void loadTransform();

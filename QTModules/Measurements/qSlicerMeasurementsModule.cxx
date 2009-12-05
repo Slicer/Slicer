@@ -39,9 +39,3 @@ QAction* qSlicerMeasurementsModule::showModuleAction()
 {
   return new QAction(QIcon(":/Icons/Measurements.png"), tr("Show Measurements module"), this);
 }
-
-//-----------------------------------------------------------------------------
-bool qSlicerMeasurementsModule::isShowModuleActionVisibleByDefault()
-{
-  return true;
-}

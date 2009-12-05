@@ -141,12 +141,6 @@ QAction* qSlicerTransformsModule::showModuleAction()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTransformsModule::isShowModuleActionVisibleByDefault()
-{
-  return true;
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerTransformsModule::onCoordinateReferenceButtonPressed(int id)
 {
   QCTK_D(qSlicerTransformsModule);
