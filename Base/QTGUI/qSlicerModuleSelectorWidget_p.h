@@ -19,9 +19,8 @@ class qSlicerModuleSelectorWidgetPrivate: public QObject,
 public:
   QCTK_DECLARE_PUBLIC(qSlicerModuleSelectorWidget);
   
-  qSlicerModuleSelectorWidgetPrivate()
-    {
-    }
+  explicit qSlicerModuleSelectorWidgetPrivate(){}
+  virtual ~qSlicerModuleSelectorWidgetPrivate(){}
     
   void setupUi(QWidget* widget);
   
