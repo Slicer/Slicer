@@ -33,12 +33,13 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *parent)
   d->Core = new qSlicerMainWindowCore(this);
   
   this->setupMenuActions();
-
-  //qSlicerModuleManager::instance()->setModuleToolBar(d->ModuleToolBar);
 }
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()

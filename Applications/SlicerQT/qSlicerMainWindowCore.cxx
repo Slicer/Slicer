@@ -1,26 +1,87 @@
 #include "qSlicerMainWindowCore.h" 
 
+#include "qSlicerMainWindowCore_p.h"
+
+// SlicerQT includes
+#include "qSlicerApplication.h"
+#include "qSlicerAbstractModule.h"
+#include "qSlicerModuleManager.h"
+
 // QT includes
-#include <QMainWindow>
-#include <QPointer>
+#include <QSignalMapper>
+#include <QToolBar>
+#include <QAction>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMainWindowCorePrivate: public qCTKPrivate<qSlicerMainWindowCore>
-{
-  QCTK_DECLARE_PUBLIC(qSlicerMainWindowCore);
-  qSlicerMainWindowCorePrivate()
-    {
-    }
-  QPointer<QMainWindow> ParentWidget;
-};
-
-//-----------------------------------------------------------------------------
-qSlicerMainWindowCore::qSlicerMainWindowCore(QMainWindow* parent):Superclass(parent)
+qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* parent):Superclass(parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
-  qctk_d()->ParentWidget = parent;
+  QCTK_D(qSlicerMainWindowCore);
+  
+  d->ParentWidget = parent;
+
+  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager); 
+
+  this->connect(moduleManager,
+                SIGNAL(moduleLoaded(qSlicerAbstractModule*)),
+                d, SLOT(onModuleLoaded(qSlicerAbstractModule*)));
+
+  this->connect(moduleManager,
+                SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractModule*)),
+                d, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractModule*)));
+                 
+  QObject::connect(d->ShowModuleActionMapper,
+                SIGNAL(mapped(const QString&)),
+                moduleManager,
+                SLOT(showModuleByName(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindowCore, QMainWindow*, widget, ParentWidget);
+QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+
+//---------------------------------------------------------------------------
+// qSlicerMainWindowCorePrivate methods
+
+//---------------------------------------------------------------------------
+qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
+  {
+  this->ShowModuleActionMapper = new QSignalMapper(this);
+  }
+    
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
+{
+  Q_ASSERT(module);
+  QCTK_P(qSlicerMainWindowCore);
+
+  QAction * action = module->showModuleAction();
+  if (action)
+    {
+    // Add action to signal mapper
+    this->ShowModuleActionMapper->setMapping(action, module->name());
+    QObject::connect(action, SIGNAL(triggered()), this->ShowModuleActionMapper, SLOT(map()));
+
+    // Update action state
+    bool visible = module->isShowModuleActionVisibleByDefault();
+    action->setVisible(visible);
+    action->setEnabled(visible);
+
+    // Add action to ToolBar
+    p->widget()->moduleToolBar()->addAction(action);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModule* module)
+{
+  Q_ASSERT(module);
+  QCTK_P(qSlicerMainWindowCore);
+
+  QAction * action = module->showModuleAction();
+  if (action)
+    {
+    p->widget()->moduleToolBar()->removeAction(action);
+    }
+}

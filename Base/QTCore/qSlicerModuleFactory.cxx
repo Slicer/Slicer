@@ -157,7 +157,7 @@ void qSlicerModuleFactory::registerCoreModule()
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerLoadableModules()
-{
+{ 
   qctk_d()->registerLibraries(qSlicerModuleFactoryPrivate::LoadableModule,
     this->loadableModuleSearchPaths());
 }

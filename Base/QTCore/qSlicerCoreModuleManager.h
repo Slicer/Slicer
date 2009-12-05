@@ -50,6 +50,10 @@ public:
   // Get module title given it's name
   const QString moduleTitle(const QString& moduleName);
 
+signals:
+  void moduleLoaded(qSlicerAbstractModule* module);
+  void moduleAboutToBeUnloaded(qSlicerAbstractModule* module);
+
 private:
   qSlicerCoreModuleManager(const qSlicerCoreModuleManager&);  // Not implemented.
   void operator=(const qSlicerCoreModuleManager&);  // Not implemented.

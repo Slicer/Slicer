@@ -23,7 +23,11 @@ public:
   
   // Description:
   // Return the main window core.
-  qSlicerMainWindowCore* core()const; 
+  qSlicerMainWindowCore* core()const;
+
+  // Description:
+  // Return the moduleToolBar
+  QToolBar* moduleToolBar()const;
   
 protected:
 

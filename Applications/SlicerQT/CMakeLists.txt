@@ -177,6 +177,7 @@ SET(SlicerQT_SRCS
 SET(SlicerQT_MOC_SRCS
   qSlicerMainWindow.h
   qSlicerMainWindowCore.h
+  qSlicerMainWindowCore_p.h
   )
   
 SET(SlicerQT_UI_SRCS

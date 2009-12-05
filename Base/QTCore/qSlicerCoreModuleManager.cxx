@@ -128,7 +128,7 @@ bool qSlicerCoreModuleManager::loadModuleByName(const QString& moduleName)
                 SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Handle post-load initialization
-  //d->onModuleLoaded(module);
+  emit this->moduleLoaded(module);
   
   return true;
   //return module;
@@ -162,7 +162,7 @@ bool qSlicerCoreModuleManager::unLoadModuleByName(const QString& moduleName)
   Q_ASSERT(module);
   
   // Handle pre-unload
-  //d->onModuleAboutToBeUnloaded(module);
+  emit this->moduleAboutToBeUnloaded(module);
   
   // Tells Qt to delete the object when appropriate
   module->deleteLater();

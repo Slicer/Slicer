@@ -1,5 +1,5 @@
 #ifndef __qSlicerMainWindowCore_h
-#define __qSlicerMainWindowCoreCore_h 
+#define __qSlicerMainWindowCore_h 
 
 // qCTK includes
 #include <qCTKPimpl.h>
@@ -9,7 +9,7 @@
 
 #include "qSlicerQTWin32Header.h"
 
-class QMainWindow; 
+class qSlicerMainWindow; 
 class qSlicerMainWindowCorePrivate;
 
 class Q_SLICERQT_EXPORT qSlicerMainWindowCore : public QObject
@@ -18,14 +18,15 @@ class Q_SLICERQT_EXPORT qSlicerMainWindowCore : public QObject
   
 public:
   typedef QObject Superclass;
-  qSlicerMainWindowCore(QMainWindow *parent);
+  qSlicerMainWindowCore(qSlicerMainWindow *parent);
+
 
 public slots: 
   // Description:
   // Handle actions
   
 protected:
-  QMainWindow* widget() const;
+  qSlicerMainWindow* widget() const;
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerMainWindowCore);
