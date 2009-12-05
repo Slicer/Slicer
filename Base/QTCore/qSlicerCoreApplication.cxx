@@ -197,7 +197,8 @@ void qSlicerCoreApplication::initializeLoadableModulesPaths()
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  QString defaultQTModulePaths = this->slicerHome() + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  QString defaultQTModulePaths = this->slicerHome() + "/"
+                                                    + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
 
 //   if (hasIntDir)
 //     {
