@@ -48,6 +48,8 @@ QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
 qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   {
   this->ShowModuleActionMapper = new QSignalMapper(this);
+
+  this->ToolBarModuleList << "Measurements" << "Transforms" << "Volumes";
   }
     
 //---------------------------------------------------------------------------
@@ -64,7 +66,7 @@ void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
     QObject::connect(action, SIGNAL(triggered()), this->ShowModuleActionMapper, SLOT(map()));
 
     // Update action state
-    bool visible = module->isShowModuleActionVisibleByDefault();
+    bool visible = this->ToolBarModuleList.contains(module->title());
     action->setVisible(visible);
     action->setEnabled(visible);
 
