@@ -203,7 +203,13 @@ qSlicerAbstractModule* qSlicerCoreModuleManager::getModuleByName(const QString& 
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerCoreModuleManager::moduleTitle(const QString& moduleName)
+QString qSlicerCoreModuleManager::moduleTitle(const QString& moduleName) const
 {
   return qctk_d()->ModuleFactory.getModuleTitle(moduleName);
+}
+
+//---------------------------------------------------------------------------
+QString qSlicerCoreModuleManager::moduleName(const QString& moduleTitle) const
+{
+  return qctk_d()->ModuleFactory.getModuleName(moduleTitle);
 }
