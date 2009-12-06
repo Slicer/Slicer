@@ -2,6 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerModuleManager.h"
+#include "qSlicerModulePanel.h"
 #include "qSlicerModuleFactory.h"
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleSelectorWidget.h"
@@ -80,18 +81,15 @@ int main(int argc, char* argv[])
   // Show main window
   window.show();
   splash.finish(&window);
-
-  // Show module panel - The module panel is a container for a module
-  moduleManager->setModulePanelVisible(true);
   
   // Add modules to the selector
   qSlicerModuleSelectorWidget moduleSelector;
   moduleSelector.addModules(moduleNames);
   moduleSelector.show(); 
 
-  // Connect the selector with the module manager
+  // Connect the selector with the module panel
   QObject::connect(&moduleSelector, SIGNAL(moduleSelected(const QString&)),
-                   moduleManager, SLOT(showModuleByName(const QString&)));
+                   window.modulePanel(), SLOT(setModuleByName(const QString&)));
   
   return app.exec();
 }
