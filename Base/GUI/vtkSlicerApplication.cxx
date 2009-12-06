@@ -9,6 +9,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
+#include "qSlicerModulePanel.h"
 //#include "QtSlicerWebKit.h"
 #include <QHash>
 #include <QDebug>
@@ -231,6 +232,7 @@ public:
     #ifdef Slicer3_USE_QT
     this->qApplication = 0;
     this->RegisteredDialogCount = 0;
+    this->ModulePanel = 0; 
     #endif
 
     this->MRMLScene = 0;
@@ -240,6 +242,7 @@ public:
   #ifdef Slicer3_USE_QT
   qSlicerApplication*                    qApplication;
   int                                    RegisteredDialogCount;
+  qSlicerModulePanel*                    ModulePanel;
   #endif
 };
 
@@ -374,6 +377,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   this->Internal->qApplication->setDefaultWindowFlags(
     Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
 
+  this->Internal->ModulePanel = 
+    new qSlicerModulePanel(0, qSlicerApplication::application()->defaultWindowFlags());
+
  #ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
   PythonQt_QtAll::init();
@@ -386,9 +392,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
 #ifdef Slicer3_USE_QT
+  Q_ASSERT(this->Internal->ModulePanel);
+  delete this->Internal->ModulePanel; 
   Q_ASSERT(this->Internal->qApplication);
   this->Internal->qApplication->quit();
-  delete this->Internal->qApplication;
+  delete this->Internal->qApplication; 
 #endif
   delete this->Internal;
 
@@ -2491,4 +2499,11 @@ void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
   qDebug() << "Attempt to load module: " << moduleName;
   moduleManager->loadModuleByName(moduleName);
 }
+
+//----------------------------------------------------------------------------
+qSlicerModulePanel* vtkSlicerApplication::modulePanel()
+{
+  return this->Internal->ModulePanel; 
+}
+
 #endif

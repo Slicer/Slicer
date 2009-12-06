@@ -12,7 +12,7 @@
 #ifdef Slicer3_USE_QT
 //BTX
 class qSlicerApplication;
-class qSlicerModuleManager;
+class qSlicerModulePanel;
 class QStringList;
 //ETX
 #endif
@@ -100,6 +100,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Initialize a qt Module given its name
     //BTX
     void InitializeQtModule(const char* moduleName);
+    //ETX
+
+    // Description:
+    // Return the module panel
+    //BTX
+    qSlicerModulePanel* modulePanel();
     //ETX
 #endif
 
