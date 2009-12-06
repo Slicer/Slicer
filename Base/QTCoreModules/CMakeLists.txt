@@ -35,7 +35,7 @@ SET(slicer_qtbase_MOC_SRCS
 # UI files
 SET(slicer_qtbase_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
-  #Resources/UI/qSlicerTransformsModule.ui
+  Resources/UI/qSlicerTransformsModule.ui
 )
 
 # Additional Target libraries (QT libs already included)
