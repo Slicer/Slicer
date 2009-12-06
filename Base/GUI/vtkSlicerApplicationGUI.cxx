@@ -16,9 +16,11 @@ a
 
 #ifdef Slicer3_USE_QT
 #include "qSlicerApplication.h"
+#include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModulePanel.h"
 #include "qSlicerModuleManager.h"
+#include <QRect>
 #endif
 
 
@@ -4034,12 +4036,12 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 
   // Set module panel visibility accordingly
   qSlicerApplication::application()->setTopLevelWidgetVisible(
-    moduleManager->modulePanel(), moduleLoaded);
+    this->GetSlicerApplication()->modulePanel(), moduleLoaded);
 
   // Show module and update geometry if required
   if (moduleLoaded)
     {
-    moduleManager->showModule(QString::fromLatin1(moduleTitle));
+    this->GetSlicerApplication()->modulePanel()->setModule(QString::fromLatin1(moduleTitle)); 
     this->ReposModulePanel();
     }
 #endif
@@ -4062,7 +4064,7 @@ void vtkSlicerApplicationGUI::ReposModulePanel()
   int size[2];
   vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
   vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
-  moduleManager->setModulePanelGeometry(pos[0], pos[1], size[0], size[1]);
+  this->GetSlicerApplication()->modulePanel()->setGeometry(QRect(pos[0], pos[1], size[0], size[1]));
 #endif
 }
 
