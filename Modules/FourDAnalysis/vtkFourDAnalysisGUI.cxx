@@ -407,10 +407,10 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
   // Plot Manager Node
   if (this->PlotManagerNode)
     {
-    if (this->GetMRMLScene())
-      {
-      this->GetMRMLScene()->RemoveNode(this->PlotManagerNode);
-      }
+    //if (this->GetMRMLScene())
+    //  {
+    //  this->GetMRMLScene()->RemoveNode(this->PlotManagerNode);
+    //  }
     this->PlotManagerNode->Delete();
     }
 
