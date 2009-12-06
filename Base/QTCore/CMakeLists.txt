@@ -22,14 +22,14 @@ SET(slicer_qtbase_SRCS
   qSlicerCoreApplication.h
   qSlicerModuleFactory.cxx
   qSlicerModuleFactory.h
-  qSlicerCoreModuleManager.cxx
-  qSlicerCoreModuleManager.h
+  qSlicerModuleManager.cxx
+  qSlicerModuleManager.h
   )
 
 # Headers that should run through moc
 SET(slicer_qtbase_MOC_SRCS
   qSlicerCoreApplication.h
-  qSlicerCoreModuleManager.h
+  qSlicerModuleManager.h
   )
 
 # UI files

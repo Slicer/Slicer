@@ -9,7 +9,6 @@
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class qSlicerWidget;
-class qSlicerModuleManager; 
 class qSlicerApplicationPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
@@ -43,10 +42,6 @@ public:
   // Set/Get default window flags that could be used when displaying top level widgets
   void setDefaultWindowFlags(Qt::WindowFlags defaultWindowFlags);
   Qt::WindowFlags defaultWindowFlags() const;
-
-  // Description:
-  // Get the module manager
-  qSlicerModuleManager* moduleManager(); 
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerApplication);

@@ -1,7 +1,7 @@
 #include "qSlicerCoreApplication.h"
 
 // SlicerQT includes
-#include "qSlicerCoreModuleManager.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
 
 // SlicerLogic includes
@@ -74,7 +74,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 
   // Description:
   // ModuleManager - It should exist only one instance of the factory
-  qSlicerCoreModuleManager*            ModuleManager;
+  qSlicerModuleManager*                ModuleManager;
 
   // For ::PutEnv
   // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
@@ -252,8 +252,8 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreModuleManager*, setModuleManager, ModuleManager);
-QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreModuleManager*, coreModuleManager, ModuleManager);
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, setModuleManager, ModuleManager);
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods

@@ -65,15 +65,6 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleManager* qSlicerApplication::moduleManager()
-{
-  qSlicerModuleManager* moduleManager =
-    qobject_cast<qSlicerModuleManager*>(this->coreModuleManager());
-  Q_ASSERT(moduleManager);
-  return moduleManager; 
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerApplication::initialize()
 {
   this->Superclass::initialize(); 

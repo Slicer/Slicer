@@ -1,5 +1,5 @@
-#ifndef __qSlicerCoreModuleManager_h
-#define __qSlicerCoreModuleManager_h
+#ifndef __qSlicerModuleManager_h
+#define __qSlicerModuleManager_h
 
 // qCTK includes
 #include <qCTKPimpl.h>
@@ -12,18 +12,18 @@
 class qSlicerAbstractModule;
 class qSlicerModuleFactory;
 
-class qSlicerCoreModuleManagerPrivate;
+class qSlicerModuleManagerPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreModuleManager : public QObject
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleManager : public QObject
 {
   Q_OBJECT
 public:
-  typedef qSlicerCoreModuleManager Self;
-  qSlicerCoreModuleManager();
-  virtual ~qSlicerCoreModuleManager(){}
+  typedef qSlicerModuleManager Self;
+  qSlicerModuleManager();
+  virtual ~qSlicerModuleManager(){}
 
   // Description:
-  static qSlicerCoreModuleManager* instance();
+  static qSlicerModuleManager* instance();
 
   virtual void printAdditionalInfo();
 
@@ -59,10 +59,10 @@ signals:
   void moduleAboutToBeUnloaded(qSlicerAbstractModule* module);
 
 private:
-  qSlicerCoreModuleManager(const qSlicerCoreModuleManager&);  // Not implemented.
-  void operator=(const qSlicerCoreModuleManager&);  // Not implemented.
+  qSlicerModuleManager(const qSlicerModuleManager&);  // Not implemented.
+  void operator=(const qSlicerModuleManager&);  // Not implemented.
 
-  QCTK_DECLARE_PRIVATE(qSlicerCoreModuleManager);
+  QCTK_DECLARE_PRIVATE(qSlicerModuleManager);
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
-#include "qSlicerCoreModuleManager.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -145,7 +145,7 @@ void qSlicerModulePanel::setModule(const QString& moduleTitle)
 {
   qDebug() << "Show module (title):" << moduleTitle;
   QString moduleName =
-    qSlicerApplication::application()->coreModuleManager()->moduleName(moduleTitle);
+    qSlicerApplication::application()->moduleManager()->moduleName(moduleTitle);
   Q_ASSERT(!moduleName.isEmpty());
   this->setModuleByName(moduleName);
 }
@@ -155,7 +155,7 @@ void qSlicerModulePanel::setModuleByName(const QString& moduleName)
 {
   qDebug() << "Show module (name):" << moduleName;
   qSlicerAbstractModule * module =
-    qSlicerApplication::application()->coreModuleManager()->getModuleByName(moduleName);
+    qSlicerApplication::application()->moduleManager()->getModuleByName(moduleName);
   Q_ASSERT(module);
   this->setModule(module);
 }
