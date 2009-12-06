@@ -90,7 +90,9 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
 {
-  if (this->WidgetRepresentation)
+  // Delete the widget representation only if it doesn't any parent.
+  // If there is a parent, QT will take care of it.
+  if (this->WidgetRepresentation && !this->WidgetRepresentation->parent())
     {
     delete this->WidgetRepresentation;
     }
