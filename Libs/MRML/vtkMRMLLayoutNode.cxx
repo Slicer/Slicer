@@ -51,6 +51,7 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->NumberOfCompareViewLightboxColumns = 1;
   this->MainPanelSize = 400;
   this->SecondaryPanelSize = 400;
+  this->SelectedModule = NULL;
   return;
 
 }
@@ -58,6 +59,12 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 //----------------------------------------------------------------------------
 vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 {
+  if ( this->SelectedModule)
+    {
+    delete [] this->SelectedModule;
+    this->SelectedModule = NULL;
+    }
+
 }
 
 
@@ -80,6 +87,8 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
   of << indent << " mainPanelSize=\"" << this->MainPanelSize << "\"";
   of << indent << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
+  of << indent << " selectedModule=\"" << this->SelectedModule << "\"";
+  
 }
 
 
@@ -157,6 +166,10 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->SecondaryPanelSize;
       }
+    else if ( !strcmp (attName, "selectedModule" ))
+      {
+      this->SetSelectedModule(attValue);
+      }
     }
 
   this->EndModify(disabledModify);
@@ -198,6 +211,7 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
 
   this->SetMainPanelSize( node->GetMainPanelSize() );
   this->SetSecondaryPanelSize( node->GetSecondaryPanelSize() );
+  this->SetSelectedModule( node->GetSelectedModule() );
   
   this->EndModify(disabledModify);
 
@@ -220,6 +234,7 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
   os << indent << "Main panel size: " << this->MainPanelSize << "\n";
   os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
+  os << indent << "Selected module: " << this->SelectedModule << "\n";
 }
 
 

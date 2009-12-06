@@ -16,6 +16,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 
+#include "vtkMRMLLayoutNode.h"
+
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerModuleGUI.h"
@@ -482,7 +484,11 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
             {
             currentModule->Enter ( );
             }
-
+          vtkMRMLLayoutNode *lnode = this->GetApplicationGUI()->GetGUILayoutNode ( );
+          if (lnode)
+            {
+            lnode->SetSelectedModule(moduleName );
+            }
           this->RaiseModule ( moduleName );
           this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
           this->PopulateHistoryListMenu ( );

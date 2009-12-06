@@ -67,6 +67,12 @@ public:
   vtkGetMacro( SecondaryPanelSize, int);
   vtkSetMacro( SecondaryPanelSize, int);
 
+
+  // Description:
+  // Set/Get the size of the last selected module
+  vtkGetStringMacro( SelectedModule);
+  vtkSetStringMacro( SelectedModule);
+  
 // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
@@ -107,6 +113,8 @@ protected:
   int NumberOfCompareViewColumns;
   int NumberOfCompareViewLightboxRows;
   int NumberOfCompareViewLightboxColumns;
+
+  char *SelectedModule;
 
   int MainPanelSize;
   int SecondaryPanelSize;

@@ -1225,6 +1225,10 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     this->ApplicationToolbar->UpdateLayoutMenu();
 #endif
     this->UpdateLayout();
+    if (ln->GetSelectedModule( ))
+      {
+      this->SelectModule ( ln->GetSelectedModule( ) );
+      }
     }
 
   if (event == vtkMRMLViewNode::ActiveModifiedEvent)
