@@ -9,6 +9,7 @@
 
 #include "qSlicerQTWin32Header.h"
 
+class qSlicerModulePanel; 
 class qSlicerMainWindowCore;
 class qSlicerMainWindowPrivate;
 
@@ -28,6 +29,10 @@ public:
   // Description:
   // Return the moduleToolBar
   QToolBar* moduleToolBar()const;
+
+  // Description:
+  // Return the module panel
+  qSlicerModulePanel* modulePanel() const;
   
 protected:
 

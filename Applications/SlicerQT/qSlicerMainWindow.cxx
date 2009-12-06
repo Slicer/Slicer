@@ -4,6 +4,7 @@
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
+#include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
 
@@ -40,6 +41,9 @@ QCTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
