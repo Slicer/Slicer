@@ -4,6 +4,7 @@
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
+#include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerModuleManager.h"
@@ -35,8 +36,8 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* parent):Supercla
                  
   QObject::connect(d->ShowModuleActionMapper,
                 SIGNAL(mapped(const QString&)),
-                moduleManager,
-                SLOT(showModuleByName(const QString&)));
+                this->widget()->modulePanel(),
+                SLOT(setModuleByName(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
