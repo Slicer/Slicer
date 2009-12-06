@@ -462,19 +462,6 @@ add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
   )
 
 ##################################
-# DicomToNrrdConverter tests
-add_test(DicomToNrrdConverterTest ${Slicer3_EXE} --launch DicomToNrrdConverterTest
-  DicomToNrrdConverterTest
-    --inputDicomDirectory ${TEST_DATA}/DWIDicom
-    --outputVolume ${TEMP}/DWIDicom.nhdr
-  )
-
-set (CLP DicomToNrrdConverter)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
-
-##################################
 # DiffusionTensorEstimation tests
 add_test(DiffusionTensorEstimationTest ${Slicer3_EXE} --launch DiffusionTensorEstimationTest
   DiffusionTensorEstimationTest

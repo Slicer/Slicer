@@ -30,7 +30,7 @@ public:
   typedef std::pair<asection*, void* > MemorySectionType;
   typedef std::vector<MemorySectionType> MemorySectionContainer;
 
-  BinaryFileDescriptor() {};
+  BinaryFileDescriptor() : BFD(0) {};
   ~BinaryFileDescriptor();
 
   // Open the object file to investigate

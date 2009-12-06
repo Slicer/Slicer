@@ -245,11 +245,16 @@ endif(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 # --------------------------------------------------------------------------
 # Testing
 
+set(SHORT_TEST_TIMEOUT 90)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
+
 if(BUILD_TESTING)
   add_test(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
   add_test(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
   add_test(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
   add_test(Slicer3FiducialsTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAdd.tcl)
+
+  set_tests_properties( Slicer3FiducialsTest1 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
+  set_tests_properties( Slicer3FiducialsTest2 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
 endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------

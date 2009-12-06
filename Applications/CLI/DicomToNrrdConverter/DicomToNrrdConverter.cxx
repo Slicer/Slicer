@@ -651,7 +651,7 @@ int main(int argc, char* argv[])
       {
       SliceOrderIS = false;
       }
-    }      
+    }
   else if ( vendor.find("PHILIPS") != std::string::npos 
     && nSlice == 1)
   {

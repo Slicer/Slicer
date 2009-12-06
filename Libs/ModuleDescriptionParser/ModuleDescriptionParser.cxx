@@ -114,7 +114,7 @@ public:
   int ErrorLine;                               /* Error line number */
   int Depth;                                   /* The depth of the tag */
 
-  ParserState():LastData(10),Debug(false),Error(false),Depth(-1){};
+  ParserState():LastData(10),CurrentGroup(0),CurrentParameter(0),Debug(false),Error(false),ErrorLine(-1),Depth(-1){};
 };
 
 /***************************
@@ -328,7 +328,7 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetCPPType("bool");
-    
+
     // Parse attribute pairs
     int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
     for (int attr=0; attr < (attrCount / 2); attr++)
@@ -350,6 +350,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -387,6 +388,7 @@ startElement(void *userData, const char *element, const char **attrs)
       ps->Error = true;
       }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -407,6 +409,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -427,6 +430,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -447,6 +451,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -474,6 +479,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -495,6 +501,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -508,6 +515,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
         }
       }
@@ -531,6 +539,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -558,6 +567,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -579,6 +589,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -592,6 +603,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
         }
       }
@@ -615,6 +627,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -633,6 +646,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -651,6 +665,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -669,6 +684,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -686,6 +702,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
         ps->Error = true;
         }
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -718,6 +735,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -735,6 +753,7 @@ startElement(void *userData, const char *element, const char **attrs)
           ps->Error = true;
           }
         ps->OpenTags.push(name);
+        delete parameter;
         return;
         }
       }
@@ -752,6 +771,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -782,6 +802,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -814,6 +835,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -835,6 +857,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -856,6 +879,7 @@ startElement(void *userData, const char *element, const char **attrs)
           ps->Error = true;
           }
         ps->OpenTags.push(name);
+        delete parameter;
         return;
         }
       }
@@ -873,6 +897,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -905,6 +930,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -929,6 +955,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -953,6 +980,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -966,6 +994,7 @@ startElement(void *userData, const char *element, const char **attrs)
           ps->Error = true;
           }
         ps->OpenTags.push(name);
+        delete parameter;
         return;
         }
       }
@@ -983,6 +1012,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -1010,6 +1040,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -1030,6 +1061,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }      else if ((strcmp(attrs[2*attr], "type") == 0))
@@ -1049,6 +1081,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -1066,6 +1099,7 @@ startElement(void *userData, const char *element, const char **attrs)
           ps->Error = true;
           }
         ps->OpenTags.push(name);
+        delete parameter;
         return;
         }
       }
@@ -1089,6 +1123,7 @@ startElement(void *userData, const char *element, const char **attrs)
         ps->Error = true;
         }
       ps->OpenTags.push(name);
+      delete parameter;
       return;
       }
     parameter = new ModuleParameter;
@@ -1121,6 +1156,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -1145,6 +1181,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -1166,6 +1203,7 @@ startElement(void *userData, const char *element, const char **attrs)
             ps->Error = true;
             }
           ps->OpenTags.push(name);
+          delete parameter;
           return;
           }
         }
@@ -1183,6 +1221,7 @@ startElement(void *userData, const char *element, const char **attrs)
           ps->Error = true;
           }
         ps->OpenTags.push(name);
+        delete parameter;
         return;
         }
       }
