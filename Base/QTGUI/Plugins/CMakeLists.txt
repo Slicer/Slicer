@@ -9,12 +9,14 @@ INCLUDE_DIRECTORIES(
 
 # Create the plugin for Qt Designer
 SET(qSlicerQTGUIPlugin_SRCS
-  qSlicerQTGUIAbstractPlugin.h
   qSlicerQTGUIAbstractPlugin.cxx
-  qSlicerQTGUIPlugins.h
+  qSlicerQTGUIAbstractPlugin.h
   qSlicerQTGUIPlugins.cxx
-  qSlicerWidgetPlugin.h
+  qSlicerQTGUIPlugins.h
   qSlicerWidgetPlugin.cxx
+  qSlicerWidgetPlugin.h
+  qSlicerModulePanelPlugin.cxx
+  qSlicerModulePanelPlugin.h
   )
 
 SET(qSlicerQTGUIPlugin_MOC_SRCS

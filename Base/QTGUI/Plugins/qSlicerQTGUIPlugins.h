@@ -2,6 +2,7 @@
 #define __qSlicerQTGUIPlugins_h
 
 #include "qSlicerWidgetPlugin.h"
+#include "qSlicerModulePanelPlugin.h"
 #include "qSlicerQTGUIPluginWin32Header.h"
 #include <QDesignerCustomWidgetCollectionInterface>
 
@@ -17,6 +18,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerWidgetPlugin;
+    plugins << new qSlicerModulePanelPlugin; 
     return plugins;
     }
 };
