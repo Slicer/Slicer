@@ -1,6 +1,8 @@
 #include "qSlicerModulePanel.h"
 
 // SlicerQT includes
+#include "qSlicerApplication.h"
+#include "qSlicerCoreModuleManager.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -122,11 +124,11 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModuleWidget* moduleWidget)
   moduleWidget->setVisible(false);
   moduleWidget->setParent(0);
 
-//   // if nobody took ownership of the module, make sure it both lost its parent and is hidden
-//   if (module->parent() == d->Layout->parentWidget())
+  // if nobody took ownership of the module, make sure it both lost its parent and is hidden
+//   if (moduleWidget->parent() == d->Layout->parentWidget())
 //     {
-//     module->setVisible(false);
-//     module->setParent(0);
+//     moduleWidget->setVisible(false);
+//     moduleWidget->setParent(0);
 //     }
 
   emit moduleRemoved(moduleWidget->module());
@@ -136,6 +138,26 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModuleWidget* moduleWidget)
 void qSlicerModulePanel::removeAllModule()
 {
   this->clear();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::setModule(const QString& moduleTitle)
+{
+  qDebug() << "Show module (title):" << moduleTitle;
+  QString moduleName =
+    qSlicerApplication::application()->coreModuleManager()->moduleName(moduleTitle);
+  Q_ASSERT(!moduleName.isEmpty());
+  this->setModuleByName(moduleName);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::setModuleByName(const QString& moduleName)
+{
+  qDebug() << "Show module (name):" << moduleName;
+  qSlicerAbstractModule * module =
+    qSlicerApplication::application()->coreModuleManager()->getModuleByName(moduleName);
+  Q_ASSERT(module);
+  this->setModule(module);
 }
 
 //---------------------------------------------------------------------------
@@ -180,5 +202,4 @@ void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
   gridLayout->addWidget(this->ScrollArea);
   gridLayout->setContentsMargins(0,0,0,0);
   widget->setLayout(gridLayout);
-
 }

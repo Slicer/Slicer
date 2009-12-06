@@ -17,12 +17,15 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel: public qSlicerAbstractModul
   Q_OBJECT
 public:
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
-
+  
   void setModule(qSlicerAbstractModule* module);
   void clear();
 
-protected:
+public slots:
+  void setModule(const QString& moduleTitle);
+  void setModuleByName(const QString& moduleName);
 
+protected slots:
   virtual void addModule(qSlicerAbstractModuleWidget* module);
   virtual void removeModule(qSlicerAbstractModuleWidget* module);
   virtual void removeAllModule();
