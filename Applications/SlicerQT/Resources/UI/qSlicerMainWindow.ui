@@ -120,7 +120,17 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QWidget" name="ModuleWidgetContainer" native="true"/>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../../../../Resources/qSlicerLogos.qrc">:/Logos/Slicer3.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
       <widget class="qCTKCollapsibleButton" name="SliceControlsCollapsibleWidget">
@@ -415,9 +425,21 @@
    <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerModulePanel</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerModulePanel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+  <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
  </resources>
  <connections/>
