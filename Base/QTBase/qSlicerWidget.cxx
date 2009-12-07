@@ -27,12 +27,6 @@ qSlicerWidget::qSlicerWidget(QWidget *parent, Qt::WindowFlags f)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWidget::printAdditionalInfo()
-{
-  this->Superclass::dumpObjectInfo();
-}
-
-//-----------------------------------------------------------------------------
 QWidget* qSlicerWidget::parentWidget()
 {
   if (this->isParentContainerScrollArea())

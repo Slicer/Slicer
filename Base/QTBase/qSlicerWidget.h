@@ -27,8 +27,6 @@ public:
   typedef QWidget Superclass;
   qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
 
-  virtual void printAdditionalInfo();
-
   // Description:
   // Convenient windows to return parent widget or Null if any
   QWidget* parentWidget();
