@@ -83,13 +83,7 @@ int main(int argc, char* argv[])
   splash.finish(&window);
   
   // Add modules to the selector
-  qSlicerModuleSelectorWidget moduleSelector;
-  moduleSelector.addModules(moduleNames);
-  moduleSelector.show(); 
-
-  // Connect the selector with the module panel
-  QObject::connect(&moduleSelector, SIGNAL(moduleSelected(const QString&)),
-                   window.modulePanel(), SLOT(setModuleByName(const QString&)));
+  window.moduleSelector()->addModules(moduleNames);
   
   return app.exec();
 }
