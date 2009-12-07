@@ -171,8 +171,8 @@ void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
   this->HelpCollapsibleButton->setCollapsed(true);
   this->HelpCollapsibleButton->setSizePolicy(
     QSizePolicy::Ignored, QSizePolicy::Minimum);
-  // QTextBrowser instead of QLabel because QLabel doesn't word wrap links 
-  // correctly
+    
+  // Note: QWebView could be used as an alternative to qCTKFittedTextBrowser ?
   //this->HelpLabel = new QWebView;
   this->HelpLabel = static_cast<QTextBrowser*>(new qCTKFittedTextBrowser);
   this->HelpLabel->setOpenExternalLinks(true);
