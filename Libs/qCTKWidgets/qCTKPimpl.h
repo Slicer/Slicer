@@ -300,22 +300,18 @@ public:
     }
   inline PVT& ref()
     {
-    Q_ASSERT(this->pvt);
     return *static_cast<PVT*>(this->pvt);
     }
   inline const PVT& ref() const
     {
-    Q_ASSERT(this->pvt);
     return *static_cast<PVT*>(this->pvt);
     }
   inline PVT* operator()()
     {
-    Q_ASSERT(this->pvt);
     return static_cast<PVT*>(this->pvt);
     }
   inline const PVT* operator()() const
     {
-    Q_ASSERT(this->pvt);
     return static_cast<PVT*>(this->pvt);
     }
 private:
