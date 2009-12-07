@@ -17,6 +17,8 @@ SET(qSlicerQTGUIPlugin_SRCS
   qSlicerWidgetPlugin.h
   qSlicerModulePanelPlugin.cxx
   qSlicerModulePanelPlugin.h
+  qSlicerModuleSelectorWidgetPlugin.cxx
+  qSlicerModuleSelectorWidgetPlugin.h
   )
 
 SET(qSlicerQTGUIPlugin_MOC_SRCS
