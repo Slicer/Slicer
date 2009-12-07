@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>771</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="qMRMLSceneGenerator" name="MRMLSceneGenerator"/>
+   </item>
+   <item>
+    <widget class="qMRMLListWidget" name="MRMLListWidget">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragDrop</enum>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragDrop</enum>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLListWidget</class>
+   <extends>QListView</extends>
+   <header>qMRMLListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSceneGenerator</class>
+   <extends>QPushButton</extends>
+   <header>qMRMLSceneGeneratorPlugin.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>MRMLSceneGenerator</sender>
+   <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
+   <receiver>MRMLTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLSceneGenerator</sender>
+   <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
+   <receiver>MRMLListWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>64</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
