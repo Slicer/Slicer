@@ -5,7 +5,7 @@
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class qSlicerAbstractModule;
-class qSlicerAbstractModuleWidget; 
+class qSlicerAbstractModule; 
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModulePanel: public qSlicerWidget
 {
@@ -13,14 +13,14 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModulePanel: public qSlicerWidge
 public:
   qSlicerAbstractModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerAbstractModulePanel();
-  virtual void addModule(qSlicerAbstractModuleWidget* module) = 0;
-  virtual void removeModule(qSlicerAbstractModuleWidget* module) = 0;
+  virtual void addModule(const QString& moduleName) = 0;
+  virtual void removeModule(const QString& moduleName) = 0;
   virtual void removeAllModule() = 0;
 
 signals:
-  void moduleAdded(qSlicerAbstractModule* module);
-  //void moduleAboutToBeRemoved(qSlicerAbstractModule* module);
-  void moduleRemoved(qSlicerAbstractModule* module);
+  void moduleAdded(const QString& moduleName);
+  //void moduleAboutToBeRemoved(const QString& moduleName);
+  void moduleRemoved(const QString& moduleName);
 };
 
 #endif

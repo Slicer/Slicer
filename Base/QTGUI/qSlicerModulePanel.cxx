@@ -42,9 +42,18 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
+void qSlicerModulePanel::setModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModulePanel);
+
+  qSlicerAbstractModule * module = 0;
+  
+  if (!moduleName.isEmpty())
+    {
+    qDebug() << "Show module (name):" << moduleName;
+    module = qSlicerApplication::application()->moduleManager()->getModuleByName(moduleName);
+    Q_ASSERT(module);
+    }
   
   // Retrieve current module associated with the module panel
   QLayoutItem* item = d->Layout->itemAt(1);
@@ -52,7 +61,7 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
     item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
   // If module is already set, return.
-  if (module->widgetRepresentation() == currentModuleWidget)
+  if (module && (module->widgetRepresentation() == currentModuleWidget))
     {
     return;
     }
@@ -60,13 +69,13 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
   if (currentModuleWidget)
     {
     // Remove the current module
-    this->removeModule(currentModuleWidget);
+    this->removeModule(currentModuleWidget->name());
     }
 
   if (module)
     {
     // Add the new module
-    this->addModule(module->widgetRepresentation());
+    this->addModule(module->name());
     }
   else
     {
@@ -75,15 +84,15 @@ void qSlicerModulePanel::setModule(qSlicerAbstractModule* module)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::clear()
+void qSlicerModulePanel::addModule(const QString& moduleName)
 {
-  this->setModule(0);
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModulePanel::addModule(qSlicerAbstractModuleWidget* moduleWidget)
-{
+  qSlicerAbstractModule * module =
+    qSlicerApplication::application()->moduleManager()->getModuleByName(moduleName); 
+  Q_ASSERT(module);
+  
+  qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
+  
   QCTK_D(qSlicerModulePanel);
   
   // Update module layout
@@ -95,18 +104,24 @@ void qSlicerModulePanel::addModule(qSlicerAbstractModuleWidget* moduleWidget)
   moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
   moduleWidget->setVisible(true);
 
-  QString help = moduleWidget->module()->helpText(); 
+  QString help = module->helpText();
   d->HelpCollapsibleButton->setVisible(!help.isEmpty());
   d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
 
-  emit moduleAdded(moduleWidget->module());
+  emit moduleAdded(module->name());
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::removeModule(qSlicerAbstractModuleWidget* moduleWidget)
+void qSlicerModulePanel::removeModule(const QString& moduleName)
 {
+  qSlicerAbstractModule * module =
+    qSlicerApplication::application()->moduleManager()->getModuleByName(moduleName); 
+  Q_ASSERT(module);
+  
+  qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
+  
   QCTK_D(qSlicerModulePanel);
 
   int index = d->Layout->indexOf(moduleWidget);
@@ -131,33 +146,13 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractModuleWidget* moduleWidget)
 //     moduleWidget->setParent(0);
 //     }
 
-  emit moduleRemoved(moduleWidget->module());
+  emit moduleRemoved(module->name());
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::removeAllModule()
 {
-  this->clear();
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModulePanel::setModule(const QString& moduleTitle)
-{
-  qDebug() << "Show module (title):" << moduleTitle;
-  QString moduleName =
-    qSlicerApplication::application()->moduleManager()->moduleName(moduleTitle);
-  Q_ASSERT(!moduleName.isEmpty());
-  this->setModuleByName(moduleName);
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModulePanel::setModuleByName(const QString& moduleName)
-{
-  qDebug() << "Show module (name):" << moduleName;
-  qSlicerAbstractModule * module =
-    qSlicerApplication::application()->moduleManager()->getModuleByName(moduleName);
-  Q_ASSERT(module);
-  this->setModule(module);
+  this->setModule("");
 }
 
 //---------------------------------------------------------------------------

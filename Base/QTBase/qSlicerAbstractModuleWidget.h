@@ -9,7 +9,6 @@
 
 // class vtkSlicerApplicationLogic;
 class qSlicerAbstractModule; 
-class vtkMRMLScene;
 class QAction; 
 class qSlicerAbstractModuleWidgetPrivate;
 
@@ -21,8 +20,6 @@ public:
   typedef qSlicerWidget Superclass;
   qSlicerAbstractModuleWidget(QWidget *parent=0);
 
-  virtual void printAdditionalInfo();
-
   // Description:
   // All initialization code should be done in the initialize function
   void initialize(/*vtkSlicerApplicationLogic* appLogic*/);
@@ -32,9 +29,9 @@ public:
   virtual QAction* showModuleAction()  { return 0; }
 
   // Description:
-  // Set/Get pointer to the associated module
-  void setModule(qSlicerAbstractModule* module);
-  qSlicerAbstractModule* module();
+  // Set/Get module name
+  void setName(const QString& moduleName);
+  QString name()const;
 
 protected:
   // Description:

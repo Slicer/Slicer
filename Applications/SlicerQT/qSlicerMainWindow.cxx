@@ -75,5 +75,5 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Connect the selector with the module panel
   QObject::connect(this->ModuleSelector, SIGNAL(moduleSelected(const QString&)),
-                   this->ModulePanel, SLOT(setModuleByName(const QString&)));
+                   this->ModulePanel, SLOT(setModule(const QString&)));
 }

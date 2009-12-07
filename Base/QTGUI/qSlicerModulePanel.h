@@ -9,7 +9,7 @@
 
 #include "qSlicerBaseQTGUIWin32Header.h"
 
-class qSlicerAbstractModuleWidget;
+class qSlicerAbstractModule;
 class qSlicerModulePanelPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel: public qSlicerAbstractModulePanel
@@ -18,16 +18,14 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel: public qSlicerAbstractModul
 public:
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   
-  void setModule(qSlicerAbstractModule* module);
   void clear();
 
 public slots:
-  void setModule(const QString& moduleTitle);
-  void setModuleByName(const QString& moduleName);
+  void setModule(const QString& moduleName);
 
 protected slots:
-  virtual void addModule(qSlicerAbstractModuleWidget* module);
-  virtual void removeModule(qSlicerAbstractModuleWidget* module);
+  virtual void addModule(const QString& moduleName);
+  virtual void removeModule(const QString& moduleName);
   virtual void removeAllModule();
 
 private:

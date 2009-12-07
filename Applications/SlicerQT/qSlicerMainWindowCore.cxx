@@ -37,7 +37,7 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* parent):Supercla
   QObject::connect(d->ShowModuleActionMapper,
                 SIGNAL(mapped(const QString&)),
                 this->widget()->modulePanel(),
-                SLOT(setModuleByName(const QString&)));
+                SLOT(setModule(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
