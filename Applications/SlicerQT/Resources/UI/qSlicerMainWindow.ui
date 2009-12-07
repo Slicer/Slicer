@@ -144,6 +144,7 @@
        <property name="text">
         <string>Manipulate Slice Views</string>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2"/>
       </widget>
      </item>
      <item>
@@ -151,6 +152,7 @@
        <property name="text">
         <string>Manipulate 3D View</string>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3"/>
       </widget>
      </item>
     </layout>
