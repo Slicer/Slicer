@@ -87,13 +87,8 @@ vtkMRMLNode* qMRMLUtils::topLevelNthNode(vtkMRMLScene* scene, int nodeIndex)
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLUtils::childNode(vtkMRMLNode* node, int childIndex)
 {
-  if (childIndex < 0)
-    {
-    return 0;
-    }
   // shortcut the following search if we are sure that the node has no children
-  if (node == 0 ||
-      vtkMRMLTransformNode::SafeDownCast(node) == 0)
+  if (childIndex < 0 || node == 0 || !qMRMLUtils::canBeAParent(node))
     {
     return 0;
     }
