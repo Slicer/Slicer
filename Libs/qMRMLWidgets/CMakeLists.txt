@@ -15,6 +15,8 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 SET(qMRMLWidgets_SRCS
   qMRMLItemModel.cxx
   qMRMLItemModel.h
+  qMRMLItemHelper.cxx
+  qMRMLItemHelper.h
   qMRMLLinearTransformSlider.cxx
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.cxx
