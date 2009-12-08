@@ -42,7 +42,7 @@ endif(GenerateLM_FOUND)
 # SlicerDaemon:
 #   - ScriptedModule (at run-time for its Tcl package)
 
-subdirs(
+SET(modules
   AtlasCreator
   MRIBiasFieldCorrection
   CommandLineModule
@@ -82,7 +82,8 @@ subdirs(
   )
 
 if(Slicer3_USE_OPENIGTLINK)
-  subdirs(
+  SET(modules
+    ${modules}
     OpenIGTLinkIF
     NeuroNav
     ProstateNav
@@ -90,6 +91,10 @@ if(Slicer3_USE_OPENIGTLINK)
     # OpenCV
     )
 endif(Slicer3_USE_OPENIGTLINK)
+
+FOREACH(module ${modules})
+  ADD_SUBDIRECTORY(${module})
+ENDFOREACH(module)
 
 ## SLICES_DEBUG
 ## GAD_DEBUG
@@ -110,6 +115,6 @@ endif(Slicer3_USE_OPENIGTLINK)
 ## DEAMON_DEBUG
 
 if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(Slicer3_BUILD_TESTING)
 

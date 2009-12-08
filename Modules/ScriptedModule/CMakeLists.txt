@@ -108,5 +108,5 @@ slicer3_install_modules(${lib_name})
 # Testing (requires some of the examples)
 
 if(BUILD_TESTING)
-  #  SUBDIRS(Testing)
+  #  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)

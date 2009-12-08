@@ -40,7 +40,7 @@ set(include_dirs
 
 
 # IF(Slicer3_USE_QT)
-#   subdirs(Qt)
+#   ADD_SUBDIRECTORY(Qt)
 #   set(include_dirs ${include_dirs} 
 #     ${SlicerBaseGUIQt_SOURCE_DIR}
 #     ${SlicerBaseGUIQt_BINARY_DIR}

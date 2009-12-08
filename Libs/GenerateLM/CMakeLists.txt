@@ -42,7 +42,7 @@ target_link_libraries(GenerateLM
   ITKEXPAT)
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
 include(GenerateGenerateLMConfig.cmake)

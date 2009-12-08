@@ -16,7 +16,7 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
-subdirs(
+SET(meshing_libs
   IO
   Adapter
   Common
@@ -26,10 +26,13 @@ subdirs(
   Widgets
   BuildingBlock
   IA_FEMesh
-)
+  )
+FOREACH(lib ${meshing_libs})
+  ADD_SUBDIRECTORY(${lib})
+ENDFOREACH(lib)
 
 
 # --------------------------------------------------------------------------
 #if(Slicer3_BUILD_TESTING)
-#  subdirs(Testing)
+#  ADD_SUBDIRECTORY(Testing)
 #endif(Slicer3_BUILD_TESTING)

@@ -16,17 +16,20 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
-subdirs(
+SET(Tractography_libs
   Seeding
   Settings
   Display
   FiducialSeeding
   Editor
   )
+FOREACH(lib ${Tractography_libs})
+  ADD_SUBDIRECTORY(${lib})
+ENDFOREACH(lib)
 
 # --------------------------------------------------------------------------
 if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(Slicer3_BUILD_TESTING)
 
 # Install testing data

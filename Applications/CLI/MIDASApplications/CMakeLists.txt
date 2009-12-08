@@ -1,2 +1,2 @@
-SUBDIRS( DownloadSlicerTutorials )
+ADD_SUBDIRECTORY( DownloadSlicerTutorials )
 

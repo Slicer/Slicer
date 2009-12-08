@@ -611,28 +611,30 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 
-subdirs ( SparseFieldLevelSetContour )
-subdirs ( Realign )
-subdirs( DiffusionApplications )
-#subdirs( EndoNavTracking )
-subdirs( ExtractSkeleton )
-# subdirs( Java )
+SET(cli_modules
+  SparseFieldLevelSetContour
+  Realign
+  DiffusionApplications
+  #EndoNavTracking
+  ExtractSkeleton
+  #Java
+  )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
-  subdirs( RegisterImagesModule )
+  SET(cli_modules ${cli_modules} RegisterImagesModule)
 
 else ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
   if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
 
-    subdirs( RegisterImagesModule )
+    SET(cli_modules ${cli_modules} RegisterImagesModule)
 
   else ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
 
     if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
       if ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-        subdirs( RegisterImagesModule )
+        SET(cli_modules ${cli_modules} RegisterImagesModule)
       else ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
         message ("RegisterImagesModule requires that the ITK_USE_OPTIMIZED_REGISTRATION_METHODS option be turned on when building ITK")
       endif ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
@@ -644,18 +646,24 @@ else ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
 endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
-subdirs( UtahBSpline )
-subdirs( DiffeomorphicDemonsRegistration )
+SET(cli_modules ${cli_modules}
+  UtahBSpline
+  DiffeomorphicDemonsRegistration
+  )
 
 if(Slicer3_USE_MIDAS)
-  subdirs( MIDASApplications )
+  SET(cli_modules ${cli_modules} MIDASApplications)
 endif(Slicer3_USE_MIDAS)
 
 if(Slicer3_USE_BatchMake)
-  subdirs( BatchMakeApplications )
+  SET(cli_modules ${cli_modules} BatchMakeApplications)
 endif(Slicer3_USE_BatchMake)
 
-#subdirs( Utah )
+#SET(cli_modules ${cli_modules} Utah)
+
+FOREACH(cli_module ${cli_modules})
+  ADD_SUBDIRECTORY(${cli_module})
+ENDFOREACH(cli_module)
 
 if (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
@@ -736,5 +744,5 @@ endif (Slicer3_SOURCE_DIR)
 #
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)

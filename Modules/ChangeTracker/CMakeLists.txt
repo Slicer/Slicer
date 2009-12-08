@@ -77,10 +77,16 @@ set(ChangeTracker_SRCS
 )
 
 # Enders work 
-subdirs(DeformableMetric CommandLineApplication) 
+SET(changetracker_libs
+  DeformableMetric
+  CommandLineApplication
+  )
+FOREACH(lib ${changetracker_libs})
+  ADD_SUBDIRECTORY(${lib})
+ENDFOREACH(lib)
 
 # Tools for diameter estimation
-#subdirs(TumorDiameterEstimation)
+#ADD_SUBDIRECTORY(TumorDiameterEstimation)
 
 # Abstract/pure virtual classes
 
@@ -141,7 +147,7 @@ slicer3_install_modules(${lib_name})
 # Testing
 
 #if(BUILD_TESTING)
-#   subdirs(Testing)
+#   ADD_SUBDIRECTORY(Testing)
 #endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------

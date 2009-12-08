@@ -16,8 +16,12 @@ ENDIF(NOT Slicer3_SOURCE_DIR)
 
 INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTModuleMacros.cmake)
 
-SUBDIRS(
+SET(qtmodules
   SlicerWelcome
   Volumes
   Measurements
   )
+
+FOREACH(module ${qtmodules})
+  ADD_SUBDIRECTORY(${module})
+ENDFOREACH(module)

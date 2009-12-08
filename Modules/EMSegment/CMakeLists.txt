@@ -223,13 +223,13 @@ slicer3_install_modules(${lib_name})
 # Testing
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------
 # Command line application
 
-subdirs(CommandLineApplication)
+ADD_SUBDIRECTORY(CommandLineApplication)
 
 # --------------------------------------------------------------------------
 # Install the testing data

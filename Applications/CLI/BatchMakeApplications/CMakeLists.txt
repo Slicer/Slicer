@@ -58,9 +58,12 @@ if(BatchMake_DIR)
   endif(Slicer3_SOURCE_DIR)
 endif( BatchMake_DIR)
 
-SUBDIRS(
+SET(batchmake_modules
   EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
   RegisterImagesBatchMakeModule
   ResampleVolumeBatchMakeModule
-)
+  )
+FOREACH(module ${batchmake_modules})
+  ADD_SUBDIRECTORY(${module})
+ENDFOREACH(module)

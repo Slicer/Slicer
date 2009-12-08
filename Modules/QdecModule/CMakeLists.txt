@@ -88,7 +88,7 @@ slicer3_install_modules(${lib_name})
 # Testing
 
 if(BUILD_TESTING)
-#  subdirs(Testing)
+#  ADD_SUBDIRECTORY(Testing)
    add_test(QdecModuleLibs ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/QdecModuleLibs.tcl)
 endif(BUILD_TESTING)
 

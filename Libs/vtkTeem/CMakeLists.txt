@@ -130,7 +130,7 @@ install(TARGETS ${lib_name}
 # Testing (requires some of the examples)
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------

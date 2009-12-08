@@ -95,7 +95,7 @@ install(TARGETS ${lib_name}
 # Testing (requires some of the examples)
 
 # IF(BUILD_TESTING)
-#  SUBDIRS(Testing)
+#  ADD_SUBDIRECTORY(Testing)
 # ENDIF(BUILD_TESTING)
 
 # --------------------------------------------------------------------------

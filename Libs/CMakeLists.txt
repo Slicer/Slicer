@@ -99,4 +99,6 @@ list(REMOVE_ITEM libs tclap GenerateCLP GenerateLM slicerio)
 slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${libs})
 
-subdirs(${dirs})
+FOREACH(dir ${dirs})
+  ADD_SUBDIRECTORY(${dir})
+ENDFOREACH(dir)

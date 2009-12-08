@@ -70,8 +70,14 @@ generatelm(VolumeRendering_SRCS VolumeRendering.txt)
 # --------------------------------------------------------------------------
 # Build and install the library
 
-subdirs(VolumeRenderingReplacements)
-#subdirs(VolumeRenderingReplacements VolumeRenderingCuda)
+ADD_SUBDIRECTORY(VolumeRenderingReplacements)
+# SET(volume_rendering_libs
+#   VolumeRenderingReplacements
+#   VolumeRenderingCuda
+#   )
+# FOREACH(lib ${volume_rendering_libs})
+#   ADD_SUBDIRECTORY(${lib})
+# ENDFOREACH(lib)
 
 set(lib_name VolumeRendering)
 add_library(${lib_name}
@@ -102,7 +108,7 @@ slicer3_install_modules(${lib_name})
 # Testing
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------

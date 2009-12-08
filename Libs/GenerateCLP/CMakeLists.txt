@@ -37,7 +37,7 @@ target_link_libraries(GenerateCLP
   ITKEXPAT)
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
 include(GenerateGenerateCLPConfig.cmake)

@@ -1,9 +1,7 @@
 project(Statistics)
 
-subdirs(
-  LabelStatistics        
-  )
+ADD_SUBDIRECTORY(LabelStatistics)
 
 if(Slicer3_BUILD_TESTING)
-  subdirs(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(Slicer3_BUILD_TESTING)
