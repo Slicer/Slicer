@@ -130,6 +130,7 @@ SET(qMRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
   MRML
   qCTKWidgets
+  qVTKWidgets
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
