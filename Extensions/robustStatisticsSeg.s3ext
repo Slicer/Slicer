@@ -1,7 +1,7 @@
 scm       svn
-svnpath http://svn.na-mic.org/NAMICSandBox/trunk/MeningiomaSegmentation/localGlobal
-name     LocalRegionalSegModule
-cmakeproject      LocalRegionalSegModule
+svnpath http://svn.na-mic.org/NAMICSandBox/trunk/robustStatisticsSegmentation/code
+name     RobustStatisticsSegModule
+cmakeproject      RobustStatisticsSegModule
 svnusername slicerbot
 svnpassword slicer
 
@@ -12,7 +12,7 @@ svnpassword slicer
 # - the dependencies will be built first
 
 # homepage
-n/a
+http://wiki.na-mic.org/Wiki/index.php/RobustStatisticsSegmentation
 
 # match category in the xml description of the module (where it shows up in Modules menu)
 category  Segmentation
@@ -22,5 +22,4 @@ category  Segmentation
 status    Development
 
 # One line description of what the module does
-Localized Region-based Segmentation Module
-
+Active contour segmentation module using robust statistics
