@@ -64,9 +64,15 @@ QCTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, Mo
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
 {
+  QCTK_D(qSlicerMainWindow);
+  
   this->connect(
-    qctk_d()->actionFileExit, SIGNAL(triggered()),
+    d->actionFileExit, SIGNAL(triggered()),
     qSlicerApplication::instance(), SLOT(quit()));
+
+  qSlicerMainWindow_connect(EditRedo);
+  qSlicerMainWindow_connect(EditUndo);
+    
 }
 
 #undef qSlicerMainWindow_connect
