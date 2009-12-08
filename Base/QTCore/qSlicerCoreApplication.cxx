@@ -3,6 +3,7 @@
 // SlicerQT includes
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
+#include "qSlicerCoreIOManager.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
@@ -24,6 +25,10 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
 
+// For:
+//  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer3_INSTALL_PLUGINS_BIN_DIR
+//  - Slicer3_INSTALL_LIB_DIR
 #include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
@@ -35,7 +40,8 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
     {
     this->AppLogic = 0;
     this->MRMLScene = 0;
-    this->ModuleManager = 0; 
+    this->ModuleManager = 0;
+    this->IOManager = 0; 
     }
 
   ~qSlicerCoreApplicationPrivate()
@@ -45,6 +51,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
       this->ModuleManager->factory()->uninstantiateAll();
       delete this->ModuleManager; 
       }
+    if (this->IOManager) { delete this->IOManager; }
     if (this->AppLogic) { this->AppLogic->Delete(); }
     if (this->MRMLScene) { this->MRMLScene->Delete(); }
     }
@@ -75,6 +82,10 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
   // Description:
   // ModuleManager - It should exist only one instance of the factory
   qSlicerModuleManager*                ModuleManager;
+
+  // Description:
+  // IOManager - It should exist only one instance of the factory
+  qSlicerCoreIOManager*                IOManager;
 
   // For ::PutEnv
   // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
@@ -254,6 +265,10 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 //-----------------------------------------------------------------------------
 QCTK_SET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, setModuleManager, ModuleManager);
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setIOManager, IOManager);
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, IOManager);
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods

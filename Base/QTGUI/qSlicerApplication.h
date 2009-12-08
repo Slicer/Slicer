@@ -9,6 +9,7 @@
 #include "qSlicerBaseQTGUIWin32Header.h"
 
 class qSlicerWidget;
+class qSlicerIOManager; 
 class qSlicerApplicationPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
@@ -27,6 +28,10 @@ public:
 
   // Description:
   void initialize();
+
+  // Description:
+  // Get IO Manager
+  qSlicerIOManager* ioManager(); 
 
   // Description:
   // Set the visibility of the top level widgets.

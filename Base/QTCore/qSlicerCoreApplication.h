@@ -12,6 +12,7 @@
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class qSlicerModuleManager;
+class qSlicerCoreIOManager; 
 class qSlicerCoreApplicationPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
@@ -63,6 +64,11 @@ public:
   // Set/Get the module manager
   qSlicerModuleManager* moduleManager()const;
   void setModuleManager(qSlicerModuleManager* moduleManager);
+
+  // Description:
+  // Set/Get the IO manager
+  qSlicerCoreIOManager* coreIOManager()const;
+  void setIOManager(qSlicerCoreIOManager* ioManager); 
 
 signals:
   void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);
