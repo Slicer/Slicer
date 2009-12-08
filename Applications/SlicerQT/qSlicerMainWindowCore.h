@@ -20,10 +20,11 @@ public:
   typedef QObject Superclass;
   qSlicerMainWindowCore(qSlicerMainWindow *parent);
 
-
 public slots: 
   // Description:
   // Handle actions
+  void onEditUndoActionTriggered();
+  void onEditRedoActionTriggered();
   
 protected:
   qSlicerMainWindow* widget() const;

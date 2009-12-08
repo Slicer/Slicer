@@ -9,6 +9,9 @@
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerModuleManager.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // QT includes
 #include <QSignalMapper>
 #include <QToolBar>
@@ -42,6 +45,18 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* parent):Supercla
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onEditUndoActionTriggered()
+{
+  qSlicerApplication::application()->mrmlScene()->Undo();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onEditRedoActionTriggered()
+{
+  qSlicerApplication::application()->mrmlScene()->Redo();
+}
 
 //---------------------------------------------------------------------------
 // qSlicerMainWindowCorePrivate methods
