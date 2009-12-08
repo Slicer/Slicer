@@ -66,9 +66,6 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     d->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
   
   vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
-  qDebug() << "createAndAddNodeToSceneByClass - Set name to:" 
-           << nodeCreated->GetName() << "(" << nodeCreated->GetID() << ")";
-
   Q_ASSERT(nodeCreated);
   
   // Set node attributes
