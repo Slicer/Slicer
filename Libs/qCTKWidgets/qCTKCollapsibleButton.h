@@ -101,7 +101,9 @@ protected:
   //virtual void mouseReleaseEvent(QMouseEvent* event);
   virtual void childEvent(QChildEvent* c);
 
-  virtual bool hitButton ( const QPoint & pos ) const;
+  virtual bool hitButton(const QPoint & pos) const;
+  // Compute the size hint of the head button only. The sizehint depends on the text.
+  virtual QSize buttonSizeHint() const;
 
   // Initialize option with the values from this qCTKCollapsibleButton. 
   // This method is useful for subclasses when they need a QStyleOptionButton, 

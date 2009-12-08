@@ -19,7 +19,6 @@ public:
 
   bool     Collapsed;
   int      CollapsedHeight;
-  QString  Title;
 
   // Contents frame
   QFrame::Shape  ContentsFrameShape;
@@ -257,21 +256,8 @@ void qCTKCollapsibleButton::setContentsMidLineWidth(int w)
 }
 
 //-----------------------------------------------------------------------------
-QSize qCTKCollapsibleButton::minimumSizeHint()const
+QSize qCTKCollapsibleButton::buttonSizeHint()const
 {
-  return this->sizeHint();  
-}
-
-//-----------------------------------------------------------------------------
-QSize qCTKCollapsibleButton::sizeHint()const
-{
-  // frame
-  QSize s = this->QAbstractButton::sizeHint(); 
-  if (!qctk_d()->Collapsed)
-    {
-    return s;
-    }
-    
   int w = 0, h = 0;
 
   QStyleOptionButton opt;
@@ -287,7 +273,7 @@ QSize qCTKCollapsibleButton::sizeHint()const
   h = qMax(h, ih);
   
   // text 
-  QString string(qctk_d()->Title);
+  QString string(this->text());
   bool empty = string.isEmpty();
   if (empty)
     {
@@ -306,6 +292,37 @@ QSize qCTKCollapsibleButton::sizeHint()const
   opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
   QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
                       expandedTo(QApplication::globalStrut()));
+  return buttonSize;
+}
+
+//-----------------------------------------------------------------------------
+QSize qCTKCollapsibleButton::minimumSizeHint()const
+{
+  QSize s = this->QAbstractButton::minimumSizeHint(); 
+  QSize buttonSize = this->buttonSizeHint();
+  if (qctk_d()->Collapsed)
+    {
+    return buttonSize.expandedTo(s);
+    }
+  // open
+  if (this->layout() == 0)
+    {// no layout, means the button is empty
+    return buttonSize;
+    }
+  return s.expandedTo(buttonSize);
+}
+
+//-----------------------------------------------------------------------------
+QSize qCTKCollapsibleButton::sizeHint()const
+{
+  // frame
+  QSize s = this->QAbstractButton::sizeHint(); 
+  if (!qctk_d()->Collapsed)
+    {
+    return s;
+    }
+    
+  QSize buttonSize = this->buttonSizeHint();
   return buttonSize + QSize(0,s.height());
 }
 
