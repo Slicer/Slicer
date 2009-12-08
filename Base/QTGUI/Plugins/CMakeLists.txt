@@ -44,7 +44,7 @@ INSTALL(FILES
 
 SET(lib_name "qSlicerBaseQTGUIPlugin")
 
-ADD_LIBRARY(${lib_name} SHARED ${qSlicerQTGUIPlugin_SRCS})
+ADD_LIBRARY(${lib_name} MODULE ${qSlicerQTGUIPlugin_SRCS})
 SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES 
                       COMPILE_FLAGS "-DQT_PLUGIN -DQT_NO_DEBUG")
 

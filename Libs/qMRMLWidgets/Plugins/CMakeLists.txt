@@ -62,7 +62,7 @@ INSTALL(FILES
 
 SET(lib_name "qMRMLWidgetsPlugin")
 
-ADD_LIBRARY(${lib_name} SHARED ${qMRMLWidgetsPlugin_SRCS})
+ADD_LIBRARY(${lib_name} MODULE ${qMRMLWidgetsPlugin_SRCS})
 SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES 
                       COMPILE_FLAGS "-DQT_PLUGIN -DQT_NO_DEBUG")
 
