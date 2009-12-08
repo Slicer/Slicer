@@ -361,7 +361,6 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            this->GetModulesMenuButton()->SetValue( mName );
 #ifdef Slicer3_USE_QT
            //qDebug() << "Attempt to show Qt module:" << moduleName;
-           //this->GetApplicationGUI()->SetQtModuleVisible(moduleName, true);
            this->GetApplicationGUI()->SetCurrentQtModule(moduleName);
 #endif
            //--- feedback to user
@@ -371,38 +370,6 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
         }
-//#ifdef Slicer3_USE_QT
-//       qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-//       Q_ASSERT(moduleManager);
-//       qSlicerAbstractModule * module = moduleManager->getModule(moduleName);
-//       if (module)
-//         {
-// //         //--- feedback to user
-// //         std::string statusText = "...raising module ";
-// //         statusText += moduleName;
-// //         statusText += "...";
-// //         p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
-// //         this->Script ( "update idletasks");
-//
-//         int pos[2] = {0,0};
-//         int size[2] = {0,0};
-//         vtkKWWidget* widget = this->GetApplicationGUI()->GetMainSlicerWindow()->GetMainNotebook();
-//         vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
-//         vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
-//         module->resize(size[0], size[1]);
-//         module->move(pos[0], pos[1]);
-//
-//         module->show();
-//         QApplication::processEvents();
-
-//         p->GetMainSlicerWindow()->SetStatusText ( moduleName );
-//         this->GetModulesMenuButton()->SetValue( moduleName );
-
-//         //--- feedback to user
-//         p->GetMainSlicerWindow()->SetStatusText ( moduleName );
-//         this->Script ( "update idletasks");
-//        }
-//#endif
       }
     }
 }
@@ -465,12 +432,6 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
               }
             currentModule->Exit ( );
             }
-// #ifdef Slicer3_USE_QT
-//           qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-//           Q_ASSERT(moduleManager);
-//           qDebug() << "Attempt to hide module:" << currentModuleName;
-//           moduleManager->hideModule(currentModuleName);
-// #endif
           }
         // Enter selected module.
         vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );

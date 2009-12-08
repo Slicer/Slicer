@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   moduleNames.sort();
   foreach(const QString& name, moduleNames)
     {
-    moduleManager->loadModuleByName(name);
+    moduleManager->loadModule(name);
     splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
     splash.repaint();
     }

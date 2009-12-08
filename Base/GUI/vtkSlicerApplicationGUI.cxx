@@ -4028,11 +4028,12 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 #ifdef Slicer3_USE_QT
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
-  
-  // Check if the corresponding QT module is loaded
-  bool moduleLoaded = moduleManager->isLoaded(QString::fromLatin1(moduleTitle));
 
-  qDebug() << "QT Module [" << QString::fromLatin1(moduleTitle) << "] loaded:" << moduleLoaded;
+  QString moduleName = moduleManager->moduleName(QLatin1String(moduleTitle));
+  // Check if the corresponding QT module is loaded
+  bool moduleLoaded = moduleManager->isLoaded(moduleName);
+
+  qDebug() << "QT Module [" << QLatin1String(moduleTitle) << "] loaded:" << moduleLoaded;
 
   // Set module panel visibility accordingly
   qSlicerApplication::application()->setTopLevelWidgetVisible(
@@ -4041,7 +4042,7 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
   // Show module and update geometry if required
   if (moduleLoaded)
     {
-    this->GetSlicerApplication()->modulePanel()->setModule(QString::fromLatin1(moduleTitle)); 
+    this->GetSlicerApplication()->modulePanel()->setModule(moduleName);
     this->ReposModulePanel();
     }
 #endif
@@ -4068,75 +4069,6 @@ void vtkSlicerApplicationGUI::ReposModulePanel()
 #endif
 }
 
-/*
-//-------------------------------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetQtModuleVisible(const char* moduleTitle, bool visible)
-{
-#ifndef Slicer3_USE_QT
-  vtkNotUsed(moduleTitle);
-  vtkNotUsed(visible);
-#else
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager);
-  // Sanity checks
-  if (!this->GetApplication() ||
-      !this->GetMainSlicerWindow() ||
-      !this->GetMainSlicerWindow()->GetMainNotebook() ||
-      !moduleTitle)
-    {
-    //qWarning() << "SetQtModuleVisible - moduleTitle: Null";
-    return;
-    }
-
-  //qDebug() << "SetQtModuleVisible - moduleTitle:" << moduleTitle;
-
-  // Get reference to the Qt object
-  qSlicerAbstractModule * qModule = moduleManager->getModule(moduleTitle);
-  if (!qModule)
-    {
-    //qWarning() << "Failed to get Qt Module [" << moduleTitle << "]";
-    return;
-    }
-
-  // Update Qt widget state
-  if (visible)
-    {
-    vtkKWWidget* widget = this->GetMainSlicerWindow()->GetMainNotebook();
-    int pos[2];
-    int size[2];
-    vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
-    vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
-    qModule->setParentGeometry(pos[0], pos[1], size[0], size[1]);
-    }
-  qModule->setParentVisible(visible);
-#endif
-}
-
-//-------------------------------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetCurrentQtModuleVisible(bool visible)
-{
-#ifndef Slicer3_USE_QT
-  vtkNotUsed(visible);
-#else
-  // Sanity checks
-  vtkSlicerToolbarGUI *appToolBar = this->GetApplicationToolbar();
-  if (!this->GetApplication() ||
-      !appToolBar ||
-      !appToolBar->GetModuleChooseGUI() ||
-      !this->GetMainSlicerWindow()->GetMainNotebook())
-    {
-    return;
-    }
-
-  // Get current module title
-  const char* currentModuleTitle =
-    appToolBar->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName();
-
-  // Update visibility, position and size
-  this->SetQtModuleVisible(currentModuleTitle, visible);
-#endif
-}
-*/
 //-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ConfigureCallback(char* widgetName)
 {

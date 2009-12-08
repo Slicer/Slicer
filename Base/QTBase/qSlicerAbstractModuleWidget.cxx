@@ -7,6 +7,10 @@
 struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
   QString Name;
+  ~qSlicerAbstractModuleWidgetPrivate()
+    {
+    qDebug() << "~qSlicerAbstractModuleWidgetPrivate:" << Name;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -19,7 +23,7 @@ QCTK_GET_CXX(qSlicerAbstractModuleWidget, QString, name, Name);
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleWidget::initialize(/*vtkSlicerApplicationLogic* appLogic*/)
 {
-  QCTK_D(qSlicerAbstractModuleWidget);
+  //QCTK_D(qSlicerAbstractModuleWidget);
   //Q_ASSERT(appLogic);
   //this->setAppLogic(appLogic);
   this->setup();

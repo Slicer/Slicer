@@ -59,32 +59,14 @@ qSlicerModuleFactory* qSlicerModuleManager::factory()
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleManager::isLoaded(const QString& moduleTitle)
+bool qSlicerModuleManager::isLoaded(const QString& moduleName)
 {
-  // Get corresponding module name
-  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
-  if (moduleName.isEmpty())
-    {
-    return false;
-    }
-  return true;
+  QCTK_D(qSlicerModuleManager);
+  return d->ModuleList.contains(moduleName);
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleManager::loadModule(const QString& moduleTitle)
-{
-  // Get corresponding module name
-  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
-  if (moduleName.isEmpty())
-    {
-    return 0;
-    }
-
-  return this->loadModuleByName(moduleName);
-}
-
-//---------------------------------------------------------------------------
-bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
+bool qSlicerModuleManager::loadModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
   // Check if module has been loaded already
@@ -139,20 +121,7 @@ bool qSlicerModuleManager::loadModuleByName(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleManager::unLoadModule(const QString& moduleTitle)
-{
-  // Get corresponding module name
-  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
-  if (moduleName.isEmpty())
-    {
-    return false;
-    }
-
-  return this->unLoadModuleByName(moduleName);
-}
-
-//---------------------------------------------------------------------------
-bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
+bool qSlicerModuleManager::unLoadModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find( moduleName );
@@ -177,21 +146,8 @@ bool qSlicerModuleManager::unLoadModuleByName(const QString& moduleName)
   return true;
 }
 
-
 //---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::getModule(const QString& moduleTitle)
-{
-  // Get corresponding module name
-  QString moduleName = qctk_d()->ModuleFactory.getModuleName(moduleTitle);
-  if (moduleName.isEmpty())
-    {
-    return 0;
-    }
-  return this->getModuleByName(moduleName);
-}
-
-//---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::getModuleByName(const QString& moduleName)
+qSlicerAbstractModule* qSlicerModuleManager::getModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find( moduleName );

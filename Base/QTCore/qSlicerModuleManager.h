@@ -32,26 +32,25 @@ public:
   qSlicerModuleFactory* factory();
 
   // Description:
-  bool loadModule(const QString& moduleTitle);
-  bool loadModuleByName(const QString& moduleName);
+  bool loadModule(const QString& moduleName);
 
   // Description:
-  bool unLoadModule(const QString& moduleTitle);
-  bool unLoadModuleByName(const QString& moduleName);
+  bool unLoadModule(const QString& moduleName);
 
   // Description:
-  bool isLoaded(const QString& moduleTitle);
+  bool isLoaded(const QString& moduleName);
 
   // Description:
-  qSlicerAbstractModule* getModule(const QString& moduleTitle);
-  qSlicerAbstractModule* getModuleByName(const QString& moduleName);
+  qSlicerAbstractModule* getModule(const QString& moduleName);
 
   // Description:
   // Convenient method to get module title given its name
+  // Deprecated
   QString moduleTitle(const QString& moduleName) const;
 
   // Description:
   // Convenient method to get module name given its title
+  // Deprecated
   QString moduleName(const QString& moduleTitle) const;
 
 signals:

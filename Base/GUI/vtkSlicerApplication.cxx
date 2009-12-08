@@ -2497,7 +2497,7 @@ void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
   this->SplashMessage(
     splashMsg.arg(moduleManager->moduleTitle(moduleName)).toLatin1());
   qDebug() << "Attempt to load module: " << moduleName;
-  moduleManager->loadModuleByName(moduleName);
+  moduleManager->loadModule(moduleName);
 }
 
 //----------------------------------------------------------------------------
