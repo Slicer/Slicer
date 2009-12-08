@@ -45,9 +45,11 @@ SET(slicer_qtbase_target_libraries
   )
 
 # Resources
-#SET(qt_module_resources)
+SET(qt_module_resources
+  Resources/qSlicerBaseQTCore.qrc
+)
 
-Slicer3_build_slicer_qtbase_library( 
+Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${slicer_qtbase_export_directive}
   INCLUDE_DIRECTORIES ${slicer_qtbase_include_directories}
@@ -55,7 +57,7 @@ Slicer3_build_slicer_qtbase_library(
   MOC_SRCS ${slicer_qtbase_MOC_SRCS}
   #UI_SRCS ${slicer_qtbase_UI_SRCS}
   TARGET_LIBRARIES ${slicer_qtbase_target_libraries}
-  #RESOURCES ${qt_module_resources}
+  RESOURCES ${qt_module_resources}
   )
 
 # Sub directories

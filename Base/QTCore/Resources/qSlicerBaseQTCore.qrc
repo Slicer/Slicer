@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file alias="default-extension-filetype">Files/default-extension-filetype.ini</file>
+  </qresource>
+</RCC>
