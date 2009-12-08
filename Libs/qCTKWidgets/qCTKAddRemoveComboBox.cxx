@@ -16,19 +16,40 @@ struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
     this->RemovingEmptyItem = false;
     this->EmptyText = "None";
 
+    this->AddText = "Add";
+    this->RemoveText = "Remove";
+    this->EditText = "Edit";
+
     this->AddEnabled = true;
     this->RemoveEnabled = true;
     this->EditEnabled = true;
+
+    this->PushButtonEnabled = false;
     }
 
+  // Description:
+  // Insert 'Add', 'Remove' and 'Edit' item in the combobox
+  void insertComboxActions();
+
+  // Empty item
   bool    HasEmptyItem; 
   bool    AddingEmptyItem; 
   bool    RemovingEmptyItem; 
   QString EmptyText;
-  
+
+  // Actions text
+  QString AddText;
+  QString RemoveText;
+  QString EditText;
+
+  // Actions state
   bool    AddEnabled;
   bool    RemoveEnabled;
-  bool    EditEnabled; 
+  bool    EditEnabled;
+
+  // true: PushButtons enabled and visible,
+  // false: Actions available in the combobox
+  bool    PushButtonEnabled;
 };
 
 // --------------------------------------------------------------------------
@@ -50,6 +71,9 @@ qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* parent) : Superclass(paren
   d->ComboBox->addItem(d->EmptyText);
   d->AddingEmptyItem = false;
   d->HasEmptyItem = true;
+
+  // By default, add the combo box action
+  //d->insertComboxActions();
 }
 
 // --------------------------------------------------------------------------
@@ -122,6 +146,18 @@ void qCTKAddRemoveComboBox::setEmptyText(const QString& text)
 
 // --------------------------------------------------------------------------
 QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, emptyText, EmptyText);
+
+// --------------------------------------------------------------------------
+QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setAddText, AddText);
+QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, addText, AddText);
+
+// --------------------------------------------------------------------------
+QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setRemoveText, RemoveText);
+QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, removeText, RemoveText);
+
+// --------------------------------------------------------------------------
+QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setEditText, EditText);
+QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, editText, EditText);
 
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & parent, int start, int end)
@@ -289,9 +325,27 @@ bool qCTKAddRemoveComboBox::editEnabled()const
 }
 
 // --------------------------------------------------------------------------
+void qCTKAddRemoveComboBox::setPushButtonsEnabled(bool enabled)
+{
+  QCTK_D(qCTKAddRemoveComboBox);
+
+  // Update buttons state
+  QList<QWidget*> buttons;
+  buttons << d->AddPushButton << d->RemovePushButton << d->EditPushButton;
+
+  foreach(QWidget* w, buttons)
+    {
+    w->setDisabled(enabled);
+    w->setVisible(enabled);
+    }
+}
+
+// --------------------------------------------------------------------------
+QCTK_GET_CXX(qCTKAddRemoveComboBox, bool, pushButtonsEnabled, PushButtonEnabled)
+
+// --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onAdd()
 {
-
 }
 
 // --------------------------------------------------------------------------
@@ -455,4 +509,15 @@ int qCTKAddRemoveComboBox::modelColumn()const
 QAbstractItemModel* qCTKAddRemoveComboBox::model()const
 {
   return qctk_d()->ComboBox->model();
+}
+
+// --------------------------------------------------------------------------
+// qCTKAddRemoveComboBoxPrivate methods
+
+// --------------------------------------------------------------------------
+void qCTKAddRemoveComboBoxPrivate::insertComboxActions()
+{
+  this->ComboBox->addItem(this->AddText);
+  this->ComboBox->addItem(this->RemoveText);
+  this->ComboBox->addItem(this->EditText);
 }

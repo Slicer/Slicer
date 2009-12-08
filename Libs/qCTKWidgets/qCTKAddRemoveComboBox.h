@@ -18,9 +18,13 @@ class QCTK_WIDGETS_EXPORT qCTKAddRemoveComboBox : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString emptyText READ emptyText WRITE setEmptyText)
+  Q_PROPERTY(QString addText READ addText WRITE setAddText)
+  Q_PROPERTY(QString removeText READ removeText WRITE setRemoveText)
+  Q_PROPERTY(QString editText READ editText WRITE setEditText)
   Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
   Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
+  Q_PROPERTY(bool pushButtonsEnabled READ pushButtonsEnabled WRITE setPushButtonsEnabled)
   
 public:
   // Superclass typedef
@@ -34,6 +38,16 @@ public:
   // Set text that should be displayed in the comboBox when it is empty
   void setEmptyText(const QString& text); 
   QString emptyText()const;
+
+  // Description:
+  // Set text that should represent the add/remove/edit action in the comboBox
+  // when PushButtons are disabled
+  void setAddText(const QString& text);
+  QString addText()const;
+  void setRemoveText(const QString& text);
+  QString removeText()const;
+  void setEditText(const QString& text);
+  QString editText()const;
   
   // Description:
   // Enable/Disable the add button. 
@@ -48,12 +62,18 @@ public:
   // Description:
   // Enable/Disable the add button. 
   void setRemoveEnabled(bool enable);
-  bool removeEnabled()const; 
+  bool removeEnabled()const;
   
   // Description:
   // Enable/Disable the edit button. 
   void setEditEnabled(bool enable); 
   bool editEnabled()const;
+
+  // Description:
+  // Enable/Disable the pushbuttons
+  // Note: If disabled, the add/remove/edit actions will be available in the comboxbox itself
+  void setPushButtonsEnabled(bool enable);
+  bool pushButtonsEnabled()const;
   
   inline void addItem(const QString &text, const QVariant &userData = QVariant() )
     {this->insertItem(this->count(), text, userData);}
