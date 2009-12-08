@@ -1,6 +1,6 @@
 #include "qMRMLListWidget.h"
 #include "qMRMLItemModel.h"
-
+//#include "modeltest.h"
 //------------------------------------------------------------------------------
 class qMRMLListWidgetPrivate: public qCTKPrivate<qMRMLListWidget>
 {
@@ -14,6 +14,7 @@ void qMRMLListWidgetPrivate::init()
 {
   QCTK_P(qMRMLListWidget);
   p->QListView::setModel(new qMRMLItemModel(p));
+  
   // view signals
   /*
   QObject::connect(q, SIGNAL(pressed(QModelIndex)), q, SLOT(_q_emitItemPressed(QModelIndex)));
@@ -52,8 +53,15 @@ qMRMLListWidget::~qMRMLListWidget()
 //------------------------------------------------------------------------------
 void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_ASSERT(qobject_cast<qMRMLItemModel*>(this->model()));
-  qobject_cast<qMRMLItemModel*>(this->model())->setMRMLScene(scene);
+  qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  Q_ASSERT(mrmlModel);
+
+  mrmlModel->setMRMLScene(scene);
+  //if (mrmlModel->topLevelScene())
+    {
+    this->setRootIndex(mrmlModel->index(0, 0));
+    }
+  //new ModelTest(mrmlModel, this);
 }
 
 //------------------------------------------------------------------------------
@@ -62,4 +70,3 @@ vtkMRMLScene* qMRMLListWidget::mrmlScene()const
   Q_ASSERT(qobject_cast<const qMRMLItemModel*>(this->model()));
   return qobject_cast<const qMRMLItemModel*>(this->model())->mrmlScene();
 }
-
