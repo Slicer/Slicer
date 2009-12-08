@@ -7,10 +7,6 @@
 struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
   QString Name;
-  ~qSlicerAbstractModuleWidgetPrivate()
-    {
-    qDebug() << "~qSlicerAbstractModuleWidgetPrivate:" << Name;
-    }
 };
 
 //-----------------------------------------------------------------------------
