@@ -53,12 +53,23 @@ QCTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
 QCTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, ModuleSelector);
 
 //-----------------------------------------------------------------------------
+// Helper macro allowing to connect the MainWindow action with the corresponding
+// slot in MainWindowCore
+#define qSlicerMainWindow_connect(ACTION_NAME)   \
+  this->connect(                                 \
+    d->action##ACTION_NAME, SIGNAL(triggered()), \
+    this->core(),                                \
+    SLOT(on##ACTION_NAME##ActionTriggered()));
+
+//-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
 {
   this->connect(
     qctk_d()->actionFileExit, SIGNAL(triggered()),
     qSlicerApplication::instance(), SLOT(quit()));
 }
+
+#undef qSlicerMainWindow_connect
 
 //-----------------------------------------------------------------------------
 // qSlicerMainWindowPrivate methods

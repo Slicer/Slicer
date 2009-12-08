@@ -42,7 +42,7 @@ public:
 protected:
 
   // Description:
-  // Connect menu action with slots defined in MainWindowCore
+  // Connect MainWindow action with slots defined in MainWindowCore
   void setupMenuActions();
 
 private:
