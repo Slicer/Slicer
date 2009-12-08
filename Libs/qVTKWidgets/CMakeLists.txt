@@ -1,4 +1,4 @@
-PROJECT(qMRMLWidgets)
+PROJECT(qVTKWidgets)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 IF(COMMAND cmake_policy)
@@ -12,51 +12,27 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 #-----------------------------------------------------------------------------
 # Sources
 #
-SET(qMRMLWidgets_SRCS
-  qMRMLItemModel.cxx
-  qMRMLItemModel.h
-  qMRMLItemHelper.cxx
-  qMRMLItemHelper.h
-  qMRMLLinearTransformSlider.cxx
-  qMRMLLinearTransformSlider.h
-  qMRMLListWidget.cxx
-  qMRMLListWidget.h
-  qMRMLMatrixWidget.cxx
-  qMRMLMatrixWidget.h
-  qMRMLNodeFactory.cxx
-  qMRMLNodeFactory.h
-  qMRMLNodeSelector.cxx
-  qMRMLNodeSelector.h
-  qMRMLNodeTreeSelector.cxx
-  qMRMLNodeTreeSelector.h
-  qMRMLTransformSliders.cxx
-  qMRMLTransformSliders.h
-  qMRMLTreeWidget.cxx
-  qMRMLTreeWidget.h
-  qMRMLUtils.cxx
-  qMRMLUtils.h
+SET(qVTKWidgets_SRCS
+  qVTKConnection.cxx
+  qVTKConnection.h
+  qVTKObject.h
+  qVTKObjectEventsObserver.cxx
+  qVTKObjectEventsObserver.h
   )
 
 # Headers that should run through moc
-SET(qMRMLWidgets_MOC_SRCS
-  qMRMLItemModel.h
-  qMRMLLinearTransformSlider.h
-  qMRMLListWidget.h
-  qMRMLMatrixWidget.h
-  qMRMLNodeSelector.h
-  qMRMLNodeTreeSelector.h
-  qMRMLTransformSliders.h
-  qMRMLTreeWidget.h
+SET(qVTKWidgets_MOC_SRCS
+  qVTKConnection.h
+  qVTKObjectEventsObserver.h
   )
   
 # UI files
-SET(qMRMLWidgets_UI_SRCS
-  Resources/UI/qMRMLTransformSliders.ui
+SET(qVTKWidgets_UI_SRCS
 )
   
-QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})
-QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
-QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
+QT4_WRAP_CPP(qVTKWidgets_SRCS ${qVTKWidgets_MOC_SRCS})
+QT4_WRAP_UI(qVTKWidgets_UI_CXX ${qVTKWidgets_UI_SRCS})
+QT4_ADD_RESOURCES(qVTKWidgets_QRC_SRCS Resources/qVTKWidgets.qrc)
    
 
 
@@ -67,6 +43,8 @@ QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
   )
 
 SET(QT_INCLUDE_DIRS
@@ -78,8 +56,6 @@ SET(QT_INCLUDE_DIRS
 
 FOREACH(package 
     qCTKWidgets
-    qVTKWidgets
-    MRML
     )
   # This is mostly to test building this lib as standalone outside Slicer3
   IF(NOT DEFINED ${package}_SOURCE_DIR)
@@ -101,14 +77,14 @@ SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
 CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/qVTKWidgetsConfigure.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/qVTKWidgetsConfigure.h
   )
 
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 INSTALL(FILES 
   ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/qVTKWidgetsConfigure.h"
   DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 
@@ -116,21 +92,21 @@ INSTALL(FILES
 # Build the library
 #
 
-SET(lib_name "qMRMLWidgets")
+SET(lib_name "qVTKWidgets")
 
 ADD_LIBRARY(${lib_name} 
-  ${qMRMLWidgets_SRCS}
-  ${qMRMLWidgets_UI_CXX}
-  ${qMRMLWidgets_QRC_SRCS}
+  ${qVTKWidgets_SRCS}
+  ${qVTKWidgets_UI_CXX}
+  ${qVTKWidgets_QRC_SRCS}
 )
 
-SET(qMRMLWidgets_LIBRARIES 
+SET(qVTKWidgets_LIBRARIES 
   ${QT_LIBRARIES}
   MRML
   qCTKWidgets
   )
   
-TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
+TARGET_LINK_LIBRARIES(${lib_name} ${qVTKWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)

@@ -8,13 +8,13 @@
 #include <QObject>
 #include <QVector>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qVTKWidgetsWin32Header.h"
 
 class qVTKObjectEventsObserver;
 class vtkObject;
 class qVTKConnectionPrivate;
 
-class QMRML_WIDGETS_EXPORT qVTKConnection : public QObject
+class QVTK_WIDGETS_EXPORT qVTKConnection : public QObject
 {
 Q_OBJECT
 

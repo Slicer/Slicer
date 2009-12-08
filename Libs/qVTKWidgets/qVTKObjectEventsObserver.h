@@ -11,13 +11,13 @@
 // VTK includes
 #include <vtkCommand.h>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qVTKWidgetsWin32Header.h"
 
 class qVTKConnection;
 class vtkObject;
 class qVTKObjectEventsObserverPrivate;
 
-class QMRML_WIDGETS_EXPORT qVTKObjectEventsObserver : public QObject
+class QVTK_WIDGETS_EXPORT qVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT
 

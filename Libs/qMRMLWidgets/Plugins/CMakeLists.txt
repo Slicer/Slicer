@@ -71,6 +71,7 @@ TARGET_LINK_LIBRARIES(${lib_name}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTDESIGNER_LIBRARY}
   qMRMLWidgets
+  qVTKWidgets
   qCTKWidgets
   )
   

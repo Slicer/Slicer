@@ -52,6 +52,7 @@ SET(qt_module_resources
 SET(slicer_qtbase_target_libraries
   SlicerBaseLogic
   qMRMLWidgets
+  qVTKWidgets
   qCTKWidgets
   )
 
