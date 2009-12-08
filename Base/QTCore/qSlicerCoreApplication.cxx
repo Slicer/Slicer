@@ -172,8 +172,14 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
     {
     return;
     }
+
   d->MRMLScene = mrmlScene;
   d->MRMLScene->Register(NULL);
+
+  // Update IO Manager
+  Q_ASSERT(d->IOManager);
+  d->IOManager->setMRMLScene(mrmlScene);
+  
   emit this->currentMRMLSceneChanged(mrmlScene);
 }
 
