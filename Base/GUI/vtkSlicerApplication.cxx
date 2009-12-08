@@ -374,8 +374,13 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   Q_CHECK_PTR(this->Internal->qApplication);
 
   // Set window flags used to display top level widgets
+#ifdef Q_WS_MAC
+  this->Internal->qApplication->setDefaultWindowFlags(
+    Qt::WindowStaysOnTopHint | Qt::Tool);
+#else
   this->Internal->qApplication->setDefaultWindowFlags(
     Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+#endif
 
   this->Internal->ModulePanel = 
     new qSlicerModulePanel(0, qSlicerApplication::application()->defaultWindowFlags());
