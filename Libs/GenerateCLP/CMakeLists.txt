@@ -1,11 +1,13 @@
 project(GenerateCLP)
 
-cmake_minimum_required(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
+MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
 
+ 
 find_package(ModuleDescriptionParser REQUIRED)
 if(ModuleDescriptionParser_FOUND)
   include(${ModuleDescriptionParser_USE_FILE})

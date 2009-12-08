@@ -1,10 +1,12 @@
 project(LoadableModule)
 
-cmake_minimum_required(VERSION 2.4)
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
+MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
+ 
 ## ITK is required for expat.h
 
 find_package(ITK REQUIRED)

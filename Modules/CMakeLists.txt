@@ -1,10 +1,12 @@
 project(Modules)
 
-cmake_minimum_required(VERSION 2.4)
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
+MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
+ 
 if(NOT Slicer3_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
   include(${Slicer3_USE_FILE})
