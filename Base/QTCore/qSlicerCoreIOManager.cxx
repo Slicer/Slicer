@@ -16,3 +16,4 @@ qSlicerCoreIOManager::qSlicerCoreIOManager()
 qSlicerCoreIOManager::~qSlicerCoreIOManager()
 {
 }
+ 
