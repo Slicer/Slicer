@@ -11,12 +11,25 @@
 
 // QT includes
 #include <QString>
+#include <QSettings>
+#include <QStringList>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
 struct qSlicerCoreIOManagerPrivate: public qCTKPrivate<qSlicerCoreIOManager>
 {
+  qSlicerCoreIOManagerPrivate()
+    {
+    this->ExtensionFileType = new QSettings(":/default-extension-filetype",
+                                            QSettings::IniFormat);
+    }
+  ~qSlicerCoreIOManagerPrivate()
+    {
+    delete this->ExtensionFileType; 
+    }
+  
   vtkSmartPointer<vtkMRMLScene>  MRMLScene;
+  QSettings*                     ExtensionFileType;
 };
 
 //-----------------------------------------------------------------------------
@@ -28,6 +41,19 @@ qSlicerCoreIOManager::qSlicerCoreIOManager()
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager::~qSlicerCoreIOManager()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::printAdditionalInfo()
+{
+  QCTK_D(qSlicerCoreIOManager);
+  qDebug() << "ExtensionFileType:";
+  d->ExtensionFileType->beginGroup("ExtensionFileType");
+  QStringList keys = d->ExtensionFileType->childKeys();
+  foreach(const QString& key, keys)
+    {
+    qDebug() << key << " = " << d->ExtensionFileType->value(key);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -114,5 +140,13 @@ void qSlicerCoreIOManager::closeScene()
   Q_ASSERT(d->MRMLScene);
   
   d->MRMLScene->Clear(false);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::fileTypeFromExtension(const QString& extension)
+{
+  QCTK_D(qSlicerCoreIOManager);
+  d->ExtensionFileType->beginGroup("ExtensionFileType");
+  return d->ExtensionFileType->value(extension.toLower(), "Unknown").toString();
 }
 

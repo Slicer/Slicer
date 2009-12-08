@@ -16,6 +16,8 @@ public:
   qSlicerCoreIOManager();
   virtual ~qSlicerCoreIOManager();
 
+  virtual void printAdditionalInfo(); 
+  
   // Description:
   // Set MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
@@ -28,6 +30,10 @@ public:
   // Description:
   // Close scene
   void closeScene();
+  
+  // Description:
+  // Get the file type using the extension
+  QString fileTypeFromExtension(const QString& extension);
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerCoreIOManager);
