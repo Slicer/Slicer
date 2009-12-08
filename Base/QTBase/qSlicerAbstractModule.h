@@ -50,8 +50,6 @@ public:
   // Description:
   // This method allows to get a pointer to the WidgetRepresentation created by
   // method 'createWidgetRepresentation'
-  // Nota: At time of destruction, if the widget created doesn't have any parent,
-  // it will be automatically deleted.
   qSlicerAbstractModuleWidget* widgetRepresentation();
 
   // Description:

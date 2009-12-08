@@ -12,19 +12,21 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// QT includes
+#include <QPointer>
+
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractModulePrivate: public qCTKPrivate<qSlicerAbstractModule>
 {
+  QCTK_DECLARE_PUBLIC(qSlicerAbstractModule);
   qSlicerAbstractModulePrivate()
     {
     this->ModuleEnabled = false;
-    this->WidgetRepresentation = 0;
     }
   ~qSlicerAbstractModulePrivate();
   
-  bool                          ModuleEnabled;
-  qSlicerAbstractModuleWidget*  WidgetRepresentation;
-
+  bool                                       ModuleEnabled;
+  QPointer<qSlicerAbstractModuleWidget>      WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
 };
@@ -92,9 +94,8 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
 {
-  // Delete the widget representation only if it doesn't any parent.
-  // If there is a parent, QT will take care of it.
-  if (this->WidgetRepresentation && !this->WidgetRepresentation->parent())
+  // Delete the widget representation
+  if (this->WidgetRepresentation)
     {
     delete this->WidgetRepresentation;
     }
