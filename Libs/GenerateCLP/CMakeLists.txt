@@ -36,10 +36,6 @@ target_link_libraries(GenerateCLP
   itksys
   ITKEXPAT)
 
-if(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
-
 include(GenerateGenerateCLPConfig.cmake)
 
 install(TARGETS GenerateCLP RUNTIME 
@@ -89,3 +85,8 @@ if(NOT WIN32)
     DESTINATION bin COMPONENT Development
     )
 endif(NOT WIN32)
+
+# --------------------------------------------------------------------------
+if(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+endif(BUILD_TESTING)
