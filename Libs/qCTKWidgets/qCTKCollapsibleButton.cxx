@@ -27,6 +27,7 @@ public:
   int            ContentsMidLineWidth;
 
   int      MaximumHeight;
+  bool     ExclusiveMouseOver;
 };
 
 //-----------------------------------------------------------------------------
@@ -42,6 +43,7 @@ void qCTKCollapsibleButtonPrivate::init()
   this->ContentsMidLineWidth = 0;
 
   this->MaximumHeight = p->maximumHeight();
+  this->ExclusiveMouseOver = false;
 
   p->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
                               QSizePolicy::Preferred, 
@@ -66,6 +68,7 @@ void qCTKCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
     return;
     }
   option->initFrom(this);
+
   if (this->isDown())
     {
     option->state |= QStyle::State_Sunken;
@@ -78,6 +81,8 @@ void qCTKCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
     {
     option->state |= QStyle::State_Raised;
     }
+
+
 
   option->text = this->text();
   option->icon = this->icon();
@@ -329,10 +334,52 @@ QSize qCTKCollapsibleButton::sizeHint()const
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
 {
+  QCTK_D(qCTKCollapsibleButton);
+
   QPainter p(this);
   // Draw Button
   QStyleOptionButton opt;
   this->initStyleOption(&opt);
+
+  // We don't want to have the highlight effect on the button when mouse is
+  // over a child. We want the highlight effect only when the mouse is just
+  // over itself.
+  // same as this->underMouse()
+  bool exclusiveMouseOver = false;
+  if (opt.state & QStyle::State_MouseOver)
+    {
+    QRect buttonRect = opt.rect;
+    QList<QWidget*> children = this->findChildren<QWidget*>();
+    QList<QWidget*>::ConstIterator it;
+    for (it = children.constBegin(); it != children.constEnd(); ++it ) 
+      {
+      if ((*it)->underMouse())
+        {
+        // the mouse has been moved from the collapsible button to one 
+        // of its children. The paint event rect is the child rect, this
+        // is why we have to request another paint event to redraw the 
+        // button to remove the highlight effect.
+        if (!event->rect().contains(buttonRect))
+          {// repaint the button rect.
+          this->update(buttonRect);
+          }
+        opt.state &= ~QStyle::State_MouseOver;
+        exclusiveMouseOver = true;
+        break;
+        }
+      }
+    if (d->ExclusiveMouseOver && !exclusiveMouseOver)
+      {
+      // the mouse is over the widget, but not over the children. As it 
+      // has been de-highlighted in the past, we should refresh the button
+      // rect to re-highlight the button.
+      if (!event->rect().contains(buttonRect))
+        {// repaint the button rect.
+        this->update(buttonRect);
+        }
+      }
+    }
+  d->ExclusiveMouseOver = exclusiveMouseOver;
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
   opt.iconSize = indicatorSize;
@@ -344,7 +391,7 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
   indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2, 
                             (buttonHeight - indicatorSize.height()) / 2,
                             indicatorSize.width(), indicatorSize.height());
-  if (qctk_d()->Collapsed)
+  if (d->Collapsed)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
     }
@@ -362,8 +409,8 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
   QStyleOptionFrameV3 f;
   f.init(this);
   f.rect.setTop(buttonHeight);
-  f.frameShape = qctk_d()->ContentsFrameShape;
-  switch (qctk_d()->ContentsFrameShadow)
+  f.frameShape = d->ContentsFrameShape;
+  switch (d->ContentsFrameShadow)
     {
     case QFrame::Sunken:
       f.state |= QStyle::State_Sunken;
@@ -375,8 +422,8 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
     case QFrame::Plain:
       break;
     }
-  f.lineWidth = qctk_d()->ContentsLineWidth;
-  f.midLineWidth = qctk_d()->ContentsMidLineWidth;
+  f.lineWidth = d->ContentsLineWidth;
+  f.midLineWidth = d->ContentsMidLineWidth;
   style()->drawControl(QStyle::CE_ShapedFrame, &f, &p, this);
 }
 
