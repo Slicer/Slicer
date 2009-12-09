@@ -20,7 +20,7 @@ if(${launcher_platform} MATCHES Windows)
 endif(${launcher_platform} MATCHES Windows)
 
 if(${launcher_platform} MATCHES Linux)
-  exec_program(uname ARGS -m OUTPUT_VARIABLE machine) 
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE machine)
   if(${machine} MATCHES "i686")
     set(machine "x86") 
   endif(${machine} MATCHES "i686")
