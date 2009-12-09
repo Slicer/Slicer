@@ -1,7 +1,7 @@
 #include "qSlicerWelcomeModuleWidget.h"
 #include "ui_qSlicerWelcomeModule.h"
 
-// CTK includes
+// qCTK includes
 #include "qCTKCollapsibleButton.h"
 
 // QT includes
