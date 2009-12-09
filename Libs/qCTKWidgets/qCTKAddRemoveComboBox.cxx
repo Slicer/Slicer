@@ -9,23 +9,7 @@
 struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
                                       public Ui_qCTKAddRemoveComboBox
 {
-  qCTKAddRemoveComboBoxPrivate()
-    {
-    this->HasEmptyItem = false; 
-    this->AddingEmptyItem = false;
-    this->RemovingEmptyItem = false;
-    this->EmptyText = "None";
-
-    this->AddText = "Add";
-    this->RemoveText = "Remove";
-    this->EditText = "Edit";
-
-    this->AddEnabled = true;
-    this->RemoveEnabled = true;
-    this->EditEnabled = true;
-
-    this->PushButtonEnabled = false;
-    }
+  qCTKAddRemoveComboBoxPrivate();
 
   // Description:
   // Insert 'Add', 'Remove' and 'Edit' item in the combobox
@@ -42,9 +26,6 @@ struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
   void connectComboBox(QComboBox* combobox);
 
   // Empty item
-  bool    HasEmptyItem; 
-  bool    AddingEmptyItem; 
-  bool    RemovingEmptyItem; 
   QString EmptyText;
 
   // Actions text
@@ -52,11 +33,24 @@ struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
   QString RemoveText;
   QString EditText;
 
+  // Set to true when inserting either action items or the 'None' item.
+  // Will prevent the itemAdded signal from being sent
+  bool    AddingEmptyItem; 
+  bool    AddingActionItems;
+
+  // Set to true when removing either action items or the 'None' item.
+  // Will prevent the itemRemoved signal from being sent
+  bool    RemovingEmptyItem;
+  bool    RemovingActionItems;
+
   // Actions state
   bool    AddEnabled;
   bool    RemoveEnabled;
   bool    EditEnabled;
 
+  // If true, it means there is no item beside of the 'None' one
+  bool    HasEmptyItem;
+  
   // true: PushButtons enabled and visible,
   // false: Actions available in the combobox
   bool    PushButtonEnabled;
@@ -501,6 +495,29 @@ QAbstractItemModel* qCTKAddRemoveComboBox::model()const
 // --------------------------------------------------------------------------
 // qCTKAddRemoveComboBoxPrivate methods
 
+// --------------------------------------------------------------------------
+qCTKAddRemoveComboBoxPrivate::qCTKAddRemoveComboBoxPrivate()
+{
+  this->EmptyText = "None";
+
+  this->AddText = "Add";
+  this->RemoveText = "Remove";
+  this->EditText = "Edit";
+
+  this->AddingEmptyItem = false;
+  this->AddingActionItems = false;
+
+  this->RemovingEmptyItem = false;
+  this->RemovingActionItems = false;
+
+  this->AddEnabled = true;
+  this->RemoveEnabled = true;
+  this->EditEnabled = true;
+
+  this->HasEmptyItem = false;
+  this->PushButtonEnabled = false;
+}
+    
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBoxPrivate::insertActionItems()
 {
