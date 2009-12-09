@@ -1,60 +1,117 @@
 #include "qMRMLSceneGeneratorPlugin.h"
+#include "qMRMLSceneGeneratorPlugin_p.h"
 
-#include <QDebug>
-#include <vtkMRMLScene.h>
+// qMRML includes
 #include "qMRMLNodeFactory.h"
 
-class qMRMLSceneGeneratorPrivate: public qCTKPrivate<qMRMLSceneGenerator>
-{
-public:
-  QCTK_DECLARE_PUBLIC(qMRMLSceneGenerator);
-  void init()
-  {
-    QCTK_P(qMRMLSceneGenerator);
-    this->MRMLScene = 0;
-    p->connect(p, SIGNAL(clicked()), p, SLOT(generateScene()));
-  }
-  
-  vtkMRMLScene* MRMLScene;
-};
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkEventBroker.h>
 
+// QT includes
+#include <QDebug>
+
+// --------------------------------------------------------------------------
+qMRMLSceneGeneratorPlugin::qMRMLSceneGeneratorPlugin(QObject *_parent)
+        : QObject(_parent)
+{
+  qctk_d.setPublic(this); //QCTK_INIT_PRIVATE
+}
+
+// --------------------------------------------------------------------------
+QWidget *qMRMLSceneGeneratorPlugin::createWidget(QWidget *_parent)
+{
+  qMRMLSceneGenerator* _widget = new qMRMLSceneGenerator(_parent);
+  return _widget;
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLSceneGeneratorPlugin::domXml() const
+{
+  return "<widget class=\"qMRMLSceneGenerator\" \
+          name=\"MRMLSceneGenerator\">\n"
+          "</widget>\n";
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLSceneGeneratorPlugin::includeFile() const
+{
+  return "qMRMLSceneGeneratorPlugin.h";
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSceneGeneratorPlugin::isContainer() const
+{
+  return false;
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLSceneGeneratorPlugin::name() const
+{
+  return "qMRMLSceneGenerator";
+}
+
+// --------------------------------------------------------------------------
+// qMRMLSceneGenerator methods
+
+// --------------------------------------------------------------------------
 qMRMLSceneGenerator::qMRMLSceneGenerator(QWidget* parent)
   :QPushButton("Generate New Scene", parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLSceneGenerator);
-  qctk_d()->init();
+  this->init();
 }
 
+// --------------------------------------------------------------------------
 qMRMLSceneGenerator::~qMRMLSceneGenerator()
 {
-  QCTK_D(qMRMLSceneGenerator);
-  if (d->MRMLScene)
+  this->clear();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSceneGenerator::init()
+{
+  this->MRMLScene = 0;
+  this->connect(this, SIGNAL(clicked()), SLOT(generateScene()));
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSceneGenerator::clear()
+{
+  if (this->MRMLScene)
     {
-    d->MRMLScene = 0;
-    emit mrmlSceneSet(d->MRMLScene);
+    emit mrmlSceneSet(0);
+    this->MRMLScene->Delete();
     }
 }
 
+// --------------------------------------------------------------------------
 void qMRMLSceneGenerator::generateScene()
 {
-  QCTK_D(qMRMLSceneGenerator);
-  if (d->MRMLScene)
-    {
-    d->MRMLScene->Delete();
-    }
-  d->MRMLScene = vtkMRMLScene::New();
+  this->clear();
+  this->MRMLScene = vtkMRMLScene::New();
   
   qMRMLNodeFactory factory(this);
-  factory.setMRMLScene(d->MRMLScene);
+  factory.setMRMLScene(this->MRMLScene);
   
-  int numClasses = d->MRMLScene->GetNumberOfRegisteredNodeClasses();
+  int numClasses = this->MRMLScene->GetNumberOfRegisteredNodeClasses();
   int numNodes = 15;
+  QList<QString> nodeNames;
   for (int i = 0; i < numNodes ; ++i)
     {
-    vtkMRMLNode* node = d->MRMLScene->GetNthRegisteredNodeClass(rand() % numClasses);
+    int classNumber = rand() % numClasses; 
+    vtkMRMLNode* node = this->MRMLScene->GetNthRegisteredNodeClass(classNumber);
+    QString classname = QLatin1String(node->GetClassName()); 
+    if (classname.isEmpty())
+      {
+      qWarning() << "Class registered (#" << classNumber << "):"
+                 << node << " has an empty classname";
+      continue;
+      }
+    nodeNames << QLatin1String(node->GetClassName());
     factory.createNode(node->GetClassName());
     }
-  
+
+  emit this->randomMRMLNodeType(nodeNames.at(rand() % nodeNames.size()));
 /*
   factory.createNode("vtkMRMLCameraNode");
   factory.createNode("vtkMRMLCameraNode");
@@ -84,39 +141,6 @@ void qMRMLSceneGenerator::generateScene()
   factory.createNode("vtkMRMLNRRDStorageNode");
 #endif
 */
-  qDebug() << "Scene generated; Number of nodes: " << d->MRMLScene->GetNumberOfNodes();
-  emit mrmlSceneSet(d->MRMLScene);
-}
-
-qMRMLSceneGeneratorPlugin::qMRMLSceneGeneratorPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
-
-QWidget *qMRMLSceneGeneratorPlugin::createWidget(QWidget *_parent)
-{
-  qMRMLSceneGenerator* _widget = new qMRMLSceneGenerator(_parent);
-  return _widget;
-}
-
-QString qMRMLSceneGeneratorPlugin::domXml() const
-{
-  return "<widget class=\"qMRMLSceneGenerator\" \
-          name=\"MRMLSceneGenerator\">\n"
-          "</widget>\n";
-}
-
-QString qMRMLSceneGeneratorPlugin::includeFile() const
-{
-  return "qMRMLSceneGeneratorPlugin.h";
-}
-
-bool qMRMLSceneGeneratorPlugin::isContainer() const
-{
-  return false;
-}
-
-QString qMRMLSceneGeneratorPlugin::name() const
-{
-  return "qMRMLSceneGenerator";
+  qDebug() << "Scene generated; Number of nodes: " << this->MRMLScene->GetNumberOfNodes();
+  emit mrmlSceneSet(this->MRMLScene);
 }

@@ -25,6 +25,7 @@ SET(qMRMLWidgetsPlugin_SRCS
   qMRMLTreeWidgetPlugin.h
   qMRMLSceneGeneratorPlugin.cxx
   qMRMLSceneGeneratorPlugin.h
+  qMRMLSceneGeneratorPlugin_p.h
   qMRMLWidgetsAbstractPlugin.cxx
   qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetsPlugin.cxx  
@@ -41,6 +42,7 @@ SET(qMRMLWidgetsPlugin_MOC_SRCS
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h
   qMRMLSceneGeneratorPlugin.h
+  qMRMLSceneGeneratorPlugin_p.h
   )
 
 QT4_WRAP_CPP(qMRMLWidgetsPlugin_SRCS ${qMRMLWidgetsPlugin_MOC_SRCS})

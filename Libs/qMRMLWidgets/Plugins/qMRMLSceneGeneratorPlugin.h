@@ -2,29 +2,13 @@
 #define __qMRMLSceneGeneratorPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
+
+// qCTK includes
 #include <qCTKPimpl.h>
-#include <QPushButton>
 
-class qMRMLSceneGeneratorPrivate;
-class vtkMRMLScene;
-
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLSceneGenerator : public QPushButton
-{
-  Q_OBJECT
-public:
-  qMRMLSceneGenerator(QWidget* parent = 0);
-  ~qMRMLSceneGenerator();
-public slots:
-  void generateScene();
-
-signals:
-  void mrmlSceneSet(vtkMRMLScene* scene);
-private:
-  QCTK_DECLARE_PRIVATE(qMRMLSceneGenerator);
-};
-
+class qMRMLSceneGenerator;
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLSceneGeneratorPlugin : public QObject,
-                                public qMRMLWidgetsAbstractPlugin
+                                                              public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -36,7 +20,10 @@ public:
   QString includeFile() const;
   bool isContainer() const;
   QString name() const;
-  
+
+private:
+  friend class qMRMLSceneGenerator;
+  qCTKPrivateInterface<qMRMLSceneGeneratorPlugin, qMRMLSceneGenerator> qctk_d;
 };
 
 #endif
