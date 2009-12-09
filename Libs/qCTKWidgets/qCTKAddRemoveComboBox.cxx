@@ -29,7 +29,17 @@ struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
 
   // Description:
   // Insert 'Add', 'Remove' and 'Edit' item in the combobox
-  void insertComboxActions();
+  // Note: Also make sure that no signals are emited while the items are inserted
+  // That function doesn't prevent from inserting multiple time the action items
+  void insertActionItems();
+
+  // Description:
+  // Insert 'None' item
+  // Note: Also make sure that no signal is emited while the item is inserted
+  // That function doesn't prevent from inserting multiple time the 'None' item
+  void insertEmptyItem();
+
+  void connectComboBox(QComboBox* combobox);
 
   // Empty item
   bool    HasEmptyItem; 
@@ -60,46 +70,21 @@ qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* parent) : Superclass(paren
   d->setupUi(this);
   
   // connect 
-  this->connectComboBox(d->ComboBox);
+  d->connectComboBox(d->ComboBox);
     
   this->connect(d->AddPushButton, SIGNAL(pressed()), SLOT(onAdd()));
   this->connect(d->RemovePushButton, SIGNAL(pressed()), SLOT(onRemove()));
   this->connect(d->EditPushButton, SIGNAL(pressed()), SLOT(onEdit()));
 
   // Add default 'empty item'
-  d->AddingEmptyItem = true;
-  d->ComboBox->addItem(d->EmptyText);
-  d->AddingEmptyItem = false;
-  d->HasEmptyItem = true;
+  d->insertEmptyItem();
+//   d->AddingEmptyItem = true;
+//   d->ComboBox->addItem(d->EmptyText);
+//   d->AddingEmptyItem = false;
+//   d->HasEmptyItem = true;
 
   // By default, add the combo box action
-  //d->insertComboxActions();
-}
-
-// --------------------------------------------------------------------------
-void qCTKAddRemoveComboBox::connectComboBox(QComboBox* comboBox)
-{
-  this->connect(comboBox, 
-                SIGNAL(activated(int)), 
-                SIGNAL(activated(int)));
-  this->connect(comboBox, 
-                SIGNAL(currentIndexChanged(int)), 
-                SIGNAL(currentIndexChanged(int)));
-  /*
-  this->connect(qctk_d()->ComboBox->model(),
-  SIGNAL(rowsAboutToBeInserted(const QModelIndex & parent, int start, int end )),
-  SLOT(onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end )));
-  */
-  this->connect(comboBox->model(), 
-                SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-                SLOT(onRowsAboutToBeRemoved(const QModelIndex & , int , int  )));  
-  
-  this->connect(comboBox->model(), 
-                SIGNAL(rowsInserted(const QModelIndex &, int, int )),
-                SLOT(onRowsInserted(const QModelIndex &, int, int)));
-  this->connect(comboBox->model(), 
-                SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-                SLOT(onRowsRemoved(const QModelIndex &, int, int )));
+  //d->insertActionItems();
 }
 
 // --------------------------------------------------------------------------
@@ -120,15 +105,16 @@ void qCTKAddRemoveComboBox::setComboBox(QComboBox* comboBox)
   delete oldComboBoxItem;
 
   dynamic_cast<QBoxLayout*>(this->layout())->insertWidget(0, comboBox);
-  this->connectComboBox(comboBox);
+  d->connectComboBox(comboBox);
   d->ComboBox = comboBox;
   delete oldComboBox;
 
   // Add default 'empty item'
-  d->AddingEmptyItem = true;
-  d->ComboBox->addItem(d->EmptyText);
-  d->AddingEmptyItem = false;
-  d->HasEmptyItem = true;
+  d->insertEmptyItem();
+//   d->AddingEmptyItem = true;
+//   d->ComboBox->addItem(d->EmptyText);
+//   d->AddingEmptyItem = false;
+//   d->HasEmptyItem = true;
 }
 
 // --------------------------------------------------------------------------
@@ -237,10 +223,11 @@ void qCTKAddRemoveComboBox::onRowsRemoved(const QModelIndex & parent, int start,
 
   if (d->ComboBox->count() == 0)
     {
-    d->HasEmptyItem = true;
-    d->AddingEmptyItem = true;
-    d->ComboBox->addItem(d->EmptyText);
-    d->AddingEmptyItem = false;
+//     d->HasEmptyItem = true;
+//     d->AddingEmptyItem = true;
+//     d->ComboBox->addItem(d->EmptyText);
+//     d->AddingEmptyItem = false;
+    d->insertEmptyItem(); 
     if (d->RemoveEnabled)
       {
       d->RemovePushButton->setEnabled(false);
@@ -515,9 +502,46 @@ QAbstractItemModel* qCTKAddRemoveComboBox::model()const
 // qCTKAddRemoveComboBoxPrivate methods
 
 // --------------------------------------------------------------------------
-void qCTKAddRemoveComboBoxPrivate::insertComboxActions()
+void qCTKAddRemoveComboBoxPrivate::insertActionItems()
 {
   this->ComboBox->addItem(this->AddText);
   this->ComboBox->addItem(this->RemoveText);
   this->ComboBox->addItem(this->EditText);
+}
+
+// --------------------------------------------------------------------------
+void qCTKAddRemoveComboBoxPrivate::insertEmptyItem()
+{
+  if (!this->HasEmptyItem)
+    {
+    this->AddingEmptyItem = true;
+    this->ComboBox->insertItem(0, this->EmptyText);
+    this->AddingEmptyItem = false;
+    this->HasEmptyItem = true; 
+    }
+}
+
+// --------------------------------------------------------------------------
+void qCTKAddRemoveComboBoxPrivate::connectComboBox(QComboBox* comboBox)
+{
+  QCTK_P(qCTKAddRemoveComboBox);
+  QObject::connect(comboBox, SIGNAL(activated(int)),
+                p, SIGNAL(activated(int)));
+  QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)),
+                p, SIGNAL(currentIndexChanged(int)));
+  /*
+  this->connect(qctk_d()->ComboBox->model(),
+  SIGNAL(rowsAboutToBeInserted(const QModelIndex & parent, int start, int end )),
+  SLOT(onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end )));
+  */
+  QObject::connect(comboBox->model(),
+                SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
+                p, SLOT(onRowsAboutToBeRemoved(const QModelIndex & , int , int  )));
+
+  QObject::connect(comboBox->model(),
+                SIGNAL(rowsInserted(const QModelIndex &, int, int )),
+                p, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+  QObject::connect(comboBox->model(),
+                SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
+                p, SLOT(onRowsRemoved(const QModelIndex &, int, int )));
 }

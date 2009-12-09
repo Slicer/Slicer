@@ -155,8 +155,6 @@ private slots:
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
 
 private:
-  void connectComboBox(QComboBox*);
-
   QCTK_DECLARE_PRIVATE(qCTKAddRemoveComboBox);
 };
 
