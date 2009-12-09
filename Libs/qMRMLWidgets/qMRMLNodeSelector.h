@@ -35,7 +35,8 @@ public:
   
   // Description:
   // Set/Get node type 
-  QString nodeType()const ; 
+  QString nodeType()const ;
+  void setNodeType(const QString& nodeType);
 
   // Description:
   // If a vtkMRMLNode has the property HideFromEditors set to true,
@@ -67,10 +68,6 @@ public slots:
   // Description:
   // Set the selected node.
   void setCurrentNode(vtkMRMLNode* node);
-
-  // Description:
-  // Set node type
-  void setNodeType(const QString& nodeType); 
 
 signals:
   // Description:
