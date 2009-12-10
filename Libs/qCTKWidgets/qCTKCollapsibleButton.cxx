@@ -118,7 +118,13 @@ qCTKCollapsibleButton::~qCTKCollapsibleButton()
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleButton::setCollapsed(bool c)
 {
-  this->collapse(c);
+  if (!this->isCheckable())
+    {
+    // not sure if one should handle this case...
+    this->collapse(c);
+    return;
+    }
+  this->setChecked(!c);
 }
 
 //-----------------------------------------------------------------------------

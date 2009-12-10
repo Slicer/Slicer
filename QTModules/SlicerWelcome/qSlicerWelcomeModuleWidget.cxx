@@ -42,7 +42,9 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QList<qCTKCollapsibleButton*> collapsibles = widget->findChildren<qCTKCollapsibleButton*>();
   foreach(qCTKCollapsibleButton* collapsible, collapsibles)
     {
-    collapsible->setCheckable(true);
+//    collapsible->setCheckable(true);
+    bool wasChecked = collapsible->isChecked();
     group->addButton(collapsible);
+    qDebug() << (collapsible->isChecked() != wasChecked ? "wrong" : "ok");
     }
 }
