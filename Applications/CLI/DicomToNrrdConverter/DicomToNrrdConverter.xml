@@ -4,7 +4,7 @@
   Converters
   </category>
   <title>
-  DWI Dicom to Nrrd 
+  Dicom to Nrrd Converter 
   </title>
   <description>
   Converts diffusion weighted MR images in dicom series into Nrrd
@@ -14,6 +14,8 @@
   data. The program parses dicom header to extract necessary
   information about measurement frame, diffusion weighting directions,
   b-values, etc, and write out a nrrd image. 
+  For non-diffusion weighted dicom images, it loads in an entire dicom
+  series and writes out a single dicom volume in a .nhdr/.raw pair.
   </description>
   <version>0.2.0.$Revision: 916 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DicomToNRRD-3.4</documentation-url>

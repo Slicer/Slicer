@@ -1190,6 +1190,8 @@ int main(int argc, char* argv[])
   rawWriter->SetImageIO( rawIO );
   rawIO->SetByteOrderToLittleEndian();
 
+  itk::ImageFileWriter< VolumeType >::Pointer imgWriter = itk::ImageFileWriter< VolumeType >::New();
+  
   ///////////////////////////////////////////////
   // Update the number of volumes based on the
   // number to ignore from the header information
@@ -1199,16 +1201,35 @@ int main(int argc, char* argv[])
   if ( vendor.find("GE") != std::string::npos ||
     (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
-    rawWriter->SetInput( reader->GetOutput() );
-    try
+    if (nUsableVolumes == 1)
       {
-      rawWriter->Update();
+      imgWriter->SetInput( reader->GetOutput() );
+      imgWriter->SetFileName( nhdrname.c_str() );
+      try
+        {
+        imgWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while reading the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
+      return EXIT_SUCCESS;
       }
-    catch (itk::ExceptionObject &excp)
+    else
       {
-      std::cerr << "Exception thrown while reading the series" << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
+      rawWriter->SetInput( reader->GetOutput() );
+      try
+        {
+        rawWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while reading the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic)
@@ -1272,16 +1293,36 @@ int main(int argc, char* argv[])
         dmIt.Set( imIt.Get() );
         }
       }
-    rawWriter->SetInput( dmImage );
-    try
+
+    if (nUsableVolumes == 1)
       {
-      rawWriter->Update();
+      imgWriter->SetInput( dmImage );
+      imgWriter->SetFileName( nhdrname.c_str() );
+      try
+        {
+        imgWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while reading the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
+      return EXIT_SUCCESS;
       }
-    catch (itk::ExceptionObject &excp)
+    else
       {
-      std::cerr << "Exception thrown while writing the series" << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
+      rawWriter->SetInput( dmImage );
+      try
+        {
+        rawWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while writing the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     }
   else if (vendor.find("PHILIPS") != std::string::npos)
@@ -1334,16 +1375,35 @@ int main(int argc, char* argv[])
         count++;
         }
       }
-    rawWriter->SetInput( dmImage );
-    try
+    if (nUsableVolumes == 1)
       {
-      rawWriter->Update();
+      imgWriter->SetInput( dmImage );
+      imgWriter->SetFileName( nhdrname.c_str() );
+      try
+        {
+        imgWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while reading the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
+      return EXIT_SUCCESS;
       }
-    catch (itk::ExceptionObject &excp)
+    else
       {
-      std::cerr << "Exception thrown while writing the series" << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
+      rawWriter->SetInput( dmImage );
+      try
+        {
+        rawWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        std::cerr << "Exception thrown while writing the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     //Verify sizes
     if( count != bValues.size() )
