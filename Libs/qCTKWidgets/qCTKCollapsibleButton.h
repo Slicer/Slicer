@@ -13,12 +13,12 @@
 class qCTKCollapsibleButtonPrivate;
 class QStyleOptionButton;
 
+// Description
+// A Collapsible widget that show/hide its children depending on its checked/collapsed properties
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT
-
-    //Q_PROPERTY(QString title READ title WRITE setTitle)
-  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed DESIGNABLE isCheckable NOTIFY contentsCollapsed)
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
 
   Q_PROPERTY(QFrame::Shape contentsFrameShape READ contentsFrameShape WRITE setContentsFrameShape)
@@ -30,11 +30,6 @@ public:
   qCTKCollapsibleButton(QWidget *parent = 0);
   qCTKCollapsibleButton(const QString& text, QWidget *parent = 0);
   virtual ~qCTKCollapsibleButton();
-
-  // Description:
-  // Button title.
-  //void setTitle(QString t);
-  //QString title()const;
 
   // Description:
   // Property that describes if the widget is collapsed or not.
@@ -78,22 +73,17 @@ public:
   // Reimplement for internal reasons
   virtual QSize sizeHint()const;
 
-public slots:
-  // Description:
-  // Collapse the widget if not already collapsed.
-  // Expand the widget if not already expanded.
-  void toggleCollapse();
-
 signals:
   // Description:
-  // Signal emitted when the widget is collapsed or expanded
+  // Signal emitted when the widget is collapsed or expanded.
+  // See signal toggled(bool) for the opposite.
   void contentsCollapsed(bool);
 
 protected slots:
   // Description:
   // Perform the collapse.
   virtual void collapse(bool c);
-  virtual void onClicked(bool clicked = false);
+  virtual void onToggled(bool clicked = false);
 
 protected:
   virtual void paintEvent(QPaintEvent*);

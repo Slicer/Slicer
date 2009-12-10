@@ -18,7 +18,6 @@ public:
   void init();
 
   bool     Collapsed;
-  int      CollapsedHeight;
 
   // Contents frame
   QFrame::Shape  ContentsFrameShape;
@@ -26,54 +25,58 @@ public:
   int            ContentsLineWidth;
   int            ContentsMidLineWidth;
 
-  int      MaximumHeight;
+  int      CollapsedHeight;
   bool     ExclusiveMouseOver;
+  bool     LookOffWhenChecked;
+
+  int      MaximumHeight;  // use carefully
 };
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleButtonPrivate::init()
 {
   QCTK_P(qCTKCollapsibleButton);
+  p->setCheckable(true);
+  // checked and Collapsed are synchronized: checked != Collapsed
+  p->setChecked(true);
+
   this->Collapsed = false;
-  this->CollapsedHeight = 10;
 
   this->ContentsFrameShape = QFrame::NoFrame;
   this->ContentsFrameShadow = QFrame::Plain;
   this->ContentsLineWidth = 1;
   this->ContentsMidLineWidth = 0;
 
+  this->CollapsedHeight = 10;
+  this->ExclusiveMouseOver = false;  
+  this->LookOffWhenChecked = true; // set as a prop ?
+  
   this->MaximumHeight = p->maximumHeight();
-  this->ExclusiveMouseOver = false;
 
   p->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
-                              QSizePolicy::Preferred, 
-                              QSizePolicy::DefaultType));
+                               QSizePolicy::Preferred, 
+                               QSizePolicy::DefaultType));
+  p->setContentsMargins(0, p->buttonSizeHint().height(),0 , 0);
 
-  QStyleOptionButton opt;
-  p->initStyleOption(&opt);
-  p->setContentsMargins(0, opt.rect.height(),0 , 0);
-
-  QObject::connect(p, SIGNAL(clicked(bool)),
-                   p, SLOT(onClicked(bool)));
-                   
   QObject::connect(p, SIGNAL(toggled(bool)),
-                   p, SLOT(onClicked(bool)));
+                   p, SLOT(onToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
 void qCTKCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
 {
+  QCTK_D(const qCTKCollapsibleButton);
   if (option == 0)
     {
     return;
     }
   option->initFrom(this);
 
-  if (this->isDown())
+  if (this->isDown() )
     {
     option->state |= QStyle::State_Sunken;
     }
-  if (this->isChecked())
+  if (this->isChecked() && !d->LookOffWhenChecked)
     {
     option->state |= QStyle::State_On;
     }
@@ -82,13 +85,11 @@ void qCTKCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
     option->state |= QStyle::State_Raised;
     }
 
-
-
   option->text = this->text();
   option->icon = this->icon();
   option->iconSize = QSize(this->style()->pixelMetric(QStyle::PM_IndicatorWidth, option, this),
                        this->style()->pixelMetric(QStyle::PM_IndicatorHeight, option, this));
-  int buttonHeight = qMax(this->fontMetrics().height(), option->iconSize.height());
+  int buttonHeight = this->buttonSizeHint().height();//qMax(this->fontMetrics().height(), option->iconSize.height());
   option->rect.setHeight(buttonHeight);
 }
 
@@ -127,12 +128,6 @@ bool qCTKCollapsibleButton::collapsed()const
 }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleButton::toggleCollapse()
-{
-  this->collapse(!qctk_d()->Collapsed);
-}
-
-//-----------------------------------------------------------------------------
 void qCTKCollapsibleButton::setCollapsedHeight(int h)
 {
   qctk_d()->CollapsedHeight = h;
@@ -146,15 +141,11 @@ int qCTKCollapsibleButton::collapsedHeight()const
 }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleButton::onClicked(bool checked)
+void qCTKCollapsibleButton::onToggled(bool checked)
 {
   if (this->isCheckable())
     {
     this->collapse(!checked);
-    }
-  else
-    {
-    this->toggleCollapse();
     }
 }
 
@@ -162,7 +153,7 @@ void qCTKCollapsibleButton::onClicked(bool checked)
 void qCTKCollapsibleButton::collapse(bool c)
 {
   QCTK_D(qCTKCollapsibleButton);
-  if (c == qctk_d()->Collapsed)
+  if (c == d->Collapsed)
     {
     return;
     }
@@ -173,11 +164,8 @@ void qCTKCollapsibleButton::collapse(bool c)
   if (c)
     {
     d->MaximumHeight = this->maximumHeight();
-
-    QStyleOptionButton opt;
-    this->initStyleOption(&opt);
-    this->setMaximumHeight(d->CollapsedHeight + opt.rect.height());
-    this->updateGeometry();
+    this->setMaximumHeight(this->sizeHint().height());
+    //this->updateGeometry();
     }
   else
     {
@@ -266,7 +254,7 @@ QSize qCTKCollapsibleButton::buttonSizeHint()const
   int w = 0, h = 0;
 
   QStyleOptionButton opt;
-  this->initStyleOption(&opt);
+  opt.initFrom(this);
   
   // indicator
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
@@ -290,11 +278,8 @@ QSize qCTKCollapsibleButton::buttonSizeHint()const
     {
     w += sz.width();
     }
-  if(!empty || !h)
-    {
-    h = qMax(h, sz.height());
-    }
-  opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
+  h = qMax(h, sz.height());
+  //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
   QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
                       expandedTo(QApplication::globalStrut()));
   return buttonSize;
@@ -303,32 +288,34 @@ QSize qCTKCollapsibleButton::buttonSizeHint()const
 //-----------------------------------------------------------------------------
 QSize qCTKCollapsibleButton::minimumSizeHint()const
 {
-  QSize s = this->QAbstractButton::minimumSizeHint(); 
+  QCTK_D(const qCTKCollapsibleButton);
   QSize buttonSize = this->buttonSizeHint();
-  if (qctk_d()->Collapsed)
+  if (d->Collapsed)
     {
-    return buttonSize.expandedTo(s);
+    return buttonSize + QSize(0,d->CollapsedHeight);
     }
   // open
   if (this->layout() == 0)
-    {// no layout, means the button is empty
+    {// no layout, means the button is empty ?
     return buttonSize;
     }
+  QSize s = this->QAbstractButton::minimumSizeHint(); 
   return s.expandedTo(buttonSize);
 }
 
 //-----------------------------------------------------------------------------
 QSize qCTKCollapsibleButton::sizeHint()const
 {
-  // frame
-  QSize s = this->QAbstractButton::sizeHint(); 
-  if (!qctk_d()->Collapsed)
-    {
-    return s;
-    }
-    
+  QCTK_D(const qCTKCollapsibleButton);
   QSize buttonSize = this->buttonSizeHint();
-  return buttonSize + QSize(0,s.height());
+  if (d->Collapsed)
+    {
+    return buttonSize + QSize(0,d->CollapsedHeight);
+    }
+  // open
+  // QAbstractButton works well only if a layout is set
+  QSize s = this->QAbstractButton::sizeHint(); 
+  return s.expandedTo(buttonSize + QSize(0, d->CollapsedHeight));
 }
 
 //-----------------------------------------------------------------------------
