@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Transform From Fiducials</title>
+  <description>Computes a rigid, similarity or affine transform from a matched list of fiducials</description>
+  <version>0.1.0.$Revision$</version>
+    <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.4</documentation-url>
+  <license></license>
+  <contributor>Casey B Goodlett</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <point multiple="true">
+      <name>fixedLandmarks</name>
+      <description>Ordered list of landmarks in the fixed image</description>
+      <label>Fixed landmarks</label>
+      <longflag>fixedLandmarks</longflag>
+      <channel>input</channel>
+    </point>
+    <point multiple="true">
+      <name>movingLandmarks</name>
+      <description>Ordered list of landmarks in the moving image</description>
+      <label>Moving landmarks</label>
+      <longflag>movingLandmarks</longflag>
+      <channel>input</channel>
+    </point>
+    <transform fileExtensions=".txt">
+      <name>saveTransform</name>
+      <label>Save transform</label>
+      <description>Save the transform that results from registration</description>
+      <longflag>saveTransform</longflag>
+      <channel>output</channel>
+    </transform>
+    <string-enumeration>
+      <name>transformType</name>
+      <description>Type of transform to produce</description>
+      <label>Transform Type</label>
+      <longflag>transformType</longflag>
+      <element>Translation</element>
+      <element>Rigid</element>
+      <element>Similarity</element>
+      <default>Rigid</default>
+    </string-enumeration>
+  </parameters>
+</executable>

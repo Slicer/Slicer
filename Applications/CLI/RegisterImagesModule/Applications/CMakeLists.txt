@@ -34,6 +34,25 @@ PROJECT( RegisterImagesModuleApplications )
   ADD_EXECUTABLE( RegisterImages ${RegisterImagesSlicer_SOURCE} )
   TARGET_LINK_LIBRARIES( RegisterImages ${ITK_LIBRARIES} MRML )
 
+  # Setup the source and paths
+  SET( TransformFromFiducials_SOURCE TransformFromFiducials.cxx )
+  GENERATECLP( TransformFromFiducials_SOURCE 
+               TransformFromFiducials.xml
+               ${RegisterImagesModuleApplications_SOURCE_DIR}/logo.h )
+  INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
+
+  # Build the library / plugin
+  ADD_LIBRARY( TransformFromFiducialsModule 
+               SHARED 
+               ${TransformFromFiducials_SOURCE} )
+  SET_TARGET_PROPERTIES( TransformFromFiducialsModule 
+                         PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+  TARGET_LINK_LIBRARIES( TransformFromFiducialsModule ${ITK_LIBRARIES} MRML )
+
+  # Build the command line
+  ADD_EXECUTABLE( TransformFromFiducials ${TransformFromFiducials_SOURCE} )
+  TARGET_LINK_LIBRARIES( TransformFromFiducials ${ITK_LIBRARIES} MRML )
+
   # Use case specific modules
   SET( RegisterFollowupBrainMR_SOURCE RegisterFollowupBrainMR.cxx)
   GENERATECLP( RegisterFollowupBrainMR_SOURCE
@@ -72,6 +91,9 @@ PROJECT( RegisterImagesModuleApplications )
     slicer3_set_plugins_output_path( RegisterImagesModule )
     slicer3_set_plugins_output_path( RegisterImages )
 
+    slicer3_set_plugins_output_path( TransformFromFiducialsModule )
+    slicer3_set_plugins_output_path( TransformFromFiducials )
+
     slicer3_set_plugins_output_path( RegisterFollowupBrainMRModule )
     slicer3_set_plugins_output_path( RegisterFollowupBrainMR )
 
@@ -81,6 +103,8 @@ PROJECT( RegisterImagesModuleApplications )
     SET(TARGETS
          RegisterImagesModule
          RegisterImages
+         TransformFromFiducialsModule
+         TransformFromFiducials
          RegisterFollowupBrainMRModule
          RegisterFollowupBrainMR
          RegisterBrainMRToTemplateModule
