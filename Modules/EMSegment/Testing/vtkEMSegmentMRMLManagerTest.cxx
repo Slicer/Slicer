@@ -803,7 +803,6 @@ int main(int argc, char** argv)
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
   
-  vtkEventBroker::GetInstance()->Delete(); 
   return (pass ? returnValue : EXIT_FAILURE);
 }
 

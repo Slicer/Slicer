@@ -751,7 +751,6 @@ int Slicer3_main(int& argc, char *argv[])
     tclCmd = "source " + File;
     int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
-    vtkEventBroker::GetInstance()->Delete();
     slicerApp->Delete();
     return ( returnCode );
     }
@@ -767,8 +766,6 @@ int Slicer3_main(int& argc, char *argv[])
     tclCmd += "eval $::SLICER(eval);";
     int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
-    // -- event broker: free the singleton instance
-    vtkEventBroker::GetInstance()->Delete();
     slicerApp->Delete();
     return ( returnCode );
     }
@@ -1722,6 +1719,7 @@ int Slicer3_main(int& argc, char *argv[])
   // - since the singleton method is not exposed to tcl, access it this way
   //   and then delete it at the end.
   slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
+  //slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker GetInstance]");
 
 #if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   mit = moduleNames.begin();
@@ -2405,9 +2403,7 @@ int Slicer3_main(int& argc, char *argv[])
 
   // -- event broker
   // - free up the reference from the interpeter
-  // - free the actual singleton instance
   slicerApp->Script ("$::slicer3::Broker Delete");
-  vtkEventBroker::GetInstance()->Delete();
 
   //--- application last
   slicerApp->Delete ();

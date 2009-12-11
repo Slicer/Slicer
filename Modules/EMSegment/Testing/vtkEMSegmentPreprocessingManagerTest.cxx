@@ -380,7 +380,6 @@ int main(int argc, char** argv)
   emLogic->Delete();
 
   vtkEMSegmentPreprocessingManagerTest_DebugMacro("")
-  vtkEventBroker::GetInstance()->Delete();
 
   vtkEMSegmentPreprocessingManagerTest_DebugMacro("")
   return (pass ? returnValue : EXIT_FAILURE);

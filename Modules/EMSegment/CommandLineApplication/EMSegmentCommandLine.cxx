@@ -273,7 +273,6 @@ void GenerateEmptyMRMLScene(const char* filename)
   // clean up
   mrmlScene->Clear(true);
   mrmlScene->Delete();
-  vtkEventBroker::GetInstance()->Delete(); 
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();  
 }
@@ -394,7 +393,6 @@ int main(int argc, char** argv)
   if (!generateEmptyMRMLSceneAndQuit.empty())
     {
     GenerateEmptyMRMLScene(generateEmptyMRMLSceneAndQuit.c_str());
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_SUCCESS;
     }
 
@@ -415,7 +413,6 @@ int main(int argc, char** argv)
   if (!argsOK)
     {
     std::cerr << "Try --help for usage..." << std::endl;
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
     }
 
@@ -427,7 +424,6 @@ int main(int argc, char** argv)
     std::cerr << "Error: intermediate results directory does not exist." 
               << std::endl;
     std::cerr << intermediateResultsDirectory << std::endl;      
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
     }
 
@@ -435,7 +431,6 @@ int main(int argc, char** argv)
     {
     std::cerr << "Error: MRML scene file does not exist." << std::endl;
     std::cerr << mrmlSceneFileName << std::endl;      
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
     }
 
@@ -444,8 +439,7 @@ int main(int argc, char** argv)
     {
     std::cerr << "Error: result standard volume file does not exist." 
               << std::endl;
-    std::cerr << resultStandardVolumeFileName << std::endl;      
-    vtkEventBroker::GetInstance()->Delete(); 
+    std::cerr << resultStandardVolumeFileName << std::endl;   
     return EXIT_FAILURE;
     }
 
@@ -459,7 +453,6 @@ int main(int argc, char** argv)
       std::cerr << "Error: target volume file " << i << " does not exist." 
                 << std::endl;
       std::cerr << targetVolumeFileNames[i] << std::endl;      
-      vtkEventBroker::GetInstance()->Delete(); 
       return EXIT_FAILURE;
       }
     }
@@ -472,7 +465,6 @@ int main(int argc, char** argv)
       std::cerr << "Error: atlas volume file " << i << " does not exist." 
                 << std::endl;
       std::cerr << atlasVolumeFileNames[i] << std::endl;      
-      vtkEventBroker::GetInstance()->Delete(); 
       return EXIT_FAILURE;
       }
     }
@@ -1113,7 +1105,6 @@ int main(int argc, char** argv)
   mrmlScene->Delete();
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
-  vtkEventBroker::GetInstance()->Delete(); 
   if (verbose) std::cerr << "DONE" << std::endl;
 
   return segmentationSucceeded ? EXIT_SUCCESS : EXIT_FAILURE;  

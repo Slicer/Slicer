@@ -504,7 +504,6 @@ int main(int argc, char** argv)
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
 
-  vtkEventBroker::GetInstance()->Delete();
   vtkEMSegmentBuildAndRunNewSegmentationParameters001_DebugMacro("DONE");
   return EXIT_SUCCESS;
 }

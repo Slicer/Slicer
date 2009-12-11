@@ -46,26 +46,21 @@ class vtkObservation;
 
 class VTK_MRML_EXPORT vtkEventBroker : public vtkObject 
 {
-  public:
-  
-  // The Usual vtk class functions
-  vtkTypeRevisionMacro(vtkEventBroker,vtkObject);
+public:
+  vtkTypeRevisionMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  virtual void Register(vtkObject *o) { Superclass::Register(o); };
-  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+  
+  // Description:
+  // Return the singleton instance with no reference counting.
+  static vtkEventBroker* GetInstance();
 
   // Description:
   // This is a singleton pattern New.  There will only be ONE
   // reference to a vtkEventBroker object per process.  Clients that
   // call this must call Delete on the object so that the reference
-  // counting will work.   The single instance will be unreferenced when
+  // counting will work. The single instance will be unreferenced when
   // the program exits.
   static vtkEventBroker* New();
-
-  // Description:
-  // Get the singleton
-  static vtkEventBroker* GetInstance();
 
   // Description:
   // the static function used by the command callback (used by vtkObservation)
@@ -85,7 +80,7 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 
   // Description:
   // Scripted version of observation
-  // - creates an observation that will be inoked using the ScriptHandler method
+  // - creates an observation that will be invoked using the ScriptHandler method
   vtkObservation *AddObservation (vtkObject *subject, const char *event, const char *script);
 
   // Description:
@@ -247,11 +242,21 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   //ETX
 
 protected:
-
   vtkEventBroker();
   virtual ~vtkEventBroker();
   vtkEventBroker(const vtkEventBroker&);
   void operator=(const vtkEventBroker&);
+
+  // Description:
+  // Singleton management functions.
+  static void classInitialize();
+  static void classFinalize();
+  
+  //BTX
+  friend class vtkEventBrokerInitialize;
+  typedef vtkEventBroker Self;
+  //ETX
+  
 
   //BTX
   // 
@@ -285,11 +290,31 @@ protected:
   //BTX
   std::ofstream LogFile;
   //ETX
-  //
-
-  static vtkEventBroker* Instance;
-
+private:
+  //BTX
+  void DetachObservations(); 
+  // vtkObservation can call these methods
+  friend class vtkObservation; 
+  //ETX
 };
 
-#endif
+//BTX
+// Utility class to make sure qSlicerModuleManager is initialized before it is used.
+class VTK_MRML_EXPORT vtkEventBrokerInitialize
+{
+public:
+  typedef vtkEventBrokerInitialize Self;
 
+  vtkEventBrokerInitialize();
+  ~vtkEventBrokerInitialize();
+private:
+  static unsigned int Count;
+};
+
+// This instance will show up in any translation unit that uses
+// vtkEventBroker.  It will make sure vtkEventBroker is initialized
+// before it is used.
+static vtkEventBrokerInitialize vtkEventBrokerInitializer;
+//ETX
+
+#endif

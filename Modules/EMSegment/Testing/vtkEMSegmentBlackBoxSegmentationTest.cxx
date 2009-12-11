@@ -84,7 +84,6 @@ int main(int argc, char** argv)
     emLogic->SetAndObserveMRMLScene(NULL);
     emLogic->Delete();
 
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
   }
   std::cerr << "Imported: " << mrmlScene->GetNumberOfNodes()
@@ -119,7 +118,6 @@ int main(int argc, char** argv)
         emLogic->SetAndObserveMRMLScene(NULL);
         emLogic->Delete();
 
-        vtkEventBroker::GetInstance()->Delete(); 
         return EXIT_FAILURE;
       }
       foundParameters = true;
@@ -142,7 +140,6 @@ int main(int argc, char** argv)
     emLogic->SetAndObserveMRMLScene(NULL);
     emLogic->Delete();
 
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;    
   }
   
@@ -163,7 +160,6 @@ int main(int argc, char** argv)
     emLogic->SetAndObserveMRMLScene(NULL);
     emLogic->Delete();
 
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
   }
 
@@ -190,7 +186,6 @@ int main(int argc, char** argv)
     emLogic->SetAndObserveMRMLScene(NULL);
     emLogic->Delete();
 
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;
   }
 
@@ -207,7 +202,6 @@ int main(int argc, char** argv)
     emLogic->SetAndObserveMRMLScene(NULL);
     emLogic->Delete();
 
-    vtkEventBroker::GetInstance()->Delete(); 
     return EXIT_FAILURE;    
   }
   else
@@ -222,7 +216,6 @@ int main(int argc, char** argv)
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
 
-  vtkEventBroker::GetInstance()->Delete(); 
   std::cerr << "All clean..." << std::endl;
 
   return EXIT_SUCCESS;

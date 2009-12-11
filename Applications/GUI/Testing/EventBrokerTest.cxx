@@ -144,7 +144,5 @@ int main(int argc, char * argv[])
   viewer->Delete();
   callback->Delete();
 
-  broker->Delete();
-
   return (EXIT_SUCCESS);
 }

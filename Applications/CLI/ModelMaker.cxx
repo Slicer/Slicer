@@ -1676,7 +1676,6 @@ int main(int argc, char * argv[])
       modelScene->Clear(1);
       modelScene->Delete();
       modelScene = NULL;
-      vtkEventBroker::GetInstance()->Delete(); 
       }
     return EXIT_SUCCESS;
 }

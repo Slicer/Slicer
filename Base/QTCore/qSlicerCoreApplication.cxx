@@ -16,7 +16,6 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCrosshairNode.h"
-#include "vtkEventBroker.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
@@ -70,12 +69,8 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 
   // Description:
   // MRMLScene and AppLogic pointers
-  // Note: Since the logic and the scene should be deleted before the EventBroker,
-  // they are not SmartPointer.
   vtkMRMLScene*                        MRMLScene;
   vtkSlicerApplicationLogic*           AppLogic;
-  
-  vtkSmartPointer<vtkEventBroker>      EventBroker;
 
   QString                              SlicerHome;
 
@@ -132,11 +127,6 @@ void qSlicerCoreApplication::initialize()
 {
   QCTK_D(qSlicerCoreApplication);
   d->discoverSlicerHomeDirectory(this->arguments().at(0));
-  
-  // Take ownership of the vtkEventBroker instance.
-  // Note: Since EventBroker is a SmartPointer, the object will be deleted when
-  // qSlicerCoreApplicationPrivate will be deleted
-  d->EventBroker.TakeReference(vtkEventBroker::GetInstance());
   
   // Create MRML scene
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();

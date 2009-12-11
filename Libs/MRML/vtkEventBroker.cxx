@@ -20,8 +20,42 @@
 
 #include <algorithm>
 
-vtkEventBroker *vtkEventBroker::Instance = NULL;
+//----------------------------------------------------------------------------
+// The IO manager singleton.
+// This MUST be default initialized to zero by the compiler and is
+// therefore not initialized here.  The ClassInitialize and
+// ClassFinalize methods handle this instance.
+static vtkEventBroker* vtkEventBrokerInstance;
 
+//----------------------------------------------------------------------------
+// Must NOT be initialized.  Default initialization to zero is necessary.
+unsigned int vtkEventBrokerInitialize::Count;
+
+//----------------------------------------------------------------------------
+// Implementation of vtkEventBrokerInitialize class.
+//----------------------------------------------------------------------------
+vtkEventBrokerInitialize::vtkEventBrokerInitialize()
+{
+  if(++Self::Count == 1)
+    {
+    vtkEventBroker::classInitialize();
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkEventBrokerInitialize::~vtkEventBrokerInitialize()
+{
+  if(--Self::Count == 0)
+    {
+    vtkEventBroker::classFinalize();
+    }
+}
+
+//----------------------------------------------------------------------------
+// Needed when we don't use the vtkStandardNewMacro.
+vtkInstantiatorNewMacro(vtkEventBroker);
+
+//----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkEventBroker, "$Revision: 1.9.12.1 $");
 
 //----------------------------------------------------------------------------
@@ -34,22 +68,27 @@ vtkEventBroker* vtkEventBroker::New()
 }
 
 //----------------------------------------------------------------------------
-// Return the single instance of the vtkEventBroker
+// Return the single instance of the vtkOutputWindow
 vtkEventBroker* vtkEventBroker::GetInstance()
 {
-  if(!vtkEventBroker::Instance)
+  if(!vtkEventBrokerInstance)
     {
     // Try the factory first
-    vtkEventBroker::Instance = (vtkEventBroker*)
-      vtkObjectFactory::CreateInstance("vtkEventBroker");
+    vtkEventBrokerInstance = (vtkEventBroker*)vtkObjectFactory::CreateInstance("vtkEventBroker");
     // if the factory did not provide one, then create it here
-    if(!vtkEventBroker::Instance)
+    if(!vtkEventBrokerInstance)
       {
-      vtkEventBroker::Instance = new vtkEventBroker;
+      // if the factory failed to create the object,
+      // then destroy it now, as vtkDebugLeaks::ConstructClass was called
+      // with "vtkEventBroker", and not the real name of the class
+#ifdef VTK_DEBUG_LEAKS
+      vtkDebugLeaks::DestructClass("vtkEventBroker");
+#endif
+      vtkEventBrokerInstance = new vtkEventBroker;
       }
     }
   // return the instance
-  return vtkEventBroker::Instance;
+  return vtkEventBrokerInstance;
 }
 
 //----------------------------------------------------------------------------
@@ -67,21 +106,8 @@ vtkEventBroker::vtkEventBroker()
 //----------------------------------------------------------------------------
 vtkEventBroker::~vtkEventBroker()
 {
-
-  // for each subject, remove observations in its list
-  ObjectToObservationVectorMap::iterator mapiter;
-  ObservationVector::iterator oiter; 
-
-  for (mapiter = this->SubjectMap.begin(); mapiter != this->SubjectMap.end(); mapiter++)
-    {
-    // clear out all the observation records
-    for(oiter=(mapiter->second).begin(); oiter != (mapiter->second).end(); oiter++)  
-      { 
-      this->DetachObservation (*oiter);
-      (*oiter)->Delete();
-      }
-    }
-
+  this->DetachObservations();
+  
   // close the event log if needed
   if ( this->LogFile.is_open() )
     {
@@ -93,13 +119,26 @@ vtkEventBroker::~vtkEventBroker()
     {
     this->TimerLog->Delete();
     }
-
-  if( vtkEventBroker::Instance == this )
-    {
-    vtkEventBroker::Instance = NULL;
-    }
+  //cout << "vtkEventBroker singleton Deleted" << endl;
 }
 
+//----------------------------------------------------------------------------
+void vtkEventBroker::DetachObservations()
+{
+  // for each subject, remove observations in its list
+  ObjectToObservationVectorMap::iterator mapiter;
+  ObservationVector::iterator oiter;
+
+  for (mapiter = this->SubjectMap.begin(); mapiter != this->SubjectMap.end(); mapiter++)
+    {
+    // clear out all the observation records
+    for(oiter=(mapiter->second).begin(); oiter != (mapiter->second).end(); oiter++)
+      {
+      this->DetachObservation (*oiter);
+      (*oiter)->Delete();
+      }
+    }
+}
 
 //----------------------------------------------------------------------------
 vtkObservation *vtkEventBroker::AddObservation (
@@ -138,7 +177,7 @@ vtkObservation *vtkEventBroker::AddObservation (
 //----------------------------------------------------------------------------
 vtkObservation *vtkEventBroker::AddObservation (
   vtkObject *subject, const char *event, const char *script)
-{
+{       
   vtkObservation *observation = vtkObservation::New();
   observation->SetEventBroker( this );
   KeyType subjectKey = reinterpret_cast<KeyType>(subject);
@@ -873,3 +912,16 @@ vtkEventBroker::Callback(vtkObject *caller,
   self->ProcessEvent(observation, caller, eid, callData);
 }
 
+//----------------------------------------------------------------------------
+void vtkEventBroker::classInitialize()
+{
+  // Allocate the singleton
+  vtkEventBrokerInstance = vtkEventBroker::GetInstance();
+}
+
+//----------------------------------------------------------------------------
+void vtkEventBroker::classFinalize()
+{
+  vtkEventBrokerInstance->Delete();
+  vtkEventBrokerInstance = 0; 
+}
