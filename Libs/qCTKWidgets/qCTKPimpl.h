@@ -1,40 +1,3 @@
-/****************************************************************************
- **
- ** Copyright (C) Qxt Foundation. Some rights reserved.
- **
- ** This file is part of the QxtCore module of the Qxt library.
- **
- ** This library is free software; you can redistribute it and/or modify it
- ** under the terms of the Common Public License, version 1.0, as published
- ** by IBM, and/or under the terms of the GNU Lesser General Public License,
- ** version 2.1, as published by the Free Software Foundation.
- **
- ** This file is provided "AS IS", without WARRANTIES OR CONDITIONS OF ANY
- ** KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT LIMITATION, ANY
- ** WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY OR
- ** FITNESS FOR A PARTICULAR PURPOSE.
- **
- ** You should have received a copy of the CPL and the LGPL along with this
- ** file. See the LICENSE file and the cpl1.0.txt/lgpl-2.1.txt files
- ** included with the source distribution for more information.
- ** If you did not receive a copy of the licenses, contact the Qxt Foundation.
- **
- ** <http://libqxt.org>  <foundation@libqxt.org>
- **
- ****************************************************************************/
-
-/****************************************************************************
-** This file is derived from code bearing the following notice:
-** The sole author of this file, Adam Higerd, has explicitly disclaimed all
-** copyright interest and protection for the content within. This file has
-** been placed in the public domain according to United States copyright
-** statute and case law. In jurisdictions where this public domain dedication
-** is not legally recognized, anyone who receives a copy of this file is
-** permitted to use, modify, duplicate, and redistribute this file, in whole
-** or in part, with no restrictions or conditions. In these jurisdictions,
-** this file shall be copyright (C) 2006-2008 by Adam Higerd.
-****************************************************************************/
-
 /**
 \class qCTKPimpl qCTKPimpl
 \ingroup QxtCore
@@ -51,11 +14,7 @@ offers a convenient way to connect the public and private sides of your class.
 \section start Getting Started
 Before you declare the public class, you need to make a forward declaration
 of the private class. The private class must have the same name as the public
-class, followed by the word Private. For example, a class named MyTest would
-declare the private class with:
-\code
-class MyTestPrivate;
-\endcode
+class, followed by the word Private.
 
 \subsection pub The Public Class
 Generally, you shouldn't keep any data members in the public class without a
@@ -65,20 +24,9 @@ calling or overriding) should be in the protected section of the public class.
 To connect the private class to the public class, include the
 QCTK_DECLARE_PRIVATE macro in the private section of the public class. In the
 example above, the private class is connected as follows:
-\code
-private:
-    QCTK_DECLARE_PRIVATE(MyTest);
-\endcode
 
 Additionally, you must include the QCTK_INIT_PRIVATE macro in the public class's
-constructor. Continuing with the MyTest example, your constructor might look
-like this:
-\code
-MyTest::MyTest() {
-    // initialization
-    QCTK_INIT_PRIVATE(MyTest);
-}
-\endcode
+constructor.
 
 \subsection priv The Private Class
 As mentioned above, data members should usually be kept in the private class.
@@ -89,33 +37,13 @@ should be implemented here.
 
 To define the private class, inherit from the template qCTKPrivate class, and
 include the QCTK_DECLARE_PUBLIC macro in its public section. The template
-parameter should be the name of the public class. For example:
-\code
-class MyTestPrivate : public qCTKPrivate<MyTest> {
-public:
-    MyTestPrivate();
-    QCTK_DECLARE_PUBLIC(MyTest);
-};
-\endcode
+parameter should be the name of the public class.
 
 \section cross Accessing Private Members
 Use the qctk_d() function (actually a function-like object) from functions in
 the public class to access the private class. Similarly, functions in the
 private class can invoke functions in the public class by using the qctk_p()
 function (this one's actually a function).
-
-For example, assume that MyTest has methods named getFoobar and doBaz(),
-and MyTestPrivate has a member named foobar and a method named doQuux().
-The code might resemble this example:
-\code
-int MyTest::getFoobar() {
-    return qctk_d()->foobar;
-}
-
-void MyTestPrivate::doQuux() {
-    qctk_p()->doBaz(foobar);
-}
-\endcode
 */
 
 #ifndef __qCTKPimpl_h
@@ -240,7 +168,6 @@ const PUB& qctk_p_ref();
 const PUB* qctk_p();
 #endif
 
-#ifndef QCTK_DOXYGEN_RUN
 template <typename PUB>
 class qCTKPrivate
 {
@@ -317,6 +244,5 @@ public:
 private:
   qCTKPrivate<PUB>* pvt;
 };
-#endif
 
 #endif
