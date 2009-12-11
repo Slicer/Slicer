@@ -289,24 +289,6 @@ endif(GenerateCLP_FOUND)
 generateclp(${SRC} Slicer3.xml)
 
 # --------------------------------------------------------------------------
-# Command line parsing tests
-#
-add_test(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --help)
-add_test(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml --test-mode)
-add_test(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-add_test(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --eval "puts testing ,. exit 0")
-add_test(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --exec "puts testing ,. exit 0")
-add_test(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-add_test(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
-add_test(Slicer3ScrollTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
-
-# --------------------------------------------------------------------------
-# MRML Tests
-#
-add_test(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testUndo.tcl)
-add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testVolume.tcl)
-
-# --------------------------------------------------------------------------
 # Testing
 #
 IF(Slicer3_BUILD_TESTING)

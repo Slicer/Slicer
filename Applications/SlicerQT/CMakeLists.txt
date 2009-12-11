@@ -387,10 +387,11 @@ ADD_LIBRARY(${lib_name}
 )
 
 # HACK Since we don't depend on SlicerBaseGUI, remove it from the list
-LIST(REMOVE_ITEM Slicer3_Base_LIBRARIES SlicerBaseGUI)
+SET(Slicer3_BaseQT_LIBRARIES ${Slicer3_Base_LIBRARIES})
+LIST(REMOVE_ITEM Slicer3_BaseQT_LIBRARIES SlicerBaseGUI)
 
 SET(SlicerQT_LIBRARIES 
-  ${Slicer3_Base_LIBRARIES}
+  ${Slicer3_BaseQT_LIBRARIES}
   )
   
 target_link_libraries(${lib_name} 
@@ -399,9 +400,7 @@ target_link_libraries(${lib_name}
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
-  )
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 
