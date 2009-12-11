@@ -1085,8 +1085,11 @@ void vtkSlicerFiducialListWidget::RemoveFiducial(const char *id)
    if (pointIter != this->DisplayedPointWidgets.end())
      {
      vtkDebugMacro("RemoveFiducial: Deleting point widget at " << stringID.c_str());
-     this->DisplayedPointWidgets[stringID]->EnabledOff();
-     this->DisplayedPointWidgets[stringID]->SetInteractor(NULL);
+     if (this->DisplayedPointWidgets[stringID]->GetInteractor())
+       {
+       this->DisplayedPointWidgets[stringID]->EnabledOff();
+       this->DisplayedPointWidgets[stringID]->SetInteractor(NULL);
+       }
      this->DisplayedPointWidgets[stringID]->Delete();
      this->DisplayedPointWidgets[stringID] = NULL;
      this->DisplayedPointWidgets.erase(stringID);
@@ -1523,7 +1526,10 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       pointWidget->PlaceWidget(worldxyz[0]-1, worldxyz[0]+1, worldxyz[1]-1, worldxyz[1]+1, worldxyz[2]-1, worldxyz[2]+1);
       pointWidget->TranslationModeOn();
       pointWidget->SetPosition(worldxyz);
-      pointWidget->SetEnabled(!(flist->GetLocked()));
+      if (pointWidget->GetInteractor())
+        {
+        pointWidget->SetEnabled(!(flist->GetLocked()));
+        }
       vtkDebugMacro("UpdateFiducialsFromMRML: Putting new fiducial " << fid.c_str() << " in place: " << worldxyz[0] << "," << worldxyz[1] << "," << worldxyz[2]);
       this->DisplayedPointWidgets[fid] = pointWidget;
       }
@@ -1686,11 +1692,17 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
           flist->GetNthFiducialVisibility(f) == 0 ||
           flist->GetLocked())
         {
-        pointIter->second->EnabledOff();
+        if (pointIter->second->GetInteractor())
+          {
+          pointIter->second->EnabledOff();
+          }
         }
       else
         {
-        pointIter->second->EnabledOn();
+        if (pointIter->second->GetInteractor())
+          {
+          pointIter->second->EnabledOn();
+          }
         }
       transformToWorld->Delete();
       transformToWorld = NULL;
@@ -1698,9 +1710,12 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
     else { vtkDebugMacro("UpdatePointWidget: null xyz"); }
     if (flist->GetVisibility() == 0 || flist->GetNthFiducialVisibility(f) == 0)
       {
-      // Point is not visible, disabling point widget
-      vtkDebugMacro("UpdatePointWidget: Point is not visible, disabling point widget");
-      pointIter->second->EnabledOff();
+      if (pointIter->second->GetInteractor())
+        {
+        // Point is not visible, disabling point widget
+        vtkDebugMacro("UpdatePointWidget: Point is not visible, disabling point widget");
+        pointIter->second->EnabledOff();
+        }
       }
     }
   else
@@ -1774,8 +1789,11 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
       {
       vtkDebugMacro("Deleting displayed point widget at id " << pointIter->first.c_str());
       // turning Enable off removes the observers
-      pointIter->second->EnabledOff();
-      pointIter->second->SetInteractor(NULL);
+      if (pointIter->second->GetInteractor())
+        {
+        pointIter->second->EnabledOff();
+        pointIter->second->SetInteractor(NULL);
+        }
       pointIter->second->Delete();
       }
     this->DisplayedPointWidgets.erase(pointIter->first);
@@ -2146,8 +2164,11 @@ void vtkSlicerFiducialListWidget::RemovePointWidgets()
     if (pointIter->second != NULL)
       {
       vtkDebugMacro("Deleting displayed point widget at id " << pointIter->first.c_str());
-      pointIter->second->EnabledOff();
-      pointIter->second->SetInteractor(NULL);
+      if (pointIter->second->GetInteractor())
+        {
+        pointIter->second->EnabledOff();
+        pointIter->second->SetInteractor(NULL);
+        }
       pointIter->second->Delete();
       pointIter->second = NULL;
       }
@@ -2170,8 +2191,11 @@ void vtkSlicerFiducialListWidget::RemovePointWidget(const char *pointID)
   if (pointIter != this->DisplayedPointWidgets.end())
     {
     vtkDebugMacro("RemovePointWidget: Deleting point widget at " << stringID.c_str());
-    this->DisplayedPointWidgets[stringID]->EnabledOff();
-    this->DisplayedPointWidgets[stringID]->SetInteractor(NULL);
+    if (this->DisplayedPointWidgets[stringID]->GetInteractor())
+      {
+      this->DisplayedPointWidgets[stringID]->EnabledOff();
+      this->DisplayedPointWidgets[stringID]->SetInteractor(NULL);
+      }
     this->DisplayedPointWidgets[stringID]->Delete();
     this->DisplayedPointWidgets[stringID] = NULL;
     this->DisplayedPointWidgets.erase(stringID);
