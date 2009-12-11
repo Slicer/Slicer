@@ -718,14 +718,25 @@ void vtkEventBroker::ProcessEvent ( vtkObservation *observation, vtkObject *call
     }
 
   // 
-  // for delete events, just clean up and get out
-  // - we want to forget we ever had this observation
+  // for delete events, clean up and get out
+  // - first invoke any observations that have the object being
+  //   deleted as the subject
+  // - then we want to forget we ever had this observation
   //   and any that were connected to the object that is
   //   going to be deleted.
   //
   if ( eid == vtkCommand::DeleteEvent )
     {
-
+    // iterate list of observations for the deleted object (caller) as subject
+    std::vector< vtkObservation *>::iterator obsIter; 
+    KeyType subjectKey = reinterpret_cast<KeyType>(caller);
+    for(obsIter=this->SubjectMap[subjectKey].begin(); obsIter != this->SubjectMap[subjectKey].end(); obsIter++)  
+      {
+      if ( (*obsIter)->GetEvent() == vtkCommand::DeleteEvent )
+        {
+        this->InvokeObservation( observation, callData );
+        }
+      }
     if ( caller == observation->GetSubject() )
       {
       // Remove all observations for this subject (0 matches all tags)
