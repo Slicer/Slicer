@@ -68,7 +68,6 @@ int main(int argc, char* argv[])
   
   // Load all available modules
   QStringList moduleNames = moduleManager->factory()->moduleNames();
-  moduleNames.sort();
   foreach(const QString& name, moduleNames)
     {
     moduleManager->loadModule(name);

@@ -23,13 +23,16 @@ public:
   virtual ~qSlicerModuleSelectorWidgetPrivate(){}
     
   void setupUi(QWidget* widget);
-  
+
+  void addModules(const QStringList& moduleNames);
   void removeModule(const QString& name);
 
 public slots:
   void onHistoryButtonClicked();
   void onPreviousButtonClicked();
   void onNextButtonClicked();
+
+  void onComboBoxActivated(const QString& title);
 };
 
 #endif

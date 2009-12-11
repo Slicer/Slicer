@@ -3,6 +3,8 @@
 #include "qSlicerModuleSelectorWidget_p.h"
 
 // qCTK includes
+#include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
 
 // QT includes
 #include <QDebug>
@@ -20,7 +22,7 @@ qSlicerModuleSelectorWidget::qSlicerModuleSelectorWidget(QWidget* parent)
 void qSlicerModuleSelectorWidget::addModules(const QStringList& moduleNames)
 {
   QCTK_D(qSlicerModuleSelectorWidget);
-  d->ComboBox->addItems(moduleNames);
+  d->addModules(moduleNames);
 }
 
 //---------------------------------------------------------------------------
@@ -36,12 +38,10 @@ void qSlicerModuleSelectorWidget::removeModule(const QString& name)
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidgetPrivate::setupUi(QWidget* widget)
 {
-  QCTK_P(qSlicerModuleSelectorWidget);
-
   this->Ui_qSlicerModuleSelectorWidget::setupUi(widget); 
 
-  QObject::connect(this->ComboBox, SIGNAL(activated(const QString &)),
-                   p, SIGNAL(moduleSelected(const QString &)));
+  this->connect(this->ComboBox, SIGNAL(activated(const QString &)),
+                SLOT(onComboBoxActivated(const QString &)));
 
   this->connect(this->HistoryButton, SIGNAL(clicked()), SLOT(onHistoryButtonClicked()));
   this->connect(this->PreviousButton, SIGNAL(clicked()), SLOT(onPreviousButtonClicked()));
@@ -49,9 +49,36 @@ void qSlicerModuleSelectorWidgetPrivate::setupUi(QWidget* widget)
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModuleSelectorWidgetPrivate::addModules(const QStringList& moduleNames)
+{
+  QStringList titles;
+
+  foreach(const QString& name, moduleNames)
+    {
+    // Retrieve module title given its name
+    titles << qSlicerApplication::application()->moduleManager()->moduleTitle(name);
+    }
+  titles.sort();
+  this->ComboBox->addItems(titles);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidgetPrivate::removeModule(const QString& name)
 {
-  this->ComboBox->removeItem(this->ComboBox->findText(name));
+  // Retrieve module title given its name
+  QString title = qSlicerApplication::application()->moduleManager()->moduleTitle(name);
+  this->ComboBox->removeItem(this->ComboBox->findText(title));
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorWidgetPrivate::onComboBoxActivated(const QString& title)
+{
+  QCTK_P(qSlicerModuleSelectorWidget);
+  
+  // Retrieve module name given its title
+  QString name = qSlicerApplication::application()->moduleManager()->moduleName(title);
+  
+  emit p->moduleSelected(name);
 }
 
 //---------------------------------------------------------------------------
