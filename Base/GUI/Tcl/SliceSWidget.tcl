@@ -957,13 +957,26 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
   } 
 
   set labelText "Lb: $_layers(label,pixel) $colorName"
-  set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
+
+  if { [string is double $_layers(foreground,pixel)] } {
+      set fgvoxelText [format "Fg: %.1f" $_layers(foreground,pixel)]
+  } else {
+      set fgvoxelText "Fg: $_layers(foreground,pixel)"
+  }
+  if { [string is double $_layers(background,pixel)] } {
+      set bgvoxelText [format "Bg: %.1f" $_layers(background,pixel)]
+  } else {
+      set bgvoxelText "Bg: $_layers(background,pixel)"
+  }
+  set voxelText "$fgvoxelText\n$bgvoxelText"
+
+
   if { [string is integer $_layers(background,i)] } {
       set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
                        $_layers(background,i) $_layers(background,j) $_layers(background,k)]
-    } else {
+  } else {
       set ijkText ""
-    }
+  }
 
   set xyText "X: $x\nY:$y"
   set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
