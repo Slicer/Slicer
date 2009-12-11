@@ -2,7 +2,7 @@
 #include "qMRMLItemModel.h"
 
 #include <QDebug>
-
+//#include "modeltest.h"
 //------------------------------------------------------------------------------
 class qMRMLTreeWidgetPrivate: public qCTKPrivate<qMRMLTreeWidget>
 {
@@ -35,8 +35,10 @@ qMRMLTreeWidget::~qMRMLTreeWidget()
 //------------------------------------------------------------------------------
 void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_ASSERT(qobject_cast<qMRMLItemModel*>(this->model()));
-  qobject_cast<qMRMLItemModel*>(this->model())->setMRMLScene(scene);
+  qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  Q_ASSERT(mrmlModel);
+  mrmlModel->setMRMLScene(scene);
+  //new ModelTest(mrmlModel, this);
 }
 
 //------------------------------------------------------------------------------
