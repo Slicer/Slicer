@@ -126,8 +126,6 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   vtkSetMRMLNodeMacro(this->GreenSliceNode, NULL);
   vtkSetMRMLNodeMacro(this->YellowSliceNode, NULL);
 
-  //this->RemoveAllObservers();
-  
   if (this->MainViewer)
     {
     vtkSlicerViewerInteractorStyle *iStyle;
@@ -691,13 +689,13 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       {
       if (event == vtkMRMLScene::NodeAddedEvent)
         {
-        node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                          this->MRMLCallbackCommand );
+        vtkEventBroker::GetInstance()->AddObservation ( 
+          node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
         }
       else if (event == vtkMRMLScene::NodeRemovedEvent)
         {
-        node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                              this->MRMLCallbackCommand );
+        vtkEventBroker::GetInstance()->RemoveObservations ( 
+          node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
         this->UpdateCameraNode();
         }
       }
@@ -896,18 +894,21 @@ void vtkSlicerViewerWidget::AddCameraObservers()
   if (!this->MRMLScene || this->SceneClosing)
     {
     return;
-}
+    }
 
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation *> observations;
   std::vector<vtkMRMLNode*> cnodes;
   int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
   for (int n = 0; n < nnodes; n++)
     {
     vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
-    if (node && !node->HasObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                                   this->MRMLCallbackCommand))
+    observations = broker->GetObservations( 
+      node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
+    if ( node && observations.size() == 0 )
       {
-      node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                        this->MRMLCallbackCommand);
+      vtkEventBroker::GetInstance()->AddObservation ( 
+          node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
       }
     }
 }
@@ -920,16 +921,18 @@ void vtkSlicerViewerWidget::RemoveCameraObservers()
     return;
     }
 
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation *> observations;
   std::vector<vtkMRMLNode*> cnodes;
   int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
   for (int n = 0; n < nnodes; n++)
     {
     vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
-    if (node && node->HasObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                                  this->MRMLCallbackCommand))
+    observations = broker->GetObservations( 
+      node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
+    if ( node && observations.size() != 0 )
       {
-      node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
-                            this->MRMLCallbackCommand);
+      vtkEventBroker::GetInstance()->RemoveObservations ( observations );
       }
     }
 }
@@ -1366,21 +1369,26 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLDisplayableNode *model)
 {
   this->UpdateModelPolyData(model);
 
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation *> observations;
   // observe polydata
-  if (!model->HasObserver( vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->MRMLCallbackCommand ))
+  observations = broker->GetObservations( model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->MRMLCallbackCommand );
+  if ( observations.size() == 0 )
     {
-    model->AddObserver ( vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+    broker->AddObservation( model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->MRMLCallbackCommand );
     DisplayableNodes[model->GetID()] = model;
     }
   // observe display node
-  if (!model->HasObserver ( vtkMRMLDisplayableNode::DisplayModifiedEvent, this->MRMLCallbackCommand ))
+  observations = broker->GetObservations( model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->MRMLCallbackCommand );
+  if ( observations.size() == 0 )
     {
-    model->AddObserver ( vtkMRMLDisplayableNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    broker->AddObservation( model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
-  if (!model->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) )
+  observations = broker->GetObservations( model, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->MRMLCallbackCommand );
+  if ( observations.size() == 0 )
     {
-    model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+    broker->AddObservation( model, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
 
@@ -1405,6 +1413,7 @@ void vtkSlicerViewerWidget::AddHierarchiyObservers()
     }
   vtkMRMLModelHierarchyNode *node;
   
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
   std::vector<vtkMRMLNode *> hnodes;
   int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", hnodes);
 
@@ -1425,7 +1434,7 @@ void vtkSlicerViewerWidget::AddHierarchiyObservers()
       }
     if (!found)
       {
-      node->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      broker->AddObservation( node, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
       this->RegisteredModelHierarchies[node->GetID()] = 0;
       }
     }
@@ -1702,24 +1711,36 @@ void vtkSlicerViewerWidget::RemoveModelObservers(int clearCache)
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveModelObservers( vtkMRMLDisplayableNode *model)
 {
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation *> observations;
   if (model != NULL)
     {
-    model->RemoveObservers ( vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
-    model->RemoveObservers ( vtkMRMLDisplayableNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-    model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+    observations = broker->GetObservations( 
+      model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->MRMLCallbackCommand );
+    broker->RemoveObservations( observations );
+    observations = broker->GetObservations( 
+      model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->MRMLCallbackCommand );
+    broker->RemoveObservations( observations );
+    observations = broker->GetObservations( 
+      model, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->MRMLCallbackCommand );
+    broker->RemoveObservations( observations );
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveHierarchyObservers(int clearCache)
 {
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation *> observations;
   std::map<std::string, int>::iterator iter;
   for(iter=this->RegisteredModelHierarchies.begin(); iter != this->RegisteredModelHierarchies.end(); iter++) 
     {
     vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
     if (node)
       {
-      node->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      observations = broker->GetObservations( 
+        node, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+      broker->RemoveObservations( observations );
       }
     }
   if (clearCache)
