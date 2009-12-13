@@ -387,7 +387,7 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if { $caller == $::FastMarchingSegmentation($this,timeScrollScale) } {
     FastMarchingSegmentationUpdateTime $this    
     if {$event == 10001} {
-      set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+      set viewerWidget [ [$this GetApplicationGUI] GetActiveViewerWidget ]
       $viewerWidget RequestRender
     }
   } 
@@ -674,7 +674,7 @@ proc FastMarchingSegmentationDestroyRender {this} {
 
 proc FastMarchingSegmentationShowRender {this} {
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
-  set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+  set viewerWidget [ [$this GetApplicationGUI] GetActiveViewerWidget ]
   
   if {$renderVolume == ""} {
     return
@@ -686,7 +686,7 @@ proc FastMarchingSegmentationShowRender {this} {
 
 proc FastMarchingSegmentationHideRender {this} {
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
-  set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+  set viewerWidget [ [$this GetApplicationGUI] GetActiveViewerWidget ]
   
   if {$renderVolume == ""} {
     return
