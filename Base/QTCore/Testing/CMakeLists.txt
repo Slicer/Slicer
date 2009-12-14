@@ -22,7 +22,10 @@ MACRO( SIMPLE_TEST  TESTNAME )
 ENDMACRO( SIMPLE_TEST  )
 
 
-SIMPLE_TEST( qSlicerCoreApplicationTest1 )
+ADD_TEST( qSlicerCoreApplicationTest1 
+  ${QTCore_TESTS} qSlicerCoreApplicationTest1 
+  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SlicerQT )
+
 SIMPLE_TEST( qSlicerCoreIOManagerTest1 )
 SIMPLE_TEST( qSlicerModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerModuleManagerTest1 )
