@@ -40,7 +40,6 @@ IF(BUILD_SHARED_LIBS)
        \"${ITK_DIR}/bin\" CONFIG_DIR_POST,                   \\
        \"${Teem_DIR}/bin\" CONFIG_DIR_POST")
 
-    SET(SlicerQT_FORWARD_PATH_INSTALL "")
     #SET(SlicerQT_FORWARD_PATH_INSTALL
     #  "\"../lib/TclTk/bin\",
     #   \"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",
@@ -50,6 +49,8 @@ IF(BUILD_SHARED_LIBS)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},          \\
          \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
+      SET(SlicerQT_FORWARD_PATH_INSTALL
+        "\"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
     ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)    
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
@@ -104,6 +105,9 @@ IF(BUILD_SHARED_LIBS)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},                  \\
          \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+      SET(SlicerQT_FORWARD_PATH_INSTALL
+        "${SlicerQT_FORWARD_PATH_INSTALL},         \\
+        \"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
     ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer3_BUILD_MODULES)
@@ -117,12 +121,6 @@ IF(BUILD_SHARED_LIBS)
          \"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
     ENDIF(Slicer3_BUILD_CLI)
   ENDIF(WIN32)
-
-  IF(Slicer3_BUILD_QTLOADABLEMODULES)
-    SET(SlicerQT_FORWARD_PATH_INSTALL
-      "${SlicerQT_FORWARD_PATH_INSTALL},         \\
-       \"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
-  ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
 
 #   IF(Slicer3_BUILD_MODULES)
 #     SET(Slicer3_FORWARD_PATH_INSTALL
