@@ -1,14 +1,14 @@
 #ifndef __qMRMLLinearTransformSlider_h
 #define __qMRMLLinearTransformSlider_h
 
-// qMRML includes
-#include "qVTKObject.h"
+// qVTK includes
+#include <qVTKObject.h>
 
 // qCTK includes
 #include <qCTKSliderSpinBoxLabel.h>
 #include <qCTKPimpl.h>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;

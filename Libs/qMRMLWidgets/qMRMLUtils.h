@@ -5,7 +5,7 @@
 #include <QString>
 #include <QVector>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLLinearTransformNode;

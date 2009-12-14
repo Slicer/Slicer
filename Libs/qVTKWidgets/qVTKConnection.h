@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QVector>
 
-#include "qVTKWidgetsWin32Header.h"
+#include "qVTKWidgetsExport.h"
 
 class qVTKObjectEventsObserver;
 class vtkObject;

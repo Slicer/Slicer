@@ -1,7 +1,7 @@
 #ifndef __qCTKTitleComboBox_h
 #define __qCTKTitleComboBox_h
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 #include <QComboBox>
 

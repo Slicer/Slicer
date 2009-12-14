@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QColor>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class QCTK_WIDGETS_EXPORT qCTKColorPickerButton : public QPushButton
 {

@@ -3,7 +3,7 @@
 
 #include <QFrame>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class QPushButton;
 class QStackedWidget;

@@ -9,7 +9,7 @@
 // QT includes
 #include <QPushButton>
 
-#include "qMRMLWidgetsPluginWin32Header.h"
+#include "qMRMLWidgetsPluginExport.h"
 
 class vtkMRMLScene;
 

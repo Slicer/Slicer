@@ -1,9 +1,13 @@
 #ifndef __qMRMLItemModel_h
 #define __qMRMLItemModel_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QAbstractItemModel>
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsWin32Header.h"
+
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLScene;
 class vtkMRMLNode;

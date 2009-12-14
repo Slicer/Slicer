@@ -7,7 +7,7 @@
 // QT includes
 #include <QTableWidget>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class qCTKMatrixWidgetPrivate;
 

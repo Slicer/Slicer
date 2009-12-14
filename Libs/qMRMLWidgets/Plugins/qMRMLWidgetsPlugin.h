@@ -11,7 +11,7 @@
 #include "qMRMLSceneGeneratorPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
-#include "qMRMLWidgetsPluginWin32Header.h"
+#include "qMRMLWidgetsPluginExport.h"
 
 // \class Group the plugins in one library
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QObject,

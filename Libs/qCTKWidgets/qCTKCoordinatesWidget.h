@@ -1,7 +1,7 @@
 #ifndef __qCTKCoordinatesWidget_h
 #define __qCTKCoordinatesWidget_h
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 #include <QWidget>
 

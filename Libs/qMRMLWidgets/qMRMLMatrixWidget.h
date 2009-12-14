@@ -1,14 +1,14 @@
 #ifndef __qMRMLMatrixWidget_h
 #define __qMRMLMatrixWidget_h
 
-// qMRML includes
-#include "qVTKObject.h"
+// qVTK includes
+#include <qVTKObject.h>
 
 // qCTK includes
 #include <qCTKMatrixWidget.h>
 #include <qCTKPimpl.h>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
  
 class vtkMRMLNode; 
 class vtkMRMLLinearTransformNode; 

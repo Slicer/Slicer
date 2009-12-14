@@ -1,9 +1,13 @@
 #ifndef __qMRMLListWidget_h
 #define __qMRMLListWidget_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QListView>
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsWin32Header.h"
+
+#include "qMRMLWidgetsExport.h"
 
 class qMRMLListWidgetPrivate;
 class vtkMRMLScene;

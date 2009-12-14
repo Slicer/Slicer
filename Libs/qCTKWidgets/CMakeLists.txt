@@ -11,6 +11,10 @@ IF(NOT DEFINED BUILD_SHARED_LIBS)
   OPTION(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 
+# CMake Macros
+INCLUDE(CMake/qCTKParseArgumentsMacro.cmake)
+INCLUDE(CMake/qCTKDesignerPluginMacros.cmake)
+
 #-----------------------------------------------------------------------------
 # Sources
 #
@@ -73,8 +77,6 @@ SET(qCTKWidgets_UI_SRCS
 QT4_WRAP_CPP(qCTKWidgets_SRCS ${qCTKWidgets_MOC_SRCS})
 QT4_WRAP_UI(qCTKWidgets_UI_CXX ${qCTKWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(qCTKWidgets_QRC_SRCS Resources/qCTKWidgets.qrc)
-   
-
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -92,24 +94,12 @@ SET(QT_INCLUDE_DIRS
   ${QT_QTCORE_INCLUDE_DIR} 
   )
 
-SET(QT_LIBRARIES 
-  ${QT_QTCORE_LIBRARY} 
-  ${QT_QTGUI_LIBRARY} 
-  ${QT_QTWEBKIT_LIBRARY}
-  )
-
 SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qCTKWidgetsConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/qCTKWidgetsConfigure.h
-  )
-
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 INSTALL(FILES 
-  ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/qCTKWidgetsConfigure.h"
+  ${headers}
   DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 
@@ -125,19 +115,21 @@ ADD_LIBRARY(${lib_name}
   ${qCTKWidgets_QRC_SRCS}
 )
 
+SET(QT_LIBRARIES 
+  ${QT_QTCORE_LIBRARY} 
+  ${QT_QTGUI_LIBRARY} 
+  ${QT_QTWEBKIT_LIBRARY}
+  )
+  
 SET(qCTKWidgets_LIBRARIES
   ${QT_LIBRARIES}
   )
   
-TARGET_LINK_LIBRARIES(${lib_name} 
-  ${qCTKWidgets_LIBRARIES}
-  )
+TARGET_LINK_LIBRARIES(${lib_name} ${qCTKWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
-  )
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 # --------------------------------------------------------------------------

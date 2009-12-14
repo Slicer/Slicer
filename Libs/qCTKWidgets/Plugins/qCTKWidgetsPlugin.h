@@ -1,7 +1,7 @@
 #ifndef __qCTKWidgetsPlugin_h
 #define __qCTKWidgetsPlugin_h
 
-#include "qCTKWidgetsPluginWin32Header.h"
+#include "qCTKWidgetsPluginExport.h"
 #include "qCTKCollapsibleButtonPlugin.h"
 #include "qCTKCollapsibleGroupBoxPlugin.h"
 //#include "qCTKCollapsibleWidgetPlugin.h"

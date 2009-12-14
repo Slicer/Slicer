@@ -1,7 +1,7 @@
 #ifndef __qCTKCollapsibleGroupBox_h
 #define __qCTKCollapsibleGroupBox_h
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 #include <QGroupBox>
 

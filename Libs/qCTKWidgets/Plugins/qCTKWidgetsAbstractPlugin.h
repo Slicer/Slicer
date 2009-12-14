@@ -2,7 +2,7 @@
 #define __qCTKWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qCTKWidgetsPluginWin32Header.h"
+#include "qCTKWidgetsPluginExport.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {

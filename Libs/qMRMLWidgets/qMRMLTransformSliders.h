@@ -2,8 +2,8 @@
 #define __qMRMLTransformSliders_h
 
 
-// qMRML includes
-#include "qVTKObject.h"
+// qVTK includes
+#include <qVTKObject.h>
 
 // qCTK includes
 #include <qCTKPimpl.h>
@@ -11,7 +11,7 @@
 // QT includes
 #include <QWidget>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLLinearTransformNode;

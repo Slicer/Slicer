@@ -1,8 +1,8 @@
 #ifndef __qMRMLNodeSelector_h
 #define __qMRMLNodeSelector_h
 
-// qMRML includes
-#include "qVTKObject.h"
+// qVTK includes
+#include <qVTKObject.h>
 
 // qCTK includes
 #include <qCTKAddRemoveComboBox.h>
@@ -11,7 +11,7 @@
 // QT includes
 #include <QString>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
 
 class qMRMLNodeFactory; 
 class vtkMRMLScene; 

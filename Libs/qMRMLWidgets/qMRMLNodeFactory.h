@@ -7,7 +7,7 @@
 // QT includes
 #include <QObject>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
  
 class vtkMRMLNode;
 class vtkMRMLScene;

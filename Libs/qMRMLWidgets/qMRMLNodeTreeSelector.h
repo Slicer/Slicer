@@ -7,7 +7,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qMRMLWidgetsWin32Header.h"
+#include "qMRMLWidgetsExport.h"
 
 class qMRMLNodeTreeSelectorPrivate;
 

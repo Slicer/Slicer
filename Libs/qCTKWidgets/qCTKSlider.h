@@ -7,7 +7,7 @@
 // QT includes
 #include <QSlider>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class qCTKSliderPrivate;
 

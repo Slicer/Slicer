@@ -9,7 +9,7 @@
 #include <QVariant>
 #include <QModelIndex>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class QComboBox;
 class qCTKAddRemoveComboBoxPrivate;

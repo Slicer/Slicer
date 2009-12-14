@@ -1,9 +1,13 @@
 #ifndef __qMRMLTreeWidget_h
 #define __qMRMLTreeWidget_h
 
+// qCTK includes
+#include <qCTKPimpl.h>
+
+// QT includes
 #include <QTreeView>
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsWin32Header.h"
+
+#include "qMRMLWidgetsExport.h"
 
 class qMRMLTreeWidgetPrivate;
 class vtkMRMLScene;

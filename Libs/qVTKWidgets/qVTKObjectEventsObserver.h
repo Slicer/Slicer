@@ -11,7 +11,7 @@
 // VTK includes
 #include <vtkCommand.h>
 
-#include "qVTKWidgetsWin32Header.h"
+#include "qVTKWidgetsExport.h"
 
 class qVTKConnection;
 class vtkObject;

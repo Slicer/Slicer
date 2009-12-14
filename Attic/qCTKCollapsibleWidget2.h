@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QFrame>
 #include "qCTKPimpl.h"
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class qCTKCollapsibleWidget2Private;
 

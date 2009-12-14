@@ -7,7 +7,7 @@
 // QT includes
 #include <QLineEdit>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class QDoubleValidator;
 class qCTKNumericInputPrivate;

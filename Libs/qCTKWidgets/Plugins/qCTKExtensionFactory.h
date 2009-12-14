@@ -2,7 +2,7 @@
 #define __qCTKExtensionFactory_h
 
 #include <QtDesigner/QExtensionFactory>
-#include "qCTKWidgetsPluginWin32Header.h"
+#include "qCTKWidgetsPluginExport.h"
 
 class QExtensionManager;
 

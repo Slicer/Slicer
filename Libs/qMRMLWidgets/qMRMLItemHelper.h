@@ -1,11 +1,14 @@
 #ifndef __qMRMLItemHelper_h
 #define __qMRMLItemHelper_h
 
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsWin32Header.h"
+// qCTK includes
+#include <qCTKPimpl.h>
 
+// QT includes
 #include <Qt>
 #include <QVariant>
+
+#include "qMRMLWidgetsExport.h"
 
 class vtkObject;
 class vtkMRMLScene;

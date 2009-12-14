@@ -102,15 +102,9 @@ ENDFOREACH(package)
 SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h
-  )
-
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 INSTALL(FILES 
   ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h"
   DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 

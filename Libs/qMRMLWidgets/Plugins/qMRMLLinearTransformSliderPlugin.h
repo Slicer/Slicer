@@ -2,7 +2,6 @@
 #define __qMRMLLinearTransformSliderPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
-#include "qMRMLWidgetsPluginWin32Header.h"
 
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLLinearTransformSliderPlugin : public QObject,
                                          public qMRMLWidgetsAbstractPlugin

@@ -7,7 +7,7 @@
 // QT includes
 #include <QComboBox>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 // Description:
 // ComboBox that displays the items as a tree view.

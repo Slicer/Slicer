@@ -46,7 +46,7 @@
 #include <QRect>
 #include <QWidgetItem>
 #include <QStyle>
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class QCTK_WIDGETS_EXPORT qCTKFlowLayout : public QLayout
 {
