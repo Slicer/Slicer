@@ -8,7 +8,7 @@
 #include <QAbstractButton>
 #include <QFrame>
 
-#include "qCTKWidgetsWin32Header.h"
+#include "qCTKWidgetsExport.h"
 
 class qCTKCollapsibleButtonPrivate;
 class QStyleOptionButton;

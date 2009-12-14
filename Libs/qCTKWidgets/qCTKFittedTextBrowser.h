@@ -1,9 +1,10 @@
 #ifndef __qCTKFittedTextBrowser_h
 #define __qCTKFittedTextBrowser_h
 
-#include "qCTKWidgetsWin32Header.h"
-
+// QT includes
 #include <QTextBrowser>
+
+#include "qCTKWidgetsExport.h"
 
 class QCTK_WIDGETS_EXPORT qCTKFittedTextBrowser : public QTextBrowser
 {
