@@ -24,9 +24,6 @@ struct qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
   QCTK_DECLARE_PUBLIC(qSlicerApplication);
   qSlicerApplicationPrivate()
     {
-    this->initFont();
-    this->initPalette();
-    this->loadStyleSheet();
     }
 
   // Description:
@@ -75,7 +72,11 @@ qSlicerApplication* qSlicerApplication::application()
 //-----------------------------------------------------------------------------
 void qSlicerApplication::initialize()
 {
-  this->Superclass::initialize(); 
+  QCTK_D(qSlicerApplication);
+  this->Superclass::initialize();
+  d->initFont();
+  d->initPalette();
+  d->loadStyleSheet();
 }
 
 //-----------------------------------------------------------------------------
