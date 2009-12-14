@@ -54,7 +54,7 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   Q_ASSERT(ioManager);
   // qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
-  this->setIOManager(ioManager);
+  this->setCoreIOManager(ioManager);
 }
 
 //-----------------------------------------------------------------------------

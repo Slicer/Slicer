@@ -80,7 +80,7 @@ public:
   // Description:
   // Set/Get the IO manager
   qSlicerCoreIOManager* coreIOManager()const;
-  void setIOManager(qSlicerCoreIOManager* ioManager); 
+  void setCoreIOManager(qSlicerCoreIOManager* ioManager); 
 
 signals:
   void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);

@@ -107,7 +107,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
       }
   };
 
-  // On windows plateform, after the method 'discoverSlicerBinDirectory' has been called,
+  // On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
   // HasIntDir should be set to true and IntDir should be set to either Debug,
   // Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   bool               HasIntDir;
@@ -275,7 +275,7 @@ QCTK_SET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, setModuleManager, Mo
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setIOManager, IOManager);
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setCoreIOManager, IOManager);
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, IOManager);
 
 //-----------------------------------------------------------------------------
