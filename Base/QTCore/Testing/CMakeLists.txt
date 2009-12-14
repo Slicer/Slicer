@@ -2,6 +2,9 @@
 SET(KIT QTCore)
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerCoreApplicationTest1.cxx
+  qSlicerCoreIOManagerTest1.cxx
+  qSlicerModuleFactoryTest1.cxx
+  qSlicerModuleManagerTest1.cxx
   )
 
 SET (TestsToRun ${Tests})
@@ -20,4 +23,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 
 SIMPLE_TEST( qSlicerCoreApplicationTest1 )
+SIMPLE_TEST( qSlicerCoreIOManagerTest1 )
+SIMPLE_TEST( qSlicerModuleFactoryTest1 )
+SIMPLE_TEST( qSlicerModuleManagerTest1 )
 
