@@ -71,3 +71,5 @@ Slicer3_build_slicer_qtbase_library(
 # Subdirectories
 #
 #ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Testing)
+

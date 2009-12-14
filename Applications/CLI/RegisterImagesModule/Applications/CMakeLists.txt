@@ -156,7 +156,6 @@ PROJECT( RegisterImagesModuleApplications )
       SET( REGISTER_IMAGES_TEST_DATA_ROOT ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data 
            CACHE PATH "Location of registration testing data" )
       MARK_AS_ADVANCED( REGISTER_IMAGES_TEST_DATA_ROOT )
-      SET( CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH} )
       FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Testing )
       FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary )
       SET( TEST_TEMP ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary )

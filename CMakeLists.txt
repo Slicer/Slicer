@@ -153,6 +153,7 @@ set(LAUNCH_EXE ${Slicer3_BINARY_DIR}/Slicer3 --launch)
 if(Slicer3_BUILD_TESTING)
   enable_testing()
   include(CTest)
+  set(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   mark_as_advanced(TCL_TCLSH DART_ROOT)
 endif(Slicer3_BUILD_TESTING)
 
