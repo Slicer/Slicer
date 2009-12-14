@@ -4,8 +4,11 @@
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerModulePanelPlugin.h"
 #include "qSlicerModuleSelectorWidgetPlugin.h"
-#include "qSlicerQTGUIPluginWin32Header.h"
+
+// QT includes
 #include <QDesignerCustomWidgetCollectionInterface>
+
+#include "qSlicerQTGUIPluginExport.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugins : public QObject,

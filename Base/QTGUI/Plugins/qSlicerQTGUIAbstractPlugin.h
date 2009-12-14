@@ -1,8 +1,10 @@
 #ifndef __qSlicerQTGUIAbstractPlugin_h
 #define __qSlicerQTGUIAbstractPlugin_h
 
+// QT includes
 #include <QDesignerCustomWidgetInterface>
-#include "qSlicerQTGUIPluginWin32Header.h"
+
+#include "qSlicerQTGUIPluginExport.h"
 
 class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin :
   public QDesignerCustomWidgetInterface
