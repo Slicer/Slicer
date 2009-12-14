@@ -52,7 +52,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
     this->AppLogic = 0;
     this->MRMLScene = 0;
     this->ModuleManager = 0;
-    this->IOManager = 0; 
+    this->CoreIOManager = 0; 
     }
 
   ~qSlicerCoreApplicationPrivate()
@@ -62,7 +62,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
       this->ModuleManager->factory()->uninstantiateAll();
       delete this->ModuleManager; 
       }
-    if (this->IOManager) { delete this->IOManager; }
+    if (this->CoreIOManager) { delete this->CoreIOManager; }
     if (this->AppLogic) { this->AppLogic->Delete(); }
     if (this->MRMLScene) { this->MRMLScene->Delete(); }
     }
@@ -92,7 +92,7 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 
   // Description:
   // IOManager - It should exist only one instance of the factory
-  qSlicerCoreIOManager*                IOManager;
+  qSlicerCoreIOManager*                CoreIOManager;
 
   // For ::PutEnv
   // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
@@ -179,8 +179,8 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
   d->MRMLScene->Register(NULL);
 
   // Update IO Manager
-  Q_ASSERT(d->IOManager);
-  d->IOManager->setMRMLScene(mrmlScene);
+  Q_ASSERT(d->CoreIOManager);
+  d->CoreIOManager->setMRMLScene(mrmlScene);
   
   emit this->currentMRMLSceneChanged(mrmlScene);
 }
@@ -275,8 +275,8 @@ QCTK_SET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, setModuleManager, Mo
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setCoreIOManager, IOManager);
-QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, IOManager);
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setCoreIOManager, CoreIOManager);
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, CoreIOManager);
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
