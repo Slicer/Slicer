@@ -80,17 +80,25 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build the library
-
+SET(srcs
+  ${vtkTeem_SRCS}
+  )
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${vtkTeem_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
 set(lib_name vtkTeem)
 add_library(${lib_name} 
-  ${vtkTeem_SRCS} 
-  ${vtkTeem_TCL_SRCS} 
+  ${srcs}
   )
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
@@ -104,13 +112,25 @@ else ( ${Teem_VERSION_MAJOR} GREATER 1 )
   endif ( ${Teem_VERSION_MINOR} LESS 10 )
 endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
-target_link_libraries(${lib_name} 
+SET(libs
   vtkCommon
   vtkFiltering
-  vtkImagingTCL
-  vtkIOTCL
-  vtkGraphicsTCL
   ${Teem_LIBRARIES}
+  vtkImaging
+  vtkIO
+  vtkGraphics
+  )
+IF (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkImagingTCL
+    vtkIOTCL
+    vtkGraphicsTCL
+    )
+ENDIF (VTK_WRAP_TCL)
+
+target_link_libraries(${lib_name}
+  ${libs}
   )
 
 # Apply user-defined properties to the library target.

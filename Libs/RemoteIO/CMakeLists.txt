@@ -86,24 +86,45 @@ set(RemoteIO_SRCS
 
 # --------------------------------------------------------------------------
 # Wrapping
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(RemoteIO RemoteIO_TCL_SRCS "${RemoteIO_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(RemoteIO RemoteIO_TCL_SRCS "${RemoteIO_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build and install the library
 
 set(lib_name RemoteIO)
-add_library(${lib_name}
-  ${RemoteIO_SRCS} 
-  ${RemoteIO_TCL_SRCS}
+SET(srcs
+  ${RemoteIO_SRCS}
   )
-target_link_libraries(${lib_name}
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${RemoteIO_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
+add_library(${lib_name}
+  ${srcs}
+  )
+  
+SET(libs
   vtkIO
-  vtkIOTCL
-  vtkCommonTCL
   itksys
   ${SLICERLIBCURL_LIBRARIES}
   MRML
+  vtkIO
+  vtkCommon
+  )
+IF (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkIOTCL
+    vtkCommonTCL
+    )
+ENDIF (VTK_WRAP_TCL)
+target_link_libraries(${lib_name}
+  ${libs}
   )
 
 # Apply user-defined properties to the library target.

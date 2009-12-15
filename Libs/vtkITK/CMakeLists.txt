@@ -86,22 +86,32 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build the library
 
 set(lib_name vtkITK)
-add_library(${lib_name} 
-  ${vtkITK_SRCS} 
-  ${vtkITK_TCL_SRCS} 
+
+SET(srcs
+  ${vtkITK_SRCS}
   )
-target_link_libraries(${lib_name} 
-  vtkCommonTCL
-  vtkFilteringTCL
-  vtkImagingTCL
+
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${vtkITK_TCL_SRCS}
+    )
+ENDIF(VTK_WRAP_TCL)
+
+add_library(${lib_name} 
+  ${srcs}
+  )
+  
+SET(libs
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
@@ -111,6 +121,20 @@ target_link_libraries(${lib_name}
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
+  vtkCommon
+  vtkFiltering
+  vtkImaging
+  )
+IF (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkCommonTCL
+    vtkFilteringTCL
+    vtkImagingTCL
+    )
+ENDIF (VTK_WRAP_TCL)
+target_link_libraries(${lib_name} 
+  ${libs}
   )
 
 # Apply user-defined properties to the library target.

@@ -51,23 +51,46 @@ set(FreeSurfer_SRCS
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build and install the library
 
 set(lib_name FreeSurfer)
-add_library(${lib_name} 
+SET(srcs
   ${FreeSurfer_SRCS} 
-  ${FreeSurfer_TCL_SRCS}
+  )
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${FreeSurfer_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
+add_library(${lib_name} 
+  ${srcs}
   )
 
-target_link_libraries(${lib_name} 
+SET(libs
   vtkIO
-  vtkCommonTCL
-  vtkIOTCL
+  )
+IF (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkCommonTCL
+    vtkIOTCL
+    )
+ELSE(VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkCommon
+    vtkIO
+    )
+ENDIF (VTK_WRAP_TCL)
+target_link_libraries(${lib_name} 
+  ${libs}
   )
 
 # Apply user-defined properties to the library target.

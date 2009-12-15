@@ -71,22 +71,39 @@ INCLUDE_DIRECTORIES(
 
 # --------------------------------------------------------------------------
 # Build the library
-
-## Set the Libraries we link
 SET(CudaSupport_LIBRARIES
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  
+  vtkCommon
+  vtkImaging
+  vtkFiltering
+  )
+IF (VTK_WRAP_TCL)
+  SET(CudaSupport_LIBRARIES
+    ${CudaSupport_LIBRARIES}
+    vtkCommonTCL
+    vtkImagingTCL
+    vtkFilteringTCL
+    )
+ENDIF (VTK_WRAP_TCL)
+## Set the Libraries we link
+SET(CudaSupport_LIBRARIES
+  ${CudaSupport_LIBRARIES}
   ${CUDA_TARGET_LINK}
  )
 
-ADD_LIBRARY(CudaSupport
+SET(srcs
   ${CudaSupport_SRCS}
-  ${CudaSupport_TCL_SRCS}
+  )
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${CudaSupport_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
+ADD_LIBRARY(CudaSupport
+  ${srcs}
   )
 
 IF(BUILD_SHARED_LIBS)

@@ -206,28 +206,29 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+  vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build and install the library
-
+SET(srcs
+  ${MRML_SRCS}
+  )
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${MRML_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
 set(lib_name MRML)
 add_library(${lib_name} 
-  ${MRML_SRCS} 
-  ${MRML_TCL_SRCS}
+  ${srcs}
   )
-target_link_libraries(${lib_name}
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkGraphicsTCL
-  vtkRenderingTCL
-  vtkHybridTCL
+
+SET(libs
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
@@ -238,6 +239,29 @@ target_link_libraries(${lib_name}
   ITKIO
   ITKDICOMParser
   FreeSurfer
+  vtkITK
+  vtkCommon
+  vtkImaging
+  vtkFiltering
+  vtkIO
+  vtkGraphics
+  vtkRendering
+  vtkHybrid
+  )
+IF (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkCommonTCL
+    vtkImagingTCL
+    vtkFilteringTCL
+    vtkIOTCL
+    vtkGraphicsTCL
+    vtkRenderingTCL
+    vtkHybridTCL
+    )
+ENDIF (VTK_WRAP_TCL)
+target_link_libraries(${lib_name}
+  ${libs}
   )
 
 if(MRML_USE_Teem)
