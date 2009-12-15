@@ -20,6 +20,8 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 {
   qSlicerModuleFactory moduleFactory;
 
+  moduleFactory.registerCoreModules();
+
   moduleFactory.printAdditionalInfo();
 
   QString moduleName = "qSlicerTransformsModule";
@@ -68,8 +70,6 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
     }
 
   moduleFactory.uninstantiateAll();
-
-  moduleFactory.registerCoreModules();
 
   QStringList paths;  // FIXME: Initialize it from argv
 
