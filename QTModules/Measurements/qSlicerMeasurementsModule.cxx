@@ -22,3 +22,10 @@ qSlicerAbstractModuleWidget * qSlicerMeasurementsModule::createWidgetRepresentat
 {
   return new qSlicerMeasurementsModuleWidget;
 }
+
+//-----------------------------------------------------------------------------
+qSlicerModuleLogic* qSlicerMeasurementsModule::createLogic()
+{
+  //return new qSlicerMeasurementsModuleLogic;
+  return 0; 
+}

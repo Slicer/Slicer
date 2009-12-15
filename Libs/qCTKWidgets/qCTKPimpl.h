@@ -57,7 +57,7 @@ function (this one's actually a function).
  * Also make sure the Pimpl is initalized
  */
 #define QCTK_CONSTRUCTOR_NO_ARG_CXX(PUB) \
-  PUB::PUB() :                           \
+  PUB::PUB()                             \
     {                                    \
     QCTK_INIT_PRIVATE(PUB);              \
     }

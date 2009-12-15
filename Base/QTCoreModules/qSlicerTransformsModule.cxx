@@ -31,6 +31,13 @@ qSlicerAbstractModuleWidget * qSlicerTransformsModule::createWidgetRepresentatio
 }
 
 //-----------------------------------------------------------------------------
+qSlicerModuleLogic* qSlicerTransformsModule::createLogic()
+{
+  //return new qSlicerTransformsModuleLogic;
+  return 0; 
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerTransformsModule::helpText()const
 {
   QString help =

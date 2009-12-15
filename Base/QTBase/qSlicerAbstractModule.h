@@ -105,7 +105,7 @@ protected:
   // Description:
   // create and return the module logic
   // Note: Only one instance of the logic will exist per module
-  virtual qSlicerModuleLogic* createLogic(){ return 0;};
+  virtual qSlicerModuleLogic* createLogic() = 0;
   
 
 private:

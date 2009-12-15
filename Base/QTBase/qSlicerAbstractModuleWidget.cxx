@@ -19,14 +19,15 @@
 // SlicerLogic includes
 // #include "vtkSlicerApplicationLogic.h"
 
-// QT includes
-#include <QPointer>
-
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
   QString Name;
-  QPointer<qSlicerModuleLogic> Logic;
+  
+  // Since by design qSlicerModuleLogic isn't a QObject, Logic couldn't be a QPointer.
+  // We are also sure it won't be dangling pointer. Indeed, qSlicerAbstractModuleWidget
+  // is repsonsible of creating widget representation and the corresponding logic.
+  qSlicerModuleLogic*  Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -46,9 +47,12 @@ void qSlicerAbstractModuleWidget::initialize(/*vtkSlicerApplicationLogic* appLog
 }
 
 //-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerAbstractModuleWidget, qSlicerModuleLogic*, logic, Logic);
+
+//-----------------------------------------------------------------------------
 void qSlicerAbstractModuleWidget::setLogic(qSlicerModuleLogic* logic)
 {
-  // setLogic should be called only one time, the logic object should also be valid ...
+  // setLogic should be called only one time with valid object...
   Q_ASSERT(logic);
   QCTK_D(qSlicerAbstractModuleWidget);
   d->Logic = logic; 

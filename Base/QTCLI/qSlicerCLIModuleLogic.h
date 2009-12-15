@@ -44,9 +44,7 @@ public:
 
   typedef qSlicerCLIModuleLogic Self;
   typedef qSlicerModuleLogic Superclass;
-  qSlicerCLIModuleLogic(QObject *parent);
-
-  virtual void printAdditionalInfo();
+  qSlicerCLIModuleLogic();
 
   virtual void setup();
 

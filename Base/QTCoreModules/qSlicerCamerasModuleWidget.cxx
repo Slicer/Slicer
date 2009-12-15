@@ -14,15 +14,30 @@
 #include "qSlicerCamerasModuleWidget.h"
 #include "ui_qSlicerCamerasModule.h"
 
+// SlicerQT includes
+#include "qSlicerCamerasModuleLogic.h"
+
+// MRML includes
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLCameraNode.h"
 
+// QT includes
 #include <vector>
 
 //-----------------------------------------------------------------------------
 struct qSlicerCamerasModuleWidgetPrivate: public qCTKPrivate<qSlicerCamerasModuleWidget>,
                                     public Ui_qSlicerCamerasModule
 {
+  QCTK_DECLARE_PUBLIC(qSlicerCamerasModuleWidget);
+  
+  // Description:
+  // Convenient function to cast qSlicerModuleLogic into qSlicerCamerasModuleLogic
+  qSlicerCamerasModuleLogic* logic()
+    {
+    QCTK_P(qSlicerCamerasModuleWidget);
+    // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
+    return dynamic_cast<qSlicerCamerasModuleLogic*>(p->logic());
+    }
 };
 
 //-----------------------------------------------------------------------------

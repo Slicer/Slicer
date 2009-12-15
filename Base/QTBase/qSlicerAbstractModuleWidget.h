@@ -53,8 +53,9 @@ protected:
   virtual void setup() = 0;
 
   // Description:
-  // Set associated Logic
+  // Set/Get associated Logic
   void setLogic(qSlicerModuleLogic* logic);
+  qSlicerModuleLogic* logic() const; 
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);

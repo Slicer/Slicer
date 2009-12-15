@@ -115,13 +115,7 @@ struct qSlicerCLIModuleLogicPrivate: public qCTKPrivate<qSlicerCLIModuleLogic>
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCLIModuleLogic, QObject*);
-
-//-----------------------------------------------------------------------------
-void qSlicerCLIModuleLogic::printAdditionalInfo()
-{
-  this->Superclass::printAdditionalInfo();
-}
+QCTK_CONSTRUCTOR_NO_ARG_CXX(qSlicerCLIModuleLogic);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleLogic::setup()

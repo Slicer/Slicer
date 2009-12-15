@@ -39,12 +39,11 @@ QCTK_SET_CXX(qSlicerModuleLogic, vtkMRMLScene*, setMRMLScene, MRMLScene);
 QCTK_GET_CXX(qSlicerModuleLogic, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerModuleLogic, QObject*);
+QCTK_CONSTRUCTOR_NO_ARG_CXX(qSlicerModuleLogic);
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleLogic::printAdditionalInfo()
+qSlicerModuleLogic::~qSlicerModuleLogic()
 {
-  //this->Superclass::printAdditionalInfo();
 }
 
 //-----------------------------------------------------------------------------

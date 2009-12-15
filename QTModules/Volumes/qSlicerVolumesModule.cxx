@@ -24,3 +24,10 @@ qSlicerAbstractModuleWidget * qSlicerVolumesModule::createWidgetRepresentation()
 {
   return new qSlicerVolumesModuleWidget;
 }
+
+//-----------------------------------------------------------------------------
+qSlicerModuleLogic* qSlicerVolumesModule::createLogic()
+{
+  //return new qSlicerVolumesModuleLogic;
+  return 0; 
+}

@@ -15,6 +15,7 @@
 
 // SlicerQT includes
 #include "qSlicerCamerasModuleWidget.h"
+#include "qSlicerCamerasModuleLogic.h"
 
 //-----------------------------------------------------------------------------
 struct qSlicerCamerasModulePrivate: public qCTKPrivate<qSlicerCamerasModule>
@@ -28,6 +29,12 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
 qSlicerAbstractModuleWidget * qSlicerCamerasModule::createWidgetRepresentation()
 {
   return new qSlicerCamerasModuleWidget;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerModuleLogic* qSlicerCamerasModule::createLogic()
+{
+  return new qSlicerCamerasModuleLogic;
 }
 
 //-----------------------------------------------------------------------------

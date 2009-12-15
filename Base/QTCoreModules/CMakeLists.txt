@@ -16,8 +16,11 @@ SET(slicer_qtbase_include_directories
 SET(slicer_qtbase_SRCS
   qSlicerCamerasModule.cxx
   qSlicerCamerasModule.h
+  qSlicerCamerasModuleLogic.cxx
+  qSlicerCamerasModuleLogic.h
   qSlicerCamerasModuleWidget.cxx
   qSlicerCamerasModuleWidget.h
+  
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.cxx
@@ -28,6 +31,7 @@ SET(slicer_qtbase_SRCS
 SET(slicer_qtbase_MOC_SRCS
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.h
+  
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h
   )

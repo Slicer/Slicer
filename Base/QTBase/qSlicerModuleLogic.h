@@ -17,9 +17,6 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
-#include <QObject>
-
 #include "qSlicerBaseQTBaseWin32Header.h"
 
 class vtkMRMLScene;
@@ -27,15 +24,12 @@ class vtkSlicerApplicationLogic;
 class qSlicerModuleLogicPrivate;
 class qSlicerAbstractModule;
 
-class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic: public QObject
+class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic
 {
-//   Q_OBJECT
 public:
 
-  typedef QObject Superclass;
-  qSlicerModuleLogic(QObject *parent);
-
-  virtual void printAdditionalInfo();
+  qSlicerModuleLogic();
+  virtual ~qSlicerModuleLogic();
 
   void initialize(vtkSlicerApplicationLogic* appLogic);
 

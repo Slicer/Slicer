@@ -57,7 +57,7 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
 void qSlicerCLIModule::setup()
 {
   QCTK_D(qSlicerCLIModule);
-  d->Logic = new qSlicerCLIModuleLogic(this);
+  d->Logic = new qSlicerCLIModuleLogic;
   d->Logic->initialize(this->appLogic());
 }
 
@@ -66,6 +66,13 @@ qSlicerAbstractModuleWidget * qSlicerCLIModule::createWidgetRepresentation()
 {
   QCTK_D(qSlicerCLIModule);
   return new qSlicerCLIModuleWidget(&d->Desc);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerModuleLogic* qSlicerCLIModule::createLogic()
+{
+  //return new qSlicerCLIModuleLogic;
+  return 0; 
 }
 
 //-----------------------------------------------------------------------------
