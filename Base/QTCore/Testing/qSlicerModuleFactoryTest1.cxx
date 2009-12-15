@@ -26,11 +26,17 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 
   QString moduleTitle = moduleFactory.getModuleTitle( moduleName ); 
 
+  std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
+
+  std::cout << "Module Title = " << qPrintable( moduleTitle ) << std::endl;
+
   QString moduleName1 = moduleFactory.getModuleName( moduleTitle ); 
   
   if( moduleName1 != moduleName )
     {
     std::cerr << "Error in getModuleTitle() or getModuleName()" << std::endl;
+    std::cerr << "Module Name  = " << qPrintable( moduleName ) << std::endl;
+    std::cerr << "Module Name1 = " << qPrintable( moduleName1 ) << std::endl;
     return EXIT_FAILURE;
     }
 
