@@ -26,8 +26,6 @@ SET(slicer_qtbase_SRCS
   qSlicerAbstractModuleWidget.h
   qSlicerModuleLogic.cxx
   qSlicerModuleLogic.h
-  qSlicerIOManager.cxx
-  qSlicerIOManager.h
   )
 
 # Headers that should run through moc
