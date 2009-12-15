@@ -18,8 +18,10 @@
 
 #include "vtkSlicerColorLogic.h"
 
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 #include "vtkKWTkUtilities.h"
 #include "vtkKWApplication.h"
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
@@ -638,12 +640,14 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->WriteDataQueueActive = true;
     this->WriteDataQueueActiveLock->Unlock();
 
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessWriteData");
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
     }
 }
 
@@ -1006,6 +1010,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
       }
     this->ModifiedQueueLock->Unlock();
     
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
     // if this is a string array, try to evaluate the entries in the interp
     //  - this allows threads to indirectly access the interpreter
     vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj );
@@ -1029,6 +1034,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
           }
         }
       }
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 
     // Modify the object
     //  - decrement reference count that was increased when it was added to the queue
@@ -1039,7 +1045,8 @@ void vtkSlicerApplicationLogic::ProcessModified()
       obj = 0;
       }
   }
-  
+
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalModifiedQueue).size() > 0)
     {
@@ -1053,6 +1060,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
     }
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 }
 
 void vtkSlicerApplicationLogic::ProcessReadData()
@@ -1089,7 +1097,8 @@ void vtkSlicerApplicationLogic::ProcessReadData()
         }
       }
     }
-  
+
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalReadDataQueue).size() > 0)
     {
@@ -1103,6 +1112,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
     }
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 }
 
 void vtkSlicerApplicationLogic::ProcessWriteData()
@@ -1139,7 +1149,8 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
         }
       }
     }
-  
+
+#if defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalWriteDataQueue).size() > 0)
     {
@@ -1153,6 +1164,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessWriteData");
     }
+#endif //defined(VTK_WRAP_TCL) && defined(Slicer3_USE_KWWIDGETS)
 }
 
 

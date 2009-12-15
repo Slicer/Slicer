@@ -92,29 +92,55 @@ set(SlicerBaseLogic_SRCS
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-vtk_wrap_tcl3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
+IF (VTK_WRAP_TCL)
+  set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+  vtk_wrap_tcl3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build the library
 
 set(lib_name SlicerBaseLogic)
-add_library(${lib_name} 
-  ${SlicerBaseLogic_SRCS} ${SlicerBaseLogic_TCL_SRCS} 
+
+SET(srcs
+  ${SlicerBaseLogic_SRCS}
   )
-target_link_libraries(${lib_name} 
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${SlicerBaseLogic_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
+
+add_library(${lib_name} 
+  ${srcs}
+  )
+
+SET(libs
   MRML
-  ${KWWidgets_LIBRARIES}
   vtkITK
-  vtkCommonTCL
-  vtkFilteringTCL
-  vtkGraphicsTCL
-  vtkIOTCL
-  vtkHybridTCL
   ${OPENTRACKER_LIB}
   FreeSurfer
   vtkTeem
+  vtkCommon
+  vtkFiltering
+  vtkGraphics
+  vtkIO
+  vtkHybrid
+  )
+IF (VTK_WRAP_TCL AND Slicer3_USE_KWWIDGETS)
+  SET(libs
+    ${libs}
+    ${KWWidgets_LIBRARIES}
+    vtkCommonTCL
+    vtkFilteringTCL
+    vtkGraphicsTCL
+    vtkIOTCL
+    vtkHybridTCL
+    )
+ENDIF (VTK_WRAP_TCL AND Slicer3_USE_KWWIDGETS)
+target_link_libraries(${lib_name} 
+  ${libs}
   )
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
