@@ -2,7 +2,6 @@
 #define __qCTKCollapsibleButtonPlugin_h
 
 #include "qCTKWidgetsAbstractPlugin.h"
-#include "qCTKWidgetsPluginWin32Header.h"
 
 class QCTK_WIDGETS_PLUGIN_EXPORT qCTKCollapsibleButtonPlugin : public QObject,
                                          public qCTKWidgetsAbstractPlugin
