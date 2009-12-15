@@ -118,16 +118,18 @@ endmacro(slicer3_enable_plugins_testing)
 
 #-----------------------------------------------------------------------------
 # Test a plugin
-# 
-include("${KWWidgets_CMAKE_DIR}/KWWidgetsTestingMacros.cmake")
-macro(slicer3_add_plugins_test test_name clp_to_test)
-  set(build_type ".")
-  if(WIN32 AND CMAKE_CONFIGURATION_TYPES)
-    # Sadly, there is no way to know if the user picked Debug or Release
-    # here, so we are going to have to stick to the value of CMAKE_BUILD_TYPE
-    # if it has been set explicitly (by a dashboard for example), or the
-    # first value in CMAKE_CONFIGURATION_TYPES (i.e. Debug)/
-    kwwidgets_get_cmake_build_type(build_type)
-  endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
-  add_test(${test_name} ${Slicer3_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN}) 
-endmacro(slicer3_add_plugins_test)
+#
+IF (Slicer3_USE_KWWIDGETS)
+  include("${KWWidgets_CMAKE_DIR}/KWWidgetsTestingMacros.cmake")
+  macro(slicer3_add_plugins_test test_name clp_to_test)
+    set(build_type ".")
+    if(WIN32 AND CMAKE_CONFIGURATION_TYPES)
+      # Sadly, there is no way to know if the user picked Debug or Release
+      # here, so we are going to have to stick to the value of CMAKE_BUILD_TYPE
+      # if it has been set explicitly (by a dashboard for example), or the
+      # first value in CMAKE_CONFIGURATION_TYPES (i.e. Debug)/
+      kwwidgets_get_cmake_build_type(build_type)
+    endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
+    add_test(${test_name} ${Slicer3_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN})
+  endmacro(slicer3_add_plugins_test)
+ENDIF (Slicer3_USE_KWWIDGETS)

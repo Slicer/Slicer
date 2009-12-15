@@ -1,18 +1,19 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
+IF (VTK_WRAP_TCL)
+  if(TCL_INCLUDE_PATH)
+    get_filename_component(TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
+  else(TCL_INCLUDE_PATH)
+    set(TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
+  endif(TCL_INCLUDE_PATH)
 
-if(TCL_INCLUDE_PATH)
-  get_filename_component(TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
-else(TCL_INCLUDE_PATH)
-  set(TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
-endif(TCL_INCLUDE_PATH)
-
-if(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
+  if(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
+      NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+    message(STATUS "Not Packaging TCL (cannot found: ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
+    set(TCL_DIR "")
+  endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
     NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-  message(STATUS "Not Packaging TCL (cannot found: ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
-  set(TCL_DIR "")
-endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
-  NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+ENDIF (VTK_WRAP_TCL)
 
 # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
 # ends up installing the whole /usr/local to the Slicer3 install tree :(
@@ -22,13 +23,15 @@ endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
 #  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
 # like /opt/tcltk8.5.0)
 
-if(TCL_DIR)
-  install(DIRECTORY
-    ${TCL_DIR}/
-    DESTINATION lib/TclTk
-    USE_SOURCE_PERMISSIONS
-    )
-endif(TCL_DIR)
+IF (VTK_WRAP_TCL)
+  if(TCL_DIR)
+    install(DIRECTORY
+      ${TCL_DIR}/
+      DESTINATION lib/TclTk
+      USE_SOURCE_PERMISSIONS
+      )
+  endif(TCL_DIR)
+ENDIF (VTK_WRAP_TCL)
 
 # In the following section we tell the packager to include libslicerlibcurl.so
 # in the CPACK package, because we build it as a .so on Solaris,
@@ -152,9 +155,11 @@ endif(EXISTS "${VTK_DIR}/CMakeCache.txt")
 if(EXISTS "${ITK_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;ALL;/")
 endif(EXISTS "${ITK_DIR}/CMakeCache.txt")
-if(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
-endif(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+IF (Slicer3_USE_KWWIDGETS)
+  if(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
+  endif(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+ENDIF (Slicer3_USE_KWWIDGETS)
 if(EXISTS "${Teem_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;ALL;/")
 endif(EXISTS "${Teem_DIR}/CMakeCache.txt")
