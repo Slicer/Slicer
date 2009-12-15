@@ -13,13 +13,20 @@
 
 #include "qSlicerAbstractModuleWidget.h"
 
+// SlicerQT includes
+#include "qSlicerModuleLogic.h"
+
 // SlicerLogic includes
 // #include "vtkSlicerApplicationLogic.h"
+
+// QT includes
+#include <QPointer>
 
 //-----------------------------------------------------------------------------
 struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
   QString Name;
+  QPointer<qSlicerModuleLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -36,4 +43,13 @@ void qSlicerAbstractModuleWidget::initialize(/*vtkSlicerApplicationLogic* appLog
   //Q_ASSERT(appLogic);
   //this->setAppLogic(appLogic);
   this->setup();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModuleWidget::setLogic(qSlicerModuleLogic* logic)
+{
+  // setLogic should be called only one time, the logic object should also be valid ...
+  Q_ASSERT(logic);
+  QCTK_D(qSlicerAbstractModuleWidget);
+  d->Logic = logic; 
 }

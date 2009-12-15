@@ -26,7 +26,8 @@
 
 #include "qSlicerBaseQTBaseWin32Header.h"
 
-class qSlicerAbstractModuleWidget; 
+class qSlicerAbstractModuleWidget;
+class qSlicerModuleLogic; 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class QAction; 
@@ -61,14 +62,21 @@ public:
   virtual QString acknowledgementText()const { return "";}
 
   // Description:
-  // This method allows to get a pointer to the WidgetRepresentation created by
-  // method 'createWidgetRepresentation'
+  // This method allows to get a pointer to the WidgetRepresentation.
+  // If no WidgetRepresentation already exists, one will be created calling
+  // 'createWidgetRepresentation' method.
   qSlicerAbstractModuleWidget* widgetRepresentation();
 
   // Description:
   // Set the application logic
   //void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;
+
+  // Description:
+  // This method allows to get a pointer to the ModuleLogic.
+  // If no moduleLogic already exists, one will be created calling
+  // 'createLogic' method.
+  qSlicerModuleLogic* logic();
 
   // Description:
   // Return a pointer on the MRML scene
@@ -91,8 +99,14 @@ protected:
   virtual void setup() = 0;
 
   // Description:
-  // Create and return a widget representation of the module.
+  // Create and return a widget representation for the module.
   virtual qSlicerAbstractModuleWidget* createWidgetRepresentation() = 0;
+
+  // Description:
+  // create and return the module logic
+  // Note: Only one instance of the logic will exist per module
+  virtual qSlicerModuleLogic* createLogic(){ return 0;};
+  
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerAbstractModule);

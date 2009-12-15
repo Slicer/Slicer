@@ -21,6 +21,7 @@
 #include "qSlicerBaseQTBaseWin32Header.h"
 
 // class vtkSlicerApplicationLogic;
+class qSlicerModuleLogic;
 class qSlicerAbstractModule; 
 class QAction; 
 class qSlicerAbstractModuleWidgetPrivate;
@@ -51,8 +52,15 @@ protected:
   // All inialization code should be done in the setup
   virtual void setup() = 0;
 
+  // Description:
+  // Set associated Logic
+  void setLogic(qSlicerModuleLogic* logic);
+
 private:
   QCTK_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);
+
+  // Give access to method setLogic
+  friend class qSlicerAbstractModule;
 };
 
 #endif

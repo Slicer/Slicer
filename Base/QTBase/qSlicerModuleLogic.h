@@ -25,6 +25,7 @@
 class vtkMRMLScene;
 class vtkSlicerApplicationLogic;
 class qSlicerModuleLogicPrivate;
+class qSlicerAbstractModule;
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerModuleLogic: public QObject
 {
@@ -53,6 +54,9 @@ protected:
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerModuleLogic);
+
+  // Give access to setMRMLScene method
+  friend class qSlicerAbstractModule; 
 };
 
 #endif
