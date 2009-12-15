@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <QString>
+#include <QStringList>
 #include <iostream>
 
 int qSlicerModuleFactoryTest1(int argc, char * argv [] )
@@ -21,7 +22,7 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 
   moduleFactory.printAdditionalInfo();
 
-  QString moduleName = "module";
+  QString moduleName = "qSlicerTransformsModule";
 
   QString moduleTitle = moduleFactory.getModuleTitle( moduleName ); 
 
@@ -34,6 +35,41 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
     }
 
   QString moduleTitle1 = moduleFactory.getModuleTitle( moduleName ); 
+
+  if( moduleTitle1 != moduleTitle )
+    {
+    std::cerr << "Error in getModuleTitle()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerAbstractModule * abstractModule = moduleFactory.instantiateModule( moduleName );
+
+  if( abstractModule == NULL )
+    {
+    std::cerr << "Error in instantiateModule()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  moduleFactory.uninstantiateModule( moduleName );
+
+  // Instantiate again
+  abstractModule = moduleFactory.instantiateModule( moduleName );
+
+  if( abstractModule == NULL )
+    {
+    std::cerr << "Error in instantiateModule()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  moduleFactory.uninstantiateAll();
+
+  moduleFactory.registerCoreModules();
+
+  QStringList paths;  // FIXME: Initialize it from argv
+
+  moduleFactory.setLoadableModuleSearchPaths( paths );
+
+  QStringList loadableModulePaths = moduleFactory.loadableModuleSearchPaths();
 
   return EXIT_SUCCESS;
 }
