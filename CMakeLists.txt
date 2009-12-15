@@ -158,6 +158,20 @@ if(Slicer3_BUILD_TESTING)
 endif(Slicer3_BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
+# By default, build with KWWidget
+#
+option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." ON)
+
+#-----------------------------------------------------------------------------
+# Since modules are KWWidgets based, unset there variables
+IF (NOT Slicer3_USE_KWWIDGETS)
+  UNSET(Slicer3_INSTALL_MODULES_BIN_DIR)
+  UNSET(Slicer3_INSTALL_MODULES_LIB_DIR)
+  UNSET(Slicer3_INSTALL_MODULES_INCLUDE_DIR)
+  UNSET(Slicer3_INSTALL_MODULES_SHARE_DIR)
+ENDIF (NOT Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
 # Libs
 # - ITK
 # - KWWidgets (pulls in VTK)
@@ -167,17 +181,21 @@ endif(Slicer3_BUILD_TESTING)
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
 
-set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
+IF (Slicer3_USE_KWWIDGETS)
+  set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
+ENDIF(Slicer3_USE_KWWIDGETS)
 set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
 set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
 set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
- 
+
+#-----------------------------------------------------------------------------
 ## Python
 option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
 if(Slicer3_USE_PYTHON)
   find_package(PythonLibs)
 endif(Slicer3_USE_PYTHON)
 
+#-----------------------------------------------------------------------------
 ## ITK
 find_package(ITK REQUIRED)
 if(NOT ITK_FOUND)
@@ -185,19 +203,53 @@ if(NOT ITK_FOUND)
 endif(NOT ITK_FOUND)
 include(${ITK_USE_FILE})
 
-## KWWidgets
-find_package(KWWidgets REQUIRED)
-if(NOT KWWidgets_FOUND)
-  message(FATAL_ERROR "Need KWWidgets to build")
-endif(NOT KWWidgets_FOUND)
-include(${KWWidgets_USE_FILE})
+#-----------------------------------------------------------------------------
+IF (Slicer3_USE_KWWIDGETS)
+  ## KWWidgets
+  FIND_PACKAGE(KWWidgets REQUIRED)
+  IF(NOT KWWidgets_FOUND)
+    MESSAGE(FATAL_ERROR "Need KWWidgets to build")
+  ENDIF(NOT KWWidgets_FOUND)
+  INCLUDE(${KWWidgets_USE_FILE})
+ELSE(Slicer3_USE_KWWIDGETS)
+  FIND_PACKAGE(VTK REQUIRED)
+  IF(NOT VTK_FOUND)
+    MESSAGE(FATAL_ERROR "Need VTK to build with ")
+  ELSE(NOT VTK_FOUND)
+    IF(NOT VTK_USE_QVTK)
+      MESSAGE("Please make sure VTK is build with VTK_USE_GUISUPPORT and VTK_USE_QVTK enabled")
+    ENDIF(NOT VTK_USE_QVTK)
+  ENDIF(NOT VTK_FOUND)
+  INCLUDE(${VTK_USE_FILE})
+ENDIF (Slicer3_USE_KWWIDGETS)
 
-## Qt
+#-----------------------------------------------------------------------------
+IF (Slicer3_USE_KWWIDGETS)
+  ADD_DEFINITIONS(-DSlicer3_USE_KWWIDGETS)
+ENDIF(Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
 #
 # Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
 #
 SLICER3_SETUP_QT()
 
+#-----------------------------------------------------------------------------
+# Alert the user if both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are OFF
+IF(NOT Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+  MESSAGE(FATAL_ERROR "Both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are OFF. Please, choose one")
+ENDIF(NOT Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+# If Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
+# Note: Later on we will expect VTK_WRAP_PYTHON to be one
+IF(Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+  IF(VTK_WRAP_TCL)
+    MESSAGE(FATAL_ERROR "For now, if Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
+  ENDIF(VTK_WRAP_TCL)
+ENDIF(Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
 ## Teem
 find_package(Teem REQUIRED)
 if(NOT Teem_FOUND)
@@ -205,12 +257,14 @@ if(NOT Teem_FOUND)
 endif(NOT Teem_FOUND)
 include(${Teem_USE_FILE})
 
+#-----------------------------------------------------------------------------
 ## SlicerLibCurl
 find_package(SLICERLIBCURL REQUIRED)
 if(SLICERLIBCURL_FOUND)
   include(${SLICERLIBCURL_USE_FILE})
 endif(SLICERLIBCURL_FOUND)
- 
+
+#-----------------------------------------------------------------------------
 ## BatchMake
 option(Slicer3_USE_BatchMake "Build Slicer3 with BatchMake support." OFF)
 if(Slicer3_USE_BatchMake)
@@ -218,9 +272,11 @@ if(Slicer3_USE_BatchMake)
   include(${BatchMake_USE_FILE})
 endif(Slicer3_USE_BatchMake)
 
+#-----------------------------------------------------------------------------
 ## MIDAS
 option(Slicer3_USE_MIDAS "Build Slicer3 with MIDAS support." OFF)
 
+#-----------------------------------------------------------------------------
 ## OpenIGTLink (Built in Slicer3-lib)
 option(Slicer3_USE_OPENIGTLINK "Build Slicer3 with OpenIGTLink support." OFF)
 if(Slicer3_USE_OPENIGTLINK)
@@ -230,35 +286,45 @@ endif(Slicer3_USE_OPENIGTLINK)
 
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
+  VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
+  set(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
+  set(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
+  IF(Slicer3_USE_KWWIDGETS)
+    include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
+    incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
+    set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
+    set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
+  ENDIF(Slicer3_USE_KWWIDGETS)
+ENDIF (VTK_WRAP_TCL)
 
-include("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
-VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
-set(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
-set(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
-
-include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
-incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
-set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
-set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
+#-----------------------------------------------------------------------------
+# 
+IF (VTK_WRAP_TCL)
+  ADD_DEFINITIONS(-DVTK_WRAP_TCL)
+ENDIF(VTK_WRAP_TCL)
 
 #-----------------------------------------------------------------------------
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
 #
-include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
-set(extra_dirs
-  "${Teem_DIR}/bin"
-  "${BatchMake_DIR}/bin"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_LIB_DIR}"
+IF (Slicer3_USE_KWWIDGETS)
+  include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
+  set(extra_dirs
+    "${Teem_DIR}/bin"
+    "${BatchMake_DIR}/bin"
+    "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
+    "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
+    "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}"
+    "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_LIB_DIR}"
+    )
+  kwwidgets_generate_setup_paths_scripts(
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
+    "${extra_dirs}"
   )
-kwwidgets_generate_setup_paths_scripts(
-  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
-  "${extra_dirs}"
-)
+ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # VTK 5.0 does not have VTK_CMAKE_DIR
@@ -267,26 +333,30 @@ kwwidgets_generate_setup_paths_scripts(
 #  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
 #  KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 #
-if(NOT VTK_CMAKE_DIR)
-  set(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
-endif(NOT VTK_CMAKE_DIR)
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+IF (Slicer3_USE_KWWIDGETS)
+  if(NOT VTK_CMAKE_DIR)
+    set(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
+  endif(NOT VTK_CMAKE_DIR)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # Check versions of VTK to track CVS HEAD
 #
-find_package(VTK REQUIRED)
-if(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-  include(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-else(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-  #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
-  include(${Slicer3_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
-endif(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+IF (Slicer3_USE_KWWIDGETS)
+  find_package(VTK REQUIRED)
+  if(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+    include(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+  else(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+    #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
+    include(${Slicer3_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
+  endif(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
 
-vtk_get_source_revision_and_date(VTKsource_revision VTKsource_date)
-if(VTKsource_revision LESS 1.2196)
-  message(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
-endif(VTKsource_revision LESS 1.2196) 
+  vtk_get_source_revision_and_date(VTKsource_revision VTKsource_date)
+  if(VTKsource_revision LESS 1.2196)
+    message(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
+  endif(VTKsource_revision LESS 1.2196)
+ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # These packages may exist within the Slicer3 source tree
@@ -354,21 +424,25 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_D
 # Modules and CLI
 #
 option(Slicer3_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
-option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
+IF (Slicer3_USE_KWWIDGETS)
+  option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
+ENDIF (Slicer3_USE_KWWIDGETS)
 
 include("${Slicer3_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
-include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
 
-if(Slicer3_BUILD_MODULES)
-  add_subdirectory(Modules)
-else(Slicer3_BUILD_MODULES)
-  # if Slicer3_BUILD_CLI is ON, we still need at least the CommandLineModule
-  # so that we can have CLI, without all the other modules
-  if(Slicer3_BUILD_CLI)
-    add_subdirectory(Modules/CommandLineModule)
-  endif(Slicer3_BUILD_CLI)
-endif(Slicer3_BUILD_MODULES)
-
+IF (Slicer3_USE_KWWIDGETS)
+  include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+  
+  if(Slicer3_BUILD_MODULES)
+    add_subdirectory(Modules)
+  else(Slicer3_BUILD_MODULES)
+    # if Slicer3_BUILD_CLI is ON, we still need at least the CommandLineModule
+    # so that we can have CLI, without all the other modules
+    if(Slicer3_BUILD_CLI)
+      add_subdirectory(Modules/CommandLineModule)
+    endif(Slicer3_BUILD_CLI)
+  endif(Slicer3_BUILD_MODULES)
+ENDIF (Slicer3_USE_KWWIDGETS)
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #
@@ -401,16 +475,18 @@ install(DIRECTORY
 #-----------------------------------------------------------------------------
 # Launcher for slicer
 #
-add_subdirectory(Utilities/Launcher)
+IF (Slicer3_USE_KWWIDGETS)
+  add_subdirectory(Utilities/Launcher)
 
-configure_file(
-  ${Slicer3_SOURCE_DIR}/launch.tcl.in
-  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
-  )
-install(
-  FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
-  DESTINATION ${Slicer3_INSTALL_LIB_DIR}
-  )
+  configure_file(
+    ${Slicer3_SOURCE_DIR}/launch.tcl.in
+    "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
+    )
+  install(
+    FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
+    DESTINATION ${Slicer3_INSTALL_LIB_DIR}
+    )
+ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # Package slicer
