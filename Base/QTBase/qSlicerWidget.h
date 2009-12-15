@@ -23,7 +23,7 @@
 // QT includes
 #include <QWidget>
 
-#include "qSlicerBaseQTBaseWin32Header.h"
+#include "qSlicerBaseQTBaseExport.h"
 
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;

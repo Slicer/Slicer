@@ -58,27 +58,15 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   # Configure
   #
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${SLICERQTBASELIB_EXPORT_DIRECTIVE})
-  SET(MY_WIN32_HEADER_PREFIX ${SLICERQTBASELIB_NAME})
+  SET(MY_EXPORT_HEADER_PREFIX ${SLICERQTBASELIB_NAME})
   SET(MY_LIBNAME ${lib_name})
   
   CONFIGURE_FILE(
-    ${SlicerBase_SOURCE_DIR}/qSlicerBaseConfigure.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h
+    ${SlicerBase_SOURCE_DIR}/qSlicerBaseExport.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
-  
-  CONFIGURE_FILE(
-    ${SlicerBase_SOURCE_DIR}/qSlicerBaseWin32Header.h.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h
-    )
-  
-  # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES 
-    ${headers} 
-    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h"
-    DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-    )
+  SET(dynamicHeaders
+    "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
     
   #-----------------------------------------------------------------------------
   # Sources
@@ -127,13 +115,19 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
   
-  # --------------------------------------------------------------------------
-  # Install the library
-  
+  # Install rules
   INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
   )
+
+  # Install headers
+  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  INSTALL(FILES 
+    ${headers}
+    ${dynamicHeaders}
+    DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    )
 
 ENDMACRO(Slicer3_build_slicer_qtbase_library)

@@ -7,7 +7,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTCoreModulesWin32Header.h"
+#include "qSlicerBaseQTCoreModulesExport.h"
 
 class qSlicerCamerasModuleLogicPrivate;
 

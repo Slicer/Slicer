@@ -30,7 +30,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "qSlicerBaseQTCLIWin32Header.h"
+#include "qSlicerBaseQTCLIExport.h"
 
 class vtkMRMLScene;
 class vtkMRMLCommandLineModuleNode;

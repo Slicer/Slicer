@@ -16,7 +16,7 @@
 
 #include <QString>
 
-#include "qSlicerBaseQTBaseWin32Header.h"
+#include "qSlicerBaseQTBaseExport.h"
 
 class Q_SLICER_BASE_QTBASE_EXPORT qSlicerUtils
 {

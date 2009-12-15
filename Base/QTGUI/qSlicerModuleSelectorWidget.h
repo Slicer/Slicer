@@ -7,7 +7,7 @@
 // QT includes
 #include <QWidget>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerModuleSelectorWidgetPrivate;
 

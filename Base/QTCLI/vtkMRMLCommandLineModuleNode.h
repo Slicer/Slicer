@@ -14,16 +14,19 @@
 #ifndef __vtkMRMLCommandLineModuleNode_h
 #define __vtkMRMLCommandLineModuleNode_h
 
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 
+// VTK includes
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 
+// Libs/ModuleDescriptionParser includes
 #include "ModuleDescription.h"
 
-#include "qSlicerBaseQTCLIWin32Header.h"
+#include "qSlicerBaseQTCLIExport.h"
 
 //BTX
 class ModuleDescriptionMap;

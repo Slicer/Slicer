@@ -18,7 +18,7 @@
 
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTBaseWin32Header.h"
+#include "qSlicerBaseQTBaseExport.h"
 
 // class vtkSlicerApplicationLogic;
 class qSlicerModuleLogic;

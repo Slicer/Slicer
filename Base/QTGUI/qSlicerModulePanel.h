@@ -7,7 +7,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerAbstractModule;
 class qSlicerModulePanelPrivate;

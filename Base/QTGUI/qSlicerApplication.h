@@ -6,7 +6,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerWidget;
 class qSlicerIOManager; 

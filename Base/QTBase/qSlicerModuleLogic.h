@@ -17,7 +17,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerBaseQTBaseWin32Header.h"
+#include "qSlicerBaseQTBaseExport.h"
 
 class vtkMRMLScene;
 class vtkSlicerApplicationLogic;

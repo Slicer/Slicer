@@ -22,7 +22,7 @@
 // QT includes
 #include <QFileInfo>
 
-#include "qSlicerBaseQTCoreWin32Header.h"
+#include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerModuleFactoryPrivate; 
 

@@ -11,17 +11,15 @@
 =========================================================================auto=*/
 
 
-// .NAME __@MY_WIN32_HEADER_PREFIX@Win32Header - manage Windows system differences
+// .NAME __@MY_EXPORT_HEADER_PREFIX@Export - manage Windows system differences
 // .SECTION Description
-// The __@MY_WIN32_HEADER_PREFIX@Win32Header captures some system differences between Unix
+// The __@MY_EXPORT_HEADER_PREFIX@Export captures some system differences between Unix
 // and Windows operating systems. 
 
-#ifndef __@MY_WIN32_HEADER_PREFIX@Win32Header_h
-#define __@MY_WIN32_HEADER_PREFIX@Win32Header_h
+#ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
+#define __@MY_EXPORT_HEADER_PREFIX@Export_h
 
-#include <@MY_WIN32_HEADER_PREFIX@Configure.h>
-
-#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+#if defined(WIN32) && !defined(@MY_LIBNAME@_STATIC)
  #if defined(@MY_LIBNAME@_EXPORTS)
   #define @MY_LIBRARY_EXPORT_DIRECTIVE@ __declspec( dllexport ) 
  #else

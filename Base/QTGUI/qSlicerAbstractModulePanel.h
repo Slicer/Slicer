@@ -2,7 +2,7 @@
 #define __qSlicerAbstractModulePanel_h
 
 #include "qSlicerWidget.h"
-#include "qSlicerBaseQTGUIWin32Header.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerAbstractModule;
 class qSlicerAbstractModule; 

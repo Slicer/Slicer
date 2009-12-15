@@ -17,7 +17,7 @@
 #include "qSlicerAbstractModule.h"
 
 #include <qCTKPimpl.h>
-#include "qSlicerBaseQTCLIWin32Header.h"
+#include "qSlicerBaseQTCLIExport.h"
 
 class qSlicerCLIModulePrivate;
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule

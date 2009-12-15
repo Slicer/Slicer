@@ -19,7 +19,7 @@
 // QT includes
 #include <QObject>
 
-#include "qSlicerBaseQTCoreWin32Header.h"
+#include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerAbstractModule;
 class qSlicerModuleFactory;

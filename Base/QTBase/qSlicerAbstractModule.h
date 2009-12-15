@@ -24,7 +24,7 @@
   static QString staticTitle() { return _TITLE; }  \
   virtual QString title()const { return _TITLE; }
 
-#include "qSlicerBaseQTBaseWin32Header.h"
+#include "qSlicerBaseQTBaseExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerModuleLogic; 
