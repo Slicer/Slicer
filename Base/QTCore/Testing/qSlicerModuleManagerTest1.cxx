@@ -30,7 +30,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QString moduleName;
+  QString moduleName = "qSlicerTransformsModule";
 
   bool result0 = moduleManager.isLoaded( moduleName );
 
