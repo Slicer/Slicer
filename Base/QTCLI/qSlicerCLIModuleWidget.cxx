@@ -268,9 +268,9 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* layout,
   else
     {
     defaultWidget = true;
-    QLabel * label = new QLabel(label); 
-    label->setToolTip(description);
-    layout->addWidget(label);
+    QLabel * labelWidget = new QLabel(label); 
+    labelWidget->setToolTip(description);
+    layout->addWidget(labelWidget);
     }
 
   Q_ASSERT(!defaultWidget && widget);
