@@ -58,6 +58,10 @@ public:
   void uninstantiateAll();
 
   // Description:
+  // Indicate if a module has been registered
+  bool isRegistered(const QString& moduleName);
+
+  // Description:
   // Register the list of available core modules
   void registerCoreModules();
 

@@ -168,6 +168,13 @@ void qSlicerModuleFactory::registerCoreModule()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerModuleFactory::isRegistered(const QString& moduleName)
+{
+  QCTK_D(qSlicerModuleFactory);
+  return d->MapTitleToName.contains(moduleName);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerLoadableModules()
 { 
   qctk_d()->registerLibraries(qSlicerModuleFactoryPrivate::LoadableModule,
