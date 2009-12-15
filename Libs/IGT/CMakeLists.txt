@@ -7,8 +7,8 @@ ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
  
-find_package(KWWidgets REQUIRED)
-include(${KWWidgets_USE_FILE})
+#find_package(KWWidgets REQUIRED)
+#include(${KWWidgets_USE_FILE})
  
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
@@ -106,28 +106,33 @@ endif(IGT_USE_IGSTK)
 
 # --------------------------------------------------------------------------
 # Wrapping
+IF (VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
+ENDIF (VTK_WRAP_TCL)
 
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
-
+IF (VTK_WRAP_TCL)
+  ADD_DEFINITIONS(-DVTK_WRAP_TCL)
+ENDIF(VTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build and install the library
 
 set(lib_name IGT)
-add_library(${lib_name} 
+SET(srcs
   ${IGT_SRCS} 
-  ${IGT_TCL_SRCS}
+  )
+IF (VTK_WRAP_TCL)
+  SET(srcs
+    ${srcs}
+    ${IGT_TCL_SRCS}
+    )
+ENDIF (VTK_WRAP_TCL)
+add_library(${lib_name}
+  ${srcs}
   )
 
-target_link_libraries(${lib_name}
+SET(libs
   MRML
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkHybridTCL
-  vtkIOTCL
-  vtkGraphicsTCL
-  vtkRenderingTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
@@ -137,8 +142,36 @@ target_link_libraries(${lib_name}
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
-  ${KWWidgets_LIBRARIES}
   ${TRACKING_INTERFACE_LIB}
+  vtkCommon
+  vtkImaging
+  vtkFiltering
+  vtkHybrid
+  vtkIO
+  vtkGraphics
+  vtkRendering
+)
+IF (VTK_WRAP_TCL)
+  # Complain if KWWidget is not available
+  IF(NOT KWWidgets_FOUND)
+    MESSAGE(FATAL_ERROR "IGT required KWWidgets to build")
+  ELSE(NOT KWWidgets_FOUND)
+    ADD_DEFINITIONS(-DKWWidgets_FOUND)
+  ENDIF(NOT KWWidgets_FOUND)
+  SET(libs
+    ${libs}
+    vtkCommonTCL
+    vtkImagingTCL
+    vtkFilteringTCL
+    vtkHybridTCL
+    vtkIOTCL
+    vtkGraphicsTCL
+    vtkRenderingTCL
+    ${KWWidgets_LIBRARIES}
+    )
+ENDIF (VTK_WRAP_TCL)
+target_link_libraries(${lib_name}
+  ${libs}
   )
 
 # Apply user-defined properties to the library target.
