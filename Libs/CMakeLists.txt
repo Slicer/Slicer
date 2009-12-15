@@ -4,8 +4,13 @@ set(dirs
   tclap
   ModuleDescriptionParser
   GenerateCLP
-  LoadableModule
   )
+
+IF(Slicer3_USE_KWWIDGETS)
+  SET(dirs ${dirs}
+    LoadableModule
+    )
+ENDIF(Slicer3_USE_KWWIDGETS)
 
 # Note: Order of of SUBDIRS is important if your projects depend
 # on code in other projects (put dependent project later).
@@ -14,20 +19,30 @@ if(Teem_FOUND)
   set(dirs ${dirs} vtkTeem)
 endif(Teem_FOUND)
 
-set(dirs ${dirs}
+SET(dirs ${dirs}
   vtkITK
   FreeSurfer
   Qdec
   MRML
-  GenerateLM
-  SlicerIO
-  ITKCommandIO
+  )
+
+IF(Slicer3_USE_KWWIDGETS)
+  SET(dirs ${dirs}
+    GenerateLM
+    SlicerIO
+    ITKCommandIO
+    )
+ENDIF(Slicer3_USE_KWWIDGETS)
+
+SET(dirs ${dirs}
   MRMLIDImageIO
   MGHImageIO
   IGT
   RemoteIO
   #SIGN
   )
+
+
 
 #-----------------------------------------------------------------------------
 # QT related libraries
@@ -88,7 +103,9 @@ slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs}
 # Inconsistent library name vs. project/dir name :(
 
 string(REPLACE ITKCommandIO CommandIO libs "${libs}")
-string(REPLACE SlicerIO slicerio libs "${libs}")
+IF(Slicer3_USE_KWWIDGETS)
+  string(REPLACE SlicerIO slicerio libs "${libs}")
+ENDIF(Slicer3_USE_KWWIDGETS)
 string(REPLACE MGHImageIO MGHIO libs "${libs}")
 string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 
