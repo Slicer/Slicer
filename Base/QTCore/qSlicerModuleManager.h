@@ -35,8 +35,6 @@ public:
   virtual ~qSlicerModuleManager(){}
 
   // Description:
-  static qSlicerModuleManager* instance();
-
   virtual void printAdditionalInfo();
 
   // Description:

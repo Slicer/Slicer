@@ -20,14 +20,6 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 {
   qSlicerModuleManager moduleManager;
 
-  qSlicerModuleManager * modulePtr = moduleManager.instance();
-
-  if( modulePtr != & moduleManager )
-    {
-    std::cerr << "Error in instance() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   moduleManager.printAdditionalInfo();
 
   qSlicerModuleFactory * factory = moduleManager.factory();
