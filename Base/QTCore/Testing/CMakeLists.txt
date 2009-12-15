@@ -26,7 +26,10 @@ ADD_TEST( qSlicerCoreApplicationTest1
   ${QTCore_TESTS} qSlicerCoreApplicationTest1 
   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SlicerQT )
 
-SIMPLE_TEST( qSlicerCoreIOManagerTest1 )
+ADD_TEST( qSlicerCoreIOManagerTest1 
+  ${QTCore_TESTS} qSlicerCoreIOManagerTest1 
+  ${PROJECT_SOURCE_DIR}/Libs/MRML/Testing/name.mrml)
+
 SIMPLE_TEST( qSlicerModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerModuleManagerTest1 )
 
