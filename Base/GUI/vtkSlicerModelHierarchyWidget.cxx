@@ -296,13 +296,13 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
     vtkMRMLModelHierarchyNode *hmodel = 
         vtkMRMLModelHierarchyNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
 
-    if (model != NULL && model->GetDisplayNode() != NULL)
+    if (model != NULL && model->GetDisplayNode() != NULL && this->ModelDisplayWidget)
       {
       this->ModelDisplayWidget->SetModelDisplayNode(model->GetModelDisplayNode());
       this->ModelDisplayWidget->SetModelNode(model);
       this->ModelDisplayWidget->SetModelHierarchyNode(NULL);
       }
-    else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL)
+    else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL && this->ModelDisplayWidget)
       {
       this->ModelDisplayWidget->SetModelDisplayNode(hmodel->GetDisplayNode());
       this->ModelDisplayWidget->SetModelNode(NULL);

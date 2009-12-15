@@ -185,10 +185,19 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( )
 {
-  this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadScalarsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  //this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (this->LoadModelButton)
+    {
+    this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->LoadScalarsButton) 
+    {
+    this->LoadScalarsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+    //this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (this->ModelHierarchyWidget)
+    {
+    this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }  
 }
 
 
@@ -287,7 +296,7 @@ void vtkSlicerModelsGUI::Enter ( vtkMRMLNode *node )
     this->AddGUIObservers();
     }
   this->CreateModuleEventBindings();
-  if (node)
+  if (node && this->ModelHierarchyWidget)
     {
     this->ModelHierarchyWidget->UpdateTreeFromMRML();
     this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->UnconditionalUpdateMenu();
@@ -413,6 +422,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                   this->ModelDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
  
+
     this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
     this->ModelHierarchyWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
     this->ModelHierarchyWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
