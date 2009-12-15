@@ -78,6 +78,12 @@ bool qSlicerModuleManager::isLoaded(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
+qSlicerModuleManager * qSlicerModuleManager::instance()
+{
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
 bool qSlicerModuleManager::loadModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
