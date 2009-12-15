@@ -29,19 +29,15 @@ public:
   virtual ~qSlicerCoreIOManager();
 
   virtual void printAdditionalInfo(); 
-  
-  // Description:
-  // Set MRML scene
-  void setMRMLScene(vtkMRMLScene* mrmlScene);
 
   // Description:
   // Load/Import scene
-  void loadScene(const QString& filename);
-  void importScene(const QString& filename);
+  void loadScene(vtkMRMLScene* mrmlScene, const QString& filename);
+  void importScene(vtkMRMLScene* mrmlScene, const QString& filename);
 
   // Description:
   // Close scene
-  void closeScene();
+  void closeScene(vtkMRMLScene* mrmlScene);
   
   // Description:
   // Get the file type using the extension

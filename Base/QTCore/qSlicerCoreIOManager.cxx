@@ -40,7 +40,6 @@ struct qSlicerCoreIOManagerPrivate: public qCTKPrivate<qSlicerCoreIOManager>
     delete this->ExtensionFileType; 
     }
   
-  vtkSmartPointer<vtkMRMLScene>  MRMLScene;
   QSettings*                     ExtensionFileType;
 };
 
@@ -69,21 +68,17 @@ void qSlicerCoreIOManager::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreIOManager, vtkMRMLScene*, setMRMLScene, MRMLScene);
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::loadScene(const QString& filename)
+void qSlicerCoreIOManager::loadScene(vtkMRMLScene* mrmlScene, const QString& filename)
 {
-  QCTK_D(qSlicerCoreIOManager);
-  Q_ASSERT(d->MRMLScene);
+  Q_ASSERT(mrmlScene);
   
   // Convert to lowercase
   QString filenameLc = filename.toLower();
     
   if (filenameLc.endsWith(".mrml"))
     {
-    d->MRMLScene->SetURL(filenameLc.toLatin1());
-    d->MRMLScene->Connect();
+    mrmlScene->SetURL(filenameLc.toLatin1());
+    mrmlScene->Connect();
     }
   else if (filenameLc.endsWith(".xml"))
     {
@@ -102,25 +97,24 @@ void qSlicerCoreIOManager::loadScene(const QString& filename)
   // TODO save last open path
   //this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
 
-  if (d->MRMLScene->GetErrorCode() != 0 )
+  if (mrmlScene->GetErrorCode() != 0 )
     {
-    qDebug() << "Failed to load scene:" << QString::fromStdString(d->MRMLScene->GetErrorMessage());
+    qDebug() << "Failed to load scene:" << QString::fromStdString(mrmlScene->GetErrorMessage());
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::importScene(const QString& filename)
+void qSlicerCoreIOManager::importScene(vtkMRMLScene* mrmlScene, const QString& filename)
 {
-  QCTK_D(qSlicerCoreIOManager);
-  Q_ASSERT(d->MRMLScene);
+  Q_ASSERT(mrmlScene);
   
   // Convert to lowercase
   QString filenameLc = filename.toLower();
 
   if (filenameLc.endsWith(".mrml"))
     {
-    d->MRMLScene->SetURL(filenameLc.toLatin1());
-    d->MRMLScene->Import();
+    mrmlScene->SetURL(filenameLc.toLatin1());
+    mrmlScene->Import();
     }
   else if (filenameLc.endsWith(".xml"))
     {
@@ -139,19 +133,18 @@ void qSlicerCoreIOManager::importScene(const QString& filename)
   // TODO save last open path
   //this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
 
-  if (d->MRMLScene->GetErrorCode() != 0 )
+  if (mrmlScene->GetErrorCode() != 0 )
     {
-    qDebug() << "Failed to load scene:" << QString::fromStdString(d->MRMLScene->GetErrorMessage());
+    qDebug() << "Failed to load scene:" << QString::fromStdString(mrmlScene->GetErrorMessage());
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::closeScene()
+void qSlicerCoreIOManager::closeScene(vtkMRMLScene* mrmlScene)
 {
-  QCTK_D(qSlicerCoreIOManager);
-  Q_ASSERT(d->MRMLScene);
+  Q_ASSERT(mrmlScene);
   
-  d->MRMLScene->Clear(false);
+  mrmlScene->Clear(false);
 }
 
 //-----------------------------------------------------------------------------
