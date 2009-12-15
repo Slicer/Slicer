@@ -19,6 +19,12 @@
 
 int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 {
+  if( argc < 2 )
+    {
+    std::cerr << "Missing arguments" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   int argc2 = argc - 1;
   char ** argv2 = argv + 1;
 
@@ -32,6 +38,20 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+
+  qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
+
+  app.setCoreIOManager( coreIOManager );
+
+  qSlicerCoreIOManager * coreIOManager2 = app.coreIOManager();
+
+  if( coreIOManager2 != coreIOManager )
+    {
+    std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   app.initialize();
 
   qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
@@ -43,19 +63,6 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if( moduleManager2 != moduleManager )
     {
     std::cerr << "Problem with setModuleManager()/moduleManager()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-
-  qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
-
-  app.setCoreIOManager( coreIOManager );
-
-  qSlicerCoreIOManager * coreIOManager2 = app.coreIOManager();
-
-  if( coreIOManager2 != coreIOManager )
-    {
-    std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
     return EXIT_FAILURE;
     }
 
