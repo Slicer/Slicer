@@ -12,10 +12,28 @@
 #include "qSlicerModuleFactory.h"
 
 #include <stdlib.h>
+#include <QString>
+#include <iostream>
 
 int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 {
   qSlicerModuleFactory moduleFactory;
+
+  moduleFactory.printAdditionalInfo();
+
+  QString moduleName = "module";
+
+  QString moduleTitle = moduleFactory.getModuleTitle( moduleName ); 
+
+  QString moduleName1 = moduleFactory.getModuleName( moduleTitle ); 
+  
+  if( moduleName1 != moduleName )
+    {
+    std::cerr << "Error in getModuleTitle() or getModuleName()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString moduleTitle1 = moduleFactory.getModuleTitle( moduleName ); 
 
   return EXIT_SUCCESS;
 }
