@@ -111,9 +111,6 @@ IF (VTK_WRAP_TCL)
   vtk_wrap_tcl3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
 ENDIF (VTK_WRAP_TCL)
 
-IF (VTK_WRAP_TCL)
-  ADD_DEFINITIONS(-DVTK_WRAP_TCL)
-ENDIF(VTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build and install the library
 

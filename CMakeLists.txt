@@ -300,12 +300,6 @@ IF (VTK_WRAP_TCL)
 ENDIF (VTK_WRAP_TCL)
 
 #-----------------------------------------------------------------------------
-# 
-IF (VTK_WRAP_TCL)
-  ADD_DEFINITIONS(-DVTK_WRAP_TCL)
-ENDIF(VTK_WRAP_TCL)
-
-#-----------------------------------------------------------------------------
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
