@@ -171,6 +171,13 @@ void qSlicerCoreApplication::initialize()
 
   this->setMRMLScene(scene);
   this->setAppLogic(appLogic);
+
+  // Initialization done !
+  d->Initialized = true;
+
+  qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
+  Q_ASSERT(moduleManager);
+  d->ModuleManager = moduleManager;
 }
 
 //-----------------------------------------------------------------------------
@@ -274,7 +281,6 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, setModuleManager, ModuleManager);
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
 
 //-----------------------------------------------------------------------------

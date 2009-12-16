@@ -78,9 +78,8 @@ public:
   void initializeCmdLineModulesPaths();
 
   // Description:
-  // Set/Get the module manager
+  // Get the module manager
   qSlicerModuleManager* moduleManager()const;
-  void setModuleManager(qSlicerModuleManager* moduleManager);
 
   // Description:
   // Set/Get the IO manager

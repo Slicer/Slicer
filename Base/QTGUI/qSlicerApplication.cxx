@@ -2,7 +2,6 @@
 
 // SlicerQT includes
 #include "qSlicerWidget.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerIOManager.h"
 
 // QT includes
@@ -44,15 +43,10 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   : Superclass(argc, argv)
 {
   QCTK_INIT_PRIVATE(qSlicerApplication);
-  qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
-  Q_ASSERT(moduleManager);
-  // qSlicerCoreApplication class takes ownership of the moduleManager and
-  // will be responsible to delete it
-  this->setModuleManager(moduleManager);
-
+  
   qSlicerIOManager* ioManager = new qSlicerIOManager;
   Q_ASSERT(ioManager);
-  // qSlicerCoreApplication class takes ownership of the ioManager and
+  // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
   this->setCoreIOManager(ioManager);
 }
@@ -73,10 +67,11 @@ qSlicerApplication* qSlicerApplication::application()
 void qSlicerApplication::initialize()
 {
   QCTK_D(qSlicerApplication);
-  this->Superclass::initialize();
   d->initFont();
   d->initPalette();
   d->loadStyleSheet();
+
+  this->Superclass::initialize();
 }
 
 //-----------------------------------------------------------------------------
