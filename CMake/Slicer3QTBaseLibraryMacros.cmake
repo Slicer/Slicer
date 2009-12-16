@@ -62,7 +62,7 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   SET(MY_LIBNAME ${lib_name})
   
   CONFIGURE_FILE(
-    ${SlicerBase_SOURCE_DIR}/qSlicerBaseExport.h.in
+    ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
