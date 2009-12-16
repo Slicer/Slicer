@@ -12,8 +12,8 @@ class qCTKAbstractQObjectFactory : protected qCTKAbstractObjectFactory<BaseClass
 public:
   //-----------------------------------------------------------------------------
   // Description:
-  // Constructor
-  qCTKAbstractQObjectFactory(){}
+  // Constructor/Desctructor
+  explicit qCTKAbstractQObjectFactory(){}
   virtual ~qCTKAbstractQObjectFactory(){}
 
   //----------------------------------------------------------------------------

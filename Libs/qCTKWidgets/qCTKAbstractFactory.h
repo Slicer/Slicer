@@ -17,7 +17,7 @@ class qCTKAbstractFactoryItem
   //template <typename X> friend class qCTKAbstractFactory;
 
 public:
-  qCTKAbstractFactoryItem(const QString& key):Instance(),Key(key){}
+  explicit qCTKAbstractFactoryItem(const QString& key):Instance(),Key(key){}
 
   virtual QString loadErrorString() { return QString(); }
   virtual bool load() = 0;
@@ -57,7 +57,9 @@ protected:
   typedef typename QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > >::iterator       Iterator;
 
 public:
-  qCTKAbstractFactory(){}
+  // Description:
+  // Constructor/Desctructor
+  explicit qCTKAbstractFactory(){}
   virtual ~qCTKAbstractFactory(){}
 
   //----------------------------------------------------------------------------

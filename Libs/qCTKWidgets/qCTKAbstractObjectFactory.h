@@ -23,7 +23,7 @@ class qCTKFactoryObjectItem : public qCTKAbstractFactoryItem<BaseClassType>
 protected:
   typedef BaseClassType *(*InstantiateObjectFunc)();
 public:
-  qCTKFactoryObjectItem(const QString& key):qCTKAbstractFactoryItem<BaseClassType>(key){}
+  explicit qCTKFactoryObjectItem(const QString& key):qCTKAbstractFactoryItem<BaseClassType>(key){}
   virtual bool load()
     {
     this->instantiateObjectFunc = &instantiateObject<BaseClassType, ClassType>;
@@ -45,8 +45,8 @@ class qCTKAbstractObjectFactory : public qCTKAbstractFactory<BaseClassType>
 public:
   //-----------------------------------------------------------------------------
   // Description:
-  // Constructor
-  qCTKAbstractObjectFactory(){}
+  // Constructor/Desctructor
+  explicit qCTKAbstractObjectFactory(){}
   virtual ~qCTKAbstractObjectFactory(){}
 
   //-----------------------------------------------------------------------------

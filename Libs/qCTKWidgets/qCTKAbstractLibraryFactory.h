@@ -16,7 +16,7 @@ protected:
   typedef typename QHash<QString, void*>::iterator       Iterator;
 
 public:
-  qCTKFactoryLibraryItem(const QString& key, const QString& path):
+  explicit qCTKFactoryLibraryItem(const QString& key, const QString& path):
     qCTKAbstractFactoryItem<BaseClassType>(key),Path(path){}
   virtual bool load()
     {
@@ -90,7 +90,7 @@ public:
   //-----------------------------------------------------------------------------
   // Description:
   // Constructor
-  qCTKAbstractLibraryFactory():
+  explicit qCTKAbstractLibraryFactory():
     qCTKAbstractFactory<BaseClassType>(){}
   virtual ~qCTKAbstractLibraryFactory(){}
 

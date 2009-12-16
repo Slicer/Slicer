@@ -12,7 +12,7 @@ template<typename BaseClassType>
 class qCTKFactoryPluginItem : public qCTKAbstractFactoryItem<BaseClassType>
 {
 public:
-  qCTKFactoryPluginItem(const QString& key, const QString& path):
+  explicit qCTKFactoryPluginItem(const QString& key, const QString& path):
     qCTKAbstractFactoryItem<BaseClassType>(key),Path(path){}
   virtual bool load()
     {
@@ -55,7 +55,7 @@ class qCTKAbstractPluginFactory : public qCTKAbstractFactory<BaseClassType>
 public:
   // Description:
   // Constructor
-  qCTKAbstractPluginFactory():qCTKAbstractFactory<BaseClassType>(){}
+  explicit qCTKAbstractPluginFactory():qCTKAbstractFactory<BaseClassType>(){}
   virtual ~qCTKAbstractPluginFactory(){}
 
   // Description:
