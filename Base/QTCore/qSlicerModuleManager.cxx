@@ -80,6 +80,11 @@ qSlicerModuleFactory* qSlicerModuleManager::factory()
 bool qSlicerModuleManager::isLoaded(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
+  // If a module is not registered, we consider it isn't loaded
+  if (!this->factory()->isRegistered(moduleName))
+    {
+    return false;
+    }
   return d->ModuleList.contains(moduleName);
 }
 
