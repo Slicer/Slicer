@@ -12,6 +12,7 @@
 
 #include "qSlicerAbstractCoreModule.h"
 
+// QT includes
 #include <QDebug>
 
 //-----------------------------------------------------------------------------

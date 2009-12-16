@@ -14,8 +14,10 @@
 #ifndef __qSlicerAbstractLoadableModule_h
 #define __qSlicerAbstractLoadableModule_h
 
+// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 
+// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTBaseExport.h"
