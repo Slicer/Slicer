@@ -43,6 +43,10 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   : Superclass(argc, argv)
 {
   QCTK_INIT_PRIVATE(qSlicerApplication);
+  QCTK_D(qSlicerApplication);
+  d->initFont();
+  d->initPalette();
+  d->loadStyleSheet();
   
   qSlicerIOManager* ioManager = new qSlicerIOManager;
   Q_ASSERT(ioManager);
@@ -66,11 +70,7 @@ qSlicerApplication* qSlicerApplication::application()
 //-----------------------------------------------------------------------------
 void qSlicerApplication::initialize()
 {
-  QCTK_D(qSlicerApplication);
-  d->initFont();
-  d->initPalette();
-  d->loadStyleSheet();
-
+  
   this->Superclass::initialize();
 }
 
