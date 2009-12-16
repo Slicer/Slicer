@@ -124,14 +124,14 @@ void qSlicerModuleFactory::printAdditionalInfo()
   qDebug() << "qSlicerModuleFactory (" << this << ")";
   qDebug() << "LoadableModuleSearchPaths:" << d->LoadableModuleSearchPaths;
   qDebug() << "CmdLineModuleSearchPaths:" << d->CmdLineModuleSearchPaths;
-  qDebug() << "MapTitleToName";
+  qDebug() << "MapTitleToName:";
   qSlicerModuleFactoryPrivate::MapConstIterator iter = d->MapTitleToName.constBegin();
   while(iter != d->MapTitleToName.constEnd())
     {
     qDebug() << "Title:" << iter.key() << "-> Name:" << iter.value();
     ++iter;
     }
-  qDebug() << "MapNameToTitle";
+  qDebug() << "MapNameToTitle:";
   iter = d->MapNameToTitle.constBegin();
   while(iter != d->MapNameToTitle.constEnd())
     {
@@ -171,7 +171,7 @@ void qSlicerModuleFactory::registerCoreModule()
 bool qSlicerModuleFactory::isRegistered(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleFactory);
-  return d->MapTitleToName.contains(moduleName);
+  return d->MapNameToTitle.contains(moduleName);
 }
 
 //-----------------------------------------------------------------------------
