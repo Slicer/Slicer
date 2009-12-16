@@ -864,6 +864,9 @@ int Slicer3_main(int& argc, char *argv[])
 
 #ifdef Slicer3_USE_QT
   qSlicerApplication::application()->setAppLogic( appLogic );
+  qSlicerApplication::application()->setInitialized(true);
+  // Instanciate module manager
+  qSlicerApplication::application()->setModuleManager(new qSlicerModuleManager);
 #endif
 
   slicerApp->SplashMessage("Creating Application GUI...");

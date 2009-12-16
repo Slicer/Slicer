@@ -139,6 +139,7 @@ qSlicerCoreApplication* qSlicerCoreApplication::application()
 }
 
 //-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
 QCTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
@@ -278,6 +279,25 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
   paths << cmdLineModulePaths;
   d->ModuleManager->factory()->setCmdLineModuleSearchPaths(paths);
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* moduleManager)
+{
+  QCTK_D(qSlicerCoreApplication);
+  if (moduleManager == d->ModuleManager)
+    {
+    return; 
+    }
+  if (d->ModuleManager)
+    {
+    delete d->ModuleManager;
+    d->ModuleManager = 0; 
+    }
+  if (moduleManager)
+    {
+    d->ModuleManager = moduleManager;
+    }
 }
 
 //-----------------------------------------------------------------------------

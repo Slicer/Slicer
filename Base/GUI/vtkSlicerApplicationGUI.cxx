@@ -10,7 +10,7 @@
   Module:    $RCSfile: vtkSlicerApplicationGUI.cxx,v $
   Date:      $Date: 2006/01/08 04:48:05 $
   Version:   $Revision: 1.45 $
-a
+
 =========================================================================auto=*/
 
 
@@ -4054,7 +4054,7 @@ void vtkSlicerApplicationGUI::ReposModulePanel()
 #ifdef Slicer3_USE_QT
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
-  
+
   if (!this->GetMainSlicerWindow() ||
       !this->GetMainSlicerWindow()->GetMainNotebook())
     {

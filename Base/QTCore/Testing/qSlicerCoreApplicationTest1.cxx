@@ -54,11 +54,34 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   app.initialize();
 
-  qSlicerModuleManager * moduleManager = app.moduleManager();
-
-  if( !moduleManager )
+  // Since initialize has been called, the module manager should be available
+  qSlicerModuleManager * moduleManager1 = app.moduleManager();
+  
+  if( !moduleManager1 )
     {
     std::cerr << "Problem with moduleManager()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  app.setModuleManager(0);
+
+  moduleManager1 = app.moduleManager();
+
+  if( moduleManager1 )
+    {
+    std::cerr << "Problem with moduleManager()" << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
+
+  app.setModuleManager( moduleManager );
+
+  qSlicerModuleManager * moduleManager2 = app.moduleManager();
+
+  if( moduleManager2 != moduleManager )
+    {
+    std::cerr << "Problem with setModuleManager()/moduleManager()" << std::endl;
     return EXIT_FAILURE;
     }
 

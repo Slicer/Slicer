@@ -51,7 +51,14 @@ public:
   // Description:
   // Return true if the application has been initialized
   // Note: initialize() should be called only one time.
-  bool initialized() const; 
+  bool initialized() const;
+
+  // Description:
+  // Convenient method allowing to set the initialized flag
+  // Note: Use with cautious - Only vtkSlicerApplication should use that method
+  // Improper use of that function may lead to unstable state
+  // Deprecated
+  void setInitialized(bool initialized); 
 
   // Description:
   // Set/Get MRML Scene
@@ -78,8 +85,9 @@ public:
   void initializeCmdLineModulesPaths();
 
   // Description:
-  // Get the module manager
+  // Set/Get the module manager
   qSlicerModuleManager* moduleManager()const;
+  void setModuleManager(qSlicerModuleManager* moduleManager);
 
   // Description:
   // Set/Get the IO manager
