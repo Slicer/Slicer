@@ -49,6 +49,11 @@ public:
   void initialize();
 
   // Description:
+  // Return true if the application has been initialized
+  // Note: initialize() should be called only one time.
+  bool initialized() const; 
+
+  // Description:
   // Set/Get MRML Scene
   void setMRMLScene(vtkMRMLScene * scene);
   vtkMRMLScene* mrmlScene() const;

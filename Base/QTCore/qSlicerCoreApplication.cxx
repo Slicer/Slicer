@@ -52,7 +52,8 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
     this->AppLogic = 0;
     this->MRMLScene = 0;
     this->ModuleManager = 0;
-    this->CoreIOManager = 0; 
+    this->CoreIOManager = 0;
+    this->Initialized = false; 
     }
 
   ~qSlicerCoreApplicationPrivate()
@@ -111,7 +112,10 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
   // HasIntDir should be set to true and IntDir should be set to either Debug,
   // Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   bool               HasIntDir;
-  QString            IntDir; 
+  QString            IntDir;
+
+  // Indicate if initialize() method has been called.
+  bool               Initialized; 
   
 };
 
@@ -130,9 +134,13 @@ qSlicerCoreApplication::~qSlicerCoreApplication()
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication* qSlicerCoreApplication::application()
 {
+  qDebug() << "QApplication::instance():" << QApplication::instance(); 
   qSlicerCoreApplication* app = qobject_cast<qSlicerCoreApplication*>(QApplication::instance());
   return app;
 }
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initialize()
