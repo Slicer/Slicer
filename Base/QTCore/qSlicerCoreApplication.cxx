@@ -134,7 +134,6 @@ qSlicerCoreApplication::~qSlicerCoreApplication()
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication* qSlicerCoreApplication::application()
 {
-  qDebug() << "QApplication::instance():" << QApplication::instance(); 
   qSlicerCoreApplication* app = qobject_cast<qSlicerCoreApplication*>(QApplication::instance());
   return app;
 }
