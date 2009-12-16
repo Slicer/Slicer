@@ -39,6 +39,9 @@ public:
       return;
       }
     delete this->Instance;
+    // Make sure the pointer is set to 0. Doing so, Will prevent attempt to
+    // delete unextising object if uninstantiate() methods is called multiple times.
+    this->Instance = 0; 
     }
 
 protected:
