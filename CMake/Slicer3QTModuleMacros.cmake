@@ -25,6 +25,9 @@ MACRO(Slicer3_build_qtmodule)
   # Define library name
   SET(lib_name qSlicer${QTMODULE_NAME}Module)
 
+  # Define Module title
+  ADD_DEFINITIONS(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
+
   # --------------------------------------------------------------------------
   # Find Slicer3
 
@@ -46,27 +49,16 @@ MACRO(Slicer3_build_qtmodule)
     )
 
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${QTMODULE_EXPORT_DIRECTIVE})
-  SET(MY_WIN32_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
+  SET(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
   SET(MY_LIBNAME ${lib_name})
 
   CONFIGURE_FILE(
-    ${QTModules_SOURCE_DIR}/qSlicerQTModulesConfigure.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h
+    ${QTModules_SOURCE_DIR}/qSlicerQTModulesExport.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
+  SET(dynamicHeaders
+    "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  CONFIGURE_FILE(
-    ${QTModules_SOURCE_DIR}/qSlicerQTModulesWin32Header.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h
-    )
-
-  # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
-    ${headers}
-    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Configure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/${MY_WIN32_HEADER_PREFIX}Win32Header.h"
-    DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-    )
 
   #file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
   #install(FILES
@@ -93,20 +85,7 @@ MACRO(Slicer3_build_qtmodule)
     )
 
   # --------------------------------------------------------------------------
-  # Wrapping
-
-  #include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  #vtk_wrap_tcl3(Volumes
-  #  Volumes_TCL_SRCS
-  #  "${Volumes_SRCS}" "")
-
-  #---------------------------------------------------------------------------
-  # Add Loadable Module support
-
-  #generatelm(Volumes_SRCS SlicerVolumes.txt)
-
-  # --------------------------------------------------------------------------
-  # Build and install the library
+  # Build the library
 
   ADD_LIBRARY(${lib_name}
     ${QTMODULE_SRCS}
@@ -130,11 +109,7 @@ MACRO(Slicer3_build_qtmodule)
     ${Slicer3_Libs_LIBRARIES}
     ${Slicer3_Base_LIBRARIES}
     ${QTMODULE_TARGET_LIBRARIES}
-    #${KWWidgets_LIBRARIES}
     #${ITK_LIBRARIES}
-    #CommandLineModule
-    #SlicerTractographyDisplay
-    #SlicerTractographyFiducialSeeding
     )
 
   # Apply user-defined properties to the library target.
@@ -144,11 +119,19 @@ MACRO(Slicer3_build_qtmodule)
     )
   ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
-  # Install qt loadable modules
+  # Install rules
   INSTALL(TARGETS ${lib_name}
     RUNTIME DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+    )
+
+  # Install headers
+  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  INSTALL(FILES
+    ${headers}
+    ${dynamicHeaders}
+    DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
 
 ENDMACRO(Slicer3_build_qtmodule)

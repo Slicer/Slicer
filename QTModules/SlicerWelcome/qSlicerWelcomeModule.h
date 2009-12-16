@@ -7,7 +7,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerWelcomeModuleWin32Header.h"
+#include "qSlicerWelcomeModuleExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerWelcomeModulePrivate;

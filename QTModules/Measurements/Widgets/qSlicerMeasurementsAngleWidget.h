@@ -7,7 +7,7 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qSlicerMeasurementsModuleWin32Header.h"
+#include "qSlicerMeasurementsModuleExport.h"
 
 class qSlicerMeasurementsAngleWidgetPrivate;
 

@@ -1,0 +1,18 @@
+
+// The __@MY_EXPORT_HEADER_PREFIX@Export captures some system differences between Unix
+// and Windows operating systems. 
+
+#ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
+#define __@MY_EXPORT_HEADER_PREFIX@Export_h
+
+#if defined(WIN32) && !defined(@MY_LIBNAME@_STATIC)
+ #if defined(@MY_LIBNAME@_EXPORTS)
+  #define @MY_LIBRARY_EXPORT_DIRECTIVE@ __declspec( dllexport ) 
+ #else
+  #define @MY_LIBRARY_EXPORT_DIRECTIVE@ __declspec( dllimport ) 
+ #endif
+#else
+ #define @MY_LIBRARY_EXPORT_DIRECTIVE@
+#endif
+
+#endif
