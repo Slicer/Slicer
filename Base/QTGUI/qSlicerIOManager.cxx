@@ -1,9 +1,10 @@
 #include "qSlicerIOManager.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerIOManagerPrivate: public qCTKPrivate<qSlicerIOManager>
+class qSlicerIOManagerPrivate: public qCTKPrivate<qSlicerIOManager>
 {
-
+public:
+  QCTK_DECLARE_PUBLIC(qSlicerIOManager);
 };
 
 //-----------------------------------------------------------------------------

@@ -12,7 +12,7 @@
 
 class qSlicerIOManagerPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
 {
 
 public:

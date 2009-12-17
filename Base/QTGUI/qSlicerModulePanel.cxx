@@ -21,8 +21,9 @@
 #include <QWebView>
 
 //---------------------------------------------------------------------------
-struct qSlicerModulePanelPrivate: public qCTKPrivate<qSlicerModulePanel>
+class qSlicerModulePanelPrivate: public qCTKPrivate<qSlicerModulePanel>
 {
+public:
   void setupUi(QWidget * widget);
 
   QTextBrowser*          HelpLabel;
