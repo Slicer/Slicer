@@ -27,6 +27,8 @@ import sys
 import imp
 import scipy.optimize 
 import numpy
+import copy
+#from mpfit import mpfit
 
 import time
 
@@ -34,11 +36,15 @@ import time
 # Base class for curve fitting algorithm classes
 # ----------------------------------------------------------------------
 
+
+
 class CurveAnalysisBase(object):
 
     # Parameters to optimze
     ParameterNameList     = []
     InitialParameter      = []
+    Constraints           = None
+    
     Parameter             = []
 
     # Input curve
@@ -81,22 +87,42 @@ class CurveAnalysisBase(object):
     def CalcOutputParamDict(self, param):
         return {}
 
+    ## ------------------------------
+    #  Generic residual error function.
+    #  This function calls Function() defined in the child class.
+    #
+    #  Two different optimization packages have been tested.
+    #
     # ------------------------------
-    # Generic residual error fucntion
-
+    # Generic residual error fucntion for scipy.optimize package
+    
     def ResidualError(self, param, y, x):
         lst = range(len(x))
         f = self.REBUF
         for i in lst:
             f[i] = self.Function(x[i], param)
-        return (y - f)
-
-    # ------------------------------
-    # Residual error for functions that accept vector
-
-    def ResidualErrorVec(self, param, y, x):
-        err = y - (self.Function(x, param))
+    
+        err = (y - f)
+        #err2 = sum(err*err)
         return err
+    
+    # ------------------------------
+    # Residual error for functions that accept vector for scipy.optimize package
+    
+    def ResidualErrorVec(self, param, y, x):
+        err = y - self.Function(x, param)
+    
+        #err2 = sum(err*err)
+        return err
+
+    ## ------------------------------
+    ## Residual error for functions that accept vector
+    #
+    #def ResidualError(self, p, fjac=None, x=None, y=None, err=None):
+    #    err = y - self.Function(x, p)
+    #    status = 0
+    #    return ([status, err])
+
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve
@@ -123,6 +149,11 @@ class CurveAnalysisBase(object):
 
     def GetParameter(self):
         return self.Parameter
+
+    # ------------------------------
+    # Constraints
+    def SetConstraints(self, constraints):
+        self.Constraints = constraints
 
     # ------------------------------
     # Constants
@@ -196,14 +227,45 @@ class CurveAnalysisBase(object):
 
         param0 = self.InitialParameter
 
+        #######
+        ## following code uses mpfit
+
+        #p0 = numpy.array(self.InitialParameter,dtype='float64')
+        #parinfo = []
+        #diag = []
+        #parbase={'value':0., 'fixed':0, 'limited':[0,0], 'limits':[0.,0.]}
+        #for i in range(0, len(param0)):
+        #    parinfo.append(copy.deepcopy(parbase))
+        #    parinfo[i]['value'] = p0[i]
+        #    if len(self.Constraints) > 0:
+        #        parinfo[i]['limited'] = [1, 1]
+        #        parinfo[i]['limits'] = [self.Constraints[i][0], self.Constraints[i][1]]
+        #        #diag = (self.Constraint[i][1] - self.Constraint[i][0])*10
+        #
+        #fa = {'x':x, 'y':y_meas}
+        ##output = mpfit(self.ResidualError, p0, parinfo=parinfo,functkw=fa,nprint=0,ftol=1.e-8,xtol=1.e-5,diag=diag)
+        #output = mpfit(self.ResidualError,p0, parinfo=parinfo,functkw=fa, nprint=1,ftol=1.e-5,xtol=1.e-5,diag=diag)
+        #self.Parameter = output.params
+
+        #######
+        ## following code uses scipy.optimize package
+        #
+        #bound = self.Constraint
         if self.FunctionVectorInput == 0:
             self.REBUF  = scipy.zeros(len(x))   # to reduce number of memory allocations
             param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
+            #param_output = scipy.optimize.fmin_cobyla(self.ResidualError, param0, cons=bound, args=(y_meas, x), maxfun=10000)
+            #param_output = scipy.optimize.fmin_tnc(self.ResidualError, param0, args=(y_meas, x), bounds=bound2, epsilon=1e-08, scale=[0.1, 0.1, 1], offset=None, messages=15, maxCGit=-1, maxfun=None, eta=-1, stepmx=0, accuracy=0, fmin=0, ftol=-1, xtol=-1, pgtol=-1, rescale=-1)
+        
         else:
             param_output = scipy.optimize.leastsq(self.ResidualErrorVec, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
-
-        self.Parameter       = param_output[0] # fitted parameters
+            #param_output = scipy.optimize.fmin_cobyla(self.ResidualErrorVec, param0, cons=bound, args=(y_meas, x), maxfun=1000)
+            #param_output = scipy.optimize.fmin_tnc(self.ResidualErrorVec, param0, args=(y_meas, x), approx_grad=True, bounds=bound, epsilon=1e-04, scale=[1, 1, 10], offset=None, messages=0, maxCGit=-1, maxfun=None, eta=-1, stepmx=0, accuracy=0, fmin=0, ftol=-1, xtol=-1, pgtol=-1, rescale=-1)
+            #param_output = scipy.optimize.fmin_l_bfgs_b(self.ResidualErrorVec, param0, args=(y_meas, x), approx_grad=True, bounds=bound, m=10, factr=10000000.0, pgtol=1.0000000000000001e-05, epsilon=1e-08, iprint=0, maxfun=15000)
+            
+        self.Parameter        = param_output[0] # fitted parameters
         self.CovarianceMatrix = param_output[1] # covariant matrix
+        #self.Parameter       = param_output # fitted parameters
 
         return 1        ## should return 0 if optimization fails
 
@@ -216,6 +278,7 @@ class CurveAnalysisExecuter(object):
 
     ModuleName = ''
     DebugMode = 0
+    Constraints = {}
 
     # ------------------------------
     # Constructor
@@ -250,6 +313,9 @@ class CurveAnalysisExecuter(object):
         finally:
             if fp:
                 fp.close()
+
+        self.Constraints = {}
+
 
     # ------------------------------
     # Get Method Name
@@ -309,6 +375,16 @@ class CurveAnalysisExecuter(object):
         return list
 
     # ------------------------------
+    # Set Constraint
+    # 'constraintDict' should be a dictionary which associates tuple of
+    # minimum and maximum values with parameter name:
+    #      constraintDict['param name'] = (minimum, muximum)
+    #
+    def SetConstraints(self, constraintDict):
+        ## Todo: check the type of the argument
+        self.Constraints = constraintDict
+
+    # ------------------------------
     # Call curve fitting class
     def Execute(self, inputCurveDict, initialParameterDict, inputParameterDict, targetCurve, outputCurve):
 
@@ -337,11 +413,19 @@ class CurveAnalysisExecuter(object):
             fitting.SetConstant(name, param)
 
         # ------------------------------
-        # Run optimization
+        # Set constraints, if specified
+        # Constraints dictionary is converted to a list here.
+        constraints = []
+        if len(self.Constraints) > 0:
+            for pname in nameList:
+                constraints.append(self.Constraints[pname])
 
+        fitting.SetConstraints(constraints)
+
+        # ------------------------------
+        # Run optimization
         fitting.Execute()
         outputCurve[:,1] = fitting.GetFitCurve(outputCurve[:, 0])
-        
         result = fitting.GetOutputParam()
 
         return result
