@@ -229,6 +229,7 @@ add_library(${lib_name}
   )
 
 SET(libs
+  vtkITK
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
@@ -239,7 +240,6 @@ SET(libs
   ITKIO
   ITKDICOMParser
   FreeSurfer
-  vtkITK
   vtkCommon
   vtkImaging
   vtkFiltering
