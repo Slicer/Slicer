@@ -10,8 +10,7 @@ MACRO(Slicer3_SETUP_QT)
 IF(Slicer3_USE_QT)
   ## QT
   IF(VTK_USE_QVTK)
-    #This find package should NOT be needed.
-    FIND_PACKAGE(Qt4)
+    FIND_PACKAGE(Qt4 4.6 EXACT)
     IF(QT4_FOUND)
       SET(QT_USE_QTNETWORK ON)
       INCLUDE(${QT_USE_FILE})
