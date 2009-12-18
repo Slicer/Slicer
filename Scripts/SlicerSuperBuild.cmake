@@ -1,5 +1,4 @@
 
-
 project(Slicer3)
 
 enable_language(C)
