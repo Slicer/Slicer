@@ -16,6 +16,8 @@
 #include <QStringList>
 #include <iostream>
 
+#include "TestingMacros.h"
+
 int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 {
   qSlicerModuleFactory moduleFactory;
@@ -76,6 +78,8 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
   moduleFactory.setLoadableModuleSearchPaths( paths );
 
   QStringList loadableModulePaths = moduleFactory.loadableModuleSearchPaths();
+
+  CHECK_FOR_VTK_MEMORY_LEAKS();
 
   return EXIT_SUCCESS;
 }

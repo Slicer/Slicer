@@ -10,12 +10,15 @@
 =========================================================================auto=*/
 
 #include "qSlicerCoreApplication.h"
-#include "vtkMRMLScene.h"
-#include "vtkSlicerApplicationLogic.h"
 #include "qSlicerModuleManager.h" 
 #include "qSlicerCoreIOManager.h" 
 
+#include "vtkMRMLScene.h"
+#include "vtkSlicerApplicationLogic.h"
+
 #include <stdlib.h>
+
+#include "TestingMacros.h"
 
 int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 {
@@ -126,6 +129,9 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     }
 
   app.setSlicerHome( homeDirectory );
+
+
+  CHECK_FOR_VTK_MEMORY_LEAKS();
 
   return EXIT_SUCCESS;
 }

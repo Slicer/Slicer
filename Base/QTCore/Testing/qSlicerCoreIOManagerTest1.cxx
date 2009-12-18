@@ -17,6 +17,8 @@
 #include <iostream>
 #include <QString>
 
+#include "TestingMacros.h"
+
 int qSlicerCoreIOManagerTest1(int argc, char * argv [] )
 {
   if( argc < 2 )
@@ -47,6 +49,8 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [] )
 
   std::cout << "File Type from extension " << qPrintable(extension);
   std::cout << " is " << qPrintable(fileType) << std::endl;
+
+  CHECK_FOR_VTK_MEMORY_LEAKS();
 
   return EXIT_SUCCESS;
 }

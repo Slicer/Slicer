@@ -17,8 +17,11 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "TestingMacros.h"
+
 int qSlicerModuleManagerTest1(int argc, char * argv [] )
 {
+
   // By design, a ModuleManager should be instanciated only if a
   // qSlicerCoreApplication exists and has been initialized.
   // That we will be sure, an ApplicationLogic and a MRMLScene have also been instanciated
@@ -104,6 +107,8 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     std::cerr << "Error in isLoaded() or loadModule() " << std::endl;
     return EXIT_FAILURE;
     }
+
+  CHECK_FOR_VTK_MEMORY_LEAKS();
 
    return EXIT_SUCCESS;
 }
