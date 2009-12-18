@@ -16,8 +16,14 @@
 
 #include <stdlib.h>
 
+#include "TestingMacros.h"
+
 int qSlicerAbstractCoreModuleTest1(int, char * [] )
 {
+
+
+  CHECK_FOR_VTK_MEMORY_LEAKS();
+
   return EXIT_SUCCESS;
 }
 
