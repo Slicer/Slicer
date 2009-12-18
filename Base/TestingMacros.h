@@ -65,9 +65,9 @@
     }
 
 #define CHECK_FOR_VTK_MEMORY_LEAKS() \
-    if( vtkDebugLeaks::PrintCurrentLeaks() ) \
+    if( vtkDebugLeaks::PrintCurrentLeaks() > 3 ) \
     { \
-    return EXIT_FAILURE; \
+    result = EXIT_FAILURE; \
     }
 
 #endif
