@@ -15,6 +15,7 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSmartPointer.h"
 
 #include <stdlib.h>
 
@@ -40,7 +41,6 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
     }
-
 
   qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
 
@@ -88,30 +88,6 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkMRMLScene * scene = vtkMRMLScene::New();
-
-  app.setMRMLScene( scene );
-
-  vtkMRMLScene * scene1 = app.mrmlScene();
-
-  if( scene1 != scene )
-    {
-    std::cerr << "Error in setMRMLScene()/mrmlScene() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  vtkSlicerApplicationLogic * logic = vtkSlicerApplicationLogic::New();
-
-  app.setAppLogic( logic );
-
-  vtkSlicerApplicationLogic * logic1 = app.appLogic();
-
-  if( logic1 != logic )
-    {
-    std::cerr << "Error in setAppLogic()/appLogic() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
   QString homeDirectory = app.slicerHome();
 
   std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
@@ -131,7 +107,48 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   app.setSlicerHome( homeDirectory );
 
 
-  CHECK_FOR_VTK_MEMORY_LEAKS();
+  vtkSlicerApplicationLogic * logic1 = app.appLogic();
+
+  if( logic1 == NULL )
+    {
+    std::cerr << "Error in appLogic() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkSmartPointer< vtkSlicerApplicationLogic > logic = 
+    vtkSmartPointer< vtkSlicerApplicationLogic >::New();
+
+  app.setAppLogic( logic );
+
+  vtkSlicerApplicationLogic * logic2 = app.appLogic();
+
+  if( logic2 != logic )
+    {
+    std::cerr << "Error in setAppLogic()/appLogic() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  vtkMRMLScene * scene1 = app.mrmlScene();
+
+  if( scene1 == NULL )
+    {
+    std::cerr << "Error in mrmlScene() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkSmartPointer< vtkMRMLScene > scene = vtkSmartPointer< vtkMRMLScene >::New();
+
+  app.setMRMLScene( scene );
+
+  vtkMRMLScene * scene2 = app.mrmlScene();
+
+  if( scene2 != scene )
+    {
+    std::cerr << "Error in setMRMLScene()/mrmlScene() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   return EXIT_SUCCESS;
 }
