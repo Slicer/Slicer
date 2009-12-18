@@ -108,8 +108,6 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  CHECK_FOR_VTK_MEMORY_LEAKS();
-
    return EXIT_SUCCESS;
 }
 

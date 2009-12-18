@@ -79,8 +79,6 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 
   QStringList loadableModulePaths = moduleFactory.loadableModuleSearchPaths();
 
-  CHECK_FOR_VTK_MEMORY_LEAKS();
-
   return EXIT_SUCCESS;
 }
 
