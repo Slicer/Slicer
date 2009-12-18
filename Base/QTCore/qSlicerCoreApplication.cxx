@@ -64,8 +64,6 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
       delete this->ModuleManager; 
       }
     if (this->CoreIOManager) { delete this->CoreIOManager; }
-    if (this->AppLogic) { this->AppLogic->Delete(); }
-    if (this->MRMLScene) { this->MRMLScene->Delete(); }
     }
 
   // Description:
@@ -82,8 +80,8 @@ struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 
   // Description:
   // MRMLScene and AppLogic pointers
-  vtkMRMLScene*                        MRMLScene;
-  vtkSlicerApplicationLogic*           AppLogic;
+  vtkSmartPointer< vtkMRMLScene >               MRMLScene;
+  vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
 
   QString                              SlicerHome;
 
@@ -191,7 +189,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
     }
 
   d->MRMLScene = mrmlScene;
-  d->MRMLScene->Register(NULL);
   
   emit this->currentMRMLSceneChanged(mrmlScene);
 }
@@ -204,7 +201,6 @@ void qSlicerCoreApplication::setAppLogic(vtkSlicerApplicationLogic* appLogic)
 {
   QCTK_D(qSlicerCoreApplication);
   d->AppLogic = appLogic;
-  d->AppLogic->Register(NULL);
 }
 
 //-----------------------------------------------------------------------------
