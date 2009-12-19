@@ -55,9 +55,9 @@ public:
 
   // Description:
   // Convenient method allowing to set the initialized flag
-  // Note: Use with cautious - Only vtkSlicerApplication should use that method
-  // Improper use of that function may lead to unstable state
-  // Deprecated
+  // DEPRECATED: This method was used by the KWWidgests GUI only and it will be
+  // removed once the QT GUI is functional. Only vtkSlicerApplication should use
+  // that method. Improper use of that function may lead to unstable state
   void setInitialized(bool initialized); 
 
   // Description:
