@@ -62,17 +62,21 @@ public:
 
   // Description:
   // Set/Get MRML Scene
+  // DEPRECATED: This method was used by the KWWidgests GUI only and it will be
+  // removed once the QT GUI is functional.
   void setMRMLScene(vtkMRMLScene * scene);
   vtkMRMLScene* mrmlScene() const;
 
   // Description:
   // Set/Get application logic
+  // DEPRECATED: This method was used by the KWWidgests GUI only and it will be
+  // removed once the QT GUI is functional.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;
   
   // Description:
   // Get slicer home directory
-  QString slicerHome();
+  QString slicerHome() const;
 
   // Description:
   // Convenient method to set slicer home directory

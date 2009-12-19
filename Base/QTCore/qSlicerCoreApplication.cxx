@@ -207,7 +207,7 @@ void qSlicerCoreApplication::setAppLogic(vtkSlicerApplicationLogic* appLogic)
 QCTK_GET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::slicerHome()
+QString qSlicerCoreApplication::slicerHome() const
 {
   // TODO Use QCoreApplication::applicationDirPath
   return qctk_d()->SlicerHome;
