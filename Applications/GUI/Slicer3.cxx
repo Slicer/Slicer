@@ -26,6 +26,7 @@
 
 #include "vtkOpenGLRenderWindow.h"
 #include "vtkRenderWindow.h"
+#include "vtkDebugLeaks.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWWindow.h"
@@ -2410,6 +2411,13 @@ int Slicer3_main(int& argc, char *argv[])
 
   //--- application last
   slicerApp->Delete ();
+
+  const unsigned int numberOfLeaks = vtkDebugLeaks::PrintCurrentLeaks();
+  cout << "numberOfLeaks = " << numberOfLeaks << std::endl;
+  if( numberOfLeaks > 0 )
+    {
+    res = EXIT_FAILURE;
+    }
 
   return res;
 }
