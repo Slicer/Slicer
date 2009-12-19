@@ -29,7 +29,6 @@ struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate()
     {
-    this->Logic = 0;
     this->ProcessInformation = 0;
     this->Name = "NA"; 
     }
@@ -43,8 +42,6 @@ struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_
 
   ModuleDescription                 Desc;
   ModuleProcessInformation*         ProcessInformation;
-
-  qSlicerCLIModuleLogic * Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -56,9 +53,6 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
-  QCTK_D(qSlicerCLIModule);
-  d->Logic = new qSlicerCLIModuleLogic;
-  d->Logic->initialize(this->appLogic());
 }
 
 //-----------------------------------------------------------------------------
@@ -71,8 +65,7 @@ qSlicerAbstractModuleWidget * qSlicerCLIModule::createWidgetRepresentation()
 //-----------------------------------------------------------------------------
 qSlicerModuleLogic* qSlicerCLIModule::createLogic()
 {
-  //return new qSlicerCLIModuleLogic;
-  return 0; 
+  return new qSlicerCLIModuleLogic;
 }
 
 //-----------------------------------------------------------------------------

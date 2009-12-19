@@ -15,7 +15,7 @@
 #include "qSlicerCLIModuleWidget_p.h"
 
 // SlicerQT includes
-// #include "qSlicerCLIModuleLogic.h"
+#include "qSlicerCLIModuleLogic.h"
 #include "qSlicerWidget.h"
 
 // qMRML includes
@@ -76,6 +76,14 @@ void qSlicerCLIModuleWidget::setup()
 
 //-----------------------------------------------------------------------------
 // qSlicerCLIModuleWidgetPrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic()
+{
+  QCTK_P(qSlicerCLIModuleWidget);
+  // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
+  return dynamic_cast<qSlicerCLIModuleLogic*>(p->logic());
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)

@@ -33,6 +33,7 @@
 // STL includes
 #include <vector>
 
+class qSlicerCLIModuleLogic; 
 class QFormLayout;
 class QBoxLayout; 
 
@@ -48,10 +49,13 @@ public:
   typedef qSlicerCLIModuleWidgetPrivate Self;
   qSlicerCLIModuleWidgetPrivate()
     {
-//     this->Logic = 0;
     this->ProcessInformation = 0;
     this->Name = "NA"; 
     }
+  
+  // Description:
+  // Convenient function to cast qSlicerModuleLogic into qSlicerCLIModuleLogic
+  qSlicerCLIModuleLogic* logic();
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
   typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;
