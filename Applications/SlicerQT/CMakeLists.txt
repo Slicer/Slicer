@@ -276,11 +276,6 @@ set(include_dirs
 
 INCLUDE_DIRECTORIES(${include_dirs})
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/qSlicerQTConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/qSlicerQTConfigure.h
-  )
-
 # --------------------------------------------------------------------------
 # with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
 # cmd window
@@ -369,7 +364,7 @@ CONFIGURE_FILE(
 #     endif(APPLE OR UNIX)
 #   endif(NOT WIN32)
 # endif(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
-  
+    
 # --------------------------------------------------------------------------
 # Build the library
 
@@ -412,7 +407,21 @@ ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX}
 TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
   ${lib_name}
   )
-  
+
+#-----------------------------------------------------------------------------
+# Configure
+#
+SET(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICERQT_EXPORT")
+SET(MY_EXPORT_HEADER_PREFIX ${lib_name})
+SET(MY_LIBNAME ${lib_name})
+
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
+  )
+SET(dynamicHeaders
+  "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
+    
 # --------------------------------------------------------------------------
 # Install
 #
@@ -420,6 +429,14 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
   DESTINATION ${Slicer3_INSTALL_BIN_DIR}
   COMPONENT Runtime)
 
+# Install headers
+#FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+#INSTALL(FILES
+#  ${headers}
+#  ${dynamicHeaders}
+#  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+#  )
+    
 # --------------------------------------------------------------------------
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built

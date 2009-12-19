@@ -7,7 +7,7 @@
 // QT includes
 #include <QObject>
 
-#include "qSlicerQTWin32Header.h"
+#include "qSlicerQTExport.h"
 
 class qSlicerMainWindow; 
 class qSlicerMainWindowCorePrivate;
