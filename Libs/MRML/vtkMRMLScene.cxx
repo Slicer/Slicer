@@ -1024,6 +1024,10 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   n->SetScene( this );
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
 
+  // cache the node so the whole scene cache stays up-todate
+  this->NodeIDs[std::string(n->GetID())] = n;
+  this->NodeIDsMTime = this->CurrentScene->GetMTime();
+
   n->SetDisableModifiedEvent(modifyStatus);
   return n;
 }
