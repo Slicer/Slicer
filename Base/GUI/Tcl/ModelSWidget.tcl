@@ -240,14 +240,25 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  set transformToWorld [vtkMatrix4x4 New]
+  $transformToWorld Identity
+
   # control visibility based on ModelDisplayNode
   if { $_modelNode != "" } { 
     $o(cutter) SetInput [$_modelNode GetPolyData]
     set displayNode [$_modelNode GetDisplayNode]
+
+    # handle model transform to world space
+    set tnode [$_modelNode GetParentTransformNode]
+    if { $tnode != "" } {
+        $tnode GetMatrixTransformToWorld $transformToWorld
+    }
+      
     if { $caller == $displayNode } {
       $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
     }
   }
+
 
   #
   # update the transform from world to screen space
@@ -257,18 +268,42 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   set rasToXY [vtkMatrix4x4 New]
   $rasToXY DeepCopy [$_sliceNode GetXYToRAS]
   $rasToXY Invert
-  $o(cutTransform) SetMatrix $rasToXY
-  $rasToXY Delete
+  
+  set mat [vtkMatrix4x4 New]
+  $mat Identity
+  $mat Multiply4x4  $rasToXY $transformToWorld $mat
+  $rasToXY DeepCopy $mat
 
+  $o(cutTransform) SetMatrix $rasToXY
+
+  puts "transform"
+  puts [$rasToXY Print]
+
+  $transformToWorld Invert
   #
   # update the plane equation for the current slice cutting plane
   # - extract from the slice matrix
   # - normalize the normal
   #
-  foreach row {0 1 2} {
-    lappend normal [[$_sliceNode GetXYToRAS] GetElement $row 2]
-    lappend origin [[$_sliceNode GetXYToRAS] GetElement $row 3]
+
+  $rasToXY DeepCopy [$_sliceNode GetXYToRAS]
+
+  if { $_modelNode != "" } { 
+      $mat Identity
+      $mat Multiply4x4 $transformToWorld $rasToXY $mat
+      $rasToXY DeepCopy $mat
   }
+
+  foreach row {0 1 2} {
+    lappend normal [$rasToXY GetElement $row 2]
+    lappend origin [$rasToXY GetElement $row 3]
+  }
+
+  $transformToWorld Delete
+  $rasToXY Delete
+  $mat Delete
+
+
   set sum 0.
   foreach ele $normal {
     set sum [expr $sum + $ele * $ele]
