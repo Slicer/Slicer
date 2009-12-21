@@ -11,8 +11,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qVTKObjectEventsObserverPrivate: public qCTKPrivate<qVTKObjectEventsObserver>
+class qVTKObjectEventsObserverPrivate: public qCTKPrivate<qVTKObjectEventsObserver>
 {
+public:
   qVTKObjectEventsObserverPrivate()
     {
     this->AllEnabled = true;

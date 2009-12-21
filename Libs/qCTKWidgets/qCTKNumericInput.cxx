@@ -5,8 +5,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKNumericInputPrivate: public qCTKPrivate<qCTKNumericInput>
+class qCTKNumericInputPrivate: public qCTKPrivate<qCTKNumericInput>
 {
+public:
   qCTKNumericInputPrivate()
     {
     //this->Text = "0";

@@ -43,8 +43,9 @@
 #include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
+class qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerCoreApplication);
   typedef qSlicerCoreApplicationPrivate Self; 
   qSlicerCoreApplicationPrivate()

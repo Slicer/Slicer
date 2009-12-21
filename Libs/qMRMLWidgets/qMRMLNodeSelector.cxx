@@ -14,8 +14,9 @@
 #include <QComboBox>
 
 //-----------------------------------------------------------------------------
-struct qMRMLNodeSelectorPrivate: public qCTKPrivate<qMRMLNodeSelector>
+class qMRMLNodeSelectorPrivate: public qCTKPrivate<qMRMLNodeSelector>
 {
+public:
   qMRMLNodeSelectorPrivate()
     {
     this->MRMLScene = 0; 

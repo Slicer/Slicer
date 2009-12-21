@@ -14,7 +14,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLNodeFactoryPrivate: public qCTKPrivate<qMRMLNodeFactory>
+class qMRMLNodeFactoryPrivate: public qCTKPrivate<qMRMLNodeFactory>
 {
 public:
   qMRMLNodeFactoryPrivate()

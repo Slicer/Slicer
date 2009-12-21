@@ -8,7 +8,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKMatrixWidgetPrivate: public qCTKPrivate<qCTKMatrixWidget>
+class qCTKMatrixWidgetPrivate: public qCTKPrivate<qCTKMatrixWidget>
 {
 };
 

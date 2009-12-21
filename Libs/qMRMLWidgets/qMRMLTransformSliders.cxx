@@ -18,9 +18,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLTransformSlidersPrivate: public qCTKPrivate<qMRMLTransformSliders>,
+class qMRMLTransformSlidersPrivate: public qCTKPrivate<qMRMLTransformSliders>,
                                      public Ui_qMRMLTransformSliders
 {
+public:
   qMRMLTransformSlidersPrivate()
     {
     this->MRMLTransformNode = 0;

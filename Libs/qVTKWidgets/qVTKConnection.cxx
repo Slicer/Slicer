@@ -14,8 +14,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qVTKConnectionPrivate: public qCTKPrivate<qVTKConnection>
+class qVTKConnectionPrivate: public qCTKPrivate<qVTKConnection>
 {
+public:
   enum
     {
     NO_ARGUMENTS = 0,

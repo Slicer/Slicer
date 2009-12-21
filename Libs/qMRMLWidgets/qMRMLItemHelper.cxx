@@ -8,8 +8,9 @@
 #include <QDebug>
 
 //------------------------------------------------------------------------------
-struct qMRMLAbstractItemHelperPrivate: public qCTKPrivate<qMRMLAbstractItemHelper>
+class qMRMLAbstractItemHelperPrivate: public qCTKPrivate<qMRMLAbstractItemHelper>
 {
+public:
   QCTK_DECLARE_PUBLIC(qMRMLAbstractItemHelper);
   int Column;
 };
@@ -95,8 +96,9 @@ bool qMRMLAbstractItemHelper::setData(const QVariant &value, int role)
 
 // qMRMLSceneItemHelper
 //------------------------------------------------------------------------------
-struct qMRMLSceneItemHelperPrivate: public qCTKPrivate<qMRMLSceneItemHelper>
+class qMRMLSceneItemHelperPrivate: public qCTKPrivate<qMRMLSceneItemHelper>
 {
+public:
   QCTK_DECLARE_PUBLIC(qMRMLSceneItemHelper); 
   vtkMRMLScene* MRMLScene;
 };
@@ -209,8 +211,9 @@ qMRMLAbstractItemHelper* qMRMLSceneItemHelper::parent() const
 
 // qMRMLNodeItemHelper
 //------------------------------------------------------------------------------
-struct qMRMLNodeItemHelperPrivate: public qCTKPrivate<qMRMLNodeItemHelper>
+class qMRMLNodeItemHelperPrivate: public qCTKPrivate<qMRMLNodeItemHelper>
 {
+public:
   QCTK_DECLARE_PUBLIC(qMRMLNodeItemHelper); 
   vtkMRMLNode* MRMLNode;
 };
@@ -396,8 +399,9 @@ bool qMRMLNodeItemHelper::setData(const QVariant &value, int role)
 
 // qMRMLRootItemHelper
 //------------------------------------------------------------------------------
-struct qMRMLRootItemHelperPrivate: public qCTKPrivate<qMRMLRootItemHelper>
+class qMRMLRootItemHelperPrivate: public qCTKPrivate<qMRMLRootItemHelper>
 {
+public:
   QCTK_DECLARE_PUBLIC(qMRMLRootItemHelper);
   bool TopLevelScene;
 };

@@ -19,7 +19,7 @@ int getDecimalCount(double d)
 }
 
 //-----------------------------------------------------------------------------
-struct qCTKSliderSpinBoxLabelPrivate: public qCTKPrivate<qCTKSliderSpinBoxLabel>,
+class qCTKSliderSpinBoxLabelPrivate: public qCTKPrivate<qCTKSliderSpinBoxLabel>,
                                       public Ui_qCTKSliderSpinBoxLabel
 {
 };

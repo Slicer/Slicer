@@ -15,8 +15,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLLinearTransformSliderPrivate: public qCTKPrivate<qMRMLLinearTransformSlider>
+class qMRMLLinearTransformSliderPrivate: public qCTKPrivate<qMRMLLinearTransformSlider>
 {
+public:
   qMRMLLinearTransformSliderPrivate()
     {
     this->TypeOfTransform = qMRMLLinearTransformSlider::TRANSLATION_LR;

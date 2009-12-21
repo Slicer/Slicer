@@ -11,8 +11,9 @@
 #define qCTKSlider_IS_DBL(X) (!(X == static_cast<double>(static_cast<int>(X))))
 
 //-----------------------------------------------------------------------------
-struct qCTKSliderPrivate: public qCTKPrivate<qCTKSlider>
+class qCTKSliderPrivate: public qCTKPrivate<qCTKSlider>
 {
+  public:
   qCTKSliderPrivate()
     {
     this->SingleStep = 1;

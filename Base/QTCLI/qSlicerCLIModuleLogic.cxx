@@ -79,8 +79,9 @@ struct DigitsToCharacters
 };
 
 //-----------------------------------------------------------------------------
-struct qSlicerCLIModuleLogicPrivate: public qCTKPrivate<qSlicerCLIModuleLogic>
+class qSlicerCLIModuleLogicPrivate: public qCTKPrivate<qSlicerCLIModuleLogic>
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerCLIModuleLogic);
   qSlicerCLIModuleLogicPrivate()
     {

@@ -7,8 +7,9 @@
 #include <QDebug>
 
 // -------------------------------------------------------------------------
-struct qCTKTreeComboBoxPrivate: public qCTKPrivate<qCTKTreeComboBox>
+class qCTKTreeComboBoxPrivate: public qCTKPrivate<qCTKTreeComboBox>
 {
+  public:
   bool SkipNextHide;
   bool ResetPopupSize;
   

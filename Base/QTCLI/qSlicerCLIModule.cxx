@@ -23,8 +23,9 @@
 #include <ModuleDescriptionParser.h>
 
 //-----------------------------------------------------------------------------
-struct qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
+class qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerCLIModule);
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate()

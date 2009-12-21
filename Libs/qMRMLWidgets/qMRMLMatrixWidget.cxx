@@ -16,8 +16,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qMRMLMatrixWidgetPrivate: public qCTKPrivate<qMRMLMatrixWidget>
+class qMRMLMatrixWidgetPrivate: public qCTKPrivate<qMRMLMatrixWidget>
 {
+public:
   qMRMLMatrixWidgetPrivate()
     {
     this->CoordinateReference = qMRMLMatrixWidget::GLOBAL; 

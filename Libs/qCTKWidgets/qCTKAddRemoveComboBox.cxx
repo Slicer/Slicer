@@ -6,9 +6,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
+class qCTKAddRemoveComboBoxPrivate : public qCTKPrivate<qCTKAddRemoveComboBox>,
                                       public Ui_qCTKAddRemoveComboBox
 {
+public:
   qCTKAddRemoveComboBoxPrivate();
 
   // Description:

@@ -6,12 +6,9 @@
 #include <QStandardItemModel>
 
 //-----------------------------------------------------------------------------
-struct qMRMLNodeTreeSelectorPrivate: public qCTKPrivate<qMRMLNodeTreeSelector>
+class qMRMLNodeTreeSelectorPrivate: public qCTKPrivate<qMRMLNodeTreeSelector>
 {
-  qMRMLNodeTreeSelectorPrivate()
-    {
-    }
-
+public:
   void addItemInternal(int index, const QIcon &icon, 
                        const QString &text, const QVariant &userData);
 };
