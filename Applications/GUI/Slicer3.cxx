@@ -1955,11 +1955,13 @@ int Slicer3_main(int& argc, char *argv[])
   //
   if ( Exec != "" )
     {
+std::cout << "AZUCAR " << std::endl;
     std::string tclCmd = "set ::SLICER(exec) \"" + Exec + "\" ; ";
     tclCmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec); ";
     tclCmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
     tclCmd += "after idle eval $::SLICER(exec);";
-    res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
+std::cout << "tclCmd = " << tclCmd << std::endl;
+    // res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
   if ( ExecPython != "" )
