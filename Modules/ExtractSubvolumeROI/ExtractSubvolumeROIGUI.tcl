@@ -19,7 +19,7 @@ proc ExtractSubvolumeROITearDownGUI {this} {
   # nodeSelector  ;# disabled for now
   set widgets {
     initFrame runButton inputSelector outputSelector roiSelector samplingScale
-    resamplingFrame roiVisibility
+    isotropicResampling resamplingFrame roiVisibility
   }
   set nonwidgets {
     visIcons
@@ -180,6 +180,16 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   [$sampling GetWidget] SetValue 1.
   $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. E.g., \"1\" will preserve original spacing, \"0.5\" will *increase* number of pixels in each dimension by 2, \"2\" will *reduce* number of pixels in each dimension by 2"
   pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
+
+  # Isotropic resampling check box
+  set ::ExtractSubvolumeROI($this,isotropicResampling) [vtkKWCheckButton New]
+  set ckbutton $::ExtractSubvolumeROI($this,isotropicResampling)
+  $ckbutton SetParent [$initFrame GetFrame]
+  $ckbutton Create
+  $ckbutton SetText "Isotropic voxel size for output volume"
+  $ckbutton SelectedStateOff
+  $ckbutton SetBalloonHelpString "If checked, the output volume will have isotropic spacing, with the voxel size defined as the minimum input spacing value times the isotropic constant value"
+  pack [$ckbutton GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   # Resampler selection
   set ::ExtractSubvolumeROI($this,resamplingFrame) [vtkKWRadioButtonSetWithLabel New]
@@ -675,14 +685,23 @@ proc ExtractSubvolumeROIApply {this} {
 
   scan [$volumeNode GetSpacing] "%f%f%f" inputSpacingX inputSpacingY inputSpacingZ
 
-#  set outputSpacingX [expr $rX*2./100.]
-#  set outputSpacingY [expr $rY*2./100.]
-#  set outputSpacingZ [expr $rZ*2./100.]
-
   # scale spacing in each dimension by user-defined value
   set outputSpacingX [expr $inputSpacingX*$userSpacing]
   set outputSpacingY [expr $inputSpacingY*$userSpacing]
   set outputSpacingZ [expr $inputSpacingZ*$userSpacing]
+
+  if { [eval $::ExtractSubvolumeROI($this,isotropicResampling) GetSelectedState] } {
+    set minSpacing $outputSpacingX
+    if { $outputSpacingY < $minSpacing } {
+      set minSpacing $outputSpacingY
+    }
+    if { $outputSpacingZ < $minSpacing} {
+      set minSpacing $outputSpacingZ
+    }
+    set outputSpacingX $minSpacing
+    set outputSpacingY $minSpacing
+    set outputSpacingZ $minSpacing
+  }
 
   set outputExtentX [expr int(2.*$rX/$outputSpacingX)]
   set outputExtentY [expr int(2.*$rY/$outputSpacingY)]
