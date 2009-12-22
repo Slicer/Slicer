@@ -84,7 +84,7 @@ public:
 
   // Description:
   // Convenient function used to register a library in the appropriate factory
-  void registerLibrary(int factoryType, QFileInfo fileInfo);
+  void registerLibrary(int factoryType, const QFileInfo& libraryFileInfo);
 
   // Description:
   // If instantiate is true, instantiate a module. Otherwise uninstantiate it.
@@ -433,18 +433,25 @@ void qSlicerModuleFactoryPrivate::registerLibraries(int factoryType, const QStri
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, QFileInfo fileInfo)
+void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, 
+  const QFileInfo& libraryFileInfo)
 {
-  while (fileInfo.isSymLink())
+  QString libraryName, libraryPath;
+  
+  if (libraryFileInfo.isSymLink())
     {
-    fileInfo = QFileInfo(fileInfo.symLinkTarget());
-    if (!fileInfo.isFile())
-      {
-      return;
-      }
+    // symLinkTarget() handles links pointing to symlinks
+    QFileInfo target = QFileInfo(libraryFileInfo.symLinkTarget());
+    libraryName = target.fileName();
+    libraryPath = target.filePath();
     }
-  QString libraryName = fileInfo.fileName();
-  qDebug() << "Attempt to register library" << fileInfo.filePath();
+  else
+    {
+    libraryName = libraryFileInfo.fileName();
+    libraryPath = libraryFileInfo.filePath();
+    }
+  
+  qDebug() << "Attempt to register library" << libraryPath;
   
   if (!QLibrary::isLibrary(libraryName))
     {
@@ -454,7 +461,7 @@ void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, QFileInfo fil
 
   if (factoryType == Self::LoadableModule)
     {
-    if (this->LoadableModuleFactory.registerLibrary(libraryName, fileInfo.filePath()))
+    if (this->LoadableModuleFactory.registerLibrary(libraryName, libraryPath))
       {
       // Keep track of the factory type associated with the module
       this->MapModuleNameToFactoryType[libraryName] = factoryType;
@@ -468,7 +475,7 @@ void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, QFileInfo fil
     }
   else if (factoryType == Self::CmdLineLoadableModule)
     {
-    if (this->CmdLineLoadableModuleFactory.registerLibrary(libraryName, fileInfo.filePath()))
+    if (this->CmdLineLoadableModuleFactory.registerLibrary(libraryName, libraryPath))
       {
       // Keep track of the factory type associated with the module
       this->MapModuleNameToFactoryType[libraryName] = factoryType;
