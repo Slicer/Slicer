@@ -211,7 +211,7 @@ void vtkCudaVolumeMapper::Render(vtkRenderer *renderer, vtkVolume *volume)
     
     //    std::cout << "  Display Time: " << log->GetElapsedTime() << std::endl;
     log->Delete();
-
+    overallTimer->Delete();
     return;
 }
 
