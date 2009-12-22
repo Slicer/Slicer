@@ -33,8 +33,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerModuleFactoryPrivate : public qCTKPrivate<qSlicerModuleFactory>
+class qSlicerModuleFactoryPrivate : public qCTKPrivate<qSlicerModuleFactory>
 {
+public:
   typedef qSlicerModuleFactoryPrivate Self;
   
   typedef QHash<QString, QString>::const_iterator MapConstIterator;
@@ -83,7 +84,7 @@ struct qSlicerModuleFactoryPrivate : public qCTKPrivate<qSlicerModuleFactory>
 
   // Description:
   // Convenient function used to register a library in the appropriate factory
-  void registerLibrary(int factoryType, const QFileInfo& fileInfo);
+  void registerLibrary(int factoryType, QFileInfo fileInfo);
 
   // Description:
   // If instantiate is true, instantiate a module. Otherwise uninstantiate it.
@@ -196,7 +197,7 @@ QStringList qSlicerModuleFactory::loadableModuleNames() const
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerModuleFactory, QStringList, loadableModuleSearchPaths,
                                                 LoadableModuleSearchPaths);
-                                                
+         
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactory::setLoadableModuleSearchPaths(const QStringList& paths)
 {
@@ -423,7 +424,7 @@ void qSlicerModuleFactoryPrivate::registerLibraries(int factoryType, const QStri
     while (it.hasNext())
       {
       it.next();
-      if (it.fileInfo().isFile() && it.fileInfo().isExecutable())
+      if (it.fileInfo().isFile())
         {
         this->registerLibrary(factoryType, it.fileInfo());
         }
@@ -432,10 +433,19 @@ void qSlicerModuleFactoryPrivate::registerLibraries(int factoryType, const QStri
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, const QFileInfo& fileInfo)
+void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, QFileInfo fileInfo)
 {
+  while (fileInfo.isSymLink())
+    {
+    fileInfo = QFileInfo(fileInfo.symLinkTarget());
+    if (!fileInfo.isFile())
+      {
+      return;
+      }
+    }
   QString libraryName = fileInfo.fileName();
   qDebug() << "Attempt to register library" << fileInfo.filePath();
+  
   if (!QLibrary::isLibrary(libraryName))
     {
     //qDebug() << "-->Skiped";
