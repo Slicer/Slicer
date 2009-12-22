@@ -23,6 +23,7 @@
 // QT includes
 #include <QVector>
 #include <QStringList>
+#include <QDir>
 #include <QDebug>
 
 // MRML includes
@@ -216,6 +217,12 @@ QString qSlicerCoreApplication::slicerHome() const
 
 //-----------------------------------------------------------------------------
 QCTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::tempDirectory() const
+{
+  return QDir::tempPath();
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initializeLoadableModulesPaths()

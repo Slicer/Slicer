@@ -84,6 +84,10 @@ public:
   void setSlicerHome(const QString& slicerHome);
 
   // Description:
+  // Return the temporary directory associated with the application
+  QString tempDirectory() const; 
+
+  // Description:
   // Initialize paths
   void initializeLoadableModulesPaths();
   void initializeCmdLineModulesPaths();
