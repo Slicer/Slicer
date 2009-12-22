@@ -132,8 +132,7 @@ bool qVTKConnection::ValidateParameters(vtkObject* vtk_obj, unsigned long /*vtk_
     }
   return true;
 }
-#include <iostream>
-#include <fstream>
+
 //-----------------------------------------------------------------------------
 void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, QString qt_slot, float priority)
@@ -154,9 +153,6 @@ void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   int strSize = qt_slot.count();
   if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
-    std::ofstream toto("couttoto.txt", std::ios_base::app);
-    toto << qt_slot.toLatin1().data() << std::endl;
-    toto.close();
     d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT;
     }
   else
