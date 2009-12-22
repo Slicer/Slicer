@@ -28,8 +28,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerCoreIOManagerPrivate: public qCTKPrivate<qSlicerCoreIOManager>
+class qSlicerCoreIOManagerPrivate: public qCTKPrivate<qSlicerCoreIOManager>
 {
+public:
   qSlicerCoreIOManagerPrivate()
     {
     this->ExtensionFileType = new QSettings(":/default-extension-filetype",

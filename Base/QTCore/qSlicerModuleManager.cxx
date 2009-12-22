@@ -25,8 +25,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
+class qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerModuleManager);
 
   // Description:
@@ -92,7 +93,7 @@ bool qSlicerModuleManager::isLoaded(const QString& moduleName)
 bool qSlicerModuleManager::loadModule(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
-  
+
   // A module should be registered when attempting to load it
   //Q_ASSERT(this->factory()->isRegistered(moduleName));
   if (!this->factory()->isRegistered(moduleName))

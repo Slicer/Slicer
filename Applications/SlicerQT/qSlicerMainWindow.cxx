@@ -13,8 +13,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMainWindowPrivate: public qCTKPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
+class qSlicerMainWindowPrivate: public qCTKPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerMainWindow);
   qSlicerMainWindowPrivate()
     {
