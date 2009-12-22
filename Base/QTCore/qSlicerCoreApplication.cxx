@@ -29,6 +29,7 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCrosshairNode.h"
+#include "vtkMRMLCommandLineModuleNode.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
@@ -153,6 +154,12 @@ void qSlicerCoreApplication::initialize()
   vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
+
+
+  // Register the node type for the command line modules
+  vtkSmartPointer<vtkMRMLCommandLineModuleNode> clmNode =
+    vtkSmartPointer<vtkMRMLCommandLineModuleNode>::New();
+  scene->RegisterNodeClass(clmNode);
 
   // Create the application Logic object,
   vtkSmartPointer<vtkSlicerApplicationLogic> appLogic =

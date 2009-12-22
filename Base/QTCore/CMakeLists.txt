@@ -14,6 +14,8 @@ SET(slicer_qtbase_include_directories
   ${qSlicerBaseQTCLI_BINARY_DIR}
   ${qSlicerBaseQTCoreModules_SOURCE_DIR}
   ${qSlicerBaseQTCoreModules_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
   
 # Source files
