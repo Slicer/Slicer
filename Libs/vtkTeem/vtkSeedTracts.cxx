@@ -1148,6 +1148,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   timer->StopTimer();
   std::cout << "Tractography in ROI time: " << timer->GetElapsedTime() << endl;
+  timer->Delete();
 }
 
 //----------------------------------------------------------------------------
