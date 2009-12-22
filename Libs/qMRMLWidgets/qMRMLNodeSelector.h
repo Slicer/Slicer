@@ -106,9 +106,9 @@ protected slots:
   
   // Description:
   // Triggered upon MRML scene updates
-  void onMRMLSceneNodeAdded(vtkObject * node); 
-  void onMRMLSceneNodeRemoved(vtkObject * node); 
-  void onMRMLNodeModified(void* call_data, vtkObject * caller);
+  void onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node); 
+  void onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * node); 
+  void onMRMLNodeModified(vtkObject * node);
   
   void onCurrentIndexChanged(int index);
   void onItemAdded(int index);

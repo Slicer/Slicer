@@ -147,7 +147,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // Listen for Transform node changes
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
     vtkMRMLTransformableNode::TransformModifiedEvent,
-    this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
+    this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
   d->MRMLTransformNode = transformNode;
 }
@@ -175,7 +175,7 @@ void qSlicerTransformsModuleWidget::onInvertButtonPressed()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
+void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* caller)
 {
   QCTK_D(qSlicerTransformsModuleWidget);
   

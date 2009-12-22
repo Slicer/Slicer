@@ -87,10 +87,10 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
     vtkMRMLTransformableNode::TransformModifiedEvent,
-    this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*)));
+    this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
   d->MRMLTransformNode = transformNode;
-  this->onMRMLTransformNodeModified(0, transformNode);
+  this->onMRMLTransformNodeModified(transformNode);
   // If the node is NULL, any action on the widget is meaningless, this is why
   // the widget is disabled
   this->setEnabled(transformNode != 0);
@@ -103,7 +103,7 @@ vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
+void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 {
   QCTK_D(qMRMLLinearTransformSlider);
   

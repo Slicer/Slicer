@@ -51,7 +51,7 @@ protected slots:
   void onCurrentCameraNodeChanged(vtkMRMLNode*);
   void onCameraNodeAdded(vtkMRMLNode*);
   void onCameraNodeRemoved(vtkMRMLNode*);
-  void synchronizeCameraWithView(void * currentView= 0);
+  void synchronizeCameraWithView();
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerCamerasModuleWidget);

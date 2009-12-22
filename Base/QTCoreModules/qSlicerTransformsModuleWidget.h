@@ -53,7 +53,7 @@ protected slots:
 
   // Description:
   // Triggered upon MRML transform node updates
-  void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
+  void onMRMLTransformNodeModified(vtkObject* caller);
 
 protected:
   // Description:

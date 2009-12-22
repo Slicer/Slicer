@@ -9,6 +9,7 @@
 #include <vtkCallbackCommand.h>
 
 // QT includes
+#include <QRegExp>
 #include <QString>
 #include <QTextStream>
 #include <QDebug>
@@ -19,13 +20,9 @@ class qVTKConnectionPrivate: public qCTKPrivate<qVTKConnection>
 public:
   enum
     {
-    NO_ARGUMENTS = 0,
-    ARG_UNKOWN,
-    ARG_VTKOBJECT,
-    ARG_VOID,
+    ARG_UNKOWN = 0,
     ARG_VTKOBJECT_AND_VTKOBJECT,
-    ARG_VOID_AND_VTKOBJECT,
-    ARG_VTKOBJECT_ULONG_VOID_VOID
+    ARG_VTKOBJECT_VOID_ULONG_VOID
     };
 
   qVTKConnectionPrivate()
@@ -36,7 +33,7 @@ public:
     this->QtObject   = 0;
     this->VTKEvent = vtkCommand::NoEvent;
     this->Priority = 0.0;
-    this->SlotType = NO_ARGUMENTS;
+    this->SlotType = ARG_UNKOWN;
     this->Parent      = 0;
     this->Established = false;
     this->Blocked     = false;
@@ -135,7 +132,8 @@ bool qVTKConnection::ValidateParameters(vtkObject* vtk_obj, unsigned long /*vtk_
     }
   return true;
 }
-
+#include <iostream>
+#include <fstream>
 //-----------------------------------------------------------------------------
 void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, QString qt_slot, float priority)
@@ -154,36 +152,16 @@ void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   d->Priority = priority;
   
   int strSize = qt_slot.count();
-  if (qt_slot.at(strSize-1) == '(' && qt_slot.at(strSize) == ')')
+  if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
-    d->SlotType = qVTKConnectionPrivate::NO_ARGUMENTS;
-    }
-  else if (qt_slot.contains("(vtkObject*)"))
-    {
-    d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT;
-    }
-  else if (qt_slot.contains("(void*)"))
-    {
-    d->SlotType = qVTKConnectionPrivate::ARG_VOID;
-    }
-  else if (qt_slot.contains("(vtkObject*,vtkObject*)"))
-    {
+    std::ofstream toto("couttoto.txt", std::ios_base::app);
+    toto << qt_slot.toLatin1().data() << std::endl;
+    toto.close();
     d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT;
-    }
-  else if (qt_slot.contains("(void*,vtkObject*)"))
-    {
-    d->SlotType = qVTKConnectionPrivate::ARG_VOID_AND_VTKOBJECT;
-    }
-  else if (qt_slot.contains("(vtkObject*,unsigned long,void*,void*)"))
-    {
-    d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT_ULONG_VOID_VOID;
     }
   else
     {
-    d->SlotType = qVTKConnectionPrivate::ARG_UNKOWN;
-    qCritical() << "The slot (" << d->QtSlot <<  ") owned by "
-            << "QObject(" << d->QtObject->objectName() << ")"
-            << " seems to have a wrong signature.";
+    d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID;
     }
 }
 
@@ -222,7 +200,7 @@ void qVTKConnection::SetBlocked(bool block)
     }
   d->Blocked = block;
 }
-
+/*
 #define QVTK_EMPTY_ARG
 #define QVTK_OBJECT_INTERNAL_CONNECT1(ARG1)     \
 QObject::connect(                               \
@@ -247,7 +225,7 @@ QObject::connect(                                            \
   this, SIGNAL(emitExecute(ARG1, ARG2, ARG3, ARG4)),         \
   d->QtObject,                                               \
   d->QtSlot.toLatin1().data());
-
+*/
 //-----------------------------------------------------------------------------
 void qVTKConnection::EstablishConnection()
 {
@@ -257,23 +235,15 @@ void qVTKConnection::EstablishConnection()
 
   switch (d->SlotType)
     {
-    case qVTKConnectionPrivate::NO_ARGUMENTS:
-      QVTK_OBJECT_INTERNAL_CONNECT1(QVTK_EMPTY_ARG);
-      break;
-    case qVTKConnectionPrivate::ARG_VTKOBJECT:
-      QVTK_OBJECT_INTERNAL_CONNECT1(vtkObject*);
-      break;
-    case qVTKConnectionPrivate::ARG_VOID:
-      QVTK_OBJECT_INTERNAL_CONNECT1(void*);
-      break;
     case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-      QVTK_OBJECT_INTERNAL_CONNECT2(vtkObject*,vtkObject*);
+      //QVTK_OBJECT_INTERNAL_CONNECT2(vtkObject*,vtkObject*);
+      QObject::connect(this, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+        d->QtObject,d->QtSlot.toLatin1().data());
       break;
-    case qVTKConnectionPrivate::ARG_VOID_AND_VTKOBJECT:
-      QVTK_OBJECT_INTERNAL_CONNECT2(void*,vtkObject*);
-      break;
-    case qVTKConnectionPrivate::ARG_VTKOBJECT_ULONG_VOID_VOID:
-      QVTK_OBJECT_INTERNAL_CONNECT4(vtkObject*,unsigned long,void*,void*);
+    case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
+      //QVTK_OBJECT_INTERNAL_CONNECT4(vtkObject*,void*,unsigned long,void*);
+      QObject::connect(this, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+        d->QtObject, d->QtSlot.toLatin1().data());
       break;
     default:
       Q_ASSERT(false);
@@ -298,13 +268,13 @@ void qVTKConnection::EstablishConnection()
 
   d->Established = true;
 }
-
+/*
 #undef QVTK_EMPTY_ARG
 #undef QVTK_OBJECT_INTERNAL_CONNECT1
 #undef QVTK_OBJECT_INTERNAL_CONNECT2
 #undef QVTK_OBJECT_INTERNAL_CONNECT3
 #undef QVTK_OBJECT_INTERNAL_CONNECT4
-
+*/
 //-----------------------------------------------------------------------------
 void qVTKConnection::BreakConnection()
 {
@@ -316,7 +286,7 @@ void qVTKConnection::BreakConnection()
   d->VTKObject->RemoveObserver(d->Callback);
 
   QObject::disconnect(
-    this, SIGNAL(emitExecute(void*, vtkObject*)),
+    this, SIGNAL(emitExecute(vtkObject*, void*)),
     d->QtObject,
     d->QtSlot.toLatin1().data());
 
@@ -378,34 +348,6 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
     vtkObject* callDataAsVtkObject = 0;
     switch (d->SlotType)
       {
-      case qVTKConnectionPrivate::NO_ARGUMENTS:
-        if (d->VTKEvent == vtk_event)
-          {
-          emit this->emitExecute();
-          }
-        break;
-      case qVTKConnectionPrivate::ARG_VTKOBJECT:
-        callDataAsVtkObject = reinterpret_cast<vtkObject*>( call_data );
-        if (!callDataAsVtkObject)
-          {
-          qCritical() << "The VTKEvent (" << d->VTKEvent<< ") triggered by vtkObject ("
-            << d->VTKObject->GetClassName() << ") "
-            << "doesn't return data of type vtkObject." << endl
-            << "The slot (" << d->QtSlot <<  ") owned by "
-            << "QObject(" << d->QtObject->objectName() << ")"
-            << " may be incorrect.";
-          }
-        if (d->VTKEvent == vtk_event)
-          {
-          emit this->emitExecute( callDataAsVtkObject );
-          }
-        break;
-      case qVTKConnectionPrivate::ARG_VOID:
-        if (d->VTKEvent == vtk_event)
-          {
-          emit this->emitExecute(call_data);
-          }
-        break;
       case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
         if (d->VTKEvent == vtk_event)
           {
@@ -419,17 +361,11 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
               << "QObject(" << d->QtObject->objectName() << ")"
               << " may be incorrect.";
             }
-          emit this->emitExecute( callDataAsVtkObject, vtk_obj);
+          emit this->emitExecute( vtk_obj, callDataAsVtkObject );
           }
         break;
-      case qVTKConnectionPrivate::ARG_VOID_AND_VTKOBJECT:
-        if (d->VTKEvent == vtk_event)
-          {
-          emit this->emitExecute(call_data, vtk_obj);
-          }
-        break;
-      case qVTKConnectionPrivate::ARG_VTKOBJECT_ULONG_VOID_VOID:
-        emit this->emitExecute(vtk_obj, vtk_event, client_data, call_data);
+      case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
+        emit this->emitExecute(vtk_obj, call_data, vtk_event, client_data);
         break;
       default:
         // Should never reach

@@ -120,7 +120,7 @@ void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)
   // The widget is now aware of any updates regarding that node. 
   // And, if required, will be able to update the name of an item in the comboxbox
   this->qvtkConnect(mrmlNode, d->MRMLNodeModifiedEvent,
-                    this, SLOT(onMRMLNodeModified(void*,vtkObject*)));
+                    this, SLOT(onMRMLNodeModified(vtkObject*)));
   
   this->addNodeInternal(mrmlNode);  // Add the node into the combobox
 }
@@ -145,11 +145,11 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   
   // Connect MRML scene NodeAdded event
   this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent,
-    this, SLOT(onMRMLSceneNodeAdded(vtkObject*)));
+    this, SLOT(onMRMLSceneNodeAdded(vtkObject*, vtkObject*)));
   
   // Connect MRML scene NodeRemoved event
   this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent,
-    this, SLOT(onMRMLSceneNodeRemoved(vtkObject*)));
+    this, SLOT(onMRMLSceneNodeRemoved(vtkObject*, vtkObject*)));
   
   // the Add button is valid only if the scene is non-empty
   this->setAddEnabled(scene != 0);
@@ -183,9 +183,10 @@ void qMRMLNodeSelector::setCurrentNode(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * node)
+void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node)
 {
   QCTK_D(qMRMLNodeSelector);
+  Q_ASSERT(scene == d->MRMLScene);
   
   vtkMRMLNode* mrmlNode = vtkMRMLNode::SafeDownCast(node);
   if (!mrmlNode || !mrmlNode->IsA(d->NodeType.toAscii().data()))
@@ -197,9 +198,10 @@ void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * node)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * node)
+void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * node)
 {
   QCTK_D(qMRMLNodeSelector);
+  Q_ASSERT(scene == d->MRMLScene);
   
   vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(mrmlNode);
@@ -230,7 +232,7 @@ void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * node)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLNodeModified(void* call_data, vtkObject * caller)
+void qMRMLNodeSelector::onMRMLNodeModified(vtkObject * caller)
 {
   if (!caller) 
     { 

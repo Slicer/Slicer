@@ -49,7 +49,7 @@ public slots:
 protected slots:
   // Description:
   // Triggered upon MRML transform node updates
-  void onMRMLTransformNodeModified(void* call_data, vtkObject* caller);
+  void onMRMLTransformNodeModified(vtkObject* caller);
 
 private:
   QCTK_DECLARE_PRIVATE(qMRMLMatrixWidget);

@@ -65,12 +65,12 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
     vtkMRMLTransformableNode::TransformModifiedEvent, 
-    this, SLOT(onMRMLTransformNodeModified(void*,vtkObject*))); 
+    this, SLOT(onMRMLTransformNodeModified(vtkObject*))); 
 
   d->MRMLTransformNode = transformNode;
   
   //this->reset(); 
-  this->onMRMLTransformNodeModified(0, transformNode);
+  this->onMRMLTransformNodeModified(transformNode);
 
   // Enable/Disable the widget
   this->setEnabled(transformNode != 0); 
@@ -83,7 +83,7 @@ vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMatrixWidget::onMRMLTransformNodeModified(void* /*call_data*/, vtkObject* caller)
+void qMRMLMatrixWidget::onMRMLTransformNodeModified(vtkObject* caller)
 {
   QCTK_D(qMRMLMatrixWidget);
   

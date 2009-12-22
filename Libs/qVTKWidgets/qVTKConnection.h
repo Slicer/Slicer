@@ -65,12 +65,12 @@ signals:
   // Description:
   // The qt signal emited by the VTK Callback
   // The signal corresponding to the slot will be emited
-  void emitExecute();
-  void emitExecute(void* call_data);
-  void emitExecute(vtkObject* call_data);
-  void emitExecute(void* call_data, vtkObject* caller);
-  void emitExecute(vtkObject* call_data, vtkObject* caller);
-  void emitExecute(vtkObject* caller, unsigned long vtk_event, void* client_data, void* call_data);
+  void emitExecute(vtkObject* caller, vtkObject* call_data);
+  // Note: even if the signal has a signature with 4 args, you can
+  // connect it to a slot with less arguments as long as the types of the 
+  // argument are matching:
+  // connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
+  void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);
 
 protected slots:
   void deleteConnection();
