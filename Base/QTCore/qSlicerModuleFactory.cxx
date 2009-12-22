@@ -476,7 +476,6 @@ void qSlicerModuleFactoryPrivate::registerLibrary(int factoryType, QFileInfo fil
       // Instantiate the object and retrieve module title
       qSlicerAbstractModule* module = this->instantiateModule(libraryName, true);
       Q_ASSERT(module);
-
       module->initialize(qSlicerCoreApplication::application()->appLogic());
 
       this->updateInternalMaps(module->title(), libraryName);
@@ -517,9 +516,11 @@ protected:
       delete module; // Clean memory
       return 0;
       }
-     module->setXmlModuleDescription(xmlDescription);
-//     module->setupUi();
-     return module;
+    module->setXmlModuleDescription(xmlDescription);
+
+    module->setTempDirectory(qSlicerCoreApplication::application()->tempDirectory());
+    
+    return module;
     }
 };
 

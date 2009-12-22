@@ -45,6 +45,10 @@ public:
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
+  // Description:
+  // Set temporary directory associated with the module
+  void setTempDirectory(const QString& tempDirectory);
+
 protected:
   // Description:
   // Overloaded

@@ -40,6 +40,7 @@ public:
   QString           Help;
   QString           Category;
   QString           Contributor;
+  QString           TempDirectory; 
 
   ModuleDescription                 Desc;
   ModuleProcessInformation*         ProcessInformation;
@@ -54,6 +55,9 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
+  QCTK_D(qSlicerCLIModule);
+  // Temporary directory should be set before the module is initialized
+  Q_ASSERT(!d->TempDirectory.isEmpty());
 }
 
 //-----------------------------------------------------------------------------
@@ -77,6 +81,7 @@ QCTK_GET_CXX(qSlicerCLIModule, QString, category, Category);
 QCTK_GET_CXX(qSlicerCLIModule, QString, contributor, Contributor);
 QCTK_GET_CXX(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
 QCTK_GET_CXX(qSlicerCLIModule, QString, helpText, Help);
+QCTK_SET_CXX(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
