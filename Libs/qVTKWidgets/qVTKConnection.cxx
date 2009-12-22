@@ -144,12 +144,15 @@ void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   
   if (!Self::ValidateParameters(vtk_obj, vtk_event, qt_obj, qt_slot)) { return; }
 
+  // Remove spaces
+  qt_slot = qt_slot.remove(" "); 
+
   d->VTKObject = vtk_obj;
   d->QtObject = qt_obj;
   d->VTKEvent = vtk_event;
   d->QtSlot = qt_slot;
   d->Priority = priority;
-
+  
   int strSize = qt_slot.count();
   if (qt_slot.at(strSize-1) == '(' && qt_slot.at(strSize) == ')')
     {
