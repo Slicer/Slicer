@@ -2,6 +2,12 @@
 SET(KIT QTBase)
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerAbstractCoreModuleTest1.cxx
+  qSlicerAbstractLoadableModuleTest1.cxx
+  qSlicerAbstractModuleTest1.cxx
+  qSlicerAbstractModuleWidgetTest1.cxx
+  qSlicerModuleLogicTest1.cxx
+  qSlicerUtilsTest1.cxx
+  qSlicerWidgetTest1.cxx
   )
 
 SET (TestsToRun ${Tests})
@@ -18,4 +24,9 @@ ENDMACRO( SIMPLE_TEST  )
 
 
 SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
-
+SIMPLE_TEST( qSlicerAbstractLoadableModuleTest1 )
+SIMPLE_TEST( qSlicerAbstractModuleTest1 )
+SIMPLE_TEST( qSlicerAbstractModuleWidgetTest1 )
+SIMPLE_TEST( qSlicerModuleLogicTest1 )
+SIMPLE_TEST( qSlicerUtilsTest1 )
+SIMPLE_TEST( qSlicerWidgetTest1 )

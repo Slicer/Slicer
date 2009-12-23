@@ -16,8 +16,7 @@
 
 #include <stdlib.h>
 
-
-int qSlicerAbstractCoreModuleTest1(int, char * [] )
+int qSlicerAbstractModuleWidgetTest1(int, char * [] )
 {
 
 

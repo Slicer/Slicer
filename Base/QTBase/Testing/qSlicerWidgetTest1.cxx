@@ -17,9 +17,10 @@
 #include <stdlib.h>
 
 
-int qSlicerAbstractCoreModuleTest1(int, char * [] )
+int qSlicerWidgetTest1(int, char * [] )
 {
 
 
   return EXIT_SUCCESS;
 }
+
