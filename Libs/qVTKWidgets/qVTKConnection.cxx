@@ -141,15 +141,12 @@ void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   
   if (!Self::ValidateParameters(vtk_obj, vtk_event, qt_obj, qt_slot)) { return; }
 
-  // Remove spaces
-  qt_slot = qt_slot.remove(" "); 
-
   d->VTKObject = vtk_obj;
   d->QtObject = qt_obj;
   d->VTKEvent = vtk_event;
   d->QtSlot = qt_slot;
   d->Priority = priority;
-  
+
   int strSize = qt_slot.count();
   if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
@@ -281,10 +278,26 @@ void qVTKConnection::BreakConnection()
 
   d->VTKObject->RemoveObserver(d->Callback);
 
-  QObject::disconnect(
-    this, SIGNAL(emitExecute(vtkObject*, void*)),
-    d->QtObject,
-    d->QtSlot.toLatin1().data());
+  switch (d->SlotType)
+    {
+    case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
+      //QVTK_OBJECT_INTERNAL_CONNECT2(vtkObject*,vtkObject*);
+      QObject::disconnect(this, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+        d->QtObject,d->QtSlot.toLatin1().data());
+      break;
+    case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
+      //QVTK_OBJECT_INTERNAL_CONNECT4(vtkObject*,void*,unsigned long,void*);
+      QObject::disconnect(this, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+        d->QtObject, d->QtSlot.toLatin1().data());
+      break;
+    default:
+      Q_ASSERT(false);
+      qCritical() << "Failed to establish qVTKConnection - "
+            << "The slot (" << d->QtSlot <<  ") owned by "
+            << "QObject(" << d->QtObject->objectName() << ")"
+            << " seems to have a wrong signature.";
+      break;
+    }
 
   QObject::disconnect(
     d->QtObject, SIGNAL(destroyed(QObject*)),
@@ -311,7 +324,9 @@ bool qVTKConnection::IsEqual(vtkObject* vtk_obj, unsigned long vtk_event,
     {
     return false;
     }
-  if (!qt_slot.isEmpty() && (d->QtSlot.compare(qt_slot)!=0))
+  if (!qt_slot.isEmpty() && 
+      (QString(d->QtSlot).remove(' ').compare(
+        QString(qt_slot).remove(' ')) != 0))
     {
     return false;
     }
