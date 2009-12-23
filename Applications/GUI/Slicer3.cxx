@@ -2412,13 +2412,6 @@ int Slicer3_main(int& argc, char *argv[])
   //--- application last
   slicerApp->Delete ();
 
-  const unsigned int numberOfLeaks = vtkDebugLeaks::PrintCurrentLeaks();
-  cout << "There are memory leaks " << std::endl;
-  if( numberOfLeaks != 0 )
-    {
-    res = EXIT_FAILURE;
-    }
-
   return res;
 }
 
