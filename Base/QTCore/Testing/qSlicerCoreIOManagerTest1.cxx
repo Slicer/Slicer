@@ -31,13 +31,13 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [] )
 
   manager.printAdditionalInfo();
 
-  vtkMRMLScene * scene1 = vtkMRMLScene::New();
+  vtkSmartPointer< vtkMRMLScene > scene1 = vtkSmartPointer< vtkMRMLScene >::New();
 
   QString filename = argv[1];
 
   manager.loadScene( scene1, filename );
 
-  vtkMRMLScene * scene2 = vtkMRMLScene::New();
+  vtkSmartPointer< vtkMRMLScene > scene2 = vtkSmartPointer< vtkMRMLScene >::New();
 
   manager.loadScene( scene2, filename );
 
