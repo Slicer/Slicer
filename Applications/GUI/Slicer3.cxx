@@ -379,6 +379,8 @@ int Slicer3_main(int& argc, char *argv[])
   std::string itkAutoLoadPath;
   vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", itkAutoLoadPath);
 
+  vtkDebugLeaks::SetExitError(true);
+
   std::string programPath;
   std::string errorMessage;
   if ( !vtksys::SystemTools::FindProgramPath(argv[0],
