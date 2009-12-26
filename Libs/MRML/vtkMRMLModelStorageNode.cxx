@@ -20,10 +20,6 @@
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMatrix4x4.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkStripper.h"
-
 #include "vtkBYUReader.h" 
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"

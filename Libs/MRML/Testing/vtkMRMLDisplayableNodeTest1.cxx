@@ -1,0 +1,48 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+
+=========================================================================auto=*/
+
+#include "vtkMRMLDisplayableNode.h"
+
+#include <stdlib.h>
+#include <iostream>
+
+#include "TestingMacros.h"
+
+class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLDisplayableNodeTestHelper1 *New(){return new vtkMRMLDisplayableNodeTestHelper1;};
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLDisplayableNodeTestHelper1;
+    }
+  virtual const char* GetNodeTagName()
+    {
+    return "vtkMRMLNodeTestHelper1";
+    }
+
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform)
+    {
+    return;
+    } 
+};
+ 
+int vtkMRMLDisplayableNodeTest1(int argc, char * argv [] )
+{
+  vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 >::New();
+
+  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+
+  return EXIT_SUCCESS;
+}

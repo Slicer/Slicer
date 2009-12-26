@@ -1,0 +1,49 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+
+=========================================================================auto=*/
+
+#include "vtkMRMLStorageNode.h"
+#include "vtkAbstractTransform.h"
+
+#include <stdlib.h>
+#include <iostream>
+
+#include "TestingMacros.h"
+
+class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLStorageNodeTestHelper1 *New(){return new vtkMRMLStorageNodeTestHelper1;};
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLStorageNodeTestHelper1;
+    }
+  virtual const char* GetNodeTagName()
+    {
+    return "vtkMRMLStorageNodeTestHelper1";
+    }
+
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; }
+
+  virtual int ReadData(vtkMRMLNode *refNode) { return 0; }
+  virtual int WriteData(vtkMRMLNode *refNode) { return 0; }
+};
+ 
+int vtkMRMLStorageNodeTest1(int argc, char * argv [] )
+{
+  vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 >::New();
+
+  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+
+  return EXIT_SUCCESS;
+}
