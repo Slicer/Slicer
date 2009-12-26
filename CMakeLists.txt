@@ -410,7 +410,6 @@ configure_file(
   )
 endmacro(copy_no_coverage_file_to)
 
-copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}")
 copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Base")
 copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Modules")
 copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Libs")
