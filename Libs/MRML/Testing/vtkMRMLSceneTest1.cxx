@@ -23,5 +23,16 @@ int vtkMRMLSceneTest1(int argc, char * argv [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( scene1 );
 
+  std::cout << "GetNumberOfRegisteredNodeClasses() = ";
+  std::cout << scene1->GetNumberOfRegisteredNodeClasses() << std::endl;
+
+  std::cout << "GetNodeClasses() = " << std::endl;
+  std::cout << scene1->GetNodeClasses() << std::endl;
+
+  TEST_SET_GET_STRING( scene1, URL );
+  TEST_SET_GET_STRING( scene1, RootDirectory );
+
+  scene1->ResetNodes();
+
   return EXIT_SUCCESS;
 }

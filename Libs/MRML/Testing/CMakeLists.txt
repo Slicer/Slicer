@@ -36,12 +36,13 @@ SIMPLE_TEST( vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1 )
 SIMPLE_TEST( vtkMRMLDisplayableNodeTest1 )
 SIMPLE_TEST( vtkMRMLModelStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLNodeTest1 )
+SIMPLE_TEST( vtkMRMLSceneTest1 )
 SIMPLE_TEST( vtkMRMLStorableNodeTest1 )
 SIMPLE_TEST( vtkMRMLStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLTransformableNodeTest1 )
 
 MACRO( TEST_SCENE  SCENENAME )
-ADD_TEST( vtkMRMLSceneTest_${SCENENAME} 
+ADD_TEST( vtkMRMLSceneTest2_${SCENENAME} 
   ${MRMLLib_TESTS} vtkMRMLSceneTest2
   ${CMAKE_CURRENT_SOURCE_DIR}/${SCENENAME}
   )
