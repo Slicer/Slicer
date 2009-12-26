@@ -389,6 +389,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/runValgrind.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/runValgrind.sh
+  )
+
 install(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
