@@ -379,7 +379,10 @@ ENDIF(Slicer3_USE_QT)
 # --------------------------------------------------------------------------
 # Configure and install headers
 
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
+  )
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerConfigure.h.in 
