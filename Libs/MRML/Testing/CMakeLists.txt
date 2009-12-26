@@ -1,5 +1,9 @@
 SET(KIT MRMLLib)
+SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  vtkMRMLColorNodeTest1.cxx
+  vtkMRMLColorTableNodeTest1.cxx
+  vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1.cxx
   vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLModelStorageNodeTest1.cxx
   vtkMRMLNodeTest1.cxx
@@ -24,6 +28,9 @@ MACRO( SIMPLE_TEST  TESTNAME )
 ENDMACRO( SIMPLE_TEST  )
 
 
+SIMPLE_TEST( vtkMRMLColorNodeTest1 )
+SIMPLE_TEST( vtkMRMLColorTableNodeTest1 )
+SIMPLE_TEST( vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1 )
 SIMPLE_TEST( vtkMRMLDisplayableNodeTest1 )
 SIMPLE_TEST( vtkMRMLModelStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLNodeTest1 )
