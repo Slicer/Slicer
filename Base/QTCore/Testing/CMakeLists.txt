@@ -1,6 +1,5 @@
 
 SET(KIT QTCore)
-SET(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "CHECK_FOR_VTK_MEMORY_LEAKS();")
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerCoreApplicationTest1.cxx
   qSlicerCoreIOManagerTest1.cxx
