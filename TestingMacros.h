@@ -16,6 +16,9 @@
 #include "vtkDebugLeaks.h"
 #include "vtkSmartPointer.h"
 
+#define DEBUG_LEAKS_ENABLE_EXIT_ERROR() \
+  vtkDebugLeaks::SetExitError(true);
+
 #define EXERCISE_BASIC_OBJECT_METHODS( object ) \
     { \
     if ( object == NULL ) \

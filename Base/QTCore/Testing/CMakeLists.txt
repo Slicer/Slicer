@@ -1,5 +1,5 @@
-
 SET(KIT QTCore)
+SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerCoreApplicationTest1.cxx
   qSlicerCoreIOManagerTest1.cxx
