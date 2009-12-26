@@ -108,6 +108,6 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-   return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
