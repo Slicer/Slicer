@@ -7,6 +7,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLModelStorageNodeTest1.cxx
   vtkMRMLNodeTest1.cxx
+  vtkMRMLSceneTest1.cxx
+  vtkMRMLSceneTest2.cxx
   vtkMRMLStorableNodeTest1.cxx
   vtkMRMLStorageNodeTest1.cxx
   vtkMRMLTransformableNodeTest1.cxx
@@ -37,3 +39,34 @@ SIMPLE_TEST( vtkMRMLNodeTest1 )
 SIMPLE_TEST( vtkMRMLStorableNodeTest1 )
 SIMPLE_TEST( vtkMRMLStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLTransformableNodeTest1 )
+
+MACRO( TEST_SCENE  SCENENAME )
+ADD_TEST( vtkMRMLSceneTest_${SCENENAME} 
+  ${MRMLLib_TESTS} vtkMRMLSceneTest2
+  ${CMAKE_CURRENT_SOURCE_DIR}/${SCENENAME}
+  )
+ENDMACRO( TEST_SCENE )
+
+SET( ScenesToTest 
+  clipCube.mrml
+  cube.mrml
+  diffusionEditor.mrml
+  fiducial_tract.mrml
+  helixGlyphs.mrml
+  helix_roi_tract.mrml
+  hier_test.mrml
+  multi_display.mrml
+  name.mrml
+  SlicePipeline.mrml
+  unstruct_grid.mrml
+  vol_and_cube_camera.mrml
+  vol_and_cube.mrml
+  vol.mrml
+  volRender.mrml
+  volScene.mrml
+  )
+
+FOREACH( SceneToTest ${ScenesToTest} )
+  TEST_SCENE( ${SceneToTest} )
+ENDFOREACH( SceneToTest )
+
