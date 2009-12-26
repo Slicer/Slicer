@@ -41,5 +41,15 @@ int vtkMRMLStorableNodeTest1(int argc, char * argv [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  vtkMRMLNode * newNode = node1->CreateNodeInstance();
+
+  if( newNode == NULL )
+    {
+    std::cerr << "Error in CreateNodeInstance()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  newNode->Delete();
+
   return EXIT_SUCCESS;
 }
