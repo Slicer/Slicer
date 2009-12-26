@@ -35,6 +35,10 @@ public:
   // Note: Core modules are registred when the factory is instantiated
   qSlicerModuleFactory();
 
+  // Description:
+  // Destructor, Deallocates resources
+  virtual ~qSlicerModuleFactory();
+
   virtual void printAdditionalInfo();
 
   // Description:

@@ -32,7 +32,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleManager : public QObject
 public:
   typedef qSlicerModuleManager Self;
   qSlicerModuleManager();
-  virtual ~qSlicerModuleManager(){}
+  virtual ~qSlicerModuleManager();
 
   // Description:
   virtual void printAdditionalInfo();

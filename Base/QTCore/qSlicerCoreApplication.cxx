@@ -63,7 +63,6 @@ public:
     {
     if (this->ModuleManager)
       {
-      this->ModuleManager->factory()->uninstantiateAll();
       delete this->ModuleManager; 
       }
     if (this->CoreIOManager) { delete this->CoreIOManager; }

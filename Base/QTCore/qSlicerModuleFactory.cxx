@@ -110,6 +110,12 @@ qSlicerModuleFactory::qSlicerModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
+qSlicerModuleFactory::~qSlicerModuleFactory()
+{
+  this->uninstantiateAll();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModuleFactory::registerCoreModules()
 {
   this->registerCoreModule<qSlicerTransformsModule>();

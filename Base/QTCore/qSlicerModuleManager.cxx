@@ -55,6 +55,12 @@ qSlicerModuleManager::qSlicerModuleManager()
 }
 
 //-----------------------------------------------------------------------------
+qSlicerModuleManager::~qSlicerModuleManager()
+{
+
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModuleManager::printAdditionalInfo()
 {
   QCTK_D(qSlicerModuleManager);
