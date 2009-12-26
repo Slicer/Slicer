@@ -239,6 +239,24 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::WriteNodeBodyXML(ostream &, int )
+{
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ProcessMRMLEvents ( vtkObject *, unsigned long , void *)
+{
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::UpdateReferenceID(const char *, const char *)
+{
+}
+
+
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 {

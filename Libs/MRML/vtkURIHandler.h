@@ -20,8 +20,8 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   // Description:
   // virtual methods to be defined in subclasses.
   // (Maybe these should be defined to handle default file operations)
-  virtual void StageFileRead ( const char *source, const char * destination ) { };
-  virtual void StageFileWrite ( const char *source, const char * destination ) { };
+  virtual void StageFileRead ( const char *source, const char * destination );
+  virtual void StageFileWrite ( const char *source, const char * destination );
 
   // Description:
   // various Read/Write method footprints useful to redefine in specific handlers.
@@ -29,13 +29,13 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
                              const char * destination,
                              const char *username,
                              const char *password,
-                             const char *hostname) { };
+                             const char *hostname);
 
   virtual void StageFileWrite(const char *source,
                               const char *username,
                               const char *password,
                               const char *hostname,
-                              const char *sessionID ) { };
+                              const char *sessionID );
 
   // need something that goes the other way too...
 
@@ -72,7 +72,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 
   //--- Methods to configure and close transfer
   // NOTE: Subclasses should implement these method
-  virtual void InitTransfer ( ) {};
+  virtual void InitTransfer ( );
   virtual int CloseTransfer ( )
       {
       return 0;

@@ -132,8 +132,7 @@ public:
 
   // Description:
   // Write this node's body to a MRML file in XML format.
-  virtual void WriteNodeBodyXML(ostream& of, int indent){};
-
+  virtual void WriteNodeBodyXML(ostream& of, int indent);
   
   // Description:
   // Copy parameters (not including ID and Scene) from another node of the same type.
@@ -205,7 +204,7 @@ public:
   
   // Description:
   // method to propagate events generated in mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   // Description:
   // Flags to avoid event loops
@@ -360,7 +359,7 @@ public:
 
   // Description:
   // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) {};
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
   // Utility function that takes in a string and returns a URL encoded
