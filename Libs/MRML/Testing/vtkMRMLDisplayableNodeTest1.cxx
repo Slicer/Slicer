@@ -38,7 +38,7 @@ public:
     } 
 };
  
-int vtkMRMLDisplayableNodeTest1(int argc, char * argv [] )
+int vtkMRMLDisplayableNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 >::New();
 

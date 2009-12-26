@@ -39,7 +39,7 @@ public:
   virtual int WriteData(vtkMRMLNode *refNode) { return 0; }
 };
  
-int vtkMRMLStorageNodeTest1(int argc, char * argv [] )
+int vtkMRMLStorageNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 >::New();
 

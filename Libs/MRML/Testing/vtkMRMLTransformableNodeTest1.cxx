@@ -34,7 +34,7 @@ public:
   virtual void ApplyTransform(vtkAbstractTransform* transform) { return; }
 };
  
-int vtkMRMLTransformableNodeTest1(int argc, char * argv [] )
+int vtkMRMLTransformableNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLTransformableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLTransformableNodeTestHelper1 >::New();
 

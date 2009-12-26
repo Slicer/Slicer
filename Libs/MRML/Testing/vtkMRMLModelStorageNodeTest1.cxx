@@ -17,7 +17,7 @@
 
 #include "TestingMacros.h"
 
-int vtkMRMLModelStorageNodeTest1(int argc, char * argv [] )
+int vtkMRMLModelStorageNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLModelStorageNode > node1 = vtkSmartPointer< vtkMRMLModelStorageNode >::New();
 

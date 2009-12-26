@@ -38,7 +38,7 @@ public:
   virtual int WriteData(vtkMRMLNode *refNode) { return 0; }
 };
  
-int vtkMRMLColorTableNodeTest1(int argc, char * argv [] )
+int vtkMRMLColorTableNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLColorTableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLColorTableNodeTestHelper1 >::New();
 

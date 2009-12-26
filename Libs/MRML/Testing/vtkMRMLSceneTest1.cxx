@@ -17,7 +17,7 @@
 
 #include "TestingMacros.h"
 
-int vtkMRMLSceneTest1(int argc, char * argv [] )
+int vtkMRMLSceneTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLScene > scene1 = vtkSmartPointer< vtkMRMLScene >::New();
 

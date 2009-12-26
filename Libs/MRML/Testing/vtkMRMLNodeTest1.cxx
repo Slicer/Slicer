@@ -32,7 +32,7 @@ public:
     }
 };
  
-int vtkMRMLNodeTest1(int argc, char * argv [] )
+int vtkMRMLNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLNodeTestHelper1 >::New();
 

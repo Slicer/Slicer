@@ -40,7 +40,7 @@ public:
     }
 };
  
-int vtkMRMLColorNodeTest1(int argc, char * argv [] )
+int vtkMRMLColorNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLColorNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLColorNodeTestHelper1 >::New();
 

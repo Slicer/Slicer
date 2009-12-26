@@ -39,7 +39,7 @@ public:
   virtual int WriteData(vtkMRMLNode *refNode) { return 0; }
 };
  
-int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int argc, char * argv [] )
+int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 >::New();
 
