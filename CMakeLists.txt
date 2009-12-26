@@ -399,6 +399,23 @@ install(FILES
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
 
+
+#-----------------------------------------------------------------------------
+# Copying .NoDartCoverage files in the binary directory
+#
+macro(copy_no_coverage_file_to DESTINATION)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Testing/.NoDartCoverage
+  ${DESTINATION}/.NoDartCoverage
+  )
+endmacro(copy_no_coverage_file_to)
+
+copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}")
+copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Base")
+copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Modules")
+copy_no_coverage_file_to("${CMAKE_CURRENT_BINARY_DIR}/Libs")
+
+
 #-----------------------------------------------------------------------------
 # Subdirectories
 #
