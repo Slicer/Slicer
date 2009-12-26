@@ -64,7 +64,6 @@ int vtkMRMLColorNodeTest1(int argc, char * argv [] )
   vtkMRMLColorNode * newColorNode = dynamic_cast< vtkMRMLColorNode * >( newNode );
 
   newColorNode->Delete();
-#if 0
 
   node1->ReadFile();
 
@@ -85,7 +84,6 @@ int vtkMRMLColorNodeTest1(int argc, char * argv [] )
     std::cerr << "Error in CreateDefaultStorageNode() " << std::endl;
     return EXIT_FAILURE;
     }
-#endif
 
   return EXIT_SUCCESS;
 }
