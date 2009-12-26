@@ -129,11 +129,11 @@
     } \
   if( originalStringPointer != NULL ) \
     { \
-    object->SetDescription( originalString.c_str() );  \
+    object->Set##variable( originalString.c_str() );  \
     } \
   else \
     { \
-    object->SetDescription( NULL ); \
+    object->Set##variable( NULL ); \
     } \
   }
 
