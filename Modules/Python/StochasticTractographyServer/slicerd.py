@@ -46,6 +46,15 @@ class slicerd:
 
         return line
 
+    def eval(self,p):
+        # create a socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect( (self.host, self.port) )
+        s.send('eval $::slicer3::ApplicationGUI SetExternalProgress "update" ' + str(p)) # send       
+
+        s.close()
+
+
     def get(self, id):
         """get and return the image from slicer with the given id
         """

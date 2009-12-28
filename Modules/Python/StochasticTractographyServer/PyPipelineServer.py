@@ -483,10 +483,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         logger.info("Data type : %s" % data.dtype)
                         if tensEnabled:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberZ40(s, wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
                                   r2i, i2r, r2id, i2rd, spa, lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled, isIJK) 
                         else:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberX40(s, data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
                                   r2i, i2r, r2id, i2rd, spa, stepSize, maxLength, fa, spaceEnabled, isIJK)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
@@ -518,10 +518,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         logger.info("Data type : %s" % data.dtype)
                         if tensEnabled:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberZ40(s, wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
                                   r2i, i2r, r2id, i2rd, spa, lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled, isIJK)
                         else:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberX40(s, data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
                                   r2i, i2r, r2id, i2rd, spa, stepSize, maxLength, fa, spaceEnabled, isIJK)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))

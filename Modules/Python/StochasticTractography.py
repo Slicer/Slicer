@@ -243,6 +243,15 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       </constraints>
     </double>
     
+    <boolean>
+      <name>basicEnabled</name>
+      <longflag>basicEnabled</longflag>
+      <description>Switch between Friman/McGraw method</description>
+      <label>Use basic method</label>
+      <default>true</default>
+    </boolean>
+
+
   </parameters>
 
   <parameters>
@@ -584,6 +593,7 @@ def Execute (\
              spaceEnabled,\
              stopEnabled,\
              fa,\
+             basicEnabled,\
              isIJK,\
              tensEnabled,\
              cmEnabled,\
@@ -628,6 +638,34 @@ def Execute (\
       os.chdir(fdir0)
       cmd = pyt0 + '/bin/python PyPipelineServer.py'
       p = sp.Popen(cmd, shell=True )
+      os.chdir(curdir)
+
+      time.sleep(2)
+  elif os.name == 'nt':
+      
+      p1 = sp.Popen(["tasklist","/NH","/V","/FO","TABLE","/FI","WINDOWTITLE eq PyPipelineServer"],stdout=sp.PIPE)
+      output = p1.communicate()[0]
+
+      tag = 'PyPipelineServer'
+      wid = '"PyPipelineServer"'
+
+      if output.find(tag)>0:
+        lines = output.split('\n')
+        for i in range(len(lines)):
+          if lines[i].find(tag)>0:
+            pid = lines[i].split()[1]  # DOS
+            p2 = sp.Popen(["taskkill", "/PID", str(pid)])
+
+
+      nmodule = 'StochasticTractographyServer'
+
+      dir0 = os.environ['Slicer3_PLUGINS_DIR']
+      pyt0 = os.environ['PYTHONHOME']
+      fdir0 = dir0 + '/' + nmodule + '/'
+      curdir = os.getcwd()
+      os.chdir(fdir0)
+      cmd = 'start ' + wid + ' ' + pyt0 + '/PCbuild/python.exe PyPipelineServer.py'
+      p = sp.Popen(cmd,shell=True)
       os.chdir(curdir)
 
       time.sleep(2)
@@ -754,6 +792,9 @@ def Execute (\
   ack = s.recv(SIZE)
 
   s.send('fa ' + str(fa) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('basicEnabled ' + str(int(basicEnabled)) + '\n')
   ack = s.recv(SIZE)
 
   # connectivity
