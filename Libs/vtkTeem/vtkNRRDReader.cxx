@@ -792,7 +792,7 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
 
 int
 vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
-  char me[]="tenSpaceDirectionReduce", err[BIFF_STRLEN];
+  char me[]="tenSpaceDirectionReduce", err[BUFSIZ];
   double SDT[9], tenMeasr[9], tenSlice[9];
   size_t ii, nn;
   //unsigned int si, sj;
