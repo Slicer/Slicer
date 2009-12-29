@@ -456,7 +456,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   // Assume that the modules correctly report themselves
   if ( node0->GetModuleDescription().GetType() == "CommandLineModule" )
     {
-    vtkSlicerApplication::GetInstance()->InformationMessage( "Found CommandLine Module" );
+    vtkSlicerApplication::GetInstance()->InformationMessage( "Found CommandLine Module, target is ");
+    vtkSlicerApplication::GetInstance()->InformationMessage(  node0->GetModuleDescription().GetTarget().c_str());
     commandType = CommandLineModule;
     if ( entryPoint != NULL )
       {
@@ -1472,10 +1473,15 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               break;
             }
           }
+        else if (result == itksysProcess_State_Error)
+          {
+          information << node0->GetModuleDescription().GetTitle()
+                      << " process was null when state was queried, result (" << result << ") = Error." << std::endl;
+          } 
         else
           {
         information << node0->GetModuleDescription().GetTitle()
-                  << " unknown termination. " << result << std::endl;
+                  << " unknown termination. Result = " << result << std::endl;
           }
         vtkErrorMacro( << information.str().c_str() );
         node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
