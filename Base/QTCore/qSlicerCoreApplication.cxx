@@ -111,7 +111,6 @@ public:
   // On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
   // HasIntDir should be set to true and IntDir should be set to either Debug,
   // Release, RelWithDebInfo, MinSizeRel or any other custom build type.
-  bool               HasIntDir;
   QString            IntDir;
 
   // Indicate if initialize() method has been called.
@@ -188,6 +187,13 @@ void qSlicerCoreApplication::initialize()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplication::initializePaths()
+{
+  QCTK_D(qSlicerCoreApplication);
+  d->discoverSlicerHomeDirectory(this->arguments().at(0));
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
 {
   QCTK_D(qSlicerCoreApplication);
@@ -238,28 +244,29 @@ void qSlicerCoreApplication::initializeLoadableModulesPaths()
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  QString defaultQTModulePaths = this->slicerHome() + "/"
-                                                    + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  QStringList defaultQTModulePaths;
+  defaultQTModulePaths << this->slicerHome() + "/"
+                                             + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
 
-//   if (hasIntDir)
-//     {
-//     defaultQTModulePaths = defaultQTModulePaths + PathSep +
-//       slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + intDir;
-//     }
+   if (!d->IntDir.isEmpty())
+     {
+     defaultQTModulePaths << this->slicerHome() + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + d->IntDir;
+     }
 
   // add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
-  QString qtModulePaths = /*userModulePaths + PathSep + */defaultQTModulePaths;
-  this->addLibraryPath(defaultQTModulePaths);
+  QStringList qtModulePaths = /*userModulePaths + PathSep + */defaultQTModulePaths;
+  foreach(const QString& path, qtModulePaths)
+    {
+    this->addLibraryPath(path);
+    }
 
 //   foreach (QString path, this->libraryPaths())
 //     {
 //     qDebug() << "libraryPath:" << path;
 //     }
 
-  QStringList paths;
-  paths << qtModulePaths;
-  d->ModuleManager->factory()->setLoadableModuleSearchPaths(paths);
+  d->ModuleManager->factory()->setLoadableModuleSearchPaths(qtModulePaths);
   //qDebug() << "initializeLoadableModulesPaths - qtModulePaths:" << qtModulePaths;
 }
 
@@ -268,26 +275,26 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 {
   QCTK_D(qSlicerCoreApplication);
   
-  QString defaultCmdLineModulePaths;
+  QStringList defaultCmdLineModulePaths;
 
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  defaultCmdLineModulePaths = this->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR;
-//   if (hasIntDir)
-//     {
-//     defaultQTModulePaths = defaultCmdLineModulePaths + PathSep +
-//       slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "/" + intDir;
-//     }
+  defaultCmdLineModulePaths << this->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR;
+  if (!d->IntDir.isEmpty())
+     {
+     defaultCmdLineModulePaths << this->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "/" + d->IntDir;
+     }
 
   // add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
-  QString cmdLineModulePaths = /*userModulePaths + PathSep +*/ defaultCmdLineModulePaths;
-  this->addLibraryPath(defaultCmdLineModulePaths);
+  QStringList cmdLineModulePaths = /*userModulePaths + PathSep +*/ defaultCmdLineModulePaths;
+  foreach(const QString& path, cmdLineModulePaths)
+    {
+    this->addLibraryPath(path);
+    }
 
-  QStringList paths;
-  paths << cmdLineModulePaths;
-  d->ModuleManager->factory()->setCmdLineModuleSearchPaths(paths);
+  d->ModuleManager->factory()->setCmdLineModuleSearchPaths(cmdLineModulePaths);
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
 }
 
@@ -323,29 +330,23 @@ QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, CoreI
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory(const QString& programName)
 {
-   // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
-  const char* homeFromEnv = getenv("Slicer3_HOME");
-  if (!homeFromEnv)
+  QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
+  if (slicerBinDir.isEmpty())
     {
-    QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
-    if (slicerBinDir.isEmpty())
-      {
-      return;
-      }
-      
-    std::string home = vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1());
-
-    this->SlicerHome = QString::fromStdString(home); 
-
+    return;
+    }
+    
+  this->SlicerHome = QString::fromStdString(
+    vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1()));
+    
+  // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
+  if (QString::fromLatin1(getenv("Slicer3_HOME")) != this->SlicerHome)
+    {
     // Update env
     QString homeEnv = "Slicer3_HOME=%1";
     qDebug() << "Set environment: " << homeEnv.arg(this->SlicerHome);
     this->putEnv(homeEnv.arg(this->SlicerHome));
     //vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
-    }
-  else
-    {
-    this->SlicerHome = QString::fromLatin1(homeFromEnv);
     }
 }
 
@@ -361,8 +362,6 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString&
     }
 
   std::string slicerBinDir = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
-
-  std::string intDir = "";
   
   // If the path: [slicerBinDir + Slicer3_INSTALL_LIB_DIR] isn't valid, try to
   // discover the appropriate one
@@ -383,7 +382,6 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString&
 
     if (pathComponents.size() > 0)
       {
-      this->HasIntDir = true;
       this->IntDir = QString::fromStdString(pathComponents[pathComponents.size()-1]);
       }
     }

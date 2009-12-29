@@ -47,7 +47,13 @@ public:
   //  - AppLogic is set as a scene observer.
   //  - Create processing thread
   void initialize();
-
+  
+  // Description:
+  // initialize paths for module discovery
+  // DEPRECATED: This method was used by the KWWidgets GUI only and it will be
+  // removed once the QT GUI is functional.
+  void initializePaths();
+  
   // Description:
   // Return true if the application has been initialized
   // Note: initialize() should be called only one time.
@@ -69,7 +75,7 @@ public:
 
   // Description:
   // Set/Get application logic
-  // DEPRECATED: This method was used by the KWWidgests GUI only and it will be
+  // DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   // removed once the QT GUI is functional.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;

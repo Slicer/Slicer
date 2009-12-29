@@ -1027,6 +1027,7 @@ int Slicer3_main(int& argc, char *argv[])
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
 
 #ifdef Slicer3_USE_QT
+  /*
   std::string qtModulePaths;
   std::string defaultQTModulePaths;
 
@@ -1046,6 +1047,9 @@ int Slicer3_main(int& argc, char *argv[])
   
   qSlicerApplication::application()->moduleManager()->factory()->setLoadableModuleSearchPaths(
     QString::fromStdString(qtModulePaths).split(PathSep));
+  */
+  qSlicerApplication::application()->initializePaths();
+  qSlicerApplication::application()->initializeLoadableModulesPaths();
   //cout << "qtModulePaths:" << qtModulePaths << endl;
 #endif
 
@@ -1098,8 +1102,9 @@ int Slicer3_main(int& argc, char *argv[])
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
 
 #ifdef Slicer3_USE_QT
-  qSlicerApplication::application()->moduleManager()->factory()->setCmdLineModuleSearchPaths(
-    QString::fromStdString(pluginsPaths).split(PathSep));
+  //qSlicerApplication::application()->moduleManager()->factory()->setCmdLineModuleSearchPaths(
+  //  QString::fromStdString(pluginsPaths).split(PathSep));
+  qSlicerApplication::application()->initializeCmdLineModulesPaths();
   //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
 #endif
 
