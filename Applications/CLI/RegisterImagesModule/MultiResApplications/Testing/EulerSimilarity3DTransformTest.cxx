@@ -1,6 +1,12 @@
 #include <iostream>
 #include <cstdlib>
 
+#ifdef _WIN32
+#ifndef M_PI
+#define M_PI 3.1415926535898
+#endif
+#endif
+
 #include "itkEulerSimilarity3DTransform.h"
 
 namespace
@@ -258,8 +264,8 @@ int EulerSimilarity3DTransformTest(int argc, char* argv[])
     
       {
       double tjacobian [TransformType::SpaceDimension][TransformType::ParametersDimension] = 
-        { {0.0, 0.0, -scale/sqrt(2), 1.0, 0.0, 0.0, -1.0/sqrt(2.0)},
-          {0.0, 0.0, -scale/sqrt(2), 0.0, 1.0, 0.0, 1.0/sqrt(2.0)},
+        { {0.0, 0.0, -scale/sqrt(2.0), 1.0, 0.0, 0.0, -1.0/sqrt(2.0)},
+          {0.0, 0.0, -scale/sqrt(2.0), 0.0, 1.0, 0.0, 1.0/sqrt(2.0)},
           {scale, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0} };
 
       for(unsigned int i = 0; 

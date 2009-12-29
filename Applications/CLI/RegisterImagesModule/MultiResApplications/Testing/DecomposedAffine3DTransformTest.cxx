@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cstdlib>
-
+#ifdef _WIN32
+#ifndef M_PI
+#define M_PI 3.1415926535898
+#endif
+#endif
 #include "itkDecomposedAffine3DTransform.h"
 
 namespace
