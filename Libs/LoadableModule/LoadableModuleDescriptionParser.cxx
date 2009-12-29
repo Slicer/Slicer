@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "expat.h"
 
+#define argNotUsed(x) 
 
 
 /*********************
@@ -109,7 +110,7 @@ public:
  * expat callbacks to process the XML
  ***************************/
 void
-lmStartElement(void *userData, const char *element, const char **attrs)
+lmStartElement(void *userData, const char *element, const char ** argNotUsed(attrs) )
 {
   LMParserState *ps = reinterpret_cast<LMParserState *>(userData);
   std::string name(element);
