@@ -37,3 +37,10 @@ PROJECT( RegisterImagesMultiResApplications )
          )
     slicer3_install_plugins( ${TARGETS} )
   ENDIF( Slicer3_SOURCE_DIR )
+  
+  #
+  # Setup testing
+  #
+  IF( BUILD_TESTING )
+    ADD_SUBDIRECTORY( Testing )
+  ENDIF( BUILD_TESTING )
