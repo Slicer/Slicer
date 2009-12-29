@@ -411,7 +411,7 @@ int QdecDataTable::Load (const char* isFileName, char* osNewSubjDir )
  * @return int
  * @param  isFileName
  */
-int QdecDataTable::Save (const char* isFileName )
+int QdecDataTable::Save (const char * )
 {
   return 0;
 }
