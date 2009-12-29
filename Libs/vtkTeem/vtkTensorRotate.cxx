@@ -268,7 +268,7 @@ void vtkTensorRotate::AllocateTensors(vtkImageData *data)
 template <class D>
 static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
                        vtkImageData *inData,
-                       vtkImageData *outData, D *outPtr, int id)
+                       vtkImageData *outData, D * vtkNotUsed(outPtr), int id)
 {
 //  int num0, num1, num2;
 //  int idx0, idx1, idx2;
