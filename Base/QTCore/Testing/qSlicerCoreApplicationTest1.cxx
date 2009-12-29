@@ -149,6 +149,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cout << "TEST PASSED !" << std::endl;
 
   return EXIT_SUCCESS;
 }
