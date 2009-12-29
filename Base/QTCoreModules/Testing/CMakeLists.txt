@@ -1,0 +1,35 @@
+SET(KIT QTCoreModules)
+SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qSlicerCamerasModuleLogicTest1.cxx
+  qSlicerCamerasModuleTest1.cxx
+  qSlicerCamerasModuleWidgetTest1.cxx
+  qSlicerTransformsModuleTest1.cxx
+  qSlicerTransformsModuleWidgetTest1.cxx
+  EXTRA_INCLUDE TestingMacros.h
+  )
+
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CxxTests 
+  ${lib_name} 
+  qSlicerBaseQTBase  # FIXME: This shouldn't be necessary: there is a library dependency problem
+  qSlicerBaseQTCore  # FIXME: This shouldn't be necessary: there is a library dependency problem
+  )
+
+SET( QTCoreModules_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${QTCoreModules_TESTS} ${TESTNAME} )
+ENDMACRO( SIMPLE_TEST  )
+
+
+SIMPLE_TEST( qSlicerCamerasModuleLogicTest1 )
+SIMPLE_TEST( qSlicerCamerasModuleTest1 )
+SIMPLE_TEST( qSlicerCamerasModuleWidgetTest1 )
+SIMPLE_TEST( qSlicerTransformsModuleTest1 )
+SIMPLE_TEST( qSlicerTransformsModuleWidgetTest1 )
