@@ -18,8 +18,10 @@
 #include "qSlicerCamerasModuleLogic.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerCamerasModulePrivate: public qCTKPrivate<qSlicerCamerasModule>
+class qSlicerCamerasModulePrivate: public qCTKPrivate<qSlicerCamerasModule>
 {
+public:
+  QCTK_DECLARE_PUBLIC(qSlicerCamerasModule);
 };
 
 //-----------------------------------------------------------------------------

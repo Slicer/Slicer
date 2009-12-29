@@ -25,8 +25,9 @@
 #include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerModuleLogicPrivate: public qCTKPrivate<qSlicerModuleLogic>
+class qSlicerModuleLogicPrivate: public qCTKPrivate<qSlicerModuleLogic>
 {
+public:
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
 };

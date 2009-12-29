@@ -30,8 +30,9 @@
 #include <QPointer>
 
 //-----------------------------------------------------------------------------
-struct qSlicerAbstractModulePrivate: public qCTKPrivate<qSlicerAbstractModule>
+class qSlicerAbstractModulePrivate: public qCTKPrivate<qSlicerAbstractModule>
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerAbstractModule);
   qSlicerAbstractModulePrivate()
     {

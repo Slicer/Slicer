@@ -25,9 +25,10 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-struct qSlicerCamerasModuleWidgetPrivate: public qCTKPrivate<qSlicerCamerasModuleWidget>,
+class qSlicerCamerasModuleWidgetPrivate: public qCTKPrivate<qSlicerCamerasModuleWidget>,
                                     public Ui_qSlicerCamerasModule
 {
+public:
   QCTK_DECLARE_PUBLIC(qSlicerCamerasModuleWidget);
   
   // Description:
@@ -46,8 +47,6 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModuleWidget, QWidget*);
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::setup()
 {
-  //this->Superclass::setup();
-  
   QCTK_D(qSlicerCamerasModuleWidget);
   d->setupUi(this);
 

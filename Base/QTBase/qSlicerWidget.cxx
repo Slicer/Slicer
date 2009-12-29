@@ -26,8 +26,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerWidgetPrivate: public qCTKPrivate<qSlicerWidget>
+class qSlicerWidgetPrivate: public qCTKPrivate<qSlicerWidget>
 {
+public:
   QPointer<QWidget>                          ParentContainer;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
 };

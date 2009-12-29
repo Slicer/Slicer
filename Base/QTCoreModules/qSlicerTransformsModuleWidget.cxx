@@ -35,9 +35,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerTransformsModuleWidgetPrivate: public qCTKPrivate<qSlicerTransformsModuleWidget>,
+class qSlicerTransformsModuleWidgetPrivate: public qCTKPrivate<qSlicerTransformsModuleWidget>,
                                              public Ui_qSlicerTransformsModule
 {
+public:
   qSlicerTransformsModuleWidgetPrivate()
     {
     this->CoordinateReferenceButtonGroup = 0;

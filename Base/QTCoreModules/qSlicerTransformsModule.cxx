@@ -17,8 +17,9 @@
 #include "qSlicerTransformsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerTransformsModulePrivate: public qCTKPrivate<qSlicerTransformsModule>
+class qSlicerTransformsModulePrivate: public qCTKPrivate<qSlicerTransformsModule>
 {
+public:
 };
 
 //-----------------------------------------------------------------------------
