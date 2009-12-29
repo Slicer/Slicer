@@ -39,7 +39,7 @@ public:
 
   // Description:
   // Return a pointer to the current module factory
-  qSlicerModuleFactory* factory();
+  qSlicerModuleFactory* factory()const;
 
   // Description:
   bool loadModule(const QString& moduleName);
@@ -48,10 +48,10 @@ public:
   bool unLoadModule(const QString& moduleName);
 
   // Description:
-  bool isLoaded(const QString& moduleName);
+  bool isLoaded(const QString& moduleName)const;
 
   // Description:
-  qSlicerAbstractModule* getModule(const QString& moduleName);
+  qSlicerAbstractModule* module(const QString& moduleName);
 
   // Description:
   // Convenient method to get module title given its name

@@ -35,14 +35,19 @@ public:
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
 
+  // Description:
+  // Display name for the module
   qSlicerGetTitleMacro("Transforms");
 
-  // Return help/acknowledgement text
+  // Description:
+  // Help text of the module
   virtual QString helpText()const;
+
+  // Description:
+  // Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
 protected:
-
   // Description:
   // Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
@@ -52,6 +57,8 @@ protected:
   virtual qSlicerModuleLogic* createLogic();
   
 private:
+  // Description:
+  // Pimpl declaration
   QCTK_DECLARE_PRIVATE(qSlicerTransformsModule);
 };
 

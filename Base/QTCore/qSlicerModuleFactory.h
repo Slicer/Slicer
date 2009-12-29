@@ -63,7 +63,7 @@ public:
 
   // Description:
   // Indicate if a module has been registered
-  bool isRegistered(const QString& moduleName);
+  bool isRegistered(const QString& moduleName)const;
 
   // Description:
   // Register the list of available core modules

@@ -78,15 +78,16 @@ void qSlicerModuleManager::printAdditionalInfo()
 }
 
 //---------------------------------------------------------------------------
-qSlicerModuleFactory* qSlicerModuleManager::factory()
+qSlicerModuleFactory* qSlicerModuleManager::factory()const
 {
-  return &qctk_d()->ModuleFactory;
+  QCTK_D(const qSlicerModuleManager);
+  return const_cast<qSlicerModuleFactory*>(&d->ModuleFactory);
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleManager::isLoaded(const QString& moduleName)
+bool qSlicerModuleManager::isLoaded(const QString& moduleName)const
 {
-  QCTK_D(qSlicerModuleManager);
+  QCTK_D(const qSlicerModuleManager);
   // If a module is not registered, we consider it isn't loaded
   if (!this->factory()->isRegistered(moduleName))
     {
@@ -187,7 +188,7 @@ bool qSlicerModuleManager::unLoadModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::getModule(const QString& moduleName)
+qSlicerAbstractModule* qSlicerModuleManager::module(const QString& moduleName)
 {
   QCTK_D(qSlicerModuleManager);
 

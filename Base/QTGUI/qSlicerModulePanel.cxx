@@ -51,7 +51,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
   
   if (!moduleName.isEmpty())
     {
-    module = qSlicerApplication::application()->moduleManager()->getModule(moduleName);
+    module = qSlicerApplication::application()->moduleManager()->module(moduleName);
     Q_ASSERT(module);
     }
   
@@ -88,7 +88,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
 void qSlicerModulePanel::addModule(const QString& moduleName)
 {
   qSlicerAbstractModule * module =
-    qSlicerApplication::application()->moduleManager()->getModule(moduleName); 
+    qSlicerApplication::application()->moduleManager()->module(moduleName); 
   Q_ASSERT(module);
   
   qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();
@@ -117,7 +117,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
 void qSlicerModulePanel::removeModule(const QString& moduleName)
 {
   qSlicerAbstractModule * module =
-    qSlicerApplication::application()->moduleManager()->getModule(moduleName); 
+    qSlicerApplication::application()->moduleManager()->module(moduleName); 
   Q_ASSERT(module);
   
   qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();

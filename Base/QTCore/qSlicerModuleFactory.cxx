@@ -175,9 +175,9 @@ void qSlicerModuleFactory::registerCoreModule()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerModuleFactory::isRegistered(const QString& moduleName)
+bool qSlicerModuleFactory::isRegistered(const QString& moduleName)const
 {
-  QCTK_D(qSlicerModuleFactory);
+  QCTK_D(const qSlicerModuleFactory);
   return d->MapNameToTitle.contains(moduleName);
 }
 

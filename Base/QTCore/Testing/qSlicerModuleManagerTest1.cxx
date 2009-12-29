@@ -69,7 +69,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerAbstractModule * module = moduleManager.getModule( moduleName );
+  qSlicerAbstractModule * module = moduleManager.module( moduleName );
   
   if( module == NULL )
     {
