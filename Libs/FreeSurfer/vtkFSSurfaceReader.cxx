@@ -151,7 +151,8 @@ int vtkFSSurfaceReader::RequestData(
   int numFaces = 0;
   int vIndex, fIndex;
   int numVerticesPerFace = 0;
-  int tmpX, tmpY, tmpZ, tmpfIndex;
+  int tmpX, tmpY, tmpZ;
+  int tmpfIndex = 0;
   float locations[3];
   int fvIndex;
   int faceIncrement = 1;
