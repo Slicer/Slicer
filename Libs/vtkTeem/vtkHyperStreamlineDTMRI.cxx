@@ -191,13 +191,13 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
     cellScalars = vtkDataArray::CreateDataArray(inScalars->GetDataType());
     }
   int numComp;
-  if (inTensors)
+  if (inTensors && cellTensors)
     {
     numComp = inTensors->GetNumberOfComponents();
     cellTensors->SetNumberOfComponents(numComp);
     cellTensors->SetNumberOfTuples(VTK_CELL_SIZE);
     }
-  if (inScalars)
+  if (inScalars && cellScalars)
     {
     numComp = inScalars->GetNumberOfComponents();
     cellScalars->SetNumberOfComponents(numComp);
