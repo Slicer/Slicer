@@ -1048,7 +1048,7 @@ int Slicer3_main(int& argc, char *argv[])
   qSlicerApplication::application()->moduleManager()->factory()->setLoadableModuleSearchPaths(
     QString::fromStdString(qtModulePaths).split(PathSep));
   */
-  qSlicerApplication::application()->initializePaths();
+  qSlicerApplication::application()->initializePaths(QString::fromStdString(programPath));
   qSlicerApplication::application()->initializeLoadableModulesPaths();
   //cout << "qtModulePaths:" << qtModulePaths << endl;
 #endif

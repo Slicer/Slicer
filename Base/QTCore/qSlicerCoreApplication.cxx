@@ -187,10 +187,11 @@ void qSlicerCoreApplication::initialize()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::initializePaths()
+void qSlicerCoreApplication::initializePaths(const QString& programPath)
 {
   QCTK_D(qSlicerCoreApplication);
-  d->discoverSlicerHomeDirectory(this->arguments().at(0));
+  // we can't use this->arguments().at(0) here as argc/argv are incorrect.
+  d->discoverSlicerHomeDirectory(programPath);
 }
 
 //-----------------------------------------------------------------------------

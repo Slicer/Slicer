@@ -52,7 +52,7 @@ public:
   // initialize paths for module discovery
   // DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   // removed once the QT GUI is functional.
-  void initializePaths();
+  void initializePaths(const QString& programPath);
   
   // Description:
   // Return true if the application has been initialized
