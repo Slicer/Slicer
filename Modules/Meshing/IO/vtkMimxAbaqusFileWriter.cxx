@@ -57,7 +57,6 @@ vtkStandardNewMacro(vtkMimxAbaqusFileWriter);
 vtkMimxAbaqusFileWriter::vtkMimxAbaqusFileWriter()
 {
   HeaderInformation = "";
-  FileName = "";
   NodeElementFileName = "";
   UserName = "";
   Precision = 0;
@@ -94,13 +93,14 @@ int vtkMimxAbaqusFileWriter::RequestData(
     }
 
   std::ofstream outfile;  
-  outfile.open(this->FileName.c_str(), std::ios::out|std::fstream::trunc );
+  std::string filename = this->GetFileName();
+  outfile.open(filename.c_str(), std::ios::out|std::fstream::trunc );
 
   // GetFilenameWithoutExtension
   if (NodeElementFileName.length() == 0)
     {
-    this->NodeElementFileName = vtksys::SystemTools::GetFilenamePath( this->FileName );
-    std::string fname = vtksys::SystemTools::GetFilenameWithoutExtension(this->FileName);
+    this->NodeElementFileName = vtksys::SystemTools::GetFilenamePath( filename );
+    std::string fname = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
     if(this->NodeElementFileName.length() != 0)
       {
       this->NodeElementFileName += "/";
@@ -133,9 +133,10 @@ int vtkMimxAbaqusFileWriter::RequestData(
   
 void vtkMimxAbaqusFileWriter::WriteHeader( ostream& os )
 {
+  std::string filename = this->GetFileName();
   os << "**=========================================================================" << std::endl;
   os << "**     MODEL:" << std::endl;
-  os << "**        ==>" << vtksys::SystemTools::GetFilenameName(this->FileName) << std::endl; 
+  os << "**        ==>" << vtksys::SystemTools::GetFilenameName(filename) << std::endl; 
   os << "**" << std::endl;
   if ( this->UserName.length() > 0 )
     {

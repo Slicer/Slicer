@@ -41,10 +41,10 @@ public:
   vtkTypeRevisionMacro(vtkMimxAbaqusFileWriter,vtkDataSetWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  void SetFileName( std::string fieldStr) {FileName = fieldStr;} 
-  void SetNodeElementFileName( std::string fieldStr ) {NodeElementFileName = fieldStr;} 
-  void SetHeaderInformation( std::string fieldStr ) {HeaderInformation = fieldStr;} 
-  void SetUserName( std::string fieldStr) {UserName = fieldStr;} 
+  void SetFileName( const std::string & fieldStr) { this->SetFileName( fieldStr.c_str() ); }
+  void SetNodeElementFileName( const std::string & fieldStr ) {NodeElementFileName = fieldStr;} 
+  void SetHeaderInformation( const std::string & fieldStr ) {HeaderInformation = fieldStr;} 
+  void SetUserName( const std::string & fieldStr) {UserName = fieldStr;} 
   
   //Get/Set the Precision used for writing material properties
   vtkGetMacro (Precision, int);
@@ -80,7 +80,6 @@ private:
   void operator=(const vtkMimxAbaqusFileWriter&);  // Not implemented.
   
   // Filenames for the output files
-  std::string FileName;
   std::string NodeElementFileName;
   std::string UserName;
   
