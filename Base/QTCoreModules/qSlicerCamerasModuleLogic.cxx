@@ -15,3 +15,12 @@ void qSlicerCamerasModuleLogic::setup()
   
   //QCTK_D(qSlicerCamerasModuleLogic);
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerCamerasModuleLogic::synchronizeCameraWithView( void * currentView )
+{
+  if( currentView == NULL )
+    {
+    return;
+    }
+}
