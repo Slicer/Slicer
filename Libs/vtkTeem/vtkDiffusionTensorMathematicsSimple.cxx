@@ -226,7 +226,7 @@ int vtkDiffusionTensorMathematicsSimple::FillInputPortInformation(
 template <class T>
 static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathematicsSimple *self,
                                                        vtkImageData *input, 
-                                                       vtkImageData *output, 
+                                                       vtkImageData * vtkNotUsed(output), 
                                                        T *outPtr)
 {
   int dims[3];
@@ -355,7 +355,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
 template <class T>
 static void vtkDiffusionTensorMathematicsSimpleExecute1Eigen(vtkDiffusionTensorMathematicsSimple *self,
                                                        vtkImageData *input, 
-                                                       vtkImageData *output, 
+                                                       vtkImageData * vtkNotUsed(output), 
                                                        T *outPtr)
 {
   int dims[3];
