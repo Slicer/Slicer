@@ -33,13 +33,15 @@ public:
   
   // Description:
   // Convenient function to cast qSlicerModuleLogic into qSlicerCamerasModuleLogic
-  qSlicerCamerasModuleLogic* logic()
-    {
-    QCTK_P(qSlicerCamerasModuleWidget);
-    // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
-    return dynamic_cast<qSlicerCamerasModuleLogic*>(p->logic());
-    }
+  qSlicerCamerasModuleLogic* logic()const;
 };
+
+qSlicerCamerasModuleLogic* qSlicerCamerasModuleWidgetPrivate::logic()const
+{
+  QCTK_P(const qSlicerCamerasModuleWidget);
+  // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
+  return dynamic_cast<qSlicerCamerasModuleLogic*>(p->logic());
+}
 
 //-----------------------------------------------------------------------------
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModuleWidget, QWidget*);
