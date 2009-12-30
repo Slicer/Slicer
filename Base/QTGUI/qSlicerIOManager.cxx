@@ -1,5 +1,8 @@
 #include "qSlicerIOManager.h"
 
+#include <QString>
+#include <QFileDialog>
+
 //-----------------------------------------------------------------------------
 class qSlicerIOManagerPrivate: public qCTKPrivate<qSlicerIOManager>
 {
@@ -16,4 +19,10 @@ qSlicerIOManager::qSlicerIOManager():Superclass()
 //-----------------------------------------------------------------------------
 qSlicerIOManager::~qSlicerIOManager()
 {
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerIOManager::getOpenFileName(QWidget* widget)const
+{
+  return QFileDialog::getOpenFileName(widget);
 }

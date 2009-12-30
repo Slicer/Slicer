@@ -9,16 +9,21 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
+// QT declarations
+class QWidget;
 
 class qSlicerIOManagerPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
 {
-
 public:
   typedef qSlicerCoreIOManager Superclass;
   qSlicerIOManager();
   virtual ~qSlicerIOManager();
+
+  // Description:
+  // Shows up a dialog to let the user pick a file (any file).
+  QString getOpenFileName(QWidget* widget)const;
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerIOManager);
