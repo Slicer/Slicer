@@ -4,9 +4,6 @@
 // SlicerQT includes
 #include "qSlicerModuleLogic.h"
 
-// qCTK includes
-#include <qCTKPimpl.h>
-
 #include "qSlicerBaseQTCoreModulesExport.h"
 
 // MRML declarations
