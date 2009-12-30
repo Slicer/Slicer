@@ -12,12 +12,16 @@
 
 
 #include "qSlicerTransformsModuleWidget.h"
+#include "qSlicerTransformsModuleLogic.h"
 #include "ui_qSlicerTransformsModule.h"
 
-// SlicerLogic includes
+//#include "qSlicerApplication.h"
+//#include "qSlicerIOManager.h"
+
+// vtkSlicerLogic includes
 #include "vtkSlicerTransformLogic.h"
 
-// qMRML includes
+// qMRMLWidgets includes
 #include <qMRMLUtils.h>
 
 // MRML includes
@@ -36,7 +40,7 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerTransformsModuleWidgetPrivate: public qCTKPrivate<qSlicerTransformsModuleWidget>,
-                                             public Ui_qSlicerTransformsModule
+                                            public Ui_qSlicerTransformsModule
 {
 public:
   qSlicerTransformsModuleWidgetPrivate()
@@ -44,9 +48,17 @@ public:
     this->CoordinateReferenceButtonGroup = 0;
     this->MRMLTransformNode = 0;
     }
+  qSlicerTransformsModuleLogic* logic()const;
   QButtonGroup*                 CoordinateReferenceButtonGroup;
   vtkMRMLLinearTransformNode*   MRMLTransformNode;
 };
+
+//-----------------------------------------------------------------------------
+qSlicerTransformsModuleLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
+{
+  QCTK_P(const qSlicerTransformsModuleWidget);
+  return dynamic_cast<qSlicerTransformsModuleLogic*>(p->logic());
+}
 
 //-----------------------------------------------------------------------------
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModuleWidget, QWidget*);
@@ -230,18 +242,11 @@ int qSlicerTransformsModuleWidget::coordinateReference()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::loadTransform()
 {
+  /*
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  Q_ASSERT(ioManager);
+  QString fileName = ioManager->getOpenFileName(this);
+  */
   QString fileName = QFileDialog::getOpenFileName(this);
-  this->loadTransform(fileName);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::loadTransform(const QString& fileName)
-{
-  if (fileName.isEmpty())
-    {
-    return;
-    }
-  vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
-  logic->AddTransform(fileName.toLatin1(), this->mrmlScene());
-  logic->Delete();
+  qctk_d()->logic()->loadTransform(fileName);
 }

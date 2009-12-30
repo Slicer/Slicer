@@ -10,10 +10,10 @@
 
 =========================================================================auto=*/
 
-
 #include "qSlicerTransformsModule.h"
 
 // SlicerQT includes
+#include "qSlicerTransformsModuleLogic.h"
 #include "qSlicerTransformsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
@@ -34,8 +34,7 @@ qSlicerAbstractModuleWidget * qSlicerTransformsModule::createWidgetRepresentatio
 //-----------------------------------------------------------------------------
 qSlicerModuleLogic* qSlicerTransformsModule::createLogic()
 {
-  //return new qSlicerTransformsModuleLogic;
-  return 0; 
+  return new qSlicerTransformsModuleLogic;
 }
 
 //-----------------------------------------------------------------------------

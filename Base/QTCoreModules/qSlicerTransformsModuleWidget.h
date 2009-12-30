@@ -40,7 +40,6 @@ public:
 
 public slots:
   void loadTransform();
-  void loadTransform(const QString& fileName);
 
 protected:
   virtual void setup();

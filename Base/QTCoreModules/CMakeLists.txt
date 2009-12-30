@@ -23,6 +23,8 @@ SET(slicer_qtbase_SRCS
   
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
+  qSlicerTransformsModuleLogic.cxx
+  qSlicerTransformsModuleLogic.h
   qSlicerTransformsModuleWidget.cxx
   qSlicerTransformsModuleWidget.h
   )
