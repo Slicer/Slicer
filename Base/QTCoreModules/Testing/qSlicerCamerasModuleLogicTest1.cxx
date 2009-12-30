@@ -48,8 +48,6 @@ int qSlicerCamerasModuleLogicTest1(int argc, char * argv [] )
 
   qSlicerCamerasModuleLogic * cameraModuleLogic = new qSlicerCamerasModuleLogic;
 
-  cameraModuleLogic->synchronizeCameraWithView(); 
-  
   vtkSmartPointer<vtkMRMLViewNode> view = vtkSmartPointer<vtkMRMLViewNode>::New();
   vtkSmartPointer<vtkMRMLCameraNode> camera = vtkSmartPointer<vtkMRMLCameraNode>::New();
   

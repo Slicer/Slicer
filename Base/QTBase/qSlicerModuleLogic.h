@@ -43,8 +43,12 @@ protected:
   // Description:
   // Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
-
-  virtual void setup() = 0;
+  
+  // Description
+  // Called when appLogic is set. The inherited classes can call appLogic().
+  // to do an special initialization if needed.
+  // Doesn't do anything by default.
+  virtual void setup(){}
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerModuleLogic);
