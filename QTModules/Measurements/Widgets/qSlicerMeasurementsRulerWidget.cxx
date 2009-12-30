@@ -5,9 +5,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMeasurementsRulerWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsRulerWidget>,
+class qSlicerMeasurementsRulerWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsRulerWidget>,
                                                public Ui_qSlicerMeasurementsRulerWidget
 {
+public:
   qSlicerMeasurementsRulerWidgetPrivate()
     {
     }
