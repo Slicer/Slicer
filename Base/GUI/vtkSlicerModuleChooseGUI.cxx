@@ -1,9 +1,14 @@
 
 #ifdef Slicer3_USE_QT
-#include "qSlicerModuleManager.h"
 #include "qSlicerAbstractModule.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModuleFactory.h"
+#include "qSlicerModuleManager.h"
+
+// QT includes 
 #include <QApplication>
 #include <QDebug>
+#include <QStringList>
 #endif
 
 #include <map>
@@ -338,39 +343,59 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
     if ( app != NULL && app->GetModuleGUICollection ( ) != NULL )
       {
       vtkSlicerModuleGUI * m;
-      const char *mName;
+      std::string moduleNameStd = moduleName;
 
       app->GetModuleGUICollection( )->InitTraversal( );
       m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
       while (m != NULL )
         {
-          mName = m->GetUIPanel()->GetName();
-          //std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl;
-          if ( !strcmp (moduleName, mName) )
-           {
-           //--- feedback to user
-           std::string statusText = "...raising module ";
-           statusText += mName;
-           statusText += "...";
-           p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
-           this->Script ( "update idletasks");
-
-           //--- raise the panel
-           m->GetUIPanel()->Raise();
-           p->GetMainSlicerWindow()->SetStatusText ( mName );
-           this->GetModulesMenuButton()->SetValue( mName );
-#ifdef Slicer3_USE_QT
-           //qDebug() << "Attempt to show Qt module:" << moduleName;
-           this->GetApplicationGUI()->SetCurrentQtModule(moduleName);
-#endif
-           //--- feedback to user
-           p->GetMainSlicerWindow()->SetStatusText ( mName );
-           this->Script ( "update idletasks");
-           break;
-           }
-          m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
+        //std::cout << "moduleTitle:" << moduleName << ", mTitle:" << mName << endl;
+        if ( moduleNameStd == m->GetUIPanel()->GetName() )
+          {
+          break;
+          }
+        m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
         }
+
+      if (!m)
+        {
+#ifdef Slicer3_USE_QT
+        // we are here only if the module has not been found
+        // Check if the module is in Qt only.
+        qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager(); 
+        Q_ASSERT(moduleManager);
+        // the KWWidget moduleName is the module Title in Qt.
+        QString moduleTitle = QString(moduleName);
+        QString qtModuleName = moduleManager->moduleName(moduleTitle);
+        if (!moduleManager->module(qtModuleName))
+          {
+          return;
+          }
+#else
+        return;
+#endif
+        }
+      //--- feedback to user
+      std::string statusText = std::string("...raising module ") + moduleName + "...";
+      p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
+      this->Script ( "update idletasks");
+
+      if (m)
+        {
+        //--- raise the panel
+        m->GetUIPanel()->Raise();
+        }
+      p->GetMainSlicerWindow()->SetStatusText ( moduleName );
+      this->GetModulesMenuButton()->SetValue( moduleName );
+#ifdef Slicer3_USE_QT
+      this->GetApplicationGUI()->SetCurrentQtModule( moduleName );
+#endif
+      //--- feedback to user
+      p->GetMainSlicerWindow()->SetStatusText ( moduleName );
+      this->Script ( "update idletasks");
+
       }
+
     }
 }
 
@@ -435,16 +460,26 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
           }
         // Enter selected module.
         vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );
-        if ( currentModule )
+#ifdef Slicer3_USE_QT
+        QString moduleTitle = QString(moduleName);
+        qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+        Q_ASSERT(moduleManager);
+        if (currentModule || moduleManager->module(moduleManager->moduleName(moduleTitle)) != 0)
           {
-          if ( node )
+#endif
+          if ( currentModule )
             {
-            currentModule->Enter ( node );
-            }
-          else
-            {
-            currentModule->Enter ( );
-            }
+            if ( node )
+              {
+              currentModule->Enter ( node );
+              }
+            else
+              {
+              currentModule->Enter ( );
+              }
+#ifdef Slicer3_USE_QT
+          }
+#endif
           vtkMRMLLayoutNode *lnode = this->GetApplicationGUI()->GetGUILayoutNode ( );
           if (lnode)
             {
@@ -843,6 +878,46 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
         m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
         }
+#ifdef Slicer3_USE_QT
+      // Here we process the modules that are QT only.
+      qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+      Q_ASSERT(moduleManager);
+      Q_ASSERT(moduleManager->factory());
+      QStringList moduleNames = moduleManager->factory()->moduleNames();
+      // if the module has not been added already
+      foreach(const QString& moduleName, moduleNames)
+        {
+        QString moduleTitle = moduleManager->moduleTitle(moduleName);
+        bool moduleAdded = false;
+        CategoryToModuleVector::const_iterator category;
+        CategoryToModuleVector::const_iterator endCategory = categoryToModuleName.end();
+        for (category = categoryToModuleName.begin(); category != endCategory; ++category)
+          {
+          // QT modules don't have category yet, check the None category for now.
+          ModuleSet::const_iterator catIt;
+          ModuleSet::const_iterator catEndIt = (*category).second.end();
+          for (catIt = (*category).second.begin(); 
+               catIt != catEndIt;
+               ++catIt)
+            {
+            if (moduleTitle == QString::fromStdString((*catIt).second))
+              {
+              moduleAdded = true;
+              break;
+              }
+            }
+          if (moduleAdded)
+            {
+            break;
+            }
+          }
+        if (!moduleAdded)
+          {
+          // the index doesn't seem to be used, use -1.
+          categoryToModuleName["None"].insert(ModuleItem(-1, moduleTitle.toLatin1().data()));
+          }
+        }
+#endif
 
       // construct a cascading menu of module guis
       //
