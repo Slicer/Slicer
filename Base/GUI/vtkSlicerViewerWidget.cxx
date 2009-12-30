@@ -1030,6 +1030,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
+  this->MainViewer->GetVTKWidget()->RemoveBinding("<Expose>");
 
   this->MainViewer->SetRendererBackgroundColor(
     app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
