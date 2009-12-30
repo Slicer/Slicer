@@ -130,7 +130,7 @@ bool qSlicerModuleManager::loadModule(const QString& moduleName)
   module->initialize(qSlicerCoreApplication::application()->appLogic());
 
   // Retrieve module title
-  QString moduleTitle = d->ModuleFactory.getModuleTitle(moduleName);
+  QString moduleTitle = d->ModuleFactory.moduleTitle(moduleName);
   Q_ASSERT(!moduleTitle.isEmpty());
   if (moduleTitle.isEmpty())
     {
@@ -210,11 +210,11 @@ qSlicerAbstractModule* qSlicerModuleManager::module(const QString& moduleName)
 //---------------------------------------------------------------------------
 QString qSlicerModuleManager::moduleTitle(const QString& moduleName) const
 {
-  return qctk_d()->ModuleFactory.getModuleTitle(moduleName);
+  return qctk_d()->ModuleFactory.moduleTitle(moduleName);
 }
 
 //---------------------------------------------------------------------------
 QString qSlicerModuleManager::moduleName(const QString& moduleTitle) const
 {
-  return qctk_d()->ModuleFactory.getModuleName(moduleTitle);
+  return qctk_d()->ModuleFactory.moduleName(moduleTitle);
 }

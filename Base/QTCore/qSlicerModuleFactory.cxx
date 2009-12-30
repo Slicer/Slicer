@@ -253,7 +253,7 @@ QStringList qSlicerModuleFactory::moduleNames() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleFactory::getModuleTitle(const QString & moduleName) const
+QString qSlicerModuleFactory::moduleTitle(const QString & moduleName) const
 {
   QCTK_D(const qSlicerModuleFactory);
   // Lookup module name
@@ -268,7 +268,7 @@ QString qSlicerModuleFactory::getModuleTitle(const QString & moduleName) const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleFactory::getModuleName(const QString & moduleTitle) const
+QString qSlicerModuleFactory::moduleName(const QString & moduleTitle) const
 {
   QCTK_D(const qSlicerModuleFactory);
   // Lookup module name

@@ -43,11 +43,11 @@ public:
 
   // Description:
   // Get a moduleName given its title
-  QString getModuleName(const QString & moduleTitle) const;
+  QString moduleName(const QString & moduleTitle) const;
 
   // Description:
   // Get a module title given its name
-  QString getModuleTitle(const QString & moduleName) const;
+  QString moduleTitle(const QString & moduleName) const;
 
   // Description:
   // Instantiate a module given its name

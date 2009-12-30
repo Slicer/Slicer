@@ -28,13 +28,13 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
 
   QString moduleName = "qSlicerTransformsModule";
 
-  QString moduleTitle = moduleFactory.getModuleTitle( moduleName ); 
+  QString moduleTitle = moduleFactory.moduleTitle( moduleName ); 
 
   std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
 
   std::cout << "Module Title = " << qPrintable( moduleTitle ) << std::endl;
 
-  QString moduleName1 = moduleFactory.getModuleName( moduleTitle ); 
+  QString moduleName1 = moduleFactory.moduleName( moduleTitle ); 
   
   if( moduleName1 != moduleName )
     {
@@ -44,7 +44,7 @@ int qSlicerModuleFactoryTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QString moduleTitle1 = moduleFactory.getModuleTitle( moduleName ); 
+  QString moduleTitle1 = moduleFactory.moduleTitle( moduleName ); 
 
   if( moduleTitle1 != moduleTitle )
     {
