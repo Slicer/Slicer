@@ -24,11 +24,12 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
 
-#include "vtkMatrix4x4.h"
+#include "vtkDoubleArray.h"
 #include "vtkGridTransform.h"
 #include "vtkImageData.h"
-#include "vtkDoubleArray.h"
+#include "vtkMatrix4x4.h"
 #include "vtkPointData.h"
+#include "vtkSmartPointer.h"
 #include "vtkStringArray.h"
 
 #include "vtkITKBSplineTransform.h"
@@ -428,7 +429,8 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       typedef itk::BSplineDeformableTransform<double,D,D> DoubleBSplineTransformType;
       typedef itk::BSplineDeformableTransform<float,D,D> FloatBSplineTransformType;
 
-      vtkITKBSplineTransform* vtkBSpline = vtkITKBSplineTransform::New();
+      vtkSmartPointer<vtkITKBSplineTransform> vtkBSpline = 
+        vtkSmartPointer<vtkITKBSplineTransform>::New();
       
       // B-spline transform of doubles, dimension 3
       {
@@ -480,7 +482,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         
         // Set the transform on the node
         btn->SetAndObserveWarpTransformToParent( vtkBSpline );
-        vtkBSpline->Delete();
 
         result = 1;
         }

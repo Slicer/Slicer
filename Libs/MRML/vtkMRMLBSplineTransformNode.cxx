@@ -18,6 +18,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkITKBSplineTransform.h"
 
@@ -120,7 +121,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
 
-  vtkITKBSplineTransform* spline = NULL;
+  vtkSmartPointer<vtkITKBSplineTransform> spline;
 
   const char* attName;
   const char* attValue;
@@ -135,7 +136,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       if( ss >> val )
         {
-        spline = vtkITKBSplineTransform::New();
+        spline = vtkSmartPointer<vtkITKBSplineTransform>::New();
         spline->SetSplineOrder( val );
         }
       else
@@ -146,7 +147,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "switchCoord"))
       {
-      if( spline == NULL )
+      if( spline.GetPointer() == 0 )
         {
         vtkErrorMacro( "order attribute must be processed before parameter attributes" );
         return;
@@ -166,7 +167,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "fixedParam"))
       {
-      if( spline == NULL )
+      if( spline.GetPointer() == 0 )
         {
         vtkErrorMacro( "order attribute must be processed before parameter attributes" );
         return;
@@ -190,7 +191,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "bulk"))
       {
-      if( spline == NULL )
+      if( spline.GetPointer() == 0 )
         {
         vtkErrorMacro( "order attribute must be processed before parameter attributes" );
         return;
@@ -226,7 +227,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "param"))
       {
-      if( spline == NULL )
+      if( spline.GetPointer() == 0 )
         {
         vtkErrorMacro( "order attribute must be processed before parameter attributes" );
         return;
@@ -250,10 +251,9 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
       }
     }
 
-  if( spline != NULL )
+  if( spline.GetPointer() != 0 )
     {
     this->SetAndObserveWarpTransformToParent( spline );
-    spline->Delete();
     }
 }
 
