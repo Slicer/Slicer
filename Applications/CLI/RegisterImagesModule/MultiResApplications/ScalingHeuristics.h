@@ -11,7 +11,7 @@
 // results in a one-voxel movement (where the dimension of a voxel
 // is defined by its smallest size).
 
-VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT class ScalingValues
+class VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT ScalingValues
 {
 public:
   ScalingValues(const itk::ImageBase<3>* image, 
