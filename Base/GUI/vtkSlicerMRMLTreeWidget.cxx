@@ -303,6 +303,7 @@ void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
   node->SetName(node->GetID());
   this->UpdateTreeFromMRML();
   this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
+  node->Delete();
 }
 
 //---------------------------------------------------------------------------
