@@ -54,9 +54,14 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
 {
+  QCTK_D(qSlicerAbstractModule);
   Q_ASSERT(appLogic);
   //this->setAppLogic(appLogic);
-  qctk_d()->AppLogic = appLogic; 
+  if (d->Logic)
+    {
+    d->Logic->initialize(appLogic);
+    }
+  d->AppLogic = appLogic; 
   this->setup();
 }
 
@@ -77,13 +82,13 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* mrmlScene)
     return; 
     }
   d->MRMLScene = mrmlScene;
+  if (d->Logic)
+    {// logic should be updated first (because it doesn't depends on the widget
+    d->Logic->setMRMLScene(mrmlScene);
+    }
   if (d->WidgetRepresentation)
     {
     d->WidgetRepresentation->setMRMLScene(mrmlScene);
-    }
-  if (d->Logic)
-    {
-    d->Logic->setMRMLScene(mrmlScene);
     }
 }
 
@@ -101,10 +106,7 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
   QCTK_D(qSlicerAbstractModule);
   
   // If required, create module logic
-  if (!d->Logic)
-    {
-    d->Logic = this->createLogic(); 
-    }
+  this->logic();
 
   // If required, create widgetRepresentation
   if (!d->WidgetRepresentation)
@@ -131,9 +133,15 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 qSlicerModuleLogic* qSlicerAbstractModule::logic()
 {
   QCTK_D(qSlicerAbstractModule);
-  if (!d->Logic)
+  if (d->Logic)
     {
-    d->Logic = this->createLogic();
+    return d->Logic;
+    }
+  d->Logic = this->createLogic();
+  if (d->Logic)
+    {
+    d->Logic->initialize(d->AppLogic);
+    d->Logic->setMRMLScene(this->mrmlScene());
     }
   return d->Logic; 
 }
