@@ -622,6 +622,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         }
 
       vtkgrid->SetDisplacementGrid( vtkgridimage );
+      vtkgridimage->Delete();
 
       // Set the matrix on the node
       gtn->SetAndObserveWarpTransformToParent( vtkgrid );
