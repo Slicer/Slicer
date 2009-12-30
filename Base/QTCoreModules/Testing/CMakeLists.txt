@@ -4,6 +4,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerCamerasModuleLogicTest1.cxx
   qSlicerCamerasModuleTest1.cxx
   qSlicerCamerasModuleWidgetTest1.cxx
+  qSlicerTransformsModuleLogicTest1.cxx
   qSlicerTransformsModuleTest1.cxx
   qSlicerTransformsModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
@@ -32,5 +33,10 @@ ENDMACRO( SIMPLE_TEST  )
 SIMPLE_TEST( qSlicerCamerasModuleLogicTest1 )
 SIMPLE_TEST( qSlicerCamerasModuleTest1 )
 SIMPLE_TEST( qSlicerCamerasModuleWidgetTest1 )
+ADD_TEST( qSlicerTransformsModuleLogicTest1 ${LAUNCH_EXE}
+  ${QTCoreModules_TESTS} qSlicerTransformsModuleLogicTest1
+  ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt
+  )
 SIMPLE_TEST( qSlicerTransformsModuleTest1 )
 SIMPLE_TEST( qSlicerTransformsModuleWidgetTest1 )
+

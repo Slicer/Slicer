@@ -36,9 +36,23 @@ int qSlicerTransformsModuleTest1(int argc, char * argv [] )
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
     }
+  
+  aptr->initialize();
 
   qSlicerTransformsModule * transformsModule = new qSlicerTransformsModule;
+  transformsModule->initialize(aptr->appLogic());
 
+  if (transformsModule->logic() != transformsModule->logic())
+    {
+    std::cerr << "The logic must be always the same." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (transformsModule->widgetRepresentation() != transformsModule->widgetRepresentation())
+    {
+    std::cerr << "The logic must be always the same." << std::endl;
+    return EXIT_FAILURE;
+    }
   delete transformsModule;
 
   return EXIT_SUCCESS;
