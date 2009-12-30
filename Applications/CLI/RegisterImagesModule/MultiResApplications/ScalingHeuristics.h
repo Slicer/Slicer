@@ -1,6 +1,8 @@
 #ifndef ScalingHeuristics_h_
 #define ScalingHeuristics_h_
 
+#include "vtkRegisterImagesModuleMultiResApplicationsWin32Header.h"
+
 #include <itkImageBase.h>
 #include <itkVector.h>
 
@@ -9,8 +11,9 @@
 // results in a one-voxel movement (where the dimension of a voxel
 // is defined by its smallest size).
 
-struct ScalingValues
+VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT class ScalingValues
 {
+public:
   ScalingValues(const itk::ImageBase<3>* image, 
                 const itk::Point<double, 3> centerOfRotation);
 

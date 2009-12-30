@@ -17,26 +17,32 @@ create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
 ADD_EXECUTABLE(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
 TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule ${ITK_LIBRARIES})
 
+
+set(RegisterImagesMultiRes_TESTS ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests)
+if(WIN32)
+  set(RegisterImagesMultiRes_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/RegisterImagesMultiResApplicationsTests)  
+endif(WIN32)
+
 add_test(FixedRotationSimilarity3DTransformTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          FixedRotationSimilarity3DTransformTest)
 
 add_test(EulerSimilarity3DTransformTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          EulerSimilarity3DTransformTest)
 
 add_test(EulerAnisotropicSimilarity3DTransformTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          EulerAnisotropicSimilarity3DTransformTest)
 
 add_test(DecomposedAffine3DTransformTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          DecomposedAffine3DTransformTest)
 
 add_test(DownsampleHeuristicsTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests 
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS} 
          DownsampleHeuristicsTest)
 
 add_test(ScalingHeuristicsTest
-         ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          ScalingHeuristicsTest)

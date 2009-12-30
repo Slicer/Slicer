@@ -5,6 +5,11 @@ PROJECT( RegisterImagesMultiResApplications )
   FIND_PACKAGE( ITK REQUIRED )
   INCLUDE( ${ITK_USE_FILE} )
     
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/vtkRegisterImagesModuleMultiResApplicationsConfigure.h.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/vtkRegisterImagesModuleMultiResApplicationsConfigure.h
+    )
+
   # Find GenerateCLP
   FIND_PACKAGE( GenerateCLP REQUIRED )
   INCLUDE( ${GenerateCLP_USE_FILE} )
