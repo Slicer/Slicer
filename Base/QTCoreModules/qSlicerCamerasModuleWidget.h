@@ -48,7 +48,7 @@ protected:
 
 protected slots:
   void onCurrentViewNodeChanged(vtkMRMLNode*);
-  void onCurrentCameraNodeChanged(vtkMRMLNode*);
+  void setCameraToCurrentView(vtkMRMLNode*);
   void onCameraNodeAdded(vtkMRMLNode*);
   void onCameraNodeRemoved(vtkMRMLNode*);
   void synchronizeCameraWithView();

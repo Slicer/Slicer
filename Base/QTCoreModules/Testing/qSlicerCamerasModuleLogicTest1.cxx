@@ -9,9 +9,18 @@
 
 =========================================================================auto=*/
 
+// QTCoreModule includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCamerasModuleLogic.h" 
 
+// MRML includes
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLCameraNode.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+
+// std includes
 #include <stdlib.h>
 
 #include "TestingMacros.h"
@@ -40,7 +49,21 @@ int qSlicerCamerasModuleLogicTest1(int argc, char * argv [] )
   qSlicerCamerasModuleLogic * cameraModuleLogic = new qSlicerCamerasModuleLogic;
 
   cameraModuleLogic->synchronizeCameraWithView(); 
-
+  
+  vtkSmartPointer<vtkMRMLViewNode> view = vtkSmartPointer<vtkMRMLViewNode>::New();
+  vtkSmartPointer<vtkMRMLCameraNode> camera = vtkSmartPointer<vtkMRMLCameraNode>::New();
+  
+  // shouldn't do anything. 
+  cameraModuleLogic->setCameraToView(0, view);
+  // shouldn't do anything. 
+  cameraModuleLogic->setCameraToView(camera, 0);
+  // shouldn't connect camera to view
+  cameraModuleLogic->setCameraToView(camera, view);
+  if (camera->GetActiveTag() != view->GetID())
+    {
+    std::cerr << "qSlicerCamerasModuleLogic::setCameraToView failed to set ActiveTag with the view ID." << std::endl;
+    return EXIT_FAILURE;
+    }
   delete cameraModuleLogic;
 
   return EXIT_SUCCESS;
