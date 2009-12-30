@@ -64,4 +64,6 @@ Slicer3_build_slicer_qtbase_library(
 
 # Sub directories
 #ADD_SUBDIRECTORY(Plugins)
-ADD_SUBDIRECTORY(Testing)
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(BUILD_TESTING)
