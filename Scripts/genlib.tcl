@@ -1199,10 +1199,13 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
       switch $::tcl_platform(os) {
         "SunOS" -
         "Linux" {
+            set ::env("LD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
             set zlib "libvtkzlib.so"
             set png "libvtkpng.so"
         }
         "Darwin" {
+            ## Need to set the library path so that the tests pass
+            set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
             set zlib "libvtkzlib.dylib"
             set png "libvtkpng.dylib"
         }
