@@ -199,6 +199,7 @@ void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node,
     transformToWorld2->Inverse();
     
     transformToNode->Concatenate(transformToWorld2);
+    transformToWorld2->Delete();
     }
 }
 
