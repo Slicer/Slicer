@@ -339,8 +339,8 @@ void qMRMLNodeSelector::nodeIdSelected(int index)
     }
   d->MRMLCurrentNode = this->node(index);
   //qDebug() << __FUNCTION__ << " " << id ;
-  emit this->currentNodeChanged(d->MRMLCurrentNode);
-  emit this->currentNodeChanged(d->MRMLCurrentNode != 0);
+  emit currentNodeChanged(d->MRMLCurrentNode);
+  emit currentNodeChanged(d->MRMLCurrentNode != 0);
 }
 
 //-----------------------------------------------------------------------------

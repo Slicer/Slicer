@@ -36,12 +36,6 @@ QCTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
 QCTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeFactory::createNode(const char* className)
-{
-  return this->createNode(QString::fromAscii(className) );
-}
-
-//------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
   QCTK_D(qMRMLNodeFactory);

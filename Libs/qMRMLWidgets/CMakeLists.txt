@@ -27,10 +27,14 @@ SET(qMRMLWidgets_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
+  qMRMLNodeFactoryButton.cxx
+  qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.cxx
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.cxx
   qMRMLNodeTreeSelector.h
+  qMRMLSceneGeneratorButton.cxx
+  qMRMLSceneGeneratorButton.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
   qMRMLTreeWidget.cxx
@@ -45,8 +49,10 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
+  qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
+  qMRMLSceneGeneratorButton.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   )
@@ -59,8 +65,6 @@ SET(qMRMLWidgets_UI_SRCS
 QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
-   
-
 
 # --------------------------------------------------------------------------
 # Include dirs

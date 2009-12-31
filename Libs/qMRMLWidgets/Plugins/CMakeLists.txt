@@ -12,6 +12,8 @@ SET(designer_plugin_SRCS
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.cxx
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNodeFactoryButtonPlugin.cxx
+  qMRMLNodeFactoryButtonPlugin.h
   qMRMLNodeSelectorPlugin.cxx
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.cxx
@@ -20,9 +22,8 @@ SET(designer_plugin_SRCS
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.cxx
   qMRMLTreeWidgetPlugin.h
-  qMRMLSceneGeneratorPlugin.cxx
-  qMRMLSceneGeneratorPlugin.h
-  qMRMLSceneGeneratorPlugin_p.h
+  qMRMLSceneGeneratorButtonPlugin.cxx
+  qMRMLSceneGeneratorButtonPlugin.h
   qMRMLWidgetsAbstractPlugin.cxx
   qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetsPlugin.cxx  
@@ -35,12 +36,12 @@ SET(designer_plugin_MOC_SRCS
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNodeFactoryButtonPlugin.h
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h
-  qMRMLSceneGeneratorPlugin.h
-  qMRMLSceneGeneratorPlugin_p.h
+  qMRMLSceneGeneratorButtonPlugin.h
   )
 
 SET(designer_plugin_TARGET_LIBRARIES
