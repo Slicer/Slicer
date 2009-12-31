@@ -1572,6 +1572,19 @@ int Slicer3_main(int& argc, char *argv[])
     moduleFactory.SetName("Slicer");
     moduleFactory.SetSearchPaths( pluginsPaths );
     moduleFactory.SetCachePath( cachePath );
+    // register a program that can execute tcl scripts (used first to wrap
+    // java)
+    // find the tcl bin dir first
+    vtksys_stl::string tclBuild;
+    vtksys::SystemTools::GetEnv("TCL_DIR", tclBuild);
+    tclBuild += std::string("/bin");
+    std::string tclBinDir = vtksys::SystemTools::CollapseFullPath(tclBuild.c_str());
+#ifdef _WIN32
+    moduleFactory.RegisterFileExtension(".tcl", "%s/tclsh.exe", tclBinDir.c_str());
+#else
+    std::string tclexec = std::string("%s/tclsh") + Slicer3_TCL_TK_MAJOR_VERSION + "." + Slicer3_TCL_TK_MINOR_VERSION;
+    moduleFactory.RegisterFileExtension(".tcl", tclexec.c_str(), tclBinDir.c_str());
+#endif
     if (VerboseModuleDiscovery)
       {
       moduleFactory.SetWarningMessageCallback( WarningMessage );

@@ -414,6 +414,8 @@ ModuleFactory
   long numberTested = 0;
   long numberFound = 0;
   double t0, t1;
+
+  std::stringstream notModulesList;
   
   t0 = itksys::SystemTools::GetTime();  
   for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
@@ -462,6 +464,8 @@ ModuleFactory
           
           (*this->InternalCache)[entry.Location] = entry;
           this->CacheModified = true;
+
+          notModulesList << fullFilename << " is not a module\n";
           }
         }
       }
@@ -475,6 +479,8 @@ ModuleFactory
   
   this->InformationMessage( information.str().c_str() );
 
+//  this->WarningMessage ( notModulesList.str().c_str() );
+  
   return numberFound;
 }
 
@@ -706,7 +712,7 @@ ModuleFactory
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
                   
-                  information << "A module named \"" << module.GetTitle()
+                  information << "ScanForSharedObjectModules: A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation() << "("
                               << module.GetTarget() << ")" << std::endl;
@@ -862,8 +868,14 @@ ModuleFactory
       // skip any directories
       if (!itksys::SystemTools::FileIsDirectory(filename))
         {
-        // try to focus only on executables
-        if ( NameIsExecutable(filename) )
+        
+        // try to focus only on executables or those that have registered
+        // programs to execute them
+        
+        // does the file have a known extension?
+        std::string ext = itksys::SystemTools::GetFilenameExtension(filename);
+        const char *executable = this->GetExecutableForFileExtension(ext);
+        if ( NameIsExecutable(filename) || executable != NULL)
           {
           numberTested++;
           //std::cout << "Testing " << filename << " as a plugin:" <<std::endl;
@@ -900,14 +912,34 @@ ModuleFactory
             }
 
           // command, process and argument to probe the executable
-          char *command[3];
+          char *command[4];
           itksysProcess *process = itksysProcess_New();
           std::string arg("--xml");
 
+          // does the command have a known extension?
+          std::string ext = itksys::SystemTools::GetFilenameExtension(commandName);
+          const char *executable = this->GetExecutableForFileExtension(ext);
+
           // build the command/parameter array.
-          command[0] = const_cast<char*>(commandName.c_str());
-          command[1] = const_cast<char*>(arg.c_str());
-          command[2] = 0;
+          //command[1] = const_cast<char*>(arg.c_str());
+          //command[2] = 0;
+          if (executable == NULL)
+            {
+            // should be able to execute it on it's own
+            command[0] = const_cast<char*>(commandName.c_str());
+            command[1] = const_cast<char*>(arg.c_str());
+            command[2] = 0;
+            }
+          else
+            {
+            // use the executable to run it
+            command[0] = const_cast<char*>(executable);
+            command[1] = const_cast<char*>(commandName.c_str());
+            command[2] = const_cast<char*>(arg.c_str());
+            command[3] = 0;
+            //std::cout << "ScanForCommandLineModulesByExec: Got a registered exec, command[0] = " << command[0] << ", command[1] = " << command[1] << "\n";
+            }
+          
 
           // setup the command
           itksysProcess_SetCommand(process, command);
@@ -964,7 +996,17 @@ ModuleFactory
                 // Construct and configure the module object
                 ModuleDescription module;
                 module.SetType("CommandLineModule");
-                module.SetTarget( commandName );
+                if (executable != NULL)
+                  {
+                  // includes the exec with the bare command name
+                  std::string newcommand = std::string(executable) + std::string(" ") + commandName;
+                  //std::cout << "ScanForCommandLineModulesByExecuting: Setting target to " << newcommand.c_str() << "\n";
+                  module.SetTarget(newcommand);
+                  }
+                else
+                  {
+                  module.SetTarget(commandName);
+                  }
                 module.SetLocation( commandName );
 
                 // Parse the xml to build the description of the module
@@ -990,9 +1032,7 @@ ModuleFactory
 
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
-
-                  
-                  information << "A module named \"" << module.GetTitle()
+                  information << "ScanForCommandLineModulesByExecuting: A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation() 
                               << "(" << module.GetTarget() << ")"
@@ -1073,7 +1113,7 @@ ModuleFactory
           else
             {
             isAPlugin = false;
-            information << filename << " is not a plugin (did not exit cleanly)." << std::endl;
+            information << filename << " is not a plugin (did not exit cleanly), command[0] = " << command[0] << ", [1] = " << command[1] << std::endl;
             }
 
           // clean up
@@ -2228,6 +2268,7 @@ ModuleFactory
         module.SetType( (*cit).second.Type );
         if (type == "CommandLineModule")
           {
+          //std::cout << "GetModuleFromCache: it's a CommandLineModule: setting target to " << commandName << std::endl;
           module.SetTarget( commandName );
           }
         else if (type == "PythonModule")
@@ -2319,4 +2360,55 @@ ModuleFactory
     }
 
   return returnval;
+}
+
+// -----------------------------------------------------------------------------------------------
+void ModuleFactory::RegisterFileExtension(const char *ext, const char *cmdstring, const char *path)
+{
+  if (ext == NULL || cmdstring == NULL)
+    {
+    return;
+    }
+
+  std::string extString = std::string(ext);
+  std::string formattedCommandString;
+  if (path != NULL)
+    {
+    char command[125];
+  
+    sprintf(command, cmdstring, path);
+    formattedCommandString = std::string(command);
+    }
+  else
+    {
+    formattedCommandString = std::string(cmdstring);
+    }
+  //std::cout << "RegisterFileExtension: registering extension " << extString << " with command " << formattedCommandString << std::endl;
+  
+  this->RegisteredExecutablesForFileExtensions[extString] = formattedCommandString;
+}
+
+// -----------------------------------------------------------------------------------------------
+const char * ModuleFactory::GetExecutableForFileExtension(std::string ext)
+{
+  // TODO: until get execution of a two part command in an itksys process working, just
+  // return null
+  return NULL;
+  
+  if (ext.length() == 0)
+    {
+    return NULL;
+    }
+  std::map<std::string, std::string>::iterator iter;
+  for (iter = this->RegisteredExecutablesForFileExtensions.begin();
+       iter != this->RegisteredExecutablesForFileExtensions.end();
+       iter++)
+    {
+    if (ext.compare(iter->first) == 0)
+      {
+      // std::cout << "GetExecutableForFileExtension: for ext " << ext << " returning command " << iter->second << "\n";
+      return iter->second.c_str();
+      }
+    }
+  return NULL;
 }

@@ -18,6 +18,8 @@
 
 #include "ModuleDescription.h"
 
+#include <map>
+
 class ModuleDescriptionMap;
 class ModuleFileMap;
 class ModuleCache;
@@ -81,7 +83,17 @@ public:
   // Set/Get a function to call to report back a discovered module
   void SetModuleDiscoveryMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetModuleDiscoveryMessageCallback();
-  
+
+  // Description:
+  // Register an executable program that can execute files with this extension
+  // ext includes a leading .
+  // cmdstring may contain a string formatting cod for the path
+  // path may be null if cmdstring doesn't contain formatting code
+  void RegisterFileExtension(const char *ext, const char *cmdstring, const char *path);
+  // Description:
+  // given an input file extension, search through registered ones to find and
+  // return an executable that will run it. Returns null if not found
+  const char *GetExecutableForFileExtension(std::string ext);
   
 protected:
   // Load the module cache.
@@ -138,7 +150,9 @@ protected:
   ModuleFileMap *InternalFileMap;
 
   bool CacheModified;
-  
+
+  std::map<std::string, std::string> RegisteredExecutablesForFileExtensions;
+
 private:
 
   std::string Name;
