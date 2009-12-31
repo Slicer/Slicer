@@ -28,20 +28,22 @@ public:
   
   // Description:
   // Set/Get MRML scene
-  void setMRMLScene(vtkMRMLScene* mrmlScene);
   vtkMRMLScene* mrmlScene()const;
 
   // Description:
   // Create and add a node given its classname to the scene associated with the factory
   // Note: The scene has the ownership of the node and is responsible to delete it.
-  vtkMRMLNode* createNode(const char* className);
   vtkMRMLNode* createNode(const QString& className);
 
   // Description:
   // Add attribute
   // Note: If an attribute already exist, it's value will be overwritten.
   void addAttribute(const QString& name, const QString& value);
-
+public slots:
+  // Description:
+  // Set/Get MRML scene
+  void setMRMLScene(vtkMRMLScene* mrmlScene);
+  
 private:
   QCTK_DECLARE_PRIVATE(qMRMLNodeFactory);
 }; 
