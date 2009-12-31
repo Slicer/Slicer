@@ -40,13 +40,26 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
 void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode, 
   bool global, vtkTransform* transform)
 {
-  Q_ASSERT(transformNode && transform);
-  if (!transformNode || !transform) { return; }
+  Q_ASSERT(transform);
+  if (!transform)
+    {
+    return;
+    }
+
   transform->Identity();
+
+  if (!transformNode) 
+    { 
+    return; 
+    }
 
   vtkMatrix4x4 *matrix = transformNode->GetMatrixTransformToParent();
   Q_ASSERT(matrix);
-  if (!matrix) { return; }
+  if (!matrix) 
+    { 
+    return; 
+    }
+  
   transform->SetMatrix(matrix);
 
   if ( global )

@@ -94,6 +94,13 @@ vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
 void qMRMLMatrixWidget::updateMatrix()
 {
   QCTK_D(qMRMLMatrixWidget);
+
+  if (d->MRMLTransformNode == 0)
+    {
+    this->setMatrixInternal(0);
+    d->Transform = 0;
+    return;
+    }
   
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(
