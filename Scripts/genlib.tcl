@@ -1174,93 +1174,81 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 #
 
 if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
-    cd $Slicer3_LIB
+  cd $Slicer3_LIB
 
-    runcmd $::SVN co $::Teem_TAG teem
+  runcmd $::SVN co $::Teem_TAG teem
 
 
-    if {$::GENLIB(buildit)} {
-      file mkdir $Slicer3_LIB/teem-build
-      cd $Slicer3_LIB/teem-build
+  if {$::GENLIB(buildit)} {
+    file mkdir $Slicer3_LIB/teem-build
+    cd $Slicer3_LIB/teem-build
 
-      if { $isDarwin } {
-        set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
-      } else {
-        set C_FLAGS ""
-      }
+    if { $isDarwin } {
+      set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
+    } else {
+      set C_FLAGS ""
+    }
 # !!! FIXME How to append -m64 the -fno-common if we want to build 64 bit on Mac?
 
-      if {$::GENLIB(bitness) == "64"} {
-        set C_FLAGS -DCMAKE_C_FLAGS:STRING=-m64 \
+    if {$::GENLIB(bitness) == "64"} {
+      set C_FLAGS -DCMAKE_C_FLAGS:STRING=-m64 \
+    } else {
+      set C_FLAGS ""
+    }
+
+    switch $::tcl_platform(os) {
+      "SunOS" -
+      "Linux" {
+          set ::env("LD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
+          set zlib "libvtkzlib.so"
+          set png "libvtkpng.so"
+      }
+      "Darwin" {
+          ## Need to set the library path so that the tests pass
+          set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
+          set zlib "libvtkzlib.dylib"
+          set png "libvtkpng.dylib"
+      }
+      "Windows NT" {
+          set zlib "vtkzlib.lib"
+          set png "vtkpng.lib"
+      }
+    }
+
+    runcmd $::CMAKE \
+      -G$GENERATOR \
+      -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+      -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+      -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+      -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+      $C_FLAGS \
+      -DBUILD_SHARED_LIBS:BOOL=ON \
+      -DBUILD_TESTING:BOOL=ON \
+      -DTeem_PTHREAD:BOOL=OFF \
+      -DTeem_BZIP2:BOOL=OFF \
+      -DTeem_ZLIB:BOOL=ON \
+      -DTeem_PNG:BOOL=ON \
+      -DTeem_VTK_MANGLE:BOOL=ON \
+      -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
+      -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
+      -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
+      -DTeem_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+      -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
+      -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
+      -DTeem_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+      -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
+      -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON \
+      ../teem
+
+    if {$isWindows} {
+      if { $MSVC6 } {
+        runcmd $::MAKE teem.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
       } else {
-        set C_FLAGS ""
+        runcmd $::MAKE teem.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
       }
-
-      switch $::tcl_platform(os) {
-        "SunOS" -
-        "Linux" {
-            set ::env("LD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
-            set zlib "libvtkzlib.so"
-            set png "libvtkpng.so"
-        }
-        "Darwin" {
-            ## Need to set the library path so that the tests pass
-            set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
-            set zlib "libvtkzlib.dylib"
-            set png "libvtkpng.dylib"
-        }
-        "Windows NT" {
-            set zlib "vtkzlib.lib"
-            set png "vtkpng.lib"
-        }
-      }
-
-      runcmd $::CMAKE \
-        -G$GENERATOR \
-        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
-        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-        $C_FLAGS \
-        -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DBUILD_TESTING:BOOL=ON \
-        -DTeem_PTHREAD:BOOL=OFF \
-        -DTeem_BZIP2:BOOL=OFF \
-        -DTeem_ZLIB:BOOL=ON \
-        -DTeem_PNG:BOOL=ON \
-        -DTeem_VTK_MANGLE:BOOL=ON \
-        -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
-        -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
-        -DTeem_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
-        -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
-        -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
-        -DTeem_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
-        -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
-        -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON \
-        ../teem
-
-      if {$isWindows} {
-        if { $MSVC6 } {
-            runcmd $::MAKE teem.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
-        } else {
-          if { $::GENLIB(test-type) == "" } {
-            runcmd $::MAKE teem.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
-          } else {
-            runcmd $::MAKE teem.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
-
-            # - only Release mode is being built by ctest in spite of explicit request for debug...
-            # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-            # runcmd $::CMAKE_PATH/bin/ctest -D $::GENLIB(test-type) -C $::VTK_BUILD_TYPE
-          }
-        }
-      } else {
-        if { $::GENLIB(test-type) == "" } {
-          eval runcmd $::MAKE 
-        } else {
-          eval runcmd $::MAKE $::GENLIB(test-type)
-        }
-      }
+    } else {
+      eval runcmd $::MAKE 
+    }
   }
 }
 
