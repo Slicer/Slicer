@@ -20,8 +20,7 @@ void qVTKAbstractMatrixWidgetPrivate::init()
 {
   QCTK_P(qVTKAbstractMatrixWidget);
   this->setParent(p);
-  // there is no matrix to show/edit, disable the widget
-  p->setEnabled(this->Matrix == 0);
+  this->updateMatrix();
 }
 
 // --------------------------------------------------------------------------
