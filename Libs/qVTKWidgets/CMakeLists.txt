@@ -15,8 +15,13 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qVTKWidgets_SRCS
+  qVTKAbstractMatrixWidget.cxx
+  qVTKAbstractMatrixWidget.h
+  qVTKAbstractMatrixWidgetPrivate.h
   qVTKConnection.cxx
   qVTKConnection.h
+  qVTKMatrixWidget.cxx
+  qVTKMatrixWidget.h
   qVTKObject.h
   qVTKObjectEventsObserver.cxx
   qVTKObjectEventsObserver.h
@@ -24,8 +29,10 @@ SET(qVTKWidgets_SRCS
 
 # Headers that should run through moc
 SET(qVTKWidgets_MOC_SRCS
+  qVTKAbstractMatrixWidgetPrivate.h
   qVTKConnection.h
   qVTKObjectEventsObserver.h
+  qVTKMatrixWidget.h
   )
   
 # UI files

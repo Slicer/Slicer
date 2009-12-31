@@ -8,9 +8,10 @@
 #include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
+#include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkMatrix4x4.h>
+#include <vtkWeakPointer.h>
 
 // QT includes
 #include <QDebug>
@@ -26,22 +27,30 @@ public:
     }
   
   qMRMLMatrixWidget::CoordinateReferenceType   CoordinateReference;
-  vtkMRMLLinearTransformNode*                  MRMLTransformNode;
+  vtkWeakPointer<vtkMRMLLinearTransformNode>   MRMLTransformNode;
+  // Warning, this is not the real "transform, the real can be retrieved
+  // by qVTKAbstractMatrixWidget->transform();
+  vtkSmartPointer<vtkTransform>                Transform;
 };
 
 // --------------------------------------------------------------------------
 qMRMLMatrixWidget::qMRMLMatrixWidget(QWidget* parent) : Superclass(parent)
 {
   QCTK_INIT_PRIVATE(qMRMLMatrixWidget);
-
-  this->setEnabled(false); 
 }
 
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType coordinateReference)
 {
-  this->reset(); 
-  qctk_d()->CoordinateReference = coordinateReference;
+  QCTK_D(qMRMLMatrixWidget);
+  if (d->CoordinateReference == coordinateReference)
+    {
+    return;
+    }
+
+  d->CoordinateReference = coordinateReference;
+
+  this->updateMatrix();
 }
 
 // --------------------------------------------------------------------------
@@ -61,19 +70,18 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 {
   QCTK_D(qMRMLMatrixWidget);
   
-  if (d->MRMLTransformNode == transformNode) { return; }
+  if (d->MRMLTransformNode == transformNode) 
+    { 
+    return; 
+    }
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
-    vtkMRMLTransformableNode::TransformModifiedEvent, 
-    this, SLOT(onMRMLTransformNodeModified(vtkObject*))); 
+                      vtkMRMLTransformableNode::TransformModifiedEvent, 
+                      this, SLOT(updateMatrix())); 
 
   d->MRMLTransformNode = transformNode;
   
-  //this->reset(); 
-  this->onMRMLTransformNodeModified(transformNode);
-
-  // Enable/Disable the widget
-  this->setEnabled(transformNode != 0); 
+  this->updateMatrix();
 }
 
 // --------------------------------------------------------------------------
@@ -83,20 +91,18 @@ vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMatrixWidget::onMRMLTransformNodeModified(vtkObject* caller)
+void qMRMLMatrixWidget::updateMatrix()
 {
   QCTK_D(qMRMLMatrixWidget);
   
-  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
-  if (!transformNode) { return; }
-  Q_ASSERT( d->MRMLTransformNode == transformNode);
-  
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == Self::GLOBAL, transform);
-  
-  QVector<double> vector; 
-  qMRMLUtils::vtkMatrixToQVector(transform->GetMatrix(), vector); 
-  this->setVector( vector ); 
-  
+  qMRMLUtils::getTransformInCoordinateSystem(
+    d->MRMLTransformNode,
+    d->CoordinateReference == Self::GLOBAL, 
+    transform);
+  // update the matrix with the new values.
+  this->setMatrixInternal(transform->GetMatrix());
+  // keep a ref on the transform otherwise, the matrix will be reset when transform
+  // goes out of scope (because qVTKAbstractMatrixWidget has a weak ref on the matrix).
+  d->Transform = transform;  
 }
