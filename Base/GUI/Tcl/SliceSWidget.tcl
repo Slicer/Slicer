@@ -873,7 +873,6 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
    set reformation [$_sliceNode GetOrientationString]
       
 
-    [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
     set annotation [[[$sgui GetSliceViewer] GetRenderWidget] GetCornerAnnotation] 
     switch [$sliceCompositeNode GetAnnotationMode] {
       "0" {
