@@ -314,6 +314,14 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   delete this->InternalTaskQueue;
   this->InternalTaskQueue = 0;
   
+  this->ModifiedQueueLock->Lock();
+  while (!(*this->InternalModifiedQueue).empty())
+    {
+    vtkObject *obj = (*this->InternalModifiedQueue).front();
+    (*this->InternalModifiedQueue).pop();
+    obj->Delete(); // decrement ref count
+    }
+  this->ModifiedQueueLock->Unlock();
   delete this->InternalModifiedQueue;
   this->InternalModifiedQueue = 0;
   
@@ -875,6 +883,7 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 
   if (active)
     {
+    obj->Register(this);
     this->ModifiedQueueLock->Lock();
     (*this->InternalModifiedQueue).push( obj );
 //     std::cout << " [" << (*this->InternalModifiedQueue).size()
