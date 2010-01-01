@@ -875,7 +875,6 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 
   if (active)
     {
-    obj->Register(this); // hold the object and release it when processed
     this->ModifiedQueueLock->Lock();
     (*this->InternalModifiedQueue).push( obj );
 //     std::cout << " [" << (*this->InternalModifiedQueue).size()
