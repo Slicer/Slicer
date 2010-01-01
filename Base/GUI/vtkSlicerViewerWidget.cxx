@@ -2243,6 +2243,7 @@ vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplay
     clipper->SetClipFunction(this->SlicePlanes);
     }
 
+  transformToWorld->Delete();
   return clipper;
 }
 
