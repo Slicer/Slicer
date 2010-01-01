@@ -20,6 +20,18 @@ ModuleDescription::ModuleDescription()
 {
   this->Type = "Unknown";
   this->Description = "No description provided";
+  this->Category = "Unspecified";
+  this->Version = "Unspecified";
+  this->DocumentationURL = "";
+  this->License = "";
+  this->Acknowledgements = "Thank you everyone.";
+  this->Contributor = "Anonymous";
+  this->Type = "";
+  this->Target = "";
+  this->Location = "";
+  this->AlternativeType = "";
+  this->AlternativeTarget = "";
+  this->AlternativeLocation = "";
 
   std::stringstream ss;
   ss << (unsigned short) -1;
