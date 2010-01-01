@@ -240,6 +240,11 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  if { [info command $_modelNode] == "" } {
+    # the model was deleted behind our back, do nothing
+    return
+  }
+
   set transformToWorld [vtkMatrix4x4 New]
   $transformToWorld Identity
 
@@ -275,9 +280,6 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   $rasToXY DeepCopy $mat
 
   $o(cutTransform) SetMatrix $rasToXY
-
-  puts "transform"
-  puts [$rasToXY Print]
 
   $transformToWorld Invert
   #
