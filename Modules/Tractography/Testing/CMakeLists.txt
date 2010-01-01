@@ -1,5 +1,5 @@
 
-set(SHORT_TEST_TIMEOUT 90)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
+set(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 
 ADD_TEST(
   TractographyTestGlyphs
