@@ -26,7 +26,7 @@ add_test(DiffusionEditorTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-spla
 add_test(DiffusionEditorGradients ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditor_GradientsTest.tcl)
 add_test(DiffusionEditorGlyphsTracts ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorGlyphsTractsTest.tcl)
 add_test(DiffusionEditorTensor ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTensorTest.tcl)
-set(SHORT_TEST_TIMEOUT 90)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
+set(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 set_tests_properties( DiffusionEditorTensor PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
 
 add_test( DiffusionTensorEditorTest1 
