@@ -28,6 +28,7 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
     destructor {}
     
     # methods
+    method updateViewer {} {}
     method processEvent {{caller ""} {event ""}} {}
     method updateWidgetFromNode {sliceNode planeRepresentation} {}
     method updateNodeFromWidget {sliceNode planeRepresentation} {}
@@ -119,14 +120,8 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   set o(planeRepresentation) [vtkNew vtkImplicitPlaneRepresentation]
   $o(planeWidget) SetRepresentation $o(planeRepresentation)
   
-  set rwi [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+  $this updateViewer
 
-  # Update the size of the render window interactor to match that of the render window
-  set rw [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindow]
-  $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
-  # the problem is that it gets reset, so there's another call in the visibility toggle
-
-  $o(planeWidget) SetInteractor $rwi
   $o(planeRepresentation) SetDrawPlane 0
   $o(planeRepresentation) PlaceWidget -100 100 -100 100 -100 100
 
@@ -147,6 +142,23 @@ itcl::body SlicePlaneSWidget::destructor {} {
 # handle scene and slice node events
 #
 
+itcl::body SlicePlaneSWidget::updateViewer { } {
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
+  if { $viewer != "" } {
+    set rwi [[$viewer GetMainViewer] GetRenderWindowInteractor]
+
+    if { [$o(planeWidget) GetInteractor] != $rwi } {
+      # Update the size of the render window interactor to match that of the render window
+      set rw [[$viewer GetMainViewer] GetRenderWindow]
+      $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
+      # the problem is that it gets reset, so there's another call in the visibility toggle
+
+      $o(planeWidget) SetInteractor $rwi
+    }
+  }
+}
+
+
 itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $caller] == ""} {
@@ -159,6 +171,9 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
     ::SWidget::ProtectedDelete $this
     return
   }
+
+  # catch any chagnes to the active viewer
+  $this updateViewer
 
   set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
 

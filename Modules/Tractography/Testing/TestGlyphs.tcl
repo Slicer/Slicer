@@ -81,7 +81,10 @@ proc TestColor { color } {
   $::glyphDTNode SetGlyphGeometryToEllipsoids
 
   $::lineNode SetAndObserveColorNodeID "vtkMRMLColorTableNode$color"
-  bounceParam "$::MRML(vtkMRMLCameraNode1) SetPosition 0 500 " 0 100 10
+  set camera [$::slicer3::MRMLScene GetNthNodeByClass 0 "vtkMRMLCameraNode"]
+  if { $camera != "" } {
+    bounceParam "$camera SetPosition 0 500 " 0 100 10
+  }
 }
 
 SetupGlyphs
