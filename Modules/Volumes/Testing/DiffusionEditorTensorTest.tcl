@@ -43,6 +43,7 @@ while {$waiting} {
   }
   after 250
 }
+update
 puts "Task finished."
 
 $testWidget SetGlyphVisibility 0 1
