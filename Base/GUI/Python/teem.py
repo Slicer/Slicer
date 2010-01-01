@@ -2,7 +2,7 @@ from ctypes import *
 
 import sys, os
 if sys.platform == 'win32':
-  teemdir = os.environ['TEEM_DIR']
+  teemdir = os.environ['Teem_DIR']
   libteem = teemdir + '/teem.dll'
 elif sys.platform == 'linux2':
   teemdir = os.environ['Teem_DIR']
