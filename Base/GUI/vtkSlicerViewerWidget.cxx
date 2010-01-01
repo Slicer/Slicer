@@ -251,6 +251,7 @@ void vtkSlicerViewerWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                   unsigned long event, 
                                                   void *callData )
 {
+  this->RequestRender();
 } 
 
 //---------------------------------------------------------------------------
@@ -883,7 +884,7 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     {
     // do not call if no camera otherwise it will create a new one without a node
     this->UpdateAxis(); // make sure the axis follow the new camera
-}
+    }
 
   this->InvokeEvent(vtkSlicerViewerWidget::ActiveCameraChangedEvent, NULL);
 }
@@ -1030,7 +1031,12 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
+  // don't use vtkKWRenderWidget's built-in ExposeEvent handler.  
+  // It will call ProcessPendingEvents (update) even though it may already be inside
+  // a call to update.  It also calls Render directly, which will pull the vtk pipeline chain.
+  // Instead, use the RequestRender method (see below) to render when idle.
   this->MainViewer->GetVTKWidget()->RemoveBinding("<Expose>");
+
 
   this->MainViewer->SetRendererBackgroundColor(
     app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
@@ -1062,6 +1068,10 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
+
+    vtkEventBroker *broker = vtkEventBroker::GetInstance();
+    broker->AddObservation( rwi, vtkCommand::ExposeEvent, this, this->GUICallbackCommand );
+    broker->AddObservation( rwi, vtkCommand::ConfigureEvent, this, this->GUICallbackCommand );
     }
 
 

@@ -21,6 +21,7 @@ class vtkActor2D;
 class vtkKWFrame;
 class vtkImageData;
 class vtkRenderer;
+class vtkCallbackCommand;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceViewer : public vtkKWCompositeWidget
 {
@@ -60,6 +61,14 @@ public:
   void UnhighlightAllSlices();
   vtkGetVector3Macro(HighlightColor, double);
   vtkSetVector3Macro(HighlightColor, double);
+
+  // Description:
+  // propagate events generated in GUI to logic / mrml
+  // Here, it calls RequestRender in response to Expose and Configure events
+  // BTX
+  static void GUICallback( vtkObject *__caller,
+                           unsigned long eid, void *__clientData, void *callData );    
+  // ETX
   
   // Description:
   // Request Render posts a request to the event queue for processing when
@@ -100,6 +109,8 @@ protected:
   vtkActor2DCollection *ActorCollection;
   vtkPolyDataCollection* PolyDataCollection;
   vtkCollection* LookupTableCollection;
+
+  vtkCallbackCommand *GUICallbackCommand;
 
   int RenderPending;
 

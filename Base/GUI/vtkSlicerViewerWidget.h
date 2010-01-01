@@ -82,6 +82,7 @@ public:
 
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
+  // Here, it calls RequestRender in response to Expose and Configure events
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
   // Description:

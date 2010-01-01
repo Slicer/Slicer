@@ -25,12 +25,12 @@
 #include "vtkMapper2D.h"
 #include "vtkProperty2D.h"
 #include "vtkCellArray.h"
+#include "vtkCallbackCommand.h"
 
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceViewer );
 vtkCxxRevisionMacro ( vtkSlicerSliceViewer, "$Revision: 1.0 $");
-
 
 
 //---------------------------------------------------------------------------
@@ -59,6 +59,10 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     this->ActorCollection = vtkActor2DCollection::New();
     this->PolyDataCollection = vtkPolyDataCollection::New();
     this->LookupTableCollection = vtkCollection::New();
+
+    this->GUICallbackCommand = vtkCallbackCommand::New ( );
+    this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+    this->GUICallbackCommand->SetCallback( vtkSlicerSliceViewer::GUICallback );
 
     this->RenderPending = 0;
 
@@ -198,12 +202,21 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     //
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
-    this->RenderWidget->GetVTKWidget()->RemoveBinding("<Expose>");
     this->RenderWidget->SetWidth ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
     this->RenderWidget->SetHeight ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );
+
+    // Don't use vtkKWRenderWidget's built-in ExposeEvent handler.  
+    // It will call ProcessPendingEvents (update) even though it may already be inside
+    // a call to update.  It also calls Render directly, which will pull the vtk pipeline chain.
+    // Instead, use the RequestRender method to render when idle.
+    this->RenderWidget->GetVTKWidget()->RemoveBinding("<Expose>");
+    vtkRenderWindowInteractor *rwi = this->RenderWidget->GetRenderWindowInteractor();
+    vtkEventBroker *broker = vtkEventBroker::GetInstance();
+    broker->AddObservation( rwi, vtkCommand::ExposeEvent, this, this->GUICallbackCommand );
+    broker->AddObservation( rwi, vtkCommand::ConfigureEvent, this, this->GUICallbackCommand );
 
     this->ChangeLayout(1, 1);
 }
@@ -436,3 +449,17 @@ void vtkSlicerSliceViewer::UnhighlightAllSlices( )
 }
 
 
+//----------------------------------------------------------------------------
+// Description:
+// the GUICallback is a static function to handle events from the renderwidget
+// This is a simplified version of what is used in vtkSlicerComponentGUI.
+// Here we only need to call RequestRender
+//
+void 
+vtkSlicerSliceViewer::GUICallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
+{
+  vtkSlicerSliceViewer *self = reinterpret_cast<vtkSlicerSliceViewer *>(clientData);
+
+  self->RequestRender();
+}
