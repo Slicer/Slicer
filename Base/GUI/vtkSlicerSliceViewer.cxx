@@ -215,10 +215,7 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     // a call to update.  It also calls Render directly, which will pull the vtk pipeline chain.
     // Instead, use the RequestRender method to render when idle.
     this->RenderWidget->GetVTKWidget()->RemoveBinding("<Expose>");
-    vtkRenderWindowInteractor *rwi = this->RenderWidget->GetRenderWindowInteractor();
-    vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    broker->AddObservation( rwi, vtkCommand::ExposeEvent, this, this->GUICallbackCommand );
-    broker->AddObservation( rwi, vtkCommand::ConfigureEvent, this, this->GUICallbackCommand );
+    this->RenderWidget->GetVTKWidget()->AddBinding("<Expose>", this, "RequestRender");
 
     this->ChangeLayout(1, 1);
 }
@@ -456,6 +453,9 @@ void vtkSlicerSliceViewer::UnhighlightAllSlices( )
 // the GUICallback is a static function to handle events from the renderwidget
 // This is a simplified version of what is used in vtkSlicerComponentGUI.
 // Here we only need to call RequestRender
+// 
+// Note: this is not currently used: RequestRender is invoked directly
+// from the AddBinding call after the widget is created.
 //
 void 
 vtkSlicerSliceViewer::GUICallback(vtkObject *caller, 

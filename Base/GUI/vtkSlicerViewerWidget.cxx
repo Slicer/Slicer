@@ -251,6 +251,7 @@ void vtkSlicerViewerWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                   unsigned long event, 
                                                   void *callData )
 {
+  // Not currently used... 
   this->RequestRender();
 } 
 
@@ -1034,8 +1035,9 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // don't use vtkKWRenderWidget's built-in ExposeEvent handler.  
   // It will call ProcessPendingEvents (update) even though it may already be inside
   // a call to update.  It also calls Render directly, which will pull the vtk pipeline chain.
-  // Instead, use the RequestRender method (see below) to render when idle.
+  // Instead, use the RequestRender method to render when idle.
   this->MainViewer->GetVTKWidget()->RemoveBinding("<Expose>");
+  this->MainViewer->GetVTKWidget()->AddBinding("<Expose>", this, "RequestRender");
 
 
   this->MainViewer->SetRendererBackgroundColor(
@@ -1068,10 +1070,6 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
-
-    vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    broker->AddObservation( rwi, vtkCommand::ExposeEvent, this, this->GUICallbackCommand );
-    broker->AddObservation( rwi, vtkCommand::ConfigureEvent, this, this->GUICallbackCommand );
     }
 
 
