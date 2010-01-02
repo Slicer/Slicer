@@ -107,6 +107,9 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
+  # BUG: expose events are not passed through the vtk/kw layer so we need to explicitly handle them here
+  [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetVTKWidget] AddBinding "<Expose>" "::SWidget::ProtectedCallback $this processEvent $sliceGUI ExposeEvent"
+
   set node [[$sliceGUI GetLogic] GetSliceNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
