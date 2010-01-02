@@ -107,6 +107,8 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       this->RenderWidget = NULL;
     }
 
+    this->GUICallbackCommand->Delete();
+
 }
 
 //---------------------------------------------------------------------------
