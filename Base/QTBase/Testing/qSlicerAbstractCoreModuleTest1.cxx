@@ -15,11 +15,13 @@
 #include "qSlicerAbstractCoreModule.h"
 
 #include <stdlib.h>
+#include <iostream>
 
 
 int qSlicerAbstractCoreModuleTest1(int, char * [] )
 {
 
+  std::cout << "TEST PASSED !" << std::endl;
 
   return EXIT_SUCCESS;
 }
