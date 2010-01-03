@@ -127,6 +127,32 @@ if(Slicer3_USE_PYTHON)
 endif(Slicer3_USE_PYTHON)
 
 # -------------------------------------------------------------------------
+# Find and install QT
+
+if(Slicer3_USE_QT)
+
+  SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL)
+  FOREACH(qtlib ${QTLIBLIST})
+    IF (NOT WIN32)
+      #INSTALL(FILES ${QT_${qtlib}_LIBRARY_RELEASE} DESTINATION ${PV_INSTALL_LIB_DIR})
+      GET_FILENAME_COMPONENT(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
+      GET_FILENAME_COMPONENT(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
+      FILE(GLOB QT_LIB_LIST RELATIVE ${QT_LIB_DIR_tmp} "${QT_${qtlib}_LIBRARY_RELEASE}*")
+      INSTALL(CODE "
+MESSAGE(STATUS \"Installing lib/Slicer3/${QT_LIB_NAME_tmp}\")
+EXECUTE_PROCESS (WORKING_DIRECTORY ${QT_LIB_DIR_tmp}
+                 COMMAND tar c ${QT_LIB_LIST}
+                 COMMAND tar -xC \lib/Slicer3/${PV_INSTALL_LIB_DIR})
+        " COMPONENT Runtime)
+    ELSE (NOT WIN32)
+      GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
+      INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll DESTINATION lib/Slicer3 COMPONENT Runtime)
+    ENDIF (NOT WIN32)
+    
+  ENDFOREACH(qtlib)
+endif(Slicer3_USE_QT)
+
+# -------------------------------------------------------------------------
 # CPack
 
 configure_file(
@@ -140,7 +166,7 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Envi
 
 SET(CPACK_MONOLITHIC_INSTALL ON)
 #append RuntimeExecutables
-SET(CPACK_COMPONENTS_ALL "Development;Runtime;RuntimeLibraries;Unspecified;RuntimeExecutables;")
+#SET(CPACK_COMPONENTS_ALL "Development;Runtime;RuntimeLibraries;Unspecified;RuntimeExecutables;")
 
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer3_SOURCE_DIR}/README.txt")
