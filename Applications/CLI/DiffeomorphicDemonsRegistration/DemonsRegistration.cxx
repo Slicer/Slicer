@@ -978,6 +978,13 @@ int main( int argc, char *argv[] )
    
    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
    demonsTargetVolume.c_str(), itk::ImageIOFactory::ReadMode);
+
+   if( imageIO.IsNull() )
+     { 
+     std::cerr << "Unable to create imageIO for file " << demonsTargetVolume << std::endl;
+     exit( EXIT_FAILURE );
+     }
+
    imageIO->SetFileName(demonsTargetVolume.c_str());
    imageIO->ReadImageInformation();
 
