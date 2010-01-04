@@ -125,7 +125,7 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
     this->GetModuleDescription().GetProcessInformation()->Abort = 1; 
   }
   const char* GetRegisteredModuleNameByIndex ( int idx );
-  void SetModuleDescription ( const char *name ) { this->SetModuleDescription ( this->GetRegisteredModuleDescription ( name ) ); }
+  void SetModuleDescription ( const char *name ) { ModuleDescription desc = this->GetRegisteredModuleDescription ( name ); this->SetModuleDescription ( desc ); }
   const char* GetModuleVersion () { return this->GetModuleDescription().GetVersion().c_str(); };
   const char* GetModuleTitle () { return this->GetModuleDescription().GetTitle().c_str(); };
   const char* GetModuleTarget () { return this->GetModuleDescription().GetTarget().c_str(); };
