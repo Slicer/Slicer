@@ -181,6 +181,8 @@ protected:
 
     void LoadPresets();
 
+    int ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
     //OWN GUI Elements
 
     //Frame input

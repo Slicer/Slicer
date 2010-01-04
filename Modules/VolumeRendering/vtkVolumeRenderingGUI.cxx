@@ -1386,9 +1386,24 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
 }
 
+int vtkVolumeRenderingGUI::ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  //check all inputs
+
+  if (!vspNode->GetVolumeNode() || !vspNode->GetFgVolumeNode())
+    return 0;
+
+  return 1;
+}
+
 //initialize pipeline from a loaded or user selected parameters node
 void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
 {
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+
+  if (!ValidateParametersNode(vspNode))
+    return;
+  
   char buf[32] = "Initializing...";
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.1);
 
@@ -1408,8 +1423,6 @@ void vtkVolumeRenderingGUI::InitializePipelineFromParametersNode()
       slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
     }
   }
-
-  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
 
   this->GetLogic()->SetupHistograms(vspNode);
   if (vspNode->GetFgVolumeNode())
