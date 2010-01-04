@@ -390,8 +390,8 @@ configure_file(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/runValgrind.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/runValgrind.sh
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrind.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrind.sh
   )
 
 install(FILES 
