@@ -142,7 +142,7 @@ if(Slicer3_USE_QT)
 MESSAGE(STATUS \"Installing lib/Slicer3/${QT_LIB_NAME_tmp}\")
 EXECUTE_PROCESS (WORKING_DIRECTORY ${QT_LIB_DIR_tmp}
                  COMMAND tar c ${QT_LIB_LIST}
-                 COMMAND tar -xC \lib/Slicer3/${PV_INSTALL_LIB_DIR})
+                 COMMAND tar -xC lib/Slicer3/${PV_INSTALL_LIB_DIR})
         " COMPONENT Runtime)
     ELSE (NOT WIN32)
       GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
