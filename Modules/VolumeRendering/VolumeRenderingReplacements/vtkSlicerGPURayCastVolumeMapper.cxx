@@ -172,8 +172,8 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
 
   //printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
 
-  double progress = 1;
-  this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
+//  double progress = 1;
+//  this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
 }
 
 void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()

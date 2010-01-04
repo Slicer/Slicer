@@ -109,15 +109,6 @@ protected:
   vtkSlicerGPURayCastVolumeTextureMapper3D();
   ~vtkSlicerGPURayCastVolumeTextureMapper3D();
 
-//BTX
-
-  void GetLightInformation(vtkRenderer *ren,
-                           vtkVolume *vol,
-                           GLfloat lightDirection[2][4],
-                           GLfloat lightDiffuseColor[2][4],
-                           GLfloat lightSpecularColor[2][4],
-                           GLfloat halfwayVector[2][4],
-                           GLfloat *ambient );
 //ETX
 
   int              Initialized;
@@ -165,34 +156,6 @@ protected:
 
   void LoadVertexShader();
   void LoadFragmentShaders();
-  
-  // regular ray casting
-  void LoadFragmentShader();
-  void LoadNoShadingFragmentShader();
-  void LoadFragmentShaderGMOM();//gradient-magnitude opacity-modulation
-  void LoadFragmentShaderICPE();//illustrative context preserving exploration
-
-  // mip ray casting
-  void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
-  void LoadNoShadingFragmentShaderMINIP();//lighting in MIP could be bad, so no shading here
-
-  // regular ray casting
-  void LoadFragmentShaderTwo();
-  void LoadNoShadingFragmentShaderTwo();
-  void LoadFragmentShaderGMOMTwo();
-
-  // mip ray casting
-  void LoadNoShadingFragmentShaderMIPTwo();//lighting in MIP could be bad, so no shading here
-  void LoadNoShadingFragmentShaderMINIPTwo();//lighting in MIP could be bad, so no shading here
-
-  // regular ray casting
-  void LoadFragmentShaderFour();
-  void LoadNoShadingFragmentShaderFour();
-  void LoadFragmentShaderGMOMFour();
-
-  // mip ray casting
-  void LoadNoShadingFragmentShaderMIPFour();//lighting in MIP could be bad, so no shading here
-  void LoadNoShadingFragmentShaderMINIPFour();//lighting in MIP could be bad, so no shading here
 
   void LoadRayCastProgram();
 

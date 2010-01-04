@@ -562,9 +562,9 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   }
   else if (event == vtkCommand::ProgressEvent)
   {
-    float progress=*((float*)callData);
+    float *progress = (float*)callData;
     char buf[32] = "Rendering...";
-    this->GetApplicationGUI()->SetExternalProgress(buf, progress);
+    this->GetApplicationGUI()->SetExternalProgress(buf, *progress);
   }
   else if (event == vtkCommand::EndEvent)
   {

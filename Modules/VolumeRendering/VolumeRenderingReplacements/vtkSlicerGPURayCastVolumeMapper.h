@@ -113,15 +113,6 @@ protected:
   vtkSlicerGPURayCastVolumeMapper();
   ~vtkSlicerGPURayCastVolumeMapper();
 
-//BTX
-
-  void GetLightInformation(vtkRenderer *ren,
-                           vtkVolume *vol,
-                           GLfloat lightDirection[2][4],
-                           GLfloat lightDiffuseColor[2][4],
-                           GLfloat lightSpecularColor[2][4],
-                           GLfloat halfwayVector[2][4],
-                           GLfloat *ambient );
 //ETX
 
   int              Initialized;
