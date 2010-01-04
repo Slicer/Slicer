@@ -147,7 +147,6 @@ void qVTKConnection::SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
   d->QtSlot = qt_slot;
   d->Priority = priority;
 
-  int strSize = qt_slot.count();
   if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
     d->SlotType = qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT;

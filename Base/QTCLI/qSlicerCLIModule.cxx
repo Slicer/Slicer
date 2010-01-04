@@ -55,9 +55,8 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
-  QCTK_D(qSlicerCLIModule);
   // Temporary directory should be set before the module is initialized
-  Q_ASSERT(!d->TempDirectory.isEmpty());
+  Q_ASSERT(!qctk_d()->TempDirectory.isEmpty());
 }
 
 //-----------------------------------------------------------------------------

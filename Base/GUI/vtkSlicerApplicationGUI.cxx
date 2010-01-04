@@ -4052,9 +4052,6 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 void vtkSlicerApplicationGUI::ReposModulePanel()
 {
 #ifdef Slicer3_USE_QT
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager);
-
   if (!this->GetMainSlicerWindow() ||
       !this->GetMainSlicerWindow()->GetMainNotebook())
     {
@@ -4065,6 +4062,9 @@ void vtkSlicerApplicationGUI::ReposModulePanel()
   int size[2];
   vtkKWTkUtilities::GetWidgetCoordinates(widget, &pos[0], &pos[1]);
   vtkKWTkUtilities::GetWidgetSize(widget, &size[0], &size[1]);
+  Q_ASSERT(this->GetSlicerApplication());
+  Q_ASSERT(this->GetSlicerApplication()->modulePanel());
+  Q_ASSERT(qSlicerApplication::application()->moduleManager());
   this->GetSlicerApplication()->modulePanel()->setGeometry(QRect(pos[0], pos[1], size[0], size[1]));
 #endif
 }
