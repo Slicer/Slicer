@@ -1650,6 +1650,7 @@ int Slicer3_main(int& argc, char *argv[])
 
       ++mit;
       }
+
     }
 
 #ifdef Slicer3_USE_QT
@@ -1658,6 +1659,10 @@ int Slicer3_main(int& argc, char *argv[])
 
 #endif // CLIMODULES_DEBUG
 
+  // Load any default parameter sets
+  //
+  //
+  vtkSlicerModuleLogic::LoadDefaultParameterSets(scene);
 
   //
   // get the Tcl name so the vtk class will be registered in the interpreter

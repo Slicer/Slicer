@@ -74,6 +74,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   // Slicer3 and not dynamically loaded).
   virtual const char* GetModuleLibDirectory();
 
+  // Load any default parameter sets into the specified scene
+  static void LoadDefaultParameterSets(vtkMRMLScene *);
+
 protected:
   vtkSlicerModuleLogic();
   ~vtkSlicerModuleLogic();

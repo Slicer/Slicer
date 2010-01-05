@@ -26,3 +26,20 @@ install(
   DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/Resources
   )
 
+
+# Should this location change, update somewhere
+
+file(GLOB PARAMETERSETS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ParameterSets/*.mrml")
+
+foreach(parameterset ${PARAMETERSETS})
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${parameterset}
+    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/Resources/${parameterset}"
+    COPYONLY
+    )
+endforeach(parameterset)
+install(
+  FILES ${PARAMETERSETS}
+  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/Resources/ParameterSets
+  )
+
