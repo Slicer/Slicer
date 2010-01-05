@@ -55,7 +55,7 @@ vtkMRMLNode* vtkMRMLFetchMINode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLFetchMINode::vtkMRMLFetchMINode()
 {
-  this->SingletonTag = const_cast<char *>("vtkMRMLFetchMINode");
+   this->SetSingletonTag("vtkMRMLFetchMINode");
    this->HideFromEditors = true;
 
    this->TagTableCollection = vtkTagTableCollection::New();

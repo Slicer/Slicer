@@ -54,7 +54,7 @@ vtkMRMLNode* vtkMRMLChangeTrackerNode::CreateNodeInstance()
 vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
 {
    // Only one node is created 
-  this->SingletonTag = const_cast<char *>("vtkMRMLChangeTrackerNode");
+  this->SetSingletonTag("vtkMRMLChangeTrackerNode");
    this->HideFromEditors = true;
 
    this->Scan1_Ref = NULL;
