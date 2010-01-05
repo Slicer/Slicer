@@ -17,15 +17,52 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLDisplayNodeTestHelper1 *New(){return new vtkMRMLDisplayNodeTestHelper1;};
+
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLDisplayNodeTestHelper1;
+    }
+
+  const char * GetTypeAsString()
+    {
+    return "vtkMRMLDisplayNodeTestHelper1";
+    }
+
+  int ReadFile()
+    {
+    std::cout << "vtkMRMLDisplayNodeTestHelper1 pretending to read a file " << std::endl;
+    return EXIT_SUCCESS;
+    }
+
+  virtual const char* GetNodeTagName() 
+    {
+    return "Testing is good";
+    }
+};
+ 
 int vtkMRMLDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDisplayNode > node1 = vtkSmartPointer< vtkMRMLDisplayNode >::New();
+
+  vtkSmartPointer< vtkMRMLDisplayNode > node0 = vtkSmartPointer< vtkMRMLDisplayNode >::New();
+  
+  if( node0 != NULL )
+    {
+    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLDisplayNode > node2 = vtkSmartPointer< vtkMRMLDisplayNode >::New();
+  vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
