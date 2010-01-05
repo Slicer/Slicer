@@ -17,15 +17,61 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLFiberBundleDisplayNodeTestHelper1 : public vtkMRMLFiberBundleDisplayNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLFiberBundleDisplayNodeTestHelper1 *New(){return new vtkMRMLFiberBundleDisplayNodeTestHelper1;};
+
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLFiberBundleDisplayNodeTestHelper1;
+    }
+
+  const char * GetTypeAsString()
+    {
+    return "vtkMRMLFiberBundleDisplayNodeTestHelper1";
+    }
+
+  int ReadFile()
+    {
+    std::cout << "vtkMRMLFiberBundleDisplayNodeTestHelper1 pretending to read a file " << std::endl;
+    return EXIT_SUCCESS;
+    }
+
+  virtual const char* GetNodeTagName() 
+    {
+    return "Testing is good";
+    }
+};
+ 
 int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFiberBundleDisplayNode > node1 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNode >::New();
+
+  vtkSmartPointer< vtkMRMLFiberBundleDisplayNode > node0 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNode >::New();
+  
+  if( node0 != NULL )
+    {
+    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 >::New();
+
+  vtkMRMLNode * node0b = node1->CreateNodeInstance();
+  
+  if( node0b != NULL )
+    {
+    std::cerr << "This abstract class is not returning a NULL pointer from its CreateNodeInstance() method" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLFiberBundleDisplayNode > node2 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNode >::New();
+  vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
