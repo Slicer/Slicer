@@ -558,13 +558,23 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   {
     float *progress = (float*)callData;
     char buf[32] = "Gradient...";
-    this->GetApplicationGUI()->SetExternalProgress(buf, *progress);
+
+    //turn off external progress bar when complete
+    //would it be better or more expensive to send ending event?
+    if (*progress > 0.99f)
+      this->GetApplicationGUI()->SetExternalProgress(buf, 0.0);
+    else
+      this->GetApplicationGUI()->SetExternalProgress(buf, *progress);
   }
   else if (event == vtkCommand::ProgressEvent)
   {
     float *progress = (float*)callData;
     char buf[32] = "Rendering...";
-    this->GetApplicationGUI()->SetExternalProgress(buf, *progress);
+
+    if (*progress > 0.99f)
+      this->GetApplicationGUI()->SetExternalProgress(buf, 0.0);
+    else
+      this->GetApplicationGUI()->SetExternalProgress(buf, *progress);
   }
   else if (event == vtkCommand::EndEvent)
   {
@@ -1389,10 +1399,12 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 int vtkVolumeRenderingGUI::ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   //check all inputs
-
-  if (!vspNode->GetVolumeNode() || !vspNode->GetFgVolumeNode())
+  if (vspNode->GetVolumeNodeID() && strcmp(vspNode->GetVolumeNodeID(), "NULL") != 0 && vspNode->GetVolumeNode() == NULL)
     return 0;
 
+  if (vspNode->GetFgVolumeNodeID() && strcmp(vspNode->GetFgVolumeNodeID(), "NULL") != 0 && vspNode->GetFgVolumeNode() == NULL)
+    return 0;
+  
   return 1;
 }
 
