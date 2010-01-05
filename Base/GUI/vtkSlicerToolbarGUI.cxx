@@ -1214,8 +1214,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->VolumeIconButton->SetOverReliefToNone ( );
   this->VolumeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetVolumeIcon ( ));
   this->VolumeIconButton->SetBalloonHelpString ( "Volumes");
-  mtb->AddWidget ( this->VolumeIconButton );
-
+  vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
+  if ( m != NULL )
+    {
+     mtb->AddWidget ( this->VolumeIconButton );
+    }
+  else 
+    {
+      vtkDebugMacro("No Volumes module loaded, not adding a button for it on the toolbar.");
+    }
   // models module icon
   this->ModelIconButton->SetParent (mtb->GetFrame ( ) );
   this->ModelIconButton->Create ( );
@@ -1265,8 +1272,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorIconButton->SetOverReliefToNone ( );
   this->EditorIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorIcon ( ) );
   this->EditorIconButton->SetBalloonHelpString ( "Editor");        
-  mtb->AddWidget ( this->EditorIconButton );
-
+  m = app->GetModuleGUIByName("Editor");
+  if ( m != NULL )
+    {
+    mtb->AddWidget ( this->EditorIconButton );
+    }
+  else 
+    {
+      vtkDebugMacro("No Editor module loaded, not adding a button for it on the toolbar.");
+    }
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
   // measurements module icon
   this->MeasurementsIconButton->SetParent ( mtb->GetFrame ( ) );
@@ -1276,7 +1290,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MeasurementsIconButton->SetOverReliefToNone ( );
   this->MeasurementsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMeasurementsIcon ( ) );
   this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements");        
-  mtb->AddWidget ( this->MeasurementsIconButton );
+  m = app->GetModuleGUIByName("Measurements");
+  if ( m != NULL )
+    {
+    mtb->AddWidget ( this->MeasurementsIconButton );
+    }
+  else 
+    {
+      vtkDebugMacro("No Measurements module loaded, not adding a button for it on the toolbar.");
+    }
 #endif
   
   // color utility icon
