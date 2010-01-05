@@ -405,7 +405,6 @@ protected:
   char *SceneRootDir;
   char *Name;
   char *ID;
-  char *SingletonTag;
   int Indent;
   int HideFromEditors;
   int Selectable;
@@ -451,6 +450,8 @@ private:
   // Description:
   // Variable used to manage encoded/decoded URL strings
   char * TempURLString;
+
+  char *SingletonTag;
 
   int DisableModifiedEvent;
   int ModifiedEventPending;

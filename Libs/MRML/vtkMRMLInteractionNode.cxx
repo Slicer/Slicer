@@ -39,7 +39,7 @@ vtkMRMLNode* vtkMRMLInteractionNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 {
-  this->SingletonTag = const_cast<char *>("vtkMRMLInteractionNode");
+  this->SetSingletonTag("vtkMRMLInteractionNode");
 
   this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;

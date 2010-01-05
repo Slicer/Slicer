@@ -39,7 +39,7 @@ vtkMRMLNode* vtkMRMLLayoutNode::CreateNodeInstance()
 vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 {
 
-  this->SingletonTag = const_cast<char *>("vtkMRMLLayoutNode");
+  this->SetSingletonTag("vtkMRMLLayoutNode");
   this->HideFromEditors = 1;
   this->GUIPanelVisibility = 1;
   this->BottomPanelVisibility = 1;
