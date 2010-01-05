@@ -1,10 +1,10 @@
 
 #include "vtkIGTDataStream.h"
 #include "vtkObjectFactory.h"
-#if defined(VTK_WRAP_TCL) && defined(KWWidgets_FOUND)
+#if defined(KWWidgets_FOUND)
 #include "vtkKWTkUtilities.h"
 #include "vtkKWApplication.h"
-#endif //defined(VTK_WRAP_TCL) && defined(KWWidgets_FOUND)
+#endif //defined(KWWidgets_FOUND)
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 
@@ -223,10 +223,10 @@ void vtkIGTDataStream::ProcessTimerEvents()
     {
         this->PullRealTime();
         this->InvokeEvent (vtkCommand::ModifiedEvent);
-        #if defined(VTK_WRAP_TCL) && defined(KWWidgets_FOUND)
+        #if defined(KWWidgets_FOUND)
         vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
                 this->Speed, this, "ProcessTimerEvents");
-        #endif //defined(VTK_WRAP_TCL) && defined(KWWidgets_FOUND)
+        #endif //defined(KWWidgets_FOUND)
     }
     else
     {
