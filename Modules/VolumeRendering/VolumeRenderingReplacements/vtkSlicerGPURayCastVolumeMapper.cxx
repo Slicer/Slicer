@@ -182,26 +182,12 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
   if(this->Framerate <= 0.0f)
     this->Framerate = 1.0f;
 
-  if (this->TimeToDraw <= 0.25/this->Framerate)//increase ray steps for better quality when possible
-  {
-    this->RaySteps *= 3.95f;
-  }
-  else if (this->TimeToDraw <= 0.5/this->Framerate)
-  {
-    this->RaySteps *= 1.95f;
-  }
-  else if (this->TimeToDraw <= 0.75/this->Framerate)
-  {
-    this->RaySteps *= 1.3f;
-  }
-  else if (this->TimeToDraw <= 0.9/this->Framerate)
-  {
-    this->RaySteps += 10;
-  }
-  else if (this->TimeToDraw > 1.125/this->Framerate)//reduce ray steps to ensure performance
-  {
-    this->RaySteps *= 0.65f;
-  }
+  float targetTime = 1.0/this->Framerate;
+
+  if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
+    return;
+    
+  this->RaySteps *= targetTime/this->TimeToDraw;
 
   int dim[3];
   this->GetVolumeDimensions(dim);

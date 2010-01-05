@@ -1427,6 +1427,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     break;
   }
 
+  char buf[4] = "";
+  this->Gui->GetApplicationGUI()->SetExternalProgress(buf, 0.0);
+  
   this->Gui->RequestRender();
 }
 

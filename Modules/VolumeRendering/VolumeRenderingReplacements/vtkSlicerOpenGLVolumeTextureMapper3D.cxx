@@ -234,27 +234,13 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
   maxSampleDistance = maxSampleDistance > spacing[1] ? maxSampleDistance : spacing[1];  
   maxSampleDistance = maxSampleDistance > spacing[2] ? maxSampleDistance : spacing[2];  
   maxSampleDistance *= 2;                          
+
+  float targetTime = 1.0/this->Framerate;
+
+  if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
+    return;
   
-  if (this->TimeToDraw <= 0.25/this->Framerate)//descrease sample distance for better quality when possible
-  {
-    this->SampleDistance *= 0.33f;
-  }
-  else if (this->TimeToDraw <= 0.5/this->Framerate)
-  {
-    this->SampleDistance *= 0.55f;
-  }
-  else if (this->TimeToDraw <= 0.75/this->Framerate)
-  {
-    this->SampleDistance *= 0.8f;
-  }
-  else if (this->TimeToDraw <= 0.85/this->Framerate)
-  {
-    this->SampleDistance *= 0.95f;
-  }
-  else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
-  {
-    this->SampleDistance *= 2.0f;
-  }
+  this->SampleDistance *= this->TimeToDraw/targetTime;
   
 //  printf("%f %f %f\n", this->Framerate, this->TimeToDraw, 1.0/this->TimeToDraw);
   // add clamp
