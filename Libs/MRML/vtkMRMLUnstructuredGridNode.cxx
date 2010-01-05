@@ -70,7 +70,14 @@ void vtkMRMLUnstructuredGridNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
-  this->UnstructuredGrid->Print(os);
+  if( this->UnstructuredGrid )
+    {
+    this->UnstructuredGrid->Print(os);
+    }
+  else
+    {
+    os << "UnstructuredGrid is NULL " << std::endl;
+    }
 
 }
 //----------------------------------------------------------------------------
