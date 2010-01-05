@@ -17,15 +17,60 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLVolumeDisplayNodeTestHelper1 : public vtkMRMLVolumeDisplayNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLVolumeDisplayNodeTestHelper1 *New(){return new vtkMRMLVolumeDisplayNodeTestHelper1;};
+
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLVolumeDisplayNodeTestHelper1;
+    }
+
+  const char * GetTypeAsString()
+    {
+    return "vtkMRMLVolumeDisplayNodeTestHelper1";
+    }
+
+  int ReadFile()
+    {
+    std::cout << "vtkMRMLVolumeDisplayNodeTestHelper1 pretending to read a file " << std::endl;
+    return EXIT_SUCCESS;
+    }
+
+  virtual const char* GetNodeTagName() 
+    {
+    return "Testing is good";
+    }
+};
+ 
 int vtkMRMLVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLVolumeDisplayNode >::New();
+  vtkSmartPointer< vtkMRMLVolumeDisplayNode > node0 = vtkSmartPointer< vtkMRMLVolumeDisplayNode >::New();
+  
+  if( node0 != NULL )
+    {
+    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 >::New();
+
+  vtkMRMLNode * node0b = node1->CreateNodeInstance();
+  
+  if( node0b != NULL )
+    {
+    std::cerr << "This abstract class is not returning a NULL pointer from its CreateNodeInstance() method" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLVolumeDisplayNode > node2 = vtkSmartPointer< vtkMRMLVolumeDisplayNode >::New();
+  vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
