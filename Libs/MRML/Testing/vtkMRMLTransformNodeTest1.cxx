@@ -17,15 +17,59 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLTransformNodeTestHelper1 : public vtkMRMLTransformNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLTransformNodeTestHelper1 *New(){return new vtkMRMLTransformNodeTestHelper1;};
+
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLTransformNodeTestHelper1;
+    }
+
+  const char * GetTypeAsString()
+    {
+    return "vtkMRMLTransformNodeTestHelper1";
+    }
+
+  int ReadFile()
+    {
+    std::cout << "vtkMRMLTransformNodeTestHelper1 pretending to read a file " << std::endl;
+    return EXIT_SUCCESS;
+    }
+
+  virtual const char* GetNodeTagName() 
+    {
+    return "Testing is good";
+    }
+
+  virtual int IsLinear() { return 1; }
+
+  virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) 
+    {
+    return 0;
+    }
+
+  // Description:
+  // Get concatinated transforms  bwetween nodes  
+  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
+                                       vtkMatrix4x4* transformToNode) 
+    {
+    return 0;
+    } 
+
+};
+ 
 int vtkMRMLTransformNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLTransformNode > node1 = vtkSmartPointer< vtkMRMLTransformNode >::New();
+  vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLTransformNode > node2 = vtkSmartPointer< vtkMRMLTransformNode >::New();
+  vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
