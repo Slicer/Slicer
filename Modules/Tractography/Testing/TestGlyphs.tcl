@@ -33,8 +33,15 @@ proc SetupGlyphs {} {
   $::slicer3::MRMLScene Clear 0
 
   set ::gui [$::slicer3::Application GetModuleGUIByName FiberBundles] 
-
+  if {$::gui == ""} {
+      puts "Cannot find FibreBundles module"
+      return 1
+  }
   set ::seed [$::slicer3::Application GetModuleGUIByName FiducialSeeding]
+  if {$::seed == ""} {
+    puts "Cannot find FiducialSeeding module"
+    return 1
+  }
   $::seed OverwritePolyDataWarningOff
 
   set ::logic [$::gui GetLogic]
@@ -58,6 +65,7 @@ proc SetupGlyphs {} {
   set ::tubeNode [$::fbNode GetTubeDisplayNode]
   set ::glyphNode [$::fbNode GetGlyphDisplayNode]
 
+  return 0
 }
 
 proc TestProperties {} {
@@ -87,7 +95,12 @@ proc TestColor { color } {
   }
 }
 
-SetupGlyphs
+set retval [SetupGlyphs]
+
+if {$retval == 1} {
+    puts "Error setting up glyphs"
+} else {
+
 
 MRMLWatcher #auto
 
@@ -96,6 +109,11 @@ $::slicer3::Application TraceScript TestProperties
 $::slicer3::Application TraceScript "TestColor Rainbow"
 $::slicer3::Application TraceScript "TestColor Ocean"
 
+}
 if { $::Tractography_Exit_After_Script } {
-  exit
+    if {$retval == 1} {
+       exit 1
+    } else {
+       exit 0
+    }
 }
