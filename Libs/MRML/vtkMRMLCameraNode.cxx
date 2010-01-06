@@ -76,7 +76,7 @@ vtkMRMLCameraNode::~vtkMRMLCameraNode()
 {
   if (this->Camera)
     {
-    this->Camera->SetUserTransform(NULL);
+    this->Camera->SetUserViewTransform(NULL);
     }
   this->SetAndObserveCamera(NULL);
   delete [] this->InternalActiveTag;
@@ -291,18 +291,23 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
       event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
     vtkTransform *user_transform = 
-      vtkTransform::SafeDownCast(this->Camera->GetUserTransform());
+      vtkTransform::SafeDownCast(this->Camera->GetUserViewTransform());
     if (!user_transform)
       {
       user_transform = vtkTransform::New();
-      this->Camera->SetUserTransform(user_transform);
+      this->Camera->SetUserViewTransform(user_transform);
       user_transform->Delete();
       }
     vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     transformToWorld->Identity();
     tnode->GetMatrixTransformToWorld(transformToWorld);
+    double temp = transformToWorld->GetElement(1, 3);
+    transformToWorld->SetElement(1, 3, transformToWorld->GetElement(2, 3));
+    transformToWorld->SetElement(2, 3, temp);
     user_transform->SetMatrix(transformToWorld);
+    user_transform->Modified(); // since, sadly, SetMatrix does not Modified()
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    transformToWorld->Delete();
     }
 }
 
