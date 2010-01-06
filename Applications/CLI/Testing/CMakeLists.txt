@@ -37,27 +37,25 @@ set(MRML_DATA "${Slicer3_HOME}/share/MRML/Testing/TestData")
 add_test(OrientImageTest1 ${Slicer3_EXE} --launch OrientImageTest
   --compare ${BASELINE}/OrientImageTestAxial.nrrd
   ${TEMP}/OrientImageTestAxial.nrrd
-  OrientImageTest
+  ModuleEntryPoint
   --orientation Axial ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
   )
 add_test(OrientImageTest2 ${Slicer3_EXE} --launch OrientImageTest
   --compare ${BASELINE}/OrientImageTestCoronal.nrrd
   ${TEMP}/OrientImageTestCoronal.nrrd
-  OrientImageTest
+  ModuleEntryPoint
   --orientation Coronal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
   )
 add_test(OrientImageTest3 ${Slicer3_EXE} --launch OrientImageTest
   --compare ${BASELINE}/OrientImageTestSagittal.nrrd
   ${TEMP}/OrientImageTestSagittal.nrrd
-  OrientImageTest
+  ModuleEntryPoint
   --orientation Sagittal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestSagittal.nrrd
   )
 
 set (CLP OrientImage)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Add tests
 add_test(AddTest ${Slicer3_EXE} --launch AddTest
