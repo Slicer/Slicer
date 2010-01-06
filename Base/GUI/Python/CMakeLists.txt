@@ -67,6 +67,8 @@ set(SlicerBaseGUIPython_SRCS
   _slicerPython.cxx
 )
 
+add_subdirectory(Testing)
+
 # --------------------------------------------------------------------------
 # Build and install the library
 
