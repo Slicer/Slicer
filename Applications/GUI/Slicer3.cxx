@@ -1967,9 +1967,18 @@ int Slicer3_main(int& argc, char *argv[])
       tclCmd += " lappend args \"" + *argit + "\"; ";
       ++argit;
       }
-    tclCmd += " after idle source " + Script;
+
+    if (Script.find(".tcl",0) != std::string::npos)
+      {
+      tclCmd += " after idle {update; source " + Script +"}";
+      }
+    else if (Script.find(".py",0) != std::string::npos)
+      {
+      tclCmd += "after idle {update; $::slicer3::ApplicationGUI PythonCommand \"execfile('" + Script + "')\" }";
+      }
     Slicer3_Tcl_Eval( interp, tclCmd.c_str() ) ;
     }
+
 
   int res; // return code (exit code)
 
@@ -2056,6 +2065,13 @@ int Slicer3_main(int& argc, char *argv[])
         {
         // if it's a tcl file source it after the app starts
         std::string tclCmd = "after idle {update; source " + *argit + "}";
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
+        }
+      else if (fileName.find(".py",0) != std::string::npos)
+        {
+        // if it's a python file source it after the app starts
+        std::string tclCmd = 
+          "after idle {update; $::slicer3::ApplicationGUI PythonCommand \"execfile('" + *argit + "')\" }";
         res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         }
       else
