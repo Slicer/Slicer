@@ -1427,6 +1427,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     break;
   }
 
+  //turn off possible hanging progress message from cpu ray casting
   char buf[4] = "";
   this->Gui->GetApplicationGUI()->SetExternalProgress(buf, 0.0);
   
