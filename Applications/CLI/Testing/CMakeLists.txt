@@ -61,104 +61,91 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 add_test(AddTest ${Slicer3_EXE} --launch AddTest
   --compare ${BASELINE}/AddTest.nhdr
   ${TEMP}/AddTest.nhdr
-  AddTest
+  ModuleEntryPoint
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/AddTest.nhdr
   )
 
 set (CLP Add)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Mask tests
 add_test(MaskTest ${Slicer3_EXE} --launch MaskTest
   --compare ${BASELINE}/MaskedVolume.nrrd
   ${TEMP}/MaskedVolume.nrrd
-  MaskTest --label 1
+  ModuleEntryPoint --label 1
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxialMask.nrrd ${TEMP}/MaskedVolume.nrrd
   )
 
 set (CLP Mask)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Threshold tests
 add_test(ThresholdTest ${Slicer3_EXE} --launch ThresholdTest
   --compare ${BASELINE}/ThresholdTest.nhdr
   ${TEMP}/ThresholdTest.nhdr
-  ThresholdTest --upper 3800 --lower 1400 --outsidevalue 0 --thresholdtype Outside
+  ModuleEntryPoint --upper 3800 --lower 1400 --outsidevalue 0 --thresholdtype Outside
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/ThresholdTest.nhdr
   )
 
 set (CLP Threshold)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Cast tests
 add_test(CastTest ${Slicer3_EXE} --launch CastTest
   --compare ${BASELINE}/CastTest.nrrd
   ${TEMP}/CastTest.nrrd
-  CastTest --type UnsignedChar
+  ModuleEntryPoint --type UnsignedChar
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTest.nrrd
   )
 
 set (CLP Cast)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 
 # CheckerBoard tests
 add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
   --compare ${BASELINE}/CheckerBoardTest.nhdr
   ${TEMP}/CheckerBoardTest.nhdr
-  CheckerBoardTest --checkerPattern 5,3,2
+  ModuleEntryPoint --checkerPattern 5,3,2
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxialDoubled.nhdr ${TEMP}/CheckerBoardTest.nhdr
   )
 
 set (CLP CheckerBoard)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Median tests
 add_test(MedianImageFilterTest ${Slicer3_EXE} --launch MedianImageFilterTest
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
   ${TEMP}/MedianImageFilterTest.nhdr
-  MedianImageFilterTest
+  ModuleEntryPoint
   --neighborhood 1,2,3 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/MedianImageFilterTest.nhdr
   )
 
 set (CLP MedianImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # GaussianBlur tests
 add_test(GaussianBlurImageFilterTest ${Slicer3_EXE} --launch GaussianBlurImageFilterTest
   --compare ${BASELINE}/GaussianBlurImageFilterTest.nhdr
   ${TEMP}/GaussianBlurImageFilterTest.nhdr
-  GaussianBlurImageFilterTest
+  ModuleEntryPoint
   --sigma 2.5 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/GaussianBlurImageFilterTest.nhdr
   )
 set (CLP GaussianBlurImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 #
 # LinearRegistration tests
 #
 add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
   --initialtransform ${TEST_DATA}/itkAffineTransform00.txt
@@ -171,7 +158,7 @@ add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
 add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
   --spatialsamples 10000
@@ -183,7 +170,7 @@ add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
 add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
   --spatialsamples 10000
@@ -195,7 +182,7 @@ add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
 add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest03.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest03Transform.txt 
   --spatialsamples 10000
@@ -207,7 +194,7 @@ add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
 add_test(LinearRegistrationTest04 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest04.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest04Transform.txt 
   --spatialsamples 10000
@@ -220,13 +207,11 @@ add_test(LinearRegistrationTest04 ${Slicer3_EXE} --launch LinearRegistrationTest
   )
 set (CLP LinearRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKNumerics)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 if(SLICER_BRAINWEB_DATA_ROOT)
 add_test(LinearRegistrationTest05 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest05.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest05Transform.txt 
   --spatialsamples 10000
@@ -239,7 +224,7 @@ add_test(LinearRegistrationTest05 ${Slicer3_EXE} --launch LinearRegistrationTest
   )
 
 add_test(LinearRegistrationTest06 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest06.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest06Transform.txt 
   --spatialsamples 50000
@@ -252,7 +237,7 @@ add_test(LinearRegistrationTest06 ${Slicer3_EXE} --launch LinearRegistrationTest
   )
 
 add_test(LinearRegistrationTest07 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest07.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest07Transform.txt 
   --initialtransform ${TEST_DATA}/itkAffineTransform01.txt
@@ -266,7 +251,7 @@ add_test(LinearRegistrationTest07 ${Slicer3_EXE} --launch LinearRegistrationTest
   )
 
 add_test(LinearRegistrationTest08 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest08.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest08Transform.txt 
   --initialtransform ${TEST_DATA}/itkAffineTransform02.txt
@@ -280,7 +265,7 @@ add_test(LinearRegistrationTest08 ${Slicer3_EXE} --launch LinearRegistrationTest
   )
 
 add_test(LinearRegistrationTest09 ${Slicer3_EXE} --launch LinearRegistrationTest
-  LinearRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest09.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest09Transform.txt 
   --initialtransform ${TEST_DATA}/itkAffineTransform03.txt
@@ -299,7 +284,7 @@ endif(SLICER_BRAINWEB_DATA_ROOT)
 # BSplineDeformableRegistration tests
 #
 add_test(BSplineRegistrationTest00 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
-  BSplineDeformableRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest00.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest00Transform.txt 
   --default 0
@@ -314,9 +299,7 @@ add_test(BSplineRegistrationTest00 ${Slicer3_EXE} --launch BSplineDeformableRegi
   )
 set (CLP BSplineDeformableRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKNumerics)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 if(SLICER_BRAINWEB_DATA_ROOT)
 
@@ -332,7 +315,7 @@ add_test(BSplineWarping3DTest00
 )
 
 add_test(BSplineRegistrationTest01 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
-  BSplineDeformableRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest01.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest01Transform.txt 
   --default 0
@@ -347,7 +330,7 @@ add_test(BSplineRegistrationTest01 ${Slicer3_EXE} --launch BSplineDeformableRegi
   )
 
 add_test(BSplineRegistrationTest02 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
-  BSplineDeformableRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest02.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest02Transform.txt 
   --default 0
@@ -362,7 +345,7 @@ add_test(BSplineRegistrationTest02 ${Slicer3_EXE} --launch BSplineDeformableRegi
   )
 
 add_test(BSplineRegistrationTest03 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
-  BSplineDeformableRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest03.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest03Transform.txt 
   --default 0
@@ -377,7 +360,7 @@ add_test(BSplineRegistrationTest03 ${Slicer3_EXE} --launch BSplineDeformableRegi
   )
 
 add_test(BSplineRegistrationTest04 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
-  BSplineDeformableRegistrationTest
+  ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest04.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest04Transform.txt 
   --default 0
@@ -396,7 +379,7 @@ endif(SLICER_BRAINWEB_DATA_ROOT)
 
 # TestGridTransformRegistration tests
 add_test(TestGridTransformRegistrationTest00 ${Slicer3_EXE} --launch TestGridTransformRegistrationTest
-  TestGridTransformRegistrationTest
+  ModuleEntryPoint
   --gridSize 5 
   --outputtransform ${TEMP}/TestGridTransformRegistrationTest00Transform.txt 
   ${TEST_DATA}/CTHeadAxial.nhdr 
@@ -404,27 +387,24 @@ add_test(TestGridTransformRegistrationTest00 ${Slicer3_EXE} --launch TestGridTra
   )
 set (CLP TestGridTransformRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # AffineRegistration tests
 add_test(AffineRegistrationTest ${Slicer3_EXE} --launch AffineRegistrationTest
-  AffineRegistrationTest  --help
+  ModuleEntryPoint  --help
   )
 
 set (CLP AffineRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKNumerics ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ConfidenceConnected tests
 add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
   --compare ${BASELINE}/ConfidenceConnectedTest.nhdr
             ${TEMP}/ConfidenceConnectedTest.nhdr
-  ConfidenceConnectedTest
+    ModuleEntryPoint
     --smoothingIterations 1
     --timestep 0.0625
     --iterations 5
@@ -438,20 +418,18 @@ add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
 
 set (CLP ConfidenceConnected)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # CurvatureAnisotropicDiffusion tests
 set (CLP CurvatureAnisotropicDiffusion)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
   --compare ${BASELINE}/${CLP}Test.nhdr
             ${TEMP}/${CLP}Test.nhdr
-  ${CLP}Test
+    ModuleEntryPoint
     --conductance 2
     --timeStep 0.0625
     --iterations 2
@@ -497,27 +475,25 @@ target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
 # DiffusionTensorTest tests
 set (CLP DiffusionTensorTest)
 add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
-  ${CLP}Test
+  ModuleEntryPoint
     ${MRML_TEST_DATA}/helix-DTI.nhdr
     ${TEMP}/DiffusionTensorTestTest.nhdr
 )
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DiffusionWeightedTest tests
 add_test(DiffusionWeightedTestTest ${Slicer3_EXE} --launch DiffusionWeightedTestTest
-  DiffusionWeightedTestTest
+  ModuleEntryPoint
     ${MRML_TEST_DATA}/helix-DWI.nhdr
     ${TEMP}/DiffusionWeightedTestTest.nhdr
   )
 
 set (CLP DiffusionWeightedTest)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DWIDicomLoad tests
@@ -567,7 +543,7 @@ target_link_libraries(${CLP}Test ITKIO)
 add_test(GradientAnisotropicDiffusionTest ${Slicer3_EXE} --launch GradientAnisotropicDiffusionTest
   --compare ${BASELINE}/GradientAnisotropicDiffusionTest.nhdr
             ${TEMP}/GradientAnisotropicDiffusionTest.nhdr
-  GradientAnisotropicDiffusionTest
+  ModuleEntryPoint
     --conductance 2
     --timeStep 0.0625
     --iterations 2
@@ -577,38 +553,35 @@ add_test(GradientAnisotropicDiffusionTest ${Slicer3_EXE} --launch GradientAnisot
 
 set (CLP GradientAnisotropicDiffusion)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleFillHoleImageFilter tests
 add_test(GrayscaleFillHoleImageFilterTest ${Slicer3_EXE} --launch GrayscaleFillHoleImageFilterTest
   --compare ${BASELINE}/GrayscaleFillHoleTest.nhdr
             ${TEMP}/GrayscaleFillHoleTest.nhdr
-  GrayscaleFillHoleImageFilterTest
+  ModuleEntryPoint
     ${TEST_DATA}/MRHeadResampled.nhdr
     ${TEMP}/GrayscaleFillHoleTest.nhdr
   )
 
 set (CLP GrayscaleFillHoleImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleGrindPeakImageFilter tests
 add_test(GrayscaleGrindPeakImageFilterTest ${Slicer3_EXE} --launch GrayscaleGrindPeakImageFilterTest
   --compare ${BASELINE}/GrayscaleGrindPeakTest.nhdr
             ${TEMP}/GrayscaleGrindPeakTest.nhdr
-  GrayscaleGrindPeakImageFilterTest
+  ModuleEntryPoint
     ${TEST_DATA}/MRHeadResampled.nhdr
     ${TEMP}/GrayscaleGrindPeakTest.nhdr
   )
 
 set (CLP GrayscaleGrindPeakImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleModelMaker tests
@@ -639,7 +612,7 @@ target_link_libraries(${CLP}Test
 add_test(HistogramMatchingTest ${Slicer3_EXE} --launch HistogramMatchingTest
   --compare ${BASELINE}/HistogramMatchingTest.nhdr
             ${TEMP}/HistogramMatchingTest.nhdr
-  HistogramMatchingTest
+  ModuleEntryPoint
     --numberOfHistogramLevels 64
     --numberOfMatchPoints 10
     ${TEST_DATA}/CTHeadAxial.nhdr
@@ -649,8 +622,7 @@ add_test(HistogramMatchingTest ${Slicer3_EXE} --launch HistogramMatchingTest
 
 set (CLP HistogramMatching)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters ITKStatistics)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ImageLabelCombine tests
@@ -668,7 +640,7 @@ target_link_libraries(${CLP}Test  vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
 add_test(ImageReadDicomWriteTest ${Slicer3_EXE} --launch ImageReadDicomWriteTest
   --compare ${BASELINE}/ImageReadDicomWriteTest.dcm
             ${TEMP}/CTHeadAxialDicom40.dcm
-  ImageReadDicomWriteTest
+  ModuleEntryPoint
     --patientName Austrialian
     --patientID 8775070
     --patientComments "A volunteer"
@@ -688,15 +660,14 @@ add_test(ImageReadDicomWriteTest ${Slicer3_EXE} --launch ImageReadDicomWriteTest
 
 set (CLP ImageReadDicomWrite)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # LabelMapSmoothing tests
 add_test(LabelMapSmoothingTest ${Slicer3_EXE} --launch LabelMapSmoothingTest
   --compare ${BASELINE}/LabelMapSmoothingTest.nhdr
             ${TEMP}/LabelMapSmoothingTest.nhdr
-  LabelMapSmoothingTest
+  ModuleEntryPoint
     --labelToSmooth 1
     --numberOfIterations 50
     --maxRMSError 0.01
@@ -707,8 +678,7 @@ add_test(LabelMapSmoothingTest ${Slicer3_EXE} --launch LabelMapSmoothingTest
 
 set (CLP LabelMapSmoothing)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKAlgorithms ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ModelMaker tests
@@ -755,7 +725,7 @@ target_link_libraries(${CLP}Test
 add_test(OtsuThresholdImageFilterTest ${Slicer3_EXE} --launch OtsuThresholdImageFilterTest
   --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
             ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
-  OtsuThresholdImageFilterTest
+   ModuleEntryPoint
     --insideValue 0
     --outsideValue 255
     --numberOfBins 128 
@@ -766,14 +736,14 @@ add_test(OtsuThresholdImageFilterTest ${Slicer3_EXE} --launch OtsuThresholdImage
 set (CLP OtsuThresholdImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # OtsuThresholdSegmentation tests
 add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
   --compare ${BASELINE}/OtsuThresholdSegmentationTest.nhdr 
             ${TEMP}/OtsuThresholdSegmentationTest.nhdr 
-  OtsuThresholdSegmentationTest
+  ModuleEntryPoint
     --brightObjects
     --numberOfBins 128
     --faceConnected
@@ -785,7 +755,7 @@ add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegm
 set (CLP OtsuThresholdSegmentation)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ResampleVolume2 tests
@@ -793,7 +763,7 @@ add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
   --compare 
     ${TEST_DATA}/MRHeadResampled.nhdr
     ${TEMP}/ResampleVolume2Test.nhdr
-  ResampleVolume2Test
+  ModuleEntryPoint
     --Reference ${TEST_DATA}/MRHeadResampled.nhdr
     --number_of_thread 0
     --transform_matrix 1,0,0,0,1,0,0,0,1,0,0,0
@@ -811,15 +781,14 @@ add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
 
 set (CLP ResampleVolume2)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ResampleVolume tests
 add_test(ResampleVolumeTest ${Slicer3_EXE} --launch ResampleVolumeTest
   --compare ${BASELINE}/ResampleVolumeTest.nhdr
             ${TEMP}/ResampleVolumeTest.nhdr
-  ResampleVolumeTest
+  ModuleEntryPoint
     --spacing 5,5,5
     --interpolation linear
    ${TEST_DATA}/MRHeadResampled.nhdr 
@@ -828,13 +797,12 @@ add_test(ResampleVolumeTest ${Slicer3_EXE} --launch ResampleVolumeTest
 
 set (CLP ResampleVolume)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # RigidRegistration tests
 add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
-  RigidRegistrationTest --help
+  ModuleEntryPoint --help
   )
 
 # This test reproduces exactly the registration step on
@@ -863,15 +831,14 @@ add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
 #  )
 set (CLP RigidRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters ITKNumerics)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # Subtract tests
 add_test(SubtractTest ${Slicer3_EXE} --launch SubtractTest
   --compare ${BASELINE}/SubtractTest.nhdr
             ${TEMP}/SubtractTest.nhdr
-  SubtractTest
+  ModuleEntryPoint
     ${TEST_DATA}/CTHeadAxial.nhdr
     ${TEST_DATA}/CTHeadAxialDoubled.nhdr
     ${TEMP}/SubtractTest.nhdr
@@ -879,15 +846,14 @@ add_test(SubtractTest ${Slicer3_EXE} --launch SubtractTest
 
 set (CLP Subtract)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # Multiply tests
 add_test(MultiplyTest ${Slicer3_EXE} --launch MultiplyTest
   --compare ${BASELINE}/MultiplyTest.nrrd
             ${TEMP}/MultiplyTest.nrrd
-  MultiplyTest
+  ModuleEntryPoint
     --order 1
     ${TEST_DATA}/CTHeadAxial.nhdr
     ${TEST_DATA}/CTHeadAxial.nhdr
@@ -896,15 +862,14 @@ add_test(MultiplyTest ${Slicer3_EXE} --launch MultiplyTest
 
 set (CLP Multiply)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # VotingBinaryHoleFillingImageFilter tests
 add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
   --compare ${BASELINE}/VotingBinaryHoleFillingImageFilterTest.nhdr
             ${TEMP}/VotingBinaryHoleFillingImageFilterTest.nhdr
-  VotingBinaryHoleFillingImageFilterTest
+  ModuleEntryPoint
     --radius 3,3,3 
     --majorityThreshold 1
     --background 0
@@ -916,29 +881,28 @@ add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBi
 set (CLP VotingBinaryHoleFillingImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ZeroCrossingBasedEdgeDetectionImageFilter tests
 add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
   --compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
             ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
-  ZeroCrossingBasedEdgeDetectionImageFilterTest
+  ModuleEntryPoint
     ${TEST_DATA}/CTHeadResampled.nhdr
     ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
   )
 
 set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # PolyDataToLabelmap tests
 add_test(PolyDataToLabelmapTest ${Slicer3_EXE} --launch PolyDataToLabelmapTest
   --compare ${BASELINE}/OAS10001.mha
             ${TEMP}/PolyDataToLabelmapTestOutput.mha
-  PolyDataToLabelmapTest        
+  ModuleEntryPoint
     ${TEST_DATA}/PolyDataToLabelmap/OAS10001.hdr 
     ${TEST_DATA}/PolyDataToLabelmap/OAS10001.vtp 
     ${TEMP}/PolyDataToLabelmapTestOutput.mha
@@ -946,7 +910,5 @@ add_test(PolyDataToLabelmapTest ${Slicer3_EXE} --launch PolyDataToLabelmapTest
 
 set (CLP PolyDataToLabelmap)
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP}Lib)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKCommon vtkIO vtkCommon vtkFiltering vtkGraphics ITKBasicFilters)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 

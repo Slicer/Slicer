@@ -9,12 +9,14 @@
 #include <iostream>
 #include "itkTestMain.h" 
 
+#ifdef WIN32
+#define MODULE_IMPORT __declspec(dllimport)
+#else
+#define MODULE_IMPORT
+#endif
 
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
 void RegisterTests()
 {
-REGISTER_TEST(ImageReadDicomWriteTest);
+  StringToTestFunctionMap["ModuleEntryPoint"] = ModuleEntryPoint;
 }
-
-#undef main
-#define main ImageReadDicomWriteTest
-#include "ImageReadDicomWrite.cxx"
