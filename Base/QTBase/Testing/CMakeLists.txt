@@ -15,7 +15,7 @@ SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CxxTests.cxx)
 
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME} vtkCommon)
+TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME} qSlicerBaseQTBase)
 
 SET( QTBase_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
 IF(WIN32)

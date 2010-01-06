@@ -155,6 +155,10 @@ void qSlicerWidget::setParentVisible(bool visible)
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
+  if (scene == qctk_d()->MRMLScene)
+    {
+    return ;
+    }
   qctk_d()->MRMLScene = scene;
   emit mrmlSceneChanged(scene);
 }
