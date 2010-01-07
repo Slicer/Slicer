@@ -793,6 +793,10 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 
     this->RequestRender();
   }
+  else if(event == vtkMRMLVolumeNode::DisplayModifiedEvent)
+  {
+    this->UpdatePipelineByDisplayNode();
+  }
   else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
   {
     vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(caller);
@@ -1015,14 +1019,35 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
     }
 }
 
+void vtkVolumeRenderingGUI::UpdatePipelineByDisplayNode()
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+  if (!vspNode->GetFollowVolumeDisplayNode())
+    return;
+    
+  vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+  {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  }
+  
+  this->GetLogic()->UpdateVolumePropertyByDisplayNode(vspNode);
+  this->Helper->UpdateVolumeProperty();
+
+  if (slicer_viewer_widget)
+  {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+    slicer_viewer_widget->RequestRender();
+  }
+}
+
 void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
 {
-  vtkSlicerViewerWidget *slicer_viewer_widget = 
-    this->GetApplicationGUI()->GetActiveViewerWidget();
+  vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetActiveViewerWidget();
   if (slicer_viewer_widget)
-    {
+  {
     slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
-    }
+  }
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetLogic()->SetupHistograms(vspNode);
@@ -1034,11 +1059,10 @@ void vtkVolumeRenderingGUI::UpdatePipelineByVolumeProperty()
   this->Helper->UpdateVolumeProperty();
 
   if (slicer_viewer_widget)
-    {
+  {
     slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
     slicer_viewer_widget->RequestRender();
-    }
-
+  }
 }
 
 void vtkVolumeRenderingGUI::UpdatePipelineByFgVolumeProperty()
@@ -1162,6 +1186,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     //remove observer to trigger update of transform
     selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
     selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    selectedImageData->RemoveObserver(vtkMRMLVolumeNode::DisplayModifiedEvent);
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
@@ -1245,8 +1270,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
   vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
   //Add observer to trigger update of transform
   selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
-  selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
-
+  selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  selectedImageData->AddObserver(vtkMRMLVolumeNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  
   if (vspNode->GetROINode())
   {
     vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);

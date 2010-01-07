@@ -176,6 +176,8 @@ protected:
 
     void UpdatePipelineByVolumeProperty();
     void UpdatePipelineByFgVolumeProperty();
+
+    void UpdatePipelineByDisplayNode();
     
     void UpdatePipelineByROI();
 

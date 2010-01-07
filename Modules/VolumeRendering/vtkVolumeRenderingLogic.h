@@ -88,6 +88,8 @@ public:
   void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
+  void UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
   void TransformModified(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void SetVolumeVisibility(int isVisible);

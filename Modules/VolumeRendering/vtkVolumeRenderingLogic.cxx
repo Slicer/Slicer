@@ -17,6 +17,7 @@
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
@@ -373,65 +374,114 @@ void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRen
   functionOpacity->AdjustRange(rangeNew);
 }
 
-void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  this->UpdateVolumePropertyScalarRange(vspNode);
-  this->SetupHistograms(vspNode);
+  vtkMRMLScalarVolumeDisplayNode *vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetDisplayNode());
+    
+  double windowLevel[2];
+  windowLevel[0] = vpNode->GetWindow();
+  windowLevel[1] = vpNode->GetLevel();
 
+  vspNode->SetWindowLevel(windowLevel);
+    
   //add points into transfer functions
   vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
 
-  double totalOccurance = histogram->GetTotalOccurence();
-  double thresholdLow = totalOccurance * 0.2;
-  double thresholdHigh = totalOccurance * 0.8;
   double range[2];
 
   histogram->GetRange(range);
-
-  double thresholdLowIndex = range[0];
-  double sumLowIndex = 0;
-  double thresholdHighIndex = range[0];
-  double sumHighIndex = 0;
-
-  //calculate distance
-  double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
-
-  while(sumLowIndex < thresholdLow)
-  {
-    sumLowIndex += histogram->GetOccurenceAtValue(thresholdLowIndex);
-    thresholdLowIndex += bin_width;
-  }
-
-  while(sumHighIndex < thresholdHigh)
-  {
-    sumHighIndex += histogram->GetOccurenceAtValue(thresholdHighIndex);
-    thresholdHighIndex += bin_width;
-  }
-
+    
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
   prop->SetInterpolationTypeToLinear();
+
   vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
 
   opacity->RemoveAllPoints();
   opacity->AddPoint(range[0], 0.0);
-  opacity->AddPoint(thresholdLowIndex, 0.0);
-  opacity->AddPoint(thresholdHighIndex, 0.2);
-  opacity->AddPoint(range[1], 0.2);
-
+  opacity->AddPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0);
+  opacity->AddPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0);
+  opacity->AddPoint(range[1], 1.0);
+    
   vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
 
   colorTransfer->RemoveAllPoints();
-  colorTransfer->AddRGBPoint(range[0], 0.3, 0.3, 1.0);
-  colorTransfer->AddRGBPoint(thresholdLowIndex, 0.3, 0.3, 1.0);
-  colorTransfer->AddRGBPoint(thresholdLowIndex + 0.5 * (thresholdHighIndex - thresholdLowIndex), 0.3, 1.0, 0.3);
-  colorTransfer->AddRGBPoint(thresholdHighIndex, 1.0, 0.3, 0.3);
-  colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
+  colorTransfer->AddRGBPoint(range[0], 0.0, 0.0, 0.0);
+  colorTransfer->AddRGBPoint(range[1], 1.0, 1.0, 1.0);
 
   prop->ShadeOn();
   prop->SetAmbient(0.30);
   prop->SetDiffuse(0.60);
   prop->SetSpecular(0.50);
   prop->SetSpecularPower(40);
+}
+
+void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  this->UpdateVolumePropertyScalarRange(vspNode);
+  this->SetupHistograms(vspNode);
+
+  if (vspNode->GetFollowVolumeDisplayNode())
+  {
+    this->UpdateVolumePropertyByDisplayNode(vspNode);
+  }
+  else
+  {
+    //add points into transfer functions
+    vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
+
+    double totalOccurance = histogram->GetTotalOccurence();
+    double thresholdLow = totalOccurance * 0.2;
+    double thresholdHigh = totalOccurance * 0.8;
+    double range[2];
+
+    histogram->GetRange(range);
+
+    double thresholdLowIndex = range[0];
+    double sumLowIndex = 0;
+    double thresholdHighIndex = range[0];
+    double sumHighIndex = 0;
+
+    //calculate distance
+    double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
+
+    while(sumLowIndex < thresholdLow)
+    {
+      sumLowIndex += histogram->GetOccurenceAtValue(thresholdLowIndex);
+      thresholdLowIndex += bin_width;
+    }
+
+    while(sumHighIndex < thresholdHigh)
+    {
+      sumHighIndex += histogram->GetOccurenceAtValue(thresholdHighIndex);
+      thresholdHighIndex += bin_width;
+    }
+
+    vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+    prop->SetInterpolationTypeToLinear();
+    
+    vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
+
+    opacity->RemoveAllPoints();
+    opacity->AddPoint(range[0], 0.0);
+    opacity->AddPoint(thresholdLowIndex, 0.0);
+    opacity->AddPoint(thresholdHighIndex, 0.2);
+    opacity->AddPoint(range[1], 0.2);
+
+    vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
+
+    colorTransfer->RemoveAllPoints();
+    colorTransfer->AddRGBPoint(range[0], 0.3, 0.3, 1.0);
+    colorTransfer->AddRGBPoint(thresholdLowIndex, 0.3, 0.3, 1.0);
+    colorTransfer->AddRGBPoint(thresholdLowIndex + 0.5 * (thresholdHighIndex - thresholdLowIndex), 0.3, 1.0, 0.3);
+    colorTransfer->AddRGBPoint(thresholdHighIndex, 1.0, 0.3, 0.3);
+    colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
+
+    prop->ShadeOn();
+    prop->SetAmbient(0.30);
+    prop->SetDiffuse(0.60);
+    prop->SetSpecular(0.50);
+    prop->SetSpecularPower(40);
+  }
 }
 
 void vtkVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)

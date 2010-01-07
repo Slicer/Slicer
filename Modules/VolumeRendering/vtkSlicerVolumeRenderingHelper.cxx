@@ -1098,7 +1098,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
     }
     else if (callerObjectCheckButton == this->CB_FollowVolumeDisplayNode->GetWidget())
     {
-/*      vspNode->SetFollowVolumeDisplayNode(this->CB_FollowVolumeDisplayNode->GetWidget()->GetSelectedState());
+      vspNode->SetFollowVolumeDisplayNode(this->CB_FollowVolumeDisplayNode->GetWidget()->GetSelectedState());
 
       if (this->CB_FollowVolumeDisplayNode->GetWidget()->GetSelectedState())
       {
@@ -1113,7 +1113,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
           this->FrameThresholding->ExpandFrame();
         else
           this->SVP_VolumePropertyWidget->GetEditorFrame()->ExpandFrame();
-      }*/
+      }
       return;
     }
     else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())
@@ -1278,30 +1278,28 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
 
   this->CB_FollowVolumeDisplayNode->GetWidget()->SetSelectedState(vspNode->GetFollowVolumeDisplayNode());
   
+  //-------------------------bg threshold--------------------------
+  this->CB_UseThreshold->GetWidget()->SetSelectedState(vspNode->GetUseThreshold());
+  this->RA_Threshold->SetWholeRange(scalarRange);
+  this->RA_Threshold->SetRange(vspNode->GetThreshold());
+  this->RA_Threshold->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
+
+  //-------------------------bg volume property--------------------
+  this->SVP_VolumePropertyWidget->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
+
+  this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
+  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidget->Update();
+
+  this->SC_ThresholdOpacity->GetWidget()->SetRange(0, 1);
+  this->SC_ThresholdOpacity->GetWidget()->SetResolution(.001);
+  this->SC_ThresholdOpacity->SetValue(0.95);
+
   if (vspNode->GetFollowVolumeDisplayNode())
   {
     this->CB_UseThreshold->EnabledOff();
     this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
     this->FrameThresholding->CollapseFrame();
-  }
-  else
-  {
-    //-------------------------bg threshold--------------------------
-    this->CB_UseThreshold->GetWidget()->SetSelectedState(vspNode->GetUseThreshold());
-    this->RA_Threshold->SetWholeRange(scalarRange);
-    this->RA_Threshold->SetRange(vspNode->GetThreshold());
-    this->RA_Threshold->SetResolution((scalarRange[1] - scalarRange[0])*0.01);
-
-    //-------------------------bg volume property--------------------
-    this->SVP_VolumePropertyWidget->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
-
-    this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
-    this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-    this->SVP_VolumePropertyWidget->Update();
-
-    this->SC_ThresholdOpacity->GetWidget()->SetRange(0, 1);
-    this->SC_ThresholdOpacity->GetWidget()->SetResolution(.001);
-    this->SC_ThresholdOpacity->SetValue(0.95);
   }
   
   if (vspNode->GetFgVolumeNode())
