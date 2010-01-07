@@ -177,11 +177,11 @@ int main( int argc, char * argv[] )
   mpyramid->Update();
 
   const unsigned int fnumberoflevels = fpyramid->GetNumberOfLevels();
-  const unsigned int mnumberoflevels = fpyramid->GetNumberOfLevels();
+  const unsigned int mnumberoflevels = mpyramid->GetNumberOfLevels();
 
   if(DEBUG)
     {
-    std::cout << "fixed image schedule: " << fpyramid->GetSchedule() << std::endl;
+    std::cout << "fixed image schedule: " << std::endl << fpyramid->GetSchedule() << std::endl;
 
     // 0 is the downsampled image
     for(unsigned int i = 0;  i < fnumberoflevels; ++i)
@@ -190,13 +190,13 @@ int main( int argc, char * argv[] )
         fpyramid->GetOutput(i)->GetLargestPossibleRegion().GetSize() << std::endl;
       }
 
-    std::cout << "moving image schedule: " << fpyramid->GetSchedule() << std::endl;
+    std::cout << "moving image schedule: " << std::endl <<  mpyramid->GetSchedule() << std::endl;
 
     // 0 is the downsampled image
-    for(unsigned int i = 0;  i < fnumberoflevels; ++i)
+    for(unsigned int i = 0;  i < mnumberoflevels; ++i)
       {
       std::cout << "pyramid[" << i << "]: " << 
-        fpyramid->GetOutput(i)->GetLargestPossibleRegion().GetSize() << std::endl;
+        mpyramid->GetOutput(i)->GetLargestPossibleRegion().GetSize() << std::endl;
       }
 
     }

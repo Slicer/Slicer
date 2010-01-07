@@ -23,7 +23,10 @@ scheduleImagePyramid(PyramidFilterType* pyramid)
   const SizeType size = region.GetSize();
   
   typedef typename ImageType::SpacingType SpacingType;
-  const SpacingType spacing = image->GetSpacing();
+  SpacingType spacing = image->GetSpacing();
+  spacing[0] = fabs(spacing[0]);
+  spacing[1] = fabs(spacing[1]);
+  spacing[2] = fabs(spacing[2]);
 
   unsigned int ninplanelevels = 0;
   unsigned int nalllevels = 0;
