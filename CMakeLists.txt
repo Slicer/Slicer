@@ -478,6 +478,7 @@ install(DIRECTORY
 #-----------------------------------------------------------------------------
 # Launcher for slicer
 #
+
 IF (Slicer3_USE_KWWIDGETS)
   add_subdirectory(Utilities/Launcher)
 
@@ -490,6 +491,14 @@ IF (Slicer3_USE_KWWIDGETS)
     DESTINATION ${Slicer3_INSTALL_LIB_DIR}
     )
 ENDIF (Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+# Launcher for QTDesigner
+#
+
+IF (Slicer3_USE_QT)
+  add_subdirectory(Utilities/Designer)
+ENDIF (Slicer3_USE_QT)
 
 #-----------------------------------------------------------------------------
 # Package slicer

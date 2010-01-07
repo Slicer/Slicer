@@ -57,27 +57,3 @@ install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
   DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/Resources
   )
-
-# Configure Qt Designer launcher
-IF(Slicer3_USE_QT)
-  GET_TARGET_PROPERTY(output_directory ${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY)
-  #MESSAGE(STATUS CMAKE_CONFIGURATION_TYPES:${CMAKE_CONFIGURATION_TYPES})
-  #MESSAGE(STATUS CMAKE_BUILD_TYPE:${CMAKE_BUILD_TYPE})
-  IF(CMAKE_CONFIGURATION_TYPES)
-    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(LIBRARY_OUTPUT_DIRECTORY ${output_directory}/${config})
-      CONFIGURE_FILE(
-        ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
-        "${Slicer3_BINARY_DIR}/Designer-${config}.py"
-        IMMEDIATE
-        )
-    ENDFOREACH(config)
-  ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(LIBRARY_OUTPUT_DIRECTORY ${output_directory})
-    CONFIGURE_FILE(
-      ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
-      "${Slicer3_BINARY_DIR}/Designer.py"
-      IMMEDIATE
-      )
-  ENDIF(CMAKE_CONFIGURATION_TYPES)
-ENDIF(Slicer3_USE_QT)
