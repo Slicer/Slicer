@@ -68,7 +68,7 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->ROINodeID = NULL;
   this->ROINode = NULL;
 
-  this->ExpectedFPS = 5;
+  this->ExpectedFPS = 8;
   this->EstimatedSampleDistance = 1.0;
 
   this->CurrentVolumeMapper = -1;
@@ -101,6 +101,11 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->GPURaycastIIBgFgRatio = 0.0f;//default display bg volume
   
   this->GPURaycastIIFusion = 0;
+
+  this->FollowVolumeDisplayNode = 0;// by default following volume display node
+
+  this->WindowLevel[0] = 0.0;
+  this->WindowLevel[1] = 0.0;
 }
 
 //----------------------------------------------------------------------------
@@ -275,6 +280,21 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->ThresholdFg[1];
       continue;
     }
+    if (!strcmp(attName,"windowLevel"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->WindowLevel[0];
+      ss >> this->WindowLevel[1];
+      continue;
+    }
+    if (!strcmp(attName,"followVolumeDisplayNode"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->FollowVolumeDisplayNode;
+      continue;
+    }
   }
 }
 
@@ -305,6 +325,8 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
   of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
   of << indent << " gpuRaycastIIBgFgRatio=\"" << this->GPURaycastIIBgFgRatio << "\"";
+  of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
+  of << indent << " thresholdFg=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -390,6 +412,8 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetUseFgThreshold(node->GetUseFgThreshold());
   this->SetGPURaycastIIBgFgRatio(node->GetGPURaycastIIBgFgRatio());
   this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
+  this->SetWindowLevel(node->GetWindowLevel());
+  this->SetFollowVolumeDisplayNode(node->GetFollowVolumeDisplayNode());
   
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();

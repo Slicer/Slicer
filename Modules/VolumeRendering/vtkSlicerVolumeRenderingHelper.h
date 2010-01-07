@@ -215,6 +215,9 @@ protected:
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidget;
     vtkSlicerVolumePropertyWidget *SVP_VolumePropertyWidgetFg;
 
+    vtkKWCheckButtonWithLabel *CB_FollowVolumeDisplayNode;
+    vtkKWCheckButtonWithLabel *CB_FollowVolumeDisplayNodeFg;
+    
     // Description:
     // Enable/Disable thresholding
     vtkKWCheckButtonWithLabel *CB_UseThreshold;
@@ -235,8 +238,8 @@ protected:
     // ROI (clipping)
     //-----------------------------------------------------------
     vtkSlicerROIDisplayWidget  *ROIWidget;
-    vtkKWCheckButtonWithLabel  *CroppingButton;
-    vtkKWPushButton            *FitROIButton;
+    vtkKWCheckButtonWithLabel  *CB_CroppingButton;
+    vtkKWPushButton            *PB_FitROIButton;
     //--------------------------------------------------------------------------
     // Rendering Logic
     //--------------------------------------------------------------------------

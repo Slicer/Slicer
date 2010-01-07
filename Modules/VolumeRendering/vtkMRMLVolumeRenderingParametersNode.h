@@ -179,6 +179,12 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (GPURaycastIIBgFgRatio, float);
   vtkSetMacro (GPURaycastIIBgFgRatio, float);
 
+  vtkGetMacro(FollowVolumeDisplayNode, int);
+  vtkSetMacro(FollowVolumeDisplayNode, int);
+
+  vtkSetVector2Macro(WindowLevel, double);
+  vtkGetVectorMacro(WindowLevel, double, 2);
+
 protected:
   vtkMRMLVolumeRenderingParametersNode();
   ~vtkMRMLVolumeRenderingParametersNode();
@@ -290,6 +296,12 @@ protected:
   int UseFgThreshold;
 
   float GPURaycastIIBgFgRatio;
+
+  //follow window/level and thresholding setting in volume display node
+  int FollowVolumeDisplayNode;
+
+  //bg volume window & level
+  double WindowLevel[2];
 };
 
 #endif
