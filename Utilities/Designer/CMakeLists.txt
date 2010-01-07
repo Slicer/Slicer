@@ -16,15 +16,15 @@ GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_O
 #MESSAGE(STATUS output_directory:${output_directory})
 
 # Convert path
-FILE(TO_NATIVE_PATH ${LIBRARY_OUTPUT_DIRECTORY} NATIVE_LIBRARY_OUTPUT_DIRECTORY)
 FILE(TO_NATIVE_PATH ${QT_BINARY_DIR} NATIVE_QT_BINARY_DIR)
 
 IF(CMAKE_CONFIGURATION_TYPES)
   # Loop through all Configuration types
   # For further details, see http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_CONFIGURATION_TYPES
   FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-    SET(LIBRARY_OUTPUT_DIRECTORY ${output_directory}/${config})
+    FILE(TO_NATIVE_PATH ${output_directory}/${config} NATIVE_LIBRARY_OUTPUT_DIRECTORY)
     SET(designer_launcher "${designer_launcher_directory}/Designer-${config}.py")
+
     CONFIGURE_FILE(
       ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
       ${designer_launcher}
@@ -35,7 +35,7 @@ IF(CMAKE_CONFIGURATION_TYPES)
   
 ELSE(CMAKE_CONFIGURATION_TYPES)
 
-  SET(LIBRARY_OUTPUT_DIRECTORY ${output_directory})
+  FILE(TO_NATIVE_PATH ${output_directory} NATIVE_LIBRARY_OUTPUT_DIRECTORY)
   SET(designer_launcher "${designer_launcher_directory}/Designer.py")
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
