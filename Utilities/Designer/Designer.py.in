@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 """
-This module allows to:
- - update the environement variable QT_PLUGIN_PATH with Slicer QT Plugin path
+After been configured properly using CMAKE, 
+this module allows to:
+ - update the environment variable QT_PLUGIN_PATH with Slicer QT Plugin path
  - update PATH with Slicer libraries
  - start the designer
 """
@@ -9,25 +10,32 @@ This module allows to:
 import os
 import sys
   
-def startDesigner(argv):
+def startDesigner(open_command, argv):
   "Start QT Designer"
   
-  addEnvVariable('QT_PLUGIN_PATH', '@LIBRARY_OUTPUT_DIRECTORY@')
-  addEnvVariable('PATH', '@LIBRARY_OUTPUT_DIRECTORY@')
-  os.execv('@QT_BINARY_DIR@/'+argv[0], argv)
+  addEnvVariable('QT_PLUGIN_PATH', '@NATIVE_LIBRARY_OUTPUT_DIRECTORY@')
+  addEnvVariable('PATH', '@NATIVE_LIBRARY_OUTPUT_DIRECTORY@')
+  os.execv(open_command+'@NATIVE_QT_BINARY_DIR@'+os.sep+argv[0], argv)
 
 def addEnvVariable(name, value):
-  "Add variable to environement"
-  
+  "Add variable to environment"
+
+  # If platform is cygwin, force pathseparator to be ':'
+  pathsep = os.pathsep
+  if (sys.platform == 'cygwin'):
+    pathsep = ':'
+
+  # Update OS environment
   if (name in os.environ):
     sep = ''
     if (os.environ[name] != ""):
-      sep = os.pathsep
+      sep = pathsep
   
     os.environ[name] += (sep + value)
   
   else:
     os.environ[name] = value
+
 
 # Entry point
 if __name__ == "__main__":
@@ -38,6 +46,15 @@ designer.py - Start QT Designer with Slicer plugins
 Use: python designer.py [UI file]
 """
   else:
+    # Default executable name
+    executable_name ='designer'
+    open_command = ''
+    
+    # Handle MACOSX case
+    if sys.platform == 'darwin':
+      executable_name = 'Designer.app'
+      open_command = 'open '
+
     # Update first value to match executable name
-    sys.argv[0] ='designer'
-    startDesigner(sys.argv);
+    sys.argv[0] = executable_name
+    startDesigner(open_command, sys.argv);
