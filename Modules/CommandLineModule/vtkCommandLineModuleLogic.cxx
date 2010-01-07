@@ -789,6 +789,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   std::vector<std::string> commandLineAsString;
 
   // Command to execute
+  if (node0->GetModuleDescription().GetLocation() != std::string("") && 
+      commandType == CommandLineModule &&
+      node0->GetModuleDescription().GetLocation() != node0->GetModuleDescription().GetTarget())
+    {
+      vtkDebugMacro("Setting a location for a command line module: " << node0->GetModuleDescription().GetLocation().c_str() << ", target is '" << node0->GetModuleDescription().GetTarget().c_str() << "'");
+      // it's a command line module that has an executable that is used to run the target
+    commandLineAsString.push_back(node0->GetModuleDescription().GetLocation());
+    }
   commandLineAsString.push_back( node0->GetModuleDescription().GetTarget() );
 
 

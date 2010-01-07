@@ -1000,14 +1000,17 @@ ModuleFactory
                   {
                   // includes the exec with the bare command name
                   std::string newcommand = std::string(executable) + std::string(" ") + commandName;
-                  //std::cout << "ScanForCommandLineModulesByExecuting: Setting target to " << newcommand.c_str() << "\n";
-                  module.SetTarget(newcommand);
+                  // std::cout << "ScanForCommandLineModulesByExecuting: Setting location to " << executable << ", target to " << newcommand.c_str() << "\n";
+                  //module.SetTarget(newcommand);
+                  // use location to point to the executable used to run the command in commandName
+                  module.SetLocation(executable);
+                  module.SetTarget(commandName);
                   }
                 else
                   {
                   module.SetTarget(commandName);
+                  module.SetLocation( commandName );
                   }
-                module.SetLocation( commandName );
 
                 // Parse the xml to build the description of the module
                 // and the parameters
@@ -2391,10 +2394,6 @@ void ModuleFactory::RegisterFileExtension(const char *ext, const char *cmdstring
 // -----------------------------------------------------------------------------------------------
 const char * ModuleFactory::GetExecutableForFileExtension(std::string ext)
 {
-  // TODO: until get execution of a two part command in an itksys process working, just
-  // return null
-  return NULL;
-  
   if (ext.length() == 0)
     {
     return NULL;
