@@ -55,7 +55,7 @@ MACRO(qctk_build_designer_plugin)
   
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
-                      COMPILE_FLAGS "-DQT_PLUGIN -DQT_NO_DEBUG")
+                      COMPILE_FLAGS "-DQT_PLUGIN")
   
   SET(QT_LIBRARIES 
     ${QT_QTCORE_LIBRARY}
