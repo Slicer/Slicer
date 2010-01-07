@@ -829,34 +829,27 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
   // get the max label value from the table
   int maxEntry = 0;
   int minEntry = 0;
-  int addZero = 0;
-  for (int row = 0; row < this->MultiColumnList->GetWidget()->GetNumberOfRows(); row++)
+  for (int rangeRow = 0; rangeRow < this->MultiColumnList->GetWidget()->GetNumberOfRows(); rangeRow++)
     {
-    int label =  this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, this->EntryColumn);
+    int label =  this->MultiColumnList->GetWidget()->GetCellTextAsInt(rangeRow, this->EntryColumn);
     if (label > maxEntry)
       {
       maxEntry = label;
       }
-    if (row == 0 || label < minEntry)
+    if (rangeRow == 0 || label < minEntry)
       {
       minEntry = label;
       }
-    if (label == 0)
-      {
-      addZero = 1;
-      }
     }
-  maxEntry = maxEntry + addZero;
-  node->SetNumberOfColors(maxEntry);
+  // make the colour table big enough to hold the max entry, plus one for zero
+  int numberOfTableColours = maxEntry + 1;
+  node->SetNumberOfColors(numberOfTableColours);
   node->GetLookupTable()->SetRange(minEntry, maxEntry);
-  // if we're not going to be setting all of the colours because the max entry 
-  // is higher than the number of values that the user defined, initialise the names and colours
-  if (maxEntry > numColours)
+
+  // init to black and no name
+  for (int i = 0; i < numberOfTableColours; i++)
     {
-    for (int i = 0; i < maxEntry; i++)
-      {
-      node->SetColor(i, "(none)", 0.0, 0.0, 0.0);
-      }
+    node->SetColor(i, "(none)", 0.0, 0.0, 0.0);
     }
 
   // populate the node
