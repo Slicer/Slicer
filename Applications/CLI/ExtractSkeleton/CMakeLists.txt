@@ -22,15 +22,16 @@ set ( ExtractSkeleton_SOURCE
 
 generateclp(ExtractSkeleton_SOURCE ExtractSkeleton.xml)
 
-add_executable(ExtractSkeleton ${ExtractSkeleton_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries(ExtractSkeleton ITKIO)
-
 add_library(ExtractSkeletonModule SHARED ${ExtractSkeleton_SOURCE})
 slicer3_set_plugins_output_path(ExtractSkeletonModule)
 set_target_properties (ExtractSkeletonModule PROPERTIES
   COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries(ExtractSkeletonModule ITKIO)
+
+set(CLP ExtractSkeleton)
+add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP} ${CLP}Module)
 
 if (Slicer3_SOURCE_DIR)
 

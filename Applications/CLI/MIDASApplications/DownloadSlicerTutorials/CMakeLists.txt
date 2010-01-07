@@ -35,13 +35,6 @@ set(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.cxx)
 generateclp(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.xml)
 
 #
-# Generate executable
-add_executable(DownloadSlicerTutorials ${DownloadSlicerTutorials_SOURCE})
-slicer3_set_plugins_output_path(DownloadSlicerTutorials)
-target_link_libraries(DownloadSlicerTutorials 
-  ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
-
-#
 # Generate shared loadable slicer module
 add_library(DownloadSlicerTutorialsModule SHARED
   ${DownloadSlicerTutorials_SOURCE})
@@ -50,6 +43,13 @@ set_target_properties (DownloadSlicerTutorialsModule PROPERTIES
 slicer3_set_plugins_output_path(DownloadSlicerTutorialsModule)
 target_link_libraries(DownloadSlicerTutorialsModule 
   ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
+
+#
+# Generate executable
+add_executable(DownloadSlicerTutorials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+slicer3_set_plugins_output_path(DownloadSlicerTutorials)
+target_link_libraries(DownloadSlicerTutorials 
+  DownloadSlicerTutorialsModule)
 
 #
 # Move exec and module to where Slicer can find them

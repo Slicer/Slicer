@@ -21,19 +21,14 @@ MeshEnergy.cpp MeshEnergy.h MeanCurvatureEnergy.cpp MeanCurvatureEnergy.h )
 
 generateclp(SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 
-add_executable(${CLP} ${SparseFieldLevelSetContour_SOURCE} )
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP}
-  vtkImaging vtkGraphics vtkIO
-  ModuleDescriptionParser vtkTeem
-  MRML
-  SlicerBaseCLI
-  )
-
 add_library(${CLP}Lib SHARED ${SparseFieldLevelSetContour_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib vtkImaging vtkGraphics vtkIO ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI)
+
+add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP} ${CLP}Lib)
 
 include_directories(
   ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR}

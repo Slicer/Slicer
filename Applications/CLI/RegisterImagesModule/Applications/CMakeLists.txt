@@ -31,8 +31,8 @@ PROJECT( RegisterImagesModuleApplications )
   TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} MRML )
 
   # Build the command line
-  ADD_EXECUTABLE( RegisterImages ${RegisterImagesSlicer_SOURCE} )
-  TARGET_LINK_LIBRARIES( RegisterImages ${ITK_LIBRARIES} MRML )
+  ADD_EXECUTABLE( RegisterImages ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
+  TARGET_LINK_LIBRARIES( RegisterImages RegisterImagesModule )
 
   # Setup the source and paths
   SET( TransformFromFiducials_SOURCE TransformFromFiducials.cxx )
@@ -50,8 +50,8 @@ PROJECT( RegisterImagesModuleApplications )
   TARGET_LINK_LIBRARIES( TransformFromFiducialsModule ${ITK_LIBRARIES} MRML )
 
   # Build the command line
-  ADD_EXECUTABLE( TransformFromFiducials ${TransformFromFiducials_SOURCE} )
-  TARGET_LINK_LIBRARIES( TransformFromFiducials ${ITK_LIBRARIES} MRML )
+  ADD_EXECUTABLE( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+  TARGET_LINK_LIBRARIES( TransformFromFiducials TransformFromFiducialsModule )
 
   # Use case specific modules
   SET( RegisterFollowupBrainMR_SOURCE RegisterFollowupBrainMR.cxx)
@@ -67,8 +67,8 @@ PROJECT( RegisterImagesModuleApplications )
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   TARGET_LINK_LIBRARIES( RegisterFollowupBrainMRModule ${ITK_LIBRARIES} MRML )
 
-  ADD_EXECUTABLE( RegisterFollowupBrainMR ${RegisterFollowupBrainMR_SOURCE} )
-  TARGET_LINK_LIBRARIES( RegisterFollowupBrainMR ${ITK_LIBRARIES} MRML )
+  ADD_EXECUTABLE( RegisterFollowupBrainMR ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
+  TARGET_LINK_LIBRARIES( RegisterFollowupBrainMR RegisterFollowupBrainMRModule )
 
   # Use case specific modules
   SET( RegisterBrainMRToTemplate_SOURCE RegisterBrainMRToTemplate.cxx)
@@ -84,8 +84,8 @@ PROJECT( RegisterImagesModuleApplications )
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplateModule ${ITK_LIBRARIES} MRML )
 
-  ADD_EXECUTABLE( RegisterBrainMRToTemplate ${RegisterBrainMRToTemplate_SOURCE} )
-  TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplate ${ITK_LIBRARIES} MRML )
+  ADD_EXECUTABLE( RegisterBrainMRToTemplate ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
+  TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplate RegisterBrainMRToTemplateModule )
 
   IF( Slicer3_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesModule )

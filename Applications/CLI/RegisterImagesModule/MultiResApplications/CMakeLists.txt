@@ -28,9 +28,9 @@ PROJECT( RegisterImagesMultiResApplications )
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ${ITK_LIBRARIES} MRML )
 
-  # Build the command line
-  ADD_EXECUTABLE( RegisterImagesMultiRes ${RegisterImagesMultiRes_SOURCE} )
-  TARGET_LINK_LIBRARIES( RegisterImagesMultiRes ${ITK_LIBRARIES} MRML )
+  # Build the command line 
+  ADD_EXECUTABLE( RegisterImagesMultiRes ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
+  TARGET_LINK_LIBRARIES( RegisterImagesMultiRes RegisterImagesMultiResModule )
 
   IF( Slicer3_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesMultiResModule )
