@@ -1105,6 +1105,10 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
         this->CB_UseThreshold->EnabledOff();
         this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
         this->FrameThresholding->CollapseFrame();
+
+        this->Gui->GetLogic()->UpdateVolumePropertyByDisplayNode(vspNode);
+        this->UpdateVolumeProperty();
+        this->Gui->RequestRender();
       }
       else
       {
@@ -1114,6 +1118,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
         else
           this->SVP_VolumePropertyWidget->GetEditorFrame()->ExpandFrame();
       }
+      
       return;
     }
     else if(callerObjectCheckButton == this->CB_UseThreshold->GetWidget())

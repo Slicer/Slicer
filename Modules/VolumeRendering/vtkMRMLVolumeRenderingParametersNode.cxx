@@ -102,7 +102,7 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   
   this->GPURaycastIIFusion = 0;
 
-  this->FollowVolumeDisplayNode = 0;// by default following volume display node
+  this->FollowVolumeDisplayNode = 0;// by default do not follow volume display node
 
   this->WindowLevel[0] = 0.0;
   this->WindowLevel[1] = 0.0;

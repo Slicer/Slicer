@@ -406,6 +406,8 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
 
   colorTransfer->RemoveAllPoints();
   colorTransfer->AddRGBPoint(range[0], 0.0, 0.0, 0.0);
+  colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0, 0.0, 0.0);
+  colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0, 1.0, 1.0);
   colorTransfer->AddRGBPoint(range[1], 1.0, 1.0, 1.0);
 
   prop->ShadeOn();
