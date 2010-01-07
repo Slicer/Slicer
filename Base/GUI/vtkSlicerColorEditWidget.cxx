@@ -623,7 +623,7 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   this->GenerateButton->SetParent( buttonFrame);
   this->GenerateButton->Create();
   this->GenerateButton->SetText("Generate a New Color Node");
-  this->GenerateButton->SetBalloonHelpString("Generate a new color table node from the contents of the editing table. Only do this once, then you can edit it. If you press this a second time, it will create a new node again.");
+  this->GenerateButton->SetBalloonHelpString("Generate a new color table node from the contents of the editing table. Only do this once, then you can edit it. If you press this a second time, it will create a new node again. Save it through the File Save interface. Use the View, Application Settings, Module Settings, user defined color file paths to set a directory from which to load the file automatically on start up.");
   
   // a button to save a colour table to file
   this->SaveToFileButton = vtkKWPushButton::New();
@@ -633,9 +633,8 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   this->SaveToFileButton->SetBalloonHelpString("Save the current color table node to file. Use the color table name as the file name. If you set the View, Application Settings, Module Settings, user defined color file paths, the table will be saved in one of them and will be loaded again on start up.");
   
   // pack the buttons
-  app->Script("pack %s %s -side top -anchor w -padx 4 -pady 2 -in %s", 
+  app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s", 
               this->GenerateButton->GetWidgetName(),
-              this->SaveToFileButton->GetWidgetName(),
               buttonFrame->GetWidgetName());
 
   // ---
