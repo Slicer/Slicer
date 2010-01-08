@@ -1530,7 +1530,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
   vtkPiecewiseFunction *opacity = vspNode->GetVolumePropertyNode()->GetVolumeProperty()->GetScalarOpacity();
   opacity->RemoveAllPoints();
 
-  double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.01;
+  double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.001;
 
   opacity->AddPoint(iData->GetScalarRange()[0], 0.0);
   opacity->AddPoint(iData->GetScalarRange()[1], 0.0);
@@ -1560,7 +1560,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
   vtkPiecewiseFunction *opacity = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty()->GetScalarOpacity();
   opacity->RemoveAllPoints();
 
-  double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.01;
+  double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.001;
 
   opacity->AddPoint(iData->GetScalarRange()[0], 0.0);
   opacity->AddPoint(iData->GetScalarRange()[1], 0.0);

@@ -326,7 +326,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
   of << indent << " gpuRaycastIIBgFgRatio=\"" << this->GPURaycastIIBgFgRatio << "\"";
   of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
-  of << indent << " thresholdFg=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
+  of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
 }
 
 //----------------------------------------------------------------------------

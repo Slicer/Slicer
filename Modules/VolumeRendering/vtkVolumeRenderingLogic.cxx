@@ -376,6 +376,12 @@ void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRen
 
 void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  //add points into transfer functions
+  vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
+
+  double range[2];
+  histogram->GetRange(range);
+  
   vtkMRMLScalarVolumeDisplayNode *vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetDisplayNode());
   
   double windowLevel[2];
@@ -383,24 +389,31 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
   windowLevel[1] = vpNode->GetLevel();
 
   vspNode->SetWindowLevel(windowLevel);
-    
-  //add points into transfer functions
-  vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
 
-  double range[2];
+  double threshold[2];
+  threshold[0] = vpNode->GetLowerThreshold();
+  threshold[1] = vpNode->GetUpperThreshold();
 
-  histogram->GetRange(range);
-    
+  //when volumes module is in auto threshold mode, the value of threshold is invalid
+  threshold[0] = threshold[0] < range[0] ? range[0] : threshold[0];
+  threshold[1] = threshold[1] > range[1] ? range[1] : threshold[1];
+  
+  vspNode->SetThreshold(threshold);
+  
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
   prop->SetInterpolationTypeToLinear();
 
   vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
 
+  double step = (range[1] - range[0]) * 0.001;
+  
   opacity->RemoveAllPoints();
   opacity->AddPoint(range[0], 0.0);
-  opacity->AddPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0);
-  opacity->AddPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0);
-  opacity->AddPoint(range[1], 1.0);
+  opacity->AddPoint(threshold[0], 0.0);
+  opacity->AddPoint(threshold[0] + step, 1.0);
+  opacity->AddPoint(threshold[1] - step, 1.0);
+  opacity->AddPoint(threshold[1], 0.0);
+  opacity->AddPoint(range[1], 0.0);
     
   vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
 
@@ -437,14 +450,17 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
       double step;
 
       step = windowLevel[0] / (size - 1);
-    
-      for (int i = 0; i < size; i++, value += step)
+
+      int downSamplingFactor = 16;
+      
+      for (int i = 0; i < size; i += downSamplingFactor, value += downSamplingFactor*step)
       {
         pLut->GetTableValue(i, color);
         colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
       }
-  
+
       pLut->GetTableValue(size - 1, color);
+      colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, color[0], color[1], color[2]);
       colorTransfer->AddRGBPoint(range[1], color[0], color[1], color[2]);
     }
   }
