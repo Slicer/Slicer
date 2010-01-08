@@ -16,8 +16,9 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
+class qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
 {
+public:
   qSlicerAbstractLoadableModulePrivate()
     {
     }
