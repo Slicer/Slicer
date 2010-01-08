@@ -9,13 +9,23 @@ this module allows to:
 
 import os
 import sys
+import subprocess
   
 def startDesigner(open_command, argv):
   "Start QT Designer"
   
-  addEnvVariable('QT_PLUGIN_PATH', '@NATIVE_LIBRARY_OUTPUT_DIRECTORY@')
-  addEnvVariable('PATH', '@NATIVE_LIBRARY_OUTPUT_DIRECTORY@')
-  os.execv(open_command+'@NATIVE_QT_BINARY_DIR@'+os.sep+argv[0], argv)
+  addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
+  addEnvVariable('PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
+  os.execv(open_command+'@QT_BINARY_DIR@'+os.sep+argv[0], argv)
+
+def toCygwinPath(path):
+  "Attempt to convert to a cygwin path"
+  if (sys.platform == 'cygwin'):
+    os.system('cygpath -u '+path);
+    new_path=subprocess.Popen(["cygpath", "-u",path], stdout=subprocess.PIPE).communicate()[0]
+  else:
+    new_path=path
+  return new_path.strip()
 
 def addEnvVariable(name, value):
   "Add variable to environment"
