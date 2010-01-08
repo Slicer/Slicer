@@ -38,10 +38,12 @@ public:
     {
     this->ModuleEnabled = false;
     this->Logic = 0;
+    this->Name = "NA"; 
     }
   ~qSlicerAbstractModulePrivate();
   
   bool                                       ModuleEnabled;
+  QString                                    Name;
   QPointer<qSlicerAbstractModuleWidget>      WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
@@ -69,6 +71,10 @@ void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
 void qSlicerAbstractModule::printAdditionalInfo()
 {
 }
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerAbstractModule, QString, name, Name);
+QCTK_SET_CXX(qSlicerAbstractModule, const QString&, setName, Name);
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerAbstractModule, vtkMRMLScene*, mrmlScene, MRMLScene);

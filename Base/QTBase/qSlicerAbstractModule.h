@@ -50,8 +50,8 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   // Description:
-  virtual QString name()const = 0;
-  virtual void setName(const QString& name) = 0; 
+  virtual QString name()const;
+  virtual void setName(const QString& name); 
   virtual QString title()const = 0;
   virtual QString category()const { return QString(); }
   virtual QString contributor()const { return QString(); }

@@ -32,9 +32,6 @@ public:
   // Assign the module XML description.
   // Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const char* xmlModuleDescription);
-
-  virtual QString name() const;
-  virtual void setName(const QString&);
   
   virtual QString title()const;
   virtual QString category()const;

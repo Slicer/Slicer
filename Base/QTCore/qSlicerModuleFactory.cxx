@@ -337,6 +337,7 @@ qSlicerAbstractModule* qSlicerModuleFactoryPrivate::instantiateModule(const QStr
       {
       // Try to instantiate a core module
       module = this->CoreModuleFactory.instantiate(moduleName);
+      module->setName(moduleName);
       }
     else
       {

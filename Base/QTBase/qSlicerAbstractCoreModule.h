@@ -33,12 +33,8 @@ public:
   typedef qSlicerAbstractModule Superclass;
   qSlicerAbstractCoreModule(QObject *parent=0);
 
-  virtual QString name() const;
-
 protected:
   virtual void setup();
-
-  virtual void setName(const QString& name){}
 
   // Description:
   // Convenient method to return slicer wiki URL

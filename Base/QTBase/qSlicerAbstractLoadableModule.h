@@ -33,9 +33,6 @@ public:
   typedef qSlicerAbstractModule Superclass;
   qSlicerAbstractLoadableModule(QObject *parent=0);
 
-  virtual QString name() const;
-  virtual void setName(const QString&);
-
   // Description:
   // Return help/acknowledgement text
   virtual QString helpText();
