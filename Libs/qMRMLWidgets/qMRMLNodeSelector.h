@@ -24,6 +24,8 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
   QVTK_OBJECT
   Q_PROPERTY(QString NodeType READ nodeType WRITE setNodeType)
   Q_PROPERTY(bool ShowHidden READ showHidden WRITE setShowHidden)
+  Q_PROPERTY(bool SelectNodeUponCreation READ selectNodeUponCreation
+                                         WRITE setSelectNodeUponCreation)
   
 public:
   // Superclass typedef
@@ -56,9 +58,15 @@ public:
   // Add a node in the combobox
   void addNode(vtkMRMLNode* node);
 
+  // Description:
   // Set/Get MRML node factory
   void setMRMLNodeFactory(qMRMLNodeFactory* factory);
-  qMRMLNodeFactory* factory()const; 
+  qMRMLNodeFactory* factory()const;
+
+  // Description:
+  // Set/Get SelectNodeUponCreation flags
+  bool selectNodeUponCreation()const;
+  void setSelectNodeUponCreation(bool value); 
 
 public slots:
   // Description:

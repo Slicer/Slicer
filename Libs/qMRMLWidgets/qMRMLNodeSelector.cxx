@@ -26,6 +26,7 @@ public:
     this->MRMLNodeFactory = 0;
 
     this->ShowHidden = false;
+    this->SelectNodeUponCreation = true; 
     }
   qMRMLNodeFactory* MRMLNodeFactory; 
   vtkMRMLScene*     MRMLScene; 
@@ -35,6 +36,7 @@ public:
 
   QString       NodeType; 
   bool          ShowHidden;
+  bool          SelectNodeUponCreation; 
 };
 
 // --------------------------------------------------------------------------
@@ -66,6 +68,10 @@ QCTK_GET_CXX(qMRMLNodeSelector, QString, nodeType, NodeType);
 // --------------------------------------------------------------------------
 QCTK_SET_CXX(qMRMLNodeSelector, bool, setShowHidden, ShowHidden);
 QCTK_GET_CXX(qMRMLNodeSelector, bool, showHidden, ShowHidden);
+
+// --------------------------------------------------------------------------
+QCTK_SET_CXX(qMRMLNodeSelector, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
+QCTK_GET_CXX(qMRMLNodeSelector, bool, selectNodeUponCreation, SelectNodeUponCreation);
 
 // --------------------------------------------------------------------------
 QCTK_GET_CXX(qMRMLNodeSelector, vtkMRMLScene*, mrmlScene, MRMLScene);
@@ -251,8 +257,8 @@ void qMRMLNodeSelector::onAdd()
   vtkMRMLNode * node = d->MRMLNodeFactory->createNode(this->nodeType());
   // The created node is appended at the bottom of the current list  
   Q_ASSERT(node);
-  if (node)
-    {// select the created node. Maybe it should be a widget property
+  if (node && this->selectNodeUponCreation())
+    {// select the created node.
     this->setCurrentIndex(this->count() - 1);
     }
 }
