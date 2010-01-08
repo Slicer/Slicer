@@ -120,7 +120,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
                                    void * /*callData*/ );
   // Description:
   // set gray colormap
-  void SetDefaultColorMap(int isLabelMap);
+  void SetDefaultColorMap(/*int isLabelMap*/);
  
   virtual void SetImageData(vtkImageData *imageData)
     {

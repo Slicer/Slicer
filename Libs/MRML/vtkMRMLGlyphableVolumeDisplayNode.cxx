@@ -66,18 +66,18 @@ vtkMRMLGlyphableVolumeDisplayNode::vtkMRMLGlyphableVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeDisplayNode::SetDefaultColorMap(int isLabelMap)
- {
+void vtkMRMLGlyphableVolumeDisplayNode::SetDefaultColorMap(/*int isLabelMap*/)
+{
   // set up a default color node
-   // TODO: figure out if can use vtkSlicerColorLogic's helper methods
-   if (isLabelMap)
-     {
-     this->SetAndObserveGlyphColorNodeID("vtkMRMLColorTableNodeLabels");
-     }
-   else
-     {
-     this->SetAndObserveGlyphColorNodeID("vtkMRMLColorTableNodeGrey");
-     }
+  // TODO: figure out if can use vtkSlicerColorLogic's helper methods
+  /*if (isLabelMap)
+    {
+    this->SetAndObserveGlyphColorNodeID("vtkMRMLColorTableNodeLabels");
+    }
+  else
+    {*/
+  this->SetAndObserveGlyphColorNodeID("vtkMRMLColorTableNodeGrey");
+  //  }
   if (this->GlyphColorNode == NULL)
     {
     vtkDebugMacro("vtkMRMLGlyphableVolumeDisplayNode: FAILED setting default  color node, it's still null\n")
