@@ -43,10 +43,11 @@ public:
   //-----------------------------------------------------------------------------
   // Description:
   // Register an object in the factory
+  // Note: The parameter 'key' passed by reference will be updated with the associated object name
   template<typename ClassType>
-  bool registerQObject()
+  bool registerQObject(QString& key)
     {
-    QString key = QString::fromLatin1(ClassType::staticMetaObject.className());
+    key = QString::fromLatin1(ClassType::staticMetaObject.className());
     return this->qCTKAbstractObjectFactory<BaseClassType>::template registerObject<ClassType>(key);
     }
 

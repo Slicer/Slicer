@@ -161,9 +161,9 @@ void qSlicerModuleFactory::registerCoreModule()
   
   // Extract title from class name
   const QString moduleTitle = ClassType::staticTitle();
-  QString moduleName = ClassType::staticMetaObject.className();
-
-  if (d->CoreModuleFactory.registerQObject<ClassType>())
+  
+  QString moduleName;
+  if (d->CoreModuleFactory.registerQObject<ClassType>(moduleName))
     {
     d->updateInternalMaps(moduleTitle, moduleName);
 
