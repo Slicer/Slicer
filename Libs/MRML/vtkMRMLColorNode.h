@@ -146,7 +146,7 @@ public:
   vtkBooleanMacro(NamesInitialised, int);
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; };
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; };
  
   // Description:
   // Create default storage node or NULL if does not have one
