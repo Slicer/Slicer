@@ -35,7 +35,7 @@ lappend res $i
 set jarList [glob-r $pathToMipavPlugins *.jar]
 # add the top level mipav dir
 lappend jarList {c:/Program Files/mipav}
-# now add the path to the spectre edu classes
+# now add the path to the spectre edu classes, this will move to Applications/CLI/Java/SPECTRE
 lappend jarList {c:/Documents and Settings/nicole/mipav/plugins}
 if {$argv != "--xml"} {
   puts "Jar list = $jarList"
@@ -57,11 +57,11 @@ if {[info exists ::env(CLASSPATH)] != 0} {
    }
 }
 
-set ret [catch "exec java -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv" res]
+set ret [catch "exec java -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
 puts $res
 # exit $ret
 if {$argv != "--xml"} {
 puts "Return value = $ret"
 }
-exit 0
-#exit $ret
+#exit 0
+exit $ret
