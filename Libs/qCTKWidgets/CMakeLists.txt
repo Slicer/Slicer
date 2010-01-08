@@ -21,9 +21,13 @@ INCLUDE(CMake/qCTKDesignerPluginMacros.cmake)
 SET(qCTKWidgets_SRCS
   qCTKPimpl.h
   qCTKAbstractFactory.h
+  qCTKAbstractFactory.txx
   qCTKAbstractObjectFactory.h
+  qCTKAbstractObjectFactory.txx
   qCTKAbstractPluginFactory.h
+  qCTKAbstractPluginFactory.txx
   qCTKAbstractLibraryFactory.h
+  qCTKAbstractLibraryFactory.txx
   qCTKAddRemoveComboBox.cxx
   qCTKAddRemoveComboBox.h
   qCTKCollapsibleButton.cxx

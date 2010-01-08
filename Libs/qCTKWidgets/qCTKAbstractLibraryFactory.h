@@ -2,10 +2,7 @@
 #define __qCTKAbstractLibraryFactory_h
 
 #include "qCTKAbstractFactory.h"
-
-#include <QLibrary>
-#include <QFileInfo>
-#include <QDebug>
+#include <QStringList>
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
@@ -16,64 +13,22 @@ protected:
   typedef typename QHash<QString, void*>::iterator       Iterator;
 
 public:
-  explicit qCTKFactoryLibraryItem(const QString& key, const QString& path):
-    qCTKAbstractFactoryItem<BaseClassType>(key),Path(path){}
-  virtual bool load()
-    {
-    this->Library.setFileName(this->path());
-    bool loaded = this->Library.load();
-    if (loaded)
-      {
-      this->resolve();
-      return true;
-      }
-    return false;
-    }
-  QString path() { return this->Path; }
-  virtual QString loadErrorString() { return this->Library.errorString();}
+  explicit qCTKFactoryLibraryItem(const QString& key, const QString& path);
+  virtual bool load();
+  QString path()const;
+  virtual QString loadErrorString()const;
 
-  void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
+  void setSymbols(const QStringList& symbols);
 
   //-----------------------------------------------------------------------------
   // Description:
   // Resolve symbols
-  void resolve()
-    {
-    foreach(const QString& symbol, this->Symbols)
-      {
-      // Sanity checks
-      if (symbol.isEmpty()) { continue; }
-
-      // Make sure the symbols haven't been registered
-      if (this->ResolvedSymbols.contains(symbol))
-        {
-        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path;
-        continue;
-        }
-
-      void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
-      if (!resolvedSymbol)
-        {
-        qWarning() << "Failed to resolve symbol '" << symbol << "' - Path:" << this->Path;
-        }
-      this->ResolvedSymbols[symbol] = resolvedSymbol;
-      }
-    }
-
-    //-----------------------------------------------------------------------------
-    // Description:
-    // Get symbol address
-    void * symbolAddress(const QString& symbol)
-    {
-      ConstIterator iter = this->ResolvedSymbols.find(symbol);
-
-      Q_ASSERT(iter != this->ResolvedSymbols.constEnd());
-      if ( iter == this->ResolvedSymbols.constEnd())
-        {
-        return 0;
-        }
-      return iter.value();
-    }
+  void resolve();
+  
+  //-----------------------------------------------------------------------------
+  // Description:
+  // Get symbol address
+  void* symbolAddress(const QString& symbol)const;
 
 private:
   QLibrary              Library;
@@ -90,31 +45,18 @@ public:
   //-----------------------------------------------------------------------------
   // Description:
   // Constructor
-  explicit qCTKAbstractLibraryFactory():
-    qCTKAbstractFactory<BaseClassType>(){}
-  virtual ~qCTKAbstractLibraryFactory(){}
+  explicit qCTKAbstractLibraryFactory();
+  virtual ~qCTKAbstractLibraryFactory();
 
   //-----------------------------------------------------------------------------
   // Description:
   // Set the list of symbols
-  void setSymbols(const QStringList& symbols) { this->Symbols = symbols; }
+  void setSymbols(const QStringList& symbols);
 
   //-----------------------------------------------------------------------------
   // Description:
   // Register a plugin in the factory
-  virtual bool registerLibrary(const QString& key, const QString& path)
-    {
-    // Check if already registered
-    if (this->getItem(key))
-      {
-      return false;
-      }
-    QSharedPointer<FactoryItemType> item =
-      QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
-    item->setSymbols(this->Symbols);
-    return this->registerItem(item);
-    }
-
+  virtual bool registerLibrary(const QString& key, const QString& path);
 
 private:
   qCTKAbstractLibraryFactory(const qCTKAbstractLibraryFactory &);  // Not implemented
@@ -122,5 +64,7 @@ private:
 
   QStringList Symbols;
 };
+
+#include "qCTKAbstractLibraryFactory.txx"
 
 #endif
