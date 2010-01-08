@@ -3,9 +3,7 @@ project(JavaExamples Java )
 FIND_PACKAGE ( Java )
 
 
-#####################
 
-set (CLP HelloWorld)
 
 slicer3_set_plugins_output_path()
 set(build_type ".")
@@ -17,6 +15,9 @@ if(WIN32 AND CMAKE_CONFIGURATION_TYPES)
   kwwidgets_get_cmake_build_type(build_type)
 endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
 
+#####################
+
+set (CLP HelloWorld)
 
 # If have the java compiler, try to compile the .java files
 IF ( JAVA_COMPILE )
@@ -82,3 +83,35 @@ install(
   DESTINATION ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}
   )
 endif (Slicer3_SOURCE_DIR)
+
+
+##############
+
+set (CLP SPECTRE)
+
+#####
+# install the tcl file that runs the jar file like an executable CLI
+#####
+
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS 
+     ${CLP}.tcl
+    )
+
+foreach(file ${TARGETS})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${file}
+    COPYONLY
+    )
+endforeach(file)
+install(
+  FILES ${TARGETS}
+  DESTINATION ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}
+  )
+endif (Slicer3_SOURCE_DIR)
+
+
