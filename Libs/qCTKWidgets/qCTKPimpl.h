@@ -1,6 +1,5 @@
 /**
 \class qCTKPimpl qCTKPimpl
-\ingroup QxtCore
 \brief Hide private details of a class
 
 Application code generally doesn't have to be concerned about hiding its
