@@ -69,7 +69,7 @@ NAME* NAME::Instance;
 
 //----------------------------------------------------------------------------
 //
-// This should be added add the end of the CXX file
+// This should be added at the end of the CXX file
 //
 #define QCTK_SINGLETON_DEFINE(NAME)                 \
 void NAME::classInitialize()                        \
