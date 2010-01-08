@@ -95,8 +95,8 @@ public:
     // Description:
     // transform utility functions
     virtual bool CanApplyNonLinearTransforms() { return false; }
-    virtual void ApplyTransform(vtkMatrix4x4* transformMatrix) {};
-    virtual void ApplyTransform(vtkAbstractTransform* transform) {};
+    virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
+    virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
 
     // Description:
     // Create default storage node or NULL if does not have one

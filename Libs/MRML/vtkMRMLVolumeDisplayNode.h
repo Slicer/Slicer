@@ -61,7 +61,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
 
   // Description:
   // Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData) {};
+  virtual void SetImageData(vtkImageData *vtkNotUsed(imageData)) {};
 
   // Description:
   // Sets ImageData for background mask 

@@ -105,7 +105,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   // Description:
   // Get Y range for given X range.
   // Returns 0 if it cannot determin the x range.
-  virtual int GetYRange(const double* xrange, double* yrange) { return 0; };
+  virtual int GetYRange(const double* vtkNotUsed(xrange), double* vtkNotUsed(yrange)) { return 0; };
 
   // Description:
   // Set legend of the object for the graph.
@@ -130,16 +130,19 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   // Description:
   // Get minimum and muximum X values.
   // Returns 0 if the Y range cannot be determined.
-  virtual int GetXRange(double* xrange) {return 0; };
+  virtual int GetXRange(double* vtkNotUsed(xrange)) {return 0; };
 
   // Description:
   // Get minimum and muximum Y values.
   // Returns 0 if the Y range cannot be determined.
-  virtual int GetYRange(double* yrange) {return 0;};
+  virtual int GetYRange(double* vtkNotUsed(yrange)) {return 0;};
 
   // Description:
   // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
-  virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange) { return NULL; };
+  virtual vtkDataObject* GetDrawObject(double* vtkNotUsed(xrange), double* vtkNotUsed(yrange))
+  {
+    return 0;
+  };
 
 
   //----------------------------------------------------------------
