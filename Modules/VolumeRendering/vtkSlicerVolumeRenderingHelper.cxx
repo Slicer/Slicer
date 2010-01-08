@@ -1106,8 +1106,12 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned
         this->SVP_VolumePropertyWidget->GetEditorFrame()->CollapseFrame();
         this->FrameThresholding->CollapseFrame();
 
+        this->Gui->PauseRenderInteraction();
+        
         this->Gui->GetLogic()->UpdateVolumePropertyByDisplayNode(vspNode);
         this->UpdateVolumeProperty();
+
+        this->Gui->ResumeRenderInteraction();
         this->Gui->RequestRender();
       }
       else

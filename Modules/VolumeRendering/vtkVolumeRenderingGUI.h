@@ -106,6 +106,9 @@ public:
 
     void RequestRender();
 
+    void PauseRenderInteraction();
+    void ResumeRenderInteraction();
+
     // Description:
     // Get/Set the main slicer viewer widget, for picking
     vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);

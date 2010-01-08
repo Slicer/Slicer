@@ -377,7 +377,7 @@ void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRen
 void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   vtkMRMLScalarVolumeDisplayNode *vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetDisplayNode());
-    
+  
   double windowLevel[2];
   windowLevel[0] = vpNode->GetWindow();
   windowLevel[1] = vpNode->GetLevel();
@@ -405,11 +405,50 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
   vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
 
   colorTransfer->RemoveAllPoints();
-  colorTransfer->AddRGBPoint(range[0], 0.0, 0.0, 0.0);
-  colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0, 0.0, 0.0);
-  colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0, 1.0, 1.0);
-  colorTransfer->AddRGBPoint(range[1], 1.0, 1.0, 1.0);
 
+  vtkLookupTable* pLut = vpNode->GetColorNode()->GetLookupTable();
+
+  if (pLut == NULL)
+  {
+    colorTransfer->AddRGBPoint(range[0], 0.0, 0.0, 0.0);
+    colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0, 0.0, 0.0);
+    colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0, 1.0, 1.0);
+    colorTransfer->AddRGBPoint(range[1], 1.0, 1.0, 1.0);
+  }
+  else
+  {
+    int size = pLut->GetNumberOfTableValues();
+
+    double color[4];
+    pLut->GetTableValue(0, color);
+  
+    if (size == 1)
+    {
+      colorTransfer->AddRGBPoint(range[0], color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(range[1], color[0], color[1], color[2]);
+    }
+    else
+    {
+      colorTransfer->AddRGBPoint(range[0], color[0], color[1], color[2]);
+    
+      double value = windowLevel[1] - windowLevel[0]*0.5;
+      double step;
+
+      step = windowLevel[0] / (size - 1);
+    
+      for (int i = 0; i < size; i++, value += step)
+      {
+        pLut->GetTableValue(i, color);
+        colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
+      }
+  
+      pLut->GetTableValue(size - 1, color);
+      colorTransfer->AddRGBPoint(range[1], color[0], color[1], color[2]);
+    }
+  }
+  
   prop->ShadeOn();
   prop->SetAmbient(0.30);
   prop->SetDiffuse(0.60);

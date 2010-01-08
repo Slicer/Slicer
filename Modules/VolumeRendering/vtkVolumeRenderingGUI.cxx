@@ -1573,3 +1573,21 @@ void vtkVolumeRenderingGUI::RequestRender()
     }
   }
 }
+
+void vtkVolumeRenderingGUI::PauseRenderInteraction()
+{
+  vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+  {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+  }
+}
+
+void vtkVolumeRenderingGUI::ResumeRenderInteraction()
+{
+  vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetActiveViewerWidget();
+  if (slicer_viewer_widget)
+  {
+    slicer_viewer_widget->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+  }
+}
