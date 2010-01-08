@@ -718,7 +718,7 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->CB_FollowVolumeDisplayNode->SetParent(mainFrame->GetFrame());
   this->CB_FollowVolumeDisplayNode->Create();
   this->CB_FollowVolumeDisplayNode->SetLabelText("Follow Volumes Module");
-  this->CB_FollowVolumeDisplayNode->SetBalloonHelpString("Follow window/level settting in Volumes module.");
+  this->CB_FollowVolumeDisplayNode->SetBalloonHelpString("When checked, window/level and lookup table in the Volumes module will be used for color mapping in volume rendering and threshold in the Volumes module will be used for opacity mapping. Also when checked local GUI will disabled for following.");
   this->CB_FollowVolumeDisplayNode->SetLabelWidth(20);
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_FollowVolumeDisplayNode->GetWidgetName() );
   this->CB_FollowVolumeDisplayNode->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
