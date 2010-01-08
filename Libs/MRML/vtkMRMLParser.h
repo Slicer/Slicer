@@ -31,7 +31,7 @@ class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 public:
   static vtkMRMLParser *New();
   vtkTypeMacro(vtkMRMLParser,vtkCollection);
-  void PrintSelf(ostream& os, vtkIndent indent){}
+  void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)){}
   
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
   void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};
