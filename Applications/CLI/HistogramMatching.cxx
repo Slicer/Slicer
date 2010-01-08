@@ -58,7 +58,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // define the histogram matching
   typedef itk::HistogramMatchingImageFilter<
                             InputImageType, 
-                            OutputImageType >  FilterType;
+                            OutputImageType, InputPixelType>  FilterType;
 
 
   // Creation of Reader and Writer filters
@@ -110,34 +110,37 @@ int main( int argc, char * argv[] )
     switch (componentType)
       {
       case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0));
+        return DoIt<unsigned char>( argc, argv, static_cast<unsigned char>(0));
         break;
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0));
+        return DoIt<char>( argc, argv, static_cast<char>(0));
         break;
       case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0));
+        return DoIt<unsigned short>( argc, argv, static_cast<unsigned short>(0));
         break;
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0));
+        return DoIt<short>( argc, argv, static_cast<short>(0));
         break;
       case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0));
+        return DoIt<unsigned int>( argc, argv, static_cast<unsigned int>(0));
         break;
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0));
+        return DoIt<int>( argc, argv, static_cast<int>(0));
         break;
       case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0));
+        return DoIt<unsigned long>( argc, argv, static_cast<unsigned long>(0));
         break;
+/* A bug in ITK prevents this from working with ITK Review Statistics turned on. */
+#if defined USE_REVIEW_STATISTICS
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0));
+        return DoIt<long>( argc, argv, static_cast<long>(0));
         break;
+#endif
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0));
+        return DoIt<float>( argc, argv, static_cast<float>(0));
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0));
+        return DoIt<double>( argc, argv, static_cast<double>(0));
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
