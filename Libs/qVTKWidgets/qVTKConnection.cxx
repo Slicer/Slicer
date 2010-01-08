@@ -20,7 +20,7 @@ class qVTKConnectionPrivate: public qCTKPrivate<qVTKConnection>
 public:
   enum
     {
-    ARG_UNKOWN = 0,
+    ARG_UNKNOWN = 0,
     ARG_VTKOBJECT_AND_VTKOBJECT,
     ARG_VTKOBJECT_VOID_ULONG_VOID
     };
@@ -33,7 +33,7 @@ public:
     this->QtObject   = 0;
     this->VTKEvent = vtkCommand::NoEvent;
     this->Priority = 0.0;
-    this->SlotType = ARG_UNKOWN;
+    this->SlotType = ARG_UNKNOWN;
     this->Parent      = 0;
     this->Established = false;
     this->Blocked     = false;
@@ -192,32 +192,7 @@ void qVTKConnection::SetBlocked(bool block)
     }
   d->Blocked = block;
 }
-/*
-#define QVTK_EMPTY_ARG
-#define QVTK_OBJECT_INTERNAL_CONNECT1(ARG1)     \
-QObject::connect(                               \
-  this, SIGNAL(emitExecute(ARG1)),              \
-  d->QtObject,                                  \
-  d->QtSlot.toLatin1().data());
 
-#define QVTK_OBJECT_INTERNAL_CONNECT2(ARG1,ARG2)   \
-QObject::connect(                                  \
-  this, SIGNAL(emitExecute(ARG1, ARG2)),           \
-  d->QtObject,                                     \
-  d->QtSlot.toLatin1().data());
-
-#define QVTK_OBJECT_INTERNAL_CONNECT3(ARG1,ARG2,ARG3)  \
-QObject::connect(                                      \
-  this, SIGNAL(emitExecute(ARG1, ARG2, ARG3)),         \
-  d->QtObject,                                         \
-  d->QtSlot.toLatin1().data());
-
-#define QVTK_OBJECT_INTERNAL_CONNECT4(ARG1,ARG2,ARG3,ARG4)   \
-QObject::connect(                                            \
-  this, SIGNAL(emitExecute(ARG1, ARG2, ARG3, ARG4)),         \
-  d->QtObject,                                               \
-  d->QtSlot.toLatin1().data());
-*/
 //-----------------------------------------------------------------------------
 void qVTKConnection::EstablishConnection()
 {
@@ -228,12 +203,10 @@ void qVTKConnection::EstablishConnection()
   switch (d->SlotType)
     {
     case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-      //QVTK_OBJECT_INTERNAL_CONNECT2(vtkObject*,vtkObject*);
       QObject::connect(this, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
         d->QtObject,d->QtSlot.toLatin1().data());
       break;
     case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-      //QVTK_OBJECT_INTERNAL_CONNECT4(vtkObject*,void*,unsigned long,void*);
       QObject::connect(this, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
         d->QtObject, d->QtSlot.toLatin1().data());
       break;
@@ -260,13 +233,7 @@ void qVTKConnection::EstablishConnection()
 
   d->Established = true;
 }
-/*
-#undef QVTK_EMPTY_ARG
-#undef QVTK_OBJECT_INTERNAL_CONNECT1
-#undef QVTK_OBJECT_INTERNAL_CONNECT2
-#undef QVTK_OBJECT_INTERNAL_CONNECT3
-#undef QVTK_OBJECT_INTERNAL_CONNECT4
-*/
+
 //-----------------------------------------------------------------------------
 void qVTKConnection::BreakConnection()
 {
@@ -280,12 +247,10 @@ void qVTKConnection::BreakConnection()
   switch (d->SlotType)
     {
     case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-      //QVTK_OBJECT_INTERNAL_CONNECT2(vtkObject*,vtkObject*);
       QObject::disconnect(this, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
         d->QtObject,d->QtSlot.toLatin1().data());
       break;
     case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-      //QVTK_OBJECT_INTERNAL_CONNECT4(vtkObject*,void*,unsigned long,void*);
       QObject::disconnect(this, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
         d->QtObject, d->QtSlot.toLatin1().data());
       break;
