@@ -834,7 +834,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ProgressCallback ( void *who )
+void vtkDataIOManagerLogic::ProgressCallback ( void * vtkNotUsed(who) )
 {
 
   //---TODO: figure out how to make this guy work and wire him into the rest of the mechanism
