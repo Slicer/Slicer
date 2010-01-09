@@ -256,7 +256,7 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLROIListNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLROIListNode::Copy(vtkMRMLNode * vtkNotUsed(anode))
 {
   //Fill in
   return;
@@ -771,7 +771,7 @@ int vtkMRMLROIListNode::GetNthROISelected(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIID(int n, const char *id)
+int vtkMRMLROIListNode::SetNthROIID(int n, const char * vtkNotUsed(id))
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)

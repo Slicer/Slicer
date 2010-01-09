@@ -1504,9 +1504,9 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
 }
 
 //------------------------------------------------------------------------------
-int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode *node1,
-                                            vtkMRMLNode *node2, 
-                                            vtkGeneralTransform *xform)
+int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode * vtkNotUsed(node1),
+                                            vtkMRMLNode * vtkNotUsed(node2), 
+                                            vtkGeneralTransform * vtkNotUsed(xform))
 {
   vtkErrorMacro("NOT IMPLEMENTEED YET");
   return 1;
@@ -1514,13 +1514,13 @@ int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode *node1,
 
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
+void vtkMRMLScene::InsertAfterNode(vtkMRMLNode * vtkNotUsed(item), vtkMRMLNode * vtkNotUsed(n))
 {
   vtkErrorMacro("NOT IMPLEMENTEED YET");
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
+void vtkMRMLScene::InsertBeforeNode(vtkMRMLNode * vtkNotUsed(item), vtkMRMLNode * vtkNotUsed(n))
 {
   vtkErrorMacro("NOT IMPLEMENTEED YET");
 }

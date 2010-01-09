@@ -344,7 +344,9 @@ vtkDataObject* vtkMRMLArrayPlotNode::GetDrawObject(double* xrange, double* yrang
 
 
 //----------------------------------------------------------------------------
-vtkDoubleArray* vtkMRMLArrayPlotNode::CreatePlotDataWithErrorBar(vtkDoubleArray* srcData, double* xrange, double* yrange)
+vtkDoubleArray* vtkMRMLArrayPlotNode::CreatePlotDataWithErrorBar(vtkDoubleArray* srcData,
+                                                                 double* xrange,
+                                                                 double* vtkNotUsed(yrange))
 {
   vtkDoubleArray* plotData;
   plotData = vtkDoubleArray::New();
