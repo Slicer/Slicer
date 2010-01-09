@@ -513,9 +513,13 @@ if(BUILD_DOCUMENTATION)
   add_subdirectory(Utilities/Doxygen)
 endif(BUILD_DOCUMENTATION)
 
-# setup file for setting custom ctest vars
-configure_file(${Slicer3_SOURCE_DIR}/CTestCustom.cmake.in
-  ${Slicer3_BINARY_DIR}/CTestCustom.cmake @ONLY)
+#-----------------------------------------------------------------------------
+# Setup file for setting custom ctest vars
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/CTestCustom.cmake.in
+  ${Slicer3_BINARY_DIR}/CTestCustom.cmake
+  @ONLY
+  )
 
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer3 build tree and a Slicer3 installation 
