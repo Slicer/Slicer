@@ -81,25 +81,25 @@
 #define TEST_SET_GET_BOOLEAN( object, variable ) \
   object->Set##variable( false ); \
   object->Set##variable( true ); \
-  if( object->Get##variable() != true ) \
+  if( object->Get##variable() != 1 ) \
     {   \
     std::cerr << "Error in Set/Get"#variable << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->Set##variable( false ); \
-  if( object->Get##variable() != false ) \
+  if( object->Get##variable() != 0 ) \
     {   \
     std::cerr << "Error in Set/Get"#variable << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##On(); \
-  if( object->Get##variable() != true ) \
+  if( object->Get##variable() != 1 ) \
     {   \
     std::cerr << "Error in On/Get"#variable << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##Off(); \
-  if( object->Get##variable() != false ) \
+  if( object->Get##variable() != 0 ) \
     {   \
     std::cerr << "Error in Off/Get"#variable << std::endl; \
     return EXIT_FAILURE; \
