@@ -1649,24 +1649,51 @@ void vtkSlicerSliceControllerWidget::ToggleReformatWidget( int link)
       this->MRMLScene->SaveStateForUndo ( nodes );
       nodes->Delete ( );
 
-      // Set all linked slice nodes' reformat widgets to be the toggled state of this one.
+      // When slice nodes are linked, only allow one slice node's reformat widget to be on at a time
       int val = this->SliceNode->GetWidgetVisible();
-      for (int i = 0; i < nSliceGUI; i++)
+      // If slice node's reformat widget was on, just turn all of them off
+      if (val == 1)
         {
-        if (i == 0)
+        for (int i = 0; i < nSliceGUI; i++)
           {
-          sgui = ssgui->GetFirstSliceGUI();
-          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          if (i == 0)
+            {
+            sgui = ssgui->GetFirstSliceGUI();
+            layoutname = ssgui->GetFirstSliceGUILayoutName();
+            }
+          else
+            {
+            sgui = ssgui->GetNextSliceGUI(layoutname);
+            layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+            }
+          
+          if (sgui)
+            sgui->GetSliceNode()->SetWidgetVisible (!val);
           }
-        else
+        }
+      // If slice node's reformat widget was off, turn it on and turn all the other ones off
+      else
+        {
+        for (int i = 0; i < nSliceGUI; i++)
           {
-          sgui = ssgui->GetNextSliceGUI(layoutname);
-          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
-          }
-        
-        if (sgui)
-          {
-          sgui->GetSliceNode()->SetWidgetVisible ( !val);
+          if (i == 0)
+            {
+            sgui = ssgui->GetFirstSliceGUI();
+            layoutname = ssgui->GetFirstSliceGUILayoutName();
+            }
+          else
+            {
+            sgui = ssgui->GetNextSliceGUI(layoutname);
+            layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+            }
+          
+          if (sgui)
+            {
+            if ( strcmp(this->SliceNode->GetLayoutName(), layoutname) == 0 )
+              sgui->GetSliceNode()->SetWidgetVisible (!val);
+            else
+              sgui->GetSliceNode()->SetWidgetVisible (val);
+            }
           }
         }
       }
