@@ -26,6 +26,8 @@ SET(qCTKWidgets_SRCS
   qCTKAbstractObjectFactory.txx
   qCTKAbstractPluginFactory.h
   qCTKAbstractPluginFactory.txx
+  qCTKAbstractQObjectFactory.h
+  qCTKAbstractQObjectFactory.txx  
   qCTKAbstractLibraryFactory.h
   qCTKAbstractLibraryFactory.txx
   qCTKAddRemoveComboBox.cxx

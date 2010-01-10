@@ -45,7 +45,7 @@ template<typename ClassType>
 bool qCTKAbstractObjectFactory<BaseClassType>::registerObject(const QString& key)
 {
   // Check if already registered
-  if (this->getItem(key))
+  if (this->item(key))
     {
     return false;
     }

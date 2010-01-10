@@ -2,6 +2,9 @@
 #define __qCTKAbstractLibraryFactory_h
 
 #include "qCTKAbstractFactory.h"
+
+#include <QFileInfo>
+#include <QLibrary>
 #include <QStringList>
 
 //----------------------------------------------------------------------------
@@ -56,7 +59,7 @@ public:
   //-----------------------------------------------------------------------------
   // Description:
   // Register a plugin in the factory
-  virtual bool registerLibrary(const QString& key, const QString& path);
+  virtual bool registerLibrary(const QFileInfo& file, QString& key);
 
 private:
   qCTKAbstractLibraryFactory(const qCTKAbstractLibraryFactory &);  // Not implemented

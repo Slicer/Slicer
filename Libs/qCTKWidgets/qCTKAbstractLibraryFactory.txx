@@ -110,15 +110,16 @@ void qCTKAbstractLibraryFactory<BaseClassType, FactoryItemType>::setSymbols(cons
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
-bool qCTKAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(const QString& key, const QString& path)
+bool qCTKAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(const QFileInfo& file, QString& key)
 {
+  key = file.fileName();
   // Check if already registered
-  if (this->getItem(key))
+  if (this->item(key))
     {
     return false;
     }
   QSharedPointer<FactoryItemType> item =
-    QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
+    QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
   item->setSymbols(this->Symbols);
   return this->registerItem(item);
 }

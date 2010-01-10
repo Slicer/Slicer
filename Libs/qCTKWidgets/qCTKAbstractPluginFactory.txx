@@ -1,7 +1,7 @@
 #ifndef __qCTKAbstractPluginFactory_txx
 #define __qCTKAbstractPluginFactory_txx
 
-#include "qCTKAbstractFactory.h"
+#include "qCTKAbstractPluginFactory.h"
 
 #include <QPluginLoader>
 #include <QDebug>
@@ -71,15 +71,16 @@ qCTKAbstractPluginFactory<BaseClassType, FactoryItemType>::~qCTKAbstractPluginFa
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
-bool qCTKAbstractPluginFactory<BaseClassType, FactoryItemType>::registerLibrary(const QString& key, const QString& path)
+bool qCTKAbstractPluginFactory<BaseClassType, FactoryItemType>::registerLibrary(const QFileInfo& file, QString& key)
 {
+  key = file.fileName();
   // Check if already registered
-  if (this->getItem(key))
+  if (this->item(key))
     {
     return false;
     }
   QSharedPointer<FactoryItemType> item =
-    QSharedPointer<FactoryItemType>(new FactoryItemType(key, path));
+    QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
   return this->registerItem(item);
 }
 

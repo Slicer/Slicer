@@ -4,6 +4,7 @@
 #include "qCTKAbstractFactory.h"
 
 #include <QPluginLoader>
+#include <QFileInfo>
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
@@ -35,7 +36,7 @@ public:
 
   // Description:
   // Register a plugin in the factory
-  virtual bool registerLibrary(const QString& key, const QString& path);
+  virtual bool registerLibrary(const QFileInfo& file, QString& key);
 
 private:
   qCTKAbstractPluginFactory(const qCTKAbstractPluginFactory &);  // Not implemented

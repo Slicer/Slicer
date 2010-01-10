@@ -76,7 +76,7 @@ qCTKAbstractFactory<BaseClassType>::~qCTKAbstractFactory()
 template<typename BaseClassType>
 BaseClassType* qCTKAbstractFactory<BaseClassType>::instantiate(const QString& itemKey)
 {
-  qCTKAbstractFactoryItem<BaseClassType>* item = this->getItem(itemKey);
+  qCTKAbstractFactoryItem<BaseClassType>* item = this->item(itemKey);
   return (item ? item->instantiate() : 0);
 }
 
@@ -84,7 +84,7 @@ BaseClassType* qCTKAbstractFactory<BaseClassType>::instantiate(const QString& it
 template<typename BaseClassType>
 void qCTKAbstractFactory<BaseClassType>::uninstantiate(const QString& itemKey)
 {
-  qCTKAbstractFactoryItem<BaseClassType> * item = this->getItem(itemKey);
+  qCTKAbstractFactoryItem<BaseClassType> * item = this->item(itemKey);
   if (!item)
     {
     return;
@@ -107,7 +107,7 @@ bool qCTKAbstractFactory<BaseClassType>::registerItem(
   const QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > & item)
 {
   // Sanity checks
-  if (!item || item->key().isEmpty() || this->getItem(item->key()))
+  if (!item || item->key().isEmpty() || this->item(item->key()))
     {
     return false;
     }
@@ -131,7 +131,7 @@ bool qCTKAbstractFactory<BaseClassType>::registerItem(
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-qCTKAbstractFactoryItem<BaseClassType> * qCTKAbstractFactory<BaseClassType>::getItem(const QString& itemKey)
+qCTKAbstractFactoryItem<BaseClassType> * qCTKAbstractFactory<BaseClassType>::item(const QString& itemKey)const
 {
   ConstIterator iter = this->RegisteredItemMap.find(itemKey);
   if ( iter == this->RegisteredItemMap.constEnd())

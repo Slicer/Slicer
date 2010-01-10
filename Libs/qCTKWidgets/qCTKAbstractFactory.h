@@ -43,7 +43,7 @@ public:
   //----------------------------------------------------------------------------
   // Description:
   // Create an instance of the object
-  BaseClassType * instantiate(const QString& itemKey);
+  virtual BaseClassType * instantiate(const QString& itemKey);
 
   //----------------------------------------------------------------------------
   // Description:
@@ -65,7 +65,7 @@ protected:
   //----------------------------------------------------------------------------
   // Description:
   // Get a Factory item given its itemKey. Return 0 if any.
-  qCTKAbstractFactoryItem<BaseClassType> * getItem(const QString& itemKey);
+  qCTKAbstractFactoryItem<BaseClassType> * item(const QString& itemKey)const;
 
 private:
   qCTKAbstractFactory(const qCTKAbstractFactory &); // Not implemented
