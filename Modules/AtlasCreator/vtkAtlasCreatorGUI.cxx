@@ -564,13 +564,14 @@ void vtkAtlasCreatorGUI::BuildGUI()
   this->UIPanel->AddPage("AtlasCreator","AtlasCreator", NULL);
 
   // MODULE GUI FRAME
-  // Define your help text and build the help frame here.
+
   std::string help  = "The AtlasCreator module builds a statistical atlas ";
-  help += "using pre-defined label maps.";
+  help += "using pre-defined label maps.  See";
+  help += "<a>http://www.slicer.org/slicerWiki/index.php/Modules:AtlasCreator-Documentation-3.5</a>."
 
   std::string about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, ";
   about += "and the Slicer Community. See <a>http://www.slicer.org</a> for ";
-  about += "details. ";
+  about += "details. Module implemented by Sylvain Jaume (MIT).";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget("AtlasCreator");
   this->BuildHelpAndAboutFrame( page, help.c_str(), about.c_str() );
