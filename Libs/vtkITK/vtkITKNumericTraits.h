@@ -56,7 +56,7 @@ public:
 };
 #endif
 
-#if defined(VTK_TYPE_USE_LONG_LONG)
+#if defined(VTK_TYPE_USE_LONG_LONG) && !defined(ITK_TYPE_USE_LONG_LONG)
 template <>
 class NumericTraits<long long> : public vcl_numeric_limits<long long> {
 public:
