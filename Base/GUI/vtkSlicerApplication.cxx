@@ -377,6 +377,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 #ifdef Q_WS_MAC
   this->Internal->qApplication->setDefaultWindowFlags(
     Qt::WindowStaysOnTopHint | Qt::Tool);
+#elif defined(Q_WS_WIN)
+  this->Internal->qApplication->setDefaultWindowFlags(
+    Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowTitleHint);
 #else
   this->Internal->qApplication->setDefaultWindowFlags(
     Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
