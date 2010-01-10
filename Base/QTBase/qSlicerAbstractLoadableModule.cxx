@@ -19,9 +19,6 @@
 class qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
 {
 public:
-  qSlicerAbstractLoadableModulePrivate()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -34,14 +31,14 @@ void qSlicerAbstractLoadableModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::helpText()
+QString qSlicerAbstractLoadableModule::helpText()const
 {
   qDebug() << "qSlicerAbstractLoadableModule::helpText - Not implemented";
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::acknowledgementText()
+QString qSlicerAbstractLoadableModule::acknowledgementText()const
 {
   qDebug() << "qSlicerAbstractLoadableModule::acknowledgementText - Not implemented";
   return QString();
