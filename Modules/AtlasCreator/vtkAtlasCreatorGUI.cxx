@@ -565,9 +565,9 @@ void vtkAtlasCreatorGUI::BuildGUI()
 
   // MODULE GUI FRAME
 
-  std::string help  = "The AtlasCreator module builds a statistical atlas ";
+  std::string help = "The AtlasCreator module builds a statistical atlas ";
   help += "using pre-defined label maps.  See";
-  help += "<a>http://www.slicer.org/slicerWiki/index.php/Modules:AtlasCreator-Documentation-3.5</a>."
+  help += "<a>http://www.slicer.org/slicerWiki/index.php/Modules:AtlasCreator-Documentation-3.5</a>.";
 
   std::string about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, ";
   about += "and the Slicer Community. See <a>http://www.slicer.org</a> for ";
