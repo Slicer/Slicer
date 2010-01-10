@@ -97,7 +97,14 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
   QCTK_D(qSlicerModulePanel);
   
   // Update module layout
-  moduleWidget->layout()->setContentsMargins(0, 0, 0, 0);
+  if (moduleWidget->layout())
+    {
+    moduleWidget->layout()->setContentsMargins(0, 0, 0, 0);
+    }
+  else
+    {
+    qDebug() << "Warning, the module panel doesn't have a top-level layout.";
+    }
 
   // Insert module in the panel
   d->Layout->insertWidget(1, moduleWidget);
