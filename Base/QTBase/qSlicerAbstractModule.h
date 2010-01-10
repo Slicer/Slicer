@@ -50,16 +50,20 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   // Description:
+  // Set/Get the name of the module (must be unique)
   virtual QString name()const;
   virtual void setName(const QString& name); 
+  
+  // Description:
+  // Title of the module, (displayed to the user) 
   virtual QString title()const = 0;
-  virtual QString category()const { return QString(); }
-  virtual QString contributor()const { return QString(); }
+  virtual QString category()const;
+  virtual QString contributor()const;
 
   // Description:
   // Return help/acknowledgement text
-  virtual QString helpText()const {return "";}
-  virtual QString acknowledgementText()const { return "";}
+  virtual QString helpText()const;
+  virtual QString acknowledgementText()const;
 
   // Description:
   // This method allows to get a pointer to the WidgetRepresentation.

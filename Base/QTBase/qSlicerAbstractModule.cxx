@@ -73,8 +73,40 @@ void qSlicerAbstractModule::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerAbstractModule, QString, name, Name);
-QCTK_SET_CXX(qSlicerAbstractModule, const QString&, setName, Name);
+QString qSlicerAbstractModule::name()const
+{
+  return qctk_d()->Name;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModule::setName(const QString& name)
+{
+  qctk_d()->Name = name;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModule::category()const 
+{ 
+  return QString(); 
+}
+ 
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModule::contributor()const 
+{ 
+  return QString(); 
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModule::helpText()const
+{
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModule::acknowledgementText()const 
+{ 
+  return QString();
+}
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerAbstractModule, vtkMRMLScene*, mrmlScene, MRMLScene);

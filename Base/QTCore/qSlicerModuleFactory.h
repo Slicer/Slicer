@@ -50,6 +50,18 @@ public:
   QString moduleTitle(const QString & moduleName) const;
 
   // Description:
+  // Instantiate all the registered core modules
+  void instantiateCoreModules();
+
+  // Description:
+  // Instantiate all the registered core modules
+  void instantiateLoadableModules();
+
+  // Description:
+  // Instantiate all the registered core modules
+  void instantiateCmdLineModules();
+
+  // Description:
   // Instantiate a module given its name
   qSlicerAbstractModule* instantiateModule(const QString& moduleName);
 

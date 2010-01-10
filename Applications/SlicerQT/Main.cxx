@@ -63,6 +63,10 @@ int main(int argc, char* argv[])
   moduleManager->factory()->registerLoadableModules();
   moduleManager->factory()->registerCmdLineModules();
 
+  moduleManager->factory()->instantiateCoreModules();
+  moduleManager->factory()->instantiateLoadableModules();
+  moduleManager->factory()->instantiateCmdLineModules();
+  
   // Create main window
   qSlicerMainWindow window;
   

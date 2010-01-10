@@ -28,3 +28,4 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractCoreModule, QObject*);
 void qSlicerAbstractCoreModule::setup()
 {
 }
+

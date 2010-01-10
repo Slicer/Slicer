@@ -1240,6 +1240,7 @@ int Slicer3_main(int& argc, char *argv[])
     loadableModuleFactory.Scan();
 #ifdef Slicer3_USE_QT
     qSlicerApplication::application()->moduleManager()->factory()->registerLoadableModules();
+    qSlicerApplication::application()->moduleManager()->factory()->instantiateLoadableModules();
 #endif
     }
 
@@ -1333,6 +1334,7 @@ int Slicer3_main(int& argc, char *argv[])
 
 #ifdef Slicer3_USE_QT
   qSlicerApplication::application()->moduleManager()->factory()->registerCoreModules();
+  qSlicerApplication::application()->moduleManager()->factory()->instantiateCoreModules();
 #endif
 
   SlicerQDebug("Initializing Models Module");
@@ -1598,6 +1600,7 @@ int Slicer3_main(int& argc, char *argv[])
     moduleFactory.Scan();
 #ifdef Slicer3_USE_QT
     qSlicerApplication::application()->moduleManager()->factory()->registerCmdLineModules();
+    qSlicerApplication::application()->moduleManager()->factory()->instantiateCmdLineModules();
 #endif
 
     // Register the node type for the command line modules
