@@ -146,13 +146,16 @@ void vtkMRMLSceneSnapshotNode::Copy(vtkMRMLNode *anode)
     this->Nodes->GetCurrentScene()->RemoveAllItems();
     }
   vtkMRMLNode *node = NULL;
-  int n;
-  for (n=0; n < snode->Nodes->GetCurrentScene()->GetNumberOfItems(); n++) 
+  if ( snode->Nodes != NULL )
     {
-    node = (vtkMRMLNode*)snode->Nodes->GetCurrentScene()->GetItemAsObject(n);
-    if (node)
+    int n;
+    for (n=0; n < snode->Nodes->GetCurrentScene()->GetNumberOfItems(); n++) 
       {
-      this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)node);
+      node = (vtkMRMLNode*)snode->Nodes->GetCurrentScene()->GetItemAsObject(n);
+      if (node)
+        {
+        this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)node);
+        }
       }
     }
 }
