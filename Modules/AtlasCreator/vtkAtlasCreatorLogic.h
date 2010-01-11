@@ -27,7 +27,7 @@
 
 class vtkImageData;
 
-class VTK_AtlasCreator_EXPORT vtkAtlasCreatorLogic :
+class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorLogic :
   public vtkSlicerModuleLogic
 {
   public:

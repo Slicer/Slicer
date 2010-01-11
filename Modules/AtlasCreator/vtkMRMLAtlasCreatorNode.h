@@ -22,7 +22,7 @@
 #include "vtkAtlasCreator.h"
 #include "vtkImageData.h"
 
-class VTK_AtlasCreator_EXPORT vtkMRMLAtlasCreatorNode :
+class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode :
   public vtkMRMLNode
 {
   public:

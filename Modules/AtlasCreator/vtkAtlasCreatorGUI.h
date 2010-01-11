@@ -29,15 +29,15 @@ class vtkKWScaleWithEntry;
 class vtkKWPushButton;
 class vtkKWFrameWithLabel;
 class vtkKWSpinBoxWithLabel;
-class vtkKWRenderWidget;
-class vtkImageViewer2;
+//class vtkKWRenderWidget;
+//class vtkImageViewer2;
 class vtkImageResample;
 class vtkImageThreshold;
 class vtkImageSeedConnectivity;
 class vtkSlicerNodeSelectorWidget;
 class vtkSlicerApplicationLogic;
 
-class VTK_AtlasCreator_EXPORT vtkAtlasCreatorGUI :
+class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorGUI :
   public vtkSlicerModuleGUI
 {
   public:
@@ -54,13 +54,12 @@ class VTK_AtlasCreator_EXPORT vtkAtlasCreatorGUI :
   // Overloads implementation in vtkSlicerModulesGUI
   // to allow loadable modules.
   virtual void SetModuleLogic( vtkSlicerLogic *logic )
-    {
+  {
     this->SetLogic(reinterpret_cast<vtkAtlasCreatorLogic*>(logic));
-    }
+  }
 
   // Description: Get/Set MRML node
-  vtkGetObjectMacro(AtlasCreatorNode,
-      vtkMRMLAtlasCreatorNode);
+  vtkGetObjectMacro( AtlasCreatorNode, vtkMRMLAtlasCreatorNode );
 
   // Description:
   // Create widgets
@@ -135,8 +134,8 @@ protected:
   vtkImageResample                  *ImageResample;
   vtkImageThreshold                 *ImageThreshold;
   vtkImageSeedConnectivity          *ImageSeedConnectivity;
-  vtkImageViewer2                   *ImageViewer2;
-  vtkKWRenderWidget                 *RenderWidget;
+  //vtkImageViewer2                   *ImageViewer2;
+  //vtkKWRenderWidget                 *RenderWidget;
 };
 
 #endif

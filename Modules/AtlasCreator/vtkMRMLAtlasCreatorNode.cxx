@@ -29,9 +29,9 @@ vtkMRMLAtlasCreatorNode* vtkMRMLAtlasCreatorNode::New()
       "vtkMRMLAtlasCreatorNode");
 
   if (ret)
-    {
+  {
     return (vtkMRMLAtlasCreatorNode*)ret;
-    }
+  }
 
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLAtlasCreatorNode;
@@ -45,9 +45,9 @@ vtkMRMLNode* vtkMRMLAtlasCreatorNode::CreateNodeInstance()
       "vtkMRMLAtlasCreatorNode");
 
   if (ret)
-    {
+  {
     return (vtkMRMLAtlasCreatorNode*)ret;
-    }
+  }
 
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLAtlasCreatorNode;

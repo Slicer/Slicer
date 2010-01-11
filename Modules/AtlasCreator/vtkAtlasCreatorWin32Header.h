@@ -27,12 +27,12 @@
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #if defined(AtlasCreator_EXPORTS)
-#define VTK_AtlasCreator_EXPORT __declspec( dllexport )
+#define VTK_ATLASCREATOR_EXPORT __declspec( dllexport )
 #else
-#define VTK_AtlasCreator_EXPORT __declspec( dllimport )
+#define VTK_ATLASCREATOR_EXPORT __declspec( dllimport )
 #endif
 #else
-#define VTK_AtlasCreator_EXPORT
+#define VTK_ATLASCREATOR_EXPORT
 #endif
 
 #endif

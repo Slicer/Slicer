@@ -14,11 +14,19 @@
 
 =======================================================================auto=*/
 
-#include "vtkAtlasCreatorGUI.h"
+#include <string>
+#include <iostream>
+#include <sstream>
+
+// #ifdef Slicer3_USE_QT
+// #include "QtAtlasCreatorModule.h"
+// #endif
 
 #include "vtkObjectFactory.h"
-#include "vtkCommand.h"
 
+#include "vtkAtlasCreatorGUI.h"
+
+#include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
@@ -27,7 +35,7 @@
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
-#include "vtkKWRenderWidget.h"
+//#include "vtkKWRenderWidget.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
@@ -41,14 +49,14 @@
 #include "vtkMRMLSliceNode.h"
 
 #include "vtkImageData.h"
-#include "vtkImageDataGeometryFilter.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkRenderer.h"
-#include "vtkActor.h"
+//#include "vtkImageDataGeometryFilter.h"
+//#include "vtkPolyDataMapper.h"
+//#include "vtkRenderer.h"
+//#include "vtkActor.h"
 #include "vtkImageResample.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageSeedConnectivity.h"
-#include "vtkImageViewer2.h"
+//#include "vtkImageViewer2.h"
 
 //----------------------------------------------------------------------------
 vtkAtlasCreatorGUI* vtkAtlasCreatorGUI::New()
@@ -57,9 +65,9 @@ vtkAtlasCreatorGUI* vtkAtlasCreatorGUI::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkAtlasCreatorGUI");
 
   if (ret)
-    {
+  {
     return (vtkAtlasCreatorGUI*)ret;
-    }
+  }
 
   // If the factory was unable to create the object, then create it here.
   return new vtkAtlasCreatorGUI;
@@ -81,8 +89,8 @@ vtkAtlasCreatorGUI::vtkAtlasCreatorGUI()
   this->ImageResample                = vtkImageResample::New();
   this->ImageThreshold               = vtkImageThreshold::New();
   this->ImageSeedConnectivity        = vtkImageSeedConnectivity::New();
-  this->ImageViewer2                 = vtkImageViewer2::New();
-  this->RenderWidget                 = vtkKWRenderWidget::New();
+  //this->ImageViewer2               = vtkImageViewer2::New();
+  //this->RenderWidget               = vtkKWRenderWidget::New();
 
   this->ApplyButton                  = vtkKWPushButton::New();
 
@@ -98,119 +106,119 @@ vtkAtlasCreatorGUI::vtkAtlasCreatorGUI()
 vtkAtlasCreatorGUI::~vtkAtlasCreatorGUI()
 {
   if (this->SecondLabelMapThresholdScale)
-    {
+  {
     this->SecondLabelMapThresholdScale->SetParent(NULL);
     this->SecondLabelMapThresholdScale->Delete();
     this->SecondLabelMapThresholdScale = NULL;
-    }
+  }
 
   if (this->SliceScale)
-    {
+  {
     this->SliceScale->SetParent(NULL);
     this->SliceScale->Delete();
     this->SliceScale = NULL;
-    }
+  }
 
   if (this->ApplyButton)
-    {
+  {
     this->ApplyButton->SetParent(NULL);
     this->ApplyButton->Delete();
     this->ApplyButton = NULL;
-    }
+  }
 
   if (this->OutputSizeScale)
-    {
+  {
     this->OutputSizeScale->SetParent(NULL);
     this->OutputSizeScale->Delete();
     this->OutputSizeScale = NULL;
-    }
+  }
 
   if (this->VolumeSelector)
-    {
+  {
     this->VolumeSelector->SetParent(NULL);
     this->VolumeSelector->Delete();
     this->VolumeSelector = NULL;
-    }
+  }
 
   if (this->OutVolumeSelector)
-    {
+  {
     this->OutVolumeSelector->SetParent(NULL);
     this->OutVolumeSelector->Delete();
     this->OutVolumeSelector = NULL;
-    }
+  }
 
   if (this->ThirdLabelMapVolumeSelector)
-    {
+  {
     this->ThirdLabelMapVolumeSelector->SetParent(NULL);
     this->ThirdLabelMapVolumeSelector->Delete();
     this->ThirdLabelMapVolumeSelector = NULL;
-    }
+  }
 
   if (this->SecondLabelMapVolumeSelector)
-    {
+  {
     this->SecondLabelMapVolumeSelector->SetParent(NULL);
     this->SecondLabelMapVolumeSelector->Delete();
     this->SecondLabelMapVolumeSelector = NULL;
-    }
+  }
 
   if (this->NodeSelector)
-    {
+  {
     this->NodeSelector->SetParent(NULL);
     this->NodeSelector->Delete();
     this->NodeSelector = NULL;
-    }
+  }
 
   if (this->ImageResample)
-    {
+  {
     this->ImageResample->Delete();
     this->ImageResample = NULL;
-    }
+  }
 
   if (this->ImageThreshold)
-    {
+  {
     this->ImageThreshold->Delete();
     this->ImageThreshold = NULL;
-    }
+  }
 
   if (this->ImageSeedConnectivity)
-    {
+  {
     this->ImageSeedConnectivity->Delete();
     this->ImageSeedConnectivity = NULL;
-    }
+  }
 
-  if (this->ImageViewer2)
-    {
-    this->ImageViewer2->Delete();
-    this->ImageViewer2 = NULL;
-    }
+  //if (this->ImageViewer2)
+  //{
+  //this->ImageViewer2->Delete();
+  //this->ImageViewer2 = NULL;
+  //}
 
-  if (this->RenderWidget)
-    {
-    this->RenderWidget->SetParent(NULL);
-    this->RenderWidget->Delete();
-    this->RenderWidget = NULL;
-    }
+  //if (this->RenderWidget)
+  //{
+  //this->RenderWidget->SetParent(NULL);
+  //this->RenderWidget->Delete();
+  //this->RenderWidget = NULL;
+  //}
 
   if (this->VolumeSelectionFrame)
-    {
+  {
     this->VolumeSelectionFrame->SetParent(NULL);
     this->VolumeSelectionFrame->Delete();
     this->VolumeSelectionFrame = NULL;
-    }
+  }
 
   if (this->ParametersFrame)
-    {
+  {
     this->ParametersFrame->SetParent(NULL);
     this->ParametersFrame->Delete();
     this->ParametersFrame = NULL;
-    }
+  }
 
   if (this->AdvancedParametersFrame)
-    {
+  {
     this->AdvancedParametersFrame->SetParent(NULL);
     this->AdvancedParametersFrame->Delete();
     this->AdvancedParametersFrame = NULL;
-    }
+  }
 
   this->SetLogic(NULL);
   vtkSetMRMLNodeMacro(this->AtlasCreatorNode,NULL);
@@ -220,63 +228,77 @@ vtkAtlasCreatorGUI::~vtkAtlasCreatorGUI()
 void vtkAtlasCreatorGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+
+  os << indent << "Atlas Creator module for Slicer 3.5" << std::endl;
 }
 
 //----------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::AddGUIObservers()
 {
-  this->VolumeSelector->AddObserver(vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
-
-  this->OutVolumeSelector->AddObserver(vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
-
-  this->ThirdLabelMapVolumeSelector->AddObserver(vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
-
-  this->SecondLabelMapVolumeSelector->AddObserver(vtkSlicerNodeSelectorWidget
-      ::NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
-
-  this->NodeSelector->AddObserver(vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
-
-  this->ApplyButton->AddObserver(vtkKWPushButton::InvokedEvent,
+  this->VolumeSelector->AddObserver(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
       (vtkCommand*)this->GUICallbackCommand );
 
-  this->SliceScale->AddObserver(vtkKWScale::ScaleValueChangingEvent,
+  this->OutVolumeSelector->AddObserver(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*)this->GUICallbackCommand );
+
+  this->ThirdLabelMapVolumeSelector->AddObserver(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*)this->GUICallbackCommand );
+
+  this->SecondLabelMapVolumeSelector->AddObserver(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*)this->GUICallbackCommand );
+
+  this->NodeSelector->AddObserver(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*)this->GUICallbackCommand );
+
+  this->ApplyButton->AddObserver(
+      vtkKWPushButton::InvokedEvent,
+      (vtkCommand*)this->GUICallbackCommand );
+
+  this->SliceScale->AddObserver(
+      vtkKWScale::ScaleValueChangingEvent,
       (vtkCommand*)this->GUICallbackCommand);
 }
 
 //----------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::RemoveGUIObservers()
 {
-  this->VolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
+  this->VolumeSelector->RemoveObservers(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
   this->SecondLabelMapVolumeSelector->RemoveObservers(
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand*)this->
-      GUICallbackCommand );
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
-  this->OutVolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
+  this->OutVolumeSelector->RemoveObservers(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
   this->ThirdLabelMapVolumeSelector->RemoveObservers(
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand*)this->
-      GUICallbackCommand );
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
-  this->NodeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
+  this->NodeSelector->RemoveObservers(
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
-  this->ApplyButton->RemoveObservers( vtkKWPushButton::InvokedEvent,
-      (vtkCommand*)this->GUICallbackCommand );
+  this->ApplyButton->RemoveObservers(
+      vtkKWPushButton::InvokedEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 
-  this->SliceScale->RemoveObservers( vtkKWScale::ScaleValueChangingEvent,
-      (vtkCommand*)this->GUICallbackCommand );
+  this->SliceScale->RemoveObservers(
+      vtkKWScale::ScaleValueChangingEvent,
+      (vtkCommand*) this->GUICallbackCommand );
 }
 
 //----------------------------------------------------------------------------
-void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
-    event, void *callData )
+void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller,
+    unsigned long event, void *callData )
 {
   vtkKWPushButton     *button = vtkKWPushButton::SafeDownCast(caller);
   vtkKWScaleWithEntry *scale  = vtkKWScaleWithEntry::SafeDownCast(caller);
@@ -284,111 +306,115 @@ void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::
     SafeDownCast(caller);
 
-  if( selector == this->VolumeSelector && event == vtkSlicerNodeSelectorWidget
-      ::NodeSelectedEvent && this->VolumeSelector->GetSelected() != NULL )
-    {
+  if (selector == this->VolumeSelector &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->VolumeSelector->GetSelected() != NULL)
+  {
     this->UpdateMRML();
     this->UpdateGUI();
-    }
-  else if( selector == this->OutVolumeSelector && event ==
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->OutVolumeSelector->GetSelected() != NULL )
-    {
+  }
+  else if (selector == this->OutVolumeSelector &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->OutVolumeSelector->GetSelected() != NULL)
+  {
     this->UpdateMRML();
     this->UpdateGUI();
-    }
-  else if( selector == this->SecondLabelMapVolumeSelector && event ==
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->SecondLabelMapVolumeSelector->GetSelected() != NULL )
-    {
+  }
+  else if (selector == this->SecondLabelMapVolumeSelector &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->SecondLabelMapVolumeSelector->GetSelected() != NULL)
+  {
     this->UpdateMRML();
     this->UpdateGUI();
-    }
-  else if( selector == this->ThirdLabelMapVolumeSelector && event ==
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->ThirdLabelMapVolumeSelector->GetSelected() != NULL )
-    {
+  }
+  else if (selector == this->ThirdLabelMapVolumeSelector &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->ThirdLabelMapVolumeSelector->GetSelected() != NULL)
+  {
     this->UpdateMRML();
     this->UpdateGUI();
-    }
+  }
 
-  if( selector == this->NodeSelector && event ==
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->NodeSelector->GetSelected() != NULL )
-    {
+  if (selector == this->NodeSelector &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->NodeSelector->GetSelected() != NULL)
+  {
     vtkMRMLAtlasCreatorNode *node = vtkMRMLAtlasCreatorNode::SafeDownCast(
         this->NodeSelector->GetSelected());
     this->Logic->SetAndObserveAtlasCreatorNode(node);
     vtkSetAndObserveMRMLNodeMacro(this->AtlasCreatorNode,node);
     this->UpdateGUI();
-    }
-  else if( button == this->ApplyButton && event == vtkKWPushButton::
-      InvokedEvent )
-    {
+  }
+  else if (button == this->ApplyButton &&
+      event == vtkKWPushButton::InvokedEvent)
+  {
     this->UpdateMRML();
     this->Logic->Apply();
     this->UpdateGUI();
-    }
-  else if( (scale == this->SliceScale || scale == this->
-        SecondLabelMapThresholdScale) && event == vtkKWScale::
-      ScaleValueChangingEvent )
-    {
+  }
+  else if( (scale == this->SliceScale ||
+        scale == this->SecondLabelMapThresholdScale) &&
+      event == vtkKWScale::ScaleValueChangingEvent )
+  {
     double sliceNormalized     = this->SliceScale->GetValue();
-    double thresholdNormalized = this->SecondLabelMapThresholdScale->
-      GetValue();
+    double thresholdNormalized =
+      this->SecondLabelMapThresholdScale->GetValue();
 
-    std::string volumeId = this->AtlasCreatorNode->
-      GetFirstLabelMapRef();
+    std::string volumeId =
+      this->AtlasCreatorNode->GetFirstLabelMapRef();
+
+    std::cout << __FILE__ << " " << __LINE__ << " volumeId "
+      << volumeId << std::endl;
 
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->GetMRMLScene()->GetNodeByID(volumeId) );
 
     if (inVolume == NULL)
-      {
+    {
       vtkErrorMacro("No input volume");
       return;
-      }
+    }
 
     if (inVolume->GetImageData() == NULL)
-      {
+    {
       vtkErrorMacro("No image data for the input volume");
       return;
-      }
+    }
 
     int numComponents = inVolume->GetImageData()->
       GetNumberOfScalarComponents();
 
     if (numComponents != 1)
-      {
+    {
       vtkErrorMacro("Input image has " << numComponents << " components. "
           << "This module only operates on 1-component images.");
       return;
-      }
+    }
 
     bool isNew = this->ImageResample->GetInput() != inVolume->GetImageData();
     int extent[6];
 
     if (isNew)
-      {
+    {
       inVolume->GetImageData()->GetWholeExtent(extent);
 
       if (extent[1]-extent[0] > 63)
-        {
+      {
         double factor = 63.0 / (extent[1]-extent[0]);
         this->ImageResample->SetAxisMagnificationFactor(0,factor);
-        }
+      }
 
       if (extent[3]-extent[2] > 63)
-        {
+      {
         double factor = 63.0 / (extent[3]-extent[2]);
         this->ImageResample->SetAxisMagnificationFactor(0,factor);
-        }
+      }
 
       if (extent[5]-extent[4] > 63)
-        {
+      {
         double factor = 63.0 / (extent[5]-extent[4]);
         this->ImageResample->SetAxisMagnificationFactor(0,factor);
-        }
+      }
 
       this->ImageResample->SetInput(inVolume->GetImageData());
       this->ImageResample->Update();
@@ -401,7 +427,8 @@ void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
     this->ImageResample->GetOutput()->GetDimensions(dim);
     this->ImageResample->GetOutput()->GetScalarRange(scalarRange);
 
-    int slice = extent[4] + (int)((extent[5]-extent[4]) * sliceNormalized + 0.5);
+    int slice = extent[4] + (int)((extent[5]-extent[4]) * sliceNormalized +
+        0.5);
     double threshold = scalarRange[0] + (scalarRange[1]-scalarRange[0]) *
       thresholdNormalized;
 
@@ -440,7 +467,9 @@ void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
           }
         }
       }
-
+    }
+}
+/*
     this->ImageViewer2->SetInput(this->ImageSeedConnectivity->GetOutput());
     this->ImageViewer2->SetSlice(slice);
     this->ImageViewer2->SetRenderWindow(this->RenderWidget->
@@ -465,8 +494,7 @@ void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
 
     this->RenderWidget->GetRenderer()->GetActiveCamera()->Zoom(1.7);
     this->RenderWidget->Render();
-    }
-}
+*/
 
 //----------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::UpdateMRML()
@@ -474,7 +502,7 @@ void vtkAtlasCreatorGUI::UpdateMRML()
   vtkMRMLAtlasCreatorNode* node = this->GetAtlasCreatorNode();
 
   if (node == NULL)
-    {
+  {
     // no parameter node selected yet, create new
     this->NodeSelector->SetSelectedNew("vtkMRMLAtlasCreatorNode");
     this->NodeSelector->ProcessNewNodeCommand("vtkMRMLAtlasCreatorNode",
@@ -485,7 +513,7 @@ void vtkAtlasCreatorGUI::UpdateMRML()
     // set an observe new node in Logic
     this->Logic->SetAndObserveAtlasCreatorNode(node);
     vtkSetAndObserveMRMLNodeMacro(this->AtlasCreatorNode,node);
-   }
+  }
 
   // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(node);
@@ -497,26 +525,26 @@ void vtkAtlasCreatorGUI::UpdateMRML()
   node->SetOutputSize(outputSize);
 
   if (this->VolumeSelector->GetSelected() != NULL)
-    {
+  {
     node->SetFirstLabelMapRef(this->VolumeSelector->GetSelected()->GetID());
-    }
+  }
 
   if (this->OutVolumeSelector->GetSelected() != NULL)
-    {
+  {
     node->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
-    }
+  }
 
   if (this->ThirdLabelMapVolumeSelector->GetSelected() != NULL)
-    {
+  {
     node->SetThirdLabelMapVolumeRef(this->ThirdLabelMapVolumeSelector->
         GetSelected()->GetID());
-    }
+  }
 
   if (this->SecondLabelMapVolumeSelector->GetSelected() != NULL)
-    {
+  {
     node->SetSecondLabelMapVolumeRef(this->SecondLabelMapVolumeSelector->
         GetSelected()->GetID());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -566,8 +594,8 @@ void vtkAtlasCreatorGUI::BuildGUI()
   // MODULE GUI FRAME
 
   std::string help = "The AtlasCreator module builds a statistical atlas ";
-  help += "using pre-defined label maps.  See";
-  help += "<a>http://www.slicer.org/slicerWiki/index.php/Modules:AtlasCreator-Documentation-3.5</a>.";
+  help += "using pre-defined label maps.  See<a>http://www.slicer.org/";
+  help += "slicerWiki/index.php/Modules:AtlasCreator-Documentation-3.5</a>.";
 
   std::string about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, ";
   about += "and the Slicer Community. See <a>http://www.slicer.org</a> for ";
@@ -739,7 +767,7 @@ void vtkAtlasCreatorGUI::BuildGUI()
 
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->SliceScale->GetWidgetName());
-
+/*
   //--------------------------------------------------------------------------
   this->RenderWidget->SetParent(moduleFrame->GetFrame());
   this->RenderWidget->Create();
@@ -750,7 +778,7 @@ void vtkAtlasCreatorGUI::BuildGUI()
 
   this->Script("pack %s -expand n -fill none -anchor c",this->RenderWidget->
       GetWidgetName());
-
+*/
   this->ImageResample->SetInterpolationModeToNearestNeighbor();
 
   this->ImageThreshold->ThresholdByUpper(127.5);
