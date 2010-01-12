@@ -86,6 +86,17 @@ vtkMRMLNode* qMRMLNodeSelector::currentNode()const
 }
 
 // --------------------------------------------------------------------------
+const QString qMRMLNodeSelector::currentNodeId() const
+{
+  vtkMRMLNode* currentNode = this->currentNode();
+  if (currentNode)
+    {
+    return QString::fromLatin1(currentNode->GetID());
+    }
+  return QString();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* factory)
 {
   QCTK_D(qMRMLNodeSelector);

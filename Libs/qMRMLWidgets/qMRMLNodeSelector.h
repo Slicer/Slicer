@@ -66,7 +66,11 @@ public:
   // Description:
   // Set/Get SelectNodeUponCreation flags
   bool selectNodeUponCreation()const;
-  void setSelectNodeUponCreation(bool value); 
+  void setSelectNodeUponCreation(bool value);
+
+  // Description:
+  // Convenient method returning the current node id
+  const QString currentNodeId() const; 
 
 public slots:
   // Description:
