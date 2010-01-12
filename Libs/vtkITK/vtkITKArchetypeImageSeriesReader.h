@@ -318,6 +318,19 @@ public:
     }
 
   // -------
+  int GetSelectedEchoNumbers()
+    {
+    return SelectedEchoNumbers;
+    }
+
+  void SetSelectedEchoNumbers( int v )
+    {
+    SelectedEchoNumbers = v;
+    SetGroupingByTagsOn();
+    }
+
+  
+  // -------
   int GetSelectedDiffusion()
     {
     return SelectedDiffusion;
@@ -369,6 +382,11 @@ public:
     return this->TriggerTime.size();
     }
 
+  unsigned int GetNumberOfEchoNumbers()
+    {
+    return this->EchoNumbers.size();
+    }  
+
   unsigned int GetNumberOfSliceLocation()
     {
     return this->SliceLocation.size();
@@ -414,6 +432,18 @@ public:
       for (unsigned int k = 0; k < GetNumberOfTriggerTime(); k++)
         {
         if ( this->TriggerTime[k].find(triggerTime) != std::string::npos )
+          {
+          return k;
+          }
+        }
+      return -1;
+    }
+
+  int ExistEchoNumbers( const char* echoNumbers )
+    {
+      for (unsigned int k = 0; k < GetNumberOfEchoNumbers(); k++)
+        {
+        if ( this->EchoNumbers[k].find(echoNumbers) != std::string::npos )
           {
           return k;
           }
@@ -522,6 +552,15 @@ public:
       return this->TriggerTime[n].c_str();
     }
 
+  const char* GetNthEchoNumbers( unsigned int n )
+    {
+      if ( n >= this->GetNumberOfEchoNumbers() )
+        {
+        return NULL;
+        } 
+      return this->EchoNumbers[n].c_str();
+    }
+
   float* GetNthDiffusionGradientOrientation( unsigned int n )
     {
       if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
@@ -600,6 +639,19 @@ public:
       return (this->TriggerTime.size()-1);
     }
 
+  int InsertEchoNumbers ( const char * aEcho )
+    {
+      int k = ExistEchoNumbers( aEcho );
+      if ( k >= 0 )
+        {
+        return k;
+        }
+      
+      std::string aVector(aEcho);
+      this->EchoNumbers.push_back( aVector );
+      return (this->EchoNumbers.size()-1);
+    }
+  
   int InsertDiffusionGradientOrientation ( float *a )
     {
       int k = ExistDiffusionGradientOrientation( a );
@@ -656,19 +708,21 @@ public:
   int AssembleVolumeContainingArchetype();
 
   void GroupFiles ( int idxSeriesInstanceUID,
-    int idxContentTime,
-    int idxTriggerTime,
-    int idxDiffusionGradientOrientation,
-    int idxSliceLocation,
-    int idxImageOrientationPatient );
+                    int idxContentTime,
+                    int idxTriggerTime,
+                    int idxEchoNumbers,
+                    int idxDiffusionGradientOrientation,
+                    int idxSliceLocation,
+                    int idxImageOrientationPatient );
 
   const char* GetNthFileName ( int idxSeriesInstanceUID,
-    int idxContentTime,
-    int idxTriggerTime,
-    int idxDiffusionGradientOrientation,
-    int idxSliceLocation,
-    int idxImageOrientationPatient,
-    int n );
+                               int idxContentTime,
+                               int idxTriggerTime,
+                               int idxEchoNumbers,
+                               int idxDiffusionGradientOrientation,
+                               int idxSliceLocation,
+                               int idxImageOrientationPatient,
+                               int n );
 
 
 protected:
@@ -700,6 +754,7 @@ protected:
   int SelectedUID;
   int SelectedContentTime;
   int SelectedTriggerTime;
+  int SelectedEchoNumbers;
   int SelectedDiffusion;
   int SelectedSlice;
   int SelectedOrientation;
@@ -726,6 +781,7 @@ protected:
   // SeriesInstanceUID              0020,000E
   // ContentTime                    0008,0033
   // TriggerTime                    0018,1060
+  // EchoNumbers                    0018,0086
   // DiffusionGradientOrientation   0018,9089 
   // SliceLocation                  0020,1041
   // ImageOrientationPatient        0020,0037
@@ -738,6 +794,7 @@ protected:
   std::vector<std::string> SeriesInstanceUIDs;
   std::vector<std::string> ContentTime;
   std::vector<std::string> TriggerTime;
+  std::vector<std::string> EchoNumbers;
   std::vector< std::vector<float> > DiffusionGradientOrientation;
   std::vector<float> SliceLocation;
   std::vector< std::vector<float> > ImageOrientationPatient;
@@ -745,7 +802,8 @@ protected:
   // index of each dicom file into the above arrays
   std::vector<long int> IndexSeriesInstanceUIDs;
   std::vector<long int> IndexContentTime;
-  std::vector<long int> IndexTriggerTime; 
+  std::vector<long int> IndexTriggerTime;
+  std::vector<long int> IndexEchoNumbers;  
   std::vector<long int> IndexDiffusionGradientOrientation;
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;

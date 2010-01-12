@@ -113,6 +113,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SeriesInstanceUIDs.resize( 0 );
   this->ContentTime.resize( 0 );
   this->TriggerTime.resize( 0 );
+  this->EchoNumbers.resize( 0 );
   this->DiffusionGradientOrientation.resize( 0 );
   this->SliceLocation.resize( 0 );
   this->ImageOrientationPatient.resize( 0 );
@@ -125,6 +126,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SelectedUID = -1;
   this->SelectedContentTime = -1;
   this->SelectedTriggerTime = -1;
+  this->SelectedEchoNumbers = -1;
   this->SelectedDiffusion = -1;
   this->SelectedSlice = -1;
   this->SelectedOrientation = -1;
@@ -468,7 +470,13 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     }
     else 
     {
-      GroupFiles( SelectedUID, SelectedContentTime, SelectedTriggerTime, SelectedDiffusion, SelectedSlice, SelectedOrientation );
+    GroupFiles( SelectedUID,
+                SelectedContentTime,
+                SelectedTriggerTime,
+                SelectedEchoNumbers,
+                SelectedDiffusion,
+                SelectedSlice,
+                SelectedOrientation );
     }
   }
 
@@ -744,7 +752,7 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
 
   for (unsigned int k = 0; k < nSlices; k++)
   {
-    const char* name = GetNthFileName( 0, -1, -1, 0, k, 0, n );
+    const char* name = GetNthFileName( 0, -1, -1, -1, 0, k, 0, n );
     if (name == NULL)
     {
       continue;
@@ -757,24 +765,26 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
 
 //----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInstanceUID,
-                                                        int idxContentTime,
-                                                        int idxTriggerTime,
-                                                        int idxDiffusionGradientOrientation,
-                                                        int idxSliceLocation,
-                                                        int idxImageOrientationPatient,
-                                                        int n )
+                                                               int idxContentTime,
+                                                               int idxTriggerTime,
+                                                               int idxEchoNumbers,
+                                                               int idxDiffusionGradientOrientation,
+                                                               int idxSliceLocation,
+                                                               int idxImageOrientationPatient,
+                                                               int n )
 {
   int nFiles = this->AllFileNames.size();
   int count = 0;
   std::string FirstName;
   for (int k = 0; k < nFiles; k++)
   {
-    if ( (this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
-      (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
-      (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
-      (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation  && this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
-      (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
-      (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0) )
+  if ( (this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
+       (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
+       (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
+       (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||
+       (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation  && this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
+       (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
+       (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0) )
     {
       continue;
     }
@@ -800,22 +810,24 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
 
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
-                                                   int idxContentTime,
-                                                   int idxTriggerTime,
-                                                   int idxDiffusionGradientOrientation,
-                                                   int idxSliceLocation,
-                                                   int idxImageOrientationPatient )
+                                                    int idxContentTime,
+                                                    int idxTriggerTime,
+                                                    int idxEchoNumbers,                                                    
+                                                    int idxDiffusionGradientOrientation,
+                                                    int idxSliceLocation,
+                                                    int idxImageOrientationPatient )
 {
   this->FileNames.resize( 0 );
   int nFiles = this->AllFileNames.size();
   for (int k = 0; k < nFiles; k++)
   {
-    if ( (this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
-      (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
-      (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
-      (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation  && this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
-      (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
-      (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0) )
+  if ( (this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
+       (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
+       (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
+       (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||
+       (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation  && this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
+       (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
+       (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0) )
     {
       continue;
     }
@@ -838,6 +850,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   this->IndexSeriesInstanceUIDs.resize( nFiles );
   this->IndexContentTime.resize( nFiles );
   this->IndexTriggerTime.resize( nFiles );
+  this->IndexEchoNumbers.resize( nFiles );
   this->IndexDiffusionGradientOrientation.resize( nFiles );
   this->IndexSliceLocation.resize( nFiles );
   this->IndexImageOrientationPatient.resize( nFiles );
@@ -845,6 +858,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   this->SeriesInstanceUIDs.resize( 0 );
   this->ContentTime.resize( 0 );
   this->TriggerTime.resize( 0 );
+  this->EchoNumbers.resize( 0 );
   this->DiffusionGradientOrientation.resize( 0 );
   this->SliceLocation.resize( 0 );
   this->ImageOrientationPatient.resize( 0 );
@@ -866,7 +880,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
       // for now, assume ContentTime, TriggerTime, and DiffusionGradientOrientation do not exist
       this->IndexContentTime[f] = -1;
-      this->IndexContentTime[f] = -1;
+      this->IndexTriggerTime[f] = -1;
+      this->IndexEchoNumbers[f] = -1;
       this->IndexDiffusionGradientOrientation[f] = -1;
 
       // Slice Location
@@ -946,6 +961,18 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       this->IndexTriggerTime[f] = -1;
     }
 
+    // echo numbers
+    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0018|0086", tagValue );
+    if ( tagValue.length() > 0 )
+    {
+      int idx = InsertEchoNumbers( tagValue.c_str() );
+      this->IndexEchoNumbers[f] = idx;
+    }
+    else
+    {
+      this->IndexEchoNumbers[f] = -1;
+    }
+    
     // diffision gradient orientation
     tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0010|9089", tagValue );
     if ( tagValue.length() > 0 )
@@ -1114,15 +1141,19 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       
 
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
-  //long int iArchetypeContentTime = this->IndexContentTime[this->IndexArchetype];
+  //long int iArchetypeContentTime =
+  //this->IndexContentTime[this->IndexArchetype];
+  long int iArchetypeEchoNumbers = this->IndexEchoNumbers[this->IndexArchetype];
   long int iArchetypeDiffusion = this->IndexDiffusionGradientOrientation[this->IndexArchetype];
   long int iArchetypeOrientation =  this->IndexImageOrientationPatient[this->IndexArchetype];
 
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
   {
-    if ( (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID && this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) ||
+  if ( (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
+        this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) ||
       //(this->IndexContentTime[k] != iArchetypeContentTime && this->IndexContentTime[k] >= 0 && iArchetypeContentTime >= 0) ||
       //(this->IndexTriggerTime[k] != iArchetypeTriggerTime && this->IndexTriggerTime[k] >= 0 && iArchetypeTriggerTime >= 0) ||
+      (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers && this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0) ||
       (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) ||
       (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
     {
