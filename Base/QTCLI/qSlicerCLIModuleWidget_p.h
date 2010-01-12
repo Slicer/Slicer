@@ -26,6 +26,7 @@
 
 // QT includes
 #include <QHash>
+#include <QList>
 
 // ModuleDescriptionParser includes
 #include <ModuleDescription.h>
@@ -35,7 +36,39 @@
 
 class qSlicerCLIModuleLogic; 
 class QFormLayout;
-class QBoxLayout; 
+class QBoxLayout;
+class vtkMRMLCommandLineModuleNode; 
+
+//-----------------------------------------------------------------------------
+class WidgetValueWrapper
+{
+public:
+  WidgetValueWrapper(const QString& label):Label(label){}
+  virtual QVariant value() = 0;
+  QString label(){ return this->Label; }
+  QString Label; 
+};
+
+//-----------------------------------------------------------------------------
+#define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _VALUE_GETTER)          \
+namespace{                                                           \
+class _NAME##WidgetValueWrapper: public WidgetValueWrapper           \
+{                                                                    \
+public:                                                              \
+  _NAME##WidgetValueWrapper(const QString& label, _WIDGET * widget): \
+    WidgetValueWrapper(label), Widget(widget){}                      \
+  virtual QVariant value()                                           \
+    {                                                                \
+    QVariant value(this->Widget->_VALUE_GETTER());                   \
+    return value;                                                    \
+    }                                                                \
+  _WIDGET* Widget;                                                   \
+};                                                                   \
+}
+
+//-----------------------------------------------------------------------------
+#define INSTANCIATE_WIDGET_VALUE_WRAPPER(_NAME, _LABEL, _WIDGET_INSTANCE)  \
+this->WidgetValueWrappers.push_back(new _NAME##WidgetValueWrapper(_LABEL, _WIDGET_INSTANCE));
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModuleWidgetPrivate: public qSlicerWidget,
@@ -50,7 +83,8 @@ public:
   qSlicerCLIModuleWidgetPrivate()
     {
     this->ProcessInformation = 0;
-    this->Name = "NA"; 
+    this->Name = "NA";
+    this->CommandLineModuleNode = 0; 
     }
   
   // Description:
@@ -110,6 +144,11 @@ public:
   QWidget* createFileTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createEnumerationTagWidget(const ModuleParameter& moduleParameter);
 
+  // Description:
+  // Update MRML:
+  // - create commandLineModuleNode if required
+  void updateMRML();
+
 public slots:
   void onApplyButtonPressed();
   void onCancelButtonPressed();
@@ -133,6 +172,9 @@ public:
   std::vector<ModuleParameterGroup> ParameterGroups;
   ModuleProcessInformation*         ProcessInformation;
 
+  QList<WidgetValueWrapper*> WidgetValueWrappers; 
+  
+  vtkMRMLCommandLineModuleNode* CommandLineModuleNode; 
 //   qSlicerCLIModuleLogic * Logic;
 };
 
