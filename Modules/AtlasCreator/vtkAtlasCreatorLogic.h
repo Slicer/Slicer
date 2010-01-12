@@ -1,7 +1,6 @@
-/*=auto=======================================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -10,25 +9,21 @@
   Module:    $RCSfile: vtkAtlasCreatorLogic.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
-  Author:    $Sylvain Jaume (MIT)$
 
-=======================================================================auto=*/
-
+=========================================================================auto=*/
 #ifndef __vtkAtlasCreatorLogic_h
 #define __vtkAtlasCreatorLogic_h
 
 #include "vtkSlicerModuleLogic.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerApplicationGUI.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkAtlasCreator.h"
 #include "vtkMRMLAtlasCreatorNode.h"
 
-class vtkImageData;
 
-class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorLogic :
-  public vtkSlicerModuleLogic
+class vtkITKGradientAnisotropicDiffusionImageFilter;
+
+class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorLogic : public vtkSlicerModuleLogic
 {
   public:
   static vtkAtlasCreatorLogic *New();
@@ -36,42 +31,28 @@ class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorLogic :
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents( vtkObject *caller, unsigned long event,
-    void *callData ){};
+  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+                                   void *callData ){};
 
   // Description: Get/Set MRML node storing parameter values
-  vtkGetObjectMacro( AtlasCreatorNode,
-    vtkMRMLAtlasCreatorNode);
-  void SetAndObserveAtlasCreatorNode(
-    vtkMRMLAtlasCreatorNode *node)
+  vtkGetObjectMacro (AtlasCreatorNode, vtkMRMLAtlasCreatorNode);
+  void SetAndObserveAtlasCreatorNode(vtkMRMLAtlasCreatorNode *n) 
     {
-    vtkSetAndObserveMRMLNodeMacro(this->AtlasCreatorNode, node);
+    vtkSetAndObserveMRMLNodeMacro( this->AtlasCreatorNode, n);
     }
 
-  // The method that creates and runs VTK pipeline
-  void SliceProcess( vtkTransform* xyToijk, double dim0, double dim1 );
-
+  // The method that creates and runs VTK or ITK pipeline
   void Apply();
-  void ThirdLabelMap();
-
-  double InitMaxThreshold();
-  double InitMinThreshold();
-  double AxialMax();
-  double AxialMin();
-  double SagittalMax();
-  double CoronalMax();
-
+  
 protected:
   vtkAtlasCreatorLogic();
   virtual ~vtkAtlasCreatorLogic();
-
   vtkAtlasCreatorLogic(const vtkAtlasCreatorLogic&);
   void operator=(const vtkAtlasCreatorLogic&);
 
   vtkMRMLAtlasCreatorNode* AtlasCreatorNode;
+  vtkITKGradientAnisotropicDiffusionImageFilter* GradientAnisotropicDiffusionImageFilter;
 
-  vtkImageData *ThirdLabelMapImage;
-  vtkImageData *SecondLabelMap;
 };
 
 #endif

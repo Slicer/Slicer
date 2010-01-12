@@ -1,20 +1,4 @@
-# ============================================================================
-#
-#  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-#  Reserved.
-#
-#  See Doc/copyright/copyright.txt
-#  or http://www.slicer.org/copyright/copyright.txt for details.
-#
-#  Program:   3D Slicer
-#  Module:    $RCSfile: CMakeLists.txt,v $
-#  Date:      $Date: 2006/01/06 17:56:51 $
-#  Version:   $Revision: 1.6 $
-#  Author:    $Sylvain Jaume (MIT)$
-#
-# ============================================================================
-
-PROJECT(AtlasCreator)
+project(AtlasCreator)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND CMAKE_POLICY)
@@ -22,7 +6,7 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
-
+ 
 # --------------------------------------------------------------------------
 # Find Slicer3
 
@@ -31,6 +15,14 @@ if(NOT Slicer3_SOURCE_DIR)
   include(${Slicer3_USE_FILE})
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
+
+# IF(Slicer3_USE_QT)
+#   set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
+#   QT4_WRAP_CPP(MOC_SRCS QtGADModule.h)
+#   SET(SRCS ${SRCS} ${MOC_SRCS} 
+#            QtGADModule.cxx QtGADModule.h)
+#   SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
+# ENDIF(Slicer3_USE_QT)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -43,16 +35,15 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkAtlasCreatorConfigure.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkAtlasCreatorConfigure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/vtkAtlasCreatorConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES
-  ${headers}
+install(FILES 
+  ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkAtlasCreatorConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}
-  COMPONENT Development
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -62,41 +53,64 @@ set(AtlasCreator_SRCS
   vtkAtlasCreatorLogic.cxx
   vtkAtlasCreatorGUI.cxx
   vtkMRMLAtlasCreatorNode.cxx
+  ${SRCS}
   )
+
+# Abstract/pure virtual classes
+
+#SET_SOURCE_FILES_PROPERTIES(
+#vtkModule.cxx
+#PROPERTIES
+#ABSTRACT "TRUE"
+#)
+
+# Helper classes
+
+# SET_SOURCE_FILES_PROPERTIES(
+#   QtGADModule.cxx 
+#   moc_QtGADModule.cxx 
+#   QtGADModule.h
+#   WRAP_EXCLUDE
+#   )
+
 
 # --------------------------------------------------------------------------
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(AtlasCreator
-  AtlasCreator_TCL_SRCS
-  "${AtlasCreator_SRCS}" ""
-  )
+vtk_wrap_tcl3(AtlasCreator 
+  AtlasCreator_TCL_SRCS 
+  "${AtlasCreator_SRCS}" "")
 
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(AtlasCreator_SRCS
-  AtlasCreator.xml
-  )
+generatelm(AtlasCreator_SRCS 
+  AtlasCreator.xml)
 
 # --------------------------------------------------------------------------
 # Build and install the library
 
 set(lib_name AtlasCreator)
-
 add_library(${lib_name}
   ${AtlasCreator_SRCS}
   ${AtlasCreator_TCL_SRCS}
   )
-
 slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
+#   ${QT_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
 slicer3_install_modules(${lib_name})
 
+# --------------------------------------------------------------------------
+# Testing
+
+if(BUILD_TESTING)
+#  ADD_SUBDIRECTORY(Testing)
+endif(BUILD_TESTING)

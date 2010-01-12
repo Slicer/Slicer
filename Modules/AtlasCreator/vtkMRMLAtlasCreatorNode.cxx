@@ -1,145 +1,112 @@
-/*=auto=======================================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLAtlasCreatorNode.cxx,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Sylvain Jaume (MIT)$
+Program:   3D Slicer
+Module:    $RCSfile: vtkMRMLAtlasCreatorNode.cxx,v $
+Date:      $Date: 2006/03/17 15:10:10 $
+Version:   $Revision: 1.2 $
 
-=======================================================================auto=*/
+=========================================================================auto=*/
 
+#include <string>
 #include <iostream>
 #include <sstream>
 
-#include "vtkMRMLAtlasCreatorNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkObjectFactory.h"
 
-//----------------------------------------------------------------------------
+#include "vtkMRMLAtlasCreatorNode.h"
+#include "vtkMRMLScene.h"
+
+
+//------------------------------------------------------------------------------
 vtkMRMLAtlasCreatorNode* vtkMRMLAtlasCreatorNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLAtlasCreatorNode");
-
-  if (ret)
-  {
-    return (vtkMRMLAtlasCreatorNode*)ret;
-  }
-
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAtlasCreatorNode");
+  if(ret)
+    {
+      return (vtkMRMLAtlasCreatorNode*)ret;
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLAtlasCreatorNode;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
 vtkMRMLNode* vtkMRMLAtlasCreatorNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLAtlasCreatorNode");
-
-  if (ret)
-  {
-    return (vtkMRMLAtlasCreatorNode*)ret;
-  }
-
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAtlasCreatorNode");
+  if(ret)
+    {
+      return (vtkMRMLAtlasCreatorNode*)ret;
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLAtlasCreatorNode;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLAtlasCreatorNode::vtkMRMLAtlasCreatorNode()
 {
-  this->SecondLabelMapThreshold = 0.0;
-  this->OutputSize              = 1.0;
-
-  this->FirstLabelMapRef        = NULL;
-  this->OutputVolumeRef         = NULL;
-  this->ThirdLabelMapVolumeRef  = NULL;
-  this->SecondLabelMapVolumeRef = NULL;
-
-  this->HideFromEditors         = true;
+   this->Conductance = 1.0;
+   this->NumberOfIterations = 1;
+   this->TimeStep = 0.1;
+   this->InputVolumeRef = NULL;
+   this->OutputVolumeRef = NULL;
+   this->HideFromEditors = true;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLAtlasCreatorNode::~vtkMRMLAtlasCreatorNode()
 {
-  this->SetFirstLabelMapRef(NULL);
-  this->SetOutputVolumeRef(NULL);
-  this->SetThirdLabelMapVolumeRef(NULL);
-  this->SetSecondLabelMapVolumeRef(NULL);
+   this->SetInputVolumeRef( NULL );
+   this->SetOutputVolumeRef( NULL );
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLAtlasCreatorNode::WriteXML(ostream& of, int nIndent)
 {
-  // Write all MRML node attributes into output stream
   Superclass::WriteXML(of, nIndent);
+
+  // Write all MRML node attributes into output stream
+
   vtkIndent indent(nIndent);
 
   {
-  std::stringstream ss;
-  ss << this->SecondLabelMapThreshold;
-  of << indent << " SecondLabelMapThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->Conductance;
+    of << indent << " Conductance=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  ss << this->OutputSize;
-  of << indent << " OutputSize=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->NumberOfIterations;
+    of << indent << " NumberOfIterations=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  if (this->FirstLabelMapRef)
-    {
-    ss << this->FirstLabelMapRef;
-    of << indent << " FirstLabelMapRef=\"" << ss.str() << "\"";
-    }
+    std::stringstream ss;
+    ss << this->TimeStep;
+    of << indent << " TimeStep=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  if (this->OutputVolumeRef)
-    {
-    ss << this->OutputVolumeRef;
-    of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
-    }
+    std::stringstream ss;
+    if ( this->InputVolumeRef )
+      {
+      ss << this->InputVolumeRef;
+      of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
+     }
   }
-
   {
-  std::stringstream ss;
-  if (this->ThirdLabelMapVolumeRef)
-    {
-    ss << this->ThirdLabelMapVolumeRef;
-    of << indent << " ThirdLabelMapVolumeRef=\"" << ss.str() << "\"";
-    }
+    std::stringstream ss;
+    if ( this->OutputVolumeRef )
+      {
+      ss << this->OutputVolumeRef;
+      of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
+      }
   }
-
-  {
-  std::stringstream ss;
-  if (this->SecondLabelMapVolumeRef)
-    {
-    ss << this->SecondLabelMapVolumeRef;
-    of << indent << " SecondLabelMapVolumeRef=\"" << ss.str() << "\"";
-    }
-  }
-  /*
-  {
-  std::stringstream ss;
-  if (this->DemoImage)
-    {
-    ss << this->DemoImage;
-    of << indent << " DemoImage=\"" << ss.str() << "\"";
-    }
-  }
-  */
 }
 
 //----------------------------------------------------------------------------
@@ -150,52 +117,39 @@ void vtkMRMLAtlasCreatorNode::ReadXMLAttributes(const char** atts)
   // Read all MRML node attributes from two arrays of names and values
   const char* attName;
   const char* attValue;
-
-  while (*atts != NULL)
+  while (*atts != NULL) 
     {
-    attName  = *(atts++);
+    attName = *(atts++);
     attValue = *(atts++);
-
-    if (!strcmp(attName,"SecondLabelMapThreshold"))
+    if (!strcmp(attName, "Conductance")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->SecondLabelMapThreshold;
+      ss >> this->Conductance;
       }
-
-    if (!strcmp(attName,"OutputSize"))
+    else if (!strcmp(attName, "NumberOfIterations")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->OutputSize;
+      ss >> this->NumberOfIterations;
       }
-
-    if (!strcmp(attName,"FirstLabelMapRef"))
+    else if (!strcmp(attName, "TimeStep")) 
       {
-      this->SetFirstLabelMapRef(attValue);
-      this->Scene->AddReferencedNodeID(this->FirstLabelMapRef,this);
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->TimeStep;
       }
-
-    if (!strcmp(attName,"OutputVolumeRef"))
+    else if (!strcmp(attName, "InputVolumeRef"))
+      {
+      this->SetInputVolumeRef(attValue);
+      this->Scene->AddReferencedNodeID(this->InputVolumeRef, this);
+      }
+    else if (!strcmp(attName, "OutputVolumeRef"))
       {
       this->SetOutputVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->OutputVolumeRef,this);
-      }
-
-    if (!strcmp(attName,"ThirdLabelMapVolumeRef"))
-      {
-      this->SetThirdLabelMapVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->ThirdLabelMapVolumeRef,this);
-      }
-
-     if (!strcmp(attName,"SecondLabelMapVolumeRef"))
-      {
-      this->SetSecondLabelMapVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->SecondLabelMapVolumeRef,this);
+      this->Scene->AddReferencedNodeID(this->OutputVolumeRef, this);
       }
     }
-
-  // DemoImage
 }
 
 //----------------------------------------------------------------------------
@@ -204,58 +158,39 @@ void vtkMRMLAtlasCreatorNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLAtlasCreatorNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLAtlasCreatorNode *node =
-    (vtkMRMLAtlasCreatorNode *) anode;
+  vtkMRMLAtlasCreatorNode *node = (vtkMRMLAtlasCreatorNode *) anode;
 
-  this->SetSecondLabelMapThreshold(node->SecondLabelMapThreshold);
-  this->SetOutputSize(node->OutputSize);
-
-  this->SetFirstLabelMapRef(node->FirstLabelMapRef);
+  this->SetConductance(node->Conductance);
+  this->SetNumberOfIterations(node->NumberOfIterations);
+  this->SetTimeStep(node->TimeStep);
+  this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetOutputVolumeRef(node->OutputVolumeRef);
-  this->SetThirdLabelMapVolumeRef(node->ThirdLabelMapVolumeRef);
-  this->SetSecondLabelMapVolumeRef(node->SecondLabelMapVolumeRef);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAtlasCreatorNode::PrintSelf(ostream& os, vtkIndent
-    indent)
+void vtkMRMLAtlasCreatorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
+  
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "SecondLabelMapThreshold: " << this->SecondLabelMapThreshold
-    <<"\n";
-  os << indent << "OutputSize:            " << this->OutputSize        <<"\n";
-  os << indent << "FirstLabelMapRef:   " <<
-   (this->FirstLabelMapRef ? this->FirstLabelMapRef     : "(none)") << "\n";
-  os << indent << "OutputVolumeRef:   " <<
-   (this->OutputVolumeRef ? this->OutputVolumeRef   : "(none)") << "\n";
-  os << indent << "ThirdLabelMapVolumeRef:   " <<
-   (this->ThirdLabelMapVolumeRef ? this->ThirdLabelMapVolumeRef : "(none)") <<
-   "\n";
-   os << indent << "SecondLabelMapVolumeRef:   " <<
-   (this->SecondLabelMapVolumeRef ? this->SecondLabelMapVolumeRef       :
-    "(none)") << "\n";
+  os << indent << "Conductance:   " << this->Conductance << "\n";
+  os << indent << "NumberOfIterations:   " << this->NumberOfIterations << "\n";
+  os << indent << "TimeStep:   " << this->TimeStep << "\n";
+  os << indent << "InputVolumeRef:   " << 
+   (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
+  os << indent << "OutputVolumeRef:   " << 
+   (this->OutputVolumeRef ? this->OutputVolumeRef : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAtlasCreatorNode::UpdateReferenceID(const char *oldID, const char
-    *newID)
+void vtkMRMLAtlasCreatorNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (strcmp(oldID, this->FirstLabelMapRef) == 0)
+  if (!strcmp(oldID, this->InputVolumeRef))
     {
-    this->SetFirstLabelMapRef(newID);
+    this->SetInputVolumeRef(newID);
     }
-  if (strcmp(oldID, this->OutputVolumeRef) == 0)
+  if (!strcmp(oldID, this->OutputVolumeRef))
     {
     this->SetOutputVolumeRef(newID);
     }
-  if (strcmp(oldID, this->ThirdLabelMapVolumeRef) == 0)
-    {
-    this->SetThirdLabelMapVolumeRef(newID);
-    }
-  if (strcmp(oldID, this->SecondLabelMapVolumeRef) == 0)
-    {
-    this->SetSecondLabelMapVolumeRef(newID);
-    }
 }
-

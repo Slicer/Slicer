@@ -1,7 +1,6 @@
-/*=auto=======================================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -10,20 +9,24 @@
   Module:    $RCSfile: vtkMRMLAtlasCreatorNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
-  Author:    $Sylvain Jaume (MIT)$
 
-=======================================================================auto=*/
-
+=========================================================================auto=*/
 #ifndef __vtkMRMLAtlasCreatorNode_h
 #define __vtkMRMLAtlasCreatorNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkAtlasCreator.h"
+#include "vtkMRMLStorageNode.h"
+
+#include "vtkMatrix4x4.h"
+#include "vtkTransform.h"
 #include "vtkImageData.h"
 
-class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode :
-  public vtkMRMLNode
+#include "vtkAtlasCreator.h"
+
+class vtkImageData;
+
+class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLAtlasCreatorNode *New();
@@ -36,7 +39,7 @@ class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode :
 
   // Description:
   // Set node attributes from name/value pairs
-  virtual void ReadXMLAttributes(const char** atts);
+  virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -51,52 +54,48 @@ class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode :
   virtual const char* GetNodeTagName() {return "GADParameters";};
 
   // Description:
-  // Get/Set the threshold to create the mask
-  vtkGetMacro(SecondLabelMapThreshold, double);
-  vtkSetMacro(SecondLabelMapThreshold, double);
+  // Get/Set Number of iterations (module parameter)
+  vtkGetMacro(NumberOfIterations, int);
+  vtkSetMacro(NumberOfIterations, int);
 
   // Description:
-  // Get/Set the factor to downsample the image
-  vtkGetMacro(OutputSize, double);
-  vtkSetMacro(OutputSize, double);
+  // Get/Set Conductance (module parameter)
+  vtkGetMacro(Conductance, double);
+  vtkSetMacro(Conductance, double);
 
   // Description:
-  // Get/Set input volume MRML id
-  vtkGetStringMacro(FirstLabelMapRef);
-  vtkSetStringMacro(FirstLabelMapRef);
-
+  // Get/Set time step (module parameter)
+  vtkGetMacro(TimeStep, double);
+  vtkSetMacro(TimeStep, double);
+ 
   // Description:
-  // Get/Set output volume MRML id
+  // Get/Set input volume MRML Id
+  vtkGetStringMacro(InputVolumeRef);
+  vtkSetStringMacro(InputVolumeRef);
+  
+  // Description:
+  // Get/Set output volume MRML Id
   vtkGetStringMacro(OutputVolumeRef);
   vtkSetStringMacro(OutputVolumeRef);
-
-  // Description:
-  // Get/Set preview volume MRML id
-  vtkGetStringMacro(ThirdLabelMapVolumeRef);
-  vtkSetStringMacro(ThirdLabelMapVolumeRef);
-
-  // Description:
-  // Get/Set mask volume MRML id
-  vtkGetStringMacro(SecondLabelMapVolumeRef);
-  vtkSetStringMacro(SecondLabelMapVolumeRef);
 
   // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+ 
 protected:
   vtkMRMLAtlasCreatorNode();
   ~vtkMRMLAtlasCreatorNode();
   vtkMRMLAtlasCreatorNode(const vtkMRMLAtlasCreatorNode&);
   void operator=(const vtkMRMLAtlasCreatorNode&);
 
-  char *FirstLabelMapRef;
-  char *OutputVolumeRef;
-  char *ThirdLabelMapVolumeRef;
-  char *SecondLabelMapVolumeRef;
+  double Conductance;
+  double TimeStep;
+  int NumberOfIterations;
+  
+  char* InputVolumeRef;
+  char* OutputVolumeRef;
 
-  double SecondLabelMapThreshold;
-  double OutputSize;
 };
 
 #endif
