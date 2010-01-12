@@ -17,15 +17,33 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLVolumeNodeTestHelper1 *New(){return new vtkMRMLVolumeNodeTestHelper1;};
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLVolumeNodeTestHelper1;
+    }
+  virtual const char* GetNodeTagName()
+    {
+    return "vtkMRMLVolumeNodeTestHelper1";
+    }
+
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; }
+};
+ 
 int vtkMRMLVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeNode > node1 = vtkSmartPointer< vtkMRMLVolumeNode >::New();
+  vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLVolumeNode > node2 = vtkSmartPointer< vtkMRMLVolumeNode >::New();
+  vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
