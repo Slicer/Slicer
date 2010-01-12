@@ -47,24 +47,8 @@ public:
  
 int vtkMRMLVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeDisplayNode > node0 = vtkSmartPointer< vtkMRMLVolumeDisplayNode >::New();
-  
-  if( node0 != NULL )
-    {
-    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
-    return EXIT_FAILURE;
-    }
 
   vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 >::New();
-
-  vtkMRMLNode * node0b = node1->CreateNodeInstance();
-  
-  if( node0b != NULL )
-    {
-    std::cerr << "This abstract class is not returning a NULL pointer from its CreateNodeInstance() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
