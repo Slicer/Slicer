@@ -24,6 +24,7 @@ SET(dirs ${dirs}
   FreeSurfer
   Qdec
   MRML
+  MRMLCLI
   )
 
 IF(Slicer3_USE_KWWIDGETS)

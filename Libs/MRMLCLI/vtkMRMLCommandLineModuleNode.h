@@ -26,13 +26,13 @@
 // Libs/ModuleDescriptionParser includes
 #include "ModuleDescription.h"
 
-#include "qSlicerBaseQTCLIExport.h"
+#include "vtkMRMLCLIWin32Header.h"
 
 //BTX
 class ModuleDescriptionMap;
 //ETX
 
-class Q_SLICER_BASE_QTCLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
+class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLCommandLineModuleNode *New();

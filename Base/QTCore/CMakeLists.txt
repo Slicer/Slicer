@@ -16,6 +16,8 @@ SET(slicer_qtbase_include_directories
   ${qSlicerBaseQTCoreModules_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
+  ${MRMLCLI_SOURCE_DIR}
+  ${MRMLCLI_BINARY_DIR}
   )
   
 # Source files
@@ -41,6 +43,8 @@ SET(slicer_qtbase_MOC_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
+  ModuleDescriptionParser
+  MRMLCLI
   qSlicerBaseQTCLI
   qSlicerBaseQTCoreModules
   qSlicerBaseQTBase

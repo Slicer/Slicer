@@ -44,7 +44,6 @@ install(FILES
 set(CommandLineModule_SRCS
   vtkCommandLineModuleLogic.cxx
   vtkCommandLineModuleGUI.cxx
-  vtkMRMLCommandLineModuleNode.cxx
   )
 
 # Abstract/pure virtual classes

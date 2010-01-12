@@ -12,6 +12,8 @@ SET(slicer_qtbase_include_directories
   ${qSlicerBaseQTBase_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
+  ${MRMLCLI_SOURCE_DIR}
+  ${MRMLCLI_BINARY_DIR}
   )
 
 # Source files
@@ -23,8 +25,6 @@ SET(slicer_qtbase_SRCS
   qSlicerCLIModuleWidget_p.h
   qSlicerCLIModuleLogic.cxx
   qSlicerCLIModuleLogic.h
-  vtkMRMLCommandLineModuleNode.cxx
-  vtkMRMLCommandLineModuleNode.h
   )
 
 # Headers that should run through moc
@@ -48,6 +48,7 @@ SET(slicer_qtbase_target_libraries
   qSlicerBaseQTBase
   SlicerBaseLogic
   ModuleDescriptionParser
+  MRMLCLI
   )
 
 Slicer3_build_slicer_qtbase_library(
