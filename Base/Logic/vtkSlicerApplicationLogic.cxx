@@ -1529,6 +1529,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   if (disp)
     {
     vtkMRMLNode *dnode = this->MRMLScene->AddNode( disp );
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+    disp->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    colorLogic->Delete();
     disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
     int isLabelMap = 0;
     vtkMRMLVolumeDisplayNode *displayNode = NULL;
