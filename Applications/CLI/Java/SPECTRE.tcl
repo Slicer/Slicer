@@ -57,7 +57,7 @@ if {[info exists ::env(CLASSPATH)] != 0} {
    }
 }
 
-set ret [catch "exec java -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
+set ret [catch "exec java -Xms400m -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
 puts $res
 # exit $ret
 if {$argv != "--xml"} {
