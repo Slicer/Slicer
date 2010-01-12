@@ -6,6 +6,7 @@
 
 // QT includes
 #include <QObject>
+#include <QHash>
 
 #include "qMRMLWidgetsExport.h"
  
@@ -23,7 +24,7 @@ public:
   typedef QObject           Superclass;
   
   // Constructors
-  explicit qMRMLNodeFactory(QObject* parent);
+  explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory(){}
   
   // Description:
@@ -34,6 +35,11 @@ public:
   // Create and add a node given its classname to the scene associated with the factory
   // Note: The scene has the ownership of the node and is responsible to delete it.
   vtkMRMLNode* createNode(const QString& className);
+
+  // Description:
+  // Convenient method allowing to create a new node and add it to the scene
+  static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
+    const QHash<QString,QString>& attributes = QHash<QString,QString>());
 
   // Description:
   // Add attribute

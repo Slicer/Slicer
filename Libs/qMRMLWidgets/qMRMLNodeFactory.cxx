@@ -11,6 +11,7 @@
 
 // QT includes
 #include <QHash>
+#include <QSharedPointer>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -70,6 +71,23 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     nodeCreated->SetAttribute(i.key().toLatin1(), i.value().toLatin1());
     }
   return nodeCreated; 
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className,
+  const QHash<QString,QString>& attributes)
+{
+  Q_ASSERT(scene);
+  QSharedPointer<qMRMLNodeFactory> factory =
+    QSharedPointer<qMRMLNodeFactory>(new qMRMLNodeFactory());
+  factory->setMRMLScene(scene);
+  // Loop over attribute map and update the factory
+  foreach(const QString& key, attributes.keys())
+    {
+    factory->addAttribute(key, attributes.value(key));
+    }
+  // Instanciate and return the requested node
+  return factory->createNode(className); 
 }
 
 //------------------------------------------------------------------------------
