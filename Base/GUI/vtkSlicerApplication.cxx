@@ -1,29 +1,40 @@
+#include "vtkSlicerConfigure.h" // Slicer3_USE_*
 
+//
+// SlicerQT
+//
 #ifdef Slicer3_USE_QT
 # ifdef Slicer3_USE_PYTHONQT
 #   include "PythonQt.h"
 #   include "PythonQt_QtAll.h"
 # endif
 
+// qSlicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
 #include "qSlicerModulePanel.h"
 //#include "QtSlicerWebKit.h"
+
+// QT includes
 #include <QHash>
 #include <QDebug>
 #include <QStringList>
 
 #endif
 
-#include <sstream>
-#include <vtksys/stl/string>
-#include <vtksys/SystemTools.hxx>
-#include "vtkObjectFactory.h"
+// vtkSlicer includes
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerGUILayout.h"
+#include "vtkSlicerGUICollection.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerTheme.h"
+#include "vtkSlicerFont.h"
+
+// KWWidget includes
 #include "vtkKWNotebook.h"
 #include "vtkKWFrame.h"
 #include "vtkKWUserInterfacePanel.h"
@@ -37,35 +48,38 @@
 #include "vtkKWSplashScreen.h"
 #include "vtkKWSplitFrame.h"
 #include "vtkKWDirectoryPresetSelector.h"
-
-#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkKWMessageDialog.h"
 #include "vtkKWRegistryHelper.h"
-#include "vtkSlicerGUILayout.h"
+#ifdef WIN32
+# include "vtkKWWin32RegistryHelper.h"
+#endif
+
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkOutputWindow.h"
+
+// ITK includes
+#include "itkOutputWindow.h"
+#include "itksys/SystemTools.hxx"
+
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLayoutNode.h"
-#include "vtkSlicerGUICollection.h"
-#include "vtkSlicerTheme.h"
-#include "vtkSlicerFont.h"
 
-#include "vtkOutputWindow.h"
-#include "itkOutputWindow.h"
-
-#ifdef WIN32
-#include "vtkKWWin32RegistryHelper.h"
-#endif
-
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
-#include "itksys/SystemTools.hxx"
+// STL includes
+#include <sstream>
 #include <queue>
 #include <algorithm>
-#include "vtkKWMessageDialog.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+// VTKSYS includes
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
 
-#include "vtkSlicerColorGUI.h"
+#ifndef _WIN32
+# include <unistd.h>
+#endif
+
+#include "vtkSlicerBaseGUIWin32Header.h"
 
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"

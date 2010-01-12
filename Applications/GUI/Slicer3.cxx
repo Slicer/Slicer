@@ -12,6 +12,8 @@
 
 ==========================================================================*/
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
 //---------------------------------------------------------------------------
 // Slicer3_USE_QT
 //
@@ -35,6 +37,7 @@
 #include "vtkKWTkUtilities.h"
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWSplashScreen.h"
+
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
@@ -43,19 +46,24 @@
 #include "vtkSlicerModelHierarchyLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
+
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCrosshairNode.h"
+
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
+
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesGUI.h"
+
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWUserInterfaceManager.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWLogDialog.h"
+
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
@@ -66,8 +74,6 @@
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
-
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #include "ModuleFactory.h"
 

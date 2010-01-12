@@ -13,6 +13,7 @@
 
 =========================================================================auto=*/
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_QT
 #include "qSlicerApplication.h"
@@ -24,11 +25,14 @@
 #endif
 
 
+// STL includes
 #include <sstream>
 #include <string>
+
 #include <vtksys/SystemTools.hxx>
 #include <itksys/SystemTools.hxx>
 
+// VTK includes
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
 #include "vtkObjectFactory.h"
@@ -41,6 +45,7 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderWindow.h"
 
+// KWWidget includes
 #include "vtkKWApplication.h"
 #include "vtkKWTclInteractor.h"
 #include "vtkKWWidget.h"
@@ -63,6 +68,7 @@
 #include "vtkKWEvent.h"
 #include "vtkKWTkUtilities.h"
 
+// vtkSlicer includes
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -83,10 +89,9 @@
 #include "vtkSlicerFiducialListWidget.h"
 #include "vtkSlicerROIViewerWidget.h"
 
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
-
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"
