@@ -15,8 +15,8 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget" native="true">
-     <property name="text" stdset="0">
+    <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget">
+     <property name="text">
       <string>Module Title</string>
      </property>
      <layout class="QVBoxLayout" name="VerticalLayout">
@@ -61,7 +61,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="qMRMLNodeSelector" name="MRMLNodeSelector">
+         <widget class="qMRMLNodeSelector" name="MRMLCommandLineModuleNodeSelector">
           <property name="NodeType">
            <string>vtkMRMLCommandLineModuleNode</string>
           </property>
@@ -138,6 +138,9 @@
      </property>
      <item>
       <widget class="QPushButton" name="DefaultPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Reset parameters to default.</string>
        </property>
@@ -161,6 +164,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="CancelPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Cancel the execution of the module</string>
        </property>
@@ -171,6 +177,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="ApplyPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Execute the module</string>
        </property>
@@ -185,15 +194,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeSelector.h</header>
-  </customwidget>
-  <customwidget>
    <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>qCTKCollapsibleButton.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeSelector</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeSelector.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -207,7 +216,7 @@
   <connection>
    <sender>qSlicerCLIModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLNodeSelector</receiver>
+   <receiver>MRMLCommandLineModuleNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
