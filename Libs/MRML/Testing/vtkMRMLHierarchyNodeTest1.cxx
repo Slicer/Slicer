@@ -17,15 +17,32 @@
 
 #include "TestingMacros.h"
 
+class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
+{
+public:
+  // Provide a concrete New.
+  static vtkMRMLHierarchyNodeTestHelper1 *New(){return new vtkMRMLHierarchyNodeTestHelper1;};
+  virtual vtkMRMLNode* CreateNodeInstance()
+    {
+    return new vtkMRMLHierarchyNodeTestHelper1;
+    }
+  virtual const char* GetNodeTagName()
+    {
+    return "vtkMRMLHierarchyNodeTestHelper1";
+    }
+
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+};
+ 
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLHierarchyNode > node1 = vtkSmartPointer< vtkMRMLHierarchyNode >::New();
+  vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLHierarchyNode > node2 = vtkSmartPointer< vtkMRMLHierarchyNode >::New();
+  vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
 
   node2->Copy( node1 );
 
