@@ -48,24 +48,7 @@ public:
 int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
 {
 
-  vtkSmartPointer< vtkMRMLFiberBundleDisplayNode > node0 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNode >::New();
-  
-  if( node0 != NULL )
-    {
-    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 >::New();
-
-  vtkMRMLNode * node0b = node1->CreateNodeInstance();
-  
-  if( node0b != NULL )
-    {
-    std::cerr << "This abstract class is not returning a NULL pointer from its CreateNodeInstance() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
