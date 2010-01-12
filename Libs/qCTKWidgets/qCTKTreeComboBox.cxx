@@ -132,7 +132,7 @@ void qCTKTreeComboBox::onCollapsed(const QModelIndex& index)
 }
 
 // -------------------------------------------------------------------------
-void qCTKTreeComboBox::onExpanded(const QModelIndex& index)
+void qCTKTreeComboBox::onExpanded(const QModelIndex& /*index*/)
 {
   qctk_d()->ResetPopupSize = true;
 }

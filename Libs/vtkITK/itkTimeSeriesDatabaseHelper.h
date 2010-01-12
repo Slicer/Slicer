@@ -278,6 +278,8 @@ namespace itk {
         ostr << format_str("Lookups:  %7ld\nHits:     %7ld\nHit rate: %7.2lf%%\n\n",
                            stats.finds, stats.finds_hit, 100.0 * stats.finds_hit / (stats.finds+1e-15));
         ostr << format_str("Items removed by LRU: %ld\n\n", stats.removed);
+#else
+        vtkNotUsed(ostr);
 #endif // NDEBUG
       }
 

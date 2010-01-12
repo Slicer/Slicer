@@ -159,8 +159,8 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
   vtkFloatingPointType *m[3], *v[3];
   vtkFloatingPointType m0[3], m1[3], m2[3];
   vtkFloatingPointType v0[3], v1[3], v2[3];
-  vtkDataArray *cellTensors;
-  vtkDataArray *cellScalars = NULL;
+  vtkDataArray *cellTensors = 0;
+  vtkDataArray *cellScalars = 0;
   int pointCount;
   vtkTractographyPoint *sPrev, *sPrevPrev;
   vtkFloatingPointType kv1[3], kv2[3], ku1[3], ku2[3], kl1, kl2, kn[3], K = 0.0;

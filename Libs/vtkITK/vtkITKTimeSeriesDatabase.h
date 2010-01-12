@@ -43,7 +43,7 @@ class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageSource
 public:
   // vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
   static vtkITKTimeSeriesDatabase *New();
-  void PrintSelf(ostream& os, vtkIndent indent){};   
+  void PrintSelf(ostream& os, vtkIndent indent){ Superclass::PrintSelf(os, indent);};
   vtkTypeRevisionMacro(vtkITKTimeSeriesDatabase,vtkImageSource);
 
 public:
@@ -60,7 +60,7 @@ public:
   // Get/Set the current time stamp to read 
   void SetCurrentImage ( unsigned int value )
   { DelegateITKInputMacro ( SetCurrentImage, value); }; 
-  unsigned int GetCurrentImage ( unsigned int value )
+  unsigned int GetCurrentImage ( unsigned int vtkNotUsed(value) )
   { DelegateITKOutputMacro ( GetCurrentImage ); }; 
 
   int GetNumberOfVolumes() 

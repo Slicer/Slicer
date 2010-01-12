@@ -71,7 +71,7 @@ vtkMimxAbaqusFileWriter::~vtkMimxAbaqusFileWriter()
 int vtkMimxAbaqusFileWriter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformationVector * vtkNotUsed(outputVector))
 {
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
@@ -213,6 +213,7 @@ void vtkMimxAbaqusFileWriter::WriteHeader( ostream& os )
 
 void vtkMimxAbaqusFileWriter::WriteHeadingSection( ostream& os )
 {
+  vtkNotUsed(os);
 /*
   if ( Heading.length() )
   {
@@ -1015,7 +1016,7 @@ void vtkMimxAbaqusFileWriter::WriteNodeSets(ostream& os, vtkUnstructuredGrid *gr
 }
 //---------------------------------------------------------------------------------------------------
 void vtkMimxAbaqusFileWriter::WriteRepeatingMaterialProperties(
-  vtkIntArray *ElementIds, vtkDoubleArray *MatProp, 
+  vtkIntArray * vtkNotUsed(ElementIds), vtkDoubleArray *MatProp, 
   vtkUnstructuredGrid *grid , ostream& os, 
   const char *ElementSetName, double PoissonsRatio)
 {

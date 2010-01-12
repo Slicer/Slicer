@@ -41,7 +41,8 @@ public:
   vtkTypeRevisionMacro(vtkMimxAbaqusFileWriter,vtkDataSetWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  void SetFileName( const std::string & fieldStr) { this->SetFileName( fieldStr.c_str() ); }
+  void SetFileName( const std::string & fieldStr)
+    { this->vtkDataSetWriter::SetFileName( fieldStr.c_str() ); }
   void SetNodeElementFileName( const std::string & fieldStr ) {NodeElementFileName = fieldStr;} 
   void SetHeaderInformation( const std::string & fieldStr ) {HeaderInformation = fieldStr;} 
   void SetUserName( const std::string & fieldStr) {UserName = fieldStr;} 

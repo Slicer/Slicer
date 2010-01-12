@@ -990,7 +990,7 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
          }
        }
 
-       const char *key;
+       const char *key = 0;
        int E;
        cout<<"Kind: Masked Sym Matrix"<<endl;
        // Call tendExpand(nout,nin,scale,threshold)

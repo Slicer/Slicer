@@ -66,7 +66,7 @@ vtkImageData* vtkNRRDWriter::GetInput(int port)
 
 //----------------------------------------------------------------------------
 int vtkNRRDWriter::FillInputPortInformation(
-  int port, vtkInformation *info)
+  int vtkNotUsed(port), vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
