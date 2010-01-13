@@ -691,7 +691,30 @@ add_test(ModelMakerTest ${Slicer3_EXE} --launch ModelMakerTest
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
   )
-
+add_test(ModelMakerGenerateAllOneLabelTest ${Slicer3_EXE} --launch ModelMakerTest
+  ModelMakerTest
+    --generateAll
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
+  )
+add_test(ModelMakerGenerateAllThreeLabelsTest ${Slicer3_EXE} --launch ModelMakerTest
+  ModelMakerTest
+    --generateAll
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    ${MRML_TEST_DATA}/helixMask3Labels.nrrd
+  )
+add_test(ModelMakerStartEndTest ${Slicer3_EXE} --launch ModelMakerTest
+  ModelMakerTest
+    --start 1 --end 5
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    ${MRML_TEST_DATA}/helixMask3Labels.nrrd
+  )
+add_test(ModelMakerLabelsTest ${Slicer3_EXE} --launch ModelMakerTest
+  ModelMakerTest
+    --labels 3,1,5
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    ${MRML_TEST_DATA}/helixMask3Labels.nrrd
+  )
 set (CLP ModelMaker)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
