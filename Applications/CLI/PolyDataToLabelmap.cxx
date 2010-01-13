@@ -36,6 +36,7 @@
 
 #include "vtkXMLPolyDataReader.h"
 #include "vtkPolyDataPointSampler.h"
+#include "vtkDebugLeaks.h"
 
 #include "itkPluginUtilities.h"
 #include "PolyDataToLabelmapCLP.h"
@@ -101,7 +102,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
 {
 
   PARSE_ARGS;
-
+  vtkDebugLeaks::SetExitError(true);
+ 
   typedef    T       InputPixelType;
 
   typedef itk::Image< InputPixelType,  3 >   InputImageType;
