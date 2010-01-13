@@ -49,6 +49,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
+  qMRMLNodeFactory.h
   qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h

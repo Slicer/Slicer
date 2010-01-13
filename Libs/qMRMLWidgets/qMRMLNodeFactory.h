@@ -16,13 +16,13 @@ class qMRMLNodeFactoryPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
-  
+  Q_OBJECT
 public:
   
   // Self/Superclass typedef
   typedef qMRMLNodeFactory  Self;
   typedef QObject           Superclass;
-  
+  typedef QHash<QString,QString> AttributeType;
   // Constructors
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory(){}
@@ -39,7 +39,7 @@ public:
   // Description:
   // Convenient method allowing to create a new node and add it to the scene
   static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
-    const QHash<QString,QString>& attributes = QHash<QString,QString>());
+    const AttributeType& attributes = AttributeType());
 
   // Description:
   // Add attribute
