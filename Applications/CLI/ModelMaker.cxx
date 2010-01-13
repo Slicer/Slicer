@@ -48,6 +48,7 @@ Version:   $Revision$
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkSlicerColorLogic.h"
+#include "vtkDebugLeaks.h"
 
 #include <fstream>
 #include <string>
@@ -60,6 +61,8 @@ int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
+
+    vtkDebugLeaks::SetExitError(true);
 
     if (debug) 
       {
