@@ -493,7 +493,12 @@ int main(int argc, char * argv[])
            }
         }
       
-       
+      if (cubes) 
+        {
+        cubes->SetInput(NULL);
+        cubes->Delete();
+        cubes = NULL;
+        }
       cubes = vtkDiscreteMarchingCubes::New();
       std::string comment1 = "Discrete Marching Cubes";
       vtkPluginFilterWatcher watchDMCubes(cubes,
@@ -535,6 +540,11 @@ int main(int argc, char * argv[])
       if (JointSmoothing)
         {
         float passBand = 0.001;
+        if (smoother)
+          {
+          smoother->SetInput(NULL);
+          smoother->Delete();
+          }
         smoother = vtkWindowedSincPolyDataFilter::New();
         std::stringstream stream;
         stream << "Joint Smooth All Models (";
@@ -664,7 +674,12 @@ int main(int argc, char * argv[])
       }
     // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will need
     // to be applied to the model as it will be built in pixel space
-    
+    if (transformIJKtoRAS)
+      {
+      transformIJKtoRAS->SetInput(NULL);
+      transformIJKtoRAS->Delete();
+      transformIJKtoRAS = NULL;
+      }
     transformIJKtoRAS = vtkTransform::New();
     transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
     if (debug)
@@ -812,7 +827,14 @@ int main(int argc, char * argv[])
       
       // threshold
       if (JointSmoothing == 0)
-        {        
+        {
+        if (imageThreshold)
+          {
+          imageThreshold->SetInput(NULL);
+          imageThreshold->RemoveAllInputs();              
+          imageThreshold->Delete();
+          imageThreshold = NULL;
+          }
         imageThreshold = vtkImageThreshold::New();
         std::string comment3 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
@@ -834,7 +856,13 @@ int main(int argc, char * argv[])
         imageThreshold->ThresholdBetween(i,i);
         (imageThreshold->GetOutput())->ReleaseDataFlagOn();
         imageThreshold->ReleaseDataFlagOn();
-            
+
+        if (imageToStructuredPoints)
+          {
+          imageToStructuredPoints->SetInput(NULL);
+          imageToStructuredPoints->Delete();
+          imageToStructuredPoints = NULL;
+          }
         imageToStructuredPoints = vtkImageToStructuredPoints::New();
         imageToStructuredPoints->SetInput(imageThreshold->GetOutput());
         try
@@ -851,7 +879,12 @@ int main(int argc, char * argv[])
       else 
         {
         // use the output of the smoother
-          
+        if (threshold)
+          {
+          threshold->SetInput(NULL);
+          threshold->Delete();
+          threshold = NULL;
+          }
         threshold = vtkThreshold::New();
         std::string comment4 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchThreshold(threshold,
@@ -872,7 +905,13 @@ int main(int argc, char * argv[])
         threshold->ThresholdBetween(i,i);
         (threshold->GetOutput())->ReleaseDataFlagOn();
         threshold->ReleaseDataFlagOn();
-        
+
+        if (geometryFilter)
+          {
+          geometryFilter->SetInput(NULL);
+          geometryFilter->Delete();
+          geometryFilter = NULL;
+          }
         geometryFilter = vtkGeometryFilter::New();
         geometryFilter->SetInput(threshold->GetOutput());
         geometryFilter->ReleaseDataFlagOn();
@@ -882,6 +921,12 @@ int main(int argc, char * argv[])
       int skipLabel = 0;
       if (JointSmoothing == 0)
         {
+         if (mcubes)
+           {
+           mcubes->SetInput(NULL);
+           mcubes->Delete();
+           mcubes = NULL;
+           }
         mcubes = vtkMarchingCubes::New();
         std::string comment5 = "Marching Cubes " + labelName;
         vtkPluginFilterWatcher watchThreshold(mcubes,
@@ -991,6 +1036,12 @@ int main(int argc, char * argv[])
         {
       // In switch from vtk 4 to vtk 5, vtkDecimate was deprecated from the Patented dir, use vtkDecimatePro
       // TODO: look at vtkQuadraticDecimation
+        if (decimator != NULL)
+          {
+          decimator->SetInput(NULL);
+          decimator->Delete();
+          decimator = NULL;
+          }
       decimator = vtkDecimatePro::New();
       std::string comment6 = "Decimate " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(decimator,
@@ -1077,6 +1128,12 @@ int main(int argc, char * argv[])
           {
           std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant() << " is less than zero, reversing..." << endl;
           }
+         if (reverser)
+           {
+           reverser->SetInput(NULL);
+           reverser->Delete();
+           reverser = NULL;
+           }
         reverser = vtkReverseSense::New();
         std::string comment7 = "Reverse " + labelName;
         vtkPluginFilterWatcher watchReverser(reverser,
@@ -1098,7 +1155,13 @@ int main(int argc, char * argv[])
         {
         if (strcmp(FilterType.c_str(),"Sinc") == 0)
           {
-            
+
+          if (smootherSinc)
+            {
+            smootherSinc->SetInput(NULL);
+            smootherSinc->Delete();
+            smootherSinc = NULL;
+            }
           smootherSinc = vtkWindowedSincPolyDataFilter::New();
           std::string comment8 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherSinc,
@@ -1142,6 +1205,12 @@ int main(int argc, char * argv[])
           }
         else 
           {
+          if (smootherPoly)
+            {
+            smootherPoly->SetInput(NULL);
+            smootherPoly->Delete();
+            smootherPoly = NULL;
+            }
           smootherPoly = vtkSmoothPolyDataFilter::New();
           std::string comment9 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherPoly,
@@ -1224,7 +1293,13 @@ int main(int argc, char * argv[])
           writer = NULL;        
           }
         }
-      
+
+      if (transformer)
+        {
+        transformer->SetInput(NULL);
+        transformer->Delete();
+        transformer = NULL;
+        }
       transformer = vtkTransformPolyDataFilter::New();
       std::string comment1 = "Transform " + labelName;
       vtkPluginFilterWatcher watchTransformer(transformer,
@@ -1268,6 +1343,12 @@ int main(int argc, char * argv[])
 
       (transformer->GetOutput())->ReleaseDataFlagOn();
 
+      if (normals)
+        {
+        normals->SetInput(NULL);
+        normals->Delete();
+        normals = NULL;
+        }
       normals = vtkPolyDataNormals::New();
       std::string comment2 = "Normals " + labelName;
       vtkPluginFilterWatcher watchNormals(normals,
@@ -1295,6 +1376,12 @@ int main(int argc, char * argv[])
 
       (normals->GetOutput())->ReleaseDataFlagOn();
 
+      if (stripper)
+        {
+        stripper->SetInput(NULL);
+        stripper->Delete();
+        stripper = NULL;
+        }
       stripper = vtkStripper::New();
       std::string comment3 = "Strip " + labelName;
       vtkPluginFilterWatcher watchStripper(stripper,
