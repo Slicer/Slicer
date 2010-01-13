@@ -120,6 +120,11 @@ vtkMRMLNode::~vtkMRMLNode()
     delete [] this->TempURLString;
     this->TempURLString = NULL;
     }
+
+  if (this->SingletonTag)
+    {
+    this->SetSingletonTag(NULL);
+    }
 }
 
 //----------------------------------------------------------------------------
