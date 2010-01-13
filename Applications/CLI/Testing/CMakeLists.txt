@@ -633,7 +633,7 @@ add_test(ImageLabelCombineTest ${Slicer3_EXE} --launch ImageLabelCombineTest
 set (CLP ImageLabelCombine)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
+target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 
 ##################################
 # ImageReadDicomWrite tests
