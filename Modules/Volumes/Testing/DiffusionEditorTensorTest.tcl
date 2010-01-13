@@ -25,7 +25,7 @@ set testWidget [$::editor  GetTestingWidget]
 
 $testWidget RunDWI
 
-set waiting 1
+set waiting 0
 while {$waiting} {
   puts "Waiting for task..."
   set waiting 0
@@ -43,26 +43,36 @@ while {$waiting} {
   }
   after 250
 }
-update
-puts "Task finished."
+
+while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] } {
+  puts "Waiting for data to be read..."
+  after 1000
+}
 
 $testWidget SetGlyphVisibility 0 1
+update; after 333
 
 $testWidget SetGlyphVisibility 1 1
+update; after 333
 
 $testWidget SetGlyphVisibility 2 1
-
+update; after 333
 
 $testWidget SetGlyphVisibility 0 0
+update; after 333
 
 $testWidget SetGlyphVisibility 1 0
+update; after 333
 
 $testWidget SetGlyphVisibility 2 0
+update; after 333
 
 [$testWidget GetFiducialSelector] SetSelected [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLFiducialListNode]
+update; after 333
 
 $testWidget SetTractVisibility 1
 
+update; after 2000
 
 exit 0
 

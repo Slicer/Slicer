@@ -210,6 +210,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
                        int deleteFile=false);
 
   // Description:
+  // Return the number of items that need to be read from the queue
+  // (this allows code that invokes command line modules to know when 
+  // multiple items are being returned and have all been returned).
+  unsigned int GetReadDataQueueSize();
+
+
+  // Description:
   // Request that data be written from a file to a remote destination.
   int RequestWriteData(const char *refNode, const char *filename,
                        int displayData = false,

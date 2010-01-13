@@ -363,6 +363,11 @@ void vtkSlicerApplicationLogic::ClearCollections ( ) {
     }
 }
 
+//----------------------------------------------------------------------------
+unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
+{
+  return static_cast<unsigned int>( (*this->InternalReadDataQueue).size() );
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
