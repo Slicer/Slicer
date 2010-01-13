@@ -34,13 +34,15 @@ Version:   $Revision$
 #include "ModuleDescription.h"
 #include "ModuleParameterGroup.h"
 #include "ModuleParameter.h"
+#include "vtkDebugLeaks.h"
 
 #include <string>
 
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
-    
+    vtkDebugLeaks::SetExitError(true);
+
     ModuleDescription module;
     ModuleDescriptionParser parser;
     if (parser.Parse(GetXMLModuleDescription(), module))

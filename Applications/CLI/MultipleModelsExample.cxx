@@ -28,6 +28,7 @@ Version:   $Revision$
 #include "vtkCubeSource.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyData.h"
+#include "vtkDebugLeaks.h"
 
 #include "vtksys/SystemTools.hxx"
 
@@ -39,6 +40,7 @@ Version:   $Revision$
 int main(int argc, char * argv[])
 {
   PARSE_ARGS;
+  vtkDebugLeaks::SetExitError(true);
 
   std::cout << "Label image file: " << InputVolume << std::endl;
   std::cout << "Color table file: " << ColorTable << std::endl;
