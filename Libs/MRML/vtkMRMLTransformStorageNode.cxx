@@ -518,8 +518,8 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkgrid->SetInterpolationModeToCubic();
       vtkImageData *vtkgridimage = vtkImageData::New();
 
-      GridImageType::IndexType index
-        = gridImage->GetBufferedRegion().GetIndex();
+      //GridImageType::IndexType index
+      //  = gridImage->GetBufferedRegion().GetIndex();
       GridImageType::SizeType size
         = gridImage->GetBufferedRegion().GetSize();
       
