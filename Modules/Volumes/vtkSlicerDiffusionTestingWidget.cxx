@@ -428,6 +428,12 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
     this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   this->MRMLScene->AddNodeNoNotify (tensorCLM);
 
+  if ( tensorCLM == NULL )
+    {
+    vtkErrorMacro( "couldn't allocate command line module node");
+    return;
+    }
+
   // set its name  
   tensorCLM->SetModuleDescription("Diffusion Tensor Estimation");
   tensorCLM->SetName("GradientEditor: Tensor Estimation");
