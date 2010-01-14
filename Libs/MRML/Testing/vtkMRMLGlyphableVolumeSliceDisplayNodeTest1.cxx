@@ -84,5 +84,13 @@ int vtkMRMLGlyphableVolumeSliceDisplayNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  vtkSmartPointer< vtkMatrix4x4 > positionMatrix = vtkSmartPointer< vtkMatrix4x4 >::New();
+
+  node2->SetSlicePositionMatrix( positionMatrix );
+ 
+  vtkSmartPointer< vtkMatrix4x4 > glyphRotationMatrix = vtkSmartPointer< vtkMatrix4x4 >::New();
+
+  node2->SetSliceGlyphRotationMatrix( glyphRotationMatrix );
+ 
   return EXIT_SUCCESS;
 }
