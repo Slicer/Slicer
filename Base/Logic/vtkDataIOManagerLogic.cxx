@@ -43,8 +43,11 @@ vtkDataIOManagerLogic::~vtkDataIOManagerLogic()
   if ( this->DataIOManager )
     {
     this->SetAndObserveDataIOManager ( NULL );
-    this->DataIOManager->Delete();
-    this->DataIOManager = NULL;
+    if (this->DataIOManager)
+      {
+      this->DataIOManager->Delete();
+      this->DataIOManager = NULL;
+      }
     }
 }
 
