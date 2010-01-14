@@ -36,7 +36,7 @@ vtkImageLabelOutline* vtkImageLabelOutline::New()
 // Constructor sets default values
 vtkImageLabelOutline::vtkImageLabelOutline()
 {
-  this->SetOutline(1);
+  this->Outline = 1;
   this->Background = 0;
   this->HandleBoundaries = 1;
   this->SetNeighborTo8();
