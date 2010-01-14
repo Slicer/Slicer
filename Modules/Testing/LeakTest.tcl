@@ -51,6 +51,7 @@ puts $::dynamicModules
 #
 proc runSlicer { {doNotIgnore ""} {target ""} } {
 
+  set target $doNotIgnore
   # these libs are in the Modules directory even though Slicer3.cxx links to them (bad...)
   # todo - this doesn't actully support windows dll naming convention
   lappend doNotIgnore "lib/Slicer3/Modules/libVolumes.$::EXT"
@@ -91,13 +92,13 @@ proc runSlicer { {doNotIgnore ""} {target ""} } {
 
   puts ""
   if { $ret } {
-    puts "****** Error when not ignoring $doNotIgnore"
+    puts "****** Error when not ignoring $target"
     lappend ::RESULTS(failers) $target"
   } else {
     puts "-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ NO ERRORS"
   }
   if { [string match "*vtkDebugLeaks*" $res] } {
-    puts "%%%%%%%%% Leaks when not ignoring $doNotIgnore"
+    puts "%%%%%%%%% Leaks when not ignoring $target"
     lappend ::RESULTS(leakers) $target"
   } else {
     puts "-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ NO LEAKS"
