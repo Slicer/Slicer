@@ -18,6 +18,7 @@
 
 ModuleDescription::ModuleDescription()
 {
+  this->Title = "Unknown";
   this->Type = "Unknown";
   this->Description = "No description provided";
   this->Category = "Unspecified";
@@ -26,7 +27,6 @@ ModuleDescription::ModuleDescription()
   this->License = "";
   this->Acknowledgements = "Thank you everyone.";
   this->Contributor = "Anonymous";
-  this->Type = "";
   this->Target = "";
   this->Location = "";
   this->AlternativeType = "";
