@@ -161,6 +161,8 @@ public:
   // Reimplement from parent
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
+    { Superclass::ApplyTransform(transformMatrix); }
 
 protected:
   vtkMRMLCameraNode();

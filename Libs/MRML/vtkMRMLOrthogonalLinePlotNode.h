@@ -104,6 +104,8 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
   // Get minimum and muximum Y values.
   // Returns 0 if the Y range cannot be determined.
   virtual int GetYRange(double* yrange);
+  virtual int GetYRange(const double* xrange, double* yrange)
+    { return Superclass::GetYRange(xrange, yrange); }
 
   // Description:
   // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)

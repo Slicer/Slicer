@@ -115,6 +115,8 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
+    { Superclass::ApplyTransform(transformMatrix); }
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

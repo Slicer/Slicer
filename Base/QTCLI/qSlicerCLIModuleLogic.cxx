@@ -300,6 +300,7 @@ std::string qSlicerCLIModuleLogic::constructTemporaryFileName(const std::string&
                              const std::vector<std::string>& extensions,
                              CommandLineModuleType commandType) const
 {
+  Q_UNUSED(type);
   std::string fname = name;
   std::string pid;
   std::ostringstream pidString;
@@ -561,6 +562,8 @@ void qSlicerCLIModuleLogic::applyTask(void *clientdata)
 void qSlicerCLIModuleLogic::getModuleInputAndOutputNode(CommandLineModuleType commandType,
   vtkMRMLCommandLineModuleNode * node0, MRMLIDToFileNameMap & nodesToWrite, MRMLIDToFileNameMap & nodesToReload)
 {
+  Q_UNUSED(nodesToWrite);
+  Q_UNUSED(nodesToReload);
   qDebug() << "qSlicerCLIModuleLogic::getModuleInputAndOutputNode";
   Q_ASSERT(node0);
   // iterators for parameter groups
@@ -1508,6 +1511,8 @@ void qSlicerCLIModuleLogic::cleanUp()
 void qSlicerCLIModuleLogic::runCommandLineFilter(vtkMRMLCommandLineModuleNode * node0,
   const QStringList& argList)
 {
+  Q_UNUSED(node0);
+  Q_UNUSED(argList);
   qDebug() << "qSlicerCLIModuleLogic::runCommandLineFilter";
 //   // Run as a command line module
 //   //
@@ -1930,7 +1935,8 @@ void qSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode *
 void qSlicerCLIModuleLogic::runPythonFilter(vtkMRMLCommandLineModuleNode * node0,
   const QStringList& argList)
 {
-
+  Q_UNUSED(node0);
+  Q_UNUSED(argList);
   qDebug() << "qSlicerCLIModuleLogic::runPythonFilter";
 //   // For the moment, ignore the output and just run the module
 //   vtkSlicerApplication::GetInstance()->InformationMessage( "Preparing to execute Python Module" );

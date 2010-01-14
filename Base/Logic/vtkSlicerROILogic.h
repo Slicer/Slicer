@@ -20,12 +20,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerROILogic : public vtkSlicerLogic
 public:
   // The Usual vtk class functions
   static vtkSlicerROILogic *New();
-  vtkTypeRevisionMacro(vtkSlicerROILogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerROILogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
   // Update logic state when MRML scene changes
   void ProcessMRMLEvents(); 
+  virtual void ProcessMRMLEvents ( vtkObject * caller, 
+      unsigned long event, void * callData ) 
+    { Superclass::ProcessMRMLEvents(caller, event, callData); }
 
   vtkMRMLROIListNode * AddROIList();
 

@@ -57,6 +57,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerLog
   virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ ) {};  
+  virtual void ProcessLogicEvents() {}
 
 protected:
   vtkSlicerTransformLogic();

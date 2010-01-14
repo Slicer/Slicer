@@ -147,6 +147,8 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; };
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
+    { Superclass::ApplyTransform(transformMatrix); }
  
   // Description:
   // Create default storage node or NULL if does not have one

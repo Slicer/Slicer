@@ -222,6 +222,8 @@ public:
   }
 
 vtkImageData * AllocateOutputData(vtkDataObject *out);
+virtual void AllocateOutputData(vtkImageData *out, int *uExtent)
+  { Superclass::AllocateOutputData(out, uExtent); }
 void AllocatePointData(vtkImageData *out);
 
 protected:
