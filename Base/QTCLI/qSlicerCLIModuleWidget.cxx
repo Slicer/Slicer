@@ -659,6 +659,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createTransformTagWidget(const ModulePar
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createDirectoryTagWidget(const ModuleParameter& moduleParameter)
 {
+  Q_UNUSED(moduleParameter);
   QPushButton* widget = new QPushButton("Select directory ...");
   return widget;
 }
@@ -666,6 +667,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDirectoryTagWidget(const ModulePar
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createFileTagWidget(const ModuleParameter& moduleParameter)
 {
+  Q_UNUSED(moduleParameter);
   QPushButton* widget = new QPushButton("Select file ...");
   return widget;
 }

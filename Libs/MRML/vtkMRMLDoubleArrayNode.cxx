@@ -277,7 +277,7 @@ unsigned int vtkMRMLDoubleArrayNode::GetSize()
 
 
 //----------------------------------------------------------------------------
-double vtkMRMLDoubleArrayNode::GetYAxisValue(double x, int interp)
+double vtkMRMLDoubleArrayNode::GetYAxisValue(double vtkNotUsed(x), int vtkNotUsed(interp))
 {
   // not implemented yet
   //  double xy[2];

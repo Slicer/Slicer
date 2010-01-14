@@ -33,8 +33,7 @@ void vtkSlicerROILogic::ProcessMRMLEvents()
 //----------------------------------------------------------------------------
 void vtkSlicerROILogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-   
-
+  Superclass::PrintSelf(os, indent);
 }
 
 

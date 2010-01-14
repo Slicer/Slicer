@@ -13,8 +13,8 @@ class qCTKFactoryPluginItem : public qCTKAbstractFactoryItem<BaseClassType>
 public:
   explicit qCTKFactoryPluginItem(const QString& key, const QString& path);
   virtual bool load();
-  QString path();
-  virtual QString loadErrorString();
+  QString path()const;
+  virtual QString loadErrorString()const;
 
 protected:
   virtual BaseClassType* instanciator();

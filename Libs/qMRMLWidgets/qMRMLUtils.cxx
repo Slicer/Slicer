@@ -278,6 +278,7 @@ bool qMRMLUtils::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 //------------------------------------------------------------------------------
 bool qMRMLUtils::canReparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 {
+  Q_UNUSED(newParent);
   Q_ASSERT(node);
   if (!node)
     {

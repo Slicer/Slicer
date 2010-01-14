@@ -45,7 +45,7 @@ vtkPermissionPrompter::~vtkPermissionPrompter()
 
 
 //----------------------------------------------------------------------------
-int vtkPermissionPrompter::Prompt( const char *message )
+int vtkPermissionPrompter::Prompt( const char * vtkNotUsed(message) )
 {
   // initialize with guest information
   this->Username = const_cast<char *>("");

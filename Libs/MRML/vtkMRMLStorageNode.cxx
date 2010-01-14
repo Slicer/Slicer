@@ -284,7 +284,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller), unsigned long event, void *callData )
 {
   if (event ==  vtkCommand::ProgressEvent) 
     {

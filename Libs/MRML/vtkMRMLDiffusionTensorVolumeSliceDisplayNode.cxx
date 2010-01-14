@@ -197,7 +197,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *i
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
 }
 

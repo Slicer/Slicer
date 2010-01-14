@@ -25,12 +25,15 @@ qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int column)
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
 {
+  Q_UNUSED(newParent);
   return false;
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLAbstractItemHelper::child(int row, int column) const
 {
+  Q_UNUSED(row);
+  Q_UNUSED(column);
   return 0;
 }
 
@@ -43,6 +46,7 @@ int qMRMLAbstractItemHelper::childCount() const
 //------------------------------------------------------------------------------
 int qMRMLAbstractItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
 {
+  Q_UNUSED(child);
   return -1;
 }
 
@@ -55,6 +59,7 @@ int qMRMLAbstractItemHelper::column() const
 //------------------------------------------------------------------------------
 QVariant qMRMLAbstractItemHelper::data(int role) const
 {
+  Q_UNUSED(role);
   return QVariant();
 }
 
@@ -73,6 +78,7 @@ qMRMLAbstractItemHelper* qMRMLAbstractItemHelper::parent() const
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
 {
+  Q_UNUSED(newParent);
   return false;
 }
 
@@ -91,6 +97,8 @@ int qMRMLAbstractItemHelper::row() const
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::setData(const QVariant &value, int role)
 {
+  Q_UNUSED(value);
+  Q_UNUSED(role);
   return false;
 }
 
@@ -442,6 +450,7 @@ int qMRMLRootItemHelper::childCount() const
 QVariant qMRMLRootItemHelper::data(int role) const
 {
   Q_ASSERT(false);
+  Q_UNUSED(role);
   return QVariant();
 }
 

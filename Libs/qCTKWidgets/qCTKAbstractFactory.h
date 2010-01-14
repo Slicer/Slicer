@@ -13,7 +13,7 @@ class qCTKAbstractFactoryItem
 public:
   explicit qCTKAbstractFactoryItem(const QString& key);
   
-  virtual QString loadErrorString();
+  virtual QString loadErrorString()const;
   virtual bool load() = 0;
   BaseClassType* instantiate();
   bool instantiated();

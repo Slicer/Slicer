@@ -23,14 +23,14 @@ bool qCTKFactoryPluginItem<BaseClassType>::load()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QString qCTKFactoryPluginItem<BaseClassType>::path()
+QString qCTKFactoryPluginItem<BaseClassType>::path()const
 { 
   return this->Path; 
 }
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QString qCTKFactoryPluginItem<BaseClassType>::loadErrorString()
+QString qCTKFactoryPluginItem<BaseClassType>::loadErrorString()const
 { 
   return this->Loader.errorString();
 }

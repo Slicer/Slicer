@@ -160,7 +160,7 @@ int vtkImageSlice::RequestUpdateExtent(
 }
 
 //----------------------------------------------------------------------------
-int vtkImageSlice::FillInputPortInformation(int port, vtkInformation *info)
+int vtkImageSlice::FillInputPortInformation(int vtkNotUsed(port), vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
@@ -171,7 +171,7 @@ int vtkImageSlice::FillInputPortInformation(int port, vtkInformation *info)
 // TODO
 int vtkImageSlice::RequestInformation(
   vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
+  vtkInformationVector ** vtkNotUsed(inputVector),
   vtkInformationVector *outputVector)
 {
   int outWholeExt[6];

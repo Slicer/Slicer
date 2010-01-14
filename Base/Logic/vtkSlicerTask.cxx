@@ -55,4 +55,5 @@ void
 vtkSlicerTask
 ::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }

@@ -83,7 +83,9 @@ void vtkDataIOManager::TransferUpdateCallback ( vtkObject *caller,
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManager::ProcessTransferUpdates ( vtkObject *caller, unsigned long event, void *callData )
+void vtkDataIOManager::ProcessTransferUpdates ( vtkObject * vtkNotUsed(caller), 
+                                                unsigned long vtkNotUsed(event), 
+                                                void *vtkNotUsed(callData) )
 {
   vtkDebugMacro("ProcessTransferUpdates: invoking transfer update event.");
   this->InvokeEvent ( vtkDataIOManager::TransferUpdateEvent);

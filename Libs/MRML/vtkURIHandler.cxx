@@ -55,7 +55,7 @@ void vtkURIHandler::SetLocalFile (FILE *localFile )
 
 
 //----------------------------------------------------------------------------
-int vtkURIHandler::ProgressCallback ( FILE *outputFile, double dltotal,
+int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dltotal,
                               double dlnow, double ultotal, double ulnow )
 {
     if(ultotal == 0)

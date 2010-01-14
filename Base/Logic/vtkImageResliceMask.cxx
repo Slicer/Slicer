@@ -1965,7 +1965,8 @@ void vtkImageResliceMaskClearExecute(vtkImageResliceMask *self,
 void vtkImageResliceMaskExecute(vtkImageResliceMask *self,
                             vtkImageData *inData, void *inPtr,
                             vtkImageData *outData, void *outPtr,
-                            int outExt[6], int id, vtkImageData *BackgroundMask, void *BackgroundMaskPtr)
+                            int outExt[6], int id, vtkImageData * vtkNotUsed(BackgroundMask),
+                            void *BackgroundMaskPtr)
 {
   int numscalars;
   int idX, idY, idZ;
@@ -2138,7 +2139,9 @@ void vtkOptimizedExecute(vtkImageResliceMask *self,
                          vtkImageData *inData, void *inPtr,
                          vtkImageData *outData, void *outPtr,
                          int outExt[6], int id, F newmat[4][4], 
-                         vtkAbstractTransform *newtrans, vtkImageData *BackgroundMask, void *BackgroundMaskPtr)
+                         vtkAbstractTransform *newtrans, 
+                         vtkImageData *vtkNotUsed(BackgroundMask), 
+                         void *BackgroundMaskPtr)
 {
   int i, numscalars;
   int idX, idY, idZ;
@@ -2980,7 +2983,9 @@ template <class F>
 void vtkReslicePermuteExecute(vtkImageResliceMask *self,
                                      vtkImageData *inData, void *inPtr,
                                      vtkImageData *outData, void *outPtr,
-                                     int outExt[6], int id, F newmat[4][4], vtkImageData *BackgroundMask, void *BackgroundMaskPtr)
+                                     int outExt[6], int id, F newmat[4][4], 
+                                     vtkImageData *vtkNotUsed(BackgroundMask),
+                                     void *BackgroundMaskPtr)
 {
   vtkIdType outInc[3];
   int scalarSize, numscalars;

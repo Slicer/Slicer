@@ -43,9 +43,9 @@ vtkImageLabelChange::vtkImageLabelChange()
 // This templated function executes the filter for any type of data.
 template <class T>
 static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
-                     vtkImageData *inData, T *inPtr,
+                     vtkImageData *vtkNotUsed(inData), T *inPtr,
                      vtkImageData *outData, 
-                     int outExt[6], int id)
+                     int outExt[6], int vtkNotUsed(id))
 {
     T *outPtr = (T *)outData->GetScalarPointerForExtent(outExt);
     // looping

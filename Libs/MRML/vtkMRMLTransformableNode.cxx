@@ -144,7 +144,7 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
 //---------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 
-                                                  void *callData )
+                                                  void *vtkNotUsed(callData) )
 {
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode != NULL && tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&

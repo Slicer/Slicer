@@ -97,7 +97,7 @@ int connect(
   register size_t label, *outimagep, *outimage_end, *imagep, *new_imagep, boundary_mask_start, component_mask, axis_mask;
   register ptrdiff_t *stride, stridev;
 
-  assert(rank >= 0);
+  //assert(rank >= 0); // Note: Always true !
   if (rank == 0) {
     *outimage = (*inimage != inbackground);
     if (num_components) *num_components = *outimage;
@@ -498,7 +498,9 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
           for (outIdx0 = outMin0; outIdx0 <= outMax0; outIdx0++)
             {
             idx = conOutput[i];
-            if (idx >= 0 && idx <= numIslands[0])
+            // Note: Since 'idx' is defined as 'size_t' it's of type 'unsigned'
+            // It means 'idx >= 0' is always true.
+            if (/*idx >= 0 && */idx <= numIslands[0])
               {
               census[idx] = census[idx] + 1;
               }
@@ -518,7 +520,9 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
           for (outIdx0 = outMin0; outIdx0 <= outMax0; outIdx0++)
             {
             idx = conOutput[i];
-            if (idx >= 0 && idx <= numIslands[z])
+            // Note: Since 'idx' is defined as 'size_t' it's of type 'unsigned'
+            // It means 'idx >= 0' is always true.
+            if (/*idx >= 0 && */idx <= numIslands[z])
               {
               census[dz+idx] = census[dz+idx] + 1;
               }

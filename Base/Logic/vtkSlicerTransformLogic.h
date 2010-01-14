@@ -37,7 +37,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerLog
   // The Usual vtk class functions
   static vtkSlicerTransformLogic *New();
   vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkSlicerLogic);
-  void PrintSelf(ostream& os, vtkIndent indent) {};
+  void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 
   // Description:
   // Read transform from file 

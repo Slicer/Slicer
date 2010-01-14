@@ -99,7 +99,7 @@ int paintRound (double in)
 
 
 template <class T>
-void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
+void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 {
   int deltaTopRow[3];
   int deltaBottomRow[3];

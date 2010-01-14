@@ -14,7 +14,7 @@ qCTKAbstractFactoryItem<BaseClassType>::qCTKAbstractFactoryItem(const QString& k
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QString qCTKAbstractFactoryItem<BaseClassType>::loadErrorString()
+QString qCTKAbstractFactoryItem<BaseClassType>::loadErrorString()const
 { 
   return QString(); 
 }

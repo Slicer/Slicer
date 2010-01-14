@@ -496,7 +496,8 @@ void vtkSlicerGlyphSource2D::CreateHookedArrow(vtkPoints *pts, vtkCellArray *lin
 }
 
 void vtkSlicerGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
-                                             vtkCellArray *polys, vtkUnsignedCharArray *colors,
+                                             vtkCellArray *vtkNotUsed(polys),
+                                             vtkUnsignedCharArray *colors,
                                              double scale)
 {
   // make a star shaped array of lines around the center, from SeedSWidget.tcl

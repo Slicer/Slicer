@@ -323,6 +323,7 @@ void qMRMLNodeSelector::onItemAdded(int index)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onItemAboutToBeRemoved(int index)
 {
+  Q_UNUSED(index);
   // Here the node can't be found in the scene. The signal nodeAboutToBeRemoved
   // has already been called in onRemove(). this->Internal->MRMLNodeBeingRemoved
   // is the node getting removed. Be careful when using index.
@@ -331,6 +332,7 @@ void qMRMLNodeSelector::onItemAboutToBeRemoved(int index)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onItemRemoved(int index)
 {
+  Q_UNUSED(index);
   QCTK_D(qMRMLNodeSelector);
   
   if (this->count() == 0)

@@ -147,7 +147,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix)
+void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4 *vtkNotUsed(matrix))
 {
 }
 
@@ -168,7 +168,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
+void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *vtkNotUsed(image))
 {
 /*
     if (this->GlyphGlyphFilter)
@@ -180,7 +180,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
+void vtkMRMLGlyphableVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
 }
 

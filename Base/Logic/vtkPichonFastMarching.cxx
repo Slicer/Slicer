@@ -266,9 +266,9 @@ int vtkPichonFastMarching::nKnownPoints(void)
 }
 
 void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
-                vtkImageData *inData, short *inPtr,
-                vtkImageData *outData, short *outPtr, 
-                int outExt[6])
+                vtkImageData *vtkNotUsed(inData), short *inPtr,
+                vtkImageData *vtkNotUsed(outData), short *outPtr, 
+                int vtkNotUsed(outExt)[6])
 {
   if(self->somethingReallyWrong)
     return;

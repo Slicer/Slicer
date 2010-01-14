@@ -1631,7 +1631,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     }
 }
 
-void vtkSlicerApplicationLogic::ProcessWriteNodeData(WriteDataRequest& req)
+void vtkSlicerApplicationLogic::ProcessWriteNodeData(WriteDataRequest& vtkNotUsed(req))
 {
     vtkWarningMacro("ProcessWriteNodeData: we just wrote out, not doing anything here...");
 }

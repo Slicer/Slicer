@@ -66,9 +66,9 @@ vtkSlicerColorLogic::~vtkSlicerColorLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerColorLogic::ProcessMRMLEvents(vtkObject * caller,
+void vtkSlicerColorLogic::ProcessMRMLEvents(vtkObject * vtkNotUsed(caller),
                                             unsigned long event,
-                                            void * callData)
+                                            void * vtkNotUsed(callData))
 {
   vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got an event " << event);
   
