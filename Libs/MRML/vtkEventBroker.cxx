@@ -571,6 +571,7 @@ int vtkEventBroker::GenerateGraphFile ( const char *graphFile )
   for (int count = 0; count < size; count++)
     {
     observation = this->GetNthObservation( count );
+    file << "# " << observation->GetReferenceCount() << "\n";
     if ( observation->GetScript() != NULL )
       {
       file << " " \
