@@ -56,4 +56,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "include.[Qq]t([Cc]ore|[Gg]ui).*warning C4127: conditional expression is constant"
   "[Qq]t.*h.*warning.*declaration of .* shadows a member of .this"
   "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
+
+  # Libs/tclap
+  "tclap.include.tclap.*Arg.h.*warning C4512: 'TCLAP::VALUE_ARG_HELPER::ValueExtractor<T>' : assignment operator could not be generated"
+
+  # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
+  "slicer3.applications.cli"
 )
