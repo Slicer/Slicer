@@ -13,7 +13,14 @@ $::slicer3::MRMLScene SetURL $sceneFileName
 $::slicer3::MRMLScene Connect
 update
 
-exit 0
+# TODO: this test used to exit at this point.  The problem is that the volume
+# data may not be fully read at this point.  Some of the following steps 
+# (particularly vtkSlicerDiffusionTestingWidget::CreateTracts()) may detect that the data
+# is not available yet and schedule themselves to be run later.  This is probably 
+# okay for interactive use, but can be a problem for testing since the test may
+# do other operations or even exit before the tract code ever has a chance to run.
+# For now, we will try a delay.
+update; after 2000
 
 set volumesGUI [$::slicer3::Application GetModuleGUIByName Volumes] 
 $volumesGUI Enter
@@ -31,13 +38,13 @@ $testWidget SetTensorNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiff
 [$testWidget GetFiducialSelector] SetSelected [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLFiducialListNode]
 
 $testWidget SetTractVisibility 1
-
+update; after 500
 $testWidget SetGlyphVisibility 0 1
-
+update; after 500
 $testWidget SetGlyphVisibility 1 1
-
+update; after 500
 $testWidget SetGlyphVisibility 2 1
-
+update; after 500
 
 exit 0
 
