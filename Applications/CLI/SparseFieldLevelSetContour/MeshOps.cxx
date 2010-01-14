@@ -143,6 +143,14 @@ Vec = transform*Vec;
     verts->GetPoint( k, thispt );
 // apply rotate2 * rotate1 to each *translated* neighbor of this k-th point
     ::size_t num_neigh = meshdata->adj[k].myNeighbs.size();
+
+  if( num_neigh < 1 ) {
+     meshdata->dkde1[k] = 0.0;
+     meshdata->dkde2[k] = 0.0;
+     continue;
+  }
+  
+
     double vec[3];
     vector<double> vv(3);
     vector<double> vv_(3);
@@ -259,7 +267,13 @@ Vec = transform*Vec;
     verts->GetPoint( k, thispt );
 // apply rotate2 * rotate1 to each *translated* neighbor of this k-th point
     ::size_t num_neigh = meshdata->adj[k].myNeighbs.size();
-    double vec[3];
+    
+  if( num_neigh < 1 ) {
+    meshdata->MeanCurv[k] = 0.0;
+    continue;
+  }
+  
+  double vec[3];
     vector<double> vv(3);
     vector<double> vv_(3);
     valarray<double> xdata(num_neigh);

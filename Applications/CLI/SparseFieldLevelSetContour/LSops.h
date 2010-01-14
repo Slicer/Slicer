@@ -28,6 +28,7 @@ energy = mergy;
 phi = vector<double>(data->MeanCurv.size());
 CleanLZ();
 InitSphere();
+dDirection = -1.0;
 }
 vector<int> Evolve( int iterations = 1 );
 
@@ -41,9 +42,15 @@ vector<int> L_n1;
 vector<int> L_p1;
 vector<int> L_n2;
 vector<int> L_p2;
+double dDirection;
 
 vector<int> point_type;
 vector<double> phi;
+
+public:
+void SwitchDirection()    { dDirection *= -1.0; }
+vector<double>* GetPhi()  { return &phi; };
+vector<int>*  GetPtrLZ()  { return &L_z; };
 
 // "sphere": assume that the mesh is homeomorphic to a sphere
 bool InitSphere(); // determine what the other layers are on the mesh given L_z

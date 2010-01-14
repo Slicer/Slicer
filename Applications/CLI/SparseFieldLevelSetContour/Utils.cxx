@@ -66,6 +66,8 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
   string fileNameFaces = filenames[0];
   string fileNameVerts = filenames[1];
 
+    cout<<"Reading from "<<fileNameFaces<<", "<<fileNameVerts<<"\n";
+
 // read a comma separted value file that defines the vertices
 // and indices into vertices for all faces
 
@@ -75,6 +77,7 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
 
 //cout<<"Start reading faces data..."<<fileNameFaces.c_str()<<"\n";
 // TODO: check for endless loop here if file is not found or is messed up
+  
   while( !fin.eof() )
     {
     fin>>line;

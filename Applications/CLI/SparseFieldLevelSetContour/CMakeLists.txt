@@ -17,7 +17,9 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 set (CLP SparseFieldLevelSetContour)
 
 set ( SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.cxx Utils.cxx MeshOps.cxx LSops.cxx  MeshOps.h Utils.h LSops.h
-MeshEnergy.cpp MeshEnergy.h MeanCurvatureEnergy.cpp MeanCurvatureEnergy.h )
+MeshEnergy.cpp MeshEnergy.h MeanCurvatureEnergy.cpp MeanCurvatureEnergy.h ModuleEntry.h
+ModuleEntry.cxx vtkComputeLocalGeometry.h vtkComputeLocalGeometry.cxx vtkInitClosedPath.h
+vtkInitClosedPath.cxx vtkLevelSetMeshEvolver.h vtkLevelSetMeshEvolver.cxx)
 
 generateclp(SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 

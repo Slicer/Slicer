@@ -65,7 +65,7 @@ bool SparseFieldLS::InitSphere()
 
   vector<int> visited(0);
   int vprime_idx = -1;
-  for( ::size_t i = 0; i < meshdata->adj[L_z[0]].myNeighbs.size(); i++ )
+  for( ::size_t i = 0; i < meshdata->adjimm[L_z[0]].myNeighbs.size(); i++ )
     {
     int idx = meshdata->adjimm[L_z[0]].myNeighbs[i];
     if( point_type[idx] == 2 )
@@ -471,6 +471,7 @@ vector<int> SparseFieldLS::Evolve(int its )
 //scalars2->InsertTuple1(i, meshdata->dkdx[i]);
     }
   }
+  // AHA this needs to Get by name & update an array...
   meshdata->polydata->GetPointData()->AddArray(scalars2);
   scalars2->Delete();
   meshdata->polydata->Update();

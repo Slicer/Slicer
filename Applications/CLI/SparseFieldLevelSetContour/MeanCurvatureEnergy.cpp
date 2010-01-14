@@ -20,33 +20,6 @@ double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
   return E;
 }
 
-valarray<double> MeanCurvatureEnergy::getforce(const std::vector<int> &C, const vector<double>& phi)
-{
-  valarray<double> force( C.size() );
-// double lambda = 3;
-// exp( -lambda * H ) * ( nhat dot gradH + kappa )
-
-  valarray<double> nx(C.size());
-  valarray<double> ny(C.size());
-  valarray<double> nz(C.size());
-  GetNormals2( C, phi, nx, ny, nz );
-  for( ::size_t i = 0; i < C.size(); i++ )
-    {
-    int idx = C[i];
-    double val = meshdata->dkdx[idx] * nx[i] + meshdata->dkdy[idx] * ny[i] + meshdata->dkdz[idx] * nz[i];
-    force[i] = val;
-//force[i] = (val < 0 ) ? -0.25 : 0.25;
-//force[i] = nx[i];
-//force[i] = 1;
-//force[i] = meshdata->dkdx[idx];
-//force[i] = exp( -lambda * meshdata->MeanCurv[idx] ) * val;
-//force[i] = -meshdata->MeanCurv[idx];
-//force[i] = -sqrt( nx[i] * nx[i] + ny[i]*ny[i] + nz[i]*nz[i] );
-//force[i] = exp( meshdata->MeanCurv[idx] ) * sqrt( nx[i] * nx[i] + ny[i]*ny[i] + nz[i]*nz[i] );
-    }
-  return force / (abs(force)).max();
-}
-
 valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C, 
                                                 const vector<int>& L_p1, const vector<int>& L_n1,
                                                 const vector<double>& phi)
@@ -78,7 +51,7 @@ valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C,
     }
   meshdata->kappa = kappa;
 
-  double alpha = 0.2;
+  double alpha = 0.3;
   double skap = abs(kappa).max();
   if( skap > 1e-6 )
     {

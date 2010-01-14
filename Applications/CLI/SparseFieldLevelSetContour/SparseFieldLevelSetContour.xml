@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-<title>Gyri Contour Segmentation</title>
+<title>Mesh Contour Segmentation</title>
   <category>Segmentation</category>
-  <version>0.1 (alpha)</version>
+  <version>0.2 (alpha)</version>
   <documentation-url></documentation-url>
-<description>Sparse-Field Levelset Sulci Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.\n
-Once the output surface has been loaded into Slicer, go to the Models module, Model Display pane, and set the Scalar Visibility Flag, select the LevelSetValue as the active scalar array, and pick the FreeSurfer RedGreen Scalar Color Map. The InitialCurvature and SmoothedCurvature may appear if the path finding failed.</description>
+<description>Sparse-Field Levelset Mesh Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.\n
+Once the output surface has been loaded into Slicer, go to the Models module, Model Display pane, and set the Scalar Visibility Flag, select the LevelSetValue as the active scalar array, and pick the FreeSurfer RedGreen Scalar Color Map. The InitialCurvature and SmoothedCurvature may appear if the path finding failed. \n An example calling convention from the commandline for this module:
+--inputScene C:\...\bin\Release\LSVTKOut1.vtk" -c "1.5,1.5,0" -c "-1.5,1.5,0" -c "-1.5,-1.5,0" -c "1.5,-1.5,0" --outputFilename "tempOut.vtk"
+This gives it an initial geometry in the vtk file, four seed points in (x,y,z) coordinates, and where to write the output.
+The resulting output contains a colormap that defines interior/exterior of the surface
+as determined by evolving the curve into high mean curvature areas.
+</description>
   <parameters>
   
-	<label>Input Parameters</label>
-	<description>The inputs for the contour initialization and poly data</description>
-	<geometry>
-		<name>InputSurface</name>
-		<description>The filename of the input vtk XML polydata file for the surface.</description>
-		<label>Input Model</label>
-		<longflag>inputScene</longflag>
-		<channel>input</channel>
-	</geometry>
-	<point coordinateSystem="ras" multiple="true">
-		<name>ContourSeedPts</name>
-		<label>Contour Points</label>
-		<flag>c</flag>
-		<longflag>contourpoints</longflag>
-		<description>The initialization points in x,y,z coords where the contour is seeded initially. Warning: there are topological restrictions, see the documentation.</description>
-	</point>
+  <label>Input Parameters</label>
+  <description>The inputs for the contour initialization and poly data</description>
+  <geometry>
+    <name>InputSurface</name>
+    <description>The filename of the input vtk XML polydata file for the surface.</description>
+    <label>Input Model</label>
+    <longflag>inputScene</longflag>
+    <channel>input</channel>
+  </geometry>
+  <point coordinateSystem="ras" multiple="true">
+    <name>ContourSeedPts</name>
+    <label>Contour Points</label>
+    <flag>c</flag>
+    <longflag>contourpoints</longflag>
+    <description>The initialization points in x,y,z coords where the contour is seeded initially. </description>
+  </point>
   </parameters>
   <parameters>
-	<label>Output Parameters</label>
-	<description>Output params.</description>
-	<geometry>
-		<name>OutputModel</name>
-		<description>Output model, in vtk xml poly data format.</description>
-		<label>Output Model</label>
+  <label>Output Parameters</label>
+  <description>Output params.</description>
+  <geometry>
+    <name>OutputModel</name>
+    <description>Output model, in vtk xml poly data format.</description>
+    <label>Output Model</label>
         <channel>output</channel>
-		<longflag>outputModel</longflag>
-	</geometry>
+    <longflag>outputModel</longflag>
+  </geometry>
    </parameters>
   <parameters advanced="true">
     <label>Filter Parameters</label>
@@ -86,7 +91,7 @@ Once the output surface has been loaded into Slicer, go to the Models module, Mo
   Peter Karasev, pkarasev@gatech.edu, Allen Tannenbaum tannenba@ece.gatech.edu
   </contributor>
   <documentation-url>
-  http://www.google.com
+  http://www.slicer.org/slicerWiki/index.php/Modules:GyriContourSegmentation-Documentation-3.5
   </documentation-url>
   <category>Segmentation</category>
 </executable>
