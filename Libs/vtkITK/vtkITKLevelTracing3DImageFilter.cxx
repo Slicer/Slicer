@@ -51,7 +51,7 @@ vtkITKLevelTracing3DImageFilter::~vtkITKLevelTracing3DImageFilter()
 
 
 template <class T>
-void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *self,
+void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self),
                                T* scalars, int dims[3], int extent[6],
                                double origin[3], double spacing[3],
                                unsigned char *oscalars,

@@ -57,7 +57,9 @@ void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 // Note: local function not method - conforms to signature in itkCommand.h
-void vtkITKIslandMathHandleProgressEvent (itk::Object *caller, const itk::EventObject& eventObject, void *clientdata)
+void vtkITKIslandMathHandleProgressEvent (itk::Object *caller, 
+                                          const itk::EventObject& vtkNotUsed(eventObject), 
+                                          void *clientdata)
 {
   itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
   vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
@@ -69,7 +71,7 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller, const itk::EventO
 
 template <class T>
 void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
-                vtkImageData* output,
+                vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)
 {
 

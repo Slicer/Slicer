@@ -29,7 +29,7 @@ vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")
 // helper function
 template <class  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
-                      vtkMatrix4x4* rasToIjkMatrix, TPixelType dummy) {
+                      vtkMatrix4x4* rasToIjkMatrix, TPixelType vtkNotUsed(dummy)) {
 
   typedef  itk::Image<TPixelType, 3> ImageType;
 

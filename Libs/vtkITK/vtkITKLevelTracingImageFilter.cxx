@@ -53,7 +53,7 @@ vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
 
 
 template <class T>
-void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
+void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T* scalars,
                              int dims[3], int extent[6], double origin[3], double spacing[3],
                              vtkPoints *newPoints,
                              vtkCellArray *newPolys,

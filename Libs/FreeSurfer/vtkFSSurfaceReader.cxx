@@ -379,7 +379,6 @@ int vtkFSSurfaceReader::RequestData(
        fIndex += faceIncrement) {
 
     // For each vertex in the face...
-  size_t retval;
     for (fvIndex = 0; fvIndex < numVerticesPerFace; fvIndex++) {
 
         thisStep++;

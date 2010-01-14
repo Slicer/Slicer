@@ -259,7 +259,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
-int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* filename)
+int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filename))
 {
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
@@ -1027,7 +1027,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
 // implemented in the Scalar and Vector subclasses
-void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *output)
+void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *vtkNotUsed(output))
 {
   vtkErrorMacro(<<"The subclass has not defined anything for ExecuteData!\n");
 }
@@ -1129,8 +1129,8 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 {
   this->FileNames.resize(0);
 
-  if (this->IndexArchetype < 0
-      || this->IndexArchetype > this->IndexSeriesInstanceUIDs.size()
+  // Note: Since IndexArchetype is unsigned int, it's always postive 
+  if (this->IndexArchetype > this->IndexSeriesInstanceUIDs.size()
       || this->IndexArchetype > this->IndexTriggerTime.size()
       || this->IndexArchetype > this->IndexDiffusionGradientOrientation.size()
       || this->IndexArchetype > this->IndexImageOrientationPatient.size())

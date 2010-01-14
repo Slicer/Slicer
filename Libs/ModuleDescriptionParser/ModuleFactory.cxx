@@ -917,8 +917,8 @@ ModuleFactory
           std::string arg("--xml");
 
           // does the command have a known extension?
-          std::string ext = itksys::SystemTools::GetFilenameExtension(commandName);
-          const char *executable = this->GetExecutableForFileExtension(ext);
+          ext = itksys::SystemTools::GetFilenameExtension(commandName);
+          executable = this->GetExecutableForFileExtension(ext);
 
           // build the command/parameter array.
           //command[1] = const_cast<char*>(arg.c_str());

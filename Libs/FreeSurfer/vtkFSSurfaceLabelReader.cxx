@@ -152,9 +152,9 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     // number of vertices in the surface.
     // index x y z w
     // Currently, ignoring the values after the index    
-    int retval = fscanf(labelFile, "%d %f %f %f %f", &vIndexFromFile, &xValue, &yValue, &zValue, &wValue);
+    int retval2 = fscanf(labelFile, "%d %f %f %f %f", &vIndexFromFile, &xValue, &yValue, &zValue, &wValue);
 
-    if (retval != 5)
+    if (retval2 != 5)
       {
       vtkErrorMacro("ReadLabel: value #" << this->NumberOfValues << ": error reading line");
       break;

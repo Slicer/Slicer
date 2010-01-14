@@ -185,12 +185,12 @@ public:
    * Currently set to '*', which shouldn't cause many problems since
    * *'s are expanded by most shells on the command line.  
    */
-  static const char blankChar() { return '*'; }
+  static /*const*/ char blankChar() { return '*'; }
     
   /**
    * The char that indicates the beginning of a flag.  Currently '-'.
    */
-  static const char flagStartChar() { return '-'; }
+  static /*const*/ char flagStartChar() { return '-'; }
     
   /**
    * The sting that indicates the beginning of a flag.  Currently "-".
