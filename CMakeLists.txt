@@ -394,6 +394,12 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrind.sh
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageLocally.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
+  )
+
+
 install(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development

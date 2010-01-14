@@ -1,0 +1,9 @@
+ #!/bin/csh
+  make
+  lcov --directory . --zerocounters 
+  ../Slicer3-lib/CMake-build/bin/ctest
+  lcov --directory . --capture --output-file app.info 
+  lcov --remove app.info '*Tcl.cxx' --output-file app_noTcl.info
+  lcov --remove app_noTcl.info '*\/Testing\/*' --output-file app_noTcl_noTesting.info
+  genhtml app_noTcl_noTesting.info 
+  firefox ./index.html
