@@ -364,9 +364,6 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   double cl;
   // scaling
   double scaleFactor = self->GetScaleFactor();
-  // transformation of tensor orientations for coloring
-  vtkTransform *trans = vtkTransform::New();
-  int useTransform = 0;
 
   // map 0..1 values into the range a char takes on
   // but use scaleFactor so user can bump up the brightness
@@ -411,6 +408,10 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 
   // decide whether to extract eigenfunctions or just use input cols
   extractEigenvalues = self->GetExtractEigenvalues();
+
+  // transformation of tensor orientations for coloring
+  vtkTransform *trans = vtkTransform::New();
+  int useTransform = 0;
 
   // if the user has set this matrix grab it
   if (self->GetTensorRotationMatrix())
