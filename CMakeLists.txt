@@ -399,6 +399,10 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runExperimentalOffScreen.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runExperimentalOffScreen.sh
+  )
 
 install(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
