@@ -226,6 +226,8 @@ int vtkDiffusionTensorGlyph::RequestData(
   if ( !inTensors || numPts < 1 )
     {
     vtkErrorMacro(<<"No data to glyph!");
+    trans->Delete();
+    matrix->Delete();
     return 1;
     }
 
