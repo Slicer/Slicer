@@ -57,7 +57,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   
   // The Usual vtk class functions
   static vtkSlicerSliceLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSliceLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerSliceLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
