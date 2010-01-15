@@ -69,7 +69,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetStringMacro(FileName);
   // Description:
   // return the nth file name, null if doesn't exist
-  const char *GetNthFileName(int n);
+  const char *GetNthFileName(int n) const;
 
   // Description:
   // Use compression on write
@@ -175,7 +175,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   
   // Description:
   // See how many file names were generated during ExecuteInformation
-  int GetNumberOfFileNames()
+  int GetNumberOfFileNames() const
   {
     return (int)this->FileNameList.size();
   };

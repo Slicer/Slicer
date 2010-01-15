@@ -647,7 +647,7 @@ void vtkMRMLStorageNode::ResetFileNameList( )
 }
 
 //----------------------------------------------------------------------------
-const char * vtkMRMLStorageNode::GetNthFileName(int n)
+const char * vtkMRMLStorageNode::GetNthFileName(int n) const
 {
   if (this->GetNumberOfFileNames() < n)
     {
