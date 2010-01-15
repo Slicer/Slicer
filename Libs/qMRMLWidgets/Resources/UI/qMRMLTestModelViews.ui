@@ -15,7 +15,18 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLSceneGenerator" name="MRMLSceneGenerator"/>
+    <widget class="qMRMLSceneGeneratorButton" name="MRMLSceneGeneratorButton">
+    </widget>
+   </item>
+   <item>
+    <widget class="qMRMLNodeFactoryButton" name="MRMLNodeFactoryButton_2"/>
+   </item>
+   <item>
+    <widget class="qMRMLNodeFactoryButton" name="MRMLNodeFactoryButton">
+     <property name="Action">
+      <enum>qMRMLNodeFactoryButton::DeleteRandom</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="qMRMLListWidget" name="MRMLListWidget">
@@ -26,7 +37,7 @@
       <enum>QAbstractItemView::DragDrop</enum>
      </property>
      <property name="alternatingRowColors">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -39,7 +50,7 @@
       <enum>QAbstractItemView::DragDrop</enum>
      </property>
      <property name="alternatingRowColors">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -52,27 +63,32 @@
    <header>qMRMLListWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLNodeFactoryButton</class>
+   <extends>QPushButton</extends>
+   <header>qMRMLNodeFactoryButtonPlugin.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLTreeWidget</class>
    <extends>QTreeView</extends>
    <header>qMRMLTreeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLSceneGenerator</class>
+   <class>qMRMLSceneGeneratorButton</class>
    <extends>QPushButton</extends>
-   <header>qMRMLSceneGeneratorPlugin.h</header>
+   <header>qMRMLSceneGeneratorButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>MRMLSceneGenerator</sender>
+   <sender>MRMLSceneGeneratorButton</sender>
    <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
    <receiver>MRMLTreeWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>36</y>
+     <x>149</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>139</x>
@@ -81,7 +97,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>MRMLSceneGenerator</sender>
+   <sender>MRMLSceneGeneratorButton</sender>
    <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
    <receiver>MRMLListWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -91,8 +107,40 @@
      <y>16</y>
     </hint>
     <hint type="destinationlabel">
-     <x>64</x>
-     <y>86</y>
+     <x>73</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLSceneGeneratorButton</sender>
+   <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeFactoryButton</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>237</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLSceneGeneratorButton</sender>
+   <signal>mrmlSceneSet(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeFactoryButton_2</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>47</y>
     </hint>
    </hints>
   </connection>
