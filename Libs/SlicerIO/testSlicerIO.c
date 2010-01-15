@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 {
     char buffer[1024];
     size_t objSize = sizeof(char);
-    size_t objCount = 100;
-    size_t opRet;
+    int objCount = 100;
+    int opRet;
 
     FILE *sp = NULL;
     char *str = NULL;
@@ -488,7 +488,10 @@ int main(int argc, char **argv)
     printf("%s\n", buffer);
 
     fclose(sp);
-    if (opRet == -1)
+    
+    // Return non-zero if it fails
+    // See http://www.cplusplus.com/reference/clibrary/cstdio/fseek/
+    if (opRet != 0)
     {
         printf(".........failed (Tcl_Seek on pipes: Not supported\n\n");
         /* return 1; */

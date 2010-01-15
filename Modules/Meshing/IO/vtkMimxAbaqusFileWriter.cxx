@@ -211,9 +211,8 @@ void vtkMimxAbaqusFileWriter::WriteHeader( ostream& os )
   os << "**                            MODEL DATA                                 **" << std::endl;
 }
 
-void vtkMimxAbaqusFileWriter::WriteHeadingSection( ostream& os )
+void vtkMimxAbaqusFileWriter::WriteHeadingSection( ostream& vtkNotUsed(os) )
 {
-  vtkNotUsed(os);
 /*
   if ( Heading.length() )
   {

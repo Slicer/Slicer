@@ -33,6 +33,10 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual void StageFileRead(const char * source,
                              const char * destination);
 
+  //BTX
+  using vtkURIHandler::StageFileRead;
+  //ETX
+
   int PostTag (const char *svr,  const char *label, const char *temporaryResponseFileName);
   
   // Description:
@@ -52,7 +56,10 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual void StageFileWrite(const char * source,
                               const char *destination);
 
-
+  //BTX
+  using vtkURIHandler::StageFileWrite;
+  //ETX
+  
   virtual const char *QueryServer ( const char *uri, const char *destination);
   const char *GetXMLDeclaration();
   const char *GetNameSpace();
