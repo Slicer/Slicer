@@ -72,7 +72,7 @@ qMRMLAbstractItemHelper* qMRMLItemModelPrivate::itemFromIndex(const QModelIndex 
   QCTK_P(const qMRMLItemModel);
   if ((index.row() < 0) || (index.column() < 0) || (index.model() != p))
     {
-    return new qMRMLRootItemHelper(this->TopLevelScene, this->MRMLScene);
+    return new qMRMLRootItemHelper(this->MRMLScene, this->TopLevelScene);
     }
   vtkObject* object = 
     reinterpret_cast<vtkObject*>(index.internalPointer());

@@ -1,6 +1,9 @@
 #include "qMRMLListWidget.h"
 #include "qMRMLItemModel.h"
-//#include "modeltest.h"
+#include "qMRMLSceneModel.h"
+
+#include "qCTKModelTester.h"
+
 //------------------------------------------------------------------------------
 class qMRMLListWidgetPrivate: public qCTKPrivate<qMRMLListWidget>
 {
@@ -13,27 +16,9 @@ public:
 void qMRMLListWidgetPrivate::init()
 {
   QCTK_P(qMRMLListWidget);
-  p->QListView::setModel(new qMRMLItemModel(p));
-  
-  // view signals
-  /*
-  QObject::connect(q, SIGNAL(pressed(QModelIndex)), q, SLOT(_q_emitItemPressed(QModelIndex)));
-  QObject::connect(q, SIGNAL(clicked(QModelIndex)), q, SLOT(_q_emitItemClicked(QModelIndex)));
-  QObject::connect(q, SIGNAL(doubleClicked(QModelIndex)),
-                   q, SLOT(_q_emitItemDoubleClicked(QModelIndex)));
-  QObject::connect(q, SIGNAL(activated(QModelIndex)),
-                   q, SLOT(_q_emitItemActivated(QModelIndex)));
-  QObject::connect(q, SIGNAL(entered(QModelIndex)), q, SLOT(_q_emitItemEntered(QModelIndex)));
-  QObject::connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-                   q, SLOT(_q_emitItemChanged(QModelIndex)));
-  QObject::connect(q->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-                   q, SLOT(_q_emitCurrentItemChanged(QModelIndex,QModelIndex)));
-  QObject::connect(q->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-                   q, SIGNAL(itemSelectionChanged()));
-  QObject::connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-                   q, SLOT(_q_dataChanged(QModelIndex,QModelIndex)));
-  QObject::connect(model(), SIGNAL(columnsRemoved(QModelIndex,int,int)), q, SLOT(_q_sort()));
-  */
+  //p->QListView::setModel(new qMRMLItemModel(p));
+  p->QListView::setModel(new qMRMLSceneModel(p));
+  ///new qCTKModelTester(p->model(), p);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +38,8 @@ qMRMLListWidget::~qMRMLListWidget()
 //------------------------------------------------------------------------------
 void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  //qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(this->model());
   Q_ASSERT(mrmlModel);
 
   mrmlModel->setMRMLScene(scene);
@@ -61,7 +47,6 @@ void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
     {
     this->setRootIndex(mrmlModel->index(0, 0));
     }
-  //new ModelTest(mrmlModel, this);
 }
 
 //------------------------------------------------------------------------------

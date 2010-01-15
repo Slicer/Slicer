@@ -25,15 +25,12 @@ qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int column)
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
 {
-  Q_UNUSED(newParent);
   return false;
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLAbstractItemHelper::child(int row, int column) const
 {
-  Q_UNUSED(row);
-  Q_UNUSED(column);
   return 0;
 }
 
@@ -46,7 +43,6 @@ int qMRMLAbstractItemHelper::childCount() const
 //------------------------------------------------------------------------------
 int qMRMLAbstractItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
 {
-  Q_UNUSED(child);
   return -1;
 }
 
@@ -59,7 +55,6 @@ int qMRMLAbstractItemHelper::column() const
 //------------------------------------------------------------------------------
 QVariant qMRMLAbstractItemHelper::data(int role) const
 {
-  Q_UNUSED(role);
   return QVariant();
 }
 
@@ -78,7 +73,6 @@ qMRMLAbstractItemHelper* qMRMLAbstractItemHelper::parent() const
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
 {
-  Q_UNUSED(newParent);
   return false;
 }
 
@@ -97,68 +91,39 @@ int qMRMLAbstractItemHelper::row() const
 //------------------------------------------------------------------------------
 bool qMRMLAbstractItemHelper::setData(const QVariant &value, int role)
 {
-  Q_UNUSED(value);
-  Q_UNUSED(role);
   return false;
 }
 
-// qMRMLSceneItemHelper
+bool qMRMLAbstractItemHelper::operator==(const qMRMLAbstractItemHelper& helper)const
+{
+  return this->row() == helper.row() && 
+         this->column() == helper.column() && 
+         this->object() == helper.object();
+}
+
+
+// qMRMLAbstractSceneItemHelper
 //------------------------------------------------------------------------------
-class qMRMLSceneItemHelperPrivate: public qCTKPrivate<qMRMLSceneItemHelper>
+class qMRMLAbstractSceneItemHelperPrivate: public qCTKPrivate<qMRMLAbstractSceneItemHelper>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLSceneItemHelper); 
+  QCTK_DECLARE_PUBLIC(qMRMLAbstractSceneItemHelper); 
   vtkMRMLScene* MRMLScene;
 };
 
 //------------------------------------------------------------------------------
-qMRMLSceneItemHelper::qMRMLSceneItemHelper(vtkMRMLScene* scene, int column)
+qMRMLAbstractSceneItemHelper::qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int column)
   :qMRMLAbstractItemHelper(column)
 {
-  QCTK_INIT_PRIVATE(qMRMLSceneItemHelper);
+  QCTK_INIT_PRIVATE(qMRMLAbstractSceneItemHelper);
   qctk_d()->MRMLScene = scene;
 }
 
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLSceneItemHelper::child(int row, int column) const
-{
-  QCTK_D(const qMRMLSceneItemHelper);
-  vtkMRMLNode* childNode = qMRMLUtils::topLevelNthNode(d->MRMLScene, row);
-  if (childNode == 0)
-    {
-    return 0;
-    }
-  qMRMLNodeItemHelper* child = new qMRMLNodeItemHelper(childNode, column);
-  return child;
-}
 
 //------------------------------------------------------------------------------
-int qMRMLSceneItemHelper::childCount() const
+QVariant qMRMLAbstractSceneItemHelper::data(int role) const
 {
-  if (this->column() != 0)
-    {
-    return 0;
-    }
-  return qMRMLUtils::childCount(qctk_d()->MRMLScene);
-}
-
-//------------------------------------------------------------------------------
-int qMRMLSceneItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
-{
-  const qMRMLNodeItemHelper* nodeItemHelper = 
-    dynamic_cast<const qMRMLNodeItemHelper*>(child);
-  Q_ASSERT(nodeItemHelper);
-  if (nodeItemHelper == 0)
-    {
-    return -1;
-    }
-  return qMRMLUtils::nodeIndex(nodeItemHelper->mrmlNode());
-}
-
-//------------------------------------------------------------------------------
-QVariant qMRMLSceneItemHelper::data(int role) const
-{
-  QCTK_D(const qMRMLSceneItemHelper);
+  QCTK_D(const qMRMLAbstractSceneItemHelper);
   Q_ASSERT(d->MRMLScene);
 
   switch (role)
@@ -184,71 +149,47 @@ QVariant qMRMLSceneItemHelper::data(int role) const
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSceneItemHelper::flags() const
+Qt::ItemFlags qMRMLAbstractSceneItemHelper::flags() const
 {
   return Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneItemHelper::hasChildren() const
+vtkObject* qMRMLAbstractSceneItemHelper::object() const
 {
-  QCTK_D(const qMRMLSceneItemHelper);
-  qDebug() << d->MRMLScene << (d->MRMLScene ? d->MRMLScene->GetNumberOfNodes() : -1);
-  return d->MRMLScene ? d->MRMLScene->GetNumberOfNodes() > 0 : false;
-}
-
-//------------------------------------------------------------------------------
-vtkObject* qMRMLSceneItemHelper::object() const
-{
-  QCTK_D(const qMRMLSceneItemHelper);
+  QCTK_D(const qMRMLAbstractSceneItemHelper);
   return d->MRMLScene;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSceneItemHelper::mrmlScene() const
+vtkMRMLScene* qMRMLAbstractSceneItemHelper::mrmlScene() const
 {
-  QCTK_D(const qMRMLSceneItemHelper);
+  QCTK_D(const qMRMLAbstractSceneItemHelper);
   return d->MRMLScene;
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLSceneItemHelper::parent() const
+qMRMLAbstractItemHelper* qMRMLAbstractSceneItemHelper::parent() const
 {
-  return 0;
+  QCTK_D(const qMRMLAbstractSceneItemHelper);
+  return new qMRMLRootItemHelper(d->MRMLScene);
 }
 
-// qMRMLNodeItemHelper
-//------------------------------------------------------------------------------
-class qMRMLNodeItemHelperPrivate: public qCTKPrivate<qMRMLNodeItemHelper>
-{
-public:
-  QCTK_DECLARE_PUBLIC(qMRMLNodeItemHelper); 
-  vtkMRMLNode* MRMLNode;
-};
 
+
+
+// qMRMLSceneItemHelper
 //------------------------------------------------------------------------------
-qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int column)
-  :qMRMLAbstractItemHelper(column)
+//------------------------------------------------------------------------------
+qMRMLSceneItemHelper::qMRMLSceneItemHelper(vtkMRMLScene* scene, int column)
+  :qMRMLAbstractSceneItemHelper(scene, column)
 {
-  QCTK_INIT_PRIVATE(qMRMLNodeItemHelper);
-  Q_ASSERT(node);
-  qctk_d()->MRMLNode = node;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLNodeItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
-{  
-  QCTK_D(const qMRMLNodeItemHelper);
-  vtkMRMLNode*  newParentNode = 
-    newParent ? vtkMRMLNode::SafeDownCast(newParent->object()) : 0;
-  return qMRMLUtils::canReparent(d->MRMLNode, newParentNode);
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLNodeItemHelper::child(int row, int column) const
+qMRMLAbstractItemHelper* qMRMLSceneItemHelper::child(int row, int column) const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
-  vtkMRMLNode* childNode = qMRMLUtils::childNode(d->MRMLNode, row);
+  vtkMRMLNode* childNode = qMRMLUtils::topLevelNthNode(this->mrmlScene(), row);
   if (childNode == 0)
     {
     return 0;
@@ -258,19 +199,20 @@ qMRMLAbstractItemHelper* qMRMLNodeItemHelper::child(int row, int column) const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLNodeItemHelper::childCount() const
+int qMRMLSceneItemHelper::childCount() const
 {
   if (this->column() != 0)
     {
     return 0;
     }
-  return qMRMLUtils::childCount(qctk_d()->MRMLNode);
+  return qMRMLUtils::childCount(this->mrmlScene());
 }
 
 //------------------------------------------------------------------------------
-int qMRMLNodeItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
+int qMRMLSceneItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
 {
-  const qMRMLNodeItemHelper* nodeItemHelper = dynamic_cast<const qMRMLNodeItemHelper*>(child);
+  const qMRMLAbstractNodeItemHelper* nodeItemHelper = 
+    dynamic_cast<const qMRMLAbstractNodeItemHelper*>(child);
   Q_ASSERT(nodeItemHelper);
   if (nodeItemHelper == 0)
     {
@@ -280,9 +222,40 @@ int qMRMLNodeItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
 }
 
 //------------------------------------------------------------------------------
-QVariant qMRMLNodeItemHelper::data(int role) const
+bool qMRMLSceneItemHelper::hasChildren() const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
+  return this->mrmlScene() ? this->mrmlScene()->GetNumberOfNodes() > 0 : false;
+}
+
+
+
+
+
+
+
+// qMRMLAbstractNodeItemHelper
+//------------------------------------------------------------------------------
+class qMRMLAbstractNodeItemHelperPrivate: public qCTKPrivate<qMRMLAbstractNodeItemHelper>
+{
+public:
+  QCTK_DECLARE_PUBLIC(qMRMLAbstractNodeItemHelper); 
+  vtkMRMLNode* MRMLNode;
+};
+
+//------------------------------------------------------------------------------
+qMRMLAbstractNodeItemHelper::qMRMLAbstractNodeItemHelper(vtkMRMLNode* node, int column)
+  :qMRMLAbstractItemHelper(column)
+{
+  QCTK_INIT_PRIVATE(qMRMLAbstractNodeItemHelper);
+  Q_ASSERT(node);
+  qctk_d()->MRMLNode = node;
+}
+
+
+//------------------------------------------------------------------------------
+QVariant qMRMLAbstractNodeItemHelper::data(int role) const
+{
+  QCTK_D(const qMRMLAbstractNodeItemHelper);
   switch (role)
     {
     case Qt::EditRole:
@@ -307,27 +280,24 @@ QVariant qMRMLNodeItemHelper::data(int role) const
     }
   return QVariant();
 }
+#include <iostream>
+#include <fstream>
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLNodeItemHelper::flags() const
+Qt::ItemFlags qMRMLAbstractNodeItemHelper::flags() const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
+  QCTK_D(const qMRMLAbstractNodeItemHelper);
   Qt::ItemFlags f;
   if (!d->MRMLNode->GetHideFromEditors())
     {
     f |= Qt::ItemIsEnabled;
+    std::ofstream toto ("flags.txt", std::ios_base::app);
+    toto << d->MRMLNode->GetName() << "don't hide from editors" << std::endl;
+    toto << std::endl;
     }
   if (d->MRMLNode->GetSelectable())
     {
     f |= Qt::ItemIsSelectable;
-    }
-  if (qMRMLUtils::canBeAChild(d->MRMLNode))
-    {
-    f |= Qt::ItemIsDragEnabled;
-    }
-  if (this->column() == 0 && qMRMLUtils::canBeAParent(d->MRMLNode))
-    {
-    f |= Qt::ItemIsDropEnabled;
     }
   if (this->column() == 0)
     {
@@ -337,53 +307,30 @@ Qt::ItemFlags qMRMLNodeItemHelper::flags() const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLNodeItemHelper::hasChildren() const
+vtkObject* qMRMLAbstractNodeItemHelper::object() const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
-  return this->column() == 0 && 
-    qMRMLUtils::canBeAParent(d->MRMLNode) && 
-    (qMRMLUtils::childNode(d->MRMLNode, 0) != 0);
-}
-
-//------------------------------------------------------------------------------
-vtkObject* qMRMLNodeItemHelper::object() const
-{
-  QCTK_D(const qMRMLNodeItemHelper);
+  QCTK_D(const qMRMLAbstractNodeItemHelper);
   return d->MRMLNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeItemHelper::mrmlNode() const
+vtkMRMLNode* qMRMLAbstractNodeItemHelper::mrmlNode() const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
+  QCTK_D(const qMRMLAbstractNodeItemHelper);
   return d->MRMLNode;
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLNodeItemHelper::parent() const
+qMRMLAbstractItemHelper* qMRMLAbstractNodeItemHelper::parent() const
 {
-  QCTK_D(const qMRMLNodeItemHelper);
-  vtkMRMLNode* parentNode = qMRMLUtils::parentNode(d->MRMLNode);
-  if (parentNode == 0)
-    {
-    return new qMRMLSceneItemHelper(d->MRMLNode->GetScene(), 0);
-    }
-  return new qMRMLNodeItemHelper(parentNode, 0);
+  QCTK_D(const qMRMLAbstractNodeItemHelper);
+  return new qMRMLSceneItemHelper(d->MRMLNode->GetScene(), 0);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLNodeItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
-{ 
-  QCTK_D(qMRMLNodeItemHelper);
-  vtkMRMLNode*  newParentNode = 
-    newParent ? vtkMRMLNode::SafeDownCast(newParent->object()) : 0;
-  return qMRMLUtils::reparent(d->MRMLNode, newParentNode);
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLNodeItemHelper::setData(const QVariant &value, int role)
+bool qMRMLAbstractNodeItemHelper::setData(const QVariant &value, int role)
 {
-  QCTK_D(qMRMLNodeItemHelper);
+  QCTK_D(qMRMLAbstractNodeItemHelper);
   bool changed = false;
   switch (role)
     {
@@ -405,6 +352,131 @@ bool qMRMLNodeItemHelper::setData(const QVariant &value, int role)
   return changed;
 }
 
+
+
+// qMRMLNodeItemHelper
+//------------------------------------------------------------------------------
+class qMRMLNodeItemHelperPrivate: public qCTKPrivate<qMRMLNodeItemHelper>
+{
+public:
+  QCTK_DECLARE_PUBLIC(qMRMLNodeItemHelper);
+};
+
+//------------------------------------------------------------------------------
+qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int column)
+  :qMRMLAbstractNodeItemHelper(node, column)
+{
+  QCTK_INIT_PRIVATE(qMRMLNodeItemHelper);
+  Q_ASSERT(node);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLNodeItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
+{  
+  //QCTK_D(const qMRMLNodeItemHelper);
+  if (this->qMRMLAbstractNodeItemHelper::canReparent(newParent))
+    {
+    return true;
+    }
+  bool canReparent = false;
+  if (dynamic_cast<qMRMLAbstractSceneItemHelper*>(newParent))
+    {
+    canReparent = qMRMLUtils::canReparent(this->mrmlNode(), 0);
+    }
+  else if (dynamic_cast<qMRMLNodeItemHelper*>(newParent))
+    {
+    vtkMRMLNode*  newParentNode = dynamic_cast<qMRMLNodeItemHelper*>(newParent)->mrmlNode();
+    canReparent = qMRMLUtils::canReparent(this->mrmlNode(), newParentNode);
+    }
+  return canReparent;
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLNodeItemHelper::child(int row, int column) const
+{
+  vtkMRMLNode* childNode = qMRMLUtils::childNode(this->mrmlNode(), row);
+  if (childNode == 0)
+    {
+    return 0;
+    }
+  qMRMLNodeItemHelper* child = new qMRMLNodeItemHelper(childNode, column);
+  return child;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLNodeItemHelper::childCount() const
+{
+  if (this->column() != 0)
+    {
+    return 0;
+    }
+  return qMRMLUtils::childCount(this->mrmlNode());
+}
+
+//------------------------------------------------------------------------------
+int qMRMLNodeItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
+{
+  const qMRMLNodeItemHelper* nodeItemHelper = 
+    dynamic_cast<const qMRMLNodeItemHelper*>(child);
+  Q_ASSERT(nodeItemHelper);
+  if (nodeItemHelper == 0)
+    {
+    return -1;
+    }
+  return qMRMLUtils::nodeIndex(nodeItemHelper->mrmlNode());
+}
+
+//------------------------------------------------------------------------------
+Qt::ItemFlags qMRMLNodeItemHelper::flags() const
+{
+  Qt::ItemFlags f = this->qMRMLAbstractNodeItemHelper::flags();
+  if (qMRMLUtils::canBeAChild(this->mrmlNode()))
+    {
+    f |= Qt::ItemIsDragEnabled;
+    }
+  if (this->column() == 0 && qMRMLUtils::canBeAParent(this->mrmlNode()))
+    {
+    f |= Qt::ItemIsDropEnabled;
+    }
+        std::ofstream toto ("flags.txt", std::ios_base::app);
+    toto << this->mrmlNode()->GetName() << "use nodeitemhelper..." << std::endl;
+    toto << std::endl;
+  return f;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLNodeItemHelper::hasChildren() const
+{
+  return this->column() == 0 && 
+    qMRMLUtils::canBeAParent(this->mrmlNode()) && 
+    (qMRMLUtils::childNode(this->mrmlNode(), 0) != 0);
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLNodeItemHelper::parent() const
+{
+  //QCTK_D(const qMRMLNodeItemHelper);
+  vtkMRMLNode* parentNode = qMRMLUtils::parentNode(this->mrmlNode());
+  if (parentNode == 0)
+    {
+    return this->qMRMLAbstractNodeItemHelper::parent();
+    }
+  return new qMRMLNodeItemHelper(parentNode, 0);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLNodeItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
+{ 
+  vtkMRMLNode*  newParentNode = 
+    newParent ? vtkMRMLNode::SafeDownCast(newParent->object()) : 0;
+  return qMRMLUtils::reparent(this->mrmlNode(), newParentNode);
+}
+
+
+
+
+
+//------------------------------------------------------------------------------
 // qMRMLRootItemHelper
 //------------------------------------------------------------------------------
 class qMRMLRootItemHelperPrivate: public qCTKPrivate<qMRMLRootItemHelper>
@@ -415,7 +487,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLRootItemHelper::qMRMLRootItemHelper(bool topLevelScene, vtkMRMLScene* scene)
+qMRMLRootItemHelper::qMRMLRootItemHelper(vtkMRMLScene* scene, bool topLevelScene)
   :qMRMLSceneItemHelper(scene, -1)
 {
   QCTK_INIT_PRIVATE(qMRMLRootItemHelper);
@@ -450,7 +522,6 @@ int qMRMLRootItemHelper::childCount() const
 QVariant qMRMLRootItemHelper::data(int role) const
 {
   Q_ASSERT(false);
-  Q_UNUSED(role);
   return QVariant();
 }
 
@@ -480,7 +551,7 @@ qMRMLAbstractItemHelper* qMRMLRootItemHelper::parent() const
 //------------------------------------------------------------------------------
 int qMRMLRootItemHelper::row() const
 {
-  Q_ASSERT(false);
+  //Q_ASSERT(false);
   return -1;
 }
 

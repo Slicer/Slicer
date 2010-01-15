@@ -23,11 +23,7 @@ public:
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
-
- protected slots:
-  virtual void rowsInserted ( const QModelIndex & parent, int start, int end );
-  virtual void rowsRemoved ( const QModelIndex & parent, int start, int end );
-
+ 
 private:
   QCTK_DECLARE_PRIVATE(qMRMLTreeWidget);
 };

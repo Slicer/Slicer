@@ -1,8 +1,10 @@
 #include "qMRMLTreeWidget.h"
-#include "qMRMLItemModel.h"
-
+//#include "qMRMLItemModel.h"
+#include "qMRMLSceneModel.h"
+#include "qMRMLTransformProxyModel.h"
 #include <QDebug>
-//#include "modeltest.h"
+#include "qCTKModelTester.h"
+
 //------------------------------------------------------------------------------
 class qMRMLTreeWidgetPrivate: public qCTKPrivate<qMRMLTreeWidget>
 {
@@ -15,7 +17,18 @@ public:
 void qMRMLTreeWidgetPrivate::init()
 {
   QCTK_P(qMRMLTreeWidget);
-  p->QTreeView::setModel(new qMRMLItemModel(p));
+  //p->QTreeView::setModel(new qMRMLItemModel(p));
+  qMRMLSceneModel* sceneModel = new qMRMLSceneModel(p);
+  qMRMLTransformProxyModel* transformModel = new qMRMLTransformProxyModel(p);
+  transformModel->setSourceModel(sceneModel);
+  p->QTreeView::setModel(transformModel);
+  
+  //qCTKModelTester* modelTester = new qCTKModelTester(0, p);
+  //modelTester->setModel(sceneModel);
+  //new qCTKModelTester(sceneModel, p);
+  //modelTester->setModel(transformModel);
+  new qCTKModelTester(transformModel, p);
+  
 }
 
 //------------------------------------------------------------------------------
@@ -35,10 +48,14 @@ qMRMLTreeWidget::~qMRMLTreeWidget()
 //------------------------------------------------------------------------------
 void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  qMRMLTransformProxyModel* proxyModel = qobject_cast<qMRMLTransformProxyModel*>(this->model());
+  
+  //qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
+  //qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(this->model());
+  qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(proxyModel->sourceModel());
   Q_ASSERT(mrmlModel);
   mrmlModel->setMRMLScene(scene);
-  //new ModelTest(mrmlModel, this);
+
 }
 
 //------------------------------------------------------------------------------
@@ -48,16 +65,3 @@ vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
   return qobject_cast<const qMRMLItemModel*>(this->model())->mrmlScene();
 }
 
-//------------------------------------------------------------------------------
-void qMRMLTreeWidget::rowsInserted(const QModelIndex & parent, int start, int end)
-{
-  qDebug() << "qMRMLTreeWidget::rowsInserted " << parent << " " << start << " " << end;
-  this->QTreeView::rowsInserted(parent,start,end);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLTreeWidget::rowsRemoved(const QModelIndex & parent, int start, int end)
-{
-  qDebug() << "qMRMLTreeWidget::rowsRemoved " << parent << " " << start << " " << end;
-  this->QTreeView::rowsRemoved(parent,start,end);
-}

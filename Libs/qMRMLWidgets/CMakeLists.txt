@@ -35,6 +35,10 @@ SET(qMRMLWidgets_SRCS
   qMRMLNodeTreeSelector.h
   qMRMLSceneGeneratorButton.cxx
   qMRMLSceneGeneratorButton.h
+  qMRMLSceneModel.cxx
+  qMRMLSceneModel.h
+  qMRMLTransformProxyModel.cxx
+  qMRMLTransformProxyModel.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
   qMRMLTreeWidget.cxx
@@ -54,6 +58,9 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
   qMRMLSceneGeneratorButton.h
+  qMRMLSceneModel.h
+  qMRMLTransformProxyModel.h
+  qMRMLTransformProxyModel_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   )
