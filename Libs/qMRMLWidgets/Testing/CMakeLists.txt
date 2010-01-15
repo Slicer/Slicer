@@ -1,0 +1,19 @@
+
+SET(KIT qMRMLWidgets)
+SET(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
+CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qMRMLModelTest1.cxx
+  EXTRA_INCLUDE TestingMacros.h
+  )
+
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
+
+SET( qMRMLWidgets_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+
+ADD_TEST( qMRMLModelTest1 ${qMRMLWidgets_TESTS} qMRMLModelTest1 )

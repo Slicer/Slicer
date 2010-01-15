@@ -169,3 +169,4 @@ ENDIF(BUILD_TESTING)
 # Sub directories
 #
 ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Testing)
