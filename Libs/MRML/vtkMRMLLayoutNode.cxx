@@ -234,7 +234,14 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
   os << indent << "Main panel size: " << this->MainPanelSize << "\n";
   os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
-  os << indent << "Selected module: " << this->SelectedModule << "\n";
+  if ( this->SelectedModule )
+    {
+    os << indent << "Selected module: " << this->SelectedModule << "\n";
+    }
+  else
+    {
+    os << indent << "Selected module: (none)\n";
+    }
 }
 
 
