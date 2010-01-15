@@ -46,6 +46,8 @@ SET(qCTKWidgets_SRCS
   qCTKFlowLayout.h
   qCTKMatrixWidget.cxx
   qCTKMatrixWidget.h
+  qCTKModelTester.cxx
+  qCTKModelTester.h
   qCTKNumericInput.cxx
   qCTKNumericInput.h
   qCTKSlider.cxx
@@ -67,6 +69,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKCoordinatesWidget.h
   qCTKFittedTextBrowser.h
   qCTKMatrixWidget.h
+  qCTKModelTester.h
   qCTKNumericInput.h
   qCTKSlider.h
   qCTKSliderSpinBoxLabel.h
@@ -152,6 +155,7 @@ INSTALL(TARGETS ${lib_name}
 # Testing
 #
 IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
 
 # --------------------------------------------------------------------------
