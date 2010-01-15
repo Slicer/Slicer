@@ -265,7 +265,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   
   vtkDebugMacro("Adding FreeSurfer Labels file node");
   std::string colorFileName;
-  std::string id;
+
   // volume labels
   node->SetName("FreeSurferLabels");
   if (basicFSNode->GetLabelsFileName() == NULL)
@@ -280,7 +280,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     node->GetStorageNode()->SetFileName(colorFileName.c_str());
     if (node->GetStorageNode()->ReadData(node))
       {
-      id = std::string(this->GetDefaultFreeSurferLabelMapColorNodeID());
+      std::string id = std::string(this->GetDefaultFreeSurferLabelMapColorNodeID());
       node->SetSingletonTag(id.c_str());
       if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
         {
@@ -310,28 +310,28 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   vtkMRMLPETProceduralColorNode *basicPETNode = vtkMRMLPETProceduralColorNode::New();
   for (int i = basicPETNode->GetFirstType(); i <= basicPETNode->GetLastType(); i++)
     {
-    vtkMRMLPETProceduralColorNode *node = vtkMRMLPETProceduralColorNode::New();
-    node->SetType(i);
-    node->SetAttribute("Category", "PET");
-    node->SaveWithSceneOff();
-    if (node->GetTypeAsString() == NULL)
+    vtkMRMLPETProceduralColorNode *nodepcn = vtkMRMLPETProceduralColorNode::New();
+    nodepcn->SetType(i);
+    nodepcn->SetAttribute("Category", "PET");
+    nodepcn->SaveWithSceneOff();
+    if (nodepcn->GetTypeAsString() == NULL)
       {
       vtkWarningMacro("Node type as string is null");      
-      node->SetName("NoName");
+      nodepcn->SetName("NoName");
       }
     else
       {
-      vtkDebugMacro("Got node type as string " << node->GetTypeAsString());
-      node->SetName(node->GetTypeAsString());
+      vtkDebugMacro("Got node type as string " << nodepcn->GetTypeAsString());
+      nodepcn->SetName(nodepcn->GetTypeAsString());
       }
-    const char *id = this->GetDefaultPETColorNodeID(i);
-    node->SetSingletonTag(id);
-    if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
+    const char *id1 = this->GetDefaultPETColorNodeID(i);
+    nodepcn->SetSingletonTag(id1);
+    if (this->GetMRMLScene()->GetNodeByID(id1) == NULL)
       {
-      this->GetMRMLScene()->RequestNodeID(node, id);        
-      this->GetMRMLScene()->AddNode(node);
+      this->GetMRMLScene()->RequestNodeID(nodepcn, id1);        
+      this->GetMRMLScene()->AddNode(nodepcn);
       }
-    node->Delete();
+    nodepcn->Delete();
     }
   basicPETNode->Delete();
 
@@ -343,28 +343,28 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   vtkMRMLdGEMRICProceduralColorNode *basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
   for (int i = basicdGEMRICNode->GetFirstType(); i <= basicdGEMRICNode->GetLastType(); i++)
     {
-    vtkMRMLdGEMRICProceduralColorNode *node = vtkMRMLdGEMRICProceduralColorNode::New();
-    node->SetType(i);
-    node->SetAttribute("Category", "Cartilage MRI");
-    node->SaveWithSceneOff();
-    if (node->GetTypeAsString() == NULL)
+    vtkMRMLdGEMRICProceduralColorNode *pcnode = vtkMRMLdGEMRICProceduralColorNode::New();
+    pcnode->SetType(i);
+    pcnode->SetAttribute("Category", "Cartilage MRI");
+    pcnode->SaveWithSceneOff();
+    if (pcnode->GetTypeAsString() == NULL)
       {
       vtkWarningMacro("Node type as string is null");      
-      node->SetName("NoName");
+      pcnode->SetName("NoName");
       }
     else
       {
-      vtkDebugMacro("Got node type as string " << node->GetTypeAsString());
-      node->SetName(node->GetTypeAsString());
+      vtkDebugMacro("Got node type as string " << pcnode->GetTypeAsString());
+      pcnode->SetName(pcnode->GetTypeAsString());
       }
     const char *id = this->GetDefaultdGEMRICColorNodeID(i);
-    node->SetSingletonTag(id);
+    pcnode->SetSingletonTag(id);
     if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
       {
-      this->GetMRMLScene()->RequestNodeID(node, id);        
-      this->GetMRMLScene()->AddNode(node);
+      this->GetMRMLScene()->RequestNodeID(pcnode, id);        
+      this->GetMRMLScene()->AddNode(pcnode);
       }
-    node->Delete();
+    pcnode->Delete();
     }
   basicdGEMRICNode->Delete();
 
@@ -376,32 +376,32 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   this->FindColorFiles();
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
-    vtkMRMLColorTableNode * node =  vtkMRMLColorTableNode::New();
-    node->SetTypeToFile();
-    node->SetAttribute("Category", "Labels from File");
-    node->SaveWithSceneOff();
-    node->SetScene(this->GetMRMLScene());
+    vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
+    ctnode->SetTypeToFile();
+    ctnode->SetAttribute("Category", "Labels from File");
+    ctnode->SaveWithSceneOff();
+    ctnode->SetScene(this->GetMRMLScene());
     // make a storage node
     vtkMRMLColorTableStorageNode *colorStorageNode2 = vtkMRMLColorTableStorageNode::New();
     colorStorageNode2->SaveWithSceneOff();
     if (this->GetMRMLScene())
       {
       this->GetMRMLScene()->AddNode(colorStorageNode2);
-      node->SetAndObserveStorageNodeID(colorStorageNode2->GetID());
+      ctnode->SetAndObserveStorageNodeID(colorStorageNode2->GetID());
       }
     colorStorageNode2->Delete();
-    node->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
-    node->SetName(vtksys::SystemTools::GetFilenameName(node->GetStorageNode()->GetFileName()).c_str());
-    if (node->GetStorageNode()->ReadData(node))
+    ctnode->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
+    ctnode->SetName(vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str());
+    if (ctnode->GetStorageNode()->ReadData(ctnode))
       {
       const char* colorNodeID = this->GetDefaultFileColorNodeID(this->ColorFiles[i].c_str());
-      id =  std::string(colorNodeID);
+      std::string id =  std::string(colorNodeID);
 
-      node->SetSingletonTag(id.c_str());
+      ctnode->SetSingletonTag(id.c_str());
       if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
         {
-        this->GetMRMLScene()->RequestNodeID(node, id.c_str());
-        this->GetMRMLScene()->AddNode(node);
+        this->GetMRMLScene()->RequestNodeID(ctnode, id.c_str());
+        this->GetMRMLScene()->AddNode(ctnode);
         vtkDebugMacro("Read and added file node: " <<  this->ColorFiles[i].c_str());
         }
 
@@ -411,7 +411,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       {
       vtkWarningMacro("Unable to read color file " << this->ColorFiles[i].c_str());
       }
-    node->Delete();
+    ctnode->Delete();
     }
 }
 
