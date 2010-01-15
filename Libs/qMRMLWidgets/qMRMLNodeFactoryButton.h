@@ -4,6 +4,9 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
+// qVTK includes
+#include <qVTKObject.h>
+
 // QT includes
 #include <QPushButton>
 
@@ -18,6 +21,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactoryButton : public QPushButton
   Q_OBJECT
   Q_PROPERTY(ActionType Action READ action WRITE setAction)
   Q_ENUMS(ActionType)
+  QVTK_OBJECT
 public:
   
   // Self/Superclass typedef
@@ -53,7 +57,8 @@ public slots:
 
 protected slots:
   void onClick();
-  
+  void onMRMLSceneChanged();
+
 private:
   QCTK_DECLARE_PRIVATE(qMRMLNodeFactoryButton);
 }; 

@@ -16,6 +16,7 @@ public:
     }
   void init();
   void syncTextWithAction();
+  void updateEnabled();
   
   qMRMLNodeFactoryButton::ActionType Action;
 };
@@ -28,6 +29,7 @@ void qMRMLNodeFactoryButtonPrivate::init()
   this->syncTextWithAction(); 
   
   this->connect(p, SIGNAL(clicked()), p, SLOT(onClick()));
+  this->updateEnabled();
 }
 
 // --------------------------------------------------------------------------
@@ -48,6 +50,18 @@ void qMRMLNodeFactoryButtonPrivate::syncTextWithAction()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLNodeFactoryButtonPrivate::updateEnabled()
+{
+  QCTK_P(qMRMLNodeFactoryButton);
+  bool enabled = this->mrmlScene();
+  if (enabled && this->Action == qMRMLNodeFactoryButton::DeleteRandom)
+    {
+    enabled = this->mrmlScene()->GetNumberOfNodes() > 0;
+    }
+  p->setEnabled(enabled);
+}
+
+// --------------------------------------------------------------------------
 // qMRMLNodeFactoryButton methods
 // --------------------------------------------------------------------------
 qMRMLNodeFactoryButton::qMRMLNodeFactoryButton(QWidget* parent)
@@ -61,7 +75,12 @@ qMRMLNodeFactoryButton::qMRMLNodeFactoryButton(QWidget* parent)
 void qMRMLNodeFactoryButton::setMRMLScene(vtkMRMLScene* mrmlScene)
 {
   QCTK_D(qMRMLNodeFactoryButton);
+  this->qvtkReconnect(d->mrmlScene(), mrmlScene, vtkMRMLScene::NodeAddedEvent,
+                      this, SLOT(onMRMLSceneChanged()));
+  this->qvtkReconnect(d->mrmlScene(), mrmlScene, vtkMRMLScene::NodeRemovedEvent,
+                      this, SLOT(onMRMLSceneChanged()));
   d->setMRMLScene(mrmlScene);
+  d->updateEnabled();
 }
 
 // --------------------------------------------------------------------------
@@ -94,6 +113,7 @@ void qMRMLNodeFactoryButton::setAction(ActionType action)
   QCTK_D(qMRMLNodeFactoryButton);
   d->Action = action;
   d->syncTextWithAction();
+  d->updateEnabled();
 }
 
 // --------------------------------------------------------------------------
@@ -125,6 +145,16 @@ void qMRMLNodeFactoryButton::deleteRandomNode()
 {
   QCTK_D(qMRMLNodeFactoryButton);
   int numNodes= d->mrmlScene()->GetNumberOfNodes();
+  if (numNodes <= 0)
+    {
+    return;
+    }
   vtkMRMLNode* node = d->mrmlScene()->GetNthNode(rand() % numNodes); 
   d->mrmlScene()->RemoveNode(node);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeFactoryButton::onMRMLSceneChanged()
+{
+  qctk_d()->updateEnabled();
 }
