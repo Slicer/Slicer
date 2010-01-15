@@ -42,7 +42,7 @@ size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
-size_t ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow)
+size_t ProgressCallback(FILE* vtkNotUsed( outputFile ), double dltotal, double dlnow, double ultotal, double ulnow)
 {
   if(ultotal == 0)
     {
