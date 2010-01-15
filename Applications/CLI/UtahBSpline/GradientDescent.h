@@ -135,8 +135,8 @@ public:
   };
  
 protected:
-  virtual bool converged(double f, double prevf, const vnl_vector<double> &x,
-      const vnl_vector<double> &gradient, double &stepsize){
+  virtual bool converged(double f, double prevf, const vnl_vector<double> & /*x*/,
+      const vnl_vector<double> & /*gradient*/, double &stepsize){
       if(prevf < f){
         stepsize *=0.85;
       }

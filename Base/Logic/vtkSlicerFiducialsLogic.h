@@ -62,7 +62,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
 
   // Description:
   // Update logic state when MRML scene changes
-  void ProcessMRMLEvents(); 
+  void ProcessMRMLEvents();
+  //BTX
+  using vtkSlicerLogic::ProcessMRMLEvents;
+  //ETX
     
 protected:
   vtkSlicerFiducialsLogic();

@@ -119,11 +119,15 @@ public:
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
-  virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+  virtual void ProcessWidgetEvents ( vtkObject *vtkNotUsed(caller),
+                                     unsigned long vtkNotUsed(event),
+                                     void *vtkNotUsed(callData) ) { };
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+  virtual void ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
+                                   unsigned long vtkNotUsed(event),
+                                   void *vtkNotUsed(callData) ) { };
 
   // Description:
   // Flags to avoid event loops

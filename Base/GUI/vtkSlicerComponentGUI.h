@@ -191,7 +191,7 @@ public:
   //   (currently hard-coded) mapping of node types to module names.
   virtual void Enter ( ) { };
   virtual void Exit ( ) { };
-  virtual void Enter ( vtkMRMLNode* node ) { this->Enter(); };
+  virtual void Enter ( vtkMRMLNode* vtkNotUsed(node) ) { this->Enter(); };
   
 protected:
   // GUI's interface to the application layer;

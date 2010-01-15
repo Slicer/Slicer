@@ -44,7 +44,9 @@ public:
 
   // Description:
   // respond to changes in the slice logic
-  void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData ){};
+  void ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
+                            unsigned long vtkNotUsed(event),
+                            void *vtkNotUsed(callData) ){};
 
 
 protected:

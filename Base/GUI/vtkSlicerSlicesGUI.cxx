@@ -647,16 +647,18 @@ void vtkSlicerSlicesGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerSlicesGUI::ProcessLogicEvents (vtkObject *vtkNotUsed(caller),
+                                             unsigned long vtkNotUsed(event),
+                                             void *vtkNotUsed(callData) )
 {
   // Fill in
 }
  
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
+                                             unsigned long vtkNotUsed(event),
+                                             void *vtkNotUsed(callData) )
 {
   // std::cout << "In ProcessMRMLEvents" << std::endl;
   this->UpdateGUI();

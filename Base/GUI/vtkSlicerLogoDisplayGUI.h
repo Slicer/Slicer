@@ -41,6 +41,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoDisplayGUI : public vtkSlicerCompo
     // Get the main slicer toolbars.
     vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
     virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
+
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI; 
+    //ETX
     
     // Description:
     // This method builds the Data module's GUI
@@ -57,6 +61,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoDisplayGUI : public vtkSlicerCompo
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+    //BTX
+    using vtkSlicerComponentGUI::Enter; 
+    //ETX
     
     // Description:
     // Describe the behavior at module enter and exit.

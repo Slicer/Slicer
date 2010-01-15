@@ -65,6 +65,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     void SelectModule ( const char *moduleName );
     void SelectModule ( const char *moduleName, vtkMRMLNode *node );
 
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI; 
+    //ETX
+    
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWToolbar *tb ) ;
@@ -93,6 +97,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+    //BTX
+    using vtkSlicerComponentGUI::Enter; 
+    //ETX
     
     // Description:
     // Describe the behavior at module enter and exit.

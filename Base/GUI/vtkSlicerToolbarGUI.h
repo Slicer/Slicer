@@ -108,6 +108,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // Description:
     // Updates the pulldown menu of layouts.
     virtual void UpdateLayoutMenu();
+
+    //BTX
+    using vtkSlicerComponentGUI::Enter; 
+    //ETX
     
     // Description:
     // Describe the behavior at module enter and exit.
