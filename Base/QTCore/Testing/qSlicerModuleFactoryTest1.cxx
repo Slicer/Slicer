@@ -27,10 +27,25 @@ int qSlicerModuleFactoryTest1(int, char * [] )
   moduleFactory.printAdditionalInfo();
 
   QString moduleName = "qSlicerTransformsModule";
+  
+  std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
+  
+  if (!moduleFactory.moduleTitle( moduleName ).isEmpty())
+    {
+    std::cerr << "A registered module can't have a valid title yet."
+              << " Titles get set after the module get instantiated." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerAbstractModule * abstractModule = moduleFactory.instantiateModule( moduleName );
+
+  if( abstractModule == NULL )
+    {
+    std::cerr << "Error in instantiateModule()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   QString moduleTitle = moduleFactory.moduleTitle( moduleName ); 
-
-  std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
 
   std::cout << "Module Title = " << qPrintable( moduleTitle ) << std::endl;
 
@@ -38,7 +53,7 @@ int qSlicerModuleFactoryTest1(int, char * [] )
   
   if( moduleName1 != moduleName )
     {
-    std::cerr << "Error in getModuleTitle() or getModuleName()" << std::endl;
+    std::cerr << "Error in moduleTitle() or moduleName()" << std::endl;
     std::cerr << "Module Name  = " << qPrintable( moduleName ) << std::endl;
     std::cerr << "Module Name1 = " << qPrintable( moduleName1 ) << std::endl;
     return EXIT_FAILURE;
@@ -52,11 +67,11 @@ int qSlicerModuleFactoryTest1(int, char * [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerAbstractModule * abstractModule = moduleFactory.instantiateModule( moduleName );
-
-  if( abstractModule == NULL )
+  QString moduleTitle2 = abstractModule->title(); 
+  
+  if( moduleTitle2 != moduleTitle )
     {
-    std::cerr << "Error in instantiateModule()" << std::endl;
+    std::cerr << "Error in title():" << qPrintable(moduleTitle2) << std::endl;
     return EXIT_FAILURE;
     }
 

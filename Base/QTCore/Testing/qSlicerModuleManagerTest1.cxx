@@ -32,6 +32,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
   qSlicerModuleManager moduleManager;
 
   moduleManager.factory()->registerCoreModules();
+  moduleManager.factory()->instantiateCoreModules();
   
   moduleManager.printAdditionalInfo();
   
