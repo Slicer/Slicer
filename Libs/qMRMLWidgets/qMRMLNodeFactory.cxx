@@ -59,6 +59,12 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   node->SetScene( d->MRMLScene );
   node->SetName( d->MRMLScene->GetUniqueNameByString(
     d->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
+
+  if (node->GetSingletonTag() != 0 && node->GetID() == 0)
+    {
+    qDebug() << "Can't add a node with a SingletonTag and an empty ID";
+    return 0;
+    }
   
   vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
   Q_ASSERT(nodeCreated);
