@@ -802,22 +802,73 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
+  vtkIndent nextIndent;
+  nextIndent = indent.GetNextIndent();
 
   os << indent << "SlicerSliceLogic:             " << this->GetClassName() << "\n";
 
-  os << indent << "SliceNode: " <<
-    (this->SliceNode ? this->SliceNode->GetName() : "(none)") << "\n";
-  os << indent << "SliceCompositeNode: " <<
-    (this->SliceCompositeNode ? this->SliceCompositeNode->GetName() : "(none)") << "\n";
-  // TODO: fix printing of vtk objects
-  os << indent << "BackgroundLayer: " <<
-    (this->BackgroundLayer ? "not null" : "(none)") << "\n";
-  os << indent << "ForegroundLayer: " <<
-    (this->ForegroundLayer ? "not null" : "(none)") << "\n";
-  os << indent << "LabelLayer: " <<
-    (this->LabelLayer ? "not null" : "(none)") << "\n";
-  os << indent << "Blend: " <<
-    (this->Blend ? "not null" : "(none)") << "\n";
+  if (this->SliceNode)
+    {
+    os << indent << "SliceNode: ";
+    os << (this->SliceNode->GetID() ? this->SliceNode->GetID() : "(null ID)") << "\n";
+    this->SliceNode->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "SliceNode: (none)\n";
+    }
+
+  if (this->SliceCompositeNode)
+    {
+    os << indent << "SliceCompositeNode: ";
+    os << (this->SliceCompositeNode->GetID() ? this->SliceCompositeNode->GetID() : "(null ID)") << "\n";
+    this->SliceCompositeNode->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "SliceCompositeNode: (none)\n";
+    }
+
+  if (this->BackgroundLayer)
+    {
+    os << indent << "BackgroundLayer: ";
+    this->BackgroundLayer->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "BackgroundLayer: (none)\n";
+    }
+
+  if (this->ForegroundLayer)
+    {
+    os << indent << "ForegroundLayer: ";
+    this->ForegroundLayer->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "ForegroundLayer: (none)\n";
+    }
+
+  if (this->LabelLayer)
+    {
+    os << indent << "LabelLayer: ";
+    this->LabelLayer->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "LabelLayer: (none)\n";
+    }
+
+  if (this->Blend)
+    {
+    os << indent << "Blend: ";
+    this->Blend->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "Blend: (none)\n";
+    }
+
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
 
@@ -971,12 +1022,12 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     char description[256];
     std::stringstream ssD;
     vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
-    if ( sliceNode )
+    if ( sliceNode && sliceNode->GetID() )
       {
       ssD << " SliceID " << sliceNode->GetID();
       }
     vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
-    if ( compositeNode )
+    if ( compositeNode && compositeNode->GetID() )
       {
       ssD << " CompositeID " << compositeNode->GetID();
       }

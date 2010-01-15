@@ -583,12 +583,27 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
   
   os << indent << "SlicerSliceLayerLogic:             " << this->GetClassName() << "\n";
 
-  os << indent << "VolumeNode: " <<
-    (this->VolumeNode ? this->VolumeNode->GetID() : "(none)") << "\n";
-  os << indent << "SliceNode: " <<
-    (this->SliceNode ? this->SliceNode->GetID() : "(none)") << "\n";
-
+  if (this->VolumeNode)
+    {
+    os << indent << "VolumeNode: ";
+    os << (this->VolumeNode->GetID() ? this->VolumeNode->GetID() : "(null ID)") << "\n";
+    this->VolumeNode->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "VolumeNode: (none)\n";
+    }
   
+  if (this->SliceNode)
+    {
+    os << indent << "SliceNode: ";
+    os << (this->SliceNode->GetID() ? this->SliceNode->GetID() : "(null ID)") << "\n";
+    this->SliceNode->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "SliceNode: (none)\n";
+    }
 
   if (this->VolumeDisplayNode)
     {
@@ -600,6 +615,7 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "VolumeDisplayNode: (none)\n";
     }
+
   os << indent << "Slice:\n";
   if (this->Slice)
     {
