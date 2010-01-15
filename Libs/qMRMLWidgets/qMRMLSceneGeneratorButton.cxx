@@ -12,17 +12,23 @@
 class qMRMLSceneGeneratorButtonPrivate: public qCTKPrivate<qMRMLSceneGeneratorButton>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLTreeWidget);
+  QCTK_DECLARE_PUBLIC(qMRMLSceneGeneratorButton);
+  qMRMLSceneGeneratorButtonPrivate();
   void init();
   
   vtkMRMLScene*  MRMLScene;
 };
 
 // --------------------------------------------------------------------------
+qMRMLSceneGeneratorButtonPrivate::qMRMLSceneGeneratorButtonPrivate()
+{
+  this->MRMLScene = 0;
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSceneGeneratorButtonPrivate::init()
 {
   QCTK_P(qMRMLSceneGeneratorButton);
-  this->MRMLScene = 0;
   p->connect(p, SIGNAL(clicked()), p, SLOT(generateScene()));
 }
 
