@@ -358,7 +358,9 @@ public:
       SaveProgressFeedbackEvent = 66009,
       SceneLoadStartEvent = 66010,
       SceneLoadEndEvent = 66011,
-      SceneRestoredEvent = 66008
+      SceneRestoredEvent = 66008,
+      NodeAboutToBeAddedEvent = 66012,
+      NodeAboutToBeRemovedEvent = 66013
     };
 //ETX
 

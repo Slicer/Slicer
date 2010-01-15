@@ -1044,7 +1044,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     {
     return NULL;
     }
-
+  this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
   vtkMRMLNode* node = this->AddNodeNoNotify(n);
   this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();
@@ -1088,7 +1088,8 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     return;
     }
   n->Register(this);
-  
+  this->InvokeEvent(this->NodeAboutToBeRemovedEvent, n);
+
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
   
