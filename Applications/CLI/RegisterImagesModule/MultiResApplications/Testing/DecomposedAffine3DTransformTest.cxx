@@ -15,7 +15,7 @@ namespace
   }
 }
 
-int DecomposedAffine3DTransformTest(int argc, char* argv[])
+int DecomposedAffine3DTransformTest(int, char* [])
 {
   typedef itk::DecomposedAffine3DTransform<double> TransformType;
 

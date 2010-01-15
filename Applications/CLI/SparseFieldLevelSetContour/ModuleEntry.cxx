@@ -1,7 +1,8 @@
 #include "ModuleEntry.h"
 
 // Input: mesh and indices of vertices for initialization
-vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, const vector<int>& initPointVertexIndices )
+vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
+                                             const vector<int>& vtkNotUsed(initPointVertexIndices) )
 {
   // instantiate output mesh
   vtkPolyData* outputMesh = vtkPolyData::New();
@@ -60,10 +61,10 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, const vecto
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh )
+vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* vtkNotUsed(inputMesh) )
 {  
   vector<int> emptyIntVec(0);
-  vtkPolyData* outputMesh;// = entry_main( inputMesh, emptyIntVec );
+  vtkPolyData* outputMesh = 0;// = entry_main( inputMesh, emptyIntVec );
 
   return outputMesh;
 }

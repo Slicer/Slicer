@@ -208,8 +208,8 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   short minForegnd = (short)self->GetMinForeground();
   short maxForegnd = (short)self->GetMaxForeground();
   short newLabel = (short)self->GetOutputLabel();
-  short seedLabel;
-  int largest, len=1, nxy, z, nz, j;
+  short seedLabel = 0;
+  int largest, len=1, nxy, z, nz = 0, j;
   int *census = NULL;
   int seed[3];
   int minSize = self->GetMinSize();
@@ -222,7 +222,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   int sliceBySlice    = self->GetSliceBySlice();
 
   // connect
-  size_t conSeedLabel, i, idx, dz;
+  size_t conSeedLabel = 0, i, idx, dz;
   int rank;
   size_t *axis_len=NULL;
   unsigned short bg = self->GetBackground();

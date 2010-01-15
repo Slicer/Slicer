@@ -24,11 +24,6 @@
 #include <QRect>
 #endif
 
-
-// STL includes
-#include <sstream>
-#include <string>
-
 #include <vtksys/SystemTools.hxx>
 #include <itksys/SystemTools.hxx>
 
@@ -97,6 +92,11 @@
 #include "slicerPython.h"
 #endif
 
+// STL includes
+#include <sstream>
+#include <string>
+
+// VTKSYS includes
 #include <vtksys/stl/vector>
 #include <vtksys/stl/map>
 #include <vtksys/ios/fstream>

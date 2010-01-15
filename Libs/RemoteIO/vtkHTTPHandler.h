@@ -40,7 +40,9 @@ class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
   // Description:
   // This function wraps curl functionality to download a specified URL to a specified dir
   void StageFileRead(const char * source, const char * destination);
+  using vtkURIHandler::StageFileRead;
   void StageFileWrite(const char * source, const char * destination);
+  using vtkURIHandler::StageFileWrite; 
   virtual void InitTransfer ( );
   virtual int CloseTransfer ( );
 

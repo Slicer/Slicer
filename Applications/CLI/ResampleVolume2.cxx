@@ -288,7 +288,7 @@ typedef itk::Transform<double,3,3>::Pointer Transform3DPointer;
 template<class PixelType>
 void CheckDWMRI(itk::MetaDataDictionary &dico ,
                 Transform3DPointer &transform ,
-                parameters list )
+                parameters itkNotUsed(list) )
 {
   typedef std::vector< std::vector< double > > DoubleVectorType ;
   typedef itk::MetaDataObject< DoubleVectorType > MetaDataDoubleVectorType ;

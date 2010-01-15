@@ -42,8 +42,8 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLTransforma
   // Description:
   // transform utility functions, need to be defined by subclasses
   virtual bool CanApplyNonLinearTransforms() { return true; }
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix) {};
-  virtual void ApplyTransform(vtkAbstractTransform* transform) {};
+  virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
   
   
   // Description:

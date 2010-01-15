@@ -36,7 +36,7 @@ int vtkIGTMatrixState::getTimestamp ( ) {
 
 void vtkIGTMatrixState::PrintSelf(ostream& os, vtkIndent indent)
 {
-
+  Superclass::PrintSelf(os, indent);
 }
 
 

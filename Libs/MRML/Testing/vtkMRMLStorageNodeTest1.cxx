@@ -33,10 +33,10 @@ public:
     }
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; }
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  virtual int ReadData(vtkMRMLNode *refNode) { return 0; }
-  virtual int WriteData(vtkMRMLNode *refNode) { return 0; }
+  virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
+  virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
 };
  
 int vtkMRMLStorageNodeTest1(int , char * [] )

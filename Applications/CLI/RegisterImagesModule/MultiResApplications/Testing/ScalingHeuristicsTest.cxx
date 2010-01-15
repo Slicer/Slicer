@@ -49,7 +49,7 @@ createTestImage(SizeType size,
 
 }
 
-int ScalingHeuristicsTest(int argc, char* argv[])
+int ScalingHeuristicsTest(int, char* [])
 {
   const unsigned int NTESTS = 4;
   unsigned int sizes[NTESTS][3] = {{128,128,63},

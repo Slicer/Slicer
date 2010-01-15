@@ -18,7 +18,7 @@
 
 #include "TestingMacros.h"
 
-int qSlicerModuleFactoryTest1(int argc, char * argv [] )
+int qSlicerModuleFactoryTest1(int, char * [] )
 {
   qSlicerModuleFactory moduleFactory;
 

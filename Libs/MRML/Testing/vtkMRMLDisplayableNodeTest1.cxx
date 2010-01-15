@@ -32,10 +32,11 @@ public:
     }
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* transform)
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
     {
     return;
-    } 
+    }
+  using vtkMRMLTransformableNode::ApplyTransform;
 };
  
 int vtkMRMLDisplayableNodeTest1(int , char * [] )

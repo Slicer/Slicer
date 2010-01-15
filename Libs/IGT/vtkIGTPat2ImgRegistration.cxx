@@ -107,7 +107,6 @@ int vtkIGTPat2ImgRegistration::DoRegistration()
 
 void vtkIGTPat2ImgRegistration::PrintSelf(ostream& os, vtkIndent indent)
 {
-
-
+  Superclass::PrintSelf(os, indent);
 }
 

@@ -17,7 +17,7 @@ namespace
   }
 }
 
-int EulerSimilarity3DTransformTest(int argc, char* argv[])
+int EulerSimilarity3DTransformTest(int, char* [])
 {
   typedef itk::EulerSimilarity3DTransform<double> TransformType;
 

@@ -36,7 +36,7 @@ createTestImage(SizeType size,
 
 }
 
-int DownsampleHeuristicsTest(int argc, char* argv[])
+int DownsampleHeuristicsTest(int, char* [])
 {
   const unsigned int NTESTS = 7;
   unsigned int sizes[NTESTS][3] = {{128,128,63},

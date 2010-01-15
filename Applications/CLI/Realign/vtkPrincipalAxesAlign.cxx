@@ -188,16 +188,6 @@ vtkPrincipalAxesAlign::~vtkPrincipalAxesAlign()
   free(eigenvalues);
 }
 
-vtkPrincipalAxesAlign::vtkPrincipalAxesAlign(vtkPrincipalAxesAlign&)
-{
-
-}
-
-void vtkPrincipalAxesAlign::operator=(const vtkPrincipalAxesAlign&)
-{
-
-}
-
 void vtkPrincipalAxesAlign::PrintSelf(ostream& os, vtkIndent indent)
 {
   int i;

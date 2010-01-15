@@ -32,7 +32,9 @@ class VTK_RemoteIO_EXPORT vtkSRBHandler : public vtkURIHandler
   // This function wraps SCommand functionality to download a specified URI to
   // a specified destination file
   void StageFileRead(const char * source, const char * destination);
+  using vtkURIHandler::StageFileRead;
   void StageFileWrite(const char * source, const char * destination);
+  using vtkURIHandler::StageFileWrite;
 
  private:
   virtual void InitTransfer ( );

@@ -110,5 +110,6 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
 
 void vtkIGTDataManager::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 

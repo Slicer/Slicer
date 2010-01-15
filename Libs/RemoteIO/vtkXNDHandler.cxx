@@ -50,7 +50,8 @@ size_t xnd_writeheader_callback(void *ptr, size_t size, size_t nmemb, void *stre
   return written;
 }
 
-size_t xnd_ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow)
+size_t xnd_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
+                            double dlnow, double ultotal, double ulnow)
 {
   if(ultotal == 0)
     {

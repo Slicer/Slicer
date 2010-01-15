@@ -32,7 +32,8 @@ size_t hid_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
-size_t hid_ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow)
+size_t hid_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
+                            double dlnow, double ultotal, double ulnow)
 {
   if(ultotal == 0)
     {
@@ -126,7 +127,7 @@ void vtkHIDHandler::StageFileRead(const char * source,
 
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileWrite(const char *source,
-                                   const char *destination)
+                                   const char *vtkNotUsed(destination))
 
 {
   // need to use the -k argument for signed... how to

@@ -13,6 +13,9 @@ QObject *qCTKExtensionFactory::createExtension(QObject *object,
                                                const QString &iid,
                                                QObject *parent) const
 {
+  Q_UNUSED(object);
+  Q_UNUSED(iid);
+  Q_UNUSED(parent);
   // qCTKCollapsibleWidget *widget = qobject_cast<qCTKCollapsibleWidget*>(object);
   // 
   // if (widget && (iid == Q_TYPEID(QDesignerContainerExtension))) {

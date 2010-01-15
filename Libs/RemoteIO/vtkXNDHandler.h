@@ -25,7 +25,7 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   // To prevent XND handler from capturing any non-xnd requests
   // that start with http://, this test will fail. The handler must be
   // called by name.
-  virtual int CanHandleURI ( const char *uri ) { return 0; };
+  virtual int CanHandleURI ( const char *vtkNotUsed(uri) ) { return 0; };
 
   // Description:
   // This function downloads the specified source (uri) to 

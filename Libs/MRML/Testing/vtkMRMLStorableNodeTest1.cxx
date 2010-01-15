@@ -32,7 +32,8 @@ public:
     }
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; }
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
+  using vtkMRMLTransformableNode::ApplyTransform;
 };
  
 int vtkMRMLStorableNodeTest1(int , char * [] )

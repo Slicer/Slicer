@@ -27,6 +27,7 @@ QString qCTKWidgetsAbstractPlugin::whatsThis() const
 
 void qCTKWidgetsAbstractPlugin::initialize(QDesignerFormEditorInterface *formEditor)
 {
+  Q_UNUSED(formEditor);
   if (this->Initialized)
     {
     return;

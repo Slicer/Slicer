@@ -46,15 +46,15 @@ public:
 
   virtual int IsLinear() { return 1; }
 
-  virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) 
+  virtual int GetMatrixTransformToWorld(vtkMatrix4x4* vtkNotUsed(transformToWorld)) 
     {
     return 0;
     }
 
   // Description:
-  // Get concatinated transforms  bwetween nodes  
-  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
-                                       vtkMatrix4x4* transformToNode) 
+  // Get concatenated transforms  between nodes
+  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* vtkNotUsed(node), 
+                                       vtkMatrix4x4* vtkNotUsed(transformToNode))
     {
     return 0;
     } 

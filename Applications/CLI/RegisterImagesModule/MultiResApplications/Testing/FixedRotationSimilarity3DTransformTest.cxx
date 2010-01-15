@@ -9,7 +9,7 @@
 
 #include "itkFixedRotationSimilarity3DTransform.h"
 
-int FixedRotationSimilarity3DTransformTest(int argc, char* argv[])
+int FixedRotationSimilarity3DTransformTest(int, char* [])
 {
   typedef itk::FixedRotationSimilarity3DTransform<double> TransformType;
 
