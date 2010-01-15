@@ -332,9 +332,6 @@ private:
 
 };
 
-namespace
-{
 void updateAxis(vtkObject* caller, unsigned long , void* arg, void* );
-}
 
 #endif
