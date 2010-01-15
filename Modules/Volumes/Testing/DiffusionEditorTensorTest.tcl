@@ -72,7 +72,7 @@ update; after 333
 
 $testWidget SetTractVisibility 1
 
-update; after 2000
+update; 
 
 exit 0
 
