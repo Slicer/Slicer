@@ -212,7 +212,9 @@ int vtkFetchMIWebServicesClientXND::QueryServerForResources ( vtkTagTable *table
 
 
 //---------------------------------------------------------------------------
-int vtkFetchMIWebServicesClientXND::AddTagToServer ( const char *att, const char *val, const char *responseFileName )
+int vtkFetchMIWebServicesClientXND::AddTagToServer ( const char *att,
+                                                     const char *vtkNotUsed(val),
+                                                     const char *responseFileName )
 {
   // assume val is null for XND.
   if ( this->GetURIHandler() == NULL )

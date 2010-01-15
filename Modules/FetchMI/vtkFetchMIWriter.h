@@ -43,17 +43,18 @@ public:
   // Description:
   // Method that writes the XML header document 
   // Derived classes must implement this if they need to use it.
-  virtual void WriteXMLHeader ( const char *dataFilename) { };
+  virtual void WriteXMLHeader ( const char *vtkNotUsed(dataFilename)) { };
 
   // Description:
   // Method that writes the metadata for a node
   // Derived classes must implement this if they need to use it..
-  virtual void WriteMetadataForNode ( const char *nodeID, vtkMRMLScene *scene ) {};
+  virtual void WriteMetadataForNode ( const char * vtkNotUsed(nodeID),
+                                      vtkMRMLScene *vtkNotUsed(scene) ) {};
 
   // Description:
   // Method that writes the metadata for the scene.
   // Derived classes must implement this if they need to use it.
-  virtual void WriteMetadataForScene ( vtkMRMLScene *scene) {};
+  virtual void WriteMetadataForScene ( vtkMRMLScene *vtkNotUsed(scene)) {};
     
  protected:
   vtkFetchMIWriter();

@@ -67,82 +67,79 @@ class vtkSlicerModuleCollapsibleFrame;
 class VTK_BUILDINGBLOCK_EXPORT vtkKWMimxMainWindow : public vtkKWCompositeWidget
 {
 public:
-        static vtkKWMimxMainWindow* New();
-        vtkTypeRevisionMacro(vtkKWMimxMainWindow,vtkKWCompositeWidget);
+  static vtkKWMimxMainWindow* New();
+  vtkTypeRevisionMacro(vtkKWMimxMainWindow,vtkKWCompositeWidget);
 
-        virtual void Register(vtkObject *o) { Superclass::Register(o); };
-        virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
-        
-        // Description:
-        // Get/Set the KWRenderWidget used to render the scene. The
-        // RenderWidget must be set before calling the Create() method.
-        vtkGetObjectMacro(RenderWidget, vtkKWRenderWidget);
-        vtkSetObjectMacro(RenderWidget, vtkKWRenderWidget);
-        
-        // Description:
-        // Get/Set the KWWindow used by the application. The Window must
-        // be set before calling the Create() method.
-        vtkGetObjectMacro(MainWindow, vtkKWWindow);
-        vtkSetObjectMacro(MainWindow, vtkKWWindow);
-        
-        // Description:
-        // Get/Set the mode for the user interface. The default mode (true)
-        // is a standalone application. This will create options to
-        // allow the user to set the font size and type. If the value
-        // is false the main application is expected to manage this.
-        // The mode must be set before calling the Create() method.
-        vtkGetMacro(StandAloneApplication, bool);
-        vtkSetMacro(StandAloneApplication, bool);
-        
-        // Description:
-        // Get the Error dialog used to report errors 
-        vtkGetObjectMacro(ErrorCallback, vtkMimxErrorCallback);
-        
-        // Description:
-        // Get the ViewProperties dialog box 
-        vtkGetObjectMacro(ViewProperties, vtkKWMimxViewProperties);
-        
-        // Description:
-        // Get Axis Actor that is placed in the lower left.
-        vtkGetObjectMacro(PVAxesActor, vtkPVAxesActor);
-        
-        // Description:
-        // Get the user interface panel
-        vtkGetObjectMacro(
-                MainUserInterfacePanel, vtkKWMimxMainNotebook);
-        
-        // once the main window this will be drawing into is set, this method will 
-        // add and remove an orientation actor from the corner
-        void RemoveOrientationAxis();
-        void AddOrientationAxis();
-        
-        // Description:
-        // Set the status text in the lower left of the application. This
-        // is a convience function that calls the SetStatusText() in KWWindow.
-        // The method is provided here for convience.It could be
-        // eliminated with code refactoring in the other MIMX classes.
-        void SetStatusText( const char * );
-        
-        // Description:
-        // Get the UserInterfaceManager that is managed by the window. This
-        // is a convience function that calls the GetMainUserInterfaceManager() 
-        // in KWWindow. The method is provided here for convience. It could be
-        // eliminated with code refactoring in the other MIMX classes
-  vtkKWUserInterfaceManager* GetMainUserInterfaceManager();
-  
   // Description:
-        // Update the Enabled state of the Window. This is a
-        // convience function that calls the UpdateEnableState() 
-        // in KWWindow. The method is provided here for convience. It could be
-        // eliminated with code refactoring in the other MIMX classes
-  void UpdateEnableState();
-  
-  
-        // Description:
-        // Launch a window to containing display property change options
-        void DisplayPropertyCallback();
+  // Get/Set the KWRenderWidget used to render the scene. The
+  // RenderWidget must be set before calling the Create() method.
+  vtkGetObjectMacro(RenderWidget, vtkKWRenderWidget);
+  vtkSetObjectMacro(RenderWidget, vtkKWRenderWidget);
 
-        // Description:
+  // Description:
+  // Get/Set the KWWindow used by the application. The Window must
+  // be set before calling the Create() method.
+  vtkGetObjectMacro(MainWindow, vtkKWWindow);
+  vtkSetObjectMacro(MainWindow, vtkKWWindow);
+
+  // Description:
+  // Get/Set the mode for the user interface. The default mode (true)
+  // is a standalone application. This will create options to
+  // allow the user to set the font size and type. If the value
+  // is false the main application is expected to manage this.
+  // The mode must be set before calling the Create() method.
+  vtkGetMacro(StandAloneApplication, bool);
+  vtkSetMacro(StandAloneApplication, bool);
+
+  // Description:
+  // Get the Error dialog used to report errors
+  vtkGetObjectMacro(ErrorCallback, vtkMimxErrorCallback);
+
+  // Description:
+  // Get the ViewProperties dialog box
+  vtkGetObjectMacro(ViewProperties, vtkKWMimxViewProperties);
+
+  // Description:
+  // Get Axis Actor that is placed in the lower left.
+  vtkGetObjectMacro(PVAxesActor, vtkPVAxesActor);
+
+  // Description:
+  // Get the user interface panel
+  vtkGetObjectMacro(
+          MainUserInterfacePanel, vtkKWMimxMainNotebook);
+
+  // once the main window this will be drawing into is set, this method will
+  // add and remove an orientation actor from the corner
+  void RemoveOrientationAxis();
+  void AddOrientationAxis();
+
+  // Description:
+  // Set the status text in the lower left of the application. This
+  // is a convience function that calls the SetStatusText() in KWWindow.
+  // The method is provided here for convience.It could be
+  // eliminated with code refactoring in the other MIMX classes.
+  void SetStatusText( const char * );
+
+  // Description:
+  // Get the UserInterfaceManager that is managed by the window. This
+  // is a convience function that calls the GetMainUserInterfaceManager()
+  // in KWWindow. The method is provided here for convience. It could be
+  // eliminated with code refactoring in the other MIMX classes
+  vtkKWUserInterfaceManager* GetMainUserInterfaceManager();
+
+  // Description:
+  // Update the Enabled state of the Window. This is a
+  // convience function that calls the UpdateEnableState()
+  // in KWWindow. The method is provided here for convience. It could be
+  // eliminated with code refactoring in the other MIMX classes
+  void UpdateEnableState();
+
+
+  // Description:
+  // Launch a window to containing display property change options
+  void DisplayPropertyCallback();
+
+  // Description:
   // Set/Get the application font family
   void SetApplicationFontFamily ( const char *family);
   const char *GetApplicationFontFamily ( ) const;
@@ -152,77 +149,77 @@ public:
   void SetApplicationFontSize ( const char *size );
   const char *GetApplicationFontSize ( ) const;
 
-        // Description:
-        // Callback for autosave. Saves the active instance of the FE Mesh,
-        // Building blocks and Surfaces in the object list
-        void AutoSaveCallback( );
-        void EnableAutoSave( );
-        void DisableAutoSave( );
-        
-        // Description:
+  // Description:
+  // Callback for autosave. Saves the active instance of the FE Mesh,
+  // Building blocks and Surfaces in the object list
+  void AutoSaveCallback( );
+  void EnableAutoSave( );
+  void DisableAutoSave( );
+
+  // Description:
   // Set/Get the Current Render Window Text Color
-        void SetTextColor(double color[3]);
-        double *GetTextColor();
-        
-        // Description:
+  void SetTextColor(double color[3]);
+  double *GetTextColor();
+
+  // Description:
   // Set/Get the Current Render Window Background Color
-        void SetBackgroundColor(double color[3]);
-        double *GetBackgroundColor();
-        
-        // Description:
+  void SetBackgroundColor(double color[3]);
+  double *GetBackgroundColor();
+
+  // Description:
   // Set/Get the default average edge length for building blocks when created
   double GetAverageElementLength( );
   void SetAverageElementLength(double length);
-        
-        // Description:
+
+  // Description:
   // Set/Get the default precision for material properties when written to ABAQUS
   int GetABAQUSPrecision( );
   void SetABAQUSPrecision(int precision);
-  
+
   // Description:
   // Set/Get the application Auto Save Flag
   bool GetAutoSaveFlag( );
   void SetAutoSaveFlag(bool saveFlag);
-  
+
   // Description:
   // Set/Get the Auto Save Working Directory Flag
   bool GetAutoSaveWorkDirFlag( );
   void SetAutoSaveWorkDirFlag(bool saveFlag);
-  
+
   // Description:
   // Set/Get the application Auto Save Frequency
   int  GetAutoSaveTime( );
   void SetAutoSaveTime(int saveTime);
-  
+
   // Description:
   // Set/Get the Auto Save Directory
   const char *GetWorkingDirectory();
   void SetWorkingDirectory(const char *dirName);
   void InitializeWorkingDirectory(const char *dirName);
-  
+
   // Description:
   // Set/Get the Auto Save Directory
   const char *GetAutoSaveDirectory() const;
   void SetAutoSaveDirectory(const char *dirName);
-  
+
   // Description:
   // Get Apply/Cancel Icons used througout the application
-        vtkKWIcon* GetApplyButtonIcon();
-        vtkKWIcon* GetCancelButtonIcon();
-        
-        // Description:
+  vtkKWIcon* GetApplyButtonIcon();
+  vtkKWIcon* GetCancelButtonIcon();
+
+  // Description:
   // Get the Application Settings Interface as well as the Application
   // Settings User Interface Manager.
   //virtual vtkKWApplicationSettingsInterface *GetApplicationSettingsInterface();
-  
+
   // Description:
   // Callbacks for the Module application settings. Internal, do not use.
-  
+
   // Description:
   // Callbacks for font settings. Internal, do not use.
   virtual void SetFontFamilyCallback ( );
   virtual void SetFontSizeCallback ( );
-  
+
   // Description:
   // Callbacks for the Application settings. Internal, do not use.
   virtual void AutoSaveModeCallback(int mode);
@@ -231,75 +228,75 @@ public:
   virtual void AutoSaveDirectoryCallback( );
   virtual void AverageElementLengthCallback(char *value);
   virtual void ABAQUSPrecisionCallback(double value);
-  
+
   // Description:
   // Get the directory to be used for automated backups of the work
   const char *GetSaveDirectory ( );
-  
+
   // Description:
   // Refresh the interface given the current value of the Window and its
   // views/composites/widgets.
   virtual void Update();
-  
+
   // Description:
   // Load the previous set Registry Settings
-        void LoadRegistryApplicationSettings();
-        
-        // Description:
+  void LoadRegistryApplicationSettings();
+
+  // Description:
   // Get/Set the Theme to be used for the Application
-        virtual void InstallTheme ( vtkKWTheme *theme );
+  virtual void InstallTheme ( vtkKWTheme *theme );
   virtual void InstallDefaultTheme ( );
   vtkSlicerTheme *GetSlicerTheme ( );
-  
-  
+
+
   // *** Force redraw since in slicer the panels weren't redrawing automatically
-    void ForceWidgetRedraw(void);
-    
-    // add and remove the ApplicationSettings menus
-    void CustomApplicationSettingsModuleEntry();
-    void CustomApplicationSettingsModuleExit();
-    
-    // clear and display the objects from the lists.  This is used when the 
-    // module is entered and exited, so the actors don't display in the slicer
-    // window when we are not in the module.  This traverses the list and stores
-    // state in the MRML nodes. 
-    void SaveVisibilityStateOfObjectLists(void);
-    void RestoreVisibilityStateOfObjectLists(void);
-    
+  void ForceWidgetRedraw(void);
+
+  // add and remove the ApplicationSettings menus
+  void CustomApplicationSettingsModuleEntry();
+  void CustomApplicationSettingsModuleExit();
+
+  // clear and display the objects from the lists.  This is used when the
+  // module is entered and exited, so the actors don't display in the slicer
+  // window when we are not in the module.  This traverses the list and stores
+  // state in the MRML nodes.
+  void SaveVisibilityStateOfObjectLists(void);
+  void RestoreVisibilityStateOfObjectLists(void);
+
   // Widgets that must be public
   vtkKWRenderWidget *RenderWidget;
-        vtkRenderer *AxesRenderer;
+  vtkRenderer *AxesRenderer;
         
 protected:
-        vtkKWMimxMainWindow();
-        ~vtkKWMimxMainWindow();
-        virtual void CreateWidget();
-        vtkMimxErrorCallback *ErrorCallback;
-        vtkKWMimxViewProperties *ViewProperties;
-        vtkLinkedListWrapperTree *DoUndoTree;
-        vtkKWMimxMainNotebook *MainUserInterfacePanel;
-        vtkKWMimxDisplayPropertiesGroup *DisplayPropertyDialog;
-        
-        vtkSlicerModuleCollapsibleFrame *MainFrame;
+  vtkKWMimxMainWindow();
+  ~vtkKWMimxMainWindow();
+  virtual void CreateWidget();
+  vtkMimxErrorCallback *ErrorCallback;
+  vtkKWMimxViewProperties *ViewProperties;
+  vtkLinkedListWrapperTree *DoUndoTree;
+  vtkKWMimxMainNotebook *MainUserInterfacePanel;
+  vtkKWMimxDisplayPropertiesGroup *DisplayPropertyDialog;
+
+  vtkSlicerModuleCollapsibleFrame *MainFrame;
 
         
 private:
-        vtkKWMimxMainWindow(const vtkKWMimxMainWindow&);   // Not implemented.
-        void operator=(const vtkKWMimxMainWindow&);  // Not implemented.
-        
-        void AddCustomApplicationSettingsPanel();
-        void AddFontApplicationSettingsPanel();
-        
-        vtkKWIcon *applyIcon;
-        vtkKWIcon *cancelIcon; 
-        
-        char autoSaveEventId[256];   
-        
-        /* Application Settings Interface Widgets */
-        vtkPVAxesActor *PVAxesActor;
-        vtkCallbackCommand *CallbackCommand;
-        vtkKWWindow *MainWindow;
-        vtkKWFrameWithLabel *MimxSettingsFrame;
+  vtkKWMimxMainWindow(const vtkKWMimxMainWindow&);   // Not implemented.
+  void operator=(const vtkKWMimxMainWindow&);  // Not implemented.
+
+  void AddCustomApplicationSettingsPanel();
+  void AddFontApplicationSettingsPanel();
+
+  vtkKWIcon *applyIcon;
+  vtkKWIcon *cancelIcon;
+
+  char autoSaveEventId[256];
+
+  /* Application Settings Interface Widgets */
+  vtkPVAxesActor *PVAxesActor;
+  vtkCallbackCommand *CallbackCommand;
+  vtkKWWindow *MainWindow;
+  vtkKWFrameWithLabel *MimxSettingsFrame;
   vtkKWCheckButtonWithLabel *AutoSaveButton;
   vtkKWScaleWithLabel *AutoSaveScale;
   vtkKWCheckButtonWithLabel *WorkingDirButton;
@@ -334,6 +331,10 @@ private:
   bool StandAloneApplication;            
 
 };
+
+namespace
+{
 void updateAxis(vtkObject* caller, unsigned long , void* arg, void* );
+}
 
 #endif

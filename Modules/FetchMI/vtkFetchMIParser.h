@@ -72,47 +72,48 @@ public:
   // Description:
   // Function for parsing the response to query for server-supported metadata
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseMetadataQueryResponse( const char *filename ) { return 0; };
+  virtual int ParseMetadataQueryResponse( const char * vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Function for parsing the response to query for all values for any metadata attribute.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseValuesForAttributeQueryResponse( const char *filename, const char *att ) { return 0; };
+  virtual int ParseValuesForAttributeQueryResponse( const char *vtkNotUsed(filename),
+                                                    const char *vtkNotUsed(att)) { return 0; };
 
   // Description:
   // Function for parsing the response to query for resources on the server.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseResourceQueryResponse( const char *filename ) { return 0; };
+  virtual int ParseResourceQueryResponse( const char *vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Function for parsing the response to requests that metadata be deleted on server
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseMetatdataDeleteResponse(const char *filename ) { return 0; };
+  virtual int ParseMetatdataDeleteResponse(const char *vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Function for parsing the response to requests that a resource be deleted on server
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseResourceDeleteResponse(const char *filename ) { return 0; };
+  virtual int ParseResourceDeleteResponse(const char *vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Function for parsing the response to posting of new metadata to server.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseMetadataPostResponse( const char *filename) { return 0; };
+  virtual int ParseMetadataPostResponse( const char *vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Function for parsing the response to posting of reource to server.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseResourcePostResponse(const char *filename ) { return 0; };
+  virtual int ParseResourcePostResponse(const char *vtkNotUsed(filename)) { return 0; };
 
   // Description:
   // Virtual functions for parsing download requests.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseResourceDownloadResponse(const char *filename ) { return 0;};
+  virtual int ParseResourceDownloadResponse(const char *vtkNotUsed(filename)) { return 0;};
   
   // Description:
   // Virtual function for looking for errors in response to posts or queries on the server.
   // Derived classes must define these, and any other parsing methods.
-  virtual int ParseForErrors (const char *filename ) { return 0;};
+  virtual int ParseForErrors (const char *vtkNotUsed(filename)) { return 0;};
   
   // Description:
   // Function Getting an error message from an XML response.
@@ -140,7 +141,7 @@ public:
 
   // Description:
   // Gets an XMLEntry during XML parsing; this method must be redefined in each derived class.
-  virtual void GetXMLEntry ( vtkXMLDataElement *element ) { };
+  virtual void GetXMLEntry ( vtkXMLDataElement *vtkNotUsed(element) ) { };
 
   // Description:
   // Method adds a unique keyword (or attribute) in the temporary set of

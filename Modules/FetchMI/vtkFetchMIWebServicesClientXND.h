@@ -29,8 +29,8 @@ public:
                                const char *uploadFileName,
                                const char *responseFileName);
   
-  virtual void Download ( const char *src, const char *dest );
-  virtual void Upload ( const char *src, const char *dest ) { };
+  virtual void Download ( const char *vtkNotUsed(src), const char *vtkNotUsed(dest) );
+  virtual void Upload ( const char *vtkNotUsed(src), const char *vtkNotUsed(dest) ) { };
   
  protected:
   vtkFetchMIWebServicesClientXND();
