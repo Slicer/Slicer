@@ -35,15 +35,15 @@ qCTKModelTesterPrivate::qCTKModelTesterPrivate()
 }
 
 //-----------------------------------------------------------------------------
-qCTKModelTester::qCTKModelTester(QAbstractItemModel *model, QObject *parent)
-  :QObject(parent)
+qCTKModelTester::qCTKModelTester(QAbstractItemModel *vmodel, QObject *vparent)
+  :QObject(vparent)
 {
   QCTK_INIT_PRIVATE(qCTKModelTester);
-  this->setModel(model);
+  this->setModel(vmodel);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::setModel(QAbstractItemModel *model)
+void qCTKModelTester::setModel(QAbstractItemModel *vmodel)
 {
   QCTK_D(qCTKModelTester);
   if (d->Model)
@@ -54,32 +54,32 @@ void qCTKModelTester::setModel(QAbstractItemModel *model)
     d->AboutToBeRemoved.clear();
     d->LayoutAboutToBeChanged.clear();
     }
-  if (model)
+  if (vmodel)
     {
-    connect(model, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)), 
             this, SLOT(onColumnsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)), 
             this, SLOT(onColumnsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
             this, SLOT(onColumnsInserted(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(columnsRemoved(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(columnsRemoved(const QModelIndex &, int, int)), 
             this, SLOT(onColumnsRemoved(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), 
+    connect(vmodel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), 
             this, SLOT(onDataChanged(const QModelIndex& , const QModelIndex &)));
-    connect(model, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
-    connect(model, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
-    connect(model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
-    connect(model, SIGNAL(modelReset()), this, SLOT(onModelReset()));
-    connect(model, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
+    connect(vmodel, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
+    connect(vmodel, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
+    connect(vmodel, SIGNAL(modelReset()), this, SLOT(onModelReset()));
+    connect(vmodel, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), 
             this, SLOT(onRowsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), 
             this, SLOT(onRowsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(rowsInserted(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(rowsInserted(const QModelIndex &, int, int)), 
             this, SLOT(onRowsInserted(const QModelIndex& , int, int)));
-    connect(model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), 
+    connect(vmodel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), 
             this, SLOT(onRowsRemoved(const QModelIndex& , int, int)));
     }
-  d->Model = model;
+  d->Model = vmodel;
   this->testModel();
 }
 
@@ -160,33 +160,33 @@ void qCTKModelTester::testData(const QModelIndex& index)const
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::testParent(const QModelIndex& parent)const
+void qCTKModelTester::testParent(const QModelIndex& vparent)const
 {
   QCTK_D(const qCTKModelTester);
-  if (!d->Model->hasChildren(parent))
+  if (!d->Model->hasChildren(vparent))
     {
     // it's asking a lot :-)
-    //this->test(d->Model->columnCount(parent) <= 0, "A parent with no children can't have a columnCount > 0.");
-    this->test(d->Model->rowCount(parent) <= 0, "A parent with no children can't have a rowCount > 0.");
+    //this->test(d->Model->columnCount(vparent) <= 0, "A parent with no children can't have a columnCount > 0.");
+    this->test(d->Model->rowCount(vparent) <= 0, "A parent with no children can't have a rowCount > 0.");
     }
   else
     {
-    this->test(d->Model->columnCount(parent) > 0, "A parent with children can't have a columnCount <= 0.");
-    this->test(d->Model->rowCount(parent) > 0, "A parent with children can't have a rowCount <= 0.");
+    this->test(d->Model->columnCount(vparent) > 0, "A parent with children can't have a columnCount <= 0.");
+    this->test(d->Model->rowCount(vparent) > 0, "A parent with children can't have a rowCount <= 0.");
     }
 
-  if (!parent.isValid())
+  if (!vparent.isValid())
     {// otherwise there will be an infinite loop
     return;
     }
   
-  for (int i = 0 ; i < d->Model->rowCount(parent); ++i)
+  for (int i = 0 ; i < d->Model->rowCount(vparent); ++i)
     {
-    for (int j = 0; j < d->Model->columnCount(parent); ++j)
+    for (int j = 0; j < d->Model->columnCount(vparent); ++j)
       {
-      this->test(d->Model->hasIndex(i, j, parent), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
-      QModelIndex child = parent.child(i, j);
-      this->test(child.parent() == parent, "A child's parent can't be different from its parent");
+      this->test(d->Model->hasIndex(i, j, vparent), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
+      QModelIndex child = vparent.child(i, j);
+      this->test(child.parent() == vparent, "A child's parent can't be different from its parent");
       this->testModelIndex(child);
       }
     }
@@ -222,31 +222,31 @@ void qCTKModelTester::testModel()const
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onColumnsAboutToBeInserted(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onColumnsAboutToBeInserted(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "columnsAboutToBeInserted: " << parent << start << end;
-  this->onItemsAboutToBeInserted(parent, Qt::Horizontal, start, end);
+  //qDebug() << "columnsAboutToBeInserted: " << vparent << start << end;
+  this->onItemsAboutToBeInserted(vparent, Qt::Horizontal, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onColumnsAboutToBeRemoved(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onColumnsAboutToBeRemoved(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "columnsAboutToBeRemoved: " << parent << start << end;
-  this->onItemsAboutToBeRemoved(parent, Qt::Horizontal, start, end);
+  //qDebug() << "columnsAboutToBeRemoved: " << vparent << start << end;
+  this->onItemsAboutToBeRemoved(vparent, Qt::Horizontal, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onColumnsInserted(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onColumnsInserted(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "columnsInserted: " << parent << start << end;
-  this->onItemsInserted(parent, Qt::Horizontal, start, end);
+  //qDebug() << "columnsInserted: " << vparent << start << end;
+  this->onItemsInserted(vparent, Qt::Horizontal, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onColumnsRemoved(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onColumnsRemoved(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "columnsRemoved: " << parent << start << end;
-  this->onItemsRemoved(parent, Qt::Horizontal, start, end);
+  //qDebug() << "columnsRemoved: " << vparent << start << end;
+  this->onItemsRemoved(vparent, Qt::Horizontal, start, end);
 }
 
 //-----------------------------------------------------------------------------
@@ -338,35 +338,35 @@ void qCTKModelTester::onModelReset()
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void qCTKModelTester::onRowsAboutToBeInserted(const QModelIndex &vparent, int start, int end)
 {
-  //qDebug() << "rowsAboutToBeInserted: " << parent << start << end;
-  this->onItemsAboutToBeInserted(parent, Qt::Vertical, start, end);
+  //qDebug() << "rowsAboutToBeInserted: " << vparent << start << end;
+  this->onItemsAboutToBeInserted(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+void qCTKModelTester::onRowsAboutToBeRemoved(const QModelIndex &vparent, int start, int end)
 {
-  //qDebug() << "rowsAboutToBeRemoved: " << parent << start << end;
-  this->onItemsAboutToBeRemoved(parent, Qt::Vertical, start, end);
+  //qDebug() << "rowsAboutToBeRemoved: " << vparent << start << end;
+  this->onItemsAboutToBeRemoved(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onRowsInserted(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onRowsInserted(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "rowsInserted: " << parent << start << end;
-  this->onItemsInserted(parent, Qt::Vertical, start, end);
+  //qDebug() << "rowsInserted: " << vparent << start << end;
+  this->onItemsInserted(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onRowsRemoved(const QModelIndex & parent, int start, int end)
+void qCTKModelTester::onRowsRemoved(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "rowsRemoved: " << parent << start << end;
-  this->onItemsRemoved(parent, Qt::Vertical, start, end);
+  //qDebug() << "rowsRemoved: " << vparent << start << end;
+  this->onItemsRemoved(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onItemsAboutToBeInserted(const QModelIndex &parent, Qt::Orientation orientation, int start, int end)
+void qCTKModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::Orientation orientation, int start, int end)
 {
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher than end");
@@ -376,19 +376,19 @@ void qCTKModelTester::onItemsAboutToBeInserted(const QModelIndex &parent, Qt::Or
   this->test(d->AboutToBeRemoved.size() == 0, "While removing items, you can't insert other items.");
 
   qCTKModelTesterPrivate::Change change;
-  change.Parent = parent;
+  change.Parent = vparent;
   change.Orientation = orientation;
   change.Start = start;
   change.End = end;
-  change.Count = (orientation == Qt::Vertical ? d->Model->rowCount(parent) :d->Model->columnCount(parent) );
-  change.Items = this->persistentModelIndexes(parent);
+  change.Count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
+  change.Items = this->persistentModelIndexes(vparent);
   d->AboutToBeInserted.push(change);
   
   this->testModel();
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &parent, Qt::Orientation orientation, int start, int end)
+void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Orientation orientation, int start, int end)
 {
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher than end");
@@ -397,12 +397,12 @@ void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &parent, Qt::Ori
   //Not sure about that
   this->test(d->AboutToBeRemoved.size() == 0, "While removing items, you can't remove other items.");
   
-  int count = (orientation == Qt::Vertical ? d->Model->rowCount(parent) :d->Model->columnCount(parent) );
+  int count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
   this->test(start < count, "Item to remove can't be invalid");
   this->test(end < count, "Item to remove can't be invalid");
   
   qCTKModelTesterPrivate::Change change;
-  change.Parent = parent;
+  change.Parent = vparent;
   change.Orientation = orientation;
   change.Start = start;
   change.End = end;
@@ -410,7 +410,7 @@ void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &parent, Qt::Ori
   for (int i = 0 ; i < count; ++i)
     {
     QPersistentModelIndex index;
-    index = (orientation == Qt::Vertical ? d->Model->index(i, 0, parent) : d->Model->index(0, i, parent));
+    index = (orientation == Qt::Vertical ? d->Model->index(i, 0, vparent) : d->Model->index(0, i, vparent));
     this->test(index.isValid(), "Index invalid");
     if (orientation == Qt::Vertical && (index.row() < start || index.row() > end))
       {
@@ -424,11 +424,11 @@ void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &parent, Qt::Ori
   d->AboutToBeRemoved.push(change);
 
   this->testModel();
-  //qDebug() << "About to be removed: " << start << " " << end <<parent << count << change.Items.count();
+  //qDebug() << "About to be removed: " << start << " " << end <<vparent << count << change.Items.count();
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onItemsInserted(const QModelIndex & parent, Qt::Orientation orientation, int start, int end)
+void qCTKModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientation orientation, int start, int end)
 {
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher end");
@@ -437,11 +437,11 @@ void qCTKModelTester::onItemsInserted(const QModelIndex & parent, Qt::Orientatio
   this->test(d->AboutToBeRemoved.size() == 0, "While removing items, you can't insert other items.");
 
   qCTKModelTesterPrivate::Change change = d->AboutToBeInserted.pop();
-  this->test(change.Parent == parent, "Parent can't be different");
+  this->test(change.Parent == vparent, "Parent can't be different");
   this->test(change.Orientation == Qt::Vertical, "Orientation can't be different");
   this->test(change.Start == start, "Start can't be different");
   this->test(change.End == end, "End can't be different");
-  int count =  (orientation == Qt::Vertical ? d->Model->rowCount(parent) :d->Model->columnCount(parent) );
+  int count =  (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
   this->test(change.Count < count, "The new count number can't be lower");
   this->test(count - change.Count == (end - start + 1) , "The new count number can't be lower");
   foreach(const QPersistentModelIndex& index, change.Items)
@@ -454,7 +454,7 @@ void qCTKModelTester::onItemsInserted(const QModelIndex & parent, Qt::Orientatio
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::onItemsRemoved(const QModelIndex & parent, Qt::Orientation orientation, int start, int end)
+void qCTKModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation orientation, int start, int end)
 { 
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher end");
@@ -463,11 +463,11 @@ void qCTKModelTester::onItemsRemoved(const QModelIndex & parent, Qt::Orientation
   this->test(d->AboutToBeInserted.size() == 0, "While inserted items, you can't remove other items.");
 
   qCTKModelTesterPrivate::Change change = d->AboutToBeRemoved.pop();
-  this->test(change.Parent == parent, "Parent can't be different");
+  this->test(change.Parent == vparent, "Parent can't be different");
   this->test(change.Orientation == Qt::Vertical, "Orientation can't be different");
   this->test(change.Start == start, "Start can't be different");
   this->test(change.End == end, "End can't be different");
-  int count = (orientation == Qt::Vertical ? d->Model->rowCount(parent) :d->Model->columnCount(parent) );
+  int count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
   this->test(change.Count > count, "The new count number can't be higher");
   this->test(change.Count - count == (end - start + 1) , "The new count number can't be higher");
   foreach(const QPersistentModelIndex& index, change.Items)
