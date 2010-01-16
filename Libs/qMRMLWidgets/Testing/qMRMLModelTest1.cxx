@@ -81,11 +81,11 @@ int qMRMLModelTest1(int argc, char * argv [] )
       {
       nodeFactory.deleteRandomNode();
       }
-    for( int i = 0; i < 1000; ++i)
+    for( int i = 0; i < 100; ++i)
       {
       nodeFactory.generateRandomNode();
       }
-    for( int i = 0; i < 999; ++i)
+    for( int i = 0; i < 99; ++i)
       {
       nodeFactory.deleteRandomNode();
       }
