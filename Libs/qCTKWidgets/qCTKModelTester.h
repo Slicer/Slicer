@@ -12,7 +12,7 @@
 class QAbstractItemModel;
 class qCTKModelTesterPrivate;
 
-class qCTKModelTester: public QObject
+class QCTK_WIDGETS_EXPORT qCTKModelTester: public QObject
 {
   Q_OBJECT
 public:
