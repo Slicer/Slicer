@@ -917,9 +917,9 @@ void vtkQdecModuleGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkQdecModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
+void vtkQdecModuleGUI::ProcessMRMLEvents ( vtkObject * vtkNotUsed(caller),
                                             unsigned long event,
-                                            void *callData ) 
+                                            void * vtkNotUsed(callData) ) 
 {
   // if parameter node has been changed externally, update GUI widgets with new values
   if (event == vtkMRMLScene::SceneCloseEvent)
