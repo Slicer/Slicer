@@ -6,7 +6,9 @@
 #include <QPersistentModelIndex>
 #include <QList>
 
+
 // CTK includes
+#include <qCTKWidgetsExport.h>
 #include <qCTKPimpl.h>
 
 #include "qCTKWidgetsExport.h"
