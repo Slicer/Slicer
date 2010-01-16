@@ -17,7 +17,7 @@ class qMRMLItemModelPrivate: public qCTKPrivate<qMRMLItemModel>
 public:
   QCTK_DECLARE_PUBLIC(qMRMLItemModel);
   qMRMLItemModelPrivate();
-  qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
+  qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &indexVariable)const;
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
 
   qMRMLAbstractItemHelper* createItemFromVTKObject(vtkObject* object, int column = -1);
@@ -67,27 +67,27 @@ qMRMLAbstractItemHelper* qMRMLItemModelPrivate::createItemFromUID(QVariant uid, 
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLItemModelPrivate::itemFromIndex(const QModelIndex &index)const
+qMRMLAbstractItemHelper* qMRMLItemModelPrivate::itemFromIndex(const QModelIndex &indexVariable)const
 {
   QCTK_P(const qMRMLItemModel);
-  if ((index.row() < 0) || (index.column() < 0) || (index.model() != p))
+  if ((indexVariable.row() < 0) || (indexVariable.column() < 0) || (indexVariable.model() != p))
     {
     return new qMRMLRootItemHelper(this->MRMLScene, this->TopLevelScene);
     }
   vtkObject* object = 
-    reinterpret_cast<vtkObject*>(index.internalPointer());
+    reinterpret_cast<vtkObject*>(indexVariable.internalPointer());
   if (!object)
     {
-    qDebug() << index;
+    qDebug() << indexVariable;
     }
   Q_ASSERT(object);
   if (object->IsA("vtkMRMLScene"))
     {
-    return new qMRMLSceneItemHelper(vtkMRMLScene::SafeDownCast(object), index.column());
+    return new qMRMLSceneItemHelper(vtkMRMLScene::SafeDownCast(object), indexVariable.column());
     }
   else if (object->IsA("vtkMRMLNode"))
     {
-    return new qMRMLNodeItemHelper(vtkMRMLNode::SafeDownCast(object), index.column());
+    return new qMRMLNodeItemHelper(vtkMRMLNode::SafeDownCast(object), indexVariable.column());
     }
   else
     {
@@ -117,8 +117,8 @@ QModelIndex qMRMLItemModelPrivate::indexFromItem(const qMRMLAbstractItemHelper* 
 }
 
 //------------------------------------------------------------------------------
-qMRMLItemModel::qMRMLItemModel(QObject *parent)
-  :QAbstractItemModel(parent)
+qMRMLItemModel::qMRMLItemModel(QObject *parentVariable)
+  :QAbstractItemModel(parentVariable)
 {
   QCTK_INIT_PRIVATE(qMRMLItemModel);
 }
@@ -170,35 +170,35 @@ bool qMRMLItemModel::topLevelScene()const
 */
 
 //------------------------------------------------------------------------------
-int qMRMLItemModel::columnCount(const QModelIndex &parent)const
+int qMRMLItemModel::columnCount(const QModelIndex & vtkNotUsed( parentVariable ) )const
 {
   return 2;
 }
 
 //------------------------------------------------------------------------------
-QVariant qMRMLItemModel::data(const QModelIndex &index, int role)const
+QVariant qMRMLItemModel::data(const QModelIndex &indexVariable, int role)const
 {
   QCTK_D(const qMRMLItemModel);
-  if (!index.isValid())
+  if (!indexVariable.isValid())
     {
     return QVariant();
     }
   Q_ASSERT(d->MRMLScene);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(index));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(indexVariable));
 
   Q_ASSERT(!item.isNull());
   return item->data(role);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
-                                  int row, int column, const QModelIndex &parent)
+bool qMRMLItemModel::dropMimeData(const QMimeData *dataVariable, Qt::DropAction action, 
+                                  int row, int column, const QModelIndex &parentVariable)
 {
   QCTK_D(qMRMLItemModel);
   // check if the action is supported
-  if (!data || !(action == Qt::MoveAction))
+  if (!dataVariable || !(action == Qt::MoveAction))
     {
     return false;
     }
@@ -209,18 +209,18 @@ bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     return false;
     }
   QString format = types.at(0);
-  if (!data->hasFormat(format))
+  if (!dataVariable->hasFormat(format))
     {
     return false;
     }
-  int rowCount = this->rowCount(parent);
-  if (row > rowCount)
+  int rowCountVariable = this->rowCount(parentVariable);
+  if (row > rowCountVariable)
     {
-    row = rowCount;
+    row = rowCountVariable;
     }
   if (row == -1)
     {
-    row = rowCount;
+    row = rowCountVariable;
     }
   if (column == -1)
     {
@@ -228,11 +228,11 @@ bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     }
 
   // decode and insert
-  QByteArray encoded = data->data(format);
+  QByteArray encoded = dataVariable->data(format);
   QDataStream stream(&encoded, QIODevice::ReadOnly);
   
   QVector<int> rows, columns;
-  QVector<QMap<int, QVariant> > itemData;
+  QVector<QMap<int, QVariant> > itemDataVariable;
   while (!stream.atEnd()) 
     {
     int r, c;
@@ -240,19 +240,19 @@ bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     stream >> r >> c >> v;
     rows.append(r);
     columns.append(c);
-    itemData.append(v);
+    itemDataVariable.append(v);
     }
 
   emit layoutAboutToBeChanged();
 
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parent));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parentVariable));
 
   bool res = false;
-  QVector<QMap<int, QVariant> >::const_iterator it = itemData.begin();
+  QVector<QMap<int, QVariant> >::const_iterator it = itemDataVariable.begin();
   QVector<int>::const_iterator rIt = rows.begin();
   QVector<int>::const_iterator cIt = columns.begin();
-  const QVector<QMap<int, QVariant> >::iterator end = itemData.end();
+  const QVector<QMap<int, QVariant> >::iterator end = itemDataVariable.end();
   for ( ;it != end ; ++it, ++rIt, ++cIt)
     {
     if (*cIt != 0)
@@ -265,11 +265,11 @@ bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     Q_ASSERT(!item.isNull());
     if (!item.isNull())
       {
-      QModelIndex index = d->indexFromItem(item.data());
+      QModelIndex indexVariable = d->indexFromItem(item.data());
       if (item->canReparent(parentItem.data()) && 
-          parent != index.parent())
+          parentVariable != indexVariable.parent())
         {
-        this->beginRemoveRows(index.parent(), index.row(), index.row());
+        this->beginRemoveRows(indexVariable.parent(), indexVariable.row(), indexVariable.row());
         item->reparent(parentItem.data());
         this->endRemoveRows();
         }
@@ -281,16 +281,16 @@ bool qMRMLItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLItemModel::flags(const QModelIndex &index)const
+Qt::ItemFlags qMRMLItemModel::flags(const QModelIndex &indexVariable)const
 {
   QCTK_D(const qMRMLItemModel);
-  if (!index.isValid())
+  if (!indexVariable.isValid())
     {
     return Qt::NoItemFlags;
     }
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(index));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(indexVariable));
 
   Q_ASSERT(!item.isNull());
   return item->flags();
@@ -298,12 +298,12 @@ Qt::ItemFlags qMRMLItemModel::flags(const QModelIndex &index)const
 
 // Has to be reimplemented for speed issues
 //------------------------------------------------------------------------------
-bool qMRMLItemModel::hasChildren(const QModelIndex &parent)const
+bool qMRMLItemModel::hasChildren(const QModelIndex &parentVariable)const
 {
   QCTK_D(const qMRMLItemModel);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parent));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parentVariable));
   Q_ASSERT(!item.isNull());
   
   return item->hasChildren();
@@ -332,7 +332,7 @@ QVariant qMRMLItemModel::headerData(int section, Qt::Orientation orientation, in
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLItemModel::index(int row, int column, const QModelIndex &parent)const
+QModelIndex qMRMLItemModel::index(int row, int column, const QModelIndex &parentVariable)const
 {
   QCTK_D(const qMRMLItemModel);
   if (d->MRMLScene == 0 || row < 0 || column < 0)
@@ -341,7 +341,7 @@ QModelIndex qMRMLItemModel::index(int row, int column, const QModelIndex &parent
     }
 
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parent));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parentVariable));
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(row, column));
   Q_ASSERT(item.isNull() || item->object());
@@ -350,15 +350,15 @@ QModelIndex qMRMLItemModel::index(int row, int column, const QModelIndex &parent
 }
 
 //------------------------------------------------------------------------------
-//bool qMRMLItemModel::insertRows(int row, int count, const QModelIndex &parent)
+//bool qMRMLItemModel::insertRows(int row, int count, const QModelIndex &parentVariable)
 //{
 //}
 
 //------------------------------------------------------------------------------
-QMap<int, QVariant> qMRMLItemModel::itemData(const QModelIndex &index)const
+QMap<int, QVariant> qMRMLItemModel::itemData(const QModelIndex &indexVariable)const
 {
-  QMap<int, QVariant> roles = this->QAbstractItemModel::itemData(index);
-  QVariant mrmlIdData = this->data(index, qMRML::UIDRole);
+  QMap<int, QVariant> roles = this->QAbstractItemModel::itemData(indexVariable);
+  QVariant mrmlIdData = this->data(indexVariable, qMRML::UIDRole);
   if (mrmlIdData.type() != QVariant::Invalid)
     {
     roles.insert(qMRML::UIDRole, mrmlIdData);
@@ -377,15 +377,15 @@ QMap<int, QVariant> qMRMLItemModel::itemData(const QModelIndex &index)const
 //}
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLItemModel::parent(const QModelIndex &index)const
+QModelIndex qMRMLItemModel::parent(const QModelIndex &indexVariable)const
 {
   QCTK_D(const qMRMLItemModel);
-  if (!index.isValid())
+  if (!indexVariable.isValid())
     {
     return QModelIndex();
     }
   QSharedPointer<const qMRMLAbstractItemHelper> item = 
-    QSharedPointer<const qMRMLAbstractItemHelper>(d->itemFromIndex(index));
+    QSharedPointer<const qMRMLAbstractItemHelper>(d->itemFromIndex(indexVariable));
   Q_ASSERT(!item.isNull());
   if (item.isNull())
     {
@@ -397,52 +397,52 @@ QModelIndex qMRMLItemModel::parent(const QModelIndex &index)const
     {
     return QModelIndex();
     }
-  QModelIndex parent = d->indexFromItem(parentItem.data());
-  return parent;
+  QModelIndex parentVariable = d->indexFromItem(parentItem.data());
+  return parentVariable;
 }
 
 //------------------------------------------------------------------------------
-//bool qMRMLItemModel::removeColumns(int column, int count, const QModelIndex &parent=QModelIndex())
+//bool qMRMLItemModel::removeColumns(int column, int count, const QModelIndex &parentVariable=QModelIndex())
 //{
 //}
 
 //------------------------------------------------------------------------------
-//bool qMRMLItemModel::removeRows(int row, int count, const QModelIndex &parent)
+//bool qMRMLItemModel::removeRows(int row, int count, const QModelIndex &parentVariable)
 //{
 //}
 
 //------------------------------------------------------------------------------
-int qMRMLItemModel::rowCount(const QModelIndex &parent) const
+int qMRMLItemModel::rowCount(const QModelIndex &parentVariable) const
 {
   QCTK_D(const qMRMLItemModel);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parent));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(parentVariable));
   Q_ASSERT(!item.isNull());
   return !item.isNull() ? item->childCount() : 0;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool qMRMLItemModel::setData(const QModelIndex &indexVariable, const QVariant &value, int role)
 {
   QCTK_D(const qMRMLItemModel);
-  if (!index.isValid())
+  if (!indexVariable.isValid())
     {
     return false;
     }
   Q_ASSERT(qctk_d()->MRMLScene);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(index));
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(indexVariable));
   Q_ASSERT(!item.isNull());
   bool changed = !item.isNull() ? item->setData(value, role) : false;
   if (changed)
     {
-    emit dataChanged(index, index);
+    emit dataChanged(indexVariable, indexVariable);
     }
   return changed;
 }
 
 //------------------------------------------------------------------------------
-//bool qMRMLItemModel::setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles)
+//bool qMRMLItemModel::setItemData(const QModelIndex &indexVariable, const QMap<int, QVariant> &roles)
 //{
 //}
 

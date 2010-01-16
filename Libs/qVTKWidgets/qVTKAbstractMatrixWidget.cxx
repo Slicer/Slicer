@@ -24,12 +24,12 @@ void qVTKAbstractMatrixWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-void qVTKAbstractMatrixWidgetPrivate::setMatrix(vtkMatrix4x4* matrix)
+void qVTKAbstractMatrixWidgetPrivate::setMatrix(vtkMatrix4x4* matrixVariable)
 {
-  qvtkReconnect(this->Matrix.GetPointer(), matrix, 
+  qvtkReconnect(this->Matrix.GetPointer(), matrixVariable, 
                 vtkCommand::ModifiedEvent, this, SLOT(updateMatrix()));
 
-  this->Matrix = matrix;
+  this->Matrix = matrixVariable;
   this->updateMatrix();
 }
 
@@ -64,7 +64,7 @@ void qVTKAbstractMatrixWidgetPrivate::updateMatrix()
 }
 
 // --------------------------------------------------------------------------
-qVTKAbstractMatrixWidget::qVTKAbstractMatrixWidget(QWidget* parent) : Superclass(parent)
+qVTKAbstractMatrixWidget::qVTKAbstractMatrixWidget(QWidget* parentVariable) : Superclass(parentVariable)
 {
   QCTK_INIT_PRIVATE(qVTKAbstractMatrixWidget);
   qctk_d()->init();
@@ -78,8 +78,8 @@ vtkMatrix4x4* qVTKAbstractMatrixWidget::matrix()const
 }
 
 // --------------------------------------------------------------------------
-void qVTKAbstractMatrixWidget::setMatrixInternal(vtkMatrix4x4* matrix)
+void qVTKAbstractMatrixWidget::setMatrixInternal(vtkMatrix4x4* matrixVariable)
 {
   QCTK_D(qVTKAbstractMatrixWidget);
-  d->setMatrix(matrix);
+  d->setMatrix(matrixVariable);
 }

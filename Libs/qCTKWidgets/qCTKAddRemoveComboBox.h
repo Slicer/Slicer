@@ -75,15 +75,15 @@ public:
   void setPushButtonsEnabled(bool enable);
   bool pushButtonsEnabled()const;
   
-  inline void addItem(const QString &text, const QVariant &userData = QVariant() )
-    {this->insertItem(this->count(), text, userData);}
-  inline void addItem(const QIcon &icon, const QString &text, const QVariant &userData = QVariant() )
-    {this->insertItem(this->count(), icon, text, userData);}
+  inline void addItem(const QString &text, const QVariant &userDataVariable = QVariant() )
+    {this->insertItem(this->count(), text, userDataVariable);}
+  inline void addItem(const QIcon &icon, const QString &text, const QVariant &userDataVariable = QVariant() )
+    {this->insertItem(this->count(), icon, text, userDataVariable);}
   inline void addItems(const QStringList &texts )
     {this->insertItems(this->count(), texts);}
     
-  void insertItem(int index, const QString &text, const QVariant &userData = QVariant() );
-  void insertItem(int index, const QIcon &icon, const QString &text, const QVariant &userData = QVariant() );
+  void insertItem(int index, const QString &text, const QVariant &userDataVariable = QVariant() );
+  void insertItem(int index, const QIcon &icon, const QString &text, const QVariant &userDataVariable = QVariant() );
   void insertItems(int index, const QStringList &texts);  
   
   // Description:

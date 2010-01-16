@@ -61,15 +61,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qVTKConnection::qVTKConnection(qVTKObjectEventsObserver* parent):
-  Superclass(parent)
+qVTKConnection::qVTKConnection(qVTKObjectEventsObserver* parentVariable):
+  Superclass(parentVariable)
 {
   QCTK_INIT_PRIVATE(qVTKConnection);
   QCTK_D(qVTKConnection);
   
   d->Callback->SetClientData(this);
-  Q_ASSERT(parent);
-  d->Parent = parent;
+  Q_ASSERT(parentVariable);
+  d->Parent = parentVariable;
 }
 
 //-----------------------------------------------------------------------------
