@@ -10,8 +10,9 @@
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-struct qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>
+class qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>
 {
+public:
 };
 
 //-----------------------------------------------------------------------------

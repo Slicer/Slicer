@@ -10,8 +10,9 @@
 Q_EXPORT_PLUGIN2(qSlicerWelcomeModule, qSlicerWelcomeModule);
 
 //-----------------------------------------------------------------------------
-struct qSlicerWelcomeModulePrivate: public qCTKPrivate<qSlicerWelcomeModule>
+class qSlicerWelcomeModulePrivate: public qCTKPrivate<qSlicerWelcomeModule>
 {
+public:
 };
 
 //-----------------------------------------------------------------------------

@@ -11,9 +11,10 @@
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
-struct qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>,
+class qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>,
                                     public Ui_qSlicerVolumesModule
 {
+public:
 };
 
 //-----------------------------------------------------------------------------
