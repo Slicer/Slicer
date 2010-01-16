@@ -559,8 +559,7 @@ vtkMRMLScene* qMRMLTransformProxyModel::mrmlScene()const
 void qMRMLTransformProxyModel::setSourceModel(QAbstractItemModel * sourceModel)
 {
   QCTK_D(qMRMLTransformProxyModel);
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(sourceModel);    
-  Q_ASSERT(sceneModel); // only qMRMLSceneModel is supported as a source
+  Q_ASSERT_X(qobject_cast<qMRMLSceneModel*>(sourceModel), __FUNCTION__, "Only qMRMLSceneModels are supported");
   this->QAbstractProxyModel::setSourceModel(sourceModel);
 
   connect(sourceModel, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
