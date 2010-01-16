@@ -91,7 +91,7 @@ void vtkSlicerPopUpHelpWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
 //---------------------------------------------------------------------------
 void vtkSlicerPopUpHelpWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+                                                         unsigned long event, void * vtkNotUsed(  callData ) )
 {
   // process id changed events
   if (this->HelpButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)

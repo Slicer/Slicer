@@ -56,7 +56,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   virtual void RenameNodeCallback();
   virtual void ToggleVisibilityCallback();
   virtual void RenameApplyCallback();
-  virtual void RenameApplyCallback(char *name) {this->RenameApplyCallback();};
+  virtual void RenameApplyCallback(char * vtkNotUsed( name ) ) {this->RenameApplyCallback();};
   virtual void EditCallback();
 
   // Description:

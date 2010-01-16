@@ -239,7 +239,7 @@ private:
   // Check for additional conditions to filter the NodeSelector. node is the current node to be checked.
   // Returns true if the condition is fullfilled
   // Note: This method has only effects if overwritten in a sub class.
-  virtual bool CheckAdditionalConditions(vtkMRMLNode* node){return true;}
+  virtual bool CheckAdditionalConditions(vtkMRMLNode* vtkNotUsed(node) ){return true;}
 
   // Description:
   // Add aditional Nodes to the current NodeSelector. Useful for presets, other MRML-Scenes etc.

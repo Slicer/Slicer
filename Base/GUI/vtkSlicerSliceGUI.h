@@ -121,8 +121,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
 
     // Description:
     // Functions that define and undefine module-specific behaviors.
-    virtual void Enter ( );
-    virtual void Exit ( );
+    virtual void Enter ( void );
+    virtual void Exit ( void );
     
  protected:
     vtkSlicerSliceGUI ( );
