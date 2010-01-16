@@ -1,4 +1,6 @@
 
+#include "vtkSlicerConfigure.h"
+
 #ifdef Slicer3_USE_QT
 #include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
