@@ -9,6 +9,8 @@
 // CTK includes
 #include <qCTKPimpl.h>
 
+#include "qCTKWidgetsExport.h"
+
 class QAbstractItemModel;
 class qCTKModelTesterPrivate;
 
