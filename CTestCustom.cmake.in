@@ -65,6 +65,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "pyconfig.h.*warning:*redefined"
   "features.h.*"
 
+  # curl suppressions
+  "cmcurl.*warning.*conditional expression is constant"
+
 
   # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
   "slicer3.applications.cli"
