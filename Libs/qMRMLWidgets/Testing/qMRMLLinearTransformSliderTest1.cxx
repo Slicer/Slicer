@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <iostream>
 
-int qMRMLLinearTransformSliderTest1( int , char * [] )
+int qMRMLLinearTransformSliderTest1( int argc , char * argv [] )
 {
-  QWidget * widget = new QWidget;
+  QApplication app( argc, argv );
 
-  qMRMLLinearTransformSlider   mrmlItem( widget );
-  
-  delete widget;
+  QWidget widget;
 
+  qMRMLLinearTransformSlider   mrmlItem( &widget );
+ 
   return EXIT_SUCCESS;
 }

@@ -9,11 +9,9 @@ int qMRMLTransformSlidersTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QWidget * widget = new QWidget;
+  QWidget widget;
 
-  qMRMLTransformSliders   mrmlItem( widget );
+  qMRMLTransformSliders   mrmlItem( &widget );
 
-  delete widget;
-  
   return EXIT_SUCCESS;
 }

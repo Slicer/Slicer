@@ -9,11 +9,9 @@ int qMRMLMatrixWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QWidget * widget = new QWidget;
+  QWidget widget;
 
-  qMRMLMatrixWidget   mrmlItem( widget );
+  qMRMLMatrixWidget   mrmlItem( &widget );
   
-  delete widget;
-
   return EXIT_SUCCESS;
 }
