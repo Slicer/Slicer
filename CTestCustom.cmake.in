@@ -60,6 +60,12 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512: 'TCLAP::VALUE_ARG_HELPER::ValueExtractor<T>' : assignment operator could not be generated"
 
+  # Python suppressions
+  # About redefinition of symbols
+  "pyconfig.h.*warning:*redefined"
+  "features.h.*"
+
+
   # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
   "slicer3.applications.cli"
 )
