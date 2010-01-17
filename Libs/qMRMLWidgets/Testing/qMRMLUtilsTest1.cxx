@@ -1,7 +1,7 @@
 #include <qMRMLUtils.h>
 #include <QApplication>
 
-#include <vtkMRMLNode.h>
+#include <vtkMRMLSliceNode.h>
 
 // std includes
 #include <stdlib.h>
@@ -11,13 +11,20 @@ int qMRMLUtilsTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  vtkMRMLNode * mrmlNode = vtkMRMLNode::New();
+  vtkMRMLSliceNode * mrmlNode = vtkMRMLSliceNode::New();
 
   const int numberOfChildren = qMRMLUtils::childCount( mrmlNode );
 
   std::cout << "number of children " << numberOfChildren << std::endl;
 
+  //  FIXME
+  //  FIXME
+  //  FIXME
   //  FIXME   Many other methods to be exercised here...
+  //  FIXME
+  //  FIXME
+  //  FIXME
+  //  FIXME
 
 
   mrmlNode->Delete();
