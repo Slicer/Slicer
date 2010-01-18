@@ -35,6 +35,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # itk suppressions
   "Utilities.gdcm"
   "Utilities.vxl"
+  "Insight.Code.Common"
 
   # vtk suppressions
   "vtkfreetype"
@@ -58,7 +59,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
 
   # Libs/tclap
-  "tclap.include.tclap.*Arg.h.*warning C4512: 'TCLAP::VALUE_ARG_HELPER::ValueExtractor<T>' : assignment operator could not be generated"
+  "tclap.include.tclap.*Arg.h.*warning C4512.*"
 
   # Python suppressions
   # About redefinition of symbols
@@ -70,5 +71,5 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
 
   # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
-  "slicer3.applications.cli"
+  "[Ss]licer3.[Aa]pplications.(cli|CLI)"
 )
