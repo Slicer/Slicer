@@ -26,6 +26,7 @@ public:
   qMRMLTransformProxyModelPrivate(QObject* parent = 0);
 
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
+  qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   qMRMLAbstractItemHelper* proxyItemFromIndex(const QModelIndex &index)const;
   qMRMLAbstractItemHelper* sourceItemFromIndex(const QModelIndex &index)const;
   
@@ -37,6 +38,7 @@ public:
   int actualRowCount(const qMRMLAbstractItemHelper* item)const;
 
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > proxyItemsFromSourceIndexes(const QModelIndex &parent, int start, int end)const;
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > proxyItemsFromProxyIndexes(const QModelIndex &parent, int start, int end)const;
   QStack<int> consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const;
 
 public slots:

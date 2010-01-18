@@ -211,8 +211,9 @@ void qCTKModelTester::testPersistentModelIndex(const QPersistentModelIndex& inde
   QCTK_D(const qCTKModelTester);
   //qDebug() << "Test persistent Index: " << index ;
   this->test(index.isValid(), "Persistent model index can't be invalid");
+  Q_ASSERT(d->Model->index(index.row(), index.column(), index.parent()) == index);
   this->test(d->Model->index(index.row(), index.column(), index.parent()) == index, 
-             QString("Persistent index (%1, %2) can't be invalid").arg(index.row(), index.column()));
+             QString("Persistent index (%1, %2) can't be invalid").arg(index.row()).arg(index.column()));
 }
 
 //-----------------------------------------------------------------------------

@@ -157,10 +157,31 @@ qMRMLAbstractItemHelper* qMRMLTransformProxyModelPrivate::createItemFromUID(QVar
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLTransformProxyModelPrivate::proxyItemFromIndex(const QModelIndex & modelIndex)const
+qMRMLAbstractItemHelper* qMRMLTransformProxyModelPrivate::itemFromIndex(const QModelIndex &modelIndex)const
 {
   QCTK_P(const qMRMLTransformProxyModel);
-  if (( modelIndex.row() < 0) || ( modelIndex.column() < 0) || ( modelIndex.model() != p))
+  if (modelIndex.model() == 0)
+    {
+    Q_ASSERT(modelIndex.model());
+    return 0;
+    }
+  if (modelIndex.model() == p)
+    {
+    return this->proxyItemFromIndex(modelIndex);
+    }
+  else if(modelIndex.model() == p->sourceModel())
+    {
+    return this->sourceItemFromIndex(modelIndex);
+    }
+  Q_ASSERT( modelIndex.model() == p || modelIndex.model() == p->sourceModel());
+  return 0;
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLTransformProxyModelPrivate::proxyItemFromIndex(const QModelIndex &modelIndex)const
+{
+  QCTK_P(const qMRMLTransformProxyModel);
+  if ((modelIndex.row() < 0) || (modelIndex.column() < 0) || (modelIndex.model() != p))
     {
     return new qMRMLRootItemHelper(p->mrmlScene(), true);
     }
@@ -254,6 +275,33 @@ qMRMLTransformProxyModelPrivate::proxyItemsFromSourceIndexes(const QModelIndex &
 }
 
 //------------------------------------------------------------------------------
+QVector<QSharedPointer<qMRMLAbstractItemHelper> > 
+qMRMLTransformProxyModelPrivate::proxyItemsFromProxyIndexes(const QModelIndex &parent, int start, int end) const
+{
+  QCTK_P(const qMRMLTransformProxyModel);
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > children;
+
+  QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
+    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(parent));
+  Q_ASSERT(parentItem->childCount() > end);
+  // for each row
+  for (int i = start; i <= end; ++i)
+    {
+    // for each column
+    for (int j = 0 ; j < p->sourceModel()->columnCount(); ++j)
+      {
+      // convert sourceItem to proxyItem;
+      QSharedPointer<qMRMLAbstractItemHelper> item = 
+        QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(i, j));
+      Q_ASSERT(item.data());
+      Q_ASSERT(j == item->column());    
+      children.append(item);
+      }
+    }
+  return children;
+}
+
+//------------------------------------------------------------------------------
 QStack<int> 
 qMRMLTransformProxyModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const
 {
@@ -294,24 +342,35 @@ qMRMLTransformProxyModelPrivate::consecutiveRows(const QVector<QSharedPointer<qM
 
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceColumnsAboutToBeInserted(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceColumnsAboutToBeInserted(const QModelIndex & vparent, int start, int end)
 {
-
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceColumnsAboutToBeRemoved(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceColumnsAboutToBeRemoved(const QModelIndex & vparent, int start, int end)
 {
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceColumnsInserted(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceColumnsInserted(const QModelIndex & vparent, int start, int end)
 {
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceColumnsRemoved(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceColumnsRemoved(const QModelIndex & vparent, int start, int end)
 {
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
 }
 
 //------------------------------------------------------------------------------
@@ -363,9 +422,12 @@ void qMRMLTransformProxyModelPrivate::onSourceModelReset()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceRowsAboutToBeInserted(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceRowsAboutToBeInserted(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "onSourceRowsAboutToBeInserted" << vparent << start << end;
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
+  //qDebug() << "onSourceRowsAboutToBeInserted" << parent << start << end;
   // We can't do anything here because 
   //  * we don't know where the new item will be added. 
   // ->we'll do all the process in onSourceRowsInserted
@@ -493,8 +555,11 @@ void qMRMLTransformProxyModelPrivate::onSourceRowsInserted(const QModelIndex & v
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformProxyModelPrivate::onSourceRowsRemoved(const QModelIndex & vtkNotUsed( vparent ), int vtkNotUsed( start ), int vtkNotUsed( end ) )
+void qMRMLTransformProxyModelPrivate::onSourceRowsRemoved(const QModelIndex & vparent, int start, int end)
 {
+  Q_UNUSED(vparent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
   //QCTK_P(qMRMLTransformProxyModel);
   this->ObjectToRemove = 0;
   this->ItemsAboutToBeRemoved.clear();
@@ -667,7 +732,7 @@ bool qMRMLTransformProxyModel::dropMimeData(const QMimeData *dataValue, Qt::Drop
     itemDataVector.append(v);
     }
 
-  emit layoutAboutToBeChanged();
+  //emit layoutAboutToBeChanged();
 
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->proxyItemFromIndex(vparent));
@@ -678,7 +743,7 @@ bool qMRMLTransformProxyModel::dropMimeData(const QMimeData *dataValue, Qt::Drop
   QVector<int>::const_iterator cIt = columns.begin();
   const QVector<QMap<int, QVariant> >::iterator end = itemDataVector.end();
   for ( ;it != end ; ++it, ++rIt, ++cIt)
-    {
+    {// process one by one
     if (*cIt != 0)
       {
       continue;
@@ -689,18 +754,31 @@ bool qMRMLTransformProxyModel::dropMimeData(const QMimeData *dataValue, Qt::Drop
     Q_ASSERT(!item.isNull());
     if (!item.isNull())
       {
-      QModelIndex  modelIndex = d->indexFromItem(item.data());
+      QModelIndex oldIndex = d->indexFromItem(item.data());
       if (item->canReparent(parentItem.data()) && 
-          vparent !=  modelIndex.parent())
+          vparent != oldIndex.parent())
         {
-        this->beginRemoveRows( modelIndex.parent(),  modelIndex.row(),  modelIndex.row());
+        this->beginRemoveRows(oldIndex.parent(), oldIndex.row(), oldIndex.row());
+
         item->reparent(parentItem.data());
+        // the item row should be automatically updated
+        QVector<QSharedPointer<qMRMLAbstractItemHelper> > newItems =
+          d->proxyItemsFromProxyIndexes(vparent, item->row(), item->row());
+        d->ItemsAboutToBeInserted += newItems;
+        d->ObjectToRemove = item->object();
+
         this->endRemoveRows();
+        this->beginInsertRows(vparent, item->row(), item->row());
+
+        d->ItemsAboutToBeInserted.remove(d->ItemsAboutToBeInserted.count() - newItems.count(), newItems.count());
+        d->ObjectToRemove = 0;
+        Q_ASSERT(d->ItemsAboutToBeInserted.empty());
+        this->endInsertRows();
         }
       }
     }
   
-  emit layoutChanged();
+  //emit layoutChanged();
   return res;
 }
 
@@ -750,6 +828,9 @@ QModelIndex qMRMLTransformProxyModel::index(int row, int column, const QModelInd
     QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(row, column));
   if (!item.isNull() && d->actualRow(item.data()) != row)
     {
+    //qDebug() << "shift: " << row << column << parent 
+    //         << item->row() << item->column() << d->actualRow(item.data())
+    //         << d->oldRow(parentItem.data(), row);
     item = QSharedPointer<qMRMLAbstractItemHelper>(
       parentItem->child(d->oldRow(parentItem.data(), row), column));
     }
@@ -758,7 +839,7 @@ QModelIndex qMRMLTransformProxyModel::index(int row, int column, const QModelInd
   
   QModelIndex i = !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
   //toto<<"end"<<std::endl;
-  Q_ASSERT( d->ObjectToRemove != item->object());
+  Q_ASSERT( d->ObjectToRemove == 0 || d->ObjectToRemove != item->object());
   return !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
 }
 //------------------------------------------------------------------------------
