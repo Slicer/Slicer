@@ -265,7 +265,11 @@ if { $installed } {
   set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
   set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
 
-  set ::env(QT_LIB_DIR)         [file normalize "@QT_LIBRARY_DIR@"]
+  if { "@QT_LIBRARY_DIR@" != "" } {
+    set ::env(QT_LIB_DIR)         [file normalize "@QT_LIBRARY_DIR@"]
+  } else {
+    set ::env(QT_LIB_DIR)         "$::Slicer3_HOME/bin"
+  }
 
   set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::ITK_BUILD_SUBDIR"]
 
