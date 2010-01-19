@@ -36,6 +36,7 @@ if (Slicer3_SOURCE_DIR)
   # from a build)
   set(TARGETS        
     DemonsRegistration
+    DemonsRegistrationLib
     )
   slicer3_install_plugins(${TARGETS})
 
