@@ -742,6 +742,7 @@ bool qMRMLTransformProxyModel::dropMimeData(const QMimeData *dataValue, Qt::Drop
   QVector<int>::const_iterator rIt = rows.begin();
   QVector<int>::const_iterator cIt = columns.begin();
   const QVector<QMap<int, QVariant> >::iterator end = itemDataVector.end();
+
   for ( ;it != end ; ++it, ++rIt, ++cIt)
     {// process one by one
     if (*cIt != 0)
@@ -768,7 +769,10 @@ bool qMRMLTransformProxyModel::dropMimeData(const QMimeData *dataValue, Qt::Drop
         d->ObjectToRemove = item->object();
 
         this->endRemoveRows();
-        this->beginInsertRows(vparent, item->row(), item->row());
+        // what's tricky here is that vparent might be invalid now. (if the 
+        // moved row was at the same level than the parent, it shifted up the 
+        // parent). we must recompute the parent new index.
+        this->beginInsertRows(d->indexFromItem(parentItem.data()), item->row(), item->row());
 
         d->ItemsAboutToBeInserted.remove(d->ItemsAboutToBeInserted.count() - newItems.count(), newItems.count());
         d->ObjectToRemove = 0;

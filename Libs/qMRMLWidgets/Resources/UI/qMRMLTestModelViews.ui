@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>771</height>
+    <width>1054</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,8 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLSceneGeneratorButton" name="MRMLSceneGeneratorButton">
-    </widget>
+    <widget class="qMRMLSceneGeneratorButton" name="MRMLSceneGeneratorButton"/>
    </item>
    <item>
     <widget class="qMRMLNodeFactoryButton" name="MRMLNodeFactoryButton_2"/>
@@ -29,30 +28,49 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLListWidget" name="MRMLListWidget">
-     <property name="dragEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDrop</enum>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
-     <property name="dragEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDrop</enum>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="qMRMLListWidget" name="MRMLListWidget">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>false</bool>
+       </property>
+       <property name="textElideMode">
+        <enum>Qt::ElideMiddle</enum>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="allColumnsShowFocus">
+        <bool>false</bool>
+       </property>
+       <attribute name="headerDefaultSectionSize">
+        <number>200</number>
+       </attribute>
+       <attribute name="headerDefaultSectionSize">
+        <number>200</number>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -75,7 +93,7 @@
   <customwidget>
    <class>qMRMLSceneGeneratorButton</class>
    <extends>QPushButton</extends>
-   <header>qMRMLSceneGeneratorButton.h</header>
+   <header>qMRMLSceneGeneratorButtonPlugin.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
