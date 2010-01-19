@@ -71,5 +71,5 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
 
   # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
-  "[Ss]licer3.[Aa]pplications.(cli|CLI)"
+  #"[Ss]licer3.[Aa]pplications.(cli|CLI)"
 )
