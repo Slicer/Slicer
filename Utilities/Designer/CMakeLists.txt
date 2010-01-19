@@ -23,9 +23,12 @@ IF(CMAKE_CONFIGURATION_TYPES)
     SET(designer_launcher "${designer_launcher_directory}/Designer-${config}.py")
     CONFIGURE_FILE(
       ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
-      ${designer_launcher}
+      ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
       IMMEDIATE
       )
+    FILE(COPY ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
+      DESTINATION ${designer_launcher_directory}
+      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ WORLD_READ)
     MESSAGE(STATUS "Configuring Designer launcher: "${designer_launcher})
   ENDFOREACH(config)
   
@@ -35,9 +38,12 @@ ELSE(CMAKE_CONFIGURATION_TYPES)
   SET(designer_launcher "${designer_launcher_directory}/Designer.py")
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
-    ${designer_launcher}
+    ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
     IMMEDIATE
     )
+  FILE(COPY ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
+    DESTINATION ${designer_launcher_directory}
+    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ WORLD_READ )
   MESSAGE(STATUS "Configuring Designer launcher: "${designer_launcher})
   
 ENDIF(CMAKE_CONFIGURATION_TYPES)
