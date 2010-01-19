@@ -49,6 +49,7 @@ vtkModelMirrorLogic::vtkModelMirrorLogic()
    this->MirrorTransformNode = NULL;
    this->Visited = false;
    this->Raised = false;
+//   this->DebugOn();
 }
 
 
@@ -570,16 +571,29 @@ int vtkModelMirrorLogic::FlipNormals()
     }
 
   vtkPolyData *surface =   this->ModelMirrorNode->GetOutputModel()->GetPolyData();
+  //--- NOTE: This filter recomputes normals for polygons and
+  //--- triangle strips only. Normals are not computed for lines or vertices.
+  //--- Triangle strips are broken up into triangle polygons.
+  //--- Polygons are not automatically re-stripped.
   vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
   normals->SetInput ( surface );
+  //--- NOTE: This assumes a completely closed surface
+  //---(i.e. no boundary edges) and no non-manifold edges.
+  //--- If these constraints do not hold, the AutoOrientNormals
+  //--- is not guaranteed to work.
   normals->AutoOrientNormalsOn();
+  //--- Turn on the global flipping of normal orientation.
+  //--- This reverves the meaning of "front" and "back" for
+  //--- Frontface and Backface culling.
+  //--- Flipping modifies both the normal direction
+  //--- and the order of a cell's points.
   normals->FlipNormalsOn();
   normals->SplittingOff();
+  //--- enforce consistent polygon ordering.
   normals->ConsistencyOn();
   normals->Update();
   surface = normals->GetOutput();
 
-  //--- the buggy part
   //--- now get the output of the flip & cleaner and put into new model node.
   if ( surface )
     {
@@ -610,6 +624,5 @@ int vtkModelMirrorLogic::FlipNormals()
     return ( 0 );
     }
 }
-
 
 

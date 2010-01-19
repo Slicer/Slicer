@@ -344,7 +344,7 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     }
 
-  if ( b && event == vtkKWPushButton::InvokedEvent )
+  if (b != NULL && b == this->GoButton && event == vtkKWPushButton::InvokedEvent )
     {
 
     if ( this->Logic->GetModelMirrorNode()->GetInputModel() == NULL )
@@ -361,6 +361,11 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     
     this->Logic->CreateMirrorModel();
+//    int num = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
+//    vtkDebugMacro ( "========================================================================" );
+//    vtkDebugMacro ( "Created Mirror Model: have " << num << " model nodes" );
+//    vtkDebugMacro ( "========================================================================" );
+
     this->Logic->CreateMirrorTransform();
     if ( this->Logic->GetMirrorTransformNode() != NULL )
       {
@@ -372,6 +377,10 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           if ( this->Logic->PositionInHierarchy() )
             {
+//            num = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode" );
+//    vtkDebugMacro ( "========================================================================" );
+//            vtkDebugMacro ( "Finishing: have " << num << " model nodes" );
+//    vtkDebugMacro ( "========================================================================" );
             return;
             }
           }
@@ -540,9 +549,9 @@ void vtkModelMirrorGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "ModelMirror", "ModelMirror", NULL );
 
   // HELP FRAME
-  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC and the Slicer Community. See <a>http://www.slicer.org</a> for details. \n\n";
+  const char* about = "ModelMirror was developed by Wendy Plesniak with help from Marianna Jakab and Steve Pieper. This work was supported by NA-MIC, NAC, BIRN, NCIGT, Harvard CTSC, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\n";
   
-  const char *help = "**ModelMirror** \n\n";
+  const char *help = "**ModelMirror** is a module for creating a new model which is a mirrored version of another selected polygonal model, using a selected mirroring axis. \n\n **Notes about performance:.** The method used in this module recomputes normal vectors for models comprised of polygons or triangle strips ONLY. \n\n **Usage:** To use this module, select an existing model from the scene, and select the desired mirroring axis using the set of radiobutton icons. Select a name for the model to be generated and then click the **Create Mirror** button. The new model will be created, added to the scene, and displayed in the 3D viewer.\n\n";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "ModelMirror" );
   this->BuildHelpAndAboutFrame ( page, help, about );
@@ -641,7 +650,6 @@ void vtkModelMirrorGUI::BuildGUI ( )
   this->ModelSelector->SetPadX(2);
   this->ModelSelector->SetPadY(2);
   this->ModelSelector->SetLabelText( "");
-//  this->ModelSelector->UnconditionalUpdateMenu();
   this->ModelSelector->SetBalloonHelpString("Select a surface model to mirror.");
 
   this->ModelNameEntry = vtkKWEntry::New();
@@ -709,15 +717,6 @@ void vtkModelMirrorGUI::BuildGUI ( )
   app->Script ( "grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
   app->Script ( "grid columnconfigure %s 1 -weight 1", f->GetWidgetName() );
 
-
-  vtkKWLabel *tempy = vtkKWLabel::New();
-  tempy->SetParent ( this->SpecificationFrame );
-  tempy->Create();
-  tempy->SetText ( "This module is not ready for use! It is currently under development." );
-  app->Script ( "pack %s -side top -anchor w -fill x -expand y -padx 2 -pady 0",  tempy->GetWidgetName() );
-  tempy->Delete();
-
-                
   l1->Delete();
   l2->Delete();
   l3->Delete();
