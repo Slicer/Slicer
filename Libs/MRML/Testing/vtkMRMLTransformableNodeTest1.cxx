@@ -22,6 +22,9 @@ class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 public:
   // Provide a concrete New.
   static vtkMRMLTransformableNodeTestHelper1 *New(){return new vtkMRMLTransformableNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLTransformableNodeTestHelper1;

@@ -23,6 +23,9 @@ class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
 public:
   // Provide a concrete New.
   static vtkMRMLStorageNodeTestHelper1 *New(){return new vtkMRMLStorageNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLStorageNodeTestHelper1;

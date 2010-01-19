@@ -22,6 +22,9 @@ class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
 public:
   // Provide a concrete New.
   static vtkMRMLVolumeNodeTestHelper1 *New(){return new vtkMRMLVolumeNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLVolumeNodeTestHelper1,vtkMRMLVolumeNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLVolumeNodeTestHelper1;

@@ -22,6 +22,9 @@ class vtkMRMLColorTableNodeTestHelper1 : public vtkMRMLColorTableNode
 public:
   // Provide a concrete New.
   static vtkMRMLColorTableNodeTestHelper1 *New(){return new vtkMRMLColorTableNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLColorTableNodeTestHelper1,vtkMRMLColorTableNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLColorTableNodeTestHelper1;

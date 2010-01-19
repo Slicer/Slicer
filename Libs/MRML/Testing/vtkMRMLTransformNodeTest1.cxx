@@ -23,6 +23,8 @@ public:
   // Provide a concrete New.
   static vtkMRMLTransformNodeTestHelper1 *New(){return new vtkMRMLTransformNodeTestHelper1;};
 
+  vtkTypeMacro( vtkMRMLTransformNodeTestHelper1,vtkMRMLTransformNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLTransformNodeTestHelper1;

@@ -22,6 +22,9 @@ class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 public:
   // Provide a concrete New.
   static vtkMRMLDisplayableNodeTestHelper1 *New(){return new vtkMRMLDisplayableNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLDisplayableNodeTestHelper1;

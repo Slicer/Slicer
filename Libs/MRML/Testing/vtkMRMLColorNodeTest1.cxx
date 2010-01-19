@@ -23,6 +23,8 @@ public:
   // Provide a concrete New.
   static vtkMRMLColorNodeTestHelper1 *New(){return new vtkMRMLColorNodeTestHelper1;};
 
+  vtkTypeMacro( vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLColorNodeTestHelper1;

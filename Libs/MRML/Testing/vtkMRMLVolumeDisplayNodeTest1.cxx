@@ -23,6 +23,8 @@ public:
   // Provide a concrete New.
   static vtkMRMLVolumeDisplayNodeTestHelper1 *New(){return new vtkMRMLVolumeDisplayNodeTestHelper1;};
 
+  vtkTypeMacro( vtkMRMLVolumeDisplayNodeTestHelper1,vtkMRMLVolumeDisplayNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLVolumeDisplayNodeTestHelper1;

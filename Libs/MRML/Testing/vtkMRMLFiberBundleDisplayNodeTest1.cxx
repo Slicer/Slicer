@@ -23,6 +23,8 @@ public:
   // Provide a concrete New.
   static vtkMRMLFiberBundleDisplayNodeTestHelper1 *New(){return new vtkMRMLFiberBundleDisplayNodeTestHelper1;};
 
+  vtkTypeMacro( vtkMRMLFiberBundleDisplayNodeTestHelper1,vtkMRMLFiberBundleDisplayNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLFiberBundleDisplayNodeTestHelper1;

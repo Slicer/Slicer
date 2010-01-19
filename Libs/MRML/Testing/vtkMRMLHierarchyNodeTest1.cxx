@@ -22,6 +22,9 @@ class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 public:
   // Provide a concrete New.
   static vtkMRMLHierarchyNodeTestHelper1 *New(){return new vtkMRMLHierarchyNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLHierarchyNodeTestHelper1,vtkMRMLHierarchyNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLHierarchyNodeTestHelper1;

@@ -23,6 +23,9 @@ class vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 : public vtkMRMLDif
 public:
   // Provide a concrete New.
   static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 *New(){return new vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1;};
+
+  vtkTypeMacro( vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1,vtkMRMLDiffusionTensorDisplayPropertiesNode);
+
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1;
