@@ -158,6 +158,8 @@ set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 # getbuildtest Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
 # CMake option for Python, must be "OFF" on "ON", default is "ON"
+# - note: as of python 2.6 this can only be used on windows with VS 2008
+#   (this variable is forced to off later in this file if non-VS 2008 compiler is selected)
 set ::USE_PYTHON "ON"
 
 # CMake option for numerical Python, only matters if Python is on
@@ -576,6 +578,13 @@ switch $::tcl_platform(os) {
 
         set ::COMPILER "cl"
         set ::SERIAL_MAKE $::MAKE
+
+        if { ![string match "Visual Studio 9*" $::GENERATOR] } {
+          if { $::USE_PYTHON == "ON" }  {
+            puts "\n\n\nWarning: Python can only be built on Visual Studio 9 (2008) for windows.\n\n"
+            set ::USE_PYTHON "OFF"
+          }
+        }
     }
 }
 
