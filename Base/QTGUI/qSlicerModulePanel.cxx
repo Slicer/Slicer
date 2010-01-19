@@ -34,8 +34,8 @@ public:
 };
 
 //---------------------------------------------------------------------------
-qSlicerModulePanel::qSlicerModulePanel(QWidget* parent, Qt::WindowFlags f)
-  :qSlicerAbstractModulePanel(parent, f)
+qSlicerModulePanel::qSlicerModulePanel(QWidget* _parent, Qt::WindowFlags f)
+  :qSlicerAbstractModulePanel(_parent, f)
 {
   QCTK_INIT_PRIVATE(qSlicerModulePanel);
   QCTK_D(qSlicerModulePanel);

@@ -43,6 +43,7 @@ class QCTK_WIDGETS_EXPORT qCTKTreeComboBox : public QComboBox
 {
   Q_OBJECT
 public:
+  typedef QComboBox Superclass;
   explicit qCTKTreeComboBox(QWidget* parent = 0);
   virtual ~qCTKTreeComboBox(){}
 

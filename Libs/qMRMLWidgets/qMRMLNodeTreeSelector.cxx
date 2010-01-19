@@ -14,7 +14,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLNodeTreeSelector::qMRMLNodeTreeSelector(QWidget* parent) : Superclass(parent)
+qMRMLNodeTreeSelector::qMRMLNodeTreeSelector(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLNodeTreeSelector);
   
@@ -34,7 +34,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
     return;
     }
   QString categoryUID = QString("Category:") + categoryName;
-  QModelIndex rootModelIndex = this->rootModelIndex();
+  QModelIndex _rootModelIndex = this->rootModelIndex();
   // the node belongs to a category.
   // does the category exists or do we have to create it ?
   int categoryIndex = this->findData(categoryUID);
@@ -43,7 +43,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
     {// create a top-level category
     this->addItem(categoryName, categoryUID);
     categoryIndex = this->findData(categoryUID);
-    categoryModelIndex = this->model()->index(categoryIndex, this->modelColumn(), rootModelIndex);
+    categoryModelIndex = this->model()->index(categoryIndex, this->modelColumn(), _rootModelIndex);
     this->model()->insertColumns(0, 2, categoryModelIndex);
     QStandardItemModel* standardModel = qobject_cast<QStandardItemModel*>(this->model());
     if (standardModel)
@@ -54,7 +54,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
     }
   else
     {
-    categoryModelIndex = this->model()->index(categoryIndex, this->modelColumn(), rootModelIndex);
+    categoryModelIndex = this->model()->index(categoryIndex, this->modelColumn(), _rootModelIndex);
     }
 
   this->setRootModelIndex(categoryModelIndex);
@@ -64,7 +64,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
   //this->qMRMLNodeSelector::addNodeInternal(mrmlNode);
   d->addItemInternal(index, QIcon(),
                      QString::fromAscii(mrmlNode->GetName()), QString::fromAscii(mrmlNode->GetID()));
-  this->setRootModelIndex(rootModelIndex);
+  this->setRootModelIndex(_rootModelIndex);
 }
 
 // --------------------------------------------------------------------------

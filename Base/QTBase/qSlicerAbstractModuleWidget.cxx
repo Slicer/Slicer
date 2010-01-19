@@ -50,10 +50,10 @@ void qSlicerAbstractModuleWidget::initialize(/*vtkSlicerApplicationLogic* appLog
 QCTK_GET_CXX(qSlicerAbstractModuleWidget, qSlicerModuleLogic*, logic, Logic);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModuleWidget::setLogic(qSlicerModuleLogic* logic)
+void qSlicerAbstractModuleWidget::setLogic(qSlicerModuleLogic* _logic)
 {
   // setLogic should be called only one time with valid object...
-  Q_ASSERT(logic);
+  Q_ASSERT(_logic);
   QCTK_D(qSlicerAbstractModuleWidget);
-  d->Logic = logic; 
+  d->Logic = _logic; 
 }

@@ -27,10 +27,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLNodeFactory::qMRMLNodeFactory(QObject* parent) : Superclass(parent)
-{
-  QCTK_INIT_PRIVATE(qMRMLNodeFactory);
-}
+QCTK_CONSTRUCTOR_1_ARG_CXX(qMRMLNodeFactory, QObject*);
 
 // --------------------------------------------------------------------------
 QCTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);

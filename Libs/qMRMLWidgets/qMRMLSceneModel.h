@@ -24,6 +24,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QAbstractItemModel
   Q_OBJECT
   QVTK_OBJECT
 public:
+  typedef QAbstractItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
   

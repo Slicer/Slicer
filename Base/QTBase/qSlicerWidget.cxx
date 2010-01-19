@@ -34,8 +34,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerWidget::qSlicerWidget(QWidget *parent, Qt::WindowFlags f)
-  :Superclass(parent, f)
+qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
+  :Superclass(_parent, f)
 {
   QCTK_INIT_PRIVATE(qSlicerWidget);
 }

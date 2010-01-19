@@ -32,8 +32,8 @@ void qMRMLTreeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLTreeWidget::qMRMLTreeWidget(QWidget *parent)
-  :QTreeView(parent)
+qMRMLTreeWidget::qMRMLTreeWidget(QWidget *_parent)
+  :QTreeView(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLTreeWidget);
   qctk_d()->init();

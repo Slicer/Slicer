@@ -44,7 +44,7 @@ class qCTKSliderPrivate: public qCTKPrivate<qCTKSlider>
 };
 
 // --------------------------------------------------------------------------
-qCTKSlider::qCTKSlider(QWidget* parent) : Superclass(parent)
+qCTKSlider::qCTKSlider(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKSlider);
 
@@ -111,11 +111,11 @@ double qCTKSlider::valueAsDbl()const
 }
 
 // --------------------------------------------------------------------------
-void qCTKSlider::setValue(double value)
+void qCTKSlider::setValue(double _value)
 {
-  this->Superclass::setValue(this->fromDoubleToInteger(value));
-  emit this->valueChanged(value);
-  qctk_d()->PreviousPosition = value;
+  this->Superclass::setValue(this->fromDoubleToInteger(_value));
+  emit this->valueChanged(_value);
+  qctk_d()->PreviousPosition = _value;
 }
 
 // --------------------------------------------------------------------------
@@ -143,14 +143,14 @@ void qCTKSlider::setTickInterval(double ti)
 }
 
 // --------------------------------------------------------------------------
-int qCTKSlider::fromDoubleToInteger(double value)
+int qCTKSlider::fromDoubleToInteger(double _value)
 {
   QCTK_D(qCTKSlider);
   
-  int res = static_cast<int>(value);
+  int res = static_cast<int>(_value);
   if (d->HandleDouble)
     {
-    double tmp = value / d->SingleStep;
+    double tmp = _value / d->SingleStep;
     res = static_cast<int>( (tmp > 0) ? floor(tmp + 0.5) : ceil(tmp - 0.5) );
 
     }
@@ -158,9 +158,9 @@ int qCTKSlider::fromDoubleToInteger(double value)
 }
 
 // --------------------------------------------------------------------------
-void qCTKSlider::onValueChanged(int value)
+void qCTKSlider::onValueChanged(int _value)
 {
-  emit this->valueChanged(value * qctk_d()->SingleStep);
+  emit this->valueChanged(_value * qctk_d()->SingleStep);
 }
 
 // --------------------------------------------------------------------------

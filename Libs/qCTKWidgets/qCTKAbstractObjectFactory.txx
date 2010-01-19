@@ -7,8 +7,8 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename ClassType>
-qCTKFactoryObjectItem<BaseClassType,ClassType>::qCTKFactoryObjectItem(const QString& key)
-  :qCTKAbstractFactoryItem<BaseClassType>(key)
+qCTKFactoryObjectItem<BaseClassType,ClassType>::qCTKFactoryObjectItem(const QString& _key)
+  :qCTKAbstractFactoryItem<BaseClassType>(_key)
 {
 }
 

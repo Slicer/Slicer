@@ -32,7 +32,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLTransformSliders::qMRMLTransformSliders(QWidget* parent) : Superclass(parent)
+qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLTransformSliders);
   QCTK_D(qMRMLTransformSliders);
@@ -63,12 +63,12 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* parent) : Superclass(paren
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType coordinateReference)
+void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
   QCTK_D(qMRMLTransformSliders);
   
   qMRMLLinearTransformSlider::CoordinateReferenceType ref = qMRMLLinearTransformSlider::GLOBAL;
-  if (coordinateReference == LOCAL)
+  if (_coordinateReference == LOCAL)
     {
     ref = qMRMLLinearTransformSlider::LOCAL;
     }
@@ -89,24 +89,24 @@ qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinate
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setTypeOfTransform(TransformType typeOfTransform)
+void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 {
   QCTK_D(qMRMLTransformSliders);
   
-  if (d->TypeOfTransform == typeOfTransform) { return; }
-  if (typeOfTransform == Self::TRANSLATION)
+  if (d->TypeOfTransform == _typeOfTransform) { return; }
+  if (_typeOfTransform == Self::TRANSLATION)
     {
     d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_LR);
     d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_PA);
     d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_IS);
     }
-  else if (typeOfTransform == Self::ROTATION)
+  else if (_typeOfTransform == Self::ROTATION)
     {
     d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_LR);
     d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_PA);
     d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_IS);
     }
-  d->TypeOfTransform = typeOfTransform;
+  d->TypeOfTransform = _typeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -137,9 +137,9 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 QCTK_GET_CXX(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setTitle(const QString& title)
+void qMRMLTransformSliders::setTitle(const QString& _title)
 {
-  qctk_d()->SlidersGroupBox->setTitle(title);
+  qctk_d()->SlidersGroupBox->setTitle(_title);
 }
 
 // --------------------------------------------------------------------------

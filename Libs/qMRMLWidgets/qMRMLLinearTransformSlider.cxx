@@ -32,15 +32,15 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* parent) : Superclass(parent)
+qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLLinearTransformSlider);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType typeOfTransform)
+void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransform)
 {
-  qctk_d()->TypeOfTransform = typeOfTransform;
+  qctk_d()->TypeOfTransform = _typeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -66,10 +66,11 @@ bool qMRMLLinearTransformSlider::isTranslation()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLinearTransformSlider::setCoordinateReference(CoordinateReferenceType coordinateReference)
+void qMRMLLinearTransformSlider::
+setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
   this->reset();
-  qctk_d()->CoordinateReference = coordinateReference;
+  qctk_d()->CoordinateReference = _coordinateReference;
 }
 
 // --------------------------------------------------------------------------
@@ -119,23 +120,23 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
   Q_ASSERT(matrix);
   if (!matrix) { return; }
 
-  double value = 0.0;
+  double _value = 0.0;
   if (this->typeOfTransform() == TRANSLATION_LR)
     {
-    value = matrix->GetElement(0,3);
+    _value = matrix->GetElement(0,3);
     }
   else if (this->typeOfTransform() == TRANSLATION_PA)
     {
-    value = matrix->GetElement(1,3);
+    _value = matrix->GetElement(1,3);
     }
   else if (this->typeOfTransform() == TRANSLATION_IS)
     {
-    value = matrix->GetElement(2,3);
+    _value = matrix->GetElement(2,3);
     }
 
   if (this->isTranslation())
     {
-    this->setValue(value);
+    this->setValue(_value);
     }
   else if (this->isRotation())
     {
@@ -144,7 +145,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLinearTransformSlider::applyTransformation(double sliderPosition)
+void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   QCTK_D(qMRMLLinearTransformSlider);
   
@@ -158,32 +159,32 @@ void qMRMLLinearTransformSlider::applyTransformation(double sliderPosition)
 
   if (this->typeOfTransform() == ROTATION_LR)
     {
-    transform->RotateX(sliderPosition - this->previousSliderPosition());
+    transform->RotateX(_sliderPosition - this->previousSliderPosition());
     }
   else if (this->typeOfTransform() == ROTATION_PA)
     {
-    transform->RotateY(sliderPosition - this->previousSliderPosition());
+    transform->RotateY(_sliderPosition - this->previousSliderPosition());
     }
   else if (this->typeOfTransform() == ROTATION_IS)
     {
-    transform->RotateZ(sliderPosition - this->previousSliderPosition());
+    transform->RotateZ(_sliderPosition - this->previousSliderPosition());
     }
   else if (this->typeOfTransform() == TRANSLATION_LR)
     {
     double position[3] = {0, 0, 0};
-    position[0] = sliderPosition - matrix->GetElement(0,3);
+    position[0] = _sliderPosition - matrix->GetElement(0,3);
     transform->Translate(position);
     }
   else if (this->typeOfTransform() == TRANSLATION_PA)
     {
     double position[3] = {0, 0, 0};
-    position[1] = sliderPosition - matrix->GetElement(1,3);
+    position[1] = _sliderPosition - matrix->GetElement(1,3);
     transform->Translate(position);
     }
   else if (this->typeOfTransform() == TRANSLATION_IS)
     {
     double position[3] = {0, 0, 0};
-    position[2] = sliderPosition - matrix->GetElement(2,3);
+    position[2] = _sliderPosition - matrix->GetElement(2,3);
     transform->Translate(position);
     }
 

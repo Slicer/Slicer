@@ -45,7 +45,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModule::qSlicerCLIModule(QWidget* parent):Superclass(parent)
+qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerCLIModule);
 }

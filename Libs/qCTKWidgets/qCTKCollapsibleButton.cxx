@@ -108,16 +108,16 @@ void qCTKCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
 }
 
 //-----------------------------------------------------------------------------
-qCTKCollapsibleButton::qCTKCollapsibleButton(QWidget* parent)
-  :QAbstractButton(parent)
+qCTKCollapsibleButton::qCTKCollapsibleButton(QWidget* _parent)
+  :QAbstractButton(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKCollapsibleButton);
   qctk_d()->init();
 }
 
 //-----------------------------------------------------------------------------
-qCTKCollapsibleButton::qCTKCollapsibleButton(const QString& title, QWidget* parent)
-  :QAbstractButton(parent)
+qCTKCollapsibleButton::qCTKCollapsibleButton(const QString& title, QWidget* _parent)
+  :QAbstractButton(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKCollapsibleButton);
   qctk_d()->init();
@@ -206,8 +206,8 @@ void qCTKCollapsibleButton::collapse(bool c)
     w->setVisible(!c);
     }
   // this might be too many updates...
-  QWidget* parent = this->parentWidget();
-  if (!d->Collapsed && (!parent || !parent->layout()))
+  QWidget* _parent = this->parentWidget();
+  if (!d->Collapsed && (!_parent || !_parent->layout()))
     {
     this->resize(this->sizeHint());
     }
@@ -339,7 +339,7 @@ QSize qCTKCollapsibleButton::sizeHint()const
 }
 
 //-----------------------------------------------------------------------------
-void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
+void qCTKCollapsibleButton::paintEvent(QPaintEvent * _event)
 {
   QCTK_D(qCTKCollapsibleButton);
 
@@ -356,9 +356,9 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
   if (opt.state & QStyle::State_MouseOver)
     {
     QRect buttonRect = opt.rect;
-    QList<QWidget*> children = this->findChildren<QWidget*>();
+    QList<QWidget*> _children = this->findChildren<QWidget*>();
     QList<QWidget*>::ConstIterator it;
-    for (it = children.constBegin(); it != children.constEnd(); ++it ) 
+    for (it = _children.constBegin(); it != _children.constEnd(); ++it ) 
       {
       if ((*it)->underMouse())
         {
@@ -366,7 +366,7 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
         // of its children. The paint event rect is the child rect, this
         // is why we have to request another paint event to redraw the 
         // button to remove the highlight effect.
-        if (!event->rect().contains(buttonRect))
+        if (!_event->rect().contains(buttonRect))
           {// repaint the button rect.
           this->update(buttonRect);
           }
@@ -380,7 +380,7 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
       // the mouse is over the widget, but not over the children. As it 
       // has been de-highlighted in the past, we should refresh the button
       // rect to re-highlight the button.
-      if (!event->rect().contains(buttonRect))
+      if (!_event->rect().contains(buttonRect))
         {// repaint the button rect.
         this->update(buttonRect);
         }
@@ -435,11 +435,11 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * event)
 }
 
 //-----------------------------------------------------------------------------
-bool qCTKCollapsibleButton::hitButton(const QPoint & pos)const
+bool qCTKCollapsibleButton::hitButton(const QPoint & _pos)const
 {
   QStyleOptionButton opt;
   this->initStyleOption(&opt);
-  return opt.rect.contains(pos);
+  return opt.rect.contains(_pos);
 }
 
 //-----------------------------------------------------------------------------

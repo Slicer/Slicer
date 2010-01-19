@@ -54,7 +54,7 @@ QHash<QString, QString> qSlicerCLIModuleWidgetPrivate::TransformTypeAttributeToN
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
-  ModuleDescription* desc, QWidget* parent):Superclass(parent)
+  ModuleDescription* desc, QWidget* _parent):Superclass(_parent)
 {
   Q_ASSERT(desc);
   QCTK_INIT_PRIVATE(qSlicerCLIModuleWidget);
@@ -154,10 +154,10 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroups()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* layout,
+void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* _layout,
                                                      const ModuleParameterGroup& parameterGroup)
 {
-  Q_ASSERT(layout);
+  Q_ASSERT(_layout);
 
   qCTKCollapsibleButton * collapsibleWidget = new qCTKCollapsibleButton();
   collapsibleWidget->setText(QString::fromStdString(parameterGroup.GetLabel()));
@@ -170,36 +170,36 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* layout,
   vbox->setVerticalSpacing(1);
   collapsibleWidget->setLayout(vbox);
 
-  layout->addWidget(collapsibleWidget);
+  _layout->addWidget(collapsibleWidget);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::addParameters(QFormLayout* layout,
+void qSlicerCLIModuleWidgetPrivate::addParameters(QFormLayout* _layout,
                                                 const ModuleParameterGroup& parameterGroup)
 {
-  Q_ASSERT(layout);
+  Q_ASSERT(_layout);
   // iterate over each parameter in this group
   ParameterConstIterator pBeginIt = parameterGroup.GetParameters().begin();
   ParameterConstIterator pEndIt = parameterGroup.GetParameters().end();
 
   for (ParameterConstIterator pIt = pBeginIt; pIt != pEndIt; ++pIt)
     {
-    this->addParameter(layout, *pIt);
+    this->addParameter(_layout, *pIt);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* layout,
+void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
                                                const ModuleParameter& moduleParameter)
 {
-  Q_ASSERT(layout);
+  Q_ASSERT(_layout);
 
   if (moduleParameter.GetHidden() == "true")
     {
     return;
     }
 
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString description = QString::fromStdString(moduleParameter.GetDescription());
   
   // Parameters with flags can support the None node because they are optional
@@ -278,16 +278,16 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* layout,
   else
     {
     defaultWidget = true;
-    QLabel * labelWidget = new QLabel(label); 
+    QLabel * labelWidget = new QLabel(_label); 
     labelWidget->setToolTip(description);
-    layout->addWidget(labelWidget);
+    _layout->addWidget(labelWidget);
     }
 
   Q_ASSERT(!defaultWidget && widget);
   if (widget)
     {
     widget->setToolTip(description);
-    layout->addRow(new QLabel(label), widget);
+    _layout->addRow(new QLabel(_label), widget);
     }
 }
 
@@ -303,7 +303,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createIntegerTagWidget(const ModuleParam
   int min = itk::NumericTraits<int>::NonpositiveMin();
   int max = itk::NumericTraits<int>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
   QWidget * widget = 0; 
   if (!withConstraints)
@@ -313,7 +313,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createIntegerTagWidget(const ModuleParam
     spinBox->setValue(value);
     spinBox->setRange(min, max);
     widget = spinBox;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, label, spinBox);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, _label, spinBox);
     }
   else
     {
@@ -332,7 +332,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createIntegerTagWidget(const ModuleParam
     slider->setRange(min, max);
     slider->setValue(value);
     widget = slider;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(IntegerWithConstraints, label, slider);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(IntegerWithConstraints, _label, slider);
     }
   return widget;
 }
@@ -345,9 +345,9 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createBooleanTagWidget(const ModuleParam
 {
   QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
   QCheckBox * widget = new QCheckBox;
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   widget->setChecked(valueAsStr == "true");
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Boolean, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Boolean, _label, widget);
   return widget;
 }
 
@@ -363,7 +363,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
   int min = itk::NumericTraits<float>::NonpositiveMin();
   int max = itk::NumericTraits<float>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
   QWidget * widget = 0;
   if (!withConstraints)
@@ -373,7 +373,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
     spinBox->setValue(value);
     spinBox->setRange(min, max);
     widget = spinBox;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(FloatWithoutConstaints, label, spinBox);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(FloatWithoutConstaints, _label, spinBox);
     }
   else
     {
@@ -383,7 +383,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
     slider->setRange(min, max);
     slider->setValue(value);
     widget = slider;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(FloatWithConstaints, label, slider);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(FloatWithConstaints, _label, slider);
     }
   return widget; 
 }
@@ -400,7 +400,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParame
   double min = itk::NumericTraits<double>::NonpositiveMin();
   double max = itk::NumericTraits<double>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
   QWidget * widget = 0;
   if (!withConstraints)
@@ -410,7 +410,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParame
     spinBox->setValue(value);
     spinBox->setRange(min, max);
     widget = spinBox;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(DoubleWithoutConstaints, label, spinBox);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(DoubleWithoutConstaints, _label, spinBox);
     }
   else
     {
@@ -420,7 +420,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParame
     slider->setRange(min, max);
     slider->setValue(value);
     widget = slider;
-    INSTANCIATE_WIDGET_VALUE_WRAPPER(DoubleWithConstaints, label, slider);
+    INSTANCIATE_WIDGET_VALUE_WRAPPER(DoubleWithConstaints, _label, slider);
     }
   return widget; 
 }
@@ -433,9 +433,9 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createStringTagWidget(const ModuleParame
 {
   QString valueAsStr = QString::fromStdString(moduleParameter.GetDefault());
   QLineEdit * widget = new QLineEdit;
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   widget->setText(valueAsStr);
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(String, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(String, _label, widget);
   return widget;
 }
 
@@ -445,7 +445,7 @@ WIDGET_VALUE_WRAPPER(Point, qMRMLNodeSelector, currentNodeId);
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createPointTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType("vtkMRMLFiducialListNode");
   //TODO - title + " FiducialList"
@@ -458,7 +458,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createPointTagWidget(const ModuleParamet
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Point, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Point, _label, widget);
   
   return widget;
 }
@@ -469,7 +469,7 @@ WIDGET_VALUE_WRAPPER(Region, qMRMLNodeSelector, currentNodeId);
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createRegionTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType("vtkMRMLROIListNode");
   //TODO - title + " RegionList"
@@ -480,7 +480,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createRegionTagWidget(const ModuleParame
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Region, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Region, _label, widget);
   
   return widget;
 }
@@ -525,7 +525,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createImageTagWidget(const ModuleParamet
   // TODO - title + " Volume"
 
   QCTK_P(qSlicerCLIModuleWidget);
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(p->mrmlScene());
@@ -538,7 +538,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createImageTagWidget(const ModuleParamet
     widget->factory()->addAttribute("LabelMap","1");
     }
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, _label, widget);
   
   return widget;
 }
@@ -573,7 +573,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createGeometryTagWidget(const ModulePara
   // TODO - SetNoneEnabled(noneEnabled)
   
   QCTK_P(qSlicerCLIModuleWidget);
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setShowHidden(showHidden);
   widget->setNodeType(nodeType);
@@ -581,7 +581,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createGeometryTagWidget(const ModulePara
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Geometry, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Geometry, _label, widget);
   
   return widget;
 }
@@ -611,14 +611,14 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createTableTagWidget(const ModuleParamet
   // TODO - SetNoneEnabled(1)
 
   QCTK_P(qSlicerCLIModuleWidget);
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Table, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Table, _label, widget);
   
   return widget;
 }
@@ -644,14 +644,14 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createTransformTagWidget(const ModulePar
   // TODO - SetNoneEnabled(noneEnabled);
 
   QCTK_P(qSlicerCLIModuleWidget);
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setNodeType(nodeType);
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Transform, label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Transform, _label, widget);
   
   return widget;
 }
@@ -677,8 +677,8 @@ namespace{
 class ButtonGroupWidgetWrapper: public QWidget
 {
 public:
-  ButtonGroupWidgetWrapper(QWidget* parent, QButtonGroup* buttonGroup):
-    QWidget(parent), ButtonGroup(buttonGroup){}
+  ButtonGroupWidgetWrapper(QWidget* _parent, QButtonGroup* buttonGroup):
+    QWidget(_parent), ButtonGroup(buttonGroup){}
   QString checkedValue()
     {
     Q_ASSERT(this->ButtonGroup);
@@ -702,22 +702,22 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createEnumerationTagWidget(const ModuleP
   ElementConstIterator sBeginIt = moduleParameter.GetElements().begin();
   ElementConstIterator sEndIt = moduleParameter.GetElements().end();
 
-  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QWidget * widget = new QWidget;
   QButtonGroup* buttonGroup = new QButtonGroup(widget); 
-  qCTKFlowLayout * layout = new qCTKFlowLayout;
-  widget->setLayout(layout);
+  qCTKFlowLayout * _layout = new qCTKFlowLayout;
+  widget->setLayout(_layout);
 
   for (ElementConstIterator sIt = sBeginIt; sIt != sEndIt; ++sIt)
     {
     QString value = QString::fromStdString(*sIt); 
     QRadioButton * radio = new QRadioButton(value);
-    layout->addWidget(radio);
+    _layout->addWidget(radio);
     radio->setChecked(defaultValue == value);
     // Add radio button to button group 
     buttonGroup->addButton(radio); 
     }
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Enumeration, label, new ButtonGroupWidgetWrapper(widget, buttonGroup));
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Enumeration, _label, new ButtonGroupWidgetWrapper(widget, buttonGroup));
   return widget;
 }
 

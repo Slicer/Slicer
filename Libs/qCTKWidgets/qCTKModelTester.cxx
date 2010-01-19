@@ -49,15 +49,15 @@ qCTKModelTesterPrivate::qCTKModelTesterPrivate()
 }
 
 //-----------------------------------------------------------------------------
-qCTKModelTester::qCTKModelTester(QAbstractItemModel *vmodel, QObject *vparent)
-  :QObject(vparent)
+qCTKModelTester::qCTKModelTester(QAbstractItemModel *_model, QObject *_parent)
+  :QObject(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKModelTester);
-  this->setModel(vmodel);
+  this->setModel(_model);
 }
 
 //-----------------------------------------------------------------------------
-void qCTKModelTester::setModel(QAbstractItemModel *vmodel)
+void qCTKModelTester::setModel(QAbstractItemModel *_model)
 {
   QCTK_D(qCTKModelTester);
   if (d->Model)
@@ -68,32 +68,32 @@ void qCTKModelTester::setModel(QAbstractItemModel *vmodel)
     d->AboutToBeRemoved.clear();
     d->LayoutAboutToBeChanged.clear();
     }
-  if (vmodel)
+  if (_model)
     {
-    connect(vmodel, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
             this, SLOT(onColumnsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
             this, SLOT(onColumnsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
             this, SLOT(onColumnsInserted(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(columnsRemoved(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(columnsRemoved(const QModelIndex &, int, int)),
             this, SLOT(onColumnsRemoved(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), 
+    connect(_model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(onDataChanged(const QModelIndex& , const QModelIndex &)));
-    connect(vmodel, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
-    connect(vmodel, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
-    connect(vmodel, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
-    connect(vmodel, SIGNAL(modelReset()), this, SLOT(onModelReset()));
-    connect(vmodel, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
+    connect(_model, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
+    connect(_model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
+    connect(_model, SIGNAL(modelReset()), this, SLOT(onModelReset()));
+    connect(_model, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
             this, SLOT(onRowsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
             this, SLOT(onRowsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(rowsInserted(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this, SLOT(onRowsInserted(const QModelIndex& , int, int)));
-    connect(vmodel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), 
+    connect(_model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
             this, SLOT(onRowsRemoved(const QModelIndex& , int, int)));
     }
-  d->Model = vmodel;
+  d->Model = _model;
   this->testModel();
 }
 

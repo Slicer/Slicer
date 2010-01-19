@@ -43,27 +43,27 @@ class vtkMRMLCommandLineModuleNode;
 class WidgetValueWrapper
 {
 public:
-  WidgetValueWrapper(const QString& label):Label(label){}
+  WidgetValueWrapper(const QString& _label):Label(_label){}
   virtual QVariant value() = 0;
   QString label(){ return this->Label; }
   QString Label; 
 };
 
 //-----------------------------------------------------------------------------
-#define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _VALUE_GETTER)          \
-namespace{                                                           \
-class _NAME##WidgetValueWrapper: public WidgetValueWrapper           \
-{                                                                    \
-public:                                                              \
-  _NAME##WidgetValueWrapper(const QString& label, _WIDGET * widget): \
-    WidgetValueWrapper(label), Widget(widget){}                      \
-  virtual QVariant value()                                           \
-    {                                                                \
-    QVariant value(this->Widget->_VALUE_GETTER());                   \
-    return value;                                                    \
-    }                                                                \
-  _WIDGET* Widget;                                                   \
-};                                                                   \
+#define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _VALUE_GETTER)           \
+namespace{                                                            \
+class _NAME##WidgetValueWrapper: public WidgetValueWrapper            \
+{                                                                     \
+public:                                                               \
+  _NAME##WidgetValueWrapper(const QString& _label, _WIDGET * widget): \
+    WidgetValueWrapper(_label), Widget(widget){}                      \
+  virtual QVariant value()                                            \
+    {                                                                 \
+    QVariant _value(this->Widget->_VALUE_GETTER());                   \
+    return _value;                                                    \
+    }                                                                 \
+  _WIDGET* Widget;                                                    \
+};                                                                    \
 }
 
 //-----------------------------------------------------------------------------

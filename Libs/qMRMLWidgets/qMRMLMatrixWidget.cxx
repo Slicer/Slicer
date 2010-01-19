@@ -34,21 +34,18 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLMatrixWidget::qMRMLMatrixWidget(QWidget* parent) : Superclass(parent)
-{
-  QCTK_INIT_PRIVATE(qMRMLMatrixWidget);
-}
+QCTK_CONSTRUCTOR_1_ARG_CXX(qMRMLMatrixWidget, QWidget*);
 
 // --------------------------------------------------------------------------
-void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType coordinateReference)
+void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
   QCTK_D(qMRMLMatrixWidget);
-  if (d->CoordinateReference == coordinateReference)
+  if (d->CoordinateReference == _coordinateReference)
     {
     return;
     }
 
-  d->CoordinateReference = coordinateReference;
+  d->CoordinateReference = _coordinateReference;
 
   this->updateMatrix();
 }

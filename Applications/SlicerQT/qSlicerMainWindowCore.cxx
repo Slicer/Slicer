@@ -19,12 +19,12 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* parent):Superclass(parent)
+qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
   QCTK_D(qSlicerMainWindowCore);
   
-  d->ParentWidget = parent;
+  d->ParentWidget = _parent;
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager); 

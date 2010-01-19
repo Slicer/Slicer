@@ -27,13 +27,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qVTKObjectEventsObserver::qVTKObjectEventsObserver(QObject* parent):
-  Superclass(parent)
+qVTKObjectEventsObserver::qVTKObjectEventsObserver(QObject* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qVTKObjectEventsObserver);
   QCTK_D(qVTKObjectEventsObserver);
   
-  if (parent)
+  if (_parent)
     {
     d->ParentSet = true;
     }
@@ -42,14 +41,14 @@ qVTKObjectEventsObserver::qVTKObjectEventsObserver(QObject* parent):
 }
 
 //-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::setParent(QObject* parent)
+void qVTKObjectEventsObserver::setParent(QObject* _parent)
 {
-  Q_ASSERT(parent);
+  Q_ASSERT(_parent);
   QCTK_D(qVTKObjectEventsObserver);
   
-  if (parent && !d->ParentSet)
+  if (_parent && !d->ParentSet)
     {
-    this->Superclass::setParent(parent);
+    this->Superclass::setParent(_parent);
     //qDebug() << "qVTKObjectEventsObserver::setParent:" << this->parent();
     d->ParentSet = true;
     }

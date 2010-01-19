@@ -35,8 +35,7 @@ class qCTKTreeComboBoxPrivate: public qCTKPrivate<qCTKTreeComboBox>
 };
 
 // -------------------------------------------------------------------------
-qCTKTreeComboBox::qCTKTreeComboBox(QWidget* parent)
-  :QComboBox(parent)
+qCTKTreeComboBox::qCTKTreeComboBox(QWidget* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKTreeComboBox);
   QCTK_D(qCTKTreeComboBox);
@@ -55,15 +54,15 @@ qCTKTreeComboBox::qCTKTreeComboBox(QWidget* parent)
 }
 
 // -------------------------------------------------------------------------
-bool qCTKTreeComboBox::eventFilter(QObject* object, QEvent* event)
+bool qCTKTreeComboBox::eventFilter(QObject* object, QEvent* _event)
 {
   QCTK_D(qCTKTreeComboBox);
   
   bool res = false;
-  if (event->type() == QEvent::MouseButtonRelease && 
+  if (_event->type() == QEvent::MouseButtonRelease && 
       object == this->view()->viewport())
     {
-    QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event); 
+    QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(_event); 
     QModelIndex index = this->view()->indexAt(mouseEvent->pos());
     // do we click the branch (+ or -) or the item itself ?
     if (this->view()->model()->hasChildren(index) && 
@@ -120,13 +119,13 @@ void qCTKTreeComboBox::hidePopup()
     }
   else
     {
-    QModelIndex currentIndex = this->view()->currentIndex();
-    //qDebug() << "qCTKTreeComboBox::hidePopup() " << currentIndex << " " << currentIndex.row();
+    QModelIndex _currentIndex = this->view()->currentIndex();
+    //qDebug() << "qCTKTreeComboBox::hidePopup() " << _currentIndex << " " << _currentIndex.row();
     //qDebug() << "before: " << this->currentIndex() << this->view()->currentIndex();
     this->QComboBox::hidePopup();
     //qDebug() << "after: " << this->currentIndex() << this->view()->currentIndex();
-    this->setRootModelIndex(currentIndex.parent());
-    this->setCurrentIndex(currentIndex.row());
+    this->setRootModelIndex(_currentIndex.parent());
+    this->setCurrentIndex(_currentIndex.row());
     //qDebug() << "after2: " << this->currentIndex() << this->view()->currentIndex();
     }
 }

@@ -22,8 +22,8 @@ void qMRMLListWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLListWidget::qMRMLListWidget(QWidget *parent)
-  :QListView(parent)
+qMRMLListWidget::qMRMLListWidget(QWidget *_parent)
+  :QListView(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLListWidget);
   qctk_d()->init();

@@ -5,7 +5,8 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLNodeFactoryButtonPrivate: public qCTKPrivate<qMRMLNodeFactoryButton>, public qMRMLNodeFactory
+class qMRMLNodeFactoryButtonPrivate: public qCTKPrivate<qMRMLNodeFactoryButton>,
+                                     public qMRMLNodeFactory
 {
 public:
   QCTK_DECLARE_PUBLIC(qMRMLNodeFactoryButton);
@@ -64,22 +65,21 @@ void qMRMLNodeFactoryButtonPrivate::updateEnabled()
 // --------------------------------------------------------------------------
 // qMRMLNodeFactoryButton methods
 // --------------------------------------------------------------------------
-qMRMLNodeFactoryButton::qMRMLNodeFactoryButton(QWidget* parent)
-  :QPushButton(parent)
+qMRMLNodeFactoryButton::qMRMLNodeFactoryButton(QWidget* _parent):QPushButton(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLNodeFactoryButton);
   qctk_d()->init();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeFactoryButton::setMRMLScene(vtkMRMLScene* mrmlScene)
+void qMRMLNodeFactoryButton::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
   QCTK_D(qMRMLNodeFactoryButton);
-  this->qvtkReconnect(d->mrmlScene(), mrmlScene, vtkMRMLScene::NodeAddedEvent,
+  this->qvtkReconnect(d->mrmlScene(), _mrmlScene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(onMRMLSceneChanged()));
-  this->qvtkReconnect(d->mrmlScene(), mrmlScene, vtkMRMLScene::NodeRemovedEvent,
+  this->qvtkReconnect(d->mrmlScene(), _mrmlScene, vtkMRMLScene::NodeRemovedEvent,
                       this, SLOT(onMRMLSceneChanged()));
-  d->setMRMLScene(mrmlScene);
+  d->setMRMLScene(_mrmlScene);
   d->updateEnabled();
 }
 
@@ -108,10 +108,10 @@ void qMRMLNodeFactoryButton::onClick()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeFactoryButton::setAction(ActionType action)
+void qMRMLNodeFactoryButton::setAction(ActionType _action)
 {
   QCTK_D(qMRMLNodeFactoryButton);
-  d->Action = action;
+  d->Action = _action;
   d->syncTextWithAction();
   d->updateEnabled();
 }

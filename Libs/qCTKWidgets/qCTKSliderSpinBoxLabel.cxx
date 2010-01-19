@@ -39,7 +39,7 @@ class qCTKSliderSpinBoxLabelPrivate: public qCTKPrivate<qCTKSliderSpinBoxLabel>,
 };
 
 // --------------------------------------------------------------------------
-qCTKSliderSpinBoxLabel::qCTKSliderSpinBoxLabel(QWidget* parent) : Superclass(parent)
+qCTKSliderSpinBoxLabel::qCTKSliderSpinBoxLabel(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKSliderSpinBoxLabel);
   QCTK_D(qCTKSliderSpinBoxLabel);
@@ -142,14 +142,14 @@ double qCTKSliderSpinBoxLabel::value()
 }
 
 // --------------------------------------------------------------------------
-void qCTKSliderSpinBoxLabel::setValue(double value)
+void qCTKSliderSpinBoxLabel::setValue(double _value)
 {
   QCTK_D(qCTKSliderSpinBoxLabel);
   
-  d->Slider->setValue(value);
+  d->Slider->setValue(_value);
 
   d->SpinBox->blockSignals(true);
-  d->SpinBox->setValue(value);
+  d->SpinBox->setValue(_value);
   d->SpinBox->blockSignals(false);
 }
 
@@ -182,10 +182,10 @@ void qCTKSliderSpinBoxLabel::setTickInterval(double ti)
 }
 
 // -------------------------------------------------------------------------
-void qCTKSliderSpinBoxLabel::onSpinBoxValueChanged(double value)
+void qCTKSliderSpinBoxLabel::onSpinBoxValueChanged(double _value)
 {
-  qctk_d()->Slider->setSliderPosition(value);
-  emit this->sliderMoved(value);
+  qctk_d()->Slider->setSliderPosition(_value);
+  emit this->sliderMoved(_value);
 }
 
 // -------------------------------------------------------------------------

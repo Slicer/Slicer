@@ -6,9 +6,9 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-qCTKAbstractFactoryItem<BaseClassType>::qCTKAbstractFactoryItem(const QString& key)
+qCTKAbstractFactoryItem<BaseClassType>::qCTKAbstractFactoryItem(const QString& _key)
   :Instance()
-  ,Key(key)
+  ,Key(_key)
 {
 }
 
@@ -76,20 +76,20 @@ qCTKAbstractFactory<BaseClassType>::~qCTKAbstractFactory()
 template<typename BaseClassType>
 BaseClassType* qCTKAbstractFactory<BaseClassType>::instantiate(const QString& itemKey)
 {
-  qCTKAbstractFactoryItem<BaseClassType>* item = this->item(itemKey);
-  return (item ? item->instantiate() : 0);
+  qCTKAbstractFactoryItem<BaseClassType>* _item = this->item(itemKey);
+  return (_item ? _item->instantiate() : 0);
 }
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 void qCTKAbstractFactory<BaseClassType>::uninstantiate(const QString& itemKey)
 {
-  qCTKAbstractFactoryItem<BaseClassType> * item = this->item(itemKey);
-  if (!item)
+  qCTKAbstractFactoryItem<BaseClassType> * _item = this->item(itemKey);
+  if (!_item)
     {
     return;
     }
-  item->uninstantiate();
+  _item->uninstantiate();
 }
 
 //----------------------------------------------------------------------------
@@ -104,28 +104,28 @@ QStringList qCTKAbstractFactory<BaseClassType>::names() const
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 bool qCTKAbstractFactory<BaseClassType>::registerItem(
-  const QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > & item)
+  const QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > & _item)
 {
   // Sanity checks
-  if (!item || item->key().isEmpty() || this->item(item->key()))
+  if (!_item || _item->key().isEmpty() || this->item(_item->key()))
     {
     return false;
     }
   
   // Attempt to load it
-  if (!item->load())
+  if (!_item->load())
     {
     QString errorStr;
-    if (!item->loadErrorString().isEmpty())
+    if (!_item->loadErrorString().isEmpty())
       {
-      errorStr = " - " + item->loadErrorString();
+      errorStr = " - " + _item->loadErrorString();
       }
-    qCritical() << "Failed to load object:" << item->key() << errorStr ;
+    qCritical() << "Failed to load object:" << _item->key() << errorStr ;
     return false;
     }
   
   // Store its reference using a QSharedPointer
-  this->RegisteredItemMap[item->key()] = item;
+  this->RegisteredItemMap[_item->key()] = _item;
   return true;
 }
 

@@ -10,8 +10,7 @@
 #include <QDebug>
 
 //---------------------------------------------------------------------------
-qSlicerModuleSelectorWidget::qSlicerModuleSelectorWidget(QWidget* parent)
-  :Superclass(parent)
+qSlicerModuleSelectorWidget::qSlicerModuleSelectorWidget(QWidget* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerModuleSelectorWidget);
   QCTK_D(qSlicerModuleSelectorWidget);

@@ -40,8 +40,7 @@ class qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
 };
 
 //-----------------------------------------------------------------------------
-qSlicerApplication::qSlicerApplication(int &argc, char **argv)
-  : Superclass(argc, argv)
+qSlicerApplication::qSlicerApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
 {
   QCTK_INIT_PRIVATE(qSlicerApplication);
   QCTK_D(qSlicerApplication);
@@ -49,11 +48,11 @@ qSlicerApplication::qSlicerApplication(int &argc, char **argv)
   d->initPalette();
   d->loadStyleSheet();
   
-  qSlicerIOManager* ioManager = new qSlicerIOManager;
-  Q_ASSERT(ioManager);
+  qSlicerIOManager* _ioManager = new qSlicerIOManager;
+  Q_ASSERT(_ioManager);
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
-  this->setCoreIOManager(ioManager);
+  this->setCoreIOManager(_ioManager);
 }
 
 //-----------------------------------------------------------------------------
@@ -78,9 +77,9 @@ void qSlicerApplication::initialize()
 //-----------------------------------------------------------------------------
 qSlicerIOManager* qSlicerApplication::ioManager()
 {
-  qSlicerIOManager* ioManager = reinterpret_cast<qSlicerIOManager*>(this->coreIOManager());
-  Q_ASSERT(ioManager);
-  return ioManager;
+  qSlicerIOManager* _ioManager = reinterpret_cast<qSlicerIOManager*>(this->coreIOManager());
+  Q_ASSERT(_ioManager);
+  return _ioManager;
 }
 
 //-----------------------------------------------------------------------------

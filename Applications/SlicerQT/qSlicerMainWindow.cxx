@@ -28,8 +28,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindow::qSlicerMainWindow(QWidget *parent)
- :Superclass(parent)
+qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMainWindow);
   QCTK_D(qSlicerMainWindow);

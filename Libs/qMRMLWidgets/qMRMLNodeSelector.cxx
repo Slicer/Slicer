@@ -40,7 +40,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLNodeSelector::qMRMLNodeSelector(QWidget* parent) : Superclass(parent)
+qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLNodeSelector);
   QCTK_D(qMRMLNodeSelector);
@@ -88,22 +88,22 @@ vtkMRMLNode* qMRMLNodeSelector::currentNode()const
 // --------------------------------------------------------------------------
 const QString qMRMLNodeSelector::currentNodeId() const
 {
-  vtkMRMLNode* currentNode = this->currentNode();
-  if (currentNode)
+  vtkMRMLNode* _currentNode = this->currentNode();
+  if (_currentNode)
     {
-    return QString::fromLatin1(currentNode->GetID());
+    return QString::fromLatin1(_currentNode->GetID());
     }
   return QString();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* factory)
+void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* _factory)
 {
   QCTK_D(qMRMLNodeSelector);
   
-  Q_ASSERT(factory);
-  Q_ASSERT(this->mrmlScene() == factory->mrmlScene());
-  d->MRMLNodeFactory = factory;
+  Q_ASSERT(_factory);
+  Q_ASSERT(this->mrmlScene() == _factory->mrmlScene());
+  d->MRMLNodeFactory = _factory;
 }
 
 // --------------------------------------------------------------------------
@@ -193,19 +193,19 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeSelector::setCurrentNode(vtkMRMLNode* node)
+void qMRMLNodeSelector::setCurrentNode(vtkMRMLNode* _node)
 {
-  int index = node ? this->findData(node->GetID()) : -1;
+  int index = _node ? this->findData(_node->GetID()) : -1;
   this->setCurrentIndex(index);
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node)
+void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * _node)
 {
   QCTK_D(qMRMLNodeSelector);
   Q_ASSERT(scene == d->MRMLScene);
   
-  vtkMRMLNode* mrmlNode = vtkMRMLNode::SafeDownCast(node);
+  vtkMRMLNode* mrmlNode = vtkMRMLNode::SafeDownCast(_node);
   if (!mrmlNode || !mrmlNode->IsA(d->NodeType.toAscii().data()))
     {
     return;
@@ -215,12 +215,12 @@ void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * node)
+void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _node)
 {
   QCTK_D(qMRMLNodeSelector);
   Q_ASSERT(scene == d->MRMLScene);
   
-  vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(node);
+  vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(_node);
   Q_ASSERT(mrmlNode);
   if (!mrmlNode) 
     { 
@@ -265,10 +265,10 @@ void qMRMLNodeSelector::onAdd()
   QCTK_D(qMRMLNodeSelector);
   
   // Create the MRML node via the MRML Scene
-  vtkMRMLNode * node = d->MRMLNodeFactory->createNode(this->nodeType());
+  vtkMRMLNode * _node = d->MRMLNodeFactory->createNode(this->nodeType());
   // The created node is appended at the bottom of the current list  
-  Q_ASSERT(node);
-  if (node && this->selectNodeUponCreation())
+  Q_ASSERT(_node);
+  if (_node && this->selectNodeUponCreation())
     {// select the created node.
     this->setCurrentIndex(this->count() - 1);
     }

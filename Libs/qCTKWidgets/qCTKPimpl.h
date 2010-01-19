@@ -67,8 +67,8 @@ function (this one's actually a function).
  * Also make sure the Pimpl is initalized
  */
 #define QCTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)  \
-  PUB::PUB(_ARG1 _vparent) :                    \
-    Superclass( _vparent )                      \
+  PUB::PUB(_ARG1 _parent) :                     \
+    Superclass( _parent )                       \
     {                                           \
     QCTK_INIT_PRIVATE(PUB);                     \
     }

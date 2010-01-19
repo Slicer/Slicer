@@ -5,8 +5,8 @@
 #include "qSlicerModuleManager.h"
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModulePanel::qSlicerAbstractModulePanel(QWidget* parent, Qt::WindowFlags f)
-  :qSlicerWidget(parent, f)
+qSlicerAbstractModulePanel::qSlicerAbstractModulePanel(QWidget* _parent, Qt::WindowFlags f)
+  :qSlicerWidget(_parent, f)
 {
 
 }

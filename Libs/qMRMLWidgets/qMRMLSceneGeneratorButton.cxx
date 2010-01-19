@@ -36,8 +36,8 @@ void qMRMLSceneGeneratorButtonPrivate::init()
 // qMRMLSceneGeneratorButton methods
 
 // --------------------------------------------------------------------------
-qMRMLSceneGeneratorButton::qMRMLSceneGeneratorButton(QWidget* parent)
-  :QPushButton("Generate New Scene", parent)
+qMRMLSceneGeneratorButton::qMRMLSceneGeneratorButton(QWidget* _parent)
+  :QPushButton("Generate New Scene", _parent)
 {
   QCTK_INIT_PRIVATE(qMRMLSceneGeneratorButton);
   qctk_d()->init();

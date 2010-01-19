@@ -51,8 +51,8 @@
 class QCTK_WIDGETS_EXPORT qCTKFlowLayout : public QLayout
 {
 public:
-  explicit qCTKFlowLayout(QWidget *parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
-  explicit qCTKFlowLayout(int margin = -1, int hSpacing = -1, int vSpacing = -1);
+  explicit qCTKFlowLayout(QWidget *_parent, int _margin = -1, int hSpacing = -1, int vSpacing = -1);
+  explicit qCTKFlowLayout(int _margin = -1, int hSpacing = -1, int vSpacing = -1);
   virtual ~qCTKFlowLayout();
 
   void addItem(QLayoutItem *item);
@@ -72,9 +72,9 @@ private:
   int doLayout(const QRect &rect, bool testOnly) const;
   int smartSpacing(QStyle::PixelMetric pm) const;
 
-  QList<QLayoutItem *> itemList;
-  int m_hSpace;
-  int m_vSpace;
+  QList<QLayoutItem *> ItemList;
+  int HSpace;
+  int VSpace;
 };
 
 #endif

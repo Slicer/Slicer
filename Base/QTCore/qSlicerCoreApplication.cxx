@@ -119,8 +119,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCoreApplication::qSlicerCoreApplication(int &argc, char **argv)
-  : Superclass(argc, argv)
+qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
 {
   QCTK_INIT_PRIVATE(qSlicerCoreApplication);
 }
@@ -160,15 +159,15 @@ void qSlicerCoreApplication::initialize()
   scene->RegisterNodeClass(clmNode);
 
   // Create the application Logic object,
-  vtkSmartPointer<vtkSlicerApplicationLogic> appLogic =
+  vtkSmartPointer<vtkSlicerApplicationLogic> _appLogic =
     vtkSmartPointer<vtkSlicerApplicationLogic>::New();
-  appLogic->SetMRMLScene(scene);
+  _appLogic->SetMRMLScene(scene);
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created
-  appLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
-  appLogic->SetAndObserveMRMLScene(scene);
-  appLogic->CreateProcessingThread();
+  _appLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
+  _appLogic->SetAndObserveMRMLScene(scene);
+  _appLogic->CreateProcessingThread();
 
   // --- First scene needs a crosshair to be added manually
   vtkSmartPointer<vtkMRMLCrosshairNode> crosshair = vtkSmartPointer<vtkMRMLCrosshairNode>::New();
@@ -176,14 +175,14 @@ void qSlicerCoreApplication::initialize()
   scene->AddNode( crosshair );
 
   this->setMRMLScene(scene);
-  this->setAppLogic(appLogic);
+  this->setAppLogic(_appLogic);
 
   // Initialization done !
   d->Initialized = true;
 
-  qSlicerModuleManager * moduleManager = new qSlicerModuleManager;
-  Q_ASSERT(moduleManager);
-  d->ModuleManager = moduleManager;
+  qSlicerModuleManager * _moduleManager = new qSlicerModuleManager;
+  Q_ASSERT(_moduleManager);
+  d->ModuleManager = _moduleManager;
 }
 
 //-----------------------------------------------------------------------------
@@ -195,30 +194,24 @@ void qSlicerCoreApplication::initializePaths(const QString& programPath)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* mrmlScene)
+void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
   QCTK_D(qSlicerCoreApplication);
-  if (d->MRMLScene == mrmlScene)
+  if (d->MRMLScene == _mrmlScene)
     {
     return;
     }
 
-  d->MRMLScene = mrmlScene;
+  d->MRMLScene = _mrmlScene;
   
-  emit this->currentMRMLSceneChanged(mrmlScene);
+  emit this->currentMRMLSceneChanged(_mrmlScene);
 }
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerCoreApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setAppLogic(vtkSlicerApplicationLogic* appLogic)
-{
-  QCTK_D(qSlicerCoreApplication);
-  d->AppLogic = appLogic;
-}
-
-//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
 QCTK_GET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
@@ -300,10 +293,10 @@ void qSlicerCoreApplication::initializeCmdLineModulesPaths()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* moduleManager)
+void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* _moduleManager)
 {
   QCTK_D(qSlicerCoreApplication);
-  if (moduleManager == d->ModuleManager)
+  if (_moduleManager == d->ModuleManager)
     {
     return; 
     }
@@ -312,9 +305,9 @@ void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* moduleManage
     delete d->ModuleManager;
     d->ModuleManager = 0; 
     }
-  if (moduleManager)
+  if (_moduleManager)
     {
-    d->ModuleManager = moduleManager;
+    d->ModuleManager = _moduleManager;
     }
 }
 

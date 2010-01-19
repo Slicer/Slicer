@@ -48,10 +48,10 @@ qSlicerModuleLogic::~qSlicerModuleLogic()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleLogic::initialize(vtkSlicerApplicationLogic* appLogic)
+void qSlicerModuleLogic::initialize(vtkSlicerApplicationLogic* _appLogic)
 {
-  Q_ASSERT(appLogic);
-  qctk_d()->AppLogic = appLogic;
+  Q_ASSERT(_appLogic);
+  qctk_d()->AppLogic = _appLogic;
 
   this->setup();
 }

@@ -54,16 +54,16 @@ public:
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
+void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* _appLogic)
 {
   QCTK_D(qSlicerAbstractModule);
-  Q_ASSERT(appLogic);
+  Q_ASSERT(_appLogic);
   //this->setAppLogic(appLogic);
   if (d->Logic)
     {
-    d->Logic->initialize(appLogic);
+    d->Logic->initialize(_appLogic);
     }
-  d->AppLogic = appLogic; 
+  d->AppLogic = _appLogic; 
   this->setup();
 }
 
@@ -79,9 +79,9 @@ QString qSlicerAbstractModule::name()const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::setName(const QString& name)
+void qSlicerAbstractModule::setName(const QString& _name)
 {
-  qctk_d()->Name = name;
+  qctk_d()->Name = _name;
 }
 
 //-----------------------------------------------------------------------------
@@ -112,21 +112,21 @@ QString qSlicerAbstractModule::acknowledgementText()const
 QCTK_GET_CXX(qSlicerAbstractModule, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* mrmlScene)
+void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
   QCTK_D(qSlicerAbstractModule);
-  if (d->MRMLScene == mrmlScene)
+  if (d->MRMLScene == _mrmlScene)
     {
     return; 
     }
-  d->MRMLScene = mrmlScene;
+  d->MRMLScene = _mrmlScene;
   if (d->Logic)
     {// logic should be updated first (because it doesn't depends on the widget
-    d->Logic->setMRMLScene(mrmlScene);
+    d->Logic->setMRMLScene(_mrmlScene);
     }
   if (d->WidgetRepresentation)
     {
-    d->WidgetRepresentation->setMRMLScene(mrmlScene);
+    d->WidgetRepresentation->setMRMLScene(_mrmlScene);
     }
 }
 

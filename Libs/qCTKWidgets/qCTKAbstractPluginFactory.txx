@@ -8,8 +8,9 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-qCTKFactoryPluginItem<BaseClassType>::qCTKFactoryPluginItem(const QString& key, const QString& path)
-  :qCTKAbstractFactoryItem<BaseClassType>(key),Path(path)
+qCTKFactoryPluginItem<BaseClassType>::qCTKFactoryPluginItem(const QString& _key,
+                                                            const QString& _path)
+  :qCTKAbstractFactoryItem<BaseClassType>(_key),Path(_path)
 {
 }
 
@@ -79,9 +80,9 @@ bool qCTKAbstractPluginFactory<BaseClassType, FactoryItemType>::registerLibrary(
     {
     return false;
     }
-  QSharedPointer<FactoryItemType> item =
+  QSharedPointer<FactoryItemType> _item =
     QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
-  return this->registerItem(item);
+  return this->registerItem(_item);
 }
 
 #endif

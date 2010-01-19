@@ -30,7 +30,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qCTKNumericInput::qCTKNumericInput(QWidget* parent) : Superclass(parent)
+qCTKNumericInput::qCTKNumericInput(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKNumericInput);
 
@@ -68,18 +68,19 @@ double qCTKNumericInput::value()
 }
 
 // --------------------------------------------------------------------------
-void qCTKNumericInput::setValue(double value)
+void qCTKNumericInput::setValue(double _value)
 {
-  this->Superclass::setText(QString::number(value, 'g', this->decimals()+1));
+  this->Superclass::setText(QString::number(_value, 'g', this->decimals()+1));
 }
 
 // --------------------------------------------------------------------------
 QDoubleValidator* qCTKNumericInput::doubleValidator()
 {
   Q_ASSERT(this->validator());
-  QDoubleValidator* doubleValidator = qobject_cast<QDoubleValidator*>(const_cast<QValidator*>(this->validator()));
-  Q_ASSERT(doubleValidator);
-  return doubleValidator;
+  QDoubleValidator* _doubleValidator =
+    qobject_cast<QDoubleValidator*>(const_cast<QValidator*>(this->validator()));
+  Q_ASSERT(_doubleValidator);
+  return _doubleValidator;
 }
 
 // --------------------------------------------------------------------------

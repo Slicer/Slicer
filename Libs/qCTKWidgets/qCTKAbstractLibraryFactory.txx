@@ -5,9 +5,10 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-qCTKFactoryLibraryItem<BaseClassType>::qCTKFactoryLibraryItem(const QString& key, const QString& path)
-  :qCTKAbstractFactoryItem<BaseClassType>(key)
-  ,Path(path)
+qCTKFactoryLibraryItem<BaseClassType>::qCTKFactoryLibraryItem(const QString& _key,
+                                                              const QString& _path)
+  :qCTKAbstractFactoryItem<BaseClassType>(_key)
+  ,Path(_path)
 {
 }
 
@@ -118,10 +119,10 @@ bool qCTKAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary
     {
     return false;
     }
-  QSharedPointer<FactoryItemType> item =
+  QSharedPointer<FactoryItemType> _item =
     QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
-  item->setSymbols(this->Symbols);
-  return this->registerItem(item);
+  _item->setSymbols(this->Symbols);
+  return this->registerItem(_item);
 }
 
 #endif

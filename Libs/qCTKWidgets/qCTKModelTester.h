@@ -15,11 +15,11 @@
 #ifndef __qCTKModelTester_h
 #define __qCTKModelTester_h
 
+// QT includes
 #include <QObject> 
 #include <QModelIndex>
 #include <QPersistentModelIndex>
 #include <QList>
-
 
 // CTK includes
 #include <qCTKWidgetsExport.h>
@@ -34,7 +34,7 @@ class QCTK_WIDGETS_EXPORT qCTKModelTester: public QObject
 {
   Q_OBJECT
 public:
-  qCTKModelTester(QAbstractItemModel *model, QObject *vparent = 0);
+  qCTKModelTester(QAbstractItemModel *model, QObject *parent = 0);
 
   void setModel(QAbstractItemModel* model);
   QAbstractItemModel* model()const;
