@@ -5,9 +5,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerMeasurementsAngleWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsAngleWidget>,
+class qSlicerMeasurementsAngleWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsAngleWidget>,
                                                public Ui_qSlicerMeasurementsAngleWidget
 {
+public:
   qSlicerMeasurementsAngleWidgetPrivate()
     {
     }

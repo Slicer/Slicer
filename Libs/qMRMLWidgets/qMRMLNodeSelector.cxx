@@ -202,6 +202,7 @@ void qMRMLNodeSelector::setCurrentNode(vtkMRMLNode* _node)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * _node)
 {
+  Q_UNUSED(scene);
   QCTK_D(qMRMLNodeSelector);
   Q_ASSERT(scene == d->MRMLScene);
   
@@ -217,6 +218,7 @@ void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * _nod
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _node)
 {
+  Q_UNUSED(scene);
   QCTK_D(qMRMLNodeSelector);
   Q_ASSERT(scene == d->MRMLScene);
   

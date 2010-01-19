@@ -20,8 +20,9 @@
 // #include "vtkSlicerApplicationLogic.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
+class qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
 {
+public:
   QString Name;
   
   // Since by design qSlicerModuleLogic isn't a QObject, Logic couldn't be a QPointer.

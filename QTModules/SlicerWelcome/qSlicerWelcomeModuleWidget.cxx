@@ -11,9 +11,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerWelcomeModuleWidgetPrivate: public qCTKPrivate<qSlicerWelcomeModuleWidget>,
+class qSlicerWelcomeModuleWidgetPrivate: public qCTKPrivate<qSlicerWelcomeModuleWidget>,
                                           public Ui_qSlicerWelcomeModule
 {
+public:
   void setupUi(qSlicerWidget* widget);
 };
 

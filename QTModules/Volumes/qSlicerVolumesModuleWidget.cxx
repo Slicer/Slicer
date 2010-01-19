@@ -5,9 +5,10 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-struct qSlicerVolumesModuleWidgetPrivate: public qCTKPrivate<qSlicerVolumesModuleWidget>,
+class qSlicerVolumesModuleWidgetPrivate: public qCTKPrivate<qSlicerVolumesModuleWidget>,
                                           public Ui_qSlicerVolumesModule
 {
+public:
 };
 
 //-----------------------------------------------------------------------------

@@ -2,9 +2,10 @@
 #include "ui_qSlicerMeasurementsModule.h"
 
 //-----------------------------------------------------------------------------
-struct qSlicerMeasurementsModuleWidgetPrivate: public qCTKPrivate<qSlicerMeasurementsModuleWidget>,
+class qSlicerMeasurementsModuleWidgetPrivate: public qCTKPrivate<qSlicerMeasurementsModuleWidget>,
                                                public Ui_qSlicerMeasurementsModule
 {
+public:
 };
 
 //-----------------------------------------------------------------------------

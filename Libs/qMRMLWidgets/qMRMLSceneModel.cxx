@@ -237,6 +237,7 @@ QMap<int, QVariant> qMRMLSceneModel::itemData(const QModelIndex &_index)const
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   
@@ -252,6 +253,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject*
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
+  Q_UNUSED(node);
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   
@@ -264,6 +267,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(d->MRMLNodeToBe == 0);
@@ -280,6 +284,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObjec
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
+  Q_UNUSED(node);
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
