@@ -431,10 +431,11 @@ int main(int argc, char * argv[])
           double dImageScalarMax = image->GetScalarTypeMax();
           if (debug) {  std::cout << "Image scalar max as double = " << dImageScalarMax << endl; }
           extentMax = (int)(floor(dImageScalarMax - 1.0));
-          if (extentMax < 0 || extentMax > VTK_INT_MAX)
+          int biggestBin = 1000000; // VTK_INT_MAX - 1;
+          if (extentMax < 0 || extentMax > biggestBin)
             {
-            std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of " << dImageScalarMax << ", using VTK_INT_MAX - 1 as the histogram number of bins: " << VTK_INT_MAX - 1 << endl;
-            extentMax = VTK_INT_MAX - 1;
+            std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of " << dImageScalarMax << ", using  " << biggestBin << " as the histogram number of bins" << endl;
+            extentMax = biggestBin;
             }
           else
             {
