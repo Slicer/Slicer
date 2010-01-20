@@ -57,7 +57,9 @@ Version:   $Revision$
 typedef std::map<int, std::string> LabelAnatomyContainer;
 
 int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
+int GetMaxAnatomyLabel( LabelAnatomyContainer );
 
+  
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
@@ -407,8 +409,45 @@ int main(int argc, char * argv[])
     if (makeMultiple) 
       {
       hist = vtkImageAccumulate::New();
-      hist->SetInput(image); 
-      hist->SetComponentExtent(0, 1023, 0, 0, 0, 0);
+      hist->SetInput(image);
+      // need to figure out how many bins
+      int extentMax = 0;
+      if (useColorNode)
+        {
+        // get the max integer that the colour node can map
+        extentMax = colorNode->GetNumberOfColors() - 1;
+        if (debug) {  std::cout << "Using color node to get max label" << endl; }
+        }
+      else
+        {
+        if (labelToAnatomy.size() > 0)
+          {
+          extentMax = GetMaxAnatomyLabel(labelToAnatomy) - 1;
+          if (debug) {  std::cout << "Using label to anatomy file to get max label" << endl; }
+          }
+        else
+          {
+          // use the full range of the scalar type
+          double dImageScalarMax = image->GetScalarTypeMax();
+          if (debug) {  std::cout << "Image scalar max as double = " << dImageScalarMax << endl; }
+          extentMax = (int)(floor(dImageScalarMax - 1.0));
+          if (extentMax < 0 || extentMax > VTK_INT_MAX)
+            {
+            std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of " << dImageScalarMax << ", using VTK_INT_MAX - 1 as the histogram number of bins: " << VTK_INT_MAX - 1 << endl;
+            extentMax = VTK_INT_MAX - 1;
+            }
+          else
+            {
+            std::cout << "\nWARNING: due to lack of color label information, using the full scalar range of the input image when calculating the histogram over the image: " << extentMax << endl;
+            }
+          }
+        }
+      if (debug)
+        {
+        std::cout << "Setting histogram extentMax = " << extentMax << endl;
+        }
+      //hist->SetComponentExtent(0, 1023, 0, 0, 0, 0);
+      hist->SetComponentExtent(0, extentMax, 0, 0, 0, 0);
       hist->SetComponentOrigin(0, 0, 0);
       hist->SetComponentSpacing(1,1,1);      
       // try and update and get the min/max here, as need them for the
@@ -446,7 +485,7 @@ int main(int argc, char * argv[])
         
       if (debug)
         {
-        std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << " (image scalar type = "  << image->GetScalarType() << ")" << endl;
+        std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << " (image scalar type = "  << image->GetScalarType() << ", max = " << image->GetScalarTypeMax() << ")" << endl;
         }
       if (GenerateAll)
         {
@@ -654,7 +693,7 @@ int main(int argc, char * argv[])
       }
 
     // ModelMakerMarch
-    int labelFrequency;
+    double labelFrequency = 0.0;;
     std::string labelName;
     
     // get the dimensions, marching cubes only works on 3d
@@ -717,15 +756,15 @@ int main(int argc, char * argv[])
       
       if (makeMultiple)
         {
-        labelFrequency = (int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i));
+        labelFrequency = (((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i);
         if (debug)
           {
-          if (labelFrequency > 0) 
+          if (labelFrequency > 0.0) 
             {
-            std::cout << "Label    " << i << "    has    " << labelFrequency    << " voxels." << endl;
+            std::cout << "Label    " << i << " has " << labelFrequency << " voxels." << endl;
             }
           }
-        if (labelFrequency ==0) 
+        if (labelFrequency == 0.0)
           {
           skippedModels.push_back(i);
           continue;
@@ -1122,7 +1161,12 @@ int main(int argc, char * argv[])
         writer->Delete();
         writer = NULL;        
         }
-      if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
+      if (transformIJKtoRAS == NULL ||
+          transformIJKtoRAS->GetMatrix() == NULL)
+        {
+        std::cout << "transformIJKtoRAS is " << (transformIJKtoRAS == NULL ? "null" : "okay") << ", it's matrix is " << (transformIJKtoRAS->GetMatrix() == NULL ? "null" : "okay") << endl;
+        }
+      else if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
         {
         if (debug)
           {
@@ -1796,4 +1840,22 @@ int ImportAnatomyLabelFile( std::string anatomyLabelFile,
 
   fin.close();
   return EXIT_SUCCESS;
+}
+
+/// returns the maximum label in the map
+int GetMaxAnatomyLabel( LabelAnatomyContainer map )
+{
+  int maxLabel = 0;
+
+  std::map<int, std::string>::iterator it;
+
+  for ( it=map.begin() ; it != map.end(); it++ )
+    {
+    if (it->first > maxLabel)
+      {
+      maxLabel = it->first;
+      }
+    }
+
+  return maxLabel;
 }
