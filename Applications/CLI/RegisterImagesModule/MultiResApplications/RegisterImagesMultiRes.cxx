@@ -526,7 +526,7 @@ int main( int argc, char * argv[] )
 
   minima->Update();
 
-  if(DEBUG)
+  if(VERYDEBUG)
     {
     std::cout << "Finished computing minima" << std::endl;
 
