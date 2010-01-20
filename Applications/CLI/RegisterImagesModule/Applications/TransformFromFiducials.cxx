@@ -96,6 +96,27 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
+  if(fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
+     fixedLandmarks.size() != movingLandmarks.size())
+    {
+    std::cerr << "Fixed and moving landmark lists must be of the same size " <<
+      "and contain at least one point" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if(transformType != "Translation" && fixedLandmarks.size() < 3)
+    {
+    std::cerr << "At least 3 fiducual points must be specified for Rigid or Similarity transforms" <<
+      std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if(saveTransform == "")
+    {
+    std::cerr << "An output transform must be specified" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   typedef  std::vector<itk::Point<double, 3> > PointList;
 
   PointList fixedPoints(fixedLandmarks.size());
@@ -158,6 +179,8 @@ int main(int argc, char* argv[])
     // itk::Matrix<double, 3> a =
     //   computeAffineTransform(fixedPoints, movingPoints,
     //                          fixedCenter, movingCenter);
+    std::cerr << "Unsupported transform type: " << transformType << std::endl;
+    return EXIT_FAILURE;
     } 
   else
     {
