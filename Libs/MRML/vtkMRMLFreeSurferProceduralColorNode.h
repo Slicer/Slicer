@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferProceduralColorNode : public vtkMRMLProce
 {
 public:
   static vtkMRMLFreeSurferProceduralColorNode *New();
-  vtkTypeMacro(vtkMRMLFreeSurferProceduralColorNode,vtkMRMLColorNode);
+  vtkTypeMacro(vtkMRMLFreeSurferProceduralColorNode,vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------

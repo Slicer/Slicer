@@ -30,7 +30,7 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLM
 {
   public:
   static vtkMRMLFreeSurferModelOverlayStorageNode *New();
-  vtkTypeMacro(vtkMRMLFreeSurferModelOverlayStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLFreeSurferModelOverlayStorageNode,vtkMRMLModelStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
