@@ -19,7 +19,6 @@
 #define __vtkMRMLFreeSurferModelStorageNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelNode.h" 
 
@@ -30,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 {
   public:
   static vtkMRMLFreeSurferModelStorageNode *New();
-  vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode,vtkMRMLModelStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
