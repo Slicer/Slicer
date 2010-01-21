@@ -1,0 +1,38 @@
+<MRML version="" userTags="">
+ <CommandLineModule
+ id="vtkMRMLCommandLineModuleNode1" name="Default Sampling"
+ hideFromEditors="true" selectable="true" selected="false"
+ title="Register%20Images"
+ version="0.1.0.$Revision:%202104%20$(alpha)" resampledImage=""
+ loadTransform="" saveTransform="" initialization="CentersOfMass"
+ registration="PipelineAffine" metric="MattesMI" expectedOffset="20"
+ expectedRotation="0.1" expectedScale="0.05" expectedSkew="0.01"
+ verbosityLevel="Standard" sampleFromOverlap="false" fixedImageMask=""
+ randomNumberSeed="0" numberOfThreads="0" minimizeMemory="false"
+ interpolation="Linear" baselineImage=""
+ baselineNumberOfFailedPixelsTolerance="1000"
+ baselineIntensityTolerance="10" baselineRadiusTolerance="0"
+ baselineDifferenceImage="" baselineResampledMovingImage=""
+ fixedLandmarks="" movingLandmarks="" rigidMaxIterations="100"
+ rigidSamplingRatio="0.01" affineMaxIterations="50"
+ affineSamplingRatio="0.02" bsplineMaxIterations="20"
+ bsplineSamplingRatio="0.1" controlPointSpacing="40" ></CommandLineModule> 
+<CommandLineModule
+ id="vtkMRMLCommandLineModuleNode2" name="Fast Sampling"
+ hideFromEditors="true" selectable="true" selected="false"
+ title="Register%20Images"
+ version="0.1.0.$Revision:%202104%20$(alpha)" resampledImage=""
+ loadTransform="" saveTransform="" initialization="CentersOfMass"
+ registration="PipelineAffine" metric="MattesMI" expectedOffset="20"
+ expectedRotation="0.1" expectedScale="0.05" expectedSkew="0.01"
+ verbosityLevel="Standard" sampleFromOverlap="false" fixedImageMask=""
+ randomNumberSeed="0" numberOfThreads="0" minimizeMemory="false"
+ interpolation="Cubic" baselineImage=""
+ baselineNumberOfFailedPixelsTolerance="1000"
+ baselineIntensityTolerance="10" baselineRadiusTolerance="0"
+ baselineDifferenceImage="" baselineResampledMovingImage=""
+ fixedLandmarks="" movingLandmarks="" rigidMaxIterations="100"
+ rigidSamplingRatio="0.005" affineMaxIterations="80"
+ affineSamplingRatio="0.01" bsplineMaxIterations="20"
+ bsplineSamplingRatio="0.05" controlPointSpacing="40"></CommandLineModule>
+</MRML>
