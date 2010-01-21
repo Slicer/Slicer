@@ -91,10 +91,12 @@ createGrid(double max, double resolution)
   typename T::SpacingType spacing;
   typename T::PointType origin;
 
+  typedef typename T::SizeType SizeType;
+
   for(unsigned int i = 0; i < 3; ++i)
     {
     start[i] = 0;
-    size[i] = 2*floor(max / resolution) + 1;
+    size[i] = static_cast<SizeType>( 2*floor(max / resolution) + 1 );
     spacing[i] = resolution;
     origin[i] = -(resolution * static_cast<double>(size[i]/2));
     }
@@ -283,9 +285,9 @@ int main( int argc, char * argv[] )
     ViewerCommandType::Pointer command = ViewerCommandType::New();
 
     typedef LinearInterpolateImageFunction<ProcessingImage, double> Interpolator;
-    Interpolator::Pointer reginterp = Interpolator::New();
+    Interpolator::Pointer reginterp1 = Interpolator::New();
 
-    reg->SetInterpolator(reginterp);
+    reg->SetInterpolator(reginterp1);
 
     typedef MattesMutualInformationImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
 //   typedef NormalizedMutualInformationHistogramImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
@@ -650,9 +652,9 @@ int main( int argc, char * argv[] )
     ViewerCommandType::Pointer command = ViewerCommandType::New();
 
     typedef LinearInterpolateImageFunction<ProcessingImage, double> Interpolator;
-    Interpolator::Pointer reginterp = Interpolator::New();
+    Interpolator::Pointer reginterp2 = Interpolator::New();
 
-    reg->SetInterpolator(reginterp);
+    reg->SetInterpolator(reginterp2);
 
     typedef MattesMutualInformationImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
 //   typedef NormalizedMutualInformationHistogramImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
