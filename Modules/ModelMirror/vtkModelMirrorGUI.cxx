@@ -359,12 +359,18 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
       d->Delete();
       return;
       }
+
+    // swallow the event
+    if (this->GUICallbackCommand != NULL)
+      {
+      this->GUICallbackCommand->SetAbortFlag(1);
+      }
+    else
+      {
+      vtkErrorMacro("Unable to get the gui call back command that calls process widget events, event = " << event << " is not swallowed here");
+      }
     
     this->Logic->CreateMirrorModel();
-//    int num = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
-//    vtkDebugMacro ( "========================================================================" );
-//    vtkDebugMacro ( "Created Mirror Model: have " << num << " model nodes" );
-//    vtkDebugMacro ( "========================================================================" );
 
     this->Logic->CreateMirrorTransform();
     if ( this->Logic->GetMirrorTransformNode() != NULL )
@@ -377,16 +383,13 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           if ( this->Logic->PositionInHierarchy() )
             {
-//            num = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode" );
-//    vtkDebugMacro ( "========================================================================" );
-//            vtkDebugMacro ( "Finishing: have " << num << " model nodes" );
-//    vtkDebugMacro ( "========================================================================" );
             return;
             }
           }
         }
       }
 
+    
     vtkErrorMacro ( "Unable to create the new mirror model." );
     vtkKWMessageDialog *d2 = vtkKWMessageDialog::New();
     d2->SetParent ( this->UIPanel->GetPageWidget ( "ModelMirror" ));
@@ -471,6 +474,11 @@ void vtkModelMirrorGUI::UpdateGUI ()
     {
     return;
     }
+  if ( this->UpdatingGUI )
+    {
+    return;
+    }
+  
   this->UpdatingGUI = 1;
 
   if (this->Logic->GetModelMirrorNode() != NULL)
@@ -656,6 +664,7 @@ void vtkModelMirrorGUI::BuildGUI ( )
   this->ModelNameEntry->SetParent ( f );
   this->ModelNameEntry->Create();
   this->ModelNameEntry->SetWidth ( 24 );
+  this->ModelNameEntry->SetCommandTriggerToAnyChange();
   this->ModelNameEntry->SetBalloonHelpString ( "Specify a name for the model to be created." );  
 
   vtkKWFrame *f2 = vtkKWFrame::New();

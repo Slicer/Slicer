@@ -49,7 +49,6 @@ vtkModelMirrorLogic::vtkModelMirrorLogic()
    this->MirrorTransformNode = NULL;
    this->Visited = false;
    this->Raised = false;
-//   this->DebugOn();
 }
 
 
@@ -290,7 +289,13 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //--- inherit the color and other display properties from its source
   //---
 //  mirrorModelNode->GetDisplayNode()->Copy( inputModelNode->GetDisplayNode() );
-  mirrorModelNode->GetDisplayNode()->SetColor (inputModelNode->GetDisplayNode()->GetColor() );
+  if ( inputModelNode->GetDisplayNode() )
+    {
+    if ( inputModelNode->GetDisplayNode()->GetColor() )
+      {
+      mirrorModelNode->GetDisplayNode()->SetColor (inputModelNode->GetDisplayNode()->GetColor() );
+      }
+    }
 //  mirrorModelNode->GetDisplayNode()->SetDiffuse (inputModelNode->GetDisplayNode()->GetDiffuse() );
 //  mirrorModelNode->GetDisplayNode()->SetAmbient (inputModelNode->GetDisplayNode()->GetAmbient() );
 //  mirrorModelNode->GetDisplayNode()->SetSpecular (inputModelNode->GetDisplayNode()->GetSpecular() );
@@ -492,7 +497,12 @@ int vtkModelMirrorLogic::HardenTransform()
   //---
   const char *id = this->ModelMirrorNode->GetOutputModel()->GetID();
   vtkMRMLTransformableNode *tbnode = vtkMRMLTransformableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(id));
-
+  if ( tbnode == NULL )
+    {
+    vtkErrorMacro ( << "Output model doesn't appear to be correctly constructed. Mirroring output may be incorrect." );
+    return ( 0 );
+    }
+    
   if (this->GetMirrorTransformNode()->IsTransformToWorldLinear())
     {
     vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();
