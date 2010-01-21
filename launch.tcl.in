@@ -761,10 +761,16 @@ proc launch_RunProgram {} {
         exit
     }
 
-    if {$::env(BUILD) == $::WINDOWS} {
-        set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r]
-    } else {
-        set fp [open "| sh -c \"'$::LAUNCH(launchCommand)' $::argv \" |& cat" r]
+    if {$::env(BUILD) == $::WINDOWS} {        
+        if { [catch { set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r] } res] } {
+            puts "Failed to execute $::LAUNCH(launchCommand): $res"
+            exit -1
+        }        
+    } else {               
+        if { [catch { set fp [open "| sh -c \"'$::LAUNCH(launchCommand)' $::argv \" |& cat" r] } res] } {
+            puts "Failed to execute $::LAUNCH(launchCommand): $res"
+            exit -1
+        }        
     }
 
     #
