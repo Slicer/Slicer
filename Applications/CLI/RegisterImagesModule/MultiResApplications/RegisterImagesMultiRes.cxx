@@ -91,12 +91,13 @@ createGrid(double max, double resolution)
   typename T::SpacingType spacing;
   typename T::PointType origin;
 
-  typedef typename T::SizeType SizeType;
+  typedef typename T::SizeType     SizeType;
+  typedef typename SizeType::SizeValueType  SizeValueType;
 
   for(unsigned int i = 0; i < 3; ++i)
     {
     start[i] = 0;
-    size[i] = static_cast<SizeType>( 2*floor(max / resolution) + 1 );
+    size[i] = static_cast<SizeValueType>( 2*floor(max / resolution) + 1 );
     spacing[i] = resolution;
     origin[i] = -(resolution * static_cast<double>(size[i]/2));
     }
