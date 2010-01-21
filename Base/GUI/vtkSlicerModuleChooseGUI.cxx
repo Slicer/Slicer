@@ -250,6 +250,11 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( currentModule )
         {
         currentModule->Enter ( );
+        vtkMRMLLayoutNode *lnode=this->GetApplicationGUI()->GetGUILayoutNode();
+        if (lnode)
+          {
+          lnode->SetSelectedModule(currentModuleName );
+          }
         this->RaiseModule ( moduleName );
         this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
         this->PopulateHistoryListMenu ( );
@@ -287,6 +292,11 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( currentModule )
         {
         currentModule->Enter ( );
+        vtkMRMLLayoutNode *lnode=this->GetApplicationGUI()->GetGUILayoutNode();
+        if (lnode)
+          {
+          lnode->SetSelectedModule(currentModuleName );
+          }
         this->RaiseModule ( moduleName );
         this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
         this->PopulateHistoryListMenu ( );
@@ -433,71 +443,80 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNode *node )
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  static bool inSelectModule = false;
 
-  if ( app )
+  if (!inSelectModule)
     {
-    if ( this->GetApplicationGUI() != NULL )
+    inSelectModule = true;
+
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+    if ( app )
       {
-      if ( moduleName != NULL )
+      if ( this->GetApplicationGUI() != NULL )
         {
-        // Exit current module
-        char * currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
-        if ( currentModuleName != NULL )
+        if ( moduleName != NULL )
           {
-          vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
-          if (currentModule != NULL )
+          // Exit current module
+          char * currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+          if ( currentModuleName != NULL )
             {
-            //--- user feedback
-            if ( this->GetApplicationGUI()->GetMainSlicerWindow() )
+            vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
+            if (currentModule != NULL )
               {
-              std::string statusText = "leaving ";
-              statusText += currentModuleName;
-              statusText += " ...";
-              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
-              this->Script ( "update idletasks");
+              //--- user feedback
+              if ( this->GetApplicationGUI()->GetMainSlicerWindow() )
+                {
+                std::string statusText = "leaving ";
+                statusText += currentModuleName;
+                statusText += " ...";
+                this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
+                this->Script ( "update idletasks");
+                }
+              currentModule->Exit ( );
               }
-            currentModule->Exit ( );
             }
-          }
-        // Enter selected module.
-        vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );
+          // Enter selected module.
+          vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );
 #ifdef Slicer3_USE_QT
-        QString moduleTitle = QString(moduleName);
-        qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-        Q_ASSERT(moduleManager);
-        if (currentModule || moduleManager->module(moduleManager->moduleName(moduleTitle)) != 0)
-          {
-#endif
-          if ( currentModule )
+          QString moduleTitle = QString(moduleName);
+          qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+          Q_ASSERT(moduleManager);
+          if (currentModule || moduleManager->module(moduleManager->moduleName(moduleTitle)) != 0)
             {
-            if ( node )
+#endif
+            if ( currentModule )
               {
-              currentModule->Enter ( node );
-              }
-            else
-              {
-              currentModule->Enter ( );
-              }
+              if ( node )
+                {
+                currentModule->Enter ( node );
+                }
+              else
+                {
+                currentModule->Enter ( );
+                }
 #ifdef Slicer3_USE_QT
-          }
+              }
 #endif
-          vtkMRMLLayoutNode *lnode = this->GetApplicationGUI()->GetGUILayoutNode ( );
-          if (lnode)
-            {
-            lnode->SetSelectedModule(moduleName );
+            vtkMRMLLayoutNode *lnode = this->GetApplicationGUI()->GetGUILayoutNode ( );
+            if (lnode)
+              {
+              lnode->SetSelectedModule(moduleName );
+              }
+            this->RaiseModule ( moduleName );
+            this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+            this->PopulateHistoryListMenu ( );
+            this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
             }
-          this->RaiseModule ( moduleName );
-          this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
-          this->PopulateHistoryListMenu ( );
-          this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
-          }
-        else
-          {
-          vtkErrorMacro ("ERROR no slicer module GUI found for " << moduleName<< "\n");
+          else
+            {
+            vtkErrorMacro ("ERROR no slicer module GUI found for " << moduleName<< "\n");
+            }
           }
         }
       }
+
+    inSelectModule = false;
     }
 }
 
