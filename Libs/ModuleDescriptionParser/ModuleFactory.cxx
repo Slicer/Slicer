@@ -2377,7 +2377,7 @@ void ModuleFactory::RegisterFileExtension(const char *ext, const char *cmdstring
   std::string formattedCommandString;
   if (path != NULL)
     {
-    char command[125];
+    char command[4096];
   
     sprintf(command, cmdstring, path);
     formattedCommandString = std::string(command);
