@@ -36,7 +36,7 @@ namespace Cudapp
         virtual bool CopyTo(void* dst, size_t byte_count, size_t offset = 0, MemoryLocation dst_loc = MemoryOnHost) const = 0;
         virtual bool CopyFrom(const void* src, size_t byte_count, size_t offset = 0, MemoryLocation src_loc = MemoryOnHost) = 0;
 
-        // This function does a cast of this to the specified type and then a cast of the other to the specified type, so we are sure from what memory to what we are copying.
+        /// This function does a cast of this to the specified type and then a cast of the other to the specified type, so we are sure from what memory to what we are copying.
         virtual bool CopyTo(MemoryBase* dst) const { return false; /* To give you a sense what this does:  dst->CopyFromInternal(this); */ }
 
         virtual void PrintSelf(std::ostream &os) const;
@@ -49,9 +49,9 @@ namespace Cudapp
         size_t Size;    //!< The size of the Allocated Memory
         MemoryLocation Location;
 
-        virtual bool CopyFromInternal(const Memory* src) { return false; } // HACK -> Temporary
-        virtual bool CopyFromInternal(const MemoryPitch* src) { return false; } // HACK -> Temporary
-        virtual bool CopyFromInternal(const MemoryArray* src) { return false; } // HACK -> Temporary
+        virtual bool CopyFromInternal(const Memory* src) { return false; } /// HACK -> Temporary
+        virtual bool CopyFromInternal(const MemoryPitch* src) { return false; } /// HACK -> Temporary
+        virtual bool CopyFromInternal(const MemoryArray* src) { return false; } /// HACK -> Temporary
     };
 
     inline std::ostream& operator<<(std::ostream& os, const MemoryBase& in){

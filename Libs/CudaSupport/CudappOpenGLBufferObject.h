@@ -1,7 +1,7 @@
 #ifndef CUDAPPOPENGLBUFFEROBJECT_H_
 #define CUDAPPOPENGLBUFFEROBJECT_H_
 
-#include <GL/gl.h> // OpenGL headers used for the Buffer Reference
+#include <GL/gl.h> /// OpenGL headers used for the Buffer Reference
 #include "CudappSupportModule.h"
 
 class CUDA_SUPPORT_EXPORT OpenGLBufferObject

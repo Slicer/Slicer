@@ -28,7 +28,7 @@ namespace Cudapp
 
     protected:
         Memory();
-        Memory(const Memory&); // Not Implemented (do this in the subclasses)
+        Memory(const Memory&); /// Not Implemented (do this in the subclasses)
 
         virtual bool CopyFromInternal(const Memory* src);
 

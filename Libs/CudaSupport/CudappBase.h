@@ -6,7 +6,7 @@
 #include "CudappSupportModule.h"
 namespace Cudapp
 {
-    /// THIS IS A STATIC CLASS USED FOR BASIC CUDA FUNCTIONALITY!!
+    //// THIS IS A STATIC CLASS USED FOR BASIC CUDA FUNCTIONALITY!!
     class CUDA_SUPPORT_EXPORT Base
     {
     public:

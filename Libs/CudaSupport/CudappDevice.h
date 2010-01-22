@@ -12,14 +12,14 @@ namespace Cudapp
         Device(unsigned int deviceNumber);
         virtual ~Device();
 
-        /// Device Information
+        //// Device Information
         bool IsInitialized() const { return this->Initialized; }
 
         void SetDeviceNumber(unsigned int deviceNumber);
         int GetDeviceNumber() const { return this->DeviceNumber; }
 
         //////////////////////////////////////////////////////////////////////
-        // Wrapped Functions to retrieve all Information about a CUDA card ///
+        /// Wrapped Functions to retrieve all Information about a CUDA card ///
         //////////////////////////////////////////////////////////////////////
         /** @returns the name of the CUDA device */
         const char* GetName() const { return DeviceProp.name; }
@@ -36,9 +36,9 @@ namespace Cudapp
         /** @returns the maximum numbers of threads that can be run in parallel on this CUDA device */
         int GetMaxThreadsPerBlock() const { return DeviceProp.maxThreadsPerBlock; }
         /** @returns the maximum sizes of each dimension of a block for the CUDA device as int[3] */
-        const int* GetMaxThreadsDim() const { return DeviceProp.maxThreadsDim; } // [3]
+        const int* GetMaxThreadsDim() const { return DeviceProp.maxThreadsDim; } /// [3]
         /** @returns the maximum sizes of each dimension of a grid for this CUDA device as int[3] */
-        const int* GetMaxGridSize() const { return DeviceProp.maxGridSize; }  // [3]
+        const int* GetMaxGridSize() const { return DeviceProp.maxGridSize; }  /// [3]
         /** @returns the tatal amount (in bytes) of constant memory of this CUDA device */
         size_t GetTotalConstMem() const { return DeviceProp.totalConstMem; }
         /** @reuturns The major revision number of the CUDA device */
@@ -56,7 +56,7 @@ namespace Cudapp
         void SynchronizeThread();
         void ExitThread();
 
-        /// Memory Management
+        //// Memory Management
         bool AllocateMemory();
 
         virtual void PrintSelf(std::ostream&  os) const;
