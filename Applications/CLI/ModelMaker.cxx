@@ -86,6 +86,7 @@ int main(int argc, char * argv[])
       std::cout << "Filter type: " << FilterType << std::endl;
       std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
       std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
+      std::cout << "Anatomy label file : " << AnatomyLabelFile.c_str() << std::endl;
       std::cout << "Save intermediate models: " << SaveIntermediateModels << std::endl;
       std::cout << "Debug: " << debug << std::endl;
       std::cout << "\nStarting..." << std::endl;
@@ -192,17 +193,21 @@ int main(int argc, char * argv[])
     vtkMRMLColorTableStorageNode *colorStorageNode = NULL;
     
     int useColorNode = 0;
-    if (ColorTable !=  "")
-      {      
-      useColorNode = 1;
-      }
-    else if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
+    if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
       {
+      if (debug)
+        {
+        std::cout << "Importing anatomy label file " << AnatomyLabelFile.c_str() << std::endl;
+        }
       // if an anatomy label file is specified, populate a map with its contents
       if (ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy ))
         {
         return EXIT_FAILURE;
         }
+      }
+    else if (ColorTable !=  "")
+      {      
+      useColorNode = 1;
       }
 
     // vtk and helper variables
