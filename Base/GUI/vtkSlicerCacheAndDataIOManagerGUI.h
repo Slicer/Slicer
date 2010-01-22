@@ -63,7 +63,9 @@ public:
 
   // Description:
   // This method builds the DataIOManager module GUI
-  virtual void BuildGUI ( ) ;
+  virtual void BuildGUI ( void );
+  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
   // Description:
   // This method releases references and key-bindings,
@@ -92,6 +94,7 @@ public:
   // Description:
   // Methods describe behavior at module enter and exit.
   virtual void Enter ( );
+  virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
   virtual void Exit ( );
 
   // Description:

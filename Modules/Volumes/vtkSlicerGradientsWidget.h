@@ -69,6 +69,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
+    virtual void SetApplication (vtkKWApplication* arg)
+      { this->Superclass::SetApplication( arg ); }
 
   protected:
     vtkSlicerGradientsWidget(void);

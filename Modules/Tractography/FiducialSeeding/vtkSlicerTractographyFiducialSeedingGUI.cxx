@@ -227,7 +227,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::SetModuleLogic ( vtkSlicerLogic *l
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingGUI::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerTractographyFiducialSeedingGUI::PrintSelf(
+  ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent) )
 {
   
 }
@@ -316,7 +317,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void * vtkNotUsed(callData) ) 
 {
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 

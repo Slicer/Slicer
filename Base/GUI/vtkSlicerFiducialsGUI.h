@@ -107,7 +107,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     // Description:
     // This method builds the Fiducials module GUI
-    virtual void BuildGUI ( ) ;
+    virtual void BuildGUI ( void );
+    virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+    virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
     // Description:
     // This method releases references and key-bindings,

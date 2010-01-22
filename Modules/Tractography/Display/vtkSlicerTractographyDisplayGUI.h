@@ -54,7 +54,9 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
 
     // Description:
     // This method builds the Tractography module GUI
-    virtual void BuildGUI ( ) ;
+    virtual void BuildGUI ( void ) ;
+    virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+    virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
     // Description:
     // Initialize module

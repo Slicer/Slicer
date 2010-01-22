@@ -75,7 +75,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 
     // Description:
     // This method builds the Models module GUI
-    virtual void BuildGUI ( ) ;
+    virtual void BuildGUI ( void );
+    virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+    virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
     // Descripgion:
     // This method releases references and key-bindings,

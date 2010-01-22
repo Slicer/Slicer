@@ -52,6 +52,8 @@ public:
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
+  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
   // Description:
   // Add obsereves to GUI widgets
@@ -95,6 +97,7 @@ public:
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
+  virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
   virtual void Exit ( );
 
   virtual void TearDownGUI ( );

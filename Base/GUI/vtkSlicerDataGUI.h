@@ -141,7 +141,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
 
   // Description:
   // This method builds the Data module's GUI
-  virtual void BuildGUI ( ) ;
+  virtual void BuildGUI ( void );
+  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
   // Description:
   // Theses methods builds the Load panels

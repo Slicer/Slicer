@@ -90,6 +90,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidge
     vtkSetObjectMacro(Application, vtkSlicerApplication);  
     vtkSetObjectMacro(NewMeasurementFrame, vtkMatrix4x4);
 
+    virtual void SetApplication (vtkKWApplication* arg)
+      { this->Superclass::SetApplication( arg ); }
+
     //get macros
     vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);

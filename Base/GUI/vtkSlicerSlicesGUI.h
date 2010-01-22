@@ -92,6 +92,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   // Description:
   // Functions that define and undefine module-specific behaviors.
   virtual void Enter ( );
+  virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
   virtual void Exit ( );
     
  protected:
