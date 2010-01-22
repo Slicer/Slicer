@@ -66,10 +66,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
         this->SetupViewerAndController();
         }
 
-  void SetupViewerAndController();
+    void SetupViewerAndController();
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
+    virtual void BuildGUI ( void ) { this->Superclass::BuildGUI(); } 
     virtual void BuildGUI ( vtkKWFrame *f );
     virtual void BuildGUI ( vtkKWFrame *f, double *bgColor );
 
@@ -122,6 +123,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Description:
     // Functions that define and undefine module-specific behaviors.
     virtual void Enter ( void );
+    virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter( node ); }
     virtual void Exit ( void );
     
  protected:

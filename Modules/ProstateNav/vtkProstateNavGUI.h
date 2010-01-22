@@ -56,8 +56,8 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
 {
  public:
   
-  virtual void Register(vtkObject *o) { Superclass::Register(o); };
-  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+  virtual void Register(vtkObjectBase *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
 
   //BTX
   enum {
@@ -106,7 +106,9 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
 
   // Description:    
   // This method builds the IGTDemo module GUI
-  virtual void BuildGUI ( );
+  virtual void BuildGUI ( void );
+  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
   // Description:    
   // This method builds the IGTDemo module GUI
@@ -136,6 +138,7 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
+  virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
   virtual void Exit ( );
   
   void Init();

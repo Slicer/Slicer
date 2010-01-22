@@ -162,9 +162,9 @@ public:
   // Description:
   // Specifies all widgets for this GUI
   // Define function in subclasses.
-  virtual void BuildGUI ( ) { }
-  virtual void BuildGUI ( vtkKWFrame *f ) {}
-  virtual void BuildGUI ( vtkKWFrame *f, double *bgColor ) {}
+  virtual void BuildGUI ( void ) { }
+  virtual void BuildGUI ( vtkKWFrame * vtkNotUsed(f) ) {}
+  virtual void BuildGUI ( vtkKWFrame * vtkNotUsed(f), double * vtkNotUsed(bgColor) ) {}
 
   // Description:
   // Method in which references are released,
@@ -191,9 +191,9 @@ public:
   //   version selects the node on entry.  See 
   //   vtkSlicerApplicationGUI::SelectModuleForNode for the 
   //   (currently hard-coded) mapping of node types to module names.
-  virtual void Enter ( ) { };
-  virtual void Exit ( ) { };
-  virtual void Enter ( vtkMRMLNode* vtkNotUsed(node) ) { this->Enter(); };
+  virtual void Enter ( ) { }
+  virtual void Exit ( ) { }
+  virtual void Enter ( vtkMRMLNode* vtkNotUsed(node) ) { this->Enter(); }
   
 protected:
   // GUI's interface to the application layer;

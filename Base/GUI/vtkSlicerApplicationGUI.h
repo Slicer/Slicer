@@ -151,7 +151,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // This method builds Slicer's main GUI
-    virtual void BuildGUI ( );
+    virtual void BuildGUI ( void );
+    virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+    virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
     vtkSlicerSliceGUI* GetMainSliceGUI(const char *layoutName);
     void AddMainSliceGUI(const char *layoutName);
@@ -185,6 +187,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Methods describe behavior on startup and exit.
     virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
     virtual void Exit ( );
     virtual void DeleteComponentGUIs();
     

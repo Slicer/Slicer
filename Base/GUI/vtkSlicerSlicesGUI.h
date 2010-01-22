@@ -69,7 +69,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   
   // Description:
   // Build the SlicesGUI's UIPanel and three main SliceGUIs 
-  virtual void BuildGUI ( );
+  virtual void BuildGUI ( void );
+  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
+  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
   // Description:
   // Add/Remove Observers on UIPanel widgets and SliceGUIs.
