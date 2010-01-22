@@ -606,7 +606,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return returnString;
     }
-  
+
   vtkMRMLVolumeNode *volNode = NULL;
   volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
   
@@ -623,6 +623,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     return returnString;
     }
 
+  vtkDebugMacro("UpdateFileList: old file name = " << oldName);
+  
   // clear out the old file list
   this->ResetFileNameList();
   
@@ -703,22 +705,67 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   pathComponents.pop_back();
   vtksys_stl::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
   vtksys_stl::string relativePath;
-  if (volNode->GetScene() != NULL &&
-      strcmp(volNode->GetScene()->GetRootDirectory(), "") != 0)
+  
+  if (this->IsFilePathRelative(localDirectory.c_str()))
     {
-    // use the scene's root dir, all the files in the list will be
-    // relative to it (the relative path is how you go from the root dir to
-    // the dir in which the volume is saved)
-    relativePath = vtksys::SystemTools::RelativePath(volNode->GetScene()->GetRootDirectory(), localDirectory.c_str());
-    vtkDebugMacro("UpdateFileList: got the scene root dir " << volNode->GetScene()->GetRootDirectory());
+    vtkDebugMacro("UpdateFileList: the local directory is already relative, use it " << localDirectory);
+    relativePath = localDirectory;
     }
   else
     {
-    // use the archetype's directory, so that all the files in the list will
-    // be relative to it
-    relativePath = vtksys::SystemTools::RelativePath(originalDir.c_str(), localDirectory.c_str());
+    if (volNode->GetScene() != NULL &&
+        strcmp(volNode->GetScene()->GetRootDirectory(), "") != 0)
+      {
+      // use the scene's root dir, all the files in the list will be
+      // relative to it (the relative path is how you go from the root dir to
+      // the dir in which the volume is saved)
+      vtksys_stl::string rootDir = volNode->GetScene()->GetRootDirectory();
+      if (rootDir.length() != 0 &&
+          rootDir.find_last_of("/") == rootDir.length() - 1)
+        {
+        vtkDebugMacro("UpdateFileList: found trailing slash in : " << rootDir);
+        rootDir = rootDir.substr(0, rootDir.length()-1);
+        }
+      vtkDebugMacro("UpdateFileList: got the scene root dir " << rootDir << ", local dir = " << localDirectory.c_str());
+      // RelativePath requires two absolute paths, otherwise returns empty
+      // string
+      if (this->IsFilePathRelative(rootDir.c_str()))
+        {
+        vtkDebugMacro("UpdateFileList: have a relative directory in root dir (" << rootDir << "), using the local dir as a relative path.");
+        // assume the relative local directory is relative to the root
+        // directory
+        relativePath = localDirectory;
+        }
+      else
+        {
+        relativePath = vtksys::SystemTools::RelativePath(rootDir.c_str(), localDirectory.c_str());
+        }
+      }
+    else
+      {
+      // use the archetype's directory, so that all the files in the list will
+      // be relative to it
+      if (this->IsFilePathRelative(originalDir.c_str()))
+        {
+        relativePath = localDirectory;
+        }
+      else
+        {
+        // the RelativePath method needs two absolute paths
+        relativePath = vtksys::SystemTools::RelativePath(originalDir.c_str(), localDirectory.c_str());
+        }
+      vtkDebugMacro("UpdateFileList: no scene root dir, using original dir = " << originalDir.c_str() << " and local dir " << localDirectory.c_str());
+      }
     }
-  vtkDebugMacro("UpdateFileList: using prefix of relative path " << relativePath.c_str());
+  // strip off any trailing slashes
+  if (relativePath.length() != 0 &&
+      relativePath.find_last_of("/")  != std::string::npos &&
+      relativePath.find_last_of("/") == relativePath.length() - 1)
+    {
+    vtkDebugMacro("UpdateFileList: stripping off a trailing slash from relativePath '"<< relativePath.c_str() << "'");
+    relativePath = relativePath.substr(0, relativePath.length() - 1);
+    }
+  vtkDebugMacro("UpdateFileList: using prefix of relative path '" << relativePath.c_str() << "'");
   // now get ready to join the relative path to thisFile
   vtksys_stl::vector<vtksys_stl::string> relativePathComponents;
   vtksys::SystemTools::SplitPath(relativePath.c_str(), relativePathComponents);
@@ -742,7 +789,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // restore the old file name
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
-
+  
   if (move != 1)
     {
     // clean up temp directory

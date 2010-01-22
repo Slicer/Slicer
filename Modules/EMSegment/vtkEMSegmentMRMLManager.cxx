@@ -4055,12 +4055,7 @@ RegisterMRMLNodesWithScene()
     vtkMRMLEMSIntensityNormalizationParametersNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsNormalizationNode);
   emsNormalizationNode->Delete();
-  /*
-  vtkMRMLEMSClassProportionsNode* emsProportionsNode = 
-    vtkMRMLEMSClassProportionsNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(emsProportionsNode);
-  emsProportionsNode->Delete();
-*/
+
   vtkMRMLEMSGlobalParametersNode* emsGlobalParametersNode = 
     vtkMRMLEMSGlobalParametersNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsGlobalParametersNode);
@@ -4400,10 +4395,10 @@ PackageAndWriteData(const char* packageDirectory)
       outputDirectory[outputDirectory.size()-1] != '/')
     {
     // make sure directory ends in seperator
-    outputDirectory = outputDirectory + "/";
+    //outputDirectory = outputDirectory + "/";
     }
 
-  std::string mrmlURL(outputDirectory + "EMSegmenterScene.mrml");
+  std::string mrmlURL(outputDirectory + "/EMSegmenterScene.mrml");
   newScene->SetRootDirectory(outputDirectory.c_str());
   newScene->SetURL(mrmlURL.c_str());
   this->CopyEMRelatedNodesToMRMLScene(newScene);
@@ -4534,6 +4529,17 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       }
     }
 
+  // get the full path to the scene
+  std::vector<std::string> scenePathComponents;
+  vtksys_stl::string rootDir = newSceneManager->GetMRMLScene()->GetRootDirectory();
+  if (rootDir.find_last_of("/") == rootDir.length() - 1)
+    {
+    vtkDebugMacro("em seg: found trailing slash in : " << rootDir);
+    rootDir = rootDir.substr(0, rootDir.length()-1);
+    }
+  vtkDebugMacro("em seg scene manager root dir = " << rootDir);
+  vtksys::SystemTools::SplitPath(rootDir.c_str(), scenePathComponents);
+  
   //
   // change the storage file for the segmentation result
     {
@@ -4560,15 +4566,15 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       std::string oldFilename       = 
         (storageNode->GetFileName() ? storageNode->GetFileName() :
          "SegmentationResult.mhd");
-      std::string oldFlienameNoPath = 
+      std::string oldFilenameNoPath = 
         vtksys::SystemTools::GetFilenameName(oldFilename);
-      std::vector<std::string> pathComponents;
-      pathComponents.push_back("");
-      pathComponents.push_back("Segmentation");
-      pathComponents.push_back(oldFlienameNoPath);
+      scenePathComponents.push_back("Segmentation");
+      scenePathComponents.push_back(oldFilenameNoPath);
       std::string newFilename = 
-        vtksys::SystemTools::JoinPath(pathComponents);
+        vtksys::SystemTools::JoinPath(scenePathComponents);
       storageNode->SetFileName(newFilename.c_str());
+      scenePathComponents.pop_back();
+      scenePathComponents.pop_back();
       }
     }
 
@@ -4607,17 +4613,18 @@ CreatePackageFilenames(vtkMRMLScene* scene,
         std::string oldFilename       = 
           (storageNode->GetFileName() ? storageNode->GetFileName() :
            defaultFilename.str().c_str());
-        std::string oldFlienameNoPath = 
+        std::string oldFilenameNoPath = 
           vtksys::SystemTools::GetFilenameName(oldFilename);
-        std::vector<std::string> pathComponents;
-        pathComponents.push_back("");
-        pathComponents.push_back("Target");
-        pathComponents.push_back("Input");
-        pathComponents.push_back(oldFlienameNoPath);
+        scenePathComponents.push_back("Target");
+        scenePathComponents.push_back("Input");
+        scenePathComponents.push_back(oldFilenameNoPath);
         std::string newFilename = 
-          vtksys::SystemTools::JoinPath(pathComponents);
+          vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
         }
       }  
     }
@@ -4653,17 +4660,18 @@ CreatePackageFilenames(vtkMRMLScene* scene,
         std::string oldFilename       = 
           (storageNode->GetFileName() ? storageNode->GetFileName() :
            defaultFilename.str().c_str());
-        std::string oldFlienameNoPath = 
+        std::string oldFilenameNoPath = 
           vtksys::SystemTools::GetFilenameName(oldFilename);
-        std::vector<std::string> pathComponents;
-        pathComponents.push_back("");
-        pathComponents.push_back("Target");
-        pathComponents.push_back("Normalized");
-        pathComponents.push_back(oldFlienameNoPath);
+        scenePathComponents.push_back("Target");
+        scenePathComponents.push_back("Normalized");
+        scenePathComponents.push_back(oldFilenameNoPath);
         std::string newFilename = 
-          vtksys::SystemTools::JoinPath(pathComponents);
+          vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
         }
       }  
     }
@@ -4699,17 +4707,18 @@ CreatePackageFilenames(vtkMRMLScene* scene,
         std::string oldFilename       = 
           (storageNode->GetFileName() ? storageNode->GetFileName() :
            defaultFilename.str().c_str());
-        std::string oldFlienameNoPath = 
+        std::string oldFilenameNoPath = 
           vtksys::SystemTools::GetFilenameName(oldFilename);
-        std::vector<std::string> pathComponents;
-        pathComponents.push_back("");
-        pathComponents.push_back("Target");
-        pathComponents.push_back("Aligned");
-        pathComponents.push_back(oldFlienameNoPath);
+        scenePathComponents.push_back("Target");
+        scenePathComponents.push_back("Aligned");
+        scenePathComponents.push_back(oldFilenameNoPath);
         std::string newFilename = 
-          vtksys::SystemTools::JoinPath(pathComponents);
+          vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
         }
       }  
     }
@@ -4750,17 +4759,18 @@ CreatePackageFilenames(vtkMRMLScene* scene,
         std::string oldFilename       = 
           (storageNode->GetFileName() ? storageNode->GetFileName() :
            defaultFilename.str().c_str());
-        std::string oldFlienameNoPath = 
+        std::string oldFilenameNoPath = 
           vtksys::SystemTools::GetFilenameName(oldFilename);
-        std::vector<std::string> pathComponents;
-        pathComponents.push_back("");
-        pathComponents.push_back("Atlas");
-        pathComponents.push_back("Input");
-        pathComponents.push_back(oldFlienameNoPath);
+        scenePathComponents.push_back("Atlas");
+        scenePathComponents.push_back("Input");
+        scenePathComponents.push_back(oldFilenameNoPath);
         std::string newFilename = 
-          vtksys::SystemTools::JoinPath(pathComponents);
+          vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
         }
       }  
     }
@@ -4796,17 +4806,18 @@ CreatePackageFilenames(vtkMRMLScene* scene,
         std::string oldFilename       = 
           (storageNode->GetFileName() ? storageNode->GetFileName() :
            defaultFilename.str().c_str());
-        std::string oldFlienameNoPath = 
+        std::string oldFilenameNoPath = 
           vtksys::SystemTools::GetFilenameName(oldFilename);
-        std::vector<std::string> pathComponents;
-        pathComponents.push_back("");
-        pathComponents.push_back("Atlas");
-        pathComponents.push_back("Aligned");
-        pathComponents.push_back(oldFlienameNoPath);
+        scenePathComponents.push_back("Atlas");
+        scenePathComponents.push_back("Aligned");
+        scenePathComponents.push_back(oldFilenameNoPath);
         std::string newFilename = 
-          vtksys::SystemTools::JoinPath(pathComponents);
+          vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
+        scenePathComponents.pop_back();
         }
       }  
     }
