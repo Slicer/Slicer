@@ -68,8 +68,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   
-  virtual void Register(vtkObject *o) { Superclass::Register(o); };
-  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+  virtual void Register(vtkObjectBase *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
 
 
   // Description:
