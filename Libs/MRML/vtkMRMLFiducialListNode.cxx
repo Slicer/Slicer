@@ -24,6 +24,10 @@ Version:   $Revision: 1.3 $
 #include "vtkAbstractTransform.h"
 #include "vtkMath.h"
 
+
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
 {
@@ -730,6 +734,42 @@ float * vtkMRMLFiducialListNode::GetNthFiducialXYZ(int n)
       {
       return NULL;
       }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::GetNthFiducialXYZWorld(int n, double *worldxyz)
+{
+  if (!worldxyz)
+    {
+    return 0;
+    }
+  float *xyz = this->GetNthFiducialXYZ(n);
+  if (!xyz)
+    {
+    return 0;
+    }
+  // first get the list's transform node
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  transformToWorld->Identity();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+  // convert by the parent transform
+  double  xyzw[4];
+  xyzw[0] = xyz[0];
+  xyzw[1] = xyz[1];
+  xyzw[2] = xyz[2];
+  xyzw[3] = 1.0;
+
+  transformToWorld->MultiplyPoint(xyzw, worldxyz); 
+
+  transformToWorld->Delete();
+  transformToWorld = NULL;
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
