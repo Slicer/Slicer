@@ -11,15 +11,15 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
-// .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+///  vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
+/// 
+/// Volume nodes describe data sets that can be thought of as stacks of 2D 
+/// images that form a 3D volume.  Volume nodes describe where the images 
+/// are stored on disk, how to render the data (window and level), and how 
+/// to read the files.  This information is extracted from the image 
+/// headers (if they exist) at the time the MRML file is generated.  
+/// Consequently, MRML files isolate MRML browsers from understanding how 
+/// to read the myriad of file formats for medical data. 
 
 #ifndef __vtkMRMLScalarVolumeNode_h
 #define __vtkMRMLScalarVolumeNode_h
@@ -44,41 +44,41 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Volume";};
 
-  // Description:
-  // Finds the storage node and read the data
+  /// 
+  /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Indicates if this volume is a label map, which is the output of 
-  // segmentation that labels each voxel according to its tissue type.  
-  // The alternative is a gray-level or color image.
+  /// 
+  /// Indicates if this volume is a label map, which is the output of 
+  /// segmentation that labels each voxel according to its tissue type.  
+  /// The alternative is a gray-level or color image.
   int GetLabelMap();
   void SetLabelMap(int);
   void LabelMapOn();
   void LabelMapOff();
 
-  // Description:
-  // Make a 'None' volume node with blank image data
+  /// 
+  /// Make a 'None' volume node with blank image data
   static void CreateNoneNode(vtkMRMLScene *scene);
 
-  // Description:
-  // Associated display MRML node
+  /// 
+  /// Associated display MRML node
   virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode()
   {
     return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
@@ -86,9 +86,9 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   virtual void UpdateFromMRML();
   
-  // Description:
-  // Calculate good default viewing parameters, uses input image data if not
-  // null, otherwise this node's image data
+  /// 
+  /// Calculate good default viewing parameters, uses input image data if not
+  /// null, otherwise this node's image data
   virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL)
     {
     this->CalculateScalarAutoLevels(refNode, refData);
@@ -96,13 +96,13 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   virtual void CalculateScalarAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
                                          vtkImageData *imageData = NULL);
-  // Descriptoin:
-  // special case for statistics volumes
+  /// Descriptoin:
+  /// special case for statistics volumes
   void CalculateStatisticsAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
                                       vtkImageData *imageData = NULL);
   
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return vtkMRMLVolumeArchetypeStorageNode::New();
@@ -114,8 +114,8 @@ protected:
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
 
-  // Description:
-  // Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
+  /// 
+  /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
   vtkImageAccumulateDiscrete *Accumulate;
   vtkImageBimodalAnalysis *Bimodal;
 

@@ -23,7 +23,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkDataIOManager *New();
   vtkTypeRevisionMacro(vtkDataIOManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -35,53 +35,53 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkGetMacro ( InUpdateCallbackFlag, int );
   vtkSetMacro ( InUpdateCallbackFlag, int );
 
-  // Description:
-  // Get/Set the DataFileFormatHelper object
+  /// 
+  /// Get/Set the DataFileFormatHelper object
   vtkDataFileFormatHelper* GetFileFormatHelper();
   vtkSetObjectMacro ( FileFormatHelper, vtkDataFileFormatHelper );
   
   void SetEnableAsynchronousIO ( int );
 
-  // Description:
-  // Creates and adds a new data transfer object to the collection
+  /// 
+  /// Creates and adds a new data transfer object to the collection
   vtkDataTransfer *AddNewDataTransfer ( );
   vtkDataTransfer *AddNewDataTransfer ( vtkMRMLNode *node);
   void AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node);
   void AllTransfersClearedFromCache();
 
-  // Description:
-  // Adds a new data transfer object to the collection
+  /// 
+  /// Adds a new data transfer object to the collection
   void AddDataTransfer ( vtkDataTransfer *transfer );
-  // Description:
-  // Removes a data transfer object from the collection
+  /// 
+  /// Removes a data transfer object from the collection
   void RemoveDataTransfer ( vtkDataTransfer *transfer );
   void RemoveDataTransfer ( int transferID );
   int GetNumberOfDataTransfers();
-  // Description:
-  // Returns an individual data transfer by id
+  /// 
+  /// Returns an individual data transfer by id
   vtkDataTransfer *GetDataTransfer ( int transferID );
-  // Description:
-  // Clears all data transfers from the collection; called after
-  // the cache is cleared.
+  /// 
+  /// Clears all data transfers from the collection; called after
+  /// the cache is cleared.
   void ClearDataTransfers ( );
-  // Description:
-  // Gets a unique id to assign to a new data transfer.
+  /// 
+  /// Gets a unique id to assign to a new data transfer.
   int GetUniqueTransferID ( );
 
-  // Description:
-  // Invokes a RemoteReadEvent on the node 
-  // so that logic can take care of scheduling and applying it
+  /// 
+  /// Invokes a RemoteReadEvent on the node 
+  /// so that logic can take care of scheduling and applying it
   void QueueRead ( vtkMRMLNode *node );
   
-  // Description:
-  // Invokes a RemoteWriteEvent on the node 
-  // so that logic can take care of scheduling and applying it
+  /// 
+  /// Invokes a RemoteWriteEvent on the node 
+  /// so that logic can take care of scheduling and applying it
   void QueueWrite ( vtkMRMLNode *node );
 
-  // Description:
-  // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
-  // Completed).  The "modify" parameter indicates whether the object
-  // can be modified by the call.
+  /// 
+  /// Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
+  /// Completed).  The "modify" parameter indicates whether the object
+  /// can be modified by the call.
   void SetTransferStatus(vtkDataTransfer *transfer, int status);
   int GetTransferStatus( vtkDataTransfer *transfer);
 
@@ -106,12 +106,12 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       RefreshDisplayEvent,
     };
 
-  // function that gets called when a data transfer has been updated.
+  /// function that gets called when a data transfer has been updated.
   static void TransferUpdateCallback ( vtkObject *__caller,
                                        unsigned long eid, void *__clientData, void *callData );
   //ETX
 
-  // Holder for update callback
+  /// Holder for update callback
   vtkCallbackCommand *TransferUpdateCommand;
   int InUpdateCallbackFlag;
   

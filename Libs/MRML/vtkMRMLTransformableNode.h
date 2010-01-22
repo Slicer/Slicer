@@ -11,10 +11,10 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLTransformableNode - MRML node for representing a node with a tranform
-// .SECTION Description
-// A supercalss for other nodes that can have a transform to parent node 
-// like volume, model and transformation nodes
+///  vtkMRMLTransformableNode - MRML node for representing a node with a tranform
+/// 
+/// A supercalss for other nodes that can have a transform to parent node 
+/// like volume, model and transformation nodes
 
 #ifndef __vtkMRMLTransformableNode_h
 #define __vtkMRMLTransformableNode_h
@@ -38,53 +38,53 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Observe the reference transform node
+  /// 
+  /// Observe the reference transform node
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // String ID of the transform MRML node
+  /// 
+  /// String ID of the transform MRML node
   vtkGetStringMacro(TransformNodeID);
   void SetAndObserveTransformNodeID(const char *transformNodeID);
 
-  // Description:
-  // Associated transform MRML node
+  /// 
+  /// Associated transform MRML node
   vtkMRMLTransformNode* GetParentTransformNode();
 
-  // Description:
-  // alternative method to propagate events generated in Transform nodes
+  /// 
+  /// alternative method to propagate events generated in Transform nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
 
   //BTX
-  // Description:
-  // TransformModifiedEvent is send when the parent transform is modidied
+  /// 
+  /// TransformModifiedEvent is send when the parent transform is modidied
   enum
     {
       TransformModifiedEvent = 15000,

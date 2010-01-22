@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLStorageNode - a supercalss for other storage nodes
-// .SECTION Description
-// a supercalss for other storage nodes like volume and model
+///  vtkMRMLStorageNode - a supercalss for other storage nodes
+/// 
+/// a supercalss for other storage nodes like volume and model
 
 #ifndef __vtkMRMLStorageNode_h
 #define __vtkMRMLStorageNode_h
@@ -35,76 +35,76 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
   
-  // Description:
-  // Read data and set it in the referenced node. 
-  // Return 1 on success, 0 on failure.
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Read data and set it in the referenced node. 
+  /// Return 1 on success, 0 on failure.
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode) = 0;
 
-  // Description:
-  // Write data from a  referenced node
-  // Return 1 on success, 0 on failure.
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// Return 1 on success, 0 on failure.
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode) = 0;
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // A file name or the archetype file name for a series
+  /// 
+  /// A file name or the archetype file name for a series
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
-  // Description:
-  // return the nth file name, null if doesn't exist
+  /// 
+  /// return the nth file name, null if doesn't exist
   const char *GetNthFileName(int n) const;
 
-  // Description:
-  // Use compression on write
+  /// 
+  /// Use compression on write
   vtkGetMacro(UseCompression, int);
   vtkSetMacro(UseCompression, int);
 
-  // Description:
-  // Location of the remote copy of this file.
+  /// 
+  /// Location of the remote copy of this file.
   vtkSetStringMacro(URI);
   vtkGetStringMacro(URI);
   
   vtkGetObjectMacro (URIHandler, vtkURIHandler);
   vtkSetObjectMacro (URIHandler, vtkURIHandler);
   
-  // Description:
-  // Propagate Progress Event generated in ReadData
+  /// 
+  /// Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
-  // If the URI is not null, fetch it and save it to the node's FileName location or
-  // load directly into the reference node.
+  /// 
+  /// If the URI is not null, fetch it and save it to the node's FileName location or
+  /// load directly into the reference node.
   void StageReadData ( vtkMRMLNode *refNode );
-  // Description:
-  // Copy data from the local file location (node->FileName) or node to the remote
-  // location specified by the URI
+  /// 
+  /// Copy data from the local file location (node->FileName) or node to the remote
+  /// location specified by the URI
   void StageWriteData ( vtkMRMLNode *refNode );
 
-  // Description:
-  // Possible Read and Write states
-  // Idle: not currently working on any data, ready for the next transfer
-  // Pending: the data is remote, waiting for a transfer to be scheduled
-  // Scheduled: the data is remote, and is scheduled for download
-  // Transferring: data is remote, and the transfer is working to completion
-  // TransferDone: the data is on disk and ready to be read
-  // Cancelled: the user cancelled the remote data transfer
+  /// 
+  /// Possible Read and Write states
+  /// Idle: not currently working on any data, ready for the next transfer
+  /// Pending: the data is remote, waiting for a transfer to be scheduled
+  /// Scheduled: the data is remote, and is scheduled for download
+  /// Transferring: data is remote, and the transfer is working to completion
+  /// TransferDone: the data is on disk and ready to be read
+  /// Cancelled: the user cancelled the remote data transfer
   //BTX
   enum
   {
@@ -116,8 +116,8 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
     Cancelled,
   };
   //ETX
-  // Description:
-  // Get/Set the state of reading 
+  /// 
+  /// Get/Set the state of reading 
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
@@ -129,8 +129,8 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   
-  // Description:
-  // Get/Set the state of writing 
+  /// 
+  /// Get/Set the state of writing 
   vtkGetMacro(WriteState,int);
   vtkSetMacro(WriteState,int);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
@@ -141,93 +141,93 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); }; 
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 
-  // Description:
-  // Get the file's absolute path from the file name and the mrml scene root
-  // dir. GetFullnameFromFileName calls GetFullNameFromNthFileName with -1.
+  /// 
+  /// Get the file's absolute path from the file name and the mrml scene root
+  /// dir. GetFullnameFromFileName calls GetFullNameFromNthFileName with -1.
   //BTX
   std::string GetFullNameFromFileName();
   std::string GetFullNameFromNthFileName(int n);
   //ETX
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. Returns
-  // 1 if is supported, 0 otherwise.
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. Returns
+  /// 1 if is supported, 0 otherwise.
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Get all the supported write file types
-  // Subclasses should overwrite InitializeSupportedWriteFileTypes().
+  /// 
+  /// Get all the supported write file types
+  /// Subclasses should overwrite InitializeSupportedWriteFileTypes().
   virtual vtkStringArray* GetSupportedWriteFileTypes();
 
-  // Description:
-  // Allow to set specific file format that this node will write output.
+  /// 
+  /// Allow to set specific file format that this node will write output.
   vtkSetStringMacro(WriteFileFormat);
   vtkGetStringMacro(WriteFileFormat);
 
-  // Description:
-  // Add in another file name to the list of file names
+  /// 
+  /// Add in another file name to the list of file names
   unsigned int AddFileName (const char *fileName);
-  // Description:
-  // Clear the array of file names
+  /// 
+  /// Clear the array of file names
   void ResetFileNameList();
   
-  // Description:
-  // See how many file names were generated during ExecuteInformation
+  /// 
+  /// See how many file names were generated during ExecuteInformation
   int GetNumberOfFileNames() const
   {
     return (int)this->FileNameList.size();
   };
 
-  // Description:
-  // is filename in the filename list already?
-  // returns 1 if yes, 0 if no
+  /// 
+  /// is filename in the filename list already?
+  /// returns 1 if yes, 0 if no
   int FileNameIsInList(const char *fileName);
   
-  // Description:
-  // Add in another URI to the list of URI's
+  /// 
+  /// Add in another URI to the list of URI's
   unsigned int AddURI(const char *uri);
 
-  // Description:
-  // Get the nth URI from the list of URI's
+  /// 
+  /// Get the nth URI from the list of URI's
   const char *GetNthURI(int n);
   
-  // Description:
-  // Clear the array of URIs
+  /// 
+  /// Clear the array of URIs
   void ResetURIList();
   
-  // Description:
-  // Return how many uri names this storage node holds in it's list
+  /// 
+  /// Return how many uri names this storage node holds in it's list
   int GetNumberOfURIs()
   {
     return (int)this->URIList.size();
   }
 
-  // Description:
-  // Set a new data directory for all files
+  /// 
+  /// Set a new data directory for all files
   void SetDataDirectory(const char* dataDirName);
-  // Description:
-  // Set a new URI base for all URI's
+  /// 
+  /// Set a new URI base for all URI's
   void SetURIPrefix(const char *uriPrefix);
   
-  // Description:
-  // Return a default file extension for writting
+  /// 
+  /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return NULL;
     };
 
-  // Description:
-  // Set the nth file in FileNameList, checks that it is already defined
+  /// 
+  /// Set the nth file in FileNameList, checks that it is already defined
   void ResetNthFileName(int n, const char *fileName);
-  // Description:
-  // Set the nth uri in URIList, checks that it is already defined
+  /// 
+  /// Set the nth uri in URIList, checks that it is already defined
   void ResetNthURI(int n, const char *uri);
 
-  // Description:
-  // Checks is file path is a relative path by calling appropriate
-  // method on the scene depending on whether the scene pointer is valid
+  /// 
+  /// Checks is file path is a relative path by calling appropriate
+  /// method on the scene depending on whether the scene pointer is valid
   int IsFilePathRelative(const char * filepath);
   
 protected:
@@ -244,19 +244,19 @@ protected:
   int WriteState;
 
   //BTX
-  // Description:
-  // An array of file names, should contain the FileName but may not
+  /// 
+  /// An array of file names, should contain the FileName but may not
   std::vector<std::string> FileNameList;
-  // Description:
-  // An array of URI's, should contain the URI but may not
+  /// 
+  /// An array of URI's, should contain the URI but may not
   std::vector<std::string> URIList;
   //ETX
   vtkStringArray* SupportedWriteFileTypes;
   char* WriteFileFormat;
 
-  // Description:
-  // Initialize all the supported write file types
-  // Subclasses should use this method to initialize SupportedWriteFileTypes.
+  /// 
+  /// Initialize all the supported write file types
+  /// Subclasses should use this method to initialize SupportedWriteFileTypes.
   virtual void InitializeSupportedWriteFileTypes();
 
 };

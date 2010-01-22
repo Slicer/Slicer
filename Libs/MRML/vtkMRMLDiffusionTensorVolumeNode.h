@@ -11,15 +11,15 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLDiffusionTensorVolumeNode - MRML node for representing diffusion weighted MRI volume 
-// .SECTION Description
-// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
-// images. These images are the basis for computing the diffusion tensor.
-// The node is a container for the neccesary information to interpert DW images:
-// 1. Gradient information.
-// 2. B value for each gradient.
-// 3. Measurement frame that relates the coordinate system where the gradients are given 
-//  to RAS.
+///  vtkMRMLDiffusionTensorVolumeNode - MRML node for representing diffusion weighted MRI volume 
+/// 
+/// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
+/// images. These images are the basis for computing the diffusion tensor.
+/// The node is a container for the neccesary information to interpert DW images:
+/// 1. Gradient information.
+/// 2. B value for each gradient.
+/// 3. Measurement frame that relates the coordinate system where the gradients are given 
+///  to RAS.
 
 #ifndef __vtkMRMLDiffusionTensorVolumeNode_h
 #define __vtkMRMLDiffusionTensorVolumeNode_h
@@ -44,55 +44,55 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolume";};
 
-  // Description:
-  // Associated volume display MRML node
+  /// 
+  /// Associated volume display MRML node
   virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-   // Description:
-  // Finds the storage node and read the data
+   /// 
+  /// Finds the storage node and read the data
   //void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   void UpdateReferences();
 
   
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// 
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
  
-  // Description:
-  // Associated display MRML node
+  /// 
+  /// Associated display MRML node
   virtual vtkMRMLDiffusionTensorVolumeDisplayNode* GetDiffusionTensorVolumeDisplayNode()
   {
     return vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return vtkMRMLNRRDStorageNode::New();

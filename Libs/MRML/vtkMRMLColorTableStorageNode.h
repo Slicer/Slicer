@@ -11,10 +11,10 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLColorTableStorageNode - MRML node for representing a volume storage
-// .SECTION Description
-// vtkMRMLColorTableStorageNode nodes describe the archetybe based volume storage
-// node that allows to read/write volume data from/to file using generic ITK mechanism.
+///  vtkMRMLColorTableStorageNode - MRML node for representing a volume storage
+/// 
+/// vtkMRMLColorTableStorageNode nodes describe the archetybe based volume storage
+/// node that allows to read/write volume data from/to file using generic ITK mechanism.
 
 #ifndef __vtkMRMLColorTableStorageNode_h
 #define __vtkMRMLColorTableStorageNode_h
@@ -32,49 +32,49 @@ class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+   /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+ /// Description:
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "ColorTableStorage";};
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  // Description:
-  // Return a default file extension for writting
+  /// 
+  /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return "ctbl";

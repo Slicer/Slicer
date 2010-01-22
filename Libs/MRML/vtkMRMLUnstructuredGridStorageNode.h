@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLUnstructuredGridStorageNode - MRML node for fiberBundle storage on disk.
-// .SECTION Description
-// The storage node has methods to read/write vtkPolyData to/from disk.
+///  vtkMRMLUnstructuredGridStorageNode - MRML node for fiberBundle storage on disk.
+/// 
+/// The storage node has methods to read/write vtkPolyData to/from disk.
 
 #ifndef __vtkMRMLUnstructuredGridStorageNode_h
 #define __vtkMRMLUnstructuredGridStorageNode_h
@@ -31,34 +31,34 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorage
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "UnstructuredGridStorage";};
 
- // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+ /// Description:
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  // Description:
-  // Return a defualt file extension for writting
+  /// 
+  /// Return a defualt file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return "vtk";

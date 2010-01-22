@@ -30,10 +30,10 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
  public:
 
   //----------------------------------------------------------------
-  // Constants
+  /// Constants
   //----------------------------------------------------------------
 
-  // Interpolation method
+  /// Interpolation method
   //BTX
   enum {
     INTERP_LINEAR = 0,
@@ -41,7 +41,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   //ETX
 
   //----------------------------------------------------------------
-  // Standard methods for MRML nodes
+  /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
   static vtkMRMLDoubleArrayNode *New();
@@ -51,108 +51,108 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "DoubleArray";};
 
-  // Description:
-  // Method to propagate events generated in mrml
+  /// 
+  /// Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //----------------------------------------------------------------
-  // Get and Set Macros
+  /// Get and Set Macros
   //----------------------------------------------------------------
   vtkSetObjectMacro ( Array, vtkDoubleArray );
   vtkGetObjectMacro ( Array, vtkDoubleArray );
 
   //----------------------------------------------------------------
-  // Access methods
+  /// Access methods
   //----------------------------------------------------------------
 
-  // Description:
-  // Set / change the size of value data (number of points in time dimension)
+  /// 
+  /// Set / change the size of value data (number of points in time dimension)
   void SetSize(unsigned int n);
 
-  // Description:
-  // Get the size of value data (number of points in time dimension)
+  /// 
+  /// Get the size of value data (number of points in time dimension)
   unsigned int GetSize();
 
-  // Description:
-  // Get Y value by X. If X is between two data points, it interpolates the value
-  // by using the method specified by 'interp'.
-  // NOTE: TO BE IMPLEMENTED. 
+  /// 
+  /// Get Y value by X. If X is between two data points, it interpolates the value
+  /// by using the method specified by 'interp'.
+  /// NOTE: TO BE IMPLEMENTED. 
   double GetYAxisValue(double x, int interp=INTERP_LINEAR);
 
-  // Description:
-  // Get X and Y values at the data point specified by 'index'
+  /// 
+  /// Get X and Y values at the data point specified by 'index'
   int GetXYAxisValue(int index, double* x, double* y);
 
-  // Description:
-  // Get X and Y values with error (or standard deviation) of Y,
-  // at the data point specified by 'index'
+  /// 
+  /// Get X and Y values with error (or standard deviation) of Y,
+  /// at the data point specified by 'index'
   int GetXYAxisValue(int index, double* x, double* y, double*  yerr);
 
-  // Description:
-  // Set X and Y values at he data point specified by 'index'
+  /// 
+  /// Set X and Y values at he data point specified by 'index'
   int SetXYValue(int index, double x, double y);
 
-  // Description:
-  // Set X and Y values with error (or standard deviation) of Y,
-  // at the data point specified by 'index'
+  /// 
+  /// Set X and Y values with error (or standard deviation) of Y,
+  /// at the data point specified by 'index'
   int SetXYValue(int index, double x, double y, double yerr);
 
-  // Description:
-  // Get X and Y values at he data point specified by 'index'
+  /// 
+  /// Get X and Y values at he data point specified by 'index'
   int GetXYValue(int index, double* x, double* y);
 
-  // Description:
-  // Get X and Y values with error (or standard deviation) of Y,
-  // at the data point specified by 'index'
+  /// 
+  /// Get X and Y values with error (or standard deviation) of Y,
+  /// at the data point specified by 'index'
   int GetXYValue(int index, double* x, double* y, double* yerr);
 
 
-  // Description:
-  // Add a set of X and Y values at the end of the array
+  /// 
+  /// Add a set of X and Y values at the end of the array
   int AddXYValue(double x, double y);
 
-  // Description:
-  // Add a set of X and Y values with error (or standard deviation) of Y,
-  // at the end of the array
+  /// 
+  /// Add a set of X and Y values with error (or standard deviation) of Y,
+  /// at the end of the array
   int AddXYValue(double x, double y, double yerr);
 
-  // Description:
-  // Search min and maximum value of X and Y in the array. The result is stored in 'range'.
-  // (range[0]: minimum value, range[1]: maximum value)
-  // if fIncludeError=1 is specified, the range takes account of errors.
+  /// 
+  /// Search min and maximum value of X and Y in the array. The result is stored in 'range'.
+  /// (range[0]: minimum value, range[1]: maximum value)
+  /// if fIncludeError=1 is specified, the range takes account of errors.
   void GetRange(double* rangeX, double* rangeY, int fIncludeError=1);
 
-  // Description:
-  // Search min and maximum value of X in the array. The result is stored in 'range'.
-  // (range[0]: minimum value, range[1]: maximum value)
+  /// 
+  /// Search min and maximum value of X in the array. The result is stored in 'range'.
+  /// (range[0]: minimum value, range[1]: maximum value)
   void GetXRange(double* range);
 
-  // Description:
-  // Search min and maximum value of Y in the array. The result is stored in 'range'.
-  // (range[0]: minimum value, range[1]: maximum value)
-  // if fIncludeError=1 is specified, the range takes account of errors.
+  /// 
+  /// Search min and maximum value of Y in the array. The result is stored in 'range'.
+  /// (range[0]: minimum value, range[1]: maximum value)
+  /// if fIncludeError=1 is specified, the range takes account of errors.
   void GetYRange(double* range, int fIncludeError=1);
 
 
   //----------------------------------------------------------------
-  // Constructor and destroctor
+  /// Constructor and destroctor
   //----------------------------------------------------------------
  protected:
   vtkMRMLDoubleArrayNode();
@@ -163,7 +163,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 
  protected:
   //----------------------------------------------------------------
-  // Data
+  /// Data
   //----------------------------------------------------------------
 
   vtkDoubleArray* Array;

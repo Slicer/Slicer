@@ -10,7 +10,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkDataTransfer *New();
   vtkTypeRevisionMacro(vtkDataTransfer, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -75,8 +75,8 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 
 
   //BTX
-  // transfer status values
-  // ready means ready to read into storage node
+  /// transfer status values
+  /// ready means ready to read into storage node
   enum
     {
       Idle=0,
@@ -90,7 +90,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       Deleted,
       TimedOut,
     };
-  // transfer type values
+  /// transfer type values
   enum
     {
       RemoteDownload=0,
@@ -109,7 +109,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkDataTransfer(const vtkDataTransfer&);
   void operator=(const vtkDataTransfer&);
 
-  // Description:
+  /// 
   char *SourceURI;
   char *DestinationURI;
   vtkURIHandler *Handler;

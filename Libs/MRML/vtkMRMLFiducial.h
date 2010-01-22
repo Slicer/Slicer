@@ -11,8 +11,8 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiducial - MRML object to represent a 3D point.
-// .SECTION Description
+///  vtkMRMLFiducial - MRML object to represent a 3D point.
+/// 
 
 #ifndef __vtkMRMLFiducial_h
 #define __vtkMRMLFiducial_h
@@ -32,53 +32,53 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRML methods
+  /// MRML methods
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Set node attributes from an unparsed string of keys and values
+  /// 
+  /// Set node attributes from an unparsed string of keys and values
   virtual void ReadXMLString(const char *keyValuePairs);
   
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkObject *node);
 
-  // Description:
-  // Get/Set for Point
+  /// 
+  /// Get/Set for Point
   vtkSetVector3Macro(XYZ,float);
   vtkGetVectorMacro(XYZ,float,3);
 
-  // Description:
-  // Get/Set for orientation 
+  /// 
+  /// Get/Set for orientation 
   vtkSetVector4Macro(OrientationWXYZ,float);
   vtkGetVectorMacro(OrientationWXYZ,float,4);
   void SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat);
 
-  // Description:
-  // Get/Set for LabelText
+  /// 
+  /// Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  // Description:
-  // Get/Set for ID
+  /// 
+  /// Get/Set for ID
   vtkGetStringMacro(ID);
   vtkSetStringMacro(ID);
 
-  // Description:
-  // Get/Set for Selected
+  /// 
+  /// Get/Set for Selected
   vtkGetMacro(Selected, bool);
   vtkSetMacro(Selected, bool);
 
-  // Description:
-  // Get/Set for Visibility
+  /// 
+  /// Get/Set for Visibility
   vtkGetMacro(Visibility, bool);
   vtkSetMacro(Visibility, bool);
   
@@ -88,7 +88,7 @@ protected:
   vtkMRMLFiducial(const vtkMRMLFiducial&);
   void operator=(const vtkMRMLFiducial&);
 
-  // Data
+  /// Data
   float XYZ[3];
   float OrientationWXYZ[4];
   char *LabelText;

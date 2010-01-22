@@ -11,11 +11,11 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLStorableNode - MRML node to represent a 3D surface model.
-// .SECTION Description
-// Model nodes describe polygonal data.  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
+///  vtkMRMLStorableNode - MRML node to represent a 3D surface model.
+/// 
+/// Model nodes describe polygonal data.  Models 
+/// are assumed to have been constructed with the orientation and voxel 
+/// dimensions of the original segmented volume.
 
 #ifndef __vtkMRMLStorableNode_h
 #define __vtkMRMLStorableNode_h
@@ -40,73 +40,73 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // Methods for user-specified metadata
+  /// Methods for user-specified metadata
   //--------------------------------------------------------------------------
   vtkGetObjectMacro ( UserTagTable, vtkTagTable );
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
   
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
   
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Finds the storage node and read the data
+  /// 
+  /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // alternative method to propagate events generated in Storage nodes
+  /// 
+  /// alternative method to propagate events generated in Storage nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  // Description:
-  // String ID of the storage MRML node
+  /// 
+  /// String ID of the storage MRML node
   /*
   vtkSetReferenceStringMacro(StorageNodeID);
   void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
   vtkGetStringMacro(StorageNodeID);
 
-  // Description:
-  // Get associated storage MRML node
+  /// 
+  /// Get associated storage MRML node
   vtkMRMLStorageNode* GetStorageNode();
   */
-  // Description:
-  // String ID of the storage MRML node
+  /// 
+  /// String ID of the storage MRML node
   void SetAndObserveStorageNodeID(const char *StorageNodeID);
   void AddAndObserveStorageNodeID(const char *StorageNodeID);
   void SetAndObserveNthStorageNodeID(int n, const char *StorageNodeID);
 
-  // Description:
-  // This is describes the type of data stored in the nodes storage node(s).
-  // It's an informatics metadata mechanism so that Slicer knows what kinds
-  // of nodes to create to receive downloaded datasets, and works around
-  // potential ambiguity of file extensions, etc. Method is called when storage
-  // nodes are created. The method gets applied to any storable data that
-  // should be saved with, and loaded with the scene, including nodes that
-  // are hidden from editors like scalar overlays.
+  /// 
+  /// This is describes the type of data stored in the nodes storage node(s).
+  /// It's an informatics metadata mechanism so that Slicer knows what kinds
+  /// of nodes to create to receive downloaded datasets, and works around
+  /// potential ambiguity of file extensions, etc. Method is called when storage
+  /// nodes are created. The method gets applied to any storable data that
+  /// should be saved with, and loaded with the scene, including nodes that
+  /// are hidden from editors like scalar overlays.
   void SetSlicerDataType ( const char *type );
   const char *GetSlicerDataType ();
   
@@ -129,8 +129,8 @@ public:
     return this->GetNthStorageNodeID(0);
     };
 
-  // Description:
-  // Get associated display MRML node
+  /// 
+  /// Get associated display MRML node
   vtkMRMLStorageNode* GetNthStorageNode(int n);
 
   vtkMRMLStorageNode* GetStorageNode()
@@ -158,9 +158,9 @@ public:
 
 //BTX
   std::vector<std::string> StorageNodeIDs;
-  // Description:
-  // SlicerDataType records the kind of storage node that
-  // holds the data. Set in each subclass.
+  /// 
+  /// SlicerDataType records the kind of storage node that
+  /// holds the data. Set in each subclass.
   std::string SlicerDataType;
   std::vector<vtkMRMLStorageNode *> StorageNodes;
 //ETX

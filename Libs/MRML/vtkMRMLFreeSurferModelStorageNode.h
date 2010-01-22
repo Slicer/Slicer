@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFreeSurferModelStorageNode - MRML node for model storage on disk
-// .SECTION Description
-// Storage nodes has methods to read/write vtkPolyData to/from disk
+///  vtkMRMLFreeSurferModelStorageNode - MRML node for model storage on disk
+/// 
+/// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLFreeSurferModelStorageNode_h
 #define __vtkMRMLFreeSurferModelStorageNode_h
@@ -34,60 +34,60 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+   /// 
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
   
-  // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
   
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Copy data from a  referenced node's filename to new location.
-  // NOTE: use this instead of Write Data in the Remote IO Pipeline
-  // until FreeSurferModel Writers are available.
+  /// 
+  /// Copy data from a  referenced node's filename to new location.
+  /// NOTE: use this instead of Write Data in the Remote IO Pipeline
+  /// until FreeSurferModel Writers are available.
   virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelStorage";};
   
-  // Description:
-  // Control use of the triangle stipper when reading the polydata
+  /// 
+  /// Control use of the triangle stipper when reading the polydata
   vtkGetMacro(UseStripper, int);
   vtkSetMacro(UseStripper, int);
   
-  // Description:
-  // Add a known file extension
+  /// 
+  /// Add a known file extension
 //BTX
   void AddFileExtension(std::string ext);
-  // Description:
-  // returns true if on the list, false otherwise
+  /// 
+  /// returns true if on the list, false otherwise
   bool IsKnownFileExtension(std::string ext);
 //ETX
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
   
 protected:
@@ -96,8 +96,8 @@ protected:
   vtkMRMLFreeSurferModelStorageNode(const vtkMRMLFreeSurferModelStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelStorageNode&);
 
-  // Description:
-  // a list of valid file extensions
+  /// 
+  /// a list of valid file extensions
   //BTX
   std::vector< std::string > KnownFileExtensions;
   //ETX

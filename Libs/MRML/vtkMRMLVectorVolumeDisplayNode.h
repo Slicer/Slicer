@@ -11,15 +11,15 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVectorVolumeDisplayNode - MRML node for representing a volume (image stack).
-// .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+///  vtkMRMLVectorVolumeDisplayNode - MRML node for representing a volume (image stack).
+/// 
+/// Volume nodes describe data sets that can be thought of as stacks of 2D 
+/// images that form a 3D volume.  Volume nodes describe where the images 
+/// are stored on disk, how to render the data (window and level), and how 
+/// to read the files.  This information is extracted from the image 
+/// headers (if they exist) at the time the MRML file is generated.  
+/// Consequently, MRML files isolate MRML browsers from understanding how 
+/// to read the myriad of file formats for medical data. 
 
 #ifndef __vtkMRMLVectorVolumeDisplayNode_h
 #define __vtkMRMLVectorVolumeDisplayNode_h
@@ -47,24 +47,24 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VectorVolumeDisplay";};
 
   //--------------------------------------------------------------------------
-  // Display Information
+  /// Display Information
   //--------------------------------------------------------------------------
 
 
@@ -103,13 +103,13 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   virtual void SetDefaultColorMap() {};
 
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// 
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  // Description:
-  // Sets vtkImageData to be converted to displayable vtkImageData
+  /// 
+  /// Sets vtkImageData to be converted to displayable vtkImageData
   virtual void SetImageData(vtkImageData *imageData)
     {
     this->ShiftScale->SetInput( imageData );
@@ -122,16 +122,16 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
     this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
     };
 
-  // Description:
-  // Sets ImageData for background mask 
+  /// 
+  /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData *imageData)
     {
-    // TODO: what is this for?  The comment above is unhelpful!
+    /// TODO: what is this for?  The comment above is unhelpful!
     this->ResliceAlphaCast->SetInput(imageData);
     };
 
-  // Description:
-  // Gets ImageData converted from the real data in the node
+  /// 
+  /// Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData() 
     {
     if ( this->RGBToHSI->GetInput() != NULL )
@@ -146,9 +146,9 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   virtual void UpdateImageDataPipeline();
 
 //BTX
-  // Description:
-  // get associated slice glyph display node 
-  // TODO: return empty list for now, later add glyphs
+  /// 
+  /// get associated slice glyph display node 
+  /// TODO: return empty list for now, later add glyphs
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) )
     {
@@ -156,8 +156,8 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
     }
 //ETX
 
-  // Description:
-  // Access to this class's internal filter elements
+  /// 
+  /// Access to this class's internal filter elements
   vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
   vtkGetObjectMacro (RGBToHSI, vtkImageRGBToHSI);
   vtkGetObjectMacro (ExtractIntensity, vtkImageExtractComponents);

@@ -23,7 +23,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkCacheManager *New();
   vtkTypeRevisionMacro(vtkCacheManager, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -31,78 +31,78 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkGetMacro (InsufficientFreeBufferNotificationFlag, int );
   vtkSetMacro (InsufficientFreeBufferNotificationFlag, int );
 
-  // Description:
-  // Sets the name of the directory to use for local file caching
-  // Does some checking to make sure this is a valid directory
-  // on the local system. Makes sure there's NO "/" at the end
-  // of the string, or kwsys/SystemTools will not see as a valid dir.
+  /// 
+  /// Sets the name of the directory to use for local file caching
+  /// Does some checking to make sure this is a valid directory
+  /// on the local system. Makes sure there's NO "/" at the end
+  /// of the string, or kwsys/SystemTools will not see as a valid dir.
   virtual void SetRemoteCacheDirectory (const char *dir );
 
-  // Description:
-  // Returns the name of the directory to use for local file caching
+  /// 
+  /// Returns the name of the directory to use for local file caching
   const char *GetRemoteCacheDirectory () {
   return ( this->RemoteCacheDirectory.c_str() );
   };
 
-  // Description:
-  // Called when a file is loaded or removed from the cache.
+  /// 
+  /// Called when a file is loaded or removed from the cache.
   void UpdateCacheInformation ( );
-  // Description:
-  // Removes a target from the list of locally cached files and directories
+  /// 
+  /// Removes a target from the list of locally cached files and directories
   void DeleteFromCachedFileList ( const char * target );
 
   //Description:
-  // Remove a target directory or file from the cache.
+  /// Remove a target directory or file from the cache.
   void DeleteFromCache( const char *target );
 
-  // Description:
-  // Removes all files from the cachedir
-  // and removes all filenames from CachedFileList
+  /// 
+  /// Removes all files from the cachedir
+  /// and removes all filenames from CachedFileList
   int ClearCache ( );
   
-  // Description:
-  // Before a file or directory is deleted,
-  // Marks any nodes that hold the uri as
-  // a reference as modified since read.
+  /// 
+  /// Before a file or directory is deleted,
+  /// Marks any nodes that hold the uri as
+  /// a reference as modified since read.
   void MarkNodesBeforeDeletingDataFromCache (const char *);
 
-  // Description:
-  // Checks to see if a uri appears to point to remote location
-  // and returns true if so. Looks for a '://' and if present,
-  // checks to see if the prefix is 'file'. If not 'file' but the
-  // thing:// pattern exists, then returns true.
+  /// 
+  /// Checks to see if a uri appears to point to remote location
+  /// and returns true if so. Looks for a '://' and if present,
+  /// checks to see if the prefix is 'file'. If not 'file' but the
+  /// thing:/// pattern exists, then returns true.
   virtual int IsRemoteReference ( const char *uri );
-  // Description:
-  // Looks for a 'file://' in the uri and if present, returns true.
+  /// 
+  /// Looks for a 'file://' in the uri and if present, returns true.
   virtual int IsLocalReference ( const char *uri );
 
-  // Description:
-  // Checks to see if a uri is a file on disk and returns 
-  // true if so. Strips off a file:// prefix if present, and
-  // expects an absolute path.
+  /// 
+  /// Checks to see if a uri is a file on disk and returns 
+  /// true if so. Strips off a file:/// prefix if present, and
+  /// expects an absolute path.
   virtual int LocalFileExists ( const char *uri );
     
-  // Description:
-  // Takes a filename and a dirname (usually called with the
-  // RemoteCachedDirectory) and returns the full path of
-  // the filename if it exists under the dirname.
+  /// 
+  /// Takes a filename and a dirname (usually called with the
+  /// RemoteCachedDirectory) and returns the full path of
+  /// the filename if it exists under the dirname.
   const char* FindCachedFile ( const char * target, const char *dirname );
 
-  // Description:
-  // Checks to see if the The uri provided exists on disk.
-  // If not, it appends the Remote Cache Directory path
-  // and checks again, in case no path was provided.
-  // If neither exists, returns 0. If one exists, returns 1.
+  /// 
+  /// Checks to see if the The uri provided exists on disk.
+  /// If not, it appends the Remote Cache Directory path
+  /// and checks again, in case no path was provided.
+  /// If neither exists, returns 0. If one exists, returns 1.
   virtual int CachedFileExists ( const char *filename );
 
-  // Description:
-  // Extracts the filename from the URI and prepends the
-  // Remote Cache Directory path to it. Returns the full path.
-  // NOTE: this method looks at a filename's extension and
-  // if appended version numbers have been added, it attempts
-  // to strip them out of the extension and add them to the
-  // filenamebase. So filename.nrrd_010 would become filename.nrrd.
-  // This will cause problems for any file type with an '_' in its extension.
+  /// 
+  /// Extracts the filename from the URI and prepends the
+  /// Remote Cache Directory path to it. Returns the full path.
+  /// NOTE: this method looks at a filename's extension and
+  /// if appended version numbers have been added, it attempts
+  /// to strip them out of the extension and add them to the
+  /// filenamebase. So filename.nrrd_010 would become filename.nrrd.
+  /// This will cause problems for any file type with an '_' in its extension.
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
   const char* EncodeURI ( const char *uri );
@@ -116,7 +116,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   
   
 
-  // Description:
+  /// 
   vtkGetMacro ( RemoteCacheLimit, int );
   void SetRemoteCacheLimit ( int );
   vtkSetMacro ( CurrentCacheSize, float );
@@ -134,7 +134,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   //BTX
   void MarkNode ( std::string );
-  // in case we need these.
+  /// in case we need these.
   enum
     {
       NoCachedFile=0,
@@ -142,7 +142,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       CachedFile,
     };
 
-  // in case we need these.
+  /// in case we need these.
   enum
     {
       InsufficientFreeBufferEvent =  21000,
@@ -168,10 +168,10 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   //BTX
   std::string RemoteCacheDirectory;
   std::vector< std::string > GetAllCachedFiles();
-  // This array contains a list of cached file names (without paths)
-  // in case it's faster to search thru this list than to
-  // snuffle thru a large cache dir. Must keep current
-  // with every download, remove from cache, and clearcache call.
+  /// This array contains a list of cached file names (without paths)
+  /// in case it's faster to search thru this list than to
+  /// snuffle thru a large cache dir. Must keep current
+  /// with every download, remove from cache, and clearcache call.
   std::vector< std::string > CachedFileList;
   //ETX
 
@@ -181,8 +181,8 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkCacheManager(const vtkCacheManager&);
   void operator=(const vtkCacheManager&);
 
-  // Description:
-  // Holder for callback
+  /// 
+  /// Holder for callback
   vtkCallbackCommand *CallbackCommand;
 
 };

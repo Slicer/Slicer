@@ -11,11 +11,11 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLDisplayableNode - MRML node to represent a 3D surface model.
-// .SECTION Description
-// Model nodes describe polygonal data.  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
+///  vtkMRMLDisplayableNode - MRML node to represent a 3D surface model.
+/// 
+/// Model nodes describe polygonal data.  Models 
+/// are assumed to have been constructed with the orientation and voxel 
+/// dimensions of the original segmented volume.
 
 #ifndef __vtkMRMLDisplayableNode_h
 #define __vtkMRMLDisplayableNode_h
@@ -41,41 +41,41 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
   
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Clears out the list of display nodes, and updates them from teh lsit of
-  // display node ids
+  /// 
+  /// Clears out the list of display nodes, and updates them from teh lsit of
+  /// display node ids
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // String ID of the display MRML node
+  /// 
+  /// String ID of the display MRML node
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   void AddAndObserveDisplayNodeID(const char *DisplayNodeID);
   void SetAndObserveNthDisplayNodeID(int n, const char *DisplayNodeID);
@@ -99,8 +99,8 @@ public:
     return this->GetNthDisplayNodeID(0);
     };
 
-  // Description:
-  // Get associated display MRML node
+  /// 
+  /// Get associated display MRML node
   vtkMRMLDisplayNode* GetNthDisplayNode(int n);
 
   vtkMRMLDisplayNode* GetDisplayNode()
@@ -108,22 +108,22 @@ public:
     return this->GetNthDisplayNode(0);
     };
     
-  // Description:
-  // Set and observe poly data for this model
+  /// 
+  /// Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
 
 
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// 
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
   
 //BTX
-  // Description:
-  // DisplayModifiedEvent is generated when display node parameters is changed
-  // PolyDataModifiedEvent is generated when PloyData is changed
+  /// 
+  /// DisplayModifiedEvent is generated when display node parameters is changed
+  /// PolyDataModifiedEvent is generated when PloyData is changed
   enum
     {
       DisplayModifiedEvent = 17000,
@@ -131,8 +131,8 @@ public:
     };
 //ETX
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();
@@ -152,7 +152,7 @@ public:
   vtkSetObjectMacro(PolyData, vtkPolyData);
 
 
-  // Data
+  /// Data
   vtkPolyData *PolyData;
 
 //BTX

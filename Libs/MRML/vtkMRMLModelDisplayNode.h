@@ -11,10 +11,10 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLModelDisplayNode - MRML node to represent a dispaly property of 3D surface model.
-// .SECTION Description
-// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
-// including reference to ColorNode, texture, opacity, etc.
+///  vtkMRMLModelDisplayNode - MRML node to represent a dispaly property of 3D surface model.
+/// 
+/// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
+/// including reference to ColorNode, texture, opacity, etc.
 
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
@@ -36,21 +36,21 @@ public:
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Set and observe poly data for this model
+  /// 
+  /// Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
   vtkSetObjectMacro(PolyData, vtkPolyData);
 

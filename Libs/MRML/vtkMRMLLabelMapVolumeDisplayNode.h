@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLLabelMapVolumeDisplayNode - MRML node for representing a volume display attributes
-// .SECTION Description
-// vtkMRMLLabelMapVolumeDisplayNode nodes describe how volume is displayed.
+///  vtkMRMLLabelMapVolumeDisplayNode - MRML node for representing a volume display attributes
+/// 
+/// vtkMRMLLabelMapVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLLabelMapVolumeDisplayNode_h
 #define __vtkMRMLLabelMapVolumeDisplayNode_h
@@ -36,31 +36,31 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "LabelMapVolumeDisplay";};
 
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// 
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  // Description:
-  // set gray colormap
+  /// 
+  /// set gray colormap
   virtual void SetDefaultColorMap();
 
   virtual void UpdateImageDataPipeline();
 
-  // Description:
-  // Sets ImageData to be converted to lables
+  /// 
+  /// Sets ImageData to be converted to lables
   void SetImageData(vtkImageData *imageData) 
     {
     this->UpdateImageDataPipeline();
     this->MapToColors->SetInput( imageData);
     };
 
-  // Description:
-  // Gets ImageData converted from the real data in the node
+  /// 
+  /// Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData() 
     {
     if (this->MapToColors->GetInput() == NULL)

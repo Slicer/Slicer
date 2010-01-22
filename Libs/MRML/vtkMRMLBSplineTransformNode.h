@@ -11,10 +11,10 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLBSplineTransformNode - MRML node for representing a nonlinear transformation to the parent node using a bspline transform
-// .SECTION Description
-// MRML node for representing a nonlinear transformation to the parent
-// node in the form of a vtkBSplineDeformableTransform
+///  vtkMRMLBSplineTransformNode - MRML node for representing a nonlinear transformation to the parent node using a bspline transform
+/// 
+/// MRML node for representing a nonlinear transformation to the parent
+/// node in the form of a vtkBSplineDeformableTransform
 
 #ifndef __vtkMRMLBSplineTransformNode_h
 #define __vtkMRMLBSplineTransformNode_h
@@ -33,24 +33,24 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTrans
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "BSplineTransform";};
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();

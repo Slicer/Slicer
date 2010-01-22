@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-// .NAME vtkMRMLParser - Parse XML scene file
-// .SECTION Description
+///  vtkMRMLParser - Parse XML scene file
+/// 
 
 
 #ifndef __vtkMRMLParser_h

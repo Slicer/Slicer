@@ -11,7 +11,7 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLSceneSnapshotNode - abstract class representing a hierarchy member
+///  vtkMRMLSceneSnapshotNode - abstract class representing a hierarchy member
 
 #ifndef __vtkMRMLSceneSnapshotNode_h
 #define __vtkMRMLSceneSnapshotNode_h
@@ -30,45 +30,45 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Write this node's body to a MRML file in XML format.
+  /// 
+  /// Write this node's body to a MRML file in XML format.
   virtual void WriteNodeBodyXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SceneSnapshot";};
 
-  // Description:
-  // Updates scene nodes 
+  /// 
+  /// Updates scene nodes 
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Updates internal nodes 
+  /// 
+  /// Updates internal nodes 
   virtual void UpdateSnapshotScene(vtkMRMLScene *);
 
-  // Description:
-  // Set dependencies between this node and a child node
-  // when parsing XML file
+  /// 
+  /// Set dependencies between this node and a child node
+  /// when parsing XML file
   virtual void ProcessChildNode(vtkMRMLNode *node);
 
-  // Description:
-  // Store content of the scene
+  /// 
+  /// Store content of the scene
   void StoreScene();
 
-  // Description:
-  // Restore content of the scene from the node
+  /// 
+  /// Restore content of the scene from the node
   void RestoreScene();
 
   vtkGetObjectMacro ( Nodes, vtkMRMLScene );

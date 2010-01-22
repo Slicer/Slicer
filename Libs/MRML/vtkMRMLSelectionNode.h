@@ -11,10 +11,10 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLSelectionNode - MRML node for storing a slice through RAS space
-// .SECTION Description
-// This node stores the information about the currently selected volume
-// 
+///  vtkMRMLSelectionNode - MRML node for storing a slice through RAS space
+/// 
+/// This node stores the information about the currently selected volume
+/// 
 //
 
 #ifndef __vtkMRMLSelectionNode_h
@@ -35,79 +35,79 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Selection";};
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Note: the SetReferenceActive* routines are added because
-  // the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
-  // on which it is based is a special case in vtk's parser).
+  /// Note: the SetReferenceActive* routines are added because
+  /// the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
+  /// on which it is based is a special case in vtk's parser).
 
-  // Description:
-  // the ID of a MRMLVolumeNode (typically background)
+  /// 
+  /// the ID of a MRMLVolumeNode (typically background)
   vtkGetStringMacro (ActiveVolumeID);
   vtkSetReferenceStringMacro (ActiveVolumeID);
   void SetReferenceActiveVolumeID (char *id) { this->SetActiveVolumeID(id); };
 
-  // Description:
-  // the ID of a MRMLVolumeNode (typically foreground)
+  /// 
+  /// the ID of a MRMLVolumeNode (typically foreground)
   vtkGetStringMacro (SecondaryVolumeID);
   vtkSetReferenceStringMacro (SecondaryVolumeID);
   void SetReferenceSecondaryVolumeID (char *id) { this->SetSecondaryVolumeID(id); };
 
-  // Description:
-  // the ID of a MRMLVolumeNode
+  /// 
+  /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveLabelVolumeID);
   vtkSetReferenceStringMacro (ActiveLabelVolumeID);
   void SetReferenceActiveLabelVolumeID (char *id) { this->SetActiveLabelVolumeID(id); };
 
-  // Description:
-  // the ID of a MRMLFiducialList
+  /// 
+  /// the ID of a MRMLFiducialList
   vtkGetStringMacro (ActiveFiducialListID);
   vtkSetReferenceStringMacro (ActiveFiducialListID);
   void SetReferenceActiveFiducialListID (char *id) { this->SetActiveFiducialListID(id); };
 
-  // Description:
-  // the ID of a MRMLROIList
+  /// 
+  /// the ID of a MRMLROIList
   vtkGetStringMacro (ActiveROIListID);
   vtkSetReferenceStringMacro (ActiveROIListID);
   void SetReferenceActiveROIListID (char *id) { this->SetActiveROIListID(id); };
 
-  // Description:
-  // the ID of a MRMLCameraNode
+  /// 
+  /// the ID of a MRMLCameraNode
   vtkGetStringMacro (ActiveCameraID );
   vtkSetReferenceStringMacro ( ActiveCameraID );
   void SetReferenceActiveCameraID (char *id) { this->SetActiveCameraID(id); };
   
-  // Description
-  // the ID of a MRMLViewNode
+  /// Description
+  /// the ID of a MRMLViewNode
   vtkGetStringMacro (ActiveViewID );
   vtkSetReferenceStringMacro ( ActiveViewID );
   void SetReferenceActiveViewID (char *id) { this->SetActiveViewID(id); };
   
-  // Description
-  // the ID of a MRMLLayoutNode
+  /// Description
+  /// the ID of a MRMLLayoutNode
   vtkGetStringMacro (ActiveLayoutID );
   vtkSetReferenceStringMacro ( ActiveLayoutID );
   void SetReferenceActiveLayoutID (char *id) { this->SetActiveLayoutID(id); };

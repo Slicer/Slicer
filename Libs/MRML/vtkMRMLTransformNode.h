@@ -11,10 +11,10 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLTransformNode - MRML node for representing a transformation
-// between this node space and a parent node space
-// .SECTION Description
-// General Transformation between this node space and a parent node space
+///  vtkMRMLTransformNode - MRML node for representing a transformation
+/// between this node space and a parent node space
+/// 
+/// General Transformation between this node space and a parent node space
 
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
@@ -35,68 +35,68 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Finds the storage node and read the data
+  /// 
+  /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene){
      Superclass::UpdateScene(scene);
   };
 
-  // Description:
-  // 1 if transfrom is linear, 0 otherwise
+  /// 
+  /// 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() = 0;
 
-  // Description:
-  // vtkGeneral transform of this node
+  /// 
+  /// vtkGeneral transform of this node
   virtual vtkGeneralTransform* GetTransformToParent() {
      return this->TransformToParent; };
 
-  // Description:
-  // 1 if all the transforms to the top are linear, 0 otherwise
+  /// 
+  /// 1 if all the transforms to the top are linear, 0 otherwise
   int  IsTransformToWorldLinear() ;
 
-  // Description:
-  // 1 if all the transforms bwetween nodes  are linear, 0 otherwise
+  /// 
+  /// 1 if all the transforms bwetween nodes  are linear, 0 otherwise
   int  IsTransformToNodeLinear(vtkMRMLTransformNode* node);
 
-  // Description:
-  // Get concatinated transforms to the top
+  /// 
+  /// Get concatinated transforms to the top
   void GetTransformToWorld(vtkGeneralTransform* transformToWorld);
 
-  // Description:
-  // Get concatinated transforms  bwetween nodes  
+  /// 
+  /// Get concatinated transforms  bwetween nodes  
   void GetTransformToNode(vtkMRMLTransformNode* node, 
                           vtkGeneralTransform* transformToNode);
 
-  // Description:
-  // Get concatinated transforms to the top
+  /// 
+  /// Get concatinated transforms to the top
   virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) = 0;
 
-  // Description:
-  // Get concatinated transforms  bwetween nodes  
+  /// 
+  /// Get concatinated transforms  bwetween nodes  
   virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
                                        vtkMatrix4x4* transformToNode) = 0;
-  // Description:
-  // Returns 1 if this node is one of the node's descendents
+  /// 
+  /// Returns 1 if this node is one of the node's descendents
   int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
 
-  // Description:
-  // Returns 1 if the node is one of the this node's descendents
+  /// 
+  /// Returns 1 if the node is one of the this node's descendents
   int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
   virtual bool CanApplyNonLinearTransforms() { return true; }
@@ -104,8 +104,8 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
     { Superclass::ApplyTransform(transformMatrix); }
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 protected:

@@ -11,9 +11,9 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVectorVolumeNode - MRML node for representing a vector volume (image stack).
-// .SECTION Description
-// Volume with vector pixel type.
+///  vtkMRMLVectorVolumeNode - MRML node for representing a vector volume (image stack).
+/// 
+/// Volume with vector pixel type.
 
 #ifndef __vtkMRMLVectorVolumeNode_h
 #define __vtkMRMLVectorVolumeNode_h
@@ -34,35 +34,35 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VectorVolume";};
 
-  // Description:
-  // Extract a vector component and pass it on to CalculateScalarAutoLevels.
+  /// 
+  /// Extract a vector component and pass it on to CalculateScalarAutoLevels.
   virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
 
-  // Description:
-  // Associated display MRML node
+  /// 
+  /// Associated display MRML node
   virtual vtkMRMLVectorVolumeDisplayNode* GetVectorVolumeDisplayNode()
   {
     return vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return vtkMRMLVolumeArchetypeStorageNode::New();

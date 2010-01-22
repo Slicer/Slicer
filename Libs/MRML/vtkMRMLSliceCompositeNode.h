@@ -11,10 +11,10 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLSliceCompositeNode - MRML node for storing a slice through RAS space
-// .SECTION Description
-// This node stores the information about how to composite two
-// vtkMRMLVolumes into a single display image
+///  vtkMRMLSliceCompositeNode - MRML node for storing a slice through RAS space
+/// 
+/// This node stores the information about how to composite two
+/// vtkMRMLVolumes into a single display image
 //
 
 #ifndef __vtkMRMLSliceCompositeNode_h
@@ -35,84 +35,84 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SliceComposite";};
 
-  // Description:
-  // Updates other nodes in the scene depending on this node
-  // or updates this node if it depends on other nodes when the scene is read in
-  // This method is called automatically by XML parser after all nodes are created
+  /// 
+  /// Updates other nodes in the scene depending on this node
+  /// or updates this node if it depends on other nodes when the scene is read in
+  /// This method is called automatically by XML parser after all nodes are created
   virtual void UpdateScene(vtkMRMLScene *);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // the ID of a MRMLVolumeNode
+  /// 
+  /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
   vtkSetReferenceStringMacro (BackgroundVolumeID);
   void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
 
-  // Description:
-  // the ID of a MRMLVolumeNode
-  // TODO: make this an arbitrary list of layers
+  /// 
+  /// the ID of a MRMLVolumeNode
+  /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (ForegroundVolumeID);
   vtkSetReferenceStringMacro (ForegroundVolumeID);
   void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
 
-  // Description:
-  // the ID of a MRMLVolumeNode
-  // TODO: make this an arbitrary list of layers
+  /// 
+  /// the ID of a MRMLVolumeNode
+  /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (LabelVolumeID);
   vtkSetReferenceStringMacro (LabelVolumeID);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
 
-  // Description:
-  // Compositing mode for foreground and background can be alpha
-  // blending, reverse alpha blending, addition, or subtraction
+  /// 
+  /// Compositing mode for foreground and background can be alpha
+  /// blending, reverse alpha blending, addition, or subtraction
   vtkGetMacro (Compositing, int);
   vtkSetMacro (Compositing, int);
   
-  // Description:
-  // opacity of the Foreground for rendering over background
-  // TODO: make this an arbitrary list of layers
-  // TODO: make different composite types (checkerboard, etc)
+  /// 
+  /// opacity of the Foreground for rendering over background
+  /// TODO: make this an arbitrary list of layers
+  /// TODO: make different composite types (checkerboard, etc)
   vtkGetMacro (ForegroundOpacity, double);
   vtkSetMacro (ForegroundOpacity, double);
 
-  // Description:
-  // opacity of the Label for rendering over background
-  // TODO: make this an arbitrary list of layers
-  // TODO: make different composite types (checkerboard, etc)
+  /// 
+  /// opacity of the Label for rendering over background
+  /// TODO: make this an arbitrary list of layers
+  /// TODO: make different composite types (checkerboard, etc)
   vtkGetMacro (LabelOpacity, double);
   vtkSetMacro (LabelOpacity, double);
 
-  // Description:
-  // toggle that gangs control of slice viewers
+  /// 
+  /// toggle that gangs control of slice viewers
   vtkGetMacro (LinkedControl, int );
   vtkSetMacro (LinkedControl, int );
 
-  // Description:
-  // toggles for grid in different slice layers.
+  /// 
+  /// toggles for grid in different slice layers.
   vtkGetMacro (ForegroundGrid, int );
   vtkSetMacro (ForegroundGrid, int );
   vtkGetMacro (BackgroundGrid, int );
@@ -120,34 +120,34 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro (LabelGrid, int );
   vtkSetMacro (LabelGrid, int );
 
-  // Description:
-  // toggles fiducial visibility in the slice viewer
+  /// 
+  /// toggles fiducial visibility in the slice viewer
   vtkGetMacro (FiducialVisibility, int );
   vtkSetMacro (FiducialVisibility, int );
   vtkGetMacro (FiducialLabelVisibility, int );
   vtkSetMacro (FiducialLabelVisibility, int );  
 
-  // Description:
-  // toggles visibility of intersections of other slices in the slice viewer
+  /// 
+  /// toggles visibility of intersections of other slices in the slice viewer
   vtkGetMacro (SliceIntersectionVisibility, int );
   vtkSetMacro (SliceIntersectionVisibility, int );  
 
-  // Description:
-  // configures the annotations
+  /// 
+  /// configures the annotations
   vtkGetMacro ( AnnotationSpace, int );
   vtkSetMacro ( AnnotationSpace, int );
   vtkGetMacro ( AnnotationMode, int );
   vtkSetMacro ( AnnotationMode, int );
   
-  // Description:
-  // configures the behavior of PropagateVolumeSelection(): 
-  // if set to false, the background/label for slice views
-  // will not be reset. Default value is true
+  /// 
+  /// configures the behavior of PropagateVolumeSelection(): 
+  /// if set to false, the background/label for slice views
+  /// will not be reset. Default value is true
   vtkSetMacro (DoPropagateVolumeSelection, bool );
   vtkGetMacro (DoPropagateVolumeSelection, bool );
   
-  // Description:
-  // Name of the layout
+  /// 
+  /// Name of the layout
   void SetLayoutName(const char *layoutName) {
     this->SetSingletonTag(layoutName);
   }
@@ -156,7 +156,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   }
 
   //BTX
-  // Modes for annotation space and mode
+  /// Modes for annotation space and mode
   enum
     {
       XYZ = 0,
@@ -171,7 +171,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       LabelValuesOnly,
       LabelAndVoxelValuesOnly
     };
-  // Modes for compositing
+  /// Modes for compositing
   enum
     {
       Alpha = 0,

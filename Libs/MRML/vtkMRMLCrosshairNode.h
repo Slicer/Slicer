@@ -11,10 +11,10 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLCrosshairNode - MRML node for storing a crosshair through RAS space
-// .SECTION Description
-// This node stores the information about a crosshair (position,
-// style, attributes)
+///  vtkMRMLCrosshairNode - MRML node for storing a crosshair through RAS space
+/// 
+/// This node stores the information about a crosshair (position,
+/// style, attributes)
 //
 
 #ifndef __vtkMRMLCrosshairNode_h
@@ -33,24 +33,24 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Crosshair";};
 
-  // Description:
-  // configures the crosshair appearance and behavior
+  /// 
+  /// configures the crosshair appearance and behavior
   vtkGetMacro (CrosshairMode, int );
   vtkSetMacro (CrosshairMode, int );  
   vtkGetMacro (CrosshairBehavior, int );
@@ -61,19 +61,19 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
   
-  // Description:
-  // Set crosshair position
+  /// 
+  /// Set crosshair position
   vtkSetVector3Macro(CrosshairRAS, double);
   vtkGetVector3Macro(CrosshairRAS, double);
   
-  // Description:
-  // Is the crosshair to be used for navigation or as just a cursor
+  /// 
+  /// Is the crosshair to be used for navigation or as just a cursor
   vtkSetMacro(Navigation, int);
   vtkGetMacro(Navigation, int);
   vtkBooleanMacro(Navigation, int);
 
-  // Description:
-  // Name of the layout
+  /// 
+  /// Name of the layout
   void SetCrosshairName(const char *name) {
     this->SetSingletonTag(name);
   }
@@ -82,7 +82,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   }
 
   //BTX
-  // Modes for crosshair display and behavior
+  /// Modes for crosshair display and behavior
   enum
     {
       NoCrosshair = 0,

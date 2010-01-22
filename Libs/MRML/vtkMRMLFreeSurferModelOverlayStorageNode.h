@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFreeSurferModelOverlayStorageNode - MRML node for model storage on disk
-// .SECTION Description
-// Storage nodes has methods to read/write vtkPolyData to/from disk
+///  vtkMRMLFreeSurferModelOverlayStorageNode - MRML node for model storage on disk
+/// 
+/// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLFreeSurferModelOverlayStorageNode_h
 #define __vtkMRMLFreeSurferModelOverlayStorageNode_h
@@ -35,66 +35,66 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLM
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+   /// 
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
   
-  // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
   
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Copy data from a  referenced node's filename to new location.
-  // NOTE: use this instead of Write Data in the Remote IO Pipeline
-  // until FreeSurferModel Writers are available.
+  /// 
+  /// Copy data from a  referenced node's filename to new location.
+  /// NOTE: use this instead of Write Data in the Remote IO Pipeline
+  /// until FreeSurferModel Writers are available.
   virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelOverlayStorage";};
   
 //BTX
-  // Description:
-  // Add a known overlay file extension
+  /// 
+  /// Add a known overlay file extension
   void AddFileExtension(std::string ext);
-  // Description:
-  // returns true if on the list, false otherwise
+  /// 
+  /// returns true if on the list, false otherwise
   bool IsKnownFileExtension(std::string ext);
 //ETX
 
-  // Description:
-  // return the number of known file extensions
+  /// 
+  /// return the number of known file extensions
   int GetNumberOfKnownFileExtensions();
   
-  // Description:
-  // return the indexed file extension, null if i out of range
+  /// 
+  /// return the indexed file extension, null if i out of range
   const char *GetKnownFileExtension(int i);
 
-  // Description:
-  // can I load files with extensions like this filename has?
+  /// 
+  /// can I load files with extensions like this filename has?
   int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
 protected:
@@ -103,8 +103,8 @@ protected:
   vtkMRMLFreeSurferModelOverlayStorageNode(const vtkMRMLFreeSurferModelOverlayStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelOverlayStorageNode&);
 
-  // Description:
-  // a list of valid overlay file extensions
+  /// 
+  /// a list of valid overlay file extensions
   //BTX
   std::vector< std::string > KnownFileExtensions; 
   //ETX

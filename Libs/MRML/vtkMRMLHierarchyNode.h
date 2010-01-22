@@ -11,7 +11,7 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLHierarchyNode - abstract class representing a hierarchy member
+///  vtkMRMLHierarchyNode - abstract class representing a hierarchy member
 
 #ifndef __vtkMRMLHierarchyNode_h
 #define __vtkMRMLHierarchyNode_h
@@ -30,45 +30,45 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Observe the reference transform node
+  /// 
+  /// Observe the reference transform node
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // String ID of the parent hierarchy MRML node
+  /// 
+  /// String ID of the parent hierarchy MRML node
   vtkSetReferenceStringMacro(ParentNodeID);
   vtkGetStringMacro(ParentNodeID);
 
-  // Description:
-  // Associated prent MRML node
+  /// 
+  /// Associated prent MRML node
   vtkMRMLHierarchyNode* GetParentNode();
 
-  // Need this for tcl wrapping to call ReferenceStringMacro methods
+  /// Need this for tcl wrapping to call ReferenceStringMacro methods
   void SetParentNodeIDReference(const char* ref) {
     this->SetParentNodeID(ref);
   };

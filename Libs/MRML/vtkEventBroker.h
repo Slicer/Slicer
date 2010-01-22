@@ -11,19 +11,19 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-// .NAME vtkEventBroker - class that manages adding and deleting of obserevers with events
-// .SECTION Description
-// Class that manages adding and deleting of obserevers with events
-// This class keeps track of obserevers and events added to each vtk object 
-// it caches tags returned by AddObserver method so that obserevers can be removed properly
-// See also: 
-// http://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
-// http://en.wikipedia.org/wiki/Observer_pattern
+///  vtkEventBroker - class that manages adding and deleting of obserevers with events
+/// 
+/// Class that manages adding and deleting of obserevers with events
+/// This class keeps track of obserevers and events added to each vtk object 
+/// it caches tags returned by AddObserver method so that obserevers can be removed properly
+/// See also: 
+/// http://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
+/// http://en.wikipedia.org/wiki/Observer_pattern
 //
-// other interesting observer implementations:
-// http://xlobject.sourceforge
-// http://sigslot.sourceforge.net/
-// http://doc.trolltech.com/4.3/signalsandslots.html
+/// other interesting observer implementations:
+/// http://xlobject.sourceforge
+/// http://sigslot.sourceforge.net/
+/// http://doc.trolltech.com/4.3/signalsandslots.html
 
 #ifndef __vtkEventBroker_h
 #define __vtkEventBroker_h
@@ -50,55 +50,55 @@ public:
   vtkTypeRevisionMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Return the singleton instance with no reference counting.
+  /// 
+  /// Return the singleton instance with no reference counting.
   static vtkEventBroker* GetInstance();
 
-  // Description:
-  // This is a singleton pattern New.  There will only be ONE
-  // reference to a vtkEventBroker object per process.  Clients that
-  // call this must call Delete on the object so that the reference
-  // counting will work. The single instance will be unreferenced when
-  // the program exits.
+  /// 
+  /// This is a singleton pattern New.  There will only be ONE
+  /// reference to a vtkEventBroker object per process.  Clients that
+  /// call this must call Delete on the object so that the reference
+  /// counting will work. The single instance will be unreferenced when
+  /// the program exits.
   static vtkEventBroker* New();
 
-  // Description:
-  // the static function used by the command callback (used by vtkObservation)
-  // - each observation has a vtkCallbackCommand method which stores 
-  //   the pointer to the vtkObservation class as the clientData
-  // - the vtkObservation has a pointer to vtkEventBroker,
-  //   which knows how to process that event for that Observation
+  /// 
+  /// the static function used by the command callback (used by vtkObservation)
+  /// - each observation has a vtkCallbackCommand method which stores 
+  ///   the pointer to the vtkObservation class as the clientData
+  /// - the vtkObservation has a pointer to vtkEventBroker,
+  ///   which knows how to process that event for that Observation
   static void Callback(vtkObject *caller, 
       unsigned long eid, void *clientData, void *callData);
 
-  //// Adding and Removing Observation objects
+  ///// Adding and Removing Observation objects
 
-  // Description:
-  // Request that an observer be added to the subject (or "observee")
-  // - this is the "Attach" operation
+  /// 
+  /// Request that an observer be added to the subject (or "observee")
+  /// - this is the "Attach" operation
   vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
 
-  // Description:
-  // Scripted version of observation
-  // - creates an observation that will be invoked using the ScriptHandler method
+  /// 
+  /// Scripted version of observation
+  /// - creates an observation that will be invoked using the ScriptHandler method
   vtkObservation *AddObservation (vtkObject *subject, const char *event, const char *script);
 
-  // Description:
-  // Attach adds the observers to the object.
-  // Detach removes the observers
-  // These routines manage the internal datastructres and should
-  // be the only methods used to modified the internal Observations member
+  /// 
+  /// Attach adds the observers to the object.
+  /// Detach removes the observers
+  /// These routines manage the internal datastructres and should
+  /// be the only methods used to modified the internal Observations member
   void AttachObservation (vtkObservation *observation);
   void DetachObservation (vtkObservation *observation);
  
-  // Description:
-  // Remove observation from the broker and event queue
+  /// 
+  /// Remove observation from the broker and event queue
   void RemoveObservation (vtkObservation *observation);
 
-  // Description:
-  // Remove all observations that match
-  // - various signatures provided as helpers
-  // - when specifying the tag, a 0 matches all tags
+  /// 
+  /// Remove all observations that match
+  /// - various signatures provided as helpers
+  /// - when specifying the tag, a 0 matches all tags
   //BTX
   void RemoveObservations (std::vector< vtkObservation *>observations);
   //ETX
@@ -115,69 +115,69 @@ public:
   std::vector< vtkObservation *> GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
   //ETX
 
-  // Description
-  // Accessors for intropsection
-  // Note: vtkCollection object is allocated internally 
-  // and must be freed by the caller
+  /// Description
+  /// Accessors for intropsection
+  /// Note: vtkCollection object is allocated internally 
+  /// and must be freed by the caller
   vtkCollection *GetObservationsForSubject (vtkObject *subject);
   vtkCollection *GetObservationsForObserver (vtkObject *observer);
 
-  // Description:
-  // Accessors for Observations
+  /// 
+  /// Accessors for Observations
   int GetNumberOfObservations();
   vtkObservation *GetNthObservation(int n);
 
-  // Description:
-  // Process any event that comes from either subject or observer
+  /// 
+  /// Process any event that comes from either subject or observer
   void ProcessEvent (vtkObservation *observation, vtkObject *caller, unsigned long eid, void *callData);
 
-  //// Event Logging
+  ///// Event Logging
   
-  // Description:
-  // Turn on event tracing (requires TraceFile)
+  /// 
+  /// Turn on event tracing (requires TraceFile)
   vtkBooleanMacro (EventLogging, int);
   vtkSetMacro (EventLogging, int);
   vtkGetMacro (EventLogging, int);
 
-  // Description:
-  // Current level of indent (event nesting) 
-  // shows what is called by what when in synchronous mode
+  /// 
+  /// Current level of indent (event nesting) 
+  /// shows what is called by what when in synchronous mode
   vtkSetMacro (EventNestingLevel, int);
   vtkGetMacro (EventNestingLevel, int);
 
-  // Description:
-  // File to write event logs to when EventLoging is turned on
+  /// 
+  /// File to write event logs to when EventLoging is turned on
   vtkSetStringMacro (LogFileName);
   vtkGetStringMacro (LogFileName);
 
-  // Description:
-  // Timer log class for calculating elapsed time for event invocations
+  /// 
+  /// Timer log class for calculating elapsed time for event invocations
   vtkSetObjectMacro (TimerLog, vtkTimerLog);
   vtkGetObjectMacro (TimerLog, vtkTimerLog);
 
-  // Description:
-  // Open and close the log file
+  /// 
+  /// Open and close the log file
   void OpenLogFile ();
   void CloseLogFile ();
 
-  // Description:
-  // actually write to the log file (also manages state of the LogFile ivar
-  // based on the filename and the EventLogging variable)
+  /// 
+  /// actually write to the log file (also manages state of the LogFile ivar
+  /// based on the filename and the EventLogging variable)
   void LogEvent (vtkObservation *observation);
 
-  //// Graph File
+  ///// Graph File
 
-  // Description:
-  // Write out the current list of observations in graphviz format (.dot)
+  /// 
+  /// Write out the current list of observations in graphviz format (.dot)
   int GenerateGraphFile ( const char *graphFile );
 
 
-  //// Event Queue processing modes
+  ///// Event Queue processing modes
 
-  // Description:
-  // In synchronous mode, observations are invoked immediately when the
-  // event takes place.  In asynchronous mode, observations are added
-  // to the event queue for later invocation.
+  /// 
+  /// In synchronous mode, observations are invoked immediately when the
+  /// event takes place.  In asynchronous mode, observations are added
+  /// to the event queue for later invocation.
   //BTX
   enum EventMode {
     Synchronous,
@@ -204,16 +204,16 @@ public:
   }
 
 
-  //// Event queue processing
+  ///// Event queue processing
   
-  // Description:
-  // Event queue handling routines
-  // Note:
-  // - assume here that the information in a vtkObservation contains enough
-  // information for the observer to handle the event (that is, we don't pass 
-  // the callData field of the event back)
-  // TODO: if the callData is needed, we will need another class/struct to 
-  // go into the event queue that saves them
+  /// 
+  /// Event queue handling routines
+  /// Note:
+  /// - assume here that the information in a vtkObservation contains enough
+  /// information for the observer to handle the event (that is, we don't pass 
+  /// the callData field of the event back)
+  /// TODO: if the callData is needed, we will need another class/struct to 
+  /// go into the event queue that saves them
   void QueueObservation (vtkObservation *observation, void *callData); 
   int GetNumberOfQueuedObservations (); 
   vtkObservation *GetNthQueuedObservation (int n); 
@@ -221,19 +221,19 @@ public:
   void InvokeObservation (vtkObservation *observation, void *callData); 
   void ProcessEventQueue (); 
 
-  // Description:
-  // two modes - 
-  //  - CompressCallDataOn: only keep the most recent call data.  this means that if the
-  //    observation is in the queue, replace the call data with the current value
-  //  - CompressCallDataOff: maintain the list of all call data values, but only
-  //    one unique entry for each
-  //  Compression is ON by default
+  /// 
+  /// two modes - 
+  ///  - CompressCallDataOn: only keep the most recent call data.  this means that if the
+  ///    observation is in the queue, replace the call data with the current value
+  ///  - CompressCallDataOff: maintain the list of all call data values, but only
+  ///    one unique entry for each
+  ///  Compression is ON by default
   vtkBooleanMacro (CompressCallData, int);
   vtkGetMacro (CompressCallData, int);
   vtkSetMacro (CompressCallData, int);
 
-  // Description:
-  // Sets the method pointer to be used for processing script observations
+  /// 
+  /// Sets the method pointer to be used for processing script observations
   //BTX
   void SetScriptHandler ( void (*scriptHandler) (const char* script) )
     {
@@ -247,8 +247,8 @@ protected:
   vtkEventBroker(const vtkEventBroker&);
   void operator=(const vtkEventBroker&);
 
-  // Description:
-  // Singleton management functions.
+  /// 
+  /// Singleton management functions.
   static void classInitialize();
   static void classFinalize();
   
@@ -259,19 +259,19 @@ protected:
   
 
   //BTX
-  // 
+  /// 
   typedef char *KeyType;
   typedef std::vector< vtkObservation * > ObservationVector;
   typedef std::map< KeyType, ObservationVector > ObjectToObservationVectorMap;
 
-  // maps to manage quick lookup by object
+  /// maps to manage quick lookup by object
   ObjectToObservationVectorMap SubjectMap;
   ObjectToObservationVectorMap ObserverMap;
 
   //ETX
 
   //BTX
-  // The event queue of triggered but not-yet-invoked observations
+  /// The event queue of triggered but not-yet-invoked observations
   std::deque< vtkObservation * > EventQueue;
   //ETX
   
@@ -293,13 +293,13 @@ protected:
 private:
   //BTX
   void DetachObservations(); 
-  // vtkObservation can call these methods
+  /// vtkObservation can call these methods
   friend class vtkObservation; 
   //ETX
 };
 
 //BTX
-// Utility class to make sure qSlicerModuleManager is initialized before it is used.
+/// Utility class to make sure qSlicerModuleManager is initialized before it is used.
 class VTK_MRML_EXPORT vtkEventBrokerInitialize
 {
 public:
@@ -311,9 +311,9 @@ private:
   static unsigned int Count;
 };
 
-// This instance will show up in any translation unit that uses
-// vtkEventBroker.  It will make sure vtkEventBroker is initialized
-// before it is used.
+/// This instance will show up in any translation unit that uses
+/// vtkEventBroker.  It will make sure vtkEventBroker is initialized
+/// before it is used.
 static vtkEventBrokerInitialize vtkEventBrokerInitializer;
 //ETX
 

@@ -35,17 +35,17 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
  public:
 
   //----------------------------------------------------------------
-  // Constants
+  /// Constants
   //----------------------------------------------------------------
 
-  // Events
+  /// Events
   //BTX
   enum {
     UpdateGraphEvent = 11900,
   };
   //ETX
 
-  // Interpolation method
+  /// Interpolation method
   //BTX
   enum {
     INTERP_LINEAR = 0,
@@ -58,7 +58,7 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
   //ETX
 
   //----------------------------------------------------------------
-  // Standard methods for MRML nodes
+  /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
   static vtkMRMLXYPlotManagerNode *New();
@@ -68,143 +68,143 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes.
+  /// 
+  /// Set node attributes.
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object.
+  /// 
+  /// Copy the node's attributes to this object.
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() { return "XYPlot"; };
 
-  // Description:
-  // Method to propagate events generated in mrml.
+  /// 
+  /// Method to propagate events generated in mrml.
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //----------------------------------------------------------------
-  // PlotNode management
+  /// PlotNode management
   //----------------------------------------------------------------
   
-  // Description:
-  // Add DoiubleArrayNode to the plotting list. Returns array ID.
+  /// 
+  /// Add DoiubleArrayNode to the plotting list. Returns array ID.
   int AddPlotNode(vtkMRMLPlotNode* node);
 
-  // Description:
-  // Remove DoubleArrayNode from the plotting list.
+  /// 
+  /// Remove DoubleArrayNode from the plotting list.
   void RemovePlotNode(int id);
 
-  // Description:
-  // Remove DoubleArrayNode from the plotting list.
+  /// 
+  /// Remove DoubleArrayNode from the plotting list.
   void RemovePlotNodeByNodeID(const char* nodeID);
 
-  // Description:
-  // Remove all DoubleArrayNode from the plotting list.
+  /// 
+  /// Remove all DoubleArrayNode from the plotting list.
   void ClearPlotNodes();
 
-  // Description:
-  // Get number of arrays on the list
+  /// 
+  /// Get number of arrays on the list
   unsigned int GetNumberOfPlotNodes();
 
-  // Description:
-  // Get list of IDs
+  /// 
+  /// Get list of IDs
   vtkIntArray* GetPlotNodeIDList();
 
-  // Description:
-  // Get n-th vtkMRMLDoubleArrayNode on the list
+  /// 
+  /// Get n-th vtkMRMLDoubleArrayNode on the list
   vtkMRMLPlotNode* GetPlotNode(int id);
 
-  // Description:
-  // Get list of plot node objects.
-  // If 'tag' is specified, GetPlotNode() returns a list of nodes, which have the specified tag name.
+  /// 
+  /// Get list of plot node objects.
+  /// If 'tag' is specified, GetPlotNode() returns a list of nodes, which have the specified tag name.
   vtkCollection* GetPlotNodes(const char* tag=NULL);
 
 
   //----------------------------------------------------------------
-  // Methods to change property of plot objects
+  /// Methods to change property of plot objects
   //----------------------------------------------------------------
 
-  // Description:
-  // Set visibility of the all curves (i == 0 : off; i == 1 : on)
+  /// 
+  /// Set visibility of the all curves (i == 0 : off; i == 1 : on)
   void SetVisibilityAll(int i);
 
-  // Description:
-  // Set visibility of the all curves (i == 0 : off; i == 1 : on)
+  /// 
+  /// Set visibility of the all curves (i == 0 : off; i == 1 : on)
   void SetErrorBarAll(int i);
 
 
   //----------------------------------------------------------------
-  // Plot graph
+  /// Plot graph
   //----------------------------------------------------------------
 
-  // Description:  
-  // Invoke UpdateGraphEvent to force refreshing the graph
+  ///   
+  /// Invoke UpdateGraphEvent to force refreshing the graph
   void Refresh();
 
   //----------------------------------------------------------------
-  // Graph properties
+  /// Graph properties
   //----------------------------------------------------------------
 
-  // Description:
-  // Set title of graph.
+  /// 
+  /// Set title of graph.
   void SetTitle(const char* str)
   {
     this->Title = str;
     this->Modified();
   };
 
-  // Description:
-  // Get title of graph.
+  /// 
+  /// Get title of graph.
   const char* GetTitle()
   {
     return this->Title.c_str();
   };
 
-  // Description:
-  // Set label for X-axis
+  /// 
+  /// Set label for X-axis
   void SetXLabel(const char* str)
   {
     this->XLabel = str;
     this->Modified();
   };
 
-  // Description:
-  // Get label for X-axis
+  /// 
+  /// Get label for X-axis
   const char* GetXLabel()
   {
     return this->XLabel.c_str();
   };
 
-  // Description:
-  // Set label for Y-axis
+  /// 
+  /// Set label for Y-axis
   void SetYLabel(const char* str)
   {
     this->YLabel = str;
     this->Modified();
   };
   
-  // Description:
-  // Get label for Y-axis
+  /// 
+  /// Get label for Y-axis
   const char* GetYLabel()
   {
     return this->YLabel.c_str();
   };
 
-  // Description:
-  // Set/Get automatic range setting flag
+  /// 
+  /// Set/Get automatic range setting flag
   vtkSetMacro ( AutoXRange, int );
   vtkGetMacro ( AutoXRange, int );
   vtkSetMacro ( AutoYRange, int );
   vtkGetMacro ( AutoYRange, int );
 
-  // Description:
-  // Set X range
+  /// 
+  /// Set X range
   void SetXRange(double* range)
   {
     if (range[0] <= range[1])
@@ -215,8 +215,8 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
       }
   };
 
-  // Description:
-  // Set Y range
+  /// 
+  /// Set Y range
   void SetYRange(double* range)
   {
     if (range[0] <= range[1])
@@ -227,29 +227,29 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
       }
   };
 
-  // Description:
-  // Get X range
+  /// 
+  /// Get X range
   void GetXRange(double* range)
   {
     range[0] = this->YRange[0];
     range[1] = this->YRange[1];
   };
  
-  // Description:
-  // Get Y range
+  /// 
+  /// Get Y range
   void GetYRange(double* range)
   {
     range[0] = this->YRange[0];
     range[1] = this->YRange[1];
   };
 
-  // Description:
-  // Set / get color of axes
+  /// 
+  /// Set / get color of axes
   vtkSetVector3Macro( AxesColor, double );
   vtkGetVector3Macro( AxesColor, double );
 
-  // Description:
-  // Set / get color of background
+  /// 
+  /// Set / get color of background
   void SetBackgroundColor(double r, double g, double b)
   {
     this->BackgroundColor[0] = r;
@@ -258,8 +258,8 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
     this->Modified();
   };
 
-  // Description:
-  // Get color of background
+  /// 
+  /// Get color of background
   void GetBackgroundColor(double* r, double* g, double* b)
   {
     *r = this->BackgroundColor[0];
@@ -270,7 +270,7 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
   
  protected:
   //----------------------------------------------------------------
-  // Constructor and destroctor
+  /// Constructor and destroctor
   //----------------------------------------------------------------
   
   vtkMRMLXYPlotManagerNode();
@@ -281,20 +281,20 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
 
  protected:
   //----------------------------------------------------------------
-  // Data
+  /// Data
   //----------------------------------------------------------------
 
   //BTX
-  std::string Title;             // Plotting graph title
-  std::string XLabel;            // Label for x-axis
-  std::string YLabel;            // Label for y-axis
-  std::map< int, vtkMRMLPlotNode* > Data;  // map for plotting data
+  std::string Title;             /// Plotting graph title
+  std::string XLabel;            /// Label for x-axis
+  std::string YLabel;            /// Label for y-axis
+  std::map< int, vtkMRMLPlotNode* > Data;  /// map for plotting data
   //ETX
 
   int LastArrayID;
 
-  int    AutoXRange;  // Flag for automatic range adjust (default: 0 = off)
-  int    AutoYRange;  // Flag for automatic range adjust (default: 0 = off)
+  int    AutoXRange;  /// Flag for automatic range adjust (default: 0 = off)
+  int    AutoYRange;  /// Flag for automatic range adjust (default: 0 = off)
   double XRange[2];
   double YRange[2];
 

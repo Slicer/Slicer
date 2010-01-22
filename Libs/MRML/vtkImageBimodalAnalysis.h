@@ -11,13 +11,13 @@
   Version:   $Revision: 1.23 $
 
 =========================================================================auto=*/
-// .NAME vtkImageBimodalAnalysis - Analysis bimodal histograms
-// .SECTION Description
-// vtkImageBimodalAnalysis - This filter assumes the input comes
-// from vtkImageAccumulateDiscrete, so there.
-// .SECTION Warning
-// FIXME: only works on output floating point
-// FIXME: should use vtkTemplateMacro
+///  vtkImageBimodalAnalysis - Analysis bimodal histograms
+/// 
+/// vtkImageBimodalAnalysis - This filter assumes the input comes
+/// from vtkImageAccumulateDiscrete, so there.
+/// .SECTION Warning
+/// FIXME: only works on output floating point
+/// FIXME: should use vtkTemplateMacro
 
 #ifndef __vtkImageBimodalAnalysis_h
 #define __vtkImageBimodalAnalysis_h
@@ -37,15 +37,15 @@ public:
   vtkTypeMacro(vtkImageBimodalAnalysis,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set the type of data, if known
+  /// 
+  /// Set the type of data, if known
   vtkSetMacro(Modality, int);
   vtkGetMacro(Modality, int);
   void SetModalityToMR() {this->SetModality(VTK_BIMODAL_MODALITY_MR);};
   void SetModalityToCT() {this->SetModality(VTK_BIMODAL_MODALITY_CT);};
  
-  // Description:
-  // Get stats
+  /// 
+  /// Get stats
   vtkGetMacro(Threshold, int);
   vtkGetMacro(Window, int);
   vtkGetMacro(Level, int);
@@ -57,8 +57,8 @@ public:
     vtkGetMacro(Offset, int);
     vtkSetMacro(Offset, int);
     
-  // Description:
-  // Ideally this should not be public API
+  /// 
+  /// Ideally this should not be public API
   vtkSetMacro(Threshold, int);
   vtkSetMacro(Window, int);
   vtkSetMacro(Level, int);

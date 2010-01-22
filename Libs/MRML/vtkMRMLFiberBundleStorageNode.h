@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiberBundleStorageNode - MRML node for fiberBundle storage on disk.
-// .SECTION Description
-// The storage node has methods to read/write vtkPolyData to/from disk.
+///  vtkMRMLFiberBundleStorageNode - MRML node for fiberBundle storage on disk.
+/// 
+/// The storage node has methods to read/write vtkPolyData to/from disk.
 
 #ifndef __vtkMRMLFiberBundleStorageNode_h
 #define __vtkMRMLFiberBundleStorageNode_h
@@ -31,22 +31,22 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorage
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FiberBundleStorage";};
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  // Description:
-  // Return a default file extension for writting
+  /// 
+  /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return "vtk";

@@ -11,10 +11,10 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLNonlinearTransformNode - MRML node for representing a nonlinear transformation to the parent node
-// .SECTION Description
-// MRML node for representing a nonlinear transformation to the parent
-// node in the form of a vtkWarpTransform 
+///  vtkMRMLNonlinearTransformNode - MRML node for representing a nonlinear transformation to the parent node
+/// 
+/// MRML node for representing a nonlinear transformation to the parent
+/// node in the form of a vtkWarpTransform 
 
 #ifndef __vtkMRMLNonlinearTransformNode_h
 #define __vtkMRMLNonlinearTransformNode_h
@@ -33,55 +33,55 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "NonlinearTransform";};
 
-  // Description:
-  // 1 if transfrom is linear, 0 otherwise
+  /// 
+  /// 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() {return 0;};
 
-  // Description:
-  // vtkGeneral transform of this node to paren node
+  /// 
+  /// vtkGeneral transform of this node to paren node
   virtual vtkGeneralTransform* GetTransformToParent();
 
-  // Description:
-  // vtkWarpTransform of this node to paren node
+  /// 
+  /// vtkWarpTransform of this node to paren node
   vtkGetObjectMacro(WarpTransformToParent, vtkWarpTransform); 
   void SetAndObserveWarpTransformToParent(vtkWarpTransform *warp);
 
-  // Description:
-  // Get concatinated transforms to the top. This method is from
-  // the superclass and probably needs to be moved down a level in the
-  // hierarchy because this node cannot satisfy the call.
+  /// 
+  /// Get concatinated transforms to the top. This method is from
+  /// the superclass and probably needs to be moved down a level in the
+  /// hierarchy because this node cannot satisfy the call.
   virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld);
   
-  // Description:
-  // Get concatinated transforms between nodes. This method is from
-  // the superclass and probably needs to be moved down a level in the
-  // hierarchy because this node cannot satisfy the call.
+  /// 
+  /// Get concatinated transforms between nodes. This method is from
+  /// the superclass and probably needs to be moved down a level in the
+  /// hierarchy because this node cannot satisfy the call.
   virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
                                         vtkMatrix4x4* transformToNode);
 
-  // Description:
-  // alternative method to propagate events generated in Transform nodes
+  /// 
+  /// alternative method to propagate events generated in Transform nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();

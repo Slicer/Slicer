@@ -11,15 +11,15 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLDiffusionWeightedVolumeDisplayNode - MRML node for representing a volume (image stack).
-// .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+///  vtkMRMLDiffusionWeightedVolumeDisplayNode - MRML node for representing a volume (image stack).
+/// 
+/// Volume nodes describe data sets that can be thought of as stacks of 2D 
+/// images that form a 3D volume.  Volume nodes describe where the images 
+/// are stored on disk, how to render the data (window and level), and how 
+/// to read the files.  This information is extracted from the image 
+/// headers (if they exist) at the time the MRML file is generated.  
+/// Consequently, MRML files isolate MRML browsers from understanding how 
+/// to read the myriad of file formats for medical data. 
 
 #ifndef __vtkMRMLDiffusionWeightedVolumeDisplayNode_h
 #define __vtkMRMLDiffusionWeightedVolumeDisplayNode_h
@@ -43,31 +43,31 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionWeightedVolumeDisplay";};
 
-    // Description:
-  // Sets vtkImageData to be converted to displayable vtkImageData
+    /// 
+  /// Sets vtkImageData to be converted to displayable vtkImageData
   virtual void SetImageData(vtkImageData *imageData)
     {
     this->ExtractComponent->SetInput( imageData);
     };
 
-  // Description:
-  // Gets ImageData converted from the real data in the node
+  /// 
+  /// Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData();
 
   virtual void UpdateImageDataPipeline()
@@ -77,11 +77,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
     };
 
   //--------------------------------------------------------------------------
-  // Display Information
+  /// Display Information
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Set/Get interpolate reformated slices
+  /// 
+  /// Set/Get interpolate reformated slices
   vtkGetMacro(DiffusionComponent, int);
   vtkSetMacro(DiffusionComponent, int);
  

@@ -11,7 +11,7 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLSnapshotClipNode - abstract class representing a hierarchy member
+///  vtkMRMLSnapshotClipNode - abstract class representing a hierarchy member
 
 #ifndef __vtkMRMLSnapshotClipNode_h
 #define __vtkMRMLSnapshotClipNode_h
@@ -31,42 +31,42 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SnapshotClip";};
 
-   // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+   /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Add SceneSnapshot node
+  /// 
+  /// Add SceneSnapshot node
   void AddSceneSanpshotNode(vtkMRMLSceneSnapshotNode * node)
   {
     this->SceneSnapshotNodes->AddItem(node);
   };
 
-  // Description:
-  // Get Numbre of SceneSnapshot nodes
+  /// 
+  /// Get Numbre of SceneSnapshot nodes
   int GetNumberOfSceneSanpshotNodes()
   {
     return this->SceneSnapshotNodes->GetNumberOfItems();
   };
-  // Description:
-  // Get SceneSnapshot node
+  /// 
+  /// Get SceneSnapshot node
   vtkMRMLSceneSnapshotNode* GetSceneSanpshotNode(int index)
   {
     return vtkMRMLSceneSnapshotNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(index));

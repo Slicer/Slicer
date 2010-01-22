@@ -11,9 +11,9 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLClipModelsNode - MRML node to represent camera node
-// .SECTION Description
-// Camera node uses vtkCamera to store the state of the camera
+///  vtkMRMLClipModelsNode - MRML node to represent camera node
+/// 
+/// Camera node uses vtkCamera to store the state of the camera
 
 #ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
@@ -31,116 +31,116 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
   
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Camera";};
 
-  // Description:
-  // Set the camera active tag, i.e. the tag for which object (view) this
-  // camera is active.
+  /// 
+  /// Set the camera active tag, i.e. the tag for which object (view) this
+  /// camera is active.
   const char* GetActiveTag();
   virtual void SetActiveTag(const char *);
 
-  // Description:
-  // vtkCamera
+  /// 
+  /// vtkCamera
   vtkGetObjectMacro(Camera, vtkCamera); 
 
-  // Description:
-  // Set camera ParallelProjection flag 
+  /// 
+  /// Set camera ParallelProjection flag 
   void SetParallelProjection(int parallelProjection) 
     {
     this->Camera->SetParallelProjection(parallelProjection);
     };
   
-  // Description:
-  // Set camera ParallelProjection flag   
+  /// 
+  /// Set camera ParallelProjection flag   
   int GetParallelProjection()
     {
     return this->Camera->GetParallelProjection();
     };
 
-  // Description:
-  // Set camera Parallel Scale 
+  /// 
+  /// Set camera Parallel Scale 
   void SetParallelScale(double scale) 
     {
     this->Camera->SetParallelScale(scale);
     };
   
-  // Description:
-  // Set camera Parallel Scale   
+  /// 
+  /// Set camera Parallel Scale   
   double GetParallelScale()
     {
     return this->Camera->GetParallelScale();
     };
 
-  // Description:
-  // Set camera Position 
+  /// 
+  /// Set camera Position 
   void SetPosition(double position[3]) 
     {
     this->Camera->SetPosition(position);
     };
   
-  // Description:
-  // Get camera Position   
+  /// 
+  /// Get camera Position   
   double *GetPosition()
     {
     return this->Camera->GetPosition();
     };
 
-  // Description:
-  // Set camera Focal Point 
+  /// 
+  /// Set camera Focal Point 
   void SetFocalPoint(double focalPoint[3]) 
     {
     this->Camera->SetFocalPoint(focalPoint);
     };
   
-  // Description:
-  // Get camera Focal Point 
+  /// 
+  /// Get camera Focal Point 
   double *GetFocalPoint()
     {
     return this->Camera->GetFocalPoint();
     };
 
-  // Description:
-  // Set camera Up vector
+  /// 
+  /// Set camera Up vector
   void SetViewUp(double viewUp[3]) 
     {
     this->Camera->SetViewUp(viewUp);
     };
   
-  // Description:
-  // Get camera Up vector
+  /// 
+  /// Get camera Up vector
   double *GetViewUp()
     {
       return this->Camera->GetViewUp();
     };
   
-  // Description:
-  // alternative method to propagate events generated in Camera nodes
+  /// 
+  /// alternative method to propagate events generated in Camera nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  // Description:
-  // Events
+  /// 
+  /// Events
   //BTX
   enum
   {
@@ -148,17 +148,17 @@ public:
   };
   //ETX
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// 
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // Reimplement from parent
+  /// 
+  /// Reimplement from parent
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)

@@ -11,12 +11,12 @@
   Version:   $Revision: 1.21 $
 
 =========================================================================auto=*/
-// .NAME vtkImageAccumulateDiscrete - Generalized histograms up to 4 dimensions.
-// .SECTION Description
-// vtkImageAccumulateDiscrete - This filter divides component space into
-// discrete bins.  It then counts the number of pixels associated
-// with each bin.  The output is this "scatter plot".
-// The input can be any type, but the output is always int.
+///  vtkImageAccumulateDiscrete - Generalized histograms up to 4 dimensions.
+/// 
+/// vtkImageAccumulateDiscrete - This filter divides component space into
+/// discrete bins.  It then counts the number of pixels associated
+/// with each bin.  The output is this "scatter plot".
+/// The input can be any type, but the output is always int.
 
 #ifndef __vtkImageAccumulateDiscrete_h
 #define __vtkImageAccumulateDiscrete_h

@@ -30,10 +30,10 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
  public:
 
   //----------------------------------------------------------------
-  // Constants
+  /// Constants
   //----------------------------------------------------------------
 
-  // Line direction
+  /// Line direction
   //BTX
   enum {
     VERTICAL = 0,
@@ -43,7 +43,7 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
 
 
   //----------------------------------------------------------------
-  // Standard methods for MRML nodes
+  /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
   static vtkMRMLOrthogonalLinePlotNode *New();
@@ -53,30 +53,30 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "OrthogonalLinePlot";};
 
-  // Description:
-  // Method to propagate events generated in mrml
+  /// 
+  /// Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
 
   //----------------------------------------------------------------
-  // Get and Set Macros
+  /// Get and Set Macros
   //----------------------------------------------------------------
  public:
   vtkSetVector2Macro ( Point, double );
@@ -87,33 +87,33 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
   
 
   //----------------------------------------------------------------
-  // Access methods
+  /// Access methods
   //----------------------------------------------------------------
  public:
 
   //----------------------------------------------------------------
-  // Methods for plotting (called from friend classes)
+  /// Methods for plotting (called from friend classes)
   //----------------------------------------------------------------
  protected:
-  // Description:
-  // Get minimum and muximum X values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum X values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetXRange(double* xrange);
 
-  // Description:
-  // Get minimum and muximum Y values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum Y values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetYRange(double* yrange);
   virtual int GetYRange(const double* xrange, double* yrange)
     { return Superclass::GetYRange(xrange, yrange); }
 
-  // Description:
-  // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
+  /// 
+  /// Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
   virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange);
 
 
   //----------------------------------------------------------------
-  // Constructor and destroctor
+  /// Constructor and destroctor
   //----------------------------------------------------------------
  protected:
   vtkMRMLOrthogonalLinePlotNode();
@@ -124,10 +124,10 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
 
  protected:
   //----------------------------------------------------------------
-  // Data
+  /// Data
   //----------------------------------------------------------------
   
-  double Point[2];   // A point on the line
+  double Point[2];   /// A point on the line
   int Direction;
 
 };

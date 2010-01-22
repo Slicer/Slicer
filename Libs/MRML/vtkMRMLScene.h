@@ -13,13 +13,13 @@ Version:   $Revision: 1.18 $
 =========================================================================auto=*/
 //
 //
-// .NAME vtkMRMLScene - A set of MRML Nodes that supports serialization and undo/redo
-// .SECTION Description
-// vtkMRMLScene represents and provides methods to manipulate a list of
-// MRML objects. The list is core and duplicate entries are not prevented.
+///  vtkMRMLScene - A set of MRML Nodes that supports serialization and undo/redo
+/// 
+/// vtkMRMLScene represents and provides methods to manipulate a list of
+/// MRML objects. The list is core and duplicate entries are not prevented.
 //
-// .SECTION see also
-// vtkMRMLNode vtkCollection 
+/// .SECTION see also
+/// vtkMRMLNode vtkCollection 
 
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
@@ -47,118 +47,118 @@ public:
   vtkTypeMacro(vtkMRMLScene,vtkCollection);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set URL (file name) of the scene
+  /// 
+  /// Set URL (file name) of the scene
   void SetURL(const char *url) {
     this->URL = std::string(url); 
   };
   
-  // Description:
-  // Get URL (file name) of the scene  
+  /// 
+  /// Get URL (file name) of the scene  
   const char *GetURL() {
     return this->URL.c_str();
   };
   
-  // Description:
-  // Set Root directory, where URL is pointing
+  /// 
+  /// Set Root directory, where URL is pointing
   void SetRootDirectory(const char *dir) {
     this->RootDirectory = std::string(dir); 
   };
   
-  // Description:
-  // Get Root directory, where URL is pointing  
+  /// 
+  /// Get Root directory, where URL is pointing  
   const char *GetRootDirectory() {
     return this->RootDirectory.c_str();
   };
   
-  // Description:
-  // Create new scene from URL
+  /// 
+  /// Create new scene from URL
   int Connect();
   
-  // Description:
-  // Add the scene from URL
+  /// 
+  /// Add the scene from URL
   int Import();
 
-  // Description:
-  // Save scene into URL
+  /// 
+  /// Save scene into URL
   int Commit(const char* url=NULL);
 
-  // Description:
-  // Remove nodes and clear undo/redo stacks
+  /// 
+  /// Remove nodes and clear undo/redo stacks
   void Clear(int removeSingletons);
 
-  // Description:
-  // Reset all nodes to their constructor's state
+  /// 
+  /// Reset all nodes to their constructor's state
   void ResetNodes();
   
-  // Description:
-  // Create node with a given class
+  /// 
+  /// Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
-  // Description:
-  // Register node class with the Scene so that it can create it from
-  // a class name
-  // -- this maintains a registered pointer to the node, so users should Delete()
-  //    the node after calling this.  The node is Deleted when the scene is destroyed.
+  /// 
+  /// Register node class with the Scene so that it can create it from
+  /// a class name
+  /// -- this maintains a registered pointer to the node, so users should Delete()
+  ///    the node after calling this.  The node is Deleted when the scene is destroyed.
   void RegisterNodeClass(vtkMRMLNode* node);
   
-  // Description:
-  // Add a path to the list.
+  /// 
+  /// Add a path to the list.
   const char* GetClassNameByTag(const char *tagName);
 
-  // Description:
-  // Add a path to the list.
+  /// 
+  /// Add a path to the list.
   const char* GetTagByClassName(const char *className);
 
-  // Description:
-  // return collection of nodes
+  /// 
+  /// return collection of nodes
   vtkCollection* GetCurrentScene()
     {
     return this->CurrentScene;
     };
 
-  // Description:
-  // Called by another class to request that the node's id be set to the given
-  // string
-  // If the id is not in use, set it, otherwise, useit as a base for a unique
-  // id and then set it
+  /// 
+  /// Called by another class to request that the node's id be set to the given
+  /// string
+  /// If the id is not in use, set it, otherwise, useit as a base for a unique
+  /// id and then set it
   void RequestNodeID(vtkMRMLNode *node, const char *ID);
   
-  // Description:
-  // Add a node to the scene and send NewNode and SceneModified events.
+  /// 
+  /// Add a node to the scene and send NewNode and SceneModified events.
   vtkMRMLNode* AddNode(vtkMRMLNode *n);
 
-  // Description:
-  // Add a copy of a node to the scene.
+  /// 
+  /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
-  // Description:
-  // Add a node to the scene without invoking a NodeAdded Event
+  /// 
+  /// Add a node to the scene without invoking a NodeAdded Event
   vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
 
-  // Description:
-  // Invoke a NodeAddedEvent (used, for instnace, after adding a bunch of nodes with AddNodeNoNotify
+  /// 
+  /// Invoke a NodeAddedEvent (used, for instnace, after adding a bunch of nodes with AddNodeNoNotify
   void NodeAdded(vtkMRMLNode *n);
   void NodeAdded() {this->NodeAdded(NULL);};
   
-  // Description:
-  // Remove a path from the list.
+  /// 
+  /// Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n); 
 
-  // Description:
-  // Remove a path from the list without invoking NodeRemovedEvent
-  // - use this when there are no references to the passed node (e.g. singletons 
-  //   on scene load)
+  /// 
+  /// Remove a path from the list without invoking NodeRemovedEvent
+  /// - use this when there are no references to the passed node (e.g. singletons 
+  ///   on scene load)
   void RemoveNodeNoNotify(vtkMRMLNode *n); 
   
-  // Description:
-  // Determine whether a particular node is present. Returns its position
-  // in the list.
+  /// 
+  /// Determine whether a particular node is present. Returns its position
+  /// in the list.
   int IsNodePresent(vtkMRMLNode *n) {
     return this->CurrentScene->vtkCollection::IsItemPresent((vtkObject *)n);};
 
-  // Description:
-  // Initialize a traversal (not reentrant!)
+  /// 
+  /// Initialize a traversal (not reentrant!)
   void InitTraversal() { 
     if (this && this->CurrentScene) 
       {
@@ -166,48 +166,48 @@ public:
       }
   };
   
-  // Description:
-  // Get next node in the scene.
+  /// 
+  /// Get next node in the scene.
   vtkMRMLNode *GetNextNode() {
     return (vtkMRMLNode *)(this->CurrentScene->GetNextItemAsObject());};
   
-  // Description:
-  // Get next node of the class in the scene.
+  /// 
+  /// Get next node of the class in the scene.
   vtkMRMLNode *GetNextNodeByClass(const char* className);
 
-  // Description:
-  // Get nodes having the specified name
+  /// 
+  /// Get nodes having the specified name
   vtkCollection *GetNodesByName(const char* name);
 
-  // Description:
-  // Get node given a unique ID
+  /// 
+  /// Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
   //BTX
   vtkMRMLNode *GetNodeByID(std::string name);
   //ETX
   
-  // Description:
-  // Get nodes of a specified class having the specified name
+  /// 
+  /// Get nodes of a specified class having the specified name
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
   
-  // Description:
-  // Get number of nodes in the scene
+  /// 
+  /// Get number of nodes in the scene
   int GetNumberOfNodes () { return this->CurrentScene->GetNumberOfItems(); };
 
-  // Description:
-  // Get n-th node in the scene
+  /// 
+  /// Get n-th node in the scene
   vtkMRMLNode* GetNthNode(int n);
   
-  // Description:
-  // Get n-th node of a specified class  in the scene 
+  /// 
+  /// Get n-th node of a specified class  in the scene 
   vtkMRMLNode* GetNthNodeByClass(int n, const char* className );
   
-  // Description:
-  // Get number of nodes of a specified class in the scene
+  /// 
+  /// Get number of nodes of a specified class in the scene
   int GetNumberOfNodesByClass(const char* className);
   
-  // Description:
-  // Get vector of nodes of a specified class in the scene
+  /// 
+  /// Get vector of nodes of a specified class in the scene
   //BTX
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
   //ETX
@@ -216,80 +216,80 @@ public:
   std::list<std::string> GetNodeClassesList();
   //ETX
   
-  // Description:
-  // returns list of names
+  /// 
+  /// returns list of names
   const char* GetNodeClasses();
   
-  // Description:
-  // Get the number of registered node classes (is probably greater than the current number 
-  // of nodes instantiated in the scene) 
+  /// 
+  /// Get the number of registered node classes (is probably greater than the current number 
+  /// of nodes instantiated in the scene) 
   int GetNumberOfRegisteredNodeClasses();
-  // Description:
-  // Get the nth registered node class, returns NULL if n is out of the range 0-GetNumberOfRegisteredNodeClasses
-  // Useful for iterating through nodes to find all the possible storage nodes.
+  /// 
+  /// Get the nth registered node class, returns NULL if n is out of the range 0-GetNumberOfRegisteredNodeClasses
+  /// Useful for iterating through nodes to find all the possible storage nodes.
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
 
   const char* GetUniqueNameByString(const char* className);
-  // Description:
-  // Explore the MRML tree to find the next unique index for use as an ID,
-  // starting from 1
+  /// 
+  /// Explore the MRML tree to find the next unique index for use as an ID,
+  /// starting from 1
   int GetUniqueIDIndexByClass(const char* className);
-  // Description:
-  // Explore the MRML tree to find the next unique index for use as an ID,
-  // starting from hint
+  /// 
+  /// Explore the MRML tree to find the next unique index for use as an ID,
+  /// starting from hint
   int GetUniqueIDIndexByClassFromIndex(const char* className, int hint);
   
-  // Description:
-  // insert a node in the scene after a specified node
+  /// 
+  /// insert a node in the scene after a specified node
   void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
-  // Description:
-  // insert a node in the scene before a specified node
+  /// 
+  /// insert a node in the scene before a specified node
   void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   
-  // Description:
-  // Ger transformation between two nodes
+  /// 
+  /// Ger transformation between two nodes
   int GetTransformBetweenNodes( vtkMRMLNode *node1, vtkMRMLNode *node2, 
                                 vtkGeneralTransform *xform );
 
-  // Description:
-  // Set undo on/off
+  /// 
+  /// Set undo on/off
   void SetUndoOn() {UndoFlag=true;};
   void SetUndoOff() {UndoFlag=false;};
   bool GetUndoFlag() {return UndoFlag;};
   void SetUndoFlag(bool flag) {UndoFlag = flag;};
 
-  // Description:
-  // undo, set the scene to previous state
+  /// 
+  /// undo, set the scene to previous state
   void Undo();
   
-  // Description:
-  // redo, set the scene to previously undone
+  /// 
+  /// redo, set the scene to previously undone
   void Redo();
 
-  // Description:
-  // clear Undo stack, delete undo history
+  /// 
+  /// clear Undo stack, delete undo history
   void ClearUndoStack();
   
-  // Description:
-  // clear Redo stack, delete redo history
+  /// 
+  /// clear Redo stack, delete redo history
   void ClearRedoStack();
 
-  // Description: 
-  // returns number of undo steps in the history buffer
+  ///  
+  /// returns number of undo steps in the history buffer
   int GetNumberOfUndoLevels() { return (int)this->UndoStack.size();};
   
-  // Description: 
-  // returns number of redo steps in the history buffer
+  ///  
+  /// returns number of redo steps in the history buffer
   int GetNumberOfRedoLevels() { return (int)this->RedoStack.size();};
 
-  // Description: 
-  // Save current state in the undo buffer
+  ///  
+  /// Save current state in the undo buffer
   void SaveStateForUndo();
-  // Description: 
-  // Save current state of the node in the undo buffer
+  ///  
+  /// Save current state of the node in the undo buffer
   void SaveStateForUndo(vtkMRMLNode *node);
-  // Description: 
-  // Save current state of the nodes in the undo buffer
+  ///  
+  /// Save current state of the nodes in the undo buffer
   void SaveStateForUndo(vtkCollection *nodes);
   //BTX
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
@@ -327,18 +327,18 @@ public:
 
   void RemoveUnusedNodeReferences();
 
-  // Description: 
-  // get the new id of the node that is different from one in the mrml file
-  // or NULL if id has not changed
+  ///  
+  /// get the new id of the node that is different from one in the mrml file
+  /// or NULL if id has not changed
   const char* GetChangedID(const char* id);
 
-  // Description: 
-  // Return collection of all nodes referenced directly or indirectly by a node.
+  ///  
+  /// Return collection of all nodes referenced directly or indirectly by a node.
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
 //BTX
-  // Description:
-  // Get/Set the active Scene 
+  /// 
+  /// Get/Set the active Scene 
   static void SetActiveScene(vtkMRMLScene *);
   static vtkMRMLScene *GetActiveScene();
 //ETX
@@ -419,31 +419,31 @@ public:
   vtkGetObjectMacro ( UserTagTable, vtkTagTable);
   vtkSetObjectMacro ( UserTagTable, vtkTagTable);  
 
-  // Description:
-  // find a URI handler in the collection that can work on the passed URI
-  // returns NULL on failure
+  /// 
+  /// find a URI handler in the collection that can work on the passed URI
+  /// returns NULL on failure
   vtkURIHandler *FindURIHandler(const char *URI);
-  // Description:
-  // Returns a URIhandler of a specific type if its name is known.
+  /// 
+  /// Returns a URIhandler of a specific type if its name is known.
   vtkURIHandler *FindURIHandlerByName ( const char *name );
-  // Description:
-  // Add a uri handler to the collection.
+  /// 
+  /// Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
 
-  // Description:
-  // IsClosed is true during scene loads
-  // By checking this flag, logic and gui code can choose
-  // to ignore transient modified events and related events
+  /// 
+  /// IsClosed is true during scene loads
+  /// By checking this flag, logic and gui code can choose
+  /// to ignore transient modified events and related events
   vtkGetMacro( IsClosed, int );
   vtkSetMacro( IsClosed, int );
   
-  // Description:
-  // the version of the last loaded scene file
+  /// 
+  /// the version of the last loaded scene file
   vtkGetStringMacro(LastLoadedVersion);
   vtkSetStringMacro(LastLoadedVersion);
 
-  // Description:
-  // the current software version
+  /// 
+  /// the current software version
   vtkGetStringMacro(Version);
   vtkSetStringMacro(Version);
 
@@ -464,7 +464,7 @@ protected:
 
   vtkCollection* CurrentScene;
   
-  // data i/o handling members
+  /// data i/o handling members
   vtkCacheManager *CacheManager;
   vtkDataIOManager *DataIOManager;
   vtkCollection *URIHandlerCollection;
@@ -518,7 +518,7 @@ protected:
 
   
 private:
-  // hide the standard AddItem from the user and the compiler.
+  /// hide the standard AddItem from the user and the compiler.
   void AddItem(vtkObject *o) { this->CurrentScene->vtkCollection::AddItem(o); this->Modified();};
   void RemoveItem(vtkObject *o) { this->CurrentScene->vtkCollection::RemoveItem(o); this->Modified();};
   void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};

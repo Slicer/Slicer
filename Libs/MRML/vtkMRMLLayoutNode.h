@@ -16,22 +16,22 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRML methods
+  /// MRML methods
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
   
-  // Get/Set for Current layout
+  /// Get/Set for Current layout
   vtkGetMacro (ViewArrangement, int );
   virtual void SetViewArrangement ( int );
 
@@ -41,40 +41,40 @@ public:
   vtkGetMacro ( BottomPanelVisibility, int );
   vtkSetMacro (BottomPanelVisibility, int );
 
-  // 0 is Leftside, 1 is right side
+  /// 0 is Leftside, 1 is right side
   vtkGetMacro (GUIPanelLR, int );
   vtkSetMacro (GUIPanelLR, int );
 
-  // Description:
-  // CompareView configuration Get/Set methods
+  /// 
+  /// CompareView configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewRows, int );
   vtkSetMacro ( NumberOfCompareViewRows, int );  
   vtkGetMacro ( NumberOfCompareViewColumns, int );
   vtkSetMacro ( NumberOfCompareViewColumns, int );  
 
-  // Description:
-  // configure each compare viewer in lightbox mode.
+  /// 
+  /// configure each compare viewer in lightbox mode.
   vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
   vtkSetMacro ( NumberOfCompareViewLightboxRows, int );  
   vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
   vtkSetMacro ( NumberOfCompareViewLightboxColumns, int );  
 
-  // Description:
-  // Set/Get the size of the main and secondary panels (size of Frame1
-  // in each panel)
+  /// 
+  /// Set/Get the size of the main and secondary panels (size of Frame1
+  /// in each panel)
   vtkGetMacro( MainPanelSize, int);
   vtkSetMacro( MainPanelSize, int);
   vtkGetMacro( SecondaryPanelSize, int);
   vtkSetMacro( SecondaryPanelSize, int);
 
 
-  // Description:
-  // Set/Get the size of the last selected module
+  /// 
+  /// Set/Get the size of the last selected module
   vtkGetStringMacro( SelectedModule);
   vtkSetStringMacro( SelectedModule);
   
-// Description:
-  // Get node XML tag name (like Volume, Model)
+/// Description:
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
 
   //BTX

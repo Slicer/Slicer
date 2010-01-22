@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLModelStorageNode - MRML node for model storage on disk
-// .SECTION Description
-// Storage nodes has methods to read/write vtkPolyData to/from disk
+///  vtkMRMLModelStorageNode - MRML node for model storage on disk
+/// 
+/// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLModelStorageNode_h
 #define __vtkMRMLModelStorageNode_h
@@ -64,49 +64,49 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+  /// 
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
-  // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "ModelStorage";};
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
- // Description:
-  // Return a default file extension for writting
+ /// Description:
+  /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return "vtk";

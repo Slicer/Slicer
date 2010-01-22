@@ -11,17 +11,17 @@
   Version:   $Revision: 1.3 $
 
   =========================================================================auto=*/
-// .NAME vtkMRMLDiffusionTensorDisplayPropertiesNode - MRML node for display of a diffusion tensor.
-// .SECTION Description
-// This node describes display properties at the (conceptual) single-tensor level.
-// A tensor can be displayed using various scalar invariants and glyphs.
-// This class is used by classes (vtkMRMLFiberBundleDisplayNode, 
-// vtkMRMLDiffusionTensorVolumeDisplayNode) that handle higher-level display
-// concepts for many diffusion tensors, such as choosing between scalars/glyphs/etc. 
-// for specific display needs.
-// This class inherits from the vtkMRMLColorNode->vtkMRMLColorTableNode superclasses,
-// used for vtkMRMLModelNodes and vtkMRMLVolumeNodes, in order to
-// provide specific lookup tables for the scalar invariant display.
+///  vtkMRMLDiffusionTensorDisplayPropertiesNode - MRML node for display of a diffusion tensor.
+/// 
+/// This node describes display properties at the (conceptual) single-tensor level.
+/// A tensor can be displayed using various scalar invariants and glyphs.
+/// This class is used by classes (vtkMRMLFiberBundleDisplayNode, 
+/// vtkMRMLDiffusionTensorVolumeDisplayNode) that handle higher-level display
+/// concepts for many diffusion tensors, such as choosing between scalars/glyphs/etc. 
+/// for specific display needs.
+/// This class inherits from the vtkMRMLColorNode->vtkMRMLColorTableNode superclasses,
+/// used for vtkMRMLModelNodes and vtkMRMLVolumeNodes, in order to
+/// provide specific lookup tables for the scalar invariant display.
 //
 
 #ifndef __vtkMRMLDiffusionTensorDisplayPropertiesNode_h
@@ -40,29 +40,29 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   void PrintSelf(ostream& os, vtkIndent indent);
 
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from a MRML file in XML format.
+  /// 
+  /// Read node attributes from a MRML file in XML format.
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object.
+  /// 
+  /// Copy the node's attributes to this object.
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorDisplayProperties";};
 
   //--------------------------------------------------------------------------
-  // Display Information: Types of scalars that may be generated from tensors.
+  /// Display Information: Types of scalars that may be generated from tensors.
   //--------------------------------------------------------------------------
 
   //BTX
@@ -98,69 +98,69 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //ETX
 
   //--------------------------------------------------------------------------
-  // Display Information: Functions to choose scalar invariant
+  /// Display Information: Functions to choose scalar invariant
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
-  // rotation) selected for display.
+  /// 
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  /// rotation) selected for display.
   vtkGetMacro(ScalarInvariant, int);
 
-  // Description:
-  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
-  // rotation) selected for display.
+  /// 
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  /// rotation) selected for display.
   vtkSetMacro(ScalarInvariant, int);
  
-  // Description:
-  // Set scalar invariant to trace (sum of eigenvalues).
+  /// 
+  /// Set scalar invariant to trace (sum of eigenvalues).
   void SetScalarInvariantToTrace() {
     this->SetScalarInvariant(this->Trace);
   };
 
   //Description:
-  // Set scalar invariant to relative anisotropy
+  /// Set scalar invariant to relative anisotropy
   void SetScalarInvariantToRelativeAnisotropy() {
     this->SetScalarInvariant(this->RelativeAnisotropy);
   };
 
-  // Description:
-  // Set scalar invariant to FA (normalized variance of eigenvalues)
+  /// 
+  /// Set scalar invariant to FA (normalized variance of eigenvalues)
   void SetScalarInvariantToFractionalAnisotropy() {
     this->SetScalarInvariant(this->FractionalAnisotropy);
   };
 
-  // Description:
-  // Set scalar invariant to C_L (Westin's linear measure)
+  /// 
+  /// Set scalar invariant to C_L (Westin's linear measure)
   void SetScalarInvariantToLinearMeasure() {
     this->SetScalarInvariant(this->LinearMeasure);
   };
 
-  // Description:
-  // Set scalar invariant to C_P (Westin's planar measure)
+  /// 
+  /// Set scalar invariant to C_P (Westin's planar measure)
   void SetScalarInvariantToPlanarMeasure() {
     this->SetScalarInvariant(this->PlanarMeasure);
   };
 
-  // Description:
-  // Set scalar invariant to C_S (Westin's spherical measure)
+  /// 
+  /// Set scalar invariant to C_S (Westin's spherical measure)
   void SetScalarInvariantToSphericalMeasure() {
     this->SetScalarInvariant(this->SphericalMeasure);
   }
 
-  // TO DO: add the rest of the scalars
+  /// TO DO: add the rest of the scalars
 
-  // Description:
-  // Return the lowest and highest integers, for use in looping
+  /// 
+  /// Return the lowest and highest integers, for use in looping
   int GetFirstScalarInvariant() {return this->Trace;};
   int GetLastScalarInvariant() {return this->ColorOrientationMinEigenvector;};
 
-  // Description:
-  // Return a text string describing the ScalarInvariant variable
+  /// 
+  /// Return a text string describing the ScalarInvariant variable
   virtual const char * GetScalarInvariantAsString();
 
 
   //--------------------------------------------------------------------------
-  // Display Information: Types of glyph geometry that can be displayed
+  /// Display Information: Types of glyph geometry that can be displayed
   //--------------------------------------------------------------------------
 
   //BTX
@@ -174,17 +174,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //ETX
 
   //--------------------------------------------------------------------------
-  // Display Information: Functions to choose the type of glyph geometry
+  /// Display Information: Functions to choose the type of glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get the type of glyph geometry (line, ellipsoid, etc.) 
+  /// 
+  /// Get the type of glyph geometry (line, ellipsoid, etc.) 
   vtkGetMacro(GlyphGeometry, int);
 
-  // Description:
-  // Set the type of glyph geometry (line, ellipsoid, etc.) 
+  /// 
+  /// Set the type of glyph geometry (line, ellipsoid, etc.) 
   //vtkSetMacro(GlyphGeometry, int);
-  // Also update the glyph polydata source
+  /// Also update the glyph polydata source
   void SetGlyphGeometry( int geometry ) {
 
     if ( this->GlyphGeometry != geometry ) 
@@ -209,35 +209,35 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   };
 
 
-  // Description:
-  // Return the lowest and highest integers, for use in looping
+  /// 
+  /// Return the lowest and highest integers, for use in looping
   int GetFirstGlyphGeometry() {return this->Lines;};
   int GetLastGlyphGeometry() {return this->Superquadrics;};
 
-  // Description:
-  // Return a text string describing the GlyphGeometry variable
+  /// 
+  /// Return a text string describing the GlyphGeometry variable
   virtual const char * GetGlyphGeometryAsString();
 
   //--------------------------------------------------------------------------
-  // Display Information: Parameters of glyph geometry
+  /// Display Information: Parameters of glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get the scale factor applied to the glyphs.
+  /// 
+  /// Get the scale factor applied to the glyphs.
   vtkGetMacro(GlyphScaleFactor, double);
 
-  // Description:
-  // Set the scale factor applied to the glyphs.
+  /// 
+  /// Set the scale factor applied to the glyphs.
   vtkSetMacro(GlyphScaleFactor, double);
 
-  // Description:
-  // Whether the input tensors need eigensystem computation
+  /// 
+  /// Whether the input tensors need eigensystem computation
   vtkGetMacro(GlyphExtractEigenvalues, int);
   vtkSetMacro(GlyphExtractEigenvalues, int);
   vtkBooleanMacro(GlyphExtractEigenvalues, int);
 
   //--------------------------------------------------------------------------
-  // Display Information: Eigenvector to display for lines/tubes glyphs
+  /// Display Information: Eigenvector to display for lines/tubes glyphs
   //--------------------------------------------------------------------------
 
   //BTX
@@ -249,17 +249,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   };
   //ETX
 
-  // Description
-  // Which eigenvector to display with lines or tubes glyphs
+  /// Description
+  /// Which eigenvector to display with lines or tubes glyphs
   vtkGetMacro(GlyphEigenvector, int);
 
-  // Description
-  // Which eigenvector to display with lines or tubes glyphs
+  /// Description
+  /// Which eigenvector to display with lines or tubes glyphs
   //vtkSetMacro(GlyphEigenvector, int);
-    // Description:
-  // Set the type of glyph geometry (line, ellipsoid, etc.) 
+    /// 
+  /// Set the type of glyph geometry (line, ellipsoid, etc.) 
   //vtkSetMacro(GlyphGeometry, int);
-  // Also update the glyph polydata source
+  /// Also update the glyph polydata source
   void SetGlyphEigenvector( int eigenvector ) {
 
     if ( this->GlyphEigenvector != eigenvector ) 
@@ -267,7 +267,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       this->GlyphEigenvector = eigenvector;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
         {
-        // Update the source if the eigenvector has changed
+        /// Update the source if the eigenvector has changed
         this->UpdateGlyphSource();
         }
 
@@ -275,40 +275,40 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       }
   }
 
-  // Description
-  // Display major eigenvector with lines or tubes glyphs
+  /// Description
+  /// Display major eigenvector with lines or tubes glyphs
   void SetGlyphEigenvectorToMajor() {
     this->SetGlyphEigenvector(this->Major);
   };
 
-  // Description
-  // Display "middle" (second) eigenvector with lines or tubes glyphs
+  /// Description
+  /// Display "middle" (second) eigenvector with lines or tubes glyphs
   void SetGlyphEigenvectorToMiddle() {
     this->SetGlyphEigenvector(this->Middle);
   };
 
-  // Description
-  // Display minor eigenvector with lines or tubes glyphs
+  /// Description
+  /// Display minor eigenvector with lines or tubes glyphs
   void SetGlyphEigenvectorToMinor() {
     this->SetGlyphEigenvector(this->Minor);
   };
 
-  // Description:
-  // Return the lowest and highest integers, for use in looping
+  /// 
+  /// Return the lowest and highest integers, for use in looping
   int GetFirstGlyphEigenvector() {return this->Major;};
   int GetLastGlyphEigenvector() {return this->Minor;};
 
-  // Description:
-  // Return a text string describing GlyphEigenvector variable
+  /// 
+  /// Return a text string describing GlyphEigenvector variable
   virtual const char * GetGlyphEigenvectorAsString();
 
   
   //--------------------------------------------------------------------------
-  // Display Information: Parameters of Lines glyph geometry
+  /// Display Information: Parameters of Lines glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Resolution of lines displayed as tensor glyphs
+  /// 
+  /// Resolution of lines displayed as tensor glyphs
   vtkGetMacro(LineGlyphResolution, int);
   //vtkSetMacro(LineGlyphResolution, int);
   void SetLineGlyphResolution( int resolution ) {
@@ -318,7 +318,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       this->LineGlyphResolution = resolution;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
         {
-        // Update the source if the resolution has changed
+        /// Update the source if the resolution has changed
         this->UpdateGlyphSource();
         }
 
@@ -327,15 +327,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   }
 
   //--------------------------------------------------------------------------
-  // Display Information: Parameters of Tubes glyph geometry
+  /// Display Information: Parameters of Tubes glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get the radius of the tube glyph
+  /// 
+  /// Get the radius of the tube glyph
   vtkGetMacro(TubeGlyphRadius, double);
 
-  // Description:
-  // Set the radius of the tube glyph
+  /// 
+  /// Set the radius of the tube glyph
   //vtkSetMacro(TubeGlyphRadius, double);
   void SetTubeGlyphRadius( double radius ) {
 
@@ -344,7 +344,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       this->TubeGlyphRadius = radius;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
         {
-        // Update the source if the radius has changed
+        /// Update the source if the radius has changed
         this->UpdateGlyphSource();
         }
 
@@ -352,8 +352,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       }
   }
 
-  // Description:
-  // Number of sides of tube glyph (3 gives a triangular tube, etc.)
+  /// 
+  /// Number of sides of tube glyph (3 gives a triangular tube, etc.)
   vtkGetMacro(TubeGlyphNumberOfSides, int);
   //vtkSetMacro(TubeGlyphNumberOfSides, int);
   void SetTubeGlyphNumberOfSides( int numberOfSides ) {
@@ -363,7 +363,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       this->TubeGlyphNumberOfSides = numberOfSides;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
         {
-        // Update the source if the numberOfSides has changed
+        /// Update the source if the numberOfSides has changed
         this->UpdateGlyphSource();
         }
 
@@ -371,87 +371,87 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
       }
   }
   //--------------------------------------------------------------------------
-  // Display Information: Parameters of Ellipsoids glyph geometry
+  /// Display Information: Parameters of Ellipsoids glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Number of polygons used in longitude direction for sphere that will
-  // be scaled by tensor to form ellipsoid.
+  /// 
+  /// Number of polygons used in longitude direction for sphere that will
+  /// be scaled by tensor to form ellipsoid.
   vtkGetMacro(EllipsoidGlyphThetaResolution, int);
   vtkSetMacro(EllipsoidGlyphThetaResolution, int);
 
-  // Description:
-  // Number of polygons used in latitude direction for sphere that will
-  // be scaled by tensor to form ellipsoid.
+  /// 
+  /// Number of polygons used in latitude direction for sphere that will
+  /// be scaled by tensor to form ellipsoid.
   vtkGetMacro(EllipsoidGlyphPhiResolution, int);
   vtkSetMacro(EllipsoidGlyphPhiResolution, int);
 
   //--------------------------------------------------------------------------
-  // Display Information: Parameters of Superquadrics glyph geometry
+  /// Display Information: Parameters of Superquadrics glyph geometry
   //--------------------------------------------------------------------------
 
-  // Description:
+  /// 
   vtkGetMacro(SuperquadricGlyphGamma, double);
   vtkSetMacro(SuperquadricGlyphGamma, double);
 
-  // Description:
+  /// 
   vtkGetMacro(SuperquadricGlyphThetaResolution, int);
   vtkSetMacro(SuperquadricGlyphThetaResolution, int);
 
-  // Description:
+  /// 
   vtkGetMacro(SuperquadricGlyphPhiResolution, int);
   vtkSetMacro(SuperquadricGlyphPhiResolution, int);
 
   //--------------------------------------------------------------------------
-  // Display Information: Functions to choose the type of glyph coloring
+  /// Display Information: Functions to choose the type of glyph coloring
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
-  // rotation) selected for display.
+  /// 
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  /// rotation) selected for display.
   vtkGetMacro(ColorGlyphBy, int);
 
-  // Description:
-  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
-  // rotation) selected for display.
+  /// 
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  /// rotation) selected for display.
   vtkSetMacro(ColorGlyphBy, int);
 
-  // Description:
-  // Return the lowest and highest integers, for use in looping
+  /// 
+  /// Return the lowest and highest integers, for use in looping
   int GetFirstColorGlyphBy() {return this->Trace;};
   int GetLastColorGlyphBy() {return this->ColorOrientationMinEigenvector;};
   
-  // Description:
-  // Return a text string describing the ColorGlyphBy
+  /// 
+  /// Return a text string describing the ColorGlyphBy
   virtual const char * GetColorGlyphByAsString();
  
-  // Description:
-  // Set scalar invariant to trace (sum of eigenvalues).
+  /// 
+  /// Set scalar invariant to trace (sum of eigenvalues).
   void ColorGlyphByTrace() {
     this->SetColorGlyphBy(this->Trace);
   };
 
-  // Description:
-  // Set scalar invariant to FA (normalized variance of eigenvalues)
+  /// 
+  /// Set scalar invariant to FA (normalized variance of eigenvalues)
   void ColorGlyphByFractionalAnisotropy() {
     this->SetColorGlyphBy(this->FractionalAnisotropy);
   };  
 
-  // Description:
-  // Set scalar invariant to FA (normalized variance of eigenvalues)
+  /// 
+  /// Set scalar invariant to FA (normalized variance of eigenvalues)
   void ColorGlyphByLinearMeasure() {
     this->SetColorGlyphBy(this->LinearMeasure);
   };  
 
-  // TO DO: add the rest of the scalars
+  /// TO DO: add the rest of the scalars
 
   //--------------------------------------------------------------------------
-  // Convenience functions to get an appropriate glyph source
+  /// Convenience functions to get an appropriate glyph source
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get a polydata object according to current glyph display settings
-  // (so a line, sphere, or tube) to use as a source for a glyphing filter.
+  /// 
+  /// Get a polydata object according to current glyph display settings
+  /// (so a line, sphere, or tube) to use as a source for a glyphing filter.
   vtkGetObjectMacro( GlyphSource, vtkPolyData );
 
  //Helper function to get the string of Scalar enums
@@ -465,50 +465,50 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   void UpdateGlyphSource ( );
 
-  // ---- Parameters that should be written to MRML --- //
+  /// ---- Parameters that should be written to MRML --- //
 
-  // Scalar display parameters
+  /// Scalar display parameters
   int ScalarInvariant;
 
-  // Glyph general parameters
+  /// Glyph general parameters
   int GlyphGeometry;
   int ColorGlyphBy;
   double GlyphScaleFactor;
   int GlyphEigenvector;
   int GlyphExtractEigenvalues;
 
-  // Line Glyph parameters
+  /// Line Glyph parameters
   int LineGlyphResolution;
 
-  // Tube Glyph parameters
+  /// Tube Glyph parameters
   double TubeGlyphRadius;
   int TubeGlyphNumberOfSides;
 
-  // Ellipsoid Glyph parameters
+  /// Ellipsoid Glyph parameters
   int EllipsoidGlyphThetaResolution;
   int EllipsoidGlyphPhiResolution;
 
-  // Superquadric Glyph parameters
+  /// Superquadric Glyph parameters
   double SuperquadricGlyphGamma;
   int SuperquadricGlyphThetaResolution;
   int SuperquadricGlyphPhiResolution;
 
-  // ---- End of parameters that should be written to MRML --- //
+  /// ---- End of parameters that should be written to MRML --- //
 
  
-  // ---- VTK objects for display --- //
+  /// ---- VTK objects for display --- //
   vtkPolyData * GlyphSource;
 
-  // This is used internally to set a pointer to this polydata
-  // and reference count it.  
-  // TO DO: is this causing an extra modified event?
+  /// This is used internally to set a pointer to this polydata
+  /// and reference count it.  
+  /// TO DO: is this causing an extra modified event?
   vtkSetObjectMacro( GlyphSource, vtkPolyData );
 
 
-  // TO DO: add specific lookup tables ranging from 0..1 for or -1 1
-  // for scalar invariants with those ranges
+  /// TO DO: add specific lookup tables ranging from 0..1 for or -1 1
+  /// for scalar invariants with those ranges
 
-  // TO DO: read/write MRML for all parameters
+  /// TO DO: read/write MRML for all parameters
 
 };
 

@@ -33,11 +33,11 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 {
 
   //----------------------------------------------------------------
-  // Friend classes
+  /// Friend classes
   //----------------------------------------------------------------
-  // Description:
-  // These clases are defined as a friend calls of vtkMRMLPlotNode
-  // to call protected the function: GetDrawObject();
+  /// 
+  /// These clases are defined as a friend calls of vtkMRMLPlotNode
+  /// to call protected the function: GetDrawObject();
   //BTX
   friend class vtkSlicerXYPlotWidget;
   friend class vtkMRMLXYPlotManagerNode;
@@ -45,10 +45,10 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 
  public:
   //----------------------------------------------------------------
-  // Constants
+  /// Constants
   //----------------------------------------------------------------
 
-  // Interpolation method
+  /// Interpolation method
   //BTX
   enum {
     INTERP_LINEAR = 0,
@@ -56,7 +56,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   //ETX
 
   //----------------------------------------------------------------
-  // Standard methods for MRML nodes
+  /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
   static vtkMRMLPlotNode *New();
@@ -66,57 +66,57 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "Plot";};
 
-  // Description:
-  // Method to propagate events generated in mrml
+  /// 
+  /// Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //----------------------------------------------------------------
-  // Get and Set Macros
+  /// Get and Set Macros
   //----------------------------------------------------------------
   vtkSetMacro ( Visible, int );
   vtkGetMacro ( Visible, int );
 
-  // Description:
-  // Set line color by SetColor(double, double, double) or SetColor(Double* c[3])
+  /// 
+  /// Set line color by SetColor(double, double, double) or SetColor(Double* c[3])
   vtkSetVector3Macro( Color, double );
   vtkGetVector3Macro( Color, double );
   
   //----------------------------------------------------------------
-  // Access methods
+  /// Access methods
   //----------------------------------------------------------------
 
-  // Description:
-  // Get Y range for given X range.
-  // Returns 0 if it cannot determin the x range.
+  /// 
+  /// Get Y range for given X range.
+  /// Returns 0 if it cannot determin the x range.
   virtual int GetYRange(const double* vtkNotUsed(xrange), double* vtkNotUsed(yrange)) { return 0; };
 
-  // Description:
-  // Set legend of the object for the graph.
+  /// 
+  /// Set legend of the object for the graph.
   void SetLegend(const char* legend)
   {
     this->Legend = legend;
   };
 
 
-  // Description:
-  // Get legend of the object for the graph.
+  /// 
+  /// Get legend of the object for the graph.
   const char* GetLegend()
   {
     return this->Legend.c_str();
@@ -124,21 +124,21 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 
 
   //----------------------------------------------------------------
-  // Methods for Plotting (called from friend classes)
+  /// Methods for Plotting (called from friend classes)
   //----------------------------------------------------------------
  protected:
-  // Description:
-  // Get minimum and muximum X values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum X values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetXRange(double* vtkNotUsed(xrange)) {return 0; };
 
-  // Description:
-  // Get minimum and muximum Y values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum Y values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetYRange(double* vtkNotUsed(yrange)) {return 0;};
 
-  // Description:
-  // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
+  /// 
+  /// Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
   virtual vtkDataObject* GetDrawObject(double* vtkNotUsed(xrange), double* vtkNotUsed(yrange))
   {
     return 0;
@@ -146,7 +146,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 
 
   //----------------------------------------------------------------
-  // Constructor and destroctor
+  /// Constructor and destroctor
   //----------------------------------------------------------------
  protected:
   vtkMRMLPlotNode();
@@ -157,7 +157,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 
  protected:
   //----------------------------------------------------------------
-  // Data
+  /// Data
   //----------------------------------------------------------------
   int Visible;
   double Color[3];

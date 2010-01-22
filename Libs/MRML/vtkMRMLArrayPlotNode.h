@@ -31,10 +31,10 @@ class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
  public:
 
   //----------------------------------------------------------------
-  // Constants
+  /// Constants
   //----------------------------------------------------------------
 
-  // Interpolation method
+  /// Interpolation method
   //BTX
   enum {
     INTERP_LINEAR = 0,
@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   //ETX
 
   //----------------------------------------------------------------
-  // Standard methods for MRML nodes
+  /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
   static vtkMRMLArrayPlotNode *New();
@@ -52,29 +52,29 @@ class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "ArrayPlot";};
 
-  // Description:
-  // Method to propagate events generated in mrml
+  /// 
+  /// Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //----------------------------------------------------------------
-  // Get and Set Methods
+  /// Get and Set Methods
   //----------------------------------------------------------------
 
   //vtkSetObjectMacro ( Array, vtkMRMLDoubleArrayNode );
@@ -85,38 +85,38 @@ class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
   vtkGetMacro ( ErrorBar, int );
 
   //----------------------------------------------------------------
-  // Method for Plotting (called from friend classes)
+  /// Method for Plotting (called from friend classes)
   //----------------------------------------------------------------
  protected:
-  // Description:
-  // Get minimum and muximum X values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum X values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetXRange(double* xrange);
 
-  // Description:
-  // Get minimum and muximum Y values.
-  // Returns 0 if the Y range cannot be determined.
+  /// 
+  /// Get minimum and muximum Y values.
+  /// Returns 0 if the Y range cannot be determined.
   virtual int GetYRange(double* yrange);
   virtual int GetYRange(const double* xrange, double* yrange)
     { return Superclass::GetYRange(xrange, yrange); }
 
-  // Description:
-  // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
+  /// 
+  /// Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
   virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange);
 
   //----------------------------------------------------------------
-  // Subroutines for drawing
+  /// Subroutines for drawing
   //----------------------------------------------------------------
   vtkDoubleArray* CreatePlotDataWithErrorBar(vtkDoubleArray* srcData, double* xrange, double* yrange);
 
  protected:
 
-  // Description:
-  // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
+  /// 
+  /// Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
   virtual vtkDataObject* GetDrawObject() {return NULL; };
 
   //----------------------------------------------------------------
-  // Constructor and destroctor
+  /// Constructor and destroctor
   //----------------------------------------------------------------
  protected:
   vtkMRMLArrayPlotNode();
@@ -127,7 +127,7 @@ class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
 
  protected:
   //----------------------------------------------------------------
-  // Data
+  /// Data
   //----------------------------------------------------------------
   
   vtkMRMLDoubleArrayNode* Array;

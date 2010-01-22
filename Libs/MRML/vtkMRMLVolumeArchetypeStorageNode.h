@@ -11,10 +11,10 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeArchetypeStorageNode - MRML node for representing a volume storage
-// .SECTION Description
-// vtkMRMLVolumeArchetypeStorageNode nodes describe the archetybe based volume storage
-// node that allows to read/write volume data from/to file using generic ITK mechanism.
+///  vtkMRMLVolumeArchetypeStorageNode - MRML node for representing a volume storage
+/// 
+/// vtkMRMLVolumeArchetypeStorageNode nodes describe the archetybe based volume storage
+/// node that allows to read/write volume data from/to file using generic ITK mechanism.
 
 #ifndef __vtkMRMLVolumeArchetypeStorageNode_h
 #define __vtkMRMLVolumeArchetypeStorageNode_h
@@ -35,74 +35,74 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+   /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Do a temp write to update the file list in this storage node with all
-  // file names that are written when write out the ref node
-  // If move is 1, return the directory that contains the written files and
-  // only the written files, for use in a move instead of a double
-  // write. Otherwise return an empty string.
+  /// 
+  /// Do a temp write to update the file list in this storage node with all
+  /// file names that are written when write out the ref node
+  /// If move is 1, return the directory that contains the written files and
+  /// only the written files, for use in a move instead of a double
+  /// write. Otherwise return an empty string.
 //BTX
   std::string UpdateFileList(vtkMRMLNode *refNode, int move = 0);
 //ETX
   
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+ /// Description:
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeArchetypeStorage";};
 
-  // Description:
-  // Center image on read
+  /// 
+  /// Center image on read
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-  // Description:
-  // whether to read single file or the whole series
+  /// 
+  /// whether to read single file or the whole series
   vtkGetMacro(SingleFile, int);
   vtkSetMacro(SingleFile, int);
 
-  // Description:
-  // Whether to use orientation from file
+  /// 
+  /// Whether to use orientation from file
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  // Description:
-  // Return a defualt file extension for writting
+  /// 
+  /// Return a defualt file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
     return "nrrd";

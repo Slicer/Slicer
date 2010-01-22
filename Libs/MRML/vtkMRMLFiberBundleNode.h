@@ -11,12 +11,12 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiberBundleNode - MRML node to represent a fiber bundle from tractography in DTI data.
-// .SECTION Description
-// FiberBundle nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
-// A FiberBundle node contains many fibers and forms the smallest logical unit of tractography 
-// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
-// Visualization parameters for these nodes are controlled by the vtkMRMLFiberBundleDisplayNode class.
+///  vtkMRMLFiberBundleNode - MRML node to represent a fiber bundle from tractography in DTI data.
+/// 
+/// FiberBundle nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
+/// A FiberBundle node contains many fibers and forms the smallest logical unit of tractography 
+/// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
+/// Visualization parameters for these nodes are controlled by the vtkMRMLFiberBundleDisplayNode class.
 //
 
 #ifndef __vtkMRMLFiberBundleNode_h
@@ -46,41 +46,41 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiberBundle";};
 
-  // Description:
-  // get associated line display node or NULL if not set
+  /// 
+  /// get associated line display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetLineDisplayNode();
 
-  // Description:
-  // get associated tube display node or NULL if not set
+  /// 
+  /// get associated tube display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetTubeDisplayNode();
 
-  // Description:
-  // get associated glyph display node or NULL if not set
+  /// 
+  /// get associated glyph display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetGlyphDisplayNode();
 
-  // Description:
-  // add line display node if not already present and return it
+  /// 
+  /// add line display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddLineDisplayNode();
 
-  // Description:
-  // add tube display node if not already present and return it
+  /// 
+  /// add tube display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddTubeDisplayNode();
 
-  // Description:
-  // add glyph display node if not already present and return it
+  /// 
+  /// add glyph display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddGlyphDisplayNode();
 
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();

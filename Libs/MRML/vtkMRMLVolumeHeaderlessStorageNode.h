@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeHeaderlessStorageNode - MRML node for representing a volume strorage
-// .SECTION Description
-// vtkMRMLVolumeHeaderlessStorageNode nodes describes how volume data sets is stored on disk
+///  vtkMRMLVolumeHeaderlessStorageNode - MRML node for representing a volume strorage
+/// 
+/// vtkMRMLVolumeHeaderlessStorageNode nodes describes how volume data sets is stored on disk
 
 #ifndef __vtkMRMLVolumeHeaderlessStorageNode_h
 #define __vtkMRMLVolumeHeaderlessStorageNode_h
@@ -34,55 +34,55 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
+   /// 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
+ /// Description:
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// 
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeHeaderlessStorage";};
 
-  // Description:
-  // Scan order in the file
+  /// 
+  /// Scan order in the file
   vtkGetStringMacro(FileScanOrder);
   vtkSetStringMacro(FileScanOrder);
 
-  // Description:
-  // Two numbers: the number of columns and rows of pixels in each image
+  /// 
+  /// Two numbers: the number of columns and rows of pixels in each image
   vtkGetVector3Macro(FileDimensions, int);
   vtkSetVector3Macro(FileDimensions, int);
 
-  // Description:
-  // Three numbers for the dimensions of each voxel, in millimeters
+  /// 
+  /// Three numbers for the dimensions of each voxel, in millimeters
   vtkGetVector3Macro(FileSpacing, double);
   vtkSetVector3Macro(FileSpacing, double);
   
-  // Description:
-  // The type of data in the file. One of: Char, UnsignedChar, Short, 
-  // UnsignedShort, Int, UnsignedInt, Long, UnsignedLong, Float, Double
+  /// 
+  /// The type of data in the file. One of: Char, UnsignedChar, Short, 
+  /// UnsignedShort, Int, UnsignedInt, Long, UnsignedLong, Float, Double
   vtkSetMacro(FileScalarType, int);
   vtkGetMacro(FileScalarType, int);
 
@@ -111,33 +111,33 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
 
   void SetFileScalarTypeAsString(const char* );
   
-  // Description:
-  // The number of scalar components for each voxel. 
-  // Gray-level data has 1. Color data has 3
+  /// 
+  /// The number of scalar components for each voxel. 
+  /// Gray-level data has 1. Color data has 3
   vtkGetMacro(FileNumberOfScalarComponents, int);
   vtkSetMacro(FileNumberOfScalarComponents, int);
 
-  // Description:
-  // Describes the order of bytes for each voxel.  Little endian 
-  // positions the least-significant byte on the rightmost end, 
-  // and is true of data generated on a PC or SGI.
+  /// 
+  /// Describes the order of bytes for each voxel.  Little endian 
+  /// positions the least-significant byte on the rightmost end, 
+  /// and is true of data generated on a PC or SGI.
   vtkGetMacro(FileLittleEndian, int);
   vtkSetMacro(FileLittleEndian, int);
   vtkBooleanMacro(FileLittleEndian, int);
 
-  // Description:
-  // Center image on read
+  /// 
+  /// Center image on read
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-  // Description:
-  // Check to see if this storage node can handle the file type in the input
-  // string. If input string is null, check URI, then check FileName. 
-  // Subclasses should implement this method.
+  /// 
+  /// Check to see if this storage node can handle the file type in the input
+  /// string. If input string is null, check URI, then check FileName. 
+  /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  // Description:
-  // Initialize all the supported write file types
+  /// 
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
 protected:

@@ -7,8 +7,8 @@
 #include "vtkCollection.h"
 #include "vtkMRMLTransformableNode.h"
 
-// .NAME vtkMRMLROIListNode - MRML list node to represent a list of ROINODE 
-// .SECTION Description
+///  vtkMRMLROIListNode - MRML list node to represent a list of ROINODE 
+/// 
 
 class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 {
@@ -18,90 +18,90 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     void PrintSelf(ostream& os, vtkIndent indent);
 
     //--------------------------------------------------------------------------
-    // MRMLNode methods
+    /// MRMLNode methods
     //--------------------------------------------------------------------------
     virtual vtkMRMLNode* CreateNodeInstance();
 
-    // Description:
-    // Set node attributes
+    /// 
+    /// Set node attributes
     virtual void ReadXMLAttributes( const char** atts);
 
-    // Description:
-    // Write this node's information to a MRML file in XML format.
+    /// 
+    /// Write this node's information to a MRML file in XML format.
     virtual void WriteXML(ostream& of, int indent);
 
-    // Description:
-    // Copy the node's attributes to this object
+    /// 
+    /// Copy the node's attributes to this object
     virtual void Copy(vtkMRMLNode *node);
 
-    // Description:
-    // Get node XML tag name (like Volume, Model)
+    /// 
+    /// Get node XML tag name (like Volume, Model)
     virtual const char* GetNodeTagName() {return "ROIList";};
 
-    // Description:
-    // 
+    /// 
+    /// 
     virtual void UpdateScene(vtkMRMLScene *scene);
 
-    // Description:
-    // update display node ids
+    /// 
+    /// update display node ids
     void UpdateReferences();
 
-    // Description:
-    // Get the number of ROIs in the list
+    /// 
+    /// Get the number of ROIs in the list
     int GetNumberOfROIs();
 
-    // Description:
-    // Restrict access to the ROI, pass in a value via the list
-    // so that the appropriate events can be invoked. Returns 0 on success
+    /// 
+    /// Restrict access to the ROI, pass in a value via the list
+    /// so that the appropriate events can be invoked. Returns 0 on success
 
-    // Description:
-    // Get/Set for Nth ROI node Position in RAS cooridnates
-    // Note: The ROI Postion is the center of the ROI 
+    /// 
+    /// Get/Set for Nth ROI node Position in RAS cooridnates
+    /// Note: The ROI Postion is the center of the ROI 
     int SetNthROIXYZ(int n, double x, double y, double z);
     double *GetNthROIXYZ(int n);
-    // Description:
-    // Get/Set for Nth radius of the ROI in RAS cooridnates
+    /// 
+    /// Get/Set for Nth radius of the ROI in RAS cooridnates
     int SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz);
     double *GetNthROIRadiusXYZ(int n);
-    // Description:
-    // Get/Set for Nth ROI node Position in IJK cooridnates
-    // Note: The ROI Postion is the center of the ROI 
+    /// 
+    /// Get/Set for Nth ROI node Position in IJK cooridnates
+    /// Note: The ROI Postion is the center of the ROI 
     int SetNthROIIJK(int n, double i, double j, double k);
     double *GetNthROIIJK(int n);
-    // Description:
-    // Get/Set for Nth radius of the ROI in IJK cooridnates
+    /// 
+    /// Get/Set for Nth radius of the ROI in IJK cooridnates
     int SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk);
     double *GetNthROIRadiusIJK(int n);
 
-    // Description:
-    // Get/Set for label text of the Nth ROI  
+    /// 
+    /// Get/Set for label text of the Nth ROI  
     int SetNthROILabelText(int n, const char *text);
     const char *GetNthROILabelText(int n);
-    // Description:
-    // Get/Set for selected flag of the Nth ROI  
+    /// 
+    /// Get/Set for selected flag of the Nth ROI  
     int SetNthROISelected(int n, int flag);
     int GetNthROISelected(int n);
-    // Description:
-    // Get/Set for ID of the Nth ROI  
+    /// 
+    /// Get/Set for ID of the Nth ROI  
     int SetNthROIID(int n, const char *id); 
     const char *GetNthROIID(int n);
    
-    // Description:
-    // Add an ROI to the list with default values
+    /// 
+    /// Add an ROI to the list with default values
     int AddROI( );
-    // Description:
-    // Remove an ROI from the list 
+    /// 
+    /// Remove an ROI from the list 
     void RemoveROI(int i);
-    // Description:
-    // Remove all ROIs from the list 
+    /// 
+    /// Remove all ROIs from the list 
     void RemoveAllROIs();
 
     void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
     //BTX
-    // Description:
-    // DisplayModifiedEvent is generated when display node parameters is changed
-    // PolyDataModifiedEvent is generated when something else is changed
+    /// 
+    /// DisplayModifiedEvent is generated when display node parameters is changed
+    /// PolyDataModifiedEvent is generated when something else is changed
     enum
       {
       DisplayModifiedEvent = 21000,  
@@ -110,70 +110,70 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
       };
     //ETX
 
-    // Description:
-    // Get/Set for list visibility 
+    /// 
+    /// Get/Set for list visibility 
     void SetVisibility(int visible);
     vtkGetMacro(Visibility,int);
 
-    // Description:
-    // Get/Set for Text scale
+    /// 
+    /// Get/Set for Text scale
     void SetTextScale(double scale);
     vtkGetMacro(TextScale,double);
 
-    // Description:
-    // Get/Set for ROI and Text color
+    /// 
+    /// Get/Set for ROI and Text color
     void SetColor(double r, double g, double b);
     void SetColor(double c[3]);
     vtkGetVectorMacro(Color,double,3);
 
-    // Description:
-    // Get/Set for colour for when an ROI is selected
+    /// 
+    /// Get/Set for colour for when an ROI is selected
     void SetSelectedColor(double r, double g, double b);
     void SetSelectedColor(double c[3]);
     vtkGetVectorMacro(SelectedColor,double,3);
 
-    // Description:
-    // Opacity of the ROI expressed as a number from 0 to 1
+    /// 
+    /// Opacity of the ROI expressed as a number from 0 to 1
     void SetOpacity(double opacity);
     vtkGetMacro(Opacity, double);
 
-    // Description:
-    // Ambient of the ROI expressed as a number from 0 to 100
+    /// 
+    /// Ambient of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Ambient, double);
     vtkGetMacro(Ambient, double);
 
-    // Description:
-    // Diffuse of the ROI expressed as a number from 0 to 100
+    /// 
+    /// Diffuse of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Diffuse, double);
     vtkGetMacro(Diffuse, double);
 
-    // Description:
-    // Specular of the ROI expressed as a number from 0 to 100
+    /// 
+    /// Specular of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Specular, double);
     vtkGetMacro(Specular, double);
 
-    // Description:
-    // Power of the ROI expressed as a number from 0 to 100
+    /// 
+    /// Power of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Power, double);
     vtkGetMacro(Power, double);
 
-    // Description:
-    // Get/Set for the volume ID associated with the ROI
+    /// 
+    /// Get/Set for the volume ID associated with the ROI
     vtkGetStringMacro(VolumeNodeID);
     vtkSetStringMacro(VolumeNodeID);
 
-    // Description:
-    // Set the Volume node ID for each ROI node in the list
+    /// 
+    /// Set the Volume node ID for each ROI node in the list
     void SetAllVolumeNodeID();
 
-    // Description:
-    // Syncronize the ROI position and radius in IJK 
-    // coordinates according RAS coordinates
+    /// 
+    /// Syncronize the ROI position and radius in IJK 
+    /// coordinates according RAS coordinates
     void UpdateIJK();
 
-    // Description:
-    // disallow access to the ROI box by outside classes, have them use
-    // SetNthROI
+    /// 
+    /// disallow access to the ROI box by outside classes, have them use
+    /// SetNthROI
     vtkMRMLROINode* GetNthROINode(int n);
 
   protected:
@@ -183,8 +183,8 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     vtkMRMLROIListNode(const vtkMRMLROIListNode&);
     void operator=(const vtkMRMLROIListNode&);
 
-    // Description:
-    // The collection of ROI that make up this list
+    /// 
+    /// The collection of ROI that make up this list
     vtkCollection *ROIList;
 
     double TextScale;
@@ -193,16 +193,16 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     double SelectedColor[3];
 
 
-    // Description:
-    // Numbers relating to the 3D render of the ROI
+    /// 
+    /// Numbers relating to the 3D render of the ROI
     double Opacity;
     double Ambient;
     double Diffuse;
     double Specular;
     double Power;
     
-    // Description:
-    // The ID of the volume node that is associated with the ROI 
+    /// 
+    /// The ID of the volume node that is associated with the ROI 
     char *VolumeNodeID;
 };
 #endif

@@ -11,11 +11,11 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLClipModelsNode - MRML node to represent three clipping planes.
-// .SECTION Description
-// The vtkMRMLClipModelsNode MRML node stores 
-// the direction of clipping for each of the three clipping planes.
-// It also stored  the type of combined clipping operation as either intersection or union
+///  vtkMRMLClipModelsNode - MRML node to represent three clipping planes.
+/// 
+/// The vtkMRMLClipModelsNode MRML node stores 
+/// the direction of clipping for each of the three clipping planes.
+/// It also stored  the type of combined clipping operation as either intersection or union
 
 #ifndef __vtkMRMLClipModelsNode_h
 #define __vtkMRMLClipModelsNode_h
@@ -35,31 +35,31 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
   
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ClipModels";};
 
-  // Description:
-  // Indicates the type of clipping
-  // "Intersection" or "Union"
+  /// 
+  /// Indicates the type of clipping
+  /// "Intersection" or "Union"
   vtkGetMacro(ClipType, int);
   vtkSetMacro(ClipType, int);
 
@@ -71,21 +71,21 @@ public:
     };
   //ETX
 
-  // Description:
-  // Indicates if the Red slice clipping is Off, 
-  // Positive space, or Negative space
+  /// 
+  /// Indicates if the Red slice clipping is Off, 
+  /// Positive space, or Negative space
   vtkGetMacro(RedSliceClipState, int);
   vtkSetMacro(RedSliceClipState, int);
 
-  // Description:
-  // Indicates if the Yellow slice clipping is Off, 
-  // Positive space, or Negative space
+  /// 
+  /// Indicates if the Yellow slice clipping is Off, 
+  /// Positive space, or Negative space
   vtkGetMacro(YellowSliceClipState, int);
   vtkSetMacro(YellowSliceClipState, int);
 
-  // Description:
-  // Indicates if the Green slice clipping is Off, 
-  // Positive space, or Negative space
+  /// 
+  /// Indicates if the Green slice clipping is Off, 
+  /// Positive space, or Negative space
   vtkGetMacro(GreenSliceClipState, int);
   vtkSetMacro(GreenSliceClipState, int);
 

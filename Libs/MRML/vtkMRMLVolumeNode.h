@@ -11,15 +11,15 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
-// .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+///  vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
+/// 
+/// Volume nodes describe data sets that can be thought of as stacks of 2D 
+/// images that form a 3D volume.  Volume nodes describe where the images 
+/// are stored on disk, how to render the data (window and level), and how 
+/// to read the files.  This information is extracted from the image 
+/// headers (if they exist) at the time the MRML file is generated.  
+/// Consequently, MRML files isolate MRML browsers from understanding how 
+/// to read the myriad of file formats for medical data. 
 
 #ifndef __vtkMRMLVolumeNode_h
 #define __vtkMRMLVolumeNode_h
@@ -47,40 +47,40 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  // Description:
-  // Read node attributes from XML file
+  /// 
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   void CopyOrientation(vtkMRMLVolumeNode *node);
 
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  // Description:
-  // Finds the storage node and read the data
+  /// 
+  /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   //--------------------------------------------------------------------------
-  // RAS->IJK Matrix Calculation
+  /// RAS->IJK Matrix Calculation
   //--------------------------------------------------------------------------
 
-  // Description:
-  // The order of slices in the volume. One of: LR (left-to-right), 
-  // RL, AP, PA, IS, SI. This information is encoded in the rasToIJKMatrix.
-  // This matrix can be computed either from corner points, or just he
-  // scanOrder.
+  /// 
+  /// The order of slices in the volume. One of: LR (left-to-right), 
+  /// RL, AP, PA, IS, SI. This information is encoded in the rasToIJKMatrix.
+  /// This matrix can be computed either from corner points, or just he
+  /// scanOrder.
   static void ComputeIJKToRASFromScanOrder(char *order, 
                                            double* spacing, int *dims,
                                            bool centerImage,
@@ -101,52 +101,52 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   void GetJToRASDirection(double dirs[3]);
   void GetKToRASDirection(double dirs[3]);
 
-  // Description:
-  // Spacing and Origin, with the Directions, are the independent
-  // parameters that go to make up the IJKToRAS matrix
+  /// 
+  /// Spacing and Origin, with the Directions, are the independent
+  /// parameters that go to make up the IJKToRAS matrix
   vtkGetVector3Macro (Spacing, double);
   vtkSetVector3Macro (Spacing, double);
   vtkGetVector3Macro (Origin, double);
   vtkSetVector3Macro (Origin, double);
 
-  // Description:
-  // Get the IJKToRAS Matrix that includes the spacing and origin
-  // information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1)
-  // RASToIJK is the inverse of this
+  /// 
+  /// Get the IJKToRAS Matrix that includes the spacing and origin
+  /// information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1)
+  /// RASToIJK is the inverse of this
   void GetIJKToRASMatrix(vtkMatrix4x4* mat);
   void GetRASToIJKMatrix(vtkMatrix4x4* mat);
 
   void GetIJKToRASDirectionMatrix(vtkMatrix4x4* mat);
   void SetIJKToRASDirectionMatrix(vtkMatrix4x4* mat);
 
-  // Description:
-  // Convenience methods to set the directions, spacing, and origin 
-  // from a matrix
+  /// 
+  /// Convenience methods to set the directions, spacing, and origin 
+  /// from a matrix
   void SetIJKToRASMatrix(vtkMatrix4x4* mat);
   void SetRASToIJKMatrix(vtkMatrix4x4* mat);
 
-  // Description:
-  // Associated display MRML node
+  /// 
+  /// Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode()
   {
     return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
-  // Description:
-  // Associated ImageData
+  /// 
+  /// Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
   void SetAndObserveImageData(vtkImageData *ImageData);
 
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// 
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
 //BTX
-  // Description:
-  // DisplayModifiedEvent is generated when display node parameters is changed
-  // PolyDataModifiedEvent is generated when PloyData is changed
+  /// 
+  /// DisplayModifiedEvent is generated when display node parameters is changed
+  /// PolyDataModifiedEvent is generated when PloyData is changed
   enum
     {
       ImageDataModifiedEvent = 18001,
@@ -154,8 +154,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 //ETX
 
 //BTX
-  // Description:
-  // Set/Get the ITK MetaDataDictionary
+  /// 
+  /// Set/Get the ITK MetaDataDictionary
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 //ETX
@@ -164,13 +164,13 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  // Description:
-  // Subclasses can define actions to take when the mrml scene passes an event
-  // that the image data has changed, usually call CalculateAutoLevels
+  /// 
+  /// Subclasses can define actions to take when the mrml scene passes an event
+  /// that the image data has changed, usually call CalculateAutoLevels
   virtual void UpdateFromMRML();
   
-  // Description:
-  // Create default storage node or NULL if does not have one
+  /// 
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();
@@ -185,10 +185,10 @@ protected:
 
   vtkSetObjectMacro(ImageData, vtkImageData);
 
-  // these are unit length direction cosines
+  /// these are unit length direction cosines
   double IJKToRASDirections[3][3];
 
-  // these are mappings to mm space
+  /// these are mappings to mm space
   double Spacing[3];
   double Origin[3];
 

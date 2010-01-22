@@ -19,7 +19,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkDataFileFormatHelper *New();
   vtkTypeRevisionMacro(vtkDataFileFormatHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -29,8 +29,8 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   const char* GetClassNameFromFormatString(
    const char* fileformat);
   
-  // Description:
-  // Get the itkimageio supported file formats.
+  /// 
+  /// Get the itkimageio supported file formats.
   //vtkGetObjectMacro ( ITKSupportedWriteFileFormats, vtkStringArray);
   virtual vtkStringArray* GetITKSupportedWriteFileFormats();
   virtual vtkStringArray* GetITKSupportedReadFileFormats()
@@ -51,7 +51,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   vtkStringArray* SupportedWriteFileClassNames;
   vtkStringArray* ITKSupportedWriteFileFormats;
 
-  // This will initialize the supported file formats
+  /// This will initialize the supported file formats
   virtual void InitializeITKSupportedFileFormats();
   virtual void PopulateITKSupportedWriteFileTypes();
   virtual void AddSupportedWriterFileFormat(
