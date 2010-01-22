@@ -28,7 +28,7 @@ class VTK_Qdec_EXPORT QdecSubject
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecSubject ( string isId, vector < QdecFactor* > iFactors );
@@ -70,18 +70,18 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
-  // the subject identifier, as found in the 'fsid' column
-  // of the table.dat input file.
+  /// the subject identifier, as found in the 'fsid' column
+  /// of the table.dat input file.
   string msId;
 
-  // Stores factor values (either discrete or continous)
-  // pertaining to this subject.
+  /// Stores factor values (either discrete or continous)
+  /// pertaining to this subject.
   vector < QdecFactor* > mFactors;
 
 };
 //ETX
-#endif // QDECSUBJECT_H
+#endif /// QDECSUBJECT_H
 

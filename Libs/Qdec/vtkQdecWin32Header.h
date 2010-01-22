@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkQdecWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkQdecWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  vtkQdecWin32Header - manage Windows system differences
+/// 
+/// The vtkQdecWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkQdecWin32Header_h
 #define __vtkQdecWin32Header_h
@@ -34,6 +34,6 @@
 #endif
 
 #if defined(WIN32)
-// disable the warning about non exported templates
+/// disable the warning about non exported templates
 #pragma warning( disable: 4251 )
 #endif

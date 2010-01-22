@@ -33,7 +33,7 @@ class VTK_Qdec_EXPORT QdecProject
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecProject ( );
@@ -273,7 +273,7 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
   string mfnProjectFile;
@@ -281,7 +281,7 @@ private:
   QdecGlmDesign* mGlmDesign;
   QdecGlmFit* mGlmFitter;
 
-  // The command format to run to zip and unzip a file.
+  /// The command format to run to zip and unzip a file.
   string msBinaryPath;
   string msZipCommandFormat;
   string msUnzipCommandFormat;
@@ -292,4 +292,4 @@ private:
 
 };
 
-#endif // QDECPROJECT_H
+#endif /// QDECPROJECT_H

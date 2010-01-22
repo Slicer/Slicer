@@ -26,14 +26,14 @@ class  VTK_Qdec_EXPORT QdecGlmFit
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecGlmFit ( );
 
   virtual ~QdecGlmFit ( );
 
-  // public attribute accessor methods
+  /// public attribute accessor methods
   //
 
 
@@ -68,11 +68,11 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
   QdecGlmFitResults* mGlmFitResults;
 
 };
 
-#endif // QDECGLMFIT_H
+#endif /// QDECGLMFIT_H

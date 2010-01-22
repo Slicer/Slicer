@@ -29,7 +29,7 @@ class VTK_Qdec_EXPORT QdecDataTable
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecDataTable ( );
@@ -118,15 +118,15 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
   string mfnFileName;
 
   vector < QdecFactor* > mFactors;
 
-  // Stores subject data (id and factors) as read from the
-  // table.dat input file.
+  /// Stores subject data (id and factors) as read from the
+  /// table.dat input file.
   vector < QdecSubject* > mSubjects;
 
   /**
@@ -142,4 +142,4 @@ private:
 
 };
 
-#endif // QDECDATATABLE_H
+#endif /// QDECDATATABLE_H

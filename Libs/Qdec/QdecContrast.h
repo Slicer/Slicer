@@ -33,7 +33,7 @@ class  VTK_Qdec_EXPORT QdecContrast
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecContrast ( vector< double > iaVector,
@@ -76,7 +76,7 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
   vector< double > maVector;
@@ -86,4 +86,4 @@ private:
 
 };
 
-#endif // QDECCONTRAST_H
+#endif /// QDECCONTRAST_H

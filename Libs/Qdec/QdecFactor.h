@@ -31,16 +31,16 @@ public:
   static const int qdecDiscreteFactorType = 1;
   static const int qdecContinuousFactorType = 2;
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecFactor ( const char* isName,
                            int iType /* ==1 discrete or ==2 continuous */ );
   QdecFactor ( const char* isName,
-                           int iType, // ==1 discrete
+                           int iType, /// ==1 discrete
                            const char* iValue );
   QdecFactor ( const char* isName,
-                           int iType, // ==2 continuous
+                           int iType, /// ==2 continuous
                            double iValue );
 
   virtual ~QdecFactor ( );
@@ -120,22 +120,22 @@ public:
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
-  // This is the name of column in the table.dat file containing
-  // this factor data for each subject.
+  /// This is the name of column in the table.dat file containing
+  /// this factor data for each subject.
   string msName;
 
-  // if ==1, continuous
-  // if ==2, discrete
+  /// if ==1, continuous
+  /// if ==2, discrete
   int mType;
 
-  // Names of possible levels (for instance, if this factor is 'gender',
-  // then the two possible names are 'Female' and 'Male').
+  /// Names of possible levels (for instance, if this factor is 'gender',
+  /// then the two possible names are 'Female' and 'Male').
   vector< string > mLevelNames;
 
-  // true if user create a factor.levels file containing the valid level names
+  /// true if user create a factor.levels file containing the valid level names
   bool mHaveDotLevelsFile;
 
   string msDiscreteValue;
@@ -144,4 +144,4 @@ private:
 
 };
 
-#endif // QDECFACTOR_H
+#endif /// QDECFACTOR_H

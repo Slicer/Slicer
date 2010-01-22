@@ -34,7 +34,7 @@ class VTK_Qdec_EXPORT QdecGlmDesign
 {
 public:
 
-  // Constructors/Destructors
+  /// Constructors/Destructors
   //
 
   QdecGlmDesign ( QdecDataTable* iDataTable );
@@ -230,26 +230,26 @@ public:
    * Sets FsgdFileName and reads in the values into the current design
    * @return int
    */
-//  int ReadFsgdFile (const char* fsgdFile );
+///  int ReadFsgdFile (const char* fsgdFile );
 
 private:
 
-  // private attributes
+  /// private attributes
   //
 
   bool mbValid;
   QdecDataTable* mDataTable;
   string msName;
-  // Stores seleted discrete factors.  Initially empty.
+  /// Stores seleted discrete factors.  Initially empty.
   vector< QdecFactor* > mDiscreteFactors;
-  // Stores selected continous factors.  Initially empty.
+  /// Stores selected continous factors.  Initially empty.
   vector< QdecFactor* > mContinuousFactors;
   string msMeasure;
   string msHemi;
   int mSmoothness;
   string mfnSubjectsDir;
   string msAverageSubject;
-  // Stores contrasts created from an fsgdf file. Can be empty.
+  /// Stores contrasts created from an fsgdf file. Can be empty.
   vector< QdecContrast* > mContrasts;
   string mfnFsgdfFile;
   string mfnYdataFile;
@@ -257,14 +257,14 @@ private:
   string mfnWorkingDir;
   ProgressUpdateGUI* mProgressUpdateGUI;  
 
-  // A list of excluded subjects. These will not be included when
-  // writing the ydata file. The key values are subject IDs, as found
-  // in data table, and if there is a value present in the set, that
-  // subject is to be excluded.
+  /// A list of excluded subjects. These will not be included when
+  /// writing the ydata file. The key values are subject IDs, as found
+  /// in data table, and if there is a value present in the set, that
+  /// subject is to be excluded.
 //BTX
   std::set<std::string> maExcludedSubjects;
 //ETX
-  // private methods
+  /// private methods
   //
 
   int GetNumberOfDiscreteFactors ( ) 
@@ -319,4 +319,4 @@ private:
   
 };
 
-#endif // QDECGLMDESIGN_H
+#endif /// QDECGLMDESIGN_H
