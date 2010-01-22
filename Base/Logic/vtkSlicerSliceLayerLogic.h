@@ -12,20 +12,20 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerSliceLayerLogic - slicer logic class for slice manipulation
-// .SECTION Description
-// This class manages the logic associated with reslicing of volumes
-// (but not the GUI).  Features of the class include:
+///  vtkSlicerSliceLayerLogic - slicer logic class for slice manipulation
+/// 
+/// This class manages the logic associated with reslicing of volumes
+/// (but not the GUI).  Features of the class include:
 //
-// - Reslicing 
-// -- uses the vtkImageData and IJKToRAS transform from a vtkMRMLVolumeNode 
-// -- disp
-// -- uses a current slice view specification (typically set by vtkSlicerSliceLogic)
-// - Outputs
-// -- Colors vtkImageData for the given slice
-// -- image is mapped through current window/level and lookup table
+/// - Reslicing 
+/// -- uses the vtkImageData and IJKToRAS transform from a vtkMRMLVolumeNode 
+/// -- disp
+/// -- uses a current slice view specification (typically set by vtkSlicerSliceLogic)
+/// - Outputs
+/// -- Colors vtkImageData for the given slice
+/// -- image is mapped through current window/level and lookup table
 //
-// This class can also be used for resampling volumes for further computation.
+/// This class can also be used for resampling volumes for further computation.
 //
 
 
@@ -66,77 +66,77 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerSliceLayerLogic *New();
   vtkTypeRevisionMacro(vtkSlicerSliceLayerLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // The volume node to operate on
+  /// 
+  /// The volume node to operate on
   vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
   void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
 
-  // Description:
-  // The volume display node has the render properties of the volume
-  // - this node is set implicitly when the volume is set
-  //   and it is observed by this logic
+  /// 
+  /// The volume display node has the render properties of the volume
+  /// - this node is set implicitly when the volume is set
+  ///   and it is observed by this logic
   vtkGetObjectMacro (VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
 
-  // Description:
-  // The slice node that defines the view 
+  /// 
+  /// The slice node that defines the view 
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
 
-  // Description:
-  // The image reslice or slice being used
+  /// 
+  /// The image reslice or slice being used
   vtkGetObjectMacro (Slice, vtkImageSlice);
   vtkGetObjectMacro (Reslice, vtkImageResliceMask);
 
-  // Description:
-  // Select if this is a label layer or not (it currently determines if we use
-  // the label outline filter)
+  /// 
+  /// Select if this is a label layer or not (it currently determines if we use
+  /// the label outline filter)
   vtkGetMacro (IsLabelLayer, int);
   vtkSetMacro (IsLabelLayer, int);
   vtkBooleanMacro (IsLabelLayer, int);
 
-  // Description:
-  // The filter that applies the threshold
+  /// 
+  /// The filter that applies the threshold
   vtkGetObjectMacro (Threshold, vtkImageThreshold);
 
-  // Description:
-  // The filter that turns the label map into an outline
+  /// 
+  /// The filter that turns the label map into an outline
   vtkGetObjectMacro (LabelOutline, vtkImageLabelOutline);
   
-  // Description:
-  // The filter that applies the threshold to the input of the Reslice
-  // so there's a fully opaque alpha channel within the image
-  // but fully transparent outside of the image
+  /// 
+  /// The filter that applies the threshold to the input of the Reslice
+  /// so there's a fully opaque alpha channel within the image
+  /// but fully transparent outside of the image
   vtkGetObjectMacro (ResliceThreshold, vtkImageThreshold);
 
-  // Description:
-  // The add the alpha channel onto the image
+  /// 
+  /// The add the alpha channel onto the image
   vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
 
-  // Description:
-  // The add the alpha channel onto the image before the reslice
+  /// 
+  /// The add the alpha channel onto the image before the reslice
   vtkGetObjectMacro (ResliceAppendComponents, vtkImageAppendComponents);
 
-  // Description:
-  // Extract the two channels after reslice for separate processing
+  /// 
+  /// Extract the two channels after reslice for separate processing
   vtkGetObjectMacro (ResliceExtractLuminance, vtkImageExtractComponents);
   vtkGetObjectMacro (ResliceExtractAlpha, vtkImageExtractComponents);
 
-  // Description:
-  // Used to convert the alpha channel of the reslice output to be unsigned char
-  // so it can be blended with the image based threshold
+  /// 
+  /// Used to convert the alpha channel of the reslice output to be unsigned char
+  /// so it can be blended with the image based threshold
   vtkGetObjectMacro (ResliceAlphaCast, vtkImageCast);
 
-  // Description:
-  // combine the reslice with the threshold 
+  /// 
+  /// combine the reslice with the threshold 
   vtkGetObjectMacro (AlphaLogic, vtkImageLogic);
 
-  // Description:
-  // Get the output of the pipeline for this layer
+  /// 
+  /// Get the output of the pipeline for this layer
   vtkImageData *GetImageData () { 
     if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL) 
       {
@@ -160,27 +160,27 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
 
   void UpdateImageDisplay();
 
-  // Description:
-  // provide the virtual method that updates this Logic based
-  // on mrml changes
+  /// 
+  /// provide the virtual method that updates this Logic based
+  /// on mrml changes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
-  // Description:
-  // set the Reslice transforms to reflect the current state
-  // of the VolumeNode and the SliceNode
+  /// 
+  /// set the Reslice transforms to reflect the current state
+  /// of the VolumeNode and the SliceNode
   void UpdateTransforms();
 
   void UpdateGlyphs(vtkImageData *sliceImage); 
 
 
-  // Description:
-  // Check that we are observing the correct display node
-  // (correct means the same one that the volume node is referencing)
+  /// 
+  /// Check that we are observing the correct display node
+  /// (correct means the same one that the volume node is referencing)
   void UpdateNodeReferences(); 
 
-  // Description:
-  // The current reslice transform XYToIJK
+  /// 
+  /// The current reslice transform XYToIJK
   vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
     
 protected:
@@ -189,15 +189,15 @@ protected:
   vtkSlicerSliceLayerLogic(const vtkSlicerSliceLayerLogic&);
   void operator=(const vtkSlicerSliceLayerLogic&);
 
-  // Description:
-  // the MRML Nodes that define this Logic's parameters
+  /// 
+  /// the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNodeObserved;
   vtkMRMLSliceNode *SliceNode;
 
-  // Description:
-  // the VTK class instances that implement this Logic's operations
+  /// 
+  /// the VTK class instances that implement this Logic's operations
   vtkImageThreshold *ResliceThreshold;
   vtkImageAppendComponents *ResliceAppendComponents;
   vtkImageExtractComponents *ResliceExtractLuminance;
@@ -210,8 +210,8 @@ protected:
   vtkImageLabelOutline *LabelOutline;
   vtkImageAppendComponents *AppendComponents;
 
-  // Description:
-  // VTK class instances that implement the DWI logic operations
+  /// 
+  /// VTK class instances that implement the DWI logic operations
   vtkImageExtractComponents *DWIExtractComponent;
 
   vtkImageReslice *DTIReslice;
@@ -220,7 +220,7 @@ protected:
   vtkAssignAttribute* AssignAttributeTensorsFromScalars;
   vtkAssignAttribute* AssignAttributeScalarsFromTensors;
 
-  // TODO: make this a vtkAbstractTransform for non-linear
+  /// TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
 
   int IsLabelLayer;

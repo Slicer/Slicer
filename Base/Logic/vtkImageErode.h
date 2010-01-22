@@ -11,10 +11,10 @@
   Version:   $Revision: 1.17 $
 
 =========================================================================auto=*/
-// .NAME vtkImageErode -  Performs erosion
-// .SECTION Description
-// Erodes pixels of specified Foreground value by setting them 
-// to the Background value. Variable 3D connectivity (4- or 8-neighbor).
+///  vtkImageErode -  Performs erosion
+/// 
+/// Erodes pixels of specified Foreground value by setting them 
+/// to the Background value. Variable 3D connectivity (4- or 8-neighbor).
 
 #ifndef __vtkImageErode_h
 #define __vtkImageErode_h
@@ -29,9 +29,9 @@ public:
   static vtkImageErode *New();
   vtkTypeMacro(vtkImageErode,vtkImageNeighborhoodFilter);
     
-  // Description: 
-  // Background and foreground pixel values in the image.
-  // Usually 0 and some label value, respectively.
+  ///  
+  /// Background and foreground pixel values in the image.
+  /// Usually 0 and some label value, respectively.
   vtkSetMacro(Background, float);
   vtkGetMacro(Background, float);
   vtkSetMacro(Foreground, float);

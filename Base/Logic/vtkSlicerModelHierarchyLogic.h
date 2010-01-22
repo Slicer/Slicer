@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerModelHierarchyLogic - slicer logic class for volumes manipulation
-// .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the volumes
+///  vtkSlicerModelHierarchyLogic - slicer logic class for volumes manipulation
+/// 
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the volumes
 
 
 #ifndef __vtkSlicerModelHierarchyLogic_h
@@ -35,18 +35,18 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerModelHierarchyLogic *New();
   vtkTypeRevisionMacro(vtkSlicerModelHierarchyLogic,vtkObject);
 
   
-  // Description:
-  // Given model id return it's hierarchy 
-  // or NULL if it does not have one
+  /// 
+  /// Given model id return it's hierarchy 
+  /// or NULL if it does not have one
   vtkMRMLModelHierarchyNode* GetModelHierarchyNode(const char *modelNodeID);
   
-  // Description:
-  // Return number of model that are in a hierarchy 
+  /// 
+  /// Return number of model that are in a hierarchy 
   int GetNumberOfModelsInHierarchy()
     {
     this->UpdateModelToHierarchyMap();
@@ -54,21 +54,21 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
     };
 
 //BTX
-  // Description:
-  // Given model hierarchy node returns all it's children recursively. 
+  /// 
+  /// Given model hierarchy node returns all it's children recursively. 
   void GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
                                  std::vector< vtkMRMLModelHierarchyNode *> &childrenNodes);
 //ETX
 
-  // Description:
-  // Call this to update the cache when hierarchy is modified. 
+  /// 
+  /// Call this to update the cache when hierarchy is modified. 
   void HierarchyIsModified()
     {
     ModelHierarchyNodesMTime = 0;
     HierarchyChildrenNodesMTime = 0;
     }
-  // Description:
-  // Update logic state when MRML scene chenges
+  /// 
+  /// Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );    
@@ -78,9 +78,9 @@ protected:
   vtkSlicerModelHierarchyLogic(const vtkSlicerModelHierarchyLogic&);
   void operator=(const vtkSlicerModelHierarchyLogic&);
   
-  // Description:
-  // Create model to hierarchy map, 
-  // return number of model hierarchy nodes
+  /// 
+  /// Create model to hierarchy map, 
+  /// return number of model hierarchy nodes
   int UpdateModelToHierarchyMap();
   
   void UpdateHierarchyChildrenMap();

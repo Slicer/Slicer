@@ -25,10 +25,10 @@
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-// pretty big
+/// pretty big
 #define INF 1e20 
 
-// outside margin
+/// outside margin
 #define BAND_OUT 3
 
 #define GRANULARITY_PROGRESS 20
@@ -49,7 +49,7 @@ struct FMleaf {
   int nodeIndex;
 };
 
-// these typedef are for tclwrapper...
+/// these typedef are for tclwrapper...
 typedef std::vector<FMleaf> VecFMleaf;
 typedef std::vector<int> VecInt;
 
@@ -62,11 +62,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImag
 
   double powerSpeed;
 
-  int nNeighbors; // =6 pb wrap, cannot be defined as constant
+  int nNeighbors; /// =6 pb wrap, cannot be defined as constant
   int arrayShiftNeighbor[27];
   double arrayDistanceNeighbor[27];
-  int tmpNeighborhood[125]; // allocate it here so that we do not have to
-  // allocate it over and over in getMedianInhomo
+  int tmpNeighborhood[125]; /// allocate it here so that we do not have to
+  /// allocate it over and over in getMedianInhomo
 
   float dx; 
   float dy;
@@ -79,20 +79,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImag
   bool initialized;
   bool firstCall;
 
-  FMnode *node;  // arrival time and status for all voxels
-  int *inhomo; // inhomogeneity 
-  int *median; // medican intensity
+  FMnode *node;  /// arrival time and status for all voxels
+  int *inhomo; /// inhomogeneity 
+  int *median; /// medican intensity
 
-  short* outdata; // output
-  short* indata;  // input
+  short* outdata; /// output
+  short* indata;  /// input
 
-  // size of the indata (=size outdata, node, inhomo)
+  /// size of the indata (=size outdata, node, inhomo)
   int dimX;
   int dimY;
   int dimZ;
-  int dimXY; // dimX*dimY
-  int dimXYZ; // dimX*dimY*dimZ
-  // coeficients of the RAS2IJK matrix
+  int dimXY; /// dimX*dimY
+  int dimXYZ; /// dimX*dimY*dimZ
+  /// coeficients of the RAS2IJK matrix
   float m11;
   float m12;
   float m13;
@@ -121,21 +121,21 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImag
   int nEvolutions;
 
   VecInt knownPoints;
-  // vector<int> knownPoints
+  /// vector<int> knownPoints
 
   VecInt seedPoints;
-  // vector<int> seedPoints
+  /// vector<int> seedPoints
 
-  // minheap used by the fast marching algorithm
+  /// minheap used by the fast marching algorithm
   VecFMleaf tree;
-  //  vector<FMleaf> tree;
+  ///  vector<FMleaf> tree;
 
   vtkPichonFastMarchingPDF *pdfIntensityIn;
   vtkPichonFastMarchingPDF *pdfInhomoIn;
 
   bool firstPassThroughShow;
 
-  // minheap methods
+  /// minheap methods
   bool emptyTree(void);
   void insert(const FMleaf leaf);
   FMleaf removeSmallest( void );

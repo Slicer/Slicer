@@ -12,14 +12,14 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkImageSlice - Slices a volume along a new set of axes.
-// .SECTION Description
-// vtkImageSlice uses a vtkMatrix4x4 to pull a slice out of a volume.
-// This is based on David Gobbi's vtkImageReslice, but tries to be more
-// efficient by only treating the special case of a linear transform
-// .SECTION Caveats
-// .SECTION see also
-// vtkImageReslice vtkAbstractTransform vtkMatrix4x4
+///  vtkImageSlice - Slices a volume along a new set of axes.
+/// 
+/// vtkImageSlice uses a vtkMatrix4x4 to pull a slice out of a volume.
+/// This is based on David Gobbi's vtkImageReslice, but tries to be more
+/// efficient by only treating the special case of a linear transform
+/// .SECTION Caveats
+/// .SECTION see also
+/// vtkImageReslice vtkAbstractTransform vtkMatrix4x4
 
 
 #ifndef __vtkImageSlice_h
@@ -31,7 +31,7 @@
 
 #include "vtkSlicerBaseLogic.h"
 
-// interpolation mode constants
+/// interpolation mode constants
 #define VTK_SLICE_NEAREST 0
 #define VTK_SLICE_LINEAR 1
 #define VTK_SLICE_CUBIC 3
@@ -49,14 +49,14 @@ public:
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
 
-  // Description:
-  // this is the IJKToIJK transform.  It tells you how to get from
-  // pixel space in the output image to pixel space in the input image
+  /// 
+  /// this is the IJKToIJK transform.  It tells you how to get from
+  /// pixel space in the output image to pixel space in the input image
   vtkSetObjectMacro(SliceTransform, vtkAbstractTransform);
   vtkGetObjectMacro(SliceTransform, vtkAbstractTransform);
 
-  // Description:
-  // Set interpolation mode (default: nearest neighbor). 
+  /// 
+  /// Set interpolation mode (default: nearest neighbor). 
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);
   void SetInterpolationModeToNearestNeighbor() {
@@ -67,49 +67,49 @@ public:
     this->SetInterpolationMode(VTK_SLICE_CUBIC); };
   const char *GetInterpolationModeAsString();
 
-  // Description:
-  // Set the background color (for multi-component images).
+  /// 
+  /// Set the background color (for multi-component images).
   vtkSetVector4Macro(BackgroundColor, double);
   vtkGetVector4Macro(BackgroundColor, double);
 
-  // Description:
-  // Set background grey level (for single-component images).
+  /// 
+  /// Set background grey level (for single-component images).
   void SetBackgroundLevel(double v) { this->SetBackgroundColor(v,v,v,v); };
   double GetBackgroundLevel() { return this->GetBackgroundColor()[0]; };
 
-  // Description:
-  // Set the spacing to be set in the output image.  It is not used 
-  // in the calculation.  Default is 1, 1, 1.
+  /// 
+  /// Set the spacing to be set in the output image.  It is not used 
+  /// in the calculation.  Default is 1, 1, 1.
   vtkSetVector3Macro(OutputSpacing, double);
   vtkGetVector3Macro(OutputSpacing, double);
   void SetOutputSpacingToDefault() {
     this->SetOutputSpacing(1., 1., 1.); };
 
-  // Description:
-  // Set the origin to be set in the output image.  It is not used 
-  // in the calculation.  Default is 0, 0, 0
+  /// 
+  /// Set the origin to be set in the output image.  It is not used 
+  /// in the calculation.  Default is 0, 0, 0
   vtkSetVector3Macro(OutputOrigin, double);
   vtkGetVector3Macro(OutputOrigin, double);
   void SetOutputOriginToDefault() {
     this->SetOutputOrigin(0., 0., 0.); };
 
-  // Description:
-  // Set the Dimensions for the output data.  
-  // This defines the pixels to be calculated by the filter.
+  /// 
+  /// Set the Dimensions for the output data.  
+  /// This defines the pixels to be calculated by the filter.
   vtkSetVector3Macro(OutputDimensions, int);
   vtkGetVector3Macro(OutputDimensions, int);
 
-  // Description: 
-  // customized MTime calculation that takes into account the input transform
+  ///  
+  /// customized MTime calculation that takes into account the input transform
   unsigned long int GetMTime();
 
-  // Description:
-  // Convenient methods for switching between nearest-neighbor and linear
-  // interpolation.  
-  // InterpolateOn() is equivalent to SetInterpolationModeToLinear() and
-  // InterpolateOff() is equivalent to SetInterpolationModeToNearestNeighbor().
-  // You should not use these methods if you use the SetInterpolationMode
-  // methods.
+  /// 
+  /// Convenient methods for switching between nearest-neighbor and linear
+  /// interpolation.  
+  /// InterpolateOn() is equivalent to SetInterpolationModeToLinear() and
+  /// InterpolateOff() is equivalent to SetInterpolationModeToNearestNeighbor().
+  /// You should not use these methods if you use the SetInterpolationMode
+  /// methods.
   void SetInterpolate(int t) {
     if (t && !this->GetInterpolate()) {
       this->SetInterpolationModeToLinear(); }
@@ -146,8 +146,8 @@ protected:
   virtual int FillInputPortInformation(int port, vtkInformation *info);
 
 private:
-  vtkImageSlice(const vtkImageSlice&);  // Not implemented.
-  void operator=(const vtkImageSlice&);  // Not implemented.
+  vtkImageSlice(const vtkImageSlice&);  /// Not implemented.
+  void operator=(const vtkImageSlice&);  /// Not implemented.
 };
 
 //----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
-// .NAME vtkSlicerROILogic - slicer logic class for ROI manipulation
-// .SECTION Description
-// This class manages the logic associated ROI
+///  vtkSlicerROILogic - slicer logic class for ROI manipulation
+/// 
+/// This class manages the logic associated ROI
 
 
 #ifndef __vtkSlicerROILogic_h
@@ -18,13 +18,13 @@
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerROILogic : public vtkSlicerLogic 
 {
 public:
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerROILogic *New();
   vtkTypeRevisionMacro(vtkSlicerROILogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Update logic state when MRML scene changes
+  /// 
+  /// Update logic state when MRML scene changes
   void ProcessMRMLEvents(); 
   virtual void ProcessMRMLEvents ( vtkObject * caller, 
       unsigned long event, void * callData ) 

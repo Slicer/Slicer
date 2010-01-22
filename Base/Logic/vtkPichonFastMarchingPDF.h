@@ -11,7 +11,7 @@
 
 #include "vtkSlicerBaseLogic.h"
 
-#ifdef _WIN32 // WINDOWS
+#ifdef _WIN32 /// WINDOWS
 
 #include <float.h>
 #define isnan(x) _isnan(x)
@@ -27,7 +27,7 @@
 
 #include <deque>
 
-#else // UNIX
+#else /// UNIX
 
 #if defined(sun) || defined(__sun)
 #include <math.h>
@@ -92,10 +92,10 @@ public:
   int realizationMax;
 
   int counter;
-  int memorySize; // -1=don't ever forget anything
+  int memorySize; /// -1=don't ever forget anything
   int updateRate;
 
-  // the histogram
+  /// the histogram
   int *bins;
   int nRealInBins;
 
@@ -108,11 +108,11 @@ public:
   std::deque<int> toBeAdded;
   //ETX
 
-  // first 2 moments (not centered, not divided by number of samples)  
+  /// first 2 moments (not centered, not divided by number of samples)  
   double m1;
   double m2;
 
-  // first 2 moments (centered)
+  /// first 2 moments (centered)
   double sigma2;
   double mean;
 

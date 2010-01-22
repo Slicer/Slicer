@@ -11,10 +11,10 @@
   Version:   $Revision: 1.16 $
 
 =========================================================================auto=*/
-// .NAME vtkImageLabelOutline -  Display labelmap outlines
-// .SECTION Description
-//  Used  in slicer for the Label layer to outline the segmented
-//  structures (instead of showing them filled-in).
+///  vtkImageLabelOutline -  Display labelmap outlines
+/// 
+///  Used  in slicer for the Label layer to outline the segmented
+///  structures (instead of showing them filled-in).
 
 #ifndef __vtkImageLabelOutline_h
 #define __vtkImageLabelOutline_h
@@ -30,13 +30,13 @@ public:
   vtkTypeMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // background pixel value in the image (usually 0)
+  /// 
+  /// background pixel value in the image (usually 0)
   vtkSetMacro(Background, float);
   vtkGetMacro(Background, float);
 
-  // Description:
-  // not used (don't know what it was intended for)
+  /// 
+  /// not used (don't know what it was intended for)
   vtkSetMacro(Outline, int);
   vtkGetMacro(Outline, int);
 

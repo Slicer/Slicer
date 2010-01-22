@@ -1,8 +1,8 @@
-// .NAME vtkImageRectangularSource - Create a binary image of an rectangular.
-// .SECTION Description
-// vtkImageRectangularSource creates a binary image of a ellipsoid.  It was created
-// as an example of a simple source, and to test the mask filter.
-// It is also used internally in vtkImageDilateErode3D.
+///  vtkImageRectangularSource - Create a binary image of an rectangular.
+/// 
+/// vtkImageRectangularSource creates a binary image of a ellipsoid.  It was created
+/// as an example of a simple source, and to test the mask filter.
+/// It is also used internally in vtkImageDilateErode3D.
 
 #ifndef __vtkImageRectangularSource_h
 #define __vtkImageRectangularSource_h
@@ -17,41 +17,41 @@ public:
   vtkTypeRevisionMacro(vtkImageRectangularSource,vtkImageSource);
   void PrintSelf(ostream& os, vtkIndent indent);   
   
-  // Description:
-  // Set/Get the extent of the whole output image.
+  /// 
+  /// Set/Get the extent of the whole output image.
   void SetWholeExtent(int extent[6]);
   void SetWholeExtent(int minX, int maxX, int minY, int maxY, 
                             int minZ, int maxZ);
   void GetWholeExtent(int extent[6]);
   int *GetWholeExtent() {return this->WholeExtent;}
   
-  // Description:
-  // Set/Get the center of the ellipsoid.
+  /// 
+  /// Set/Get the center of the ellipsoid.
   vtkSetVector3Macro(Center, int);
   vtkGetVector3Macro(Center, int);
   
-  // Description:
-  // Set/Get the radius of the ellipsoid.
+  /// 
+  /// Set/Get the radius of the ellipsoid.
   vtkSetVector3Macro(Size, int);
   vtkGetVector3Macro(Size, int);
 
-  // Description:
-  // Set/Get the inside pixel values.
+  /// 
+  /// Set/Get the inside pixel values.
   vtkSetMacro(InValue,float);
   vtkGetMacro(InValue,float);
 
-  // Description:
-  // Set/Get the outside pixel values.
+  /// 
+  /// Set/Get the outside pixel values.
   vtkSetMacro(OutValue,float);
   vtkGetMacro(OutValue,float);
 
-  // Description:
-  // If the flag is set the inside of the rectangular slowly adjust its intensity from outside to inside
+  /// 
+  /// If the flag is set the inside of the rectangular slowly adjust its intensity from outside to inside
   vtkSetMacro(InsideGraySlopeFlag,int);
   vtkGetMacro(InsideGraySlopeFlag,int);
 
-  // Description:
-  // Set what type of scalar data this source should generate.
+  /// 
+  /// Set what type of scalar data this source should generate.
   vtkSetMacro(OutputScalarType,int);
   vtkGetMacro(OutputScalarType,int);
   void SetOutputScalarTypeToDouble()
@@ -75,7 +75,7 @@ public:
   void SetOutputScalarTypeToUnsignedChar()
     {this->SetOutputScalarType(VTK_UNSIGNED_CHAR);}
 
-  // If you do no want to define a rectangular with edges of 90 degree   
+  /// If you do no want to define a rectangular with edges of 90 degree   
   void SetCorners(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
 protected:
@@ -95,8 +95,8 @@ protected:
   virtual void ExecuteInformation();
   virtual void ExecuteData(vtkDataObject *outData);
 private:
-  vtkImageRectangularSource(const vtkImageRectangularSource&);  // Not implemented.
-  void operator=(const vtkImageRectangularSource&);  // Not implemented.
+  vtkImageRectangularSource(const vtkImageRectangularSource&);  /// Not implemented.
+  void operator=(const vtkImageRectangularSource&);  /// Not implemented.
 };
 
 

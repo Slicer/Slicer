@@ -25,7 +25,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkDataIOManagerLogic *New();
   vtkTypeRevisionMacro(vtkDataIOManagerLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -35,25 +35,25 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   
   virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *calldata );
 
-  // Description:
-  // Methods that Queues the read
+  /// 
+  /// Methods that Queues the read
   virtual int QueueRead ( vtkMRMLNode *node );
 
-  // Description:
-  // Method that queues the write 
+  /// 
+  /// Method that queues the write 
   virtual int QueueWrite ( vtkMRMLNode *node );
 
-  // Description:
-  // The method that executes the data transfer in another thread
+  /// 
+  /// The method that executes the data transfer in another thread
   virtual void ApplyTransfer(void *clientdata);
 
-  // Description
-  // Communicates progress back to the DataIOManager
+  /// Description
+  /// Communicates progress back to the DataIOManager
   static void ProgressCallback ( void * );
 
-  // Description:
-  // Convenience method that goes through vtkDataIOManager
-  // to create a new DataTransfer object.
+  /// 
+  /// Convenience method that goes through vtkDataIOManager
+  /// to create a new DataTransfer object.
   virtual void AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node );
   virtual void CancelDataTransfer ( vtkDataTransfer *transfer );
   virtual void ClearCache();

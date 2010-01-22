@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerModelsLogic - slicer logic class for volumes manipulation
-// .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the volumes
+///  vtkSlicerModelsLogic - slicer logic class for volumes manipulation
+/// 
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the volumes
 
 
 #ifndef __vtkSlicerModelsLogic_h
@@ -34,36 +34,36 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerModelsLogic *New();
   vtkTypeRevisionMacro(vtkSlicerModelsLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // The currently active mrml volume node 
+  /// 
+  /// The currently active mrml volume node 
   vtkGetObjectMacro (ActiveModelNode, vtkMRMLModelNode);
   void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
 
-  // Description:
-  // Create new mrml model node and
-  // read it's polydata from a specified file
+  /// 
+  /// Create new mrml model node and
+  /// read it's polydata from a specified file
   vtkMRMLModelNode* AddModel (const char* filename);
 
-  // Description:
-  // Create model nodes and
-  // read their polydata from a specified directory
+  /// 
+  /// Create model nodes and
+  /// read their polydata from a specified directory
   int AddModels (const char* dirname, const char* suffix );
 
-  // Description:
-  // Write model's polydata  to a specified file
+  /// 
+  /// Write model's polydata  to a specified file
   int SaveModel (const char* filename, vtkMRMLModelNode *modelNode);
 
-  // Description:
-  // Read in a scalar overlay and add it to the model node
+  /// 
+  /// Read in a scalar overlay and add it to the model node
   int AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
-  // Description:
-  // Update logic state when MRML scene chenges
+  /// 
+  /// Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );    
@@ -73,7 +73,7 @@ protected:
   vtkSlicerModelsLogic(const vtkSlicerModelsLogic&);
   void operator=(const vtkSlicerModelsLogic&);
 
-  // Description:
+  /// 
   //
   vtkMRMLModelNode *ActiveModelNode;
 };

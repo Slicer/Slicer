@@ -17,17 +17,17 @@ public:
   typedef vtkSlicerLogic::TaskFunctionPointer TaskFunctionPointer;
   //ETX
   
-  // Description:
-  // Set the function and object to call for the task.
+  /// 
+  /// Set the function and object to call for the task.
   void SetTaskFunction(vtkSlicerLogic*, TaskFunctionPointer, void *clientdata);
   
-  // Description:
-  // Execute the task.
+  /// 
+  /// Execute the task.
   virtual void Execute();
 
-  // Description:
-  // The type of task - this can be used, for example, to decide
-  // how many concurrent threads should be allowed
+  /// 
+  /// The type of task - this can be used, for example, to decide
+  /// how many concurrent threads should be allowed
   //BTX
   enum
     {

@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerColorLogic - slicer logic class for color manipulation
-// .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the colors
+///  vtkSlicerColorLogic - slicer logic class for color manipulation
+/// 
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the colors
 
 
 #ifndef __vtkSlicerColorLogic_h
@@ -33,82 +33,82 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerColorLogic *New();
   vtkTypeRevisionMacro(vtkSlicerColorLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Update logic state when MRML scene chenges
+  /// 
+  /// Update logic state when MRML scene chenges
   void ProcessMRMLEvents(vtkObject * caller,
                          unsigned long event,
                          void * callData);
 
-  // Description:
-  // Add a series of color nodes, setting the types to the defaults, so that
-  // they're accessible to the rest of Slicer
+  /// 
+  /// Add a series of color nodes, setting the types to the defaults, so that
+  /// they're accessible to the rest of Slicer
   void AddDefaultColorNodes();
 
-  // Description:
-  // Remove the colour nodes that were added
+  /// 
+  /// Remove the colour nodes that were added
   void RemoveDefaultColorNodes();
 
-  // Description:
-  // Return the default color table node id for a given type
+  /// 
+  /// Return the default color table node id for a given type
   const char * GetDefaultColorTableNodeID(int type);
 
-  // Description:
-  // Return the default freesurfer color node id for a given type
+  /// 
+  /// Return the default freesurfer color node id for a given type
   const char * GetDefaultFreeSurferColorNodeID(int type);
 
-  // Description:
-  // Return the default dGEMRIC color node id for a given type
+  /// 
+  /// Return the default dGEMRIC color node id for a given type
   const char * GetDefaultdGEMRICColorNodeID(int type);
 
-  // Description:
-  // Return the default PET color node id for a given type
+  /// 
+  /// Return the default PET color node id for a given type
   const char * GetDefaultPETColorNodeID(int type);
 
-  // Description:
-  // Return a default color node id for a freesurfer label map volume
+  /// 
+  /// Return a default color node id for a freesurfer label map volume
   const char * GetDefaultFreeSurferLabelMapColorNodeID();
   
-  // Description:
-  // Return a default color node id for a volume
+  /// 
+  /// Return a default color node id for a volume
   const char * GetDefaultVolumeColorNodeID();
 
-  // Description:
-  // Return a default color node id for a label map
+  /// 
+  /// Return a default color node id for a label map
   const char * GetDefaultLabelMapColorNodeID();
 
-  // Description:
-  // Return a default color node id for a model
+  /// 
+  /// Return a default color node id for a model
   const char * GetDefaultModelColorNodeID();
 
-  // Description:
-  // return a default color node id for a procedural color node
+  /// 
+  /// return a default color node id for a procedural color node
   char * GetDefaultProceduralColorNodeID(const char *name);
 
-  // Description:
-  // return a default color node id for a file based node, based on the file name
+  /// 
+  /// return a default color node id for a file based node, based on the file name
   char * GetDefaultFileColorNodeID(const char *fileName);
 
-  // Description:
-  // look for color files in the Base/Logic/Resources/ColorFiles directory and
-  // put their names in the ColorFiles list
+  /// 
+  /// look for color files in the Base/Logic/Resources/ColorFiles directory and
+  /// put their names in the ColorFiles list
   void FindColorFiles();
 
-  // Description:
-  // Add a file to the ColorFiles list, checking first for null, duplicates
+  /// 
+  /// Add a file to the ColorFiles list, checking first for null, duplicates
   void AddColorFile(const char *fileName);
   
-  // Description:
-  // load in a color file and add the name to the names list, creating a
-  // storage node
+  /// 
+  /// load in a color file and add the name to the names list, creating a
+  /// storage node
   vtkMRMLColorNode * LoadColorFile(const char *fileName);
 
-  // Description:
-  // Get/Set the user defined paths where to look for extra colour files
+  /// 
+  /// Get/Set the user defined paths where to look for extra colour files
   vtkGetStringMacro(UserColorFilePaths);
   vtkSetStringMacro(UserColorFilePaths);
 
@@ -118,17 +118,17 @@ protected:
   vtkSlicerColorLogic(const vtkSlicerColorLogic&);
   void operator=(const vtkSlicerColorLogic&);
 
-  // Description:
-  // a vector holding discovered colour files, white space separated with:
-  // int name r g b a
-  // with rgba in the range 0-255
+  /// 
+  /// a vector holding discovered colour files, white space separated with:
+  /// int name r g b a
+  /// with rgba in the range 0-255
   //BTX
   std::vector<std::string> ColorFiles;
   //ETX
-  // Description:
-  // a string holding delimiter separated (; on win32, : else) paths where to
-  // look for extra colour files, set from the return value of
-  // vtkSlicerApplication::GetColorFilePaths
+  /// 
+  /// a string holding delimiter separated (; on win32, : else) paths where to
+  /// look for extra colour files, set from the return value of
+  /// vtkSlicerApplication::GetColorFilePaths
   char *UserColorFilePaths;
 };
 

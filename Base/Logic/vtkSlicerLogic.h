@@ -11,12 +11,12 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-// .NAME vtkSlicerLogic - superclass for slicer logic classes
-// .SECTION Description
-// Superclass for all slicer logic classes (application, views, slices).
-// There must be a corresponding vtkSlicerGUI subclass corresponding 
-// to each logic class that handles all GUI interaction (no GUI code
-// goes in the logic class).
+///  vtkSlicerLogic - superclass for slicer logic classes
+/// 
+/// Superclass for all slicer logic classes (application, views, slices).
+/// There must be a corresponding vtkSlicerGUI subclass corresponding 
+/// to each logic class that handles all GUI interaction (no GUI code
+/// goes in the logic class).
 
 #ifndef __vtkSlicerLogic_h
 #define __vtkSlicerLogic_h
@@ -79,23 +79,23 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
 {
   public:
 
-  // Typedef for member functions of SlicerLogic that can be used as
-  // scheduled tasks.
+  /// Typedef for member functions of SlicerLogic that can be used as
+  /// scheduled tasks.
   //BTX
   typedef void (vtkSlicerLogic::*TaskFunctionPointer)(void *clientdata);
   //ETX
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerLogic *New();
   vtkTypeRevisionMacro(vtkSlicerLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description
-  // All logic classes need to know about the current mrml scene
+  /// Description
+  /// All logic classes need to know about the current mrml scene
   vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
 
-  // Description:
-  // API for setting or setting and observing MRMLScene
+  /// 
+  /// API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
     {
     vtkObject *oldValue = this->MRMLScene;
@@ -134,14 +134,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
 
   virtual void ProcessLogicEvents() {};
 
-  // Description:
-  // Name of this node
+  /// 
+  /// Name of this node
   vtkSetStringMacro(Name);
   vtkGetStringMacro(Name);
   
-  // Description:
-  // Flags to avoid event loops
-  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  /// 
+  /// Flags to avoid event loops
+  /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
   void SetInLogicCallbackFlag (int flag) {
     this->InLogicCallbackFlag = flag;
   }
@@ -151,10 +151,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   }
   vtkGetMacro(InMRMLCallbackFlag, int);
 
-  // Additional functionality:
+  /// Additional functionality:
 
-  // Overload in modules that observe events, used during Loadable Module
-  // discovery. CLIENT MUST DELETE!
+  /// Overload in modules that observe events, used during Loadable Module
+  /// discovery. CLIENT MUST DELETE!
   virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
 
 protected:
@@ -168,9 +168,9 @@ protected:
   char *Name;
 
   //BTX
-  // a shared set of functions that call the 
-  // virtual ProcessMRMLEvents and ProcessLogicEvents methods in the
-  // subclasses (if they are defined)
+  /// a shared set of functions that call the 
+  /// virtual ProcessMRMLEvents and ProcessLogicEvents methods in the
+  /// subclasses (if they are defined)
   static void MRMLCallback(vtkObject *caller, 
                 unsigned long eid, void *clientData, void *callData);
   static void LogicCallback(vtkObject *caller, 
@@ -178,12 +178,12 @@ protected:
 
   //ETX
 
-  // Description:
-  // Holder for MRML and Logic callbacks
+  /// 
+  /// Holder for MRML and Logic callbacks
   vtkCallbackCommand *LogicCallbackCommand;
 
-  // Description:
-  // Flag to avoid event loops
+  /// 
+  /// Flag to avoid event loops
   int InLogicCallbackFlag;
   int InMRMLCallbackFlag;
 

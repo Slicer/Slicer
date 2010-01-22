@@ -11,17 +11,17 @@
   Version:   $Revision: 1.19 $
 
 =========================================================================auto=*/
-// .NAME vtkImageFillROI - Paints on top of an image.
-// .SECTION Description
-// vtkImageFillROI will draw a polygon, line, or points in an
-// image.  As opposed to vtkImageDrawROI, which draws only outlines
-// around these shapes, this filter will also fill the inside of
-// polygons.
-// This filter is used when applying image editing effects,
-// while vtkImageDrawROI is used while the user is actually
-// drawing (for temporary interactive display).  So it is
-// important that the output from this filter (vtkImageFIllROI)
-// correspond to that of the vtkImageDrawROI filter!
+///  vtkImageFillROI - Paints on top of an image.
+/// 
+/// vtkImageFillROI will draw a polygon, line, or points in an
+/// image.  As opposed to vtkImageDrawROI, which draws only outlines
+/// around these shapes, this filter will also fill the inside of
+/// polygons.
+/// This filter is used when applying image editing effects,
+/// while vtkImageDrawROI is used while the user is actually
+/// drawing (for temporary interactive display).  So it is
+/// important that the output from this filter (vtkImageFIllROI)
+/// correspond to that of the vtkImageDrawROI filter!
 //
 
 #ifndef __vtkImageFillROI_h
@@ -95,7 +95,7 @@ protected:
   int Radius;
   int Shape;
 
-  // not threaded because too simple a filter
+  /// not threaded because too simple a filter
   void ExecuteData(vtkDataObject *);
 
 private:

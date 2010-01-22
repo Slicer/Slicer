@@ -11,12 +11,12 @@
   Version:   $Revision: 1.17 $
 
 =========================================================================auto=*/
-// .NAME vtkImageLabelChange -  Change one label value to another
-// 
-// .SECTION Description
+///  vtkImageLabelChange -  Change one label value to another
+/// 
+/// 
 //
-// vtkImageLabelChange is will replace one voxel value with another.
-// This is used for editing of labelmaps.
+/// vtkImageLabelChange is will replace one voxel value with another.
+/// This is used for editing of labelmaps.
 //
 
 #ifndef __vtkImageLabelChange_h

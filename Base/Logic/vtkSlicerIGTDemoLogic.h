@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerIGTDemoLogic - slicer logic class for Locator module 
-// .SECTION Description
-// This class manages the logic associated with tracking device for 
-// IGT. 
+///  vtkSlicerIGTDemoLogic - slicer logic class for Locator module 
+/// 
+/// This class manages the logic associated with tracking device for 
+/// IGT. 
 
 
 #ifndef __vtkSlicerIGTDemoLogic_h
@@ -42,7 +42,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerIGTDemoLogic : public vtkSlicerLogic
 {
 public:
 
-    // The Usual vtk class functions
+    /// The Usual vtk class functions
     static vtkSlicerIGTDemoLogic *New();
     vtkTypeRevisionMacro(vtkSlicerIGTDemoLogic,vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
@@ -66,16 +66,16 @@ public:
     static void callbackF(const Node&, const Event &event, void *data);
 #endif
 
-    // t1, t2, t3: target landmarks 
-    // s1, s2, s3: source landmarks 
+    /// t1, t2, t3: target landmarks 
+    /// s1, s2, s3: source landmarks 
     void AddPoint(int id, float t1, float t2, float t3, float s1, float s2, float s3);
     int DoRegistration();
 
     void SetNumberOfPoints(int no);
 
-    // Description:
-    // Description:
-    // Update logic state when MRML scene chenges
+    /// 
+    /// 
+    /// Update logic state when MRML scene chenges
     void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
 
     void SetLocatorTransforms();

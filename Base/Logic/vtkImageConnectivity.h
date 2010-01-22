@@ -11,11 +11,11 @@
   Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
-// .NAME vtkImageConnectivity - Identify and process islands of similar pixels
-// .SECTION Description
-//  The input data type must be shorts.
-// .SECTION Warning
-// You need to explicitely call Update
+///  vtkImageConnectivity - Identify and process islands of similar pixels
+/// 
+///  The input data type must be shorts.
+/// .SECTION Warning
+/// You need to explicitely call Update
 
 #ifndef __vtkImageConnectivity_h
 #define __vtkImageConnectivity_h
@@ -36,7 +36,7 @@ public:
   vtkTypeMacro(vtkImageConnectivity,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Function
+  /// Function
   void SetFunction(int func) {
     this->Function = func;};
   void SetFunctionToIdentifyIslands() {
@@ -52,13 +52,13 @@ public:
   int GetFunction() {return this->Function;}
   const char* GetFunctionString();
 
-  // outputs of MeasureIsland
+  /// outputs of MeasureIsland
   vtkGetMacro(IslandSize, int);
   vtkSetMacro(IslandSize, int);
   vtkGetMacro(LargestIslandSize, int);
   vtkSetMacro(LargestIslandSize, int);
 
-  // Description:
+  /// 
   vtkGetMacro(SliceBySlice, int);
   vtkSetMacro(SliceBySlice, int);
   vtkBooleanMacro(SliceBySlice, int);

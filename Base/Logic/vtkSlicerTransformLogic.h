@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerTransformLogic - slicer logic class for volumes manipulation
-// .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the volumes
+///  vtkSlicerTransformLogic - slicer logic class for volumes manipulation
+/// 
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the volumes
 
 
 #ifndef __vtkSlicerTransformLogic_h
@@ -34,17 +34,17 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerLog
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerTransformLogic *New();
   vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 
-  // Description:
-  // Read transform from file 
+  /// 
+  /// Read transform from file 
   vtkMRMLTransformNode* AddTransform (const char* filename, vtkMRMLScene *scene);
 
-  // Description:
-  // Write transform's data to a specified file
+  /// 
+  /// Write transform's data to a specified file
   int SaveTransform (const char* filename, vtkMRMLTransformNode *transformNode);
   
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
@@ -52,8 +52,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerLog
                                    void * /*callData*/ ) { };
   
   
-  // Description:
-  // Update logic events
+  /// 
+  /// Update logic events
   virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ ) {};  

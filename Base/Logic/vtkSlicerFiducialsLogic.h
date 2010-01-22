@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerFiducialsLogic - slicer logic class for volumes manipulation
-// .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the volumes
+///  vtkSlicerFiducialsLogic - slicer logic class for volumes manipulation
+/// 
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the volumes
 
 
 #ifndef __vtkSlicerFiducialsLogic_h
@@ -34,34 +34,34 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSlicerFiducialsLogic *New();
   vtkTypeRevisionMacro(vtkSlicerFiducialsLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Create new mrml node for a full list, make it the selected list, and clear up local pointers
+  /// 
+  /// Create new mrml node for a full list, make it the selected list, and clear up local pointers
   void AddFiducialListSelected();
   
-  // Description:
-  // Create new mrml node and associated display node for a full list,
-  // return the node
+  /// 
+  /// Create new mrml node and associated display node for a full list,
+  /// return the node
   vtkMRMLFiducialListNode * AddFiducialList();
 
-  // Description:
-  // Add a fiducial to the currently selected list, as kept in the
-  // vtkMRMLSelectionNode
-  // Returns the index of the new fiducial in the list, -1 on failure
-  // AddFiducialSelected includes a selected flag option
+  /// 
+  /// Add a fiducial to the currently selected list, as kept in the
+  /// vtkMRMLSelectionNode
+  /// Returns the index of the new fiducial in the list, -1 on failure
+  /// AddFiducialSelected includes a selected flag option
   int AddFiducial(float x, float y, float z);
   int AddFiducialSelected (float x, float y, float z, int selected);
 
-  // Description:
-  // Load a fiducial list from file, returns NULL on failure
+  /// 
+  /// Load a fiducial list from file, returns NULL on failure
   vtkMRMLFiducialListNode *LoadFiducialList(const char *path);
 
-  // Description:
-  // Update logic state when MRML scene changes
+  /// 
+  /// Update logic state when MRML scene changes
   void ProcessMRMLEvents();
   //BTX
   using vtkSlicerLogic::ProcessMRMLEvents;
