@@ -1202,8 +1202,8 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                   unsigned long event, void *callData )
+void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                                   unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
   // Fill in
 }

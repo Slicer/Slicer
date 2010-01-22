@@ -487,7 +487,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 
 //--------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+                                            unsigned long event, void * vtkNotUsed(callData) )
 {
   int numnodes, nn;
   vtkMRMLFiducialListNode *flNode;
@@ -1451,8 +1451,8 @@ void vtkSlicerFiducialsGUI::ModifySelectedListExposureGUI (  )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerFiducialsGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                              unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }
@@ -3145,7 +3145,7 @@ void vtkSlicerFiducialsGUI::UpdateMeasurementLabels()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::JumpSlicesCallback(int row, int col, int x, int y)
+void vtkSlicerFiducialsGUI::JumpSlicesCallback(int row, int vtkNotUsed(col), int vtkNotUsed(x), int vtkNotUsed(y) )
 
 {
   double r = 0.0l, a = 0.0l, s = 0.0l;

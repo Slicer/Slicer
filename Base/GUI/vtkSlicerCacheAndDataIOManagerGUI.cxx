@@ -251,7 +251,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                           unsigned long event, void *callData )
+                                                           unsigned long event, void *vtkNotUsed(callData) )
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
 
@@ -414,8 +414,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::CancelAllDataTransfers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerCacheAndDataIOManagerGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                             unsigned long event, void *callData )
+void vtkSlicerCacheAndDataIOManagerGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                                             unsigned long vtkNotUsed(event), void *vtkNotUsed(callData) )
 {
   // If any of the logic state changes, update GUI to show.
   // Force reload?
@@ -429,7 +429,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                                            unsigned long event, void *callData )
+                                                            unsigned long event, void *(callData) )
 {
 
   vtkDataIOManager *dm = vtkDataIOManager::SafeDownCast ( caller );

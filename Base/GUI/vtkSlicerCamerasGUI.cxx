@@ -287,8 +287,7 @@ void vtkSlicerCamerasGUI::UpdateViewSelector()
 
 //---------------------------------------------------------------------------
 void vtkSlicerCamerasGUI::ProcessMRMLEvents(
-  vtkObject *caller,
-                                              unsigned long event, void *callData )
+  vtkObject * vtkNotUsed(caller), unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }

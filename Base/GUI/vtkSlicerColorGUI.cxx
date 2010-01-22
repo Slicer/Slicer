@@ -148,7 +148,7 @@ void vtkSlicerColorGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+                                            unsigned long event, void * vtkNotUsed(callData) )
 {
   if (this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event ==  vtkKWTopLevel::WithdrawEvent )
     {
@@ -185,15 +185,15 @@ void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerColorGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerColorGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                              unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
   // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerColorGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerColorGUI::ProcessMRMLEvents ( vtkObject * vtkNotUsed(caller),
+                                             unsigned long event, void * vtkNotUsed(callData) )
 {    
   vtkDebugMacro("vtkSlicerColorGUI::ProcessMRMLEvents: event = " << event << ".\n");
 }

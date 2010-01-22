@@ -465,7 +465,7 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                   unsigned long event, void *callData )
+                                                   unsigned long event, void *vtkNotUsed(callData) )
 {
 
   
@@ -1493,7 +1493,7 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                     unsigned long event, void *callData )
+                                                     unsigned long event, void *vtkNotUsed(callData) )
 {
 
 }
@@ -1503,7 +1503,7 @@ void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event, void *callData )
+                                                    unsigned long event, void *vtkNotUsed(callData) )
 {
   if (this->ProcessingMRMLEvent != 0 )
     {

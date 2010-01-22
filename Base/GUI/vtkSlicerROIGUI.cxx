@@ -229,7 +229,7 @@ void vtkSlicerROIGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
-                                        unsigned long event, void *callData )
+                                        unsigned long event, void * vtkNotUsed(callData) )
   {
   // process ROI list node selector events
   vtkSlicerNodeSelectorWidget *roiSelector = 
@@ -476,7 +476,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIGUI::ProcessLogicEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+                                          unsigned long event, void * vtkNotUsed(callData) )
 {
   // Fill in
 }
@@ -484,7 +484,7 @@ void vtkSlicerROIGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                         unsigned long event, void *callData )
+                                         unsigned long event, void * vtkNotUsed(callData) )
 {
   vtkDebugMacro("vtkSlicerROIsGUI::ProcessMRMLEvents: event = " << event << ".\n");
 

@@ -1258,15 +1258,15 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkSlicerDataGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                            unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+void vtkSlicerDataGUI::ProcessMRMLEvents ( vtkObject * vtkNotUsed(caller),
+                                           unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }
