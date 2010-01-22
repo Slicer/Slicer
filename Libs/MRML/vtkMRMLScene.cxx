@@ -1175,9 +1175,14 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n) 
 {
-  if (n == NULL || n->GetID() == NULL)
+  if (n == NULL)
     {
-    vtkErrorMacro("RemoveNodeReferences: node is null or has null id, can't remove it");
+    vtkErrorMacro("RemoveNodeReferences: node is null can't remove it");
+    return;
+    }
+  if (n->GetID() == NULL)
+    {
+    // can happen when adding singleton nodes that are not really added but copied
     return;
     }
 

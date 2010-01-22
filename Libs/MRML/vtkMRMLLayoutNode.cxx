@@ -87,8 +87,10 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
   of << indent << " mainPanelSize=\"" << this->MainPanelSize << "\"";
   of << indent << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
-  of << indent << " selectedModule=\"" << this->SelectedModule << "\"";
-  
+  if (this->SelectedModule != NULL)
+    {
+    of << indent << " selectedModule=\"" << (this->SelectedModule != NULL ? this->SelectedModule : "") << "\"";
+    }
 }
 
 
