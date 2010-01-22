@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME itkMGHImageIOWin32Header - manage Windows system differences
-// .SECTION Description
-// The itkMGHImageIOWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  itkMGHImageIOWin32Header - manage Windows system differences
+/// 
+/// The itkMGHImageIOWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __itkMGHImageIOWin32Header_h
 #define __itkMGHImageIOWin32Header_h

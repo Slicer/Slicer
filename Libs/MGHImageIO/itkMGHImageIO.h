@@ -3,9 +3,9 @@
 #ifndef H_ITK_IMAGE_IO_H
 #define H_ITK_IMAGE_IO_H
 
-// STL includes
+/// STL includes
 
-// ITK includes
+/// ITK includes
 #include "itkImageIOBase.h"
 #include "itkMatrix.h"
 
@@ -52,10 +52,10 @@ namespace itk
     void ReadVolumeHeader(gzFile fp);
 
   private:
-    // processes the actual data buffer
+    /// processes the actual data buffer
     void SwapBytesIfNecessary(void* buffer, 
             unsigned long numberOfPixels);
-    // examines the direction cosines and creates encapsulation data
+    /// examines the direction cosines and creates encapsulation data
     //void MriDirCos();
     
     void WriteUncompressedHeader();
@@ -75,7 +75,7 @@ namespace itk
 }
 
 
-#endif // H_ITK_IMAGE_IO_H
+#endif /// H_ITK_IMAGE_IO_H
 
 
 

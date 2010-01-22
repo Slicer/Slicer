@@ -42,12 +42,12 @@ namespace itk
     ~MGHImageIOFactory();
 
   private:
-    MGHImageIOFactory(const Self&); // purposely not implemented
-    void operator=(const Self&); // purposely not implemented
+    MGHImageIOFactory(const Self&); /// purposely not implemented
+    void operator=(const Self&); /// purposely not implemented
     
-  }; // end class MGHImageIOFactory
+  }; /// end class MGHImageIOFactory
 
 
-} // end namespace itk
+} /// end namespace itk
 
-#endif // H_ITK_MGH_IMAGE_IO_FACTORY_H
+#endif /// H_ITK_MGH_IMAGE_IO_FACTORY_H
