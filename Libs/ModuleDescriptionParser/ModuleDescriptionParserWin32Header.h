@@ -11,10 +11,10 @@
   Version:   $Revision$
 
 ==========================================================================*/
-// .NAME ModuleDescriptionParserWin32Header - manage Windows system differences
-// .SECTION Description
-// The ModuleDescriptionParserWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  ModuleDescriptionParserWin32Header - manage Windows system differences
+/// 
+/// The ModuleDescriptionParserWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __ModuleDescriptionParserWin32Header_h
 #define __ModuleDescriptionParserWin32Header_h

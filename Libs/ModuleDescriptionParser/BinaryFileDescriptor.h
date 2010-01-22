@@ -22,8 +22,8 @@
 #if !defined(WIN32)
 #include <bfd.h>
 
-// Implementation for Linux, Mac, etc. to allow us to peek into an
-// executable file and determine whether it contains global symbols.
+/// Implementation for Linux, Mac, etc. to allow us to peek into an
+/// executable file and determine whether it contains global symbols.
 class ModuleDescriptionParser_EXPORT BinaryFileDescriptor
 {
 public:
@@ -33,13 +33,13 @@ public:
   BinaryFileDescriptor() : BFD(0) {};
   ~BinaryFileDescriptor();
 
-  // Open the object file to investigate
+  /// Open the object file to investigate
   bool Open(const char *filename);
 
-  // Close the object file
+  /// Close the object file
   void Close();
 
-  // Get the address of a symbol in memory
+  /// Get the address of a symbol in memory
   void *GetSymbolAddress(const char *name);
 
 private:

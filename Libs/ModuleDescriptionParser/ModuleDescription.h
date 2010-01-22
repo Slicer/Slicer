@@ -123,7 +123,7 @@ public:
     return this->Contributor;
   }
 
-  // Set the type of module: Unknown, SharedObjectModule, CommandLineModule
+  /// Set the type of module: Unknown, SharedObjectModule, CommandLineModule
   void SetType(const std::string &type)
   {
     if (type == "SharedObjectModule" 
@@ -139,15 +139,15 @@ public:
   }
 
   
-  // Get the type of the module: Unknown, SharedObjectModule, CommandLineModule
+  /// Get the type of the module: Unknown, SharedObjectModule, CommandLineModule
   const std::string& GetType() const
   {
     return this->Type;
   }
 
-  // Set the type of an alternative version of the module: Unknown,
-  // SharedObjectModule, CommandLineModule. The alternative version is
-  // usually a different type than the primary version.
+  /// Set the type of an alternative version of the module: Unknown,
+  /// SharedObjectModule, CommandLineModule. The alternative version is
+  /// usually a different type than the primary version.
   void SetAlternativeType(const std::string &type)
   {
     if (type == "SharedObjectModule" 
@@ -163,73 +163,73 @@ public:
   }
 
   
-  // Get the type of an alternative version of the module: Unknown,
-  // SharedObjectModule, CommandLineModule. The alternative version is
-  // usually a different type than the primary version.
+  /// Get the type of an alternative version of the module: Unknown,
+  /// SharedObjectModule, CommandLineModule. The alternative version is
+  /// usually a different type than the primary version.
   const std::string& GetAlternativeType() const
   {
     return this->AlternativeType;
   }
   
-  // Set the target for the module.  This is the entry point for a
-  // shared object module and the full command (with path) for an executable.
+  /// Set the target for the module.  This is the entry point for a
+  /// shared object module and the full command (with path) for an executable.
   void SetTarget(const std::string &target)
   {
     this->Target = target;
   }
 
-  // Get the target for the module.  This is the entry point for a
-  // shared object module and the full command (with path) for an executable.
+  /// Get the target for the module.  This is the entry point for a
+  /// shared object module and the full command (with path) for an executable.
   const std::string& GetTarget() const
   {
     return this->Target;
   }
 
-  // Set the alternative target for the module.  This is the entry
-  // point for a shared object module and the full command (with path)
-  // for an executable. The alternative target is used for a second version
-  // of a module (whose type differs from the primary target,
-  // executable verses shared object).
+  /// Set the alternative target for the module.  This is the entry
+  /// point for a shared object module and the full command (with path)
+  /// for an executable. The alternative target is used for a second version
+  /// of a module (whose type differs from the primary target,
+  /// executable verses shared object).
   void SetAlternativeTarget(const std::string &target)
   {
     this->AlternativeTarget = target;
   }
 
-  // Get the alternative target for the module.  This is the entry for a
-  // shared object module and the full command (with path) for an
-  // executable. The alternative target is used for a second version
-  // of a module (whose type differs from the primary target,
-  // executable verses shared object).
+  /// Get the alternative target for the module.  This is the entry for a
+  /// shared object module and the full command (with path) for an
+  /// executable. The alternative target is used for a second version
+  /// of a module (whose type differs from the primary target,
+  /// executable verses shared object).
   const std::string& GetAlternativeTarget() const
   {
     return this->AlternativeTarget;
   }
 
-  // Set the location for the module.  This is path to the file (shared
-  // object or executable) for the module.
+  /// Set the location for the module.  This is path to the file (shared
+  /// object or executable) for the module.
   void SetLocation(const std::string &target)
   {
     this->Location = target;
   }
 
-  // Get the location for the module.  This is path to the file (shared
-  // object or executable) for the module.
+  /// Get the location for the module.  This is path to the file (shared
+  /// object or executable) for the module.
   const std::string& GetLocation() const
   {
     return this->Location;
   }
 
-  // Set the alternative location for the module.  This is path to the
-  // file (shared object or executable) for a second version of the
-  // module (usually a different type from the primary).
+  /// Set the alternative location for the module.  This is path to the
+  /// file (shared object or executable) for a second version of the
+  /// module (usually a different type from the primary).
   void SetAlternativeLocation(const std::string &target)
   {
     this->AlternativeLocation = target;
   }
 
-  // Get the alternative location for the module.  This is path to the
-  // file (shared object or executable) for a second version of the
-  // module (usually a different type from the primary).
+  /// Get the alternative location for the module.  This is path to the
+  /// file (shared object or executable) for a second version of the
+  /// module (usually a different type from the primary).
   const std::string& GetAlternativeLocation() const
   {
     return this->AlternativeLocation;

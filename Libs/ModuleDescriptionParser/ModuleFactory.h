@@ -30,114 +30,114 @@ public:
   ModuleFactory();
   virtual ~ModuleFactory();
 
-  // Set the name of the module factory.  The name is used in error
-  // messages (to refer to the application using the module factory)
-  // and in encoding entry points.
+  /// Set the name of the module factory.  The name is used in error
+  /// messages (to refer to the application using the module factory)
+  /// and in encoding entry points.
   void SetName( const std::string& name) { Name = name; }
 
-  // Get the name of the module factory.  The name is used in error
-  // messages (to refer to the application using the module factory)
-  // and in encoding entry points.
+  /// Get the name of the module factory.  The name is used in error
+  /// messages (to refer to the application using the module factory)
+  /// and in encoding entry points.
   const std::string& GetName() const { return Name; }
   
-  // Set the search path for modules (both command line modules and
-  // shared object modules). A list of ':' or ';' separated paths.
+  /// Set the search path for modules (both command line modules and
+  /// shared object modules). A list of ':' or ';' separated paths.
   void SetSearchPaths(const std::string& paths) { SearchPaths = paths; }
 
-  // Get the module search path.
+  /// Get the module search path.
   const std::string& GetSearchPaths() const { return SearchPaths; }
 
-  // Set the cache path for modules (both command line modules and
-  // shared object modules). The cache is an area where information on
-  // a mocule is cached between sessions.
+  /// Set the cache path for modules (both command line modules and
+  /// shared object modules). The cache is an area where information on
+  /// a mocule is cached between sessions.
   void SetCachePath(const std::string& path) { CachePath = path; }
 
-  // Get the module cache path.
+  /// Get the module cache path.
   const std::string& GetCachePath() const { return CachePath; }
   
-  // Scan for modules in the module search path.  This will locate
-  // command line modules as well as shared object modules.
+  /// Scan for modules in the module search path.  This will locate
+  /// command line modules as well as shared object modules.
   virtual void Scan();
 
-  // Get the names of all the modules.
+  /// Get the names of all the modules.
   std::vector<std::string> GetModuleNames() const;
 
-  // Get a module description by name.
+  /// Get a module description by name.
   ModuleDescription GetModuleDescription(const std::string&) const;
 
-  // Typedef of callback function
+  /// Typedef of callback function
   typedef void (*CallbackFunctionType)(const char *);
     
-  // Set/Get a function to call to report back warnings 
+  /// Set/Get a function to call to report back warnings 
   void SetWarningMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetWarningMessageCallback();
 
-  // Set/Get a function to call to report back errors
+  /// Set/Get a function to call to report back errors
   void SetErrorMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetErrorMessageCallback();
 
-  // Set/Get a function to call to report back information
+  /// Set/Get a function to call to report back information
   void SetInformationMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetInformationMessageCallback();
 
-  // Set/Get a function to call to report back a discovered module
+  /// Set/Get a function to call to report back a discovered module
   void SetModuleDiscoveryMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetModuleDiscoveryMessageCallback();
 
-  // Description:
-  // Register an executable program that can execute files with this extension
-  // ext includes a leading .
-  // cmdstring may contain a string formatting cod for the path
-  // path may be null if cmdstring doesn't contain formatting code
+  /// 
+  /// Register an executable program that can execute files with this extension
+  /// ext includes a leading .
+  /// cmdstring may contain a string formatting cod for the path
+  /// path may be null if cmdstring doesn't contain formatting code
   void RegisterFileExtension(const char *ext, const char *cmdstring, const char *path);
-  // Description:
-  // given an input file extension, search through registered ones to find and
-  // return an executable that will run it. Returns null if not found
+  /// 
+  /// given an input file extension, search through registered ones to find and
+  /// return an executable that will run it. Returns null if not found
   const char *GetExecutableForFileExtension(std::string ext);
   
 protected:
-  // Load the module cache.
+  /// Load the module cache.
   virtual void LoadModuleCache();
 
-  // Save the module cache.
+  /// Save the module cache.
   virtual void SaveModuleCache();
 
-  // Get the module description from the cache. Returns 0 if module
-  // was not found in the cache.  Returns 1 if module found in the
-  // cache and used.  Returns 2 if module found in the cache but not
-  // used because it was not a module. commandName is the full path to
-  // the module file being tested.
+  /// Get the module description from the cache. Returns 0 if module
+  /// was not found in the cache.  Returns 1 if module found in the
+  /// cache and used.  Returns 2 if module found in the cache but not
+  /// used because it was not a module. commandName is the full path to
+  /// the module file being tested.
   virtual int GetModuleFromCache(const std::string &commandName,
                                  long int commandModifiedTime,
                                  const std::string & type,
                                  std::stringstream &stream);
   
-  // Scan for shared object modules (i.e. DLL) in the module search
-  // path. Modules can either have global symbols or entry points to
-  // describe the module and logos. Returns the number of modules
-  // found (that have not already been discovered by another method).
+  /// Scan for shared object modules (i.e. DLL) in the module search
+  /// path. Modules can either have global symbols or entry points to
+  /// describe the module and logos. Returns the number of modules
+  /// found (that have not already been discovered by another method).
   virtual long ScanForSharedObjectModules();
 
-  // Scan for command line modules in the module search path. Command
-  // line modules are executables that respond to a --xml
-  // argument. Returns the number of modules found (that have not
-  // already been discovered by another method).
+  /// Scan for command line modules in the module search path. Command
+  /// line modules are executables that respond to a --xml
+  /// argument. Returns the number of modules found (that have not
+  /// already been discovered by another method).
   virtual long ScanForCommandLineModulesByExecuting();
 
-  // Scan for command line module in the module search path. Command
-  // line modules are executables with global symbols that can be
-  // queried without executing the program. Returns the number of
-  // modules found (that have not already been discovered by another
-  // method). 
+  /// Scan for command line module in the module search path. Command
+  /// line modules are executables with global symbols that can be
+  /// queried without executing the program. Returns the number of
+  /// modules found (that have not already been discovered by another
+  /// method). 
   virtual long ScanForCommandLineModulesByPeeking();
 
-  // Scan for Python modules in the module search path. 
+  /// Scan for Python modules in the module search path. 
   virtual long ScanForPythonModulesByLoading();
 
-  // Scan for files which are known (by exclusion) to not be modules
+  /// Scan for files which are known (by exclusion) to not be modules
   virtual long ScanForNotAModuleFiles();
 
-  // Get the logo for a command line module
+  /// Get the logo for a command line module
   virtual void GetLogoForCommandLineModuleByExecuting(ModuleDescription&);
   
   void WarningMessage( const char *);
