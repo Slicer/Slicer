@@ -65,6 +65,6 @@ private:
 };
   
   
-} // end namespace itk
+} /// end namespace itk
 
 #endif

@@ -93,6 +93,6 @@ private:
 
 };
 
-} // end namespace itk
+} /// end namespace itk
 
-#endif // __itkCommandIO_h
+#endif /// __itkCommandIO_h

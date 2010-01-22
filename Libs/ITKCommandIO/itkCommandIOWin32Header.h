@@ -12,10 +12,10 @@
 
 ==========================================================================*/
 
-// .NAME itkCommandIOWin32Header - manage Windows system differences
-// .SECTION Description
-// The itkCommandIOWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  itkCommandIOWin32Header - manage Windows system differences
+/// 
+/// The itkCommandIOWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __itkCommandIOWin32Header_h
 #define __itkCommandIOWin32Header_h
