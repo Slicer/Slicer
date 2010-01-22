@@ -136,6 +136,6 @@ private:
 };
 
 
-} // end namespace itk
-#endif // __itkMRMLIDImageIO_h
+} /// end namespace itk
+#endif /// __itkMRMLIDImageIO_h
 
