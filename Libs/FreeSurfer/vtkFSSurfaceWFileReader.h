@@ -11,13 +11,13 @@
   Version:   $Revision: 1.5 $
 
 =========================================================================auto=*/
-// .NAME vtkFSSurfaceWFileReader - read a surface w file (*.w) file
-// from Freesurfer tools
-// .SECTION Description
-// Reads a surface w file file from FreeSurfer and outputs a
-// vtkFloatArray. Use the SetFileName function to specify the file
-// name. The number of values in the array should be equal to the
-// number of vertices/points in the surface.
+/// .NAME vtkFSSurfaceWFileReader - read a surface w file (*.w) file
+/// from Freesurfer tools
+/// .SECTION Description
+/// Reads a surface w file file from FreeSurfer and outputs a
+/// vtkFloatArray. Use the SetFileName function to specify the file
+/// name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface.
 
 #ifndef __vtkFSSurfaceWFileReader_h
 #define __vtkFSSurfaceWFileReader_h
@@ -50,7 +50,7 @@ public:
   //BTX
   enum
   {
-    // error codes
+    /// error codes
     FS_ERROR_W_NONE = 0,
     FS_ERROR_W_OUTPUT_NULL = 1,
     FS_ERROR_W_NO_FILENAME = 2,
@@ -58,7 +58,7 @@ public:
     FS_ERROR_W_NUM_VALUES = 4,
     FS_ERROR_W_ALLOC = 5,
     FS_ERROR_W_EOF = 6,
-    // file type magic numbers
+    /// file type magic numbers
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
   };
   //ETX
@@ -70,10 +70,10 @@ protected:
   vtkFloatArray *scalars;
 
 
-  // Description:
-  // this is the number of vertices in the associated model file,
-  // there may not be as many value in this scalar file as there
-  // are vertices
+  /// 
+  /// this is the number of vertices in the associated model file,
+  /// there may not be as many value in this scalar file as there
+  /// are vertices
   int NumberOfVertices;
   
   int ReadInt3 (FILE* iFile, int& oInt);
@@ -81,8 +81,8 @@ protected:
   int ReadFloat (FILE* iFile, float& oInt);
   
 private:
-  vtkFSSurfaceWFileReader(const vtkFSSurfaceWFileReader&);  // Not implemented.
-  void operator=(const vtkFSSurfaceWFileReader&);  // Not implemented.
+  vtkFSSurfaceWFileReader(const vtkFSSurfaceWFileReader&);  /// Not implemented.
+  void operator=(const vtkFSSurfaceWFileReader&);  /// Not implemented.
 };
 #endif
 

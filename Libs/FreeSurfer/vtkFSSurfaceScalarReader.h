@@ -11,13 +11,13 @@
   Version:   $Revision: 1.9 $
 
 =========================================================================auto=*/
-// .NAME vtkFSSurfaceScalarReader - read a surface scalar file from
-// Freesurfer tools
-// .SECTION Description
-// Reads a surface scalar file from FreeSurfer and outputs a
-// vtkFloatArray. Use the SetFileName function to specify the file
-// name. The number of values in the array should be equal to the
-// number of vertices/points in the surface.
+/// .NAME vtkFSSurfaceScalarReader - read a surface scalar file from
+/// Freesurfer tools
+/// .SECTION Description
+/// Reads a surface scalar file from FreeSurfer and outputs a
+/// vtkFloatArray. Use the SetFileName function to specify the file
+/// name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface.
 
 #ifndef __vtkFSSurfaceScalarReader_h
 #define __vtkFSSurfaceScalarReader_h
@@ -41,12 +41,12 @@ public:
   void SetOutput(vtkFloatArray *output)
     {this->scalars = output; };
 
-  // Description:
-  // Read the scalars from a file. Return 1 on success, 0 on failure
+  /// 
+  /// Read the scalars from a file. Return 1 on success, 0 on failure
   int ReadFSScalars();
 
-  // file type magic numbers
-  // const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
+  /// file type magic numbers
+  /// const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
   //BTX
   enum 
     {
@@ -64,8 +64,8 @@ protected:
   int ReadFloat (FILE* iFile, float& oInt);
   
 private:
-  vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader&);  // Not implemented.
-  void operator=(const vtkFSSurfaceScalarReader&);  // Not implemented.
+  vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader&);  /// Not implemented.
+  void operator=(const vtkFSSurfaceScalarReader&);  /// Not implemented.
 };
 
 

@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkFreeSurferWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkFreeSurferWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+/// .NAME vtkFreeSurferWin32Header - manage Windows system differences
+/// .SECTION Description
+/// The vtkFreeSurferWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkFreeSurferWin32Header_h
 #define __vtkFreeSurferWin32Header_h

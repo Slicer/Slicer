@@ -11,10 +11,10 @@
   Version:   $Revision: 1.10 $
 
 =========================================================================auto=*/
-// .NAME vtkFSIO - Some IO functions for irregular FreeSurface files.
-// .SECTION Description
-// Some simple functions for doing silly things like reading three
-// byte ints, common in FreeSurfer file types.
+/// .NAME vtkFSIO - Some IO functions for irregular FreeSurface files.
+/// .SECTION Description
+/// Some simple functions for doing silly things like reading three
+/// byte ints, common in FreeSurfer file types.
 
 #ifndef __vtkFSIO_h
 #define __vtkFSIO_h
@@ -33,9 +33,9 @@ class  vtkFSIO {
 
   static vtkFSIO *New () { return NULL; }
 
-  // These use FILE types instead of file streams for no good reason,
-  // simply because the old code from which this is adapted is
-  // C-based.
+  /// These use FILE types instead of file streams for no good reason,
+  /// simply because the old code from which this is adapted is
+  /// C-based.
   static int ReadShort (FILE* iFile, short& oShort);
   static int ReadInt (FILE* iFile, int& oInt);
   static int ReadInt3 (FILE* iFile, int& oInt);
@@ -48,7 +48,7 @@ class  vtkFSIO {
  static int ReadInt2Z (gzFile iFile, int& oInt);
   static int ReadFloatZ (gzFile iFile, float& oFloat);
 
-    // for testing purposes
+    /// for testing purposes
     static int WriteInt (FILE* iFile, int iInt);
     static int WriteInt3 (FILE* iFile, int iInt);
     static int WriteInt2 (FILE* iFile, int iInt);
