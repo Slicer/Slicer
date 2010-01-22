@@ -1,7 +1,7 @@
-// .NAME vtkIGTDataManager - Central registry to provide control and I/O for
-//  trackers and imagers
-// .SECTION Description
-// vtkIGTDataManager registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
+///  vtkIGTDataManager - Central registry to provide control and I/O for
+///  trackers and imagers
+/// 
+/// vtkIGTDataManager registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
 
 #ifndef IGTDATAMANAGER_H
 #define IGTDATAMANAGER_H
@@ -29,11 +29,11 @@ public:
 
 
     //Description:
-    // Set MRML scene from the Slicer main routine
+    /// Set MRML scene from the Slicer main routine
     vtkSetObjectMacro(MRMLScene,vtkMRMLScene);
 
     //Description:
-    // Get MRML scene stored
+    /// Get MRML scene stored
     vtkGetObjectMacro(MRMLScene,vtkMRMLScene);
 
 
@@ -66,4 +66,4 @@ private:
 };
 
 
-#endif // IGTDATAMANAGER_H
+#endif /// IGTDATAMANAGER_H

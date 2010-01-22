@@ -16,8 +16,8 @@ class VTK_IGT_EXPORT vtkIGTMatrixState : public vtkObject
 {
 public:
 
-  // Constructors/Destructors
-  //  
+  /// Constructors/Destructors
+  ///  
     static vtkIGTMatrixState *New();
     vtkTypeRevisionMacro(vtkIGTMatrixState,vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
@@ -42,8 +42,8 @@ protected:
   vtkMatrix4x4* Matrix_in_RAS;
   vtkMatrix4x4* Matrix_in_IJK;
   int m_timestamp;
-  // Private attribute accessor methods
-  //  
+  /// Private attribute accessor methods
+  ///  
 
 
 
@@ -66,4 +66,4 @@ protected:
 
 };
 
-#endif // IGTMATRIXSTATE_H
+#endif /// IGTMATRIXSTATE_H

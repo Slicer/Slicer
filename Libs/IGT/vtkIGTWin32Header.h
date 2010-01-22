@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkIGTWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkIGTWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  vtkIGTWin32Header - manage Windows system differences
+/// 
+/// The vtkIGTWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkIGTWin32Header_h
 #define __vtkIGTWin32Header_h

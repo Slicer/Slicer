@@ -16,8 +16,8 @@ class VTK_IGT_EXPORT vtkIGTDataStream : public vtkObject
 {
 public:
 
-    // Constructors/Destructors
-    //  Magic lines for vtk and Slicer
+    /// Constructors/Destructors
+    ///  Magic lines for vtk and Slicer
     static vtkIGTDataStream *New();
     vtkTypeRevisionMacro(vtkIGTDataStream,vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
@@ -56,4 +56,4 @@ protected:
     void ApplyTransform(float *position, float *norm, float *transnorm);
  };
 
-#endif // IGTDATASTREAM_H
+#endif /// IGTDATASTREAM_H

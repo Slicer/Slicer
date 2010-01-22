@@ -1,13 +1,13 @@
-// .NAME vtkIGTIGSTKStream - Central registry to provide control and I/O for
-//  trackers and imagers
-// .SECTION Description
-// vtkIGTIGSTKStream registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
+///  vtkIGTIGSTKStream - Central registry to provide control and I/O for
+///  trackers and imagers
+/// 
+/// vtkIGTIGSTKStream registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
 
 #ifndef IGTIGSTKSTREAM_H
 #define IGTIGSTKSTREAM_H
 
 
-// #include "itkCommand.h"
+/// #include "itkCommand.h"
 
 #include "vtkIGTWin32Header.h" 
 #include "vtkObject.h"
@@ -59,7 +59,7 @@ public:
     void Init();
     void StopPulling();
     void PullRealTime();    
-    // void SetLocatorTransforms();
+    /// void SetLocatorTransforms();
     void CleanTracker();
 
 private:
@@ -69,7 +69,7 @@ private:
     igstk::PolarisTracker::Pointer       PolarisTracker;
 
 
-    // Communication Parameters
+    /// Communication Parameters
     /**  Port Number */
     PortNumberT PortNumber;   
     /** Baud rate of communication */
@@ -85,7 +85,7 @@ private:
 
     //ETX
 
-    short TrackerType;  // 0 - Polaris; 1 - Aurora 
+    short TrackerType;  /// 0 - Polaris; 1 - Aurora 
 
     void UpdateLocatorMatrix(float *positon, float *orientation);
 
@@ -94,5 +94,5 @@ private:
 
 
 
-#endif // IGTIGSTKSTREAM_H
+#endif /// IGTIGSTKSTREAM_H
 

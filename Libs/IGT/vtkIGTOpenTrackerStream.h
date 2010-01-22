@@ -1,7 +1,7 @@
-// .NAME vtkIGTOpenTrackerStream - Central registry to provide control and I/O for
-//  trackers and imagers
-// .SECTION Description
-// vtkIGTOpenTrackerStream registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
+///  vtkIGTOpenTrackerStream - Central registry to provide control and I/O for
+///  trackers and imagers
+/// 
+/// vtkIGTOpenTrackerStream registers arbitary number of trackers and imagers, created MRML nodes in the MRML secene. Designed and Coded by Nobuhiko Hata and Haiying Liu, Jan 12, 2007 @ NA-MIC All Hands Meeting, Salt Lake City, UT
 
 #ifndef IGTOPENTRACKERSTREAM_H
 #define IGTOPENTRACKERSTREAM_H
@@ -49,5 +49,5 @@ private:
 
 };
 
-#endif // IGTOPENTRACKERSTREAM_H
+#endif /// IGTOPENTRACKERSTREAM_H
 
