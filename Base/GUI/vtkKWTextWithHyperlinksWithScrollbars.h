@@ -23,10 +23,10 @@ protected:
 
 
 private:
-     // Description:
-    // Caution: Not implemented
-    vtkKWTextWithHyperlinksWithScrollbars(const vtkKWTextWithHyperlinksWithScrollbars&); // Not implemented
-    void operator=(const vtkKWTextWithHyperlinksWithScrollbars&); // Not implemented
+     /// 
+    /// Caution: Not implemented
+    vtkKWTextWithHyperlinksWithScrollbars(const vtkKWTextWithHyperlinksWithScrollbars&); /// Not implemented
+    void operator=(const vtkKWTextWithHyperlinksWithScrollbars&); /// Not implemented
 };
 
 #endif

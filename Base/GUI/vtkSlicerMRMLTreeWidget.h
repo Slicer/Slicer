@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -47,26 +47,26 @@ public:
   vtkTypeRevisionMacro(vtkSlicerMRMLTreeWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
-  // Description:
-  // removes observers on node deleted events 
+  /// 
+  /// removes observers on node deleted events 
   virtual void AddMRMLObservers();
   virtual void RemoveMRMLObservers();
 
   
-  // Description::
-  // Callbacks
+  /// :
+  /// Callbacks
   virtual void DeleteNodeCallback(const char *id);
 
   virtual void CutNodeCallback(const char *id);
@@ -94,8 +94,8 @@ protected:
   vtkSlicerMRMLTreeWidget();
   virtual ~vtkSlicerMRMLTreeWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
   
   void UpdateTreeFromMRML();
@@ -124,8 +124,8 @@ private:
   vtkKWLabelWithLabel *NodeID;
   vtkKWEntryWithLabel *NodeName;
 
-  vtkSlicerMRMLTreeWidget(const vtkSlicerMRMLTreeWidget&); // Not implemented
-  void operator=(const vtkSlicerMRMLTreeWidget&); // Not Implemented
+  vtkSlicerMRMLTreeWidget(const vtkSlicerMRMLTreeWidget&); /// Not implemented
+  void operator=(const vtkSlicerMRMLTreeWidget&); /// Not Implemented
 };
 
 #endif

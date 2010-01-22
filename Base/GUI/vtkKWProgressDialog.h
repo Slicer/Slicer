@@ -1,9 +1,9 @@
-// .NAME vtkKWProgressDialog - show a dialog with progress on top of the parent window
-// .SECTION Description
-// Creates a dialog that will be shown on top of the parent window.
-// Attention: The display method processes all pending events to allow a proper display on all platforms.
-// Keep also in main that the progress gauge executes all idle events.
-// Example how to use it: Slicer3\Modules\VolumeRendering\vtkSlicerVRLabelmapHelper.cxx
+///  vtkKWProgressDialog - show a dialog with progress on top of the parent window
+/// 
+/// Creates a dialog that will be shown on top of the parent window.
+/// Attention: The display method processes all pending events to allow a proper display on all platforms.
+/// Keep also in main that the progress gauge executes all idle events.
+/// Example how to use it: Slicer3\Modules\VolumeRendering\vtkSlicerVRLabelmapHelper.cxx
 
 #ifndef __vtkKWProgressDialog_h
 #define __vtkKWProgressDialog_h
@@ -22,12 +22,12 @@ class vtkKWProgressGauge;
 class VTK_SLICER_BASE_GUI_EXPORT vtkKWProgressDialog : public vtkKWTopLevel
 {
 public:
-    // Description:
-    // Callback function for progress tracking
+    /// 
+    /// Callback function for progress tracking
     static void Callback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
-    // Description:
-    // Usual vtk methods: go to www.vtk.org for more details
+    /// 
+    /// Usual vtk methods: go to www.vtk.org for more details
     static vtkKWProgressDialog *New();
     vtkTypeRevisionMacro(vtkKWProgressDialog, vtkKWTopLevel);   
     void PrintSelf(ostream& os, vtkIndent indent);
@@ -51,15 +51,15 @@ public:
     virtual void Display();
 
 protected:
-    // Description:
-    // Use ::New() to get a new instance.
+    /// 
+    /// Use ::New() to get a new instance.
     vtkKWProgressDialog(void);
-    // Description:
-    // Use ->Delete() to delete object
+    /// 
+    /// Use ->Delete() to delete object
     ~vtkKWProgressDialog(void);
 
-    // Description:
-    // Create the widget.
+    /// 
+    /// Create the widget.
     virtual void CreateWidget();
 
 
@@ -83,9 +83,9 @@ protected:
 
 private:
 
-    // Description:
-    // Caution: Not implemented
-    vtkKWProgressDialog(const vtkKWProgressDialog&); // Not implemented
-    void operator=(const vtkKWProgressDialog&); // Not implemented
+    /// 
+    /// Caution: Not implemented
+    vtkKWProgressDialog(const vtkKWProgressDialog&); /// Not implemented
+    void operator=(const vtkKWProgressDialog&); /// Not implemented
 };
 #endif

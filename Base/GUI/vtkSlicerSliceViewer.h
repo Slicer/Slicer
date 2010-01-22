@@ -38,12 +38,12 @@ public:
 
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
-  // Description:
-  // Used to set the PolyData/LookupTable pairs to show arbitrary object in the 2D slices
+  /// 
+  /// Used to set the PolyData/LookupTable pairs to show arbitrary object in the 2D slices
   void SetCoordinatedPolyDataAndLookUpTableCollections( vtkPolyDataCollection* newPolyDataCollection, vtkCollection* newLookupTableCollection );
 
-  // Description: 
-  // Used to track the fact that there is a idle task pending requesting a render
+  ///  
+  /// Used to track the fact that there is a idle task pending requesting a render
   vtkSetMacro (RenderPending, int);
   vtkGetMacro (RenderPending, int);
 
@@ -53,26 +53,26 @@ public:
   vtkGetMacro (LayoutGridColumns, int);
   vtkSetMacro (LayoutGridColumns, int);
 
-  // Description:
-  // Control the highlight of a viewport in a lightbox. Hightlight is
-  // used to designate the active slice in a lightbox
+  /// 
+  /// Control the highlight of a viewport in a lightbox. Hightlight is
+  /// used to designate the active slice in a lightbox
   void HighlightSlice(int slice);
   void UnhighlightSlice(int slice);
   void UnhighlightAllSlices();
   vtkGetVector3Macro(HighlightColor, double);
   vtkSetVector3Macro(HighlightColor, double);
 
-  // Description:
-  // propagate events generated in GUI to logic / mrml
-  // Here, it calls RequestRender in response to Expose and Configure events
-  // BTX
+  /// 
+  /// propagate events generated in GUI to logic / mrml
+  /// Here, it calls RequestRender in response to Expose and Configure events
+  /// BTX
   static void GUICallback( vtkObject *__caller,
                            unsigned long eid, void *__clientData, void *callData );    
-  // ETX
+  /// ETX
   
-  // Description:
-  // Request Render posts a request to the event queue for processing when
-  // all other user events have been handled.  Render does the actual render.
+  /// 
+  /// Request Render posts a request to the event queue for processing when
+  /// all other user events have been handled.  Render does the actual render.
   void RequestRender();
   void Render();
 
@@ -82,22 +82,22 @@ public:
 
   //int GetNumberOfTiles() { return ImageMapperVec; };
 
-  // void SetNthMapper( int n, vtkImageMapper* imageMapper } { ImageMapperVec[n] = imageMapper; };
+  /// void SetNthMapper( int n, vtkImageMapper* imageMapper } { ImageMapperVec[n] = imageMapper; };
 
 protected:
   vtkSlicerSliceViewer ( );
   virtual ~vtkSlicerSliceViewer ( );
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget( );
 
-  // Slice viewer widgets
+  /// Slice viewer widgets
   vtkKWRenderWidget *RenderWidget;
 
   double HighlightColor[3];
   
-  // To accomadate changes in layout
+  /// To accomadate changes in layout
   //BTX
   std::vector< vtkSmartPointer< vtkImageMapper > > ImageMapperVec;
   std::vector< vtkSmartPointer< vtkActor2D > > HighlightActorVec;

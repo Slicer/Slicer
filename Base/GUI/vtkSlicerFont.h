@@ -13,8 +13,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFont : public vtkObject
   static vtkSlicerFont* New();
   vtkTypeRevisionMacro(vtkSlicerFont, vtkObject);
 
-  // Description:
-  // Get methods for Slicer's Font options
+  /// 
+  /// Get methods for Slicer's Font options
   vtkGetMacro(FontSizeSmall0, int);
   vtkGetMacro(FontSizeSmall1, int);
   vtkGetMacro(FontSizeSmall2, int);
@@ -52,7 +52,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFont : public vtkObject
   vtkSlicerFont();
   ~vtkSlicerFont();
 
-  // try this...
+  /// try this...
   //BTX
   std::vector <std::string> FontFamilies;
   std::vector <std::string> FontSizes;
@@ -72,8 +72,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFont : public vtkObject
   int FontSizeLargest2;
         
   private:
-  vtkSlicerFont(const vtkSlicerFont&); // Not implemented
-  void operator =(const vtkSlicerFont&); // Not implemented
+  vtkSlicerFont(const vtkSlicerFont&); /// Not implemented
+  void operator =(const vtkSlicerFont&); /// Not implemented
 };
 
 #endif

@@ -7,19 +7,19 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerSlicesControl_ImageData.h"
 
-// Description:
-// This class reads in the png format image data for logos and
-// for icons in Slicer's main toolbar, and elsewhere in
-// slicer's main window. It also creates vtkKWIcons and assigns
-// the image data to them. (Elsewhere in the application,
-// vtkKWLabels and vtkKWPushbuttons can display these
-// vtkKWIcons instead of text.
+/// Description:
+/// This class reads in the png format image data for logos and
+/// for icons in Slicer's main toolbar, and elsewhere in
+/// slicer's main window. It also creates vtkKWIcons and assigns
+/// the image data to them. (Elsewhere in the application,
+/// vtkKWLabels and vtkKWPushbuttons can display these
+/// vtkKWIcons instead of text.
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerIcons
 {
  public:
-    // Description:
-    // Usual vtk functions
+    /// 
+    /// Usual vtk functions
     static vtkSlicerSlicesControlIcons* New ();
     vtkTypeRevisionMacro ( vtkSlicerSlicesControlIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
@@ -55,8 +55,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkGetObjectMacro (SliceLabelOutlineOnIcon, vtkKWIcon );
     vtkGetObjectMacro ( SliceLabelOutlineOffIcon, vtkKWIcon );
 
-    // Description:
-    // Method for setting images for widgets in Slicer's SlicesControlFrame
+    /// 
+    /// Method for setting images for widgets in Slicer's SlicesControlFrame
     void AssignImageDataToIcons ( );
     
  protected:
@@ -95,8 +95,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkKWIcon *FieldOfViewIcon;
 
  private:
-    vtkSlicerSlicesControlIcons (const vtkSlicerSlicesControlIcons& ); // Not implemented
-    void operator = (const vtkSlicerSlicesControlIcons& ); // Not implemented
+    vtkSlicerSlicesControlIcons (const vtkSlicerSlicesControlIcons& ); /// Not implemented
+    void operator = (const vtkSlicerSlicesControlIcons& ); /// Not implemented
     
 };
 #endif

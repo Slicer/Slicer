@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 
-// Description:
-// Definition of Slicer's look and feel.
+/// Description:
+/// Definition of Slicer's look and feel.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
 {
@@ -16,20 +16,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   static vtkSlicerStyle* New ( );
   vtkTypeRevisionMacro ( vtkSlicerStyle, vtkObject );
 
-  // Description:
-  // This method configures the Slicer brand.
-  // New style classes can be derived from this one,
-  // and the ApplyPresentation method can be overridden
-  // to specify different look and feel.
-  // Can we plan to adopt Tk tiles to create
-  // a platform invariant expression of Slicer brand?
+  /// 
+  /// This method configures the Slicer brand.
+  /// New style classes can be derived from this one,
+  /// and the ApplyPresentation method can be overridden
+  /// to specify different look and feel.
+  /// Can we plan to adopt Tk tiles to create
+  /// a platform invariant expression of Slicer brand?
   virtual void ApplyPresentation ( );
-  // To be defined later, reading slicer style from xml fikle.
-  // for now, just hardcode them.
+  /// To be defined later, reading slicer style from xml fikle.
+  /// for now, just hardcode them.
   void ParseStyleParameters ( );
 
-  // Interface to standard Tk options
-  // font and text
+  /// Interface to standard Tk options
+  /// font and text
   vtkSetStringMacro(BigFont);
   vtkGetStringMacro(BigFont);
   vtkSetStringMacro(MedFont);
@@ -37,14 +37,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   vtkSetStringMacro(SmallFont);
   vtkGetStringMacro(SmallFont);
 
-  // relief
+  /// relief
   vtkSetStringMacro(Relief);
   virtual void SetFlatRelief ( );
   virtual void SetGrooveRelief ( );
 
-  // color
-  // Description:
-  // Used by all color-setting methods to do error checking, setting.
+  /// color
+  /// 
+  /// Used by all color-setting methods to do error checking, setting.
   //
   virtual int SetColor ( double *color, double r, double g, double b );
   virtual int SetColor (double *c1, double *c2);
@@ -88,7 +88,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   virtual int SetSliceBgColor ( double *color);
   virtual double* GetSliceBgColor ( );
 
-  // highlights
+  /// highlights
   virtual int SetHighLightColor ( double r, double g, double b );
   virtual int SetHighLightColor ( double *color );
   virtual double* GetHighLightColor ( );
@@ -98,7 +98,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   virtual void SetHighLightThickness ( int thickness );
   virtual int GetHighLightThickness ( ) { return this->HighLightThickness; }
     
-  // spacing functions
+  /// spacing functions
   virtual void SetBorderWidth ( int width );
   virtual int GetBorderWidth ( ) { return this->BorderWidth ;}
   virtual void SetActiveBorderWidth ( int width );
@@ -115,22 +115,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
     
   protected:
     
-  // Font and text
+  /// Font and text
   vtkSlicerFont *Fonts;
     
   char *BigFont;
   char *MedFont;
   char *SmallFont;
     
-  // Relief
-  //    char *FlatRelief; // Not used
-  //    char *GrooveRelief; // Not used
+  /// Relief
+  ///    char *FlatRelief; /// Not used
+  ///    char *GrooveRelief; /// Not used
   char *Relief;
 
-  // Color definitions
+  /// Color definitions
   vtkSlicerColor *Colors;
     
-  // Code colors
+  /// Code colors
   double SavedDataTextColor [3];
   double UnsavedDataTextColor [3];
   double ErrorTextColor [3];
@@ -138,12 +138,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   double WarningTextColor [3];
   double WarningColor [3];
 
-  // Slice color
+  /// Slice color
   double SagColor [3];
   double AxiColor [3];
   double CorColor [3];
     
-  // Foreground and Background color
+  /// Foreground and Background color
   double BgColor [3];
   double ActiveBgColor [3];
   double InsertBgColor [3];
@@ -158,12 +158,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   double GUIFgColor [3];
   double SliceBgColor [3];
     
-  // Highlights
+  /// Highlights
   double HighLightColor [3];
   double HighLightBgColor [3];
   int HighLightThickness;
     
-  // Spacing
+  /// Spacing
   int BorderWidth;
   int ActiveBorderWidth;
   int SelectBorderWidth;
@@ -174,8 +174,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
   virtual ~vtkSlicerStyle ( );
         
   private:
-  vtkSlicerStyle ( const vtkSlicerStyle&); // Not implemented
-  void operator = ( const vtkSlicerStyle&); // Not implemented
+  vtkSlicerStyle ( const vtkSlicerStyle&); /// Not implemented
+  void operator = ( const vtkSlicerStyle&); /// Not implemented
 };
 
 #endif

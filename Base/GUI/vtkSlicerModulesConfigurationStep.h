@@ -21,19 +21,19 @@ public:
   static vtkSlicerModulesConfigurationStep* New();
   vtkTypeRevisionMacro(vtkSlicerModulesConfigurationStep,vtkKWWizardStep);
 
-  // Description:
-  // Show/hide/update the UI, and validate the step.
+  /// 
+  /// Show/hide/update the UI, and validate the step.
   virtual void ShowUserInterface();
   virtual void HideUserInterface();
   virtual void Validate();
   virtual void Update();
 
-  // Description:
-  // Connect to selected repository 0 == success
+  /// 
+  /// Connect to selected repository 0 == success
   virtual int IsRepositoryValid();
 
-  // Description:
-  // Get selected action
+  /// 
+  /// Get selected action
   //BTX
   enum 
   {
@@ -45,17 +45,17 @@ public:
   //ETX
   virtual int GetSelectedAction();
 
-  // Description:
-  // Set/Get the wizard widget this step should install its UI in.
+  /// 
+  /// Set/Get the wizard widget this step should install its UI in.
   vtkGetObjectMacro(WizardDialog, vtkSlicerModulesWizardDialog);
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
-  // Description:
-  // Get the input to branch when repository has failed or is empty.
+  /// 
+  /// Get the input to branch when repository has failed or is empty.
   vtkGetObjectMacro(RepositoryValidationFailed, vtkKWStateMachineInput);
 
-  // Description:
-  // Callbacks
+  /// 
+  /// Callbacks
   virtual int ActionRadioButtonSetChangedCallback();
   virtual void CacheDirectoryCallback();
   virtual void EmptyCacheDirectoryCommand();
@@ -80,8 +80,8 @@ protected:
   vtkKWStateMachineInput *RepositoryValidationFailed;
 
 private:
-  vtkSlicerModulesConfigurationStep(const vtkSlicerModulesConfigurationStep&); // Not implemented.
-  void operator=(const vtkSlicerModulesConfigurationStep&); // Not implemented.
+  vtkSlicerModulesConfigurationStep(const vtkSlicerModulesConfigurationStep&); /// Not implemented.
+  void operator=(const vtkSlicerModulesConfigurationStep&); /// Not implemented.
 
 };
 

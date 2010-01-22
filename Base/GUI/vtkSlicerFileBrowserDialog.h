@@ -19,13 +19,13 @@ protected:
   vtkSlicerFileBrowserDialog();
   ~vtkSlicerFileBrowserDialog();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
   vtkSlicerFileBrowserIcons *Icons;
 
 private:
-  vtkSlicerFileBrowserDialog(const vtkSlicerFileBrowserDialog&); // Not implemented
-  void operator=(const vtkSlicerFileBrowserDialog&); // Not implemented
+  vtkSlicerFileBrowserDialog(const vtkSlicerFileBrowserDialog&); /// Not implemented
+  void operator=(const vtkSlicerFileBrowserDialog&); /// Not implemented
 };
 #endif

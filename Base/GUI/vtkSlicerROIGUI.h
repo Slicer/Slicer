@@ -1,6 +1,6 @@
-// .NAME vtkSlicerROIGUI 
-// .SECTION Description
-// Main ROI GUI and mediator methods for slicer3. 
+///  vtkSlicerROIGUI 
+/// 
+/// Main ROI GUI and mediator methods for slicer3. 
 
 
 #ifndef __vtkSlicerROIGUI_h
@@ -38,14 +38,14 @@ class vtkSlicerROIDisplayWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerROIGUI : public vtkSlicerModuleGUI
 {
 public:
-  // Description: 
-  // Usual vtk class functions 
+  ///  
+  /// Usual vtk class functions 
   static vtkSlicerROIGUI* New (  );
   vtkTypeRevisionMacro ( vtkSlicerROIGUI, vtkSlicerModuleGUI );
   void PrintSelf ( ostream& os, vtkIndent indent );
 
-  // Description:
-  // Get methods on class members ( no Set methods required. )
+  /// 
+  /// Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( AddROIButton, vtkKWPushButton);
   vtkGetObjectMacro ( RemoveROIButton, vtkKWPushButton);
   vtkGetObjectMacro ( RemoveROIListButton, vtkKWPushButton);
@@ -62,58 +62,58 @@ public:
   void SetAndObserveModuleLogic ( vtkSlicerROILogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
-  // Description:
-  // This method builds the ROI module GUI
+  /// 
+  /// This method builds the ROI module GUI
   virtual void BuildGUI ( void );
   virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
   virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
-  // Description:
-  // This method releases references and key-bindings,
-  // and optionally removes observers.
+  /// 
+  /// This method releases references and key-bindings,
+  /// and optionally removes observers.
   virtual void TearDownGUI ( );
 
-  // Description:
-  // Methods for adding module-specific key bindings and
-  // removing them.
+  /// 
+  /// Methods for adding module-specific key bindings and
+  /// removing them.
   virtual void CreateModuleEventBindings ( );
   virtual void ReleaseModuleEventBindings ( );
 
-  // Description:
-  // Add/Remove observers on widgets in the GUI
+  /// 
+  /// Add/Remove observers on widgets in the GUI
   virtual void AddGUIObservers ( );
   virtual void RemoveGUIObservers ( );
 
-  // Description:
-  // Class's mediator methods for processing events invoked by
-  // either the Logic, MRML or GUI.
+  /// 
+  /// Class's mediator methods for processing events invoked by
+  /// either the Logic, MRML or GUI.
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
-  // Once know that the GUI has to be cleared and updated to show elements
-  // from a new list, use this call
+  /// 
+  /// Once know that the GUI has to be cleared and updated to show elements
+  /// from a new list, use this call
   virtual void SetGUIFromList(vtkMRMLROIListNode * activeROIListNode);
 
-  // Description:
-  // Methods describe behavior at module enter and exit.
+  /// 
+  /// Methods describe behavior at module enter and exit.
   virtual void Enter ( );
   virtual void Exit ( );
 
   virtual void UpdateElement(int row, int col, char * str);
 
-  // Description:
-  // Getting and setting the mrml ROI list node id
+  /// 
+  /// Getting and setting the mrml ROI list node id
   vtkGetStringMacro(ROIListNodeID);
   void SetROIListNodeID(char *id);
 
-  // Description:
-  // Set the selected node, the ROI list id, and update the widgets
+  /// 
+  /// Set the selected node, the ROI list id, and update the widgets
   void SetROIListNode(vtkMRMLROIListNode *ROIListNode);
 
-  // Description:
-  // Update the gui from the currently selected ROI node, called on Enter
+  /// 
+  /// Update the gui from the currently selected ROI node, called on Enter
   void UpdateGUI();
 
 
@@ -121,72 +121,72 @@ protected:
   vtkSlicerROIGUI ( );
   virtual ~vtkSlicerROIGUI ( );
 
-  // Description:
-  // Which ROI  node are we displaying in this gui 
+  /// 
+  /// Which ROI  node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROISelectorWidget;
 
-  // Description:
-  // Which ROI list node are we displaying in this gui 
+  /// 
+  /// Which ROI list node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROIListSelectorWidget;
 
-  // Description:
-  // Which voliume node is associated with the ROI 
+  /// 
+  /// Which voliume node is associated with the ROI 
   vtkSlicerNodeSelectorWidget* VolumeNodeSelectorWidget;
 
- // Description:
-  // Module logic and mrml pointers
+ /// Description:
+  /// Module logic and mrml pointers
   vtkSlicerROILogic *Logic;
 
-  // Description:
-  // The ID of the ROI node that is currently displayed in the GUI
+  /// 
+  /// The ID of the ROI node that is currently displayed in the GUI
   char *ROIListNodeID;
 
-  // Description:
-  // The ROI  node that is currently displayed in the GUI
+  /// 
+  /// The ROI  node that is currently displayed in the GUI
   vtkMRMLROIListNode *ROINode;
 
-  // Description:
-  // The ROI list node that is currently displayed in the GUI
+  /// 
+  /// The ROI list node that is currently displayed in the GUI
   vtkMRMLROIListNode *ROIListNode;
 
-  // Widgets for the ROI module
-  // add a point
+  /// Widgets for the ROI module
+  /// add a point
   vtkKWPushButton *AddROIButton;
-  // remove the last selected (multi column list definition of selected)
-  // point
+  /// remove the last selected (multi column list definition of selected)
+  /// point
   vtkKWPushButton *RemoveROIButton;
-  // remove all the ROI boxes on this list
+  /// remove all the ROI boxes on this list
   vtkKWPushButton *RemoveROIListButton;
 
-  // ROI position and Raidus scale
+  /// ROI position and Raidus scale
   vtkSlicerROIDisplayWidget *ROIDisplayWidget;
 
-  // ROI visibility
+  /// ROI visibility
   vtkKWPushButton *VisibilityToggle;
   vtkSlicerVisibilityIcons *VisibilityIcons;
 
-  // ROI colour
+  /// ROI colour
   vtkKWChangeColorButton *ROIColorButton;
 
-  // ROI selected ROI colour
+  /// ROI selected ROI colour
   vtkKWChangeColorButton *ROISelectedColorButton;
 
-  // text scale
+  /// text scale
   vtkKWScaleWithEntry *ROITextScale;
 
-  // opacity
+  /// opacity
   vtkKWScaleWithEntry *ROIOpacity;
 
-  // display the points on the list
+  /// display the points on the list
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
-  // the columns that hold the
-  // name, x, y, z, selected
+  /// the columns that hold the
+  /// name, x, y, z, selected
   int NumberOfColumns;
 
   //BTX
-  // Description:
-  // The column orders in the list box
+  /// 
+  /// The column orders in the list box
   enum
     {
     NameColumn = 0,
@@ -202,7 +202,7 @@ protected:
 
 
 private:
-  vtkSlicerROIGUI ( const vtkSlicerROIGUI& ); // Not implemented.
+  vtkSlicerROIGUI ( const vtkSlicerROIGUI& ); /// Not implemented.
   void operator = ( const vtkSlicerROIGUI& ); //Not implemented.
 };
 #endif

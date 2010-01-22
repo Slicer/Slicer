@@ -34,8 +34,8 @@ public:
   vtkTypeRevisionMacro ( vtkSlicerSliceControllerWidget, vtkKWCompositeWidget );
   void PrintSelf (ostream& os, vtkIndent indent);
     
-  // Description:
-  // Get/Set the Widgets in this composite widget.
+  /// 
+  /// Get/Set the Widgets in this composite widget.
   vtkGetObjectMacro ( OffsetScale, vtkKWScale );
   vtkGetMacro (OffsetScaleMin, double);
   vtkSetMacro (OffsetScaleMin, double);
@@ -81,8 +81,8 @@ public:
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
   
-  // Description:
-  // Get/Set the Nodes
+  /// 
+  /// Get/Set the Nodes
   vtkGetObjectMacro ( SliceCompositeNode, vtkMRMLSliceCompositeNode );
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *scnode)
     {
@@ -94,39 +94,39 @@ public:
     vtkSetAndObserveMRMLNodeMacro(this->SliceNode, snode );
     }
 
-  // Description:
-  // updates FG and BG layer menus when Slice Logic is updated.
+  /// 
+  /// updates FG and BG layer menus when Slice Logic is updated.
   virtual void UpdateLayerMenus();
 
-  // Description:
-  // slice logic controlling the slice to be manipulated
+  /// 
+  /// slice logic controlling the slice to be manipulated
   vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
   void SetAndObserveSliceLogic (vtkSlicerSliceLogic *sLogic)
     {
-    // treat the logic as a MRML node (it will be passing on changes to volumes and layers)
+    /// treat the logic as a MRML node (it will be passing on changes to volumes and layers)
     vtkSetAndObserveMRMLNodeMacro(this->SliceLogic, sLogic );
     }
 
-  // Description:
-  // TODO: Use this flag to determine how to display
-  // the SliceControllerWidget.
+  /// 
+  /// TODO: Use this flag to determine how to display
+  /// the SliceControllerWidget.
   vtkGetMacro ( ControllerStyle, int );
   vtkSetMacro ( ControllerStyle, int );
   
-  // Description:
-  // respond to events from subwidgets of this widget
+  /// 
+  /// respond to events from subwidgets of this widget
   void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // respond to changes in the mrml scene
+  /// 
+  /// respond to changes in the mrml scene
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
-  // respond to changes in the slice logic
+  /// 
+  /// respond to changes in the slice logic
   void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
-  // applies a background color to the controller
+  /// 
+  /// applies a background color to the controller
   virtual void ApplyColorCode ( double *c );
   virtual void ToggleSlicesLink  ( );
   virtual void LinkAllSlices();
@@ -141,8 +141,8 @@ public:
   virtual void PopUpPrescribedSliceSpacingEntry();
   virtual void HidePrescribedSliceSpacingEntry();
   
-  // Description:
-  // Shrink/Expand the widget
+  /// 
+  /// Shrink/Expand the widget
   virtual void Shrink();
   virtual void Expand();
 
@@ -158,14 +158,14 @@ public:
   virtual void ToggleLabelOutline ( int link );
   virtual void ToggleLabelOutline ( );
 
-  // Description:
-  // Configure the slice viewer layout in linked mode for all CompareX slice viewers
-  // This only works in CompareView layout mode
+  /// 
+  /// Configure the slice viewer layout in linked mode for all CompareX slice viewers
+  /// This only works in CompareView layout mode
   virtual void SliceViewerLayoutConfig(int nRows, int nColumns);
 
-  // Description:
-  // if slice viewers are linked in CompareView layout mode,
-  // modify all slice logic to synch all Compare Slice viewers
+  /// 
+  /// if slice viewers are linked in CompareView layout mode,
+  /// modify all slice logic to synch all Compare Slice viewers
   virtual int UpdateCompareView(double value);
 
   //BTX
@@ -180,21 +180,21 @@ protected:
   vtkSlicerSliceControllerWidget ( );
   virtual ~vtkSlicerSliceControllerWidget ( );
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget( );
 
-  // TODO: hook this up
+  /// TODO: hook this up
   int ControllerStyle;
 
   vtkKWFrame *ContainerFrame;
 
   //
-  // Slice controller subwidgets
+  /// Slice controller subwidgets
   //
-  // Offset scale is internally integer in terms of the number of
-  // steps (slices).  These get converted to/from mm for the OffsetEntry
-  // and the slice node
+  /// Offset scale is internally integer in terms of the number of
+  /// steps (slices).  These get converted to/from mm for the OffsetEntry
+  /// and the slice node
   vtkKWScale *OffsetScale;
   double OffsetScaleMin;
   double OffsetScaleResolution;
@@ -205,8 +205,8 @@ protected:
   vtkSlicerNodeSelectorWidget *LabelSelector;
   
   //
-  // MenuButtons next to selectors with drop-down
-  // menu of options for each layer.
+  /// MenuButtons next to selectors with drop-down
+  /// menu of options for each layer.
   vtkKWMenuButton *OrientationMenuButton;
   vtkKWMenuButton *ForegroundMenuButton;
   vtkKWMenuButton *BackgroundMenuButton;
@@ -247,13 +247,13 @@ protected:
   float LastLabelOpacity;
   
   //
-  // Nodes
+  /// Nodes
   //
   vtkMRMLSliceNode *SliceNode;
   vtkMRMLSliceCompositeNode *SliceCompositeNode;
 
   //
-  // Logic
+  /// Logic
   //
   vtkSlicerSliceLogic *SliceLogic;
 

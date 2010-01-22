@@ -30,8 +30,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCheckRadioButtonIcons : public vtkSlic
   vtkKWIcon *DisabledIcon;
 
  private:
-  vtkSlicerCheckRadioButtonIcons (const vtkSlicerCheckRadioButtonIcons&); // Not implemented
-  void operator = (const vtkSlicerCheckRadioButtonIcons&); // Not implemented
+  vtkSlicerCheckRadioButtonIcons (const vtkSlicerCheckRadioButtonIcons&); /// Not implemented
+  void operator = (const vtkSlicerCheckRadioButtonIcons&); /// Not implemented
 
 };
 #endif

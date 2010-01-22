@@ -25,8 +25,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoIcons : public vtkSlicerIcons
     vtkKWIcon *SlicerLogo;
     
  private:
-    vtkSlicerLogoIcons (const vtkSlicerLogoIcons&); // Not implemented
-    void operator = ( const vtkSlicerLogoIcons& ); // Not implemented
+    vtkSlicerLogoIcons (const vtkSlicerLogoIcons&); /// Not implemented
+    void operator = ( const vtkSlicerLogoIcons& ); /// Not implemented
     
 };
 

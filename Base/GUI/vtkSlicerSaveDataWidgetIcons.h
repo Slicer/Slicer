@@ -30,8 +30,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSaveDataWidgetIcons : public vtkSlicer
     vtkKWIcon *CheckModified;    
     
  private:
-    vtkSlicerSaveDataWidgetIcons (const vtkSlicerSaveDataWidgetIcons&); // Not implemented
-    void operator = ( const vtkSlicerSaveDataWidgetIcons& ); // Not implemented
+    vtkSlicerSaveDataWidgetIcons (const vtkSlicerSaveDataWidgetIcons&); /// Not implemented
+    void operator = ( const vtkSlicerSaveDataWidgetIcons& ); /// Not implemented
     
 };
 

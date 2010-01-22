@@ -20,8 +20,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkTypeRevisionMacro ( vtkSlicerToolbarIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    // Description:
-    // Get toolbar vtkKWIcons
+    /// 
+    /// Get toolbar vtkKWIcons
     vtkGetObjectMacro (HomeIcon, vtkKWIcon);
     vtkGetObjectMacro (DataIcon, vtkKWIcon);
     vtkGetObjectMacro (VolumeIcon, vtkKWIcon);
@@ -112,8 +112,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
 
 
  private:
-    vtkSlicerToolbarIcons (const vtkSlicerToolbarIcons&); // Not implemented
-    void operator = ( const vtkSlicerToolbarIcons& ); // Not implemented
+    vtkSlicerToolbarIcons (const vtkSlicerToolbarIcons&); /// Not implemented
+    void operator = ( const vtkSlicerToolbarIcons& ); /// Not implemented
     
 };
 

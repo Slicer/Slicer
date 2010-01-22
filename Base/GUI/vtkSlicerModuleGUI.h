@@ -19,11 +19,11 @@
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerBaseAcknowledgementLogoIcons.h"
 
-// Description:
-// This is a base class from which all SlicerModuleGUIs that include
-// their GUI in Slicer's shared GUI panel are derived. SlicerModuleGUIs
-// that don't populate that panel with their widgets can derive
-// directly from vtkSlicerComponentGUI.
+/// Description:
+/// This is a base class from which all SlicerModuleGUIs that include
+/// their GUI in Slicer's shared GUI panel are derived. SlicerModuleGUIs
+/// that don't populate that panel with their widgets can derive
+/// directly from vtkSlicerComponentGUI.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentGUI
 {
@@ -33,67 +33,67 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     vtkTypeRevisionMacro ( vtkSlicerModuleGUI, vtkKWObject );
     void PrintSelf (ostream& os, vtkIndent indent );
 
-    // Description:
-    // Get/Set pointers to the ApplicationLogic
+    /// 
+    /// Get/Set pointers to the ApplicationLogic
     vtkGetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
-    // Description:
-    // Get the Collapsing frame that contains the notebook.
+    /// 
+    /// Get the Collapsing frame that contains the notebook.
     vtkGetObjectMacro (HelpAndAboutFrame, vtkSlicerModuleCollapsibleFrame );
-    // Description:
-    // Get the Notebook that contains help and acknowledgements for module.
+    /// 
+    /// Get the Notebook that contains help and acknowledgements for module.
     vtkGetObjectMacro (HelpAndAboutNotebook, vtkKWNotebook);
-    // Description:
-    // Get the help text widget.
+    /// 
+    /// Get the help text widget.
     vtkGetObjectMacro (HelpText, vtkKWTextWithHyperlinksWithScrollbars );
-    // Description:
-    // Get the about text widget.
+    /// 
+    /// Get the about text widget.
     vtkGetObjectMacro (AboutText, vtkKWTextWithHyperlinksWithScrollbars );
-    // Description:
-    // Get the Frame into which contributor and sponsor logos are packed.
+    /// 
+    /// Get the Frame into which contributor and sponsor logos are packed.
     vtkGetObjectMacro (LogoFrame, vtkKWFrame );
 
-    // Description:
-    // Get the Icons for Acknowledging Sponsorship of Slicer's base.
+    /// 
+    /// Get the Icons for Acknowledging Sponsorship of Slicer's base.
   vtkSlicerBaseAcknowledgementLogoIcons* GetAcknowledgementIcons ();
 
-  // Description:
-  // Get/Set Macro for ApplicationGUI: allow Modules to access
-  // the overall application context
+  /// 
+  /// Get/Set Macro for ApplicationGUI: allow Modules to access
+  /// the overall application context
   vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
   vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
 
-  // Description:
-  // Set the category for menu grouping
+  /// 
+  /// Set the category for menu grouping
   vtkSetStringMacro(Category);
   virtual const char *GetCategory() const {return this->Category;}
 
-  // Description:
-  // Get/Set the index of the module.  The index is used for sorting the 
-  // modules within a menu. Modules are sorted first by index, then alphabetical
+  /// 
+  /// Get/Set the index of the module.  The index is used for sorting the 
+  /// modules within a menu. Modules are sorted first by index, then alphabetical
   virtual unsigned short GetIndex() const {return this->Index;}
   vtkSetMacro(Index, unsigned short);
   
-  // Description:
-  // Get a logo for the module
+  /// 
+  /// Get a logo for the module
   virtual vtkKWIcon* GetLogo() const;
 
-  // Description:
-  // Set the module logic
+  /// 
+  /// Set the module logic
   virtual void SetModuleLogic( vtkSlicerLogic * ); 
   
-  // Description: 
-  // The name of the Module
+  ///  
+  /// The name of the Module
   vtkGetStringMacro (ModuleName);
   vtkSetStringMacro (ModuleName);
 
   //Description:
-  // Implemented module initialization if needed
+  /// Implemented module initialization if needed
   virtual void Init() { };
 
-  // Description:
-  // Configures a module's help frame, with acknowledgment
-  // in a consistent manner
+  /// 
+  /// Configures a module's help frame, with acknowledgment
+  /// in a consistent manner
   virtual void BuildHelpAndAboutFrame ( vtkKWWidget *parent,
                                         const char *help,
                                         const char *about);
@@ -103,22 +103,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 
   virtual void SetActiveViewer(vtkSlicerViewerWidget * vtkNotUsed( activeViewer ) ){};
   
-  // Description:
-  // propagate events generated in logic layer to GUI
+  /// 
+  /// propagate events generated in logic layer to GUI
     virtual void ProcessLogicEvents ( vtkObject * /*caller*/,
       unsigned long /*event*/, void * /*callData*/ ) { };
-    // Description:
-    // alternative method to propagate events generated in GUI to logic / mrml
+    /// 
+    /// alternative method to propagate events generated in GUI to logic / mrml
     virtual void ProcessGUIEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
     
-    // Description:
-    // alternative method to propagate events generated in GUI to logic / mrml
+    /// 
+    /// alternative method to propagate events generated in GUI to logic / mrml
     virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
 
-  // Overload in modules that observe events, used during Loadable Module
-  // discovery. CLIENT MUST DELETE!
+  /// Overload in modules that observe events, used during Loadable Module
+  /// discovery. CLIENT MUST DELETE!
   virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
 
  //BTX
@@ -131,52 +131,52 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 
   char *ModuleName;
 
-    // Description:
-    // This user interface panel is populated with the GUI's widgets,
-    // and is raised in Slicer's shared GUI panel when the module
-    // is selected for use.
+    /// 
+    /// This user interface panel is populated with the GUI's widgets,
+    /// and is raised in Slicer's shared GUI panel when the module
+    /// is selected for use.
     vtkKWUserInterfacePanel *UIPanel;
     
-    // Description:
-    // A module's UIPanel's HelpAndAboutFrame contains a notebook
-    // with a tab for module help, and a tab for acknowledgments
-    // and logos.
+    /// 
+    /// A module's UIPanel's HelpAndAboutFrame contains a notebook
+    /// with a tab for module help, and a tab for acknowledgments
+    /// and logos.
     vtkSlicerModuleCollapsibleFrame *HelpAndAboutFrame;
     vtkKWNotebook *HelpAndAboutNotebook;
 
-    // Description:
-    // HelpText contains the text describing the
-    // module's functionality and how to use it.
+    /// 
+    /// HelpText contains the text describing the
+    /// module's functionality and how to use it.
     vtkKWTextWithHyperlinksWithScrollbars *HelpText;
 
-    // Description:
-    // AboutText contains text describing
-    // the module's authors and sponsors.
+    /// 
+    /// AboutText contains text describing
+    /// the module's authors and sponsors.
     vtkKWTextWithHyperlinksWithScrollbars *AboutText;
-    // The LogoFrame is where a contributor's logos may
-    // be packed.
+    /// The LogoFrame is where a contributor's logos may
+    /// be packed.
     vtkKWFrame *LogoFrame;
 
-    // Description:
-    // Describes whether the GUI has been built or not.
+    /// 
+    /// Describes whether the GUI has been built or not.
     bool Built;
 
-    // Description:
-    // If true, a user has visited this module
-    // so its "Enter()" method has been invoked.
+    /// 
+    /// If true, a user has visited this module
+    /// so its "Enter()" method has been invoked.
     bool Visited;
 
-    // Description:
-    // Priority order for menus 
+    /// 
+    /// Priority order for menus 
     unsigned short Index;
 
-    // Description:
-    // the category for menu grouping
+    /// 
+    /// the category for menu grouping
     char *Category;
     
 
 
-    // constructor, destructor.
+    /// constructor, destructor.
     vtkSlicerModuleGUI ( );
     virtual ~vtkSlicerModuleGUI ( );
 
@@ -186,8 +186,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     vtkSmartPointer<vtkKWIcon> Logo;
 //ETX
  private:
-    vtkSlicerModuleGUI ( const vtkSlicerModuleGUI& ); // Not implemented.
-    void operator = ( const vtkSlicerModuleGUI& ); // Not implemented.
+    vtkSlicerModuleGUI ( const vtkSlicerModuleGUI& ); /// Not implemented.
+    void operator = ( const vtkSlicerModuleGUI& ); /// Not implemented.
 };
 
 

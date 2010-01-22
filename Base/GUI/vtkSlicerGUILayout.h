@@ -1,6 +1,6 @@
-// .NAME vtkSlicerGUILayout
-// .SECTION Description
-// Main application layout for slicer3
+///  vtkSlicerGUILayout
+/// 
+/// Main application layout for slicer3
 
 #ifndef __vtkSlicerGUILayout_h
 #define __vtkSlicerGUILayout_h
@@ -13,15 +13,15 @@
 #include "vtkKWFrame.h"
 
 
-// Description:
-// This class contains the default dimensions for the various window layouts
+/// Description:
+/// This class contains the default dimensions for the various window layouts
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
 {
 
  public:
-    // Description:
-    // Usual vtk class functions
+    /// 
+    /// Usual vtk class functions
     static vtkSlicerGUILayout* New ( );
     vtkTypeRevisionMacro ( vtkSlicerGUILayout, vtkKWObject );
     void PrintSelf ( ostream& os, vtkIndent indent );
@@ -29,8 +29,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkGetObjectMacro ( MainSlicerWindow, vtkKWWindow );
     vtkSetObjectMacro ( MainSlicerWindow, vtkKWWindow );
     
-   // Description:
-    // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
+   /// 
+    /// Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
     vtkGetMacro ( DefaultSlicerWindowWidth, int );
     vtkSetMacro ( DefaultSlicerWindowWidth, int );
     vtkGetMacro ( DefaultSlicerWindowHeight, int );
@@ -63,18 +63,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
     vtkGetMacro ( SliceViewerMinDim, int );
     vtkSetMacro ( SliceViewerMinDim, int );
-    // Description:
-    // If the screen resolution is less than this number
-    // (default is 1200 pixels) when a SliceControllerWidget
-    // is first created, then the SliceControllerWidget
-    // will be packed differently to allow all of its widgets
-    // to be displayed and usable.
+    /// 
+    /// If the screen resolution is less than this number
+    /// (default is 1200 pixels) when a SliceControllerWidget
+    /// is first created, then the SliceControllerWidget
+    /// will be packed differently to allow all of its widgets
+    /// to be displayed and usable.
     vtkGetMacro ( SliceControllerResolutionThreshold, int );
-    // Description:
-    // If the SliceViewer width is greater than this number
-    // of pixels (default 260) when the overall layout
-    // is *adjusted*, then the SliceControllerWidgets will
-    // be packed differently to save space.
+    /// 
+    /// If the SliceViewer width is greater than this number
+    /// of pixels (default 260) when the overall layout
+    /// is *adjusted*, then the SliceControllerWidgets will
+    /// be packed differently to save space.
     vtkGetMacro ( SliceViewerWidthThreshold, int );
 
     virtual void InitializeLayoutDimensions ( int width, int height, int sliceHeight);
@@ -86,12 +86,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     virtual ~vtkSlicerGUILayout ( );
     
     //Description:
-    // Pointer to Slicer's 3Dviewer and
-    // Three main Slice viewers.
+    /// Pointer to Slicer's 3Dviewer and
+    /// Three main Slice viewers.
     vtkKWWindow *MainSlicerWindow;
     
-    // Description:
-    // Dimensions for the Default Window & components
+    /// 
+    /// Dimensions for the Default Window & components
     int DefaultSlicerWindowHeight;
     int DefaultSlicerWindowWidth;
     int Default3DViewerHeight;
@@ -104,22 +104,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     int DefaultQuadrantHeight;
     int DefaultQuadrantWidth;
     
-    // Description:
-    // Dimensions for specific GUI panel components
+    /// 
+    /// Dimensions for specific GUI panel components
     int DefaultTopFrameHeight;
     int DefaultModuleControlPanelHeight;
     int DefaultSlicesControlFrameHeight;    
     int DefaultViewControlFrameHeight;
 
-    // Description:
-    // Minimum size for the Slice Windows
+    /// 
+    /// Minimum size for the Slice Windows
     int SliceViewerMinDim;
     int SliceControllerResolutionThreshold;
     int SliceViewerWidthThreshold;
 
  private:
-    vtkSlicerGUILayout ( const vtkSlicerGUILayout& ); // Not implemented
-    void operator = ( const vtkSlicerGUILayout& ); // Not implemented
+    vtkSlicerGUILayout ( const vtkSlicerGUILayout& ); /// Not implemented
+    void operator = ( const vtkSlicerGUILayout& ); /// Not implemented
 };
 
 #endif

@@ -33,37 +33,37 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   vtkGetStringMacro ( MRsessionID );
   vtkSetStringMacro ( MRsessionID );
 
-  // Description:
-  // Convenience method for getting the host name string from widget.
+  /// 
+  /// Convenience method for getting the host name string from widget.
   const char* GetHostFromWidget ( );
 
-  // Description:
-  // Convenience method for getting the scene name string from widget.
+  /// 
+  /// Convenience method for getting the scene name string from widget.
   const char* GetSceneNameFromWidget( );
 
-  // Description:
-  // Convenience method for getting the MRsessionID string from widget.
+  /// 
+  /// Convenience method for getting the MRsessionID string from widget.
   const char* GetMRsessionIDFromWidget();
   
-  // Description:
-  // Convenience method for getting the name of the Resource Set from widget.
+  /// 
+  /// Convenience method for getting the name of the Resource Set from widget.
   const char* GetResourceSetNameFromWidget ( );
 
-  // Description:
-  // Convenience method for getting the Resource Tags from widget.
+  /// 
+  /// Convenience method for getting the Resource Tags from widget.
   const char* GetResourceTagFromWidget ( );
   
-  // Description:
-  // Creates, configures and packs the widgets in the prompt
+  /// 
+  /// Creates, configures and packs the widgets in the prompt
   virtual void CreatePrompter( const char *messageText, const char *title);
-  // Description:
-  // Deletes the widgets in the prompt
+  /// 
+  /// Deletes the widgets in the prompt
   virtual void DestroyPrompter();
 
-  // Description:
-  // Raises the dialog and sets MRML values
-  // Returns 1 if UserName, Password, and Host have been entered,
-  // and 0 if any value is NULL;
+  /// 
+  /// Raises the dialog and sets MRML values
+  /// Returns 1 if UserName, Password, and Host have been entered,
+  /// and 0 if any value is NULL;
   virtual int Prompt( const char *message, vtkMRMLScene *scene);
   
  protected:
@@ -81,8 +81,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   char *ResourceTag;
  
  private:
-  vtkSlicerXNATPermissionPrompterWidget(const vtkSlicerXNATPermissionPrompterWidget&); // Not implemented
-  void operator=(const vtkSlicerXNATPermissionPrompterWidget&); // Not Implemented
+  vtkSlicerXNATPermissionPrompterWidget(const vtkSlicerXNATPermissionPrompterWidget&); /// Not implemented
+  void operator=(const vtkSlicerXNATPermissionPrompterWidget&); /// Not Implemented
 };
 #endif
 

@@ -8,19 +8,19 @@
 #include "./Resources/vtkSlicerNavZoom_ImageData.h"
 #include "./Resources/vtkSlicerViewControl_ImageData.h"
 
-// Description:
-// This class reads in the png format image data for logos and
-// for icons in Slicer's main toolbar, and elsewhere in
-// slicer's main window. It also creates vtkKWIcons and assigns
-// the image data to them. (Elsewhere in the application,
-// vtkKWLabels and vtkKWPushbuttons can display these
-// vtkKWIcons instead of text.
+/// Description:
+/// This class reads in the png format image data for logos and
+/// for icons in Slicer's main toolbar, and elsewhere in
+/// slicer's main window. It also creates vtkKWIcons and assigns
+/// the image data to them. (Elsewhere in the application,
+/// vtkKWLabels and vtkKWPushbuttons can display these
+/// vtkKWIcons instead of text.
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIcons
 {
  public:
-    // Description:
-    // Usual vtk functions
+    /// 
+    /// Usual vtk functions
     static vtkSlicerViewControlIcons* New ();
     vtkTypeRevisionMacro ( vtkSlicerViewControlIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
@@ -70,8 +70,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
 
     vtkGetObjectMacro (PercentZoomIcon, vtkKWIcon );
 
-    // Description:
-    // Method for setting images for widgets in Slicer's ViewControlFrame
+    /// 
+    /// Method for setting images for widgets in Slicer's ViewControlFrame
     void AssignImageDataToIcons ( );
     
  protected:
@@ -124,8 +124,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
 
     
  private:
-    vtkSlicerViewControlIcons (const vtkSlicerViewControlIcons& ); // Not implemented
-    void operator = (const vtkSlicerViewControlIcons& ); // Not implemented
+    vtkSlicerViewControlIcons (const vtkSlicerViewControlIcons& ); /// Not implemented
+    void operator = (const vtkSlicerViewControlIcons& ); /// Not implemented
     
 };
 #endif

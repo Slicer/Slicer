@@ -33,8 +33,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleNavigationIcons : public vtkSlic
     vtkKWIcon *ModuleSearchIcon;
     
  private:
-    vtkSlicerModuleNavigationIcons (const vtkSlicerModuleNavigationIcons&); // Not implemented
-    void operator = ( const vtkSlicerModuleNavigationIcons& ); // Not implemented
+    vtkSlicerModuleNavigationIcons (const vtkSlicerModuleNavigationIcons&); /// Not implemented
+    void operator = ( const vtkSlicerModuleNavigationIcons& ); /// Not implemented
     
 };
 

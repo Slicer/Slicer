@@ -11,11 +11,11 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkSlicerRenderWidget - a render widget
-// .SECTION Description
-// Almost empty subclass of vtkKWRenderWidget that 
-// disables the ProcessPendingEvents and Render
-// in the Expose callback
+///  vtkSlicerRenderWidget - a render widget
+/// 
+/// Almost empty subclass of vtkKWRenderWidget that 
+/// disables the ProcessPendingEvents and Render
+/// in the Expose callback
 
 #ifndef __vtkSlicerRenderWidget_h
 #define __vtkSlicerRenderWidget_h
@@ -31,13 +31,13 @@ public:
   vtkTypeRevisionMacro(vtkSlicerRenderWidget, vtkKWRenderWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Override 'update' behavior in superclass
+  /// 
+  /// Override 'update' behavior in superclass
   virtual void ExposeCallback();
 
-  // Description:
-  // Update the render window interactor size
-  // override bug with 10 x 10 window size
+  /// 
+  /// Update the render window interactor size
+  /// override bug with 10 x 10 window size
   virtual void UpdateRenderWindowInteractorSize(int width, int height);
 
 protected:
@@ -45,8 +45,8 @@ protected:
   ~vtkSlicerRenderWidget();
 
 private:
-  vtkSlicerRenderWidget(const vtkSlicerRenderWidget&);  // Not implemented
-  void operator=(const vtkSlicerRenderWidget&);  // Not implemented
+  vtkSlicerRenderWidget(const vtkSlicerRenderWidget&);  /// Not implemented
+  void operator=(const vtkSlicerRenderWidget&);  /// Not implemented
 };
 
 #endif

@@ -1,6 +1,6 @@
-// .NAME vtkSlicerColorGUI 
-// .SECTION Description
-// Main Color GUI and mediator methods for slicer3. 
+///  vtkSlicerColorGUI 
+/// 
+/// Main Color GUI and mediator methods for slicer3. 
 
 
 #ifndef __vtkSlicerColorGUI_h
@@ -14,8 +14,8 @@
 #include "vtkKWFrame.h"
 #include "vtkKWLabel.h"
 
-// Description:
-// This class implements Slicer's Color GUI
+/// Description:
+/// This class implements Slicer's Color GUI
 //
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerColorEditWidget;
@@ -26,99 +26,99 @@ class vtkKWLoadSaveButton;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
 {
 public:
-    // Description:
-    // Usual vtk class functions
+    /// 
+    /// Usual vtk class functions
     static vtkSlicerColorGUI* New (  );
     vtkTypeRevisionMacro ( vtkSlicerColorGUI, vtkSlicerModuleGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
     
-    // Description:
-    // Get methods on class members ( no Set methods required. )
+    /// 
+    /// Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( Logic, vtkSlicerColorLogic);
 
-    // Description:
-    // API for setting Logic and
-    // for both setting and observing them.        
+    /// 
+    /// API for setting Logic and
+    /// for both setting and observing them.        
     void SetModuleLogic ( vtkSlicerColorLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     void SetAndObserveModuleLogic ( vtkSlicerColorLogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
-    // Description:
-    // This method builds the Color module GUI
+    /// 
+    /// This method builds the Color module GUI
     virtual void BuildGUI ( void );
     virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
     virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
-    // Description:
-    // Add/Remove observers on widgets in the GUI
+    /// 
+    /// Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-    // Description:
-    // This method releases references and key-bindings,
-    // and optionally removes observers.
+    /// 
+    /// This method releases references and key-bindings,
+    /// and optionally removes observers.
     virtual void TearDownGUI ( );
 
-    // Description:
-    // Methods for adding module-specific key bindings and
-    // removing them.
+    /// 
+    /// Methods for adding module-specific key bindings and
+    /// removing them.
     virtual void CreateModuleEventBindings ( );
     virtual void ReleaseModuleEventBindings ( );
 
-    // Description:
-    // Class's mediator methods for processing events invoked by
-    // either the Logic, MRML or GUI.
+    /// 
+    /// Class's mediator methods for processing events invoked by
+    /// either the Logic, MRML or GUI.
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
     
-    // Description:
-    // Methods describe behavior at module enter and exit.
+    /// 
+    /// Methods describe behavior at module enter and exit.
     virtual void Enter ( vtkMRMLNode *node );
     virtual void Enter ( ) { this->Enter(NULL); };
     virtual void Exit ( );
 
-    // Description:
-    // Get methods on class members (no Set methods required)
+    /// 
+    /// Get methods on class members (no Set methods required)
     vtkGetObjectMacro ( LoadColorFileButton, vtkKWLoadSaveButtonWithLabel );
 
-    // Description:
-    // Add Slicer mrml colour table nodes to the application's color picker dialog as swatches. Returns 1 on failure, 0 on success.
+    /// 
+    /// Add Slicer mrml colour table nodes to the application's color picker dialog as swatches. Returns 1 on failure, 0 on success.
     int AddLUTsToColorDialog();
 
-    // Description:
-    // the widget that displays info about the colour node
+    /// 
+    /// the widget that displays info about the colour node
     vtkGetObjectMacro(ColorDisplayWidget, vtkSlicerColorDisplayWidget);
 
 protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
 
-    // Module logic and mrml pointers
+    /// Module logic and mrml pointers
     vtkSlicerColorLogic *Logic;
     
-    // Description:
-    // the widget that displays the colour node
+    /// 
+    /// the widget that displays the colour node
     vtkSlicerColorDisplayWidget *ColorDisplayWidget;
 
-    // Description:
-    // the widget that allows the user to edit a color node
+    /// 
+    /// the widget that allows the user to edit a color node
     vtkSlicerColorEditWidget *ColorEditWidget;
 
-    // Description:
-    // Acknowledgement icons
+    /// 
+    /// Acknowledgement icons
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
 
-    // Description:
-    // Trigger loading a color file
+    /// 
+    /// Trigger loading a color file
     vtkKWLoadSaveButtonWithLabel *LoadColorFileButton;
     
 private:
-    vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); // Not implemented.
+    vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); /// Not implemented.
     void operator = ( const vtkSlicerColorGUI& ); //Not implemented.
 };
 

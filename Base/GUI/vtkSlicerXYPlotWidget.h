@@ -12,9 +12,9 @@
   Version:   $Revision: $
 
 =========================================================================*/
-// .NAME vtkSlicerXYPlotWidget
-// .SECTION Description
-// vtkSlicerXYPlotWidget is a widget containing widgets that help view and edit plot
+///  vtkSlicerXYPlotWidget
+/// 
+/// vtkSlicerXYPlotWidget is a widget containing widgets that help view and edit plot
 //
 
 #ifndef __vtkSlicerXYPlotWidget_h
@@ -74,14 +74,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidge
 {
 
   //----------------------------------------------------------------
-  // Data types
+  /// Data types
   //----------------------------------------------------------------
   
  public:
 
   //BTX
   typedef struct {
-    int             visible;  // 0: invisible   1: visible
+    int             visible;  /// 0: invisible   1: visible
     vtkDoubleArray* data;
     std::string     label;
     double          color[3];
@@ -95,7 +95,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidge
   
 
   //----------------------------------------------------------------
-  // New() / PrintSelf
+  /// New() / PrintSelf
   //----------------------------------------------------------------
 
  public:
@@ -106,7 +106,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidge
 
 
   //----------------------------------------------------------------
-  // MRML Event callbacks
+  /// MRML Event callbacks
   //----------------------------------------------------------------
  public:
 
@@ -115,106 +115,106 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidge
   };
   vtkGetMacro(InMRMLCallbackFlag, int);
 
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, void * /*callData*/ );
 
  protected:
-  // Description:
-  // a shared function that call the virtual ProcessMRMLEvents subclasses,
-  // if they are defined.
+  /// 
+  /// a shared function that call the virtual ProcessMRMLEvents subclasses,
+  /// if they are defined.
   static void MRMLCallback( vtkObject *__caller,
                             unsigned long eid, void *__clientData, void *callData );
 
 
   //----------------------------------------------------------------
-  // Set and Get Methods
+  /// Set and Get Methods
   //----------------------------------------------------------------
 
  public:
 
-  // Description:
-  // Get and set the scene to observe.
+  /// 
+  /// Get and set the scene to observe.
   vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
   void SetMRMLScene(vtkMRMLScene *MRMLScene);
 
-  // Description:
-  // Set and observe XYPlotNode
+  /// 
+  /// Set and observe XYPlotNode
   void SetAndObservePlotManagerNode(vtkMRMLXYPlotManagerNode* node);
 
-  // Description:
-  // Get XY plot node 
+  /// 
+  /// Get XY plot node 
   vtkGetObjectMacro(PlotManagerNode, vtkMRMLXYPlotManagerNode);
 
-  // Description::
-  // AutoUpdate flag specifies when the graph is refreshed.
-  // Set 1 if the graph needs to be updated on MofifiedEvent.
+  /// :
+  /// AutoUpdate flag specifies when the graph is refreshed.
+  /// Set 1 if the graph needs to be updated on MofifiedEvent.
   vtkSetMacro( AutoUpdate, int );
   vtkGetMacro( AutoUpdate, int );
 
   //----------------------------------------------------------------
-  // Graph operations
+  /// Graph operations
   //----------------------------------------------------------------
  public:
   void SetAxisLineColor(double r, double g, double b);
   void UpdateGraph();
 
   //----------------------------------------------------------------
-  // Constructor / destructor
+  /// Constructor / destructor
   //----------------------------------------------------------------
  protected:
 
   vtkSlicerXYPlotWidget();
   virtual ~vtkSlicerXYPlotWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
  private:
-  vtkSlicerXYPlotWidget(const vtkSlicerXYPlotWidget&); // Not implemented
-  void operator=(const vtkSlicerXYPlotWidget&); // Not implemented
+  vtkSlicerXYPlotWidget(const vtkSlicerXYPlotWidget&); /// Not implemented
+  void operator=(const vtkSlicerXYPlotWidget&); /// Not implemented
 
 
  protected:
   //----------------------------------------------------------------
-  // MRML scene and event callbacks
+  /// MRML scene and event callbacks
   //----------------------------------------------------------------
 
   vtkMRMLScene* MRMLScene;
   vtkMRMLXYPlotManagerNode* PlotManagerNode;
 
-  // Description:
-  // MRML observer manager
+  /// 
+  /// MRML observer manager
   vtkObserverManager *MRMLObserverManager;
 
-  // Description::
-  // Holders for MRML callbacks
+  /// :
+  /// Holders for MRML callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
 
-  // Description:
-  // Flag to avoid event loops
+  /// 
+  /// Flag to avoid event loops
   int InMRMLCallbackFlag;
 
   //----------------------------------------------------------------
-  // Widgets
+  /// Widgets
   //----------------------------------------------------------------
   vtkXYPlotActor* PlotActor;
 
 
   //----------------------------------------------------------------
-  // Flags
+  /// Flags
   //----------------------------------------------------------------
 
-  // Description::
-  // AutoUpdate flag specifies when the graph is refreshed.
-  // If the flag is 1, the graph is refreshed whenever it receives ModifiedEvent.
-  // Otherwise, the graph is refreshed only when the widget catches UpdateGraphEvent.
+  /// :
+  /// AutoUpdate flag specifies when the graph is refreshed.
+  /// If the flag is 1, the graph is refreshed whenever it receives ModifiedEvent.
+  /// Otherwise, the graph is refreshed only when the widget catches UpdateGraphEvent.
   int AutoUpdate;
 
-  // Description::
-  // Updating flag is 1, while graph is being updated.
+  /// :
+  /// Updating flag is 1, while graph is being updated.
   int Updating;
 
   double AxisLineColor[3];

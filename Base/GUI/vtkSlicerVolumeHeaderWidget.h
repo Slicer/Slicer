@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -47,34 +47,34 @@ public:
   
   void SetVolumeNode ( vtkMRMLVolumeNode *node );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  // Description:
-  // add observers on widgets in the class
+  /// 
+  /// add observers on widgets in the class
   virtual void AddWidgetObservers ( );
 
   virtual void UpdateWidgetFromMRML();
 
-  // Description:
-  // get current volume node
+  /// 
+  /// get current volume node
   vtkMRMLVolumeNode* GetVolumeNode ();
   
-  // Description:
-  // get current volume storage node
+  /// 
+  /// get current volume storage node
   vtkMRMLStorageNode* GetVolumeStorageNode ();
 
-  // Description:
-  // Add a Node Selector Widget
+  /// 
+  /// Add a Node Selector Widget
   vtkSetMacro(AddNodeSelectorWidget,int);
   vtkGetMacro(AddNodeSelectorWidget,int);
   vtkBooleanMacro(AddNodeSelectorWidget,int);
@@ -83,8 +83,8 @@ protected:
   vtkSlicerVolumeHeaderWidget();
   virtual ~vtkSlicerVolumeHeaderWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
   int AddNodeSelectorWidget;
@@ -122,12 +122,12 @@ protected:
 
 private:
 
-  // internal flag to prevent widget updates from triggering 
-  // a feedback loop
+  /// internal flag to prevent widget updates from triggering 
+  /// a feedback loop
   int UpdatingFromMRML;
 
-  vtkSlicerVolumeHeaderWidget(const vtkSlicerVolumeHeaderWidget&); // Not implemented
-  void operator=(const vtkSlicerVolumeHeaderWidget&); // Not Implemented
+  vtkSlicerVolumeHeaderWidget(const vtkSlicerVolumeHeaderWidget&); /// Not implemented
+  void operator=(const vtkSlicerVolumeHeaderWidget&); /// Not Implemented
 };
 
 #endif

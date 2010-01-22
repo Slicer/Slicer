@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -43,112 +43,112 @@ public:
   vtkTypeRevisionMacro(vtkSlicerNodeSelectorWidget,vtkKWMenuButtonWithSpinButtonsWithLabel);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // this is the scene to observe
+  /// 
+  /// this is the scene to observe
   vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
   void SetMRMLScene(vtkMRMLScene *MRMLScene);
 
-  // Description:
-  // Set class name of this node to select
-  // also sets:
-  // attribute name-value pair to use as additional node filter (optional)
-  // nodeName to use as a base name for creating new nodes (optional)
+  /// 
+  /// Set class name of this node to select
+  /// also sets:
+  /// attribute name-value pair to use as additional node filter (optional)
+  /// nodeName to use as a base name for creating new nodes (optional)
   void SetNodeClass(const char *className, const char *attName, const char* attValue, const char *nodeName);
 
-  // Description:
-  // Add class name of this node to select
-  // also sets:
-  // attribute name-value pair to use as additional node filter (optional)
-  // nodeName to use as a base name for creating new nodes (optional)
+  /// 
+  /// Add class name of this node to select
+  /// also sets:
+  /// attribute name-value pair to use as additional node filter (optional)
+  /// nodeName to use as a base name for creating new nodes (optional)
   void AddNodeClass(const char *className, const char *attName, const char* attValue, const char *nodeName);
 
-  // Description:
-  // Get a n-th class name of this node to select
+  /// 
+  /// Get a n-th class name of this node to select
   const char* GetNodeClass(int ind) {
     return NodeClasses[ind].c_str();
   };
 
-  // Description:
-  // Get a n-th base name of this node to select
+  /// 
+  /// Get a n-th base name of this node to select
   const char* GetNodeName(int ind) {
     return NodeNames[ind].c_str();
   };
 
-  // Description:
-  // Get a n-th attribute name of this node to select
+  /// 
+  /// Get a n-th attribute name of this node to select
   const char* GetNodeAttributeName(int ind) {
     return AttributeNames[ind]==std::string("") ? NULL : AttributeNames[ind].c_str();
   };
 
-  // Description:
-  // Get a n-th attribute name of this node to select
+  /// 
+  /// Get a n-th attribute name of this node to select
   const char* GetNodeAttributeValue(int ind) {
     return AttributeValues[ind]==std::string("") ? NULL : AttributeValues[ind].c_str();
   };
 
-  // Description:
-  // Get a number of class names to select
+  /// 
+  /// Get a number of class names to select
   int GetNumberOfNodeClasses() {
     return (int)NodeClasses.size();
   };
 
-  // Description:
-  // Specifies whether new node creation is enabled
+  /// 
+  /// Specifies whether new node creation is enabled
   vtkBooleanMacro(NewNodeEnabled, int);
   vtkGetMacro(NewNodeEnabled, int);
   vtkSetMacro(NewNodeEnabled, int);
 
-  // Description:
-  // Specifies whether or not None can be selected
+  /// 
+  /// Specifies whether or not None can be selected
   vtkBooleanMacro(NoneEnabled, int);
   vtkGetMacro(NoneEnabled, int);
   vtkSetMacro(NoneEnabled, int);
 
-  // Description:
-  // Specifies whether or not show hidden nodes
+  /// 
+  /// Specifies whether or not show hidden nodes
   vtkBooleanMacro(ShowHidden, int);
   vtkGetMacro(ShowHidden, int);
   vtkSetMacro(ShowHidden, int);
 
-  // Description:
-  // Specifies whether or not display child classes of a specified class
-  // Default: true
+  /// 
+  /// Specifies whether or not display child classes of a specified class
+  /// Default: true
   vtkBooleanMacro(ChildClassesEnabled, int);
   vtkGetMacro(ChildClassesEnabled, int);
   vtkSetMacro(ChildClassesEnabled, int);
 
-  // Description:
-  // Add child class to exclude
+  /// 
+  /// Add child class to exclude
   void AddExcludedChildClass(const char *className)
     {
     this->ExcludedChildClasses.push_back(className);
     };
 
-  // Description:
-  // Get number of excluded child classes 
+  /// 
+  /// Get number of excluded child classes 
   int GetNumberOfExcludedChildClasses()
     {
       return (int)this->ExcludedChildClasses.size();
     };
 
-  // Description:
-  // Get child class to exclude
+  /// 
+  /// Get child class to exclude
   const char* GetExcludedChildClass(int index)
     {
     return this->ExcludedChildClasses[index].c_str();
     };
 
 
-  // Description
-  // Get selected node
+  /// Description
+  /// Get selected node
   vtkMRMLNode *GetSelected();
 
-  // Description
-  // Set selected node
+  /// Description
+  /// Set selected node
   void SetSelected(vtkMRMLNode *node);
 
-  // Description
-  // Get selection to new node of n-th class name
+  /// Description
+  /// Get selection to new node of n-th class name
   void SetSelectedNew(const char *className);
 
 //BTX
@@ -161,20 +161,20 @@ public:
     };
 //ETX
 
-  // Description:
-  // Reflect the state of the mrml scene in the menu
-  // - UpdateMenu only updates if widget is mapped
-  // - UnconditionalUpdateMenu updates even if not mapped
+  /// 
+  /// Reflect the state of the mrml scene in the menu
+  /// - UpdateMenu only updates if widget is mapped
+  /// - UnconditionalUpdateMenu updates even if not mapped
   void UpdateMenu();
   void UnconditionalUpdateMenu();
 
-  // Description:
-  // A helper class to manage context menus
+  /// 
+  /// A helper class to manage context menus
   vtkSetObjectMacro(ContextMenuHelper, vtkSlicerContextMenuHelper);
   vtkGetObjectMacro(ContextMenuHelper, vtkSlicerContextMenuHelper);
 
-  // Description:
-  // Remove all menu entries
+  /// 
+  /// Remove all menu entries
   void ClearMenu();
 
   void ProcessNewNodeCommand(const char *className, const char *nodeName);
@@ -182,9 +182,9 @@ public:
 
   bool CheckNodeClass(vtkMRMLNode *node);
 
-  // Description:
-  // Flags to avoid event loops
-  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  /// 
+  /// Flags to avoid event loops
+  /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
   vtkGetMacro(InMRMLCallbackFlag, int);
   void SetInMRMLCallbackFlag (int flag) {
     this->InMRMLCallbackFlag = flag;
@@ -196,8 +196,8 @@ protected:
 
 
 
-  // Description:
-  // Create the widget
+  /// 
+  /// Create the widget
   virtual void CreateWidget();
 
 //BTX
@@ -231,30 +231,30 @@ private:
 
   vtkCallbackCommand *MRMLCallbackCommand;
 
-  // Description:
-  // Flag to avoid event loops
+  /// 
+  /// Flag to avoid event loops
   int InMRMLCallbackFlag;
 
-  // Description:
-  // Check for additional conditions to filter the NodeSelector. node is the current node to be checked.
-  // Returns true if the condition is fullfilled
-  // Note: This method has only effects if overwritten in a sub class.
+  /// 
+  /// Check for additional conditions to filter the NodeSelector. node is the current node to be checked.
+  /// Returns true if the condition is fullfilled
+  /// Note: This method has only effects if overwritten in a sub class.
   virtual bool CheckAdditionalConditions(vtkMRMLNode* vtkNotUsed(node) ){return true;}
 
-  // Description:
-  // Add aditional Nodes to the current NodeSelector. Useful for presets, other MRML-Scenes etc.
-  // Returns the number of added items or 0 if no item was added.
-  // Note: This method has only effects if overwritten in a sub class. Also overwrite GetSelectedInAdditional().
+  /// 
+  /// Add aditional Nodes to the current NodeSelector. Useful for presets, other MRML-Scenes etc.
+  /// Returns the number of added items or 0 if no item was added.
+  /// Note: This method has only effects if overwritten in a sub class. Also overwrite GetSelectedInAdditional().
   virtual int AddAditionalNodes(){return 0;}
 
-  // Description
-  // Look for corresponding node for the SelectedID in additional nodes.
-  // Returns NULL if there is no corresponding node otherwise the corresponding node
-  // Note: This method has only effects if overwritten in a sub class. Also overwrite AddAditionalNodes().
+  /// Description
+  /// Look for corresponding node for the SelectedID in additional nodes.
+  /// Returns NULL if there is no corresponding node otherwise the corresponding node
+  /// Note: This method has only effects if overwritten in a sub class. Also overwrite AddAditionalNodes().
   virtual vtkMRMLNode* GetSelectedInAdditional(){return NULL;}
 
-  vtkSlicerNodeSelectorWidget(const vtkSlicerNodeSelectorWidget&); // Not implemented
-  void operator=(const vtkSlicerNodeSelectorWidget&); // Not Implemented
+  vtkSlicerNodeSelectorWidget(const vtkSlicerNodeSelectorWidget&); /// Not implemented
+  void operator=(const vtkSlicerNodeSelectorWidget&); /// Not Implemented
 };
 
 #endif

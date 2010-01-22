@@ -9,14 +9,14 @@
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTheme : public vtkKWTheme
 {
   public:
-  // Description:
-  // Usual vtk functions
+  /// 
+  /// Usual vtk functions
   static vtkSlicerTheme* New ();
   vtkTypeRevisionMacro ( vtkSlicerTheme, vtkKWTheme );
   void PrintSelf ( ostream& os, vtkIndent indent );
 
-  // Description:
-  // Get method for SlicerColor class
+  /// 
+  /// Get method for SlicerColor class
   vtkGetObjectMacro ( SlicerColors, vtkSlicerColor );
   vtkGetObjectMacro ( SlicerFonts, vtkSlicerFont );
   vtkGetMacro (FontSize0, int );
@@ -56,8 +56,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTheme : public vtkKWTheme
     return this->ApplicationFont2;
   }
 
-  // Description:
-  // Ask the default Slicer theme to install itself
+  /// 
+  /// Ask the default Slicer theme to install itself
   virtual void Install ( );
   virtual void InstallFonts ( );
     
@@ -79,8 +79,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTheme : public vtkKWTheme
   vtkSlicerCheckRadioButtonIcons *CheckRadioIcons;
     
   private:
-  vtkSlicerTheme (const vtkSlicerTheme& ); // Not implemented
-  void operator = (const vtkSlicerTheme& ); // Not implemented
+  vtkSlicerTheme (const vtkSlicerTheme& ); /// Not implemented
+  void operator = (const vtkSlicerTheme& ); /// Not implemented
     
 };
 #endif

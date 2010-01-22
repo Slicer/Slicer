@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkSlicerBaseGUIWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkSlicerBaseGUIWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  vtkSlicerBaseGUIWin32Header - manage Windows system differences
+/// 
+/// The vtkSlicerBaseGUIWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkSlicerBaseGUIWin32Header_h
 #define __vtkSlicerBaseGUIWin32Header_h

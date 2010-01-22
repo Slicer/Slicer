@@ -1,7 +1,7 @@
-// .NAME vtkSlicerToolbarGUI
-// .SECTION Description
-// Main Data GUI and mediator methods for
-// the application Toolbar in slicer3.
+///  vtkSlicerToolbarGUI
+/// 
+/// Main Data GUI and mediator methods for
+/// the application Toolbar in slicer3.
 
 #ifndef __vtkSlicerToolbarGUI_h
 #define __vtkSlicerToolbarGUI_h
@@ -28,24 +28,24 @@
 
 class vtkSlicerApplicationGUI;
 
-// Description:
-// This class implements Slicer's Application Toolbar 
+/// Description:
+/// This class implements Slicer's Application Toolbar 
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponentGUI
 {
  public:
-    // Description:
-    // Usual vtk class functions
+    /// 
+    /// Usual vtk class functions
     static vtkSlicerToolbarGUI* New ( );
     vtkTypeRevisionMacro ( vtkSlicerToolbarGUI, vtkSlicerComponentGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
     
-    // Description:
-    // Get the class containing all slicer GUI images for logos/icons
+    /// 
+    /// Get the class containing all slicer GUI images for logos/icons
     vtkGetObjectMacro (SlicerToolbarIcons, vtkSlicerToolbarIcons);
 
-    // Description:
-    // Get the main slicer toolbars.
+    /// 
+    /// Get the main slicer toolbars.
     vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
     virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
     
@@ -57,8 +57,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
     vtkGetObjectMacro (ModuleChooseGUI, vtkSlicerModuleChooseGUI );
 
-    // Description:
-    // Get the widgets that display the toolbar icons
+    /// 
+    /// Get the widgets that display the toolbar icons
     vtkGetObjectMacro (HomeIconButton, vtkKWPushButton); 
     vtkGetObjectMacro (DataIconButton, vtkKWPushButton);
     vtkGetObjectMacro (VolumeIconButton, vtkKWPushButton );
@@ -82,23 +82,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (CompareViewLightboxRowEntry, vtkKWEntry );
     vtkGetObjectMacro (CompareViewLightboxColumnEntry, vtkKWEntry );
 
-    // Description:
-    // This method builds the Data module's GUI
+    /// 
+    /// This method builds the Data module's GUI
     virtual void BuildGUI ( void ) ;
     virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
     virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
     
-    // Description:
-    // Add/Remove observers on widgets in the GUI
+    /// 
+    /// Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void AddMRMLObservers ( );
     virtual void RemoveGUIObservers ( );
     virtual void RemoveMRMLObservers ( );
 
-    // Description:
-    // Class's mediator methods for processing events invoked by
-    // either the Logic, MRML or GUI.
+    /// 
+    /// Class's mediator methods for processing events invoked by
+    /// either the Logic, MRML or GUI.
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -107,36 +107,36 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
   virtual void HideCompareViewCustomLayoutFrame();
 
     
-    // Description:
-    // Updates the pulldown menu of layouts.
+    /// 
+    /// Updates the pulldown menu of layouts.
     virtual void UpdateLayoutMenu();
 
     //BTX
     using vtkSlicerComponentGUI::Enter; 
     //ETX
     
-    // Description:
-    // Describe the behavior at module enter and exit.
+    /// 
+    /// Describe the behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
-    // Description:
-    // Method called when a view reconfiguration is chosen
-    // from the toolbar; before Slice and 3D viewers are
-    // unpacked and repacked in a new configuration,
-    // render requests from automatic rock or spin are
-    // stopped. Resumes when finished packing.
+    /// 
+    /// Method called when a view reconfiguration is chosen
+    /// from the toolbar; before Slice and 3D viewers are
+    /// unpacked and repacked in a new configuration,
+    /// render requests from automatic rock or spin are
+    /// stopped. Resumes when finished packing.
     virtual int StopViewRockOrSpin ( );
     virtual void ResumeViewRockOrSpin ( int mode );
     virtual void SetLayoutMenubuttonValueToCurrentLayout ();
     virtual void SetLayoutMenubuttonValueToLayout (int layout);
     virtual void ReconfigureGUIFonts ( );
   
-    // Description:
-    // Getting and setting the mrml selection node id
+    /// 
+    /// Getting and setting the mrml selection node id
     vtkGetStringMacro(InteractionNodeID);
     vtkSetStringMacro(InteractionNodeID);
-    // Description:
-    // Get/Set the selection node
+    /// 
+    /// Get/Set the selection node
     vtkGetObjectMacro(InteractionNode, vtkMRMLInteractionNode);
     void SetAndObserveInteractionNode (vtkMRMLInteractionNode *node)
     {
@@ -147,8 +147,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkSlicerToolbarGUI ( );
     virtual ~vtkSlicerToolbarGUI ( );
 
-    // Description:
-    // Main Application Toolbars
+    /// 
+    /// Main Application Toolbars
     vtkKWToolbar *ModulesToolbar;
     vtkKWToolbar *LoadSaveToolbar;
     vtkKWToolbar *ViewToolbar;
@@ -157,12 +157,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWToolbar *UtilitiesToolbar;
     vtkKWTopLevel *CompareViewBoxTopLevel;
 
-    // Description:
-    // Contains icons
+    /// 
+    /// Contains icons
     vtkSlicerToolbarIcons *SlicerToolbarIcons;
     
-    // Description:
-    // Widgets that display toolbar icons
+    /// 
+    /// Widgets that display toolbar icons
     vtkKWPushButton *UndoIconButton;
     vtkKWPushButton *RedoIconButton;
     vtkKWPushButton *HomeIconButton;
@@ -180,7 +180,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWMenuButton *ChooseLayoutIconMenuButton;
 
     vtkKWEntry *CompareViewBoxRowEntry;
-//    vtkKWEntry *CompareViewBoxColumnEntry;
+///    vtkKWEntry *CompareViewBoxColumnEntry;
     vtkKWPushButton *CompareViewBoxApplyButton;
 
     vtkKWEntry *CompareViewLightboxRowEntry;
@@ -193,15 +193,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;
 
-    // Description:
-    // the id of the selection node, for tracking changes to the mouse
-    // interation mode
+    /// 
+    /// the id of the selection node, for tracking changes to the mouse
+    /// interation mode
     char *InteractionNodeID;
     vtkMRMLInteractionNode *InteractionNode;
     int ProcessingMRMLEvent;
     
  private:
-    vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); // Not implemented.
+    vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); /// Not implemented.
     void operator = ( const vtkSlicerToolbarGUI& ); //Not implemented.
 };
 

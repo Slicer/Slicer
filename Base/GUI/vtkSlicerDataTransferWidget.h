@@ -21,18 +21,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
   {
   public:
 
-    // Description:
-    // Usual vtk class functions.
+    /// 
+    /// Usual vtk class functions.
     static vtkSlicerDataTransferWidget* New();
     vtkTypeRevisionMacro(vtkSlicerDataTransferWidget,vtkSlicerWidget);
     void PrintSelf(ostream& os, vtkIndent indent);
 
-    // Description:
-    // Get/Set on members
-    // associated transfer
+    /// 
+    /// Get/Set on members
+    /// associated transfer
     vtkGetMacro ( TransferID, int );
     vtkSetMacro ( TransferID, int );
-    // widgets
+    /// widgets
     vtkGetObjectMacro (DataTransferFrame, vtkKWFrame );
     vtkGetObjectMacro (URILabel, vtkKWLabel );
     vtkGetObjectMacro (TransferTypeLabel, vtkKWLabel );
@@ -46,38 +46,38 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkGetObjectMacro (InformationCloseButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataTransfer, vtkDataTransfer);
     vtkSetObjectMacro ( DataTransfer, vtkDataTransfer);
-    // timer things
+    /// timer things
     vtkGetMacro ( TimerCount, int );
     vtkSetMacro ( TimerCount, int );
     vtkGetMacro ( TimerSteps, int );
     vtkGetMacro ( TimerRunning, int );
     vtkSetMacro ( TimerRunning, int);
-    // managers
+    /// managers
     vtkGetObjectMacro (CacheManager, vtkCacheManager);
     vtkSetObjectMacro (CacheManager, vtkCacheManager);
     vtkGetObjectMacro (DataIOManager, vtkDataIOManager);
     vtkSetObjectMacro (DataIOManager, vtkDataIOManager);
 
-    // Description:
-    // Add/Remove observers on widgets in the GUI.
+    /// 
+    /// Add/Remove observers on widgets in the GUI.
     virtual void AddWidgetObservers();
     virtual void RemoveWidgetObservers();
 
     virtual int ComputeSizeOnDisk ();
 
-    // Description:
-    // Method to propagate events generated in GUI to logic / mrml.
+    /// 
+    /// Method to propagate events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
 
-    // Description:
-    // Methods to update content in the information text widget
-    // and to display and hide it.
+    /// 
+    /// Methods to update content in the information text widget
+    /// and to display and hide it.
     virtual void DisplayInformationWindow();
     virtual void HideInformationWindow();
     virtual void UpdateInformationText();
     
-    // Description:
-    // Methods to handle the animated "transfer running" status display
+    /// 
+    /// Methods to handle the animated "transfer running" status display
     virtual void DisplayRunningAnimation();
 
 //BTX
@@ -101,21 +101,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     virtual void EnableURILabel();
     virtual void UpdateURILabel ( const char* );
 
-    // Description:
-    // Method to update the widget when a new node is loaded.
-    // Or when a Data Transfer's state may have changed.
+    /// 
+    /// Method to update the widget when a new node is loaded.
+    /// Or when a Data Transfer's state may have changed.
     void UpdateWidget();
 
   protected:
     vtkSlicerDataTransferWidget(void);
     virtual ~vtkSlicerDataTransferWidget(void);
 
-    // Description:
-    // Method to create the widget.
+    /// 
+    /// Method to create the widget.
     virtual void CreateWidget();
 
-    // Description:
-    // members to animate transfer running icons.
+    /// 
+    /// members to animate transfer running icons.
     int TimerCount;
     int TimerSteps;
     int TimerRunning;
@@ -144,7 +144,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
 
 
   private:
-    vtkSlicerDataTransferWidget (const vtkSlicerDataTransferWidget&); // Not implemented.
+    vtkSlicerDataTransferWidget (const vtkSlicerDataTransferWidget&); /// Not implemented.
     void operator = (const vtkSlicerDataTransferWidget&); //Not implemented.
   };
 

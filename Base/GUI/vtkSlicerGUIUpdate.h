@@ -29,8 +29,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUIUpdate : public vtkCallbackCommand
     ~vtkSlicerGUIUpdate ( );
 
  private:
-    vtkSlicerGUIUpdate ( const vtkSlicerGUIUpdate& ); // Not implemented.
-    void operator = (const vtkSlicerGUIUpdate& ); // Not implemented.
+    vtkSlicerGUIUpdate ( const vtkSlicerGUIUpdate& ); /// Not implemented.
+    void operator = (const vtkSlicerGUIUpdate& ); /// Not implemented.
     
 };
 

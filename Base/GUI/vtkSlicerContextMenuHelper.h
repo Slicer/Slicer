@@ -13,12 +13,12 @@
 a
 =========================================================================auto=*/
 
-// .NAME vtkSlicerContextMenuHelper - helper code to manage node editing context menus for the MRMLTreeWidget and the NodeSelectorWidget
-// .SECTION Description
-// This class combines common context menu functions in a single class
-// for easier management.  This class handles populating the menu and 
-// handles the callbacks.  A scene and a node are instance variables
-// to handle callbacks.
+///  vtkSlicerContextMenuHelper - helper code to manage node editing context menus for the MRMLTreeWidget and the NodeSelectorWidget
+/// 
+/// This class combines common context menu functions in a single class
+/// for easier management.  This class handles populating the menu and 
+/// handles the callbacks.  A scene and a node are instance variables
+/// to handle callbacks.
 //
 
 #ifndef __vtkSlicerContextMenuHelper_h
@@ -44,13 +44,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   static vtkSlicerContextMenuHelper* New();
   vtkTypeRevisionMacro(vtkSlicerContextMenuHelper, vtkObject);
 
-  // Description:
-  // Populate a context menu for a given node
+  /// 
+  /// Populate a context menu for a given node
   virtual void PopulateMenu();
 
-  // Description:
-  // Callbacks triggered by the menu.  String argument is a node id
-  // to operate on.
+  /// 
+  /// Callbacks triggered by the menu.  String argument is a node id
+  /// to operate on.
   //
   virtual void DeleteNodeCallback();
   virtual void RenameNodeCallback();
@@ -59,29 +59,29 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   virtual void RenameApplyCallback(char * vtkNotUsed( name ) ) {this->RenameApplyCallback();};
   virtual void EditCallback();
 
-  // Description:
-  // Show/Hide mini dialog to rename node
+  /// 
+  /// Show/Hide mini dialog to rename node
   //
   void PopUpRenameEntry();
   void HideRenameEntry();
 
-  // Description:
-  // MRML scene to operate on (not observed)
+  /// 
+  /// MRML scene to operate on (not observed)
   vtkSetObjectMacro(MRMLScene, vtkMRMLScene);
   vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
 
-  // Description:
-  // MRML node to operate on (not observed)
+  /// 
+  /// MRML node to operate on (not observed)
   vtkSetObjectMacro(MRMLNode, vtkMRMLNode);
   vtkGetObjectMacro(MRMLNode, vtkMRMLNode);
 
-  // Description:
-  // menu to operate on (used for processing callbacks)
+  /// 
+  /// menu to operate on (used for processing callbacks)
   vtkSetObjectMacro(ContextMenu, vtkKWMenu);
   vtkGetObjectMacro(ContextMenu, vtkKWMenu);
 
-  // Description:
-  // Update menu item state based on MRMLNode state (null or not null)
+  /// 
+  /// Update menu item state based on MRMLNode state (null or not null)
   void UpdateMenuState();
 
   protected:
@@ -90,8 +90,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   ~vtkSlicerContextMenuHelper();
 
   private:
-  vtkSlicerContextMenuHelper(const vtkSlicerContextMenuHelper&); // Not implemented
-  void operator =(const vtkSlicerContextMenuHelper&); // Not implemented
+  vtkSlicerContextMenuHelper(const vtkSlicerContextMenuHelper&); /// Not implemented
+  void operator =(const vtkSlicerContextMenuHelper&); /// Not implemented
 
   vtkMRMLScene *MRMLScene;
   vtkMRMLNode *MRMLNode;
@@ -100,8 +100,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   vtkKWEntryWithLabel *RenameEntry;
   vtkKWPushButton *RenameApply;
   vtkKWPushButton *RenameCancel;
-  // Description:
-  // holders for menu item indices
+  /// 
+  /// holders for menu item indices
   int DeleteItem;
   int RenameItem;
   int EditItem;

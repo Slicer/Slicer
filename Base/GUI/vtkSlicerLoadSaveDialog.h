@@ -18,8 +18,8 @@ protected:
   ~vtkSlicerLoadSaveDialog() {};
 
 private:
-  vtkSlicerLoadSaveDialog(const vtkSlicerLoadSaveDialog&); // Not implemented
-  void operator=(const vtkSlicerLoadSaveDialog&); // Not implemented
+  vtkSlicerLoadSaveDialog(const vtkSlicerLoadSaveDialog&); /// Not implemented
+  void operator=(const vtkSlicerLoadSaveDialog&); /// Not implemented
 };
 
 

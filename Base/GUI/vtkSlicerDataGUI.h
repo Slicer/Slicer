@@ -1,6 +1,6 @@
-// .NAME vtkSlicerDataGUI
-// .SECTION Description
-// Main Data GUI and mediator methods for slicer3.
+///  vtkSlicerDataGUI
+/// 
+/// Main Data GUI and mediator methods for slicer3.
 
 #ifndef __vtkSlicerDataGUI_h
 #define __vtkSlicerDataGUI_h
@@ -23,28 +23,28 @@
 
 //#include "vtkSlicerDataLogic.h"
 
-// Description:
-// This class implements Slicer's Data GUI
+/// Description:
+/// This class implements Slicer's Data GUI
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
 {
  public:
-  // Description:
-  // Usual vtk class functions
+  /// 
+  /// Usual vtk class functions
   static vtkSlicerDataGUI* New (  );
   vtkTypeRevisionMacro ( vtkSlicerDataGUI, vtkSlicerModuleGUI );
   void PrintSelf ( ostream& os, vtkIndent indent );
     
-  // Description:
-  // Get methods on class members (no Set methods required.)
+  /// 
+  /// Get methods on class members (no Set methods required.)
   //vtkGetObjectMacro ( Logic, vtkSlicerDataLogic);
   //vtkGetObjectMacro ( MRMLNode, vtkMRMLNode );
 
-  // Description:
-  // API for setting MRMLNode, Logic and
-  // for both setting and observing them.
+  /// 
+  /// API for setting MRMLNode, Logic and
+  /// for both setting and observing them.
   /*
-  // classes not yet defined!
+  /// classes not yet defined!
   void SetMRMLNode ( vtkMRMLNode *node )
   { this->SetMRML ( vtkObjectPointer( &this->MRMLNode), node ); }
   void SetAndObserveMRMLNode ( vtkMRMLNode *node )
@@ -56,97 +56,97 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
   { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ) }
   */
     
-  // Description:
-  // These Get methods provide the API for the load scene pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load scene pushbuttons and frame
   vtkGetObjectMacro (SceneInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (SceneInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadSceneButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the import scene pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the import scene pushbuttons and frame
   vtkGetObjectMacro (ImportSceneInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (ImportSceneInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (ImportSceneButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load volume  pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load volume  pushbuttons and frame
   vtkGetObjectMacro (LoadVolumeButton, vtkKWPushButton );
   vtkGetObjectMacro (VolumeInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (VolumeInformationFrame, vtkKWFrame );
 
-  // Description:
-  // These Get methods provide the API for the load dicom volume pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load dicom volume pushbuttons and frame
   vtkGetObjectMacro (LoadDicomVolumeButton, vtkKWPushButton );
   vtkGetObjectMacro ( DicomInformationButton, vtkKWPushButton );
   vtkGetObjectMacro ( DicomInformationFrame, vtkKWFrame );
 
-  // Description:
-  // These Get methods provide the API for the load model pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load model pushbuttons and frame
   vtkGetObjectMacro (ModelInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (ModelInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadModelButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load model pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load model pushbuttons and frame
   vtkGetObjectMacro (OverlayInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (OverlayInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadOverlayButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load transform pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load transform pushbuttons and frame
   vtkGetObjectMacro (TransformInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (TransformInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadTransformButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load fiducial list pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load fiducial list pushbuttons and frame
   vtkGetObjectMacro (FiducialsInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (FiducialsInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadFiducialsButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load directory pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load directory pushbuttons and frame
   vtkGetObjectMacro (DirectoryInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (DirectoryInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadDirectoryButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load any data pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load any data pushbuttons and frame
   vtkGetObjectMacro (DataInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (DataInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadDataButton, vtkKWPushButton );
 
-  // Description:
-  // These Get methods provide the API for the load color LUT pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load color LUT pushbuttons and frame
   vtkGetObjectMacro (ColorLUTInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (ColorLUTInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadColorLUTButton, vtkKWPushButton );  
 
-  // Description:
-  // These Get methods provide the API for the load fiber bundle pushbuttons and frame
+  /// 
+  /// These Get methods provide the API for the load fiber bundle pushbuttons and frame
   vtkGetObjectMacro (FiberBundleInformationButton, vtkKWPushButton );
   vtkGetObjectMacro (FiberBundleInformationFrame, vtkKWFrame );
   vtkGetObjectMacro (LoadFiberBundleButton, vtkKWPushButton );
 
-  // Description:
-  // Get/Set on the last directory the load filebrowsers open to.
+  /// 
+  /// Get/Set on the last directory the load filebrowsers open to.
   vtkGetStringMacro (LoadDirectory );
   vtkSetStringMacro (LoadDirectory );
 
-  // Description:
-  // Methods for adding module-specific key bindings and
-  // removing them.
+  /// 
+  /// Methods for adding module-specific key bindings and
+  /// removing them.
   virtual void CreateModuleEventBindings ( );
   virtual void ReleaseModuleEventBindings ( );
 
-  // Description:
-  // This method builds the Data module's GUI
+  /// 
+  /// This method builds the Data module's GUI
   virtual void BuildGUI ( void );
   virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
   virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
 
-  // Description:
-  // Theses methods builds the Load panels
+  /// 
+  /// Theses methods builds the Load panels
   virtual void BuildScenePanel ( vtkKWFrame *parent );
   virtual void BuildGeneralPanel ( vtkKWFrame *parent );
   virtual void BuildVolumePanel ( vtkKWFrame *parent );
@@ -157,45 +157,45 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
   virtual void BuildColorPanel ( vtkKWFrame *parent );
   virtual void BuildFiberBundlePanel ( vtkKWFrame *parent );
 
-  // Description:
-  // These methods pack and unpack the load information text.
+  /// 
+  /// These methods pack and unpack the load information text.
   virtual void PackInformationFrame ( vtkKWFrame *f, vtkKWPushButton *b);
   virtual void UnpackInformationFrame ( vtkKWFrame *f, vtkKWPushButton *b);
 
-  // Descripgion:
-  // This method releases references and key-bindings,
-  // and optionally removes observers.
+  /// Descripgion:
+  /// This method releases references and key-bindings,
+  /// and optionally removes observers.
   virtual void TearDownGUI ( );
 
-  // Description:
-  // Methods to take apart pop-up windows and remove observers on widgets.
+  /// 
+  /// Methods to take apart pop-up windows and remove observers on widgets.
   virtual void WithdrawAddModelWindow();
   virtual void WithdrawAddScalarOverlayWindow();
 
-  // Description:
-  // Methods to raise pop-up windows and put observers on widgets.
+  /// 
+  /// Methods to raise pop-up windows and put observers on widgets.
   virtual void RaiseAddModelWindow();
   virtual void RaiseAddScalarOverlayWindow();
     
-  // Description:
-  // Methods to destroy pop-up windows and put observers on widgets.
+  /// 
+  /// Methods to destroy pop-up windows and put observers on widgets.
   virtual void DestroyAddModelWindow();
   virtual void DestroyAddScalarOverlayWindow();
 
-  // Description:
-  // Add/Remove observers on widgets in the GUI
+  /// 
+  /// Add/Remove observers on widgets in the GUI
   virtual void AddGUIObservers ( );
   virtual void RemoveGUIObservers ( );
 
-  // Description:
-  // Class's mediator methods for processing events invoked by
-  // either the Logic, MRML or GUI.
+  /// 
+  /// Class's mediator methods for processing events invoked by
+  /// either the Logic, MRML or GUI.
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
     
-  // Description:
-  // Describe the behavior at module enter and exit.
+  /// 
+  /// Describe the behavior at module enter and exit.
   virtual void Enter ( );
   virtual void Exit ( );
     
@@ -265,36 +265,36 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
 
   char *LoadDirectory;
     
-  // Widgets for AddModel functionality
+  /// Widgets for AddModel functionality
   vtkKWLoadSaveButton *AddModelDialogButton;
   vtkKWLoadSaveButton *AddModelDirectoryDialogButton;
   vtkKWTopLevel *AddModelWindow;
   
-  // Widgets for AddScalarOverlay functionality
+  /// Widgets for AddScalarOverlay functionality
   vtkSlicerNodeSelectorWidget *ModelSelector;
   vtkKWLoadSaveButton *AddOverlayDialogButton;
   vtkKWTopLevel *AddOverlayWindow;
   vtkMRMLModelNode *SelectedModelNode;
   
-  // Widgets for AddFiducialList functionality
+  /// Widgets for AddFiducialList functionality
   vtkKWLoadSaveDialog *AddFiducialDialog;
   
-  // Widgets for AddColorLUT functionality
+  /// Widgets for AddColorLUT functionality
   vtkKWLoadSaveDialog *AddColorLUTDialog;
   
-  // Widgets for AddDTIFiberBundle functionality
+  /// Widgets for AddDTIFiberBundle functionality
   vtkKWLoadSaveDialog *AddFiberBundleDialog;
 
-  // Widgets for MRMLScene
+  /// Widgets for MRMLScene
   vtkSlicerMRMLTreeWidget *MRMLTreeWidget;
-  // Widgets for acknowledgement.
+  /// Widgets for acknowledgement.
   vtkKWLabel *NACLabel;
   vtkKWLabel *NAMICLabel;
   vtkKWLabel *NCIGTLabel;
   vtkKWLabel *BIRNLabel;
   
  private:
-  vtkSlicerDataGUI ( const vtkSlicerDataGUI& ); // Not implemented.
+  vtkSlicerDataGUI ( const vtkSlicerDataGUI& ); /// Not implemented.
   void operator = ( const vtkSlicerDataGUI& ); //Not implemented.
 };
 

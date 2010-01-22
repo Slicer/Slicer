@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene 
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene 
 //
 
 
@@ -81,12 +81,12 @@ public:
   vtkTypeRevisionMacro(vtkSlicerWidget,vtkKWCompositeWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Getting setting and observing MRMLScene.
+  /// 
+  /// Getting setting and observing MRMLScene.
   vtkGetObjectMacro ( MRMLScene, vtkMRMLScene );
   
-  // Description:
-  // API for setting or setting and observing MRMLScene
+  /// 
+  /// API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
     {
     vtkObject *oldValue = this->MRMLScene;
@@ -117,21 +117,21 @@ public:
       }
     }
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *vtkNotUsed(caller),
                                      unsigned long vtkNotUsed(event),
                                      void *vtkNotUsed(callData) ) { };
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
                                    unsigned long vtkNotUsed(event),
                                    void *vtkNotUsed(callData) ) { };
 
-  // Description:
-  // Flags to avoid event loops
-  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  /// 
+  /// Flags to avoid event loops
+  /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
   vtkGetMacro(InWidgetCallbackFlag, int);
   void SetInWidgetCallbackFlag (int flag) {
     this->InWidgetCallbackFlag = flag;
@@ -146,8 +146,8 @@ protected:
   vtkSlicerWidget();
   virtual ~vtkSlicerWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget() {this->Superclass::CreateWidget();};
 
   vtkMRMLScene       *MRMLScene;
@@ -155,28 +155,28 @@ protected:
   vtkObserverManager *MRMLObserverManager;
 
   //BTX
-  // a shared set of functions that call the
-  // virtual ProcessMRMLEvents
-  // and ProcessGUIEvents methods in the
-  // subclasses, if they are defined.
+  /// a shared set of functions that call the
+  /// virtual ProcessMRMLEvents
+  /// and ProcessGUIEvents methods in the
+  /// subclasses, if they are defined.
   static void MRMLCallback( vtkObject *caller,
                             unsigned long eid, void *clientData, void *callData );
   static void WidgetCallback( vtkObject *caller,
                            unsigned long eid, void *clientData, void *callData );    
   //ETX
   
-  // Description::
-  // Holders for MRML, GUI and Logic callbacks
+  /// :
+  /// Holders for MRML, GUI and Logic callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
   vtkCallbackCommand *GUICallbackCommand;
 
-  // Description:
-  // Flag to avoid event loops
+  /// 
+  /// Flag to avoid event loops
   int InWidgetCallbackFlag;
   int InMRMLCallbackFlag;
   
-  vtkSlicerWidget(const vtkSlicerWidget&); // Not implemented
-  void operator=(const vtkSlicerWidget&); // Not Implemented
+  vtkSlicerWidget(const vtkSlicerWidget&); /// Not implemented
+  void operator=(const vtkSlicerWidget&); /// Not Implemented
 };
 
 #endif

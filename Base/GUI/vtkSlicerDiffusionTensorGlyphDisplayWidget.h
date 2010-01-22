@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerDiffusionTensorGlyphDisplayWidget - GUI for setting parameters of a 
-// vtkMRMLDiffusionTensorGlyphDisplayNode
-// .SECTION Description
+///  vtkSlicerDiffusionTensorGlyphDisplayWidget - GUI for setting parameters of a 
+/// vtkMRMLDiffusionTensorGlyphDisplayNode
+/// 
 //
 
 
@@ -39,22 +39,22 @@ public:
   vtkTypeRevisionMacro(vtkSlicerDiffusionTensorGlyphDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set DiffusionTensorDisplayPropertiesNode currently active in this GUI.
-  // Internally this method sets the DiffusionTensorDisplayPropertiesNodeID 
-  // and sets up observers.
+  /// 
+  /// Set DiffusionTensorDisplayPropertiesNode currently active in this GUI.
+  /// Internally this method sets the DiffusionTensorDisplayPropertiesNodeID 
+  /// and sets up observers.
   void SetDiffusionTensorDisplayPropertiesNode ( vtkMRMLDiffusionTensorDisplayPropertiesNode *node );
 
-  // Description:
-  // Get MRML DiffusionTensorDisplayPropertiesNodeID.
+  /// 
+  /// Get MRML DiffusionTensorDisplayPropertiesNodeID.
   vtkGetStringMacro ( DiffusionTensorDisplayPropertiesNodeID );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
   void SetGlyphResolution(int value);
@@ -75,44 +75,44 @@ public:
   vtkSlicerDiffusionTensorGlyphDisplayWidget();
   virtual ~vtkSlicerDiffusionTensorGlyphDisplayWidget();
 
-  // Description:
-  // add observers on display node
+  /// 
+  /// add observers on display node
   virtual void AddMRMLObservers ( );
 
-  // Description:
-  // remove observers on display node
+  /// 
+  /// remove observers on display node
   virtual void RemoveMRMLObservers ( );
 
-  // Description:
-  // adds observers on widgets in the class
+  /// 
+  /// adds observers on widgets in the class
   virtual void AddWidgetObservers ( );
 
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  // Description:
-  // Set MRML DiffusionTensorDisplayPropertiesNodeID.
+  /// 
+  /// Set MRML DiffusionTensorDisplayPropertiesNodeID.
   vtkSetStringMacro ( DiffusionTensorDisplayPropertiesNodeID );
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
-  // Description:
-  // Update the widget's values to correspond to the MRML display node.
+  /// 
+  /// Update the widget's values to correspond to the MRML display node.
   void UpdateWidget();
 
-  // Description:
-  // Update the display node's values to correspond to the widget
+  /// 
+  /// Update the display node's values to correspond to the widget
   void UpdateMRML();
   
-  // Description:
-  // ID in the MRML scene of the current display properties node
+  /// 
+  /// ID in the MRML scene of the current display properties node
   char* DiffusionTensorDisplayPropertiesNodeID;
 
-  // Description:
-  // All of the widgets used in this widget
+  /// 
+  /// All of the widgets used in this widget
   vtkKWMenuButtonWithLabel  *GlyphGeometryMenu;
 
   vtkKWFrameWithLabel *Frame;
@@ -122,21 +122,21 @@ public:
   //vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   //vtkKWChangeColorButton *ChangeColorButton;
 
-  // advanced frame
+  /// advanced frame
   vtkKWScaleWithLabel  *GlyphScale;
   vtkKWScaleWithLabel  *GlyphResolutionScale;
 
-  // lines frame
+  /// lines frame
   vtkKWMenuButtonWithLabel  *LineGlyphEigenvectorMenu;
 
-  // tubes frame
+  /// tubes frame
   vtkKWMenuButtonWithLabel  *TubeGlyphEigenvectorMenu;
   vtkKWScaleWithLabel  *TubeNumberOfSidesScale;
   vtkKWScaleWithLabel  *TubeRadiusScale;
 
-  // ellipsoids frame
+  /// ellipsoids frame
 
-  // superquadrics frame
+  /// superquadrics frame
 
   //BTX
   std::map <std::string, int> GlyphGeometryMap;
@@ -146,8 +146,8 @@ public:
 private:
 
 
-  vtkSlicerDiffusionTensorGlyphDisplayWidget(const vtkSlicerDiffusionTensorGlyphDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerDiffusionTensorGlyphDisplayWidget&); // Not Implemented
+  vtkSlicerDiffusionTensorGlyphDisplayWidget(const vtkSlicerDiffusionTensorGlyphDisplayWidget&); /// Not implemented
+  void operator=(const vtkSlicerDiffusionTensorGlyphDisplayWidget&); /// Not Implemented
 };
 
 #endif

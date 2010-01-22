@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -42,69 +42,69 @@ public:
   vtkTypeRevisionMacro(vtkKWCheckBoxSelectionDialog,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  // Description:
-  // Add entry name
+  /// 
+  /// Add entry name
   void AddEntry(const char *Label, int selected);
 
-  // Description:
-  // Clear all entries
+  /// 
+  /// Clear all entries
   void RemoveAllEntries();
 
-  // Description:
-  // Sets all rows in the list box to be selected or unselected depending on
-  // the flag
+  /// 
+  /// Sets all rows in the list box to be selected or unselected depending on
+  /// the flag
   void SetAllEntriesSelected(int sel);
 
-  // Description:
-  // Returns selected entries
+  /// 
+  /// Returns selected entries
   vtkStringArray* GetSelectedEntries();
  
-  // Description:
-  // Returns unselected entries
+  /// 
+  /// Returns unselected entries
   vtkStringArray* GetUnselectedEntries();
 
-  // Description:
-  // invoke the widget
+  /// 
+  /// invoke the widget
   void Invoke();
 
-  // Description:
-  // Title
+  /// 
+  /// Title
   vtkGetStringMacro(Title);
   vtkSetStringMacro(Title);
 
-  // Description:
-  // First colomn name
+  /// 
+  /// First colomn name
   vtkGetStringMacro(EntryColumnName);
   vtkSetStringMacro(EntryColumnName);
 
-  // Description:
-  // First colomn name
+  /// 
+  /// First colomn name
   vtkGetStringMacro(BoxColumnName);
   vtkSetStringMacro(BoxColumnName);
 
-  // Description:
-  // Cancel action
+  /// 
+  /// Cancel action
   vtkSetMacro(Cancel, int);
   vtkGetMacro(Cancel, int);
 
 
-  // Update widget
+  /// Update widget
   //void UpdateWidget();
   
 protected:
   vtkKWCheckBoxSelectionDialog();
   virtual ~vtkKWCheckBoxSelectionDialog();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
 
@@ -129,15 +129,15 @@ private:
 
   vtkKWPushButton *CancelButton;
 
-  // Description:
-  // set all list box entries to selected/unselected in Box column 
+  /// 
+  /// set all list box entries to selected/unselected in Box column 
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;
   
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
-  vtkKWCheckBoxSelectionDialog(const vtkKWCheckBoxSelectionDialog&); // Not implemented
-  void operator=(const vtkKWCheckBoxSelectionDialog&); // Not Implemented
+  vtkKWCheckBoxSelectionDialog(const vtkKWCheckBoxSelectionDialog&); /// Not implemented
+  void operator=(const vtkKWCheckBoxSelectionDialog&); /// Not Implemented
 };
 
 #endif

@@ -32,8 +32,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerBaseAcknowledgementLogoIcons : public 
     vtkKWIcon *CTSCLogo;
     
  private:
-    vtkSlicerBaseAcknowledgementLogoIcons (const vtkSlicerBaseAcknowledgementLogoIcons&); // Not implemented
-    void operator = ( const vtkSlicerBaseAcknowledgementLogoIcons& ); // Not implemented
+    vtkSlicerBaseAcknowledgementLogoIcons (const vtkSlicerBaseAcknowledgementLogoIcons&); /// Not implemented
+    void operator = ( const vtkSlicerBaseAcknowledgementLogoIcons& ); /// Not implemented
     
 };
 

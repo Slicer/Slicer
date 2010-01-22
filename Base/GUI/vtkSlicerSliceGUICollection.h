@@ -32,8 +32,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUICollection : public vtkCollect
     virtual ~vtkSlicerSliceGUICollection ( );
 
  private:
-    vtkSlicerSliceGUICollection (const vtkSlicerSliceGUICollection & ); // Not implemented
-    void operator=(const vtkSlicerSliceGUICollection &); // Not implemented
+    vtkSlicerSliceGUICollection (const vtkSlicerSliceGUICollection & ); /// Not implemented
+    void operator=(const vtkSlicerSliceGUICollection &); /// Not implemented
 };
 
 #endif

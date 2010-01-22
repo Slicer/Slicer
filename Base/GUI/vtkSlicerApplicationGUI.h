@@ -11,9 +11,9 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-// .NAME vtkSlicerApplicationGUI 
-// .SECTION Description
-// Main application GUI and mediator methods for slicer3.  
+///  vtkSlicerApplicationGUI 
+/// 
+/// Main application GUI and mediator methods for slicer3.  
 
 #ifndef __vtkSlicerApplicationGUI_h
 #define __vtkSlicerApplicationGUI_h
@@ -61,35 +61,35 @@ class vtkSlicerApplicationGUIInternals;
 class vtkMRMLViewNode;
 class vtkSlicerApplication;
 
-// Description:
-// This class implements Slicer's main Application GUI.
+/// Description:
+/// This class implements Slicer's main Application GUI.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerComponentGUI
 {
  public:
-    // Description:
-    // Usual vtk class functions
+    /// 
+    /// Usual vtk class functions
     static vtkSlicerApplicationGUI* New (  );
     vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    // Description:
-    // Get Viewer Widget associated to a given view node
+    /// 
+    /// Get Viewer Widget associated to a given view node
     virtual int GetNumberOfViewerWidgets();
     virtual vtkSlicerViewerWidget* GetNthViewerWidget(int idx);
     virtual vtkSlicerViewerWidget* GetViewerWidgetForNode(vtkMRMLViewNode*);
 
-    // Description:
-    // Get the active 3D Viewer Widget
+    /// 
+    /// Get the active 3D Viewer Widget
     virtual vtkSlicerViewerWidget* GetActiveViewerWidget();
 
-    // Description:
-    // Get active render window interactor (the interactor of the
-    // active 3D viewer)
+    /// 
+    /// Get active render window interactor (the interactor of the
+    /// active 3D viewer)
     virtual vtkRenderWindowInteractor *GetActiveRenderWindowInteractor();
 
-    // Description:
-    // Get/Set the layout node
+    /// 
+    /// Get/Set the layout node
     vtkMRMLLayoutNode *GetGUILayoutNode ( );
     void SetAndObserveGUILayoutNode ( vtkMRMLLayoutNode *node );
     const char* GetCurrentLayoutStringName ( );
@@ -99,58 +99,58 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetMacro (CurrentLayout, int);
     vtkSetMacro (CurrentLayout, int);
     
-    // Description:
-    // The Fiducial List Widget
+    /// 
+    /// The Fiducial List Widget
     vtkGetObjectMacro (FiducialListWidget, vtkSlicerFiducialListWidget);
 
-    // Description:
-    // The ROI Viewer Widget
+    /// 
+    /// The ROI Viewer Widget
     vtkGetObjectMacro (ROIViewerWidget, vtkSlicerROIViewerWidget);
 
-    // Description:
-    // Pointers to the SlicesGUI used by the ApplicationGUI.
+    /// 
+    /// Pointers to the SlicesGUI used by the ApplicationGUI.
     vtkGetObjectMacro (SlicesGUI, vtkSlicerSlicesGUI);
     virtual void SetSlicesGUI(vtkSlicerSlicesGUI*);
 
-    // Description:
-    // Get the frames that populate the Slicer GUI
+    /// 
+    /// Get the frames that populate the Slicer GUI
     vtkGetObjectMacro ( LogoFrame, vtkKWFrame);
     vtkGetObjectMacro ( DropShadowFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicesControlFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkSlicerModuleCollapsibleFrame );
     
-    // Description:
-    // A frame used in the MainViewFrame of SlicerMainWin
+    /// 
+    /// A frame used in the MainViewFrame of SlicerMainWin
     vtkGetObjectMacro ( GridFrame1, vtkKWFrame );
     vtkGetObjectMacro ( GridFrame2, vtkKWFrame );
     
-    // Description:
-    // The following (ApplicationToolbar, ViewControlGUI, SlicesControlGUI,
-    // ModuleChooseGUI) are collections of widgets that populate
-    // the main applicaiton GUI. Each has a pointer to this instance
-    // of vtkSlicerApplicationGUI and the ProcessGUIEvents method
-    // in each calls methods from this class.
-    // Get the application Toolbar.
+    /// 
+    /// The following (ApplicationToolbar, ViewControlGUI, SlicesControlGUI,
+    /// ModuleChooseGUI) are collections of widgets that populate
+    /// the main applicaiton GUI. Each has a pointer to this instance
+    /// of vtkSlicerApplicationGUI and the ProcessGUIEvents method
+    /// in each calls methods from this class.
+    /// Get the application Toolbar.
     vtkGetObjectMacro ( ApplicationToolbar, vtkSlicerToolbarGUI );
-    // Get the GUI containing widgets for controlling the 3D View
+    /// Get the GUI containing widgets for controlling the 3D View
     vtkGetObjectMacro ( ViewControlGUI, vtkSlicerViewControlGUI );
-    // Get the GUI containing widgets for controlling the Slice Views
+    /// Get the GUI containing widgets for controlling the Slice Views
     vtkGetObjectMacro ( SlicesControlGUI, vtkSlicerSlicesControlGUI );
-    // Get the GUI containing the widgets to select modules.
-//    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
-    // Get the GUI containing the widgets to display logos
+    /// Get the GUI containing the widgets to select modules.
+///    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
+    /// Get the GUI containing the widgets to display logos
     vtkGetObjectMacro ( LogoDisplayGUI, vtkSlicerLogoDisplayGUI );
     
-    // Description:
-    // Get the main slicer window.
+    /// 
+    /// Get the main slicer window.
     vtkGetObjectMacro ( MainSlicerWindow, vtkSlicerWindow );
 
-    // Description:
-    // Basic icons for the slicer application.
+    /// 
+    /// Basic icons for the slicer application.
     vtkGetObjectMacro ( SlicerFoundationIcons, vtkSlicerFoundationIcons );
     
-    // Description:
-    // This method builds Slicer's main GUI
+    /// 
+    /// This method builds Slicer's main GUI
     virtual void BuildGUI ( void );
     virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
     virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
@@ -158,14 +158,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerSliceGUI* GetMainSliceGUI(const char *layoutName);
     void AddMainSliceGUI(const char *layoutName);
 
-    // Description:
-    // Add/Remove observers on widgets in Slicer's main GUI
+    /// 
+    /// Add/Remove observers on widgets in Slicer's main GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-    // Description:
-    // Class's mediator methods for processing events invoked by
-    // the Logic, MRML or GUI objects observed.
+    /// 
+    /// Class's mediator methods for processing events invoked by
+    /// the Logic, MRML or GUI objects observed.
     virtual void ProcessLogicEvents(
       vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents (
@@ -184,31 +184,31 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void UpdateLayout();
     void CustomizeStatusBarLayout();
     
-    // Description:
-    // Methods describe behavior on startup and exit.
+    /// 
+    /// Methods describe behavior on startup and exit.
     virtual void Enter ( );
     virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
     virtual void Exit ( );
     virtual void DeleteComponentGUIs();
     
-    // Description:
-    // Gives progress feedback in the main slicer window
-    // and is called when a storage node's StageReadData is called.
-    // Provides "signs of life" when large datasets are being loaded.
+    /// 
+    /// Gives progress feedback in the main slicer window
+    /// and is called when a storage node's StageReadData is called.
+    /// Provides "signs of life" when large datasets are being loaded.
     virtual void UpdateLoadStatusText();
 
-    // Description:
-    // Gives progress feedback in the main slicer window
-    // and is called when a storage node's StageWriteData is called.
-    // Provides "signs of life" when large datasets are being saved.
+    /// 
+    /// Gives progress feedback in the main slicer window
+    /// and is called when a storage node's StageWriteData is called.
+    /// Provides "signs of life" when large datasets are being saved.
     virtual void UpdateSaveStatusText();
     
-    // Description:
-    // These methods configure and pack the Slicer Window
+    /// 
+    /// These methods configure and pack the Slicer Window
     virtual void PackFirstSliceViewerFrame ( );
 
-    // Description:
-    // These methods configure the Main Viewer's layout
+    /// 
+    /// These methods configure the Main Viewer's layout
     virtual void PackConventionalView ( );
     virtual void PackOneUp3DView ( );
     virtual void PackOneUpSliceView ( const char *whichSlice);
@@ -228,8 +228,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void UnpackCompareView();
     virtual void UnpackDual3DView();
 
-    // Description:
-    // Methods to manage Slice viewers
+    /// 
+    /// Methods to manage Slice viewers
     virtual void ConfigureMainSliceViewers ( );
     virtual void AddMainSliceViewerObservers ( );
     virtual void RemoveMainSliceViewerObservers ( );
@@ -237,8 +237,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
                                                vtkSlicerSliceLogic *l2,
                                                vtkSlicerSliceLogic *l3 );
     
-    // Description:
-    // These methods populate the various GUI Panel frames
+    /// 
+    /// These methods populate the various GUI Panel frames
     virtual void BuildGUIFrames ( );
     virtual void BuildMainViewer ( int arrangementType);
 
@@ -268,12 +268,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
 
-    // Description:
-    // Methods invoked by making selections from Help menu
-    // on the menu bar; give access to Slicer tutorials,
-    // and web pages for reporting bugs, usability problems,
-    // making feature requests, and a script to upload
-    // screenshots and a caption to slicer's visual blog.
+    /// 
+    /// Methods invoked by making selections from Help menu
+    /// on the menu bar; give access to Slicer tutorials,
+    /// and web pages for reporting bugs, usability problems,
+    /// making feature requests, and a script to upload
+    /// screenshots and a caption to slicer's visual blog.
     virtual void OpenTutorialsLink ();
     virtual void OpenDocumentationLink ();
     virtual void OpenPublicationsLink ();
@@ -282,24 +282,24 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void OpenFeatureLink ();
     virtual void PostToVisualBlog ();
 
-    // Description:
-    // Method to display the Loadable Modules wizard
+    /// 
+    /// Method to display the Loadable Modules wizard
     virtual void ShowModulesWizard();
 
-    // Description:
-    // Display Slicer's main window
+    /// 
+    /// Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
 
-    // Description:
-    // Raise module's panel.
-    // - use either the module name or a node
-    // - SelectModuleForNode has internal logic to map node types to modules
+    /// 
+    /// Raise module's panel.
+    /// - use either the module name or a node
+    /// - SelectModuleForNode has internal logic to map node types to modules
     void SelectModule ( const char *moduleName, vtkMRMLNode *node );
     void SelectModule ( const char *moduleName );
     void SelectModuleForNode ( vtkMRMLNode *node );
 
-    // Description:
-    // Helper routine to set images for icons
+    /// 
+    /// Helper routine to set images for icons
     void SetIconImage (vtkKWIcon *icon, vtkImageData *image);
 
     virtual void UpdateRemoteIOConfigurationForRegistry();
@@ -310,61 +310,61 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //--- through the ApplicationGUI to CacheManager.
     virtual void ConfigureRemoteIOSettings();
 
-    // Description:
-    // Callback set on the configure event of main window
+    /// 
+    /// Callback set on the configure event of main window
     virtual void ConfigureCallback(char *);
     virtual void MapCallback(char *);
     virtual void UnMapCallback(char *);
 
-    // Description:
-    // Show/hide a QtModule. The position/size of the Qt widget 
-    // is mapped against the corresponding KwWidget
+    /// 
+    /// Show/hide a QtModule. The position/size of the Qt widget 
+    /// is mapped against the corresponding KwWidget
     //void SetQtModuleVisible(const char* moduleTitle, bool visible); 
     //void SetCurrentQtModuleVisible(bool visible); 
     void SetCurrentQtModule(const char* moduleTitle);
 
-    // Description:
-    // Callbacks set on the configure events of the split frames
+    /// 
+    /// Callbacks set on the configure events of the split frames
     void MainSplitFrameConfigureCallback(int width, int height);
     void SecondarySplitFrameConfigureCallback(int width, int height);
 
-    // Description:
-    // Use a helper process to display a progress message and progress bar.
-    // Need to use this for feedback when a normal KWWidgets progress bar
-    // would cause event loops (since it calls the tk 'update' command
-    // to force display)
+    /// 
+    /// Use a helper process to display a progress message and progress bar.
+    /// Need to use this for feedback when a normal KWWidgets progress bar
+    /// would cause event loops (since it calls the tk 'update' command
+    /// to force display)
     void SetExternalProgress(char *message, float progress);
 
-    // Description:
-    // Get SlicerApplication
+    /// 
+    /// Get SlicerApplication
     vtkSlicerApplication* GetSlicerApplication();
 
 protected:
     vtkSlicerApplicationGUI ( );
     virtual ~vtkSlicerApplicationGUI ( );
-    // Description:
-    // Main Slicer window
+    /// 
+    /// Main Slicer window
     vtkSlicerWindow *MainSlicerWindow;
 
-        // Description:
-    // Frames for the main Slicer UI panel    
+        /// 
+    /// Frames for the main Slicer UI panel    
     vtkKWFrame *TopFrame;
     vtkKWFrame *LogoFrame;
     vtkKWFrame *DropShadowFrame;
     vtkSlicerModuleCollapsibleFrame *SlicesControlFrame;
     vtkSlicerModuleCollapsibleFrame *ViewControlFrame;
 
-    // Description:
-    // Frame for Lightbox viewing (not yet implemented)
+    /// 
+    /// Frame for Lightbox viewing (not yet implemented)
     vtkKWFrame *GridFrame1;
     vtkKWFrame *GridFrame2;
 
-    // Description:
-    // Widgets for the File menu
+    /// 
+    /// Widgets for the File menu
     vtkKWLoadSaveDialog *LoadSceneDialog;
 
-    // Description:
-    // Main Slicer toolbar and components
+    /// 
+    /// Main Slicer toolbar and components
     vtkSlicerToolbarGUI *ApplicationToolbar;
     vtkSlicerViewControlGUI *ViewControlGUI;
     vtkSlicerSlicesControlGUI *SlicesControlGUI;
@@ -372,71 +372,71 @@ protected:
     
     double MainRendererBBox[6];
 
-    // Description:
-    // Fiducial List Widget
+    /// 
+    /// Fiducial List Widget
     vtkSlicerFiducialListWidget *FiducialListWidget;
 
-    // Description:
-    // ROI Viewer Widget
+    /// 
+    /// ROI Viewer Widget
     vtkSlicerROIViewerWidget *ROIViewerWidget;
 
-    // Description:
-    // Contains the state of the ApplicationGUI's layout
+    /// 
+    /// Contains the state of the ApplicationGUI's layout
     vtkMRMLLayoutNode *GUILayoutNode;
 
-    // Description:
-    // use STL::Map to hold all SliceViewers where key is the layoutName
+    /// 
+    /// use STL::Map to hold all SliceViewers where key is the layoutName
     vtkSlicerSlicesGUI *SlicesGUI;
 
-    // Description:
-    // Collection of Icons all GUIs can have access to.
-    // TODO: move basic icons from misc icon collections into here.
+    /// 
+    /// Collection of Icons all GUIs can have access to.
+    /// TODO: move basic icons from misc icon collections into here.
     vtkSlicerFoundationIcons *SlicerFoundationIcons;
 
-    // Description:
-    // Used to tag all pages added to the tabbed notebook
-    // arrangement of the main viewer.
+    /// 
+    /// Used to tag all pages added to the tabbed notebook
+    /// arrangement of the main viewer.
     int ViewerPageTag;
 
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
 
-    // Description:
-    // Wizard-based dialog for selecting and downoading Loadable Modules
+    /// 
+    /// Wizard-based dialog for selecting and downoading Loadable Modules
     vtkSlicerModulesWizardDialog *ModulesWizardDialog;
 
     int ProcessingMRMLEvent;
     bool SceneClosing;
     bool Built;
     int CurrentLayout;
-    // Description:
-    // Used for user feedback during loading of datasets
+    /// 
+    /// Used for user feedback during loading of datasets
     int DataCount;
 
-    // Description:
-    // If the active viewer widget has changed, update the dependencies
+    /// 
+    /// If the active viewer widget has changed, update the dependencies
     void UpdateActiveViewerWidgetDependencies(vtkSlicerViewerWidget*);
 
-    // PIMPL Encapsulation for STL containers
+    /// PIMPL Encapsulation for STL containers
     //BTX
     vtkSlicerApplicationGUIInternals *Internals;
     //ETX
 
-  // Description:
-  // Called when a view node has been added/removed to/from the scene
+  /// 
+  /// Called when a view node has been added/removed to/from the scene
   virtual void OnViewNodeAdded(vtkMRMLViewNode *node);
   virtual void OnViewNodeRemoved(vtkMRMLViewNode *node);
   virtual void OnViewNodeNeeded();
      
-  // Description:
-  // Synchronize the position of the Qt module panel with the KWWidget
-  // module panel
+  /// 
+  /// Synchronize the position of the Qt module panel with the KWWidget
+  /// module panel
   //BTX
   void ReposModulePanel();
   //ETX
 
  private:
 
-    vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
+    vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); /// Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
 }; 
 

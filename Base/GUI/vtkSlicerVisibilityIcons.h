@@ -27,8 +27,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVisibilityIcons : public vtkSlicerIcon
     vtkKWIcon *InvisibleIcon;
     
  private:
-    vtkSlicerVisibilityIcons ( const vtkSlicerVisibilityIcons&); // Not implemented
-    void operator = (const vtkSlicerVisibilityIcons& ); // not implemented.
+    vtkSlicerVisibilityIcons ( const vtkSlicerVisibilityIcons&); /// Not implemented
+    void operator = (const vtkSlicerVisibilityIcons& ); /// not implemented.
     
 };
 #endif

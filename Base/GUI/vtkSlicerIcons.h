@@ -7,9 +7,9 @@
 
 #include "vtkSlicerBaseGUI.h"
 
-// Description:
-// This class is defined in anticipation of superclass methods that
-// all Slicer Icons will use...
+/// Description:
+/// This class is defined in anticipation of superclass methods that
+/// all Slicer Icons will use...
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerIcons : public vtkKWObject
 {
@@ -21,8 +21,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerIcons : public vtkKWObject
  protected:
     vtkSlicerIcons ( );
     virtual ~vtkSlicerIcons ( );
-    vtkSlicerIcons (const vtkSlicerIcons& ); // Not implemented
-    void operator = ( const vtkSlicerIcons& ); // Not implemented
+    vtkSlicerIcons (const vtkSlicerIcons& ); /// Not implemented
+    void operator = ( const vtkSlicerIcons& ); /// Not implemented
     
  private:
     

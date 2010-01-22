@@ -1,7 +1,7 @@
-// .NAME vtkSlicerApplicationSettingsInterface
-// .SECTION Description
-// Slicer specific ApplicationSettingsInterface. Provides a user
-// interface to set/view application settings.
+///  vtkSlicerApplicationSettingsInterface
+/// 
+/// Slicer specific ApplicationSettingsInterface. Provides a user
+/// interface to set/view application settings.
 //
 
 #ifndef __vtkSlicerApplicationSettingsInterface_h
@@ -28,18 +28,18 @@ public:
   vtkGetObjectMacro (FontSizeButtons, vtkKWRadioButtonSet );
   vtkGetObjectMacro (FontFamilyButtons, vtkKWRadioButtonSet );
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void Create();
   
-  // Description:
-  // Refresh the interface given the current value of the Window and its
-  // views/composites/widgets.
+  /// 
+  /// Refresh the interface given the current value of the Window and its
+  /// views/composites/widgets.
   virtual void Update();
   virtual void UpdateRemoteIOSettings();
 
-  // Description:
-  // Callbacks for the Module application settings. Internal, do not use.
+  /// 
+  /// Callbacks for the Module application settings. Internal, do not use.
 
   virtual void ExtensionsInstallPathCallback();
   virtual void HomeModuleCallback(char *name);
@@ -50,8 +50,8 @@ public:
   virtual void ModulePathsHasChangedCallback(int id);
   virtual void ModulePathsRemovedCallback();
  
-  // Description:
-  // Callbacks for the Slicer application settings. Internal, do not use.
+  /// 
+  /// Callbacks for the Slicer application settings. Internal, do not use.
   virtual void BrowserSelectCallback();
   virtual void ZipSelectCallback();
   virtual void UnzipSelectCallback();
@@ -60,36 +60,36 @@ public:
   virtual void ConfirmDeleteCallback(int state);
   virtual void ModulesSelectionCallback();
 
-  // Description:
-  // Callbacks for the Slicer font settings.
+  /// 
+  /// Callbacks for the Slicer font settings.
   virtual void SetFontFamilyCallback ( );
   virtual void SetFontSizeCallback ( );
 
-  // Description:
-  // Callbacks for the Remote Data Handling settings.
-  // Description:
-  // Enable and disable asychronous IO, if false use blocking IO, if true,
-  // downloads and loading are forked off into a separate thread
+  /// 
+  /// Callbacks for the Remote Data Handling settings.
+  /// 
+  /// Enable and disable asychronous IO, if false use blocking IO, if true,
+  /// downloads and loading are forked off into a separate thread
   virtual void EnableAsynchronousIOCallback(int state);
-  // Description:
-  // If true, even if the file is in the cache, download it again. If false,
-  // check for and use the cached copy.
+  /// 
+  /// If true, even if the file is in the cache, download it again. If false,
+  /// check for and use the cached copy.
   virtual void EnableForceRedownloadCallback(int state);
-  // Description:
-  // If true, over write copies in the cache when downloading a remote
-  // file. If false, rename the old copy.
-//  virtual void EnableRemoteCacheOverwritingCallback(int state);
-  // Description:
-  // Set the cache directory on disk
+  /// 
+  /// If true, over write copies in the cache when downloading a remote
+  /// file. If false, rename the old copy.
+///  virtual void EnableRemoteCacheOverwritingCallback(int state);
+  /// 
+  /// Set the cache directory on disk
   virtual void RemoteCacheDirectoryCallback();
-  // Description:
-  // Set the upper limit on the size of the cache directory
+  /// 
+  /// Set the upper limit on the size of the cache directory
   virtual void RemoteCacheLimitCallback(int size);
-  // Description:
-  // Set the amount of space in the cache directory that should remain free
+  /// 
+  /// Set the amount of space in the cache directory that should remain free
   virtual void RemoteCacheFreeBufferSizeCallback(int size);
 
-  // Callbacks for the colour application settings. Internal, do not use.
+  /// Callbacks for the colour application settings. Internal, do not use.
   virtual int ColorFilePathsAddCallback();
   virtual void ColorFilePathsHasChangedCallback(int id);
   virtual void ColorFilePathsRemovedCallback();
@@ -100,8 +100,8 @@ protected:
 
   
 private:
-  vtkSlicerApplicationSettingsInterface(const vtkSlicerApplicationSettingsInterface&); // Not implemented
-  void operator=(const vtkSlicerApplicationSettingsInterface&); // Not Implemented
+  vtkSlicerApplicationSettingsInterface(const vtkSlicerApplicationSettingsInterface&); /// Not implemented
+  void operator=(const vtkSlicerApplicationSettingsInterface&); /// Not Implemented
 
   vtkKWFrameWithLabel *SlicerSettingsFrame;
   vtkKWCheckButton  *ConfirmDeleteCheckButton;
@@ -126,7 +126,7 @@ private:
   vtkKWFrameWithLabel *RemoteCacheSettingsFrame;
   vtkKWCheckButton *EnableAsynchronousIOCheckButton;
   vtkKWCheckButton *EnableForceRedownloadCheckButton;
-//  vtkKWCheckButton *EnableRemoteCacheOverwritingCheckButton;
+///  vtkKWCheckButton *EnableRemoteCacheOverwritingCheckButton;
   vtkKWLoadSaveButtonWithLabel *RemoteCacheDirectoryButton;
   vtkKWSpinBoxWithLabel *RemoteCacheLimitSpinBox;
   vtkKWSpinBoxWithLabel * RemoteCacheFreeBufferSizeSpinBox;

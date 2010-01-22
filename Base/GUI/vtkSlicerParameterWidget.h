@@ -6,8 +6,8 @@
 #include <string>
 #include <map>
 #include <ModuleParameter.h>
-// Description:
-// This Widget builds out of the "module Xml description" a vtkKWWidget.
+/// Description:
+/// This Widget builds out of the "module Xml description" a vtkKWWidget.
 #include "vtkSlicerBaseGUIWin32Header.h" 
 
 
@@ -76,16 +76,16 @@ protected:
     
     void AddParameterAndEventToWidget(vtkKWCoreWidget* parentWidget, ModuleParameter widgetParameter);
     
-    // Description:
-    // create new attribute for the widget in the mrml node or get the value from the node
+    /// 
+    /// create new attribute for the widget in the mrml node or get the value from the node
     void UpdateMRMLForWidget(vtkKWCoreWidget* parentWidget, ModuleParameter widgetParameter);
     
-    // Callback routine that is used for creating a new node.  This
-    // method is needed to avoid recursive calls to GUICallback()
+    /// Callback routine that is used for creating a new node.  This
+    /// method is needed to avoid recursive calls to GUICallback()
     static void GUIChangedCallback( vtkObject *__caller,
                                 unsigned long eid, void *__clientData, void *callData );    
 
-//    vtkCallbackCommand *GUIChangedCallbackCommand;
+///    vtkCallbackCommand *GUIChangedCallbackCommand;
     const char* GetValueFromWidget(vtkKWWidget *widg);
     
     void SetValueForWidget(vtkKWCoreWidget *widg, const char* value);
@@ -115,7 +115,7 @@ private:
     std::vector<moduleParameterWidgetStruct*> *m_InternalWidgetParamList;
     std::vector<moduleParameterWidgetStruct*>::iterator m_InternalIterator;
     
-//    std::map<vtkKWCoreWidget*, ModuleParameter> *m_internalWidgetToParamMap; 
+///    std::map<vtkKWCoreWidget*, ModuleParameter> *m_internalWidgetToParamMap; 
     std::string m_curWidgetLabel;
     std::string m_widgID;
 

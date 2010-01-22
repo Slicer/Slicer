@@ -24,8 +24,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerHelpIcons : public vtkSlicerIcons
     vtkKWIcon *HelpAndInformationIcon;
     
  private:
-    vtkSlicerHelpIcons (const vtkSlicerHelpIcons&); // Not implemented
-    void operator = ( const vtkSlicerHelpIcons& ); // Not implemented
+    vtkSlicerHelpIcons (const vtkSlicerHelpIcons&); /// Not implemented
+    void operator = ( const vtkSlicerHelpIcons& ); /// Not implemented
     
 };
 

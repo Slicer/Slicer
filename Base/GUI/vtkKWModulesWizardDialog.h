@@ -13,8 +13,8 @@ public:
   static vtkKWModulesWizardDialog* New();
   vtkTypeRevisionMacro(vtkKWModulesWizardDialog,vtkKWWizardDialog);
 
-  // Description:
-  // Access to the steps.
+  /// 
+  /// Access to the steps.
   vtkGetObjectMacro(RepositoryStep, vtkKWMyRepositoryStep);
   vtkGetObjectMacro(ModulesStep, vtkKWMyModulesStep);
   vtkGetObjectMacro(ProgressStep, vtkKWMyProgressStep);
@@ -23,19 +23,19 @@ protected:
   vtkKWModulesWizardDialog();
   ~vtkKWModulesWizardDialog() {};
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
-  // Description:
-  // Steps
+  /// 
+  /// Steps
   vtkKWMyRepositoryStep *RepositoryStep;
   vtkKWMyModulesStep *ModulesStep;
   vtkKWMyProgressStep *ProgressStep;
 
 private:
-  vtkKWModulesWizardDialog(const vtkKWModulesWizardDialog&);   // Not implemented.
-  void operator=(const vtkKWModulesWizardDialog&);  // Not implemented.
+  vtkKWModulesWizardDialog(const vtkKWModulesWizardDialog&);   /// Not implemented.
+  void operator=(const vtkKWModulesWizardDialog&);  /// Not implemented.
 };
 
 #endif

@@ -1,7 +1,7 @@
-// .NAME vtkSlicerSlicesControlGUI
-// .SECTION Description
-// Main Data GUI and mediator methods for
-// SlicesControl GUI Panel in slicer3.
+///  vtkSlicerSlicesControlGUI
+/// 
+/// Main Data GUI and mediator methods for
+/// SlicesControl GUI Panel in slicer3.
 
 #ifndef __vtkSlicerSlicesControlGUI_h
 #define __vtkSlicerSlicesControlGUI_h
@@ -24,20 +24,20 @@ class vtkKWEntryWithLabel;
 class vtkSlicerVisibilityIcons;
 class vtkSlicerFoundationIcons;
 
-// Description:
-// This class implements Slicer's SlicesControl Panel on Main GUI panel
+/// Description:
+/// This class implements Slicer's SlicesControl Panel on Main GUI panel
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerComponentGUI
 {
  public:
-    // Description:
-    // Usual vtk class functions
+    /// 
+    /// Usual vtk class functions
     static vtkSlicerSlicesControlGUI* New ( );
     vtkTypeRevisionMacro ( vtkSlicerSlicesControlGUI, vtkSlicerComponentGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    // Description:
-    // Get the widgets in the SlicesControlFrame
+    /// 
+    /// Get the widgets in the SlicesControlFrame
     vtkGetObjectMacro ( SliceFadeScale, vtkKWScale );
     vtkGetObjectMacro ( ShowFgButton, vtkKWPushButton );
     vtkGetObjectMacro ( ShowBgButton, vtkKWPushButton );
@@ -47,7 +47,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( LabelOpacityToggleButton, vtkKWPushButton);
     vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
     vtkGetObjectMacro ( FieldOfViewTopLevel, vtkKWTopLevel );
-//    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
+///    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
     vtkGetObjectMacro ( CompositingButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AnnotationButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SpatialUnitsButton, vtkKWMenuButton );
@@ -81,30 +81,30 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
     vtkGetObjectMacro ( FoundationIcons, vtkSlicerFoundationIcons );
     
-    // Description:
-    // Get the main slicer toolbars.
+    /// 
+    /// Get the main slicer toolbars.
     vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
     virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
     
-    // Description:
-    // This method builds the Data module's GUI
+    /// 
+    /// This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWFrame *appF ) ;
     virtual void TearDownGUI ( );
     
-    // Description:
-    // Add/Remove observers on widgets in the GUI
+    /// 
+    /// Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-    // Description:
-    // Class's mediator methods for processing events invoked by
-    // either the Logic, MRML or GUI.
+    /// 
+    /// Class's mediator methods for processing events invoked by
+    /// either the Logic, MRML or GUI.
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
     
-    // Description:
-    // Describe the behavior at module enter and exit.
+    /// 
+    /// Describe the behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
 
@@ -118,7 +118,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void BuildAnnotationMenu ( );
     virtual void BuildCrossHairMenu ( );
     virtual void BuildSpacesMenu ( );
-//    virtual void BuildGridMenu ( );
+///    virtual void BuildGridMenu ( );
     virtual void BuildVisibilityMenu ( );
     
     virtual void FitSlicesToBackground ( );
@@ -144,11 +144,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkSlicerSlicesControlIcons *SlicesControlIcons;
     vtkSlicerFoundationIcons *FoundationIcons;
 
-    // Description:
-    // visibility icons, for the label opacity toggle
+    /// 
+    /// visibility icons, for the label opacity toggle
     vtkSlicerVisibilityIcons *VisibilityIcons;
     //Description:
-    // Widgets for the SlicesControlFrame in the GUI
+    /// Widgets for the SlicesControlFrame in the GUI
     vtkKWScale *SliceFadeScale;
     vtkKWPushButton *ShowFgButton;
     vtkKWPushButton *ShowBgButton;
@@ -158,7 +158,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkKWPushButton *LabelOpacityToggleButton;
     vtkKWTopLevel *LabelOpacityTopLevel;
     vtkKWTopLevel *FieldOfViewTopLevel;
-//    vtkKWMenuButton *GridButton;
+///    vtkKWMenuButton *GridButton;
     vtkKWMenuButton *CompositingButton;
     vtkKWMenuButton *AnnotationButton;
     vtkKWMenuButton *SpatialUnitsButton;
@@ -182,7 +182,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     float LastLabelOpacity;
 
  private:
-    vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); // Not implemented.
+    vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); /// Not implemented.
     void operator = ( const vtkSlicerSlicesControlGUI& ); //Not implemented.
 };
 

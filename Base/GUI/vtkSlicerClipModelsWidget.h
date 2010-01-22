@@ -25,8 +25,8 @@ public:
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
   
-  // Description:
-  // Get/Set the Clip Nodes
+  /// 
+  /// Get/Set the Clip Nodes
   vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );
   void SetClipModelsNode (vtkMRMLClipModelsNode *snode)
     {
@@ -34,16 +34,16 @@ public:
     }
 
 
-  // Description:
-  // respond to events from subwidgets of this widget
+  /// 
+  /// respond to events from subwidgets of this widget
   void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // respond to changes in the mrml scene
+  /// 
+  /// respond to changes in the mrml scene
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
-  // respond to changes in the slice logic
+  /// 
+  /// respond to changes in the slice logic
   void ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
                             unsigned long vtkNotUsed(event),
                             void *vtkNotUsed(callData) ){};
@@ -53,8 +53,8 @@ protected:
   vtkSlicerClipModelsWidget ( );
   virtual ~vtkSlicerClipModelsWidget ( );
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget( );
 
   void UpdateGUI();
@@ -62,7 +62,7 @@ protected:
   void UpdateClipModelsNode();
 
   //
-  // Slice controller subwidgets
+  /// Slice controller subwidgets
   //
   vtkKWMenuButtonWithLabel *RedSliceClipStateMenu;
   vtkKWMenuButtonWithLabel *YellowSliceClipStateMenu;  
@@ -72,7 +72,7 @@ protected:
 
   vtkSlicerNodeSelectorWidget *ClipModelsNodeSelector;
   //
-  // Nodes
+  /// Nodes
   //
   vtkMRMLClipModelsNode *ClipModelsNode;
 

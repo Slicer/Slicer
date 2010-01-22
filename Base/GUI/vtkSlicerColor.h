@@ -4,8 +4,8 @@
 #include "vtkObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h" 
 
-// Description:
-// Color definitios used in Slicer's style.
+/// Description:
+/// Color definitios used in Slicer's style.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColor : public vtkObject
 {
@@ -153,8 +153,8 @@ protected:
     char HexColor [6];
     
  private:
-    vtkSlicerColor ( const vtkSlicerColor&); // Not implemented
-    void operator = ( const vtkSlicerColor&); // Not implemented
+    vtkSlicerColor ( const vtkSlicerColor&); /// Not implemented
+    void operator = ( const vtkSlicerColor&); /// Not implemented
 };
 
 #endif

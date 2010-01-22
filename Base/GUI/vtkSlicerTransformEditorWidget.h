@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -44,16 +44,16 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTransformEditorWidget,vtkKWCompositeWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
   void TransformChangedCallback(double);
@@ -79,8 +79,8 @@ public:
   vtkSlicerTransformEditorWidget();
   virtual ~vtkSlicerTransformEditorWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
   void UpdateTranslationSliders();
@@ -114,8 +114,8 @@ public:
 private:
 
 
-  vtkSlicerTransformEditorWidget(const vtkSlicerTransformEditorWidget&); // Not implemented
-  void operator=(const vtkSlicerTransformEditorWidget&); // Not Implemented
+  vtkSlicerTransformEditorWidget(const vtkSlicerTransformEditorWidget&); /// Not implemented
+  void operator=(const vtkSlicerTransformEditorWidget&); /// Not Implemented
 };
 
 #endif

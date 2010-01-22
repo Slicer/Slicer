@@ -29,8 +29,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMRMLUpdate : public vtkCallbackCommand
     ~vtkSlicerMRMLUpdate ( );
 
  private:
-    vtkSlicerMRMLUpdate ( const vtkSlicerMRMLUpdate& ); // Not implemented.
-    void operator = (const vtkSlicerMRMLUpdate& ); // Not implemented.
+    vtkSlicerMRMLUpdate ( const vtkSlicerMRMLUpdate& ); /// Not implemented.
+    void operator = (const vtkSlicerMRMLUpdate& ); /// Not implemented.
     
 };
 

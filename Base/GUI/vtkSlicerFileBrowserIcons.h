@@ -35,8 +35,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFileBrowserIcons : public vtkSlicerIco
   vtkKWIcon *HistoryIcon;
 
  private:
-    vtkSlicerFileBrowserIcons (const vtkSlicerFileBrowserIcons&); // Not implemented
-    void operator = ( const vtkSlicerFileBrowserIcons& ); // Not implemented
+    vtkSlicerFileBrowserIcons (const vtkSlicerFileBrowserIcons&); /// Not implemented
+    void operator = ( const vtkSlicerFileBrowserIcons& ); /// Not implemented
     
 };
 

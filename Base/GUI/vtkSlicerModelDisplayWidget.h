@@ -12,12 +12,12 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-// .SECTION Description
-// Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
+/// 
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally
 //
 
 
@@ -47,40 +47,40 @@ public:
   vtkTypeRevisionMacro(vtkSlicerModelDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set  MRML ModelDisplayNode.
+  /// 
+  /// Set  MRML ModelDisplayNode.
   void SetModelDisplayNode ( vtkMRMLModelDisplayNode *node );
   
-  // Description:
-  // Set  MRML ModelNode for dscalar colors
+  /// 
+  /// Set  MRML ModelNode for dscalar colors
   void SetModelNode ( vtkMRMLModelNode *node );
   
-  // Description:
-  // Set  MRML ModelHierarchyNode 
+  /// 
+  /// Set  MRML ModelHierarchyNode 
   void SetModelHierarchyNode ( vtkMRMLModelHierarchyNode *node );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  // Description:
-  // add observers on display node
+  /// 
+  /// add observers on display node
   virtual void AddMRMLObservers ( );
 
-  // Description:
-  // remove observers on display node
+  /// 
+  /// remove observers on display node
   virtual void RemoveMRMLObservers ( );
   
-  // Description:
-  // get/set vtkSlicerModelHierarchyLogic
+  /// 
+  /// get/set vtkSlicerModelHierarchyLogic
   vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
   vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
 
@@ -88,8 +88,8 @@ public:
   vtkSlicerModelDisplayWidget();
   virtual ~vtkSlicerModelDisplayWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
   void UpdateWidget();
@@ -113,8 +113,8 @@ public:
 
   vtkSlicerModelHierarchyLogic * ModelHierarchyLogic;
 
-  // Description:
-  // Set this when processing an event, since repopulate the scalars menu
+  /// 
+  /// Set this when processing an event, since repopulate the scalars menu
   int ProcessingMRMLEvent;
   int ProcessingWidgetEvent;
 
@@ -124,8 +124,8 @@ public:
 private:
 
 
-  vtkSlicerModelDisplayWidget(const vtkSlicerModelDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerModelDisplayWidget&); // Not Implemented
+  vtkSlicerModelDisplayWidget(const vtkSlicerModelDisplayWidget&); /// Not implemented
+  void operator=(const vtkSlicerModelDisplayWidget&); /// Not Implemented
 };
 
 #endif

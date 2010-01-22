@@ -12,11 +12,11 @@ public:
   vtkTypeMacro(vtkSlicerImageCloseUp2D,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set the Center of the window (X,Y) that we zoom in on.
-  // Set the Magnification
-  // Set the half-width of the region to zoom in on (HalfWidth)
-  // The half-length is set to the same value.
+  /// 
+  /// Set the Center of the window (X,Y) that we zoom in on.
+  /// Set the Magnification
+  /// Set the half-width of the region to zoom in on (HalfWidth)
+  /// The half-length is set to the same value.
   vtkSetMacro(X, int);
   vtkSetMacro(Y, int);
   vtkSetMacro(Z, int);
@@ -39,7 +39,7 @@ protected:
                           vtkImageData *outData);
   void ExecuteInformation(){this->Superclass::ExecuteInformation();};
 
-  // Override this function since inExt != outExt
+  /// Override this function since inExt != outExt
   void ComputeInputUpdateExtent(int inExt[6], int outExt[6]);
   
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 

@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkSlicerColorDisplayWidget - displays the colour node colours
-// .SECTION Description
-// Displays the attributes of the vtkMRMLColorNode. Has a notion of the currently selected colour.
+///  vtkSlicerColorDisplayWidget - displays the colour node colours
+/// 
+/// Displays the attributes of the vtkMRMLColorNode. Has a notion of the currently selected colour.
 
 #ifndef __vtkSlicerColorDisplayWidget_h
 #define __vtkSlicerColorDisplayWidget_h
@@ -42,8 +42,8 @@ public:
   vtkTypeRevisionMacro(vtkSlicerColorDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Get methods on class members ( no Set methods required. )
+  /// 
+  /// Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( ColorNodeTypeLabel, vtkKWLabel);
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
@@ -56,24 +56,24 @@ public:
   vtkBooleanMacro(MultiSelectMode,int);
   vtkSetMacro(MultiSelectMode,int);
 
-  // Description:
-  // Set the selected node, the color id, and update the widgets
+  /// 
+  /// Set the selected node, the color id, and update the widgets
   void SetColorNode ( vtkMRMLColorNode *node );
 
-  // Description:
-  // Get the color node, needed for the Editor
+  /// 
+  /// Get the color node, needed for the Editor
   vtkGetObjectMacro ( ColorNode, vtkMRMLColorNode );
   
-  // Description:
-  // Getting and setting the mrml color node id
+  /// 
+  /// Getting and setting the mrml color node id
   vtkGetStringMacro(ColorNodeID);
   //vtkSetStringMacro(ColorlListNodeID);
   void SetColorNodeID(char *id);
 
   //BTX
-  // Description:
-  // ColorIDModifiedEvent is generated when the ColorNodeID is
-  // changed
+  /// 
+  /// ColorIDModifiedEvent is generated when the ColorNodeID is
+  /// changed
   enum
   {
       ColorIDModifiedEvent = 30000,
@@ -81,44 +81,44 @@ public:
   };
   //ETX
 
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // alternative method to propagate events generated in GUI to logic / mrml
+  /// 
+  /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
+  /// 
+  /// removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  // Description:
-  // add observers on color node
+  /// 
+  /// add observers on color node
   virtual void AddMRMLObservers ( );
 
-  // Description:
-  // remove observers on color node
+  /// 
+  /// remove observers on color node
   virtual void RemoveMRMLObservers ( );
 
-  // Description:
-  // update a table entry
+  /// 
+  /// update a table entry
   void UpdateElement(int row, int col, char * str);  
 
-  // Description:
-  // Update the "enable" state of the object and its internal parts
+  /// 
+  /// Update the "enable" state of the object and its internal parts
   virtual void UpdateEnableState(void);
 
-  // Description:
-  // Return the index of the currently selected colour in the multi column 
-  // list box, for use by other classes when they wish to call GetColor 
-  // on the vtkMRMLColorNode. Returns -1 if no list box or no selection,
-  // or if more than one row is selected.
+  /// 
+  /// Return the index of the currently selected colour in the multi column 
+  /// list box, for use by other classes when they wish to call GetColor 
+  /// on the vtkMRMLColorNode. Returns -1 if no list box or no selection,
+  /// or if more than one row is selected.
   int GetSelectedColorIndex();
   void SetSelectedColorIndex(int index);
 
-  // Description:
-  // API for setting ColorNode, and observing it
+  /// 
+  /// API for setting ColorNode, and observing it
   /*
   void SetMRMLNode ( vtkMRMLColorNode *node )
   { this->SetMRML ( vtkObjectPointer( &this->ColorNode), node ); }
@@ -126,78 +126,78 @@ public:
     { this->SetAndObserveMRML ( vtkObjectPointer( &this->ColorNode), node ); }
   */
   
-  // Description:
-  // Once know that the GUI has to be cleared and updated to show elements
-  // from a new list, use this call
-  //  virtual void SetGUIFromNode(vtkMRMLColorNode * activeColorNode);
+  /// 
+  /// Once know that the GUI has to be cleared and updated to show elements
+  /// from a new list, use this call
+  ///  virtual void SetGUIFromNode(vtkMRMLColorNode * activeColorNode);
 
-  // Description:
-  // Get/set the viewer widget so can add a the scalar bar widget to it
+  /// 
+  /// Get/set the viewer widget so can add a the scalar bar widget to it
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
 
-  // Description:
-  // Get the scalar bar widget
+  /// 
+  /// Get the scalar bar widget
   vtkGetObjectMacro(ScalarBarWidget, vtkScalarBarWidget);
  protected:
   vtkSlicerColorDisplayWidget();
   virtual ~vtkSlicerColorDisplayWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
-  // Description:
-  // Update the widget, used when the color node id changes
+  /// 
+  /// Update the widget, used when the color node id changes
   void UpdateWidget();
   
   void UpdateMRML();
 
-  // Description:
-  // Called when the selected row changes, just update the label, called from UpdateWidget
+  /// 
+  /// Called when the selected row changes, just update the label, called from UpdateWidget
   void UpdateSelectedColor();
   
-  // Description:
-  // id of the color node displayed in the widget
+  /// 
+  /// id of the color node displayed in the widget
   char* ColorNodeID;
   
-  // Description:
-  // The the color node that is currently displayed in the widget
+  /// 
+  /// The the color node that is currently displayed in the widget
   vtkMRMLColorNode *ColorNode;
   
-  // Description:
-  // select a colour node to display
+  /// 
+  /// select a colour node to display
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
 
-  // Description:
-  // pop up help describing the nodes
+  /// 
+  /// pop up help describing the nodes
   vtkSlicerPopUpHelpWidget *NodeHelpWidget;
 
-  // Description:
-  // type of the colour node
+  /// 
+  /// type of the colour node
   vtkKWLabel *ColorNodeTypeLabel;
 
-  // Description:
-  // displays the number of colours in the table
+  /// 
+  /// displays the number of colours in the table
   vtkKWLabel *NumberOfColorsLabel;
 
-  // Description:
-  // displays the currently selected colour index
+  /// 
+  /// displays the currently selected colour index
   vtkKWLabel *SelectedColorLabel;
   
-  // Description:
-  // display the colours in the table
+  /// 
+  /// display the colours in the table
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   int NumberOfColumns;
 
-  // Description:
-  // Decides if MultipleColumns can be selected or not
+  /// 
+  /// Decides if MultipleColumns can be selected or not
   int MultiSelectMode;
 
-//  vtkKWChangeColorButton *ChangeColorButton;
+///  vtkKWChangeColorButton *ChangeColorButton;
   //BTX
-  // Description:
-  // The column orders in the list box
+  /// 
+  /// The column orders in the list box
   enum
     {
       EntryColumn = 0,
@@ -207,26 +207,26 @@ public:
   //ETX
 
   vtkKWCheckButton *ShowOnlyNamedColorsCheckButton;
-  // Description:
-  // show and set the range on the colour lut
+  /// 
+  /// show and set the range on the colour lut
   vtkKWEntryWithLabel  *MinRangeEntry;
   vtkKWEntryWithLabel  *MaxRangeEntry;
 
-  // Description:
-  // Control the parameters for a scalar bar widget
+  /// 
+  /// Control the parameters for a scalar bar widget
   vtkKWScalarBarAnnotation* ScalarBarAnnotation;
 
-  // Description:
-  // a widget that manipulates a scalar bar actor (integrated). 
+  /// 
+  /// a widget that manipulates a scalar bar actor (integrated). 
   vtkScalarBarWidget *ScalarBarWidget;
 
-  // Description:
-  // a pointer back to the viewer widget, useful for displaying the scalar bar actor
+  /// 
+  /// a pointer back to the viewer widget, useful for displaying the scalar bar actor
   vtkSlicerViewerWidget *ViewerWidget;
 private:
 
-  vtkSlicerColorDisplayWidget(const vtkSlicerColorDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerColorDisplayWidget&); // Not Implemented
+  vtkSlicerColorDisplayWidget(const vtkSlicerColorDisplayWidget&); /// Not implemented
+  void operator=(const vtkSlicerColorDisplayWidget&); /// Not Implemented
 };
 
 #endif

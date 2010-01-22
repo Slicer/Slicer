@@ -14,20 +14,20 @@ public:
   vtkTypeRevisionMacro(vtkSlicerWaitMessageWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Getting the window in which to display message.
+  /// 
+  /// Getting the window in which to display message.
   vtkGetObjectMacro ( MessageWindow, vtkKWTopLevel );
 
-  // Description:
-  // Getting the label that contains the message
+  /// 
+  /// Getting the label that contains the message
   vtkGetObjectMacro (TextLabel, vtkKWLabel );
 
-  // Description:
-  // Getting the label that contains the icon
+  /// 
+  /// Getting the label that contains the icon
   vtkGetObjectMacro (ImageLabel, vtkKWLabel );
 
-  // Description:
-  // Internal Callbacks. do not use.
+  /// 
+  /// Internal Callbacks. do not use.
   void DisplayWindow ( );
   void WithdrawWindow ( );
   void SetText ( const char *text);
@@ -37,8 +37,8 @@ public:
   vtkSlicerWaitMessageWidget();
   virtual ~vtkSlicerWaitMessageWidget();
 
-  // Description:
-  // Create the widget.
+  /// 
+  /// Create the widget.
   virtual void CreateWidget();
 
   vtkKWTopLevel *MessageWindow;
@@ -47,8 +47,8 @@ public:
   
 private:
 
-  vtkSlicerWaitMessageWidget(const vtkSlicerWaitMessageWidget&); // Not implemented
-  void operator=(const vtkSlicerWaitMessageWidget&); // Not Implemented
+  vtkSlicerWaitMessageWidget(const vtkSlicerWaitMessageWidget&); /// Not implemented
+  void operator=(const vtkSlicerWaitMessageWidget&); /// Not Implemented
 };
 
 #endif

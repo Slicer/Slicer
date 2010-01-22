@@ -228,8 +228,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerWWWIcon;
     
  private:
-    vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); // Not implemented
-    void operator = (const vtkSlicerFoundationIcons& ); // not implemented.
+    vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); /// Not implemented
+    void operator = (const vtkSlicerFoundationIcons& ); /// not implemented.
     
 };
 #endif
