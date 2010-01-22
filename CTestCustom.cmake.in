@@ -63,7 +63,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Python suppressions
   # About redefinition of symbols
-  "pyconfig.h.*warning:*redefined"
+  ".*pyconfig.h.*warning:.*redefined.*"
   "features.h.*"
 
   # curl suppressions
