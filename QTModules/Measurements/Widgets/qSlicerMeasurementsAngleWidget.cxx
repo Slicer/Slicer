@@ -15,7 +15,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMeasurementsAngleWidget::qSlicerMeasurementsAngleWidget(QWidget *parent) : Superclass(parent)
+qSlicerMeasurementsAngleWidget::qSlicerMeasurementsAngleWidget(QWidget *_parent):
+Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMeasurementsAngleWidget);
   QCTK_D(qSlicerMeasurementsAngleWidget);

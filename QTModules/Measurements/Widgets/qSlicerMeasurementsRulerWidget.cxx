@@ -15,7 +15,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMeasurementsRulerWidget::qSlicerMeasurementsRulerWidget(QWidget *parent) : Superclass(parent)
+qSlicerMeasurementsRulerWidget::qSlicerMeasurementsRulerWidget(QWidget *_parent):
+Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerMeasurementsRulerWidget);
   QCTK_D(qSlicerMeasurementsRulerWidget);
