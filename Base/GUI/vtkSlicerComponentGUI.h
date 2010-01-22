@@ -162,7 +162,9 @@ public:
   // Description:
   // Specifies all widgets for this GUI
   // Define function in subclasses.
-  virtual void BuildGUI ( ) { };
+  virtual void BuildGUI ( ) { }
+  virtual void BuildGUI ( vtkKWFrame *f ) {}
+  virtual void BuildGUI ( vtkKWFrame *f, double *bgColor ) {}
 
   // Description:
   // Method in which references are released,
