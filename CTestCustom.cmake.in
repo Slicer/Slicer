@@ -69,6 +69,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
 
+  # Suppressing warnings about duplicate libraries in Darwin
+  # At some point this may be addressed by CMake feature request: 
+  # http://public.kitware.com/Bug/view.php?id=10179
+  "ld: warning: duplicate dylib.*"
 
   # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
   #"[Ss]licer3.[Aa]pplications.(cli|CLI)"
