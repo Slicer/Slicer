@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a 
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a 
 
 #ifndef __vtkITKImageToImageFilterUSF
 #define __vtkITKImageToImageFilterUSF
@@ -42,7 +42,7 @@ public:
 protected:
   //BTX
   
-  // To/from ITK
+  /// To/from ITK
   typedef unsigned short InputImagePixelType;
   typedef float  OutputImagePixelType;
   typedef itk::Image<InputImagePixelType, 3> InputImageType;
@@ -58,7 +58,7 @@ protected:
 
   vtkITKImageToImageFilterUSF ( GenericFilterType* filter )
   {
-    // Need an import, export, and a ITK pipeline
+    /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
     this->itkImporter = ImageImportType::New();
     this->itkExporter = ImageExportType::New();
@@ -66,7 +66,7 @@ protected:
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
     
-    // Set up the filter pipeline
+    /// Set up the filter pipeline
     m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
     this->vtkCast->SetOutputScalarTypeToUnsignedShort();
@@ -78,8 +78,8 @@ protected:
   //ETX
   
 private:
-  vtkITKImageToImageFilterUSF(const vtkITKImageToImageFilterUSF&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterUSF&);  // Not implemented.
+  vtkITKImageToImageFilterUSF(const vtkITKImageToImageFilterUSF&);  /// Not implemented.
+  void operator=(const vtkITKImageToImageFilterUSF&);  /// Not implemented.
 };
 
 #endif

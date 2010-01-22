@@ -121,13 +121,13 @@ namespace itk {
 
     unsigned long CalculateIndex ( Size<3> Position, int ImageCount );
     static unsigned long CalculateIndex ( Size<3> Position, int ImageCount, unsigned int BlocksPerImage[3] );
-    // Return true if this is a full block, false otherwise.  Assumes there is overlap!
+    /// Return true if this is a full block, false otherwise.  Assumes there is overlap!
     bool CalculateIntersection ( Size<3> BlockIndex, typename OutputImageType::RegionType RequestedRegion, 
                                  typename OutputImageType::RegionType& BlockRegion,
                                  typename OutputImageType::RegionType& ImageRegion );
     bool IsOpen() const;
 
-    // How many pixels are in the last block?
+    /// How many pixels are in the last block?
     Array<unsigned int> m_PixelRemainder;
     std::string m_Filename;
     unsigned int m_CurrentImage;
@@ -136,7 +136,7 @@ namespace itk {
     std::vector<std::string> m_DatabaseFileNames;
     unsigned long m_BlocksPerFile;
 
-    // our cache
+    /// our cache
     struct CacheBlock 
     {
       TPixel data[TimeSeriesBlockSize*TimeSeriesBlockSize*TimeSeriesBlockSize];

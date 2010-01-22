@@ -120,9 +120,9 @@ private:
   OutputPixelType     m_OutsideValue;
   unsigned long       m_NumberOfHistogramBins;
   double             m_Omega; 
-} ; // end of class
+} ; /// end of class
 
-} // end namespace itk
+} /// end namespace itk
   
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkNewOtsuThresholdImageFilter.txx"

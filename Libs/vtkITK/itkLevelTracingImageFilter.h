@@ -75,35 +75,35 @@ public:
 
   void PrintSelf ( std::ostream& os, Indent indent ) const;
   
-  // Set/Get the seed
+  /// Set/Get the seed
   itkSetMacro(Seed, IndexType); 
   itkGetMacro(Seed, IndexType);
 
-  // Did we move the seed point to put in on a boundary?
+  /// Did we move the seed point to put in on a boundary?
   itkGetMacro(MovedSeed, bool);
   
   int GetThreshold();
   InputImagePixelType GetMaxIntensity() {return m_Max;}
   InputImagePixelType GetMinIntensity() {return m_Min;}
   
-  // Get the output as a ChainCodePath.  This output is only generated in the 2D case.
+  /// Get the output as a ChainCodePath.  This output is only generated in the 2D case.
   ChainCodePathType *GetPathOutput() { return static_cast<ChainCodePathType*>(this->ProcessObject::GetOutput(1)); }
 
 protected:
   LevelTracingImageFilter();
   ~LevelTracingImageFilter(){}
    
-  // Override since the filter needs all the data for the algorithm
+  /// Override since the filter needs all the data for the algorithm
   void GenerateInputRequestedRegion();
 
-  // Override since the filter produces the entire dataset
+  /// Override since the filter produces the entire dataset
   void EnlargeOutputRequestedRegion(DataObject *output);
 
   void GenerateData();
 
   DataObjectPointer MakeOutput(unsigned int output);
 
-  // To control overloaded versions of ComputeThreshold
+  /// To control overloaded versions of ComputeThreshold
   struct DispatchBase {};
   template<signed int VDimension>
   struct Dispatch : DispatchBase {};
@@ -124,18 +124,18 @@ private:
 
 
 //#ifdef ITK_USE_CONCEPT_CHECKING
-//  /** Begin concept checking */
-//  itkConceptMacro(OutputEqualityComparableCheck,
-//    (Concept::EqualityComparable<OutputImagePixelType>));
-//  itkConceptMacro(InputEqualityComparableCheck,
-//    (Concept::EqualityComparable<InputImagePixelType>));
-//  itkConceptMacro(SameDimensionCheck,
-//    (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
-//  itkConceptMacro(IntConvertibleToInputCheck,
-//    (Concept::Convertible<int, InputImagePixelType>));
-//  itkConceptMacro(OutputOStreamWritableCheck,
-//    (Concept::OStreamWritable<OutputImagePixelType>));
-//  /** End concept checking */
+///  /** Begin concept checking */
+///  itkConceptMacro(OutputEqualityComparableCheck,
+///    (Concept::EqualityComparable<OutputImagePixelType>));
+///  itkConceptMacro(InputEqualityComparableCheck,
+///    (Concept::EqualityComparable<InputImagePixelType>));
+///  itkConceptMacro(SameDimensionCheck,
+///    (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+///  itkConceptMacro(IntConvertibleToInputCheck,
+///    (Concept::Convertible<int, InputImagePixelType>));
+///  itkConceptMacro(OutputOStreamWritableCheck,
+///    (Concept::OStreamWritable<OutputImagePixelType>));
+///  /** End concept checking */
 //#endif
 
 }

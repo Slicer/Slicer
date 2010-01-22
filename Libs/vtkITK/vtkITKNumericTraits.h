@@ -1,6 +1,6 @@
-// .NAME vtkITKNumericTraits - Extra itk::NumericTraits instantiations for VTK
-// .SECTION Description
-// vtkITKNumericTraits provides extra instantiations for itk::NumericTraits for VTK scalar types.
+///  vtkITKNumericTraits - Extra itk::NumericTraits instantiations for VTK
+/// 
+/// vtkITKNumericTraits provides extra instantiations for itk::NumericTraits for VTK scalar types.
 #ifndef __vtkITKNumericTraits_h
 #define __vtkITKNumericTraits_h
 
@@ -102,4 +102,4 @@ public:
 
 }
 
-#endif // namespace
+#endif /// namespace

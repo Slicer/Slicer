@@ -7,9 +7,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKDistanceTransform - Wrapper class around itk::SignedMaurerDistanceMapImageFilter
-// .SECTION Description
-// vtkITKDistanceTransform
+///  vtkITKDistanceTransform - Wrapper class around itk::SignedMaurerDistanceMapImageFilter
+/// 
+/// vtkITKDistanceTransform
 
 
 #ifndef __vtkITKDistanceTransform_h
@@ -26,19 +26,19 @@ class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkSimpleImageToImageFilte
   vtkTypeRevisionMacro(vtkITKDistanceTransform, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Output volume contains square of distance or actual distance
+  /// Output volume contains square of distance or actual distance
   vtkGetMacro(SquaredDistance, int);
   vtkSetMacro(SquaredDistance, int);
 
-  // Pixels inside region positive
+  /// Pixels inside region positive
   vtkGetMacro(InsideIsPositive, int);
   vtkSetMacro(InsideIsPositive, int);
 
-  // Use image spacing when calculating distances
+  /// Use image spacing when calculating distances
   vtkGetMacro(UseImageSpacing, int);
   vtkSetMacro(UseImageSpacing, int);
 
-  // Value of background
+  /// Value of background
   vtkGetMacro(BackgroundValue, double);
   vtkSetMacro(BackgroundValue, double);
 
@@ -55,8 +55,8 @@ protected:
   double BackgroundValue;
   
 private:
-  vtkITKDistanceTransform(const vtkITKDistanceTransform&);  // Not implemented.
-  void operator=(const vtkITKDistanceTransform&);  // Not implemented.
+  vtkITKDistanceTransform(const vtkITKDistanceTransform&);  /// Not implemented.
+  void operator=(const vtkITKDistanceTransform&);  /// Not implemented.
 };
 
 #endif

@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a foo
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a foo
 
 #ifndef __vtkITKImageToImageFilter_h
 #define __vtkITKImageToImageFilter_h
@@ -65,9 +65,9 @@ public:
     this->vtkImporter->PrintSelf ( os, indent );
   };
   
-  // Description:
-  // This method considers the sub filters MTimes when computing this objects
-  // modified time.
+  /// 
+  /// This method considers the sub filters MTimes when computing this objects
+  /// modified time.
   unsigned long int GetMTime()
   {
     unsigned long int t1, t2;
@@ -86,8 +86,8 @@ public:
     return t1;
   };
 
-  // Description:
-  // Pass modified message to itk filter
+  /// 
+  /// Pass modified message to itk filter
   void Modified()
   {
     this->Superclass::Modified();
@@ -97,37 +97,37 @@ public:
       }
   };
   
-  // Description:
-  // Pass DebugOn.
+  /// 
+  /// Pass DebugOn.
   void DebugOn()
   {
     this->m_Process->DebugOn();
   };
   
-  // Description:
-  // Pass DebugOff.
+  /// 
+  /// Pass DebugOff.
   void DebugOff()
   {
     this->m_Process->DebugOff();
   };
   
-  // Description:
-  // Pass SetNumberOfThreads.
+  /// 
+  /// Pass SetNumberOfThreads.
   void SetNumberOfThreads(int val)
   {
     this->m_Process->SetNumberOfThreads(val);
   };
   
-  // Description:
-  // Pass SetNumberOfThreads.
+  /// 
+  /// Pass SetNumberOfThreads.
   int GetNumberOfThreads()
   {
     return this->m_Process->GetNumberOfThreads();
   };
   
-  // Description:
-  // This method returns the cache to make a connection
-  // It justs feeds the request to the sub filter.
+  /// 
+  /// This method returns the cache to make a connection
+  /// It justs feeds the request to the sub filter.
   void SetOutput ( vtkImageData* d ) { this->vtkImporter->SetOutput ( d ); };
   virtual vtkImageData *GetOutput() { return this->vtkImporter->GetOutput(); };
   virtual vtkImageData *GetOutput(int idx)
@@ -135,22 +135,22 @@ public:
     return (vtkImageData *) this->vtkImporter->GetOutput(idx);
   };
 
-  // Description:
-  // Set the Input of the filter.
+  /// 
+  /// Set the Input of the filter.
   virtual void SetInput(vtkImageData *Input)
   {
     this->vtkCast->SetInput(Input);
   };
 
-  // Description:
-  // Return the input to the filter
+  /// 
+  /// Return the input to the filter
   virtual vtkDataObject* GetInput()
   {
     return (vtkDataObject::SafeDownCast( this->vtkCast->GetInput() ));
   };
 
-  // Description: Override vtkSource's Update so that we can access
-  // this class's GetOutput(). vtkSource's GetOutput is not virtual.
+  ///  Override vtkSource's Update so that we can access
+  /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
   void Update()
     {
       if (this->GetOutput(0))
@@ -158,7 +158,7 @@ public:
         this->GetOutput(0)->Update();
         if ( this->GetOutput(0)->GetSource() )
           {
-          //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
+          ///          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
           }
         }
     }
@@ -178,21 +178,21 @@ public:
   {
     this->InvokeEvent(vtkCommand::EndEvent,NULL);
   };
-  // ETX  
+  /// ETX  
 
  protected:
 
-  // BTX
-  // Dummy ExecuteData
+  /// BTX
+  /// Dummy ExecuteData
   void ExecuteData (vtkDataObject *)
   {
     vtkWarningMacro(<< "This filter does not respond to Update(). Doing a GetOutput->Update() instead.");
   }
-  // ETX
+  /// ETX
 
   vtkITKImageToImageFilter()
   {
-    // Need an import, export, and a ITK pipeline
+    /// Need an import, export, and a ITK pipeline
     this->vtkCast = vtkImageCast::New();
     this->vtkExporter = vtkImageExport::New();
     this->vtkImporter = vtkImageImport::New();
@@ -213,7 +213,7 @@ public:
     this->vtkCast->Delete();
   };
 
-  // BTX  
+  /// BTX  
   void LinkITKProgressToVTKProgress ( itk::ProcessObject* process )
   {
     if ( process )
@@ -233,16 +233,16 @@ public:
   MemberCommandPointer m_StartEventCommand;
   MemberCommandPointer m_EndEventCommand;
   
-  // ITK Progress object
-  // To/from VTK
+  /// ITK Progress object
+  /// To/from VTK
   vtkImageCast* vtkCast;
   vtkImageImport* vtkImporter;
   vtkImageExport* vtkExporter;  
   //ETX
   
 private:
-  vtkITKImageToImageFilter(const vtkITKImageToImageFilter&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilter&);  // Not implemented.
+  vtkITKImageToImageFilter(const vtkITKImageToImageFilter&);  /// Not implemented.
+  void operator=(const vtkITKImageToImageFilter&);  /// Not implemented.
 };
 
 #endif

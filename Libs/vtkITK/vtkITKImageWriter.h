@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a 
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a 
 
 #ifndef __vtkITKImageWriter_h
 #define __vtkITKImageWriter_h
@@ -37,36 +37,36 @@ public:
   vtkTypeRevisionMacro(vtkITKImageWriter,vtkProcessObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Specify file name for the image file. You should specify either
-  // a FileName or a FilePrefix. Use FilePrefix if the data is stored 
-  // in multiple files.
+  /// 
+  /// Specify file name for the image file. You should specify either
+  /// a FileName or a FilePrefix. Use FilePrefix if the data is stored 
+  /// in multiple files.
   void SetFileName(const char *);
 
   char *GetFileName() {
     return FileName;
   }
 
-  // Description:
-  // use compression if possible
+  /// 
+  /// use compression if possible
   vtkGetMacro (UseCompression, int);
   vtkSetMacro (UseCompression, int);
 
-  // Description:
-  // Set/Get the input object from the image pipeline.
+  /// 
+  /// Set/Get the input object from the image pipeline.
   void SetInput(vtkImageData *input);
   vtkImageData *GetInput();
 
-  // Description:
-  // Set/Get the ImageIO class name.
+  /// 
+  /// Set/Get the ImageIO class name.
   vtkGetStringMacro (ImageIOClassName);
   vtkSetStringMacro (ImageIOClassName);
 
-  // Description:
-  // The main interface which triggers the writer to start.
+  /// 
+  /// The main interface which triggers the writer to start.
   void Write();
 
-  // Set orienation matrix
+  /// Set orienation matrix
   void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
     RasToIJKMatrix = mat;
   }
@@ -81,8 +81,8 @@ protected:
   char* ImageIOClassName;
 
 private:
-  vtkITKImageWriter(const vtkITKImageWriter&);  // Not implemented.
-  void operator=(const vtkITKImageWriter&);  // Not implemented.
+  vtkITKImageWriter(const vtkITKImageWriter&);  /// Not implemented.
+  void operator=(const vtkITKImageWriter&);  /// Not implemented.
 };
 
 //vtkStandardNewMacro(vtkITKImageWriter)

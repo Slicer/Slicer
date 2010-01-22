@@ -12,10 +12,10 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkITKWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  vtkITKWin32Header - manage Windows system differences
+/// 
+/// The vtkITKWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkITKWin32Header_h
 #define __vtkITKWin32Header_h

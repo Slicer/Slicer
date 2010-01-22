@@ -12,17 +12,17 @@ Version:   $Revision$
 
 ==========================================================================*/
 
-// .NAME vtkITKArchetypeImageSeriesReader - Read a series of files
-// that have a common naming convention
-// .SECTION Description
-// ArchetypeImageSeriesReader creates a volume from a series of images
-// stored in files. The series are represented by one filename. This
-// filename, the archetype, is any one of the files in the series.
+///  vtkITKArchetypeImageSeriesReader - Read a series of files
+/// that have a common naming convention
+/// 
+/// ArchetypeImageSeriesReader creates a volume from a series of images
+/// stored in files. The series are represented by one filename. This
+/// filename, the archetype, is any one of the files in the series.
 //
-// \note
-// This work is part of the National Alliance for Medical Image Computing 
-// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
-// for Medical Research, Grant U54 EB005149.
+/// \note
+/// This work is part of the National Alliance for Medical Image Computing 
+/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
+/// for Medical Research, Grant U54 EB005149.
 
 #ifndef __vtkITKArchetypeImageSeriesReader_h
 #define __vtkITKArchetypeImageSeriesReader_h
@@ -34,10 +34,10 @@ Version:   $Revision$
 #include <string>
 
 #include "itkMetaDataDictionary.h"
-#include "gdcmDictSet.h"        // access to dictionary
-#include "gdcmDict.h"           // access to dictionary
-#include "gdcmDictEntry.h"      // access to dictionary
-#include "gdcmGlobal.h"         // access to dictionary
+#include "gdcmDictSet.h"        /// access to dictionary
+#include "gdcmDict.h"           /// access to dictionary
+#include "gdcmDictEntry.h"      /// access to dictionary
+#include "gdcmGlobal.h"         /// access to dictionary
 
 #include "vtkITK.h"
 
@@ -52,68 +52,68 @@ public:
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
   //ETX
 
-  // Description:
-  // Specify the archetype filename for the series.
+  /// 
+  /// Specify the archetype filename for the series.
   vtkSetStringMacro(Archetype);
   vtkGetStringMacro(Archetype);
 
-  // Description:
-  // See how many file names were generated during ExecuteInformation
+  /// 
+  /// See how many file names were generated during ExecuteInformation
   unsigned int GetNumberOfFileNames()
     {
     return this->FileNames.size();
     };
 
-  // Description:
-  // Specify the file names to be used when looking for extra files
-  // that match the archetype in defining the volume to load (e.g.
-  // other canidate dicom files to look in for matching tags)
+  /// 
+  /// Specify the file names to be used when looking for extra files
+  /// that match the archetype in defining the volume to load (e.g.
+  /// other canidate dicom files to look in for matching tags)
   unsigned int AddFileName( const char* filename );
   const char* GetFileName( unsigned int n );
   void ResetFileNames();
 
-  // Description:
-  // Set/Get the default spacing of the data in the file. This will be
-  // used if the reader provided spacing is 1.0. (Default is 1.0)
+  /// 
+  /// Set/Get the default spacing of the data in the file. This will be
+  /// used if the reader provided spacing is 1.0. (Default is 1.0)
   vtkSetVector3Macro(DefaultDataSpacing,double);
   vtkGetVector3Macro(DefaultDataSpacing,double);
 
-  // Description:
-  // Set/Get the default origin of the data (location of first pixel
-  // in the file). This will be used if the reader provided origin is
-  // 0.0. (Default is 0.0)
+  /// 
+  /// Set/Get the default origin of the data (location of first pixel
+  /// in the file). This will be used if the reader provided origin is
+  /// 0.0. (Default is 0.0)
   vtkSetVector3Macro(DefaultDataOrigin,double);
   vtkGetVector3Macro(DefaultDataOrigin,double);
 
-  // Description:
-  // When reading files which start at an unusual index, this can be added
-  // to the slice number when generating the file name (default = 0)
+  /// 
+  /// When reading files which start at an unusual index, this can be added
+  /// to the slice number when generating the file name (default = 0)
   vtkSetMacro(FileNameSliceOffset,int);
   vtkGetMacro(FileNameSliceOffset,int);
 
-  // Description:
-  // When reading files which have regular, but non contiguous slices
-  // (eg filename.1,filename.3,filename.5)
-  // a spacing can be specified to skip missing files (default = 1)
+  /// 
+  /// When reading files which have regular, but non contiguous slices
+  /// (eg filename.1,filename.3,filename.5)
+  /// a spacing can be specified to skip missing files (default = 1)
   vtkSetMacro(FileNameSliceSpacing,int);
   vtkGetMacro(FileNameSliceSpacing,int);
 
-  // Description:
-  // The maximum number of files to include in the series. If this is
-  // zero, then all files will be included. (Default is 0)
+  /// 
+  /// The maximum number of files to include in the series. If this is
+  /// zero, then all files will be included. (Default is 0)
   vtkSetMacro(FileNameSliceCount,int);
   vtkGetMacro(FileNameSliceCount,int);
 
-  // Description: is the given file name a NRRD file?
+  ///  is the given file name a NRRD file?
   virtual int CanReadFile(const char* filename);
 
-  // Description:
-  // Set the orientation of the output image
+  /// 
+  /// Set the orientation of the output image
   void SetDesiredCoordinateOrientationToAxial ()
     {
     this->DesiredCoordinateOrientation =
       itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
-    //     itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPS;
+    ///     itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPS;
     this->UseNativeCoordinateOrientation = 0;
     this->Modified();
     }
@@ -121,7 +121,7 @@ public:
     {
     this->DesiredCoordinateOrientation =
       itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSA;
-    //      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
+    ///      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
     this->UseNativeCoordinateOrientation = 0;
     this->Modified();
     }
@@ -129,7 +129,7 @@ public:
   {
     this->DesiredCoordinateOrientation =
       itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ASL;
-    //      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_AIR;
+    ///      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_AIR;
     this->UseNativeCoordinateOrientation = 0;
     this->Modified();
   }
@@ -139,10 +139,10 @@ public:
     this->Modified();
     }
 
-  // Description:
-  // Set the data type of pixels in the file.  
-  // If you want the output scalar type to have a different value, set it
-  // after this method is called.
+  /// 
+  /// Set the data type of pixels in the file.  
+  /// If you want the output scalar type to have a different value, set it
+  /// after this method is called.
   virtual void SetOutputScalarTypeToDouble()
     {
     UseNativeScalarType = 0;
@@ -199,60 +199,60 @@ public:
     this->Modified();
     }
 
-  // Description:
-  // Use image origin from the file
+  /// 
+  /// Use image origin from the file
   void SetUseNativeOriginOn() 
     {
     UseNativeOrigin = true;
     }
 
-  // Description:
-  // Use image center as origin
+  /// 
+  /// Use image center as origin
   void SetUseNativeOriginOff() 
     {
     UseNativeOrigin = false;
     }
 
-  // Description:
-  // Get the file format.  Pixels are this type in the file.
+  /// 
+  /// Get the file format.  Pixels are this type in the file.
   vtkSetMacro(OutputScalarType, int);
   vtkGetMacro(OutputScalarType, int);
 
-  // Description:
-  // Get number of scalars
+  /// 
+  /// Get number of scalars
   vtkSetMacro(NumberOfComponents, unsigned int);
   vtkGetMacro(NumberOfComponents, unsigned int);
 
-  // Description:
-  // Whether load in a single file or a series
+  /// 
+  /// Whether load in a single file or a series
   vtkSetMacro(SingleFile, int);
   vtkGetMacro(SingleFile, int);
 
-  // Description:
-  // Whether to use orientation from file
+  /// 
+  /// Whether to use orientation from file
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);
 
-  // Description:
-  // Returns an IJK to RAS transformation matrix
+  /// 
+  /// Returns an IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
-  // Description:
-  // ITK internally does not register all of the IO types that get built
-  // (possibly due to lingering bugs?) but many slicer users have
-  // GE5 (Signa - magic number: IMGF) files that they need to work
-  // with so we register the factory explictly here
+  /// 
+  /// ITK internally does not register all of the IO types that get built
+  /// (possibly due to lingering bugs?) but many slicer users have
+  /// GE5 (Signa - magic number: IMGF) files that they need to work
+  /// with so we register the factory explictly here
   //
-  // In addition, ITK does register an older dicom parser that incorrectly
-  // report success when reading ill-formed dicom files so we turn that old
-  // parser off.
+  /// In addition, ITK does register an older dicom parser that incorrectly
+  /// report success when reading ill-formed dicom files so we turn that old
+  /// parser off.
   //
   void RegisterExtraBuiltInFactories();
   void UnRegisterDeprecatedBuiltInFactories();
 
   //BTX
-  // Description:
-  // Return the MetaDataDictionary from the ITK layer
+  /// 
+  /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
   std::vector<std::string> Tags;
   std::vector<std::string> TagValues;
@@ -265,7 +265,7 @@ public:
   const char* GetNthValue( unsigned int n );
   const char* GetTagValue( char* tag );
 
-  // set/get functions for grouping by tags
+  /// set/get functions for grouping by tags
   bool GetGroupingByTags()
     {
     return GroupingByTags;
@@ -281,7 +281,7 @@ public:
     GroupingByTags = false;
     }
 
-  // -------
+  /// -------
   int GetSelectedUID()
     {
     return SelectedUID;
@@ -293,7 +293,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // -------
+  /// -------
   int GetSelectedContentTime()
     {
     return SelectedContentTime;
@@ -305,7 +305,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // -------
+  /// -------
   int GetSelectedTriggerTime()
     {
     return SelectedTriggerTime;
@@ -317,7 +317,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // -------
+  /// -------
   int GetSelectedEchoNumbers()
     {
     return SelectedEchoNumbers;
@@ -330,7 +330,7 @@ public:
     }
 
   
-  // -------
+  /// -------
   int GetSelectedDiffusion()
     {
     return SelectedDiffusion;
@@ -342,7 +342,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // -------
+  /// -------
   int GetSelectedSlice()
     {
     return SelectedSlice;
@@ -354,7 +354,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // -------
+  /// -------
   int GetSelectedOrientation()
     {
     return SelectedOrientation;
@@ -366,7 +366,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  // get number of certain discriminators in the directory
+  /// get number of certain discriminators in the directory
   unsigned int GetNumberOfSeriesInstanceUIDs()
     {
     return this->SeriesInstanceUIDs.size();
@@ -402,7 +402,7 @@ public:
     return this->ImageOrientationPatient.size();
     };
 
-  // check the existance of given discriminator
+  /// check the existance of given discriminator
   int ExistSeriesInstanceUID( const char* SeriesInstanceUID )
     {
     for (unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)
@@ -492,7 +492,7 @@ public:
 
   int ExistImageOrientationPatient( float * directionCosine )
     {
-      // input has to have six elements
+      /// input has to have six elements
       float a = sqrt( directionCosine[0]*directionCosine[0] + directionCosine[1]*directionCosine[1] + directionCosine[2]*directionCosine[2] );
       for (int k = 0; k < 3; k++)
         {
@@ -524,7 +524,7 @@ public:
       return -1;
     }
   
-  // methods to get N-th discriminator
+  /// methods to get N-th discriminator
   const char* GetNthSeriesInstanceUID( unsigned int n )
     {
       if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
@@ -598,8 +598,8 @@ public:
       return dgo;
     }
 
-  // insert unique item into array. Duplicate code for TCL wrapping. 
-  // TODO: need to clean up
+  /// insert unique item into array. Duplicate code for TCL wrapping. 
+  /// TODO: need to clean up
   int InsertSeriesInstanceUIDs ( const char * aUID )
     {
       int k = ExistSeriesInstanceUID( aUID );
@@ -766,25 +766,25 @@ protected:
   CoordinateOrientationCode DesiredCoordinateOrientation;
   //ETX
   virtual void ExecuteInformation();
-  // defined in the subclasses
+  /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *data);
 
   //BTX
   itk::MetaDataDictionary Dictionary;
   //ETX
 
-  // The following variables provide support
-  // for reading a directory with multiple series/groups.
-  // The current scheme is to check the following and see 
-  // if multiple values exist:
-  // 
-  // SeriesInstanceUID              0020,000E
-  // ContentTime                    0008,0033
-  // TriggerTime                    0018,1060
-  // EchoNumbers                    0018,0086
-  // DiffusionGradientOrientation   0018,9089 
-  // SliceLocation                  0020,1041
-  // ImageOrientationPatient        0020,0037
+  /// The following variables provide support
+  /// for reading a directory with multiple series/groups.
+  /// The current scheme is to check the following and see 
+  /// if multiple values exist:
+  /// 
+  /// SeriesInstanceUID              0020,000E
+  /// ContentTime                    0008,0033
+  /// TriggerTime                    0018,1060
+  /// EchoNumbers                    0018,0086
+  /// DiffusionGradientOrientation   0018,9089 
+  /// SliceLocation                  0020,1041
+  /// ImageOrientationPatient        0020,0037
 
   //BTX
   std::vector<std::string> AllFileNames;
@@ -799,7 +799,7 @@ protected:
   std::vector<float> SliceLocation;
   std::vector< std::vector<float> > ImageOrientationPatient;
 
-  // index of each dicom file into the above arrays
+  /// index of each dicom file into the above arrays
   std::vector<long int> IndexSeriesInstanceUIDs;
   std::vector<long int> IndexContentTime;
   std::vector<long int> IndexTriggerTime;
@@ -810,8 +810,8 @@ protected:
   //ETX
 
 private:
-  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
-  void operator=(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
+  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  /// Not implemented.
+  void operator=(const vtkITKArchetypeImageSeriesReader&);  /// Not implemented.
 };
 
 #endif

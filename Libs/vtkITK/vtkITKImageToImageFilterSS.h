@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a 
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a 
 
 #ifndef __vtkITKImageToImageFilterSS_h
 #define __vtkITKImageToImageFilterSS_h
@@ -39,9 +39,9 @@ public:
     os << m_Filter;
   };
 
-  // Description:
-  // Portion of the SetReleaseDataFlag implementation can be
-  // implemented at this level of the hierachy.
+  /// 
+  /// Portion of the SetReleaseDataFlag implementation can be
+  /// implemented at this level of the hierachy.
   virtual void SetReleaseDataFlag(int f)
     {
       Superclass::SetReleaseDataFlag(f);
@@ -51,7 +51,7 @@ public:
 protected:
   //BTX
   
-  // To/from ITK
+  /// To/from ITK
   typedef short InputImagePixelType;
   typedef short OutputImagePixelType;
   typedef itk::Image<InputImagePixelType, 3> InputImageType;
@@ -67,7 +67,7 @@ protected:
 
   vtkITKImageToImageFilterSS ( GenericFilterType* filter )
   {
-    // Need an import, export, and a ITK pipeline
+    /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
     this->itkImporter = ImageImportType::New();
     this->itkExporter = ImageExportType::New();
@@ -75,7 +75,7 @@ protected:
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
     
-    // Set up the filter pipeline
+    /// Set up the filter pipeline
     m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
     this->vtkCast->SetOutputScalarTypeToShort();
@@ -87,8 +87,8 @@ protected:
   //ETX
   
 private:
-  vtkITKImageToImageFilterSS(const vtkITKImageToImageFilterSS&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterSS&);  // Not implemented.
+  vtkITKImageToImageFilterSS(const vtkITKImageToImageFilterSS&);  /// Not implemented.
+  void operator=(const vtkITKImageToImageFilterSS&);  /// Not implemented.
 };
 
 #endif

@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKGradientAnisotropicDiffusionImageFilter - Wrapper class around itk::GradientAnisotropicDiffusionImageFilterImageFilter
-// .SECTION Description
-// vtkITKGradientAnisotropicDiffusionImageFilter
+///  vtkITKGradientAnisotropicDiffusionImageFilter - Wrapper class around itk::GradientAnisotropicDiffusionImageFilterImageFilter
+/// 
+/// vtkITKGradientAnisotropicDiffusionImageFilter
 
 
 #ifndef __vtkITKGradientAnisotropicDiffusionImageFilter_h
@@ -78,8 +78,8 @@ protected:
   //ETX
   
 private:
-  vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  // Not implemented.
-  void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  // Not implemented.
+  vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
+  void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
 };
 
 #endif

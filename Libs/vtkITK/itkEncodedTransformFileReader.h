@@ -57,8 +57,8 @@ protected:
   virtual ~EncodedTransformFileReader();
 };
 
-} // namespace itk
+} /// namespace itk
 
 #endif
 
-#endif // __itkEncodedTransformFileReader_h
+#endif /// __itkEncodedTransformFileReader_h

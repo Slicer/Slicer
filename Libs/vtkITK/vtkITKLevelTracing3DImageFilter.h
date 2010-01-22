@@ -1,14 +1,14 @@
-// .NAME vtkITKLevelTracing3DImageFilter - Wrapper class around itk::LevelTracingImageFilterImageFilter
-// .SECTION Description
-// itk::LevelTracingImageFilter
-// LevelTracingImageFilter traces a level curve (or surface) from a
-// seed point.  The pixels on this level curve "boundary" are labeled
-// as 1. Does nothing if seed is in uniform area.
+///  vtkITKLevelTracing3DImageFilter - Wrapper class around itk::LevelTracingImageFilterImageFilter
+/// 
+/// itk::LevelTracingImageFilter
+/// LevelTracingImageFilter traces a level curve (or surface) from a
+/// seed point.  The pixels on this level curve "boundary" are labeled
+/// as 1. Does nothing if seed is in uniform area.
 
-// .SECTION Caveats
-// This filter is specialized to volumes. If you are interested in 
-// contouring other types of data, use the general vtkContourFilter. If you
-// want to contour an image (i.e., a volume slice), use vtkMarchingSquares.
+/// .SECTION Caveats
+/// This filter is specialized to volumes. If you are interested in 
+/// contouring other types of data, use the general vtkContourFilter. If you
+/// want to contour an image (i.e., a volume slice), use vtkMarchingSquares.
 
 #ifndef __vtkITKLevelTracing3DImageFilter_h
 #define __vtkITKLevelTracing3DImageFilter_h
@@ -23,7 +23,7 @@ public:
   vtkTypeRevisionMacro(vtkITKLevelTracing3DImageFilter, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).
+  /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).
   vtkSetVector3Macro(Seed, int);
   vtkGetVector3Macro(Seed, int);
 
@@ -38,8 +38,8 @@ protected:
   int Seed[3];
 
 private:
-  vtkITKLevelTracing3DImageFilter(const vtkITKLevelTracing3DImageFilter&);  // Not implemented.
-  void operator=(const vtkITKLevelTracing3DImageFilter&);  // Not implemented.
+  vtkITKLevelTracing3DImageFilter(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
+  void operator=(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
 };
 
 

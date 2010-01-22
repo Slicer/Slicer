@@ -9,7 +9,7 @@
 
 namespace itk {
   namespace TimeSeriesDatabaseHelper {
-    // Some useful classes
+    /// Some useful classes
     /*
      * counted_ptr - simple reference counted pointer.
      *
@@ -24,7 +24,7 @@ namespace itk {
       public:
         typedef X element_type;
         
-        explicit counted_ptr(X* p = 0) // allocate a new counter
+        explicit counted_ptr(X* p = 0) /// allocate a new counter
           : itsCounter(0) {if (p) itsCounter = new counter(p);}
         ~counted_ptr()
           {release();}
@@ -51,7 +51,7 @@ namespace itk {
             }
             return *this;
           }
-#endif // NO_MEMBER_TEMPLATES
+#endif /// NO_MEMBER_TEMPLATES
         
         X& operator*()  const throw()   {return *itsCounter->ptr;}
         X* operator->() const throw()   {return itsCounter->ptr;}
@@ -68,13 +68,13 @@ namespace itk {
         }* itsCounter;
         
         void acquire(counter* c) throw()
-        { // increment the count
+        { /// increment the count
           itsCounter = c;
           if (c) ++c->count;
         }
 
         void release()
-        { // decrement the count, delete if it is 0
+        { /// decrement the count, delete if it is 0
           if (itsCounter) {
             if (--itsCounter->count == 0) {
               delete itsCounter->ptr;
@@ -85,7 +85,7 @@ namespace itk {
         }
       };
 
-    // LRU Cache
+    /// LRU Cache
 
     using namespace std;
 
@@ -97,31 +97,31 @@ namespace itk {
 #endif 
 
 
-    /// A cache class. 
+    //// A cache class. 
     ///
-    /// Stores cached values for keys. Yseful when the value is
-    /// a result of some complex calculation on key that we want
-    /// to avoid doing repeatedly.
+    //// Stores cached values for keys. Yseful when the value is
+    //// a result of some complex calculation on key that we want
+    //// to avoid doing repeatedly.
     ///
-    /// The basic interface is insert() for insertions and find() 
-    /// to look up items. key_type must have operator < defined.
+    //// The basic interface is insert() for insertions and find() 
+    //// to look up items. key_type must have operator < defined.
     ///
-    /// Has a maximal size (amount of elements - key/value pairs) 
-    /// and employs a LRU (Least Recently Used) removal policy when 
-    /// that maximum is exceeded, meaning that the item which was 
-    /// accesses least recently is removed.
+    //// Has a maximal size (amount of elements - key/value pairs) 
+    //// and employs a LRU (Least Recently Used) removal policy when 
+    //// that maximum is exceeded, meaning that the item which was 
+    //// accesses least recently is removed.
     ///
-    /// The class also keeps statistics, cache hit/miss
-    /// rate that may be useful while debugging. The statistics
-    /// counting works only if NDEBUG is not defined.
+    //// The class also keeps statistics, cache hit/miss
+    //// rate that may be useful while debugging. The statistics
+    //// counting works only if NDEBUG is not defined.
     ///
     template <typename key_type, typename value_type>
       class LRUCache
     {
     public:
-      /// Create a new cache.
+      //// Create a new cache.
       ///
-      /// \param maxsize_ maximal size of the cache
+      //// \param maxsize_ maximal size of the cache
       ///
     LRUCache(unsigned maxsize_ = 100) 
       : maxsize(maxsize_) 
@@ -141,21 +141,21 @@ namespace itk {
           clear();
         }
 
-      /// How many elements are currently stored in the cache ?
+      //// How many elements are currently stored in the cache ?
       ///
       size_t size()
       {
         return lru_list.size();
       }
 
-      /// Is the cache empty ?
+      //// Is the cache empty ?
       ///
       bool empty()
       {
         return lru_list.empty();
       }
 
-      /// Clear the cache.
+      //// Clear the cache.
       ///
       void clear()
       {
@@ -164,36 +164,36 @@ namespace itk {
         IF_DEBUG(stats.clear());
       }
 
-      /// Inserts a key/value pair to the cache.
+      //// Inserts a key/value pair to the cache.
       ///
       void insert(const key_type& key, const value_type& value)
       {
-        // Is the key already in the cache ?
-        // Note: find() is used intentionally - if
-        // an element gets updated, it should be moved
-        // to be MRU.
+        /// Is the key already in the cache ?
+        /// Note: find() is used intentionally - if
+        /// an element gets updated, it should be moved
+        /// to be MRU.
         //
         value_type* valptr = find(key);
 
-        // Found ? 
+        /// Found ? 
         //
         if (valptr)
           {
-            // Update the value.
+            /// Update the value.
             //
             *valptr = value;
           }
         else
           { 
-            // Add it to the table and to the front of the
-            // list (mark it MRU).
-            // 
+            /// Add it to the table and to the front of the
+            /// list (mark it MRU).
+            /// 
             lru_list.push_front(key);
             cached_value cv(value, lru_list.begin());
             table.insert(make_pair(key, cv));
 
-            // If the maximal size was exceeded, clean up
-            // LRU element.
+            /// If the maximal size was exceeded, clean up
+            /// LRU element.
             //
             if (lru_list.size() > maxsize)
               {
@@ -206,13 +206,13 @@ namespace itk {
           }
       }
 
-      /// Looks for a key in the cache.
+      //// Looks for a key in the cache.
       ///
-      /// Returns a pointer to the value if found, 0 otherwise.
+      //// Returns a pointer to the value if found, 0 otherwise.
       ///
-      /// Warning: a bare pointer is returned, at the user's
-      /// risk. The pointer may become invalid at some time,
-      /// so it should be used immediately.
+      //// Warning: a bare pointer is returned, at the user's
+      //// risk. The pointer may become invalid at some time,
+      //// so it should be used immediately.
       ///
       value_type* find(const key_type& key)
       {
@@ -225,8 +225,8 @@ namespace itk {
 
         IF_DEBUG(stats.finds_hit++);
 
-        // An access moves the element to the front of
-        // the list (marking it MRU).
+        /// An access moves the element to the front of
+        /// the list (marking it MRU).
         //
         list_iter li = ti->second.cache_i;
         lru_list.splice(lru_list.begin(), lru_list, li);
@@ -234,10 +234,10 @@ namespace itk {
         return &(ti->second.value);
       }
 
-      /// Dumps the cache to output.
+      //// Dumps the cache to output.
       ///
-      /// Useful for debugging. Expects key/value types to have 
-      /// an output operator (<<) defined.
+      //// Useful for debugging. Expects key/value types to have 
+      //// an output operator (<<) defined.
       ///
       void debug_dump(ostream& ostr = cerr) 
       {
@@ -264,9 +264,9 @@ namespace itk {
         ostr << endl;
       }
 
-      /// Prints cache statistics.
+      //// Prints cache statistics.
       ///
-      /// Only in debug mode (NDEBUG not defined).
+      //// Only in debug mode (NDEBUG not defined).
       ///
       void statistics(ostream& ostr = cerr) const
       {
@@ -280,12 +280,12 @@ namespace itk {
         ostr << format_str("Items removed by LRU: %ld\n\n", stats.removed);
 #else
         vtkNotUsed(ostr);
-#endif // NDEBUG
+#endif /// NDEBUG
       }
 
  #ifndef NDEBUG
-    /// Works like sprintf, but returns the resulting string in a 
-    /// memory-safe manner.
+    //// Works like sprintf, but returns the resulting string in a 
+    //// memory-safe manner.
     ///
     string format_str(const char* format, ...) const
     {
@@ -298,7 +298,7 @@ namespace itk {
       delete [] buf;
       return ret;
     }
-#endif // NDEBUG
+#endif /// NDEBUG
 
     private:
       typedef typename list<key_type>::iterator list_iter;
@@ -316,19 +316,19 @@ namespace itk {
 
       typedef typename map<key_type, cached_value>::iterator table_iter;
 
-      /// Maximal cache size.
+      //// Maximal cache size.
       ///
       unsigned maxsize;
 
-      /// Orders keys by time of last access. MRU (most recently used)
-      /// in the front, and LRU (least recently used) in the back.
+      //// Orders keys by time of last access. MRU (most recently used)
+      //// in the front, and LRU (least recently used) in the back.
       ///
-      /// Note: the elements in lru_list and table are always
-      /// the same.
+      //// Note: the elements in lru_list and table are always
+      //// the same.
       ///
       list<key_type> lru_list;
 
-      /// Table storing cache elements for quick access.
+      //// Table storing cache elements for quick access.
       ///
       map<key_type, cached_value> table;
 

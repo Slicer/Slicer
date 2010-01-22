@@ -62,6 +62,6 @@ private:
   std::list<const TransformType*>  m_TransformList;
 };
 
-} // namespace itk
+} /// namespace itk
 
-#endif // __itkEncodedTransformFileWriter_h
+#endif /// __itkEncodedTransformFileWriter_h

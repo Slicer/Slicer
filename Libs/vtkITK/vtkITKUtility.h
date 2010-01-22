@@ -91,28 +91,28 @@ if ( 1 ) { \
   }
 
 
-// struct vtkITKProgressDisplay
-// {
-//   ProgressDisplay(vtkObject* obj, itk::ProcessObject* process): m_Process(process), m_Object(obj) {}
+/// struct vtkITKProgressDisplay
+/// {
+///   ProgressDisplay(vtkObject* obj, itk::ProcessObject* process): m_Process(process), m_Object(obj) {}
   
-//   void Display()
-//   {
-//     m_Object->SetProgress ( m_Process->GetProgress() );
-//     }
+///   void Display()
+///   {
+///     m_Object->SetProgress ( m_Process->GetProgress() );
+///     }
   
-//   itk::ProcessObject::Pointer m_Process;
-//   vtkObject* m_Object();
-// };
+///   itk::ProcessObject::Pointer m_Process;
+///   vtkObject* m_Object();
+/// };
 
-//   // Add a progress observer for the itk::CurvatureFlowImageFilter.
-//   // This will make it clear when this part of the ITK pipeline
-//   // executes.
-//   ProgressDisplay progressDisplay(denoiser);
-//   itk::SimpleMemberCommand<ProgressDisplay>::Pointer progressEvent =
-//     itk::SimpleMemberCommand<ProgressDisplay>::New();
-//   progressEvent->SetCallbackFunction(&progressDisplay,
-//                                      &ProgressDisplay::Display);
-//   denoiser->AddObserver(itk::ProgressEvent(), progressEvent);
+///   /// Add a progress observer for the itk::CurvatureFlowImageFilter.
+///   /// This will make it clear when this part of the ITK pipeline
+///   /// executes.
+///   ProgressDisplay progressDisplay(denoiser);
+///   itk::SimpleMemberCommand<ProgressDisplay>::Pointer progressEvent =
+///     itk::SimpleMemberCommand<ProgressDisplay>::New();
+///   progressEvent->SetCallbackFunction(&progressDisplay,
+///                                      &ProgressDisplay::Display);
+///   denoiser->AddObserver(itk::ProgressEvent(), progressEvent);
 
 
 

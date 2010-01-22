@@ -12,16 +12,16 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKTimeSeriesDatabase - Effeciently process large datasets in small memory
-// .SECTION Description
-// TimeSeriesDatabase creates a database on disk from a series of volumes
-// stored on disk.  The database allows efficient access to volumes,
-// slices and voxels through time. 
+///  vtkITKTimeSeriesDatabase - Effeciently process large datasets in small memory
+/// 
+/// TimeSeriesDatabase creates a database on disk from a series of volumes
+/// stored on disk.  The database allows efficient access to volumes,
+/// slices and voxels through time. 
 //
-// \note
-// This work is part of the National Alliance for Medical Image Computing 
-// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
-// for Medical Research, Grant U54 EB005149.
+/// \note
+/// This work is part of the National Alliance for Medical Image Computing 
+/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
+/// for Medical Research, Grant U54 EB005149.
 
 #ifndef __vtkITKTimeSeriesDatabase_h
 #define __vtkITKTimeSeriesDatabase_h
@@ -41,23 +41,23 @@
 class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageSource
 {
 public:
-  // vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
+  /// vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
   static vtkITKTimeSeriesDatabase *New();
   void PrintSelf(ostream& os, vtkIndent indent){ Superclass::PrintSelf(os, indent);};
   vtkTypeRevisionMacro(vtkITKTimeSeriesDatabase,vtkImageSource);
 
 public:
-  // Create a TimeSeriesDatabase from a series of volumes
+  /// Create a TimeSeriesDatabase from a series of volumes
   static void CreateFromFileArchetype ( const char* TSDFilename, const char* ArchetypeFilename )
   {
     itk::TimeSeriesDatabase<OutputImagePixelType>::CreateFromFileArchetype ( TSDFilename, ArchetypeFilename );
   };
   
-  // Connect/Disconnect to a database
-  // void Connect ( const char* filename ) { this->m_Filter->Connect ( filename ); this->Modified(); };
-  // void Disconnect() { this->m_Filter->Disconnect(); }
+  /// Connect/Disconnect to a database
+  /// void Connect ( const char* filename ) { this->m_Filter->Connect ( filename ); this->Modified(); };
+  /// void Disconnect() { this->m_Filter->Disconnect(); }
 
-  // Get/Set the current time stamp to read 
+  /// Get/Set the current time stamp to read 
   void SetCurrentImage ( unsigned int value )
   { DelegateITKInputMacro ( SetCurrentImage, value); }; 
   unsigned int GetCurrentImage ( unsigned int vtkNotUsed(value) )
@@ -93,12 +93,12 @@ protected:
   
 //ETX
   virtual void ExecuteInformation();
-  // defined in the subclasses
+  /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *output);
 
 private:
-  vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  // Not implemented.
-  void operator=(const vtkITKTimeSeriesDatabase&);  // Not implemented.
+  vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
+  void operator=(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
 
 
 };

@@ -27,8 +27,8 @@
 namespace itk
 {
  template <
-     class TScalarType = double,          // Data type for scalars
-     unsigned int NDimensions = 3 >        // Number of dimensions
+     class TScalarType = double,          /// Data type for scalars
+     unsigned int NDimensions = 3 >        /// Number of dimensions
  class DisplacementFieldTransform : 
            public Transform< TScalarType, NDimensions, NDimensions >
  {
@@ -268,9 +268,9 @@ namespace itk
 
 }; //class DisplacementFieldTransform
 
-}  // namespace itk
+}  /// namespace itk
 
-// Define instantiation macro for this template.
+/// Define instantiation macro for this template.
 #define ITK_TEMPLATE_DisplacementFieldTransform(_, EXPORT, x, y) namespace itk { \
   _(3(class EXPORT DisplacementFieldTransform< ITK_TEMPLATE_3 x >)) \
   namespace Templates { typedef DisplacementFieldTransform< ITK_TEMPLATE_3 x > \

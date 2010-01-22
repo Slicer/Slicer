@@ -19,9 +19,9 @@
   Date:      $Date: 2006/03/16 20:00:18 $
   Version:   $Revision: 1.1.2.1 $
 */
-// .NAME vtkITKNewOtsuThresholdImageFilter - Wrapper class around itk::NewOtsuThresholdImageFilter
-// .SECTION Description
-// vtkITKNewOtsuThresholdImageFilter
+///  vtkITKNewOtsuThresholdImageFilter - Wrapper class around itk::NewOtsuThresholdImageFilter
+/// 
+/// vtkITKNewOtsuThresholdImageFilter
 
 
 #ifndef __vtkITKNewOtsuThresholdImageFilter_h
@@ -86,8 +86,8 @@ protected:
   //ETX
   
 private:
-  vtkITKNewOtsuThresholdImageFilter(const vtkITKNewOtsuThresholdImageFilter&);  // Not implemented.
-  void operator=(const vtkITKNewOtsuThresholdImageFilter&);  // Not implemented.
+  vtkITKNewOtsuThresholdImageFilter(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
+  void operator=(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
 };
 
 //vtkCxxRevisionMacro(vtkITKNewOtsuThresholdImageFilter, "$Revision: 1.1.2.1 $");

@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a 
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a 
 
 #ifndef __vtkITKImageToImageFilterF2F2_h
 #define __vtkITKImageToImageFilterF2F2_h
@@ -41,8 +41,8 @@ public:
     os << m_Filter;
   };
 
-  // Description:
-  // Set the Input of the filter.
+  /// 
+  /// Set the Input of the filter.
   virtual void SetInput1(vtkImageData *Input)
   {
     this->SetInput ( Input );
@@ -58,7 +58,7 @@ public:
 protected:
   //BTX
   
-  // To/from ITK
+  /// To/from ITK
   typedef itk::Vector<float,2> InputImagePixelType;
   typedef itk::Vector<float,2> OutputImagePixelType;
   typedef itk::Image<InputImagePixelType, 3> InputImageType;
@@ -89,7 +89,7 @@ protected:
   {
     this->vtkImporter1 = vtkImageImport::New();
     this->vtkExporter1 = vtkImageExport::New();
-    // Need an import, export, and a ITK pipeline
+    /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
     this->itkImporter = ImageImportType::New();
     this->itkExporter = ImageExportType::New();
@@ -102,21 +102,21 @@ protected:
     ConnectPipelines(this->itkExporter1, this->vtkImporter1);
     this->LinkITKProgressToVTKProgress ( m_Filter );
 
-    // Set up the filter pipeline
-    // Join before going in
+    /// Set up the filter pipeline
+    /// Join before going in
     join = JoinFilterType::New();
     join->SetInput1 ( this->itkImporter->GetOutput() );
     join->SetInput2 ( this->itkImporter->GetOutput() );
     
     m_Filter->SetInput ( join->GetOutput() );
-    // m_Filter->DebugOn();
+    /// m_Filter->DebugOn();
     
     split = SplitFilterType::New();
-    // split->SetInput ( join->GetOutput() );
+    /// split->SetInput ( join->GetOutput() );
     split->SetInput ( m_Filter->GetOutput() );
     split->SetIndex ( 0 );
     split1 = SplitFilterType::New();
-    // split1->SetInput ( join->GetOutput() );
+    /// split1->SetInput ( join->GetOutput() );
     split1->SetInput ( m_Filter->GetOutput() );
     split1->SetIndex ( 1 );
 
@@ -128,19 +128,19 @@ protected:
     this->append->SetInput ( 1, this->vtkImporter1->GetOutput() );
     this->vtkCast->SetOutputScalarTypeToFloat();
 
-//     cout << m_Filter;
-//     vtkImporter1->DebugOn();
-//     vtkImporter->DebugOn();
-//     vtkExporter->DebugOn();
-//     vtkExporter1->DebugOn();
-//     itkImporter->DebugOn();
-//     itkImporter1->DebugOn();
-//     itkExporter->DebugOn();
-//     itkExporter1->DebugOn();
-//     split->DebugOn();
-//     join->DebugOn();
-//     append->DebugOn();
-    // m_Filter->Update();
+///     cout << m_Filter;
+///     vtkImporter1->DebugOn();
+///     vtkImporter->DebugOn();
+///     vtkExporter->DebugOn();
+///     vtkExporter1->DebugOn();
+///     itkImporter->DebugOn();
+///     itkImporter1->DebugOn();
+///     itkExporter->DebugOn();
+///     itkExporter1->DebugOn();
+///     split->DebugOn();
+///     join->DebugOn();
+///     append->DebugOn();
+    /// m_Filter->Update();
   };
 
   ~vtkITKImageToImageFilterF2F2()
@@ -152,8 +152,8 @@ protected:
   //ETX
   
 private:
-  vtkITKImageToImageFilterF2F2(const vtkITKImageToImageFilterF2F2&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterF2F2&);  // Not implemented.
+  vtkITKImageToImageFilterF2F2(const vtkITKImageToImageFilterF2F2&);  /// Not implemented.
+  void operator=(const vtkITKImageToImageFilterF2F2&);  /// Not implemented.
 };
 
 #endif

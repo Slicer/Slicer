@@ -12,9 +12,9 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a 
+///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+/// 
+/// vtkITKImageToImageFilter provides a 
 
 #ifndef __vtkITKImageToImageFilterF2F_h
 #define __vtkITKImageToImageFilterF2F_h
@@ -42,7 +42,7 @@ public:
 protected:
   //BTX
   
-  // To/from ITK
+  /// To/from ITK
   typedef itk::Vector<float,2> InputImagePixelType;
   typedef float OutputImagePixelType;
   typedef itk::Image<InputImagePixelType, 3> InputImageType;
@@ -58,7 +58,7 @@ protected:
 
   vtkITKImageToImageFilterF2F ( GenericFilterType* filter )
   {
-    // Need an import, export, and a ITK pipeline
+    /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
     this->itkImporter = ImageImportType::New();
     this->itkExporter = ImageExportType::New();
@@ -66,7 +66,7 @@ protected:
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
     
-    // Set up the filter pipeline
+    /// Set up the filter pipeline
     m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
     this->vtkCast->SetOutputScalarTypeToFloat();
@@ -78,8 +78,8 @@ protected:
   //ETX
   
 private:
-  vtkITKImageToImageFilterF2F(const vtkITKImageToImageFilterF2F&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterF2F&);  // Not implemented.
+  vtkITKImageToImageFilterF2F(const vtkITKImageToImageFilterF2F&);  /// Not implemented.
+  void operator=(const vtkITKImageToImageFilterF2F&);  /// Not implemented.
 };
 
 #endif
