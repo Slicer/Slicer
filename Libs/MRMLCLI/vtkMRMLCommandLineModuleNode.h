@@ -14,16 +14,16 @@
 #ifndef __vtkMRMLCommandLineModuleNode_h
 #define __vtkMRMLCommandLineModuleNode_h
 
-// MRML includes
+/// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 
-// VTK includes
+/// VTK includes
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 
-// Libs/ModuleDescriptionParser includes
+/// Libs/ModuleDescriptionParser includes
 #include "ModuleDescription.h"
 
 #include "vtkMRMLCLIWin32Header.h"
@@ -41,26 +41,26 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// 
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// 
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "CommandLineModule";};
 
-  // Description:
-  // Get/Set the module description object. THe module description
-  // object is used to cache the current settings for the module.
+  /// 
+  /// Get/Set the module description object. THe module description
+  /// object is used to cache the current settings for the module.
   const ModuleDescription& GetModuleDescription() const
     { return ModuleDescriptionObject; }
   ModuleDescription& GetModuleDescription()
@@ -72,10 +72,10 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   typedef enum { Idle=0, Scheduled=1, Running=2, Completed=3, CompletedWithErrors=4, Cancelled=5 } StatusType;
   //ETX
 
-  // Description:
-  // Set the status of the node (Idle, Scheduled, Running,
-  // Completed).  The "modify" parameter indicates whether the object
-  // can be modified by the call.
+  /// 
+  /// Set the status of the node (Idle, Scheduled, Running,
+  /// Completed).  The "modify" parameter indicates whether the object
+  /// can be modified by the call.
   //BTX
   void SetStatus(StatusType status, bool modify=true);
   StatusType GetStatus();
@@ -95,8 +95,8 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 
 
 
-  // Description:
-  // Get/Set a parameter for the module.
+  /// 
+  /// Get/Set a parameter for the module.
 //BTX
   void SetParameterAsString(const std::string& name, const std::string& value);
   void SetParameterAsInt(const std::string& name, int value);
@@ -107,7 +107,7 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   std::string GetParameterAsString(const std::string &name) const;
 //ETX
 
-  // Some functions to make CommandLineModuleNodes useful from Tcl and Python
+  /// Some functions to make CommandLineModuleNodes useful from Tcl and Python
   void SetParameterAsString(const char *name, const char *value)
     {this->SetParameterAsString(std::string(name), std::string(value));}
   void SetParameterAsInt(const char *name, const int value)
@@ -160,14 +160,14 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   const char* GetParameterFileExtensions ( unsigned int group, unsigned int param ) { return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetFileExtensionsAsString().c_str(); }
   const char* GetParameterCoordinateSystem ( unsigned int group, unsigned int param ) { return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetCoordinateSystem().c_str(); }
 
-  // Description:
-  // Methods to manage the master list of module description prototypes
+  /// 
+  /// Methods to manage the master list of module description prototypes
 //BTX
   static void RegisterModuleDescription(ModuleDescription md);
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
   static void ClearRegisteredModules();
-// ETX
+/// ETX
 
 private:
   vtkMRMLCommandLineModuleNode();

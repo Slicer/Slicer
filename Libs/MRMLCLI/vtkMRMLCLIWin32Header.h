@@ -11,10 +11,10 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLCLIWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkMRMLCLIWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  vtkMRMLCLIWin32Header - manage Windows system differences
+/// 
+/// The vtkMRMLCLIWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __vtkMRMLCLIWin32Header_h
 #define __vtkMRMLCLIWin32Header_h
