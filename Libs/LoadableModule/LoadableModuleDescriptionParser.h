@@ -28,7 +28,7 @@ public:
 
   int Parse( const std::string& xml, LoadableModuleDescription& description);
 
-  /// Use this to parse the module's XML-like description file
+  //// Use this to parse the module's XML-like description file
   int ParseXmlDescription(const std::string& xmlInput, LoadableModuleDescription& description);
 
   int ParseText( const std::string& txtInput, LoadableModuleDescription& description);

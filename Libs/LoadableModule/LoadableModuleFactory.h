@@ -30,59 +30,59 @@ public:
   LoadableModuleFactory();
   virtual ~LoadableModuleFactory();
 
-  // Set the name of the module factory.  The name is used in error
-  // messages (to refer to the application using the module factory)
-  // and in encoding entry points.
+  /// Set the name of the module factory.  The name is used in error
+  /// messages (to refer to the application using the module factory)
+  /// and in encoding entry points.
   void SetName( const std::string& name) { Name = name; }
 
-  // Get the name of the module factory.  The name is used in error
-  // messages (to refer to the application using the module factory)
-  // and in encoding entry points.
+  /// Get the name of the module factory.  The name is used in error
+  /// messages (to refer to the application using the module factory)
+  /// and in encoding entry points.
   const std::string& GetName() const { return Name; }
   
-  // Set the search paths for modules (both command line modules and
-  // shared object modules). A list of ':' or ';' separated paths.
+  /// Set the search paths for modules (both command line modules and
+  /// shared object modules). A list of ':' or ';' separated paths.
   void SetSearchPaths(const std::string& paths) { SearchPaths = paths; }
 
-  // Get the module search paths.
+  /// Get the module search paths.
   const std::string& GetSearchPaths() const { return SearchPaths; }
 
-  // Scan for modules in the module search path.  This will locate
-  // command line modules as well as shared object modules.
+  /// Scan for modules in the module search path.  This will locate
+  /// command line modules as well as shared object modules.
   virtual void Scan();
 
-  // Get the names of all the modules.
+  /// Get the names of all the modules.
   std::vector<std::string> GetModuleNames() const;
 
-  // Get a module description by name.
+  /// Get a module description by name.
   LoadableModuleDescription GetModuleDescription(const std::string&) const;
 
-  // Typedef of callback function
+  /// Typedef of callback function
   typedef void (*CallbackFunctionType)(const char *);
     
-  // Set/Get a function to call to report back warnings 
+  /// Set/Get a function to call to report back warnings 
   void SetWarningMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetWarningMessageCallback();
 
-  // Set/Get a function to call to report back errors
+  /// Set/Get a function to call to report back errors
   void SetErrorMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetErrorMessageCallback();
 
-  // Set/Get a function to call to report back information
+  /// Set/Get a function to call to report back information
   void SetInformationMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetInformationMessageCallback();
 
-  // Set/Get a function to call to report back a discovered module
+  /// Set/Get a function to call to report back a discovered module
   void SetModuleDiscoveryMessageCallback( CallbackFunctionType );
   CallbackFunctionType GetModuleDiscoveryMessageCallback();
   
   
 protected:
 
-  // Scan for shared object modules (i.e. DLL) in the module search
-  // path. Modules can either have global symbols or entry points to
-  // describe the module and logos. Returns the number of modules
-  // found (that have not already been discovered by another method).
+  /// Scan for shared object modules (i.e. DLL) in the module search
+  /// path. Modules can either have global symbols or entry points to
+  /// describe the module and logos. Returns the number of modules
+  /// found (that have not already been discovered by another method).
   virtual long ScanForSharedObjectModules();
 
   void WarningMessage( const char *);

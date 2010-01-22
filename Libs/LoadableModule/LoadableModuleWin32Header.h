@@ -11,10 +11,10 @@
   Version:   $Revision$
 
 ==========================================================================*/
-// .NAME LoadableModuleWin32Header - manage Windows system differences
-// .SECTION Description
-// The LoadableModuleWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+///  LoadableModuleWin32Header - manage Windows system differences
+/// 
+/// The LoadableModuleWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __LoadableModuleWin32Header_h
 #define __LoadableModuleWin32Header_h
