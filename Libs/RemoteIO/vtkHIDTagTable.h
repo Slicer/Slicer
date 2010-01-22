@@ -10,13 +10,13 @@
 class VTK_RemoteIO_EXPORT vtkHIDTagTable : public vtkTagTable
 {
   public:
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkHIDTagTable *New();
   vtkTypeRevisionMacro(vtkHIDTagTable, vtkTagTable);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Adds all default and required tags for the service.
+  /// 
+  /// Adds all default and required tags for the service.
   void Initialize();
   
  private:

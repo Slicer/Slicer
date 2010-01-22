@@ -16,20 +16,20 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkHIDHandler *New();
   vtkTypeRevisionMacro(vtkHIDHandler, vtkHTTPHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
- // Description:
-  // To prevent XND handler from capturing any non-xnd requests
-  // that start with http://, this test will fail. The handler must be
-  // called by name.
+ /// Description:
+  /// To prevent XND handler from capturing any non-xnd requests
+  /// that start with http://, this test will fail. The handler must be
+  /// called by name.
   virtual int CanHandleURI ( const char *vtkNotUsed(uri) ) { return 0; };
 
-  // Description:
-  // This function downloads the specified source (uri) to 
-  // a specified destination file, from a specified host.
+  /// 
+  /// This function downloads the specified source (uri) to 
+  /// a specified destination file, from a specified host.
   virtual void StageFileRead(const char * source,
                              const char * destination);
 
@@ -37,9 +37,9 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   using vtkURIHandler::StageFileRead; 
   //ETX
   
-  // Description:
-  // This function uploads the specified file (source) to
-  // the specified destination (uri), on a specified host.
+  /// 
+  /// This function uploads the specified file (source) to
+  /// the specified destination (uri), on a specified host.
   virtual void StageFileWrite(const char * source,
                               const char *destination);
 

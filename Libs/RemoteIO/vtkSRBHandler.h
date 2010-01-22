@@ -17,20 +17,20 @@ class VTK_RemoteIO_EXPORT vtkSRBHandler : public vtkURIHandler
 {
   public:
   
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkSRBHandler *New();
   vtkTypeRevisionMacro(vtkSRBHandler, vtkURIHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // This methods returns 1 if the handler matches the uri's required 
-  // protocol and returns 0 if it's not appropriate for the uri. uri must
-  // start with srb://
+  /// 
+  /// This methods returns 1 if the handler matches the uri's required 
+  /// protocol and returns 0 if it's not appropriate for the uri. uri must
+  /// start with srb://
   virtual int CanHandleURI ( const char *uri );
 
-  // Description:
-  // This function wraps SCommand functionality to download a specified URI to
-  // a specified destination file
+  /// 
+  /// This function wraps SCommand functionality to download a specified URI to
+  /// a specified destination file
   void StageFileRead(const char * source, const char * destination);
   //BTX
   using vtkURIHandler::StageFileRead;

@@ -10,13 +10,13 @@
 class VTK_RemoteIO_EXPORT vtkXNDTagTable : public vtkTagTable
 {
   public:
-  // The Usual vtk class functions
+  /// The Usual vtk class functions
   static vtkXNDTagTable *New();
   vtkTypeRevisionMacro(vtkXNDTagTable, vtkTagTable);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  // Description:
-  // Adds all default and required tags for the service.
+  /// 
+  /// Adds all default and required tags for the service.
   void Initialize();
   
  private:
