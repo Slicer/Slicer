@@ -178,66 +178,6 @@ private:
 }; // end namespace itk
 
 //----------------------------------------------------------------------------
-// Slicer needs its own version of vtkKWOutputWindow to ensure that
-// only the application thread controlling the gui tries to display a
-// message.
-//
-// NOTE: it looks as though as long as Slicer constructs the dialog
-// window early enough, then we do not need our own version of the
-// output window for VTK.  The virtual overrides of
-// InformationMessage(), WarningMessage(), etc. in
-// vtkSlicerApplication are enough to ensure that we display messages
-// in a thread safe manner.
-//
-//
-// class vtkSlicerOutputWindow : public vtkOutputWindow
-// {
-// public:
-//   vtkTypeMacro(vtkSlicerOutputWindow,vtkOutputWindow);
-//   static vtkSlicerOutputWindow* New();
-//
-//   void DisplayDebugText(const char* t)
-//     {
-//       this->Application->DebugMessage(t);
-//     }
-//   void DisplayWarningText(const char* t)
-//     {
-//       this->Application->WarningMessage(t);
-//     }
-//   void DisplayErrorText(const char* t)
-//     {
-//       this->Application->ErrorMessage(t);
-//     }
-//   void DisplayText(const char* t)
-//     {
-//       this->Application->InformationMessage(t);
-//     }
-//   void DisplayGenericWarningText(const char* t)
-//     {
-//       this->DisplayWarningText(t);
-//     }
-//
-//   void SetApplication(vtkSlicerApplication *app)
-//     {
-//       this->Application = app;
-//     }
-//
-// protected:
-//   vtkSlicerOutputWindow()
-//     {
-//       this->Application = NULL;
-//     }
-//   vtkSlicerApplication *Application;
-//
-// private:
-//   vtkSlicerOutputWindow(const vtkSlicerOutputWindow&);
-//   void operator=(const vtkSlicerOutputWindow&);
-// };
-//
-//
-// vtkStandardNewMacro(vtkSlicerOutputWindow);
-
-//----------------------------------------------------------------------------
 class vtkSlicerApplication::vtkInternal
 {
 public:
@@ -342,26 +282,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     vtkKWTkUtilities::CreateTimerHandler(
       this, 100, this, "ProcessDisplayMessage");
-
-    // Override the type of output windows used for VTK and ITK.  Note
-    // that in the VTK case, we are currently bypassing the output
-    // window mechanism provided by KWWidgets.  In KWWidgets, there
-    // are calls to InstallOutputWindow()/RestoreOutputWindow() to
-    // manage a KWWidget specific output window.  In the Slicer case,
-    // we need a different type of output window to ensure that only
-    // the main thread updates the gui.
-    //
-    //
-    // NOTE: it looks as though as long as Slicer constructs the dialog
-    // window early enough, then we do not need our own version of the
-    // output window for VTK.  The virtual overrides of
-    // InformationMessage(), WarningMessage(), etc. in
-    // vtkSlicerApplication are enough to ensure that we display messages
-    // in a thread safe manner.
-
-    //vtkSlicerOutputWindow *vtkoutput = vtkSlicerOutputWindow::New();
-    //vtkoutput->SetApplication(this);
-    //vtkOutputWindow::SetInstance( vtkoutput );
 
     itk::SlicerOutputWindow::SetInstance( itk::SlicerOutputWindow::New() );
 
