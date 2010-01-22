@@ -11,17 +11,17 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkImageGetTensorComponents - Six scalar components from tensor
-// .SECTION Description
-// vtkImageGetTensorComponents gets from the tensor the 6 components and
-// exports them as scalar components, ordered as follows:
-// 1 2 3
-// 2 4 5
-// 3 5 6
+///  vtkImageGetTensorComponents - Six scalar components from tensor
+/// 
+/// vtkImageGetTensorComponents gets from the tensor the 6 components and
+/// exports them as scalar components, ordered as follows:
+/// 1 2 3
+/// 2 4 5
+/// 3 5 6
 
 
-// .SECTION See Also
-// vtkImageSetTensorComponents
+/// .SECTION See Also
+/// vtkImageSetTensorComponents
 
 #ifndef __vtkImageGetTensorComponents_h
 #define __vtkImageGetTensorComponents_h
@@ -37,13 +37,13 @@ public:
   vtkTypeMacro(vtkImageGetTensorComponents,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set/Get the components to extract.
+  /// 
+  /// Set/Get the components to extract.
   vtkGetVector3Macro(Components,int);
   
-  // Description:
-  // Get the number of components to extract. This is set implicitly by the 
-  // SetComponents() method.
+  /// 
+  /// Get the number of components to extract. This is set implicitly by the 
+  /// SetComponents() method.
   vtkGetMacro(NumberOfComponents,int);
 
 protected:
@@ -58,8 +58,8 @@ protected:
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 
                        int ext[6], int id);
 private:
-  vtkImageGetTensorComponents(const vtkImageGetTensorComponents&);  // Not implemented.
-  void operator=(const vtkImageGetTensorComponents&);  // Not implemented.
+  vtkImageGetTensorComponents(const vtkImageGetTensorComponents&);  /// Not implemented.
+  void operator=(const vtkImageGetTensorComponents&);  /// Not implemented.
 };
 
 #endif

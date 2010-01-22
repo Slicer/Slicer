@@ -11,15 +11,15 @@
   Version:   $Revision: 1.20 $
 
 =========================================================================auto=*/
-// .NAME vtkDiffusionTensorMathematics - Trace, determinant, anisotropy measures
-// .SECTION Description
-// Operates on input tensors and outputs image data scalars 
-// that describe some feature of the input tensors.
+///  vtkDiffusionTensorMathematics - Trace, determinant, anisotropy measures
+/// 
+/// Operates on input tensors and outputs image data scalars 
+/// that describe some feature of the input tensors.
 //
-// In future should optionally pass through input tensors,
-// and also possibly output tensors with eigenvectors as columns.
-// Currently a two-input filter like vtkImageMathematics, which
-// may be useful someday.
+/// In future should optionally pass through input tensors,
+/// and also possibly output tensors with eigenvectors as columns.
+/// Currently a two-input filter like vtkImageMathematics, which
+/// may be useful someday.
 //
 
 
@@ -38,13 +38,13 @@ public:
   vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Get the Operation to perform.
+  /// 
+  /// Get the Operation to perform.
   vtkGetMacro(Operation,int);
   vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
 
 
-  // Operation options.
+  /// Operation options.
   //BTX
   enum
   {
@@ -76,18 +76,18 @@ public:
   //ETX
 
 
-  // Description:
-  // Output the trace (sum of eigenvalues = sum along diagonal)
+  /// 
+  /// Output the trace (sum of eigenvalues = sum along diagonal)
   void SetOperationToTrace() 
     {this->SetOperation(VTK_TENS_TRACE);};
 
-  // Description:
-  // Output the determinant
+  /// 
+  /// Output the determinant
   void SetOperationToDeterminant() 
     {this->SetOperation(VTK_TENS_DETERMINANT);};
 
-  // Description:
-  // Output various anisotropy and shape measures
+  /// 
+  /// Output various anisotropy and shape measures
   void SetOperationToRelativeAnisotropy() 
     {this->SetOperation(VTK_TENS_RELATIVE_ANISOTROPY);};
   void SetOperationToFractionalAnisotropy() 
@@ -98,8 +98,8 @@ public:
     {this->SetOperation(VTK_TENS_PLANAR_MEASURE);};
   void SetOperationToSphericalMeasure() 
     {this->SetOperation(VTK_TENS_SPHERICAL_MEASURE);};
-  // This is the skewness of the eigenvalues 
-  // (thanks to Gordon Lothar (of the Hill People) Kindlmann)
+  /// This is the skewness of the eigenvalues 
+  /// (thanks to Gordon Lothar (of the Hill People) Kindlmann)
   void SetOperationToMode() 
     {this->SetOperation(VTK_TENS_MODE);};
   void SetOperationToParallelDiffusivity()
@@ -107,8 +107,8 @@ public:
   void SetOperationToPerpendicularDiffusivity()
     {this->SetOperation(VTK_TENS_PERPENDICULAR_DIFFUSIVITY);};
 
-  // Description:
-  // Output a selected eigenvalue
+  /// 
+  /// Output a selected eigenvalue
   void SetOperationToMaxEigenvalue() 
     {this->SetOperation(VTK_TENS_MAX_EIGENVALUE);};
   void SetOperationToMiddleEigenvalue() 
@@ -116,8 +116,8 @@ public:
   void SetOperationToMinEigenvalue() 
     {this->SetOperation(VTK_TENS_MIN_EIGENVALUE);};
 
-  // Description:
-  // Output Maxeigenvalue*Maxeigenvec_projection also known as L1Z
+  /// 
+  /// Output Maxeigenvalue*Maxeigenvec_projection also known as L1Z
   void SetOperationToMaxEigenvalueProjectionX()
   {this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJX);};
   void SetOperationToMaxEigenvalueProjectionY()
@@ -125,8 +125,8 @@ public:
   void SetOperationToMaxEigenvalueProjectionZ()
   {this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJZ);};
   
-  // Description:
-  // Output Relative_anisotropy*Maxeigenvec_projection also known as L1z
+  /// 
+  /// Output Relative_anisotropy*Maxeigenvec_projection also known as L1z
   void SetOperationToRAIMaxEigenvecX()
   {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJX);}
   void SetOperationToRAIMaxEigenvecY()
@@ -134,8 +134,8 @@ public:
   void SetOperationToRAIMaxEigenvecZ()
   {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJZ);}
   
-  // Description: 
-  // Output a matrix (tensor) component
+  ///  
+  /// Output a matrix (tensor) component
   void SetOperationToD11() 
     {this->SetOperation(VTK_TENS_D11);};
   void SetOperationToD22() 
@@ -143,58 +143,58 @@ public:
   void SetOperationToD33() 
     {this->SetOperation(VTK_TENS_D33);};
   
-  // Description:
-  // Output RGB color according to XYZ of eigenvectors.
-  // Output A (alpha, or transparency) according to 
-  // anisotropy (1-spherical measure).
+  /// 
+  /// Output RGB color according to XYZ of eigenvectors.
+  /// Output A (alpha, or transparency) according to 
+  /// anisotropy (1-spherical measure).
   void SetOperationToColorByOrientation() 
     {this->SetOperation(VTK_TENS_COLOR_ORIENTATION);};
 
-  // Description:
-  // Output RGB color according to colormapping of mode, with 
-  // final RGB being a linear combination of gray and 
-  // this color.  Amount of gray is determined by FA.
-  // Thanks to Gordon Lothar Kindlmann for this method.
+  /// 
+  /// Output RGB color according to colormapping of mode, with 
+  /// final RGB being a linear combination of gray and 
+  /// this color.  Amount of gray is determined by FA.
+  /// Thanks to Gordon Lothar Kindlmann for this method.
   void SetOperationToColorByMode() 
     {this->SetOperation(VTK_TENS_COLOR_MODE);};
 
-  // Description:
-  // Specify scale factor to scale output (float) scalars by.
-  // This is not used when the output is RGBA (char color data).
+  /// 
+  /// Specify scale factor to scale output (float) scalars by.
+  /// This is not used when the output is RGBA (char color data).
   vtkSetMacro(ScaleFactor,double);
   vtkGetMacro(ScaleFactor,double);
 
-  // Description:
-  // Turn on/off extraction of eigenvalues from tensor.
+  /// 
+  /// Turn on/off extraction of eigenvalues from tensor.
   vtkSetMacro(ExtractEigenvalues,int);
   vtkBooleanMacro(ExtractEigenvalues,int);
   vtkGetMacro(ExtractEigenvalues,int);
 
-  // Description
-  // This matrix is only used for ColorByOrientation.
-  // We transform the tensor orientation by this matrix
-  // before setting the output RGB values.
+  /// Description
+  /// This matrix is only used for ColorByOrientation.
+  /// We transform the tensor orientation by this matrix
+  /// before setting the output RGB values.
   //
-  // This is useful to put the output colors into a standard
-  // coordinate system (i.e. RAS) regardless of the data scan order.
+  /// This is useful to put the output colors into a standard
+  /// coordinate system (i.e. RAS) regardless of the data scan order.
   //
-  // Example usage is as follows:
-  // 1) If tensors are to be displayed in a coordinate system
-  //    that is not IJK (array-based), and the whole volume is
-  //    being rotated, each tensor needs also to be rotated.
-  //    First find the matrix that positions your volume.
-  //    (This is how the entire volume is positioned, not 
-  //    the matrix that positions an arbitrary reformatted slice.)
-  // 2) Remove scaling and translation from this matrix; we
-  //    just need to rotate each tensor.
-  // 3) Set TensorRotationMatrix to this rotation matrix.
+  /// Example usage is as follows:
+  /// 1) If tensors are to be displayed in a coordinate system
+  ///    that is not IJK (array-based), and the whole volume is
+  ///    being rotated, each tensor needs also to be rotated.
+  ///    First find the matrix that positions your volume.
+  ///    (This is how the entire volume is positioned, not 
+  ///    the matrix that positions an arbitrary reformatted slice.)
+  /// 2) Remove scaling and translation from this matrix; we
+  ///    just need to rotate each tensor.
+  /// 3) Set TensorRotationMatrix to this rotation matrix.
   //
   virtual void SetTensorRotationMatrix(vtkMatrix4x4*);
   vtkGetObjectMacro(TensorRotationMatrix, vtkMatrix4x4);
 
-  // Description
-  // Input scalars are a binary mask: 0 prevents display
-  // of tensor quantity at that point
+  /// Description
+  /// Input scalars are a binary mask: 0 prevents display
+  /// of tensor quantity at that point
   vtkBooleanMacro(MaskWithScalars, int);
   vtkSetMacro(MaskWithScalars, int);
   vtkGetMacro(MaskWithScalars, int);
@@ -203,23 +203,23 @@ public:
   vtkSetMacro(FixNegativeEigenvalues, int);
   vtkGetMacro(FixNegativeEigenvalues, int);
 
-  // Description:
-  // Scalar mask
+  /// 
+  /// Scalar mask
   virtual void SetScalarMask(vtkImageData*);
   vtkGetObjectMacro(ScalarMask, vtkImageData);
   
-  // Description:
-  // Label value defining ROI for mask  
+  /// 
+  /// Label value defining ROI for mask  
   vtkSetMacro(MaskLabelValue, int);
   vtkGetMacro(MaskLabelValue, int);
 
-  // Public for access from threads
+  /// Public for access from threads
   static void ModeToRGB(double Mode, double FA,
                  double &R, double &G, double &B);
 
 
-  // Description:
-  // Helper functions to perform operations pixel-wise
+  /// 
+  /// Helper functions to perform operations pixel-wise
   static int FixNegativeEigenvaluesMethod(double w[3]);
   static double Determinant(double D[3][3]);
   static double Trace(double D[3][3]);
@@ -252,9 +252,9 @@ protected:
   vtkDiffusionTensorMathematics();
   ~vtkDiffusionTensorMathematics();
 
-  int Operation; // math operation to perform
-  double ScaleFactor; // Scale factor for output scalars
-  int ExtractEigenvalues; // Boolean controls eigenfunction extraction
+  int Operation; /// math operation to perform
+  double ScaleFactor; /// Scale factor for output scalars
+  int ExtractEigenvalues; /// Boolean controls eigenfunction extraction
 
   int MaskWithScalars;
   vtkImageData *ScalarMask;

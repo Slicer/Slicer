@@ -39,11 +39,11 @@ public:
   vtkPreciseHyperPoint *Resize(vtkIdType sz); //reallocates data
   void Reset() {this->MaxId = -1;};
 
-  vtkPreciseHyperPoint *Array;  // pointer to data
-  vtkIdType MaxId;             // maximum index inserted thus far
-  vtkIdType Size;              // allocated size of data
-  vtkIdType Extend;            // grow array by this amount
-  vtkFloatingPointType Direction;       // integration direction
+  vtkPreciseHyperPoint *Array;  /// pointer to data
+  vtkIdType MaxId;             /// maximum index inserted thus far
+  vtkIdType Size;              /// allocated size of data
+  vtkIdType Extend;            /// grow array by this amount
+  vtkFloatingPointType Direction;       /// integration direction
   vtkIdType MaxAngleLastId;
   void IncrementMaxAngleLastId(void) { MaxAngleLastId++; }
   vtkFloatingPointType DistanceSoFarMaxAngle(void) { 

@@ -25,15 +25,15 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkNRRDReader - Reads Nearly Raw Raster Data files
-// .SECTION Description
-// vtkNRRDReader 
-// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
+///  vtkNRRDReader - Reads Nearly Raw Raster Data files
+/// 
+/// vtkNRRDReader 
+/// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
 //
 
 //
-// .SECTION See Also
-// vtkImageReader2
+/// .SECTION See Also
+/// vtkImageReader2
 
 #ifndef __vtkNRRDReader_h
 #define __vtkNRRDReader_h
@@ -64,73 +64,73 @@ public:
 
   vtkTypeRevisionMacro(vtkNRRDReader,vtkMedicalImageReader2);
 
-  // Description:
-  // Returns a IJK to RAS transformation matrix
+  /// 
+  /// Returns a IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
-  // Description:
-  // Returns the measurement frame matrix used for tensor valued data.
+  /// 
+  /// Returns the measurement frame matrix used for tensor valued data.
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
-  // Description:
-  // Get a space separated list of all keys in the header
-  // the string is allocated and deleted in this object
+  /// 
+  /// Get a space separated list of all keys in the header
+  /// the string is allocated and deleted in this object
   char* GetHeaderKeys();
 
-  // Description:
-  // Get a value given a key in the header
+  /// 
+  /// Get a value given a key in the header
   const char* GetHeaderValue(const char *key);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description: is the given file name a NRRD file?
+  ///  is the given file name a NRRD file?
   virtual int CanReadFile(const char* filename);
 
-  // Description:
-  // Valid extentsions
+  /// 
+  /// Valid extentsions
   virtual const char* GetFileExtensions()
     {
       return ".nhdr .nrrd";
     }
 
-  // Description: 
-  // A descriptive name for this format
+  ///  
+  /// A descriptive name for this format
   virtual const char* GetDescriptiveName()
     {
       return "NRRD - Nearly Raw Raster Data";
     }
 
   //Description:
-  // Report the status of the reading process.
-  // If this is different than zero, there have been some error
-  // parsing the complete header information.
+  /// Report the status of the reading process.
+  /// If this is different than zero, there have been some error
+  /// parsing the complete header information.
   vtkGetMacro(ReadStatus,int);
 
-  // Description:
-  // Point data field type
+  /// 
+  /// Point data field type
   vtkSetMacro(PointDataType,int);
   vtkGetMacro(PointDataType,int);
   
-  // Description:
-  // Set the data type: int, float....
+  /// 
+  /// Set the data type: int, float....
   vtkSetMacro(DataType,int);
   vtkGetMacro(DataType,int);
   
-  // Description:
+  /// 
   //Number of components
   vtkSetMacro(NumberOfComponents,int);
   vtkGetMacro(NumberOfComponents,int);
   
 
-  // Description:
-  // Use image origin from the file
+  /// 
+  /// Use image origin from the file
   void SetUseNativeOriginOn() 
   {
     UseNativeOrigin = true;
   }
 
-  // Description:
-  // Use image center as origin
+  /// 
+  /// Use image center as origin
   void SetUseNativeOriginOff() 
   {
     UseNativeOrigin = false;
@@ -156,12 +156,12 @@ public:
     case nrrdTypeUShort:
       return VTK_UNSIGNED_SHORT;
       break;
-      //    case nrrdTypeLLong:
-      //      return LONG ;
-      //      break;
-      //    case nrrdTypeULong:
-      //      return ULONG;
-      //      break;
+      ///    case nrrdTypeLLong:
+      ///      return LONG ;
+      ///      break;
+      ///    case nrrdTypeULong:
+      ///      return ULONG;
+      ///      break;
     case nrrdTypeInt:
       return VTK_INT;
       break;
@@ -200,12 +200,12 @@ public:
     case VTK_UNSIGNED_SHORT:
       return nrrdTypeUShort;
       break;
-      //    case nrrdTypeLLong:
-      //      return LONG ;
-      //      break;
-      //    case nrrdTypeULong:
-      //      return ULONG;
-      //      break;
+      ///    case nrrdTypeLLong:
+      ///      return LONG ;
+      ///      break;
+      ///    case nrrdTypeULong:
+      ///      return ULONG;
+      ///      break;
     case VTK_INT:
       return nrrdTypeInt;
       break;
@@ -256,8 +256,8 @@ protected:
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 
 private:
-  vtkNRRDReader(const vtkNRRDReader&);  // Not implemented.
-  void operator=(const vtkNRRDReader&);  // Not implemented.
+  vtkNRRDReader(const vtkNRRDReader&);  /// Not implemented.
+  void operator=(const vtkNRRDReader&);  /// Not implemented.
 
 };
 #endif

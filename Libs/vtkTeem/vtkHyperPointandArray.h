@@ -20,28 +20,28 @@
 #include "vtkStreamer.h"
 
 
-// copied directly from vtkHyperStreamline.
-// this class was defined in the vtkHyperStreamline.cxx file.
+/// copied directly from vtkHyperStreamline.
+/// this class was defined in the vtkHyperStreamline.cxx file.
 
 //
-// Special classes for manipulating data
+/// Special classes for manipulating data
 //BTX
 class VTK_Teem_EXPORT vtkHyperPoint { //;prevent man page generation
 public:
-    vtkHyperPoint(); // method sets up storage
+    vtkHyperPoint(); /// method sets up storage
     vtkHyperPoint &operator=(const vtkHyperPoint& hp); //for resizing
     
-    vtkFloatingPointType   X[3];    // position 
-    vtkIdType     CellId;  // cell
-    int     SubId; // cell sub id
-    vtkFloatingPointType   P[3];    // parametric coords in cell 
-    vtkFloatingPointType   W[3];    // eigenvalues (sorted in decreasing value)
-    vtkFloatingPointType      *V[3];   // pointers to eigenvectors (also sorted)
-    vtkFloatingPointType   V0[3];   // storage for eigenvectors
+    vtkFloatingPointType   X[3];    /// position 
+    vtkIdType     CellId;  /// cell
+    int     SubId; /// cell sub id
+    vtkFloatingPointType   P[3];    /// parametric coords in cell 
+    vtkFloatingPointType   W[3];    /// eigenvalues (sorted in decreasing value)
+    vtkFloatingPointType      *V[3];   /// pointers to eigenvectors (also sorted)
+    vtkFloatingPointType   V0[3];   /// storage for eigenvectors
     vtkFloatingPointType   V1[3];
     vtkFloatingPointType   V2[3];
-    vtkFloatingPointType   S;       // scalar value 
-    vtkFloatingPointType   D;       // distance travelled so far 
+    vtkFloatingPointType   S;       /// scalar value 
+    vtkFloatingPointType   D;       /// distance travelled so far 
 };
 //ETX
 
@@ -69,11 +69,11 @@ public:
   vtkHyperPoint *Resize(vtkIdType sz); //reallocates data
   void Reset() {this->MaxId = -1;};
 
-  vtkHyperPoint *Array;  // pointer to data
-  vtkIdType MaxId;             // maximum index inserted thus far
-  vtkIdType Size;              // allocated size of data
-  vtkIdType Extend;            // grow array by this amount
-  vtkFloatingPointType Direction;       // integration direction
+  vtkHyperPoint *Array;  /// pointer to data
+  vtkIdType MaxId;             /// maximum index inserted thus far
+  vtkIdType Size;              /// allocated size of data
+  vtkIdType Extend;            /// grow array by this amount
+  vtkFloatingPointType Direction;       /// integration direction
 };
 //ETX
 

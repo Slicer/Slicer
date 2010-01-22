@@ -1,10 +1,10 @@
 
-// .NAME vtkNRRDWriter - Writes PNG files.
-// .SECTION Description
-// vtkNRRDWriter writes NRRD files.
+///  vtkNRRDWriter - Writes PNG files.
+/// 
+/// vtkNRRDWriter writes NRRD files.
 
-// .SECTION See Also
-// vtkNRRDReader
+/// .SECTION See Also
+/// vtkNRRDReader
 
 #ifndef __vtkNRRDWriter_h
 #define __vtkNRRDWriter_h
@@ -28,15 +28,15 @@ public:
 
   static vtkNRRDWriter *New();
 
-  // Description:
-  // Get the input to this writer.
+  /// 
+  /// Get the input to this writer.
   vtkImageData* GetInput();
   vtkImageData* GetInput(int port);
 
 
 
-  // Description:
-  // Specify file name of vtk polygon data file to write.
+  /// 
+  /// Specify file name of vtk polygon data file to write.
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
@@ -71,12 +71,12 @@ protected:
 
   virtual int FillInputPortInformation(int port, vtkInformation *info);
 
-  // Description:
-  // Write method. It is called by vtkWriter::Write();
+  /// 
+  /// Write method. It is called by vtkWriter::Write();
   void WriteData();
 
-  // Description:
-  // Flag to set to on when a write error occured
+  /// 
+  /// Flag to set to on when a write error occured
   int WriteError;
   
   char *FileName;
@@ -92,8 +92,8 @@ protected:
   
   
 private:
-  vtkNRRDWriter(const vtkNRRDWriter&);  // Not implemented.
-  void operator=(const vtkNRRDWriter&);  // Not implemented.
+  vtkNRRDWriter(const vtkNRRDWriter&);  /// Not implemented.
+  void operator=(const vtkNRRDWriter&);  /// Not implemented.
   //BTX
   void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
   //ETX

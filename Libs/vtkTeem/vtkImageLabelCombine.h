@@ -12,11 +12,11 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkImageLabelCombine - Add, subtract, multiply, divide, invert, sin, cos, exp, log.
-// .SECTION Description
-// vtkImageLabelCombine implements basic mathematic operations SetOperation is
-// used to select the filters behavior.  The filter can take two or one
-// input.
+///  vtkImageLabelCombine - Add, subtract, multiply, divide, invert, sin, cos, exp, log.
+/// 
+/// vtkImageLabelCombine implements basic mathematic operations SetOperation is
+/// used to select the filters behavior.  The filter can take two or one
+/// input.
 
 
 #ifndef __vtkImageLabelCombine_h
@@ -33,13 +33,13 @@ public:
   vtkTypeRevisionMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set/Get the Operation to perform.
+  /// 
+  /// Set/Get the Operation to perform.
   vtkSetMacro(OverwriteInput,int);
   vtkGetMacro(OverwriteInput,int);
 
-  // Description:
-  // Set the two inputs to this filter
+  /// 
+  /// Set the two inputs to this filter
   virtual void SetInput1(vtkDataObject *in) { this->SetInput(0,in); }
   virtual void SetInput2(vtkDataObject *in) { this->SetInput(1,in); }
 
@@ -63,8 +63,8 @@ protected:
   virtual int FillInputPortInformation(int port, vtkInformation* info);
 
 private:
-  vtkImageLabelCombine(const vtkImageLabelCombine&);  // Not implemented.
-  void operator=(const vtkImageLabelCombine&);  // Not implemented.
+  vtkImageLabelCombine(const vtkImageLabelCombine&);  /// Not implemented.
+  void operator=(const vtkImageLabelCombine&);  /// Not implemented.
 };
 
 #endif

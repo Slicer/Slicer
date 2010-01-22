@@ -11,12 +11,12 @@
   Version:   $Revision: 1.10 $
 
 =========================================================================auto=*/
-// .NAME vtkBSplineInterpolateImageFunction - BSpline interpolation of a image dataset of points
-// .SECTION Description
-// vtkBSplineInterpolateImageFunction
-// .SECTION Bugs
-// This class should be rewritten to properly take into account the ImageData. This is
-// not a regular SetInput (not ref count). Also mtime of image is not taken into account...
+///  vtkBSplineInterpolateImageFunction - BSpline interpolation of a image dataset of points
+/// 
+/// vtkBSplineInterpolateImageFunction
+/// .SECTION Bugs
+/// This class should be rewritten to properly take into account the ImageData. This is
+/// not a regular SetInput (not ref count). Also mtime of image is not taken into account...
 
 
 #ifndef __vtkBSplineInterpolateImageFunction_h
@@ -25,7 +25,7 @@
 #include "vtkImplicitFunction.h"
 #include "vtkTeemConfigure.h"
 
-#include <vtkstd/vector>  // for the buffer
+#include <vtkstd/vector>  /// for the buffer
 
 #define VTK_INTEGRATE_MAJOR_EIGENVECTOR  0
 #define VTK_INTEGRATE_MEDIUM_EIGENVECTOR 1
@@ -53,22 +53,22 @@ class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFu
 protected:
   vtkBSplineInterpolateImageFunction() {
     this->Initialized = 0;
-    this->SplineOrder = 0; // Nasty bug, really calling a Set* function in constructor is bad
+    this->SplineOrder = 0; /// Nasty bug, really calling a Set* function in constructor is bad
     this->SetSplineOrder(3);
   }
   ~vtkBSplineInterpolateImageFunction() {}
-  int                                 DataLength[ImageDimension];  // Image size
-  unsigned int                        SplineOrder;    // User specified spline order (3rd or cubic is the default)
+  int                                 DataLength[ImageDimension];  /// Image size
+  unsigned int                        SplineOrder;    /// User specified spline order (3rd or cubic is the default)
 
-  vtkImageData *                      Coefficients; // Spline coefficients  
+  vtkImageData *                      Coefficients; /// Spline coefficients  
   vtkFloatingPointType * Origin;
   vtkFloatingPointType * Spacing;
   int * Extent;
 private:
   //BTX
   int Initialized;
-  vtkBSplineInterpolateImageFunction(const vtkBSplineInterpolateImageFunction&);  // Not implemented.
-  void operator=(const vtkBSplineInterpolateImageFunction&);  // Not implemented.
+  vtkBSplineInterpolateImageFunction(const vtkBSplineInterpolateImageFunction&);  /// Not implemented.
+  void operator=(const vtkBSplineInterpolateImageFunction&);  /// Not implemented.
 
   /** Determines the weights for interpolation of the value x */
   void SetInterpolationWeights( vtkFloatingPointType *x, long *evaluateIndex[ImageDimension],
@@ -92,8 +92,8 @@ private:
     unsigned int splineOrder) const;
 
 
-  unsigned int             MaxNumberInterpolationPoints; // number of neighborhood points used for interpolation
-  std::vector<int>    PointsToIndex[ImageDimension];  // Preallocation of interpolation neighborhood indicies
+  unsigned int             MaxNumberInterpolationPoints; /// number of neighborhood points used for interpolation
+  std::vector<int>    PointsToIndex[ImageDimension];  /// Preallocation of interpolation neighborhood indicies
   //ETX
 };
 

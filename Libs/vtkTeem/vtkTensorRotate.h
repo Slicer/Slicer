@@ -11,12 +11,12 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkTensorRotate - flip Y axis and negate xy and zy terms
-// .SECTION Description
-// Make tend estim generated vtk files compatible with slicer
-// .SECTION Warning
-// The filter will always output floating point (loose precision)
-// explicit use of vtkFloatArray
+///  vtkTensorRotate - flip Y axis and negate xy and zy terms
+/// 
+/// Make tend estim generated vtk files compatible with slicer
+/// .SECTION Warning
+/// The filter will always output floating point (loose precision)
+/// explicit use of vtkFloatArray
 
 
 #ifndef __vtkTensorRotate_h
@@ -35,13 +35,13 @@ public:
   vtkTypeRevisionMacro(vtkTensorRotate,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Set the tensor type for the filter
+  /// Set the tensor type for the filter
   void SetTensorTypeToFloat(){this->SetTensorType(VTK_FLOAT);};
   void SetTensorTypeToDouble(){this->SetTensorType(VTK_DOUBLE);};
   vtkSetMacro(TensorType, int);
   vtkGetMacro(TensorType, int);
 
-  // Set/Get transformation to use to rotate the tensor
+  /// Set/Get transformation to use to rotate the tensor
   vtkSetObjectMacro(Transform,vtkTransform);
   vtkGetObjectMacro(Transform,vtkTransform);
 
@@ -57,7 +57,7 @@ protected:
         int extent[6], int id);
 
 
-  // This also copies other arrays from point and cell data from input to output.
+  /// This also copies other arrays from point and cell data from input to output.
   vtkImageData *AllocateOutputData(vtkDataObject *out);
   void AllocateTensors(vtkImageData *data);
 

@@ -11,8 +11,8 @@
   Version:   $Revision: 1.3.2.1 $
 
 =========================================================================auto=*/
-// .NAME vtkTeemEstimateDiffusionTensor - 
-// .SECTION Description
+///  vtkTeemEstimateDiffusionTensor - 
+/// 
 
 #ifndef __vtkTeemEstimateDiffusionTensor_h
 #define __vtkTeemEstimateDiffusionTensor_h
@@ -30,14 +30,14 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   static vtkTeemEstimateDiffusionTensor *New();
   vtkTypeMacro(vtkTeemEstimateDiffusionTensor,vtkImageToImageFilter);
 
-  // Description:
-  // The number of gradients is the same as the number of input
-  // diffusion ImageDatas this filter will require.
+  /// 
+  /// The number of gradients is the same as the number of input
+  /// diffusion ImageDatas this filter will require.
   void SetNumberOfGradients(int num);
   vtkGetMacro(NumberOfGradients,int);
 
-  // Description:
-  // Set the 3-vectors describing the gradient directions
+  /// 
+  /// Set the 3-vectors describing the gradient directions
   void SetDiffusionGradient(int num, vtkFloatingPointType gradient[3])
     {
     this->DiffusionGradients->SetTuple(num,gradient);
@@ -53,12 +53,12 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   void SetDiffusionGradients(vtkDoubleArray *grad);
   vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 
-  // Description:
-  // Get the 3-vectors describing the gradient directions
+  /// 
+  /// Get the 3-vectors describing the gradient directions
   void GetDiffusionGradient(int num,double grad[3]);
 
-  // the following look messy but are copied from vtkSetGet.h,
-  // just adding the num parameter we need.
+  /// the following look messy but are copied from vtkSetGet.h,
+  /// just adding the num parameter we need.
 
   void SetBValue(int num,double b)
    {
@@ -69,18 +69,18 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   void SetBValues(vtkDoubleArray *bValues);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
 
-  // Description
-  // need to calculate max B (using GetRange) outside threaded execute
+  /// Description
+  /// need to calculate max B (using GetRange) outside threaded execute
   void CalculateMaxB();
   vtkSetMacro(MaxB, double);
   vtkGetMacro(MaxB, double);
 
-  // Description:
-  // Get Baseline Image
+  /// 
+  /// Get Baseline Image
   vtkGetObjectMacro(Baseline,vtkImageData);
 
-  // Description:
-  // Get Average of all DWI images
+  /// 
+  /// Get Average of all DWI images
   vtkGetObjectMacro(AverageDWI,vtkImageData);
 
 //BTX
@@ -109,23 +109,23 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   vtkGetMacro(MinimumSignalValue,double);
   vtkSetMacro(MinimumSignalValue,double);
 
-  // Description
-  // Transformation of the tensors (for RAS coords, for example)
-  // The gradient vectors are multiplied by this matrix
+  /// Description
+  /// Transformation of the tensors (for RAS coords, for example)
+  /// The gradient vectors are multiplied by this matrix
   vtkSetObjectMacro(Transform, vtkTransform);
   vtkGetObjectMacro(Transform, vtkTransform);
  
-  // Description:
-  // Internal class use only
+  /// 
+  /// Internal class use only
   //BTX
   void TransformDiffusionGradients();
   int SetGradientsToContext ( tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
   int SetTenContext(  tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
   //ETX
 
-  // Description:
-  // Flag to shift eigenvalues upwards to that smallest one is non-negative
-  // (negEvalShift in Teem's Ten)
+  /// 
+  /// Flag to shift eigenvalues upwards to that smallest one is non-negative
+  /// (negEvalShift in Teem's Ten)
   vtkSetMacro(ShiftNegativeEigenvalues,int);
   vtkGetMacro(ShiftNegativeEigenvalues,int);
 
@@ -142,34 +142,34 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
 
   vtkDoubleArray *BValues;
   vtkDoubleArray *DiffusionGradients;
-  // Maximum of the B values
+  /// Maximum of the B values
   double MaxB;
 
   vtkImageData *Baseline;
   vtkImageData *AverageDWI;
 
-  // for transforming tensors
+  /// for transforming tensors
   vtkTransform *Transform;
 
-  // Method
+  /// Method
   int EstimationMethod;
 
-  // Minimum detectable value
+  /// Minimum detectable value
   double MinimumSignalValue;
 
-  // Noise variance (useful for MLE)
+  /// Noise variance (useful for MLE)
   double Sigma;
 
-  // Matrices for LS fitting
+  /// Matrices for LS fitting
   int knownB0;
 
 
-  // Description:
-  // Flag to shift eigenvalues upwards to that smallest one is non-negative
-  // (negEvalShift in Teem's Ten)
+  /// 
+  /// Flag to shift eigenvalues upwards to that smallest one is non-negative
+  /// (negEvalShift in Teem's Ten)
   int ShiftNegativeEigenvalues;
 
-  // 
+  /// 
   int NumberOfWLSIterations;
 
   void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
@@ -177,9 +177,9 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
         int extent[6], int id);
 
-  // We override this in order to allocate output tensors
-  // before threading happens.  This replaces the superclass 
-  // vtkImageMultipleInputFilter's Execute function.
+  /// We override this in order to allocate output tensors
+  /// before threading happens.  This replaces the superclass 
+  /// vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
 
 

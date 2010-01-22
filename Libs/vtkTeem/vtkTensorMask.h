@@ -11,17 +11,17 @@
   Version:   $Revision: 1.2.8.2 $
 
 =========================================================================auto=*/
-// .NAME vtkTensorMask - Combines a mask and an image.
-// .SECTION Description
-// vtkTensorMask combines a mask with an image.  Non zero mask
-// implies the output pixel will be the same as the image.
-// If a mask pixel is zero,  the the output pixel
-// is set to "MaskedValue".  The filter also has the option to pass
-// the mask through a boolean not operation before processing the image.
-// This reverses the passed and replaced pixels.
-// The two inputs should have the same "WholeExtent".
-// The mask input should be unsigned char, and the image scalar type
-// is the same as the output scalar type.
+///  vtkTensorMask - Combines a mask and an image.
+/// 
+/// vtkTensorMask combines a mask with an image.  Non zero mask
+/// implies the output pixel will be the same as the image.
+/// If a mask pixel is zero,  the the output pixel
+/// is set to "MaskedValue".  The filter also has the option to pass
+/// the mask through a boolean not operation before processing the image.
+/// This reverses the passed and replaced pixels.
+/// The two inputs should have the same "WholeExtent".
+/// The mask input should be unsigned char, and the image scalar type
+/// is the same as the output scalar type.
 
 
 #ifndef __vtkTensorMask_h
@@ -49,9 +49,9 @@ protected:
   vtkTensorMask(const vtkTensorMask&);
   void operator=(const vtkTensorMask&);
 
-  // We override this in order to allocate output tensors
-  // before threading happens.  This replaces the superclass 
-  // vtkImageMultipleInputFilter's Execute function.
+  /// We override this in order to allocate output tensors
+  /// before threading happens.  This replaces the superclass 
+  /// vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
 
   virtual void ThreadedRequestData(vtkInformation *request, 

@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 
-// .NAME vtkTensorImplicitFunctionToFunctionSet - Wrapper class around itk::BSplineInterpolateImageFuntion
-// .SECTION Description
-// vtkTensorImplicitFunctionToFunctionSet
+///  vtkTensorImplicitFunctionToFunctionSet - Wrapper class around itk::BSplineInterpolateImageFuntion
+/// 
+/// vtkTensorImplicitFunctionToFunctionSet
 
 
 #ifndef __vtkTensorImplicitFunctionToFunctionSet_h
@@ -51,27 +51,27 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
     im->GetOrigin(DataOrigin);
     im->GetSpacing(DataSpacing);
   }
-  // Set the Integration Direction
+  /// Set the Integration Direction
   void SetIntegrationForward(void);
   void SetIntegrationBackward(void);
   void SetChangeIntegrationDirection(void);
   void SetIntegrationDirection(vtkFloatingPointType dir[3]);
 
-  // Description:
-  // Set/get lower bound bias. If fractional anisotropy falls below this value, no regularization is done
-  // ( should be set to the value of the terminal fractional anisotropy )
+  /// 
+  /// Set/get lower bound bias. If fractional anisotropy falls below this value, no regularization is done
+  /// ( should be set to the value of the terminal fractional anisotropy )
   vtkSetClampMacro(LowerBoundBias,vtkFloatingPointType,0.0,UpperBoundBias);
   vtkGetMacro(LowerBoundBias,vtkFloatingPointType);
 
-  // Description:
-  // Set/get upper bound bias. If fractional anisotropy falls below this value, regularization is done on the tensor
+  /// 
+  /// Set/get upper bound bias. If fractional anisotropy falls below this value, regularization is done on the tensor
   vtkSetClampMacro(UpperBoundBias,vtkFloatingPointType,LowerBoundBias,1.0);
   vtkGetMacro(UpperBoundBias,vtkFloatingPointType);
 
   vtkGetMacro(LastFractionalAnisotropy,vtkFloatingPointType);
 
-  // Description:
-  // Set/get the magnitude of the correction bias
+  /// 
+  /// Set/get the magnitude of the correction bias
   vtkSetClampMacro(CorrectionBias,vtkFloatingPointType,0.0,UpperBoundBias);
   vtkGetMacro(CorrectionBias,vtkFloatingPointType);
   int IsInsideImage(vtkFloatingPointType x[3]);
@@ -128,8 +128,8 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
   //ETX
   
 private:
-  vtkTensorImplicitFunctionToFunctionSet(const vtkTensorImplicitFunctionToFunctionSet&);  // Not implemented.
-  void operator=(const vtkTensorImplicitFunctionToFunctionSet&);  // Not implemented.
+  vtkTensorImplicitFunctionToFunctionSet(const vtkTensorImplicitFunctionToFunctionSet&);  /// Not implemented.
+  void operator=(const vtkTensorImplicitFunctionToFunctionSet&);  /// Not implemented.
 };
 
 #endif
