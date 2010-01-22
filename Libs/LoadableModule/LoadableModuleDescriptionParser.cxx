@@ -316,16 +316,18 @@ LoadableModuleDescriptionParser::Parse( const std::string& xml, LoadableModuleDe
 }
 
 int
-LoadableModuleDescriptionParser::ParseXmlDescription( const std::string& xml, LoadableModuleDescription& description)
+LoadableModuleDescriptionParser::ParseXmlDescription( const std::string& xmlInput, LoadableModuleDescription& description)
 {
-  int status = 0;
+  // The parsing algorithm assumes that the string has a trailing newline character
+  std::string xml=xmlInput;
+  xml.append("\n");
+
   std::string::size_type pos = 0;
   std::string::size_type lt = xml.find("<", pos);
   std::string::size_type gt = xml.find(">", pos);
   std::string::size_type newline = xml.find("\n", pos);
   
-  int count = 0;
-  while (gt != std::string::npos && count < 5) {
+  while (gt != std::string::npos) {
 
     std::string key(xml.substr(lt + 1, gt - (lt + 1)));
 
@@ -351,16 +353,18 @@ LoadableModuleDescriptionParser::ParseXmlDescription( const std::string& xml, Lo
     gt = xml.find(">", pos);
     newline = xml.find("\n", pos);
 
-    count++;
   }
 
-  return status;
+  return 0;
 }
 
 int
-LoadableModuleDescriptionParser::ParseText( const std::string& txt, LoadableModuleDescription& description)
+LoadableModuleDescriptionParser::ParseText( const std::string& txtInput, LoadableModuleDescription& description)
 {
-  int status = 0;
+  // The parsing algorithm assumes that the string has a trailing newline character
+  std::string txt=txtInput;
+  txt.append("\n");
+
   std::string::size_type pos = 0;
   std::string::size_type colon = txt.find(":", pos);
   std::string::size_type newline = txt.find("\n", pos);
@@ -392,5 +396,5 @@ LoadableModuleDescriptionParser::ParseText( const std::string& txt, LoadableModu
     description.SetGUIName(description.GetName());
   }
 
-  return status;
+  return 0;
 }
