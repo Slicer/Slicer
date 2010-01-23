@@ -1076,7 +1076,11 @@ itcl::body SliceSWidget::moveSlice { delta } {
         lappend logics $logic
     }
 
-    # set the slice offset for all slice logics
+    # set the slice offset for all slice logics (there may be a flaw
+    # in this logic as modifying a single logic may trigger a
+    # controller widget which then will trigger all the other slice
+    # logics. Comes down to whether we want to rely on the existence
+    # of SliceControllerWidgets.)
     set numberOfLogics [llength $logics]
     foreach logic $logics {
         $logic SetSliceOffset [expr $offset + $delta]
