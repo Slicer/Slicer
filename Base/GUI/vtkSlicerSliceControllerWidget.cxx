@@ -2841,7 +2841,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     double newValue = entry->GetValueAsDouble();
     double value = this->SliceLogic->GetSliceOffset();
 
-    if ( value != newValue )
+    if ( fabs(value - newValue) > 1.0e-6 )
       {
       // if slice viewers are linked in CompareView layout mode,
       // modify all slice logic to synch all Compare Slice viewers
@@ -2851,12 +2851,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else
         {
-        double oldValue = this->SliceLogic->GetSliceOffset();
-        if (fabs(oldValue - newValue) > 1.0e-6)
-          {
-          this->SliceLogic->SetSliceOffset( newValue );
-          modified = 1;
-          }
+        this->SliceLogic->SetSliceOffset( newValue );
+        modified = 1;
         }
 
       // convert to slice number
