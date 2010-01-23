@@ -2826,8 +2826,12 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else
       {
-      this->SliceLogic->SetSliceOffset( offset );
-      modified = 1;
+      double oldValue = this->SliceLogic->GetSliceOffset();
+      if (fabs(oldValue - offset) > 1.0e-6)
+        {
+        this->SliceLogic->SetSliceOffset( offset );
+        modified = 1;
+        }
       }
     }
 
@@ -2847,8 +2851,12 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else
         {
-        this->SliceLogic->SetSliceOffset( newValue );
-        modified = 1;
+        double oldValue = this->SliceLogic->GetSliceOffset();
+        if (fabs(oldValue - newValue) > 1.0e-6)
+          {
+          this->SliceLogic->SetSliceOffset( newValue );
+          modified = 1;
+          }
         }
 
       // convert to slice number
@@ -2918,8 +2926,12 @@ int vtkSlicerSliceControllerWidget::UpdateCompareView ( double newValue )
       if ( sgui->GetLogic() &&  sgui->GetSliceNode() &&
            !strcmp(this->SliceNode->GetOrientationString(), sgui->GetSliceNode()->GetOrientationString()))
         {
-        sgui->GetLogic()->SetSliceOffset( newValue );
-        modified = 1;
+        double oldValue = sgui->GetLogic()->GetSliceOffset();
+        if (fabs(oldValue - newValue) > 1.0e-6)
+          {
+          sgui->GetLogic()->SetSliceOffset( newValue );
+          modified = 1;
+          }
         }
       }
     }
