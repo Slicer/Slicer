@@ -80,7 +80,7 @@ void vtkMRMLDoubleArrayNode::WriteXML(ostream& of, int nIndent)
   int n = this->Array->GetNumberOfComponents();
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 3)
+  if (this->Array->GetNumberOfComponents() >= 3)
     {
     // Put values to the string streams except the last values.
     n = this->Array->GetNumberOfTuples() - 1;
@@ -293,7 +293,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y)
 {
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetNumberOfTuples())
+  if (this->Array->GetNumberOfComponents() >= 2 && index < this->Array->GetNumberOfTuples())
     {
     this->Array->GetTupleValue(index, xy);
     *x = xy[0];
@@ -312,7 +312,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y, double* 
 {
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetNumberOfTuples())
+  if (this->Array->GetNumberOfComponents() >= 3 && index < this->Array->GetNumberOfTuples())
     {
     this->Array->GetTupleValue(index, xy);
     *x    = xy[0];
@@ -331,7 +331,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y, double* 
 int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetNumberOfTuples())
+  if (this->Array->GetNumberOfComponents() >= 2 && index < this->Array->GetNumberOfTuples())
     {
     xy[0] = x;
     xy[1] = y;
@@ -352,7 +352,7 @@ int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y)
 int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y, double yerr)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetNumberOfTuples())
+  if (this->Array->GetNumberOfComponents() >= 3 && index < this->Array->GetNumberOfTuples())
     {
     xy[0] = x;
     xy[1] = y;
@@ -373,7 +373,7 @@ int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y, double yer
 int vtkMRMLDoubleArrayNode::AddXYValue(double x, double y)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 2)
+  if (this->Array->GetNumberOfComponents() >= 2)
     {
     xy[0] = x;
     xy[1] = y;
@@ -395,7 +395,7 @@ int vtkMRMLDoubleArrayNode::AddXYValue(double x, double y)
 int vtkMRMLDoubleArrayNode::AddXYValue(double x, double y, double yerr)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 3)
+  if (this->Array->GetNumberOfComponents() >= 3)
     {
     xy[0] = x;
     xy[1] = y;
@@ -500,7 +500,7 @@ void vtkMRMLDoubleArrayNode::GetXRange(double* range)
   int nTuples = this->Array->GetNumberOfTuples();
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 2 && nTuples > 0)
+  if (this->Array->GetNumberOfComponents() >= 2 && nTuples > 0)
     {
 
     // Get the first values as an initial value
