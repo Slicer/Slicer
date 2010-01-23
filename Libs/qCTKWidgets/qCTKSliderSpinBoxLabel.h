@@ -29,8 +29,12 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool LabelTextVisible READ isLabelTextVisible WRITE setLabelTextVisible)
+  Q_PROPERTY(QString labelText READ labelText WRITE setLabelText)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
+  Q_PROPERTY(double value READ value WRITE setValue)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
 
 public:
   // Superclass typedef
