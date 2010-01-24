@@ -665,20 +665,22 @@ int QdecGlmDesign::WriteFsgdFile ( )
       fprintf(fp,"Class %s\n",ClassName.c_str());
       unsigned int f = 0;
       levels[f]++;
-      while (1)
+      do
       {
-        if (levels[f] == this->mDiscreteFactors[f]->GetLevelNames().size())
-        {
           levels[f] = 0;
           f++;
-          if ( f == nDiscreteFactors ) break;
+          if ( f == nDiscreteFactors )
+            {
+            break;
+            }
           levels[f]++;
-        }
-        else break;
-      }
+      } while ( levels[f] == this->mDiscreteFactors[f]->GetLevelNames().size() );
     }
   }
-  else fprintf(fp,"Class Main\n");
+  else 
+    {
+    fprintf(fp,"Class Main\n");
+    }
 
   unsigned int nContinuousFactors = this->GetNumberOfContinuousFactors();
   if ( nContinuousFactors > 0 )
