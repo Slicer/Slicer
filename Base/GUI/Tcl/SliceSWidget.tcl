@@ -97,12 +97,12 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
+  # events to catch (currently not catching KeyReleaseEvent, CharEvent, UserEvent)
   set events {  "MouseMoveEvent" "RightButtonPressEvent" "RightButtonReleaseEvent"
     "LeftButtonPressEvent" "LeftButtonReleaseEvent" "MiddleButtonPressEvent"
     "MiddleButtonReleaseEvent" "MouseWheelForwardEvent" "MouseWheelBackwardEvent"
     "ExposeEvent" "ConfigureEvent" "EnterEvent" "LeaveEvent"
-    "TimerEvent" "KeyPressEvent" "KeyReleaseEvent"
-    "CharEvent" "ExitEvent" "UserEvent" }
+    "TimerEvent" "KeyPressEvent" "ExitEvent" }
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }

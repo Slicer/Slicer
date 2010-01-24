@@ -125,7 +125,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
-  set events {  "MouseMoveEvent" "UserEvent"  "ConfigureEvent" "LeaveEvent" "LeftButtonPressEvent" "LeftButtonReleaseEvent"}
+  set events {  "MouseMoveEvent" "ConfigureEvent" "LeaveEvent" "LeftButtonPressEvent" "LeftButtonReleaseEvent"}
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
