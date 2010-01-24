@@ -23,7 +23,6 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
-  ITKCommon
   )
 
 

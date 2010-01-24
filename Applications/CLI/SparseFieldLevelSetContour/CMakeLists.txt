@@ -26,7 +26,7 @@ generateclp(SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.xml ${S
 add_library(${CLP}Lib SHARED ${SparseFieldLevelSetContour_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib vtkImaging vtkGraphics vtkIO ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI)
+target_link_libraries (${CLP}Lib ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})

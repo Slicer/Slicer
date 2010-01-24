@@ -32,7 +32,6 @@ target_link_libraries (${CLP}
   ITKIO
   ITKAlgorithms 
   ITKBasicFilters 
-  ITKCommon
   ModuleDescriptionParser
   # MRML
   )

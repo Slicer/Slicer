@@ -28,7 +28,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+target_link_libraries (${CLP}Lib ITKIO)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})
@@ -59,7 +59,7 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR})
-target_link_libraries (${CLP} ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
+target_link_libraries (${CLP} MRML vtkTeem SlicerBaseLogic)
 include_directories(
   ${vtkITK_SOURCE_DIR} 
   ${vtkITK_BINARY_DIR} 
@@ -203,7 +203,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKCommon vtkIO vtkCommon vtkFiltering vtkGraphics ITKBasicFilters)
+target_link_libraries (${CLP}Lib ITKIO vtkIO vtkGraphics ITKBasicFilters)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})
@@ -246,7 +246,7 @@ set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/BillsLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters MRML)
+target_link_libraries (${CLP} MRML)
 
 #####################
 
@@ -485,8 +485,7 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 # TODO: remove SlicerBaseLogic once pass in color node information
 target_link_libraries (${CLP}
-  vtkITK vtkImaging vtkGraphics vtkIO
-  ITKIO
+  vtkITK
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic
@@ -509,8 +508,7 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 # TODO: remove SlicerBaseLogic once pass in color node information
 target_link_libraries (${CLP}
-  vtkITK vtkImaging vtkGraphics vtkIO
-  ITKIO
+  vtkITK
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic
@@ -532,10 +530,10 @@ link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
-  vtkITK vtkImaging vtkGraphics vtkIO
-  ITKIO
+  vtkITK
   ModuleDescriptionParser
   SlicerBaseCLI
+  vtkHybrid
   )
 include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
@@ -602,7 +600,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
+target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKAlgorithms)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})
@@ -632,7 +630,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml)
 
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKCommon)
+target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 
 set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
@@ -746,7 +744,6 @@ if (Slicer3_SOURCE_DIR)
     AffineRegistrationLib
     BSplineDeformableRegistration
     BSplineDeformableRegistrationLib
-    #TestGridTransformRegistration
     LabelMapSmoothing
     LabelMapSmoothingLib
     ImageLabelCombine

@@ -23,7 +23,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKCommon ITKStatistics)
+target_link_libraries (${CLP}Lib ITKIO ITKStatistics)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})

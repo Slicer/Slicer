@@ -15,7 +15,7 @@ create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
                        ${RegisterImagesMultiResApplicationsTests_SOURCE})
 
 ADD_EXECUTABLE(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
-TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule)
 
 
 set(RegisterImagesMultiRes_TESTS ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests)

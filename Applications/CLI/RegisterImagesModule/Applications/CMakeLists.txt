@@ -1,4 +1,3 @@
-
 PROJECT( RegisterImagesModuleApplications )
 
   # Find ITK
@@ -28,7 +27,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${RegisterImagesSlicer_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterImagesModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} MRML )
+  TARGET_LINK_LIBRARIES( RegisterImagesModule MRML )
 
   # Build the command line
   ADD_EXECUTABLE( RegisterImages ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
@@ -47,7 +46,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${TransformFromFiducials_SOURCE} )
   SET_TARGET_PROPERTIES( TransformFromFiducialsModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( TransformFromFiducialsModule ${ITK_LIBRARIES} MRML )
+  TARGET_LINK_LIBRARIES( TransformFromFiducialsModule MRML )
 
   # Build the command line
   ADD_EXECUTABLE( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)

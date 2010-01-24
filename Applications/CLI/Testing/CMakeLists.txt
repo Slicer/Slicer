@@ -450,7 +450,7 @@ add_test(DiffusionTensorEstimationTest ${Slicer3_EXE} --launch DiffusionTensorEs
 set (CLP DiffusionTensorEstimation)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
+target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
 include_directories(
   ${vtkITK_SOURCE_DIR} 
   ${vtkITK_BINARY_DIR} 
@@ -469,7 +469,7 @@ add_test(DiffusionTensorMathematicsTest ${Slicer3_EXE} --launch DiffusionTensorM
 set (CLP DiffusionTensorMathematics)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
+target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
 
 ##################################
 # DiffusionTensorTest tests
@@ -525,7 +525,7 @@ add_test(ExecutionModelTourTest ${Slicer3_EXE} --launch ExecutionModelTourTest
 set (CLP ExecutionModelTour)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKBasicFilters MRML)
+target_link_libraries(${CLP}Test MRML)
 
 ##################################
 # FreesurferSurfaceSectionExtraction tests
@@ -601,10 +601,11 @@ set (CLP GrayscaleModelMaker)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
-  vtkITK vtkImaging vtkGraphics vtkIO
+  vtkITK
   ITKIO
   ModuleDescriptionParser
   SlicerBaseCLI
+  vtkHybrid
 )
 
 ##################################
@@ -719,7 +720,7 @@ set (CLP ModelMaker)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
-  vtkITK vtkImaging vtkGraphics vtkIO
+  vtkITK
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic
@@ -736,7 +737,7 @@ set (CLP MultipleModelsExample)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
-  vtkITK vtkImaging vtkGraphics vtkIO
+  vtkITK
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic

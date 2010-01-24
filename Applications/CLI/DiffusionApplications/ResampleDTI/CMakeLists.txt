@@ -19,9 +19,7 @@ target_link_libraries (${CLP}
   ITKIO
   ITKAlgorithms 
   ITKBasicFilters 
-  ITKCommon
   ModuleDescriptionParser
-  # MRML
   )
 
 if (Slicer3_SOURCE_DIR)
