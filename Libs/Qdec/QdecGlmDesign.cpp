@@ -656,27 +656,27 @@ int QdecGlmDesign::WriteFsgdFile ( )
   unsigned int nDiscreteFactors = this->GetNumberOfDiscreteFactors();
   unsigned int nClasses = this->GetNumberOfClasses();
   if ( nDiscreteFactors > 0)
-  {
+    {
     unsigned int* levels = 
       (unsigned int *) calloc( nDiscreteFactors, sizeof(unsigned int) );
     for (unsigned int nthclass = 0; nthclass < nClasses; nthclass++)
-    {
+      {
       string ClassName = this->GetLevels2ClassName( levels );
       fprintf(fp,"Class %s\n",ClassName.c_str());
       unsigned int f = 0;
       levels[f]++;
-      do
-      {
-          levels[f] = 0;
-          f++;
-          if ( f == nDiscreteFactors )
-            {
-            break;
-            }
-          levels[f]++;
-      } while ( levels[f] == this->mDiscreteFactors[f]->GetLevelNames().size() );
+      while ( levels[f] == this->mDiscreteFactors[f]->GetLevelNames().size() )
+        {
+        levels[f] = 0;
+        f++;
+        if ( f == nDiscreteFactors )
+          {
+          break;
+          }
+        levels[f]++;
+        } 
+      }
     }
-  }
   else 
     {
     fprintf(fp,"Class Main\n");
