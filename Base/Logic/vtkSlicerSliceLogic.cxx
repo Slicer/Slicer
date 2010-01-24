@@ -1491,6 +1491,12 @@ void vtkSlicerSliceLogic::SetSliceOffset(double offset)
   // - this preserves whatever translation was already in place
   //
 
+  double oldOffset = this->GetSliceOffset();
+  if (fabs(offset - oldOffset) <= 1.0e-6)
+    {
+    return;
+    }
+
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
 
   if ( !sliceNode )
@@ -1504,35 +1510,39 @@ void vtkSlicerSliceLogic::SetSliceOffset(double offset)
     {
     sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
     }
-  sliceToRAS->Invert();
-  double v1[4], v2[4];
+  vtkMatrix4x4 *sliceToRASInverted = vtkMatrix4x4::New(); // inverse sliceToRAS
+  sliceToRASInverted->DeepCopy( sliceToRAS );
+  sliceToRASInverted->Invert();
+  double v1[4], v2[4], v3[4];
   for (int i = 0; i < 4; i++)
     { // get the translation back as a vector
     v1[i] = sliceNode->GetSliceToRAS()->GetElement( i, 3 );
     }
   // bring the translation into slice space
   // and overwrite the z part
-  sliceToRAS->MultiplyPoint(v1, v2);
+  sliceToRASInverted->MultiplyPoint(v1, v2);
 
   v2[2] = offset;
 
   // Now bring the new translation vector back into RAS space
-  sliceToRAS->Invert();
-  sliceToRAS->MultiplyPoint(v2, v1);
-  for (int i = 0; i < 4; i++)
-    {
-    sliceToRAS->SetElement( i, 3, v1[i] );
-    }
+  sliceToRAS->MultiplyPoint(v2, v3);
  
   // if the translation has changed, update the rest of the matrices
-  if ( sliceToRAS->GetElement( 0, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
-       sliceToRAS->GetElement( 1, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
-       sliceToRAS->GetElement( 2, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
+  double eps=1.0e-6;
+  if ( fabs(v1[0] - v3[0]) > eps ||
+       fabs(v1[1] - v3[1]) > eps ||
+       fabs(v1[2] - v3[2]) > eps )
     {
+    // copy new translation into sliceToRAS
+    for (int i = 0; i < 4; i++)
+      {
+      sliceToRAS->SetElement( i, 3, v3[i] );
+      }
     sliceNode->GetSliceToRAS()->DeepCopy( sliceToRAS );
     sliceNode->UpdateMatrices();
     }
   sliceToRAS->Delete();
+  sliceToRASInverted->Delete();
 }
 
 void vtkSlicerSliceLogic::GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *polyDataCollection,
