@@ -25,6 +25,10 @@ int QdecGlmFitResultsTest1(int , char * [] )
   QdecGlmDesign iGlmDesign( iDataTable );
 
   vector< string > iContrastSigFiles;
+  iContrastSigFiles.push_back("file1");
+  iContrastSigFiles.push_back("file2");
+  iContrastSigFiles.push_back("file3");
+  iContrastSigFiles.push_back("file4");
 
   std::string iConcatContrastSigFile;
   std::string ifnResidualErrorStdDevFile;
