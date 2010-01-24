@@ -1,6 +1,26 @@
 SET(KIT qCTKWidgets)
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qCTKModelTesterTest1
+  qCTKAbstractFactoryTest1.cxx
+  qCTKAbstractLibraryFactoryTest1.cxx
+  qCTKAbstractObjectFactoryTest1.cxx
+  qCTKAbstractPluginFactoryTest1.cxx
+  qCTKAbstractQObjectFactoryTest1.cxx
+  qCTKAddRemoveComboBoxTest1.cxx
+  qCTKCollapsibleButtonTest1.cxx
+  qCTKCollapsibleGroupBoxTest1.cxx
+  qCTKColorPickerButtonTest1.cxx
+  qCTKCoordinatesWidgetTest1.cxx
+  qCTKFittedTextBrowserTest1.cxx
+  qCTKFlowLayoutTest1.cxx
+  qCTKMatrixWidgetTest1.cxx
+  qCTKModelTesterTest1.cxx
+  qCTKNumericInputTest1.cxx
+  qCTKPimplTest1.cxx
+  qCTKSingletonTest1.cxx
+  qCTKSliderSpinBoxLabelTest1.cxx
+  qCTKSliderTest1.cxx
+  qCTKTitleComboBoxTest1.cxx
+  qCTKTreeComboBoxTest1.cxx
   )
 
 SET (TestsToRun ${Tests})
@@ -13,4 +33,28 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
 
 SET( qCTKWidgets_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
 
-ADD_TEST( qCTKModelTesterTest1 ${qCTKWidgets_TESTS} qCTKModelTesterTest1 )
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE}  ${qCTKWidgets_TESTS} ${TESTNAME} )
+ENDMACRO( SIMPLE_TEST  )
+
+SIMPLE_TEST( qCTKAbstractFactoryTest1 )
+SIMPLE_TEST( qCTKAbstractLibraryFactoryTest1 )
+SIMPLE_TEST( qCTKAbstractObjectFactoryTest1 )
+SIMPLE_TEST( qCTKAbstractPluginFactoryTest1 )
+SIMPLE_TEST( qCTKAbstractQObjectFactoryTest1 )
+SIMPLE_TEST( qCTKAddRemoveComboBoxTest1 )
+SIMPLE_TEST( qCTKCollapsibleButtonTest1 )
+SIMPLE_TEST( qCTKCollapsibleGroupBoxTest1 )
+SIMPLE_TEST( qCTKColorPickerButtonTest1 )
+SIMPLE_TEST( qCTKCoordinatesWidgetTest1 )
+SIMPLE_TEST( qCTKFittedTextBrowserTest1 )
+SIMPLE_TEST( qCTKFlowLayoutTest1 )
+SIMPLE_TEST( qCTKMatrixWidgetTest1 )
+SIMPLE_TEST( qCTKModelTesterTest1 )
+SIMPLE_TEST( qCTKNumericInputTest1 )
+SIMPLE_TEST( qCTKPimplTest1 )
+SIMPLE_TEST( qCTKSingletonTest1 )
+SIMPLE_TEST( qCTKSliderSpinBoxLabelTest1 )
+SIMPLE_TEST( qCTKSliderTest1 )
+SIMPLE_TEST( qCTKTitleComboBoxTest1 )
+SIMPLE_TEST( qCTKTreeComboBoxTest1 )

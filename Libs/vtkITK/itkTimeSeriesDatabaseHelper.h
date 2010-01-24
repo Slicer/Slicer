@@ -268,9 +268,9 @@ namespace itk {
       ///
       //// Only in debug mode (NDEBUG not defined).
       ///
+#ifndef NDEBUG
       void statistics(ostream& ostr = cerr) const
       {
-#ifndef NDEBUG
         ostr << "LRUCache statistics\n";
         ostr << "----------------\n\n";
         ostr << format_str("Max size: %ld, cur size %ld. Cache is %5.2lf%% full\n\n",
@@ -278,10 +278,12 @@ namespace itk {
         ostr << format_str("Lookups:  %7ld\nHits:     %7ld\nHit rate: %7.2lf%%\n\n",
                            stats.finds, stats.finds_hit, 100.0 * stats.finds_hit / (stats.finds+1e-15));
         ostr << format_str("Items removed by LRU: %ld\n\n", stats.removed);
-#else
-        vtkNotUsed(ostr);
-#endif /// NDEBUG
       }
+#else
+      void statistics(ostream & vtkNotUsed(ostr) ) const
+      {
+      }
+#endif /// NDEBUG
 
  #ifndef NDEBUG
     //// Works like sprintf, but returns the resulting string in a 
