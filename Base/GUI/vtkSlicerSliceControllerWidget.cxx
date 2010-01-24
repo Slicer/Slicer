@@ -84,6 +84,9 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->PrescribedSliceSpacingTopLevel = NULL;
   this->PrescribedSliceSpacingApplyButton = NULL;
   this->PrescribedSliceSpacingCancelButton = NULL;
+  
+  this->OffsetScaleActive = false; // Is the user interacting with
+                                   // this slider?
 }
 
 
@@ -2753,6 +2756,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     {
     // set an undo state when the scale starts being dragged
     this->MRMLScene->SaveStateForUndo( this->SliceNode );
+    this->OffsetScaleActive = true;
     }
   else if ( scale0 == this->LabelOpacityScale->GetWidget() 
             && event == vtkKWScale::ScaleValueStartChangingEvent )
@@ -2805,7 +2809,12 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   // and here:
   // http://sourceforge.net/tracker/index.php?func=detail&aid=1899040&group_id=12997&atid=112997
   //
+
+  // A scale changing event is only actioned on if the user is
+  // interacting with the slider.  Otherwise, we rely on the entry
+  // change event to manipulate the scale.
   if ( this->OffsetScale == vtkKWScale::SafeDownCast( caller ) &&
+       this->OffsetScaleActive &&
        (event == vtkKWScale::ScaleValueChangedEvent ||
         event == vtkKWScale::ScaleValueChangingEvent) )
     {
@@ -2816,6 +2825,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     value = scale->GetValue();
     offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
 
+    // set the entry to match
     if (fabs(offset - this->OffsetEntry->GetValueAsDouble()) > 1.0e-6)
       {
       this->OffsetEntry->SetValueAsDouble(offset);
@@ -2837,9 +2847,18 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         modified = 1;
         }
       }
+    
+    // end event of the user interactiving with the slider
+    if (event == vtkKWScale::ScaleValueChangedEvent)
+      {
+      this->OffsetScaleActive = false;
+      }
     }
 
-  if ( this->OffsetEntry == vtkKWEntry::SafeDownCast( caller ) )
+  // An entry change event is only actioned if the user is not
+  // interacting with the slider. The entry change event will modify
+  // the scale.
+  if ( !this->OffsetScaleActive && this->OffsetEntry == vtkKWEntry::SafeDownCast( caller ) )
     {
     vtkKWEntry *entry = vtkKWEntry::SafeDownCast( caller );
     double newValue = entry->GetValueAsDouble();

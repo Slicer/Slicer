@@ -203,6 +203,7 @@ protected:
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
   vtkSlicerNodeSelectorWidget *LabelSelector;
+  bool OffsetScaleActive;
   
   //
   /// MenuButtons next to selectors with drop-down
