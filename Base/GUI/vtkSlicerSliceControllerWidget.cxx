@@ -2816,13 +2816,17 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     value = scale->GetValue();
     offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
 
-    this->OffsetEntry->SetValueAsDouble(offset);
-
+    if (fabs(offset - this->OffsetEntry->GetValueAsDouble()) > 1.0e-6)
+      {
+      this->OffsetEntry->SetValueAsDouble(offset);
+      modified = 1;
+      }
+ 
     // if slice viewers are linked in CompareView layout mode,
     // modify all slice logic to synch all Compare Slice viewers
     if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
       {
-      modified = this->UpdateCompareView( offset );
+      modified |= this->UpdateCompareView( offset );
       }
     else
       {
@@ -2847,7 +2851,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       // modify all slice logic to synch all Compare Slice viewers
       if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
         {
-        modified = this->UpdateCompareView( newValue );
+        modified |= this->UpdateCompareView( newValue );
         }
       else
         {
