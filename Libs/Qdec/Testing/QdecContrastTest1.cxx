@@ -21,6 +21,10 @@
 int QdecContrastTest1(int , char * [] )
 {
   vector< double > iaVector;
+  iaVector.push_back( 1.6 );
+  iaVector.push_back( 2.6 );
+  iaVector.push_back( 3.6 );
+  iaVector.push_back( 4.6 );
 
   std::string isName = "nameOfNoName";
   std::string isQuestion = "DoWeExist?";
