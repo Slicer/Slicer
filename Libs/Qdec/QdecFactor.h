@@ -105,7 +105,7 @@ public:
 
   /**
    * Returns the value of the discrete factor stored in this instance
-   * (null if this is not a discrete factor).
+   * (empty string if this is not a discrete factor).
    * @return string
    */
   string GetDiscreteValue ( );
@@ -113,7 +113,7 @@ public:
 
   /**
    * Returns the value of the continuous factor stored in this instance
-   * (null if this is not a continuous factor).
+   * (0 if this is not a continuous factor).
    * @return double
    */
   double GetContinuousValue ( );

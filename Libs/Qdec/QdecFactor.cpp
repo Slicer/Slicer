@@ -23,8 +23,17 @@ QdecFactor::QdecFactor ( const char* isName,
 
   // if ==1, continuous
   // if ==2, discrete
-  mType = iType;
-  assert( (mType == 1) || (mType == 2) );
+  if (iType == 1 ||
+      iType == 2)
+    {
+    mType = iType;
+    }
+  else
+    {
+    //std::err << "QdecFactor: invalid type " << iType << ", using 1 for continuous intstead\n";
+    mType = 1;
+    }
+
 
   mHaveDotLevelsFile = false;
 
@@ -39,7 +48,11 @@ QdecFactor::QdecFactor ( const char* isName,
   // if ==1, continuous
   // if ==2, discrete
   mType = iType;
-  assert( mType == 1 );
+  if (mType != 1)
+    {
+    //std::err << "Invalid type " << mType << ", using 1 for discrete instead\n";
+    mType = 1;
+    }
 
   msDiscreteValue = iValue;
 
@@ -56,7 +69,11 @@ QdecFactor::QdecFactor ( const char* isName,
   // if ==1, continuous
   // if ==2, discrete
   mType = iType;
-  assert( mType == 2 );
+  if (mType != 2)
+    {
+    //std::err << "Invalid type " << mType << ", using 2 for continuous instead\n";
+    mType = 2;
+    }
 
   mContinuousValue = iValue;
 
@@ -118,7 +135,10 @@ string QdecFactor::GetFactorTypeName ( )
  */
 void QdecFactor::AddLevelName ( string isLevelName )
 {
-  assert( mType == 1 );
+  if (mType != 1)
+    {
+    return;
+    }
 
   // check if already in our list:
   if (this->ValidLevelName( isLevelName.c_str() ))
@@ -154,24 +174,36 @@ bool QdecFactor::ValidLevelName ( const char* iLevelName )
 
 /**
  * Returns the value of the discrete factor stored in this instance
- * (null if this is not a discrete factor).
+ * (empty string if this is not a discrete factor).
  * @return string
  */
 string QdecFactor::GetDiscreteValue ( )
 {
-  assert( mType == 1 );
-  return msDiscreteValue;
+  if (mType == 1 )
+    {
+    return msDiscreteValue;
+    }
+  else
+    {
+    return string("");
+    }
 }
 
 
 /**
  * Returns the value of the continous factor stored in this instance
- * (null if this is not a continuous factor).
+ * (0 if this is not a continuous factor).
  * @return double
  */
 double QdecFactor::GetContinuousValue ( )
 {
-  assert( mType == 2 );
-  return mContinuousValue;
+  if ( mType == 2 )
+    {
+    return mContinuousValue;
+    }
+  else
+    {
+    return 0.0;
+    }
 }
 
