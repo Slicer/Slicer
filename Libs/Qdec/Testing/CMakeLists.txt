@@ -32,7 +32,8 @@ MACRO( SIMPLE_TEST  TESTNAME )
 ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( QdecContrastTest1 )
-SIMPLE_TEST( QdecDataTableTest1 )
+# SIMPLE_TEST( QdecDataTableTest1 )
+ADD_TEST (QdecDataTableTest1 ${LAUNCH_EXE} ${QdecLib_TESTS} QdecDataTableTest1 ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/qdec.table.dat)
 SIMPLE_TEST( QdecFactorTest1 )
 SIMPLE_TEST( QdecGlmDesignTest1 )
 SIMPLE_TEST( QdecGlmFitResultsTest1 )
@@ -41,3 +42,14 @@ SIMPLE_TEST( QdecProjectTest1 )
 SIMPLE_TEST( QdecSubjectTest1 )
 SIMPLE_TEST( QdecUtilitiesTest1 )
 
+# install extra files
+SET(testFiles qdec.table.dat gender.levels)
+foreach(file
+   ${testFiles}
+   )
+   configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${file}
+    COPYONLY
+    )
+endforeach(file) 
