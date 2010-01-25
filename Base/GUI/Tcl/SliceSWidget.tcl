@@ -33,6 +33,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
     variable _swidgets ""
+    variable _annotationTaskID ""
+    variable _inWidget 0
 
     # methods
     method updateSWidgets {} {}
@@ -40,6 +42,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     method processEvent {{caller ""} {event ""}} {}
     method updateAnnotation {r a s} {}
     method updateAnnotations {r a s} {}
+    method updateStatusAnnotation {r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
@@ -51,6 +54,10 @@ if { [itcl::find class SliceSWidget] == "" } {
     method isCompareViewer {} {}
     method isCompareViewMode {} {}
     method getSliceSWidgetForGUI { gui } {}
+    method requestAnnotation {} {}
+    method cancelAnnotation {} {}
+    method getInWidget {} {}
+    method getInAnyWidget {} {}
   }
 }
 
@@ -592,6 +599,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
+      set _inWidget 1
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
 
@@ -599,7 +607,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
-          [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
+          #[[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
               # prescribe spacing for all other guis
@@ -615,11 +623,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeaveEvent" { 
-      $_renderWidget CornerAnnotationVisibilityOff
-      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
+      #puts "LeaveEvent"
+      set _inWidget 0
 
-      #puts "LeaveEvent."
       set sliceGUIs [$this getLinkedSliceGUIs]
+      # cancel annotation requests before doing anything else
+      foreach gui $sliceGUIs {
+        set sw [$this getSliceSWidgetForGUI $gui]
+        $sw cancelAnnotation
+      }
+      # now turn do whatever else is needed
       foreach gui $sliceGUIs {
         [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
         set snode [$gui GetSliceNode]
@@ -629,6 +642,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           
         [$gui GetSliceViewer] RequestRender
       }
+      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
+      #puts "EndLeaveEvent"
     }
     "TimerEvent" { }
     "KeyPressEvent" { 
@@ -771,7 +786,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
+#puts "updateAnnotations"
 
+  $this updateStatusAnnotation $r $a $s
+    
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
   $this queryLayers $x $y $z
 
@@ -805,7 +823,6 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
 
     # find the SliceSWidget for sgui
     set sw [$this getSliceSWidgetForGUI $sgui]
-
     if { $sw != "" } {
       foreach {x y z} [$sw rasToXYZ "$r $a $s"] {}
       $sw queryLayers $x $y $z
@@ -905,12 +922,20 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
     }
     
     # jvm - request a render so the annotations on other viewers update
+    $sw cancelAnnotation
+    [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
+    $sw requestAnnotation
+    # this render only seems to be needed to get the cornerannotations
+    # to turn off in the other compare views when there is no
+    # crosshair or the crosshair is in navigation mode but not being
+    # dragged
     [$sgui GetSliceViewer] RequestRender
   }
 }
 
 itcl::body SliceSWidget::updateAnnotation {r a s} {
 #puts "--updateAnnotation--"
+  $this updateStatusAnnotation $r $a $s
 
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
   $this queryLayers $x $y $z
@@ -1024,6 +1049,122 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
       $_annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
     }
   }
+
+  # jvm - request a render so the annotations on other viewers update
+  $this cancelAnnotation
+  [[$sliceGUI GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
+  $this requestAnnotation
+  # no longer needed?   [$sgui GetSliceViewer] RequestRender
+}
+
+itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
+#puts "updateStatusAnnotation"
+
+  # display a subset of the annotation in the status bar because we may not
+  # show the information while moving the mouse
+
+  foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
+  $this queryLayers $x $y $z
+
+  set logic [$sliceGUI GetLogic]
+  set sliceCompositeNode [$logic GetSliceCompositeNode]
+
+  set foregroundname "None"
+  set backgroundname "None"
+  set labelname "None"
+
+  set reformation [$_sliceNode GetOrientationString]
+  
+  # get the display node for the label volume, extract the name of the colour used to represent the label pixel
+  set colorName ""
+  if {[info command $_layers(label,node)] != "" && \
+      $_layers(label,node) != "" && \
+      $_layers(label,pixel) != "" && \
+      $_layers(label,pixel) != "Unknown" && \
+      $_layers(label,pixel) != "Out of Frame" && \
+      $_layers(label,pixel) != "Slice not shown"} {
+      set labelDisplayNode [$_layers(label,node) GetDisplayNode]
+      if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
+          set colorNode [$labelDisplayNode GetColorNode]
+          if {$colorNode != ""} {
+              if {[string is integer $_layers(label,pixel)]} {
+                  set colorName [$colorNode GetColorName $_layers(label,pixel)]
+              }
+          }
+      }
+  }
+
+  if {[info command $_layers(label,node)] != ""
+      && $_layers(label,node) != ""} {
+      #set labelname "Lb: [$_layers(label,node) GetName]"
+      set labelname "[$_layers(label,node) GetName]"
+  }
+
+  if {[info command $_layers(foreground,node)] != ""
+      && $_layers(foreground,node) != ""} {
+      #set foregroundname "Fg: [$_layers(foreground,node) GetName]"
+      set foregroundname "[$_layers(foreground,node) GetName]"
+  }
+
+  if {[info command $_layers(background,node)] != ""
+      && $_layers(background,node) != ""} {
+      #set backgroundname "Bg: [$_layers(background,node) GetName]"
+      set backgroundname "[$_layers(background,node) GetName]"
+  } 
+
+  if { $_layers(label,pixel) == "None"} {
+      set labelText ""
+  } else {
+      set labelText " Lb: $_layers(label,pixel) $colorName,"
+  }
+
+  if { [string is double $_layers(foreground,pixel)] } {
+      set fgvoxelText [format " Fg: %.1f" $_layers(foreground,pixel)]
+  } else {
+      if { $_layers(foreground,pixel) == "None"} {
+          set fgvoxelText ""
+      } else {
+          set fgvoxelText " Fg: $_layers(foreground,pixel),"
+      }
+  }
+  if { [string is double $_layers(background,pixel)] } {
+      set bgvoxelText [format " Bg: %.1f" $_layers(background,pixel)]
+  } else {
+      if { $_layers(background,pixel) == "None"} {
+          set bgvoxelText ""
+      } else {
+          set bgvoxelText " Bg: $_layers(background,pixel),"
+      }
+  }
+  
+  if { $fgvoxelText == "" && $bgvoxelText == "" } {
+      set voxelText ""
+  } elseif {$fgvoxelText == "" } {
+      set voxelText $bgvoxelText
+  } elseif {$bgvoxelText == "" } {
+      set voxelText $fgvoxelText
+  } else {
+      set voxelText "$fgvoxelText$bgvoxelText"
+  }
+
+
+  if { [string is integer $_layers(background,i)] } {
+      set ijkText [format " Bg IJK: (%d, %d, %d)," \
+                       $_layers(background,i) $_layers(background,j) $_layers(background,k)]
+  } else {
+      set ijkText ""
+  }
+
+  if { $backgroundname == "None" } {
+      set ijkText ""
+  }
+
+  set xyText "XY: ($x, $y)"
+  set rasText [format "RAS: (%.1f, %.1f, %.1f)," $r $a $s]
+
+  set statusText "$backgroundname $rasText$ijkText$labelText$voxelText"
+  [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $statusText
+
 }
 
 
@@ -1248,5 +1389,40 @@ itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
     } else {
       return ""
     }
+}
+
+itcl::body SliceSWidget::requestAnnotation { } {
+    set _annotationTaskID [after 500 "\
+                              if { [$this getInAnyWidget] == 1 } { \
+                                $_renderWidget CornerAnnotationVisibilityOn; \
+                                [$sliceGUI GetSliceViewer] RequestRender; \
+                                $this cancelAnnotation; \
+                              } "]
+    #puts "requestAnnotation $_annotationTaskID"
+}
+
+itcl::body SliceSWidget::cancelAnnotation { } {
+    #puts "cancelAnnotation $_annotationTaskID"
+    if {$_annotationTaskID != ""} {
+        after cancel $_annotationTaskID
+        set _annotationTaskID ""
+    }
+}
+
+itcl::body SliceSWidget::getInWidget { } {
+    return $_inWidget
+}
+
+itcl::body SliceSWidget::getInAnyWidget { } {
+    set in 0
+
+    set swidgets [itcl::find objects -class SliceSWidget]
+    foreach sw $swidgets {
+        if { [$sw getInWidget] == 1} {
+            set in 1
+            break
+        }
+    }
+    return $in
 }
 
