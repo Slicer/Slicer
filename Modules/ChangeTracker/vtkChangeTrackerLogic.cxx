@@ -1167,6 +1167,8 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
     return;
 
   }
+  std::cout << "Analysis intensity threshold is " << this->Analysis_Intensity_Threshold << std::endl;
+
   int IntensityMin = SegmentThreshMin - (int) this->Analysis_Intensity_Threshold ;
   int IntensityMax = SegmentThreshMax + (int) this->Analysis_Intensity_Threshold ;
 
