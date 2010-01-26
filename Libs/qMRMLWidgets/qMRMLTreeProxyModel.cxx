@@ -233,13 +233,14 @@ qMRMLTreeProxyModelPrivate::proxyItemsFromSourceIndexes(const QModelIndex &vpare
 
 //------------------------------------------------------------------------------
 QVector<QSharedPointer<qMRMLAbstractItemHelper> > 
-qMRMLTreeProxyModelPrivate::proxyItemsFromProxyIndexes(const QModelIndex &parent, int start, int end) const
+qMRMLTreeProxyModelPrivate::proxyItemsFromProxyIndexes(const QModelIndex &_parent,
+                                                       int start, int end) const
 {
   QCTK_P(const qMRMLTreeProxyModel);
-  QVector<QSharedPointer<qMRMLAbstractItemHelper> > children;
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > _children;
 
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
-    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(parent));
+    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_parent));
   Q_ASSERT(parentItem->childCount() > end);
   // for each row
   for (int i = start; i <= end; ++i)
@@ -252,10 +253,10 @@ qMRMLTreeProxyModelPrivate::proxyItemsFromProxyIndexes(const QModelIndex &parent
         QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(i, j));
       Q_ASSERT(item.data());
       Q_ASSERT(j == item->column());    
-      children.append(item);
+      _children.append(item);
       }
     }
-  return children;
+  return _children;
 }
 
 //------------------------------------------------------------------------------

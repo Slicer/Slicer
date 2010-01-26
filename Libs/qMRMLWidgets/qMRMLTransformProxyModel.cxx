@@ -64,8 +64,8 @@ public:
 // qMRMLSceneItemHelper
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-qMRMLSceneItemHelper::qMRMLSceneItemHelper(vtkMRMLScene* scene, int column)
-  :qMRMLAbstractSceneItemHelper(scene, column)
+qMRMLSceneItemHelper::qMRMLSceneItemHelper(vtkMRMLScene* scene, int _column)
+  :qMRMLAbstractSceneItemHelper(scene, _column)
 {
 }
 
@@ -77,8 +77,8 @@ qMRMLAbstractItemHelper* qMRMLSceneItemHelper::child(int _row, int _column) cons
     {
     return 0;
     }
-  qMRMLNodeItemHelper* child = new qMRMLNodeItemHelper(childNode, _column);
-  return child;
+  qMRMLNodeItemHelper* _child = new qMRMLNodeItemHelper(childNode, _column);
+  return _child;
 }
 
 //------------------------------------------------------------------------------
@@ -92,10 +92,10 @@ int qMRMLSceneItemHelper::childCount() const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
+int qMRMLSceneItemHelper::childIndex(const qMRMLAbstractItemHelper* _child) const
 {
   const qMRMLAbstractNodeItemHelper* nodeItemHelper = 
-    dynamic_cast<const qMRMLAbstractNodeItemHelper*>(child);
+    dynamic_cast<const qMRMLAbstractNodeItemHelper*>(_child);
   Q_ASSERT(nodeItemHelper);
   if (nodeItemHelper == 0)
     {
@@ -125,8 +125,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int column)
-  :qMRMLAbstractNodeItemHelper(node, column)
+qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int _column)
+  :qMRMLAbstractNodeItemHelper(node, _column)
 {
   QCTK_INIT_PRIVATE(qMRMLNodeItemHelper);
   Q_ASSERT(node);
@@ -140,17 +140,17 @@ bool qMRMLNodeItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
     {
     return true;
     }
-  bool canReparent = false;
+  bool _canReparent = false;
   if (dynamic_cast<qMRMLAbstractSceneItemHelper*>(newParent))
     {
-    canReparent = qMRMLUtils::canReparent(this->mrmlNode(), 0);
+    _canReparent = qMRMLUtils::canReparent(this->mrmlNode(), 0);
     }
   else if (dynamic_cast<qMRMLNodeItemHelper*>(newParent))
     {
     vtkMRMLNode*  newParentNode = dynamic_cast<qMRMLNodeItemHelper*>(newParent)->mrmlNode();
-    canReparent = qMRMLUtils::canReparent(this->mrmlNode(), newParentNode);
+    _canReparent = qMRMLUtils::canReparent(this->mrmlNode(), newParentNode);
     }
-  return canReparent;
+  return _canReparent;
 }
 
 //------------------------------------------------------------------------------
@@ -161,8 +161,8 @@ qMRMLAbstractItemHelper* qMRMLNodeItemHelper::child(int _row, int _column) const
     {
     return 0;
     }
-  qMRMLNodeItemHelper* child = new qMRMLNodeItemHelper(childNode, _column);
-  return child;
+  qMRMLNodeItemHelper* _child = new qMRMLNodeItemHelper(childNode, _column);
+  return _child;
 }
 
 //------------------------------------------------------------------------------
@@ -176,10 +176,10 @@ int qMRMLNodeItemHelper::childCount() const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLNodeItemHelper::childIndex(const qMRMLAbstractItemHelper* child) const
+int qMRMLNodeItemHelper::childIndex(const qMRMLAbstractItemHelper* _child) const
 {
   const qMRMLNodeItemHelper* nodeItemHelper = 
-    dynamic_cast<const qMRMLNodeItemHelper*>(child);
+    dynamic_cast<const qMRMLNodeItemHelper*>(_child);
   Q_ASSERT(nodeItemHelper);
   if (nodeItemHelper == 0)
     {
@@ -238,11 +238,11 @@ qMRMLRootItemHelper::qMRMLRootItemHelper(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLRootItemHelper::child(int row, int column) const
+qMRMLAbstractItemHelper* qMRMLRootItemHelper::child(int _row, int _column) const
 {
-  if (row == 0)
+  if (_row == 0)
     {
-    return new qMRMLSceneItemHelper(this->mrmlScene(), column);
+    return new qMRMLSceneItemHelper(this->mrmlScene(), _column);
     }
   return 0;
 }

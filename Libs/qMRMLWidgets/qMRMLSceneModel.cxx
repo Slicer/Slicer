@@ -31,9 +31,9 @@ qMRMLAbstractItemHelper* qMRMLFlatSceneItemHelper::child(int _row, int _column) 
     {
     return 0;
     }
-  qMRMLAbstractNodeItemHelper* child = 
+  qMRMLAbstractNodeItemHelper* _child = 
     new qMRMLFlatNodeItemHelper(childNode, _column);
-  return child;
+  return _child;
 }
 
 //------------------------------------------------------------------------------
