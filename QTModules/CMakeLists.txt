@@ -20,6 +20,7 @@ SET(qtmodules
   SlicerWelcome
   Volumes
   Measurements
+  TractographyFiducialSeeding
   )
 
 FOREACH(module ${qtmodules})
