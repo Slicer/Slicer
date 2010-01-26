@@ -11,7 +11,6 @@
 #include <vtkObject.h>
 
 //------------------------------------------------------------------------------
-//QCTK_CONSTRUCTOR_1_ARG_CXX(qMRMLEventLogger, QObject*);
 qMRMLEventLogger::qMRMLEventLogger(QObject* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qMRMLEventLogger);

@@ -15,6 +15,7 @@
 #include "qSlicerTransformsModuleLogic.h"
 #include "ui_qSlicerTransformsModule.h"
 
+// SlicerQT includes
 //#include "qSlicerApplication.h"
 //#include "qSlicerIOManager.h"
 
@@ -92,33 +93,11 @@ void qSlicerTransformsModuleWidget::setup()
                 SIGNAL(pressed()),
                 SLOT(onInvertButtonPressed()));
 
-  /* Connect node selector with translation sliders
-  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                d->TranslationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
-  */
-  /* Connect node selector with rotation sliders
-  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                d->RotationSliders, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
-  */
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onNodeSelected(vtkMRMLNode*)));
 
-  /* Connect node selector with matrix widget
-  this->connect(d->TransformNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                d->MatrixWidget, SLOT(setMRMLTransformNode(vtkMRMLNode*)));
-  */
-  /* Reset Rotation sliders if at least one of the translation sliders is moved
-  this->connect(d->TranslationSliders, SIGNAL(sliderMoved()),
-                d->RotationSliders, SLOT(reset()));
-  */
-  /* Connect min/max translation limit input with translation sliders
-  this->connect(d->MinTranslationLimitInput, SIGNAL(valueEdited(double)),
-    d->TranslationSliders, SLOT(setMinimumRange(double)));
-  this->connect(d->MaxTranslationLimitInput, SIGNAL(valueEdited(double)),
-    d->TranslationSliders, SLOT(setMaximumRange(double)));
-  */
   this->connect(d->LoadTransformPushButton, SIGNAL(clicked()),
                 SLOT(loadTransform()));
   QIcon openIcon =
@@ -242,11 +221,9 @@ int qSlicerTransformsModuleWidget::coordinateReference()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::loadTransform()
 {
-  /*
-  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  Q_ASSERT(ioManager);
-  QString fileName = ioManager->getOpenFileName(this);
-  */
   QString fileName = QFileDialog::getOpenFileName(this);
-  qctk_d()->logic()->loadTransform(fileName);
+  if (!fileName.isEmpty())
+    {
+    qctk_d()->logic()->loadTransform(fileName);
+    }
 }
