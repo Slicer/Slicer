@@ -1,11 +1,11 @@
-#ifndef __qMRMLTransformProxyModel_p_h
-#define __qMRMLTransformProxyModel_p_h
+#ifndef __qMRMLTreeProxyModel_p_h
+#define __qMRMLTreeProxyModel_p_h
 
 // qCTK includes 
 #include <qCTKPimpl.h>
 
 // qMRML includes
-#include "qMRMLTransformProxyModel.h"
+#include "qMRMLTreeProxyModel.h"
 #include "qMRMLItemHelper.h"
 
 // QT includes
@@ -18,24 +18,23 @@ class qMRMLAbstractItemHelper;
 class vtkObject;
 
 //------------------------------------------------------------------------------
-class qMRMLTransformProxyModelPrivate: public QObject, public qCTKPrivate<qMRMLTransformProxyModel>
+class qMRMLTreeProxyModelPrivate: public QObject, public qCTKPrivate<qMRMLTreeProxyModel>
 {
   Q_OBJECT
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLTransformProxyModel);
-  qMRMLTransformProxyModelPrivate(QObject* parent = 0);
+  QCTK_DECLARE_PUBLIC(qMRMLTreeProxyModel);
+  qMRMLTreeProxyModelPrivate(QObject* parent = 0);
 
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
-  qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   qMRMLAbstractItemHelper* proxyItemFromIndex(const QModelIndex &index)const;
   qMRMLAbstractItemHelper* sourceItemFromIndex(const QModelIndex &index)const;
+  qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   
-  qMRMLAbstractItemHelper* createItemFromVTKObject(vtkObject* object, int column = -1);
-  qMRMLAbstractItemHelper* createItemFromUID(QVariant uid, int column = -1);
+  qMRMLAbstractItemHelper* itemFromUID(QVariant uid, int column = -1);
 
-  int actualRow(const qMRMLAbstractItemHelper* item)const;
-  int oldRow(const qMRMLAbstractItemHelper* parent, int row)const;
-  int actualRowCount(const qMRMLAbstractItemHelper* item)const;
+  int rowWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const;
+  int childRowWithHiddenItemsAdded(const qMRMLAbstractItemHelper* parent, int row)const;
+  int rowCountWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const;
 
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > proxyItemsFromSourceIndexes(const QModelIndex &parent, int start, int end)const;
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > proxyItemsFromProxyIndexes(const QModelIndex &parent, int start, int end)const;
@@ -58,9 +57,12 @@ public slots:
   void onSourceRowsRemoved(const QModelIndex & parent, int start, int end);
 
 protected:
-  QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsAboutToBeInserted;
-  QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsAboutToBeRemoved;
-  vtkObject* ObjectToRemove;
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > HiddenItems;
+  //QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsAboutToBeInserted;
+  //QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsAboutToBeRemoved;
+#ifndef QT_NO_DEBUG
+  vtkObject* HiddenVTKObject;
+#endif
 };
 
 #endif

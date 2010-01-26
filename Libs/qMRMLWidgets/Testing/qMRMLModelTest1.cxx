@@ -60,10 +60,10 @@ int qMRMLModelTest1(int argc, char * argv [] )
     nodeFactory.deleteRandomNode();
     nodeFactory.deleteRandomNode();
   
-    qMRMLTransformProxyModel transformModel(0);
-    //qCTKModelTester transformTester(&transformModel);
+    qMRMLTransformProxyModel TreeModel(0);
+    qCTKModelTester TreeTester(&TreeModel);
   
-    transformModel.setSourceModel(&model);
+    TreeModel.setSourceModel(&model);
   
     nodeFactory.generateRandomNode();
     nodeFactory.deleteRandomNode();

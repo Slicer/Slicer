@@ -15,8 +15,8 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qMRMLWidgets_SRCS
-  qMRMLItemModel.cxx
-  qMRMLItemModel.h
+  #qMRMLItemModel.cxx
+  #qMRMLItemModel.h
   qMRMLItemHelper.cxx
   qMRMLItemHelper.h
   qMRMLLinearTransformSlider.cxx
@@ -41,6 +41,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLTransformProxyModel.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
+  qMRMLTreeProxyModel.cxx
+  qMRMLTreeProxyModel.h
+  qMRMLTreeProxyModel_p.h
   qMRMLTreeWidget.cxx
   qMRMLTreeWidget.h
   qMRMLUtils.cxx
@@ -49,7 +52,6 @@ SET(qMRMLWidgets_SRCS
 
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
-  qMRMLItemModel.h
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
@@ -60,7 +62,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSceneGeneratorButton.h
   qMRMLSceneModel.h
   qMRMLTransformProxyModel.h
-  qMRMLTransformProxyModel_p.h
+  qMRMLTreeProxyModel.h
+  qMRMLTreeProxyModel_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   )

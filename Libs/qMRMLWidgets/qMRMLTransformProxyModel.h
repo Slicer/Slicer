@@ -1,16 +1,11 @@
 #ifndef __qMRMLTransformProxyModel_h
 #define __qMRMLTransformProxyModel_h
 
-#include <QAbstractProxyModel>
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsExport.h"
-#include "qMRMLItemModel.h"
+#include "qMRMLTreeProxyModel.h"
 
-class vtkMRMLScene;
-class vtkMRMLNode;
 class qMRMLTransformProxyModelPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLTransformProxyModel : public QAbstractProxyModel
+class QMRML_WIDGETS_EXPORT qMRMLTransformProxyModel : public qMRMLTreeProxyModel
 {
   Q_OBJECT
 
@@ -18,32 +13,9 @@ public:
   qMRMLTransformProxyModel(QObject *parent=0);
   virtual ~qMRMLTransformProxyModel();
 
-  vtkMRMLScene* mrmlScene()const;
-
-  virtual QModelIndex mapFromSource(const QModelIndex & sourceIndex)const;
-  virtual QModelIndex mapToSource(const QModelIndex & proxyIndex)const;
-  virtual void setSourceModel(QAbstractItemModel * sourceModel);
-
-  virtual int columnCount(const QModelIndex &) const;
-  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;
-  virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
-  virtual Qt::ItemFlags flags(const QModelIndex &index)const;
-  virtual bool hasChildren(const QModelIndex &parent=QModelIndex())const;
-  //virtual QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole)const;
-  virtual QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex())const;
-  //virtual bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
-  virtual QMap<int, QVariant> itemData(const QModelIndex &index)const;
-  //virtual QMimeData * mimeData(const QModelIndexList &indexes)const;
-  //virtual QStringList mimeTypes()const;
-  virtual QModelIndex parent(const QModelIndex &index)const;
-
-  //virtual bool removeColumns(int column, int count, const QModelIndex &parent=QModelIndex());
-  //virtual bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
-  virtual int rowCount(const QModelIndex &parent=QModelIndex()) const;
-  virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-  //virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
-  virtual Qt::DropActions supportedDropActions()const;
-
+protected:
+  virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const;
+  virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const;
 private:
   QCTK_DECLARE_PRIVATE(qMRMLTransformProxyModel);
 };

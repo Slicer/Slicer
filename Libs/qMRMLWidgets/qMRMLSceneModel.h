@@ -4,21 +4,54 @@
 #include <QAbstractListModel>
 #include "qCTKPimpl.h"
 #include "qMRMLWidgetsExport.h"
-#include "qMRMLItemModel.h"
+#include "qMRMLItemHelper.h"
 #include "qVTKObject.h"
 
 class vtkMRMLScene;
 class vtkMRMLNode;
 class qMRMLSceneModelPrivate;
-/*
+
 namespace qMRML
 {
  enum ItemDataRole {
    UIDRole = Qt::UserRole
  };
 };
-*/
 
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLFlatSceneItemHelper : public qMRMLAbstractSceneItemHelper
+{
+public:
+  qMRMLFlatSceneItemHelper(vtkMRMLScene* scene, int column = -1);
+  
+  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
+  virtual int childCount() const;
+  virtual bool hasChildren() const;
+  virtual qMRMLAbstractItemHelper* parent()const;
+  
+protected:
+  // here we know for sure that child is a child of this.
+  virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
+};
+
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLFlatNodeItemHelper : public qMRMLAbstractNodeItemHelper
+{
+public:
+  qMRMLFlatNodeItemHelper(vtkMRMLNode* node, int column = -1);
+  virtual qMRMLAbstractItemHelper* parent() const;
+};
+
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLFlatRootItemHelper : public qMRMLAbstractRootItemHelper
+{
+public:
+  qMRMLFlatRootItemHelper(vtkMRMLScene* scene);
+  // child MUST be reimplemented
+  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
+};
+
+//------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QAbstractItemModel
 {
   Q_OBJECT

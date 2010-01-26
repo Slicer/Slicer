@@ -61,7 +61,7 @@ void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
 {
-  Q_ASSERT(qobject_cast<const qMRMLItemModel*>(this->model()));
-  return qobject_cast<const qMRMLItemModel*>(this->model())->mrmlScene();
+  Q_ASSERT(qobject_cast<const qMRMLTreeProxyModel*>(this->model()));
+  return qobject_cast<const qMRMLTreeProxyModel*>(this->model())->mrmlScene();
 }
 
