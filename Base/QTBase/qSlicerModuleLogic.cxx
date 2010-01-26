@@ -33,10 +33,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerModuleLogic, vtkMRMLScene*, mrmlScene, MRMLScene);
-QCTK_SET_CXX(qSlicerModuleLogic, vtkMRMLScene*, setMRMLScene, MRMLScene);
-
-//-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerModuleLogic, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
@@ -45,6 +41,24 @@ QCTK_CONSTRUCTOR_NO_ARG_CXX(qSlicerModuleLogic);
 //-----------------------------------------------------------------------------
 qSlicerModuleLogic::~qSlicerModuleLogic()
 {
+}
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerModuleLogic, vtkMRMLScene*, mrmlScene, MRMLScene);
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleLogic::setMRMLScene(vtkMRMLScene* scene)
+{
+  QCTK_D(qSlicerModuleLogic);
+  if (scene == d->MRMLScene)
+    {
+    return;
+    }
+  if (scene)
+    {
+    this->registerNodes(scene); 
+    }
+  d->MRMLScene = scene; 
 }
 
 //-----------------------------------------------------------------------------

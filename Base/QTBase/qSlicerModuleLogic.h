@@ -50,6 +50,11 @@ protected:
   // Doesn't do anything by default.
   virtual void setup(){}
 
+  // Description:
+  // This method is respondible to register additional MRML node with the current scene
+  // Should only be called from setMRMLScene method
+  virtual void registerNodes(vtkMRMLScene* scene){ Q_UNUSED(scene); }
+
 private:
   QCTK_DECLARE_PRIVATE(qSlicerModuleLogic);
 
