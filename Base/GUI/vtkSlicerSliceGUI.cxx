@@ -177,7 +177,7 @@ void vtkSlicerSliceGUI::SetGUICommandAbortFlag ( int flag )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+                                              unsigned long event, void * vtkNotUsed(callData) )
 {
   vtkKWRenderWidget *rw = 
         vtkKWRenderWidget::SafeDownCast (caller);
@@ -233,7 +233,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                unsigned long event, void *callData )
+                                                unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
   if ( !caller )
     {
@@ -313,7 +313,7 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                               unsigned long event, void *callData )
+                                               unsigned long event, void * vtkNotUsed(callData) )
 {
   if ( !caller )
     {

@@ -455,7 +455,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+                                          unsigned long event, void * vtkNotUsed(callData) )
 {
   int val;
   if ( this->GetApplicationGUI() != NULL )
@@ -954,8 +954,8 @@ int vtkSlicerToolbarGUI::StopViewRockOrSpin ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerToolbarGUI::ProcessLogicEvents ( vtkObject *caller,
-                                               unsigned long event, void *callData )
+void vtkSlicerToolbarGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                               unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
   // Fill in}
 }
@@ -990,7 +990,7 @@ void vtkSlicerToolbarGUI::UpdateLayoutMenu()
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+                                           unsigned long event, void * vtkNotUsed(callData) )
 {
   std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: got event " << event << "(modified = " << vtkCommand::ModifiedEvent << ")" << endl;
 

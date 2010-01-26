@@ -169,7 +169,7 @@ vtkMRMLStorageNode * vtkSlicerModelInfoWidget::GetModelStorageNode ()
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelInfoWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+                                                         unsigned long event, void * vtkNotUsed(callData) )
 {
 
   //
@@ -201,7 +201,7 @@ void vtkSlicerModelInfoWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelInfoWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+                                              unsigned long event, void * vtkNotUsed(callData) )
 {
   if (vtkMRMLModelNode::SafeDownCast(caller) != NULL && 
       vtkMRMLModelNode::SafeDownCast(caller) == this->GetModelNode() &&

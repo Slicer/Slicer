@@ -519,7 +519,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::ProcessGUIEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData)
+                                            unsigned long event, void * vtkNotUsed(callData))
 {
   // std::cout << "In Process GUI Events" << std::endl;
   

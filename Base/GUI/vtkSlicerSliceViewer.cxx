@@ -458,8 +458,8 @@ void vtkSlicerSliceViewer::UnhighlightAllSlices( )
 // from the AddBinding call after the widget is created.
 //
 void 
-vtkSlicerSliceViewer::GUICallback(vtkObject *caller, 
-            unsigned long eid, void *clientData, void *callData)
+vtkSlicerSliceViewer::GUICallback(vtkObject * vtkNotUsed(caller), 
+            unsigned long vtkNotUsed(eid), void *clientData, void * vtkNotUsed(callData) )
 {
   vtkSlicerSliceViewer *self = reinterpret_cast<vtkSlicerSliceViewer *>(clientData);
 

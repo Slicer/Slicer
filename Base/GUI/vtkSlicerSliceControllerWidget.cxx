@@ -1851,7 +1851,8 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData ) 
+void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, 
+  unsigned long event, void * vtkNotUsed(callData) ) 
 { 
 
   //
@@ -3290,7 +3291,7 @@ void vtkSlicerSliceControllerWidget::ToggleSlicesLink  ( )
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 
+void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) ) 
 { 
   if (this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
     {

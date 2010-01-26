@@ -260,15 +260,15 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
 }    
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                              unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerModelsGUI::ProcessMRMLEvents ( vtkObject * vtkNotUsed(caller),
+                                             unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }

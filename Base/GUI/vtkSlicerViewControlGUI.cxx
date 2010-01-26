@@ -1085,7 +1085,7 @@ int vtkSlicerViewControlGUI::InvokeNameDialog( const char *msg, const char *name
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                 unsigned long event, void *callData )
+                                                 unsigned long event, void * vtkNotUsed(callData) )
 {
 
   // Right now this class contains state variables that will be moved
@@ -1616,7 +1616,7 @@ void vtkSlicerViewControlGUI::MainViewZoom(double factor)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::SetMRMLFiducialPointVisibility ( int state)
+void vtkSlicerViewControlGUI::SetMRMLFiducialPointVisibility ( int vtkNotUsed(state) )
 {
   
   // Right now, fiducial visibility is stored in three places.
@@ -1638,7 +1638,7 @@ void vtkSlicerViewControlGUI::SetMRMLFiducialPointVisibility ( int state)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::SetMRMLFiducialLabelVisibility ( int state)
+void vtkSlicerViewControlGUI::SetMRMLFiducialLabelVisibility ( int vtkNotUsed(state) )
 {
 
   // Right now, fiducial visibility is stored in three places.
@@ -3018,8 +3018,8 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkSlicerViewControlGUI::ProcessLogicEvents ( vtkObject * vtkNotUsed(caller),
+                                            unsigned long vtkNotUsed(event), void * vtkNotUsed(callData) )
 {
     // Fill in
 }
@@ -3028,7 +3028,7 @@ void vtkSlicerViewControlGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+                                           unsigned long event, void * vtkNotUsed(callData) )
 {
   if (this->ProcessingMRMLEvent != 0 )
     {
