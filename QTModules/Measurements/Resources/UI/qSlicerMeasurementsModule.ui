@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
-    <height>276</height>
+    <width>543</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,11 +22,20 @@
      <property name="text">
       <string>Ruler Widget</string>
      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="qSlicerWidget" name="SlicerWidget"/>
-       </item>
-      </layout>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qSlicerWidget" name="SlicerWidget"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -34,11 +43,20 @@
      <property name="text">
       <string>Angle Widget</string>
      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="qSlicerMeasurementsAngleWidget" name="SlicerWidget_2"/>
-       </item>
-      </layout>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qSlicerMeasurementsAngleWidget" name="SlicerWidget_2"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -46,38 +64,38 @@
      <property name="text">
       <string>Transform Widget</string>
      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0" rowspan="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>198</width>
-           <height>21</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="checkBox_4">
-         <property name="text">
-          <string>Transform Widget Visibility</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" rowspan="2">
-        <widget class="qMRMLNodeSelector" name="MRMLNodeSelector"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Select Data to Transform:</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" rowspan="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>198</width>
+          <height>21</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBox_4">
+        <property name="text">
+         <string>Transform Widget Visibility</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" rowspan="2">
+       <widget class="qMRMLNodeSelector" name="MRMLNodeSelector"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Select Data to Transform:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
