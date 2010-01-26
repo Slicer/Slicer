@@ -121,6 +121,12 @@ IF (VTK_WRAP_TCL)
     vtkIOTCL
     vtkGraphicsTCL
     )
+ELSE (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkIO
+    vtkGraphics
+    )
 ENDIF (VTK_WRAP_TCL)
 
 target_link_libraries(${lib_name}

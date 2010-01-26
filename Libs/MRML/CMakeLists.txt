@@ -244,6 +244,12 @@ IF (VTK_WRAP_TCL)
     ${libs}
     vtkHybridTCL
     )
+ELSE (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkHybrid
+    vtkRendering
+    )
 ENDIF (VTK_WRAP_TCL)
 target_link_libraries(${lib_name}
   ${libs}

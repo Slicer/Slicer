@@ -130,6 +130,13 @@ IF (VTK_WRAP_TCL)
     ${libs}
     vtkImagingTCL
     )
+ELSE (VTK_WRAP_TCL)
+  SET(libs
+    ${libs}
+    vtkImaging
+    vtkCommon
+    vtkFiltering
+    )
 ENDIF (VTK_WRAP_TCL)
 target_link_libraries(${lib_name} 
   ${libs}
