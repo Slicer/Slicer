@@ -14,6 +14,7 @@ class vtkObject;
 class vtkMRMLScene;
 class vtkMRMLNode;
 class qMRMLAbstractItemHelperPrivate;
+class qMRMLAbstractRootItemHelperPrivate;
 class qMRMLAbstractSceneItemHelperPrivate;
 class qMRMLAbstractNodeItemHelperPrivate;
 

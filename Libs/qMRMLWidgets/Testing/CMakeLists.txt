@@ -13,7 +13,6 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLNodeTreeSelectorTest1.cxx
   qMRMLSceneGeneratorButtonTest1.cxx
   qMRMLSceneModelTest1.cxx
-  qMRMLTransformProxyModel_pTest1.cxx
   qMRMLTransformProxyModelTest1.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLTreeWidgetTest1.cxx

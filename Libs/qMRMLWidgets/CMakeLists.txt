@@ -19,8 +19,6 @@ SET(qMRMLWidgets_SRCS
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
   qMRMLEventLoggerWidget.h
-  #qMRMLItemModel.cxx
-  #qMRMLItemModel.h
   qMRMLItemHelper.cxx
   qMRMLItemHelper.h
   qMRMLLinearTransformSlider.cxx
@@ -58,7 +56,6 @@ SET(qMRMLWidgets_SRCS
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
-  #qMRMLItemModel.h
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
