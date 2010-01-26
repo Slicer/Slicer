@@ -17,6 +17,25 @@
 
 #include "vtkSlicerConfigure.h"
 
+void  qSlicerPalette(QPalette& palette)
+{
+  /* Old palette that makes a high contrast in Windows.
+  palette.setColor(QPalette::Window, Qt::white);
+  palette.setColor(QPalette::Base, Qt::white);
+  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+  palette.setColor(QPalette::Button, Qt::white);
+  */
+  palette.setColor(QPalette::Button, "#fcfcfc");
+  palette.setColor(QPalette::Light, "#c8c8c8");
+  palette.setColor(QPalette::Midlight, "#e6e6e6");
+  palette.setColor(QPalette::Dark, "#aaaaaa");
+  palette.setColor(QPalette::Mid, "#c8c8c8");
+  palette.setColor(QPalette::Base, Qt::white);
+  palette.setColor(QPalette::Window, Qt::white);
+  palette.setColor(QPalette::Shadow, "#5a5a5a");
+  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+}
+
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
 {
@@ -145,22 +164,7 @@ void qSlicerApplicationPrivate::initPalette()
 {
   QCTK_P(qSlicerApplication);
   QPalette palette = p->palette();
-  /* Old palette that makes a high contrast in Windows.
-  p.setColor(QPalette::Window, Qt::white);
-  p.setColor(QPalette::Base, Qt::white);
-  p.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
-  p.setColor(QPalette::Button, Qt::white);
-  */
-  palette.setColor(QPalette::Button, "#fcfcfc");
-  palette.setColor(QPalette::Light, "#c8c8c8");
-  palette.setColor(QPalette::Midlight, "#e6e6e6");
-  palette.setColor(QPalette::Dark, "#aaaaaa");
-  palette.setColor(QPalette::Mid, "#c8c8c8");
-  palette.setColor(QPalette::Base, Qt::white);
-  palette.setColor(QPalette::Window, Qt::white);
-  palette.setColor(QPalette::Shadow, "#5a5a5a");
-  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
-
+  qSlicerPalette(palette);
   p->setPalette(palette);
 }
 

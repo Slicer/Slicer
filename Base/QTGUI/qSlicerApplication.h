@@ -1,11 +1,16 @@
 #ifndef __qSlicerApplication_h
 #define __qSlicerApplication_h
 
-#include "qSlicerCoreApplication.h"
+// Qt includes
+#include <QPalette>
 
 // qCTK includes
 #include <qCTKPimpl.h>
 
+// QTCORE includes
+#include "qSlicerCoreApplication.h"
+
+// QTGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerWidget;
@@ -51,5 +56,9 @@ public:
 private:
   QCTK_DECLARE_PRIVATE(qSlicerApplication);
 };
+
+/** Apply the Slicer palette to the \c palette
+ */
+void  Q_SLICER_BASE_QTGUI_EXPORT qSlicerPalette(QPalette& palette);
 
 #endif

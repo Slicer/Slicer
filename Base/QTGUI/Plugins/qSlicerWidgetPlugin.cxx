@@ -1,5 +1,6 @@
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerWidget.h"
+#include "qSlicerApplication.h"
 
 qSlicerWidgetPlugin::qSlicerWidgetPlugin()
 {
@@ -8,6 +9,11 @@ qSlicerWidgetPlugin::qSlicerWidgetPlugin()
 QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
 {
   qSlicerWidget* _widget = new qSlicerWidget(_parent);
+  QPalette slicerPalette = _widget->palette();
+  qSlicerPalette(slicerPalette);
+
+  _widget->setPalette(slicerPalette);
+  _widget->setAutoFillBackground(true);
   return _widget;
 }
 
