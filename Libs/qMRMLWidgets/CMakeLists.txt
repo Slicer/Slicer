@@ -15,6 +15,10 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 # Sources
 #
 SET(qMRMLWidgets_SRCS
+  qMRMLEventLogger.cxx
+  qMRMLEventLogger.h
+  qMRMLEventLoggerWidget.cxx
+  qMRMLEventLoggerWidget.h
   #qMRMLItemModel.cxx
   #qMRMLItemModel.h
   qMRMLItemHelper.cxx
@@ -52,6 +56,9 @@ SET(qMRMLWidgets_SRCS
 
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
+  qMRMLEventLogger.h
+  qMRMLEventLoggerWidget.h
+  #qMRMLItemModel.h
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
@@ -71,6 +78,7 @@ SET(qMRMLWidgets_MOC_SRCS
 # UI files
 SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLTransformSliders.ui
+  Resources/UI/qMRMLEventLoggerWidget.ui
 )
   
 QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})

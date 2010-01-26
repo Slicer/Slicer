@@ -23,7 +23,7 @@
 // -------------------------------------------------------------------------
 class qCTKTreeComboBoxPrivate: public qCTKPrivate<qCTKTreeComboBox>
 {
-  public:
+public:
   bool SkipNextHide;
   bool ResetPopupSize;
   
