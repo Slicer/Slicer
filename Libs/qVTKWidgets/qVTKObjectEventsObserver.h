@@ -6,7 +6,7 @@
 
 // QT includes
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -38,16 +38,17 @@ public:
   void setParent(QObject* parent);
 
   // Description:
-  // Add a connection
-  void addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
+  // Add a connection, an Id allowing to uniquely identify the connection is also returned
+  QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
-  void addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
+  QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
 
   // Description:
   // Block/Unblock a connection.
   void blockConnection(bool block, vtkObject* vtk_obj,
     unsigned long vtk_event, const QObject* qt_obj);
+  void blockConnection(const QString& id, bool blocked);
 
   // Description:
   // Remove a connection
@@ -67,7 +68,7 @@ protected:
 
   // Description:
   // Enable/Disable all qVTKConnections
-  void enableAll(QVector<qVTKConnection*>& connectionList, bool enable);
+  void enableAll(QList<qVTKConnection*>& connectionList, bool enable);
 
   // Description:
   // Check if a connection has already been added

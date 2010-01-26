@@ -52,6 +52,10 @@ public:
   int GetSlotType()const;
 
   // Description:
+  // Return a string uniquely identifying the connection within the current process
+  QString GetId()const; 
+
+  // Description:
   // VTK Callback
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);

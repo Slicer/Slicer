@@ -25,28 +25,12 @@ public:
     ARG_VTKOBJECT_VOID_ULONG_VOID
     };
 
-  qVTKConnectionPrivate()
-    {
-    this->Callback = vtkSmartPointer<vtkCallbackCommand>::New();
-    this->Callback->SetCallback(qVTKConnection::DoCallback);
-    this->VTKObject  = 0;
-    this->QtObject   = 0;
-    this->VTKEvent = vtkCommand::NoEvent;
-    this->Priority = 0.0;
-    this->SlotType = ARG_UNKNOWN;
-    this->Parent      = 0;
-    this->Established = false;
-    this->Blocked     = false;
-    }
+  typedef qVTKConnectionPrivate Self;
+  qVTKConnectionPrivate();
+  ~qVTKConnectionPrivate();
 
-  ~qVTKConnectionPrivate()
-    {
-    if(this->VTKObject && this->Established)
-      {
-      this->VTKObject->RemoveObserver(this->Callback);
-      //Qt takes care of disconnecting slots
-      }
-    }
+  // Convenient function allowing to convert a pointer to its hexdecimal string representation
+  static QString convertPointerToString(void* pointer);
 
   vtkSmartPointer<vtkCallbackCommand> Callback;
   vtkObject*                          VTKObject;
@@ -58,6 +42,7 @@ public:
   int                                 SlotType;
   bool                                Established;
   bool                                Blocked;
+  QString                             Id; 
 };
 
 //-----------------------------------------------------------------------------
@@ -73,6 +58,9 @@ qVTKConnection::qVTKConnection(qVTKObjectEventsObserver* parentVariable):
 }
 
 //-----------------------------------------------------------------------------
+QCTK_GET_CXX(qVTKConnection, QString, GetId, Id);
+
+//-----------------------------------------------------------------------------
 void qVTKConnection::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo();
@@ -80,6 +68,7 @@ void qVTKConnection::printAdditionalInfo()
   QCTK_D(qVTKConnection);
   
   qDebug() << "qVTKConnection:" << this << endl
+           << "Id:" << d->Id << endl
            << " VTKObject:" << d->VTKObject->GetClassName()
              << "(" << d->VTKObject << ")" << endl
            << " Parent:" << d->Parent << endl
@@ -362,4 +351,41 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
 void qVTKConnection::deleteConnection()
 {
   qctk_d()->Parent->removeConnection( this );
+}
+
+//-----------------------------------------------------------------------------
+// qVTKConnectionPrivate methods
+
+//-----------------------------------------------------------------------------
+qVTKConnectionPrivate::qVTKConnectionPrivate()
+{
+  this->Callback = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->Callback->SetCallback(qVTKConnection::DoCallback);
+  this->VTKObject  = 0;
+  this->QtObject   = 0;
+  this->VTKEvent = vtkCommand::NoEvent;
+  this->Priority = 0.0;
+  this->SlotType = ARG_UNKNOWN;
+  this->Parent      = 0;
+  this->Established = false;
+  this->Blocked     = false;
+  this->Id          = Self::convertPointerToString(this);
+}
+
+//-----------------------------------------------------------------------------
+qVTKConnectionPrivate::~qVTKConnectionPrivate()
+{
+  if(this->VTKObject && this->Established)
+    {
+    this->VTKObject->RemoveObserver(this->Callback);
+    //Qt takes care of disconnecting slots
+    }
+}
+    
+//-----------------------------------------------------------------------------
+QString qVTKConnectionPrivate::convertPointerToString(void* pointer)
+{
+  QString pointerAsString;
+  QTextStream(&pointerAsString) << pointer;
+  return pointerAsString;
 }

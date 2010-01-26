@@ -10,21 +10,21 @@
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_ADD_CONNECTION_METHOD                               \
-void qvtkConnect(vtkObject* vtk_obj, unsigned long vtk_event,           \
+QString qvtkConnect(vtkObject* vtk_obj, unsigned long vtk_event,        \
   const QObject* qt_obj, const char* qt_slot)                           \
 {                                                                       \
   MyQVTK.setParent( this );                                             \
-  MyQVTK.addConnection(vtk_obj, vtk_event,                              \
+  return MyQVTK.addConnection(vtk_obj, vtk_event,                       \
     qt_obj, qt_slot);                                                   \
 }
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_RECONNECT_METHOD                                    \
-void qvtkReconnect(vtkObject* old_vtk_obj, vtkObject* vtk_obj,          \
+QString qvtkReconnect(vtkObject* old_vtk_obj, vtkObject* vtk_obj,       \
   unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot)  \
 {                                                                       \
   MyQVTK.setParent( this );                                             \
-  MyQVTK.addConnection(old_vtk_obj, vtk_obj, vtk_event,                 \
+  return MyQVTK.addConnection(old_vtk_obj, vtk_obj, vtk_event,          \
     qt_obj, qt_slot);                                                   \
 }
 
@@ -35,6 +35,14 @@ void qvtkBlock(vtkObject* vtk_obj, unsigned long vtk_event,              \
 {                                                                        \
   MyQVTK.setParent( this );                                              \
   MyQVTK.blockConnection(true, vtk_obj, vtk_event, qt_obj);              \
+}
+
+//-----------------------------------------------------------------------------
+#define QVTK_OBJECT_BLOCK_CONNECTION_METHOD2                             \
+void qvtkBlock(const QString& id, bool blocked)                          \
+{                                                                        \
+  MyQVTK.setParent( this );                                              \
+  MyQVTK.blockConnection(id, blocked);                                   \
 }
 
 //-----------------------------------------------------------------------------
@@ -79,6 +87,7 @@ protected:                                      \
   QVTK_OBJECT_ADD_CONNECTION_METHOD             \
   QVTK_OBJECT_RECONNECT_METHOD                  \
   QVTK_OBJECT_BLOCK_CONNECTION_METHOD           \
+  QVTK_OBJECT_BLOCK_CONNECTION_METHOD2          \
   QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD        \
   QVTK_OBJECT_UNBLOCK_CONNECTION_METHOD         \
   QVTK_OBJECT_UNBLOCKALL_CONNECTION_METHOD      \
