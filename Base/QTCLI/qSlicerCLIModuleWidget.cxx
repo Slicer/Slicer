@@ -17,7 +17,6 @@
 // SlicerQT includes
 #include "qSlicerCLIModuleLogic.h"
 #include "qSlicerWidget.h"
-#include "qSlicerCoreApplication.h"
 
 // qMRML includes
 #include <qMRMLNodeSelector.h>
@@ -126,9 +125,10 @@ void qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed()
 {
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed";
   this->updateMRML();
-  
-  this->logic()->SetTemporaryDirectory(
-    qSlicerCoreApplication::application()->tempDirectory().toLatin1());
+
+  // QTCLI shouldn't depend on QtCore, otherwise there is a loop in the dependency
+  //this->logic()->SetTemporaryDirectory(
+  //  qSlicerCoreApplication::application()->tempDirectory().toLatin1());
   //((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
 // 
 //     // Lazy evaluation of module target
