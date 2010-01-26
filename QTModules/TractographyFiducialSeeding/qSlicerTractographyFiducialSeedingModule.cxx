@@ -8,7 +8,8 @@
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerTractographyFiducialSeedingModule, qSlicerTractographyFiducialSeedingModule);
 //-----------------------------------------------------------------------------
-qSlicerTractographyFiducialSeedingModule::qSlicerTractographyFiducialSeedingModule(QObject* parent) 
+qSlicerTractographyFiducialSeedingModule::
+qSlicerTractographyFiducialSeedingModule(QObject* _parent):Superclass(_parent)
 {
 }
 

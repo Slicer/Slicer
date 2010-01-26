@@ -15,7 +15,7 @@ class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyF
 public:
   typedef qSlicerAbstractLoadableModule Superclass;
 
-  qSlicerTractographyFiducialSeedingModule(QObject *parent=0);
+  qSlicerTractographyFiducialSeedingModule(QObject *_parent = 0);
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
