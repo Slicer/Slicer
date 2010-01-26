@@ -17,6 +17,7 @@
 // SlicerQT includes
 #include "qSlicerCLIModuleLogic.h"
 #include "qSlicerWidget.h"
+#include "qSlicerCoreApplication.h"
 
 // qMRML includes
 #include <qMRMLNodeSelector.h>
@@ -43,7 +44,7 @@
 #include <QRadioButton>
 
 // ITK includes
-#include "itkNumericTraits.h"
+#include <itkNumericTraits.h>
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleWidgetPrivate::MapInitialized = false;
@@ -110,14 +111,25 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->connect(this->DefaultPushButton,
                 SIGNAL(pressed()),
                 SLOT(onDefaultButtonPressed()));
+
+  this->connect(this->MRMLCommandLineModuleNodeSelector,
+                SIGNAL(itemAdded(int)),
+                SLOT(updateCommandButtonState()));
+
+  this->connect(this->MRMLCommandLineModuleNodeSelector,
+                SIGNAL(itemRemoved(int)),
+                SLOT(updateCommandButtonState()));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed()
 {
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed";
-//     this->UpdateMRML();
-//     this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
+  this->updateMRML();
+  
+  this->logic()->SetTemporaryDirectory(
+    qSlicerCoreApplication::application()->tempDirectory().toLatin1());
+  //((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
 // 
 //     // Lazy evaluation of module target
 //     this->Logic->LazyEvaluateModuleTarget(this->ModuleDescriptionObject);
@@ -140,6 +152,14 @@ void qSlicerCLIModuleWidgetPrivate::onCancelButtonPressed()
 void qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed()
 {
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed";
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidgetPrivate::updateCommandButtonState()
+{
+  bool enable = this->MRMLCommandLineModuleNodeSelector->count(); 
+  this->ApplyPushButton->setEnabled(enable);
+  this->CancelPushButton->setEnabled(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -169,7 +189,7 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* _layout,
   //vbox->addStretch(1);
   vbox->setVerticalSpacing(1);
   collapsibleWidget->setLayout(vbox);
-
+  
   _layout->addWidget(collapsibleWidget);
 }
 

@@ -154,6 +154,8 @@ public slots:
   void onCancelButtonPressed();
   void onDefaultButtonPressed();
 
+  void updateCommandButtonState();
+
 public:
 
   // Map used to store the different relation
