@@ -186,6 +186,7 @@ void qCTKSliderSpinBoxLabel::onSpinBoxValueChanged(double _value)
 {
   qctk_d()->Slider->setSliderPosition(_value);
   emit this->sliderMoved(_value);
+  emit this->valueChanged(_value);
 }
 
 // -------------------------------------------------------------------------
