@@ -30,5 +30,32 @@ int QdecUtilitiesTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  bool fakeFileIsReadable = true;
+  try
+    {
+    qdec.AssertFileIsReadable("fakeFile.h");
+    }
+  catch (...)
+    {
+    std::cout << "Success in catching that a fake file is not readable.\n";
+    fakeFileIsReadable = false;
+    }
+  if (fakeFileIsReadable)
+    {
+    std::cerr << "Error in AssertFileIsReadable\n";
+    return EXIT_FAILURE;
+    }
+
+  const char *fname = "/tmp/testThis.h";
+  char pathName[128];
+
+  const char *returnString = qdec.FileNamePath(fname, pathName);
+
+  std::cout << "Calling FileNamePath with fname = " << fname << ", pathName = " << pathName << " and return string = " << returnString << std::endl;
+
+  const char *fname2 = "testThis.h";
+  const char *returnString2 = qdec.FileNamePath(fname2, pathName);
+  std::cout << "Calling FileNamePath with fname = " << fname2 << ", pathName = " << pathName << " and return string = " << returnString2 << std::endl;
+
   return EXIT_SUCCESS;
 }
