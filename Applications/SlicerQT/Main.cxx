@@ -8,7 +8,7 @@
 #include "qSlicerModuleSelectorWidget.h"
 
 // qMRML includes
-#include <qMRMLEventLoggerWidget.h>
+// #include <qMRMLEventLoggerWidget.h>
 
 // QT includes
 #include <QSplashScreen>
@@ -91,15 +91,15 @@ int main(int argc, char* argv[])
   // Add modules to the selector
   window.moduleSelector()->addModules(moduleNames);
 
-  qMRMLEventLoggerWidget logger;
-  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(currentMRMLSceneChanged(vtkMRMLScene*)),
-                   &logger,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-
-  logger.show();
+//   qMRMLEventLoggerWidget logger;
+//   logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
+//   
+//   QObject::connect(qSlicerApplication::application(),
+//                    SIGNAL(currentMRMLSceneChanged(vtkMRMLScene*)),
+//                    &logger,
+//                    SLOT(setMRMLScene(vtkMRMLScene*)));
+// 
+//   logger.show();
   
   return app.exec();
 }
