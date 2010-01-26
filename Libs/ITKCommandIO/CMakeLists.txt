@@ -105,9 +105,6 @@ target_link_libraries(CommandIOPlugin
   ${lib_name}  
   ITKAlgorithms
   ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
   ITKStatistics
   ITKBasicFilters
   ITKIO

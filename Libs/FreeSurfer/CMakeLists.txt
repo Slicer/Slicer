@@ -74,19 +74,16 @@ add_library(${lib_name}
   )
 
 SET(libs
-  vtkIO
   )
 IF (VTK_WRAP_TCL)
   SET(libs
     ${libs}
-    vtkCommonTCL
     vtkIOTCL
     )
 ELSE(VTK_WRAP_TCL)
   SET(libs
     ${libs}
     vtkCommon
-    vtkIO
     )
 ENDIF (VTK_WRAP_TCL)
 target_link_libraries(${lib_name} 

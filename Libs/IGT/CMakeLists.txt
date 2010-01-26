@@ -130,23 +130,7 @@ add_library(${lib_name}
 
 SET(libs
   MRML
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
   ${TRACKING_INTERFACE_LIB}
-  vtkCommon
-  vtkImaging
-  vtkFiltering
-  vtkHybrid
-  vtkIO
-  vtkGraphics
-  vtkRendering
 )
 IF (VTK_WRAP_TCL)
   # Complain if KWWidget is not available
@@ -157,13 +141,6 @@ IF (VTK_WRAP_TCL)
   ENDIF(NOT KWWidgets_FOUND)
   SET(libs
     ${libs}
-    vtkCommonTCL
-    vtkImagingTCL
-    vtkFilteringTCL
-    vtkHybridTCL
-    vtkIOTCL
-    vtkGraphicsTCL
-    vtkRenderingTCL
     ${KWWidgets_LIBRARIES}
     )
 ENDIF (VTK_WRAP_TCL)

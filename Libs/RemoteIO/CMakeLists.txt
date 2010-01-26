@@ -109,18 +109,12 @@ add_library(${lib_name}
   )
   
 SET(libs
-  vtkIO
-  itksys
   ${SLICERLIBCURL_LIBRARIES}
   MRML
-  vtkIO
-  vtkCommon
   )
 IF (VTK_WRAP_TCL)
   SET(libs
     ${libs}
-    vtkIOTCL
-    vtkCommonTCL
     )
 ENDIF (VTK_WRAP_TCL)
 target_link_libraries(${lib_name}

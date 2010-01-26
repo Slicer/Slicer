@@ -6,7 +6,6 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
- 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
@@ -113,12 +112,7 @@ else ( ${Teem_VERSION_MAJOR} GREATER 1 )
 endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
 SET(libs
-  vtkCommon
-  vtkFiltering
   ${Teem_LIBRARIES}
-  vtkImaging
-  vtkIO
-  vtkGraphics
   )
 IF (VTK_WRAP_TCL)
   SET(libs

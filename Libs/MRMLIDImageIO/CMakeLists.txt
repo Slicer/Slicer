@@ -73,11 +73,7 @@ add_library(${lib_name}
   ${MRMLIDImageIO_SRCS}
   )
 target_link_libraries(${lib_name} 
-  ITKIO 
   MRML
-  vtkCommon
-  vtkFiltering
-  vtkImaging
 )
 
 # Apply user-defined properties to the library target.

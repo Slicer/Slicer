@@ -232,32 +232,16 @@ add_library(${lib_name}
 SET(libs
   vtkITK
   ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
   ITKNumerics
   ITKStatistics
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
   FreeSurfer
-  vtkCommon
-  vtkImaging
-  vtkFiltering
-  vtkIO
-  vtkGraphics
-  vtkRendering
-  vtkHybrid
   )
 IF (VTK_WRAP_TCL)
   SET(libs
     ${libs}
-    vtkCommonTCL
-    vtkImagingTCL
-    vtkFilteringTCL
-    vtkIOTCL
-    vtkGraphicsTCL
-    vtkRenderingTCL
     vtkHybridTCL
     )
 ENDIF (VTK_WRAP_TCL)
@@ -265,12 +249,9 @@ target_link_libraries(${lib_name}
   ${libs}
   )
 
-if(MRML_USE_Teem)
-  target_link_libraries(${lib_name} ${Teem_LIBRARIES})
   if(MRML_USE_vtkTeem)
     target_link_libraries(${lib_name} vtkTeem)
   endif(MRML_USE_vtkTeem)
-endif(MRML_USE_Teem)
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
