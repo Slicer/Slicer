@@ -1,7 +1,7 @@
 #include "qVTKAbstractMatrixWidget.h"
 
-// qVTKWidgets includes
-#include "qVTKAbstractMatrixWidgetPrivate.h"
+// qVTK includes
+#include "qVTKAbstractMatrixWidget_p.h"
 
 // VTK includes
 #include <vtkMatrix4x4.h>

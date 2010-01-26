@@ -5,7 +5,8 @@
 #include <qCTKPimpl.h>
 
 // qVTK includes
-#include <qVTKAbstractMatrixWidget.h>
+#include "qVTKAbstractMatrixWidget.h"
+#include "qVTKWidgetsExport.h"
  
 class vtkMatrix4x4;
 

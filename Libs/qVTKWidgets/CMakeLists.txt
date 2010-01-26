@@ -17,7 +17,7 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 SET(qVTKWidgets_SRCS
   qVTKAbstractMatrixWidget.cxx
   qVTKAbstractMatrixWidget.h
-  qVTKAbstractMatrixWidgetPrivate.h
+  qVTKAbstractMatrixWidget_p.h
   qVTKConnection.cxx
   qVTKConnection.h
   qVTKMatrixWidget.cxx
@@ -25,14 +25,18 @@ SET(qVTKWidgets_SRCS
   qVTKObject.h
   qVTKObjectEventsObserver.cxx
   qVTKObjectEventsObserver.h
+  qVTKRenderView.cxx
+  qVTKRenderView.h
   )
 
 # Headers that should run through moc
 SET(qVTKWidgets_MOC_SRCS
-  qVTKAbstractMatrixWidgetPrivate.h
+  qVTKAbstractMatrixWidget_p.h
   qVTKConnection.h
   qVTKObjectEventsObserver.h
   qVTKMatrixWidget.h
+  qVTKRenderView.h
+  qVTKRenderView_p.h
   )
   
 # UI files
@@ -107,6 +111,7 @@ SET(qVTKWidgets_LIBRARIES
   ${QT_LIBRARIES}
   MRML
   qCTKWidgets
+  QVTK
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qVTKWidgets_LIBRARIES})

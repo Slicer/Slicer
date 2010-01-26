@@ -1,3 +1,6 @@
+#ifndef __qVTKAbstractMatrixWidget_p_h
+#define __qVTKAbstractMatrixWidget_p_h
+
 // QT includes
 #include <QObject>
 
@@ -31,3 +34,5 @@ public slots:
 protected:
   vtkWeakPointer<vtkMatrix4x4> Matrix;
 };
+
+#endif 
