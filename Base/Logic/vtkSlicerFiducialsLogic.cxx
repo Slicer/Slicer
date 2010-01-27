@@ -137,12 +137,12 @@ int vtkSlicerFiducialsLogic::AddFiducialSelected (float x, float y, float z, int
       {
       vtkErrorMacro("AddFiducial: error adding a blank fiducial to list " << flist->GetName());
       }
-    return index;
+    //return index;
     }
   else
     {
     vtkErrorMacro("FiducialsLogic: no selection node to pick which list to which to add a fiducial\n");
-    return -1;
+    //return -1;
     }
 
   // get the selection node
