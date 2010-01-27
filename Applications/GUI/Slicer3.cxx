@@ -169,6 +169,7 @@ extern "C" {
 extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
+extern "C" int Mrmlcli_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 extern "C" int Igt_Init(Tcl_Interp *interp);
@@ -667,6 +668,7 @@ int Slicer3_main(int& argc, char *argv[])
   Slicerbasegui_Init(interp);
   Slicerbaselogic_Init(interp);
   Mrml_Init(interp);
+  Mrmlcli_Init(interp);
   Vtkitk_Init(interp);
   Freesurfer_Init(interp);
   Igt_Init(interp);
