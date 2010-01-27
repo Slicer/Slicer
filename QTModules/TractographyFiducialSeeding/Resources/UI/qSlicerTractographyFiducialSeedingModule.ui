@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
-    <height>756</height>
+    <width>393</width>
+    <height>526</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,124 +19,112 @@
   <property name="windowTitle">
    <string>TractographyFiducialSeedingModule</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Parameters</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeSelector" name="ParameterNodeSelector">
-       <property name="NodeType">
-        <string>vtkMRMLTractographyFiducialSeedingNode</string>
-       </property>
-       <property name="ShowHidden">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>DTI Volume</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeSelector" name="DTINodeSelector">
-       <property name="NodeType">
-        <string>vtkMRMLDiffusionTensorVolumeNode</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Fiducial List or Model</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeSelector" name="FiducialNodeSelector">
-       <property name="NodeType">
-        <string>vtkMRMLFiducialListNode</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Output Fiber Bundle</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeSelector" name="FiberNodeSelector">
-       <property name="NodeType">
-        <string>vtkMRMLFiberBundleNode</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="qCTKTitleComboBox" name="StoppingCriteriaComboBox">
-       <property name="editable">
-        <bool>false</bool>
-       </property>
-       <property name="title">
-        <string>Stopping Cretiria</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Linear Measure</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Fractional Anisotropy</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="StoppingValueSpinBoxLabel">
-     <property name="labelText">
-      <string>STopping Value</string>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Parameters</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="qMRMLNodeSelector" name="ParameterNodeSelector">
+     <property name="NodeType">
+      <string>vtkMRMLTractographyFiducialSeedingNode</string>
+     </property>
+     <property name="ShowHidden">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>DTI Volume</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="qMRMLNodeSelector" name="DTINodeSelector">
+     <property name="NodeType">
+      <string>vtkMRMLDiffusionTensorVolumeNode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Fiducial List or Model</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="qMRMLNodeSelector" name="FiducialNodeSelector">
+     <property name="NodeType">
+      <string>vtkMRMLFiducialListNode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Output Fiber Bundle</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="qMRMLNodeSelector" name="FiberNodeSelector">
+     <property name="NodeType">
+      <string>vtkMRMLFiberBundleNode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="qCTKTitleComboBox" name="StoppingCriteriaComboBox">
+     <property name="editable">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Stopping Cretiria</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>Linear Measure</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fractional Anisotropy</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Stopping Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="StoppingValueSpinBoxLabel">
      <property name="maximum">
-      <double>1.000000000000000</double>
+      <double>0.000000000000000</double>
      </property>
      <property name="value">
       <double>0.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="StoppingCurvatureSpinBoxLabel">
-     <property name="labelText">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
       <string>Stopping Track Curvature</string>
      </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="StoppingCurvatureSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -145,11 +133,15 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="IntegrationStepSpinBoxLabel">
-     <property name="labelText">
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
       <string>Integration Step Length (mm)</string>
      </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="IntegrationStepSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -158,11 +150,15 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="MinimumPathSpinBoxLabel">
-     <property name="labelText">
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
       <string>Minimum Path Length (mm)</string>
      </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="MinimumPathSpinBoxLabel">
      <property name="maximum">
       <double>200.000000000000000</double>
      </property>
@@ -171,11 +167,15 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="FiducialRegionSpinBoxLabel">
-     <property name="labelText">
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
       <string>Fiducial Region Size (mm)</string>
      </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="FiducialRegionSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -184,11 +184,15 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="qCTKSliderSpinBoxLabel" name="FiducialStepSpinBoxLabel">
-     <property name="labelText">
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
       <string>Fiducial Seeding Step Size</string>
      </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="qCTKSliderSpinBoxLabel" name="FiducialStepSpinBoxLabel">
      <property name="minimum">
       <double>1.000000000000000</double>
      </property>
@@ -197,81 +201,63 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QCheckBox" name="SeedSelectedCheckBox">
-       <property name="text">
-        <string>Seed Selected Fiducials</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="11" column="1">
+    <widget class="QCheckBox" name="SeedSelectedCheckBox">
+     <property name="text">
+      <string>Seed Selected Fiducials</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8">
-     <item>
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Maximum Number Of Seeds</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qCTKNumericInput" name="MaxNumberSeedsNumericInput">
-       <property name="text">
-        <string>100</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Maximum Number Of Seeds</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_9">
-     <item>
-      <widget class="qCTKTitleComboBox" name="DisplayTracksComboBox">
-       <property name="title">
-        <string>Display Tracts As: </string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Lines</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Tubes</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
+   <item row="12" column="1">
+    <widget class="QSpinBox" name="MaxNumberSeedsNumericInput">
+     <property name="maximum">
+      <number>10000</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
+   <item row="13" column="1">
+    <widget class="qCTKTitleComboBox" name="DisplayTracksComboBox">
+     <property name="title">
+      <string>Display Tracts As: </string>
+     </property>
      <item>
-      <widget class="QCheckBox" name="EnableSeedingCheckBox">
-       <property name="text">
-        <string>Enable Seeding Tracts</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <property name="text">
+       <string>Lines</string>
+      </property>
      </item>
-    </layout>
+     <item>
+      <property name="text">
+       <string>Tubes</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="14" column="1">
+    <widget class="QCheckBox" name="EnableSeedingCheckBox">
+     <property name="text">
+      <string>Enable Seeding Tracts</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>qCTKNumericInput</class>
-   <extends>QLineEdit</extends>
-   <header>qCTKNumericInput.h</header>
-  </customwidget>
   <customwidget>
    <class>qCTKTitleComboBox</class>
    <extends>QComboBox</extends>

@@ -49,8 +49,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
               SLOT(onParameterChanged(int)));
   QObject::connect(d->EnableSeedingCheckBox, SIGNAL(stateChanged(int)),
               SLOT(onParameterChanged(int)));
-  QObject::connect(d->MaxNumberSeedsNumericInput, SIGNAL(valueEdited(double)),
-              SLOT(onParameterChanged(double)));
+  QObject::connect(d->MaxNumberSeedsNumericInput, SIGNAL(valueChanged(int)),
+              SLOT(onParameterChanged(int)));
 }
 
 //-----------------------------------------------------------------------------
