@@ -35,6 +35,21 @@
 #include "vtkITKImageWriter.h"
 #define ERROR_NODE_VTKID 0
 
+#include "itkImage.h"
+#include "itkImageToVTKImageFilter.h"
+#include "itkVTKImageToImageFilter.h"
+#include "itkSignedMaurerDistanceMapImageFilter.h"
+#include "itkThresholdImageFilter.h"
+#include "itkTernaryAddImageFilter.h"
+#include "itkMaskImageFilter.h"
+#include "vtkImageEuclideanDistance.h"
+#include "itkConnectedComponentImageFilter.h"
+#include "itkRelabelComponentImageFilter.h"
+#include "itkMultiplyByConstantImageFilter.h"
+#include "itkImageFileWriter.h"
+#include "vtkImageMask.h"
+#include "vtkImageCast.h"
+
 //----------------------------------------------------------------------------
 vtkChangeTrackerLogic* vtkChangeTrackerLogic::New()
 {
@@ -1159,7 +1174,7 @@ void vtkChangeTrackerLogic::MeassureGrowth(double &Shrinkage, double &Growth) {
    }
  }
 
-void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax,double &Shrinkage, double &Growth) {
+void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax,double &Shrinkage, double &Growth, vtkImageData* segment) {
    
   if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROIShrinkVolume || !this->Analysis_Intensity_ROIGrowthVolume ) {
     Shrinkage = 1 ;
@@ -1169,13 +1184,14 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
   }
   std::cout << "Analysis intensity threshold is " << this->Analysis_Intensity_Threshold << std::endl;
 
+  vtkImageData *connectivityMask = NULL;
   int IntensityMin = SegmentThreshMin - (int) this->Analysis_Intensity_Threshold ;
   int IntensityMax = SegmentThreshMax + (int) this->Analysis_Intensity_Threshold ;
 
   // Biasing results - this is a hack right now 
   // Used in in journal publication - for some reason the pipeline favors shrinkage over growth 
   // ShrinkBias > 1 => less Shrinkage; ShrinkBias < 1 => more shrinkage  
-  float ShrinkBias = 1.1; 
+  float ShrinkBias = 1.0; 
   float GrowthBias = 1.0; 
 
   if (this->Analysis_Intensity_Scan1ByLower) {
@@ -1207,6 +1223,8 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
   this->Analysis_Intensity_ROIGrowthInt->Update();
   this->Analysis_Intensity_ROIShrinkInt->Update();
 
+
+
   // See Corresponding comment in ChangeTrackerFct - reduces bias towards shrinkage
   this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-ShrinkBias*this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROINegativeBin->Update(); 
@@ -1214,6 +1232,34 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
   this->Analysis_Intensity_ROIPositiveBin->Update(); 
   this->Analysis_Intensity_ROIPositiveBinReal->Update();
   this->Analysis_Intensity_ROINegativeBinReal->Update();
+
+  if(segment != NULL){
+    connectivityMask = GetConnectivityMask(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput(),
+      this->Analysis_Intensity_ROINegativeBinReal->GetOutput(), segment);
+
+    if(connectivityMask){
+      // include only those pixels in the growth/shrink map that are connected
+      // to the tumor boundary
+      vtkImageMask *growthMaskFilter = vtkImageMask::New();
+      growthMaskFilter->SetImageInput(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput());
+      growthMaskFilter->SetMaskInput(connectivityMask);
+      growthMaskFilter->Update();
+
+      vtkImageMask *shrinkMaskFilter = vtkImageMask::New();
+      shrinkMaskFilter->SetImageInput(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput());
+      shrinkMaskFilter->SetMaskInput(connectivityMask);
+      shrinkMaskFilter->Update();
+
+      this->Analysis_Intensity_ROIBinCombine->SetInput(0,growthMaskFilter->GetOutput());
+      this->Analysis_Intensity_ROIBinCombine->SetInput(1,shrinkMaskFilter->GetOutput());
+      this->Analysis_Intensity_ROIBinCombine->Update();
+
+      growthMaskFilter->Delete();
+      shrinkMaskFilter->Delete();
+      connectivityMask->Delete();
+    }
+  }
+
   this->Analysis_Intensity_ROIBinAdd->Update();
   this->Analysis_Intensity_ROIBinDisplay->Update();
   this->Analysis_Intensity_ROIGrowthVolume->Update(); 
@@ -1595,17 +1641,31 @@ void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
   vtkImageData *image = scan1->GetImageData();
   vtkImageData *mask = scan1_segm->GetImageData();
 
-  std::cerr << "Input image scalar type: " << image->GetScalarType() << std::endl;
-  std::cerr << "Input mask scalar type: " << mask->GetScalarType() << std::endl;
-
   vtkImageMathematics* mult = vtkImageMathematics::New();
   vtkImageThreshold* thresh = vtkImageThreshold::New();
+  vtkImageThreshold* distThresh = vtkImageThreshold::New();
+  vtkImageEuclideanDistance* dist = vtkImageEuclideanDistance::New();
+
   thresh->SetInput(mask);
   thresh->ThresholdBetween(1,255);
   thresh->SetInValue(1);
   thresh->SetOutValue(0);
+
+  // get the narrownband inside the segmentation
+  dist->SetInput(thresh->GetOutput());
+  dist->SetAlgorithmToSaito();
+  dist->SetMaximumDistance(10);
+  dist->ConsiderAnisotropyOff();
+  dist->Update();
+
+  distThresh->SetInput(dist->GetOutput());
+  distThresh->ThresholdBetween(1,2);
+  distThresh->SetInValue(1);
+  distThresh->SetOutValue(0);
+  distThresh->Update();
+
   mult->SetInput(0, image);
-  mult->SetInput(1, thresh->GetOutput());
+  mult->SetInput(1, distThresh->GetOutput());
   mult->SetOperationToMultiply();
 
   vtkImageCast *cast = vtkImageCast::New();
@@ -1617,21 +1677,122 @@ void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
   hist->SetInput(cast->GetOutput());
   hist->Update();
 
-//  double max = hist->GetMax()[0];
   hist->SetComponentOrigin(0.,0.,0.);
   hist->SetComponentExtent(0,(int)hist->GetMax()[0],0,0,0,0);
   hist->SetComponentSpacing(1.,0.,0.);
   hist->IgnoreZeroOn();
   hist->Update();
+  
+  int idx = hist->GetMin()[0];
+  float mean = 0, cnt = 0;
+  for(;idx<hist->GetMax()[0];idx++){
+    mean += hist->GetOutput()->GetScalarComponentAsFloat(idx,0,0,0)*float(idx);
+    cnt += hist->GetOutput()->GetScalarComponentAsFloat(idx,0,0,0);
+  }
+  mean = mean/cnt;
 
   std::cerr << "Histogram min: " << hist->GetMin()[0] << std::endl;
   std::cerr << "Histogram max: " << hist->GetMax()[0] << std::endl;
+  std::cerr << "Histogram mean: " << mean << std::endl;
 
-  this->ChangeTrackerNode->SetSegmentThresholdMin(hist->GetMin()[0]);
+  this->ChangeTrackerNode->SetSegmentThresholdMin(mean);
   this->ChangeTrackerNode->SetSegmentThresholdMax(hist->GetMax()[0]);
 
   mult->Delete();
   thresh->Delete();
   hist->Delete();
   cast->Delete();
+  dist->Delete();
+  distThresh->Delete();
+}
+
+// return the mask that will be applied to the growth/shrinkage analysis
+// results
+vtkImageData* vtkChangeTrackerLogic::GetConnectivityMask(vtkImageData* growthImage, 
+  vtkImageData* shrinkImage, vtkImageData *segImage){
+
+  typedef itk::Image<short, 3> ImageType;
+  typedef itk::Image<float, 3> DTImageType;
+  typedef itk::Image<char,3> MaskImageType;
+  typedef itk::VTKImageToImageFilter<ImageType> VTK2ITKConverter;
+  typedef itk::ImageToVTKImageFilter<MaskImageType> ITK2VTKConverter;
+  typedef itk::SignedMaurerDistanceMapImageFilter<ImageType,DTImageType> DistMapFilter;
+  typedef itk::BinaryThresholdImageFilter<DTImageType,ImageType> DTThresholdType;
+  typedef itk::BinaryThresholdImageFilter<ImageType,MaskImageType> ThresholdType;
+  typedef itk::TernaryAddImageFilter<ImageType,ImageType,ImageType,ImageType> AddType;
+  typedef itk::MaskImageFilter<ImageType,ImageType> MaskType;
+  typedef itk::ConnectedComponentImageFilter<ImageType,ImageType> ConnCompType;
+  typedef itk::RelabelComponentImageFilter<ImageType,ImageType> RelabelType;
+  typedef itk::MultiplyByConstantImageFilter<ImageType,char,ImageType> MulType;
+  typedef itk::ImageFileWriter<ImageType> WriterType;
+
+  VTK2ITKConverter::Pointer vtk2itk1 = VTK2ITKConverter::New();
+  VTK2ITKConverter::Pointer vtk2itk2 = VTK2ITKConverter::New();
+  VTK2ITKConverter::Pointer vtk2itk3 = VTK2ITKConverter::New();
+  ITK2VTKConverter::Pointer itk2vtk = ITK2VTKConverter::New();
+
+  try{
+    vtk2itk1->SetInput(growthImage);
+    vtk2itk1->Update();
+    vtk2itk2->SetInput(shrinkImage);
+    vtk2itk2->Update();
+    vtk2itk3->SetInput(segImage);
+    vtk2itk3->Update();
+
+    DistMapFilter::Pointer dt = DistMapFilter::New();
+    dt->SetInput(vtk2itk3->GetOutput());
+    dt->SquaredDistanceOff();
+    dt->SetUseImageSpacing(false);
+    dt->Update();
+
+    DTThresholdType::Pointer dtThresh = DTThresholdType::New();
+    dtThresh->SetInput(dt->GetOutput());
+    dtThresh->SetUpperThreshold(0);
+    dtThresh->SetLowerThreshold(0);
+    dtThresh->SetInsideValue(1);
+    dtThresh->SetOutsideValue(0);
+    dtThresh->Update();
+
+    MulType::Pointer mul = MulType::New();
+    mul->SetInput(vtk2itk2->GetOutput());
+    mul->SetConstant(-1);
+    mul->Update();
+
+    AddType::Pointer adder = AddType::New();
+    adder->SetInput1(dtThresh->GetOutput());
+    adder->SetInput2(vtk2itk1->GetOutput());
+    adder->SetInput3(mul->GetOutput());
+    adder->Update();
+
+
+    ConnCompType::Pointer connComp = ConnCompType::New();
+    connComp->SetInput(adder->GetOutput());
+    connComp->FullyConnectedOn();
+
+    RelabelType::Pointer relabelComp = RelabelType::New();
+    relabelComp->SetInput(connComp->GetOutput());
+
+    ThresholdType::Pointer thresh = ThresholdType::New();
+    thresh->SetInput(relabelComp->GetOutput());
+    thresh->SetUpperThreshold(1);
+    thresh->SetLowerThreshold(1);
+    thresh->SetInsideValue(1);
+    thresh->SetOutsideValue(0);
+    thresh->Update();
+
+    itk2vtk->GetExporter()->SetInput(thresh->GetOutput());
+    itk2vtk->GetImporter()->Update();
+  } catch(itk::ExceptionObject &e){
+    std::cerr << "Exception: " << e << std::endl;
+    return NULL;
+  }
+  vtkImageCast *cast = vtkImageCast::New();
+  cast->SetInput(itk2vtk->GetOutput());
+  cast->SetOutputScalarTypeToUnsignedChar();
+  cast->Update();
+
+  vtkImageData* result = vtkImageData::New();
+  result->DeepCopy(cast->GetOutput());
+
+  return result;
 }

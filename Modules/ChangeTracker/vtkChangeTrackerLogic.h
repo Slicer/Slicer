@@ -76,7 +76,7 @@ public:
 
   // Main Growth Function 
   int AnalyzeGrowth(vtkSlicerApplication *application);
-  void MeassureGrowth(int ThreshMin, int ThreshMax, double &Shrinkage, double &Growth);
+  void MeassureGrowth(int ThreshMin, int ThreshMax, double &Shrinkage, double &Growth,vtkImageData* segm = NULL);
   void MeassureGrowth(double &Shrinkage, double &Growth);
   void DeleteAnalyzeOutput(vtkSlicerApplication *app);
 
@@ -150,6 +150,7 @@ public:
   char* GetInputScanName(int);
 
   void SetThresholdsFromSegmentation();
+  vtkImageData* GetConnectivityMask(vtkImageData*,vtkImageData*,vtkImageData*);
 
 private:
   vtkChangeTrackerLogic();
