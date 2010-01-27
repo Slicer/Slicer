@@ -41,9 +41,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="LabelTextVisible">
-         <bool>false</bool>
-        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -60,9 +57,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="LabelTextVisible">
-         <bool>false</bool>
         </property>
         <property name="TypeOfTransform">
          <enum>qMRMLLinearTransformSlider::TRANSLATION_PA</enum>
@@ -83,9 +77,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="LabelTextVisible">
-         <bool>false</bool>
         </property>
         <property name="TypeOfTransform">
          <enum>qMRMLLinearTransformSlider::TRANSLATION_IS</enum>
@@ -241,8 +232,13 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLLinearTransformSlider</class>
+   <class>qCTKSliderSpinBoxLabel</class>
    <extends>QWidget</extends>
+   <header>qCTKSliderSpinBoxLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLLinearTransformSlider</class>
+   <extends>qCTKSliderSpinBoxLabel</extends>
    <header>qMRMLLinearTransformSlider.h</header>
    <container>1</container>
   </customwidget>

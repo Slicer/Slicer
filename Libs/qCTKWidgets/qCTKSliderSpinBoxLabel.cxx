@@ -55,30 +55,6 @@ qCTKSliderSpinBoxLabel::qCTKSliderSpinBoxLabel(QWidget* _parent) : Superclass(_p
 }
 
 // --------------------------------------------------------------------------
-void qCTKSliderSpinBoxLabel::setLabelTextVisible(bool visible)
-{
-  qctk_d()->Label->setVisible(visible);
-}
-
-// --------------------------------------------------------------------------
-bool qCTKSliderSpinBoxLabel::isLabelTextVisible()
-{
-  return qctk_d()->Label->isVisible();
-}
-
-// --------------------------------------------------------------------------
-QString qCTKSliderSpinBoxLabel::labelText()
-{
-  return qctk_d()->Label->text();
-}
-
-// --------------------------------------------------------------------------
-void qCTKSliderSpinBoxLabel::setLabelText(const QString & label)
-{
-  qctk_d()->Label->setText(label);
-}
-
-// --------------------------------------------------------------------------
 double qCTKSliderSpinBoxLabel::minimum()const
 {
   return qctk_d()->Slider->minimumAsDbl();

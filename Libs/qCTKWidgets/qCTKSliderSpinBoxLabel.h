@@ -28,8 +28,6 @@ class qCTKSliderSpinBoxLabelPrivate;
 class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool LabelTextVisible READ isLabelTextVisible WRITE setLabelTextVisible)
-  Q_PROPERTY(QString labelText READ labelText WRITE setLabelText)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double value READ value WRITE setValue)
@@ -43,16 +41,6 @@ public:
   // Constructors
   explicit qCTKSliderSpinBoxLabel(QWidget* parent = 0);
   virtual ~qCTKSliderSpinBoxLabel(){}
-
-  // Description:
-  // Set built-in label text visibility
-  void setLabelTextVisible(bool visible);
-  bool isLabelTextVisible();
-
-  // Description:
-  // Set/Get label text
-  QString labelText();
-  void setLabelText(const QString & label);
 
   // Description:
   // Set/Get range
