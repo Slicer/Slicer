@@ -525,10 +525,16 @@ itcl::body Loader::apply { } {
           set volumeLogic [$::slicer3::VolumesGUI GetLogic]
           ## set node [$volumeLogic AddArchetypeVolume $path $centered $labelMap $name]
           set loadingOptions [expr $labelMap * 1 + $centered * 2]
-          set node [$volumeLogic AddArchetypeVolume $path $name $loadingOptions]
+          if {[file pathtype $path] == "absolute"} {
+              set node [$volumeLogic AddArchetypeVolume $path $name $loadingOptions]
+          } else {
+              set absPath [file join [pwd] $path]
+              #$this errorDialog "Have a relative path '$path', pwd = [pwd], using abs path $absPath"
+              set node [$volumeLogic AddArchetypeVolume $absPath $name $loadingOptions]
+          }
           set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
           if { $node == "" } {
-            $this errorDialog "Could not open $path"
+            $this errorDialog "Could not open volume at '$path'"
           } else {
             if { $labelMap } {
               $selNode SetReferenceActiveLabelVolumeID [$node GetID]
