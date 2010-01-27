@@ -219,6 +219,10 @@ public:
     GlyphMax = Diamond3D,
   };
   //ETX
+  /// Return the min/max glyph types, for iterating over them in tcl
+  int GetMinimumGlyphType() { return vtkMRMLFiducialListNode::GlyphMin; };
+  int GetMaximumGlyphType() { return vtkMRMLFiducialListNode::GlyphMax; };
+  
   //// The glyph type used to display this fiducial
   void SetGlyphType(int type);
   vtkGetMacro(GlyphType, int);
