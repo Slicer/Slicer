@@ -12,8 +12,8 @@
 
 =========================================================================*/
 
-#ifndef __qCTKSliderSpinBoxLabel_h
-#define __qCTKSliderSpinBoxLabel_h
+#ifndef __qCTKSliderSpinBoxWidget_h
+#define __qCTKSliderSpinBoxWidget_h
 
 // qCTK includes
 #include "qCTKPimpl.h"
@@ -23,9 +23,9 @@
 
 #include "qCTKWidgetsExport.h"
 
-class qCTKSliderSpinBoxLabelPrivate;
+class qCTKSliderSpinBoxWidgetPrivate;
 
-class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxLabel : public QWidget
+class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -39,8 +39,8 @@ public:
   typedef QWidget Superclass;
 
   // Constructors
-  explicit qCTKSliderSpinBoxLabel(QWidget* parent = 0);
-  virtual ~qCTKSliderSpinBoxLabel(){}
+  explicit qCTKSliderSpinBoxWidget(QWidget* parent = 0);
+  virtual ~qCTKSliderSpinBoxWidget(){}
 
   // Description:
   // Set/Get range
@@ -85,7 +85,7 @@ signals:
   void valueChanged(double value);
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxLabel);
+  QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxWidget);
 
 };
 

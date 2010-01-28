@@ -52,8 +52,8 @@ SET(qCTKWidgets_SRCS
   qCTKModelTester.h
   qCTKNumericInput.cxx
   qCTKNumericInput.h
-  qCTKSliderSpinBoxLabel.cxx
-  qCTKSliderSpinBoxLabel.h
+  qCTKSliderSpinBoxWidget.cxx
+  qCTKSliderSpinBoxWidget.h
   qCTKTitleComboBox.cxx
   qCTKTitleComboBox.h
   qCTKTreeComboBox.cxx
@@ -72,7 +72,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKMatrixWidget.h
   qCTKModelTester.h
   qCTKNumericInput.h
-  qCTKSliderSpinBoxLabel.h
+  qCTKSliderSpinBoxWidget.h
   qCTKTitleComboBox.h
   qCTKTreeComboBox.h
   )
@@ -80,7 +80,7 @@ SET(qCTKWidgets_MOC_SRCS
 # UI files
 SET(qCTKWidgets_UI_SRCS
   Resources/UI/qCTKAddRemoveComboBox.ui
-  Resources/UI/qCTKSliderSpinBoxLabel.ui
+  Resources/UI/qCTKSliderSpinBoxWidget.ui
 )
   
 QT4_WRAP_CPP(qCTKWidgets_SRCS ${qCTKWidgets_MOC_SRCS})

@@ -18,7 +18,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qCTKNumericInputTest1.cxx
   qCTKPimplTest1.cxx
   qCTKSingletonTest1.cxx
-  qCTKSliderSpinBoxLabelTest1.cxx
+  qCTKSliderSpinBoxWidgetTest1.cxx
   qCTKTitleComboBoxTest1.cxx
   qCTKTreeComboBoxTest1.cxx
   )
@@ -59,6 +59,6 @@ SIMPLE_TEST( qCTKModelTesterTest1 )
 SIMPLE_TEST( qCTKNumericInputTest1 )
 SIMPLE_TEST( qCTKPimplTest1 )
 SIMPLE_TEST( qCTKSingletonTest1 )
-SIMPLE_TEST( qCTKSliderSpinBoxLabelTest1 )
+SIMPLE_TEST( qCTKSliderSpinBoxWidgetTest1 )
 SIMPLE_TEST( qCTKTitleComboBoxTest1 )
 SIMPLE_TEST( qCTKTreeComboBoxTest1 )

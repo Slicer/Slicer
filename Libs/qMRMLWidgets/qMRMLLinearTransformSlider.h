@@ -5,7 +5,7 @@
 #include <qVTKObject.h>
 
 // qCTK includes
-#include <qCTKSliderSpinBoxLabel.h>
+#include <qCTKSliderSpinBoxWidget.h>
 #include <qCTKPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
@@ -14,7 +14,7 @@ class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;
 class qMRMLLinearTransformSliderPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBoxLabel
+class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBoxWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -25,7 +25,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBox
 
 public:
   // Constructors
-  typedef qCTKSliderSpinBoxLabel Superclass;
+  typedef qCTKSliderSpinBoxWidget Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider(){}
 

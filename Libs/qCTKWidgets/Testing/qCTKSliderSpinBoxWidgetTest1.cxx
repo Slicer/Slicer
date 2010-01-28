@@ -10,7 +10,7 @@
 =========================================================================auto=*/
 
 // qCTK includes
-#include "qCTKSliderSpinBoxLabel.h"
+#include "qCTKSliderSpinBoxWidget.h"
 
 // QT includes
 #include <QApplication>
@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include <iostream>
 
-int qCTKSliderSpinBoxLabelTest1(int argc, char * argv [] )
+int qCTKSliderSpinBoxWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qCTKSliderSpinBoxLabel qctkObject;
+  qCTKSliderSpinBoxWidget qctkObject;
 
 
   return EXIT_SUCCESS;
