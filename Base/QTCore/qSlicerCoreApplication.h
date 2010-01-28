@@ -90,13 +90,13 @@ public:
   void setSlicerHome(const QString& slicerHome);
 
   // Description:
-  // Return the temporary directory associated with the application
-  QString tempDirectory() const; 
+  // In any, this method return the build intermediate directory
+  // See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
+  QString intDir()const;
 
   // Description:
-  // Initialize paths
-  void initializeLoadableModulesPaths();
-  void initializeCmdLineModulesPaths();
+  // Return the temporary directory associated with the application
+  QString tempDirectory() const; 
 
   // Description:
   // Set/Get the module manager

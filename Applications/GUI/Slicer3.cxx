@@ -18,12 +18,21 @@
 // Slicer3_USE_QT
 //
 #ifdef Slicer3_USE_QT
+
+// SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactory.h"
-// #include "vtkSlicerEmptyModuleGUI.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerCoreModuleFactory.h"
+#include "qSlicerLoadableModuleFactory.h"
+#include "qSlicerCLILoadableModuleFactory.h"
+#include "qSlicerCLIExecutableModuleFactory.h"
+
+// QT includes
 #include <QStringList>
 #include <QDebug>
+
+// #include "vtkSlicerEmptyModuleGUI.h"
 #endif
 
 #include "vtkOpenGLRenderWindow.h"
@@ -876,8 +885,21 @@ int Slicer3_main(int& argc, char *argv[])
 #ifdef Slicer3_USE_QT
   qSlicerApplication::application()->setAppLogic( appLogic );
   qSlicerApplication::application()->setInitialized(true);
+
   // Instanciate module manager
   qSlicerApplication::application()->setModuleManager(new qSlicerModuleManager);
+  qSlicerModuleFactoryManager * moduleFactoryManager =
+      qSlicerApplication::application()->moduleManager()->factoryManager();
+
+  // Register module factories
+  moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory",
+                                        new qSlicerCoreModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
+                                        new qSlicerLoadableModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
+                                        new qSlicerCLILoadableModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
+                                        new qSlicerCLIExecutableModuleFactory());
 #endif
 
   slicerApp->SplashMessage("Creating Application GUI...");
@@ -1035,30 +1057,7 @@ int Slicer3_main(int& argc, char *argv[])
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
 
 #ifdef Slicer3_USE_QT
-  /*
-  std::string qtModulePaths;
-  std::string defaultQTModulePaths;
-
-  // On Win32, *both* paths have to be there, since scripts are installed
-  // in the install location, and exec/libs are *automatically* installed
-  // in intDir.
-  defaultQTModulePaths = slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
-  if (hasIntDir)
-    {
-    defaultQTModulePaths = defaultQTModulePaths + PathSep +
-      slicerHome + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + intDir;
-    }
-
-  // add the default modules directory (based on the slicer
-  // installation or build tree) to the user paths
-  qtModulePaths = userModulePaths + PathSep + defaultQTModulePaths;
-  
-  qSlicerApplication::application()->moduleManager()->factory()->setLoadableModuleSearchPaths(
-    QString::fromStdString(qtModulePaths).split(PathSep));
-  */
   qSlicerApplication::application()->initializePaths(QString::fromStdString(programPath));
-  qSlicerApplication::application()->initializeLoadableModulesPaths();
-  //cout << "qtModulePaths:" << qtModulePaths << endl;
 #endif
 
   // =================== vvv
@@ -1108,14 +1107,6 @@ int Slicer3_main(int& argc, char *argv[])
   // add the default plugins directory (based on the slicer
   // installation or build tree) to the user paths
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
-
-#ifdef Slicer3_USE_QT
-  //qSlicerApplication::application()->moduleManager()->factory()->setCmdLineModuleSearchPaths(
-  //  QString::fromStdString(pluginsPaths).split(PathSep));
-  qSlicerApplication::application()->initializeCmdLineModulesPaths();
-  //cout << "cmdLineModulePaths:" << cmdLineModulePaths << endl;
-#endif
-
 
   vtksys_stl::vector<vtksys_stl::string> pluginsPathsList;
   vtksys::SystemTools::Split(pluginsPaths.c_str(), pluginsPathsList, PathSep[0]);
@@ -1247,8 +1238,8 @@ int Slicer3_main(int& argc, char *argv[])
     {
     loadableModuleFactory.Scan();
 #ifdef Slicer3_USE_QT
-    qSlicerApplication::application()->moduleManager()->factory()->registerLoadableModules();
-    qSlicerApplication::application()->moduleManager()->factory()->instantiateLoadableModules();
+    moduleFactoryManager->registerModules("qSlicerLoadableModuleFactory");
+    moduleFactoryManager->instantiateModules("qSlicerLoadableModuleFactory");
 #endif
     }
 
@@ -1341,8 +1332,8 @@ int Slicer3_main(int& argc, char *argv[])
 #ifndef MODELS_DEBUG
 
 #ifdef Slicer3_USE_QT
-  qSlicerApplication::application()->moduleManager()->factory()->registerCoreModules();
-  qSlicerApplication::application()->moduleManager()->factory()->instantiateCoreModules();
+  moduleFactoryManager->registerModules("qSlicerCoreModuleFactory");
+  moduleFactoryManager->instantiateModules("qSlicerCoreModuleFactory");
 #endif
 
   SlicerQDebug("Initializing Models Module");
@@ -1607,8 +1598,11 @@ int Slicer3_main(int& argc, char *argv[])
       }
     moduleFactory.Scan();
 #ifdef Slicer3_USE_QT
-    qSlicerApplication::application()->moduleManager()->factory()->registerCmdLineModules();
-    qSlicerApplication::application()->moduleManager()->factory()->instantiateCmdLineModules();
+    moduleFactoryManager->registerModules("qSlicerCLILoadableModuleFactory");
+    moduleFactoryManager->instantiateModules("qSlicerCLILoadableModuleFactory");
+
+    moduleFactoryManager->registerModules("qSlicerCLIExecutableModuleFactory");
+    moduleFactoryManager->instantiateModules("qSlicerCLIExecutableModuleFactory");
 #endif
 
     // Register the node type for the command line modules
@@ -1624,9 +1618,9 @@ int Slicer3_main(int& argc, char *argv[])
       ModuleDescription desc = moduleFactory.GetModuleDescription(*mit);
       // slicerCerr(desc << endl);
 #ifdef Slicer3_USE_QT
-      qDebug() << "Initialize command line module:" << mit->c_str()
-               << "/" << desc.GetTitle().c_str()
-               << "/" <<desc.GetLocation().c_str() ;
+      //qDebug() << "Initialize command line module:" << mit->c_str()
+      //         << "/" << desc.GetTitle().c_str()
+      //         << "/" <<desc.GetLocation().c_str() ;
 #endif
 
       vtkCommandLineModuleGUI *commandLineModuleGUI

@@ -10,10 +10,6 @@ SET(slicer_qtbase_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
 SET(slicer_qtbase_include_directories
   ${qSlicerBaseQTBase_SOURCE_DIR}
   ${qSlicerBaseQTBase_BINARY_DIR}
-  ${qSlicerBaseQTCLI_SOURCE_DIR}
-  ${qSlicerBaseQTCLI_BINARY_DIR}
-  ${qSlicerBaseQTCoreModules_SOURCE_DIR}
-  ${qSlicerBaseQTCoreModules_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
@@ -26,10 +22,12 @@ SET(slicer_qtbase_SRCS
   qSlicerCoreApplication.h
   qSlicerCoreIOManager.cxx
   qSlicerCoreIOManager.h
-  qSlicerModuleFactory.cxx
-  qSlicerModuleFactory.h
+  qSlicerLoadableModuleFactory.cxx
+  qSlicerLoadableModuleFactory.h
   qSlicerModuleManager.cxx
   qSlicerModuleManager.h
+  qSlicerModuleFactoryManager.cxx
+  qSlicerModuleFactoryManager.h
   )
 
 # Headers that should run through moc
@@ -45,8 +43,6 @@ SET(slicer_qtbase_MOC_SRCS
 SET(slicer_qtbase_target_libraries
   ModuleDescriptionParser
   MRMLCLI
-  qSlicerBaseQTCLI
-  qSlicerBaseQTCoreModules
   qSlicerBaseQTBase
   )
 

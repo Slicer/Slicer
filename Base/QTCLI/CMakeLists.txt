@@ -18,13 +18,19 @@ SET(slicer_qtbase_include_directories
 
 # Source files
 SET(slicer_qtbase_SRCS
+  qSlicerCLIExecutableModuleFactory.cxx
+  qSlicerCLIExecutableModuleFactory.h
+  qSlicerCLILoadableModuleFactory.cxx
+  qSlicerCLILoadableModuleFactory.h
   qSlicerCLIModule.cxx
   qSlicerCLIModule.h
+  qSlicerCLIModuleFactoryHelper.cxx
+  qSlicerCLIModuleFactoryHelper.h
+  qSlicerCLIModuleLogic.cxx
+  qSlicerCLIModuleLogic.h
   qSlicerCLIModuleWidget.cxx
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
-  qSlicerCLIModuleLogic.cxx
-  qSlicerCLIModuleLogic.h
   )
 
 # Headers that should run through moc
@@ -46,6 +52,7 @@ SET(qt_module_resources
 SET(slicer_qtbase_target_libraries
   qCTKWidgets
   qSlicerBaseQTBase
+  qSlicerBaseQTCore
   SlicerBaseLogic
   ModuleDescriptionParser
   MRMLCLI

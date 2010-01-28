@@ -1,11 +1,15 @@
 #include "qSlicerApplication.h"
 
 // SlicerQT includes
-#include "qSlicerModuleManager.h"
 #include "qSlicerModulePanel.h"
-#include "qSlicerModuleFactory.h"
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleSelectorWidget.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerCoreModuleFactory.h"
+#include "qSlicerLoadableModuleFactory.h"
+#include "qSlicerCLILoadableModuleFactory.h"
+#include "qSlicerCLIExecutableModuleFactory.h"
 
 // qMRML includes
 // #include <qMRMLEventLoggerWidget.h>
@@ -56,25 +60,30 @@ int main(int argc, char* argv[])
 
   app.initialize();
 
-  app.initializeLoadableModulesPaths();
-  app.initializeCmdLineModulesPaths();
-
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
-  
-  moduleManager->factory()->registerCoreModules();
-  moduleManager->factory()->registerLoadableModules();
-  moduleManager->factory()->registerCmdLineModules();
 
-  moduleManager->factory()->instantiateCoreModules();
-  moduleManager->factory()->instantiateLoadableModules();
-  moduleManager->factory()->instantiateCmdLineModules();
+  qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
+  
+  // Register module factories
+  moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory",
+                                        new qSlicerCoreModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
+                                        new qSlicerLoadableModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
+                                        new qSlicerCLILoadableModuleFactory());
+  moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
+                                        new qSlicerCLIExecutableModuleFactory());
+
+  // Register and instanciate modules
+  moduleFactoryManager->registerAllModules();
+  moduleFactoryManager->instantiateAllModules();
   
   // Create main window
   qSlicerMainWindow window;
   
   // Load all available modules
-  QStringList moduleNames = moduleManager->factory()->moduleNames();
+  QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
   foreach(const QString& name, moduleNames)
     {
     moduleManager->loadModule(name);

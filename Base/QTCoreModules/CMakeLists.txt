@@ -14,6 +14,9 @@ SET(slicer_qtbase_include_directories
   
 # Source files
 SET(slicer_qtbase_SRCS
+  qSlicerCoreModuleFactory.cxx
+  qSlicerCoreModuleFactory.h
+  
   qSlicerCamerasModule.cxx
   qSlicerCamerasModule.h
   qSlicerCamerasModuleLogic.cxx
@@ -47,6 +50,7 @@ SET(slicer_qtbase_UI_SRCS
 # Additional Target libraries (QT libs already included)
 SET(slicer_qtbase_target_libraries
   qSlicerBaseQTBase
+  qSlicerBaseQTCore
   )
 
 # Resources

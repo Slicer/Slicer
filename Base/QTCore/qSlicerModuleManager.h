@@ -22,7 +22,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerAbstractModule;
-class qSlicerModuleFactory;
+class qSlicerModuleFactoryManager; 
 
 class qSlicerModuleManagerPrivate;
 
@@ -37,30 +37,30 @@ public:
   virtual void printAdditionalInfo();
 
   // Description:
-  // Return a pointer to the current module factory
-  qSlicerModuleFactory* factory()const;
+  // Return a pointer to the current module factory manager
+  qSlicerModuleFactoryManager * factoryManager()const;
 
   // Description:
-  bool loadModule(const QString& moduleName);
+  bool loadModule(const QString& name);
 
   // Description:
-  bool unLoadModule(const QString& moduleName);
+  bool unLoadModule(const QString& name);
 
   // Description:
-  bool isLoaded(const QString& moduleName)const;
+  bool isLoaded(const QString& name)const;
 
   // Description:
-  qSlicerAbstractModule* module(const QString& moduleName);
+  qSlicerAbstractModule* module(const QString& name);
 
   // Description:
   // Convenient method to get module title given its name
   // Deprecated
-  QString moduleTitle(const QString& moduleName) const;
+  QString moduleTitle(const QString& name) const;
 
   // Description:
   // Convenient method to get module name given its title
   // Deprecated
-  QString moduleName(const QString& moduleTitle) const;
+  QString moduleName(const QString& title) const;
 
 signals:
   void moduleLoaded(qSlicerAbstractModule* module);
