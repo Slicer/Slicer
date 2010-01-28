@@ -70,7 +70,7 @@ MACRO(Slicer3_build_qtmodule)
   # Sources
   #
 
-  QT4_WRAP_CPP(QTMODULE_SRCS ${QTMODULE_MOC_SRCS})
+  QT4_WRAP_CPP(QTMODULE_MOC_OUTPUT ${QTMODULE_MOC_SRCS})
   QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
   IF(DEFINED QTMODULE_RESOURCES)
     QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${QTMODULE_RESOURCES})
@@ -84,11 +84,24 @@ MACRO(Slicer3_build_qtmodule)
     WRAP_EXCLUDE
     )
 
+  SOURCE_GROUP("Resources" FILES
+    ${QTMODULE_UI_SRCS}
+    ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${QTMODULE_RESOURCES}
+  )
+
+  SOURCE_GROUP("Generated" FILES
+    ${QTMODULE_UI_CXX}
+    ${QTMODULE_MOC_OUTPUT}
+    ${QTMODULE_QRC_SRCS}
+    ${dynamicHeaders}
+  )
   # --------------------------------------------------------------------------
   # Build the library
 
   ADD_LIBRARY(${lib_name}
     ${QTMODULE_SRCS}
+    ${QTMODULE_MOC_OUTPUT}
     ${QTMODULE_UI_CXX}
     ${QTMODULE_QRC_SRCS}
     #${qSlicerModule_TCL_SRCS}

@@ -71,8 +71,8 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   #-----------------------------------------------------------------------------
   # Sources
   #
-  
-  QT4_WRAP_CPP(SLICERQTBASELIB_SRCS ${SLICERQTBASELIB_MOC_SRCS})
+
+  QT4_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS})
   QT4_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
   IF(DEFINED SLICERQTBASELIB_RESOURCES)
     QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
@@ -85,6 +85,20 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${SLICERQTBASELIB_SRCS}
     WRAP_EXCLUDE
     )
+
+  SOURCE_GROUP("Resources" FILES
+    ${SLICERQTBASELIB_UI_SRCS}
+    ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${SLICERQTBASELIB_RESOURCES}
+  )
+
+  SOURCE_GROUP("Generated" FILES
+    ${SLICERQTBASELIB_UI_CXX}
+    ${SLICERQTBASELIB_MOC_OUTPUT}
+    ${SLICERQTBASELIB_QRC_SRCS}
+    ${dynamicHeaders}
+  )
+
   
   
   # --------------------------------------------------------------------------
@@ -95,6 +109,7 @@ MACRO(Slicer3_build_slicer_qtbase_library)
 
   ADD_LIBRARY(${lib_name}
     ${SLICERQTBASELIB_SRCS}
+    ${SLICERQTBASELIB_MOC_OUTPUT}
     ${SLICERQTBASELIB_UI_CXX}
     ${SLICERQTBASELIB_QRC_SRCS}
     )
