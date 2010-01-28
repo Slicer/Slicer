@@ -16,6 +16,8 @@
 
 // QT includes
 #include <QDebug>
+#include <QStack>
+
 
 //-----------------------------------------------------------------------------
 class qMRMLTransformSlidersPrivate: public qCTKPrivate<qMRMLTransformSliders>,
@@ -29,6 +31,7 @@ public:
     
   qMRMLTransformSliders::TransformType   TypeOfTransform;
   vtkMRMLLinearTransformNode*            MRMLTransformNode;
+  QStack<qMRMLLinearTransformSlider*>    ActiveSliders;
 };
 
 // --------------------------------------------------------------------------
@@ -42,14 +45,14 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
   this->setCoordinateReference(Self::GLOBAL);
   this->setTypeOfTransform(Self::TRANSLATION);
 
-
-  this->connect(d->LRSlider, SIGNAL(sliderMoved(double)),
+  
+  this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
                 SLOT(onLRSliderPositionChanged(double)));
-  this->connect(d->PASlider, SIGNAL(sliderMoved(double)),
+  this->connect(d->PASlider, SIGNAL(valueChanged(double)),
                 SLOT(onPASliderPositionChanged(double)));
-  this->connect(d->ISSlider, SIGNAL(sliderMoved(double)),
+  this->connect(d->ISSlider, SIGNAL(valueChanged(double)),
                 SLOT(onISSliderPositionChanged(double)));
-
+  
   this->connect(d->MinValueSpinBox, SIGNAL(valueChanged(double)),
                 SLOT(onMinimumChanged(double)));
   this->connect(d->MaxValueSpinBox, SIGNAL(valueChanged(double)),
@@ -234,19 +237,19 @@ void qMRMLTransformSliders::setSingleStep(double step)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getLRLabel()const
+QString qMRMLTransformSliders::lrLabel()const
 {
   return qctk_d()->LRLabel->text();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getPALabel()const
+QString qMRMLTransformSliders::paLabel()const
 {
   return qctk_d()->PALabel->text();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::getISLabel()const
+QString qMRMLTransformSliders::isLabel()const
 {
   return qctk_d()->ISLabel->text();
 }
@@ -280,58 +283,93 @@ void qMRMLTransformSliders::reset()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
+void qMRMLTransformSliders::resetUnactiveSliders()
 {
   QCTK_D(qMRMLTransformSliders);
   
+  if (!d->ActiveSliders.contains(d->LRSlider))
+    {
+    d->LRSlider->blockSignals(true);
+    d->LRSlider->reset();
+    d->LRSlider->blockSignals(false);
+    }
+  if (!d->ActiveSliders.contains(d->PASlider))
+    {
+    d->PASlider->blockSignals(true);
+    d->PASlider->reset();
+    d->PASlider->blockSignals(false);
+    }
+  if (!d->ActiveSliders.contains(d->ISSlider))
+    {
+    d->ISSlider->blockSignals(true);
+    d->ISSlider->reset();
+    d->ISSlider->blockSignals(false);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
+{
+  QCTK_D(qMRMLTransformSliders);
+  d->ActiveSliders.push(d->LRSlider);
+
   if (this->typeOfTransform() == Self::ROTATION)
     {
     // Reset other sliders
+    d->PASlider->blockSignals(true);
     d->PASlider->reset();
+    d->PASlider->blockSignals(false);
+    d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
-    }
-  else
-    {
-    emit this->sliderMoved();
+    d->ISSlider->blockSignals(false);
     }
   // Update LR slider
   d->LRSlider->applyTransformation(position);
+  emit this->valuesChanged();
+
+  d->ActiveSliders.pop();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onPASliderPositionChanged(double position)
 {
   QCTK_D(qMRMLTransformSliders);
-  
+  d->ActiveSliders.push(d->PASlider);
+
   if (this->typeOfTransform() == Self::ROTATION)
     {
     // Reset other sliders
+    d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
+    d->LRSlider->blockSignals(false);
+    d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
-    }
-  else
-    {
-    emit this->sliderMoved();
+    d->ISSlider->blockSignals(false);
     }
   // Update PA slider
   d->PASlider->applyTransformation(position);
+  emit this->valuesChanged();
+  d->ActiveSliders.pop();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onISSliderPositionChanged(double position)
 {
   QCTK_D(qMRMLTransformSliders);
-  
+   d->ActiveSliders.push(d->ISSlider);
   if (this->typeOfTransform() == Self::ROTATION)
     {
     // Reset other sliders
+    d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
+    d->LRSlider->blockSignals(false);
+    d->PASlider->blockSignals(true);
     d->PASlider->reset();
+    d->PASlider->blockSignals(false);
     }
-  else
-    {
-    emit this->sliderMoved();
-    }
+  
   // Update IS slider
   d->ISSlider->applyTransformation(position);
+  emit this->valuesChanged();
+  d->ActiveSliders.pop();
 }

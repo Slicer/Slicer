@@ -27,9 +27,9 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_ENUMS(CoordinateReferenceType)
   Q_PROPERTY(TransformType TypeOfTransform READ typeOfTransform WRITE setTypeOfTransform)
   Q_ENUMS(TransformType)
-  Q_PROPERTY(QString LRLabel READ getLRLabel WRITE setLRLabel)
-  Q_PROPERTY(QString PALabel READ getPALabel WRITE setPALabel)
-  Q_PROPERTY(QString ISLabel READ getISLabel WRITE setISLabel)
+  Q_PROPERTY(QString LRLabel READ lrLabel WRITE setLRLabel)
+  Q_PROPERTY(QString PALabel READ paLabel WRITE setPALabel)
+  Q_PROPERTY(QString ISLabel READ isLabel WRITE setISLabel)
   Q_PROPERTY(double SingleStep READ singleStep WRITE setSingleStep)
 
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -88,9 +88,9 @@ public:
 
   // Description:
   // Get/Set slider's label
-  QString getLRLabel()const;
-  QString getPALabel()const;
-  QString getISLabel()const;
+  QString lrLabel()const;
+  QString paLabel()const;
+  QString isLabel()const;
   void setLRLabel(const QString& label);
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
@@ -101,8 +101,8 @@ public:
 
 signals:
   // Description:
-  // Signal sent if at least one of the slider's position is updated
-  void sliderMoved();
+  // Signal sent if at least one of the slider's value is updated
+  void valuesChanged();
 
 public slots:
   // Description:
@@ -113,6 +113,10 @@ public slots:
   // Description:
   // Reset all sliders to their 0 position and value
   void reset();
+
+  /// Reset all sliders but the one that are currently active (i.e. the user
+  /// is changing its value.
+  void resetUnactiveSliders();
 
 protected slots:
   void onLRSliderPositionChanged(double position);

@@ -178,8 +178,8 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
     this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
 
-  // The matrix can be changed externally. The min/max values shall be updated accordingly to
-  // the new matrix if needed.
+  // The matrix can be changed externally. The min/max values shall be updated 
+  //accordingly to the new matrix if needed.
   vtkMatrix4x4 * mat = transform->GetMatrix();
   double min = 0.;
   double max = 0.;
@@ -208,7 +208,7 @@ void qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
   for (int i=0; i <3; i++)
     {
     min = qMin(min, mat->GetElement(i,3));
-    max = qMin(max, mat->GetElement(i,3));
+    max = qMax(max, mat->GetElement(i,3));
     }
 }
 

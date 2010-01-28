@@ -18,6 +18,11 @@
 
 #include <QDebug>
 
+bool equal(double v1, double v2)
+{
+  return qAbs(v1 - v2) < 0.0001;
+}
+
 //-----------------------------------------------------------------------------
 namespace
 {
@@ -46,42 +51,49 @@ qCTKSliderSpinBoxLabel::qCTKSliderSpinBoxLabel(QWidget* _parent) : Superclass(_p
   
   d->setupUi(this);
 
-  d->Slider->setTracking(false);
-  d->SpinBox->setKeyboardTracking(false);
+  //d->Slider->setTracking(false);
+  //d->SpinBox->setKeyboardTracking(false);
+  d->Slider->setMaximum(d->SpinBox->maximum());
+  d->Slider->setMinimum(d->SpinBox->minimum());
 
   this->connect(d->Slider, SIGNAL(sliderMoved(double)), SIGNAL(sliderMoved(double)));
-  this->connect(d->SpinBox, SIGNAL(valueChanged(double)),
-                SLOT(onSpinBoxValueChanged(double)));
+  this->connect(d->Slider, SIGNAL(valueChanged(double)), d->SpinBox, SLOT(setValue(double)));
+  this->connect(d->SpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setValue(double)));
+  this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
 }
 
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxLabel::minimum()const
 {
-  return qctk_d()->Slider->minimumAsDbl();
+  QCTK_D(const qCTKSliderSpinBoxLabel);
+  Q_ASSERT(equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  return d->Slider->minimum();
 }
 
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxLabel::maximum()const
 {
-  return qctk_d()->Slider->maximumAsDbl();
+  QCTK_D(const qCTKSliderSpinBoxLabel);
+  Q_ASSERT(equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  return d->Slider->maximum();
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setMinimum(double min)
 {
   QCTK_D(qCTKSliderSpinBoxLabel);
-  
   d->Slider->setMinimum(min);
   d->SpinBox->setMinimum(min);
+  Q_ASSERT(equal(d->SpinBox->minimum(),d->Slider->minimum()));
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setMaximum(double max)
 {
   QCTK_D(qCTKSliderSpinBoxLabel);
-  
   d->Slider->setMaximum(max);
   d->SpinBox->setMaximum(max);
+  Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
 }
 
 // --------------------------------------------------------------------------
@@ -91,12 +103,14 @@ void qCTKSliderSpinBoxLabel::setRange(double min, double max)
   
   d->Slider->setRange(min, max);
   d->SpinBox->setRange(min, max);
+  Q_ASSERT(equal(d->SpinBox->minimum(), d->Slider->minimum()));
+  Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
 }
 
 // --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::sliderPosition()
+double qCTKSliderSpinBoxLabel::sliderPosition()const
 {
-  return qctk_d()->Slider->sliderPositionAsDbl();
+  return qctk_d()->Slider->sliderPosition();
 }
 
 // --------------------------------------------------------------------------
@@ -105,64 +119,67 @@ void qCTKSliderSpinBoxLabel::setSliderPosition(double position)
   qctk_d()->Slider->setSliderPosition(position);
 }
 
+/*
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxLabel::previousSliderPosition()
 {
   return qctk_d()->Slider->previousSliderPosition();
 }
+*/
 
 // --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::value()
+double qCTKSliderSpinBoxLabel::value()const
 {
-  return qctk_d()->Slider->valueAsDbl();
+  QCTK_D(const qCTKSliderSpinBoxLabel);
+  Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
+  return d->Slider->value();
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setValue(double _value)
 {
   QCTK_D(qCTKSliderSpinBoxLabel);
-  
-  d->Slider->setValue(_value);
-
-  d->SpinBox->blockSignals(true);
+  //qDebug() << __FUNCTION__ << "set: " << _value;
+  //qDebug() << __FUNCTION__ << "old values: " << d->Slider->value() << " " << d->SpinBox->value();
   d->SpinBox->setValue(_value);
-  d->SpinBox->blockSignals(false);
+  //qDebug() << __FUNCTION__ << "inter: " << d->Slider->value() << d->SpinBox->value();
+//  d->SpinBox->blockSignals(true);
+  d->Slider->setValue(d->SpinBox->value());
+//  d->SpinBox->blockSignals(false);
+  //qDebug() << __FUNCTION__ << "new values: " << d->Slider->value() << " " << d->SpinBox->value();
+  Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
 }
 
 // --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::singleStep()
+double qCTKSliderSpinBoxLabel::singleStep()const
 {
-  return qctk_d()->Slider->singleStepAsDbl();
+  QCTK_D(const qCTKSliderSpinBoxLabel);
+  Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
+  return qctk_d()->Slider->singleStep();
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setSingleStep(double step)
 {
-  QCTK_D(qCTKSliderSpinBoxLabel);
-  
+  QCTK_D(qCTKSliderSpinBoxLabel);;
   d->Slider->setSingleStep(step);
   d->SpinBox->setSingleStep(step);
   d->SpinBox->setDecimals(::getDecimalCount(step));
+  Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
 }
 
 // --------------------------------------------------------------------------
-double qCTKSliderSpinBoxLabel::tickInterval()
+double qCTKSliderSpinBoxLabel::tickInterval()const
 {
-  return qctk_d()->Slider->tickIntervalAsDbl();
+  QCTK_D(const qCTKSliderSpinBoxLabel);
+  return d->Slider->tickInterval();
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxLabel::setTickInterval(double ti)
-{
-  qctk_d()->Slider->setTickInterval(ti);
-}
-
-// -------------------------------------------------------------------------
-void qCTKSliderSpinBoxLabel::onSpinBoxValueChanged(double _value)
-{
-  qctk_d()->Slider->setSliderPosition(_value);
-  emit this->sliderMoved(_value);
-  emit this->valueChanged(_value);
+{ 
+  QCTK_D(qCTKSliderSpinBoxLabel);
+  d->Slider->setTickInterval(ti);
 }
 
 // -------------------------------------------------------------------------
@@ -170,8 +187,10 @@ void qCTKSliderSpinBoxLabel::reset()
 {
   QCTK_D(qCTKSliderSpinBoxLabel);
   
-  d->Slider->reset();
+  d->Slider->setValue(0);
+/*
   d->SpinBox->blockSignals(true);
   d->SpinBox->setValue(0);
   d->SpinBox->blockSignals(false);
+*/
 }

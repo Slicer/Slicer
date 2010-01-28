@@ -54,36 +54,35 @@ public:
 
   // Description:
   // Set/Get slider position
-  double sliderPosition();
+  double sliderPosition()const;
   void setSliderPosition(double position);
-  double previousSliderPosition();
+  //double previousSliderPosition();
 
   // Description:
   // Set/Get value
-  double value();
-  void setValue(double value);
+  double value()const;
 
   // Description:
   // Set/Get single step
-  double singleStep();
+  double singleStep()const;
   void setSingleStep(double step);
 
   // Description:
   // Set/Get tick interval
-  double tickInterval();
+  double tickInterval()const;
   void setTickInterval(double ti);
 
 public slots:
   // Description:
   // Reset the slider and spinbox to zero (value and position)
   void reset();
+  void setValue(double value);
 
 signals:
+  /// Use with care:
+  /// sliderMoved is emitted only when the user moves the slider
   void sliderMoved(double position);
   void valueChanged(double value);
-
-protected slots:
-  void onSpinBoxValueChanged(double value);
 
 private:
   QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxLabel);

@@ -43,8 +43,8 @@ public:
 
   // Description:
   // Convenience method allowing to get which familly of transform is set
-  bool isRotation();
-  bool isTranslation();
+  bool isRotation()const;
+  bool isTranslation()const;
 
   // Description:
   // Set/Get Coordinate system
@@ -54,10 +54,6 @@ public:
   CoordinateReferenceType coordinateReference() const;
 
   // Description:
-  // Apply the appropriate rotation/translation according to the typeOfTransform of the slider.
-  void applyTransformation(double sliderPosition);
-
-  // Description:
   // Return the current transform node
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 public slots:
@@ -65,6 +61,10 @@ public slots:
   // Set the MRML node of interest
   // Note that setting transformNode to 0 will disable the widget
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
+
+  // Description:
+  // Apply the appropriate rotation/translation according to the typeOfTransform of the slider.
+  void applyTransformation(double sliderPosition);
 
 protected slots:
   // Description:

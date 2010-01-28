@@ -423,9 +423,9 @@
   </connection>
   <connection>
    <sender>TranslationSliders</sender>
-   <signal>sliderMoved()</signal>
+   <signal>valuesChanged()</signal>
    <receiver>RotationSliders</receiver>
-   <slot>reset()</slot>
+   <slot>resetUnactiveSliders()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>64</x>
