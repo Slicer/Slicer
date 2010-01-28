@@ -180,8 +180,9 @@ void vtkSlicerTransformEditorWidget::UpdateMatrix ()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerTransformEditorWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                         unsigned long event,
+                                                         void *vtkNotUsed(callData))
 {
   if (this->ProcessingCallback)
     {
@@ -269,8 +270,9 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerTransformEditorWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *vtkNotUsed(callData))
 {
   if (this->MatrixWidget->GetMatrix4x4() == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
     {

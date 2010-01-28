@@ -755,7 +755,8 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min,
 }
 
 //----------------------------------------------------------------------------
-void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelEndCommand(double min, double max)
+void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelEndCommand(double vtkNotUsed(min),
+                                                                   double vtkNotUsed(max))
 {
   this->UpdateTransferFunction();
 }
@@ -810,7 +811,8 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
 }
 
 //----------------------------------------------------------------------------
-void vtkKWWindowLevelThresholdEditor::ProcessThresholdEndCommand(double min, double max)
+void vtkKWWindowLevelThresholdEditor::ProcessThresholdEndCommand(double vtkNotUsed(min),
+                                                                 double vtkNotUsed(max))
 {
   this->UpdateTransferFunction();
 }
@@ -955,7 +957,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
 }
 
 //----------------------------------------------------------------------------
-void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int state)
+void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int vtkNotUsed(state))
 {
   if (!this->ProcessCallbacks)
     {

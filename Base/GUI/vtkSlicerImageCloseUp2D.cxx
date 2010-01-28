@@ -48,7 +48,7 @@ void vtkSlicerImageCloseUp2D::ExecuteInformation(vtkImageData *inData,
 
 //----------------------------------------------------------------------------
 
-void vtkSlicerImageCloseUp2D::ComputeInputUpdateExtent(int inExt[6], int outExt[6])
+void vtkSlicerImageCloseUp2D::ComputeInputUpdateExtent(int inExt[6], int vtkNotUsed(outExt)[6])
 
 {
     // Use full input extent
@@ -62,7 +62,8 @@ template <class T>
 static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
                      vtkImageData *inData, T *inPtr,
                      vtkImageData *outData, T* outPtr, 
-                     int outExt[6], int id)
+                     int outExt[6],
+                     int vtkNotUsed(id))
 {
     int idxX, maxX, idxY, maxY;
     long inRowLength, inSliceSize;

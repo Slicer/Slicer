@@ -20,8 +20,9 @@ vtkCxxRevisionMacro(vtkKWProgressDialog , "$Revision: 1.49 $");
 // the Callback is a static function to reflect progress to the widget
 //
 void 
-vtkKWProgressDialog::Callback(vtkObject *caller, 
-                                    unsigned long eid, void *clientData, void *callData)
+vtkKWProgressDialog::Callback(vtkObject *vtkNotUsed(caller), 
+                              unsigned long vtkNotUsed(eid),
+                              void *clientData, void *callData)
 {
   vtkKWProgressDialog *self = reinterpret_cast<vtkKWProgressDialog *>(clientData);
 

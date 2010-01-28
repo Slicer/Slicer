@@ -260,8 +260,9 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                           unsigned long event, void *callData )
+void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
 {
   vtkDebugWithObjectMacro(this,"Process MRML Events");
 

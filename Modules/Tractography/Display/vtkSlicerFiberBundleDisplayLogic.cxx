@@ -151,7 +151,8 @@ void vtkSlicerFiberBundleDisplayLogic::DeleteTemporaryModelNodeForDisplay ( vtkM
 } 
 
 //----------------------------------------------------------------------------
-void vtkSlicerFiberBundleDisplayLogic::VisibilityOffForTemporaryModel ( vtkMRMLModelNode * modelNode,  vtkMRMLModelDisplayNode * displayNode)
+void vtkSlicerFiberBundleDisplayLogic::VisibilityOffForTemporaryModel (
+  vtkMRMLModelNode * vtkNotUsed(modelNode),  vtkMRMLModelDisplayNode * displayNode)
 {
   vtkDebugMacro("Turning off model visibility");
 
@@ -625,9 +626,9 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerFiberBundleDisplayLogic::ProcessMRMLEvents( vtkObject * caller, 
-                                            unsigned long event, 
-                                            void * callData )
+void vtkSlicerFiberBundleDisplayLogic::ProcessMRMLEvents(vtkObject * caller,
+                                                         unsigned long event, 
+                                                         void * vtkNotUsed(callData))
 {
 
 

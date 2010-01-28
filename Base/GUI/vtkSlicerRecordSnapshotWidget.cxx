@@ -87,8 +87,9 @@ void vtkSlicerRecordSnapshotWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *vtkNotUsed(callData))
 {
 
   if (this->SaveClipButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
@@ -170,8 +171,9 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerRecordSnapshotWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerRecordSnapshotWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                      unsigned long event,
+                                                      void *vtkNotUsed(callData))
 {
   if (vtkMRMLNode::SafeDownCast(caller)  && event == vtkCommand::ModifiedEvent )
     {

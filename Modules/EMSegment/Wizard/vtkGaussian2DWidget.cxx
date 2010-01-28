@@ -221,10 +221,10 @@ int vtkGaussian2DWidget::DrawGaussian(
     double varianceX,
     double varianceY,
     double covariance,
-    double sine,
-    double cosine,
-    double lambda1,
-    double lambda2,
+    double vtkNotUsed(sine),
+    double vtkNotUsed(cosine),
+    double vtkNotUsed(lambda1),
+    double vtkNotUsed(lambda2),
     double hue)
 {
   if(!this->IsCreated())

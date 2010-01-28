@@ -47,7 +47,7 @@ vtkSlicerWelcomeLogic::~vtkSlicerWelcomeLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerWelcomeLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 

@@ -729,7 +729,7 @@ void vtkMimxTraceContourWidget::OnRightButtonUp()
 
 }
 
-void vtkMimxTraceContourWidget::PlaceWidget(double bounds[6])
+void vtkMimxTraceContourWidget::PlaceWidget(double vtkNotUsed(bounds)[6])
 {
 
 }

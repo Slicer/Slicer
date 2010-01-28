@@ -108,7 +108,7 @@ vtkKWMimxCreateSurfaceFromContourGroup::~vtkKWMimxCreateSurfaceFromContourGroup(
           this->InteractionFrame->Delete();
 }
 //--------------------------------------------------------------------------
-void vtkKWMimxCreateSurfaceFromContourGroup::SelectionChangedCallback(const char* dummy)
+void vtkKWMimxCreateSurfaceFromContourGroup::SelectionChangedCallback(const char* vtkNotUsed(dummy))
 {
   if(this->TraceContourButton->GetSelectedState())
   {

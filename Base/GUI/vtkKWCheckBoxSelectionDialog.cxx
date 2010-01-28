@@ -165,9 +165,9 @@ void vtkKWCheckBoxSelectionDialog::SetAllEntriesSelected(int sel)
 }
 
 //---------------------------------------------------------------------------
-void vtkKWCheckBoxSelectionDialog::ProcessWidgetEvents ( vtkObject *caller,
-                                                    unsigned long event, 
-                                                    void *callData )
+void vtkKWCheckBoxSelectionDialog::ProcessWidgetEvents(vtkObject *caller,
+                                                       unsigned long event, 
+                                                       void *vtkNotUsed(callData))
 {
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if (button != NULL && event == vtkKWPushButton::InvokedEvent)

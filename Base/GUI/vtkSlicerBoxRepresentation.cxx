@@ -978,7 +978,7 @@ void vtkSlicerBoxRepresentation::GenerateOutline()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::ComputeInteractionState(int X, int Y, int modify)
+int vtkSlicerBoxRepresentation::ComputeInteractionState(int X, int Y, int vtkNotUsed(modify))
 {
   // Okay, we can process this. Try to pick handles first;
   // if no handles picked, then pick the bounding box.

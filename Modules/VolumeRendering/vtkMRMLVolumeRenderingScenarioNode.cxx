@@ -93,7 +93,8 @@ void vtkMRMLVolumeRenderingScenarioNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingScenarioNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLVolumeRenderingScenarioNode::UpdateReferenceID(const char *vtkNotUsed(oldID),
+                                                           const char *vtkNotUsed(newID))
 {
 
 }

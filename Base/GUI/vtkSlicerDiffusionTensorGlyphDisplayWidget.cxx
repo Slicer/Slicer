@@ -150,8 +150,9 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::SetDiffusionTensorDisplayProper
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                                      unsigned long event, void *callData )
+void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                                     unsigned long event,
+                                                                     void *vtkNotUsed(callData))
   {
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *displayNode = 
@@ -236,8 +237,9 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                                    unsigned long event, void *callData )
+void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                                   unsigned long event,
+                                                                   void *vtkNotUsed(callData))
   {
 
   if (!this->DiffusionTensorDisplayPropertiesNodeID )

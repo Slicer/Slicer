@@ -117,7 +117,7 @@ vtkCommandLineModuleLogic::~vtkCommandLineModuleLogic()
 //----------------------------------------------------------------------------
 void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 std::string
@@ -164,7 +164,7 @@ vtkCommandLineModuleLogic
 std::string
 vtkCommandLineModuleLogic
 ::ConstructTemporaryFileName(const std::string& tag,
-                             const std::string& type,
+                             const std::string& vtkNotUsed(type),
                              const std::string& name,
                              const std::vector<std::string>& extensions,
                              CommandLineModuleType commandType) const

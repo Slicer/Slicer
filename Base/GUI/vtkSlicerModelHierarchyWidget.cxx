@@ -313,7 +313,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
 } 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::SelectReparentCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::SelectReparentCallback(const char *vtkNotUsed(id))
 {
   this->SelectedForReparenting.clear();
   this->SelectedForReparenting = this->SelectedLeaves;
@@ -391,7 +391,7 @@ void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *vtkNotUsed(id))
 {
   int visibility = 0;
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
@@ -440,7 +440,7 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *id)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::ModelVisibilityCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::ModelVisibilityCallback(const char *vtkNotUsed(id))
 {
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
@@ -462,7 +462,7 @@ void vtkSlicerModelHierarchyWidget::ModelVisibilityCallback(const char *id)
     }
 }
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::ColorCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::ColorCallback(const char *vtkNotUsed(id))
 {
   vtkMRMLDisplayNode *dnode = NULL;
 
@@ -503,7 +503,7 @@ void vtkSlicerModelHierarchyWidget::ColorCallback(const char *id)
 
 }
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *vtkNotUsed(id))
 {
   // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
@@ -519,7 +519,7 @@ void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::RenameNodeCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::RenameNodeCallback(const char *vtkNotUsed(id))
 {
   // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
@@ -599,7 +599,7 @@ void vtkSlicerModelHierarchyWidget::SearchNodeCallback()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *vtkNotUsed(id))
 {
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
@@ -793,9 +793,9 @@ void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                  unsigned long event, 
-                                                  void *callData )
+void vtkSlicerModelHierarchyWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                      unsigned long event, 
+                                                      void *callData )
 {
   if (((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent) && 
       (reinterpret_cast<vtkMRMLModelNode *>(callData) || reinterpret_cast<vtkMRMLModelHierarchyNode *>(callData))) ||

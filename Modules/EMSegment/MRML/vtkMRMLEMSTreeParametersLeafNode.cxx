@@ -439,20 +439,20 @@ void vtkMRMLEMSTreeParametersLeafNode::PrintSelf(ostream& os,vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSTreeParametersLeafNode::AddChildNode(const char* childNodeID)
+void vtkMRMLEMSTreeParametersLeafNode::AddChildNode(const char* vtkNotUsed(childNodeID))
 {
   // nothing to do here
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSTreeParametersLeafNode::RemoveNthChildNode(int n)
+void vtkMRMLEMSTreeParametersLeafNode::RemoveNthChildNode(int vtkNotUsed(n))
 {
   // nothing to do here
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSTreeParametersLeafNode::MoveNthChildNode(int fromIndex, int
-    toIndex)
+void vtkMRMLEMSTreeParametersLeafNode::MoveNthChildNode(int vtkNotUsed(fromIndex), int
+    vtkNotUsed(toIndex))
 {
   // nothing to do here
 }

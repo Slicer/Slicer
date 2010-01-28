@@ -86,7 +86,7 @@ std::cerr << (match ? "OK" : "FAILED") << std::endl;                    \
 pass = pass && match;                                                   \
 }                                                                       \
 
-int main(int argc, char** argv)
+int main(int vtkNotUsed(argc), char** argv)
 {
   std::cerr << "Starting EM mrml manager test..." << std::endl;
 

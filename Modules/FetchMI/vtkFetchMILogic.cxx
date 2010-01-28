@@ -1247,7 +1247,9 @@ void vtkFetchMILogic::SetFetchMINode( vtkMRMLFetchMINode *node )
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkFetchMILogic::ProcessMRMLEvents(vtkObject *caller,
+                                        unsigned long event,
+                                        void *vtkNotUsed(callData))
 {
 
   if ( !this->Visited )

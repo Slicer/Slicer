@@ -1,6 +1,13 @@
 #ifndef __vtkSlicerApplication_h
 #define __vtkSlicerApplication_h
 
+#include "vtkSlicerConfigure.h"
+
+#ifdef Slicer3_USE_QT
+// QT includes
+#include <QStringList>
+#endif
+
 #include "vtkStringArray.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWApplication.h"
@@ -13,7 +20,6 @@
 //BTX
 class qSlicerApplication;
 class qSlicerModulePanel;
-class QStringList;
 //ETX
 #endif
 
@@ -93,13 +99,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     /// 
     /// Initialize a list of QtModules given a list of names
     //BTX
-    void InitializeQtModules(QStringList* names);
+    void InitializeQtModules(const QStringList& names);
     //ETX
 
     /// 
     /// Initialize a qt Module given its name
     //BTX
-    void InitializeQtModule(const char* moduleName);
+    void InitializeQtModule(const QString& moduleName);
     //ETX
 
     /// 

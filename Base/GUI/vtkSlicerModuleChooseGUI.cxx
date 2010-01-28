@@ -2,10 +2,11 @@
 #include "vtkSlicerConfigure.h"
 
 #ifdef Slicer3_USE_QT
+// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
-#include "qSlicerModuleFactory.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactoryManager.h"
 
 // QT includes 
 #include <QApplication>
@@ -523,15 +524,17 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModuleChooseGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkSlicerModuleChooseGUI::ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
+                                                    unsigned long vtkNotUsed(event),
+                                                    void *vtkNotUsed(callData) )
 {
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModuleChooseGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+void vtkSlicerModuleChooseGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
+                                                   unsigned long vtkNotUsed(event),
+                                                   void *vtkNotUsed(callData) )
 {
     // Fill in
 }
@@ -548,16 +551,11 @@ void vtkSlicerModuleChooseGUI::Exit ( )
     // Fill in
 }
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
 {
   this->ApplicationGUI = appGUI;
 }
-
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
@@ -754,21 +752,10 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesSearch->IndicatorVisibilityOff ( );
       this->ModulesSearch->SetBalloonHelpString ("Displays module search results for the text entered to the left (or use keyboard Ctrl+F).");
       tb->AddWidget ( this->ModulesSearch);
-
-
-
-
   }
-
-
 }
 
-
-
-
-
 //---------------------------------------------------------------------------
-
 void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchString )
 {
   vtkSlicerModuleGUI *m;
@@ -857,8 +844,6 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
       }
 }
 
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::Populate( )
 {
@@ -903,8 +888,8 @@ void vtkSlicerModuleChooseGUI::Populate( )
       // Here we process the modules that are QT only.
       qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
       Q_ASSERT(moduleManager);
-      Q_ASSERT(moduleManager->factory());
-      QStringList moduleNames = moduleManager->factory()->moduleNames();
+      Q_ASSERT(moduleManager->factoryManager());
+      QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
       // if the module has not been added already
       foreach(const QString& moduleName, moduleNames)
         {

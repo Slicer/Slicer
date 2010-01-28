@@ -202,7 +202,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
-void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRenderer *pRen, vtkVolume *pVol)
+void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRenderer *vtkNotUsed(pRen),
+                                                                      vtkVolume *pVol)
 {
   double bounds[6];
   this->GetInput()->GetBounds(bounds);
@@ -550,7 +551,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Setup3DTextureParameters( vtkVolu
   glTexParameterf( vtkgl::TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures( vtkRenderer *ren, vtkVolume *vol )
+void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTextures(vtkRenderer *vtkNotUsed(ren),
+                                                             vtkVolume *vol )
 {
   //0, 1, 2, 3
   //7, 6, 5, 4

@@ -112,6 +112,9 @@ public:
         virtual void SetEnabled(int);
         virtual void PlaceWidget(double bounds[6]);
         virtual void SetInput(vtkPolyData* polydata);
+        //BTX
+        using vtk3DWidget::SetInput;
+        //ETX
 
         void PlaceWidget()
         {this->Superclass::PlaceWidget();}

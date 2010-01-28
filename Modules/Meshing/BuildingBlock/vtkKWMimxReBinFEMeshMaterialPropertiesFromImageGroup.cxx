@@ -526,7 +526,7 @@ void vtkKWMimxReBinFEMeshMaterialPropertiesFromImageGroup::
 }
 //---------------------------------------------------------------------------------
 void vtkKWMimxReBinFEMeshMaterialPropertiesFromImageGroup::
-        FEMeshSelectionChangedCallback(const char *Selection)
+        FEMeshSelectionChangedCallback(const char *vtkNotUsed(Selection))
 {
         if(!this->FEMeshList->GetNumberOfItems())
         {

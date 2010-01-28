@@ -76,12 +76,12 @@ public:
    /** Should check if a point is inside the image buffer however we
    * require that it answers true to use the extrapolation
    * possibility. */
-   virtual bool IsInsideBuffer( const PointType & point ) const
+   virtual bool IsInsideBuffer( const PointType & itkNotUsed(point)) const
    { 
       return true;
    };
 
-   virtual bool IsInsideBuffer( const ContinuousIndexType & index ) const
+   virtual bool IsInsideBuffer( const ContinuousIndexType & itkNotUsed(index) ) const
    { 
       return true;
    };

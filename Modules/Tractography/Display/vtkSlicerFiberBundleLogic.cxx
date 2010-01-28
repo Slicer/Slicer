@@ -41,8 +41,8 @@ vtkSlicerFiberBundleLogic::~vtkSlicerFiberBundleLogic()
 
 //----------------------------------------------------------------------------
 void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller, 
-                                            unsigned long event, 
-                                            void * callData)
+                                                  unsigned long event, 
+                                                  void * vtkNotUsed(callData))
 {
 
   if (this->MRMLScene == NULL)

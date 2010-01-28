@@ -957,7 +957,9 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
   }
 }
 
-void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,unsigned long eid,void *callData)
+void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
+                                                      unsigned long eid,
+                                                      void *vtkNotUsed(callData))
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 

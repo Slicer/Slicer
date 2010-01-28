@@ -28,7 +28,7 @@
   std::cout << __FILE__ << "\n\tLine " << __LINE__ <<"\n\t" \
   << msg << std::endl;
 
-int main(int argc, char** argv)
+int main(int vtkNotUsed(argc), char** argv)
 {
   vtkEMSegmentPreprocessingManagerTest_DebugMacro(
       "Starting EM preprocessing manager test");

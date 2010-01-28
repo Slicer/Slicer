@@ -174,7 +174,9 @@ void vtkChangeTrackerFirstScanStep::WizardGUICallback(vtkObject *caller, unsigne
     }
 }
 
-void vtkChangeTrackerFirstScanStep::ProcessGUIEvents(vtkObject *caller, void *callData) {
+void vtkChangeTrackerFirstScanStep::ProcessGUIEvents(vtkObject *caller,
+                                                     void *vtkNotUsed(callData))
+{
     // This just has to be donw if you use the same Callbakc function for severall calls 
     vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
     if (!this->VolumeMenuButton || !this->SecondVolumeMenuButton ) return;

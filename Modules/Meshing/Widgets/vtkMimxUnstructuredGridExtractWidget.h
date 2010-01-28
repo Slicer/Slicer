@@ -144,7 +144,10 @@ protected:
         int ForwardEvent(unsigned long event);
         void Initialize();
         void CreateDefaultProperties(){};
-        void PlaceWidget(double bounds[6]){};
+        void PlaceWidget(double vtkNotUsed(bounds)[6]){};
+        //BTX
+        using vtk3DWidget::PlaceWidget; 
+        //ETX
         void ExtractEdge();
         void ExtractFace();
         vtkIdList *CellIdList;

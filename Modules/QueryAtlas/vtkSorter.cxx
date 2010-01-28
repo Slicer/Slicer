@@ -251,7 +251,7 @@ void vtkSorter::DepthSort() {
 
 void vtkSorter::PrintSelf(ostream& os, vtkIndent indent)
 {
-    //  this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os,indent);
 
     /*  TODO - do print
     os << indent << "X Resolution: " << this->XResolution << "\n";

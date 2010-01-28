@@ -184,8 +184,9 @@ void vtkSlicerModelDisplayWidget::SetModelHierarchyNode ( vtkMRMLModelHierarchyN
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerModelDisplayWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                      unsigned long event,
+                                                      void *vtkNotUsed(callData))
 {
   if (this->ProcessingMRMLEvent != 0 || this->ProcessingWidgetEvent != 0)
     {
@@ -320,8 +321,9 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerModelDisplayWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
 {
   if ( !this->ModelDisplayNode )
     {

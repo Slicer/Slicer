@@ -69,7 +69,7 @@ vtkOpenGLScriptedActor::~vtkOpenGLScriptedActor()
 // Care must be taken in the render script not to re-enter the render pipeline
 // (e.g. don't call Render on any render windows or update the GUI loop).
 //
-void vtkOpenGLScriptedActor::Render(vtkRenderer *ren, vtkMapper *mapper)
+void vtkOpenGLScriptedActor::Render(vtkRenderer *ren, vtkMapper *vtkNotUsed(mapper))
 {
   // bail out early if we aren't configured corretly
   if (this->Language != vtkOpenGLScriptedActor::Python)

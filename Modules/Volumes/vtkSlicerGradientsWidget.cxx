@@ -119,7 +119,9 @@ void vtkSlicerGradientsWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerGradientsWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *vtkNotUsed(callData))
   {
   //enable the gradients textbox
   if(this->EnableGradientsButton == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)

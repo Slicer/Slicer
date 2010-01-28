@@ -243,7 +243,9 @@ void vtkSlicerDiffusionTestingWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
   {
   // possible caller (widgets)
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);

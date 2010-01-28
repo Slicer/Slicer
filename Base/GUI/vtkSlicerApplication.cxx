@@ -13,9 +13,8 @@
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactory.h"
+#include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModulePanel.h"
-//#include "QtSlicerWebKit.h"
 
 // QT includes
 #include <QHash>
@@ -2034,7 +2033,7 @@ void vtkSlicerApplication::DisplayTclInteractor(vtkKWTopLevel *master)
 //  override default behavior of KWWidgets so that toplevel window
 //  can be on top of the log dialog (i.e. so it's not 'transient')
 //
-void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
+void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* vtkNotUsed(master))
 {
   if (this->CreateLogDialog())
     {
@@ -2392,8 +2391,8 @@ void vtkSlicerApplication::InitializeQtCoreModules()
   Q_ASSERT(moduleManager);
 
   // Register core modules
-  QStringList tmp(moduleManager->factory()->coreModuleNames());
-  this->InitializeQtModules(&tmp);
+  QStringList tmp(moduleManager->factoryManager()->moduleNames("qSlicerCoreModuleFactory"));
+  this->InitializeQtModules(tmp);
 }
 
 //----------------------------------------------------------------------------
@@ -2402,8 +2401,8 @@ void vtkSlicerApplication::InitializeQtLoadableModules()
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
 
-  QStringList tmp(moduleManager->factory()->loadableModuleNames());
-  this->InitializeQtModules(&tmp);
+  QStringList tmp(moduleManager->factoryManager()->moduleNames("qSlicerLoadableModuleFactory"));
+  this->InitializeQtModules(tmp);
 }
 
 //----------------------------------------------------------------------------
@@ -2412,25 +2411,21 @@ void vtkSlicerApplication::InitializeQtCommandLineModules()
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
   
-  QStringList tmp(moduleManager->factory()->commandLineModuleNames());
-  this->InitializeQtModules(&tmp);
+  QStringList tmp(moduleManager->factoryManager()->moduleNames("qSlicerCLILoadableModuleFactory"));
+  this->InitializeQtModules(tmp);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::InitializeQtModules(QStringList* names)
+void vtkSlicerApplication::InitializeQtModules(const QStringList& names)
 {
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager);
-  
-  QStringList moduleNames = moduleManager->factory()->coreModuleNames();
-  foreach(const QString& name, *names)
+  foreach(const QString& name, names)
     {
     this->InitializeQtModule(name.toLatin1());
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::InitializeQtModule(const char* moduleName)
+void vtkSlicerApplication::InitializeQtModule(const QString& moduleName)
 {
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);

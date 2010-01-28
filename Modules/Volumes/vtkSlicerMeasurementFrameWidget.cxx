@@ -204,7 +204,9 @@ int vtkSlicerMeasurementFrameWidget::CheckDeterminant()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
   {
 
   //import current matrix values 

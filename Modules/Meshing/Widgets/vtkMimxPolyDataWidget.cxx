@@ -649,7 +649,7 @@ void vtkMimxPolyDataWidget::CreateDefaultProperties()
   this->SelectedOutlineProperty->SetLineWidth(2.0);
 }
 
-void vtkMimxPolyDataWidget::PlaceWidget(double bds[6])
+void vtkMimxPolyDataWidget::PlaceWidget(double vtkNotUsed(bds)[6])
 {
 }
 

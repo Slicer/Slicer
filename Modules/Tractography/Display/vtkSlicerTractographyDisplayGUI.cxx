@@ -116,8 +116,9 @@ void vtkSlicerTractographyDisplayGUI::AddGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents(vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *vtkNotUsed(callData))
 {
   vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
   if (loadSaveDialog && loadSaveDialog == this->LoadTractographyButton->GetLoadSaveDialog() &&
@@ -205,15 +206,17 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyDisplayGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerTractographyDisplayGUI::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
+                                                         unsigned long vtkNotUsed(event),
+                                                         void *vtkNotUsed(callData))
 {
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyDisplayGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerTractographyDisplayGUI::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                        unsigned long vtkNotUsed(event),
+                                                        void *vtkNotUsed(callData))
 {
     // Fill in
 }

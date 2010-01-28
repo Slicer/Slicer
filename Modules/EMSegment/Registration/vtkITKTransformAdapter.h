@@ -78,10 +78,10 @@ protected:
     out[2] = this->ITKTMP_outputPoint[2];
   }
 
-  void ForwardTransformDerivative(const float in[3], float out[3],
-      float derivative[3][3]) {}
-  void ForwardTransformDerivative(const double in[3], double out[3],
-                                  double derivative[3][3]) {}
+  void ForwardTransformDerivative(const float vtkNotUsed(in)[3], float vtkNotUsed(out)[3],
+      float vtkNotUsed(derivative)[3][3]) {}
+  void ForwardTransformDerivative(const double vtkNotUsed(in)[3], double vtkNotUsed(out)[3],
+                                  double vtkNotUsed(derivative)[3][3]) {}
 
 private:
   vtkITKTransformAdapter

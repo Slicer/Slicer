@@ -47,7 +47,7 @@ vtkMeasurementsLogic::~vtkMeasurementsLogic()
 //----------------------------------------------------------------------------
 void vtkMeasurementsLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);  
 }
 
 

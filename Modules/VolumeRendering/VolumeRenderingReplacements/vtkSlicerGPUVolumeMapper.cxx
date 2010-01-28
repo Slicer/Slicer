@@ -551,7 +551,7 @@ vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
   return (vtkSlicerGPUVolumeMapper*)ret;
 }
 
-int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vol)
+int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 {
   int needToUpdate = 0;
 

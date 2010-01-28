@@ -82,14 +82,14 @@ void vtkMRMLModelMirrorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelMirrorNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLModelMirrorNode::WriteXML(ostream& vtkNotUsed(of), int vtkNotUsed(nIndent))
 {
   //TODO
 }
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelMirrorNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLModelMirrorNode::ReadXMLAttributes(const char** vtkNotUsed(atts))
 {
   //TODO
 }

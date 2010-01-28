@@ -84,7 +84,7 @@ void vtkGDFReader::Execute()
 }
 
 //------------------------------------------------------------------------------
-vtkImageData *vtkGDFReader::GetImage(int ImageNumber)
+vtkImageData *vtkGDFReader::GetImage(int vtkNotUsed(ImageNumber))
 {
   cerr << "vtkGDFReader::GetImage() called. uh oh." << endl;
   return NULL;
@@ -560,7 +560,11 @@ const char *vtkGDFReader::GetNthSubjectNthValue(int n1, int n2)
 //------------------------------------------------------------------------------
 // return all the values for this subject
 // need to return a point in x, y, z - do it in tcl
-vtkFloatingPointType vtkGDFReader::GetNthSubjectMeasurement(int n, const char *subject, int x, int y, int z)
+vtkFloatingPointType vtkGDFReader::GetNthSubjectMeasurement(int vtkNotUsed(n),
+                                                            const char *vtkNotUsed(subject),
+                                                            int vtkNotUsed(x),
+                                                            int vtkNotUsed(y),
+                                                            int vtkNotUsed(z))
 {
     vtkFloatingPointType retval;
     vtkDebugMacro(<< "GetNthSubjectMeasurement\n");

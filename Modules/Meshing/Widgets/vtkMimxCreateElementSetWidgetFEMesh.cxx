@@ -1339,7 +1339,8 @@ int vtkMimxCreateElementSetWidgetFEMesh::ComputeOriginalCellNumber(
   return -1;
 }
 //----------------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::AcceptSelectedMesh(vtkMimxCreateElementSetWidgetFEMesh *Self)
+void vtkMimxCreateElementSetWidgetFEMesh::AcceptSelectedMesh(
+  vtkMimxCreateElementSetWidgetFEMesh *vtkNotUsed(Self))
 {
   //if(!Self->ExtractedGrid)      return;
 
@@ -1591,7 +1592,8 @@ void vtkMimxCreateElementSetWidgetFEMesh::SetInput(vtkUnstructuredGrid *input)
 //      self->AcceptSelectedMesh(self);
 //}
 //-----------------------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonDownCallback(vtkAbstractWidget *w)
+void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonDownCallback(
+  vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxCreateElementSetWidgetFEMesh *self = reinterpret_cast<vtkMimxCreateElementSetWidgetFEMesh*>(w);
   //self->EventCallbackCommand->SetAbortFlag(1);
@@ -1601,7 +1603,8 @@ void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonDownCallback(vtkAbstrac
   //self->Interactor->Render();
 }
 //-----------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonUpCallback(vtkAbstractWidget *w)
+void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonUpCallback(
+  vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxCreateElementSetWidgetFEMesh *self = reinterpret_cast<vtkMimxCreateElementSetWidgetFEMesh*>(w);
   //if(self->CellSelectionState != vtkMimxCreateElementSetWidgetFEMesh::SelectMultipleCells)      return;
@@ -1681,7 +1684,8 @@ void vtkMimxCreateElementSetWidgetFEMesh::ShiftLeftButtonUpCallback(vtkAbstractW
   //CellPicker->Delete();
 }
 //------------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::DeleteExtractedCells(vtkMimxCreateElementSetWidgetFEMesh *Self)
+void vtkMimxCreateElementSetWidgetFEMesh::DeleteExtractedCells(
+  vtkMimxCreateElementSetWidgetFEMesh *vtkNotUsed(Self))
 {
   // create a new selected element set based on computed selected cells
   //Self->ExtractedGrid->Initialize();
@@ -1721,7 +1725,7 @@ void vtkMimxCreateElementSetWidgetFEMesh::DeleteExtractedCells(vtkMimxCreateElem
 }
 //-------------------------------------------------------------------------------------------
 int vtkMimxCreateElementSetWidgetFEMesh::DoesCellBelong(
-  int CellNum, vtkMimxCreateElementSetWidgetFEMesh *Self)
+  int vtkNotUsed(CellNum), vtkMimxCreateElementSetWidgetFEMesh *vtkNotUsed(Self))
 {
   //int i, j;
   //vtkIdList *OrIds = Self->Input->GetCell(CellNum)->GetPointIds();
@@ -1819,7 +1823,8 @@ void vtkMimxCreateElementSetWidgetFEMesh::SetCellSelectionState(int Selection)
   this->CurrentRenderer->Render();
 }
 //---------------------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::ShiftMouseMoveCallback(vtkAbstractWidget *w)
+void vtkMimxCreateElementSetWidgetFEMesh::ShiftMouseMoveCallback(
+  vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxCreateElementSetWidgetFEMesh *self = reinterpret_cast<vtkMimxCreateElementSetWidgetFEMesh*>(w);
   //if(self->CellSelectionState == vtkMimxCreateElementSetWidgetFEMesh::SelectIndividualCell)
@@ -2420,7 +2425,8 @@ void vtkMimxCreateElementSetWidgetFEMesh::RightButtonDownCallback(vtkAbstractWid
   //self->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
 }
 //--------------------------------------------------------------------------------------------------------
-void vtkMimxCreateElementSetWidgetFEMesh::RightButtonUpCallback(vtkAbstractWidget* w)
+void vtkMimxCreateElementSetWidgetFEMesh::RightButtonUpCallback(
+  vtkAbstractWidget* vtkNotUsed(w))
 {
 }
 //--------------------------------------------------------------------------------------------------------

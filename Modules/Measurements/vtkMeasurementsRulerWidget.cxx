@@ -375,8 +375,9 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
 }
 
 //---------------------------------------------------------------------------
-void vtkMeasurementsRulerWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                     unsigned long event,
+                                                     void *vtkNotUsed(callData))
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   if ( !app )

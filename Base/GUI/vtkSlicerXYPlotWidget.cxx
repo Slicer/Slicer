@@ -157,8 +157,9 @@ void vtkSlicerXYPlotWidget::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::ProcessMRMLEvents ( vtkObject * caller, 
-                                                unsigned long event, void * callData )
+void vtkSlicerXYPlotWidget::ProcessMRMLEvents(vtkObject * caller,
+                                              unsigned long event,
+                                              void * vtkNotUsed(callData))
 {
 
   if ((this->AutoUpdate && event == vtkCommand::ModifiedEvent) ||

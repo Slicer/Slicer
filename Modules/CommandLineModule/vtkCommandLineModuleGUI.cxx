@@ -73,7 +73,7 @@ splitFilenames (const std::string& text, vtkStringArray *words)
   std::string comma(",");
   std::string quote("\"");
   start = text.find_first_not_of(comma);
-  while ((start >= 0) && (start < n))
+  while ((start != std::string::npos) && (start < n))
     {
     // find any quotes
     quoted = false;
@@ -81,7 +81,7 @@ splitFilenames (const std::string& text, vtkStringArray *words)
     stopq = text.find_first_of(quote, startq+1);
 
     stop = text.find_first_of(comma, start);
-    if ((stop < 0) || (stop > n)) stop = n;
+    if ((stop == std::string::npos) || (stop > n)) stop = n;
 
     if (startq != std::string::npos && stopq != std::string::npos)
       {
@@ -92,7 +92,7 @@ splitFilenames (const std::string& text, vtkStringArray *words)
         {
         quoted = true;
         stop = text.find_first_of(comma, stop+1);
-        if ((stop < 0) || (stop > n)) stop = n;
+        if (stop > n) stop = n;
         }
       }
 
@@ -852,9 +852,9 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkCommandLineModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkCommandLineModuleGUI::ProcessMRMLEvents(vtkObject *caller,
+                                                unsigned long vtkNotUsed(event),
+                                                void *vtkNotUsed(callData)) 
 {
   //std::cout << "ProcessMRMLEvents()" << std::endl;
   // if parameter node has been changed externally, update GUI widgets

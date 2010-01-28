@@ -158,13 +158,11 @@ vtkIntArray* vtkPETCTFusionLogic::NewObservableEvents()
   return events;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkPETCTFusionLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)

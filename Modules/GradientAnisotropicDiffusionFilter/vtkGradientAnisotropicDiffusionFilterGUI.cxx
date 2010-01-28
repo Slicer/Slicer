@@ -170,9 +170,9 @@ void vtkGradientAnisotropicDiffusionFilterGUI::RemoveGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData ) 
+void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents(vtkObject *caller,
+                                                                unsigned long event,
+                                                                void *vtkNotUsed(callData))
 {
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);

@@ -120,7 +120,7 @@ public:
   itkSetMacro(SamplingRatio, double);
   itkSetMacro(NumberOfIterations, int);
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object *itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
   {
     return;
   }
@@ -188,7 +188,7 @@ public:
     return new vtkMyCallback;
   }
 
-  virtual void Execute(vtkObject *caller, unsigned long, void*)
+  virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long, void*)
   {
     std::cerr << ".";
   }

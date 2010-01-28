@@ -139,7 +139,7 @@ vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLFetchMINode::WriteXML(ostream& vtkNotUsed(of), int vtkNotUsed(nIndent))
 {
 /*
   Superclass::WriteXML(of, nIndent);
@@ -201,7 +201,7 @@ void vtkMRMLFetchMINode::WriteXML(ostream& of, int nIndent)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
+void vtkMRMLFetchMINode::ReadXMLAttributes(const char** vtkNotUsed(atts))
 {
 /*
   // cout << "vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)" << endl;

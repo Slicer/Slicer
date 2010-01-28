@@ -187,8 +187,9 @@ void vtkSlicerROIDisplayWidget::SetROINode ( vtkMRMLROINode *node )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerROIDisplayWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
 {
   if (this->ProcessingMRMLEvent != 0 || this->ProcessingWidgetEvent != 0)
     {
@@ -271,8 +272,9 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerROIDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerROIDisplayWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                  unsigned long event,
+                                                  void *vtkNotUsed(callData))
 {
   if (this->ProcessingMRMLEvent != 0 || this->ProcessingWidgetEvent != 0)
     {

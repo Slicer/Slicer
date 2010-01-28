@@ -765,7 +765,7 @@ void vtkMimxSelectPointsWidget::ComputeSelectedPointIds(vtkMimxSelectPointsWidge
   locator->Delete();
 }
 //----------------------------------------------------------------------------------------
-void vtkMimxSelectPointsWidget::ShiftLeftButtonUpCallback(vtkAbstractWidget *w)
+void vtkMimxSelectPointsWidget::ShiftLeftButtonUpCallback(vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxSelectPointsWidget *self = reinterpret_cast<vtkMimxSelectPointsWidget*>(w);
 
@@ -796,7 +796,7 @@ void vtkMimxSelectPointsWidget::ShiftLeftButtonUpCallback(vtkAbstractWidget *w)
   //self->Interactor->Render();
 }
 //----------------------------------------------------------------------
-void vtkMimxSelectPointsWidget::ShiftMouseMoveCallback(vtkAbstractWidget *w)
+void vtkMimxSelectPointsWidget::ShiftMouseMoveCallback(vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxSelectPointsWidget *self = reinterpret_cast<vtkMimxSelectPointsWidget*>(w);
   //if(self->PointSelectionState == vtkMimxSelectPointsWidget::SelectSinglePoint ||
@@ -998,7 +998,7 @@ int vtkMimxSelectPointsWidget::DoAllPointsLieOnSurface(
   return 1;       
 }
 //--------------------------------------------------------------------------------------
-void vtkMimxSelectPointsWidget::ShiftLeftButtonDownCallback(vtkAbstractWidget *w)
+void vtkMimxSelectPointsWidget::ShiftLeftButtonDownCallback(vtkAbstractWidget *vtkNotUsed(w))
 {
   //vtkMimxSelectPointsWidget *self = reinterpret_cast<vtkMimxSelectPointsWidget*>(w);
   //int X = self->Interactor->GetEventPosition()[0];
@@ -1027,7 +1027,7 @@ void vtkMimxSelectPointsWidget::LeftButtonUpCallback(vtkAbstractWidget* w)
     }
 }
 //-------------------------------------------------------------------------------------------
-void vtkMimxSelectPointsWidget::SetSphereRadius(double Radius)
+void vtkMimxSelectPointsWidget::SetSphereRadius(double vtkNotUsed(Radius))
 {
   /*this->Sphere->SetRadius(Radius);
         this->Sphere->Update();*/
@@ -1336,7 +1336,7 @@ void vtkMimxSelectPointsWidget::RightButtonDownCallback(vtkAbstractWidget* w)
   CellPicker->Delete();
 }
 //--------------------------------------------------------------------------------------------------------
-void vtkMimxSelectPointsWidget::RightButtonUpCallback(vtkAbstractWidget* w)
+void vtkMimxSelectPointsWidget::RightButtonUpCallback(vtkAbstractWidget* vtkNotUsed(w))
 {
 }
 //--------------------------------------------------------------------------------------------------------

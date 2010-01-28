@@ -377,42 +377,35 @@ int vtkFetchMIParserXND::ParseResourceQueryResponse(const char *filename )
 
 
 //---------------------------------------------------------------------------
-int vtkFetchMIParserXND::ParseResourcePostResponse(const char *filename )
+int vtkFetchMIParserXND::ParseResourcePostResponse(const char *vtkNotUsed(filename))
 {
   return 0;
 }
 
 
 //---------------------------------------------------------------------------
-int vtkFetchMIParserXND::ParseResourceDownloadResponse(const char *filename )
+int vtkFetchMIParserXND::ParseResourceDownloadResponse(const char *vtkNotUsed(filename))
 {
   return 0;
 }
 
 //---------------------------------------------------------------------------
-int vtkFetchMIParserXND::ParseMetatdataDeleteResponse(const char *filename )
+int vtkFetchMIParserXND::ParseMetatdataDeleteResponse(const char *vtkNotUsed(filename))
 {
   return 0;
 }
 
 //---------------------------------------------------------------------------
-int vtkFetchMIParserXND::ParseResourceDeleteResponse(const char *filename )
+int vtkFetchMIParserXND::ParseResourceDeleteResponse(const char *vtkNotUsed(filename))
 {
   return 0;
 }
 
-
-
-
-
-  
 //---------------------------------------------------------------------------
-int vtkFetchMIParserXND::ParseForErrors (const char *val )
+int vtkFetchMIParserXND::ParseForErrors (const char *vtkNotUsed(val) )
 {
   return 0;
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkFetchMIParserXND::GetXMLEntry ( vtkXMLDataElement *element )

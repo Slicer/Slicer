@@ -688,7 +688,7 @@ void vtkMimxExtractMultipleFaceWidget::OnRightButtonUp()
 
 }
 
-void vtkMimxExtractMultipleFaceWidget::PlaceWidget(double bounds[6])
+void vtkMimxExtractMultipleFaceWidget::PlaceWidget(double vtkNotUsed(bounds)[6])
 {
 
 }

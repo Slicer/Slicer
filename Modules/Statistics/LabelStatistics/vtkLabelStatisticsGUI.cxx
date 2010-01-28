@@ -140,7 +140,7 @@ void vtkLabelStatisticsGUI::SetModuleLogic(vtkSlicerLogic *logic)
 //----------------------------------------------------------------------------
 void vtkLabelStatisticsGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -175,9 +175,9 @@ void vtkLabelStatisticsGUI::RemoveGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkLabelStatisticsGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData ) 
+void vtkLabelStatisticsGUI::ProcessGUIEvents(vtkObject *caller,
+                                             unsigned long event,
+                                             void *vtkNotUsed(callData)) 
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
@@ -275,9 +275,9 @@ void vtkLabelStatisticsGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkLabelStatisticsGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkLabelStatisticsGUI::ProcessMRMLEvents(vtkObject *caller,
+                                              unsigned long vtkNotUsed(event),
+                                              void *vtkNotUsed(callData))
 {
   //std::cout <<"ProcessMRMLEvents gets called!" << "\n";
   // if parameter node has been changed externally, update GUI widgets with new values

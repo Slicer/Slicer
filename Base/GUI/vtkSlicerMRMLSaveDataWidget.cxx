@@ -568,14 +568,9 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   // get length of MRMLScene Directory...
   int directoryColumnWidth;
   std::string dirtxt = this->MultiColumnList->GetWidget()->GetCellText(0, FileDirectory_Column );
-  if ( dirtxt.length () < 0 )
-    {
-    directoryColumnWidth = 0;
-    }
-  else
-    {
-    directoryColumnWidth = dirtxt.length();
-    }
+  // Note: Since std::string::length() always return a 'unsigned int' (size_t)
+  // there is not need to check for length < 0.
+  directoryColumnWidth = dirtxt.length();
 
 
   vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
@@ -1121,9 +1116,9 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMRMLSaveDataWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                  unsigned long event, 
-                                                  void *callData )
+void vtkSlicerMRMLSaveDataWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
 {
   if (event == vtkCommand::ModifiedEvent)
     {

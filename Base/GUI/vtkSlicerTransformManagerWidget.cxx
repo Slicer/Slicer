@@ -68,8 +68,9 @@ void vtkSlicerTransformManagerWidget::PrintSelf ( ostream& os, vtkIndent indent 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerTransformManagerWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
 {
   if (this->NodeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
       && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
@@ -126,8 +127,9 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformManagerWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerTransformManagerWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                        unsigned long vtkNotUsed(event),
+                                                        void *vtkNotUsed(callData))
 {
 }
 

@@ -23,7 +23,7 @@ Version:   $Revision: 5304 $
 #include "vtkTimerLog.h"
 
 //----------------------------------------------------------------------------
-void Callback(vtkObject *caller, unsigned long eid, void *clientData, void *callData)
+void Callback(vtkObject *caller, unsigned long eid, void *clientData, void *vtkNotUsed(callData))
 {
   std::cerr << "Got an event " << eid << " from " << caller->GetClassName() << "\n";
 

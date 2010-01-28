@@ -141,8 +141,9 @@ void vtkFetchMIQueryTermWidget::RaiseHelpWindow()
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkFetchMIQueryTermWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMultiColumnList *l = vtkKWMultiColumnList::SafeDownCast( caller );

@@ -1000,7 +1000,9 @@ void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
 }
 
 //----------------------------------------------------------------------------
-void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                unsigned long vtkNotUsed(event),
+                                                void *vtkNotUsed(callData))
 {
 }
 

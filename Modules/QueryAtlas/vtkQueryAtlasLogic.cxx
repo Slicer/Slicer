@@ -55,13 +55,13 @@ vtkQueryAtlasLogic::~vtkQueryAtlasLogic()
 //----------------------------------------------------------------------------
 void vtkQueryAtlasLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkQueryAtlasLogic::ProcessMrmlEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData )
+void vtkQueryAtlasLogic::ProcessMrmlEvents(vtkObject *vtkNotUsed(caller),
+                                           unsigned long vtkNotUsed(event),
+                                           void *vtkNotUsed(callData))
 {
   // nothing to do here....
 }

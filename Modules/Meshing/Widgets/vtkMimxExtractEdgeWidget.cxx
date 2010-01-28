@@ -682,7 +682,7 @@ void vtkMimxExtractEdgeWidget::OnRightButtonUp()
   this->Interactor->Render();
 }
 
-void vtkMimxExtractEdgeWidget::PlaceWidget(double bounds[6])
+void vtkMimxExtractEdgeWidget::PlaceWidget(double vtkNotUsed(bounds)[6])
 {
 
 }

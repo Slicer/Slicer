@@ -31,7 +31,8 @@ vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision: 1.33 $");
 // observed mrml scene back into the logic layer for further processing
 // - this can also end up calling observers of the logic (i.e. in the GUI)
 //
-static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientData, void *callData)
+static void MRMLCallback(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eid),
+                         void *__clientData, void *callData)
 {
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 

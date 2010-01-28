@@ -242,8 +242,9 @@ vtkMRMLStorageNode * vtkSlicerVolumeHeaderWidget::GetVolumeStorageNode ()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                      unsigned long event,
+                                                      void *vtkNotUsed(callData))
 {
 
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
@@ -375,8 +376,9 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeHeaderWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerVolumeHeaderWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                    unsigned long vtkNotUsed(event),
+                                                    void *vtkNotUsed(callData))
 {
   this->UpdateWidgetFromMRML();
 }

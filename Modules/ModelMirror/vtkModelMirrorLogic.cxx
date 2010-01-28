@@ -105,7 +105,9 @@ vtkIntArray* vtkModelMirrorLogic::NewObservableEvents()
 
 
 //----------------------------------------------------------------------------
-void vtkModelMirrorLogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkModelMirrorLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                            unsigned long vtkNotUsed(event),
+                                            void *vtkNotUsed(callData))
 {
 
   if ( !this->Visited )

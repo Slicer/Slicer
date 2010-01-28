@@ -557,7 +557,9 @@ void vtkTextureText::CalculateRangeBox(Vector3D<vtkFloatingPointType> *min, Vect
 
 
 // TODO - could be added back - can be a useful Calculate method
-vtkFloatingPointType vtkTextureText::GetAdvanceWidth(char *string, char *fontname, bool space)
+vtkFloatingPointType vtkTextureText::GetAdvanceWidth(char *vtkNotUsed(string),
+                                                     char *vtkNotUsed(fontname),
+                                                     bool vtkNotUsed(space))
 {
   return 0.0;
 }

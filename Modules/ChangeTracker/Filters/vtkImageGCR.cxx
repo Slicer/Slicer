@@ -94,12 +94,12 @@ float** vtkImageGCR::matrix(int nrl,int nrh,int ncl,int nch)
   return m;
 }
 
-void vtkImageGCR::free_vector(float* v,int nl,int nh)
+void vtkImageGCR::free_vector(float* v,int nl,int vtkNotUsed(nh))
 {
   free((char*) (v+nl));
 }
 
-void vtkImageGCR::free_matrix(float** m,int nrl,int nrh,int ncl,int nch)
+void vtkImageGCR::free_matrix(float** m,int nrl,int nrh,int ncl,int vtkNotUsed(nch))
 {
   int i;
 

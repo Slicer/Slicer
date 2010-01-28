@@ -790,7 +790,7 @@ void vtkMimxPlaceLocalAxesWidget::OnRightButtonUp()
 
 }
 
-void vtkMimxPlaceLocalAxesWidget::PlaceWidget(double bounds[6])
+void vtkMimxPlaceLocalAxesWidget::PlaceWidget(double vtkNotUsed(bounds)[6])
 {
 
 }

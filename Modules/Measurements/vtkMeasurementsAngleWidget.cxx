@@ -451,8 +451,9 @@ void vtkMeasurementsAngleWidget::SetAngleNodeID ( char *id )
 }
 
 //---------------------------------------------------------------------------
-void vtkMeasurementsAngleWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkMeasurementsAngleWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                     unsigned long event,
+                                                     void *vtkNotUsed(callData) )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   if ( !app )

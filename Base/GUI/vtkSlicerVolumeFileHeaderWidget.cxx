@@ -151,8 +151,9 @@ void vtkSlicerVolumeFileHeaderWidget::PrintSelf ( ostream& os, vtkIndent indent 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeFileHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerVolumeFileHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
 {
   if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     {
@@ -168,8 +169,9 @@ void vtkSlicerVolumeFileHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeFileHeaderWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerVolumeFileHeaderWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                        unsigned long vtkNotUsed(event),
+                                                        void *vtkNotUsed(callData))
 {
 }
 

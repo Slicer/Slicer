@@ -63,7 +63,7 @@ class vtkUGEWCallback : public vtkCommand
 public:
   static vtkUGEWCallback *New() 
   { return new vtkUGEWCallback; }
-  virtual void Execute(vtkObject *caller, unsigned long, void*)
+  virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long, void*)
   {
     pickedcell = cellpicker->GetCellId();
     pickedpoint = pointpicker->GetPointId();

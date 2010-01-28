@@ -98,8 +98,9 @@ void vtkSlicerSceneSnapshotWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *vtkNotUsed(callData))
 {
 
   //
@@ -170,7 +171,10 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
+void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback(vtkObject *caller,
+                                                     unsigned long eid,
+                                                     void *clientData,
+                                                     void *vtkNotUsed(callData))
 {
 
   static int inMRMLExtraCallback = 0;
@@ -252,8 +256,9 @@ void vtkSlicerSceneSnapshotWidget::RemoveMRMLObservers ()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneSnapshotWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerSceneSnapshotWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                     unsigned long vtkNotUsed(event),
+                                                     void * vtkNotUsed(callData))
 {
 
   // Looking for node deleted event...
