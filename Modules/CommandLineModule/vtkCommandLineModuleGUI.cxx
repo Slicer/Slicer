@@ -1602,7 +1602,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    NULL,
                                    NULL,
                                    (title + " Measurement").c_str());
+          tparameter->SetNoneEnabled(noneEnabled);
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->ShowHiddenOn();
           tparameter->Create();
           tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
           tparameter->UpdateMenu();
@@ -1633,9 +1635,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    NULL,
                                    (title + " Measurement").c_str());
           tparameter->SetNewNodeEnabled(1);
-          tparameter->SetNoneEnabled(1);
+          tparameter->SetNoneEnabled(noneEnabled);
           // tparameter->SetNewNodeName((title+" output").c_str());
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->ShowHiddenOn();
           tparameter->Create();
           tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
           tparameter->UpdateMenu();
@@ -1934,7 +1937,6 @@ void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
     self->SetInMRMLCallbackFlag(1);
     self->ProcessGUIEvents ( __caller, eid, callData );
     self->SetInMRMLCallbackFlag(0);
-
 }
 
 
