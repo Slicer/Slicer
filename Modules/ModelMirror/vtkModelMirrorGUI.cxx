@@ -1,13 +1,14 @@
-#include <string>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkCommand.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkModelMirrorGUI.h"
 
+// vtkSlicer includes
+#include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerApplicationGUI.h"
+
+// KWWidgets includes
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
 #include "vtkKWEvent.h"
@@ -17,16 +18,18 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
 
-#include "vtkSlicerModuleCollapsibleFrame.h"
-#include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerApplicationGUI.h"
-
-#include <map>
+// STL includes
 #include <string>
+#include <iostream>
+#include <sstream>
+#include <map>
 #include <vector>
 #include <iterator>
-#include <sstream>
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 
 
 //------------------------------------------------------------------------------
@@ -223,7 +226,7 @@ void vtkModelMirrorGUI::TearDownGUI ( )
 //----------------------------------------------------------------------------
 void vtkModelMirrorGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 
@@ -312,7 +315,7 @@ void vtkModelMirrorGUI::RemoveLogicObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void *vtkNotUsed(callData))
 {
 
   if ( !this->Built )
@@ -431,9 +434,9 @@ void vtkModelMirrorGUI::SetSlicerText(const char *txt)
 
 
 //---------------------------------------------------------------------------
-void vtkModelMirrorGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkModelMirrorGUI::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                          unsigned long vtkNotUsed(event),
+                                          void *vtkNotUsed(callData))
 {
   if ( !this->Raised )
     {

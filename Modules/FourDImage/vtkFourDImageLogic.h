@@ -162,7 +162,10 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
 
   virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
-                                  void * /*callData*/ );  
+                                  void * /*callData*/ );
+  //BTX
+  using vtkSlicerLogic::ProcessLogicEvents;
+  //ETX
 
   static void DataCallback(vtkObject*, unsigned long, void *, void *);
   void UpdateAll();

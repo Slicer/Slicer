@@ -379,7 +379,7 @@ void vtkKWMimxViewPropertiesGroup::UpdateEnableState()
 }
 
 //----------------------------------------------------------------------------
-void vtkKWMimxViewPropertiesGroup::SetActorColor(double color[3])
+void vtkKWMimxViewPropertiesGroup::SetActorColor(double vtkNotUsed(color)[3])
 {
         int row = this->GetItemRow(); /*this->SelectionRow;*/
         
@@ -421,7 +421,7 @@ void vtkKWMimxViewPropertiesGroup::SetActorColor(double color[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkKWMimxViewPropertiesGroup::SetOutlineColor(double color[3])
+void vtkKWMimxViewPropertiesGroup::SetOutlineColor(double vtkNotUsed(color)[3])
 {
         int row = this->GetItemRow(); /*this->SelectionRow;*/
         
@@ -785,7 +785,7 @@ void vtkKWMimxViewPropertiesGroup::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 //----------------------------------------------------------------------------
-void vtkKWMimxViewPropertiesGroup::SetElementSetColor(double color[3])
+void vtkKWMimxViewPropertiesGroup::SetElementSetColor(double vtkNotUsed(color)[3])
 {
         int row = this->GetItemRow(); /*this->SelectionRow;*/
         

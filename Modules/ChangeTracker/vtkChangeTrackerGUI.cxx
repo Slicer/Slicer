@@ -201,7 +201,7 @@ void vtkChangeTrackerGUI::ProcessGUIEvents(vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkChangeTrackerGUI::ProcessLogicEvents (
-  vtkObject *caller, unsigned long event, void *callData )
+  vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   if ( !caller || !this->WizardWidget)
     {
@@ -668,7 +668,7 @@ void vtkChangeTrackerGUI::SliceLogicDefine() {
     //[[$GUI GetSliceLogic] GetSliceNode] SetFieldOfView 200 200 1
 } 
 
-void  vtkChangeTrackerGUI::SliceLogicCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData )
+void  vtkChangeTrackerGUI::SliceLogicCallback(vtkObject *caller, unsigned long event, void *clientData, void *vtkNotUsed(callData))
 {
 
     vtkChangeTrackerGUI *self = reinterpret_cast< vtkChangeTrackerGUI *>(clientData);
@@ -709,7 +709,7 @@ void vtkChangeTrackerGUI::LoadTutorialData(){
 }
   
 void vtkChangeTrackerGUI::SetRedGreenYellowAllVolumes(const char* bgVolID, 
-    const char* fgVolID, const char* lVolID){
+    const char* vtkNotUsed(fgVolID), const char* vtkNotUsed(lVolID)){
   vtkSlicerSliceGUI *redGUI, *greenGUI, *yellowGUI;
   double oldSliceSetting[3];
   vtkSlicerApplicationGUI *applicationGUI = this->GetApplicationGUI();

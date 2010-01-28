@@ -216,9 +216,9 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerClipModelsWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                               unsigned long event, 
-                                               void *callData ) 
+void vtkSlicerClipModelsWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
 { 
   if (this->ClipModelsNodeSelector  ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller) 
       && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
@@ -329,7 +329,9 @@ void vtkSlicerClipModelsWidget::UpdateMRML()
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerClipModelsWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 
+void vtkSlicerClipModelsWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                  unsigned long vtkNotUsed(event),
+                                                  void *vtkNotUsed(callData))
 { 
   this->UpdateGUI();
 }

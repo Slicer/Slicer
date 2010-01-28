@@ -12,14 +12,18 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkLabelStatisticsGUI.h"
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
+// vtkSlicer includes
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+//#include "vtkSlicerWindow.h"
+
+// KWWidgets includes
+#include "vtkLabelStatisticsGUI.h"
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -28,8 +32,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
@@ -38,7 +40,10 @@ Version:   $Revision: 1.2 $
 #include "vtkKWProgressGauge.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWTopLevel.h"
-//#include "vtkSlicerWindow.h" 
+
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 
 //------------------------------------------------------------------------------
 vtkLabelStatisticsGUI* vtkLabelStatisticsGUI::New()

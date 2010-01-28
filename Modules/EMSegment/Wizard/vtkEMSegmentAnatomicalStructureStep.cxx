@@ -703,8 +703,9 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(vtkObject *caller,
-                                         unsigned long eid, void *clientData, void *callData)
+void vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(
+  vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eid),
+  void *clientData, void * vtkNotUsed(callData))
 {
   vtkEMSegmentAnatomicalStructureStep *self = 
         reinterpret_cast<vtkEMSegmentAnatomicalStructureStep *>(clientData);
@@ -850,7 +851,8 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(vtkObj
  
 //----------------------------------------------------------------------------
 void vtkEMSegmentAnatomicalStructureStep::SelectedColorChangedCallback(vtkObject *caller,
-                                    unsigned long eid, void *clientData, void *callData)
+                                    unsigned long vtkNotUsed(eid), void *clientData,
+                                    void *vtkNotUsed(callData))
 {
   vtkEMSegmentAnatomicalStructureStep *self = 
       reinterpret_cast<vtkEMSegmentAnatomicalStructureStep *>(clientData);

@@ -358,7 +358,9 @@ void vtkSlicerDataTransferWidget::RemoveWidgetObservers( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *vtkNotUsed(callData))
   {
     const char *msg;
     vtkKWMessageDialog *dialog;

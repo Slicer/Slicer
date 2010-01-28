@@ -520,7 +520,7 @@ void vtkKWMimxMainWindow::CreateWidget()
   this->Update();
 }
 //----------------------------------------------------------------------------------------------
-void updateAxis(vtkObject* caller, unsigned long , void* arg, void* ) {
+void updateAxis(vtkObject* vtkNotUsed(caller), unsigned long , void* arg, void* ) {
         double    cPos[3], cFoc[3], aFoc[3];
 
         // set the axis camera according to the main renderer.

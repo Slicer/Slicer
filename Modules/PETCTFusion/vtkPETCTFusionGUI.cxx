@@ -348,6 +348,7 @@ void vtkPETCTFusionGUI::TearDownGUI ( )
 //----------------------------------------------------------------------------
 void vtkPETCTFusionGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
   //---
   //--- print widgets
   //---
@@ -527,7 +528,7 @@ void vtkPETCTFusionGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkPETCTFusionGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void *vtkNotUsed(callData) )
 {
 
   // lots of null pointer checking.
@@ -1691,7 +1692,7 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
 //---------------------------------------------------------------------------
 void vtkPETCTFusionGUI::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void *vtkNotUsed(callData) )
 {
   if ( this->MRMLScene == NULL )
     {
@@ -2633,7 +2634,7 @@ void vtkPETCTFusionGUI::Init ( )
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessPETRangeCommand ( double min, double max)
+ void vtkPETCTFusionGUI::ProcessPETRangeCommand ( double vtkNotUsed(min), double vtkNotUsed(max))
 {
   if ( this->UpdatingLUT )
     {
@@ -2643,7 +2644,8 @@ void vtkPETCTFusionGUI::Init ( )
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessPETRangeStartCommand( double min, double max)
+ void vtkPETCTFusionGUI::ProcessPETRangeStartCommand(double vtkNotUsed(min),
+                                                     double vtkNotUsed(max))
 {
   if ( this->PETCTFusionNode == NULL )
     {
@@ -2677,7 +2679,7 @@ void vtkPETCTFusionGUI::Init ( )
 
 
 //--------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ProcessPETRangeStopCommand ( double min, double max)
+void vtkPETCTFusionGUI::ProcessPETRangeStopCommand(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   if ( this->PETCTFusionNode == NULL )
     {
@@ -2703,14 +2705,14 @@ void vtkPETCTFusionGUI::ProcessPETRangeStopCommand ( double min, double max)
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessCTRangeCommand ( double min, double max)
+ void vtkPETCTFusionGUI::ProcessCTRangeCommand(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   this->UpdateNodeCTColorRange();
 }
 
 
 //---------------------------------------------------------------------------
- void vtkPETCTFusionGUI::ProcessCTRangeStartCommand( double min, double max)
+ void vtkPETCTFusionGUI::ProcessCTRangeStartCommand(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   if ( this->PETCTFusionNode == NULL )
     {
@@ -2741,7 +2743,7 @@ void vtkPETCTFusionGUI::ProcessPETRangeStopCommand ( double min, double max)
 
 
 //--------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ProcessCTRangeStopCommand ( double min, double max)
+void vtkPETCTFusionGUI::ProcessCTRangeStopCommand(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   if ( this->PETCTFusionNode == NULL )
     {
@@ -3329,7 +3331,7 @@ void vtkPETCTFusionGUI::ApplyDefaultPETLUT()
 
 
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ScaleCTColormap( double min, double max)
+void vtkPETCTFusionGUI::ScaleCTColormap(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   //--- we want to scale the colors in the selected map
   //--- to span the range from:
@@ -3423,7 +3425,7 @@ void vtkPETCTFusionGUI::ScaleCTColormap( double min, double max)
 
 
 //---------------------------------------------------------------------------
-void vtkPETCTFusionGUI::ScalePETColormap( double min, double max)
+void vtkPETCTFusionGUI::ScalePETColormap(double vtkNotUsed(min), double vtkNotUsed(max))
 {
   //--- we want to scale the colors in the selected map
   //--- to span the range from:

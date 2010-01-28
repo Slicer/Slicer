@@ -208,8 +208,9 @@ void vtkSlicerColorEditWidget::SetColorNodeID (char * id)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerColorEditWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerColorEditWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *vtkNotUsed(callData))
 {
   // process id changed events
   if (vtkSlicerColorEditWidget::SafeDownCast(caller) != NULL &&
@@ -324,8 +325,9 @@ void vtkSlicerColorEditWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerColorEditWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerColorEditWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                 unsigned long event,
+                                                 void *vtkNotUsed(callData))
 {
   if ( !this->ColorNodeID )
     {

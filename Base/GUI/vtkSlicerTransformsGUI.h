@@ -32,6 +32,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformsGUI : public vtkSlicerModule
     /// 
     /// This method builds the Volumes module GUI
     virtual void BuildGUI ( );
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI; 
+    //ETX
 
     /// 
     /// Add/Remove observers on widgets in the GUI

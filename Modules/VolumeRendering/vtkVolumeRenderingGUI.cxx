@@ -970,11 +970,11 @@ void vtkVolumeRenderingGUI::UpdateGUI()
   this->UpdatingGUI = 0;
 }
 
-void vtkVolumeRenderingGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
+void vtkVolumeRenderingGUI::SetViewerWidget(vtkSlicerViewerWidget *vtkNotUsed(viewerWidget))
 {
 }
 
-void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
+void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *vtkNotUsed(interactorStyle))
 {
 }
 

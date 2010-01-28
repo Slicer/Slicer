@@ -55,6 +55,9 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   // Create widgets
 
   virtual void BuildGUI ( );
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI; 
+  //ETX
   virtual void TearDownGUI ( );
   vtkIntArray *NewObservableEvents();
 
@@ -74,6 +77,9 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
+  //BTX
+  using vtkSlicerComponentGUI::Enter; 
+  //ETX
   virtual void Exit ( );
   virtual void Init ( );
 

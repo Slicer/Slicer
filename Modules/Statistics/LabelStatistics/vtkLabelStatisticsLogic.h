@@ -38,8 +38,9 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsLogic : public vtkSlicerModul
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData ){};
+  virtual void ProcessMrmlEvents(vtkObject * vtkNotUsed(caller),
+                                 unsigned long vtkNotUsed(event),
+                                 void *vtkNotUsed(callData)){};
 
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro (LabelStatisticsNode, vtkMRMLLabelStatisticsNode);

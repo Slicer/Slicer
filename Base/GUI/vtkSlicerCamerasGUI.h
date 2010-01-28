@@ -47,6 +47,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCamerasGUI : public vtkSlicerModuleGUI
     /// 
     /// Describe behavior at module startup and exit.
     virtual void Enter ( );
+    //BTX
+    using vtkSlicerComponentGUI::Enter; 
+    //ETX
     virtual void Exit ( );
 
     /// 

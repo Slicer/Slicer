@@ -1508,11 +1508,11 @@ int vtkKWMimxAssignBoundaryConditionsGroup::IsStepEmpty(vtkUnstructuredGrid *ugr
   return 0;
 }
 //-----------------------------------------------------------------------------------------
-void vtkKWMimxAssignBoundaryConditionsGroup::ViewBoundaryConditionsCallback(int Mode)
+void vtkKWMimxAssignBoundaryConditionsGroup::ViewBoundaryConditionsCallback(int vtkNotUsed(Mode))
 {
 }
 //-----------------------------------------------------------------------------------------------
-void vtkKWMimxAssignBoundaryConditionsGroup::GlyphSizeChangedCallback(const char *Entry)
+void vtkKWMimxAssignBoundaryConditionsGroup::GlyphSizeChangedCallback(const char *vtkNotUsed(Entry))
 {
   if(this->CancelStatus)    return;
   double scaleValue = this->GlyphSizeEntry->GetWidget()->GetValueAsDouble( );
@@ -2915,7 +2915,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ModifyBoundaryConditionActor(
     }
 }
 //----------------------------------------------------------------------------------------------------
-void vtkKWMimxAssignBoundaryConditionsGroup::UpdateVisibility(int Mode)
+void vtkKWMimxAssignBoundaryConditionsGroup::UpdateVisibility(int vtkNotUsed(Mode))
 {
   int numItems = this->MultiColumnList->GetWidget()->GetNumberOfRows();
   int stepNumber = this->GetNotebookStep();

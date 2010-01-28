@@ -100,7 +100,7 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 template< class TData >
 typename DiffusionTensor3DMatrix3x3Transform< TData >::TensorDataType
 DiffusionTensor3DMatrix3x3Transform< TData >
-::EvaluateTransformedTensor( TensorDataType &tensor , PointType &outputPosition )
+::EvaluateTransformedTensor( TensorDataType &tensor , PointType &itkNotUsed(outputPosition) )
 {
   return EvaluateTransformedTensor( tensor ) ;
 }

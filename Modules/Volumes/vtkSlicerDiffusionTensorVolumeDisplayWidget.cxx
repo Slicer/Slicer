@@ -1,33 +1,33 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkSlicerDiffusionTensorVolumeDisplayWidget.h"
-
-#include "vtkKWFrame.h"
-#include "vtkKWMenu.h"
-#include "vtkKWMenuButton.h"
-#include "vtkKWScale.h"
-
 #include "vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.h"
-
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-
-#include "vtkDiffusionTensorMathematics.h"
-
-#include "vtkAssignAttribute.h"
 
 // to get at the colour logic to set a default color node
 #include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkSlicerVolumesLogic.h"
 
+// KWWidgets includes
+#include "vtkKWFrame.h"
+#include "vtkKWMenu.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWScale.h"
+
+// MRML includes
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkAssignAttribute.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorVolumeDisplayWidget );

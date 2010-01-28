@@ -339,7 +339,12 @@ void vtkChangeTrackerLogic::DeleteSuperSample(int ScanNum) {
   } 
 }
 
-double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], double resampleConst, int resampleChoice) {
+double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3],
+                                                    const int ROIMin[3],
+                                                    const int ROIMax[3],
+                                                    double vtkNotUsed(resampleConst),
+                                                    int resampleChoice)
+{
 
 
     double SuperSampleSpacing = -1.;
@@ -1562,8 +1567,10 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   return 0;
 }
 
-void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller, 
-  unsigned long event, void *callData){
+void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller,
+                                              unsigned long vtkNotUsed(event),
+                                              void *vtkNotUsed(callData))
+{
   vtkMRMLScalarVolumeNode *callerNode = 
     vtkMRMLScalarVolumeNode::SafeDownCast(caller);
   if(callerNode && callerNode == this->Scan2_RegisteredVolume){

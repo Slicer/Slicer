@@ -316,6 +316,11 @@ public:
           (this->ProcessInformation->ProgressCallbackClientData);
       }
     }
+#else
+  // unused variable
+  (void)(message);
+  (void)(totalProgress);
+  (void)(stageProgress);
 #endif
   }
   

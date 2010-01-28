@@ -88,6 +88,9 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   static vtkFourDImageGUI* New ();
   void Init();
   virtual void Enter ( );
+  //BTX
+  using vtkSlicerComponentGUI::Enter; 
+  //ETX
   virtual void Exit ( );
   void PrintSelf (ostream& os, vtkIndent indent );
 
@@ -120,6 +123,9 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   virtual void BuildGUI ( );
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI; 
+  //ETX
   virtual void TearDownGUI ( );
   void BuildGUIForHelpFrame();
   void BuildGUIForLoadFrame(int show);

@@ -46,14 +46,13 @@ vtkIA_FEMeshLogic::vtkIA_FEMeshLogic()
 //----------------------------------------------------------------------------
 vtkIA_FEMeshLogic::~vtkIA_FEMeshLogic()
 {
-
   this->IA_FEMeshNode->Delete();
 }
 
 //----------------------------------------------------------------------------
 void vtkIA_FEMeshLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 void vtkIA_FEMeshLogic::Apply()

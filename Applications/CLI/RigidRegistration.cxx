@@ -108,7 +108,7 @@ class ScheduleCommand : public itk::Command
     {
     Execute( (const itk::Object *)caller, event);
     }
-  void Execute ( const itk::Object *caller, const itk::EventObject & event )
+  void Execute ( const itk::Object *caller, const itk::EventObject & itkNotUsed(event) )
     {
     itk::GradientDescentOptimizer* optimizer = (itk::GradientDescentOptimizer*)(const_cast<itk::Object *>(caller));
 

@@ -666,7 +666,7 @@ void vtkKWMimxCreateExtrudeFEMeshGroup::ShowNormalsCallback(int State)
   }
 }
 //------------------------------------------------------------------------------------------
-void vtkKWMimxCreateExtrudeFEMeshGroup::SelectionChangedCallback(const char *dummy)
+void vtkKWMimxCreateExtrudeFEMeshGroup::SelectionChangedCallback(const char *vtkNotUsed(dummy))
 {
   //if(this->ShowNormalsCheckButton->GetState())
   //{

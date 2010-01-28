@@ -95,7 +95,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
 {
 
-  this->SetModuleLogic ( NULL );
+  this->SetModuleLogic (static_cast<vtkSlicerFiducialsLogic*>(0));
 
   if ( this->AllLockMenuButton)
     {

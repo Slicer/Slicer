@@ -131,8 +131,9 @@ void vtkQueryAtlasUseSearchTermWidget::PrintSelf ( ostream& os, vtkIndent indent
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkQueryAtlasUseSearchTermWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *vtkNotUsed(callData))
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   
@@ -169,8 +170,9 @@ void vtkQueryAtlasUseSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkQueryAtlasUseSearchTermWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                         unsigned long vtkNotUsed(event),
+                                                         void *vtkNotUsed(callData))
 {
   // nothing; handle in parent.
 }

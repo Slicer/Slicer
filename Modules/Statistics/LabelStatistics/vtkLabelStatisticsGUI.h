@@ -59,6 +59,9 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsGUI : public vtkSlicerModuleG
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI; 
+  //ETX
 
   // Description:
   // Add obsereves to GUI widgets
@@ -85,6 +88,9 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsGUI : public vtkSlicerModuleG
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( ){};
+  //BTX
+  using vtkSlicerComponentGUI::Enter; 
+  //ETX
   virtual void Exit ( ){};
 
   // Description:

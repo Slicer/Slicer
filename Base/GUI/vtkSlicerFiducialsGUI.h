@@ -102,6 +102,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     void SetModuleLogic ( vtkSlicerFiducialsLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    //BTX
+    using vtkSlicerModuleGUI::SetModuleLogic;
+    //ETX
     void SetAndObserveModuleLogic ( vtkSlicerFiducialsLogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 

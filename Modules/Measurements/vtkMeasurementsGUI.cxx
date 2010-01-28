@@ -285,7 +285,7 @@ void vtkMeasurementsGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void *vtkNotUsed(callData) ) 
 {
 
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );

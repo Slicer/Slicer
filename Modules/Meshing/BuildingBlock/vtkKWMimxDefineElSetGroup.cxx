@@ -527,7 +527,7 @@ int vtkKWMimxDefineElSetGroup::EnableElementSelection(int mode)
 }
 
 //----------------------------------------------------------------------------
-void vtkKWMimxDefineElSetGroup::DisableElementSelection(int mode)
+void vtkKWMimxDefineElSetGroup::DisableElementSelection(int vtkNotUsed(mode))
 {
   this->SelectionState = -1;
   if(this->SelectCellsWidget)

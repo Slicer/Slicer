@@ -1,9 +1,7 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
 
 #include "vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.h"
 
+// KWWidgets includes
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
@@ -11,8 +9,14 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWCheckButton.h"
 
+// MRML includes
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+#include "vtkProperty.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget );
@@ -161,7 +165,8 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetDiffusionTensorVolumeN
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                                            unsigned long event, void *callData )
+                                                                            unsigned long event,
+                                                                            void *vtkNotUsed(callData) )
   {
 
   if (this->MRMLScene && this->DiffusionTensorVolumeNode != NULL  &&
@@ -294,8 +299,9 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateMRML()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                                          unsigned long event, void *callData )
+void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessMRMLEvents(vtkObject *caller,
+                                                                         unsigned long event,
+                                                                         void *vtkNotUsed(callData))
   {
   vtkDebugWithObjectMacro(this,"Process MRML Events");
 

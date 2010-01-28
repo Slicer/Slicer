@@ -200,7 +200,9 @@ int tgSetSLICER_HOME(char** argv)
   return 0;
 }
 
-int tgRegisterAG(vtkKWApplication *app, Tcl_Interp *interp, vtkImageData* Target, std::string TargetTcl, vtkImageData* Source, std::string WorkingDir, std::string Output) {
+int tgRegisterAG(vtkKWApplication *app, Tcl_Interp *interp, vtkImageData* Target,
+                 std::string TargetTcl, vtkImageData* Source, std::string vtkNotUsed(WorkingDir),
+                 std::string Output) {
 
   vtkImageResample *SourceRes = vtkImageResample::New();
       SourceRes->SetDimensionality(3);

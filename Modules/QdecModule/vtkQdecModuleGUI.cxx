@@ -12,22 +12,20 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "QdecSubject.h"
 
+// QDec includes
 #include "vtkQdecModuleGUI.h"
 
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
-#include "vtkSlicerApplication.h"
+// vtkSlicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+
+// KWWidgets includes
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -36,7 +34,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -67,6 +64,15 @@ Version:   $Revision: 1.2 $
 
 // for scalar overlays
 #include "vtkMRMLProceduralColorNode.h"
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
+
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()

@@ -12,24 +12,18 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-// #ifdef Slicer3_USE_QT
-// #include "QtGADModule.h"
-// #endif
-
-#include "vtkObjectFactory.h"
-
 #include "vtkAtlasCreatorGUI.h"
 
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
+// vtkSlicer includes
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+
+// KWWidgets includes
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -38,10 +32,16 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkAtlasCreatorGUI* vtkAtlasCreatorGUI::New()
@@ -119,7 +119,7 @@ vtkAtlasCreatorGUI::~vtkAtlasCreatorGUI()
 //----------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void vtkAtlasCreatorGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void *vtkNotUsed(callData)) 
 {
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
@@ -270,8 +270,8 @@ void vtkAtlasCreatorGUI::UpdateGUI ()
 
 //---------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+                                            unsigned long vtkNotUsed(event),
+                                            void *vtkNotUsed(callData)) 
 {
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLAtlasCreatorNode* node = vtkMRMLAtlasCreatorNode::SafeDownCast(caller);

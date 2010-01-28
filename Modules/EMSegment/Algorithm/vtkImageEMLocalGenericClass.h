@@ -12,13 +12,14 @@
 
 =========================================================================auto=*/
 // .NAME vtkImageEMLocalGenericClass
-// Definnition of all variables owned by both vtkImageEMSuperClass and vtkImageEMClass
-//                                          vtkImageEMGenericClass
-//                                        /              \      \ ___________________________ 
-//                                       /                \                                  \ .
-//                      vtkImageEMLocalGenericClass   vtkImageEMLocalSuperClass <- - - vtkImageEMLocalClass
+// Definition of all variables owned by both vtkImageEMSuperClass and vtkImageEMClass
+//
+//                                    vtkImageEMGenericClass
+//                                    /              \      \ ___________________________
+//                                   /                \                                  \ .
+//            vtkImageEMLocalGenericClass   vtkImageEMLocalSuperClass <- - - vtkImageEMLocalClass
 //                        /                    \.
-//           vtkImageEMLocalSuperClass <- - - vtkImageEMLocalClass
+//             vtkImageEMLocalSuperClass <- - - vtkImageEMLocalClass
 
 #ifndef __vtkImageEMLocalGenericClass_h
 #define __vtkImageEMLocalGenericClass_h 

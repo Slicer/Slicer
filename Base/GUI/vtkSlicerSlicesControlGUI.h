@@ -90,6 +90,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     /// This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWFrame *appF ) ;
     virtual void TearDownGUI ( );
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI;
+    //ETX
     
     /// 
     /// Add/Remove observers on widgets in the GUI
@@ -106,6 +109,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     /// 
     /// Describe the behavior at module enter and exit.
     virtual void Enter ( );
+    //BTX
+    using vtkSlicerComponentGUI::Enter;
+    //ETX
     virtual void Exit ( );
 
     virtual void HideLabelOpacityScaleAndEntry ( );

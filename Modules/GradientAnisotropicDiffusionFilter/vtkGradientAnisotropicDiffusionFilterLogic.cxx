@@ -53,7 +53,7 @@ vtkGradientAnisotropicDiffusionFilterLogic::~vtkGradientAnisotropicDiffusionFilt
 //----------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 void vtkGradientAnisotropicDiffusionFilterLogic::Apply()

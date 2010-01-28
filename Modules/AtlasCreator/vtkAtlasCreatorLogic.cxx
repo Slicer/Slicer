@@ -53,7 +53,7 @@ vtkAtlasCreatorLogic::~vtkAtlasCreatorLogic()
 //----------------------------------------------------------------------------
 void vtkAtlasCreatorLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 void vtkAtlasCreatorLogic::Apply()

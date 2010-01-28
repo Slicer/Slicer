@@ -66,14 +66,14 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject *caller, 
-                                            unsigned long event, 
-                                            void *callData)
+void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                              unsigned long vtkNotUsed(event),
+                                              void *vtkNotUsed(callData))
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *caller, 
+void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
                                             unsigned long event, 
                                             void *callData)
 {

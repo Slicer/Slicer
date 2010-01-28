@@ -159,7 +159,9 @@ protected:
   void DeleteClassVariables();
   void DeletePCAParameters(); 
 
-  void ThreadedExecute(vtkImageData **inData, vtkImageData *outData,int outExt[6], int id) {};
+  void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
+                       vtkImageData *vtkNotUsed(outData),
+                       int vtkNotUsed(outExt)[6], int vtkNotUsed(id)) {};
   void ExecuteData(vtkDataObject *);   
 
   double *LogMu;                 // Intensity distribution of the classes (changed for Multi Dim Version)

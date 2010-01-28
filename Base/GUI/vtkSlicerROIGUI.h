@@ -59,6 +59,9 @@ public:
 
   void SetModuleLogic ( vtkSlicerROILogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+  //BTX
+  using vtkSlicerModuleGUI::SetModuleLogic;
+  //ETX
   void SetAndObserveModuleLogic ( vtkSlicerROILogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
@@ -99,6 +102,9 @@ public:
   /// 
   /// Methods describe behavior at module enter and exit.
   virtual void Enter ( );
+  //BTX
+  using vtkSlicerComponentGUI::Enter;
+  //ETX
   virtual void Exit ( );
 
   virtual void UpdateElement(int row, int col, char * str);

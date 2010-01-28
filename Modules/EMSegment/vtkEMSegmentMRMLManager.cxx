@@ -4485,7 +4485,7 @@ CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
 void
 vtkEMSegmentMRMLManager::
 CreatePackageFilenames(vtkMRMLScene* scene, 
-                       const char* packageDirectoryName)
+                       const char* vtkNotUsed(packageDirectoryName))
 {
   //
   // set up mrml manager for this new scene

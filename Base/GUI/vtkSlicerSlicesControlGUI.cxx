@@ -1492,8 +1492,9 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                     unsigned long event, void *vtkNotUsed(callData) )
+void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
+                                                     unsigned long vtkNotUsed(event),
+                                                     void *vtkNotUsed(callData) )
 {
 
 }

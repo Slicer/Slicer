@@ -120,7 +120,9 @@ void vtkSlicerDiffusionEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDiffusionEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerDiffusionEditorWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                         unsigned long event,
+                                                         void *vtkNotUsed(callData))
   {
   //enable undo/restore button, when values were changed
   if((this->MeasurementFrameWidget == vtkSlicerMeasurementFrameWidget::SafeDownCast(caller) && 

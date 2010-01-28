@@ -411,12 +411,12 @@ void vtkKWMimxEditElementSetNumbersGroup::SelectionChangedCallback(const char *S
         
 }
 //-------------------------------------------------------------------------------------
-void vtkKWMimxEditElementSetNumbersGroup::ElementSetChangedCallback(const char *Selection)
+void vtkKWMimxEditElementSetNumbersGroup::ElementSetChangedCallback(const char *vtkNotUsed(Selection))
 {
 
 }
 //-------------------------------------------------------------------------------------
-void vtkKWMimxEditElementSetNumbersGroup::NodeSetChangedCallback(const char *Selection)
+void vtkKWMimxEditElementSetNumbersGroup::NodeSetChangedCallback(const char *vtkNotUsed(Selection))
 {
 
 }

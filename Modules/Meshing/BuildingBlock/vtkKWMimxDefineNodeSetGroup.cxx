@@ -422,7 +422,7 @@ int vtkKWMimxDefineNodeSetGroup::EnableNodeSelection(int mode)
 }
 
 //----------------------------------------------------------------------------
-void vtkKWMimxDefineNodeSetGroup::DisableNodeSelection(int mode)
+void vtkKWMimxDefineNodeSetGroup::DisableNodeSelection(int vtkNotUsed(mode))
 {
   this->SelectionState = -1;
   if(this->SelectPointsWidget)

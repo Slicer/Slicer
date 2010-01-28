@@ -51,8 +51,8 @@ public:
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   vtkSetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void AddTargetInputChannel() {}
-  virtual void RemoveNthTargetInputChannel(int index) {}
-  virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex) {}
+  virtual void RemoveNthTargetInputChannel(int vtkNotUsed(index)) {}
+  virtual void MoveNthTargetInputChannel(int vtkNotUsed(fromIndex), int vtkNotUsed(toIndex)) {}
 
   // class interaction matrix
   vtkSetReferenceStringMacro(ClassInteractionMatrixNodeID);

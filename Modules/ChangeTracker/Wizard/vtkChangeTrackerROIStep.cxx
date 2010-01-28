@@ -1083,7 +1083,8 @@ void vtkChangeTrackerROIStep::RetrieveInteractorCoordinates(vtkSlicerSliceGUI *s
 
 }
 
-void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {
+void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long event,
+                                               void *vtkNotUsed(callData)) {
   
   if (event == vtkKWPushButton::InvokedEvent) {
     vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
@@ -1168,7 +1169,9 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
 }
 
 
-void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) {
+void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long event,
+                                                void *vtkNotUsed(callData))
+{
 //  if(event == vtkCommand::ModifiedEvent){
     vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
     if(roiCaller && roiCaller == roiNode && event == vtkCommand::ModifiedEvent && !roiUpdateGuard)
@@ -1518,7 +1521,11 @@ void vtkChangeTrackerROIStep::ResetROICenter(int *center)
   CenterRYGSliceViews(pointRAS[0], pointRAS[1], pointRAS[2]);
 }
 
-void vtkChangeTrackerROIStep::ROIMRMLCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData ){
+void vtkChangeTrackerROIStep::ROIMRMLCallback(vtkObject *caller,
+                                              unsigned long event,
+                                              void *clientData,
+                                              void *vtkNotUsed(callData))
+{
   vtkChangeTrackerROIStep *thisStep = reinterpret_cast<vtkChangeTrackerROIStep*>(clientData);
 
   vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);

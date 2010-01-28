@@ -115,7 +115,7 @@ class vtkRightButtonPressEventCallback : public vtkCommand
 public:
   static vtkRightButtonPressEventCallback *New() 
   { return new vtkRightButtonPressEventCallback; }
-  virtual void Execute(vtkObject *caller, unsigned long, void*)
+  virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long, void*)
   {
     this->EditBBInstance->EditBBApplyCallback();
   }
@@ -2998,7 +2998,7 @@ void vtkKWMimxEditBBGroup::RepackSphereSizeFrame()
     this->SphereSizeEntry->GetWidgetName());
 }
 //-----------------------------------------------------------------------------------------
-void vtkKWMimxEditBBGroup::SphereSizeChangeCallback(const char *dummy)
+void vtkKWMimxEditBBGroup::SphereSizeChangeCallback(const char *vtkNotUsed(dummy))
 {
   if(this->CancelStatus)
     {

@@ -92,7 +92,7 @@ void vtkFourDImageLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkFourDImageLogic::ProcessLogicEvents(vtkObject *caller, 
+void vtkFourDImageLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
                                             unsigned long event, 
                                             void *callData)
 {
@@ -103,8 +103,9 @@ void vtkFourDImageLogic::ProcessLogicEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkFourDImageLogic::DataCallback(vtkObject *caller, 
-                                       unsigned long eid, void *clientData, void *callData)
+void vtkFourDImageLogic::DataCallback(vtkObject *vtkNotUsed(caller), 
+                                       unsigned long vtkNotUsed(eid),
+                                       void *clientData, void *vtkNotUsed(callData))
 {
   vtkFourDImageLogic *self = reinterpret_cast<vtkFourDImageLogic *>(clientData);
   vtkDebugWithObjectMacro(self, "In vtkFourDImageLogic DataCallback");

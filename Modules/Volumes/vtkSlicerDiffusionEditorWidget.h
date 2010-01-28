@@ -44,6 +44,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
+    //BTX
+    using vtkKWObject::SetApplication;
+    //ETX
 
     // Description:
     // Returns the logic of the DiffusionEditor.

@@ -421,7 +421,9 @@ void vtkFetchMIResourceUploadWidget::UpdateNewUserTag( const char *att, const ch
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                         unsigned long event,
+                                                         void *vtkNotUsed(callData) )
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMultiColumnList *l = vtkKWMultiColumnList::SafeDownCast( caller );
@@ -797,8 +799,9 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedDataTarget(int n)
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkFetchMIResourceUploadWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                       unsigned long vtkNotUsed(event),
+                                                       void *vtkNotUsed(callData))
 {
   // nothing; handle in parent.
 }
@@ -1187,7 +1190,8 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::RightClickListCallback(int row, int col, int x, int y)
+void vtkFetchMIResourceUploadWidget::RightClickListCallback(int row, int col,
+                                                            int vtkNotUsed(x), int vtkNotUsed(y))
 {
     vtkKWMultiColumnList *list =
         this->GetMultiColumnList()->GetWidget();

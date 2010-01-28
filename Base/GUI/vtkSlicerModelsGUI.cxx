@@ -67,7 +67,7 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 {
   this->RemoveGUIObservers();
 
-  this->SetModuleLogic ( NULL );
+  this->SetModuleLogic (static_cast<vtkSlicerModelsLogic*>(0));
   this->SetModelHierarchyLogic ( NULL );
 
   if (this->ModelDisplaySelectorWidget)

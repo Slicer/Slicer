@@ -899,7 +899,7 @@ PopulateIntensityDistributionTargetVolumeSelector()
 */
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-  Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_volId)
+  Gaussian2DVolumeXSelectionChangedCallback(vtkIdType vtkNotUsed(target_volId))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "Gaussian2DVolumeXSelectionChangedCallback");
@@ -1254,7 +1254,7 @@ IntensityDistributionSpecificationCallback(
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback(
-  vtkIdType selVolId, int type)
+  vtkIdType vtkNotUsed(selVolId), int vtkNotUsed(type))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "Gaussian2DRenderingCallback");
@@ -1278,7 +1278,7 @@ void vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback(
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionMeanChangedCallback(
-    vtkIdType selVolId, int row, int col, const char *value)
+    vtkIdType selVolId, int vtkNotUsed(row), int col, const char *value)
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "IntensityDistributionMeanChangedCallback");
@@ -1595,7 +1595,7 @@ RemoveManualIntensitySamplingGUIObservers()
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 ProcessManualIntensitySamplingGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData)
+  vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "ProcessManualIntensitySamplingGUIEvents");
@@ -1673,7 +1673,7 @@ void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
-  const char *parent, vtkIdType volId)
+  const char *vtkNotUsed(parent), vtkIdType volId)
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "GetNumberOfLeaf");
@@ -1702,7 +1702,7 @@ void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
+IntensityDistributionTargetSelectionChangedCallback(vtkIdType vtkNotUsed(targetVolId))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "IntensityDistributionTargetSelectionChangedCallback");
@@ -1764,7 +1764,7 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
-    vtkObject *caller, unsigned long event, void *callData)
+    vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "ProcessGaussian2DButtonGUIEvents");
@@ -1865,7 +1865,7 @@ RemoveLabelButtonGUIEventsObservers()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData)
+  vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "ProcessLabelButtonGUIEvents");
@@ -2255,7 +2255,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveLabelSelectorGUIObservers()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessLabelSelectorGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData)
+  vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   if (caller == this->LabelSelector &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&

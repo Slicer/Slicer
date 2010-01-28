@@ -267,7 +267,7 @@ void vtkKWMimxDeleteBoundaryConditionsGroup::DeleteBoundaryConditionDoneCallback
 }
 //---------------------------------------------------------------------------------
 void vtkKWMimxDeleteBoundaryConditionsGroup::SelectionChangedCallback(
-        const char *Selection)
+        const char *vtkNotUsed(Selection))
 {
         if(this->CancelStatus)
         {

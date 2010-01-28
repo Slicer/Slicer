@@ -1,8 +1,8 @@
 
+#include "vtkSlicerApplication.h"
 #include "vtkObjectFactory.h"
 #include "vtkSlicerTheme.h"
 #include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
 #include "vtkKWOptionDataBase.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerCheckRadioButtonIcons.h"

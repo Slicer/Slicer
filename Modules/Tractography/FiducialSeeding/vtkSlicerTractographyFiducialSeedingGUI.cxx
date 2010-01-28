@@ -12,6 +12,8 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+#include "vtkSlicerApplication.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -50,7 +52,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWEntry.h"
 
-#include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWFrame.h"

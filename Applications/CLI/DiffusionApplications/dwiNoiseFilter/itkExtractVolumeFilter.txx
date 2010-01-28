@@ -27,7 +27,7 @@ namespace itk
 
 template< class TInputImage, class TOutputImage>
 void ExtractVolumeFilter< TInputImage, TOutputImage >
-::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
+::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int itkNotUsed(threadId) )
 {
   // Allocate images:
   typename OutputImageType::Pointer     output = this->GetOutput();

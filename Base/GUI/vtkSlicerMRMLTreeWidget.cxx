@@ -246,7 +246,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
 } 
 
 //---------------------------------------------------------------------------
-void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
+void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char * vtkNotUsed(id))
 {
   // delete node, then repopulate tree
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
@@ -307,7 +307,7 @@ void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
+void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *vtkNotUsed(id))
 {
   //cout << "I want to delete MRML node " << id << endl;
   this->ClearCutNodes();

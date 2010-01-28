@@ -532,7 +532,7 @@ void vtkKWMimxCreateElementSetPickFaceGroup:: VTKinteractionCallback()
         }
 }
 //---------------------------------------------------------------------------------
-void vtkKWMimxCreateElementSetPickFaceGroup::SelectionChangedCallback(const char *dummy)
+void vtkKWMimxCreateElementSetPickFaceGroup::SelectionChangedCallback(const char *vtkNotUsed(dummy))
 {
         this->AddButtonState = 1;
         if(this->RadioButtonSet->GetWidget(0)->GetSelectedState())

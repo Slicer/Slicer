@@ -308,7 +308,10 @@ void vtkChangeTrackerAnalysisStep::WizardGUICallback(vtkObject *caller, unsigned
 }
 
 
-void vtkChangeTrackerAnalysisStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {
+void vtkChangeTrackerAnalysisStep::ProcessGUIEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *vtkNotUsed(callData))
+{
 
   // cout << "vtkChangeTrackerAnalysisStep::ProcessGUIEvents" << endl;
 

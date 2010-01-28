@@ -13,21 +13,21 @@
 
 =======================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-
 #include "vtkMRIBiasFieldCorrectionGUI.h"
 
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerSlicesControlGUI.h"
+#include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
+
+// KWWidgets includes
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -36,19 +36,23 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWSpinBox.h"
-
-#include "vtkSlicerSliceControllerWidget.h"
-#include "vtkSlicerSlicesControlGUI.h"
 #include "vtkKWScale.h"
 
+// MRML includes
 #include "vtkMRMLSliceNode.h"
-#include "vtkSlicerSliceGUI.h"
+
+// VTK includes
+#include "vtkCommand.h"
+#include "vtkObjectFactory.h"
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
@@ -273,6 +277,7 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
 //----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -343,7 +348,7 @@ void vtkMRIBiasFieldCorrectionGUI::RemoveGUIObservers()
 void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents(
     vtkObject *caller,
     unsigned long event,
-    void *callData )
+    void *vtkNotUsed(callData))
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector =
@@ -518,7 +523,7 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateGUI()
 
 //---------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents(
-    vtkObject *caller, unsigned long event, void *callData )
+    vtkObject *caller, unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
 {
   // if parameter node has been changed externally, update GUI widgets with
   // new values

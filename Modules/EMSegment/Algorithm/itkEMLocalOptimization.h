@@ -72,8 +72,8 @@ public:
 
 
   /** Get the derivatives of the match measure. */
-  void GetDerivative( const ParametersType & parameters,
-                      DerivativeType & derivative ) const
+  void GetDerivative( const ParametersType & vtkNotUsed(parameters),
+                      DerivativeType & vtkNotUsed(derivative) ) const
   {
      itkExceptionMacro( "GetDerivative not supported!" );
   }
@@ -90,8 +90,9 @@ public:
   }
 
   /**  Get value and derivatives for multiple valued optimizers. */
-  void GetValueAndDerivative( const ParametersType & parameters,
-                              MeasureType& Value, DerivativeType& Derivative ) const
+  void GetValueAndDerivative( const ParametersType & vtkNotUsed(parameters),
+                              MeasureType& vtkNotUsed(Value),
+                              DerivativeType& vtkNotUsed(Derivative) ) const
   {
     itkExceptionMacro( "GetValueAndDerivative not supported!" );
   }
@@ -121,7 +122,10 @@ private:
 
 /* Run optimzation */
 // Seperate from itk function bc it is only a wrapper around 
-void  itkEMLocalOptimization_Registration_Start(EMLocalRegistrationCostFunction* RegCostFunction, double* Parameters, float &Cost) {
+void  itkEMLocalOptimization_Registration_Start(EMLocalRegistrationCostFunction* RegCostFunction,
+                                                double* Parameters,
+                                                float &vtkNotUsed(Cost))
+{
   std::cerr << "==================== Start Registration =========================== " << endl;
 
   RegCostFunction->InitializeCostFunction();

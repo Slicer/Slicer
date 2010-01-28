@@ -112,7 +112,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic
   virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );  
-
+  //BTX
+  using vtkSlicerLogic::ProcessLogicEvents; 
+  //ETX
+  
   // Description:
   // Computes matrix we need to register
   // V1Node to V2Node given the

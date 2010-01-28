@@ -414,7 +414,7 @@ void vtkKWMimxMirrorBBGroup::UpdateObjectLists()
                 this->EditBBGroup->GetObjectListComboBox()->GetWidget()->GetValue());
 }
 //-----------------------------------------------------------------------------------
-void vtkKWMimxMirrorBBGroup::SelectionChangedCallback(const char* dummy)
+void vtkKWMimxMirrorBBGroup::SelectionChangedCallback(const char* vtkNotUsed(dummy))
 {
         if(this->AxisSelection->GetWidget(0)->GetSelectedState())
         {

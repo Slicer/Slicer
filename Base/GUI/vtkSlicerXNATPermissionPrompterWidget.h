@@ -65,6 +65,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   /// Returns 1 if UserName, Password, and Host have been entered,
   /// and 0 if any value is NULL;
   virtual int Prompt( const char *message, vtkMRMLScene *scene);
+  //BTX
+  using vtkSlicerPermissionPrompterWidget::Prompt; 
+  //ETX
   
  protected:
   vtkSlicerXNATPermissionPrompterWidget ( );

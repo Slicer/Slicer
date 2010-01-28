@@ -821,7 +821,10 @@ void vtkSlicerParameterWidget::AddParameterAndEventToWidget(vtkKWCoreWidget *par
     }
 }
 
-void vtkSlicerParameterWidget::GUIChangedCallback(vtkObject *__caller, unsigned long eid, void *__clientData, void *callData)
+void vtkSlicerParameterWidget::GUIChangedCallback(vtkObject *__caller,
+                                                  unsigned long vtkNotUsed(eid),
+                                                  void *__clientData,
+                                                  void *vtkNotUsed(callData))
 {
     
   vtkSlicerParameterWidget::callBackDataStruct *myCBStruct = (vtkSlicerParameterWidget::callBackDataStruct*)__clientData;

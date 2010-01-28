@@ -146,8 +146,9 @@ void vtkFetchMIFlatResourceWidget::RaiseHelpWindow()
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *vtkNotUsed(callData))
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   
@@ -410,8 +411,9 @@ const char* vtkFetchMIFlatResourceWidget::GetNthSelectedURI (int n)
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIFlatResourceWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkFetchMIFlatResourceWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                     unsigned long vtkNotUsed(event),
+                                                     void *vtkNotUsed(callData))
 {
   // nothing; handle in parent.
 }
@@ -631,7 +633,8 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMIFlatResourceWidget::RightClickListCallback(int row, int col, int x, int y)
+void vtkFetchMIFlatResourceWidget::RightClickListCallback(int row, int col,
+                                                          int vtkNotUsed(x), int vtkNotUsed(y))
 {
     vtkKWMultiColumnList *list =
         this->GetMultiColumnList()->GetWidget();

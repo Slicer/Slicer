@@ -433,7 +433,7 @@ void vtkMimxSelectCellsWidget::Initialize()
   //}
 }
 //-----------------------------------------------------------------------------------------------
-void vtkMimxSelectCellsWidget::AcceptSelectedMesh(vtkMimxSelectCellsWidget *self)
+void vtkMimxSelectCellsWidget::AcceptSelectedMesh(vtkMimxSelectCellsWidget *vtkNotUsed(self))
 {
   //if(self->CurrentSelectedSubsetActor)
   //{

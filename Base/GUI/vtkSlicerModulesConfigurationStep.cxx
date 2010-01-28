@@ -1,8 +1,14 @@
 #include "vtkSlicerModulesConfigurationStep.h"
 
 #include "vtkSlicerConfigure.h"
-#include "vtkObjectFactory.h"
 
+// vtkSlicer includes
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerModulesWizardDialog.h"
+#include "vtkSlicerFoundationIcons.h"
+
+// KWWidgets includes
 #include "vtkKWApplication.h"
 #include "vtkKWIcon.h"
 #include "vtkKWLabel.h"
@@ -18,12 +24,11 @@
 #include "vtkKWStateMachineInput.h"
 #include "vtkKWFrame.h"
 
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerModulesWizardDialog.h"
-#include "vtkSlicerFoundationIcons.h"
-
+// RemoteIO includes
 #include "vtkHTTPHandler.h"
+
+// VTK includes
+#include "vtkObjectFactory.h"
 
 #include <itksys/SystemTools.hxx>
 

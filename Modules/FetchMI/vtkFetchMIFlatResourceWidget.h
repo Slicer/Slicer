@@ -37,6 +37,9 @@ public:
   // Description:
   // Method to add a new resource to the resource list.
   virtual void AddNewItem ( const char *uri, const char *dtype);
+  //BTX
+  using vtkFetchMIMulticolumnWidget::AddNewItem; 
+  //ETX
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml

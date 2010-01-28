@@ -271,7 +271,7 @@ void vtkSlicerWelcomeGUI::TearDownGUI ( )
 //----------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 
@@ -401,7 +401,7 @@ void vtkSlicerWelcomeGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
-                                           void *callData ) 
+                                           void *vtkNotUsed(callData)) 
 {
 
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );

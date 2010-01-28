@@ -56,7 +56,9 @@ public:
   virtual void UpdateGUI() { } 
   virtual void RemoveGUIObservers() { } 
 
-  virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) { }
+  virtual void ProcessGUIEvents(vtkObject *vtkNotUsed(caller),
+                                unsigned long vtkNotUsed(event),
+                                void *vtkNotUsed(callData)) { }
 
   void SetNextStep(vtkChangeTrackerStep *init) { this->NextStep = init;}
 

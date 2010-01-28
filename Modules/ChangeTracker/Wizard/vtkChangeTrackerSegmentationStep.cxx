@@ -519,7 +519,9 @@ void vtkChangeTrackerSegmentationStep::RemoveGUIObservers()
     }
 }
 
-void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *vtkNotUsed(callData))
 {
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if(this->Scan1_SegmSelector && sel == this->Scan1_SegmSelector &&

@@ -1067,8 +1067,9 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkQueryAtlasGUI::ProcessGUIEvents(vtkObject *caller,
+                                        unsigned long event,
+                                        void *vtkNotUsed(callData))
 {
     // nothing to do here yet...
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
@@ -2022,8 +2023,9 @@ void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkQueryAtlasGUI::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
+                                          unsigned long vtkNotUsed(event),
+                                          void *vtkNotUsed(callData))
 {
   // Fill in
 }

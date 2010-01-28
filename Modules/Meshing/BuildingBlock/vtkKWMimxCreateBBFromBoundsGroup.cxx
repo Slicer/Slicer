@@ -71,7 +71,7 @@ class vtkRightButtonBBManualCreateCallback : public vtkCommand
 public:
         static vtkRightButtonBBManualCreateCallback *New() 
         { return new vtkRightButtonBBManualCreateCallback; }
-        virtual void Execute(vtkObject *caller, unsigned long, void*)
+        virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long, void*)
         {
                 this->PickInstance->CreateBBFromBoundsApplyCallback();
         }
@@ -422,7 +422,7 @@ void vtkKWMimxCreateBBFromBoundsGroup::DisableRubberBandPick( )
 }
 
 //---------------------------------------------------------------------------------
-void vtkKWMimxCreateBBFromBoundsGroup::ExtrusionLengthChangedCallback(const char *value)
+void vtkKWMimxCreateBBFromBoundsGroup::ExtrusionLengthChangedCallback(const char *vtkNotUsed(value))
 {
         if (this->CreateBuildingBlockFromPickWidget)
         {

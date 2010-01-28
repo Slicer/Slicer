@@ -61,7 +61,7 @@ public:
   virtual void SetEnabled(int);
   virtual void SetEnabled(int, vtkMimxSelectCellsWidget *Self);
 
-  virtual void PlaceWidget(double bounds[6]){};
+  virtual void PlaceWidget(double vtkNotUsed(bounds)[6]){};
   vtkUnstructuredGrid *GetPickedSubset();
   void Initialize();
  /* vtkSetObjectMacro(InputActor, vtkActor);

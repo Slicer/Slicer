@@ -40,10 +40,10 @@ class VTK_CHANGETRACKER_EXPORT vtkImageSumOverVoxels : public vtkImageToImageFil
 protected:
 
   vtkImageSumOverVoxels() {VoxelSum = -1; };
-  vtkImageSumOverVoxels(const vtkImageSumOverVoxels&) {};
   ~vtkImageSumOverVoxels(){};
 
-  void operator=(const vtkImageSumOverVoxels&) {};
+  vtkImageSumOverVoxels(const vtkImageSumOverVoxels&);
+  void operator=(const vtkImageSumOverVoxels&);
   
   // When it works on parallel machines use : 
   //  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,int outExt[6], int id);

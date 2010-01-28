@@ -113,8 +113,9 @@ void vtkSlicerTransformsGUI::AddGUIObservers ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformsGUI::ProcessGUIEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerTransformsGUI::ProcessGUIEvents (vtkObject *caller,
+                                               unsigned long event,
+                                               void *vtkNotUsed(callData))
 {
   vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
   if (loadSaveDialog && loadSaveDialog == this->LoadButton->GetLoadSaveDialog() &&

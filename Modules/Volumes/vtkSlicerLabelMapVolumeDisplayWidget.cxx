@@ -1,23 +1,28 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+
+#include "vtkSlicerApplication.h"
 
 #include "vtkSlicerLabelMapVolumeDisplayWidget.h"
 
+// KWWidgets includes
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 
+// to get at the colour logic to set a default color node
+#include "vtkKWApplication.h"
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerColorLogic.h"
+
+// MRML includes
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 
-// to get at the colour logic to set a default color node
-#include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerColorGUI.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkMRMLScalarVolumeNode.h"
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerLabelMapVolumeDisplayWidget );
@@ -102,11 +107,10 @@ void vtkSlicerLabelMapVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *call
     }
 }
 
-
-
 //---------------------------------------------------------------------------
-void vtkSlicerLabelMapVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkSlicerLabelMapVolumeDisplayWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                             unsigned long event,
+                                                             void *vtkNotUsed(callData))
 {
   if (this->UpdatingMRML || this->UpdatingWidget)
     {

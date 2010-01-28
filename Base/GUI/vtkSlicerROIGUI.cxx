@@ -55,7 +55,7 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
 {
-  this->SetModuleLogic (NULL);
+  this->SetModuleLogic (static_cast<vtkSlicerROILogic*>(0));
   this->SetROIListNodeID(NULL);
   
   /*if (this->VolumeNodeID)
@@ -475,8 +475,9 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerROIGUI::ProcessLogicEvents ( vtkObject *caller,
-                                          unsigned long event, void * vtkNotUsed(callData) )
+void vtkSlicerROIGUI::ProcessLogicEvents (vtkObject *vtkNotUsed(caller),
+                                          unsigned long vtkNotUsed(event),
+                                          void * vtkNotUsed(callData))
 {
   // Fill in
 }

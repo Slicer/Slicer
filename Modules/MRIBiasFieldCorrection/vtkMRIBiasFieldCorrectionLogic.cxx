@@ -105,6 +105,7 @@ vtkMRIBiasFieldCorrectionLogic::~vtkMRIBiasFieldCorrectionLogic()
 //----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 
 void vtkMRIBiasFieldCorrectionLogic::Apply()

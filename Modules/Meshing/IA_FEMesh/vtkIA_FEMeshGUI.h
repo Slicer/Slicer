@@ -58,7 +58,13 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   const char *GetCategory() const {return "Wizards";}
 
   virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  //BTX
+  using vtkObjectBase::Register; 
+  //ETX
   virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+  //BTX
+  using vtkObjectBase::UnRegister; 
+  //ETX
 
 
    // Description: Get/Set MRML node
@@ -66,21 +72,28 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   vtkSetObjectMacro (Logic, vtkIA_FEMeshLogic);
 
   virtual void BuildGUI ( );
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI; 
+  //ETX
   virtual void TearDownGUI ( );
 
   virtual void AddGUIObservers ( );
 
   virtual void RemoveGUIObservers ( );
 
-  virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
-                                  void *callData ){};
-  virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
+  virtual void ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
+                                  unsigned long vtkNotUsed(event),
+                                  void *vtkNotUsed(callData)){};
+  virtual void ProcessGUIEvents( vtkObject *caller, unsigned long event,
                                   void *callData );
-  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+  virtual void ProcessMrmlEvents( vtkObject *caller, unsigned long event,
                                    void *callData );
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
+  //BTX
+  using vtkSlicerComponentGUI::Enter; 
+  //ETX
   virtual void Exit ( );
 
   virtual void SetActiveViewer(vtkSlicerViewerWidget *activeViewer);
@@ -88,15 +101,15 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
 //  vtkGetObjectMacro(ViewProperties, vtkKWMimxViewProperties);
 //  vtkGetObjectMacro(MainUserInterfacePanel, vtkKWMimxMainUserInterfacePanel);
 
-    // Added for loadable modules
-     // Description:
-     // Set the logic pointer from parent class pointer.
-     // Overloads implementation in vtkSlicerModulesGUI
-     // to allow loadable modules.
-     virtual void SetModuleLogic ( vtkSlicerLogic *logic )
-     {
-       this->SetLogic(reinterpret_cast<vtkIA_FEMeshLogic*> (logic));
-     }
+  // Added for loadable modules
+  // Description:
+  // Set the logic pointer from parent class pointer.
+  // Overloads implementation in vtkSlicerModulesGUI
+  // to allow loadable modules.
+  virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+  {
+    this->SetLogic(reinterpret_cast<vtkIA_FEMeshLogic*> (logic));
+  }
 
 protected:
   vtkIA_FEMeshGUI();

@@ -339,8 +339,9 @@ void vtkFetchMIQueryTermWidget::DeselectAllItems()
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIQueryTermWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkFetchMIQueryTermWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                  unsigned long vtkNotUsed(event),
+                                                  void *vtkNotUsed(callData))
 {
   // nothing; handle in parent.
 }
@@ -556,7 +557,8 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
 
 //--- no longer used.
 //----------------------------------------------------------------------------
-void vtkFetchMIQueryTermWidget::RightClickListCallback(int row, int col, int x, int y)
+void vtkFetchMIQueryTermWidget::RightClickListCallback(int row, int col,
+                                                       int vtkNotUsed(x), int vtkNotUsed(y))
 {
     vtkKWMultiColumnList *list =
         this->GetMultiColumnList()->GetWidget();
@@ -587,7 +589,8 @@ void vtkFetchMIQueryTermWidget::PopulateFromServer ( )
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *val )
+void vtkFetchMIQueryTermWidget::AddNewItem(const char *vtkNotUsed(keyword),
+                                           const char *vtkNotUsed(val))
 {
   // not used.
 }
@@ -890,8 +893,3 @@ const char* vtkFetchMIQueryTermWidget::GetNthSelectedValue(int n)
     }
   return NULL;
 }
-
-
-
-
-

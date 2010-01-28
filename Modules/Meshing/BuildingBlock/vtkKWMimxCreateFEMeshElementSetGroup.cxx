@@ -542,7 +542,7 @@ void vtkKWMimxCreateFEMeshElementSetGroup::FullCallback()
         }
 }
 //---------------------------------------------------------------------------------
-void vtkKWMimxCreateFEMeshElementSetGroup::SelectionChangedCallback(const char *Selection)
+void vtkKWMimxCreateFEMeshElementSetGroup::SelectionChangedCallback(const char *vtkNotUsed(Selection))
 {
         if (this->SelectCellsWidget)
         {

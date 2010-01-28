@@ -62,6 +62,9 @@ public:
   void RaiseTaggingHelpWindow();
   
   virtual void AddNewItem ( const char *dataset, const char *dtype);
+  //BTX
+  using vtkFetchMIMulticolumnWidget::AddNewItem; 
+  //ETX
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml

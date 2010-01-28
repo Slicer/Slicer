@@ -12,24 +12,20 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-// #ifdef Slicer3_USE_QT
-// #include "QtGADModule.h"
-// #endif
-
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
-#include "vtkSlicerApplication.h"
+// vtkSlicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
+
+// KWWidgets includes
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
+#include "vtkKWPushButton.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -38,10 +34,15 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
-#include "vtkKWPushButton.h"
 
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterGUI* vtkGradientAnisotropicDiffusionFilterGUI::New()
@@ -119,7 +120,7 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
 //----------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -270,8 +271,8 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateGUI ()
 
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+                                            unsigned long vtkNotUsed(event),
+                                            void *vtkNotUsed(callData)) 
 {
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLGradientAnisotropicDiffusionFilterNode* node = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(caller);

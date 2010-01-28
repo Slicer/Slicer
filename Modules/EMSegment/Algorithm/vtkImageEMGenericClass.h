@@ -222,7 +222,6 @@ class VTK_EMSEGMENT_EXPORT vtkImageEMGenericClass : public vtkImageMultipleInput
 
 protected:
   vtkImageEMGenericClass();
-  vtkImageEMGenericClass(const vtkImageEMGenericClass&) {};
   ~vtkImageEMGenericClass(){
     this->DeleteVariables(); 
   } 
@@ -231,8 +230,10 @@ protected:
   // vtkImageData* GetOutput() {return NULL;}
 
   void DeleteVariables(); 
-  void operator=(const vtkImageEMGenericClass&) {};
-  void ThreadedExecute(vtkImageData **inData, vtkImageData *outData,int outExt[6], int id) {};
+  void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
+                       vtkImageData *vtkNotUsed(outData),
+                       int vtkNotUsed(outExt)[6], int vtkNotUsed(id)) {};
+  
  
   // Checks if all the parameters are setrectly
   // We do not have any input here
@@ -257,7 +258,9 @@ protected:
   ProtocolMessages WarningMessage;    // Lists all the error messges -> allows them to be displayed in tcl too 
 
   int PrintWeights;                   // Print out Weights (1 = Normal 2=as shorts normed to 1000)   
-
+private:
+  vtkImageEMGenericClass(const vtkImageEMGenericClass&); // Not implemented
+  void operator=(const vtkImageEMGenericClass&);  // Not implemented
 };
 
 #endif

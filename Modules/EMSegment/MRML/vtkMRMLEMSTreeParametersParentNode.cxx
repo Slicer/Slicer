@@ -504,7 +504,7 @@ GetClassInteractionMatrixNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSTreeParametersParentNode::AddChildNode(const char* childNodeID)
+void vtkMRMLEMSTreeParametersParentNode::AddChildNode(const char* vtkNotUsed(childNodeID))
 {
   if (this->GetClassInteractionMatrixNode() != NULL)
   {

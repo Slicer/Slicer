@@ -252,12 +252,11 @@ class VTK_CHANGETRACKER_EXPORT vtkImageIslandFilter : public vtkImageToImageFilt
 
 
 protected:
+  vtkImageIslandFilter(const vtkImageIslandFilter&); // Not implemented
+  void operator=(const vtkImageIslandFilter&); // Not implemented
 
   vtkImageIslandFilter();
-  vtkImageIslandFilter(const vtkImageIslandFilter&) {};
   ~vtkImageIslandFilter();
-
-  void operator=(const vtkImageIslandFilter&) {};
   
   // When it works on parallel machines use : 
   //  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,int outExt[6], int id);

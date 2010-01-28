@@ -1,14 +1,18 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
 
-#include "vtkSlicerWaitMessageWidget.h"
+// vtkSlicer includes
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerWaitMessageWidget.h"
 #include "vtkSlicerFoundationIcons.h"
 
+// KWWidgets includes
 #include "vtkKWLabel.h"
 #include "vtkKWTopLevel.h"
 #include "vtkKWTkUtilities.h"
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+#include "vtkProperty.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerWaitMessageWidget );

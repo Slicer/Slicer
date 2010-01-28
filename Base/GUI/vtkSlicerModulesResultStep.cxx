@@ -1,10 +1,12 @@
 #include "vtkSlicerModulesResultStep.h"
 #include "vtkSlicerModulesStep.h"
 
-#include "vtkStringArray.h"
+// vtkSlicer includes
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerConfigure.h"
+#include "vtkSlicerModulesWizardDialog.h"
 
-#include "vtkObjectFactory.h" 
-
+// KWWidgets includes
 #include "vtkKWApplication.h"
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
@@ -12,12 +14,12 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWLabel.h"
 
+// RemoteIO includes
 #include "vtkHTTPHandler.h"
 
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerConfigure.h"
-#include "vtkSlicerModulesWizardDialog.h"
-
+// VTK includes
+#include "vtkStringArray.h"
+#include "vtkObjectFactory.h" 
 
 #include <vtksys/SystemTools.hxx>
 

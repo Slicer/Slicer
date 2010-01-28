@@ -126,7 +126,7 @@ void vtkKWMimxImageViewProperties::UpdateEnableState()
         this->Superclass::UpdateEnableState();
 }
 //----------------------------------------------------------------------------
-void vtkKWMimxImageViewProperties::VisibilityCallback(int flag)
+void vtkKWMimxImageViewProperties::VisibilityCallback(int vtkNotUsed(flag))
 {
   for (int i=0; i<this->ObjectList->GetNumberOfItems(); i++)
   {

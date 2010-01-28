@@ -41,6 +41,9 @@ public:
     /// for both setting and observing them.        
     void SetModuleLogic ( vtkSlicerColorLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    //BTX
+    using vtkSlicerModuleGUI::SetModuleLogic;
+    //ETX
     void SetAndObserveModuleLogic ( vtkSlicerColorLogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 

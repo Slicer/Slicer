@@ -64,6 +64,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 
     void SetModuleLogic ( vtkSlicerModelsLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    //BTX
+    using vtkSlicerModuleGUI::SetModuleLogic; 
+    //ETX
     void SetAndObserveModuleLogic ( vtkSlicerModelsLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     vtkGetObjectMacro( Logic, vtkSlicerModelsLogic );

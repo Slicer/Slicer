@@ -12,24 +12,29 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
+#include "vtkSlicerApplication.h"
 
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/Directory.hxx>
-
-#include "vtkObjectFactory.h"
-
+// QDec includes
 #include "vtkQdecModuleLogic.h"
 #include "vtkQdecModule.h"
 
-#include "vtkSlicerApplication.h"
-
+// vtkSlicer includes
 // for loading the outputs of the GLM processing
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerModelsLogic.h"
 //#include "vtkGDFReader.h"
+
+// VTK includes
+#include "vtkObjectFactory.h"
+
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+#include <vtksys/Directory.hxx>
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 vtkQdecModuleLogic* vtkQdecModuleLogic::New()
 {

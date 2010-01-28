@@ -12,20 +12,17 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkIA_FEMeshGUI.h"
 
-#include "vtkCommand.h"
-#include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
-#include "vtkSlicerApplication.h"
+// vtkSlicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
+
+#include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -38,8 +35,15 @@ Version:   $Revision: 1.2 $
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 
-#include "vtkSlicerModuleCollapsibleFrame.h"
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 #include "vtkRenderWindowInteractor.h"
+
+// STL includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 // *** Declarations added for Univ. of Iowa Meshing Integration into Slicer3
 
@@ -124,7 +128,7 @@ vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 //----------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -144,9 +148,9 @@ void vtkIA_FEMeshGUI::RemoveGUIObservers ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *caller,
-                                         unsigned long event,
-                                         void *callData )
+void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *vtkNotUsed(caller),
+                                         unsigned long vtkNotUsed(event),
+                                         void *vtkNotUsed(callData) )
 {
 //  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
 
@@ -162,9 +166,9 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                          unsigned long event,
-                                          void *callData )
+void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *vtkNotUsed(caller),
+                                          unsigned long vtkNotUsed(event),
+                                          void *vtkNotUsed(callData) )
 {
   /**
   vtkMRMLIA_FEMeshNode* node = dynamic_cast<vtkMRMLIA_FEMeshNode *> (this->ApplicationLogic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLIA_FEMeshNode"));

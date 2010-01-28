@@ -734,14 +734,14 @@ void vtkFourDImageGUI::AddLogicObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkFourDImageGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
+void vtkFourDImageGUI::HandleMouseEvent(vtkSlicerInteractorStyle *vtkNotUsed(style))
 {
 }
 
 
 //---------------------------------------------------------------------------
 void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
-                                         unsigned long event, void *callData)
+                                         unsigned long event, void *vtkNotUsed(callData))
 {
 
   const char *eventName = vtkCommand::GetStringFromEventId(event);
@@ -1170,8 +1170,9 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkFourDImageGUI::DataCallback(vtkObject *caller, 
-                                     unsigned long eid, void *clientData, void *callData)
+void vtkFourDImageGUI::DataCallback(vtkObject *vtkNotUsed(caller), 
+                                    unsigned long vtkNotUsed(eid),
+                                    void *clientData, void *vtkNotUsed(callData))
 {
   vtkFourDImageGUI *self = reinterpret_cast<vtkFourDImageGUI *>(clientData);
   vtkDebugWithObjectMacro(self, "In vtkFourDImageGUI DataCallback");
@@ -1180,7 +1181,7 @@ void vtkFourDImageGUI::DataCallback(vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkFourDImageGUI::ProcessLogicEvents ( vtkObject *caller,
+void vtkFourDImageGUI::ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
                                              unsigned long event, void *callData )
 {
   if (event == vtkFourDImageLogic::StatusUpdateEvent)
@@ -1224,8 +1225,8 @@ void vtkFourDImageGUI::ProcessLogicEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkFourDImageGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkFourDImageGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
+                                            unsigned long event, void *vtkNotUsed(callData))
 {
   if (event == vtkMRMLScene::NodeAddedEvent)
     {

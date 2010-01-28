@@ -196,7 +196,8 @@ public:
 
   void SetInterpolationType(int init) {this->InterpolationType = init;}
   void SetGenerateBackgroundProbability(int init) { this->GenerateBackgroundProbability = init;}
-  void SetNumberOfTrainingSamples(int init) {this->NumberOfTrainingSamples = NumberOfTrainingSamples;}
+  void SetNumberOfTrainingSamples(int vtkNotUsed(init))
+    {this->NumberOfTrainingSamples = NumberOfTrainingSamples;}
 
   void SetBoundary_NumberOfROIVoxels(int init) {this->Boundary_NumberOfROIVoxels = init;}
 

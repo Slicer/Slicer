@@ -181,6 +181,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // This method builds the QueryAtlas module GUI
     virtual void BuildGUI ( ) ;
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI; 
+    //ETX
     virtual void BuildAcknowledgementPanel ( );
     virtual void BuildLoadAndConvertGUI ( );
     virtual void BuildAnnotationOptionsGUI ( );
@@ -282,6 +285,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // Methods describe behavior at module enter and exit.
     virtual void Enter ( );
+    //BTX
+    using vtkSlicerComponentGUI::Enter; 
+    //ETX
     virtual void Exit ( );
 
     // Description:

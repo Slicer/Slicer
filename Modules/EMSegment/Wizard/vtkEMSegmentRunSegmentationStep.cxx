@@ -735,7 +735,7 @@ RemoveRunRegistrationOutputGUIObservers()
 void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
   vtkObject *caller,
   unsigned long event,
-  void *callData)
+  void *vtkNotUsed(callData))
 {
   if (caller == this->RunSegmentationOutVolumeSelector &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
@@ -1093,7 +1093,7 @@ void vtkEMSegmentRunSegmentationStep::GenerateSurfaceModelsCallback(
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMaxChangedCallback(
-    int row, int col, const char *value)
+    int vtkNotUsed(row), int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1111,7 +1111,7 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMaxChangedCallback(
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMinChangedCallback(
-    int row, int col, const char *value)
+    int vtkNotUsed(row), int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();

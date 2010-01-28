@@ -395,7 +395,7 @@ void vtkFetchMIGUI::TearDownGUI ( )
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -509,9 +509,9 @@ void vtkFetchMIGUI::RemoveLogicObservers ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData ) 
+void vtkFetchMIGUI::ProcessGUIEvents(vtkObject *caller,
+                                     unsigned long event,
+                                     void *vtkNotUsed(callData))
 {
 
   if ( !this->Built )
@@ -1395,9 +1395,9 @@ void vtkFetchMIGUI::RestoreSelectedValuesForTagsFromMRML()
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkFetchMIGUI::ProcessMRMLEvents(vtkObject *caller,
+                                      unsigned long event,
+                                      void *vtkNotUsed(callData))
 {
   if ( !this->Raised )
     {

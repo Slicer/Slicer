@@ -1,23 +1,27 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkSlicerVectorVolumeDisplayWidget.h"
 
+// to get at the colour logic to set a default color node
+#include "vtkKWApplication.h"
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerColorLogic.h"
+
+// KWWidgets
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 
+// MRML includes
+#include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 
-// to get at the colour logic to set a default color node
-#include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerColorGUI.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkMRMLVectorVolumeNode.h"
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVectorVolumeDisplayWidget );

@@ -81,8 +81,9 @@ void vtkSlicerLogoDisplayGUI::AddGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerLogoDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+void vtkSlicerLogoDisplayGUI::ProcessGUIEvents(vtkObject *vtkNotUsed(caller),
+                                               unsigned long vtkNotUsed(event),
+                                               void *vtkNotUsed(callData))
 {
 
   if ( this->GetApplicationGUI() != NULL )
@@ -98,15 +99,17 @@ void vtkSlicerLogoDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerLogoDisplayGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+void vtkSlicerLogoDisplayGUI::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
+                                                 unsigned long vtkNotUsed(event),
+                                                 void *vtkNotUsed(callData))
 {
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerLogoDisplayGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+void vtkSlicerLogoDisplayGUI::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                unsigned long vtkNotUsed(event),
+                                                void *vtkNotUsed(callData))
 {
     // Fill in
 }

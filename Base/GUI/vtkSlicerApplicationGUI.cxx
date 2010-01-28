@@ -3954,15 +3954,17 @@ void vtkSlicerApplicationGUI::UpdateRemoteIOConfigurationForRegistry()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int width, int height)
+void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int vtkNotUsed(width),
+                                                              int vtkNotUsed(height))
 {
   //std::cout << "MainSplitFrameConfigureCallback width:" << width
   //          << ", height:" << height << std::endl;
   this->GUILayoutNode->SetMainPanelSize( this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1Size() );
 }
+
 //---------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int width, int height)
+void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int vtkNotUsed(width),
+                                                                   int vtkNotUsed(height))
 {
   // std::cout << "SecondarySplitFrameConfigureCallback" << std::endl;
   // Disable modified event to avoid a crash when dragging split frame

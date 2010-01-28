@@ -58,6 +58,9 @@ public:
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI;
+  //ETX
 
   // Description:
   // This method releases references and key-bindings,
@@ -105,6 +108,9 @@ public:
   // Description:
   // Methods describe behavior at module enter and exit.
   virtual void Enter ( );
+  //BTX
+  using vtkSlicerComponentGUI::Enter; 
+  //ETX
   virtual void Exit ( );
   
   // Description:

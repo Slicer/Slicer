@@ -80,6 +80,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // Description:
     // This method builds the Volumes module GUI
     virtual void BuildGUI ( );
+    //BTX
+    using vtkSlicerComponentGUI::BuildGUI; 
+    //ETX
 
        // Description:
     // This method releases references and key-bindings,

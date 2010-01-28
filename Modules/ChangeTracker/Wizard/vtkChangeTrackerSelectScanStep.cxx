@@ -70,7 +70,9 @@ void vtkChangeTrackerSelectScanStep::RemoveGUIObservers()
     }
 }
 
-void vtkChangeTrackerSelectScanStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) { 
+void vtkChangeTrackerSelectScanStep::ProcessGUIEvents(vtkObject *caller,
+                                                      unsigned long event,
+                                                      void *vtkNotUsed(callData)) { 
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if (this->VolumeMenuButton && selector == this->VolumeMenuButton && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent && this->VolumeMenuButton->GetSelected() != NULL) 
   { 

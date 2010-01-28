@@ -29,8 +29,9 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshLogic : public vtkSlicerModuleLogic
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData ){};
+  virtual void ProcessMrmlEvents(vtkObject *vtkNotUsed(caller),
+                                 unsigned long vtkNotUsed(event),
+                                 void *vtkNotUsed(callData)){};
 
   // Description: Get/Set MRML node
   vtkGetObjectMacro (IA_FEMeshNode, vtkMRMLIA_FEMeshNode);

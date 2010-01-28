@@ -84,7 +84,7 @@ template< class TInput , class TOutput >
 void
 DiffusionTensor3DResample< TInput , TOutput >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                                                              int threadId )
+                                                              int itkNotUsed(threadId) )
 {
   OutputImagePointerType outputImagePtr = this->GetOutput( 0 ) ;
   IteratorType it( outputImagePtr , outputRegionForThread ) ;

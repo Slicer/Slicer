@@ -102,7 +102,7 @@ class VTK_EMSEGMENT_EXPORT vtkImageEMGeneral : public vtkImageMultipleInputFilte
   // -------------------------------
   static vtkImageEMGeneral *New();
   vtkTypeMacro(vtkImageEMGeneral,vtkObject);
-  void PrintSelf(ostream& os) { };
+  void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 //Kilian
 //BTX
   void SetInputIndex(int index, vtkImageData *image) {this->SetInput(index,image);}
@@ -259,12 +259,12 @@ class VTK_EMSEGMENT_EXPORT vtkImageEMGeneral : public vtkImageMultipleInputFilte
 
 protected:
   vtkImageEMGeneral() {};
-  vtkImageEMGeneral(const vtkImageEMGeneral&) {};
   ~vtkImageEMGeneral() {};
 
   void DeleteVariables();
-  void operator=(const vtkImageEMGeneral&) {};
-  void ThreadedExecute(vtkImageData **inData, vtkImageData *outData,int outExt[6], int id){};
+  void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
+                       vtkImageData *vtkNotUsed(outData),
+                       int vtkNotUsed(outExt)[6], int vtkNotUsed(id)){};
 //Kilian
 //BTX
   // -------------------------------
@@ -334,6 +334,10 @@ protected:
 
 //Kilian
 //ETX
+
+private:
+  vtkImageEMGeneral(const vtkImageEMGeneral&); // Not implemented
+  void operator=(const vtkImageEMGeneral&);  // Not implemented
 };
 
 //BTX 

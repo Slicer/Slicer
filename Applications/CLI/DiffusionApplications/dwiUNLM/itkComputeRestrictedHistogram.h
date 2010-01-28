@@ -78,6 +78,7 @@ protected:
     this->Superclass::Modified();
     m_Ready = false;
   }
+  using itk::Object::Modified; 
   void BeforeThreadedGenerateData();
   void AfterThreadedGenerateData();
 private:

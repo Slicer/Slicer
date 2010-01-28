@@ -417,8 +417,10 @@ void vtkKWMimxViewProperties::ViewPropertyCallback(const char *objectId, const c
           this->ViewPropertyDialog->Display();
 }
 //----------------------------------------------------------------------------
-void vtkKWMimxViewProperties::CreateNameCellCallback(const char *objectId, int actorType, 
-                                                                                                         const char *tableWidgetName, int row, int col, const char *widgetName)
+void vtkKWMimxViewProperties::CreateNameCellCallback(const char *objectId, int actorType,
+                                                     const char *vtkNotUsed(tableWidgetName),
+                                                     int row, int col,
+                                                     const char *widgetName)
 {
   vtkKWPushButton *cellButton = vtkKWPushButton::New();
   cellButton->SetWidgetName(widgetName);

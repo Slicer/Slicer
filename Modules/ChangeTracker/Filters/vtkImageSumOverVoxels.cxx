@@ -17,7 +17,7 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-void vtkImageSumOverVoxels::ComputeInputUpdateExtent(int inExt[6], int outExt[6])
+void vtkImageSumOverVoxels::ComputeInputUpdateExtent(int inExt[6], int vtkNotUsed(outExt)[6])
 {
   this->GetInput()->GetWholeExtent(inExt);
 }
@@ -36,6 +36,7 @@ vtkImageSumOverVoxels* vtkImageSumOverVoxels::New()
 //----------------------------------------------------------------------------
 void vtkImageSumOverVoxels::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 
 

@@ -2450,7 +2450,8 @@ void vtkEMSegmentNodeParametersStep::Validate()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::
-RightClickOnInputChannelWeightsListCallback(int row, int col, int x, int y)
+RightClickOnInputChannelWeightsListCallback(int row, int col,
+                                            int vtkNotUsed(x), int vtkNotUsed(y))
 {
   vtkKWMultiColumnList *list =
     this->NodeParametersInputChannelWeightsList->GetWidget()->GetWidget();
@@ -2480,9 +2481,9 @@ void vtkEMSegmentNodeParametersStep::RemovePointMovingGUIEvents()
 }
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessPointMovingGUIEvents(
-  vtkObject *caller,
+  vtkObject *vtkNotUsed(caller),
   unsigned long event,
-  void *callData)
+  void *vtkNotUsed(callData))
 {
   vtkErrorMacro("");
   if(event == vtkKWParameterValueFunctionEditor::PointChangedEvent)
@@ -2584,7 +2585,7 @@ void vtkEMSegmentNodeParametersStep::GetLeavesRange()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::GetNumberOfLeaf(
-  const char *parent, vtkIdType volumeID)
+  const char *vtkNotUsed(parent), vtkIdType volumeID)
 {
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -2629,7 +2630,7 @@ void vtkEMSegmentNodeParametersStep::FillTheTreeStructure(
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessComputeWeightsButtonGUIEvents(
-    vtkObject *caller, unsigned long event, void *callData)
+    vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
 
   if (event == vtkKWPushButton::InvokedEvent && caller ==
@@ -2723,7 +2724,7 @@ void vtkEMSegmentNodeParametersStep::RemoveComputeWeightsButtonGUIEvents()
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::GetNodesWeights(int j, vtkIdType volumeID)
+void vtkEMSegmentNodeParametersStep::GetNodesWeights(int vtkNotUsed(j), vtkIdType volumeID)
 {
   this->DepthOfTheNodeInTheTreeStructure += 1;
 
@@ -2812,7 +2813,7 @@ void vtkEMSegmentNodeParametersStep::RemovePreviewGUIObservers()
 void vtkEMSegmentNodeParametersStep::ProcessPreviewGUIEvents(
   vtkObject *caller,
   unsigned long event,
-  void *callData)
+  void *vtkNotUsed(callData))
 {
   if (caller == this->PreviewSelector &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
@@ -3154,7 +3155,7 @@ void vtkEMSegmentNodeParametersStep::RemoveColumnListGUIObservers()
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessColumnListGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData)
+  vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   vtkErrorMacro("");
 

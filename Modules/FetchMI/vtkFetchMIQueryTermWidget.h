@@ -39,6 +39,9 @@ public:
   // Description:
   // not used. New method AddNewTagForQuery is used instead.
   virtual void AddNewItem ( const char *keyword, const char *value);
+  //BTX
+  using vtkFetchMIMulticolumnWidget::AddNewItem; 
+  //ETX
   
   //BTX
   // Description:

@@ -1,7 +1,13 @@
 #include "vtkSlicerModulesStep.h"
 
-#include "vtkObjectFactory.h"
+// vtkSlicer includes
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerConfigure.h"
+#include "vtkSlicerModulesConfigurationStep.h"
+#include "vtkSlicerModulesWizardDialog.h"
 
+// KWWidgets includes
 #include "vtkKWApplication.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWWizardStep.h"
@@ -17,13 +23,11 @@
 
 #include "vtkSlicerModulesConfigurationStep.h"
 
+// RemoteIO includes
 #include "vtkHTTPHandler.h"
 
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerConfigure.h"
-#include "vtkSlicerModulesConfigurationStep.h"
-#include "vtkSlicerModulesWizardDialog.h"
+// VTK includes
+#include "vtkObjectFactory.h"
 
 #include <itksys/SystemTools.hxx>
 
@@ -694,7 +698,7 @@ void vtkSlicerModulesStep::OpenHomePageInBrowserCallback()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModulesStep::DescriptionCommand(const char *notused,
+void vtkSlicerModulesStep::DescriptionCommand(const char *vtkNotUsed(notused),
                                               int row_index,
                                               int col_index,
                                               const char *widget_name)
@@ -1025,7 +1029,7 @@ void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
 //----------------------------------------------------------------------------
 static bool UnzipPackage(const std::string& zipfile, 
                          const std::string& target,
-                         const std::string& tmpdir)
+                         const std::string& vtkNotUsed(tmpdir))
 {
   std::string unzip;
 

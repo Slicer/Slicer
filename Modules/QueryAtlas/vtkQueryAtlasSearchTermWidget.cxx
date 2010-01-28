@@ -133,8 +133,9 @@ void vtkQueryAtlasSearchTermWidget::AddTerm ( const char *term )
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *vtkNotUsed(callData))
 {
 
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller);
@@ -182,8 +183,9 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasSearchTermWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+void vtkQueryAtlasSearchTermWidget::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                      unsigned long vtkNotUsed(event),
+                                                      void *vtkNotUsed(callData))
 {
   // nothing; handle in parent.
 }

@@ -11,20 +11,22 @@ Version:   $Revision: 979 $
 
 ==========================================================================*/
 
+#include "vtkSlicerApplication.h"
+
+#include "vtkScriptedModuleGUI.h"
+
+// KWWidgets includes
+#include "vtkKWApplication.h"
+
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STL includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkKWApplication.h"
-#include "vtkScriptedModuleGUI.h"
-
-#include "vtkSlicerApplication.h"
-
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
-
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"
@@ -203,9 +205,9 @@ void vtkScriptedModuleGUI::RemoveGUIObservers ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData ) 
+void vtkScriptedModuleGUI::ProcessGUIEvents(vtkObject *caller,
+                                            unsigned long event,
+                                            void *vtkNotUsed(callData)) 
 {
   vtkKWObject *kwObject = vtkKWObject::SafeDownCast(caller);
 
@@ -279,9 +281,9 @@ void vtkScriptedModuleGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkScriptedModuleGUI::ProcessMRMLEvents(vtkObject *caller,
+                                             unsigned long event,
+                                             void *vtkNotUsed(callData)) 
 {
   vtkDebugMacro("ProcessMRMLEvents()");
   vtkMRMLNode *mrmlNode = vtkMRMLNode::SafeDownCast(caller);

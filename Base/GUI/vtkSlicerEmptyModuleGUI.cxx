@@ -47,8 +47,9 @@ void vtkSlicerEmptyModuleGUI::AddGUIObservers ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerEmptyModuleGUI::ProcessGUIEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+void vtkSlicerEmptyModuleGUI::ProcessGUIEvents ( vtkObject * vtkNotUsed(caller),
+                                                 unsigned long vtkNotUsed(event),
+                                                 void *vtkNotUsed(callData) )
 {
 } 
 
@@ -63,7 +64,7 @@ void vtkSlicerEmptyModuleGUI::ReleaseModuleEventBindings ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerEmptyModuleGUI::Enter ( vtkMRMLNode *node )
+void vtkSlicerEmptyModuleGUI::Enter ( vtkMRMLNode * vtkNotUsed(node) )
 {
   if ( this->Built == false )
     {

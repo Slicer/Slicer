@@ -323,7 +323,7 @@ void vtkKWMimxEditNodeSetNumbersGroup::SelectionChangedCallback(const char *Sele
         this->NodeSetComboBox->GetWidget()->SetValue( strarray->GetValue(0) );
 }
 //-------------------------------------------------------------------------------------
-void vtkKWMimxEditNodeSetNumbersGroup::NodeSetChangedCallback(const char *Selection)
+void vtkKWMimxEditNodeSetNumbersGroup::NodeSetChangedCallback(const char *vtkNotUsed(Selection))
 {
         //if(!strcmp(Selection,""))
         //{

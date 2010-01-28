@@ -247,9 +247,9 @@ void vtkSlicerViewerWidget::PrintSelf ( ostream& os, vtkIndent indent )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                  unsigned long event, 
-                                                  void *callData )
+void vtkSlicerViewerWidget::ProcessWidgetEvents(vtkObject *vtkNotUsed(caller),
+                                                unsigned long vtkNotUsed(event),
+                                                void *vtkNotUsed(callData))
 {
   // Not currently used... 
   this->RequestRender();

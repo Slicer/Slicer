@@ -63,6 +63,9 @@ public:
   // Description:
   // Create widgets
   virtual void BuildGUI();
+  //BTX
+  using vtkSlicerComponentGUI::BuildGUI; 
+  //ETX
 
   // Description:
   // Delete Widgets
@@ -102,6 +105,9 @@ public:
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter();
+  //BTX
+  using vtkSlicerComponentGUI::Enter;
+  //ETX
   virtual void Exit();
 
   // Description: The name of the Module - this is used to 

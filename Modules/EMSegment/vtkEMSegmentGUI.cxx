@@ -247,7 +247,7 @@ void vtkEMSegmentGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event,
 //----------------------------------------------------------------------------
 void vtkEMSegmentGUI::
 ProcessLogicEvents(
-    vtkObject *caller, unsigned long event, void *callData)
+    vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   if (!caller || !this->WizardWidget)
   {

@@ -328,7 +328,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
   if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
       event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
@@ -504,7 +504,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerVolumesGUI::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
+                                             unsigned long event,
+                                             void *callData)
 {
   if (event ==  vtkCommand::ProgressEvent) 
     {
@@ -514,7 +516,9 @@ void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller, unsigned long 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerVolumesGUI::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                            unsigned long vtkNotUsed(event),
+                                            void *vtkNotUsed(callData))
 {
 }
 

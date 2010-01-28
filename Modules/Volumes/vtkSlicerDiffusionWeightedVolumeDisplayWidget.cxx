@@ -1,28 +1,30 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+#include "vtkSlicerApplication.h"
 
 #include "vtkSlicerDiffusionWeightedVolumeDisplayWidget.h"
 
+// to get at the colour logic to set a default color node
+#include "vtkKWApplication.h"
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerColorLogic.h"
+#include "vtkSlicerVolumesLogic.h"
+
+// KWWidgets includes
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWScale.h"
 
-
+// MRML includes
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
+// VTK includes
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
 #include "vtkImageExtractComponents.h"
-
-// to get at the colour logic to set a default color node
-#include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerColorGUI.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkSlicerVolumesLogic.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionWeightedVolumeDisplayWidget );

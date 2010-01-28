@@ -65,7 +65,8 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 vtkImageMeanIntensityNormalization::~vtkImageMeanIntensityNormalization(){ }
 
 //----------------------------------------------------------------------------
-void vtkImageMeanIntensityNormalization::ComputeInputUpdateExtent(int inExt[6], int outExt[6])
+void vtkImageMeanIntensityNormalization::ComputeInputUpdateExtent(int inExt[6],
+                                                                  int vtkNotUsed(outExt)[6])
 {
   this->GetInput()->GetWholeExtent(inExt);
 }
@@ -73,6 +74,7 @@ void vtkImageMeanIntensityNormalization::ComputeInputUpdateExtent(int inExt[6], 
 //----------------------------------------------------------------------------
 void vtkImageMeanIntensityNormalization::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 
 int* vtkImageMeanIntensityNormalization::InitializeHistogram(vtkImageAccumulate *HIST, vtkImageData *Input, int &HistMin, int &HistMax)

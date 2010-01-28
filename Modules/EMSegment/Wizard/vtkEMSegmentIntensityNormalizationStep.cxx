@@ -1047,7 +1047,7 @@ void vtkEMSegmentIntensityNormalizationStep::GetHistogramValue()
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::ProcessCursorMovingGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData)
+  vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
 {
   if (event == vtkKWPiecewiseFunctionEditor::ParameterCursorMovingEvent)
   {

@@ -56,7 +56,7 @@ vtkSlicerColorGUI::vtkSlicerColorGUI ( )
 vtkSlicerColorGUI::~vtkSlicerColorGUI ( )
 {
 
-  this->SetModuleLogic ( NULL );
+  this->SetModuleLogic (static_cast<vtkSlicerColorLogic*>(0));
   
   if (this->ColorDisplayWidget ) 
     {

@@ -85,10 +85,7 @@ class VTK_EMSEGMENT_EXPORT vtkImageMeanIntensityNormalization : public vtkImageT
 protected:
 
   vtkImageMeanIntensityNormalization();
-  vtkImageMeanIntensityNormalization(const vtkImageMeanIntensityNormalization&) {};
   ~vtkImageMeanIntensityNormalization();
-
-  void operator=(const vtkImageMeanIntensityNormalization&) {};
   
   // When it works on parallel machines use : 
   //  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,int outExt[6], int id);
@@ -114,6 +111,10 @@ protected:
   int MaxHistogramSmoothingWidth;
   float RelativeMaxVoxelNum;
   int PrintInfo;
+
+private:
+  vtkImageMeanIntensityNormalization(const vtkImageMeanIntensityNormalization&); // Not implemented
+  void operator=(const vtkImageMeanIntensityNormalization&); // Not implemented
 
 };
 #endif

@@ -402,7 +402,7 @@ vtkImageIslandFilter::vtkImageIslandFilter()
 vtkImageIslandFilter::~vtkImageIslandFilter(){ }
 
 //----------------------------------------------------------------------------
-void vtkImageIslandFilter::ComputeInputUpdateExtent(int inExt[6], int outExt[6])
+void vtkImageIslandFilter::ComputeInputUpdateExtent(int inExt[6], int vtkNotUsed(outExt)[6])
 {
   this->GetInput()->GetWholeExtent(inExt);
 }
@@ -411,6 +411,7 @@ void vtkImageIslandFilter::ComputeInputUpdateExtent(int inExt[6], int outExt[6])
 //----------------------------------------------------------------------------
 void vtkImageIslandFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os, indent);
 }
 
 // To chage anything about output us this executed before Thread
