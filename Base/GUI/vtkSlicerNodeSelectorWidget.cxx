@@ -64,6 +64,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
 {
   this->NewNodeCount = 0;
   this->NewNodeEnabled = 0;
+  this->DefaultEnabled = 1;
   this->NoneEnabled = 0;
   this->ShowHidden = 0;
   this->ChildClassesEnabled = 1;
@@ -324,7 +325,8 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
         sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
 
         this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str(), this, sc.str().c_str());
-        this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
+        // default action should never be to create a new node(?) - jvm
+        // this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
         }
       }
     }
@@ -447,7 +449,8 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
             selectedName = entryName;
           }
           //Only choose first one wenn the Additional Nodes didn't take care about this
-          else if (!selected && !this->NoneEnabled&&(resultAddAdditionalNodes==0))
+          else if (!selected && this->DefaultEnabled
+                   && !this->NoneEnabled && (resultAddAdditionalNodes==0))
           {
             selectedNode = node;
             selected = true;

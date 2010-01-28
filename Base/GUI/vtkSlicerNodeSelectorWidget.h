@@ -105,6 +105,13 @@ public:
   vtkSetMacro(NoneEnabled, int);
 
   /// 
+  /// Specifies whether a node selector can autoselect a node as a
+  /// default
+  vtkBooleanMacro(DefaultEnabled, int);
+  vtkGetMacro(DefaultEnabled, int);
+  vtkSetMacro(DefaultEnabled, int);
+
+  /// 
   /// Specifies whether or not show hidden nodes
   vtkBooleanMacro(ShowHidden, int);
   vtkGetMacro(ShowHidden, int);
@@ -217,6 +224,8 @@ protected:
   int NewNodeEnabled;
 
   int NoneEnabled;
+
+  int DefaultEnabled;
 
   int ShowHidden;
 

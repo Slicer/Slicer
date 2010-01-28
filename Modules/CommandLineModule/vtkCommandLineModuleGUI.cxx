@@ -1298,6 +1298,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  (title + " FiducialList").c_str());
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1320,6 +1321,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  (title + " RegionList").c_str());
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1372,6 +1374,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
                                    (title + " Volume").c_str());
           tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetDefaultEnabled(0);
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
           tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1434,6 +1437,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             }
           tparameter->SetNewNodeEnabled(1);
           tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetDefaultEnabled(0);
           // tparameter->SetNewNodeName((title+" output").c_str());
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
@@ -1468,6 +1472,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " Model").c_str());
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1501,6 +1506,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  (title + " Model").c_str());
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1534,6 +1540,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    NULL,
                                    (title + " Table").c_str());
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetDefaultEnabled(0);
           tparameter->Create();
           tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
           tparameter->UpdateMenu();
@@ -1571,6 +1579,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    (title + " Table").c_str());
           tparameter->SetNewNodeEnabled(1);
           tparameter->SetNoneEnabled(1);
+          tparameter->SetDefaultEnabled(0);
           // tparameter->SetNewNodeName((title+" output").c_str());
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
@@ -1603,6 +1612,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    NULL,
                                    (title + " Measurement").c_str());
           tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetDefaultEnabled(0);
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->ShowHiddenOn();
           tparameter->Create();
@@ -1636,6 +1646,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    (title + " Measurement").c_str());
           tparameter->SetNewNodeEnabled(1);
           tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetDefaultEnabled(0);
           // tparameter->SetNewNodeName((title+" output").c_str());
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->ShowHiddenOn();
@@ -1677,6 +1688,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " Transform").c_str());
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1717,6 +1729,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  (title + " Transform").c_str());
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
