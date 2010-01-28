@@ -182,13 +182,22 @@ void qCTKDoubleSlider::setValue(double newValue)
   QCTK_D(qCTKDoubleSlider);
   d->updateOffset(newValue);
   int newIntValue = d->toInt(newValue);
-  bool forceValueChangedSignal = (newIntValue == d->Slider->value() 
-                                  && qAbs(newValue - d->Value) > (d->SingleStep * 0.000000001));
-  d->Slider->setValue(newIntValue);
-  if (forceValueChangedSignal)
+  if (newIntValue != d->Slider->value())
     {
-    this->onSliderMoved(newIntValue);
-    this->onValueChanged(newIntValue);
+    // d->Slider will emit a valueChanged signal that is connected to
+    // qCTKDoubleSlider::onValueChanged
+    d->Slider->setValue(newIntValue);
+    }
+  else
+    {
+    double oldValue = d->Value;
+    d->Value = newValue;
+    // don't emit a valuechanged signal if the new value is quite 
+    // similar to the old value.
+    if (qAbs(newValue - oldValue) > (d->SingleStep * 0.000000001))
+      {
+      emit this->valueChanged(newValue);
+      }
     }
 }
 
