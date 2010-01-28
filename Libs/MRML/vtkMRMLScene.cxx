@@ -71,6 +71,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLPlotNode.h"
 #include "vtkMRMLOrthogonalLinePlotNode.h"
+#include "vtkMRMLDoubleArrayStorageNode.h"
+
 
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
@@ -356,6 +358,11 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLOrthogonalLinePlotNode *olpn = vtkMRMLOrthogonalLinePlotNode::New();
   this->RegisterNodeClass( olpn );
   olpn->Delete();
+
+  vtkMRMLDoubleArrayStorageNode *dasn = vtkMRMLDoubleArrayStorageNode::New();
+  this->RegisterNodeClass(dasn);
+  dasn->Delete();
+
 
 }
 
