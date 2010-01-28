@@ -585,12 +585,13 @@ void vtkMRMLDoubleArrayNode::GetYRange(double* range, int fIncludeError)
 
 }
 
-void vtkMRMLDoubleArrayNode::SetLabels(const std::vector< std::string > &labels)
+void vtkMRMLDoubleArrayNode::SetLabels(const LabelsVectorType &labels)
 {
    this->Labels = labels;
 }
-std::vector< std::string > vtkMRMLDoubleArrayNode::GetLabels()
+
+const vtkMRMLDoubleArrayNode::LabelsVectorType & vtkMRMLDoubleArrayNode::GetLabels() const
 {
-    return(this->Labels);
+    return this->Labels;
 }
 

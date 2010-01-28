@@ -156,11 +156,12 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   // Description:
   //Set labels
   //void SetLabel(std::vector< std::string > labels);
-  void SetLabels(const std::vector< std::string > &labels);
+  typedef std::vector< std::string > LabelsVectorType;
+  void SetLabels(const LabelsVectorType &labels);
   
   // Description:
   //Get labels
- std::vector< std::string > GetLabels();
+  const LabelsVectorType & GetLabels() const;
   //ETX
 
   //----------------------------------------------------------------
