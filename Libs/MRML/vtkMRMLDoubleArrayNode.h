@@ -22,10 +22,12 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkObject.h"
 #include "vtkDoubleArray.h"
+#include "vtkStringArray.h"
 
 
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 {
+ 
 
  public:
 
@@ -89,7 +91,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   /// 
   /// Get the size of value data (number of points in time dimension)
   unsigned int GetSize();
-
+ 
   /// 
   /// Get Y value by X. If X is between two data points, it interpolates the value
   /// by using the method specified by 'interp'.
@@ -150,6 +152,16 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   /// if fIncludeError=1 is specified, the range takes account of errors.
   void GetYRange(double* range, int fIncludeError=1);
 
+  //BTX
+  // Description:
+  //Set labels
+  //void SetLabel(std::vector< std::string > labels);
+  void SetLabels(const std::vector< std::string > &labels);
+  
+  // Description:
+  //Get labels
+ std::vector< std::string > GetLabels();
+  //ETX
 
   //----------------------------------------------------------------
   /// Constructor and destroctor
@@ -159,7 +171,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   ~vtkMRMLDoubleArrayNode();
   vtkMRMLDoubleArrayNode(const vtkMRMLDoubleArrayNode&);
   void operator=(const vtkMRMLDoubleArrayNode&);
-
+ 
 
  protected:
   //----------------------------------------------------------------
@@ -167,9 +179,10 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   vtkDoubleArray* Array;
-
+  
   //BTX
   std::vector< std::string > Unit;
+  std::vector< std::string > Labels;
   //ETX
   
 
