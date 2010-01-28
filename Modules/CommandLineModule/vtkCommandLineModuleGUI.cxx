@@ -1094,7 +1094,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         noneEnabled = 1;
         }
       
-      if ((*pit).GetTag() == "integer")
+      if ((*pit).GetHidden() == "true")
+        {
+        // hidden parameters do not have GUI elements
+        }
+      else if ((*pit).GetTag() == "integer")
         {
         if ((*pit).GetConstraints() == "")
           {
@@ -1152,15 +1156,12 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         }
       else if ((*pit).GetTag() == "boolean")
         {
-        if((*pit).GetHidden() != "true")
-          {
-          vtkKWCheckButtonWithLabel *tparameter = vtkKWCheckButtonWithLabel::New();
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->Create();
-          tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->GetWidget()->SetSelectedState((*pit).GetDefault() == "true" ? 1 : 0);
-          parameter = tparameter;
-          }
+        vtkKWCheckButtonWithLabel *tparameter = vtkKWCheckButtonWithLabel::New();
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetLabelText((*pit).GetLabel().c_str());
+        tparameter->GetWidget()->SetSelectedState((*pit).GetDefault() == "true" ? 1 : 0);
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "float")
         {
@@ -1335,120 +1336,114 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         }
       else if ((*pit).GetTag() == "image" && (*pit).GetChannel() == "input")
         {
-        if ((*pit).GetHidden() != "true")
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
+        std::string labelAttrName("LabelMap");
+        std::string labelAttrValue("1");
+        std::string nodeClass;
+        const char *attrName = 0;
+        const char *attrValue = 0;
+        if ((*pit).GetType() == "any")
           {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
-          std::string labelAttrName("LabelMap");
-          std::string labelAttrValue("1");
-          std::string nodeClass;
-          const char *attrName = 0;
-          const char *attrValue = 0;
-          if ((*pit).GetType() == "any")
-            {
-            nodeClass = "vtkMRMLVolumeNode";
-            }
-          else if ((*pit).GetType() == "label")
-            {
-            nodeClass = "vtkMRMLScalarVolumeNode";
-            attrName = labelAttrName.c_str();
-            attrValue = labelAttrValue.c_str();
-            }
-          else if ((*pit).GetType() == "vector")
-            {
-            nodeClass = "vtkMRMLVectorVolumeNode";
-            }
-          else if ((*pit).GetType() == "tensor")
-            {
-            nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
-            }
-          else if ((*pit).GetType() == "diffusion-weighted")
-            {
-            nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
-            }
-          else
-            {
-            nodeClass = "vtkMRMLScalarVolumeNode";
-            }
-
-          tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                   (title + " Volume").c_str());
-          tparameter->SetNoneEnabled(noneEnabled);
-          tparameter->SetDefaultEnabled(0);
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
-        
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
+          nodeClass = "vtkMRMLVolumeNode";
           }
+        else if ((*pit).GetType() == "label")
+          {
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          attrName = labelAttrName.c_str();
+          attrValue = labelAttrValue.c_str();
+          }
+        else if ((*pit).GetType() == "vector")
+          {
+          nodeClass = "vtkMRMLVectorVolumeNode";
+          }
+        else if ((*pit).GetType() == "tensor")
+          {
+          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+          }
+        else if ((*pit).GetType() == "diffusion-weighted")
+          {
+          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
+          }
+        else
+          {
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          }
+
+        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                 (title + " Volume").c_str());
+        tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+        
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "image" && (*pit).GetChannel() == "output")
         {
-        if ((*pit).GetHidden() != "true")
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
+        std::string labelAttrName("LabelMap");
+        std::string labelAttrValue("1");
+        std::string nodeClass;
+        const char *attrName = 0;
+        const char *attrValue = 0;
+        if ((*pit).GetType() == "label")
           {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
-          std::string labelAttrName("LabelMap");
-          std::string labelAttrValue("1");
-          std::string nodeClass;
-          const char *attrName = 0;
-          const char *attrValue = 0;
-          if ((*pit).GetType() == "label")
-            {
-            nodeClass = "vtkMRMLScalarVolumeNode";
-            attrName = labelAttrName.c_str();
-            attrValue = labelAttrValue.c_str();
-            }
-          else if ((*pit).GetType() == "vector")
-            {
-            nodeClass = "vtkMRMLVectorVolumeNode";
-            }
-          else if ((*pit).GetType() == "tensor")
-            {
-            nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
-            }
-          else if ((*pit).GetType() == "diffusion-weighted")
-            {
-            nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
-            }
-          else
-            {
-            nodeClass = "vtkMRMLScalarVolumeNode";
-            }
-
-          tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                   (title + " Volume").c_str());
-          if ((*pit).GetType() == "any")
-            {
-            // Add all of the other concrete volume node types
-            tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
-                                     attrName, attrValue, 
-                                     (title + " VectorVolume").c_str());
-            tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
-                                     attrName, attrValue, 
-                                     (title + " DiffusionTensorVolume").c_str());
-            tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
-                                     attrName, attrValue, 
-                                     (title + " DiffusionWeightedVolume").c_str());
-            }
-          tparameter->SetNewNodeEnabled(1);
-          tparameter->SetNoneEnabled(noneEnabled);
-          tparameter->SetDefaultEnabled(0);
-          // tparameter->SetNewNodeName((title+" output").c_str());
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
-        
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          attrName = labelAttrName.c_str();
+          attrValue = labelAttrValue.c_str();
           }
+        else if ((*pit).GetType() == "vector")
+          {
+          nodeClass = "vtkMRMLVectorVolumeNode";
+          }
+        else if ((*pit).GetType() == "tensor")
+          {
+          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+          }
+        else if ((*pit).GetType() == "diffusion-weighted")
+          {
+          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
+          }
+        else
+          {
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          }
+
+        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                 (title + " Volume").c_str());
+        if ((*pit).GetType() == "any")
+          {
+          // Add all of the other concrete volume node types
+          tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
+                                   attrName, attrValue, 
+                                   (title + " VectorVolume").c_str());
+          tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
+                                   attrName, attrValue, 
+                                   (title + " DiffusionTensorVolume").c_str());
+          tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
+                                   attrName, attrValue, 
+                                   (title + " DiffusionWeightedVolume").c_str());
+          }
+        tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
+        // tparameter->SetNewNodeName((title+" output").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+        
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "geometry" && (*pit).GetChannel() == "input")
         {
@@ -1520,149 +1515,121 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         }
       else if ((*pit).GetTag() == "table" && (*pit).GetChannel() == "input")
         {
-        if ((*pit).GetHidden() != "true")
-          {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
           
-          std::string nodeClass;
-          if((*pit).GetType() == "color")
-            nodeClass = "vtkMRMLColorNode";
-          else
-            {
-            vtkErrorMacro(<< "Only color tables are currently supported.");
-            }
-          // else 
-          //  nodeClass = "vtkMRMLTableNode";
-          
-          tparameter->SetNodeClass(nodeClass.c_str(),
-                                   NULL,
-                                   NULL,
-                                   (title + " Table").c_str());
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->SetNoneEnabled(noneEnabled);
-          tparameter->SetDefaultEnabled(0);
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
-          
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
-          }
+        std::string nodeClass;
+        if((*pit).GetType() == "color")
+          nodeClass = "vtkMRMLColorNode";
         else
           {
-          parameter = 0;
+          vtkErrorMacro(<< "Only color tables are currently supported.");
           }
+        // else 
+        //  nodeClass = "vtkMRMLTableNode";
+          
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Table").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+          
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "table" && (*pit).GetChannel() == "output")
         {
-        if ((*pit).GetHidden() != "true")
-          {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
           
-          std::string nodeClass;
-          if((*pit).GetType() == "color")
-            nodeClass = "vtkMRMLColorNode";
-          else
-            {
-            vtkErrorMacro(<< "Only color tables are currently supported.");
-            }
-          // else 
-          //  nodeClass = "vtkMRMLTableNode";
-          
-          tparameter->SetNodeClass(nodeClass.c_str(),
-                                   NULL,
-                                   NULL,
-                                   (title + " Table").c_str());
-          tparameter->SetNewNodeEnabled(1);
-          tparameter->SetNoneEnabled(1);
-          tparameter->SetDefaultEnabled(0);
-          // tparameter->SetNewNodeName((title+" output").c_str());
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
-          
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
-          }
+        std::string nodeClass;
+        if((*pit).GetType() == "color")
+          nodeClass = "vtkMRMLColorNode";
         else
           {
-          parameter = 0;
+          vtkErrorMacro(<< "Only color tables are currently supported.");
           }
+        // else 
+        //  nodeClass = "vtkMRMLTableNode";
+          
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Table").c_str());
+        tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(1);
+        tparameter->SetDefaultEnabled(0);
+        // tparameter->SetNewNodeName((title+" output").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+          
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "measurement" && (*pit).GetChannel() == "input")
         {
-        if ((*pit).GetHidden() != "true")
-          {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
 
-          // may someday use different node types for different "type"
-          // attributes
-          std::string nodeClass = "vtkMRMLDoubleArrayNode";
+        // may someday use different node types for different "type"
+        // attributes
+        std::string nodeClass = "vtkMRMLDoubleArrayNode";
           
-          tparameter->SetNodeClass(nodeClass.c_str(),
-                                   NULL,
-                                   NULL,
-                                   (title + " Measurement").c_str());
-          tparameter->SetNoneEnabled(noneEnabled);
-          tparameter->SetDefaultEnabled(0);
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->ShowHiddenOn();
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Measurement").c_str());
+        tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->ShowHiddenOn();
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
           
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
-          }
-        else
-          {
-          parameter = 0;
-          }
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "measurement" && (*pit).GetChannel() == "output")
         {
-        if ((*pit).GetHidden() != "true")
-          {
-          vtkSlicerNodeSelectorWidget *tparameter
-            = vtkSlicerNodeSelectorWidget::New();
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
           
-          // may someday use different node types for different "type"
-          // attributes
-          std::string nodeClass = "vtkMRMLDoubleArrayNode";
+        // may someday use different node types for different "type"
+        // attributes
+        std::string nodeClass = "vtkMRMLDoubleArrayNode";
           
-          tparameter->SetNodeClass(nodeClass.c_str(),
-                                   NULL,
-                                   NULL,
-                                   (title + " Measurement").c_str());
-          tparameter->SetNewNodeEnabled(1);
-          tparameter->SetNoneEnabled(noneEnabled);
-          tparameter->SetDefaultEnabled(0);
-          // tparameter->SetNewNodeName((title+" output").c_str());
-          tparameter->SetParent( parameterGroupFrame->GetFrame() );
-          tparameter->ShowHiddenOn();
-          tparameter->Create();
-          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-          tparameter->UpdateMenu();
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Measurement").c_str());
+        tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
+        tparameter->SetDefaultEnabled(0);
+        // tparameter->SetNewNodeName((title+" output").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->ShowHiddenOn();
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
           
-          tparameter->SetBorderWidth(2);
-          tparameter->SetReliefToFlat();
-          tparameter->SetLabelText( (*pit).GetLabel().c_str());
-          parameter = tparameter;
-          }
-        else
-          {
-          parameter = 0;
-          }
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
         }
       else if ((*pit).GetTag() == "transform" && (*pit).GetChannel() == "input")
         {
