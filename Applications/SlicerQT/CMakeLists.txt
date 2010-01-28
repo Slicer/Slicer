@@ -92,6 +92,7 @@ IF(BUILD_SHARED_LIBS)
        \"../lib/LoadableModule\",                                   \\
        \"../lib/MGHImageIO\",                                       \\
        \"../lib/MRML\",                                             \\
+       \"../lib/MRMLCLI\",                                          \\
        \"../lib/ModuleDescriptionParser\",                          \\
        \"../lib/MRMLIDImageIO\",                                    \\
        \"../lib/Qdec\",                                             \\
