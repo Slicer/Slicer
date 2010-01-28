@@ -156,7 +156,6 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   QCTK_D(qMRMLLinearTransformSlider);
-  qDebug() << "Apply Transform: " << _sliderPosition;
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
     d->CoordinateReference == Self::GLOBAL, transform);
