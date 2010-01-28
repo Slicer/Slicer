@@ -107,7 +107,7 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="StoppingValueSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="StoppingValueSpinBoxLabel">
      <property name="maximum">
       <double>1.000000000000000</double>
      </property>
@@ -127,7 +127,7 @@
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="StoppingCurvatureSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="StoppingCurvatureSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -144,7 +144,7 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="IntegrationStepSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="IntegrationStepSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -161,7 +161,7 @@
     </widget>
    </item>
    <item row="8" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="MinimumPathSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="MinimumPathSpinBoxLabel">
      <property name="maximum">
       <double>200.000000000000000</double>
      </property>
@@ -178,7 +178,7 @@
     </widget>
    </item>
    <item row="9" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="FiducialRegionSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="FiducialRegionSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -195,7 +195,7 @@
     </widget>
    </item>
    <item row="10" column="1">
-    <widget class="qCTKSliderSpinBoxLabel" name="FiducialStepSpinBoxLabel">
+    <widget class="qCTKSliderSpinBoxWidget" name="FiducialStepSpinBoxLabel">
      <property name="minimum">
       <double>1.000000000000000</double>
      </property>
@@ -267,9 +267,9 @@
    <header>qCTKTitleComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKSliderSpinBoxLabel</class>
+   <class>qCTKSliderSpinBoxWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKSliderSpinBoxLabel.h</header>
+   <header>qCTKSliderSpinBoxWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>
