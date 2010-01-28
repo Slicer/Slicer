@@ -40,7 +40,7 @@ QString qCTKFactoryPluginItem<BaseClassType>::loadErrorString()const
 template<typename BaseClassType>
 BaseClassType* qCTKFactoryPluginItem<BaseClassType>::instanciator()
 {
-  qDebug() << "PluginItem::instantiate - name:" << this->path();
+  //qDebug() << "PluginItem::instantiate - name:" << this->path();
   QObject * object = this->Loader.instance();
   if (!object)
     {

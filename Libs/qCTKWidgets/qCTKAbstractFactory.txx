@@ -74,6 +74,14 @@ qCTKAbstractFactory<BaseClassType>::~qCTKAbstractFactory()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
+void qCTKAbstractFactory<BaseClassType>::printAdditionalInfo()
+{
+  qDebug() << "qCTKAbstractFactory<BaseClassType> (" << this << ")";
+  // TODO
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
 BaseClassType* qCTKAbstractFactory<BaseClassType>::instantiate(const QString& itemKey)
 {
   qCTKAbstractFactoryItem<BaseClassType>* _item = this->item(itemKey);
