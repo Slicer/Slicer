@@ -16,11 +16,8 @@ class QVTK_WIDGETS_EXPORT qVTKRenderView : public QWidget
 {
   Q_OBJECT
 public:
-  // Self/Superclass typedef
-  typedef qVTKRenderView  Self;
-  typedef QWidget   Superclass;
-  
   // Constructors
+  typedef QWidget   Superclass;
   explicit qVTKRenderView(QWidget* parent = 0);
   virtual ~qVTKRenderView();
 

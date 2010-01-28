@@ -18,12 +18,12 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
 public:
-  
-  // Self/Superclass typedef
-  typedef qMRMLNodeFactory  Self;
-  typedef QObject           Superclass;
+
+  // Convenient typedef 
   typedef QHash<QString,QString> AttributeType;
+  
   // Constructors
+  typedef QObject Superclass;
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory(){}
   

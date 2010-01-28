@@ -19,7 +19,6 @@ class QVTK_WIDGETS_EXPORT qVTKConnection : public QObject
 Q_OBJECT
 
 public:
-  typedef qVTKConnection Self;
   typedef QObject Superclass;
   explicit qVTKConnection(qVTKObjectEventsObserver* parent);
   virtual ~qVTKConnection(){}

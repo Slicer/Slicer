@@ -103,8 +103,12 @@ function (this one's actually a function).
  * Declares that a public class has a related private class.
  *
  * This should be put in the private section of the public class. The parameter is the name of the public class.
+ * For convenience, this macro also add 'typedef PUB Self;'
  */
-#define QCTK_DECLARE_PRIVATE(PUB) friend class PUB##Private; qCTKPrivateInterface<PUB, PUB##Private> qctk_d;
+#define QCTK_DECLARE_PRIVATE(PUB)                                          \
+friend class PUB##Private; qCTKPrivateInterface<PUB, PUB##Private> qctk_d; \
+typedef PUB Self;
+
 /*! \relates qCTKPimpl
  * Declares that a private class has a related public class.
  *

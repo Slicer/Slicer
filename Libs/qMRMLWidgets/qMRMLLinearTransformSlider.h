@@ -24,12 +24,8 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBox
   Q_ENUMS(CoordinateReferenceType)
 
 public:
-
-  // Self/Superclass typedef
-  typedef qMRMLLinearTransformSlider  Self;
-  typedef qCTKSliderSpinBoxLabel      Superclass;
-
   // Constructors
+  typedef qCTKSliderSpinBoxLabel Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider(){}
 

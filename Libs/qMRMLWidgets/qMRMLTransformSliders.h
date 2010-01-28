@@ -37,12 +37,8 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_PROPERTY(bool minMaxVisible READ isMinMaxVisible WRITE setMinMaxVisible)
 
 public:
-
-  // Self/Superclass typedef
-  typedef qMRMLTransformSliders  Self;
-  typedef QWidget                Superclass;
-
   // Constructors
+  typedef QWidget Superclass;
   explicit qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders(){}
 

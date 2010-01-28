@@ -16,7 +16,6 @@ class QVTK_WIDGETS_EXPORT qVTKAbstractMatrixWidget : public qCTKMatrixWidget
 {
 public:
   // Self/Superclass typedef
-  typedef qVTKAbstractMatrixWidget  Self;
   typedef qCTKMatrixWidget   Superclass;
   
   // Constructors

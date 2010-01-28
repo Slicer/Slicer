@@ -23,13 +23,11 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactoryButton : public QPushButton
   Q_ENUMS(ActionType)
   QVTK_OBJECT
 public:
-  
-  // Self/Superclass typedef
-  typedef qMRMLNodeFactoryButton  Self;
-  typedef QPushButton             Superclass;
-  
+
   // Constructors
-  qMRMLNodeFactoryButton(QWidget* parent = 0);
+  typedef QPushButton Superclass;
+  explicit qMRMLNodeFactoryButton(QWidget* parent = 0);
+  virtual ~qMRMLNodeFactoryButton(){}
   
   // Description:
   // Set/Get MRML scene

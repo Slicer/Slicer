@@ -24,11 +24,8 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public qVTKAbstractMatrixWidget
   
 public:
   
-  // Self/Superclass typedef
-  typedef qMRMLMatrixWidget  Self;
-  typedef qVTKAbstractMatrixWidget   Superclass;
-  
   // Constructors
+  typedef qVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
   virtual ~qMRMLMatrixWidget(){}
   

@@ -13,7 +13,6 @@ public:
   qMRMLNodeFactoryButtonPrivate()
     :qMRMLNodeFactory(0)
     {
-    // no worries, qMRMLNodeFactory will be destroyed automatically.
     }
   void init();
   void syncTextWithAction();

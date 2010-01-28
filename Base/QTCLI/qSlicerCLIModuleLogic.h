@@ -42,7 +42,6 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleLogic : public qSlicerModuleLog
 
 public:
 
-  typedef qSlicerCLIModuleLogic Self;
   typedef qSlicerModuleLogic Superclass;
   qSlicerCLIModuleLogic();
 
