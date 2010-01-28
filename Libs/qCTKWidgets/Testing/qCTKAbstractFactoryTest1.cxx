@@ -11,7 +11,7 @@
 
 // qCTK includes
 #include "qCTKAbstractFactory.h"
-#include "qCTKSlider.h"
+#include "qCTKDoubleSlider.h"
 
 // QT includes
 #include <QApplication>
@@ -28,7 +28,7 @@ int qCTKAbstractFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qCTKAbstractFactory<qCTKSlider>  qctkObject;
+  qCTKAbstractFactory<qCTKDoubleSlider>  qctkObject;
 
 
   return EXIT_SUCCESS;

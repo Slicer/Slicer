@@ -29,8 +29,6 @@ SET(designer_plugin_SRCS
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.cxx
   qCTKTreeComboBoxPlugin.h
-  qCTKSliderPlugin.cxx
-  qCTKSliderPlugin.h
   qCTKSliderSpinBoxLabelPlugin.cxx
   qCTKSliderSpinBoxLabelPlugin.h
   )
@@ -48,7 +46,6 @@ SET(designer_plugin_MOC_SRCS
   qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.h
-  qCTKSliderPlugin.h
   qCTKSliderSpinBoxLabelPlugin.h
   )
 

@@ -24,7 +24,7 @@
 
 // qCTK includes
 #include <qCTKCollapsibleButton.h>
-#include <qCTKSlider.h>
+#include <qCTKDoubleSlider.h>
 #include <qCTKFlowLayout.h>
 
 // MRML includes
@@ -348,6 +348,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createIntegerTagWidget(const ModuleParam
     
     QSlider * slider = new QSlider;
     slider->setOrientation(Qt::Horizontal);
+    slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);
     slider->setValue(value);
@@ -373,7 +374,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createBooleanTagWidget(const ModuleParam
 
 //-----------------------------------------------------------------------------
 WIDGET_VALUE_WRAPPER(FloatWithoutConstaints, QDoubleSpinBox, value);
-WIDGET_VALUE_WRAPPER(FloatWithConstaints, qCTKSlider, value);
+WIDGET_VALUE_WRAPPER(FloatWithConstaints, qCTKDoubleSlider, value);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParameter& moduleParameter)
@@ -397,9 +398,10 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
     }
   else
     {
-    qCTKSlider * slider = new qCTKSlider;
+    qCTKDoubleSlider * slider = new qCTKDoubleSlider;
     slider->setOrientation(Qt::Horizontal);
     slider->setTickInterval(step);
+    slider->setSingleStep(step);
     slider->setRange(min, max);
     slider->setValue(value);
     widget = slider;
@@ -410,7 +412,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
 
 //-----------------------------------------------------------------------------
 WIDGET_VALUE_WRAPPER(DoubleWithoutConstaints, QDoubleSpinBox, value);
-WIDGET_VALUE_WRAPPER(DoubleWithConstaints, qCTKSlider, value);
+WIDGET_VALUE_WRAPPER(DoubleWithConstaints, qCTKDoubleSlider, value);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParameter& moduleParameter)
@@ -434,8 +436,9 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParame
     }
   else
     {
-    qCTKSlider * slider = new qCTKSlider;
+    qCTKDoubleSlider * slider = new qCTKDoubleSlider;
     slider->setOrientation(Qt::Horizontal);
+    slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);
     slider->setValue(value);

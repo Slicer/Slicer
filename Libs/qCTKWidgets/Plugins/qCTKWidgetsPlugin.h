@@ -11,7 +11,6 @@
 #include "qCTKNumericInputPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
 #include "qCTKTreeComboBoxPlugin.h"
-#include "qCTKSliderPlugin.h"
 #include "qCTKSliderSpinBoxLabelPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -36,7 +35,6 @@ public:
             << new qCTKNumericInputPlugin
             << new qCTKTitleComboBoxPlugin
             << new qCTKTreeComboBoxPlugin
-            << new qCTKSliderPlugin
             << new qCTKSliderSpinBoxLabelPlugin;
     return plugins;
     }
