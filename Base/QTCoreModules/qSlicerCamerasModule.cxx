@@ -15,7 +15,6 @@
 
 // SlicerQT includes
 #include "qSlicerCamerasModuleWidget.h"
-#include "qSlicerCamerasModuleLogic.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerCamerasModulePrivate: public qCTKPrivate<qSlicerCamerasModule>

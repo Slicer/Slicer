@@ -24,8 +24,6 @@ SET(slicer_qtbase_SRCS
   qSlicerAbstractLoadableModule.h
   qSlicerAbstractModuleWidget.cxx
   qSlicerAbstractModuleWidget.h
-  qSlicerModuleLogic.cxx
-  qSlicerModuleLogic.h
   )
 
 # Headers that should run through moc
