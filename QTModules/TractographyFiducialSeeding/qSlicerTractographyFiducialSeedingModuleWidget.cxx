@@ -57,7 +57,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(double value)
 {
   // run seeding here
-  std::cout << "param changed(" << value << "): TODO call logic to compute fibers\n";
+  qDebug() << "parameter changed: " << value ;
+  // std::cout << "param changed(" << value << "): TODO call logic to compute fibers\n";
 }
 
 //-----------------------------------------------------------------------------
