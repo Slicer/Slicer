@@ -42,6 +42,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
+#include "vtkMRMLDoubleArrayStorageNode.h"
 
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
@@ -296,6 +298,19 @@ vtkCommandLineModuleLogic
       }
     fname = fname + ext;
     }
+
+  if (tag == "measurement")
+    {
+    // tables are currently always passed via files
+
+    // Use default fname construction, tack on extension
+    std::string ext = ".csv";
+    if (extensions.size() != 0)
+      {
+      ext = extensions[0];
+      }
+    fname = fname + ext;
+    }
   
     
   return fname;
@@ -527,7 +542,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     for (pit = pbeginit; pit != pendit; ++pit)
       {
       if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table")
+          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table"
+          || (*pit).GetTag() == "measurement")
         {
         std::string id = (*pit).GetDefault();
 
@@ -612,6 +628,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       = vtkMRMLColorTableNode::SafeDownCast(nd);
     vtkMRMLModelHierarchyNode *mhnd
       = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
+    vtkMRMLDoubleArrayNode *dand
+      = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
 
     
     vtkMRMLStorageNode *out = 0;
@@ -679,6 +697,11 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       {
       // always write out color table nodes
       out = vtkMRMLColorTableStorageNode::New();
+      }
+    else if (dand)
+      {
+      // always write out double array nodes
+      out = vtkMRMLDoubleArrayStorageNode::New();
       }
     else if (mhnd)
       {
@@ -854,7 +877,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             && (*pit).GetTag() != "region"
             && (*pit).GetTag() != "transform"
             && (*pit).GetTag() != "geometry"
-            && (*pit).GetTag() != "table")
+            && (*pit).GetTag() != "table"
+            && (*pit).GetTag() != "measurement")
           {
           // simple parameter, write flag and value
           commandLineAsString.push_back(prefix + flag);
@@ -895,7 +919,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           continue;
           }
         if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table")
+            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table" 
+            || (*pit).GetTag() == "measurement")
           {
           std::string fname;
 
@@ -1072,6 +1097,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         && (*iit).second.GetTag() != "geometry"
         && (*iit).second.GetTag() != "transform"
         && (*iit).second.GetTag() != "table"
+        && (*iit).second.GetTag() != "measurement"
         && (*iit).second.GetTag() != "file"
         && (*iit).second.GetTag() != "directory"
         && (*iit).second.GetTag() != "string"
@@ -1116,7 +1142,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       }
     else
       {
-      // image or geometry or transform or table index parameter
+      // image or geometry or transform or table or measurement index parameter
 
       std::string fname;
       

@@ -169,4 +169,21 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
            <description>List of regions to process</description>
         </region>
   </parameters>
+  <parameters>
+        <label>Measurements</label>
+        <measurement>
+           <name>inputFA</name>
+           <channel>input</channel>
+           <label>Input FA measurements</label>
+           <longflag>inputFA</longflag>
+           <description>Array of FA values to process</description>
+        </measurement>
+        <measurement>
+           <name>outputFA</name>
+           <channel>output</channel>
+           <label>Output FA measurements</label>
+           <longflag>outputFA</longflag>
+           <description>Array of processed (output) FA values</description>
+        </measurement>
+  </parameters>
 </executable>

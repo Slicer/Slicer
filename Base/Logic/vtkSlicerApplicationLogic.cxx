@@ -40,6 +40,8 @@
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLDoubleArrayStorageNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
@@ -1196,6 +1198,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLNonlinearTransformNode *nltnd = 0;
   vtkMRMLFiberBundleNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
+  vtkMRMLDoubleArrayNode *dand = 0;
   
   nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
 
@@ -1226,6 +1229,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   nltnd  = vtkMRMLNonlinearTransformNode::SafeDownCast(nd);
   fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
+  dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
   
   bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
   bool storageNodeExists = false;
@@ -1300,6 +1304,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         // load in a color node
         storageNode = vtkMRMLColorTableStorageNode::New();
+        }
+      else if (dand)
+        {
+        // load in a color node
+        storageNode = vtkMRMLDoubleArrayStorageNode::New();
         }
       else if (mnd)
         {

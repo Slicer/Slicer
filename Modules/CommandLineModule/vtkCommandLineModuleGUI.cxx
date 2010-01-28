@@ -953,6 +953,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   defaultExtensionMap[".stl"] = "Stereolithography";
 
   defaultExtensionMap[".csv"] = "Comma Separated Value";
+  defaultExtensionMap[".mcsv"] = "Comma Separated Value for Measurements";
   defaultExtensionMap[".txt"] = "Text Document";
   defaultExtensionMap[".xml"] = "XML Document";
   defaultExtensionMap[".html"] = "HTML Document";
@@ -1568,6 +1569,69 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    NULL,
                                    NULL,
                                    (title + " Table").c_str());
+          tparameter->SetNewNodeEnabled(1);
+          tparameter->SetNoneEnabled(1);
+          // tparameter->SetNewNodeName((title+" output").c_str());
+          tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->Create();
+          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+          tparameter->UpdateMenu();
+          
+          tparameter->SetBorderWidth(2);
+          tparameter->SetReliefToFlat();
+          tparameter->SetLabelText( (*pit).GetLabel().c_str());
+          parameter = tparameter;
+          }
+        else
+          {
+          parameter = 0;
+          }
+        }
+      else if ((*pit).GetTag() == "measurement" && (*pit).GetChannel() == "input")
+        {
+        if ((*pit).GetHidden() != "true")
+          {
+          vtkSlicerNodeSelectorWidget *tparameter
+            = vtkSlicerNodeSelectorWidget::New();
+
+          // may someday use different node types for different "type"
+          // attributes
+          std::string nodeClass = "vtkMRMLDoubleArrayNode";
+          
+          tparameter->SetNodeClass(nodeClass.c_str(),
+                                   NULL,
+                                   NULL,
+                                   (title + " Measurement").c_str());
+          tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->Create();
+          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+          tparameter->UpdateMenu();
+          
+          tparameter->SetBorderWidth(2);
+          tparameter->SetReliefToFlat();
+          tparameter->SetLabelText( (*pit).GetLabel().c_str());
+          parameter = tparameter;
+          }
+        else
+          {
+          parameter = 0;
+          }
+        }
+      else if ((*pit).GetTag() == "measurement" && (*pit).GetChannel() == "output")
+        {
+        if ((*pit).GetHidden() != "true")
+          {
+          vtkSlicerNodeSelectorWidget *tparameter
+            = vtkSlicerNodeSelectorWidget::New();
+          
+          // may someday use different node types for different "type"
+          // attributes
+          std::string nodeClass = "vtkMRMLDoubleArrayNode";
+          
+          tparameter->SetNodeClass(nodeClass.c_str(),
+                                   NULL,
+                                   NULL,
+                                   (title + " Measurement").c_str());
           tparameter->SetNewNodeEnabled(1);
           tparameter->SetNoneEnabled(1);
           // tparameter->SetNewNodeName((title+" output").c_str());
