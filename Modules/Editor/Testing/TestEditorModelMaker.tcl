@@ -39,6 +39,7 @@ proc EditorTestModelMaker { {labelFile ""} } {
     }
 
     # clean up
+    modelEffect tearDownOptions
     catch "itcl::delete object  modelEffect" err
 
     return 0
