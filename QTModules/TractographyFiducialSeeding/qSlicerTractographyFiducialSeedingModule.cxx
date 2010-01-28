@@ -20,7 +20,7 @@ qSlicerAbstractModuleWidget* qSlicerTractographyFiducialSeedingModule::createWid
 }
 //-----------------------------------------------------------------------------
 //
-qSlicerModuleLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
+vtkSlicerLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
 {
   return 0;
 }

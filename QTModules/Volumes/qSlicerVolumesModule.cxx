@@ -27,8 +27,7 @@ qSlicerAbstractModuleWidget * qSlicerVolumesModule::createWidgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic* qSlicerVolumesModule::createLogic()
+vtkSlicerLogic* qSlicerVolumesModule::createLogic()
 {
-  //return new qSlicerVolumesModuleLogic;
   return 0; 
 }

@@ -34,7 +34,7 @@
 // STL includes
 #include <vector>
 
-class qSlicerCLIModuleLogic; 
+class vtkSlicerCLIModuleLogic; 
 class QFormLayout;
 class QBoxLayout;
 class vtkMRMLCommandLineModuleNode; 
@@ -89,7 +89,7 @@ public:
   
   // Description:
   // Convenient function to cast qSlicerModuleLogic into qSlicerCLIModuleLogic
-  qSlicerCLIModuleLogic* logic();
+  vtkSlicerCLIModuleLogic* logic()const;
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
   typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;

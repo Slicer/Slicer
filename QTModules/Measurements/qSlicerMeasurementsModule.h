@@ -32,7 +32,7 @@ protected:
 
   // Description:
   // Create and return the logic associated to this module
-  virtual qSlicerModuleLogic* createLogic();
+  virtual vtkSlicerLogic* createLogic();
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerMeasurementsModule); 

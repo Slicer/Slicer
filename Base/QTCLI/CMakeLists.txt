@@ -26,11 +26,11 @@ SET(slicer_qtbase_SRCS
   qSlicerCLIModule.h
   qSlicerCLIModuleFactoryHelper.cxx
   qSlicerCLIModuleFactoryHelper.h
-  qSlicerCLIModuleLogic.cxx
-  qSlicerCLIModuleLogic.h
   qSlicerCLIModuleWidget.cxx
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
+  vtkSlicerCLIModuleLogic.cxx
+  vtkSlicerCLIModuleLogic.h
   )
 
 # Headers that should run through moc

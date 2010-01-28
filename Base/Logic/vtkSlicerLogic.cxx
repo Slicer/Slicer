@@ -120,3 +120,8 @@ vtkSlicerLogic::LogicCallback(vtkObject *caller,
   self->SetInLogicCallbackFlag(0);
 }
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerLogic::RegisterNodes()
+{
+}

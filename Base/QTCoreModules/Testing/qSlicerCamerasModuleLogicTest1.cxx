@@ -46,24 +46,6 @@ int qSlicerCamerasModuleLogicTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerCamerasModuleLogic * cameraModuleLogic = new qSlicerCamerasModuleLogic;
-
-  vtkSmartPointer<vtkMRMLViewNode> view = vtkSmartPointer<vtkMRMLViewNode>::New();
-  vtkSmartPointer<vtkMRMLCameraNode> camera = vtkSmartPointer<vtkMRMLCameraNode>::New();
-  
-  // shouldn't do anything. 
-  cameraModuleLogic->setCameraToView(0, view);
-  // shouldn't do anything. 
-  cameraModuleLogic->setCameraToView(camera, 0);
-  // shouldn't connect camera to view
-  cameraModuleLogic->setCameraToView(camera, view);
-  if (camera->GetActiveTag() != view->GetID())
-    {
-    std::cerr << "qSlicerCamerasModuleLogic::setCameraToView failed to set ActiveTag with the view ID." << std::endl;
-    return EXIT_FAILURE;
-    }
-  delete cameraModuleLogic;
-
   return EXIT_SUCCESS;
 }
 

@@ -19,15 +19,11 @@ SET(slicer_qtbase_SRCS
   
   qSlicerCamerasModule.cxx
   qSlicerCamerasModule.h
-  qSlicerCamerasModuleLogic.cxx
-  qSlicerCamerasModuleLogic.h
   qSlicerCamerasModuleWidget.cxx
   qSlicerCamerasModuleWidget.h
   
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
-  qSlicerTransformsModuleLogic.cxx
-  qSlicerTransformsModuleLogic.h
   qSlicerTransformsModuleWidget.cxx
   qSlicerTransformsModuleWidget.h
   )

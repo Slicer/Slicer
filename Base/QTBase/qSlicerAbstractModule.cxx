@@ -15,10 +15,11 @@
 
 // SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerModuleLogic.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerLogic.h"
+#include "vtkSlicerModuleLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -36,34 +37,49 @@ public:
   QCTK_DECLARE_PUBLIC(qSlicerAbstractModule);
   qSlicerAbstractModulePrivate()
     {
-    this->ModuleEnabled = false;
+    this->Enabled = false;
     this->Logic = 0;
     this->Name = "NA"; 
     }
   ~qSlicerAbstractModulePrivate();
   
-  bool                                       ModuleEnabled;
+  bool                                       Enabled;
   QString                                    Name;
   QPointer<qSlicerAbstractModuleWidget>      WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
-  qSlicerModuleLogic*                        Logic; 
+  vtkSmartPointer<vtkSlicerLogic>            Logic; 
 };
+
+//-----------------------------------------------------------------------------
+// qSlicerAbstractModulePrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
+{
+  // Delete the widget representation
+  if (this->WidgetRepresentation)
+    {
+    delete this->WidgetRepresentation;
+    }
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerAbstractModule methods
 
 //-----------------------------------------------------------------------------
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* _appLogic)
+void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
 {
-  QCTK_D(qSlicerAbstractModule);
-  Q_ASSERT(_appLogic);
-  //this->setAppLogic(appLogic);
-  if (d->Logic)
+  this->setAppLogic(appLogic);
+
+  vtkSlicerLogic* moduleLogic = this->logic();
+  if (moduleLogic)
     {
-    d->Logic->initialize(_appLogic);
+    //moduleLogic->initialize();
     }
-  d->AppLogic = _appLogic; 
   this->setup();
 }
 
@@ -122,7 +138,7 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
   d->MRMLScene = _mrmlScene;
   if (d->Logic)
     {// logic should be updated first (because it doesn't depends on the widget
-    d->Logic->setMRMLScene(_mrmlScene);
+    d->Logic->SetMRMLScene(_mrmlScene);
     }
   if (d->WidgetRepresentation)
     {
@@ -131,12 +147,23 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 }
 
 //-----------------------------------------------------------------------------
-//QCTK_SET_CXX(qSlicerAbstractModule, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+void qSlicerAbstractModule::setAppLogic(vtkSlicerApplicationLogic* newAppLogic)
+{
+  QCTK_D(qSlicerAbstractModule);
+  vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(this->logic());
+  if (moduleLogic)
+    {
+    moduleLogic->SetApplicationLogic(newAppLogic);
+    }
+  d->AppLogic = newAppLogic;
+}
+
+//-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerAbstractModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerAbstractModule, bool, moduleEnabled, ModuleEnabled);
-QCTK_SET_CXX(qSlicerAbstractModule, bool, setModuleEnabled, ModuleEnabled);
+QCTK_GET_CXX(qSlicerAbstractModule, bool, isEnabled, Enabled);
+QCTK_SET_CXX(qSlicerAbstractModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
@@ -152,15 +179,16 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
     d->WidgetRepresentation = this->createWidgetRepresentation();
     Q_ASSERT(d->WidgetRepresentation);
     // Note: WidgetRepresentation->setLogic should be called before
-    // WidgetRepresentation->setMRMLScene
+    // WidgetRepresentation->setMRMLScene() because some methods
+    // might need a logic when a MRML scene is set.
     if (d->Logic)
       {
       d->WidgetRepresentation->setLogic(d->Logic);
       }
-      
     d->WidgetRepresentation->setName(this->name());
-    d->WidgetRepresentation->initialize();
-    // Note: setMRMLScene should be called after initialize
+    d->WidgetRepresentation->setup();
+    // Note: setMRMLScene should be called after setup (just to make sure widgets
+    // are well written and can handle empty mrmlscene
     d->WidgetRepresentation->setMRMLScene(this->mrmlScene());
     d->WidgetRepresentation->setWindowTitle(this->title());
     }
@@ -168,36 +196,23 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic* qSlicerAbstractModule::logic()
+vtkSlicerLogic* qSlicerAbstractModule::logic()
 {
   QCTK_D(qSlicerAbstractModule);
   if (d->Logic)
     {
     return d->Logic;
     }
-  d->Logic = this->createLogic();
+  d->Logic.TakeReference(this->createLogic());
   if (d->Logic)
     {
-    d->Logic->initialize(d->AppLogic);
-    d->Logic->setMRMLScene(this->mrmlScene());
+    vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
+    if (moduleLogic)
+      {
+      moduleLogic->SetApplicationLogic(d->AppLogic);
+      }
+    d->Logic->SetMRMLScene(this->mrmlScene());
     }
   return d->Logic; 
 }
 
-//-----------------------------------------------------------------------------
-// qSlicerAbstractModulePrivate methods
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
-{
-  // Delete the widget representation
-  if (this->WidgetRepresentation)
-    {
-    delete this->WidgetRepresentation;
-    }
-  // Delete the Logic
-  if (this->Logic)
-    {
-    delete this->Logic; 
-    }
-}

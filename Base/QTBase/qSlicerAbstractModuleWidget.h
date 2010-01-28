@@ -21,7 +21,7 @@
 #include "qSlicerBaseQTBaseExport.h"
 
 // class vtkSlicerApplicationLogic;
-class qSlicerModuleLogic;
+class vtkSlicerLogic;
 class qSlicerAbstractModule; 
 class QAction; 
 class qSlicerAbstractModuleWidgetPrivate;
@@ -33,10 +33,6 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerAbstractModuleWidget(QWidget *parent=0);
-
-  // Description:
-  // All initialization code should be done in the initialize function
-  void initialize(/*vtkSlicerApplicationLogic* appLogic*/);
 
   // Description:
   // Return the action allowing to show the module
@@ -54,13 +50,13 @@ protected:
 
   // Description:
   // Set/Get associated Logic
-  void setLogic(qSlicerModuleLogic* logic);
-  qSlicerModuleLogic* logic() const; 
+  void setLogic(vtkSlicerLogic* logic);
+  vtkSlicerLogic* logic() const; 
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);
 
-  // Give access to method setLogic
+  // Give access to qSlicerAbstractModule to the method qSlicerAbstractModuleWidget::setLogic
   friend class qSlicerAbstractModule;
 };
 

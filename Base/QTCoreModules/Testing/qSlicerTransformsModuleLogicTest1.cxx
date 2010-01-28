@@ -11,7 +11,7 @@
 
 // QTCoreModule includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerTransformsModuleLogic.h" 
+#include "vtkSlicerTransformLogic.h" 
 #include "qSlicerTransformsModule.h"
 
 // MRML includes
@@ -53,8 +53,8 @@ int qSlicerTransformsModuleLogicTest1(int argc, char * argv [] )
   transformModule->initialize(aptr->appLogic());
   transformModule->setMRMLScene(aptr->mrmlScene());
 
-  qSlicerModuleLogic * moduleLogic = transformModule->logic();
-  qSlicerTransformsModuleLogic* transformModuleLogic = dynamic_cast<qSlicerTransformsModuleLogic*>(moduleLogic);
+  vtkSlicerLogic * moduleLogic = transformModule->logic();
+  vtkSlicerTransformLogic* transformModuleLogic = vtkSlicerTransformLogic::SafeDownCast(moduleLogic);
   if (!transformModuleLogic)
     {
     std::cerr << "The transform module didn't create a transform module logic." << std::endl;
@@ -75,7 +75,7 @@ int qSlicerTransformsModuleLogicTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkMRMLTransformNode* transform = transformModuleLogic->loadTransform(argv2[0]);
+  vtkMRMLTransformNode* transform = transformModuleLogic->AddTransform(argv2[0], transformModule->mrmlScene());
   if (transform == 0)
     {
     std::cerr << "Could not read transform file: " << argv2[0] << std::endl;

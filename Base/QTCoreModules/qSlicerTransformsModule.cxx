@@ -13,7 +13,7 @@
 #include "qSlicerTransformsModule.h"
 
 // SlicerQT includes
-#include "qSlicerTransformsModuleLogic.h"
+#include "vtkSlicerTransformLogic.h"
 #include "qSlicerTransformsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
@@ -32,9 +32,9 @@ qSlicerAbstractModuleWidget * qSlicerTransformsModule::createWidgetRepresentatio
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic* qSlicerTransformsModule::createLogic()
+vtkSlicerLogic* qSlicerTransformsModule::createLogic()
 {
-  return new qSlicerTransformsModuleLogic;
+  return vtkSlicerTransformLogic::New();
 }
 
 //-----------------------------------------------------------------------------

@@ -15,7 +15,7 @@
 #include "ui_qSlicerCLIModule.h"
 
 // SlicerQT includes
-#include "qSlicerCLIModuleLogic.h"
+#include "vtkSlicerCLIModuleLogic.h"
 #include "qSlicerCLIModuleWidget.h"
 
 // ModuleDescriptionParser includes
@@ -65,9 +65,9 @@ qSlicerAbstractModuleWidget * qSlicerCLIModule::createWidgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic* qSlicerCLIModule::createLogic()
+vtkSlicerLogic* qSlicerCLIModule::createLogic()
 {
-  return new qSlicerCLIModuleLogic;
+  return vtkSlicerCLIModuleLogic::New();
 }
 
 //-----------------------------------------------------------------------------

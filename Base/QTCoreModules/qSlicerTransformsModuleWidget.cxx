@@ -12,7 +12,6 @@
 
 
 #include "qSlicerTransformsModuleWidget.h"
-#include "qSlicerTransformsModuleLogic.h"
 #include "ui_qSlicerTransformsModule.h"
 
 // SlicerQT includes
@@ -49,16 +48,16 @@ public:
     this->CoordinateReferenceButtonGroup = 0;
     this->MRMLTransformNode = 0;
     }
-  qSlicerTransformsModuleLogic* logic()const;
+  vtkSlicerTransformLogic*      logic()const;
   QButtonGroup*                 CoordinateReferenceButtonGroup;
   vtkMRMLLinearTransformNode*   MRMLTransformNode;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsModuleLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
+vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
 {
   QCTK_P(const qSlicerTransformsModuleWidget);
-  return dynamic_cast<qSlicerTransformsModuleLogic*>(p->logic());
+  return vtkSlicerTransformLogic::SafeDownCast(p->logic());
 }
 
 //-----------------------------------------------------------------------------
@@ -221,9 +220,10 @@ int qSlicerTransformsModuleWidget::coordinateReference()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::loadTransform()
 {
+  Q_ASSERT(this->mrmlScene());
   QString fileName = QFileDialog::getOpenFileName(this);
   if (!fileName.isEmpty())
     {
-    qctk_d()->logic()->loadTransform(fileName);
+    qctk_d()->logic()->AddTransform(fileName.toLatin1(), this->mrmlScene());
     }
 }

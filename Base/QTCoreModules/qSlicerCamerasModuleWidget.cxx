@@ -14,9 +14,6 @@
 #include "qSlicerCamerasModuleWidget.h"
 #include "ui_qSlicerCamerasModule.h"
 
-// SlicerQT includes
-#include "qSlicerCamerasModuleLogic.h"
-
 // MRML includes
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLCameraNode.h"
@@ -30,18 +27,7 @@ class qSlicerCamerasModuleWidgetPrivate: public qCTKPrivate<qSlicerCamerasModule
 {
 public:
   QCTK_DECLARE_PUBLIC(qSlicerCamerasModuleWidget);
-  
-  // Description:
-  // Convenient function to cast qSlicerModuleLogic into qSlicerCamerasModuleLogic
-  qSlicerCamerasModuleLogic* logic()const;
 };
-
-qSlicerCamerasModuleLogic* qSlicerCamerasModuleWidgetPrivate::logic()const
-{
-  QCTK_P(const qSlicerCamerasModuleWidget);
-  // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
-  return dynamic_cast<qSlicerCamerasModuleLogic*>(p->logic());
-}
 
 //-----------------------------------------------------------------------------
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModuleWidget, QWidget*);
@@ -120,7 +106,11 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
     }
   vtkMRMLViewNode *currentViewNode = vtkMRMLViewNode::SafeDownCast(
     d->ViewNodeSelector->currentNode());
-  d->logic()->setCameraToView(currentCameraNode, currentViewNode);
+  if (currentViewNode == 0)
+    {
+    return;
+    }
+  currentCameraNode->SetActiveTag(currentViewNode->GetID());
 }
 
 //-----------------------------------------------------------------------------

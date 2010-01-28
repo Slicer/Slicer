@@ -22,7 +22,7 @@ public:
 protected:
   // Create and return a widget representation of the object
   virtual qSlicerAbstractModuleWidget* createWidgetRepresentation();
-  virtual qSlicerModuleLogic* createLogic();
+  virtual vtkSlicerLogic* createLogic();
 
 private:
   //QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModule);

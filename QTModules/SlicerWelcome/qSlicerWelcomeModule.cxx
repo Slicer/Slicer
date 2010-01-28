@@ -23,3 +23,9 @@ qSlicerAbstractModuleWidget * qSlicerWelcomeModule::createWidgetRepresentation()
 {
   return new qSlicerWelcomeModuleWidget;
 }
+
+//-----------------------------------------------------------------------------
+vtkSlicerLogic* qSlicerWelcomeModule::createLogic()
+{
+  return 0;
+}

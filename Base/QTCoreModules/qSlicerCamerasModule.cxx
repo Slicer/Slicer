@@ -34,9 +34,9 @@ qSlicerAbstractModuleWidget * qSlicerCamerasModule::createWidgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleLogic* qSlicerCamerasModule::createLogic()
+vtkSlicerLogic* qSlicerCamerasModule::createLogic()
 {
-  return new qSlicerCamerasModuleLogic;
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

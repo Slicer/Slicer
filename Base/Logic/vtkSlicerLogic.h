@@ -100,6 +100,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
     {
     vtkObject *oldValue = this->MRMLScene;
     this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    this->RegisterNodes();
     if ( oldValue != this->MRMLScene )
       {
       this->InvokeEvent (vtkCommand::ModifiedEvent);
@@ -110,6 +111,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
     {
     vtkObject *oldValue = this->MRMLScene;
     this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    this->RegisterNodes();
     if ( oldValue != this->MRMLScene )
       {
       this->InvokeEvent (vtkCommand::ModifiedEvent);
@@ -120,6 +122,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
     {
     vtkObject *oldValue = this->MRMLScene;
     this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+    this->RegisterNodes();
     if ( oldValue != this->MRMLScene )
       {
       this->InvokeEvent (vtkCommand::ModifiedEvent);
@@ -162,6 +165,10 @@ protected:
   virtual ~vtkSlicerLogic();
   vtkSlicerLogic(const vtkSlicerLogic&);
   void operator=(const vtkSlicerLogic&);
+
+  /// Register node classes into the mrml scene. Called each time a new scene
+  /// is set. Do nothing by default. Can be reimplemented in derivated classes.
+  virtual void RegisterNodes();
 
   vtkMRMLScene *MRMLScene;
 
