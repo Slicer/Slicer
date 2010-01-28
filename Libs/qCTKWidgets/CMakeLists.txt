@@ -40,6 +40,8 @@ SET(qCTKWidgets_SRCS
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.cxx
   qCTKCoordinatesWidget.h
+  qCTKDoubleSlider.cxx
+  qCTKDoubleSlider.h
   qCTKFittedTextBrowser.cxx
   qCTKFittedTextBrowser.h
   qCTKFlowLayout.cxx
@@ -67,6 +69,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKCollapsibleGroupBox.h
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
+  qCTKDoubleSlider.h
   qCTKFittedTextBrowser.h
   qCTKMatrixWidget.h
   qCTKModelTester.h
