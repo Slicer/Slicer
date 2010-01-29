@@ -14,6 +14,7 @@
 #include "ModuleDescriptionParser.h"
 
 #include "ModuleDescription.h"
+#include "ModuleDescriptionUtilities.h"
 
 #include <iostream>
 #include <string>
@@ -36,62 +37,6 @@ static bool
 validVariable(std::string &s)
 {
   return (startsWithValidVariableChar(s) && s.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") == std::string::npos);
-}
-
-static void
-replaceSubWithSub(std::string& s, const char *o, const char  *n)
-{
-  if (s.size())
-    {
-    std::string from(o), to(n);
-    std::string::size_type start = 0;
-    while ((start = s.find(from, start)) != std::string::npos)
-      {
-      s.replace(start, from.size(), to);
-      start += to.size();
-      }
-    }
-}
-
-static void
-trimLeading(std::string& s, const char* extraneousChars = " \t\n")
-{
-  if (s.size())
-    {
-    std::string::size_type pos = s.find_first_not_of(extraneousChars);
-    if (pos != std::string::npos)
-      {
-      s = s.substr(pos);
-      }
-    else
-      {
-      s = "";
-      }
-    }
-}
-
-static void
-trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
-{
-  if (s.size())
-    {
-    std::string::size_type pos = s.find_last_not_of(extraneousChars);
-    if (pos != std::string::npos)
-      {
-      s = s.substr(0, pos + 1);
-      }
-    else
-      {
-      s = "";
-      }
-    }
-}
-
-static void
-trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n")
-{
-  trimLeading(s, extraneousChars);
-  trimTrailing(s, extraneousChars);
 }
 
 /* ParserState: A class to keep state information for the parser. This
