@@ -14,10 +14,10 @@
 #ifndef __qSlicerCamerasModuleWidget_h
 #define __qSlicerCamerasModuleWidget_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTCoreModulesExport.h"
@@ -38,8 +38,8 @@ public:
   virtual QAction* showModuleAction();
 
 public slots:
-  // Description:
-  // Inherited from qSlicerWidget. Reimplemented for refresh issues.
+  /// 
+  /// Inherited from qSlicerWidget. Reimplemented for refresh issues.
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected:

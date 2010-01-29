@@ -14,10 +14,10 @@
 #ifndef __qSlicerCamerasModule_h
 #define __qSlicerCamerasModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractCoreModule.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTCoreModulesExport.h"
@@ -35,18 +35,18 @@ public:
 
   qSlicerGetTitleMacro("Cameras");
 
-  // Return help/acknowledgement text
+  /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
 protected:
 
-  // Description:
-  // Create and return the widget representation associated to this module
+  /// 
+  /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
 
-  // Description:
-  // Create and return the logic associated to this module
+  /// 
+  /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
   
 private:

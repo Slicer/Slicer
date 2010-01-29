@@ -14,11 +14,11 @@
 #ifndef __qSlicerCoreModuleFactory_h
 #define __qSlicerCoreModuleFactory_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 #include <qCTKAbstractQObjectFactory.h>
 

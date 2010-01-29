@@ -14,10 +14,10 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractCoreModule.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTCoreModulesExport.h"
@@ -35,30 +35,30 @@ public:
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
 
-  // Description:
-  // Display name for the module
+  /// 
+  /// Display name for the module
   qSlicerGetTitleMacro("Transforms");
 
-  // Description:
-  // Help text of the module
+  /// 
+  /// Help text of the module
   virtual QString helpText()const;
 
-  // Description:
-  // Acknowledgement of the module
+  /// 
+  /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
 protected:
-  // Description:
-  // Create and return the widget representation associated to this module
+  /// 
+  /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
 
-  // Description:
-  // Create and return the logic associated to this module
+  /// 
+  /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
   
 private:
-  // Description:
-  // Pimpl declaration
+  /// 
+  /// Pimpl declaration
   QCTK_DECLARE_PRIVATE(qSlicerTransformsModule);
 };
 
