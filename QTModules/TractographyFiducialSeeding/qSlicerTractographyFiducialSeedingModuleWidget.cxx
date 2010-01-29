@@ -17,6 +17,7 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTractographyFiducialSeedingModuleWidget, QWidg
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 {
+  this->processParameterChange = true;
   QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
 
@@ -59,6 +60,11 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(double value)
 {
+  if (!this->processParameterChange)
+  {
+    return;
+  }
+
   // run seeding here
   qDebug() << "parameter changed: " << value ;
   // std::cout << "param changed(" << value << "): TODO call logic to compute fibers\n";
@@ -80,6 +86,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
   if (paramNode)
     {
+    this->processParameterChange = false;
+
     d->IntegrationStepSpinBoxLabel->setValue(paramNode->GetIntegrationStep());
     d->MaxNumberSeedsNumericInput->setValue(paramNode->GetMaxNumberOfSeeds());
     d->MinimumPathSpinBoxLabel->setValue(paramNode->GetMinimumPathLength());
@@ -93,6 +101,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
     //d->FiberNodeSelector->setCurrentNode(getMRMLScene()->GetNodeByID((paramNode->GetOutputFiberRef()0);
    // ->setValue(paramNode->GetInputFiducialRef());
    // ->setValue(paramNode->GetInputVolumeRef());
+
+    this->processParameterChange = true;
     }
   this->onParameterChanged(0.0);
 

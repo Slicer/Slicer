@@ -30,6 +30,7 @@ protected slots:
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
+  bool processParameterChange;
 };
 
 #endif
