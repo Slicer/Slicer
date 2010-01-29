@@ -155,7 +155,7 @@ double qCTKSliderSpinBoxWidget::singleStep()const
 {
   QCTK_D(const qCTKSliderSpinBoxWidget);
   Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
-  return qctk_d()->Slider->singleStep();
+  return d->Slider->singleStep();
 }
 
 // --------------------------------------------------------------------------
