@@ -2,13 +2,13 @@
 #define __qMRMLTransformSliders_h
 
 
-// qVTK includes
+/// qVTK includes
 #include <qVTKObject.h>
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QWidget>
 
 #include "qMRMLWidgetsExport.h"
@@ -37,57 +37,57 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_PROPERTY(bool minMaxVisible READ isMinMaxVisible WRITE setMinMaxVisible)
 
 public:
-  // Constructors
+  /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders(){}
 
-  // Description:
-  // Set/Get Coordinate system
-  // By default, the selector coordinate system will be set to GLOBAL
+  /// 
+  /// Set/Get Coordinate system
+  /// By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  // Description:
-  // Set/Get TypeOfTransform
-  // By default, the selector coordinate system will be set to TRANSLATION
+  /// 
+  /// Set/Get TypeOfTransform
+  /// By default, the selector coordinate system will be set to TRANSLATION
   enum TransformType { ROTATION, TRANSLATION };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
-  // Description:
-  // Set/Get Title of the group box
+  /// 
+  /// Set/Get Title of the group box
   void setTitle(const QString& title);
   QString title()const;
 
-  // Description:
-  // Get sliders range
+  /// 
+  /// Get sliders range
   double minimum()const;
   double maximum()const;
 
-  // Description:
-  // Set sliders range
+  /// 
+  /// Set sliders range
   void setMinimum(double min);
   void setMaximum(double max);
-  // Description:
-  // Utility function that set min/max in once
+  /// 
+  /// Utility function that set min/max in once
   void setRange(double min, double max);
 
-  // Description:
-  // Set the visibility property of the minimum QSpinBox and maximum QSpinBox.
-  // Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
-  // setMaximum() manually
+  /// 
+  /// Set the visibility property of the minimum QSpinBox and maximum QSpinBox.
+  /// Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
+  /// setMaximum() manually
   void setMinMaxVisible(bool visible);
   bool isMinMaxVisible()const;
 
-  // Description:
-  // Set sliders single step
+  /// 
+  /// Set sliders single step
   double singleStep()const;
   void setSingleStep(double step);
 
-  // Description:
-  // Get/Set slider's label
+  /// 
+  /// Get/Set slider's label
   QString lrLabel()const;
   QString paLabel()const;
   QString isLabel()const;
@@ -95,27 +95,27 @@ public:
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
 
-  // Description:
-  // Return the current MRML node of interest
+  /// 
+  /// Return the current MRML node of interest
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 
 signals:
-  // Description:
-  // Signal sent if at least one of the slider's value is updated
+  /// 
+  /// Signal sent if at least one of the slider's value is updated
   void valuesChanged();
 
 public slots:
-  // Description:
-  // Set the MRML node of interest
+  /// 
+  /// Set the MRML node of interest
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
   void setMRMLTransformNode(vtkMRMLNode* node);
 
-  // Description:
-  // Reset all sliders to their 0 position and value
+  /// 
+  /// Reset all sliders to their 0 position and value
   void reset();
 
-  /// Reset all sliders but the one that are currently active (i.e. the user
-  /// is changing its value.
+  //// Reset all sliders but the one that are currently active (i.e. the user
+  //// is changing its value.
   void resetUnactiveSliders();
 
 protected slots:

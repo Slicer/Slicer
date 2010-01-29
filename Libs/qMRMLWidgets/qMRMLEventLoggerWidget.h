@@ -1,10 +1,10 @@
 #ifndef __qMRMLEventLoggerWidget_h
 #define __qMRMLEventLoggerWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QWidget>
 
 #include "qMRMLWidgetsExport.h"
@@ -23,8 +23,8 @@ public:
 
 public slots:
 
-  // Description:
-  // Set the MRML scene that should be listened for events
+  /// 
+  /// Set the MRML scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
 protected slots:

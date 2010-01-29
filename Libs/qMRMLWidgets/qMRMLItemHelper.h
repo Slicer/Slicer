@@ -1,10 +1,10 @@
 #ifndef __qMRMLItemHelper_h
 #define __qMRMLItemHelper_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <Qt>
 #include <QVariant>
 
@@ -42,7 +42,7 @@ public:
   virtual vtkObject* object()const = 0;
   virtual bool operator==(const qMRMLAbstractItemHelper& helper)const;
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
   QCTK_DECLARE_PRIVATE(qMRMLAbstractItemHelper);
@@ -61,11 +61,11 @@ public:
   //virtual bool hasChildren() const;
   virtual vtkObject* object()const;
   virtual vtkMRMLScene* mrmlScene()const;
-  // parent() MUST be reimplemented  
+  /// parent() MUST be reimplemented  
   //virtual qMRMLAbstractItemHelper* parent() const;
 
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   //virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
   QCTK_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
@@ -110,7 +110,7 @@ public:
   virtual int row() const;
   virtual bool setData(const QVariant &value, int role = Qt::EditRole);
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 
 private:
@@ -124,7 +124,7 @@ class QMRML_WIDGETS_EXPORT qMRMLAbstractRootItemHelper : public qMRMLAbstractIte
 {
 public:
   qMRMLAbstractRootItemHelper(vtkMRMLScene* scene);
-  // child MUST be reimplemented
+  /// child MUST be reimplemented
   virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
   virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
@@ -135,7 +135,7 @@ public:
   virtual int row() const;
 
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   vtkMRMLScene* mrmlScene()const;
 private:
@@ -158,7 +158,7 @@ public:
   virtual int row() const;
 
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 
 private:

@@ -1,10 +1,10 @@
 #ifndef __qMRMLTreeWidget_h
 #define __qMRMLTreeWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QTreeView>
 
 #include "qMRMLWidgetsExport.h"

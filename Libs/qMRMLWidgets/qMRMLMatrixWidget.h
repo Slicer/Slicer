@@ -1,11 +1,11 @@
 #ifndef __qMRMLMatrixWidget_h
 #define __qMRMLMatrixWidget_h
 
-// qVTK includes
+/// qVTK includes
 #include <qVTKObject.h>
 #include <qVTKAbstractMatrixWidget.h>
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
@@ -24,28 +24,28 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public qVTKAbstractMatrixWidget
   
 public:
   
-  // Constructors
+  /// Constructors
   typedef qVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
   virtual ~qMRMLMatrixWidget(){}
   
-  // Description:
-  // Set/Get Coordinate system
-  // By default, the selector coordinate system will be set to GLOBAL
+  /// 
+  /// Set/Get Coordinate system
+  /// By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 public slots:
-  // Description:
-  // Set the MRML node of interest
+  /// 
+  /// Set the MRML node of interest
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode); 
   void setMRMLTransformNode(vtkMRMLNode* node); 
   
 protected slots:
-  // Description:
-  // Triggered upon MRML transform node updates
+  /// 
+  /// Triggered upon MRML transform node updates
   void updateMatrix();
 
 private:

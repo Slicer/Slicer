@@ -1,10 +1,10 @@
 #ifndef __qMRMLListWidget_h
 #define __qMRMLListWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QListView>
 
 #include "qMRMLWidgetsExport.h"

@@ -1,6 +1,6 @@
 
-// The qMRMLWidgetsWin32Header captures some system differences between Unix
-// and Windows operating systems. 
+/// The qMRMLWidgetsWin32Header captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __qMRMLWidgetsExport_h
 #define __qMRMLWidgetsExport_h

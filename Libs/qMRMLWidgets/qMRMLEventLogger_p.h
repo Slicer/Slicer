@@ -3,16 +3,16 @@
 
 #include "qMRMLEventLogger.h"
 
-// qVTK includes
+/// qVTK includes
 #include <qVTKObject.h>
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QObject>
 
-// VTK includes
+/// VTK includes
 #include <vtkWeakPointer.h>
 
 class vtkMRMLScene;

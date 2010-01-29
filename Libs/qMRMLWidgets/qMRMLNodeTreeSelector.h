@@ -1,10 +1,10 @@
 #ifndef __qMRMLNodeTreeSelector_h
 #define __qMRMLNodeTreeSelector_h
 
-// qMRML includes
+/// qMRML includes
 #include "qMRMLNodeSelector.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
@@ -15,10 +15,10 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeTreeSelector : public qMRMLNodeSelector
 {
   Q_OBJECT
 public:
-  // Superclass typedef
+  /// Superclass typedef
   typedef qMRMLNodeSelector Superclass;
   
-  // Constructors
+  /// Constructors
   explicit qMRMLNodeTreeSelector(QWidget* parent = 0);
   virtual ~qMRMLNodeTreeSelector(){}
 

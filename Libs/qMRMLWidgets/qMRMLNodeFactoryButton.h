@@ -1,13 +1,13 @@
 #ifndef __qMRMLNodeFactoryButton_h
 #define __qMRMLNodeFactoryButton_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// qVTK includes
+/// qVTK includes
 #include <qVTKObject.h>
 
-// QT includes
+/// QT includes
 #include <QPushButton>
 
 #include "qMRMLWidgetsExport.h"
@@ -24,13 +24,13 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactoryButton : public QPushButton
   QVTK_OBJECT
 public:
 
-  // Constructors
+  /// Constructors
   typedef QPushButton Superclass;
   explicit qMRMLNodeFactoryButton(QWidget* parent = 0);
   virtual ~qMRMLNodeFactoryButton(){}
   
-  // Description:
-  // Set/Get MRML scene
+  /// 
+  /// Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
 
   enum ActionType
@@ -43,13 +43,13 @@ public:
   ActionType action()const;
 
 public slots:
-  // Description:
-  // Set/Get MRML scene
+  /// 
+  /// Set/Get MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
 
-  // Description:
-  // Create and add a node given its classname to the scene associated with the factory
-  // Note: The scene has the ownership of the node and is responsible to delete it.
+  /// 
+  /// Create and add a node given its classname to the scene associated with the factory
+  /// Note: The scene has the ownership of the node and is responsible to delete it.
   vtkMRMLNode* generateRandomNode();
   void deleteRandomNode();
 

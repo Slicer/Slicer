@@ -1,10 +1,10 @@
 #ifndef __qMRMLEventLogger_h
 #define __qMRMLEventLogger_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QObject>
 
 #include "qMRMLWidgetsExport.h"
@@ -21,12 +21,12 @@ public:
   explicit qMRMLEventLogger(QObject* parent = 0);
   virtual ~qMRMLEventLogger();
 
-  // Description:
-  // Set the MRML scene that should be listened for events
+  /// 
+  /// Set the MRML scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
-  // Description:
-  // Return true if the corresponding event if listened by the eventLogger
+  /// 
+  /// Return true if the corresponding event if listened by the eventLogger
   bool listeningNodeAddedEvent();
   bool listeningNodeRemovedEvent();
   bool listeningNewSceneEvent();
@@ -42,8 +42,8 @@ public:
   bool listeningSceneRestoredEvent();
 
 public slots:
-  // Description:
-  // Allow to enable or disable the listening of specific event
+  /// 
+  /// Allow to enable or disable the listening of specific event
   void listenNodeAddedEvent(bool listen);
   void listenNodeRemovedEvent(bool listen);
   void listenNewSceneEvent(bool listen);
@@ -73,8 +73,8 @@ public slots:
   virtual void onSceneRestoredEvent();
 
 signals:
-  // Description:
-  // Emitted when the associated MRML scene event is fired
+  /// 
+  /// Emitted when the associated MRML scene event is fired
   void signalNodeAddedEvent(vtkObject* calle, vtkObject* call_data);
   void signalNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);
   void signalNewSceneEvent();

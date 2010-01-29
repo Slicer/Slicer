@@ -1,14 +1,14 @@
 #ifndef __qMRMLTreeProxyModel_p_h
 #define __qMRMLTreeProxyModel_p_h
 
-// qCTK includes 
+/// qCTK includes 
 #include <qCTKPimpl.h>
 
-// qMRML includes
+/// qMRML includes
 #include "qMRMLTreeProxyModel.h"
 #include "qMRMLItemHelper.h"
 
-// QT includes
+/// QT includes
 #include <QObject>
 #include <QVector>
 #include <QStack>

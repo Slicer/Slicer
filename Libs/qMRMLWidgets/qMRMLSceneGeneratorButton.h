@@ -1,10 +1,10 @@
 #ifndef __qMRMLSceneGeneratorButton_h
 #define __qMRMLSceneGeneratorButton_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QPushButton>
 #include <QString>
 

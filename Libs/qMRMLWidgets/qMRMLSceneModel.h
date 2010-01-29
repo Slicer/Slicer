@@ -30,7 +30,7 @@ public:
   virtual qMRMLAbstractItemHelper* parent()const;
   
 protected:
-  // here we know for sure that child is a child of this.
+  /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 };
 
@@ -47,7 +47,7 @@ class QMRML_WIDGETS_EXPORT qMRMLFlatRootItemHelper : public qMRMLAbstractRootIte
 {
 public:
   qMRMLFlatRootItemHelper(vtkMRMLScene* scene);
-  // child MUST be reimplemented
+  /// child MUST be reimplemented
   virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
 };
 

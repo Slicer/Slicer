@@ -1,10 +1,10 @@
 #ifndef __qMRMLLinearTransformSlider_h
 #define __qMRMLLinearTransformSlider_h
 
-// qVTK includes
+/// qVTK includes
 #include <qVTKObject.h>
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKSliderSpinBoxWidget.h>
 #include <qCTKPimpl.h>
 
@@ -24,15 +24,15 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBox
   Q_ENUMS(CoordinateReferenceType)
 
 public:
-  // Constructors
+  /// Constructors
   typedef qCTKSliderSpinBoxWidget Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider(){}
 
-  // Description:
-  // Set/Get Transform type
-  // By default, the slider transform type will be set to TRANSLATION_LR
-  // X axis:LR, Y axis:PA, Z axis:IS
+  /// 
+  /// Set/Get Transform type
+  /// By default, the slider transform type will be set to TRANSLATION_LR
+  /// X axis:LR, Y axis:PA, Z axis:IS
   enum TransformType
   {
     TRANSLATION_LR, TRANSLATION_PA, TRANSLATION_IS,
@@ -41,34 +41,34 @@ public:
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
-  // Description:
-  // Convenience method allowing to get which familly of transform is set
+  /// 
+  /// Convenience method allowing to get which familly of transform is set
   bool isRotation()const;
   bool isTranslation()const;
 
-  // Description:
-  // Set/Get Coordinate system
-  // By default, the selector coordinate system will be set to GLOBAL
+  /// 
+  /// Set/Get Coordinate system
+  /// By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  // Description:
-  // Return the current transform node
+  /// 
+  /// Return the current transform node
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 public slots:
-  // Description:
-  // Set the MRML node of interest
-  // Note that setting transformNode to 0 will disable the widget
+  /// 
+  /// Set the MRML node of interest
+  /// Note that setting transformNode to 0 will disable the widget
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
 
-  // Description:
-  // Apply the appropriate rotation/translation according to the typeOfTransform of the slider.
+  /// 
+  /// Apply the appropriate rotation/translation according to the typeOfTransform of the slider.
   void applyTransformation(double sliderPosition);
 
 protected slots:
-  // Description:
-  // Triggered upon MRML scene updates
+  /// 
+  /// Triggered upon MRML scene updates
   void onMRMLTransformNodeModified(vtkObject* caller);
 
 private:
