@@ -921,7 +921,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
           {
           // the index doesn't seem to be used, use string::npos.
           // See http://www.cplusplus.com/reference/string/string/npos/
-          categoryToModuleName["None"].insert(ModuleItem(string::npos,
+          categoryToModuleName["None"].insert(ModuleItem(std::string::npos,
                                               moduleTitle.toLatin1().data()));
           }
         }
