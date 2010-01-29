@@ -1,10 +1,10 @@
 #ifndef __qSlicerVolumesModuleWidget_h
 #define __qSlicerVolumesModuleWidget_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerVolumesModuleExport.h"

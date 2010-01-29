@@ -1,10 +1,10 @@
 #ifndef __qSlicerWelcomeModule_h
 #define __qSlicerWelcomeModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractLoadableModule.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerWelcomeModuleExport.h"
@@ -27,12 +27,12 @@ public:
 
 protected:
 
-  // Description:
-  // Create and return the widget representation associated to this module
+  /// 
+  /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
 
-  // Description:
-  // Create and return the logic associated to this module
+  /// 
+  /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
 private:

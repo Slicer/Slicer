@@ -1,10 +1,10 @@
 #ifndef __qSlicerTractographyFiducialSeedingModuleWidget_h
 #define __qSlicerTractographyFiducialSeedingModuleWidget_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerTractographyFiducialSeedingModuleExport.h"

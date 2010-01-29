@@ -1,7 +1,7 @@
 #ifndef __qSlicerTractographyFiducialSeedingModule_h
 #define __qSlicerTractographyFiducialSeedingModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractLoadableModule.h"
 
 #include "qSlicerTractographyFiducialSeedingModuleExport.h"
@@ -20,7 +20,7 @@ public:
   virtual QString title()const {return "FiducialSeeding";} 
 
 protected:
-  // Create and return a widget representation of the object
+  /// Create and return a widget representation of the object
   virtual qSlicerAbstractModuleWidget* createWidgetRepresentation();
   virtual vtkSlicerLogic* createLogic();
 

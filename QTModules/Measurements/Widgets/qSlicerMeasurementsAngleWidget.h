@@ -1,10 +1,10 @@
 #ifndef __qSlicerMeasurementsAngleWidget_h
 #define __qSlicerMeasurementsAngleWidget_h 
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerMeasurementsModuleExport.h"
