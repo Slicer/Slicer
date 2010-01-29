@@ -186,4 +186,62 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
            <description>Array of processed (output) FA values</description>
         </measurement>
   </parameters>
+  <parameters>
+    <label>Simple return types</label>
+    <integer>
+      <name>anintegerreturn</name>
+      <label>An integer return value</label>
+      <channel>output</channel>
+      <default>5</default>
+      <description>An example of an integer return type</description>
+    </integer>
+    <boolean>
+      <name>abooleanreturn</name>
+      <label>A boolean return value</label>
+      <channel>output</channel>
+      <default>false</default>
+      <description>An example of a boolean return type</description>
+    </boolean>
+    <float>
+      <name>afloatreturn</name>
+      <label>A floating point return value</label>
+      <channel>output</channel>
+      <default>7.0</default>
+      <description>An example of a float return type</description>
+    </float>
+    <double>
+      <name>adoublereturn</name>
+      <label>A double point return value</label>
+      <channel>output</channel>
+      <default>14.0</default>
+      <description>An example of a double return type</description>
+    </double>
+    <string>
+      <name>astringreturn</name>
+      <label>A string point return value</label>
+      <channel>output</channel>
+      <default>Hello</default>
+      <description>An example of a string return type</description>
+    </string>
+    <integer-vector>
+      <name>anintegervectorreturn</name>
+      <label>An integer vector return value</label>
+      <channel>output</channel>
+      <default>1,2,3</default>
+      <description>An example of an integer vector return type</description>
+    </integer-vector>
+    <string-enumeration>
+      <name>astringchoicereturn</name>
+      <channel>output</channel>
+      <description>An enumeration of strings as a return type</description>
+      <label>A string enumeration return value</label>
+      <default>Bill</default>
+      <element>Ron</element>
+      <element>Eric</element>
+      <element>Bill</element>
+      <element>Ross</element>
+      <element>Steve</element>
+      <element>Will</element>
+    </string-enumeration>
+  </parameters>
 </executable>

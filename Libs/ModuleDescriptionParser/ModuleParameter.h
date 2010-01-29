@@ -87,7 +87,32 @@ public:
   {
     return this->Hidden;
   }
+
+  // Simple return types are parameters on output channel with no
+  // flags and without a specified index 
+  virtual bool IsReturnParameter() const
+  {
+    // could check for tag == float, int, float-vector, ...
+    if (this->Channel == "output" 
+        && !this->IsFlagParameter() && !this->IsIndexParameter())
+      {
+      return true;
+      }
+    return false;
+  }
   
+  // Has a flag or a long flag?
+  virtual bool IsFlagParameter() const
+  {
+    return (this->Flag != "" && this->LongFlag != "");
+  }
+
+  // Is an index type?
+  virtual bool IsIndexParameter() const
+  {
+    return (this->Index != "");
+  }
+
   virtual void SetArgType(const std::string &argType)
   {
     this->ArgType = argType;

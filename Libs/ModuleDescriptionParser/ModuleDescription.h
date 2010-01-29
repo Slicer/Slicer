@@ -260,6 +260,9 @@ public:
 
   bool HasParameter(const std::string& name) const;
 
+  // Does the module have any simple (primitive) return types?
+  bool HasReturnParameters() const;
+
   bool SetParameterDefaultValue(const std::string& name,
                                 const std::string& value);
 
@@ -270,8 +273,21 @@ public:
   
   ModuleProcessInformation* GetProcessInformation()
     {return &ProcessInformation;}
-  
-  
+
+  ///
+  /// Read a parameter file. Syntax of file is "name: value" for each
+  /// parameter. Returns a bool indicating whether any parameter value
+  /// was modified.
+  bool ReadParameterFile(const std::string& filename);
+
+  ///
+  /// Write a parameter file. By default, the method writes out all
+  /// the parameters.  The "withHandlesToBulkParameters" parameter
+  /// controls whether the handles to the bulk parameters (image,
+  /// geometry, etc.) are writte to the file.
+  bool WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters = true);
+
+
 private:
   std::string Title;
   std::string Category; 

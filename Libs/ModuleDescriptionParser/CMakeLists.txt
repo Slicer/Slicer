@@ -55,6 +55,7 @@ install(FILES
 set(ModuleDescriptionParser_SRCS
   ModuleParameter.cxx
   ModuleParameterGroup.cxx
+  ModuleDescriptionUtilities.cxx
   ModuleDescription.cxx
   ModuleDescriptionParser.cxx
   ModuleProcessInformation.cxx

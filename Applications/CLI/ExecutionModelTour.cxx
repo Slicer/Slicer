@@ -76,5 +76,17 @@ int main (int argc, char *argv[])
     }
   scene = 0;
 
+  // Write out the return parameters in "name: value" form
+  std::ofstream rts;
+  rts.open(returnParameterFile.c_str());
+  rts << "anintegerreturn =  10" << std::endl;
+  rts << "abooleanreturn = true" << std::endl;
+  rts << "afloatreturn = 34.2" << std::endl;
+  rts << "adoublereturn = 102.7" << std::endl;
+  rts << "astringreturn = Good-bye" << std::endl;
+  rts << "anintegervectorreturn = 4,5,6,7" << std::endl;
+  rts << "astringchoicereturn = Ron" << std::endl;
+  rts.close();
+
   return EXIT_SUCCESS;
 }

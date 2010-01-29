@@ -833,6 +833,42 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     
     commandLineAsString.push_back( tname );
     }
+
+  // Add a command line flag for a file of return types
+  if (node0->GetModuleDescription().HasReturnParameters())
+    {
+    commandLineAsString.push_back( "--returnparameterfile" );
+    
+    std::ostringstream pidString;
+#ifdef _WIN32
+    pidString << GetCurrentProcessId();
+#else
+    pidString << getpid();
+#endif
+
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    srand(time(0));
+
+    std::ostringstream code;
+    for (int ii = 0; ii < 10; ii++)
+      {
+      code << alphanum[rand() % (sizeof(alphanum)-1)];
+      }
+
+    std::string returnFile = this->TemporaryDirectory + "/" + pidString.str()
+      + "_" + code.str() + ".params";
+
+    commandLineAsString.push_back( returnFile );
+
+    // We will need to load this results file back when module completes
+    nodesToReload[node0->GetID()] = returnFile;
+
+    // This is an extra file we will need to delete
+    filesToDelete.insert( returnFile );
+    }
   
   // Run over all the parameters with flags
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
@@ -1744,6 +1780,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         filesToDelete.erase( (*id2fn0).second );
         }
       }
+
 
     // rewire the mrml scene as directed 
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)

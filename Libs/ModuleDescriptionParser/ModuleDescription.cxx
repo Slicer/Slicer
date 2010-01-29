@@ -13,8 +13,10 @@
 ==========================================================================*/
 
 #include "ModuleDescription.h"
+#include "ModuleDescriptionUtilities.h"
 
 #include <sstream>
+#include <fstream>
 
 ModuleDescription::ModuleDescription()
 {
@@ -152,6 +154,38 @@ ModuleDescription
 
 bool
 ModuleDescription
+::HasReturnParameters() const
+{
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = this->ParameterGroups.begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = this->ParameterGroups.end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).IsReturnParameter())
+        {
+        return true;
+        }
+      }    
+    }
+
+  return false;
+}
+
+bool
+ModuleDescription
 ::SetParameterDefaultValue(const std::string& name, const std::string& value)
 {
   // iterate over each parameter group
@@ -228,4 +262,106 @@ ModuleDescription
 ::GetLogo() const
 {
   return this->Logo;
+}
+
+bool
+ModuleDescription
+::ReadParameterFile(const std::string& filename)
+{
+  std::ifstream rtp;
+  bool modified = false;
+
+  rtp.open(filename.c_str());
+  if (rtp.fail())
+    {
+    std::cout << "Parameter file " << filename << " could not be opened." << std::endl;
+    return false;
+    }
+
+  std::string line;
+  while (getline(rtp, line))
+    {
+    // split the line into key: value
+    std::string key, value;
+
+    std::string::size_type start = line.find_first_not_of(" \t");
+    std::string::size_type stop = line.find_first_of("=", start);
+    
+    key = line.substr(start, stop-start);
+    start = line.find_first_not_of(" \t", stop+1);
+    value = line.substr(start, line.length() - start + 1);
+    
+    trimLeadingAndTrailing(key);
+    trimLeadingAndTrailing(value);
+    
+    // std::cout << "key=" << key << ", value=" << value << "!" << std::endl;
+
+    if (this->HasParameter(key))
+      {
+      if (value != this->GetParameterDefaultValue(key))
+        {
+        this->SetParameterDefaultValue(key, value);
+        modified = true;
+
+        // multiple="true" may have to be handled differently
+        }
+      }
+    }
+
+  rtp.close();
+  return modified;
+}
+
+bool
+ModuleDescription
+::WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
+{
+  std::ofstream rtp;
+
+  rtp.open(filename.c_str());
+  if (rtp.fail())
+    {
+    std::cout << "Parameter file " << filename << " could not be opened for writing." << std::endl;
+    return false;
+    }
+
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = this->ParameterGroups.begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = this->ParameterGroups.end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      // write out all parameters or just the ones that are not bulk parameters
+      if (withHandlesToBulkParameters
+          || (!withHandlesToBulkParameters 
+              && ((*pit).GetTag() != "image"
+                  && (*pit).GetTag() != "geometry"
+                  && (*pit).GetTag() != "transform"
+                  && (*pit).GetTag() != "table"
+                  && (*pit).GetTag() != "measurement"
+                  && (*pit).GetTag() != "point"  // point and region are special
+                  && (*pit).GetTag() != "region")))
+        {
+        rtp << (*pit).GetName() << " = " 
+            << (*pit).GetDefault() << std::endl;
+
+        // multiple="true" may have to be handled differently
+        }
+      }
+    }
+
+  rtp.close();
+  return true;
 }

@@ -23,6 +23,7 @@ Version:   $Revision$
 #include "vtkSmartPointer.h"
 #include "vtkKWWidget.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerTheme.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWScaleWithEntry.h"
@@ -784,6 +785,8 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
           vtkKWLoadSaveButtonWithLabel *lsb
             = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
           vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
+          vtkKWLabelWithLabel *l = vtkKWLabelWithLabel::SafeDownCast((*wit).second);
+
 
           if (sb)
             {
@@ -795,8 +798,15 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             }
           else if (cb)
             {
+            int enabled = cb->GetWidget()->GetEnabled();
             cb->GetWidget()
               ->SetSelectedState(value=="true" ? 1 : 0 );
+            // this is not working!
+            if (!enabled)
+              {
+              cb->GetWidget()->EnabledOff();
+              cb->GetWidget()->UpdateEnableState();
+              }
             }
           else if (e)
             {
@@ -831,6 +841,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
           else if (rbs)
             {
             // set one of the radiobuttons
+            int enabled = rbs->GetWidget()->GetEnabled();
             int num = rbs->GetWidget()->GetNumberOfWidgets();
             for (int i=0; i < num; ++i)
               {
@@ -842,6 +853,16 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
                 break;
                 }
               }
+            // this is not working!
+            if (!enabled)
+              {
+              rbs->GetWidget()->EnabledOff();
+              rbs->GetWidget()->UpdateEnableState();
+              }
+            }
+          else if (l) // this is an "el" not a "one"
+            {
+            l->GetWidget()->SetText(value.c_str());
             }
           }
         }    
@@ -958,7 +979,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   defaultExtensionMap[".xml"] = "XML Document";
   defaultExtensionMap[".html"] = "HTML Document";
 
-  
+  double *simpleReturnTypeColor = ((vtkSlicerApplication*)this->GetApplication())->GetSlicerTheme()->GetSlicerColors()->LightestGrey;
+
   std::string title = this->ModuleDescriptionObject.GetTitle();
   
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -1098,7 +1120,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         // hidden parameters do not have GUI elements
         }
-      else if ((*pit).GetTag() == "integer")
+      else if ((*pit).GetTag() == "integer" && !(*pit).IsReturnParameter())
         {
         if ((*pit).GetConstraints() == "")
           {
@@ -1161,9 +1183,13 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->Create();
         tparameter->SetLabelText((*pit).GetLabel().c_str());
         tparameter->GetWidget()->SetSelectedState((*pit).GetDefault() == "true" ? 1 : 0);
+        if ((*pit).IsReturnParameter())
+          {
+          tparameter->GetWidget()->EnabledOff();
+          }
         parameter = tparameter;
         }
-      else if ((*pit).GetTag() == "float")
+      else if ((*pit).GetTag() == "float" && !(*pit).IsReturnParameter())
         {
         if ((*pit).GetConstraints() == "")
           {
@@ -1219,7 +1245,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           parameter = tparameter;
           }
         }
-      else if ((*pit).GetTag() == "double")
+      else if ((*pit).GetTag() == "double" && !(*pit).IsReturnParameter())
         {
         if ((*pit).GetConstraints() == "")
           {
@@ -1275,17 +1301,39 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           parameter = tparameter;
           }
         }
-      else if ((*pit).GetTag() == "string"
-               || (*pit).GetTag() == "integer-vector"
-               || (*pit).GetTag() == "float-vector"
-               || (*pit).GetTag() == "double-vector"
-               || (*pit).GetTag() == "string-vector")
+      else if (((*pit).GetTag() == "string"
+                || (*pit).GetTag() == "integer-vector"
+                || (*pit).GetTag() == "float-vector"
+                || (*pit).GetTag() == "double-vector"
+                || (*pit).GetTag() == "string-vector") 
+               && !(*pit).IsReturnParameter())
         {
         vtkKWEntryWithLabel *tparameter = vtkKWEntryWithLabel::New();
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetLabelText((*pit).GetLabel().c_str());
         tparameter->GetWidget()->SetValue((*pit).GetDefault().c_str());
+        parameter = tparameter;
+        }
+      else if (((*pit).GetTag() == "integer" 
+                || (*pit).GetTag() == "float"
+                || (*pit).GetTag() == "double"
+                || (*pit).GetTag() == "string"
+                || (*pit).GetTag() == "integer-vector"
+                || (*pit).GetTag() == "float-vector"
+                || (*pit).GetTag() == "double-vector"
+                || (*pit).GetTag() == "string-vector")
+               && (*pit).IsReturnParameter())
+        {
+        vtkKWLabelWithLabel *tparameter
+            = vtkKWLabelWithLabel::New();
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetLabelText((*pit).GetLabel().c_str());
+        tparameter->GetWidget()->SetText((*pit).GetDefault().c_str());
+        tparameter->GetWidget()->SetReliefToFlat();
+        // set color from theme
+        tparameter->GetWidget()->SetBackgroundColor(simpleReturnTypeColor);
         parameter = tparameter;
         }
       else if ((*pit).GetTag() == "point")
@@ -1724,7 +1772,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->GetWidget()->SetText( (*pit).GetDefault().c_str() );
         parameter = tparameter;
         }
-      else if ((*pit).GetTag() == "file")
+      else if ((*pit).GetTag() == "file" && !(*pit).IsReturnParameter())
         {
         vtkKWLoadSaveButtonWithLabel *tparameter
           = vtkKWLoadSaveButtonWithLabel::New();
@@ -1779,9 +1827,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         parameter = tparameter;
         }
       else if ((*pit).GetTag() == "string-enumeration"
-               || (*pit).GetTag() == "integer-enumeration"
-               || (*pit).GetTag() == "float-enumeration"
-               || (*pit).GetTag() == "double-enumeration")
+                || (*pit).GetTag() == "integer-enumeration"
+                || (*pit).GetTag() == "float-enumeration"
+                || (*pit).GetTag() == "double-enumeration")
         {
         vtkKWRadioButtonSetWithLabel *tparameter
           = vtkKWRadioButtonSetWithLabel::New();
@@ -1811,6 +1859,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             b->SetSelectedState(0);
             }
           }
+        if ((*pit).IsReturnParameter())
+          {
+          tparameter->GetWidget()->EnabledOff();
+          }
+        
         parameter = tparameter;
         }
       else

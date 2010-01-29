@@ -127,7 +127,6 @@ bool HasDefault(const ModuleParameter &parameter)
   return (parameter.GetDefault().size() > 0 && parameter.GetMultiple() != "true");
 }
 
-
 /* Generate the preamble to the code. This includes the required
  * include files and code to process comma separated arguments.
  */
@@ -630,8 +629,18 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   processInformationAddressArg.SetLongFlag("processinformationaddress");
   processInformationAddressArg.SetDescription("Address of a structure to store process information (progress, abort, etc.).");
   processInformationAddressArg.SetDefault("0");
-
   autoParameters.AddParameter(processInformationAddressArg);
+
+  // Add an argument to accept a filename for simple return types
+  ModuleParameter returnParameterArg;
+  returnParameterArg.SetTag("file");
+  returnParameterArg.SetCPPType("std::string");
+  returnParameterArg.SetName("returnParameterFile");
+  returnParameterArg.SetLongFlag("returnparameterfile");
+  returnParameterArg.SetDescription("Filename in which to write simple return parameters (int, float, int-vector, etc.) as opposed to bulk return parameters (image, geometry, transform, measurement, table).");
+  returnParameterArg.SetDefault("");
+  autoParameters.AddParameter(returnParameterArg);
+
 
   // Add the parameter group to the module
   module.AddParameterGroup(autoParameters);
@@ -793,6 +802,13 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
+      // Don't generate TCLAP data structures for parameters that are
+      // simple return types 
+      if ((*pit).IsReturnParameter())
+        {
+        continue;
+        }
+
       sout << "    msg.str(\"\");";
       sout << "msg << "
            << "\""
@@ -1160,6 +1176,11 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
+      if ((*pit).IsReturnParameter())
+        {
+        continue;
+        }
+
       sout << "    "
            << pit->GetName();
       if (NeedsTemp(*pit))

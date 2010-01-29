@@ -58,6 +58,7 @@
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLCommandLineModuleNode.h"
 
 #include "vtkPointData.h"
 
@@ -1199,6 +1200,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLFiberBundleNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
+  vtkMRMLCommandLineModuleNode *clp = 0;
   
   nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
 
@@ -1230,6 +1232,8 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
+
+  clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
   
   bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
   bool storageNodeExists = false;
@@ -1439,6 +1443,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         storageNode->Delete();
         }
       }
+
+    // if the node was a CommandLineModule node, then read the file
+    // (no storage node for these, yet)
+    if (clp)
+      {
+      clp->ReadParameterFile(req.GetFilename());
+      }
+
     
     // Delete the file if requested
     if (req.GetDeleteFile())

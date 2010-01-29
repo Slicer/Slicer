@@ -16,6 +16,10 @@ set(include_dirs
   ${SlicerBase_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${MRMLCLI_SOURCE_DIR}
+  ${MRMLCLI_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   ${vtkTeem_SOURCE_DIR}
   ${vtkTeem_BINARY_DIR}
   ${OPENTRACKER_INC_DIR}
@@ -118,6 +122,7 @@ add_library(${lib_name}
 
 SET(libs
   MRML
+  MRMLCLI
   vtkITK
   ${OPENTRACKER_LIB}
   FreeSurfer

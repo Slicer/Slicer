@@ -437,3 +437,46 @@ vtkMRMLCommandLineModuleNode
   return "";
 }
 
+
+bool
+vtkMRMLCommandLineModuleNode
+::ReadParameterFile(const std::string& filename)
+{
+  return this->ReadParameterFile(filename.c_str());
+}
+
+bool
+vtkMRMLCommandLineModuleNode
+::ReadParameterFile(const char* filename)
+{
+  bool modified = this->ModuleDescriptionObject.ReadParameterFile(filename);
+  
+  if (modified)
+    {
+    this->Modified();
+    }
+
+  return modified;
+}
+
+bool
+vtkMRMLCommandLineModuleNode
+::WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
+{
+  return this->WriteParameterFile(filename.c_str(), withHandlesToBulkParameters);
+}
+
+bool
+vtkMRMLCommandLineModuleNode
+::WriteParameterFile(const char* filename, bool withHandlesToBulkParameters)
+{
+  bool modified 
+    = this->ModuleDescriptionObject.WriteParameterFile(filename, withHandlesToBulkParameters);
+  
+  if (modified)
+    {
+    this->Modified();
+    }
+
+  return modified;
+}
