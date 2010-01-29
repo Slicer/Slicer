@@ -17,6 +17,7 @@ endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 SET(Tractography_libs
+  Logic
   Seeding
   Settings
   Display

@@ -28,7 +28,7 @@ vtkCxxRevisionMacro(vtkKWMatrix4x4, "$Revision: 1.49 $");
 // observed mrml scene back into the logic layer for further processing
 // - this can also end up calling observers of the logic (i.e. in the GUI)
 //
-static void MRMLCallback(vtkObject *vtkNotUsed(__mrmlscene), unsigned long vtkNotUsed(eid),
+static void MRMLCallback(vtkObject *__mrmlscene, unsigned long vtkNotUsed(eid),
                          void *__clientData, void *vtkNotUsed(callData))
 {
   static int inMRMLCallback = 0;

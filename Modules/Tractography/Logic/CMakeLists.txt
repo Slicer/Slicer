@@ -1,4 +1,4 @@
-project(SlicerTractographyFiducialSeeding)
+project(SlicerTractographyLogic)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND CMAKE_POLICY)
@@ -27,22 +27,23 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerTractographyFiducialSeedingConfigure.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyFiducialSeedingConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerTractographyLogicConfigure.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyLogicConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyFiducialSeedingConfigure.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyLogicConfigure.h"
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
 # Sources
 
-set(SlicerTractographyFiducialSeeding_SRCS
-  vtkSlicerTractographyFiducialSeedingGUI.cxx
+set(SlicerTractographyLogic_SRCS
+  vtkSlicerTractographyFiducialSeedingLogic.cxx
+  vtkMRMLTractographyFiducialSeedingNode.cxx
   )
 
 # --------------------------------------------------------------------------
@@ -50,30 +51,23 @@ set(SlicerTractographyFiducialSeeding_SRCS
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(SlicerTractographyFiducialSeeding 
-  SlicerTractographyFiducialSeeding_TCL_SRCS 
-  "${SlicerTractographyFiducialSeeding_SRCS}" "")
-
-# --------------------------------------------------------------------------
-# Add Loadable Module support
-
-generatelm(SlicerTractographyFiducialSeeding_SRCS SlicerTractographyFiducialSeeding.txt)
+  SlicerTractographyLogic_TCL_SRCS 
+  "${SlicerTractographyLogic_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build and install the library
 
-set(lib_name SlicerTractographyFiducialSeeding)
+set(lib_name SlicerTractographyLogic)
 add_library(${lib_name}
-  ${SlicerTractographyFiducialSeeding_SRCS}
-  ${SlicerTractographyFiducialSeeding_TCL_SRCS}
+  ${SlicerTractographyLogic_SRCS}
+  ${SlicerTractographyLogic_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
-  SlicerTractographyLogic
   )
 
 # Apply user-defined properties to the library target.
@@ -85,9 +79,3 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 
-# --------------------------------------------------------------------------
-# Testing (requires some of the examples)
-
-if(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
