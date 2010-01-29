@@ -149,6 +149,8 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         this->LookupTable->SetTableValue(index, r, g, b, a);
         this->SetColorNameWithSpaces(index, name.c_str(), "_");
         }
+      // set the table range
+      this->LookupTable->SetRange(0,  this->LookupTable->GetNumberOfTableValues() - 1);
       this->NamesInitialisedOn();
       }
       else if (!strcmp(attName, "type")) 
