@@ -68,7 +68,7 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
+void vtkMRMLFiducial::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 {
   // this is encapsulated in the fiducial list storage node, but needs to be
   // here as well because when scene snapshots are restored, storage nodes are

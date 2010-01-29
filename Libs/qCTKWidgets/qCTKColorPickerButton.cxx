@@ -20,8 +20,8 @@
 #include <QPixmap>
 #include <QStyle>
 
-qCTKColorPickerButton::qCTKColorPickerButton(QWidget* parent)
-  :QPushButton(parent)
+qCTKColorPickerButton::qCTKColorPickerButton(QWidget* _parent)
+  :QPushButton(_parent)
 {
   connect(this, SIGNAL(toggled(bool)), this, SLOT(changeColor(bool)));
   this->setColor(Qt::black);
@@ -29,8 +29,8 @@ qCTKColorPickerButton::qCTKColorPickerButton(QWidget* parent)
   this->setCheckable(true);
 }
 
-qCTKColorPickerButton::qCTKColorPickerButton(const QString& text, QWidget* parent)
-  :QPushButton(text, parent)
+qCTKColorPickerButton::qCTKColorPickerButton(const QString& _text, QWidget* _parent)
+  :QPushButton(_text, _parent)
 {
   connect(this, SIGNAL(clicked), this, SLOT(changeColor));
   this->setColor(Qt::black);
@@ -39,11 +39,13 @@ qCTKColorPickerButton::qCTKColorPickerButton(const QString& text, QWidget* paren
   this->setCheckable(true);
 }
 
-qCTKColorPickerButton::qCTKColorPickerButton(const QColor& color, const QString& text, QWidget* parent)
-  :QPushButton(text, parent)
+qCTKColorPickerButton::qCTKColorPickerButton(const QColor& _color,
+                                             const QString& _text,
+                                             QWidget* _parent)
+  :QPushButton(_text, _parent)
 {
   connect(this, SIGNAL(clicked), this, SLOT(changeColor));
-  this->setColor(color);
+  this->setColor(_color);
 
   // Customize
   this->setCheckable(true);
@@ -59,25 +61,25 @@ void qCTKColorPickerButton::changeColor(bool change)
     }
 }
 
-void qCTKColorPickerButton::setColor(const QColor& color)
+void qCTKColorPickerButton::setColor(const QColor& _color)
 {
-  if (color == this->Color)
+  if (_color == this->Color)
     {
     return;
     }
 
-  int iconSize = style()->pixelMetric(QStyle::PM_SmallIconSize);
-  QPixmap pix(iconSize, iconSize);
+  int _iconSize = style()->pixelMetric(QStyle::PM_SmallIconSize);
+  QPixmap pix(_iconSize, _iconSize);
   pix.fill(palette().button().color());
   QPainter p(&pix);
   p.setPen(QPen(Qt::gray));
-  p.setBrush(color);
+  p.setBrush(_color);
   p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
 
   this->setIcon(QIcon(pix));
-  this->setText(color.name());
+  this->setText(_color.name());
   
-  this->Color = color;
+  this->Color = _color;
   emit colorChanged(this->Color);
 }
 

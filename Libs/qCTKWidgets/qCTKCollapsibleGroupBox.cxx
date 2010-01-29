@@ -46,8 +46,8 @@ class qCTKCollapsibleGroupBoxStyle:public QProxyStyle
   
 #endif
 
-qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* parent)
-  :QGroupBox(parent)
+qCTKCollapsibleGroupBox::qCTKCollapsibleGroupBox(QWidget* _parent)
+  :QGroupBox(_parent)
 {
   this->setCheckable(true);
   connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
@@ -69,9 +69,9 @@ qCTKCollapsibleGroupBox::~qCTKCollapsibleGroupBox()
 
 }
 
-void qCTKCollapsibleGroupBox::expand(bool expand)
+void qCTKCollapsibleGroupBox::expand(bool _expand)
 {
-  if (!expand)
+  if (!_expand)
     {
     this->OldSize = this->size();
     }
@@ -85,12 +85,12 @@ void qCTKCollapsibleGroupBox::expand(bool expand)
       QWidget *w = static_cast<QWidget *>(o);
       if ( w )
         {
-        w->setVisible(expand);
+        w->setVisible(_expand);
         }
       }
     }
   
-  if (expand)
+  if (_expand)
     {
     this->setMaximumHeight(this->MaxHeight);
     this->resize(this->OldSize);
@@ -177,8 +177,8 @@ int qCTKCollapsibleGroupBox::heightForWidth(int w) const
   return this->QGroupBox::heightForWidth(w);
 }
 
-void qCTKCollapsibleGroupBox::resizeEvent ( QResizeEvent * event )
+void qCTKCollapsibleGroupBox::resizeEvent ( QResizeEvent * _event )
 {
-  //qDebug() << "qCTKCollapsibleGroupBox::resizeEvent::" << event->oldSize() << event->size() ;
-  return this->QGroupBox::resizeEvent(event);
+  //qDebug() << "qCTKCollapsibleGroupBox::resizeEvent::" << _event->oldSize() << _event->size() ;
+  return this->QGroupBox::resizeEvent(_event);
 }

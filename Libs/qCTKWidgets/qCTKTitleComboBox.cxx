@@ -19,8 +19,8 @@
 #include <QDebug>
 
 // -------------------------------------------------------------------------
-qCTKTitleComboBox::qCTKTitleComboBox(QWidget* parent)
-  : QComboBox(parent)
+qCTKTitleComboBox::qCTKTitleComboBox(QWidget* _parent)
+  : QComboBox(_parent)
 {
   this->Title = "Select an item...";
 }
@@ -32,9 +32,9 @@ qCTKTitleComboBox::~qCTKTitleComboBox()
 }
 
 // -------------------------------------------------------------------------
-void qCTKTitleComboBox::setTitle(const QString& title)
+void qCTKTitleComboBox::setTitle(const QString& _title)
 {
-  this->Title = title;
+  this->Title = _title;
   this->SizeHint = QSize();
   this->updateGeometry();
 }
@@ -46,9 +46,9 @@ QString qCTKTitleComboBox::title()const
 }
 
 // -------------------------------------------------------------------------
-void qCTKTitleComboBox::setIcon(const QIcon& icon)
+void qCTKTitleComboBox::setIcon(const QIcon& _icon)
 {
-  this->Icon = icon;
+  this->Icon = _icon;
   this->SizeHint = QSize();
   this->updateGeometry();
 }
@@ -115,8 +115,8 @@ QSize qCTKTitleComboBox::recomputeSizeHint(QSize &sh) const
   if (!this->Icon.isNull() && !iconSizes.empty()) 
     {
     // TODO: pick the best size (based on the pixelMetric maybe)
-    QSize iconSize = iconSizes[0];
-    sh.setWidth(qMax(sh.width(), fm.boundingRect(this->Title).width() + iconSize.width() + 4));
+    QSize _iconSize = iconSizes[0];
+    sh.setWidth(qMax(sh.width(), fm.boundingRect(this->Title).width() + _iconSize.width() + 4));
     }
   else
     {
@@ -128,8 +128,8 @@ QSize qCTKTitleComboBox::recomputeSizeHint(QSize &sh) const
   if (!this->Icon.isNull() && !iconSizes.empty()) 
     {
     // TODO: pick the best size (based on the pixelMetric maybe)
-    QSize iconSize = iconSizes[0];
-    sh.setHeight(qMax(sh.height(), iconSize.height() + 2));
+    QSize _iconSize = iconSizes[0];
+    sh.setHeight(qMax(sh.height(), _iconSize.height() + 2));
     }
 
   // add style and strut values

@@ -215,8 +215,8 @@ void qCTKDoubleSlider::setSingleStep(double newStep)
   d->SingleStep = newStep;
   d->updateOffset(d->Value);
   // update the new values of the QSlider
-  double value = d->Value;
-  this->setValue(value);
+  double _value = d->Value;
+  this->setValue(_value);
   this->setMinimum(d->Minimum);
   this->setMaximum(d->Maximum);
 }

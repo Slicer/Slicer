@@ -18,8 +18,8 @@
 #include <QDoubleSpinBox>
 
 //------------------------------------------------------------------------------
-qCTKCoordinatesWidget::qCTKCoordinatesWidget(QWidget* parent)
-  :QWidget(parent)
+qCTKCoordinatesWidget::qCTKCoordinatesWidget(QWidget* _parent)
+  :QWidget(_parent)
 {
   this->Minimum = -100000.;
   this->Maximum = 100000.;
@@ -165,9 +165,9 @@ double qCTKCoordinatesWidget::singleStep() const
 }
 
 //------------------------------------------------------------------------------
-void qCTKCoordinatesWidget::setCoordinatesAsString(QString pos)
+void qCTKCoordinatesWidget::setCoordinatesAsString(QString _pos)
 {
-  QStringList posList = pos.split(',');
+  QStringList posList = _pos.split(',');
   if (posList.count() != this->Dimension)
     {
     return;
@@ -197,11 +197,11 @@ QString qCTKCoordinatesWidget::coordinatesAsString()const
 }
 
 //------------------------------------------------------------------------------
-void qCTKCoordinatesWidget::setCoordinates(double* pos)
+void qCTKCoordinatesWidget::setCoordinates(double* _pos)
 {
   for (int i = 0; i < this->Dimension; ++i)
     {
-    this->Coordinates[i] = pos[i];
+    this->Coordinates[i] = _pos[i];
     }
   bool blocked = this->blockSignals(true);
   for (int i = 0; i < this->Dimension; ++i)

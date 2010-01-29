@@ -18,8 +18,8 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 
-qCTKFittedTextBrowser::qCTKFittedTextBrowser(QWidget* parent)
-  : QTextBrowser(parent)
+qCTKFittedTextBrowser::qCTKFittedTextBrowser(QWidget* _parent)
+  : QTextBrowser(_parent)
 {
   this->connect(this, SIGNAL(textChanged()), SLOT(heightForWidthMayHaveChanged()));
 }
@@ -34,7 +34,7 @@ void qCTKFittedTextBrowser::heightForWidthMayHaveChanged()
   this->updateGeometry();
 }
 
-int qCTKFittedTextBrowser::heightForWidth(int width) const 
+int qCTKFittedTextBrowser::heightForWidth(int _width) const 
 {
   QTextDocument* doc = this->document();
   qreal savedWidth = doc->textWidth();
@@ -44,7 +44,7 @@ int qCTKFittedTextBrowser::heightForWidth(int width) const
   int fudge = 2 * this->frameWidth();
   
   // Do the calculation assuming no scrollbars
-  doc->setTextWidth(width - fudge);
+  doc->setTextWidth(_width - fudge);
   int noScrollbarHeight =
     doc->documentLayout()->documentSize().height() + fudge;
   
@@ -54,8 +54,8 @@ int qCTKFittedTextBrowser::heightForWidth(int width) const
   // hit the maximum height, it doesn't matter that we underestimate.)
   
   // Get minimum height (even if string is empty): one line of text
-  int minimumHeight = QFontMetrics(doc->defaultFont()).lineSpacing() + fudge;
-  int ret = qMax(noScrollbarHeight, minimumHeight);
+  int _minimumHeight = QFontMetrics(doc->defaultFont()).lineSpacing() + fudge;
+  int ret = qMax(noScrollbarHeight, _minimumHeight);
 
   doc->setTextWidth(savedWidth);
   return ret;
