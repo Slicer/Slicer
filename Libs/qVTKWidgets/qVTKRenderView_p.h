@@ -1,17 +1,17 @@
 #ifndef __qVTKRenderView_p_h
 #define __qVTKRenderView_p_h
 
-// qVTK includes
+/// qVTK includes
 #include "qVTKObject.h"
 #include "qVTKRenderView.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QObject>
 
-// VTK includes
+/// VTK includes
 #include <QVTKWidget.h>
 #include <vtkAxesActor.h>
 #include <vtkCornerAnnotation.h>
@@ -32,7 +32,7 @@ class qVTKRenderViewPrivate : public QObject,
 public:
   qVTKRenderViewPrivate();
 
-  // Convenient setup methods
+  /// Convenient setup methods
   void setupCornerAnnotation();
   void setupRendering();
   void setupDefaultInteractor();

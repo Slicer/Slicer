@@ -1,10 +1,10 @@
 #ifndef __qVTKConnection_h
 #define __qVTKConnection_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QObject>
 #include <QVector>
 
@@ -23,56 +23,56 @@ public:
   explicit qVTKConnection(qVTKObjectEventsObserver* parent);
   virtual ~qVTKConnection(){}
 
-  // Description:
+  /// 
   virtual void printAdditionalInfo();
   QString getShortDescription();
   static QString getShortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot = "");
 
-  // Description:
+  /// 
   void SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot, float priority);
 
-  // Description:
+  /// 
   static bool ValidateParameters(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot);
 
-  // Description:
+  /// 
   void SetEstablished(bool enable);
 
-  // Description:
+  /// 
   void SetBlocked(bool block);
 
-  // Description:
+  /// 
   bool IsEqual(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot);
 
-  // Description:
+  /// 
   int GetSlotType()const;
 
-  // Description:
-  // Return a string uniquely identifying the connection within the current process
+  /// 
+  /// Return a string uniquely identifying the connection within the current process
   QString GetId()const; 
 
-  // Description:
-  // VTK Callback
+  /// 
+  /// VTK Callback
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
 
-  // Description:
-  // Called by 'DoCallback' to emit signal
+  /// 
+  /// Called by 'DoCallback' to emit signal
   void Execute(vtkObject* vtk_obj, unsigned long vtk_event, void* client_data, void* call_data);
 
 
 signals:
-  // Description:
-  // The qt signal emited by the VTK Callback
-  // The signal corresponding to the slot will be emited
+  /// 
+  /// The qt signal emited by the VTK Callback
+  /// The signal corresponding to the slot will be emited
   void emitExecute(vtkObject* caller, vtkObject* call_data);
-  // Note: even if the signal has a signature with 4 args, you can
-  // connect it to a slot with less arguments as long as the types of the 
-  // argument are matching:
-  // connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
+  /// Note: even if the signal has a signature with 4 args, you can
+  /// connect it to a slot with less arguments as long as the types of the 
+  /// argument are matching:
+  /// connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
   void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);
 
 protected slots:

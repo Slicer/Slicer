@@ -1,6 +1,6 @@
 
-// The qVTKWidgetsExport captures some system differences between Unix
-// and Windows operating systems. 
+/// The qVTKWidgetsExport captures some system differences between Unix
+/// and Windows operating systems. 
 
 #ifndef __qVTKWidgetsExport_h
 #define __qVTKWidgetsExport_h

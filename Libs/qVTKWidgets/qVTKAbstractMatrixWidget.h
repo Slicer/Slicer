@@ -1,11 +1,11 @@
 #ifndef __qVTKAbstractMatrixWidget_h
 #define __qVTKAbstractMatrixWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKMatrixWidget.h>
 #include <qCTKPimpl.h>
 
-// qVTK includes
+/// qVTK includes
 #include "qVTKObject.h"
 #include "qVTKWidgetsExport.h"
  
@@ -15,10 +15,10 @@ class qVTKAbstractMatrixWidgetPrivate;
 class QVTK_WIDGETS_EXPORT qVTKAbstractMatrixWidget : public qCTKMatrixWidget
 {
 public:
-  // Self/Superclass typedef
+  /// Self/Superclass typedef
   typedef qCTKMatrixWidget   Superclass;
   
-  // Constructors
+  /// Constructors
   qVTKAbstractMatrixWidget(QWidget* parent);
   vtkMatrix4x4* matrix()const;
 

@@ -1,16 +1,16 @@
 #ifndef __qVTKAbstractMatrixWidget_p_h
 #define __qVTKAbstractMatrixWidget_p_h
 
-// QT includes
+/// QT includes
 #include <QObject>
 
-// VTK includes
+/// VTK includes
 #include <vtkWeakPointer.h>
 
-// qCTKWidgets includes
+/// qCTKWidgets includes
 #include <qCTKPimpl.h>
 
-// qVTKWidgets includes
+/// qVTKWidgets includes
 #include "qVTKAbstractMatrixWidget.h"
 
 class vtkMatrix4x4;
@@ -27,8 +27,8 @@ public:
   vtkMatrix4x4* matrix()const;
 
 public slots:
-  // Description:
-  // Triggered upon VTK transform modified event
+  /// 
+  /// Triggered upon VTK transform modified event
   void updateMatrix();
 
 protected:

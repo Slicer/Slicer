@@ -1,10 +1,10 @@
 #ifndef __qVTKObject_h
 #define __qVTKObject_h 
 
-// qVTK includes
+/// qVTK includes
 #include "qVTKObjectEventsObserver.h"
 
-// QT includes
+/// QT includes
 #include <QString>
 #include <QDebug>
 
