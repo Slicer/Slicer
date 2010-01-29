@@ -14,13 +14,13 @@
 #ifndef __qSlicerWidget_h
 #define __qSlicerWidget_h
 
-// qMRML includes
+/// qMRML includes
 #include <qVTKObject.h>
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QWidget>
 
 #include "qSlicerBaseQTBaseExport.h"
@@ -40,46 +40,46 @@ public:
   typedef QWidget Superclass;
   qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
 
-  // Description:
-  // Convenient windows to return parent widget or Null if any
+  /// 
+  /// Convenient windows to return parent widget or Null if any
   QWidget* parentWidget();
 
-  // Description:
-  // If possible, set the windowsFlags of the parent container.
-  // Otherwise, set the ones of the current widget
+  /// 
+  /// If possible, set the windowsFlags of the parent container.
+  /// Otherwise, set the ones of the current widget
   void setWindowFlags(Qt::WindowFlags type);
 
-  // Description:
-  // Tell if the parent container is a QScrollArea
+  /// 
+  /// Tell if the parent container is a QScrollArea
   bool isParentContainerScrollArea();
 
-  // Description:
-  // Convenient method to Set/Get the parent container as a QScrollArea
-  // Note: Method mainly used while porting the application from KwWidget to Qt
+  /// 
+  /// Convenient method to Set/Get the parent container as a QScrollArea
+  /// Note: Method mainly used while porting the application from KwWidget to Qt
   QScrollArea* getScrollAreaParentContainer();
   void setScrollAreaAsParentContainer(bool enable);
 
-  // Description:
-  // If possible, set parent container geometry otherwise set widget geometry
+  /// 
+  /// If possible, set parent container geometry otherwise set widget geometry
   void setParentGeometry(int ax, int ay, int aw, int ah);
 
-  // Description:
-  // Return a pointer on the MRML scene
+  /// 
+  /// Return a pointer on the MRML scene
   vtkMRMLScene* mrmlScene() const;
 
-  // Description:
-  // Set/Get the application logic
+  /// 
+  /// Set/Get the application logic
   //void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   //vtkSlicerApplicationLogic* appLogic() const;
 
 public slots:
 
-  // Description:
-  // Overloaded method from QWidget
+  /// 
+  /// Overloaded method from QWidget
   virtual void setParentVisible(bool visible);
 
-  // Description:
-  // Set the current MRML scene to the widget
+  /// 
+  /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
 signals:

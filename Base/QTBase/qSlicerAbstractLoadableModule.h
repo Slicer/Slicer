@@ -14,10 +14,10 @@
 #ifndef __qSlicerAbstractLoadableModule_h
 #define __qSlicerAbstractLoadableModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTBaseExport.h"
@@ -33,8 +33,8 @@ public:
   typedef qSlicerAbstractModule Superclass;
   qSlicerAbstractLoadableModule(QObject *parent=0);
 
-  // Description:
-  // Return help/acknowledgement text
+  /// 
+  /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 

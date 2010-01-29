@@ -14,10 +14,10 @@
 #ifndef __qSlicerAbstractCoreModule_h
 #define __qSlicerAbstractCoreModule_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTBaseExport.h"
@@ -36,8 +36,8 @@ public:
 protected:
   virtual void setup();
 
-  // Description:
-  // Convenient method to return slicer wiki URL
+  /// 
+  /// Convenient method to return slicer wiki URL
   QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
 
 private:
