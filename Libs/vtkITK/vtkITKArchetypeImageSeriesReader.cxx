@@ -1029,7 +1029,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 // implemented in the Scalar and Vector subclasses
 void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *vtkNotUsed(output))
 {
-  vtkErrorMacro(<<"The subclass has not defined anything for ExecuteData!\n");
+  vtkWarningMacro(<<"The subclass has not defined anything for ExecuteData!\n");
 }
 
 const itk::MetaDataDictionary&
