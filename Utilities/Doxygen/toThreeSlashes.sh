@@ -1,7 +1,6 @@
 #!/bin/sh
-#echo "Working on $argv"
-# perl -pi -e 's/\/\/ /\/\/\/ /g' $0
-# perl -pi -e 's/  \/\/\/ Description:/  \/\/\/ /g' $0
+# convert Slicer .h files to use three slashes instead of two in doxygen comments
+# also remove Description and NAME lines
 for x in *.h
 do
   echo "working on $x"
