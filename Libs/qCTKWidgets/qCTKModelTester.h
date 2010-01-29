@@ -15,13 +15,13 @@
 #ifndef __qCTKModelTester_h
 #define __qCTKModelTester_h
 
-// QT includes
+/// QT includes
 #include <QObject> 
 #include <QModelIndex>
 #include <QPersistentModelIndex>
 #include <QList>
 
-// CTK includes
+/// CTK includes
 #include <qCTKWidgetsExport.h>
 #include <qCTKPimpl.h>
 

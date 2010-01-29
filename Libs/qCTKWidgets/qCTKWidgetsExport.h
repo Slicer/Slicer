@@ -13,8 +13,8 @@
 =========================================================================*/
 
 //
-// The qCTKWidgetsPluginExport captures some system differences between Unix
-// and Windows operating systems. 
+/// The qCTKWidgetsPluginExport captures some system differences between Unix
+/// and Windows operating systems. 
 //
 
 #ifndef __qCTKWidgetsExport_h
@@ -30,4 +30,4 @@
  #define QCTK_WIDGETS_EXPORT
 #endif
 
-#endif // __qCTKWidgetsExport_h
+#endif /// __qCTKWidgetsExport_h

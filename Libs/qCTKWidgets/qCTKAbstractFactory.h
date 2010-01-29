@@ -21,8 +21,8 @@
 #include <QStringList>
 
 #ifdef _MSC_VER
-  // 4505: 'qCTKAbstractFactoryItem<BaseClassType>::loadErrorString' :
-  //       unreferenced local function has been removed
+  /// 4505: 'qCTKAbstractFactoryItem<BaseClassType>::loadErrorString' :
+  ///       unreferenced local function has been removed
 # pragma warning(disable: 4505)
 #endif
 
@@ -55,43 +55,43 @@ protected:
   typedef typename QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > >::iterator       Iterator;
 
 public:
-  // Description:
-  // Constructor/Desctructor
+  /// 
+  /// Constructor/Desctructor
   explicit qCTKAbstractFactory();
   virtual ~qCTKAbstractFactory();
   virtual void printAdditionalInfo();
 
-  // Description:
-  // Create an instance of the object
+  /// 
+  /// Create an instance of the object
   virtual BaseClassType * instantiate(const QString& itemKey);
 
-  // Description:
-  // Uninstanciate the object
+  /// 
+  /// Uninstanciate the object
   void uninstantiate(const QString& itemKey);
 
-  // Description:
-  // Get list of all registered item names
+  /// 
+  /// Get list of all registered item names
   QStringList names() const;
 
-  // Description:
-  // Register items with the factory
-  // Method provided for convenience - Should be overloaded in subclasse
+  /// 
+  /// Register items with the factory
+  /// Method provided for convenience - Should be overloaded in subclasse
   virtual void registerItems(){}
 
 protected:
 
-  // Description:
-  // Call the load method associated with the item.
-  // If succesfully loaded, add it to the internal map.
+  /// 
+  /// Call the load method associated with the item.
+  /// If succesfully loaded, add it to the internal map.
   bool registerItem(const QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > & item);
 
-  // Description:
-  // Get a Factory item given its itemKey. Return 0 if any.
+  /// 
+  /// Get a Factory item given its itemKey. Return 0 if any.
   qCTKAbstractFactoryItem<BaseClassType> * item(const QString& itemKey)const;
 
 private:
-  qCTKAbstractFactory(const qCTKAbstractFactory &); // Not implemented
-  void operator=(const qCTKAbstractFactory&); // Not implemented
+  qCTKAbstractFactory(const qCTKAbstractFactory &); /// Not implemented
+  void operator=(const qCTKAbstractFactory&); /// Not implemented
 
   QHash<QString, QSharedPointer<qCTKAbstractFactoryItem<BaseClassType> > > RegisteredItemMap;
 };

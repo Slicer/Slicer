@@ -16,16 +16,16 @@
 #define __qCTKSingleton_h
 
 //
-// Singleton definition and declaration helpers
+/// Singleton definition and declaration helpers
 //
-// See http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.12
-// and http://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Nifty_Counter
+/// See http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.12
+/// and http://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Nifty_Counter
 //
-// Inspired from VTK/Utilities/kwsys/SystemTools class
+/// Inspired from VTK/Utilities/kwsys/SystemTools class
 //
 
 //-----------------------------------------------------------------------------
-// Should be included as a class protected member
+/// Should be included as a class protected member
 //
 #define QCTK_SINGLETON_DECLARE(NAME)      \
 static NAME* Instance;                    \
@@ -34,14 +34,14 @@ static void classFinalize();              \
 friend class NAME##Initialize;
   
 //-----------------------------------------------------------------------------
-// Help macro allowing to declare the utility class to make sure
-// NAME is initialized before it is used.
+/// Help macro allowing to declare the utility class to make sure
+/// NAME is initialized before it is used.
 //
-// Should be added at the bottom of the header file, after the class declaration
+/// Should be added at the bottom of the header file, after the class declaration
 //
-// The instance (NAME##Initializer) will show up in any translation unit
-// that uses NAME.  It will make sure NAME is initialized before it is used.
-// 
+/// The instance (NAME##Initializer) will show up in any translation unit
+/// that uses NAME.  It will make sure NAME is initialized before it is used.
+/// 
 #define QCTK_SINGLETON_DECLARE_INITIALIZER(EXPORT_DIRECTIVE,NAME)  \
 class EXPORT_DIRECTIVE NAME##Initialize                            \
 {                                                                  \
@@ -59,10 +59,10 @@ static NAME##Initialize NAME##Initializer;
 
 //-----------------------------------------------------------------------------
 //
-// Implementation of NAME##Initialize class.
+/// Implementation of NAME##Initialize class.
 //
-// Note: NAME##Initialize::Count and NAME::Instance Must NOT be initialized.
-// Default initialization to zero is necessary.
+/// Note: NAME##Initialize::Count and NAME::Instance Must NOT be initialized.
+/// Default initialization to zero is necessary.
 //
 #define QCTK_SINGLETON_DEFINE_INITIALIZER(NAME)     \
 NAME##Initialize::NAME##Initialize()                \
@@ -83,7 +83,7 @@ NAME* NAME::Instance;
 
 //----------------------------------------------------------------------------
 //
-// This should be added at the end of the CXX file
+/// This should be added at the end of the CXX file
 //
 #define QCTK_SINGLETON_DEFINE(NAME)                 \
 void NAME::classInitialize()                        \
@@ -101,9 +101,9 @@ QCTK_SINGLETON_DEFINE_INITIALIZER(NAME)
 
 //----------------------------------------------------------------------------
 //
-// Helper macro
+/// Helper macro
 //
-// TODO Documentation
+/// TODO Documentation
 //
 #define QCTK_SINGLETON_DECLARE_PRIVATE(PUB)      \
 PUB(const PUB&);                                 \

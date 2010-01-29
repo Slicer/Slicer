@@ -15,10 +15,10 @@
 #ifndef __qCTKSliderSpinBoxWidget_h
 #define __qCTKSliderSpinBoxWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include "qCTKPimpl.h"
 
-// QT includes
+/// QT includes
 #include <QSlider>
 
 #include "qCTKWidgetsExport.h"
@@ -35,52 +35,52 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
 
 public:
-  // Superclass typedef
+  /// Superclass typedef
   typedef QWidget Superclass;
 
-  // Constructors
+  /// Constructors
   explicit qCTKSliderSpinBoxWidget(QWidget* parent = 0);
   virtual ~qCTKSliderSpinBoxWidget(){}
 
-  // Description:
-  // Set/Get range
+  /// 
+  /// Set/Get range
   double minimum()const;
   double maximum()const;
   void setMinimum(double minimum);
   void setMaximum(double maximum);
-  // Description
-  // Utility function that set the min/max in once
+  /// Description
+  /// Utility function that set the min/max in once
   void setRange(double min, double max);
 
-  // Description:
-  // Set/Get slider position
+  /// 
+  /// Set/Get slider position
   double sliderPosition()const;
   void setSliderPosition(double position);
   //double previousSliderPosition();
 
-  // Description:
-  // Set/Get value
+  /// 
+  /// Set/Get value
   double value()const;
 
-  // Description:
-  // Set/Get single step
+  /// 
+  /// Set/Get single step
   double singleStep()const;
   void setSingleStep(double step);
 
-  // Description:
-  // Set/Get tick interval
+  /// 
+  /// Set/Get tick interval
   double tickInterval()const;
   void setTickInterval(double ti);
 
 public slots:
-  // Description:
-  // Reset the slider and spinbox to zero (value and position)
+  /// 
+  /// Reset the slider and spinbox to zero (value and position)
   void reset();
   void setValue(double value);
 
 signals:
-  /// Use with care:
-  /// sliderMoved is emitted only when the user moves the slider
+  //// Use with care:
+  //// sliderMoved is emitted only when the user moves the slider
   void sliderMoved(double position);
   void valueChanged(double value);
 

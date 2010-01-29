@@ -38,13 +38,13 @@ public:
   void setSymbols(const QStringList& symbols);
 
   //-----------------------------------------------------------------------------
-  // Description:
-  // Resolve symbols
+  /// 
+  /// Resolve symbols
   void resolve();
   
   //-----------------------------------------------------------------------------
-  // Description:
-  // Get symbol address
+  /// 
+  /// Get symbol address
   void* symbolAddress(const QString& symbol)const;
 
 private:
@@ -60,24 +60,24 @@ class qCTKAbstractLibraryFactory : public qCTKAbstractFactory<BaseClassType>
 {
 public:
   //-----------------------------------------------------------------------------
-  // Description:
-  // Constructor
+  /// 
+  /// Constructor
   explicit qCTKAbstractLibraryFactory();
   virtual ~qCTKAbstractLibraryFactory();
 
   //-----------------------------------------------------------------------------
-  // Description:
-  // Set the list of symbols
+  /// 
+  /// Set the list of symbols
   void setSymbols(const QStringList& symbols);
 
   //-----------------------------------------------------------------------------
-  // Description:
-  // Register a plugin in the factory
+  /// 
+  /// Register a plugin in the factory
   virtual bool registerLibrary(const QFileInfo& file, QString& key);
 
 private:
-  qCTKAbstractLibraryFactory(const qCTKAbstractLibraryFactory &);  // Not implemented
-  void operator=(const qCTKAbstractLibraryFactory&); // Not implemented
+  qCTKAbstractLibraryFactory(const qCTKAbstractLibraryFactory &);  /// Not implemented
+  void operator=(const qCTKAbstractLibraryFactory&); /// Not implemented
 
   QStringList Symbols;
 };

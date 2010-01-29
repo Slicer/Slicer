@@ -15,10 +15,10 @@
 #ifndef __qCTKMatrixWidget_h
 #define __qCTKMatrixWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include "qCTKPimpl.h"
 
-// QT includes
+/// QT includes
 #include <QTableWidget>
 
 #include "qCTKWidgetsExport.h"
@@ -30,38 +30,38 @@ class QCTK_WIDGETS_EXPORT qCTKMatrixWidget : public QTableWidget
   Q_OBJECT
 
 public:
-  // Superclass typedef
+  /// Superclass typedef
   typedef QTableWidget Superclass;
 
-  // Constructors
+  /// Constructors
   explicit qCTKMatrixWidget(QWidget* parent = 0);
   virtual ~qCTKMatrixWidget(){}
 
-  // Description:
-  // Set / Get values
+  /// 
+  /// Set / Get values
   double value(int i, int j);
   void setValue(int i, int j, double value);
   void setVector(const QVector<double> & vector);
 
-  // Description:
-  // Overloaded - See QWidget
+  /// 
+  /// Overloaded - See QWidget
   virtual QSize minimumSizeHint () const;
   virtual QSize sizeHint () const;
 
 
 public slots:
 
-  // Description:
-  // Reset to zero
+  /// 
+  /// Reset to zero
   void reset();
 
 protected slots:
-  // Description:
-  // Adjust columns/rows size according to width/height
+  /// 
+  /// Adjust columns/rows size according to width/height
   void adjustRowsColumnsSize(int width, int height);
 
 protected:
-  // Description:
+  /// 
   virtual void resizeEvent(QResizeEvent * event);
 
 private:

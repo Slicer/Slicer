@@ -15,7 +15,7 @@
 #ifndef __qCTKFittedTextBrowser_h
 #define __qCTKFittedTextBrowser_h
 
-// QT includes
+/// QT includes
 #include <QTextBrowser>
 
 #include "qCTKWidgetsExport.h"

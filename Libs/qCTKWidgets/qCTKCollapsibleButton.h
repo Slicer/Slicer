@@ -15,10 +15,10 @@
 #ifndef __qCTKCollapsibleButton_h
 #define __qCTKCollapsibleButton_h
 
-// qCTK includes
+/// qCTK includes
 #include "qCTKPimpl.h"
 
-// QT includes
+/// QT includes
 #include <QAbstractButton>
 #include <QFrame>
 
@@ -27,8 +27,8 @@
 class qCTKCollapsibleButtonPrivate;
 class QStyleOptionButton;
 
-// Description
-// A Collapsible widget that show/hide its children depending on its checked/collapsed properties
+/// Description
+/// A Collapsible widget that show/hide its children depending on its checked/collapsed properties
 class QCTK_WIDGETS_EXPORT qCTKCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT
@@ -45,57 +45,57 @@ public:
   qCTKCollapsibleButton(const QString& text, QWidget *parent = 0);
   virtual ~qCTKCollapsibleButton();
 
-  // Description:
-  // Property that describes if the widget is collapsed or not.
-  // When collapsed, the children are invisible and the widget
-  // has a sized defined by CollapsedHeight
+  /// 
+  /// Property that describes if the widget is collapsed or not.
+  /// When collapsed, the children are invisible and the widget
+  /// has a sized defined by CollapsedHeight
   void setCollapsed(bool);
   bool collapsed()const;
 
-  // Description:
-  // Height used when the widget is collapsed
+  /// 
+  /// Height used when the widget is collapsed
   void setCollapsedHeight(int);
   int collapsedHeight()const;
 
-  // Description:
-  // Set the frame shape of the contents
-  // Hint: StyledPanel is probably the shape you are looking for
+  /// 
+  /// Set the frame shape of the contents
+  /// Hint: StyledPanel is probably the shape you are looking for
   QFrame::Shape contentsFrameShape() const;
   void setContentsFrameShape(QFrame::Shape);
 
-  // Description:
-  // Set the frame shadow of the contents
-  // Hint: Raised is probably the shadow you are looking for
+  /// 
+  /// Set the frame shadow of the contents
+  /// Hint: Raised is probably the shadow you are looking for
   QFrame::Shadow contentsFrameShadow() const;
   void setContentsFrameShadow(QFrame::Shadow);
 
-  // Description:
-  // Set the line width of the frame around the contents
+  /// 
+  /// Set the line width of the frame around the contents
   int contentsLineWidth() const;
   void setContentsLineWidth(int);
 
-  // Description:
-  // Set the mid line width of the frame around the contents
+  /// 
+  /// Set the mid line width of the frame around the contents
   int contentsMidLineWidth() const;
   void setContentsMidLineWidth(int);
 
-  // Description:
-  // Reimplement for internal reasons
+  /// 
+  /// Reimplement for internal reasons
   virtual QSize minimumSizeHint()const;
 
-  // Description:
-  // Reimplement for internal reasons
+  /// 
+  /// Reimplement for internal reasons
   virtual QSize sizeHint()const;
 
 signals:
-  // Description:
-  // Signal emitted when the widget is collapsed or expanded.
-  // See signal toggled(bool) for the opposite.
+  /// 
+  /// Signal emitted when the widget is collapsed or expanded.
+  /// See signal toggled(bool) for the opposite.
   void contentsCollapsed(bool);
 
 protected slots:
-  // Description:
-  // Perform the collapse.
+  /// 
+  /// Perform the collapse.
   virtual void collapse(bool c);
   virtual void onToggled(bool clicked = false);
 
@@ -106,12 +106,12 @@ protected:
   virtual void childEvent(QChildEvent* c);
 
   virtual bool hitButton(const QPoint & pos) const;
-  // Compute the size hint of the head button only. The sizehint depends on the text.
+  /// Compute the size hint of the head button only. The sizehint depends on the text.
   virtual QSize buttonSizeHint() const;
 
-  // Initialize option with the values from this qCTKCollapsibleButton. 
-  // This method is useful for subclasses when they need a QStyleOptionButton, 
-  // but don't want to fill in all the information themselves.
+  /// Initialize option with the values from this qCTKCollapsibleButton. 
+  /// This method is useful for subclasses when they need a QStyleOptionButton, 
+  /// but don't want to fill in all the information themselves.
   virtual void initStyleOption(QStyleOptionButton* option)const;
 
 private:

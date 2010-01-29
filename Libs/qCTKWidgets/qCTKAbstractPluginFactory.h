@@ -43,18 +43,18 @@ template<typename BaseClassType, typename FactoryItemType = qCTKFactoryPluginIte
 class qCTKAbstractPluginFactory : public qCTKAbstractFactory<BaseClassType>
 {
 public:
-  // Description:
-  // Constructor
+  /// 
+  /// Constructor
   explicit qCTKAbstractPluginFactory();
   virtual ~qCTKAbstractPluginFactory();
 
-  // Description:
-  // Register a plugin in the factory
+  /// 
+  /// Register a plugin in the factory
   virtual bool registerLibrary(const QFileInfo& file, QString& key);
 
 private:
-  qCTKAbstractPluginFactory(const qCTKAbstractPluginFactory &);  // Not implemented
-  void operator=(const qCTKAbstractPluginFactory&); // Not implemented
+  qCTKAbstractPluginFactory(const qCTKAbstractPluginFactory &);  /// Not implemented
+  void operator=(const qCTKAbstractPluginFactory&); /// Not implemented
 };
 
 #include "qCTKAbstractPluginFactory.txx"

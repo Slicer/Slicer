@@ -15,27 +15,27 @@
 #ifndef __qCTKTreeComboBox_h
 #define __qCTKTreeComboBox_h
 
-// qCTK includes
+/// qCTK includes
 #include "qCTKPimpl.h"
 
-// QT includes
+/// QT includes
 #include <QComboBox>
 
 #include "qCTKWidgetsExport.h"
 
-// Description:
-// ComboBox that displays the items as a tree view.
-// See below for a use case:
-//    qCTKTreeComboBox combo;
-//    QStandardItemModel model;
-//    model.appendRow(new QStandardItem("Test1"));
-//    model.item(0)->appendRow(new QStandardItem("Test1.1"));
-//    model.item(0)->appendRow(new QStandardItem("Test1.2"));
-//    model.item(0)->appendRow(new QStandardItem("Test1.3"));
-//    model.appendRow(new QStandardItem("Test2"));
-//    model.appendRow(new QStandardItem("Test3"));
-//    combo.setModel(&model);
-//    combo.show();
+/// Description:
+/// ComboBox that displays the items as a tree view.
+/// See below for a use case:
+///    qCTKTreeComboBox combo;
+///    QStandardItemModel model;
+///    model.appendRow(new QStandardItem("Test1"));
+///    model.item(0)->appendRow(new QStandardItem("Test1.1"));
+///    model.item(0)->appendRow(new QStandardItem("Test1.2"));
+///    model.item(0)->appendRow(new QStandardItem("Test1.3"));
+///    model.appendRow(new QStandardItem("Test2"));
+///    model.appendRow(new QStandardItem("Test3"));
+///    combo.setModel(&model);
+///    combo.show();
 //
 class qCTKTreeComboBoxPrivate;
 

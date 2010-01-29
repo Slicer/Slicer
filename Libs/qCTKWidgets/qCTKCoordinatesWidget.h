@@ -33,33 +33,33 @@ public:
   explicit qCTKCoordinatesWidget(QWidget* parent = 0);
   virtual ~qCTKCoordinatesWidget();
 
-  // Description:
-  // Set/Get the dimension of the point (3D by default)
+  /// 
+  /// Set/Get the dimension of the point (3D by default)
   void setDimension(int dim);
   int dimension() const;
 
-  // Description:
-  // Set/Get the single step of the QDoubleSpinBoxes 
+  /// 
+  /// Set/Get the single step of the QDoubleSpinBoxes 
   void setSingleStep(double step);
   double singleStep() const;
 
-  // Description:
-  // Set/Get the minimum value of the QDoubleSpinBoxes 
+  /// 
+  /// Set/Get the minimum value of the QDoubleSpinBoxes 
   void setMinimum(double minimum);
   double minimum() const;
 
-  // Description:
-  // Set/Get the maximum value of the QDoubleSpinBoxes 
+  /// 
+  /// Set/Get the maximum value of the QDoubleSpinBoxes 
   void setMaximum(double minimum);
   double maximum() const;
 
-  // Description:
-  // Set/Get the coordinates. Use commas between numbers
+  /// 
+  /// Set/Get the coordinates. Use commas between numbers
   void setCoordinatesAsString(QString pos);
   QString coordinatesAsString()const;
 
-  // Description:
-  // Set/Get the coordinates
+  /// 
+  /// Set/Get the coordinates
   void setCoordinates(double* pos);
   double* coordinates()const;
 

@@ -15,11 +15,11 @@
 #ifndef __qCTKDoubleSlider_h
 #define __qCTKDoubleSlider_h
 
-// QT includes
+/// QT includes
 #include <QSlider>
 #include <QWidget>
 
-// qCTK includes
+/// qCTK includes
 #include "qCTKPimpl.h"
 #include "qCTKWidgetsExport.h"
 
@@ -37,39 +37,39 @@ class QCTK_WIDGETS_EXPORT qCTKDoubleSlider : public QWidget
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
 
 public:
-  // Superclass typedef
+  /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// Constructors
-  /// Vertical by default
+  //// Constructors
+  //// Vertical by default
   explicit qCTKDoubleSlider(QWidget* parent = 0);
   explicit qCTKDoubleSlider(Qt::Orientation orient, QWidget* parent = 0);
-  /// Destructor
+  //// Destructor
   virtual ~qCTKDoubleSlider();
 
-  // Description:
-  // Get range
+  /// 
+  /// Get range
   void setMinimum(double min);
   double minimum()const;
 
   void setMaximum(double max);
   double maximum()const;
 
-  // Description:
-  // Set range
+  /// 
+  /// Set range
   void setRange(double min, double max);
 
-  // Description:
-  // Set/Get value
+  /// 
+  /// Set/Get value
   double value()const;
 
-  // Description:
-  // Set/Get single step
+  /// 
+  /// Set/Get single step
   void setSingleStep(double step);
   double singleStep()const;
 
-  // Description:
-  // Set/Get tick interval
+  /// 
+  /// Set/Get tick interval
   void setTickInterval(double ti);
   double tickInterval()const;
 
@@ -81,7 +81,7 @@ public:
   
   void triggerAction(QAbstractSlider::SliderAction action);
 
-  /// Orientation of the slider (Vertical by default)
+  //// Orientation of the slider (Vertical by default)
   Qt::Orientation orientation()const;
 
 public slots:
@@ -94,8 +94,8 @@ protected slots:
 
 signals:
   void valueChanged(double value);
-  /// Same as QSlider::sliderMoved, the signal is emitted ONLY if the slider
-  // is manually moved by the user.
+  //// Same as QSlider::sliderMoved, the signal is emitted ONLY if the slider
+  /// is manually moved by the user.
   void sliderMoved(double position);
   
 private:
