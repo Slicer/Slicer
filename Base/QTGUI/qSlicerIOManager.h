@@ -1,15 +1,15 @@
 #ifndef __qSlicerIOManager_h
 #define __qSlicerIOManager_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerCoreIOManager.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTGUIExport.h"
 
-// QT declarations
+/// QT declarations
 class QWidget;
 
 class qSlicerIOManagerPrivate;
@@ -21,8 +21,8 @@ public:
   qSlicerIOManager();
   virtual ~qSlicerIOManager();
 
-  // Description:
-  // Shows up a dialog to let the user pick a file (any file).
+  /// 
+  /// Shows up a dialog to let the user pick a file (any file).
   QString getOpenFileName(QWidget* widget)const;
 
 private:

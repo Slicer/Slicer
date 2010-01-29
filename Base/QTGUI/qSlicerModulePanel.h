@@ -1,10 +1,10 @@
 #ifndef __qSlicerModulePanel_h
 #define __qSlicerModulePanel_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModulePanel.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTGUIExport.h"

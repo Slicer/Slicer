@@ -1,10 +1,10 @@
 #ifndef __qSlicerModuleSelectorWidget_h
 #define __qSlicerModuleSelectorWidget_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QWidget>
 
 #include "qSlicerBaseQTGUIExport.h"
@@ -18,12 +18,12 @@ public:
   typedef QWidget Superclass;
   qSlicerModuleSelectorWidget(QWidget* parent = 0);
 
-  // Description:
-  // Add a list of module available for selection
+  /// 
+  /// Add a list of module available for selection
   void addModules(const QStringList& moduleNames);
 
-  // Description:
-  // Remove a module from the list given its name
+  /// 
+  /// Remove a module from the list given its name
   void removeModule(const QString& name);
 
 signals:

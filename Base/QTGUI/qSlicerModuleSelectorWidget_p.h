@@ -4,10 +4,10 @@
 #include "ui_qSlicerModuleSelectorWidget.h"
 #include "qSlicerModuleSelectorWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QObject>
 
 //---------------------------------------------------------------------------
