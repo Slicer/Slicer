@@ -21,6 +21,10 @@ Version:   $Revision: 1.0 $
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLScene.h"
 
+// to calculate relative path for filename
+#include "vtkMRMLStorageNode.h"
+#include <itksys/SystemTools.hxx>
+
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLColorNode::New()
 {
@@ -92,7 +96,15 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL)
     {
-    of << " filename=\"" << this->FileName << "\"";
+    // convert to relative filename
+    std::string name = this->FileName;
+    if (this->GetScene() && this->GetStorageNode() &&
+        !this->GetStorageNode()->IsFilePathRelative(this->FileName))
+      {
+      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
+      }
+    
+    of << indent << " filename=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
     }
 }
 
