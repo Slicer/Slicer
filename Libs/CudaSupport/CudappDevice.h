@@ -12,7 +12,7 @@ namespace Cudapp
         Device(unsigned int deviceNumber);
         virtual ~Device();
 
-        //// Device Information
+        /// Device Information
         bool IsInitialized() const { return this->Initialized; }
 
         void SetDeviceNumber(unsigned int deviceNumber);
@@ -56,7 +56,7 @@ namespace Cudapp
         void SynchronizeThread();
         void ExitThread();
 
-        //// Memory Management
+        /// Memory Management
         bool AllocateMemory();
 
         virtual void PrintSelf(std::ostream&  os) const;

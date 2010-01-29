@@ -67,12 +67,12 @@ public:
   /// colour, power, ambient, diffuse, etc.
   vtkProperty *GetProperty();
 
-  /// 
-  /// set the colour of the glyphs and text, saving the value in a local var ListColour
+  ///// 
+  ///// set the colour of the glyphs and text, saving the value in a local var ListColour
   //void SetColor(double *col);
-///  void SetColor(double r, double g, double b);
+  //void SetColor(double r, double g, double b);
    
-  //// Description:
+  ///
   /// set the selected colour of the glyphs and text, saving the value in a
   /// local var ListSelectedColor
   //void SetSelectedColor(double *col);

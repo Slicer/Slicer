@@ -121,7 +121,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   //vtkSetObjectMacro (ActiveView,vtkSlicerViewLogic);
   //vtkGetObjectMacro (ActiveView,vtkSlicerViewLogic);
 
-  ////// Slices
+  /// Slices
   /// 
   /// Slices are the 2D viewports that show composited layers
   /// of volume data from a particular slice definition.
@@ -154,7 +154,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   /// (display it in the Fiducials GUI)
   void PropagateFiducialListSelection();
   
-  ////// Modules
+  /// Modules
   /// 
   /// Modules are additional pieces of Slicer functionality
   /// that are loaded and managed at run time

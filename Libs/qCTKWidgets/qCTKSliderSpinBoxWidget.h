@@ -79,8 +79,8 @@ public slots:
   void setValue(double value);
 
 signals:
-  //// Use with care:
-  //// sliderMoved is emitted only when the user moves the slider
+  /// Use with care:
+  /// sliderMoved is emitted only when the user moves the slider
   void sliderMoved(double position);
   void valueChanged(double value);
 

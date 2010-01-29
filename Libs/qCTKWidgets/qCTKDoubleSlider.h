@@ -40,11 +40,11 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  //// Constructors
-  //// Vertical by default
+  /// Constructors
+  /// Vertical by default
   explicit qCTKDoubleSlider(QWidget* parent = 0);
   explicit qCTKDoubleSlider(Qt::Orientation orient, QWidget* parent = 0);
-  //// Destructor
+  /// Destructor
   virtual ~qCTKDoubleSlider();
 
   /// 
@@ -81,7 +81,7 @@ public:
   
   void triggerAction(QAbstractSlider::SliderAction action);
 
-  //// Orientation of the slider (Vertical by default)
+  /// Orientation of the slider (Vertical by default)
   Qt::Orientation orientation()const;
 
 public slots:
@@ -94,7 +94,7 @@ protected slots:
 
 signals:
   void valueChanged(double value);
-  //// Same as QSlider::sliderMoved, the signal is emitted ONLY if the slider
+  /// Same as QSlider::sliderMoved, the signal is emitted ONLY if the slider
   /// is manually moved by the user.
   void sliderMoved(double position);
   

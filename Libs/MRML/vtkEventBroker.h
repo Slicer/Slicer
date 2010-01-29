@@ -71,8 +71,7 @@ public:
   static void Callback(vtkObject *caller, 
       unsigned long eid, void *clientData, void *callData);
 
-  ///// Adding and Removing Observation objects
-
+  /// Adding and Removing Observation objects
   /// 
   /// Request that an observer be added to the subject (or "observee")
   /// - this is the "Attach" operation
@@ -131,8 +130,7 @@ public:
   /// Process any event that comes from either subject or observer
   void ProcessEvent (vtkObservation *observation, vtkObject *caller, unsigned long eid, void *callData);
 
-  ///// Event Logging
-  
+  /// Event Logging
   /// 
   /// Turn on event tracing (requires TraceFile)
   vtkBooleanMacro (EventLogging, int);
@@ -165,15 +163,13 @@ public:
   /// based on the filename and the EventLogging variable)
   void LogEvent (vtkObservation *observation);
 
-  ///// Graph File
-
+  /// Graph File
   /// 
   /// Write out the current list of observations in graphviz format (.dot)
   int GenerateGraphFile ( const char *graphFile );
 
 
-  ///// Event Queue processing modes
-
+  /// Event Queue processing modes
   /// 
   /// In synchronous mode, observations are invoked immediately when the
   /// event takes place.  In asynchronous mode, observations are added
@@ -204,7 +200,7 @@ public:
   }
 
 
-  ///// Event queue processing
+  /// Event queue processing
   
   /// 
   /// Event queue handling routines

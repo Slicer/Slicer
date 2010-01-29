@@ -114,8 +114,8 @@ public slots:
   /// Reset all sliders to their 0 position and value
   void reset();
 
-  //// Reset all sliders but the one that are currently active (i.e. the user
-  //// is changing its value.
+  /// Reset all sliders but the one that are currently active (i.e. the user
+  /// is changing its value.
   void resetUnactiveSliders();
 
 protected slots:
