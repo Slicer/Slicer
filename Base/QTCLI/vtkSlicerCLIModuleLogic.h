@@ -104,8 +104,11 @@ public:
   void SetTemporaryDirectory(const char *tempdir);
   const char *GetTemporaryDirectory() const;
 protected:
-   vtkSlicerCLIModuleLogic();
-   ~vtkSlicerCLIModuleLogic();
+  vtkSlicerCLIModuleLogic();
+  ~vtkSlicerCLIModuleLogic();
+  // not implemented
+  vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
+  void operator=(const vtkSlicerCLIModuleLogic&);
 
 private:
   QCTK_DECLARE_PRIVATE(vtkSlicerCLIModuleLogic);
