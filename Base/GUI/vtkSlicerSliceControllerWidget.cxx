@@ -1579,10 +1579,10 @@ void vtkSlicerSliceControllerWidget::ToggleReformatWidget()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ToggleReformatWidget( int link)
 {
-  vtkSlicerSlicesGUI *ssgui;
-  vtkSlicerSliceGUI *sgui;
-  vtkSlicerApplication *app;
-  vtkSlicerApplicationGUI *appGUI;
+  vtkSlicerSlicesGUI *ssgui = 0;
+  vtkSlicerSliceGUI *sgui = 0;
+  vtkSlicerApplication *app = 0;
+  vtkSlicerApplicationGUI *appGUI = 0;
   int found = 0;
     
   // find the sliceGUI for this controller

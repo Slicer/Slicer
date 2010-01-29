@@ -17,6 +17,7 @@
 
 #include "vtkSlicerConfigure.h"
 
+//-----------------------------------------------------------------------------
 void  qSlicerPalette(QPalette& palette)
 {
   /* Old palette that makes a high contrast in Windows.
@@ -163,9 +164,9 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
 void qSlicerApplicationPrivate::initPalette()
 {
   QCTK_P(qSlicerApplication);
-  QPalette palette = p->palette();
-  qSlicerPalette(palette);
-  p->setPalette(palette);
+  QPalette myPalette = p->palette();
+  qSlicerPalette(myPalette);
+  p->setPalette(myPalette);
 }
 
 //-----------------------------------------------------------------------------

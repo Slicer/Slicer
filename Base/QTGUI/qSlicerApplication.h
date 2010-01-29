@@ -57,8 +57,9 @@ private:
   QCTK_DECLARE_PRIVATE(qSlicerApplication);
 };
 
-/** Apply the Slicer palette to the \c palette
- */
+// Apply the Slicer palette to the \c palette
+// Note also that the palette parameter is passed by reference and will be
+// updated using the native paletter and applying Slicer specific properties.
 void  Q_SLICER_BASE_QTGUI_EXPORT qSlicerPalette(QPalette& palette);
 
 #endif

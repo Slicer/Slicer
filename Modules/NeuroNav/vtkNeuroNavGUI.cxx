@@ -470,7 +470,7 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
 
 //---------------------------------------------------------------------------
 void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
-                                        unsigned long event, void *callData )
+                                        unsigned long event, void *vtkNotUsed(callData))
 {
   const char *eventName = vtkCommand::GetStringFromEventId(event);
 
@@ -656,16 +656,17 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkNeuroNavGUI::ProcessLogicEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+void vtkNeuroNavGUI::ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
+                                          unsigned long vtkNotUsed(event),
+                                          void *vtkNotUsed(callData))
 {
   // Fill in
 }
 
 
 //---------------------------------------------------------------------------
-void vtkNeuroNavGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                         unsigned long event, void *callData )
+void vtkNeuroNavGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
+                                         unsigned long event, void *vtkNotUsed(callData))
 {
   if (event == vtkMRMLScene::SceneCloseEvent)
     {

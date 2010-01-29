@@ -20,6 +20,12 @@
 #include <QSharedPointer>
 #include <QStringList>
 
+#ifdef _MSC_VER
+  // 4505: 'qCTKAbstractFactoryItem<BaseClassType>::loadErrorString' :
+  //       unreferenced local function has been removed
+# pragma warning(disable: 4505)
+#endif
+
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 class qCTKAbstractFactoryItem

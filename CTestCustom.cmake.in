@@ -74,6 +74,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # http://public.kitware.com/Bug/view.php?id=10179
   "ld: warning: duplicate dylib.*"
 
-  # While working on cleaning Slicer3/SlicerQT code base - Temporarly remove CLI warnings
-  #"[Ss]licer3.[Aa]pplications.(cli|CLI)"
+  # Libs/OpenIGTLink
+  "(OpenIGTLink|openigtlink).[Ss]ource.igtl*"
 )

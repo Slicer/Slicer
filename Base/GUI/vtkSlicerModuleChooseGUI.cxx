@@ -919,8 +919,10 @@ void vtkSlicerModuleChooseGUI::Populate( )
           }
         if (!moduleAdded)
           {
-          // the index doesn't seem to be used, use -1.
-          categoryToModuleName["None"].insert(ModuleItem(-1, moduleTitle.toLatin1().data()));
+          // the index doesn't seem to be used, use string::npos.
+          // See http://www.cplusplus.com/reference/string/string/npos/
+          categoryToModuleName["None"].insert(ModuleItem(string::npos,
+                                              moduleTitle.toLatin1().data()));
           }
         }
 #endif

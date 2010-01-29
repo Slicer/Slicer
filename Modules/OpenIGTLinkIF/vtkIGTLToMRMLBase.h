@@ -50,16 +50,19 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   virtual const char*  GetIGTLName()      { return NULL;};
   virtual const char*  GetMRMLName()      { return NULL;};
   virtual vtkIntArray* GetNodeEvents()    { return NULL; };
-  virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name)  { return NULL; };
+  virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* vtkNotUsed(scene), const char* vtkNotUsed(name))
+    { return NULL; };
 
   // for TYPE_MULTI_IGTL_NAMES
   int                  GetNumberOfIGTLNames()   { return this->IGTLNames.size(); };
   const char*          GetIGTLName(int index)   { return this->IGTLNames[index].c_str(); };
 
   //BTX
-  virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node) { return 0; };
+  virtual int          IGTLToMRML(igtl::MessageBase::Pointer vtkNotUsed(buffer),
+                                  vtkMRMLNode* vtkNotUsed(node)) { return 0; };
   //ETX
-  virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg) { return 0; };
+  virtual int          MRMLToIGTL(unsigned long vtkNotUsed(event), vtkMRMLNode* vtkNotUsed(mrmlNode),
+                                  int* vtkNotUsed(size), void** vtkNotUsed(igtlMsg)){ return 0; };
 
   vtkGetMacro( CheckCRC, int );
   vtkSetMacro( CheckCRC, int );

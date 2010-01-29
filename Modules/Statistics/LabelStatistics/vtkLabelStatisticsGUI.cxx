@@ -453,8 +453,8 @@ void vtkLabelStatisticsGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkLabelStatisticsGUI::SetPrimarySelectionTclProcedures( )
 {
   std::string cmd;
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  Tcl_Interp *interp = app->GetMainInterp(); 
+  vtkSlicerApplication *myApp = (vtkSlicerApplication *)this->GetApplication();
+  Tcl_Interp *interp = myApp->GetMainInterp();
 
   //  # selectText "text" --
   //   #       Sets the value of the PRIMARY selection to "$text".
@@ -502,12 +502,11 @@ void vtkLabelStatisticsGUI::SetPrimarySelectionTclProcedures( )
 
 void vtkLabelStatisticsGUI::SetPrimarySelection( std::string text )
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  Tcl_Interp *interp = app->GetMainInterp(); 
+  vtkSlicerApplication *myApp = (vtkSlicerApplication *)this->GetApplication();
+  Tcl_Interp *interp = myApp->GetMainInterp();
   std::string cmd = "selectText \"";
   cmd.append(text);
   cmd.append("\"");
   Tcl_Eval( interp, cmd.c_str() );
   cmd.clear();
 }
-

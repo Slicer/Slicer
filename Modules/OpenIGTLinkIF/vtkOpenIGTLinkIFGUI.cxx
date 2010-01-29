@@ -1126,8 +1126,9 @@ void vtkOpenIGTLinkIFGUI::Init()
 
 
 
-void vtkOpenIGTLinkIFGUI::DataCallback(vtkObject *caller, 
-                                     unsigned long eid, void *clientData, void *callData)
+void vtkOpenIGTLinkIFGUI::DataCallback(vtkObject *vtkNotUsed(caller), 
+                                       unsigned long vtkNotUsed(eid), void *clientData,
+                                       void *vtkNotUsed(callData))
 {
   vtkOpenIGTLinkIFGUI *self = reinterpret_cast<vtkOpenIGTLinkIFGUI *>(clientData);
   vtkDebugWithObjectMacro(self, "In vtkOpenIGTLinkIFGUI DataCallback");
@@ -1138,7 +1139,7 @@ void vtkOpenIGTLinkIFGUI::DataCallback(vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::ProcessLogicEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+                                             unsigned long event, void *vtkNotUsed(callData))
 {
 
   if (this->GetLogic() == vtkOpenIGTLinkIFLogic::SafeDownCast(caller))
