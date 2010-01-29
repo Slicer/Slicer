@@ -30,6 +30,19 @@
 set ::errorCode 0
 set ::errorInfo ""
 
+# Helper function: ShowAndLogError
+# Use this function instead of puts to both log an error message and
+# show it for the user in a popup window
+# (The popup window is automatically closed after a few seconds to allow some
+# time for the user to read, but allow application exit in a reasonable time
+# for automated tests.)
+proc ShowAndLogError { msg } {
+    set autoCloseTimeoutMs 10000 
+    puts $msg
+    after $autoCloseTimeoutMs {destroy .dialog1}
+    tk_dialog .dialog1 "Error" "$msg" error 0 OK
+}
+
 #
 # Slicer3_HOME: , find it relative to the location of this script
 # -- when run by the launcher, this variable will be set already
@@ -90,7 +103,7 @@ if {$tcl_platform(os) == "SunOS"} {
     } elseif {$::SlicerBinaryBitness == "64" && $::isainfo == 64} {
         set ::BUILD(bitness) "64"
     } elseif {$::SlicerBinaryBitness == "64" && $::isainfo == 32} {
-	puts "You can't run a 64 bit program on a 32 bit kernel!"
+	ShowAndLogError "You can't run a 64 bit program on a 32 bit kernel!"
 	exit
     }
 }	
@@ -384,7 +397,7 @@ proc launch_ParseArgs {argv} {
       }
       "--detach" {
         set ::LAUNCH(detach) 1
-      }
+      }      
       default {
         # escape any pipe characters 
         regsub -all "\\|" $arg "\\\\|" arg
@@ -530,7 +543,7 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(Slicer3_PLUGINS_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer3_MODULES_DIR)\;$::env(Path)
         } else {
-            puts stderr "Libraries: unknown build $::env(BUILD)"
+            ShowAndLogError "Libraries: unknown build $::env(BUILD)"
         }
 
     # set the base tcl/tk library paths, using the previously defined TCL_LIB_DIR
@@ -671,7 +684,7 @@ proc launch_SplashShow { {delayms 7000} } {
 
 proc launch_puts {args} {
   if { [catch "puts [list $args]" res] } {
-    puts $res
+    ShowAndLogError "Error while running launch_puts: $res"
   }
 }
 
@@ -747,8 +760,11 @@ proc launch_RunProgram {} {
     # 
     # determine the correct arguments and executable for the platform
     #
-    if { $::LAUNCH(launchCommand) == "" } {
-      set ::LAUNCH(launchCommand) $::Slicer3_REAL
+    if { $::LAUNCH(launchCommand) == "" } {          
+        if { [catch { set ::LAUNCH(launchCommand) $::Slicer3_REAL } res] } {
+            ShowAndLogError "Failed to execute Slicer3_REAL: $res"
+            exit -1
+        }              
     }
 
     set ::errorCode ""  
@@ -763,12 +779,12 @@ proc launch_RunProgram {} {
 
     if {$::env(BUILD) == $::WINDOWS} {        
         if { [catch { set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r] } res] } {
-            puts "Failed to execute $::LAUNCH(launchCommand): $res"
+            ShowAndLogError "Failed to execute $::LAUNCH(launchCommand): $res"
             exit -1
         }        
     } else {               
         if { [catch { set fp [open "| sh -c \"'$::LAUNCH(launchCommand)' $::argv \" |& cat" r] } res] } {
-            puts "Failed to execute $::LAUNCH(launchCommand): $res"
+            ShowAndLogError "Failed to execute $::LAUNCH(launchCommand): $res"
             exit -1
         }        
     }
@@ -813,9 +829,14 @@ proc launch_RunProgram {} {
         set result "Exceptional errorCode: $::saved_errorCode, $::saved_errorCode\n$::saved_errorInfo"
       }
     }
-
+         
     if { $result != "" } {
-      puts $result
+      if {$code != 0} {
+        ShowAndLogError "Launch $::LAUNCH(launchCommand) returned with error: $result"
+      } else {
+        puts "$result"
+      }
+      
     }
     exit $code
 }
@@ -890,8 +911,7 @@ launch_SetPaths
 
 set ret [catch launch_ImportModulePaths res]
 if { $ret } {
-  puts "Could not query slicer for module paths"
-  puts $res
+  ShowAndLogError "Could not query slicer for module paths $res"
 }
 
 #
