@@ -24,6 +24,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
+  ${SlicerTractographyLogic_SOURCE_DIR}
+  ${SlicerTractographyLogic_BINARY_DIR}
   )
 
 configure_file(

@@ -3,6 +3,12 @@
 // SlicerQT includes
 #include "qSlicerTractographyFiducialSeedingModuleWidget.h"
 
+#include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
+
+#include "vtkSlicerTractographyFiducialSeedingLogic.h"
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
+
 // QT includes
 #include <QtPlugin>
 //-----------------------------------------------------------------------------

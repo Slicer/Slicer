@@ -1,6 +1,9 @@
 #include "qSlicerTractographyFiducialSeedingModuleWidget.h"
 #include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
+#include "vtkSlicerTractographyFiducialSeedingLogic.h"
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
+
 //-----------------------------------------------------------------------------
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
   public qCTKPrivate<qSlicerTractographyFiducialSeedingModuleWidget>,
@@ -71,8 +74,26 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged( int val
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkMRMLNode *node)
 {
+  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
   std::cout << "param node changed(" << node << "): TODO update sliders with new values\n";
+  vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+  if (paramNode)
+    {
+    d->IntegrationStepSpinBoxLabel->setValue(paramNode->GetIntegrationStep());
+    d->MaxNumberSeedsNumericInput->setValue(paramNode->GetMaxNumberOfSeeds());
+    d->MinimumPathSpinBoxLabel->setValue(paramNode->GetMinimumPathLength());
+    d->FiducialRegionSpinBoxLabel->setValue(paramNode->GetSeedingRegionSize());
+    d->FiducialStepSpinBoxLabel->setValue(paramNode->GetSeedingRegionStep());
+    d->SeedSelectedCheckBox->setChecked(paramNode->GetSeedSelectedFiducials()==1);
+    d->StoppingCurvatureSpinBoxLabel->setValue(paramNode->GetStoppingCurvature());
+    //d->StoppingCriteriaComboBox->setValue(paramNode->GetStoppingMode());
+    d->StoppingValueSpinBoxLabel->setValue(paramNode->GetStoppingValue());
+
+    //d->FiberNodeSelector->setCurrentNode(getMRMLScene()->GetNodeByID((paramNode->GetOutputFiberRef()0);
+   // ->setValue(paramNode->GetInputFiducialRef());
+   // ->setValue(paramNode->GetInputVolumeRef());
+    }
   this->onParameterChanged(0.0);
 
 }
