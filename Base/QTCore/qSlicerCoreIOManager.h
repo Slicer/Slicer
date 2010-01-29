@@ -13,7 +13,7 @@
 #ifndef __qSlicerCoreIOManager_h
 #define __qSlicerCoreIOManager_h
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTCoreExport.h"
@@ -30,17 +30,17 @@ public:
 
   virtual void printAdditionalInfo(); 
 
-  // Description:
-  // Load/Import scene
+  /// 
+  /// Load/Import scene
   void loadScene(vtkMRMLScene* mrmlScene, const QString& filename);
   void importScene(vtkMRMLScene* mrmlScene, const QString& filename);
 
-  // Description:
-  // Close scene
+  /// 
+  /// Close scene
   void closeScene(vtkMRMLScene* mrmlScene);
   
-  // Description:
-  // Get the file type using the extension
+  /// 
+  /// Get the file type using the extension
   QString fileTypeFromExtension(const QString& extension);
 
 private:
