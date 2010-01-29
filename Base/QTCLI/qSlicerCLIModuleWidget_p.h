@@ -17,21 +17,21 @@
 #include "qSlicerCLIModuleWidget.h"
 #include "ui_qSlicerCLIModule.h"
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerCLIModuleWidget.h"
 #include "qSlicerWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QHash>
 #include <QList>
 
-// ModuleDescriptionParser includes
+/// ModuleDescriptionParser includes
 #include <ModuleDescription.h>
 
-// STL includes
+/// STL includes
 #include <vector>
 
 class vtkSlicerCLIModuleLogic; 
@@ -87,8 +87,8 @@ public:
     this->CommandLineModuleNode = 0; 
     }
   
-  // Description:
-  // Convenient function to cast qSlicerModuleLogic into qSlicerCLIModuleLogic
+  /// 
+  /// Convenient function to cast qSlicerModuleLogic into qSlicerCLIModuleLogic
   vtkSlicerCLIModuleLogic* logic()const;
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
@@ -101,34 +101,34 @@ public:
   typedef std::vector<std::string>::iterator       ElementIterator;
 
 
-  // Description:
-  // Calling this method will loop trough the structure resulting
-  // from the XML parsing and generate the corresponding UI.
+  /// 
+  /// Calling this method will loop trough the structure resulting
+  /// from the XML parsing and generate the corresponding UI.
   void setupUi(qSlicerWidget* widget);
   
-  // Description:
-  // Initiliaze the maps containing the mapping
-  //   parameter type -> MRML node type (classname)
+  /// 
+  /// Initiliaze the maps containing the mapping
+  ///   parameter type -> MRML node type (classname)
   static void initializeMaps();
 
-  // Description:
-  // Convenient method allowing to retrieve the node type associated
-  // with the parameter type
+  /// 
+  /// Convenient method allowing to retrieve the node type associated
+  /// with the parameter type
   static QString nodeTypeFromMap(const QString& defaultValue,
                                  const QHash<QString, QString>& map,
                                  const QString& attribute);
                                  
-  // Description:
+  /// 
   void addParameterGroups();
   void addParameterGroup(QBoxLayout* layout,
                          const ModuleParameterGroup& parameterGroup);
 
-  // Description:
+  /// 
   void addParameters(QFormLayout* layout, const ModuleParameterGroup& parameterGroup);
   void addParameter(QFormLayout* layout, const ModuleParameter& moduleParameter);
 
-  // Description:
-  // Create widget corresponding to the different parameters
+  /// 
+  /// Create widget corresponding to the different parameters
   QWidget* createIntegerTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createBooleanTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createFloatTagWidget(const ModuleParameter& moduleParameter);
@@ -144,9 +144,9 @@ public:
   QWidget* createFileTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createEnumerationTagWidget(const ModuleParameter& moduleParameter);
 
-  // Description:
-  // Update MRML:
-  // - create commandLineModuleNode if required
+  /// 
+  /// Update MRML:
+  /// - create commandLineModuleNode if required
   void updateMRML();
 
 public slots:
@@ -158,8 +158,8 @@ public slots:
 
 public:
 
-  // Map used to store the different relation
-  //  parameter type -> MRML node type
+  /// Map used to store the different relation
+  ///  parameter type -> MRML node type
   static bool MapInitialized; 
   static QHash<QString, QString> ImageTypeAttributeToNodeType;
   static QHash<QString, QString> GeometryTypeAttributeToNodeType;
@@ -177,7 +177,7 @@ public:
   QList<WidgetValueWrapper*> WidgetValueWrappers; 
   
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode; 
-//   qSlicerCLIModuleLogic * Logic;
+///   qSlicerCLIModuleLogic * Logic;
 };
 
 

@@ -28,35 +28,35 @@ public:
   qSlicerCLIModule(QWidget *parent=0);
   virtual ~qSlicerCLIModule(){}
 
-  // Description:
-  // Assign the module XML description.
-  // Note: That will also trigger the parsing of the XML structure
+  /// 
+  /// Assign the module XML description.
+  /// Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const char* xmlModuleDescription);
   
   virtual QString title()const;
   virtual QString category()const;
   virtual QString contributor()const;
 
-  // Description:
-  // Return help/acknowledgement text
+  /// 
+  /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
-  // Description:
-  // Set temporary directory associated with the module
+  /// 
+  /// Set temporary directory associated with the module
   void setTempDirectory(const QString& tempDirectory);
 
 protected:
-  // Description:
-  // Overloaded
+  /// 
+  /// Overloaded
   virtual void setup();
 
-  // Description:
-  // Create and return the widget representation associated to this module
+  /// 
+  /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
 
-  // Description:
-  // Create and return the logic associated to this module
+  /// 
+  /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
 private:

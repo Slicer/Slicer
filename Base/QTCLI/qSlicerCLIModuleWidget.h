@@ -14,10 +14,10 @@
 #ifndef __qSlicerCLIModuleWidget_h
 #define __qSlicerCLIModuleWidget_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
 #include "qSlicerBaseQTCLIExport.h"
@@ -35,8 +35,8 @@ public:
   virtual ~qSlicerCLIModuleWidget(){}
 
 protected:
-  // Description:
-  // Overloaded
+  /// 
+  /// Overloaded
   virtual void setup();
 
 private:

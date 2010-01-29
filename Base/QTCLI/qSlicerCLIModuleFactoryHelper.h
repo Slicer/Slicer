@@ -13,7 +13,7 @@
 #ifndef __qSlicerCLIModuleFactoryHelper_h
 #define __qSlicerCLIModuleFactoryHelper_h
 
-// QT includes
+/// QT includes
 #include <QStringList>
 
 #include "qSlicerBaseQTCLIExport.h"
@@ -22,12 +22,12 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleFactoryHelper
 {
 public:
 
-  // Description:
-  // Convenient method returning a list of module paths that the factory could use
+  /// 
+  /// Convenient method returning a list of module paths that the factory could use
   static const QStringList modulePaths();
 
 private:
-  // Not implemented
+  /// Not implemented
   qSlicerCLIModuleFactoryHelper(){}
   virtual ~qSlicerCLIModuleFactoryHelper(){}
 };

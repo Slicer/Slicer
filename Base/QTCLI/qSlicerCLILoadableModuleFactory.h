@@ -14,11 +14,11 @@
 #ifndef __qSlicerCLILoadableModuleFactory_h
 #define __qSlicerCLILoadableModuleFactory_h
 
-// SlicerQT includes
+/// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 #include <qCTKAbstractLibraryFactory.h>
 
@@ -31,7 +31,7 @@ public:
   virtual ~qSlicerCLILoadableModuleFactoryItem(){}
 
 protected:
-  // To make the cast code cleaner to read.
+  /// To make the cast code cleaner to read.
   //typedef char * (*XMLModuleDescriptionFunction)();
   //typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
 

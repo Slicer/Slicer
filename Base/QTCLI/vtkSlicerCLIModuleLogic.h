@@ -14,16 +14,16 @@
 #ifndef __vtkSlicerCLIModuleLogic_h
 #define __vtkSlicerCLIModuleLogic_h
 
-// SlicerLogic includes
+/// SlicerLogic includes
 #include "vtkSlicerModuleLogic.h"
 
-// qCTK includes
+/// qCTK includes
 #include <qCTKPimpl.h>
 
-// QT includes
+/// QT includes
 #include <QStringList>
 
-// STL includes
+/// STL includes
 #include <map>
 #include <vector>
 #include <string>
@@ -52,19 +52,19 @@ public:
                              const std::vector<std::string>& extensions,
                              CommandLineModuleType commandType) const;
 
-  // map to keep track of MRML Ids and filenames
+  /// map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
   MRMLIDToFileNameMap NodesToReload;
   MRMLIDToFileNameMap NodesToWrite;
 
   //
-  // map to keep track of the MRML Ids on the main scene to the MRML
-  // Ids in the miniscene sent to the module
+  /// map to keep track of the MRML Ids on the main scene to the MRML
+  /// Ids in the miniscene sent to the module
   typedef std::map<std::string, std::string> MRMLIDMap;
 
   void applyTask(void *clientdata);
 
-  // Prepare
+  /// Prepare
   void getModuleInputAndOutputNode(CommandLineModuleType commandType, vtkMRMLCommandLineModuleNode * node0,
     MRMLIDToFileNameMap & nodesToWrite, MRMLIDToFileNameMap & nodesToReload);
 
@@ -78,35 +78,35 @@ public:
 
   void processParametersWithIndices(const std::string& minisceneFilename, vtkMRMLCommandLineModuleNode * node0,
     MRMLIDMap& sceneToMiniSceneMap, QStringList& commandLineAsString);
-//   std::string generateCommand(vtkMRMLCommandLineModuleNode * node0, const QStringList& commandLineAsString );
+///   std::string generateCommand(vtkMRMLCommandLineModuleNode * node0, const QStringList& commandLineAsString );
 
-  // Run methods
+  /// Run methods
   void runFilter(vtkMRMLCommandLineModuleNode * node0,
     const QStringList& argList, CommandLineModuleType commandType);
   void runCommandLineFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argList);
   void runSharedObjectFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argListist);
   void runPythonFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argListst);
 
-  // Terminate
+  /// Terminate
   void onExecutionTerminated(vtkMRMLCommandLineModuleNode * node0, const MRMLIDMap& sceneToMiniSceneMap);
   void requestloadMinisceneLoading(const std::string& minisceneFilename,
     vtkMRMLCommandLineModuleNode * node0, vtkMRMLScene * miniscene, const MRMLIDMap& sceneToMiniSceneMap);
   void cleanUp();
 
-  // For debug
+  /// For debug
   void setDeleteTemporaryFiles(bool enable);
   bool deleteTemporaryFiles()const;
 
-  // Communicate progress back to the node
+  /// Communicate progress back to the node
   static void ProgressCallback(void * who);
 
-  // Set/Get the directory to use for temporary files
+  /// Set/Get the directory to use for temporary files
   void SetTemporaryDirectory(const char *tempdir);
   const char *GetTemporaryDirectory() const;
 protected:
   vtkSlicerCLIModuleLogic();
   ~vtkSlicerCLIModuleLogic();
-  // not implemented
+  /// not implemented
   vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
   void operator=(const vtkSlicerCLIModuleLogic&);
 
