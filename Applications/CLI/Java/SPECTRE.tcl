@@ -4,12 +4,11 @@
 
 set CLP "SPECTRE"
 
-# add the mipav classes
-#set pathToMipavPlugins "/cygdrive/c/Program\ Files/mipav"
-set pathToMipavPlugins "c:/Program Files/mipav"
-if {$argv != "--xml"} {
-puts "path to mip av plugins $pathToMipavPlugins"
-}
+# set the path to the MIPAV install directory
+#set pathToMipav "c:/Program Files/mipav"
+set pathToMipav "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
+# set the full path to the SPECTRE plugins directory
+set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/plugins"
 
 proc glob-r {{dir .} args} {
      set res {}
@@ -22,42 +21,44 @@ proc glob-r {{dir .} args} {
              if {[string match $arg $i]} {
                lappend res $i
                break
-}
-}
-} else {
-lappend res $i
-}
+             }
+           }
+         } else {
+             lappend res $i
+         }
        }
      }
      return $res
  } ;# JH
 
-set jarList [glob-r $pathToMipavPlugins *.jar]
+set jarList [glob-r $pathToMipav *.jar]
 # add the top level mipav dir
-lappend jarList {c:/Program Files/mipav}
-# now add the path to the spectre edu classes, this will move to Applications/CLI/Java/SPECTRE
-lappend jarList {c:/Documents and Settings/nicole/mipav/plugins}
+lappend jarList $pathToMipav
+# now add the path to the spectre edu classes
+lappend jarList $pathToSPECTREPlugins
+
 if {$argv != "--xml"} {
-  puts "Jar list = $jarList"
+#  puts "Jar list = $jarList"
 }
 foreach j $jarList {
   lappend cpath $j
 }
-set joinChar ";"
+switch $tcl_platform(os) {
+    "SunOS" -
+    "Linux" -
+    "Darwin" { set joinChar ":" }
+    default { set joinChar ";" }
+}
 set cpath [join $cpath $joinChar]
 
 if {$argv != "--xml"} {
+ puts "Path to MIPAV $pathToMipav"
+ puts "Path to SPECTRE plugins $pathToSPECTREPlugins"
  puts "cpath = $cpath"
  puts "argv = \"$argv\""
 }
 
-if {[info exists ::env(CLASSPATH)] != 0} {
-   if {$argv != "--xml"} {
-      puts "Current classpath = $::env(CLASSPATH)"
-   }
-}
-
-set ret [catch "exec java -Xms400m -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
+set ret [catch "exec  ${pathToMipav}/jre/bin/java -Xms400m -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
 puts $res
 # exit $ret
 if {$argv != "--xml"} {
