@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
     }
   scene = 0;
 
-  // Write out the return parameters in "name: value" form
+  // Write out the return parameters in "name = value" form
   std::ofstream rts;
   rts.open(returnParameterFile.c_str());
   rts << "anintegerreturn =  10" << std::endl;
