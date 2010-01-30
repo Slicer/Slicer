@@ -20,7 +20,7 @@ IF(Slicer3_USE_QT)
     
     FIND_PACKAGE(Qt4)
 
-    MESSAGE(STATUS Slicer using Qt version: ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH})
+    MESSAGE(STATUS "Configuring Slicer with Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
     
     IF(QT4_FOUND AND QT_QMAKE_EXECUTABLE)
       # Check version, note that ${QT_VERSION_PATCH} could also be used
