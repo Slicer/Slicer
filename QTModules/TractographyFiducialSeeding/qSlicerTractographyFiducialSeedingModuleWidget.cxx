@@ -3,6 +3,7 @@
 
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
+#include "vtkMRMLFiberBundleNode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
@@ -65,9 +66,51 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(double v
     return;
   }
 
+  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+
+  if (!d->SeedSelectedCheckBox->isChecked()) 
+    {
+    return;
+    }
+
   // run seeding here
-  qDebug() << "parameter changed: " << value ;
-  // std::cout << "param changed(" << value << "): TODO call logic to compute fibers\n";
+  
+  vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
+    vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+
+  if (seedingLogic)
+  {
+    qDebug() << "parameter changed: " << value ;
+
+    vtkMRMLDiffusionTensorVolumeNode *volumeNode = 
+      vtkMRMLDiffusionTensorVolumeNode::SafeDownCast( d->DTINodeSelector->currentNode() );
+    vtkMRMLTransformableNode *fiducialListNode = 
+      vtkMRMLTransformableNode::SafeDownCast( d->FiducialNodeSelector->currentNode() );
+    vtkMRMLFiberBundleNode *fiberNode = 
+      vtkMRMLFiberBundleNode::SafeDownCast( d->FiberNodeSelector->currentNode() );
+
+    if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) 
+    {
+      return;
+    }
+
+    std::string stopingMode = d->StoppingCriteriaComboBox->currentText().toStdString();
+
+
+    seedingLogic->CreateTracts(volumeNode, fiducialListNode, fiberNode,
+                               stopingMode.c_str(),
+                               d->StoppingValueSpinBoxLabel->value(),
+                               d->StoppingCurvatureSpinBoxLabel->value(),
+                               d->IntegrationStepSpinBoxLabel->value(),
+                               d->MinimumPathSpinBoxLabel->value(),
+                               d->FiducialRegionSpinBoxLabel->value(),
+                               d->FiducialStepSpinBoxLabel->value(),
+                               d->MaxNumberSeedsNumericInput->value(),
+                               (d->SeedSelectedCheckBox->isChecked() ? 1:0),
+                               d->DisplayTracksComboBox->currentIndex()
+                               ); 
+
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -84,7 +127,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
 
   std::cout << "param node changed(" << node << "): TODO update sliders with new values\n";
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
-  if (paramNode)
+  if (paramNode && this->mrmlScene())
     {
     this->processParameterChange = false;
 
@@ -95,12 +138,13 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
     d->FiducialStepSpinBoxLabel->setValue(paramNode->GetSeedingRegionStep());
     d->SeedSelectedCheckBox->setChecked(paramNode->GetSeedSelectedFiducials()==1);
     d->StoppingCurvatureSpinBoxLabel->setValue(paramNode->GetStoppingCurvature());
-    //d->StoppingCriteriaComboBox->setValue(paramNode->GetStoppingMode());
+    d->StoppingCriteriaComboBox->setCurrentIndex(paramNode->GetStoppingMode());
     d->StoppingValueSpinBoxLabel->setValue(paramNode->GetStoppingValue());
+    d->DisplayTracksComboBox->setCurrentIndex(paramNode->GetDisplayMode());
 
-    //d->FiberNodeSelector->setCurrentNode(getMRMLScene()->GetNodeByID((paramNode->GetOutputFiberRef()0);
-   // ->setValue(paramNode->GetInputFiducialRef());
-   // ->setValue(paramNode->GetInputVolumeRef());
+    d->FiberNodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()) );
+    d->FiducialNodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()) );
+    d->DTINodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()) );
 
     this->processParameterChange = true;
     }

@@ -20,6 +20,9 @@
    <string>TractographyFiducialSeedingModule</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
@@ -79,14 +82,15 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Stopping Criteria</string>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="1">
-    <widget class="qCTKTitleComboBox" name="StoppingCriteriaComboBox">
-     <property name="editable">
-      <bool>false</bool>
-     </property>
-     <property name="title">
-      <string>Stopping Cretiria</string>
-     </property>
+    <widget class="QComboBox" name="StoppingCriteriaComboBox">
      <item>
       <property name="text">
        <string>Linear Measure</string>
@@ -112,7 +116,7 @@
       <double>1.000000000000000</double>
      </property>
      <property name="value">
-      <double>0.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="singleStep">
       <double>0.100000000000000</double>
@@ -132,7 +136,7 @@
       <double>10.000000000000000</double>
      </property>
      <property name="value">
-      <double>0.000000000000000</double>
+      <double>0.700000000000000</double>
      </property>
     </widget>
    </item>
@@ -149,7 +153,7 @@
       <double>10.000000000000000</double>
      </property>
      <property name="value">
-      <double>0.000000000000000</double>
+      <double>0.500000000000000</double>
      </property>
     </widget>
    </item>
@@ -231,11 +235,15 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
-    <widget class="qCTKTitleComboBox" name="DisplayTracksComboBox">
-     <property name="title">
-      <string>Display Tracts As: </string>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>Display Tracts As:</string>
      </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QComboBox" name="DisplayTracksComboBox">
      <item>
       <property name="text">
        <string>Lines</string>
@@ -261,11 +269,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>qCTKTitleComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qCTKTitleComboBox.h</header>
-  </customwidget>
   <customwidget>
    <class>qCTKSliderSpinBoxWidget</class>
    <extends>QWidget</extends>

@@ -28,5 +28,5 @@ qSlicerAbstractModuleWidget* qSlicerTractographyFiducialSeedingModule::createWid
 //
 vtkSlicerLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
 {
-  return 0;
+  return vtkSlicerTractographyFiducialSeedingLogic::New();
 }
