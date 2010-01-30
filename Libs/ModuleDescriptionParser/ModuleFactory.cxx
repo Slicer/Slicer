@@ -1794,13 +1794,13 @@ ModuleFactory
   std::string SetEnvString =    "from __main__ import tk\n"
                                 "import os;\n"
                                 "os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()]);\n";
-  PyObject* v;
+  PyObject* v2;
       
-  v = PyRun_String( SetEnvString.c_str(),
+  v2 = PyRun_String( SetEnvString.c_str(),
                             Py_file_input,
                             PythonDictionary,
                             PythonDictionary );
-  if (v == NULL)
+  if (v2 == NULL)
     {
     this->WarningMessage ( "Failed to load the environment to Python" );
     PyErr_Print();
@@ -1896,13 +1896,13 @@ ModuleFactory
             "if not 'Execute' in dir ( Module ):\n"
             "    XML = ''\n";
 
-          PyObject* v;
+          PyObject* v1;
       
-          v = PyRun_String( LoadModuleString.c_str(),
+          v1 = PyRun_String( LoadModuleString.c_str(),
                             Py_file_input,
                             PythonDictionary,
                             PythonDictionary );
-          if (v == NULL)
+          if (v1 == NULL)
             {
             PyErr_Print();
             continue;
