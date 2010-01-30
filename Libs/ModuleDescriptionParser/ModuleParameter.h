@@ -104,7 +104,7 @@ public:
   // Has a flag or a long flag?
   virtual bool IsFlagParameter() const
   {
-    return (this->Flag != "" && this->LongFlag != "");
+    return (this->Flag != "" || this->LongFlag != "");
   }
 
   // Is an index type?
