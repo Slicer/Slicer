@@ -24,6 +24,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
+  ${SlicerTractographyLogic_SOURCE_DIR}
+  ${SlicerTractographyLogic_BINARY_DIR}
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
   ${SlicerTractographyDisplay_SOURCE_DIR}
