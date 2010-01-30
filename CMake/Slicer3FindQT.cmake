@@ -12,7 +12,7 @@ IF(Slicer3_USE_QT)
   IF(VTK_USE_QVTK)
 
     # Check if QT_QMAKE_EXECUTABLE is set
-    IF(NOT QT_QMAKE_EXECUTABLE)
+    IF(NOT VTK_QT_QMAKE_EXECUTABLE)
       MESSAGE(FATAL_ERROR "error: Set QT_QMAKE_EXECUTABLE: version of Qt >= ${minimum_required_qt_version} *required* to build Slicer")
     ENDIF()
     
