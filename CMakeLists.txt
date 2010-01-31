@@ -409,6 +409,50 @@ install(FILES
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
 
+#-----------------------------------------------------------------------------
+# Generate Slicer3Version.txt
+
+INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3TodayMacro.cmake)
+
+# Get build time
+TODAY(Slicer3_BUILDDATE)
+
+# Get sytem name and architecture
+SET(Slicer3_BUILD NA)
+INCLUDE(${Slicer3_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
+
+SET(Slicer3_WC_URL NA)
+SET(Slicer3_WC_REVISION 0)
+
+# Get SVN info
+FIND_PACKAGE(Subversion)
+IF(NOT Subversion_FOUND)
+  MESSAGE(FATAL_ERROR "error: Install SVN and try to re-configure")
+ENDIF(NOT Subversion_FOUND)
+
+# Case where Slicer is checkout using SVN
+IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
+  Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in 
+    ${Slicer3_HOME}/lib/Slicer3/Slicer3Version.txt
+    )
+ENDIF()
+
+# Case where Slicer is checkout using Git-SVN
+IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+  FIND_PACKAGE(Git)
+  IF(NOT Git_FOUND)
+    MESSAGE(FATAL_ERROR "error: Failed to locate Git")
+  ENDIF(NOT Git_FOUND)
+  Git_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in
+    ${Slicer3_HOME}/lib/Slicer3/Slicer3Version.txt
+    )
+ENDIF()
+MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
+
 
 #-----------------------------------------------------------------------------
 # Subdirectories
@@ -530,6 +574,7 @@ CONFIGURE_FILE(
   ${Slicer3_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
+
 
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer3 build tree and a Slicer3 installation 
