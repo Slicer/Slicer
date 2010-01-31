@@ -35,6 +35,7 @@ Version:   $Revision$
 #include "vtkStripper.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkImageChangeInformation.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkPluginFilterWatcher.h"
 
@@ -145,8 +146,7 @@ int main(int argc, char * argv[])
     std::string rootDir
       = vtksys::SystemTools::GetParentDirectory( sceneFilename.c_str() );
     
-    vtkMRMLScene *modelScene = NULL;
-    modelScene = vtkMRMLScene::New();
+    vtkSmartPointer< vtkMRMLScene > modelScene = vtkSmartPointer< vtkMRMLScene >::New();
 
     modelScene->SetURL(sceneFilename.c_str());
     // only try importing if the scene file exists
@@ -166,18 +166,16 @@ int main(int argc, char * argv[])
  
     // make sure we have a model hierarchy node
     vtkMRMLNode *rnd = modelScene->GetNodeByID( modelHierarchyID );
-    vtkMRMLModelHierarchyNode *rtnd;
+    vtkSmartPointer< vtkMRMLModelHierarchyNode > rtnd;
     if (!rnd)
       {
       std::cerr << "Error: no model hierarchy node at ID \""
                 << modelHierarchyID << "\", creating one" << std::endl;
 //      return EXIT_FAILURE;
-      rtnd = vtkMRMLModelHierarchyNode::New();
+      rtnd = vtkSmartPointer< vtkMRMLModelHierarchyNode >::New();
       modelScene->AddNode(rtnd);      
       // now get it again as a mrml node so can add things under it
       rnd =  modelScene->GetNodeByID(rtnd->GetID());
-      // delete the new hiearachy node, scene sill points to it
-      rtnd->Delete();
       }
     else
       {
@@ -189,8 +187,8 @@ int main(int argc, char * argv[])
       }  
     LabelAnatomyContainer labelToAnatomy;
 
-    vtkMRMLColorTableNode *colorNode = NULL;
-    vtkMRMLColorTableStorageNode *colorStorageNode = NULL;
+    vtkSmartPointer< vtkMRMLColorTableNode > colorNode = NULL;
+    vtkSmartPointer< vtkMRMLColorTableStorageNode > colorStorageNode = NULL;
     
     int useColorNode = 0;
     if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
@@ -211,30 +209,30 @@ int main(int argc, char * argv[])
       }
 
     // vtk and helper variables
-    vtkITKArchetypeImageSeriesReader* reader = NULL;
+    vtkSmartPointer< vtkITKArchetypeImageSeriesReader > reader = NULL;
     vtkImageData * image;
-    vtkDiscreteMarchingCubes  * cubes = NULL;
-    vtkWindowedSincPolyDataFilter *smoother = NULL;
+    vtkSmartPointer< vtkDiscreteMarchingCubes > cubes = NULL;
+    vtkSmartPointer< vtkWindowedSincPolyDataFilter > smoother = NULL;
     bool makeMultiple = false;
     bool useStartEnd = false;
-    vtkImageAccumulate *hist = NULL;
+    vtkSmartPointer< vtkImageAccumulate > hist = NULL;
     std::vector<int> skippedModels;
     std::vector<int> madeModels;
-    vtkWindowedSincPolyDataFilter * smootherSinc = NULL;    
-    vtkSmoothPolyDataFilter * smootherPoly = NULL;
+    vtkSmartPointer< vtkWindowedSincPolyDataFilter > smootherSinc = NULL;    
+    vtkSmartPointer< vtkSmoothPolyDataFilter > smootherPoly = NULL;
 
-    vtkDecimatePro * decimator = NULL;
-    vtkMarchingCubes * mcubes = NULL;
-    vtkImageThreshold * imageThreshold = NULL;
-    vtkThreshold * threshold = NULL;
-    vtkImageToStructuredPoints * imageToStructuredPoints = NULL;
-    vtkGeometryFilter * geometryFilter = NULL;
-    vtkTransform * transformIJKtoRAS = NULL;
-    vtkReverseSense * reverser = NULL;
-    vtkTransformPolyDataFilter * transformer = NULL;
-    vtkPolyDataNormals *normals = NULL;
-    vtkStripper * stripper = NULL;
-    vtkPolyDataWriter * writer = NULL;
+    vtkSmartPointer< vtkDecimatePro > decimator = NULL;
+    vtkSmartPointer< vtkMarchingCubes > mcubes = NULL;
+    vtkSmartPointer< vtkImageThreshold > imageThreshold = NULL;
+    vtkSmartPointer< vtkThreshold > threshold = NULL;
+    vtkSmartPointer< vtkImageToStructuredPoints > imageToStructuredPoints = NULL;
+    vtkSmartPointer< vtkGeometryFilter > geometryFilter = NULL;
+    vtkSmartPointer< vtkTransform > transformIJKtoRAS = NULL;
+    vtkSmartPointer< vtkReverseSense > reverser = NULL;
+    vtkSmartPointer< vtkTransformPolyDataFilter > transformer = NULL;
+    vtkSmartPointer< vtkPolyDataNormals > normals = NULL;
+    vtkSmartPointer< vtkStripper > stripper = NULL;
+    vtkSmartPointer< vtkPolyDataWriter > writer = NULL;
 
     // keep track of number of models that will be generated, for filter
     // watcher reporting
@@ -344,7 +342,7 @@ int main(int argc, char * argv[])
     fclose(infile);
 
     // Read the file
-    reader = vtkITKArchetypeImageSeriesScalarReader::New();
+    reader = vtkSmartPointer< vtkITKArchetypeImageSeriesScalarReader >::New();
     std::string comment = "Read Volume";
     vtkPluginFilterWatcher watchReader(reader,
                                        comment.c_str(),
@@ -360,7 +358,7 @@ int main(int argc, char * argv[])
     reader->SetDesiredCoordinateOrientationToNative();
     reader->SetUseNativeOriginOn();
     reader->Update();
-    vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+    vtkSmartPointer< vtkImageChangeInformation > ici = vtkSmartPointer< vtkImageChangeInformation >::New();
     ici->SetInput (reader->GetOutput());
     ici->SetOutputSpacing( 1, 1, 1 );
     ici->SetOutputOrigin( 0, 0, 0 );
@@ -371,7 +369,7 @@ int main(int argc, char * argv[])
     
     if (useColorNode)
       {
-      colorNode = vtkMRMLColorTableNode::New();
+      colorNode = vtkSmartPointer< vtkMRMLColorTableNode >::New();
       modelScene->AddNode(colorNode);
 
       // read the colour file
@@ -379,7 +377,7 @@ int main(int argc, char * argv[])
         {
         std::cout << "Colour table file name = " << ColorTable.c_str() << std::endl;
         }
-      colorStorageNode = vtkMRMLColorTableStorageNode::New();
+      colorStorageNode = vtkSmartPointer< vtkMRMLColorTableStorageNode >::New();
       colorStorageNode->SetFileName(ColorTable.c_str());
       modelScene->AddNode(colorStorageNode);
       
@@ -400,20 +398,20 @@ int main(int argc, char * argv[])
           std::cout << "Read colour file  " << colorStorageNode->GetFileName() << endl;
           }
         }
-      colorStorageNode->Delete();
+      colorStorageNode = NULL;
       }
 
     // each hierarchy node needs a display node
-    vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
+    vtkSmartPointer< vtkMRMLModelDisplayNode > dnd = vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
     rtnd->SetAndObserveDisplayNodeID( dnd->GetID() );
-    dnd->Delete();
+    dnd = NULL;
 
     // If making mulitple models, figure out which labels have voxels
     if (makeMultiple) 
       {
-      hist = vtkImageAccumulate::New();
+      hist = vtkSmartPointer< vtkImageAccumulate >::New();
       hist->SetInput(image);
       // need to figure out how many bins
       int extentMax = 0;
@@ -541,10 +539,9 @@ int main(int argc, char * argv[])
       if (cubes) 
         {
         cubes->SetInput(NULL);
-        cubes->Delete();
         cubes = NULL;
         }
-      cubes = vtkDiscreteMarchingCubes::New();
+      cubes = vtkSmartPointer< vtkDiscreteMarchingCubes >::New();
       std::string comment1 = "Discrete Marching Cubes";
       vtkPluginFilterWatcher watchDMCubes(cubes,
                                           comment1.c_str(),
@@ -588,9 +585,9 @@ int main(int argc, char * argv[])
         if (smoother)
           {
           smoother->SetInput(NULL);
-          smoother->Delete();
+          smoother = NULL;
           }
-        smoother = vtkWindowedSincPolyDataFilter::New();
+        smoother = vtkSmartPointer< vtkWindowedSincPolyDataFilter >::New();
         std::stringstream stream;
         stream << "Joint Smooth All Models (";
         stream << numModelsToGenerate;
@@ -722,10 +719,9 @@ int main(int argc, char * argv[])
     if (transformIJKtoRAS)
       {
       transformIJKtoRAS->SetInput(NULL);
-      transformIJKtoRAS->Delete();
       transformIJKtoRAS = NULL;
       }
-    transformIJKtoRAS = vtkTransform::New();
+    transformIJKtoRAS = vtkSmartPointer< vtkTransform >::New();
     transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
     if (debug)
       {
@@ -877,10 +873,9 @@ int main(int argc, char * argv[])
           {
           imageThreshold->SetInput(NULL);
           imageThreshold->RemoveAllInputs();              
-          imageThreshold->Delete();
           imageThreshold = NULL;
           }
-        imageThreshold = vtkImageThreshold::New();
+        imageThreshold = vtkSmartPointer< vtkImageThreshold >::New();
         std::string comment3 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
                                                    comment3.c_str(),
@@ -905,10 +900,9 @@ int main(int argc, char * argv[])
         if (imageToStructuredPoints)
           {
           imageToStructuredPoints->SetInput(NULL);
-          imageToStructuredPoints->Delete();
           imageToStructuredPoints = NULL;
           }
-        imageToStructuredPoints = vtkImageToStructuredPoints::New();
+        imageToStructuredPoints = vtkSmartPointer< vtkImageToStructuredPoints >::New();
         imageToStructuredPoints->SetInput(imageThreshold->GetOutput());
         try
           {
@@ -927,10 +921,9 @@ int main(int argc, char * argv[])
         if (threshold)
           {
           threshold->SetInput(NULL);
-          threshold->Delete();
           threshold = NULL;
           }
-        threshold = vtkThreshold::New();
+        threshold = vtkSmartPointer< vtkThreshold >::New();
         std::string comment4 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchThreshold(threshold,
                                               comment4.c_str(),
@@ -954,10 +947,9 @@ int main(int argc, char * argv[])
         if (geometryFilter)
           {
           geometryFilter->SetInput(NULL);
-          geometryFilter->Delete();
           geometryFilter = NULL;
           }
-        geometryFilter = vtkGeometryFilter::New();
+        geometryFilter = vtkSmartPointer< vtkGeometryFilter >::New();
         geometryFilter->SetInput(threshold->GetOutput());
         geometryFilter->ReleaseDataFlagOn();
         }
@@ -969,10 +961,9 @@ int main(int argc, char * argv[])
          if (mcubes)
            {
            mcubes->SetInput(NULL);
-           mcubes->Delete();
            mcubes = NULL;
            }
-        mcubes = vtkMarchingCubes::New();
+        mcubes = vtkSmartPointer< vtkMarchingCubes >::New();
         std::string comment5 = "Marching Cubes " + labelName;
         vtkPluginFilterWatcher watchThreshold(mcubes,
                                               comment5.c_str(),
@@ -1009,7 +1000,6 @@ int main(int argc, char * argv[])
           std::cout << "Cannot create a model from label "<< i << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
           if (transformIJKtoRAS)
             {
-            transformIJKtoRAS->Delete();
             transformIJKtoRAS = NULL;
             }
           if (imageThreshold)
@@ -1020,20 +1010,17 @@ int main(int argc, char * argv[])
               }
             imageThreshold->SetInput(NULL);
             imageThreshold->RemoveAllInputs();              
-            imageThreshold->Delete();
             imageThreshold = NULL;
               
             }
           if (imageToStructuredPoints)
             {
             imageToStructuredPoints->SetInput(NULL);
-            imageToStructuredPoints->Delete();
             imageToStructuredPoints = NULL;
             }
           if (mcubes)
             {
             mcubes->SetInput(NULL);
-            mcubes->Delete();
             mcubes = NULL;
             }
           skipLabel = 1;
@@ -1042,7 +1029,7 @@ int main(int argc, char * argv[])
           }
         if (SaveIntermediateModels)
           {
-          writer = vtkPolyDataWriter::New();
+          writer = vtkSmartPointer< vtkPolyDataWriter >::New();
           std::string commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
           vtkPluginFilterWatcher watchWriter(writer,
                                              commentSaveCubes.c_str(),
@@ -1069,7 +1056,6 @@ int main(int argc, char * argv[])
           writer->SetFileName(fileName.c_str());
           writer->Write();
           writer->SetInput(NULL);
-          writer->Delete();
           writer = NULL;        
           }
         }
@@ -1084,10 +1070,9 @@ int main(int argc, char * argv[])
         if (decimator != NULL)
           {
           decimator->SetInput(NULL);
-          decimator->Delete();
           decimator = NULL;
           }
-      decimator = vtkDecimatePro::New();
+      decimator = vtkSmartPointer< vtkDecimatePro >::New();
       std::string comment6 = "Decimate " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(decimator,
                                                  comment6.c_str(),
@@ -1137,7 +1122,7 @@ int main(int argc, char * argv[])
 
       if (SaveIntermediateModels)
         {
-        writer = vtkPolyDataWriter::New();
+        writer = vtkSmartPointer< vtkPolyDataWriter >::New();
         std::string commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
         vtkPluginFilterWatcher watchWriter(writer,
                                            commentSaveDecimation.c_str(),
@@ -1164,7 +1149,6 @@ int main(int argc, char * argv[])
         writer->SetFileName(fileName.c_str());
         writer->Write();
         writer->SetInput(NULL);
-        writer->Delete();
         writer = NULL;        
         }
       if (transformIJKtoRAS == NULL ||
@@ -1181,10 +1165,9 @@ int main(int argc, char * argv[])
          if (reverser)
            {
            reverser->SetInput(NULL);
-           reverser->Delete();
            reverser = NULL;
            }
-        reverser = vtkReverseSense::New();
+        reverser = vtkSmartPointer< vtkReverseSense >::New();
         std::string comment7 = "Reverse " + labelName;
         vtkPluginFilterWatcher watchReverser(reverser,
                                              comment7.c_str(),
@@ -1209,10 +1192,9 @@ int main(int argc, char * argv[])
           if (smootherSinc)
             {
             smootherSinc->SetInput(NULL);
-            smootherSinc->Delete();
             smootherSinc = NULL;
             }
-          smootherSinc = vtkWindowedSincPolyDataFilter::New();
+          smootherSinc = vtkSmartPointer< vtkWindowedSincPolyDataFilter >::New();
           std::string comment8 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherSinc,
                                                comment8.c_str(),
@@ -1258,10 +1240,9 @@ int main(int argc, char * argv[])
           if (smootherPoly)
             {
             smootherPoly->SetInput(NULL);
-            smootherPoly->Delete();
             smootherPoly = NULL;
             }
-          smootherPoly = vtkSmoothPolyDataFilter::New();
+          smootherPoly = vtkSmartPointer< vtkSmoothPolyDataFilter >::New();
           std::string comment9 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherPoly,
                                                comment9.c_str(),
@@ -1305,7 +1286,7 @@ int main(int argc, char * argv[])
 
         if (SaveIntermediateModels)
           {
-          writer = vtkPolyDataWriter::New();
+          writer = vtkSmartPointer< vtkPolyDataWriter >::New();
           std::string commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
           vtkPluginFilterWatcher watchWriter(writer,
                                              commentSaveSmoothed.c_str(),
@@ -1339,7 +1320,6 @@ int main(int argc, char * argv[])
           writer->SetFileName(fileName.c_str());
           writer->Write();
           writer->SetInput(NULL);
-          writer->Delete();
           writer = NULL;        
           }
         }
@@ -1347,10 +1327,9 @@ int main(int argc, char * argv[])
       if (transformer)
         {
         transformer->SetInput(NULL);
-        transformer->Delete();
         transformer = NULL;
         }
-      transformer = vtkTransformPolyDataFilter::New();
+      transformer = vtkSmartPointer< vtkTransformPolyDataFilter >::New();
       std::string comment1 = "Transform " + labelName;
       vtkPluginFilterWatcher watchTransformer(transformer,
                                               comment1.c_str(),
@@ -1396,10 +1375,9 @@ int main(int argc, char * argv[])
       if (normals)
         {
         normals->SetInput(NULL);
-        normals->Delete();
         normals = NULL;
         }
-      normals = vtkPolyDataNormals::New();
+      normals = vtkSmartPointer< vtkPolyDataNormals >::New();
       std::string comment2 = "Normals " + labelName;
       vtkPluginFilterWatcher watchNormals(normals,
                                           comment2.c_str(),
@@ -1429,10 +1407,9 @@ int main(int argc, char * argv[])
       if (stripper)
         {
         stripper->SetInput(NULL);
-        stripper->Delete();
         stripper = NULL;
         }
-      stripper = vtkStripper::New();
+      stripper = vtkSmartPointer< vtkStripper >::New();
       std::string comment3 = "Strip " + labelName;
       vtkPluginFilterWatcher watchStripper(stripper,
                                            comment3.c_str(),
@@ -1462,7 +1439,7 @@ int main(int argc, char * argv[])
         }
       
       // but for now we're just going to write it out
-      writer = vtkPolyDataWriter::New();
+      writer = vtkSmartPointer< vtkPolyDataWriter >::New();
       std::string comment4 = "Write " + labelName;
       vtkPluginFilterWatcher watchWriter(writer,
                                          comment4.c_str(),
@@ -1496,7 +1473,6 @@ int main(int argc, char * argv[])
       writer->Write();
         
       writer->SetInput(NULL);
-      writer->Delete();
       writer = NULL;
       if (modelScene != NULL)
         {
@@ -1505,17 +1481,17 @@ int main(int argc, char * argv[])
           std::cout << "Adding model " << labelName << " to the output scene, with filename " << fileName.c_str() << endl;
           }
         // each model needs a mrml node, a storage node and a display node
-        vtkMRMLModelNode *mnode = vtkMRMLModelNode::New();
+        vtkSmartPointer< vtkMRMLModelNode > mnode = vtkSmartPointer< vtkMRMLModelNode >::New();
         mnode->SetScene(modelScene);
         mnode->SetName(labelName.c_str());
         
-        vtkMRMLModelStorageNode *snode = vtkMRMLModelStorageNode::New();
+        vtkSmartPointer< vtkMRMLModelStorageNode > snode = vtkSmartPointer< vtkMRMLModelStorageNode >::New();
         snode->SetFileName(fileName.c_str());
         if (modelScene->AddNode(snode) == NULL)
           {
           std::cerr << "ERROR: unable to add the storage node to the model scene" << endl;
           }        
-        vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::New();
+        vtkSmartPointer< vtkMRMLModelDisplayNode > dnode = vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
         dnode->SetPolyData(mnode->GetPolyData());
         dnode->SetColor(0.5, 0.5, 0.5);
         double *rgba;
@@ -1548,7 +1524,7 @@ int main(int argc, char * argv[])
         modelScene->AddNode(mnode);
 
         // put it in the hierarchy
-        vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::New();
+        vtkSmartPointer< vtkMRMLModelHierarchyNode > mhnd = vtkSmartPointer< vtkMRMLModelHierarchyNode >::New();
         modelScene->AddNode(mhnd);
         mhnd->SetParentNodeID( rnd->GetID() );
         mhnd->SetModelNodeID( mnode->GetID() );
@@ -1558,13 +1534,9 @@ int main(int argc, char * argv[])
           std::cout << "...done adding model to output scene" << endl;
           }
         // clean up
-        dnode->Delete();
         dnode = NULL;
-        snode->Delete();
         snode = NULL;
-        mnode->Delete();
         mnode = NULL;
-        mhnd->Delete();
         mhnd = NULL;
         }
         } // end of skipping an empty label
@@ -1628,12 +1600,10 @@ int main(int argc, char * argv[])
         std::cout << "Deleting cubes" << endl;
         }
       cubes->SetInput(NULL);
-      cubes->Delete();
       cubes = NULL;
       }
     if (colorNode)
       {
-      colorNode->Delete();
       colorNode = NULL;
       }
     if (smoother)
@@ -1643,7 +1613,7 @@ int main(int argc, char * argv[])
         std::cout << "Deleting smoother" << endl;
         }
       smoother->SetInput(NULL);
-      smoother->Delete();
+      smoother = NULL;
       }    
     if (hist) 
       {
@@ -1652,7 +1622,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting hist" << endl;
         }
       hist->SetInput(NULL);
-      hist->Delete();
       hist = NULL;
       }
     if (smootherSinc)
@@ -1662,7 +1631,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting smootherSinc" << endl;
         }
       smootherSinc->SetInput(NULL);
-      smootherSinc->Delete();
       smootherSinc = NULL;
       }
     if (smootherPoly)
@@ -1672,7 +1640,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting smoother poly" << endl;
         }
       smootherPoly->SetInput(NULL);
-      smootherPoly->Delete();
       smootherPoly = NULL;
       }
     if (decimator)
@@ -1682,7 +1649,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting decimator" << endl;
         }
       decimator->SetInput(NULL);
-      decimator->Delete();
       decimator = NULL;
       }
     if (mcubes)
@@ -1692,7 +1658,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting mcubes" << endl;
         }
       mcubes->SetInput(NULL);
-      mcubes->Delete();
       mcubes = NULL;
       }
     if (imageThreshold)
@@ -1703,7 +1668,6 @@ int main(int argc, char * argv[])
         }
       imageThreshold->SetInput(NULL);
       imageThreshold->RemoveAllInputs();
-      imageThreshold->Delete();
       imageThreshold = NULL;
       if (debug)
         {
@@ -1717,7 +1681,6 @@ int main(int argc, char * argv[])
         cout << "Deleting threshold" << endl;
         }
       threshold->SetInput(NULL);
-      threshold->Delete();
       threshold = NULL;
       }
     if (imageToStructuredPoints)
@@ -1727,7 +1690,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting iamge to structured points" << endl;
         }
       imageToStructuredPoints->SetInput(NULL);
-      imageToStructuredPoints->Delete();
       imageToStructuredPoints = NULL;
       }
     if (geometryFilter)
@@ -1737,7 +1699,6 @@ int main(int argc, char * argv[])
         cout << "Deleting geometry filter" << endl;
         }
       geometryFilter->SetInput(NULL);
-      geometryFilter->Delete();
       geometryFilter = NULL;
       }
     if (transformIJKtoRAS)
@@ -1747,7 +1708,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting transform ijk to ras" << endl;
         }
       transformIJKtoRAS->SetInput(NULL);
-      transformIJKtoRAS->Delete();
       transformIJKtoRAS = NULL;
       }
     if (reverser)
@@ -1757,7 +1717,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting reverser" << endl;
         }
       reverser->SetInput(NULL);
-      reverser->Delete();
       reverser = NULL;
       }
     if (transformer)
@@ -1767,7 +1726,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting transformer" << endl;
         }
       transformer->SetInput(NULL);
-      transformer->Delete();
       transformer = NULL;
       }
     if (normals)
@@ -1777,7 +1735,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting normals" << endl;
         }
       normals->SetInput(NULL);
-      normals->Delete();
       normals = NULL;
       }
     if (stripper)
@@ -1787,7 +1744,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting stripper" << endl;
         }
       stripper->SetInput(NULL);
-      stripper->Delete();
       stripper = NULL;
       }
     if (ici)
@@ -1797,14 +1753,12 @@ int main(int argc, char * argv[])
         std::cout << "Deleting ici, no set input null" << endl;
         }
       ici->SetInput(NULL);
-      ici->Delete();
       ici = NULL;
       }
     if (debug)
       {
       std::cout << "Deleting reader" << endl;
       }
-    reader->Delete();
     reader = NULL;
     
     if (modelScene)
@@ -1814,7 +1768,6 @@ int main(int argc, char * argv[])
         std::cout << "Deleting model scene" << endl;
         }
       modelScene->Clear(1);
-      modelScene->Delete();
       modelScene = NULL;
       }
     return EXIT_SUCCESS;
