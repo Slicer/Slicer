@@ -145,17 +145,29 @@ slicer3_set_persistent_property(Slicer3_Modules_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer3_QTModules_INCLUDE_DIRS "")
 
 #-----------------------------------------------------------------------------
+# Get sytem name and architecture
+#
+SET(Slicer3_BUILD NA)
+INCLUDE(${Slicer3_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
+MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
+
+#-----------------------------------------------------------------------------
 # Add the testing directories
 #
-option(BUILD_TESTING "Test the project" ON)
-set(Slicer3_BUILD_TESTING ${BUILD_TESTING})
-set(LAUNCH_EXE ${Slicer3_BINARY_DIR}/Slicer3 --launch)
-if(Slicer3_BUILD_TESTING)
-  enable_testing()
-  include(CTest)
-  set(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-  mark_as_advanced(TCL_TCLSH DART_ROOT)
-endif(Slicer3_BUILD_TESTING)
+OPTION(BUILD_TESTING "Test the project" ON)
+SET(Slicer3_BUILD_TESTING ${BUILD_TESTING})
+SET(LAUNCH_EXE ${Slicer3_BINARY_DIR}/Slicer3 --launch)
+IF(Slicer3_BUILD_TESTING)
+  IF (NOT BUILDNAME)
+    SET(BUILDNAME "${Slicer3_BUILD}" CACHE STRING "Name of build on the dashboard")
+  ELSE()
+    SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
+  ENDIF()
+  ENABLE_TESTING()
+  INCLUDE(CTest)
+  SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
+ENDIF(Slicer3_BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # By default, build with KWWidget
@@ -417,9 +429,7 @@ INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3TodayMacro.cmake)
 # Get build time
 TODAY(Slicer3_BUILDDATE)
 
-# Get sytem name and architecture
-SET(Slicer3_BUILD NA)
-INCLUDE(${Slicer3_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
+# Note that Slicer_BUILD is set above
 
 SET(Slicer3_WC_URL NA)
 SET(Slicer3_WC_REVISION 0)
@@ -451,7 +461,6 @@ IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
     ${Slicer3_HOME}/lib/Slicer3/Slicer3Version.txt
     )
 ENDIF()
-MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
 
 
 #-----------------------------------------------------------------------------
