@@ -15,7 +15,7 @@ ENDIF()
 
 IF (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
-  SET(Slicer3_BUILD "win${Slicer_BUILD_BITS}")
+  SET(Slicer3_BUILD "win${Slicer3_BUILD_BITS}")
   
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
