@@ -31,11 +31,11 @@ MACRO(Slicer3_build_qtmodule)
   # --------------------------------------------------------------------------
   # Find Slicer3
 
-  if(NOT Slicer3_SOURCE_DIR)
-    find_package(Slicer3 REQUIRED)
-    include(${Slicer3_USE_FILE})
+  IF(NOT Slicer3_SOURCE_DIR)
+    FIND_PACKAGE(Slicer3 REQUIRED)
+    INCLUDE(${Slicer3_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
-  endif(NOT Slicer3_SOURCE_DIR)
+  ENDIF(NOT Slicer3_SOURCE_DIR)
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -88,14 +88,15 @@ MACRO(Slicer3_build_qtmodule)
     ${QTMODULE_UI_SRCS}
     ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc
     ${QTMODULE_RESOURCES}
-  )
+    )
 
   SOURCE_GROUP("Generated" FILES
     ${QTMODULE_UI_CXX}
     ${QTMODULE_MOC_OUTPUT}
     ${QTMODULE_QRC_SRCS}
     ${dynamicHeaders}
-  )
+    )
+  
   # --------------------------------------------------------------------------
   # Build the library
 
@@ -144,7 +145,7 @@ MACRO(Slicer3_build_qtmodule)
   INSTALL(FILES
     ${headers}
     ${dynamicHeaders}
-    DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${QTMODULE_NAME} COMPONENT Development
     )
 
 ENDMACRO(Slicer3_build_qtmodule)
