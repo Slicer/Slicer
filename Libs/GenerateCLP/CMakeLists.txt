@@ -68,7 +68,7 @@ else(WIN32)
   set(GenerateCLP_FORWARD_PATH_BUILD 
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\",\"${ITK_DIR}/bin\"")
   set(GenerateCLP_FORWARD_PATH_INSTALL
-    "\"../lib/GenerateCLP\",\"../lib/InsightToolkit\",\"../lib/ModuleDescriptionParser\"")
+    "\"${GenerateCLP_DIR}\",\"${ITK_DIR}\",\"${ModuleDescriptionParser_DIR}\"")
 endif(WIN32)
 set(GenerateCLP_FORWARD_EXE GenerateCLP)
 
