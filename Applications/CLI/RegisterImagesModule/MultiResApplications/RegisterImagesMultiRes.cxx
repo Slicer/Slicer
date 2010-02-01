@@ -660,24 +660,24 @@ int main( int argc, char * argv[] )
     typedef MattesMutualInformationImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
 //   typedef NormalizedMutualInformationHistogramImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
 //    typedef NormalizedCorrelationImageToImageMetric<ProcessingImage, ProcessingImage> Metric;
-    Metric::Pointer metric = Metric::New();
-    metric->SetNumberOfHistogramBins(256/8);
+    Metric::Pointer metric2 = Metric::New();
+    metric2->SetNumberOfHistogramBins(256/8);
     //    Metric::HistogramSizeType hsize;
     //    hsize[0] = 256/8;
     //    hsize[1] = 256/8;
-    //    metric->SetHistogramSize(hsize);
+    //    metric2->SetHistogramSize(hsize);
     //Contains only 16384 pixels total   
-    //metric->SetUseAllPixels(true);
-    // metric->SetFixedImageMask(maskreader->GetOutput());
-    metric->SetNumberOfSpatialSamples(15000);
+    //metric2->SetUseAllPixels(true);
+    // metric2->SetFixedImageMask(maskreader->GetOutput());
+    metric2->SetNumberOfSpatialSamples(15000);
     if(mask)
       {
-      metric->SetFixedImageMask(mask);
+      metric2->SetFixedImageMask(mask);
       }
-    metric->SetUseExplicitPDFDerivatives(true);
+    metric2->SetUseExplicitPDFDerivatives(true);
 //    metric->Initialize();
 
-    reg->SetMetric(metric);
+    reg->SetMetric(metric2);
 
     //typedef OnePlusOneEvolutionaryOptimizer OptimizerType;
     //typedef PowellOptimizer OptimizerType;
@@ -757,15 +757,15 @@ int main( int argc, char * argv[] )
         metric->SetFixedImageMask(mask);
         }
 
-      ScalingValues sv(fpyramid->GetOutput(fnumberoflevels >= 2 ? 1 : 0), initt->GetCenter());
+      ScalingValues sv2(fpyramid->GetOutput(fnumberoflevels >= 2 ? 1 : 0), initt->GetCenter());
 
-      optimizerScales[0] = 1.0/ sv.RotationScale;
-      optimizerScales[1] = 1.0/ sv.RotationScale;
-      optimizerScales[2] = 1.0/ sv.RotationScale;
-      optimizerScales[3] = 1.0/ sv.TranslationScale;
-      optimizerScales[4] = 1.0/ sv.TranslationScale;
-      optimizerScales[5] = 1.0/ sv.TranslationScale;
-      optimizerScales[6] = 1.0/ sv.ScalingScale;
+      optimizerScales[0] = 1.0/ sv2.RotationScale;
+      optimizerScales[1] = 1.0/ sv2.RotationScale;
+      optimizerScales[2] = 1.0/ sv2.RotationScale;
+      optimizerScales[3] = 1.0/ sv2.TranslationScale;
+      optimizerScales[4] = 1.0/ sv2.TranslationScale;
+      optimizerScales[5] = 1.0/ sv2.TranslationScale;
+      optimizerScales[6] = 1.0/ sv2.ScalingScale;
 
       opt->SetScales(optimizerScales);
 
