@@ -24,8 +24,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
-  ${SlicerTractographyLogic_SOURCE_DIR}
-  ${SlicerTractographyLogic_BINARY_DIR}
+  ${vtkSlicerTractographyModuleLogic_SOURCE_DIR}
+  ${vtkSlicerTractographyModuleLogic_BINARY_DIR}
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
   ${SlicerTractographyDisplay_SOURCE_DIR}
@@ -98,7 +98,7 @@ add_library(${lib_name}
   ${Volumes_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
-
+  
 target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
@@ -107,6 +107,7 @@ target_link_libraries(${lib_name}
   CommandLineModule
   SlicerTractographyDisplay
   SlicerTractographyFiducialSeeding
+  vtkSlicerTractographyModuleLogic
   )
 
 # Apply user-defined properties to the library target.
