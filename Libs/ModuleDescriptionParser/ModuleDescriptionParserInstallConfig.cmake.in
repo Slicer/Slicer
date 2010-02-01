@@ -16,4 +16,4 @@ set(ModuleDescriptionParser_USE_FILE
   "${ModuleDescriptionParser_CONFIG_DIR}/UseModuleDescriptionParser.cmake"
   )
 
-set(ITK_DIR "${ModuleDescriptionParser_CONFIG_DIR}/../InsightToolkit")
+set(ITK_DIR "@ITK_DIR@")
