@@ -3,6 +3,7 @@ PROJECT(Slicer3)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND CMAKE_POLICY)
   CMAKE_POLICY(SET CMP0003 NEW)
+  CMAKE_POLICY(SET CMP0012 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
@@ -177,8 +178,10 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." ON)
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
 IF (NOT Slicer3_USE_KWWIDGETS)
-  UNSET(Slicer3_INSTALL_MODULES_BIN_DIR)
-  UNSET(Slicer3_INSTALL_MODULES_LIB_DIR)
+  # Since the module Logic is shared between QTModules and regular Modules,
+  # the associated BIN and LIB directory shouldn't be unset
+  #UNSET(Slicer3_INSTALL_MODULES_BIN_DIR)
+  #UNSET(Slicer3_INSTALL_MODULES_LIB_DIR)
   UNSET(Slicer3_INSTALL_MODULES_INCLUDE_DIR)
   UNSET(Slicer3_INSTALL_MODULES_SHARE_DIR)
 ENDIF (NOT Slicer3_USE_KWWIDGETS)
@@ -485,6 +488,21 @@ slicer3_get_persistent_property(Slicer3_Base_LIBRARIES Slicer3_Base_LIBRARIES)
 
 slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS Slicer3_Libs_INCLUDE_DIRS)
 slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_DIRS)
+
+#-----------------------------------------------------------------------------
+# Module Logic
+
+INCLUDE("${Slicer3_CMAKE_DIR}/Slicer3ModuleLogicMacros.cmake")
+INCLUDE("${Slicer3_CMAKE_DIR}/Slicer3ListSubDirectoriesMacro.cmake")
+
+# Loop through Modules subdirectory and try to include Logic subdirectory if it exists
+FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
+FOREACH(subdir ${modules_subdirs})
+  IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
+    ADD_SUBDIRECTORY(${subdir}/Logic)
+  ENDIF()
+ENDFOREACH()
+
 
 #-----------------------------------------------------------------------------
 # Modules and CLI

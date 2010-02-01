@@ -24,8 +24,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
-  ${SlicerTractographyLogic_SOURCE_DIR}
-  ${SlicerTractographyLogic_BINARY_DIR}
+  ${vtkSlicerTractographyModuleLogic_SOURCE_DIR}
+  ${vtkSlicerTractographyModuleLogic_BINARY_DIR}
   )
 
 configure_file(
@@ -75,7 +75,7 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
-  SlicerTractographyLogic
+  vtkSlicerTractographyModuleLogic
   )
 
 # Apply user-defined properties to the library target.

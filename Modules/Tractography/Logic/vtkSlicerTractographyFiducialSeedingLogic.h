@@ -26,7 +26,8 @@
 
 #include "vtkSlicerModuleLogic.h"
 
-#include "vtkSlicerTractographyLogic.h"
+//#include "vtkSlicerTractographyLogic.h"
+#include "vtkSlicerTractographyModuleLogicExport.h"
 
 class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLFiducialListNode;
@@ -34,7 +35,8 @@ class vtkMRMLFiberBundleNode;
 class vtkMRMLTransformableNode;
 class vtkMaskPoints;
 
-class VTK_TRCACTOGRAPHYLOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic : public vtkSlicerModuleLogic 
+class VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
+  public vtkSlicerModuleLogic
 {
   public:
   
