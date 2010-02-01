@@ -494,13 +494,15 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_D
 
 INCLUDE("${Slicer3_CMAKE_DIR}/Slicer3ModuleLogicMacros.cmake")
 
-# Loop through Modules subdirectory and try to include Logic subdirectory if it exists
-FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
-FOREACH(subdir ${modules_subdirs})
-  IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
-    ADD_SUBDIRECTORY(${subdir}/Logic)
-  ENDIF()
-ENDFOREACH()
+IF (NOT Slicer3_USE_KWWIDGETS)
+  # Loop through Modules subdirectory and try to include Logic subdirectory if it exists
+  FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
+  FOREACH(subdir ${modules_subdirs})
+    IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
+      ADD_SUBDIRECTORY(${subdir}/Logic)
+    ENDIF()
+  ENDFOREACH()
+ENDIF()
 
 
 #-----------------------------------------------------------------------------

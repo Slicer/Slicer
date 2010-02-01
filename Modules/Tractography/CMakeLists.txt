@@ -17,9 +17,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 
-# Warning - Do not include Logic subdirectory - This has been done in Slicer3/CMakeLists.txt
-
 SET(Tractography_libs
+  Logic
   Seeding
   Settings
   Display
