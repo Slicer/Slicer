@@ -354,14 +354,17 @@ ITK2VTKConnectorFilterType::New();
 
 void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double dim0,double dim1)
 {
+  return;
+}
+#if 0
   vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
- // check if MRML node is present 
+ // check if MRML node is present
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
     vtkErrorMacro("No input MRIBiasFieldCorrectionNode found");
     return;
     }
-  
+
   vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -421,9 +424,8 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
   this->PREVIEW->DeepCopy(inVolume->GetImageData());
   
   //stoVolume->SetAndObserveImageData(this->PREVIEW);
-  
   //GET SIZE OF THE ARRAY TO BE PROCESSED AND THE FIRST PIXEL IN FRAME
-  
+
   double size1 = 0;
   double size2 = 0;
   double xyPt[4];
@@ -763,7 +765,6 @@ outMask->SetComponent(i*(size[0])+j,0,maskVolume->GetImageData()->GetScalarCompo
   vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 outVolume->SetAndObserveImageData(this->MASK);
 outVolume->SetModifiedSinceRead(1);
-
 // PROCESS THE SLICE
 
 
@@ -812,9 +813,8 @@ VTK2ITKConnectorFilterType::New();
         VTK2ITKConnectorFilterTypeM::Pointer VTK2ITKconnectorM = VTK2ITKConnectorFilterTypeM::New();
         VTK2ITKconnectorM->SetInput( VtkCasterM->GetOutput() );
         VTK2ITKconnectorM->Update();
-                     
-                     
-//PROCESSING    
+
+//PROCESSING
      
   typedef itk::ShrinkImageFilter<InputImageType, InputImageType> ShrinkerType;
   ShrinkerType::Pointer shrinker = ShrinkerType::New();
@@ -1026,7 +1026,7 @@ stoVolume->SetModifiedSinceRead(1);
 
   vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
-
+#endif
 
 void vtkMRIBiasFieldCorrectionLogic::ApplyPreview(double red, double yellow, double green,vtkImageData* image)
 {
