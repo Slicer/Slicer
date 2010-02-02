@@ -16,7 +16,9 @@ def startDesigner(open_command, argv):
   
   addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
   addEnvVariable('PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
-  os.execv(open_command+'@QT_BINARY_DIR@'+os.sep+argv[0], argv)
+  openCmd = open_command+'@QT_BINARY_DIR@'+os.sep+argv[0]
+  print openCmd
+  os.system(openCmd + " " + argv[1])
 
 def toCygwinPath(path):
   "Attempt to convert to a cygwin path"
@@ -59,12 +61,15 @@ Use: python designer.py [UI file]
     # Default executable name
     executable_name ='designer'
     open_command = ''
-    
-    # Handle MACOSX case
-    if sys.platform == 'darwin':
-      executable_name = 'Designer.app'
-      open_command = 'open '
 
-    # Update first value to match executable name
-    sys.argv[0] = executable_name
-    startDesigner(open_command, sys.argv);
+  if (len(sys.argv) < 2):
+    sys.argv.append("")
+    
+  # Handle MACOSX case
+  if sys.platform == 'darwin':
+    executable_name = 'Designer.app'
+    open_command = 'open '
+
+  # Update first value to match executable name
+  sys.argv[0] = executable_name
+  startDesigner(open_command, sys.argv);
