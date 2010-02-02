@@ -20,18 +20,20 @@
 #
 
 # scm is source code manager (i.e. svn)
-scm       svn
-svnpath   https://www.nitrc.org/svn/sylvainproject/Slicer3/Modules/SpineSegmentation
-svnusername slicerbot
-svnpassword slicer
+scm          svn
+svnpath      https://www.nitrc.org/svn/sylvainproject/Slicer3/Modules/SpineSegmentation
+name         SpineSegmentation
+cmakeproject SpineSegmentation
+svnusername  slicerbot
+svnpassword  slicer
 
 # list dependencies
 # - these should be names of other modules that have .s3ext files
 # - the dependencies will be built first
-depends
+#depends
 
 # homepage
-homepage  http://www.slicer.org
+homepage  http://wiki.na-mic.org/Wiki/index.php/2010_Winter_Project_Week_Spine_Segmentation_Module_in_Slicer3
 
 # match category in the xml description of the module (where it shows up in
 # Modules menu)
@@ -42,5 +44,5 @@ category  Segmentation
 status    Alpha
 
 # One line description of what the module does
-description Segmentation of spinal nerves in MRI images using an automated shape-based algorithm.
+description SpineSegmentation automatically creates a segmentation of the spinal nerves in MRI images using an automated shape-based algorithm.
 
