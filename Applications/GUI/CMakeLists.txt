@@ -78,7 +78,7 @@ if(Slicer3_NEED_SHARED_FORWARD)
       @ONLY IMMEDIATE)
     add_executable(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
-    add_dependencies(${slicer_exe} ${slicer_exe}${Slicer3_EXE_SUFFIX})
+    add_dependencies(${slicer_exe} ${Slicer3_FORWARD_EXE})
     install(TARGETS ${slicer_exe}
       DESTINATION ${Slicer3_INSTALL_BIN_DIR}
       COMPONENT Runtime)

@@ -35,12 +35,16 @@ endif(${launcher_platform} MATCHES Darwin-powerpc)
 string(TOLOWER "${launcher_platform}" launcher_platform)
 set(launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 
-#MESSAGE("launcher_platform is ${launcher_platform}\nlauncher name is ${launcher_name}")
-
 set(launcher_source
   "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}")
-set(launcher_binary
+
+SET(launcher_binary
   "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}")
+
+# MESSAGE(STATUS "launcher_platform: ${launcher_platform}")
+# MESSAGE(STATUS "launcher_name: ${launcher_name}")
+# MESSAGE(STATUS "launcher_source: ${launcher_source}")
+# MESSAGE(STATUS "launcher_binary: ${launcher_binary}")
 
 if(EXISTS "${launcher_source}")
   configure_file("${launcher_source}" "${launcher_binary}" COPYONLY)

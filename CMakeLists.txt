@@ -561,9 +561,10 @@ install(DIRECTORY
 # Launcher for slicer
 #
 
-IF (Slicer3_USE_KWWIDGETS)
-  add_subdirectory(Utilities/Launcher)
+# let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
+ADD_SUBDIRECTORY(Utilities/Launcher)
 
+IF (Slicer3_USE_KWWIDGETS)
   configure_file(
     ${Slicer3_SOURCE_DIR}/launch.tcl.in
     "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
