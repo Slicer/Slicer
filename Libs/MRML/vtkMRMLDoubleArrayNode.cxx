@@ -53,6 +53,8 @@ vtkMRMLDoubleArrayNode::vtkMRMLDoubleArrayNode()
   this->Array->SetNumberOfComponents(3);
 
   this->Unit.resize(3);
+
+  this->HideFromEditorsOff();
 }
 
 //----------------------------------------------------------------------------
