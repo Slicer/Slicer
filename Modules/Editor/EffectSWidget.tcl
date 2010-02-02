@@ -143,6 +143,10 @@ itcl::body EffectSWidget::destructor {} {
     [$sliceGUI GetSliceViewer] RequestRender
   }
 
+  if { $_outputLabel != "" } {
+    $_outputLabel Delete
+  }
+
   if { $exitCommand != "" } {
     eval $exitCommand
   }

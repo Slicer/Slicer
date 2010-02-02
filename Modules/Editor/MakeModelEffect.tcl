@@ -135,7 +135,15 @@ itcl::body MakeModelEffect::apply {} {
   # output 
   # - make a new hierarchy node if needed
   #
-  set outHierarchy [[$::slicer3::MRMLScene GetNodesByClassByName "vtkMRMLModelHierarchyNode" "Editor Models"] GetItemAsObject 0]
+  set numNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelHierarchyNode"]
+  set outHierarchy ""
+  for {set n 0} {$n < $numNodes} {incr n} {
+    set node [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelHierarchyNode"]
+    if { [$node GetName] == "Editor Models"] } {
+      set outHierarchy $node
+    }
+  }
+
   if { $outHierarchy == "" } {
     set outHierarchy [vtkMRMLModelHierarchyNode New]
     $outHierarchy SetScene $::slicer3::MRMLScene
@@ -144,7 +152,6 @@ itcl::body MakeModelEffect::apply {} {
   }
 
   $moduleNode SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
-
 
 
   # 
@@ -189,7 +196,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   #
   # smooth
   #
-  set o(smooth) [vtkKWCheckButtonWithLabel New]
+  set o(smooth) [vtkNew vtkKWCheckButtonWithLabel]
   $o(smooth) SetParent [$this getOptionsFrame]
   $o(smooth) Create
   $o(smooth) SetLabelText "Smooth Model: "
@@ -201,7 +208,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   #
   # model name
   #
-  set o(name) [vtkKWEntryWithLabel New]
+  set o(name) [vtkNew vtkKWEntryWithLabel]
   $o(name) SetParent [$this getOptionsFrame]
   $o(name) Create
   $o(name) SetLabelText "Name: "
