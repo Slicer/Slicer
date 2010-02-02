@@ -564,16 +564,14 @@ install(DIRECTORY
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
-IF (Slicer3_USE_KWWIDGETS)
-  configure_file(
-    ${Slicer3_SOURCE_DIR}/launch.tcl.in
-    "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
-    )
-  install(
-    FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
-    DESTINATION ${Slicer3_INSTALL_LIB_DIR}
-    )
-ENDIF (Slicer3_USE_KWWIDGETS)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/launch.tcl.in
+  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
+  )
+INSTALL(
+  FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
+  DESTINATION ${Slicer3_INSTALL_LIB_DIR}
+  )
 
 #-----------------------------------------------------------------------------
 # Launcher for QTDesigner
