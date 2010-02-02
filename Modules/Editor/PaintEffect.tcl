@@ -318,7 +318,7 @@ itcl::body PaintEffect::buildOptions {} {
   pack [$o(radius) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
-  set o(smudge) [vtkKWCheckButtonWithLabel New]
+  set o(smudge) [vtkNew vtkKWCheckButtonWithLabel]
   $o(smudge) SetParent [$this getOptionsFrame]
   $o(smudge) Create
   $o(smudge) SetLabelText "Smudge: "
