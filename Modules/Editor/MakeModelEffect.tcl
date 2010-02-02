@@ -139,7 +139,7 @@ itcl::body MakeModelEffect::apply {} {
   set outHierarchy ""
   for {set n 0} {$n < $numNodes} {incr n} {
     set node [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelHierarchyNode"]
-    if { [$node GetName] == "Editor Models"] } {
+    if { [$node GetName] == "Editor Models" } {
       set outHierarchy $node
     }
   }
