@@ -26,10 +26,10 @@ public:
   
 public slots:
   void generateScene();
+  void generateEmptyScene();
 
 signals:
   void mrmlSceneSet(vtkMRMLScene* scene);
-  void randomMRMLNodeType(const QString& name);
 
 private:
   QCTK_DECLARE_PRIVATE(qMRMLSceneGeneratorButton);

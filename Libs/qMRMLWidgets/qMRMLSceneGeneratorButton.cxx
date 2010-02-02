@@ -90,12 +90,21 @@ void qMRMLSceneGeneratorButton::generateScene()
     factory.createNode(node->GetClassName());
     }
 
-  emit this->randomMRMLNodeType(nodeNames.at(rand() % nodeNames.size()));
-
   qDebug() << "Scene generated; Number of nodes: " << d->MRMLScene->GetNumberOfNodes();
   emit mrmlSceneSet(d->MRMLScene);
 }
 
+// --------------------------------------------------------------------------
+void qMRMLSceneGeneratorButton::generateEmptyScene()
+{
+  QCTK_D(qMRMLSceneGeneratorButton);
+  
+  this->clear();
+  d->MRMLScene = vtkMRMLScene::New();
+  emit mrmlSceneSet(d->MRMLScene);
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSceneGeneratorButton::mrmlScene()const
 {
   QCTK_D(const qMRMLSceneGeneratorButton);
