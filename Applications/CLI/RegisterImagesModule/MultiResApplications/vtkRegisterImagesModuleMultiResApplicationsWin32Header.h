@@ -4,7 +4,7 @@
 #include <vtkRegisterImagesModuleMultiResApplicationsConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
-#if defined(RegisterImagesModuleMultiResApplications_EXPORTS)
+#if defined(RegisterImagesMultiResModule_EXPORTS)
 #define VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT __declspec( dllexport ) 
 #else
 #define VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT __declspec( dllimport ) 
