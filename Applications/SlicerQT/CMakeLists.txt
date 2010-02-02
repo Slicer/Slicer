@@ -51,7 +51,14 @@ IF(BUILD_SHARED_LIBS)
          \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "\"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
-    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)    
+
+      # Since ModuleLogic are in Slicer3_INSTALL_MODULES_BIN_DIR, let's add it
+      SET(Slicer3_FORWARD_PATH_BUILD
+        "${Slicer3_FORWARD_PATH_BUILD},            \\
+        \"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    
+    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+     
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
     #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
@@ -109,6 +116,12 @@ IF(BUILD_SHARED_LIBS)
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "${SlicerQT_FORWARD_PATH_INSTALL},         \\
         \"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+
+      # Since ModuleLogic are in Slicer3_INSTALL_MODULES_BIN_DIR, let's add it
+      SET(Slicer3_FORWARD_PATH_BUILD
+        "${Slicer3_FORWARD_PATH_BUILD},             \\
+        \"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+        
     ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer3_BUILD_MODULES)
@@ -156,7 +169,7 @@ IF(SlicerQT_NEED_SHARED_FORWARD)
       @ONLY IMMEDIATE)
     ADD_EXECUTABLE(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
-    ADD_DEPENDENCIES(${slicer_exe} ${slicer_exe}${SlicerQT_EXE_SUFFIX})
+    ADD_DEPENDENCIES(${slicer_exe} ${SlicerQT_FORWARD_EXE})
     INSTALL(TARGETS ${slicer_exe}
       DESTINATION ${Slicer3_INSTALL_BIN_DIR}
       COMPONENT Runtime)
