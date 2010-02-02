@@ -86,8 +86,10 @@
         </item>
         <item row="0" column="1">
          <widget class="qMRMLNodeSelector" name="RulerNodeSelector">
-          <property name="NodeType">
-           <string>vtkMRMLMeasurementsRulerNode</string>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLMeasurementsRulerNode</string>
+           </stringlist>
           </property>
          </widget>
         </item>

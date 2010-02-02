@@ -470,7 +470,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createPointTagWidget(const ModuleParamet
 {
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
-  widget->setNodeType("vtkMRMLFiducialListNode");
+  widget->setNodeTypes(QStringList("vtkMRMLFiducialListNode"));
   //TODO - title + " FiducialList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
@@ -494,7 +494,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createRegionTagWidget(const ModuleParame
 {
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
-  widget->setNodeType("vtkMRMLROIListNode");
+  widget->setNodeTypes(QStringList("vtkMRMLROIListNode"));
   //TODO - title + " RegionList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
@@ -550,7 +550,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createImageTagWidget(const ModuleParamet
   QCTK_P(qSlicerCLIModuleWidget);
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
-  widget->setNodeType(nodeType);
+  widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -599,7 +599,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createGeometryTagWidget(const ModulePara
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
   widget->setShowHidden(showHidden);
-  widget->setNodeType(nodeType);
+  widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -636,7 +636,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createTableTagWidget(const ModuleParamet
   QCTK_P(qSlicerCLIModuleWidget);
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
-  widget->setNodeType(nodeType);
+  widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -669,7 +669,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createTransformTagWidget(const ModulePar
   QCTK_P(qSlicerCLIModuleWidget);
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   qMRMLNodeSelector * widget = new qMRMLNodeSelector;
-  widget->setNodeType(nodeType);
+  widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(p->mrmlScene());
   QObject::connect(p, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));

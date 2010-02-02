@@ -22,9 +22,9 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(QString NodeType READ nodeType WRITE setNodeType)
-  Q_PROPERTY(bool ShowHidden READ showHidden WRITE setShowHidden)
-  Q_PROPERTY(bool SelectNodeUponCreation READ selectNodeUponCreation
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+  Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
+  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation
                                          WRITE setSelectNodeUponCreation)
   
 public:
@@ -37,8 +37,8 @@ public:
   
   /// 
   /// Set/Get node type 
-  QString nodeType()const ;
-  void setNodeType(const QString& nodeType);
+  QStringList nodeTypes()const ;
+  void setNodeTypes(const QStringList& nodeTypes);
 
   /// 
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
@@ -56,6 +56,7 @@ public:
 
   /// 
   /// Add a node in the combobox
+  /// The node must be valid (not null + correct type)
   void addNode(vtkMRMLNode* node);
 
   /// 

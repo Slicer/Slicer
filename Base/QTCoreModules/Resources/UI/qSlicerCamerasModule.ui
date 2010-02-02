@@ -39,8 +39,10 @@
       </item>
       <item row="0" column="1">
        <widget class="qMRMLNodeSelector" name="ViewNodeSelector">
-        <property name="NodeType">
-         <string>vtkMRMLViewNode</string>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLViewNode</string>
+         </stringlist>
         </property>
        </widget>
       </item>
@@ -53,8 +55,10 @@
       </item>
       <item row="1" column="1">
        <widget class="qMRMLNodeSelector" name="CameraNodeSelector">
-        <property name="NodeType">
-         <string>vtkMRMLCameraNode</string>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLCameraNode</string>
+         </stringlist>
         </property>
        </widget>
       </item>

@@ -88,8 +88,10 @@
           <property name="editEnabled">
            <bool>false</bool>
           </property>
-          <property name="NodeType">
-           <string>vtkMRMLLinearTransformNode</string>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLLinearTransformNode</string>
+           </stringlist>
           </property>
          </widget>
         </item>

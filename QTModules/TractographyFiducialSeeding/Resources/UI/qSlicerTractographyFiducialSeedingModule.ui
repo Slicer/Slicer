@@ -32,8 +32,10 @@
    </item>
    <item row="0" column="1">
     <widget class="qMRMLNodeSelector" name="ParameterNodeSelector">
-     <property name="NodeType">
-      <string>vtkMRMLTractographyFiducialSeedingNode</string>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLTractographyFiducialSeedingNode</string>
+      </stringlist>
      </property>
      <property name="ShowHidden">
       <bool>true</bool>
@@ -49,8 +51,10 @@
    </item>
    <item row="1" column="1">
     <widget class="qMRMLNodeSelector" name="DTINodeSelector">
-     <property name="NodeType">
-      <string>vtkMRMLDiffusionTensorVolumeNode</string>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLDiffusionTensorVolumeNode</string>
+      </stringlist>
      </property>
     </widget>
    </item>
@@ -63,8 +67,10 @@
    </item>
    <item row="2" column="1">
     <widget class="qMRMLNodeSelector" name="FiducialNodeSelector">
-     <property name="NodeType">
-      <string>vtkMRMLFiducialListNode</string>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLFiducialListNode</string>
+      </stringlist>
      </property>
     </widget>
    </item>
@@ -77,8 +83,10 @@
    </item>
    <item row="3" column="1">
     <widget class="qMRMLNodeSelector" name="FiberNodeSelector">
-     <property name="NodeType">
-      <string>vtkMRMLFiberBundleNode</string>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLFiberBundleNode</string>
+      </stringlist>
      </property>
     </widget>
    </item>

@@ -88,8 +88,10 @@
             </item>
             <item>
              <widget class="qMRMLNodeSelector" name="MRMLCommandLineModuleNodeSelector">
-              <property name="NodeType">
-               <string>vtkMRMLCommandLineModuleNode</string>
+              <property name="nodeTypes">
+               <stringlist>
+                <string>vtkMRMLCommandLineModuleNode</string>
+               </stringlist>
               </property>
               <property name="ShowHidden">
                <bool>true</bool>

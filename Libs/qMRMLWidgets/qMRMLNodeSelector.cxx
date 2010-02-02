@@ -28,16 +28,35 @@ public:
     this->ShowHidden = false;
     this->SelectNodeUponCreation = true; 
     }
+  bool isValidNode(vtkMRMLNode* node)const;
+  
   qMRMLNodeFactory* MRMLNodeFactory; 
   vtkMRMLScene*     MRMLScene; 
   vtkMRMLNode*      MRMLCurrentNode; 
   vtkMRMLNode*      MRMLNodeBeingRemoved;
   unsigned long     MRMLNodeModifiedEvent; 
 
-  QString       NodeType; 
+  QStringList   NodeTypes; 
   bool          ShowHidden;
   bool          SelectNodeUponCreation; 
 };
+
+// --------------------------------------------------------------------------
+bool qMRMLNodeSelectorPrivate::isValidNode(vtkMRMLNode* node)const
+{
+  if (!node)
+    {
+    return false;
+    }
+  foreach(const QString& nodeType, this->NodeTypes)
+    {
+    if (node->IsA(nodeType.toAscii().data()))
+      {
+      return true;
+      }
+    }
+  return false;
+}
 
 // --------------------------------------------------------------------------
 qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
@@ -62,8 +81,8 @@ qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qMRMLNodeSelector, const QString&, setNodeType, NodeType);
-QCTK_GET_CXX(qMRMLNodeSelector, QString, nodeType, NodeType);
+QCTK_SET_CXX(qMRMLNodeSelector, const QStringList&, setNodeTypes, NodeTypes);
+QCTK_GET_CXX(qMRMLNodeSelector, QStringList, nodeTypes, NodeTypes);
 
 // --------------------------------------------------------------------------
 QCTK_SET_CXX(qMRMLNodeSelector, bool, setShowHidden, ShowHidden);
@@ -72,8 +91,6 @@ QCTK_GET_CXX(qMRMLNodeSelector, bool, showHidden, ShowHidden);
 // --------------------------------------------------------------------------
 QCTK_SET_CXX(qMRMLNodeSelector, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
 QCTK_GET_CXX(qMRMLNodeSelector, bool, selectNodeUponCreation, SelectNodeUponCreation);
-
-// --------------------------------------------------------------------------
 QCTK_GET_CXX(qMRMLNodeSelector, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 // --------------------------------------------------------------------------
@@ -114,19 +131,13 @@ void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)
 {
   QCTK_D(qMRMLNodeSelector);
   
-  if (!mrmlNode) 
-    { 
-    Q_ASSERT(mrmlNode);
-    return; 
-    }
-  
-  // Make sure the the node added to the scene matches the nodeType of the selector
-  if (!mrmlNode->IsA(d->NodeType.toAscii().data()))
-    {// this test should have been done prior to calling the function
-    Q_ASSERT(mrmlNode->IsA(d->NodeType.toAscii().data()));
+  // Make sure the the node added to the scene matches the nodeTypes of the selector
+  if (!d->isValidNode(mrmlNode))
+    {
+    Q_ASSERT(d->isValidNode(mrmlNode));
     return;
     }
-    
+  
   if (!d->ShowHidden && mrmlNode->GetHideFromEditors())
     {
     //qDebug() << d->NodeType << " hide from editor: " << mrmlNode->GetClassName();
@@ -184,7 +195,13 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   if (scene)
     {
     std::vector<vtkMRMLNode *> nodes;
-    int numberOfNodes = scene->GetNodesByClass(d->NodeType.toAscii().data(), nodes);
+    foreach(const QString& nodeType, d->NodeTypes)
+      {
+      // here we expect vtkMRMLScene::GetNodesByClass to concatenate 
+      // new nodes to existing nodes
+      scene->GetNodesByClass(nodeType.toAscii().data(), nodes);
+      }
+    int numberOfNodes = nodes.size();
     for (int i = 0; i < numberOfNodes; ++i)
       {
       this->addNode(nodes[i]);
@@ -207,7 +224,8 @@ void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * _nod
   Q_ASSERT(scene == d->MRMLScene);
   
   vtkMRMLNode* mrmlNode = vtkMRMLNode::SafeDownCast(_node);
-  if (!mrmlNode || !mrmlNode->IsA(d->NodeType.toAscii().data()))
+  // we check the type here because addNode expect "valid" nodes only.
+  if (!d->isValidNode(mrmlNode))
     {
     return;
     }
@@ -221,7 +239,6 @@ void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _n
   Q_UNUSED(scene);
   QCTK_D(qMRMLNodeSelector);
   Q_ASSERT(scene == d->MRMLScene);
-  
   vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(_node);
   Q_ASSERT(mrmlNode);
   if (!mrmlNode) 
@@ -230,7 +247,7 @@ void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _n
     }
   
    // Make sure the the node removed matches the nodeType of the selector
-  if (!mrmlNode->IsA(d->NodeType.toAscii().data()))
+  if (!d->isValidNode(mrmlNode))
     {
     return;
     }
@@ -267,7 +284,9 @@ void qMRMLNodeSelector::onAdd()
   QCTK_D(qMRMLNodeSelector);
   
   // Create the MRML node via the MRML Scene
-  vtkMRMLNode * _node = d->MRMLNodeFactory->createNode(this->nodeType());
+  // FIXME, for the moment we create only nodes of the first type, but we should
+  // be able to add a node of any type in NodeTypes
+  vtkMRMLNode * _node = d->MRMLNodeFactory->createNode(d->NodeTypes[0]);
   // The created node is appended at the bottom of the current list  
   Q_ASSERT(_node);
   if (_node && this->selectNodeUponCreation())

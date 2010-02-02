@@ -85,8 +85,10 @@
         </item>
         <item row="0" column="1">
          <widget class="qMRMLNodeSelector" name="AngleNodeSelector">
-          <property name="NodeType">
-           <string>vtkMRMLMeasurementsAngleNode</string>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLMeasurementsAngleNode</string>
+           </stringlist>
           </property>
          </widget>
         </item>
