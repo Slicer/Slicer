@@ -358,6 +358,12 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
 {
   // avoid warning
   dim0 = dim1;
+
+  if (xyToijk)
+  {
+    vtkMRIBiasFieldCorrectionLogic_DebugMacro("xyToijk " << *xyToijk);
+  }
+
   return;
 }
 #if 0
