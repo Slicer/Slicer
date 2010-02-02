@@ -63,6 +63,11 @@ public:
   /// Called by 'DoCallback' to emit signal
   void Execute(vtkObject* vtk_obj, unsigned long vtk_event, void* client_data, void* call_data);
 
+  /// 
+  /// The flag is set to true in Execute if the vtkObject emitted a DeleteEvent event.
+  /// This tells that the object will delete itself at the end of Execute(). Knowing
+  /// that information can be useful to prevent a multiple deletion of the same object
+  bool isAboutToBeDeleted() const;
 
 signals:
   /// 
@@ -81,6 +86,7 @@ protected slots:
 protected:
   void EstablishConnection();
   void BreakConnection();
+
 
 private:
   QCTK_DECLARE_PRIVATE(qVTKConnection);

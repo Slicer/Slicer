@@ -42,7 +42,8 @@ public:
   int                                 SlotType;
   bool                                Established;
   bool                                Blocked;
-  QString                             Id; 
+  QString                             Id;
+  bool                                AboutToBeDeleted;
 };
 
 //-----------------------------------------------------------------------------
@@ -305,7 +306,18 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
 {
   QCTK_D(qVTKConnection);
   
-  if (d->Blocked) { return; }
+  if (d->Blocked) 
+    { 
+    return; 
+    }
+  
+  if (vtk_event == vtkCommand::DeleteEvent)
+    {
+    // we don't want that the slots (connected to the signals we emit below) 
+    // delete our qVTKConnection object (via qVTKObjectEvent::removeConnection)
+    d->AboutToBeDeleted = true;
+    }
+
   if(vtk_event != vtkCommand::DeleteEvent ||
      (vtk_event == vtkCommand::DeleteEvent && d->VTKEvent == vtkCommand::DeleteEvent))
     {
@@ -342,9 +354,18 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
   if(vtk_event == vtkCommand::DeleteEvent)
     {
     //qDebug("--------------------------> qVTKConnection::Execute - removeConnection <--------------------------");
-    d->Parent->removeConnection(d->VTKObject, d->VTKEvent,
-                                d->QtObject, d->QtSlot.toLatin1().data());
+    //d->Parent->removeConnection(d->VTKObject, d->VTKEvent,
+    //                            d->QtObject, d->QtSlot.toLatin1().data());
+    // now we reset AboutToBeDeleted to let the observer kill ourself
+    d->AboutToBeDeleted = false;
+    this->deleteConnection();
     }
+}
+
+//-----------------------------------------------------------------------------
+bool qVTKConnection::isAboutToBeDeleted()const
+{
+  return qctk_d()->AboutToBeDeleted;
 }
 
 //-----------------------------------------------------------------------------
@@ -370,6 +391,7 @@ qVTKConnectionPrivate::qVTKConnectionPrivate()
   this->Established = false;
   this->Blocked     = false;
   this->Id          = Self::convertPointerToString(this);
+  this->AboutToBeDeleted = false;
 }
 
 //-----------------------------------------------------------------------------

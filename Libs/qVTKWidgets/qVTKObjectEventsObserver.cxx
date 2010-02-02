@@ -319,25 +319,13 @@ void qVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lon
     all_info = false;
     }
 
-  //QMutableListIterator<qVTKConnection*> i(d->ConnectionList);
-  //while (i.hasNext())
-  //  {
-  //  i.next();
-  //  qVTKConnection * connection = i.value();
   QStringList connectionToRemove;
   foreach (qVTKConnection* connection, d->ConnectionMap.values())
     {
-    //qDebug() << "d->MRMLTransformNode - InLoop(" << vtk_obj << ") ="
-    //         << connection->getShortDescription();
     if (connection->IsEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
       {
       connectionToRemove << connection->GetId();
-//       connection->SetEstablished(false);
-//       delete connection;
-//       i.remove();
-//       if (all_info){ i.toBack(); }
       if (all_info){ break; }
-      //qDebug() << "----> REMOVED";
       }
     }
 
@@ -346,9 +334,7 @@ void qVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lon
     {
     qVTKConnection* connection = d->ConnectionMap[id];
     Q_ASSERT(connection);
-    connection->SetEstablished(false);
-    delete connection;
-    d->ConnectionMap.remove(id);
+    this->removeConnection(connection);
     }
 }
 
@@ -379,11 +365,15 @@ qVTKConnection* qVTKObjectEventsObserver::findConnection(vtkObject* vtk_obj, uns
 void qVTKObjectEventsObserver::removeConnection(qVTKConnection* connection)
 {
   QCTK_D(qVTKObjectEventsObserver);
-  
-  if (!connection) { return; }
-  d->ConnectionMap.remove(connection->GetId());
+  // there is no need to remove the connection if the connection itself says that
+  // it is about to get deleted. We trust the connection :-)
+  if (!connection || connection->isAboutToBeDeleted())
+    {
+    return; 
+    }
+  connection->SetEstablished(false);
   delete connection;
-  //d->ConnectionList.removeAt(d->ConnectionList.indexOf(connection));
+  d->ConnectionMap.remove(connection->GetId());
 }
 
 //-----------------------------------------------------------------------------
