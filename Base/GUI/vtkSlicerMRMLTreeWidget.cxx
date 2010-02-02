@@ -19,6 +19,7 @@
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWTopLevel.h"
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -26,7 +27,11 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
+#include "vtkMRMLArrayPlotNode.h"
+#include "vtkMRMLXYPlotManagerNode.h"
 
+#include "vtkSlicerXYPlotWidget.h"
 #include "vtkSlicerApplication.h"
 
 //---------------------------------------------------------------------------
@@ -203,6 +208,11 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
           int index = this->ContextMenu->AddCheckButton("Visibility", this, command);
           this->ContextMenu->SetItemSelectedState(index, vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode()->GetVisibility());
           }
+        if (node != NULL && node->IsA("vtkMRMLDoubleArrayNode"))
+          {
+          sprintf(command, "PlotCallback {%s}", (const char *)callData);
+          int index = this->ContextMenu->AddCommand("Plot", this, command);
+          }
         if (node != NULL)
           {
           sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
@@ -332,6 +342,51 @@ void vtkSlicerMRMLTreeWidget::SelectNodeCallback(const char *id)
   if (node != NULL)
     {
     this->InvokeEvent(vtkSlicerMRMLTreeWidget::SelectedEvent, node);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::PlotCallback(const char * vtkNotUsed(id))
+{
+  // plot the node
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
+    if (node != NULL && node->IsA("vtkMRMLDoubleArrayNode"))
+      {
+        vtkMRMLDoubleArrayNode *dnode = vtkMRMLDoubleArrayNode::SafeDownCast(node);
+
+        vtkMRMLArrayPlotNode *plot = vtkMRMLArrayPlotNode::New();
+        this->GetMRMLScene()->AddNode(plot);
+        plot->SetAndObserveArray(dnode);
+
+        vtkMRMLXYPlotManagerNode *manager = vtkMRMLXYPlotManagerNode::New();
+        this->GetMRMLScene()->AddNode(manager);
+        manager->AddPlotNode(plot);
+    
+        vtkKWTopLevel *top = vtkKWTopLevel::New();
+        top->SetApplication(this->GetApplication());
+        top->Create();
+        
+        vtkSlicerXYPlotWidget *widget = vtkSlicerXYPlotWidget::New();
+        widget->SetParent(top);
+        widget->SetAndObservePlotManagerNode(manager);
+        widget->Create();
+        
+        this->Script ( "pack %s -fill both -expand true",
+                   widget->GetWidgetName() );
+
+        widget->UpdateGraph();
+       
+        top->SetSize(400, 200);
+        top->Display();
+
+        plot->Delete();
+        manager->Delete();
+        // top->Delete(); do I need to keep this around to have it display?
+
+        // what about the widget? when do I delete that? Or will the toplevel delete it?
+      }
     }
 }
 

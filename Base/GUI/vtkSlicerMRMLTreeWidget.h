@@ -82,6 +82,8 @@ public:
   virtual void ToggleVisibilityCallback(const char *id);
   virtual void VisibilityCallback(const char *id, int vis);
 
+  virtual void PlotCallback(const char *id);
+
   virtual void HardenTransformCallback(const char *id);
  
 //BTX
