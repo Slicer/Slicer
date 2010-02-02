@@ -37,6 +37,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLNodeTreeSelector.h
   qMRMLSceneGeneratorButton.cxx
   qMRMLSceneGeneratorButton.h
+  qMRMLSceneFactoryWidget.cxx
+  qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
   qMRMLTransformProxyModel.cxx
@@ -63,6 +65,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
+  qMRMLSceneFactoryWidget.h
   qMRMLSceneGeneratorButton.h
   qMRMLSceneModel.h
   qMRMLTransformProxyModel.h
@@ -74,8 +77,9 @@ SET(qMRMLWidgets_MOC_SRCS
   
 # UI files
 SET(qMRMLWidgets_UI_SRCS
-  Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
+  Resources/UI/qMRMLSceneFactoryWidget.ui
+  Resources/UI/qMRMLTransformSliders.ui
 )
   
 QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})

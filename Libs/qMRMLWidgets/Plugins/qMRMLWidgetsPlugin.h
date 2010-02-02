@@ -9,6 +9,7 @@
 #include "qMRMLNodeTreeSelectorPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeWidgetPlugin.h"
+#include "qMRMLSceneFactoryWidgetPlugin.h"
 #include "qMRMLSceneGeneratorButtonPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -33,6 +34,7 @@ public:
             << new qMRMLNodeTreeSelectorPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
+            << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSceneGeneratorButtonPlugin;
     return plugins;
     }
