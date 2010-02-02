@@ -44,7 +44,6 @@ endif(GenerateLM_FOUND)
 
 SET(modules
   AtlasCreator
-  MRIBiasFieldCorrection
   CommandLineModule
   Editor
   GradientAnisotropicDiffusionFilter
