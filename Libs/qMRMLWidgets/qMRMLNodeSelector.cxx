@@ -1,17 +1,15 @@
-
-#include "qMRMLNodeSelector.h"
+// QT includes
+#include <QDebug>
+#include <QComboBox>
 
 // qMRML includes
 #include "qMRMLNodeFactory.h"
+#include "qMRMLNodeSelector.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLTransformNode.h>
-
-// QT includes
-#include <QDebug>
-#include <QComboBox>
 
 //-----------------------------------------------------------------------------
 class qMRMLNodeSelectorPrivate: public qCTKPrivate<qMRMLNodeSelector>
@@ -103,7 +101,7 @@ vtkMRMLNode* qMRMLNodeSelector::currentNode()const
 }
 
 // --------------------------------------------------------------------------
-const QString qMRMLNodeSelector::currentNodeId() const
+QString qMRMLNodeSelector::currentNodeId() const
 {
   vtkMRMLNode* _currentNode = this->currentNode();
   if (_currentNode)
@@ -176,9 +174,18 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
     this, SLOT(onMRMLSceneNodeAdded(vtkObject*, vtkObject*)));
   
   // Connect MRML scene NodeRemoved event
+  // Note: doesn't handle the case when the scene is deleted
   this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent,
     this, SLOT(onMRMLSceneNodeRemoved(vtkObject*, vtkObject*)));
+  // When the scene is deleted, NodeRemovedEvent is not called. 
+  // onMRMLSceneDeleted should clear the items 
+  this->qvtkReconnect(d->MRMLScene, scene, vtkCommand::DeleteEvent,
+    this, SLOT(onMRMLSceneDeleted(vtkObject*)));
   
+  // clear should be called before d->MRMLScene is changed
+  // to handle signals/slots with the correct scene
+  this->clear();
+
   // the Add button is valid only if the scene is non-empty
   this->setAddEnabled(scene != 0);
   
@@ -276,6 +283,24 @@ void qMRMLNodeSelector::onMRMLNodeModified(vtkObject * caller)
     }
   //qDebug() << "qMRMLNodeSelector::onMRMLNodeModified:" << caller;
   // TODO Check if the name of node changed and update accordingly
+}
+
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeSelector::onMRMLSceneDeleted(vtkObject * scene)
+{
+  QCTK_D(qMRMLNodeSelector);
+  Q_UNUSED(scene);
+  Q_ASSERT(scene == d->MRMLScene);
+  // FIXME:
+  // It's a bit tricky here. The scene has been deleted, but the scene 
+  // destructor has deleted the nodes as well without letting anyone know.
+  // As a result qMRMLNodeSelector is unsynchronized with the scene. We can't
+  // even send signals like nodeAboutToBeRemoved/nodeRemoved. 
+  // As of now, let's block signals/slots and clear the scene. 
+  this->blockSignals(true);
+  this->setMRMLScene(0);
+  this->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------

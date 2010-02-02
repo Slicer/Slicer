@@ -132,6 +132,10 @@ public:
   inline void removeCurrentItem()
     {this->removeItem(this->currentIndex());}
 
+  /// 
+  /// Remove all the items
+  void clear();
+
 signals:
   void currentIndexChanged(int index);
   void activated(int index);

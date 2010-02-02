@@ -71,7 +71,7 @@ public:
 
   /// 
   /// Convenient method returning the current node id
-  const QString currentNodeId() const; 
+  QString currentNodeId() const; 
 
 public slots:
   /// 
@@ -122,6 +122,7 @@ protected slots:
   void onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node); 
   void onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * node); 
   void onMRMLNodeModified(vtkObject * node);
+  void onMRMLSceneDeleted(vtkObject * scene); 
   
   void onCurrentIndexChanged(int index);
   void onItemAdded(int index);

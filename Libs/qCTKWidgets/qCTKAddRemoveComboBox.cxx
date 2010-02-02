@@ -230,6 +230,7 @@ void qCTKAddRemoveComboBox::onRowsRemoved(const QModelIndex & _parent, int start
     return;
     }
 
+  // the combobox is now empty, add the EmptyItem if needed
   if (d->ComboBox->count() == 0)
     {
 //     d->HasEmptyItem = true;
@@ -481,6 +482,18 @@ void qCTKAddRemoveComboBox::removeItem(int index)
     return; 
     }
   d->ComboBox->removeItem(index);
+}
+
+// --------------------------------------------------------------------------
+void qCTKAddRemoveComboBox::clear()
+{
+  QCTK_D(qCTKAddRemoveComboBox);
+  
+  if (d->HasEmptyItem)
+    {
+    return; 
+    }
+  d->ComboBox->clear();
 }
 
 // --------------------------------------------------------------------------
