@@ -352,8 +352,12 @@ ITK2VTKConnectorFilterType::New();
   vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
-void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double dim0,double dim1)
+//----------------------------------------------------------------------------
+void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
+    double dim0, double dim1)
 {
+  // avoid warning
+  dim0 = dim1;
   return;
 }
 #if 0
