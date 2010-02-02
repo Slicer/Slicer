@@ -503,7 +503,7 @@ int main( int argc, char * argv[] )
       {
       m = metric->GetValue(p);
       }
-    catch (itk::ExceptionObject & e)
+    catch (itk::ExceptionObject&)
       {
       // Let m = 0
       }
