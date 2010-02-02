@@ -30,14 +30,16 @@ class qSlicerModuleManagerPrivate: public qCTKPrivate<qSlicerModuleManager>
 public:
   QCTK_DECLARE_PUBLIC(qSlicerModuleManager);
 
-  // Description:
-  // Handle post-load initialization
+  ///
+  /// Handle post-load initialization
   void onModuleLoaded(qSlicerAbstractModule* module);
 
   typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
   typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
 
-  QHash<QString, qSlicerAbstractModule*> ModuleList;  // Store Pair<ModuleName, ModuleObject>
+  ///
+  /// Store Pair<ModuleName, ModuleObject>
+  QHash<QString, qSlicerAbstractModule*> ModuleList;  
   qSlicerModuleFactoryManager            ModuleFactoryManager;
 };
 

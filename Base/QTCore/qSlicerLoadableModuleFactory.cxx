@@ -33,8 +33,8 @@ public:
     {
     }
 
-  // Description:
-  // Return a list of module paths
+  ///
+  /// Return a list of module paths
   QStringList modulePaths() const;
 };
 

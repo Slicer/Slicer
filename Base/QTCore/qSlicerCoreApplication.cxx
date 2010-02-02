@@ -67,35 +67,35 @@ public:
     if (this->CoreIOManager) { delete this->CoreIOManager; }
     }
 
-  // Description:
-  // Given the program name, should return Slicer Home Directory
+  ///
+  /// Given the program name, should return Slicer Home Directory
   void discoverSlicerHomeDirectory(const QString& programName);
 
-  // Description:
-  // Given the program name, attempt to return the corresponding binary directory
+  ///
+  /// Given the program name, attempt to return the corresponding binary directory
   QString discoverSlicerBinDirectory(const QString& programName);
 
-  // Description:
-  // Accept argument of the form "FOO=BAR" and update the process environment
+  ///
+  /// Accept argument of the form "FOO=BAR" and update the process environment
   int putEnv(const QString& value);
 
-  // Description:
-  // MRMLScene and AppLogic pointers
+  ///
+  /// MRMLScene and AppLogic pointers
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
 
   QString                              SlicerHome;
 
-  // Description:
-  // ModuleManager - It should exist only one instance of the factory
+  ///
+  /// ModuleManager - It should exist only one instance of the factory
   qSlicerModuleManager*                ModuleManager;
 
-  // Description:
-  // IOManager - It should exist only one instance of the factory
+  ///
+  /// IOManager - It should exist only one instance of the factory
   qSlicerCoreIOManager*                CoreIOManager;
 
-  // For ::PutEnv
-  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
+  /// For ::PutEnv
+  /// See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
   struct DeletingCharVector : public QVector<char*>
   {
     ~DeletingCharVector()
@@ -107,12 +107,12 @@ public:
       }
   };
 
-  // On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
-  // IntDir should be set to either Debug,
-  // Release, RelWithDebInfo, MinSizeRel or any other custom build type.
+  /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
+  /// IntDir should be set to either Debug,
+  /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString            IntDir;
 
-  // Indicate if initialize() method has been called.
+  /// Indicate if initialize() method has been called.
   bool               Initialized; 
   
 };

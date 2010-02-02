@@ -23,8 +23,8 @@ public:
   QCTK_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
   qSlicerCoreModuleFactoryPrivate(){}
 
-  // Description:
-  // Add a module class to the core module factory
+  ///
+  /// Add a module class to the core module factory
   template<typename ClassType>
   void registerCoreModule();
 };
