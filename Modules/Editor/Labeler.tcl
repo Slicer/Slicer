@@ -369,7 +369,7 @@ itcl::body Labeler::buildOptions { } {
 
   $this setMRMLDefaults
 
-  set o(paintOver) [vtkKWCheckButtonWithLabel New]
+  set o(paintOver) [vtkNew vtkKWCheckButtonWithLabel]
   $o(paintOver) SetParent [$this getOptionsFrame]
   $o(paintOver) Create
   $o(paintOver) SetLabelText "Paint Over: "
@@ -379,7 +379,7 @@ itcl::body Labeler::buildOptions { } {
   pack [$o(paintOver) GetWidgetName] \
     -side top -anchor w -padx 2 -pady 2 
 
-  set o(paintThreshold) [vtkKWCheckButtonWithLabel New]
+  set o(paintThreshold) [vtkNew vtkKWCheckButtonWithLabel]
   $o(paintThreshold) SetParent [$this getOptionsFrame]
   $o(paintThreshold) Create
   $o(paintThreshold) SetLabelText "Threshold Painting: "
@@ -390,7 +390,7 @@ itcl::body Labeler::buildOptions { } {
     -side top -anchor w -padx 2 -pady 2 
 
 
-  set o(paintRange) [vtkKWRange New]
+  set o(paintRange) [vtkNew vtkKWRange]
   $o(paintRange) SetParent [$this getOptionsFrame]
   $o(paintRange) Create
   $o(paintRange) SetLabelText "Threshold"
