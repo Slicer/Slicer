@@ -147,6 +147,10 @@ void qMRMLSceneFactoryWidget::deleteNode()
     return;
     }
   int numNodes = d->MRMLScene->GetNumberOfNodes();
+  if (numNodes == 0)
+    {
+    return;
+    }
   vtkMRMLNode* node = d->MRMLScene->GetNthNode(rand() % numNodes);
   d->MRMLScene->RemoveNode(node);
   // FIXME: disable delete button when there is no more nodes in the scene to delete
@@ -160,6 +164,10 @@ void qMRMLSceneFactoryWidget::deleteNode(const QString& className)
   Q_ASSERT(!className.isEmpty());
   Q_ASSERT(d->MRMLScene != 0);
   int numNodes = d->MRMLScene->GetNumberOfNodesByClass(className.toLatin1().data());
+  if (numNodes == 0)
+    {
+    return;
+    }
   vtkMRMLNode* node = d->MRMLScene->GetNthNodeByClass(rand() % numNodes, className.toLatin1().data());
   d->MRMLScene->RemoveNode(node);
   // FIXME: disable delete button when there is no more nodes in the scene to delete
