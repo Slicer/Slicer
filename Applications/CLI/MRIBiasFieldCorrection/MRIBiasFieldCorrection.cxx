@@ -41,8 +41,11 @@
 #include "itkPluginUtilities.h"
 #include "MRIBiasFieldCorrectionCLP.h"
 
-#define MRIBiasFieldCorrection_DebugMacro(msg) \
-  std::cout << __LINE__ << " MRIBiasFieldCorrection " << msg << std::endl;
+#define MRIBiasFieldCorrection_DebugMacro(msg) std::cout << __LINE__ \
+  << " MRIBiasFieldCorrection " << msg << std::endl;
+
+#define MRIBiasFieldCorrection_ErrorMacro(msg) std::cout << __LINE__ \
+  << " MRIBiasFieldCorrection ERROR: " << msg << std::endl;
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
@@ -52,11 +55,112 @@
 namespace
 {
   //--------------------------------------------------------------------------
-  int BiasFieldCorrection( int argc, char *argv[],
+  int L1BiasFieldCorrection( int argc, char *argv[],
       itk::Image< float, 3 >::Pointer inputImage,
       itk::Image< float, 3 >::Pointer outputImage )
   {
-    MRIBiasFieldCorrection_DebugMacro("BiasFieldCorrection start");
+    MRIBiasFieldCorrection_DebugMacro("L1BiasFieldCorrection start");
+
+    PARSE_ARGS;
+
+    try
+    {
+      typedef itk::Image< float, 3 >             InputImageType;
+      typedef itk::Image< float, 3 >             OutputImageType;
+
+      MRIBiasFieldCorrection_DebugMacro("AlgorithmType " << AlgorithmType);
+
+      const InputImageType::PointType   inputOrigin = inputImage->GetOrigin();
+
+      const InputImageType::SpacingType inputSpacing =
+        inputImage->GetSpacing();
+
+      const InputImageType::DirectionType inputDirection =
+        inputImage->GetDirection();
+
+      MRIBiasFieldCorrection_DebugMacro("inputOrigin " << inputOrigin);
+      MRIBiasFieldCorrection_DebugMacro("inputSpacing " << inputSpacing);
+      MRIBiasFieldCorrection_DebugMacro("inputDirection\n" << inputDirection);
+
+      typedef itk::ImageToVTKImageFilter<InputImageType> ConvertITKtoVTKType;
+
+      ConvertITKtoVTKType::Pointer convertITKtoVTK =
+        ConvertITKtoVTKType::New();
+
+      convertITKtoVTK->SetInput( inputImage );
+      convertITKtoVTK->Update();
+
+      int wholeExtent[6];
+      double bounds[6];
+
+      convertITKtoVTK->GetOutput()->GetWholeExtent(wholeExtent);
+      convertITKtoVTK->GetOutput()->GetBounds(bounds);
+
+      MRIBiasFieldCorrection_DebugMacro("inputImage wholeExtent "
+          << wholeExtent[0] << " " << wholeExtent[1] << " "
+          << wholeExtent[2] << " " << wholeExtent[3] << " "
+          << wholeExtent[4] << " " << wholeExtent[5]
+          << " bounds "
+          << bounds[0] << " " << bounds[1] << " " << bounds[2] << " "
+          << bounds[3] << " " << bounds[4] << " " << bounds[5]);
+
+      if (wholeExtent[0] >= wholeExtent[1] ||
+          wholeExtent[2] >= wholeExtent[3] ||
+          wholeExtent[4] >= wholeExtent[5] )
+      {
+        MRIBiasFieldCorrection_ErrorMacro("inputImage wholeExtent "
+            << wholeExtent[0] << " " << wholeExtent[1] << " "
+            << wholeExtent[2] << " " << wholeExtent[3] << " "
+            << wholeExtent[4] << " " << wholeExtent[5]);
+        return 0;
+      }
+
+      if (bounds[0] >= bounds[1] ||
+          bounds[2] >= bounds[3] ||
+          bounds[4] >= bounds[5])
+      {
+        MRIBiasFieldCorrection_ErrorMacro("inputImage bounds "
+            << bounds[0] << " " << bounds[1] << " " << bounds[2] << " "
+            << bounds[3] << " " << bounds[4] << " " << bounds[5]);
+        return 0;
+      }
+
+      //itk::PluginFilterWatcher watchShrinker(shrinker, "Shrink image",
+        //CLPProcessInformation);
+
+      MRIBiasFieldCorrection_DebugMacro("float pointer");
+
+      float *ptr =
+        static_cast<float*>(convertITKtoVTK->GetOutput()->GetScalarPointer());
+
+      MRIBiasFieldCorrection_DebugMacro("ImageRegionIterator");
+
+      itk::ImageRegionIterator<OutputImageType> ItOut( outputImage,
+        outputImage->GetLargestPossibleRegion() );
+
+      for( ItOut.GoToBegin(); !ItOut.IsAtEnd(); ++ptr, ++ItOut )
+      {
+        ItOut.Set( *ptr );
+      }
+
+      MRIBiasFieldCorrection_DebugMacro("Created output image");
+    }
+    catch( itk::ExceptionObject &excep )
+    {
+      std::cerr << argv[0] << " : Exception caught!" << std::endl;
+      std::cerr << excep << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+  }
+
+  //--------------------------------------------------------------------------
+  int N3BiasFieldCorrection( int argc, char *argv[],
+      itk::Image< float, 3 >::Pointer inputImage,
+      itk::Image< float, 3 >::Pointer outputImage )
+  {
+    MRIBiasFieldCorrection_DebugMacro("N3BiasFieldCorrection start");
 
     PARSE_ARGS;
 
@@ -279,8 +383,20 @@ namespace
     outputImage->SetDirection( inputImage->GetDirection() );
     outputImage->Allocate();
 
-    BiasFieldCorrection(argc, argv, castFilter->GetOutput(),
-        outputImage );
+    if (AlgorithmType == "L1")
+    {
+      L1BiasFieldCorrection(argc, argv, castFilter->GetOutput(), outputImage);
+    }
+    else if(AlgorithmType == "N3")
+    {
+      N3BiasFieldCorrection(argc, argv, castFilter->GetOutput(), outputImage);
+    }
+    else
+    {
+      MRIBiasFieldCorrection_ErrorMacro("Algorithm type not implemented: "
+          << AlgorithmType);
+      return EXIT_FAILURE;
+    }
 
     typename WriterType::Pointer writer = WriterType::New();
 
@@ -309,37 +425,37 @@ int main(int argc, char *argv[])
   {
     itk::GetImageType (InputImageFileName, pixelType, componentType);
 
-    float tmp;
+    float dummy = 0.0;
 
     switch (componentType)
     {
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
 
-        return DoIt( argc, argv, static_cast<char>(0), tmp);
+        return DoIt( argc, argv, static_cast<char>(0), dummy);
 
       case itk::ImageIOBase::USHORT:
       case itk::ImageIOBase::SHORT:
 
-        return DoIt( argc, argv, static_cast<short>(0), tmp);
+        return DoIt( argc, argv, static_cast<short>(0), dummy);
 
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
 
-        return DoIt( argc, argv, static_cast<int>(0), tmp);
+        return DoIt( argc, argv, static_cast<int>(0), dummy);
 
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
 
-        return DoIt( argc, argv, static_cast<long>(0), tmp);
+        return DoIt( argc, argv, static_cast<long>(0), dummy);
 
       case itk::ImageIOBase::FLOAT:
 
-          return DoIt( argc, argv, static_cast<float>(0), tmp);
+          return DoIt( argc, argv, static_cast<float>(0), dummy);
 
       case itk::ImageIOBase::DOUBLE:
 
-          return DoIt( argc, argv, static_cast<double>(0), tmp);
+          return DoIt( argc, argv, static_cast<double>(0), dummy);
 
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
 

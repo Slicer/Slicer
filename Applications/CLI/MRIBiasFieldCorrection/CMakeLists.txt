@@ -55,7 +55,9 @@ set_target_properties (${PROJECT_NAME}Module PROPERTIES
 target_link_libraries (${PROJECT_NAME}Module
   ITKIO
   ITKStatistics
-  ITKBasicFilters)
+  ITKBasicFilters
+  vtkIO
+  vtkImaging)
 
 
 #-----------------------------------------------------------------------------
