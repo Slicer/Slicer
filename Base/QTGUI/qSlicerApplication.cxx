@@ -5,15 +5,17 @@
 #include "qSlicerIOManager.h"
 
 // QT includes
-#include <QRect>
-#include <QPalette>
+#include <QCleanlooksStyle>
 #include <QColor>
-#include <QFont>
-#include <QFontInfo>
-#include <QFontDatabase>
-#include <QWidget>
-#include <QMap>
 #include <QDebug>
+#include <QFont>
+#include <QFontDatabase>
+#include <QFontInfo>
+#include <QMap>
+#include <QPalette>
+#include <QRect>
+#include <QStyle>
+#include <QWidget>
 
 #include "vtkSlicerConfigure.h"
 
@@ -37,18 +39,30 @@ void  qSlicerPalette(QPalette& palette)
   palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
 }
 
+
+
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
 {
   public:
   QCTK_DECLARE_PUBLIC(qSlicerApplication);
-  qSlicerApplicationPrivate()
-    {
-    }
+  qSlicerApplicationPrivate();
 
-  // Description:
-  // Initialize application Palette/Font
+  /// 
+  /// Initialize application style
+  void init();
+
+  /// 
+  /// Initialize application style
+  void initStyle();
+
+  ///
+  /// Initialize application palette
+  /// Note: the palette is reset to its default values by initStyle
   void initPalette();
+
+  ///
+  /// Initialize application font
   void initFont();
 
   // Description:
@@ -59,20 +73,88 @@ class qSlicerApplicationPrivate: public qCTKPrivate<qSlicerApplication>
   Qt::WindowFlags               DefaultWindowFlags;
 };
 
+
 //-----------------------------------------------------------------------------
-qSlicerApplication::qSlicerApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
+// qSlicerApplicationPrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerApplicationPrivate::qSlicerApplicationPrivate()
 {
-  QCTK_INIT_PRIVATE(qSlicerApplication);
-  QCTK_D(qSlicerApplication);
-  d->initFont();
-  d->initPalette();
-  d->loadStyleSheet();
+  
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplicationPrivate::init()
+{
+  QCTK_P(qSlicerApplication);
+  this->initStyle();
+  this->initFont();
+  this->initPalette();
+  this->loadStyleSheet();
   
   qSlicerIOManager* _ioManager = new qSlicerIOManager;
   Q_ASSERT(_ioManager);
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
-  this->setCoreIOManager(_ioManager);
+  p->setCoreIOManager(_ioManager);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplicationPrivate::initStyle()
+{
+  QCTK_P(qSlicerApplication);
+  p->setStyle(new QCleanlooksStyle);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplicationPrivate::initPalette()
+{
+  QCTK_P(qSlicerApplication);
+  QPalette myPalette = p->palette();
+  qSlicerPalette(myPalette);
+  p->setPalette(myPalette);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplicationPrivate::initFont()
+{
+  /*
+  QCTK_P(qSlicerApplication);
+  QFont f("Verdana", 9);
+  QFontInfo ff(f);
+  QFontDatabase database;
+  foreach (QString family, database.families())
+    {
+    cout << family.toStdString() << endl;
+    }
+
+  cout << "Family: " << ff.family().toStdString() << endl;
+  cout << "Size: " << ff.pointSize() << endl;
+  p->setFont(f);
+  */
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplicationPrivate::loadStyleSheet()
+{
+//   QCTK_P(qSlicerApplication);
+//   QString styleSheet =
+//     "background-color: white;"
+//     "alternate-background-color: #e4e4fe;";
+//
+//   p->setStyleSheet(styleSheet);
+}
+
+
+//-----------------------------------------------------------------------------
+// qSlicerApplication methods
+
+//-----------------------------------------------------------------------------
+qSlicerApplication::qSlicerApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
+{
+  QCTK_INIT_PRIVATE(qSlicerApplication);
+  QCTK_D(qSlicerApplication);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -155,47 +237,4 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
     {
     d->TopLevelWidgetsSavedVisibilityState[widget] = visible;
     }
-}
-
-//-----------------------------------------------------------------------------
-// qSlicerApplicationPrivate methods
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::initPalette()
-{
-  QCTK_P(qSlicerApplication);
-  QPalette myPalette = p->palette();
-  qSlicerPalette(myPalette);
-  p->setPalette(myPalette);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::initFont()
-{
-  /*
-  QCTK_P(qSlicerApplication);
-  QFont f("Verdana", 9);
-  QFontInfo ff(f);
-  QFontDatabase database;
-  foreach (QString family, database.families())
-    {
-    cout << family.toStdString() << endl;
-    }
-
-  cout << "Family: " << ff.family().toStdString() << endl;
-  cout << "Size: " << ff.pointSize() << endl;
-  p->setFont(f);
-  */
-}//-----------------------------------------------------------------------------
-// Static methods
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::loadStyleSheet()
-{
-//   QCTK_P(qSlicerApplication);
-//   QString styleSheet =
-//     "background-color: white;"
-//     "alternate-background-color: #e4e4fe;";
-//
-//   p->setStyleSheet(styleSheet);
 }
