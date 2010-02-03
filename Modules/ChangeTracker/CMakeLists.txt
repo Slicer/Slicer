@@ -79,7 +79,7 @@ set(ChangeTracker_SRCS
 # Enders work 
 SET(changetracker_libs
   DeformableMetric
-  CommandLineApplicationNew
+  CommandLineApplication
   )
 FOREACH(lib ${changetracker_libs})
   ADD_SUBDIRECTORY(${lib})
