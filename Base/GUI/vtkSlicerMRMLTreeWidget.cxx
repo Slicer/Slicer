@@ -359,11 +359,18 @@ void vtkSlicerMRMLTreeWidget::PlotCallback(const char * vtkNotUsed(id))
         vtkMRMLArrayPlotNode *plot = vtkMRMLArrayPlotNode::New();
         this->GetMRMLScene()->AddNode(plot);
         plot->SetAndObserveArray(dnode);
-
+        plot->SetColor(1, 0, 0);
+        
+        
         vtkMRMLXYPlotManagerNode *manager = vtkMRMLXYPlotManagerNode::New();
         this->GetMRMLScene()->AddNode(manager);
         manager->AddPlotNode(plot);
-    
+        vtkMRMLDoubleArrayNode::LabelsVectorType labels = dnode->GetLabels();
+        manager->SetXLabel(labels.at(0).c_str());
+        manager->SetYLabel(labels.at(1).c_str());
+        manager->SetErrorBarAll(1);
+        manager->SetBackgroundColor(0.8,0.8,1);
+        
         vtkKWTopLevel *top = vtkKWTopLevel::New();
         top->SetApplication(this->GetApplication());
         top->Create();
