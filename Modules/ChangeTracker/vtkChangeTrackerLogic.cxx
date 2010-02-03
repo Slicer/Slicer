@@ -1251,7 +1251,7 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
       growthMaskFilter->Update();
 
       vtkImageMask *shrinkMaskFilter = vtkImageMask::New();
-      shrinkMaskFilter->SetImageInput(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput());
+      shrinkMaskFilter->SetImageInput(this->Analysis_Intensity_ROINegativeBinReal->GetOutput());
       shrinkMaskFilter->SetMaskInput(connectivityMask);
       shrinkMaskFilter->Update();
 
