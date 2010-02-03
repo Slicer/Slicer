@@ -123,7 +123,6 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->TagViewer = NULL;
   this->Notebook = NULL;
   this->SetGUIWidth(-1);
-//  this->DebugOn();
   this->Raised = false;
 
 }
@@ -579,6 +578,8 @@ void vtkFetchMIGUI::ProcessGUIEvents(vtkObject *caller,
         {
         this->MRMLScene->GetDataIOManager()->InvokeEvent ( vtkDataIOManager::DisplayManagerWindowEvent );
         }
+      this->SwallowGUIEvent();
+
       //--- try to post a message....
       if ( this->GetApplication() )
         {
@@ -789,6 +790,23 @@ void vtkFetchMIGUI::ProcessGUIEvents(vtkObject *caller,
         }
       }
     }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::SwallowGUIEvent ( )
+{
+  // swallow the event
+  if (this->GUICallbackCommand != NULL)
+    {
+    this->GUICallbackCommand->SetAbortFlag(1);
+    }
+  else
+    {
+    vtkErrorMacro("Unable to get the gui call back command that calls process widget events; event not swallowed.");
+    }
+
 }
 
 
