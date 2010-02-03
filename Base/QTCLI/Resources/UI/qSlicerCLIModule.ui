@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>431</width>
-        <height>111</height>
+        <width>429</width>
+        <height>101</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -51,6 +51,9 @@
         <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget">
          <property name="text">
           <string>Module Title</string>
+         </property>
+         <property name="contentsFrameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="VerticalLayout">
           <property name="spacing">
@@ -93,7 +96,7 @@
                 <string>vtkMRMLCommandLineModuleNode</string>
                </stringlist>
               </property>
-              <property name="ShowHidden">
+              <property name="ShowHidden" stdset="0">
                <bool>true</bool>
               </property>
              </widget>

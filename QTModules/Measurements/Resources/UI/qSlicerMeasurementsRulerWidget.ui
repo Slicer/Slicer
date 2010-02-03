@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>475</width>
-    <height>308</height>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,9 @@
      <property name="text">
       <string>Modify All Ruler Nodes</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="qCTKTitleComboBox" name="AllRulersVisibilityComboBox">
@@ -30,7 +33,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
           <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
         <item>
@@ -38,7 +41,7 @@
           <string>All Rulers Visible</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
            <normaloff>:/Icons/Visible.png</normaloff>:/Icons/Visible.png</iconset>
          </property>
         </item>
@@ -47,7 +50,7 @@
           <string>All Rulers Invisible</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
            <normaloff>:/Icons/Invisible.png</normaloff>:/Icons/Invisible.png</iconset>
          </property>
         </item>
@@ -73,6 +76,9 @@
     <widget class="qCTKCollapsibleButton" name="ModifySelectedRulerNodesGroupBox">
      <property name="text">
       <string>Modify Selected Ruler Nodes</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>

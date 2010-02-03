@@ -22,6 +22,9 @@
      <property name="text">
       <string>Ruler Widget</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="topMargin">
        <number>0</number>
@@ -43,6 +46,9 @@
      <property name="text">
       <string>Angle Widget</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="topMargin">
        <number>0</number>
@@ -63,6 +69,9 @@
     <widget class="qCTKCollapsibleButton" name="TransformWidgetGroupBox">
      <property name="text">
       <string>Transform Widget</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" rowspan="2">

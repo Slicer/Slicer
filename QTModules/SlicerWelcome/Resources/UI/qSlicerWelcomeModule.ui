@@ -19,6 +19,9 @@
      <property name="text">
       <string>Welcome &amp;&amp; About</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
        <number>0</number>
@@ -57,6 +60,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
@@ -97,6 +103,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="spacing">
        <number>0</number>
@@ -135,6 +144,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <property name="spacing">
@@ -175,6 +187,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_13">
       <property name="spacing">
        <number>0</number>
@@ -210,6 +225,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <property name="spacing">
@@ -250,6 +268,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <property name="spacing">
        <number>0</number>
@@ -288,6 +309,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_7">
       <property name="spacing">
@@ -328,6 +352,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_8">
       <property name="spacing">
        <number>0</number>
@@ -366,6 +393,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_9">
       <property name="spacing">
@@ -406,6 +436,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_10">
       <property name="spacing">
        <number>0</number>
@@ -444,6 +477,9 @@
      </property>
      <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_11">
       <property name="spacing">

@@ -28,6 +28,9 @@ QString qCTKCollapsibleButtonPlugin::domXml() const
           " <property name=\"text\">"
           "  <string>CollapsibleButton</string>"
           " </property>"
+          " <property name=\"contentsFrameShape\">"
+          "  <enum>QFrame::StyledPanel</enum>"
+          " </property>"
           "</widget>\n";
 }
 

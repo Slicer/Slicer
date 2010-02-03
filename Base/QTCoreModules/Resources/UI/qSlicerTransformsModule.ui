@@ -29,6 +29,9 @@
      <property name="text">
       <string>Load</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QPushButton" name="LoadTransformPushButton">
@@ -63,6 +66,9 @@
      </property>
      <property name="text">
       <string>Display &amp;&amp; Edit</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="contentsLineWidth">
       <number>0</number>

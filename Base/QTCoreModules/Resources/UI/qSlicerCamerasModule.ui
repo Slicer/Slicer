@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>96</height>
+    <height>98</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,9 @@
     <widget class="qCTKCollapsibleButton" name="CameraCollapsibleWidget">
      <property name="text">
       <string>Camera</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">

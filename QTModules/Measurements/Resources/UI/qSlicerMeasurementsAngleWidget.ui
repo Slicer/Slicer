@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>473</width>
-    <height>339</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,9 @@
      <property name="text">
       <string>Modify All Angle Nodes</string>
      </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="qCTKTitleComboBox" name="AllAnglesVisibilityComboBox">
@@ -29,7 +32,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../qSlicerMeasurementsModule.qrc">
+         <iconset>
           <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
         <item>
@@ -37,7 +40,7 @@
           <string>All Rulers Visible</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerMeasurementsModule.qrc">
+          <iconset>
            <normaloff>:/Icons/Visible.png</normaloff>:/Icons/Visible.png</iconset>
          </property>
         </item>
@@ -46,7 +49,7 @@
           <string>All Rulers Invisible</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerMeasurementsModule.qrc">
+          <iconset>
            <normaloff>:/Icons/Invisible.png</normaloff>:/Icons/Invisible.png</iconset>
          </property>
         </item>
@@ -72,6 +75,9 @@
     <widget class="qCTKCollapsibleButton" name="ModifySelectedAngleNodeGroupBox">
      <property name="text">
       <string>Modify Selected Angle Node</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -309,15 +315,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qCTKCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>qCTKCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qCTKCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qCTKCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
