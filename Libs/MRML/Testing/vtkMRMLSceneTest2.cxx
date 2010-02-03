@@ -17,6 +17,18 @@
 
 #include "TestingMacros.h"
 
+void printNode(vtkObject *vtkNotUsed(vtkcaller), unsigned long vtkNotUsed(eid), void *vtkNotUsed(clientdata), void *calldata)
+{
+  vtkObject* object = reinterpret_cast<vtkObject*>(calldata);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(object);
+  if (node == 0)
+    {
+    std::cout << "node invalid" << std::endl;
+    return;
+    }
+  std::cout << "  " << node->GetName() << std::endl;
+}
+
 int vtkMRMLSceneTest2(int argc, char * argv [] )
 {
   if( argc < 2 )
@@ -27,7 +39,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer< vtkMRMLScene > scene = vtkSmartPointer< vtkMRMLScene >::New();
+  vtkMRMLScene* scene = vtkMRMLScene::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( scene );
 
@@ -40,12 +52,21 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   std::cout << collection->GetNumberOfItems() << std::endl;
 
   std::cout << "List of Node Names in this Scene" << std::endl;
+  scene->InitTraversal();
   vtkMRMLNode * nodePtr = scene->GetNextNode();
-  while( nodePtr != NULL )
+  while( nodePtr != 0 )
     {
-    std::cout << nodePtr->GetName() << std::endl;
+    std::cout << " " << nodePtr->GetName() << std::endl;
     nodePtr = scene->GetNextNode();
     }
+  
+  vtkSmartPointer<vtkCallbackCommand> nodeRemovedCallback = 
+    vtkSmartPointer<vtkCallbackCommand>::New();
+  nodeRemovedCallback->SetCallback(printNode);
+  scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, nodeRemovedCallback);
+  std::cout << "Delete Scene" << std::endl;
+  scene->Delete();
+  
 
   return EXIT_SUCCESS;
 }
