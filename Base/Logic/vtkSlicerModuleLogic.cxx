@@ -14,6 +14,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSlicerModuleLogic.h"
+//#include "vtkSlicerApplication.h"
 
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
@@ -285,6 +286,11 @@ vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
 
     } // end of looping over dirs
 
+  // Save the URL and root directory of the scene so it can
+  // be restored after loading presets
+  std::string url = scene->GetURL();
+  std::string rootdir = scene->GetRootDirectory();
+
   // Finally, load each of the parameter sets
   vtksys_stl::vector<vtksys_stl::string>::iterator fit;
   for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
@@ -292,4 +298,8 @@ vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
     scene->SetURL( (*fit).c_str() );
     scene->Import();
     }
+
+  // restore URL and root dir
+  scene->SetURL(url.c_str());
+  scene->SetRootDirectory(rootdir.c_str());
 }
