@@ -29,14 +29,10 @@ SET(qMRMLWidgets_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
-  qMRMLNodeFactoryButton.cxx
-  qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.cxx
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.cxx
   qMRMLNodeTreeSelector.h
-  qMRMLSceneGeneratorButton.cxx
-  qMRMLSceneGeneratorButton.h
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
@@ -62,11 +58,9 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
   qMRMLNodeFactory.h
-  qMRMLNodeFactoryButton.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
   qMRMLSceneFactoryWidget.h
-  qMRMLSceneGeneratorButton.h
   qMRMLSceneModel.h
   qMRMLTransformProxyModel.h
   qMRMLTreeProxyModel.h

@@ -10,8 +10,7 @@
 =========================================================================auto=*/
 
 // qMRML includes
-#include "qMRMLNodeFactoryButton.h"
-#include "qMRMLSceneGeneratorButton.h"
+#include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLTreeProxyModel.h"
 #include "qMRMLTransformProxyModel.h"
@@ -40,61 +39,58 @@ int qMRMLTransformProxyModelTest1(int argc, char * argv [] )
     qMRMLSceneModel model(0);
     qCTKModelTester tester(&model);
 
-    qMRMLSceneGeneratorButton sceneGenerator(0);
-    sceneGenerator.generateScene();
+    qMRMLSceneFactoryWidget sceneFactory(0);
+    sceneFactory.generateScene();
 
-    model.setMRMLScene(sceneGenerator.mrmlScene());
-    if (model.mrmlScene() != sceneGenerator.mrmlScene())
+    model.setMRMLScene(sceneFactory.mrmlScene());
+    if (model.mrmlScene() != sceneFactory.mrmlScene())
       {
       //std::cerr << "Scene not set." << std::endl;
       return EXIT_FAILURE;
       }
     // check one more time, just to make sure a reset works correctly
-    model.setMRMLScene(sceneGenerator.mrmlScene());
+    model.setMRMLScene(sceneFactory.mrmlScene());
 
-    qMRMLNodeFactoryButton nodeFactory(0);
-    nodeFactory.setMRMLScene(sceneGenerator.mrmlScene());
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.generateRandomNode();
-  
-    nodeFactory.deleteRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.deleteNode();
+    sceneFactory.deleteNode();
   
     qMRMLTransformProxyModel transformModel(0);
     qCTKModelTester transformTester(&transformModel);
   
     transformModel.setSourceModel(&model);
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.generateRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
   
-    nodeFactory.deleteRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.deleteNode();
+    sceneFactory.deleteNode();
 
     for( int i = 0; i < 100; ++i)
       {
-      nodeFactory.deleteRandomNode();
+      sceneFactory.deleteNode();
       }
     for( int i = 0; i < 100; ++i)
       {
-      nodeFactory.generateRandomNode();
+      sceneFactory.generateNode();
       }
     for( int i = 0; i < 99; ++i)
       {
-      nodeFactory.deleteRandomNode();
+      sceneFactory.deleteNode();
       }
     }
   catch (const char* error)

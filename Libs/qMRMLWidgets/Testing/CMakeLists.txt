@@ -7,12 +7,10 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLListWidgetTest1.cxx
   qMRMLMatrixWidgetTest1.cxx
   qMRMLModelTest1.cxx
-  qMRMLNodeFactoryButtonTest1.cxx
   qMRMLNodeFactoryTest1.cxx
   qMRMLNodeSelectorTest1.cxx
   qMRMLNodeTreeSelectorTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
-  qMRMLSceneGeneratorButtonTest1.cxx
   qMRMLSceneModelTest1.cxx
   qMRMLTransformProxyModelTest1.cxx
   qMRMLTransformSlidersTest1.cxx
@@ -44,12 +42,10 @@ SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )
 SIMPLE_TEST( qMRMLListWidgetTest1 )
 SIMPLE_TEST( qMRMLMatrixWidgetTest1 )
 SIMPLE_TEST( qMRMLModelTest1 )
-SIMPLE_TEST( qMRMLNodeFactoryButtonTest1 )
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
 SIMPLE_TEST( qMRMLNodeSelectorTest1 )
 SIMPLE_TEST( qMRMLNodeTreeSelectorTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
-SIMPLE_TEST( qMRMLSceneGeneratorButtonTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLTransformProxyModelTest1 )
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )

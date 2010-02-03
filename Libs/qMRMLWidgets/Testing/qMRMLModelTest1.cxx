@@ -10,8 +10,7 @@
 =========================================================================auto=*/
 
 // qMRML includes
-#include "qMRMLNodeFactoryButton.h"
-#include "qMRMLSceneGeneratorButton.h"
+#include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLTransformProxyModel.h"
 
@@ -39,55 +38,52 @@ int qMRMLModelTest1(int argc, char * argv [] )
     qMRMLSceneModel model(0);
     qCTKModelTester tester(&model);
 
-    qMRMLSceneGeneratorButton sceneGenerator(0);
-    sceneGenerator.generateScene();
+    qMRMLSceneFactoryWidget sceneFactory(0);
+    sceneFactory.generateScene();
 
-    model.setMRMLScene(sceneGenerator.mrmlScene());
-    model.setMRMLScene(sceneGenerator.mrmlScene());
+    model.setMRMLScene(sceneFactory.mrmlScene());
+    model.setMRMLScene(sceneFactory.mrmlScene());
 
-    qMRMLNodeFactoryButton nodeFactory(0);
-    nodeFactory.setMRMLScene(sceneGenerator.mrmlScene());
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.generateRandomNode();
-  
-    nodeFactory.deleteRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.deleteNode();
+    sceneFactory.deleteNode();
   
     qMRMLTransformProxyModel TreeModel(0);
     qCTKModelTester TreeTester(&TreeModel);
   
     TreeModel.setSourceModel(&model);
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.deleteNode();
   
-    nodeFactory.generateRandomNode();
-    nodeFactory.generateRandomNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
   
-    nodeFactory.deleteRandomNode();
-    nodeFactory.deleteRandomNode();
+    sceneFactory.deleteNode();
+    sceneFactory.deleteNode();
 
     for( int i = 0; i < 100; ++i)
       {
-      nodeFactory.deleteRandomNode();
+      sceneFactory.deleteNode();
       }
     for( int i = 0; i < 100; ++i)
       {
-      nodeFactory.generateRandomNode();
+      sceneFactory.generateNode();
       }
     for( int i = 0; i < 99; ++i)
       {
-      nodeFactory.deleteRandomNode();
+      sceneFactory.deleteNode();
       }
     }
   catch (const char* error)
