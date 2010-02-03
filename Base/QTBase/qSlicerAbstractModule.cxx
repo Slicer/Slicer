@@ -71,16 +71,11 @@ qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
 QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* appLogic)
+void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* _appLogic)
 {
-  this->setAppLogic(appLogic);
-
-  vtkSlicerLogic* moduleLogic = this->logic();
-  if (moduleLogic)
-    {
-    //moduleLogic->initialize();
-    }
-  this->setup();
+  this->setAppLogic(_appLogic);
+  this->logic(); // Required to instanciate moduleLogic
+  this->setup(); // Setup is a virtual pure method overloaded in subclass
 }
 
 //-----------------------------------------------------------------------------
@@ -136,6 +131,8 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
     return; 
     }
   d->MRMLScene = _mrmlScene;
+  // Since we don't want 'setMRMLScene' to instanciate explicitly the logic,
+  // we just check the pointer (instead of calling 'this->logic()')
   if (d->Logic)
     {// logic should be updated first (because it doesn't depends on the widget
     d->Logic->SetMRMLScene(_mrmlScene);
@@ -169,9 +166,14 @@ QCTK_SET_CXX(qSlicerAbstractModule, bool, setEnabled, Enabled);
 qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 {
   QCTK_D(qSlicerAbstractModule);
-  
-  // If required, create module logic
-  this->logic();
+
+  // Since 'logic()' should have been called in 'initialize(), let's make
+  // sure the 'logic()' method call is consistent and won't create a
+  // diffent logic object
+#ifndef QT_NO_DEBUG // Required to avoid undefined variable warning
+  vtkSlicerLogic* currentLogic = d->Logic;
+  Q_ASSERT(currentLogic == this->logic());
+#endif
 
   // If required, create widgetRepresentation
   if (!d->WidgetRepresentation)
@@ -199,11 +201,18 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 vtkSlicerLogic* qSlicerAbstractModule::logic()
 {
   QCTK_D(qSlicerAbstractModule);
+  
+  // Return a logic object is one already exists
   if (d->Logic)
     {
     return d->Logic;
     }
+  // Attempt to create a logic object
   d->Logic.TakeReference(this->createLogic());
+  
+  // If createLogic return a valid object, set its Scene and AppLogic
+  // Note also that, in case no logic is associated with the module,
+  // 'createLogic()' could return 0
   if (d->Logic)
     {
     vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
