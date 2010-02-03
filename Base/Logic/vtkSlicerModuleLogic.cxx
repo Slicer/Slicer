@@ -14,7 +14,6 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSlicerModuleLogic.h"
-//#include "vtkSlicerApplication.h"
 
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
