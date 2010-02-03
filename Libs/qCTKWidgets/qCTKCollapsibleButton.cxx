@@ -14,15 +14,16 @@
 
 #include "qCTKCollapsibleButton.h"
 
-#include <QStyle>
-#include <QPushButton>
-#include <QDebug>
-#include <QPainter>
-#include <QStyleOptionButton>
 #include <QApplication>
-#include <QStyleOptionFrameV3>
-#include <QMouseEvent>
+#include <QCleanlooksStyle>
+#include <QDebug>
 #include <QLayout>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPushButton>
+#include <QStyle>
+#include <QStyleOptionButton>
+#include <QStyleOptionFrameV3>
 
 //-----------------------------------------------------------------------------
 class qCTKCollapsibleButtonPrivate : public qCTKPrivate<qCTKCollapsibleButton>
@@ -415,7 +416,16 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * _event)
   // Draw Frame around contents
   QStyleOptionFrameV3 f;
   f.init(this);
-  f.rect.setTop(buttonHeight);
+  // HACK: on some styles, the frame doesn't exactly touch the button.
+  // this is because the button has some kind of extra border. 
+  if (qobject_cast<QCleanlooksStyle*>(this->style()) != 0)
+    {
+    f.rect.setTop(buttonHeight - 1);
+    }
+  else
+    {
+    f.rect.setTop(buttonHeight);
+    }
   f.frameShape = d->ContentsFrameShape;
   switch (d->ContentsFrameShadow)
     {
