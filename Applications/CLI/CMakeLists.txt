@@ -637,6 +637,7 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 ###################
 
 SET(cli_modules
+  MRIBiasFieldCorrection
   SparseFieldLevelSetContour
   Realign
   DiffusionApplications

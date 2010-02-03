@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <title>MRI Bias Field Correction</title>
+  <description>Corrects 3D MRI images corrupted by MRI gain field effect.  This module removes the slow-varying intensity variation from a 3D image.  The output image has a higher contrast locally and the visualization and reading of the image are improved.  This is an important pre-processinbg step for image operations requiring intensity perfect images, such as the Expectation Maximization segmentation (see EMSegment).</description>
+  <version>0.1.0.$Revision: 0 $(alpha)</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:MRIBiasFieldCorrection-Documentation-3.5</documentation-url>
+  <license>3D Slicer license</license>
+  <contributor>Sylvain Jaume (MIT)</contributor>
+  <acknowledgements>This work was supported by the National Alliance for Medical Image Computing (NA-MIC).</acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <image>
+      <name>InputImageFileName</name>
+      <label>Input Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input image</description>
+    </image>
+
+    <image type="label">
+      <name>InputMaskFileName</name>
+      <label>Input Mask</label>
+      <channel>input</channel>
+      <index>2</index>
+      <description>Input mask</description>
+    </image>
+
+    <image>
+      <name>OutputImageFileName</name>
+      <label>Output Image</label>
+      <channel>output</channel>
+      <index>3</index>
+      <description>Contrast enhanced image</description>
+    </image>
+
+  </parameters>
+
+  <parameters>
+    <label>MRI bias field correction parameters</label>
+    <description>Parameters for MRI bias field correction</description>
+
+    <string-enumeration>
+      <name>AlgorithmType</name>
+      <longflag>type</longflag>
+      <label>Algorithm type</label>
+      <description>Select your algorithm</description>
+      <default>N3</default>
+      <element>L1</element>
+      <element>N3</element>
+      <element>TMI</element>
+    </string-enumeration>
+
+   <integer>
+      <name>ShrinkFactor</name>
+      <longflag>shrinkFactor</longflag>
+      <label>Shrink factor</label>
+      <description>Shrink the image by this factor for the N3 algorithm</description>
+      <default>3</default>
+    </integer>
+
+   <integer>
+      <name>MaxNumberOfIterations</name>
+      <longflag>maxNumberOfIterations</longflag>
+      <label>Maximum number of iterations</label>
+      <description>Number of iterations for the N3 algorithm</description>
+      <default>50</default>
+    </integer>
+
+   <integer>
+      <name>NumberOfFittingLevels</name>
+      <longflag>numberOfFittingLevels</longflag>
+      <label>Number of fitting levels</label>
+      <description>Set the number of fitting levels for the N3 algorithm</description>
+      <default>4</default>
+    </integer>
+
+   <double>
+      <name>WienerFilterNoise</name>
+      <longflag>wienerFilterNoise</longflag>
+      <label>Wiener filter noise</label>
+      <description>Set the Wiener filter noise for the N3 algorithm</description>
+      <default>0.1</default>
+    </double>
+
+   <double>
+      <name>FullWidthAtHalfMaximum</name>
+      <longflag>FullWidthAtHalfMaximum</longflag>
+      <label>Bias full width at half maximum</label>
+      <description>Set the bias field full width at half maximum for the N3 algorithm</description>
+      <default>0.70</default>
+    </double>
+
+   <double>
+      <name>ConvergenceThreshold</name>
+      <longflag>convergenceThreshold</longflag>
+      <label>Convergence threshold</label>
+      <description>Set the convergence threshold for the N3 algorithm</description>
+      <default>0.001</default>
+    </double>
+
+  </parameters>
+</executable>
