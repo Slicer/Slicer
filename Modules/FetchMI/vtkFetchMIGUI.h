@@ -81,6 +81,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   //ETX
   virtual void TearDownGUI ( );
   void LoadTclPackage ( );
+  virtual void SwallowGUIEvent();
 
   vtkIntArray *NewObservableEvents();
 

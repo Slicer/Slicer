@@ -205,6 +205,8 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents(vtkObject *caller,
       std::string dtype;
       std::string uri;
 
+      this->SwallowGUIEvent();
+
       //--- try to post a wait message
       if ( this->GetApplication() )
         {
@@ -267,6 +269,24 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents(vtkObject *caller,
     }
   this->UpdateMRML();
 } 
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIFlatResourceWidget::SwallowGUIEvent ( )
+{
+  // swallow the event
+  if (this->GUICallbackCommand != NULL)
+    {
+    this->GUICallbackCommand->SetAbortFlag(1);
+    }
+  else
+    {
+    vtkErrorMacro("Unable to get the gui call back command that calls process widget events; event not swallowed." );
+    }
+}
+
 
 
 //---------------------------------------------------------------------------

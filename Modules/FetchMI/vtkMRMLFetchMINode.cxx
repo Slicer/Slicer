@@ -83,22 +83,36 @@ void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
   //---
   //--- DEVELOPERS NOTE: extend here as new web services are added.
   //---
-  
+  if ( this->GetTagTableCollection() == NULL )
+    {
+     vtkErrorMacro ( "AddTagTablesForWebServices: Got a null TagTableCollection in FetchMINode." );
+     std::string msg = "Unable to create tag tables for Web Services.";
+     this->SetErrorMessage (msg.c_str() );
+     this->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+     return;
+    }
+
    //--- fBIRN HID web services
-   vtkHIDTagTable *hid_tt = vtkHIDTagTable::New();
-   hid_tt->Initialize();
-   this->TagTableCollection->AddTableByName ( hid_tt, "HID" );
-   hid_tt->Delete();
+  if ( ! this->GetTagTableCollection()->FindTagTableByName ("HID") )
+    {
+    vtkHIDTagTable *hid_tt = vtkHIDTagTable::New();
+    hid_tt->Initialize();
+    this->TagTableCollection->AddTableByName ( hid_tt, "HID" );
+    hid_tt->Delete();
+    }
    
-   //--- XNAT Desktop web services
-   //--- here we have one table for all instances of xnat desktop
-   //--- webservices so that users need not re-define tags to mark up
-   //--- data for different remost hosts; just use the same table as a
-   //--- metadata dictionary for all.
-   vtkXNDTagTable *xnd_tt = vtkXNDTagTable::New();
-   xnd_tt->Initialize();
-   this->TagTableCollection->AddTableByName (xnd_tt, "XND" );
-   xnd_tt->Delete();
+  //--- XNAT Desktop web services
+  //--- here we have one table for all instances of xnat desktop
+  //--- webservices so that users need not re-define tags to mark up
+  //--- data for different remost hosts; just use the same table as a
+  //--- metadata dictionary for all.
+  if ( ! this->GetTagTableCollection()->FindTagTableByName ("XND") )
+    {
+    vtkXNDTagTable *xnd_tt = vtkXNDTagTable::New();
+    xnd_tt->Initialize();
+    this->TagTableCollection->AddTableByName (xnd_tt, "XND" );
+    xnd_tt->Delete();
+    }
 }
 
 

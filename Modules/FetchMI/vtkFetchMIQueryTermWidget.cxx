@@ -43,7 +43,6 @@ vtkFetchMIQueryTermWidget::vtkFetchMIQueryTermWidget ( )
     this->FetchMIIcons = NULL;
     this->NumberOfColumns = 3;
     this->InPopulateWidget = 0;
-//    this->DebugOn();
     this->Logic = NULL;
 }
 

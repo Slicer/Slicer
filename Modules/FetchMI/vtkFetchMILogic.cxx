@@ -34,6 +34,9 @@
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 
+#include "itkRealTimeClock.h"
+
+
 #include "vtkHTTPHandler.h"
 #include "vtkHIDHandler.h"
 #include "vtkXNDHandler.h"
@@ -91,6 +94,9 @@ vtkFetchMILogic::vtkFetchMILogic()
   this->ServerCollection = vtkFetchMIServerCollection::New();
   this->CurrentWebService = NULL;
   this->ReservedURI = NULL;
+
+  // Flags infrastructure for performance profiling
+  this->Profiling = false;
 
   // Temporary vars used for parsing xml.
   this->NumberOfTagsOnServer = 0;
@@ -150,6 +156,7 @@ vtkFetchMILogic::vtkFetchMILogic()
 
    this->Visited = false;
    this->Raised = false;
+//   this->DebugOn();
 }
 
 
@@ -2393,8 +2400,16 @@ void vtkFetchMILogic::UpdateMRMLQueryTags()
     }
   if ( this->CurrentWebService->GetTagTable() == NULL )
     {
-    vtkErrorMacro ( "UpdateMRMLQueryTags: CurrentWebService has NULL TagTable.");
-    return;
+    this->GetFetchMINode()->AddTagTablesForWebServices();
+    if ( this->CurrentWebService->GetTagTable() == NULL )
+      {
+      this->GetFetchMINode()->AddTagTablesForWebServices();
+      if ( this->CurrentWebService->GetTagTable() == NULL )
+        {
+        vtkErrorMacro ( "UpdateMRMLQueryTags: CurrentWebService has NULL TagTable.");
+        return;
+        }
+      }
     }
   const char *svr = this->GetCurrentWebService()->GetName();
   if (svr == NULL || !(strcmp(svr, "") ) )
@@ -2776,8 +2791,16 @@ void vtkFetchMILogic::QueryServerForResources ( )
     }
   if ( this->CurrentWebService->GetTagTable() == NULL )
     {
-    vtkErrorMacro ( "QueryServerForResources: got NULL TagTable" );
-    return;
+    this->GetFetchMINode()->AddTagTablesForWebServices();
+    if ( this->CurrentWebService->GetTagTable() == NULL )
+      {
+      this->GetFetchMINode()->AddTagTablesForWebServices();
+      if ( this->CurrentWebService->GetTagTable() == NULL )
+        {
+        vtkErrorMacro ( "QueryServerForResources: got NULL TagTable" );
+        return;
+        }
+      }
     }
   const char *svrName = this->GetCurrentWebService()->GetName();
   if (svrName == NULL || !(strcmp(svrName, "") ) )
@@ -3012,8 +3035,16 @@ void vtkFetchMILogic::RefreshValuesForTag( const char *tagname )
     }
   if ( this->CurrentWebService->GetTagTable() == NULL )
     {
-    vtkErrorMacro ( "RefreshValuesForTag: Got NULL TagTable" );
-    return;
+    this->GetFetchMINode()->AddTagTablesForWebServices();
+    if ( this->CurrentWebService->GetTagTable() == NULL )
+      {    
+      this->GetFetchMINode()->AddTagTablesForWebServices();
+      if ( this->CurrentWebService->GetTagTable() == NULL )
+        {
+        vtkErrorMacro ( "QueryServerForResources: got NULL TagTable" );
+        return;
+        }
+      }
     }
   
   this->ClearExistingValuesForTag(tagname);
@@ -3342,12 +3373,57 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
   //--- handle scene with separate set of methods.
   if ( !(strcmp(slicerDataType, "MRML")))
     {
-    this->RequestSceneDownload ( uri );
+    if (!this->Profiling)
+      {
+      this->RequestSceneDownload ( uri );
+      }
+    else
+      {
+      // TIME TEST BEGIN
+      this->DebugOn();
+      double timeStart = 0.0;
+      double timeStop = 0.0;
+      try
+        {
+        itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
+        timeStart = clock->GetTimeStamp();
+        vtkDebugMacro ( "==============================================================");
+        vtkDebugMacro (<< "-------------------------BEGINNING TIME TEST---------------------------------------" );
+        vtkDebugMacro (<< "Calling initial RequestSceneDownload() method at:" << timeStart << "." );
+        vtkDebugMacro ( "==============================================================");
+        }
+      catch( itk::ExceptionObject  )
+        {
+        vtkErrorMacro ( "Unable to set up time profiling" );
+        throw;    
+        }
+
+      this->RequestSceneDownload ( uri );
+
+      try
+        {
+        itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
+        timeStop = clock->GetTimeStamp();
+        double timeLength = (timeStop - timeStart);
+        vtkDebugMacro ( "==============================================================");
+        vtkDebugMacro (<< "Returned from RequestSceneDownload() method. Entire scene download took: " << timeLength << ".");
+        vtkDebugMacro ( "==============================================================");      
+        }
+      catch( itk::ExceptionObject  )
+        {
+        vtkErrorMacro ( "Unable to set up time profiling" );
+        throw;    
+        }
+      // TIME TEST END
+      this->DebugOff();
+      }
     }
   else 
     {
     //--- someday download other resource types
     }
+  
+
 }
 
 

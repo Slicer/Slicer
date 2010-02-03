@@ -581,6 +581,9 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   bool Visited;
   bool Raised;
 
+  // Description:
+  // Toggles temporary infrastructure for performance profiling.
+  bool Profiling;
 };
 
 

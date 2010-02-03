@@ -68,6 +68,12 @@ public:
 // Description:
   // Display a window that has tips on using the interface.
   virtual void RaiseHelpWindow();
+
+  // Description:
+  // Convenience method that prevents other
+  // listeners from acting on this event once
+  // its callback has been dispatched.
+  virtual void SwallowGUIEvent();
   
   // Description:
   // Selection methods
