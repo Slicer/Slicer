@@ -1356,18 +1356,18 @@ void vtkChangeTrackerLogic::PrintResult(ostream& os, vtkSlicerApplication *app)
     double Total = Growth + Shrinkage;
     os  << "  Intensity Metric: \n";
     os <<  "    Shrinkage: " << floor(-Shrinkage*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
-       << " (" << int(-Shrinkage*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
+       << " (" << (-Shrinkage*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
     os <<  "    Growth: " << floor(Growth*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
-       << " (" << int(Growth*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
+       << " (" << (Growth*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
     os <<  "    Total Change: " << floor(Total*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
-       << " (" << int(Total*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
+       << " (" << (Total*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
   }
   if (this->ChangeTrackerNode->GetAnalysis_Deformable_Flag()) {
     os  << "Analysis based on Deformable Map" << endl;
     os  << "  Segmentation Metric: "<<  floor(this->ChangeTrackerNode->GetAnalysis_Deformable_SegmentationGrowth()*1000)/1000.0 << "mm" << char(179) 
-       << " (" << int(this->ChangeTrackerNode->GetAnalysis_Deformable_SegmentationGrowth()/this->ChangeTrackerNode->GetScan1_VoxelVolume()) << " Voxels)\n";
+       << " (" << (this->ChangeTrackerNode->GetAnalysis_Deformable_SegmentationGrowth()/this->ChangeTrackerNode->GetScan1_VoxelVolume()) << " Voxels)\n";
     os  << "  Jacobian Metric:     "<<  floor(this->ChangeTrackerNode->GetAnalysis_Deformable_JacobianGrowth()*1000)/1000.0 << "mm" << char(179) 
-       << " (" << int(this->ChangeTrackerNode->GetAnalysis_Deformable_JacobianGrowth()/this->ChangeTrackerNode->GetScan1_VoxelVolume()) << " Voxels)\n";
+       << " (" << (this->ChangeTrackerNode->GetAnalysis_Deformable_JacobianGrowth()/this->ChangeTrackerNode->GetScan1_VoxelVolume()) << " Voxels)\n";
   }
 }
 
