@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
