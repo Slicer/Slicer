@@ -52,7 +52,10 @@ slicer3_set_plugins_output_path (${PROJECT_NAME}Module)
 set_target_properties (${PROJECT_NAME}Module PROPERTIES
   COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 
-target_link_libraries (${PROJECT_NAME}Module ITKIO ITKStatistics)
+target_link_libraries (${PROJECT_NAME}Module
+  ITKIO
+  ITKStatistics
+  ITKBasicFilters)
 
 
 #-----------------------------------------------------------------------------

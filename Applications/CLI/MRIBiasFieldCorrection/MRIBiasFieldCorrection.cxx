@@ -35,6 +35,10 @@
 #include "itkBSplineControlPointImageFilter.h"
 #include "itkExpImageFilter.h"
 
+#include "itkImageToVTKImageFilter.h"
+#include "itkVTKImageToImageFilter.h"
+
+#include "itkPluginUtilities.h"
 #include "MRIBiasFieldCorrectionCLP.h"
 
 #define MRIBiasFieldCorrection_DebugMacro(msg) \
@@ -45,185 +49,311 @@
 // thing should be in an anonymous namespace except for the module
 // entry point, e.g. main()
 
-namespace {} // end of anonymous namespace
+namespace
+{
+  //--------------------------------------------------------------------------
+  int BiasFieldCorrection( int argc, char *argv[],
+      itk::Image< float, 3 >::Pointer inputImage,
+      itk::Image< float, 3 >::Pointer outputImage )
+  {
+    MRIBiasFieldCorrection_DebugMacro("BiasFieldCorrection start");
+
+    PARSE_ARGS;
+
+    try
+    {
+      typedef itk::Image< float, 3 >             InputImageType;
+      typedef itk::Image< float, 3 >             OutputImageType;
+
+      typedef unsigned char                      MaskPixelType;
+      typedef itk::Image< MaskPixelType, 3 >     MaskType;
+      typedef itk::ImageFileReader< MaskType >   MaskReaderType;
+
+      MRIBiasFieldCorrection_DebugMacro("AlgorithmType " << AlgorithmType);
+
+      MRIBiasFieldCorrection_DebugMacro("ShrinkFactor " << ShrinkFactor);
+
+      MRIBiasFieldCorrection_DebugMacro("MaximumNumberOfIterations "
+        << MaximumNumberOfIterations);
+
+      MRIBiasFieldCorrection_DebugMacro("NumberOfFittingLevels "
+        << NumberOfFittingLevels);
+
+      MRIBiasFieldCorrection_DebugMacro("WienerFilterNoise "
+        << WienerFilterNoise);
+
+      MRIBiasFieldCorrection_DebugMacro("FullWidthAtHalfMaximum "
+        << FullWidthAtHalfMaximum);
+
+      MRIBiasFieldCorrection_DebugMacro("ConvergenceThreshold "
+        << ConvergenceThreshold);
+
+      MRIBiasFieldCorrection_DebugMacro("MaskReader");
+
+      MaskReaderType::Pointer maskReader = MaskReaderType::New();
+      maskReader->SetFileName( InputMaskFileName.c_str() );
+      maskReader->Update();
+
+      MaskType::Pointer inputMask = maskReader->GetOutput();
+
+      MRIBiasFieldCorrection_DebugMacro("ShrinkImageFilter");
+
+      typedef itk::ShrinkImageFilter<InputImageType, InputImageType>
+        ShrinkerType;
+
+      ShrinkerType::Pointer shrinker = ShrinkerType::New();
+
+      itk::PluginFilterWatcher watchShrinker(shrinker, "Shrink image",
+        CLPProcessInformation);
+
+      shrinker->SetInput( inputImage );
+      shrinker->SetShrinkFactors( ShrinkFactor );
+      shrinker->Update();
+      shrinker->UpdateLargestPossibleRegion();
+
+      MRIBiasFieldCorrection_DebugMacro("BinaryThresholdImageFilter");
+
+      typedef itk::BinaryThresholdImageFilter< InputImageType, MaskType >
+        ThresholdImageFilterType;
+
+      ThresholdImageFilterType::Pointer thresholdImageFilter =
+        ThresholdImageFilterType::New();
+
+      thresholdImageFilter->SetInput( inputImage );
+      thresholdImageFilter->SetLowerThreshold(1);
+      thresholdImageFilter->SetOutsideValue(0);
+      thresholdImageFilter->SetInsideValue(1);
+      thresholdImageFilter->UpdateLargestPossibleRegion();
+
+      MaskType::Pointer maskImage =
+        thresholdImageFilter->GetOutput();
+
+      typedef itk::ShrinkImageFilter< MaskType, MaskType > MaskShrinkerType;
+
+      MaskShrinkerType::Pointer maskShrinker = MaskShrinkerType::New();
+      maskShrinker->SetInput( maskImage );
+      maskShrinker->SetShrinkFactors( ShrinkFactor );
+
+      maskShrinker->Update();
+      maskShrinker->UpdateLargestPossibleRegion();
+
+      MRIBiasFieldCorrection_DebugMacro(
+          "N3MRIBiasFieldCorrectionImageFilter");
+
+      typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType,
+              MaskType, InputImageType> CorrecterType;
+
+      CorrecterType::Pointer correcter = CorrecterType::New();
+      correcter->SetInput( shrinker->GetOutput() );
+      correcter->SetMaskImage( maskShrinker->GetOutput() );
+
+      correcter->SetMaximumNumberOfIterations( MaximumNumberOfIterations );
+      correcter->SetNumberOfFittingLevels( NumberOfFittingLevels );
+      correcter->SetWeinerFilterNoise( WienerFilterNoise );
+      correcter->SetBiasFieldFullWidthAtHalfMaximum( FullWidthAtHalfMaximum );
+      correcter->SetConvergenceThreshold( ConvergenceThreshold );
+      correcter->Update();
+
+      MRIBiasFieldCorrection_DebugMacro("BSplineControlPointImageFilter");
+
+      typedef CorrecterType::BiasFieldControlPointLatticeType
+        PointType;
+      typedef CorrecterType::ScalarImageType ScalarImageType;
+
+      typedef itk::BSplineControlPointImageFilter<PointType, ScalarImageType>
+        BSplinerType;
+
+      BSplinerType::Pointer bspliner = BSplinerType::New();
+      bspliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
+      bspliner->SetSplineOrder( correcter->GetSplineOrder() );
+      bspliner->SetSize( inputImage->GetLargestPossibleRegion().GetSize() );
+      bspliner->SetOrigin( inputImage->GetOrigin() );
+      bspliner->SetDirection( inputImage->GetDirection() );
+      bspliner->SetSpacing( inputImage->GetSpacing() );
+      bspliner->Update();
+
+      MRIBiasFieldCorrection_DebugMacro("logField");
+
+      InputImageType::Pointer logField = InputImageType::New();
+      logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
+      logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
+      logField->SetRegions( bspliner->GetOutput()->GetLargestPossibleRegion().
+          GetSize() );
+      logField->SetDirection( bspliner->GetOutput()->GetDirection() );
+      logField->Allocate();
+
+      MRIBiasFieldCorrection_DebugMacro("ImageRegionIterator");
+
+      itk::ImageRegionIterator<ScalarImageType> ItB( bspliner->GetOutput(),
+          bspliner->GetOutput()->GetLargestPossibleRegion() );
+
+      itk::ImageRegionIterator<InputImageType> ItF( logField,
+          logField->GetLargestPossibleRegion() );
+
+      for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
+      {
+        ItF.Set( ItB.Get()[0] );
+      }
+
+      typedef itk::ExpImageFilter< InputImageType, InputImageType >
+        ExpFilterType;
+
+      ExpFilterType::Pointer expFilter = ExpFilterType::New();
+      expFilter->SetInput( logField );
+      expFilter->Update();
+
+      typedef itk::DivideImageFilter< InputImageType, InputImageType,
+              InputImageType > DividerType;
+
+      DividerType::Pointer divider = DividerType::New();
+      divider->SetInput1( inputImage );
+      divider->SetInput2( expFilter->GetOutput() );
+      divider->Update();
+
+      MRIBiasFieldCorrection_DebugMacro("ImageRegionIterator");
+
+      itk::ImageRegionIterator<InputImageType> ItIn( divider->GetOutput(),
+        divider->GetOutput()->GetLargestPossibleRegion() );
+
+      itk::ImageRegionIterator<OutputImageType> ItOut( outputImage,
+        outputImage->GetLargestPossibleRegion() );
+
+      for( ItIn.GoToBegin(), ItOut.GoToBegin(); !ItIn.IsAtEnd(); ++ItIn,
+          ++ItOut )
+      {
+        ItOut.Set( ItIn.Get() );
+      }
+
+      MRIBiasFieldCorrection_DebugMacro("Created output image");
+    }
+    catch( itk::ExceptionObject &excep )
+    {
+      std::cerr << argv[0] << " : Exception caught!" << std::endl;
+      std::cerr << excep << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+  }
+
+  //--------------------------------------------------------------------------
+  template<class Tin, class Tout> int DoIt(int argc, char *argv[], Tin, Tout)
+  {
+    PARSE_ARGS;
+
+    typedef Tin  InputPixelType;
+    typedef Tout OutputPixelType;
+
+    typedef itk::Image< InputPixelType,  3 >   InputImageType;
+    typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+
+    typedef itk::ImageFileReader< InputImageType >  ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType > WriterType;
+
+    typedef itk::CastImageFilter< InputImageType, OutputImageType >
+      CastFilterType;
+
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    itk::PluginFilterWatcher watchReader(reader, "Read image",
+        CLPProcessInformation);
+
+    reader->SetFileName( InputImageFileName.c_str() );
+    reader->Update();
+
+    typename InputImageType::Pointer inputImage = reader->GetOutput();
+
+    typename CastFilterType::Pointer castFilter = CastFilterType::New();
+
+    itk::PluginFilterWatcher watchFilter(castFilter, "Cast image",
+        CLPProcessInformation);
+
+    castFilter->SetInput( 0, inputImage );
+    castFilter->Update();
+
+    typename OutputImageType::Pointer outputImage = OutputImageType::New();
+
+    outputImage->SetOrigin( inputImage->GetOrigin() );
+    outputImage->SetSpacing( inputImage->GetSpacing() );
+    outputImage->SetRegions(inputImage->GetLargestPossibleRegion().GetSize());
+    outputImage->SetDirection( inputImage->GetDirection() );
+    outputImage->Allocate();
+
+    BiasFieldCorrection(argc, argv, castFilter->GetOutput(),
+        outputImage );
+
+    typename WriterType::Pointer writer = WriterType::New();
+
+    itk::PluginFilterWatcher watchWriter( writer, "Write Volume",
+        CLPProcessInformation );
+
+    writer->SetFileName( OutputImageFileName.c_str() );
+    writer->SetInput( outputImage );
+    writer->Update();
+
+    return EXIT_SUCCESS;
+  }
+
+} // end of anonymous namespace
 
 
 //----------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-  MRIBiasFieldCorrection_DebugMacro("Start");
-
   PARSE_ARGS;
 
-  MRIBiasFieldCorrection_DebugMacro("Processed arguments");
+  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
 
   try
   {
-    typedef float                                  InputPixelType;
-    typedef itk::Image<InputPixelType,3>           InputImageType;
-    typedef itk::ImageFileReader<InputImageType>   ReaderType;
+    itk::GetImageType (InputImageFileName, pixelType, componentType);
 
-    typedef unsigned char                          MaskPixelType;
-    typedef itk::Image<MaskPixelType,3>            MaskType;
-    typedef itk::ImageFileReader<MaskType>         MaskReaderType;
+    float tmp;
 
-    typedef float                                  OutputPixelType;
-    typedef itk::Image<OutputPixelType, 3>         OutputImageType;
-    typedef itk::ImageFileWriter<OutputImageType>  WriterType;
-
-    MRIBiasFieldCorrection_DebugMacro("Read image");
-
-    ReaderType::Pointer ImageReader = ReaderType::New();
-    ImageReader->SetFileName(InputImageFileName.c_str());
-    ImageReader->Update();
-    InputImageType::Pointer inputImage = ImageReader->GetOutput();
-
-    MRIBiasFieldCorrection_DebugMacro("Read mask");
-
-    MaskReaderType::Pointer MaskReader = MaskReaderType::New();
-    MaskReader->SetFileName(InputMaskFileName.c_str());
-    MaskReader->Update();
-    MaskType::Pointer inputMask = MaskReader->GetOutput();
-
-    MRIBiasFieldCorrection_DebugMacro("create output image");
-
-    typedef itk::ShrinkImageFilter<InputImageType, InputImageType>
-      ShrinkerType;
-
-    ShrinkerType::Pointer shrinker = ShrinkerType::New();
-    shrinker->SetInput( inputImage );
-    shrinker->SetShrinkFactors( 1 );
-
-    MRIBiasFieldCorrection_DebugMacro("");
-
-    typedef itk::BinaryThresholdImageFilter<InputImageType, MaskType>
-      mFilterType;
-
-    mFilterType::Pointer mfilter = mFilterType::New();
-    mfilter->SetInput( inputImage );
-
-    MRIBiasFieldCorrection_DebugMacro("");
-
-    mfilter->SetLowerThreshold(1);
-    mfilter->SetOutsideValue(0);
-    mfilter->SetInsideValue(1);
-    mfilter->UpdateLargestPossibleRegion();
-
-    MRIBiasFieldCorrection_DebugMacro("");
-
-    MaskType::Pointer maskImage = mfilter->GetOutput();
-
-    typedef itk::ShrinkImageFilter<MaskType, MaskType> MaskShrinkerType;
-
-    MaskShrinkerType::Pointer maskShrinker = MaskShrinkerType::New();
-    maskShrinker->SetInput( maskImage );
-    maskShrinker->SetShrinkFactors( 1 );
-
-    MRIBiasFieldCorrection_DebugMacro("");
-    //shrink factor: "<<this->MRIBiasFieldCorrectionNode->GetShrink
-
-    //shrinker->SetShrinkFactors( this->MRIBiasFieldCorrectionNode->GetShrink());
-    //maskshrinker->SetShrinkFactors(this->MRIBiasFieldCorrectionNode->GetShrink());
-
-    MRIBiasFieldCorrection_DebugMacro("");
-
-    shrinker->Update();
-    shrinker->UpdateLargestPossibleRegion();
-
-    maskShrinker->Update();
-    maskShrinker->UpdateLargestPossibleRegion();
-
-    MRIBiasFieldCorrection_DebugMacro("");
-
-    typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType, MaskType,
-            InputImageType> CorrecterType;
-
-    CorrecterType::Pointer correcter = CorrecterType::New();
-    correcter->SetInput( shrinker->GetOutput() );
-    correcter->SetMaskImage( maskShrinker->GetOutput() );
-
-    MRIBiasFieldCorrection_DebugMacro("MaxNumberOfIterations");
-    correcter->SetMaximumNumberOfIterations(MaxNumberOfIterations);
-
-    MRIBiasFieldCorrection_DebugMacro("NumberOfFittingLevels");
-    correcter->SetNumberOfFittingLevels(NumberOfFittingLevels);
-
-    MRIBiasFieldCorrection_DebugMacro("WienerFilterNoise");
-    correcter->SetWeinerFilterNoise(WienerFilterNoise);
-
-    MRIBiasFieldCorrection_DebugMacro("FullWidthAtHalfMaximum");
-    correcter->SetBiasFieldFullWidthAtHalfMaximum(FullWidthAtHalfMaximum);
-
-    MRIBiasFieldCorrection_DebugMacro("Convergence Threshold");
-    correcter->SetConvergenceThreshold(ConvergenceThreshold);
-
-    MRIBiasFieldCorrection_DebugMacro("");
-    correcter->Update();
-
-    MRIBiasFieldCorrection_DebugMacro("");
-    typedef itk::BSplineControlPointImageFilter<
-    CorrecterType::BiasFieldControlPointLatticeType,
-    CorrecterType::ScalarImageType> BSplinerType;
-
-    BSplinerType::Pointer bspliner = BSplinerType::New();
-    bspliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
-    bspliner->SetSplineOrder( correcter->GetSplineOrder() );
-    bspliner->SetSize( inputImage->GetLargestPossibleRegion().GetSize() );
-    bspliner->SetOrigin( inputImage->GetOrigin() );
-    bspliner->SetDirection( inputImage->GetDirection() );
-    bspliner->SetSpacing( inputImage->GetSpacing() );
-    bspliner->Update();
-
-    MRIBiasFieldCorrection_DebugMacro("logField");
-    InputImageType::Pointer logField = InputImageType::New();
-    logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
-    logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
-    logField->SetRegions(
-    bspliner->GetOutput()->GetLargestPossibleRegion().GetSize() );
-    logField->SetDirection( bspliner->GetOutput()->GetDirection() );
-    logField->Allocate();
-
-    MRIBiasFieldCorrection_DebugMacro("");
-    itk::ImageRegionIterator<CorrecterType::ScalarImageType> ItB(
-    bspliner->GetOutput(),
-    bspliner->GetOutput()->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator<InputImageType> ItF( logField,
-    logField->GetLargestPossibleRegion() );
-
-    for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
+    switch (componentType)
     {
-      ItF.Set( ItB.Get()[0] );
+      case itk::ImageIOBase::UCHAR:
+      case itk::ImageIOBase::CHAR:
+
+        return DoIt( argc, argv, static_cast<char>(0), tmp);
+
+      case itk::ImageIOBase::USHORT:
+      case itk::ImageIOBase::SHORT:
+
+        return DoIt( argc, argv, static_cast<short>(0), tmp);
+
+      case itk::ImageIOBase::UINT:
+      case itk::ImageIOBase::INT:
+
+        return DoIt( argc, argv, static_cast<int>(0), tmp);
+
+      case itk::ImageIOBase::ULONG:
+      case itk::ImageIOBase::LONG:
+
+        return DoIt( argc, argv, static_cast<long>(0), tmp);
+
+      case itk::ImageIOBase::FLOAT:
+
+          return DoIt( argc, argv, static_cast<float>(0), tmp);
+
+      case itk::ImageIOBase::DOUBLE:
+
+          return DoIt( argc, argv, static_cast<double>(0), tmp);
+
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+
+      default:
+          std::cout << "Unknown component type " << componentType
+            << std::endl;
     }
-
-    typedef itk::ExpImageFilter<InputImageType, InputImageType> ExpFilterType;
-
-    ExpFilterType::Pointer expFilter = ExpFilterType::New();
-    expFilter->SetInput( logField );
-    expFilter->Update();
-
-    typedef itk::DivideImageFilter<InputImageType, InputImageType,
-            InputImageType> DividerType;
-    DividerType::Pointer divider = DividerType::New();
-    divider->SetInput1( inputImage );
-    divider->SetInput2( expFilter->GetOutput() );
-    divider->Update();
-
-    MRIBiasFieldCorrection_DebugMacro("Write " <<
-        OutputImageFileName);
-
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName(OutputImageFileName.c_str());
-    writer->SetInput(divider->GetOutput());
-    writer->Update();
-
-    MRIBiasFieldCorrection_DebugMacro("Wrote output image");
   }
-  catch( itk::ExceptionObject &excep )
+  catch( itk::ExceptionObject &excep)
   {
-    std::cerr << argv[0] << " : Exception caught!" << std::endl;
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
-  }
+}

@@ -39,7 +39,7 @@
   </parameters>
 
   <parameters>
-    <label>MRI bias field correction parameters</label>
+    <label>Parameters for the N3 algorithm</label>
     <description>Parameters for MRI bias field correction</description>
 
     <string-enumeration>
@@ -62,8 +62,8 @@
     </integer>
 
    <integer>
-      <name>MaxNumberOfIterations</name>
-      <longflag>maxNumberOfIterations</longflag>
+      <name>MaximumNumberOfIterations</name>
+      <longflag>maximumNumberOfIterations</longflag>
       <label>Maximum number of iterations</label>
       <description>Number of iterations for the N3 algorithm</description>
       <default>50</default>
