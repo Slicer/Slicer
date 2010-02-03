@@ -1,4 +1,5 @@
 #include "qSlicerModulePanel.h"
+#include "ui_qSlicerModulePanel.h"
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
@@ -22,8 +23,10 @@
 
 //---------------------------------------------------------------------------
 class qSlicerModulePanelPrivate: public qCTKPrivate<qSlicerModulePanel>
+                               , public Ui_qSlicerModulePanel
 {
 public:
+  /*
   void setupUi(QWidget * widget);
 
   QTextBrowser*          HelpLabel;
@@ -31,6 +34,7 @@ public:
   QBoxLayout*            Layout;
   QScrollArea*           ScrollArea;
   qCTKCollapsibleButton* HelpCollapsibleButton;
+  */
 };
 
 //---------------------------------------------------------------------------
@@ -56,7 +60,10 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
     }
   
   // Retrieve current module associated with the module panel
-  QLayoutItem* item = d->Layout->itemAt(1);
+  QBoxLayout* scrollAreaLayout = 
+    qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
+  Q_ASSERT(scrollAreaLayout);
+  QLayoutItem* item = scrollAreaLayout->itemAt(1);
   qSlicerAbstractModuleWidget* currentModuleWidget = 
     item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
@@ -107,7 +114,10 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
     }
 
   // Insert module in the panel
-  d->Layout->insertWidget(1, moduleWidget);
+  QBoxLayout* scrollAreaLayout = 
+    qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
+  Q_ASSERT(scrollAreaLayout);
+  scrollAreaLayout->insertWidget(1, moduleWidget);
 
   moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
   moduleWidget->setVisible(true);
@@ -132,7 +142,10 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
   
   QCTK_D(qSlicerModulePanel);
 
-  int index = d->Layout->indexOf(moduleWidget);
+  QBoxLayout* scrollAreaLayout = 
+    qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
+  Q_ASSERT(scrollAreaLayout);
+  int index = scrollAreaLayout->indexOf(moduleWidget);
   if (index == -1)
     {
     return;
@@ -142,7 +155,7 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
 
   // Remove widget from layout
   //d->Layout->removeWidget(module);
-  d->Layout->takeAt(index);
+  scrollAreaLayout->takeAt(index);
 
   moduleWidget->setVisible(false);
   moduleWidget->setParent(0);
@@ -165,7 +178,7 @@ void qSlicerModulePanel::removeAllModule()
 
 //---------------------------------------------------------------------------
 // qSlicerModulePanelPrivate methods
-
+/*
 //---------------------------------------------------------------------------
 void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
 {
@@ -206,3 +219,4 @@ void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
   gridLayout->setContentsMargins(0,0,0,0);
   widget->setLayout(gridLayout);
 }
+*/
