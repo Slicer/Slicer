@@ -524,7 +524,7 @@ itcl::body Labeler::rotateSliceToImage { } {
     error "Background and Label Volumes must be selected and cannot be inside transforms."
   } 
 
-  set ijkToRAS [vtkMatrix4x4 New]
+  set ijkToRAS [vtkNew vtkMatrix4x4]
 
   set volumeNode $_layers(background,node)
   if { $volumeNode == "" } {
