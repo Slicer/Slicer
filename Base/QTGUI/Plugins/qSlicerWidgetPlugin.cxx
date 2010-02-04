@@ -1,6 +1,6 @@
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerWidget.h"
-#include "qSlicerApplication.h"
+#include "qSlicerApplication.h" // For qSlicerApplyPalette function
 
 qSlicerWidgetPlugin::qSlicerWidgetPlugin()
 {
@@ -10,7 +10,9 @@ QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
 {
   qSlicerWidget* _widget = new qSlicerWidget(_parent);
   QPalette slicerPalette = _widget->palette();
-  qSlicerPalette(slicerPalette);
+
+  // Apply Slicer Palette using the non-member function defined in qSlicerApplication
+  qSlicerApplyPalette(slicerPalette);
 
   _widget->setPalette(slicerPalette);
   _widget->setAutoFillBackground(true);
