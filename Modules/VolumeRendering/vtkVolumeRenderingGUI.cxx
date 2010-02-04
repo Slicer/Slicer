@@ -38,6 +38,7 @@
 #include "vtkTexture.h"
 #include "vtkTimerLog.h"
 #include "vtkVolume.h"
+#include "vtkKWCheckButtonWithLabel.h"
 
 extern "C" int Volumerenderingreplacements_Init(Tcl_Interp *interp);
 
@@ -57,6 +58,7 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
   this->Presets = NULL;
 
+  this->CB_VolumeRenderingOnOff = NULL;
   this->NS_ParametersSet = NULL;
 
   this->NS_ImageData=NULL;
@@ -93,6 +95,14 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 {
   this->RemoveMRMLObservers();
 
+  if(this->CB_VolumeRenderingOnOff != NULL)
+  {
+    this->CB_VolumeRenderingOnOff->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
+    this->CB_VolumeRenderingOnOff->SetParent(NULL);
+    this->CB_VolumeRenderingOnOff->Delete();
+    this->CB_VolumeRenderingOnOff=NULL;
+  }
+  
   if (this->NS_ParametersSet)
   {
     this->NS_ParametersSet->SetParent(NULL);
@@ -218,6 +228,17 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       loadSaveDataFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
+  //enable/disable cpu ray casting MIP rendering
+  this->CB_VolumeRenderingOnOff = vtkKWCheckButtonWithLabel::New();
+  this->CB_VolumeRenderingOnOff->SetParent(loadSaveDataFrame->GetFrame());
+  this->CB_VolumeRenderingOnOff->Create();
+  this->CB_VolumeRenderingOnOff->SetBalloonHelpString("Turn on or turn off VolumeRendering module");
+  this->CB_VolumeRenderingOnOff->SetLabelText("VolumeRendering Module On/Off");
+  this->CB_VolumeRenderingOnOff->SetLabelWidth(25);
+  this->CB_VolumeRenderingOnOff->GetWidget()->SetSelectedState(1);
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_VolumeRenderingOnOff->GetWidgetName() );
+  this->CB_VolumeRenderingOnOff->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+    
   this->NS_ParametersSet = vtkSlicerNodeSelectorWidget::New();
   this->NS_ParametersSet->SetNodeClass("vtkMRMLVolumeRenderingParametersNode", "", "", "");
   this->NS_ParametersSet->NoneEnabledOff();

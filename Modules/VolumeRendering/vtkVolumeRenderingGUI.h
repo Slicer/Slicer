@@ -30,6 +30,7 @@ Version:   $Revision: 1.3 $
 
 #include <string>
 
+class vtkKWCheckButtonWithLabel;
 class vtkSlicerVolumeRenderingHelper;
 class vtkSlicerVolumePropertyWidget;
 
@@ -198,7 +199,7 @@ protected:
     //OWN GUI Elements
 
     //Frame input
-
+    vtkKWCheckButtonWithLabel   *CB_VolumeRenderingOnOff;
     vtkSlicerNodeSelectorWidget *NS_ParametersSet;
 
     vtkSlicerNodeSelectorWidget *NS_ImageData;
