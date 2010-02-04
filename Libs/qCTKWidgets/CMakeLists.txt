@@ -62,6 +62,8 @@ SET(qCTKWidgets_SRCS
   qCTKTitleComboBox.h
   qCTKTreeComboBox.cxx
   qCTKTreeComboBox.h
+  qCTKUtils.cxx
+  qCTKUtils.h
   )
 
 # Headers that should run through moc
