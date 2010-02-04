@@ -9,7 +9,7 @@
   <contributor>Casey B Goodlett</contributor>
   <acknowledgements></acknowledgements>
   <parameters>
-    <label>IO</label>
+    <label>Required</label>
     <description>Input and output parameters</description>
     <image>
       <name>fixedImage</name>
@@ -43,7 +43,7 @@
     </transform>
   </parameters>
   <parameters>
-    <label>Registration</label>
+    <label>Optional</label>
     <description>Registration algorithm</description>
     <image type="label">
       <name>fixedImageMask</name>
@@ -53,6 +53,9 @@
       <description>Label image which defines a mask of interest for the fixed image</description>
       <default></default>
     </image>
+  </parameters>
+  <parameters>
+    <label>Advanced</label>
     <integer>
       <name>numIterations</name>
       <label>Number of Iterations</label>
@@ -87,7 +90,7 @@
     </float>
     <float>
       <name>metricTolerance</name>
-      <label>Metric Tolerance (voxels)</label>
+      <label>Metric Tolerance</label>
       <channel>input</channel>
       <longflag>metricTolerance</longflag>
       <description></description>
