@@ -394,33 +394,43 @@ ENDIF(Slicer3_USE_QT)
 # --------------------------------------------------------------------------
 # Configure and install headers
 
-include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_BINARY_DIR}"
-  )
-
-configure_file(
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerConfigure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h
   )
 
-configure_file(
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerVersionConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h
+  )
+
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrind.sh.in 
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrind.sh
   )
 
-configure_file(
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageLocally.sh.in 
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
   )
 
-configure_file(
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runExperimentalOffScreen.sh.in 
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runExperimentalOffScreen.sh
   )
 
-install(FILES 
+INCLUDE_DIRECTORIES(
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
+  )
+
+INSTALL(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
+  )
+
+INSTALL(FILES 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
   DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
 
