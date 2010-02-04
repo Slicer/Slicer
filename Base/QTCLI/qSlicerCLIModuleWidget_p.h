@@ -71,7 +71,7 @@ public:                                                               \
 this->WidgetValueWrappers.push_back(new _NAME##WidgetValueWrapper(_LABEL, _WIDGET_INSTANCE));
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModuleWidgetPrivate: public qSlicerWidget,
+class qSlicerCLIModuleWidgetPrivate: public QObject,
                                      public qCTKPrivate<qSlicerCLIModuleWidget>,
                                      public Ui_qSlicerCLIModule
 {
@@ -145,9 +145,8 @@ public:
   QWidget* createEnumerationTagWidget(const ModuleParameter& moduleParameter);
 
   /// 
-  /// Update MRML:
-  /// - create commandLineModuleNode if required
-  void updateMRML();
+  /// Update MRMLCommandLineModuleNode properties using value entered using the UI
+  void updateMRMLCommandLineModuleNode();
 
 public slots:
   void onApplyButtonPressed();

@@ -124,7 +124,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 void qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed()
 {
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed";
-  this->updateMRML();
+  this->updateMRMLCommandLineModuleNode();
 
   // QTCLI shouldn't depend on QtCore, otherwise there is a loop in the dependency
   //this->logic()->SetTemporaryDirectory(
@@ -791,50 +791,17 @@ QString qSlicerCLIModuleWidgetPrivate::nodeTypeFromMap(const QString& defaultVal
 }
 
 //---------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::updateMRML()
+void qSlicerCLIModuleWidgetPrivate::updateMRMLCommandLineModuleNode()
 { 
-//   if (this->InUpdateGUI) {
-//     return;
-//   }
-
-//   this->InUpdateMRML = true;
-  // std::cout << "UpdateMRML()" << std::endl;
-//   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
-//   bool createdNode = false;
-//   if (n == NULL)
-//     {
-//     // no parameter node selected yet, create new
-//     //std::cout << "  Creating a new node" << std::endl;
-//     vtkSlicerNodeSelectorWidget *moduleNodeSelector = vtkSlicerNodeSelectorWidget::SafeDownCast((*this->InternalWidgetMap)["CommandLineModuleNodeSelector"]);
-//     moduleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
-//     this->CreatingNewNode = true;
-//     moduleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", this->ModuleDescriptionObject.GetTitle().c_str());
-//     n = vtkMRMLCommandLineModuleNode::SafeDownCast(moduleNodeSelector->GetSelected());
-//     this->CreatingNewNode = false;
-// 
-//     if (n == NULL)
-//       {
-//       this->InUpdateMRML = false;
-//       vtkDebugMacro("No CommandLineModuleNode available");
-//       return;
-//       }
-//     
-//     // set the a module description for this node
-//     n->SetModuleDescription( this->ModuleDescriptionObject );
-//     
-//     // set an observe new node in Logic
-//     this->Logic->SetCommandLineModuleNode(n);
-//     vtkSetAndObserveMRMLNodeMacro(this->CommandLineModuleNode,n);
-// 
-//     createdNode = true;
-//    }
-
+  QCTK_P(qSlicerCLIModuleWidget);
+  Q_ASSERT(p->mrmlScene());
+   
   vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->MRMLCommandLineModuleNodeSelector->currentNode());
   Q_ASSERT(node);
   
   // save node parameters for Undo
-  this->mrmlScene()->SaveStateForUndo(node);
+  p->mrmlScene()->SaveStateForUndo(node);
 
   foreach(WidgetValueWrapper* widgetValueWrapper, this->WidgetValueWrappers)
     {
@@ -859,122 +826,4 @@ void qSlicerCLIModuleWidgetPrivate::updateMRML()
       qDebug() << "Uknown widget value type:" << type;
       }
     }
-/*
-  //  set node parameters from GUI widgets
-  //
-  ModuleWidgetMap::const_iterator wit;
-  for (wit = this->InternalWidgetMap->begin();
-       wit != this->InternalWidgetMap->end(); ++wit)
-    {
-    // Need to determine what type of widget we are using so that we
-    // can get the value.
-    vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast((*wit).second);
-    vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast((*wit).second);
-    vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast((*wit).second);
-    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast((*wit).second);
-    vtkSlicerNodeSelectorWidget *ns = vtkSlicerNodeSelectorWidget::SafeDownCast((*wit).second);
-    vtkKWLoadSaveButtonWithLabel *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
-    vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
-
-    if (sb)
-      {
-      // std::cout << "SpinBox" << std::endl;
-      n->SetParameterAsDouble((*wit).first, sb->GetWidget()->GetValue());
-      }
-    else if (se)
-      {
-      n->SetParameterAsDouble((*wit).first, se->GetValue());
-      }
-    else if (cb)
-      {
-      n->SetParameterAsBool((*wit).first, cb->GetWidget()->GetSelectedState());
-      }
-    else if (e)
-      {
-      n->SetParameterAsString((*wit).first, e->GetWidget()->GetValue());
-      }
-    else if (ns)
-      {
-      if (ns->GetSelected() != NULL)
-        {
-        n->SetParameterAsString((*wit).first, ns->GetSelected()->GetID());
-        }
-      else
-        {
-        n->SetParameterAsString((*wit).first, "");
-        }
-      }
-    else if (lsb)
-      {
-      int numberOfFiles
-        = lsb->GetWidget()->GetLoadSaveDialog()->GetNumberOfFileNames();
-      if (numberOfFiles > 0)
-        {
-        // build a comma separated list of file names
-        std::string names;
-        for (int i=0; i < numberOfFiles; ++i)
-          {
-          // get a filename
-          std::string nthName
-            = lsb->GetWidget()->GetLoadSaveDialog()->GetNthFileName(i);
-
-          // quote it as needed (if multiple filenames and a filename
-          // contains a comma and is not already quoted, then quote it)
-          if (lsb->GetWidget()->GetLoadSaveDialog()->GetMultipleSelection())
-            {
-            size_t s1, len;
-            len = nthName.length();
-            s1 = nthName.find_first_of(",");
-            if (s1 > 0 && s1 < len)
-              {
-              // filename contains a comma
-              size_t q1, qn;
-              q1 = nthName.find_first_of("\"");
-              qn = nthName.find_last_of("\"");
-              if (q1 != 0 && qn != len-1)
-                {
-                // first and last character in name are not quotes, so
-                // quote
-                nthName = std::string("\"") + nthName + "\"";
-                }
-              }
-            }
-          
-          // add it to the list
-          names = names + nthName;
-          if (i < numberOfFiles-1)  // comma after all but last
-            {
-            names = names + ",";
-            }
-          }
-        //vtkWarningMacro(<< "Selected filenames: " << names);
-        n->SetParameterAsString((*wit).first, names);
-
-        // set the filenames as the selected filenames for next time
-        lsb->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( lsb->GetWidget()->GetLoadSaveDialog()->GetFileNames() );
-        }
-      }
-    else if (rbs)
-      {
-      // find out who is set
-      int num = rbs->GetWidget()->GetNumberOfWidgets();
-      for (int i=0; i < num; ++i)
-        {
-        int id = rbs->GetWidget()->GetIdOfNthWidget(i);
-        vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
-        if (rb->GetSelectedState())
-          {
-          n->SetParameterAsString((*wit).first, rb->GetValue());
-          break;
-          }
-        }
-      }
-    }
-
-  if (createdNode)
-    {
-    vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode,n);
-    }
-  this->InUpdateMRML = false;
-  */
 }
