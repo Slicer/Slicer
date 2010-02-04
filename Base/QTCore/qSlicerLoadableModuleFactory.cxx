@@ -56,7 +56,6 @@ void qSlicerLoadableModuleFactory::registerItems()
     qWarning() << "No loadable module paths provided";
     return;
     }
-  qWarning() << "d->ModulePaths:" << modulePaths;
 
   // Process one path at a time
   foreach (QString path, modulePaths)
