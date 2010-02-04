@@ -8,6 +8,7 @@
 #include "qCTKCoordinatesWidgetPlugin.h"
 #include "qCTKDoubleSliderPlugin.h"
 #include "qCTKFittedTextBrowserPlugin.h"
+#include "qCTKMenuButtonPlugin.h"
 #include "qCTKNumericInputPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
 #include "qCTKTreeComboBoxPlugin.h"
@@ -32,6 +33,7 @@ public:
             << new qCTKCoordinatesWidgetPlugin
             << new qCTKDoubleSliderPlugin
             << new qCTKFittedTextBrowserPlugin
+            << new qCTKMenuButtonPlugin
             << new qCTKNumericInputPlugin
             << new qCTKTitleComboBoxPlugin
             << new qCTKTreeComboBoxPlugin

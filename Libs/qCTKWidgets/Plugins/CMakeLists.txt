@@ -23,6 +23,8 @@ SET(designer_plugin_SRCS
   qCTKExtensionFactory.h
   qCTKFittedTextBrowserPlugin.cxx
   qCTKFittedTextBrowserPlugin.h  
+  qCTKMenuButtonPlugin.cxx
+  qCTKMenuButtonPlugin.h
   qCTKNumericInputPlugin.cxx
   qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.cxx
@@ -43,6 +45,7 @@ SET(designer_plugin_MOC_SRCS
   qCTKDoubleSliderPlugin.h
   qCTKExtensionFactory.h
   qCTKFittedTextBrowserPlugin.h  
+  qCTKMenuButtonPlugin.h
   qCTKNumericInputPlugin.h
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.h
