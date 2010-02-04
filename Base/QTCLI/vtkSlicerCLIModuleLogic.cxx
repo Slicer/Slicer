@@ -16,6 +16,9 @@
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
 
+// qCTK includes
+#include <qCTKUtils.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLCommandLineModuleNode.h>
@@ -100,8 +103,6 @@ public:
 
   std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
 
-  static void stringListToArray(const QStringList& list, std::vector<char*>& argv);
-
   typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
   typedef int (*EntryPointFunc)(int argc, char* argv[]);
@@ -134,20 +135,6 @@ void vtkSlicerCLIModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 { 
   Superclass::PrintSelf(os, indent); 
 };
-
-//----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogicPrivate::stringListToArray(const QStringList& list, std::vector<char*>& argv)
-{
-  // Resize with required
-  if (list.count() != static_cast<int>(argv.size()))
-    {
-    argv.resize(list.count());
-    }
-  for (int i = 0; i < list.count(); ++i)
-    {
-    argv[i] = list[i].toLatin1().data();
-    }
-}
 
 //----------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic::ProgressCallback ( void *who )
@@ -1854,7 +1841,7 @@ void vtkSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode
     int argc = argList.count();
 
     std::vector<char*> argv(argc);
-    vtkSlicerCLIModuleLogicPrivate::stringListToArray(argList, argv);
+    qCTKUtils::stringListToArray(argList, argv);
 
     // run the module
     if ( qctk_d()->entryPointFunc != NULL ) {
