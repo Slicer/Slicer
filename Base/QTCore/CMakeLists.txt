@@ -20,6 +20,8 @@ SET(slicer_qtbase_include_directories
 SET(slicer_qtbase_SRCS
   qSlicerCoreApplication.cxx
   qSlicerCoreApplication.h
+  qSlicerCoreCommandOptions.cxx
+  qSlicerCoreCommandOptions.h
   qSlicerCoreIOManager.cxx
   qSlicerCoreIOManager.h
   qSlicerLoadableModuleFactory.cxx
