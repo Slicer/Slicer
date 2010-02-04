@@ -325,10 +325,6 @@ int vtkXNDHandler::PostTag ( const char *svr, const char *label,
 
   this->CloseTransfer();
 
-  if (this->LocalFile)
-    {
-    fclose(this->LocalFile);
-    }
   if (responseFile)
     {
     fclose(responseFile);
