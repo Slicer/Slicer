@@ -54,6 +54,8 @@ SET(qCTKWidgets_SRCS
   qCTKModelTester.h
   qCTKNumericInput.cxx
   qCTKNumericInput.h
+  qCTKSettings.cxx
+  qCTKSettings.h
   qCTKSliderSpinBoxWidget.cxx
   qCTKSliderSpinBoxWidget.h
   qCTKTitleComboBox.cxx
@@ -75,6 +77,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKMenuButton.h
   qCTKModelTester.h
   qCTKNumericInput.h
+  qCTKSettings.h
   qCTKSliderSpinBoxWidget.h
   qCTKTitleComboBox.h
   qCTKTreeComboBox.h
