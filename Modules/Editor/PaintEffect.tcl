@@ -67,6 +67,7 @@ itcl::body PaintEffect::constructor {sliceGUI} {
   $this configure -sliceGUI $sliceGUI
  
   set o(brush) [vtkNew vtkPolyData]
+  set o(rasToXY) [vtkNew vtkMatrix4x4]
   $this createGlyph $o(brush)
   set o(mapper) [vtkNew vtkPolyDataMapper2D]
   set o(actor) [vtkNew vtkActor2D]
@@ -128,10 +129,9 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   # - assume uniform scaling between XY and RAS which
   #   is enforced by the view interactors
   #
-  set rasToXY [vtkMatrix4x4 New]
-  $rasToXY DeepCopy [$_sliceNode GetXYToRAS]
-  $rasToXY Invert
-  set xyRadius [$rasToXY MultiplyPoint $radius $radius $radius 0]
+  $o(rasToXY) DeepCopy [$_sliceNode GetXYToRAS]
+  $o(rasToXY) Invert
+  set xyRadius [$o(rasToXY) MultiplyPoint $radius $radius $radius 0]
   foreach {xRadius yRadius} $xyRadius {}
   set xRadius [expr abs([lindex $xyRadius 0])]
   set yRadius [expr abs([lindex $xyRadius 1])]
