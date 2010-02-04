@@ -392,7 +392,10 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * _event)
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
   opt.iconSize = indicatorSize;
   style()->drawControl(QStyle::CE_PushButtonBevel, &opt, &p, this);
+  // is PE_PanelButtonCommand better ?
+  //style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &opt, &p, this);
   int buttonHeight = opt.rect.height();
+
   // Draw Indicator
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
@@ -407,12 +410,22 @@ void qCTKCollapsibleButton::paintEvent(QPaintEvent * _event)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowUp, &indicatorOpt, &p, this);
     }
+
   // Draw Text
   int indicatorSpacing = style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   opt.rect.setLeft( indicatorOpt.rect.right() + indicatorSpacing);
-  uint tf = Qt::AlignVCenter | Qt::TextShowMnemonic | Qt::AlignLeft;
+  uint tf = Qt::AlignVCenter | Qt::AlignLeft;
+  if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
+    {
+    tf |= Qt::TextShowMnemonic;
+    }
+  else
+    {
+    tf |= Qt::TextHideMnemonic;
+    }
   style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),
                         opt.text, QPalette::ButtonText);
+
   // Draw Frame around contents
   QStyleOptionFrameV3 f;
   f.init(this);
