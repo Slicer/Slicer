@@ -61,6 +61,14 @@
       <description>Number of iterations to run at each resolution level.</description>
       <default>10</default>
     </integer>
+    <integer>
+      <name>numLineIterations</name>
+      <label>Number of Line Iterations</label>
+      <channel>input</channel>
+      <longflag>numLineIterations</longflag>
+      <description>Number of iterations to run at each resolution level.</description>
+      <default>30</default>
+    </integer>
     <float>
       <name>stepSize</name>
       <label>Step Size (voxels)</label>
@@ -76,6 +84,14 @@
       <longflag>stepTolerance</longflag>
       <description>The maximum step size of the optimizer in voxels</description>
       <default>.25</default>
+    </float>
+    <float>
+      <name>metricTolerance</name>
+      <label>Metric Tolerance (voxels)</label>
+      <channel>input</channel>
+      <longflag>metricTolerance</longflag>
+      <description></description>
+      <default>.00001</default>
     </float>
   </parameters>
 </executable>
