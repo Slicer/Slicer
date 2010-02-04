@@ -76,4 +76,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl*"
+  
+  # Visual studio spurious warnings...
+  "The following environment variables were not found"
 )
