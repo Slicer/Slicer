@@ -18,6 +18,8 @@ SET(qVTKWidgets_SRCS
   qVTKAbstractMatrixWidget.cxx
   qVTKAbstractMatrixWidget.h
   qVTKAbstractMatrixWidget_p.h
+  qVTKCommandOptions.cxx
+  qVTKCommandOptions.h
   qVTKConnection.cxx
   qVTKConnection.h
   qVTKMatrixWidget.cxx
