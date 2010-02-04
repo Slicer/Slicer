@@ -38,6 +38,28 @@ proc EditorTestModelMaker { {labelFile ""} } {
         return 1
     }
 
+    set waiting 1
+    set needToWait { "Idle" "Scheduled" "Running" }
+    while {$waiting == 1} {
+        puts "Waiting for task..."
+        set waiting 0
+        set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLCommandLineModuleNode"]
+        puts "Found $nNodes command line module nodes"
+        for {set i 0} {$i < $nNodes} {incr i} {
+            set clmNode [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLCommandLineModuleNode"]
+            set moduleTitle [$clmNode GetModuleTitle]
+            # puts "\tchecking node $i: $moduleTitle..."
+            if {$moduleTitle == "Model Maker"} {
+                set status [$clmNode GetStatusString]
+                puts "Checking node $i: $moduleTitle = $status"
+                if { [lsearch $needToWait $status] != -1 } {
+                    set waiting 1
+                }
+            }
+        }
+        after 250
+    }
+
     # clean up
     modelEffect tearDownOptions
     catch "itcl::delete object  modelEffect" err
