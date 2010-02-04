@@ -405,14 +405,13 @@ itcl::body Labeler::buildOptions { } {
   }
 
   #
-  # event observers - TODO: if there were a way to make these more specific, I would...
+  # event observers 
   #
-  set tag [[$o(paintOver) GetWidget] AddObserver AnyEvent "$this processEvent $o(paintOver)"]
-  lappend _observerRecords "$o(paintOver) $tag"
-  set tag [[$o(paintThreshold) GetWidget] AddObserver AnyEvent "$this processEvent $o(paintThreshold)"]
-  lappend _observerRecords "$o(paintThreshold) $tag"
-  set tag [$o(paintRange) AddObserver AnyEvent "$this processEvent $o(paintRange)"]
-  lappend _observerRecords "$o(paintRange) $tag"
+  set SelectedStateChangedEvent 10000
+  set RangeValueChangedEvent 10001
+  $::slicer3::Broker AddObservation [$o(paintOver) GetWidget] $SelectedStateChangedEvent "$this processEvent $o(paintOver)"
+  $::slicer3::Broker AddObservation [$o(paintThreshold) GetWidget] $SelectedStateChangedEvent "$this processEvent $o(paintThreshold)"
+  $::slicer3::Broker AddObservation $o(paintRange) $RangeValueChangedEvent "$this processEvent $o(paintRange)"
 
 }
 

@@ -79,7 +79,7 @@ itcl::body PaintEffect::constructor {sliceGUI} {
 
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
-
+  
   $this processEvent
 
   set _guiObserverTags ""
@@ -339,14 +339,14 @@ itcl::body PaintEffect::buildOptions {} {
     -side right -anchor e -padx 2 -pady 2 
 
   #
-  # event observers - TODO: if there were a way to make these more specific, I would...
-  #
-  set tag [$o(radius) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
-  lappend _observerRecords "$o(radius) $tag"
-  set tag [[$o(smudge) GetWidget] AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
-  lappend _observerRecords "$o(smudge) $tag"
-  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
-  lappend _observerRecords "$o(cancel) $tag"
+  # event observers 
+  # 
+  set InvokedEvent 10000
+  set ThumbWheelValueChangedEvent 10001
+  set SelectedStateChangedEvent 10000
+  $::slicer3::Broker AddObservation $o(radius) $ThumbWheelValueChangedEvent "after idle $this updateMRMLFromGUI"
+  $::slicer3::Broker AddObservation [$o(smudge) GetWidget] $SelectedStateChangedEvent  "after idle $this updateMRMLFromGUI"
+  $::slicer3::Broker AddObservation $o(cancel) $InvokedEvent  "after idle ::EffectSWidget::RemoveAll"
 
   if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for painting"
