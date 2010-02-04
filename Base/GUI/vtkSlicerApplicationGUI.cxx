@@ -1860,7 +1860,7 @@ void vtkSlicerApplicationGUI::OpenTutorialsLink ()
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    app->OpenLink ("http://wiki.na-mic.org/Wiki/index.php/Slicer3.2:Training" );
+    app->OpenLink ("http://www.slicer.org/slicerWiki/index.php/Slicer3.4:Training" );
     }
 }
 
