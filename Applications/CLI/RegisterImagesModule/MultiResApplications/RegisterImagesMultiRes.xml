@@ -2,7 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>Register Images MultiRes (Experimental)</title>
-  <description>Provides affine registration using multiple resolution levels and decomposed affine transforms</description>
+  <description>Provides affine registration using multiple resolution levels and decomposed affine transforms.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.4</documentation-url>
   <license></license>
@@ -53,6 +53,14 @@
       <description>Label image which defines a mask of interest for the fixed image</description>
       <default></default>
     </image>
+    <integer>
+      <name>numIterations</name>
+      <label>Number of Iterations</label>
+      <channel>input</channel>
+      <longflag>numIterations</longflag>
+      <description>Number of iterations to run at each resolution level.</description>
+      <default>10</default>
+    </integer>
     <float>
       <name>stepSize</name>
       <label>Step Size (voxels)</label>
@@ -61,6 +69,5 @@
       <description>The maximum step size of the optimizer in voxels</description>
       <default>5.0</default>
     </float>
-      
   </parameters>
 </executable>

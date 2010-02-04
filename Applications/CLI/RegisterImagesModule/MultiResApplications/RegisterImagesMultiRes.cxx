@@ -337,7 +337,7 @@ int main( int argc, char * argv[] )
     opt->SetStepLength(stepSize);
     opt->SetStepTolerance(.25);
     opt->SetValueTolerance(.0001);
-    opt->SetMaximumIteration(100);
+    opt->SetMaximumIteration(numIterations*optimizerScales.size());
     opt->SetMaximumLineIteration(30);
     //opt->SetUseUnitLengthGradient( true );
     opt->SetToPolakRibiere();
@@ -708,7 +708,7 @@ int main( int argc, char * argv[] )
     opt->SetStepLength(stepSize);
     opt->SetStepTolerance(.25);
     opt->SetValueTolerance(.0001);
-    opt->SetMaximumIteration(100);
+    opt->SetMaximumIteration(numIterations*optimizerScales.size());
     opt->SetMaximumLineIteration(30);
     opt->SetUseUnitLengthGradient( true );
     opt->SetToPolakRibiere();
@@ -895,7 +895,7 @@ int main( int argc, char * argv[] )
   opt->SetStepLength(stepSize);
   opt->SetStepTolerance(.25);
   opt->SetValueTolerance(.0001);
-  opt->SetMaximumIteration(50);
+  opt->SetMaximumIteration(numIterations*optimizerScales.size());
   opt->SetMaximumLineIteration(30);
   opt->SetUseUnitLengthGradient( true );
   opt->SetToPolakRibiere();
@@ -933,7 +933,7 @@ int main( int argc, char * argv[] )
 
   opt->SetScales( optimizerScales );
 
-  opt->SetMaximumIteration(30);
+  opt->SetMaximumIteration(numIterations*optimizerScales.size());
   
   metricf->SetNumberOfHistogramBins(256);
   metricf->SetNumberOfSpatialSamples(480000);
