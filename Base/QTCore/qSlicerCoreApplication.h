@@ -24,8 +24,10 @@
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class qSlicerModuleManager;
-class qSlicerCoreIOManager; 
+class qSlicerCoreIOManager;
+class qSlicerCoreCommandOptions; 
 class qSlicerCoreApplicationPrivate;
+class qCTKSettings;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
@@ -46,7 +48,8 @@ public:
   ///  - Configure scene
   ///  - AppLogic is set as a scene observer.
   ///  - Create processing thread
-  void initialize();
+  /// If exitWhenDone is True, it's your responsability to exit the application
+  void initialize(bool& exitWhenDone);
   
   /// 
   /// initialize paths for module discovery
@@ -67,17 +70,22 @@ public:
   void setInitialized(bool initialized); 
 
   /// 
-  /// Set/Get MRML Scene
+  /// Set MRML Scene
   /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
   /// removed once the QT GUI is functional.
   void setMRMLScene(vtkMRMLScene * scene);
+
+  /// 
+  /// Get MRML Scene
   vtkMRMLScene* mrmlScene() const;
 
   /// 
-  /// Set/Get application logic
+  /// Set application logic
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   /// removed once the QT GUI is functional.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
+
+  /// Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
   
   /// 
@@ -99,14 +107,50 @@ public:
   QString tempDirectory() const; 
 
   /// 
-  /// Set/Get the module manager
+  /// Get the module manager
   qSlicerModuleManager* moduleManager()const;
+
+  /// 
+  /// Get the module manager
+  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
+  /// removed once the QT GUI is functional.
   void setModuleManager(qSlicerModuleManager* moduleManager);
 
   /// 
   /// Set/Get the IO manager
   qSlicerCoreIOManager* coreIOManager()const;
-  void setCoreIOManager(qSlicerCoreIOManager* ioManager); 
+  void setCoreIOManager(qSlicerCoreIOManager* ioManager);
+
+  ///
+  /// Get coreCommandOptions
+  qSlicerCoreCommandOptions* coreCommandOptions()const;
+
+  ///
+  /// Get application settings
+  /// If not already done, this method will also instanciate a qCTKWidget and associate it
+  /// with the application.
+  qCTKSettings* settings();
+
+  ///
+  /// Disable application settings
+  void disableSettings();
+
+  /// Clear application settings
+  void clearSettings();
+
+protected:
+  
+  ///
+  /// Set coreCommandOptions
+  void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
+  
+  /// 
+  virtual void handlePreApplicationCommandLineArguments();
+
+protected slots:
+
+  ///
+  virtual void handleCommandLineArguments();
 
 signals:
   void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);

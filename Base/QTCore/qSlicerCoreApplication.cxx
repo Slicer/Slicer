@@ -15,14 +15,22 @@
 // SlicerQT includes
 #include "qSlicerModuleManager.h"
 #include "qSlicerCoreIOManager.h"
+#include "qSlicerCoreCommandOptions.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
+
+// Slicer includes
+#include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
+
+// qCTK includes
+#include <qCTKSettings.h>
 
 // QT includes
 #include <QVector>
 #include <QStringList>
 #include <QDir>
+#include <QTimer>
 #include <QDebug>
 
 // MRML includes
@@ -37,6 +45,9 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
 
+// STL includes
+#include <cstdlib> // For exit() function
+
 // For:
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer3_INSTALL_PLUGINS_BIN_DIR
@@ -48,25 +59,15 @@ class qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
 {
 public:
   QCTK_DECLARE_PUBLIC(qSlicerCoreApplication);
+  
   typedef qSlicerCoreApplicationPrivate Self; 
-  qSlicerCoreApplicationPrivate()
-    {
-    this->AppLogic = 0;
-    this->MRMLScene = 0;
-    this->ModuleManager = 0;
-    this->CoreIOManager = 0;
-    this->Initialized = false; 
-    }
+  qSlicerCoreApplicationPrivate();
+  ~qSlicerCoreApplicationPrivate();
 
-  ~qSlicerCoreApplicationPrivate()
-    {
-    if (this->ModuleManager)
-      {
-      delete this->ModuleManager; 
-      }
-    if (this->CoreIOManager) { delete this->CoreIOManager; }
-    }
-
+  ///
+  /// Instanciate settings object
+  qCTKSettings* instantiateSettings(const QString& suffix, bool useTmp);
+  
   ///
   /// Given the program name, should return Slicer Home Directory
   void discoverSlicerHomeDirectory(const QString& programName);
@@ -74,6 +75,14 @@ public:
   ///
   /// Given the program name, attempt to return the corresponding binary directory
   QString discoverSlicerBinDirectory(const QString& programName);
+
+  ///
+  /// Parse arguments
+  bool parseArguments(int argc, char** argv);
+  
+  ///
+  /// See the ExitWhenDone flag to True
+  void terminate();
 
   ///
   /// Accept argument of the form "FOO=BAR" and update the process environment
@@ -85,6 +94,7 @@ public:
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
 
   QString                              SlicerHome;
+  qCTKSettings*                        Settings;
 
   ///
   /// ModuleManager - It should exist only one instance of the factory
@@ -93,6 +103,13 @@ public:
   ///
   /// IOManager - It should exist only one instance of the factory
   qSlicerCoreIOManager*                CoreIOManager;
+
+  ///
+  /// CoreOptions - It should exist only one instance of the coreOptions
+  qSlicerCoreCommandOptions*           CoreCommandOptions;
+
+  /// ExitWhenDone flag
+  bool                                 ExitWhenDone; 
 
   /// For ::PutEnv
   /// See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
@@ -113,14 +130,203 @@ public:
   QString            IntDir;
 
   /// Indicate if initialize() method has been called.
-  bool               Initialized; 
+  bool               Initialized;
+
+  /// Local copy of the arguments
+  int                Argc;
+  char**             Argv;
   
 };
+
+//-----------------------------------------------------------------------------
+// qSlicerCoreApplicationPrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
+{
+  this->AppLogic = 0;
+  this->MRMLScene = 0;
+  this->ModuleManager = 0;
+  this->CoreIOManager = 0;
+  this->CoreCommandOptions = 0;
+  this->Settings = 0;
+  this->Initialized = false;
+  this->Argc = 0;
+  this->Argv = 0;
+  this->ExitWhenDone = false;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
+{
+  if (this->ModuleManager) { delete this->ModuleManager; }
+  if (this->CoreIOManager) { delete this->CoreIOManager; }
+  if (this->CoreCommandOptions) { delete this->CoreCommandOptions; }
+  if (this->Argc && this->Argv)
+    {
+    for (int i = 0; i < this->Argc; ++i)
+      {
+      delete [] this->Argv[i];
+      }
+    delete [] this->Argv;
+    }
+}
+
+//-----------------------------------------------------------------------------
+qCTKSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suffix,
+                                                                 bool useTmp)
+{
+  QCTK_P(qSlicerCoreApplication);
+
+  QString settingsFileName = QString("%1-%2.%3%4").
+    arg(qSlicerCoreApplication::applicationName().replace(":", "")).
+    arg(QString::number(Slicer3_VERSION_MAJOR)).
+    arg(QString::number(Slicer3_VERSION_MINOR)).
+    arg(suffix);
+
+  if (useTmp)
+    {
+    settingsFileName += "-tmp";
+    }
+
+  qCTKSettings* settings = new qCTKSettings(p->organizationName(), settingsFileName, p);
+
+  if (useTmp)
+    {
+    settings->clear();
+    }
+  return settings;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory(const QString& programName)
+{
+  QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
+  if (slicerBinDir.isEmpty())
+    {
+    qWarning() << "Failed to retrieve Slicer binary directory.";
+    return;
+    }
+    
+  this->SlicerHome = QString::fromStdString(
+    vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1()));
+    
+  // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
+  if (QString::fromLatin1(getenv("Slicer3_HOME")) != this->SlicerHome)
+    {
+    // Update env
+    QString homeEnv = "Slicer3_HOME=%1";
+    //qDebug() << "Set environment: " << homeEnv.arg(this->SlicerHome);
+    this->putEnv(homeEnv.arg(this->SlicerHome));
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString& programName)
+{
+  std::string programPath;
+  std::string errorMessage;
+  if ( !vtksys::SystemTools::FindProgramPath(programName.toLatin1(), programPath, errorMessage) )
+    {
+    qCritical() << "Cannot find Slicer3 executable - " << errorMessage.c_str();
+    return "";
+    }
+
+  std::string slicerBinDir = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+  
+  // If the path: [slicerBinDir + Slicer3_INSTALL_LIB_DIR] isn't valid, try to
+  // discover the appropriate one
+  std::string tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
+  if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+    {
+    // Handle Visual Studio IntDir
+    std::vector<std::string> pathComponents;
+    vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
+
+    slicerBinDir = slicerBinDir + "/..";
+    tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
+    if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+      {
+      qCritical() << "Cannot find Slicer3 libraries";
+      return "";
+      }
+
+    if (pathComponents.size() > 0)
+      {
+      this->IntDir = QString::fromStdString(pathComponents[pathComponents.size()-1]);
+      }
+    }
+
+  slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
+  return QString::fromStdString(slicerBinDir);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreApplicationPrivate::parseArguments(int _argc, char** _argv)
+{
+  QCTK_P(qSlicerCoreApplication);
+  
+  qSlicerCoreCommandOptions* options = this->CoreCommandOptions;
+  if (!options)
+    {
+    qWarning() << "Failed to parse arguments - "
+                  "it seems you forgot to call setCoreCommandOptions()";
+    this->terminate();
+    return false;
+    }
+  if (!options->parse(_argc, _argv))
+    {
+    qCritical("Problem parsing command line arguments.  Try with --help.");
+    this->terminate();
+    return false;
+    }
+
+  p->handlePreApplicationCommandLineArguments();
+  QTimer::singleShot(0, p, SLOT(handleCommandLineArguments()));
+  
+  return true; 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::terminate()
+{
+  this->ExitWhenDone = true;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplicationPrivate::putEnv(const QString& value)
+{ 
+  static Self::DeletingCharVector local_environment;
+  char *env_var = new char[value.size() + 1];
+  strcpy(env_var, value.toLatin1());
+  int ret = putenv(env_var);
+  // Save the pointer in the static vector so that it can be deleted on exit
+  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
+  local_environment << env_var;
+  return ret == 0;
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerCoreApplication methods
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
 {
   QCTK_INIT_PRIVATE(qSlicerCoreApplication);
+  QCTK_D(qSlicerCoreApplication);
+
+  this->setOrganizationName("NAMIC");
+  
+  // Keep a local copy of the original arguments
+  char **myArgv = new char*[_argc];
+  for (int i = 0; i < _argc; ++i)
+    {
+    int length = static_cast<int>(strlen(_argv[i])) + 1;
+    myArgv[i] = new char[length];
+    strncpy(myArgv[i], _argv[i], length);
+    }
+  d->Argc = _argc;
+  d->Argv = myArgv;
 }
 
 //-----------------------------------------------------------------------------
@@ -140,7 +346,7 @@ QCTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
 QCTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::initialize()
+void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 {
   QCTK_D(qSlicerCoreApplication);
   d->discoverSlicerHomeDirectory(this->arguments().at(0));
@@ -175,13 +381,63 @@ void qSlicerCoreApplication::initialize()
 
   this->setMRMLScene(scene);
   this->setAppLogic(_appLogic);
-
+  
   // Initialization done !
   d->Initialized = true;
 
-  qSlicerModuleManager * _moduleManager = new qSlicerModuleManager;
-  Q_ASSERT(_moduleManager);
-  d->ModuleManager = _moduleManager;
+  // Instanciate moduleManager
+  d->ModuleManager = new qSlicerModuleManager;
+
+  // Parse command line arguments
+  d->parseArguments(d->Argc, d->Argv);
+    
+  exitWhenDone = d->ExitWhenDone;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
+{
+  QCTK_D(qSlicerCoreApplication);
+  
+  qSlicerCoreCommandOptions* options = this->coreCommandOptions();
+  Q_ASSERT(options);
+
+  if (options->helpSelected())
+    {
+    std::cout << options->help().toStdString() << std::endl;
+    d->terminate();
+    return;
+    }
+    
+  if (options->displayVersionAndExit())
+    {
+    std::cout << this->applicationName().toStdString() << " " << Slicer3_VERSION_FULL << std::endl;
+    d->terminate();
+    return;
+    }
+
+  if (options->displayProgramPathAndExit())
+    {
+    std::cout << this->arguments().at(0).toStdString() << std::endl;
+    d->terminate();
+    return;
+    }
+
+  if (options->displayHomePathAndExit())
+    {
+    std::cout << this->slicerHome().toStdString() << std::endl;
+    d->terminate();
+    return;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::handleCommandLineArguments()
+{
+  qSlicerCoreCommandOptions* options = this->coreCommandOptions();
+  Q_ASSERT(options);
+  Q_UNUSED(options);
+  
 }
 
 //-----------------------------------------------------------------------------
@@ -190,6 +446,37 @@ void qSlicerCoreApplication::initializePaths(const QString& programPath)
   QCTK_D(qSlicerCoreApplication);
   // we can't use this->arguments().at(0) here as argc/argv are incorrect.
   d->discoverSlicerHomeDirectory(programPath);
+}
+
+//-----------------------------------------------------------------------------
+qCTKSettings* qSlicerCoreApplication::settings()
+{
+  QCTK_D(qSlicerCoreApplication);
+
+  // If required, instanciate Settings
+  if(!d->Settings)
+    {
+    d->Settings = d->instantiateSettings("", false);
+    }
+  return d->Settings;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::disableSettings()
+{
+  QCTK_D(qSlicerCoreApplication);
+  Q_ASSERT(!d->Settings);
+  
+  // Instanciate empty Settings
+  d->Settings = d->instantiateSettings("", true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::clearSettings()
+{
+  QCTK_D(qSlicerCoreApplication);
+  Q_ASSERT(!d->Settings);
+  d->Settings->clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -259,80 +546,7 @@ QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setCoreIOManager, Co
 QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, CoreIOManager);
 
 //-----------------------------------------------------------------------------
-// qSlicerCoreApplicationPrivate methods
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory(const QString& programName)
-{
-  QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
-  if (slicerBinDir.isEmpty())
-    {
-    qWarning() << "Failed to retrieve Slicer binary directory.";
-    return;
-    }
-    
-  this->SlicerHome = QString::fromStdString(
-    vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1()));
-    
-  // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
-  if (QString::fromLatin1(getenv("Slicer3_HOME")) != this->SlicerHome)
-    {
-    // Update env
-    QString homeEnv = "Slicer3_HOME=%1";
-    qDebug() << "Set environment: " << homeEnv.arg(this->SlicerHome);
-    this->putEnv(homeEnv.arg(this->SlicerHome));
-    }
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString& programName)
-{
-  std::string programPath;
-  std::string errorMessage;
-  if ( !vtksys::SystemTools::FindProgramPath(programName.toLatin1(), programPath, errorMessage) )
-    {
-    qCritical() << "Cannot find Slicer3 executable - " << errorMessage.c_str();
-    return "";
-    }
-
-  std::string slicerBinDir = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
-  
-  // If the path: [slicerBinDir + Slicer3_INSTALL_LIB_DIR] isn't valid, try to
-  // discover the appropriate one
-  std::string tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
-  if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
-    {
-    // Handle Visual Studio IntDir
-    std::vector<std::string> pathComponents;
-    vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
-
-    slicerBinDir = slicerBinDir + "/..";
-    tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
-    if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
-      {
-      qCritical() << "Cannot find Slicer3 libraries";
-      return "";
-      }
-
-    if (pathComponents.size() > 0)
-      {
-      this->IntDir = QString::fromStdString(pathComponents[pathComponents.size()-1]);
-      }
-    }
-
-  slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
-  return QString::fromStdString(slicerBinDir);
-}
-
-//-----------------------------------------------------------------------------
-int qSlicerCoreApplicationPrivate::putEnv(const QString& value)
-{ 
-  static Self::DeletingCharVector local_environment;
-  char *env_var = new char[value.size() + 1];
-  strcpy(env_var, value.toLatin1());
-  int ret = putenv(env_var);
-  // Save the pointer in the static vector so that it can be deleted on exit
-  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
-  local_environment << env_var;
-  return ret == 0;
-}
+QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreCommandOptions*,
+             setCoreCommandOptions, CoreCommandOptions);
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreCommandOptions*,
+             coreCommandOptions, CoreCommandOptions);

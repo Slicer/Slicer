@@ -14,7 +14,8 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerWidget;
-class qSlicerIOManager; 
+class qSlicerIOManager;
+class qSlicerCommandOptions; 
 class qSlicerApplicationPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
@@ -32,7 +33,11 @@ public:
   static qSlicerApplication* application();
 
   /// 
-  void initialize();
+  void initialize(bool& exitWhenDone);
+
+  ///
+  /// Get commandOptions
+  qSlicerCommandOptions* commandOptions();
 
   /// 
   /// Get IO Manager
@@ -52,6 +57,12 @@ public:
   /// Set/Get default window flags that could be used when displaying top level widgets
   void setDefaultWindowFlags(Qt::WindowFlags defaultWindowFlags);
   Qt::WindowFlags defaultWindowFlags() const;
+
+  ///
+  /// TODO
+  /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
+  /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
+  //virtual void commitData(QSessionManager & manager);
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerApplication);

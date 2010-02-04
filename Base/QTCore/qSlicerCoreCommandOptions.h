@@ -53,6 +53,10 @@ protected:
   // Disable current settings
   virtual void disableCurrentSettings();
 
+  /// This method is called when wrong argument is found. If it returns False, then
+  /// the parsing will fail.
+  virtual bool wrongArgument(const char* argument);
+
 private:
   QCTK_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
 

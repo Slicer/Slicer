@@ -3,6 +3,10 @@
 // SlicerQT includes
 #include "qSlicerWidget.h"
 #include "qSlicerIOManager.h"
+#include "qSlicerCommandOptions.h"
+
+// qCTK includes
+#include <qCTKSettings.h>
 
 // QT includes
 #include <QCleanlooksStyle>
@@ -170,10 +174,29 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::initialize()
+void qSlicerApplication::initialize(bool& exitWhenDone)
 {
-  
-  this->Superclass::initialize();
+  // If specific command line option are required for the different Slicer apps
+  // (SlicerQT, SlicerBatch, SlicerDaemon, ...).
+  // The class qSlicerCommandOptions could be subclassed into, for example,
+  // qSlicerGUICommandOptions, qSlicerDaemonCommandOptions, ...
+  // Each subclasse should be added in their respective Applications/Slicer{Batch, Daemon}
+  // directory.
+  // The following line should also be moved into the 'Main.cxx' specific to each app.
+  // This comment should also be deleted !
+  this->setCoreCommandOptions(new qSlicerCommandOptions(this->settings()));
+
+  // Proceed to initialization of the Core
+  this->Superclass::initialize(exitWhenDone);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCommandOptions* qSlicerApplication::commandOptions()
+{
+  qSlicerCommandOptions* _commandOptions =
+    reinterpret_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
+  Q_ASSERT(_commandOptions);
+  return _commandOptions;
 }
 
 //-----------------------------------------------------------------------------

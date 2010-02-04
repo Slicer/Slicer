@@ -36,8 +36,14 @@ int qSlicerTransformsModuleTest1(int argc, char * argv [] )
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
     }
-  
-  aptr->initialize();
+
+  bool exitWhenDone = false;
+  aptr->initialize(exitWhenDone);
+  if (exitWhenDone == true)
+    {
+    std::cerr << "Problem with the application::initialize function" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   qSlicerTransformsModule * transformsModule = new qSlicerTransformsModule;
   transformsModule->initialize(aptr->appLogic());

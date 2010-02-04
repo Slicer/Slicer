@@ -37,6 +37,14 @@ int qSlicerCamerasModuleTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  bool exitWhenDone = false;
+  aptr->initialize(exitWhenDone);
+  if (exitWhenDone == true)
+    {
+    std::cerr << "Problem with the application::initialize function" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   qSlicerCamerasModule * cameraModule = new qSlicerCamerasModule;
 
   delete cameraModule;

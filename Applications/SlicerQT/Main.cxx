@@ -1,6 +1,7 @@
 #include "qSlicerApplication.h"
 
 // SlicerQT includes
+#include "qSlicerCommandOptions.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleSelectorWidget.h"
@@ -19,24 +20,6 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-// namespace
-// {
-// QString getSlicerHome()
-// {
-//   QString home = QString(getenv("Slicer3_HOME"));
-//   if (home.isEmpty())
-//     {
-//     home = slicerBinDir + "/..";
-//     //slicerHome = vtksys::SystemTools::CollapseFullPath(home.c_str());
-//     QString homeEnv = "Slicer3_HOME=%1";
-//     qDebug() << "Set environment: " << homeEnv.arg(home);
-//     //vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
-//     }
-//   return 
-// }
-// }
-
-//----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
@@ -49,31 +32,43 @@ int main(int argc, char* argv[])
   //Q_INIT_RESOURCE(qMRMLWidgets);
 #endif
 
-  QPixmap pixmap(":Images/SlicerSplashScreen.png");
-  QSplashScreen splash(pixmap, Qt::WindowStaysOnTopHint);
-  splash.show();
-  
-  //app.setOrganizationName("");
-  //app.setApplicationName("");
+  app.setApplicationName("Slicer");
   //app.setApplicationVersion();
   //app.setWindowIcon(QIcon(":Icons/..."));
 
-  app.initialize();
+  bool exitWhenDone = false;
+  app.initialize(exitWhenDone);
+  if  (exitWhenDone)
+    {
+    return EXIT_SUCCESS;
+    }
+
+  QPixmap pixmap(":Images/SlicerSplashScreen.png");
+  QSplashScreen splash(pixmap, Qt::WindowStaysOnTopHint);
+  bool enableSplash = !app.commandOptions()->noSplash(); 
+  if (enableSplash)
+    {
+    splash.show();
+    }
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
 
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
-  
+
   // Register module factories
   moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory",
                                         new qSlicerCoreModuleFactory());
   moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
                                         new qSlicerLoadableModuleFactory());
-  moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
-                                        new qSlicerCLILoadableModuleFactory());
-  moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
-                                        new qSlicerCLIExecutableModuleFactory());
+
+  if (!app.commandOptions()->disableCLIModule())
+    {
+    moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
+                                          new qSlicerCLILoadableModuleFactory());
+    moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
+                                          new qSlicerCLIExecutableModuleFactory());
+    }
 
   // Register and instanciate modules
   moduleFactoryManager->registerAllModules();
@@ -87,15 +82,24 @@ int main(int argc, char* argv[])
   foreach(const QString& name, moduleNames)
     {
     moduleManager->loadModule(name);
-    splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
-    splash.repaint();
+    if (enableSplash)
+      {
+      splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
+      splash.repaint();
+      }
     }
 
-  splash.clearMessage();
+  if (enableSplash)
+    {
+    splash.clearMessage();
+    }
   
   // Show main window
   window.show();
-  splash.finish(&window);
+  if (!app.commandOptions()->noSplash())
+    {
+    splash.finish(&window);
+    }
   
   // Add modules to the selector
   window.moduleSelector()->addModules(moduleNames);

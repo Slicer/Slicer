@@ -18,6 +18,9 @@
 // qCTK includes
 #include <qCTKSettings.h>
 
+// QT includes
+#include <QDebug>
+
 //-----------------------------------------------------------------------------
 class qSlicerCoreCommandOptionsPrivate: public qCTKPrivate<qSlicerCoreCommandOptions>
 {
@@ -90,4 +93,11 @@ void qSlicerCoreCommandOptions::initialize()
 void qSlicerCoreCommandOptions::disableCurrentSettings()
 {
   qSlicerCoreApplication::application()->disableSettings();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::wrongArgument(const char* argument)
+{
+  qWarning() << "Unknown argument:" << argument;
+  return false;
 }

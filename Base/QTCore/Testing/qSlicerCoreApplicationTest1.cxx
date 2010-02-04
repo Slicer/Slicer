@@ -55,7 +55,13 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     }
 
 
-  app.initialize();
+  bool exitWhenDone = false;
+  app.initialize(exitWhenDone);
+  if (exitWhenDone == true)
+    {
+    std::cerr << "Problem with the application::initialize function" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // Since initialize has been called, the module manager should be available
   qSlicerModuleManager * moduleManager1 = app.moduleManager();
