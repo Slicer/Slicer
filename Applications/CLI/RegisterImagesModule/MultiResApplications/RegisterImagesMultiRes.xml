@@ -69,5 +69,13 @@
       <description>The maximum step size of the optimizer in voxels</description>
       <default>5.0</default>
     </float>
+    <float>
+      <name>stepTolerance</name>
+      <label>Step Tolerance (voxels)</label>
+      <channel>input</channel>
+      <longflag>stepTolerance</longflag>
+      <description>The maximum step size of the optimizer in voxels</description>
+      <default>.25</default>
+    </float>
   </parameters>
 </executable>

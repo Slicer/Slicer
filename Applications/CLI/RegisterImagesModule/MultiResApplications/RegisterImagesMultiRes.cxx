@@ -335,11 +335,11 @@ int main( int argc, char * argv[] )
 
     // For FRPR
     opt->SetStepLength(stepSize);
-    opt->SetStepTolerance(.25);
+    opt->SetStepTolerance(stepTolerance);
     opt->SetValueTolerance(.0001);
     opt->SetMaximumIteration(numIterations*optimizerScales.size());
     opt->SetMaximumLineIteration(30);
-    //opt->SetUseUnitLengthGradient( true );
+    opt->SetUseUnitLengthGradient( true );
     opt->SetToPolakRibiere();
 
     reg->SetOptimizer(opt);
@@ -706,7 +706,7 @@ int main( int argc, char * argv[] )
       }
 
     opt->SetStepLength(stepSize);
-    opt->SetStepTolerance(.25);
+    opt->SetStepTolerance(stepTolerance);
     opt->SetValueTolerance(.0001);
     opt->SetMaximumIteration(numIterations*optimizerScales.size());
     opt->SetMaximumLineIteration(30);
@@ -893,7 +893,7 @@ int main( int argc, char * argv[] )
     }
 
   opt->SetStepLength(stepSize);
-  opt->SetStepTolerance(.25);
+  opt->SetStepTolerance(stepTolerance);
   opt->SetValueTolerance(.0001);
   opt->SetMaximumIteration(numIterations*optimizerScales.size());
   opt->SetMaximumLineIteration(30);
