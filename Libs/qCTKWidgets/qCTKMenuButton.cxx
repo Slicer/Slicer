@@ -133,10 +133,24 @@ void qCTKMenuButton::paintEvent(QPaintEvent * _event)
   painter.drawControl(QStyle::CE_PushButtonBevel, option);
   // is PE_PanelButtonCommand better ?
   //painter.drawPrimitive(QStyle::PE_PanelButtonCommand, option);
+  QRect downArrowRect = d->indicatorRect();
+  if (option.state & QStyle::State_Sunken)
+    {    
+    // if the button is down, draw the part under the indicator up
+    QPixmap cache = QPixmap(option.rect.size());
+    cache.fill(Qt::transparent);
+    QPainter cachePainter(&cache);
+    option.state &= ~QStyle::State_Sunken;
+    option.state |= QStyle::State_Raised;
+    //option.state &= ~QStyle::State_HasFocus;
+    option.state &= ~QStyle::State_MouseOver;
+    this->style()->drawControl(QStyle::CE_PushButtonBevel, &option, &cachePainter, this);
+    painter.drawItemPixmap(downArrowRect, Qt::AlignLeft | Qt::AlignTop, cache.copy(downArrowRect)); 
+    }
 
   // Separator
   // Freely inspired by the painting of CC_ComboBox in qcleanlooksstyle.cpp 
-  QRect downArrowRect = d->indicatorRect();
+  
   QColor buttonColor = this->palette().button().color();
   QColor darkColor;
   darkColor.setHsv(buttonColor.hue(),
@@ -152,7 +166,7 @@ void qCTKMenuButton::paintEvent(QPaintEvent * _event)
   // Draw arrow
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
-  indicatorOpt.rect = downArrowRect;
+  indicatorOpt.rect = downArrowRect.adjusted(borderSize, borderSize, -borderSize, -borderSize);
   painter.drawPrimitive(QStyle::PE_IndicatorArrowDown, indicatorOpt);
 
   // Draw Icon & Text
