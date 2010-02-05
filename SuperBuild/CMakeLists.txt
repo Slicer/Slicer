@@ -24,14 +24,35 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 include(CheckFortran)
 
 if(CMAKE_Fortran_COMPILER)
-  option(SLICER_BUILD_ "Build ParaView Testing" ON)
-  option(SLICER_BUILD_ "Build ParaView Testing" ON)
-  option(SLICER_BUILD_ "Build ParaView Testing" ON)
-  option(SLICER_BUILD_ "Build ParaView Testing" ON)
+  option(Slicer3_BUILD_BLAS "Build ParaView Testing" ON)
+  option(Slicer3_BUILD_LAPACK "Build ParaView Testing" ON)
+  
+  if(Slicer3_BUILD_NUMPY AND Slicer3_BUILD_LAPACK)
+    option(Slicer3_BUILD_NUMPY "Build ParaView Testing" ON)
+
+    if(Slicer3_BUILD_NUMPY)
+      option(Slicer3_BUILD_SCIPY "Build ParaView Testing" ON)
+    endif()
+    
+  endif()
+  
   enable_language(Fortran)
 endif(CMAKE_Fortran_COMPILER)
 
+
 include(ExternalProject)
+
+## QT
+option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
+
+if(Slicer3_USE_QT)
+  find_package(Qt4 REQUIRED)
+  # Enable modules
+  SET(QT_USE_QTNETWORK ON)
+  # Includes Qt headers
+  INCLUDE(${QT_USE_FILE})
+endif()
+
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
 set_property(DIRECTORY PROPERTY EP_BASE ${base})
