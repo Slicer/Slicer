@@ -188,7 +188,8 @@ void vtkProstateNavCalibrationStep::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 void vtkProstateNavCalibrationStep::ProcessGUIEvents(vtkObject *caller,
-                                           unsigned long event, void *callData)
+                                           unsigned long event,
+                                           void *vtkNotUsed(callData))
 {
 
   if (this->ShowZFrameCheckButton == vtkKWCheckButton::SafeDownCast(caller) 

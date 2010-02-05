@@ -471,7 +471,7 @@ protected:
    virtual GeneralMatrix* Transpose(TransposedMatrix*, MatrixType);
    void CheckConversion(const BaseMatrix&);     // check conversion OK
    void resize(int, int, int);                  // change dimensions
-   virtual short SimpleAddOK(const GeneralMatrix* gm) { return 0; }
+   virtual short SimpleAddOK(const GeneralMatrix* /*gm*/) { return 0; }
              // see bandmat.cpp for explanation
    virtual void MiniCleanUp()
       { store = 0; storage = 0; nrows_val = 0; ncols_val = 0; tag_val = -1;}
