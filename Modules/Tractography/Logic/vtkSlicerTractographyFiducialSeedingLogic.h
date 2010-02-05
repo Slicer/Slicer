@@ -25,8 +25,6 @@
 #include <stdlib.h>
 
 #include "vtkSlicerModuleLogic.h"
-
-//#include "vtkSlicerTractographyLogic.h"
 #include "vtkSlicerTractographyModuleLogicExport.h"
 
 class vtkMRMLDiffusionTensorVolumeNode;

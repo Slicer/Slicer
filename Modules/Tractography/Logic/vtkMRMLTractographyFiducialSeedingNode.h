@@ -14,15 +14,16 @@
 #ifndef __vtkMRMLTractographyFiducialSeedingNode_h
 #define __vtkMRMLTractographyFiducialSeedingNode_h
 
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 
+// VTK includes
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
-//#include "vtkSlicerTractographyLogic.h"
 #include "vtkSlicerTractographyModuleLogicExport.h"
 
 class vtkImageData;
