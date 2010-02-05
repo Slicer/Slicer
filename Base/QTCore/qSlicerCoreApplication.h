@@ -111,38 +111,43 @@ public:
   qSlicerModuleManager* moduleManager()const;
 
   /// 
-  /// Get the module manager
+  /// Set the module manager
+  /// Note that qSlicerCoreApplication takes ownership of the object
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   /// removed once the QT GUI is functional.
   void setModuleManager(qSlicerModuleManager* moduleManager);
 
   /// 
-  /// Set/Get the IO manager
+  /// Get the IO manager
   qSlicerCoreIOManager* coreIOManager()const;
+
+  /// Set the IO manager
+  /// Note that qSlicerCoreApplication takes ownership of the object
   void setCoreIOManager(qSlicerCoreIOManager* ioManager);
 
   ///
   /// Get coreCommandOptions
   qSlicerCoreCommandOptions* coreCommandOptions()const;
 
+  /// Set coreCommandOptions
+  /// Note that qSlicerCoreApplication takes ownership of the object
+  void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
+
   ///
   /// Get application settings
-  /// If not already done, this method will also instanciate a qCTKWidget and associate it
-  /// with the application.
+  /// Note that his method will also instanciate a qCTKSettings object if required.
   qCTKSettings* settings();
 
   ///
   /// Disable application settings
+  /// Instanciate a new empty qCTKSettings object and associate it with this instance.
+  /// Note that the original settings won't deleted.
   void disableSettings();
 
   /// Clear application settings
   void clearSettings();
 
 protected:
-  
-  ///
-  /// Set coreCommandOptions
-  void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
   
   /// 
   virtual void handlePreApplicationCommandLineArguments();

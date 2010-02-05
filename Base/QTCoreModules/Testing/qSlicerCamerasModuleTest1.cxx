@@ -9,9 +9,15 @@
 
 =========================================================================auto=*/
 
+// SlicerQT includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerCamerasModule.h" 
+#include "qSlicerCamerasModule.h"
+#include "qSlicerCoreCommandOptions.h"
 
+// qCTK includes
+#include <qCTKSettings.h>
+
+// STL includes
 #include <stdlib.h>
 
 #include "TestingMacros.h"
@@ -34,6 +40,25 @@ int qSlicerCamerasModuleTest1(int argc, char * argv [] )
   if( aptr != (&app) )
     {
     std::cerr << "Problem with the application() singleton" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qCTKSettings * settings = app.settings();
+  if( settings == 0 )
+    {
+    std::cerr << "Problem with settings()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions(settings);
+
+  app.setCoreCommandOptions( coreCommandOptions );
+
+  qSlicerCoreCommandOptions * coreCommandOptions2 = app.coreCommandOptions();
+
+  if( coreCommandOptions2 != coreCommandOptions )
+    {
+    std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
     return EXIT_FAILURE;
     }
 

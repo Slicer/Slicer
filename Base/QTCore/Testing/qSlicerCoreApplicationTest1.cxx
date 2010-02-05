@@ -9,17 +9,36 @@
 
 =========================================================================auto=*/
 
+// SlicerQT includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h" 
-#include "qSlicerCoreIOManager.h" 
+#include "qSlicerCoreIOManager.h"
+#include "qSlicerCoreCommandOptions.h"
 
-#include "vtkMRMLScene.h"
+// Slicer includes
 #include "vtkSlicerApplicationLogic.h"
+
+// qCTK includes
+#include <qCTKSettings.h>
+
+// MRML includes
+#include "vtkMRMLScene.h"
+
+// VTK includes
 #include "vtkSmartPointer.h"
 
+// STL includes
 #include <stdlib.h>
 
 #include "TestingMacros.h"
+
+// namespace{
+// class qSlicerCoreApplicationTest : public qSlicerCoreApplication
+// {
+// public:
+//   qSlicerCoreApplicationTest():qSlicerCoreApplication(){}
+// };
+// }
 
 int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 {
@@ -50,10 +69,28 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   if( coreIOManager2 != coreIOManager )
     {
-    std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
+    std::cerr << "Problem with setCoreIOManager()/coreIOManager()" << std::endl;
     return EXIT_FAILURE;
     }
 
+  qCTKSettings * settings = app.settings();
+  if( settings == 0 )
+    {
+    std::cerr << "Problem with settings()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions(settings);
+
+  app.setCoreCommandOptions( coreCommandOptions );
+
+  qSlicerCoreCommandOptions * coreCommandOptions2 = app.coreCommandOptions();
+
+  if( coreCommandOptions2 != coreCommandOptions )
+    {
+    std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   bool exitWhenDone = false;
   app.initialize(exitWhenDone);

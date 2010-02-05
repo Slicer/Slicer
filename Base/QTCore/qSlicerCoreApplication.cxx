@@ -46,7 +46,7 @@
 #include <vtksys/stl/string>
 
 // STL includes
-#include <cstdlib> // For exit() function
+#include <memory> // auto_ptr
 
 // For:
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
@@ -98,15 +98,15 @@ public:
 
   ///
   /// ModuleManager - It should exist only one instance of the factory
-  qSlicerModuleManager*                ModuleManager;
+  std::auto_ptr<qSlicerModuleManager>       ModuleManager;
 
   ///
   /// IOManager - It should exist only one instance of the factory
-  qSlicerCoreIOManager*                CoreIOManager;
+  std::auto_ptr<qSlicerCoreIOManager>       CoreIOManager;
 
   ///
   /// CoreOptions - It should exist only one instance of the coreOptions
-  qSlicerCoreCommandOptions*           CoreCommandOptions;
+  std::auto_ptr<qSlicerCoreCommandOptions>  CoreCommandOptions;
 
   /// ExitWhenDone flag
   bool                                 ExitWhenDone; 
@@ -146,9 +146,6 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
 {
   this->AppLogic = 0;
   this->MRMLScene = 0;
-  this->ModuleManager = 0;
-  this->CoreIOManager = 0;
-  this->CoreCommandOptions = 0;
   this->Settings = 0;
   this->Initialized = false;
   this->Argc = 0;
@@ -159,9 +156,6 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 {
-  if (this->ModuleManager) { delete this->ModuleManager; }
-  if (this->CoreIOManager) { delete this->CoreIOManager; }
-  if (this->CoreCommandOptions) { delete this->CoreCommandOptions; }
   if (this->Argc && this->Argv)
     {
     for (int i = 0; i < this->Argc; ++i)
@@ -266,7 +260,7 @@ bool qSlicerCoreApplicationPrivate::parseArguments(int _argc, char** _argv)
 {
   QCTK_P(qSlicerCoreApplication);
   
-  qSlicerCoreCommandOptions* options = this->CoreCommandOptions;
+  qSlicerCoreCommandOptions* options = this->CoreCommandOptions.get();
   if (!options)
     {
     qWarning() << "Failed to parse arguments - "
@@ -386,7 +380,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   d->Initialized = true;
 
   // Instanciate moduleManager
-  d->ModuleManager = new qSlicerModuleManager;
+  d->ModuleManager = std::auto_ptr<qSlicerModuleManager>(new qSlicerModuleManager);
 
   // Parse command line arguments
   d->parseArguments(d->Argc, d->Argv);
@@ -520,33 +514,37 @@ QString qSlicerCoreApplication::tempDirectory() const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* _moduleManager)
+void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
 {
-  QCTK_D(qSlicerCoreApplication);
-  if (_moduleManager == d->ModuleManager)
-    {
-    return; 
-    }
-  if (d->ModuleManager)
-    {
-    delete d->ModuleManager;
-    d->ModuleManager = 0; 
-    }
-  if (_moduleManager)
-    {
-    d->ModuleManager = _moduleManager;
-    }
+  qctk_d()->ModuleManager = std::auto_ptr<qSlicerModuleManager>(manager);
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerCoreApplication, qSlicerModuleManager*, moduleManager, ModuleManager);
+qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
+{
+  return qctk_d()->ModuleManager.get();
+}
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, setCoreIOManager, CoreIOManager);
-QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreIOManager*, coreIOManager, CoreIOManager);
+void qSlicerCoreApplication::setCoreIOManager(qSlicerCoreIOManager* manager)
+{
+  qctk_d()->CoreIOManager = std::auto_ptr<qSlicerCoreIOManager>(manager);
+}
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, qSlicerCoreCommandOptions*,
-             setCoreCommandOptions, CoreCommandOptions);
-QCTK_GET_CXX(qSlicerCoreApplication, qSlicerCoreCommandOptions*,
-             coreCommandOptions, CoreCommandOptions);
+qSlicerCoreIOManager* qSlicerCoreApplication::coreIOManager()const
+{
+  return qctk_d()->CoreIOManager.get();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setCoreCommandOptions(qSlicerCoreCommandOptions* options)
+{
+  qctk_d()->CoreCommandOptions = std::auto_ptr<qSlicerCoreCommandOptions>(options);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
+{
+  return qctk_d()->CoreCommandOptions.get();
+}
