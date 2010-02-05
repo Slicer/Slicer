@@ -14,16 +14,21 @@
 #ifndef __vtkAtlasCreatorLogic_h
 #define __vtkAtlasCreatorLogic_h
 
+// Slicer includes
 #include "vtkSlicerModuleLogic.h"
-#include "vtkMRMLScene.h"
 
-#include "vtkAtlasCreator.h"
+// MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLAtlasCreatorNode.h"
 
+#include "vtkSlicerAtlasCreatorModuleLogicExport.h"
+
+// TODO Node registration needs to be done in the Logic. See RegisterNodes
 
 class vtkITKGradientAnisotropicDiffusionImageFilter;
 
-class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorLogic : public vtkSlicerModuleLogic
+class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkAtlasCreatorLogic :
+  public vtkSlicerModuleLogic
 {
   public:
   static vtkAtlasCreatorLogic *New();

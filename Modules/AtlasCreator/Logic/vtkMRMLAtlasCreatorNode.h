@@ -14,19 +14,21 @@
 #ifndef __vtkMRMLAtlasCreatorNode_h
 #define __vtkMRMLAtlasCreatorNode_h
 
+// MRMK includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 
+// VTK includes
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
-#include "vtkAtlasCreator.h"
+#include "vtkSlicerAtlasCreatorModuleLogicExport.h"
 
 class vtkImageData;
 
-class VTK_ATLASCREATOR_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
+class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLAtlasCreatorNode *New();

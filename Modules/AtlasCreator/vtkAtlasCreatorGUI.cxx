@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 #include "vtkAtlasCreatorGUI.h"
 
 // vtkSlicer includes
+#include "vtkAtlasCreatorLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerApplication.h"
@@ -33,6 +34,9 @@ Version:   $Revision: 1.2 $
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
+
+// MRML includes
+#include "vtkMRMLAtlasCreatorNode.h"
 
 // VTK includes
 #include "vtkObjectFactory.h"

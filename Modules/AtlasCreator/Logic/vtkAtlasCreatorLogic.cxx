@@ -12,18 +12,23 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// Slicer includes
+#include "vtkAtlasCreatorLogic.h"
+
+// VTKITK includes
+#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLScalarVolumeNode.h"
+
+// VTK includes
+#include "vtkObjectFactory.h"
+
+// STL includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkAtlasCreatorLogic.h"
-#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
-#include "vtkAtlasCreator.h"
-
-#include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
 
 vtkAtlasCreatorLogic* vtkAtlasCreatorLogic::New()
 {

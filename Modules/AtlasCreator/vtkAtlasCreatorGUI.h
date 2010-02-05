@@ -16,11 +16,12 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
+#include "vtkAtlasCreatorLogic.h"
+#include "vtkAtlasCreator.h"
 
 #include "vtkMRMLScene.h"
-#include "vtkAtlasCreatorLogic.h"
 
-
+class vtkMRMLAtlasCreatorNode; 
 class vtkSlicerSliceWidget;
 class vtkKWFrame;
 class vtkKWScaleWithEntry;

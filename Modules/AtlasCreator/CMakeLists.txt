@@ -16,13 +16,10 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
-# IF(Slicer3_USE_QT)
-#   set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-#   QT4_WRAP_CPP(MOC_SRCS QtGADModule.h)
-#   SET(SRCS ${SRCS} ${MOC_SRCS} 
-#            QtGADModule.cxx QtGADModule.h)
-#   SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
-# ENDIF(Slicer3_USE_QT)
+# --------------------------------------------------------------------------
+# Add subdirectories
+
+ADD_SUBDIRECTORY(Logic)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -30,6 +27,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkSlicerAtlasCreatorModuleLogic_SOURCE_DIR}
+  ${vtkSlicerAtlasCreatorModuleLogic_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   )
@@ -50,9 +49,7 @@ install(FILES
 # Sources
 
 set(AtlasCreator_SRCS
-  vtkAtlasCreatorLogic.cxx
   vtkAtlasCreatorGUI.cxx
-  vtkMRMLAtlasCreatorNode.cxx
   ${SRCS}
   )
 
@@ -67,9 +64,6 @@ set(AtlasCreator_SRCS
 # Helper classes
 
 # SET_SOURCE_FILES_PROPERTIES(
-#   QtGADModule.cxx 
-#   moc_QtGADModule.cxx 
-#   QtGADModule.h
 #   WRAP_EXCLUDE
 #   )
 
@@ -102,8 +96,8 @@ target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-#   ${QT_LIBRARIES}
   ${ITK_LIBRARIES}
+  vtkSlicerModelMirrorModuleLogic
   )
 
 slicer3_install_modules(${lib_name})
