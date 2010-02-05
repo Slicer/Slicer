@@ -1,19 +1,24 @@
 #ifndef __vtkFetchMIParser_h
 #define __vtkFetchMIParser_h
 
-#include "vtkObject.h"
-#include "vtkFetchMIWin32Header.h"
-#include "vtkXMLDataParser.h"
-#include "vtkXMLDataElement.h"
+// MRML includes
 #include "vtkMRMLFetchMINode.h"
 #include "vtkTagTable.h"
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkXMLDataParser.h"
+#include "vtkXMLDataElement.h"
+
+// STL includes
 #include <string>
 #include <map>
 #include <vector>
 #include <iterator>
 
+#include "vtkSlicerFetchMIModuleLogicExport.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIParser : public vtkObject
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIParser : public vtkObject
 {
   
 public:

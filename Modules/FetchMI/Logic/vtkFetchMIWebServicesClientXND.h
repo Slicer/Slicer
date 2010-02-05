@@ -1,11 +1,16 @@
 #ifndef __vtkFetchMIWebServicesClientXND_h
 #define __vtkFetchMIWebServicesClientXND_h
 
-#include "vtkObject.h"
-#include "vtkFetchMIWin32Header.h"
+// FetchMI includes
 #include "vtkFetchMIWebServicesClient.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIWebServicesClientXND : public vtkFetchMIWebServicesClient
+// VTK includes
+#include "vtkObject.h"
+
+#include "vtkSlicerFetchMIModuleLogicExport.h"
+
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIWebServicesClientXND :
+  public vtkFetchMIWebServicesClient
 {
   
 public:

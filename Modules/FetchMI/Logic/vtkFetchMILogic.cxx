@@ -43,13 +43,10 @@
 #include "vtkXMLDataParser.h"
 
 #include "vtkFetchMILogic.h"
-#include "vtkFetchMI.h"
 
 #include "vtkFetchMIWriterXND.h"
 #include "vtkFetchMIParserXND.h"
 #include "vtkFetchMIWebServicesClientXND.h"
-
-#include "vtkKWMessageDialog.h"
 
 //----------------------------------------------------------------------------
 //--- a word about language:
@@ -581,7 +578,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     if ( !success )
       {
       //--- post message to user. filenames may be corrupt.
-      std::string msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
+      msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
       this->FetchMINode->SetErrorMessage (msg.c_str() );
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
       }
@@ -604,7 +601,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     if ( !success )
       {
       //--- post message to user. filenames may be corrupt.
-      std::string msg = "Error restoring uris associated with loaded datasets after a remote upload failure. Warning: uris may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
+      msg = "Error restoring uris associated with loaded datasets after a remote upload failure. Warning: uris may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
       this->FetchMINode->SetErrorMessage (msg.c_str() );
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
       }
@@ -612,7 +609,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     if ( !success )
       {
       //--- post message to user. filenames may be corrupt.
-      std::string msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
+      msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
       this->FetchMINode->SetErrorMessage (msg.c_str() );
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
       }
@@ -635,7 +632,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     if ( !success )
       {
       //--- post message to user. filenames may be corrupt.
-      std::string msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
+      msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
       this->FetchMINode->SetErrorMessage (msg.c_str() );
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
       }
@@ -849,7 +846,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
             //---
             this->SetReservedURI ( NULL );
             this->GetCurrentWebService()->GetParser()->ParseMetadataPostResponse(this->GetTemporaryResponseFileName());
-            const char *uri = this->GetCurrentWebService()->GetParser()->GetResponse();
+            uri = this->GetCurrentWebService()->GetParser()->GetResponse();
             this->SetReservedURI ( uri );
             if (uri == NULL)
               {

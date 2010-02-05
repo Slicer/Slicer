@@ -630,7 +630,6 @@ void vtkFetchMIParserXND::GetXMLEntry ( vtkXMLDataElement *element )
             {
             //--- get all nested values.
             int numnested = element->GetNumberOfNestedElements();
-            vtkXMLDataElement *nestedElement;
             //--- get tag value
             for ( int i=0; i < numnested; i++)
               {

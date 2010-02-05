@@ -1,12 +1,16 @@
+#include "vtkFetchMIParserHID.h"
+
+//VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
+// VTK includes
 #include "vtkObjectFactory.h"
+
+// STL includes
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <vtksys/SystemTools.hxx>
-
-#include "vtkFetchMIParserHID.h"
-#include "vtkSlicerApplication.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkFetchMIParserHID );

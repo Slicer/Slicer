@@ -1,28 +1,37 @@
 #ifndef __vtkFetchMILogic_h
 #define __vtkFetchMILogic_h
 
-#include <vtksys/SystemTools.hxx>
-#include "vtkObject.h"
-
-#include "vtkSlicerModuleLogic.h"
-#include "vtkMRMLScene.h"
-#include "vtkXMLDataElement.h"
-#include "vtkXMLDataParser.h"
-
+// FetchMI includes
 #include "vtkFetchMIServer.h"
 #include "vtkFetchMIServerCollection.h"
 
-#include "vtkTagTable.h"
-#include "vtkFetchMI.h"
+// Slicer includes
+#include "vtkSlicerModuleLogic.h"
+
+// MRML includes
 #include "vtkMRMLFetchMINode.h"
+#include "vtkMRMLScene.h"
+#include "vtkTagTable.h"
+
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkXMLDataElement.h"
+#include "vtkXMLDataParser.h"
+
+// STL includes
 #include <string>
 #include <vector>
 #include <map>
 #include <iterator>
 
+#include "vtkSlicerFetchMIModuleLogicExport.h"
+
 class vtkXNDHandler;
 class vtkIntArray;
-class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
 {
   public:
   static vtkFetchMILogic *New();

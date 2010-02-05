@@ -1,15 +1,21 @@
 #ifndef __vtkFetchMIServer_h
 #define __vtkFetchMIServer_h
 
-#include "vtkObject.h"
-#include "vtkFetchMIWin32Header.h"
-#include "vtkURIHandler.h"
+// FetchMI includes
 #include "vtkFetchMIParser.h"
 #include "vtkFetchMIWriter.h"
 #include "vtkFetchMIWebServicesClient.h"
-#include "vtkTagTable.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIServer : public vtkObject
+// MRML includes
+#include "vtkTagTable.h"
+#include "vtkURIHandler.h"
+
+// VTK includes
+#include "vtkObject.h"
+
+#include "vtkSlicerFetchMIModuleLogicExport.h"
+
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIServer : public vtkObject
 {
 public:
   static vtkFetchMIServer* New();

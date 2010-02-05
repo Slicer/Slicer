@@ -814,9 +814,9 @@ void vtkFetchMIQueryTermWidget::SelectValueOfItem(int i, const char *val )
     {
     //--- make sure value is in the list.
     numValues = cb->GetNumberOfValues();
-    for ( int i=0; i < numValues; i++ )
+    for ( int j=0; j < numValues; j++ )
       {
-      cellText = cb->GetValueFromIndex(i);
+      cellText = cb->GetValueFromIndex(j);
       if ( !(strcmp (cellText.c_str(), val) ))
         {
         cb->SetValue (cellText.c_str() );

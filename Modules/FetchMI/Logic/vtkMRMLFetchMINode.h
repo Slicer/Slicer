@@ -1,20 +1,22 @@
 #ifndef __vtkMRMLFetchMINode_h
 #define __vtkMRMLFetchMINode_h
 
-#include "vtkStringArray.h"
-
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-
 #include "vtkTagTable.h"
 #include "vtkTagTableCollection.h"
 
-#include "vtkFetchMIWin32Header.h"
+// VTK includes
+#include "vtkStringArray.h"
+
+// STL includes
 #include <string>
 #include <vector>
 
+#include "vtkSlicerFetchMIModuleLogicExport.h"
 
-class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
 {
   public:
   static vtkMRMLFetchMINode *New();

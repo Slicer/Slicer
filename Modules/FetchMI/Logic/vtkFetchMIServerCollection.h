@@ -1,12 +1,19 @@
 #ifndef __vtkFetchMIServerCollection_h
 #define __vtkFetchMIServerCollection_h
 
-#include "vtkMRML.h"
-#include "vtkObject.h"
-#include "vtkCollection.h"
+// FetchMI includes
 #include "vtkFetchMIServer.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIServerCollection : public vtkCollection
+// MRML includes
+#include "vtkMRML.h"
+
+// VTK includes
+#include "vtkObject.h"
+#include "vtkCollection.h"
+
+#include "vtkSlicerFetchMIModuleLogicExport.h"
+
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIServerCollection : public vtkCollection
 {
 public:
   static vtkFetchMIServerCollection *New();

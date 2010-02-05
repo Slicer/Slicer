@@ -17,13 +17,22 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
+# Add subdirectories
+
+ADD_SUBDIRECTORY(Logic)
+
+# --------------------------------------------------------------------------
 # Include dirs
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkSlicerFetchMIModuleLogic_SOURCE_DIR}
+  ${vtkSlicerFetchMIModuleLogic_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
   )
@@ -44,24 +53,13 @@ install(FILES
 # Sources
 
 set(FetchMI_SRCS
-  vtkFetchMILogic.cxx
   vtkFetchMIGUI.cxx
-  vtkMRMLFetchMINode.cxx
   vtkFetchMIIcons.cxx
   vtkFetchMIMulticolumnWidget.cxx
   vtkFetchMIQueryTermWidget.cxx
   vtkFetchMIFlatResourceWidget.cxx
   vtkFetchMIResourceUploadWidget.cxx
   vtkFetchMITagViewWidget.cxx
-  vtkFetchMIParser.cxx
-  vtkFetchMIParserHID.cxx
-  vtkFetchMIParserXND.cxx
-  vtkFetchMIWriter.cxx
-  vtkFetchMIWriterXND.cxx
-  vtkFetchMIWebServicesClient.cxx
-  vtkFetchMIWebServicesClientXND.cxx
-  vtkFetchMIServer.cxx
-  vtkFetchMIServerCollection.cxx
   )
 
 # --------------------------------------------------------------------------
@@ -90,6 +88,8 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
+  vtkSlicerFetchMIModuleLogic
+  vtkSlicerVolumesModuleLogic
   Volumes
   )
 

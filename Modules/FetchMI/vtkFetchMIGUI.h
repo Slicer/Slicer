@@ -8,6 +8,7 @@
 #include "vtkFetchMILogic.h"
 #include "vtkMRMLFetchMINode.h"
 #include "vtkIntArray.h"
+#include "vtkFetchMI.h"
 
 
 class vtkSlicerNodeSelectorWidget;

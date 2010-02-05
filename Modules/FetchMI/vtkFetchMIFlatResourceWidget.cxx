@@ -210,7 +210,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents(vtkObject *caller,
       //--- try to post a wait message
       if ( this->GetApplication() )
         {
-        vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+        app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
         if ( app )
           {
           vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();

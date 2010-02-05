@@ -1,11 +1,15 @@
 #ifndef __vtkFetchMIWriterXND_h
 #define __vtkFetchMIWriterXND_h
 
-#include "vtkObject.h"
+// MRML includes
 #include "vtkFetchMIWriter.h"
-#include "vtkFetchMIWin32Header.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIWriterXND : public vtkFetchMIWriter
+// VTK includes
+#include "vtkObject.h"
+
+#include "vtkSlicerFetchMIModuleLogicExport.h"
+
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIWriterXND : public vtkFetchMIWriter
 {
   
 public:

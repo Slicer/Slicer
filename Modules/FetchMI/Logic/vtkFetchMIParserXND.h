@@ -1,15 +1,20 @@
 #ifndef __vtkFetchMIParserXND_h
 #define __vtkFetchMIParserXND_h
 
+// FetchMI includes
+#include "vtkFetchMIParser.h"
+
+// VTK includes
 #include "vtkObject.h"
-#include "vtkFetchMIWin32Header.h"
 #include "vtkXMLDataParser.h"
 #include "vtkXMLDataElement.h"
-#include "vtkFetchMIParser.h"
+
+// STL includes
 #include <string>
 
+#include "vtkSlicerFetchMIModuleLogicExport.h"
 
-class VTK_FETCHMI_EXPORT vtkFetchMIParserXND : public vtkFetchMIParser
+class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMIParserXND : public vtkFetchMIParser
 {
   
 public:
