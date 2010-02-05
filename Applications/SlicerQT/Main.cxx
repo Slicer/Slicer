@@ -59,8 +59,12 @@ int main(int argc, char* argv[])
   // Register module factories
   moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory",
                                         new qSlicerCoreModuleFactory());
-  moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
-                                        new qSlicerLoadableModuleFactory());
+
+  if (!app.commandOptions()->disableLoadableModule())
+    {
+    moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
+                                          new qSlicerLoadableModuleFactory());
+    }
 
   if (!app.commandOptions()->disableCLIModule())
     {

@@ -34,6 +34,9 @@ public:
   /// Return True if the loading of Command Line Modules should be disabled
   bool disableCLIModule()const;
 
+  /// Return True if the loading of Loadable Modules should be disabled
+  bool disableLoadableModule()const;
+
   /// Return True if slicer should display version and exit
   bool displayVersionAndExit()const;
 

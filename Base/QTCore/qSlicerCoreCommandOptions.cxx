@@ -28,6 +28,7 @@ public:
   qSlicerCoreCommandOptionsPrivate();
 
   bool DisableCLIModule;
+  bool DisableLoadableModule;
   bool DisplayVersionAndExit;
   bool DisplayProgramPathAndExit;
   bool DisplayHomePathAndExit;
@@ -43,6 +44,7 @@ public:
 qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 {
   this->DisableCLIModule = false;
+  this->DisableLoadableModule = false;
   this->DisplayVersionAndExit = false;
   this->DisplayProgramPathAndExit = false;
   this->DisplayHomePathAndExit = false;
@@ -64,6 +66,7 @@ qSlicerCoreCommandOptions::~qSlicerCoreCommandOptions()
 
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableCLIModule, DisableCLIModule);
+QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoadableModule);
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
@@ -78,6 +81,9 @@ void qSlicerCoreCommandOptions::initialize()
 
   this->addBooleanArgument("--disable-cli-module", 0, &d->DisableCLIModule,
                            "Disables the loading of Command Line Modules.");
+
+  this->addBooleanArgument("--disable-loadable-module", 0, &d->DisableLoadableModule,
+                           "Disables the loading of Loadable Modules.");
 
   this->addBooleanArgument("--version", 0, &d->DisplayVersionAndExit,
                            "Displays version information and exits.");
