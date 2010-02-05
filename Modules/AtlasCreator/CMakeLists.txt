@@ -97,7 +97,7 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
-  vtkSlicerModelMirrorModuleLogic
+  vtkSlicerAtlasCreatorModuleLogic
   )
 
 slicer3_install_modules(${lib_name})
