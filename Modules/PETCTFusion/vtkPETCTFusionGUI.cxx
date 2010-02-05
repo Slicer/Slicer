@@ -1583,8 +1583,6 @@ void vtkPETCTFusionGUI::UpdateGUIFromMRML ( int updateDICOMevent )
       if ( this->PETCTFusionNode->GetPatientName() )
         {
         sstr <<this->PETCTFusionNode->GetPatientName();
-        std::string tmpstr;
-        const char *tmpc;
         tmpstr = sstr.str();
         tmpc = tmpstr.c_str();
         this->PatientNameLabel->SetText ( tmpc );

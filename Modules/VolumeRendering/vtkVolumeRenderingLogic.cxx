@@ -447,7 +447,6 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
       colorTransfer->AddRGBPoint(range[0], color[0], color[1], color[2]);
     
       double value = windowLevel[1] - windowLevel[0]*0.5;
-      double step;
 
       step = windowLevel[0] / (size - 1);
 

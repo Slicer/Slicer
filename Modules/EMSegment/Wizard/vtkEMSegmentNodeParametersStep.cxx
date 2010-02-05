@@ -641,7 +641,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
   if(this->HistogramVolumeSelector->GetEnabled())
     {
     // Select the target volume, and update everything else accordingly
-    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+    mrmlManager = this->GetGUI()->GetMRMLManager();
     int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(0);
     this->IntensityDistributionTargetSelectionChangedCallback(vol_id);
     }

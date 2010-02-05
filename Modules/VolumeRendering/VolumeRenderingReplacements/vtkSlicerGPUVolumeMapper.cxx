@@ -679,7 +679,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   
   if (input1)
   {
-    int scalarType = input1->GetScalarType();
+    scalarType = input1->GetScalarType();
 
     if ( scalarType == VTK_FLOAT ||
         scalarType == VTK_DOUBLE ||

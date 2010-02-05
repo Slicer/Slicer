@@ -180,7 +180,7 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
   while (!feof(fp))
   {
       // Get a line. Strip newline and skip initial spaces.
-      char *retval = fgets( input, 1024, fp );
+      retval = fgets( input, 1024, fp );
       if (retval == NULL)
         {
         vtkErrorMacro("Error reading a line from file " << filename);

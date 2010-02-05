@@ -201,7 +201,7 @@ int vtkGaussian2DWidget::AddGaussian(
       sine   = sin(angle);
 
       {
-        double angle = atan((lambda2 - varianceX) / covariance);
+        angle = atan((lambda2 - varianceX) / covariance);
 
         vtkErrorMacro("angle " << angle * 180.0 / 3.14 << " alternatively");
       }
