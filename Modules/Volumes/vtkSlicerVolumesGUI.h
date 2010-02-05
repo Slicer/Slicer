@@ -24,6 +24,12 @@
 #include "vtkSlicerVolumeHeaderWidget.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 
+
+// Had to add this to force loading of these support libraries
+// Only libraries with entries that will be dynamically called from TCL need to be instantiated
+#include "vtkTcl.h"
+extern "C" int Vtkslicervolumesmodulelogic_Init(Tcl_Interp *interp);
+
 class vtkKWPushButton;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWLoadSaveButton;

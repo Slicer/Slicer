@@ -21,6 +21,11 @@
 
 #include "vtkMRMLScene.h"
 
+// Had to add this to force loading of these support libraries
+// Only libraries with entries that will be dynamically called from TCL need to be instantiated
+#include "vtkTcl.h"
+extern "C" int Vtksliceratlascreatormodulelogic_Init(Tcl_Interp *interp);
+
 class vtkMRMLAtlasCreatorNode; 
 class vtkSlicerSliceWidget;
 class vtkKWFrame;

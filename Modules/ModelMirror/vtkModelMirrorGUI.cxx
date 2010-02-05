@@ -64,6 +64,18 @@ vtkModelMirrorGUI::vtkModelMirrorGUI()
   this->SpecificationFrame = NULL;
   this->Raised = false;
 
+  // Try to load supporting libraries dynamically.  This is needed
+  // since the toplevel is a loadable module but the other libraries
+  // didn't get loaded
+  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
+  if (interp)
+    {
+    Vtkslicermodelmirrormodulelogic_Init(interp);
+    }
+  else
+    {
+    vtkErrorMacro("Failed to obtain reference to application TCL interpreter");
+    }
 }
 
 //----------------------------------------------------------------------------

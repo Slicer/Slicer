@@ -8,6 +8,11 @@
 #include "vtkModelMirrorLogic.h"
 #include "vtkModelMirrorIcons.h"
 
+// Had to add this to force loading of these support libraries
+// Only libraries with entries that will be dynamically called from TCL need to be instantiated
+#include "vtkTcl.h"
+extern "C" int Vtkslicermodelmirrormodulelogic_Init(Tcl_Interp *interp);
+
 class vtkKWFrame;
 class vtkSlicerNodeSelectorWidget;
 class vtkSlicerModuleCollapsibleFrame;
