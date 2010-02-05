@@ -28,5 +28,12 @@ if (Slicer3_SOURCE_DIR)
 
   set(TARGETS ${CLP}Lib ${CLP})
   slicer3_install_plugins(${TARGETS})
-endif (Slicer3_SOURCE_DIR)
+else (Slicer3_SOURCE_DIR)
 
+INSTALL(TARGETS
+  DicomToNrrdConverter
+                 RUNTIME DESTINATION bin
+                 LIBRARY DESTINATION lib
+                 ARCHIVE DESTINATION lib/static)
+
+endif (Slicer3_SOURCE_DIR)
