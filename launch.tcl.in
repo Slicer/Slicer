@@ -40,7 +40,11 @@ proc ShowAndLogError { msg } {
     set autoCloseTimeoutMs 10000 
     puts $msg
     after $autoCloseTimeoutMs {destroy .dialog1}
-    tk_dialog .dialog1 "Error" "$msg" error 0 OK
+    if { [catch "package require Tk"] } {
+      puts "Error: $msg"
+    } else {
+      tk_dialog .dialog1 "Error" "$msg" error 0 OK
+    }
 }
 
 #
