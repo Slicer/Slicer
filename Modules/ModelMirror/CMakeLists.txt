@@ -31,6 +31,8 @@ include_directories(
   ${vtkSlicerModelMirrorModuleLogic_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
   )
@@ -82,6 +84,7 @@ target_link_libraries(${lib_name}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   vtkSlicerModelMirrorModuleLogic
+  vtkSlicerVolumesModuleLogic
   Volumes
   )
 

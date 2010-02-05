@@ -25,6 +25,8 @@ include_directories(
   ${Slicer3_Base_INCLUDE_DIRS}
   ${vtkTeem_SOURCE_DIR} 
   ${vtkTeem_BINARY_DIR}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
   )
