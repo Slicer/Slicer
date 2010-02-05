@@ -4,7 +4,6 @@ project(Slicer3)
 
 enable_language(C)
 enable_language(CXX)
-enable_language(Fortran)
 
 cmake_minimum_required(VERSION 2.8)
 if(COMMAND cmake_policy)
@@ -19,7 +18,14 @@ if(CMAKE_COMPILER_2005)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
 endif(CMAKE_COMPILER_2005)
 
-# include a test for endianness (used to be done by default)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
+
+# Attempt to detect if we have a Fortran Compiler available.
+include(CheckFortran)
+
+if(CMAKE_Fortran_COMPILER)
+  enable_language(Fortran)
+endif(CMAKE_Fortran_COMPILER)
 
 include(ExternalProject)
 
@@ -380,6 +386,8 @@ endif(WIN32)
 
 # Get and build netlib (blas and lapack)
 
+if(CMAKE_Fortran_COMPILER)
+
 set(proj blas)
 
 set(blas_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS")
@@ -442,8 +450,6 @@ else()
   #set(ENV{PYTHONHOME} ${python_home})
 endif()
 
-
-
 #} else {
 #          # Jim's way - cygwin does mount c:/ as /c and doesn't use cygdrive
 #          set devenvdir [file dirname $::MAKE]
@@ -480,6 +486,8 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
+
+endif() # CMAKE_Fortran_COMPILER
 
 # Get and build vtk
 
