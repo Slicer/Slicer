@@ -759,8 +759,8 @@ endif()
 
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDENCIES}
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk"
-  SOURCE_DIR Slicer3
+  DOWNLOAD_COMMAND ""
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
   BINARY_DIR Slicer3-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
