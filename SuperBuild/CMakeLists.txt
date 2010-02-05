@@ -740,6 +740,11 @@ set(proj Slicer3)
 
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
+set(slicer_DEPENDENCIES tcl KWWidgets teem OpenIGTLink BatchMake python vtk)
+
+if(CMAKE_Fortran_COMPILER)
+  set(slicer_DEPENDENCIES tcl KWWidgets teem OpenIGTLink BatchMake python numpy blas lapack vtk)
+endif(CMAKE_Fortran_COMPILER)
 
 if(WIN32)
   set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/Python-build/Include)
@@ -753,7 +758,7 @@ else()
 endif()
 
 ExternalProject_Add(${proj}
-  DEPENDS tcl KWWidgets teem OpenIGTLink BatchMake python numpy blas lapack vtk
+  DEPENDS ${slicer_DEPENDENCIES}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk"
   SOURCE_DIR Slicer3
   BINARY_DIR Slicer3-build
