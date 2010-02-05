@@ -24,6 +24,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 include(CheckFortran)
 
 if(CMAKE_Fortran_COMPILER)
+  option(SLICER_BUILD_ "Build ParaView Testing" ON)
+  option(SLICER_BUILD_ "Build ParaView Testing" ON)
+  option(SLICER_BUILD_ "Build ParaView Testing" ON)
+  option(SLICER_BUILD_ "Build ParaView Testing" ON)
   enable_language(Fortran)
 endif(CMAKE_Fortran_COMPILER)
 
@@ -404,7 +408,6 @@ else()
 endif()
 
 ExternalProject_Add(${proj}
-  DEPENDS python
   SVN_REPOSITORY ${blas_SVN}
   SOURCE_DIR netlib/BLAS
 #  BUILD_IN_SOURCE ${blas_BUILD_IN_SOURCE}
@@ -423,7 +426,6 @@ endif(NOT WIN32)
 set(proj lapack)
 
 ExternalProject_Add(${proj}
-  DEPENDS python
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3.1.1"
   SOURCE_DIR netlib/lapack
   CONFIGURE_COMMAND ""
