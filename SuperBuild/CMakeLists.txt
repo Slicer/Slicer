@@ -250,7 +250,7 @@ set(out ${python_tkinter})
 set(in ${python_tkinter})
 
 ExternalProject_Add(${proj}
-  DEPENDS tcl
+  DEPENDS tcl tk
   SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
   SOURCE_DIR python-build
   UPDATE_COMMAND ""
