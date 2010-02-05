@@ -45,7 +45,7 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   
   // The Usual vtk class functions
   static vtkSlicerVolumesLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerVolumesLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
