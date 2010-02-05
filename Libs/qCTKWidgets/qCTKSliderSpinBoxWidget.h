@@ -33,6 +33,7 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double value READ value WRITE setValue)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
+  Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
 
 public:
   /// Superclass typedef
@@ -72,6 +73,14 @@ public:
   double tickInterval()const;
   void setTickInterval(double ti);
 
+  /// 
+  /// Set/Get the auto spinbox width
+  /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
+  /// set to the same width of the largest QSpinBox of its
+  // qCTKSliderSpinBoxWidget siblings.
+  bool isAutoSpinBoxWidth()const;
+  void setAutoSpinBoxWidth(bool autoWidth);
+
 public slots:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
@@ -83,7 +92,6 @@ signals:
   /// sliderMoved is emitted only when the user moves the slider
   void sliderMoved(double position);
   void valueChanged(double value);
-
 private:
   QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxWidget);
 
