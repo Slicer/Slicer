@@ -39,6 +39,6 @@ qctk_build_designer_plugin(
 qctk_install_designer_plugin(
   NAME ${PROJECT_NAME}
   INSTALL_BIN_DIR ${Slicer3_INSTALL_BIN_DIR}
-  INSTALL_LIB_DIR ${Slicer3_INSTALL_LIB_DIR}
+  INSTALL_LIB_DIR ${Slicer3_INSTALL_LIB_DIR}/designer
   INSTALL_HEADERS_DIR ${Slicer3_INSTALL_INCLUDE_DIR}
   )
