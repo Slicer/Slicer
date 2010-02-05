@@ -3,7 +3,6 @@
 After been configured properly using CMAKE, 
 this module allows to:
  - update the environment variable QT_PLUGIN_PATH with Slicer QT Plugin path
- - update PATH with Slicer libraries
  - start the designer
 """
 
@@ -15,7 +14,6 @@ def startDesigner(open_command, argv):
   "Start QT Designer"
   
   addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
-  addEnvVariable('PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
   openCmd = open_command+'@QT_BINARY_DIR@'+os.sep+argv[0]
   print openCmd
   os.system(openCmd + " " + argv[1])
