@@ -574,6 +574,20 @@ install(DIRECTORY
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
+# Compute Slicer3_QT_PLUGIN_PATH used to configure launch.tcl.in
+SET(Slicer3_QT_PLUGIN_PATH "")
+IF(Slicer3_USE_QT)
+  SET(designer_launcher_project_name SlicerQT)
+  GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)
+
+  IF(CMAKE_CONFIGURATION_TYPES)
+    SET(config ${CMAKE_BUILD_TYPE})
+    SET(Slicer3_QT_PLUGIN_PATH ${output_directory}/${config})
+  ELSE()
+    SET(Slicer3_QT_PLUGIN_PATH ${output_directory})
+  ENDIF()
+ENDIF(Slicer3_USE_QT)
+
 CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/launch.tcl.in
   "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"

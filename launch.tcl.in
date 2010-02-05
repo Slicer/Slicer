@@ -194,6 +194,9 @@ if { $installed } {
   set ::env(tclap_DIR)          $::env(Slicer3_HOME)/lib/tclap
   set ::env(vtkITK_DIR)         $::env(Slicer3_HOME)/lib/vtkITK
   set ::env(vtkTeem_DIR)        $::env(Slicer3_HOME)/lib/vtkTeem
+  set ::env(qCTKWidgets_DIR)    $::env(Slicer3_HOME)/lib/qCTKWidgets
+  set ::env(qVTKWidgets_DIR)    $::env(Slicer3_HOME)/lib/qVTKWidgets
+  set ::env(qMRMLWidgets_DIR)   $::env(Slicer3_HOME)/lib/qMRMLWidgets
 
   set ::env(Slicer3_COMPILER_DIR) ""
   if { $::env(BUILD) == $::SOLARIS } {
@@ -205,8 +208,13 @@ if { $installed } {
   set ::env(Slicer3_LIB_DIR)    $::env(Slicer3_HOME)/lib/Slicer3
   set ::env(Slicer3_BIN_DIR)    $::env(Slicer3_HOME)/bin
 
-  set ::env(Slicer3_PLUGINS_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@
-  set ::env(Slicer3_MODULES_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@
+  set ::env(Slicer3_PLUGINS_DIR)            $::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@
+  set ::env(Slicer3_MODULES_DIR)            $::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@
+  set ::env(Slicer3_QTLOADABLEMODULES_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR@
+
+  # QtDesigner variable
+  #
+  set ::env(Slicer3_QT_PLUGIN_PATH)  "@Slicer3_INSTALL_LIB_DIR@"
 
 } else {
 
@@ -324,6 +332,10 @@ if { $installed } {
   set ::env(tclap_DIR)          [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
   set ::env(vtkITK_DIR)         [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
   set ::env(vtkTeem_DIR)        [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
+  set ::env(qCTKWidgets_DIR)    [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
+  set ::env(qMRMLWidgets_DIR)   [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
+  set ::env(qVTKWidgets_DIR)    [file normalize "$::Slicer3_HOME/lib/$::BUILD_SUBDIR"]
+  
 
   # Slicer3 Base
 
@@ -332,6 +344,12 @@ if { $installed } {
 
   set ::env(Slicer3_PLUGINS_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@/$::BUILD_SUBDIR"]
   set ::env(Slicer3_MODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@/$::BUILD_SUBDIR"]
+  set ::env(Slicer3_QTLOADABLEMODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
+
+
+  # QtDesigner variable
+  
+  set ::env(Slicer3_QT_PLUGIN_PATH)  "@Slicer3_QT_PLUGIN_PATH@"
 }
 
 set ::env(Slicer3_VERSION)    @Slicer3_VERSION_PATCH@
@@ -459,9 +477,13 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(tclap_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(qCTKWidgets_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(qVTKWidgets_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(X11_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SFW_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_COMPILER_DIR):$::env(LD_LIBRARY_PATH)
@@ -470,6 +492,8 @@ proc launch_SetPaths {} {
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(PATH)"
+            set ::env(QT_PLUGIN_PATH) "$::env(Slicer3_QT_PLUGIN_PATH)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -500,14 +524,20 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(tclap_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(qCTKWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(qVTKWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TCL_DIR)/bin"
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(PATH)"
+            set ::env(QT_PLUGIN_PATH) "$::env(Slicer3_QT_PLUGIN_PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
@@ -538,10 +568,15 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(tclap_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkITK_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkTeem_DIR)\;$::env(Path)
+            set ::env(Path) $::env(qCTKWidgets_DIR)\;$::env(Path)
+            set ::env(Path) $::env(qVTKWidgets_DIR)\;$::env(Path)
+            set ::env(Path) $::env(qMRMLWidgets_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer3_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer3_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer3_PLUGINS_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer3_MODULES_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Slicer3_QTLOADABLEMODULES_DIR)\;$::env(Path)
+            set ::env(QT_PLUGIN_PATH) $::env(Slicer3_QT_PLUGIN_PATH)
         } else {
             ShowAndLogError "Libraries: unknown build $::env(BUILD)"
         }
