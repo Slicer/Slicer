@@ -64,6 +64,10 @@ void qCTKSliderSpinBoxWidgetPrivate::updateSpinBoxWidth()
     {
     this->SpinBox->setMinimumWidth(spinBoxWidth);
     }
+  else
+    {
+    this->SpinBox->setMinimumWidth(0);
+    }
   this->synchronizeSiblingSpinBox(spinBoxWidth);
 }
 
