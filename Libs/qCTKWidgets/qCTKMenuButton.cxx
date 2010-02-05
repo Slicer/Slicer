@@ -83,14 +83,14 @@ qCTKMenuButton::~qCTKMenuButton()
 }
 
 //-----------------------------------------------------------------------------
-void qCTKMenuButton::setExtraMenu(QMenu* menu)
+void qCTKMenuButton::setExtraMenu(QMenu* extramenu)
 {
   QCTK_D(qCTKMenuButton);
   if (d->ExtraMenu)
     {
     this->removeAction(d->ExtraMenu->menuAction());
     }
-  d->ExtraMenu = menu;
+  d->ExtraMenu = extramenu;
   if (d->ExtraMenu)
     {
     this->addAction(d->ExtraMenu->menuAction());
@@ -224,39 +224,39 @@ void qCTKMenuButton::showExtraMenu()
     }
 #endif
   QWidgetItem item(this);
-  QRect rect = item.geometry();
-  rect.setRect(rect.x() - this->x(), rect.y() - this->y(), rect.width(), rect.height());
+  QRect _rect = item.geometry();
+  _rect.setRect(_rect.x() - this->x(), _rect.y() - this->y(), _rect.width(), _rect.height());
 
   QSize menuSize = d->ExtraMenu->sizeHint();
-  QPoint globalPos = this->mapToGlobal(rect.topLeft());
-  int x = globalPos.x();
-  int y = globalPos.y();
+  QPoint globalPos = this->mapToGlobal(_rect.topLeft());
+  int _x = globalPos.x();
+  int _y = globalPos.y();
   if (horizontal) 
     {
-    if (globalPos.y() + rect.height() + menuSize.height() <= QApplication::desktop()->height()) 
+    if (globalPos.y() + _rect.height() + menuSize.height() <= QApplication::desktop()->height()) 
       {
-      y += rect.height();
+      _y += _rect.height();
       } 
     else 
       {
-      y -= menuSize.height();
+      _y -= menuSize.height();
       }
     if (this->layoutDirection() == Qt::RightToLeft)
       {
-      x += rect.width() - menuSize.width();
+      _x += _rect.width() - menuSize.width();
       }
     } 
   else 
     {
-    if (globalPos.x() + rect.width() + d->ExtraMenu->sizeHint().width() <= QApplication::desktop()->width())
+    if (globalPos.x() + _rect.width() + d->ExtraMenu->sizeHint().width() <= QApplication::desktop()->width())
       {
-      x += rect.width();
+      _x += _rect.width();
       }
     else
       {
-      x -= menuSize.width();
+      _x -= menuSize.width();
       }
     }
   // waits until the menu is executed...
-  d->ExtraMenu->exec(QPoint(x, y));
+  d->ExtraMenu->exec(QPoint(_x, _y));
 }

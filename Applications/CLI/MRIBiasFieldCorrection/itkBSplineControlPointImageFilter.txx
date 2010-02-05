@@ -311,7 +311,7 @@ BSplineControlPointImageFilter<TInputPointImage, TOutputImage>
           {
           off_Psi = this->NumberToIndex( j, size_Psi );
 
-          bool outOfBoundary = false;
+          outOfBoundary = false;
           for( unsigned int k = 0; k < ImageDimension; k++ )
             {
             tmp_Psi[k] = idx_Psi[k] + off_Psi[k];
@@ -361,8 +361,7 @@ BSplineControlPointImageFilter<TInputPointImage, TOutputImage>
       }
 
     typedef ImageDuplicator<ControlPointLatticeType> ImageDuplicatorType;
-    typename ImageDuplicatorType::Pointer Duplicator
-      = ImageDuplicatorType::New();
+    Duplicator = ImageDuplicatorType::New();
     Duplicator->SetInputImage( refinedLattice );
     Duplicator->Update();
     psiLattice = Duplicator->GetOutput();

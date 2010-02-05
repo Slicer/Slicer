@@ -10,11 +10,11 @@
 #include <math.h>
 #include "vtkObjectFactory.h"
 
-vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int realizationMax )
+vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
 {
   sigma2SmoothPDF=0.25;
 
-  this->realizationMax=realizationMax;
+  this->realizationMax=_realizationMax;
 
   bins = new int [realizationMax+1];
   //  assert( bins!=NULL );

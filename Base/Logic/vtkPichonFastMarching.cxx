@@ -338,7 +338,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
       self->firstCall=true; // we did not complete this step
       return;
       }
-    for(int k=0;k<(int)self->seedPoints.size();k++)
+    for(k=0;k<(int)self->seedPoints.size();k++)
       self->collectInfoSeed( self->seedPoints[k] );
 
     self->pdfIntensityIn->update();
@@ -367,7 +367,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
            to infinity to make sure they appear in the back of the heap
          */
 
-        for(int n=1;n<=self->nNeighbors;n++)
+        for(n=1;n<=self->nNeighbors;n++)
           {
           int indexN=index+self->shiftNeighbor(n);
           if( self->node[indexN].status==fmsTRIAL )
@@ -385,7 +385,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
         int indexN;
 
         bool hasKnownNeighbor =  false;
-        for(int n=1;n<=self->nNeighbors;n++)
+        for(n=1;n<=self->nNeighbors;n++)
           {
           indexN=index+self->shiftNeighbor(n);
           if( self->node[indexN].status==fmsKNOWN )
@@ -499,9 +499,9 @@ void vtkPichonFastMarching::show(float r)
   firstPassThroughShow=false;
 }
 
-void vtkPichonFastMarching::setActiveLabel(int label)
+void vtkPichonFastMarching::setActiveLabel(int _label)
 {
-  this->label=label;
+  this->label=_label;
 }
 
 //----------------------------------------------------------------------------
@@ -744,13 +744,13 @@ vtkPichonFastMarching::vtkPichonFastMarching()
   somethingReallyWrong=true;
 }
 
-void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, double dx, double dy, double dz)
+void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth, double _dx, double _dy, double _dz)
 {
   powerSpeed = 1.0;
 
-  this->dx=(float)dx;
-  this->dy=(float)dy;
-  this->dz=(float)dz;
+  this->dx=(float)_dx;
+  this->dy=(float)_dy;
+  this->dz=(float)_dz;
 
   invDx2 = (float)(1.0/(dx*dx));
   invDy2 = (float)(1.0/(dy*dy));
@@ -762,9 +762,9 @@ void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, dou
 
   nEvolutions=-1;
 
-  this->dimX=dimX;
-  this->dimY=dimY;
-  this->dimZ=dimZ;
+  this->dimX=_dimX;
+  this->dimY=_dimY;
+  this->dimZ=_dimZ;
   this->dimXY=dimX*dimY;
   this->dimXYZ=dimX*dimY*dimZ;
 
@@ -826,7 +826,7 @@ void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, dou
   arrayShiftNeighbor[26] = -1-dimX+dimXY;
   arrayDistanceNeighbor[26] = sqrt( dx*dx + dy*dy + dz*dz );
 
-  this->depth = (int) depth;
+  this->depth = (int) _depth;
 
   node = new FMnode[ dimX*dimY*dimZ ];
   // assert( node!=NULL );
@@ -852,14 +852,14 @@ void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, dou
       return;
     }
 
-  pdfIntensityIn = new vtkPichonFastMarchingPDF( (int) depth );
+  pdfIntensityIn = new vtkPichonFastMarchingPDF( (int) _depth );
   if(!(pdfIntensityIn!=NULL))
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfIntensityIn'");
       return;
     }
 
-  pdfInhomoIn = new vtkPichonFastMarchingPDF( (int) depth );
+  pdfInhomoIn = new vtkPichonFastMarchingPDF( (int) _depth );
   if(!(pdfInhomoIn!=NULL))
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfInhomoIn'");
@@ -1104,7 +1104,7 @@ float vtkPichonFastMarching::computeT(int index )
     int candidateIndex;
     double candidateT;
     Tij=INF;
-    double s=speed(index);
+    s=speed(index);
     for(int n=1;n<=nNeighbors;n++)
       {
     candidateIndex = index + shiftNeighbor(n);
@@ -1140,30 +1140,30 @@ float vtkPichonFastMarching::computeT(int index )
 }
 
 void vtkPichonFastMarching::setRAStoIJKmatrix
-(float m11, float m12, float m13, float m14,
- float m21, float m22, float m23, float m24,
- float m31, float m32, float m33, float m34,
- float m41, float m42, float m43, float m44)
+(float _m11, float _m12, float _m13, float _m14,
+ float _m21, float _m22, float _m23, float _m24,
+ float _m31, float _m32, float _m33, float _m34,
+ float _m41, float _m42, float _m43, float _m44)
 {
-  this->m11=m11;
-  this->m12=m12;
-  this->m13=m13;
-  this->m14=m14;
+  this->m11=_m11;
+  this->m12=_m12;
+  this->m13=_m13;
+  this->m14=_m14;
 
-  this->m21=m21;
-  this->m22=m22;
-  this->m23=m23;
-  this->m24=m24;
+  this->m21=_m21;
+  this->m22=_m22;
+  this->m23=_m23;
+  this->m24=_m24;
 
-  this->m31=m31;
-  this->m32=m32;
-  this->m33=m33;
-  this->m34=m34;
+  this->m31=_m31;
+  this->m32=_m32;
+  this->m33=_m33;
+  this->m34=_m34;
 
-  this->m41=m41;
-  this->m42=m42;
-  this->m43=m43;
-  this->m44=m44;
+  this->m41=_m41;
+  this->m42=_m42;
+  this->m43=_m43;
+  this->m44=_m44;
 }
 
 int vtkPichonFastMarching::addSeed( float r, float a, float s )

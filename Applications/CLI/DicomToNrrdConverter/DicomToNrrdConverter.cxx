@@ -1167,9 +1167,9 @@ int main(int argc, char* argv[])
     nVolume = nItems/nSliceInVolume;
     nIgnoreVolume = ignorePhilipsSliceMultiFrame.size()/nSliceInVolume;
 
-    for( unsigned int k = 0; k < bValues.size(); k++ ) 
+    for( unsigned int k2 = 0; k2 < bValues.size(); k2++ ) 
     {
-      std::cout << k << ": direction: " <<  DiffusionVectors[k][0] << ", " << DiffusionVectors[k][1] << ", " << DiffusionVectors[k][2] << ", b-value: " << bValues[k] << std::endl;
+      std::cout << k2 << ": direction: " <<  DiffusionVectors[k2][0] << ", " << DiffusionVectors[k2][1] << ", " << DiffusionVectors[k2][2] << ", b-value: " << bValues[k2] << std::endl;
     }
 
   }
