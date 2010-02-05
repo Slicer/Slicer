@@ -921,8 +921,8 @@ void vtkSlicerModuleChooseGUI::Populate( )
           {
           // the index doesn't seem to be used, use string::npos.
           // See http://www.cplusplus.com/reference/string/string/npos/
-          categoryToModuleName["None"].insert(ModuleItem(std::string::npos,
-                                              moduleTitle.toLatin1().data()));
+          categoryToModuleName["None"].insert(ModuleItem(
+            static_cast<unsigned short>(std::string::npos), moduleTitle.toLatin1().data()));
           }
         }
 #endif
@@ -1009,7 +1009,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
           // need to create a set of cascading menus
           vtkKWMenu *pos = this->GetModulesMenuButton()->GetMenu();
-          for (unsigned int i=0; i < path.size(); ++i)
+          for (i=0; i < path.size(); ++i)
             {
             if (!pos->HasItem(path[i].c_str()))
               {

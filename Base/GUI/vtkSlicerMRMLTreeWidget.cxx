@@ -118,9 +118,9 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       // For example, one could populate the node inspector
       this->SetSelectesLeaves();
-      vtkMRMLNode *selected = this->GetSelectedNodeInTree();
-      this->UpdateNodeInspector(selected);
-      this->UpdateNodeInTree(selected);
+      vtkMRMLNode *selectedNode = this->GetSelectedNodeInTree();
+      this->UpdateNodeInspector(selectedNode);
+      this->UpdateNodeInTree(selectedNode);
       }
 
     // Right click: context menu
@@ -211,7 +211,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
         if (node != NULL && node->IsA("vtkMRMLDoubleArrayNode"))
           {
           sprintf(command, "PlotCallback {%s}", (const char *)callData);
-          int index = this->ContextMenu->AddCommand("Plot", this, command);
+          /*int index = */ this->ContextMenu->AddCommand("Plot", this, command);
           }
         if (node != NULL)
           {

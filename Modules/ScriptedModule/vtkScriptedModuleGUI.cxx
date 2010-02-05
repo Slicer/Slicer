@@ -368,7 +368,7 @@ void vtkScriptedModuleGUI::TearDownGUI ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkScriptedModuleGUI::Invoke (char* method, char* args ) 
+void vtkScriptedModuleGUI::Invoke (char* method, char* args )
 {
   if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
@@ -397,6 +397,9 @@ void vtkScriptedModuleGUI::Invoke (char* method, char* args )
       {
       PyErr_Print();
       }
+#else
+    (void)(method); // To avoid "unused variable warning"
+    (void)(args); // To avoid "unused variable warning"
 #endif
     } 
 }

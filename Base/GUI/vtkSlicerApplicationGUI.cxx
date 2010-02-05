@@ -1826,6 +1826,7 @@ void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
     PyErr_Clear();
     }
 #else
+  (void)(cmd); // To avoid 'unused variable warning'
   vtkErrorMacro("Python is not available in this build.");
 #endif
 }

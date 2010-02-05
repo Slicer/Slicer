@@ -1083,7 +1083,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
     }
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();      
+    app = (vtkSlicerApplication *)this->GetApplication();
     this->MainViewer->SetWidth ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
     this->MainViewer->SetHeight ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
     }

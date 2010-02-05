@@ -99,8 +99,9 @@ void vtkSlicerAllFiberBundlesDisplayWidget::PrintSelf ( ostream& os, vtkIndent i
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents(vtkObject *caller,
+                                                                unsigned long event,
+                                                                void *vtkNotUsed(callData))
 {
   vtkDebugMacro("Process Widget Events");
 

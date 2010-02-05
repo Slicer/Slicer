@@ -362,7 +362,7 @@ void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
         int ndnodes = mnode->GetNumberOfDisplayNodes();
         for (int d=0; d<ndnodes; d++)
           {
-          vtkMRMLDisplayNode *dnode = mnode->GetNthDisplayNode(d);
+          dnode = mnode->GetNthDisplayNode(d);
           if (dnode)
             {
             dnode->SetVisibility(visibility);
@@ -426,7 +426,7 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *vtkN
           int ndnodes = mnode->GetNumberOfDisplayNodes();
           for (int d=0; d<ndnodes; d++)
             {
-            vtkMRMLDisplayNode *dnode = mnode->GetNthDisplayNode(d);
+            dnode = mnode->GetNthDisplayNode(d);
             if (dnode)
               {
               dnode->SetVisibility(visibility);

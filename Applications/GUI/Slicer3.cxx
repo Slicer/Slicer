@@ -1134,7 +1134,6 @@ int Slicer3_main(int& argc, char *argv[])
     }
   slicerApp->SetExtensionsInstallPath(userCachePath.c_str());
 
-  vtksys::Directory directory;
   if ( FullDisk == false)
     {
     // if user cache path is set and we can write to it, use it.
@@ -1142,7 +1141,6 @@ int Slicer3_main(int& argc, char *argv[])
     // the default cache path.
     // if we cannot write to the default cache path, then warn and
     // don't use a cache.
-    vtksys::Directory directory;
     if (userCachePath != "")
       {
       if (!vtksys::SystemTools::FileExists(userCachePath.c_str()))

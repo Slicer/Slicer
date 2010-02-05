@@ -38,6 +38,8 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long vtkNotUsed(eid),
     {
 #ifdef _DEBUG
     vtkDebugWithObjectMacro (__mrmlscene, << "*********MRMLCallback called recursively?" << endl);
+#else
+    (void)(__mrmlscene); // To avoid 'variable unused warning'
 #endif
     return;
     }
