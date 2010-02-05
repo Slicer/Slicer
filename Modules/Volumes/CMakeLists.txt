@@ -17,6 +17,11 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
+# Add subdirectories
+
+ADD_SUBDIRECTORY(Logic)
+
+# --------------------------------------------------------------------------
 # Include dirs
 
 include_directories(
@@ -24,6 +29,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${vtkSlicerTractographyModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyModuleLogic_BINARY_DIR}
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
@@ -57,7 +64,6 @@ install(FILES
 
 set(Volumes_SRCS
   vtkSlicerVolumesGUI.cxx
-  vtkSlicerVolumesLogic.cxx
   #dwi/dti editor
   vtkSlicerDiffusionEditorWidget.cxx
   vtkSlicerMeasurementFrameWidget.cxx
@@ -108,6 +114,7 @@ target_link_libraries(${lib_name}
   SlicerTractographyDisplay
   SlicerTractographyFiducialSeeding
   vtkSlicerTractographyModuleLogic
+  vtkSlicerVolumesModuleLogic
   )
 
 # Apply user-defined properties to the library target.

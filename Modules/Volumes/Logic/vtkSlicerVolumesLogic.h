@@ -21,20 +21,25 @@
 #ifndef __vtkSlicerVolumesLogic_h
 #define __vtkSlicerVolumesLogic_h
 
-#include <stdlib.h>
-
-#include "vtkVolumes.h"
+// Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLVolumeNode.h"
+
+// STL includes
+#include <stdlib.h>
+
+#include "vtkSlicerVolumesModuleLogicExport.h"
 
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
 
-class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic 
+class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
+  public vtkSlicerModuleLogic
 {
   public:
   
