@@ -289,6 +289,7 @@ private:
     void DestroyMiscTab(void);
 
     void SetupGUIFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+    void SetROIRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
     // Description:
     // Setup CPU ray casing interactive mode parameters

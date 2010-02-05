@@ -348,6 +348,7 @@ void vtkSlicerROIDisplayWidget::SetXRangeExtent(double r0, double r1)
 {
   XRangeExtent[0] = r0;
   XRangeExtent[1] = r1;
+  this->XRange->SetWholeRange(XRangeExtent[0],XRangeExtent[1]);
 }
 
 //---------------------------------------------------------------------------
@@ -355,6 +356,7 @@ void vtkSlicerROIDisplayWidget::SetYRangeExtent(double r0, double r1)
 {
   YRangeExtent[0] = r0;
   YRangeExtent[1] = r1;
+  this->YRange->SetWholeRange(YRangeExtent[0],YRangeExtent[1]);
 }
 
 //---------------------------------------------------------------------------
@@ -362,6 +364,8 @@ void vtkSlicerROIDisplayWidget::SetZRangeExtent(double r0, double r1)
 {
   ZRangeExtent[0] = r0;
   ZRangeExtent[1] = r1;
+  this->ZRange->SetWholeRange(ZRangeExtent[0],ZRangeExtent[1]);
+
 }
 
 //---------------------------------------------------------------------------

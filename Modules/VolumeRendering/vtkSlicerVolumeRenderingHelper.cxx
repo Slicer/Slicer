@@ -1173,9 +1173,40 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
     {
       this->Gui->GetLogic()->FitROIToVolume(vspNode);
       this->Gui->GetLogic()->SetROI(vspNode);
+      this->SetROIRange(vspNode);
+
       this->Gui->RequestRender();
       return;
     }
+  }
+}
+
+void vtkSlicerVolumeRenderingHelper::SetROIRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  if (vspNode == NULL)
+  {
+    return;
+  }
+  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
+  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+
+  if (volumeNode && roiNode)
+  {
+    double xyz[3];
+    double center[3];
+    double bounds[6];
+
+    roiNode->GetXYZ(center);
+    roiNode->GetRadiusXYZ(xyz);
+
+    for (int i = 0; i < 3; i++)
+    {
+      bounds[2*i  ] = center[i] - 1.1*xyz[i];
+      bounds[2*i+1] = center[i] + 1.1*xyz[i];
+    }
+    this->ROIWidget->SetXRangeExtent(bounds[0], bounds[1]);
+    this->ROIWidget->SetYRangeExtent(bounds[2], bounds[3]);
+    this->ROIWidget->SetZRangeExtent(bounds[4], bounds[5]);
   }
 }
 
