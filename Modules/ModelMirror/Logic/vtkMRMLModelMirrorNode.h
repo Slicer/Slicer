@@ -1,18 +1,21 @@
 #ifndef __vtkMRMLModelMirrorNode_h
 #define __vtkMRMLModelMirrorNode_h
 
-#include "vtkStringArray.h"
-
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLModelNode.h"
 
-#include "vtkModelMirrorWin32Header.h"
+// VTK includes
+#include "vtkStringArray.h"
+
+// STL includes
 #include <string>
 #include <vector>
 
+#include "vtkSlicerModelMirrorModuleLogicExport.h"
 
-class VTK_MODELMIRROR_EXPORT vtkMRMLModelMirrorNode : public vtkMRMLNode
+class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLModelMirrorNode *New();

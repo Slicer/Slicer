@@ -1,31 +1,36 @@
 #ifndef __vtkModelMirrorLogic_h
 #define __vtkModelMirrorLogic_h
 
-#include "vtkModelMirrorWin32Header.h"
-#include <vtksys/SystemTools.hxx>
-#include "vtkObject.h"
-
+// Slicer includes
 #include "vtkSlicerModuleLogic.h"
+
+// MRML includes
 #include "vtkMRMLScene.h"
 
-#include "vtkModelMirror.h"
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
+// VTK includes
+#include "vtkObject.h"
 #include "vtkMatrix4x4.h"
 #include "vtkPolyData.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelMirrorNode.h"
 
+// STL includes
 #include <string>
 #include <vector>
 #include <map>
 #include <iterator>
 
+#include "vtkSlicerModelMirrorModuleLogicExport.h"
 
+// TODO Node registration needs to be done in the Logic. See RegisterNodes
 
 class vtkIntArray;
 
-
-class VTK_MODELMIRROR_EXPORT vtkModelMirrorLogic : public vtkSlicerModuleLogic
+class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkModelMirrorLogic : public vtkSlicerModuleLogic
 {
   public:
   static vtkModelMirrorLogic *New();
