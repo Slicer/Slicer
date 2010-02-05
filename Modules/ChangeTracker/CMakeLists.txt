@@ -28,6 +28,8 @@ include_directories(
   ${Slicer3_Base_INCLUDE_DIRS}
   ${vtkTeem_SOURCE_DIR} 
   ${vtkTeem_BINARY_DIR}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
   # AF: this is needed to wrap the command line module (Linear registration)
@@ -130,7 +132,8 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
-  vtkTeem 
+  vtkTeem
+  vtkSlicerVolumesModuleLogic
   Volumes
   )
 

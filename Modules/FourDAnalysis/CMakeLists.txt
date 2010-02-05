@@ -38,6 +38,8 @@ include_directories(
   ${CommandLineModule_BINARY_DIR}
   ${FourDImage_SOURCE_DIR}
   ${FourDImage_BINARY_DIR}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
   ${PYTHON_INCLUDE_PATH}
@@ -153,6 +155,7 @@ target_link_libraries(${lib_name}
   ${CommandLineModuleLib}
   ${ITK_LIBRARIES}
   ${CLP_MODULE}
+  vtkSlicerVolumesModuleLogic
   ${VolumesLib}
   ${FourDImageLib}
   ${PYTHON_LIBRARIES}
