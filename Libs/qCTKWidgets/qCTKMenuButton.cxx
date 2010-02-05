@@ -123,6 +123,7 @@ QSize qCTKMenuButton::sizeHint()const
 //-----------------------------------------------------------------------------
 void qCTKMenuButton::paintEvent(QPaintEvent * _event)
 {
+  Q_UNUSED(_event);
   QCTK_D(qCTKMenuButton);
   QStylePainter painter(this);
   QStyleOptionButton option;
