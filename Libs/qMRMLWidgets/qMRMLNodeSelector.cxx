@@ -96,7 +96,7 @@ vtkMRMLNode* qMRMLNodeSelector::currentNode()const
 {
   QCTK_D(const qMRMLNodeSelector);
   
-  Q_ASSERT(this->count() > 0 ? (d->MRMLCurrentNode != 0) : true);
+  //Q_ASSERT(this->count() > 0 ? (d->MRMLCurrentNode != 0) : true);
   return d->MRMLCurrentNode;
 }
 
