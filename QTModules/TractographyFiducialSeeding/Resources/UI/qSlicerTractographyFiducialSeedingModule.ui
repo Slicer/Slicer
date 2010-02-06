@@ -70,6 +70,7 @@
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLFiducialListNode</string>
+       <string>vtkMRMLModelNode</string>
       </stringlist>
      </property>
     </widget>
