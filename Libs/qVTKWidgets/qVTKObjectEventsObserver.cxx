@@ -372,8 +372,8 @@ void qVTKObjectEventsObserver::removeConnection(qVTKConnection* connection)
     return; 
     }
   connection->SetEstablished(false);
-  delete connection;
   d->ConnectionMap.remove(connection->GetId());
+  delete connection;
 }
 
 //-----------------------------------------------------------------------------
