@@ -558,7 +558,7 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createImageTagWidget(const ModuleParamet
   // Specify factory attributes
   if (type == "label")
     {
-    widget->factory()->addAttribute("LabelMap","1");
+    widget->addAttribute(nodeType, "LabelMap",QString("1"));
     }
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, _label, widget);

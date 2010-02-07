@@ -134,6 +134,10 @@ void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* _factory)
   Q_ASSERT(_factory);
   Q_ASSERT(this->mrmlScene() == _factory->mrmlScene());
   d->MRMLNodeFactory = _factory;
+  foreach(qMRMLNodeSelectorPrivate::AttributeType attribute, d->Attributes)
+    {
+    d->MRMLNodeFactory->addAttribute(attribute.first, attribute.second.toString());
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -451,5 +455,7 @@ void qMRMLNodeSelector::addAttribute(const QString& nodeType,
     }
   d->Attributes[nodeType] = 
     qMRMLNodeSelectorPrivate::AttributeType(attributeName, attributeValue);
+  d->MRMLNodeFactory->addAttribute(attributeName, attributeValue.toString());
   // FIXME: refresh the list to filter with the new attribute rules 
+  
 }
