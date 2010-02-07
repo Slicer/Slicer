@@ -26,7 +26,9 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation
                                          WRITE setSelectNodeUponCreation)
-  
+  Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
+  Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
+
 public:
   /// Superclass typedef
   typedef qCTKAddRemoveComboBox Superclass;
@@ -48,6 +50,28 @@ public:
   void setShowHidden(bool);
   bool showHidden()const;
   
+  ///
+  /// Add node type attribute that filter the nodes to
+  /// display
+  void addAttribute(const QString& nodeType, 
+                    const QString& attributeName,
+                    const QVariant& attributeValue);
+
+
+  ///
+  /// Display or not the nodes that are excluded by
+  /// the ExcludedChildNodeTypes list.
+  /// true by default.
+  void setShowChildNodeTypes(bool show);
+  bool showChildNodeTypes()const;
+
+  ///
+  /// If a node is a nodeType, hide the node if it is also 
+  /// a ExcludedChildNodeType. (this can happen if nodeType is a 
+  /// mother class of ExcludedChildNodeType)
+  void setHideChildNodeTypes(const QStringList& nodeTypes);
+  QStringList hideChildNodeTypes()const;
+
   /// 
   /// Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
@@ -58,7 +82,7 @@ public:
 
   /// 
   /// Add a node in the combobox
-  /// The node must be valid (not null + correct type)
+  /// The node will be added if not filtered
   void addNode(vtkMRMLNode* node);
 
   /// 
@@ -74,13 +98,6 @@ public:
   /// 
   /// Convenient method returning the current node id
   QString currentNodeId() const; 
-
-  ///
-  /// Add node type attribute that filter the nodes to
-  /// display
-  void addAttribute(const QString& nodeType, 
-                    const QString& attributeName,
-                    const QVariant& attributeValue);
 
 public slots:
   /// 
@@ -129,7 +146,7 @@ protected slots:
   /// 
   /// Triggered upon MRML scene updates
   void onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * node); 
-  void onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * node); 
+  void onMRMLSceneNodeAboutToBeRemoved(vtkObject * scene, vtkObject * node); 
   void onMRMLNodeModified(vtkObject * node);
   void onMRMLSceneDeleted(vtkObject * scene); 
   
@@ -144,6 +161,7 @@ protected:
   vtkMRMLNode* node(int index)const;
   vtkMRMLNode* node(const QString& id)const;
 
+  void populateItems();
 private:
   QCTK_DECLARE_PRIVATE(qMRMLNodeSelector);
 };

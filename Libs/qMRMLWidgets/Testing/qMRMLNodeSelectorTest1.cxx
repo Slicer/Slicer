@@ -127,12 +127,41 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   node = sceneFactory.mrmlScene()->GetNthNode(1);
   node->SetAttribute("foo", "bar2");
   
-nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
+  nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.count() != 4)
     {
     std::cerr << "qMRMLNodeSelector: attribute filtering failed." 
               << nodeSelector.count() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check hide child node type
+  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
+  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
+  sceneFactory.generateNode("vtkMRMLGridTransformNode");
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLNonlinearTransformNode"));
+  if (nodeSelector.count() != 3)
+    {
+    std::cerr << "qMRMLNodeSelector: node type filtering failed." << nodeSelector.count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  nodeSelector.setShowChildNodeTypes(false);
+  if (nodeSelector.count() != 2)
+    {
+    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+  nodeSelector.setShowChildNodeTypes(true);
+  if (nodeSelector.count() != 3)
+    {
+    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+  nodeSelector.setHideChildNodeTypes(QStringList("vtkMRMLGridTransformNode"));
+  if (nodeSelector.count() != 2)
+    {
+    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
     return EXIT_FAILURE;
     }
 

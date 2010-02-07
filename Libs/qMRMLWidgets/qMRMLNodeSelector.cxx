@@ -21,26 +21,26 @@ public:
     {
     this->MRMLScene = 0; 
     this->MRMLCurrentNode = 0; 
-    this->MRMLNodeBeingRemoved = 0;
-    this->MRMLNodeModifiedEvent = vtkCommand::ModifiedEvent;
     this->MRMLNodeFactory = 0;
 
     this->ShowHidden = false;
     this->SelectNodeUponCreation = true; 
+    this->ShowChildNodeTypes = true;
     }
   bool isValidNode(vtkMRMLNode* node)const;
   
-  qMRMLNodeFactory* MRMLNodeFactory; 
-  vtkMRMLScene*     MRMLScene; 
-  vtkMRMLNode*      MRMLCurrentNode; 
-  vtkMRMLNode*      MRMLNodeBeingRemoved;
-  unsigned long     MRMLNodeModifiedEvent; 
+  qMRMLNodeFactory*        MRMLNodeFactory; 
+  vtkMRMLScene*            MRMLScene; 
+  vtkMRMLNode*             MRMLCurrentNode; 
+  QHash<int, vtkMRMLNode*> MRMLNodesBeingRemoved;
 
-  QStringList   NodeTypes; 
-  bool          ShowHidden;
-  bool          SelectNodeUponCreation;
+  QStringList                   NodeTypes; 
+  bool                          ShowHidden;
+  bool                          SelectNodeUponCreation;
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType> Attributes;
+  bool                          ShowChildNodeTypes;
+  QStringList                   HideChildNodeTypes;
 };
 
 // --------------------------------------------------------------------------
@@ -52,10 +52,28 @@ bool qMRMLNodeSelectorPrivate::isValidNode(vtkMRMLNode* node)const
     }
   foreach(const QString& nodeType, this->NodeTypes)
     {
+    // filter by node type
     if (!node->IsA(nodeType.toAscii().data()))
       {
       continue;
       }
+    // filter by excluded child node types
+    if (!this->ShowChildNodeTypes && nodeType != node->GetClassName())
+      {
+      continue;
+      }
+    // filter by HideChildNodeType
+    if (this->ShowChildNodeTypes)
+      {
+      foreach(const QString& hideChildNodeType, this->HideChildNodeTypes)
+        {
+        if (node->IsA(hideChildNodeType.toAscii().data()))
+          {
+          return false;
+          }
+        }
+      } 
+    // filter by attributes
     if (this->Attributes.contains(nodeType))
       {
       QString nodeAttribute = 
@@ -66,6 +84,7 @@ bool qMRMLNodeSelectorPrivate::isValidNode(vtkMRMLNode* node)const
         return false;
         }
       }
+    
     return true;
     }
   return false;
@@ -83,7 +102,7 @@ qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
   this->connect(this, SIGNAL(currentIndexChanged(int)),
                 SLOT(onCurrentIndexChanged(int)));
   this->connect(this, SIGNAL(itemAdded(int)),SLOT(onItemAdded(int)));
-  //this->connect(this, SIGNAL(itemAboutToBeRemoved(int)),SLOT(onItemAboutToBeRemoved(int)));
+  this->connect(this, SIGNAL(itemAboutToBeRemoved(int)),SLOT(onItemAboutToBeRemoved(int)));
   this->connect(this, SIGNAL(itemRemoved(int)),SLOT(onItemRemoved(int)));
 
   // as the Scene is empty, disable the "Add Button"
@@ -94,7 +113,18 @@ qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qMRMLNodeSelector, const QStringList&, setNodeTypes, NodeTypes);
+void qMRMLNodeSelector::setNodeTypes(const QStringList& nodeTypes)
+{
+  QCTK_D(qMRMLNodeSelector);
+  if (d->NodeTypes == nodeTypes)
+    {
+    return;
+    }
+  d->NodeTypes = nodeTypes;
+  this->populateItems();
+}
+
+// --------------------------------------------------------------------------
 QCTK_GET_CXX(qMRMLNodeSelector, QStringList, nodeTypes, NodeTypes);
 
 // --------------------------------------------------------------------------
@@ -163,7 +193,7 @@ void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)
   // Connect MRML Node
   // The widget is now aware of any updates regarding that node. 
   // And, if required, will be able to update the name of an item in the comboxbox
-  this->qvtkConnect(mrmlNode, d->MRMLNodeModifiedEvent,
+  this->qvtkConnect(mrmlNode, vtkCommand::ModifiedEvent,
                     this, SLOT(onMRMLNodeModified(vtkObject*)));
   
   this->addNodeInternal(mrmlNode);  // Add the node into the combobox
@@ -193,8 +223,8 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   
   // Connect MRML scene NodeRemoved event
   // Note: doesn't handle the case when the scene is deleted
-  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent,
-    this, SLOT(onMRMLSceneNodeRemoved(vtkObject*, vtkObject*)));
+  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAboutToBeRemovedEvent,
+    this, SLOT(onMRMLSceneNodeAboutToBeRemoved(vtkObject*, vtkObject*)));
   // When the scene is deleted, NodeRemovedEvent is not called. 
   // onMRMLSceneDeleted should clear the items 
   this->qvtkReconnect(d->MRMLScene, scene, vtkCommand::DeleteEvent,
@@ -219,18 +249,7 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   // Scan the scene and populate the nodes
   if (scene)
     {
-    std::vector<vtkMRMLNode *> nodes;
-    foreach(const QString& nodeType, d->NodeTypes)
-      {
-      // here we expect vtkMRMLScene::GetNodesByClass to concatenate 
-      // new nodes to existing nodes
-      scene->GetNodesByClass(nodeType.toAscii().data(), nodes);
-      }
-    int numberOfNodes = nodes.size();
-    for (int i = 0; i < numberOfNodes; ++i)
-      {
-      this->addNode(nodes[i]);
-      }
+    this->populateItems();
     }
 }
 
@@ -259,7 +278,7 @@ void qMRMLNodeSelector::onMRMLSceneNodeAdded(vtkObject * scene, vtkObject * _nod
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _node)
+void qMRMLNodeSelector::onMRMLSceneNodeAboutToBeRemoved(vtkObject * scene, vtkObject * _node)
 {
   Q_UNUSED(scene);
   QCTK_D(qMRMLNodeSelector);
@@ -287,9 +306,7 @@ void qMRMLNodeSelector::onMRMLSceneNodeRemoved(vtkObject * scene, vtkObject * _n
   // onItemAboutToBeRemoved() and onItemRemoved(). Querying the scene
   // with the node ID doesn't work as the item has already been removed
   // from the scene. 
-  d->MRMLNodeBeingRemoved = mrmlNode;
-  this->removeItem(index); 
-  d->MRMLNodeBeingRemoved = 0;
+  this->removeItem(index);
 }
 
 //-----------------------------------------------------------------------------
@@ -350,11 +367,9 @@ void qMRMLNodeSelector::onRemove()
     return;
     }
   Q_ASSERT(d->MRMLCurrentNode);
-  // we must emit the signal here (instead of onItemAboutToBeRemoved) because 
-  // the node is still in the scene here.
-  emit nodeAboutToBeRemoved(d->MRMLCurrentNode);
   // ask the scene to remove the node. As we observe the scene, the item will be 
-  // removed from the list later in onMRMLSceneNodeRemoved
+  // removed from the list later between onMRMLSceneNodeAboutToBeRemoved and 
+  // onMRMLSceneNodeRemoved
   d->MRMLScene->RemoveNode(d->MRMLCurrentNode);
   // the signal nodeRemoved will be send by the method onItemRemoved
 }
@@ -368,15 +383,12 @@ void qMRMLNodeSelector::onEdit()
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onCurrentIndexChanged(int index)
 {
-  //qDebug() << "qMRMLNodeSelector::" << __FUNCTION__ << ":" << index << endl; 
   this->nodeIdSelected(index); 
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onItemAdded(int index)
 {
-  //qDebug() << this->Internal->NodeType << " on item added" 
-  //         << this->itemText(index) << "" << this->itemData(index);
   this->setComboBoxEnabled(true);
   this->setRemoveEnabled(true);
   this->setEditEnabled(true);
@@ -387,10 +399,14 @@ void qMRMLNodeSelector::onItemAdded(int index)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onItemAboutToBeRemoved(int index)
 {
-  Q_UNUSED(index);
-  // Here the node can't be found in the scene. The signal nodeAboutToBeRemoved
-  // has already been called in onRemove(). this->Internal->MRMLNodeBeingRemoved
-  // is the node getting removed. Be careful when using index.
+  QCTK_D(qMRMLNodeSelector);
+  // Here the node can still be found in the scene.
+  vtkMRMLNode* mrmlNode = this->node(index);
+  Q_ASSERT(mrmlNode);
+  this->qvtkDisconnect(mrmlNode, vtkCommand::ModifiedEvent,
+                       this, SLOT(onMRMLNodeModified(vtkObject*)));
+  d->MRMLNodesBeingRemoved[index] = mrmlNode;
+  emit nodeAboutToBeRemoved(mrmlNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -407,8 +423,9 @@ void qMRMLNodeSelector::onItemRemoved(int index)
     }
   // Here this->node(index) doesn't work as the scene has already removed the
   // node. Warning, the node can't be found in the scene.
-  Q_ASSERT(d->MRMLNodeBeingRemoved);
-  emit nodeRemoved(d->MRMLNodeBeingRemoved);
+  Q_ASSERT(d->MRMLNodesBeingRemoved.contains(index));
+  emit nodeRemoved(d->MRMLNodesBeingRemoved[index]);
+  d->MRMLNodesBeingRemoved.remove(index);
 }
 
 //-----------------------------------------------------------------------------
@@ -449,13 +466,74 @@ void qMRMLNodeSelector::addAttribute(const QString& nodeType,
                                      const QVariant& attributeValue)
 {
   QCTK_D(qMRMLNodeSelector);
-  if (!d->NodeTypes.contains(nodeType))
+  if (!d->NodeTypes.contains(nodeType) ||
+      (d->Attributes[nodeType].first == attributeName &&
+       d->Attributes[nodeType].second == attributeValue))
     {
     return;
     }
   d->Attributes[nodeType] = 
     qMRMLNodeSelectorPrivate::AttributeType(attributeName, attributeValue);
   d->MRMLNodeFactory->addAttribute(attributeName, attributeValue.toString());
-  // FIXME: refresh the list to filter with the new attribute rules 
-  
+  this->populateItems();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeSelector::setShowChildNodeTypes(bool show)
+{
+  QCTK_D(qMRMLNodeSelector);
+  if (show == d->ShowChildNodeTypes)
+    {
+    return;
+    }
+  d->ShowChildNodeTypes = show;
+  populateItems();
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLNodeSelector::showChildNodeTypes()const
+{
+  QCTK_D(const qMRMLNodeSelector);
+  return d->ShowChildNodeTypes;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeSelector::setHideChildNodeTypes(const QStringList& nodeTypes)
+{
+  QCTK_D(qMRMLNodeSelector);
+  if (nodeTypes == d->HideChildNodeTypes)
+    {
+    return;
+    }
+  d->HideChildNodeTypes = nodeTypes;
+  this->populateItems();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLNodeSelector::hideChildNodeTypes()const
+{
+  QCTK_D(const qMRMLNodeSelector);
+  return d->HideChildNodeTypes;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeSelector::populateItems()
+{
+  QCTK_D(qMRMLNodeSelector);
+  QString currentNode = this->currentNodeId();
+
+  this->clear();
+  if (d->MRMLScene == 0)
+    {
+    return;
+    }
+  int numberOfNodes = d->MRMLScene->GetNumberOfNodes();
+  for (int i = 0; i < numberOfNodes; ++i)
+    {
+    this->addNode(d->MRMLScene->GetNthNode(i));
+    }
+  // restore current node.
+  vtkMRMLNode* previouslySelectedNode = 
+    d->MRMLScene->GetNodeByID(currentNode.toAscii().data());
+  this->setCurrentNode(previouslySelectedNode);
 }
