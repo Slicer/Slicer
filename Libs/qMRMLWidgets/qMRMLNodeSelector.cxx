@@ -1,6 +1,8 @@
 // QT includes
-#include <QDebug>
 #include <QComboBox>
+#include <QDebug>
+#include <QHash>
+#include <QPair>
 
 // qMRML includes
 #include "qMRMLNodeFactory.h"
@@ -36,7 +38,9 @@ public:
 
   QStringList   NodeTypes; 
   bool          ShowHidden;
-  bool          SelectNodeUponCreation; 
+  bool          SelectNodeUponCreation;
+  typedef QPair<QString, QVariant> AttributeType;
+  QHash<QString, AttributeType> Attributes;
 };
 
 // --------------------------------------------------------------------------
@@ -48,10 +52,21 @@ bool qMRMLNodeSelectorPrivate::isValidNode(vtkMRMLNode* node)const
     }
   foreach(const QString& nodeType, this->NodeTypes)
     {
-    if (node->IsA(nodeType.toAscii().data()))
+    if (!node->IsA(nodeType.toAscii().data()))
       {
-      return true;
+      continue;
       }
+    if (this->Attributes.contains(nodeType))
+      {
+      QString nodeAttribute = 
+        node->GetAttribute(this->Attributes[nodeType].first.toLatin1().data());
+      if (!nodeAttribute.isEmpty() && 
+           nodeAttribute != this->Attributes[nodeType].second.toString())
+        {
+        return false;
+        }
+      }
+    return true;
     }
   return false;
 }
@@ -132,7 +147,6 @@ void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)
   // Make sure the the node added to the scene matches the nodeTypes of the selector
   if (!d->isValidNode(mrmlNode))
     {
-    Q_ASSERT(d->isValidNode(mrmlNode));
     return;
     }
   
@@ -423,4 +437,19 @@ vtkMRMLNode* qMRMLNodeSelector::node(const QString& id)const
   
   return d->MRMLScene ? 
     d->MRMLScene->GetNodeByID(id.toLatin1().data()) : 0;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeSelector::addAttribute(const QString& nodeType, 
+                                     const QString& attributeName,
+                                     const QVariant& attributeValue)
+{
+  QCTK_D(qMRMLNodeSelector);
+  if (!d->NodeTypes.contains(nodeType))
+    {
+    return;
+    }
+  d->Attributes[nodeType] = 
+    qMRMLNodeSelectorPrivate::AttributeType(attributeName, attributeValue);
+  // FIXME: refresh the list to filter with the new attribute rules 
 }

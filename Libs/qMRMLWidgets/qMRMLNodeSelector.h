@@ -36,7 +36,9 @@ public:
   virtual ~qMRMLNodeSelector(){}
   
   /// 
-  /// Set/Get node type 
+  /// Set/Get node types to display in the list
+  /// NodeTypes are the class names, i.e. vtkMRMLViewNode, 
+  /// vtkMRMLTransformNode
   QStringList nodeTypes()const ;
   void setNodeTypes(const QStringList& nodeTypes);
 
@@ -72,6 +74,13 @@ public:
   /// 
   /// Convenient method returning the current node id
   QString currentNodeId() const; 
+
+  ///
+  /// Add node type attribute that filter the nodes to
+  /// display
+  void addAttribute(const QString& nodeType, 
+                    const QString& attributeName,
+                    const QVariant& attributeValue);
 
 public slots:
   /// 

@@ -114,7 +114,29 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
     }
   // FIXME: add more basic tests here
 
-  // checks with more than 1 type
+  // Check Attributes
+  sceneFactory.generateScene();
+  sceneFactory.generateNode("vtkMRMLViewNode");
+  sceneFactory.generateNode("vtkMRMLViewNode");
+  sceneFactory.generateNode("vtkMRMLViewNode");
+  sceneFactory.generateNode("vtkMRMLViewNode");
+  sceneFactory.generateNode("vtkMRMLViewNode");
+
+  vtkMRMLNode* node = sceneFactory.mrmlScene()->GetNthNode(0);
+  node->SetAttribute("foo", "bar");
+  node = sceneFactory.mrmlScene()->GetNthNode(1);
+  node->SetAttribute("foo", "bar2");
+  
+nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
+  nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
+  if (nodeSelector.count() != 4)
+    {
+    std::cerr << "qMRMLNodeSelector: attribute filtering failed." 
+              << nodeSelector.count() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Checks with more than 1 type
   QStringList types;
   types << "vtkMRMLViewNode" << "vtkMRMLCameraNode";
   //test setNodeTypes()/nodeTypes()
