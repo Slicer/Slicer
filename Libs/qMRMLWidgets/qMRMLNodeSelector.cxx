@@ -324,9 +324,8 @@ void qMRMLNodeSelector::onMRMLNodeModified(vtkObject * caller)
 //-----------------------------------------------------------------------------
 void qMRMLNodeSelector::onMRMLSceneDeleted(vtkObject * scene)
 {
-  QCTK_D(qMRMLNodeSelector);
   Q_UNUSED(scene);
-  Q_ASSERT(scene == d->MRMLScene);
+  Q_ASSERT(scene == qctk_d()->MRMLScene);
   // FIXME:
   // It's a bit tricky here. The scene has been deleted, but the scene 
   // destructor has deleted the nodes as well without letting anyone know.
