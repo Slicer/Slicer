@@ -349,20 +349,20 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
     // 1) Put the image origin at the centre of the image,
     // 2) Re-align axes according to the IJK convention,
     // 3) Scale by pixel size.
-    for(int i=0; i<7; i++)
+    for(int ii=0; ii<7; ii++)
     {
       // Move origin to centre of image and exchange axes for correct 
       // image frame orientation.
-      tmpCoord = tZcoordinates[i][1];
-      tZcoordinates[i][1] = (float)(tZcoordinates[i][0]) - (float)(xsize/2);
-      tZcoordinates[i][0] = tmpCoord - (float)(ysize/2);
+      tmpCoord = tZcoordinates[ii][1];
+      tZcoordinates[ii][1] = (float)(tZcoordinates[ii][0]) - (float)(xsize/2);
+      tZcoordinates[ii][0] = tmpCoord - (float)(ysize/2);
 
       // Flip the y-axis for IJK coordinates. 
-      //tZcoordinates[i][1] *= -1.0;
+      //tZcoordinates[ii][1] *= -1.0;
 
       // Scale coordinates by pixel size
-      tZcoordinates[i][0] *= pixel_size;
-      tZcoordinates[i][1] *= pixel_size;
+      tZcoordinates[ii][0] *= pixel_size;
+      tZcoordinates[ii][1] *= pixel_size;
     }
 
     // Compute relative pose between the Z-frame and the current image.
@@ -464,20 +464,20 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
  * @param Zcoordinates[][] The resulting list of seven fiducial coordinates.
 
 */
-bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &SourceImage, int xsize, 
+bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &sourceImage, int xsize, 
                   int ysize, int Zcoordinates[7][2], float tZcoordinates[7][2])
 {
   int    i,j;
   Real   peakval, offpeak1, offpeak2, offpeak3, offpeak4;
 
   // Transform the MR image to the frequency domain (k-space).
-  FFT2(SourceImage, zeroimag, IFreal, IFimag);
+  FFT2(sourceImage, zeroimag, IFreal, IFimag);
 
   FILE* fp;
   fp = fopen("dump.txt", "w");
   for(i=0; i<xsize; i++)
     for(j=0; j<ysize; j++)
-      fprintf(fp, "%.2f\n", SourceImage.element(i,j));
+      fprintf(fp, "%.2f\n", sourceImage.element(i,j));
   fclose(fp);
 
 
