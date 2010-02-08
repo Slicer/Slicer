@@ -1,5 +1,7 @@
 # called after loading a volume, setting up a label map
 
+set ::thisDebug 0
+
 proc EditorTestModelMaker { {labelFile ""} } {
 
     if {$labelFile == ""} {
@@ -59,6 +61,16 @@ proc EditorTestModelMaker { {labelFile ""} } {
         }
         after 250
     }
+    if {  [$::slicer3::ApplicationLogic GetReadDataQueueSize] } {
+        puts "Still data to read in the queue, processing it..."
+        $::slicer3::ApplicationLogic ProcessReadData
+    }
+    set i 0
+    while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i < 10 } {
+        puts "$i Waiting for data to be read...queue size = [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
+        incr i
+        after 1000
+    }
 
     # clean up
     modelEffect tearDownOptions
@@ -76,16 +88,25 @@ proc runtest { labelFile } {
 
  if { $ret } {
    puts stderr $res
-   exit 1
+     if {$::thisDebug} {
+       return 1
+     } else {
+       exit 1
+     }
  }
- exit 0
+    if {$::thisDebug} {
+       return 1
+    } else {
+       exit 0
+    }
 }
 
 update 
 
 if {$argc == 0} {
     # when use source ../Slicer3/Modules/Editor/Testing/TestEditorModelMaker.tcl
-    set labelFile ../../../../../Slicer3/Libs/MRML/Testing/TestData/helixMask.nrrd
+    set labelFile $::env(Slicer3_HOME)/../Slicer3/Libs/MRML/Testing/TestData/helixMask.nrrd
+    set ::thisDebug 1
 } else {
     # puts "argv = $argv"
     # for now assume that it's run just through the testing framework with --test-mode --script TestEditorModelMaker.tcl helixMask.nrrd
