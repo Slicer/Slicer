@@ -336,7 +336,6 @@ qSlicerCoreApplication* qSlicerCoreApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
 QCTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
@@ -374,7 +373,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   scene->AddNode( crosshair );
 
   this->setMRMLScene(scene);
-  this->setAppLogic(_appLogic);
+  d->AppLogic = _appLogic;
   
   // Initialization done !
   d->Initialized = true;
@@ -435,14 +434,6 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::initializePaths(const QString& programPath)
-{
-  QCTK_D(qSlicerCoreApplication);
-  // we can't use this->arguments().at(0) here as argc/argv are incorrect.
-  d->discoverSlicerHomeDirectory(programPath);
-}
-
-//-----------------------------------------------------------------------------
 qCTKSettings* qSlicerCoreApplication::settings()
 {
   QCTK_D(qSlicerCoreApplication);
@@ -476,6 +467,31 @@ void qSlicerCoreApplication::clearSettings()
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerCoreApplication, QString, intDir, IntDir);
 
+
+#ifdef Slicer3_USE_KWWIDGETS
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::initializePaths(const QString& programPath)
+{
+  QCTK_D(qSlicerCoreApplication);
+  // we can't use this->arguments().at(0) here as argc/argv are incorrect.
+  d->discoverSlicerHomeDirectory(programPath);
+}
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
+{
+  qctk_d()->ModuleManager = std::auto_ptr<qSlicerModuleManager>(manager);
+}
+
+#endif //Slicer3_USE_KWWIDGETS
+
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
@@ -494,7 +510,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
 QCTK_GET_CXX(qSlicerCoreApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
 QCTK_GET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
@@ -512,14 +527,6 @@ QString qSlicerCoreApplication::tempDirectory() const
 {
   return QDir::tempPath();
 }
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
-{
-  qctk_d()->ModuleManager = std::auto_ptr<qSlicerModuleManager>(manager);
-}
-
-//-----------------------------------------------------------------------------
 qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
 {
   return qctk_d()->ModuleManager.get();

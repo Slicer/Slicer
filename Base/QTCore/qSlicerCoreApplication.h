@@ -19,6 +19,8 @@
 /// QT includes
 #include <QApplication>
 
+#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS
+
 #include "qSlicerBaseQTCoreExport.h"
 
 class vtkSlicerApplicationLogic;
@@ -52,22 +54,13 @@ public:
   void initialize(bool& exitWhenDone);
   
   /// 
-  /// initialize paths for module discovery
-  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
-  /// removed once the QT GUI is functional.
-  void initializePaths(const QString& programPath);
-  
-  /// 
   /// Return true if the application has been initialized
   /// Note: initialize() should be called only one time.
   bool initialized() const;
 
   /// 
-  /// Convenient method allowing to set the initialized flag
-  /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
-  /// removed once the QT GUI is functional. Only vtkSlicerApplication should use
-  /// that method. Improper use of that function may lead to unstable state
-  void setInitialized(bool initialized); 
+  /// Get MRML Scene
+  vtkMRMLScene* mrmlScene() const;
 
   /// 
   /// Set MRML Scene
@@ -75,15 +68,35 @@ public:
   /// removed once the QT GUI is functional.
   void setMRMLScene(vtkMRMLScene * scene);
 
-  /// 
-  /// Get MRML Scene
-  vtkMRMLScene* mrmlScene() const;
+#ifdef Slicer3_USE_KWWIDGETS
 
+  /// 
+  /// initialize paths for module discovery
+  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
+  /// removed once the QT GUI is functional.
+  void initializePaths(const QString& programPath);
+  
+  /// 
+  /// Convenient method allowing to set the initialized flag
+  /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
+  /// removed once the QT GUI is functional. Only vtkSlicerApplication should use
+  /// that method. Improper use of that function may lead to unstable state
+  void setInitialized(bool initialized);
+  
   /// 
   /// Set application logic
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   /// removed once the QT GUI is functional.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
+
+  /// 
+  /// Set the module manager
+  /// Note that qSlicerCoreApplication takes ownership of the object
+  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
+  /// removed once the QT GUI is functional.
+  void setModuleManager(qSlicerModuleManager* moduleManager);
+
+#endif //Slicer3_USE_KWWIDGETS
 
   /// Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
@@ -98,7 +111,7 @@ public:
   void setSlicerHome(const QString& slicerHome);
 
   /// 
-  /// In any, this method return the build intermediate directory
+  /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;
 
@@ -109,13 +122,6 @@ public:
   /// 
   /// Get the module manager
   qSlicerModuleManager* moduleManager()const;
-
-  /// 
-  /// Set the module manager
-  /// Note that qSlicerCoreApplication takes ownership of the object
-  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
-  /// removed once the QT GUI is functional.
-  void setModuleManager(qSlicerModuleManager* moduleManager);
 
   /// 
   /// Get the IO manager
