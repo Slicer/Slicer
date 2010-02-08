@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QHash>
 #include <QList>
+#include <QPointer>
 #include <QStringList>
 
 // --------------------------------------------------------------------------
@@ -67,7 +68,7 @@ public:
   bool                           DisableSettings;
   int                            Argc;
   char**                         Argv;
-  QSettings*                     Settings;
+  QPointer<QSettings>            Settings;
   int                            ProcessType; // GUI, Batch, Daemon, ...
   
   QHash<QString*, char**>                         QStringPointerToCharPointerMap;
