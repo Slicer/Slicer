@@ -37,7 +37,7 @@
        <string>vtkMRMLTractographyFiducialSeedingNode</string>
       </stringlist>
      </property>
-     <property name="ShowHidden">
+     <property name="ShowHidden" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -130,6 +130,9 @@
      <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item row="6" column="0">
@@ -146,6 +149,9 @@
      </property>
      <property name="value">
       <double>0.700000000000000</double>
+     </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -164,6 +170,9 @@
      <property name="value">
       <double>0.500000000000000</double>
      </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item row="8" column="0">
@@ -180,6 +189,9 @@
      </property>
      <property name="value">
       <double>20.000000000000000</double>
+     </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -198,6 +210,9 @@
      <property name="value">
       <double>2.000000000000000</double>
      </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item row="10" column="0">
@@ -214,6 +229,9 @@
      </property>
      <property name="maximum">
       <double>10.000000000000000</double>
+     </property>
+     <property name="spinBoxAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>

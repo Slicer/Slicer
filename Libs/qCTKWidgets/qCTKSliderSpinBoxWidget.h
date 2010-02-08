@@ -34,6 +34,7 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
+  Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
 
 public:
   /// Superclass typedef
@@ -44,34 +45,60 @@ public:
   virtual ~qCTKSliderSpinBoxWidget(){}
 
   /// 
-  /// Set/Get range
+  /// This property holds the sliders and spinbox minimum value.
+  /// FIXME: Test following specs.
+  /// When setting this property, the maximum is adjusted if necessary 
+  /// to ensure that the range remains valid. 
+  /// Also the slider's current value is adjusted to be within the new range.
   double minimum()const;
-  double maximum()const;
   void setMinimum(double minimum);
+  
+  /// 
+  /// This property holds the sliders and spinbox minimum value.
+  /// FIXME: Test following specs.
+  /// When setting this property, the maximum is adjusted if necessary 
+  /// to ensure that the range remains valid. 
+  /// Also the slider's current value is adjusted to be within the new range.
+  double maximum()const;
   void setMaximum(double maximum);
   /// Description
   /// Utility function that set the min/max in once
   void setRange(double min, double max);
 
   /// 
-  /// Set/Get slider position
+  /// This property holds the current slider position.
+  /// If tracking is enabled (the default), this is identical to value.
   double sliderPosition()const;
   void setSliderPosition(double position);
-  //double previousSliderPosition();
 
   /// 
-  /// Set/Get value
+  /// This property holds the slider and spinbox current value.
+  /// qCTKSliderSpinBoxWidget forces the value to be within the 
+  /// legal range: minimum <= value <= maximum.
   double value()const;
 
   /// 
-  /// Set/Get single step
+  /// This property holds the single step.
+  /// The smaller of two natural steps that the 
+  /// slider provides and typically corresponds to the 
+  /// user pressing an arrow key.
   double singleStep()const;
   void setSingleStep(double step);
 
   /// 
-  /// Set/Get tick interval
+  /// This property holds the interval between tickmarks.
+  /// This is a value interval, not a pixel interval. 
+  /// If it is 0, the slider will choose between lineStep() and pageStep().
+  /// The default value is 0.
   double tickInterval()const;
   void setTickInterval(double ti);
+
+  /// 
+  /// This property holds the alignment of the spin box.
+  /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
+  /// By default, the alignment is Qt::AlignLeft
+  void setSpinBoxAlignment(Qt::Alignment alignment);
+  Qt::Alignment spinBoxAlignment()const;
 
   /// 
   /// Set/Get the auto spinbox width

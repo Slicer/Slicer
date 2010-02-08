@@ -260,6 +260,18 @@ void qCTKSliderSpinBoxWidget::reset()
 }
 
 // -------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::setSpinBoxAlignment(Qt::Alignment alignment)
+{
+  return qctk_d()->SpinBox->setAlignment(alignment);
+}
+
+// -------------------------------------------------------------------------
+Qt::Alignment qCTKSliderSpinBoxWidget::spinBoxAlignment()const
+{
+  return qctk_d()->SpinBox->alignment();
+}
+
+// -------------------------------------------------------------------------
 bool qCTKSliderSpinBoxWidget::isAutoSpinBoxWidth()const
 {
   QCTK_D(const qCTKSliderSpinBoxWidget);
