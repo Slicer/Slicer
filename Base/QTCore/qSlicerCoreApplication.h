@@ -116,10 +116,6 @@ public:
   QString intDir()const;
 
   /// 
-  /// Return the temporary directory associated with the application
-  QString tempDirectory() const; 
-
-  /// 
   /// Get the module manager
   qSlicerModuleManager* moduleManager()const;
 

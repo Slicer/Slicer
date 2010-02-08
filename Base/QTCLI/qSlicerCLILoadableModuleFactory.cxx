@@ -44,7 +44,6 @@ qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     }
   module->setXmlModuleDescription(xmlDescription);
 
-  module->setTempDirectory(qSlicerCoreApplication::application()->tempDirectory());
 
   return module;
 }

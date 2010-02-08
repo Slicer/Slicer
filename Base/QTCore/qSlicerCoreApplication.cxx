@@ -523,10 +523,6 @@ QString qSlicerCoreApplication::slicerHome() const
 QCTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::tempDirectory() const
-{
-  return QDir::tempPath();
-}
 qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
 {
   return qctk_d()->ModuleManager.get();
