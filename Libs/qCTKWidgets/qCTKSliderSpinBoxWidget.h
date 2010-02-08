@@ -33,6 +33,8 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double value READ value WRITE setValue)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
+  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
@@ -91,6 +93,20 @@ public:
   /// Sets how many decimals the spinbox will use for displaying and interpreting doubles.
   int decimals()const;
   void setDecimals(int decimals);
+
+  ///
+  /// This property holds the spin box's prefix.
+  /// The prefix is prepended to the start of the displayed value. 
+  /// Typical use is to display a unit of measurement or a currency symbol
+  QString prefix()const;
+  void setPrefix(const QString& prefix);
+
+  ///
+  /// This property holds the spin box's suffix.
+  /// The suffix is appended to the end of the displayed value. 
+  /// Typical use is to display a unit of measurement or a currency symbol
+  QString suffix()const;
+  void setSuffix(const QString& suffix);
 
   /// 
   /// This property holds the interval between tickmarks.

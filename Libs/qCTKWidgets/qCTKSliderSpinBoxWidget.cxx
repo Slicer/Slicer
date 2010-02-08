@@ -238,6 +238,34 @@ void qCTKSliderSpinBoxWidget::setDecimals(int newDecimals)
 }
 
 // --------------------------------------------------------------------------
+QString qCTKSliderSpinBoxWidget::prefix()const
+{
+  QCTK_D(const qCTKSliderSpinBoxWidget);
+  return d->SpinBox->prefix();
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::setPrefix(const QString& newPrefix)
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  d->SpinBox->setPrefix(newPrefix);
+}
+
+// --------------------------------------------------------------------------
+QString qCTKSliderSpinBoxWidget::suffix()const
+{
+  QCTK_D(const qCTKSliderSpinBoxWidget);
+  return d->SpinBox->suffix();
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::setSuffix(const QString& newSuffix)
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  d->SpinBox->setSuffix(newSuffix);
+}
+
+// --------------------------------------------------------------------------
 double qCTKSliderSpinBoxWidget::tickInterval()const
 {
   QCTK_D(const qCTKSliderSpinBoxWidget);

@@ -150,6 +150,30 @@ int qCTKSliderSpinBoxWidgetTest1(int argc, char * argv [] )
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }
+
+  sliderSpinBox.setPrefix("$");
+
+  if (sliderSpinBox.prefix() != "$" || 
+      !qFuzzyCompare(sliderSpinBox.value(), 80.6))
+    {
+    std::cerr << "qCTKSliderSpinBoxWidget::setPrefix failed." 
+              << sliderSpinBox.prefix().toLatin1().data() << " "
+              << sliderSpinBox.value() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  sliderSpinBox.setSuffix("mm");
+
+  if (sliderSpinBox.suffix() != "mm" || 
+      !qFuzzyCompare(sliderSpinBox.value(), 80.6))
+    {
+    std::cerr << "qCTKSliderSpinBoxWidget::setSuffix failed." 
+              << sliderSpinBox.suffix().toLatin1().data() << " "
+              << sliderSpinBox.value() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   // FIXME check that the correct signals are sent.
   return EXIT_SUCCESS;
 }
