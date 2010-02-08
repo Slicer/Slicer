@@ -28,7 +28,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public qVTKCommand
 {
 public:
   typedef qVTKCommandOptions Superclass;
-  qSlicerCoreCommandOptions(QSettings* settings);
+  qSlicerCoreCommandOptions(QSettings* _settings);
   virtual ~qSlicerCoreCommandOptions();
 
   /// Return True if the loading of Command Line Modules should be disabled
@@ -47,6 +47,9 @@ public:
   bool displayHomePathAndExit()const;
 
   /// Return temp directory
+  /// Try to read the value from the setting, if no value is found it defaults to
+  /// the value returned by QDir::tempPath()
+  /// See http://qt.nokia.com/doc/4.6/qdir.html#tempPath
   QString tempDirectory()const;
 
 protected:

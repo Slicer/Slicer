@@ -15,10 +15,9 @@
 // SlicerQT includes
 #include "qSlicerCoreApplication.h" // For disableCurrentSettings()
 
-// qCTK includes
-#include <qCTKSettings.h>
-
 // QT includes
+#include <QSettings>
+#include <QDir>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -32,9 +31,6 @@ public:
   bool DisplayVersionAndExit;
   bool DisplayProgramPathAndExit;
   bool DisplayHomePathAndExit;
-
-  QString TempDirectory;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -54,7 +50,7 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 // qSlicerCoreCommandOptions methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* settings):Superclass(settings)
+qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* _settings):Superclass(_settings)
 {
   QCTK_INIT_PRIVATE(qSlicerCoreCommandOptions);
 }
@@ -70,7 +66,12 @@ QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoad
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
 QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
-QCTK_GET_CXX(qSlicerCoreCommandOptions, QString, tempDirectory, TempDirectory);
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreCommandOptions::tempDirectory()const
+{
+  return this->settings()->value("temp-directory", QVariant(QDir::tempPath())).toString();
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreCommandOptions::initialize()

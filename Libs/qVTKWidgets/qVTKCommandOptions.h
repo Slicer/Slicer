@@ -35,7 +35,7 @@ class QVTK_WIDGETS_EXPORT qVTKCommandOptions
 {
 public:
   /// Constructors
-  explicit qVTKCommandOptions(QSettings* settings);
+  explicit qVTKCommandOptions(QSettings* _settings);
   virtual ~qVTKCommandOptions();
 
   virtual void printAdditionalInfo();
@@ -73,6 +73,10 @@ public:
   /// GUI application, Batch, Daemon, etc ...
   int processType()const;
   void setProcessType(int p);
+
+  ///
+  /// Convenient method to get associated Settings object
+  QSettings* settings()const;
 
   ///
   /// In case of unknown argument, return its name.

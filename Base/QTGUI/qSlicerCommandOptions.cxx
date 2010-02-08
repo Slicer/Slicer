@@ -35,7 +35,7 @@ qSlicerCommandOptionsPrivate::qSlicerCommandOptionsPrivate()
 // qSlicerCommandOptions methods
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions::qSlicerCommandOptions(QSettings* settings):Superclass(settings)
+qSlicerCommandOptions::qSlicerCommandOptions(QSettings* _settings):Superclass(_settings)
 {
   QCTK_INIT_PRIVATE(qSlicerCommandOptions);
 }

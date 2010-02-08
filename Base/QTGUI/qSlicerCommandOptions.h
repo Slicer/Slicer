@@ -28,7 +28,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
 {
 public:
   typedef qSlicerCoreCommandOptions Superclass;
-  qSlicerCommandOptions(QSettings* settings);
+  qSlicerCommandOptions(QSettings* _settings);
   virtual ~qSlicerCommandOptions();
 
   bool noSplash()const;

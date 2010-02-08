@@ -204,12 +204,12 @@ void qVTKCommandOptionsPrivate::syncQStringListPtrWithStringVectorPtr()
 // qVTKCommandOptions methods
 
 // --------------------------------------------------------------------------
-qVTKCommandOptions::qVTKCommandOptions(QSettings* settings)
+qVTKCommandOptions::qVTKCommandOptions(QSettings* _settings)
 {
   QCTK_INIT_PRIVATE(qVTKCommandOptions);
-  Q_ASSERT(settings);
+  Q_ASSERT(_settings);
   QCTK_D(qVTKCommandOptions);
-  d->Settings = settings;
+  d->Settings = _settings;
 }
 
 //----------------------------------------------------------------------------
@@ -231,6 +231,7 @@ QCTK_GET_CXX(qVTKCommandOptions, QString, errorMessage, ErrorMessage);
 QCTK_GET_CXX(qVTKCommandOptions, QString, unknownArgument, UnknownArgument);
 QCTK_GET_CXX(qVTKCommandOptions, bool, helpSelected, HelpSelected);
 QCTK_GET_CXX(qVTKCommandOptions, bool, disableSettings, DisableSettings);
+QCTK_GET_CXX(qVTKCommandOptions, QSettings*, settings, Settings);
 
 //----------------------------------------------------------------------------
 QCTK_GET_CXX(qVTKCommandOptions, int, processType, ProcessType);
