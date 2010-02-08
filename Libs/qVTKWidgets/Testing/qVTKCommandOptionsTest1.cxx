@@ -43,6 +43,7 @@ public:
     this->TestIfCommandLineOverwriteSettings = false;
     this->TestIfDisableSettingsFlagWorks = false;
     this->GenerateTestData = false;
+    this->TestIfIgnoreRestFlagWorks = false;
     }
   virtual ~qTestVTKCommandOptions(){}
 
@@ -51,6 +52,7 @@ public:
   bool          CurrentSettingsDisabled;
   bool          TestIfCommandLineOverwriteSettings;
   bool          TestIfDisableSettingsFlagWorks;
+  bool          TestIfIgnoreRestFlagWorks;
   bool          GenerateTestData;
   QString       WrongArgument;
   QStringList   MyListOfStrings;
@@ -83,6 +85,7 @@ public:
              << " WrongArgument:" << this->WrongArgument << endl
              << " TestIfCommandLineOverwriteSettings:" << this->TestIfCommandLineOverwriteSettings << endl
              << " TestIfDisableSettingsFlagWorks:" << this->TestIfDisableSettingsFlagWorks << endl
+             << " TestIfIgnoreRestFlagWorks:" << this->TestIfIgnoreRestFlagWorks << endl
              << " GenerateTestData:" << this->GenerateTestData << endl
              << " SettingsFile:" << QTESTVTKCOMMANDOPTIONS_SETTINGS << endl
              << " MyListOfStrings:" << this->MyListOfStrings << endl
@@ -108,6 +111,10 @@ protected:
     this->addBooleanArgument("--test-if-disablesettings-flag-works", 0,
                              &this->TestIfDisableSettingsFlagWorks,
                              "Indicates if '--disable-settings' flags should be tested.");
+
+    this->addBooleanArgument("--test-if-ignorerest-flag-works", 0,
+                             &this->TestIfIgnoreRestFlagWorks,
+                             "Indicates if '--ignore-rest' flags should be tested.");
 
     this->addBooleanArgument("--generate-test-data", 0, &this->GenerateTestData,
                              "Generates test data and save it to the file specified using '--settings-file'");
@@ -177,6 +184,65 @@ int qVTKCommandOptionsTest1(int argc, char * argv [] )
     {
     commandOptions.generateIniFile();
     return EXIT_SUCCESS;
+    }
+
+  // Test if '--ignore-rest' flag works
+  if (commandOptions.TestIfIgnoreRestFlagWorks)
+    {
+    if (!commandOptions.ignoreRest())
+      {
+      commandOptions.printAdditionalInfo();
+      std::cerr << "Error with parse() function - ignoreRest() should return True" << std::endl;
+      return EXIT_FAILURE;
+      }
+    QStringList _ignoreArguments = commandOptions.ignoredArguments(); 
+    if (_ignoreArguments.size() != 3)
+      {
+      commandOptions.printAdditionalInfo();
+      std::cerr << "Error with parse() function - "
+                << "ignoredArguments() returns an incorrect QStringList." << std::endl
+                << " expected size: 3" << std::endl
+                << " current size: " << _ignoreArguments.size() << std::endl;
+      
+      return EXIT_FAILURE;
+      }
+    if (_ignoreArguments[0] != "--nothing=foo" ||
+        _ignoreArguments[1] != "extra1" ||
+        _ignoreArguments[2] != "/?")
+      {
+      commandOptions.printAdditionalInfo();
+      std::cerr << "Error with parse() function - "
+                << "Content of list returned by ignoredArguments() is incorrect" << std::endl
+                << "expected[0] => [--nothing=foo]" << std::endl
+                << "expected[1] => [extra1]" << std::endl
+                << "expected[2] => [/?]" << std::endl;
+      for(int i=0; i < _ignoreArguments.size(); ++i)
+        {
+        std::cerr << "ignoreArguments[" << i << "] => ["
+                  << qPrintable(_ignoreArguments[i]) << "]" << std::endl;
+        }
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    if (commandOptions.ignoreRest())
+      {
+      commandOptions.printAdditionalInfo();
+      std::cerr << "Error with parse() function - ignoreRest() should return False" << std::endl;
+      return EXIT_FAILURE;
+      }
+    QStringList _ignoreArguments = commandOptions.ignoredArguments(); 
+    if (_ignoreArguments.size() != 0)
+      {
+      commandOptions.printAdditionalInfo();
+      std::cerr << "Error with parse() function - "
+                << "ignoredArguments() returns an incorrect QStringList." << std::endl
+                << " expected size: 0" << std::endl
+                << " current size: " << _ignoreArguments.size() << std::endl;
+      
+      return EXIT_FAILURE;
+      }
     }
 
   // Test if '--disable-settings' flag works

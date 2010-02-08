@@ -82,3 +82,11 @@ ADD_TEST( qVTKCommandOptionsTest5 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
           qVTKCommandOptionsTest1 -mlos ${arg1} ${arg2} ${arg3}
           --my-string=${arg4} --test-if-commandline-overwrite-settings )
 ENDIF()
+
+ADD_TEST( qVTKCommandOptionsTest6 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
+          qVTKCommandOptionsTest1 --test-if-ignorerest-flag-works
+          --ignore-rest --nothing=foo extra1 /? )
+
+ADD_TEST( qVTKCommandOptionsTest7 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
+          qVTKCommandOptionsTest1 --test-if-ignorerest-flag-works
+          -- --nothing=foo extra1 /? )
