@@ -26,27 +26,38 @@ endif(CMAKE_COMPILER_2005)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 
-# Attempt to detect if we have a Fortran Compiler available.
-include(CheckFortran)
+include(ExternalProject)
 
-if(CMAKE_Fortran_COMPILER)
-  option(Slicer3_BUILD_BLAS "Build Slicer with Blas." ON)
-  option(Slicer3_BUILD_LAPACK "Build Slicer with Lapack." ON)
-  
-  if(Slicer3_BUILD_NUMPY AND Slicer3_BUILD_LAPACK)
-    option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (requires Blas and Lapack)." ON)
+option(Slicer3_USE_PYTHON "Build Slicer3 with Python support" OFF)
 
-    if(Slicer3_BUILD_NUMPY)
-      option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
+if(Slicer3_USE_PYTHON)
+
+  # Attempt to detect if we have a Fortran Compiler available.
+  include(CheckFortran)
+
+  if(CMAKE_Fortran_COMPILER)
+    option(Slicer3_BUILD_BLAS "Build Slicer with Blas." ON)
+    option(Slicer3_BUILD_LAPACK "Build Slicer with Lapack." ON)
+    
+    if(Slicer3_BUILD_NUMPY AND Slicer3_BUILD_LAPACK)
+      option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (requires Blas and Lapack)." ON)
+
+      if(Slicer3_BUILD_NUMPY)
+        option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
+      endif()
+      
     endif()
     
-  endif()
-  
-  enable_language(Fortran)
-endif(CMAKE_Fortran_COMPILER)
+    enable_language(Fortran)
+  endif(CMAKE_Fortran_COMPILER)
+endif() # Slicer3_USE_PYTHON
 
 
-include(ExternalProject)
+
+
+# KWWidgets on by default.
+
+option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 
 ## QT
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
@@ -66,16 +77,6 @@ set_property(DIRECTORY PROPERTY EP_BASE ${base})
 set(prefix "${base}/Install")
 
 OPTION(BUILD_SHARED_LIBS "Build with shared libraries.")
-SET(CMAKE_BUILD_TYPE "Release")
-
-# Compute -G arg for configuring external projects with the same CMake generator:
-#
-if(CMAKE_EXTRA_GENERATOR)
-  set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
-else()
-  set(gen "${CMAKE_GENERATOR}")
-endif()
-
 
 # Set the default build type---this will affect all libraries and
 # applications
@@ -263,157 +264,160 @@ ExternalProject_Add(${proj}
 
 set(proj python)
 
-if(WIN32)
+if(Slicer3_USE_PYTHON)
 
-set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
-string(REPLACE "/" "\\" python_sln ${python_sln})
+  if(WIN32)
 
-# point the tkinter build file to the slicer tcl-build 
+  set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
+  string(REPLACE "/" "\\" python_sln ${python_sln})
 
-get_filename_component(python_base ${python_sln} PATH)
-get_filename_component(python_home ${python_base} PATH)
+  # point the tkinter build file to the slicer tcl-build 
 
-set(python_tkinter ${python_base}/pyproject.vsprops)
-string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+  get_filename_component(python_base ${python_sln} PATH)
+  get_filename_component(python_home ${python_base} PATH)
 
-set(script ${CMAKE_CURRENT_SOURCE_DIR}/StringFindReplace.cmake)
-set(out ${python_tkinter})
-set(in ${python_tkinter})
+  set(python_tkinter ${python_base}/pyproject.vsprops)
+  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
-ExternalProject_Add(${proj}
-  DEPENDS tcl tk
-  SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
-  SOURCE_DIR python-build
-  UPDATE_COMMAND ""
-  PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script}
-  CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
-  BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
-  BUILD_IN_SOURCE 1
-  INSTALL_COMMAND ""
-)
-
-# this must match the version of tcl we are building for slicer.
-ExternalProject_Add_Step(${proj} Patch_tcltk_version
-  COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
-  DEPENDEES configure
-  DEPENDERS build
-  )
-
-ExternalProject_Add_Step(${proj} Build_make_versioninfo
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
-  DEPENDEES configure
-  )
-  
-ExternalProject_Add_Step(${proj} Build_make_buildinfo
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_buildinfo
-  DEPENDEES Build_make_versioninfo
-  )
-  
-ExternalProject_Add_Step(${proj} Build_kill_python
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project kill_python
-  DEPENDEES Build_kill_python
-  )
-  
-ExternalProject_Add_Step(${proj} Build_w9xpopen
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project w9xpopen
-  DEPENDEES Build_kill_python
-  )
-  
-ExternalProject_Add_Step(${proj} Build_pythoncore
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythoncore
-  DEPENDEES Build_w9xpopen
-  )
-  
-ExternalProject_Add_Step(${proj} Build__socket
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
-  DEPENDEES Build_pythoncore
-  )
-  
-ExternalProject_Add_Step(${proj} Build__tkinter
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
-  DEPENDEES Build__socket
-  )
-  
-ExternalProject_Add_Step(${proj} Build__testcapi
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
-  DEPENDEES Build__tkinter
-  )
-  
-ExternalProject_Add_Step(${proj} Build__msi
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _msi
-  DEPENDEES Build__testcapi
-  )
-  
-ExternalProject_Add_Step(${proj} Build__elementtree
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _elementtree
-  DEPENDEES Build__msi
-  )
-  
-ExternalProject_Add_Step(${proj} Build__ctypes_test
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes_test
-  DEPENDEES Build__elementtree
-  )
-  
-ExternalProject_Add_Step(${proj} Build__ctypes
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes
-  DEPENDEES python_sln
-  )
-  
-ExternalProject_Add_Step(${proj} Build_winsound
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project winsound
-  DEPENDEES Build__ctypes
-  )
-  
-ExternalProject_Add_Step(${proj} Build_pyexpat
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pyexpat
-  DEPENDEES Build_winsound
-  )
-  
-ExternalProject_Add_Step(${proj} Build_pythonw
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythonw
-  DEPENDEES Build_pyexpat
-  )
-  
-ExternalProject_Add_Step(${proj} Build__multiprocessing
-  COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
-  DEPENDEES Build_pythonw
-  )
-
-ExternalProject_Add_Step(${proj} CopyPythonLib
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib 
-  DEPENDEES install
-  )
-ExternalProject_Add_Step(${proj} Copy_socketPyd
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_socket.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_socket.pyd 
-  DEPENDEES install
-  )
-ExternalProject_Add_Step(${proj} Copy_ctypesPyd
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
-  DEPENDEES install
-  )
-  
-ExternalProject_Add_Step(${proj} CopyPythonDll
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
-  DEPENDEES install
-  )
-else(WIN32)
-
-  set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
-  set(python_BUILD_IN_SOURCE 1)
-  set(python_CONFIGURE sh configure --prefix=${build_dir}/python-build --with-tcl=${tcl_build} --enable-shared)
-  set(python_BUILD make)
-  set(python_INSTALL make install)
+  set(script ${CMAKE_CURRENT_SOURCE_DIR}/StringFindReplace.cmake)
+  set(out ${python_tkinter})
+  set(in ${python_tkinter})
 
   ExternalProject_Add(${proj}
     DEPENDS tcl tk
-    SVN_REPOSITORY ${python_SVN}
-    SOURCE_DIR python
-    BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
-    CONFIGURE_COMMAND ${python_CONFIGURE}
-    BUILD_COMMAND ${python_BUILD}
-    INSTALL_COMMAND ${python_INSTALL}
+    SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
+    SOURCE_DIR python-build
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script}
+    CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
+    BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
+    BUILD_IN_SOURCE 1
+    INSTALL_COMMAND ""
   )
-endif(WIN32)
+
+  # this must match the version of tcl we are building for slicer.
+  ExternalProject_Add_Step(${proj} Patch_tcltk_version
+    COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
+    DEPENDEES configure
+    DEPENDERS build
+    )
+
+  ExternalProject_Add_Step(${proj} Build_make_versioninfo
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
+    DEPENDEES configure
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_make_buildinfo
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_buildinfo
+    DEPENDEES Build_make_versioninfo
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_kill_python
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project kill_python
+    DEPENDEES Build_kill_python
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_w9xpopen
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project w9xpopen
+    DEPENDEES Build_kill_python
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_pythoncore
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythoncore
+    DEPENDEES Build_w9xpopen
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__socket
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
+    DEPENDEES Build_pythoncore
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__tkinter
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
+    DEPENDEES Build__socket
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__testcapi
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
+    DEPENDEES Build__tkinter
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__msi
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _msi
+    DEPENDEES Build__testcapi
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__elementtree
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _elementtree
+    DEPENDEES Build__msi
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__ctypes_test
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes_test
+    DEPENDEES Build__elementtree
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__ctypes
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes
+    DEPENDEES python_sln
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_winsound
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project winsound
+    DEPENDEES Build__ctypes
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_pyexpat
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pyexpat
+    DEPENDEES Build_winsound
+    )
+    
+  ExternalProject_Add_Step(${proj} Build_pythonw
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythonw
+    DEPENDEES Build_pyexpat
+    )
+    
+  ExternalProject_Add_Step(${proj} Build__multiprocessing
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
+    DEPENDEES Build_pythonw
+    )
+
+  ExternalProject_Add_Step(${proj} CopyPythonLib
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib 
+    DEPENDEES install
+    )
+  ExternalProject_Add_Step(${proj} Copy_socketPyd
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_socket.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_socket.pyd 
+    DEPENDEES install
+    )
+  ExternalProject_Add_Step(${proj} Copy_ctypesPyd
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
+    DEPENDEES install
+    )
+    
+  ExternalProject_Add_Step(${proj} CopyPythonDll
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
+    DEPENDEES install
+    )
+  else(WIN32)
+
+    set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
+    set(python_BUILD_IN_SOURCE 1)
+    set(python_CONFIGURE sh configure --prefix=${build_dir}/python-build --with-tcl=${tcl_build} --enable-shared)
+    set(python_BUILD make)
+    set(python_INSTALL make install)
+
+    ExternalProject_Add(${proj}
+      DEPENDS tcl tk
+      SVN_REPOSITORY ${python_SVN}
+      SOURCE_DIR python
+      BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
+      CONFIGURE_COMMAND ${python_CONFIGURE}
+      BUILD_COMMAND ${python_BUILD}
+      INSTALL_COMMAND ${python_INSTALL}
+    )
+  endif(WIN32)
+endif(Slicer3_USE_PYTHON)
 
 # Get and build netlib (blas and lapack)
 
@@ -443,12 +447,6 @@ ExternalProject_Add(${proj}
 #  BUILD_COMMAND ${blas_BUILD}
   INSTALL_COMMAND ""
 )
-
-if(NOT WIN32)
-  
-endif(NOT WIN32)
-
-#return()
 
 set(proj lapack)
 
@@ -730,7 +728,7 @@ ExternalProject_Add(${proj}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DCMAKE_SKIP_RPATH:BOOL=ON
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
-    -DCMAKE_BUILD_TYPE:STRING=Release
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   INSTALL_COMMAND ""
 )
 
