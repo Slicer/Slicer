@@ -1,13 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Library:   qCTK
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Kitware Inc. 
+  All rights reserved.
+  Distributed under a BSD License. See LICENSE.txt file.
 
-  Program:   3D Slicer
+  This software is distributed "AS IS" WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the above copyright notice for more information.
 
-=========================================================================auto=*/
+=========================================================================*/
 
 // qCTK includes
 #include "qCTKCoordinatesWidget.h"
