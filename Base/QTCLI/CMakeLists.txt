@@ -20,6 +20,8 @@ SET(slicer_qtbase_include_directories
 SET(slicer_qtbase_SRCS
   qSlicerCLIExecutableModuleFactory.cxx
   qSlicerCLIExecutableModuleFactory.h
+  qSlicerCLILoadableModule.cxx
+  qSlicerCLILoadableModule.h
   qSlicerCLILoadableModuleFactory.cxx
   qSlicerCLILoadableModuleFactory.h
   qSlicerCLIModule.cxx

@@ -46,6 +46,10 @@ public:
   /// Set temporary directory associated with the module
   void setTempDirectory(const QString& tempDirectory);
 
+  ///
+  /// Get entry point as string
+  virtual QString entryPoint() = 0;
+
 protected:
   /// 
   /// Overloaded

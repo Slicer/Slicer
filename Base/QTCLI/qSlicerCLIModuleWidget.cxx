@@ -53,40 +53,20 @@ QHash<QString, QString> qSlicerCLIModuleWidgetPrivate::TableTypeAttributeToNodeT
 QHash<QString, QString> qSlicerCLIModuleWidgetPrivate::TransformTypeAttributeToNodeType;
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
-  ModuleDescription* desc, QWidget* _parent):Superclass(_parent)
-{
-  Q_ASSERT(desc);
-  QCTK_INIT_PRIVATE(qSlicerCLIModuleWidget);
-  QCTK_D(qSlicerCLIModuleWidget);
-
-  // Set properties
-  d->Title = QString::fromStdString(desc->GetTitle());
-  d->Contributor = QString::fromStdString(desc->GetContributor());
-  d->Category = QString::fromStdString(desc->GetCategory());
-
-  d->ProcessInformation = desc->GetProcessInformation();
-  d->ParameterGroups = desc->GetParameterGroups();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidget::setup()
-{
-  QCTK_D(qSlicerCLIModuleWidget);
-  d->setupUi(this);
-//   d->Logic = new qSlicerCLIModuleLogic(this);
-//   d->Logic->initialize(this->appLogic());
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerCLIModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic()const
 {
   QCTK_P(const qSlicerCLIModuleWidget);
-  // Since the logic doesn't have the Q_OJBECT macro, qobject_cast isn't available
   return vtkSlicerCLIModuleLogic::SafeDownCast(p->logic());
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNode()const
+{
+  return vtkMRMLCommandLineModuleNode::SafeDownCast(
+    this->MRMLCommandLineModuleNodeSelector->currentNode());
 }
 
 //-----------------------------------------------------------------------------
@@ -126,20 +106,9 @@ void qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed()
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onApplyButtonPressed";
   this->updateMRMLCommandLineModuleNode();
 
-  // QTCLI shouldn't depend on QtCore, otherwise there is a loop in the dependency
-  //this->logic()->SetTemporaryDirectory(
-  //  qSlicerCoreApplication::application()->tempDirectory().toLatin1());
-  //((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
-// 
-//     // Lazy evaluation of module target
-//     this->Logic->LazyEvaluateModuleTarget(this->ModuleDescriptionObject);
-// 
-//     // make sure the entry point is set on the node
-//     this->GetCommandLineModuleNode()->GetModuleDescription()
-//       .SetTarget( this->ModuleDescriptionObject.GetTarget() );
-//     
-//     // apply
-//     this->Logic->Apply();
+  vtkMRMLCommandLineModuleNode* node = this->commandLineModuleNode();
+  Q_ASSERT(node);
+  this->logic()->Apply(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -796,9 +765,11 @@ void qSlicerCLIModuleWidgetPrivate::updateMRMLCommandLineModuleNode()
   QCTK_P(qSlicerCLIModuleWidget);
   Q_ASSERT(p->mrmlScene());
    
-  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(
-    this->MRMLCommandLineModuleNodeSelector->currentNode());
+  vtkMRMLCommandLineModuleNode* node = this->commandLineModuleNode();
   Q_ASSERT(node);
+
+  // Set entry point associated with the module
+  node->GetModuleDescription().SetTarget(this->ModuleEntryPoint.toStdString());
   
   // save node parameters for Undo
   p->mrmlScene()->SaveStateForUndo(node);
@@ -827,3 +798,33 @@ void qSlicerCLIModuleWidgetPrivate::updateMRMLCommandLineModuleNode()
       }
     }
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerCLIModuleWidget methods
+
+//-----------------------------------------------------------------------------
+qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
+  ModuleDescription* desc, QWidget* _parent):Superclass(_parent)
+{
+  Q_ASSERT(desc);
+  QCTK_INIT_PRIVATE(qSlicerCLIModuleWidget);
+  QCTK_D(qSlicerCLIModuleWidget);
+
+  // Set properties
+  d->Title = QString::fromStdString(desc->GetTitle());
+  d->Contributor = QString::fromStdString(desc->GetContributor());
+  d->Category = QString::fromStdString(desc->GetCategory());
+
+  d->ProcessInformation = desc->GetProcessInformation();
+  d->ParameterGroups = desc->GetParameterGroups();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setup()
+{
+  QCTK_D(qSlicerCLIModuleWidget);
+  d->setupUi(this);
+}
+
+//-----------------------------------------------------------------------------
+QCTK_SET_CXX(qSlicerCLIModuleWidget, const QString&, setModuleEntryPoint, ModuleEntryPoint);

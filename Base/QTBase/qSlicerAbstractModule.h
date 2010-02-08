@@ -119,7 +119,7 @@ public slots:
 
 protected:
   /// 
-  /// All inialization code should be done in the setup
+  /// All initialization code should be done in the setup
   virtual void setup() = 0;
 
   /// 

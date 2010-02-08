@@ -34,6 +34,10 @@ public:
   qSlicerCLIModuleWidget(ModuleDescription* desc, QWidget *parent=0);
   virtual ~qSlicerCLIModuleWidget(){}
 
+  ///
+  /// Set the module entry point associated with the module
+  void setModuleEntryPoint(const QString& entryPoint);
+
 protected:
   /// 
   /// Overloaded

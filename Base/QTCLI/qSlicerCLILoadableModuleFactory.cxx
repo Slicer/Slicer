@@ -13,9 +13,10 @@
 #include "qSlicerCLILoadableModuleFactory.h"
 
 // SlicerQT includes
-#include "qSlicerCLIModule.h"
+#include "qSlicerCLILoadableModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerCoreApplication.h"
+#include "qSlicerCoreCommandOptions.h"
 
 // QT includes
 #include <QStringList>
@@ -28,9 +29,9 @@ qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(const Q
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
-  qSlicerCLIModule * module = new qSlicerCLIModule();
+  qSlicerCLILoadableModule * module = new qSlicerCLILoadableModule();
 
-  // Resolve symbols
+  // Resolves symbol
   char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription");
 
   // Retrieve
@@ -42,8 +43,24 @@ qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     delete module; // Clean memory
     return 0;
     }
+
+  // Resolves symbol
+  qSlicerCLILoadableModule::ModuleEntryPointType moduleEntryPoint =
+    (qSlicerCLILoadableModule::ModuleEntryPointType)this->symbolAddress("ModuleEntryPoint");
+
+  if (!moduleEntryPoint)
+    {
+    qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+    delete module; // Clean memory
+    return 0;
+    }
+    
   module->setXmlModuleDescription(xmlDescription);
 
+  module->setEntryPoint(moduleEntryPoint);
+
+  module->setTempDirectory(
+    qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
 
   return module;
 }
@@ -67,6 +84,7 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory():Superclass()
   // if one of these symbols can't be resolved, the library won't be registered.
   QStringList cmdLineModuleSymbols;
   cmdLineModuleSymbols << "XMLModuleDescription";
+  cmdLineModuleSymbols << "ModuleEntryPoint";
   this->setSymbols(cmdLineModuleSymbols);
 }
 
@@ -92,7 +110,6 @@ void qSlicerCLILoadableModuleFactory::registerItems()
       // Skip if item isn't a file
       if (!fileInfo.isFile()) { continue; }
       
-      //this->registerLibrary(factory, it.fileInfo());
       if (fileInfo.isSymLink())
         {
         // symLinkTarget() handles links pointing to symlinks.
@@ -107,7 +124,7 @@ void qSlicerCLILoadableModuleFactory::registerItems()
       QString libraryName;
       if (!this->registerLibrary(fileInfo, libraryName))
         {
-        qDebug() << "Failed to register module: " << libraryName; 
+        qWarning() << "Failed to register module: " << libraryName;
         return;
         }
       }

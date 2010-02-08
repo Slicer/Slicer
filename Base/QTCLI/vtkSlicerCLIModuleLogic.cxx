@@ -10,14 +10,9 @@
 
 =========================================================================auto=*/
 
-
 #include "vtkSlicerCLIModuleLogic.h"
 
-// SlicerLogic includes
-#include "vtkSlicerApplicationLogic.h"
-
-// qCTK includes
-#include <qCTKUtils.h>
+#include "vtkSlicerTask.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -38,35 +33,47 @@
 #include <vtkMRMLTransformStorageNode.h>
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLROIListNode.h>
+#include <vtkMRMLDoubleArrayNode.h>
+#include <vtkMRMLDoubleArrayStorageNode.h>
 
 // VTK includes
-//#include <vtkObject.h>
-//#include <vtkObjectFactory.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 
-// STL includes
-#include <algorithm>
-#include <set>
+// ITKSYS includes
+#include <itksys/Process.h>
+#include <itksys/SystemTools.hxx>
+#include <itksys/RegularExpression.hxx>
+#include <itksys/DynamicLoader.hxx>
 
 // QT includes
 #include <QDebug>
 
-vtkCxxRevisionMacro(vtkSlicerCLIModuleLogic, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkSlicerCLIModuleLogic);
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+// needed to hack around itksys to override defaults used by Mac OS X
+#include <dlfcn.h>
+#endif
 
-namespace
-{
-// class vtkProgressHelper : public vtkObject
-// {
-//   static vtkProgressHelper *New();
-//   vtkTypeMacro(vtkProgressHelper,vtkObject);
-// };
-//
-// //-----------------------------------------------------------------------------
-// vtkStandardNewMacro(vtkProgressHelper);
-// vtkCxxRevisionMacro(vtkProgressHelper, "$Revision: 681 $");
-//
+
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
+#include "slicerPython.h"
+#endif
+
+// STL includes
+#include <algorithm>
+#include <set>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <time.h>
+
+#ifdef _WIN32
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
 struct DigitsToCharacters
 {
@@ -81,179 +88,45 @@ struct DigitsToCharacters
     }
 };
 
-};
+typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
-//-----------------------------------------------------------------------------
-class vtkSlicerCLIModuleLogicPrivate: public qCTKPrivate<vtkSlicerCLIModuleLogic>
+
+//----------------------------------------------------------------------------
+vtkSlicerCLIModuleLogic* vtkSlicerCLIModuleLogic::New()
 {
-public:
-  QCTK_DECLARE_PUBLIC(vtkSlicerCLIModuleLogic);
-  vtkSlicerCLIModuleLogicPrivate()
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerCLIModuleLogic");
+  if(ret)
     {
-    // For debug purposes
-    this->RedirectModuleStreams = false;
-    this->deleteTemporaryFiles = true;
-
-    this->entryPointFunc = NULL;
-    this->commandType = vtkSlicerCLIModuleLogic::CommandLineModule;
-    this->commandLineModuleNode = 0;
+      return vtkSlicerCLIModuleLogic::SafeDownCast(ret);
     }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkSlicerCLIModuleLogic;
+}
 
-  std::string FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p);
 
-  std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
+//----------------------------------------------------------------------------
+vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
+{
+  this->CommandLineModuleNode = NULL;
+  this->DeleteTemporaryFiles = 1;
+  this->RedirectModuleStreams = 1;
+}
 
-  typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
-
-  typedef int (*EntryPointFunc)(int argc, char* argv[]);
-  EntryPointFunc entryPointFunc;
-
-  vtkSlicerCLIModuleLogic::CommandLineModuleType commandType;
-
-  vtkMRMLCommandLineModuleNode* commandLineModuleNode;
-
-  std::string TemporaryDirectory;
-
-  // vector of files to delete
-  std::set<std::string> filesToDelete;
-
-  bool RedirectModuleStreams;
-  bool deleteTemporaryFiles;
-
-};
-
-//-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_NO_ARG_CXX(vtkSlicerCLIModuleLogic);
-
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic::~vtkSlicerCLIModuleLogic()
 {
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::PrintSelf(ostream& os, vtkIndent indent) 
-{ 
-  Superclass::PrintSelf(os, indent); 
-};
-
 //----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::ProgressCallback ( void *who )
+void vtkSlicerCLIModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkSlicerCLIModuleLogicPrivate::LogicNodePair *lnp =
-    reinterpret_cast<vtkSlicerCLIModuleLogicPrivate::LogicNodePair*>(who);
-  Q_ASSERT(lnp);
-  if (!lnp)
-    {
-    return;
-    }
-
-  qDebug() << "vtkSlicerCLIModuleLogic::ProgressCallback";
-  // All we need to do is tell the node that it was Modified.  The
-  // shared object plugin modifies fields in the ProcessInformation directly.
-  //lnp->first->GetApplicationLogic()->RequestModified(lnp->second);
-}
-
-//----------------------------------------------------------------------------
-QCTK_SET_CXX(vtkSlicerCLIModuleLogic, const char *, SetTemporaryDirectory, TemporaryDirectory);
-QCTK_GET_CXX(vtkSlicerCLIModuleLogic, const char *, GetTemporaryDirectory, TemporaryDirectory.c_str());
-
-//-----------------------------------------------------------------------------
-QCTK_SET_CXX(vtkSlicerCLIModuleLogic, bool, setDeleteTemporaryFiles, deleteTemporaryFiles);
-QCTK_GET_CXX(vtkSlicerCLIModuleLogic, bool, deleteTemporaryFiles, deleteTemporaryFiles);
-
-//----------------------------------------------------------------------------
-std::string
-vtkSlicerCLIModuleLogicPrivate::FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p)
-{
-  std::string id = "None";
-
-  if (p.GetHidden() == "true")
-    {
-    if (p.GetReference().size() > 0)
-      {
-      std::string reference;
-      if (d.HasParameter(p.GetReference()))
-        {
-        reference = d.GetParameterDefaultValue(p.GetReference());
-
-        if (p.GetTag() == "table")
-          {
-          if (p.GetType() == "color")
-            {
-            // go to the display node for the reference parameter and
-            // get its color node
-            vtkMRMLDisplayableNode *rn
-              = vtkMRMLDisplayableNode::SafeDownCast(qctk_p()->GetMRMLScene()
-                                            ->GetNodeByID(reference.c_str()));
-            if (rn)
-              {
-              vtkMRMLDisplayNode *dn = rn->GetDisplayNode();
-              if (dn)
-                {
-                // get the id of the color node
-                if (dn->GetColorNode())
-                  {
-                  id = dn->GetColorNode()->GetID();
-                  }
-                else
-                  {
-                  qCritical("Display node of the reference node does not have a color node. No value for \"table\" parameter.");
-                  }
-                }
-              else
-                {
-                qCritical("Reference node \"%s\" does not have a display node which "
-                          "is needed to find the color node.", reference.c_str());
-                }
-              }
-            else
-              {
-              qCritical("Reference node \"%s\" does not exist in the scene.", reference.c_str());
-              }
-            }
-          else
-            {
-            qCritical("Hidden \"table\" parameters must be of type \"color\"");
-            }
-          }
-        else if (p.GetTag() == "image")
-          {
-          // hidden parameters allowed for images to hide from GUI but
-          // we don't currently do anything with them. This implies
-          // that hidden parameters that are images must have flags
-          // and not be index parameters.
-          }
-        else
-          {
-          qCritical("Hidden parameters not supported on \"%s\"", p.GetType().c_str());
-          }
-        }
-      else
-        {
-        qCritical("Reference parameter \"%s\" not found.", p.GetReference().c_str());
-        }
-      }
-    else
-      {
-      // no reference node
-      //if (this->GetDebug())
-      //  {
-        qDebug("Hidden parameter \"%s\" but no reference parameter.", p.GetName().c_str());
-      //  }
-      }
-    }
-  else
-    {
-    // not a hidden node, just return the default
-    id = p.GetDefault();
-    }
-
-  return id;
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
 std::string
-vtkSlicerCLIModuleLogicPrivate
+vtkSlicerCLIModuleLogic
 ::ConstructTemporarySceneFileName(vtkMRMLScene *scene)
 {
   std::string fname;
@@ -264,9 +137,9 @@ vtkSlicerCLIModuleLogicPrivate
   // Part of the filename will include an encoding of the scene
   // pointer for uniqueness
   char tname[256];
-
+      
   sprintf(tname, "%p", scene);
-
+      
   fname = tname;
 
   // To avoid confusing the Archetype readers, convert any
@@ -291,14 +164,16 @@ vtkSlicerCLIModuleLogicPrivate
   return fname;
 }
 
+
 //----------------------------------------------------------------------------
-std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::string& tag,
-                             const std::string& type,
+std::string
+vtkSlicerCLIModuleLogic
+::ConstructTemporaryFileName(const std::string& tag,
+                             const std::string& vtkNotUsed(type),
                              const std::string& name,
                              const std::vector<std::string>& extensions,
                              CommandLineModuleType commandType) const
 {
-  Q_UNUSED(type);
   std::string fname = name;
   std::string pid;
   std::ostringstream pidString;
@@ -329,7 +204,7 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
   // per module execution.
   //
 
-
+  
   // Encode process id into a string.  To avoid confusing the
   // Archetype reader, convert the numbers in pid to characters [0-9]->[A-J]
 #ifdef _WIN32
@@ -346,7 +221,7 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
     {
     return fname;
     }
-
+  
   // To avoid confusing the Archetype readers, convert any
   // numbers in the filename to characters [0-9]->[A-J]
   std::transform(fname.begin(), fname.end(),
@@ -354,13 +229,13 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = qctk_d()->TemporaryDirectory + "/" + pid + "_" + fname;
+  fname = this->TemporaryDirectory + "/" + pid + "_" + fname;
 
   if (tag == "image")
     {
     if ( commandType == CommandLineModule )
       {
-      // If running an executable
+      // If running an executable 
 
       // Use default fname construction, tack on extension
       std::string ext = ".nrrd";
@@ -377,15 +252,13 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
       // tree.
 
       // Redefine the filename to be a reference to a slicer node.
-
+      
       // Must be large enough to hold slicer:, #, an ascii
-      // representation of the scene pointer and the MRML node ID.
+      // representation of the scene pointer and the MRML node ID. 
       char *tname = new char[name.size() + 100];
-
-      sprintf(tname, "slicer:%p#%s", 
-              const_cast<vtkSlicerCLIModuleLogic*>(this)->GetMRMLScene(), 
-              name.c_str());
-
+      
+      sprintf(tname, "slicer:%p#%s", this->MRMLScene, name.c_str());
+      
       fname = tname;
 
       delete [] tname;
@@ -431,9 +304,123 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
     fname = fname + ext;
     }
 
+  if (tag == "measurement")
+    {
+    // tables are currently always passed via files
+
+    // Use default fname construction, tack on extension
+    std::string ext = ".csv";
+    if (extensions.size() != 0)
+      {
+      ext = extensions[0];
+      }
+    fname = fname + ext;
+    }
+  
+    
   return fname;
 }
 
+//-----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node )
+{
+  // Just execute and wait.
+  node->Register(this);
+  vtkSlicerCLIModuleLogic::ApplyTask ( node );
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
+{
+  bool ret;
+
+  if ( node->GetModuleDescription().GetType() == "PythonModule" )
+    {
+    this->ApplyAndWait ( node );
+    return;
+    }
+
+
+  vtkSlicerTask* task = vtkSlicerTask::New();
+  task->SetTypeToProcessing();
+
+  // Pass the current node as client data to the task.  This allows
+  // the user to switch to another parameter set after the task is
+  // scheduled but before it starts to run. And when the scheduled
+  // task does run, it will operate on the correct node.
+  task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                        &vtkSlicerCLIModuleLogic::ApplyTask,
+                        node);
+  
+  // Client data on the task is just a regular pointer, up the
+  // reference count on the node, we'll decrease the reference count
+  // once the task actually runs
+  node->Register(this);
+  
+  // Schedule the task
+  ret = this->GetApplicationLogic()->ScheduleTask( task );
+
+  if (!ret)
+    {
+    vtkWarningMacro( << "Could not schedule task" );
+    }
+  else
+    {
+    node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
+    }
+  
+  task->Delete();
+
+}
+
+//-----------------------------------------------------------------------------
+// Static method for lazy evaluation of module target
+// void vtkSlicerCLIModuleLogic::LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject)
+// {
+//   if (moduleDescriptionObject.GetTarget() == "Unknown")
+//     {
+//     if (moduleDescriptionObject.GetType() == "SharedObjectModule")
+//       {
+//       typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+// 
+// #if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+//       // Mac OS X defaults to RTLD_GLOBAL and there is no way to
+//       // override in itksys. So make the direct call to dlopen().
+//       itksys::DynamicLoader::LibraryHandle lib
+//         = dlopen(moduleDescriptionObject.GetLocation().c_str(), RTLD_LAZY | RTLD_LOCAL);
+// #else
+//       itksys::DynamicLoader::LibraryHandle lib
+//         = itksys::DynamicLoader::OpenLibrary(moduleDescriptionObject.GetLocation().c_str());
+// #endif
+//       if ( lib )
+//         {
+//         ModuleEntryPoint entryPoint
+//           = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
+// 
+//         if (entryPoint)
+//           {
+//           char entryPointAsText[256];
+//           std::string entryPointAsString;
+// 
+//           sprintf(entryPointAsText, "%p", entryPoint);
+//           entryPointAsString = std::string("slicer:") + entryPointAsText;
+// 
+//           moduleDescriptionObject.SetTarget( entryPointAsString );
+//           }
+//         else
+//           {
+//           // can't find entry point, eject.
+//           itksys::DynamicLoader::CloseLibrary(lib);
+// 
+//           vtkErrorMacro(<< "Cannot find entry point for " << moduleDescriptionObject.GetLocation() << "\nCannot run module." );
+//           return;
+//           }
+//         }
+//       }
+//     }
+// }
+
+//-----------------------------------------------------------------------------
 //
 // This routine is called in a separate thread from the main thread.
 // As such, this routine cannot directly or indirectly update the user
@@ -441,206 +428,181 @@ std::string vtkSlicerCLIModuleLogic::constructTemporaryFileName(const std::strin
 // updated whenever a node receives a Modified.  Since calls to
 // Modified() can update the GUI, the ApplyTask must be careful not to
 // modify a MRML node.
-//
-void vtkSlicerCLIModuleLogic::applyTask(void *clientdata)
+// 
+void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 {
-   QCTK_D(vtkSlicerCLIModuleLogic);
-
-  std::cout << "vtkCommandLineModuleLogic::ApplyTask" <<std::endl;
-  // check if MRML node is present
-  if (!clientdata)
+  // check if MRML node is present 
+  if (clientdata == NULL)
     {
-    qWarning() << "No input CommandLineModuleNode found";
+    vtkErrorMacro("No input CommandLineModuleNode found");
     return;
     }
 
   vtkMRMLCommandLineModuleNode *node0 = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata);
-  Q_ASSERT(node0);
 
   // Check to see if this node/task has been cancelled
   if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
     {
     // node was registered when the task was scheduled so unregister now
-    //TODO
-    //node0->UnRegister(this);
+    node0->UnRegister(this);
+
     return;
     }
 
 
   // Set the callback for progress.  This will only be used for the
   // scope of this function.
-  vtkSlicerCLIModuleLogicPrivate::LogicNodePair lnp( this, node0 );
+  LogicNodePair lnp( this, node0 );
   node0->GetModuleDescription().GetProcessInformation()
-    ->SetProgressCallback( vtkSlicerCLIModuleLogic::ProgressCallback, &lnp );
-
-
+    ->SetProgressCallback( vtkSlicerCLIModuleLogic::ProgressCallback,
+                           &lnp );
+  
+  
   // Determine the type of the module: command line or shared object
-//   int (*entryPoint)(int argc, char* argv[]);
-//   entryPoint = NULL;
-//   CommandLineModuleType commandType = CommandLineModule;
-//
-   std::string target = node0->GetModuleDescription().GetTarget();
-//    std::string::size_type pos = target.find("slicer:");
-//    if (pos != std::string::npos && pos == 0)
-//      {
-//      sscanf(target.c_str(), "slicer:%p", &qctk_d()->entryPointFunc);
-//      }
-//
-//    // Assume that the modules correctly report themselves
-//    if ( node0->GetModuleDescription().GetType() == "CommandLineModule" )
-//      {
-//      vtkSlicerApplication::GetInstance()->InformationMessage( "Found CommandLine Module" );
-//      commandType = CommandLineModule;
-//      if ( entryPoint != NULL )
-//        {
-//        vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target.c_str());
-//        }
-//      }
-//    else if ( node0->GetModuleDescription().GetType() == "SharedObjectModule" )
-//     {
-//     //vtkSlicerApplication::GetInstance()->InformationMessage( "Found SharedObject Module" );
-//     qWarning() << "Found SharedObject Module";
-//
-//     commandType = SharedObjectModule;
-//     if ( entryPoint == NULL )
-//       {
-//       qWarning() << "Module reports that it is a Shared Object Module but does not have a shared object module target. " << target.c_str();
-//       }
-//     }
-//   else if ( node0->GetModuleDescription().GetType() == "PythonModule" )
-//     {
-// //     vtkSlicerApplication::GetInstance()->InformationMessage( "Found Python Module" );
-//     qWarning() << "Found Python Module";
-//     commandType = PythonModule;
-//     }
-//   vtkSlicerApplication::GetInstance()->InformationMessage( node0->GetModuleDescription().GetType().c_str() );
+  int (*entryPoint)(int argc, char* argv[]);
+  entryPoint = NULL;
+  CommandLineModuleType commandType = CommandLineModule;
 
+  std::string target
+    = node0->GetModuleDescription().GetTarget();
+  std::string::size_type pos = target.find("slicer:");
+  if (pos != std::string::npos && pos == 0)
+    {
+    sscanf(target.c_str(), "slicer:%p", &entryPoint);
+    }
 
-//   // map to keep track of MRML Ids and filenames
-//    typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
-//    MRMLIDToFileNameMap nodesToReload;
-//    MRMLIDToFileNameMap nodesToWrite;
-//
-//   // map to keep track of the MRML Ids on the main scene to the MRML
-//   // Ids in the miniscene sent to the module
-//   typedef std::map<std::string, std::string> MRMLIDMap;
-//   MRMLIDMap sceneToMiniSceneMap;
-   MRMLIDMap sceneToMiniSceneMap;
-//
-   // Mini-scene used to communicate a subset of the main scene to the module
-   vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
-   std::string minisceneFilename = d->ConstructTemporarySceneFileName(miniscene);
-   qDebug() << "minisceneFilename:" << minisceneFilename.c_str();
-//
-//   // vector of files to delete
-//   std::set<std::string> filesToDelete;
-//
-//   // iterators for parameter groups
-//   std::vector<ModuleParameterGroup>::iterator pgbeginit
-//     = node0->GetModuleDescription().GetParameterGroups().begin();
-//   std::vector<ModuleParameterGroup>::iterator pgendit
-//     = node0->GetModuleDescription().GetParameterGroups().end();
-//   std::vector<ModuleParameterGroup>::iterator pgit;
+  // Assume that the modules correctly report themselves
+  if ( node0->GetModuleDescription().GetType() == "CommandLineModule" )
+    {
+    // vtkSlicerApplication::GetInstance()->InformationMessage
+    qDebug() << "Found CommandLine Module, target is "
+             << node0->GetModuleDescription().GetTarget().c_str();
+    commandType = CommandLineModule;
+    if ( entryPoint != NULL )
+      {
+      vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target.c_str());
+      }
+    }
+  else if ( node0->GetModuleDescription().GetType() == "SharedObjectModule" )
+    {
+    // vtkSlicerApplication::GetInstance()->InformationMessage
+    qDebug() << "Found SharedObject Module";
 
-   QStringList commandLineAsString;
+    commandType = SharedObjectModule;
+    if ( entryPoint == NULL )
+      {
+      vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target.c_str());
+      }
+    }
+  else if ( node0->GetModuleDescription().GetType() == "PythonModule" )
+    {
+    // vtkSlicerApplication::GetInstance()->InformationMessage
+    qDebug() << "Found Python Module";
+    commandType = PythonModule;
+    }
+  // vtkSlicerApplication::GetInstance()->InformationMessage
+  qDebug() << node0->GetModuleDescription().GetType().c_str(); 
 
-   this->getModuleInputAndOutputNode(d->commandType, node0, this->NodesToWrite, this->NodesToReload);
-   this->generateInputDatasets(d->commandType, miniscene, sceneToMiniSceneMap, this->NodesToWrite);
-   this->addOutputNodeToMiniScene(minisceneFilename, miniscene, sceneToMiniSceneMap, this->NodesToReload);
-   this->buildCommandLine(minisceneFilename, node0, sceneToMiniSceneMap,
-     d->commandType, target, commandLineAsString); // TODO get the target
-   this->processParametersWithIndices(minisceneFilename, node0, sceneToMiniSceneMap, commandLineAsString);
-//    this->generateCommand(node0, commandLineAsString);
+  
+  // map to keep track of MRML Ids and filenames
+  typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
+  MRMLIDToFileNameMap nodesToReload;
+  MRMLIDToFileNameMap nodesToWrite;
 
-   this->runFilter(node0, commandLineAsString, d->commandType);
+  // map to keep track of the MRML Ids on the main scene to the MRML
+  // Ids in the miniscene sent to the module
+  typedef std::map<std::string, std::string> MRMLIDMap;
+  MRMLIDMap sceneToMiniSceneMap;
 
-   this->onExecutionTerminated(node0, sceneToMiniSceneMap);
-   this->requestloadMinisceneLoading(minisceneFilename, node0, miniscene, sceneToMiniSceneMap);
-//   this->cleanUp();
-}
+  // Mini-scene used to communicate a subset of the main scene to the module
+  // Additional handling is necessary because we use SmartPointers
+  // (see http://slicer.spl.harvard.edu/slicerWiki/index.php/Slicer3:Memory_Management#SmartPointers)
+  vtkMRMLScene *tmpScene = vtkMRMLScene::New();
+  vtkSmartPointer<vtkMRMLScene> miniscene = tmpScene;
+  tmpScene->Delete();
+  std::string minisceneFilename
+    = this->ConstructTemporarySceneFileName(miniscene);
+ 
+  // vector of files to delete
+  std::set<std::string> filesToDelete;
 
-void vtkSlicerCLIModuleLogic::getModuleInputAndOutputNode(CommandLineModuleType commandType,
-  vtkMRMLCommandLineModuleNode * node0, MRMLIDToFileNameMap & nodesToWrite, MRMLIDToFileNameMap & nodesToReload)
-{
-  Q_UNUSED(nodesToWrite);
-  Q_UNUSED(nodesToReload);
-  qDebug() << "vtkSlicerCLIModuleLogic::getModuleInputAndOutputNode";
-  Q_ASSERT(node0);
   // iterators for parameter groups
-  std::vector<ModuleParameterGroup>::iterator pgbeginit = node0->GetModuleDescription().GetParameterGroups().begin();
-  std::vector<ModuleParameterGroup>::iterator pgendit = node0->GetModuleDescription().GetParameterGroups().end();
+  std::vector<ModuleParameterGroup>::iterator pgbeginit
+    = node0->GetModuleDescription().GetParameterGroups().begin();
+  std::vector<ModuleParameterGroup>::iterator pgendit
+    = node0->GetModuleDescription().GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::iterator pgit;
 
+  
   // Make a pass over the parameters and establish which parameters
   // have images or geometry or transforms or tables that need to be written
   // before execution or loaded upon completion.
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
-    std::vector<ModuleParameter>::iterator pbeginit = (*pgit).GetParameters().begin();
-    std::vector<ModuleParameter>::iterator pendit = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::iterator pendit
+      = (*pgit).GetParameters().end();
     std::vector<ModuleParameter>::iterator pit;
 
     for (pit = pbeginit; pit != pendit; ++pit)
       {
       if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table")
+          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table"
+          || (*pit).GetTag() == "measurement")
         {
         std::string id = (*pit).GetDefault();
 
         // if the parameter is hidden, then deduce its value/id
         if ((*pit).GetHidden() == "true")
           {
-          id = qctk_d()->FindHiddenNodeID(node0->GetModuleDescription(), *pit);
+          id = this->FindHiddenNodeID(node0->GetModuleDescription(), *pit);
 
           // cache the id so we don't have to look for it later
           (*pit).SetDefault( id );
           }
-
+        
         // only keep track of objects associated with real nodes
-        if (!this->GetMRMLScene()->GetNodeByID(id.c_str()) || id == "None")
+        if (!this->MRMLScene->GetNodeByID(id.c_str()) || id == "None")
           {
           continue;
           }
 
         std::string fname
-          = this->constructTemporaryFileName((*pit).GetTag(),
+          = this->ConstructTemporaryFileName((*pit).GetTag(),
                                              (*pit).GetType(),
                                              id,
                                              (*pit).GetFileExtensions(),
                                              commandType);
 
-        qctk_d()->filesToDelete.insert(fname);
+        filesToDelete.insert(fname);
 
         if ((*pit).GetChannel() == "input")
           {
-          this->NodesToWrite[id] = fname;
+          nodesToWrite[id] = fname;
           }
         else if ((*pit).GetChannel() == "output")
           {
-          this->NodesToReload[id] = fname;
+          nodesToReload[id] = fname;
           }
         }
       }
     }
-}
-
-void vtkSlicerCLIModuleLogic::generateInputDatasets(CommandLineModuleType commandType, vtkMRMLScene * miniscene,
-  MRMLIDMap& sceneToMiniSceneMap, const MRMLIDToFileNameMap & nodesToWrite)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::generateInputDatasets";
-  Q_ASSERT(miniscene);
+  
+  
   // write out the input datasets
-
-
+  //
+  //
   MRMLIDToFileNameMap::const_iterator id2fn0;
-
+    
   for (id2fn0 = nodesToWrite.begin();
        id2fn0 != nodesToWrite.end();
        ++id2fn0)
     {
-    vtkMRMLNode *nd = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
-//
+    vtkMRMLNode *nd
+      = this->MRMLScene->GetNodeByID( (*id2fn0).first.c_str() );
+    
     vtkMRMLDiffusionTensorVolumeNode *dtvnd = NULL;
     vtkMRMLDiffusionWeightedVolumeNode *dwvnd = NULL;
     vtkMRMLVectorVolumeNode *vvnd = NULL;
@@ -662,16 +624,23 @@ void vtkSlicerCLIModuleLogic::generateInputDatasets(CommandLineModuleType comman
       {
       svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
       }
-//
-    vtkMRMLModelNode *mnd           = vtkMRMLModelNode::SafeDownCast(nd);
-    vtkMRMLFiberBundleNode *fbnd    = vtkMRMLFiberBundleNode::SafeDownCast(nd);
-    vtkMRMLTransformNode *tnd       = vtkMRMLTransformNode::SafeDownCast(nd);
-    vtkMRMLColorTableNode *ctnd     = vtkMRMLColorTableNode::SafeDownCast(nd);
-    vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
 
+    vtkMRMLModelNode *mnd
+      = vtkMRMLModelNode::SafeDownCast(nd);
+    vtkMRMLFiberBundleNode *fbnd
+      = vtkMRMLFiberBundleNode::SafeDownCast(nd);
+    vtkMRMLTransformNode *tnd
+      = vtkMRMLTransformNode::SafeDownCast(nd);
+    vtkMRMLColorTableNode *ctnd
+      = vtkMRMLColorTableNode::SafeDownCast(nd);
+    vtkMRMLModelHierarchyNode *mhnd
+      = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
+    vtkMRMLDoubleArrayNode *dand
+      = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
 
+    
     vtkMRMLStorageNode *out = 0;
-//
+
     // Determine if and how a node is to be written.  If we update the
     // MRMLIDImageIO, then we can change these conditions for the
     // other image types so that we only write nodes to disk if we are
@@ -736,6 +705,11 @@ void vtkSlicerCLIModuleLogic::generateInputDatasets(CommandLineModuleType comman
       // always write out color table nodes
       out = vtkMRMLColorTableStorageNode::New();
       }
+    else if (dand)
+      {
+      // always write out double array nodes
+      out = vtkMRMLDoubleArrayStorageNode::New();
+      }
     else if (mhnd)
       {
       // model hierarchy nodes need to get put in a scene
@@ -753,7 +727,7 @@ void vtkSlicerCLIModuleLogic::generateInputDatasets(CommandLineModuleType comman
         vtkMRMLModelHierarchyNode *mhcp
           = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
         vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
-
+        
         mhcp->SetAndObserveDisplayNodeID( d->GetID() );
         }
       }
@@ -761,36 +735,31 @@ void vtkSlicerCLIModuleLogic::generateInputDatasets(CommandLineModuleType comman
     // if the file is to be written, then write it
     if (out)
       {
-      out->SetScene(this->GetMRMLScene());
+      out->SetScene(this->MRMLScene);
       out->SetFileName( (*id2fn0).second.c_str() );
       if (!out->WriteData( nd ))
         {
-        qCritical("ERROR writing file %s", out->GetFileName());
+        vtkErrorMacro("ERROR writing file " << out->GetFileName());
         }
       out->Delete();
       }
     }
-}
-
-
-void vtkSlicerCLIModuleLogic::addOutputNodeToMiniScene(const std::string& minisceneFilename, vtkMRMLScene * miniscene, MRMLIDMap& sceneToMiniSceneMap,
-  const MRMLIDToFileNameMap & nodesToReload)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::addOutputNodeToMiniScene";
-  Q_ASSERT(miniscene);
-
-  MRMLIDToFileNameMap::const_iterator id2fn0;
 
   // Also need to run through any output nodes that will be
   // communicated through the miniscene and add them to the miniscene
-  //
-  for (id2fn0 = nodesToReload.begin(); id2fn0 != nodesToReload.end(); ++id2fn0)
+  // 
+  for (id2fn0 = nodesToReload.begin();
+       id2fn0 != nodesToReload.end();
+       ++id2fn0)
     {
-    vtkMRMLNode *nd = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
-//
-    vtkMRMLTransformNode *tnd       = vtkMRMLTransformNode::SafeDownCast(nd);
-    vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
-//
+    vtkMRMLNode *nd
+      = this->MRMLScene->GetNodeByID( (*id2fn0).first.c_str() );
+    
+    vtkMRMLTransformNode *tnd
+      = vtkMRMLTransformNode::SafeDownCast(nd);
+    vtkMRMLModelHierarchyNode *mhnd
+      = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
+  
     if (tnd || mhnd)
       {
       std::string::size_type loc = (*id2fn0).second.find_last_of(".");
@@ -814,7 +783,7 @@ void vtkSlicerCLIModuleLogic::addOutputNodeToMiniScene(const std::string& minisc
       {
       // always put model hierarchy nodes in the miniscene
       vtkMRMLNode *cp = miniscene->CopyNode(nd);
-
+      
       // Keep track what scene node corresponds to what miniscene node
       sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
 
@@ -837,54 +806,85 @@ void vtkSlicerCLIModuleLogic::addOutputNodeToMiniScene(const std::string& minisc
         }
       }
     }
-
+  
   // write out the miniscene if needed
   if (miniscene->GetNumberOfNodes() > 0)
     {
     miniscene->Commit( minisceneFilename.c_str() );
     }
-}
 
-void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilename,
-  vtkMRMLCommandLineModuleNode * node0, MRMLIDMap& sceneToMiniSceneMap,
-  CommandLineModuleType commandType, const std::string& target, QStringList& commandLineAsString)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::buildCommandLine";
-  Q_ASSERT(node0);
   // build the command line
   //
   //
-//   std::vector<std::string> commandLineAsString;
-//
-//   // Command to execute
-//   commandLineAsString.push_back( target );
-  commandLineAsString << QString::fromStdString(target);
-//
-//
+  std::vector<std::string> commandLineAsString;
+
+  // Command to execute
+  if (node0->GetModuleDescription().GetLocation() != std::string("") && 
+      commandType == CommandLineModule &&
+      node0->GetModuleDescription().GetLocation() != node0->GetModuleDescription().GetTarget())
+    {
+      vtkDebugMacro("Setting a location for a command line module: " << node0->GetModuleDescription().GetLocation().c_str() << ", target is '" << node0->GetModuleDescription().GetTarget().c_str() << "'");
+      // it's a command line module that has an executable that is used to run the target
+    commandLineAsString.push_back(node0->GetModuleDescription().GetLocation());
+    }
+  commandLineAsString.push_back( node0->GetModuleDescription().GetTarget() );
+
+
   // Add a command line flag for the process information structure
   if ( commandType == SharedObjectModule )
     {
-    //commandLineAsString.push_back( "--processinformationaddress" );
-    commandLineAsString << "--processinformationaddress";
+    commandLineAsString.push_back( "--processinformationaddress" );
 
-    //char tname[256];
-    //sprintf(tname, "%p", node0->GetModuleDescription().GetProcessInformation());
-    commandLineAsString << QString().sprintf("%p", node0->GetModuleDescription().GetProcessInformation());
-
-    //commandLineAsString.push_back( tname );
+    char tname[256];
+    sprintf(tname, "%p", node0->GetModuleDescription().GetProcessInformation());
+    
+    commandLineAsString.push_back( tname );
     }
 
-  // iterators for parameter groups
-  std::vector<ModuleParameterGroup>::iterator pgbeginit = node0->GetModuleDescription().GetParameterGroups().begin();
-  std::vector<ModuleParameterGroup>::iterator pgendit = node0->GetModuleDescription().GetParameterGroups().end();
-  std::vector<ModuleParameterGroup>::iterator pgit;
-//
+  // Add a command line flag for a file of return types
+  if (node0->GetModuleDescription().HasReturnParameters())
+    {
+    commandLineAsString.push_back( "--returnparameterfile" );
+    
+    std::ostringstream pidString;
+#ifdef _WIN32
+    pidString << GetCurrentProcessId();
+#else
+    pidString << getpid();
+#endif
+
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    srand(time(0));
+
+    std::ostringstream code;
+    for (int ii = 0; ii < 10; ii++)
+      {
+      code << alphanum[rand() % (sizeof(alphanum)-1)];
+      }
+
+    std::string returnFile = this->TemporaryDirectory + "/" + pidString.str()
+      + "_" + code.str() + ".params";
+
+    commandLineAsString.push_back( returnFile );
+
+    // We will need to load this results file back when module completes
+    nodesToReload[node0->GetID()] = returnFile;
+
+    // This is an extra file we will need to delete
+    filesToDelete.insert( returnFile );
+    }
+  
   // Run over all the parameters with flags
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
-    std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
-    std::vector<ModuleParameter>::const_iterator pendit   = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
     std::vector<ModuleParameter>::const_iterator pit;
 
     for (pit = pbeginit; pit != pendit; ++pit)
@@ -892,7 +892,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
       std::string prefix;
       std::string flag;
       bool hasFlag = false;
-
+      
       if ((*pit).GetLongFlag() != "")
         {
         prefix = "--";
@@ -905,7 +905,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
         flag = (*pit).GetFlag();
         hasFlag = true;
         }
-
+      
       if (hasFlag)
         {
         if ((*pit).GetTag() != "boolean"
@@ -920,13 +920,12 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
             && (*pit).GetTag() != "region"
             && (*pit).GetTag() != "transform"
             && (*pit).GetTag() != "geometry"
-            && (*pit).GetTag() != "table")
+            && (*pit).GetTag() != "table"
+            && (*pit).GetTag() != "measurement")
           {
           // simple parameter, write flag and value
-          commandLineAsString << QString::fromStdString(prefix + flag);
-          commandLineAsString << QString::fromStdString((*pit).GetDefault());
-          //commandLineAsString.push_back(prefix + flag);
-          //commandLineAsString.push_back((*pit).GetDefault());
+          commandLineAsString.push_back(prefix + flag);
+          commandLineAsString.push_back((*pit).GetDefault());
           continue;
           }
         if ((*pit).GetTag() == "boolean")
@@ -936,17 +935,14 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
             {
             if ((*pit).GetDefault() == "true")
               {
-              //commandLineAsString.push_back(prefix + flag);
-              commandLineAsString << QString::fromStdString(prefix + flag);
+              commandLineAsString.push_back(prefix + flag);
               }
             }
           else
             {
             // For Python, if the flag is true or false, specify that
-            commandLineAsString << QString::fromStdString(prefix + flag);
-            commandLineAsString << QString::fromStdString((*pit).GetDefault());
-            //commandLineAsString.push_back ( prefix + flag );
-            //commandLineAsString.push_back ( (*pit).GetDefault() );
+            commandLineAsString.push_back ( prefix + flag );
+            commandLineAsString.push_back ( (*pit).GetDefault() );
             }
           continue;
           }
@@ -960,36 +956,36 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
           // Only write out the flag if value is not empty
           if ((*pit).GetDefault() != "")
             {
-            commandLineAsString << QString::fromStdString(prefix + flag);
-            commandLineAsString << QString::fromStdString((*pit).GetDefault());
-            //commandLineAsString.push_back(prefix + flag);
-            //commandLineAsString.push_back((*pit).GetDefault());
+            commandLineAsString.push_back(prefix + flag);
+            commandLineAsString.push_back((*pit).GetDefault());
             }
           continue;
           }
         if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table")
+            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table" 
+            || (*pit).GetTag() == "measurement")
           {
           std::string fname;
 
           // default to using filename in the read/write maps
           // established earlier
           MRMLIDToFileNameMap::const_iterator id2fn;
-
-          id2fn  = this->NodesToWrite.find( (*pit).GetDefault() );
-          if ((*pit).GetChannel() == "input" && id2fn != this->NodesToWrite.end())
+          
+          id2fn  = nodesToWrite.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "input" && id2fn != nodesToWrite.end())
             {
             fname = (*id2fn).second;
             }
 
-          id2fn  = this->NodesToReload.find( (*pit).GetDefault() );
-          if ((*pit).GetChannel() == "output" && id2fn != this->NodesToReload.end())
+          id2fn  = nodesToReload.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
             {
             fname = (*id2fn).second;
             }
 
           // check to see if we need to remap to a scene file and node id
-          MRMLIDMap::iterator mit = sceneToMiniSceneMap.find((*pit).GetDefault());
+          MRMLIDMap::iterator mit
+            = sceneToMiniSceneMap.find((*pit).GetDefault());
           if (mit != sceneToMiniSceneMap.end())
             {
             // node is being sent inside of a scene, so use the scene
@@ -1001,10 +997,8 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
           // or in the mini-scene
           if (fname.size() > 0)
             {
-            commandLineAsString << QString::fromStdString(prefix + flag);
-            commandLineAsString << QString::fromStdString(fname);
-            //commandLineAsString.push_back(prefix + flag);
-            //commandLineAsString.push_back( fname );
+            commandLineAsString.push_back(prefix + flag);
+            commandLineAsString.push_back( fname );
             }
 
           continue;
@@ -1013,7 +1007,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
           {
           // get the fiducial list node
           vtkMRMLNode *node
-            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
+            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLFiducialListNode *fiducials
             = vtkMRMLFiducialListNode::SafeDownCast(node);
 
@@ -1028,7 +1022,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
                 numberOfSelectedFiducials++;
                 }
               }
-
+            
             if (numberOfSelectedFiducials == 1
                 || (*pit).GetMultiple() == "true")
               {
@@ -1043,12 +1037,9 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
                   ptAsString << pt[0] << "," << pt[1] << "," << pt[2]
                              << std::ends;
                   ptAsString.rdbuf()->freeze();
-
-                  commandLineAsString << QString::fromStdString(prefix + flag);
-                  commandLineAsString << QString::fromStdString(ptAsString.str());
-
-                  //commandLineAsString.push_back(prefix + flag);
-                  //commandLineAsString.push_back(ptAsString.str());
+                  
+                  commandLineAsString.push_back(prefix + flag);
+                  commandLineAsString.push_back(ptAsString.str());
                   }
                 }
               }
@@ -1056,7 +1047,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
               {
               // Can't support this command line with this fiducial
               // list
-              qCritical("Module does not support multiple fiducials.");
+              vtkErrorMacro("Module does not support multiple fiducials.");
               }
             }
           continue;
@@ -1064,7 +1055,8 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
         if ((*pit).GetTag() == "region")
           {
           // get the region node
-          vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
+          vtkMRMLNode *node
+            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
 
           if (regions)
@@ -1078,7 +1070,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
                 numberOfSelectedRegions++;
                 }
               }
-
+            
             if (numberOfSelectedRegions == 1
                 || (*pit).GetMultiple() == "true")
               {
@@ -1096,12 +1088,9 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
                              << Radius[0] << "," << Radius[1] << "," << Radius[2]
                              << std::ends;
                   roiAsString.rdbuf()->freeze();
-
-                  commandLineAsString << QString::fromStdString(prefix + flag);
-                  commandLineAsString << QString::fromStdString(roiAsString.str());
-
-                  //commandLineAsString.push_back(prefix + flag);
-                  //commandLineAsString.push_back(roiAsString.str());
+                  
+                  commandLineAsString.push_back(prefix + flag);
+                  commandLineAsString.push_back(roiAsString.str());
                   }
                 }
               }
@@ -1109,8 +1098,7 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
               {
               // Can't support this command line with this region
               // list
-              qCritical() << "Module does not support multiple regions. Region list contains"
-                          << numberOfSelectedRegions << "selected regions.";
+              vtkErrorMacro("Module does not support multiple regions. Region list contains " << numberOfSelectedRegions << " selected regions.");
               }
             }
           continue;
@@ -1118,19 +1106,6 @@ void vtkSlicerCLIModuleLogic::buildCommandLine(const std::string& minisceneFilen
         }
       }
     }
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& minisceneFilename,
-  vtkMRMLCommandLineModuleNode * node0, MRMLIDMap& sceneToMiniSceneMap, QStringList& commandLineAsString)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::processParametersWithIndices";
-  Q_ASSERT(node0);
-
-  // iterators for parameter groups
-  std::vector<ModuleParameterGroup>::iterator pgbeginit = node0->GetModuleDescription().GetParameterGroups().begin();
-  std::vector<ModuleParameterGroup>::iterator pgendit = node0->GetModuleDescription().GetParameterGroups().end();
-  std::vector<ModuleParameterGroup>::iterator pgit;
 
   // now tack on any parameters that are based on indices
   //
@@ -1139,10 +1114,12 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
-    std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
-    std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
     std::vector<ModuleParameter>::const_iterator pit;
-
+  
     for (pit = pbeginit; pit != pendit; ++pit)
       {
       if ((*pit).GetIndex() != "")
@@ -1163,6 +1140,7 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
         && (*iit).second.GetTag() != "geometry"
         && (*iit).second.GetTag() != "transform"
         && (*iit).second.GetTag() != "table"
+        && (*iit).second.GetTag() != "measurement"
         && (*iit).second.GetTag() != "file"
         && (*iit).second.GetTag() != "directory"
         && (*iit).second.GetTag() != "string"
@@ -1173,8 +1151,7 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
         && (*iit).second.GetTag() != "double-vector"
         && (*iit).second.GetTag() != "string-vector")
       {
-      commandLineAsString << QString::fromStdString((*iit).second.GetDefault());
-      //commandLineAsString.push_back((*iit).second.GetDefault());
+      commandLineAsString.push_back((*iit).second.GetDefault());
       }
     else if ((*iit).second.GetTag() == "file"
              || (*iit).second.GetTag() == "directory"
@@ -1186,12 +1163,12 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
       {
       if ((*iit).second.GetDefault() != "")
         {
-        commandLineAsString << QString::fromStdString((*iit).second.GetDefault());
-        //commandLineAsString.push_back((*iit).second.GetDefault());
+        commandLineAsString.push_back((*iit).second.GetDefault());
         }
       else
         {
-        qCritical() << "No value assigned to \"" << (*iit).second.GetLabel().c_str() << "\"";
+        vtkErrorMacro("No value assigned to \""
+                      << (*iit).second.GetLabel().c_str() << "\"");
 
         node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
         this->GetApplicationLogic()->RequestModified( node0 );
@@ -1201,24 +1178,24 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
     else if ((*iit).second.GetTag() == "point"
              || (*iit).second.GetTag() == "region")
       {
-      qCritical() << "Fiducials and ROIs are not currently supported as index arguments to modules.";
+      vtkErrorMacro("Fiducials and ROIs are not currently supported as index arguments to modules.");
       node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
       this->GetApplicationLogic()->RequestModified( node0 );
       return;
       }
     else
       {
-      // image or geometry or transform or table index parameter
+      // image or geometry or transform or table or measurement index parameter
 
       std::string fname;
-
+      
       MRMLIDToFileNameMap::const_iterator id2fn;
 
       if ((*iit).second.GetChannel() == "input")
         {
         // Check to make sure the index parameter is set
-        id2fn  = this->NodesToWrite.find( (*iit).second.GetDefault() );
-        if (id2fn != this->NodesToWrite.end())
+        id2fn  = nodesToWrite.find( (*iit).second.GetDefault() );
+        if (id2fn != nodesToWrite.end())
           {
           fname = (*id2fn).second;
           }
@@ -1226,32 +1203,32 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
       else if ((*iit).second.GetChannel() == "output")
         {
         // Check to make sure the index parameter is set
-        id2fn  = this->NodesToReload.find( (*iit).second.GetDefault() );
-        if (id2fn != this->NodesToReload.end())
+        id2fn  = nodesToReload.find( (*iit).second.GetDefault() );
+        if (id2fn != nodesToReload.end())
           {
           fname = (*id2fn).second;
           }
         }
 
       // check to see if we need to remap to a scene file and node id
-      MRMLIDMap::iterator mit = sceneToMiniSceneMap.find((*iit).second.GetDefault());
+      MRMLIDMap::iterator mit
+        = sceneToMiniSceneMap.find((*iit).second.GetDefault());
       if (mit != sceneToMiniSceneMap.end())
         {
         // node is being sent inside of a scene, so use the scene
         // filename and the remapped id
         fname = minisceneFilename + "#" + (*mit).second;
-        }
+        }      
 
       if (fname.size() > 0)
         {
-        commandLineAsString << QString::fromStdString(fname);
-        //commandLineAsString.push_back( fname );
+        commandLineAsString.push_back( fname );
         }
       else
         {
-        qCritical() << "No " << (*iit).second.GetChannel().c_str()
-                    << " data assigned to \""
-                    << (*iit).second.GetLabel().c_str() << "\"";
+        vtkErrorMacro("No " << (*iit).second.GetChannel().c_str()
+                      << " data assigned to \""
+                      << (*iit).second.GetLabel().c_str() << "\"");
 
         node0->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
         this->GetApplicationLogic()->RequestModified( node0 );
@@ -1259,42 +1236,31 @@ void vtkSlicerCLIModuleLogic::processParametersWithIndices(const std::string& mi
         }
       }
     }
-}
 
-// //-----------------------------------------------------------------------------
-// std::string vtkSlicerCLIModuleLogic::generateCommand(vtkMRMLCommandLineModuleNode * node0,
-//   const QStringList& commandLineAsString )
-// {
-//   qDebug() << "vtkSlicerCLIModuleLogic::generateCommand";
-//   // copy the command line arguments into an array of pointers to
-//   // chars
-//   char **command = new char*[commandLineAsString.size()+1];
-//   for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
-//     {
-//     command[i] = const_cast<char*>(commandLineAsString[i].c_str());
-//     }
-//    command[commandLineAsString.size()] = 0;
-//
-//   // print the command line
-//   //
-//   std::stringstream information0;
-//   information0 << node0->GetModuleDescription().GetTitle()
-//               << " command line: " << std::endl << std::endl;
-//   for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
-//     {
-//     information0 << command[i] << " ";
-//     }
-//   information0 << std::endl;
-// //   vtkSlicerApplication::GetInstance()->InformationMessage( information0.str().c_str() );
-//   return std::string(*command);
-// }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::runFilter(vtkMRMLCommandLineModuleNode * node0,
-  const QStringList& argList, CommandLineModuleType commandType)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::runFilter";
-  Q_ASSERT(node0);
+  // copy the command line arguments into an array of pointers to
+  // chars
+  char **command = new char*[commandLineAsString.size()+1];
+  for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
+    {
+    command[i] = const_cast<char*>(commandLineAsString[i].c_str());
+    }
+  command[commandLineAsString.size()] = 0;
+
+  // print the command line
+  //
+  std::stringstream information0;
+  information0 << node0->GetModuleDescription().GetTitle()
+              << " command line: " << std::endl << std::endl;
+  for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
+    {
+    information0 << command[i] << " ";
+    }
+  information0 << std::endl;
+  // vtkSlicerApplication::GetInstance()->InformationMessage
+  qDebug() << information0.str().c_str();
+  
+
   // run the filter
   //
   //
@@ -1303,27 +1269,483 @@ void vtkSlicerCLIModuleLogic::runFilter(vtkMRMLCommandLineModuleNode * node0,
   this->GetApplicationLogic()->RequestModified( node0 );
   if (commandType == CommandLineModule)
     {
-    this->runCommandLineFilter(node0, argList);
+    // Run as a command line module
+    //
+    // 
+    
+    //
+    // first, remove ITK_AUTOLOAD_PATH to work around
+    // nvidia driver bug that causes the module to fail 
+    // on exit with undefined symbol
+    //
+//     std::string saveITKAutoLoadPath;
+//     itksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
+//     std::string emptyString("ITK_AUTOLOAD_PATH=");
+//     int putSuccess = 
+//       vtkKWApplication::PutEnv(const_cast <char *> (emptyString.c_str()));
+//     if (!putSuccess)
+//       {
+//       vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
+//       }
+
+    //
+    // now run the process
+    //
+    itksysProcess *process = itksysProcess_New();
+    
+    // setup the command
+    itksysProcess_SetCommand(process, command);
+    itksysProcess_SetOption(process,
+                            itksysProcess_Option_Detach, 0);
+    itksysProcess_SetOption(process,
+                            itksysProcess_Option_HideWindow, 1);
+    // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+    
+    // execute the command
+    itksysProcess_Execute(process);
+    
+
+    // restore the load path
+//     std::string putEnvString = ("ITK_AUTOLOAD_PATH=");
+//     putEnvString = putEnvString + saveITKAutoLoadPath;
+//     putSuccess = 
+//       vtkKWApplication::PutEnv(const_cast <char *> (putEnvString.c_str()));
+//     if (!putSuccess)
+//       {
+//       vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
+//       }
+
+    // Wait for the command to finish
+    char *tbuffer;
+    int length;
+    int pipe;
+    const double timeoutlimit = 0.1;    // tenth of a second
+    double timeout = timeoutlimit;
+    std::string stdoutbuffer;
+    std::string stderrbuffer;
+    std::string::size_type tagend;
+    std::string::size_type tagstart;
+    while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
+                                             &length, &timeout)) != 0)
+      {
+      // increment the elapsed time
+      node0->GetModuleDescription().GetProcessInformation()->ElapsedTime
+        += (timeoutlimit - timeout);
+      this->GetApplicationLogic()->RequestModified( node0 );
+      
+      // reset the timeout value 
+      timeout = timeoutlimit;
+
+      // Check to see if the plugin was cancelled
+      if (node0->GetModuleDescription().GetProcessInformation()->Abort)
+        {
+        itksysProcess_Kill(process);
+        node0->GetModuleDescription().GetProcessInformation()->Progress = 0;
+        node0->GetModuleDescription().GetProcessInformation()->StageProgress =0;
+        this->GetApplicationLogic()->RequestModified( node0 ); 
+        break;
+        }
+
+      // Capture the output from the filter
+      if (length != 0 && tbuffer != 0)
+        {
+        if (pipe == itksysProcess_Pipe_STDOUT)
+          {
+          //std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
+          stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+
+          bool foundTag = false;
+          // search for the last occurence of </filter-progress>
+          tagend = stdoutbuffer.rfind("</filter-progress>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-progress>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressString(stdoutbuffer, tagstart+17,
+                                         tagend-tagstart-17);
+              node0->GetModuleDescription().GetProcessInformation()->Progress = atof(progressString.c_str());
+              foundTag = true;
+              }
+            }
+          // search for the last occurence of </filter-stage-progress>
+          tagend = stdoutbuffer.rfind("</filter-stage-progress>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-stage-progress>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressString(stdoutbuffer, tagstart+23,
+                                         tagend-tagstart-23);
+              node0->GetModuleDescription().GetProcessInformation()->StageProgress = atof(progressString.c_str());
+              foundTag = true;
+              }
+            }
+
+          // search for the last occurence of </filter-name>
+          tagend = stdoutbuffer.rfind("</filter-name>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-name>");
+            if (tagstart != std::string::npos)
+              {
+              std::string filterString(stdoutbuffer, tagstart+13,
+                                       tagend-tagstart-13);
+              strncpy(node0->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
+              foundTag = true;
+              }
+            }
+          
+          // search for the last occurence of </filter-comment>
+          tagend = stdoutbuffer.rfind("</filter-comment>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-comment>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressMessage(stdoutbuffer, tagstart+16,
+                                         tagend-tagstart-16);
+              strncpy (node0->GetModuleDescription().GetProcessInformation()->ProgressMessage, progressMessage.c_str(), 1023);
+              foundTag = true;
+              }
+            }
+          if (foundTag)
+            {
+            this->GetApplicationLogic()->RequestModified( node0 );
+            }
+          }
+        else if (pipe == itksysProcess_Pipe_STDERR)
+          {
+          stderrbuffer = stderrbuffer.append(tbuffer, length);
+          }
+        }
+      }
+    itksysProcess_WaitForExit(process, 0);
+
+
+    // remove the embedded XML from the stdout stream
+    //
+    // Note that itksys::RegularExpression gives begin()/end() as
+    // size_types not iterators. So we need to use the version of
+    // erase that takes a position and length to erase.
+    //
+    itksys::RegularExpression filterProgressRegExp("<filter-progress>[^<]*</filter-progress>[ \t\n\r]*");
+    while (filterProgressRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterProgressRegExp.start(),
+                         filterProgressRegExp.end()
+                         - filterProgressRegExp.start());
+      }
+    itksys::RegularExpression filterStageProgressRegExp("<filter-stage-progress>[^<]*</filter-stage-progress>[ \t\n\r]*");
+    while (filterStageProgressRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterStageProgressRegExp.start(),
+                         filterStageProgressRegExp.end()
+                         - filterStageProgressRegExp.start());
+      }
+    itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
+    while (filterNameRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterNameRegExp.start(),
+                         filterNameRegExp.end()
+                         - filterNameRegExp.start());
+      }
+    itksys::RegularExpression filterCommentRegExp("<filter-comment>[^<]*</filter-comment>[ \t\n\r]*");
+    while (filterCommentRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterCommentRegExp.start(),
+                         filterCommentRegExp.end()
+                         - filterCommentRegExp.start());
+      }
+    itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
+    while (filterStartRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterStartRegExp.start(),
+                         filterStartRegExp.end()
+                         - filterStartRegExp.start());
+      }
+    itksys::RegularExpression filterEndRegExp("<filter-end>[^<]*</filter-end>[ \t\n\r]*");
+    while (filterEndRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterEndRegExp.start(),
+                         filterEndRegExp.end()
+                         - filterEndRegExp.start());
+      }
+    
+    
+    if (stdoutbuffer.size() > 0)
+      {
+      std::string tmp(" standard output:\n\n");
+      stdoutbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
+      // vtkSlicerApplication::GetInstance()->InformationMessage
+      qDebug() << stdoutbuffer.c_str();
+      }
+    if (stderrbuffer.size() > 0)
+      {
+      std::string tmp(" standard error:\n\n");
+      stderrbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
+      vtkErrorMacro( << stderrbuffer.c_str() );
+      }
+    
+    // check the exit state / error state of the process
+    if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
+      {
+      int result = itksysProcess_GetState(process);
+      if (result == itksysProcess_State_Exited)
+        {
+        // executable exited cleanly and must of done
+        // "something" 
+        if (itksysProcess_GetExitValue(process) == 0)
+          {
+          // executable exited without errors,
+          std::stringstream information;
+          information << node0->GetModuleDescription().GetTitle()
+                      << " completed without errors" << std::endl;
+          // vtkSlicerApplication::GetInstance()->InformationMessage
+          qDebug() << information.str().c_str();
+          
+          }
+        else
+          {
+          std::stringstream information;
+          information << node0->GetModuleDescription().GetTitle()
+                      << " completed with errors" << std::endl;
+          vtkErrorMacro( << information.str().c_str() );
+          node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+          this->GetApplicationLogic()->RequestModified( node0 );
+          }
+        }
+      else if (result == itksysProcess_State_Expired)
+        {
+        std::stringstream information;
+        information << node0->GetModuleDescription().GetTitle()
+                    << " timed out" << std::endl;
+        vtkErrorMacro( << information.str().c_str() );
+        node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node0 );
+        }
+      else
+        {
+        std::stringstream information;
+        if (result == itksysProcess_State_Exception)
+          {
+          information << node0->GetModuleDescription().GetTitle();
+          int excResult = itksysProcess_GetExitException(process);
+          switch (excResult)
+            {
+            case itksysProcess_Exception_None:
+              information << " terminated with no exceptions." << std::endl;
+              break;
+            case itksysProcess_Exception_Fault:
+              information << " terminated with a fault." << std::endl;
+              break;
+            case itksysProcess_Exception_Illegal:
+              information << " terminated with an illegal instruction." << std::endl;
+              break;
+            case itksysProcess_Exception_Interrupt:
+              information << " terminated with an interrupt." << std::endl;
+              break;
+            case itksysProcess_Exception_Numerical:
+              information << " terminated with a numerical fault." << std::endl;
+              break;
+            case itksysProcess_Exception_Other:
+              information << " terminated with an unknown exception." << std::endl;
+              break;
+            }
+          }
+        else if (result == itksysProcess_State_Error)
+          {
+          information << node0->GetModuleDescription().GetTitle()
+                      << " process was null when state was queried, result (" << result << ") = Error." << std::endl;
+          } 
+        else
+          {
+        information << node0->GetModuleDescription().GetTitle()
+                  << " unknown termination. Result = " << result << std::endl;
+          }
+        vtkErrorMacro( << information.str().c_str() );
+        node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node0 );
+        }
+
+      // clean up
+      itksysProcess_Delete(process);
+      }
     }
   else if ( commandType == SharedObjectModule )
     {
-    this->runSharedObjectFilter(node0, argList);
+    // Run as a shared object module
+    //
+    //
+    
+    std::ostringstream coutstringstream;
+    std::ostringstream cerrstringstream;
+    std::streambuf* origcoutrdbuf = std::cout.rdbuf();
+    std::streambuf* origcerrrdbuf = std::cerr.rdbuf();
+    int returnValue = 0;
+    try
+      {
+      if (this->RedirectModuleStreams)
+        {
+        // redirect the streams
+        std::cout.rdbuf( coutstringstream.rdbuf() );
+        std::cerr.rdbuf( cerrstringstream.rdbuf() );
+        }
+
+      // run the module
+      if ( entryPoint != NULL ) {
+        returnValue = (*entryPoint)(commandLineAsString.size(), command);
+      }
+
+      // report the output
+      if (coutstringstream.str().size() > 0)
+        {
+        std::string tmp(" standard output:\n\n");
+        tmp = node0->GetModuleDescription().GetTitle()+tmp;
+
+        // vtkSlicerApplication::GetInstance()->InformationMessage
+        qDebug() << (tmp + coutstringstream.str()).c_str();
+        }
+      if (cerrstringstream.str().size() > 0)
+        {
+        std::string tmp(" standard error:\n\n");
+        tmp = node0->GetModuleDescription().GetTitle()+tmp;
+
+        vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
+        }
+
+      if (this->RedirectModuleStreams)
+        {
+        // reset the streams
+        std::cout.rdbuf( origcoutrdbuf );
+        std::cerr.rdbuf( origcerrrdbuf );
+        }
+      }
+    catch (itk::ExceptionObject& exc)
+      {
+      std::stringstream information;
+      if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
+        {
+        information << node0->GetModuleDescription().GetTitle()
+                    << " cancelled.";
+        // vtkSlicerApplication::GetInstance()->InformationMessage
+        qDebug() << information.str().c_str();
+        }
+      else
+        {
+        information << node0->GetModuleDescription().GetTitle()
+                    << " terminated with an exception: " << exc;
+        vtkErrorMacro( << information.str().c_str() );
+        node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node0 );
+        }
+
+      std::cout.rdbuf( origcoutrdbuf );
+      std::cerr.rdbuf( origcerrrdbuf );
+      }
+    catch (...)
+      {
+      std::stringstream information;
+      information << node0->GetModuleDescription().GetTitle()
+                << " terminated with an unknown exception." << std::endl;
+      vtkErrorMacro( << information.str().c_str() );
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+      this->GetApplicationLogic()->RequestModified( node0 );
+
+      std::cout.rdbuf( origcoutrdbuf );
+      std::cerr.rdbuf( origcerrrdbuf );
+      }
+    // Check the return status of the module
+    if (returnValue)
+      {
+      std::stringstream information;
+      information << node0->GetModuleDescription().GetTitle()
+                  << " returned " << returnValue << " which probably indicates an error." << std::endl;
+      vtkErrorMacro( << information.str().c_str() );
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+      this->GetApplicationLogic()->RequestModified( node0 );
+      std::cout.rdbuf( origcoutrdbuf );
+      std::cerr.rdbuf( origcerrrdbuf );
+      }
     }
   else if ( commandType == PythonModule )
     {
-    this->runPythonFilter(node0, argList);
+    // For the moment, ignore the output and just run the module
+    // vtkSlicerApplication::GetInstance()->InformationMessage
+    qDebug() << "Preparing to execute Python Module";
+
+    // Now, call Python properly.  For the moment, make a big string...
+    // ...later we'll want to do this through the Python API
+    std::string ExecuteModuleString =
+      "import sys\n"
+      "import Slicer\n"
+      "import inspect\n"
+      "ModuleName = \"" + node0->GetModuleDescription().GetTarget() + "\"\n"
+      "ModuleArgs = []\n"
+      "ArgTags = []\n"
+      "ArgFlags = []\n"
+      "ArgMultiples = []\n";
+
+    //cout<<"-----------------------Individial command line items---------------------"<<endl;
+    // Now add the individual command line items
+    for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
+      {
+      ExecuteModuleString += "ModuleArgs.append ( '" + commandLineAsString[i] + "' );\n";
+      }
+    for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+      {
+      // iterate over each parameter in this group
+      std::vector<ModuleParameter>::const_iterator pbeginit
+        = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit
+        = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pit;  
+      for (pit = pbeginit; pit != pendit; ++pit)
+        {
+        ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' )\n";
+        ExecuteModuleString += "ArgFlags.append ( '" + (*pit).GetLongFlag() + "' )\n";
+        ExecuteModuleString += "ArgMultiples.append ( '" + (*pit).GetMultiple() + "' )\n";
+        }
+      }
+    // TODO: FlagArgs, PositionalArgs, Arguments are in global scope - potential name clash
+    ExecuteModuleString +=
+      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags , ArgFlags, ArgMultiples )\n"
+      "Module = __import__ ( ModuleName )\n"
+      "reload ( Module )\n"
+      "Arguments = inspect.getargspec(Module.Execute)[0]\n"
+      "if 'commandLineModuleNode' in Arguments:\n"
+      "  FlagArgs['commandLineModuleNode'] = '";
+    ExecuteModuleString += std::string(node0->GetID()) + "'\n";
+    ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
+
+#ifdef Slicer3_USE_PYTHON    
+    PyObject* v;
+    v = PyRun_String(
+      ExecuteModuleString.c_str(),
+      Py_file_input,
+      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
+      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
+
+    if (v == NULL || PyErr_Occurred())
+      {
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+      PyErr_Print();
+      }
+    else
+      {
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
+      if (Py_FlushLine())
+        {
+        PyErr_Clear();
+        }
+      }
+#else
+    vtkErrorMacro("Attempting to execute a Python Module without Python support enabled");
+#endif
+
+    this->GetApplicationLogic()->RequestModified( node0 );
     }
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode * node0,
-  const MRMLIDMap& sceneToMiniSceneMap)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::onExecutionTerminated";
-  Q_ASSERT(node0);
-  MRMLIDToFileNameMap::const_iterator id2fn0;
-
-  if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled
+  if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled 
       && node0->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
@@ -1333,22 +1755,20 @@ void vtkSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode
   node0->GetModuleDescription().GetProcessInformation()->Progress = 0;
   node0->GetModuleDescription().GetProcessInformation()->StageProgress = 0;
   this->GetApplicationLogic()->RequestModified( node0 );
-
+  
   // import the results if the plugin was allowed to complete
   //
   //
   if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled &&
       node0->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
-
     // reload nodes
-    for (id2fn0 = this->NodesToReload.begin(); id2fn0 != this->NodesToReload.end(); ++id2fn0)
+    for (id2fn0 = nodesToReload.begin(); id2fn0 != nodesToReload.end(); ++id2fn0)
       {
       // Is this node one that was put in the miniscene? Nodes in the
-      // miniscene will be handled later
+      // miniscene will be handled later 
       //
-      //MRMLIDMap::iterator mit = sceneToMiniSceneMap.find((*id2fn0).first);
-      MRMLIDMap::const_iterator mit = sceneToMiniSceneMap.find((*id2fn0).first);
+      MRMLIDMap::iterator mit = sceneToMiniSceneMap.find((*id2fn0).first);
       if (mit == sceneToMiniSceneMap.end())
         {
         // Node is not being communicated in the miniscene, load via a file
@@ -1361,30 +1781,28 @@ void vtkSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode
         // now, he/she will still be looking at the node by the time the
         // data is reloaded by the main thread.
         bool displayData = false;
-        bool deleteFile = qctk_d()->deleteTemporaryFiles;
-        displayData = (node0 == qctk_d()->commandLineModuleNode);
-        this->GetApplicationLogic()->RequestReadData((*id2fn0).first.c_str(),
-                                          (*id2fn0).second.c_str(),
-                                          displayData, deleteFile);
-
+        bool deleteFile = this->GetDeleteTemporaryFiles();
+        displayData = (node0 == this->CommandLineModuleNode);
+        this->GetApplicationLogic()
+          ->RequestReadData((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
+                            displayData, deleteFile);
+        
         // If we are reloading a file, then we know that it is a file
         // that needs to be removed.  It wouldn't make sense for two
         // outputs of a module to produce the same file to be reloaded.
-        qctk_d()->filesToDelete.erase( (*id2fn0).second );
+        filesToDelete.erase( (*id2fn0).second );
         }
       }
 
-    // iterators for parameter groups
-    std::vector<ModuleParameterGroup>::iterator pgbeginit = node0->GetModuleDescription().GetParameterGroups().begin();
-    std::vector<ModuleParameterGroup>::iterator pgendit = node0->GetModuleDescription().GetParameterGroups().end();
-    std::vector<ModuleParameterGroup>::iterator pgit;
 
-    // rewire the mrml scene as directed
+    // rewire the mrml scene as directed 
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)
       {
       // iterate over each parameter in this group
-      std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
-      std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pbeginit
+        = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit
+        = (*pgit).GetParameters().end();
       std::vector<ModuleParameter>::const_iterator pit;
 
       for (pit = pbeginit; pit != pendit; ++pit)
@@ -1396,12 +1814,14 @@ void vtkSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode
           std::string reference;
           if (node0->GetModuleDescription().HasParameter((*pit).GetReference()))
             {
-            reference = node0->GetModuleDescription()
+            reference
+              = node0->GetModuleDescription()
                            .GetParameterDefaultValue((*pit).GetReference());
             if (reference.size() > 0)
               {
-              vtkMRMLTransformableNode *t = vtkMRMLTransformableNode::SafeDownCast(
-                this->GetMRMLScene()->GetNodeByID(reference.c_str()));
+              vtkMRMLTransformableNode *t
+                = vtkMRMLTransformableNode::SafeDownCast(this->MRMLScene
+                           ->GetNodeByID(reference.c_str()));
               if (t)
                 {
                 if ( (*pit).GetDefault() != "" )
@@ -1418,46 +1838,39 @@ void vtkSlicerCLIModuleLogic::onExecutionTerminated(vtkMRMLCommandLineModuleNode
                 }
               else
                 {
-                qWarning() << "Cannot find referenced node " << QString::fromStdString((*pit).GetDefault());
+                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
                 }
               }
             }
           else
             {
-            qWarning() << "Referenced parameter unknown: " << QString::fromStdString((*pit).GetReference());
+            vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
             }
-
+        
           }
         }
       }
     }
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::requestloadMinisceneLoading(const std::string& minisceneFilename,
-  vtkMRMLCommandLineModuleNode * node0,
-  vtkMRMLScene * miniscene, const MRMLIDMap& sceneToMiniSceneMap)
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::requestloadMinisceneLoading";
-  Q_ASSERT(node0);
-  Q_ASSERT(miniscene);
 
   // if there was a miniscene that needs loading, request it
   if (miniscene->GetNumberOfNodes() > 0)
     {
-    bool displayData = (node0 == qctk_d()->commandLineModuleNode);
-//
+    bool displayData = false;
+    bool deleteFile = this->GetDeleteTemporaryFiles();
+    displayData = (node0 == this->CommandLineModuleNode);
+
     // Convert the index map to two vectors so that we can pass it to
     // a function in a different library (Win32 limitation)
     std::vector<std::string> keys, values;
-//
-    MRMLIDMap::const_iterator mit;
-    for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end(); ++mit)
+    
+    MRMLIDMap::iterator mit;
+    for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end();
+         ++mit)
       {
       // only load the nodes that are needed back into the main scene
-      MRMLIDToFileNameMap::const_iterator rit = this->NodesToReload.find( (*mit).first );
+      MRMLIDToFileNameMap::iterator rit = nodesToReload.find( (*mit).first );
 
-      if (rit != this->NodesToReload.end())
+      if (rit != nodesToReload.end())
         {
         keys.push_back( (*mit).first );
         values.push_back( (*mit).second );
@@ -1465,550 +1878,143 @@ void vtkSlicerCLIModuleLogic::requestloadMinisceneLoading(const std::string& min
       }
 
     // Place a request to read the miniscene and map any ids as necessary
-    this->GetApplicationLogic()->RequestReadScene( minisceneFilename, keys, values,
-                                        displayData, this->deleteTemporaryFiles() );
+    this->GetApplicationLogic()
+      ->RequestReadScene( minisceneFilename, keys, values,
+                          displayData, deleteFile );
     }
-}
 
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::cleanUp()
-{
-  qDebug() << "vtkSlicerCLIModuleLogic::cleanUp";
+
   // clean up
   //
   //
-//   delete [] command;
+  delete [] command;
 
   // Remove any remaining temporary files.  At this point, these files
   // should be the files written as inputs to the module
-  if ( qctk_d()->deleteTemporaryFiles )
+  if ( this->GetDeleteTemporaryFiles() )
     {
     bool removed;
     std::set<std::string>::iterator fit;
-    for (fit = qctk_d()->filesToDelete.begin(); fit != qctk_d()->filesToDelete.end(); ++fit)
+    for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
       {
       if (itksys::SystemTools::FileExists((*fit).c_str()))
         {
         removed = itksys::SystemTools::RemoveFile((*fit).c_str());
         if (!removed)
           {
-          //std::stringstream information;
-          //information << "Unable to delete temporary file " << *fit << std::endl;
-          //vtkWarningMacro( << information.str().c_str() );
-          qWarning() << "Unable to delete temporary file " << QString::fromStdString(*fit);
+          std::stringstream information;
+          information << "Unable to delete temporary file " << *fit << std::endl;
+          vtkWarningMacro( << information.str().c_str() );
           }
         }
       }
     }
 
   // node was registered when the task was scheduled so unregister now
-  // TODO
-//   node0->UnRegister(this);
-}
-
-
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::runCommandLineFilter(vtkMRMLCommandLineModuleNode * node0,
-  const QStringList& argList)
-{
-  Q_UNUSED(node0);
-  Q_UNUSED(argList);
-  qDebug() << "vtkSlicerCLIModuleLogic::runCommandLineFilter";
-//   // Run as a command line module
-//   //
-//   //
-//
-//   //
-//   // first, remove ITK_AUTOLOAD_PATH to work around
-//   // nvidia driver bug that causes the module to fail
-//   // on exit with undefined symbol
-//   //
-//   std::string saveITKAutoLoadPath;
-//   itksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
-//   std::string emptyString("ITK_AUTOLOAD_PATH=");
-//   int putSuccess =
-//     vtkKWApplication::PutEnv(const_cast <char *> (emptyString.c_str()));
-//   if (!putSuccess)
-//     {
-//     vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
-//     }
-//
-//   //
-//   // now run the process
-//   //
-//   itksysProcess *process = itksysProcess_New();
-//
-//   // setup the command
-//   itksysProcess_SetCommand(process, command);
-//   itksysProcess_SetOption(process,
-//                           itksysProcess_Option_Detach, 0);
-//   itksysProcess_SetOption(process,
-//                           itksysProcess_Option_HideWindow, 1);
-//   // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
-//
-//   // execute the command
-//   itksysProcess_Execute(process);
-//
-//
-//   // restore the load path
-//   std::string putEnvString = ("ITK_AUTOLOAD_PATH=");
-//   putEnvString = putEnvString + saveITKAutoLoadPath;
-//   putSuccess =
-//     vtkKWApplication::PutEnv(const_cast <char *> (putEnvString.c_str()));
-//   if (!putSuccess)
-//     {
-//     vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
-//     }
-//
-//   // Wait for the command to finish
-//   char *tbuffer;
-//   int length;
-//   int pipe;
-//   const double timeoutlimit = 0.1;    // tenth of a second
-//   double timeout = timeoutlimit;
-//   std::string stdoutbuffer;
-//   std::string stderrbuffer;
-//   std::string::size_type tagend;
-//   std::string::size_type tagstart;
-//   while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
-//                                             &length, &timeout)) != 0)
-//     {
-//     // increment the elapsed time
-//     node0->GetModuleDescription().GetProcessInformation()->ElapsedTime
-//       += (timeoutlimit - timeout);
-//     this->GetApplicationLogic()->RequestModified( node0 );
-//
-//     // reset the timeout value
-//     timeout = timeoutlimit;
-//
-//     // Check to see if the plugin was cancelled
-//     if (node0->GetModuleDescription().GetProcessInformation()->Abort)
-//       {
-//       itksysProcess_Kill(process);
-//       node0->GetModuleDescription().GetProcessInformation()->Progress = 0;
-//       node0->GetModuleDescription().GetProcessInformation()->StageProgress =0;
-//       this->GetApplicationLogic()->RequestModified( node0 );
-//       break;
-//       }
-//
-//     // Capture the output from the filter
-//     if (length != 0 && tbuffer != 0)
-//       {
-//       if (pipe == itksysProcess_Pipe_STDOUT)
-//         {
-//         //std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
-//         stdoutbuffer = stdoutbuffer.append(tbuffer, length);
-//
-//         bool foundTag = false;
-//         // search for the last occurence of </filter-progress>
-//         tagend = stdoutbuffer.rfind("</filter-progress>");
-//         if (tagend != std::string::npos)
-//           {
-//           tagstart = stdoutbuffer.rfind("<filter-progress>");
-//           if (tagstart != std::string::npos)
-//             {
-//             std::string progressString(stdoutbuffer, tagstart+17,
-//                                         tagend-tagstart-17);
-//             node0->GetModuleDescription().GetProcessInformation()->Progress = atof(progressString.c_str());
-//             foundTag = true;
-//             }
-//           }
-//         // search for the last occurence of </filter-stage-progress>
-//         tagend = stdoutbuffer.rfind("</filter-stage-progress>");
-//         if (tagend != std::string::npos)
-//           {
-//           tagstart = stdoutbuffer.rfind("<filter-stage-progress>");
-//           if (tagstart != std::string::npos)
-//             {
-//             std::string progressString(stdoutbuffer, tagstart+23,
-//                                         tagend-tagstart-23);
-//             node0->GetModuleDescription().GetProcessInformation()->StageProgress = atof(progressString.c_str());
-//             foundTag = true;
-//             }
-//           }
-//
-//         // search for the last occurence of </filter-name>
-//         tagend = stdoutbuffer.rfind("</filter-name>");
-//         if (tagend != std::string::npos)
-//           {
-//           tagstart = stdoutbuffer.rfind("<filter-name>");
-//           if (tagstart != std::string::npos)
-//             {
-//             std::string filterString(stdoutbuffer, tagstart+13,
-//                                       tagend-tagstart-13);
-//             strncpy(node0->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
-//             foundTag = true;
-//             }
-//           }
-//
-//         // search for the last occurence of </filter-comment>
-//         tagend = stdoutbuffer.rfind("</filter-comment>");
-//         if (tagend != std::string::npos)
-//           {
-//           tagstart = stdoutbuffer.rfind("<filter-comment>");
-//           if (tagstart != std::string::npos)
-//             {
-//             std::string progressMessage(stdoutbuffer, tagstart+16,
-//                                         tagend-tagstart-16);
-//             strncpy (node0->GetModuleDescription().GetProcessInformation()->ProgressMessage, progressMessage.c_str(), 1023);
-//             foundTag = true;
-//             }
-//           }
-//         if (foundTag)
-//           {
-//           this->GetApplicationLogic()->RequestModified( node0 );
-//           }
-//         }
-//       else if (pipe == itksysProcess_Pipe_STDERR)
-//         {
-//         stderrbuffer = stderrbuffer.append(tbuffer, length);
-//         }
-//       }
-//     }
-//   itksysProcess_WaitForExit(process, 0);
-//
-//
-//   // remove the embedded XML from the stdout stream
-//   //
-//   // Note that itksys::RegularExpression gives begin()/end() as
-//   // size_types not iterators. So we need to use the version of
-//   // erase that takes a position and length to erase.
-//   //
-//   itksys::RegularExpression filterProgressRegExp("<filter-progress>[^<]*</filter-progress>[ \t\n\r]*");
-//   while (filterProgressRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterProgressRegExp.start(),
-//                         filterProgressRegExp.end()
-//                         - filterProgressRegExp.start());
-//     }
-//   itksys::RegularExpression filterStageProgressRegExp("<filter-stage-progress>[^<]*</filter-stage-progress>[ \t\n\r]*");
-//   while (filterStageProgressRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterStageProgressRegExp.start(),
-//                         filterStageProgressRegExp.end()
-//                         - filterStageProgressRegExp.start());
-//     }
-//   itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
-//   while (filterNameRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterNameRegExp.start(),
-//                         filterNameRegExp.end()
-//                         - filterNameRegExp.start());
-//     }
-//   itksys::RegularExpression filterCommentRegExp("<filter-comment>[^<]*</filter-comment>[ \t\n\r]*");
-//   while (filterCommentRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterCommentRegExp.start(),
-//                         filterCommentRegExp.end()
-//                         - filterCommentRegExp.start());
-//     }
-//   itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
-//   while (filterStartRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterStartRegExp.start(),
-//                         filterStartRegExp.end()
-//                         - filterStartRegExp.start());
-//     }
-//   itksys::RegularExpression filterEndRegExp("<filter-end>[^<]*</filter-end>[ \t\n\r]*");
-//   while (filterEndRegExp.find(stdoutbuffer))
-//     {
-//     stdoutbuffer.erase(filterEndRegExp.start(),
-//                         filterEndRegExp.end()
-//                         - filterEndRegExp.start());
-//     }
-//
-//
-//   if (stdoutbuffer.size() > 0)
-//     {
-//     std::string tmp(" standard output:\n\n");
-//     stdoutbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
-//     vtkSlicerApplication::GetInstance()->InformationMessage( stdoutbuffer.c_str() );
-//     }
-//   if (stderrbuffer.size() > 0)
-//     {
-//     std::string tmp(" standard error:\n\n");
-//     stderrbuffer.insert(0, node0->GetModuleDescription().GetTitle()+tmp);
-//     vtkErrorMacro( << stderrbuffer.c_str() );
-//     }
-//
-//   // check the exit state / error state of the process
-//   if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
-//     {
-//     int result = itksysProcess_GetState(process);
-//     if (result == itksysProcess_State_Exited)
-//       {
-//       // executable exited cleanly and must of done
-//       // "something"
-//       if (itksysProcess_GetExitValue(process) == 0)
-//         {
-//         // executable exited without errors,
-//         std::stringstream information;
-//         information << node0->GetModuleDescription().GetTitle()
-//                     << " completed without errors" << std::endl;
-//         vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
-//
-//         }
-//       else
-//         {
-//         std::stringstream information;
-//         information << node0->GetModuleDescription().GetTitle()
-//                     << " completed with errors" << std::endl;
-//         vtkErrorMacro( << information.str().c_str() );
-//         node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//         this->GetApplicationLogic()->RequestModified( node0 );
-//         }
-//       }
-//     else if (result == itksysProcess_State_Expired)
-//       {
-//       std::stringstream information;
-//       information << node0->GetModuleDescription().GetTitle()
-//                   << " timed out" << std::endl;
-//       vtkErrorMacro( << information.str().c_str() );
-//       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//       this->GetApplicationLogic()->RequestModified( node0 );
-//       }
-//     else
-//       {
-//       std::stringstream information;
-//       if (result == itksysProcess_State_Exception)
-//         {
-//         information << node0->GetModuleDescription().GetTitle();
-//         int excResult = itksysProcess_GetExitException(process);
-//         switch (excResult)
-//           {
-//           case itksysProcess_Exception_None:
-//             information << " terminated with no exceptions." << std::endl;
-//             break;
-//           case itksysProcess_Exception_Fault:
-//             information << " terminated with a fault." << std::endl;
-//             break;
-//           case itksysProcess_Exception_Illegal:
-//             information << " terminated with an illegal instruction." << std::endl;
-//             break;
-//           case itksysProcess_Exception_Interrupt:
-//             information << " terminated with an interrupt." << std::endl;
-//             break;
-//           case itksysProcess_Exception_Numerical:
-//             information << " terminated with a numerical fault." << std::endl;
-//             break;
-//           case itksysProcess_Exception_Other:
-//             information << " terminated with an unknown exception." << std::endl;
-//             break;
-//           }
-//         }
-//       else
-//         {
-//       information << node0->GetModuleDescription().GetTitle()
-//                 << " unknown termination. " << result << std::endl;
-//         }
-//       vtkErrorMacro( << information.str().c_str() );
-//       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//       this->GetApplicationLogic()->RequestModified( node0 );
-//       }
-//
-//     // clean up
-//     itksysProcess_Delete(process);
-//     }
+  node0->UnRegister(this);
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode * node0,
-  const QStringList& argList)
+void vtkSlicerCLIModuleLogic::ProgressCallback ( void *who )
 {
-  qDebug() << "vtkSlicerCLIModuleLogic::runSharedObjectFilter";
+  LogicNodePair *lnp = reinterpret_cast<LogicNodePair*>(who);
 
-  // TODO
-  // command, commandLineAsString, node0
-
-  // Run as a shared object module
-  //
-  //
-
-  std::ostringstream coutstringstream;
-  std::ostringstream cerrstringstream;
-  std::streambuf* origcoutrdbuf = std::cout.rdbuf();
-  std::streambuf* origcerrrdbuf = std::cerr.rdbuf();
-  int returnValue = 0;
-  try
-    {
-    if (qctk_d()->RedirectModuleStreams)
-      {
-      // redirect the streams
-      std::cout.rdbuf( coutstringstream.rdbuf() );
-      std::cerr.rdbuf( cerrstringstream.rdbuf() );
-      }
-
-    int argc = argList.count();
-
-    std::vector<char*> argv(argc);
-    qCTKUtils::qListToSTLVector(argList, argv);
-
-    // run the module
-    if ( qctk_d()->entryPointFunc != NULL ) {
-      returnValue = qctk_d()->entryPointFunc(argc, &argv[0]);
-    }
-
-    // report the output
-    if (coutstringstream.str().size() > 0)
-      {
-      qDebug() << "Display cout stream";
-      //std::string tmp(" standard output:\n\n");
-      //tmp = node0->GetModuleDescription().GetTitle()+tmp;
-
-      //vtkSlicerApplication::GetInstance()->InformationMessage( (tmp + coutstringstream.str()).c_str() );
-      qDebug() << QString::fromStdString(node0->GetModuleDescription().GetTitle())
-               << " standard output:"
-               << QString::fromStdString(coutstringstream.str());
-      }
-    if (cerrstringstream.str().size() > 0)
-      {
-      qDebug() << "Display cerr stream";
-//       std::string tmp(" standard error:\n\n");
-//       tmp = node0->GetModuleDescription().GetTitle()+tmp;
-//
-//       vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
-      qCritical() << QString::fromStdString(node0->GetModuleDescription().GetTitle())
-                  << " standard error:"
-                  << QString::fromStdString(cerrstringstream.str());
-      }
-
-    if (qctk_d()->RedirectModuleStreams)
-      {
-      // reset the streams
-      std::cout.rdbuf( origcoutrdbuf );
-      std::cerr.rdbuf( origcerrrdbuf );
-      }
-    }
-//   catch (itk::ExceptionObject& exc)
-//     {
-//     std::stringstream information;
-//     if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
-//       {
-//       information << node0->GetModuleDescription().GetTitle()
-//                   << " cancelled.";
-//       vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
-//       }
-//     else
-//       {
-//       information << node0->GetModuleDescription().GetTitle()
-//                   << " terminated with an exception: " << exc;
-//       vtkErrorMacro( << information.str().c_str() );
-//       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//       this->GetApplicationLogic()->RequestModified( node0 );
-//       }
-
-//     std::cout.rdbuf( origcoutrdbuf );
-//     std::cerr.rdbuf( origcerrrdbuf );
-//     }
-  catch (...)
-    {
-    qCritical() << QString::fromStdString(node0->GetModuleDescription().GetTitle())
-                << " terminated with an unknown exception.";
-
-//     std::stringstream information;
-//     information << node0->GetModuleDescription().GetTitle()
-//               << " terminated with an unknown exception." << std::endl;
-//     vtkErrorMacro( << information.str().c_str() );
-    node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-    this->GetApplicationLogic()->RequestModified( node0 );
-
-//     std::cout.rdbuf( origcoutrdbuf );
-//     std::cerr.rdbuf( origcerrrdbuf );
-    }
-  // Check the return status of the module
-  if (returnValue)
-    {
-    qCritical() << QString::fromStdString(node0->GetModuleDescription().GetTitle())
-                << " returned " << returnValue << " which probably indicates an error.";
-//     std::stringstream information;
-//     information << node0->GetModuleDescription().GetTitle()
-//                 << " returned " << returnValue << " which probably indicates an error." << std::endl;
-//     vtkErrorMacro( << information.str().c_str() );
-    node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-    this->GetApplicationLogic()->RequestModified( node0 );
-//     std::cout.rdbuf( origcoutrdbuf );
-//     std::cerr.rdbuf( origcerrrdbuf );
-    }
+  // All we need to do is tell the node that it was Modified.  The
+  // shared object plugin modifies fields in the ProcessInformation directly.
+  lnp->first->GetApplicationLogic()->RequestModified(lnp->second);
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::runPythonFilter(vtkMRMLCommandLineModuleNode * node0,
-  const QStringList& argList)
+std::string
+vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
+                                            const ModuleParameter& p)
 {
-  Q_UNUSED(node0);
-  Q_UNUSED(argList);
-  qDebug() << "vtkSlicerCLIModuleLogic::runPythonFilter";
-//   // For the moment, ignore the output and just run the module
-//   vtkSlicerApplication::GetInstance()->InformationMessage( "Preparing to execute Python Module" );
-//
-//   // Now, call Python properly.  For the moment, make a big string...
-//   // ...later we'll want to do this through the Python API
-//   std::string ExecuteModuleString =
-//     "import sys\n"
-//     "import Slicer\n"
-//     "import inspect\n"
-//     "ModuleName = \"" + node0->GetModuleDescription().GetTarget() + "\"\n"
-//     "ModuleArgs = []\n"
-//     "ArgTags = []\n"
-//     "ArgFlags = []\n"
-//     "ArgMultiples = []\n";
-//
-//   //cout<<"-----------------------Individial command line items---------------------"<<endl;
-//   // Now add the individual command line items
-//   for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
-//     {
-//     ExecuteModuleString += "ModuleArgs.append ( '" + commandLineAsString[i] + "' );\n";
-//     }
-//   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
-//     {
-//     // iterate over each parameter in this group
-//     std::vector<ModuleParameter>::const_iterator pbeginit
-//       = (*pgit).GetParameters().begin();
-//     std::vector<ModuleParameter>::const_iterator pendit
-//       = (*pgit).GetParameters().end();
-//     std::vector<ModuleParameter>::const_iterator pit;
-//     for (pit = pbeginit; pit != pendit; ++pit)
-//       {
-//       ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' )\n";
-//       ExecuteModuleString += "ArgFlags.append ( '" + (*pit).GetLongFlag() + "' )\n";
-//       ExecuteModuleString += "ArgMultiples.append ( '" + (*pit).GetMultiple() + "' )\n";
-//       }
-//     }
-//   // TODO: FlagArgs, PositionalArgs, Arguments are in global scope - potential name clash
-//   ExecuteModuleString +=
-//     "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags , ArgFlags, ArgMultiples )\n"
-//     "Module = __import__ ( ModuleName )\n"
-//     "reload ( Module )\n"
-//     "Arguments = inspect.getargspec(Module.Execute)[0]\n"
-//     "if 'commandLineModuleNode' in Arguments:\n"
-//     "  FlagArgs['commandLineModuleNode'] = '";
-//   ExecuteModuleString += std::string(node0->GetID()) + "'\n";
-//   ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
-//
-// #ifdef Slicer3_USE_PYTHON
-//   PyObject* v;
-//   v = PyRun_String(
-//     ExecuteModuleString.c_str(),
-//     Py_file_input,
-//     (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-//     (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-//
-//   if (v == NULL || PyErr_Occurred())
-//     {
-//     node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//     PyErr_Print();
-//     }
-//   else
-//     {
-//     node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-//     if (Py_FlushLine())
-//       {
-//       PyErr_Clear();
-//       }
-//     }
-// #else
-//   vtkErrorMacro("Attempting to execute a Python Module without Python support enabled");
-// #endif
-//
-//   this->GetApplicationLogic()->RequestModified( node0 );
+  std::string id = "None";
+  
+  if (p.GetHidden() == "true")
+    {
+    if (p.GetReference().size() > 0)
+      {
+      std::string reference;
+      if (d.HasParameter(p.GetReference()))
+        {
+        reference = d.GetParameterDefaultValue(p.GetReference());
+
+        if (p.GetTag() == "table")
+          {
+          if (p.GetType() == "color")
+            {
+            // go to the display node for the reference parameter and
+            // get its color node 
+            vtkMRMLDisplayableNode *rn
+              = vtkMRMLDisplayableNode::SafeDownCast(this->MRMLScene
+                                            ->GetNodeByID(reference.c_str()));
+            if (rn)
+              {
+              vtkMRMLDisplayNode *dn = rn->GetDisplayNode();
+              if (dn)
+                {
+                // get the id of the color node
+                if (dn->GetColorNode())
+                  {
+                  id = dn->GetColorNode()->GetID();
+                  }
+                else
+                  {
+                  vtkErrorMacro(<< "Display node of the reference node does not have a color node. No value for \"table\" parameter.");
+                  }
+                }
+              else
+                {
+                vtkErrorMacro(<< "Reference node \"" << reference.c_str()
+                              << "\" does not have a display node which is needed to find the color node.");
+                }
+              }
+            else
+              {
+              vtkErrorMacro(<< "Reference node \"" << reference.c_str()
+                            << "\" does not exist in the scene.");
+              }
+            }
+          else
+            {
+            vtkErrorMacro(<< "Hidden \"table\" parameters must be of type \"color\"");
+            }
+          }
+        else if (p.GetTag() == "image")
+          {
+          // hidden parameters allowed for images to hide from GUI but
+          // we don't currently do anything with them. This implies
+          // that hidden parameters that are images must have flags
+          // and not be index parameters.
+          }
+        else
+          {
+          vtkErrorMacro(<< "Hidden parameters not supported on \""
+                        << p.GetType().c_str() << "\"");
+          }
+        }
+      else
+        {
+        vtkErrorMacro(<< "Reference parameter \"" << p.GetReference().c_str()
+                      << "\" not found.");
+        }
+      }
+    else
+      {
+      // no reference node
+      if (this->GetDebug())
+        {
+        vtkErrorMacro(<< "Hidden parameter \"" << p.GetName().c_str()
+                      << "\" but no reference parameter.");
+        }
+      }
+    }
+  else
+    {
+    // not a hidden node, just return the default
+    id = p.GetDefault();
+    }
+
+  return id;
 }

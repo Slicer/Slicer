@@ -26,14 +26,16 @@
 class qSlicerCLILoadableModuleFactoryItem : public qCTKFactoryLibraryItem<qSlicerAbstractModule>
 {
 public:
+  // Convenient typedef
   typedef qCTKFactoryLibraryItem<qSlicerAbstractModule> Superclass;
+  
   explicit qSlicerCLILoadableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
   virtual ~qSlicerCLILoadableModuleFactoryItem(){}
 
 protected:
-  /// To make the cast code cleaner to read.
+  /// Convenient typedef
+  typedef qSlicerCLILoadableModuleFactoryItem Self;
   //typedef char * (*XMLModuleDescriptionFunction)();
-  //typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
 
   virtual qSlicerAbstractModule* instanciator();
 };

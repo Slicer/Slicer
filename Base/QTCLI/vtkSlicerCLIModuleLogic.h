@@ -10,108 +10,95 @@
 
 =========================================================================auto=*/
 
-
 #ifndef __vtkSlicerCLIModuleLogic_h
 #define __vtkSlicerCLIModuleLogic_h
 
-/// SlicerLogic includes
+// Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// MRMLCLI includes
+#include "vtkMRMLCommandLineModuleNode.h"
 
-/// QT includes
-#include <QStringList>
+// MRML include
+#include "vtkMRMLScene.h"
 
-/// STL includes
-#include <map>
-#include <vector>
+// STL includes
 #include <string>
-#include <iostream>
-#include <sstream>
 
 #include "qSlicerBaseQTCLIExport.h"
 
-class vtkMRMLScene;
-class vtkMRMLCommandLineModuleNode;
-class vtkSlicerCLIModuleLogicPrivate;
+typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
 
-class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic : public vtkSlicerModuleLogic
+class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
+  public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerCLIModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-  typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
+  // TODO: do we need to observe MRML here?
+  virtual void ProcessMrmlEvents(vtkObject * vtkNotUsed(caller),
+                                 unsigned long vtkNotUsed(event),
+                                 void * vtkNotUsed(callData)){}
 
-  std::string constructTemporaryFileName(const std::string& tag,
-                             const std::string& type,
-                             const std::string& name,
-                             const std::vector<std::string>& extensions,
-                             CommandLineModuleType commandType) const;
+  // Description: For debugging, control deletion of temp files
+  vtkBooleanMacro (DeleteTemporaryFiles, int);
+  vtkSetMacro (DeleteTemporaryFiles, int);
+  vtkGetMacro (DeleteTemporaryFiles, int);
 
-  /// map to keep track of MRML Ids and filenames
-  typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
-  MRMLIDToFileNameMap NodesToReload;
-  MRMLIDToFileNameMap NodesToWrite;
+  // Description: For debugging, control redirection of cout and cerr
+  vtkBooleanMacro (RedirectModuleStreams, int);
+  vtkSetMacro (RedirectModuleStreams, int);
+  vtkGetMacro (RedirectModuleStreams, int);
+  
+  // The method that schedules the command line module to run
+  void Apply( vtkMRMLCommandLineModuleNode* node );
+  void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node );
 
-  //
-  /// map to keep track of the MRML Ids on the main scene to the MRML
-  /// Ids in the miniscene sent to the module
-  typedef std::map<std::string, std::string> MRMLIDMap;
+  // Set/Get the directory to use for temporary files
+  void SetTemporaryDirectory(const char *tempdir)
+    { this->TemporaryDirectory = tempdir; }
 
-  void applyTask(void *clientdata);
+//BTX
+//   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
+//ETX
+//   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node) 
+//     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
-  /// Prepare
-  void getModuleInputAndOutputNode(CommandLineModuleType commandType, vtkMRMLCommandLineModuleNode * node0,
-    MRMLIDToFileNameMap & nodesToWrite, MRMLIDToFileNameMap & nodesToReload);
-
-  void generateInputDatasets(CommandLineModuleType commandType, vtkMRMLScene * miniscene, MRMLIDMap& sceneToMiniSceneMap,
-    const MRMLIDToFileNameMap & nodesToWrite);
-
-  void addOutputNodeToMiniScene(const std::string& minisceneFilename, vtkMRMLScene * miniscene, MRMLIDMap& sceneToMiniSceneMap,
-    const MRMLIDToFileNameMap & nodesToReload);
-
-  void buildCommandLine(const std::string& minisceneFilename, vtkMRMLCommandLineModuleNode * node0, MRMLIDMap& sceneToMiniSceneMap, CommandLineModuleType commandType, const std::string& target, QStringList& commandLineAsString);
-
-  void processParametersWithIndices(const std::string& minisceneFilename, vtkMRMLCommandLineModuleNode * node0,
-    MRMLIDMap& sceneToMiniSceneMap, QStringList& commandLineAsString);
-///   std::string generateCommand(vtkMRMLCommandLineModuleNode * node0, const QStringList& commandLineAsString );
-
-  /// Run methods
-  void runFilter(vtkMRMLCommandLineModuleNode * node0,
-    const QStringList& argList, CommandLineModuleType commandType);
-  void runCommandLineFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argList);
-  void runSharedObjectFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argListist);
-  void runPythonFilter(vtkMRMLCommandLineModuleNode * node0, const QStringList& argListst);
-
-  /// Terminate
-  void onExecutionTerminated(vtkMRMLCommandLineModuleNode * node0, const MRMLIDMap& sceneToMiniSceneMap);
-  void requestloadMinisceneLoading(const std::string& minisceneFilename,
-    vtkMRMLCommandLineModuleNode * node0, vtkMRMLScene * miniscene, const MRMLIDMap& sceneToMiniSceneMap);
-  void cleanUp();
-
-  /// For debug
-  void setDeleteTemporaryFiles(bool enable);
-  bool deleteTemporaryFiles()const;
-
-  /// Communicate progress back to the node
-  static void ProgressCallback(void * who);
-
-  /// Set/Get the directory to use for temporary files
-  void SetTemporaryDirectory(const char *tempdir);
-  const char *GetTemporaryDirectory() const;
 protected:
+  //BTX
+  std::string ConstructTemporaryFileName(const std::string& tag,
+                                         const std::string& type,
+                                         const std::string& name,
+                                     const std::vector<std::string>& extensions,
+                                     CommandLineModuleType commandType) const;
+  std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
+  std::string FindHiddenNodeID(const ModuleDescription& d,
+                               const ModuleParameter& p);
+  //ETX
+
+  // The method that runs the command line module
+  void ApplyTask(void *clientdata);
+
+  // Communicate progress back to the node
+  static void ProgressCallback(void *);
+  
+private:
   vtkSlicerCLIModuleLogic();
-  ~vtkSlicerCLIModuleLogic();
-  /// not implemented
+  virtual ~vtkSlicerCLIModuleLogic();
   vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
   void operator=(const vtkSlicerCLIModuleLogic&);
 
-private:
-  QCTK_DECLARE_PRIVATE(vtkSlicerCLIModuleLogic);
+  int DeleteTemporaryFiles;
+
+  int RedirectModuleStreams;
+
+  vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+//BTX
+  std::string TemporaryDirectory;
+//ETX
 };
 
 #endif
+

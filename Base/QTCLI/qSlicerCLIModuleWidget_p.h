@@ -88,8 +88,12 @@ public:
     }
   
   /// 
-  /// Convenient function to cast qSlicerModuleLogic into qSlicerCLIModuleLogic
+  /// Convenient function to cast vtkSlicerLogic into vtkSlicerCLIModuleLogic
   vtkSlicerCLIModuleLogic* logic()const;
+
+  /// 
+  /// Convenient function to cast vtkMRMLNode into vtkMRMLCommandLineModuleNode
+  vtkMRMLCommandLineModuleNode* commandLineModuleNode()const; 
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
   typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;
@@ -175,8 +179,8 @@ public:
 
   QList<WidgetValueWrapper*> WidgetValueWrappers; 
   
-  vtkMRMLCommandLineModuleNode* CommandLineModuleNode; 
-///   qSlicerCLIModuleLogic * Logic;
+  vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+  QString                       ModuleEntryPoint;
 };
 
 

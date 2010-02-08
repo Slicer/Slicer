@@ -12,7 +12,6 @@
 
 
 #include "qSlicerCLIModule.h"
-#include "ui_qSlicerCLIModule.h"
 
 // SlicerQT includes
 #include "vtkSlicerCLIModuleLogic.h"
@@ -23,15 +22,12 @@
 #include <ModuleDescriptionParser.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>, public Ui_qSlicerCLIModule
+class qSlicerCLIModulePrivate: public qCTKPrivate<qSlicerCLIModule>
 {
 public:
   QCTK_DECLARE_PUBLIC(qSlicerCLIModule);
   typedef qSlicerCLIModulePrivate Self;
-  qSlicerCLIModulePrivate()
-    {
-    this->ProcessInformation = 0;
-    }
+  qSlicerCLIModulePrivate();
 
   QString           Title;
   QString           Acknowledgement;
@@ -45,6 +41,18 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// qSlicerCLIModulePrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
+{
+  this->ProcessInformation = 0;
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerCLIModule methods
+
+//-----------------------------------------------------------------------------
 qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qSlicerCLIModule);
@@ -53,8 +61,14 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
+  QCTK_D(qSlicerCLIModule);
+  
   // Temporary directory should be set before the module is initialized
-  Q_ASSERT(!qctk_d()->TempDirectory.isEmpty());
+  Q_ASSERT(!d->TempDirectory.isEmpty());
+
+  // Set temp directory 
+  vtkSlicerCLIModuleLogic* myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
+  myLogic->SetTemporaryDirectory(d->TempDirectory.toLatin1());
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +126,3 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 
   d->Desc = desc; 
 }
-
-//-----------------------------------------------------------------------------
-// qSlicerCLIModulePrivate methods
-
