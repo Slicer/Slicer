@@ -16,11 +16,7 @@
 #include "qCTKDoubleSlider.h"
 
 // QT includes
-#include <QApplication>
-#include <QList>
-#include <QTreeWidget>
 #include <QString>
-#include <QStringList>
 
 // std includes
 #include <stdlib.h>
@@ -28,7 +24,8 @@
 
 int qCTKDoubleSliderTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  Q_UNUSED(argc);
+  Q_UNUSED(argv);
 
   qCTKDoubleSlider slider;
   std::cout << "Test setValue(18.54)" << std::endl;

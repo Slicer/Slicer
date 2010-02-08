@@ -17,13 +17,9 @@
 
 // QT includes
 #include <QApplication>
-#include <QList>
-#include <QTreeWidget>
-#include <QString>
-#include <QStringList>
 #include <QModelIndex>
 
-// std includes
+// STL includes
 #include <stdlib.h>
 #include <iostream>
 

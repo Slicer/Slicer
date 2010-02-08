@@ -18,10 +18,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QList>
-#include <QTreeWidget>
-#include <QString>
-#include <QStringList>
 
 // std includes
 #include <stdlib.h>
