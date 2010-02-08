@@ -24,20 +24,6 @@ bool equal(double v1, double v2)
 }
 
 //-----------------------------------------------------------------------------
-namespace
-{
-int getDecimalCount(double d)
-  {
-  // Convert double to QString
-  QString dbl = QString::number(d);
-
-  // Extract number of decimals
-  int decimalPointIndex = dbl.indexOf(".");
-  return (decimalPointIndex == -1) ? 0 : (dbl.size() - 1 - decimalPointIndex);
-  }
-}
-
-//-----------------------------------------------------------------------------
 class qCTKSliderSpinBoxWidgetPrivate: public qCTKPrivate<qCTKSliderSpinBoxWidget>,
                                       public Ui_qCTKSliderSpinBoxWidget
 {
@@ -143,8 +129,10 @@ double qCTKSliderSpinBoxWidget::maximum()const
 void qCTKSliderSpinBoxWidget::setMinimum(double min)
 {
   QCTK_D(qCTKSliderSpinBoxWidget);
-  d->Slider->setMinimum(min);
   d->SpinBox->setMinimum(min);
+  // SpinBox can truncate min (depending on decimals).
+  // use Spinbox's min to set Slider's min
+  d->Slider->setMinimum(d->SpinBox->minimum());
   Q_ASSERT(equal(d->SpinBox->minimum(),d->Slider->minimum()));
   d->updateSpinBoxWidth();
 }
@@ -153,8 +141,10 @@ void qCTKSliderSpinBoxWidget::setMinimum(double min)
 void qCTKSliderSpinBoxWidget::setMaximum(double max)
 {
   QCTK_D(qCTKSliderSpinBoxWidget);
-  d->Slider->setMaximum(max);
   d->SpinBox->setMaximum(max);
+  // SpinBox can truncate max (depending on decimals).
+  // use Spinbox's max to set Slider's max
+  d->Slider->setMaximum(d->SpinBox->maximum());
   Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
@@ -164,8 +154,10 @@ void qCTKSliderSpinBoxWidget::setRange(double min, double max)
 {
   QCTK_D(qCTKSliderSpinBoxWidget);
   
-  d->Slider->setRange(min, max);
   d->SpinBox->setRange(min, max);
+  // SpinBox can truncate the range (depending on decimals).
+  // use Spinbox's range to set Slider's range
+  d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
   Q_ASSERT(equal(d->SpinBox->minimum(), d->Slider->minimum()));
   Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
@@ -225,11 +217,24 @@ double qCTKSliderSpinBoxWidget::singleStep()const
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxWidget::setSingleStep(double step)
 {
-  QCTK_D(qCTKSliderSpinBoxWidget);;
-  d->Slider->setSingleStep(step);
+  QCTK_D(qCTKSliderSpinBoxWidget);
   d->SpinBox->setSingleStep(step);
-  d->SpinBox->setDecimals(::getDecimalCount(step));
+  d->Slider->setSingleStep(d->SpinBox->singleStep());
   Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
+}
+
+// --------------------------------------------------------------------------
+int qCTKSliderSpinBoxWidget::decimals()const
+{
+  QCTK_D(const qCTKSliderSpinBoxWidget);
+  return d->SpinBox->decimals();
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::setDecimals(int newDecimals)
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  d->SpinBox->setDecimals(newDecimals);
 }
 
 // --------------------------------------------------------------------------

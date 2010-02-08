@@ -32,6 +32,7 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double value READ value WRITE setValue)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
@@ -84,6 +85,12 @@ public:
   /// user pressing an arrow key.
   double singleStep()const;
   void setSingleStep(double step);
+
+  /// 
+  /// This property holds the precision of the spin box, in decimals.
+  /// Sets how many decimals the spinbox will use for displaying and interpreting doubles.
+  int decimals()const;
+  void setDecimals(int decimals);
 
   /// 
   /// This property holds the interval between tickmarks.
