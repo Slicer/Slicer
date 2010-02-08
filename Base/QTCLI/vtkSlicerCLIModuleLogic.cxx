@@ -57,9 +57,9 @@
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_PYTHON
-#include "slicerPython.h"
-#endif
+// #ifdef Slicer3_USE_PYTHON
+// #include "slicerPython.h"
+// #endif
 
 // STL includes
 #include <algorithm>
@@ -1718,30 +1718,30 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     ExecuteModuleString += std::string(node0->GetID()) + "'\n";
     ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
 
-#ifdef Slicer3_USE_PYTHON    
-    PyObject* v;
-    v = PyRun_String(
-      ExecuteModuleString.c_str(),
-      Py_file_input,
-      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-
-    if (v == NULL || PyErr_Occurred())
-      {
-      node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-      PyErr_Print();
-      }
-    else
-      {
-      node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-      if (Py_FlushLine())
-        {
-        PyErr_Clear();
-        }
-      }
-#else
+// #ifdef Slicer3_USE_PYTHON    
+//     PyObject* v;
+//     v = PyRun_String(
+//       ExecuteModuleString.c_str(),
+//       Py_file_input,
+//       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
+//       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
+// 
+//     if (v == NULL || PyErr_Occurred())
+//       {
+//       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+//       PyErr_Print();
+//       }
+//     else
+//       {
+//       node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
+//       if (Py_FlushLine())
+//         {
+//         PyErr_Clear();
+//         }
+//       }
+// #else
     vtkErrorMacro("Attempting to execute a Python Module without Python support enabled");
-#endif
+// #endif
 
     this->GetApplicationLogic()->RequestModified( node0 );
     }
