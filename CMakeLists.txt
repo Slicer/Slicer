@@ -239,11 +239,6 @@ ELSE(Slicer3_USE_KWWIDGETS)
 ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
-IF (Slicer3_USE_KWWIDGETS)
-  ADD_DEFINITIONS(-DSlicer3_USE_KWWIDGETS)
-ENDIF(Slicer3_USE_KWWIDGETS)
-
-#-----------------------------------------------------------------------------
 #
 # Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
 #
