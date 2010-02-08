@@ -59,9 +59,8 @@ qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   module->setEntryPoint(moduleEntryPoint);
 
-//   module->setTempDirectory(
-//     qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
-  module->setTempDirectory(QDir::tempPath());
+  module->setTempDirectory(
+    qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
 
   return module;
 }

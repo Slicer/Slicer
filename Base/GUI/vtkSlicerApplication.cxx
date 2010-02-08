@@ -9,12 +9,16 @@
 #   include "PythonQt_QtAll.h"
 # endif
 
-// qSlicer includes
+// SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModulePanel.h"
+#include "qSlicerCommandOptions.h"
+
+// qCTK includes
+#include <qCTKSettings.h>
 
 // QT includes
 #include <QHash>
@@ -305,6 +309,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   static int argc = 0;
   this->Internal->qApplication = new qSlicerApplication(argc, &argv);
   Q_CHECK_PTR(this->Internal->qApplication);
+
+  this->Internal->qApplication->setCoreCommandOptions(
+    new qSlicerCommandOptions(this->Internal->qApplication->settings()));
 
   // Set window flags used to display top level widgets
 #ifdef Q_WS_MAC
