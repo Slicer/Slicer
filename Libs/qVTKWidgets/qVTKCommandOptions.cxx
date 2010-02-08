@@ -15,6 +15,9 @@
 
 #include "qVTKCommandOptions.h"
 
+// qCTK includes
+#include <qCTKUtils.h>
+
 // VTKSYS includes
 #include <vtksys/CommandLineArguments.hxx>
 
@@ -24,6 +27,7 @@
 #include <QLatin1String>
 #include <QSettings>
 #include <QHash>
+#include <QList>
 #include <QStringList>
 
 // --------------------------------------------------------------------------
@@ -41,29 +45,33 @@ public:
 
   /// Callback executed when a deprecated arguments is parsed
   static int deprecatedArgumentHandler(const char* argument, const char* value, void* call_data);
-
-  /// Read options from the settings.
-  void readBooleanOption(const char* longarg, bool& var, bool defaultValue);
-  void readOption(const char* longarg, int& var, int defaultValue);
-  void readOption(const char* longarg, QString& var, const QString& defaultValue);
                                                        
   /// Since vtksys::CommandLineArguments will only update char*, returns
   /// a valid char* pointer that it could use.
-  char** mapQStringStarToCharStar(QString* qstringstar);
+  char** mapQStringPtrToCharPtr(QString* qStringPtr);
 
-  /// Sync the updated char* with the corresponding QString*
-  void syncQStringStarWithCharStar();
+  /// Since vtksys::CommandLineArguments will only update std::vector<std::string>*, returns
+  /// a valid std::vector<std::string>* pointer that it could use.
+  std::vector<std::string>* mapQStringListPtrToStringVectorPtr(QStringList* qStringListPtr);
 
-  vtksys::CommandLineArguments  CMD;
-  QString                       UnknownArgument;
-  QString                       ErrorMessage;
-  bool                          HelpSelected;
-  bool                          DisableSettings;
-  int                           Argc;
-  char**                        Argv;
-  QSettings*                    Settings;
-  int                           ProcessType; // GUI, Batch, Daemon, ...
-  QHash<QString*, char**>       QStringStarToCharStarMap;
+  /// If required, sync the updated char* with the corresponding QString*
+  void syncQStringPtrWithCharPtr();
+
+  /// If required, sync the updated std::vector<std::string> with the corresponding QStringList*
+  void syncQStringListPtrWithStringVectorPtr();
+
+  vtksys::CommandLineArguments   CMD;
+  QString                        UnknownArgument;
+  QString                        ErrorMessage;
+  bool                           HelpSelected;
+  bool                           DisableSettings;
+  int                            Argc;
+  char**                         Argv;
+  QSettings*                     Settings;
+  int                            ProcessType; // GUI, Batch, Daemon, ...
+  
+  QHash<QString*, char**>                         QStringPointerToCharPointerMap;
+  QHash<QStringList*, std::vector<std::string>*>  QStringListPointerToStringVectorPointerMap;
 };
 
 //-----------------------------------------------------------------------------
@@ -85,9 +93,9 @@ qVTKCommandOptionsPrivate::qVTKCommandOptionsPrivate()
 qVTKCommandOptionsPrivate::~qVTKCommandOptionsPrivate()
 {
   this->cleanArgcArgv();
-  foreach (QString* qstringchar, this->QStringStarToCharStarMap.keys())
+  foreach (QString* qstringpointer, this->QStringPointerToCharPointerMap.keys())
     {
-    delete this->QStringStarToCharStarMap[qstringchar];
+    delete this->QStringPointerToCharPointerMap[qstringpointer];
     }
 }
 
@@ -134,50 +142,56 @@ int qVTKCommandOptionsPrivate::deprecatedArgumentHandler(const char* argument,
 }
 
 // --------------------------------------------------------------------------
-void qVTKCommandOptionsPrivate::readBooleanOption(const char* longarg, bool& var,
-                                                      bool defaultValue)
+char** qVTKCommandOptionsPrivate::mapQStringPtrToCharPtr(QString* qStringPtr)
 {
-  Q_ASSERT(this->Settings);
-  var = this->Settings->value(QLatin1String(longarg+2), defaultValue).toBool();
+  Q_ASSERT(!this->QStringPointerToCharPointerMap.contains(qStringPtr));
+  char** charPtr = new char*; // Create a new pointer
+  *charPtr = 0; // Initialize to 0
+  this->QStringPointerToCharPointerMap[qStringPtr] = charPtr;
+  return charPtr;
 }
 
 // --------------------------------------------------------------------------
-void qVTKCommandOptionsPrivate::readOption(const char* longarg, int& var, int defaultValue)
+std::vector<std::string>*
+qVTKCommandOptionsPrivate::mapQStringListPtrToStringVectorPtr(QStringList* qStringListPtr)
 {
-  Q_ASSERT(this->Settings);
-  var = this->Settings->value(QLatin1String(longarg+2), defaultValue).toInt();
+  Q_ASSERT(!this->QStringListPointerToStringVectorPointerMap.contains(qStringListPtr));
+  std::vector<std::string>* vectorPtr = new std::vector<std::string>(); // Create a new vector
+  this->QStringListPointerToStringVectorPointerMap[qStringListPtr] = vectorPtr;
+  return vectorPtr;
 }
 
 // --------------------------------------------------------------------------
-void qVTKCommandOptionsPrivate::readOption(const char* longarg, QString& var,
-                                               const QString& defaultValue)
+void qVTKCommandOptionsPrivate::syncQStringPtrWithCharPtr()
 {
-  Q_ASSERT(this->Settings);
-  var = this->Settings->value(QLatin1String(longarg+2), defaultValue).toString();
-}
-
-// --------------------------------------------------------------------------
-char** qVTKCommandOptionsPrivate::mapQStringStarToCharStar(QString* qstringstar)
-{
-  Q_ASSERT(!QStringStarToCharStarMap.contains(qstringstar));
-  char** charstar = new char*; // Create a new pointer
-  *charstar = 0; // Initialize to 0
-  QStringStarToCharStarMap[qstringstar] = charstar;
-  return charstar; 
-}
-
-// --------------------------------------------------------------------------
-void qVTKCommandOptionsPrivate::syncQStringStarWithCharStar()
-{
-  foreach(QString* qstringstar, this->QStringStarToCharStarMap.keys())
+  foreach(QString* qStringPtr, this->QStringPointerToCharPointerMap.keys())
     {
-    char** charstar = this->QStringStarToCharStarMap[qstringstar];
-    Q_ASSERT(charstar);
-    // Update QString only if the content pointed by charstar is valid
-    if (*charstar)
+    char** charPtr = this->QStringPointerToCharPointerMap[qStringPtr];
+    Q_ASSERT(charPtr);
+    // Update QString only if the content pointed by charPtr is valid
+    if (*charPtr)
       {
-      qstringstar->clear();
-      qstringstar->append(QLatin1String(*charstar));
+      qStringPtr->clear();
+      qStringPtr->append(QLatin1String(*charPtr));
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qVTKCommandOptionsPrivate::syncQStringListPtrWithStringVectorPtr()
+{
+  foreach(QStringList* qStringListPtr, this->QStringListPointerToStringVectorPointerMap.keys())
+    {
+    std::vector<std::string>* vectorPtr =
+      this->QStringListPointerToStringVectorPointerMap[qStringListPtr];
+    Q_ASSERT(vectorPtr);
+    // Update QString only if vectorPtr is not empty
+    if (vectorPtr->size() > 0)
+      {
+      qStringListPtr->clear();
+      QStringList convertedVector;
+      qCTKUtils::stlVectorToQList(*vectorPtr, convertedVector);
+      qStringListPtr->append(convertedVector);
       }
     }
 }
@@ -200,6 +214,15 @@ qVTKCommandOptions::~qVTKCommandOptions()
 }
 
 //----------------------------------------------------------------------------
+void qVTKCommandOptions::printAdditionalInfo()
+{
+  QCTK_D(qVTKCommandOptions);
+  qDebug() << "qVTKCommandOptions:" << this << endl
+           << " HelpSelected:" << this->helpSelected() << endl
+           << " DisableSettings:" << d->DisableSettings;
+}
+
+//----------------------------------------------------------------------------
 QCTK_GET_CXX(qVTKCommandOptions, QString, errorMessage, ErrorMessage);
 QCTK_GET_CXX(qVTKCommandOptions, QString, unknownArgument, UnknownArgument);
 QCTK_GET_CXX(qVTKCommandOptions, bool, helpSelected, HelpSelected);
@@ -212,7 +235,6 @@ QCTK_SET_CXX(qVTKCommandOptions, int, setProcessType, ProcessType);
 //----------------------------------------------------------------------------
 void qVTKCommandOptions::initialize()
 {
-  
 }
 
 //----------------------------------------------------------------------------
@@ -253,8 +275,30 @@ bool qVTKCommandOptions::parse(int argc, const char* const argv[])
     this->disableCurrentSettings();
     }
 
-  d->syncQStringStarWithCharStar();
+  d->syncQStringPtrWithCharPtr();
+  d->syncQStringListPtrWithStringVectorPtr();
+  
   return res1 && res2;
+}
+
+//----------------------------------------------------------------------------
+QStringList qVTKCommandOptions::remainingArguments()
+{
+  QCTK_D(qVTKCommandOptions);
+  QStringList tmp; 
+  for(int i=0; i < d->Argc; ++i)
+    {
+    tmp << d->Argv[i]; 
+    }
+  return tmp;
+}
+
+//----------------------------------------------------------------------------
+void qVTKCommandOptions::remainingArguments(int* argc, char*** argv)
+{
+  QCTK_D(qVTKCommandOptions);
+  *argc = d->Argc;
+  *argv = d->Argv;
 }
 
 //----------------------------------------------------------------------------
@@ -305,7 +349,7 @@ void qVTKCommandOptions::addBooleanArgument(const char* longarg, const char* sho
   // Attempt to read from settings only if longarg is different from '--disable-settings'.
   if (QLatin1String(longarg) != "--disable-settings")
     {
-    d->readBooleanOption(longarg, *var, defaultValue);
+    *var = d->Settings->value(QLatin1String(longarg+2), defaultValue).toBool();
     
     if(type & qVTKCommandOptions::QSETTINGS_ONLY)
       {
@@ -325,12 +369,61 @@ void qVTKCommandOptions::addBooleanArgument(const char* longarg, const char* sho
 }
 
 //----------------------------------------------------------------------------
-void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg, int* var,
-                                    const char* arghelp, int defaultValue, int type)
+void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg, QString* var,
+                                    const char* arghelp, const QString& defaultValue, int type)
 {
   QCTK_D(qVTKCommandOptions);
+  *var = d->Settings->value(QLatin1String(longarg+2), defaultValue).toString();
+  
+  if(type & qVTKCommandOptions::QSETTINGS_ONLY)
+    {
+    return;
+    }
+  
+  if(type & d->ProcessType || type == qVTKCommandOptions::ALL)
+    {
+    char ** charstar = d->mapQStringPtrToCharPtr(var);
+    typedef vtksys::CommandLineArguments argT;
+    d->CMD.AddArgument(longarg, argT::EQUAL_ARGUMENT, charstar, arghelp);
+    if ( shortarg )
+      {
+      d->CMD.AddArgument(shortarg, argT::EQUAL_ARGUMENT, charstar, longarg);
+      }
+    }
+}
 
-  d->readOption(longarg, *var, defaultValue);
+//----------------------------------------------------------------------------
+void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg,
+                                     QStringList* var, const char* arghelp,
+                                     const QStringList& defaultValue, int type)
+{
+  QCTK_D(qVTKCommandOptions);
+  *var = d->Settings->value(QLatin1String(longarg+2), defaultValue).toStringList();
+  
+  if(type & qVTKCommandOptions::QSETTINGS_ONLY)
+    {
+    return;
+    }
+    
+  if(type & d->ProcessType || type == qVTKCommandOptions::ALL)
+    {
+    std::vector<std::string>* vectorPtr = d->mapQStringListPtrToStringVectorPtr(var);
+    typedef vtksys::CommandLineArguments argT;
+    d->CMD.AddArgument(longarg, argT::MULTI_ARGUMENT, vectorPtr, arghelp);
+    if (shortarg)
+      {
+      d->CMD.AddArgument(shortarg, argT::MULTI_ARGUMENT, vectorPtr, longarg);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg, int* var,
+                                     const char* arghelp, int defaultValue, int type)
+{
+  QCTK_D(qVTKCommandOptions);
+  *var = d->Settings->value(QLatin1String(longarg+2), defaultValue).toInt();
+  
   if(type & qVTKCommandOptions::QSETTINGS_ONLY)
     {
     return;
@@ -343,30 +436,6 @@ void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg, 
     if (shortarg)
       {
       d->CMD.AddArgument(shortarg, argT::EQUAL_ARGUMENT, var, longarg);
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-void qVTKCommandOptions::addArgument(const char* longarg, const char* shortarg, QString* var,
-                                    const char* arghelp, const QString& defaultValue, int type)
-{
-  QCTK_D(qVTKCommandOptions);
-
-  d->readOption(longarg, *var, defaultValue);
-  if(type & qVTKCommandOptions::QSETTINGS_ONLY)
-    {
-    return;
-    }
-  
-  if(type & d->ProcessType || type == qVTKCommandOptions::ALL)
-    {
-    char ** charstar = d->mapQStringStarToCharStar(var);
-    typedef vtksys::CommandLineArguments argT;
-    d->CMD.AddArgument(longarg, argT::EQUAL_ARGUMENT, charstar, arghelp);
-    if ( shortarg )
-      {
-      d->CMD.AddArgument(shortarg, argT::EQUAL_ARGUMENT, charstar, longarg);
       }
     }
 }
