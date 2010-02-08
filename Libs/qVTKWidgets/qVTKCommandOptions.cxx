@@ -93,9 +93,13 @@ qVTKCommandOptionsPrivate::qVTKCommandOptionsPrivate()
 qVTKCommandOptionsPrivate::~qVTKCommandOptionsPrivate()
 {
   this->cleanArgcArgv();
-  foreach (QString* qstringpointer, this->QStringPointerToCharPointerMap.keys())
+  foreach (QString* qStringPtr, this->QStringPointerToCharPointerMap.keys())
     {
-    delete this->QStringPointerToCharPointerMap[qstringpointer];
+    delete this->QStringPointerToCharPointerMap[qStringPtr];
+    }
+  foreach (QStringList* qStringListPtr, this->QStringListPointerToStringVectorPointerMap.keys())
+    {
+    delete this->QStringListPointerToStringVectorPointerMap[qStringListPtr];
     }
 }
 
