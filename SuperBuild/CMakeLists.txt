@@ -11,6 +11,12 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
+# TODO
+#   - Add a Slicer3_USE_KWWIDGETS, that will configure some of the external project
+#         -> If ON, exclude TCL related packages + disable TCL wraping
+#         -> If OFF, enable Python wraping
+#   - See comments set(proj VTK)
+
 #-----------------------------------------------------------------------------
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 #
@@ -514,7 +520,29 @@ endif() # CMAKE_Fortran_COMPILER
 
 # Get and build vtk
 
-set(proj vtk)
+# TODO
+# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT OFF
+#       -> configure VTK with VTK_WRAP_TCL ON, VTK_WRAP_PYTHON OFF (and slicer default VTK options)
+#
+# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT ON 
+#       -> configure VTK with VTK_WRAP_TCL ON,
+#                             VTK_WRAP_PYTHON OFF
+#                             DESIRED_QT_VERSION 4
+#                             VTK_USE_GUISUPPORT ON
+#                             VTK_USE_QVTK ON
+#                             VTK_USE_QVTK_QTOPENGL OFF (should be OFF by default)
+#                             (and slicer default VTK options)
+#
+# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT ON 
+#       -> configure VTK with VTK_WRAP_TCL OFF,
+#                             VTK_WRAP_PYTHON ON
+#                             DESIRED_QT_VERSION 4
+#                             VTK_USE_GUISUPPORT ON
+#                             VTK_USE_QVTK ON
+#                             VTK_USE_QVTK_QTOPENGL OFF (should be OFF by default)
+#                             (and slicer default VTK options)
+
+set(proj VTK)
 set(vtk_tag VTK-5-4)
 set(vtk_module VTK)
 set(vtk_source ${CMAKE_BINARY_DIR}/VTK)
