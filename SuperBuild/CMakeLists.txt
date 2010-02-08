@@ -24,14 +24,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 include(CheckFortran)
 
 if(CMAKE_Fortran_COMPILER)
-  option(Slicer3_BUILD_BLAS "Build ParaView Testing" ON)
-  option(Slicer3_BUILD_LAPACK "Build ParaView Testing" ON)
+  option(Slicer3_BUILD_BLAS "Build Slicer with Blas." ON)
+  option(Slicer3_BUILD_LAPACK "Build Slicer with Lapack." ON)
   
   if(Slicer3_BUILD_NUMPY AND Slicer3_BUILD_LAPACK)
-    option(Slicer3_BUILD_NUMPY "Build ParaView Testing" ON)
+    option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (requires Blas and Lapack)." ON)
 
     if(Slicer3_BUILD_NUMPY)
-      option(Slicer3_BUILD_SCIPY "Build ParaView Testing" ON)
+      option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
     endif()
     
   endif()
