@@ -60,10 +60,15 @@ ADD_TEST( qVTKCommandOptionsTest3 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
 ADD_TEST( qVTKCommandOptionsTest3 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
           qVTKCommandOptionsTest1 --disable-settings --test-if-disablesettings-flag-works )
 
+SET(arg1 "Testing with")
+SET(arg2 " cmake is ")
+SET(arg3 "super awesome !")
+SET(arg4 "CMake rocks !")
+
 ADD_TEST( qVTKCommandOptionsTest4 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
-          qVTKCommandOptionsTest1 --my-list-of-strings Testing\ with \ cmake\ is\  super\ awesome\ !
-          -ms=CMake\ rocks\ ! --test-if-commandline-overwrite-liststring-settings )
+          qVTKCommandOptionsTest1 --my-list-of-strings ${arg1} ${arg2} ${arg3}
+          -ms=${arg4} --test-if-commandline-overwrite-liststring-settings )
 
 ADD_TEST( qVTKCommandOptionsTest5 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
-          qVTKCommandOptionsTest1 -mlos Testing\ with \ cmake\ is\  super\ awesome\ !
-          --my-string=CMake\ rocks\ ! --test-if-commandline-overwrite-liststring-settings )
+          qVTKCommandOptionsTest1 -mlos ${arg1} ${arg2} ${arg3}
+          --my-string=${arg4} --test-if-commandline-overwrite-liststring-settings )
