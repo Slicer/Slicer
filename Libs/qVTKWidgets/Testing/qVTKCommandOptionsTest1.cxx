@@ -85,7 +85,8 @@ public:
              << " TestIfDisableSettingsFlagWorks:" << this->TestIfDisableSettingsFlagWorks << endl
              << " GenerateTestData:" << this->GenerateTestData << endl
              << " SettingsFile:" << QTESTVTKCOMMANDOPTIONS_SETTINGS << endl
-             << " MyListOfStrings:" << this->MyListOfStrings << endl; 
+             << " MyListOfStrings:" << this->MyListOfStrings << endl
+             << " MyString:" << this->MyString << endl;
     
     }
   
@@ -99,7 +100,7 @@ protected:
     this->addBooleanArgument("--enable-awesome-test", "-eat", &this->AwesomeTestEnabled,
                              "Enables awesome test.");
 
-    this->addBooleanArgument("--test-if-commandline-overwrite-liststring-settings", 0,
+    this->addBooleanArgument("--test-if-commandline-overwrite-settings", 0,
                              &this->TestIfCommandLineOverwriteSettings,
                              "Should we test if QListString setting is overwriten by the "
                              "corresponding command line argument.");
@@ -242,7 +243,7 @@ int qVTKCommandOptionsTest1(int argc, char * argv [] )
       {
       commandOptions.printAdditionalInfo();
       std::cerr << "Error with parse() function - Content of MyString is incorrect" << std::endl
-                << "expected value is [Testing rocks !]" << std::endl
+                << "expected value is [CMake rocks !]" << std::endl
                 << "current value is [" << qPrintable(commandOptions.MyString) << "]" << std::endl;
       }
     return EXIT_SUCCESS;
@@ -271,7 +272,7 @@ int qVTKCommandOptionsTest1(int argc, char * argv [] )
       {
       commandOptions.printAdditionalInfo();
       std::cerr << "Error with parse() function - Content of MyString is incorrect" << std::endl
-                << "expected value is [CMake rocks !]" << std::endl
+                << "expected value is [Testing rocks !]" << std::endl
                 << "current value is [" << qPrintable(commandOptions.MyString) << "]" << std::endl;
       }
     }

@@ -65,10 +65,20 @@ SET(arg2 " cmake is ")
 SET(arg3 "super awesome !")
 SET(arg4 "CMake rocks !")
 
+IF(WIN32)
+ADD_TEST( qVTKCommandOptionsTest4 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
+          qVTKCommandOptionsTest1 --my-list-of-strings "${arg1}" "${arg2}" "${arg3}"
+          -ms="${arg4}" --test-if-commandline-overwrite-settings )
+
+ADD_TEST( qVTKCommandOptionsTest5 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
+          qVTKCommandOptionsTest1 -mlos "${arg1}" "${arg2}" "${arg3}"
+          --my-string="${arg4}" --test-if-commandline-overwrite-settings )
+ELSE()
 ADD_TEST( qVTKCommandOptionsTest4 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
           qVTKCommandOptionsTest1 --my-list-of-strings ${arg1} ${arg2} ${arg3}
-          -ms=${arg4} --test-if-commandline-overwrite-liststring-settings )
+          -ms=${arg4} --test-if-commandline-overwrite-settings )
 
 ADD_TEST( qVTKCommandOptionsTest5 ${LAUNCH_EXE} ${qVTKWidgets_TESTS}
           qVTKCommandOptionsTest1 -mlos ${arg1} ${arg2} ${arg3}
-          --my-string=${arg4} --test-if-commandline-overwrite-liststring-settings )
+          --my-string=${arg4} --test-if-commandline-overwrite-settings )
+ENDIF()
