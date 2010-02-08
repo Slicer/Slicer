@@ -422,6 +422,12 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     d->terminate();
     return;
     }
+
+  if (options->ignoreRest())
+    {
+    qDebug() << "Ignored arguments:" << options->ignoredArguments();
+    return;
+    }
 }
 
 //-----------------------------------------------------------------------------
