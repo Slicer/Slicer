@@ -14,17 +14,50 @@
 
 #include "qCTKUtils.h"
 
+// STL includes
+#include <algorithm>
+
 //------------------------------------------------------------------------------
-void qCTKUtils::stringListToArray(const QStringList& strList,
-                                        std::vector<char*>& charstarList)
+void qCTKUtils::qListToSTLVector(const QStringList& list,
+                                 std::vector<char*>& vector)
 {
   // Resize if required
-  if (strList.count() != static_cast<int>(charstarList.size()))
+  if (list.count() != static_cast<int>(vector.size()))
     {
-    charstarList.resize(strList.count());
+    vector.resize(list.count());
     }
-  for (int i = 0; i < strList.count(); ++i)
+  for (int i = 0; i < list.count(); ++i)
     {
-    charstarList[i] = strList[i].toLatin1().data();
+    // Allocate memory
+    char* str = new char[list[i].size()+1];
+    strcpy(str, list[i].toLatin1());
+    vector[i] = str;
     }
 }
+
+//------------------------------------------------------------------------------
+namespace
+{
+/// Convert QString to std::string
+static std::string qStringToSTLString(const QString& qstring)
+{
+  return qstring.toStdString();
+}
+}
+
+//------------------------------------------------------------------------------
+void qCTKUtils::qListToSTLVector(const QStringList& list,
+                                 std::vector<std::string>& vector)
+{
+  // To avoid unnessesary relocations, let's reserve the required amount of space
+  vector.reserve(list.size());
+  std::transform(list.begin(),list.end(),std::back_inserter(vector),&qStringToSTLString);
+}
+
+//------------------------------------------------------------------------------
+void qCTKUtils::stlVectorToQList(const std::vector<std::string>& vector,
+                                 QStringList& list)
+{
+  std::transform(vector.begin(),vector.end(),std::back_inserter(list),&QString::fromStdString);
+}
+

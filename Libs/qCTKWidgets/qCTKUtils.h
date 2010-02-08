@@ -31,7 +31,16 @@ public:
 
   ///
   /// Convert a QStringList to Vector of char*
-  static void stringListToArray(const QStringList& strList, std::vector<char*>& charstarList);
+  /// Caller will be responsible to delete the content of the vector
+  static void qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
+
+  ///
+  /// Convert a QStringList to a Vector of string
+  static void qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
+
+  ///
+  /// Convert a Vector of string to QStringList
+  static void stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
 
 private:
   /// Not implemented

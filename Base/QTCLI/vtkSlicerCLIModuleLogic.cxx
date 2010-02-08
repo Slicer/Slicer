@@ -1841,7 +1841,7 @@ void vtkSlicerCLIModuleLogic::runSharedObjectFilter(vtkMRMLCommandLineModuleNode
     int argc = argList.count();
 
     std::vector<char*> argv(argc);
-    qCTKUtils::stringListToArray(argList, argv);
+    qCTKUtils::qListToSTLVector(argList, argv);
 
     // run the module
     if ( qctk_d()->entryPointFunc != NULL ) {
