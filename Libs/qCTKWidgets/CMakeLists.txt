@@ -58,6 +58,8 @@ SET(qCTKWidgets_SRCS
   qCTKSettings.h
   qCTKSliderSpinBoxWidget.cxx
   qCTKSliderSpinBoxWidget.h
+  qCTKTestApplication.cxx
+  qCTKTestApplication.h
   qCTKTitleComboBox.cxx
   qCTKTitleComboBox.h
   qCTKTreeComboBox.cxx
