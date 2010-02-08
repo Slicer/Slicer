@@ -36,7 +36,7 @@ class qTestVTKCommandOptions : public qVTKCommandOptions
 {
 public:
   typedef qVTKCommandOptions Superclass;
-  qTestVTKCommandOptions(QSettings* settings):Superclass(settings)
+  qTestVTKCommandOptions(QSettings* _settings):Superclass(_settings)
     {
     this->AwesomeTestEnabled = false;
     this->CurrentSettingsDisabled = false;
@@ -62,17 +62,17 @@ public:
     {
     std::cout << "Saving test data:" << QTESTVTKCOMMANDOPTIONS_SETTINGS << std::endl;
     
-    QSettings settings(QTESTVTKCOMMANDOPTIONS_SETTINGS, QSettings::IniFormat);
+    QSettings newSettings(QTESTVTKCOMMANDOPTIONS_SETTINGS, QSettings::IniFormat);
 
-    settings.clear();
+    newSettings.clear();
     
-    settings.setValue("enable-awesome-test", QVariant(true));
+    newSettings.setValue("enable-awesome-test", QVariant(true));
 
-    settings.setValue("my-string", QVariant("Testing rocks !"));
+    newSettings.setValue("my-string", QVariant("Testing rocks !"));
     
     QStringList mystringlist;
     mystringlist << "Testing"; mystringlist << " is "; mystringlist << "awesome !";
-    settings.setValue("my-list-of-strings", QVariant(mystringlist));
+    newSettings.setValue("my-list-of-strings", QVariant(mystringlist));
     }
 
   virtual void printAdditionalInfo()
