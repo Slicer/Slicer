@@ -44,6 +44,11 @@ public:
   /// Callback executed when an unknown arguments is parsed
   static int unknownArgumentHandler(const char* argument, void* call_data);
 
+  /// If case the --ignore-rest flag has been specified, this method will
+  /// catch the first argument parsed.
+  /// If not, it will call the virtual method 'wrongArgument(const char* argument)'
+  bool checkForIgnoreRestFlag(const char* argument);
+
   /// Callback executed when a deprecated arguments is parsed
   static int deprecatedArgumentHandler(const char* argument, const char* value, void* call_data);
                                                        
@@ -66,6 +71,8 @@ public:
   QString                        ErrorMessage;
   bool                           HelpSelected;
   bool                           DisableSettings;
+  bool                           IgnoreRest;
+  QStringList                    IgnoredArguments;
   int                            Argc;
   char**                         Argv;
   QPointer<QSettings>            Settings;
@@ -88,6 +95,7 @@ qVTKCommandOptionsPrivate::qVTKCommandOptionsPrivate()
   this->Argv = 0; 
   this->HelpSelected = false;
   this->DisableSettings = false;
+  this->IgnoreRest = false;
 }
 
 // --------------------------------------------------------------------------
@@ -128,9 +136,24 @@ int qVTKCommandOptionsPrivate::unknownArgumentHandler(const char* argument,
   if (self)
     {
     self->UnknownArgument = QString::fromLatin1(argument);
-    return self->qctk_p()->wrongArgument(argument);
+    return self->checkForIgnoreRestFlag(argument);
     }
   return 0;
+}
+
+//----------------------------------------------------------------------------
+bool qVTKCommandOptionsPrivate::checkForIgnoreRestFlag(const char* argument)
+{
+  QCTK_P(qVTKCommandOptions);
+  if (this->IgnoreRest)
+    {
+    this->IgnoredArguments << QLatin1String(argument);
+    return true;
+    }
+  else
+    {
+    return p->wrongArgument(argument);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -224,7 +247,9 @@ void qVTKCommandOptions::printAdditionalInfo()
   QCTK_D(qVTKCommandOptions);
   qDebug() << "qVTKCommandOptions:" << this << endl
            << " HelpSelected:" << this->helpSelected() << endl
-           << " DisableSettings:" << d->DisableSettings;
+           << " DisableSettings:" << d->DisableSettings << endl
+           << " IgnoreRest:" << d->IgnoreRest << endl
+           << " IgnoredArguments:" << d->IgnoredArguments;
 }
 
 //----------------------------------------------------------------------------
@@ -233,6 +258,8 @@ QCTK_GET_CXX(qVTKCommandOptions, QString, unknownArgument, UnknownArgument);
 QCTK_GET_CXX(qVTKCommandOptions, bool, helpSelected, HelpSelected);
 QCTK_GET_CXX(qVTKCommandOptions, bool, disableSettings, DisableSettings);
 QCTK_GET_CXX(qVTKCommandOptions, QSettings*, settings, Settings);
+QCTK_GET_CXX(qVTKCommandOptions, bool, ignoreRest, IgnoreRest);
+QCTK_GET_CXX(qVTKCommandOptions, QStringList, ignoredArguments, IgnoredArguments);
 
 //----------------------------------------------------------------------------
 QCTK_GET_CXX(qVTKCommandOptions, int, processType, ProcessType);
@@ -269,6 +296,10 @@ bool qVTKCommandOptions::parse(int argc, const char* const argv[])
   this->addBooleanArgument("--disable-settings", 0, &d->DisableSettings,
                            "Start application ignoring user settings.");
 
+
+  this->addBooleanArgument("--ignore-rest", "--", &d->IgnoreRest,
+                           "Ignores the rest of the labeled arguments following this flag.");
+
   // Get options from the command line
   bool res1 = d->CMD.Parse();
   bool res2 = this->postProcess(argc, argv);
@@ -283,6 +314,14 @@ bool qVTKCommandOptions::parse(int argc, const char* const argv[])
 
   d->syncQStringPtrWithCharPtr();
   d->syncQStringListPtrWithStringVectorPtr();
+
+  // Since CommandLineArguments include arg0 in the list
+  // of remaining arguments, let's create a temporary list and remove it.
+  QStringList _remaingingArguments = this->remainingArguments();
+  _remaingingArguments.removeFirst();
+
+  // Update ignored arguments list
+  d->IgnoredArguments << _remaingingArguments;
   
   return res1 && res2;
 }

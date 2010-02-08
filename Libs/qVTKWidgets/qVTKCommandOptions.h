@@ -56,6 +56,14 @@ public:
   void remainingArguments(int* argc, char*** argv);
 
   ///
+  /// Return True if flag '--ignore-rest' has been specified
+  bool ignoreRest()const;
+
+  ///
+  /// If any, return the list of ignored arguments
+  QStringList ignoredArguments()const;
+
+  ///
   /// Get the index of the last parsed argument.
   int indexOfLastParsedArgument();
   
