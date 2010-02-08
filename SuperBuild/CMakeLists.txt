@@ -52,9 +52,6 @@ if(Slicer3_USE_PYTHON)
   endif(CMAKE_Fortran_COMPILER)
 endif() # Slicer3_USE_PYTHON
 
-
-
-
 # KWWidgets on by default.
 
 option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
@@ -76,7 +73,16 @@ set_property(DIRECTORY PROPERTY EP_BASE ${base})
 
 set(prefix "${base}/Install")
 
-OPTION(BUILD_SHARED_LIBS "Build with shared libraries.")
+option(BUILD_SHARED_LIBS "Build with shared libraries.")
+set(CMAKE_BUILD_TYPE "Release")
+
+# Compute -G arg for configuring external projects with the same CMake generator:
+#
+if(CMAKE_EXTRA_GENERATOR)
+  set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
+else()
+  set(gen "${CMAKE_GENERATOR}")
+endif()
 
 # Set the default build type---this will affect all libraries and
 # applications
@@ -146,14 +152,12 @@ if(WIN32)
   set(tk_SOURCE_DIR tcl/tk)
 elseif(APPLE)
 # uncmd ./configure --with-tcl=./tcl-build/lib --prefix=./tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
-  set(tk_DEPENDS tcl)
   set(tk_SOURCE_DIR tcl/tk)
   set(tk_BUILD_IN_SOURCE 1)
   set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
   set(tk_BUILD_COMMAND make ${parallelism_level})
   set(tk_INSTALL_COMMAND make install)
 else()
-  set(tk_DEPENDS tcl)
   set(tk_SOURCE_DIR tcl/tk)
   set(tk_BUILD_IN_SOURCE 1)
   set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
@@ -545,23 +549,43 @@ set(vtk_tag VTK-5-4)
 set(vtk_module VTK)
 set(vtk_source ${CMAKE_BINARY_DIR}/VTK)
 
+set(vtk_DEPENDS)
+set(vtk_WRAP_TCL OFF)
+
+if(Slicer3_USE_KWWIDGETS)
+  list(APPEND vtk_DEPENDS iwidgets)
+  set(vtk_WRAP_TCL ON)
+endif(Slicer3_USE_KWWIDGETS)
+
+set(vtk_QT_ARGS)
+if(Slicer3_USE_QT)
+  set(vtk_QT_ARGS
+    -DDESIRED_QT_VERSION:STRING=4
+    -DVTK_USE_GUISUPPORT:BOOL=ON
+    -DVTK_USE_QVTK:BOOL=ON
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    )
+endif(Slicer3_USE_QT)
+
 set(slicer_TCL_LIB)
 set(slicer_TK_LIB)
 set(slicer_TCLSH)
 
-if(WIN32)
-  set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tcl84.lib)
-  set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tk84.lib)
-  set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh.exe)
-elseif(APPLE)
-  set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.dylib)
-  set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.dylib)
-  set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
-else()
-  set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.so)
-  set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.so)
-  set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
-endif()
+if(vtk_WRAP_TCL)
+  if(WIN32)
+    set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tcl84.lib)
+    set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tk84.lib)
+    set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh.exe)
+  elseif(APPLE)
+    set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.dylib)
+    set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.dylib)
+    set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
+  else()
+    set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.so)
+    set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.so)
+    set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
+  endif()
+endif(vtk_WRAP_TCL)
 
 #set ::TCL_BIN_DIR $::Slicer3_LIB/tcl-build/bin
 #set ::TCL_LIB_DIR $::Slicer3_LIB/tcl-build/lib
@@ -571,7 +595,7 @@ endif()
 #set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
 
 ExternalProject_Add(vtk
-  DEPENDS python iwidgets
+  DEPENDS ${vtk_DEPENDS}
   CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
   CVS_MODULE ${vtk_module}
   CVS_TAG -r ${vtk_tag}
@@ -582,11 +606,10 @@ ExternalProject_Add(vtk
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DBUILD_SHARED_LIBS:BOOL=ON
-    -DCMAKE_BUILD_TYPE:STRING=Release
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
-    -DVTK_WRAP_TCL:BOOL=ON
+    -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
     -DVTK_USE_PARALLEL:BOOL=ON
     -DVTK_DEBUG_LEAKS:BOOL=ON
     -DTCL_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
@@ -594,7 +617,7 @@ ExternalProject_Add(vtk
     -DTCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DTK_LIBRARY:FILEPATH=${slicer_TK_LIB}
     -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
-    ${mac_args}
+    ${vtk_QT_ARGS}
   INSTALL_COMMAND ""
 )
 
@@ -789,10 +812,10 @@ set(proj Slicer3)
 
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
-set(slicer_DEPENDENCIES tcl KWWidgets teem OpenIGTLink BatchMake python vtk)
+set(slicer_DEPENDS tcl KWWidgets teem OpenIGTLink BatchMake python vtk)
 
 if(CMAKE_Fortran_COMPILER)
-  set(slicer_DEPENDENCIES tcl KWWidgets teem OpenIGTLink BatchMake python numpy blas lapack vtk)
+  set(slicer_DEPENDS tcl KWWidgets teem OpenIGTLink BatchMake python numpy blas lapack vtk)
 endif(CMAKE_Fortran_COMPILER)
 
 if(WIN32)
@@ -805,6 +828,14 @@ else()
   set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
   set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.so)
 endif()
+
+set(slicer_QT_ARGS)
+if(Slicer3_USE_QT)
+  set(slicer_QT_ARGS
+    -DSlicer3_USE_QT:BOOL=ON
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    )
+endif(Slicer3_USE_QT)
 
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDENCIES}
@@ -837,6 +868,6 @@ ExternalProject_Add(${proj}
     -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
     -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build 
-     ${mac_args}
+    ${slicer_QT_ARGS}
   INSTALL_COMMAND ""
 )
