@@ -92,6 +92,25 @@ qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* _parent) : Superclass(_par
   //d->insertActionItems();
 }
 
+/// --------------------------------------------------------------------------
+void qCTKAddRemoveComboBox::printAdditionalInfo()
+{
+  QCTK_D(qCTKAddRemoveComboBox);
+  qDebug() << "qCTKAddRemoveComboBox:" << this << endl
+           << " EmptyText:" << d->EmptyText << endl
+           << " AddText:" << d->AddText << endl
+           << " RemoveText:" << d->RemoveText << endl
+           << " EditText:" << d->EditText << endl
+           << " AddingEmptyItem:" << d->AddingEmptyItem << endl
+           << " RemovingEmptyItem:" << d->RemovingEmptyItem << endl
+           << " AddEnabled:" << d->AddEnabled << endl
+           << " RemoveEnabled:" << d->RemoveEnabled << endl
+           << " EditEnabled:" << d->EditEnabled << endl
+           << " HasEmptyItem:" << d->HasEmptyItem << endl
+           << " PushButtonEnabled:" << d->PushButtonEnabled;
+}
+
+/// --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::setComboBox(QComboBox* comboBox)
 {
@@ -533,7 +552,7 @@ qCTKAddRemoveComboBoxPrivate::qCTKAddRemoveComboBoxPrivate()
   this->EditEnabled = true;
 
   this->HasEmptyItem = false;
-  this->PushButtonEnabled = false;
+  this->PushButtonEnabled = true;
 }
     
 // --------------------------------------------------------------------------

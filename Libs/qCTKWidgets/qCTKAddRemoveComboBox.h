@@ -47,6 +47,7 @@ public:
   /// Constructors
   explicit qCTKAddRemoveComboBox(QWidget* parent = 0);
   virtual ~qCTKAddRemoveComboBox(){}
+  virtual void printAdditionalInfo();
   
   /// 
   /// Set text that should be displayed in the comboBox when it is empty
