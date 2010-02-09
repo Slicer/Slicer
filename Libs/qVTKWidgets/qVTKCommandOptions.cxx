@@ -45,7 +45,7 @@ public:
   static int unknownArgumentHandler(const char* argument, void* call_data);
 
   /// If case the --ignore-rest flag has been specified, this method will
-  /// catch the first argument parsed.
+  /// catch the first argument parsed and add it to the ignoredArguments list.
   /// If not, it will call the virtual method 'wrongArgument(const char* argument)'
   bool checkForIgnoreRestFlag(const char* argument);
 
