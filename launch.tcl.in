@@ -404,7 +404,7 @@ proc launch_SetEnvironment {} {
     # If reportVTKErrors is nonzero, then we check for VTK errors and
     # if a VTK error is found then launcher returns with error (causing the test to FAIL)
     set ::LAUNCH(reportVTKErrors) 0
-    if {@LAUNCHER_REPORT_VTK_ERRORS@=="ON"} {
+    if {"@LAUNCHER_REPORT_VTK_ERRORS@"=="ON"} {
       set ::LAUNCH(reportVTKErrors) 1
     }
 }
