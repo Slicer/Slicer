@@ -14,6 +14,11 @@
 ## variables that are the same for all systems
 set ::Slicer3_DATA_ROOT ""
 
+# If ::LAUNCHER_REPORT_VTK_ERRORS is set to ON, then the launched
+# process returns with error if VTK errors are found
+# (this stricter checking is useful for test execution) 
+set ::LAUNCHER_REPORT_VTK_ERRORS "OFF"
+
 if {[info exists ::env(Slicer3_HOME)]} {
     # already set by the launcher
     set ::Slicer3_HOME $::env(Slicer3_HOME)

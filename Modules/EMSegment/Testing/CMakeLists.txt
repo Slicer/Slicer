@@ -394,6 +394,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFBogusParameterNode
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --parametersMRMLNodeName BogusNodeName  
@@ -408,6 +409,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFBogusMRMLScene
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName /tmp/bogus_file_scene.mrml
     )
   set_tests_properties(
@@ -420,6 +422,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFBogusTargetImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
@@ -435,6 +438,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFTooManyImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
@@ -450,6 +454,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFTooFewImages
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --targetVolumeFileNames
@@ -465,6 +470,7 @@ if(NOT DISABLE_CXX_TESTING)
   add_test(
     EMSegCL_EFBogusResultStandardImage
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --resultStandardVolumeFileName
