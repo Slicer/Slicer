@@ -29,6 +29,11 @@
 set ::errorCode 0
 set ::errorInfo ""
 
+set ::EXIT_CODE_NO_ERROR 0
+set ::EXIT_CODE_CHILD_KILLED 1
+set ::EXIT_CODE_GENERIC_ERROR -1
+set ::EXIT_CODE_VTK_ERROR -2
+set ::EXIT_CODE_LAUNCHING_ERROR -3
 
 #-------------------------------------------------------------------------------
 # .PROC ShowAndLogError
@@ -147,7 +152,7 @@ proc launch_SetEnvironment {} {
             set ::BUILD(bitness) "64"
         } elseif {$::SlicerBinaryBitness == "64" && $::isainfo == 32} {
     	ShowAndLogError "You can't run a 64 bit program on a 32 bit kernel!"
-    	exit
+    	exit $::EXIT_CODE_GENERIC_ERROR
         }
     }	
     
@@ -458,7 +463,7 @@ proc launch_ParseArgs {argv} {
     "--designer" {
       if { $::Slicer3_USE_QT != "ON" } {
         ShowAndLogError "Failed to start Qt Designer - Slicer is *NOT* built with QT Support"
-        exit
+        exit $::EXIT_CODE_GENERIC_ERROR
       }
       set ::LAUNCH(launchDesigner) 1
       set ::argv [lreplace $::argv 0 1]
@@ -468,7 +473,7 @@ proc launch_ParseArgs {argv} {
     "--launch-script" {
       set ::argv [lreplace $::argv 0 1]
       uplevel #0 source $argv1
-      exit
+      exit $::EXIT_CODE_NO_ERROR
     }
   }
 
@@ -906,7 +911,7 @@ proc launch_RunProgram {} {
     if { $::LAUNCH(launchCommand) == "" } {          
         if { [catch { set ::LAUNCH(launchCommand) $::Slicer3_REAL } res] } {
             ShowAndLogError "Failed to execute Slicer3_REAL: $res"
-            exit -1
+            exit $::EXIT_CODE_GENERIC_ERROR
         }              
     }
 
@@ -917,18 +922,18 @@ proc launch_RunProgram {} {
     # detach mode: start the executable and then go away
     if { $::LAUNCH(detach) } {
         exec $::LAUNCH(launchCommand) $::argv &
-        exit
+        exit $::EXIT_CODE_NO_ERROR
     }
 
     if {$::env(BUILD) == $::WINDOWS} {        
         if { [catch { set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r] } res] } {
             ShowAndLogError "Failed to execute $::LAUNCH(launchCommand): $res"
-            exit -1
+            exit $::EXIT_CODE_GENERIC_ERROR
         }        
     } else {               
         if { [catch { set fp [open "| sh -c \"'$::LAUNCH(launchCommand)' $::argv \" |& cat" r] } res] } {
             ShowAndLogError "Failed to execute $::LAUNCH(launchCommand): $res"
-            exit -1
+            exit $::EXIT_CODE_GENERIC_ERROR
         }        
     }
 
@@ -958,32 +963,32 @@ proc launch_RunProgram {} {
     switch $codeString {
       "" -
       "NONE" { 
-        set code 0 
+        set code "$::EXIT_CODE_NO_ERROR" 
       }
       "CHILDKILLED" {
-        set code 1
+        set code "$::EXIT_CODE_CHILD_KILLED"
         set result "$result\n$::saved_errorCode"
       }
       "CHILDSTATUS" {
         set code [lindex $::saved_errorCode 2] 
       }
       default {
-        set code -1
+        set code "$::EXIT_CODE_GENERIC_ERROR"
         set result "Exceptional errorCode: $::saved_errorCode, $::saved_errorCode\n$::saved_errorInfo"
       }
     }
          
     # If the process returned without errors, but there are VTK errors in the output, then return with error code
-    if { $code == 0 && $::LAUNCH(reportVTKErrors) != 0 } {
+    if { $code == "$::EXIT_CODE_NO_ERROR" && $::LAUNCH(reportVTKErrors) != 0 } {
       set vtkErrorString "ERROR: In "
       if { [string first $vtkErrorString $result] != -1 } {
-        set code -2
+        set code "$::EXIT_CODE_VTK_ERROR"
         set result "VTK error\n $result"
       }
     }         
          
     if { $result != "" } {
-      if {$code != 0} {
+      if {$code != "$::EXIT_CODE_NO_ERROR"} {
         ShowAndLogError "Launch $::LAUNCH(launchCommand) returned with error: $result"
       } else {
         puts "$result"
@@ -1058,21 +1063,25 @@ proc launch_ImportModulePaths {} {
 
 if { [catch launch_SetEnvironment res] } {
   ShowAndLogError "launch_SetEnvironment failed: $res"
+  exit $::EXIT_CODE_LAUNCHING_ERROR
 }
 if { [catch {launch_ParseArgs $argv} res] } {
   ShowAndLogError "launch_ParseArgs failed: $res"
+  exit $::EXIT_CODE_LAUNCHING_ERROR
 }
 if { [catch launch_SplashScreen res] } {
   ShowAndLogError "launch_SplashScreen failed: $res"
 }
 if { [catch launch_SetPaths res] } {
   ShowAndLogError "launch_SetPaths failed: $res"
+  exit $::EXIT_CODE_LAUNCHING_ERROR
 }
 if { [catch launch_ImportModulePaths res] } {
   ShowAndLogError "launch_ImportModulePaths failed: $res"
+  exit $::EXIT_CODE_LAUNCHING_ERROR
 }
 # run program until it exits and then exit this script with the ouput
 if { [catch launch_RunProgram res] } {
   ShowAndLogError "launch_RunProgram failed: $res"
-  exit -3
+  exit $::EXIT_CODE_LAUNCHING_ERROR
 }
