@@ -277,6 +277,7 @@ proc launch_SetEnvironment {} {
       set ::Teem_BUILD_SUBDIR  ""
       set ::OpenIGTLink_BUILD_SUBDIR  ""
       set ::BatchMake_BUILD_SUBDIR  ""
+      set ::QtDesignerPlugins_BUILD_SUBDIR  ""
     
       if {$::env(BUILD) == $::WINDOWS} {
         foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
@@ -303,6 +304,11 @@ proc launch_SetEnvironment {} {
           }
           if { [file exists "@BatchMake_DIR@/bin/$buildType/BatchMake.dll"] } {
             set ::BatchMake_BUILD_SUBDIR $buildType
+          }
+          if { "@Slicer3_QT_PLUGIN_PATH@" != "" } {
+            if { [file exists "@Slicer3_QT_PLUGIN_PATH@/designer/$buildType/qCTKWidgetsPlugin.dll"] } {
+              set ::QtDesignerPlugins_BUILD_SUBDIR $buildType
+            }
           }
         }
       } else {
@@ -400,7 +406,7 @@ proc launch_SetEnvironment {} {
     
     
       # QtDesigner variable  
-      StoreDirInEnvVar Slicer3_QT_PLUGIN_PATH "@Slicer3_QT_PLUGIN_PATH@"
+      StoreDirInEnvVar Slicer3_QT_PLUGIN_PATH "@Slicer3_QT_PLUGIN_PATH@/$::QtDesignerPlugins_BUILD_SUBDIR"
       
     }
     
