@@ -1452,6 +1452,8 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
 
 int vtkVolumeRenderingGUI::ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  if (vspNode == NULL)
+    return 0;
   //check all inputs
   if (vspNode->GetVolumeNodeID() && strcmp(vspNode->GetVolumeNodeID(), "NULL") != 0 && vspNode->GetVolumeNode() == NULL)
     return 0;
