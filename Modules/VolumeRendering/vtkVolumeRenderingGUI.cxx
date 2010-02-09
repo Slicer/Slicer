@@ -232,9 +232,9 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->CB_VolumeRenderingOnOff = vtkKWCheckButtonWithLabel::New();
   this->CB_VolumeRenderingOnOff->SetParent(loadSaveDataFrame->GetFrame());
   this->CB_VolumeRenderingOnOff->Create();
-  this->CB_VolumeRenderingOnOff->SetBalloonHelpString("Turn on or turn off VolumeRendering module");
-  this->CB_VolumeRenderingOnOff->SetLabelText("VolumeRendering Module On/Off");
-  this->CB_VolumeRenderingOnOff->SetLabelWidth(25);
+  this->CB_VolumeRenderingOnOff->SetBalloonHelpString("If unchecked the VolumeRendering module will not monitor scene loading event.");
+  this->CB_VolumeRenderingOnOff->SetLabelText("Monitor Scene Loading Event");
+  this->CB_VolumeRenderingOnOff->SetLabelWidth(30);
   this->CB_VolumeRenderingOnOff->GetWidget()->SetSelectedState(1);
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_VolumeRenderingOnOff->GetWidgetName() );
   this->CB_VolumeRenderingOnOff->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
@@ -745,6 +745,13 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   }
   //End Check NodeSelectors
 
+  vtkKWCheckButton *callerObjectCheckButton = vtkKWCheckButton::SafeDownCast(caller);
+  if (callerObjectCheckButton == this->CB_VolumeRenderingOnOff->GetWidget())
+  {
+    if (this->CB_VolumeRenderingOnOff->GetWidget()->GetSelectedState() && this->ScenarioNode != NULL)
+      this->InitializePipelineFromParametersNode();
+  }
+  
   this->ProcessingGUIEvents = 0;
 }
 
@@ -769,7 +776,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
         vtkMRMLVolumeRenderingScenarioNode *sNode = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(addedNode);
         this->ScenarioNode = sNode;
 
-        if (this->GetCurrentParametersNode() != NULL)
+        if (this->GetCurrentParametersNode() != NULL && this->CB_VolumeRenderingOnOff->GetWidget()->GetSelectedState())
         {
           this->InitializePipelineFromParametersNode();
         }
