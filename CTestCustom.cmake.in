@@ -58,6 +58,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Qq]t.*h.*warning.*declaration of .* shadows a member of .this"
   "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
 
+  # Suppress warning caused when QT 'foreach' loops are combined
+  ".*warning: declaration of '_container_' shadows a previous local"
+
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512.*"
 
