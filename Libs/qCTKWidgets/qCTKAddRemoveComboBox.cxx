@@ -87,10 +87,6 @@ qCTKAddRemoveComboBox::qCTKAddRemoveComboBox(QWidget* _parent) : Superclass(_par
 
   // Add default 'empty item'
   d->insertEmptyItem();
-//   d->AddingEmptyItem = true;
-//   d->ComboBox->addItem(d->EmptyText);
-//   d->AddingEmptyItem = false;
-//   d->HasEmptyItem = true;
 
   // By default, add the combo box action
   //d->insertActionItems();
@@ -120,10 +116,6 @@ void qCTKAddRemoveComboBox::setComboBox(QComboBox* comboBox)
 
   // Add default 'empty item'
   d->insertEmptyItem();
-//   d->AddingEmptyItem = true;
-//   d->ComboBox->addItem(d->EmptyText);
-//   d->AddingEmptyItem = false;
-//   d->HasEmptyItem = true;
 }
 
 // --------------------------------------------------------------------------
@@ -158,7 +150,7 @@ QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, editText, EditText);
 void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int start, int end)
 {
   QCTK_D(qCTKAddRemoveComboBox);
-  
+
   if (_parent != d->ComboBox->rootModelIndex())
     {//rows that are to be added in the model are not displayed by the combobox
     return;
@@ -202,7 +194,7 @@ void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int star
 void qCTKAddRemoveComboBox::onRowsAboutToBeRemoved(const QModelIndex & _parent, int start, int end)
 {
   QCTK_D(qCTKAddRemoveComboBox);
-  
+
   if (_parent != d->ComboBox->rootModelIndex())
     {//rows that are to be added in the model are not displayed by the combobox
     return;
@@ -233,11 +225,9 @@ void qCTKAddRemoveComboBox::onRowsRemoved(const QModelIndex & _parent, int start
   // the combobox is now empty, add the EmptyItem if needed
   if (d->ComboBox->count() == 0)
     {
-//     d->HasEmptyItem = true;
-//     d->AddingEmptyItem = true;
-//     d->ComboBox->addItem(d->EmptyText);
-//     d->AddingEmptyItem = false;
-    d->insertEmptyItem(); 
+    // Add default 'empty item'
+    d->insertEmptyItem();
+   
     if (d->RemoveEnabled)
       {
       d->RemovePushButton->setEnabled(false);
@@ -491,7 +481,7 @@ void qCTKAddRemoveComboBox::clear()
   
   if (d->HasEmptyItem)
     {
-    return; 
+    return;
     }
   d->ComboBox->clear();
 }
@@ -557,13 +547,10 @@ void qCTKAddRemoveComboBoxPrivate::insertActionItems()
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBoxPrivate::insertEmptyItem()
 {
-  if (!this->HasEmptyItem)
-    {
-    this->AddingEmptyItem = true;
-    this->ComboBox->insertItem(0, this->EmptyText);
-    this->AddingEmptyItem = false;
-    this->HasEmptyItem = true; 
-    }
+  this->AddingEmptyItem = true;
+  this->ComboBox->insertItem(0, this->EmptyText);
+  this->AddingEmptyItem = false;
+  this->HasEmptyItem = true;
 }
 
 // --------------------------------------------------------------------------
