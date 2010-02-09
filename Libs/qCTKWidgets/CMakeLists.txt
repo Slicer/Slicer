@@ -83,6 +83,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKNumericInput.h
   qCTKSettings.h
   qCTKSliderSpinBoxWidget.h
+  qCTKTestApplication.h
   qCTKTitleComboBox.h
   qCTKTreeComboBox.h
   )

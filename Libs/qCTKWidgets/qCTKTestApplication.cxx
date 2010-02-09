@@ -33,12 +33,14 @@
 
 #include "qCTKTestApplication.h"
 
-#include <stdio.h>
-
+// QT includes
 #include <QTimer>
 #include <QWidget>
 #include <QKeyEvent>
 #include <QMouseEvent>
+
+// STL includes
+#include <iostream>
 
 int qCTKTestApplication::Error = 0;
 
@@ -70,6 +72,17 @@ qCTKTestApplication::~qCTKTestApplication()
 }
 
 //-----------------------------------------------------------------------------
+void qCTKTestApplication::runTestSlot()
+{
+  this->runTest();
+}
+
+//-----------------------------------------------------------------------------
+void qCTKTestApplication::runTest()
+{
+}
+
+//-----------------------------------------------------------------------------
 int qCTKTestApplication::exec(bool reportErrorsOnExit)
 {
   if(QCoreApplication::arguments().contains("--exit"))
@@ -95,18 +108,18 @@ void qCTKTestApplication::messageHandler(QtMsgType type, const char *msg)
   switch(type)
   {
   case QtDebugMsg:
-    fprintf(stderr, "Debug: %s\n", msg);
+    std::cerr << "Debug: " << msg << std::endl;
     break;
   case QtWarningMsg:
-    fprintf(stderr, "Warning: %s\n", msg);
+    std::cerr << "Warning: " << msg << std::endl;
     Error++;
     break;
   case QtCriticalMsg:
-    fprintf(stderr, "Critical: %s\n", msg);
+    std::cerr << "Critical: " << msg << std::endl;
     Error++;
     break;
   case QtFatalMsg:
-    fprintf(stderr, "Fatal: %s\n", msg);
+    std::cerr << "Fatal: " << msg << std::endl;
     abort();
   }
 }

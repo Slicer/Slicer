@@ -34,20 +34,59 @@
 #ifndef __qCTKTestApplication_h
 #define __qCTKTestApplication_h
 
+// QT includes
 #include <QApplication>
 #include <QVector>
 #include <QByteArray>
+#include <QTimer>
 
-class qCTKTestApplication
+/// Helper macro allowing to declare a test
+#define QCTK_DECLARE_TEST(TEST_NAME)                \
+namespace                                           \
+{                                                   \
+class _TEST_NAME : public qCTKTestApplication       \
+{                                                   \
+public:                                             \
+  _TEST_NAME(int _argc, char * _argv []):           \
+    qCTKTestApplication(_argc, _argv){}             \
+  virtual void runTest();                           \
+};                                                  \
+                                                    \
+void _TEST_NAME::runTest()                          \
+
+/// Helper macro allowing to define a test
+#define QCTK_RUN_TEST(TEST_NAME)                      \
+}                                                     \
+                                                      \
+int TEST_NAME(int _argc, char * _argv [] )            \
+{                                                     \
+  _TEST_NAME app(_argc, _argv);                       \
+  QTimer::singleShot(0, &app, SLOT(runTestSlot()));   \
+  return _TEST_NAME::exec();                          \
+}
+
+/// Helper macro allowing to exit the event loop specifying a return code
+#define QCTK_EXIT_TEST(_status)    \
+  QCoreApplication::exit(_status); \
+  return;
+  
+
+class qCTKTestApplication : public QObject
 {
+  Q_OBJECT
+  
 public:
   qCTKTestApplication(int _argc, char** _argv);
   ~qCTKTestApplication();
 
-  // Description:
-  // If reportErrorsOnExit is true, then the return value will
-  // be the number of warning messages plus the number of error messages
-  // produced by QDebug during execution.
+  /// This function could be overloaded to implement test that required
+  /// an active event loop
+  virtual void runTest();
+  
+  /// 
+  /// If reportErrorsOnExit is true, then the return value will
+  /// be the number of warning messages plus the number of error messages
+  /// produced by QDebug during execution.
   static int exec(bool reportErrorsOnExit=false);
 
   static void messageHandler(QtMsgType type, const char *msg);
@@ -76,6 +115,12 @@ public:
 
   static void mouseDClick(QWidget* w, QPoint pos, Qt::MouseButton btn, 
                           Qt::KeyboardModifiers mod, int ms);
+
+public slots:
+
+  /// Slot responsible to invoke the virtual function 'runTest'.
+  /// The typical use case consists in calling that slot using a singleShot QTimer
+  void runTestSlot(); 
 
 private:
   QApplication*     App;
