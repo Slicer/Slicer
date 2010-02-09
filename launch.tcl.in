@@ -306,7 +306,7 @@ proc launch_SetEnvironment {} {
             set ::BatchMake_BUILD_SUBDIR $buildType
           }
           if { "@Slicer3_QT_PLUGIN_PATH@" != "" } {
-            if { [file exists "@Slicer3_QT_PLUGIN_PATH@/designer/$buildType/qCTKWidgetsPlugin.dll"] } {
+            if { [file exists "@Slicer3_QT_PLUGIN_PATH@/$buildType/designer/qCTKWidgetsPlugin.dll"] } {
               set ::QtDesignerPlugins_BUILD_SUBDIR $buildType
             }
           }
