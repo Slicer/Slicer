@@ -70,8 +70,10 @@ int TEST_NAME(int _argc, char * _argv [] )            \
   QCoreApplication::exit(_status); \
   return;
   
+#include "qCTKWidgetsExport.h"
+  
 
-class qCTKTestApplication : public QObject
+class QCTK_WIDGETS_EXPORT qCTKTestApplication : public QObject
 {
   Q_OBJECT
   
