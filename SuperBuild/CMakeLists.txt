@@ -845,7 +845,7 @@ if(Slicer3_USE_QT)
 endif(Slicer3_USE_QT)
 
 ExternalProject_Add(${proj}
-  DEPENDS ${slicer_DEPENS}
+  DEPENDS ${slicer_DEPENDS}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
   BINARY_DIR Slicer3-build
