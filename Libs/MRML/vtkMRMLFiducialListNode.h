@@ -168,7 +168,7 @@ public:
     {
       DisplayModifiedEvent = 19000,
       PolyDataModifiedEvent = 19001,
-      FiducialModifiedEvent = 19002,
+      FiducialModifiedEvent = 19002
     };
 //ETX
 
@@ -216,7 +216,7 @@ public:
     StarBurst2D,
     Sphere3D,
     Diamond3D,
-    GlyphMax = Diamond3D,
+    GlyphMax = Diamond3D
   };
   //ETX
   /// Return the min/max glyph types, for iterating over them in tcl
@@ -269,7 +269,7 @@ public:
       UseID = SchemeMin,
       UseIndex,
       UsePrevious,
-      SchemeMax = UsePrevious,
+      SchemeMax = UsePrevious
   };
   //ETX
 

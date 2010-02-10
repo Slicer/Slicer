@@ -74,7 +74,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
     {
     visModeScalar = 0,
     visModeGlyph = 1,
-    visModeBoth = 2,
+    visModeBoth = 2
     };
   //ETX 
   vtkGetMacro(VisualizationMode, int);

@@ -63,7 +63,7 @@ public:
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
-      DisplayModifiedEvent = 20000,
+      DisplayModifiedEvent = 20000
     };
 //ETX
 
@@ -88,7 +88,7 @@ public:
   {
     PETheat = 0,
     PETrainbow = 1,
-    PETMIP = 2,
+    PETMIP = 2
   };
   //ETX
   /// 

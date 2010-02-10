@@ -127,7 +127,7 @@ public:
   enum
     {
       DisplayModifiedEvent = 17000,
-      PolyDataModifiedEvent = 17001,
+      PolyDataModifiedEvent = 17001
     };
 //ETX
 

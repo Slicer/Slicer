@@ -106,7 +106,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
       {
       DisplayModifiedEvent = 21000,  
       PolyDataModifiedEvent = 21001, 
-      ROIModifiedEvent = 21002,
+      ROIModifiedEvent = 21002
       };
     //ETX
 

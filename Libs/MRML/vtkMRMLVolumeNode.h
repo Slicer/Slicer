@@ -149,7 +149,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   /// PolyDataModifiedEvent is generated when PloyData is changed
   enum
     {
-      ImageDataModifiedEvent = 18001,
+      ImageDataModifiedEvent = 18001
     };
 //ETX
 

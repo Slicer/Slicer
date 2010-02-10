@@ -83,7 +83,7 @@ public:
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
-      DisplayModifiedEvent = 20000,
+      DisplayModifiedEvent = 20000
     };
 //ETX
 
@@ -106,7 +106,7 @@ public:
   enum
   {
     dGEMRIC15T = 0,
-    dGEMRIC3T = 1,
+    dGEMRIC3T = 1
   };
   //ETX
   /// 

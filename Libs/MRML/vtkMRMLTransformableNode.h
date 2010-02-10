@@ -87,7 +87,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
   /// TransformModifiedEvent is send when the parent transform is modidied
   enum
     {
-      TransformModifiedEvent = 15000,
+      TransformModifiedEvent = 15000
     };
  //ETX
  

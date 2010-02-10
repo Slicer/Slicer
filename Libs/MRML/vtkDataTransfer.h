@@ -88,7 +88,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       Cancelled,
       Ready,
       Deleted,
-      TimedOut,
+      TimedOut
     };
   /// transfer type values
   enum
@@ -97,7 +97,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       RemoteUpload,
       LocalLoad,
       LocalSave,
-      Unspecified,
+      Unspecified
     };
   //ETX
 

@@ -41,19 +41,19 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
   /// Events
   //BTX
   enum {
-    UpdateGraphEvent = 11900,
+    UpdateGraphEvent = 11900
   };
   //ETX
 
   /// Interpolation method
   //BTX
   enum {
-    INTERP_LINEAR = 0,
+    INTERP_LINEAR = 0
   };
   enum {
     TYPE_CURVE = 0,
     TYPE_VERTICAL_LINE,
-    TYPE_HORIZONTAL_LINE,
+    TYPE_HORIZONTAL_LINE
   };
   //ETX
 

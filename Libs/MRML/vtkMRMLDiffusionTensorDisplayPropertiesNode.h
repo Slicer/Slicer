@@ -93,7 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     ParallelDiffusivity =  22,
     PerpendicularDiffusivity =  23,
     ColorOrientationMiddleEigenvector = 24,
-    ColorOrientationMinEigenvector = 25,
+    ColorOrientationMinEigenvector = 25
   };
   //ETX
 
@@ -169,7 +169,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     Lines = 0,
     Tubes = 1,
     Ellipsoids = 2,
-    Superquadrics = 3,
+    Superquadrics = 3
   };
   //ETX
 
@@ -245,7 +245,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   {
     Major = 1,
     Middle = 2,
-    Minor = 3,
+    Minor = 3
   };
   //ETX
 

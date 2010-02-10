@@ -67,7 +67,7 @@ public:
   enum
     {
       ClipIntersection = 0,
-      ClipUnion = 1,
+      ClipUnion = 1
     };
   //ETX
 

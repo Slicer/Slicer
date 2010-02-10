@@ -97,7 +97,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
     {
       Fine = 1,
       Medium,
-      Thick,
+      Thick
     };
   enum
     {

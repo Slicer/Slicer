@@ -99,7 +99,7 @@ public:
   /// TypeModifiedEvent is generated when the type of the colour look up table changes
   enum
     {
-      TypeModifiedEvent = 20002,
+      TypeModifiedEvent = 20002
     };
 //ETX
 

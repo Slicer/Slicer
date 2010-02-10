@@ -113,7 +113,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
     Scheduled,
     Transferring,
     TransferDone,
-    Cancelled,
+    Cancelled
   };
   //ETX
   /// 

@@ -71,7 +71,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   //BTX
   enum
     {
-    scalarModeMagnitude = 0,
+    scalarModeMagnitude = 0
     };
   //ETX
 
@@ -86,7 +86,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   enum
     {
     glyphModeLines = 1,
-    glyphModeTubes = 2,
+    glyphModeTubes = 2
     };
   //ETX
   vtkGetMacro(GlyphMode, int);

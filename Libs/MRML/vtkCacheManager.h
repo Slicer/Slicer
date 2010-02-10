@@ -139,7 +139,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
     {
       NoCachedFile=0,
       OldCachedFile,
-      CachedFile,
+      CachedFile
     };
 
   /// in case we need these.

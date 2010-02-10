@@ -185,7 +185,7 @@ public:
       WarmTint3 = 35,
       CoolTint1 = 36,
       CoolTint2 = 37,
-      CoolTint3 = 38,
+      CoolTint3 = 38
     };
   //ETX
 
