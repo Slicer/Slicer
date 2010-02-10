@@ -806,7 +806,7 @@ set(proj Slicer3)
 
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
-set(slicer_DEPENDS tcl teem OpenIGTLink BatchMake vtk)
+set(slicer_DEPENDS tcl tk itcl teem OpenIGTLink BatchMake vtk Insight)
 
 if(Slicer3_USE_KWWIDGETS)
   list(APPEND slicer_DEPENDS KWWidgets)
