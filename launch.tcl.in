@@ -146,11 +146,11 @@ proc launch_SetEnvironment {} {
     if {$::tcl_platform(os) == "SunOS"} {
       set isainfo [exec isainfo -b]
       set SlicerBinaryBitness [exec file $::env(Slicer3_HOME)/bin/Slicer3-real | cut -d "," -f 1 | cut -d " " -f2 | cut -d "-" -f1]
-        if {$::SlicerBinaryBitness == "32"} {
+        if {$SlicerBinaryBitness == "32"} {
             set ::BUILD(bitness) "32"
-        } elseif {$::SlicerBinaryBitness == "64" && $::isainfo == 64} {
+        } elseif {$SlicerBinaryBitness == "64" && $isainfo == 64} {
             set ::BUILD(bitness) "64"
-        } elseif {$::SlicerBinaryBitness == "64" && $::isainfo == 32} {
+        } elseif {$SlicerBinaryBitness == "64" && $isainfo == 32} {
     	ShowAndLogError "You can't run a 64 bit program on a 32 bit kernel!"
     	exit $::EXIT_CODE_GENERIC_ERROR
         }
