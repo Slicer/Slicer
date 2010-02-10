@@ -12,13 +12,14 @@
 #include <qCTKFittedTextBrowser.h>
 
 // QT includes
+#include <QDebug>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QResizeEvent>
 #include <QScrollArea>
 #include <QSpacerItem>
 #include <QStackedWidget>
-#include <QResizeEvent>
 #include <QTextBrowser>
+#include <QVBoxLayout>
 #include <QWebView>
 
 //---------------------------------------------------------------------------

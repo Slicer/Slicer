@@ -7,6 +7,7 @@
 /// QT includes
 #include <QObject>
 #include <QList>
+#include <QString>
 
 /// VTK includes
 #include <vtkCommand.h>

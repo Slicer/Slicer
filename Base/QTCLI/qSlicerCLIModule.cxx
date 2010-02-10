@@ -13,6 +13,9 @@
 
 #include "qSlicerCLIModule.h"
 
+// Qt includes
+#include <QDebug>
+
 // SlicerQT includes
 #include "vtkSlicerCLIModuleLogic.h"
 #include "qSlicerCLIModuleWidget.h"

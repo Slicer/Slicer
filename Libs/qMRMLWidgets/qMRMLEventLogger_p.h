@@ -10,7 +10,9 @@
 #include <qCTKPimpl.h>
 
 /// QT includes
+#include <QHash>
 #include <QObject>
+#include <QString>
 
 /// VTK includes
 #include <vtkWeakPointer.h>

@@ -1,11 +1,14 @@
 #include "qSlicerTractographyFiducialSeedingModuleWidget.h"
 #include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
+// Qt includes
+#include <QDebug>
+
+// Logic includes
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiducialListNode.h"
-
 
 //-----------------------------------------------------------------------------
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
@@ -139,7 +142,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
  
   this->processParameterChange = false;
 
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  //QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
   std::cout << "param node changed(" << node << "): TODO update sliders with new values\n";
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
@@ -170,7 +173,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeModified(vtk
 
   this->processParameterChange = false;
 
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  //QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
   if (paramNode && this->mrmlScene())

@@ -4,10 +4,6 @@
 /// qVTK includes
 #include "qVTKObjectEventsObserver.h"
 
-/// QT includes
-#include <QString>
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_ADD_CONNECTION_METHOD                               \
 QString qvtkConnect(vtkObject* vtk_obj, unsigned long vtk_event,        \

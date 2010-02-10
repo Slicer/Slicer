@@ -16,11 +16,15 @@
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_QT
+
 #include "qSlicerApplication.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModulePanel.h"
 #include "qSlicerModuleManager.h"
+
+// Qt includes
+#include <QDebug>
 #include <QRect>
 #endif
 
