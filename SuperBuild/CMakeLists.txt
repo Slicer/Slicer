@@ -36,16 +36,10 @@ if(Slicer3_USE_PYTHON)
   include(CheckFortran)
 
   if(CMAKE_Fortran_COMPILER)
-    option(Slicer3_BUILD_BLAS "Build Slicer with Blas." ON)
-    option(Slicer3_BUILD_LAPACK "Build Slicer with Lapack." ON)
-    
-    if(Slicer3_BUILD_NUMPY AND Slicer3_BUILD_LAPACK)
-      option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (requires Blas and Lapack)." ON)
+    option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds Blas and Lapack)." ON)
 
-      if(Slicer3_BUILD_NUMPY)
-        option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
-      endif()
-      
+    if(Slicer3_BUILD_NUMPY)
+      option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
     endif()
     
     enable_language(Fortran)
@@ -425,7 +419,7 @@ endif(Slicer3_USE_PYTHON)
 
 # Get and build netlib (blas and lapack)
 
-if(CMAKE_Fortran_COMPILER)
+if(CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY)
 
 set(proj blas)
 
@@ -518,7 +512,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
-endif() # CMAKE_Fortran_COMPILER
+endif() # CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY
 
 # Get and build vtk
 
@@ -851,7 +845,7 @@ if(Slicer3_USE_QT)
 endif(Slicer3_USE_QT)
 
 ExternalProject_Add(${proj}
-  DEPENDS ${slicer_DEPENDENCIES}
+  DEPENDS ${slicer_DEPENS}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
   BINARY_DIR Slicer3-build
@@ -876,7 +870,7 @@ ExternalProject_Add(${proj}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
-    -DSlicer3_USE_NUMPY:BOOL=OFF
+    -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
     -DSlicer3_USE_OPENIGTLINK:BOOL=ON
     -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build 
     ${slicer_PYTHON_ARGS}
