@@ -41,7 +41,7 @@ void qvtkBlock(const QString& id, bool blocked)                          \
 #define QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD                          \
 void qvtkBlockAll()                                                     \
 {                                                                       \
-  MyQVTK.blockAllConnection(true);                                      \
+  MyQVTK.blockAllConnections(true);                                     \
 }
 
 //-----------------------------------------------------------------------------
