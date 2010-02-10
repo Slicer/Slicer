@@ -812,10 +812,23 @@ set(proj Slicer3)
 
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
-set(slicer_DEPENDS tcl KWWidgets teem OpenIGTLink BatchMake python vtk)
+set(slicer_DEPENDS tcl teem OpenIGTLink BatchMake vtk)
+
+if(Slicer3_USE_KWWIDGETS)
+  list(APPEND slicer_DEPENDS KWWidgets)
+endif(Slicer3_USE_KWWIDGETS)
+
+set(slicer_PYTHON_ARGS)
+if(Slicer3_USE_PYTHON)
+  list(APPEND slicer_DEPENDS python)
+  set(slicer_PYTHON_ARGS
+    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    )
+endif(Slicer3_USE_PYTHON)
 
 if(CMAKE_Fortran_COMPILER)
-  set(slicer_DEPENDS tcl KWWidgets teem OpenIGTLink BatchMake python numpy blas lapack vtk)
+  list(APPEND slicer_DEPENDS numpy blas lapack)
 endif(CMAKE_Fortran_COMPILER)
 
 if(WIN32)
@@ -861,13 +874,12 @@ ExternalProject_Add(${proj}
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
-    -DSlicer3_USE_PYTHON:BOOL=ON
+    -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=OFF
     -DSlicer3_USE_OPENIGTLINK:BOOL=ON
-    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
-    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
     -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build 
+    ${slicer_PYTHON_ARGS}
     ${slicer_QT_ARGS}
   INSTALL_COMMAND ""
 )
