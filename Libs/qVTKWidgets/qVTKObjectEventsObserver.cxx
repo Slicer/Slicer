@@ -15,40 +15,35 @@ class qVTKObjectEventsObserverPrivate: public qCTKPrivate<qVTKObjectEventsObserv
 {
 public:
   qVTKObjectEventsObserverPrivate();
-  QString convertPointerToString(void* pointer);
+
+  /// 
+  /// Check if a connection has already been added
+  bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
+    const QObject* qt_obj, const char* qt_slot);
+
+  /// 
+  /// Return a reference toward the corresponding connection or NULL if doesn't exist
+  qVTKConnection* findConnection(vtkObject* vtk_obj, unsigned long vtk_event,
+    const QObject* qt_obj, const char* qt_slot);
+
+  /// 
+  /// Return all the references that match the given parameters
+  QList<qVTKConnection*> findConnections(vtkObject* vtk_obj, unsigned long vtk_event,
+    const QObject* qt_obj, const char* qt_slot);
   
-  bool                            ParentSet;
   bool                            AllEnabled;
   bool                            AllBlocked;
   QHash<QString, qVTKConnection*> ConnectionMap;
 };
 
 //-----------------------------------------------------------------------------
+// qVTKObjectEventsObserver methods
+
+//-----------------------------------------------------------------------------
 qVTKObjectEventsObserver::qVTKObjectEventsObserver(QObject* _parent):Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qVTKObjectEventsObserver);
-  QCTK_D(qVTKObjectEventsObserver);
-  
-  if (_parent)
-    {
-    d->ParentSet = true;
-    }
-
   this->setProperty("QVTK_OBJECT", true);
-}
-
-//-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::setParent(QObject* _parent)
-{
-  Q_ASSERT(_parent);
-  QCTK_D(qVTKObjectEventsObserver);
-  
-  if (_parent && !d->ParentSet)
-    {
-    this->Superclass::setParent(_parent);
-    //qDebug() << "qVTKObjectEventsObserver::setParent:" << this->parent();
-    d->ParentSet = true;
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -59,7 +54,6 @@ void qVTKObjectEventsObserver::printAdditionalInfo()
   qDebug() << "qVTKObjectEventsObserver:" << this << endl
            << " AllEnabled:" << d->AllEnabled << endl
            << " AllBlocked:" << d->AllBlocked << endl
-           << " ParentSet:" << d->ParentSet << endl
            << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << endl
            << " Connection count:" << d->ConnectionMap.count();
 
@@ -71,7 +65,7 @@ void qVTKObjectEventsObserver::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-bool qVTKObjectEventsObserver::allEnabled()
+bool qVTKObjectEventsObserver::allEnabled()const
 {
   return qctk_d()->AllEnabled;
 }
@@ -80,21 +74,15 @@ bool qVTKObjectEventsObserver::allEnabled()
 void qVTKObjectEventsObserver::setAllEnabled(bool enable)
 {
   QCTK_D(qVTKObjectEventsObserver);
-  QList<qVTKConnection*> list = d->ConnectionMap.values();
-  this->enableAll(list, enable);
-}
-
-//-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::enableAll(QList<qVTKConnection*>& connectionList, bool enable)
-{
-  QCTK_D(qVTKObjectEventsObserver);
-  
-  if (d->AllEnabled == enable) { return; }
-
+  // FIXME: maybe a particular module has been enabled/disabled
+  if (d->AllEnabled == enable) 
+    { 
+    return; 
+    }
   // Loop through VTKQtConnections to enable/disable
-  foreach(qVTKConnection* connection, connectionList)
+  foreach(qVTKConnection* connection, d->ConnectionMap.values())
     {
-    connection->SetEstablished(enable);
+    connection->setEnabled(enable);
     }
   d->AllEnabled = enable;
 }
@@ -128,21 +116,21 @@ QString qVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObjec
 QString qVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot, float priority)
 {
-  Q_ASSERT(vtk_obj);
   QCTK_D(qVTKObjectEventsObserver);
   if (!qVTKConnection::ValidateParameters(vtk_obj, vtk_event, qt_obj, qt_slot))
     {
-    qCritical() << "Can't establish a vtkQtConnection - Invalid parameters - "
-                << qVTKConnection::getShortDescription(vtk_obj, vtk_event, qt_obj, qt_slot);
+    qDebug() << "qVTKObjectEventsObserver::addConnection(...) - Invalid parameters - "
+             << qVTKConnection::shortDescription(vtk_obj, vtk_event, qt_obj, qt_slot);
     return QString();
     }
 
   // Check if such event is already observed
-  if (this->containsConnection(vtk_obj, vtk_event, qt_obj, qt_slot))
+  if (d->containsConnection(vtk_obj, vtk_event, qt_obj, qt_slot))
     {
-    qWarning() << " [vtkObject:" << vtk_obj->GetClassName()
+    qWarning() << "qVTKObjectEventsObserver::addConnection - [vtkObject:" 
+               << vtk_obj->GetClassName()
                << ", event:" << vtk_event << "]"
-               << "already connected with [qObject:" << qt_obj->objectName()
+               << " is already connected with [qObject:" << qt_obj->objectName()
                << ", slot:" << qt_slot << "]";
     return QString();
     }
@@ -150,65 +138,27 @@ QString qVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned lon
   // Instantiate a new connection, set its parameters and add it to the list
   qVTKConnection * connection = new qVTKConnection(this);
   connection->SetParameters(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
-  d->ConnectionMap[connection->GetId()] = connection;
+  d->ConnectionMap[connection->id()] = connection;
 
   // If required, establish connection
-  connection->SetEstablished(d->AllEnabled);
+  connection->setEnabled(d->AllEnabled);
+  connection->setBlocked(d->AllBlocked);
 
-  return connection->GetId();
+  return connection->id();
 }
 
 //-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::blockAllConnection(bool block, bool recursive)
+void qVTKObjectEventsObserver::blockAllConnections(bool block)
 {
   QCTK_D(qVTKObjectEventsObserver);
-  qDebug() << "blockAllConnection-recursive:" << recursive;
   this->printAdditionalInfo();
   if (d->AllBlocked == block) { return; }
 
   foreach (qVTKConnection* connection, d->ConnectionMap.values())
     {
-    connection->SetBlocked(block);
+    connection->setBlocked(block);
     }
-//   if (recursive)
-//     {
-//     this->blockAllConnectionFromChildren(block);
-//     }
   d->AllBlocked = block;
-}
-
-// //-----------------------------------------------------------------------------
-// void qVTKObjectEventsObserver::blockAllConnectionFromChildren(bool block)
-// {
-//   QObject* qt_obj = this->parent();
-//   Q_ASSERT(qt_obj);
-//   if (!qt_obj) { return; }
-//
-//   foreach(QObject* o, qt_obj->children())
-//     {
-//     if (o != qt_obj)
-//       {
-//       if (o->metaObject()->indexOfProperty("QVTK_OBJECT"))
-//         {
-//         QMetaObject::invokeMethod(o, "blockAllConnection", Qt::DirectConnection,
-//                         Q_ARG(bool, block),
-//                         Q_ARG(bool, false) // False means no recursion
-//                         );
-//         }
-//       }
-//     }
-// }
-
-//-----------------------------------------------------------------------------
-void qVTKObjectEventsObserver::blockConnection(bool block, vtkObject* vtk_obj,
-  unsigned long vtk_event, const QObject* qt_obj)
-{
-  int hit = this->blockConnectionRecursive(block, vtk_obj, vtk_event, qt_obj);
-  if (!hit)
-    {
-    qCritical() << "Failed to " << (block?"block":"unblock") << " unexisting connection ("
-                << qVTKConnection::getShortDescription(vtk_obj, vtk_event, qt_obj) << ")" << endl;
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -220,145 +170,50 @@ void qVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked)
     {
     qVTKConnection* connection = i.value();
     Q_ASSERT(connection);
-    connection->SetBlocked(blocked);
+    connection->setBlocked(blocked);
     }
 }
 
 //-----------------------------------------------------------------------------
-int qVTKObjectEventsObserver::blockConnectionRecursive(bool block, vtkObject* vtk_obj,
+int qVTKObjectEventsObserver::blockConnection(bool block, vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj)
 {
-  Q_ASSERT(vtk_obj);
   QCTK_D(qVTKObjectEventsObserver);
   if (!vtk_obj)
     {
-    qCritical() << "qVTKObjectEventsObserver - Failed to " << (block?"block":"unblock")
-                <<" connection - vtkObject is NULL";
+    qDebug() << "qVTKObjectEventsObserver::blockConnectionRecursive"
+             << "- Failed to " << (block?"block":"unblock") <<" connection"
+             << "- vtkObject is NULL";
     return 0;
     }
-  bool all_info = true;
-  if(qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
+  QList<qVTKConnection*> connections =
+    d->findConnections(vtk_obj, vtk_event, qt_obj, 0);
+  foreach (qVTKConnection* connection, connections)
     {
-    all_info = false;
+    connection->setBlocked(block);
     }
-
-  int hit = 0;
-  foreach (qVTKConnection* connection, d->ConnectionMap.values())
-    {
-    //qDebug() << "blockConnection(" << block << ") - " << connection->getShortDescription();
-    if (connection->IsEqual(vtk_obj, vtk_event, qt_obj, 0))
-      {
-      //qDebug() << "----> "<< (block?"blocked":"unblocked") << " <----";
-      connection->SetBlocked(block);
-      hit++;
-      if (all_info){ break; }
-      }
-    }
-//   if (!hit)
-//     {
-//     return this->blockConnectionFromChildren(block, vtk_obj, vtk_event, qt_obj);
-//     }
-  return hit;
+  return connections.size();
 }
-
-// //-----------------------------------------------------------------------------
-// int qVTKObjectEventsObserver::blockConnectionFromChildren(bool block, vtkObject* vtk_obj,
-//     unsigned long vtk_event, const QObject* qt_obj)
-// {
-//   QObject* qt_parent_obj = this->parent();
-//   Q_ASSERT(qt_parent_obj);
-//   if (!qt_parent_obj) { return 0; }
-//
-//   qDebug() << "qt_parent_obj:" << qt_parent_obj->objectName();
-//
-//   foreach(QObject* o, qt_parent_obj->children())
-//     {
-//     if (o != qt_obj)
-//       {
-//       if (o->metaObject()->indexOfProperty("QVTK_OBJECT") > 0)
-//         {
-//         //qDebug() << "blockConnectionFromChildren:" << o->objectName();
-//         int hit = 0;
-//         bool status = QMetaObject::invokeMethod(o, "blockConnectionRecursive", Qt::DirectConnection,
-//                         Q_RETURN_ARG(int, hit),
-//                         Q_ARG(bool, block),
-//                         Q_ARG(vtkObject*, vtk_obj),
-//                         Q_ARG(unsigned long, vtk_event),
-//                         Q_ARG(const QObject*, qt_obj)
-//                         );
-//         Q_ASSERT(status);
-//         if (!status)
-//           {
-//           qDebug("Failed to invoke slot: blockConnectionRecursive");
-//           }
-//         if (hit > 0)
-//           {
-//           return hit;
-//           }
-//         }
-//       }
-//     }
-//   return 0;
-// }
 
 //-----------------------------------------------------------------------------
 void qVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot)
 {
-  Q_ASSERT(vtk_obj);
   QCTK_D(qVTKObjectEventsObserver);
   if (!vtk_obj)
     {
-    qCritical() << "qVTKObjectEventsObserver - Failed to remove connection - vtkObject is NULL";
+    qDebug() << "qVTKObjectEventsObserver::removeConnection(...) - "
+             << "Failed to remove connection: vtkObject is NULL";
     return;
     }
 
-  bool all_info = true;
-  if(qt_slot == NULL || qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
+  QList<qVTKConnection*> connections = 
+    d->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
+  
+  foreach (qVTKConnection* connection, connections)
     {
-    all_info = false;
-    }
-
-  QStringList connectionToRemove;
-  foreach (qVTKConnection* connection, d->ConnectionMap.values())
-    {
-    if (connection->IsEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
-      {
-      connectionToRemove << connection->GetId();
-      if (all_info){ break; }
-      }
-    }
-
-  // Remove connections
-  foreach(const QString& id, connectionToRemove)
-    {
-    qVTKConnection* connection = d->ConnectionMap[id];
-    Q_ASSERT(connection);
     this->removeConnection(connection);
     }
-}
-
-//-----------------------------------------------------------------------------
-bool qVTKObjectEventsObserver::containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-  const QObject* qt_obj, const char* qt_slot)
-{
-  return (this->findConnection(vtk_obj, vtk_event, qt_obj, qt_slot) !=0);
-}
-
-//-----------------------------------------------------------------------------
-qVTKConnection* qVTKObjectEventsObserver::findConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot)
-{
-  if (!qVTKConnection::ValidateParameters(vtk_obj, vtk_event, qt_obj, qt_slot)) { return 0; }
-
-  QCTK_D(qVTKObjectEventsObserver);
-  
-  // Loop through all connection
-  foreach (qVTKConnection* connection, d->ConnectionMap.values())
-    {
-    if (connection->IsEqual(vtk_obj, vtk_event, qt_obj, qt_slot)) { return connection; }
-    }
-  return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -371,10 +226,11 @@ void qVTKObjectEventsObserver::removeConnection(qVTKConnection* connection)
     {
     return; 
     }
-  connection->SetEstablished(false);
-  d->ConnectionMap.remove(connection->GetId());
+  //connection->setEnabled(false);
+  d->ConnectionMap.remove(connection->id());
   delete connection;
 }
+
 
 //-----------------------------------------------------------------------------
 // qVTKObjectEventsObserverPrivate methods
@@ -384,6 +240,50 @@ qVTKObjectEventsObserverPrivate::qVTKObjectEventsObserverPrivate()
 {
   this->AllEnabled = true;
   this->AllBlocked = false;
-  this->ParentSet = false;
 }
 
+//-----------------------------------------------------------------------------
+bool qVTKObjectEventsObserverPrivate::containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
+  const QObject* qt_obj, const char* qt_slot)
+{
+  return (this->findConnection(vtk_obj, vtk_event, qt_obj, qt_slot) != 0);
+}
+
+//-----------------------------------------------------------------------------
+qVTKConnection* 
+qVTKObjectEventsObserverPrivate::findConnection(vtkObject* vtk_obj, unsigned long vtk_event,
+                                         const QObject* qt_obj, const char* qt_slot)
+{
+  QList<qVTKConnection*> connections =
+    this->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
+
+  return connections.size() ? connections[0] : 0;
+}
+
+//-----------------------------------------------------------------------------
+QList<qVTKConnection*> 
+qVTKObjectEventsObserverPrivate::findConnections(
+  vtkObject* vtk_obj, unsigned long vtk_event,
+  const QObject* qt_obj, const char* qt_slot)
+{
+  bool all_info = true;
+  if(qt_slot == NULL || qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
+    {
+    all_info = false;
+    }
+
+  QList<qVTKConnection*> connections;
+  // Loop through all connection
+  foreach (qVTKConnection* connection, this->ConnectionMap.values())
+    {
+    if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot)) 
+      {
+      connections.append(connection); 
+      if (all_info)
+        {
+        break;
+        }
+      }
+    }
+  return connections;
+}

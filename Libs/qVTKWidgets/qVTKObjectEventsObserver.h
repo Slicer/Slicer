@@ -32,70 +32,40 @@ public:
   /// 
   /// Enable / Disable all qVTKConnections
   void setAllEnabled( bool enable );
-  bool allEnabled();
-
-  /// 
-  /// Set QVTK parent object
-  void setParent(QObject* parent);
+  bool allEnabled()const;
 
   /// 
   /// Add a connection, an Id allowing to uniquely identify the connection is also returned
   QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
+
+  ///
+  /// Utility function that remove a connection on old_vtk_obj and add a connection
+  /// to vtk_obj (same event, object, slot, priority)
   QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
-
-  /// 
-  /// Block/Unblock a connection.
-  void blockConnection(bool block, vtkObject* vtk_obj,
-    unsigned long vtk_event, const QObject* qt_obj);
-  void blockConnection(const QString& id, bool blocked);
 
   /// 
   /// Remove a connection
   void removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
     const QObject* qt_obj = NULL, const char* qt_slot = NULL);
-
-public slots:
-  /// 
-  /// Blocks recursive all qVTKConnection from this object and the QObject parent children
-  void blockAllConnection( bool block, bool recursive);
-
-  /// 
-  /// Blocks recursive all qVTKConnection from the QObject parent children
-///   void blockAllConnectionFromChildren( bool block );
-
-protected:
-
-  /// 
-  /// Enable/Disable all qVTKConnections
-  void enableAll(QList<qVTKConnection*>& connectionList, bool enable);
-
-  /// 
-  /// Check if a connection has already been added
-  bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot);
-
-  /// 
-  /// Return a reference toward the corresponding connection or NULL if doesn't exist
-  qVTKConnection* findConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot);
-
-  friend class qVTKConnection;
-  void removeConnection(qVTKConnection* connection);
-
-  /// 
-  /// Loop through all children until the invokation of 'blockConnection' returns true
-  /// or until all children have been reviewed
-///   int blockConnectionFromChildren(bool block, vtkObject* vtk_obj,
-///     unsigned long vtk_event, const QObject* qt_obj);
-
-protected slots:
+  
+  ///
+  /// Temporarilly block all the connection
+  void blockAllConnections(bool block);
+  
   /// 
   /// Block/Unblock a connection.
-  /// Return the number of blocked connection. Zero if any.
-  int blockConnectionRecursive(bool block, vtkObject* vtk_obj,
-    unsigned long vtk_event, const QObject* qt_obj);
+  int blockConnection(bool block, vtkObject* vtk_obj,
+                      unsigned long vtk_event, const QObject* qt_obj);
+  void blockConnection(const QString& id, bool blocked);
+
+protected:
+  /// FIXME, the qVTKConnection shouldn't have access to this function.
+  /// qVTKConnection should delete itself and qVTKObjectEventsObserver
+  /// should update its connection list 
+  friend class qVTKConnection;
+  void removeConnection(qVTKConnection* connection);
 
 private:
   QCTK_DECLARE_PRIVATE(qVTKObjectEventsObserver);

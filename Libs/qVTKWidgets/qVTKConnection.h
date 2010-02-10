@@ -21,12 +21,12 @@ Q_OBJECT
 public:
   typedef QObject Superclass;
   explicit qVTKConnection(qVTKObjectEventsObserver* parent);
-  virtual ~qVTKConnection(){}
+  virtual ~qVTKConnection();
 
   /// 
   virtual void printAdditionalInfo();
-  QString getShortDescription();
-  static QString getShortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
+  QString shortDescription();
+  static QString shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot = "");
 
   /// 
@@ -34,25 +34,34 @@ public:
     const QObject* qt_obj, QString qt_slot, float priority);
 
   /// 
+  /// Check the validity of the parameters. Parameters must be valid to add 
+  /// a connection
   static bool ValidateParameters(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot);
 
   /// 
-  void SetEstablished(bool enable);
+  /// Actually do the connection. Parameters must have been set prior to it
+  /// Disconnecting (enable = false) removes the connection.
+  void setEnabled(bool enable);
+  bool isEnabled()const;
 
   /// 
-  void SetBlocked(bool block);
+  /// Temporarilly block any signals/slots. If the event is fired, the slot
+  /// won't be called. You can restore the connection by calling SetBlocked
+  /// with block = false.
+  void setBlocked(bool block);
+  bool isBlocked()const;
 
   /// 
-  bool IsEqual(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot);
+  bool isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
+               const QObject* qt_obj, QString qt_slot)const;
 
   /// 
-  int GetSlotType()const;
+  //int GetSlotType()const;
 
   /// 
   /// Return a string uniquely identifying the connection within the current process
-  QString GetId()const; 
+  QString id()const;
 
   /// 
   /// VTK Callback
@@ -82,11 +91,6 @@ signals:
 
 protected slots:
   void deleteConnection();
-
-protected:
-  void EstablishConnection();
-  void BreakConnection();
-
 
 private:
   QCTK_DECLARE_PRIVATE(qVTKConnection);
