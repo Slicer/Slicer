@@ -19,7 +19,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-// std includes
+// STD includes
 #include <stdlib.h>
 
 #include "TestingMacros.h"

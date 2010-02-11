@@ -7,7 +7,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
-// std includes
+// STD includes
 #include <stdlib.h>
 #include <iostream>
 

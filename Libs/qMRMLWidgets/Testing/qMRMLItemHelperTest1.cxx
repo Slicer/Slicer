@@ -1,7 +1,7 @@
 #include <qMRMLItemHelper.h>
 #include <QApplication>
 
-// std includes
+// STD includes
 #include <stdlib.h>
 #include <iostream>
 
