@@ -89,6 +89,16 @@ void vtkSlicerCamerasGUI::RemoveGUIObservers ( )
   this->GetMRMLScene()->RemoveObservers(
     vtkMRMLScene::NodeRemovedEvent, 
     (vtkCommand *)this->GUICallbackCommand );
+
+  std::vector<vtkMRMLNode*> snodes;
+  int nnodes = 
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", snodes);
+  for (int n = 0; n < nnodes; n++)
+    {
+    vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(snodes[n]);
+    node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                          this->GUICallbackCommand);
+    }
 }
 
 //---------------------------------------------------------------------------
