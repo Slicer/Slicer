@@ -74,6 +74,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->OrientImageMenu = NULL;
   this->LabelMapCheckButton = NULL;
   this->SingleFileCheckButton = NULL;
+  this->KeepAllCheckButton = NULL;
   this->ApplyButton=NULL;
   this->LoadPreviousButton = NULL;
   this->LoadNextButton = NULL;
@@ -82,6 +83,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->VolumeFileHeaderWidget = NULL;
   this->DiffusionEditorWidget = NULL;
 
+  this->KeepAll = false;
   this->LoadingOptions = 0;
   this->AllFileNames.clear();
   this->IndexCurrentFile = 0;
@@ -154,6 +156,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->SingleFileCheckButton->SetParent(NULL );
     this->SingleFileCheckButton->Delete ( );
+    }
+  if (this->KeepAllCheckButton)
+    {
+    this->KeepAllCheckButton->SetParent(NULL );
+    this->KeepAllCheckButton->Delete ( );
     }
   if (this->ApplyButton)
     {
@@ -399,6 +406,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       {
       LoadingOptions += 4;
       }
+    if ( this->KeepAllCheckButton->GetSelectedState() )
+      {
+      KeepAll = true;
+      }
+    else
+      {
+        this->KeepAll = false;
+      }
 
     vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
     if ( !strcmp (orientMB->GetValue(), "Use IJK") )
@@ -465,6 +480,16 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
         {
         LoadingOptions += 4;
         }
+
+      if ( this->KeepAllCheckButton->GetSelectedState() )
+        {
+        this->KeepAll = true;
+        }
+      else
+        {
+        this->KeepAll = false;
+        }
+
 
       vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
       if ( !strcmp (orientMB->GetValue(), "Use IJK") )
@@ -563,6 +588,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     }
   else if (this->LoadPreviousButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
+    if ( this->KeepAllCheckButton->GetSelectedState() )
+      {
+      this->KeepAll = true;
+      }
+    else
+      {
+      this->KeepAll = false;
+      }
     // If there is at least one file to load
     if ( this->AllFileNames.size() != 0 ) 
       {
@@ -577,9 +610,16 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
       vtkMRMLVolumeNode *volumeNode = NULL;
+      // delete current node if told to do so
+      if ( !this->KeepAll )
+        {
+        volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+        this->GetMRMLScene()->RemoveNode(volumeNode);
+        }
+
       std::string currentFileName = this->AllFileNames[ this->IndexCurrentFile ];
       std::string archetype = vtksys::SystemTools::GetFilenameName ( currentFileName );
- 
+
       volumeNode = volumeLogic->AddArchetypeVolume( currentFileName.c_str(), archetype.c_str(), LoadingOptions );
       if ( volumeNode == NULL ) 
         {
@@ -628,6 +668,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     }
   else if (this->LoadNextButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
+    if ( this->KeepAllCheckButton->GetSelectedState() )
+      {
+      this->KeepAll = true;
+      }
+    else
+      {
+      this->KeepAll = false;
+      }
     // If there is at least one file to load
     if ( this->AllFileNames.size() != 0 ) 
       {
@@ -642,6 +690,13 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
       vtkMRMLVolumeNode *volumeNode = NULL;
+      // delete current node if told to do so
+      if ( !this->KeepAll )
+        {
+        volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+        this->GetMRMLScene()->RemoveNode(volumeNode);
+        }
+
       std::string currentFileName = this->AllFileNames[ this->IndexCurrentFile ];
       std::string archetype = vtksys::SystemTools::GetFilenameName ( currentFileName );
  
@@ -1119,6 +1174,15 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->SingleFileCheckButton->SetText("Single File");
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->SingleFileCheckButton->GetWidgetName());
+
+  // keep all images in memory when we do previous/next ?
+  this->KeepAllCheckButton = vtkKWCheckButton::New();
+  this->KeepAllCheckButton->SetParent(this->LoadFrame->GetFrame());
+  this->KeepAllCheckButton->Create();
+  this->KeepAllCheckButton->SelectedStateOff();
+  this->KeepAllCheckButton->SetText("Keep all");
+  this->Script("pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+               this->KeepAllCheckButton->GetWidgetName());
 
   // Apply button
   this->ApplyButton = vtkKWPushButton::New();

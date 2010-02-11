@@ -166,6 +166,8 @@ protected:
     vtkKWPushButton *LoadPreviousButton;
     vtkKWPushButton *LoadNextButton;
     vtkKWPushButton *CineButton;
+    vtkKWCheckButton *KeepAllCheckButton;
+    
 
     vtkSlicerModuleCollapsibleFrame *HelpFrame;
     vtkSlicerModuleCollapsibleFrame *LoadFrame;
@@ -202,6 +204,7 @@ protected:
     int IndexCurrentFile;
     //ETX
     int LoadingOptions;
+    bool KeepAll;
 
  private:
     vtkSlicerVolumesGUI ( const vtkSlicerVolumesGUI& ); // Not implemented.
