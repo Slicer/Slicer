@@ -61,15 +61,17 @@ proc EditorTestModelMaker { {labelFile ""} } {
         }
         after 250
     }
-    if {  [$::slicer3::ApplicationLogic GetReadDataQueueSize] } {
-        puts "Still data to read in the queue, processing it..."
-        $::slicer3::ApplicationLogic ProcessReadData
-    }
+
     set i 0
     while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i < 10 } {
         puts "$i Waiting for data to be read...queue size = [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
         incr i
         after 1000
+    }
+
+    if { $i >= 10 } {
+      puts "Error: timeout waiting for data to be read"
+      return 1
     }
 
     # clean up
