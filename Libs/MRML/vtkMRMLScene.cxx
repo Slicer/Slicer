@@ -432,8 +432,9 @@ vtkMRMLScene::~vtkMRMLScene()
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::SceneCallback( vtkObject *caller, unsigned long eid, 
-                                  void *clientData, void *callData )
+void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller), 
+                                  unsigned long vtkNotUsed(eid), 
+                                  void *clientData, void *vtkNotUsed(callData) )
 {
   vtkMRMLScene *self = reinterpret_cast<vtkMRMLScene *>(clientData);
   if (self == NULL)
