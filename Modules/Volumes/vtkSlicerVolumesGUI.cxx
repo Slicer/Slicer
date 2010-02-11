@@ -609,12 +609,17 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
-      vtkMRMLVolumeNode *volumeNode = NULL;
+      vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = 0;
       // delete current node if told to do so
       if ( !this->KeepAll )
         {
         volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
-        this->GetMRMLScene()->RemoveNode(volumeNode);
+        // this->GetMRMLScene()->RemoveNode(volumeNode);
+        std::ostringstream idle;
+        idle << "after idle [list after 0 \"$::slicer3::MRMLScene RemoveNode [$::slicer3::MRMLScene GetNodeByID " << volumeNode->GetID() << "]\"]";
+        //std::cout << idle.str() << std::endl;
+        this->Script(idle.str().c_str());
+        volumeNode = vtkSmartPointer<vtkMRMLVolumeNode>::New(); // so we don't leak this new instance
         }
 
       std::string currentFileName = this->AllFileNames[ this->IndexCurrentFile ];
@@ -689,12 +694,17 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
-      vtkMRMLVolumeNode *volumeNode = NULL;
+      vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = 0;
       // delete current node if told to do so
       if ( !this->KeepAll )
         {
         volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
-        this->GetMRMLScene()->RemoveNode(volumeNode);
+        // this->GetMRMLScene()->RemoveNode(volumeNode);
+        std::ostringstream idle;
+        idle << "after idle [list after 0 \"$::slicer3::MRMLScene RemoveNode [$::slicer3::MRMLScene GetNodeByID " << volumeNode->GetID() << "]\"]";
+        //std::cout << idle.str() << std::endl;
+        this->Script(idle.str().c_str());
+        volumeNode = vtkSmartPointer<vtkMRMLVolumeNode>::New(); // so we don't leak this new instance
         }
 
       std::string currentFileName = this->AllFileNames[ this->IndexCurrentFile ];
