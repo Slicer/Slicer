@@ -26,6 +26,8 @@ public:
   static const __int64 VTK_ITK_EXPORT Zero;
   static const __int64 VTK_ITK_EXPORT One;
 
+  static __int64 min( ) { return vcl_numeric_limits<__int64>::min(); } 
+  static __int64 max( ) { return vcl_numeric_limits<__int64>::max(); } 
   static __int64 min( __int64 ) { return vcl_numeric_limits<__int64>::min(); } 
   static __int64 max( __int64 ) { return vcl_numeric_limits<__int64>::max(); } 
   static __int64 NonpositiveMin() { return min(); }
@@ -49,6 +51,8 @@ public:
   static const unsigned __int64 VTK_ITK_EXPORT Zero;
   static const unsigned __int64 VTK_ITK_EXPORT One;
 
+  static unsigned __int64 min( ) { return vcl_numeric_limits<unsigned __int64>::min(); } 
+  static unsigned __int64 max( ) { return vcl_numeric_limits<unsigned __int64>::max(); } 
   static unsigned __int64 min( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::min(); } 
   static unsigned __int64 max( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::max(); } 
   static unsigned __int64 NonpositiveMin() { return min(); }
@@ -74,6 +78,8 @@ public:
   static const long long VTK_ITK_EXPORT Zero;
   static const long long VTK_ITK_EXPORT One;
 
+  static long long min( ) { return vcl_numeric_limits<long long>::min(); } 
+  static long long max( ) { return vcl_numeric_limits<long long>::max(); } 
   static long long min( long long ) { return vcl_numeric_limits<long long>::min(); } 
   static long long max( long long ) { return vcl_numeric_limits<long long>::max(); } 
   static long long NonpositiveMin() { return vcl_numeric_limits<long long>::min(); }
@@ -97,6 +103,8 @@ public:
   static const unsigned long long VTK_ITK_EXPORT Zero;
   static const unsigned long long VTK_ITK_EXPORT One;
 
+  static unsigned long long min( ) { return vcl_numeric_limits<unsigned long long>::min(); } 
+  static unsigned long long max( ) { return vcl_numeric_limits<unsigned long long>::max(); } 
   static unsigned long long min( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::min(); } 
   static unsigned long long max( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::max(); } 
   static unsigned long long NonpositiveMin() { return vcl_numeric_limits<unsigned long long>::min(); }
