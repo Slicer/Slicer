@@ -2,6 +2,7 @@
 #define __qCTKWidgetsPlugin_h
 
 #include "qCTKWidgetsPluginExport.h"
+#include "qCTKAddRemoveComboBoxPlugin.h"
 #include "qCTKCollapsibleButtonPlugin.h"
 #include "qCTKCollapsibleGroupBoxPlugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
@@ -27,7 +28,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qCTKCollapsibleButtonPlugin
+    plugins << new qCTKAddRemoveComboBoxPlugin
+            << new qCTKCollapsibleButtonPlugin
             << new qCTKCollapsibleGroupBoxPlugin
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin

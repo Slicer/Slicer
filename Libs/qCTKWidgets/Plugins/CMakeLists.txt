@@ -9,6 +9,8 @@ SET(designer_plugin_SRCS
   qCTKWidgetsPlugin.cxx  
   qCTKWidgetsAbstractPlugin.cxx
 
+  qCTKAddRemoveComboBoxPlugin.cxx
+  qCTKAddRemoveComboBoxPlugin.h
   qCTKCollapsibleButtonPlugin.cxx
   qCTKCollapsibleButtonPlugin.h
   qCTKCollapsibleGroupBoxPlugin.cxx
@@ -38,6 +40,7 @@ SET(designer_plugin_SRCS
 SET(designer_plugin_MOC_SRCS
   qCTKWidgetsPlugin.h
 
+  qCTKAddRemoveComboBoxPlugin.h
   qCTKCollapsibleButtonPlugin.h 
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKColorPickerButtonPlugin.h
