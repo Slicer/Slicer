@@ -114,6 +114,26 @@ qMRMLNodeSelector::qMRMLNodeSelector(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
+void qMRMLNodeSelector::printAdditionalInfo()
+{
+  Superclass::printAdditionalInfo();
+  
+  QCTK_D(qMRMLNodeSelector);
+  qDebug() << "qMRMLNodeSelector:" << this << endl
+           << " ShowHidden:" << d->ShowHidden << endl
+           << " SelectNodeUponCreation:" << d->SelectNodeUponCreation << endl
+           << " ShowChildNodeTypes:" << d->ShowChildNodeTypes << endl
+           << " HideChildNodeTypes:" << d->HideChildNodeTypes << endl
+           << " NodeTypes:" << d->NodeTypes << endl
+           << " Attributes:" << d->Attributes << endl
+           << " MRMLNodesBeingRemoved:" << d->MRMLNodesBeingRemoved;
+
+//   qMRMLNodeFactory*        MRMLNodeFactory; 
+//   vtkMRMLScene*            MRMLScene; 
+//   vtkMRMLNode*             MRMLCurrentNode; 
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeSelector::setNodeTypes(const QStringList& _nodeTypes)
 {
   QCTK_D(qMRMLNodeSelector);

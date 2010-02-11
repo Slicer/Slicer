@@ -36,6 +36,7 @@ public:
   /// Constructors
   explicit qMRMLNodeSelector(QWidget* parent = 0);
   virtual ~qMRMLNodeSelector(){}
+  virtual void printAdditionalInfo();
   
   /// 
   /// Set/Get node types to display in the list
