@@ -517,9 +517,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // Mini-scene used to communicate a subset of the main scene to the module
   // Additional handling is necessary because we use SmartPointers
   // (see http://slicer.spl.harvard.edu/slicerWiki/index.php/Slicer3:Memory_Management#SmartPointers)
-  vtkMRMLScene *tmpScene = vtkMRMLScene::New();
-  vtkSmartPointer<vtkMRMLScene> miniscene = tmpScene;
-  tmpScene->Delete();
+  vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
   std::string minisceneFilename
     = this->ConstructTemporarySceneFileName(miniscene);
  
