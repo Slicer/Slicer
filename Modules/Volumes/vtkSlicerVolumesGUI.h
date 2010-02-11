@@ -162,6 +162,11 @@ protected:
     vtkKWCheckButton *SingleFileCheckButton;
     vtkKWPushButton *ApplyButton;
 
+    // load other images in the same directory
+    vtkKWPushButton *LoadPreviousButton;
+    vtkKWPushButton *LoadNextButton;
+    vtkKWPushButton *CineButton;
+
     vtkSlicerModuleCollapsibleFrame *HelpFrame;
     vtkSlicerModuleCollapsibleFrame *LoadFrame;
     vtkSlicerModuleCollapsibleFrame *DisplayFrame;
@@ -191,6 +196,12 @@ protected:
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
+
+    //BTX
+    std::vector<std::string> AllFileNames;
+    int IndexCurrentFile;
+    //ETX
+    int LoadingOptions;
 
  private:
     vtkSlicerVolumesGUI ( const vtkSlicerVolumesGUI& ); // Not implemented.
