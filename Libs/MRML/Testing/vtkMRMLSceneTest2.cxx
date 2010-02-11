@@ -17,16 +17,18 @@
 
 #include "TestingMacros.h"
 
+int numberOfRemovedNodes = 0;
+
 void printNode(vtkObject *vtkNotUsed(vtkcaller), unsigned long vtkNotUsed(eid), void *vtkNotUsed(clientdata), void *calldata)
 {
   vtkObject* object = reinterpret_cast<vtkObject*>(calldata);
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(object);
   if (node == 0)
     {
-    std::cout << "node invalid" << std::endl;
     return;
     }
-  std::cout << "  " << node->GetName() << std::endl;
+  //std::cout << "  " << node->GetName() << std::endl;
+  ++numberOfRemovedNodes;
 }
 
 int vtkMRMLSceneTest2(int argc, char * argv [] )
@@ -60,13 +62,19 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     nodePtr = scene->GetNextNode();
     }
   
+  int numberOfNodes = scene->GetNumberOfNodes();
+  numberOfRemovedNodes = 0;
   vtkSmartPointer<vtkCallbackCommand> nodeRemovedCallback = 
     vtkSmartPointer<vtkCallbackCommand>::New();
   nodeRemovedCallback->SetCallback(printNode);
   scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, nodeRemovedCallback);
-  std::cout << "Delete Scene" << scene->GetNumberOfNodes() << std::endl;
   scene->Delete();
-  
+  if (numberOfRemovedNodes != numberOfNodes)
+    {
+    std::cerr << "vtkMRMLScene::Delete() has not fired enough NodeRemovedEvent." 
+              << numberOfRemovedNodes << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }
