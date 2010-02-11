@@ -26,6 +26,8 @@ public:
   static const __int64 VTK_ITK_EXPORT Zero;
   static const __int64 VTK_ITK_EXPORT One;
 
+  static __int64 min( __int64 ) { return vcl_numeric_limits<__int64>::min(); } 
+  static __int64 max( __int64 ) { return vcl_numeric_limits<__int64>::max(); } 
   static __int64 NonpositiveMin() { return min(); }
   static bool IsPositive(__int64 val) { return val > Zero; }
   static bool IsNonpositive(__int64 val) { return val <= Zero; }
@@ -47,6 +49,8 @@ public:
   static const unsigned __int64 VTK_ITK_EXPORT Zero;
   static const unsigned __int64 VTK_ITK_EXPORT One;
 
+  static unsigned __int64 min( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::min(); } 
+  static unsigned __int64 max( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::max(); } 
   static unsigned __int64 NonpositiveMin() { return min(); }
   static bool IsPositive(unsigned __int64 val) { return val != Zero; }
   static bool IsNonpositive(unsigned __int64 val) { return val == Zero; }
@@ -70,7 +74,9 @@ public:
   static const long long VTK_ITK_EXPORT Zero;
   static const long long VTK_ITK_EXPORT One;
 
-  static long long NonpositiveMin() { return min(); }
+  static long long min( long long ) { return vcl_numeric_limits<long long>::min(); } 
+  static long long max( long long ) { return vcl_numeric_limits<long long>::max(); } 
+  static long long NonpositiveMin() { return vcl_numeric_limits<long long>::min(); }
   static bool IsPositive(long long val) { return val > Zero; }
   static bool IsNonpositive(long long val) { return val <= Zero; }
   static bool IsNegative(long long val) { return val < Zero; }
@@ -91,7 +97,9 @@ public:
   static const unsigned long long VTK_ITK_EXPORT Zero;
   static const unsigned long long VTK_ITK_EXPORT One;
 
-  static unsigned long long NonpositiveMin() { return min(); }
+  static unsigned long long min( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::min(); } 
+  static unsigned long long max( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::max(); } 
+  static unsigned long long NonpositiveMin() { return vcl_numeric_limits<unsigned long long>::min(); }
   static bool IsPositive(unsigned long long val) { return val != Zero; }
   static bool IsNonpositive(unsigned long long val) { return val == Zero; }
   static bool IsNegative(unsigned long long) { return false; }
