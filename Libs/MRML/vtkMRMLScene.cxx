@@ -17,6 +17,7 @@ Version:   $Revision: 1.18 $
 //#include <hash_map>
 #include "vtkObjectFactory.h"
 #include "vtkErrorCode.h"
+#include "vtkCallbackCommand.h"
 #include "vtkCommand.h"
 #include "vtkGeneralTransform.h"
 
@@ -119,6 +120,14 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->LastLoadedVersion = NULL;
   this->Version = NULL;
+
+  this->DeleteEventCallback = vtkCallbackCommand::New();
+  this->DeleteEventCallback->SetClientData( reinterpret_cast<void *>(this) );
+  this->DeleteEventCallback->SetCallback( vtkMRMLScene::SceneCallback );
+  // we want to be first to catch the event, so that SceneClosingEvent, 
+  // NodeRemovedEvent and SceneClosedEvent are fired and caught before DeleteEvent
+  // is caught by other observers.
+  this->AddObserver(vtkCommand::DeleteEvent, this->DeleteEventCallback, 1000.);
 
   //
   // Register all the 'built-in' nodes for the library
@@ -377,11 +386,16 @@ vtkMRMLScene::~vtkMRMLScene()
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
   
-  if ( this->CurrentScene != NULL ) {
+  if ( this->CurrentScene != NULL ) 
+    {
+    if (this->CurrentScene->GetNumberOfItems() > 0)
+      {
+      vtkDebugMacro("CurrentScene should have already been cleared in DeleteEvent callback: ");
       this->CurrentScene->RemoveAllItems ( );
-      this->CurrentScene->Delete();
-      this->CurrentScene = NULL;
-  }
+      }
+    this->CurrentScene->Delete();
+    this->CurrentScene = NULL;
+    }
 
   for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++) 
     {
@@ -410,9 +424,28 @@ vtkMRMLScene::~vtkMRMLScene()
     this->UserTagTable->Delete();
     this->UserTagTable = NULL;
     }
+  if ( this->DeleteEventCallback != NULL )
+    {
+    this->DeleteEventCallback->Delete();
+    this->DeleteEventCallback = NULL;
+    }
 }
 
-
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SceneCallback( vtkObject *caller, unsigned long eid, 
+                                  void *clientData, void *callData )
+{
+  vtkMRMLScene *self = reinterpret_cast<vtkMRMLScene *>(clientData);
+  if (self == NULL)
+    {
+    return; 
+    }
+  // here we know that SceneCallback has only be called by DeleteEvent,
+  // we directly process the event here. If in the future, more events
+  // are processed, then add a ProcessMRMLEvents method (instead of 
+  // doing everything in the static function).
+  self->Clear(1);
+}
 
 //------------------------------------------------------------------------------
 void vtkMRMLScene::Clear(int removeSingletons) 
@@ -430,7 +463,11 @@ void vtkMRMLScene::Clear(int removeSingletons)
     }
   else
     {
-    this->CurrentScene->RemoveAllItems();
+    //this->CurrentScene->RemoveAllItems();
+    while (this->GetNumberOfNodes() > 0)
+      {
+      this->RemoveNode(this->GetNthNode(0));
+      }
     // See comment below
     //  this->InvokeEvent(this->SceneCloseEvent, NULL);
     }

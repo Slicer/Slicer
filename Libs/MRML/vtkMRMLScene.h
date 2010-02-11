@@ -33,13 +33,16 @@ Version:   $Revision: 1.18 $
 #include "vtkObjectFactory.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLNode.h"
+//#include "vtkMRMLNode.h"
+class vtkMRMLNode;
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkTagTable.h"
 
+class vtkCallbackCommand;
 class vtkGeneralTransform;
 class vtkURIHandler;
+
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkCollection
 {
 public:
@@ -462,6 +465,10 @@ protected:
 
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
 
+  /// 
+  /// Handle vtkMRMLScene::DeleteEvent: clear the scene
+  static void SceneCallback( vtkObject *caller, unsigned long eid, 
+                             void *clientData, void *callData );
   vtkCollection* CurrentScene;
   
   /// data i/o handling members
@@ -515,7 +522,7 @@ protected:
   char *Version;
 
   char *LastLoadedVersion;
-
+  vtkCallbackCommand *DeleteEventCallback;
   
 private:
   /// hide the standard AddItem from the user and the compiler.

@@ -64,7 +64,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     vtkSmartPointer<vtkCallbackCommand>::New();
   nodeRemovedCallback->SetCallback(printNode);
   scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, nodeRemovedCallback);
-  std::cout << "Delete Scene" << std::endl;
+  std::cout << "Delete Scene" << scene->GetNumberOfNodes() << std::endl;
   scene->Delete();
   
 
