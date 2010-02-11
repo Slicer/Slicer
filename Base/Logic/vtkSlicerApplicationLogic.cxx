@@ -14,6 +14,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 #include "vtkStringArray.h"
+#include "vtkSlicerConfigure.h"
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkSlicerColorLogic.h"
