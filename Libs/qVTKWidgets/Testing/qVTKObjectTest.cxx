@@ -36,16 +36,16 @@ bool qVTKObjectTest::test()
   // should do nothing but shouldn't fail neither
   qDebug() << "The following can generate error message.";
   qDebug() << "Disconnect:";
-  this->qvtkDisconnect(0, -1, this, SLOT(onVTKObjectModifiedPublic()));
+  this->qvtkDisconnect(0, static_cast<unsigned long>(-1), this, SLOT(onVTKObjectModifiedPublic()));
   qDebug() << "Connect:";
-  QString connection = this->qvtkConnect(0, -1, this, SLOT(onVTKObjectModifiedPublic()));
+  QString connection = this->qvtkConnect(0, static_cast<unsigned long>(-1), this, SLOT(onVTKObjectModifiedPublic()));
   if (!connection.isEmpty())
     {
     qDebug() << "qVTKObject::qvtkConnect() failed: "<< connection;
     return false;
     }
   qDebug() << "Reconnect:";
-  connection = this->qvtkReconnect(0, 0, -1, this, SLOT(onVTKObjectModifiedPublic()));
+  connection = this->qvtkReconnect(0, 0, static_cast<unsigned long>(-1), this, SLOT(onVTKObjectModifiedPublic()));
   if (!connection.isEmpty())
     {
     qDebug() << "qVTKObject::qvtkReconnect() failed: "<< connection;
