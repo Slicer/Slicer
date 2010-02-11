@@ -1686,7 +1686,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     return;
     }
   
-  vtkSmartPointer<vtkMRMLScene> miniscene = vtkMRMLScene::New();
+  vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
   miniscene->SetURL( req.GetFilename().c_str() );
   miniscene->Import();
 
@@ -1845,7 +1845,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     ++sit;
     ++tit;
     }
-
+  
   // Delete the file if requested
   if (req.GetDeleteFile())
     {
