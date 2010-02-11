@@ -524,7 +524,7 @@ proc launch_ParseArgs {argv} {
 #-------------------------------------------------------------------------------
 proc launch_SetPaths {} {
 
-    foreach var {LD_LIBRARY_PATH TCLLIBPATH PYTHONPATH DYLD_LIBRARY_PATH PATH} {
+    foreach var {LD_LIBRARY_PATH TCLLIBPATH DYLD_LIBRARY_PATH PATH} {
         # if it is an empty string or doesn't exist, set the environment variable
         if { ![info exists ::env($var)] || $::env($var) == "" } {
             set ::env($var) " "
@@ -709,17 +709,23 @@ proc launch_SetPaths {} {
       } else {
         set SEP ":"
       }
+
       set ::env(PYTHONHOME) "$::env(PYTHON_DIR)"
-      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib$SEP$::env(PYTHONPATH)"
+
+      # check for existing variable to avoid empty entries in PYTHONPATH
+      if { ![info exists ::env(PYTHONPATH)] } {
+        set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib"
+      } else {
+        set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib$SEP$::env(PYTHONPATH)"
+      }
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/lib-tk$SEP$::env(PYTHONPATH)"
-      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/test$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/lib-tk$SEP$::env(PYTHONPATH)"
-      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/test$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Python$SEP$::env(PYTHONPATH)"
     }
 }
 
@@ -871,17 +877,19 @@ proc launch_RunProgram {} {
     # that contain spaces -- note that shell notation only works for a single
     # level of nesting
     # - change backslashes to forward slashes (for windows paths)
-    # - escape the spaces in each of the arguments
+    # - escape the spaces in each of the arguments (non-windows only)
     # - handle any escaped | where the \ was changed to / by mistake
     #
     regsub -all "\\\\" $::argv "/" ::argv
     regsub -all "/\\|" $::argv "\\\\|" ::argv
-    set newargv ""
-    foreach a $::argv {
-        regsub -all " " $a "\\\ " a
-        lappend newargv $a
+    if {$::env(BUILD) != $::WINDOWS} {
+      set newargv ""
+      foreach a $::argv {
+          regsub -all " " $a "\\\ " a
+          lappend newargv $a
+      }
+      set ::argv $newargv
     }
-    set ::argv $newargv
 
     if {$::env(BUILD) != $::WINDOWS} {
       # turn curly braces into quotes
