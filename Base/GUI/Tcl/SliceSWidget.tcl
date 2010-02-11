@@ -341,7 +341,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set grabID [$sliceGUI GetGrabID]
   if { ($grabID != "" && $grabID != $this) } {
     if { ![string match "Focus*Event" $event] } {
-      return ;# some other widget wants these events
+      if { [info command $grabID] != $grabID } {
+        # the widget with the grab doesn't exist any more (probably deleted while grabbing)
+        # reset the grabID and continue
+        $sliceGUI SetGrabID ""
+      } else {
+        return ;# some other widget wants these events
+      }
     }
   }
 
