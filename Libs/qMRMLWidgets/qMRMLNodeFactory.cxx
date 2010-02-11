@@ -59,7 +59,8 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 
   if (node->GetSingletonTag() != 0 && node->GetID() == 0)
     {
-    qDebug() << "Can't add a node with a SingletonTag and an empty ID";
+    qDebug() << "Problem creating node [" << className << "] - "
+                "Can't add a node with a SingletonTag and an empty ID";
     return 0;
     }
   
