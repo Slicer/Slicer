@@ -6,11 +6,10 @@
 
 // qVTK includes
 #include "qVTKObject.h"
-#include "qVTKWidgetsExport.h"
 
 class qVTKObjectTestPrivate;
 
-class QVTK_WIDGETS_EXPORT qVTKObjectTest: public QObject
+class qVTKObjectTest: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
