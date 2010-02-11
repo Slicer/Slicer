@@ -29,6 +29,8 @@ IF(Slicer3_USE_QT)
       ENDIF()
       # Enable modules
       SET(QT_USE_QTNETWORK ON)
+      SET(QT_USE_QTTEST ${Slicer3_BUILD_TESTING})
+
       # Includes Qt headers
       INCLUDE(${QT_USE_FILE})
     ELSE(QT4_FOUND AND QT_QMAKE_EXECUTABLE)
