@@ -261,6 +261,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //ETX
     virtual void PythonCommand(const char *cmd);
     virtual void PythonConsole();
+    /// Result of the most recent PythonCommand
+    vtkGetStringMacro(PythonResult);
+    vtkSetStringMacro(PythonResult);
 
     virtual void InitializeViewControlGUI ();
     virtual void InitializeSlicesControlGUI ();
@@ -433,6 +436,9 @@ protected:
   //BTX
   void ReposModulePanel();
   //ETX
+
+  /// Result of the most recent python command as a string
+  char *PythonResult;
 
  private:
 

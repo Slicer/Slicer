@@ -200,6 +200,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   this->ViewerPageTag = 1999;
   this->ProcessingMRMLEvent = 0;
   this->SceneClosing = false;
+  this->PythonResult = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1808,9 +1809,10 @@ void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
     return;
     }
 
+  // Note: cmdString is not currently used - calls with cmd directly
   std::string cmdString =  std::string ( "import sys;\n" );
               cmdString += std::string ( "try:\n" );
-              cmdString += std::string (    cmd ) + std::string ( ";\n" );
+              cmdString += std::string ( "  ") + std::string( cmd ) + std::string ( ";\n" );
               cmdString += std::string ( "except Exception, e:\n" );
               cmdString += std::string ( "  print 'Failed to run command ', e\n" );
               cmdString += std::string ( "sys.stdout.flush();\n" );
@@ -1818,12 +1820,43 @@ void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
 
   PyObject* v = PyRun_String ( cmd, Py_file_input, d, d);
 
+
   if (v == NULL)
     {
-    PyErr_Print();
+    PyObject *exception, *v, *tb;
+    PyObject *exception_s, *v_s, *tb_s;
+
+    PyErr_Fetch(&exception, &v, &tb);
+    if (exception == NULL)
+      return;
+    PyErr_NormalizeException(&exception, &v, &tb);
+    if (exception == NULL)
+      return;
+    
+    exception_s = PyObject_Str(exception);
+    v_s = PyObject_Str(v);
+    tb_s = PyObject_Str(tb);
     vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Python Fail" );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(exception_s) );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(v_s) );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(tb_s) );
+    Py_DECREF ( exception_s );
+    Py_DECREF ( v_s );
+    Py_DECREF ( tb_s );
+    Py_DECREF ( exception );
+    Py_DECREF ( v );
+    Py_DECREF ( tb );
+
     return;
     }
+  else
+    {
+    PyObject *v_s;
+    v_s = PyObject_Str(v);
+    this->SetPythonResult(PyString_AS_STRING(v_s));
+    Py_DECREF(v_s);
+    }
+
   Py_DECREF ( v );
   if (Py_FlushLine())
     {
