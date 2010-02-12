@@ -23,9 +23,10 @@ QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTractographyFiducialSeedingModuleWidget, QWidg
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 {
-  this->processParameterChange = true;
   QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
+
+  this->processParameterChange = true;
 
   this->TractographyFiducialSeedingNode = NULL;
   this->FiberBundleNode                 = NULL;
@@ -34,6 +35,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 
   QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    this,SLOT(onParameterNodeChanged(vtkMRMLNode*)));
+                   
   QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(bool)),
                    this, SLOT(onSelectionNodeChanged(bool)));
   QObject::connect(d->FiducialNodeSelector, SIGNAL(currentNodeChanged(bool)),

@@ -115,7 +115,7 @@ signals:
   /// the list is empty.
   void currentNodeChanged(vtkMRMLNode* node);
 
-  /// Descritpion:
+  /// 
   /// Utility function emitted at the same time(right after)
   /// then currentNodeChanged(vtkMRMLNode*) signal is emitted
   /// emit true when the current node is changed.
