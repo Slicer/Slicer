@@ -436,14 +436,50 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "\n";
   os << indent << "ResampleConst: " << this->ResampleConst << "\n";
 
-  os << indent << "Scan1_InputSegmentRef: " << GetScan1_InputSegmentRef() << "\n";
-  os << indent << "Scan2_InputSegmentRef: " << GetScan2_InputSegmentRef() << "\n";
-  os << indent << "Scan1_InputSegmentSuperSampleRef: " << 
-    GetScan1_InputSegmentSuperSampleRef() << "\n";
-  os << indent << "Scan2_InputSegmentSuperSampleRef: " << 
-    GetScan2_InputSegmentSuperSampleRef() << "\n";
+  if (this->GetScan1_InputSegmentRef())
+    {
+    os << indent << "Scan1_InputSegmentRef: " << GetScan1_InputSegmentRef() << "\n";
+    }
+  else
+    {
+    os << indent << "Scan1_InputSegmentRef: NULL\n";
+    }
+  if (this->GetScan2_InputSegmentRef())
+    {
+    os << indent << "Scan2_InputSegmentRef: " << GetScan2_InputSegmentRef() << "\n";
+    }
+  else
+    {
+    os << indent << "Scan2_InputSegmentRef: NULL\n";
+    }
+
+  if (this->GetScan1_InputSegmentSuperSampleRef())
+    {
+    os << indent << "Scan1_InputSegmentSuperSampleRef: " << GetScan1_InputSegmentSuperSampleRef() << "\n";
+    }
+  else
+    {
+    os << indent << "Scan1_InputSegmentSuperSampleRef: NULL\n";
+    }
+
+  if (this->GetScan2_InputSegmentSuperSampleRef())
+    {
+    os << indent << "Scan2_InputSegmentSuperSampleRef: " << GetScan2_InputSegmentSuperSampleRef() << "\n";
+    }
+  else
+    {
+    os << indent << "Scan2_InputSegmentSuperSampleRef: NULL\n";
+    }
+
   os << "\n";
-  os << indent << "ROI_Ref: " << GetROI_Ref() << "\n";
+  if (this->GetROI_Ref())
+    {
+    os << indent << "ROI_Ref: " << GetROI_Ref() << "\n";
+    }
+  else
+    {
+    os << indent << "ROI_Ref: NULL\n";
+    }
   os << "\n";
 }
 
