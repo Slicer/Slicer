@@ -32,40 +32,57 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
   this->TransformableNode               = NULL;
   this->DiffusionTensorVolumeNode       = NULL;
 
-  QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onParameterNodeChanged(vtkMRMLNode*)));
-  QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(onSelectionNodeChanged(bool)));
-  QObject::connect(d->FiducialNodeSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(onSelectionNodeChanged(bool)));
-  QObject::connect(d->FiberNodeSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(onSelectionNodeChanged(bool)));
+  QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   this,SLOT(onParameterNodeChanged(vtkMRMLNode*)));
+  QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(bool)),
+                   this, SLOT(onSelectionNodeChanged(bool)));
+  QObject::connect(d->FiducialNodeSelector, SIGNAL(currentNodeChanged(bool)),
+                   this, SLOT(onSelectionNodeChanged(bool)));
+  QObject::connect(d->FiberNodeSelector, SIGNAL(currentNodeChanged(bool)),
+                   this, SLOT(onSelectionNodeChanged(bool)));
 
-  //QObject::connect(d->StoppingCurvatureSpinBoxLabel, SIGNAL(sliderMoved(double)),
-  //              SLOT(onParameterChanged(double)));
+  //QObject::connect(d->StoppingCurvatureSpinBoxLabel,
+  //                 SIGNAL(sliderMoved(double)),
+  //                 SLOT(onParameterChanged(double)));
 
-  QObject::connect(d->StoppingCurvatureSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->StoppingCriteriaComboBox, SIGNAL(currentIndexChanged(int)),
-                SLOT(onParameterChanged(int)));
-  QObject::connect(d->StoppingValueSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->StoppingCurvatureSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->IntegrationStepSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->MinimumPathSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->FiducialRegionSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
-  QObject::connect(d->FiducialStepSpinBoxLabel, SIGNAL(valueChanged(double)),
-                SLOT(onParameterChanged(double)));
+  QObject::connect(d->StoppingCurvatureSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->StoppingCriteriaComboBox,
+                   SIGNAL(currentIndexChanged(int)),
+                   SLOT(onParameterChanged(int)));
+  QObject::connect(d->StoppingValueSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->StoppingCurvatureSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->IntegrationStepSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->MinimumPathSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->FiducialRegionSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
+  QObject::connect(d->FiducialStepSpinBoxLabel,
+                   SIGNAL(valueChanged(double)),
+                   SLOT(onParameterChanged(double)));
 
-  QObject::connect(d->DisplayTracksComboBox, SIGNAL(currentIndexChanged(int)),
-              SLOT(onParameterChanged(int)));
+  QObject::connect(d->DisplayTracksComboBox,
+                   SIGNAL(currentIndexChanged(int)),
+                   SLOT(onParameterChanged(int)));
 
-  QObject::connect(d->SeedSelectedCheckBox, SIGNAL(stateChanged(int)),
-              SLOT(onParameterChanged(int)));
-  QObject::connect(d->EnableSeedingCheckBox, SIGNAL(stateChanged(int)),
-              SLOT(onParameterChanged(int)));
-  QObject::connect(d->MaxNumberSeedsNumericInput, SIGNAL(valueChanged(int)),
-              SLOT(onParameterChanged(int)));
+  QObject::connect(d->SeedSelectedCheckBox,
+                   SIGNAL(stateChanged(int)),
+                   SLOT(onParameterChanged(int)));
+  QObject::connect(d->EnableSeedingCheckBox,
+                   SIGNAL(stateChanged(int)),
+                   SLOT(onParameterChanged(int)));
+  QObject::connect(d->MaxNumberSeedsNumericInput,
+                   SIGNAL(valueChanged(int)),
+                   SLOT(onParameterChanged(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +143,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(double v
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged( int value)
+void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(int value)
 {
   Q_UNUSED(value);
   this->onParameterChanged((double)0);
@@ -144,12 +161,13 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
 
   //QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
-  std::cout << "param node changed(" << node << "): TODO update sliders with new values\n";
+  qDebug() << "param node changed(" << node << "): TODO update sliders with new values";
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
   if (paramNode && this->mrmlScene())
   {
     this->qvtkReconnect(this->TractographyFiducialSeedingNode, paramNode,
-                        vtkCommand::ModifiedEvent, this, SLOT(onParameterNodeModified(vtkObject*)));
+                        vtkCommand::ModifiedEvent,
+                        this, SLOT(onParameterNodeModified(vtkObject*)));
 
     this->connectNodeObservers(paramNode);
 
@@ -163,7 +181,6 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeChanged(vtkM
 }
 
 //-----------------------------------------------------------------------------
-
 void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeModified(vtkObject* node)
 {
   if (!this->processParameterChange)
@@ -188,7 +205,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterNodeModified(vtk
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetfromMRML(vtkMRMLTractographyFiducialSeedingNode *paramNode)
+void qSlicerTractographyFiducialSeedingModuleWidget::
+  updateWidgetfromMRML(vtkMRMLTractographyFiducialSeedingNode *paramNode)
 {
   QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
@@ -207,9 +225,12 @@ void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetfromMRML(vtkMRM
     d->StoppingValueSpinBoxLabel->setValue(paramNode->GetStoppingValue());
     d->DisplayTracksComboBox->setCurrentIndex(paramNode->GetDisplayMode());
 
-    d->FiberNodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()) );
-    d->FiducialNodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()) );
-    d->DTINodeSelector->setCurrentNode( this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()) );
+    d->FiberNodeSelector->setCurrentNode(
+      this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()));
+    d->FiducialNodeSelector->setCurrentNode(
+      this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()));
+    d->DTINodeSelector->setCurrentNode(
+      this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()));
 
     this->processParameterChange = true;
     }
@@ -218,6 +239,9 @@ void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetfromMRML(vtkMRM
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::onSelectionNodeChanged(bool value)
 {
+  Q_UNUSED(value);
+  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  
   if (!this->processParameterChange)
   {
     return;
@@ -225,8 +249,6 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onSelectionNodeChanged(bool
 
   //this->processParameterChange = false;
 
-  Q_UNUSED(value);
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(d->ParameterNodeSelector->currentNode());
   if (paramNode && this->mrmlScene())
   {
@@ -258,17 +280,21 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(vtkObjec
 
 //-----------------------------------------------------------------------------
 
-void qSlicerTractographyFiducialSeedingModuleWidget::connectNodeObservers(vtkMRMLTractographyFiducialSeedingNode* paramNode)
+void qSlicerTractographyFiducialSeedingModuleWidget::
+  connectNodeObservers(vtkMRMLTractographyFiducialSeedingNode* paramNode)
 {
   if (paramNode && this->mrmlScene())
   {
-    if (paramNode->GetOutputFiberRef() && this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()) )
+    if (paramNode->GetOutputFiberRef() &&
+        this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()))
     {
       this->qvtkReconnect(this->FiberBundleNode, this->mrmlScene()->GetNodeByID(paramNode->GetOutputFiberRef()),
                     vtkCommand::ModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
 
     }
-    if (paramNode->GetInputFiducialRef() && this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()) )
+    
+    if (paramNode->GetInputFiducialRef() &&
+        this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()))
     {
       this->qvtkReconnect(this->TransformableNode, this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()),
                     vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
@@ -278,7 +304,9 @@ void qSlicerTractographyFiducialSeedingModuleWidget::connectNodeObservers(vtkMRM
                     vtkMRMLFiducialListNode::FiducialModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
 
     }
-    if (paramNode->GetInputVolumeRef() && this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()) )
+    
+    if (paramNode->GetInputVolumeRef() &&
+        this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()))
     {
       this->qvtkReconnect(this->DiffusionTensorVolumeNode, this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()),
                     vtkCommand::ModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
