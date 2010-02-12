@@ -204,7 +204,7 @@ void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)
     {
     return;
     }
-  
+
   if (!d->ShowHidden && mrmlNode->GetHideFromEditors())
     {
     //qDebug() << d->NodeType << " hide from editor: " << mrmlNode->GetClassName();
@@ -253,7 +253,7 @@ void qMRMLNodeSelector::setMRMLScene(vtkMRMLScene* scene)
   
   // Clear should be called before d->MRMLScene is changed
   // to handle signals/slots with the correct scene
-  this->clear();
+  this->Superclass::clear();
 
   // The Add button is valid only if the scene is non-empty
   this->setAddEnabled(scene != 0);
@@ -362,6 +362,7 @@ void qMRMLNodeSelector::onMRMLSceneDeleted(vtkObject * scene)
 void qMRMLNodeSelector::onAdd()
 {
   QCTK_D(qMRMLNodeSelector);
+  Q_ASSERT(d->NodeTypes.size() > 0);
   
   // Create the MRML node via the MRML Scene
   // FIXME, for the moment we create only nodes of the first type, but we should
@@ -542,7 +543,7 @@ void qMRMLNodeSelector::populateItems()
   QCTK_D(qMRMLNodeSelector);
   QString _currentNode = this->currentNodeId();
 
-  this->clear();
+  this->Superclass::clear();
   if (d->MRMLScene == 0)
     {
     return;

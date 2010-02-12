@@ -16,17 +16,25 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qMRMLNodeSelector   nodeSelector;
+  qMRMLNodeSelector nodeSelector;
   qMRMLSceneFactoryWidget sceneFactory;
-  //qMRMLNodeFactory nodeFactory;
 
   sceneFactory.generateScene();
+
+  int currentCount = nodeSelector.count();
+  if (currentCount != 0)
+    {
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
+    return EXIT_FAILURE;
+    }
   
   // Test: setMRMLScene()/mrmlScene()
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
     {
-    std::cerr<< "qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
   // test a second time, just to make sure methods are well reinit.
@@ -34,14 +42,16 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
     {
-    std::cerr<< "qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
   
   // no type has been given yet -> no item shoud be listed
   if (nodeSelector.count())
     {
-    std::cerr << "qMRMLNodeSelector::count() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -54,14 +64,16 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   // no type has been given yet -> no item shoud be listed
   if (nodeSelector.count())
     {
-    std::cerr << "qMRMLNodeSelector::count() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed." << std::endl;
     return EXIT_FAILURE;
     }
 
   nodeSelector.setMRMLScene(0);
   if (nodeSelector.mrmlScene() != 0)
     {
-    std::cerr << "qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -73,42 +85,49 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.count() != 1)
     {
-    std::cerr << "qMRMLNodeSelector: NodeType failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.count() != 2)
     {
-    std::cerr << "qMRMLNodeSelector: NodeType failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.count() != 1)
     {
-    std::cerr << "qMRMLNodeSelector: NodeType failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.count() != 0)
     {
-    std::cerr << "qMRMLNodeSelector: NodeType failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.count() != 1)
     {
-    std::cerr << "qMRMLNodeSelector: NodeType failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.deleteScene();
   if (nodeSelector.count() != 0)
     {
-    std::cerr << "qMRMLNodeSelector: mrml scene events failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: mrml scene events failed." << std::endl;
     return EXIT_FAILURE;
     }
   if (nodeSelector.currentNode() != 0)
     {
-    std::cerr << "qMRMLNodeSelector: currentNode failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: currentNode failed." << std::endl;
     return EXIT_FAILURE;
     }
   // FIXME: add more basic tests here
@@ -130,7 +149,8 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.count() != 4)
     {
-    std::cerr << "qMRMLNodeSelector: attribute filtering failed." 
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: attribute filtering failed."
               << nodeSelector.count() << std::endl;
     return EXIT_FAILURE;
     }
@@ -142,25 +162,29 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLNonlinearTransformNode"));
   if (nodeSelector.count() != 3)
     {
-    std::cerr << "qMRMLNodeSelector: node type filtering failed." << nodeSelector.count() << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: node type filtering failed." << nodeSelector.count() << std::endl;
     return EXIT_FAILURE;
     }
   nodeSelector.setShowChildNodeTypes(false);
   if (nodeSelector.count() != 2)
     {
-    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed." << std::endl;
     return EXIT_FAILURE;
     }
   nodeSelector.setShowChildNodeTypes(true);
   if (nodeSelector.count() != 3)
     {
-    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed." << std::endl;
     return EXIT_FAILURE;
     }
   nodeSelector.setHideChildNodeTypes(QStringList("vtkMRMLGridTransformNode"));
   if (nodeSelector.count() != 2)
     {
-    std::cerr << "qMRMLNodeSelector: show child node types failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -172,7 +196,8 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   
   if (nodeSelector.nodeTypes() != types)
     {
-    std::cerr << "qMRMLNodeSelector::setNodeTypes() failed." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::setNodeTypes() failed." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -187,15 +212,75 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.count() != 5)
     {
-    std::cerr << "qMRMLNodeSelector:NodeTypeS: setMRMLScene fails." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: setMRMLScene fails." << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.generateNode(types[1]);
   if (nodeSelector.count() != 6)
     {
-    std::cerr << "qMRMLNodeSelector:NodeTypeS: node added to the scene fails." << std::endl;
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: node added to the scene fails." << std::endl;
     return EXIT_FAILURE;
     }
+
+  nodeSelector.setMRMLScene(0);
+
+  currentCount = nodeSelector.count();
+  if (currentCount != 0)
+    {
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //
+  // Let's connect the sceneFactory with the widget
+  //
+  
+  QObject::connect(&sceneFactory, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   &nodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+
+  // Let's check the state of the buttons
+
+  sceneFactory.generateScene();
+
+  // Test: setMRMLScene()/mrmlScene()
+  nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
+  if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
+    {
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QPushButton * addPushButton = nodeSelector.findChild<QPushButton*>("AddPushButton");
+  QPushButton * removePushButton = nodeSelector.findChild<QPushButton*>("RemovePushButton");
+  QPushButton * editPushButton = nodeSelector.findChild<QPushButton*>("EditPushButton");
+  if (!addPushButton || !removePushButton || !editPushButton)
+    {
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - Failed to obtain references to the PushButtons" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  bool addPushButtonEnabled = addPushButton->isEnabled();
+  bool removePushButtonEnabled = removePushButton->isEnabled();
+  bool editPushButtonEnabled = editPushButton->isEnabled();
+  // Add button should be enabled
+  if (!(addPushButtonEnabled && !removePushButtonEnabled && !editPushButtonEnabled))
+    {
+    nodeSelector.printAdditionalInfo();
+    std::cerr << __LINE__ << " - Incorrect PushButtons state" << std::endl
+                          << " Expected => Add[1], Remove[0], Edit[0]" << std::endl
+                          << " Current => Add[" << addPushButtonEnabled << "], "
+                          << "Remove[" << removePushButtonEnabled << "], "
+                          << "Edit[" << editPushButtonEnabled << "]" << std::endl;
+    return EXIT_FAILURE;
+    }
+    
+  sceneFactory.deleteScene();
   
   return EXIT_SUCCESS;
 }
