@@ -162,7 +162,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   // Other utility functions
   //----------------------------------------------------------------
   const char* GetActiveTimeSeriesBundleNodeID();
-
+  vtkMRMLTimeSeriesBundleNode *GetActiveTimeSeriesBundleNode ();
 
  protected:
   

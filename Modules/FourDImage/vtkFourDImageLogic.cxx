@@ -120,6 +120,32 @@ void vtkFourDImageLogic::UpdateAll()
 
 
 //---------------------------------------------------------------------------
+vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::AddNewFourDBundleNode (  )
+{
+
+ vtkMRMLNode *node = NULL;
+ vtkMRMLNode *retNode = NULL;
+
+    node = this->MRMLScene->CreateNodeByClass( "vtkMRMLTimeSeriesBundleNode" );
+    if (node == NULL)
+      {
+      return NULL;
+      }
+
+    node->SetScene(this->MRMLScene);
+
+    std::stringstream ss;
+    const char *name = "TimeSeriesBundle";
+    ss << this->MRMLScene->GetUniqueNameByString(name);
+    node->SetName(ss.str().c_str());
+    retNode = this->MRMLScene->AddNode(node);
+    node->Delete();
+    return ( vtkMRMLTimeSeriesBundleNode::SafeDownCast(retNode) );
+}
+
+
+
+//---------------------------------------------------------------------------
 int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
                                                            std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
 {

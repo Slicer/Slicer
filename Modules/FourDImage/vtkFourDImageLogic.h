@@ -146,6 +146,15 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
                            vtkMRMLTimeSeriesBundleNode* outputBundleNode);
 
 
+  // Description:
+  // This method is used to handle NULL pointers.
+  // If there's a null time series bundle node,
+  // this method creates one using the same
+  // mechanisms as the node selector widget
+  // before any operations on the node are
+  // performed.
+  vtkMRMLTimeSeriesBundleNode* AddNewFourDBundleNode ();
+  
   //----------------------------------------------------------------
   // Editor functions
   //----------------------------------------------------------------
