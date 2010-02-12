@@ -36,7 +36,7 @@ class vtkMaskPoints;
 class VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
   public vtkSlicerModuleLogic
 {
-  public:
+public:
   
   // The Usual vtk class functions
   static vtkSlicerTractographyFiducialSeedingLogic *New();
@@ -59,6 +59,10 @@ protected:
   vtkSlicerTractographyFiducialSeedingLogic(const vtkSlicerTractographyFiducialSeedingLogic&);
   void operator=(const vtkSlicerTractographyFiducialSeedingLogic&);
 
+  /// Register node classes into the mrml scene. Called each time a new scene
+  /// is set. Do nothing by default. Can be reimplemented in derivated classes.
+  virtual void RegisterNodes();
+  
   vtkMaskPoints *MaskPoints;
 
 };

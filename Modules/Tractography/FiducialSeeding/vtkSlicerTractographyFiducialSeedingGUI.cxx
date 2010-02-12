@@ -101,7 +101,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->MaximumPropagationDistance = 600;
   this->OverwritePolyDataWarning =1;
 
-  this->RegisteredNode = 0;
+//   this->RegisteredNode = 0;
   this->TractographyFiducialSeedingNode = NULL;
 
   UpdatingMRML = 0;
@@ -705,27 +705,12 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingGUI::RegisterTractographyFiducialSeedingNode ( ) 
-{
-  if (this->RegisteredNode || this->GetMRMLScene() == NULL)
-    {
-    return;
-    }
-  vtkMRMLTractographyFiducialSeedingNode* gadNode = vtkMRMLTractographyFiducialSeedingNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(gadNode);
-  gadNode->Delete();
-  this->RegisteredNode = 1;
-}
-
-//---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( ) 
 {
   if (this->Built)
     {
     return;
     }
-
-  this->RegisterTractographyFiducialSeedingNode();
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 

@@ -143,9 +143,6 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
 
-  void RegisterTractographyFiducialSeedingNode();
-  int RegisteredNode;
-
   char* StoppingMode;
   vtkFloatingPointType StoppingThreshold;
   double MaximumPropagationDistance;

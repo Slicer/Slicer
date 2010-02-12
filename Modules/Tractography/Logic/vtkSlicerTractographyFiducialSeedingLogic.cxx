@@ -12,28 +12,34 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkImageChangeInformation.h"
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
-
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
 
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkSeedTracts.h"
-#include "vtkMath.h"
-#include "vtkPointData.h"
-#include "vtkMaskPoints.h"
+// MRML includes
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
+#include <vtkMRMLTransformableNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLFiducialListNode.h>
+#include <vtkMRMLFiberBundleNode.h>
+#include <vtkMRMLFiberBundleStorageNode.h>
+#include <vtkMRMLTransformNode.h>
 
-#include "vtkMRMLTransformableNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-#include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLTransformNode.h"
+// VTK includes
+#include <vtkDiffusionTensorMathematics.h>
+#include <vtkSeedTracts.h>
+#include <vtkMath.h>
+#include <vtkPointData.h>
+#include <vtkMaskPoints.h>
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkSmartPointer.h>
 
+// ITKSYS includes
+#include <itksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx>
+
+// STD includes
 #include <sstream>
 
 vtkCxxRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic, "$Revision: 1.9.12.1 $");
@@ -331,4 +337,15 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   transformVolumeToFifucial->Delete();
   transFiducial->Delete();
   return 1;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene(); 
+  if (!scene)
+    {
+    return;
+    }
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLTractographyFiducialSeedingNode>::New());
 }
