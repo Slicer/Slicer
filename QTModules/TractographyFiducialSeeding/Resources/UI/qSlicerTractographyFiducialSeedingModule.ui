@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>393</width>
-    <height>526</height>
+    <width>399</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,6 +36,9 @@
       <stringlist>
        <string>vtkMRMLTractographyFiducialSeedingNode</string>
       </stringlist>
+     </property>
+     <property name="showHidden">
+      <bool>true</bool>
      </property>
      <property name="ShowHidden" stdset="0">
       <bool>true</bool>
@@ -297,13 +300,18 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qCTKAddRemoveComboBox</class>
+   <extends>QWidget</extends>
+   <header>qCTKAddRemoveComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qCTKSliderSpinBoxWidget</class>
    <extends>QWidget</extends>
    <header>qCTKSliderSpinBoxWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>
-   <extends>QWidget</extends>
+   <extends>qCTKAddRemoveComboBox</extends>
    <header>qMRMLNodeSelector.h</header>
   </customwidget>
   <customwidget>
