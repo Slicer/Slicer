@@ -1173,6 +1173,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetRange(min, max);
           tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->SetResolution(step);
+          tparameter->GetEntry()->SetCommandTriggerToAnyChange();
           parameter = tparameter;
           }
         }
@@ -1242,6 +1243,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetRange(min, max);
           tparameter->SetResolution(step);
           tparameter->SetValue(atof((*pit).GetDefault().c_str()));
+          tparameter->GetEntry()->SetCommandTriggerToAnyChange();
           parameter = tparameter;
           }
         }
@@ -1298,6 +1300,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetRange(min, max);
           tparameter->SetResolution(step);
           tparameter->SetValue(atof((*pit).GetDefault().c_str()));
+          tparameter->GetEntry()->SetCommandTriggerToAnyChange();
           parameter = tparameter;
           }
         }
