@@ -259,35 +259,16 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
 void vtkMRMLScalarVolumeNode::UpdateFromMRML()
 {
   vtkDebugMacro("UpdateFromMRML: calling calculate auto levels");
-  // check for a stats volume - name or storage node's file name
-  std::string nodeName = "";
-  std::string fileName = "";
-  if ( this->GetName() != NULL )
-    {
-    nodeName = std::string(this->GetName());
-    }
-  if (this->GetStorageNode() != NULL)
-    {
-    if ( this->GetStorageNode()->GetFileName() != NULL )
-      {
-      fileName = std::string(this->GetStorageNode()->GetFileName());
-      }
-    else
-      {
-      fileName = std::string("");
-      }
-    }
-  // TODO: checking the name for 'stat' -- should be an attrbute like labelMap.
-  if ((nodeName != "" && nodeName.find("stat",0) != std::string::npos) ||
-      (fileName != "" && fileName.find("stat",0) != std::string::npos))
-    {
-    vtkMRMLScalarVolumeDisplayNode *sdNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-    this->CalculateStatisticsAutoLevels(sdNode, this->GetImageData());
-    }
-  else
-    {
-    this->CalculateScalarAutoLevels(NULL, NULL);
-    }
+
+  //---NOTE:
+  //--- removed the method that calculates
+  //--- auto-levels on statistics volumes. Used
+  //--- to perform this based on filename hints,
+  //--- but this is not a useful metric.
+  //vtkMRMLScalarVolumeDisplayNode *sdNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  //  this->CalculateStatisticsAutoLevels(sdNode, this->GetImageData());
+
+  this->CalculateScalarAutoLevels(NULL, NULL);
 }
 
 //---------------------------------------------------------------------------
