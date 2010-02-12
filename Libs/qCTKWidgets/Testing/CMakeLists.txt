@@ -6,6 +6,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qCTKAbstractPluginFactoryTest1.cxx
   qCTKAbstractQObjectFactoryTest1.cxx
   qCTKAddRemoveComboBoxTest1.cxx
+  qCTKButtonGroupTest1.cxx
   qCTKCollapsibleButtonTest1.cxx
   qCTKCollapsibleGroupBoxTest1.cxx
   qCTKColorPickerButtonTest1.cxx
@@ -49,6 +50,7 @@ SIMPLE_TEST( qCTKAbstractObjectFactoryTest1 )
 SIMPLE_TEST( qCTKAbstractPluginFactoryTest1 )
 SIMPLE_TEST( qCTKAbstractQObjectFactoryTest1 )
 SIMPLE_TEST( qCTKAddRemoveComboBoxTest1 )
+SIMPLE_TEST( qCTKButtonGroupTest1 )
 SIMPLE_TEST( qCTKCollapsibleButtonTest1 )
 SIMPLE_TEST( qCTKCollapsibleGroupBoxTest1 )
 SIMPLE_TEST( qCTKColorPickerButtonTest1 )

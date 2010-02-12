@@ -3,6 +3,7 @@
 
 // qCTK includes
 #include "qCTKCollapsibleButton.h"
+#include "qCTKButtonGroup.h"
 
 // QT includes
 #include <QButtonGroup>
@@ -37,7 +38,8 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerWelcomeModule::setupUi(widget);
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
-  QButtonGroup * group = new QButtonGroup(widget);
+  //QButtonGroup * group = new QButtonGroup(widget);
+  qCTKButtonGroup * group = new qCTKButtonGroup(widget);
   
   // Add all collabsibleWidgetButton to a button group
   QList<qCTKCollapsibleButton*> collapsibles = widget->findChildren<qCTKCollapsibleButton*>();
