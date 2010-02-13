@@ -215,16 +215,16 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_Mapper->Create();
     this->MB_Mapper->SetLabelWidth(labelWidth);
     this->MB_Mapper->SetBalloonHelpString("Please select one rendering method");
-    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Software Ray Casting");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("VTK CPU Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessRenderingMethodEvents 0");
     this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Single Volume GPU Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessRenderingMethodEvents 1");
     this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Multi-volume GPU Ray Casting");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessRenderingMethodEvents 2");
-    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("OpenGL 3D Texture Mapping");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("VTK OpenGL 3D Texture Mapping");
     this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessRenderingMethodEvents 3");
-//    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
-//    this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessRenderingMethodEvents 4");
+    this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("VTK GPU Ray Casting");
+    this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessRenderingMethodEvents 4");
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_Mapper->GetWidgetName() );
   }
@@ -1505,19 +1505,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
     else//seldom should we see this error message unless really low end graphics card...
       this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D is not supported by your computer.");
     break;
-  case 4://CUDA ray casting
-/*    if (success)
-    {
-      this->FrameCUDARayCasting->ExpandFrame();
-      this->Volume->SetMapper(this->MapperCUDARaycast);
-      vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-      vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
-      this->MapperCUDARaycast->SetOrientationMatrix(matrix);
-      matrix->Delete();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CUDA");
-    }
-    else
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("CUDA is not supported by your computer.");*/
+  case 4://vtk edge gpu ray casting
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("VTK GPU Ray Casting is being integrated into Slicer.");
     break;
   }
 
