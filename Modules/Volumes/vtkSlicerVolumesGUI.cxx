@@ -83,8 +83,8 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->VolumeFileHeaderWidget = NULL;
   this->DiffusionEditorWidget = NULL;
 
-  this->KeepAll = false;
-  this->LoadingOptions = 0;
+  // this->KeepAll = false;
+  // this->LoadingOptions = 0;
   this->AllFileNames.clear();
   this->IndexCurrentFile = 0;
 
@@ -387,39 +387,15 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
 {
+  int LoadingOptions = 0;
+  bool KeepAll = false;
+
   if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
       event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
     {
     const char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
-    vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Centered") )
-      {
-      LoadingOptions += 2;
-      }
 
-    if ( this->LabelMapCheckButton->GetSelectedState() )
-      {
-      LoadingOptions += 1;
-      }
-
-    if ( this->SingleFileCheckButton->GetSelectedState() )
-      {
-      LoadingOptions += 4;
-      }
-    if ( this->KeepAllCheckButton->GetSelectedState() )
-      {
-      KeepAll = true;
-      }
-    else
-      {
-        this->KeepAll = false;
-      }
-
-    vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
-    if ( !strcmp (orientMB->GetValue(), "Use IJK") )
-      {
-      LoadingOptions += 16;
-      }
+    this->CheckLoadingOptions( LoadingOptions, KeepAll );
 
     vtkSlicerVolumesLogic* volumeLogic = this->Logic;
     vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
@@ -464,39 +440,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     if ( fileName ) 
       {
 
-      vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
-
-      if ( !strcmp (mb->GetValue(), "Centered") )
-        {
-        LoadingOptions += 2;
-        }
-
-      if ( this->LabelMapCheckButton->GetSelectedState() )
-        {
-        LoadingOptions += 1;
-        }
-
-      if ( this->SingleFileCheckButton->GetSelectedState() )
-        {
-        LoadingOptions += 4;
-        }
-
-      if ( this->KeepAllCheckButton->GetSelectedState() )
-        {
-        this->KeepAll = true;
-        }
-      else
-        {
-        this->KeepAll = false;
-        }
-
-
-      vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
-      if ( !strcmp (orientMB->GetValue(), "Use IJK") )
-        {
-        LoadingOptions += 16;
-        }
-
+      this->CheckLoadingOptions( LoadingOptions, KeepAll );
       std::string fileString(fileName);
       for (unsigned int i = 0; i < fileString.length(); i++)
         {
@@ -507,6 +451,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
         }
 
       // let's see how many 'similar' images are there in the directory
+      this->AllFileNames.clear();
+      this->IndexCurrentFile = 0;
+
       std::string pathString =  vtksys::SystemTools::GetFilenamePath( fileString );
       std::string extName = vtksys::SystemTools::GetFilenameLastExtension( fileString );
             
@@ -588,18 +535,10 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     }
   else if (this->LoadPreviousButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    if ( this->KeepAllCheckButton->GetSelectedState() )
-      {
-      this->KeepAll = true;
-      }
-    else
-      {
-      this->KeepAll = false;
-      }
     // If there is at least one file to load
     if ( this->AllFileNames.size() != 0 ) 
       {
-
+      this->CheckLoadingOptions( LoadingOptions, KeepAll );
       this->IndexCurrentFile -= 1;
       if ( this->IndexCurrentFile == -1 )
         {
@@ -611,7 +550,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
       vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = 0;
       // delete current node if told to do so
-      if ( !this->KeepAll )
+      if ( !KeepAll )
         {
         volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
         // this->GetMRMLScene()->RemoveNode(volumeNode);
@@ -673,18 +612,10 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     }
   else if (this->LoadNextButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    if ( this->KeepAllCheckButton->GetSelectedState() )
-      {
-      this->KeepAll = true;
-      }
-    else
-      {
-      this->KeepAll = false;
-      }
     // If there is at least one file to load
     if ( this->AllFileNames.size() != 0 ) 
       {
-
+      this->CheckLoadingOptions( LoadingOptions, KeepAll );
       this->IndexCurrentFile += 1;
       if ( this->IndexCurrentFile == static_cast<int>(this->AllFileNames.size()) )
         {
@@ -696,7 +627,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
       vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = 0;
       // delete current node if told to do so
-      if ( !this->KeepAll )
+      if ( !KeepAll )
         {
         volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
         // this->GetMRMLScene()->RemoveNode(volumeNode);
@@ -1494,3 +1425,41 @@ const char* vtkSlicerVolumesGUI::GetTagValue( char* tag )
   return NULL;
 }
 
+void vtkSlicerVolumesGUI::CheckLoadingOptions( int &LoadingOptions, bool &KeepAll )
+{
+  LoadingOptions = 0;
+  KeepAll = false;
+
+  if ( this->LabelMapCheckButton->GetSelectedState() )
+    {
+      LoadingOptions += 1;
+    }
+
+  vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
+  if ( !strcmp (mb->GetValue(), "Centered") )
+    {
+      LoadingOptions += 2;
+    }
+
+  if ( this->SingleFileCheckButton->GetSelectedState() )
+    {
+      LoadingOptions += 4;
+    }
+
+  vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
+  if ( !strcmp (orientMB->GetValue(), "Use IJK") )
+    {
+      LoadingOptions += 16;
+    }
+
+  if ( this->KeepAllCheckButton->GetSelectedState() )
+    {
+      KeepAll = true;
+    }
+  else
+    {
+      KeepAll = false;
+    }
+
+  return;
+}

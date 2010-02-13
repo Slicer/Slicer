@@ -132,6 +132,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     std::vector<std::string> Tags;
     std::vector<std::string> TagValues;
     void CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader );
+    void CheckLoadingOptions( int &LoadingOptions, bool &KeepAll );
     //ETX
 
     unsigned int GetNumberOfItemsInDictionary(); 
@@ -203,8 +204,6 @@ protected:
     std::vector<std::string> AllFileNames;
     int IndexCurrentFile;
     //ETX
-    int LoadingOptions;
-    bool KeepAll;
 
  private:
     vtkSlicerVolumesGUI ( const vtkSlicerVolumesGUI& ); // Not implemented.
