@@ -36,10 +36,6 @@ public:
 protected:
   virtual void setup();
 
-  /// 
-  /// Convenient method to return slicer wiki URL
-  QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
-
 private:
   QCTK_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
 };

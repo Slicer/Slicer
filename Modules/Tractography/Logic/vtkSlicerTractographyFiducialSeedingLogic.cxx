@@ -34,6 +34,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkSmartPointer.h>
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx> 
@@ -49,12 +50,15 @@ vtkStandardNewMacro(vtkSlicerTractographyFiducialSeedingLogic);
 vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingLogic()
 {
   this->MaskPoints = vtkMaskPoints::New();
+  this->TractographyFiducialSeedingNode = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
 {
   this->MaskPoints->Delete();
+  vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
+
 }
 
 
@@ -64,10 +68,18 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
   this->vtkObject::PrintSelf(os, indent);
 }
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
+}
+
+//----------------------------------------------------------------------------
 int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLTransformableNode *transformableNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
-                                                            const char * stoppingMode, 
+                                                            int stoppingMode, 
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
                                                             double integrationStepLength,
@@ -177,19 +189,15 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
   seed->SetMinimumPathLength(mnimumPathLength);
 
-  if ( stoppingMode && 
-        ( (strcmp("Linear Measurement", stoppingMode) != 0) || (strcmp("Linear Measure", stoppingMode) != 0) ) )
+  if ( stoppingMode == 0 )
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
-  else if (stoppingMode && strcmp("Fractional Anisotropy", stoppingMode) != 0)
+  else
     {  
     streamer->SetStoppingModeToFractionalAnisotropy();
     }
-  else
-    {
-    std::cerr << "No stopping criteria is defined. Using default";
-    }
+
   //streamer->SetMaximumPropagationDistance(this->MaximumPropagationDistance);
   streamer->SetStoppingThreshold(stoppingValue);
   streamer->SetRadiusOfCurvature(stoppingCurvature);
@@ -339,6 +347,53 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   return 1;
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents ( vtkObject *caller,
+                                            unsigned long event,
+                                            void *callData ) 
+{
+  // if parameter node has been added, update GUI widgets with new values
+  vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;
+  if (snode == NULL || snode->GetEnableSeeding() == 0)
+    {
+    return;
+    }
+
+  vtkMRMLScene* scene = this->GetMRMLScene(); 
+  if (!scene)
+    {
+    return;
+    }
+
+  vtkMRMLDiffusionTensorVolumeNode *volumeNode = 
+        vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(scene->GetNodeByID(snode->GetInputVolumeRef()));
+  vtkMRMLTransformableNode *transformableNode = 
+        vtkMRMLTransformableNode::SafeDownCast(scene->GetNodeByID(snode->GetInputFiducialRef()));
+  vtkMRMLFiberBundleNode *fiberNode = 
+        vtkMRMLFiberBundleNode::SafeDownCast(scene->GetNodeByID(snode->GetOutputFiberRef()));
+
+  if(volumeNode == NULL || transformableNode == NULL || fiberNode == NULL) 
+    {
+    return;
+    }
+  
+  this->CreateTracts(volumeNode, transformableNode, fiberNode,
+                     snode->GetStoppingMode(), 
+                     snode->GetStoppingValue(),
+                     snode->GetStoppingCurvature(),
+                     snode->GetIntegrationStep(),
+                     snode->GetMinimumPathLength(),
+                     snode->GetSeedingRegionSize(),
+                     snode->GetSeedingRegionStep(),
+                     snode->GetMaxNumberOfSeeds(),
+                     snode->GetSeedSelectedFiducials(),
+                     snode->GetDisplayMode()
+                     );
+  return;
+                                                            
+}
+
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
 {
@@ -349,3 +404,4 @@ void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
     }
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLTractographyFiducialSeedingNode>::New());
 }
+

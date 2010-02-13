@@ -11,10 +11,10 @@
 
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate;
 class vtkMRMLNode;
-class vtkMRMLTractographyFiducialSeedingNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLTransformableNode;
 class vtkMRMLDiffusionTensorVolumeNode;
+class vtkMRMLTractographyFiducialSeedingNode;
 
 class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModuleWidget :  public qSlicerAbstractModuleWidget
 {
@@ -23,23 +23,94 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTractographyFiducialSeedingModuleWidget(QWidget *parent=0);
 
+  /// get current parameter node
+  vtkMRMLTractographyFiducialSeedingNode* tractographyFiducialSeedingNode() {
+    return this->TractographyFiducialSeedingNode;
+  };
+
+  /// get current seeding node
+  vtkMRMLTransformableNode* transformableNode() {
+    return this->TransformableNode;
+  };
+
+  /// get current DTI volume node
+  vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode() {
+    return this->DiffusionTensorVolumeNode;
+  };
+
+  /// get current fiber bundlde node
+  vtkMRMLFiberBundleNode* fiberBundleNode() {
+    return this->FiberBundleNode;
+  };
+
+
+public slots:
+
+  /// 
+  /// Set the current MRML scene to the widget
+  virtual void setMRMLScene(vtkMRMLScene*);
+
+  /// set current parameter node
+  void setTractographyFiducialSeedingNode(vtkMRMLNode *node);
+
+  /// set current seeding node
+  void setTransformableNode(vtkMRMLNode *node);
+
+  /// set current DTI volume node
+  void setDiffusionTensorVolumeNode(vtkMRMLNode *node);
+
+  /// set current fiber bundlde node
+  void setFiberBundleNode(vtkMRMLNode *node);
+
+  /// set stopping criteria 0-Linear Measure, 1 - FA
+  void setStoppingCriteria(int value);
+
+  /// set display mode 0-line 1-tube
+  void setTrackDisplayMode(int value);
+
+  /// set stopping curvature
+  void setStoppingCurvature(double value);
+
+  /// set stopping curvature
+  void setStoppingValue(double value);
+
+  /// set integration step length, mm
+  void setIntegrationStep(double value);
+
+  /// set minimum path length, mm
+  void setMinimumPath(double value);
+
+  /// set the size of fiducial region, mm
+  void setFiducialRegion(double value);
+
+  /// set the step of fiducial region, mm
+  void setFiducialRegionStep(double value);
+
+  /// set seed only selected fiducails
+  void setSeedSelectedFiducials(int value);
+
+  /// set enable/disable seeding
+  void setEnableSeeding(int value);
+
+  /// set max number of seeds
+  void setMaxNumberSeeds(int value);
+
 protected:
+
   virtual void setup();
+
   void updateWidgetfromMRML(vtkMRMLTractographyFiducialSeedingNode *paramNode);
+
   void connectNodeObservers(vtkMRMLTractographyFiducialSeedingNode* paramNode);
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
-  vtkMRMLFiberBundleNode*                 FiberBundleNode;
   vtkMRMLTransformableNode*               TransformableNode;
   vtkMRMLDiffusionTensorVolumeNode*       DiffusionTensorVolumeNode;
+  vtkMRMLFiberBundleNode*                 FiberBundleNode;
 
 protected slots:
-  void onParameterChanged(double value);
-  void onParameterChanged(int value);
+
   void onParameterChanged(vtkObject* node);
-  void onParameterNodeChanged(vtkMRMLNode *node);
-  void onParameterNodeModified(vtkObject* node);
-  void onSelectionNodeChanged(bool value);
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);

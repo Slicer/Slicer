@@ -57,6 +57,11 @@ public:
 
   virtual void printAdditionalInfo();
 
+  /// 
+  /// Convenient method to return slicer wiki URL
+  QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
+
+
   ///
   /// Initialize the module, an appLogic must be given to
   /// initialize the module

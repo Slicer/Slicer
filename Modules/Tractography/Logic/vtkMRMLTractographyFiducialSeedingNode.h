@@ -114,6 +114,13 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSee
 
   
   // Description:
+  // Enable/Disable fiducial seeding
+  vtkBooleanMacro(EnableSeeding, int);
+  vtkGetMacro(EnableSeeding, int);
+  vtkSetMacro(EnableSeeding, int);
+
+
+  // Description:
   // Get/Set input volume MRML Id
   vtkGetStringMacro(InputVolumeRef);
   vtkSetStringMacro(InputVolumeRef);
@@ -150,6 +157,7 @@ protected:
   double MinimumPathLength;
   int MaxNumberOfSeeds;
   int SeedSelectedFiducials;
+  int EnableSeeding;
 
   char* InputVolumeRef;
   char* InputFiducialRef;

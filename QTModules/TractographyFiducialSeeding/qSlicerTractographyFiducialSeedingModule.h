@@ -16,8 +16,18 @@ public:
   typedef qSlicerAbstractLoadableModule Superclass;
 
   qSlicerTractographyFiducialSeedingModule(QObject *_parent = 0);
-  
+
+  /// 
+  /// Display name for the module
   virtual QString title()const {return "FiducialSeeding";} 
+   /// 
+  /// Help text of the module
+  virtual QString helpText()const;
+
+  /// 
+  /// Acknowledgement of the module
+  virtual QString acknowledgementText()const;
+
 
 protected:
   /// Create and return a widget representation of the object

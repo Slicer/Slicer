@@ -681,7 +681,17 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
   vtkMRMLTransformableNode *fiducialListNode = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
   vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
   
-  std::string stopingMode = this->StoppingModeMenu->GetWidget()->GetValue ();
+  std::string stoppingMode = this->StoppingModeMenu->GetWidget()->GetValue ();
+  int istoppingMode = 0;
+  if ( stoppingMode == std::string("Linear Measurement") || 
+       stoppingMode == std::string("Linear Measure")  )
+    {
+     istoppingMode = 0;
+    }
+  else 
+    {  
+     istoppingMode = 1;
+    }  
 
   if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) return;
 
@@ -692,7 +702,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
     }
 
   this->ModuleLogic->CreateTracts(volumeNode, fiducialListNode, fiberNode,
-                                                          stopingMode.c_str(),
+                                                          istoppingMode,
                                                           this->StoppingValueScale->GetWidget()->GetValue(),
                                                           this->StoppingCurvatureScale->GetWidget()->GetValue(),
                                                           this->IntegrationStepLengthScale->GetWidget()->GetValue(),

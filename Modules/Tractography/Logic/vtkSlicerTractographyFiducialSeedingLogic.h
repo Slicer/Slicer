@@ -27,6 +27,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerTractographyModuleLogicExport.h"
 
+class vtkMRMLTractographyFiducialSeedingNode;
 class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiberBundleNode;
@@ -43,16 +44,23 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  int CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
-                          vtkMRMLTransformableNode *fiducialListNode,
-                          vtkMRMLFiberBundleNode *fiberNode,
-                          const char * stoppinMode,
-                          double stoppingValue, double stoppingCurvature, 
-                          double integrationStepLength, double mnimumPathLength,
-                          double resgionSize, double samplingStep,
-                          int maxNumberOfSeeds,
-                          int seedSelectedFiducials,
-                          int displayMode);
+  int CreateTracts( vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+                    vtkMRMLTransformableNode *fiducialListNode,
+                    vtkMRMLFiberBundleNode *fiberNode,
+                    int stoppinMode,
+                    double stoppingValue, double stoppingCurvature, 
+                    double integrationStepLength, double mnimumPathLength,
+                    double resgionSize, double samplingStep,
+                    int maxNumberOfSeeds,
+                    int seedSelectedFiducials,
+                    int displayMode);
+
+  virtual void ProcessMRMLEvents ( vtkObject *caller,
+                                   unsigned long event,
+                                   void *callData );
+
+  void SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node);
+
 protected:
   vtkSlicerTractographyFiducialSeedingLogic();
   ~vtkSlicerTractographyFiducialSeedingLogic();
@@ -64,6 +72,8 @@ protected:
   virtual void RegisterNodes();
   
   vtkMaskPoints *MaskPoints;
+
+  vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
 
 };
 

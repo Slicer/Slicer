@@ -62,6 +62,7 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->MaxNumberOfSeeds = 100;
    this->SeedSelectedFiducials = 0;
    this->DisplayMode = 1;
+   this->EnableSeeding = 1;
 
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
@@ -134,6 +135,8 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->DisplayMode;
     of << indent << " displayMode=\"" << ss.str() << "\"";
   }
+
+  of << indent << " enableSeeding=\"" << (this->EnableSeeding ? "true" : "false") << "\"";
 
   {
     std::stringstream ss;
@@ -232,6 +235,17 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
         this->SeedSelectedFiducials = 0;
         }
       }
+    else if (!strcmp(attName, "enableSeeding")) 
+      {
+     if (!strcmp(attValue,"true")) 
+        {
+        this->EnableSeeding = 1;
+        }
+      else
+        {
+        this->EnableSeeding = 0;
+        }
+      }
     else if (!strcmp(attName, "DisplayMode")) 
       {
       std::stringstream ss;
@@ -277,6 +291,7 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
   this->SetSeedSelectedFiducials(node->SeedSelectedFiducials);
   this->SetDisplayMode(node->DisplayMode);
+  this->SetEnableSeeding(node->EnableSeeding);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
@@ -302,6 +317,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
   os << indent << "SeedSelectedFiducials:   " << this->SeedSelectedFiducials << "\n";
   os << indent << "DisplayMode:   " << this->DisplayMode << "\n";
+  os << indent << "EnableSeeding:   " << this->EnableSeeding << "\n";
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 
