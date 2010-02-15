@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   SlicerViewerWidget
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/ModuleDescriptionParser/ModuleDescription.cxx $
+  Module:    $HeadURL$
   Date:      $Date$
   Version:   $Revision$
 
