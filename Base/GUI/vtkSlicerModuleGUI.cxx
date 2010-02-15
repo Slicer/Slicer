@@ -6,7 +6,7 @@
 
 
 //---------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision$");
 vtkStandardNewMacro ( vtkSlicerModuleGUI );
 
 vtkSlicerBaseAcknowledgementLogoIcons* vtkSlicerModuleGUI::AcknowledgementIcons = NULL;

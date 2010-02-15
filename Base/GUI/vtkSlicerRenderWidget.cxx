@@ -19,7 +19,7 @@
 
 
 vtkStandardNewMacro(vtkSlicerRenderWidget);
-vtkCxxRevisionMacro(vtkSlicerRenderWidget, "$Revision: 1.163 $");
+vtkCxxRevisionMacro(vtkSlicerRenderWidget, "$Revision$");
 
 vtkSlicerRenderWidget::vtkSlicerRenderWidget()
 {

@@ -16,7 +16,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerCamerasGUI );
-vtkCxxRevisionMacro ( vtkSlicerCamerasGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerCamerasGUI, "$Revision$");
 
 //----------------------------------------------------------------------------
 class vtkSlicerCamerasGUIInternals

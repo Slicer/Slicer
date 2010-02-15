@@ -28,7 +28,7 @@
 // for picking
 #include "vtkSlicerViewerWidget.h"
 
-vtkCxxRevisionMacro(vtkSlicerViewerInteractorStyle, "$Revision: 1.32 $");
+vtkCxxRevisionMacro(vtkSlicerViewerInteractorStyle, "$Revision$");
 vtkStandardNewMacro(vtkSlicerViewerInteractorStyle);
 
 //----------------------------------------------------------------------------

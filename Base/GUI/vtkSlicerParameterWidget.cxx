@@ -56,7 +56,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerParameterWidget );
-//vtkCxxRevisionMacro(vtkSlicerParameteWidget, "$Revision: 1.33 $");
+//vtkCxxRevisionMacro(vtkSlicerParameteWidget, "$Revision$");
 //----------------------------------------------------------------------------
 
 vtkSlicerParameterWidget::vtkSlicerParameterWidget()

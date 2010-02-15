@@ -21,7 +21,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDataTransferWidget);
-vtkCxxRevisionMacro (vtkSlicerDataTransferWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerDataTransferWidget, "$Revision$");
 //---------------------------------------------------------------------------
 
 vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)

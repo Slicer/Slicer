@@ -30,7 +30,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationSettingsInterface );
-vtkCxxRevisionMacro(vtkSlicerApplicationSettingsInterface, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerApplicationSettingsInterface, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()

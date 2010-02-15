@@ -15,7 +15,7 @@
 #include "vtkURIHandler.h"
 #include <vtksys/stl/string>
 //---------------------------------------------------------------------------
-vtkCxxRevisionMacro ( vtkSlicerCacheAndDataIOManagerGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerCacheAndDataIOManagerGUI, "$Revision$");
 vtkStandardNewMacro (vtkSlicerCacheAndDataIOManagerGUI );
 
 

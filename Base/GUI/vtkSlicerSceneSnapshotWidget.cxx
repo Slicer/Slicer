@@ -18,7 +18,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSceneSnapshotWidget );
-vtkCxxRevisionMacro ( vtkSlicerSceneSnapshotWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerSceneSnapshotWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

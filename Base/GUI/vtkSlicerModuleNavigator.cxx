@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerModuleNavigator );
-vtkCxxRevisionMacro ( vtkSlicerModuleNavigator, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerModuleNavigator, "$Revision$");
 
 
 //---------------------------------------------------------------------------

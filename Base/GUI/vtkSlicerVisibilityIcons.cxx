@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerVisibilityIcons );
-vtkCxxRevisionMacro ( vtkSlicerVisibilityIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerVisibilityIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerVisibilityIcons::vtkSlicerVisibilityIcons ( )

@@ -28,7 +28,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorEditWidget );
-vtkCxxRevisionMacro ( vtkSlicerColorEditWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerColorEditWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerROIGUI );
-vtkCxxRevisionMacro ( vtkSlicerROIGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerROIGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerTransformEditorWidget );
-vtkCxxRevisionMacro ( vtkSlicerTransformEditorWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerTransformEditorWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

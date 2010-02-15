@@ -50,7 +50,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewControlGUI );
-vtkCxxRevisionMacro ( vtkSlicerViewControlGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerViewControlGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

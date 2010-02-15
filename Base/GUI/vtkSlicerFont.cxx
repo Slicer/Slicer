@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerFont );
-vtkCxxRevisionMacro ( vtkSlicerFont, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerFont, "$Revision$" );
 
 //---------------------------------------------------------------------------
 vtkSlicerFont::vtkSlicerFont ( ) {

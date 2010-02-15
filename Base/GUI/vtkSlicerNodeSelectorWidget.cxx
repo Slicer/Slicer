@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkSlicerNodeSelectorWidget.cxx,v $
-Date:      $Date: 2006/03/17 15:10:10 $
-Version:   $Revision: 1.2 $
+Date:      $Date$
+Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -22,7 +22,7 @@ Version:   $Revision: 1.2 $
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerNodeSelectorWidget );
-vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision: 1.33 $");
+vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision$");
 
 
 //----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include "vtkKWApplication.h"
 
 
-vtkCxxRevisionMacro ( vtkSlicerComponentGUI, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerComponentGUI, "$Revision$" );
 vtkStandardNewMacro ( vtkSlicerComponentGUI );
 
 

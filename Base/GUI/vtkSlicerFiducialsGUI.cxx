@@ -26,7 +26,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerFiducialsGUI );
-vtkCxxRevisionMacro ( vtkSlicerFiducialsGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerFiducialsGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -33,7 +33,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDataGUI );
-vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

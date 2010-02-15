@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerFileBrowserDialog );
-vtkCxxRevisionMacro(vtkSlicerFileBrowserDialog, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerFileBrowserDialog, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerFileBrowserDialog::vtkSlicerFileBrowserDialog()

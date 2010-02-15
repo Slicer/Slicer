@@ -13,7 +13,7 @@
 vtkStandardNewMacro( vtkKWProgressDialog );
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkKWProgressDialog , "$Revision: 1.49 $");
+vtkCxxRevisionMacro(vtkKWProgressDialog , "$Revision$");
 
 //----------------------------------------------------------------------------
 // Description:

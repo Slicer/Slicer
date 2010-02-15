@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerBaseGUIWin32Header.h,v $
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 ///  vtkSlicerBaseGUIWin32Header - manage Windows system differences

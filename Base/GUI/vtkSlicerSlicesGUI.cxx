@@ -44,7 +44,7 @@ class ParameterWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCor
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSlicesGUI);
-vtkCxxRevisionMacro(vtkSlicerSlicesGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerSlicesGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

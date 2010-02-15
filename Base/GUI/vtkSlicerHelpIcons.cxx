@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerHelpIcons );
-vtkCxxRevisionMacro ( vtkSlicerHelpIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerHelpIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerHelpIcons::vtkSlicerHelpIcons ( )

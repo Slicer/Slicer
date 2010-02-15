@@ -121,7 +121,7 @@ const char *vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey = "RemoteCache
 vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
 
 //---------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision$");
 
 typedef std::pair<std::string, std::string> AddRecordType;
 class DisplayMessageQueue : public std::queue<AddRecordType> {};

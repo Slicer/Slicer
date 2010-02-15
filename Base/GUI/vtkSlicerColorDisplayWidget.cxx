@@ -32,7 +32,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorDisplayWidget );
-vtkCxxRevisionMacro ( vtkSlicerColorDisplayWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerColorDisplayWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

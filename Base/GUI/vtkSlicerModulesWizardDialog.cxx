@@ -18,7 +18,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModulesWizardDialog );
-vtkCxxRevisionMacro(vtkSlicerModulesWizardDialog, "$Revision: 1.6 $");
+vtkCxxRevisionMacro(vtkSlicerModulesWizardDialog, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesWizardDialog::vtkSlicerModulesWizardDialog()

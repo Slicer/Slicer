@@ -36,7 +36,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModulesConfigurationStep );
-vtkCxxRevisionMacro(vtkSlicerModulesConfigurationStep, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerModulesConfigurationStep, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()

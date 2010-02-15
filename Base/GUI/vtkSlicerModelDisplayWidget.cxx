@@ -20,7 +20,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelDisplayWidget );
-vtkCxxRevisionMacro ( vtkSlicerModelDisplayWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerModelDisplayWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

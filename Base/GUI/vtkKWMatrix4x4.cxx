@@ -20,7 +20,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWMatrix4x4 );
-vtkCxxRevisionMacro(vtkKWMatrix4x4, "$Revision: 1.49 $");
+vtkCxxRevisionMacro(vtkKWMatrix4x4, "$Revision$");
 
 //----------------------------------------------------------------------------
 // Description:

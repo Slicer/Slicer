@@ -22,7 +22,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerTransformsGUI );
-vtkCxxRevisionMacro ( vtkSlicerTransformsGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerTransformsGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -5,7 +5,7 @@
  
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSaveDataWidgetIcons );
-vtkCxxRevisionMacro ( vtkSlicerSaveDataWidgetIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerSaveDataWidgetIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerSaveDataWidgetIcons::vtkSlicerSaveDataWidgetIcons ( )

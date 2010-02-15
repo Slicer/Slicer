@@ -17,7 +17,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumeFileHeaderWidget );
-vtkCxxRevisionMacro ( vtkSlicerVolumeFileHeaderWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerVolumeFileHeaderWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

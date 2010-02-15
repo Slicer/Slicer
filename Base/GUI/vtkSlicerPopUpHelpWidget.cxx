@@ -13,7 +13,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerPopUpHelpWidget );
-vtkCxxRevisionMacro ( vtkSlicerPopUpHelpWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerPopUpHelpWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

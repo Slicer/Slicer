@@ -7,7 +7,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSlicesControlIcons );
-vtkCxxRevisionMacro ( vtkSlicerSlicesControlIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerSlicesControlIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )

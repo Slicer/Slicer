@@ -79,7 +79,7 @@ static std::string trim(const std::string& str)
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModulesStep );
-vtkCxxRevisionMacro(vtkSlicerModulesStep, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkSlicerModulesStep, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesStep::vtkSlicerModulesStep()

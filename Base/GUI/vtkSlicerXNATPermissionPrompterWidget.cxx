@@ -9,7 +9,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerXNATPermissionPrompterWidget );
-vtkCxxRevisionMacro (vtkSlicerXNATPermissionPrompterWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerXNATPermissionPrompterWidget, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerXNATPermissionPrompterWidget::vtkSlicerXNATPermissionPrompterWidget()

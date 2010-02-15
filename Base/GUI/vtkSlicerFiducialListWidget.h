@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerFiducialListWidget.h,v $
-  Date:      $Date: $
-  Version:   $Revision: $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 

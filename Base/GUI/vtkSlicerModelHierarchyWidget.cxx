@@ -28,7 +28,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelHierarchyWidget );
-vtkCxxRevisionMacro ( vtkSlicerModelHierarchyWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerModelHierarchyWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

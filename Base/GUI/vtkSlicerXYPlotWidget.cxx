@@ -8,7 +8,7 @@
 
   Program:   3D Slicer
   Module:    $HeadURL: $
-  Date:      $Date: $
+  Date:      $Date$
 
 =========================================================================*/
 #include "vtkCommand.h"
@@ -39,7 +39,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerXYPlotWidget );
-vtkCxxRevisionMacro(vtkSlicerXYPlotWidget, "$Revision: 1.49 $");
+vtkCxxRevisionMacro(vtkSlicerXYPlotWidget, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()

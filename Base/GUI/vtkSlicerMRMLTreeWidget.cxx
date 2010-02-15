@@ -36,7 +36,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
-vtkCxxRevisionMacro ( vtkSlicerMRMLTreeWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerMRMLTreeWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

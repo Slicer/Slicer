@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerCheckRadioButtonIcons );
-vtkCxxRevisionMacro ( vtkSlicerCheckRadioButtonIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerCheckRadioButtonIcons, "$Revision$");
 
 
 //---------------------------------------------------------------------------

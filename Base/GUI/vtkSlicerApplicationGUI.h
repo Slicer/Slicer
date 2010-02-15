@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerApplicationGUI.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 ///  vtkSlicerApplicationGUI 

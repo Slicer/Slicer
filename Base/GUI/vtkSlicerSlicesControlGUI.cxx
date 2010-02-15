@@ -34,7 +34,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSlicesControlGUI );
-vtkCxxRevisionMacro ( vtkSlicerSlicesControlGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerSlicesControlGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

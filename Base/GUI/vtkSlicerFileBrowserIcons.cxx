@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerFileBrowserIcons );
-vtkCxxRevisionMacro ( vtkSlicerFileBrowserIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerFileBrowserIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerFileBrowserIcons::vtkSlicerFileBrowserIcons ( )

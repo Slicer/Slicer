@@ -123,7 +123,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerFiducialListWidget );
-vtkCxxRevisionMacro ( vtkSlicerFiducialListWidget, "$Revision: $");
+vtkCxxRevisionMacro ( vtkSlicerFiducialListWidget, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )

@@ -20,7 +20,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkKWCheckBoxSelectionDialog );
-vtkCxxRevisionMacro ( vtkKWCheckBoxSelectionDialog, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkKWCheckBoxSelectionDialog, "$Revision$");
 
 
 //---------------------------------------------------------------------------

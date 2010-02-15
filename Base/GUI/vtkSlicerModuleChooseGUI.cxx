@@ -48,7 +48,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModuleChooseGUI );
-vtkCxxRevisionMacro ( vtkSlicerModuleChooseGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerModuleChooseGUI, "$Revision$");
 
 namespace {
 typedef std::pair<unsigned short, std::string> ModuleItem;

@@ -9,7 +9,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerGUILayout );
-vtkCxxRevisionMacro ( vtkSlicerGUILayout, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerGUILayout, "$Revision$" );
 
 
 //---------------------------------------------------------------------------

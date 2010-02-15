@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerViewControlIcons );
-vtkCxxRevisionMacro ( vtkSlicerViewControlIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerViewControlIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )

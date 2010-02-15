@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerStyle );
-vtkCxxRevisionMacro ( vtkSlicerStyle, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerStyle, "$Revision$" );
 
 //---------------------------------------------------------------------------
 vtkSlicerStyle::vtkSlicerStyle ( ) {

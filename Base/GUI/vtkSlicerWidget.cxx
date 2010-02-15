@@ -10,7 +10,7 @@
 
 
 
-vtkCxxRevisionMacro ( vtkSlicerWidget, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerWidget, "$Revision$" );
 
 //---------------------------------------------------------------------------
 vtkSlicerWidget::vtkSlicerWidget ( )

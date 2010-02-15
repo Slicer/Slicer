@@ -3,7 +3,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerLoadSaveDialog );
-vtkCxxRevisionMacro(vtkSlicerLoadSaveDialog, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerLoadSaveDialog, "$Revision$");
 
 //----------------------------------------------------------------------------
 void vtkSlicerLoadSaveDialog::PrintSelf(ostream& os, vtkIndent indent)

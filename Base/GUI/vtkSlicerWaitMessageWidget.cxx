@@ -16,7 +16,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerWaitMessageWidget );
-vtkCxxRevisionMacro ( vtkSlicerWaitMessageWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerWaitMessageWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

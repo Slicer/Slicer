@@ -36,7 +36,7 @@
 #include "vtkObjectFactory.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerBoxRepresentation, "$Revision: 1.6.2.2 $");
+vtkCxxRevisionMacro(vtkSlicerBoxRepresentation, "$Revision$");
 vtkStandardNewMacro(vtkSlicerBoxRepresentation);
 
 //----------------------------------------------------------------------------

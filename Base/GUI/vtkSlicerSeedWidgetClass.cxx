@@ -30,7 +30,7 @@
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro (vtkSlicerSeedWidgetClass);
-vtkCxxRevisionMacro ( vtkSlicerSeedWidgetClass, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerSeedWidgetClass, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerSeedWidgetClass::vtkSlicerSeedWidgetClass()

@@ -27,7 +27,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModulesResultStep );
-vtkCxxRevisionMacro(vtkSlicerModulesResultStep, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkSlicerModulesResultStep, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesResultStep::vtkSlicerModulesResultStep()

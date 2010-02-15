@@ -5,7 +5,7 @@
 
 
 //---------------------------------------------------------------------------
-vtkCxxRevisionMacro ( vtkSlicerLogicUpdate, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerLogicUpdate, "$Revision$" );
 
 
 //---------------------------------------------------------------------------

@@ -17,7 +17,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWScriptedWidget );
-vtkCxxRevisionMacro(vtkKWScriptedWidget, "$Revision: 1.49 $");
+vtkCxxRevisionMacro(vtkKWScriptedWidget, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkKWScriptedWidget::vtkKWScriptedWidget()

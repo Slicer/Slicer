@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerClipModelsWidget );
-vtkCxxRevisionMacro ( vtkSlicerClipModelsWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerClipModelsWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerRecordSnapshotWidget );
-vtkCxxRevisionMacro ( vtkSlicerRecordSnapshotWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerRecordSnapshotWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

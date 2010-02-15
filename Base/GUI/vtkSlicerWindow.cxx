@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerWindow );
-vtkCxxRevisionMacro(vtkSlicerWindow, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerWindow, "$Revision$");
 
 vtkSlicerWindow::vtkSlicerWindow()
 {

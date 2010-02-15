@@ -26,7 +26,7 @@
 #include "vtkRenderer.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerBoxWidget2, "$Revision: 1.2.2.2 $");
+vtkCxxRevisionMacro(vtkSlicerBoxWidget2, "$Revision$");
 vtkStandardNewMacro(vtkSlicerBoxWidget2);
 
 //----------------------------------------------------------------------------

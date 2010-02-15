@@ -14,7 +14,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorGlyphDisplayWidget );
-vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorGlyphDisplayWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorGlyphDisplayWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

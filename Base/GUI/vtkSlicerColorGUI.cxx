@@ -35,7 +35,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorGUI );
-vtkCxxRevisionMacro ( vtkSlicerColorGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerColorGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------

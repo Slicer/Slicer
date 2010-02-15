@@ -90,7 +90,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerROIViewerWidget );
-vtkCxxRevisionMacro ( vtkSlicerROIViewerWidget, "$Revision: $");
+vtkCxxRevisionMacro ( vtkSlicerROIViewerWidget, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerROIViewerWidget::vtkSlicerROIViewerWidget ( )

@@ -39,7 +39,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLSaveDataWidget );
-vtkCxxRevisionMacro ( vtkSlicerMRMLSaveDataWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerMRMLSaveDataWidget, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )

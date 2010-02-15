@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerModuleNavigationIcons );
-vtkCxxRevisionMacro ( vtkSlicerModuleNavigationIcons, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerModuleNavigationIcons, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleNavigationIcons::vtkSlicerModuleNavigationIcons ( )

@@ -13,7 +13,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWTextWithHyperlinksWithScrollbars);
-vtkCxxRevisionMacro(vtkKWTextWithHyperlinksWithScrollbars, "$Revision: 0.1 $");
+vtkCxxRevisionMacro(vtkKWTextWithHyperlinksWithScrollbars, "$Revision$");
 vtkKWTextWithHyperlinksWithScrollbars::vtkKWTextWithHyperlinksWithScrollbars(void)
 {
 }

@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerLoadSaveButton);
-vtkCxxRevisionMacro(vtkSlicerLoadSaveButton, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerLoadSaveButton, "$Revision$");
 
 //----------------------------------------------------------------------------
 vtkSlicerLoadSaveButton::vtkSlicerLoadSaveButton()

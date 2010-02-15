@@ -8,8 +8,8 @@
 
   Program:   3D Slicer
   Module:    $HeadURL: $
-  Date:      $Date: $
-  Version:   $Revision: $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================*/
 ///  vtkSlicerXYPlotWidget

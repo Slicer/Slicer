@@ -14,7 +14,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerEmptyModuleGUI );
-vtkCxxRevisionMacro ( vtkSlicerEmptyModuleGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerEmptyModuleGUI, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerEmptyModuleGUI::vtkSlicerEmptyModuleGUI ( )

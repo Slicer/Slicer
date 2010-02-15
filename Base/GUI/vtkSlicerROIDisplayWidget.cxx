@@ -18,7 +18,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerROIDisplayWidget );
-vtkCxxRevisionMacro ( vtkSlicerROIDisplayWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerROIDisplayWidget, "$Revision$");
 
 
 //---------------------------------------------------------------------------

@@ -15,7 +15,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModuleCollapsibleFrame );
-vtkCxxRevisionMacro(vtkSlicerModuleCollapsibleFrame, "$Revision: 1.10 $");
+vtkCxxRevisionMacro(vtkSlicerModuleCollapsibleFrame, "$Revision$");
 
 int vtkSlicerModuleCollapsibleFrame::DefaultLabelCase = vtkSlicerModuleCollapsibleFrame::LabelCaseUppercaseFirst;
 int vtkSlicerModuleCollapsibleFrame::DefaultLabelFontWeight = vtkSlicerModuleCollapsibleFrame::LabelFontWeightNormal;

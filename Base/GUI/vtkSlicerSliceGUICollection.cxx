@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSliceGUICollection);
-vtkCxxRevisionMacro (vtkSlicerSliceGUICollection, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerSliceGUICollection, "$Revision$");
 
 
 //---------------------------------------------------------------------------

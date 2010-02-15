@@ -8,8 +8,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerApplicationGUI.cxx,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -107,7 +107,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
-vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision$");
 vtkCxxSetObjectMacro(vtkSlicerApplicationGUI, SlicesGUI, vtkSlicerSlicesGUI);
 
 // temporary crud for vtkDebugLeak hunting. Will remove

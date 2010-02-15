@@ -11,7 +11,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerTheme );
-vtkCxxRevisionMacro ( vtkSlicerTheme, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerTheme, "$Revision$");
 
 //---------------------------------------------------------------------------
 vtkSlicerTheme::vtkSlicerTheme ( )

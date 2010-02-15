@@ -13,7 +13,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerContextMenuHelper );
-vtkCxxRevisionMacro ( vtkSlicerContextMenuHelper, "$Revision: 1.0 $" );
+vtkCxxRevisionMacro ( vtkSlicerContextMenuHelper, "$Revision$" );
 
 //---------------------------------------------------------------------------
 vtkSlicerContextMenuHelper::vtkSlicerContextMenuHelper ( ) {

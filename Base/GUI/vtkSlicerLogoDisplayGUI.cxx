@@ -14,7 +14,7 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerLogoDisplayGUI );
-vtkCxxRevisionMacro ( vtkSlicerLogoDisplayGUI, "$Revision: 1.0 $");
+vtkCxxRevisionMacro ( vtkSlicerLogoDisplayGUI, "$Revision$");
 
 
 //---------------------------------------------------------------------------
