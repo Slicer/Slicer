@@ -117,90 +117,77 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeedingNode(vtkMRMLNode *node)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
 
-  if (paramNode && this->mrmlScene())
-  {
-    this->connectNodeObservers(paramNode);
-
-    this->updateWidgetfromMRML(paramNode);
-  }
-
+  // each time the node is modified, the logic creates tracks
   vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
         vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
   if (seedingLogic && this->mrmlScene())
   {
     seedingLogic->SetAndObserveTractographyFiducialSeedingNode(paramNode);
-    if (this->TractographyFiducialSeedingNode != paramNode && paramNode)
-    {
-      seedingLogic->ProcessMRMLEvents (NULL, 
-                                       vtkCommand::ModifiedEvent,
-                                       paramNode );
-    }
-
   }
 
+  // each time the node is modified, the qt widgets are updated
+  this->qvtkReconnect(this->TractographyFiducialSeedingNode, paramNode, 
+                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetfromMRML()));
+
   this->TractographyFiducialSeedingNode = paramNode;
+  this->updateWidgetfromMRML();
 }
 
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTransformableNode(vtkMRMLNode *node)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
 
-  this->TransformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
-  if (this->TransformableNode) 
+  this->qvtkReconnect(this->TransformableNode, transformableNode,
+                vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onParameterChanged()));
+  this->qvtkReconnect(this->TransformableNode, transformableNode,
+                vtkMRMLModelNode::PolyDataModifiedEvent, this, SLOT(onParameterChanged()));
+  this->qvtkReconnect(this->TransformableNode, transformableNode,
+                vtkMRMLFiducialListNode::FiducialModifiedEvent, this, SLOT(onParameterChanged()));
+
+  this->TransformableNode = transformableNode;
+  if (this->TractographyFiducialSeedingNode)
   {
-    d->FiducialNodeSelector->setCurrentNode(this->TransformableNode);
-    if (this->TractographyFiducialSeedingNode)
-    {
-      this->TractographyFiducialSeedingNode->SetInputFiducialRef(this->TransformableNode->GetID() );
-      this->connectNodeObservers(this->TractographyFiducialSeedingNode);
-    }
+    this->TractographyFiducialSeedingNode->SetInputFiducialRef(this->TransformableNode ? 
+                                                                this->TransformableNode->GetID() : "" );
   }
 }
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNode(vtkMRMLNode *node)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
 
-  this->DiffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
-  if (this->DiffusionTensorVolumeNode) 
+  this->qvtkReconnect(this->DiffusionTensorVolumeNode, diffusionTensorVolumeNode,
+                      vtkCommand::ModifiedEvent, this, SLOT(onParameterChanged()));
+
+  this->DiffusionTensorVolumeNode = diffusionTensorVolumeNode;
+
+  if (this->TractographyFiducialSeedingNode)
   {
-    d->DTINodeSelector->setCurrentNode(this->DiffusionTensorVolumeNode);
-    if (this->TractographyFiducialSeedingNode)
-    {
-      this->TractographyFiducialSeedingNode->SetInputVolumeRef(this->DiffusionTensorVolumeNode->GetID() );
-      this->connectNodeObservers(TractographyFiducialSeedingNode);
-    }
+    this->TractographyFiducialSeedingNode->SetInputVolumeRef(this->DiffusionTensorVolumeNode ? 
+                                                              this->DiffusionTensorVolumeNode->GetID() : "" );
   }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   this->FiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
-  if (this->FiberBundleNode) 
+  if (this->TractographyFiducialSeedingNode)
   {
-    d->FiberNodeSelector->setCurrentNode(this->FiberBundleNode);
-    if (this->TractographyFiducialSeedingNode)
-    {
-      this->TractographyFiducialSeedingNode->SetOutputFiberRef(this->FiberBundleNode->GetID() );
-    }
+    this->TractographyFiducialSeedingNode->SetOutputFiberRef(this->FiberBundleNode ?
+                                                              this->FiberBundleNode->GetID() : "" );
   }
 }
 
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(vtkObject* node)
+void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged()
 {
-  Q_UNUSED(node);
   vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
         vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
   if (seedingLogic && this->mrmlScene() && this->TractographyFiducialSeedingNode)
@@ -211,44 +198,13 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged(vtkObjec
   }
 }
 
-//-----------------------------------------------------------------------------
-
-void qSlicerTractographyFiducialSeedingModuleWidget::connectNodeObservers(vtkMRMLTractographyFiducialSeedingNode* paramNode)
-{
-  if (paramNode && this->mrmlScene())
-  {
-    if (paramNode->GetInputFiducialRef() )
-    {
-      vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(paramNode->GetInputFiducialRef()));
-      if (transformableNode)
-      {
-        this->qvtkReconnect(this->TransformableNode, transformableNode,
-                      vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
-        this->qvtkReconnect(this->TransformableNode, transformableNode,
-                      vtkMRMLModelNode::PolyDataModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
-        this->qvtkReconnect(this->TransformableNode, transformableNode,
-                      vtkMRMLFiducialListNode::FiducialModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
-        this->TransformableNode = transformableNode;
-      }
-    }
-    if (paramNode->GetInputVolumeRef() )
-    {
-      vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(paramNode->GetInputVolumeRef()));
-      if (diffusionTensorVolumeNode)
-      {
-        this->qvtkReconnect(this->DiffusionTensorVolumeNode, diffusionTensorVolumeNode,
-                      vtkCommand::ModifiedEvent, this, SLOT(onParameterChanged(vtkObject*)));
-        this->DiffusionTensorVolumeNode = diffusionTensorVolumeNode;
-      }
-    }
-  }
-}
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::
-  updateWidgetfromMRML(vtkMRMLTractographyFiducialSeedingNode *paramNode)
+void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetfromMRML()
 {
   QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  
+  vtkMRMLTractographyFiducialSeedingNode *paramNode = this->TractographyFiducialSeedingNode;
 
   if (paramNode && this->mrmlScene())
     {
@@ -279,130 +235,99 @@ void qSlicerTractographyFiducialSeedingModuleWidget::
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingCurvature(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetStoppingCurvature(value);
   }
-  d->StoppingCurvatureSpinBoxLabel->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingValue(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetStoppingValue(value);
   }
-  d->StoppingValueSpinBoxLabel->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setIntegrationStep(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetIntegrationStep(value);
   }
-  d->IntegrationStepSpinBoxLabel->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setMinimumPath(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetMinimumPathLength(value);
   }
-  d->MinimumPathSpinBoxLabel->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiducialRegion(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetSeedingRegionSize(value);
   }
-  d->FiducialRegionSpinBoxLabel->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiducialRegionStep(double value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetSeedingRegionStep(value);
   }
-  d->FiducialStepSpinBoxLabel->setValue(value);
 }
 
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingCriteria(int value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetStoppingMode(value);
   }
-  d->StoppingCriteriaComboBox->setCurrentIndex(value);
 }
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTrackDisplayMode(int value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetDisplayMode(value);
   }
-  d->DisplayTracksComboBox->setCurrentIndex(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setSeedSelectedFiducials(int value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetSeedSelectedFiducials(value);
   }
-  d->SeedSelectedCheckBox->setChecked(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setMaxNumberSeeds(int value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
-
   if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetMaxNumberOfSeeds(value);
   }
-  d->MaxNumberSeedsNumericInput->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setEnableSeeding(int value)
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
  if (this->TractographyFiducialSeedingNode)
   {
     this->TractographyFiducialSeedingNode->SetEnableSeeding(value);
   }
- d->EnableSeedingCheckBox->setChecked(value);
 }
 

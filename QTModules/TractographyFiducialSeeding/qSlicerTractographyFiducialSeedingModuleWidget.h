@@ -95,13 +95,12 @@ public slots:
   /// set max number of seeds
   void setMaxNumberSeeds(int value);
 
+  /// update widget GUI from parameter node
+  void updateWidgetfromMRML();
+
 protected:
 
   virtual void setup();
-
-  void updateWidgetfromMRML(vtkMRMLTractographyFiducialSeedingNode *paramNode);
-
-  void connectNodeObservers(vtkMRMLTractographyFiducialSeedingNode* paramNode);
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
   vtkMRMLTransformableNode*               TransformableNode;
@@ -110,11 +109,10 @@ protected:
 
 protected slots:
 
-  void onParameterChanged(vtkObject* node);
+  void onParameterChanged();
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
-  bool processParameterChange;
 };
 
 #endif
