@@ -20,6 +20,7 @@ qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedi
   this->TractographyFiducialSeedingNode = NULL;
   this->TransformableNode = NULL;
   this->DiffusionTensorVolumeNode = NULL;
+  this->FiberBundleNode = NULL;
 
 }
 
