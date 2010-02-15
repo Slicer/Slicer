@@ -459,6 +459,17 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
+  vtkMRMLVolumeRenderingParametersNode *vspNode = this->GetCurrentParametersNode();
+  if (vspNode)
+  {
+    //remove existing observers
+    vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+
+    //remove observer to trigger update of transform
+    selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
+    selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    selectedImageData->RemoveObserver(vtkMRMLVolumeNode::DisplayModifiedEvent);
+  }
 }
 
 void vtkVolumeRenderingGUI::AddGUIObservers(void)
