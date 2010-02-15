@@ -1,16 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerViewerWidget.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+  Program:   SlicerViewerWidget
+  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/ModuleDescriptionParser/ModuleDescription.cxx $
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================auto=*/
+==========================================================================*/
 
 ///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
 /// 
@@ -57,7 +57,7 @@ class vtkClipPolyData;
 class vtkPMatrix4x4;
 class vtkSlicerBoxWidget2;
 class vtkSlicerBoxRepresentation;
-
+class vtkBoundingBox;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
@@ -299,7 +299,8 @@ protected:
 
   //ETX
 
-  vtkActor *BoxAxisActor;
+  vtkActor       *BoxAxisActor;
+  vtkBoundingBox *BoxAxisBoundingBox;
 
   int ProcessingMRMLEvent;
 
