@@ -1,5 +1,6 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+#include <vtkObject.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -635,7 +636,8 @@ void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
 {
 
   vtkMRMLModelHierarchyNode *parentNode = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-  vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::New();
+  vtkSmartPointer<vtkMRMLModelHierarchyNode> node = 
+    vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
 
   this->GetMRMLScene()->AddNodeNoNotify(node);
   vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
@@ -656,7 +658,8 @@ void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
       node->SetParentNodeID(parentNode->GetID());
       this->ModelHierarchyLogic->HierarchyIsModified();
       }
-    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::New();
+    vtkSmartPointer<vtkMRMLModelDisplayNode> dnode = 
+      vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
     this->GetMRMLScene()->AddNodeNoNotify(dnode);
     node->SetAndObserveDisplayNodeID(dnode->GetID());
     //this->UpdateTreeFromMRML();
