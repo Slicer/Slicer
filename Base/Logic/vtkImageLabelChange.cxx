@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageLabelChange.cxx,v $
-  Date:      $Date: 2006/02/22 22:54:49 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 #include "vtkImageLabelChange.h"

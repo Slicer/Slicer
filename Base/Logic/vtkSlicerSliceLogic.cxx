@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerSliceLogic.cxx,v $
-  Date:      $Date: 2006/01/06 17:56:48 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -33,7 +33,7 @@
 #include <sstream>
 #include <iostream>
 
-vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
 
 #ifndef max
@@ -801,7 +801,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->vtkObject::PrintSelf(os, indent);
+  this->vtkSlicerLogic::PrintSelf(os, indent);
   vtkIndent nextIndent;
   nextIndent = indent.GetNextIndent();
 

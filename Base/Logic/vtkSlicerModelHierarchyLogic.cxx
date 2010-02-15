@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerModelHierarchyLogic.cxx,v $
-  Date:      $Date: 2006/01/06 17:56:48 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -17,7 +17,7 @@
 
 #include "vtkSlicerModelHierarchyLogic.h"
 
-vtkCxxRevisionMacro(vtkSlicerModelHierarchyLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerModelHierarchyLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModelHierarchyLogic);
 
 //----------------------------------------------------------------------------

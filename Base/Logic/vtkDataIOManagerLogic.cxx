@@ -26,7 +26,7 @@
 
 
 vtkStandardNewMacro ( vtkDataIOManagerLogic );
-vtkCxxRevisionMacro(vtkDataIOManagerLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkDataIOManagerLogic, "$Revision$");
 
 typedef std::pair< vtkDataTransfer *, vtkMRMLNode * > TransferNodePair;
 

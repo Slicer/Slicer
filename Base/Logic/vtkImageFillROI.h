@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageFillROI.h,v $
-  Date:      $Date: 2006/04/13 19:28:30 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 ///  vtkImageFillROI - Paints on top of an image.

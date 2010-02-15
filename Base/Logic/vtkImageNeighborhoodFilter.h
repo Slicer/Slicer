@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageNeighborhoodFilter.h,v $
-  Date:      $Date: 2006/04/13 19:26:19 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 ///  vtkImageNeighborhoodFilter -  Augments vtkImageSpatialFilter with

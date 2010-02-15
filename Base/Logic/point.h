@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: point.h,v $
-  Date:      $Date: 2006/02/14 22:11:24 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 #ifndef __point_h

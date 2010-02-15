@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerSliceLayerLogic.cxx,v $
-  Date:      $Date: 2006/01/06 17:56:48 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -34,7 +34,7 @@
 
 #include "vtkDiffusionTensorMathematics.h"
 
-vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
 
 

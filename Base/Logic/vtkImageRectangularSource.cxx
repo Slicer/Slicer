@@ -3,7 +3,7 @@
 #include "assert.h"
 #include "vtkImageData.h"
 
-vtkCxxRevisionMacro(vtkImageRectangularSource, "$Revision: 1.7 $");
+vtkCxxRevisionMacro(vtkImageRectangularSource, "$Revision$");
 vtkStandardNewMacro(vtkImageRectangularSource);
 //----------------------------------------------------------------------------
 vtkImageRectangularSource::vtkImageRectangularSource()

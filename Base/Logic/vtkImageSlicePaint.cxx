@@ -19,7 +19,7 @@
 
 #include <math.h>
 
-vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision: 1.22 $");
+vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision$");
 vtkStandardNewMacro(vtkImageSlicePaint);
 
 //----------------------------------------------------------------------------

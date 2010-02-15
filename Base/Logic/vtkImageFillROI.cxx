@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageFillROI.cxx,v $
-  Date:      $Date: 2006/04/13 19:28:29 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 #include "vtkImageFillROI.h"

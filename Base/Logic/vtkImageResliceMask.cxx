@@ -35,7 +35,7 @@
 #include <float.h>
 #include <math.h>
 
-vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision: 1.63.6.2 $");
+vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision$");
 vtkStandardNewMacro(vtkImageResliceMask);
 vtkCxxSetObjectMacro(vtkImageResliceMask, InformationInput, vtkImageData);
 vtkCxxSetObjectMacro(vtkImageResliceMask,ResliceAxes,vtkMatrix4x4);

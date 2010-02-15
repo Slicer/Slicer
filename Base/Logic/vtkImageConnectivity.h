@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageConnectivity.h,v $
-  Date:      $Date: 2006/05/04 16:48:17 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 ///  vtkImageConnectivity - Identify and process islands of similar pixels

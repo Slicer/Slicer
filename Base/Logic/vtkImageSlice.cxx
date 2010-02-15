@@ -35,7 +35,7 @@
 #include <float.h>
 #include <math.h>
 
-vtkCxxRevisionMacro(vtkImageSlice, "$Revision: 1.63.6.2 $");
+vtkCxxRevisionMacro(vtkImageSlice, "$Revision$");
 vtkStandardNewMacro(vtkImageSlice);
 //
 // TODO: why?

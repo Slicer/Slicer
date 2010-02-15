@@ -76,7 +76,7 @@
 // Private implementaton of an std::map
 class SliceLogicMap : public std::map<std::string, vtkSmartPointer<vtkSlicerSliceLogic> > {};
 
-vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};

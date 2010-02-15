@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkImageErode.cxx,v $
-  Date:      $Date: 2006/04/12 22:26:25 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 #include "vtkImageErode.h"

@@ -1,6 +1,6 @@
 #include "vtkSlicerTask.h"
 
-vtkCxxRevisionMacro(vtkSlicerTask, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerTask, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTask);
 
 // vtkSlicerTask* vtkSlicerTask::New()

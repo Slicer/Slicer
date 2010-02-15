@@ -25,7 +25,7 @@
 
 #include "vtkMRMLFiducialListNode.h"
 
-vtkCxxRevisionMacro(vtkSlicerGlyphSource2D, "$Revision: 1.15 $");
+vtkCxxRevisionMacro(vtkSlicerGlyphSource2D, "$Revision$");
 vtkStandardNewMacro(vtkSlicerGlyphSource2D);
 
 //----------------------------------------------------------------------------

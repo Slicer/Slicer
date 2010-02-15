@@ -8,7 +8,7 @@
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLSelectionNode.h"
 
-vtkCxxRevisionMacro(vtkSlicerROILogic, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkSlicerROILogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerROILogic);
 
 

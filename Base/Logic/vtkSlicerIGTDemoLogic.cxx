@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: $
-  Date:      $Date: $
-  Version:   $Revision: $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -23,7 +23,7 @@
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-vtkCxxRevisionMacro(vtkSlicerIGTDemoLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerIGTDemoLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerIGTDemoLogic);
 
 vtkSlicerIGTDemoLogic::vtkSlicerIGTDemoLogic()

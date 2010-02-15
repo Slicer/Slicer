@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkSlicerTransformLogic.cxx,v $
-  Date:      $Date: 2006/01/06 17:56:48 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -27,7 +27,7 @@
 
 #include "vtkStringArray.h"
 
-vtkCxxRevisionMacro(vtkSlicerTransformLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkSlicerTransformLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTransformLogic);
 
 //----------------------------------------------------------------------------
