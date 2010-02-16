@@ -47,9 +47,13 @@ public:
 
   /// 
   /// Remove a connection
-  void removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
-    const QObject* qt_obj = NULL, const char* qt_slot = NULL);
-  
+  int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
+                       const QObject* qt_obj = 0, const char* qt_slot = 0);
+
+  /// 
+  /// Remove all the connections
+  inline int removeAllConnections();
+
   ///
   /// Temporarilly block all the connection
   void blockAllConnections(bool block);
@@ -60,16 +64,14 @@ public:
                       unsigned long vtk_event, const QObject* qt_obj);
   void blockConnection(const QString& id, bool blocked);
 
-protected:
-  /// FIXME, the qVTKConnection shouldn't have access to this function.
-  /// qVTKConnection should delete itself and qVTKObjectEventsObserver
-  /// should update its connection list 
-  friend class qVTKConnection;
-  void removeConnection(qVTKConnection* connection);
-
 private:
   QCTK_DECLARE_PRIVATE(qVTKObjectEventsObserver);
 
 };
+
+int qVTKObjectEventsObserver::removeAllConnections()
+{
+  return this->removeConnection(0);
+}
 
 #endif

@@ -26,6 +26,7 @@ public:
 
 public slots:
   void onVTKObjectModifiedPublic();
+  void deleteConnection();
 
 protected slots:
   void onVTKObjectModifiedProtected();

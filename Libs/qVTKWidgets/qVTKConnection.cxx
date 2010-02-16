@@ -1,20 +1,17 @@
-#include "qVTKConnection.h"
+// QT includes
+#include <QDebug>
+#include <QRegExp>
+#include <QString>
+#include <QTextStream>
 
-// qMRML includes
-#include "qVTKObjectEventsObserver.h"
+// qVTK includes 
+#include "qVTKConnection.h"
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 
-// QT includes
-#include <QRegExp>
-#include <QString>
-#include <QTextStream>
-#include <QDebug>
-
-    
 //-----------------------------------------------------------------------------
 QString convertPointerToString(void* pointer)
 {
@@ -41,9 +38,17 @@ public:
   void connect();
   void disconnect();
 
+  /// 
+  /// VTK Callback
+  static void DoCallback(vtkObject* vtk_obj, unsigned long event,
+                         void* client_data, void* call_data);
+
+  /// 
+  /// Called by 'DoCallback' to emit signal
+  void Execute(vtkObject* vtk_obj, unsigned long vtk_event, void* client_data, void* call_data);
+
   vtkSmartPointer<vtkCallbackCommand> Callback;
   vtkObject*                          VTKObject;
-  qVTKObjectEventsObserver*           EventsObserver;
   const QObject*                      QtObject;
   unsigned long                       VTKEvent;
   QString                             QtSlot;
@@ -62,13 +67,13 @@ public:
 qVTKConnectionPrivate::qVTKConnectionPrivate()
 {
   this->Callback    = vtkSmartPointer<vtkCallbackCommand>::New();
-  this->Callback->SetCallback(qVTKConnection::DoCallback);
+  this->Callback->SetCallback(qVTKConnectionPrivate::DoCallback);
+  this->Callback->SetClientData(this);
   this->VTKObject   = 0;
   this->QtObject    = 0;
   this->VTKEvent    = vtkCommand::NoEvent;
   this->Priority    = 0.0;
   this->SlotType    = ARG_UNKNOWN;
-  this->EventsObserver = 0;
   this->Connected   = false;
   this->Blocked     = false;
   this->Id          = convertPointerToString(this);
@@ -176,15 +181,10 @@ void qVTKConnectionPrivate::disconnect()
 // qVTKConnection methods
 
 //-----------------------------------------------------------------------------
-qVTKConnection::qVTKConnection(qVTKObjectEventsObserver* parentVariable):
-  Superclass(parentVariable)
+qVTKConnection::qVTKConnection(QObject* _parent):
+  Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qVTKConnection);
-  QCTK_D(qVTKConnection);
-  
-  d->Callback->SetClientData(this);
-  Q_ASSERT(parentVariable);
-  d->EventsObserver = parentVariable;
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +207,6 @@ void qVTKConnection::printAdditionalInfo()
            << "Id:" << d->Id << endl
            << " VTKObject:" << d->VTKObject->GetClassName()
              << "(" << d->VTKObject << ")" << endl
-           << " EventsObserver:" << d->EventsObserver << endl
            << " QtObject:" << d->QtObject << endl
            << " VTKEvent:" << d->VTKEvent << endl
            << " QtSlot:" << d->QtSlot << endl
@@ -237,9 +236,10 @@ QString qVTKConnection::shortDescription(vtkObject* vtk_obj, unsigned long vtk_e
 }
 
 //-----------------------------------------------------------------------------
-bool qVTKConnection::ValidateParameters(vtkObject* vtk_obj, unsigned long /*vtk_event*/,
-  const QObject* qt_obj, QString qt_slot)
+bool qVTKConnection::ValidateParameters(vtkObject* vtk_obj, unsigned long vtk_event,
+                                        const QObject* qt_obj, QString qt_slot)
 {
+  Q_UNUSED(vtk_event);
   if (!vtk_obj)
     {
     return false;
@@ -351,65 +351,59 @@ bool qVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
 }
 
 //-----------------------------------------------------------------------------
-//QCTK_GET_CXX(qVTKConnection, int, GetSlotType, SlotType);
-
-//-----------------------------------------------------------------------------
-void qVTKConnection::DoCallback(vtkObject* vtk_obj, unsigned long event,
+void qVTKConnectionPrivate::DoCallback(vtkObject* vtk_obj, unsigned long event,
                                  void* client_data, void* call_data)
 {
-  qVTKConnection* conn = static_cast<qVTKConnection*>(client_data);
+  qVTKConnectionPrivate* conn = static_cast<qVTKConnectionPrivate*>(client_data);
   Q_ASSERT(conn);
   conn->Execute(vtk_obj, event, client_data, call_data);
 }
 
 //-----------------------------------------------------------------------------
 // callback from VTK to emit signal
-void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
+void qVTKConnectionPrivate::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
   void* client_data, void* call_data)
 {
-  QCTK_D(qVTKConnection);
+  QCTK_P(qVTKConnection);
   
-  Q_ASSERT(d->Connected);
-  if (d->Blocked) 
+  Q_ASSERT(this->Connected);
+  if (this->Blocked) 
     { 
     return; 
     }
-
   if (vtk_event == vtkCommand::DeleteEvent)
     {
-    // we don't want that the slots (connected to the signals we emit below) 
-    // delete our qVTKConnection object (via qVTKObjectEvent::removeConnection)
-    d->AboutToBeDeleted = true;
+    this->AboutToBeDeleted = true;
     }
 
   if(vtk_event != vtkCommand::DeleteEvent ||
-     (vtk_event == vtkCommand::DeleteEvent && d->VTKEvent == vtkCommand::DeleteEvent))
+     (vtk_event == vtkCommand::DeleteEvent && this->VTKEvent == vtkCommand::DeleteEvent))
     {
     vtkObject* callDataAsVtkObject = 0;
-    switch (d->SlotType)
+    switch (this->SlotType)
       {
       case qVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-        if (d->VTKEvent == vtk_event)
+        if (this->VTKEvent == vtk_event)
           {
           callDataAsVtkObject = reinterpret_cast<vtkObject*>( call_data );
           if (!callDataAsVtkObject)
             {
-            qCritical() << "The VTKEvent(" << d->VTKEvent<< ") triggered by vtkObject("
-              << d->VTKObject->GetClassName() << ") "
+            qCritical() << "The VTKEvent(" << this->VTKEvent<< ") triggered by vtkObject("
+              << this->VTKObject->GetClassName() << ") "
               << "doesn't return data of type vtkObject." << endl
-              << "The slot (" << d->QtSlot <<  ") owned by "
-              << "QObject(" << d->QtObject->objectName() << ")"
+              << "The slot (" << this->QtSlot <<  ") owned by "
+              << "QObject(" << this->QtObject->objectName() << ")"
               << " may be incorrect.";
             }
-          emit this->emitExecute( vtk_obj, callDataAsVtkObject );
+          emit p->emitExecute(vtk_obj, callDataAsVtkObject);
           }
         break;
       case qVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-        emit this->emitExecute(vtk_obj, call_data, vtk_event, client_data);
+        emit p->emitExecute(vtk_obj, call_data, vtk_event, client_data);
         break;
       default:
         // Should never reach
-        qCritical() << "Unknown SlotType:" << d->SlotType;
+        qCritical() << "Unknown SlotType:" << this->SlotType;
         return;
         break;
       }
@@ -417,24 +411,17 @@ void qVTKConnection::Execute(vtkObject* vtk_obj, unsigned long vtk_event,
 
   if(vtk_event == vtkCommand::DeleteEvent)
     {
-    //d->EventsObserver->removeConnection(d->VTKObject, d->VTKEvent,
-    //                            d->QtObject, d->QtSlot.toLatin1().data());
-    // now we reset AboutToBeDeleted to let the observer kill ourself
-    d->AboutToBeDeleted = false;
-    this->deleteConnection();
+    this->AboutToBeDeleted = false;
+    p->deleteConnection();
     }
 }
 
-//-----------------------------------------------------------------------------
-bool qVTKConnection::isAboutToBeDeleted()const
-{
-  return qctk_d()->AboutToBeDeleted;
-}
-
-//-----------------------------------------------------------------------------
 void qVTKConnection::deleteConnection()
 {
-  // FIXME: it should delete itself here and the eventsobserver should 
-  // update it's hash table automatically.
-  qctk_d()->EventsObserver->removeConnection( this );
+  QCTK_D(qVTKConnection);
+  if (d->AboutToBeDeleted)
+    {
+    return;
+    }
+  delete this;
 }
