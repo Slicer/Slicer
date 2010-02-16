@@ -14,8 +14,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qCTKButtonGroup::qCTKButtonGroup(QObject* parent)
-  :QButtonGroup(parent)
+qCTKButtonGroup::qCTKButtonGroup(QObject* _parent)
+  :QButtonGroup(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKButtonGroup);
   connect(this, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onButtonClicked(QAbstractButton*)));
