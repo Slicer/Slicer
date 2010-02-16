@@ -18,10 +18,6 @@ class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
 qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *parent)
 {
   this->TractographyFiducialSeedingNode = NULL;
-  this->TransformableNode = NULL;
-  this->DiffusionTensorVolumeNode = NULL;
-  this->FiberBundleNode = NULL;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -116,6 +112,42 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLTransformableNode* qSlicerTractographyFiducialSeedingModuleWidget::transformableNode() 
+{
+  vtkMRMLTransformableNode *transformableNode = NULL;
+  if (this->TractographyFiducialSeedingNode)
+  {
+    transformableNode = vtkMRMLTransformableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(
+                        this->TractographyFiducialSeedingNode->GetInputFiducialRef()));
+  }
+  return transformableNode;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorVolumeNode* qSlicerTractographyFiducialSeedingModuleWidget::diffusionTensorVolumeNode() 
+{
+  vtkMRMLDiffusionTensorVolumeNode *dtiNode = NULL;
+  if (this->TractographyFiducialSeedingNode)
+  {
+    dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(
+              this->TractographyFiducialSeedingNode->GetInputVolumeRef()));
+  }
+  return dtiNode;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLFiberBundleNode* qSlicerTractographyFiducialSeedingModuleWidget::fiberBundleNode() 
+{
+  vtkMRMLFiberBundleNode *fiberNode = NULL;
+  if (this->TractographyFiducialSeedingNode)
+  {
+    fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->mrmlScene()->GetNodeByID(
+                this->TractographyFiducialSeedingNode->GetOutputFiberRef()));
+  }
+  return fiberNode;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeedingNode(vtkMRMLNode *node)
 {
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
@@ -142,18 +174,17 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setTransformableNode(vtkMRM
 {
   vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
 
-  this->qvtkReconnect(this->TransformableNode, transformableNode,
-                vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onParameterChanged()));
-  this->qvtkReconnect(this->TransformableNode, transformableNode,
-                vtkMRMLModelNode::PolyDataModifiedEvent, this, SLOT(onParameterChanged()));
-  this->qvtkReconnect(this->TransformableNode, transformableNode,
-                vtkMRMLFiducialListNode::FiducialModifiedEvent, this, SLOT(onParameterChanged()));
-
-  this->TransformableNode = transformableNode;
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetInputFiducialRef(this->TransformableNode ? 
-                                                                this->TransformableNode->GetID() : "" );
+    this->TractographyFiducialSeedingNode->SetInputFiducialRef(transformableNode ? 
+                                                               transformableNode->GetID() : "" );
+    vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
+          vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+    if (seedingLogic && this->mrmlScene())
+    {
+      seedingLogic->SetAndObserveTractographyFiducialSeedingNode(this->TractographyFiducialSeedingNode);
+    }
+
   }
 }
 //-----------------------------------------------------------------------------
@@ -161,41 +192,28 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
 {
   vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
 
-  this->qvtkReconnect(this->DiffusionTensorVolumeNode, diffusionTensorVolumeNode,
-                      vtkCommand::ModifiedEvent, this, SLOT(onParameterChanged()));
-
-  this->DiffusionTensorVolumeNode = diffusionTensorVolumeNode;
-
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetInputVolumeRef(this->DiffusionTensorVolumeNode ? 
-                                                              this->DiffusionTensorVolumeNode->GetID() : "" );
+    this->TractographyFiducialSeedingNode->SetInputVolumeRef(diffusionTensorVolumeNode ? 
+                                                             diffusionTensorVolumeNode->GetID() : "" );
+    vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
+          vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+    if (seedingLogic && this->mrmlScene())
+    {
+      seedingLogic->SetAndObserveTractographyFiducialSeedingNode(this->TractographyFiducialSeedingNode);
+    }
+
   }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
 {
-  this->FiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
+  vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetOutputFiberRef(this->FiberBundleNode ?
-                                                              this->FiberBundleNode->GetID() : "" );
-  }
-}
-
-
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::onParameterChanged()
-{
-  vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
-        vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
-  if (seedingLogic && this->mrmlScene() && this->TractographyFiducialSeedingNode)
-  {
-    seedingLogic->ProcessMRMLEvents (NULL, 
-                                     vtkCommand::ModifiedEvent,
-                                     this->TractographyFiducialSeedingNode );
+    this->TractographyFiducialSeedingNode->SetOutputFiberRef(fiberBundleNode ?
+                                                             fiberBundleNode->GetID() : "" );
   }
 }
 

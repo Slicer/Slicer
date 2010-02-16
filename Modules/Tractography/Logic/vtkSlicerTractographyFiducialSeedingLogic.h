@@ -74,6 +74,8 @@ protected:
   vtkMaskPoints *MaskPoints;
 
   vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
+  vtkMRMLTransformableNode               *TransformableNode;
+  vtkMRMLDiffusionTensorVolumeNode       *DiffusionTensorVolumeNode;
 
 };
 

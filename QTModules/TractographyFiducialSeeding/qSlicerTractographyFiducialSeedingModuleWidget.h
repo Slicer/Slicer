@@ -29,20 +29,13 @@ public:
   };
 
   /// get current seeding node
-  vtkMRMLTransformableNode* transformableNode() {
-    return this->TransformableNode;
-  };
+  vtkMRMLTransformableNode* transformableNode(); 
 
   /// get current DTI volume node
-  vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode() {
-    return this->DiffusionTensorVolumeNode;
-  };
+  vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode(); 
 
   /// get current fiber bundlde node
-  vtkMRMLFiberBundleNode* fiberBundleNode() {
-    return this->FiberBundleNode;
-  };
-
+  vtkMRMLFiberBundleNode* fiberBundleNode();
 
 public slots:
 
@@ -103,13 +96,6 @@ protected:
   virtual void setup();
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
-  vtkMRMLTransformableNode*               TransformableNode;
-  vtkMRMLDiffusionTensorVolumeNode*       DiffusionTensorVolumeNode;
-  vtkMRMLFiberBundleNode*                 FiberBundleNode;
-
-protected slots:
-
-  void onParameterChanged();
 
 private:
   QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);

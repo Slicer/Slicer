@@ -51,6 +51,8 @@ vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingL
 {
   this->MaskPoints = vtkMaskPoints::New();
   this->TractographyFiducialSeedingNode = NULL;
+  this->TransformableNode = NULL;
+  this->DiffusionTensorVolumeNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -58,7 +60,8 @@ vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeeding
 {
   this->MaskPoints->Delete();
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
-
+  vtkSetAndObserveMRMLNodeMacro(this->TransformableNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
 }
 
 
@@ -73,6 +76,22 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
 void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
 {
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
+  if (node)
+    {
+    vtkMRMLDiffusionTensorVolumeNode *dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID(node->GetInputVolumeRef()));
+    vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, dtiNode);
+
+    vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID(node->GetInputFiducialRef()));
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
+    events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
+    events->InsertNextValue ( vtkMRMLFiducialListNode::FiducialModifiedEvent );
+    vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNode, transformableNode, events);
+    }
+  return;
 }
 
 //----------------------------------------------------------------------------
