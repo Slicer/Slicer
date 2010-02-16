@@ -91,6 +91,11 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
     events->InsertNextValue ( vtkMRMLFiducialListNode::FiducialModifiedEvent );
     vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNode, transformableNode, events);
     }
+  else
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->TransformableNode, NULL);
+    vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
+    }
   return;
 }
 
