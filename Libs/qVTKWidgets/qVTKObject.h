@@ -23,6 +23,22 @@ QString qvtkReconnect(vtkObject* old_vtk_obj, vtkObject* vtk_obj,       \
 }
 
 //-----------------------------------------------------------------------------
+#define QVTK_OBJECT_REMOVE_CONNECTION_METHOD                            \
+int qvtkDisconnect(vtkObject* vtk_obj, unsigned long vtk_event,         \
+  const QObject* qt_obj, const char* qt_slot)                           \
+{                                                                       \
+  return MyQVTK.removeConnection(vtk_obj, vtk_event,                    \
+    qt_obj, qt_slot);                                                   \
+}
+
+//-----------------------------------------------------------------------------
+#define QVTK_OBJECT_REMOVEALL_CONNECTION_METHOD                         \
+int qvtkDisconnectAll()                                                 \
+{                                                                       \
+  return MyQVTK.removeAllConnections();                                 \
+}
+
+//-----------------------------------------------------------------------------
 #define QVTK_OBJECT_BLOCK_CONNECTION_METHOD                              \
 void qvtkBlock(vtkObject* vtk_obj, unsigned long vtk_event,              \
   const QObject* qt_obj)                                                 \
@@ -60,21 +76,12 @@ void qvtkUnblockAll()                                                   \
 }
 
 //-----------------------------------------------------------------------------
-#define QVTK_OBJECT_REMOVE_CONNECTION_METHOD                            \
-void qvtkDisconnect(vtkObject* vtk_obj, unsigned long vtk_event,        \
-  const QObject* qt_obj, const char* qt_slot)                           \
-{                                                                       \
-  MyQVTK.removeConnection(vtk_obj, vtk_event,                           \
-    qt_obj, qt_slot);                                                   \
-}
-
-
-//-----------------------------------------------------------------------------
 #define QVTK_OBJECT                                \
 protected:                                         \
   QVTK_OBJECT_ADD_CONNECTION_METHOD                \
   QVTK_OBJECT_RECONNECT_METHOD                     \
   QVTK_OBJECT_REMOVE_CONNECTION_METHOD             \
+  QVTK_OBJECT_REMOVEALL_CONNECTION_METHOD          \
   QVTK_OBJECT_BLOCK_CONNECTION_METHOD              \
   QVTK_OBJECT_BLOCK_CONNECTION_METHOD2             \
   QVTK_OBJECT_UNBLOCK_CONNECTION_METHOD            \
