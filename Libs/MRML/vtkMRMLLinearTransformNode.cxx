@@ -203,7 +203,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
 
   vtkMatrix4x4 *xform = vtkMatrix4x4::New();
   xform->DeepCopy(transformToWorld);
-  vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToWorld);
+  vtkMatrix4x4::Multiply4x4(this->MatrixTransformToParent, xform, transformToWorld);
   xform->Delete();
 
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
@@ -243,7 +243,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
-      vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
+      vtkMatrix4x4::Multiply4x4(this->MatrixTransformToParent, xform, transformToNode);
       xform->Delete();
 
       if (strcmp(parent->GetID(), node->GetID()) ) 
@@ -255,7 +255,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       {
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
-      vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
+      vtkMatrix4x4::Multiply4x4(this->MatrixTransformToParent, xform, transformToNode);
       xform->Delete();
       }
     }
@@ -268,7 +268,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
-      vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+      vtkMatrix4x4::Multiply4x4(lnode->MatrixTransformToParent, xform, transformToNode);
       xform->Delete();
 
       if (strcmp(parent->GetID(), this->GetID()) ) 
@@ -280,7 +280,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       {
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
-      vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+      vtkMatrix4x4::Multiply4x4(lnode->MatrixTransformToParent, xform, transformToNode);
       xform->Delete();
       }
     }
@@ -295,7 +295,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
     
     vtkMatrix4x4 *xform = vtkMatrix4x4::New();
     xform->DeepCopy(transformToNode);
-    vtkMatrix4x4::Multiply4x4(xform, transformToWorld2, transformToNode);
+    vtkMatrix4x4::Multiply4x4(transformToWorld2, xform, transformToNode);
     xform->Delete();
     transformToWorld2->Delete();
     }
