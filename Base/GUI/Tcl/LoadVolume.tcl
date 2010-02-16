@@ -1095,21 +1095,22 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
 
   $this loadDICOMDictionary
 
-  set reader [vtkITKArchetypeImageSeriesReader New]
-  $reader SetArchetype $fileName
-  $reader SetSingleFile 1
-  set ret [catch "$reader UpdateInformation" res]
+  if { ![info exists o(reader)] } {
+    set o(reader) [vtkNew vtkITKArchetypeImageSeriesReader]
+  }
+  $o(reader) SetArchetype $fileName
+  $o(reader) SetSingleFile 1
+  set ret [catch "$o(reader) UpdateInformation" res]
   if { $ret } {
     # this isn't a file we can read
-    $reader Delete
     return
   }
 
   set isDICOM 0
-  set header(numberOfKeys) [$reader GetNumberOfItemsInDictionary]
+  set header(numberOfKeys) [$o(reader) GetNumberOfItemsInDictionary]
   for {set n 0} {$n < $header(numberOfKeys)} {incr n} {
-    set key [$reader GetNthKey $n]
-    set value [$reader GetTagValue $key]
+    set key [$o(reader) GetNthKey $n]
+    set value [$o(reader) GetTagValue $key]
 
     if { [info exists _DICOM($key)] } {
       set description $_DICOM($key)
@@ -1128,8 +1129,6 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
     }
   }
   set header(isDICOM) $isDICOM
-
-  $reader Delete
 }
 
 itcl::body LoadVolume::safeNodeName {name} {
