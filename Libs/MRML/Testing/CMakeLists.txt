@@ -82,6 +82,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumePropertyNodeTest1.cxx
   vtkMRMLVolumePropertyStorageNodeTest1.cxx
   vtkMRMLXYPlotManagerNodeTest1.cxx
+  vtkObserverManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -183,7 +184,7 @@ SIMPLE_TEST( vtkMRMLVolumeNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumePropertyNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLXYPlotManagerNodeTest1 )
-
+SIMPLE_TEST( vtkObserverManagerTest1 )
 
 MACRO( TEST_SCENE  SCENENAME )
 ADD_TEST( vtkMRMLSceneTest2_${SCENENAME} 
