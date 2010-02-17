@@ -52,6 +52,9 @@
       <element>LinearMeasure</element>
       <element>PlanarMeasure</element>
       <element>SphericalMeasure</element>
+      <element>MinEigenvalue</element>
+      <element>MidEigenvalue</element>
+      <element>MaxEigenvalue</element>
     </string-enumeration>
   </parameters>
 </executable>

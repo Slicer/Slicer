@@ -73,6 +73,18 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToSphericalMeasure();
     }
+  else if (operation == std::string("MinEigenvalue"))
+    {
+    math->SetOperationToMinEigenvalue();
+    }
+  else if (operation == std::string("MiddleEigenvalue"))
+    {
+    math->SetOperationToMiddleEigenvalue();
+    }
+  else if (operation == std::string("MaxEigenvalue"))
+    {
+    math->SetOperationToMaxEigenvalue();
+    }
   else
     {
     std::cerr << argv[0] <<": Operation "<< operation<< "not supported"<< std::endl;
