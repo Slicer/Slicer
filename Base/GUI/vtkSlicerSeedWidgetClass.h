@@ -90,11 +90,10 @@ public:
   double * GetTextScale();
 
   /// 
-  /// set the scale on the glpyhs
+  /// set the scale on the glpyhs, iterates through all the handles in the
+  /// seed representation and sets uniform scale. Don't need to ever get the
+  /// scale, as it's stored in the mrml node
   void SetGlyphScale(double scale);
-  /// 
-  /// get the scale of the glyphs
-  double GetGlyphScale();
 
   /// 
   /// set the glyphs to different poly datas. Return 1 if changed, 0 if not, -1

@@ -424,11 +424,6 @@ double *vtkSlicerSeedWidgetClass::GetTextScale()
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::SetGlyphScale(double scale)
 {
-  if (this->Glyph)
-    {
-    this->Glyph->SetScale(scale);
-    this->Glyph->Update();
-    }
   // iterate through the handles
   if (this->Widget == NULL || this->Widget->GetRepresentation() == NULL)
     {
@@ -437,80 +432,34 @@ void vtkSlicerSeedWidgetClass::SetGlyphScale(double scale)
   vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
   if (!sr)
     {
+    vtkWarningMacro("SetGlyphScale: no representation for this widget.");
     return;
     }
   int numSeeds = sr->GetNumberOfSeeds();
   for (int n = 0; n < numSeeds; n++)
     {
-    if (this->Widget->GetSeed(n) != NULL &&
-        this->Widget->GetSeed(n)->GetRepresentation() != NULL)
+    if (sr->GetHandleRepresentation(n) != NULL)
       {
-      //vtkPolygonalHandleRepresentation3D *rep = NULL;
-      //rep =
-      //vtkPolygonalHandleRepresentation3D::SafeDownCast(this->Widget->GetSeed(n)->GetRepresentation());
       vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
       rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
-      if (rep && rep->GetTransform() &&
-          rep->GetTransform()->IsA("vtkHomogeneousTransform"))
+      if (rep)
         {
-        // get the matrix
-       
-        vtkHomogeneousTransform *transform = vtkHomogeneousTransform::SafeDownCast(rep->GetTransform());
-        if (transform != NULL)
-          {
-           vtkMatrix4x4 *mat = transform->GetMatrix();
-           if (mat)
-             {
-             vtkDebugMacro("ScaleGlyph: " << n << ": Have a homogeonous transform, old matrix scale = " << mat->GetElement(0,0) << ", " << mat->GetElement(1,1) <<  ", " << mat->GetElement(2,2) << ", setting all values to " << scale);
-             mat->SetElement(0,0,scale);
-             mat->SetElement(1,1,scale);
-             mat->SetElement(2,2,scale);
-             transform->Update();
-             }
-          }
-        }
-      /*
-      if (rep && rep->GetHandle() && rep->GetHandle()->GetSource())
-        {
-        if (vtkSlicerGlyphSource2D::SafeDownCast(rep->GetHandle()->GetSource()))
-          {
-          vtkWarningMacro("setting scale on a glyph source 2d, n = " << n);
-          vtkSlicerGlyphSource2D::SafeDownCast(rep->GetHandle()->GetSource())->SetScale(scale);
-          rep->GetHandle()->GetSource()->Update();
-          }
-        else if (rep->GetHandle() == this->SphereSource->GetOutput())
-          {
-          vtkWarningMacro("setting scale on a sphere source, n = " << n);
-          vtkSphereSource::SafeDownCast(rep->GetHandle()->GetSource())->SetRadius(scale / 2.0); //SetScale(scale);
-          rep->GetHandle()->GetSource()->Update();
-          }
-        else
-          {
-          vtkErrorMacro("unable to get the poly data to set the scale to " << scale);
-          }
+        rep->SetUniformScale(scale);
+        // call modified so text location updates
+        rep->Modified();
         }
       else
         {
-        if (rep && rep->GetHandle() && rep->GetHandle() == this->DiamondGlyphPolyData)
-          {
-          vtkErrorMacro("not quite sure how to set scale on the diamond glyph");
-          }
+        vtkWarningMacro("SetGlyphScale: unable to get abstract polygonal handle representation 3d of handle representation for seed " << n);
         }
-      */
+      }
+    else
+      {
+      vtkWarningMacro("SetGlyphScale: unable to get handle representation " << n);
       }
     }
 }
 
-//---------------------------------------------------------------------------
-double vtkSlicerSeedWidgetClass::GetGlyphScale()
-{
-  double s = 0.0;
-  if (this->Glyph)
-    {
-    s = this->Glyph->GetScale();
-    }
-  return s;
-}
 
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::SetNthSeedVisibility(int n, int flag)
