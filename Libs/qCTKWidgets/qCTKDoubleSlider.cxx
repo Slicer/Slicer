@@ -62,6 +62,8 @@ void qCTKDoubleSliderPrivate::init()
 
   p->connect(this->Slider, SIGNAL(valueChanged(int)), p, SLOT(onValueChanged(int)));
   p->connect(this->Slider, SIGNAL(sliderMoved(int)), p, SLOT(onSliderMoved(int)));
+  p->connect(this->Slider, SIGNAL(sliderPressed()), p, SIGNAL(sliderPressed()));
+  p->connect(this->Slider, SIGNAL(sliderReleased()), p, SIGNAL(sliderReleased()));
 }
   
 // --------------------------------------------------------------------------

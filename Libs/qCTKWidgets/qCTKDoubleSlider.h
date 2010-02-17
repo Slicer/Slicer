@@ -97,6 +97,9 @@ signals:
   /// Same as QSlider::sliderMoved, the signal is emitted ONLY if the slider
   /// is manually moved by the user.
   void sliderMoved(double position);
+
+  void sliderPressed();
+  void sliderReleased();
   
 private:
   QCTK_DECLARE_PRIVATE(qCTKDoubleSlider);
