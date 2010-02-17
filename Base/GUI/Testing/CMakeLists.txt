@@ -20,9 +20,11 @@ ADD_TEST(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Sl
 ADD_TEST(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
 ADD_TEST(Slicer3FiducialsTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAdd.tcl)
 ADD_TEST(Slicer3FiducialsTestGlyphs ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsGlyphs.tcl)
+#ADD_TEST(Slicer3RestoreSceneSnapshotCompareViewTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestRestoreSceneSnapshotCompareView.tcl)
 
 SET_TESTS_PROPERTIES( Slicer3FiducialsTest1 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
 SET_TESTS_PROPERTIES( Slicer3FiducialsTest2 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
+#SET_TESTS_PROPERTIES( Slicer3RestoreSceneSnapshotCompareViewTest1 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
 
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests 
