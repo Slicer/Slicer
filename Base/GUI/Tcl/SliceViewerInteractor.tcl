@@ -13,10 +13,24 @@ proc SliceViewerFindWidgets { sliceGUI } {
   return $sswidgets
 }
 
+# create a slice widget for the sliceGUI
+# - check that there isn't already a widget for this sliceGUI
+# - check that logic has been created
+# - check that node has been assigned
 proc SliceViewerInitialize { sliceGUI } {
-  if { [SliceViewerFindWidgets $sliceGUI] == "" } {
-    SliceSWidget #auto $sliceGUI
+  if { [SliceViewerFindWidgets $sliceGUI] != "" } {
+    return
   }
+  set logic [$sliceGUI GetLogic]
+  if { $logic == "" } {
+    return
+  }
+  set node [$logic GetSliceNode]
+  if { $node == "" } {
+    return
+  }
+  # new widget is needed, so allocate it
+  SliceSWidget #auto $sliceGUI
 }
 
 
