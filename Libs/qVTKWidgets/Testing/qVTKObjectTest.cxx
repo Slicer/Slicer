@@ -177,7 +177,8 @@ bool qVTKObjectTest::test()
                     this, SLOT(onVTKObjectModifiedPublic ()));
   this->qvtkConnect(object, vtkCommand::WarningEvent, 
                     this, SLOT(onVTKObjectModifiedPublic( )));
-  int disconnected = this->qvtkDisconnect(object, 0, this, SLOT(onVTKObjectModifiedPublic() ));
+  int disconnected = this->qvtkDisconnect(object, vtkCommand::NoEvent, 
+                                          this, SLOT(onVTKObjectModifiedPublic() ));
   if (disconnected != 2)
     {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << disconnected;
@@ -196,7 +197,7 @@ bool qVTKObjectTest::test()
   this->resetSlotCalls();
 
   disconnected = this->qvtkDisconnectAll();
-  if (disconnected != 1)
+  if (disconnected != 0)
     {
     qDebug() << __LINE__ << "qvtkDisconnectAll failed" << disconnected;
     return false;
