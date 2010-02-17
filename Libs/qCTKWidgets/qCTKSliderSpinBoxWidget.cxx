@@ -17,6 +17,7 @@
 #include "ui_qCTKSliderSpinBoxWidget.h"
 
 #include <QDebug>
+#include <QMouseEvent>
 
 bool equal(double v1, double v2)
 {
@@ -33,12 +34,18 @@ public:
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
 
-  bool AutoSpinBoxWidth;
+  bool   Tracking;
+  bool   Changing;
+  double ValueBeforeChange;
+  bool   AutoSpinBoxWidth;
 };
 
 // --------------------------------------------------------------------------
 qCTKSliderSpinBoxWidgetPrivate::qCTKSliderSpinBoxWidgetPrivate()
 {
+  this->Tracking = true;
+  this->Changing = false;
+  this->ValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
 }
 
@@ -98,15 +105,17 @@ qCTKSliderSpinBoxWidget::qCTKSliderSpinBoxWidget(QWidget* _parent) : Superclass(
   
   d->setupUi(this);
 
-  //d->Slider->setTracking(false);
-  //d->SpinBox->setKeyboardTracking(false);
   d->Slider->setMaximum(d->SpinBox->maximum());
   d->Slider->setMinimum(d->SpinBox->minimum());
 
-  this->connect(d->Slider, SIGNAL(sliderMoved(double)), SIGNAL(sliderMoved(double)));
   this->connect(d->Slider, SIGNAL(valueChanged(double)), d->SpinBox, SLOT(setValue(double)));
   this->connect(d->SpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setValue(double)));
-  this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
+
+  //this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
+  this->connect(d->Slider, SIGNAL(sliderPressed()), this, SLOT(startChanging()));
+  this->connect(d->Slider, SIGNAL(sliderReleased()), this, SLOT(stopChanging()));
+  this->connect(d->Slider, SIGNAL(valueChanged(double)), this, SLOT(changeValue(double)));
+  d->SpinBox->installEventFilter(this);
 }
 
 // --------------------------------------------------------------------------
@@ -162,7 +171,7 @@ void qCTKSliderSpinBoxWidget::setRange(double min, double max)
   Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
-
+/*
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxWidget::sliderPosition()const
 {
@@ -174,7 +183,7 @@ void qCTKSliderSpinBoxWidget::setSliderPosition(double position)
 {
   qctk_d()->Slider->setSliderPosition(position);
 }
-
+*/
 /*
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxWidget::previousSliderPosition()
@@ -188,23 +197,91 @@ double qCTKSliderSpinBoxWidget::value()const
 {
   QCTK_D(const qCTKSliderSpinBoxWidget);
   Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
-  return d->Slider->value();
+  return d->Changing ? d->ValueBeforeChange : d->Slider->value();
 }
 
 // --------------------------------------------------------------------------
 void qCTKSliderSpinBoxWidget::setValue(double _value)
 {
   QCTK_D(qCTKSliderSpinBoxWidget);
-  //qDebug() << __FUNCTION__ << "set: " << _value;
-  //qDebug() << __FUNCTION__ << "old values: " << d->Slider->value() << " " << d->SpinBox->value();
+  // disable the tracking temporally to emit the
+  // signal valueChanged if changeValue() is called
+  bool isChanging = d->Changing;
+  d->Changing = false;
   d->SpinBox->setValue(_value);
-  //qDebug() << __FUNCTION__ << "inter: " << d->Slider->value() << d->SpinBox->value();
-//  d->SpinBox->blockSignals(true);
-  d->Slider->setValue(d->SpinBox->value());
-//  d->SpinBox->blockSignals(false);
-  //qDebug() << __FUNCTION__ << "new values: " << d->Slider->value() << " " << d->SpinBox->value();
+  // Why do we need to set the value to the slider ?
+  //d->Slider->setValue(d->SpinBox->value());
   Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
+  // restore the prop
+  d->Changing = isChanging;
 }
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::startChanging()
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  if (d->Tracking)
+    {
+    return;
+    }
+  d->Changing = true;
+  d->ValueBeforeChange = this->value();
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::stopChanging()
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  if (d->Tracking)
+    {
+    return;
+    }
+  d->Changing = false;
+  if (qAbs(this->value() - d->ValueBeforeChange) > (this->singleStep() * 0.000000001))
+    {
+    emit this->valueChanged(this->value());
+    }
+}
+
+// --------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::changeValue(double newValue)
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  //if (d->Tracking)
+    {
+    emit this->valueIsChanging(newValue);
+    }
+  if (!d->Changing)
+    {
+    emit this->valueChanged(newValue);
+    }
+}
+
+// --------------------------------------------------------------------------
+bool qCTKSliderSpinBoxWidget::eventFilter(QObject *obj, QEvent *event)
+ {
+   if (event->type() == QEvent::MouseButtonPress)
+     {
+     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+     if (mouseEvent->button() & Qt::LeftButton)
+       {
+       this->startChanging();
+       }
+     }
+   else if (event->type() == QEvent::MouseButtonRelease) 
+     {
+     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+     if (mouseEvent->button() & Qt::LeftButton)
+       {
+       // here we might prevent qCTKSliderSpinBoxWidget::stopChanging
+       // from sending a valueChanged() event as the spinbox might
+       // send a valueChanged() after eventFilter() is done.
+       this->stopChanging();
+       }
+     } 
+   // standard event processing
+   return this->Superclass::eventFilter(obj, event);
+ }
 
 // --------------------------------------------------------------------------
 double qCTKSliderSpinBoxWidget::singleStep()const
@@ -282,14 +359,7 @@ void qCTKSliderSpinBoxWidget::setTickInterval(double ti)
 // -------------------------------------------------------------------------
 void qCTKSliderSpinBoxWidget::reset()
 {
-  QCTK_D(qCTKSliderSpinBoxWidget);
-  
-  d->Slider->setValue(0);
-/*
-  d->SpinBox->blockSignals(true);
-  d->SpinBox->setValue(0);
-  d->SpinBox->blockSignals(false);
-*/
+  this->setValue(0.);
 }
 
 // -------------------------------------------------------------------------
@@ -302,6 +372,20 @@ void qCTKSliderSpinBoxWidget::setSpinBoxAlignment(Qt::Alignment alignment)
 Qt::Alignment qCTKSliderSpinBoxWidget::spinBoxAlignment()const
 {
   return qctk_d()->SpinBox->alignment();
+}
+
+// -------------------------------------------------------------------------
+void qCTKSliderSpinBoxWidget::setTracking(bool enable)
+{
+  QCTK_D(qCTKSliderSpinBoxWidget);
+  d->Tracking = enable;
+}
+
+// -------------------------------------------------------------------------
+bool qCTKSliderSpinBoxWidget::hasTracking()const
+{
+  QCTK_D(const qCTKSliderSpinBoxWidget);
+  return d->Tracking;
 }
 
 // -------------------------------------------------------------------------

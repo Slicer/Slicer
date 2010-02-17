@@ -38,6 +38,7 @@ class QCTK_WIDGETS_EXPORT qCTKSliderSpinBoxWidget : public QWidget
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
+  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
 
 public:
   /// Superclass typedef
@@ -71,8 +72,8 @@ public:
   /// 
   /// This property holds the current slider position.
   /// If tracking is enabled (the default), this is identical to value.
-  double sliderPosition()const;
-  void setSliderPosition(double position);
+  //double sliderPosition()const;
+  //void setSliderPosition(double position);
 
   /// 
   /// This property holds the slider and spinbox current value.
@@ -124,6 +125,15 @@ public:
   Qt::Alignment spinBoxAlignment()const;
 
   /// 
+  /// This property holds whether slider tracking is enabled.
+  /// If tracking is enabled (the default), the widget emits the valueChanged() 
+  /// signal while the slider or spinbox is being dragged. If tracking is 
+  /// disabled, the widget emits the valueChanged() signal only when the user 
+  /// releases the slider or spinbox.
+  void setTracking(bool enable);
+  bool hasTracking()const;
+
+  /// 
   /// Set/Get the auto spinbox width
   /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
   /// set to the same width of the largest QSpinBox of its
@@ -140,8 +150,18 @@ public slots:
 signals:
   /// Use with care:
   /// sliderMoved is emitted only when the user moves the slider
-  void sliderMoved(double position);
+  //void sliderMoved(double position);
   void valueChanged(double value);
+  void valueIsChanging(double value);
+
+protected slots:
+  
+  void startChanging();
+  void stopChanging();
+  void changeValue(double value);
+  
+protected:
+  virtual bool eventFilter(QObject *obj, QEvent *event);
 private:
   QCTK_DECLARE_PRIVATE(qCTKSliderSpinBoxWidget);
 

@@ -147,7 +147,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
     }
   else if (this->isRotation())
     {
-    d->OldPosition = this->sliderPosition();
+    d->OldPosition = this->value();//this->sliderPosition();
     //this->setValue(this->sliderPosition());
     }
 }
