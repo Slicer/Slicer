@@ -15,7 +15,7 @@ QWidget *qCTKMenuButtonPlugin::createWidget(QWidget *_parent)
   dummyMenu->addAction("foo");
   dummyMenu->addAction("bar");
   dummyMenu->addAction("barbarbarbarbarbarbarbarbarbar");
-  _widget->setExtraMenu(dummyMenu);
+  _widget->setMenu(dummyMenu);
   return _widget;
 }
 

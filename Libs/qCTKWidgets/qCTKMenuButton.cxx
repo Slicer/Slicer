@@ -34,16 +34,16 @@ class qCTKMenuButtonPrivate : public qCTKPrivate<qCTKMenuButton>
 {
 public:
   QCTK_DECLARE_PUBLIC(qCTKMenuButton);
-  void init();
-  QRect indicatorRect() const;
+  qCTKMenuButtonPrivate();
 
-  QPointer<QMenu> ExtraMenu;
+  QRect indicatorRect() const;
+  bool ShowMenu;
 };
 
-
 //-----------------------------------------------------------------------------
-void qCTKMenuButtonPrivate::init()
+qCTKMenuButtonPrivate::qCTKMenuButtonPrivate()
 {
+  this->ShowMenu = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -66,7 +66,6 @@ qCTKMenuButton::qCTKMenuButton(QWidget* _parent)
   :QPushButton(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKMenuButton);
-  qctk_d()->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -74,36 +73,11 @@ qCTKMenuButton::qCTKMenuButton(const QString& title, QWidget* _parent)
   :QPushButton(title, _parent)
 {
   QCTK_INIT_PRIVATE(qCTKMenuButton);
-  qctk_d()->init();
 }
 
 //-----------------------------------------------------------------------------
 qCTKMenuButton::~qCTKMenuButton()
 {
-}
-
-//-----------------------------------------------------------------------------
-void qCTKMenuButton::setExtraMenu(QMenu* extramenu)
-{
-  QCTK_D(qCTKMenuButton);
-  if (d->ExtraMenu)
-    {
-    this->removeAction(d->ExtraMenu->menuAction());
-    }
-  d->ExtraMenu = extramenu;
-  if (d->ExtraMenu)
-    {
-    this->addAction(d->ExtraMenu->menuAction());
-    }
-  update();
-  updateGeometry();
-}
-
-//-----------------------------------------------------------------------------
-QMenu* qCTKMenuButton::extraMenu() const
-{
-    QCTK_D(const qCTKMenuButton);
-    return d->ExtraMenu;
 }
 
 //-----------------------------------------------------------------------------
@@ -128,14 +102,21 @@ void qCTKMenuButton::paintEvent(QPaintEvent * _event)
   QStylePainter painter(this);
   QStyleOptionButton option;
   initStyleOption(&option);
-
+  bool drawIndicatorBackground = 
+    option.state & QStyle::State_Sunken || 
+    option.state & QStyle::State_On;
   // Draw button
   option.features &= ~QStyleOptionButton::HasMenu;
+  if (this->menu() && (this->menu()->isVisible() || d->ShowMenu))
+    {
+    option.state &= ~QStyle::State_Sunken;
+    option.state |= QStyle::State_Raised;
+    }
   painter.drawControl(QStyle::CE_PushButtonBevel, option);
   // is PE_PanelButtonCommand better ?
   //painter.drawPrimitive(QStyle::PE_PanelButtonCommand, option);
   QRect downArrowRect = d->indicatorRect();
-  if (option.state & QStyle::State_Sunken)
+  if (drawIndicatorBackground)
     {    
     // if the button is down, draw the part under the indicator up
     QPixmap cache = QPixmap(option.rect.size());
@@ -143,6 +124,8 @@ void qCTKMenuButton::paintEvent(QPaintEvent * _event)
     QPainter cachePainter(&cache);
     option.state &= ~QStyle::State_Sunken;
     option.state |= QStyle::State_Raised;
+    option.state &= ~QStyle::State_On;
+    option.state |= QStyle::State_Off;
     //option.state &= ~QStyle::State_HasFocus;
     option.state &= ~QStyle::State_MouseOver;
     this->style()->drawControl(QStyle::CE_PushButtonBevel, &option, &cachePainter, this);
@@ -193,6 +176,9 @@ void qCTKMenuButton::initStyleOption(QStyleOptionButton* option)const
 void qCTKMenuButton::mousePressEvent(QMouseEvent *e)
 {
   QCTK_D(qCTKMenuButton);
+  // we don't want to open the menu if the mouse is clicked anywhere on
+  // the button, only if it's clicked on the indecator
+  this->disconnect(this,SIGNAL(pressed()), this, SLOT(_q_popupPressed()));
   this->QPushButton::mousePressEvent(e);
   if (e->isAccepted())
     {
@@ -200,63 +186,9 @@ void qCTKMenuButton::mousePressEvent(QMouseEvent *e)
     }
   if (d->indicatorRect().contains(e->pos()))
     {
-    this->showExtraMenu();
+    d->ShowMenu = true;
+    this->showMenu();
+    d->ShowMenu = false;
     e->accept();
     }
-}
-
-//-----------------------------------------------------------------------------
-void qCTKMenuButton::showExtraMenu()
-{
-  QCTK_D(qCTKMenuButton);
-  if (!d->ExtraMenu)
-    {
-    return;
-    }
-
-  d->ExtraMenu->setNoReplayFor(this);
-  bool horizontal = true;
-#if !defined(QT_NO_TOOLBAR)
-  QToolBar *tb = qobject_cast<QToolBar*>(this->parent());
-  if (tb && tb->orientation() == Qt::Vertical)
-    {
-    horizontal = false;
-    }
-#endif
-  QWidgetItem item(this);
-  QRect _rect = item.geometry();
-  _rect.setRect(_rect.x() - this->x(), _rect.y() - this->y(), _rect.width(), _rect.height());
-
-  QSize menuSize = d->ExtraMenu->sizeHint();
-  QPoint globalPos = this->mapToGlobal(_rect.topLeft());
-  int _x = globalPos.x();
-  int _y = globalPos.y();
-  if (horizontal) 
-    {
-    if (globalPos.y() + _rect.height() + menuSize.height() <= QApplication::desktop()->height()) 
-      {
-      _y += _rect.height();
-      } 
-    else 
-      {
-      _y -= menuSize.height();
-      }
-    if (this->layoutDirection() == Qt::RightToLeft)
-      {
-      _x += _rect.width() - menuSize.width();
-      }
-    } 
-  else 
-    {
-    if (globalPos.x() + _rect.width() + d->ExtraMenu->sizeHint().width() <= QApplication::desktop()->width())
-      {
-      _x += _rect.width();
-      }
-    else
-      {
-      _x -= menuSize.width();
-      }
-    }
-  // waits until the menu is executed...
-  d->ExtraMenu->exec(QPoint(_x, _y));
 }

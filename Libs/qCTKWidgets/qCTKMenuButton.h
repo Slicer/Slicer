@@ -34,17 +34,9 @@ public:
   qCTKMenuButton(QWidget *parent = 0);
   qCTKMenuButton(const QString& text, QWidget *parent = 0);
   virtual ~qCTKMenuButton();
-  
-  /// 
-  /// don't use menu/setMenu but extraMenu/setExtraMenu instead.
-  QMenu* extraMenu()const;
-  void setExtraMenu(QMenu* menu);
-  
+
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
-  
-public slots:
-  void showExtraMenu();
 
 protected:
   virtual void paintEvent(QPaintEvent*);
