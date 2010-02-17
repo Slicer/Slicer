@@ -563,6 +563,8 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     rasBounds[5] = max(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
     
     this->roiWidget->SetParent(this->FrameROI->GetFrame());
+    this->roiWidget->Create();
+
     this->roiWidget->SetXRangeExtent(rasBounds[0],rasBounds[3]);
     this->roiWidget->SetYRangeExtent(rasBounds[1],rasBounds[4]);
     this->roiWidget->SetZRangeExtent(rasBounds[2],rasBounds[5]);
@@ -571,7 +573,6 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->roiWidget->SetYResolution(fabs(rasBounds[4]-rasBounds[1])/100.);
     this->roiWidget->SetZResolution(fabs(rasBounds[5]-rasBounds[2])/100.);
 
-    this->roiWidget->Create();
     this->roiWidget->SetROINode(roiNode);
     }
 
