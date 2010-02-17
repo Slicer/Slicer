@@ -118,7 +118,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
   QBoxLayout* scrollAreaLayout = 
     qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
   Q_ASSERT(scrollAreaLayout);
-  scrollAreaLayout->insertWidget(1, moduleWidget);
+  scrollAreaLayout->insertWidget(1, moduleWidget,1);
 
   moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
   moduleWidget->setVisible(true);

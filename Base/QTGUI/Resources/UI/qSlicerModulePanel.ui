@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
-    <height>513</height>
+    <width>357</width>
+    <height>120</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,15 +30,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>366</width>
-        <height>509</height>
+        <width>353</width>
+        <height>116</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="qCTKCollapsibleButton" name="HelpCollapsibleButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
+          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -80,7 +80,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>218</width>
-           <height>239</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
