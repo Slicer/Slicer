@@ -44,6 +44,8 @@ SET(qCTKWidgets_SRCS
   qCTKCoordinatesWidget.h
   qCTKDoubleSlider.cxx
   qCTKDoubleSlider.h
+  qCTKDynamicSpacer.cxx
+  qCTKDynamicSpacer.h
   qCTKFittedTextBrowser.cxx
   qCTKFittedTextBrowser.h
   qCTKFlowLayout.cxx
@@ -79,6 +81,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKColorPickerButton.h
   qCTKCoordinatesWidget.h
   qCTKDoubleSlider.h
+  qCTKDynamicSpacer.h
   qCTKFittedTextBrowser.h
   qCTKMatrixWidget.h
   qCTKMenuButton.h

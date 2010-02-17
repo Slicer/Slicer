@@ -21,6 +21,8 @@ SET(designer_plugin_SRCS
   qCTKCoordinatesWidgetPlugin.h
   qCTKDoubleSliderPlugin.cxx
   qCTKDoubleSliderPlugin.h
+  qCTKDynamicSpacerPlugin.cxx
+  qCTKDynamicSpacerPlugin.h
   qCTKExtensionFactory.cxx
   qCTKExtensionFactory.h
   qCTKFittedTextBrowserPlugin.cxx
@@ -46,6 +48,7 @@ SET(designer_plugin_MOC_SRCS
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
   qCTKDoubleSliderPlugin.h
+  qCTKDynamicSpacerPlugin.h
   qCTKExtensionFactory.h
   qCTKFittedTextBrowserPlugin.h  
   qCTKMenuButtonPlugin.h

@@ -8,6 +8,7 @@
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
 #include "qCTKDoubleSliderPlugin.h"
+#include "qCTKDynamicSpacerPlugin.h"
 #include "qCTKFittedTextBrowserPlugin.h"
 #include "qCTKMenuButtonPlugin.h"
 #include "qCTKNumericInputPlugin.h"
@@ -34,6 +35,7 @@ public:
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin
             << new qCTKDoubleSliderPlugin
+            << new qCTKDynamicSpacerPlugin
             << new qCTKFittedTextBrowserPlugin
             << new qCTKMenuButtonPlugin
             << new qCTKNumericInputPlugin
