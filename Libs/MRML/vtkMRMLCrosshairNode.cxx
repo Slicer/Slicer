@@ -55,6 +55,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
   this->CrosshairThickness = vtkMRMLCrosshairNode::Fine;
   this->Navigation = 1;
   this->CrosshairRAS[0] = this->CrosshairRAS[1] = this->CrosshairRAS[2] = 0.0;
+  this->SetSingletonTag("default");
 }
 
 //----------------------------------------------------------------------------

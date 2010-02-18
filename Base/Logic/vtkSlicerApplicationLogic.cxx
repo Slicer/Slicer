@@ -567,6 +567,8 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
     events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 

@@ -3643,6 +3643,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
       events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
       events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
       events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+      events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 

@@ -73,7 +73,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLPlotNode.h"
 #include "vtkMRMLOrthogonalLinePlotNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
-
+#include "vtkMRMLCrosshairNode.h"
+#include "vtkMRMLInteractionNode.h"
 
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
@@ -372,6 +373,13 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(dasn);
   dasn->Delete();
 
+  vtkMRMLCrosshairNode *chn = vtkMRMLCrosshairNode::New();
+  this->RegisterNodeClass(chn);
+  chn->Delete();
+
+  vtkMRMLInteractionNode *intn = vtkMRMLInteractionNode::New();
+  this->RegisterNodeClass(intn);
+  intn->Delete();
 
 }
 
