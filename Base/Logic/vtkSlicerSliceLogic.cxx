@@ -301,16 +301,34 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     this->UpdatePipeline();
     }
 
-  // On a new scene, create the singleton for the default crosshair
-  // for navigation or cursor
-  if ( vtkMRMLScene::SafeDownCast(caller) && event == vtkMRMLScene::NewSceneEvent)
+  //
+  // On a new scene or restore, create the singleton for the default crosshair
+  // for navigation or cursor if it doesn't already exist in scene
+  //
+  if ( vtkMRMLScene::SafeDownCast(caller) && 
+        ( event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneRestoredEvent ) )
     {
     vtkMRMLScene *scene =  vtkMRMLScene::SafeDownCast(caller);
-    vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
-    crosshair->SetCrosshairName("default");
-    crosshair->NavigationOn();
-    scene->AddNode( crosshair );
-    crosshair->Delete();
+    int n, numberOfCrosshairs = scene->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
+    int foundDefault = 0;
+    vtkMRMLCrosshairNode *crosshair;
+    for (n = 0; n < numberOfCrosshairs; n++)
+      {
+      crosshair = vtkMRMLCrosshairNode::SafeDownCast( scene->GetNthNodeByClass( n, "vtkMRMLCrosshairNode" ) );
+      if ( crosshair && !strcmp( "default", crosshair->GetCrosshairName() ) )
+        {
+        foundDefault = 1;
+        }
+      }
+
+    if (!foundDefault)
+      {
+      crosshair = vtkMRMLCrosshairNode::New();
+      crosshair->SetCrosshairName("default");
+      crosshair->NavigationOn();
+      scene->AddNode( crosshair );
+      crosshair->Delete();
+      }
     }
 }
 
