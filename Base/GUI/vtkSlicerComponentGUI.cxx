@@ -78,9 +78,30 @@ void vtkSlicerComponentGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
   this->vtkObject::PrintSelf ( os, indent );
   os << indent << "SlicerComponentGUI: " << this->GetClassName ( ) << "\n";
-  os << indent << "MRMLScene: " << this->GetMRMLScene ( ) << "\n";
-  os << indent << "ApplicationLogic: " << this->GetApplicationLogic ( ) << "\n";
-  os << indent << "GUIName: " << this->GetGUIName ( ) << "\n";
+  if (this->GetMRMLScene ( ) != NULL)
+    {      
+    os << indent << "MRMLScene: " << this->GetMRMLScene ( ) << "\n";
+    }
+  else
+    {
+    os << indent << "MRMLScene: NULL\n";
+    }
+  if (this->GetApplicationLogic ( ) != NULL)
+    {
+    os << indent << "ApplicationLogic: " << this->GetApplicationLogic() << "\n";
+    }
+  else
+    {
+    os << indent << "ApplicationLogic: NULL\n";
+    }
+  if (this->GetGUIName ( ) != NULL)
+    {
+    os << indent << "GUIName: " << this->GetGUIName() << "\n";
+    }
+  else
+    {
+    os << indent << "GUIName: NULL\n";
+    }
 }
 
 
