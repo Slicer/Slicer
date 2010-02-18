@@ -66,7 +66,8 @@ proc slicerextd_stop { } {
 #
 proc slicerextd_sock_cb { sock addr port } {
 
-    fileevent $sock readable "slicerextd_sock_fileevent $sock"
+  set ::SLICEREXTD(addr) $addr
+  fileevent $sock readable "slicerextd_sock_fileevent $sock"
 }
 
 #
@@ -124,9 +125,10 @@ proc slicerextd_sock_fileevent {sock} {
             set size [file tail [lindex $line 4]]
             
             fconfigure $sock -translation binary
-            puts "reading data ($size bytes) for $dir/$name..."
+            puts "reading data ($size bytes) from $::SLICEREXTD(addr) for $name..."
             set data [read $sock $size]
             fconfigure $sock -translation auto
+            puts "succeeded in reading $name."
 
             set pathSoFar ""
             foreach subdir [file split $subpath] {
