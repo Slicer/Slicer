@@ -22,6 +22,14 @@ int QdecGlmFitTest1(int , char * [] )
 {
   QdecGlmFit  qdec;
 
+  //QdecGlmDesign* iGlmDesign = NULL;
+  
+  QdecGlmFitResults* results = qdec.GetResults();
 
+  if (results == NULL)
+    {
+    return EXIT_FAILURE;
+    }
+  
   return EXIT_SUCCESS;
 }
