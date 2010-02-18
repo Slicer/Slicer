@@ -60,6 +60,8 @@
 // VTK includes
 #include "vtkObjectFactory.h"
 #include "vtkOutputWindow.h"
+#include "vtkCommand.h"
+#include "vtkSmartPointer.h"
 
 // ITK includes
 #include "itkOutputWindow.h"
@@ -73,6 +75,7 @@
 #include <sstream>
 #include <queue>
 #include <algorithm>
+#include <vector>
 
 // VTKSYS includes
 #include <vtksys/stl/string>
@@ -110,6 +113,10 @@ const char *vtkSlicerApplication::ApplicationWindowWidthRegKey = "ApplicationWin
 const char *vtkSlicerApplication::ApplicationWindowHeightRegKey = "ApplicationWindowHeight";
 const char *vtkSlicerApplication::ApplicationSlicesFrameHeightRegKey = "ApplicationSlicesFrameHeight";
 const char *vtkSlicerApplication::ApplicationLayoutTypeRegKey = "ApplicationLayoutType";
+const char *vtkSlicerApplication::ApplicationLayoutCompareViewRowsRegKey = "ApplicationLayoutCompareViewRows";
+const char *vtkSlicerApplication::ApplicationLayoutCompareViewColumnsRegKey = "ApplicationLayoutCompareViewColumns";
+const char *vtkSlicerApplication::ApplicationLayoutLightboxRowsRegKey = "ApplicationLayoutLightboxRows";
+const char *vtkSlicerApplication::ApplicationLayoutLightboxColumnsRegKey = "ApplicationLayoutLightboxColumns";
 const char *vtkSlicerApplication::EnableAsynchronousIORegKey = "EnableAsynchronousIO";
 const char *vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey = "UseWelcomeModuleAtStartup";
 const char *vtkSlicerApplication::EnableForceRedownloadRegKey = "EnableForceRedownload";
@@ -194,6 +201,7 @@ public:
 
     this->MRMLScene = 0;
     }
+
   vtkMRMLScene*       MRMLScene;
 
   #ifdef Slicer3_USE_QT
@@ -201,6 +209,7 @@ public:
   int                                    RegisteredDialogCount;
   qSlicerModulePanel*                    ModulePanel;
   #endif
+
 };
 
 //---------------------------------------------------------------------------
@@ -241,6 +250,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ApplicationWindowWidth = 0;
     this->ApplicationWindowHeight = 0;
     this->ApplicationLayoutType = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
+    this->ApplicationLayoutCompareViewRows = 1;
+    this->ApplicationLayoutCompareViewColumns = 1;
+    this->ApplicationLayoutLightboxRows = 1;
+    this->ApplicationLayoutLightboxColumns = 1;
+
     this->ApplicationSlicesFrameHeight = this->DefaultGeometry->GetDefaultSliceGUIFrameHeight();
 
     // Remote data handling settings
@@ -1016,6 +1030,26 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->ApplicationLayoutType = this->GetIntRegistryValue(
         2, "RunTime", vtkSlicerApplication::ApplicationLayoutTypeRegKey);
     }
+  if ( this->HasRegistryValue (2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewRowsRegKey))
+    {
+    this->ApplicationLayoutCompareViewRows = this->GetIntRegistryValue(
+        2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewRowsRegKey);
+    }
+  if ( this->HasRegistryValue (2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewColumnsRegKey))
+    {
+    this->ApplicationLayoutCompareViewColumns = this->GetIntRegistryValue(
+        2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewColumnsRegKey);
+    }
+  if ( this->HasRegistryValue (2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxRowsRegKey))
+    {
+    this->ApplicationLayoutLightboxRows = this->GetIntRegistryValue(
+        2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxRowsRegKey);
+    }
+  if ( this->HasRegistryValue (2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxColumnsRegKey))
+    {
+    this->ApplicationLayoutLightboxColumns = this->GetIntRegistryValue(
+        2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxColumnsRegKey);
+    }
 
   if ( this->HasRegistryValue(
         2, "RunTime", vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey))
@@ -1102,13 +1136,11 @@ void vtkSlicerApplication::SaveApplicationWindowConfiguration()
       this->SetApplicationSlicesFrameHeight ( this->ApplicationGUI->GetMainSlicerWindow()->GetSecondarySplitFrame()->GetFrame1Size() );
       if ( this->ApplicationGUI->GetGUILayoutNode() )
         {
-        // Compare View not supported as a saved layout yet (need to
-        // put the number of compare views into the Layout node
-        if (this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement()
-            != vtkMRMLLayoutNode::SlicerLayoutCompareView)
-          {
-          this->SetApplicationLayoutType ( this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement() );
-          }
+        this->SetApplicationLayoutType ( this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement() );
+        this->SetApplicationLayoutCompareViewRows(this->ApplicationGUI->GetGUILayoutNode()->GetNumberOfCompareViewRows());
+        this->SetApplicationLayoutCompareViewColumns(this->ApplicationGUI->GetGUILayoutNode()->GetNumberOfCompareViewColumns());
+        this->SetApplicationLayoutLightboxRows(this->ApplicationGUI->GetGUILayoutNode()->GetNumberOfCompareViewLightboxRows());
+        this->SetApplicationLayoutLightboxColumns(this->ApplicationGUI->GetGUILayoutNode()->GetNumberOfCompareViewLightboxColumns());
         }
       }
     }
@@ -1200,6 +1232,18 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::ApplicationLayoutTypeRegKey, "%d",
                          this->ApplicationLayoutType );
+  this->SetRegistryValue(
+                         2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewRowsRegKey, "%d",
+                         this->ApplicationLayoutCompareViewRows );
+  this->SetRegistryValue(
+                         2, "RunTime", vtkSlicerApplication::ApplicationLayoutCompareViewColumnsRegKey, "%d",
+                         this->ApplicationLayoutCompareViewColumns );
+  this->SetRegistryValue(
+                         2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxRowsRegKey, "%d",
+                         this->ApplicationLayoutLightboxRows );
+  this->SetRegistryValue(
+                         2, "RunTime", vtkSlicerApplication::ApplicationLayoutLightboxColumnsRegKey, "%d",
+                         this->ApplicationLayoutLightboxColumns );
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::ApplicationSlicesFrameHeightRegKey, "%d",
                          this->ApplicationSlicesFrameHeight );
@@ -2319,6 +2363,10 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   os << nextIndent << "ApplicationWindowHeight: " << ApplicationWindowHeight << "\n";
   os << nextIndent << "ApplicationSlicesFrameHeight: " << ApplicationSlicesFrameHeight << "\n";
   os << nextIndent << "ApplicationLayoutType: " << ApplicationLayoutType << "\n";
+  os << nextIndent << "ApplicationLayoutCompareViewRows: " << ApplicationLayoutCompareViewRows << "\n";
+  os << nextIndent << "ApplicationLayoutCompareViewColumns: " << ApplicationLayoutCompareViewColumns << "\n";
+  os << nextIndent << "ApplicationLayoutLightboxRows: " << ApplicationLayoutLightboxRows << "\n";
+  os << nextIndent << "ApplicationLayoutLightboxColumns: " << ApplicationLayoutLightboxColumns << "\n";
 
   os << nextIndent << "RegistryHolder: " << RegistryHolder << "\n";
 

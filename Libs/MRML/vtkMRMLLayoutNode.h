@@ -48,16 +48,16 @@ public:
   /// 
   /// CompareView configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewRows, int );
-  vtkSetMacro ( NumberOfCompareViewRows, int );  
+  vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);  
   vtkGetMacro ( NumberOfCompareViewColumns, int );
-  vtkSetMacro ( NumberOfCompareViewColumns, int );  
+  vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );  
 
   /// 
   /// configure each compare viewer in lightbox mode.
   vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
-  vtkSetMacro ( NumberOfCompareViewLightboxRows, int );  
+  vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );  
   vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
-  vtkSetMacro ( NumberOfCompareViewLightboxColumns, int );  
+  vtkSetClampMacro ( NumberOfCompareViewLightboxColumns, int, 1, 50 );  
 
   /// 
   /// Set/Get the size of the main and secondary panels (size of Frame1

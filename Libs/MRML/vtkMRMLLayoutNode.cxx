@@ -45,8 +45,8 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;
   this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
-  this->NumberOfCompareViewRows = 0;
-  this->NumberOfCompareViewColumns = 0;
+  this->NumberOfCompareViewRows = 1;
+  this->NumberOfCompareViewColumns = 1;
   this->NumberOfCompareViewLightboxRows = 1;
   this->NumberOfCompareViewLightboxColumns = 1;
   this->MainPanelSize = 400;

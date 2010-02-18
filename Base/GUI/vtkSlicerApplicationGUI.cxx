@@ -890,6 +890,15 @@ vtkMRMLLayoutNode *vtkSlicerApplicationGUI::GetGUILayoutNode()
     this->MRMLScene->AddNode(layout);
     this->SetAndObserveGUILayoutNode ( layout );
     layout->Delete();
+
+    if ( this->GetApplication() != NULL ) 
+      {
+      vtkSlicerApplication *app =(vtkSlicerApplication *)this->GetApplication();
+      layout->SetNumberOfCompareViewRows( app->GetApplicationLayoutCompareViewRows() );
+      layout->SetNumberOfCompareViewColumns( app->GetApplicationLayoutCompareViewColumns() );
+      layout->SetNumberOfCompareViewLightboxRows( app->GetApplicationLayoutLightboxRows() );
+      layout->SetNumberOfCompareViewLightboxColumns( app->GetApplicationLayoutLightboxColumns() );
+      }
     }
 
   //--- bail out if infrastructure isn't there.
@@ -1475,6 +1484,16 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
     this->GetMRMLScene()->AddNode ( layout );
     layout->Delete();
     this->SetAndObserveGUILayoutNode ( layout );
+
+    if ( this->GetApplication() != NULL ) 
+      {
+      vtkSlicerApplication *app =(vtkSlicerApplication *)this->GetApplication();
+      layout->SetNumberOfCompareViewRows( app->GetApplicationLayoutCompareViewRows() );
+      layout->SetNumberOfCompareViewColumns( app->GetApplicationLayoutCompareViewColumns() );
+      layout->SetNumberOfCompareViewLightboxRows( app->GetApplicationLayoutLightboxRows() );
+      layout->SetNumberOfCompareViewLightboxColumns( app->GetApplicationLayoutLightboxColumns() );
+      // view arrangement will be set later
+      }
     }
   //--- set and observe this node and set it to the active layout.
   this->GUILayoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutInitialView);
@@ -3186,11 +3205,14 @@ void vtkSlicerApplicationGUI::PackCompareView()
     //--- side in a top row. Then, the requested compare view rows and cols
     //--- are arrayed in a grid beneath these two.
     vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
-    x = g->GetSliceNode()->GetFieldOfView()[0];
-    y = g->GetSliceNode()->GetFieldOfView()[1];
-    z = g->GetSliceNode()->GetFieldOfView()[2];
-    g->GetSliceNode()->SetFieldOfView(x, y, z);
-    g->GetSliceNode()->UpdateMatrices();
+    if (g->GetSliceNode())
+      {
+      x = g->GetSliceNode()->GetFieldOfView()[0];
+      y = g->GetSliceNode()->GetFieldOfView()[1];
+      z = g->GetSliceNode()->GetFieldOfView()[2];
+      g->GetSliceNode()->SetFieldOfView(x, y, z);
+      g->GetSliceNode()->UpdateMatrices();
+      }
 
     //--TODO: when Compare view gets added into the vtkMRMLLayoutNode,
     vtkSlicerViewerWidget *viewer_widget = this->GetActiveViewerWidget();
@@ -3249,7 +3271,10 @@ void vtkSlicerApplicationGUI::PackCompareView()
            strcmp(layoutname, "Yellow") == 0 ||
            strcmp(layoutname, "Green") == 0)
         {
-        g->GetSliceNode()->SetSliceVisible(0);
+        if (g->GetSliceNode())
+          {
+          g->GetSliceNode()->SetSliceVisible(0);
+          }
         continue;
         }
       else
@@ -3265,11 +3290,11 @@ void vtkSlicerApplicationGUI::PackCompareView()
           // first compare viewer, the foreground of Red Viewer for
           // bsecond compare viewer, and rest like the first
           vtkSlicerSliceGUI *red = this->SlicesGUI->GetSliceGUI("Red");
-          if ((ncount == 0 || ncount > 2) && red && red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID())
+          if ((ncount == 0 || ncount > 2) && red && red->GetLogic() && red->GetLogic()->GetSliceCompositeNode() && red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID())
             {
             g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID());
             }
-          else if (ncount == 1 && red && red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID())
+          else if (ncount == 1 && red && red->GetLogic() && red->GetLogic()->GetSliceCompositeNode() && red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID())
             {
             g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID());
             }

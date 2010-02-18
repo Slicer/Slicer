@@ -184,6 +184,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ApplicationWindowHeightRegKey;
   static const char *ApplicationSlicesFrameHeightRegKey;
   static const char *ApplicationLayoutTypeRegKey;
+  static const char *ApplicationLayoutCompareViewRowsRegKey;
+  static const char *ApplicationLayoutCompareViewColumnsRegKey;
+  static const char *ApplicationLayoutLightboxRowsRegKey;
+  static const char *ApplicationLayoutLightboxColumnsRegKey;
   static const char *EnableAsynchronousIORegKey;
   static const char *UseWelcomeModuleAtStartupRegKey;
   static const char *EnableForceRedownloadRegKey;
@@ -310,6 +314,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro (ApplicationSlicesFrameHeight, int );
   vtkGetMacro (ApplicationLayoutType, int );
   vtkSetMacro (ApplicationLayoutType, int );
+  vtkGetMacro (ApplicationLayoutCompareViewRows, int );
+  vtkSetMacro (ApplicationLayoutCompareViewRows, int );
+  vtkGetMacro (ApplicationLayoutCompareViewColumns, int );
+  vtkSetMacro (ApplicationLayoutCompareViewColumns, int );
+  vtkGetMacro (ApplicationLayoutLightboxRows, int );
+  vtkSetMacro (ApplicationLayoutLightboxRows, int );
+  vtkGetMacro (ApplicationLayoutLightboxColumns, int );
+  vtkSetMacro (ApplicationLayoutLightboxColumns, int );
 
   /// 
   /// Set/Get if modules should be loaded (i.e. loadable modules)
@@ -506,6 +518,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   int ApplicationWindowHeight;
   int ApplicationSlicesFrameHeight;
   int ApplicationLayoutType;
+  int ApplicationLayoutCompareViewRows;
+  int ApplicationLayoutCompareViewColumns;
+  int ApplicationLayoutLightboxRows;
+  int ApplicationLayoutLightboxColumns;
 
   char RegistryHolder [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
