@@ -64,7 +64,7 @@ void vtkSlicerRenderWidget::ExposeCallback()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerRenderWidget::UpdateRenderWindowInteractorSize(int width, int height)
+void vtkSlicerRenderWidget::UpdateRenderWindowInteractorSize(int vtkNotUsed(width), int vtkNotUsed(height))
 {
   vtkDebugMacro("UpdateRenderWindowInteractorSize: returning as this call was causing slicer 3d and 2d windows to be pixelated on linux and solaris");
   return;
