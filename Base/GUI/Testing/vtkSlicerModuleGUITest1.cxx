@@ -21,7 +21,7 @@
 
 #include "TestingMacros.h"
 
-int vtkSlicerModuleGUITest1(int argc, char * argv [] )
+int vtkSlicerModuleGUITest1(int vtkNotUsed(argc), char * vtkNotUsed(argv) [] )
 {
   vtkSlicerModuleGUI* moduleGUI = vtkSlicerModuleGUI::New();
 
