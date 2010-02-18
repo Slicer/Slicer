@@ -20,14 +20,14 @@
 #include "assert.h"
 // #include "ostream.h"
 
-// ----------------------------------------------------
-// Stucture and function needed for convolution
-// ----------------------------------------------------
+/// ----------------------------------------------------
+/// Stucture and function needed for convolution
+/// ----------------------------------------------------
 
 //
 //BTX - begin tcl exclude
 //
-// From Simon convolution.cxx
+/// From Simon convolution.cxx
 
 typedef struct {
   float *input;
@@ -49,10 +49,10 @@ typedef struct {
 } convolution_filter_work;
 
 // ----------------------------------------------------------------------------------------------
-// Definitions for 3D float array EMVolume
-// ----------------------------------------------------------------------------------------------/ 
+/// Definitions for 3D float array EMVolume
+/// ----------------------------------------------------------------------------------------------/ 
 
-// Kilian turn around dimension so it is y,x,z like in matlab ! 
+/// Kilian turn around dimension so it is y,x,z like in matlab ! 
 class VTK_EMSEGMENT_EXPORT EMVolume {
 public:
   //static EMVolume *New() {return (new vtkDataDef);}
@@ -60,8 +60,8 @@ public:
   EMVolume(int initZ,int initY, int initX) {this->allocate(initZ,initY, initX);}
   ~EMVolume() {this->deallocate();}
 
-  // Convolution in all three direction 
-  // Can be made using less memory but then it will be probably be slower
+  /// Convolution in all three direction 
+  /// Can be made using less memory but then it will be probably be slower
   void Conv(float *v,int vLen) {
     this->ConvY(v,vLen);
     this->ConvX(v,vLen);
@@ -77,21 +77,27 @@ public:
 
   EMVolume & operator = (const EMVolume &trg) {
     if ( this->Data == trg.Data ) return *this;
-    // Has to be of the same dimension
-    assert((this->MaxX == trg.MaxX) && (this->MaxY == trg.MaxY) && (this->MaxZ == trg.MaxZ));  
-    memcpy(this->Data,trg.Data,sizeof(float)*this->MaxXYZ);
+    /// Has to be of the same dimension
+    if ((this->MaxX == trg.MaxX) && (this->MaxY == trg.MaxY) && (this->MaxZ == trg.MaxZ))
+      {
+      memcpy(this->Data,trg.Data,sizeof(float)*this->MaxXYZ);
+      }
+    else
+      {
+      std::cerr << "operator=: dimensions are not the same." << std::endl;
+      }
     return *this;
   }
 
-  // Kilian : Just to be compatible with older version
+  /// Kilian : Just to be compatible with older version
   void Conv(double *v,int vLen);
-  // End -  Multi Thread Function
+  /// End -  Multi Thread Function
   void ConvY(float *v, int vLen);
   void ConvX(float *v, int vLen);
-  // Same as above only sorce and target Volume are different => Slower 
+  /// Same as above only sorce and target Volume are different => Slower 
   void ConvX(EMVolume &src,float v[], int vLen);
   void ConvZ(float *v, int vLen);
-  // Same as above only sorce and target Volume are different => Slower 
+  /// Same as above only sorce and target Volume are different => Slower 
   void ConvZ(EMVolume &src,float v[], int vLen);
   void Print(char name[]);
   void Test(int Vdim);
@@ -105,17 +111,28 @@ public:
     char VolumeFileName[1024];
     sprintf(VolumeFileName,"%s.img",FileName); 
     FILE *File= fopen(VolumeFileName, "wb");
-    // Could not open file
-    assert(File); 
-    fwrite(this->Data, sizeof(float),this->MaxXYZ, File);
+    /// Could not open file
+    if (File == NULL)
+      {
+      std::cerr << "SaveDataToFile: unable to open file " << VolumeFileName << " for writing." << std::endl;
+      return;
+      }
+    size_t written = fwrite(this->Data, sizeof(float),this->MaxXYZ, File);
+    if (written != (size_t)(this->MaxXYZ))
+      {
+      std::cerr << "SaveDataToFile: failed to write " << this->MaxXYZ << " to file " << VolumeFileName << ", instead wrote " << written << std::endl;
+      }
     fflush(File);
     fclose(File);
 
 #ifndef _WIN32
-    // Compress file 
+    /// Compress file 
     char command[1024];
     sprintf(command,"gzip --fast -f \"%s\"",VolumeFileName);
-    assert(system(command) == 0); 
+    if (system(command) != 0)
+      {
+      std::cout << "Error runing system command " << command << std::endl;
+      }
 #endif
   }
  
@@ -124,38 +141,58 @@ public:
     char VolumeFileName[1024];
 
 #ifndef _WIN32
-    // First uncompress file
+    /// First uncompress file
     char command[1024];
     sprintf(command,"gunzip --fast -f \"%s.img.gz\"",FileName);
-    // Do not quite here bc could have been unzipped before - if file does not exist next assert will catch it 
-    system(command); 
+    /// Do not quit here bc could have been unzipped before - if file does not exist next check will catch it 
+    int returnVal = system(command);
+    if (returnVal != 0)
+      {
+      std::cout <<  "ReadDataFromFile: error executing system command " << command << std::endl;
+      }
 #endif
 
     sprintf(VolumeFileName,"%s.img",FileName);
     FILE *File= fopen(VolumeFileName, "rb");
-    // Could not open file
-    assert(File);
-    fread (this->Data,sizeof(float),this->MaxXYZ,File);
-    // terminate
+    /// Could not open file
+    if (File == NULL)
+      {
+      std::cerr << "ReadDataFromFile: unable to open file " << VolumeFileName << std::endl;
+      return;
+      }
+    size_t numRead = fread (this->Data,sizeof(float),this->MaxXYZ,File);
+    if (numRead != (size_t)(this->MaxXYZ))
+      {
+      std::cerr << "ReadDataFromFile: error reading " << VolumeFileName << ", expected to read " << this->MaxXYZ << ", instead got " << numRead << std::endl;
+      }
+    /// terminate
     fclose (File);
 
 #ifndef _WIN32
-    // Compress it back 
+    /// Compress it back 
     sprintf(command,"gzip --fast -f \"%s\"",VolumeFileName);
-    assert(system(command) == 0); 
+    returnVal = system(command);
+    if (returnVal != 0)
+      {
+      std::cout << "ReadDataFromFile: error executing system command " << command << std::endl;
+      }
 #endif
 
  }
 
- void EraseDataFile(char *FileName) {
+ void EraseDataFile(char *FileName)
+ {
     char VolumeFileName[1024];
 #ifndef _WIN32
-    // Compress it back 
+    /// Compress it back 
     sprintf(VolumeFileName,"%s.img.gz",FileName);
 #else 
     sprintf(VolumeFileName,"%s.img",FileName);
 #endif
-    assert(!remove(VolumeFileName));
+    if (remove(VolumeFileName) != 0)
+      {
+      std::cerr << "EraseDataFile: error erasing file " << VolumeFileName << std::endl;
+      }
  }
 
  int GetMaxX() {return this->MaxX;} 
@@ -181,11 +218,11 @@ protected :
 
 }; 
 
-// ----------------------------------------------------------------------------------------------
-// Definitions for 5D float array EMTriVolume (lower triangle)
-// ----------------------------------------------------------------------------------------------/ 
-// It is a 5 dimensional Volume where m[t1][t2][z][y][x] t1>= t2 is only defined 
-// Lower Traingular matrix - or a symmetric matrix where you only save the lower triangle
+/// ----------------------------------------------------------------------------------------------
+/// Definitions for 5D float array EMTriVolume (lower triangle)
+/// ----------------------------------------------------------------------------------------------/ 
+/// It is a 5 dimensional Volume where m[t1][t2][z][y][x] t1>= t2 is only defined 
+/// Lower Traingular matrix - or a symmetric matrix where you only save the lower triangle
 class VTK_EMSEGMENT_EXPORT EMTriVolume {
 protected :
   EMVolume **TriVolume;
@@ -221,15 +258,25 @@ public:
 
   EMTriVolume & operator = (const EMTriVolume &trg) {
     if ( this->TriVolume == trg.TriVolume) return *this;
-    // Has to be of the same dimension
-    assert(this->Dim == trg.Dim); 
-    for (int y=0; y < this->Dim; y++) {  
-      for (int x = 0; x <= y ; x++) this->TriVolume[y][x] = trg.TriVolume[y][x];
-    }
+    /// Has to be of the same dimension
+    if (this->Dim == trg.Dim)
+      {
+      for (int y=0; y < this->Dim; y++)
+        {  
+        for (int x = 0; x <= y ; x++)
+          {
+          this->TriVolume[y][x] = trg.TriVolume[y][x];
+          }
+        }
+      }
+    else
+      {
+      std::cerr << "operator=: dimensions are not the same " << this->Dim << " != " << trg.Dim << std::endl;
+      }
     return *this;
   }
 
-  // Kilian : Just to be complient with old version
+  /// Kilian : Just to be compliant with old version
   void Conv(double *v,int vLen) {
     float *v_f = new float[vLen];
     for (int i = 0; i < vLen; i++) v_f[i] = float(v[i]);
@@ -287,9 +334,9 @@ void EraseDataFile(char *FileName) {
 //ETX - end tcl exclude
 //
 
-// ----------------------------------------------------------------------------------------------
-// Dummy class 
-// ----------------------------------------------------------------------------------------------/ 
+/// ----------------------------------------------------------------------------------------------
+/// Dummy class 
+/// ----------------------------------------------------------------------------------------------/ 
 class VTK_EMSEGMENT_EXPORT vtkDataDef { 
 public:
   static vtkDataDef *New() {return (new vtkDataDef);}

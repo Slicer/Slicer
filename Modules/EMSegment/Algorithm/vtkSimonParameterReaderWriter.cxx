@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 #include <ctype.h>
 vtkCxxRevisionMacro(vtkSimonParameterReaderWriter, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkSimonParameterReaderWriter);
@@ -38,11 +37,11 @@ vtkStandardNewMacro(vtkSimonParameterReaderWriter);
 #endif
 
 
+/// char *flts - character array of floats 
+/// Return -1 on a malformed string
+/// Return the count of the number of floating point numbers
+///
 int countFloatsInString(const char *fltString)
-/* char *flts - character array of floats 
- Return -1 on a malformed string
- Return the count of the number of floating point numbers
-*/
 {
   char *end;
   const char *start = fltString;
@@ -64,9 +63,9 @@ int countFloatsInString(const char *fltString)
   return count; /* Success */
 }
 
+/// char *dbls - character array of doubles 
+/// double *tgts - array to save doubles 
 int getDoubleString(int numDoubles, const char *dbls, double *tgts)
-/* char *dbls - character array of doubles */
-/* double *tgts - array to save doubles */
 {
   char *end;
   const char *start = dbls;
@@ -92,9 +91,9 @@ int getDoubleString(int numDoubles, const char *dbls, double *tgts)
 
 
 // -------------------------------------------------------------------
-// from transform.c 
+/// from transform.c
+/// We assume that enough memory has already been allocated for tran 
 int readRegTransformFile(char *fname, double *tran)
-/* We assume that enough memory has already been allocated for tran */
 {
   FILE *fp = fopen(fname,"r");
   if (fp == (FILE *)NULL) {
@@ -111,8 +110,8 @@ int readRegTransformFile(char *fname, double *tran)
 }
 
 
-// *out and inA or inB can be the same pointer
-// out = A * B
+/// *out and inA or inB can be the same pointer
+/// out = A * B
 template <class TinA,class TinB,class Tout>  inline void matmult_3x3Template(TinA *inA, TinB *inB, Tout *out)
 {
   Tout tmp[9];
@@ -144,14 +143,16 @@ printf("in[6] %g inout[3] %g in[7] %g inout[4] %g in[8] %g inout[5] %g == %g\n",
 
 }
 
-// *out and inA or inB can be the same pointer
-inline void vtkSimonParameterReaderWriter::matmult_3x3(float *inA, float *inB, float *out) {
+/// *out and inA or inB can be the same pointer
+inline void vtkSimonParameterReaderWriter::matmult_3x3(float *inA, float *inB, float *out)
+{
   matmult_3x3Template(inA,inB,out);
 }
 
-// Needed to calculate not inverted transfromation matrix 
-// This is a matrix vector calculation
-template <class T>  inline void matvect_multTemplate(T *matrix, T *inVect, T *outVect) { 
+///Needed to calculate not inverted transfromation matrix 
+/// This is a matrix vector calculation
+template <class T>  inline void matvect_multTemplate(T *matrix, T *inVect, T *outVect)
+{ 
   T tmp[3];
 
   tmp[0] = T(double(matrix[0])*double(inVect[0]) + double(matrix[1])*double(inVect[1]) + double(matrix[2])*double(inVect[2]));
@@ -165,7 +166,7 @@ template <class T>  inline void matvect_multTemplate(T *matrix, T *inVect, T *ou
 
 
 
-// Needed for vtkImageEMLocalSegment
+/// Needed for vtkImageEMLocalSegment
 template <class T>  inline void matmult_3x4Template(T *inARotation, T *inATranslation, T *inBRotation,  T *inBTranslation, T *outRotation,  T *outTranslation) {
   T tmp[3];
 
@@ -180,7 +181,7 @@ template <class T>  inline void matmult_3x4Template(T *inARotation, T *inATransl
   matmult_3x3Template(inARotation,inBRotation,outRotation);
 }
 
-// No inline in functions which are called by other functions and who refere to function within this file 
+/// No inline in functions which are called by other functions and who refere to function within this file 
 void vtkSimonParameterReaderWriter::matmult_3x4(float *inARotation, float *inATranslation, float *inBRotation,  float *inBTranslation, float *outRotation,  float *outTranslation) {
   matmult_3x4Template(inARotation, inATranslation, inBRotation, inBTranslation, outRotation, outTranslation);
 }
@@ -222,7 +223,6 @@ template <class T> void buildTransformMatrix(double *parms, T *transform, int nu
     transform[8] = (T)parms[6];
   } else if (numparms == 8) {
     fprintf(stderr,"Don't know what to do with 8 parameters\n");
-    assert(numparms != 8);
     return;
   } else if (numparms == 9) {
     if (paraType == 1) {
@@ -375,23 +375,24 @@ printf("Transform is: %f %f %f %f %f %f %f %f %f %f %f %f\n",
 }
 
 
-/* Convert from parameter estimates to transform matrix */
-/* Convert from the estimated parameters to the transform matrix
-   theta[0] = translate x dim
-   theta[1] = translate y dim
-   theta[2] = translate z dim
-   theta[3] = rotate around x axis in degrees
-   theta[4] = rotate around y axis in degrees
-   theta[5] = rotate around z axis in degrees
-   theta[6] = scale x axis
-   theta[7] = scale y axis
-   theta[8] = scale z axis
-*/
+/// Convert from parameter estimates to transform matrix 
+/// Convert from the estimated parameters to the transform matrix
+///   theta[0] = translate x dim
+///   theta[1] = translate y dim
+///   theta[2] = translate z dim
+///   theta[3] = rotate around x axis in degrees
+///   theta[4] = rotate around y axis in degrees
+///   theta[5] = rotate around z axis in degrees
+///   theta[6] = scale x axis
+///   theta[7] = scale y axis
+///   theta[8] = scale z axis
+///
 
 
-/* Take a 3x3 matrix in row major order, and write its inverse
- * into out.  If it is singular return 1 else return 0
- */
+///
+/// Take a 3x3 matrix in row major order, and write its inverse
+/// into out.  If it is singular, or input and output are the same, return 1 else return 0
+///
 template  <class T>  int fast_invert_3x3_matrixTemplate(T* in, T *out)
 {
   T det = in[0]*in[4]*in[8] -
@@ -401,7 +402,11 @@ template  <class T>  int fast_invert_3x3_matrixTemplate(T* in, T *out)
               in[2]*in[3]*in[7] -
                 in[2]*in[4]*in[6];
 
-  assert(in != out);
+  if (in == out)
+    {
+    fprintf(stderr, "fast_invert_3x3_matrixTemplate: input and output are the same!\n");
+    return 1;
+    }
 
   if (fabs(det) <= 0.00000001) {
     fprintf(stderr,"matrix is (close to) singular\n");
@@ -475,8 +480,8 @@ template  <class T> void convertParmsToTransformTemplate(double *theta, T *trans
   }
 }
 
-// paraType = 1 old Simon parameterisation 
-// paraType = 2 Kilian parameterisation 
+/// paraType = 1 old Simon parameterisation 
+/// paraType = 2 Kilian parameterisation 
 template  <class T> 
 int TurnParameteresIntoInverseRotationTranslationTemplate( double Xtranslate, double Ytranslate , double Ztranslate,
                                                            double Xrotate,    double Yrotate,     double Zrotate, 
@@ -499,9 +504,9 @@ int TurnParameteresIntoInverseRotationTranslationTemplate( double Xtranslate, do
   return 0;
 }
 
-// Produces inverse of last function 
-// Last Function invRot =  (R3*R2*R1*SC) ^ -1  and invTran = - Trans so that  y = invRot x + invTran
-// Thus the inverse is RotMat =  R3*R2*R1*SC TransVec = RotMat*Trans as x = RotMat y + TransVec
+/// Produces inverse of last function 
+/// Last Function invRot =  (R3*R2*R1*SC) ^ -1  and invTran = - Trans so that  y = invRot x + invTran
+/// Thus the inverse is RotMat =  R3*R2*R1*SC TransVec = RotMat*Trans as x = RotMat y + TransVec
 
 template  <class T> 
 void TurnParameteresIntoRotationTranslationTemplate( double Xtranslate, double Ytranslate , double Ztranslate,
@@ -524,9 +529,9 @@ void vtkSimonParameterReaderWriter::convertParmsToTransform(double *theta, float
 
 
 
-// Description: 
-// paraType = 1 old Simon parameterisation 
-// paraType = 2 Kilian parameterisation 
+/// Description: 
+/// paraType = 1 old Simon parameterisation 
+/// paraType = 2 Kilian parameterisation 
 int vtkSimonParameterReaderWriter::TurnParameteresIntoInverseRotationTranslation( double Xtranslate, double Ytranslate , double Ztranslate,
                                                    double Xrotate,    double Yrotate,     double Zrotate, 
                            double Xscale,     double Yscale,      double Zscale, 
@@ -598,7 +603,8 @@ int vtkSimonParameterReaderWriter::TurnParameteresIntoInverseRotationTranslation
     }
   }
 }
-// This produces the inverse of the last function 
+
+/// This produces the inverse of the last function 
 void vtkSimonParameterReaderWriter::TurnParameteresIntoRotationTranslation(double Xtranslate, double Ytranslate , double Ztranslate,
                            double Xrotate, double Yrotate, double Zrotate, double Xscale, double Yscale, double Zscale, float *RotationMatrix, 
                                        float *DisplacementVector, int paraType) {
@@ -608,28 +614,39 @@ void vtkSimonParameterReaderWriter::TurnParameteresIntoRotationTranslation(doubl
                          RotationMatrix, DisplacementVector,paraType);
 }
 
+///
+/// Reads parameters from file fname. Returns -1 on error, number of
+/// parameters on success.
 int readParametersFromFile(char *fname, double *parameters)
 {
   char buffer[2048];
   int numparms = 0;
 
   FILE *fp = fopen(fname,"r");
-  if (fp == NULL) {
+  if (fp == NULL)
+    {
     return -1; /* Failure */
-  }
+    }
 
   memset(buffer,0,sizeof(buffer));
-  fgets(buffer,sizeof(buffer),fp);
-  if (fclose(fp) != 0) {
+  char *readString = fgets(buffer,sizeof(buffer),fp);
+  if (readString == NULL)
+    {
+    fprintf(stderr, "Failed to read from file %s\n",fname);
+    return -1;
+    }
+  if (fclose(fp) != 0)
+    {
     fprintf(stderr,"Failed closing file %s\n",fname);
     return -1; /* Failure */
-  }
+    }
 
   numparms = countFloatsInString(buffer);
-  if (getDoubleString(numparms, buffer, parameters) != 0) {
+  if (getDoubleString(numparms, buffer, parameters) != 0)
+    {
     fprintf(stderr,"Failed to convert string to parameters\n");
     return -1; /* Failure */
-  }
+    }
 
   return numparms;
 }
@@ -686,31 +703,31 @@ int writeParametersToGuimondFile(char *fname, double transform[12])
 
   return 0; /* success */
 }
-// -------------------------------------------------------------------
-// Transferes file from Simon To Alex 
-// the nine parameters are defined as following
-// 
-// Parameter 0-2 : translation 
-// Parameter 3-5 : Rotation 
-// Parameter 6-8 : Scale Parameter  
-// where p[i] is abreviation of parameter i
-// 
-// Transform matrix is defined as 
-// Rotation Matrix   Translation Matrix 
-// t[0] t[1] t[2]      t[9]    
-// t[3] t[4] t[5]      t[10]
-// t[6] t[7] t[8]      t[11]
-// 
-// where R=  t[0],..., t[8] and T = t[9] ,.. , t[11]
-// Before applying rotation 
-// p[6]  0    0        p[0]
-// 0    p[7]  0        p[1]
-// 0     0   p[8]      p[2]
-// 
-// Afterwards we apply Yaw Pitch Roll to the new R where 
-// we first rotate around the x axis with paramter p[3]
-// then rotate around the y axis with paramter p[4]
-// and finally rotate around the z axis with paramter p[5]
+/// -------------------------------------------------------------------
+/// Transferes file from Simon To Alex 
+/// the nine parameters are defined as following
+/// 
+/// Parameter 0-2 : translation 
+/// Parameter 3-5 : Rotation 
+/// Parameter 6-8 : Scale Parameter  
+/// where p[i] is abreviation of parameter i
+/// 
+/// Transform matrix is defined as 
+/// Rotation Matrix   Translation Matrix 
+/// t[0] t[1] t[2]      t[9]    
+/// t[3] t[4] t[5]      t[10]
+/// t[6] t[7] t[8]      t[11]
+/// 
+/// where R=  t[0],..., t[8] and T = t[9] ,.. , t[11]
+/// Before applying rotation 
+/// p[6]  0    0        p[0]
+/// 0    p[7]  0        p[1]
+/// 0     0   p[8]      p[2]
+/// 
+/// Afterwards we apply Yaw Pitch Roll to the new R where 
+/// we first rotate around the x axis with paramter p[3]
+/// then rotate around the y axis with paramter p[4]
+/// and finally rotate around the z axis with paramter p[5]
 
 
 int ReadParameterFile(char *WarfieldFileName, double* parameter) {
