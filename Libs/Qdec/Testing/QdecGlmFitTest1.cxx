@@ -20,13 +20,18 @@
  
 int QdecGlmFitTest1(int , char * [] )
 {
-  QdecGlmFit  qdec;
+  QdecGlmFit  iGlmFit;
 
-  //QdecGlmDesign* iGlmDesign = NULL;
+//  QdecDataTable* iDataTable = new QdecDataTable;
+
+//  QdecGlmDesign iGlmDesign(iDataTable);
+
+//  iGlmFit.CreateResultsFromCachedData(&iGlmDesign);
   
-  QdecGlmFitResults* results = qdec.GetResults();
+  QdecGlmFitResults* results = iGlmFit.GetResults();
 
-  if (results == NULL)
+  // can't test this without files on disk, so results should be null
+  if (results != NULL)
     {
     return EXIT_FAILURE;
     }
