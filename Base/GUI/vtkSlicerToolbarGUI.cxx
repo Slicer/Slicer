@@ -678,10 +678,12 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       else if (pushb == this->CompareViewBoxApplyButton) 
         {
         this->HideCompareViewCustomLayoutFrame();
+        int disabledModify = layout->StartModify();
         layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
         layout->SetNumberOfCompareViewLightboxRows ( this->CompareViewLightboxRowEntry->GetValueAsInt () );
         layout->SetNumberOfCompareViewLightboxColumns ( this->CompareViewLightboxColumnEntry->GetValueAsInt() );
         layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
+        layout->EndModify(disabledModify);
         }
       else if ( pushb == this->UndoIconButton )
         {
