@@ -379,6 +379,23 @@ void vtkSlicerViewerWidget::UpdateAxis()
   else
     {
     newBBox.SetBounds(bounds);
+
+    // Check for degenerate bounds
+    double maxLength = newBBox.GetMaxLength();
+    double minPoint[3], maxPoint[3];
+    newBBox.GetMinPoint(minPoint[0], minPoint[1], minPoint[2]);
+    newBBox.GetMaxPoint(maxPoint[0], maxPoint[1], maxPoint[2]);
+
+    for (unsigned int i = 0; i < 3; i++)
+      {
+      if (newBBox.GetLength(i) == 0.0)
+        {
+        minPoint[i] = minPoint[i] - maxLength * .05;
+        maxPoint[i] = maxPoint[i] + maxLength * .05;
+        }
+      }
+    newBBox.SetMinPoint(minPoint);
+    newBBox.SetMaxPoint(maxPoint);
     }
 
   // See if bounding box has changed. If not, no need to change the
@@ -411,6 +428,7 @@ void vtkSlicerViewerWidget::UpdateAxis()
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize);
+      this->AxisLabelActors[i]->SetOrigin(.5, .5,.5);
       vtkCamera *camera =
         this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
         this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
@@ -421,31 +439,33 @@ void vtkSlicerViewerWidget::UpdateAxis()
     double center[3];
     this->BoxAxisBoundingBox->GetCenter(center);
 
+    double offset =
+      this->BoxAxisBoundingBox->GetMaxLength() * letterSize * 1.5;
     this->AxisLabelActors[0]->SetPosition(               // R
-      bounds[1] + (bounds[1] - bounds[0]) * 1.5 * letterSize,
+      bounds[1] + offset,
       center[1],
       center[2]);
     this->AxisLabelActors[1]->SetPosition(               // A
       center[0],
-      bounds[3] + (bounds[3] - bounds[2]) * 1.5 * letterSize,
+      bounds[3] + offset,
       center[2]);
     this->AxisLabelActors[2]->SetPosition(               // S
       center[0],
       center[1],
-      bounds[5] + (bounds[5] - bounds[4]) * .5 * letterSize);
+      bounds[5] + offset);
 
     this->AxisLabelActors[3]->SetPosition(               // L
-      bounds[0] - (bounds[1] - bounds[0]) * .5 * letterSize,
+      bounds[0] - offset,
       center[1],
       center[2]);
     this->AxisLabelActors[4]->SetPosition(               // P
       center[0],
-      bounds[2] - (bounds[3] - bounds[2]) * .5 * letterSize,
+      bounds[2] - offset,
       center[2]);
     this->AxisLabelActors[5]->SetPosition(               // I
       center[0],
       center[1],
-      bounds[4] - (bounds[5] - bounds[4]) * 1.5 * letterSize);
+      bounds[4] - offset);
     }
 
   // Make the axis visible again
