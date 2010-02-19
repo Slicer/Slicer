@@ -1076,10 +1076,13 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     for (row = 0; row < 3; row++)
       {
       ele = ijkToRAS->GetElement(row, col);
-      len[col] += ele;
+      len[col] += ele*ele;
       }
-    len[col] = len[col]/sqrt(len[col]);
-    toRAS[col][row] = ijkToRAS->GetElement( row, col ) / len[col];
+    len[col] = sqrt(len[col]);
+    for (row = 0; row < 3; row++)
+      {
+      toRAS[col][row] = ijkToRAS->GetElement( row, col ) / len[col];
+      }
     }
 
 
@@ -1109,6 +1112,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     double dot[3];
     for (col = 0; col < 3; col++)
       {
+      dot[col] = 0;
       int i;
       for (i = 0; i < 3; i++)
         {
