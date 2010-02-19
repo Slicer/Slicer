@@ -153,6 +153,8 @@ public:
   //virtual void RaiseVolumeDisplayPanel ( char *id );
   virtual void FitSliceToBackground ( int link );
   virtual void FitSliceToBackground ( );
+  virtual void RotateSliceToBackground ( int link );
+  virtual void RotateSliceToBackground ( );
   virtual void ToggleReformatWidget ( int link );
   virtual void ToggleReformatWidget ( );
   virtual void ToggleLabelOutline ( int link );

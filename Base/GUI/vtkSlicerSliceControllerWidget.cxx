@@ -840,6 +840,15 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 
+  //--- 
+  //--- Rotate SLICE IMAGE TO WINDOW
+  //---
+  this->MoreMenuButton->GetMenu()->AddCommand ("Rotate to Volume Plane", this, "RotateSliceToBackground") ;
+  index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Rotate to Volume Plane");
+  imageName = "FitImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetFitToWindowIcon ( ));
+  this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
   
 
   //---     //--- 
@@ -1844,6 +1853,143 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
       sgui->GetLogic()->FitSliceToAll ( rSize[0], rSize[1] );
       this->SliceNode->UpdateMatrices( );
       appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();      
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::RotateSliceToBackground ( )
+{
+  int link;
+  //--- swallow the menu event
+  if ( this->GUICallbackCommand != NULL )
+    {
+    this->GUICallbackCommand->SetAbortFlag(1);
+    }
+
+  //
+  // --- Find out whether SliceViewers are linked or unlinked
+  // --- so we know how to handle control.
+  //
+  if ( this->SliceCompositeNode )
+    {
+    link = this->SliceCompositeNode->GetLinkedControl ( );
+    }
+  else
+    {
+    link = 0;
+    }
+  this->RotateSliceToBackground ( link );
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::RotateSliceToBackground ( int link )
+{
+
+  vtkSlicerSlicesGUI *ssgui;
+  vtkSlicerSliceGUI *sgui;
+  vtkSlicerApplication *app;
+  vtkSlicerApplicationGUI *appGUI;
+  int found = 0;
+    
+  // find the sliceGUI for this controller
+  app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+  ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+  appGUI = ssgui->GetApplicationGUI ( );
+
+  if (ssgui)
+    {
+    const char *layoutname = NULL;
+    int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        sgui = ssgui->GetFirstSliceGUI();
+        layoutname = ssgui->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        sgui = ssgui->GetNextSliceGUI(layoutname);
+        layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+        }
+        
+      if (sgui)
+        {
+        if (sgui->GetSliceNode() == this->SliceNode )
+          {
+          found = 1;
+          break;
+          }
+        }
+      }
+    }
+  else
+    {
+    return;
+    }
+
+  if ( found )
+    {
+    if ( link )
+      {
+      // First save all SliceNodes for undo:
+      vtkCollection *nodes = vtkCollection::New();
+      const char *layoutname = NULL;
+      int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+            
+        if (sgui)
+          nodes->AddItem ( sgui->GetSliceNode ( ) );
+        }
+        
+      this->MRMLScene->SaveStateForUndo ( nodes );
+      nodes->Delete ( );
+        
+      // Now fit all Slices to background
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+            
+        if (sgui)
+          {
+          vtkMRMLVolumeNode *backgroundNode = sgui->GetLogic()->GetLayerVolumeNode(0);
+          if ( backgroundNode )
+            {
+            sgui->GetSliceNode()->RotateToVolumePlane( backgroundNode );
+            }
+          }
+        }
+      }
+    else
+      {
+      this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+      vtkMRMLVolumeNode *backgroundNode = sgui->GetLogic()->GetLayerVolumeNode(0);
+      if ( backgroundNode )
+        {
+        sgui->GetSliceNode()->RotateToVolumePlane( backgroundNode );
+        }
       }
     }
 }
