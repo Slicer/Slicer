@@ -26,6 +26,7 @@
 #include "vtkMRMLNode.h"
 
 #include "vtkMatrix4x4.h"
+class vtkMRMLVolumeNode;
 
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
 {
@@ -213,6 +214,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// shown in the 3D scene
   vtkSetMacro(ActiveSlice, int);
   vtkGetMacro(ActiveSlice, int);
+
+  ///
+  /// adjusts the slice node to align with the 
+  /// native space of the image data so that no oblique resampling
+  /// occurs when rendering (helps to see original acquisition data
+  /// and for obluique volumes with few slices).
+  void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode);
   
 protected:
 
