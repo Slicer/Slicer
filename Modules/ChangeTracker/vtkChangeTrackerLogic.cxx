@@ -862,7 +862,6 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       {
       if(this->ChangeTrackerNode->GetUseITK())
         {
-        std::cerr << "REGCHOICE == REGISTER" << std::endl;
         // AF: do local registration. It is probably not a good style to have a
         // separate function for the similar functionality, but style is not the
         // goal.
@@ -878,7 +877,6 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       {
       // resample; assume transform has been initialized (this was checked
       // earlier)
-      std::cerr << "REGCHOICE == RESAMPLE" << std::endl;      
       this->ChangeTrackerNode->SetScan2_GlobalRef(this->ChangeTrackerNode->GetScan2_Ref());
       // ResampleScan2(vtkSlicerApplication::GetInstance());
       // nop -- resample will be done implicitly in CreateSuperSample(2)
@@ -887,7 +885,6 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       {
       // just duplicate the image data from scan2; need to maintain separate
       // node, because this is hard-coded into the Tcl part
-      std::cerr << "REGCHOICE == ALIGNED" << std::endl;
       vtkImageData *scan2imageData = scan2node->GetImageData();
       vtkImageData *outputImageData = vtkImageData::New();
       assert(scan2imageData);
@@ -933,7 +930,6 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
     if(this->ChangeTrackerNode->GetROIRegistration())
       {
-      std::cerr << "Local registration requested" << std::endl;
       if(this->ChangeTrackerNode->GetUseITK())
         {
         // AF: do local registration. It is probably not a good style to have a
@@ -952,7 +948,6 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     else
       {
       // copy the image over
-      std::cerr << "No local registration -- copy" << std::endl;
       vtkImageData *scan2ROIimageData = scan2ROInode->GetImageData();
       vtkImageData *outputImageData = vtkImageData::New();
       assert(scan2ROIimageData);
@@ -1187,7 +1182,7 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
     return;
 
   }
-  std::cout << "Analysis intensity threshold is " << this->Analysis_Intensity_Threshold << std::endl;
+//  std::cout << "Analysis intensity threshold is " << this->Analysis_Intensity_Threshold << std::endl;
 
   vtkImageData *connectivityMask = NULL;
   int IntensityMin = SegmentThreshMin - (int) this->Analysis_Intensity_Threshold ;

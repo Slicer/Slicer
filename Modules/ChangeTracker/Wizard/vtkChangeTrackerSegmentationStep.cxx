@@ -502,7 +502,6 @@ void vtkChangeTrackerSegmentationStep::AddGUIObservers()
   if(this->Scan1_SegmSelector && (!this->Scan1_SegmSelector->HasObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand)))
     {
     this->Scan1_SegmSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
-    std::cerr << "observer added for the first segm selector" << std::endl;
     }
   if(this->Scan2_SegmSelector && (!this->Scan2_SegmSelector->HasObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand)))
     {

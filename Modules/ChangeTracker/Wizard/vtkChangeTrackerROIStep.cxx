@@ -1306,8 +1306,8 @@ void vtkChangeTrackerROIStep::TransitionCallback()
   double *roiXYZ, *roiRadius;
   roiXYZ = roiNode->GetXYZ();
   roiRadius = roiNode->GetRadiusXYZ();
-  std::cerr << "Final ROI center: " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << std::endl;
-  std::cerr << "Final ROI radius: " << roiRadius[0] << ", " << roiRadius[1] << ", " << roiRadius[2] << std::endl;
+//  std::cerr << "Final ROI center: " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << std::endl;
+//  std::cerr << "Final ROI radius: " << roiRadius[0] << ", " << roiRadius[1] << ", " << roiRadius[2] << std::endl;
   if (this->ROICheck()) { 
     vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
     if (!Node) return;
@@ -1357,9 +1357,9 @@ void vtkChangeTrackerROIStep::TransitionCallback()
          roiNode->SetVisibility(0);
        ResetROIRender();
 
-       std::cout << "Final ROI in IJK:  X " << Node->GetROIMin(0) << "," << Node->GetROIMax(0) 
-            << "                   Y " << Node->GetROIMin(1) << "," << Node->GetROIMax(1) 
-            << "                   Z " << Node->GetROIMin(2) << "," << Node->GetROIMax(2) << std::endl;
+//       std::cout << "Final ROI in IJK:  X " << Node->GetROIMin(0) << "," << Node->GetROIMax(0) 
+//            << "                   Y " << Node->GetROIMin(1) << "," << Node->GetROIMax(1) 
+//            << "                   Z " << Node->GetROIMin(2) << "," << Node->GetROIMax(2) << std::endl;
 
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
