@@ -454,12 +454,16 @@ void vtkSlicerViewerWidget::UpdateAxis()
     {
     this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
     }
+  // Until we come up with a solution for all use cases, the resetting
+  // of the camera is disabled
+#if 0
   if (bBoxChanged)
     {
     this->MainViewer->ResetCamera ( );
     this->MainViewer->GetRenderer()->GetActiveCamera()->Dolly(1.5);
     this->MainViewer->GetRenderer()->ResetCameraClippingRange();
     }
+#endif
 }
 
 //---------------------------------------------------------------------------
