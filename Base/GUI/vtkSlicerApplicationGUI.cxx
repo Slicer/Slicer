@@ -2173,7 +2173,7 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     {
     node = vtkMRMLViewNode::SafeDownCast (
       this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
-    if (node)
+    if (node && !node->GetHideFromEditors())
       {
       view_nodes[node] = 1;
       if (!this->GetViewerWidgetForNode(node))
