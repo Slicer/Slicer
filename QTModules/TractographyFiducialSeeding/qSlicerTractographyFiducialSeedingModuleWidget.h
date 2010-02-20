@@ -89,7 +89,7 @@ public slots:
   void setMaxNumberSeeds(int value);
 
   /// update widget GUI from parameter node
-  void updateWidgetfromMRML();
+  void updateWidgetFromMRML();
 
 protected:
 

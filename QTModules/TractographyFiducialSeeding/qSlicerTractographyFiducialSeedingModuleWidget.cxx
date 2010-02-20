@@ -162,10 +162,10 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeed
 
   // each time the node is modified, the qt widgets are updated
   this->qvtkReconnect(this->TractographyFiducialSeedingNode, paramNode, 
-                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetfromMRML()));
+                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->TractographyFiducialSeedingNode = paramNode;
-  this->updateWidgetfromMRML();
+  this->updateWidgetFromMRML();
 }
 
 
@@ -176,7 +176,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setTransformableNode(vtkMRM
 
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetInputFiducialRef(_transformableNode ? 
+    this->TractographyFiducialSeedingNode->SetInputFiducialRef(_transformableNode ?
                                                                _transformableNode->GetID() : "" );
     vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
           vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
@@ -194,7 +194,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
 
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetInputVolumeRef(_diffusionTensorVolumeNode ? 
+    this->TractographyFiducialSeedingNode->SetInputVolumeRef(_diffusionTensorVolumeNode ?
                                                              _diffusionTensorVolumeNode->GetID() : "" );
     vtkSlicerTractographyFiducialSeedingLogic *seedingLogic = 
           vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
@@ -219,7 +219,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLN
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetfromMRML()
+void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetFromMRML()
 {
   QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   
