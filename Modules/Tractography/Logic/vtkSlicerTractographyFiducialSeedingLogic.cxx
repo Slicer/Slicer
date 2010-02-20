@@ -85,7 +85,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
     vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(
           this->GetMRMLScene()->GetNodeByID(node->GetInputFiducialRef()));
 
-    vtkIntArray *events = vtkIntArray::New();
+    vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
     events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
     events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
     events->InsertNextValue ( vtkMRMLFiducialListNode::FiducialModifiedEvent );
