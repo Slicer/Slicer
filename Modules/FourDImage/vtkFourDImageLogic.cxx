@@ -176,6 +176,7 @@ int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
   gfn->AddFileNames("*.nrrd");
   gfn->AddFileNames("*.hdr");
   gfn->AddFileNames("*.mha");
+  gfn->AddFileNames("*.mhd");
   gfn->AddFileNames("*.img");
   gfn->AddFileNames("*.nii");
   gfn->AddFileNames("*.nia");
