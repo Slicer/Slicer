@@ -373,9 +373,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData ) 
+void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
+                                                                  unsigned long vtkNotUsed(event),
+                                                                  void *vtkNotUsed(callData)) 
 {
   // if parameter node has been added, update GUI widgets with new values
   vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;

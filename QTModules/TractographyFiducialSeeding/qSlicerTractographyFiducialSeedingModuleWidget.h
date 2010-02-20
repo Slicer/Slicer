@@ -21,7 +21,7 @@ class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyF
   Q_OBJECT
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTractographyFiducialSeedingModuleWidget(QWidget *parent=0);
+  qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent=0);
 
   /// get current parameter node
   vtkMRMLTractographyFiducialSeedingNode* tractographyFiducialSeedingNode() {
