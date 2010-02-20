@@ -20,18 +20,9 @@
 #include <limits.h>
 #include <assert.h>
 
-//------------------------------------------------------------------------------
-vtkImageConnectivity* vtkImageConnectivity::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageConnectivity");
-  if(ret)
-    {
-    return (vtkImageConnectivity*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageConnectivity;
-}
+//----------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkImageConnectivity, "$Revision$");
+vtkStandardNewMacro(vtkImageConnectivity);
 
 //----------------------------------------------------------------------------
 // Description:

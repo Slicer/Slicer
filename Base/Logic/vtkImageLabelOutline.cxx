@@ -16,20 +16,9 @@
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
 
-//-----------------------------------------------------------------------------
-
-vtkImageLabelOutline* vtkImageLabelOutline::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageLabelOutline");
-  if(ret)
-    {
-    return (vtkImageLabelOutline*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageLabelOutline;
-}
-
+//------------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkImageLabelOutline, "$Revision$");
+vtkStandardNewMacro(vtkImageLabelOutline);
 
 //----------------------------------------------------------------------------
 // Description:

@@ -28,7 +28,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageS
 {
 public:
   static vtkImageNeighborhoodFilter *New();
-  vtkTypeMacro(vtkImageNeighborhoodFilter,vtkImageSpatialFilter);
+  vtkTypeRevisionMacro(vtkImageNeighborhoodFilter,vtkImageSpatialFilter);
 
   /// 
   /// Mask that defines area of interest in the neighborhood.

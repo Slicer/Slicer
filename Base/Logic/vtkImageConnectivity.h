@@ -33,7 +33,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageConnectivity : public vtkImageToImage
 {
 public:
   static vtkImageConnectivity *New();
-  vtkTypeMacro(vtkImageConnectivity,vtkImageToImageFilter);
+  vtkTypeRevisionMacro(vtkImageConnectivity,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Function

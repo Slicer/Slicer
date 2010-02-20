@@ -16,18 +16,8 @@
 #include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------
-vtkImageNeighborhoodFilter* vtkImageNeighborhoodFilter::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageNeighborhoodFilter");
-  if(ret)
-    {
-    return (vtkImageNeighborhoodFilter*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageNeighborhoodFilter;
-}
-
+vtkCxxRevisionMacro(vtkImageNeighborhoodFilter, "$Revision$");
+vtkStandardNewMacro(vtkImageNeighborhoodFilter);
 
 //----------------------------------------------------------------------------
 // Description:

@@ -44,7 +44,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageToImageFilte
 {
 public:
   static vtkImageFillROI *New();
-  vtkTypeMacro(vtkImageFillROI,vtkImageToImageFilter);
+  vtkTypeRevisionMacro(vtkImageFillROI,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetMacro(Value, vtkFloatingPointType);

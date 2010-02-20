@@ -20,18 +20,8 @@
 vtkCxxSetObjectMacro(vtkImageFillROI,Points,vtkPoints);
 
 //------------------------------------------------------------------------------
-vtkImageFillROI* vtkImageFillROI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageFillROI");
-  if(ret)
-    {
-    return (vtkImageFillROI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageFillROI;
-}
-
+vtkCxxRevisionMacro(vtkImageFillROI, "$Revision$");
+vtkStandardNewMacro(vtkImageFillROI);
 
 //----------------------------------------------------------------------------
 vtkImageFillROI::vtkImageFillROI()

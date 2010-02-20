@@ -39,19 +39,11 @@ int compareInt(const void *a, const void *b)
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-vtkPichonFastMarching* vtkPichonFastMarching::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkPichonFastMarching");
-  if(ret)
-    {
-      return (vtkPichonFastMarching*)ret;
-    }
+//------------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkPichonFastMarching, "$Revision$");
+vtkStandardNewMacro(vtkPichonFastMarching);
 
-  // If the factory was unable to create the object, then create it here.
-  return new vtkPichonFastMarching;
-}
-
+//------------------------------------------------------------------------------
 void vtkPichonFastMarching::collectInfoSeed( int index )
 {
   int med, inh;

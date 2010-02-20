@@ -30,7 +30,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageLabelChange : public vtkImageToImageF
 {
 public:
     static vtkImageLabelChange *New();
-  vtkTypeMacro(vtkImageLabelChange,vtkImageToImageFilter);
+    vtkTypeRevisionMacro(vtkImageLabelChange,vtkImageToImageFilter);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     vtkSetMacro(InputLabel, float);

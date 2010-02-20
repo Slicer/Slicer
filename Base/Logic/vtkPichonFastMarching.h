@@ -57,7 +57,62 @@ typedef std::vector<int> VecInt;
 ///////////////////////////////////////////////////////////////////////
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
 {
- private:
+public:
+  static vtkPichonFastMarching *New();
+  vtkTypeRevisionMacro(vtkPichonFastMarching,vtkImageToImageFilter);
+  void PrintSelf(ostream& os, vtkIndent indent);
+  
+  void vtkErrorWrapper( const char* s)
+    {
+      vtkErrorMacro( << s );
+    };
+
+  void unInit( void );
+
+  void init(int dimX, int dimY, int dimZ, double depth, double dx, double dy, double dz);
+
+  void setActiveLabel(int label);
+
+  void initNewExpansion( void );
+
+  int nValidSeeds( void );
+  int nKnownPoints(void);
+
+  void setNPointsEvolution( int n );
+
+  void setInData(short* data);
+  void setOutData(short* data);
+
+  void setRAStoIJKmatrix(float m11, float m12, float m13, float m14,
+             float m21, float m22, float m23, float m24,
+             float m31, float m32, float m33, float m34,
+             float m41, float m42, float m43, float m44);
+
+  int addSeed( float r, float a, float s );
+  int addSeedIJK( int, int, int );
+
+  void show(float r);
+
+  char * cxxVersionString(void);
+  int cxxMajorVersion(void);
+  void tweak(char *name, double value);
+
+protected:
+  vtkPichonFastMarching();
+  ~vtkPichonFastMarching();
+  
+  void ExecuteData(vtkDataObject *);
+
+
+  friend void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
+                     vtkImageData *inData, short *inPtr,
+                     vtkImageData *outData, short *outPtr, 
+                     int outExt[6]);
+                     
+private:
+  //pb wrap  vtkPichonFastMarching()(const vtkPichonFastMarching&);
+  //pb wrap  void operator=(const vtkPichonFastMarching&);
+  
   bool somethingReallyWrong;
 
   double powerSpeed;
@@ -162,76 +217,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImag
   /* perform one step of fast marching
      return the leaf which has just been added to fmsKNOWN */
   float step( void );
-
- public:
-
-  void vtkErrorWrapper( const char* s)
-    {
-      vtkErrorMacro( << s );
-    };
-
-  static vtkPichonFastMarching *New();
-
-  vtkTypeMacro(vtkPichonFastMarching,vtkImageToImageFilter);
-
-  vtkPichonFastMarching();
-  ~vtkPichonFastMarching();
-  void unInit( void );
-
-  void PrintSelf(ostream& os, vtkIndent indent);
-
-  //pb wrap  vtkPichonFastMarching()(const vtkPichonFastMarching&);
-  //pb wrap  void operator=(const vtkPichonFastMarching&);
-
-  void init(int dimX, int dimY, int dimZ, double depth, double dx, double dy, double dz);
-
-  void setActiveLabel(int label);
-
-  void initNewExpansion( void );
-
-  int nValidSeeds( void );
-  int nKnownPoints(void);
-
-  void setNPointsEvolution( int n );
-
-  void setInData(short* data);
-  void setOutData(short* data);
-
-  void setRAStoIJKmatrix(float m11, float m12, float m13, float m14,
-             float m21, float m22, float m23, float m24,
-             float m31, float m32, float m33, float m34,
-             float m41, float m42, float m43, float m44);
-
-  int addSeed( float r, float a, float s );
-  int addSeedIJK( int, int, int );
-
-  void show(float r);
-/*
-  char * cxxVersionString(void)
-    {
-      char *text = new char[100];
-      
-      sprintf(text,"%d.%d \t(%s)",MAJOR_VERSION,MINOR_VERSION,DATE_VERSION);
-      return text;
-    }; 
-
-   int cxxMajorVersion(void)
-    {
-      return MAJOR_VERSION;
-    };
-*/
-    char * cxxVersionString(void);
-    int cxxMajorVersion(void);
-  void tweak(char *name, double value);
-
- protected:
-  void ExecuteData(vtkDataObject *);
-
-
-  friend void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
-                     vtkImageData *inData, short *inPtr,
-                     vtkImageData *outData, short *outPtr, 
-                     int outExt[6]);
 };
 
 #endif

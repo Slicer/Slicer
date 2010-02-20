@@ -27,7 +27,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighbo
 {
 public:
   static vtkImageLabelOutline *New();
-  vtkTypeMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
+  vtkTypeRevisionMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
