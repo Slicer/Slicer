@@ -64,6 +64,10 @@
 #include "ModuleParameterGroup.h"
 #include "ModuleParameter.h"
 
+#if defined( WIN32 )
+#pragma warning ( disable : 4996 )
+#endif
+
 /* A useful string utility */
 void
 replaceSubWithSub(std::string& s, const char *o, const char  *n)
