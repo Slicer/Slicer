@@ -19,6 +19,10 @@
 #include <cstring>
 #include <string.h>
 
+#if defined(WIN32)
+#pragma warning ( disable : 4996 )
+#endif
+
 extern "C" {
   struct ModuleProcessInformation
   {
