@@ -398,6 +398,28 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+  // Read the scene's MRML version (the version is 0 if the version is invalid or not available)
+  int sceneLastLoadedVersion=0;
+  if (this->Scene != NULL)
+    {
+      char* sceneLastLoadedVersionString=this->Scene->GetLastLoadedVersion();
+      if (sceneLastLoadedVersionString != NULL)
+        {
+        sceneLastLoadedVersion=atoi(sceneLastLoadedVersionString);
+        }
+    }
+  
+  // Fix old MRML file incompatibility problem 
+  // The hidefromeditors property was always true for scenes that were saved by Slicer before revision 10795.
+  // After 10795 hidefromeditors property is false by default, and true only if a view shall be hidden
+  // from the views in the primary Slicer screen (it is used privately by modules, such as ProstateNav).
+  // To have a same default behavior for pre and post 10795 scenes, the solution is to set hidefromeditors to false,
+  // if the scene's LastLoadedVersion<10795.
+  if (sceneLastLoadedVersion < 10795)
+  {
+    this->HideFromEditors=false;
+  }
+    
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
