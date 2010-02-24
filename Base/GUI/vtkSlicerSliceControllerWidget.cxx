@@ -3441,6 +3441,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
 { 
   if (this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
     {
+    // jvm std::cerr << "Setting slice node to null @a" << std::endl;
     this->SetSliceNode(NULL);
     }
 
