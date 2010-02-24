@@ -81,17 +81,17 @@ void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *
 {
   bool showingModule = false;
 
-//   if (this->GetApplicationGUI() 
-//       && this->GetApplicationGUI()->GetApplicationToolbar()
-//       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
-//       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
-//     {
-//     if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), this->GetModuleName()) == 0)
-//       {
-//       //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
-//       showingModule = true;
-//       }
-//     }
+   if (this->GetApplicationGUI() 
+       && this->GetApplicationGUI()->GetApplicationToolbar()
+       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
+       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
+     {
+     if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), "Slices") == 0)
+       {
+       //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
+       showingModule = true;
+       }
+     }
 
   if (showingModule)
     {
@@ -101,9 +101,7 @@ void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *
     // call to Exit() either directly or indirectly (by showing
     // another module).
     //
-    // NEITHER APPROACH WORKS. DISABLE FOR NOW.
-    //
-    //this->Exit();
+    this->Exit();
     // or
     //this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->RaiseModule("Volumes");
     }
@@ -119,13 +117,12 @@ void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *
     // call to Enter() either directly or indirectly (by showing
     // this module).
     //
-    // NEITHER APPROACH WORKS. DISABLE FOR NOW.
-    //
-    //this->Enter();
+    this->Enter();
     // or
     //this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->RaiseModule("Slices");
     }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( const char *layoutName, vtkSlicerSliceGUI *pSliceGUI )
@@ -187,7 +184,13 @@ void vtkSlicerSlicesGUI::AddGUIObservers ( )
     {
     this->SliceNode->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
     }
-  
+
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneRestoredEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+        
 }
 
 
@@ -656,11 +659,29 @@ void vtkSlicerSlicesGUI::ProcessLogicEvents (vtkObject *vtkNotUsed(caller),
  
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
-                                             unsigned long vtkNotUsed(event),
+void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                             unsigned long event,
                                              void *vtkNotUsed(callData) )
 {
-  // std::cout << "In ProcessMRMLEvents" << std::endl;
+  // std::cerr << "In ProcessMRMLEvents " << event << std::endl;
+
+  if (this->GetMRMLScene() && caller == this->GetMRMLScene() && (event == vtkMRMLScene::SceneLoadEndEvent || event == vtkMRMLScene::SceneRestoredEvent))
+    {
+    if (this->GetApplicationGUI() 
+        && this->GetApplicationGUI()->GetApplicationToolbar()
+        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
+        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()
+        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() != 0)
+      {
+      if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), "Slices") == 0)
+        {
+        // std::cerr << "Rebuilding" << std::endl;
+        this->Exit();
+        this->Enter();
+        }
+      }
+    }
+
   this->UpdateGUI();
 }
  
@@ -736,7 +757,7 @@ void vtkSlicerSlicesGUI::Enter ( )
         {
         vtkSlicerSliceControllerWidget *sliceController 
           = this->BuildSliceController(g);
-        
+
         if (sliceController)
           {
           (*this->InternalParameterWidgetMap)[this->GetNthSliceGUILayoutName(i)]
