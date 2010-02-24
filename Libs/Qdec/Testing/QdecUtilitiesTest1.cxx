@@ -20,9 +20,8 @@
  
 int QdecUtilitiesTest1(int , char * [] )
 {
-  QdecUtilities  qdec;
 
-  bool isReadable = qdec.IsFileReadable( "fakeFile.h" );
+  bool isReadable = QdecUtilities::IsFileReadable( "fakeFile.h" );
 
   if( isReadable )
     {
@@ -33,7 +32,7 @@ int QdecUtilitiesTest1(int , char * [] )
   bool fakeFileIsReadable = true;
   try
     {
-    qdec.AssertFileIsReadable("fakeFile.h");
+    QdecUtilities::AssertFileIsReadable("fakeFile.h");
     }
   catch (...)
     {
@@ -49,12 +48,12 @@ int QdecUtilitiesTest1(int , char * [] )
   const char *fname = "/tmp/testThis.h";
   char pathName[128];
 
-  const char *returnString = qdec.FileNamePath(fname, pathName);
+  const char *returnString = QdecUtilities::FileNamePath(fname, pathName);
 
   std::cout << "Calling FileNamePath with fname = " << fname << ", pathName = " << pathName << " and return string = " << returnString << std::endl;
 
   const char *fname2 = "testThis.h";
-  const char *returnString2 = qdec.FileNamePath(fname2, pathName);
+  const char *returnString2 = QdecUtilities::FileNamePath(fname2, pathName);
   std::cout << "Calling FileNamePath with fname = " << fname2 << ", pathName = " << pathName << " and return string = " << returnString2 << std::endl;
 
   return EXIT_SUCCESS;
