@@ -55,7 +55,14 @@ public:
   /// Indicates whether or not the view is active
   vtkGetMacro (Active, int );
   virtual void SetActive(int);
-  
+
+  /// 
+  /// Indicates whether or not the view is visible (if it is not visible,
+  /// then the view is not shown in any of the view layouts, but can be privately
+  /// used by modules)
+  vtkGetMacro(Visibility, int);
+  virtual void SetVisibility ( int );
+
   /// 
   /// Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
@@ -249,6 +256,10 @@ protected:
   /// 
   /// Indicates whether or not the View is active
   int Active;
+
+  /// 
+  /// Indicates whether or not the View is visible
+  int Visibility;
   
   /// 
   /// When a view is set Active, make other views inactive.

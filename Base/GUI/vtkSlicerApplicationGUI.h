@@ -429,6 +429,8 @@ protected:
   virtual void OnViewNodeAdded(vtkMRMLViewNode *node);
   virtual void OnViewNodeRemoved(vtkMRMLViewNode *node);
   virtual void OnViewNodeNeeded();
+
+  virtual int GetNumberOfVisibleViewNodes();
      
   /// 
   /// Synchronize the position of the Qt module panel with the KWWidget

@@ -1302,6 +1302,11 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->OnViewNodeRemoved(view_node);
       }
     }
+  else if (event == vtkMRMLViewNode::VisibilityEvent)
+    {
+    // a viewer may need to be added or removed from the screen
+    this->UpdateMain3DViewers();
+    }
   else if ( scene != NULL &&
             scene == this->MRMLScene &&
             event == vtkMRMLScene::LoadProgressFeedbackEvent )
@@ -2173,7 +2178,7 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     {
     node = vtkMRMLViewNode::SafeDownCast (
       this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
-    if (node && !node->GetHideFromEditors())
+    if (node && node->GetVisibility())
       {
       view_nodes[node] = 1;
       if (!this->GetViewerWidgetForNode(node))
@@ -2287,10 +2292,9 @@ void vtkSlicerApplicationGUI::OnViewNodeNeeded()
     return;
     }
 
-  // No 3D view node, let's add one for convenience
-
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode");
-  if (!nnodes)
+  // No visible 3D view node, let's add one for convenience
+  int nnodes = GetNumberOfVisibleViewNodes();
+  if (nnodes<1)
     {
     vtkMRMLViewNode *view_node = vtkMRMLViewNode::New();
     view_node->SetName(
@@ -2312,6 +2316,9 @@ void vtkSlicerApplicationGUI::OnViewNodeAdded(vtkMRMLViewNode *view_node)
 {
   view_node->AddObserver(vtkMRMLViewNode::ActiveModifiedEvent,
                          this->MRMLCallbackCommand );
+  view_node->AddObserver(vtkMRMLViewNode::VisibilityEvent,
+                         this->MRMLCallbackCommand );
+
   if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") == 1)
     {
     view_node->SetActive(1);
@@ -2324,6 +2331,9 @@ void vtkSlicerApplicationGUI::OnViewNodeRemoved(vtkMRMLViewNode *view_node)
 {
   view_node->RemoveObservers(vtkMRMLViewNode::ActiveModifiedEvent,
                              this->MRMLCallbackCommand );
+  view_node->RemoveObservers(vtkMRMLViewNode::VisibilityEvent,
+                             this->MRMLCallbackCommand );
+
   this->UpdateMain3DViewers();
 }
 
@@ -2466,7 +2476,7 @@ vtkSlicerViewerWidget* vtkSlicerApplicationGUI::GetActiveViewerWidget()
   for (int i = 0; i < nb_viewer_widgets; ++i)
     {
     vtkSlicerViewerWidget *viewer_widget = this->GetNthViewerWidget(i);
-    if (viewer_widget && viewer_widget->GetViewNode()->GetActive())
+    if (viewer_widget && viewer_widget->GetViewNode()->GetActive() && viewer_widget->GetViewNode()->GetVisibility())
       {
       return viewer_widget;
       }
@@ -2833,8 +2843,9 @@ void vtkSlicerApplicationGUI::PackDual3DView ( )
     this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
 
-    // Do we need to make another 3D viewer?
-    if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") < 2)
+
+    // Do we need to make another 3D viewer node?
+    if (GetNumberOfVisibleViewNodes() < 2)
       {
       // Need another view node.  When the view node is added to the
       // scene, a viewer widget will be constructed automatically
@@ -4185,4 +4196,20 @@ void vtkSlicerApplicationGUI::MapCallback(char * widgetName)
   qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
   this->ReposModulePanel();
 #endif
+}
+
+int vtkSlicerApplicationGUI::GetNumberOfVisibleViewNodes()
+{
+  int numberOfVisibleNodes=0;
+  vtkMRMLViewNode *node = NULL;
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode");    
+  for (int n = 0; n < nnodes; n++)
+    {
+    node = vtkMRMLViewNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
+    if (node && node->GetVisibility())
+      {
+      numberOfVisibleNodes++;
+      }
+    }
+  return numberOfVisibleNodes;
 }

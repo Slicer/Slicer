@@ -56,6 +56,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->HideFromEditors = 0;
 
   this->Active = 0;
+  this->Visibility = 1;
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
   this->FiducialsVisible = 1;
@@ -287,6 +288,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
+  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
   of << indent << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
   of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
   of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
@@ -397,28 +399,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
-
-  // Read the scene's MRML version (the version is 0 if the version is invalid or not available)
-  int sceneLastLoadedVersion=0;
-  if (this->Scene != NULL)
-    {
-      char* sceneLastLoadedVersionString=this->Scene->GetLastLoadedVersion();
-      if (sceneLastLoadedVersionString != NULL)
-        {
-        sceneLastLoadedVersion=atoi(sceneLastLoadedVersionString);
-        }
-    }
-  
-  // Fix old MRML file incompatibility problem 
-  // The hidefromeditors property was always true for scenes that were saved by Slicer before revision 10795.
-  // After 10795 hidefromeditors property is false by default, and true only if a view shall be hidden
-  // from the views in the primary Slicer screen (it is used privately by modules, such as ProstateNav).
-  // To have a same default behavior for pre and post 10795 scenes, the solution is to set hidefromeditors to false,
-  // if the scene's LastLoadedVersion<10795.
-  if (sceneLastLoadedVersion < 10795)
-  {
-    this->HideFromEditors=false;
-  }
     
   const char* attName;
   const char* attValue;
@@ -654,6 +634,18 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         }
       }
 
+    else if (!strcmp(attName, "visibility")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Visibility = 1;
+        }
+      else
+        {
+        this->Visibility = 0;
+        }
+      }
+
     }
     
     
@@ -693,6 +685,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
   // Important: do not use SetActive or RemoveActiveFlagInScene will be called
   this->Active = node->GetActive();
+  this->Visibility = node->GetVisibility();
 
   this->EndModify(disabledModify);
 }
@@ -704,6 +697,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Active:        " << this->Active << "\n";
+  os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
   os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
   os << indent << "FiducialLabelsVisible:        " << this->FiducialLabelsVisible << "\n";
@@ -743,6 +737,21 @@ void vtkMRMLViewNode::SetActive(int _arg)
   this->Modified();
 
   this->InvokeEvent(vtkMRMLViewNode::ActiveModifiedEvent, NULL);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewNode::SetVisibility(int _arg) 
+{
+  if (this->Visibility == _arg) 
+    { 
+    return;
+    }
+
+  this->Visibility = _arg;
+
+  this->Modified();
+
+  this->InvokeEvent(vtkMRMLViewNode::VisibilityEvent, NULL);
 }
 
 //----------------------------------------------------------------------------
