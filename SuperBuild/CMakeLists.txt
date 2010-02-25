@@ -183,6 +183,18 @@ elseif(APPLE)
   set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
   set(itcl_BUILD_COMMAND make ${parallelism_level} all)
   set(itcl_INSTALL_COMMAND make install)
+  
+#  if { $isDarwin } {
+#          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
+#          exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
+#      }
+#if { $isDarwin } {
+#        # need to run ranlib separately on lib for Darwin
+#        # file is created and ranlib is needed inside make all
+#        catch "eval runcmd $::MAKE all"
+#        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
+#          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+#        }
 else()
   set(itcl_BUILD_IN_SOURCE 1)
   set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
@@ -243,6 +255,16 @@ set(blt_BUILD "")
 set(blt_INSTALL "")
 
 if(WIN32)
+elseif(APPLE)
+if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
+              puts "Patching..." 
+              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
+              cd $Slicer3_LIB/tcl/blt 
+              runcmd patch -p2 < ../bltpatch 
+
+              # create a file to make sure BLT isn't patched twice 
+              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
+              file delete $Slicer3_LIB/tcl/bltpatch 
 else()
   set(blt_BUILD_IN_SOURCE 1)
   set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
@@ -397,8 +419,7 @@ if(Slicer3_USE_PYTHON)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
     DEPENDEES install
     )
-  else(WIN32)
-
+  elseif(APPLE)
     set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
     set(python_BUILD_IN_SOURCE 1)
     set(python_CONFIGURE sh configure --prefix=${build_dir}/python-build --with-tcl=${tcl_build} --enable-shared)
@@ -414,7 +435,40 @@ if(Slicer3_USE_PYTHON)
       BUILD_COMMAND ${python_BUILD}
       INSTALL_COMMAND ${python_INSTALL}
     )
-  endif(WIN32)
+#  if { $isDarwin } {
+#            # Special Slicer hack to build and install the .dylib
+#            file mkdir $::Slicer3_LIB/python-build/lib/
+#            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.6.dylib
+#            set fid [open environhack.c w]
+#            puts $fid "char **environ=0;"
+#            close $fid
+#            runcmd gcc -c -o environhack.o environhack.c
+#            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.6.dylib -dynamic  \
+#                -all_load libpython2.6.a environhack.o -single_module \
+#                -install_name $::Slicer3_LIB/python-build/lib/libpython2.6.dylib \
+#                -compatibility_version 2.6 \
+#                -current_version 2.6 -lSystem -lSystemStubs
+#
+# 
+  else()
+    set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
+    set(python_BUILD_IN_SOURCE 1)
+    set(python_CONFIGURE sh configure --prefix=${build_dir}/python-build --with-tcl=${tcl_build} --enable-shared)
+    set(python_BUILD make)
+    set(python_INSTALL make install)
+
+    ExternalProject_Add(${proj}
+      DEPENDS tcl tk
+      SVN_REPOSITORY ${python_SVN}
+      SOURCE_DIR python
+      BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
+      CONFIGURE_COMMAND ${python_CONFIGURE}
+      BUILD_COMMAND ${python_BUILD}
+      INSTALL_COMMAND ${python_INSTALL}
+    )
+         }
+  endif()
+  
 endif(Slicer3_USE_PYTHON)
 
 # Get and build netlib (blas and lapack)
