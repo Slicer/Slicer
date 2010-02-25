@@ -6,7 +6,6 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
-
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -78,46 +77,48 @@ set(SlicerBaseLogic_SRCS
   vtkImageRectangularSource.cxx
   )
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-# <classname>.cxx
-#PROPERTIES
-#ABSTRACT "TRUE"
-#)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-# <classname>.cxx
-#PROPERTIES
-#WRAP_EXCLUDE "TRUE"
-#)
+SET_SOURCE_FILES_PROPERTIES(
+  vtkPichonFastMarchingPDF.cxx
+  WRAP_EXCLUDE
+)
 
 # --------------------------------------------------------------------------
-# Wrapping
+# TCL Wrapping
 IF (VTK_WRAP_TCL)
-  set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-  vtk_wrap_tcl3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
+  SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+  VTK_WRAP_TCL3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
 ENDIF (VTK_WRAP_TCL)
+
+# --------------------------------------------------------------------------
+## Create an instantiator for these classes
+# SET(VTK_USE_INSTANTIATOR_NEW 1)
+# VTK_MAKE_INSTANTIATOR3("${lib_name}Instantiator"
+#   Instantiator_SRCS
+#   "${SlicerBaseLogic_SRCS}"
+#   "VTK_SLICER_BASE_LOGIC_EXPORT"
+#   ${Slicer3_BINARY_DIR}
+#   "vtkSlicerBaseLogic.h")
 
 # --------------------------------------------------------------------------
 # Build the library
 
 set(lib_name SlicerBaseLogic)
 
-SET(srcs
-  ${SlicerBaseLogic_SRCS}
-  )
+#SET(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
+SET(srcs ${SlicerBaseLogic_SRCS})
+
 IF (VTK_WRAP_TCL)
-  SET(srcs
-    ${srcs}
-    ${SlicerBaseLogic_TCL_SRCS}
-    )
+  SET(srcs ${srcs} ${SlicerBaseLogic_TCL_SRCS})
 ENDIF (VTK_WRAP_TCL)
 
-add_library(${lib_name} 
-  ${srcs}
+ADD_LIBRARY(${lib_name} ${srcs})
+
+SET(VTK_LIBRARIES
+  vtkCommon
+  vtkFiltering
+  vtkGraphics
+  vtkIO
+  vtkHybrid
   )
 
 SET(libs
@@ -127,26 +128,19 @@ SET(libs
   ${OPENTRACKER_LIB}
   FreeSurfer
   vtkTeem
-  vtkCommon
-  vtkFiltering
-  vtkGraphics
-  vtkIO
-  vtkHybrid
+  ${VTK_LIBRARIES}
   )
-IF (VTK_WRAP_TCL AND Slicer3_USE_KWWIDGETS)
-  SET(libs
-    ${libs}
-    ${KWWidgets_LIBRARIES}
-    vtkCommonTCL
-    vtkFilteringTCL
-    vtkGraphicsTCL
-    vtkIOTCL
-    vtkHybridTCL
-    )
-ENDIF (VTK_WRAP_TCL AND Slicer3_USE_KWWIDGETS)
-target_link_libraries(${lib_name} 
-  ${libs}
-  )
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
+
+IF(Slicer3_USE_KWWIDGETS)
+  TARGET_LINK_LIBRARIES(${lib_name} ${KWWidgets_LIBRARIES})
+ENDIF()
+
+IF (VTK_WRAP_TCL)
+  FOREACH(c ${VTK_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name} ${c}TCL)
+  ENDFOREACH(c)
+ENDIF()
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
@@ -163,6 +157,39 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
   )
+  
+# --------------------------------------------------------------------------
+# Create Python wrappers if Slicer3_USE_PYTHONQT is ON and if VTK is wrapped in Python
+#
+
+IF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
+
+  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
+
+  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${SlicerBaseLogic_SRCS}")
+  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+  
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  
+  FOREACH(c ${KIT_PYTHON_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
+  ENDFOREACH(c)
+
+  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+
+  ## Python modules on Windows must have the extension ".pyd"
+  IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
+  ENDIF(WIN32 AND NOT CYGWIN)
+
+  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
+    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT Runtime
+    LIBRARY DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT Runtime
+    ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development)
+
+ENDIF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
