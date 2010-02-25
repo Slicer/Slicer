@@ -2355,6 +2355,11 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies(
     FEMeshModule->SetActiveViewer(active_viewer);
     }
 
+  vtkSlicerModuleGUI *MeasurementsModule = this->GetSlicerApplication()->GetModuleGUIByName("Measurements");
+  if (MeasurementsModule)
+    {
+    MeasurementsModule->SetActiveViewer(active_viewer);
+    }
 #ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
   vcGUI->SetViewNode(active_viewer ? active_viewer->GetViewNode() : NULL);

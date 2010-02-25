@@ -498,3 +498,31 @@ void vtkMeasurementsGUI::UpdateTransformableNode()
       acbk->Delete();
       }
 }
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
+{
+  if (activeViewer == NULL)
+    {
+    vtkWarningMacro("SetActiveViewer: active viewer is NULL, returning.");
+    return;
+    }
+  else
+    {
+    vtkDebugMacro("SetActiveViewer: resetting the active view.");
+    }
+  // update the active viewer where needed
+  if (this->RulerWidget)
+    {
+    this->RulerWidget->SetViewerWidget(activeViewer);
+    }
+  if (this->AngleWidget)
+    {
+    this->AngleWidget->SetViewerWidget(activeViewer);
+    }
+  if (this->TransformWidget &&
+      activeViewer->GetMainViewer())
+    {
+    this->TransformWidget->SetInteractor(activeViewer->GetMainViewer()->GetRenderWindowInteractor());
+    }
+}
