@@ -1,11 +1,11 @@
 #ifndef __qSlicerMainWindow_h
 #define __qSlicerMainWindow_h 
 
-// qCTK includes
-#include <qCTKPimpl.h>
-
 // QT includes
 #include <QMainWindow>
+
+// qCTK includes
+#include <qCTKPimpl.h>
 
 #include "qSlicerQTExport.h"
 
