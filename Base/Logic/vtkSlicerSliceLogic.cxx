@@ -266,14 +266,10 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     return;
     }
 
-  if ( !this->MRMLScene->GetIsClosed() )
-    {
-    this->CreateSliceModel();
-
-    this->UpdateSliceNode();
-   
-    this->UpdateSliceCompositeNode();
-    }
+  // Set up the nodes and models
+  this->CreateSliceModel();
+  this->UpdateSliceNode();
+  this->UpdateSliceCompositeNode();
 
   //
   // check that our referenced nodes exist, and if not set to None

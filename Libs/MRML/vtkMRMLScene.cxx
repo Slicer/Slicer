@@ -705,6 +705,7 @@ int vtkMRMLScene::Import()
 
   this->SetUndoOff();
   this->LoadingScene = true;
+  this->SetIsClosed(true);
   this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneLoadStartEvent, NULL);
@@ -730,7 +731,6 @@ int vtkMRMLScene::Import()
     this->UpdateNodeReferences(scene);
 
     this->InvokeEvent(this->NewSceneEvent, NULL);
-    this->SetIsClosed(0);
 
     for (n=0; n<nnodes; n++) 
       {
@@ -777,9 +777,10 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
-  this->InvokeEvent(this->SceneLoadEndEvent, NULL);
-   
   this->LoadingScene = false;
+  this->SetIsClosed(false);
+
+  this->InvokeEvent(this->SceneLoadEndEvent, NULL);
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 
