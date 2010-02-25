@@ -18,36 +18,36 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLTransforma
   vtkTypeRevisionMacro(vtkMRMLMeasurementsNode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // get/set if the widget is visible
+  /// 
+  /// get/set if the widget is visible
   vtkGetMacro(Visibility, int);
   vtkSetMacro(Visibility, int);
   
-  // Description:
-  // Create instance of a GAD node.
+  /// 
+  /// Create instance of a GAD node.
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes from name/value pairs
+  /// 
+  /// Set node attributes from name/value pairs
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// 
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// 
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // transform utility functions, need to be defined by subclasses
+  /// 
+  /// transform utility functions, need to be defined by subclasses
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
   
   
-  // Description:
-  // Get unique node XML tag name (like Volume, Model)
+  /// 
+  /// Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Measurements"; };
 
  protected:
@@ -56,8 +56,8 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsNode : public vtkMRMLTransforma
   vtkMRMLMeasurementsNode(const vtkMRMLMeasurementsNode&);
   void operator=(const vtkMRMLMeasurementsNode&);
 
-  // Description:
-  // is the widget visible?
+  /// 
+  /// is the widget visible?
   int Visibility;
 };
 
