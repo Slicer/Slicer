@@ -43,6 +43,10 @@ public:
   /// Get the file type using the extension
   QString fileTypeFromExtension(const QString& extension);
 
+  ///
+  /// Load archetype volume
+  void loadArchetypeVolume(const QString& filename);
+
 private:
   QCTK_DECLARE_PRIVATE(qSlicerCoreIOManager);
 };
