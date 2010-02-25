@@ -120,6 +120,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkGetStringMacro ( GrabID );
     vtkSetStringMacro ( GrabID );
 
+    ///
+    /// Flag so that one tool can claim 'ownership' of the left mouse
+    /// button clicks.
+    vtkGetStringMacro ( ActiveLeftButtonTool );
+    vtkSetStringMacro ( ActiveLeftButtonTool );
+
     /// 
     /// Functions that define and undefine module-specific behaviors.
     virtual void Enter ( void );
@@ -142,6 +148,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
 
     char *CurrentGUIEvent;
     char *GrabID;
+    char *ActiveLeftButtonTool;
 
 //BTX
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;

@@ -87,6 +87,7 @@ if { [itcl::find class EffectSWidget] == "" } {
 itcl::body EffectSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
+  $sliceGUI SetActiveLeftButtonTool $this
  
   $this createCursor
 
@@ -122,6 +123,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
 itcl::body EffectSWidget::destructor {} {
 
+  $sliceGUI SetActiveLeftButtonTool ""
   $this animateCursor off
   $this tearDownOptions
 

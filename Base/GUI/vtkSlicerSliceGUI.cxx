@@ -44,6 +44,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->SliceNode = NULL;
     this->CurrentGUIEvent = NULL;
     this->GrabID = NULL;
+    this->ActiveLeftButtonTool = NULL;
 }
 
 

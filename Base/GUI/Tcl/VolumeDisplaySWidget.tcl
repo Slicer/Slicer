@@ -131,14 +131,16 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
   # map x, y offset of drag to a change in the window/level of the background volume
   switch $event {
     "LeftButtonPressEvent" {
-      set _actionState "dragging"
-      $sliceGUI SetGrabID $this
-      set _startPosition [$_interactor GetEventPosition]
-      set _startWindow [$displayNode GetWindow]
-      set _startLevel [$displayNode GetLevel]
-      $displayNode SetAutoWindowLevel 0
-      $::slicer3::MRMLScene SaveStateForUndo $displayNode
-      $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
+      if { [$sliceGUI GetActiveLeftButtonTool] == "" } {
+        set _actionState "dragging"
+        $sliceGUI SetGrabID $this
+        set _startPosition [$_interactor GetEventPosition]
+        set _startWindow [$displayNode GetWindow]
+        set _startLevel [$displayNode GetLevel]
+        $displayNode SetAutoWindowLevel 0
+        $::slicer3::MRMLScene SaveStateForUndo $displayNode
+        $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
+      }
     }
     "MouseMoveEvent" {
       switch $_actionState {
