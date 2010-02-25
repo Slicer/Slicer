@@ -11,10 +11,13 @@
 =========================================================================auto=*/
 
 
-#include "qSlicerUtils.h"
-
+// QT includes
 #include <QStringList>
+#include <QFile>
 #include <QDebug>
+
+// SlicerQt includes
+#include "qSlicerUtils.h"
 
 //------------------------------------------------------------------------------
 bool qSlicerUtils::isExecutableName(const QString& name)
@@ -33,3 +36,33 @@ bool qSlicerUtils::isExecutableName(const QString& name)
   return false;
 }
 
+//------------------------------------------------------------------------------
+QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QString& target)
+{
+#ifdef _WIN32
+  QStringList intDirs;
+  intDirs << "." << "Debug" << "RelWithDebInfo" << "Release" << "MinSizeRel";
+  QString intDir = directory + "/%2/" + target;
+  foreach(const QString& subdir, intDirs)
+    {
+    if (QFile::exists(intDir.arg(subdir)))
+      {
+      return directory+"/"+subdir+"/";
+      }
+    }
+  return QString();
+#else
+  Q_UNUSED(target);
+  return directory; 
+#endif
+}
+
+//------------------------------------------------------------------------------
+QString qSlicerUtils::executableExtension()
+{
+#ifdef _WIN32
+  return QLatin1String(".exe"); 
+#else
+  return QString();
+#endif
+}
