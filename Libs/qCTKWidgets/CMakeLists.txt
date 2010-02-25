@@ -40,6 +40,8 @@ SET(qCTKWidgets_SRCS
   qCTKCollapsibleGroupBox.h
   qCTKColorPickerButton.cxx
   qCTKColorPickerButton.h
+  qCTKConsoleWidget.cxx
+  qCTKConsoleWidget.h
   qCTKCoordinatesWidget.cxx
   qCTKCoordinatesWidget.h
   qCTKDoubleSlider.cxx
@@ -79,6 +81,7 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKCollapsibleButton.h
   qCTKCollapsibleGroupBox.h
   qCTKColorPickerButton.h
+  qCTKConsoleWidget.h
   qCTKCoordinatesWidget.h
   qCTKDoubleSlider.h
   qCTKDynamicSpacer.h
