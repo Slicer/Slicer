@@ -597,6 +597,11 @@ itcl::body LoadVolume::loadGeometry {} {
 #
 itcl::body LoadVolume::apply { } {
 
+  set progressDialog [$this progressDialog]
+  $progressDialog SetTitle "Working..."
+  $progressDialog SetMessageText "Loading volume..."
+  update
+
   set centered [$o(centered) GetSelectedState]
   set orient [$o(orient) GetSelectedState]
   set label [$o(label) GetSelectedState]
@@ -611,6 +616,9 @@ itcl::body LoadVolume::apply { } {
   set fileName [$fileTable GetNthSelectedFileName 0]
   if { $fileName == "" } {
     $this errorDialog "No file selected"
+    $progressDialog SetParent ""
+    $progressDialog SetMasterWindow ""
+    $progressDialog Delete
     return 1
   }
   set name [[$o(name) GetWidget] GetValue]
@@ -627,6 +635,9 @@ itcl::body LoadVolume::apply { } {
   set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions $fileList] node]
   if { $ret } {
     $this errorDialog "Could not load $fileName as a volume\n\nError is:\n$node"
+    $progressDialog SetParent ""
+    $progressDialog SetMasterWindow ""
+    $progressDialog Delete
     return 1
   }
   $fileList Delete
@@ -634,6 +645,9 @@ itcl::body LoadVolume::apply { } {
   set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
   if { $node == "" } {
     $this errorDialog "Could not load $fileName as a volume"
+    $progressDialog SetParent ""
+    $progressDialog SetMasterWindow ""
+    $progressDialog Delete
     return 1
   } else {
     if { $label } {
@@ -701,6 +715,9 @@ itcl::body LoadVolume::apply { } {
     set recentFiles [linsert $recentFiles 0 [list $name $fileName [array get options]]]
     $::slicer3::Application SetRegistry "RecentFiles" $recentFiles
   }
+  $progressDialog SetParent ""
+  $progressDialog SetMasterWindow ""
+  $progressDialog Delete
   return 0
 }
 
@@ -713,11 +730,12 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
   #
   # ignore events that occur while updating widgets that 
-  # have relate values
+  # have related values
   #
   if { $_processingEvents } {
     return
   }
+  set _processingEvents 1
 
   #
   # handle cancel and apply buttons
@@ -726,11 +744,13 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     if { [$this apply] == 0 } {
       after idle "itcl::delete object $this"
     }
+    set _processingEvents 0
     return
   }
 
   if { $caller == $o(cancel) } {
     after idle "itcl::delete object $this"
+    set _processingEvents 0
     return
   }
 
@@ -752,6 +772,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     }
     set name [file root [file tail $fileName]]
     $this selectArchetype $fileName $name
+    set _processingEvents 0
     return
   }
 
@@ -763,6 +784,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     set menu [$menuButton GetMenu]
     set selection [$menu GetIndexOfSelectedItem]
     if { $selection == 0 } {
+      set _processingEvents 0
       return ;# the '-' empty selection
     }
     if { $selection == [expr [$menu GetNumberOfItems] - 1] } {
@@ -770,6 +792,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       $::slicer3::Application SetRegistry "RecentFiles" ""
       $menu DeleteAllItems
       after idle $menu SelectItem 0
+      set _processingEvents 0
       return;
     }
     $::slicer3::Application RequestRegistry "RecentFiles"
@@ -781,6 +804,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       $this selectArchetype $fileName $name options
       after idle $menu SelectItem 0
     }
+    set _processingEvents 0
     return
   }
 
@@ -791,6 +815,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     set path [[$o(path) GetWidget] GetValue]
     set name [file tail $path]
     $this selectArchetype $path $name
+    set _processingEvents 0
     return
   }
 
@@ -809,6 +834,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     set includeSubseries [$o(dicomParseSubseries) GetSelectedState]
     $this parseDICOMDirectory $dir _dicomTree $includeSubseries
     $this populateDICOMTree $dir _dicomTree
+    set _processingEvents 0
     return
   }
 
@@ -890,10 +916,12 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     catch "$t OpenNode $seriesNode"
     catch "$t SeeNode $selection"
 
+    set _processingEvents 0
     return
   }
   
   puts "unknown event from $caller"
+  set _processingEvents 0
 }
 
 #
@@ -912,8 +940,6 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
   } else {
     set directoryName [file dirname $path]
   }
-
-  set _processingEvents 1
 
   if { $optionsName != "" } {
     upvar $optionsName options
@@ -940,11 +966,10 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
   # user clicks 'Parse Directory' button
   #
   if { ![info exists _dicomTree(directoryName)] || 
-        $_dicomTree(directoryName) != $directoryName ||
-        [lsearch $_dicomSeriesFileList $path] == -1 } {
+        $_dicomTree(directoryName) != $directoryName } {
     # get the dicom info for this directory if it exists
     set dicomCache [DICOMCache #auto]
-    $dicomCache getTreeForDirectory $directoryName _dicomTree
+    $dicomCache getTreeForDirectory $directoryName _dicomTree 1
     itcl::delete object $dicomCache
     $this populateDICOMTree $directoryName _dicomTree
 
@@ -954,17 +979,17 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
     # - when the file is selected from the tree, then the tree needs
     #   to set the series itself (this code doesn't know, since a file
     #   can be in multiple series)
-    set _dicomSeriesFileList ""
-    set fileLists [array names _dicomTree *files]
-    foreach fileList $fileLists {
-      if { [lsearch $_dicomTree($fileList) $path] != -1 } {
-        set _dicomSeriesFileList $_dicomTree($fileList)
-        break
+    if { [lsearch $_dicomSeriesFileList $path] == -1 } {
+      set _dicomSeriesFileList ""
+      set fileLists [array names _dicomTree *files]
+      foreach fileList $fileLists {
+        if { [lsearch $_dicomTree($fileList) $path] != -1 } {
+          set _dicomSeriesFileList $_dicomTree($fileList)
+          break
+        }
       }
     }
   }
-
-  set _processingEvents 0
 }
 
 
@@ -1152,7 +1177,7 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
     # this isn't a file we can read
     puts "Can't read file $fileName"
     puts $res
-    # need to create a fresh reader because InAlgorithm state is not updated by vtkExecutive on error
+    # need to create a fresh reader because "InAlgorithm" state is not updated by vtkExecutive on error
     set o(reader) [vtkNew vtkITKArchetypeImageSeriesReader]
     return
   }
@@ -1203,6 +1228,14 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
 
   upvar $arrayName tree
 
+  # use a flag to know when tree is up to date
+  # - this relies on the fact that the tree is always cleared each
+  #   time the data is changed, so if this flag exists, we are in sync.
+  if { [info exists tree(treePopulated)] } {
+    return
+  }
+  set tree(directoryName) $directoryName
+
   set t [$o(dicomTree) GetWidget]
   $t DeleteAllNodes
 
@@ -1210,31 +1243,60 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
     return
   }
 
+  set progressDialog [$this progressDialog]
+  $progressDialog SetTitle "Working..."
+  $progressDialog SetMessageText "Displaying DICOM Tree for $directoryName..."
+  update
+
   set n 0 ;# serial number of node
   foreach patient $tree(patients) {
     set patientNode $n-patient-[$this safeNodeName $patient]
     incr n
-    $t AddNode "" $patientNode $patient
+    if { ![info exists tree(patients,displayName,$patient)] } {
+      set tree(patients,displayName,$patient) $patient
+    }
+    $t AddNode "" $patientNode $tree(patients,displayName,$patient)
     $t OpenNode $patientNode
     foreach study $tree($patient,studies) {
       set studyNode $n-study-[$this safeNodeName $study]
       incr n
-      $t AddNode $patientNode $studyNode $study
+      if { ![info exists tree($patient,studies,displayName,$study)] } {
+        set tree($patient,studies,displayName,$study) $study
+      }
+      $t AddNode $patientNode $studyNode $tree($patient,studies,displayName,$study)
       $t OpenNode $studyNode
       foreach series $tree($patient,$study,series) {
         set seriesNode $n-series-[$this safeNodeName $series]
         incr n
         set fileCount [llength $tree($patient,$study,$series,files)]
         if { $fileCount == 1 } {set countString "file" } else { set countString "files" }
-        $t AddNode $studyNode $seriesNode "$series ($fileCount $countString)"
+        if { ![info exists tree($patient,$study,series,displayName,$series)] } {
+          set tree($patient,$study,series,displayName,$series) $series
+        }
+        $t AddNode $studyNode $seriesNode "$tree($patient,$study,series,displayName,$series) ($fileCount $countString)"
         foreach file $tree($patient,$study,$series,files) {
           set fileNode $n-$seriesNode-file-[$this safeNodeName $file]
           incr n
           $t AddNode $seriesNode $fileNode "[file tail $file] ($file)"
+          if { [expr $n % 200] == 0 } {
+            $progressDialog SetMessageText "$n files processed..."
+            update
+          }
+        }
+        if { [info exists tree($patient,$study,$series,warning)] } {
+          set nodeText [$t GetNodeText $seriesNode]
+          $t SetNodeText $seriesNode "$nodeText -- $tree($patient,$study,$series,warning)"
+          $t SetNodeFontSlantToItalic $seriesNode
         }
       }
     }
   }
+
+  set tree(treePopulated) 1
+
+  $progressDialog SetParent ""
+  $progressDialog SetMasterWindow ""
+  $progressDialog Delete
 }
 
 itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubseries 0} } {
@@ -1292,32 +1354,39 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
       set tag [set [string toupper $key]]
       if { ![info exists header($tag,value)] } {
         set $key "Unknown[string totitle $key]" ;# missing group/element in header
+        set display$key [set $key]
       } elseif { $header($tag,value) == "" } {
         # one of the keys has an empty string value - create a dummy
         # TODO: could be using UIDs
         set $key "Unnamed[string totitle $key]"
+        set display$key [set $key]
       } else {
-        set $key $header($tag,value) ;# normal tag value
+        set display$key $header($tag,value) ;# normal tag value
+        set $key [$this safeNodeName $header($tag,value)] ;# escaped version
+        
       }
     }
 
     if { [lsearch $tree(patients) $patient] == -1 } {
       lappend tree(patients) $patient
+      set tree(patients,displayName,$patient) $displaypatient
       set tree($patient,studies) ""
     }
     if { [lsearch $tree($patient,studies) $study] == -1 } {
       lappend tree($patient,studies) $study
+      set tree($patient,studies,displayName,$study) $displaystudy
       set tree($patient,$study,series) ""
     }
     if { [lsearch $tree($patient,$study,series) $series] == -1 } {
       lappend tree($patient,$study,series) $series
+      set tree($patient,$study,series,displayName,$series) $displayseries
     }
     lappend tree($patient,$study,$series,files) $f
     set tree($f,header) [array get header]
   }
 
   $progressDialog SetMessageText "Organizing Files..."
-  $progressDialog UpdateProgress $progress
+  $progressDialog UpdateProgress 1.
   $this organizeDICOMSeries tree $includeSubseries "$progressDialog SetMessageText "
 
   $progressDialog SetParent ""
@@ -1367,7 +1436,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
     foreach study $tree($patient,studies) {
       foreach series $tree($patient,$study,series) {
         if { $progressCmd != "" } {
-          eval $progressCmd [list "Sorting series \n$patient\n$study\n$series"]
+          eval $progressCmd [list "Sorting series \n$patient\n$study\n$series\n"]
           update ;# TODO: this update should be in the progressCmd itself
         }
 
@@ -1390,7 +1459,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         # second, for any specs that have more than one value, create a new
         # virtual series
         if { $progressCmd != "" } {
-          set ret [eval $progressCmd [list "Sorting sub series \n$patient\n$study\n$series"]]
+          set ret [eval $progressCmd [list "Sorting sub series \n$patient\n$study\n$series\n"]]
           update ;# TODO: this update should be in the progressCmd itself
         }
         foreach {name tag} $subseriesSpecs {
@@ -1420,12 +1489,12 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
   set POSITION "0020|0032"
   set ORIENTATION "0020|0037"
 
-  set spaceWarnings ""
+  set spaceWarnings 0
   foreach patient $tree(patients) {
     foreach study $tree($patient,studies) {
       foreach series $tree($patient,$study,series) {
         if { $progressCmd != "" } {
-          set ret [eval $progressCmd [list "Geometric analysis of \n$patient\n$study\n$series"]]
+          set ret [eval $progressCmd [list "Geometric analysis of \n$patient\n$study\n$series\n"]]
           update ;# TODO: this update should be in the progressCmd itself
         }
         #
@@ -1482,7 +1551,8 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
             set spacingN [expr $distN - $distNminus1]
             set spaceError [expr $spacingN - $spacing0]
             if { $spaceError > $epsilon } {
-              set spaceWarnings "$spaceWarnings\nThe images in series \"$series\" are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
+              incr spaceWarnings
+              set tree($patient,$study,$series,warning) "images are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
               break
             }
           }
@@ -1490,7 +1560,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
       }
     }
   }
-  if { $spaceWarnings != "" } {
-    $this errorDialog $spaceWarnings
+  if { $spaceWarnings != 0 } {
+    $this errorDialog "Geometric issues were found with $spaceWarnings of the series.  Please use caution."
   }
 }
