@@ -145,6 +145,12 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   QString homeDirectory = app.slicerHome();
 
+  if (homeDirectory.isEmpty())
+    {
+    std::cerr << "Problem with slicerHome()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
 
   QString newHome = homeDirectory;
