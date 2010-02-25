@@ -11,11 +11,38 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
-# TODO
-#   - Add a Slicer3_USE_KWWIDGETS, that will configure some of the external project
-#         -> If ON, exclude TCL related packages + disable TCL wraping
-#         -> If OFF, enable Python wraping
-#   - See comments set(proj VTK)
+#
+#                         ----------------------------
+#                         | Case 1 | Case 2 | Case 3 |
+# ----------------------------------------------------
+# | Slicer3_USE_KWWIDGETS |  ON    |  ON    |  OFF   |
+# |---------------------------------------------------
+# | Slicer3_USE_QT        |  OFF   |  ON    |  ON    |
+# |--------------------------------------------------|
+# | Slicer3_USE_PYTHON    | ON|OFF | ON|OFF |  OFF   |
+# |--------------------------------------------------|
+# | Slicer3_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
+# |---------------------------------------------------
+#
+# Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: OFF, VTK_WRAP_TCL:ON]
+#   a) KwwOnly-NoPython  
+#   b) KwwOnly-Python    
+# 
+# Case 2: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: ON, VTK_WRAP_TCL:ON]
+#   a) KwwAndQt-NoPython-NoPythonQt
+#   b) KwwAndQt-Python
+#   c) KwwAndQt-PythonQt          [VTK_WRAP_PYTHON: ON]  -> TODO
+#   d) KwwAndQt-Python-PythonQt   [VTK_WRAP_PYTHON: ON]  -> TODO
+#
+# Case 3: [Slicer3_USE_KWWIDGETS: OFF, Slicer3_USE_QT: ON,  VTK_WRAP_TCL:OFF]
+#   a) QtOnly-NoPythonQt
+#   b) QtOnly-PythonQt            [VTK_WRAP_PYTHON: ON]
+#
+#
+# Note:
+#   Tcl, Tk, blt, incrTcl and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
+#   Python is build if either Slicer3_USE_PYTHON or Slicer3_USE_PYTHONQT are ON
+# 
 
 #-----------------------------------------------------------------------------
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
@@ -28,6 +55,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 
 include(ExternalProject)
 
+#-----------------------------------------------------------------------------
+# Python
+#
 option(Slicer3_USE_PYTHON "Build Slicer3 with Python support" OFF)
 
 if(Slicer3_USE_PYTHON)
@@ -46,11 +76,15 @@ if(Slicer3_USE_PYTHON)
   endif(CMAKE_Fortran_COMPILER)
 endif() # Slicer3_USE_PYTHON
 
+#-----------------------------------------------------------------------------
 # KWWidgets on by default.
 
 option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 
-## QT
+#-----------------------------------------------------------------------------
+# QT
+#
+
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
@@ -59,16 +93,54 @@ if(Slicer3_USE_QT)
   SET(QT_USE_QTNETWORK ON)
   # Includes Qt headers
   INCLUDE(${QT_USE_FILE})
+
+  option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
+  if (Slicer3_USE_PYTHONQT)
+  
+  endif()
+  
 endif()
 
+#-----------------------------------------------------------------------------
+# Check options
+#
+if (NOT Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
+  set(err "error: Slicer SuperBuild requires at least Slicer3_USE_KWWIDGETS or Slicer3_USE_QT to be ON.
+
+Slicer3_USE_KWWIDGETS = ON
+ -> Means Slicer will be built only with KWWidgets support.
+ 
+Slicer3_USE_KWWIDGETS = ON and Slicer3_USE_QT = ON
+ -> Means Slicer will be built with both KWWidgets and QT support.
+ 
+Slicer3_USE_QT = ON
+ -> Means Slicer will be build only with QT support.
+")
+
+  message(FATAL_ERROR "${err}")
+endif()
+
+if (Slicer3_USE_PYTHON AND Slicer3_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_PYTHON and Slicer3_USE_PYTHONQT ON.")
+
+  message(FATAL_ERROR "${err}")
+endif()
+
+#-----------------------------------------------------------------------------
+# Setup CMake 
+#
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
 set_property(DIRECTORY PROPERTY EP_BASE ${base})
 
 set(prefix "${base}/Install")
 
-option(BUILD_SHARED_LIBS "Build with shared libraries.")
-set(CMAKE_BUILD_TYPE "Release")
+# Let's use shared libraries
+set(BUILD_SHARED_LIBS ON)
+#option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+
+# By default, let's build as Debug
+set(CMAKE_BUILD_TYPE "Debug")
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 #
@@ -86,6 +158,12 @@ if(CMAKE_BUILD_TYPE)
   set(build_type "${CMAKE_BUILD_TYPE}")
 endif()
 
+set(parallelism_level)
+set(build_dir ${CMAKE_CURRENT_BINARY_DIR})
+
+#-----------------------------------------------------------------------------
+# VTK option for Mac when QT is enabled
+#
 set(mac_args)
 if(APPLE)
   # With Qt 4.4, VTK_USE_QVTK means we should use Carbon, not Cocoa:
@@ -95,330 +173,350 @@ if(APPLE)
     )
 endif()
 
-set(parallelism_level)
-set(build_dir ${CMAKE_CURRENT_BINARY_DIR})
+#-----------------------------------------------------------------------------
+# TCL
+if(Slicer3_USE_KWWIDGETS)
+  set(proj tcl)
 
-set(proj tcl)
+  set(tcl_SVN_REPOSITORY)
+  set(tcl_SOURCE_DIR "")
+  set(tcl_BINARY_DIR "")
+  set(tcl_BUILD_IN_SOURCE 0)
+  set(tcl_CONFIGURE_COMMAND "")
+  set(tcl_BUILD_COMMAND "")
+  set(tcl_INSTALL_COMMAND "")
+  set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
+  set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
-set(tcl_SVN_REPOSITORY)
-set(tcl_SOURCE_DIR "")
-set(tcl_BINARY_DIR "")
-set(tcl_BUILD_IN_SOURCE 0)
-set(tcl_CONFIGURE_COMMAND "")
-set(tcl_BUILD_COMMAND "")
-set(tcl_INSTALL_COMMAND "")
-set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
-set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
-
-
-if(WIN32)
-  set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
-  set(tcl_SOURCE_DIR tcl-build)
-else()
-  set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
-  set(tcl_SOURCE_DIR tcl/tcl)
-  set(tcl_BUILD_IN_SOURCE 1)
-  set(tcl_CONFIGURE_COMMAND ./unix/configure --prefix=${tcl_build})
-  set(tcl_BUILD_COMMAND make ${parallelism_level})
-  set(tcl_INSTALL_COMMAND make install)
-endif()
-
-ExternalProject_Add(${proj}
-  SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
-  SOURCE_DIR ${tcl_SOURCE_DIR}
-  BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND ${tcl_CONFIGURE_COMMAND}
-  BUILD_COMMAND ${tcl_BUILD_COMMAND}
-  INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
-)
-
-set(proj tk)
-
-set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
-set(tk_SOURCE_DIR "")
-set(tk_BINARY_DIR "")
-set(tk_BUILD_IN_SOURCE 0)
-set(tk_CONFIGURE_COMMAND "")
-set(tk_BUILD_COMMAND "")
-set(tk_INSTALL_COMMAND "")
-
-if(WIN32)
-  set(tk_SOURCE_DIR tcl/tk)
-elseif(APPLE)
-# uncmd ./configure --with-tcl=./tcl-build/lib --prefix=./tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
-  set(tk_SOURCE_DIR tcl/tk)
-  set(tk_BUILD_IN_SOURCE 1)
-  set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
-  set(tk_BUILD_COMMAND make ${parallelism_level})
-  set(tk_INSTALL_COMMAND make install)
-else()
-  set(tk_SOURCE_DIR tcl/tk)
-  set(tk_BUILD_IN_SOURCE 1)
-  set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
-  set(tk_BUILD_COMMAND make ${parallelism_level})
-  set(tk_INSTALL_COMMAND make install)
-endif()
-
-ExternalProject_Add(${proj}
-  DEPENDS tcl
-  SVN_REPOSITORY ${tk_SVN_REPOSITORY}
-  SOURCE_DIR ${tk_SOURCE_DIR}
-  BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
-  BUILD_COMMAND ${tk_BUILD_COMMAND}
-  INSTALL_COMMAND ${tk_INSTALL_COMMAND}
-)
-
-set(proj itcl)
-
-set(itcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
-set(itcl_BUILD_IN_SOURCE 0)
-set(itcl_CONFIGURE_COMMAND "")
-set(itcl_BUILD_COMMAND "")
-set(itcl_INSTALL_COMMAND "")
-
-if(WIN32)
-elseif(APPLE)
-  set(itcl_BUILD_IN_SOURCE 1)
-  set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(itcl_BUILD_COMMAND make ${parallelism_level} all)
-  set(itcl_INSTALL_COMMAND make install)
-  
-#  if { $isDarwin } {
-#          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
-#          exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
-#      }
-#if { $isDarwin } {
-#        # need to run ranlib separately on lib for Darwin
-#        # file is created and ranlib is needed inside make all
-#        catch "eval runcmd $::MAKE all"
-#        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
-#          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
-#        }
-else()
-  set(itcl_BUILD_IN_SOURCE 1)
-  set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(itcl_BUILD_COMMAND make ${parallelism_level} all)
-  set(itcl_INSTALL_COMMAND make install)
-endif()
-
-#exec chmod +x ../incrTcl/configure
-
-ExternalProject_Add(${proj}
-  DEPENDS tk
-  SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
-  SOURCE_DIR tcl/incrTcl
-  BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
-  BUILD_COMMAND ${itcl_BUILD_COMMAND}
-  INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
-)
-
-ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
-  COMMAND chmod +x ${tcl_base}/incrTcl/configure
-  DEPENDEES update
-  DEPENDERS configure
-  )
-
-set(proj iwidgets)
-
-set(iwidgets_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets")
-set(iwidgets_BUILD_IN_SOURCE 0)
-set(iwidgets_CONFIGURE "")
-set(iwidgets_BUILD "")
-set(iwidgets_INSTALL "")
-
-if(WIN32)
-else()
-  set(iwidgets_BUILD_IN_SOURCE 1)
-  set(iwidgets_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --with-itcl=${tcl_base}/incrTcl --prefix=${tcl_build})
-  set(iwidgets_BUILD make all) # iwidgets doesn't build in parallel
-  set(iwidgets_INSTALL make install)
-endif()
-
-ExternalProject_Add(${proj}
-  DEPENDS tcl itcl
-  SVN_REPOSITORY ${iwidgets_SVN}
-  SOURCE_DIR tcl/iwidgets
-  BUILD_IN_SOURCE ${iwidgets_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND ${iwidgets_CONFIGURE}
-  BUILD_COMMAND ${iwidgets_BUILD}
-  INSTALL_COMMAND ${iwidgets_INSTALL}
-)
-
-set(proj blt)
-
-set(blt_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt")
-set(blt_BUILD_IN_SOURCE 0)
-set(blt_CONFIGURE "")
-set(blt_BUILD "")
-set(blt_INSTALL "")
-
-if(WIN32)
-elseif(APPLE)
-#if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
-#              puts "Patching..." 
-#              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
-#              cd $Slicer3_LIB/tcl/blt 
-#              runcmd patch -p2 < ../bltpatch 
-
-              # create a file to make sure BLT isn't patched twice 
-#              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
-#              file delete $Slicer3_LIB/tcl/bltpatch 
-else()
-  set(blt_BUILD_IN_SOURCE 1)
-  set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(blt_BUILD make ${parallelism_level})
-  set(blt_INSTAL make install)
-endif()
-
-ExternalProject_Add(${proj}
-  DEPENDS tcl tk
-  SVN_REPOSITORY ${blt_SVN}
-  SOURCE_DIR tcl/blt
-  BUILD_IN_SOURCE ${blt_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND ${blt_CONFIGURE}
-  BUILD_COMMAND ${blt_BUILD}
-  INSTALL_COMMAND ${btl_INSTALL}
-)
-
-set(proj python)
-
-if(Slicer3_USE_PYTHON)
 
   if(WIN32)
+    set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
+    set(tcl_SOURCE_DIR tcl-build)
+  else()
+    set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
+    set(tcl_SOURCE_DIR tcl/tcl)
+    set(tcl_BUILD_IN_SOURCE 1)
+    set(tcl_CONFIGURE_COMMAND ./unix/configure --prefix=${tcl_build})
+    set(tcl_BUILD_COMMAND make ${parallelism_level})
+    set(tcl_INSTALL_COMMAND make install)
+  endif()
 
-  set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
-  string(REPLACE "/" "\\" python_sln ${python_sln})
+  ExternalProject_Add(${proj}
+    SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
+    SOURCE_DIR ${tcl_SOURCE_DIR}
+    BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${tcl_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${tcl_BUILD_COMMAND}
+    INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
+  )
+endif(Slicer3_USE_KWWIDGETS)
 
-  # point the tkinter build file to the slicer tcl-build 
+#-----------------------------------------------------------------------------
+if(Slicer3_USE_KWWIDGETS)
+  set(proj tk)
 
-  get_filename_component(python_base ${python_sln} PATH)
-  get_filename_component(python_home ${python_base} PATH)
+  set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
+  set(tk_SOURCE_DIR "")
+  set(tk_BINARY_DIR "")
+  set(tk_BUILD_IN_SOURCE 0)
+  set(tk_CONFIGURE_COMMAND "")
+  set(tk_BUILD_COMMAND "")
+  set(tk_INSTALL_COMMAND "")
 
-  set(python_tkinter ${python_base}/pyproject.vsprops)
-  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+  if(WIN32)
+    set(tk_SOURCE_DIR tcl/tk)
+  elseif(APPLE)
+  # uncmd ./configure --with-tcl=./tcl-build/lib --prefix=./tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+    set(tk_SOURCE_DIR tcl/tk)
+    set(tk_BUILD_IN_SOURCE 1)
+    set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
+    set(tk_BUILD_COMMAND make ${parallelism_level})
+    set(tk_INSTALL_COMMAND make install)
+  else()
+    set(tk_SOURCE_DIR tcl/tk)
+    set(tk_BUILD_IN_SOURCE 1)
+    set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
+    set(tk_BUILD_COMMAND make ${parallelism_level})
+    set(tk_INSTALL_COMMAND make install)
+  endif()
 
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/StringFindReplace.cmake)
-  set(out ${python_tkinter})
-  set(in ${python_tkinter})
+  ExternalProject_Add(${proj}
+    DEPENDS tcl
+    SVN_REPOSITORY ${tk_SVN_REPOSITORY}
+    SOURCE_DIR ${tk_SOURCE_DIR}
+    BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${tk_BUILD_COMMAND}
+    INSTALL_COMMAND ${tk_INSTALL_COMMAND}
+  )
+endif(Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+if(Slicer3_USE_KWWIDGETS)
+  set(proj itcl)
+
+  set(itcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
+  set(itcl_BUILD_IN_SOURCE 0)
+  set(itcl_CONFIGURE_COMMAND "")
+  set(itcl_BUILD_COMMAND "")
+  set(itcl_INSTALL_COMMAND "")
+
+  if(WIN32)
+  elseif(APPLE)
+    set(itcl_BUILD_IN_SOURCE 1)
+    set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(itcl_BUILD_COMMAND make ${parallelism_level} all)
+    set(itcl_INSTALL_COMMAND make install)
+    
+  #  if { $isDarwin } {
+  #          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
+  #          exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
+  #      }
+  #if { $isDarwin } {
+  #        # need to run ranlib separately on lib for Darwin
+  #        # file is created and ranlib is needed inside make all
+  #        catch "eval runcmd $::MAKE all"
+  #        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
+  #          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+  #        }
+  else()
+    set(itcl_BUILD_IN_SOURCE 1)
+    set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(itcl_BUILD_COMMAND make ${parallelism_level} all)
+    set(itcl_INSTALL_COMMAND make install)
+  endif()
+
+  #exec chmod +x ../incrTcl/configure
+
+  ExternalProject_Add(${proj}
+    DEPENDS tk
+    SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
+    SOURCE_DIR tcl/incrTcl
+    BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${itcl_BUILD_COMMAND}
+    INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
+  )
+
+  ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
+    COMMAND chmod +x ${tcl_base}/incrTcl/configure
+    DEPENDEES update
+    DEPENDERS configure
+    )
+endif(Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+if(Slicer3_USE_KWWIDGETS)
+  set(proj iwidgets)
+
+  set(iwidgets_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets")
+  set(iwidgets_BUILD_IN_SOURCE 0)
+  set(iwidgets_CONFIGURE "")
+  set(iwidgets_BUILD "")
+  set(iwidgets_INSTALL "")
+
+  if(WIN32)
+  else()
+    set(iwidgets_BUILD_IN_SOURCE 1)
+    set(iwidgets_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --with-itcl=${tcl_base}/incrTcl --prefix=${tcl_build})
+    set(iwidgets_BUILD make all) # iwidgets doesn't build in parallel
+    set(iwidgets_INSTALL make install)
+  endif()
+
+  ExternalProject_Add(${proj}
+    DEPENDS tcl itcl
+    SVN_REPOSITORY ${iwidgets_SVN}
+    SOURCE_DIR tcl/iwidgets
+    BUILD_IN_SOURCE ${iwidgets_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${iwidgets_CONFIGURE}
+    BUILD_COMMAND ${iwidgets_BUILD}
+    INSTALL_COMMAND ${iwidgets_INSTALL}
+  )
+endif(Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+if(Slicer3_USE_KWWIDGETS)
+  set(proj blt)
+
+  set(blt_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt")
+  set(blt_BUILD_IN_SOURCE 0)
+  set(blt_CONFIGURE "")
+  set(blt_BUILD "")
+  set(blt_INSTALL "")
+
+  if(WIN32)
+  elseif(APPLE)
+  #if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
+  #              puts "Patching..." 
+  #              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
+  #              cd $Slicer3_LIB/tcl/blt 
+  #              runcmd patch -p2 < ../bltpatch 
+
+                # create a file to make sure BLT isn't patched twice 
+  #              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
+  #              file delete $Slicer3_LIB/tcl/bltpatch 
+  else()
+    set(blt_BUILD_IN_SOURCE 1)
+    set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(blt_BUILD make ${parallelism_level})
+    set(blt_INSTAL make install)
+  endif()
 
   ExternalProject_Add(${proj}
     DEPENDS tcl tk
-    SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
-    SOURCE_DIR python-build
-    UPDATE_COMMAND ""
-    PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script}
-    CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
-    BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
-    BUILD_IN_SOURCE 1
-    INSTALL_COMMAND ""
+    SVN_REPOSITORY ${blt_SVN}
+    SOURCE_DIR tcl/blt
+    BUILD_IN_SOURCE ${blt_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND ${blt_CONFIGURE}
+    BUILD_COMMAND ${blt_BUILD}
+    INSTALL_COMMAND ${btl_INSTALL}
   )
+endif(Slicer3_USE_KWWIDGETS)
 
-  # this must match the version of tcl we are building for slicer.
-  ExternalProject_Add_Step(${proj} Patch_tcltk_version
-    COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
-    DEPENDEES configure
-    DEPENDERS build
-    )
+#-----------------------------------------------------------------------------
+set(proj python)
 
-  ExternalProject_Add_Step(${proj} Build_make_versioninfo
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
-    DEPENDEES configure
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_make_buildinfo
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_buildinfo
-    DEPENDEES Build_make_versioninfo
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_kill_python
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project kill_python
-    DEPENDEES Build_kill_python
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_w9xpopen
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project w9xpopen
-    DEPENDEES Build_kill_python
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_pythoncore
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythoncore
-    DEPENDEES Build_w9xpopen
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__socket
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
-    DEPENDEES Build_pythoncore
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__tkinter
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
-    DEPENDEES Build__socket
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__testcapi
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
-    DEPENDEES Build__tkinter
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__msi
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _msi
-    DEPENDEES Build__testcapi
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__elementtree
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _elementtree
-    DEPENDEES Build__msi
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__ctypes_test
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes_test
-    DEPENDEES Build__elementtree
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__ctypes
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes
-    DEPENDEES python_sln
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_winsound
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project winsound
-    DEPENDEES Build__ctypes
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_pyexpat
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pyexpat
-    DEPENDEES Build_winsound
-    )
-    
-  ExternalProject_Add_Step(${proj} Build_pythonw
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythonw
-    DEPENDEES Build_pyexpat
-    )
-    
-  ExternalProject_Add_Step(${proj} Build__multiprocessing
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
-    DEPENDEES Build_pythonw
+set(python_DEPENDS )
+
+if(Slicer3_USE_PYTHON)
+  list(APPEND python_DEPENDS tcl tk)
+endif(Slicer3_USE_PYTHON)
+
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+
+  if(WIN32)
+  
+    set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
+    string(REPLACE "/" "\\" python_sln ${python_sln})
+
+    # point the tkinter build file to the slicer tcl-build 
+
+    get_filename_component(python_base ${python_sln} PATH)
+    get_filename_component(python_home ${python_base} PATH)
+
+    set(python_tkinter ${python_base}/pyproject.vsprops)
+    string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+
+    set(script ${CMAKE_CURRENT_SOURCE_DIR}/StringFindReplace.cmake)
+    set(out ${python_tkinter})
+    set(in ${python_tkinter})
+
+    ExternalProject_Add(${proj}
+      DEPENDS ${python_DEPENDS}
+      SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
+      SOURCE_DIR python-build
+      UPDATE_COMMAND ""
+      PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script}
+      CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
+      BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
+      BUILD_IN_SOURCE 1
+      INSTALL_COMMAND ""
     )
 
-  ExternalProject_Add_Step(${proj} CopyPythonLib
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib 
-    DEPENDEES install
-    )
-  ExternalProject_Add_Step(${proj} Copy_socketPyd
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_socket.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_socket.pyd 
-    DEPENDEES install
-    )
-  ExternalProject_Add_Step(${proj} Copy_ctypesPyd
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
-    DEPENDEES install
-    )
-    
-  ExternalProject_Add_Step(${proj} CopyPythonDll
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
-    DEPENDEES install
-    )
+    # this must match the version of tcl we are building for slicer.
+    ExternalProject_Add_Step(${proj} Patch_tcltk_version
+      COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
+      DEPENDEES configure
+      DEPENDERS build
+      )
+
+    ExternalProject_Add_Step(${proj} Build_make_versioninfo
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
+      DEPENDEES configure
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_make_buildinfo
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_buildinfo
+      DEPENDEES Build_make_versioninfo
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_kill_python
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project kill_python
+      DEPENDEES Build_kill_python
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_w9xpopen
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project w9xpopen
+      DEPENDEES Build_kill_python
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_pythoncore
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythoncore
+      DEPENDEES Build_w9xpopen
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__socket
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
+      DEPENDEES Build_pythoncore
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__tkinter
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
+      DEPENDEES Build__socket
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__testcapi
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
+      DEPENDEES Build__tkinter
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__msi
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _msi
+      DEPENDEES Build__testcapi
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__elementtree
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _elementtree
+      DEPENDEES Build__msi
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__ctypes_test
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes_test
+      DEPENDEES Build__elementtree
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__ctypes
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes
+      DEPENDEES python_sln
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_winsound
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project winsound
+      DEPENDEES Build__ctypes
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_pyexpat
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pyexpat
+      DEPENDEES Build_winsound
+      )
+      
+    ExternalProject_Add_Step(${proj} Build_pythonw
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythonw
+      DEPENDEES Build_pyexpat
+      )
+      
+    ExternalProject_Add_Step(${proj} Build__multiprocessing
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
+      DEPENDEES Build_pythonw
+      )
+
+    ExternalProject_Add_Step(${proj} CopyPythonLib
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib 
+      DEPENDEES install
+      )
+    ExternalProject_Add_Step(${proj} Copy_socketPyd
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_socket.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_socket.pyd 
+      DEPENDEES install
+      )
+    ExternalProject_Add_Step(${proj} Copy_ctypesPyd
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
+      DEPENDEES install
+      )
+      
+    ExternalProject_Add_Step(${proj} CopyPythonDll
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
+      DEPENDEES install
+      )
   elseif(APPLE)
     set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
     set(python_BUILD_IN_SOURCE 1)
@@ -427,14 +525,14 @@ if(Slicer3_USE_PYTHON)
     set(python_INSTALL make install)
 
     ExternalProject_Add(${proj}
-      DEPENDS tcl tk
+      DEPENDS ${python_DEPENDS}
       SVN_REPOSITORY ${python_SVN}
       SOURCE_DIR python
       BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
       CONFIGURE_COMMAND ${python_CONFIGURE}
       BUILD_COMMAND ${python_BUILD}
       INSTALL_COMMAND ${python_INSTALL}
-    )
+      )
 #  if { $isDarwin } {
 #            # Special Slicer hack to build and install the .dylib
 #            file mkdir $::Slicer3_LIB/python-build/lib/
@@ -458,18 +556,80 @@ if(Slicer3_USE_PYTHON)
     set(python_INSTALL make install)
 
     ExternalProject_Add(${proj}
-      DEPENDS tcl tk
+      DEPENDS ${python_DEPENDS}
       SVN_REPOSITORY ${python_SVN}
       SOURCE_DIR python
       BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
       CONFIGURE_COMMAND ${python_CONFIGURE}
       BUILD_COMMAND ${python_BUILD}
       INSTALL_COMMAND ${python_INSTALL}
-    )
+      )
   endif()
   
+endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+
+#-----------------------------------------------------------------------------
+# Set vtk_PYTHON_ARGS, slicer_PYTHON_INCLUDE and slicer_PYTHON_LIBRARY variables
+#
+
+set(vtk_PYTHON_ARGS)
+set(slicer_PYTHON_INCLUDE)
+set(slicer_PYTHON_LIBRARY)
+
+if(WIN32)
+  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/Python-build/Include)
+  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/Python-build/PCbuild/python26.lib)
+elseif(APPLE)
+  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
+  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.dylib)
+else()
+  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
+  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.so)
+endif()
+
+if(Slicer3_USE_PYTHON)
+  set(vtk_PYTHON_ARGS
+    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    )
 endif(Slicer3_USE_PYTHON)
 
+#-----------------------------------------------------------------------------
+# PythonQT
+#
+
+if(Slicer3_USE_PYTHONQT)
+  set(proj PythonQt)
+
+  find_program(Slicer3_PATCH_EXECUTABLE patch
+         "C:/Program Files/GnuWin32/bin"
+         "C:/Program Files (x86)/GnuWin32/bin")
+  mark_as_advanced(Slicer3_PATCH_EXECUTABLE)
+  if (NOT Slicer3_PATCH_EXECUTABLE)
+    message(FATAL_ERROR "Building PythonQt requires a patch program.  Please set Slicer3_PATCH_EXECUTABLE!")
+  endif()
+
+  set(pythonqt_src_dir "${CMAKE_CURRENT_BINARY_DIR}/${proj}")
+  set(pythonqt_patches_dir "${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/PythonQt")
+  set(pythonqt_patch_script "${CMAKE_CURRENT_BINARY_DIR}/Slicer3-build/CMake/Slicer3PatchPythonQt.cmake")
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../CMake/Slicer3PatchPythonQt.cmake.in ${pythonqt_patch_script} @ONLY)
+
+  ExternalProject_Add(${proj}
+    DEPENDS python
+    SVN_REPOSITORY "https://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
+    SOURCE_DIR PythonQt
+    PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patch_script}
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      #-DCMAKE_INSTALL_PREFIX:PATH=${prefix}
+      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      ${vtk_PYTHON_ARGS}
+    INSTALL_COMMAND "")
+      
+endif(Slicer3_USE_PYTHONQT)
+
+#-----------------------------------------------------------------------------
 # Get and build netlib (blas and lapack)
 
 if(CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY)
@@ -509,6 +669,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build numpy and scipy
 
 #set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.2.x"
@@ -552,6 +713,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
 
 set(proj scipy)
@@ -567,29 +729,9 @@ ExternalProject_Add(${proj}
 
 endif() # CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY
 
-# Get and build vtk
-
-# TODO
-# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT OFF
-#       -> configure VTK with VTK_WRAP_TCL ON, VTK_WRAP_PYTHON OFF (and slicer default VTK options)
+#-----------------------------------------------------------------------------
+# Get and build VTK
 #
-# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT ON 
-#       -> configure VTK with VTK_WRAP_TCL ON,
-#                             VTK_WRAP_PYTHON OFF
-#                             DESIRED_QT_VERSION 4
-#                             VTK_USE_GUISUPPORT ON
-#                             VTK_USE_QVTK ON
-#                             VTK_USE_QVTK_QTOPENGL OFF (should be OFF by default)
-#                             (and slicer default VTK options)
-#
-# - If Slicer3_USE_KWWIDGETS ON and Slicer3_USE_QT ON 
-#       -> configure VTK with VTK_WRAP_TCL OFF,
-#                             VTK_WRAP_PYTHON ON
-#                             DESIRED_QT_VERSION 4
-#                             VTK_USE_GUISUPPORT ON
-#                             VTK_USE_QVTK ON
-#                             VTK_USE_QVTK_QTOPENGL OFF (should be OFF by default)
-#                             (and slicer default VTK options)
 
 set(proj VTK)
 set(vtk_tag VTK-5-4)
@@ -598,11 +740,17 @@ set(vtk_source ${CMAKE_BINARY_DIR}/VTK)
 
 set(vtk_DEPENDS)
 set(vtk_WRAP_TCL OFF)
+set(vtk_WRAP_PYTHON OFF)
 
 if(Slicer3_USE_KWWIDGETS)
   list(APPEND vtk_DEPENDS iwidgets)
   set(vtk_WRAP_TCL ON)
 endif(Slicer3_USE_KWWIDGETS)
+
+if (Slicer3_USE_PYTHONQT)
+  set(vtk_WRAP_PYTHON ON)
+  list(APPEND vtk_DEPENDS python)
+endif(Slicer3_USE_PYTHONQT)
 
 set(vtk_QT_ARGS)
 if(Slicer3_USE_QT)
@@ -617,7 +765,7 @@ endif(Slicer3_USE_QT)
 set(slicer_TCL_LIB)
 set(slicer_TK_LIB)
 set(slicer_TCLSH)
-
+set(vtk_TCL_ARGS)
 if(vtk_WRAP_TCL)
   if(WIN32)
     set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tcl84.lib)
@@ -632,6 +780,13 @@ if(vtk_WRAP_TCL)
     set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.so)
     set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
   endif()
+  set(vtk_TCL_ARGS
+    -DTCL_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
+    -DTK_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
+    -DTCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
+    -DTK_LIBRARY:FILEPATH=${slicer_TK_LIB}
+    -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
+    )
 endif(vtk_WRAP_TCL)
 
 #set ::TCL_BIN_DIR $::Slicer3_LIB/tcl-build/bin
@@ -656,45 +811,47 @@ ExternalProject_Add(vtk
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=OFF
-    -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
     -DVTK_USE_PARALLEL:BOOL=ON
     -DVTK_DEBUG_LEAKS:BOOL=ON
-    -DTCL_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
-    -DTK_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
-    -DTCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
-    -DTK_LIBRARY:FILEPATH=${slicer_TK_LIB}
-    -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
+    -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
+    ${vtk_TCL_ARGS}
+    -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
+    ${vtk_PYTHON_ARGS}
     ${vtk_QT_ARGS}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build kwwidgets
 
-set(proj KWWidgets)
-set(kwwidgets_tag Slicer-3-4)
+if(Slicer3_USE_KWWIDGETS)
+  set(proj KWWidgets)
+  set(kwwidgets_tag Slicer-3-4)
 
-ExternalProject_Add(${proj}
-  DEPENDS vtk
-  CVS_REPOSITORY ":pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets"
-  CVS_MODULE "KWWidgets"
-  CVS_TAG -r ${kwwidgets_tag}
-  SOURCE_DIR KWWidgets
-  BINARY_DIR KWWidgets-build
-  CMAKE_GENERATOR ${gen}
-  CMAKE_ARGS
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
-    -DBUILD_SHARED_LIBS:BOOL=ON
-    -DCMAKE_SKIP_RPATH:BOOL=ON
-    -DBUILD_EXAMPLES:BOOL=OFF
-    -DKWWidgets_BUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_TESTING:BOOL=OFF
-    -DKWWidgets_BUILD_TESTING:BOOL=OFF
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-  INSTALL_COMMAND ""
-)
+  ExternalProject_Add(${proj}
+    DEPENDS vtk
+    CVS_REPOSITORY ":pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets"
+    CVS_MODULE "KWWidgets"
+    CVS_TAG -r ${kwwidgets_tag}
+    SOURCE_DIR KWWidgets
+    BINARY_DIR KWWidgets-build
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+      -DBUILD_SHARED_LIBS:BOOL=ON
+      -DCMAKE_SKIP_RPATH:BOOL=ON
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DKWWidgets_BUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
+      -DKWWidgets_BUILD_TESTING:BOOL=OFF
+      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    INSTALL_COMMAND ""
+  )
+endif(Slicer3_USE_KWWIDGETS)
 
+#-----------------------------------------------------------------------------
 # Get and build itk
 
 set(proj Insight)
@@ -726,6 +883,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build teem
 
 set(proj teem)
@@ -777,6 +935,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build OpenIGTLink 
 
 #set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
@@ -802,6 +961,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build BatchMake
 
 #set ::BatchMake_TAG "HEAD"
@@ -828,6 +988,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # Get and build SLICERLIBCURL (slicerlibcurl)
 
 #set ::SLICERLIBCURL_TAG "HEAD"
@@ -850,6 +1011,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
 )
 
+#-----------------------------------------------------------------------------
 # build the slicer
 # - first run cmake
 # - create the Slicer3Version.txt file
@@ -857,45 +1019,39 @@ ExternalProject_Add(${proj}
 
 set(proj Slicer3)
 
-set(slicer_PYTHON_INCLUDE)
-set(slicer_PYTHON_LIBRARY)
-set(slicer_DEPENDS tcl tk itcl teem OpenIGTLink BatchMake vtk Insight)
+set(slicer_DEPENDS teem OpenIGTLink BatchMake vtk Insight)
 
+# For now, tk and itcl are used only when Slicer3_USE_KWWIDGETS is ON
 if(Slicer3_USE_KWWIDGETS)
-  list(APPEND slicer_DEPENDS KWWidgets)
+  list(APPEND slicer_DEPENDS tcl tk itcl KWWidgets)
 endif(Slicer3_USE_KWWIDGETS)
-
-set(slicer_PYTHON_ARGS)
-if(Slicer3_USE_PYTHON)
-  list(APPEND slicer_DEPENDS python)
-  set(slicer_PYTHON_ARGS
-    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
-    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
-    )
-endif(Slicer3_USE_PYTHON)
 
 if(CMAKE_Fortran_COMPILER)
   list(APPEND slicer_DEPENDS numpy blas lapack)
 endif(CMAKE_Fortran_COMPILER)
 
-if(WIN32)
-  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/Python-build/Include)
-  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/Python-build/PCbuild/python26.lib)
-elseif(APPLE)
-  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
-  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.dylib)
-else()
-  set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
-  set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.so)
-endif()
-
 set(slicer_QT_ARGS)
 if(Slicer3_USE_QT)
   set(slicer_QT_ARGS
-    -DSlicer3_USE_QT:BOOL=ON
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    -DVTK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/VTK-build
     )
 endif(Slicer3_USE_QT)
+
+if(Slicer3_USE_PYTHON)
+  list(APPEND slicer_DEPENDS python)
+endif(Slicer3_USE_PYTHON)
+
+if (Slicer3_USE_PYTHONQT)
+  list(APPEND slicer_DEPENDS PythonQt)
+endif(Slicer3_USE_PYTHONQT)
+
+set(slicer_KWWIDGETS_ARGS)
+if(Slicer3_USE_KWWIDGETS)
+  set(slicer_KWWIDGETS_ARGS
+    -DKWWidgets_DIR:FILEPATH=${CMAKE_BINARY_DIR}/KWWidgets-build
+    )
+endif(Slicer3_USE_KWWIDGETS)
 
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDS}
@@ -904,29 +1060,30 @@ ExternalProject_Add(${proj}
   BINARY_DIR Slicer3-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
 #    -DCMAKE_INSTALL_PREFIX:PATH=${prefix
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DVTK_DEBUG_LEAKS:BOOL=ON
     -DBUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DBUILD_TESTING:BOOL=ON
     -DITK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/Insight-build
-    -DKWWidgets_DIR:FILEPATH=${CMAKE_BINARY_DIR}/KWWidgets-build
     -DTeem_DIR:FILEPATH=${CMAKE_BINARY_DIR}/teem-build
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
     -DBatchMake_DIR:FILEPATH=${CMAKE_BINARY_DIR}/BatchMake-build
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
+    -DSlicer3_USE_OPENIGTLINK:BOOL=ON
+    -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
-    -DSlicer3_USE_OPENIGTLINK:BOOL=ON
-    -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build 
-    ${slicer_PYTHON_ARGS}
+    ${vtk_PYTHON_ARGS}
+    -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
     ${slicer_QT_ARGS}
+    -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
+    ${slicer_KWWIDGETS_ARGS}
   INSTALL_COMMAND ""
 )
