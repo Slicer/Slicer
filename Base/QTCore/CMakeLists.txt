@@ -14,6 +14,7 @@ SET(slicer_qtbase_include_directories
   ${ModuleDescriptionParser_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
   ${MRMLCLI_BINARY_DIR}
+  ${qCTKWidgets_PYTHONQT_INCLUDE_DIR}
   )
   
 # Source files
@@ -36,7 +37,13 @@ SET(slicer_qtbase_SRCS
 SET(slicer_qtbase_MOC_SRCS
   qSlicerCoreApplication.h
   qSlicerModuleManager.h
+  ${slicer_qtbase_pythonqt_MOC_SRCS}
   )
+
+# PythonQt decorator
+IF(Slicer3_USE_PYTHONQT)
+  SET(slicer_qtbase_MOC_SRCS ${slicer_qtbase_MOC_SRCS} qSlicerBaseQTBasePythonQtDecorators.h)
+ENDIF(Slicer3_USE_PYTHONQT)
 
 # UI files
 #SET(slicer_qtbase_UI_SRCS)
@@ -46,12 +53,31 @@ SET(slicer_qtbase_target_libraries
   ModuleDescriptionParser
   MRMLCLI
   qSlicerBaseQTBase
+  ${qCTKWidgets_PYTHONQT_LIBRARIES}
   )
 
 # Resources
 SET(qt_module_resources
   Resources/qSlicerBaseQTCore.qrc
 )
+
+# Python wrap 
+IF(Slicer3_USE_PYTHONQT)
+
+  # Sources
+  SET(slicer_qtbase_SRCS
+    ${slicer_qtbase_SRCS}
+    qSlicerPythonManager.cxx
+    qSlicerPythonManager.h
+    )
+
+  # Headers that should run through moc
+  SET(slicer_qtbase_MOC_SRCS
+    ${slicer_qtbase_MOC_SRCS}
+    qSlicerPythonManager.h
+    )
+    
+ENDIF(Slicer3_USE_PYTHONQT)
 
 Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}

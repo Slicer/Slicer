@@ -73,3 +73,7 @@
 #else
 #define SlicerQDebug(_arg)
 #endif
+
+// Library sub-directory
+#define VTK_DIR "@VTK_DIR@"
+//#define Teem_DIR "@Teem_DIR@"
