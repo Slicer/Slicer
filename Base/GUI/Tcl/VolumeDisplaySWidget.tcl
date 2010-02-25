@@ -138,6 +138,7 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
       set _startLevel [$displayNode GetLevel]
       $displayNode SetAutoWindowLevel 0
       $::slicer3::MRMLScene SaveStateForUndo $displayNode
+      $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
     }
     "MouseMoveEvent" {
       switch $_actionState {
@@ -156,6 +157,7 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           $displayNode SetDisableModifiedEvent 0
           $displayNode InvokePendingModifiedEvent
           [$sliceGUI GetSliceViewer] RequestRender
+          $this statusText "Window/Level: $window/$level for [$_layers(background,node) GetName]"
         }
       }
     }
@@ -164,6 +166,7 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGrabID ""
       set _description ""
       $_renderWidget CornerAnnotationVisibilityOn
+      $this statusText ""
     }
   }
 
