@@ -312,11 +312,11 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
     "over" {
       # when mouse is over us, we pay attention to the
       # event and tell others not to look at it
+      $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
       switch $event {
         "LeftButtonPressEvent" {
           set _actionState "dragging"
-          $sliceGUI SetGrabID $this
         }
         "MouseMoveEvent" {
           switch $_actionState {

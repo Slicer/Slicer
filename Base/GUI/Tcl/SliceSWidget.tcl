@@ -132,6 +132,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
+
   lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
   set gridSWidget [GridSWidget #auto $sliceGUI]
   $gridSWidget configure -layer "label"
@@ -139,6 +140,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
   lappend _swidgets [RegionsSWidget #auto $sliceGUI]
   lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
+  lappend _swidgets [VolumeDisplaySWidget #auto $sliceGUI]
 
 }
 

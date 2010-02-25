@@ -10,6 +10,7 @@ package ifneeded SlicerBaseGUITcl 3.0 [list
   source [file join $dir CrosshairSWidget.tcl]
   source [file join $dir RegionsSWidget.tcl]
   source [file join $dir SlicePlaneSWidget.tcl]
+  source [file join $dir VolumeDisplaySWidget.tcl]
   source [file join $dir ModelSWidget.tcl]
   source [file join $dir RulerSWidget.tcl]
   source [file join $dir Slicer2Import.tcl]
