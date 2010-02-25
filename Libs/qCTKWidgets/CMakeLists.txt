@@ -15,6 +15,27 @@ ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 INCLUDE(CMake/qCTKParseArgumentsMacro.cmake)
 INCLUDE(CMake/qCTKDesignerPluginMacros.cmake)
 
+# CMake module
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qCTKWidgets_SOURCE_DIR}/CMake")
+
+#-----------------------------------------------------------------------------
+# Python wrapping using PythonQT
+# If qCTKWidgets_WRAP_PYTHON is ON, PythonQT wrapping will be enabled
+#
+
+IF(qCTKWidgets_WRAP_PYTHON)
+  FIND_PACKAGE(PythonQt)
+  IF(PYTHONQT_FOUND)
+    SET(qCTKWidgets_PYTHONQT_INCLUDE_DIR "${PYTHONQT_INCLUDE_DIR}")
+    SET(qCTKWidgets_PYTHONQT_LIBRARIES ${PYTHONQT_LIBRARIES} ${PYTHON_LIBRARY})
+  ELSE(PYTHONQT_FOUND)
+    MESSAGE(SEND_ERROR "PythonQt not found.  Please set the required paths or disable qCTKWidgets_WRAP_PYTHON.")
+  ENDIF(PYTHONQT_FOUND)
+ENDIF(qCTKWidgets_WRAP_PYTHON)
+SET(qCTKWidgets_WRAP_PYTHON ${qCTKWidgets_WRAP_PYTHON} CACHE INTERNAL "qCTKWidgets wrap python flag" FORCE)
+SET(qCTKWidgets_PYTHONQT_INCLUDE_DIR ${qCTKWidgets_PYTHONQT_INCLUDE_DIR} CACHE INTERNAL "qCTKWidgets pythonQt includes" FORCE)
+SET(qCTKWidgets_PYTHONQT_LIBRARIES ${qCTKWidgets_PYTHONQT_LIBRARIES} CACHE INTERNAL "qCTKWidgets pythonQt libraries" FORCE)
+
 #-----------------------------------------------------------------------------
 # Sources
 #
@@ -102,6 +123,27 @@ SET(qCTKWidgets_UI_SRCS
   Resources/UI/qCTKAddRemoveComboBox.ui
   Resources/UI/qCTKSliderSpinBoxWidget.ui
 )
+
+# Python wrap 
+IF(qCTKWidgets_WRAP_PYTHON)
+
+  # Sources
+  SET(qCTKWidgets_SRCS
+    ${qCTKWidgets_SRCS}
+    qCTKAbstractPythonManager.cxx
+    qCTKAbstractPythonManager.h
+    qCTKPythonShell.cxx
+    qCTKPythonShell.h
+    )
+
+  # Headers that should run through moc
+  SET(qCTKWidgets_MOC_SRCS
+    ${qCTKWidgets_MOC_SRCS}
+    qCTKAbstractPythonManager.h
+    qCTKPythonShell.h
+    )
+    
+ENDIF(qCTKWidgets_WRAP_PYTHON)
   
 QT4_WRAP_CPP(qCTKWidgets_SRCS ${qCTKWidgets_MOC_SRCS})
 QT4_WRAP_UI(qCTKWidgets_UI_CXX ${qCTKWidgets_UI_SRCS})
@@ -114,6 +156,7 @@ QT4_ADD_RESOURCES(qCTKWidgets_QRC_SRCS Resources/qCTKWidgets.qrc)
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${qCTKWidgets_PYTHONQT_INCLUDE_DIR}
   )
 
 SET(QT_INCLUDE_DIRS
@@ -152,6 +195,7 @@ SET(QT_LIBRARIES
   
 SET(qCTKWidgets_LIBRARIES
   ${QT_LIBRARIES}
+  ${qCTKWidgets_PYTHONQT_LIBRARIES}
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qCTKWidgets_LIBRARIES})
