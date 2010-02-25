@@ -484,8 +484,6 @@ protected:
   
   bool InUndo;
 
-  bool LoadingScene;
-
   //BTX
   std::list< vtkCollection* >  UndoStack;
   std::list< vtkCollection* >  RedoStack;

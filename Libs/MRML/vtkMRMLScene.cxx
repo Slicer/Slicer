@@ -104,7 +104,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->UndoStackSize = 100;
   this->UndoFlag = true;
   this->InUndo = false;
-  this->LoadingScene = false;
 
   this->ReferencedIDs.clear() ;
   this->ReferencingNodes.clear();
@@ -704,7 +703,6 @@ int vtkMRMLScene::Import()
   int n;
 
   this->SetUndoOff();
-  this->LoadingScene = true;
   this->SetIsClosed(true);
   this->ClearReferencedNodeID();
 
@@ -777,7 +775,6 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
-  this->LoadingScene = false;
   this->SetIsClosed(false);
 
   this->InvokeEvent(this->SceneLoadEndEvent, NULL);
@@ -1767,7 +1764,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (this->LoadingScene)
+  if (this->IsClosed)
     {
     return;
     }
@@ -1788,7 +1785,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     {
     return;
     }
-  if (this->LoadingScene)
+  if (this->IsClosed)
     {
     return;
     }
@@ -1815,7 +1812,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     return;
     }
 
-  if (this->LoadingScene)
+  if (this->IsClosed)
     {
     return;
     }
@@ -1844,7 +1841,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
-  if (this->LoadingScene)
+  if (this->IsClosed)
     {
     return;
     }
