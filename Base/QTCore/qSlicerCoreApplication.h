@@ -115,6 +115,10 @@ public:
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;
 
+  ///
+  /// Return true is this instance of Slicer is running from an installed directory
+  bool isInstalled();
+
   /// 
   /// Get the module manager
   qSlicerModuleManager* moduleManager()const;

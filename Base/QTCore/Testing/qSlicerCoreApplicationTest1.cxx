@@ -101,6 +101,13 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  bool isInstalled = app.isInstalled();
+  if (isInstalled)
+    {
+    std::cerr << "Problem with isInstalled()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // Since initialize has been called, the module manager should be available
   qSlicerModuleManager * moduleManager1 = app.moduleManager();
   

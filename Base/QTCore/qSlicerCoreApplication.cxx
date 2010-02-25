@@ -473,6 +473,15 @@ void qSlicerCoreApplication::clearSettings()
 //-----------------------------------------------------------------------------
 QCTK_GET_CXX(qSlicerCoreApplication, QString, intDir, IntDir);
 
+//-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::isInstalled()
+{
+#ifdef _WIN32
+  return QFile::exists(this->slicerHome()+"/bin/vtk.exe");
+#else
+  return QFile::exists(this->slicerHome()+"/bin/vtk");
+#endif
+}
 
 #ifdef Slicer3_USE_KWWIDGETS
 
