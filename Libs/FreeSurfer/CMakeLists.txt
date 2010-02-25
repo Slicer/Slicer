@@ -60,35 +60,30 @@ ENDIF (VTK_WRAP_TCL)
 # Build and install the library
 
 set(lib_name FreeSurfer)
-SET(srcs
-  ${FreeSurfer_SRCS} 
-  )
+SET(srcs ${FreeSurfer_SRCS})
+
 IF (VTK_WRAP_TCL)
-  SET(srcs
-    ${srcs}
-    ${FreeSurfer_TCL_SRCS}
-    )
+  SET(srcs ${srcs} ${FreeSurfer_TCL_SRCS} )
 ENDIF (VTK_WRAP_TCL)
-add_library(${lib_name} 
-  ${srcs}
+
+add_library(${lib_name} ${srcs})
+
+SET(VTK_LIBRARIES
+  vtkCommon
+  vtkIO
+  )
+  
+SET(libs
+  ${VTK_LIBRARIES}
   )
 
-SET(libs
-  )
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
+
 IF (VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkIOTCL
-    )
-ELSE(VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkCommon
-    )
-ENDIF (VTK_WRAP_TCL)
-target_link_libraries(${lib_name} 
-  ${libs}
-  )
+  FOREACH(c ${VTK_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name} ${c}TCL)
+  ENDFOREACH(c)
+ENDIF()
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
@@ -102,6 +97,39 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )
+
+# --------------------------------------------------------------------------
+# Create Python wrappers if VTK is wrapped in Python
+#
+
+IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
+
+  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${FreeSurfer_SRCS}")
+  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+  
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  
+  FOREACH(c ${KIT_PYTHON_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
+  ENDFOREACH(c)
+
+  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+
+  ## Python modules on Windows must have the extension ".pyd"
+  IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
+  ENDIF(WIN32 AND NOT CYGWIN)
+
+  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+
+ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
 # --------------------------------------------------------------------------
 # Install support files
