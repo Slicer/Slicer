@@ -130,6 +130,7 @@ if { [itcl::find class LoadVolume] == "" } {
     method status { message } {}
     method errorDialog {errorText} {}
     method yesNoDialog {yesNoText} {}
+    method progressDialog { {message "Working..."} } {}
     method loadDICOMDictionary {} {}
     method parseDICOMHeader {fileName arrayName} {}
     method populateDICOMTable {fileName} {}
@@ -976,6 +977,28 @@ itcl::body LoadVolume::yesNoDialog { yesNoText } {
   return $response
 }
 
+# this creates a progress dialog that needs to be managed and deleted by the caller
+itcl::body LoadVolume::progressDialog { {message "Working..."} } {
+
+  set progressDialog [vtkKWProgressDialog New]
+  if { [info exists o(toplevel)] } {
+    set parent $o(toplevel)
+  } else {
+    set parent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  }
+  $progressDialog SetParent $parent
+  $progressDialog SetMasterWindow $parent
+  $progressDialog SetTitle "Progress"
+  $progressDialog SetMessageText $message
+  $progressDialog SetDisplayPositionToMasterWindowCenter
+  $progressDialog Create
+  $progressDialog SetSize 300 75
+  $progressDialog ModalOn
+  $progressDialog Display
+
+  return $progressDialog
+}
+
 itcl::body LoadVolume::status { message } {
   $o(status) SetText $message
 }
@@ -1103,6 +1126,10 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
   set ret [catch "$o(reader) UpdateInformation" res]
   if { $ret } {
     # this isn't a file we can read
+    puts "Can't read file $fileName"
+    puts $res
+    # need to create a fresh reader because InAlgorithm state is not updated by vtkExecutive on error
+    set o(reader) [vtkNew vtkITKArchetypeImageSeriesReader]
     return
   }
 
@@ -1190,16 +1217,9 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
 
   upvar $arrayName tree
 
-  set progressDialog [vtkKWProgressDialog New]
-  $progressDialog SetParent $o(toplevel)
-  $progressDialog SetMasterWindow $o(toplevel)
+  set progressDialog [$this progressDialog]
   $progressDialog SetTitle "Parsing DICOM Files in $directoryName..."
   $progressDialog SetMessageText "Starting..."
-  $progressDialog SetDisplayPositionToMasterWindowCenter
-  $progressDialog Create
-  $progressDialog SetSize 300 75
-  $progressDialog ModalOn
-  $progressDialog Display
 
   set PATIENT "0010|0010"
   set STUDY "0008|1030"
