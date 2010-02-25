@@ -85,6 +85,8 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   
   this->GPURaycastTechniqueII = 0;
   this->GPURaycastTechniqueIIFg = 0;
+
+  this->GPURaycastTechnique3 = 0;
   
   this->CroppingEnabled = 0;//by default cropping is not enabled
   
@@ -264,6 +266,13 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->GPURaycastIIFusion;
       continue;
     }
+    if (!strcmp(attName,"gpuRaycastTechnique3"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->GPURaycastTechnique3;
+      continue;
+    }
     if (!strcmp(attName,"threshold"))
     {
       std::stringstream ss;
@@ -320,6 +329,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " gpuRaycastTechniqueII=\"" << this->GPURaycastTechniqueII << "\"";
   of << indent << " gpuRaycastTechniqueIIFg=\"" << this->GPURaycastTechniqueIIFg << "\"";
   of << indent << " gpuRaycastIIFusion=\"" << this->GPURaycastIIFusion << "\"";
+  of << indent << " gpuRaycastTechnique3=\"" << this->GPURaycastTechnique3 << "\"";
   of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
   of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
   of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
@@ -406,6 +416,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetGPURaycastTechnique(node->GetGPURaycastTechnique());
   this->SetGPURaycastTechniqueII(node->GetGPURaycastTechniqueII());
   this->SetGPURaycastTechniqueIIFg(node->GetGPURaycastTechniqueIIFg());
+  this->SetGPURaycastTechnique3(node->GetGPURaycastTechnique3());
   this->SetThreshold(node->GetThreshold());
   this->SetUseThreshold(node->GetUseThreshold());
   this->SetThresholdFg(node->GetThresholdFg());

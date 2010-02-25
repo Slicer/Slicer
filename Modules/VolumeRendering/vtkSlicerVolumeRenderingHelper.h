@@ -87,6 +87,7 @@ public:
     void ProcessGPURayCastTechnique(int id);
     void ProcessGPURayCastTechniqueII(int id);
     void ProcessGPURayCastTechniqueIIFg(int id);
+    void ProcessGPURayCastTechnique3(int id);
 
     // Description:
     // Callback, that is processed when the multi-volume rendering fusion method is changed
@@ -165,6 +166,7 @@ protected:
     vtkKWFrameWithLabel *FrameTechniques;
     vtkKWFrameWithLabel *FrameGPURayCasting;
     vtkKWFrameWithLabel *FrameGPURayCastingII;
+    vtkKWFrameWithLabel *FrameGPURayCasting3;
     vtkKWFrameWithLabel *FramePolygonBlending;
     vtkKWFrameWithLabel *FrameCPURayCasting;
     vtkKWFrameWithLabel *FrameFPS;
@@ -187,6 +189,7 @@ protected:
 
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueII;
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueIIFg;
+    vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique3;
 
     // Description:
     // Menu button to select color/opacity fusion method in multi-volume rendering

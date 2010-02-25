@@ -170,6 +170,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (GPURaycastIIFusion, int);
   vtkSetMacro (GPURaycastIIFusion, int);
 
+  vtkGetMacro (GPURaycastTechnique3, int);
+  vtkSetMacro (GPURaycastTechnique3, int);
+
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
 
@@ -224,7 +227,7 @@ protected:
    * 1: GPU ray cast
    * 2: GPU ray cast II
    * 3: GPU texture mapping
-   * 4: CUDA ray cast
+   * 4: VTK GPU ray cast
    */
   int CurrentVolumeMapper;
 
@@ -288,6 +291,13 @@ protected:
    * 2: Alpha Blending NOT
    * */
   int GPURaycastIIFusion;
+
+  /* techniques in GPU ray cast 3
+   * 0: composite (default)
+   * 2: MIP
+   * 3: MINIP
+   * */
+  int GPURaycastTechnique3;
 
   double Threshold[2];
   double ThresholdFg[2];

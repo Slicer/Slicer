@@ -29,6 +29,7 @@
 #cmakedefine Slicer3_USE_OPENTRACKER
 #cmakedefine Slicer3_USE_QT
 #cmakedefine Slicer3_USE_KWWIDGETS
+#cmakedefine Slicer3_USE_CVS_HEAD
 
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
 

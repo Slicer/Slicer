@@ -13,6 +13,7 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkSlicerGPURayCastVolumeMapper;
+class vtkGPUVolumeRayCastMapper;
 
 class vtkKWHistogramSet;
 
@@ -79,6 +80,7 @@ public:
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetGPURaycast3Parameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
@@ -89,6 +91,9 @@ public:
   void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void TransformModified(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
@@ -127,6 +132,10 @@ protected:
   vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
 
   // Description:
+  // The gpu ray cast mapper.
+  vtkGPUVolumeRayCastMapper *MapperGPURaycast3;
+
+  // Description:
   // Actor used for Volume Rendering
   vtkVolume *Volume;
 
@@ -141,6 +150,9 @@ protected:
   vtkCommand* GUICallback;
 
   vtkVolumeProperty *VolumePropertyGPURaycastII;
+
+  //vtkVolumeProperty *VolumePropertyGPURaycast3;
+
 
 protected:
   void ComputeInternalVolumeSize(int index);

@@ -79,6 +79,8 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->MB_GPURayCastTechniqueII = NULL;
   this->MB_GPURayCastTechniqueIIFg = NULL;
 
+  this->MB_GPURayCastTechnique3 = NULL;
+
   this->SC_GPURayCastDepthPeelingThreshold = NULL;
   this->SC_GPURayCastICPEkt = NULL;
   this->SC_GPURayCastICPEks = NULL;
@@ -430,7 +432,31 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastIIFgBgRatio->GetWidgetName() );
   }
+  //GPU ray casting 3
+  {
+    this->FrameGPURayCasting3 = vtkKWFrameWithLabel::New();
+    this->FrameGPURayCasting3->SetParent(this->FrameTechniques->GetFrame());
+    this->FrameGPURayCasting3->Create();
+    this->FrameGPURayCasting3->AllowFrameToCollapseOff();
+    this->FrameGPURayCasting3->SetLabelText("VTK GPU Ray Casting");
+    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCasting3->GetWidgetName() );
 
+    //set technique
+    this->MB_GPURayCastTechnique3 = vtkKWMenuButtonWithLabel::New();
+    this->MB_GPURayCastTechnique3->SetParent(this->FrameGPURayCasting3->GetFrame());
+    this->MB_GPURayCastTechnique3->SetLabelText("Technique (bg):");
+    this->MB_GPURayCastTechnique3->Create();
+    this->MB_GPURayCastTechnique3->SetLabelWidth(labelWidth);
+    this->MB_GPURayCastTechnique3->SetBalloonHelpString("Select GPU ray casting technique for bg volume");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Composite");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique3 0");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique3 1");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique3 2");
+
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique3->GetWidgetName() );
+  }
   //opengl 2D Polygon Texture 3D
   {
     this->FramePolygonBlending = vtkKWFrameWithLabel::New();
@@ -481,6 +507,13 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->MB_GPURayCastTechniqueIIFg->SetParent(NULL);
     this->MB_GPURayCastTechniqueIIFg->Delete();
     this->MB_GPURayCastTechniqueIIFg = NULL;
+  }
+
+  if(this->MB_GPURayCastTechnique3 != NULL)
+  {
+    this->MB_GPURayCastTechnique3->SetParent(NULL);
+    this->MB_GPURayCastTechnique3->Delete();
+    this->MB_GPURayCastTechnique3 = NULL;
   }
 
   if(this->SC_ExpectedFPS != NULL)
@@ -1299,6 +1332,28 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
       break;
   }
 
+  switch(vspNode->GetGPURaycastTechnique3())
+  {
+    case 0:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Composite With Shading");
+      break;
+    case 1:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Composite With Fast Psuedo Shading");
+      break;
+    case 2:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Maximum Intensity Projection");
+      break;
+    case 3:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Minimum Intensity Projection");
+      break;
+    case 4:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Gradient Magnitude Opacity Modulation");
+      break;
+    case 5:
+      this->MB_GPURayCastTechnique3->GetWidget()->SetValue("Illustrative Context Preserving Exploration");
+      break;
+  }
+
   this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10);
   this->SC_GPURayCastICPEkt->GetWidget()->SetResolution(0.01);
   this->SC_GPURayCastICPEkt->SetValue(vspNode->GetICPEScale());
@@ -1427,6 +1482,16 @@ void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechniqueIIFg(int id)
   this->Gui->RequestRender();
 }
 
+void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastTechnique3(int id)
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  vspNode->SetGPURaycastTechnique3(id);
+
+  this->Gui->GetLogic()->SetGPURaycast3Parameters(vspNode);
+  this->Gui->RequestRender();
+}
+
 void vtkSlicerVolumeRenderingHelper::ProcessGPURayCastColorOpacityFusion(int id)
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
@@ -1469,6 +1534,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
 
   this->FrameGPURayCasting->CollapseFrame();
   this->FrameGPURayCastingII->CollapseFrame();
+  this->FrameGPURayCasting3->CollapseFrame();
   this->FramePolygonBlending->CollapseFrame();
   this->FrameCPURayCasting->CollapseFrame();
 
@@ -1506,7 +1572,13 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
       this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D is not supported by your computer.");
     break;
   case 4://vtk edge gpu ray casting
-    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("VTK GPU Ray Casting is being integrated into Slicer.");
+    if (success)
+      {
+      this->FrameGPURayCasting3->ExpandFrame();
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting 3");
+      }
+    else
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting 3 is not supported by your computer.");
     break;
   }
 
@@ -1604,6 +1676,17 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
   vspNode->SetExpectedFPS(this->SC_ExpectedFPS->GetValue());
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
+
+  int numViewer = this->Gui->GetApplicationGUI()->GetNumberOfViewerWidgets();
+  for (int i = 0; i < numViewer; i++)
+    {
+    vtkSlicerViewerWidget *slicer_viewer_widget = this->Gui->GetApplicationGUI()->GetNthViewerWidget(i);
+    if (slicer_viewer_widget)
+      {
+      slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetDesiredUpdateRate (this->SC_ExpectedFPS->GetValue());
+      slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->GetInteractor()->SetDesiredUpdateRate(this->SC_ExpectedFPS->GetValue());
+      }
+    }
 
   this->Gui->RequestRender();
 }

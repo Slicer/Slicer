@@ -239,6 +239,12 @@ ELSE(Slicer3_USE_KWWIDGETS)
 ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
+# Slicer3 is built with cvs head
+#
+option(Slicer3_USE_CVS_HEAD "Slicer3 is configurated with cvs head." OFF)
+mark_as_advanced(Slicer3_USE_CVS_HEAD)
+
+#-----------------------------------------------------------------------------
 #
 # Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
 #
