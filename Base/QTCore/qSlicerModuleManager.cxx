@@ -195,7 +195,8 @@ qSlicerAbstractModule* qSlicerModuleManager::module(const QString& name)
   QCTK_D(qSlicerModuleManager);
 
   // A module should be registered when attempting to obtain it
-  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
+  // assert causes a crash on linux64 when this check fails
+//  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
   if (!d->ModuleFactoryManager.isRegistered(name))
     {
     return 0;
