@@ -134,8 +134,8 @@ if { [itcl::find class LoadVolume] == "" } {
     method loadDICOMDictionary {} {}
     method parseDICOMHeader {fileName arrayName} {}
     method populateDICOMTable {fileName} {}
-    method parseDICOMDirectory {directoryName arrayName} {}
-    method organizeDICOMSeries {arrayName} {}
+    method parseDICOMDirectory {directoryName arrayName {includeSubseries 0} } {}
+    method organizeDICOMSeries {arrayName {includeSubseries 0} {progressCmd ""} } {}
     method populateDICOMTree {directoryName arrayName} {}
     method safeNodeName {name} {}
     method saveGeometry {} {}
@@ -394,14 +394,37 @@ itcl::body LoadVolume::constructor {} {
   # parse dicom button - initially disabled, but enabled when
   # dicom file is selected
   #
+
+  set o(dicomParseFrame) [vtkNew vtkKWFrame]
+  $o(dicomParseFrame) SetParent [$o(dicomSplit) GetFrame2]
+  $o(dicomParseFrame) Create
+  pack [$o(dicomParseFrame) GetWidgetName] -side top -anchor nw -fill x -expand false
+
   set o(dicomParse) [vtkNew vtkKWPushButton]
-  $o(dicomParse) SetParent [$o(dicomSplit) GetFrame2]
+  $o(dicomParse) SetParent $o(dicomParseFrame)
   $o(dicomParse) Create
   $o(dicomParse) SetText "Parse Directory"
   $o(dicomParse) SetBalloonHelpString "Parse the current directory to select series to load as volume"
   set tag [$o(dicomParse) AddObserver ModifiedEvent "$this processEvent $o(dicomParse)"]
   lappend _observerRecords [list $o(dicomParse) $tag]
   $o(dicomParse) SetCommand $o(dicomParse) Modified
+
+  #
+  # subdivide series based on common dicom tags that indicate volume differences
+  # optional - initially disabled, but enabled when
+  # dicom file is selected
+  #
+  set o(dicomParseSubseries) [vtkNew vtkKWCheckButton]
+  $o(dicomParseSubseries) SetParent $o(dicomParseFrame)
+  $o(dicomParseSubseries) SetText "Divide Subseries"
+  $o(dicomParseSubseries) Create
+  $o(dicomParseSubseries) SetBalloonHelpString "Based on dicom header tags, create optional 'virtual' series that may map better to volumes (makes parsing slower)"
+  $o(dicomParseSubseries) SetSelectedState 0
+
+
+  pack [$o(dicomParse) GetWidgetName] -side left -anchor nw -fill x -expand true
+  pack [$o(dicomParseSubseries) GetWidgetName] -side left -anchor nw -fill x -expand true
+
 
   #
   # the listbox of dicom info
@@ -450,7 +473,7 @@ itcl::body LoadVolume::constructor {} {
   set tag [$t AddObserver AnyEvent "$this processEvent $t"]
   lappend _observerRecords [list $t $tag]
 
-  pack [$o(dicomParse) GetWidgetName] -side top -anchor w -padx 2 -pady 2 -expand false -fill none
+
   pack [$o(dicomTree) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand true -fill both
   pack [$o(dicomList) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand true -fill both
 
@@ -783,7 +806,8 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     }
     array unset _dicomTree
     array set _dicomTree ""
-    $this parseDICOMDirectory $dir _dicomTree
+    set includeSubseries [$o(dicomParseSubseries) GetSelectedState]
+    $this parseDICOMDirectory $dir _dicomTree $includeSubseries
     $this populateDICOMTree $dir _dicomTree
     return
   }
@@ -992,7 +1016,7 @@ itcl::body LoadVolume::progressDialog { {message "Working..."} } {
   $progressDialog SetMessageText $message
   $progressDialog SetDisplayPositionToMasterWindowCenter
   $progressDialog Create
-  $progressDialog SetSize 300 75
+  $progressDialog SetSize 500 75
   $progressDialog ModalOn
   $progressDialog Display
 
@@ -1213,7 +1237,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
   }
 }
 
-itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
+itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubseries 0} } {
 
   upvar $arrayName tree
 
@@ -1254,7 +1278,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
     set ff [file tail $f]
     incr fileCount
     set progress [expr pow((1. * $fileCount) / $totalFiles,2)]
-    $progressDialog SetMessageText "Examining $ff..."
+    $progressDialog SetMessageText [format %.40s "Examining $ff..."]
     $progressDialog UpdateProgress $progress
     update
 
@@ -1294,7 +1318,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
 
   $progressDialog SetMessageText "Organizing Files..."
   $progressDialog UpdateProgress $progress
-  $this organizeDICOMSeries tree
+  $this organizeDICOMSeries tree $includeSubseries "$progressDialog SetMessageText "
 
   $progressDialog SetParent ""
   $progressDialog SetMasterWindow ""
@@ -1310,7 +1334,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
 # Organize a dicom study into coherent and correctly ordered volues
 # corresponding to the series information
 #
-itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
+itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {progressCmd ""} } {
 
   upvar $arrayName tree
 
@@ -1327,22 +1351,30 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
   #  SliceLocation                  0020|1041
   # 
 
-  set subSeriesSpecs {
-    SeriesInstanceUID              0020|000E
-    ContentTime                    0008|0033
-    TriggerTime                    0018|1060
-    DiffusionGradientOrientation   0018|9089 
-    ImageOrientationPatient        0020|0037
+  if { $includeSubseries } {
+    set subseriesSpecs {
+      SeriesInstanceUID              0020|000E
+      ContentTime                    0008|0033
+      TriggerTime                    0018|1060
+      DiffusionGradientOrientation   0018|9089 
+      ImageOrientationPatient        0020|0037
+    }
+  } else {
+    set subseriesSpecs ""
   }
 
   foreach patient $tree(patients) {
     foreach study $tree($patient,studies) {
       foreach series $tree($patient,$study,series) {
+        if { $progressCmd != "" } {
+          eval $progressCmd [list "Sorting series \n$patient\n$study\n$series"]
+          update ;# TODO: this update should be in the progressCmd itself
+        }
 
         # first, look for subseries within this series
-        array unset subSeriesValues
-        array set subSeriesValues ""
-        foreach {name tag} $subSeriesSpecs {
+        array unset subseriesValues
+        array set subseriesValues ""
+        foreach {name tag} $subseriesSpecs {
           foreach f $tree($patient,$study,$series,files) {
             array set header $tree($f,header)
             if { ![info exists header($tag,value)] } {
@@ -1350,21 +1382,25 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
             } else {
               set value $header($tag,value)
             }
-            lappend subSeriesValues($name,$value,files) $f
+            lappend subseriesValues($name,$value,files) $f
           }
         }
 
 
         # second, for any specs that have more than one value, create a new
         # virtual series
-        foreach {name tag} $subSeriesSpecs {
-          set subSeries [array names subSeriesValues $name*files]
-          if { [llength $subSeries] > 1 } {
-            foreach sub $subSeries {
+        if { $progressCmd != "" } {
+          set ret [eval $progressCmd [list "Sorting sub series \n$patient\n$study\n$series"]]
+          update ;# TODO: this update should be in the progressCmd itself
+        }
+        foreach {name tag} $subseriesSpecs {
+          set subseries [array names subseriesValues $name*files]
+          if { [llength $subseries] > 1 } {
+            foreach sub $subseries {
               foreach {name value files} [split $sub ","] {}
               set newSeries "$series for $name $value"
               lappend tree($patient,$study,series) $newSeries
-              set tree($patient,$study,$newSeries,files) $subSeriesValues($sub)
+              set tree($patient,$study,$newSeries,files) $subseriesValues($sub)
             }
           }
         }
@@ -1384,9 +1420,14 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
   set POSITION "0020|0032"
   set ORIENTATION "0020|0037"
 
+  set spaceWarnings ""
   foreach patient $tree(patients) {
     foreach study $tree($patient,studies) {
       foreach series $tree($patient,$study,series) {
+        if { $progressCmd != "" } {
+          set ret [eval $progressCmd [list "Geometric analysis of \n$patient\n$study\n$series"]]
+          update ;# TODO: this update should be in the progressCmd itself
+        }
         #
         # use the first file to get the ImageOrientationPatient for the 
         # series and calculate the scan direction (assumed to be perpendicular
@@ -1441,12 +1482,15 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
             set spacingN [expr $distN - $distNminus1]
             set spaceError [expr $spacingN - $spacing0]
             if { $spaceError > $epsilon } {
-              $this errorDialog "Warning!  The images in series \"$series\" are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
+              set spaceWarnings "$spaceWarnings\nThe images in series \"$series\" are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
               break
             }
           }
         }
       }
     }
+  }
+  if { $spaceWarnings != "" } {
+    $this errorDialog $spaceWarnings
   }
 }
