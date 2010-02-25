@@ -79,19 +79,23 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 
 void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *pSliceGUI)
 {
+  // Check if we are showing this module. Trigger from the data model
+  // as opposed to the GUI (GUI reflects the current module in the
+  // ModuleNavigator). 
   bool showingModule = false;
 
-   if (this->GetApplicationGUI() 
-       && this->GetApplicationGUI()->GetApplicationToolbar()
-       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
-       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
-     {
-     if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), "Slices") == 0)
-       {
-       //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
-       showingModule = true;
-       }
-     }
+  if (this->GetMRMLScene())
+    {
+    vtkMRMLNode *nd 
+      = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLLayoutNode");
+    vtkMRMLLayoutNode *layout = vtkMRMLLayoutNode::SafeDownCast(nd);
+    
+    if (this->Built && layout && layout->GetSelectedModule()
+        && strcmp(layout->GetSelectedModule(), "Slices") == 0)
+      {
+      showingModule = true;
+      }
+    }
 
   if (showingModule)
     {
@@ -667,19 +671,21 @@ void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   if (this->GetMRMLScene() && caller == this->GetMRMLScene() && (event == vtkMRMLScene::SceneLoadEndEvent || event == vtkMRMLScene::SceneRestoredEvent))
     {
-    if (this->GetApplicationGUI() 
-        && this->GetApplicationGUI()->GetApplicationToolbar()
-        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
-        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()
-        && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() != 0)
-      {
-      if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), "Slices") == 0)
-        {
-        // std::cerr << "Rebuilding" << std::endl;
-        this->Exit();
-        this->Enter();
-        }
-      }
+    // Check the data model for the current module.  Need to be
+    // careful that Slicer fully "up" before checking. As an
+    // alternative, we could check the GUI for current module but that
+    // information is held deep in the ModuleNavigator.
+     vtkMRMLNode *nd 
+       = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLLayoutNode");
+     vtkMRMLLayoutNode *layout = vtkMRMLLayoutNode::SafeDownCast(nd);
+
+     if (this->Built && layout && layout->GetSelectedModule()
+         && strcmp(layout->GetSelectedModule(), "Slices") == 0)
+       {
+       // std::cerr << "Rebuilding" << std::endl;
+       this->Exit();
+       this->Enter();
+       }
     }
 
   this->UpdateGUI();
@@ -743,9 +749,8 @@ void vtkSlicerSlicesGUI::Enter ( )
       }
     }
 
-  // Compare views
   const char *nthname;
-  for (int i = 0; i < nSliceGUI; i++)
+  for (int i = 0;  i < nSliceGUI; i++)
     {
     nthname = this->GetNthSliceGUILayoutName(i);
 
@@ -1177,7 +1182,8 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
   (*this->InternalParameterWidgetMap)["PrescribedSpacing"]
     = prescribedSpacing;
   prescribedSpacing->Delete();
-    
+
+  this->Built = true;
 }
 
 
