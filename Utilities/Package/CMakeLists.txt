@@ -1,18 +1,20 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
 IF (VTK_WRAP_TCL)
-  if(TCL_INCLUDE_PATH)
-    get_filename_component(TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
-  else(TCL_INCLUDE_PATH)
-    set(TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
-  endif(TCL_INCLUDE_PATH)
+  if(NOT Slicer3_TCL_DIR)
+    if(TCL_INCLUDE_PATH)
+      get_filename_component(Slicer3_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
+    else(TCL_INCLUDE_PATH)
+      set(Slicer3_TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
+    endif(TCL_INCLUDE_PATH)
+  endif(NOT Slicer3_TCL_DIR)
 
-  if(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
-      NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-    message(STATUS "Not Packaging TCL (cannot found: ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
-    set(TCL_DIR "")
-  endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
-    NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+  if(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
+      NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+    message(STATUS "Not Packaging TCL (cannot found: ${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
+    set(Slicer3_TCL_DIR "")
+  endif(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
+    NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
 ENDIF (VTK_WRAP_TCL)
 
 # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
@@ -24,13 +26,13 @@ ENDIF (VTK_WRAP_TCL)
 # like /opt/tcltk8.5.0)
 
 IF (VTK_WRAP_TCL)
-  if(TCL_DIR)
+  if(Slicer3_TCL_DIR)
     install(DIRECTORY
-      ${TCL_DIR}/
+      ${Slicer3_TCL_DIR}/
       DESTINATION lib/TclTk
       USE_SOURCE_PERMISSIONS
       )
-  endif(TCL_DIR)
+  endif(Slicer3_TCL_DIR)
 ENDIF (VTK_WRAP_TCL)
 
 # In the following section we tell the packager to include libslicerlibcurl.so

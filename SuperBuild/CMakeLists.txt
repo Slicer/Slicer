@@ -175,6 +175,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # TCL
+set(tcl_build)
 if(Slicer3_USE_KWWIDGETS)
   set(proj tcl)
 
@@ -1075,6 +1076,7 @@ ExternalProject_Add(${proj}
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
+    -DSlicer3_TCL_DIR:FILEPATH=${tcl_build}
     -DSlicer3_USE_OPENIGTLINK:BOOL=ON
     -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
