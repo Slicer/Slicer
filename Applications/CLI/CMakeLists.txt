@@ -538,6 +538,21 @@ target_link_libraries (${CLP}
 include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
 #####################
+
+set (CLP MergeModels)
+
+set ( ${CLP}_SOURCE ${CLP}.cxx )
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+link_directories(${vtkITK_LIB_DIR})
+add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP}
+  vtkIO
+  vtkGraphics
+  )
+include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
+
+#####################
 set (CLP GrayscaleFillHoleImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)

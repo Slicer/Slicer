@@ -936,3 +936,22 @@ set (CLP PolyDataToLabelmap)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
+
+##################################
+# MergeModels tests
+
+add_test(MergeModelsTest ${Slicer3_EXE} --launch MergeModelsTest
+  MergeModelsTest
+    ${MRML_TEST_DATA}/sphere.vtk
+    ${MRML_TEST_DATA}/cube.vtk
+    ${TEMP}/sphereCube.vtk
+  )
+
+set (CLP MergeModels)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkIO
+  ITKIO
+  vtkGraphics
+  )
