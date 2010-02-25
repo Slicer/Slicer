@@ -72,6 +72,7 @@ void qSlicerMainWindow::setupMenuActions()
 
   qSlicerMainWindow_connect(EditRedo);
   qSlicerMainWindow_connect(EditUndo);
+  qSlicerMainWindow_connect(WindowPythonInteractor);
     
 }
 

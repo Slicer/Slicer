@@ -1,11 +1,11 @@
 #ifndef __qSlicerMainWindowCore_h
 #define __qSlicerMainWindowCore_h 
 
-// qCTK includes
-#include <qCTKPimpl.h>
-
 // QT includes
 #include <QObject>
+
+// qCTK includes
+#include <qCTKPimpl.h>
 
 #include "qSlicerQTExport.h"
 
@@ -25,6 +25,7 @@ public slots:
   // Handle actions
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();
+  void onWindowPythonInteractorActionTriggered();
   
 protected:
   qSlicerMainWindow* widget() const;

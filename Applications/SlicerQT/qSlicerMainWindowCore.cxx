@@ -1,16 +1,3 @@
-#include "qSlicerMainWindowCore.h" 
-
-#include "qSlicerMainWindowCore_p.h"
-
-// SlicerQT includes
-#include "qSlicerApplication.h"
-#include "qSlicerModulePanel.h"
-#include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerModuleManager.h"
-
-// MRML includes
-#include <vtkMRMLScene.h>
 
 // QT includes
 #include <QSignalMapper>
@@ -18,45 +5,23 @@
 #include <QAction>
 #include <QDebug>
 
-//-----------------------------------------------------------------------------
-qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Superclass(_parent)
-{
-  QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
-  QCTK_D(qSlicerMainWindowCore);
-  
-  d->ParentWidget = _parent;
+// qCTK includes
+#include <qCTKPythonShell.h>
 
-  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager); 
+// MRML includes
+#include <vtkMRMLScene.h>
 
-  this->connect(moduleManager,
-                SIGNAL(moduleLoaded(qSlicerAbstractModule*)),
-                d, SLOT(onModuleLoaded(qSlicerAbstractModule*)));
+// SlicerQT includes
+#include "qSlicerMainWindowCore.h" 
+#include "qSlicerMainWindowCore_p.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModulePanel.h"
+#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerPythonManager.h"
 
-  this->connect(moduleManager,
-                SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractModule*)),
-                d, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractModule*)));
-                 
-  QObject::connect(d->ShowModuleActionMapper,
-                SIGNAL(mapped(const QString&)),
-                this->widget()->modulePanel(),
-                SLOT(setModule(const QString&)));
-}
-
-//-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
-
-//---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onEditUndoActionTriggered()
-{
-  qSlicerApplication::application()->mrmlScene()->Undo();
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onEditRedoActionTriggered()
-{
-  qSlicerApplication::application()->mrmlScene()->Redo();
-}
+#include "vtkSlicerConfigure.h" // For Slicer3_USE_PYTHONQT
 
 //---------------------------------------------------------------------------
 // qSlicerMainWindowCorePrivate methods
@@ -64,6 +29,7 @@ void qSlicerMainWindowCore::onEditRedoActionTriggered()
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   {
+  this->PythonShell = 0; 
   this->ShowModuleActionMapper = new QSignalMapper(this);
 
   this->ToolBarModuleList << "Measurements" << "Transforms" << "Volumes";
@@ -110,3 +76,65 @@ void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModu
     p->widget()->moduleToolBar()->removeAction(action);
     }
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerMainWindowCore methods
+
+//-----------------------------------------------------------------------------
+qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Superclass(_parent)
+{
+  QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
+  QCTK_D(qSlicerMainWindowCore);
+  
+  d->ParentWidget = _parent;
+
+  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager); 
+
+  this->connect(moduleManager,
+                SIGNAL(moduleLoaded(qSlicerAbstractModule*)),
+                d, SLOT(onModuleLoaded(qSlicerAbstractModule*)));
+
+  this->connect(moduleManager,
+                SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractModule*)),
+                d, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractModule*)));
+                 
+  QObject::connect(d->ShowModuleActionMapper,
+                SIGNAL(mapped(const QString&)),
+                this->widget()->modulePanel(),
+                SLOT(setModule(const QString&)));
+}
+
+//-----------------------------------------------------------------------------
+QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onEditUndoActionTriggered()
+{
+  qSlicerApplication::application()->mrmlScene()->Undo();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onEditRedoActionTriggered()
+{
+  qSlicerApplication::application()->mrmlScene()->Redo();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
+{
+  QCTK_D(qSlicerMainWindowCore);
+#ifdef Slicer3_USE_PYTHONQT
+  if (!d->PythonShell)
+    {
+    Q_ASSERT(qSlicerApplication::application()->pythonManager());
+    d->PythonShell = new qCTKPythonShell(qSlicerApplication::application()->pythonManager()/*, d->ParentWidget*/);
+    d->PythonShell->setAttribute(Qt::WA_QuitOnClose, false);
+    d->PythonShell->resize(600, 280);
+    }
+  Q_ASSERT(d->PythonShell);
+  d->PythonShell->show();
+  d->PythonShell->raise();
+#endif
+}
+
