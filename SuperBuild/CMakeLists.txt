@@ -256,15 +256,15 @@ set(blt_INSTALL "")
 
 if(WIN32)
 elseif(APPLE)
-if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
-              puts "Patching..." 
-              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
-              cd $Slicer3_LIB/tcl/blt 
-              runcmd patch -p2 < ../bltpatch 
+#if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
+#              puts "Patching..." 
+#              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
+#              cd $Slicer3_LIB/tcl/blt 
+#              runcmd patch -p2 < ../bltpatch 
 
               # create a file to make sure BLT isn't patched twice 
-              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
-              file delete $Slicer3_LIB/tcl/bltpatch 
+#              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
+#              file delete $Slicer3_LIB/tcl/bltpatch 
 else()
   set(blt_BUILD_IN_SOURCE 1)
   set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
@@ -466,7 +466,6 @@ if(Slicer3_USE_PYTHON)
       BUILD_COMMAND ${python_BUILD}
       INSTALL_COMMAND ${python_INSTALL}
     )
-         }
   endif()
   
 endif(Slicer3_USE_PYTHON)
