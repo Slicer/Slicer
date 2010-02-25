@@ -1,0 +1,103 @@
+cmake_minimum_required(VERSION 2.6.3)
+project(PythonQt)
+
+find_package(Qt4)
+if(QT4_FOUND)
+  include(${QT_USE_FILE})
+else()
+  message(FATAL_ERROR "Qt4 was not found on your system. Please set the QT_QMAKE_EXECUTABLE variable.")
+endif()
+
+find_package(PythonLibs)
+include_directories("${PYTHON_INCLUDE_PATH}")
+
+
+
+add_definitions("-DPYTHONQT_EXPORTS")
+
+set(sources
+    src/PythonQtClassInfo.cpp
+    src/PythonQtClassWrapper.cpp
+    src/PythonQtConversion.cpp
+    src/PythonQt.cpp
+    src/PythonQtImporter.cpp
+    src/PythonQtInstanceWrapper.cpp
+    src/PythonQtMethodInfo.cpp
+    src/PythonQtMisc.cpp
+    src/PythonQtObjectPtr.cpp
+    src/PythonQtQFileImporter.cpp
+    src/PythonQtSignalReceiver.cpp
+    src/PythonQtSlot.cpp
+    src/PythonQtStdDecorators.cpp
+    src/PythonQtStdOut.cpp
+    src/gui/PythonQtScriptingConsole.cpp
+
+    generated_cpp/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin0.cpp
+    generated_cpp/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin_init.cpp
+    generated_cpp/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin0.cpp
+    generated_cpp/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin_init.cpp
+)
+
+# List headers.  This is list is used for the install command.
+set(headers
+    src/PythonQtClassInfo.h
+    src/PythonQtClassWrapper.h
+    src/PythonQtConversion.h
+    src/PythonQtCppWrapperFactory.h
+    src/PythonQtDoc.h
+    src/PythonQt.h
+    src/PythonQtImporter.h
+    src/PythonQtImportFileInterface.h
+    src/PythonQtInstanceWrapper.h
+    src/PythonQtMethodInfo.h
+    src/PythonQtMisc.h
+    src/PythonQtObjectPtr.h
+    src/PythonQtQFileImporter.h
+    src/PythonQtSignalReceiver.h
+    src/PythonQtSlot.h
+    src/PythonQtStdDecorators.h
+    src/PythonQtStdOut.h
+    src/PythonQtSystem.h
+    src/PythonQtVariants.h
+    src/dPython.h
+)
+
+set(moc_sources
+    src/PythonQt.h
+    src/PythonQtSignalReceiver.h
+    src/PythonQtStdDecorators.h
+    src/gui/PythonQtScriptingConsole.h
+
+    generated_cpp/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin0.h
+    generated_cpp/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin0.h
+)
+
+set(ui_sources )
+set(qrc_sources )
+
+# do wrapping
+qt4_wrap_cpp(gen_moc_sources ${moc_sources})
+qt4_wrap_ui(gen_ui_sources ${ui_sources})
+qt4_add_resources(gen_qrc_sources ${qrc_sources})
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+# build the library
+add_library(PythonQt SHARED
+            ${sources}
+            ${gen_moc_sources}
+            ${gen_ui_sources}
+            ${gen_qrc_sources}
+)
+
+target_link_libraries(PythonQt
+              ${PYTHON_LIBRARY}
+              ${QT_LIBRARIES}
+)
+
+# install library (on windows, put the dll in 'bin' and the archive in 'lib')
+install(TARGETS PythonQt
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+install(FILES ${headers} DESTINATION include/PythonQt)

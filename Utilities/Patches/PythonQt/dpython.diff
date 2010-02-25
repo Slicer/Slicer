@@ -1,0 +1,127 @@
+Index: src/PythonQtSlot.h
+===================================================================
+--- src/PythonQtSlot.h	(revision 137)
++++ src/PythonQtSlot.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include "Python.h"
++#include "dPython.h"
+ #include "PythonQtSystem.h"
+ #include "structmember.h"
+ 
+Index: src/PythonQtClassWrapper.h
+===================================================================
+--- src/PythonQtClassWrapper.h	(revision 137)
++++ src/PythonQtClassWrapper.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include <Python.h>
++#include <dPython.h>
+ 
+ #include "PythonQtSystem.h"
+ 
+Index: src/PythonQtSignalReceiver.h
+===================================================================
+--- src/PythonQtSignalReceiver.h	(revision 137)
++++ src/PythonQtSignalReceiver.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include <Python.h>
++#include <dPython.h>
+ #include "PythonQtSystem.h"
+ #include "PythonQtObjectPtr.h"
+ 
+Index: src/PythonQtImporter.h
+===================================================================
+--- src/PythonQtImporter.h	(revision 137)
++++ src/PythonQtImporter.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include "Python.h"
++#include "dPython.h"
+ #include "structmember.h"
+ #include "osdefs.h"
+ #include "marshal.h"
+Index: src/PythonQtObjectPtr.h
+===================================================================
+--- src/PythonQtObjectPtr.h	(revision 137)
++++ src/PythonQtObjectPtr.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include <Python.h>
++#include <dPython.h>
+ #include "PythonQtSystem.h"
+ #include <QVariant>
+ #include <QVariantList>
+Index: src/PythonQtStdDecorators.h
+===================================================================
+--- src/PythonQtStdDecorators.h	(revision 137)
++++ src/PythonQtStdDecorators.h	(working copy)
+@@ -43,7 +43,7 @@
+ //----------------------------------------------------------------------------------
+ 
+ #include "PythonQtSystem.h"
+-#include <Python.h>
++#include <dPython.h>
+ #include <QObject>
+ #include <QVariantList>
+ #include <QTextDocument>
+Index: src/PythonQtInstanceWrapper.h
+===================================================================
+--- src/PythonQtInstanceWrapper.h	(revision 137)
++++ src/PythonQtInstanceWrapper.h	(working copy)
+@@ -42,7 +42,7 @@
+ */
+ //----------------------------------------------------------------------------------
+ 
+-#include <Python.h>
++#include <dPython.h>
+ 
+ #include "PythonQtSystem.h"
+ #include <QPointer>
+Index: src/PythonQtStdOut.h
+===================================================================
+--- src/PythonQtStdOut.h	(revision 137)
++++ src/PythonQtStdOut.h	(working copy)
+@@ -43,7 +43,7 @@
+ //----------------------------------------------------------------------------------
+ 
+ 
+-#include <Python.h>
++#include <dPython.h>
+ #include "structmember.h"
+ #include <QString>
+ 
+Index: src/dPython.h
+===================================================================
+--- src/dPython.h	(revision 0)
++++ src/dPython.h	(revision 0)
+@@ -0,0 +1,10 @@
++# ifdef _DEBUG
++#  undef _DEBUG
++#  if defined(_MSC_VER) && _MSC_VER >= 1400
++#    define _CRT_NOFORCE_MANIFEST 1
++#  endif
++#  include <Python.h>
++#  define _DEBUG
++# else
++#  include <Python.h>
++# endif
+
+Property changes on: src/dPython.h
+___________________________________________________________________
+Added: svn:mime-type
+   + text/plain
+Added: svn:eol-style
+   + native
+

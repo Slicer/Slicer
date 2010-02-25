@@ -1,0 +1,28 @@
+SET(pythonqt_src_dir "@pythonqt_src_dir@")
+SET(patches_dir "@pythonqt_patches_dir@")
+SET(patch_exe "@Slicer3_PATCH_EXECUTABLE@")
+
+
+# Patch "dpython.diff" created with a command like the following
+# svn diff src/PythonQtSlot.h src/PythonQtClassWrapper.h src/PythonQtSignalReceiver.h src/PythonQtImporter.h src/PythonQtObjectPtr.h src/PythonQtStdDecorators.h src/PythonQtInstanceWrapper.h src/PythonQtStdOut.h src/dPython.h >../../Slicer3/Utilities/Patches/PythonQT/dpython.diff
+
+# Patch "PythonQtConversions.diff" created with a command similar to the following:
+# svn diff src/PythonQtConversion.cpp > ../../Slicer3/Utilities/Patches/PythonQT/PythonQtConversions.diff
+
+SET(patch_files
+    PythonQtConversions.diff
+    dpython.diff
+)
+
+# Copy CMakeLists.txt
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "${patches_dir}/PythonQtCMakeLists.txt" "${pythonqt_src_dir}/CMakeLists.txt")
+
+# Apply patches
+FOREACH(patch_file ${patch_files})
+  SET(patch_file "${patches_dir}/${patch_file}")
+  MESSAGE("Applying patch: ${patch_file}")
+  EXECUTE_PROCESS(COMMAND ${patch_exe} -p0 -i "${patch_file}" -d "${pythonqt_src_dir}" RESULT_VARIABLE result_var)
+  IF(result_var)
+    MESSAGE("ERROR: ${result_var}")
+  ENDIF(result_var)
+ENDFOREACH()
