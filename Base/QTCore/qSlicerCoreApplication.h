@@ -19,7 +19,7 @@
 /// QT includes
 #include <QApplication>
 
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS
+#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS, Slicer3_USE_PYTHONQT
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -30,6 +30,9 @@ class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions; 
 class qSlicerCoreApplicationPrivate;
 class qCTKSettings;
+#ifdef Slicer3_USE_PYTHONQT
+class qSlicerPythonManager;
+#endif
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
@@ -65,7 +68,7 @@ public:
   /// 
   /// Set MRML Scene
   /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
-  /// removed once the QT GUI is functional.
+  /// moved as a protected member.
   void setMRMLScene(vtkMRMLScene * scene);
 
 #ifdef Slicer3_USE_KWWIDGETS
@@ -118,6 +121,12 @@ public:
   ///
   /// Return true is this instance of Slicer is running from an installed directory
   bool isInstalled();
+
+#ifdef Slicer3_USE_PYTHONQT
+  ///
+  /// Get python manager
+  qSlicerPythonManager* pythonManager()const;
+#endif
 
   /// 
   /// Get the module manager

@@ -10,28 +10,15 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerCoreApplication.h"
-
-// SlicerQT includes
-#include "qSlicerModuleManager.h"
-#include "qSlicerCoreIOManager.h"
-#include "qSlicerCoreCommandOptions.h"
-
-// SlicerLogic includes
-#include "vtkSlicerApplicationLogic.h"
-
-// Slicer includes
-#include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
-
-// qCTK includes
-#include <qCTKSettings.h>
-
 // QT includes
 #include <QVector>
 #include <QStringList>
 #include <QDir>
 #include <QTimer>
 #include <QDebug>
+
+// qCTK includes
+#include <qCTKSettings.h>
 
 // MRML includes
 #include "vtkMRMLScene.h"
@@ -45,14 +32,30 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
 
-// STL includes
-#include <memory> // auto_ptr
-
 // For:
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer3_INSTALL_PLUGINS_BIN_DIR
 //  - Slicer3_INSTALL_LIB_DIR
+//  - Slicer3_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
+
+// SlicerQT includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerCoreIOManager.h"
+#include "qSlicerCoreCommandOptions.h"
+#ifdef Slicer3_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+#endif
+
+// SlicerLogic includes
+#include "vtkSlicerApplicationLogic.h"
+
+// Slicer includes
+#include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
+
+// STL includes
+#include <memory> // auto_ptr
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
@@ -135,7 +138,10 @@ public:
   /// Local copy of the arguments
   int                Argc;
   char**             Argv;
-  
+
+#ifdef Slicer3_USE_PYTHONQT
+  qSlicerPythonManager* PythonManager;
+#endif
 };
 
 //-----------------------------------------------------------------------------
@@ -151,11 +157,19 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
   this->Argc = 0;
   this->Argv = 0;
   this->ExitWhenDone = false;
+
+#ifdef Slicer3_USE_PYTHONQT
+  this->PythonManager = new qSlicerPythonManager();
+#endif
 }
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 {
+#ifdef Slicer3_USE_PYTHONQT
+  delete this->PythonManager;
+#endif
+  
   if (this->Argc && this->Argv)
     {
     for (int i = 0; i < this->Argc; ++i)
@@ -350,7 +364,6 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
 
-
   // Register the node type for the command line modules
   vtkSmartPointer<vtkMRMLCommandLineModuleNode> clmNode =
     vtkSmartPointer<vtkMRMLCommandLineModuleNode>::New();
@@ -536,6 +549,11 @@ QString qSlicerCoreApplication::slicerHome() const
 
 //-----------------------------------------------------------------------------
 QCTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
+
+//-----------------------------------------------------------------------------
+#ifdef Slicer3_USE_PYTHONQT
+QCTK_GET_CXX(qSlicerCoreApplication, qSlicerPythonManager*, pythonManager, PythonManager);
+#endif
 
 //-----------------------------------------------------------------------------
 qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
