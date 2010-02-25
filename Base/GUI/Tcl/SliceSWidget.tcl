@@ -338,7 +338,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #
   # if another widget has the grab, let this go unless
   # it is a focus event, in which case we want to update
-  # out display icon
+  # our display icon
   #
   set grabID [$sliceGUI GetGrabID]
   if { ($grabID != "" && $grabID != $this) } {
