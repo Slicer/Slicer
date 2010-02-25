@@ -86,19 +86,14 @@ ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
 # Build the library
-SET(srcs
-  ${vtkTeem_SRCS}
-  )
+
+SET(srcs ${vtkTeem_SRCS} )
 IF (VTK_WRAP_TCL)
-  SET(srcs
-    ${srcs}
-    ${vtkTeem_TCL_SRCS}
-    )
+  SET(srcs ${srcs} ${vtkTeem_TCL_SRCS})
 ENDIF (VTK_WRAP_TCL)
+
 set(lib_name vtkTeem)
-add_library(${lib_name} 
-  ${srcs}
-  )
+add_library(${lib_name} ${srcs})
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
 if ( ${Teem_VERSION_MAJOR} GREATER 1 )
@@ -111,27 +106,24 @@ else ( ${Teem_VERSION_MAJOR} GREATER 1 )
   endif ( ${Teem_VERSION_MINOR} LESS 10 )
 endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
+SET(VTK_LIBRARIES
+  vtkIO
+  vtkImaging
+  vtkGraphics
+  )
+
 SET(libs
   ${Teem_LIBRARIES}
+  ${VTK_LIBRARIES}
   )
-IF (VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkImagingTCL
-    vtkIOTCL
-    vtkGraphicsTCL
-    )
-ELSE (VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkIO
-    vtkGraphics
-    )
-ENDIF (VTK_WRAP_TCL)
 
-target_link_libraries(${lib_name}
-  ${libs}
-  )
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
+
+IF (VTK_WRAP_TCL)
+  FOREACH(c ${VTK_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name} ${c}TCL)
+  ENDFOREACH(c)
+ENDIF()
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
@@ -145,6 +137,39 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )
+
+# --------------------------------------------------------------------------
+# Create Python wrappers if VTK is wrapped in Python
+#
+
+IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
+
+  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${vtkTeem_SRCS}")
+  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+  
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  
+  FOREACH(c ${KIT_PYTHON_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
+  ENDFOREACH(c)
+
+  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+
+  ## Python modules on Windows must have the extension ".pyd"
+  IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
+  ENDIF(WIN32 AND NOT CYGWIN)
+
+  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+
+ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
