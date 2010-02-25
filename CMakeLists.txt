@@ -252,12 +252,26 @@ ENDIF(NOT Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # If Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
-# Note: Later on we will expect VTK_WRAP_PYTHON to be one
+# Note: Later on we will expect VTK_WRAP_PYTHON to be ON
 IF(Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
   IF(VTK_WRAP_TCL)
     MESSAGE(FATAL_ERROR "For now, if Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
   ENDIF(VTK_WRAP_TCL)
 ENDIF(Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+
+#-----------------------------------------------------------------------------
+# Add Slicer3_USE_PYTHONQT option if Slicer3_USE_QT is ON
+IF(Slicer3_USE_QT)
+  option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
+  IF(Slicer3_USE_PYTHONQT)
+    IF(NOT VTK_WRAP_PYTHON)
+      MESSAGE(FATAL_ERROR "Since both Slicer3_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
+    ENDIF(NOT VTK_WRAP_PYTHON)
+    # Enable qCTKWidgets python wrapping
+    # Note that qVTKWidgets and qMRMLWidgets python wrapping will be automatically enabled
+    SET(qCTKWidgets_WRAP_PYTHON ON)
+  ENDIF(Slicer3_USE_PYTHONQT)
+ENDIF(Slicer3_USE_QT)  
 
 #-----------------------------------------------------------------------------
 ## Teem
