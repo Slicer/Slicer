@@ -3461,6 +3461,9 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   
   int modified = 0;
 
+  std::ostringstream sstring;
+  sstring << this->SliceNode->GetLayoutName() << ". Click to shrink/expand";
+  this->ColorCodeButton->SetBalloonHelpString(sstring.str().c_str());
 
   // 
   // Update the menu to match the node
