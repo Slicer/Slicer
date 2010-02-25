@@ -322,6 +322,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           switch $_actionState {
             "dragging" {
               if { !$inactive } {
+                $_renderWidget CornerAnnotationVisibilityOff
                 foreach {wx wy} [$_interactor GetEventPosition] {}
                 foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
                 foreach {dx dy dz} $_startOffset {}
@@ -336,6 +337,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           set _actionState ""
           $sliceGUI SetGrabID ""
           set _description ""
+          $_renderWidget CornerAnnotationVisibilityOn
           eval $movedCommand
         }
       }
