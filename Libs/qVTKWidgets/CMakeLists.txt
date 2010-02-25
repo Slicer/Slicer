@@ -12,6 +12,21 @@ IF(NOT DEFINED BUILD_SHARED_LIBS)
 ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
+# Python wrapping using PythonQT
+# If qCTKWidgets_WRAP_PYTHON is ON, PythonQT wrapping will be enabled
+#
+
+IF(qCTKWidgets_WRAP_PYTHON)
+  IF(NOT VTK_WRAP_PYTHON)
+    MESSAGE(FATAL_ERROR "qCTKWidgets_WRAP_PYTHON is ON and VTK_WRAP_PYTHON is OFF. Re-configure VTK or disable qCTKWidgets_WRAP_PYTHON")
+  ENDIF(NOT VTK_WRAP_PYTHON)
+  SET(qVTKWidgets_PYTHONQT_INCLUDE_DIR "${qCTKWidgets_PYTHONQT_INCLUDE_DIR}")
+  SET(qVTKWidgets_PYTHONQT_LIBRARIES ${qCTKWidgets_PYTHONQT_LIBRARIES} vtkCommonPythonD)
+ENDIF(qCTKWidgets_WRAP_PYTHON)
+#SET(qVTKWidgets_PYTHONQT_INCLUDE_DIR ${qVTKWidgets_PYTHONQT_INCLUDE_DIR} CACHE INTERNAL "qVTKWidgets pythonQt includes" FORCE)
+#SET(qVTKWidgets_PYTHONQT_LIBRARIES ${qCTKWidgets_PYTHONQT_LIBRARIES} CACHE INTERNAL "qVTKWidgets pythonQt libraries" FORCE)
+
+#-----------------------------------------------------------------------------
 # Sources
 #
 SET(qVTKWidgets_SRCS
@@ -44,7 +59,26 @@ SET(qVTKWidgets_MOC_SRCS
 # UI files
 SET(qVTKWidgets_UI_SRCS
 )
-  
+
+# Python wrap 
+IF(qCTKWidgets_WRAP_PYTHON)
+
+  # Sources
+  SET(qVTKWidgets_SRCS
+    ${qVTKWidgets_SRCS}
+    qVTKAbstractPythonManager.cxx
+    qVTKAbstractPythonManager.h
+    )
+
+  # Headers that should run through moc
+  SET(qVTKWidgets_MOC_SRCS
+    ${qVTKWidgets_MOC_SRCS}
+    qVTKAbstractPythonManager.h
+    )
+    
+ENDIF(qCTKWidgets_WRAP_PYTHON)
+
+
 QT4_WRAP_CPP(qVTKWidgets_SRCS ${qVTKWidgets_MOC_SRCS})
 QT4_WRAP_UI(qVTKWidgets_UI_CXX ${qVTKWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(qVTKWidgets_QRC_SRCS Resources/qVTKWidgets.qrc)
@@ -60,6 +94,7 @@ SET(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${qVTKWidgets_PYTHONQT_INCLUDE_DIR}
   )
 
 SET(QT_INCLUDE_DIRS
@@ -114,6 +149,7 @@ SET(qVTKWidgets_LIBRARIES
   MRML
   qCTKWidgets
   QVTK
+  ${qVTKWidgets_PYTHONQT_LIBRARIES}
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qVTKWidgets_LIBRARIES})
