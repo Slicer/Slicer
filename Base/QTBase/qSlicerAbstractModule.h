@@ -48,6 +48,13 @@ class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public QObject
   /// order to have the signal/slots working and the meta-class name valid.
   Q_OBJECT
 
+  /// The following property will be added to the meta-class
+  /// and will also be available through PythonQt
+  Q_PROPERTY(QString Name READ name)
+  Q_PROPERTY(QString Title READ title)
+  Q_PROPERTY(QString Category READ category)
+  Q_PROPERTY(QString Contributor READ contributor)
+
 public:
 
   typedef QObject Superclass;
@@ -60,7 +67,6 @@ public:
   /// 
   /// Convenient method to return slicer wiki URL
   QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
-
 
   ///
   /// Initialize the module, an appLogic must be given to
@@ -132,7 +138,7 @@ protected:
   virtual qSlicerAbstractModuleWidget* createWidgetRepresentation() = 0;
 
   /// 
-  /// create and return the module logic
+  /// Create and return the module logic
   /// Note: Only one instance of the logic will exist per module
   virtual vtkSlicerLogic* createLogic() = 0;
   
