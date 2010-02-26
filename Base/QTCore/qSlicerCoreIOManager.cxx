@@ -24,8 +24,8 @@
 #include <vtkMRMLScene.h>
 
 // VolumeLogic
-#include "vtkSlicerVolumesLogic.h"
-#include "vtkMRMLVolumeNode.h"
+//#include "vtkSlicerVolumesLogic.h"
+//#include "vtkMRMLVolumeNode.h"
 
 // SlicerQT includes
 #include "qSlicerCoreIOManager.h"
@@ -171,22 +171,22 @@ void qSlicerCoreIOManager::loadArchetypeVolume(const QString& filename)
     return;
     }
 
-  // HACK Get a reference to the volumes module
-  // For now, let's link against the VolumesLogic
-  qSlicerModuleManager* moduleManager = qSlicerCoreApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager);
-  qSlicerAbstractModule* volumesModule =  moduleManager->module(moduleManager->moduleName("Volumes"));
-  Q_ASSERT(volumesModule);
-  vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
-  Q_ASSERT(volumesLogic);
-
-  bool labelMap = false;
-  bool centered = true;
-  int loadingOptions = labelMap * 1 + centered * 2; 
-  
-  vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(filename.toLatin1(),
-                                                             fileInfo.baseName().toLatin1(),
-                                                             loadingOptions);
-  Q_ASSERT(node);
+//   // HACK Get a reference to the volumes module
+//   // For now, let's link against the VolumesLogic
+//   qSlicerModuleManager* moduleManager = qSlicerCoreApplication::application()->moduleManager();
+//   Q_ASSERT(moduleManager);
+//   qSlicerAbstractModule* volumesModule =  moduleManager->module(moduleManager->moduleName("Volumes"));
+//   Q_ASSERT(volumesModule);
+//   vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
+//   Q_ASSERT(volumesLogic);
+// 
+//   bool labelMap = false;
+//   bool centered = true;
+//   int loadingOptions = labelMap * 1 + centered * 2; 
+//   
+//   vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(filename.toLatin1(),
+//                                                              fileInfo.baseName().toLatin1(),
+//                                                              loadingOptions);
+//   Q_ASSERT(node);
   
 }

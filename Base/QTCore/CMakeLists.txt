@@ -16,10 +16,10 @@ SET(slicer_qtbase_include_directories
   ${MRMLCLI_BINARY_DIR}
   ${qCTKWidgets_PYTHONQT_INCLUDE_DIR}
   # HACK
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
-  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
+  #${MRML_SOURCE_DIR}
+  #${MRML_BINARY_DIR}
+  #${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  #${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   )
   
 # Source files
@@ -60,8 +60,8 @@ SET(slicer_qtbase_target_libraries
   qSlicerBaseQTBase
   ${qCTKWidgets_PYTHONQT_LIBRARIES}
   # HACK
-  vtkSlicerVolumesModuleLogic
-  MRML 
+  #vtkSlicerVolumesModuleLogic
+  #MRML 
   )
 
 # Resources
