@@ -57,7 +57,7 @@ proc SlicerSaveLargeImage { fileName resolutionFactor } {
 proc SlicerSaveEachRenderCancel { {renderer ""} } {
   if { $renderer == "" } {
     set appGUI $::slicer3::ApplicationGUI
-    set viewerWidget [$appGUI GetViewerWidget]
+    set viewerWidget [$appGUI GetActiveViewerWidget]
     set mainViewer [$viewerWidget GetMainViewer]
     set window [ $mainViewer GetRenderWindow ]
     set renderer [$mainViewer GetRenderer]
@@ -68,7 +68,7 @@ proc SlicerSaveEachRenderCancel { {renderer ""} } {
 proc SlicerSaveEachRender { {fileNamePattern /tmp/slicer-%d.png} {resolutionFactor 1} } {
 
   set appGUI $::slicer3::ApplicationGUI
-  set viewerWidget [$appGUI GetViewerWidget]
+  set viewerWidget [$appGUI GetActiveViewerWidget]
   set mainViewer [$viewerWidget GetMainViewer]
   set window [ $mainViewer GetRenderWindow ]
   set renderer [$mainViewer GetRenderer]
