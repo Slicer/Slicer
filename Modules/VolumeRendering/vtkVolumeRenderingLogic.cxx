@@ -31,10 +31,8 @@
 #include "vtkKWHistogramSet.h"
 #include "vtkKWHistogram.h"
 
-double abs(double n)
-{
-  return n < 0. ? -n : n;
-}
+#include <cmath>
+
 bool vtkVolumeRenderingLogic::First = true;
 
 vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
@@ -1025,11 +1023,11 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
     vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
     vspNode->GetVolumeNode()->GetRASToIJKMatrix (rasToIJK);
     center[3] = 1.;
-    center[3] = 1.;
+    radius[3] = 1.;
     rasToIJK->MultiplyPoint(center, ijkCenter);
     rasToIJK->MultiplyPoint(radius, ijkRadius);
     roi->SetXYZ(ijkCenter);
-    roi->SetRadiusXYZ(abs(ijkRadius[0]), abs(ijkRadius[1]), abs(ijkRadius[2]));
+    roi->SetRadiusXYZ(fabs(ijkRadius[0]), fabs(ijkRadius[1]), fabs(ijkRadius[2]));
     roi->GetTransformedPlanes(planes);
     this->MapperGPURaycast3->SetClippingPlanes(planes);
     rasToIJK->Delete();
