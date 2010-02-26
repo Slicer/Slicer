@@ -11,6 +11,62 @@
 #include <QVBoxLayout>
 
 // --------------------------------------------------------------------------
+// qVTKRenderViewPrivate methods
+
+// --------------------------------------------------------------------------
+qVTKRenderViewPrivate::qVTKRenderViewPrivate()
+{
+  this->Renderer = vtkSmartPointer<vtkRenderer>::New();
+  this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+  this->Axes = vtkSmartPointer<vtkAxesActor>::New();
+  this->Orientation = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
+  this->RenderPending = false;
+}
+
+// --------------------------------------------------------------------------
+void qVTKRenderViewPrivate::setupCornerAnnotation()
+{
+  if (!this->Renderer->HasViewProp(this->CornerAnnotation))
+    {
+    this->Renderer->AddViewProp(this->CornerAnnotation);
+    this->CornerAnnotation->SetMaximumLineHeight(0.07);
+    vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
+    tprop->ShadowOn();
+    }
+  this->CornerAnnotation->ClearAllTexts();
+}
+
+//---------------------------------------------------------------------------
+void qVTKRenderViewPrivate::setupRendering()
+{
+  Q_ASSERT(this->RenderWindow);
+  this->RenderWindow->SetAlphaBitPlanes(1);
+  this->RenderWindow->SetMultiSamples(0);
+  this->RenderWindow->StereoCapableWindowOn();
+  
+  this->RenderWindow->GetRenderers()->RemoveAllItems();
+  
+  // Add renderer
+  this->RenderWindow->AddRenderer(this->Renderer);
+  
+  // Setup the corner annotation
+  this->setupCornerAnnotation();
+
+  this->VTKWidget->SetRenderWindow(this->RenderWindow);
+}
+
+//---------------------------------------------------------------------------
+void qVTKRenderViewPrivate::setupDefaultInteractor()
+{
+  QCTK_P(qVTKRenderView);
+  p->setInteractor(this->RenderWindow->GetInteractor());
+}
+
+//---------------------------------------------------------------------------
+// qVTKRenderView methods
+
+// --------------------------------------------------------------------------
 qVTKRenderView::qVTKRenderView(QWidget* _parent) : Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qVTKRenderView);
@@ -87,57 +143,4 @@ void qVTKRenderView::resetCamera()
 {
   QCTK_D(qVTKRenderView);
   d->Renderer->ResetCamera();
-}
-
-// --------------------------------------------------------------------------
-// qVTKRenderViewPrivate methods
-
-// --------------------------------------------------------------------------
-qVTKRenderViewPrivate::qVTKRenderViewPrivate()
-{
-  this->Renderer = vtkSmartPointer<vtkRenderer>::New();
-  this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  this->Axes = vtkSmartPointer<vtkAxesActor>::New();
-  this->Orientation = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
-  this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
-  this->RenderPending = false;
-}
-
-// --------------------------------------------------------------------------
-void qVTKRenderViewPrivate::setupCornerAnnotation()
-{
-  if (!this->Renderer->HasViewProp(this->CornerAnnotation))
-    {
-    this->Renderer->AddViewProp(this->CornerAnnotation);
-    this->CornerAnnotation->SetMaximumLineHeight(0.07);
-    vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
-    tprop->ShadowOn();
-    }
-  this->CornerAnnotation->ClearAllTexts();
-}
-
-//---------------------------------------------------------------------------
-void qVTKRenderViewPrivate::setupRendering()
-{
-  Q_ASSERT(this->RenderWindow);
-  this->RenderWindow->SetAlphaBitPlanes(1);
-  this->RenderWindow->SetMultiSamples(0);
-  this->RenderWindow->StereoCapableWindowOn();
-  
-  this->RenderWindow->GetRenderers()->RemoveAllItems();
-  
-  // Add renderer
-  this->RenderWindow->AddRenderer(this->Renderer);
-  
-  // Setup the corner annotation
-  this->setupCornerAnnotation();
-
-  this->VTKWidget->SetRenderWindow(this->RenderWindow);
-}
-
-//---------------------------------------------------------------------------
-void qVTKRenderViewPrivate::setupDefaultInteractor()
-{
-  QCTK_P(qVTKRenderView);
-  p->setInteractor(this->RenderWindow->GetInteractor());
 }
