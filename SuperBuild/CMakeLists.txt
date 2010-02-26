@@ -142,6 +142,11 @@ set(BUILD_SHARED_LIBS ON)
 # By default, let's build as Debug
 set(CMAKE_BUILD_TYPE "Debug")
 
+# let a dashboard override the default.
+if(CTEST_BUILD_CONFIGURATION)
+  set(CMAKE_BUILD_TYPE "${CTEST_BUILD_CONFIGURATION}")
+endif()
+
 # Compute -G arg for configuring external projects with the same CMake generator:
 #
 if(CMAKE_EXTRA_GENERATOR)
@@ -1035,7 +1040,6 @@ set(slicer_QT_ARGS)
 if(Slicer3_USE_QT)
   set(slicer_QT_ARGS
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    -DVTK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/VTK-build
     )
 endif(Slicer3_USE_QT)
 
@@ -1073,6 +1077,7 @@ ExternalProject_Add(${proj}
     -DTeem_DIR:FILEPATH=${CMAKE_BINARY_DIR}/teem-build
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
     -DBatchMake_DIR:FILEPATH=${CMAKE_BINARY_DIR}/BatchMake-build
+    -DVTK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/VTK-build
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
