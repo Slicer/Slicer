@@ -123,8 +123,8 @@ void qSlicerMainWindowCore::onEditRedoActionTriggered()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
-  QCTK_D(qSlicerMainWindowCore);
 #ifdef Slicer3_USE_PYTHONQT
+  QCTK_D(qSlicerMainWindowCore);
   if (!d->PythonShell)
     {
     Q_ASSERT(qSlicerApplication::application()->pythonManager());
