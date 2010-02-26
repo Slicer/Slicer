@@ -1505,6 +1505,10 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         #
         set refFile [lindex $tree($patient,$study,$series,files) 0]
         array set refHeader $tree($refFile,header)
+        if { ![info exists refFile($ORIENTATION,value)] } {
+          $this errorDialog "No orientation information for\n$patient\n$study\n$series\nPlease use caution."
+          continue
+        }
         set refOrientation $refHeader($ORIENTATION,value)
         regsub -all "\\\\" $refOrientation " " sliceAxes
         set scanAxis [eval ::LoadVolume::Cross $sliceAxes]
