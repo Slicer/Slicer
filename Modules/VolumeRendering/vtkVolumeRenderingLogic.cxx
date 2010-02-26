@@ -31,6 +31,10 @@
 #include "vtkKWHistogramSet.h"
 #include "vtkKWHistogram.h"
 
+double abs(double n)
+{
+  return n < 0. ? -n : n;
+}
 bool vtkVolumeRenderingLogic::First = true;
 
 vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
@@ -1000,7 +1004,6 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
   if (vspNode->GetCroppingEnabled())
   {
     vtkPlanes *planes = vtkPlanes::New();
-    //vspNode->GetROINode()->SetInsideOut(0);
     vspNode->GetROINode()->GetTransformedPlanes(planes);
 
     this->MapperTexture->SetClippingPlanes(planes);
@@ -1013,8 +1016,24 @@ void vtkVolumeRenderingLogic::SetROI(vtkMRMLVolumeRenderingParametersNode* vspNo
     this->MapperGPURaycastII->ClippingOn();
 
 #ifdef Slicer3_USE_VTK_CVSHEAD
+    vtkMRMLROINode* roi = vtkMRMLROINode::New();
+    roi->SetInsideOut(1);
+    double center[4], radius[4];
+    double ijkCenter[4], ijkRadius[4];
+    vspNode->GetROINode()->GetXYZ(center);    
+    vspNode->GetROINode()->GetRadiusXYZ(radius);
+    vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
+    vspNode->GetVolumeNode()->GetRASToIJKMatrix (rasToIJK);
+    center[3] = 1.;
+    center[3] = 1.;
+    rasToIJK->MultiplyPoint(center, ijkCenter);
+    rasToIJK->MultiplyPoint(radius, ijkRadius);
+    roi->SetXYZ(ijkCenter);
+    roi->SetRadiusXYZ(abs(ijkRadius[0]), abs(ijkRadius[1]), abs(ijkRadius[2]));
+    roi->GetTransformedPlanes(planes);
     this->MapperGPURaycast3->SetClippingPlanes(planes);
-    //this->MapperGPURaycast3->ClippingOn();
+    rasToIJK->Delete();
+    roi->Delete();
 #endif
 
     planes->Delete();
