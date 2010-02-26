@@ -153,12 +153,15 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
 
           set window [expr $_startWindow + $offx]
           set level [expr $_startLevel + $offy]
+          if { $window < 0 } { set window 0 }
           $displayNode SetDisableModifiedEvent 1
           $displayNode SetWindow $window
           $displayNode SetLevel $level
           $displayNode SetDisableModifiedEvent 0
           $displayNode InvokePendingModifiedEvent
           [$sliceGUI GetSliceViewer] RequestRender
+          set window [format %.1f $window]
+          set level [format %.1f $level]
           $this statusText "Window/Level: $window/$level for [$_layers(background,node) GetName]"
         }
       }
