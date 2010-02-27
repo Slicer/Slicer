@@ -2904,6 +2904,50 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
     // set an undo state when the scale starts being dragged
     this->MRMLScene->SaveStateForUndo( this->SliceNode );
     this->OffsetScaleActive = true;
+
+    // find the sliceGUI for this controller
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+    vtkSlicerSlicesGUI *ssgui = NULL;
+    if (app!=NULL)
+      {
+      ssgui=vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+      }
+    vtkSlicerSliceGUI *sgui=NULL; // slice GUI belonging to this widget
+    if (ssgui!=NULL)
+      {
+      const char *layoutname = NULL;
+      int nSliceGUI = ssgui->GetNumberOfSliceGUI();    
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }      
+        if (sgui && sgui->GetSliceNode() == this->SliceNode )
+          {
+          // found - sgui is non-NULL, quit from the loop now
+          break;
+          }        
+        // not found yet
+        sgui=NULL;
+        }
+
+      // Set the focus to the renderer widget (that handles keyboard shortcuts and mouse wheel
+      // events for changing slices)
+      if ( sgui!=NULL && 
+          sgui->GetSliceViewer()!=NULL &&
+          sgui->GetSliceViewer()->GetRenderWidget()!=NULL &&
+          sgui->GetSliceViewer()->GetRenderWidget()->GetVTKWidget()!=NULL )
+        {
+        sgui->GetSliceViewer()->GetRenderWidget()->GetVTKWidget()->Focus();
+        }
+      }
     }
   else if ( scale0 == this->LabelOpacityScale->GetWidget() 
             && event == vtkKWScale::ScaleValueStartChangingEvent )
