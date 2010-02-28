@@ -26,7 +26,7 @@ PROJECT( RegisterImagesMultiResApplications )
                ${RegisterImagesMultiRes_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterImagesMultiResModule
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule MRML )
+  TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ${ITK_LIBRARIES} )
 
   # Build the command line 
   ADD_EXECUTABLE( RegisterImagesMultiRes ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )

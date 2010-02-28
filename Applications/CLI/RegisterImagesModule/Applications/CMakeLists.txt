@@ -27,7 +27,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${RegisterImagesSlicer_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterImagesModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( RegisterImagesModule MRML )
+  TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} )
 
   # Build the command line
   ADD_EXECUTABLE( RegisterImages ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
@@ -46,7 +46,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${TransformFromFiducials_SOURCE} )
   SET_TARGET_PROPERTIES( TransformFromFiducialsModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( TransformFromFiducialsModule MRML )
+  TARGET_LINK_LIBRARIES( TransformFromFiducialsModule ${ITK_LIBRARIES} )
 
   # Build the command line
   ADD_EXECUTABLE( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
@@ -98,7 +98,7 @@ PROJECT( RegisterImagesModuleApplications )
 
     ADD_LIBRARY( RegisterImagesModuleLogic RegisterImagesModuleLogic.cxx )
     TARGET_LINK_LIBRARIES( RegisterImagesModuleLogic
-                           MaverickModule MRML SlicerBaseLogic
+                           MaverickModule ${ITK_LIBRARIES} SlicerBaseLogic
                            ITKIO ITKCommon ITKStatistics ITKNumerics )
     MOVE_TO_TOP_BINARY( RegisterImagesModuleLogic
                         RegisterImagesModuleLogic_LIB )
