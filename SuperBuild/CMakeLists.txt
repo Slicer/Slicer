@@ -744,9 +744,9 @@ endif() # CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY
 set(proj VTK)
 
 if(Slicer3_USE_VTK_CVSHEAD)
-  set(vtk_tag)
+  set(vtk_tag "-dAP")
 else()
-  set(vtk_tag VTK-5-4)
+  set(vtk_tag "-r VTK-5-4")
 endif()
 
 set(vtk_module VTK)
@@ -816,7 +816,7 @@ ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDS}
   CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
   CVS_MODULE ${vtk_module}
-  CVS_TAG -r ${vtk_tag}
+  CVS_TAG ${vtk_tag}
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
   CMAKE_GENERATOR ${gen}
