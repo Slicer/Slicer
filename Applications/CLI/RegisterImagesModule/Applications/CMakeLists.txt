@@ -25,11 +25,12 @@ PROJECT( RegisterImagesModuleApplications )
   ADD_LIBRARY( RegisterImagesModule 
                SHARED 
                ${RegisterImagesSlicer_SOURCE} )
-  SET_TARGET_PROPERTIES( RegisterImagesModule 
-                         PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   IF( SUPPORT_2D_IMAGES )
     SET_TARGET_PROPERTIES( RegisterImagesModule 
-                           PROPERTIES COMPILE_FLAGS "-DSUPPORT_2D_IMAGES" )
+                           PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DSUPPORT_2D_IMAGES" )
+  ELSE( SUPPORT_2D_IMAGES )
+    SET_TARGET_PROPERTIES( RegisterImagesModule 
+                           PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   ENDIF( SUPPORT_2D_IMAGES )
 
   TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} )
