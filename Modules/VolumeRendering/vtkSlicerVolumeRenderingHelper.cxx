@@ -452,8 +452,8 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique3 0");
     this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
     this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique3 1");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique3 2");
+    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique3 2");
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique3->GetWidgetName() );
   }
