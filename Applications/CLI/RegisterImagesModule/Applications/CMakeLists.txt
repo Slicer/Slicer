@@ -27,6 +27,11 @@ PROJECT( RegisterImagesModuleApplications )
                ${RegisterImagesSlicer_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterImagesModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+  IF( SUPPORT_2D_IMAGES )
+    SET_TARGET_PROPERTIES( RegisterImagesModule 
+                           PROPERTIES COMPILE_FLAGS "-DSUPPORT_2D_IMAGES" )
+  ENDIF( SUPPORT_2D_IMAGES )
+
   TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} )
 
   # Build the command line

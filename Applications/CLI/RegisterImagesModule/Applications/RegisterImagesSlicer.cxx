@@ -315,7 +315,7 @@ int DoIt( int argc, char *argv[] )
     std::cout << "### sampleFromOverlap: " << sampleFromOverlap << std::endl;
     }
 
-  typedef typename itk::ImageFileReader<itk::Image<unsigned char, 3> > ImageReader;
+  typedef typename itk::ImageFileReader<itk::Image<unsigned char, DimensionT> > ImageReader;
   typedef typename itk::ImageMaskSpatialObject<DimensionT> ImageMaskSpatialObject;
   
   // if a fixed image mask was set
