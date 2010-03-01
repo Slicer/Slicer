@@ -114,16 +114,18 @@ SET(VTK_LIBRARIES
 
 SET(libs
   ${Teem_LIBRARIES}
-  ${VTK_LIBRARIES}
   )
 
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
-IF (VTK_WRAP_TCL)
-  FOREACH(c ${VTK_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name} ${c}TCL)
-  ENDFOREACH(c)
-ENDIF()
+
+FOREACH(c ${VTK_LIBRARIES})
+  SET(tcl_wrap)
+  IF (VTK_WRAP_TCL)
+    SET(tcl_wrap TCL)
+  ENDIF()
+  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
+ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
