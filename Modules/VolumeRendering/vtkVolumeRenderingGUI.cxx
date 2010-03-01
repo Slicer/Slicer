@@ -181,6 +181,7 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 
   this->SetViewerWidget(NULL);
   this->SetInteractorStyle(NULL);
+
 }
 
 vtkVolumeRenderingGUI* vtkVolumeRenderingGUI::New()
@@ -466,9 +467,9 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
     vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
 
     //remove observer to trigger update of transform
-    selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
-    selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
-    selectedImageData->RemoveObserver(vtkMRMLVolumeNode::DisplayModifiedEvent);
+    selectedImageData->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand);
+    selectedImageData->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, this->MRMLCallbackCommand);
+    selectedImageData->RemoveObservers(vtkMRMLVolumeNode::DisplayModifiedEvent, this->MRMLCallbackCommand);
   }
 }
 
@@ -1034,7 +1035,7 @@ void vtkVolumeRenderingGUI::UpdatePipelineByROI()
   vtkMRMLROINode *roi = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
   if (roi)
   {
-    roi->RemoveObserver(vtkCommand::ModifiedEvent);
+  roi->RemoveObservers(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
   }
 
   vspNode->SetAndObserveROINodeID(this->NS_ROI->GetSelected()->GetID());
@@ -1223,9 +1224,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     vtkMRMLScalarVolumeNode *selectedImageData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
 
     //remove observer to trigger update of transform
-    selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
-    selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
-    selectedImageData->RemoveObserver(vtkMRMLVolumeNode::DisplayModifiedEvent);
+    selectedImageData->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand);
+    selectedImageData->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, this->MRMLCallbackCommand);
+    selectedImageData->RemoveObservers(vtkMRMLVolumeNode::DisplayModifiedEvent, this->MRMLCallbackCommand);
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
@@ -1366,8 +1367,8 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
     if (selectedImageData)
     {
       //remove observer to trigger update of transform
-      selectedImageData->RemoveObserver(vtkMRMLTransformableNode::TransformModifiedEvent);
-      selectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+      selectedImageData->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand);
+      selectedImageData->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, this->MRMLCallbackCommand);
     }
   }
 
