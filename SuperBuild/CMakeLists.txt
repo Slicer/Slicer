@@ -140,7 +140,7 @@ set(BUILD_SHARED_LIBS ON)
 #option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 
 # By default, let's build as Debug
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 # let a dashboard override the default.
 if(CTEST_BUILD_CONFIGURATION)
@@ -177,6 +177,8 @@ if(APPLE)
     -DVTK_USE_COCOA:BOOL=OFF
     )
 endif()
+
+option(Slicer3_USE_VTK_CVSHEAD "Use VTK CVS head when building." OFF)
 
 #-----------------------------------------------------------------------------
 # TCL
@@ -740,7 +742,13 @@ endif() # CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY
 #
 
 set(proj VTK)
-set(vtk_tag VTK-5-4)
+
+if(Slicer3_USE_VTK_CVSHEAD)
+  set(vtk_tag)
+else()
+  set(vtk_tag VTK-5-4)
+endif()
+
 set(vtk_module VTK)
 set(vtk_source ${CMAKE_BINARY_DIR}/VTK)
 
@@ -767,6 +775,8 @@ if(Slicer3_USE_QT)
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     )
 endif(Slicer3_USE_QT)
+
+
 
 set(slicer_TCL_LIB)
 set(slicer_TK_LIB)
@@ -1092,5 +1102,6 @@ ExternalProject_Add(${proj}
     ${slicer_QT_ARGS}
     -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
     ${slicer_KWWIDGETS_ARGS}
+    -DSlicer3_USE_VTK_CVSHEAD:BOOL=${Slicer3_USE_VTK_CVSHEAD}
   INSTALL_COMMAND ""
 )
