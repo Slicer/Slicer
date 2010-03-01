@@ -508,6 +508,12 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->MB_GPURayCastTechniqueIIFg->Delete();
     this->MB_GPURayCastTechniqueIIFg = NULL;
   }
+  if (this->MB_GPURayCastColorOpacityFusion != NULL)
+    {
+    this->MB_GPURayCastColorOpacityFusion->SetParent(NULL);
+    this->MB_GPURayCastColorOpacityFusion->Delete();
+    this->MB_GPURayCastColorOpacityFusion = NULL;
+    }
 
   if(this->MB_GPURayCastTechnique3 != NULL)
   {
@@ -589,7 +595,18 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->FrameGPURayCasting->Delete();
     this->FrameGPURayCasting = NULL;
   }
-
+  if (this->FrameGPURayCastingII != NULL)
+    {
+    this->FrameGPURayCastingII->SetParent(NULL);
+    this->FrameGPURayCastingII->Delete();
+    this->FrameGPURayCastingII = NULL;
+    }
+  if (this->FrameGPURayCasting3 != NULL)
+    {
+    this->FrameGPURayCasting3->SetParent(NULL);
+    this->FrameGPURayCasting3->Delete();
+    this->FrameGPURayCasting3 = NULL;
+    }
   if (this->FramePolygonBlending != NULL)
   {
     this->FramePolygonBlending->SetParent(NULL);
@@ -651,6 +668,7 @@ void vtkSlicerVolumeRenderingHelper::CreateROITab()
   this->CB_CroppingButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   roiFrame->Delete();
+  mainFrame->Delete();
 
   this->UpdateROI();
 }
@@ -882,8 +900,10 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
                 this->LoadVolumePropertyButton->GetWidgetName());
   this->LoadVolumePropertyButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  mainFrameFg->Delete();
+  loadFrame->Delete();
  }
+
 
 void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
 {
