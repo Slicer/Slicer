@@ -9,7 +9,8 @@ set(RegisterImagesMultiResApplicationsTests_SOURCE
     DecomposedAffine3DTransformTest.cxx
     DownsampleHeuristicsTest.cxx
     ScalingHeuristicsTest.cxx
-    ConvertSlicerROIToRegionTest.cxx)
+    ConvertSlicerROIToRegionTest.cxx
+    CountSamplesTest.cxx)
 
 create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
                        RegisterImagesMultiResApplicationsTests.cxx
@@ -51,3 +52,7 @@ add_test(ScalingHeuristicsTest
 add_test(ConvertSlicerROIToRegionTest
          ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          ConvertSlicerROIToRegionTest)
+  
+add_test(CountSamplesTest
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
+         CountSamplesTest)

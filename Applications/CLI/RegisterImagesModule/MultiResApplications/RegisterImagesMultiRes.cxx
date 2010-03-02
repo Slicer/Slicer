@@ -18,6 +18,7 @@
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 #include "itkImageMaskSpatialObject.h"
 #include "itkAffineTransform.h"
+#include "itkBoxSpatialObject.h"
 
 // From Review
 #include "itkTransformFileWriter.h"
@@ -38,6 +39,7 @@
 #include "ImageWriters.h"
 #include "DownsampleHeuristics.h"
 #include "ScalingHeuristics.h"
+#include "ConvertSlicerROIToRegion.h"
 
 #include <queue>
 #include <iostream>
@@ -148,13 +150,72 @@ int main( int argc, char * argv[] )
   mreader->Update();
 
 
-  ImageMaskSpatialObject<3>::Pointer mask = NULL;
+  SpatialObject<3>::Pointer mask = NULL;
   if(fixedImageMask != "")
     {
     maskreader->SetFileName(fixedImageMask);
     maskreader->Update();
-    mask = ImageMaskSpatialObject<3>::New();
-    mask->SetImage(maskreader->GetOutput());
+    ImageMaskSpatialObject<3>::Pointer imask =
+      ImageMaskSpatialObject<3>::New();
+    imask->SetImage(maskreader->GetOutput());
+    mask = imask;
+    }
+
+  // If we have a bounding box mask
+  if( fixedImageROI.size() == 6)
+    {
+    if(mask)
+      {
+      std::cerr << "Specifying an ROI and an image mask is currently not supported" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    std::vector<double> c(3, 0.0);
+    std::vector<double> r(3, 0.0);
+
+    // the input is a 6 element vector containing the center in RAS space
+    // followed by the radius in real world coordinates
+
+    // copy out center values
+    std::copy(fixedImageROI.begin(), fixedImageROI.begin() + 3,
+              c.begin());
+    // copy out radius values
+    std::copy(fixedImageROI.begin() + 3, fixedImageROI.end(),
+              r.begin());
+
+    // create lower point
+    itk::Point<double, 3> p1;
+    p1[0] = -c[0] + r[0];
+    p1[1] = -c[1] + r[1];
+    p1[2] = c[2] + r[2];
+
+    // create upper point
+    itk::Point<double, 3> p2;
+    p2[0] = -c[0] - r[0];
+    p2[1] = -c[1] - r[1];
+    p2[2] = c[2] - r[2];
+
+    if(DEBUG)
+      {
+      std::cout << "p1: " << p1 << std::endl;
+      std::cout << "p2: " << p2 << std::endl;
+      }
+
+    BoxSpatialObject<3>::Pointer bmask =
+      convertPointsToBoxSpatialObject(p1, p2);
+
+    mask = bmask;
+    }
+  else if (fixedImageROI.size() > 1 &&
+           fixedImageROI.size() < 6)
+    {
+    std::cerr << "Number of parameters for ROI not as expected" << std::endl;
+    return EXIT_FAILURE;
+    }
+  else if (fixedImageROI.size() > 6)
+    {
+    std::cerr << "Multiple ROIs not supported" << std::endl;
+    return EXIT_FAILURE;
     }
 
   // Resample both images to 8x8x8
@@ -202,6 +263,17 @@ int main( int argc, char * argv[] )
         mpyramid->GetOutput(i)->GetLargestPossibleRegion().GetSize() << std::endl;
       }
 
+    }
+  
+  // compute number of samples per level
+  std::vector<unsigned long> numberOfVoxelsPerLevel(fnumberoflevels, 0.0);
+  for(unsigned int i = 0; i < fnumberoflevels; ++i)
+    {
+    numberOfVoxelsPerLevel[i] = countInsideVoxels(fpyramid->GetOutput(i), mask);
+    if(DEBUG)
+      {
+      std::cout << "num samples [" << i << "]: " << numberOfVoxelsPerLevel[i] << std::endl;
+      }
     }
   
   typedef FixedRotationSimilarity3DTransform<double> FixedRotationTransform;

@@ -53,6 +53,14 @@
       <description>Label image which defines a mask of interest for the fixed image</description>
       <default></default>
     </image>
+    <region>
+      <name>fixedImageROI</name>
+      <label>Fixed Image ROI</label>
+      <channel>input</channel>
+      <longflag>fixedImageROI</longflag>
+      <description>Label image which defines a ROI of interest for the fixed image</description>
+      <default></default>
+    </region>
   </parameters>
   <parameters>
     <label>Advanced</label>

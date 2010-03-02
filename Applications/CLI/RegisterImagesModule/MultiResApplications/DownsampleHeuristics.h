@@ -1,8 +1,10 @@
 #ifndef DownsampleHeuristics_h_
 #define DownsampleHeuristics_h_
 
-#include "itkArray2D.h"
+#include <itkArray2D.h>
 #include <vnl/vnl_vector.h>
+#include <itkSpatialObject.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
 
 template<class PyramidFilterType>
 void
@@ -94,6 +96,33 @@ scheduleImagePyramid(PyramidFilterType* pyramid)
     }
 
   pyramid->SetSchedule(schedule);
+}
+
+template<class ImageType>
+unsigned long countInsideVoxels(const ImageType* img, const itk::SpatialObject<3>* so)
+{
+  unsigned long count = 0;
+
+
+
+  typedef itk::ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
+  IteratorType it(img, img->GetBufferedRegion());
+  for(it.GoToBegin(); !it.IsAtEnd(); ++it)
+    {
+    typedef typename ImageType::IndexType IndexType;
+    IndexType ind = it.GetIndex();
+    typedef typename ImageType::PointType PointType;
+    PointType pt;
+    img->TransformIndexToPhysicalPoint(ind, pt);
+    
+    if(so->IsInside(pt))
+      {
+      ++count;
+      }
+    
+    }
+
+  return count;
 }
 
 #endif
