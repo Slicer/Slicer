@@ -1052,6 +1052,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           vtkMRMLNode *node
             = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
+          vtkMRMLROINode *singleroi = vtkMRMLROINode::SafeDownCast(node);
 
           if (regions)
             {
@@ -1095,8 +1096,25 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               vtkErrorMacro("Module does not support multiple regions. Region list contains " << numberOfSelectedRegions << " selected regions.");
               }
             }
+          else if(singleroi)
+            {
+            double pt[3] = {0.0, 0.0, 0.0};
+            double radius[3] = {0.0, 0.0, 0.0};
+            std::ostrstream roiAsString;
+
+            singleroi->GetXYZ(pt);
+            singleroi->GetRadiusXYZ(radius);
+            
+            roiAsString << pt[0] << "," << pt[1] << "," << pt[2] << ","
+                        << radius[0] << "," << radius[1] << "," << radius[2]
+                        << std::ends;
+            roiAsString.rdbuf()->freeze();
+            
+            commandLineAsString.push_back(prefix + flag);
+            commandLineAsString.push_back(roiAsString.str());
+            }
           continue;
-          }
+          } // end region tag
         }
       }
     }

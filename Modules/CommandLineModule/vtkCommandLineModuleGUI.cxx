@@ -1371,6 +1371,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  NULL,
                                  (title + " RegionList").c_str());
+        tparameter->AddNodeClass("vtkMRMLROINode",
+                                 NULL,
+                                 NULL,
+                                 (title + " Region").c_str());
+
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
         tparameter->SetDefaultEnabled(0);
