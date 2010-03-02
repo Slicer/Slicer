@@ -36,12 +36,12 @@ public:
 
   QStringList                   NodeTypes; 
   bool                          ShowHidden;
-  bool                          SelectNodeUponCreation;
   bool                          ShowChildNodeTypes;
-  QStringList                   HideChildNodeTypes;
-  
+  QStringList                   HideChildNodeTypes; 
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType>    Attributes;
+  bool                          SelectNodeUponCreation;
+
 };
 
 // --------------------------------------------------------------------------

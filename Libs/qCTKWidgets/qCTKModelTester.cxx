@@ -145,7 +145,6 @@ void qCTKModelTester::testModelIndex(const QModelIndex& index)const
       {
       this->test(index.sibling(i % 10, i / 10).isValid() == false, "An invalid index can't have valid sibling.");
       }
-    this->testParent(index);
     }
   else
     {// valid index
@@ -153,11 +152,9 @@ void qCTKModelTester::testModelIndex(const QModelIndex& index)const
     this->test(index.column() >= 0, "An valid index can't have an invalid column.");
     this->test(index.row() >= 0, "An valid index can't have an invalid row.");
     this->test(index == index.sibling(index.row(), index.column()), "Index's row and/or column is wrong.");
-
-    this->testData(index);
-    this->testParent(index);
-    
     }
+  this->testData(index);
+  this->testParent(index);
 }
 
 //-----------------------------------------------------------------------------
@@ -165,11 +162,15 @@ void qCTKModelTester::testData(const QModelIndex& index)const
 {
   if (!index.isValid())
     {
-    this->test(!index.data(Qt::DisplayRole).isValid(), "An valid index can't have an invalid data.");
+    this->test(!index.data(Qt::DisplayRole).isValid(), 
+               QString("An invalid index can't have valid data: %1")
+               .arg(index.data(Qt::DisplayRole).toString()));
     }
   else
     {
-    this->test(index.data(Qt::DisplayRole).isValid(), "An valid index can't have an invalid data.");
+    this->test(index.data(Qt::DisplayRole).isValid(), 
+               QString("A valid index can't have invalid data: %1, %2, %3")
+               .arg(index.row()).arg(index.column()).arg(long(index.internalPointer())));
     }
 }
 

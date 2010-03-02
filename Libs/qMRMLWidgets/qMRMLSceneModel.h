@@ -1,14 +1,21 @@
 #ifndef __qMRMLSceneModel_h
 #define __qMRMLSceneModel_h
 
+// Qt includes
 #include <QAbstractListModel>
-#include "qCTKPimpl.h"
-#include "qMRMLWidgetsExport.h"
-#include "qMRMLItemHelper.h"
+
+// qCTKWidgets includes 
+#include <qCTKPimpl.h>
+
+// qVTKWidgets includes 
 #include "qVTKObject.h"
 
+// qMRMLWidgets Includes
+#include "qMRMLWidgetsExport.h"
+#include "qMRMLItemHelper.h"
+
 class vtkMRMLScene;
-class vtkMRMLNode;
+class QAction;
 class qMRMLSceneModelPrivate;
 
 namespace qMRML
@@ -16,39 +23,6 @@ namespace qMRML
  enum ItemDataRole {
    UIDRole = Qt::UserRole
  };
-};
-
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLFlatSceneItemHelper : public qMRMLAbstractSceneItemHelper
-{
-public:
-  qMRMLFlatSceneItemHelper(vtkMRMLScene* scene, int column = -1);
-  
-  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
-  virtual int childCount() const;
-  virtual bool hasChildren() const;
-  virtual qMRMLAbstractItemHelper* parent()const;
-  
-protected:
-  /// here we know for sure that child is a child of this.
-  virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
-};
-
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLFlatNodeItemHelper : public qMRMLAbstractNodeItemHelper
-{
-public:
-  qMRMLFlatNodeItemHelper(vtkMRMLNode* node, int column = -1);
-  virtual qMRMLAbstractItemHelper* parent() const;
-};
-
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLFlatRootItemHelper : public qMRMLAbstractRootItemHelper
-{
-public:
-  qMRMLFlatRootItemHelper(vtkMRMLScene* scene);
-  /// child MUST be reimplemented
-  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
 };
 
 //------------------------------------------------------------------------------
@@ -63,6 +37,8 @@ public:
   
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
+
+  void setExtraItems(vtkObject* parent, const QStringList& extraItems);
 
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;
@@ -88,6 +64,12 @@ protected slots:
   void onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node);
   void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
   void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
+  void onMRMLSceneDeleted(vtkObject* scene);
+protected:
+  friend class qMRMLSortFilterProxyModel;
+  friend class qMRMLTreeProxyModel;
+  qMRMLAbstractItemHelperFactory* itemFactory()const;
+  qMRMLAbstractItemHelper* item(const QModelIndex &modelIndex)const;
 private:
   QCTK_DECLARE_PRIVATE(qMRMLSceneModel);
 };

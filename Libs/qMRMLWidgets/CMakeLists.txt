@@ -27,6 +27,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLListWidget.h
   qMRMLMatrixWidget.cxx
   qMRMLMatrixWidget.h
+  qMRMLNodeComboBox.cxx
+  qMRMLNodeComboBox.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
   qMRMLNodeSelector.cxx
@@ -37,6 +39,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
+  qMRMLSortFilterProxyModel.cxx
+  qMRMLSortFilterProxyModel.h
   qMRMLTransformProxyModel.cxx
   qMRMLTransformProxyModel.h
   qMRMLTransformSliders.cxx
@@ -57,11 +61,13 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
+  qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
   qMRMLNodeSelector.h
   qMRMLNodeTreeSelector.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
+  qMRMLSortFilterProxyModel.h
   qMRMLTransformProxyModel.h
   qMRMLTreeProxyModel.h
   qMRMLTreeProxyModel_p.h

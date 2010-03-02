@@ -11,7 +11,7 @@ class vtkMRMLNode;
 class qMRMLTreeProxyModelPrivate;
 class vtkObject;
 class qMRMLAbstractItemHelper;
-class qMRMLAbstractRootItemHelper;
+class qMRMLAbstractItemHelperFactory;
 
 class QMRML_WIDGETS_EXPORT qMRMLTreeProxyModel : public QAbstractProxyModel
 {
@@ -46,11 +46,17 @@ public:
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
   //virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
   virtual Qt::DropActions supportedDropActions()const;
+public slots:
+  void setMRMLScene(vtkMRMLScene* scene);
 protected:
-  virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const =0;
-  virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const =0;
+  friend class qMRMLSortFilterProxyModel;
+  virtual qMRMLAbstractItemHelper* item(const QModelIndex& index)const;
+  virtual qMRMLAbstractItemHelperFactory* itemFactory()const = 0;
+  //virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const =0;
+  //virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const =0;
   
 private:
+  qMRMLAbstractItemHelperFactory* sourceItemFactory()const;
   QCTK_DECLARE_PRIVATE(qMRMLTreeProxyModel);
 };
 

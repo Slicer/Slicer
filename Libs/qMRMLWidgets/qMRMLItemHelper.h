@@ -17,19 +17,32 @@ class qMRMLAbstractItemHelperPrivate;
 class qMRMLAbstractRootItemHelperPrivate;
 class qMRMLAbstractSceneItemHelperPrivate;
 class qMRMLAbstractNodeItemHelperPrivate;
+class vtkVariantArray;
+class qMRMLExtraItemHelperPrivate;
 
-class qMRMLSceneItemHelperPrivate;
-class qMRMLNodeItemHelperPrivate;
-class qMRMLNodeCategoryItemHelperPrivate;
-class qMRMLRootItemHelperPrivate;
+//class qMRMLSceneItemHelperPrivate;
+//class qMRMLNodeItemHelperPrivate;
+//class qMRMLNodeCategoryItemHelperPrivate;
+//class qMRMLRootItemHelperPrivate;
+
+class qMRMLAbstractItemHelper;
+class vtkVariantArray;
+class vtkStdString;
+
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLAbstractItemHelperFactory
+{
+public:
+  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const = 0;
+  virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const = 0;
+};
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLAbstractItemHelper
 {
 public:
-  qMRMLAbstractItemHelper(int column = -1);
   virtual bool canReparent(qMRMLAbstractItemHelper* newParent)const;
-  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
+  virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
   virtual int column() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
@@ -42,6 +55,8 @@ public:
   virtual vtkObject* object()const = 0;
   virtual bool operator==(const qMRMLAbstractItemHelper& helper)const;
 protected:
+  qMRMLAbstractItemHelper(int column, const qMRMLAbstractItemHelperFactory* factory);
+  const qMRMLAbstractItemHelperFactory* factory()const;
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
@@ -52,40 +67,39 @@ private:
 class QMRML_WIDGETS_EXPORT qMRMLAbstractSceneItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int column = -1);
   
-  //virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
-  //virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
-  //virtual bool hasChildren() const;
   virtual vtkObject* object()const;
   virtual vtkMRMLScene* mrmlScene()const;
-  /// parent() MUST be reimplemented  
-  //virtual qMRMLAbstractItemHelper* parent() const;
 
-protected:
-  /// here we know for sure that child is a child of this.
-  //virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
+protected: 
+  qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory);
+  //inline void setActions(const QList<QAction*>& actions);
+  //const QList<QAction*>& Actions;
 private:
   QCTK_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
 };
-
-
-
+/*
+void qMRMLAbstractSceneItemHelper::setActions(const QList<QAction*>& actions)
+{
+  this->Actions = actions;
+}
+*/
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLAbstractNodeItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  qMRMLAbstractNodeItemHelper(vtkMRMLNode* node, int column = -1);
-
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
   virtual vtkObject* object() const;
   virtual vtkMRMLNode* mrmlNode()const;
   virtual qMRMLAbstractItemHelper* parent() const = 0;
   virtual bool setData(const QVariant &value, int role = Qt::EditRole);
+protected:
+  qMRMLAbstractNodeItemHelper(vtkMRMLNode* node, int column, const qMRMLAbstractItemHelperFactory* factory);
+
 private:
   QCTK_DECLARE_PRIVATE(qMRMLAbstractNodeItemHelper);
 };
@@ -100,7 +114,7 @@ public:
   qMRMLNodeCategoryItemHelper(const QString& category);
   virtual ~qMRMLNodeCategoryItemHelper();
   
-  virtual qMRMLAbstractItemHelper* child(int row, int column = 0) const;
+  virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
   virtual int column() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
@@ -123,9 +137,7 @@ private:
 class QMRML_WIDGETS_EXPORT qMRMLAbstractRootItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  qMRMLAbstractRootItemHelper(vtkMRMLScene* scene);
-  /// child MUST be reimplemented
-  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
+  virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
@@ -135,6 +147,7 @@ public:
   virtual int row() const;
 
 protected:
+  qMRMLAbstractRootItemHelper(vtkMRMLScene* scene, const qMRMLAbstractItemHelperFactory* factory);
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   vtkMRMLScene* mrmlScene()const;
@@ -142,28 +155,26 @@ private:
   QCTK_DECLARE_PRIVATE(qMRMLAbstractRootItemHelper);
 };
 
-/*
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLRootItemHelper : public qMRMLAbstractSceneItemHelper
+class QMRML_WIDGETS_EXPORT qMRMLExtraItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  qMRMLRootItemHelper(vtkMRMLScene* scene, bool topLevelScene = true);
-  
-  virtual qMRMLAbstractItemHelper* child(int row = 0, int column = 0) const;
-  virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
-  virtual bool hasChildren() const;
   virtual qMRMLAbstractItemHelper* parent() const;
-  virtual int row() const;
-
+  virtual bool setData(const QVariant &value, int role = Qt::EditRole);
+  virtual vtkObject* object()const;
+  static void createExtraItemProperties(vtkVariantArray& properties, 
+                              vtkObject* parent, 
+                              const vtkStdString& title);
 protected:
-  /// here we know for sure that child is a child of this.
-  virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
+  friend class qMRMLSceneModelItemHelperFactory;
+  qMRMLExtraItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory);
+  vtkMRMLScene* mrmlScene()const;
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLRootItemHelper);
+  QCTK_DECLARE_PRIVATE(qMRMLExtraItemHelper);
 };
-*/
+
 
 #endif

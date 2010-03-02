@@ -49,12 +49,8 @@ qMRMLTreeWidget::~qMRMLTreeWidget()
 void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   qMRMLTransformProxyModel* proxyModel = qobject_cast<qMRMLTransformProxyModel*>(this->model());
-  
-  //qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
-  //qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(this->model());
-  qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(proxyModel->sourceModel());
-  Q_ASSERT(mrmlModel);
-  mrmlModel->setMRMLScene(scene);
+  Q_ASSERT(proxyModel);
+  proxyModel->setMRMLScene(scene);
 
 }
 

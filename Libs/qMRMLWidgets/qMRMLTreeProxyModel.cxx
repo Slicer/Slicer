@@ -51,7 +51,8 @@ int qMRMLTreeProxyModelPrivate::childRowWithHiddenItemsAdded(const qMRMLAbstract
   int childRowWithHiddenItemsAddedValue = row;
   foreach (const QSharedPointer<qMRMLAbstractItemHelper>& hiddenItem, this->HiddenItems)
     {
-    if ((*hiddenItem->parent()) == *vparent && hiddenItem->column() == 0)
+    if ((*hiddenItem->parent()) == *vparent
+        && hiddenItem->column() == 0)
       {
       if (hiddenItem->row() <= row)
         {
@@ -69,7 +70,8 @@ int qMRMLTreeProxyModelPrivate::rowCountWithHiddenItemsRemoved(const qMRMLAbstra
   int rowCountWithHiddenItemsRemovedValue = item->childCount();
   foreach (const QSharedPointer<qMRMLAbstractItemHelper>& hiddenItem, this->HiddenItems)
     {
-    if (*hiddenItem->parent() == *item && hiddenItem->column() == item->column())
+    if ((*hiddenItem->parent()) == *item
+        && hiddenItem->column() == item->column())
       {
       --rowCountWithHiddenItemsRemovedValue;
       }
@@ -100,11 +102,11 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromUID(QVariant uid, i
   Q_ASSERT(p->mrmlScene());
   if (uid.toString().isNull())
     {
-    return p->itemFromVTKObject(p->mrmlScene(), column);
+    return p->itemFactory()->createItem(p->mrmlScene(), column);
     }
   Q_ASSERT(!uid.toString().isNull());
   vtkMRMLNode* node = p->mrmlScene()->GetNodeByID(uid.toString().toLatin1().data());
-  return p->itemFromVTKObject(node, column);
+  return p->itemFactory()->createItem(node, column);
 }
 
 //------------------------------------------------------------------------------
@@ -134,11 +136,11 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::proxyItemFromIndex(const QM
   QCTK_P(const qMRMLTreeProxyModel);
   if ((modelIndex.row() < 0) || (modelIndex.column() < 0) || (modelIndex.model() != p))
     {
-    return p->rootItem(p->mrmlScene());
+    return p->itemFactory()->createRootItem(p->mrmlScene());
     }
   vtkObject* object = 
     reinterpret_cast<vtkObject*>( modelIndex.internalPointer());
-  return p->itemFromVTKObject(object, modelIndex.column());
+  return p->itemFactory()->createItem(object, modelIndex.column());
   /*
   vtkObject* object = 
     reinterpret_cast<vtkObject*>( modelIndex.internalPointer());
@@ -175,10 +177,15 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromIndex(const Q
       }
     qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(p->sourceModel());
     Q_ASSERT(sceneModel); // only qMRMLSceneModel is supported a source
-    return p->rootItem(sceneModel->mrmlScene());
+    return p->itemFactory()->createRootItem(sceneModel->mrmlScene());
     }
   vtkObject* object = 
     reinterpret_cast<vtkObject*>( modelIndex.internalPointer());
+  return p->sourceItemFactory()->createItem(object, modelIndex.column());
+}
+/*
+  return this->sourceItemFromObject(object, modelIndex.column());
+  
   if (!object)
     {
     qDebug() <<  modelIndex;
@@ -197,7 +204,35 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromIndex(const Q
     Q_ASSERT( false);
     }
   return 0;
+  
 }
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromObject(vtkObject* object, int column)const
+{
+  QCTK_P(const qMRMLTreeProxyModel);
+  
+  if (!object)
+    {
+    Q_ASSERT(object);
+    return 0;
+    }
+  
+  if (object->IsA("vtkMRMLScene"))
+    {
+    return new qMRMLFlatSceneItemHelper(vtkMRMLScene::SafeDownCast(object),  column);
+    }
+  else if (object->IsA("vtkMRMLNode"))
+    {
+    return new qMRMLFlatNodeItemHelper(vtkMRMLNode::SafeDownCast(object),  column);
+    }
+  else
+    {
+    Q_ASSERT( false);
+    }
+  return 0;
+}
+*/
 
 //------------------------------------------------------------------------------
 QVector<QSharedPointer<qMRMLAbstractItemHelper> > 
@@ -496,6 +531,8 @@ void qMRMLTreeProxyModelPrivate::onSourceRowsRemoved(const QModelIndex & vparent
   // nested)
   this->HiddenItems.clear(); 
 }
+//------------------------------------------------------------------------------
+// qMRMLTreeProxyModel
 
 //------------------------------------------------------------------------------
 qMRMLTreeProxyModel::qMRMLTreeProxyModel(QObject *vparent)
@@ -763,6 +800,13 @@ QModelIndex qMRMLTreeProxyModel::index(int row, int column, const QModelIndex &v
 //}
 
 //------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLTreeProxyModel::item(const QModelIndex &modelIndex)const
+{
+  QCTK_D(const qMRMLTreeProxyModel);
+  return d->itemFromIndex(modelIndex);
+}
+
+//------------------------------------------------------------------------------
 QMap<int, QVariant> qMRMLTreeProxyModel::itemData(const QModelIndex & modelIndex)const
 {
   QMap<int, QVariant> roles = this->QAbstractItemModel::itemData(modelIndex);
@@ -869,6 +913,29 @@ bool qMRMLTreeProxyModel::setData(const QModelIndex & modelIndex, const QVariant
     emit dataChanged( modelIndex,  modelIndex);
     }
   return changed;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeProxyModel::setMRMLScene(vtkMRMLScene* scene)
+{
+  if (this->sourceModel() == 0)
+    {
+    Q_ASSERT(this->sourceModel());
+    return;
+    }
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());    
+  Q_ASSERT(sceneModel); // only qMRMLSceneModel is supported as a source
+  if (sceneModel == 0)
+    {
+    return;
+    }
+  return sceneModel->setMRMLScene(scene);
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelperFactory* qMRMLTreeProxyModel::sourceItemFactory()const
+{
+  return qobject_cast<qMRMLSceneModel*>(this->sourceModel())->itemFactory();
 }
 
 //------------------------------------------------------------------------------

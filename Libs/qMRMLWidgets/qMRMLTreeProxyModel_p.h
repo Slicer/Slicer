@@ -28,6 +28,7 @@ public:
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
   qMRMLAbstractItemHelper* proxyItemFromIndex(const QModelIndex &index)const;
   qMRMLAbstractItemHelper* sourceItemFromIndex(const QModelIndex &index)const;
+  //qMRMLAbstractItemHelper* sourceItemFromObject(vtkObject* object, int column)const;
   qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   
   qMRMLAbstractItemHelper* itemFromUID(QVariant uid, int column = -1);

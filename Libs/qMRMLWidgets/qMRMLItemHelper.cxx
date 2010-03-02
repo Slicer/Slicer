@@ -1,14 +1,19 @@
-
-#include "qMRMLItemHelper.h"
-//#include "qMRMLItemModel.h"
-#include "qMRMLUtils.h"
-#include "qMRMLSceneModel.h" // needed for UIDRole
-
-#include <vtkMRMLScene.h>
-
+// Qt includes
 #include <QSharedPointer>
 #include <QDebug>
 
+// qMRMLWidgets includes
+#include "qMRMLItemHelper.h"
+#include "qMRMLUtils.h"
+#include "qMRMLSceneModel.h" // needed for UIDRole
+
+// MRML includes
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkVariantArray.h>
+#include <vtkStdString.h>
 
 //------------------------------------------------------------------------------
 class qMRMLAbstractItemHelperPrivate: public qCTKPrivate<qMRMLAbstractItemHelper>
@@ -16,13 +21,16 @@ class qMRMLAbstractItemHelperPrivate: public qCTKPrivate<qMRMLAbstractItemHelper
 public:
   QCTK_DECLARE_PUBLIC(qMRMLAbstractItemHelper);
   int Column;
+  const qMRMLAbstractItemHelperFactory* ItemFactory;
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int _column)
+qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
 {
   QCTK_INIT_PRIVATE(qMRMLAbstractItemHelper);
-  qctk_d()->Column = _column;
+  QCTK_D(qMRMLAbstractItemHelper);
+  d->Column = _column;
+  d->ItemFactory = itemFactory;
 }
 
 //------------------------------------------------------------------------------
@@ -64,6 +72,13 @@ QVariant qMRMLAbstractItemHelper::data(int role) const
 {
   Q_UNUSED(role);
   return QVariant();
+}
+
+//------------------------------------------------------------------------------
+const qMRMLAbstractItemHelperFactory* qMRMLAbstractItemHelper::factory()const
+{
+  QCTK_D(const qMRMLAbstractItemHelper);
+  return d->ItemFactory;
 }
 
 //------------------------------------------------------------------------------
@@ -124,8 +139,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractSceneItemHelper::qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int _column)
-  :qMRMLAbstractItemHelper(_column)
+qMRMLAbstractSceneItemHelper::qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
+  :qMRMLAbstractItemHelper(_column, itemFactory)
 {
   QCTK_INIT_PRIVATE(qMRMLAbstractSceneItemHelper);
   qctk_d()->MRMLScene = scene;
@@ -180,7 +195,6 @@ vtkMRMLScene* qMRMLAbstractSceneItemHelper::mrmlScene() const
   return d->MRMLScene;
 }
 
-
 //------------------------------------------------------------------------------
 // qMRMLAbstractNodeItemHelper
 
@@ -194,8 +208,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractNodeItemHelper::qMRMLAbstractNodeItemHelper(vtkMRMLNode* _node, int _column)
-  :qMRMLAbstractItemHelper(_column)
+qMRMLAbstractNodeItemHelper::qMRMLAbstractNodeItemHelper(vtkMRMLNode* _node, int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
+  :qMRMLAbstractItemHelper(_column, itemFactory)
 {
   QCTK_INIT_PRIVATE(qMRMLAbstractNodeItemHelper);
   Q_ASSERT(_node);
@@ -231,8 +245,6 @@ QVariant qMRMLAbstractNodeItemHelper::data(int role) const
     }
   return QVariant();
 }
-#include <iostream>
-#include <fstream>
 
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLAbstractNodeItemHelper::flags() const
@@ -242,9 +254,6 @@ Qt::ItemFlags qMRMLAbstractNodeItemHelper::flags() const
   if (!d->MRMLNode->GetHideFromEditors())
     {
     f |= Qt::ItemIsEnabled;
-    std::ofstream toto ("flags.txt", std::ios_base::app);
-    toto << d->MRMLNode->GetName() << "don't hide from editors" << std::endl;
-    toto << std::endl;
     }
   if (d->MRMLNode->GetSelectable())
     {
@@ -308,7 +317,9 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractRootItemHelper::qMRMLAbstractRootItemHelper(vtkMRMLScene* scene)
+qMRMLAbstractRootItemHelper::qMRMLAbstractRootItemHelper(vtkMRMLScene* scene, 
+                                                         const qMRMLAbstractItemHelperFactory* itemFactory)
+  :qMRMLAbstractItemHelper(-1, itemFactory)
 {
   QCTK_INIT_PRIVATE(qMRMLAbstractRootItemHelper);
   qctk_d()->MRMLScene = scene;
@@ -319,7 +330,8 @@ qMRMLAbstractItemHelper* qMRMLAbstractRootItemHelper::child(int _row, int _colum
 {
   if (_row == 0)
     {
-    return new qMRMLFlatSceneItemHelper(qctk_d()->MRMLScene, _column);
+    //return qctk_d()->MRMLScene;
+    return this->factory()->createItem(qctk_d()->MRMLScene, _column);
     }
   return 0;
 }
@@ -382,4 +394,119 @@ int qMRMLAbstractRootItemHelper::childIndex(const qMRMLAbstractItemHelper* _chil
   Q_UNUSED(_child);
   // we know for sure that child is a child of this, child is at index 0
   return 0;
+}
+
+//------------------------------------------------------------------------------
+// qMRMLExtraItemHelper
+
+//------------------------------------------------------------------------------
+class qMRMLExtraItemHelperPrivate: public qCTKPrivate<qMRMLExtraItemHelper>
+{
+public:
+  QCTK_DECLARE_PUBLIC(qMRMLExtraItemHelper);
+  vtkSmartPointer<vtkVariantArray> VariantArray;
+  bool isSeparator()const;
+};
+
+//------------------------------------------------------------------------------
+bool qMRMLExtraItemHelperPrivate::isSeparator()const
+{
+  const vtkVariant v = this->VariantArray->GetValue(1);
+  return v.ToString() == "separator";
+}
+
+//------------------------------------------------------------------------------
+qMRMLExtraItemHelper::qMRMLExtraItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory)
+  :qMRMLAbstractItemHelper(column, factory)
+{
+  QCTK_INIT_PRIVATE(qMRMLAbstractRootItemHelper);
+  qctk_d()->VariantArray = array;
+}
+
+//------------------------------------------------------------------------------
+QVariant qMRMLExtraItemHelper::data(int role) const
+{
+  QCTK_D(const qMRMLExtraItemHelper);
+  switch (role)
+    {
+    case Qt::DisplayRole:
+    case Qt::EditRole:
+      if (d->isSeparator())
+        {
+        break;
+        }
+    case qMRML::UIDRole:
+      if (this->column() == 0)
+        {
+        const vtkVariant v = d->VariantArray->GetValue(1);
+        return QString(v.ToString());
+        }
+      break;
+    case Qt::AccessibleDescriptionRole:
+      if (d->isSeparator())
+        {
+        // QComboBox understands "separator"
+        return QString("separator");
+        }
+    default:
+      break;
+    }
+  return QVariant();
+}
+
+//------------------------------------------------------------------------------
+Qt::ItemFlags qMRMLExtraItemHelper::flags() const
+{
+  //QCTK_D(const qMRMLExtraItemHelper);
+  return Qt::ItemIsEnabled;
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLExtraItemHelper::parent() const
+{
+  //QCTK_D(const qMRMLExtraItemHelper);
+  return this->factory()->createItem(this->mrmlScene(), 0);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLExtraItemHelper::setData(const QVariant &value, int role)
+{
+  //QCTK_D(const qMRMLExtraItemHelper);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+vtkObject* qMRMLExtraItemHelper::object()const
+{
+  QCTK_D(const qMRMLExtraItemHelper);
+  return d->VariantArray;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLScene* qMRMLExtraItemHelper::mrmlScene()const
+{
+  QCTK_D(const qMRMLExtraItemHelper);
+  const vtkVariant v = d->VariantArray->GetValue(0);
+  vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(v.ToVTKObject());
+  Q_ASSERT(mrmlScene);
+  return mrmlScene;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLExtraItemHelper
+::createExtraItemProperties(vtkVariantArray& properties,
+                            vtkObject* itemParent, 
+                            const vtkStdString& title)
+{
+  properties.SetNumberOfValues(2);
+  
+  if (itemParent == 0)
+    {
+    properties.SetValue(0, vtkVariant(0));
+    }
+  else
+    {
+    properties.SetValue(0, vtkVariant(itemParent));
+    }
+  properties.SetValue(1, vtkVariant(title));
 }

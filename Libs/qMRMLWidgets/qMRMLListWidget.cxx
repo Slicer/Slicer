@@ -30,8 +30,14 @@ void qMRMLListWidgetPrivate::init()
   p->QListView::setModel(sortModel);
   p->setWrapping(true);
   p->setResizeMode(QListView::Adjust);
-  p->setFlow(QListView::LeftToRight);
-  new qCTKModelTester(p->model(), p);
+  p->setFlow(QListView::TopToBottom);
+  // We have a problem when the model is reset (qMRMLSceneModel::setMRMLScene(0)), 
+  // the QSortFilterProxyModel doesn't realize that the rows have disappeared 
+  // and QSortFilterProxyModel::rowCount(QModelIndex) returns 1(the mrmlscene), which
+  // is eventually called by the qCTKModelTester slot connected to QSortFilterProxyModel
+  // signal layoutAboutToBeChanged() which eventually calls testData on the valid QModelIndex
+  //new qCTKModelTester(p->model(), p);
+  new qCTKModelTester(transformModel,p);
 }
 
 //------------------------------------------------------------------------------

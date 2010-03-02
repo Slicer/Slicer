@@ -80,7 +80,6 @@ void qMRMLSceneFactoryWidget::generateScene()
   emit mrmlSceneChanged(d->MRMLScene);
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidget::deleteScene()
 {

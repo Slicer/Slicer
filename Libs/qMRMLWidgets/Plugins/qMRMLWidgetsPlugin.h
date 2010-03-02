@@ -4,6 +4,7 @@
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
+#include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLNodeSelectorPlugin.h"
 #include "qMRMLNodeTreeSelectorPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
@@ -27,6 +28,7 @@ public:
     plugins << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
+            << new qMRMLNodeComboBoxPlugin
             << new qMRMLNodeSelectorPlugin
             << new qMRMLNodeTreeSelectorPlugin
             << new qMRMLTransformSlidersPlugin

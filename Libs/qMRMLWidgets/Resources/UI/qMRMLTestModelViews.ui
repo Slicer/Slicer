@@ -18,6 +18,21 @@
     <widget class="qMRMLSceneFactoryWidget" name="MRMLSceneFactoryWidget"/>
    </item>
    <item>
+    <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox">
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLCameraNode</string>
+      </stringlist>
+     </property>
+     <property name="showChildNodeTypes">
+      <bool>false</bool>
+     </property>
+     <property name="selectNodeUponCreation">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="qMRMLListWidget" name="MRMLListWidget">
@@ -68,6 +83,11 @@
    <header>qMRMLListWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLTreeWidget</class>
    <extends>QTreeView</extends>
    <header>qMRMLTreeWidget.h</header>
@@ -109,6 +129,22 @@
     <hint type="destinationlabel">
      <x>698</x>
      <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MRMLSceneFactoryWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>427</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>432</x>
+     <y>182</y>
     </hint>
    </hints>
   </connection>

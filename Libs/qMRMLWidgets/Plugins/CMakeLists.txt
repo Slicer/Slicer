@@ -12,6 +12,8 @@ SET(designer_plugin_SRCS
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.cxx
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNodeComboBoxPlugin.cxx
+  qMRMLNodeComboBoxPlugin.h
   qMRMLNodeSelectorPlugin.cxx
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.cxx
@@ -34,6 +36,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNodeComboBoxPlugin.h
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
