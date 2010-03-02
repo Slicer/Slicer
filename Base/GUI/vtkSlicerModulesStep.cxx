@@ -1054,7 +1054,7 @@ static bool UnzipPackage(const std::string& zipfile,
   if (!unzip.empty())
     {
     std::stringstream cmd;
-    cmd << unzip << " -o " << zipfile << " -d " << target;
+    cmd << unzip << " -o \"" << zipfile << "\" -d " << target;
     if (!system(cmd.str().c_str()))
       {
       result = true;
