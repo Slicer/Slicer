@@ -76,21 +76,50 @@ int ConvertSlicerROIToRegionTest(int argc, char* argv[])
   TEST_ASSERT_EQUALS_VEC_3(testreg3.GetSize(), 1, 2, 1);
   TEST_ASSERT_EQUALS_VEC_3(testreg3.GetIndex(), -1, 0, -1);
   itk::ImageRegion<3> testreg4 = convertPointsToRegion(p1, p4, testimage1);
-  TEST_ASSERT_EQUALS_VEC_3(testreg4.GetSize(), 1000, 200, 500)
-  TEST_ASSERT_EQUALS_VEC_3(testreg4.GetIndex(), 0, 0, 0)
+  TEST_ASSERT_EQUALS_VEC_3(testreg4.GetSize(), 1000, 200, 500);
+  TEST_ASSERT_EQUALS_VEC_3(testreg4.GetIndex(), 0, 0, 0);
 
   itk::ImageRegion<3> testreg5 = convertPointsToRegion(p1, p3, testimage2);
-  TEST_ASSERT_EQUALS_VEC_3(testreg5.GetSize(), 1, 5, 2)
-  TEST_ASSERT_EQUALS_VEC_3(testreg5.GetIndex(), 0, 0, 0)
+  TEST_ASSERT_EQUALS_VEC_3(testreg5.GetSize(), 1, 5, 2);
+  TEST_ASSERT_EQUALS_VEC_3(testreg5.GetIndex(), 0, 0, 0);
   itk::ImageRegion<3> testreg6 = convertPointsToRegion(p3, p1, testimage2);
-  TEST_ASSERT_EQUALS_VEC_3(testreg6.GetSize(), 1, 5, 2)
-  TEST_ASSERT_EQUALS_VEC_3(testreg6.GetIndex(), 0, 0, 0)
+  TEST_ASSERT_EQUALS_VEC_3(testreg6.GetSize(), 1, 5, 2);
+  TEST_ASSERT_EQUALS_VEC_3(testreg6.GetIndex(), 0, 0, 0);
   itk::ImageRegion<3> testreg7 = convertPointsToRegion(p1, p2, testimage2);
-  TEST_ASSERT_EQUALS_VEC_3(testreg7.GetSize(), 1, 3, 2)
-  TEST_ASSERT_EQUALS_VEC_3(testreg7.GetIndex(), -1, 0, -2)
+  TEST_ASSERT_EQUALS_VEC_3(testreg7.GetSize(), 1, 3, 2);
+  TEST_ASSERT_EQUALS_VEC_3(testreg7.GetIndex(), -1, 0, -2);
   itk::ImageRegion<3> testreg8 = convertPointsToRegion(p1, p4, testimage2);
-  TEST_ASSERT_EQUALS_VEC_3(testreg8.GetSize(), 1000, 500, 1000)
-  TEST_ASSERT_EQUALS_VEC_3(testreg8.GetIndex(), -1000, 0, -1000)
+  TEST_ASSERT_EQUALS_VEC_3(testreg8.GetSize(), 1000, 500, 1000);
+  TEST_ASSERT_EQUALS_VEC_3(testreg8.GetIndex(), -1000, 0, -1000);
+
+  itk::Point<double, 3> ponehalf;
+  assign3(ponehalf, .5, 2.5, 1.0);
+
+  // Testing spatial object
+  itk::BoxSpatialObject<3>::Pointer box1 =
+    convertPointsToBoxSpatialObject(p1, p2);
+  TEST_ASSERT(box1->IsInside(p1));
+  TEST_ASSERT(box1->IsInside(p2));
+  TEST_ASSERT(box1->IsInside(ponehalf));
+  TEST_ASSERT(!box1->IsInside(p3));
+  TEST_ASSERT(!box1->IsInside(p4));
+
+  // test point ordering doesnt matter
+  itk::BoxSpatialObject<3>::Pointer box2 =
+    convertPointsToBoxSpatialObject(p2, p1);
+  TEST_ASSERT(box2->IsInside(p1));
+  TEST_ASSERT(box2->IsInside(p2));
+  TEST_ASSERT(box2->IsInside(ponehalf));
+  TEST_ASSERT(!box2->IsInside(p3));
+  TEST_ASSERT(!box2->IsInside(p4));
+
+  itk::BoxSpatialObject<3>::Pointer box3 =
+    convertPointsToBoxSpatialObject(p1, p4);
+  TEST_ASSERT(box3->IsInside(p1));
+  TEST_ASSERT(box3->IsInside(p2));
+  TEST_ASSERT(box3->IsInside(ponehalf));
+  TEST_ASSERT(!box3->IsInside(p3));
+  TEST_ASSERT(box3->IsInside(p4));
 
   return EXIT_SUCCESS;
 }
