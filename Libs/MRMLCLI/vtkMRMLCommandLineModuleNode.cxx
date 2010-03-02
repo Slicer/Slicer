@@ -230,8 +230,7 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode::SetModuleDescription(const ModuleDescription& description)
+void vtkMRMLCommandLineModuleNode::SetModuleDescription(const ModuleDescription& description)
 {
   // Copy the module description
   ModuleDescriptionObject = description;
@@ -244,10 +243,8 @@ vtkMRMLCommandLineModuleNode::SetModuleDescription(const ModuleDescription& desc
   this->Modified();
 }
 
-
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode
+void vtkMRMLCommandLineModuleNode
 ::SetParameterAsString(const std::string& name, const std::string& value)
 {
   // Set the default value of the named parameter with the value
@@ -260,8 +257,7 @@ vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode
+void vtkMRMLCommandLineModuleNode
 ::SetParameterAsDouble(const std::string& name, double value)
 {
   std::ostrstream strvalue;
@@ -282,8 +278,7 @@ vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode
+void vtkMRMLCommandLineModuleNode
 ::SetParameterAsFloat(const std::string& name, float value)
 {
   std::ostrstream strvalue;
@@ -305,8 +300,7 @@ vtkMRMLCommandLineModuleNode
 
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode
+void vtkMRMLCommandLineModuleNode
 ::SetParameterAsInt(const std::string& name, int value)
 {
   std::ostrstream strvalue;
@@ -327,8 +321,7 @@ vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLCommandLineModuleNode
+void vtkMRMLCommandLineModuleNode
 ::SetParameterAsBool(const std::string& name, bool value)
 {
   // Set the default value of the named parameter with the value
@@ -341,19 +334,14 @@ vtkMRMLCommandLineModuleNode
     }
 }
 
-
-std::string
-vtkMRMLCommandLineModuleNode
-::GetParameterAsString(const std::string& name) const
+//----------------------------------------------------------------------------
+std::string vtkMRMLCommandLineModuleNode::GetParameterAsString(const std::string& name) const
 {
   return this->ModuleDescriptionObject.GetParameterDefaultValue(name);
 }
 
-
-
-
-void
-vtkMRMLCommandLineModuleNode
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode
 ::SetStatus(vtkMRMLCommandLineModuleNode::StatusType status, bool modify)
 {
   if (this->m_Status != status)
@@ -366,17 +354,14 @@ vtkMRMLCommandLineModuleNode
     }
 }
 
-vtkMRMLCommandLineModuleNode::StatusType
-vtkMRMLCommandLineModuleNode
-::GetStatus()
+//----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode::StatusType vtkMRMLCommandLineModuleNode::GetStatus()
 {
   return this->m_Status;
 }
 
-
-bool
-vtkMRMLCommandLineModuleNode
-::HasRegisteredModule(const std::string& name)
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode::HasRegisteredModule(const std::string& name)
 {
   ModuleDescriptionMap::iterator mit;
 
@@ -385,8 +370,8 @@ vtkMRMLCommandLineModuleNode
   return mit != (*vtkMRMLCommandLineModuleNode::RegisteredModules).end();
 }
 
-ModuleDescription
-vtkMRMLCommandLineModuleNode
+//----------------------------------------------------------------------------
+ModuleDescription vtkMRMLCommandLineModuleNode
 ::GetRegisteredModuleDescription(const std::string& name)
 {
   ModuleDescriptionMap::iterator mit;
@@ -401,30 +386,27 @@ vtkMRMLCommandLineModuleNode
   return ModuleDescription();
 }
 
-void
-vtkMRMLCommandLineModuleNode
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode
 ::RegisterModuleDescription(ModuleDescription md)
 {
   (*vtkMRMLCommandLineModuleNode::RegisteredModules)[md.GetTitle()] = md;
 }
 
-void
-vtkMRMLCommandLineModuleNode
-::ClearRegisteredModules()
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::ClearRegisteredModules()
 {
   (*vtkMRMLCommandLineModuleNode::RegisteredModules).clear();
 }
 
-int
-vtkMRMLCommandLineModuleNode
-::GetNumberOfRegisteredModules ()
+//----------------------------------------------------------------------------
+int vtkMRMLCommandLineModuleNode::GetNumberOfRegisteredModules ()
 { 
   return (int)RegisteredModules->size(); 
 }
 
-const char* 
-vtkMRMLCommandLineModuleNode
-::GetRegisteredModuleNameByIndex ( int idx )
+//----------------------------------------------------------------------------
+const char* vtkMRMLCommandLineModuleNode::GetRegisteredModuleNameByIndex ( int idx )
 {
   ModuleDescriptionMap::iterator mit = RegisteredModules->begin();
   int count = 0;
@@ -437,17 +419,14 @@ vtkMRMLCommandLineModuleNode
   return "";
 }
 
-
-bool
-vtkMRMLCommandLineModuleNode
-::ReadParameterFile(const std::string& filename)
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode::ReadParameterFile(const std::string& filename)
 {
   return this->ReadParameterFile(filename.c_str());
 }
 
-bool
-vtkMRMLCommandLineModuleNode
-::ReadParameterFile(const char* filename)
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode::ReadParameterFile(const char* filename)
 {
   bool modified = this->ModuleDescriptionObject.ReadParameterFile(filename);
   
@@ -459,15 +438,15 @@ vtkMRMLCommandLineModuleNode
   return modified;
 }
 
-bool
-vtkMRMLCommandLineModuleNode
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode
 ::WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
 {
   return this->WriteParameterFile(filename.c_str(), withHandlesToBulkParameters);
 }
 
-bool
-vtkMRMLCommandLineModuleNode
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode
 ::WriteParameterFile(const char* filename, bool withHandlesToBulkParameters)
 {
   bool modified 

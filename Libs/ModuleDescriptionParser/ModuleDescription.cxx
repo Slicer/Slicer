@@ -18,6 +18,7 @@
 #include <sstream>
 #include <fstream>
 
+//----------------------------------------------------------------------------
 ModuleDescription::ModuleDescription()
 {
   this->Title = "Unknown";
@@ -40,7 +41,7 @@ ModuleDescription::ModuleDescription()
   ss >> this->Index;
 }
 
-
+//----------------------------------------------------------------------------
 ModuleDescription::ModuleDescription(const ModuleDescription &md)
 {
   this->Title = md.Title;
@@ -64,8 +65,8 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->ProcessInformation.Initialize();
 }
 
-void
-ModuleDescription::operator=(const ModuleDescription &md)
+//----------------------------------------------------------------------------
+void ModuleDescription::operator=(const ModuleDescription &md)
 {
   this->Title = md.Title;
   this->Category = md.Category;
@@ -87,6 +88,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
   this->Logo = md.Logo;
 }
 
+//----------------------------------------------------------------------------
 std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
 {
   os << "Title: " << module.GetTitle() << std::endl;
@@ -120,9 +122,8 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
 }
 
 
-bool
-ModuleDescription
-::HasParameter(const std::string& name) const
+//----------------------------------------------------------------------------
+bool ModuleDescription::HasParameter(const std::string& name) const
 {
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -152,9 +153,8 @@ ModuleDescription
   return false;
 }
 
-bool
-ModuleDescription
-::HasReturnParameters() const
+//----------------------------------------------------------------------------
+bool ModuleDescription::HasReturnParameters() const
 {
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -184,9 +184,8 @@ ModuleDescription
   return false;
 }
 
-bool
-ModuleDescription
-::SetParameterDefaultValue(const std::string& name, const std::string& value)
+//----------------------------------------------------------------------------
+bool ModuleDescription::SetParameterDefaultValue(const std::string& name, const std::string& value)
 {
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::iterator pgbeginit
@@ -218,9 +217,8 @@ ModuleDescription
 }
 
 
-std::string
-ModuleDescription
-::GetParameterDefaultValue(const std::string& name) const
+//----------------------------------------------------------------------------
+std::string ModuleDescription::GetParameterDefaultValue(const std::string& name) const
 {
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -250,23 +248,20 @@ ModuleDescription
   return "";
 }
 
-void
-ModuleDescription
-::SetLogo(const ModuleLogo& logo)
+//----------------------------------------------------------------------------
+void ModuleDescription ::SetLogo(const ModuleLogo& logo)
 {
   this->Logo = logo;
 }
 
-const ModuleLogo&
-ModuleDescription
-::GetLogo() const
+//----------------------------------------------------------------------------
+const ModuleLogo& ModuleDescription::GetLogo() const
 {
   return this->Logo;
 }
 
-bool
-ModuleDescription
-::ReadParameterFile(const std::string& filename)
+//----------------------------------------------------------------------------
+bool ModuleDescription ::ReadParameterFile(const std::string& filename)
 {
   std::ifstream rtp;
   bool modified = false;
@@ -312,9 +307,9 @@ ModuleDescription
   return modified;
 }
 
-bool
-ModuleDescription
-::WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
+//----------------------------------------------------------------------------
+bool ModuleDescription::
+WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
 {
   std::ofstream rtp;
 

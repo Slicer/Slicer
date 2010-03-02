@@ -137,14 +137,14 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->CoordinateSystem = parameter.CoordinateSystem;
 }
 
-const std::vector<std::string> &
-ModuleParameter::GetFileExtensions() const
+//-----------------------------------------------------------------------------
+const std::vector<std::string> & ModuleParameter::GetFileExtensions() const
 {
   return this->FileExtensions;
 }
 
-void
-ModuleParameter::SetFileExtensionsAsString(const std::string& ext)
+//-----------------------------------------------------------------------------
+void ModuleParameter::SetFileExtensionsAsString(const std::string& ext)
 {
   this->FileExtensionsAsString = ext;
 
@@ -152,8 +152,8 @@ ModuleParameter::SetFileExtensionsAsString(const std::string& ext)
   splitString(this->FileExtensionsAsString, std::string(","), this->FileExtensions);
 }
 
-void
-ModuleParameter::SetFlagAliasesAsString(const std::string& aliases)
+//-----------------------------------------------------------------------------
+void ModuleParameter::SetFlagAliasesAsString(const std::string& aliases)
 {
   this->FlagAliasesAsString = aliases;
 
@@ -161,8 +161,8 @@ ModuleParameter::SetFlagAliasesAsString(const std::string& aliases)
   splitString(this->FlagAliasesAsString, std::string(","), this->FlagAliases);
 }
 
-void
-ModuleParameter::SetDeprecatedFlagAliasesAsString(const std::string& aliases)
+//-----------------------------------------------------------------------------
+void ModuleParameter::SetDeprecatedFlagAliasesAsString(const std::string& aliases)
 {
   this->DeprecatedFlagAliasesAsString = aliases;
 
@@ -170,8 +170,8 @@ ModuleParameter::SetDeprecatedFlagAliasesAsString(const std::string& aliases)
   splitString(this->DeprecatedFlagAliasesAsString, std::string(","), this->DeprecatedFlagAliases);
 }
 
-void
-ModuleParameter::SetLongFlagAliasesAsString(const std::string& aliases)
+//-----------------------------------------------------------------------------
+void ModuleParameter::SetLongFlagAliasesAsString(const std::string& aliases)
 {
   this->LongFlagAliasesAsString = aliases;
 
@@ -179,8 +179,8 @@ ModuleParameter::SetLongFlagAliasesAsString(const std::string& aliases)
   splitString(this->LongFlagAliasesAsString, std::string(","), this->LongFlagAliases);
 }
 
-void
-ModuleParameter::SetDeprecatedLongFlagAliasesAsString(const std::string& aliases)
+//-----------------------------------------------------------------------------
+void ModuleParameter::SetDeprecatedLongFlagAliasesAsString(const std::string& aliases)
 {
   this->DeprecatedLongFlagAliasesAsString = aliases;
 
@@ -188,6 +188,7 @@ ModuleParameter::SetDeprecatedLongFlagAliasesAsString(const std::string& aliases
   splitString(this->DeprecatedLongFlagAliasesAsString, std::string(","), this->DeprecatedLongFlagAliases);
 }
 
+//-----------------------------------------------------------------------------
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
 { 
   std::vector<std::string>::const_iterator fit;  
@@ -289,4 +290,3 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "CoordinateSystem: " << parameter.GetCoordinateSystem() << std::endl;
   return os;
 }
-
