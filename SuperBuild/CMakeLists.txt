@@ -745,9 +745,9 @@ endif() # CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY
 set(proj VTK)
 
 if(Slicer3_USE_VTK_CVSHEAD)
-  set(vtk_tag "-dAP")
+  set(vtk_tag -dAP)
 else()
-  set(vtk_tag "-r VTK-5-4")
+  set(vtk_tag -r VTK-5-4)
 endif()
 
 set(vtk_module VTK)
