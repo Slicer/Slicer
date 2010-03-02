@@ -1,11 +1,15 @@
-#include "qSlicerTractographyFiducialSeedingModuleWidget.h"
-#include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
-#include "vtkSlicerTractographyFiducialSeedingLogic.h"
+// MRML includes
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiducialListNode.h"
+
+// Tractography Logic includes
+#include "vtkSlicerTractographyFiducialSeedingLogic.h"
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
 
+// Tractography QTModule includes
+#include "qSlicerTractographyFiducialSeedingModuleWidget.h"
+#include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
