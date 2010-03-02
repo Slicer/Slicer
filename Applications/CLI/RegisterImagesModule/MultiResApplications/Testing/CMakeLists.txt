@@ -8,7 +8,8 @@ set(RegisterImagesMultiResApplicationsTests_SOURCE
     EulerAnisotropicSimilarity3DTransformTest.cxx
     DecomposedAffine3DTransformTest.cxx
     DownsampleHeuristicsTest.cxx
-    ScalingHeuristicsTest.cxx)
+    ScalingHeuristicsTest.cxx
+    ConvertSlicerROIToRegionTest.cxx)
 
 create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
                        RegisterImagesMultiResApplicationsTests.cxx
@@ -46,3 +47,7 @@ add_test(DownsampleHeuristicsTest
 add_test(ScalingHeuristicsTest
          ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          ScalingHeuristicsTest)
+
+add_test(ConvertSlicerROIToRegionTest
+         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
+         ConvertSlicerROIToRegionTest)
