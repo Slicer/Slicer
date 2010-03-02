@@ -179,6 +179,7 @@ if(APPLE)
 endif()
 
 option(Slicer3_USE_VTK_CVSHEAD "Use VTK CVS head when building." OFF)
+option(Slicer3_USE_VTK_DEBUG_LEAKS "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
 
 #-----------------------------------------------------------------------------
 # TCL
@@ -828,7 +829,7 @@ ExternalProject_Add(vtk
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=OFF
     -DVTK_USE_PARALLEL:BOOL=ON
-    -DVTK_DEBUG_LEAKS:BOOL=ON
+    -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
     -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
     ${vtk_TCL_ARGS}
     -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
@@ -1080,7 +1081,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
 #    -DCMAKE_INSTALL_PREFIX:PATH=${prefix
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DVTK_DEBUG_LEAKS:BOOL=ON
+    -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=ON
     -DITK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/Insight-build
