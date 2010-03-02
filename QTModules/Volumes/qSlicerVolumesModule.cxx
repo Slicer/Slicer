@@ -1,18 +1,19 @@
-#include "qSlicerVolumesModule.h"
-#include "ui_qSlicerVolumesModule.h"
-
-// SlicerQT includes
-#include "qSlicerVolumesModuleWidget.h"
 
 // QT includes
 #include <QtPlugin>
+
+// Volumes Logic includes
+#include <vtkSlicerVolumesLogic.h>
+
+// Volumes QTModule includes
+#include "qSlicerVolumesModule.h"
+#include "qSlicerVolumesModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>,
-                                    public Ui_qSlicerVolumesModule
+class qSlicerVolumesModulePrivate: public qCTKPrivate<qSlicerVolumesModule>
 {
 public:
 };
@@ -29,5 +30,5 @@ qSlicerAbstractModuleWidget * qSlicerVolumesModule::createWidgetRepresentation()
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerVolumesModule::createLogic()
 {
-  return 0; 
+  return vtkSlicerVolumesLogic::New();
 }

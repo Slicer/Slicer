@@ -7,6 +7,8 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   )
 
 # Source files
@@ -29,11 +31,7 @@ SET(qt_module_UI_SRCS
 
 # Additional Target libraries
 SET(qt_module_target_libraries
-  #${KWWidgets_LIBRARIES}
-  #${ITK_LIBRARIES}
-  #CommandLineModule
-  #SlicerTractographyDisplay
-  #SlicerTractographyFiducialSeeding
+  vtkSlicerVolumesModuleLogic
   )
 
 # Resources
@@ -51,3 +49,7 @@ Slicer3_build_qtmodule(
   TARGET_LIBRARIES ${qt_module_target_libraries}
   RESOURCES ${qt_module_resources}
   )
+
+if(BUILD_TESTING)
+  #add_subdirectory(Testing)
+endif(BUILD_TESTING)

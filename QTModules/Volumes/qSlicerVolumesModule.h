@@ -1,11 +1,11 @@
 #ifndef __qSlicerVolumesModule_h
 #define __qSlicerVolumesModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
-
-/// qCTK includes
+// qCTK includes
 #include <qCTKPimpl.h>
+
+// SlicerQT includes
+#include "qSlicerAbstractLoadableModule.h"
 
 #include "qSlicerVolumesModuleExport.h"
 
