@@ -41,7 +41,7 @@ int main( int argc, char * argv[] )
   vtkXMLPolyDataReader *pdxReader2 = NULL;
   
   // do we have vtk or vtp models?
-  std::string::size_type loc = Model1.find(".");
+  std::string::size_type loc = Model1.find_last_of(".");
   if( loc == std::string::npos ) 
     {
     std::cerr << "Failed to find an extension for " << Model1 << std::endl;
@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
     }
   // read the second poly data
   
-  loc = Model2.find(".");
+  loc = Model2.find_last_of(".");
   if( loc == std::string::npos ) 
     {
      std::cerr << "Failed to find an extension for " << Model2 << std::endl;
@@ -104,7 +104,7 @@ int main( int argc, char * argv[] )
   add->Update();
   
   // write the output
-  loc = ModelOutput.find(".");
+  loc = ModelOutput.find_last_of(".");
   if( loc == std::string::npos ) 
     {
     std::cerr << "Failed to find an extension for " << ModelOutput << std::endl;
