@@ -31,6 +31,8 @@ SET(designer_plugin_SRCS
   qCTKMenuButtonPlugin.h
   qCTKNumericInputPlugin.cxx
   qCTKNumericInputPlugin.h
+  qCTKRangeSliderPlugin.cxx
+  qCTKRangeSliderPlugin.h
   qCTKTitleComboBoxPlugin.cxx
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.cxx
@@ -53,6 +55,7 @@ SET(designer_plugin_MOC_SRCS
   qCTKFittedTextBrowserPlugin.h  
   qCTKMenuButtonPlugin.h
   qCTKNumericInputPlugin.h
+  qCTKRangeSliderPlugin.h
   qCTKTitleComboBoxPlugin.h
   qCTKTreeComboBoxPlugin.h
   qCTKSliderSpinBoxWidgetPlugin.h
