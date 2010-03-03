@@ -12,6 +12,7 @@
 
 =========================================================================auto=*/
 
+#include <vtkSmartPointer.h>
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx> 
@@ -772,7 +773,7 @@ void vtkSlicerColorLogic::AddColorFile(const char *fileName)
 //----------------------------------------------------------------------------
 vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
 {
-  vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
+  vtkSmartPointer<vtkMRMLColorTableNode> node = vtkSmartPointer<vtkMRMLColorTableNode>::New();
   
   node->SetTypeToFile();
   node->SetAttribute("Category", "File");
@@ -780,7 +781,7 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
   node->SaveWithSceneOn();
   node->HideFromEditorsOff();
   // make a storage node
-  vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  vtkSmartPointer<vtkMRMLColorTableStorageNode>colorStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
   colorStorageNode->SaveWithSceneOn();
   
   if (this->GetMRMLScene())
@@ -803,7 +804,6 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
       this->GetMRMLScene()->AddNode(node);
       vtkDebugMacro("Read and added file node: " <<  fileName);
       this->AddColorFile(fileName);
-      colorStorageNode->Delete();
       return node;
       }
     }
@@ -811,7 +811,6 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
     {
     vtkWarningMacro("Unable to read color file " << fileName);
     }
-  colorStorageNode->Delete();
   return NULL;
 }
 
