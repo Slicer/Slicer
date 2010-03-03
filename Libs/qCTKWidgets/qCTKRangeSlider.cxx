@@ -141,7 +141,7 @@ qCTKRangeSlider::qCTKRangeSlider(QWidget* parent)
   : QSlider(parent)
 {
   QCTK_INIT_PRIVATE(qCTKRangeSlider);
-  connect(this, SIGNAL(rangeChanged(int, int)), 
+  connect(this, SIGNAL(rangeValuesChanged(int, int)), 
           this, SLOT(updateRangeBounds(int, int)));
 }
 
@@ -151,7 +151,7 @@ qCTKRangeSlider::qCTKRangeSlider( Qt::Orientation o,
   :QSlider(o, parentObject)
 {
   QCTK_INIT_PRIVATE(qCTKRangeSlider);
-  connect(this, SIGNAL(rangeChanged(int, int)), 
+  connect(this, SIGNAL(rangeValuesChanged(int, int)), 
           this, SLOT(updateRangeBounds()));
 }
 
@@ -202,7 +202,7 @@ void qCTKRangeSlider::setRangeBounds(int l, int u)
     d->m_RangeMaximum = d->m_RangeMaximumValue = rangeMaximum;
 
     emit rangeMaximumChanged(rangeMaximum);
-    emit rangeChanged(d->m_RangeMinimum, d->m_RangeMaximum);
+    emit rangeValuesChanged(d->m_RangeMinimum, d->m_RangeMaximum);
     this->update();
     }
 
@@ -211,7 +211,7 @@ void qCTKRangeSlider::setRangeBounds(int l, int u)
     d->m_RangeMinimum = d->m_RangeMinimumValue = rangeMinimum;
     
     emit rangeMinimumChanged(rangeMinimum);
-    emit rangeChanged(d->m_RangeMinimum, d->m_RangeMaximum);
+    emit rangeValuesChanged(d->m_RangeMinimum, d->m_RangeMaximum);
     this->update();
     }
 }

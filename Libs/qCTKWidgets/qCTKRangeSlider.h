@@ -33,7 +33,7 @@ public:
     int rangeMaximumValuePosition() const;
 
 signals:
-    void rangeChanged(int rangeMinimum, int rangeMaximum);
+    void rangeValuesChanged(int rangeMinimum, int rangeMaximum);
     void rangeMinimumChanged(int rangeMinimum);
     void rangeMaximumChanged(int rangeMaximum);
 
