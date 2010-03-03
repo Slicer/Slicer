@@ -52,6 +52,7 @@ vtkMRMLNode* vtkMRMLColorTableStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
+  this->InitializeSupportedWriteFileTypes();
 }
 
 //----------------------------------------------------------------------------
@@ -390,6 +391,7 @@ int vtkMRMLColorTableStorageNode::SupportedFileType(const char *fileName)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
 {
+  Superclass::InitializeSupportedWriteFileTypes();
   this->SupportedWriteFileTypes->InsertNextValue("Color Table (.ctbl)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
 }

@@ -777,9 +777,12 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
   node->SetTypeToFile();
   node->SetAttribute("Category", "File");
   node->SetScene(this->GetMRMLScene());
+  node->SaveWithSceneOn();
+  node->HideFromEditorsOff();
   // make a storage node
   vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
-  colorStorageNode->SaveWithSceneOff();
+  colorStorageNode->SaveWithSceneOn();
+  
   if (this->GetMRMLScene())
     {
     this->GetMRMLScene()->AddNode(colorStorageNode);
