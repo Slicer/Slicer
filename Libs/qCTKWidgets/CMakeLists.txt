@@ -79,8 +79,6 @@ SET(qCTKWidgets_SRCS
   qCTKMenuButton.h
   qCTKModelTester.cxx
   qCTKModelTester.h
-  qCTKNumericInput.cxx
-  qCTKNumericInput.h
   qCTKRangeSlider.cxx
   qCTKRangeSlider.h
   qCTKSettings.cxx
@@ -112,7 +110,6 @@ SET(qCTKWidgets_MOC_SRCS
   qCTKMatrixWidget.h
   qCTKMenuButton.h
   qCTKModelTester.h
-  qCTKNumericInput.h
   qCTKRangeSlider.h
   qCTKSettings.h
   qCTKSliderSpinBoxWidget.h
