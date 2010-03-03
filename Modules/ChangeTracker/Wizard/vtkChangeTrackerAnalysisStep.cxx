@@ -411,9 +411,10 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   // Display Analysis Volume 
   // ----------------------------------------  
   vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
+  vtkMRMLVolumeNode *volumeAnalysisNode = NULL;
+  
   if (node) { 
     vtkMRMLVolumeNode *volumeSampleNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_SuperSampleRef()));
-    vtkMRMLVolumeNode *volumeAnalysisNode = NULL;
 
     if (node->GetAnalysis_Intensity_Flag()) {
       volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Intensity_Ref()));
@@ -919,6 +920,8 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   this->CreateSliceButton();
   this->AddGUIObservers();
   this->SensitivityChangedCallback(-1);
+      
+  this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget()->RequestRender();
 //  this->GetGUI()->PropagateVolumeSelection();
 }
 
