@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Icons/combobox.png</file>
+    <file>Icons/doublespinbox.png</file>
+    <file>Icons/groupboxcollapsible.png</file>
+    <file>Icons/hrangeslider.png</file>
+    <file>Icons/hslider.png</file>
+    <file>Icons/listbox.png</file>
+    <file>Icons/pushbutton.png</file>
+    <file>Icons/sliderspinbox.png</file>
+    <file>Icons/textedit.png</file>
+    <file>Icons/vspacer.png</file>
+    <file>Icons/widget.png</file>
+  </qresource>
+</RCC>

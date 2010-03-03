@@ -19,6 +19,11 @@ QString qCTKCoordinatesWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qCTKCoordinatesWidgetPlugin::icon() const
+{
+  return QIcon(":/Icons/doublespinbox.png");
+}
+
 QString qCTKCoordinatesWidgetPlugin::includeFile() const
 {
   return "qCTKCoordinatesWidget.h";

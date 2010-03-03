@@ -19,6 +19,11 @@ QString qCTKTitleComboBoxPlugin::domXml() const
           name=\"CTKTitleComboBox\">\n"
           "</widget>\n";
 }
+// --------------------------------------------------------------------------
+QIcon qCTKTitleComboBoxPlugin::icon() const
+{
+  return QIcon(":/Icons/combobox.png");
+}
 
 QString qCTKTitleComboBoxPlugin::includeFile() const
 {

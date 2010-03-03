@@ -3,11 +3,13 @@
 
 #include <QMenu>
 
+// --------------------------------------------------------------------------
 qCTKMenuButtonPlugin::qCTKMenuButtonPlugin(QObject *_parent)
         : QObject(_parent)
 {
 }
 
+// --------------------------------------------------------------------------
 QWidget *qCTKMenuButtonPlugin::createWidget(QWidget *_parent)
 {
   qCTKMenuButton* _widget = new qCTKMenuButton(_parent);
@@ -19,6 +21,7 @@ QWidget *qCTKMenuButtonPlugin::createWidget(QWidget *_parent)
   return _widget;
 }
 
+// --------------------------------------------------------------------------
 QString qCTKMenuButtonPlugin::domXml() const
 {
   return "<widget class=\"qCTKMenuButton\" name=\"CTKMenuButton\">\n"
@@ -28,16 +31,25 @@ QString qCTKMenuButtonPlugin::domXml() const
          "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
+QIcon qCTKMenuButtonPlugin::icon() const
+{
+  return QIcon(":/Icons/combobox.png");
+}
+
+// --------------------------------------------------------------------------
 QString qCTKMenuButtonPlugin::includeFile() const
 {
   return "qCTKMenuButton.h";
 }
 
+// --------------------------------------------------------------------------
 bool qCTKMenuButtonPlugin::isContainer() const
 {
   return false;
 }
 
+// --------------------------------------------------------------------------
 QString qCTKMenuButtonPlugin::name() const
 {
   return "qCTKMenuButton";

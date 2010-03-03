@@ -20,6 +20,12 @@ QString qCTKSliderSpinBoxWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
+QIcon qCTKSliderSpinBoxWidgetPlugin::icon() const
+{
+  return QIcon(":/Icons/sliderspinbox.png");
+}
+
 QString qCTKSliderSpinBoxWidgetPlugin::includeFile() const
 {
   return "qCTKSliderSpinBoxWidget.h";

@@ -51,7 +51,8 @@ MACRO(qctk_build_designer_plugin)
   # Build the library
 
   ADD_LIBRARY(${lib_name} MODULE
-    ${QCTK_DESIGNERPLUGIN_SRCS})
+    ${QCTK_DESIGNERPLUGIN_SRCS}
+    ${QCTK_DESIGNERPLUGIN_QRC_SRCS})
   
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES

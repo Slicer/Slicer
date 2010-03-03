@@ -34,6 +34,11 @@ QString qCTKCollapsibleButtonPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qCTKCollapsibleButtonPlugin::icon() const
+{
+  return QIcon(":/Icons/groupboxcollapsible.png");
+}
+
 QString qCTKCollapsibleButtonPlugin::includeFile() const
 {
   return "qCTKCollapsibleButton.h";

@@ -69,6 +69,7 @@ qctk_build_designer_plugin(
   NAME ${PROJECT_NAME}
   SRCS ${designer_plugin_SRCS}
   MOC_SRCS ${designer_plugin_MOC_SRCS}
+  RESOURCES Resources/qCTKWidgetsPlugins.qrc
   TARGET_LIBRARIES ${designer_plugin_TARGET_LIBRARIES}
   )
 

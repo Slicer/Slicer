@@ -22,6 +22,12 @@ QString qCTKDynamicSpacerPlugin::domXml() const
 }
 
 // --------------------------------------------------------------------------
+QIcon qCTKDynamicSpacerPlugin::icon() const
+{
+  return QIcon(":/Icons/vspacer.png");
+}
+
+// --------------------------------------------------------------------------
 QString qCTKDynamicSpacerPlugin::includeFile() const
 {
   return "qCTKDynamicSpacer.h";

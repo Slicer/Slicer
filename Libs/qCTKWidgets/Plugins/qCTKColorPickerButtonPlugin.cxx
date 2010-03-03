@@ -19,6 +19,11 @@ QString qCTKColorPickerButtonPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qCTKColorPickerButtonPlugin::icon() const
+{
+  return QIcon(":/Icons/pushbutton.png");
+}
+
 QString qCTKColorPickerButtonPlugin::includeFile() const
 {
   return "qCTKColorPickerButton.h";

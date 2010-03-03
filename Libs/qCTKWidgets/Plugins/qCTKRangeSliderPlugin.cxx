@@ -25,6 +25,12 @@ QString qCTKRangeSliderPlugin::domXml() const
 }
 
 // --------------------------------------------------------------------------
+QIcon qCTKRangeSliderPlugin::icon() const
+{
+  return QIcon(":/Icons/hrangeslider.png");
+}
+
+// --------------------------------------------------------------------------
 QString qCTKRangeSliderPlugin::includeFile() const
 {
   return "qCTKRangeSlider.h";

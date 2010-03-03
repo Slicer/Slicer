@@ -20,6 +20,12 @@ QString qCTKNumericInputPlugin::domXml() const
           "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
+QIcon qCTKNumericInputPlugin::icon() const
+{
+  return QIcon(":/Icons/doublespinbox.png");
+}
+
 QString qCTKNumericInputPlugin::includeFile() const
 {
   return "qCTKNumericInput.h";

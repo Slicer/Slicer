@@ -20,6 +20,12 @@ QString qCTKFittedTextBrowserPlugin::domXml() const
           "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
+QIcon qCTKFittedTextBrowserPlugin::icon() const
+{
+  return QIcon(":/Icons/textedit.png");
+}
+
 QString qCTKFittedTextBrowserPlugin::includeFile() const
 {
   return "qCTKFittedTextBrowser.h";

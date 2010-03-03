@@ -25,6 +25,12 @@ QString qCTKDoubleSliderPlugin::domXml() const
 }
 
 // --------------------------------------------------------------------------
+QIcon qCTKDoubleSliderPlugin::icon() const
+{
+  return QIcon(":/Icons/hslider.png");
+}
+
+// --------------------------------------------------------------------------
 QString qCTKDoubleSliderPlugin::includeFile() const
 {
   return "qCTKDoubleSlider.h";
