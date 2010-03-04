@@ -803,7 +803,9 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
       this->GetMRMLScene()->RequestNodeID(node, id.c_str());
       this->GetMRMLScene()->AddNode(node);
       vtkDebugMacro("Read and added file node: " <<  fileName);
-      this->AddColorFile(fileName);
+      // don't add the name to the list of files, otherwise it will get loaded
+      //again with the default ones
+      //this->AddColorFile(fileName);
       return node;
       }
     }
