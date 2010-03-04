@@ -597,12 +597,8 @@ itcl::body Loader::apply { } {
            }  
         }
         "ColorTable" {
-           set node [[$::slicer3::ColorGUI GetLogic] LoadColorFile $path]
-           if { $node == "" } {
-              $this errorDialog "Could not open $path"
-           } else {
-              $node SetName $name
-           }  
+           # uses smart pointers which don't return the node back to tcl
+            [$::slicer3::ColorGUI GetLogic] LoadColorFile $path $name
         }
         "Transform" {
            set logic [vtkSlicerTransformLogic New]
