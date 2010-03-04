@@ -19,6 +19,11 @@ QString qMRMLListWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qMRMLListWidgetPlugin::icon() const
+{
+  return QIcon(":Icons/listbox.png");
+}
+
 QString qMRMLListWidgetPlugin::includeFile() const
 {
   return "qMRMLListWidget.h";

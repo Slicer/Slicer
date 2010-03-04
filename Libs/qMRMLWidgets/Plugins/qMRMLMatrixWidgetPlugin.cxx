@@ -27,6 +27,11 @@ QString qMRMLMatrixWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qMRMLMatrixWidgetPlugin::icon() const
+{
+  return QIcon(":/Icons/table.png");
+}
+
 QString qMRMLMatrixWidgetPlugin::includeFile() const
 {
   return "qMRMLMatrixWidget.h";

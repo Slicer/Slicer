@@ -19,6 +19,11 @@ QString qMRMLTreeWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qMRMLTreeWidgetPlugin::icon() const
+{
+  return QIcon(":/Icons/listview.png");
+}
+
 QString qMRMLTreeWidgetPlugin::includeFile() const
 {
   return "qMRMLTreeWidget.h";

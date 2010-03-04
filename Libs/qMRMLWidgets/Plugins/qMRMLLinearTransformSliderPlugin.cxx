@@ -12,7 +12,6 @@ QWidget *qMRMLLinearTransformSliderPlugin::createWidget(QWidget *_parent)
   return _widget;
 }
 
-
 QString qMRMLLinearTransformSliderPlugin::domXml() const
 {
   return "<widget class=\"qMRMLLinearTransformSlider\" \
@@ -26,6 +25,11 @@ QString qMRMLLinearTransformSliderPlugin::domXml() const
           "  </rect>\n"
           " </property>\n"
           "</widget>\n";
+}
+
+QIcon qMRMLLinearTransformSliderPlugin::icon() const
+{
+  return QIcon(":/Icons/sliderspinbox.png");
 }
 
 QString qMRMLLinearTransformSliderPlugin::includeFile() const

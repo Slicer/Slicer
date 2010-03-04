@@ -27,6 +27,11 @@ QString qMRMLTransformSlidersPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qMRMLTransformSlidersPlugin::icon() const
+{
+  return QIcon(":/Icons/groupbox.png");
+}
+
 QString qMRMLTransformSlidersPlugin::includeFile() const
 {
   return "qMRMLTransformSliders.h";

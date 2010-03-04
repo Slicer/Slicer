@@ -27,6 +27,11 @@ QString qMRMLNodeTreeSelectorPlugin::domXml() const
           "</widget>\n";
 }
 
+QIcon qMRMLNodeTreeSelectorPlugin::icon() const
+{
+  return QIcon(":/Icons/combobox.png");
+}
+
 QString qMRMLNodeTreeSelectorPlugin::includeFile() const
 {
   return "qMRMLNodeTreeSelector.h";
