@@ -114,12 +114,13 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
       {
       // get the volume display node
       vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
-      if (displayNode != NULL && displayNode->GetColorNodeID() != NULL)
+      if (displayNode)
         {
-        // set and observe it's colour node id
-        if (strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
+        // set and observe it's colour node id if there isn't one already, or
+        // if there's a change
+        if (displayNode->GetColorNodeID()  == NULL ||
+            (displayNode->GetColorNodeID() != NULL && strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0))
           {
-          // there's a change, set it
           displayNode->SetAndObserveColorNodeID(color->GetID());
           }
         }

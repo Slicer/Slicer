@@ -92,15 +92,28 @@ void vtkSlicerLabelMapVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *call
       {
       // get the volume display node
       vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
-      if (displayNode != NULL && displayNode->GetColorNodeID() != NULL)
+      if (displayNode != NULL)
         {
-        // set and observe it's colour node id
-        if (strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
+        // set and observe it's colour node id if there isn't one already, or
+        // if there's a change
+        if (displayNode->GetColorNodeID()  == NULL ||
+            (displayNode->GetColorNodeID() != NULL && strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0))
           {
-          // there's a change, set it
           displayNode->SetAndObserveColorNodeID(color->GetID());
           }
+        else
+          {
+          vtkWarningMacro("ProcessWidgetEvents: no change in the color node id, " << displayNode->GetColorNodeID() << " is equal to " << color->GetID());
+          }
         }
+      else
+        {
+        vtkErrorMacro("ProcessWidgetEvents: the display node is null, can't set a color node");
+        }
+      }
+    else
+      {
+      vtkErrorMacro("ProcessWidgetEvents: unable to get the selected color node!");
       }
     this->UpdatingWidget = 0;
     return;
