@@ -68,10 +68,6 @@ public:
 //ETX
 
   /// 
-  /// Read in a text file with procedural definitions
-  virtual int ReadFile ();
-
-  /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {

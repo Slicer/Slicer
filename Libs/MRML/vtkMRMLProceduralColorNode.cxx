@@ -146,14 +146,6 @@ void vtkMRMLProceduralColorNode::SetType(int type)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLProceduralColorNode::ReadFile()
-{
-  vtkWarningMacro("Subclass didn't define ReadFile!");
-  return 0;
-}
-
-
-//---------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::SetNamesFromColors()
 {
   // get the transfer function's range and iterate over them

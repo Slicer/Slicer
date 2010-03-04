@@ -270,9 +270,3 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
   this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
 }
 
-//---------------------------------------------------------------------------
-int vtkMRMLPETProceduralColorNode::ReadFile()
-{
-  vtkWarningMacro("vtkMRMLPETProceduralColorNode hasn't define ReadFile yet...");
-  return 0;
-}

@@ -263,9 +263,3 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
   this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
 }
 
-//---------------------------------------------------------------------------
-int vtkMRMLdGEMRICProceduralColorNode::ReadFile()
-{
-  vtkWarningMacro("vtkMRMLdGEMRICProceduralColorNode hasn't define ReadFile yet...");
-  return 0;
-}

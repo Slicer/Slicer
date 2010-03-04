@@ -48,12 +48,6 @@ public:
   /// 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-
-
-  /// 
-  /// Read in a text file - not used, use a regular vtkMRMLColorTableNode to
-  /// read in freesurfer colour text files.
-///  virtual void ReadFile ();
   
   /// 
   /// Copy the node's attributes to this object

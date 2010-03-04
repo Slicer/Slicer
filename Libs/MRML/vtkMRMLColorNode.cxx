@@ -25,6 +25,8 @@ Version:   $Revision: 1.0 $
 #include "vtkMRMLStorageNode.h"
 #include <itksys/SystemTools.hxx>
 
+#include <vtkSmartPointer.h>
+
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLColorNode::New()
 {
@@ -96,15 +98,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL)
     {
-    // convert to relative filename
-    std::string name = this->FileName;
-    if (this->GetScene() && this->GetStorageNode() &&
-        !this->GetStorageNode()->IsFilePathRelative(this->FileName))
-      {
-      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
-      }
-    
-    of << indent << " filename=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
+    // dont' write it out, it's handled by the storage node
     }
 }
 
@@ -136,9 +130,24 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "filename"))
       {
       this->SetFileName(attValue);
-      // read in the file with the colours
-      std::cout << "Reading file " << this->FileName << endl;
-      this->ReadFile();
+      // don't read in the file with the colours, it's handled by the storage
+      // node
+      if (this->GetStorageNode() == NULL)
+        {
+        vtkWarningMacro("A color node has a file name, but no storage node, trying to create one");
+        vtkSmartPointer<vtkMRMLStorageNode> snode = this->CreateDefaultStorageNode();
+        if (snode && this->GetScene())
+          {
+          snode->SetFileName(attValue);
+          this->GetScene()->AddNode(snode);
+          this->SetAndObserveStorageNodeID(snode->GetID());
+          }
+        else
+          {
+          vtkErrorMacro("Unable to create or add to scene a new color storage node to read file " << attValue);
+          }
+           
+        }
       }
     }
   this->EndModify(disabledModify);
@@ -149,13 +158,6 @@ vtkLookupTable * vtkMRMLColorNode::GetLookupTable()
 {
   vtkDebugMacro("Subclass has not implemented GetLookupTable, returning NULL");
   return NULL;
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLColorNode::ReadFile ()
-{
-  vtkErrorMacro("Subclass has not implemented ReadFile.");
-  return 0;
 }
 
 //----------------------------------------------------------------------------

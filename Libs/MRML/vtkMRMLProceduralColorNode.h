@@ -88,10 +88,6 @@ public:
 //ETX
 
   /// 
-  /// Read in a text file with procedural definitions
-  virtual int ReadFile ();
-
-  /// 
   /// Get the color transfer function for this node
   vtkGetObjectMacro(ColorTransferFunction, vtkColorTransferFunction);
 

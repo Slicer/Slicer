@@ -51,12 +51,6 @@ public:
   /// 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-
-
-  /// 
-  /// Read in a text file holding colours
-  /// Return 1 on sucess, 0 on failure
-  virtual int ReadFile ();
   
   /// 
   /// Copy the node's attributes to this object
