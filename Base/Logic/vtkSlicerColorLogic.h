@@ -105,7 +105,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   /// 
   /// load in a color file and add the name to the names list, creating a
   /// storage node
-  vtkMRMLColorNode * LoadColorFile(const char *fileName);
+  vtkMRMLColorNode * LoadColorFile(const char *fileName, const char *nodeName = NULL);
 
   /// 
   /// Get/Set the user defined paths where to look for extra colour files

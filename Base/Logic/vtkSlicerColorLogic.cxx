@@ -771,7 +771,7 @@ void vtkSlicerColorLogic::AddColorFile(const char *fileName)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
+vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
 {
   vtkSmartPointer<vtkMRMLColorTableNode> node = vtkSmartPointer<vtkMRMLColorTableNode>::New();
   
@@ -792,8 +792,15 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
   
   node->SetFileName(fileName);
   colorStorageNode->SetFileName(fileName);
-  
-  node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
+
+  if (nodeName == NULL)
+    {
+    node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
+    }
+  else
+    {
+    node->SetName(nodeName);
+    }
   std::string id;
   if (colorStorageNode->ReadData(node)) // ReadFile())
     {
