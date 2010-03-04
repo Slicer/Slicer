@@ -21,6 +21,7 @@ Version:   $Revision: 1.6 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
@@ -214,7 +215,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   
   vtkMRMLVolumeNode *volNode = NULL;
-  vtkITKArchetypeImageSeriesReader* reader = NULL;
+  vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader = NULL;
   
 #ifdef MRML_USE_vtkTeem
   if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
@@ -226,8 +227,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     // - note these are different classes because they are too big to compile
     //   as a single class on some systems
     //
-    vtkITKArchetypeImageSeriesVectorReaderFile *readerFile = vtkITKArchetypeImageSeriesVectorReaderFile::New();
-    vtkITKArchetypeImageSeriesVectorReaderSeries *readerSeries = vtkITKArchetypeImageSeriesVectorReaderSeries::New();
+    vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderFile> readerFile = vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderFile>::New();
+    vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderSeries> readerSeries = vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderSeries>::New();
 
     readerFile->SetArchetype(fullName.c_str());
     readerFile->SetSingleFile( this->GetSingleFile() );
@@ -243,25 +244,20 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     catch ( ... )
       {
-      readerFile->Delete();
-      readerSeries->Delete();
       return 0;
       }
     if ( readerSeries->GetNumberOfFileNames() == 1 )
       {
       reader = readerFile;
       reader->UpdateInformation();
-      readerSeries->Delete();
       }
     else
       {
       vtkDebugMacro("ReadData: readerSeries number of file names = " << readerSeries->GetNumberOfFileNames());
       reader = readerSeries;
-      readerFile->Delete();
       }
     if (reader->GetNumberOfComponents() < 3)
       {
-      reader->Delete();
       return 0;
       }
     }
@@ -270,7 +266,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-    reader = vtkITKArchetypeImageSeriesScalarReader::New();  
+    reader = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();  
     reader->SetSingleFile( this->GetSingleFile() );
     reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
     }
@@ -337,7 +333,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkErrorMacro("reader 0th file name = " << reader->GetFileName(0) );
       }
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
-    reader->Delete();
     return 0;
     }
 
@@ -346,7 +341,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
-    reader->Delete();
     return 0;
     }
   
@@ -356,7 +350,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     volNode->SetAndObserveImageData(NULL);
     vtkErrorMacro("ReadData: Not a scalar volume file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
-    reader->Delete();
     return 0;
     }
 
@@ -378,7 +371,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   //TODO update scene to send Modified event
  
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+  vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
   ici->SetInput (reader->GetOutput());
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
@@ -388,8 +381,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
-    reader->Delete();
-    ici->Delete();
     return 0;
     }
   else
@@ -406,8 +397,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   volNode->SetRASToIJKMatrix(mat);
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
-  reader->Delete();
-  ici->Delete();
 
   this->SetReadStateIdle();
   
@@ -521,7 +510,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkDebugMacro("WriteData: writing out file with archetype " << fullName);
     
-    vtkITKImageWriter *writer = vtkITKImageWriter::New();
+    vtkSmartPointer<vtkITKImageWriter> writer = vtkSmartPointer<vtkITKImageWriter>::New();
     writer->SetFileName(fullName.c_str());
   
     writer->SetInput( volNode->GetImageData() );
@@ -534,7 +523,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
       }
     
     // set volume attributes
-    vtkMatrix4x4* mat = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
     volNode->GetRASToIJKMatrix(mat);
     writer->SetRasToIJKMatrix(mat);
     
@@ -546,8 +535,6 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
       {
       result = 0;
       }
-    mat->Delete();
-    writer->Delete();    
     }
   
   Superclass::StageWriteData(refNode);
@@ -661,7 +648,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   vtkDebugMacro("UpdateFileList: new archetype file name = " << tempName.c_str());
 
   // set up the writer and write
-  vtkITKImageWriter *writer = vtkITKImageWriter::New();
+  vtkSmartPointer<vtkITKImageWriter> writer = vtkSmartPointer<vtkITKImageWriter>::New();
   writer->SetFileName(tempName.c_str());
   
   writer->SetInput( volNode->GetImageData() );
@@ -678,7 +665,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
 
   // set volume attributes
-  vtkMatrix4x4* mat = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
   volNode->GetRASToIJKMatrix(mat);
   writer->SetRasToIJKMatrix(mat);
 
@@ -691,8 +678,6 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     {
     result = 0;
     }
-  mat->Delete();
-  writer->Delete();
 
   // look through the new dir and populate the file list
   vtksys::Directory dir;
