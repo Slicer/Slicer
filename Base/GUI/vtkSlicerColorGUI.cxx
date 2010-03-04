@@ -345,7 +345,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
   this->LoadColorFileButton->GetWidget()->SetText ("Select Color File");
   this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open Color File");
   this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-                                                                         "{ {Color text} {*.txt} }");
+                                                                         "{ {Color text} {*.txt} } { {Color table} {*.ctbl} }");
   this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
                                                                                          "OpenPath");
   app->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
