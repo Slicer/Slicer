@@ -1513,12 +1513,6 @@ int Slicer3_main(int& argc, char *argv[])
   slicerApp->InitializeQtLoadableModules();
 #endif
 
- // --- First scene needs a crosshair to be added manually
-  vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
-  crosshair->SetCrosshairName("default");
-  scene->AddNode( crosshair );
-  crosshair->Delete();
-
   //
   //--- Cache and RemoteIO ManagerGUI
   //

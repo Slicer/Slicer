@@ -60,6 +60,7 @@
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"
+#include "vtkMRMLCrosshairNode.h"
 
 #include "vtkPointData.h"
 
@@ -563,39 +564,45 @@ void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
 
 void vtkSlicerApplicationLogic::CreateSliceLogics()
 {
-        // insert slicelogic pointers to a map InternalSlicerSliceLogicMap
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  // make sure there is a CrossHair in the scene
+  vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
+  crosshair->SetCrosshairName("default");
+  this->GetMRMLScene()->AddNode( crosshair );
+  crosshair->Delete();
 
-    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New ( );
-    sliceLogic->SetName("Red");
-    this->AddSliceLogic("Red", sliceLogic);
-    sliceLogic = vtkSlicerSliceLogic::New();
-    sliceLogic->SetName("Yellow");
-    this->AddSliceLogic("Yellow", sliceLogic);
-    sliceLogic = vtkSlicerSliceLogic::New();
-    sliceLogic->SetName("Green");
-    this->AddSliceLogic("Green", sliceLogic);
+  // insert slicelogic pointers to a map InternalSlicerSliceLogicMap
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New ( );
+  sliceLogic->SetName("Red");
+  this->AddSliceLogic("Red", sliceLogic);
+  sliceLogic = vtkSlicerSliceLogic::New();
+  sliceLogic->SetName("Yellow");
+  this->AddSliceLogic("Yellow", sliceLogic);
+  sliceLogic = vtkSlicerSliceLogic::New();
+  sliceLogic->SetName("Green");
+  this->AddSliceLogic("Green", sliceLogic);
     
 
-    SliceLogicMap::iterator lit;
-    for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
-      {
-      sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
-      sliceLogic->SetMRMLScene ( this->GetMRMLScene() );
-      sliceLogic->ProcessLogicEvents ();
-      sliceLogic->ProcessMRMLEvents (this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
-      sliceLogic->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), events );
-      //if (this->Slices)
-      //      this->Slices->AddItem(sliceLogic);
-      }
+  SliceLogicMap::iterator lit;
+  for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
+    {
+    sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+    sliceLogic->SetMRMLScene ( this->GetMRMLScene() );
+    sliceLogic->ProcessLogicEvents ();
+    sliceLogic->ProcessMRMLEvents (this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
+    sliceLogic->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), events );
+    //if (this->Slices)
+    //      this->Slices->AddItem(sliceLogic);
+    }
     
-    events->Delete();
+  events->Delete();
 }
 
 void vtkSlicerApplicationLogic::DeleteSliceLogics()
