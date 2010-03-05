@@ -868,6 +868,36 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
     this->UnpackMainViewer();
     this->SetCurrentLayout ( target == vtkMRMLLayoutNode::SlicerLayoutNone );
     }
+
+  // update the collapse state of the slice controllers
+  if (this->SlicesGUI)
+    {
+    vtkSlicerSliceGUI *g = NULL;
+    const char *layoutname = NULL;
+    int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        g = this->SlicesGUI->GetFirstSliceGUI();
+        layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        g = this->SlicesGUI->GetNextSliceGUI(layoutname);
+        layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
+        }
+     
+      if (this->GUILayoutNode->GetCollapseSliceControllers())
+        {
+        g->GetSliceController()->Shrink();
+        }
+      else
+        {
+        g->GetSliceController()->Expand();
+        }
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1156,51 +1186,11 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if (event == vtkSlicerSliceControllerWidget::ExpandEvent)
       {
-      if (this->SlicesGUI)
-        {
-        vtkSlicerSliceGUI *g = NULL;
-        const char *layoutname = NULL;
-        int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-        for (int i = 0; i < nSliceGUI; i++)
-          {
-          if (i == 0)
-            {
-            g = this->SlicesGUI->GetFirstSliceGUI();
-            layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
-            }
-          else
-            {
-            g = this->SlicesGUI->GetNextSliceGUI(layoutname);
-            layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
-            }
-
-          g->GetSliceController()->Expand();
-          }
-        }
+      this->GUILayoutNode->SetCollapseSliceControllers(0);
       }
     else if (event == vtkSlicerSliceControllerWidget::ShrinkEvent)
       {
-      if (this->SlicesGUI)
-        {
-        vtkSlicerSliceGUI *g = NULL;
-        const char *layoutname = NULL;
-        int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-        for (int i = 0; i < nSliceGUI; i++)
-          {
-          if (i == 0)
-            {
-            g = this->SlicesGUI->GetFirstSliceGUI();
-            layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
-            }
-          else
-            {
-            g = this->SlicesGUI->GetNextSliceGUI(layoutname);
-            layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
-            }
-
-          g->GetSliceController()->Shrink();
-          }
-        }
+      this->GUILayoutNode->SetCollapseSliceControllers(1);
       }
     }
 

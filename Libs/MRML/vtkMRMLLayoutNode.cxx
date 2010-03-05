@@ -45,6 +45,7 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;
   this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
+  this->CollapseSliceControllers = 0;
   this->NumberOfCompareViewRows = 1;
   this->NumberOfCompareViewColumns = 1;
   this->NumberOfCompareViewLightboxRows = 1;
@@ -81,6 +82,7 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " guiPanelVisibility=\"" << this->GUIPanelVisibility << "\"";
   of << indent << " bottomPanelVisibility =\"" << this->BottomPanelVisibility << "\"";
   of << indent << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
+  of << indent << " collapseSliceControllers=\"" << this->CollapseSliceControllers << std::endl;
   of << indent << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
   of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
   of << indent << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
@@ -131,6 +133,12 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->GUIPanelLR;
+      }
+    else if ( !strcmp (attName, "collapseSliceControllers"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CollapseSliceControllers;
       }
     else if ( !strcmp (attName, "numberOfCompareViewRows" ))
       {
@@ -206,6 +214,7 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetGUIPanelVisibility(node->GetGUIPanelVisibility()) ;
   this->SetBottomPanelVisibility (node->GetBottomPanelVisibility());
   this->SetGUIPanelLR ( node->GetGUIPanelLR());
+  this->SetCollapseSliceControllers( node->GetCollapseSliceControllers() );
   this->SetNumberOfCompareViewRows ( node->GetNumberOfCompareViewRows() );
   this->SetNumberOfCompareViewColumns ( node->GetNumberOfCompareViewColumns() );
   this->SetNumberOfCompareViewLightboxRows ( node->GetNumberOfCompareViewLightboxRows() );
@@ -230,6 +239,7 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "GUIPanelVisibility: " << this->GUIPanelVisibility  << "\n";
   os << indent << "GUIPanelLR: " << this->GUIPanelLR  << "\n";
   os << indent << "BottomPanelVisibility: " << this->BottomPanelVisibility  << "\n";
+  os << indent << "CollapseSliceControllers: " << this->CollapseSliceControllers << "\n";
   os << indent << "NumberOfCompareViewRows: " << this->NumberOfCompareViewRows << "\n";
   os << indent << "NumberOfCompareViewColumns: " << this->NumberOfCompareViewColumns << "\n";
   os << indent << "NumberOfCompareViewLightboxRows: " << this->NumberOfCompareViewLightboxRows << "\n";

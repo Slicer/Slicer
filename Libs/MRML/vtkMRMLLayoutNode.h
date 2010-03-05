@@ -46,6 +46,11 @@ public:
   vtkSetMacro (GUIPanelLR, int );
 
   /// 
+  /// Control the collapse state of the SliceControllers
+  vtkGetMacro (CollapseSliceControllers, int);
+  vtkSetMacro (CollapseSliceControllers, int);
+
+  /// 
   /// CompareView configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewRows, int );
   vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);  
@@ -108,6 +113,7 @@ protected:
   int GUIPanelVisibility;
   int BottomPanelVisibility;
   int GUIPanelLR;
+  int CollapseSliceControllers;
   int ViewArrangement;
   int NumberOfCompareViewRows;
   int NumberOfCompareViewColumns;
