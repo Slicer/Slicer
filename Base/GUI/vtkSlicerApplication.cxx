@@ -1527,14 +1527,24 @@ const char* vtkSlicerApplication::GetPotentialColorFilePaths() const
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SetExtensionsInstallPath(const char* path)
 {
-  if (path)
+  if (!path)
     {
-    if (strcmp(this->ExtensionsInstallPath, path) != 0
-        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
-      {
-      strcpy(this->ExtensionsInstallPath, path);
-      this->Modified();
-      }
+    vtkWarningMacro("SetExtensionsInstallPath: input path is null!");
+    return;
+    }
+  if (strcmp(this->ExtensionsInstallPath, path) == 0)
+    {
+    // no change
+    return;
+    }
+  if (strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    {
+    strcpy(this->ExtensionsInstallPath, path);
+    this->Modified();
+    }
+  else
+    {
+    vtkWarningMacro("SetExtensionsInstallPath: new path is over limit. Current = " << this->ExtensionsInstallPath << ", new path = " << path << ", limit = " << vtkKWRegistryHelper::RegistryKeyValueSizeMax);
     }
 }
 
@@ -1544,17 +1554,20 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
   char* extpath = this->ExtensionsInstallPath;
   if (extpath)
     {
+    vtkDebugMacro("GetExtensionsInstallPath: extpath = '" << extpath << "'");
+    if (0 == strlen(extpath))
+      {
+      // :NOTE: 20090728 tgl: Do this here as I am not certain
+      // TemporaryDirectory is available when we first copy a value
+      // to ExtensionsInstallPathDefault in vtkSlicerApplication()
+      if (0 == strlen(this->ExtensionsInstallPathDefault))
         {
-        // :NOTE: 20090728 tgl: Do this here as I am not certain
-        // TemporaryDirectory is available when we first copy a value
-        // to ExtensionsInstallPathDefault in vtkSlicerApplication()
-        if (0 == strlen(this->ExtensionsInstallPathDefault))
-          {
-          strcpy(this->ExtensionsInstallPathDefault, this->TemporaryDirectory);
-          }
-        extpath = this->ExtensionsInstallPathDefault;
+        strcpy(this->ExtensionsInstallPathDefault, this->TemporaryDirectory);
         }
-
+      vtkDebugMacro("GetExtensionsInstallPath: using extensions install path default of " <<  this->ExtensionsInstallPathDefault);
+      extpath = this->ExtensionsInstallPathDefault;
+      }
+    
     // does the path exist?
     if (!itksys::SystemTools::MakeDirectory(extpath))
       {
@@ -1611,6 +1624,11 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
         }
       }
     }
+  else
+    {
+    vtkWarningMacro("GetExtensionsInstallPath: ExtensionsInstallPath is null!");
+    }
+  vtkDebugMacro("GetExtensionsInstallPath: returning " << (extpath == NULL ? "null" : extpath));
   return extpath;
 }
 
