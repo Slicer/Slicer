@@ -9,6 +9,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkSlicerInteractorStyle.h"
 
 class vtkSlicerApplicationGUI;
@@ -23,6 +24,7 @@ class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerVisibilityIcons;
 class vtkSlicerFoundationIcons;
+
 
 /// Description:
 /// This class implements Slicer's SlicesControl Panel on Main GUI panel
@@ -72,6 +74,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( RedSliceEvents, vtkSlicerInteractorStyle );
     vtkGetObjectMacro ( YellowSliceEvents, vtkSlicerInteractorStyle );
     vtkGetObjectMacro ( GreenSliceEvents, vtkSlicerInteractorStyle );
+
+    vtkGetObjectMacro( CrosshairNode, vtkMRMLCrosshairNode );
+    vtkSetObjectMacro( CrosshairNode, vtkMRMLCrosshairNode );
 
     vtkGetMacro (EntryUpdatePending, int );
     vtkSetMacro (EntryUpdatePending, int);
@@ -181,6 +186,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkSlicerInteractorStyle *RedSliceEvents;
     vtkSlicerInteractorStyle *YellowSliceEvents;
     vtkSlicerInteractorStyle *GreenSliceEvents;
+    vtkMRMLCrosshairNode *CrosshairNode;
     int SliceInteracting;
     int ProcessingMRMLEvent;
     int EntryUpdatePending;
