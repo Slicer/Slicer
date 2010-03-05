@@ -68,6 +68,8 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->YellowSliceNode = NULL;
   this->GreenSliceNode = NULL;
 
+  this->CrosshairNode = NULL;
+
   this->RedSliceEvents = NULL;
   this->YellowSliceEvents = NULL;
   this->GreenSliceEvents = NULL;
@@ -216,6 +218,8 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
   this->SetYellowSliceEvents(NULL);
   this->SetGreenSliceEvents(NULL);
 
+  vtkSetAndObserveMRMLNodeMacro( this->CrosshairNode, NULL);
+
   if ( this->VisibilityIcons )
     {
     this->VisibilityIcons->Delete  ( );
@@ -278,6 +282,7 @@ void vtkSlicerSlicesControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "RedSliceEvents: " << this->GetRedSliceEvents(  ) << "\n";    
   os << indent << "GreenSliceEvents: " << this->GetGreenSliceEvents(  ) << "\n";    
   os << indent << "YellowSliceEvents: " << this->GetYellowSliceEvents(  ) << "\n";    
+  os << indent << "CrosshairNode: " << this->GetCrosshairNode() << "\n";
 }
 
 
@@ -292,6 +297,27 @@ void vtkSlicerSlicesControlGUI::UpdateFromMRML()
   // repopulate the NavigationZoom widget's actors, etc.,
   // and rerender the NavigationZoom widget's view.
   this->UpdateSlicesFromMRML();
+
+  // make sure we are observing the correct crosshair
+  vtkMRMLCrosshairNode *xnode=0;
+  std::vector<vtkMRMLNode *> nodes;
+  this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode", nodes);
+
+  // find the "default" crosshair node
+  for (std::vector<vtkMRMLNode*>::iterator nit = nodes.begin();
+       nit != nodes.end(); ++nit)
+    {
+    if (strcmp((*nit)->GetSingletonTag(), "default") == 0)
+      {
+      xnode = vtkMRMLCrosshairNode::SafeDownCast(*nit);
+      break;
+      }
+    }
+
+  if (xnode != this->CrosshairNode)
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->CrosshairNode, xnode);
+    }
 }
 
 
@@ -1512,7 +1538,7 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   this->ProcessingMRMLEvent = event;
   vtkDebugMacro("processing event " << event);
-   
+
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
@@ -1540,6 +1566,62 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->RequestFOVEntriesUpdate();
       }
     }
+
+  if (vtkMRMLCrosshairNode::SafeDownCast( caller ) )
+    {
+    // update the cross hair menu state (should we make sure it is the
+    // default crosshair?)
+    vtkMRMLCrosshairNode *xnode = vtkMRMLCrosshairNode::SafeDownCast( caller);
+    
+    if (xnode->GetNavigation())
+      {
+      this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Navigator", 1);
+      }
+    else
+      {
+      this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Navigator", 0);
+      }
+    
+    switch (xnode->GetCrosshairMode())
+      {
+      case vtkMRMLCrosshairNode::NoCrosshair: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("No crosshair", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowBasic: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Basic crosshair", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowIntersection: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Basic + intersection", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowHashmarks: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Basic + hashmarks", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowAll: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Basic + hashmarks + intersection", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowSmallBasic: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Small basic", 1);
+        break;
+      case vtkMRMLCrosshairNode::ShowSmallIntersection: 
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Small basic + intersection", 1);
+        break;
+      }
+    
+    switch (xnode->GetCrosshairThickness())
+      {
+      case vtkMRMLCrosshairNode::Fine:
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Fine", 1);
+        break;
+      case vtkMRMLCrosshairNode::Medium:
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Medium", 1);
+        break;
+      case vtkMRMLCrosshairNode::Thick:
+        this->GetCrossHairButton()->GetMenu()->SetItemSelectedState("Thick", 1);
+        break;
+      }
+    }
+
+  this->ProcessingMRMLEvent = 0;
 }
 
 
