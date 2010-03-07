@@ -52,6 +52,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLTreeWidget.h
   qMRMLUtils.cxx
   qMRMLUtils.h
+  qMRMLWindowLevelWidget.cxx
+  qMRMLWindowLevelWidget.h
   )
 
 # Headers that should run through moc
@@ -73,6 +75,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLTreeProxyModel_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
+  qMRMLWindowLevelWidget.h
   )
   
 # UI files
@@ -80,6 +83,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
+  Resources/UI/qMRMLWindowLevelWidget.ui
 )
   
 QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})

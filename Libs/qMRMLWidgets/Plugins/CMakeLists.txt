@@ -27,7 +27,9 @@ SET(designer_plugin_SRCS
   qMRMLWidgetsAbstractPlugin.cxx
   qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetsPlugin.cxx  
-  qMRMLWidgetsPlugin.h  
+  qMRMLWidgetsPlugin.h
+  qMRMLWindowLevelWidgetPlugin.cxx
+  qMRMLWindowLevelWidgetPlugin.h
   )
 
 # Headers that should run through moc
@@ -42,6 +44,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h
+  qMRMLWindowLevelWidgetPlugin.h
   )
 
 SET(designer_plugin_TARGET_LIBRARIES
