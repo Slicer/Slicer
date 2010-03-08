@@ -33,7 +33,7 @@ void assign3(T& vec, J x, J y, J z)
 }
 }
 
-int ConvertSlicerROIToRegionTest(int argc, char* argv[])
+int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
 {
   itk::Point<double, 3> p1;
   assign3(p1, 0.0, 0.0, 0.0);
