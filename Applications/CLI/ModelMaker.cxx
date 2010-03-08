@@ -55,11 +55,6 @@ Version:   $Revision$
 #include <string>
 #include <map>
 
-typedef std::map<int, std::string> LabelAnatomyContainer;
-
-int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
-int GetMaxAnatomyLabel( LabelAnatomyContainer );
-
   
 int main(int argc, char * argv[])
 {
@@ -87,7 +82,6 @@ int main(int argc, char * argv[])
       std::cout << "Filter type: " << FilterType << std::endl;
       std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
       std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
-      std::cout << "Anatomy label file : " << AnatomyLabelFile.c_str() << std::endl;
       std::cout << "Save intermediate models: " << SaveIntermediateModels << std::endl;
       std::cout << "Debug: " << debug << std::endl;
       std::cout << "\nStarting..." << std::endl;
@@ -185,25 +179,11 @@ int main(int argc, char * argv[])
         }
       rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
       }  
-    LabelAnatomyContainer labelToAnatomy;
-
     vtkSmartPointer< vtkMRMLColorTableNode > colorNode = NULL;
     vtkSmartPointer< vtkMRMLColorTableStorageNode > colorStorageNode = NULL;
     
     int useColorNode = 0;
-    if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
-      {
-      if (debug)
-        {
-        std::cout << "Importing anatomy label file " << AnatomyLabelFile.c_str() << std::endl;
-        }
-      // if an anatomy label file is specified, populate a map with its contents
-      if (ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy ))
-        {
-        return EXIT_FAILURE;
-        }
-      }
-    else if (ColorTable !=  "")
+    if (ColorTable !=  "")
       {      
       useColorNode = 1;
       }
@@ -423,13 +403,6 @@ int main(int argc, char * argv[])
         }
       else
         {
-        if (labelToAnatomy.size() > 0)
-          {
-          extentMax = GetMaxAnatomyLabel(labelToAnatomy) - 1;
-          if (debug) {  std::cout << "Using label to anatomy file to get max label" << endl; }
-          }
-        else
-          {
           // use the full range of the scalar type
           double dImageScalarMax = image->GetScalarTypeMax();
           if (debug) {  std::cout << "Image scalar max as double = " << dImageScalarMax << endl; }
@@ -444,7 +417,6 @@ int main(int argc, char * argv[])
             {
             std::cout << "\nWARNING: due to lack of color label information, using the full scalar range of the input image when calculating the histogram over the image: " << extentMax << endl;
             }
-          }
         }
       if (debug)
         {
@@ -827,20 +799,13 @@ int main(int argc, char * argv[])
           }
         else
           {
-          if (labelToAnatomy.find(i) != labelToAnatomy.end())
+          if (!SkipUnNamed)
             {
-            labelName = labelToAnatomy[i];
+            labelName  = Name + std::string("_") + stringI;
             }
           else
             {
-            if (!SkipUnNamed)
-              {
-              labelName  = Name + std::string("_") + stringI;
-              }
-            else
-              {
-              continue;
-              }
+            continue;
             }
           }
         } // end of making multiples 
@@ -1773,48 +1738,3 @@ int main(int argc, char * argv[])
     return EXIT_SUCCESS;
 }
 
-int ImportAnatomyLabelFile( std::string anatomyLabelFile,
-                             LabelAnatomyContainer &map)
-
-{
-  std::ifstream fin(anatomyLabelFile.c_str(),std::ios::in|std::ios::binary);
-  if (fin.fail())
-    {
-    std::cerr << "ImportAnatomyLabelFile: Cannot open " << anatomyLabelFile << " for input" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  char label[81];
-  char anatomy[81];
-  char aLine[81];
-  
-  fin.getline(aLine, 80);
-  while (!fin.eof())
-    {    
-    fin.getline(anatomy, 80, ',');
-    fin.getline(label, 80);
-    std::string anatomyStr(anatomy);
-    map[atoi(label)] = anatomyStr;
-    }
-
-  fin.close();
-  return EXIT_SUCCESS;
-}
-
-/// returns the maximum label in the map
-int GetMaxAnatomyLabel( LabelAnatomyContainer map )
-{
-  int maxLabel = 0;
-
-  std::map<int, std::string>::iterator it;
-
-  for ( it=map.begin() ; it != map.end(); it++ )
-    {
-    if (it->first > maxLabel)
-      {
-      maxLabel = it->first;
-      }
-    }
-
-  return maxLabel;
-}

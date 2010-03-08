@@ -13,8 +13,6 @@ You can set the number of smoothing iterations, target reduction in number of po
 You can set the flags to split normals or generate point normals in this pane as well.\n
 You can save a copy of the models after intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation); these models are not saved in the mrml file, turn off deleting temporary files first in the tcl window:\n
 ~~[$::slicer3::CommandLineModuleGUI_Model_Maker GetLogic] DeleteTemporaryFilesOff~~\n
-**Anatomical Information:**\n
-Here you can specify an external file linking label values with anatomical names. This will over ride any color information associated with the input label volume (passed in via the --color flag).
 </description>
   <version>3.2</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Model_Maker-Documentation-3.4</documentation-url>
@@ -94,6 +92,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <default>-1</default>
   </integer>
   <boolean>
+    <name>SkipUnNamed</name>
+    <label>Skip Un-Named Labels</label>
+    <longflag>--skipUnNamed</longflag>
+    <description>If true, only models which have an entry in the color table will be generated. If false, generate all models that exist within the label range.</description>
+     <default>true</default>
+  </boolean>
+  <boolean>
     <name>JointSmoothing</name>
     <label>Joint Smoothing</label>
     <description>Perform joint smoothing between models, so that they will fit together. </description>
@@ -155,30 +160,11 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 </parameters>
 
 <parameters advanced="true">
-   <label>Anatomical Information</label>
-   <description>Use external information to name models, instead of the colors associated with the label map.</description>   
-   <file fileExtensions=".csv">
-     <name>AnatomyLabelFile</name>
-     <channel>input</channel>
-     <label>Anatomy Label File</label>
-     <longflag>--anatomyLabelFile</longflag>
-     <description>A file containing lines in the format 'anatomy name, label number'. Not the same as a colour resource file ending in .txt or .ctbl! Over rides any color information associated with the input label volume.  </description>
-     <default></default>
-   </file>
-   <boolean>
-     <name>SkipUnNamed</name>
-     <label>Skip Un-Named Labels</label>
-     <longflag>--skipUnNamed</longflag>
-     <description> If true and an Anatomy Label File is specified, only models which have an entry in the Anatomy Label File will be generated. If false, generate all models that exist within the label range.</description>
-     <default>true</default>
-   </boolean>
-</parameters>
-<parameters advanced="true">
   <label>Debug</label>
     <boolean>
       <name>debug</name>
       <label>Debug</label>
-      <description>Click if wish to see debugging output</description>
+      <description>Click to see debugging output</description>
       <flag>-d</flag> 
       <longflag>--debug</longflag>
       <default>false</default>
