@@ -17,6 +17,7 @@ class qMRMLAbstractRootItemHelperPrivate;
 class qMRMLAbstractSceneItemHelperPrivate;
 class qMRMLAbstractNodeItemHelperPrivate;
 class qMRMLVariantArrayItemHelperPrivate;
+class qMRMLProxyItemHelperPrivate;
 class qMRMLProxyItemHelper;
 class qMRMLExtraItemsHelper;
 
