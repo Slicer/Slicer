@@ -45,6 +45,13 @@ public:
   QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
 
+  ///
+  /// Utility function that remove a connection on old_vtk_obj and add a connection
+  /// to vtk_obj (same event, object, slot, priority)
+  QString reconnection(vtkObject* vtk_obj, unsigned long vtk_event,
+                       const QObject* qt_obj, const char* qt_slot, 
+                       float priority = 0.0);
+
   /// 
   /// Remove a connection
   int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,

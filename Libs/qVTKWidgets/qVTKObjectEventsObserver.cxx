@@ -121,6 +121,20 @@ QString qVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObjec
 }
 
 //-----------------------------------------------------------------------------
+QString qVTKObjectEventsObserver::reconnection(vtkObject* vtk_obj,
+  unsigned long vtk_event, const QObject* qt_obj, 
+  const char* qt_slot, float priority)
+{
+  QString connectionId; 
+  this->removeConnection(0, vtk_event, qt_obj, qt_slot);
+  if (vtk_obj)
+    {
+    connectionId = this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
+    }
+  return connectionId; 
+}
+
+//-----------------------------------------------------------------------------
 QString qVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot, float priority)
 {
