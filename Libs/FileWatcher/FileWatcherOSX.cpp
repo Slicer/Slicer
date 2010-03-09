@@ -23,6 +23,7 @@
 */
 
 #include <FileWatcher/FileWatcherOSX.h>
+#include <FileWatcher/FileWatcher.h>
 
 #if FILEWATCHER_PLATFORM == FILEWATCHER_PLATFORM_KQUEUE
 
@@ -119,7 +120,7 @@ struct WatchStruct
       
     // handle action
     if(imitEvents)
-      handleAction(name, Action::Add);
+      handleAction(name, FW::Actions::Add);
   }
     
   void removeFile(const String& name, bool imitEvents = true)
@@ -153,7 +154,7 @@ struct WatchStruct
       
     // handle action
     if(imitEvents)
-      handleAction(name, Action::Delete);
+      handleAction(name, FW::Actions::Delete);
   }
     
   // called when the directory is actually changed
@@ -193,7 +194,7 @@ struct WatchStruct
           if(entry->mModifiedTime != timestamp)
             {
             entry->mModifiedTime = timestamp;
-            handleAction(entry->mFilename, Action::Modified);
+            handleAction(entry->mFilename, FW::Actions::Modified);
             }
           ke++;
           }
@@ -261,13 +262,13 @@ struct WatchStruct
     KEvent* ke = NULL;
       
     // go through list removing each file and sending an event
-    for(int i = 0; i < mChangeListCount; ++i)
+    for(unsigned int i = 0; i < mChangeListCount; ++i)
       {
       ke = &mChangeList[i];
       //handleAction(name, Action::Delete);
       EntryStruct* entry = (EntryStruct*)ke->udata;
         
-      handleAction(entry->mFilename, Action::Delete);
+      handleAction(entry->mFilename, FW::Actions::Delete);
         
       // delete
       close(ke->ident);
@@ -318,7 +319,7 @@ void FileWatcherOSX::update()
             struct stat attrib;
             stat(entry->mFilename, &attrib);
             entry->mModifiedTime = attrib.st_mtime;
-            watch->handleAction(entry->mFilename, Action::Modified);
+            watch->handleAction(entry->mFilename, FW::Actions::Modified);
             }
           }
         else
