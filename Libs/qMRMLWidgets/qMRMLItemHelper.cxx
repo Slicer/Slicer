@@ -251,10 +251,7 @@ Qt::ItemFlags qMRMLAbstractNodeItemHelper::flags() const
 {
   QCTK_D(const qMRMLAbstractNodeItemHelper);
   Qt::ItemFlags f;
-  if (!d->MRMLNode->GetHideFromEditors())
-    {
-    f |= Qt::ItemIsEnabled;
-    }
+  f |= Qt::ItemIsEnabled;
   if (d->MRMLNode->GetSelectable())
     {
     f |= Qt::ItemIsSelectable;
@@ -397,26 +394,26 @@ int qMRMLAbstractRootItemHelper::childIndex(const qMRMLAbstractItemHelper* _chil
 }
 
 //------------------------------------------------------------------------------
-// qMRMLExtraItemHelper
+// qMRMLVariantArrayItemHelper
 
 //------------------------------------------------------------------------------
-class qMRMLExtraItemHelperPrivate: public qCTKPrivate<qMRMLExtraItemHelper>
+class qMRMLVariantArrayItemHelperPrivate: public qCTKPrivate<qMRMLVariantArrayItemHelper>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLExtraItemHelper);
+  QCTK_DECLARE_PUBLIC(qMRMLVariantArrayItemHelper);
   vtkSmartPointer<vtkVariantArray> VariantArray;
   bool isSeparator()const;
 };
 
 //------------------------------------------------------------------------------
-bool qMRMLExtraItemHelperPrivate::isSeparator()const
+bool qMRMLVariantArrayItemHelperPrivate::isSeparator()const
 {
   const vtkVariant v = this->VariantArray->GetValue(1);
   return v.ToString() == "separator";
 }
 
 //------------------------------------------------------------------------------
-qMRMLExtraItemHelper::qMRMLExtraItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory)
+qMRMLVariantArrayItemHelper::qMRMLVariantArrayItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory)
   :qMRMLAbstractItemHelper(column, factory)
 {
   QCTK_INIT_PRIVATE(qMRMLAbstractRootItemHelper);
@@ -424,9 +421,9 @@ qMRMLExtraItemHelper::qMRMLExtraItemHelper(vtkVariantArray* array, int column, c
 }
 
 //------------------------------------------------------------------------------
-QVariant qMRMLExtraItemHelper::data(int role) const
+QVariant qMRMLVariantArrayItemHelper::data(int role) const
 {
-  QCTK_D(const qMRMLExtraItemHelper);
+  QCTK_D(const qMRMLVariantArrayItemHelper);
   switch (role)
     {
     case Qt::DisplayRole:
@@ -455,37 +452,37 @@ QVariant qMRMLExtraItemHelper::data(int role) const
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLExtraItemHelper::flags() const
+Qt::ItemFlags qMRMLVariantArrayItemHelper::flags() const
 {
-  //QCTK_D(const qMRMLExtraItemHelper);
-  return Qt::ItemIsEnabled;
+  QCTK_D(const qMRMLVariantArrayItemHelper);
+  return d->VariantArray->GetValue(2).ToInt();
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLExtraItemHelper::parent() const
+qMRMLAbstractItemHelper* qMRMLVariantArrayItemHelper::parent() const
 {
-  //QCTK_D(const qMRMLExtraItemHelper);
+  //QCTK_D(const qMRMLVariantArrayItemHelper);
   return this->factory()->createItem(this->mrmlScene(), 0);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLExtraItemHelper::setData(const QVariant &value, int role)
+bool qMRMLVariantArrayItemHelper::setData(const QVariant &value, int role)
 {
-  //QCTK_D(const qMRMLExtraItemHelper);
+  //QCTK_D(const qMRMLVariantArrayItemHelper);
   return true;
 }
 
 //------------------------------------------------------------------------------
-vtkObject* qMRMLExtraItemHelper::object()const
+vtkObject* qMRMLVariantArrayItemHelper::object()const
 {
-  QCTK_D(const qMRMLExtraItemHelper);
+  QCTK_D(const qMRMLVariantArrayItemHelper);
   return d->VariantArray;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLExtraItemHelper::mrmlScene()const
+vtkMRMLScene* qMRMLVariantArrayItemHelper::mrmlScene()const
 {
-  QCTK_D(const qMRMLExtraItemHelper);
+  QCTK_D(const qMRMLVariantArrayItemHelper);
   const vtkVariant v = d->VariantArray->GetValue(0);
   vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(v.ToVTKObject());
   Q_ASSERT(mrmlScene);
@@ -493,20 +490,260 @@ vtkMRMLScene* qMRMLExtraItemHelper::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLExtraItemHelper
-::createExtraItemProperties(vtkVariantArray& properties,
-                            vtkObject* itemParent, 
-                            const vtkStdString& title)
+void qMRMLVariantArrayItemHelper
+::createProperties(vtkVariantArray& properties,
+                   vtkObject* itemParent, 
+                   const vtkStdString& title,
+                   Qt::ItemFlags flags)
 {
-  properties.SetNumberOfValues(2);
+  properties.SetNumberOfValues(3);
   
   if (itemParent == 0)
-    {
+    {// add itemParent as an integer
     properties.SetValue(0, vtkVariant(0));
     }
   else
-    {
+    {// add itemParent as a void*
     properties.SetValue(0, vtkVariant(itemParent));
     }
   properties.SetValue(1, vtkVariant(title));
+  properties.SetValue(2, vtkVariant(static_cast<int>(flags)));
+}
+
+//------------------------------------------------------------------------------
+// qMRMLProxyItemHelper
+
+class qMRMLProxyItemHelperPrivate: public qCTKPrivate<qMRMLProxyItemHelper>
+{
+public:
+  QSharedPointer<qMRMLAbstractItemHelper> Proxy;
+};
+
+//------------------------------------------------------------------------------
+qMRMLProxyItemHelper::qMRMLProxyItemHelper(qMRMLAbstractItemHelper* _proxy)
+:qMRMLAbstractItemHelper(_proxy->column(), _proxy->factory())
+{
+  QCTK_INIT_PRIVATE(qMRMLProxyItemHelper);
+  qctk_d()->Proxy = QSharedPointer<qMRMLAbstractItemHelper>(_proxy);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLProxyItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
+{
+  return this->proxy()->canReparent(newParent);
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLProxyItemHelper::child(int row, int column) const
+{
+  return this->proxy()->child(row, column);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLProxyItemHelper::childCount() const
+{
+  return this->childCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLProxyItemHelper::column() const
+{
+  return this->proxy()->column();
+}
+
+//------------------------------------------------------------------------------
+QVariant qMRMLProxyItemHelper::data(int role) const
+{
+  return this->proxy()->data(role);
+}
+//------------------------------------------------------------------------------
+Qt::ItemFlags qMRMLProxyItemHelper::flags() const
+{
+  return this->proxy()->flags();
+}
+//------------------------------------------------------------------------------
+bool qMRMLProxyItemHelper::hasChildren() const
+{
+  return this->proxy()->hasChildren();
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLProxyItemHelper::parent() const
+{
+  return this->proxy()->parent();
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLProxyItemHelper::proxy()const
+{
+  QCTK_D(const qMRMLProxyItemHelper);
+  Q_ASSERT(!d->Proxy.isNull());
+  return d->Proxy.data();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLProxyItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
+{
+  return this->proxy()->reparent(newParent);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLProxyItemHelper::row() const
+{
+  return this->proxy()->row();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLProxyItemHelper::setData(const QVariant &value, int role)
+{
+  return this->proxy()->setData(value, role);
+}
+
+//------------------------------------------------------------------------------
+vtkObject* qMRMLProxyItemHelper::object()const
+{
+  return this->proxy()->object();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLProxyItemHelper::operator==(const qMRMLAbstractItemHelper& helper)const
+{
+  return this->proxy()->operator==(helper);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLProxyItemHelper::childIndex(const qMRMLAbstractItemHelper* child)const
+{
+  return this->proxy()->childIndex(child);
+}
+
+//------------------------------------------------------------------------------
+// qMRMLExtraItemsHelper
+class qMRMLExtraItemsHelperPrivate : public qCTKPrivate<qMRMLExtraItemsHelper>
+{
+public: 
+  qMRMLExtraItemsHelperPrivate();
+  vtkCollection* PreItems;
+  vtkCollection* PostItems;
+  int preItemsCount()const;
+  int postItemsCount()const;
+};
+
+//------------------------------------------------------------------------------
+qMRMLExtraItemsHelperPrivate::qMRMLExtraItemsHelperPrivate()
+{
+  this->PreItems = 0;
+  this->PostItems = 0;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLExtraItemsHelperPrivate::preItemsCount()const
+{
+  return this->PreItems ? this->PreItems->GetNumberOfItems() : 0;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLExtraItemsHelperPrivate::postItemsCount()const
+{
+  return this->PostItems ? this->PostItems->GetNumberOfItems() : 0;
+}
+
+//------------------------------------------------------------------------------
+qMRMLExtraItemsHelper::qMRMLExtraItemsHelper(vtkCollection* preItems, 
+                                             vtkCollection* postItems, 
+                                             qMRMLAbstractItemHelper* proxy)
+:qMRMLProxyItemHelper(proxy)
+{
+  QCTK_INIT_PRIVATE(qMRMLExtraItemsHelper);
+  QCTK_D(qMRMLExtraItemsHelper);
+  d->PreItems = preItems;
+  d->PostItems = postItems;
+}
+qMRMLExtraItemsHelper::~qMRMLExtraItemsHelper()
+{
+
+}
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLExtraItemsHelper::child(int row, int column) const
+{
+  QCTK_D(const qMRMLExtraItemsHelper);
+
+  if (row < d->preItemsCount())
+    {
+    return this->factory()->createItem(d->PreItems->GetItemAsObject(row), column);
+    }
+  row -= d->preItemsCount();
+  if (row < this->proxy()->childCount())
+    {
+    return this->qMRMLProxyItemHelper::child(row, column);
+    }
+  row -= this->proxy()->childCount();
+  if (row < d->postItemsCount())
+    {
+    return this->factory()->createItem(d->PostItems->GetItemAsObject(row), column);
+    }
+  Q_ASSERT(row < d->postItemsCount());
+  return 0;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLExtraItemsHelper::childCount() const
+{
+  QCTK_D(const qMRMLExtraItemsHelper);
+  //Q_ASSERT(d->preItemsCount() == 1);
+  return d->preItemsCount() + this->proxy()->childCount() + d->postItemsCount();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLExtraItemsHelper::hasChildren() const
+{
+  QCTK_D(const qMRMLExtraItemsHelper);
+  return this->qMRMLProxyItemHelper::hasChildren() 
+      || d->preItemsCount()
+      || d->postItemsCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLExtraItemsHelper::childIndex(const qMRMLAbstractItemHelper* child)const
+{
+  QCTK_D(const qMRMLExtraItemsHelper);
+  Q_ASSERT(child);
+  int childRow = 0;
+  vtkObject* childObject = 0;
+  vtkCollectionSimpleIterator it;
+  if (d->PreItems)
+    {
+    d->PreItems->InitTraversal(it);
+    //pre item ?
+    for (childObject = d->PreItems->GetNextItemAsObject(it); 
+         childObject && childObject != child->object(); 
+         childObject = d->PreItems->GetNextItemAsObject(it))
+      {
+      ++childRow;
+      }
+    if (childObject)
+      {
+      return childRow;
+      }
+    }
+  // postItem ?
+  if (d->PostItems)
+    {
+    childRow += this->proxy()->childCount();
+    d->PostItems->InitTraversal(it);
+    for (childObject = d->PostItems->GetNextItemAsObject(it); 
+         childObject && childObject != child->object(); 
+         childObject = d->PostItems->GetNextItemAsObject(it))
+      {
+      ++childRow;
+      }
+    if (childObject)
+      {
+      return childRow;
+      }
+    }
+  // not a pre, nor a post, must be a child from the proxy
+  childRow = d->preItemsCount();
+  Q_ASSERT(this->qMRMLProxyItemHelper::childIndex(child) >= 0);
+  return childRow + this->qMRMLProxyItemHelper::childIndex(child);
 }

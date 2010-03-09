@@ -31,16 +31,13 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="qMRMLNodeSelector" name="ParameterNodeSelector">
+    <widget class="qMRMLNodeComboBox" name="ParameterNodeSelector">
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLTractographyFiducialSeedingNode</string>
       </stringlist>
      </property>
      <property name="showHidden">
-      <bool>true</bool>
-     </property>
-     <property name="ShowHidden" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -53,7 +50,7 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="qMRMLNodeSelector" name="DTINodeSelector">
+    <widget class="qMRMLNodeComboBox" name="DTINodeSelector">
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLDiffusionTensorVolumeNode</string>
@@ -69,7 +66,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="qMRMLNodeSelector" name="FiducialNodeSelector">
+    <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector">
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLFiducialListNode</string>
@@ -86,7 +83,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="qMRMLNodeSelector" name="FiberNodeSelector">
+    <widget class="qMRMLNodeComboBox" name="FiberNodeSelector">
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLFiberBundleNode</string>
@@ -314,9 +311,9 @@
    <header>qCTKSliderSpinBoxWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
-   <extends>qCTKAddRemoveComboBox</extends>
-   <header>qMRMLNodeSelector.h</header>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

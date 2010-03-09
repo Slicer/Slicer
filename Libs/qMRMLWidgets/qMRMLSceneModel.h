@@ -38,7 +38,10 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
 
-  void setExtraItems(vtkObject* parent, const QStringList& extraItems);
+  void setPreItems(vtkObject* parent, const QStringList& extraItems);
+  void setPostItems(vtkObject* parent, const QStringList& extraItems);
+  QStringList preItems(vtkObject* parent)const;
+  QStringList postItems(vtkObject* parent)const;
 
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;

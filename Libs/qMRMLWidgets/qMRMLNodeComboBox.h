@@ -26,6 +26,10 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QComboBox
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
+  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
 
 public:
   /// Superclass typedef
@@ -68,15 +72,52 @@ public:
   /// mother class of ExcludedChildNodeType)
   inline void setHideChildNodeTypes(const QStringList& nodeTypes);
   inline QStringList hideChildNodeTypes()const;
+  
+  ///
+  /// Add node type attribute that filter the nodes to
+  /// display. If a node is created via "AddNode", the attributes
+  /// will be set to the new node
+  void addAttribute(const QString& nodeType, 
+                    const QString& attributeName,
+                    const QVariant& attributeValue);
+  ///
+  /// return the number of nodes. it can be different from count()
+  /// as count includes the "AddNode", "Remove Node"... items
+  int nodeCount()const;
 
   /// 
   /// Return the currently selected node. 0 if no node is selected
   vtkMRMLNode* currentNode()const;
 
   /// 
+  /// Return the currently selected node id . "" if no node is selected
+  /// Utility function that is based on currentNode
+  QString currentNodeId()const;
+
+  /// 
   /// Set/Get SelectNodeUponCreation flags
   bool selectNodeUponCreation()const;
   void setSelectNodeUponCreation(bool value);
+
+  /// 
+  /// Set/Get NoneEnabled flags
+  bool noneEnabled()const;
+  void setNoneEnabled(bool enable);
+
+  /// 
+  /// Set/Get AddEnabled flags
+  bool addEnabled()const;
+  void setAddEnabled(bool enable);
+
+  /// 
+  /// Set/Get AddEnabled flags
+  bool removeEnabled()const;
+  void setRemoveEnabled(bool enable);
+
+  /// 
+  /// Set/Get AddEnabled flags
+  bool editEnabled()const;
+  void setEditEnabled(bool enable);
 
 public slots:
   /// 
@@ -98,12 +139,27 @@ public slots:
   /// 
   /// Edit the current node
   virtual void editCurrentNode();
+signals:
+  /// 
+  /// emit the current displayed node. NULL if
+  /// the list is empty.
+  void currentNodeChanged(vtkMRMLNode* node);
+
+  /// 
+  /// Utility function emitted at the same time(right after)
+  /// then currentNodeChanged(vtkMRMLNode*) signal is emitted
+  /// emit true when the current node is changed.
+  /// false when the list is empty. Useful to 
+  /// enable/disable/show/hide other widgets
+  /// depending on the validity of the current node.
+  void currentNodeChanged(bool validNode);
 
 protected:
   virtual QAbstractItemModel* createSceneModel();
 
 protected slots:
   void activateExtraItem(const QModelIndex& index);
+  void emitCurrentNodeChanged(int index);
 
 private:
   QCTK_DECLARE_PRIVATE(qMRMLNodeComboBox);

@@ -90,7 +90,7 @@
              </widget>
             </item>
             <item>
-             <widget class="qMRMLNodeSelector" name="MRMLCommandLineModuleNodeSelector">
+             <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector">
               <property name="nodeTypes">
                <stringlist>
                 <string>vtkMRMLCommandLineModuleNode</string>
@@ -251,9 +251,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
+   <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
-   <header>qMRMLNodeSelector.h</header>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

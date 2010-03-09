@@ -30,6 +30,15 @@
      <property name="selectNodeUponCreation">
       <bool>false</bool>
      </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="editEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

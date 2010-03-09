@@ -44,7 +44,7 @@ class WidgetValueWrapper
 {
 public:
   WidgetValueWrapper(const QString& _label):Label(_label){}
-  virtual QVariant value() = 0;
+  virtual QVariant value()const = 0;
   QString label(){ return this->Label; }
   QString Label; 
 };
@@ -57,7 +57,7 @@ class _NAME##WidgetValueWrapper: public WidgetValueWrapper            \
 public:                                                               \
   _NAME##WidgetValueWrapper(const QString& _label, _WIDGET * widget): \
     WidgetValueWrapper(_label), Widget(widget){}                      \
-  virtual QVariant value()                                            \
+  virtual QVariant value()const                                       \
     {                                                                 \
     QVariant _value(this->Widget->_VALUE_GETTER());                   \
     return _value;                                                    \
