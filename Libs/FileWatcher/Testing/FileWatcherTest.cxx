@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <itksys/SystemTools.hxx>
 
+#include <cstdlib>
+
 /// Processes a file action
 class UpdateListener : public FW::FileWatchListener
 {
