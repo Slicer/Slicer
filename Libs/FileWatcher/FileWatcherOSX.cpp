@@ -221,7 +221,7 @@ struct WatchStruct
     closedir(dir);
   };
     
-  void handleAction(const String& filename, FileWatcher::Action action)
+  void handleAction(const String& filename, Action action)
   {
     mListener->handleFileAction(mWatchID, mDirName, filename, action);
   }
