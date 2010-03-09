@@ -134,7 +134,7 @@ struct WatchStruct
                                   sizeof(KEvent),
                                   comparator);
     if(!ke)
-      throw FileNotFoundException(directory);
+      throw FileNotFoundException(name);
 
     tempEntry.mFilename = 0;
       
@@ -238,7 +238,7 @@ struct WatchStruct
     // scan directory and call addFile(name, false) on each file
     DIR* dir = opendir(mDirName.c_str());
     if(!dir)
-      throw FileNotFoundException(directory);
+      throw FileNotFoundException(mDirName);
       
     struct dirent* entry;
     struct stat attrib;
