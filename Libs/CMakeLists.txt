@@ -4,6 +4,7 @@ set(dirs
   tclap
   ModuleDescriptionParser
   GenerateCLP
+  FileWatcher
   )
 
 IF(Slicer3_USE_KWWIDGETS)
