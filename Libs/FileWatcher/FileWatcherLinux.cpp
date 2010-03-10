@@ -141,7 +141,6 @@ void FileWatcherLinux::update()
   else if(FD_ISSET(mFD, &mDescriptorSet))
     {
     ssize_t len, i = 0;
-    char action[81+FILENAME_MAX] = {0};
     char buff[BUFF_SIZE] = {0};
 
     len = read (mFD, buff, BUFF_SIZE);

@@ -44,17 +44,18 @@ int main(int argc, char **argv)
 {
   // create the file watcher object
   FW::FileWatcher fileWatcher;
+  FW::WatchID watchID ;
   try 
     {
     // add a watch to the system
-    FW::WatchID watchID = fileWatcher.addWatch(argv[1],
-                                               new UpdateListener(),
-                                               true);
+    watchID = fileWatcher.addWatch(argv[1],
+                                   new UpdateListener(),
+                                   true);
     fileWatcher.update();
     }
   catch( std::exception& e ) 
     {
-    std::cerr << "An unexpected exception has occurred: %s\n"
+    std::cerr << "An unexpected exception has occurred: \n"
               << e.what() << std::endl;
     return EXIT_FAILURE;
     }
@@ -79,5 +80,7 @@ int main(int argc, char **argv)
   std::cout << "********** Should see " << fileName << " deleted" << std::endl;
   itksys::SystemTools::RemoveFile(fileName.c_str());
   fileWatcher.update();
+
+  fileWatcher.removeWatch(watchID);
   return EXIT_SUCCESS;
 }

@@ -73,9 +73,9 @@ int main(int argc, char **argv)
     argc--; argv++;
     while (argc)
       {
-      FW::WatchID watchID = fileWatcher.addWatch(argv[0],
-                                                 new UpdateListener(),
-                                                 true);
+      fileWatcher.addWatch(argv[0],
+                           new UpdateListener(),
+                           true);
       argc--; argv++;
       }
     std::cout << "Press ^C to exit demo" << std::endl;
