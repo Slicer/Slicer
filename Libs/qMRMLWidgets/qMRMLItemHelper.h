@@ -17,9 +17,10 @@ class qMRMLAbstractRootItemHelperPrivate;
 class qMRMLAbstractSceneItemHelperPrivate;
 class qMRMLAbstractNodeItemHelperPrivate;
 class qMRMLVariantArrayItemHelperPrivate;
-class qMRMLProxyItemHelperPrivate;
 class qMRMLProxyItemHelper;
+class qMRMLProxyItemHelperPrivate;
 class qMRMLExtraItemsHelper;
+class qMRMLExtraItemsHelperPrivate;
 
 // MRML predefs
 class vtkMRMLScene;
