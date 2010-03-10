@@ -11,6 +11,7 @@
 #include "qSlicerVolumesModuleExport.h"
 
 class qSlicerVolumesModuleWidgetPrivate;
+class vtkMRMLNode;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -23,6 +24,10 @@ public:
   qSlicerVolumesModuleWidget(QWidget *parent=0);
 
   virtual QAction* showModuleAction();
+
+public slots:
+
+  void setActiveVolumeNode(vtkMRMLNode* node);
 
 protected:
   virtual void setup();

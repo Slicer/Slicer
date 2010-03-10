@@ -53,7 +53,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
+        <widget class="qSlicerVolumeDisplayWidget" name="VolumeDisplayWidget"/>
        </item>
       </layout>
      </widget>
@@ -106,7 +106,7 @@
   <connection>
    <sender>ActiveVolumeNodeSelector</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLWindowLevelWidget</receiver>
+   <receiver>VolumeDisplayWidget</receiver>
    <slot>setMRMLVolumeNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -70,10 +70,14 @@ public slots:
   void setLevel(double level);
 
   /// 
-  /// Sset window/level in once
+  /// Set window/level in once
   void setWindowLevel(double window, double level);
+
+  /// 
+  /// Set min/max range
+  void setMinMaxRange(double min, double max);
   // TODO remove when range becomes double
-  void setWindowLevel(int window, int level);
+  void setMinMaxRange(int min, int max);
 
   /// 
   /// Set the MRML node of interest
