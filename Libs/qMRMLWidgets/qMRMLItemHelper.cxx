@@ -455,7 +455,7 @@ QVariant qMRMLVariantArrayItemHelper::data(int role) const
 Qt::ItemFlags qMRMLVariantArrayItemHelper::flags() const
 {
   QCTK_D(const qMRMLVariantArrayItemHelper);
-  return d->VariantArray->GetValue(2).ToInt();
+  return QFlag(d->VariantArray->GetValue(2).ToInt());
 }
 
 //------------------------------------------------------------------------------
