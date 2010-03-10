@@ -42,6 +42,7 @@
 
 #include "vtkCylinderSource.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 
 //---------------------------------------------------------------------------
@@ -89,7 +90,13 @@ vtkPatientToImageRegistrationGUI::vtkPatientToImageRegistrationGUI ( )
   this->TimerFlag = 0;
 
   this->TranslationScale = NULL;
+  this->TrackerSelector = NULL;
+  this->PivotCalibrationErrorReport = NULL;
+  this->PivotCalibrationLabel = NULL;
+  this->StartPivotCalibrationPushButton = NULL;
+  this->FinishPivotCalibrationPushButton = NULL;
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -174,6 +181,32 @@ vtkPatientToImageRegistrationGUI::~vtkPatientToImageRegistrationGUI ( )
     this->TranslationScale = NULL;
     }
 
+  if (this->TrackerSelector)
+    {
+    this->TrackerSelector->SetParent(NULL);
+    this->TrackerSelector->Delete();
+    }
+  if (this->PivotCalibrationErrorReport)
+    {
+    this->PivotCalibrationErrorReport->SetParent(NULL);
+    this->PivotCalibrationErrorReport->Delete();
+    }
+  if (this->PivotCalibrationLabel)
+    {
+    this->PivotCalibrationLabel->SetParent(NULL);
+    this->PivotCalibrationLabel->Delete();
+    }
+  if (this->StartPivotCalibrationPushButton)
+    {
+    this->StartPivotCalibrationPushButton->SetParent(NULL);
+    this->StartPivotCalibrationPushButton->Delete();
+    }
+  if (this->FinishPivotCalibrationPushButton)
+    {
+    this->FinishPivotCalibrationPushButton->SetParent(NULL);
+    this->FinishPivotCalibrationPushButton->Delete();
+    }
+
   this->SetModuleLogic ( NULL );
 }
 
@@ -235,7 +268,22 @@ void vtkPatientToImageRegistrationGUI::RemoveGUIObservers ( )
     {
     this->ResetPushButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->StartPivotCalibrationPushButton)
+    {
+    this->StartPivotCalibrationPushButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+   if (this->FinishPivotCalibrationPushButton)
+    {
+    this->FinishPivotCalibrationPushButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+ 
+  if (this->TrackerSelector)
+    {
+    this->TrackerSelector->
+        RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -262,7 +310,9 @@ void vtkPatientToImageRegistrationGUI::AddGUIObservers ( )
     }
   events->Delete();
 
-  
+  this->TrackerSelector
+    ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   //----------------------------------------------------------------
   // Main Slice GUI
 
@@ -285,6 +335,10 @@ void vtkPatientToImageRegistrationGUI::AddGUIObservers ( )
   this->DeleteAllPointPairPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RegisterPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ResetPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StartPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FinishPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+
 }
 
 
@@ -364,11 +418,14 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (strcmp(eventName, "LeftButtonPressEvent") == 0)
     {
+    // Get RAS coordinates of mouse click from any 2D slice windows
     vtkSlicerInteractorStyle *style = vtkSlicerInteractorStyle::SafeDownCast(caller);
     HandleMouseEvent(style);
     }
   else
     {
+    // Handle mouse click event on Slicer interface on the left
+    //
     if (this->GetPatCoordinatesPushButton == vtkKWPushButton::SafeDownCast(caller) 
         && event == vtkKWPushButton::InvokedEvent)
       {
@@ -391,23 +448,23 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
           const vtksys_stl::string pcCor(pc);
           pcSize = pcCor.size();
         }
-      if (sc) 
-        {
-        const vtksys_stl::string scCor(sc);
-        scSize = scCor.size();
-        }
+        if (sc) 
+          {
+          const vtksys_stl::string scCor(sc);
+          scSize = scCor.size();
+          }
 
-      if (pcSize < 5 || scSize < 5)
-        {
-        vtkSlicerApplication::GetInstance()->ErrorMessage("Patient or Slicer coordinates are invalid."); 
-        }
-      else 
-        {
-        int row = this->PointPairMultiColumnList->GetWidget()->GetNumberOfRows();
-        this->PointPairMultiColumnList->GetWidget()->AddRow();
-        this->PointPairMultiColumnList->GetWidget()->SetCellText(row, 0, pc);
-        this->PointPairMultiColumnList->GetWidget()->SetCellText(row, 1, sc);
-        }
+        if (pcSize < 5 || scSize < 5)
+          {
+          vtkSlicerApplication::GetInstance()->ErrorMessage("Patient or Slicer coordinates are invalid."); 
+          }
+        else 
+          {
+          int row = this->PointPairMultiColumnList->GetWidget()->GetNumberOfRows();
+          this->PointPairMultiColumnList->GetWidget()->AddRow();
+          this->PointPairMultiColumnList->GetWidget()->SetCellText(row, 0, pc);
+          this->PointPairMultiColumnList->GetWidget()->SetCellText(row, 1, sc);
+          }
       }
     else if (this->DeletePointPairPushButton == vtkKWPushButton::SafeDownCast(caller) 
              && event == vtkKWPushButton::InvokedEvent)
@@ -466,6 +523,23 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
              && event == vtkKWPushButton::InvokedEvent)
       {
       this->GetLogic()->SetUseRegistration(0);
+      }
+    else if (this->StartPivotCalibrationPushButton == vtkKWPushButton::SafeDownCast(caller) 
+             && event == vtkKWPushButton::InvokedEvent)
+      {
+      std::cerr << "DEBUG: StartPivotCalibrationPushButton is selected." << std::endl;
+      }
+    else if (this->FinishPivotCalibrationPushButton == vtkKWPushButton::SafeDownCast(caller) 
+             && event == vtkKWPushButton::InvokedEvent)
+      {
+      std::cerr << "DEBUG: FinishPivotCalibrationPushButton is selected." << std::endl;
+      }
+    else if (this->TrackerSelector ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+             && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+             this->TrackerSelector->GetSelected() != NULL)
+      {
+      //TODO:this->UpdateMRML();
+      std::cerr << "DEBUG: TrackerSelector is selected." << std::endl;
       }
     }
 } 
@@ -538,9 +612,9 @@ void vtkPatientToImageRegistrationGUI::BuildGUI ( )
 
   BuildGUIForHelpFrame();
   BuildGUIForTrackerFrame();
+  BuildGUIForCalibrationFrame();
   BuildGUIForLandmarksFrame();
   BuildGUIForICPFrame();
-
 }
 
 
@@ -580,7 +654,95 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForTrackerFrame()
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 trackerFrame->GetWidgetName(), page->GetWidgetName());
 
+  // -----------------------------------------
+  // Tracker List Selector
+
+  this->TrackerSelector = vtkSlicerNodeSelectorWidget::New();
+  this->TrackerSelector->SetNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, NULL);
+  //this->TrackerSelector->SetNewNodeEnabled(1); // don't want to create this here. Create in OpenIGTLink.
+  this->TrackerSelector->SetParent( trackerFrame->GetFrame() );
+  this->TrackerSelector->Create();
+  this->TrackerSelector->SetMRMLScene(this->Logic->GetMRMLScene());
+  this->TrackerSelector->UpdateMenu();
+
+  this->TrackerSelector->SetBorderWidth(2);
+  this->TrackerSelector->SetLabelText( "Probe Reading: ");
+  this->TrackerSelector->SetBalloonHelpString("Tracking data from a probe stored in a transform.");
+
+  this->Script("pack %s -side top -anchor e -fill x -padx 20 -pady 4",
+                this->TrackerSelector->GetWidgetName());
+
   trackerFrame->Delete();
+}
+
+
+
+void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
+
+  // ----------------------------------------------------------------
+  // Calibration frame
+  // ----------------------------------------------------------------
+  vtkSlicerModuleCollapsibleFrame *calibrationFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+  calibrationFrame->SetParent ( page );
+  calibrationFrame->Create ( );
+  calibrationFrame->SetLabelText ("Calibration");
+  calibrationFrame->CollapseFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                calibrationFrame->GetWidgetName(), page->GetWidgetName());
+
+
+  // add two sub frames
+  vtkKWFrame *processFrame = vtkKWFrame::New();
+  processFrame->SetParent ( calibrationFrame->GetFrame() );
+  processFrame->Create ( );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                processFrame->GetWidgetName());
+
+  this->PivotCalibrationLabel = vtkKWLabel::New();
+  this->PivotCalibrationLabel->SetParent(processFrame);
+  this->PivotCalibrationLabel->Create();
+  this->PivotCalibrationLabel->SetText("Pivot Calibration:");
+  this->PivotCalibrationLabel->SetWidth ( 14 );
+
+  this->StartPivotCalibrationPushButton = vtkKWPushButton::New();
+  this->StartPivotCalibrationPushButton->SetParent(processFrame);
+  this->StartPivotCalibrationPushButton->Create();
+  this->StartPivotCalibrationPushButton->SetText("Start");
+  this->StartPivotCalibrationPushButton->SetWidth ( 12 );
+
+  this->FinishPivotCalibrationPushButton = vtkKWPushButton::New();
+  this->FinishPivotCalibrationPushButton->SetParent(processFrame);
+  this->FinishPivotCalibrationPushButton->Create();
+  this->FinishPivotCalibrationPushButton->SetText( "Done" );
+  this->FinishPivotCalibrationPushButton->SetWidth ( 12 );
+
+  this->Script( "pack %s %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+                this->PivotCalibrationLabel->GetWidgetName(),
+                this->StartPivotCalibrationPushButton->GetWidgetName(),
+                this->FinishPivotCalibrationPushButton->GetWidgetName());
+
+  // add the error frame
+  vtkKWFrame *errorFrame = vtkKWFrame::New();
+  errorFrame->SetParent ( calibrationFrame->GetFrame() );
+  errorFrame->Create ( );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                errorFrame->GetWidgetName());
+
+  this->PivotCalibrationErrorReport = vtkKWEntryWithLabel::New();
+  this->PivotCalibrationErrorReport->SetParent(errorFrame);
+  this->PivotCalibrationErrorReport->Create();
+  this->PivotCalibrationErrorReport->SetWidth(40);
+  this->PivotCalibrationErrorReport->SetLabelWidth(15);
+  this->PivotCalibrationErrorReport->SetLabelText("Error (mm):");
+  this->PivotCalibrationErrorReport->GetWidget()->SetValue ( "0.0" );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+               this->PivotCalibrationErrorReport->GetWidgetName());
+
+
+  calibrationFrame->Delete();
 }
 
 

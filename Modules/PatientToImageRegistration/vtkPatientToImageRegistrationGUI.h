@@ -32,6 +32,8 @@ class vtkKWFrame;
 class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
+class vtkSlicerNodeSelectorWidget;
+class vtkKWLabel;
 
 
 // Description:    
@@ -119,7 +121,12 @@ protected:
   vtkKWPushButton *RegisterPushButton;
   vtkKWPushButton *ResetPushButton;
 
-
+  vtkSlicerNodeSelectorWidget *TrackerSelector;
+  vtkKWEntryWithLabel *PivotCalibrationErrorReport;
+  vtkKWLabel *PivotCalibrationLabel;
+  vtkKWPushButton *StartPivotCalibrationPushButton;
+  vtkKWPushButton *FinishPivotCalibrationPushButton;
+ 
   // Module logic and mrml pointers
   vtkPatientToImageRegistrationLogic *Logic;
 
@@ -133,6 +140,7 @@ private:
   void BuildGUIForLandmarksFrame();
   void BuildGUIForHelpFrame();
   void BuildGUIForTrackerFrame();
+  void BuildGUIForCalibrationFrame();
 
   void TrackerLoop();
 
