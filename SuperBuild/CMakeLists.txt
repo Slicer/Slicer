@@ -270,10 +270,11 @@ if(Slicer3_USE_KWWIDGETS)
   set(itcl_BUILD_COMMAND "")
   set(itcl_INSTALL_COMMAND "")
 
+  #make build command call cmake -P on a cmake script that sets LD_LIBRARY_PATH
   if(WIN32)
   elseif(APPLE)
     set(itcl_BUILD_IN_SOURCE 1)
-    set(itcl_CONFIGURE_COMMAND PATH=${tcl_build}/bin:$PATH sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(itcl_CONFIGURE_COMMAND PATH=${tcl_build}/bin:$PATH; sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
     set(itcl_BUILD_COMMAND make ${parallelism_level} all)
     set(itcl_INSTALL_COMMAND make install)
     
