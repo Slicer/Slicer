@@ -21,11 +21,11 @@
 */
 
 #include <FileWatcher/FileWatcherWin32.h>
-#include <iostream>
 #if FILEWATCHER_PLATFORM == FILEWATCHER_PLATFORM_WIN32
 
 #define _WIN32_WINNT 0x0550
 #include <windows.h>
+#include <sstream>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "comctl32.lib")
@@ -209,8 +209,11 @@ WatchID FileWatcherWin32::addWatch(const String& directory,
     recursive);
 
   if(!watch)
-    throw FileNotFoundException(directory);
-
+    {
+    std::ostringstream message;
+    message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
+    throw FileNotFoundException(directory, message.str());
+    }
   watch->mWatchid = watchid;
   watch->mFileWatcher = this;
   watch->mFileWatchListener = watcher;

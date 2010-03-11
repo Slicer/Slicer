@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
+#include <sstream>
 
 
 namespace FW
@@ -100,7 +101,11 @@ struct WatchStruct
     int fd = open(name.c_str(), O_RDONLY);
 
     if(fd == -1)
-      throw FileNotFoundException(name);
+      {
+      std::ostringstream message;
+      message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
+      throw FileNotFoundException(name, message.str());
+      }
       
     ++mChangeListCount;
       
@@ -135,7 +140,11 @@ struct WatchStruct
                                   sizeof(KEvent),
                                   comparator);
     if(!ke)
-      throw FileNotFoundException(name);
+      {
+      std::ostringstream message;
+      message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
+      throw FileNotFoundException(name, message.str());
+      }
 
     tempEntry.mFilename = 0;
       
@@ -239,7 +248,11 @@ struct WatchStruct
     // scan directory and call addFile(name, false) on each file
     DIR* dir = opendir(mDirName.c_str());
     if(!dir)
-      throw FileNotFoundException(mDirName);
+      {
+      std::ostringstream message;
+      message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
+      throw FileNotFoundException(mDirName, message.str());
+      }
       
     struct dirent* entry;
     struct stat attrib;

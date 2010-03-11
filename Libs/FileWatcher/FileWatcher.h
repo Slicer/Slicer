@@ -63,8 +63,9 @@ public:
     : Exception("File not found")
   {}
   
-  FileNotFoundException(const String& filename)
-    : Exception("File not found (" + filename + ")")
+  FileNotFoundException(const String& filename,
+                        const String message = "")
+    : Exception(message + "File not found (" + filename + ")")
   {}
 };
 

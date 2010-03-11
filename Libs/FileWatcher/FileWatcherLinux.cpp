@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sstream>
 #include <stdio.h>
 #include <errno.h>
 #include <sys/inotify.h>
@@ -81,7 +82,11 @@ WatchID FileWatcherLinux::addWatch(const String& directory,
   if (wd < 0)
     {
     if(errno == ENOENT)
-      throw FileNotFoundException(directory);
+      {
+      std::ostringstream message;
+      message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
+      throw FileNotFoundException(directory, message.str());
+      }
     else
       throw Exception(strerror(errno));
     }
