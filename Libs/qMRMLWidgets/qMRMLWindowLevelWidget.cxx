@@ -58,11 +58,17 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
   
   if (this->VolumeDisplayNode)
   {
+    int oldAuto = this->VolumeDisplayNode->GetAutoWindowLevel();
+
+    int disabledModify = this->VolumeDisplayNode->StartModify();
     this->VolumeDisplayNode->SetAutoWindowLevel(autoWindowLevel);
-    if (this->VolumeNode && autoWindowLevel == 1)
+    this->VolumeDisplayNode->EndModify(disabledModify);
+
+    if (autoWindowLevel != oldAuto)
     {
-      this->VolumeNode->CalculateAutoLevels();
+       emit this->autoWindowLevelValueChanged(autoWindowLevel);
     }
+
   }
 }
 
@@ -90,7 +96,8 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
     if (oldWindow != this->VolumeDisplayNode->GetWindow() ||
         oldLevel  != this->VolumeDisplayNode->GetLevel())
     {
-      this->VolumeDisplayNode->SetAutoWindowLevel(0);
+      this->setAutoWindowLevel(0);
+      emit this->windowLevelValuesChanged(window, level);
     }
     this->VolumeDisplayNode->EndModify(disabledModify);
   }
@@ -99,24 +106,10 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMinMaxRange(double min, double max)
 {
-  if (this->VolumeDisplayNode)
-  {
-    double oldWindow = this->VolumeDisplayNode->GetWindow();
-    double oldLevel  = this->VolumeDisplayNode->GetLevel();
-
-    double window = max - min;
-    double level = 0.5*(min+max);
-
-    int disabledModify = this->VolumeDisplayNode->StartModify();
-    this->VolumeDisplayNode->SetWindow(window);
-    this->VolumeDisplayNode->SetLevel(level);
-    if (oldWindow != this->VolumeDisplayNode->GetWindow() ||
-        oldLevel  != this->VolumeDisplayNode->GetLevel())
-    {
-      this->VolumeDisplayNode->SetAutoWindowLevel(0);
-    }
-    this->VolumeDisplayNode->EndModify(disabledModify);
-  }
+  double window = max - min;
+  double level = 0.5*(min+max);
+  
+  this->setWindowLevel(window, level);
 }
 
 // TODO remove when range becomes double
@@ -131,16 +124,8 @@ void qMRMLWindowLevelWidget::setWindow(double window)
 {
   if (this->VolumeDisplayNode)
   {
-    double oldWindow = this->VolumeDisplayNode->GetWindow();
-
-    int disabledModify = this->VolumeDisplayNode->StartModify();
-    this->VolumeDisplayNode->SetWindow(window);
-    if (oldWindow != this->VolumeDisplayNode->GetWindow())
-    {
-      this->VolumeDisplayNode->SetAutoWindowLevel(0);
-    }
-    this->VolumeDisplayNode->EndModify(disabledModify);
-
+    double level  = this->VolumeDisplayNode->GetLevel();
+    this->setWindowLevel(window, level);
   }
 }
 
@@ -149,16 +134,8 @@ void qMRMLWindowLevelWidget::setLevel(double level)
 {
   if (this->VolumeDisplayNode)
   {
-    double oldLevel  = this->VolumeDisplayNode->GetLevel();
-
-    int disabledModify = this->VolumeDisplayNode->StartModify();
-    this->VolumeDisplayNode->SetLevel(level);
-    if (oldLevel  != this->VolumeDisplayNode->GetLevel())
-    {
-      this->VolumeDisplayNode->SetAutoWindowLevel(0);
-    }
-    this->VolumeDisplayNode->EndModify(disabledModify);
-
+    double window = this->VolumeDisplayNode->GetWindow();
+    this->setWindowLevel(window, level);
   }
 }
 
@@ -252,18 +229,17 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     double window = this->VolumeDisplayNode->GetWindow();
     double level = this->VolumeDisplayNode->GetLevel();
     d->AutoManualComboBox->setCurrentIndex(this->VolumeDisplayNode->GetAutoWindowLevel());
-    d->WindowLevelRangeSlider->setRange(level - 0.5 * window, level + 0.5 * window);
 
-    if (oldAuto != d->AutoManualComboBox->currentIndex())
-    {
-       emit this->autoWindowLevelValueChanged(d->AutoManualComboBox->currentIndex());
-    }
+    double min = level - 0.5 * window;
+    double max = level + 0.5 * window;
 
-    if (oldMin != d->WindowLevelRangeSlider->rangeMinimum() ||
-        oldMax != d->WindowLevelRangeSlider->rangeMaximum() )
-    {
-      emit this->windowLevelValuesChanged(window, level);
-    }
+    //TODO: set correct bounds of the range widget
+    // clipping in the range widget causing multiple volume display node updates
+    // also a problem if values get clipped, the mode switches from Auto to Manual
+    d->WindowLevelRangeSlider->setRangeBounds(min, max );
+
+    //d->WindowLevelRangeSlider->setRangeMinimumPosition(level - 0.5 * window);
+    //d->WindowLevelRangeSlider->setRangeMaximumPosition(level + 0.5 * window);
   }
 
 }
