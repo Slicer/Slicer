@@ -273,13 +273,14 @@ if(Slicer3_USE_KWWIDGETS)
   if(WIN32)
   elseif(APPLE)
     set(itcl_BUILD_IN_SOURCE 1)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/itcl_configure_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/itcl_configure_step.cmake )
+
     #set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-    set(itcl_CONFIGURE_COMMAND)
+    set(itcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/itcl_configure_step.cmake)
     set(itcl_BUILD_COMMAND make ${parallelism_level} all)
     set(itcl_INSTALL_COMMAND make install)
-    
-    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/win_config_qt.cmake.in
-    #  ${CMAKE_CURRENT_BINARY_DIR}/win_config_qt.cmake )
     
   #  if { $isDarwin } {
   #          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
