@@ -71,8 +71,7 @@ if(Slicer3_USE_PYTHON)
     if(Slicer3_BUILD_NUMPY)
       option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
     endif()
-    
-    enable_language(Fortran)
+
   endif(CMAKE_Fortran_COMPILER)
 endif() # Slicer3_USE_PYTHON
 
@@ -274,9 +273,13 @@ if(Slicer3_USE_KWWIDGETS)
   if(WIN32)
   elseif(APPLE)
     set(itcl_BUILD_IN_SOURCE 1)
-    set(itcl_CONFIGURE_COMMAND PATH=${tcl_build}/bin:$PATH; sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    #set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(itcl_CONFIGURE_COMMAND 
     set(itcl_BUILD_COMMAND make ${parallelism_level} all)
     set(itcl_INSTALL_COMMAND make install)
+    
+    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/win_config_qt.cmake.in
+    #  ${CMAKE_CURRENT_BINARY_DIR}/win_config_qt.cmake )
     
   #  if { $isDarwin } {
   #          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
@@ -662,10 +665,7 @@ endif()
 ExternalProject_Add(${proj}
   SVN_REPOSITORY ${blas_SVN}
   SOURCE_DIR netlib/BLAS
-#  BUILD_IN_SOURCE ${blas_BUILD_IN_SOURCE}
   CMAKE_GENERATOR ${gen}
-#  CONFIGURE_COMMAND ${blas_CONFIGURE}
-#  BUILD_COMMAND ${blas_BUILD}
   INSTALL_COMMAND ""
 )
 
