@@ -104,7 +104,9 @@ struct WatchStruct
       {
       std::ostringstream message;
       message << "In " << __FILE__ << " at line " << __LINE__ << ": ";
-      throw FileNotFoundException(name, message.str());
+      std::cout << "Warning: " << message.str() << std::endl;
+      return;
+//      throw FileNotFoundException(name, message.str());
       }
       
     ++mChangeListCount;
