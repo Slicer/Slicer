@@ -222,14 +222,10 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
   
   if (this->VolumeDisplayNode) 
   {
-    int oldAuto = d->AutoManualComboBox->currentIndex();
-    double oldMin = d->WindowLevelRangeSlider->rangeMinimum();
-    double oldMax = d->WindowLevelRangeSlider->rangeMaximum();
+    d->AutoManualComboBox->setCurrentIndex(this->VolumeDisplayNode->GetAutoWindowLevel());
 
     double window = this->VolumeDisplayNode->GetWindow();
     double level = this->VolumeDisplayNode->GetLevel();
-    d->AutoManualComboBox->setCurrentIndex(this->VolumeDisplayNode->GetAutoWindowLevel());
-
     double min = level - 0.5 * window;
     double max = level + 0.5 * window;
 

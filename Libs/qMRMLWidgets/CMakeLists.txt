@@ -52,6 +52,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLTreeWidget.h
   qMRMLUtils.cxx
   qMRMLUtils.h
+  qMRMLVolumeThresholdWidget.cxx
+  qMRMLVolumeThresholdWidget.h
   qMRMLWindowLevelWidget.cxx
   qMRMLWindowLevelWidget.h
   )
@@ -75,6 +77,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLTreeProxyModel_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
+  qMRMLVolumeThresholdWidget.h
   qMRMLWindowLevelWidget.h
   )
   
@@ -83,6 +86,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
+  Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui
 )
   

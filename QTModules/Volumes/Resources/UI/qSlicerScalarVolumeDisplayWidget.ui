@@ -19,11 +19,19 @@
      <item>
       <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
      </item>
+     <item>
+      <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLVolumeThresholdWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumeThresholdWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>qMRMLWindowLevelWidget</class>
    <extends>QWidget</extends>
