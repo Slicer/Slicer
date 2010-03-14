@@ -37,7 +37,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <sstream>
-
+#include <iostream>
 
 namespace FW
 {
