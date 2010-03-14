@@ -54,6 +54,9 @@ set(PatientToImageRegistration_SRCS
   vtkPatientToImageRegistrationLogic.cxx
   vtkPatientToImageRegistrationGUI.cxx
 )
+SET (PatinetToImageRegistration_NO_WRAP_SRCS
+  PivotCalibration.cxx
+)
 
 
 # --------------------------------------------------------------------------
@@ -76,6 +79,7 @@ set(lib_name PatientToImageRegistration)
 add_library(${lib_name}
   ${PatientToImageRegistration_SRCS} 
   ${PatientToImageRegistration_TCL_SRCS}
+  ${PatinetToImageRegistration_NO_WRAP_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
 

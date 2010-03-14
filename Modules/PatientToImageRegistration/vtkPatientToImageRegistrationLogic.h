@@ -34,6 +34,7 @@ Version:   $Revision: $
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkIGTPat2ImgRegistration.h"
+#include "PivotCalibration.h"
 
 
 class VTK_PatientToImageRegistration_EXPORT vtkPatientToImageRegistrationLogic : public vtkSlicerModuleLogic 
@@ -106,12 +107,15 @@ public:
   vtkGetObjectMacro ( LocatorMatrix,    vtkMatrix4x4 );
   vtkGetObjectMacro ( Pat2ImgReg, vtkIGTPat2ImgRegistration );
 
+  vtkSetObjectMacro(OriginalTrackerNode, vtkMRMLLinearTransformNode);
 
   vtkSetStringMacro(TransformNodeName); 
   vtkGetStringMacro(TransformNodeName);
 
   vtkSetMacro (UseRegistration, bool);
   vtkGetMacro (UseRegistration, bool);
+
+  vtkGetMacro(RMSE, double);
 
   void PrintSelf(ostream&, vtkIndent);
   //void AddRealtimeVolumeNode(const char* name);
@@ -127,7 +131,18 @@ public:
 
   void UpdateFiducialSeeding(const char *name, double offset);
 
+  void CollectDataForPivotCalibration(int start);
+  void ComputePivotCalibration();
+  void ApplyPivotCalibration(int yes);
+
 protected:
+
+  double PivotPosition[3];
+  double Translation[3];
+  double RMSE;
+  bool CollectPCData;
+  bool UsePivotCalibration;
+  PivotCalibration PVCalibration;
 
   vtkPatientToImageRegistrationLogic();
   ~vtkPatientToImageRegistrationLogic();

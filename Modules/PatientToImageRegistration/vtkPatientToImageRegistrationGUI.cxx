@@ -95,6 +95,8 @@ vtkPatientToImageRegistrationGUI::vtkPatientToImageRegistrationGUI ( )
   this->PivotCalibrationLabel = NULL;
   this->StartPivotCalibrationPushButton = NULL;
   this->FinishPivotCalibrationPushButton = NULL;
+  this->PivotCalibrationCheckButton = NULL;
+ 
 }
 
 
@@ -205,6 +207,11 @@ vtkPatientToImageRegistrationGUI::~vtkPatientToImageRegistrationGUI ( )
     {
     this->FinishPivotCalibrationPushButton->SetParent(NULL);
     this->FinishPivotCalibrationPushButton->Delete();
+    }
+  if (this->PivotCalibrationCheckButton)
+    {
+    this->PivotCalibrationCheckButton->SetParent(NULL);
+    this->PivotCalibrationCheckButton->Delete();
     }
 
   this->SetModuleLogic ( NULL );
@@ -527,12 +534,39 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
     else if (this->StartPivotCalibrationPushButton == vtkKWPushButton::SafeDownCast(caller) 
              && event == vtkKWPushButton::InvokedEvent)
       {
-      std::cerr << "DEBUG: StartPivotCalibrationPushButton is selected." << std::endl;
+      // std::cerr << "DEBUG: StartPivotCalibrationPushButton is selected." << std::endl;
+      if (this->TrackerSelector->GetSelected() == NULL)
+        {
+        //--- report an error to user if no tracker is available 
+        std::string message = "Please make sure your tracker is available.";
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent(this->StartPivotCalibrationPushButton);
+        dialog->SetStyleToCancel();
+        dialog->SetText(message.c_str());
+        dialog->Create( );
+        dialog->SetMasterWindow(this->StartPivotCalibrationPushButton);
+        dialog->ModalOn();
+        dialog->Invoke();
+        dialog->Delete();
+        }
+      else
+        {
+        this->GetLogic()->SetOriginalTrackerNode(vtkMRMLLinearTransformNode::SafeDownCast(this->TrackerSelector->GetSelected())); 
+        this->GetLogic()->CollectDataForPivotCalibration(1);
+        this->DoPivot = true;
+        }
       }
     else if (this->FinishPivotCalibrationPushButton == vtkKWPushButton::SafeDownCast(caller) 
              && event == vtkKWPushButton::InvokedEvent)
       {
-      std::cerr << "DEBUG: FinishPivotCalibrationPushButton is selected." << std::endl;
+      //std::cerr << "DEBUG: FinishPivotCalibrationPushButton is selected." << std::endl;
+      this->DoPivot = false;
+      this->GetLogic()->ComputePivotCalibration();
+      double error = this->GetLogic()->GetRMSE();
+      char str[10];
+      sprintf(str, "%4.2f", error);
+      this->PivotCalibrationErrorReport->GetWidget()->SetValue(str);
+
       }
     else if (this->TrackerSelector ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
              && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
@@ -568,8 +602,6 @@ void vtkPatientToImageRegistrationGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkPatientToImageRegistrationGUI::Enter ( )
 {
-  // Fill in
-
   if (this->TimerFlag == 0)
     {
     this->TimerFlag = 1;
@@ -587,6 +619,12 @@ void vtkPatientToImageRegistrationGUI::ProcessTimerEvents()
   if (this->TimerFlag)
     {
 
+    // continue to collect tracking data for pivot calibration
+    if (this->DoPivot)
+      { 
+      this->GetLogic()->CollectDataForPivotCalibration(0);
+      }
+
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
                                          this->TimerInterval,
                                          this, "ProcessTimerEvents");        
@@ -598,7 +636,7 @@ void vtkPatientToImageRegistrationGUI::ProcessTimerEvents()
 //---------------------------------------------------------------------------
 void vtkPatientToImageRegistrationGUI::Exit ( )
 {
-  // Fill in
+  this->TimerFlag = 0;
 }
 
 
@@ -614,7 +652,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUI ( )
   BuildGUIForTrackerFrame();
   BuildGUIForCalibrationFrame();
   BuildGUIForLandmarksFrame();
-  BuildGUIForICPFrame();
+  // BuildGUIForICPFrame();
 }
 
 
@@ -694,7 +732,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
                 calibrationFrame->GetWidgetName(), page->GetWidgetName());
 
 
-  // add two sub frames
+  // add calibration processing frame 
   vtkKWFrame *processFrame = vtkKWFrame::New();
   processFrame->SetParent ( calibrationFrame->GetFrame() );
   processFrame->Create ( );
@@ -741,8 +779,28 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
   this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                this->PivotCalibrationErrorReport->GetWidgetName());
 
+  // add the choice frame
+  vtkKWFrame *choiceFrame = vtkKWFrame::New();
+  choiceFrame->SetParent ( calibrationFrame->GetFrame() );
+  choiceFrame->Create ( );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                choiceFrame->GetWidgetName());
+
+  this->PivotCalibrationCheckButton = vtkKWCheckButton::New();
+  this->PivotCalibrationCheckButton->SetParent(choiceFrame);
+  this->PivotCalibrationCheckButton->Create();
+  this->PivotCalibrationCheckButton->SelectedStateOn();
+  this->PivotCalibrationCheckButton->SetText("Apply Calibration");
+
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+               this->PivotCalibrationCheckButton->GetWidgetName());
+
 
   calibrationFrame->Delete();
+  processFrame->Delete();
+  errorFrame->Delete();
+  choiceFrame->Delete();
+
 }
 
 
@@ -993,4 +1051,3 @@ void vtkPatientToImageRegistrationGUI::TransformChangingCallback(double)
 {
 //    cout << "Transform changing.\n";
 }
-

@@ -34,6 +34,7 @@ Version:   $Revision: $
 vtkCxxRevisionMacro(vtkPatientToImageRegistrationLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkPatientToImageRegistrationLogic);
 
+
 //---------------------------------------------------------------------------
 vtkPatientToImageRegistrationLogic::vtkPatientToImageRegistrationLogic()
 {
@@ -600,6 +601,7 @@ void vtkPatientToImageRegistrationLogic::UpdateLocatorTransform()
     }
 }
 
+
 int vtkPatientToImageRegistrationLogic::PerformPatientToImageRegistration()
 {
   int error = this->GetPat2ImgReg()->DoRegistration();
@@ -611,6 +613,70 @@ int vtkPatientToImageRegistrationLogic::PerformPatientToImageRegistration()
 
   this->SetUseRegistration(1);
   return 0;
+}
+
+
+void vtkPatientToImageRegistrationLogic::CollectDataForPivotCalibration(int start)
+{
+  // if we just start to collect data:
+  // start = 1
+  // in progress:
+  // start = 0
+  if (start)
+    {
+    this->PVCalibration.Clear();
+    }
+
+  if (! this->OriginalTrackerNode)
+    {
+    return;
+    }
+
+  vtkMatrix4x4* matrix;
+  matrix = this->OriginalTrackerNode->GetMatrixTransformToParent();
+  if (matrix)
+    {
+    double quat[4], quat2[4];
+    vtkTransform *temp = vtkTransform::New();
+    temp->SetMatrix(matrix);
+    temp->GetOrientationWXYZ(quat);
+
+    // switch from wxyz to xyzw
+    quat2[0] = quat[1];
+    quat2[1] = quat[2];
+    quat2[2] = quat[3];
+    quat2[3] = quat[0];
+
+
+    double pos[3];
+    // pos[0]: px
+    // pos[1]: py
+    // pos[2]: pz
+    pos[0] = matrix->GetElement(0, 3);
+    pos[1] = matrix->GetElement(1, 3);
+    pos[2] = matrix->GetElement(2, 3);
+
+    // add one sample 
+    this->PVCalibration.AddSample(quat2, pos);
+    }
+}
+
+
+
+void vtkPatientToImageRegistrationLogic::ComputePivotCalibration()
+{
+    this->PVCalibration.CalculateCalibration();
+    this->PVCalibration.GetPivotPosition(this->PivotPosition);
+    this->PVCalibration.GetTranslation(this->Translation);
+    this->RMSE = this->PVCalibration.GetRMSE();
+}
+
+
+
+void vtkPatientToImageRegistrationLogic::ApplyPivotCalibration(int yes)
+{
+    this->UsePivotCalibration = yes;
+
 }
 
 
