@@ -632,32 +632,13 @@ void vtkPatientToImageRegistrationLogic::CollectDataForPivotCalibration(int star
     return;
     }
 
-  vtkMatrix4x4* matrix;
-  matrix = this->OriginalTrackerNode->GetMatrixTransformToParent();
-  if (matrix)
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  if (this->OriginalTrackerNode->GetMatrixTransformToParent())
     {
-    double quat[4], quat2[4];
-    vtkTransform *temp = vtkTransform::New();
-    temp->SetMatrix(matrix);
-    temp->GetOrientationWXYZ(quat);
-
-    // switch from wxyz to xyzw
-    quat2[0] = quat[1];
-    quat2[1] = quat[2];
-    quat2[2] = quat[3];
-    quat2[3] = quat[0];
-
-
-    double pos[3];
-    // pos[0]: px
-    // pos[1]: py
-    // pos[2]: pz
-    pos[0] = matrix->GetElement(0, 3);
-    pos[1] = matrix->GetElement(1, 3);
-    pos[2] = matrix->GetElement(2, 3);
+    matrix->DeepCopy(this->OriginalTrackerNode->GetMatrixTransformToParent());
 
     // add one sample 
-    this->PVCalibration.AddSample(quat2, pos);
+    this->PVCalibration.AddSample(matrix);
     }
 }
 
@@ -665,10 +646,11 @@ void vtkPatientToImageRegistrationLogic::CollectDataForPivotCalibration(int star
 
 void vtkPatientToImageRegistrationLogic::ComputePivotCalibration()
 {
-    this->PVCalibration.CalculateCalibration();
+    this->PVCalibration.ComputeCalibration();
     this->PVCalibration.GetPivotPosition(this->PivotPosition);
     this->PVCalibration.GetTranslation(this->Translation);
     this->RMSE = this->PVCalibration.GetRMSE();
+
 }
 
 

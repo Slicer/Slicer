@@ -773,8 +773,8 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
   this->PivotCalibrationErrorReport->SetParent(errorFrame);
   this->PivotCalibrationErrorReport->Create();
   this->PivotCalibrationErrorReport->SetWidth(40);
-  this->PivotCalibrationErrorReport->SetLabelWidth(15);
-  this->PivotCalibrationErrorReport->SetLabelText("Error (mm):");
+  this->PivotCalibrationErrorReport->SetLabelWidth(20);
+  this->PivotCalibrationErrorReport->SetLabelText("Root mean square error:");
   this->PivotCalibrationErrorReport->GetWidget()->SetValue ( "0.0" );
   this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                this->PivotCalibrationErrorReport->GetWidgetName());

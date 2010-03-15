@@ -30,14 +30,10 @@
 #include <vector>
 #include "itkVersorRigid3DTransform.h"
 #include "vtkPatientToImageRegistrationWin32Header.h"
+#include "vtkMatrix4x4.h"
 
 
-typedef itk::Versor<double> QuaternionType;
-typedef itk::Vector<double> TranslationType;
-
-//class VTK_PatientToImageRegistration_EXPORT PivotCalibration
-
-class PivotCalibration
+class VTK_PatientToImageRegistration_EXPORT PivotCalibration
 {
 public:
     PivotCalibration();
@@ -48,9 +44,9 @@ public:
     /// Adds a sample
     /// @param quat orientation (as a quaternion x,y,z,w)
     /// @param trans position
-    void AddSample(double *quat, double *trans);
+    void AddSample(vtkMatrix4x4 *);
     /// Calculates the pivot calibration
-    void CalculateCalibration();
+    void ComputeCalibration();
 
     /// Gets the position of the pivot point
     void GetPivotPosition(double pos[3]);
@@ -63,13 +59,14 @@ public:
 
 private:
 
-    double pivotPosition[3];
-    double translation[3];
-    double RMSE;
-    bool validPivotCalibration;
+  double PivotPosition[3];
+  double Translation[3];
+  double RMSE;
+  bool ValidPivotCalibration;
 
-    std::vector<QuaternionType> quaternionSampleCollection;
-    std::vector<TranslationType> translationSampleCollection;
+   // readings from tracking device
+   std::vector<vtkMatrix4x4 *> Transforms;        
+
 };
 
 #endif
