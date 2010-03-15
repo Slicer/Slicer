@@ -129,6 +129,7 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     }
   if (this->FiducialListSelectorWidget)
     {
+    this->FiducialListSelectorWidget->SetMRMLScene(NULL);
     this->FiducialListSelectorWidget->SetParent(NULL);
     this->FiducialListSelectorWidget->Delete();
     this->FiducialListSelectorWidget = NULL;
@@ -1688,14 +1689,26 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     int numPoints = activeFiducialListNode->GetNumberOfFiducials();
     bool deleteFlag = true;
 
-    vtkDebugMacro("SetGUIFromList: have " << numPoints << " points in the list");
+    vtkDebugMacro("SetGUIFromList: have " << numPoints << " points in the list and " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << " rows in the multicolumn list box");
     
-    if (numPoints != this->MultiColumnList->GetWidget()->GetNumberOfRows())
+    if (numPoints > this->MultiColumnList->GetWidget()->GetNumberOfRows())
       {
-      vtkDebugMacro("SetGUIFromList: numPoints " << numPoints << " doesn't match number of rows " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << ", so deleting all of them and starting from scratch\n");
-      
-      // clear out the multi column list box and fill it in with the
-      // new list
+      // add some rows
+      int numToAdd = numPoints -  this->MultiColumnList->GetWidget()->GetNumberOfRows();
+      this->MultiColumnList->GetWidget()->AddRows(numToAdd);
+      }
+    if (numPoints <  this->MultiColumnList->GetWidget()->GetNumberOfRows())
+      {
+      // delete some rows
+      for (int r = this->MultiColumnList->GetWidget()->GetNumberOfRows(); r >= numPoints; r--)
+        {
+        this->MultiColumnList->GetWidget()->DeleteRow(r);
+        }
+      }
+    // final check (in case not all fids are going to be shown, see vtkSlicerColorDisplayWidget)
+    if (numPoints !=  this->MultiColumnList->GetWidget()->GetNumberOfRows())
+      {
+      vtkDebugMacro("Clearing out the fids MCLB, numPoints = " << numPoints);
       this->MultiColumnList->GetWidget()->DeleteAllRows();
       }
     else
