@@ -421,7 +421,7 @@ void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRen
 }
 
 void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
-{
+{printf("424\n");
   //add points into transfer functions
   vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
 
@@ -496,7 +496,7 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRen
 
       step = windowLevel[0] / (size - 1);
 
-      int downSamplingFactor = 16;
+      int downSamplingFactor = 64;
       
       for (int i = 0; i < size; i += downSamplingFactor, value += downSamplingFactor*step)
       {
@@ -589,7 +589,7 @@ void vtkVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRend
 
         step = windowLevel[0] / (size - 1);
 
-        int downSamplingFactor = 16;
+        int downSamplingFactor = 64;
         
         for (int i = 0; i < size; i += downSamplingFactor, value += downSamplingFactor*step)
         {
