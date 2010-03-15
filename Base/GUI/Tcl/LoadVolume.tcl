@@ -1505,10 +1505,23 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         #
         set refFile [lindex $tree($patient,$study,$series,files) 0]
         array set refHeader $tree($refFile,header)
-        if { ![info exists refFile($ORIENTATION,value)] } {
-          $this errorDialog "No orientation information for\n$patient\n$study\n$series\nPlease use caution."
-          continue
+
+        set validGeometry 1
+        foreach tag {POSITION ORIENTATION} {
+          set key [set $tag],value
+          puts "checking refHeader($key)"
+          array set ::refheader [array get refHeader]
+          if { [lsearch [array names refHeader] $key] == -1 } {
+            $this errorDialog "Warning!  The reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
+            set validGeometry 0
+            break
+          }
         }
+
+        if { $validGeometry == 0 } {
+          break
+        }
+
         set refOrientation $refHeader($ORIENTATION,value)
         regsub -all "\\\\" $refOrientation " " sliceAxes
         set scanAxis [eval ::LoadVolume::Cross $sliceAxes]
