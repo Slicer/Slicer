@@ -181,7 +181,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
     return;
   
-  this->RaySteps *= targetTime/this->TimeToDraw;
+  this->RaySteps *= targetTime/(this->TimeToDraw*1.33);
   
   int dim[3];
   this->GetVolumeDimensions(dim);
@@ -192,7 +192,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   maxRaysteps *= 128.0f; //make sure we have enough sampling rate to recover details
 
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
-
+  
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
   if (this->RaySteps < 150.0f)       this->RaySteps = 150.0f;

@@ -187,7 +187,7 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
   if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
     return;
     
-  this->RaySteps *= targetTime/this->TimeToDraw;
+  this->RaySteps *= targetTime/(this->TimeToDraw*1.33);
 
   int dim[3];
   this->GetVolumeDimensions(dim);
