@@ -1484,6 +1484,8 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           delNode->GetID() == this->GetFiducialListNodeID())
         {
         vtkDebugMacro("My node got deleted " << this->GetFiducialListNodeID());
+        // remove observers that were added in SetFiducialListNodeID
+        this->MRMLObserverManager->SetObject( vtkObjectPointer( &delNode ), NULL);
         }
       }
     }
@@ -3043,6 +3045,11 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
     {
     vtkDebugMacro("SetFiducialListNodeID: NULL input id, clearing GUI and returning.\n");
     this->SetGUIFromList(NULL);
+    if (oldFidList != NULL)
+      {
+      vtkDebugMacro("SetFiducialListNodeID: null input id, but oldFidList is not null, removing all observers");
+      this->MRMLObserverManager->SetObject( vtkObjectPointer( &oldFidList), NULL);
+      }
     return;
     }
   
