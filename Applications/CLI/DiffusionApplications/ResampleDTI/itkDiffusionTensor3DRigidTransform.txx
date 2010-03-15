@@ -41,8 +41,19 @@ DiffusionTensor3DRigidTransform< TData >
     this->m_Translation[ i ] = transform->GetFixedParameters().GetElement( i ) ;
     }
   SetMatrix3x3( matrix3x3 ) ;
-}    
-    
+}
+
+template< class TData >
+itk::Rigid3DTransform< double >::Pointer 
+DiffusionTensor3DRigidTransform< TData >
+::GetRigidTransform()
+{
+  typename Rigid3DTransformType::Pointer rigidTransform = Rigid3DTransformType::New() ;
+  rigidTransform->SetMatrix( this->m_TransformMatrix ) ;
+  rigidTransform->SetTranslation( this->m_Translation ) ;
+  return rigidTransform ;
+}
+
 template< class TData >
 void
 DiffusionTensor3DRigidTransform< TData >

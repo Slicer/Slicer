@@ -19,6 +19,7 @@
 #include <itkPoint.h>
 #include "itkMatrixExtended.h"
 #include <itkNumericTraits.h>
+#include <itkTransform.h>
 
 namespace itk
 {
@@ -31,13 +32,14 @@ class DiffusionTensor3DTransform : public Object
 {
 public:
   typedef TData DataType ;
+  typedef double TransformType ;
   typedef DiffusionTensor3DTransform Self ; 
-  typedef Point< double , 3 > PointType ;
+  typedef Point< TransformType , 3 > PointType ;
   typedef DiffusionTensor3D< DataType > TensorDataType ;
   typedef DiffusionTensor3DExtended< DataType > InternalTensorDataType ;
-  typedef Matrix< double , 3 , 3 > MatrixTransformType ;
+  typedef Matrix< TransformType , 3 , 3 > MatrixTransformType ;
   typedef Matrix< DataType , 3 , 3 > MatrixDataType ;
-  typedef MatrixExtended< double , 3 , 3 > InternalMatrixTransformType ;
+  typedef MatrixExtended< TransformType , 3 , 3 > InternalMatrixTransformType ;
   typedef MatrixExtended< DataType , 3 , 3 > InternalMatrixDataType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
@@ -48,7 +50,7 @@ public:
                                                PointType &outputPosition) = 0 ;
   ///Set the measurement frame of the tensor
   itkSetMacro( MeasurementFrame , MatrixTransformType ) ;
-  
+  virtual typename Transform< TransformType , 3 , 3 >::Pointer GetTransform( ) = 0 ;
 protected:
   DiffusionTensor3DTransform() ;
   InternalMatrixTransformType m_MeasurementFrame ;

@@ -18,8 +18,10 @@
 #include "itkDiffusionTensor3D.h"
 #include <itkOrientedImage.h>
 #include <itkPoint.h>
-#include <itkSemaphore.h>
+//#include <itkSemaphore.h>
 #include <itkNumericTraits.h>
+#include "define.h"
+
 
 namespace itk
 {
@@ -41,20 +43,20 @@ public :
   typedef Point< double , 3 > PointType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-
+  typedef typename TensorDataType::RealValueType TensorRealType ;
   ///Set the input image
   itkSetObjectMacro( InputImage , DiffusionImageType ) ;
   ///Evaluate the tensor value at a given position
   virtual TensorDataType Evaluate( const PointType &point ) = 0 ;
+  void SetDefaultPixelValue( TensorRealType defaultPixelValue ) ;
+  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
 
 protected:
   DiffusionTensor3DInterpolateImageFunction() ;
   DiffusionImageTypePointer m_InputImage ;
-  Semaphore::Pointer P ;
-  PointType m_Origin ;
-  PointType m_End ;
   unsigned long latestTime ;
-  void PreComputeCorners() ;
+  TensorRealType m_DefaultPixelValue ;
+  TensorDataType m_DefaultPixel ;
 };
 
 }//end namespace itk

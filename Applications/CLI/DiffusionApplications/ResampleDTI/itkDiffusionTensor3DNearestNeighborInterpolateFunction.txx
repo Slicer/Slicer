@@ -19,7 +19,43 @@
 namespace itk
 {
 
+template< class TData >
+DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
+::DiffusionTensor3DNearestNeighborInterpolateFunction()
+{
+  m_Origin.Fill( NumericTraits< double >::Zero ) ;
+  m_End.Fill( NumericTraits< double >::Zero ) ;
+  lock = MutexLock::New() ;
+}
 
+template< class TData >
+void
+DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
+::PreComputeCorners()
+{
+  //Compute position of the lower and superior corner of the image
+  typename DiffusionImageType::SizeType size
+         = this->m_InputImage->GetLargestPossibleRegion().GetSize() ;    
+  typename DiffusionImageType::IndexType index ;
+  index.Fill( 0 ) ;
+  this->m_InputImage->TransformIndexToPhysicalPoint( index , m_Origin ) ;
+  for( int i = 0 ; i < 3 ; i++ )
+    {
+    index[ i ] = size[ i ] - 1 ;
+    }
+  this->m_InputImage->TransformIndexToPhysicalPoint( index , m_End ) ;
+  double temp ;
+  for( int i = 0 ; i < 3 ; i++ )
+    {
+    if( m_End[ i ] < m_Origin[ i ] )
+      {
+      temp = m_Origin[ i ] ;
+      m_Origin[ i ] = m_End[ i ] ;
+      m_End[ i ] = temp ;
+      }
+    }
+  this->latestTime = Object::GetMTime() ;
+}
 
 template< class TData >
 typename DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
@@ -27,17 +63,16 @@ typename DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
 DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
 ::Evaluate( const PointType &point )
 {
-  TensorDataType pixelValue( NumericTraits< DataType >::Zero ) ;
   if( this->m_InputImage.IsNotNull() )
     {
     if( this->latestTime< Object::GetMTime() )
       { 
-      this->P->Down() ;
+      lock->Lock() ;
       if( this->latestTime< Object::GetMTime() )
         {
-        this->PreComputeCorners() ;
+        PreComputeCorners() ;
         }
-      this->P->Up() ;
+      lock->Unlock() ;
       }
     bool ok = 1 ;
     typename DiffusionImageType::IndexType pixelIndex ;
@@ -55,14 +90,17 @@ DiffusionTensor3DNearestNeighborInterpolateFunction< TData >
       }
     if( ok )
       {
-      pixelValue = this->m_InputImage->GetPixel( pixelIndex ) ;
+      return this->m_InputImage->GetPixel( pixelIndex ) ;
+      }
+    else
+      {
+      return this->m_DefaultPixel ;
       }
     }
   else
     {
     itkExceptionMacro( << " No InputImage set" ) ;
     }
-  return pixelValue ;
 }
 
 }//end namespace itk

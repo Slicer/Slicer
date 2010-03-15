@@ -28,7 +28,7 @@ DiffusionTensor3DLinearInterpolateFunction< TData >
   for( int i = 0 ; i < 6 ; i++ )
     {
     linearInterpolator[ i ] = LinearInterpolateImageFunctionType::New() ;
-    this->interpol[ i ] = linearInterpolator[ i ] ;
+    this->m_Interpol[ i ] = linearInterpolator[ i ] ;
     }
 }
 

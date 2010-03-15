@@ -64,10 +64,8 @@ if( this->latestTime < Object::GetMTime() )
     e2[ i ] = eigenVectors[ 1 ][ i ] ;     
     }
   InternalMatrixTransformType transformMF=this->m_TransformMatrix * ( InternalMatrixTransformType ) this->m_MeasurementFrame;
-//  n1 = this->m_TransformMatrix  * e1 ;
   n1 = transformMF  * e1 ;
   n1 /= n1.GetVnlVector().two_norm() ;
-//  n2 = this->m_TransformMatrix * e2 ;
   n2 = transformMF * e2 ;
   n2 /= n2.GetVnlVector().two_norm() ;
   double costheta = dot_product( e1.GetVnlVector() , n1.GetVnlVector() ) ;

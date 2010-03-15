@@ -92,7 +92,8 @@ DiffusionTensor3DWrite< TData >
           tagvalue[ i ].resize( 3 ) ;
           for(int j = 0 ; j < 3 ; j++ )
             {
-            tagvalue[ i ][ j ] = measurementFrame[ i ][ j ] ;
+//            tagvalue[ i ][ j ] = measurementFrame[ i ][ j ] ;
+            tagvalue[ i ][ j ] = measurementFrame[ j ][ i ] ;
             }
           }
         entryvalue->SetMetaDataObjectValue( tagvalue ) ;
@@ -101,25 +102,23 @@ DiffusionTensor3DWrite< TData >
     ++itr ;
     }   
 }
-    
+
+
+
 template< class TData >
 int
 DiffusionTensor3DWrite< TData >
 ::Update( const char* output )
 {
-  typename itk::NrrdImageIO::Pointer io = itk::NrrdImageIO::New() ;
-  io->SetFileTypeToBinary() ;
-  io->SetMetaDataDictionary( m_MetaDataDictionary ) ;
-  typename WriterType::Pointer nrrdWriter = WriterType::New() ;
-  nrrdWriter->UseInputMetaDataDictionaryOff() ;
-  nrrdWriter->SetInput( m_Input ) ;
-  nrrdWriter->SetImageIO( io ) ;
-  nrrdWriter->SetFileName( output ) ;
-  nrrdWriter->UseCompressionOn() ;
-  nrrdWriter->SetNumberOfThreads(m_NumberOfThreads);
+  m_Input->SetMetaDataDictionary( m_MetaDataDictionary ) ;
+  typename WriterType::Pointer writer = WriterType::New() ;
+  writer->SetInput( m_Input ) ;
+  writer->SetFileName( output ) ;
+  writer->UseCompressionOn() ;
+  writer->SetNumberOfThreads(m_NumberOfThreads);
   try
     {
-    nrrdWriter->Update() ;
+    writer->Update() ;
     return 0;
     }
   catch( itk::ExceptionObject excep )

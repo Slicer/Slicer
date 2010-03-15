@@ -50,6 +50,7 @@ public:
   /** Set the transformation matrix from an itk::AffineTransform< double , 3 > object
   */
   void SetTransform( typename AffineTransformType::Pointer transform ) ;
+  typename AffineTransformType::Pointer GetAffineTransform() ;
   /** Set the transformation matrix directly from a 4x4 matrix
   * The 4th row is ignored and considered to be 0,0,0,1
   */

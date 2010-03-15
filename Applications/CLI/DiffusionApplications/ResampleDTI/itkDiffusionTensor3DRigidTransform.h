@@ -43,6 +43,7 @@ public:
   void SetMatrix4x4( MatrixTransform4x4Type matrix ) ;
   ///Set the transformation matrix from an itk::RigidTransform< double > object
   void SetTransform( typename Rigid3DTransformType::Pointer transform ) ;
+  typename Rigid3DTransformType::Pointer GetRigidTransform() ;
   itkNewMacro( Self ) ;
   ///Set the 3x3 rotation matrix
   void SetMatrix3x3( MatrixTransformType &matrix ) ; 

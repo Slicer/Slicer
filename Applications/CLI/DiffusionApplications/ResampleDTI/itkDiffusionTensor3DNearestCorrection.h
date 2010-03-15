@@ -86,7 +86,7 @@ public:
     mat.Fill(0);
     for( int i = 0 ; i < 3 ; i++ )
       {
-      mat[ i ][ i ] = ( eigenValues[ i ] < 0 ? 0 : eigenValues[ i ] ) ;
+      mat[ i ][ i ] = ( eigenValues[ i ] <= 0 ? ZERO : eigenValues[ i ] ) ;
       }
     eigenVectors = eigenVectors.GetTranspose();
     tensorDouble.SetTensorFromMatrix( eigenVectors * mat * eigenVectors.GetInverse() );

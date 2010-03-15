@@ -28,7 +28,9 @@ DiffusionTensor3DResample< TInput,TOutput >
   m_OutputOrigin.Fill( 0.0 ) ;
   m_OutputDirection.SetIdentity() ;
   m_OutputSize.Fill( 0 ) ;
+  m_DefaultPixelValue = static_cast< TensorRealType >( ZERO ) ;
 }
+
 
 template< class TInput , class TOutput >
 unsigned long 
@@ -68,7 +70,8 @@ DiffusionTensor3DResample< TInput ,TOutput >
     itkExceptionMacro( << "Transform not set" ) ;
     }
   m_Interpolator->SetInputImage( const_cast< InputImageType* >
-                                           ( this->GetInput() )  ) ;  
+                                           ( this->GetInput() )  ) ;
+  m_Interpolator->SetDefaultPixelValue( m_DefaultPixelValue ) ;
 }
 
 
@@ -84,7 +87,7 @@ template< class TInput , class TOutput >
 void
 DiffusionTensor3DResample< TInput , TOutput >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                                                              int itkNotUsed(threadId) )
+                                                     int itkNotUsed(threadId) )
 {
   OutputImagePointerType outputImagePtr = this->GetOutput( 0 ) ;
   IteratorType it( outputImagePtr , outputRegionForThread ) ;

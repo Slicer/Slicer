@@ -132,6 +132,56 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 }
 
 
+template< class TData >
+typename DiffusionTensor3DMatrix3x3Transform< TData >::
+InternalMatrixTransformType 
+DiffusionTensor3DMatrix3x3Transform< TData >::GetMatrix3x3( )
+{
+  if( latestTime < Object::GetMTime() )
+    {
+    P->Down() ;
+    if( latestTime < Object::GetMTime() )
+      {
+      PreCompute() ;
+      }
+    P->Up() ;
+    }
+  return m_TransformMatrix ;
+}
+
+template< class TData >
+typename DiffusionTensor3DMatrix3x3Transform< TData >::
+VectorType 
+DiffusionTensor3DMatrix3x3Transform< TData >::GetTranslation( )
+{
+  if( latestTime < Object::GetMTime() )
+    {
+    P->Down() ;
+    if( latestTime < Object::GetMTime() )
+      {
+      PreCompute() ;
+      }
+    P->Up() ;
+    }
+return m_Translation ;
+}
+
+
+template< class TData >
+typename Transform< double , 3 , 3 >::Pointer 
+DiffusionTensor3DMatrix3x3Transform< TData >
+::GetTransform( )
+{
+  typename itk::MatrixOffsetTransformBase< TransformType , 3 , 3 >::Pointer matrixTransform ;
+  matrixTransform = itk::MatrixOffsetTransformBase< TransformType , 3 , 3 >::New() ;
+  matrixTransform->SetMatrix( m_TransformMatrix ) ;
+  matrixTransform->SetTranslation( m_Translation ) ;
+  typename itk::Transform< TransformType , 3 , 3 >::Pointer transform ; 
+  transform = matrixTransform ;
+  return transform ;
+}
+
+
 }//end namespace itk
 
 #endif

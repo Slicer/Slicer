@@ -34,7 +34,7 @@ namespace itk
  * Spatial Transformations of Diffusion Tensor Magnetic Resonance Images, 
  * IEEE Transactions on Medical Imaging, Vol 20, No. 11, November 2001 
  * 
- * Any nonsingular matrix F can be decomposed into a rigid rotation component R, and a deformation copmoment U, where:
+ * Any nonsingular matrix F can be decomposed into a rigid rotation component R, and a deformation component U, where:
  * F=UR
  * 
  * The tensor position is computed by the given affine transformation F but the tensor is transformed by 

@@ -48,6 +48,27 @@ of the image at non-grid positions.
 </parameters>
 
 <parameters advanced="true">
+    <label>Deformation Field (last transform applied)</label>
+    <string-enumeration>
+      <name>typeOfField</name>
+      <longflag>--hfieldtype</longflag>
+      <description>Set if the deformation field is an h-Field</description>
+      <label>Displacement or H-Field</label>
+      <element>displacement</element>
+      <element>h-Field</element>
+      <default>h-Field</default>
+    </string-enumeration>
+    <image type="scalar">
+      <name>deffield</name>
+      <label>Deformation Field Volume</label>
+      <flag>-H</flag>
+      <longflag>--defField</longflag>
+      <description>File containing the deformation field (the deformation field is the last transform)</description>
+      <default></default>
+    </image>
+</parameters>
+
+<parameters advanced="true">
     <label>Resampling Parameters</label>
     <description>Parameters used for resampling</description>
     <integer>
@@ -69,6 +90,14 @@ of the image at non-grid positions.
       <element>nearest</element>
       <default>none</default>
     </string-enumeration>
+    <double>
+      <name>defaultPixelValue</name>
+      <flag>-p</flag>
+      <longflag>--default_pixel_value</longflag>
+      <description>Default pixel value for samples falling outside of the input region (log[value] is used if the Log-Euclidean Framework is used )</description>
+      <label>Default Pixel Value</label>
+      <default>1e-10</default>
+    </double>
 </parameters>
 
 

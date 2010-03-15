@@ -35,7 +35,7 @@ DiffusionTensor3DBSplineInterpolateImageFunction< TData >
     {
     bSplineInterpolateFunction[ i ] = BSplineInterpolateFunction::New() ;
     bSplineInterpolateFunction[ i ]->SetSplineOrder( m_SplineOrder ) ;
-    this->interpol[ i ] = bSplineInterpolateFunction[ i ] ;
+    this->m_Interpol[ i ] = bSplineInterpolateFunction[ i ] ;
     }
 }
 

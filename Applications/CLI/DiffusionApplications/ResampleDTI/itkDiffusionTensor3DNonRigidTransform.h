@@ -18,6 +18,7 @@
 #include "itkDiffusionTensor3DFSAffineTransform.h"
 #include "itkDiffusionTensor3DPPDAffineTransform.h"
 #include <itkTransform.h>
+#include <itkMutexLock.h>
 
 namespace itk
 {
@@ -44,6 +45,7 @@ public:
   itkNewMacro( Self ) ;
   ///Set the transform
   itkSetObjectMacro( Transform , TransformType ) ;
+  TransformType::Pointer GetTransform() ;
   ///Evaluate the position of the transformed tensor in the output image
   PointType EvaluateTensorPosition( const PointType &point ) ;
   ///Evaluate the transformed tensor
@@ -51,6 +53,7 @@ public:
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 
 protected:
+  MutexLock::Pointer m_LockGetJacobian ;
   unsigned long latestTime ;
   typename TransformType::Pointer m_Transform ;
   typename AffineTransform::Pointer m_Affine;

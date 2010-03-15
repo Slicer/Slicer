@@ -10,8 +10,15 @@ include(${ITK_USE_FILE})
 
 include_directories( ${CLI_SOURCE_DIR} )
 
+Set( dtiProcessFiles
+dtiprocessFiles/deformationfieldio.h
+dtiprocessFiles/deformationfieldio.cxx
+dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
+dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+)
+
 set (CLP ResampleDTI)
-set ( ${CLP}_SOURCE ${CLP}.cxx)
+set ( ${CLP}_SOURCE ${CLP}.cxx ${dtiProcessFiles} )
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})

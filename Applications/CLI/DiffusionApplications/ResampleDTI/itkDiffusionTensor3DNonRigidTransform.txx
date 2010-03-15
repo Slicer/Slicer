@@ -25,6 +25,16 @@ DiffusionTensor3DNonRigidTransform< TData >
 ::SetAffineTransformType(typename AffineTransform::Pointer transform)
 {
   m_Affine=transform;
+  m_LockGetJacobian = MutexLock::New() ;
+}
+
+
+template< class TData >
+typename Transform< double, 3, 3 >::Pointer
+DiffusionTensor3DNonRigidTransform< TData >
+::GetTransform()
+{
+  return m_Transform ;
 }
 
 template< class TData >
@@ -38,8 +48,7 @@ DiffusionTensor3DNonRigidTransform< TData >
     }
   else
     {
-    PointType zeroPoint( 0 ) ;
-    return zeroPoint ;
+    itkExceptionMacro( << "Transform not set" ) ;
     }
 }
 
@@ -53,6 +62,7 @@ DiffusionTensor3DNonRigidTransform< TData >
     MatrixTransformType matrix ;
     matrix.SetIdentity() ;
     typename TransformType::JacobianType jacobian ;
+    m_LockGetJacobian->Lock() ;
     jacobian = m_Transform->GetJacobian( outputPosition ) ;
     for( int i = 0 ; i < 3 ; i++ )
       {
@@ -61,13 +71,13 @@ DiffusionTensor3DNonRigidTransform< TData >
         matrix[ i ][ j ] = jacobian[ i ][ j ] + matrix[ i ][ j ] ;
         }
       }
+    m_LockGetJacobian->Unlock() ;
     m_Affine->SetMatrix3x3( matrix ) ;
     return m_Affine->EvaluateTransformedTensor( tensor ) ;
     }
   else
     {
-    TensorDataType returnedTensor( NumericTraits< DataType >::Zero ) ;
-    return returnedTensor ;
+    itkExceptionMacro( << "Transform or affine transform type not set" ) ;
     }
 }
     

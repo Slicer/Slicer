@@ -25,40 +25,22 @@ DiffusionTensor3DInterpolateImageFunction< TData >
 {
   m_InputImage = 0 ;
   latestTime = 0 ;
-  P = Semaphore::New() ;
-  P->Initialize( 1 ) ;
-  m_Origin.Fill( NumericTraits< TensorType >::Zero ) ;
-  m_End.Fill( NumericTraits< TensorType >::Zero ) ;
+  SetDefaultPixelValue( ZERO ) ;
 }
 
 template< class TData >
 void
 DiffusionTensor3DInterpolateImageFunction< TData >
-::PreComputeCorners()
+::SetDefaultPixelValue( TensorRealType defaultPixelValue )
 {
-  //Compute position of the lower and superior corner of the image
-  typename DiffusionImageType::SizeType size
-         = m_InputImage->GetLargestPossibleRegion().GetSize() ;    
-  typename DiffusionImageType::IndexType index ;
-  index.Fill( 0 ) ;
-  m_InputImage->TransformIndexToPhysicalPoint( index , m_Origin ) ;
-  for( int i = 0 ; i < 3 ; i++ )
+  m_DefaultPixelValue = defaultPixelValue ;
+  m_DefaultPixel.SetIdentity() ;
+  for( unsigned int i = 0 ; i < 3 ; i++ ) 
     {
-    index[ i ] = size[ i ] - 1 ;
+    m_DefaultPixel( i , i ) *= static_cast< TData >( this->m_DefaultPixelValue ) ;
     }
-  m_InputImage->TransformIndexToPhysicalPoint( index , m_End ) ;
-  double temp ;
-  for( int i = 0 ; i < 3 ; i++ )
-    {
-    if( m_End[ i ] < m_Origin[ i ] )
-      {
-      temp = m_Origin[ i ] ;
-      m_Origin[ i ] = m_End[ i ] ;
-      m_End[ i ] = temp ;
-      }
-    }
-  latestTime = Object::GetMTime() ;
 }
+
 
 
 }//end namespace itk

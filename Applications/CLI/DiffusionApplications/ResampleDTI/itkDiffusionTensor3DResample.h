@@ -23,7 +23,7 @@
 #include <itkCastImageFilter.h>
 #include <itkImageRegionIterator.h>
 #include <itkPoint.h>
-
+#include "define.h"
 
 namespace itk
 {
@@ -58,6 +58,7 @@ typedef typename InputImageType::Pointer InputImagePointerType ;
 typedef typename OutputImageType::Pointer OutputImagePointerType ;
 typedef itk::ImageRegionIterator< OutputImageType > IteratorType ;
 typedef typename OutputImageType::RegionType OutputImageRegionType ;
+typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
 itkNewMacro( Self ) ;
 ///Set the transform
@@ -70,13 +71,19 @@ void SetInput( InputImagePointerType inputImage ) ;
 void SetOutputParametersFromImage( InputImagePointerType Image ) ;
 ///Get the time of the last modification of the object
 unsigned long GetMTime() const ;
-
+itkSetMacro( DefaultPixelValue , TensorRealType ) ;
+itkGetMacro( DefaultPixelValue , TensorRealType ) ;
 
 itkSetMacro( OutputOrigin , typename OutputImageType::PointType ) ;
 itkSetMacro( OutputSpacing , typename OutputImageType::SpacingType ) ;
 itkSetMacro( OutputSize , typename OutputImageType::SizeType ) ;
 itkSetMacro( OutputDirection , typename OutputImageType::DirectionType ) ;
 Matrix< double , 3 , 3 > GetOutputMeasurementFrame() ;
+itkGetMacro( OutputOrigin , typename OutputImageType::PointType ) ;
+itkGetMacro( OutputSpacing , typename OutputImageType::SpacingType ) ;
+itkGetMacro( OutputSize , typename OutputImageType::SizeType ) ;
+itkGetMacro( OutputDirection , typename OutputImageType::DirectionType ) ;
+
 
 protected :
 DiffusionTensor3DResample() ;
@@ -94,7 +101,7 @@ typename OutputImageType::PointType m_OutputOrigin ;
 typename OutputImageType::SpacingType m_OutputSpacing ;
 typename OutputImageType::SizeType m_OutputSize ;
 typename OutputImageType::DirectionType m_OutputDirection ;
-
+TensorRealType m_DefaultPixelValue ;
 };
 
 }//end namespace itk

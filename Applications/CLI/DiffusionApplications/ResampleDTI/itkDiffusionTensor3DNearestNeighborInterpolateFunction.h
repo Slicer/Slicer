@@ -16,6 +16,7 @@
 
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
+#include <itkMutexLock.h>
 
 namespace itk
 {
@@ -42,6 +43,13 @@ public:
   itkNewMacro( Self ) ;
   ///Evaluate the value of a tensor at a given position
   TensorDataType Evaluate( const PointType &point ) ;
+protected:
+  MutexLock::Pointer lock ;
+  DiffusionTensor3DNearestNeighborInterpolateFunction() ;
+  void PreComputeCorners() ;
+  PointType m_Origin ;
+  PointType m_End ;
+
 
 };
 

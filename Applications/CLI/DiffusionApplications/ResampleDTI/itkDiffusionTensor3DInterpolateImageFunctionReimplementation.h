@@ -16,11 +16,21 @@
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
 #include <itkOrientedImage.h>
-#include <itkImageRegionIterator.h>
+#include <itkImageRegionIteratorWithIndex.h>
 #include <itkInterpolateImageFunction.h>
+#include <itkMutexLock.h>
+#include <itkSemaphore.h>
 
 namespace itk
 {
+
+struct RegionType
+{
+  ImageRegion< 3 > itkRegion ;
+  bool Done ;
+  Index< 3 > PositionInImage ;
+  bool Stop ;
+};
 
 /**
  * \class DiffusionTensor3DInterpolateImageFunctionReimplementation
@@ -44,20 +54,36 @@ public :
   typedef typename Superclass::PointType PointType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-  typedef typename itk::ImageRegionIterator< DiffusionImageType > IteratorDiffusionImageType ;
-  typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
+  typedef ImageRegionIteratorWithIndex< DiffusionImageType > IteratorDiffusionImageType ;
+  typedef ImageRegionIteratorWithIndex< ImageType > IteratorImageType ;
   typedef InterpolateImageFunction< ImageType , double > InterpolateImageFunctionType ;
+  typedef typename DiffusionImageType::RegionType itkRegionType ;
+  typedef typename DiffusionImageType::SizeType SizeType ;
   /** Evaluate the interpolated tensor at a position
    */
   TensorDataType Evaluate( const PointType &point ) ;
-
+  virtual void SetInputImage( DiffusionImageTypePointer inputImage ) ;
 protected:
+  DiffusionTensor3DInterpolateImageFunctionReimplementation() ;
   virtual void AllocateInterpolator() = 0 ;
-  void PreCompute() ;  
- // DiffusionTensor3DInterpolateImageFunctionReimplementation();
-  typename InterpolateImageFunctionType::Pointer interpol[ 6 ] ;
+  void SeparateImages() ;
+  void AllocateImages() ;
+  bool DivideRegion( int currentThread ) ;
+  int RegionToDivide() ;
+  typename InterpolateImageFunctionType::Pointer m_Interpol[ 6 ] ;
   ImagePointer m_Image[ 6 ] ;
-
+  Semaphore::Pointer m_Threads ;
+  int m_SplitAxis ;
+  bool m_SeparationDone ;
+  bool m_CannotSplit ;
+  MutexLock::Pointer m_Lock ;
+  MutexLock::Pointer m_LockNewThreadDetected ;
+  std::vector< RegionType > m_ListRegions ;
+  int m_NbThread ;
+  MutexLock::Pointer m_CheckRegionsDone ;
+  bool m_ExceptionThrown ;
+  SizeType m_Size ;
+  bool m_AllocateInterpolatorsDone ;
 };
 
 }//end namespace itk
