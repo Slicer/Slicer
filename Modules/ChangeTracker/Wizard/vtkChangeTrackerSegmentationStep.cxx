@@ -627,7 +627,7 @@ void vtkChangeTrackerSegmentationStep::ShowSegmentedVolume(vtkMRMLScalarVolumeNo
   // ------------------------------------
   // Show Segmentation through 3D Volume Rendering
   // ------------------------------------
-  float color[3] = { 0.8, 0.8, 0.0 };
+  //float color[3] = { 0.8, 0.8, 0.0 };
 
   this->CreateRender(segVol, 0);
   // assume the label value is between 1 and 255
