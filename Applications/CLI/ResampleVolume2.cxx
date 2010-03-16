@@ -290,121 +290,139 @@ void CheckDWMRI(itk::MetaDataDictionary &dico ,
                 Transform3DPointer &transform ,
                 parameters itkNotUsed(list) )
 {
-  typedef std::vector< std::vector< double > > DoubleVectorType ;
-  typedef itk::MetaDataObject< DoubleVectorType > MetaDataDoubleVectorType ;
-  typedef itk::MetaDataObject< std::string > MetaDataStringType ;
-  typedef itk::AffineTransform< double , 3 > AffineTransformType;
-  typedef itk::Rigid3DTransform< double > RotationType;
-  itk::Matrix< double , 3 , 3 > measurementFrame ;
-  bool dtmri = 0 ;
-  itk::MetaDataDictionary::ConstIterator itr = dico.Begin() ;
-  itk::MetaDataDictionary::ConstIterator end = dico.End() ;
-  while( itr != end )
-    {
-    itk::MetaDataObjectBase::Pointer entry = itr->second ;
-    MetaDataDoubleVectorType::Pointer entryvalue
-      = dynamic_cast< MetaDataDoubleVectorType* >( entry.GetPointer() ) ; 
-    if( entryvalue )
+   typedef std::vector< std::vector< double > > DoubleVectorType ;
+   typedef itk::MetaDataObject< DoubleVectorType > MetaDataDoubleVectorType ;
+   typedef itk::MetaDataObject< std::string > MetaDataStringType ;
+   typedef itk::AffineTransform< double , 3 > AffineTransformType;
+   typedef itk::Rigid3DTransform< double > RotationType;
+   //Inverse the transform if possible
+   bool noninvertible = false ;
+   itk::Transform< double , 3 , 3 >::Pointer inverseTransform ;
+   try
+   {
+      typename AffineTransformType::Pointer affine = dynamic_cast<AffineTransformType* > ( transform.GetPointer() ) ;
+      if(affine )//Rotation around a selected point
       {
-      int pos = itr->first.find( "NRRD_measurement frame" ) ;
-      if( pos != -1 )
-        {
-        DoubleVectorType tagvalue = entryvalue->GetMetaDataObjectValue() ;
-        for( int i = 0 ; i < 3 ; i++ )
-          {
-          for( int j = 0 ; j < 3 ; j++ )
+         typename AffineTransformType::Pointer affinetemp=AffineTransformType::New();
+         affine->GetInverse(affinetemp);
+         inverseTransform=affinetemp;
+      }
+      else
+      {
+         typename RotationType::Pointer rigid = dynamic_cast<RotationType* > ( transform.GetPointer() ) ;
+         if( rigid )
+         {
+            typename RotationType::Pointer rigidtemp = RotationType::New() ;
+            rigid->GetInverse( rigidtemp ) ;
+            inverseTransform = rigidtemp ;
+         }
+         else 
+         {
+            noninvertible = true ;
+         }
+      }
+   }
+   catch(...)
+   {
+      std::cout << "Exception Detected" << std::endl ;
+      noninvertible = true ;
+   }
+   //if the transform is not invertible, we continue to see if the image is a DWMRI
+   itk::Matrix< double , 3 , 3 > measurementFrame ;
+   itk::MetaDataDictionary::ConstIterator itr = dico.Begin() ;
+   itk::MetaDataDictionary::ConstIterator end = dico.End() ;
+   //We look for the measurement frame in the metadatadictionary
+   while( itr != end )
+   {
+      itk::MetaDataObjectBase::Pointer entry = itr->second ;
+      MetaDataDoubleVectorType::Pointer entryvalue
+        = dynamic_cast< MetaDataDoubleVectorType* >( entry.GetPointer() ) ; 
+      if( entryvalue )
+      {
+         int pos = itr->first.find( "NRRD_measurement frame" ) ;
+         if( pos != -1 )
+         {
+            DoubleVectorType tagvalue = entryvalue->GetMetaDataObjectValue() ;
+            for( int i = 0 ; i < 3 ; i++ )
             {
-            measurementFrame[ i ][ j ] = tagvalue.at( j ).at( i ) ;
-            tagvalue.at(j).at(i) = ( i == j ? 1 : 0 );
+               for( int j = 0 ; j < 3 ; j++ )
+               {
+               //we copy the measurement frame
+               measurementFrame[ i ][ j ] = tagvalue.at( j ).at( i ) ;
+               tagvalue.at(j).at(i) = ( i == j ? 1 : 0 ) ;
+               }
             }
-          }
-        entryvalue->SetMetaDataObjectValue(tagvalue);
-        } 
+            //if the transform is invertible, we set the measurement frame to the identity matrix
+            //because we are going to apply this measurement frame to the gradient vectors before transforming them
+            if( !noninvertible )
+            {
+            entryvalue->SetMetaDataObjectValue( tagvalue );
+            }
+         }
       }
-    ++itr ;
-    }
-  //transform gradient
-  bool noninvertible = 0 ;
-  itk::Transform< double , 3 , 3 >::Pointer inverseTransform ;
-  try
-    {
-    typename AffineTransformType::Pointer affine = dynamic_cast<AffineTransformType* > ( transform.GetPointer() ) ;
-    if(affine )//Rotation around a selected point
+      ++itr ;
+   }
+   //even if the transform is not invertible, we still go through the metadatadictionary to check if the image is a DWMRI
+   //if the image is not, everything is fine. If the image is, we print an error message. The gradient direction of the transform image is not going to be correct
+   itr = dico.Begin() ;
+   end = dico.End() ;
+   bool dtmri = 0 ;
+   while( itr != end )
+   {
+      itk::MetaDataObjectBase::Pointer entry = itr->second ;
+      MetaDataStringType::Pointer entryvalue
+         = dynamic_cast<MetaDataStringType* >( entry.GetPointer() ) ;
+      if( entryvalue )
       {
-      typename AffineTransformType::Pointer affinetemp=AffineTransformType::New();
-      affine->GetInverse(affinetemp);
-      inverseTransform=affinetemp;
+         //get the gradient directions
+         int pos = itr->first.find( "DWMRI_gradient" ) ;
+         if( pos != -1 )
+         {
+            dtmri = 1 ;
+            if( !noninvertible )
+            {
+               std::string tagvalue = entryvalue->GetMetaDataObjectValue() ;
+               itk::Vector< double , 3 > vec ;
+               itk::Vector< double , 3 > transformedVector ;
+               std::istringstream iss( tagvalue ) ;
+               iss >> vec[ 0 ] >> vec[ 1 ] >> vec[ 2 ] ;//we copy the metavalue in an itk::vector
+               if( iss.fail() )
+               {
+                  iss.str( tagvalue ) ;
+                  iss.clear() ;
+                  std::string trash ;
+                  iss >> vec[ 0 ] >> trash >> vec[ 1 ] >> trash >> vec[ 2 ] ;//in case the separator between the values is something else than spaces
+                  if( iss.fail() )//problem reading the gradient values
+                  {
+                     std::cerr << "Error reading a DWMRI gradient value" << std::endl ;
+                  }
+               }
+               //We transform the gradient vector with the measurement frame and then apply the inverse transform
+               transformedVector = inverseTransform->TransformVector( measurementFrame * vec ) ;
+               if( transformedVector.GetNorm() > .00001 ) //gradient not null
+               {
+                  transformedVector.Normalize() ;
+               }
+               std::ostringstream oss ;
+               //write the new gradient values (after transformation) in the metadatadictionary
+               oss << transformedVector[ 0 ] << "  " <<
+                      transformedVector[ 1 ] << "  " <<
+                      transformedVector[ 2 ] << std::ends ;
+               entryvalue->SetMetaDataObjectValue( oss.str() ) ;
+            }
+            else//if the image is a DWMRI we exit the loop
+            {
+               break ;
+            }
+         }
       }
-    else
-      {
-      typename RotationType::Pointer rigid = dynamic_cast<RotationType* > ( transform.GetPointer() ) ;
-      if( rigid )
-        {
-        typename RotationType::Pointer rigidtemp = RotationType::New() ;
-        rigid->GetInverse( rigidtemp ) ;
-        inverseTransform = rigidtemp ;
-        }
-      else 
-        {
-        noninvertible = 1 ;
-        }
-      }
-    }
-  catch(...)
-    {
-    std::cout << "Exception Detected" << std::endl ;
-    noninvertible = 1 ;
-    }
-  itr = dico.Begin() ;
-  end = dico.End() ;
-  while( itr != end )
-    {
-    itk::MetaDataObjectBase::Pointer entry = itr->second ;
-    MetaDataStringType::Pointer entryvalue
-      = dynamic_cast<MetaDataStringType* >( entry.GetPointer() ) ;  
-    if( entryvalue )
-      {
-      //get the gradient directions
-      int pos = itr->first.find( "DWMRI_gradient" ) ;
-      if( pos != -1 )
-        {
-        if( !noninvertible )
-          {
-          std::string tagvalue = entryvalue->GetMetaDataObjectValue() ;
-          itk::Vector< double , 3 > vec ;
-          itk::Vector< double , 3 > transformedVector ;
-          std::istringstream iss( tagvalue ) ;
-          iss >> vec[ 0 ] >> vec[ 1 ] >> vec[ 2 ] ;
-          if( iss.fail() )
-          {
-             iss.str( tagvalue ) ;
-             iss.clear() ;
-             std::string trash ;
-             iss >> vec[ 0 ] >> trash >> vec[ 1 ] >> trash >> vec[ 2 ] ;//in case the separator between the values is something else than spaces
-             if( iss.fail() )//problem reading the gradient values
-             {
-               std::cerr << "Error reading a DWMRI gradient value" << std::endl ;
-             }
-          }
-          transformedVector = inverseTransform->TransformVector( measurementFrame * vec ) ;
-          if( transformedVector.GetNorm() > .00001 ) //gradient not null
-            { transformedVector.Normalize() ; }
-          std::ostringstream oss ;
-          //write the new gradient values (after transformation) in the metadatadictionary
-          oss << transformedVector[ 0 ] << "  " <<
-                 transformedVector[ 1 ] << "  " <<
-                 transformedVector[ 2 ] << std::ends ;
-            entryvalue->SetMetaDataObjectValue( oss.str() ) ;
-          }
-        dtmri = 1 ;
-        }
-      }
-    ++itr ;
-    }
-  if( noninvertible && dtmri )
-    {
-    std::cerr << "The gradient transformation is not handle correctly with the current transformation"<< std::endl ;
-    }
+      ++itr ;
+   }
+   //print an error message if the transform is not invertible and if the image is a DWMRI 
+   if( noninvertible && dtmri )
+   {
+      std::cerr << "The gradient transformation is not handle correctly with the current transformation.\nThe gradient direction of the output image is probably wrong"<< std::endl ;
+   }
 }
 
 
