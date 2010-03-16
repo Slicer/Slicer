@@ -92,6 +92,7 @@ vtkPatientToImageRegistrationGUI::vtkPatientToImageRegistrationGUI ( )
   this->TranslationScale = NULL;
   this->TrackerSelector = NULL;
   this->PivotCalibrationErrorReport = NULL;
+  this->OffsetReport = NULL;
   this->PivotCalibrationLabel = NULL;
   this->StartPivotCalibrationPushButton = NULL;
   this->FinishPivotCalibrationPushButton = NULL;
@@ -193,6 +194,11 @@ vtkPatientToImageRegistrationGUI::~vtkPatientToImageRegistrationGUI ( )
     this->PivotCalibrationErrorReport->SetParent(NULL);
     this->PivotCalibrationErrorReport->Delete();
     }
+  if (this->OffsetReport)
+    {
+    this->OffsetReport->SetParent(NULL);
+    this->OffsetReport->Delete();
+    }
   if (this->PivotCalibrationLabel)
     {
     this->PivotCalibrationLabel->SetParent(NULL);
@@ -283,6 +289,10 @@ void vtkPatientToImageRegistrationGUI::RemoveGUIObservers ( )
     {
     this->FinishPivotCalibrationPushButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->PivotCalibrationCheckButton)
+    {
+    this->PivotCalibrationCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
  
   if (this->TrackerSelector)
     {
@@ -344,7 +354,7 @@ void vtkPatientToImageRegistrationGUI::AddGUIObservers ( )
   this->ResetPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StartPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FinishPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->PivotCalibrationCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -562,11 +572,23 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
       //std::cerr << "DEBUG: FinishPivotCalibrationPushButton is selected." << std::endl;
       this->DoPivot = false;
       this->GetLogic()->ComputePivotCalibration();
-      double error = this->GetLogic()->GetRMSE();
+      // report offset 
+      double trans[3];
+      this->GetLogic()->GetTranslation(trans);
       char str[10];
+      sprintf(str, "%4.2f", trans[2]);
+      this->OffsetReport->GetWidget()->SetValue(str);
+
+      // report error
+      double error = this->GetLogic()->GetRMSE();
       sprintf(str, "%4.2f", error);
       this->PivotCalibrationErrorReport->GetWidget()->SetValue(str);
 
+      }
+    else if (this->PivotCalibrationCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
+             && event == vtkKWCheckButton::SelectedStateChangedEvent)
+      {
+      this->GetLogic()->SetUsePivotCalibration(this->PivotCalibrationCheckButton->GetSelectedState());
       }
     else if (this->TrackerSelector ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
              && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
@@ -762,6 +784,23 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
                 this->StartPivotCalibrationPushButton->GetWidgetName(),
                 this->FinishPivotCalibrationPushButton->GetWidgetName());
 
+  // add the offset frame
+  vtkKWFrame *offsetFrame = vtkKWFrame::New();
+  offsetFrame->SetParent ( calibrationFrame->GetFrame() );
+  offsetFrame->Create ( );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                offsetFrame->GetWidgetName());
+
+  this->OffsetReport = vtkKWEntryWithLabel::New();
+  this->OffsetReport->SetParent(offsetFrame);
+  this->OffsetReport->Create();
+  this->OffsetReport->SetWidth(40);
+  this->OffsetReport->SetLabelWidth(20);
+  this->OffsetReport->SetLabelText("Offset from tip to sensor:");
+  this->OffsetReport->GetWidget()->SetValue ( "0.0" );
+  this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+               this->OffsetReport->GetWidgetName());
+
   // add the error frame
   vtkKWFrame *errorFrame = vtkKWFrame::New();
   errorFrame->SetParent ( calibrationFrame->GetFrame() );
@@ -800,7 +839,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForCalibrationFrame()
   processFrame->Delete();
   errorFrame->Delete();
   choiceFrame->Delete();
-
+  offsetFrame->Delete();
 }
 
 

@@ -110,6 +110,8 @@ public:
   void TransformChangedCallback(double);
   void TransformChangingCallback(double);
 
+
+
 protected:
   vtkPatientToImageRegistrationGUI ( );
   virtual ~vtkPatientToImageRegistrationGUI ( );
@@ -133,6 +135,7 @@ protected:
 
   vtkSlicerNodeSelectorWidget *TrackerSelector;
   vtkKWEntryWithLabel *PivotCalibrationErrorReport;
+  vtkKWEntryWithLabel *OffsetReport;
   vtkKWLabel *PivotCalibrationLabel;
   vtkKWPushButton *StartPivotCalibrationPushButton;
   vtkKWPushButton *FinishPivotCalibrationPushButton;

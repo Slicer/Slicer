@@ -115,6 +115,9 @@ public:
   vtkSetMacro (UseRegistration, bool);
   vtkGetMacro (UseRegistration, bool);
 
+  vtkSetMacro (UsePivotCalibration, bool);
+  vtkGetMacro (UsePivotCalibration, bool);
+
   vtkGetMacro(RMSE, double);
 
   void PrintSelf(ostream&, vtkIndent);
@@ -134,6 +137,8 @@ public:
   void CollectDataForPivotCalibration(int start);
   void ComputePivotCalibration();
   void ApplyPivotCalibration(int yes);
+  void GetTranslation(double trans[3]);
+
 
 protected:
 

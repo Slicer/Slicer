@@ -60,6 +60,7 @@ vtkPatientToImageRegistrationLogic::vtkPatientToImageRegistrationLogic()
   this->SliceNo3Last = 1;
   this->OriginalTrackerNode = NULL;
   this->UseRegistration = false;
+  this->UsePivotCalibration = false;
 
   this->Pat2ImgReg = vtkIGTPat2ImgRegistration::New();
   this->UpdatedTrackerNode = NULL;
@@ -202,10 +203,11 @@ void vtkPatientToImageRegistrationLogic::GetCurrentPosition(double *px, double *
 
   if (transform)
     {
+    double offset = (this->UsePivotCalibration ? this->Translation[2] : 0.0); 
     // set volume orientation
     *px = transform->GetElement(0, 3);
     *py = transform->GetElement(1, 3);
-    *pz = transform->GetElement(2, 3);
+    *pz = transform->GetElement(2, 3) + offset;
     }
 }
 
@@ -651,6 +653,14 @@ void vtkPatientToImageRegistrationLogic::ComputePivotCalibration()
     this->PVCalibration.GetTranslation(this->Translation);
     this->RMSE = this->PVCalibration.GetRMSE();
 
+}
+
+
+void vtkPatientToImageRegistrationLogic::GetTranslation(double trans[3])
+{
+    trans[0]=this->Translation[0];
+    trans[1]=this->Translation[1];
+    trans[2]=this->Translation[2];
 }
 
 

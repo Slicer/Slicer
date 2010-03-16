@@ -121,7 +121,6 @@ void PivotCalibration::ComputeCalibration()
   if( svdA.rank() < 4 )
     {
     this->ValidPivotCalibration = false;
-    std::cerr << "svdA.rank" << std::endl;
     }
   else
     {
@@ -151,92 +150,6 @@ void PivotCalibration::ComputeCalibration()
     }
 }
 
-
-/*
-void PivotCalibration::CalculateCalibration()
-{
-    unsigned int i;
-    unsigned int j;
-    unsigned int k;
-    unsigned int r;
-    unsigned int c;
-    unsigned int num;
-
-    num = this->GetNumberOfSamples();
-    if (num == 0)
-    {
-        return;
-    }
-
-
-    // Set the number of sample, row and column number of matrix
-    r = num * 3;
-    c = 6;
-
-    typedef vnl_matrix< double >            VnlMatrixType;
-
-    typedef vnl_vector< double >            VnlVectorType;
-
-    typedef vnl_svd< double >               VnlSVDType;
-
-
-    // Define the Vnl matrix and intermediate variables
-    VnlMatrixType matrix(r, c);
-    VnlVectorType x(c);
-    VnlVectorType b(r);
-    VnlVectorType br(r);  
-    itk::Versor<double> quat;
-    itk::Versor<double>::MatrixType rotMatrix;
-
-    // Fill the matrix of M
-    for (k = 0; k < num; k++)
-    {
-        quat = this->quaternionSampleCollection.at(k);
-        rotMatrix = quat.GetMatrix();
-
-        for (j = 0; j < 3; j++)
-        {
-            for (i = 0; i < 3; i++)
-            {
-                matrix[3 * k + j][i] = rotMatrix[j][2-i];
-            }
-            for (i = 0; i < 3; i++)
-            {
-                matrix[3 * k + j][i + 3] = 0.0;
-            }
-            matrix[3 * k + j][j + 3] = -1.0;
-        }
-
-        for (j = 0; j < 3; j++)
-        {
-            b[3 * k + j] = -this->translationSampleCollection.at(k)[j];
-        }
-    }
-
-    // Use SVD to solve M * x = b
-    VnlSVDType svd(matrix);
-    x = svd.solve(b);
-
-    // Extract the offset components
-    for (i = 0; i < 3; i++)
-    {
-        this->translation[2-i] = x[i];
-    }
-
-    // Extract the pivot position
-    for (i = 0; i < 3; i++)
-    {
-        this->pivotPosition[i] = x[i + 3];
-    }
-
-    // Calculate the root mean square error
-    br = matrix * x - b;  
-    this->RMSE = sqrt(br.squared_magnitude() / num );
-
-    // Set valid indicator
-    this->validPivotCalibration = true;
-}
-*/
 
 
 void PivotCalibration::GetPivotPosition(double pos[3])
