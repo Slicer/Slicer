@@ -113,6 +113,7 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerCloseIcon = vtkKWIcon::New();
   this->SlicerExtensionsIcon = vtkKWIcon::New();
   this->SlicerWWWIcon = vtkKWIcon::New();
+  this->SlicerRotateToPixelSpaceIcon = vtkKWIcon::New();
   
   this->AssignImageDataToIcons ( );
 }
@@ -638,6 +639,11 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     this->SlicerWWWIcon->Delete();
     this->SlicerWWWIcon = NULL;
     }
+  if (this->SlicerRotateToPixelSpaceIcon )
+    {
+    this->SlicerRotateToPixelSpaceIcon->Delete();
+    this->SlicerRotateToPixelSpaceIcon = NULL;    
+    }
 }
 
 
@@ -1161,6 +1167,11 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                  image_SlicerWWW_height,
                                  image_SlicerWWW_pixel_size,
                                  image_SlicerWWW_length, 0);
+  this->SlicerRotateToPixelSpaceIcon->SetImage (image_SlicerRotateToPixelSpace,
+                                            image_SlicerRotateToPixelSpace_width,
+                                            image_SlicerRotateToPixelSpace_height,
+                                            image_SlicerRotateToPixelSpace_pixel_size,
+                                            image_SlicerRotateToPixelSpace_length, 0);                                            
 }
 
 
@@ -1274,4 +1285,5 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerCloseIcon: " << this->GetSlicerCloseIcon() << "\n";
     os << indent << "SlicerExtensionsIcon: " << this->GetSlicerExtensionsIcon() << "\n";
     os << indent << "SlicerWWWIcon: " << this->GetSlicerWWWIcon() << "\n";
+    os << indent << "SlicerRotateToPixelSpaceIcon: " << this->GetSlicerRotateToPixelSpaceIcon() << "\n";
 }

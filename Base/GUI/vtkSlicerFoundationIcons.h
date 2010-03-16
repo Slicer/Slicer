@@ -117,6 +117,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerCloseIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerExtensionsIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerWWWIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerRotateToPixelSpaceIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -226,6 +227,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerCloseIcon;
     vtkKWIcon *SlicerExtensionsIcon;
     vtkKWIcon *SlicerWWWIcon;
+    vtkKWIcon *SlicerRotateToPixelSpaceIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); /// Not implemented

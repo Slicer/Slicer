@@ -845,10 +845,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   //---
   this->MoreMenuButton->GetMenu()->AddCommand ("Rotate to Volume Plane", this, "RotateSliceToBackground") ;
   index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Rotate to Volume Plane");
-  imageName = "FitImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetFitToWindowIcon ( ));
-  this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  if ( this->FoundationIcons != NULL )
+    {
+    imageName = "RotateToPixelSpaceImage";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->FoundationIcons->GetSlicerRotateToPixelSpaceIcon ( ));
+    this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+    }
   this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+
   
 
   //---     //--- 
