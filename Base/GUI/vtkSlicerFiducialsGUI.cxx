@@ -1519,7 +1519,11 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     
     vtkMRMLFiducialListNode *node = vtkMRMLFiducialListNode::SafeDownCast(caller);
     vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
-    
+
+    // don't need to do anything in particular if there's a node added event
+    // on the scene, until it's selected in the GUI we don't care about new
+    // fid lists
+    /*
     // check for a node added event
     if (//vtkMRMLScene::SafeDownCast(caller) != NULL &&
         //vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
@@ -1545,15 +1549,17 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           }
         }
       }
-
+    */
     if (node == activeFiducialListNode)
       {
-      if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
+      if (event == vtkCommand::ModifiedEvent ||
+          event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
         {
-        vtkDebugMacro("Modified or node added or removed event on the fiducial list node.\n");
+        vtkDebugMacro("Modified or node added or removed event on the fiducial list node.");
+        
         if (node == NULL)
           {
-          vtkDebugMacro("\tBUT: the node is null\n");
+          vtkDebugMacro("\tBUT: the node is null");
           // check to see if the id used to get the node is not null, if it's
           // a valid string, means that the node was deleted
           if (this->GetFiducialListNodeID() != NULL)
@@ -1562,9 +1568,21 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
             }
           return;
           }
-        vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
-        // update the table
-        SetGUIFromList(activeFiducialListNode);
+       
+        if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeRemovedEvent)
+          {
+          vtkDebugMacro("ProcessMRMLEvents: modified or node removed on the list. Updating the GUI");
+          // update the table
+          SetGUIFromList(activeFiducialListNode);
+          }
+        else if (event == vtkMRMLScene::NodeAddedEvent)
+          {
+          // just add the one fiducial to the end of the table
+          this->MultiColumnList->GetWidget()->AddRow();
+          int row = this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1;
+          vtkDebugMacro("ProcessMRMLEvents: Got node added on fid list, calling  update row " << row << " from " << row << "th fid");
+          this->UpdateRowFromNthFiducial(row, activeFiducialListNode, row, true, true);
+          }
         return;
         }
       else if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
@@ -1574,8 +1592,26 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           {
           return;
           }
-        vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve fid list node");
-        SetGUIFromList(activeFiducialListNode);
+        // check to see if have the id of the fid that was modified
+        vtkDebugMacro("ProcessMRMLEvents: got a fiducial modified event on the active fiducial list.");
+        // just one was modified, see if have the id
+        if (callData != NULL)
+          {
+          std::string *id =  reinterpret_cast<std::string *>(callData);
+          if (id)
+            {
+            int n = activeFiducialListNode->GetFiducialIndex(*id);
+            int row = this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1;
+            vtkDebugMacro("ProcessMRMLEvents: got modified point id " << *id << " and index " << n << ", updating row " << row);
+            this->UpdateRowFromNthFiducial(row, activeFiducialListNode, n, false, true);
+            }
+          }
+        else
+          {
+          // one of them changed, update the whole list
+          vtkDebugMacro("ProcessMRMLEvents: didn't get the id of the modified fid, calling SetGUIFromList");
+          SetGUIFromList(activeFiducialListNode);
+          }
         return;
         }
       else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
@@ -1593,7 +1629,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         // select it first off
         this->SetFiducialListNodeID(vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected())->GetID());
         }
-      vtkDebugMacro("Setting gui from list after display modified event");
+      vtkDebugMacro("ProcessMRMLEvents: Setting gui from list after modified event");
       SetGUIFromList(activeFiducialListNode);
       return;        
       }    
@@ -1719,10 +1755,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       }
 
     //--- configure fiducial list gui        
-    float *xyz;
-    float *wxyz;
-    int fidVisibility;
-    int listLock;
+    
     // a row in the individual fiducial gui for each point
     for (int row = 0; row < numPoints; row++)
       {
@@ -1732,107 +1765,11 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
         this->MultiColumnList->GetWidget()->AddRow();
         }
-      vtkDebugMacro("SetGUIFromList: getting " << row << "th fiducial xyz - total fids = " << numPoints);
       // now populate it
-      xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
-      if (xyz == NULL)
-        {
-        vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
-        }
-      vtkDebugMacro("Getting nth fiducial orientation");            
-      wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
-      
-      if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
-        {
-        if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
-          {
-          this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,activeFiducialListNode->GetNthFiducialLabelText(row));
-          }               
-        }
-      else
-        {
-        if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), "(none)") != 0)
-          {
-          this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,"(none)");
-          }
-        }
-      // selected
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
-        {
-        this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
-        this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
-        this->UpdateMeasurementLabels();
-        this->MultiColumnList->GetWidget()->SetCellBackgroundColor ( row, this->SelectedColumn, 1.0, 1.0, 1.0 );
-        this->MultiColumnList->GetWidget()->SetCellSelectionBackgroundColor ( row, this->SelectedColumn, 1.0, 1.0, 1.0 );
-        }
-      // visibility
-      fidVisibility = activeFiducialListNode->GetNthFiducialVisibility(row);
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->VisibilityColumn) != ( fidVisibility ? 1 : 0))
-        {
-        if ( !fidVisibility)
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->VisibilityColumn, 0);
-          this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->VisibilityColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
-          }
-          else
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->VisibilityColumn, 1 );
-          this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->VisibilityColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon() );
-          }
-        }
-      // lock
-      listLock = activeFiducialListNode->GetLocked();
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->LockColumn) != (listLock ? 1 : 0))
-        {
-        if ( !listLock )
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->LockColumn, 0 );
-          this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->LockColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon() );
-          }
-        else
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->LockColumn, 1 );
-          this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->LockColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon() );
-          }
-        }
-      if (xyz != NULL)
-        {
-        // always set it if it's a new row added because all were
-        // deleted, because the numerical default is 0
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->XColumn) != xyz[0])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->XColumn,xyz[0]);
-          } 
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->YColumn) != xyz[1])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->YColumn,xyz[1]);
-          }
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->ZColumn) != xyz[2])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
-          }
-        this->UpdateMeasurementLabels();
-        }
-      if (wxyz != NULL)
-        {
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrWColumn) != wxyz[0])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrWColumn,wxyz[0]);
-          }
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrXColumn) != wxyz[1])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrXColumn,wxyz[1]);
-          }
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrYColumn) != wxyz[2])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrYColumn,wxyz[2]);
-          }
-        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrZColumn) != wxyz[3])
-          {
-          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrZColumn,wxyz[3]);
-          }
-        }
+      vtkDebugMacro("SetGUIFromList: calling update row " << row << " from " << row << "th fid");
+      this->UpdateRowFromNthFiducial(row, activeFiducialListNode, row, deleteFlag, false);
       }
+    
     this->UpdateMeasurementLabels();
 
     // update the numbering scheme
@@ -1849,6 +1786,137 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       return;
       }
     this->SetGUIDisplayFrameFromList(activeFiducialListNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::UpdateRowFromNthFiducial(int row, vtkMRMLFiducialListNode *fidList, int n, bool newRowFlag, bool updateMeasurementsFlag)
+{
+  if ((row < 0) ||
+      (row >= this->MultiColumnList->GetWidget()->GetNumberOfRows()))
+    {
+    vtkErrorMacro("UpdateRowFromNthFiducial: row " << row << " out of range 0-" <<  this->MultiColumnList->GetWidget()->GetNumberOfRows());
+    return;
+    }
+  if (fidList == NULL)
+    {
+    vtkErrorMacro("UpdateRowFromNthFiducial: null fiducial list for row " << row);
+    return;
+    }
+  if (n < 0 ||
+      n > fidList->GetNumberOfFiducials())
+    {
+    vtkErrorMacro("UpdateRowFromNthFiducial: n " << n << " is out of bounds from 0-" << fidList->GetNumberOfFiducials());
+    return;
+    }
+
+  vtkDebugMacro("UpdateRowFromNthFiducial: row = " << row << ", n = " << n << ", new row = " << newRowFlag << ", update measurements = " << updateMeasurementsFlag);
+  
+      
+  if (fidList->GetNthFiducialLabelText(n) != NULL)
+    {
+    if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), fidList->GetNthFiducialLabelText(n)) != 0)
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,fidList->GetNthFiducialLabelText(n));
+      }               
+    }
+  else
+    {
+    if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), "(none)") != 0)
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,"(none)");
+      }
+    }
+  // selected
+  if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn) != (fidList->GetNthFiducialSelected(n) ? 1 : 0))
+    {
+    this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(fidList->GetNthFiducialSelected(n) ? 1 : 0));
+    this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
+    this->MultiColumnList->GetWidget()->SetCellBackgroundColor ( row, this->SelectedColumn, 1.0, 1.0, 1.0 );
+    this->MultiColumnList->GetWidget()->SetCellSelectionBackgroundColor ( row, this->SelectedColumn, 1.0, 1.0, 1.0 );
+    }
+  // visibility
+  int fidVisibility = fidList->GetNthFiducialVisibility(n);
+  if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->VisibilityColumn) != ( fidVisibility ? 1 : 0))
+    {
+    if ( !fidVisibility)
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->VisibilityColumn, 0);
+      this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->VisibilityColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
+      }
+    else
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->VisibilityColumn, 1 );
+      this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->VisibilityColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon() );
+      }
+    }
+  // lock (not implemented on a per fid basis yet)
+  /*
+    int listLock = fidList->GetNthFiducialLocked(n);
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->LockColumn) != (listLock ? 1 : 0))
+    {
+    if ( !listLock )
+    {
+    this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->LockColumn, 0 );
+    this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->LockColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon() );
+    }
+    else
+    {
+    this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, this->LockColumn, 1 );
+    this->MultiColumnList->GetWidget()->SetCellImageToIcon (row, this->LockColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon() );
+    }
+    }
+  */
+  float *xyz = fidList->GetNthFiducialXYZ(n);
+  if (xyz == NULL)
+    {
+    vtkErrorMacro ("UpdateRowFromNthFiducial: ERROR: got null xyz for point " << row);
+    }
+  else
+    {
+    // always set it if it's a new row, because the numerical default is 0
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->XColumn) != xyz[0])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->XColumn,xyz[0]);
+      } 
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->YColumn) != xyz[1])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->YColumn,xyz[1]);
+      }
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->ZColumn) != xyz[2])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
+      }
+    }
+
+  float *wxyz = fidList->GetNthFiducialOrientation(n);
+  if (wxyz != NULL)
+    {
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrWColumn) != wxyz[0])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrWColumn,wxyz[0]);
+      }
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrXColumn) != wxyz[1])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrXColumn,wxyz[1]);
+      }
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrYColumn) != wxyz[2])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrYColumn,wxyz[2]);
+      }
+    if (newRowFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrZColumn) != wxyz[3])
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrZColumn,wxyz[3]);
+      }
+    }
+  else
+    {
+    vtkErrorMacro ("UpdateRowFromNthFiducial: ERROR: got null wxyz for point " << n);
+    }
+
+  if (updateMeasurementsFlag)
+    {
+    this->UpdateMeasurementLabels();
+    }
 }
 
 //---------------------------------------------------------------------------

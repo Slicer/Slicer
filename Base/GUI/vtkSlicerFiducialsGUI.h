@@ -141,6 +141,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     /// Once know that the GUI has to be cleared and updated to show elements
     /// from a new list, use this call. It calls SetGUIDisplayFrameFromList.
     virtual void SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode);
+    ///
+    /// Update a single row of the table, called when a new fid is added, and
+    /// in a loop from SetGUIFromList. If newRowFlag is true, just set it,
+    /// otherwise compare against the old value. Returns if row is out of
+    /// bounds or fidList is null, or n is out of bounds. Need to use the
+    /// fidList GetNthFiducialX calls rather than passing in a fid since
+    /// GetNthFiducial is protected on the fiducial list node. If
+    /// updateMeasurementsFlag is true, call UpdateMeasurements (should be
+    /// false when called in a loop). 
+    virtual void UpdateRowFromNthFiducial(int row, vtkMRMLFiducialListNode *fidList, int n, bool newRowFlag, bool updateMeasurementsFlag);
+    
     /// 
     /// If just the display frame elements need to be updated from the list
     /// (got a display modified event), call this method. The lock toggle is
