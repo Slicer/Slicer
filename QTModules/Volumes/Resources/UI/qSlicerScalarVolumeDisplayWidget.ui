@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>549</height>
+    <width>677</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
-     </item>
-     <item>
-      <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
-     </item>
-    </layout>
+    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+   </item>
+   <item>
+    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
    </item>
   </layout>
  </widget>

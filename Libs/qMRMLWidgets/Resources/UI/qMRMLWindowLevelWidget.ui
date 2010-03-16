@@ -13,46 +13,36 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>40</y>
-     <width>321</width>
-     <height>80</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QLabel" name="label">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Window/Level: </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="AutoManualComboBox">
+     <item>
       <property name="text">
-       <string>Window/Level: </string>
+       <string>Manual</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="AutoManualComboBox">
-      <item>
-       <property name="text">
-        <string>Manual</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Auto</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item>
-     <widget class="qCTKRangeSlider" name="WindowLevelRangeSlider">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+     </item>
+     <item>
+      <property name="text">
+       <string>Auto</string>
       </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="qCTKRangeSlider" name="WindowLevelRangeSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

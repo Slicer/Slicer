@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerScalarVolumeDisplayWidget</class>
+ <class>qSlicerVolumeDisplayWidget</class>
  <widget class="qSlicerWidget" name="qSlicerVolumeDisplayWidget">
   <property name="geometry">
    <rect>
@@ -13,9 +13,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-  </layout>
+  <layout class="QVBoxLayout" name="verticalLayout"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

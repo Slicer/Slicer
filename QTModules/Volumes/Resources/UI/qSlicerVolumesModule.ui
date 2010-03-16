@@ -42,21 +42,15 @@
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>651</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="qSlicerVolumeDisplayWidget" name="VolumeDisplayWidget"/>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="qSlicerVolumeDisplayWidget" name="VolumeDisplayWidget" native="true"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -74,15 +68,15 @@
    <header>qMRMLNodeSelector.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLWindowLevelWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWindowLevelWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerVolumeDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerVolumeDisplayWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

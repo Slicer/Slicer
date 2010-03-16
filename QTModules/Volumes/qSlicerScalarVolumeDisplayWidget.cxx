@@ -38,7 +38,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
   if (volumeNode) 
   {
     d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
-
+    d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
     this->setEnabled(true);
   }
 }
