@@ -12,7 +12,7 @@
 
 ==========================================================================*/
 #include <iostream>
-
+#include <sstream>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkImageIOBase.h>
@@ -364,6 +364,7 @@ void CheckDWMRI(itk::MetaDataDictionary &dico ,
       = dynamic_cast<MetaDataStringType* >( entry.GetPointer() ) ;  
     if( entryvalue )
       {
+      //get the gradient directions
       int pos = itr->first.find( "DWMRI_gradient" ) ;
       if( pos != -1 )
         {
@@ -372,13 +373,28 @@ void CheckDWMRI(itk::MetaDataDictionary &dico ,
           std::string tagvalue = entryvalue->GetMetaDataObjectValue() ;
           itk::Vector< double , 3 > vec ;
           itk::Vector< double , 3 > transformedVector ;
-          std::sscanf( tagvalue.c_str() , "%lf %lf %lf\n" , &vec[0], &vec[1], &vec[2] ) ;
+          std::istringstream iss( tagvalue ) ;
+          iss >> vec[ 0 ] >> vec[ 1 ] >> vec[ 2 ] ;
+          if( iss.fail() )
+          {
+             iss.str( tagvalue ) ;
+             iss.clear() ;
+             std::string trash ;
+             iss >> vec[ 0 ] >> trash >> vec[ 1 ] >> trash >> vec[ 2 ] ;//in case the separator between the values is something else than spaces
+             if( iss.fail() )//problem reading the gradient values
+             {
+               std::cerr << "Error reading a DWMRI gradient value" << std::endl ;
+             }
+          }
           transformedVector = inverseTransform->TransformVector( measurementFrame * vec ) ;
           if( transformedVector.GetNorm() > .00001 ) //gradient not null
             { transformedVector.Normalize() ; }
-          char buffer[ 150 ] ;
-          std::sprintf( buffer , "%lf %lf %lf" , transformedVector[ 0 ] , transformedVector[ 1 ] , transformedVector[ 2 ] ) ;
-          entryvalue->SetMetaDataObjectValue( buffer ) ;
+          std::ostringstream oss ;
+          //write the new gradient values (after transformation) in the metadatadictionary
+          oss << transformedVector[ 0 ] << "  " <<
+                 transformedVector[ 1 ] << "  " <<
+                 transformedVector[ 2 ] << std::ends ;
+            entryvalue->SetMetaDataObjectValue( oss.str() ) ;
           }
         dtmri = 1 ;
         }
@@ -723,10 +739,11 @@ template< class PixelType > int Rotate( parameters list )
 
     if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
       { RASLPS<PixelType>( outputImage); }
+    outputImage->SetMetaDataDictionary( dico ) ;
     typedef itk::ImageFileWriter< typename itk::VectorImage< PixelType, 3 > > WriterType ;
     typename WriterType::Pointer writer = WriterType::New() ;
-    writer->UseInputMetaDataDictionaryOff() ;
-    writer->SetMetaDataDictionary( dico ) ;
+    //writer->UseInputMetaDataDictionaryOff() ;
+    //writer->SetMetaDataDictionary( dico ) ;
     writer->SetInput( outputImage ) ;
 //writer->SetImageIO( io ) ;
     writer->SetFileName( list.outputVolume.c_str() ) ;
