@@ -62,7 +62,10 @@ int vtkMimxApplyImageBasedMaterialProperties::RequestData(
 {
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+std::cerr << "Got Input vtkInformation" << std::endl;
+
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
+std::cerr << "Got Output vtkInformation" << std::endl;
 
   vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -125,6 +128,7 @@ int vtkMimxApplyImageBasedMaterialProperties::RequestData(
                         input->GetCellBounds(i, bounds);
                         p0[0] = bounds[0];      p0[1] = bounds[2];      p0[2] = bounds[4];
                         p1[0] = bounds[1];      p1[1] = bounds[3];      p1[2] = bounds[5];
+std::cerr << "ITK Image " << this->ITKImage << std::endl;
                         if ( this->ITKImage )
                         {
                         this->ITKImage->TransformPhysicalPointToIndex(p0, StartIndex);
@@ -135,6 +139,11 @@ int vtkMimxApplyImageBasedMaterialProperties::RequestData(
                         this->ITKOrientImage->TransformPhysicalPointToIndex(p0, StartIndex);
                         this->ITKOrientImage->TransformPhysicalPointToIndex(p1, EndIndex);
                         }
+std::cerr << "Point 0 " << p0 << std::endl;
+std::cerr << "Point 1 " << p1 << std::endl;
+std::cerr << "Start Index " << StartIndex << std::endl;
+std::cerr << "End Index " << EndIndex << std::endl;
+
                         for (int j=0;j<3;j++)
                         {
                         if (StartIndex[j] > EndIndex[j])

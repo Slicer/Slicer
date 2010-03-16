@@ -268,9 +268,9 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage,TMaskImage>
      }
 
    InputIndexType imageIndex = it.GetIndex( );
-   if ( ( imageIndex[0] % m_MeshResampleSize == offset ) &&
-        ( imageIndex[1] % m_MeshResampleSize == offset ) &&
-        ( imageIndex[2] % m_MeshResampleSize == offset ) &&
+   if ( ( static_cast<unsigned long>(imageIndex[0]) % m_MeshResampleSize == offset ) &&
+        ( static_cast<unsigned long>(imageIndex[1]) % m_MeshResampleSize == offset ) &&
+        ( static_cast<unsigned long>(imageIndex[2]) % m_MeshResampleSize == offset ) &&
         ( imageIndex[0] < imageSize[0] - offset ) &&
         ( imageIndex[1] < imageSize[1] - offset ) &&
         ( imageIndex[2] < imageSize[2] - offset ))

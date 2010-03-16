@@ -79,17 +79,17 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainSplitUnstructuredHexahedronGridCellTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
-
-  add_executable(MainApplyImageBasedMaterialPropertiesTest MainApplyImageBasedMaterialPropertiesTest.cxx vtkMimxTestErrorCallback.cxx)
-  target_link_libraries(MainApplyImageBasedMaterialPropertiesTest mimxFilter mimxCommon 
-                      vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
-  add_test(
-    MimxApplyImageBasedMaterialPropertiesTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainApplyImageBasedMaterialPropertiesTest
-    ${MimxTesting_SOURCE_DIR}/Data/CA05042124RFinal.hdr 
-    ${MimxTesting_SOURCE_DIR}/Data/CAfemesh.vtk
-    )
-
+############## Re-Enable when Meshing Integratation is completed
+#  add_executable(MainApplyImageBasedMaterialPropertiesTest MainApplyImageBasedMaterialPropertiesTest.cxx vtkMimxTestErrorCallback.cxx)
+#  target_link_libraries(MainApplyImageBasedMaterialPropertiesTest mimxFilter mimxCommon 
+#                      vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
+#  add_test(
+#    MimxApplyImageBasedMaterialPropertiesTest
+#    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainApplyImageBasedMaterialPropertiesTest
+#    ${MimxTesting_SOURCE_DIR}/Data/CA05042124RFinal.hdr 
+#    ${MimxTesting_SOURCE_DIR}/Data/CAfemesh.vtk
+#    )
+##############
 
   add_executable(MainBoundingBoxFromUnstructuredGridTest MainBoundingBoxFromUnstructuredGridTest.cxx vtkMimxTestErrorCallback.cxx)
   target_link_libraries(MainBoundingBoxFromUnstructuredGridTest mimxFilter mimxCommon 
