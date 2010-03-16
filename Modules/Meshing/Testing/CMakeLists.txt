@@ -80,7 +80,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 ############## Re-Enable when Meshing Integratation is completed
-#  add_executable(MainApplyImageBasedMaterialPropertiesTest MainApplyImageBasedMaterialPropertiesTest.cxx vtkMimxTestErrorCallback.cxx)
+#  add_executable(MainApplyImageBasedMaterialPropertiesTest MainApplyImageBasedMaterialPropertiesTest.cxx )
 #  target_link_libraries(MainApplyImageBasedMaterialPropertiesTest mimxFilter mimxCommon 
 #                      vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
 #  add_test(
@@ -91,7 +91,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
 #    )
 ##############
 
-  add_executable(MainBoundingBoxFromUnstructuredGridTest MainBoundingBoxFromUnstructuredGridTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainBoundingBoxFromUnstructuredGridTest MainBoundingBoxFromUnstructuredGridTest.cxx )
   target_link_libraries(MainBoundingBoxFromUnstructuredGridTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -102,7 +102,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     )
 
 
-  add_executable(MainEquivalancePointsTest MainEquivalancePointsTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainEquivalancePointsTest MainEquivalancePointsTest.cxx )
   target_link_libraries(MainEquivalancePointsTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -112,7 +112,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     )
 
 
-  add_executable(MainExtractSurfaceTest MainExtractSurfaceTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainExtractSurfaceTest MainExtractSurfaceTest.cxx )
   target_link_libraries(MainExtractSurfaceTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -121,7 +121,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 
-  add_executable(MainBoundingBoxFromBoundsTest MainBoundingBoxFromBoundsTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainBoundingBoxFromBoundsTest MainBoundingBoxFromBoundsTest.cxx )
   target_link_libraries(MainBoundingBoxFromBoundsTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -131,7 +131,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     )
 
 
-  add_executable(MainExtractStructuredGridEdgeTest MainExtractStructuredGridEdgeTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainExtractStructuredGridEdgeTest MainExtractStructuredGridEdgeTest.cxx )
   target_link_libraries(MainExtractStructuredGridEdgeTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -140,7 +140,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/sgrid.vtk
     )
 
-  add_executable(MainExtractStructuredGridFaceTest MainExtractStructuredGridFaceTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainExtractStructuredGridFaceTest MainExtractStructuredGridFaceTest.cxx )
   target_link_libraries(MainExtractStructuredGridFaceTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -150,7 +150,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     )
 
 
-  add_executable(MainGeometryFilterTest MainGeometryFilterTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainGeometryFilterTest MainGeometryFilterTest.cxx )
   target_link_libraries(MainGeometryFilterTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -159,7 +159,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/Vert_Bod.vtk
     )
 
-  add_executable(MainBoundingBoxToStructuredGridsTest MainBoundingBoxToStructuredGridsTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainBoundingBoxToStructuredGridsTest MainBoundingBoxToStructuredGridsTest.cxx )
   target_link_libraries(MainBoundingBoxToStructuredGridsTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -168,7 +168,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
     )
 
-  add_executable(MainMorphStructuredGridTest MainMorphStructuredGridTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainMorphStructuredGridTest MainMorphStructuredGridTest.cxx )
   target_link_libraries(MainMorphStructuredGridTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -178,7 +178,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/lumbar_smoothed_04075.stl
     )
 
-  add_executable(MainUnstructuredToStructuredGridTest MainUnstructuredToStructuredGridTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainUnstructuredToStructuredGridTest MainUnstructuredToStructuredGridTest.cxx )
   target_link_libraries(MainUnstructuredToStructuredGridTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -188,7 +188,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
     )
 
-  add_executable(MainMergePointsTest MainMergePointsTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainMergePointsTest MainMergePointsTest.cxx )
   target_link_libraries(MainMergePointsTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
@@ -197,7 +197,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     ${MimxTesting_SOURCE_DIR}/Data/BBoxMerge.vtk
     )
 
-  add_executable(MainRecalculateInteriorNodesTest MainRecalculateInteriorNodesTest.cxx vtkMimxTestErrorCallback.cxx)
+  add_executable(MainRecalculateInteriorNodesTest MainRecalculateInteriorNodesTest.cxx )
   target_link_libraries(MainRecalculateInteriorNodesTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(

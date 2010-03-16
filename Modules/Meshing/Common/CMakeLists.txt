@@ -88,6 +88,7 @@ SET ( LIB_SRCS
     vtkMimxColorCodeMeshSeedActor.cxx
     #
     vtkMimxBoundaryConditionActor.cxx
+    vtkMimxTestErrorCallback.cxx
 )
  
 SET_SOURCE_FILES_PROPERTIES(
@@ -116,6 +117,7 @@ SET_SOURCE_FILES_PROPERTIES(
   vtkMimxUnstructuredGridActor.cxx
   vtkMimxCurve.cxx
   vtkMimxBoundaryConditionActor.cxx
+  vtkMimxTestErrorCallback.cxx
   WRAP_EXCLUDE
   )
 
