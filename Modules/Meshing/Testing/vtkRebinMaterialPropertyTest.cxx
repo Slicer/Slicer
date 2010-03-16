@@ -56,8 +56,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkFlipImageFilter.h>
 #include <itksys/Directory.hxx>
 #include <vtkXMLUnstructuredGridWriter.h>
-//#include <vtkTable.h>
-//#include <vtkTableReader.h>
+#include <vtkTable.h>
+#include <vtkTableReader.h>
 #include <vtkAbstractArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkUnsignedLongArray.h>
@@ -183,10 +183,10 @@ int main( int argc, char * argv[] )
   {
     histogramArray->InsertValue( i, static_cast<double>(i)*stepSize );
   }
-  //vtkTable *materialTable = vtkTable::New();
-  //materialTable->AddColumn( histogramArray );
-  vtkFieldData *materialTable = vtkFieldData::New();
-  materialTable->AddArray( histogramArray );
+  vtkTable *materialTable = vtkTable::New();
+  materialTable->AddColumn( histogramArray );
+  //vtkFieldData *materialTable = vtkFieldData::New();
+  //materialTable->AddArray( histogramArray );
 
   
   vtkMimxRebinMaterialProperty *rebinFilter = vtkMimxRebinMaterialProperty::New();
@@ -310,7 +310,7 @@ int main( int argc, char * argv[] )
   rebinFilter2->SetGeneratePropertyBins( true );
   rebinFilter2->Update();
       
-  vtkFieldData *materialTable2 = rebinFilter2->GetPropertyTable();
+  vtkTable *materialTable2 = rebinFilter2->GetPropertyTable();
   vtkDoubleArray *histogramArray2 = NULL;
   //histogramArray2 = vtkDoubleArray::SafeDownCast( materialTable2->GetColumnByName( "Histogram" ) );
   histogramArray2 = vtkDoubleArray::SafeDownCast( materialTable2->GetArray( "Histogram" ) );
