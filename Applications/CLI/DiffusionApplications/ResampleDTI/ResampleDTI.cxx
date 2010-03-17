@@ -791,7 +791,7 @@ int Do( parameters list )
        fieldPointer = readDeformationField( list.deffield , dftype ) ;
        nonRigidTransforms++ ;
     }
-    //If more than one transform or if hfield, add all transforms and compute the deformation field and its Jacobian
+    //If more than one transform or if hfield, add all transforms and compute the deformation field
     TransformTypePointer transform ;
     if( (list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 && nonRigidTransforms > 0) || list.deffield.compare( "" ) )
     {
