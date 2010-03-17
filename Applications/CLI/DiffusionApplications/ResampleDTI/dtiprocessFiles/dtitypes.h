@@ -66,16 +66,16 @@ typedef itk::AffineTransform<TransformRealType,3> AffineTransformType;
 typedef vnl_vector_fixed<double, 3> GradientType;
 typedef itk::VectorContainer<unsigned int, GradientType> GradientListType;
 
-enum InterpolationType {NearestNeighbor, Linear, Cubic};
-enum TensorReorientationType {FiniteStrain, PreservationPrincipalDirection};
+//enum InterpolationType {NearestNeighbor, Linear, Cubic};
+//enum TensorReorientationType {FiniteStrain, PreservationPrincipalDirection};
 
-enum EigenValueIndex {Lambda1 = 0, Lambda2, Lambda3};
+//enum EigenValueIndex {Lambda1 = 0, Lambda2, Lambda3};
 
-typedef itk::DTITubeSpatialObject<3> DTITubeType;
-typedef DTITubeType::TubePointType DTIPointType;
-typedef DTITubeType::PointListType DTIPointListType;
+//typedef itk::DTITubeSpatialObject<3> DTITubeType;
+//typedef DTITubeType::TubePointType DTIPointType;
+//typedef DTITubeType::PointListType DTIPointListType;
 
-typedef itk::GroupSpatialObject<3> GroupType;
-typedef GroupType::ChildrenListType ChildrenListType;
+//typedef itk::GroupSpatialObject<3> GroupType;
+//typedef GroupType::ChildrenListType ChildrenListType;
 
 #endif

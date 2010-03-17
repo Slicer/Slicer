@@ -107,7 +107,7 @@ void GetImageType( std::string fileName ,
 template< class PixelType >
 typename itk::DiffusionTensor3DInterpolateImageFunction< PixelType >
 ::Pointer
-InterpolationType( std::string interpolationType ,
+InterpolationTypeFct( std::string interpolationType ,
                    std::string windowFunction ,
                    unsigned int splineOrder )
 {
@@ -746,7 +746,7 @@ int Do( parameters list )
     typedef typename InterpolatorType::Pointer InterpolatorTypePointer ;
     InterpolatorTypePointer interpol ;
     //Select interpolation type
-    interpol = InterpolationType< PixelType > ( list.interpolationType ,
+    interpol = InterpolationTypeFct< PixelType > ( list.interpolationType ,
                                                 list.windowFunction ,
                                                 list.splineOrder
                                               ) ;
