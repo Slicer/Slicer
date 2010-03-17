@@ -48,6 +48,27 @@
   </parameters>
 
   <parameters advanced="true">
+     <label>Deformation Field (last transform applied)</label>
+     <string-enumeration>
+        <name>typeOfField</name>
+        <longflag>--hfieldtype</longflag>
+        <description>Set if the deformation field is an h-Field</description>
+        <label>Displacement or H-Field</label>
+        <element>displacement</element>
+        <element>h-Field</element>
+        <default>h-Field</default>
+     </string-enumeration>
+     <image type="scalar">
+        <name>deffield</name>
+        <label>Deformation Field Volume</label>
+        <flag>-H</flag>
+        <longflag>--defField</longflag>
+        <description>File containing the deformation field (the deformation field is the last transform)</description>
+        <default></default>
+     </image>
+  </parameters>
+
+  <parameters advanced="true">
     <label>Resampling Parameters</label>
     <description>Parameters used for resampling</description>
   <integer>

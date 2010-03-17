@@ -609,7 +609,19 @@ target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 #####################
 set (CLP ResampleVolume2)
 
-set ( ${CLP}_SOURCE ${CLP}.cxx)
+set( TRANSFORM_SOURCE 
+DiffusionApplications/ResampleDTI/itkWarpTransform3D.h
+DiffusionApplications/ResampleDTI/itkWarpTransform3D.txx
+DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.h
+DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.txx
+DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.h
+DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.cxx
+DiffusionApplications/ResampleDTI/dtiprocessFiles/dtitypes.h
+DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
+DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+)
+
+set ( ${CLP}_SOURCE ${CLP}.cxx ${TRANSFORM_SOURCE} )
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
