@@ -351,7 +351,7 @@ void vtkPatientToImageRegistrationGUI::AddGUIObservers ( )
   this->DeletePointPairPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllPointPairPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RegisterPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ResetPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //this->ResetPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StartPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FinishPivotCalibrationPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->PivotCalibrationCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1025,14 +1025,15 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                 actionFrame->GetWidgetName());
 
-  // add a register button 
+  // add a compute button 
   this->RegisterPushButton = vtkKWPushButton::New ( );
   this->RegisterPushButton->SetParent ( actionFrame );
   this->RegisterPushButton->Create ( );
-  this->RegisterPushButton->SetText ("Register");
+  this->RegisterPushButton->SetText ("Compute");
   this->RegisterPushButton->SetWidth (12);
-  this->RegisterPushButton->SetBalloonHelpString("Perform patient to image registration.");
+  this->RegisterPushButton->SetBalloonHelpString("Perform landmark registration.");
 
+/*
   // add a reset button 
   this->ResetPushButton = vtkKWPushButton::New ( );
   this->ResetPushButton->SetParent ( actionFrame );
@@ -1041,10 +1042,15 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
   this->ResetPushButton->SetWidth (12);
   this->ResetPushButton->SetBalloonHelpString("Remove the current registration.");
 
-
   app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2", 
               this->RegisterPushButton->GetWidgetName(),
               this->ResetPushButton->GetWidgetName());
+
+  */
+
+
+  app->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+              this->RegisterPushButton->GetWidgetName());
 
 
   regFrame->Delete ();

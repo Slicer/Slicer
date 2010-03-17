@@ -94,97 +94,6 @@ void vtkPatientToImageRegistrationLogic::PrintSelf(ostream& os, vtkIndent indent
 }
 
 
-//---------------------------------------------------------------------------
-vtkMRMLModelNode* vtkPatientToImageRegistrationLogic::SetVisibilityOfLocatorModel(const char* nodeName, int v)
-{
-  vtkMRMLModelNode*   locatorModel;
-  vtkMRMLDisplayNode* locatorDisp;
-
-  // Check if any node with the specified name exists
-  vtkMRMLScene*  scene = this->GetApplicationLogic()->GetMRMLScene();
-  vtkCollection* collection = scene->GetNodesByName(nodeName);
-
-  if (collection != NULL && collection->GetNumberOfItems() == 0)
-    {
-    // if a node doesn't exist
-    locatorModel = AddLocatorModel(nodeName, 0.0, 1.0, 1.0);
-    }
-  else
-    {
-    locatorModel = vtkMRMLModelNode::SafeDownCast(collection->GetItemAsObject(0));
-    }
-
-  if (locatorModel)
-    {
-    locatorDisp = locatorModel->GetDisplayNode();
-    locatorDisp->SetVisibility(v);
-    locatorModel->Modified();
-    this->GetApplicationLogic()->GetMRMLScene()->Modified();
-    }
-
-  return locatorModel;
-}
-
-
-//---------------------------------------------------------------------------
-vtkMRMLModelNode* vtkPatientToImageRegistrationLogic::AddLocatorModel(const char* nodeName, double r, double g, double b)
-{
-
-  vtkMRMLModelNode           *locatorModel;
-  vtkMRMLModelDisplayNode    *locatorDisp;
-
-  locatorModel = vtkMRMLModelNode::New();
-  locatorDisp = vtkMRMLModelDisplayNode::New();
-
-  GetMRMLScene()->SaveStateForUndo();
-  GetMRMLScene()->AddNode(locatorDisp);
-  GetMRMLScene()->AddNode(locatorModel);  
-
-  locatorDisp->SetScene(this->GetMRMLScene());
-
-  locatorModel->SetName(nodeName);
-  locatorModel->SetScene(this->GetMRMLScene());
-  locatorModel->SetAndObserveDisplayNodeID(locatorDisp->GetID());
-  locatorModel->SetHideFromEditors(0);
-
-  // Cylinder represents the locator stick
-  vtkCylinderSource *cylinder = vtkCylinderSource::New();
-  cylinder->SetRadius(1.5);
-  cylinder->SetHeight(100);
-  cylinder->SetCenter(0, 50, 0);
-  cylinder->Update();
-
-  // Sphere represents the locator tip 
-  vtkSphereSource *sphere = vtkSphereSource::New();
-  sphere->SetRadius(3.0);
-  sphere->SetCenter(0, 0, 0);
-  sphere->Update();
-
-  vtkAppendPolyData *apd = vtkAppendPolyData::New();
-  apd->AddInput(sphere->GetOutput());
-  apd->AddInput(cylinder->GetOutput());
-  apd->Update();
-
-  locatorModel->SetAndObservePolyData(apd->GetOutput());
-
-  double color[3];
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  locatorDisp->SetPolyData(locatorModel->GetPolyData());
-  locatorDisp->SetColor(color);
-
-  cylinder->Delete();
-  sphere->Delete();
-  apd->Delete();
-
-  //locatorModel->Delete();
-  locatorDisp->Delete();
-
-  return locatorModel;
-}
-
-
 
 void vtkPatientToImageRegistrationLogic::GetCurrentPosition(double *px, double *py, double *pz)
 {
@@ -607,14 +516,33 @@ void vtkPatientToImageRegistrationLogic::UpdateLocatorTransform()
 int vtkPatientToImageRegistrationLogic::PerformPatientToImageRegistration()
 {
   int error = this->GetPat2ImgReg()->DoRegistration();
-  if (error)
+  if (! error)
     {
-    this->SetUseRegistration(0);
-    return error;
-    }
+    char *name = this->OriginalTrackerNode->GetName();
+    char name2[100];
+    sprintf(name2, "%s_pr", name);
 
-  this->SetUseRegistration(1);
-  return 0;
+    vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
+    vtkCollection* collection = scene->GetNodesByName(name2);
+
+    vtkMRMLLinearTransformNode *transform = NULL;
+    if (collection == NULL || (collection != NULL && collection->GetNumberOfItems() == 0))
+      {
+      transform = vtkMRMLLinearTransformNode::New();
+      transform->SetName(name2);
+      transform->SetDescription("Tracker after patient to image registration.");
+      GetMRMLScene()->AddNode(transform);
+      }
+    else
+      {
+      transform = vtkMRMLLinearTransformNode::SafeDownCast(collection->GetItemAsObject(0));
+      }
+
+    vtkMatrix4x4 *matrix = transform->GetMatrixTransformToParent();
+    matrix->DeepCopy(this->GetPat2ImgReg()->GetLandmarkTransformMatrix());
+ 
+    }
+  return error;
 }
 
 

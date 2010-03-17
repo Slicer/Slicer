@@ -123,10 +123,6 @@ public:
   void PrintSelf(ostream&, vtkIndent);
   //void AddRealtimeVolumeNode(const char* name);
 
-
-  vtkMRMLModelNode* SetVisibilityOfLocatorModel(const char* nodeName, int v);
-  vtkMRMLModelNode* AddLocatorModel(const char* nodeName, double r, double g, double b);
-
   void UpdateDisplay(int sliceNo1, int sliceNo2, int sliceNo3);
   void GetCurrentPosition(double *px, double *py, double *pz);
   void UpdateTransformNodeByName(const char *name);
