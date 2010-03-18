@@ -1601,9 +1601,8 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           if (id)
             {
             int n = activeFiducialListNode->GetFiducialIndex(*id);
-            int row = this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1;
-            vtkDebugMacro("ProcessMRMLEvents: got modified point id " << *id << " and index " << n << ", updating row " << row);
-            this->UpdateRowFromNthFiducial(row, activeFiducialListNode, n, false, true);
+            vtkDebugMacro("ProcessMRMLEvents: got modified point id " << *id << " and index " << n << ", updating row " << n);
+            this->UpdateRowFromNthFiducial(n, activeFiducialListNode, n, false, true);
             }
           }
         else
