@@ -38,7 +38,8 @@ endif (WIN32)
 
 set (${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.cxx)
 
-generateclp (${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.xml)
+generateclp (${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.xml
+  ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 
 #-----------------------------------------------------------------------------
