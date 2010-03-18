@@ -81,20 +81,22 @@ struct parameters
   double defaultPixelValue;
 } ;
 
-
-void GetImageType (std::string fileName,
-                   itk::ImageIOBase::IOPixelType &pixelType,
-                   itk::ImageIOBase::IOComponentType &componentType)
+//To check the image voxel type
+void GetImageType( std::string fileName ,
+                   itk::ImageIOBase::IOPixelType &pixelType ,
+                   itk::ImageIOBase::IOComponentType &componentType
+                 )
 {
-  typedef itk::Image< unsigned char , 3 > ImageType ;
-  itk::ImageFileReader< ImageType >::Pointer imageReader ;
-  imageReader = itk::ImageFileReader< ImageType >::New() ;
-  imageReader->SetFileName( fileName.c_str() ) ;
-  imageReader->UpdateOutputInformation() ;
-  pixelType = imageReader->GetImageIO()->GetPixelType() ;
-  componentType = imageReader->GetImageIO()->GetComponentType() ;
+   typedef itk::Image< unsigned char , 3 > ImageType ;
+   itk::ImageFileReader< ImageType >::Pointer imageReader ;
+   imageReader = itk::ImageFileReader< ImageType >::New() ;
+   imageReader->SetFileName( fileName.c_str() ) ;
+   imageReader->UpdateOutputInformation() ;
+   pixelType = imageReader->GetImageIO()->GetPixelType() ;
+   componentType = imageReader->GetImageIO()->GetComponentType() ;
 }
 
+//Center or/and invert the affine/rigid transform if this option was selected
 template< class ImageType >
 typename itk::Transform< double , 3 , 3 >::Pointer
 SetUpTransform( parameters list ,
@@ -119,24 +121,32 @@ SetUpTransform( parameters list ,
          itk::Point< double , 3 > pointOpposite ;
          itk::Index< 3 > index ;
          for( int i = 0 ; i < 3 ; i++ )
-         { index[ i ] = 0 ; }
+         { 
+            index[ i ] = 0 ;
+         }
          image->TransformIndexToPhysicalPoint( index , point ) ;
          for( int i = 0 ; i < 3 ; i++ )
-         { index[ i ] = sizeim[ i ] - 1 ; }
+         {
+            index[ i ] = sizeim[ i ] - 1 ;
+         }
          image->TransformIndexToPhysicalPoint( index , pointOpposite ) ;
          for( int i = 0 ; i < 3 ; i++ )
-         { center[ i ] = ( point[ i ] + pointOpposite[ i ] ) / 2 ; }
+         {
+            center[ i ] = ( point[ i ] + pointOpposite[ i ] ) / 2 ;
+         }
       }
       else
       {
          for( int i = 0 ; i < 3 ; i++ )
-         { center[ i ] = list.rotationPoint[ i ] ; }
+         {
+            center[ i ] = list.rotationPoint[ i ] ;
+         }
       }
       for( int i = 0 ; i < 3 ; i++ )
       {
          for( int j = 0 ; j < 3 ; j++ )
          {
-            transformMatrix4x4[ i ][ j ] = ( double )list.transformMatrix[ i*3 + j  ] ;    
+            transformMatrix4x4[ i ][ j ] = ( double )list.transformMatrix[ i*3 + j  ] ;
          }
          translation[ i ] = ( double )list.transformMatrix[ 9 + i ] ;
       }
@@ -178,13 +188,13 @@ SetUpTransform( parameters list ,
          rotation->SetTranslation( vec ) ;
          transform = rotation ;
       }
-      catch(itk::ExceptionObject exp)
+      catch( itk::ExceptionObject exp )
       {
-         std::string exception = exp.GetDescription();
-         if( exception.find("Attempting to set a non-orthogonal rotation matrix") != std::string::npos )
+         std::string exception = exp.GetDescription() ;
+         if( exception.find( "Attempting to set a non-orthogonal rotation matrix" ) != std::string::npos )
          {
             list.transformType = "a" ;
-            std::cerr<<"Non-orthogonal rotation matrix: uses affine transform"<<std::endl;
+            std::cerr << "Non-orthogonal rotation matrix: uses affine transform" << std::endl ;
          }
          else
          {
@@ -203,96 +213,116 @@ SetUpTransform( parameters list ,
 }
 
 
-
+//Copy rigid or affine transform to list.transformMatrix
+template< class PixelType >
+void
+SetListFromTransform( const typename itk::MatrixOffsetTransformBase< PixelType , 3 , 3 >::Pointer &transform ,
+                      parameters &list
+                    )
+{
+   for( int i = 0 ; i < 3 ; i++ )
+   {
+      for( int j = 0 ; j < 3 ; j++ )
+      {
+         list.transformMatrix.push_back( (double)transform->GetMatrix()[ i ][ j ] ) ;
+      }
+   }
+   for(int i = 0 ; i < 3 ; i++ )
+   {
+      list.transformMatrix.push_back( (double)transform->GetTranslation()[ i ] ) ;
+      list.rotationPoint.push_back( (double)transform->GetCenter()[ i ] ) ;
+   }
+}
 
 //Set the transformation
-template< class PixelType >
+template< class ImageType >
 typename itk::Transform< double , 3 , 3 >::Pointer
 SetTransform( parameters list ,
-              const typename itk::OrientedImage< PixelType , 3 >::Pointer &image ,
+              const typename ImageType::Pointer &image ,
               itk::TransformFileReader::Pointer &transformFile
             )
 {
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-   //typedef itk::TransformFileReader::Pointer TransformReaderPointer ;
    typedef itk::AffineTransform< double , 3 > AffineTransformType ;
    typedef itk::Rigid3DTransform< double > RotationType ;
    typedef itk::Transform< double , 3 , 3 > TransformType ;
-   //typename TransformType::Pointer nonRigidFile ;
-//   TransformReaderPointer transformFile ;
-//   itk::Transform< double , 3 , 3 >ReadTransform( list , transformFile ) ;
-
    typename TransformType::Pointer transform ;
 
-        //int size = list.transformMatrix.size() ;
    if( list.transformationFile.compare( "" ) )//Get transformation matrix from command line if no file given
    {
       list.transformMatrix.resize( 0 ) ;
       list.rotationPoint.resize( 0 ) ;
+      typename itk::MatrixOffsetTransformBase< double , 3 , 3 >
+         ::Pointer doubleMatrixOffsetTransform ;
+      typename itk::MatrixOffsetTransformBase< float , 3 , 3 >
+         ::Pointer floatMatrixOffsetTransform ;
           //size = transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
-      AffineTransformType::Pointer affinetransform
+      AffineTransformType::Pointer doubleAffineTransform
             = dynamic_cast< AffineTransformType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
-      if( affinetransform )
+      if( doubleAffineTransform )//affine transform in double
       {
          list.transformType.assign( "a" ) ;
-            //std::cout<<rigid3dtransform->GetMatrix()<<std::endl;
-         for( int i = 0 ; i < 3 ; i++ )
-         {
-            for( int j = 0 ; j < 3 ; j++)
-            {
-               list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
-            }
-         }
-         for(int i = 0 ; i < 3 ; i++)
-         {
-            list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
-            list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
-         }
+         doubleMatrixOffsetTransform = doubleAffineTransform ;
+         SetListFromTransform< double >( doubleMatrixOffsetTransform , list ) ;
       }
       else
       {
-         RotationType::Pointer rigid3dtransform
-               = dynamic_cast< RotationType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
-         if( rigid3dtransform )
+         itk::AffineTransform< float , 3 >::Pointer floatAffineTransform
+               = dynamic_cast< itk::AffineTransform< float , 3 >* >
+               ( transformFile->GetTransformList()->back().GetPointer() ) ;
+         if( floatAffineTransform )//if affine transform in float
          {
-            list.transformType.assign( "rt" ) ;
-            for( int i = 0 ; i < 3 ; i++ )
-            {
-               for( int j = 0 ; j < 3 ; j++)
-               {
-                  list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
-               }
-            }
-            for(int i = 0 ; i < 3 ; i++)
-            {
-               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
-               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
-            }
+            list.transformType.assign( "a" ) ;
+            floatMatrixOffsetTransform = floatAffineTransform ;
+            SetListFromTransform< float >( floatMatrixOffsetTransform , list ) ;
          }
-         else//if non-rigid
+         else
          {
-            transform = dynamic_cast< TransformType* >
+            RotationType::Pointer doubleRigid3DTransform
+                  = dynamic_cast< itk::Rigid3DTransform< double >* >
                   ( transformFile->GetTransformList()->back().GetPointer() ) ;
-            if( transform )//if non rigid Transform loaded
+            if( doubleRigid3DTransform )//if rigid3D transform in double
             {
-               list.transformType.assign( "nr" ) ;
-//               transform = nonRigidFile ;
+               list.transformType.assign( "rt" ) ;
+               doubleMatrixOffsetTransform = doubleRigid3DTransform ;
+               SetListFromTransform< double >( doubleMatrixOffsetTransform , list ) ;
             }
-            else//something else
+            else
             {
-               std::cerr<< "Transformation type not yet implemented"
-                     << std::endl ;
-               return NULL ;
+               itk::Rigid3DTransform< float >::Pointer floatRigid3DTransform
+                     = dynamic_cast< itk::Rigid3DTransform< float >* >
+                     ( transformFile->GetTransformList()->back().GetPointer() ) ;
+               if( floatRigid3DTransform )//if rigid3D transform in float
+               {
+                  list.transformType.assign( "rt" ) ;
+                  floatMatrixOffsetTransform = floatRigid3DTransform ;
+                  SetListFromTransform< float >( floatMatrixOffsetTransform , list ) ;
+               }
+               else//if non-rigid
+               {
+                  transform = dynamic_cast< TransformType* >
+                  ( transformFile->GetTransformList()->back().GetPointer() ) ;
+                  if( transform )//if non rigid Transform loaded
+                  {
+                     list.transformType.assign( "nr" ) ;
+      //             transform = nonRigidFile ;
+                  }
+                  else//something else
+                  {
+                     std::cerr << "Transformation type not yet implemented"
+                               << std::endl ;
+                     return NULL ;
+                  }
+               }
             }
          }
       }
       if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
       {
-            //if problem in the number of parameters
+         //if problem in the number of parameters
          if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
          {
-            std::cerr<< "Error in the file containing the matrix transformation"
-                  << std::endl ;
+            std::cerr << "Error in the file containing the matrix transformation"
+                      << std::endl ;
             return NULL ;
          }
       }
@@ -306,9 +336,9 @@ SetTransform( parameters list ,
 //Read the transform file and return the number of non-rigid transform.
 //If the transform file contain a transform that the program does not
 //handle, the function returns -1
-template< class PixelType >
+template< class ImageType >
 int ReadTransform( const parameters &list ,
-                   const typename itk::OrientedImage< PixelType , 3 >::Pointer &image ,
+                   const typename ImageType::Pointer &image ,
                    itk::TransformFileReader::Pointer &transformFile
                  )
 {
@@ -318,10 +348,10 @@ int ReadTransform( const parameters &list ,
       transformFile = itk::TransformFileReader::New() ;
       transformFile->SetFileName( list.transformationFile.c_str() ) ;
       transformFile->Update() ;
-    //Check if any of the transform is not supported and counts the number of non-rigid transform
+      //Check if any of the transform is not supported and counts the number of non-rigid transform
       do
       {
-         if( !SetTransform< PixelType >( list , image , transformFile ) )
+         if( !SetTransform< ImageType >( list , image , transformFile ) )
          {
             return -1 ;
          }
@@ -345,8 +375,8 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
                                const itk::Matrix< double , 3 , 3 > &direction
                              )
 {
-  //Check if the field does not already have the same properties as the output image:
-  //It would save some time if we did not have to resample the field
+   //Check if the field does not already have the same properties as the output image:
+   //It would save some time if we did not have to resample the field
    itk::Point< double , 3 > fieldOrigin ;
    itk::Vector< double , 3 > fieldSpacing ;
    itk::Size< 3 > fieldSize ;
@@ -366,9 +396,9 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
    typedef itk::VectorLinearInterpolateImageFunction< DeformationImageType > VectorInterpolatorType ;
    VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New() ;
    typedef itk::VectorResampleImageFilter< DeformationImageType ,
-   DeformationImageType ,
-   double
-            > ResampleImageFilter ;
+                                           DeformationImageType ,
+                                           double
+                                         > ResampleImageFilter ;
    ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New() ;
    DeformationPixelType defaultPixel ;
    defaultPixel.Fill( 0.0 ) ;
@@ -383,36 +413,35 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
    field = resampleFieldFilter->GetOutput() ;
 }
 
-template< class PixelType >
+//Loads the transforms and merge them into only one transform
+template< class ImageType >
 itk::Transform< double , 3 , 3 >::Pointer
 SetAllTransform( parameters list ,
-                typename itk::ResampleImageFilter< itk::OrientedImage< PixelType , 3 > ,
-                                                   itk::OrientedImage< PixelType , 3 > >::Pointer resampler ,
-                typename itk::OrientedImage< PixelType , 3 >::Pointer image )
+                 typename itk::ResampleImageFilter< ImageType , ImageType >::Pointer resampler ,
+                 typename ImageType::Pointer image
+               )
 {
    typedef itk::Transform< double , 3 , 3 > TransformType ;
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
    typedef itk::AffineTransform< double , 3 > AffineTransformType ;
    typedef itk::Rigid3DTransform< double > RotationType ;
-//   typename TransformType::Pointer nonRigidFile ;
    typename DeformationImageType::Pointer fieldPointer ;
    typedef itk::TransformFileReader::Pointer TransformReaderPointer ;
    TransformReaderPointer transformFile ;
    int nonRigidTransforms = 0 ;
-   nonRigidTransforms = ReadTransform< PixelType >( list , image , transformFile ) ;
+   nonRigidTransforms = ReadTransform< ImageType >( list , image , transformFile ) ;
    if( nonRigidTransforms < 0 )//The transform file contains a transform that is not handled by ResampleVolume2, it exits.
    {
       return NULL ;
    }
    if( list.deffield.compare( "" ) )
    {
-       //set if the field is a displacement or a h- field
+      //set if the field is a displacement or a h- field
       DeformationFieldType dftype = HField ;
       if( !list.typeOfField.compare( "displacement" ) )
       {
          dftype = Displacement ;
       }
-       //reads deformation field and if it is a h-field, it transforms it to a displacement field
+      //reads deformation field and if it is a h-field, it transforms it to a displacement field
       fieldPointer = readDeformationField( list.deffield , dftype ) ;
       nonRigidTransforms++ ;
    }
@@ -426,7 +455,12 @@ SetAllTransform( parameters list ,
    sizeOutput = resampler->GetSize() ;
    directionOutput = resampler->GetOutputDirection() ;
    //If more than one transform or if hfield, add all transforms and compute the deformation field
-   if( (list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 && nonRigidTransforms > 0) || list.deffield.compare( "" ) )
+   if( ( list.transformationFile.compare( "" )
+         && transformFile->GetTransformList()->size() > 1
+         && nonRigidTransforms > 0
+       )
+       || list.deffield.compare( "" )
+     )
    {
       //Create warp transform
       typedef itk::WarpTransform3D< double > WarpTransformType ;
@@ -455,8 +489,8 @@ SetAllTransform( parameters list ,
       {
          typedef itk::TransformDeformationFieldFilter< double , double , 3 > itkTransformDeformationFieldFilterType ;
          typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New() ;
-         transform = SetTransform< PixelType > ( list , image , transformFile ) ;
-         if( list.numberOfThread ) 
+         transform = SetTransform< ImageType > ( list , image , transformFile ) ;
+         if( list.numberOfThread )
          {
             transformDeformationFieldFilter->SetNumberOfThreads( list.numberOfThread ) ;
          }
@@ -482,7 +516,7 @@ SetAllTransform( parameters list ,
       composedMatrix.SetIdentity() ;
       do
       {
-         transform = SetTransform< PixelType > ( list , image , transformFile ) ;
+         transform = SetTransform< ImageType > ( list , image , transformFile ) ;
          typename MatrixTransformType::Pointer localTransform ;
          localTransform = dynamic_cast< MatrixTransformType* > (transform.GetPointer() ) ;
          if( !localTransform )//should never happen, just for security
@@ -521,7 +555,7 @@ SetAllTransform( parameters list ,
    else
    {
       //only one transform, just load it
-      transform = SetTransform< PixelType > ( list , image , transformFile ) ;
+      transform = SetTransform< ImageType > ( list , image , transformFile ) ;
    }
 return transform ;
 }
@@ -529,34 +563,37 @@ return transform ;
 
 //Write back the vector of images into a image vector
 template<class PixelType>
-int AddImage(typename itk::VectorImage< PixelType, 3 >
-             ::Pointer &imagePile,
-             const std::vector< typename itk::OrientedImage< PixelType , 3 > ::Pointer > &vectorImage)
+int AddImage( typename itk::VectorImage< PixelType, 3 >
+              ::Pointer &imagePile,
+              const std::vector< typename itk::OrientedImage< PixelType , 3 > ::Pointer > &vectorImage
+            )
 {
-  typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-  imagePile->SetRegions( vectorImage.at( 0 )->GetLargestPossibleRegion().GetSize() ) ;
-  imagePile->SetOrigin( vectorImage.at( 0 )->GetOrigin() ) ;
-  imagePile->SetDirection( vectorImage.at( 0 )->GetDirection() ) ;
-  imagePile->SetSpacing( vectorImage.at( 0 )->GetSpacing() ) ;
-  imagePile->SetVectorLength( vectorImage.size() ) ;
-  imagePile->Allocate() ;
-  typename itk::ImageRegionIterator< itk::VectorImage< PixelType , 3 > > out( imagePile , imagePile->GetLargestPossibleRegion() ) ;
-  typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
-  std::vector< IteratorImageType > in ;
-  for(unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
-    {
-    IteratorImageType intemp( vectorImage.at( i ) , vectorImage.at( i )->GetLargestPossibleRegion() ) ;
-    intemp.GoToBegin();
-    in.push_back( intemp ) ;
-    }
-  itk::VariableLengthVector< PixelType > value ;
-  value.SetSize( vectorImage.size() ) ;
-  for( out.GoToBegin() ; !out.IsAtEnd() ; ++out )
-    {
-    for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
+   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   imagePile->SetRegions( vectorImage.at( 0 )->GetLargestPossibleRegion().GetSize() ) ;
+   imagePile->SetOrigin( vectorImage.at( 0 )->GetOrigin() ) ;
+   imagePile->SetDirection( vectorImage.at( 0 )->GetDirection() ) ;
+   imagePile->SetSpacing( vectorImage.at( 0 )->GetSpacing() ) ;
+   imagePile->SetVectorLength( vectorImage.size() ) ;
+   imagePile->Allocate() ;
+   typename itk::ImageRegionIterator< itk::VectorImage< PixelType , 3 > > out( imagePile ,
+                                                                               imagePile->GetLargestPossibleRegion()
+                                                                             ) ;
+   typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
+   std::vector< IteratorImageType > in ;
+   for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
+   {
+      IteratorImageType intemp( vectorImage.at( i ) , vectorImage.at( i )->GetLargestPossibleRegion() ) ;
+      intemp.GoToBegin();
+      in.push_back( intemp ) ;
+   }
+   itk::VariableLengthVector< PixelType > value ;
+   value.SetSize( vectorImage.size() ) ;
+   for( out.GoToBegin() ; !out.IsAtEnd() ; ++out )
+   {
+      for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
       {
-      value.SetElement( i , in.at( i ).Get() ) ;
-      ++in[ i ] ;
+         value.SetElement( i , in.at( i ).Get() ) ;
+         ++in[ i ] ;
       }
     out.Set( value ) ;
     }
@@ -565,41 +602,48 @@ int AddImage(typename itk::VectorImage< PixelType, 3 >
 
 //Separate the vector image into a vector of images
 template< class PixelType >
-int SeparateImages(const typename itk::VectorImage< PixelType , 3 >
-                   ::Pointer &imagePile ,
-                   std::vector< typename itk::OrientedImage< PixelType , 3 >::Pointer > &vectorImage)
+int SeparateImages( const typename itk::VectorImage< PixelType , 3 >
+                    ::Pointer &imagePile ,
+                    std::vector< typename itk::OrientedImage< PixelType , 3 >::Pointer > &vectorImage
+                  )
 {
-  typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-  typename itk::VectorImage< PixelType , 3 >::SizeType size = imagePile->GetLargestPossibleRegion().GetSize() ;
-  typename itk::VectorImage< PixelType , 3 >::DirectionType direction=imagePile->GetDirection() ;
-  typename itk::VectorImage< PixelType , 3 >::PointType origin=imagePile->GetOrigin() ;
-  typename itk::VectorImage< PixelType , 3 >::SpacingType spacing=imagePile->GetSpacing() ;
-  typename itk::ImageRegionIterator< itk::VectorImage< PixelType , 3 > > in(imagePile,imagePile->GetLargestPossibleRegion()) ;
-  typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
-  std::vector< IteratorImageType > out ;
-  for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
-    {
-    typename ImageType::Pointer imageTemp = ImageType::New() ;
-    imageTemp->SetRegions( size ) ;
-    imageTemp->SetOrigin( origin ) ;
-    imageTemp->SetDirection( direction ) ;
-    imageTemp->SetSpacing( spacing ) ;
-    imageTemp->Allocate() ;
-    vectorImage.push_back( imageTemp ) ;
-    IteratorImageType outtemp( imageTemp , imageTemp->GetLargestPossibleRegion() ) ;
-    outtemp.GoToBegin() ;
-    out.push_back( outtemp ) ;
-    }
-  for( in.GoToBegin() ; !in.IsAtEnd() ; ++in )
-    {
-    itk::VariableLengthVector< PixelType > value = in.Get() ;
-    for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
+   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   typedef itk::VectorImage< PixelType , 3 > VectorImageType ;
+   typename itk::VectorImage< PixelType , 3 >::SizeType size ;
+   typename itk::VectorImage< PixelType , 3 >::DirectionType direction ;
+   typename itk::VectorImage< PixelType , 3 >::PointType origin ;
+   typename itk::VectorImage< PixelType , 3 >::SpacingType spacing ;
+   size = imagePile->GetLargestPossibleRegion().GetSize() ;
+   direction=imagePile->GetDirection() ;
+   origin=imagePile->GetOrigin() ;
+   spacing=imagePile->GetSpacing() ;
+   typename itk::ImageRegionIterator< VectorImageType > in( imagePile ,
+                                                            imagePile->GetLargestPossibleRegion() ) ;
+   typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
+   std::vector< IteratorImageType > out ;
+   for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
+   {
+      typename ImageType::Pointer imageTemp = ImageType::New() ;
+      imageTemp->SetRegions( size ) ;
+      imageTemp->SetOrigin( origin ) ;
+      imageTemp->SetDirection( direction ) ;
+      imageTemp->SetSpacing( spacing ) ;
+      imageTemp->Allocate() ;
+      vectorImage.push_back( imageTemp ) ;
+      IteratorImageType outtemp( imageTemp , imageTemp->GetLargestPossibleRegion() ) ;
+      outtemp.GoToBegin() ;
+      out.push_back( outtemp ) ;
+   }
+   for( in.GoToBegin() ; !in.IsAtEnd() ; ++in )
+   {
+      itk::VariableLengthVector< PixelType > value = in.Get() ;
+      for( unsigned int i = 0 ; i < imagePile->GetVectorLength() ; i++ )
       {
-      out[ i ].Set( value[ i ] ) ;
-      ++out[ i ] ;
+         out[ i ].Set( value[ i ] ) ;
+         ++out[ i ] ;
       }
-    }
-  return EXIT_SUCCESS ;
+   }
+   return EXIT_SUCCESS ;
 }
 
 
@@ -607,116 +651,146 @@ int SeparateImages(const typename itk::VectorImage< PixelType , 3 >
 bool VectorIsNul( std::vector< double > vec )
 {
   bool zero = 1 ;
-  for( ::size_t i = 0 ; i < vec.size() ; i++ ) { if( vec[i] != 0 ) { zero = 0 ; } }
-  return zero;
+  for( ::size_t i = 0 ; i < vec.size() ; i++ )
+  {
+     if( vec[i] != 0 )
+     {
+        zero = 0 ;
+     }
+  }
+  return zero ;
 }
 
 
 
 
-//Set Output parameters
-template< class PixelType >
-void SetOutputParameters(const parameters &list ,
-                         typename itk::ResampleImageFilter< itk::OrientedImage< PixelType , 3 >, itk::OrientedImage< PixelType , 3 > >
-                         ::Pointer &resampler ,
-                         typename itk::OrientedImage< PixelType , 3 >::Pointer &image )
+//Set resampler's output parameters
+template< class ImageType >
+void SetOutputParameters( const parameters &list ,
+                          typename itk::ResampleImageFilter< ImageType , ImageType >
+                          ::Pointer &resampler ,
+                          typename ImageType::Pointer &image
+                        )
 {
-  typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-  typedef itk::ImageFileReader< ImageType > FileReaderType ;  
-  typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType ;
-  typename FileReaderType::Pointer readerReference ;
-  //is there a reference image to set the size, the orientation,
-  // the spacing and the origin of the output image
-  if( list.referenceVolume.compare( "" ) )
-    {
-    readerReference = FileReaderType::New() ;
-    readerReference->SetFileName(list.referenceVolume.c_str() );
-    readerReference->Update();
-    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+   typedef itk::ImageFileReader< ImageType > FileReaderType ;
+   typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType ;
+   typename FileReaderType::Pointer readerReference ;
+   //is there a reference image to set the size, the orientation,
+   // the spacing and the origin of the output image
+   if( list.referenceVolume.compare( "" ) )
+   {
+      readerReference = FileReaderType::New() ;
+      readerReference->SetFileName(list.referenceVolume.c_str() ) ;
+      readerReference->Update() ;
+      if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
       {
-      typename ImageType::PointType originReference ;
-      typename ImageType::DirectionType directionReference ;
-      originReference = readerReference->GetOutput()->GetOrigin() ;
-      directionReference = readerReference->GetOutput()->GetDirection();
-      originReference[0]=-originReference[0];
-      originReference[1]=-originReference[1];
-      itk::Matrix< double , 3 , 3 > ras ;
-      ras.SetIdentity() ;
-      ras[ 0 ][ 0 ] = -1 ;
-      ras[ 1 ][ 1 ] = -1 ;
-      directionReference=ras*directionReference;
-      readerReference->GetOutput()->SetOrigin( originReference ) ;
-      readerReference->GetOutput()->SetDirection( directionReference ) ; 
+         typename ImageType::PointType originReference ;
+         typename ImageType::DirectionType directionReference ;
+         originReference = readerReference->GetOutput()->GetOrigin() ;
+         directionReference = readerReference->GetOutput()->GetDirection() ;
+         originReference[ 0 ] = -originReference[ 0 ] ;
+         originReference[ 1 ] = -originReference[ 1 ] ;
+         itk::Matrix< double , 3 , 3 > ras ;
+         ras.SetIdentity() ;
+         ras[ 0 ][ 0 ] = -1 ;
+         ras[ 1 ][ 1 ] = -1 ;
+         directionReference = ras * directionReference ;
+         readerReference->GetOutput()->SetOrigin( originReference ) ;
+         readerReference->GetOutput()->SetDirection( directionReference ) ;
       }
-    }
-  resampler->SetOutputParametersFromImage( image ) ;
-  typename ResamplerType::OutputImageType::SpacingType m_Spacing ;
-  typename ResamplerType::OutputImageType::PointType m_Origin ;
-  typename ResamplerType::OutputImageType::DirectionType m_Direction ;
-  typename ResamplerType::OutputImageType::SizeType m_Size ;
-  if( VectorIsNul( list.outputImageSpacing ) )
-    {
-    if( list.referenceVolume.compare( "" ) )
-      { m_Spacing = readerReference->GetOutput()->GetSpacing() ; }
-    else
-      { m_Spacing = image->GetSpacing() ; }
-    }
-  else
-    {
-    for( int i = 0 ; i < 3 ; i++ ) { m_Spacing[ i ] = list.outputImageSpacing[ i ] ; }
-    }
-  if( VectorIsNul( list.outputImageSize) ) 
-    {
-    if( list.referenceVolume.compare( "" ) )
-      { m_Size
-        = readerReference->GetOutput()->GetLargestPossibleRegion().GetSize() ;
-      }
-    else
-      { m_Size = image->GetLargestPossibleRegion().GetSize() ; }
-    }
-  else
-    {
-    for( int i = 0 ; i < 3 ; i++ ) 
-      { m_Size[ i ] = ( unsigned long ) list.outputImageSize[ i ] ; }
-    }
-  if( list.outputImageOrigin.size() == 0 )
-    {
-    if( list.referenceVolume.compare( "" ) )
-      { m_Origin = readerReference->GetOutput()->GetOrigin() ; }
-    else
-      { m_Origin = image->GetOrigin() ; }
-    }
-  else
-    {
-    for(int i = 0 ; i < 3 ; i++ )
-      { m_Origin[ i ] = list.outputImageOrigin[ i ] ; }
-    }
-  if( VectorIsNul( list.directionMatrix ) )
-    {
-    if( list.referenceVolume.compare( "" ) )
-      { m_Direction = readerReference->GetOutput()->GetDirection() ; }
-    else
-      { m_Direction = image->GetDirection() ; }
-    }
-  else
-    {
-    for( int i = 0 ; i < 3 ; i++ )
+   }
+   resampler->SetOutputParametersFromImage( image ) ;
+   typename ResamplerType::OutputImageType::SpacingType m_Spacing ;
+   typename ResamplerType::OutputImageType::PointType m_Origin ;
+   typename ResamplerType::OutputImageType::DirectionType m_Direction ;
+   typename ResamplerType::OutputImageType::SizeType m_Size ;
+   if( VectorIsNul( list.outputImageSpacing ) )
+   {
+      if( list.referenceVolume.compare( "" ) )
       {
-      for( int j = 0 ; j < 3 ; j++ )
-        {
-        m_Direction[ i ][ j ] = ( double ) list.directionMatrix[ i * 3 + j ] ;
-        }
+         m_Spacing = readerReference->GetOutput()->GetSpacing() ;
+      }
+      else
+      {
+         m_Spacing = image->GetSpacing() ;
+      }
+   }
+   else
+   {
+      for( int i = 0 ; i < 3 ; i++ )
+      {
+         m_Spacing[ i ] = list.outputImageSpacing[ i ] ;
+      }
+   }
+   if( VectorIsNul( list.outputImageSize ) )
+   {
+      if( list.referenceVolume.compare( "" ) )
+      {
+         m_Size
+         = readerReference->GetOutput()->GetLargestPossibleRegion().GetSize() ;
+      }
+      else
+      {
+         m_Size = image->GetLargestPossibleRegion().GetSize() ;
+      }
+   }
+   else
+   {
+      for( int i = 0 ; i < 3 ; i++ )
+      {
+         m_Size[ i ] = ( unsigned long ) list.outputImageSize[ i ] ;
       }
     }
-  resampler->SetOutputSpacing( m_Spacing ) ;
-  resampler->SetSize( m_Size ) ;
-  resampler->SetOutputOrigin( m_Origin ) ;
-  resampler->SetOutputDirection( m_Direction ) ; 
-  resampler->SetDefaultPixelValue( static_cast<PixelType> (list.defaultPixelValue) );
+   if( list.outputImageOrigin.size() == 0 )
+   {
+      if( list.referenceVolume.compare( "" ) )
+      {
+         m_Origin = readerReference->GetOutput()->GetOrigin() ;
+      }
+      else
+      {
+         m_Origin = image->GetOrigin() ;
+      }
+   }
+   else
+   {
+      for(int i = 0 ; i < 3 ; i++ )
+      {
+         m_Origin[ i ] = list.outputImageOrigin[ i ] ;
+      }
+   }
+   if( VectorIsNul( list.directionMatrix ) )
+   {
+      if( list.referenceVolume.compare( "" ) )
+      {
+         m_Direction = readerReference->GetOutput()->GetDirection() ;
+      }
+      else
+      {
+         m_Direction = image->GetDirection() ;
+      }
+   }
+   else
+   {
+      for( int i = 0 ; i < 3 ; i++ )
+      {
+         for( int j = 0 ; j < 3 ; j++ )
+         {
+         m_Direction[ i ][ j ] = ( double ) list.directionMatrix[ i * 3 + j ] ;
+         }
+      }
+   }
+   resampler->SetOutputSpacing( m_Spacing ) ;
+   resampler->SetSize( m_Size ) ;
+   resampler->SetOutputOrigin( m_Origin ) ;
+   resampler->SetOutputDirection( m_Direction ) ;
+   resampler->SetDefaultPixelValue( static_cast< typename ImageType::PixelType > ( list.defaultPixelValue ) ) ;
 }
 
-typedef itk::Transform<double,3,3>::Pointer Transform3DPointer;
 
+//typedef to avoid a compilation issue with VS7
+typedef itk::Transform<double,3,3>::Pointer Transform3DPointer ;
+//Compute the inverse transform
 Transform3DPointer InverseTransform( const Transform3DPointer &transform )
 {
    itk::Transform< double , 3 , 3 >::Pointer inverseTransform ;
@@ -725,7 +799,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer &transform )
    try
    {
       AffineTransformType::Pointer affine = dynamic_cast<AffineTransformType* > ( transform.GetPointer() ) ;
-      if(affine )//Rotation around a selected point
+      if( affine )//Rotation around a selected point
       {
          AffineTransformType::Pointer affinetemp = AffineTransformType::New() ;
          affine->GetInverse( affinetemp ) ;
@@ -740,7 +814,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer &transform )
             rigid->GetInverse( rigidtemp ) ;
             inverseTransform = rigidtemp ;
          }
-         else 
+         else
          {
             inverseTransform = NULL ;
          }
@@ -754,8 +828,9 @@ Transform3DPointer InverseTransform( const Transform3DPointer &transform )
    return inverseTransform ;
 }
 
+//Read Measurement Frame and set it to identity if inverseTransform is not NULL
 itk::Matrix< double , 3 , 3 >
-      ReadMeasurementFrame( itk::MetaDataDictionary &dico , const Transform3DPointer &inverseTransform )
+ReadMeasurementFrame( itk::MetaDataDictionary &dico , const Transform3DPointer &inverseTransform )
 {
    itk::Matrix< double , 3 , 3 > measurementFrame ;
    typedef std::vector< std::vector< double > > DoubleVectorType ;
@@ -796,8 +871,8 @@ itk::Matrix< double , 3 , 3 >
    return measurementFrame ;
 }
 
-
-void TransformGradients( itk::MetaDataDictionary &dico ,
+//Transform the gradient vectors
+int TransformGradients( itk::MetaDataDictionary &dico ,
                          const Transform3DPointer &inverseTransform ,
                          const itk::Matrix< double , 3 , 3 > &measurementFrame
                        )
@@ -845,8 +920,8 @@ void TransformGradients( itk::MetaDataDictionary &dico ,
                std::ostringstream oss ;
                //write the new gradient values (after transformation) in the metadatadictionary
                oss << transformedVector[ 0 ] << "  " <<
-                     transformedVector[ 1 ] << "  " <<
-                     transformedVector[ 2 ] << std::ends ;
+                      transformedVector[ 1 ] << "  " <<
+                      transformedVector[ 2 ] << std::ends ;
                entryvalue->SetMetaDataObjectValue( oss.str() ) ;
             }
             else//if the image is a DWMRI we exit the loop
@@ -860,14 +935,17 @@ void TransformGradients( itk::MetaDataDictionary &dico ,
    //print an error message if the transform is not invertible and if the image is a DWMRI 
    if( !inverseTransform && dtmri )
    {
-      std::cerr << "The gradient transformation is not handle correctly with the current transformation.\nThe gradient direction of the output image is probably wrong"<< std::endl ;
+      std::cerr << "The gradient transformation is not handle correctly with the current \
+                    transformation.\nThe gradient direction of the output image is probably wrong" << std::endl ;
+      return 1 ;
    }
+   return 0 ;
 }
-      
-template<class PixelType>
-void CheckDWMRI(itk::MetaDataDictionary &dico ,
-                Transform3DPointer &transform ,
-                parameters itkNotUsed(list) )
+
+
+int CheckDWMRI( itk::MetaDataDictionary &dico ,
+                 const Transform3DPointer &transform
+               )
 {
    //Inverse the transform if possible
    itk::Transform< double , 3 , 3 >::Pointer inverseTransform ;
@@ -877,27 +955,35 @@ void CheckDWMRI(itk::MetaDataDictionary &dico ,
    measurementFrame = ReadMeasurementFrame( dico , inverseTransform ) ;
    //even if the transform is not invertible, we still go through the metadatadictionary to check if the image is a DWMRI
    //if the image is not, everything is fine. If the image is, we print an error message. The gradient direction of the transform image is not going to be correct
-   TransformGradients( dico , inverseTransform , measurementFrame ) ;
+   if( !TransformGradients( dico , inverseTransform , measurementFrame ) )
+   {
+      return 0 ;
+   }
+   else
+   {
+      return 1 ;
+   }
 }
 
 
-template< class PixelType > void RASLPS(typename itk::VectorImage< PixelType, 3 >::Pointer image)
+template< class ImageType > void RASLPS( typename ImageType::Pointer image)
 {
-  typename itk::VectorImage< PixelType, 3 >::PointType m_Origin ;
-  typename itk::VectorImage< PixelType, 3 >::DirectionType m_Direction ;
+  typename ImageType::PointType m_Origin ;
+  typename ImageType::DirectionType m_Direction ;
   m_Origin = image->GetOrigin() ;
-  m_Direction = image->GetDirection();
-  m_Origin[0]=-m_Origin[0];
-  m_Origin[1]=-m_Origin[1];
+  m_Direction = image->GetDirection() ;
+  m_Origin[ 0 ] = -m_Origin [ 0 ] ;
+  m_Origin[ 1 ] = -m_Origin[ 1 ] ;
   itk::Matrix< double , 3 , 3 > ras ;
   ras.SetIdentity() ;
   ras[ 0 ][ 0 ] = -1 ;
   ras[ 1 ][ 1 ] = -1 ;
-  m_Direction=ras*m_Direction;
+  m_Direction = ras * m_Direction ;
   image->SetOrigin( m_Origin ) ;
-  image->SetDirection( m_Direction ) ; 
+  image->SetDirection( m_Direction ) ;
 }
 
+//Check the selected interpolator. Creates and returns an object of that type
 template< class ImageType >
 typename itk::InterpolateImageFunction< ImageType , double >::Pointer
 SetInterpolator( const parameters &list )
@@ -984,32 +1070,44 @@ SetInterpolator( const parameters &list )
 template< class PixelType > int Rotate( parameters list )
 {
    typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-   typedef itk::ImageFileReader< ImageType > FileReaderType ;   
-   //typename FileReaderType::Pointer readerCopyInfo = FileReaderType::New() ;
+   typedef itk::ImageFileReader< ImageType > FileReaderType ;
    typedef itk::InterpolateImageFunction< ImageType , double > InterpolatorType ;
    typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleType ;
    typedef itk::Transform< double , 3 , 3 > TransformType ;
+   typedef itk::VectorImage< PixelType , 3 > VectorImageType ;
    typename ImageType::Pointer image ;
-   ///////////////////////////////////////////
-   typename itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::Pointer reader ;
-   reader = itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::New() ;
-   reader->SetFileName( list.inputVolume.c_str()) ;
-   reader->Update() ;
-   if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+   std::vector< typename ImageType::Pointer > vectorOfImage ;
+   itk::MetaDataDictionary dico ;
+   try
    {
-      RASLPS<PixelType>( reader->GetOutput() ) ;
+      //open image file
+      typename itk::ImageFileReader< VectorImageType >::Pointer reader ;
+      reader = itk::ImageFileReader< VectorImageType >::New() ;
+      reader->SetFileName( list.inputVolume.c_str()) ;
+      reader->Update() ;
+      if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+      {
+         RASLPS< VectorImageType >( reader->GetOutput() ) ;
+      }
+      //Save metadata dictionary
+      dico = reader->GetOutput()->GetMetaDataDictionary() ;
+      //Separate the vector image into a vector of images
+      SeparateImages< PixelType >( reader->GetOutput() , vectorOfImage ) ;
+      }
+   catch( itk::ExceptionObject exception )
+   {
+      std::cerr << exception << std::endl ;
+      return EXIT_FAILURE ;
    }
-   itk::MetaDataDictionary dico = reader->GetOutput()->GetMetaDataDictionary() ;
-   std::vector< typename ImageType::Pointer > vectorImage ;
-   std::vector< typename ImageType::Pointer > vectorOutputImage ;
-   SeparateImages< PixelType >( reader->GetOutput() , vectorImage ) ;
-   ////////////////////////////////////////////////////
+   //Set interpolator
    typename InterpolatorType::Pointer interpol ;
    interpol = SetInterpolator< ImageType >( list ) ;
+   //Create resampler and initialize its output parameters
    typename ResampleType::Pointer resample = ResampleType::New() ;
-   SetOutputParameters< PixelType >( list , resample , vectorImage[ 0 ] ) ;
+   SetOutputParameters< ImageType >( list , resample , vectorOfImage[ 0 ] ) ;
    TransformType::Pointer transform ;
-   transform = SetAllTransform< PixelType >( list , resample , vectorImage[ 0 ] ) ;
+   //Load transforms and compute a merged transform
+   transform = SetAllTransform< ImageType >( list , resample , vectorOfImage[ 0 ] ) ;
    if( !transform )
    {
       return EXIT_FAILURE ;
@@ -1020,28 +1118,46 @@ template< class PixelType > int Rotate( parameters list )
    {
       resample->SetNumberOfThreads( list.numberOfThread ) ;
    }
-   for( ::size_t idx = 0 ; idx < vectorImage.size() ; idx++ )
+   std::vector< typename ImageType::Pointer > vectorOutputImage ;
+   //Resample all the images separately
+   for( ::size_t idx = 0 ; idx < vectorOfImage.size() ; idx++ )
    {
-     resample->SetInput( vectorImage[ idx ] ) ;
+     resample->SetInput( vectorOfImage[ idx ] ) ;
      resample->Update() ;
      vectorOutputImage.push_back( resample->GetOutput() ) ;
      vectorOutputImage[ idx ]->DisconnectPipeline() ;
    }
-   //If necessary, transform gradient vectors with the loaded transformations
-   CheckDWMRI< PixelType >( dico , transform , list ) ;
-   typename itk::VectorImage< PixelType, 3 >::Pointer outputImage = itk::VectorImage< PixelType , 3 >::New() ;
+   typename itk::VectorImage< PixelType, 3 >::Pointer outputImage ;
+   outputImage = itk::VectorImage< PixelType , 3 >::New() ;
    AddImage< PixelType >( outputImage , vectorOutputImage ) ;
+   vectorOutputImage.clear() ;
+   //If necessary, transform gradient vectors with the loaded transformations
+   int dwmriProblem = CheckDWMRI( dico , transform ) ;
    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
    {
-      RASLPS<PixelType>( outputImage) ;
+      RASLPS< VectorImageType >( outputImage ) ;
    }
    outputImage->SetMetaDataDictionary( dico ) ;
-   typedef itk::ImageFileWriter< typename itk::VectorImage< PixelType, 3 > > WriterType ;
-   typename WriterType::Pointer writer = WriterType::New() ;
-   writer->SetInput( outputImage ) ;
-   writer->SetFileName( list.outputVolume.c_str() ) ;
-   writer->UseCompressionOn() ;
-   writer->Update() ;
+   //Save transformed image
+   typedef itk::ImageFileWriter< VectorImageType > WriterType ;
+   try
+   {
+      typename WriterType::Pointer writer = WriterType::New() ;
+      writer->SetInput( outputImage ) ;
+      writer->SetFileName( list.outputVolume.c_str() ) ;
+      writer->UseCompressionOn() ;
+      writer->Update() ;
+   }
+   catch( itk::ExceptionObject exception )
+   {
+      std::cerr << exception << std::endl ;
+      return EXIT_FAILURE ;
+   }
+   //If there was a problem while computing the transformed dwmri, exits with an error
+   if( dwmriProblem )
+   {
+      return EXIT_FAILURE ;
+   }
    return EXIT_SUCCESS ;
 }
 
@@ -1050,74 +1166,74 @@ template< class PixelType > int Rotate( parameters list )
 
 int main( int argc , char * argv[] )
 {
-  PARSE_ARGS ;
-  parameters list ;
-  list.numberOfThread = numberOfThread ;
-  list.interpolationType = interpolationType ;
-  list.transformType = transformType ;
-  list.transformMatrix = transformMatrix ;
-  list.inputVolume = inputVolume ;
-  list.referenceVolume = referenceVolume ;
-  list.outputVolume = outputVolume ;
-  list.rotationPoint=rotationPoint ;
-  list.transformationFile=transformationFile ;
-  list.inverseITKTransformation = inverseITKTransformation ;
-  list.windowFunction = windowFunction ;
-  list.splineOrder = splineOrder ;
-  list.space = space ;
-  list.centeredTransform = centeredTransform ;
-  list.outputImageSpacing = outputImageSpacing ;
-  list.outputImageSize = outputImageSize ;
-  list.outputImageOrigin = outputImageOrigin ;
-  list.directionMatrix = directionMatrix ;
-  list.deffield = deffield ;
-  list.typeOfField = typeOfField ;
-  list.defaultPixelValue = defaultPixelValue ;
-  if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
-    {
-    std::cerr<<"Argument(s) having wrong size"<<std::endl ;
-    return EXIT_FAILURE;
-    }   
-  itk::ImageIOBase::IOPixelType pixelType ;
-  itk::ImageIOBase::IOComponentType componentType ;
-  GetImageType( list.inputVolume , pixelType , componentType ) ;
-
-  switch( componentType )
-    {
-    case itk::ImageIOBase::UCHAR:
-      return Rotate< unsigned char >( list ) ;
-      break ;
-    case itk::ImageIOBase::CHAR:
-      return Rotate< char >( list ) ;
-      break ;
-    case itk::ImageIOBase::USHORT:
-      return Rotate< unsigned short >( list ) ;
-      break ;
-    case itk::ImageIOBase::SHORT:
-      return Rotate< short >( list ) ;
-      break ;
-    case itk::ImageIOBase::UINT:
-      return Rotate< unsigned int >( list ) ;
-      break ;
-    case itk::ImageIOBase::INT:
-      return Rotate< int >( list ) ;
-      break ;
-    case itk::ImageIOBase::ULONG:
-      return Rotate< unsigned long >( list ) ;
-      break ;
-    case itk::ImageIOBase::LONG:
-      return Rotate< long >( list ) ;
-      break ;
-    case itk::ImageIOBase::FLOAT:
-      return Rotate< float >( list ) ;
-      break ;
-    case itk::ImageIOBase::DOUBLE:
-      return Rotate< double >( list ) ;
-      break ;
-    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
-    default:
-      std::cout << "unknown component type" << std::endl ;
-      break ;
-    }
-  return EXIT_FAILURE;
+   PARSE_ARGS ;
+   parameters list ;
+   list.numberOfThread = numberOfThread ;
+   list.interpolationType = interpolationType ;
+   list.transformType = transformType ;
+   list.transformMatrix = transformMatrix ;
+   list.inputVolume = inputVolume ;
+   list.referenceVolume = referenceVolume ;
+   list.outputVolume = outputVolume ;
+   list.rotationPoint=rotationPoint ;
+   list.transformationFile=transformationFile ;
+   list.inverseITKTransformation = inverseITKTransformation ;
+   list.windowFunction = windowFunction ;
+   list.splineOrder = splineOrder ;
+   list.space = space ;
+   list.centeredTransform = centeredTransform ;
+   list.outputImageSpacing = outputImageSpacing ;
+   list.outputImageSize = outputImageSize ;
+   list.outputImageOrigin = outputImageOrigin ;
+   list.directionMatrix = directionMatrix ;
+   list.deffield = deffield ;
+   list.typeOfField = typeOfField ;
+   list.defaultPixelValue = defaultPixelValue ;
+   if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
+   {
+      std::cerr << "Argument(s) having wrong size" << std::endl ;
+      return EXIT_FAILURE ;
+   }
+   itk::ImageIOBase::IOPixelType pixelType ;
+   itk::ImageIOBase::IOComponentType componentType ;
+   GetImageType( list.inputVolume , pixelType , componentType ) ;
+   //templated over the input image voxel type
+   switch( componentType )
+   {
+      case itk::ImageIOBase::UCHAR:
+         return Rotate< unsigned char >( list ) ;
+         break ;
+      case itk::ImageIOBase::CHAR:
+         return Rotate< char >( list ) ;
+         break ;
+      case itk::ImageIOBase::USHORT:
+         return Rotate< unsigned short >( list ) ;
+         break ;
+      case itk::ImageIOBase::SHORT:
+         return Rotate< short >( list ) ;
+         break ;
+      case itk::ImageIOBase::UINT:
+         return Rotate< unsigned int >( list ) ;
+         break ;
+      case itk::ImageIOBase::INT:
+         return Rotate< int >( list ) ;
+         break ;
+      case itk::ImageIOBase::ULONG:
+         return Rotate< unsigned long >( list ) ;
+         break ;
+      case itk::ImageIOBase::LONG:
+         return Rotate< long >( list ) ;
+         break ;
+      case itk::ImageIOBase::FLOAT:
+         return Rotate< float >( list ) ;
+         break ;
+      case itk::ImageIOBase::DOUBLE:
+         return Rotate< double >( list ) ;
+         break ;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
+         std::cout << "unknown component type" << std::endl ;
+         break ;
+   }
+   return EXIT_FAILURE ;
 }
