@@ -860,138 +860,151 @@ template< class PixelType > void RASLPS(typename itk::VectorImage< PixelType, 3 
   image->SetDirection( m_Direction ) ; 
 }
 
-
+template< class ImageType >
+typename itk::InterpolateImageFunction< ImageType , double >::Pointer
+SetInterpolator( const parameters &list )
+{
+   typedef itk::ConstantBoundaryCondition< ImageType > BoundaryCondition ;
+   typedef itk::InterpolateImageFunction< ImageType , double > InterpolatorType ;
+   typedef itk::NearestNeighborInterpolateImageFunction< ImageType , double > NearestNeighborInterpolateType ;
+   typedef itk::LinearInterpolateImageFunction< ImageType , double > LinearInterpolateType;
+   typedef itk::BSplineInterpolateImageFunction< ImageType , double , double > BSplineInterpolateFunction ;
+   typename InterpolatorType::Pointer interpol ;
+   if( !list.interpolationType.compare( "linear" ) )
+   {
+      typename LinearInterpolateType::Pointer linearinterpolator = LinearInterpolateType::New() ;
+      interpol = linearinterpolator ;
+   }
+   else if( !list.interpolationType.compare( "nn" ) )
+   {
+      typename NearestNeighborInterpolateType::Pointer interpolator = NearestNeighborInterpolateType::New() ;
+      interpol = interpolator ;
+   }
+   else if( !list.interpolationType.compare( "ws" ) )
+   {
+      if( !list.windowFunction.compare( "h" ) )
+      {
+         typedef itk::Function::HammingWindowFunction< RADIUS > windowFunction ;
+         typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
+                     RADIUS ,
+                     windowFunction ,
+                     BoundaryCondition ,
+                     double > WindowedSincInterpolateImageFunctionType ;
+         interpol = WindowedSincInterpolateImageFunctionType::New() ;
+      }
+      else if( !list.windowFunction.compare( "c" ) )
+      {
+         typedef itk::Function::CosineWindowFunction< RADIUS > windowFunction ;
+         typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
+                     RADIUS ,
+                     windowFunction ,
+                     BoundaryCondition ,
+                     double > WindowedSincInterpolateImageFunctionType ;
+         interpol = WindowedSincInterpolateImageFunctionType::New() ;
+      }
+      else if( !list.windowFunction.compare( "w" ) )
+      {
+         typedef itk::Function::WelchWindowFunction< RADIUS > windowFunction ;
+         typedef itk::WindowedSincInterpolateImageFunction< ImageType,
+                     RADIUS ,
+                     windowFunction ,
+                     BoundaryCondition ,
+                     double > WindowedSincInterpolateImageFunctionType ;
+         interpol = WindowedSincInterpolateImageFunctionType::New() ;
+      }
+      else if(!list.windowFunction.compare( "l" ) )
+      {
+         typedef itk::Function::LanczosWindowFunction< RADIUS > windowFunction ;
+         typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
+                     RADIUS ,
+                     windowFunction ,
+                     BoundaryCondition ,
+                     double > WindowedSincInterpolateImageFunctionType ;
+         interpol = WindowedSincInterpolateImageFunctionType::New() ;
+      }
+      else if(!list.windowFunction.compare( "b" ) )
+      {
+         typedef itk::Function::BlackmanWindowFunction< RADIUS > windowFunction ;
+         typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
+                     RADIUS ,
+                     windowFunction ,
+                     BoundaryCondition ,
+                     double > WindowedSincInterpolateImageFunctionType ;
+         interpol = WindowedSincInterpolateImageFunctionType::New() ;
+      }
+   }
+   else if( !list.interpolationType.compare( "bs" ) )
+   {
+      typename BSplineInterpolateFunction::Pointer bSplineInterpolator = BSplineInterpolateFunction::New() ;
+      bSplineInterpolator->SetSplineOrder( list.splineOrder ) ;
+      interpol = bSplineInterpolator ;
+   }
+   return interpol ;
+}
 
 
 template< class PixelType > int Rotate( parameters list )
 {
-  typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-  typedef itk::ImageFileReader< ImageType > FileReaderType ;   
-  //typename FileReaderType::Pointer readerCopyInfo = FileReaderType::New() ;
-  typedef itk::InterpolateImageFunction< ImageType , double > InterpolatorType ;
-  typedef itk::NearestNeighborInterpolateImageFunction< ImageType , double > NearestNeighborInterpolateType ;
-  typedef itk::LinearInterpolateImageFunction< ImageType , double > LinearInterpolateType;
-  typedef itk::ConstantBoundaryCondition< itk::OrientedImage< PixelType , 3 > > BoundaryCondition ;
-  typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleType ;
-  typedef itk::Transform< double , 3 , 3 > TransformType ;
-  typedef itk::BSplineInterpolateImageFunction< ImageType , double , double > BSplineInterpolateFunction ;
-  typename ImageType::Pointer image ;
-  ///////////////////////////////////////////
-  typename itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::Pointer reader ;
-    reader = itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::New() ;
-    reader->SetFileName( list.inputVolume.c_str()) ;
-    reader->Update() ;
-    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
-      { RASLPS<PixelType>( reader->GetOutput() ); }
-    itk::MetaDataDictionary dico = reader->GetOutput()->GetMetaDataDictionary() ;
-    std::vector< typename ImageType::Pointer > vectorImage ;
-    std::vector< typename ImageType::Pointer > vectorOutputImage ;
-    SeparateImages< PixelType >( reader->GetOutput() , vectorImage ) ;
-    ////////////////////////////////////////////////////
-    typename NearestNeighborInterpolateType::Pointer interpolator = NearestNeighborInterpolateType::New() ;
-    typename LinearInterpolateType::Pointer linearinterpolator = LinearInterpolateType::New() ;
-    typename InterpolatorType::Pointer interpol ;
-
-    if( !list.interpolationType.compare( "linear" ) )
-      { interpol = linearinterpolator ; }
-    else if( !list.interpolationType.compare( "nn" ) )
-      { interpol = interpolator ; }
-    else if( !list.interpolationType.compare( "ws" ) )
-      {
-      if( !list.windowFunction.compare( "h" ) )
-        {
-        typedef itk::Function::HammingWindowFunction< RADIUS > windowFunction ;
-        typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
-          RADIUS ,
-          windowFunction ,
-          BoundaryCondition ,
-          double > WindowedSincInterpolateImageFunctionType ;
-        interpol = WindowedSincInterpolateImageFunctionType::New() ;
-        }
-      else if( !list.windowFunction.compare( "c" ) )
-        {
-        typedef itk::Function::CosineWindowFunction< RADIUS > windowFunction ;
-        typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
-          RADIUS ,
-          windowFunction ,
-          BoundaryCondition ,
-          double > WindowedSincInterpolateImageFunctionType ;
-        interpol = WindowedSincInterpolateImageFunctionType::New() ;
-        }
-      else if( !list.windowFunction.compare( "w" ) )
-        {
-        typedef itk::Function::WelchWindowFunction< RADIUS > windowFunction ;
-        typedef itk::WindowedSincInterpolateImageFunction< ImageType,
-          RADIUS ,
-          windowFunction ,
-          BoundaryCondition ,
-          double > WindowedSincInterpolateImageFunctionType ;
-        interpol = WindowedSincInterpolateImageFunctionType::New() ;
-        }
-      else if(!list.windowFunction.compare( "l" ) )
-        {
-        typedef itk::Function::LanczosWindowFunction< RADIUS > windowFunction ;
-        typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
-          RADIUS ,
-          windowFunction ,
-          BoundaryCondition ,
-          double > WindowedSincInterpolateImageFunctionType ;
-        interpol = WindowedSincInterpolateImageFunctionType::New() ;
-        }
-      else if(!list.windowFunction.compare( "b" ) )
-        {
-        typedef itk::Function::BlackmanWindowFunction< RADIUS > windowFunction ;
-        typedef itk::WindowedSincInterpolateImageFunction< ImageType ,
-          RADIUS ,
-          windowFunction ,
-          BoundaryCondition ,
-          double > WindowedSincInterpolateImageFunctionType ;
-        interpol = WindowedSincInterpolateImageFunctionType::New() ;
-        }
-      }
-    else if( !list.interpolationType.compare( "bs" ) )
-      {
-      typename BSplineInterpolateFunction::Pointer bSplineInterpolator = BSplineInterpolateFunction::New() ;
-      bSplineInterpolator->SetSplineOrder( list.splineOrder ) ;
-      interpol = bSplineInterpolator ;
-      }
-    typename ResampleType::Pointer resample = ResampleType::New() ;
-    SetOutputParameters< PixelType >( list , resample , vectorImage[ 0 ] ) ;
-    TransformType::Pointer transform ;
-    transform = SetUpTransform< PixelType >( list , resample , vectorImage[ 0 ] ) ;
-    if( !transform )
-    {
-       return EXIT_FAILURE ;
-    }
-    resample->SetTransform( transform ) ;
-    resample->SetInterpolator( interpol ) ;
-    if(list.numberOfThread)
-    {
-       resample->SetNumberOfThreads( list.numberOfThread ) ;
-    }
-    for( ::size_t idx = 0 ; idx < vectorImage.size() ; idx++ )
-    {
-      resample->SetInput( vectorImage[ idx ] ) ;
-      resample->Update() ;
-      vectorOutputImage.push_back( resample->GetOutput() ) ;
-      vectorOutputImage[ idx ]->DisconnectPipeline() ;
-    }
-    //If necessary, transform gradient vectors with the loaded transformations
-    CheckDWMRI< PixelType >( dico , transform , list ) ;
-    typename itk::VectorImage< PixelType, 3 >::Pointer outputImage = itk::VectorImage< PixelType , 3 >::New() ;
-    AddImage< PixelType >( outputImage , vectorOutputImage ) ;
-    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
-    {
-      RASLPS<PixelType>( outputImage);
-    }
-    outputImage->SetMetaDataDictionary( dico ) ;
-    typedef itk::ImageFileWriter< typename itk::VectorImage< PixelType, 3 > > WriterType ;
-    typename WriterType::Pointer writer = WriterType::New() ;
-    writer->SetInput( outputImage ) ;
-    writer->SetFileName( list.outputVolume.c_str() ) ;
-    writer->UseCompressionOn() ;
-    writer->Update() ;
-    return EXIT_SUCCESS;
+   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   typedef itk::ImageFileReader< ImageType > FileReaderType ;   
+   //typename FileReaderType::Pointer readerCopyInfo = FileReaderType::New() ;
+   typedef itk::InterpolateImageFunction< ImageType , double > InterpolatorType ;
+   typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleType ;
+   typedef itk::Transform< double , 3 , 3 > TransformType ;
+   typename ImageType::Pointer image ;
+   ///////////////////////////////////////////
+   typename itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::Pointer reader ;
+   reader = itk::ImageFileReader< itk::VectorImage< PixelType , 3 > >::New() ;
+   reader->SetFileName( list.inputVolume.c_str()) ;
+   reader->Update() ;
+   if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+   {
+      RASLPS<PixelType>( reader->GetOutput() ) ;
+   }
+   itk::MetaDataDictionary dico = reader->GetOutput()->GetMetaDataDictionary() ;
+   std::vector< typename ImageType::Pointer > vectorImage ;
+   std::vector< typename ImageType::Pointer > vectorOutputImage ;
+   SeparateImages< PixelType >( reader->GetOutput() , vectorImage ) ;
+   ////////////////////////////////////////////////////
+   typename InterpolatorType::Pointer interpol ;
+   interpol = SetInterpolator< ImageType >( list ) ;
+   typename ResampleType::Pointer resample = ResampleType::New() ;
+   SetOutputParameters< PixelType >( list , resample , vectorImage[ 0 ] ) ;
+   TransformType::Pointer transform ;
+   transform = SetUpTransform< PixelType >( list , resample , vectorImage[ 0 ] ) ;
+   if( !transform )
+   {
+      return EXIT_FAILURE ;
+   }
+   resample->SetTransform( transform ) ;
+   resample->SetInterpolator( interpol ) ;
+   if(list.numberOfThread)
+   {
+      resample->SetNumberOfThreads( list.numberOfThread ) ;
+   }
+   for( ::size_t idx = 0 ; idx < vectorImage.size() ; idx++ )
+   {
+     resample->SetInput( vectorImage[ idx ] ) ;
+     resample->Update() ;
+     vectorOutputImage.push_back( resample->GetOutput() ) ;
+     vectorOutputImage[ idx ]->DisconnectPipeline() ;
+   }
+   //If necessary, transform gradient vectors with the loaded transformations
+   CheckDWMRI< PixelType >( dico , transform , list ) ;
+   typename itk::VectorImage< PixelType, 3 >::Pointer outputImage = itk::VectorImage< PixelType , 3 >::New() ;
+   AddImage< PixelType >( outputImage , vectorOutputImage ) ;
+   if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+   {
+      RASLPS<PixelType>( outputImage) ;
+   }
+   outputImage->SetMetaDataDictionary( dico ) ;
+   typedef itk::ImageFileWriter< typename itk::VectorImage< PixelType, 3 > > WriterType ;
+   typename WriterType::Pointer writer = WriterType::New() ;
+   writer->SetInput( outputImage ) ;
+   writer->SetFileName( list.outputVolume.c_str() ) ;
+   writer->UseCompressionOn() ;
+   writer->Update() ;
+   return EXIT_SUCCESS ;
 }
 
 } // end of anonymous namespace
