@@ -79,6 +79,8 @@ SET(modules
   ExtractSubvolumeROI
   CollectFiducials 
   PETCTFusion
+  CollectFiducials
+  IGTToolSelector
   )
 
 if(Slicer3_USE_OPENIGTLINK)
