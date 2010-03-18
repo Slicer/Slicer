@@ -80,6 +80,8 @@ int vtkMimxGeometryFilter::RequestData(
                 orArray->InsertNextValue(i);
         }
         input->GetCellData()->AddArray(orArray);
+        orArray->Delete();
+
         vtkGeometryFilter *geofil = vtkGeometryFilter::New();
         geofil->SetInput(input);
         geofil->Update();
@@ -121,6 +123,7 @@ int vtkMimxGeometryFilter::RequestData(
         output->DeepCopy(polydata);
         input->GetCellData()->RemoveArray("mimxCellIds");
         geofil->Delete();
+        faceNumArray->Delete();
         return 1;
 }
 

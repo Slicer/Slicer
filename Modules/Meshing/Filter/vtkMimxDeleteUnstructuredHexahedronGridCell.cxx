@@ -51,6 +51,9 @@ vtkMimxDeleteUnstructuredHexahedronGridCell::vtkMimxDeleteUnstructuredHexahedron
 
 vtkMimxDeleteUnstructuredHexahedronGridCell::~vtkMimxDeleteUnstructuredHexahedronGridCell()
 {
+  if ( this->CellList )
+    this->CellList->Delete();
+
 }
 
 int vtkMimxDeleteUnstructuredHexahedronGridCell::RequestData(
@@ -91,7 +94,7 @@ int vtkMimxDeleteUnstructuredHexahedronGridCell::RequestData(
   vtkPoints *points = vtkPoints::New();
   points->Allocate(input->GetNumberOfPoints());
   locator->InitPointInsertion (points, input->GetPoints()->GetBounds());
-  vtkIdList *idlist;
+  
   int i;
   double x[3];
   vtkIdType tempid;
@@ -106,7 +109,7 @@ int vtkMimxDeleteUnstructuredHexahedronGridCell::RequestData(
   {
           if(this->CellList->IsId(i) == -1)
           {
-                  idlist = vtkIdList::New();
+                  vtkIdList *idlist = vtkIdList::New();
                   idlist->DeepCopy(input->GetCell(i)->GetPointIds());
                   for(int j=0; j <8; j++)
                   {

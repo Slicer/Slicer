@@ -55,6 +55,8 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    MergePoints->Delete();
+    reader1->Delete();
 
     return status;
 }

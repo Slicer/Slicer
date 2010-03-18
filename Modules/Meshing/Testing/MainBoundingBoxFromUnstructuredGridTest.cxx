@@ -64,6 +64,7 @@ int main(int argc, char * argv [])
     callback->Delete();
     reader1->Delete();
     reader2->Delete();
+    boundingboxfromunstructuredgrid->Delete();
 
     return status;
 }

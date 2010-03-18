@@ -225,8 +225,8 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
     
-  grid->Delete();
-  
+  grid->Delete(); 
+
   /*********************** Test 2 - Build Mesh with Mask ***********************/
   InputImageType::Pointer maskImage = InputImageType::New();
   InputImageType::SpacingType maskSpacing;
@@ -361,6 +361,7 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   grid2->Delete();
+
   //std::cout << "Test 2" << std::endl;
   /********************* Check Conversion Function ******************/
   ImageToMeshFilterType::Pointer imageToHexMeshFilter2 = 
@@ -427,6 +428,6 @@ int main( int argc, char * argv[] )
     }
  
   grid3->Delete();
-   
+ 
   return EXIT_SUCCESS;
 }

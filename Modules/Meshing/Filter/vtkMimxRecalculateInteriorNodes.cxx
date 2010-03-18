@@ -262,6 +262,7 @@ int vtkMimxRecalculateInteriorNodes::RequestData(
     pointidlist->Delete();
     idlistedge->Delete();
     }
+gencell->Delete();
   geofil->Delete();
   bboxfromugrid->Delete();
   if(recalctps)   recalctps->Delete();

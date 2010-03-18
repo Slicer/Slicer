@@ -346,7 +346,7 @@ int vtkMimxSplitUnstructuredHexahedronGridCell::RequestData(
           }
         idlistnew->Delete();
         }
-
+        pts_replace->Delete();
       }
     }
   //ugrid->SetPoints(points);
@@ -366,6 +366,7 @@ int vtkMimxSplitUnstructuredHexahedronGridCell::RequestData(
 
   mergecells->MergeDataSet(ugrid);
   mergecells->Finish();
+  
   ugrid->Delete();
   this->CopyConstraintValues(input, output);
   if (MeshSeedValues)
@@ -374,6 +375,7 @@ int vtkMimxSplitUnstructuredHexahedronGridCell::RequestData(
     }
         
   NewMeshSeedValues->Delete();
+  mergecells->Delete();
   // merge cells now
 //      ugrid->Delete();
 

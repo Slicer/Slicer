@@ -50,6 +50,7 @@ vtkMimxAddUnstructuredHexahedronGridCell::vtkMimxAddUnstructuredHexahedronGridCe
 
 vtkMimxAddUnstructuredHexahedronGridCell::~vtkMimxAddUnstructuredHexahedronGridCell()
 {
+ 
 }
 
 int vtkMimxAddUnstructuredHexahedronGridCell::RequestData(
@@ -67,7 +68,8 @@ int vtkMimxAddUnstructuredHexahedronGridCell::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
- 
+  
+
   if(!this->IdList)
     {
     vtkErrorMacro("Enter the point numbers of the face to be extruded,  face list should contain 4 points");

@@ -56,6 +56,8 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    ExtractStructuredGridFace->Delete();
+    reader->Delete();
 
     return status;
 }

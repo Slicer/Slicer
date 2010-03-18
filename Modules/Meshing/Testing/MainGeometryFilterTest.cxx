@@ -47,6 +47,7 @@ int main(int argc, char * argv [])
     vtkUnstructuredGridReader *reader = vtkUnstructuredGridReader::New();
     reader->SetFileName(argv[1]);
     reader->Update();
+
     vtkMimxGeometryFilter *GeometryFilter = vtkMimxGeometryFilter::New();
     GeometryFilter->SetInput(reader->GetOutput());
     GeometryFilter->AddObserver(vtkCommand::ErrorEvent, callback, 1.0);
@@ -55,6 +56,8 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    GeometryFilter->Delete();
+    reader->Delete();
 
     return status;
 }

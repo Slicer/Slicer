@@ -191,7 +191,8 @@ int vtkMimxBoundingBoxToStructuredGrids::RequestData(
                         GetItemAsObject(i))));
         }
         mergecells->Finish();
-
+        mergecells->Delete();
+  hexahedron->Delete();
   return 1;
 }
 

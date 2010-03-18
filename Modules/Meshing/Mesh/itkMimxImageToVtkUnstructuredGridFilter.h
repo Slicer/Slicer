@@ -191,7 +191,7 @@ public:
 
 protected:
   MimxImageToVtkUnstructuredGridFilter( );
-  ~MimxImageToVtkUnstructuredGridFilter( ){ };
+  ~MimxImageToVtkUnstructuredGridFilter( );
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
   /** Calculate Material Properties for the mesh */

@@ -66,10 +66,12 @@ int main(int argc, char * argv [])
   vtkMimxDeleteUnstructuredHexahedronGridCell *Delete2 = 
     vtkMimxDeleteUnstructuredHexahedronGridCell::New();
   Delete2->SetInput(Delete1->GetOutput());
-  cellToBeDeleted->SetId(0, 3);
-  Delete2->SetCellList(cellToBeDeleted);
+  vtkIdList *cellToBeDeleted2 = vtkIdList::New();
+  cellToBeDeleted2->SetNumberOfIds(1);
+  cellToBeDeleted2->SetId(0, 3);
+  Delete2->SetCellList(cellToBeDeleted2);
   Delete2->Update( );
-  cellToBeDeleted->Delete();
+
   std::cout << "Test 2 - Number of Cells: " << Delete2->GetOutput()->GetNumberOfCells() << std::endl;
   if ( Delete2->GetOutput()->GetNumberOfCells() != 5 )
     {
@@ -77,29 +79,13 @@ int main(int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-
-  /* Turn off the Graphical User Interface testing
-  *************************************************
-    vtkRenderer* ren = vtkRenderer::New();
-    vtkDataSetMapper *mapper = vtkDataSetMapper::New();
-    mapper->SetInput(Delete1->GetOutput());
-    vtkActor *actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    ren->AddActor(actor);
-    vtkRenderWindow* renwin = vtkRenderWindow::New();
-    renwin->AddRenderer(ren);
-    vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::New();
-    iren->SetRenderWindow(renwin);
-    renwin->Render();
-    iren->Start();
-    reader->Delete();
-    Delete1->Delete();
-    actor->Delete();
-    mapper->Delete();
-    ren->Delete();
-    renwin->Delete();
-    iren->Delete();
-  *************************************************/
+  Delete1->Delete();
+  Delete2->Delete();
+  cellToBeDeleted->Delete();
+  cellToBeDeleted2->Delete();
+  
+  reader->Delete();
+  
 
   return EXIT_SUCCESS;
 }

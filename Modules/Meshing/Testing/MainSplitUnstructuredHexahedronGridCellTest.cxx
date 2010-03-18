@@ -99,30 +99,13 @@ int main(int argc, char * argv [])
 
 
 
- /* Turn off the Graphical User Interface testing
-  *************************************************
-    vtkRenderer* ren = vtkRenderer::New();
-    vtkDataSetMapper *mapper = vtkDataSetMapper::New();
-    mapper->SetInput(split1->GetOutput());
-    vtkActor *actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    ren->AddActor(actor);
-    vtkRenderWindow* renwin = vtkRenderWindow::New();
-    renwin->AddRenderer(ren);
-    vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::New();
-    iren->SetRenderWindow(renwin);
-    renwin->Render();
-    iren->Start();
-    reader->Delete();
-    split1->Delete();
-    actor->Delete();
-    mapper->Delete();
-    idlist1->Delete();
-    idlist2->Delete();
-    ren->Delete();
-    renwin->Delete();
-    iren->Delete();
-  *************************************************/
+  idlist1->Delete();
+  idlist2->Delete();
+  idlist3->Delete();
+  split1->Delete();
+  split2->Delete();
+  split3->Delete();
+  reader->Delete();
 
   return EXIT_SUCCESS;
 }

@@ -61,6 +61,10 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    utosgrid->Delete();
+    boundingbox->Delete();
+    ugrid->Delete();
+
 
     return status;
 }

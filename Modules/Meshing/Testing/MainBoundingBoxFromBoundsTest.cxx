@@ -32,18 +32,10 @@ PURPOSE.  See the above copyright notices for more information.
 
 int main(int argc, char * argv [])
 {
-/*
-    if( argc < 2 )
-    {
-        std::cerr << "Usage: MainBoundingBoxFromBoundsTest "
-            << " InputSurface"
-            << std::endl;
-        return EXIT_FAILURE;
-    }
-*/
+
     vtkMimxTestErrorCallback *callback = vtkMimxTestErrorCallback::New();
        
-        double inputBounds[6] = {0,0,0,1,1,1};
+    double inputBounds[6] = {0,0,0,1,1,1};
     vtkMimxBoundingBoxFromBounds *BBFromBounds = vtkMimxBoundingBoxFromBounds::New();
     BBFromBounds->AddObserver(vtkCommand::ErrorEvent, callback, 1.0);
         BBFromBounds->SetBounds( inputBounds );
@@ -52,6 +44,7 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    BBFromBounds->Delete();
 
     return status;
 }

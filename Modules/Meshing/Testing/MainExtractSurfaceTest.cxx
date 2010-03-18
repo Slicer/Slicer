@@ -68,5 +68,9 @@ int main(int argc, char * argv [])
     callback->Delete();
     reader->Delete();
     Extract->Delete();
+    CellIdList->Delete();
+    FaceIdList->Delete();
+
+
     return status;
 }

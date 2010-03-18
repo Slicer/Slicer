@@ -50,14 +50,16 @@ int main(int argc, char * argv [])
     vtkUnstructuredGridReader *reader = vtkUnstructuredGridReader::New();
     reader->SetFileName(argv[1]);
     reader->Update();
-    vtkMimxBoundingBoxToStructuredGrids *bboxtostructgrids = vtkMimxBoundingBoxToStructuredGrids::New();
 
+
+    vtkMimxBoundingBoxToStructuredGrids *bboxtostructgrids = vtkMimxBoundingBoxToStructuredGrids::New();
     bboxtostructgrids->SetInput(reader->GetOutput());
     bboxtostructgrids->Update();
 
     vtkSTLReader *stlreader = vtkSTLReader::New();
     stlreader->SetFileName(argv[2]);
     stlreader->Update();
+
     vtkMimxMorphStructuredGrid *morphgrid = vtkMimxMorphStructuredGrid::New();
     morphgrid->SetGridStructure(reader->GetOutput());
     morphgrid->SetInput(bboxtostructgrids->GetStructuredGrid(0));
@@ -69,7 +71,11 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    bboxtostructgrids->Delete();
     reader->Delete();
+    morphgrid->Delete();
+    stlreader->Delete();
+    
 
     return status;
 }

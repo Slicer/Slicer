@@ -55,6 +55,10 @@ vtkMimxExtractSurface::vtkMimxExtractSurface()
 //----------------------------------------------------------------------------
 vtkMimxExtractSurface::~vtkMimxExtractSurface()
 {
+  if (this->CellIdList)
+    this->CellIdList->Delete();
+  if (this->FaceIdList)
+    this->FaceIdList->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -109,17 +113,17 @@ int vtkMimxExtractSurface::RequestData(
   vtkCellArray *CellArray = vtkCellArray::New();
 
   int numIds = this->CellIdList->GetNumberOfIds();
-  vtkIdList *facepointlist;
+  //vtkIdList *facepointlist;
   for (i=0; i<numIds; i++)
   {
-                facepointlist = input->GetCell(this->CellIdList->GetId(i))
+      vtkIdList *facepointlist = input->GetCell(this->CellIdList->GetId(i))
                         ->GetFace(this->FaceIdList->GetId(i))->GetPointIds();
-                CellArray->InsertNextCell(facepointlist->GetNumberOfIds());
-                for (j=0; j<facepointlist->GetNumberOfIds(); j++)
-                {
-                        Points->InsertNextPoint(input->GetPoint(facepointlist->GetId(j)));
-                        CellArray->InsertCellPoint(Points->GetNumberOfPoints()-1);
-                }
+      CellArray->InsertNextCell(facepointlist->GetNumberOfIds());
+      for (j=0; j<facepointlist->GetNumberOfIds(); j++)
+      {
+          Points->InsertNextPoint(input->GetPoint(facepointlist->GetId(j)));
+          CellArray->InsertCellPoint(Points->GetNumberOfPoints()-1);
+      }
   }
   
   vtkPolyData *PolyData = vtkPolyData::New();

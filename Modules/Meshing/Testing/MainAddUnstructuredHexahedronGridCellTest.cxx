@@ -46,23 +46,24 @@ int main(int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-    vtkUnstructuredGridReader *reader = vtkUnstructuredGridReader::New();
-    reader->SetFileName( argv[1] );
-    vtkMimxAddUnstructuredHexahedronGridCell *Add1 = 
-          vtkMimxAddUnstructuredHexahedronGridCell::New();
-    vtkIdList *idlist1 = vtkIdList::New();
-    idlist1->SetNumberOfIds(4);
-    idlist1->SetId(0,10); idlist1->SetId(1,14); 
-    idlist1->SetId(2,13); idlist1->SetId(3,11); 
-    Add1->SetInput(reader->GetOutput());
-    Add1->SetIdList(idlist1);
+  vtkUnstructuredGridReader *reader = vtkUnstructuredGridReader::New();
+  reader->SetFileName( argv[1] );
+  vtkMimxAddUnstructuredHexahedronGridCell *Add1 = 
+        vtkMimxAddUnstructuredHexahedronGridCell::New();
+  vtkIdList *idlist1 = vtkIdList::New();
+  idlist1->SetNumberOfIds(4);
+  idlist1->SetId(0,10); idlist1->SetId(1,14); 
+  idlist1->SetId(2,13); idlist1->SetId(3,11); 
+  Add1->SetInput(reader->GetOutput());
+  Add1->SetIdList(idlist1);
   Add1->Update( );
-    std::cout << "Test 1 - Number of Cells: " << Add1->GetOutput()->GetNumberOfCells() << std::endl;
+  std::cout << "Test 1 - Number of Cells: " << Add1->GetOutput()->GetNumberOfCells() << std::endl;
   if ( Add1->GetOutput()->GetNumberOfCells() != 4 )
     {
     std::cout << "Error Test 1 - Invalid number of cells " << std::endl;
     return EXIT_FAILURE;
     }
+  idlist1->Delete();
 
   vtkMimxAddUnstructuredHexahedronGridCell *Add2 = 
     vtkMimxAddUnstructuredHexahedronGridCell::New();
@@ -79,6 +80,7 @@ int main(int argc, char * argv [])
     std::cout << "Error Test 2 - Invalid number of cells " << std::endl;
     return EXIT_FAILURE;
     }
+  idlist2->Delete();
 
   vtkMimxAddUnstructuredHexahedronGridCell *Add3 = 
     vtkMimxAddUnstructuredHexahedronGridCell::New();
@@ -95,7 +97,7 @@ int main(int argc, char * argv [])
     std::cout << "Error Test 3 - Invalid number of cells " << std::endl;
     return EXIT_FAILURE;
     }
-
+  idlist3->Delete();
 
   vtkMimxAddUnstructuredHexahedronGridCell *Add4 = 
     vtkMimxAddUnstructuredHexahedronGridCell::New();
@@ -112,32 +114,12 @@ int main(int argc, char * argv [])
     std::cout << "Error Test 4 - Invalid number of cells " << std::endl;
     return EXIT_FAILURE;
     }
-
-
-  /* Turn off the Graphical User Interface testing
-  *************************************************
-    vtkRenderer* ren = vtkRenderer::New();
-    vtkDataSetMapper *mapper = vtkDataSetMapper::New();
-    mapper->SetInput(Add4->GetOutput());
-    vtkActor *actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    ren->AddActor(actor);
-    vtkRenderWindow* renwin = vtkRenderWindow::New();
-    renwin->AddRenderer(ren);
-    vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::New();
-    iren->SetRenderWindow(renwin);
-    renwin->Render();
-    iren->Start();
-    reader->Delete();
-    Add1->Delete();
-    actor->Delete();
-    mapper->Delete();
-    idlist1->Delete();
-    idlist2->Delete();
-    ren->Delete();
-    renwin->Delete();
-    iren->Delete();
-  *************************************************/
+  idlist4->Delete();
+  Add1->Delete();
+  Add2->Delete();
+  Add3->Delete();
+  Add4->Delete();
+  reader->Delete();
 
   return EXIT_SUCCESS;
 }

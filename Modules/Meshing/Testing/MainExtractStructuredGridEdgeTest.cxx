@@ -47,6 +47,7 @@ int main(int argc, char * argv [])
     vtkStructuredGridReader *reader = vtkStructuredGridReader::New();
     reader->SetFileName(argv[1]);
     reader->Update();
+
     vtkMimxExtractStructuredGridEdge *ExtractStructuredGridEdge = vtkMimxExtractStructuredGridEdge::New();
     ExtractStructuredGridEdge->SetInput(reader->GetOutput());
     ExtractStructuredGridEdge->SetEdgeNum(0);
@@ -56,6 +57,8 @@ int main(int argc, char * argv [])
     int status = callback->GetState();
 
     callback->Delete();
+    ExtractStructuredGridEdge->Delete();
+    reader->Delete();
 
     return status;
 }

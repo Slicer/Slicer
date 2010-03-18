@@ -57,6 +57,7 @@ int main(int argc, char * argv [])
 
     callback->Delete();
     reader1->Delete();
+    equivalance->Delete();
 
     return status;
 }

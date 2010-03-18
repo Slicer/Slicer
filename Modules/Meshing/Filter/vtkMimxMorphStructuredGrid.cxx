@@ -403,6 +403,9 @@ int vtkMimxMorphStructuredGrid::RequestData(
     pointsstore->Delete();
     geofil->Delete();
     ptids->Delete();
+    idlistedge->Delete();
+    idlistface->Delete();
+    gencell->Delete();
     }
 
   return 1;

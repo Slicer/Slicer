@@ -59,6 +59,13 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage, TMaskImage>
 
 }
 
+template<class TInputImage, class TMaskImage>
+MimxImageToVtkUnstructuredGridFilter<TInputImage, TMaskImage>
+::~MimxImageToVtkUnstructuredGridFilter( )
+{
+  //m_Output->Delete();
+}
+
 /** Set the Input Image */
 
 template<class TInputImage, class TMaskImage>
@@ -268,9 +275,9 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage,TMaskImage>
      }
 
    InputIndexType imageIndex = it.GetIndex( );
-   if ( ( static_cast<unsigned long>(imageIndex[0]) % m_MeshResampleSize == offset ) &&
-        ( static_cast<unsigned long>(imageIndex[1]) % m_MeshResampleSize == offset ) &&
-        ( static_cast<unsigned long>(imageIndex[2]) % m_MeshResampleSize == offset ) &&
+   if ( ( imageIndex[0] % m_MeshResampleSize == offset ) &&
+        ( imageIndex[1] % m_MeshResampleSize == offset ) &&
+        ( imageIndex[2] % m_MeshResampleSize == offset ) &&
         ( imageIndex[0] < imageSize[0] - offset ) &&
         ( imageIndex[1] < imageSize[1] - offset ) &&
         ( imageIndex[2] < imageSize[2] - offset ))
@@ -475,7 +482,12 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage,TMaskImage>
    gridFields->AddArray( elementIndexArray );
    m_Output->SetFieldData( gridFields );
    m_Output->BuildLinks();
-  
+   nodalPoints->Delete();
+   gridFields->Delete();
+   elementIndexArray->Delete();
+   nodeIndexArray->Delete();
+   materialPropertyArray->Delete();
+   hexCellArray->Delete();
 }
 
 
