@@ -95,106 +95,21 @@ void GetImageType (std::string fileName,
   componentType = imageReader->GetImageIO()->GetComponentType() ;
 }
 
-
-
-
-//Set the transformation
-template< class PixelType >
+template< class ImageType >
 typename itk::Transform< double , 3 , 3 >::Pointer
-SetTransform( parameters list ,
-              const typename itk::OrientedImage< PixelType , 3 >::Pointer &image ,
-              itk::TransformFileReader::Pointer &transformFile
-            )
+SetUpTransform( parameters list ,
+                const typename ImageType::Pointer &image ,
+                typename itk::Transform< double , 3 , 3 >::Pointer transform
+              )
 {
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
-   typedef itk::TransformFileReader::Pointer TransformReaderPointer ;
    typedef itk::AffineTransform< double , 3 > AffineTransformType ;
    typedef itk::Rigid3DTransform< double > RotationType ;
-   typedef itk::Transform< double , 3 , 3 > TransformType ;
-   typename TransformType::Pointer nonRigidFile ;
    itk::Matrix< double , 3 , 3 > transformMatrix ;
-//   TransformReaderPointer transformFile ;
-//   itk::Transform< double , 3 , 3 >ReadTransform( list , transformFile ) ;
    itk::Vector< double , 3 > vec ;
-   typename TransformType::Pointer transform ;
-   itk::Matrix< double , 4 , 4 > transformMatrix4x4 ;
-   transformMatrix4x4.SetIdentity() ;
-        //int size = list.transformMatrix.size() ;
-   if( list.transformationFile.compare( "" ) )//Get transformation matrix from command line if no file given
-   {
-      list.transformMatrix.resize( 0 ) ;
-      list.rotationPoint.resize( 0 ) ;
-          //size = transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
-      AffineTransformType::Pointer affinetransform
-            = dynamic_cast< AffineTransformType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
-      if( affinetransform )
-      {
-         list.transformType.assign( "a" ) ;
-            //std::cout<<rigid3dtransform->GetMatrix()<<std::endl;
-         for( int i = 0 ; i < 3 ; i++ )
-         {
-            for( int j = 0 ; j < 3 ; j++)
-            {
-               list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
-            }
-         }
-         for(int i = 0 ; i < 3 ; i++)
-         {
-            list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
-            list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
-         }
-      }
-      else
-      {
-         RotationType::Pointer rigid3dtransform
-               = dynamic_cast< RotationType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
-         if( rigid3dtransform )
-         {
-            list.transformType.assign( "rt" ) ;
-            for( int i = 0 ; i < 3 ; i++ )
-            {
-               for( int j = 0 ; j < 3 ; j++)
-               {
-                  list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
-               }
-            }
-            for(int i = 0 ; i < 3 ; i++)
-            {
-               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
-               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
-            }
-         }
-         else//if non-rigid
-         {
-            nonRigidFile = dynamic_cast< TransformType* >
-                  ( transformFile->GetTransformList()->back().GetPointer() ) ;
-            if( nonRigidFile )//if non rigid Transform loaded
-            {
-               list.transformType.assign( "nr" ) ;
-               transform = nonRigidFile ;
-            }
-            else//something else
-            {
-               std::cerr<< "Transformation type not yet implemented"
-                     << std::endl ;
-               return NULL ;
-            }
-         }
-      }
-      if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
-      {
-            //if problem in the number of parameters
-         if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
-         {
-            std::cerr<< "Error in the file containing the matrix transformation"
-                  << std::endl ;
-            return NULL ;
-         }
-      }
-      transformFile->GetTransformList()->pop_back() ;
-   }
    if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
    {
+      itk::Matrix< double , 4 , 4 > transformMatrix4x4 ;
+      transformMatrix4x4.SetIdentity() ;
       itk::Point< double > center ;
       itk::Vector< double > translation ;
       if( list.centeredTransform )
@@ -289,6 +204,105 @@ SetTransform( parameters list ,
 
 
 
+
+//Set the transformation
+template< class PixelType >
+typename itk::Transform< double , 3 , 3 >::Pointer
+SetTransform( parameters list ,
+              const typename itk::OrientedImage< PixelType , 3 >::Pointer &image ,
+              itk::TransformFileReader::Pointer &transformFile
+            )
+{
+   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   //typedef itk::TransformFileReader::Pointer TransformReaderPointer ;
+   typedef itk::AffineTransform< double , 3 > AffineTransformType ;
+   typedef itk::Rigid3DTransform< double > RotationType ;
+   typedef itk::Transform< double , 3 , 3 > TransformType ;
+   //typename TransformType::Pointer nonRigidFile ;
+//   TransformReaderPointer transformFile ;
+//   itk::Transform< double , 3 , 3 >ReadTransform( list , transformFile ) ;
+
+   typename TransformType::Pointer transform ;
+
+        //int size = list.transformMatrix.size() ;
+   if( list.transformationFile.compare( "" ) )//Get transformation matrix from command line if no file given
+   {
+      list.transformMatrix.resize( 0 ) ;
+      list.rotationPoint.resize( 0 ) ;
+          //size = transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
+      AffineTransformType::Pointer affinetransform
+            = dynamic_cast< AffineTransformType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
+      if( affinetransform )
+      {
+         list.transformType.assign( "a" ) ;
+            //std::cout<<rigid3dtransform->GetMatrix()<<std::endl;
+         for( int i = 0 ; i < 3 ; i++ )
+         {
+            for( int j = 0 ; j < 3 ; j++)
+            {
+               list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
+            }
+         }
+         for(int i = 0 ; i < 3 ; i++)
+         {
+            list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
+            list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
+         }
+      }
+      else
+      {
+         RotationType::Pointer rigid3dtransform
+               = dynamic_cast< RotationType* > ( transformFile->GetTransformList()->back().GetPointer() ) ;
+         if( rigid3dtransform )
+         {
+            list.transformType.assign( "rt" ) ;
+            for( int i = 0 ; i < 3 ; i++ )
+            {
+               for( int j = 0 ; j < 3 ; j++)
+               {
+                  list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
+               }
+            }
+            for(int i = 0 ; i < 3 ; i++)
+            {
+               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
+               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
+            }
+         }
+         else//if non-rigid
+         {
+            transform = dynamic_cast< TransformType* >
+                  ( transformFile->GetTransformList()->back().GetPointer() ) ;
+            if( transform )//if non rigid Transform loaded
+            {
+               list.transformType.assign( "nr" ) ;
+//               transform = nonRigidFile ;
+            }
+            else//something else
+            {
+               std::cerr<< "Transformation type not yet implemented"
+                     << std::endl ;
+               return NULL ;
+            }
+         }
+      }
+      if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
+      {
+            //if problem in the number of parameters
+         if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
+         {
+            std::cerr<< "Error in the file containing the matrix transformation"
+                  << std::endl ;
+            return NULL ;
+         }
+      }
+      transformFile->GetTransformList()->pop_back() ;
+   }
+   return SetUpTransform< ImageType >( list, image , transform ) ;
+}
+
+
+
 //Read the transform file and return the number of non-rigid transform.
 //If the transform file contain a transform that the program does not
 //handle, the function returns -1
@@ -371,7 +385,7 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
 
 template< class PixelType >
 itk::Transform< double , 3 , 3 >::Pointer
-SetUpTransform( parameters list ,
+SetAllTransform( parameters list ,
                 typename itk::ResampleImageFilter< itk::OrientedImage< PixelType , 3 > ,
                                                    itk::OrientedImage< PixelType , 3 > >::Pointer resampler ,
                 typename itk::OrientedImage< PixelType , 3 >::Pointer image )
@@ -995,7 +1009,7 @@ template< class PixelType > int Rotate( parameters list )
    typename ResampleType::Pointer resample = ResampleType::New() ;
    SetOutputParameters< PixelType >( list , resample , vectorImage[ 0 ] ) ;
    TransformType::Pointer transform ;
-   transform = SetUpTransform< PixelType >( list , resample , vectorImage[ 0 ] ) ;
+   transform = SetAllTransform< PixelType >( list , resample , vectorImage[ 0 ] ) ;
    if( !transform )
    {
       return EXIT_FAILURE ;
