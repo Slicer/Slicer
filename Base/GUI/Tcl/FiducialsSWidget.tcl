@@ -90,6 +90,7 @@ itcl::body FiducialsSWidget::destructor {} {
       $fidListNode RemoveObserver $tag
     }
   }
+  set _fiducialListObserverTagPairs ""
 }
 
 
@@ -204,9 +205,10 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     foreach pair $_fiducialListObserverTagPairs {
       foreach {fidListNode tag} $pair {}
       if { [info command $fidListNode] != "" } {
-        after idle "::SWidget::ProtectedCallback $fidListNode RemoveObserver $tag"
+        $fidListNode RemoveObserver $tag
       } 
     }
+    set _fiducialListObserverTagPairs ""
   }
 
   $this requestUpdate
