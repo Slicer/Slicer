@@ -293,7 +293,7 @@ ComputeTransformMatrix( const parameters &list ,
     ras.SetIdentity() ;
     ras[ 0 ][ 0 ] = -1 ;
     ras[ 1 ][ 1 ] = -1 ;
-    transformMatrix4x4 = ras * transformMatrix4x4 * ras ;            
+    transformMatrix4x4 = ras * transformMatrix4x4 * ras ;
   }
   return transformMatrix4x4 ;
 }
@@ -369,12 +369,12 @@ SetUpTransform( const parameters &list ,
 //Set the transformation
 template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
-SetTransform( parameters list , 
+SetTransform( parameters &list ,
               const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
                 ::Pointer &image ,
               itk::TransformFileReader::Pointer &transformFile
             )
-{    
+{
   typedef itk::DiffusionTensor3DTransform< PixelType > TransformType ;
   typedef itk::DiffusionTensor3DNonRigidTransform< PixelType >
                NonRigidTransformType ;
@@ -481,7 +481,7 @@ SetTransform( parameters list ,
 //If the transform file contain a transform that the program does not
 //handle, the function returns -1
 template< class PixelType >
-int ReadTransform( const parameters &list ,
+int ReadTransform( parameters &list ,
                    const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer &image ,
                    itk::TransformFileReader::Pointer &transformFile
                  )
