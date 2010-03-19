@@ -1509,11 +1509,11 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         set validGeometry 1
         foreach tag {POSITION ORIENTATION} {
           set key [set $tag],value
-          puts "checking refHeader($key)"
           array set ::refheader [array get refHeader]
           if { [lsearch [array names refHeader] $key] == -1 } {
-            $this errorDialog "Warning!  The reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
+            set tree($patient,$study,$series,warning) "reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
             set validGeometry 0
+            puts "invalid geometry for $patient, $study, $series"
             break
           }
         }
