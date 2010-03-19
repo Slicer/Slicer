@@ -51,6 +51,7 @@ set(SlicerWelcome_SRCS
   vtkSlicerWelcomeLogic.cxx
   vtkSlicerWelcomeGUI.cxx
   vtkSlicerWelcomeIcons.cxx
+  vtkMRMLSlicerWelcomeNode.cxx
   )
 
 # --------------------------------------------------------------------------

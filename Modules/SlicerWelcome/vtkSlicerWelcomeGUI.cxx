@@ -60,6 +60,8 @@ vtkSlicerWelcomeGUI* vtkSlicerWelcomeGUI::New()
 vtkSlicerWelcomeGUI::vtkSlicerWelcomeGUI()
 {
   this->Logic = NULL;
+  this->WelcomeNode = NULL;
+  
   this->SlicerWelcomeIcons = NULL;
   this->WelcomeFrame = NULL;
   this->OverviewFrame = NULL;
@@ -74,7 +76,6 @@ vtkSlicerWelcomeGUI::vtkSlicerWelcomeGUI()
   this->MouseModeFrame = NULL;
   this->ViewAndLayoutFrame = NULL;
   this->StartWithWelcome = NULL;
-  this->SetGUIWidth(-1);
   this->Observed = 0;
 }
 
@@ -83,7 +84,6 @@ vtkSlicerWelcomeGUI::~vtkSlicerWelcomeGUI()
 {
 //    this->RemoveMRMLNodeObservers ( );
 //    this->RemoveLogicObservers ( );
-  this->SetGUIWidth(-1);
     
   if ( this->StartWithWelcome )
     {
@@ -170,43 +170,106 @@ vtkSlicerWelcomeGUI::~vtkSlicerWelcomeGUI()
     }
   
   this->Observed = 0;
-  this->Logic = NULL;
-//    vtkSetAndObserveMRMLNodeMacro( this->SlicerWelcomeNode, NULL );
+  if ( this->Logic )
+    {
+    this->Logic = NULL;
+    }
+  if ( this->WelcomeNode )
+    {
+    this->SetWelcomeNode ( NULL );
+    }
 }
+
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::Enter()
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  if ( app )
-    {
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
-    if ( geom )
-      {
-      vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-      if ( appGUI )
-        {
-        if ( appGUI->GetMainSlicerWindow() )
-          {
-//          this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
-          appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( (int)(floor(geom->GetDefaultGUIPanelWidth() * 1.75)) );
-          }
-        }
-      }
 
-    if (this->Built == false )
+  //--- get or create node
+  vtkMRMLSlicerWelcomeNode *node = NULL;
+  node = this->GetWelcomeNode();
+  if ( node == NULL )
+    {
+    node = vtkMRMLSlicerWelcomeNode::New();
+    this->SetWelcomeNode ( node );
+    node->Delete();
+    }
+
+  if (this->GetWelcomeNode()  == NULL )
+    {
+    vtkErrorMacro ( "Enter: got NULL Welcome Node." );
+    return;
+    }
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  if ( app== NULL )
+    {
+    vtkErrorMacro ( "Enter: NULL Application -- can not raise welcome module." );
+    return;
+    }
+  vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+  if ( geom == NULL )
+    {
+    vtkErrorMacro ( "Enter: NULL geometry -- can not raise welcome module." );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  if ( ! appGUI )
+    {
+    vtkErrorMacro ( "Enter: NULL applicationGUI -- can not raise welcome module." );
+    return;
+    }
+
+  if ( !appGUI->GetGUILayoutNode() )
+    {
+    vtkErrorMacro ( "Enter: NULL LayoutNode" );
+    return;
+    }
+  if ( !appGUI->GetMainSlicerWindow() )
+    {
+    vtkErrorMacro ( "Enter: NULL Main Slicer Window.");
+    return;
+    }
+
+  int w;
+  //--- set the size of this GUI panel.
+  if ( this->Visited == false )
+    {
+    //--- if first time visiting welcome module,
+    //--- display GUI panel wider than default,
+    //--- and save both widths in node.
+    w = geom->GetDefaultGUIPanelWidth();
+    this->GetWelcomeNode()->SetGUIWidth (w);
+    w = (int)(floor(w * 1.75));
+    this->GetWelcomeNode()->SetWelcomeGUIWidth (w);
+    appGUI->GetGUILayoutNode()->SetMainPanelSize( w );
+    appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( w );
+    }
+  else
+    {
+    //--- if user has visited before, then change
+    //--- the GUI panel size to be what it was
+    //--- last time user exited module.
+    w = this->GetWelcomeNode()->GetWelcomeGUIWidth();
+    appGUI->GetGUILayoutNode()->SetMainPanelSize( w );
+    appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( w );
+    }
+  
+  this->Visited = true;  
+  if (this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+
+    //--- hook up gui
+    this->AddGUIObservers();
+    this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
+    }
+  else
+    {
+    if ( !this->Observed )
       {
-      this->BuildGUI();
-      this->Built = true;
       this->AddGUIObservers();
-      this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
-      }
-    else
-      {
-      if ( !this->Observed )
-        {
-        this->AddGUIObservers();
-        }
       }
     }
 }
@@ -216,34 +279,54 @@ void vtkSlicerWelcomeGUI::Enter()
 void vtkSlicerWelcomeGUI::Exit ( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  if ( app )
+  if ( app == NULL )
     {
+    vtkErrorMacro ( "Exit: Got NULL application." );
+    return;
+    }
+  vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+  if ( geom == NULL )
+    {
+    vtkErrorMacro ( "Enter: NULL geometry -- can not raise welcome module." );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  if ( appGUI == NULL )
+    {
+    vtkErrorMacro ( "Exit: Got NULL application GUI." );
+    return;
+    }
+  if ( appGUI->GetMainSlicerWindow() == NULL )
+    {
+    vtkErrorMacro ( "Exit: Got NULL application window.");
+    return;  
+    }
+  if ( appGUI->GetGUILayoutNode() == NULL )
+    {
+    vtkErrorMacro ( "Exit: Got NULL layout node.");
+    return;  
+    }
+  if ( this->GetWelcomeNode() == NULL )
+    {
+    vtkErrorMacro ( "Exit: Got NULL welcome node.");
+    return;      
+    }
 
-    if ( this->Built )
-      {
-      this->RemoveGUIObservers();
-      }
+  int w;
+  
+  //--- restore gui panel to default size, if bigger than usual.
+  w = appGUI->GetGUILayoutNode()->GetMainPanelSize( );
+  if ( w > geom->GetDefaultGUIPanelWidth() )
+    {
+    this->GetWelcomeNode()->SetWelcomeGUIWidth ( w );
+    w = this->GetWelcomeNode()->GetGUIWidth();
+    appGUI->GetGUILayoutNode()->SetMainPanelSize( w );
+    appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( w );
+    }
 
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
-    if ( geom )
-      {
-      vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-      if ( appGUI )
-        {
-        if ( appGUI->GetMainSlicerWindow() )
-          {
-          if ( this->GUIWidth < 0 )
-            {
-            appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (geom->GetDefaultGUIPanelWidth() );
-            }
-          else
-            {
-            // restore.
-            appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (this->GUIWidth );
-            }
-          }
-        }
-      }
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
     }
 }
 

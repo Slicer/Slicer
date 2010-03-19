@@ -11,6 +11,7 @@
 #include "vtkSlicerWelcomeLogic.h"
 #include "vtkSlicerWelcomeIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkMRMLSlicerWelcomeNode.h"
 #include "vtkIntArray.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWLabel.h"
@@ -39,14 +40,15 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   };
 
    // Description: Get/Set MRML node
+  vtkGetObjectMacro ( WelcomeNode, vtkMRMLSlicerWelcomeNode );
+  vtkSetObjectMacro ( WelcomeNode, vtkMRMLSlicerWelcomeNode );
+
+   // Description: Get/Set Module logic
   vtkGetObjectMacro (Logic, vtkSlicerWelcomeLogic);
   vtkSetObjectMacro (Logic, vtkSlicerWelcomeLogic);
 
   vtkGetObjectMacro ( SlicerWelcomeIcons, vtkSlicerWelcomeIcons );
   vtkSetObjectMacro ( SlicerWelcomeIcons, vtkSlicerWelcomeIcons );
-  
-  vtkGetMacro (GUIWidth, int );
-  vtkSetMacro (GUIWidth, int );
   
   vtkGetObjectMacro (StartWithWelcome, vtkKWCheckButtonWithLabel);
   vtkSetObjectMacro (StartWithWelcome, vtkKWCheckButtonWithLabel);
@@ -108,7 +110,7 @@ protected:
   void SetStatusText( const char *txt);
   vtkSlicerWelcomeIcons *SlicerWelcomeIcons;
   vtkSlicerWelcomeLogic *Logic;
-  int GUIWidth;
+  vtkMRMLSlicerWelcomeNode *WelcomeNode;
 
   vtkSlicerModuleCollapsibleFrame *WelcomeFrame;
   vtkSlicerModuleCollapsibleFrame *OverviewFrame;
