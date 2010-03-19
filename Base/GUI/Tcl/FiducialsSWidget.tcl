@@ -31,6 +31,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     
     # a list of seeds - the callback info includes the mapping to list and index
     variable _seedSWidgets ""
+    variable _storedSeedSWidgets ""
     variable _fiducialListObserverTagPairs ""
     variable _timeOfLastKeyEvent 0
 
@@ -219,16 +220,14 @@ itcl::body FiducialsSWidget::processUpdate {} {
   chain
 
   #
-  # first, remove the old seeds
-  # - for reasons unknown as yet, deleting the object from within the 
-  #   event handler causes a hang -- so set it up to be deleted later
+  # first - disable old seeds
+  # - put them in a list for reuse
   #
   foreach seed $_seedSWidgets {
     $seed place -10000 -10000 -10000
-    after idle "::SWidget::ProtectedDelete ::FiducialsSWidget::$seed;"
-    [$sliceGUI GetSliceViewer] RequestRender
+    lappend _storedSeedSWidgets $seed
+    $seed configure -visibility 0
   }
-  set _seedSWidgets ""
 
 
   #
@@ -284,8 +283,20 @@ itcl::body FiducialsSWidget::processUpdate {} {
         foreach {r a s t} [$rasToRAS MultiplyPoint $r $a $s 1] {}
         set xyz [$this rasToXYZ "$r $a $s"]
         foreach {x y z} $xyz {}
+
+        # id we are within 0.5mm of the slice
         if { $z >= -0.5 && $z < [expr 0.5+[lindex [$node GetDimensions] 2]-1]} {
-          set seedSWidget [SeedSWidget #auto $sliceGUI]
+
+          # get a stored seed widget or create a new one
+          if { [llength $_storedSeedSWidgets] > 0 } {
+            set seedSWidget [lindex $_storedSeedSWidgets 0]
+            set _storedSeedSWidgets [lrange $_storedSeedSWidgets 1 end]
+            $seedSWidget configure -visibility 1
+          } else {
+            set seedSWidget [SeedSWidget #auto $sliceGUI]
+            lappend _seedSWidgets $seedSWidget
+          }
+
           $seedSWidget place $r $a $s
           $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
           $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $fidListNode $f"
@@ -301,7 +312,6 @@ itcl::body FiducialsSWidget::processUpdate {} {
             $seedSWidget configure -selected 1
           }
           $seedSWidget configure -visibility [$fidListNode GetNthFiducialVisibility $f]
-          lappend _seedSWidgets $seedSWidget
         }
       }
     }
