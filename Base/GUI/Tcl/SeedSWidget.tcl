@@ -40,6 +40,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable opacity "1"
     public variable selected "0"
     public variable visibility "1"
+    public variable textVisibility "1"
     public variable text ""
     public variable textScale "1"
     public variable inactive "0"
@@ -165,6 +166,11 @@ itcl::configbody SeedSWidget::visibility {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
+itcl::configbody SeedSWidget::textVisibility {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
 itcl::configbody SeedSWidget::text {
   $o(textMapper) SetInput $text
   [$sliceGUI GetSliceViewer] RequestRender
@@ -249,6 +255,10 @@ itcl::body SeedSWidget::highlight { } {
 
   $o(actor) SetVisibility $visibility
   $o(textActor) SetVisibility $visibility
+  if { $visibility } {
+    # if fiducial is visible, then control text independently
+    $o(textActor) SetVisibility $textVisibility
+  }
 
   if { $selected } {
     eval $property SetColor $selectedColor
@@ -317,6 +327,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
       switch $event {
         "LeftButtonPressEvent" {
           set _actionState "dragging"
+          SeedSWidget::SetAllTextVisibility 0
         }
         "MouseMoveEvent" {
           switch $_actionState {
@@ -338,6 +349,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           $sliceGUI SetGrabID ""
           set _description ""
           $_renderWidget CornerAnnotationVisibilityOn
+          SeedSWidget::SetAllTextVisibility 1
           eval $movedCommand
         }
       }
@@ -347,6 +359,13 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
   $this highlight
   $this positionActors
   [$sliceGUI GetSliceViewer] RequestRender
+}
+
+proc SeedSWidget::SetAllTextVisibility { onOff } {
+
+  foreach ssw [itcl::find objects -class SeedSWidget] {
+    $ssw configure -textVisibility $onOff
+  }
 }
 
 proc SeedSWidget::ManyWidgetTest { sliceGUI } {
