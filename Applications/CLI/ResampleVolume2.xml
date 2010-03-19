@@ -48,7 +48,8 @@
   </parameters>
 
   <parameters advanced="true">
-     <label>Deformation Field (last transform applied)</label>
+     <label>Deformation Field</label>
+     <description>The deformation field is the last transform, the first applied since transforms are backward</description>
      <string-enumeration>
         <name>typeOfField</name>
         <longflag>--hfieldtype</longflag>
@@ -64,7 +65,7 @@
         <channel>input</channel>
         <flag>-H</flag>
         <longflag>--defField</longflag>
-        <description>File containing the deformation field (the deformation field is the last transform)</description>
+        <description>File containing the deformation field</description>
         <default></default>
      </image>
   </parameters>
