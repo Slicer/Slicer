@@ -177,6 +177,14 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           [$sliceGUI GetSliceViewer] RequestRender
           set window [format %.1f $window]
           set level [format %.1f $level]
+          # TODO: this is a hack - make up for the GUI not observing mrml by explicitly
+          # telling it to update from the changes we made to the mrml node
+          if { [info exists ::slicer3::VolumesGUI] } {
+            set widget [$::slicer3::VolumesGUI GetVolumeDisplayWidget]
+            if { $widget != "" } {
+              [$::slicer3::VolumesGUI GetVolumeDisplayWidget] UpdateWidgetFromMRML
+            }
+          }
           $this statusText "Window/Level: $window/$level for [$_layers(background,node) GetName]"
         }
       }
