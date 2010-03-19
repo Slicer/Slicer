@@ -610,6 +610,10 @@ itcl::body LoadVolume::apply { } {
     set options($opt) [set $opt]
   }
 
+  if { [llength $_dicomSeriesFileList] == 1 } {
+    set singleFile 1
+  }
+
   set loadingOptions [expr $label * 1 + $centered * 2 + $singleFile * 4 + $orient * 16]
 
   set fileTable [$o(browser) GetFileListTable]
