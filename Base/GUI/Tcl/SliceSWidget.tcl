@@ -567,11 +567,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
           if { $modeString == "Place" || $modifier } {
             FiducialsSWidget::AddFiducial $r $a $s
+            $sliceGUI SetGrabID $this
+            $sliceGUI SetGUICommandAbortFlag 1
           }
         }
       }
     }
     "LeftButtonReleaseEvent" { 
+      if { [$sliceGUI GetGrabID] == $this } {
+        $sliceGUI SetGrabID ""
+      }
     }
     "MiddleButtonPressEvent" {
       $_renderWidget CornerAnnotationVisibilityOff
