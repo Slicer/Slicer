@@ -99,7 +99,7 @@ void GetImageType( std::string fileName ,
 //Center or/and invert the affine/rigid transform if this option was selected
 template< class ImageType >
 typename itk::Transform< double , 3 , 3 >::Pointer
-SetUpTransform( parameters list ,
+SetUpTransform( parameters &list ,
                 const typename ImageType::Pointer &image ,
                 typename itk::Transform< double , 3 , 3 >::Pointer transform
               )
@@ -237,7 +237,7 @@ SetListFromTransform( const typename itk::MatrixOffsetTransformBase< PixelType ,
 //Set the transformation
 template< class ImageType >
 typename itk::Transform< double , 3 , 3 >::Pointer
-SetTransform( parameters list ,
+SetTransform( parameters &list ,
               const typename ImageType::Pointer &image ,
               itk::TransformFileReader::Pointer &transformFile
             )
@@ -337,7 +337,7 @@ SetTransform( parameters list ,
 //If the transform file contain a transform that the program does not
 //handle, the function returns -1
 template< class ImageType >
-int ReadTransform( const parameters &list ,
+int ReadTransform( parameters &list ,
                    const typename ImageType::Pointer &image ,
                    itk::TransformFileReader::Pointer &transformFile
                  )
@@ -416,7 +416,7 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
 //Loads the transforms and merge them into only one transform
 template< class ImageType >
 itk::Transform< double , 3 , 3 >::Pointer
-SetAllTransform( parameters list ,
+SetAllTransform( parameters &list ,
                  typename itk::ResampleImageFilter< ImageType , ImageType >::Pointer resampler ,
                  typename ImageType::Pointer image
                )
@@ -966,7 +966,7 @@ int CheckDWMRI( itk::MetaDataDictionary &dico ,
 }
 
 
-template< class ImageType > void RASLPS( typename ImageType::Pointer image)
+template< class ImageType > void RASLPS( typename ImageType::Pointer image )
 {
   typename ImageType::PointType m_Origin ;
   typename ImageType::DirectionType m_Direction ;
@@ -1067,7 +1067,7 @@ SetInterpolator( const parameters &list )
 }
 
 
-template< class PixelType > int Rotate( parameters list )
+template< class PixelType > int Rotate( parameters &list )
 {
    typedef itk::OrientedImage< PixelType , 3 > ImageType ;
    typedef itk::ImageFileReader< ImageType > FileReaderType ;
