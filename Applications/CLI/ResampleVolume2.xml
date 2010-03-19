@@ -58,9 +58,10 @@
         <element>h-Field</element>
         <default>h-Field</default>
      </string-enumeration>
-     <image type="scalar">
+     <image type="vector">
         <name>deffield</name>
         <label>Deformation Field Volume</label>
+        <channel>input</channel>
         <flag>-H</flag>
         <longflag>--defField</longflag>
         <description>File containing the deformation field (the deformation field is the last transform)</description>
@@ -138,7 +139,7 @@
       <name>centeredTransform</name>
       <flag>-c</flag>
       <longflag>--centered_transform</longflag>
-      <description>Set the center of the transformation to the middle of the image</description>
+      <description>Set the center of the transformation to the center of the input image</description>
       <label>Centered Transform</label>
       <default>false</default>
     </boolean>
