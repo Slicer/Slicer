@@ -132,14 +132,26 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
   switch $event {
     "LeftButtonPressEvent" {
       if { [$sliceGUI GetActiveLeftButtonTool] == "" } {
-        set _actionState "dragging"
-        $sliceGUI SetGrabID $this
-        set _startPosition [$_interactor GetEventPosition]
-        set _startWindow [$displayNode GetWindow]
-        set _startLevel [$displayNode GetLevel]
-        $displayNode SetAutoWindowLevel 0
-        $::slicer3::MRMLScene SaveStateForUndo $displayNode
-        $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
+        set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+        if { $interactionNode != "" } {
+          set mode [$interactionNode GetCurrentInteractionMode]
+          set modeString [$interactionNode GetInteractionModeAsString $mode]
+          # TODO: there will be other modes besides place where the window/level
+          # should be turned off - for now check for Place mode to avoid changing
+          # window/level while placing fiducials
+          if { $modeString != "Place" } {
+            set _actionState "dragging"
+            $sliceGUI SetGrabID $this
+            set _startPosition [$_interactor GetEventPosition]
+            set _startWindow [$displayNode GetWindow]
+            set _startLevel [$displayNode GetLevel]
+            $displayNode SetAutoWindowLevel 0
+            $::slicer3::MRMLScene SaveStateForUndo $displayNode
+            $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
+          } else {
+            set _actionState ""
+          }
+        }
       }
     }
     "MouseMoveEvent" {
