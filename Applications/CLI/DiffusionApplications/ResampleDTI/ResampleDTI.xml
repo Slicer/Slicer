@@ -48,7 +48,8 @@ of the image at non-grid positions.
 </parameters>
 
 <parameters advanced="true">
-    <label>Deformation Field (last transform applied)</label>
+    <label>Deformation Field</label>
+    <description>The deformation field is the last transform, the first applied since transforms are backward</description>
     <string-enumeration>
       <name>typeOfField</name>
       <longflag>--hfieldtype</longflag>
@@ -58,14 +59,15 @@ of the image at non-grid positions.
       <element>h-Field</element>
       <default>h-Field</default>
     </string-enumeration>
-    <image type="scalar">
-      <name>deffield</name>
-      <label>Deformation Field Volume</label>
-      <flag>-H</flag>
-      <longflag>--defField</longflag>
-      <description>File containing the deformation field (the deformation field is the last transform)</description>
-      <default></default>
-    </image>
+     <image type="vector">
+        <name>deffield</name>
+        <label>Deformation Field Volume</label>
+        <channel>input</channel>
+        <flag>-H</flag>
+        <longflag>--defField</longflag>
+        <description>File containing the deformation field</description>
+        <default></default>
+     </image>
 </parameters>
 
 <parameters advanced="true">
@@ -157,7 +159,7 @@ of the image at non-grid positions.
       <name>centeredTransform</name>
       <flag>-c</flag>
       <longflag>--centered_transform</longflag>
-      <description>Set the center of the transformation to the middle of the image</description>
+      <description>Set the center of the transformation to the center of the input image</description>
       <label>Centered Transform</label>
       <default>false</default>
     </boolean>
