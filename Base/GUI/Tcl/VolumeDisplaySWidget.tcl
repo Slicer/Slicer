@@ -150,9 +150,12 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           foreach {startx starty} $_startPosition {currx curry} $_currentPosition {}
           set offx [expr $currx - $startx]
           set offy [expr $curry - $starty]
-
-          set window [expr $_startWindow + $offx]
-          set level [expr $_startLevel + $offy]
+          set range [[$_layers(background,node) GetImageData] GetScalarRange]
+          foreach {rangelo rangehi} $range {}
+          # each pixel should be 1/500 of the scalar range
+          set gain [expr ($rangehi - $rangelo) / 500.]
+          set window [expr $_startWindow + ($gain * $offx)]
+          set level [expr $_startLevel + ($gain * $offy)]
           if { $window < 0 } { set window 0 }
           $displayNode SetDisableModifiedEvent 1
           $displayNode SetWindow $window
