@@ -326,8 +326,11 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGUICommandAbortFlag 1
       switch $event {
         "LeftButtonPressEvent" {
-          set _actionState "dragging"
-          SeedSWidget::SetAllTextVisibility 0
+          if { $visibility } {
+            # only respond to mouse clicks if visible
+            set _actionState "dragging"
+            SeedSWidget::SetAllTextVisibility 0
+          }
         }
         "MouseMoveEvent" {
           switch $_actionState {
