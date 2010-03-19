@@ -79,7 +79,6 @@ SET(modules
   ExtractSubvolumeROI
   CollectFiducials 
   PETCTFusion
-  CollectFiducials
   IGTToolSelector
   )
 
