@@ -1310,6 +1310,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
   set PATIENT "0010|0010"
   set STUDY "0008|1030"
   set SERIES "0008|103e"
+  set SERIESNUMBER "0020|0011"
 
   set files [glob -nocomplain $directoryName/*]
   set subdirs ""
@@ -1363,7 +1364,12 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
       } else {
         set display$key $header($tag,value) ;# normal tag value
         set $key [$this safeNodeName $header($tag,value)] ;# escaped version
-        
+      }
+
+      if { $key == "series" && [info exists header($SERIESNUMBER,value)] } {
+        set seriesNumber $header($SERIESNUMBER,value)
+        set series "$seriesNumber-$series"
+        set displayseries "$seriesNumber-$displayseries"
       }
     }
 
@@ -1513,7 +1519,6 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
           if { [lsearch [array names refHeader] $key] == -1 } {
             set tree($patient,$study,$series,warning) "reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
             set validGeometry 0
-            puts "invalid geometry for $patient, $study, $series"
             break
           }
         }
