@@ -1,4 +1,13 @@
 
+comment = '''
+This example can be loaded into a running slicer from the python console using
+a command somthing like:
+
+  execfile("../Slicer3/Base/GUI/Testing/NodeSelector.py")
+
+The resulting node selector can be used to see and manipulate fiducial list nodes.
+'''
+
 
 import Slicer
 
@@ -12,7 +21,7 @@ t.Create()
 selector = Slicer.slicer.vtkSlicerNodeSelectorWidget()
 selector.SetParent( t )
 selector.Create()
-selector.SetNodeClass('vtkMRMLFiducialListNode', 0, 0, 0)
+selector.SetNodeClass('vtkMRMLFiducialListNode', "", "", "")
 selector.SetMRMLScene( Slicer.slicer.MRMLScene )
 selector.UpdateMenu()
 selector.SetLabelText('Fiducials')
