@@ -37,7 +37,23 @@ public:
   vtkGetMacro (CurrentInteractionMode, int );
   void SetCurrentInteractionMode ( int mode );
   vtkGetMacro (LastInteractionMode, int );
-  vtkSetMacro (LastInteractionMode, int );
+  void SetLastInteractionMode (int mode );
+  
+  vtkGetMacro (PickModePersistence, int );
+  vtkGetMacro (PlaceModePersistence, int);
+  vtkGetMacro (TransformModePersistence, int );
+  
+  // Description:
+  // Convenience methods for setting modes
+  // without triggering events on the node.
+  // These methods assist in distinguishing between
+  // persistent and transient mouse modes.
+  // TransformMode is persistent by default,
+  // and Pick or Place are transient by default.
+  virtual void SetPickModePersistence ( int val );
+  virtual void SetPlaceModePersistence (int val );
+  virtual void SetTransformModePersistence ( int val );
+  virtual void NormalizeAllMouseModes();
   
   //BTX
   /// mouse modes
@@ -50,18 +66,28 @@ public:
       ViewPan,
       ViewZoom,
       ViewRotate,
-      ViewTransform
+      ViewTransform,
     };
   /// events
   enum
     {
-      InteractionModeChangedEvent = 19001
+      InteractionModeChangedEvent = 19001,
+      TransientTimeoutEvent,
     };
   //ETX 
+
+  //BTX
+  int PickModePersistence;
+  int PlaceModePersistence;
+  int TransformModePersistence;
+  //ETX
 
   /// 
   /// Return a text string describing the mode
   const char *GetInteractionModeAsString(int mode);
+  ///
+  /// Return the mode given a text string.
+  int GetInteractionModeByString ( const char * modeString );
 
 protected:
   vtkMRMLInteractionNode();

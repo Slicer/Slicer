@@ -43,11 +43,103 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 
   this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
+  this->PickModePersistence = 0;
+  this->PlaceModePersistence = 0;
+  this->TransformModePersistence = 1;
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode::~vtkMRMLInteractionNode()
 {
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )
+{
+  if ( !strcmp (modeString, "Pick" ))
+    {
+    return ( vtkMRMLInteractionNode::PickManipulate);
+    }
+  else if ( !strcmp (modeString, "PickManipulate" ))
+    {
+    return ( vtkMRMLInteractionNode::PickManipulate);
+    }
+  else if ( !strcmp (modeString, "Place" ))
+    {
+    return ( vtkMRMLInteractionNode::Place);
+    }
+  else if ( !strcmp (modeString, "Put" ))
+    {
+    return ( vtkMRMLInteractionNode::Place );
+    }
+  else if ( !strcmp (modeString, "ViewTransform" ))
+    {
+    return ( vtkMRMLInteractionNode::ViewTransform);
+    }
+  else if ( !strcmp (modeString, "Transform" ))
+    {
+    return ( vtkMRMLInteractionNode::ViewTransform);
+    }
+  else if ( !strcmp (modeString, "SelectRegion" ))
+    {
+    return ( vtkMRMLInteractionNode::SelectRegion);
+    }
+  else if ( !strcmp (modeString, "LassoRegion" ))
+    {
+    return ( vtkMRMLInteractionNode::LassoRegion);
+    }
+  else if ( !strcmp (modeString, "ViewPan" ))
+    {
+    return ( vtkMRMLInteractionNode::ViewPan);
+    }
+  else if ( !strcmp (modeString, "ViewRotate" ))
+    {
+    return ( vtkMRMLInteractionNode::ViewRotate);
+    }
+  else if ( !strcmp (modeString, "ViewZoom" ))
+    {
+    return ( vtkMRMLInteractionNode::ViewZoom);
+    }
+  else
+    {
+    return (-1);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::NormalizeAllMouseModes()
+{
+  this->PickModePersistence = 0;
+  this->PlaceModePersistence = 0;
+  this->TransformModePersistence = 1;
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetPickModePersistence ( int val )
+{
+  this->PickModePersistence = val;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetPlaceModePersistence ( int val )
+{
+  this->PlaceModePersistence = val;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetTransformModePersistence ( int val )
+{
+  this->TransformModePersistence = val;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetLastInteractionMode ( int mode )
+{
+    this->LastInteractionMode = mode;
 }
 
 
@@ -92,6 +184,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       break;
     }
 }
+
 
 
 
@@ -329,6 +422,5 @@ const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
     {
     return "ViewTransform";
     }
-  
   return "(unknown)";
 }
