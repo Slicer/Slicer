@@ -25,7 +25,7 @@ vtkCxxRevisionMacro(vtkLiverAblationOptimizationStep, "$Revision: 1.4 $");
 //----------------------------------------------------------------------------
 vtkLiverAblationOptimizationStep::vtkLiverAblationOptimizationStep()
 {
-  this->SetName("3/3. Optimization");
+  this->SetName("4/4. Optimization");
   this->SetDescription("Run the optimization program.");
 
   this->RunFrame = NULL;

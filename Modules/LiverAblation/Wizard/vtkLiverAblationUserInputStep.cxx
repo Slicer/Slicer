@@ -28,7 +28,7 @@ vtkCxxRevisionMacro(vtkLiverAblationUserInputStep, "$Revision: 1.4 $");
 //----------------------------------------------------------------------------
 vtkLiverAblationUserInputStep::vtkLiverAblationUserInputStep()
 {
-  this->SetName("2/3. User input");
+  this->SetName("3/4. User input");
   this->SetDescription("Collect user information.");
 
   this->ProbeFrame = NULL;

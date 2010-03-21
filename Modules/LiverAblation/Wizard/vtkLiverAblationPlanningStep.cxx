@@ -1,4 +1,4 @@
-#include "vtkLiverAblationLoadingPreoperativeDataStep.h"
+#include "vtkLiverAblationPlanningStep.h"
 
 #include "vtkLiverAblationGUI.h"
 #include "vtkLiverAblationMRMLManager.h"
@@ -18,16 +18,14 @@
 #include "vtkSlicerApplication.h"
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkLiverAblationLoadingPreoperativeDataStep);
-vtkCxxRevisionMacro(vtkLiverAblationLoadingPreoperativeDataStep, "$Revision: 1.8 $");
+vtkStandardNewMacro(vtkLiverAblationPlanningStep);
+vtkCxxRevisionMacro(vtkLiverAblationPlanningStep, "$Revision: 1.8 $");
 
 //----------------------------------------------------------------------------
-vtkLiverAblationLoadingPreoperativeDataStep::vtkLiverAblationLoadingPreoperativeDataStep()
+vtkLiverAblationPlanningStep::vtkLiverAblationPlanningStep()
 {
-  this->SetName("1/4. Load Preoperative Images");
-//  this->SetDescription("Load required preoperative data.");
-  this->SetDescription("");
-
+  this->SetName("2/4. Planning");
+  this->SetDescription("Use existing Slicer modules to perform surgical planning.");
   this->PreoperativeImageDataMenuButton = NULL;
   this->ToolModelMenuButton = NULL;
 
@@ -38,7 +36,7 @@ vtkLiverAblationLoadingPreoperativeDataStep::vtkLiverAblationLoadingPreoperative
 }
 
 //----------------------------------------------------------------------------
-vtkLiverAblationLoadingPreoperativeDataStep::~vtkLiverAblationLoadingPreoperativeDataStep()
+vtkLiverAblationPlanningStep::~vtkLiverAblationPlanningStep()
 {  
   if(this->PreoperativeImageDataMenuButton)
     {
@@ -66,7 +64,7 @@ vtkLiverAblationLoadingPreoperativeDataStep::~vtkLiverAblationLoadingPreoperativ
 }
 
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::ShowUserInterface()
+void vtkLiverAblationPlanningStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
@@ -97,8 +95,9 @@ void vtkLiverAblationLoadingPreoperativeDataStep::ShowUserInterface()
     }
 
   this->Script(
-    "pack %s -side top -anchor center -padx 2 -pady 5", 
-    this->AddVolumeButton->GetWidgetName());
+    "pack %s %s -side top -anchor center -padx 2 -pady 5", 
+    this->AddVolumeButton->GetWidgetName(),
+    this->GuideWidgetButton->GetWidgetName());
 
 /* 
   // Create the preoperative image data  menu button
@@ -176,7 +175,7 @@ void vtkLiverAblationLoadingPreoperativeDataStep::ShowUserInterface()
 }
  
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::PopulateToolModelSelector()
+void vtkLiverAblationPlanningStep::PopulateToolModelSelector()
 {
   char buffer[256];
 
@@ -203,7 +202,7 @@ void vtkLiverAblationLoadingPreoperativeDataStep::PopulateToolModelSelector()
 }
 
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::PopulatePreoperativeImageDataSelector()
+void vtkLiverAblationPlanningStep::PopulatePreoperativeImageDataSelector()
 {
   char buffer[256];
 
@@ -230,14 +229,14 @@ void vtkLiverAblationLoadingPreoperativeDataStep::PopulatePreoperativeImageDataS
 }
  
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::PrintSelf(ostream& os, vtkIndent indent)
+void vtkLiverAblationPlanningStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
 
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::ProcessGUIEvents(vtkObject *caller,
+void vtkLiverAblationPlanningStep::ProcessGUIEvents(vtkObject *caller,
                                           unsigned long event, void *callData)
 {
   // AddVolumeButton Pressed
@@ -251,7 +250,7 @@ void vtkLiverAblationLoadingPreoperativeDataStep::ProcessGUIEvents(vtkObject *ca
 }
 
 //----------------------------------------------------------------------------
-vtkKWGuideWidget* vtkLiverAblationLoadingPreoperativeDataStep::GetGuideWidget()
+vtkKWGuideWidget* vtkLiverAblationPlanningStep::GetGuideWidget()
 {
   if (!this->GuideWidget)
     {
@@ -281,7 +280,7 @@ vtkKWGuideWidget* vtkLiverAblationLoadingPreoperativeDataStep::GetGuideWidget()
 
 
 //----------------------------------------------------------------------------
-int vtkLiverAblationLoadingPreoperativeDataStep::CreateGuideWidget()
+int vtkLiverAblationPlanningStep::CreateGuideWidget()
 {
   if (this->GetGuideWidget())
     {
@@ -296,7 +295,7 @@ int vtkLiverAblationLoadingPreoperativeDataStep::CreateGuideWidget()
 
 
 //----------------------------------------------------------------------------
-void vtkLiverAblationLoadingPreoperativeDataStep::DisplayGuideWidget(vtkKWTopLevel* master)
+void vtkLiverAblationPlanningStep::DisplayGuideWidget(vtkKWTopLevel* master)
 {
   vtkKWGuideWidget *widget = this->GetGuideWidget();
   if (widget)
@@ -318,7 +317,7 @@ void vtkLiverAblationLoadingPreoperativeDataStep::DisplayGuideWidget(vtkKWTopLev
 }
 
 
-void vtkLiverAblationLoadingPreoperativeDataStep::AddVolumeButtonCallback()
+void vtkLiverAblationPlanningStep::AddVolumeButtonCallback()
 {
   // AddVolumeButton Pressed
 
@@ -329,7 +328,7 @@ void vtkLiverAblationLoadingPreoperativeDataStep::AddVolumeButtonCallback()
 }
 
 
-void vtkLiverAblationLoadingPreoperativeDataStep::GuideWidgetButtonCallback()
+void vtkLiverAblationPlanningStep::GuideWidgetButtonCallback()
 {
   this->DisplayGuideWidget(NULL);
 }

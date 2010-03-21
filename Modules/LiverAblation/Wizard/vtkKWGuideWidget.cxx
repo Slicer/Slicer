@@ -107,7 +107,7 @@ void vtkKWGuideWidget::EditorButtonCallback()
 //----------------------------------------------------------------------------
 void vtkKWGuideWidget::ExitButtonCallback()
 {
-  this->RaiseModule(std::string("IGT Planning").c_str());
+  this->RaiseModule(std::string("Liver Ablation").c_str());
   this->Withdraw();
 }
 
