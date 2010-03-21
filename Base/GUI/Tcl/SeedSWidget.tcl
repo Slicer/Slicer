@@ -330,6 +330,19 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
             # only respond to mouse clicks if visible
             set _actionState "dragging"
             SeedSWidget::SetAllTextVisibility 0
+            # switch into pick mode when we mouse down
+            # on a seed widget -- this mirrors the
+            # behavior in the 3D viewer.
+            set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+            if { $interactionNode != "" } {
+                set mode [$interactionNode GetCurrentInteractionMode]
+                set modeString [$interactionNode GetInteractionModeAsString $mode]
+                set pickPersistence [ $interactionNode GetPickModePersistence]
+                if { $pickPersistence == 0 } {
+                    $interactionNode SetLastInteractionMode $mode
+                }
+                $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "PickManipulate" ]
+            }
           }
         }
         "MouseMoveEvent" {
@@ -353,7 +366,24 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           set _description ""
           $_renderWidget CornerAnnotationVisibilityOn
           SeedSWidget::SetAllTextVisibility 1
-          eval $movedCommand
+            eval $movedCommand
+            
+            set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+            # Reset interaction mode to default viewtransform
+            # mode if user has not selected a persistent pick or place.
+            # This implementation of mouse modes turns on
+            # 'pick' mode when a fiducial is highlighted.
+            if { $interactionNode != "" } {
+                if { [$interactionNode GetCurrentInteractionMode] != [$interactionNode GetInteractionModeByString "ViewTransform"] } {
+                    set pickPersistence [ $interactionNode GetPickModePersistence]
+                    set placePersistence [ $interactionNode GetPlaceModePersistence ]
+                    if { $pickPersistence == 0 && $placePersistence == 0 } {
+                        $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
+                        $interactionNode SetPickModePersistence 0
+                        $interactionNode SetPlaceModePersistence 0
+                    }
+                }
+            }
         }
       }
     }

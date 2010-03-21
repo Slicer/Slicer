@@ -75,6 +75,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
     
+    vtkGetObjectMacro (MousePickOptionsButton, vtkKWMenuButton );
+    vtkGetObjectMacro (MousePlaceOptionsButton, vtkKWMenuButton );
+    
     vtkGetObjectMacro (MousePickButton, vtkKWRadioButton);
     vtkGetObjectMacro (MousePlaceButton, vtkKWRadioButton);
     vtkGetObjectMacro (MouseTransformViewButton, vtkKWRadioButton);    
@@ -130,14 +133,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     virtual void SetLayoutMenubuttonValueToCurrentLayout ();
     virtual void SetLayoutMenubuttonValueToLayout (int layout);
     virtual void ReconfigureGUIFonts ( );
-  
+
+
     /// 
-    /// Getting and setting the mrml selection node id
+    /// Getting and setting the mrml interaction node
     vtkGetStringMacro(InteractionNodeID);
-    vtkSetStringMacro(InteractionNodeID);
-    /// 
-    /// Get/Set the selection node
     vtkGetObjectMacro(InteractionNode, vtkMRMLInteractionNode);
+    virtual void SetInteractionNode ( vtkMRMLInteractionNode *node );
+
+    // not used.
     void SetAndObserveInteractionNode (vtkMRMLInteractionNode *node)
     {
     vtkSetAndObserveMRMLNodeMacro(this->InteractionNode, node);
@@ -186,6 +190,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWEntry *CompareViewLightboxRowEntry;
     vtkKWEntry *CompareViewLightboxColumnEntry;
 
+    vtkKWMenuButton *MousePickOptionsButton;
+    vtkKWMenuButton *MousePlaceOptionsButton;
+    
     vtkKWRadioButton *MousePickButton;
     vtkKWRadioButton *MousePlaceButton;
     vtkKWRadioButton *MouseTransformViewButton;

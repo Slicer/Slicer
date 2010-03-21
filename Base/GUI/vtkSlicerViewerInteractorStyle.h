@@ -84,10 +84,31 @@ public:
 
 
   /// 
-  /// Get/Set the CamerNode
+  /// Get/Set the CameraNode
   vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
 
+  // Description:
+  // Get the number of mouse 'pick' events
+  vtkGetMacro (NumberOfPicks, int);
+
+  // Description:
+  // Get the max number of 'pick' events 
+  // allowed before interaction mode switches
+  // back to 'transform'.
+  vtkGetMacro (NumberOfTransientPicks, int );
+
+  // Description:
+  // Get the number of mouse 'place' events
+  vtkGetMacro (NumberOfPlaces, int);
+
+  // Description:
+  // Get the max number of 'place' events 
+  // allowed before interaction mode switches
+  // back to 'transform'.
+  vtkGetMacro ( NumberOfTransientPlaces, int );
+
+  
   /// 
   /// Get/Set the main slicer viewer widget, for picking
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
@@ -113,6 +134,20 @@ protected:
   vtkSlicerApplicationLogic *ApplicationLogic;
 
   double MotionFactor;
+  // Description:
+  // Keep track of the number of picks
+  // so for resetting mouse modes when
+  // transient pick or place mode has
+  // been selected.
+  int NumberOfPicks;
+  int NumberOfPlaces;
+  // Description:
+  // The number of "clicks" the transient
+  // mouse-modes come loaded with.
+  // Currently makes sense to set this to
+  // 1 -- but we can change it if appropriate.
+  int NumberOfTransientPicks;
+  int NumberOfTransientPlaces;
 
   /// 
   /// A pointer back to the viewer widget, useful for picking

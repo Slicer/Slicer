@@ -565,7 +565,14 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           set mode [$interactionNode GetCurrentInteractionMode]
           set modeString [$interactionNode GetInteractionModeAsString $mode]
           set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
+            # SET MODE TO PLACE...
           if { $modeString == "Place" || $modifier } {
+               set placePersistence [ $interactionNode GetPlaceModePersistence]
+                if { $placePersistence == 0 } {
+                    $interactionNode SetLastInteractionMode $mode
+                }
+                $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
+              # AND PLACE FIDUCIAL.
             $sliceGUI SetGrabID $this
             $sliceGUI SetGUICommandAbortFlag 1
             FiducialsSWidget::AddFiducial $r $a $s
@@ -577,6 +584,22 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       if { [$sliceGUI GetGrabID] == $this } {
         $sliceGUI SetGrabID ""
       }
+        # RESET MOUSE MODE BACK TO
+        # TRANSFORM, UNLESS USER HAS
+        # SELECTED A PERSISTENT PICK OR
+        # PLACE MODE.
+        set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+        if { $interactionNode != "" } {
+            set pickPersistence [ $interactionNode GetPickModePersistence ]
+            set placePersistence [ $interactionNode GetPlaceModePersistence ]
+            if { $pickPersistence == 0 && $placePersistence == 0 } {
+                set mode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
+                $interactionNode SetCurrentInteractionMode $mode
+                $interactionNode SetPickModePersistence 0
+                $interactionNode SetPlaceModePersistence 0
+            }
+        }
+        
     }
     "MiddleButtonPressEvent" {
       $_renderWidget CornerAnnotationVisibilityOff

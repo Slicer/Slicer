@@ -66,6 +66,8 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
   this->LoadSceneIconButton = vtkKWMenuButton::New ( );
   this->ChooseLayoutIconMenuButton = vtkKWMenuButton::New();
+  this->MousePickOptionsButton = vtkKWMenuButton::New();
+  this->MousePlaceOptionsButton = vtkKWMenuButton::New();
   this->MousePickButton = vtkKWRadioButton::New();
   this->MousePlaceButton = vtkKWRadioButton::New();
   this->MouseTransformViewButton = vtkKWRadioButton::New();
@@ -296,6 +298,18 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
       this->InteractionModeToolbar->Delete ( );
       this->InteractionModeToolbar = NULL;
       }
+    if ( this->MousePickOptionsButton)
+      {
+      this->MousePickOptionsButton->SetParent ( NULL );
+      this->MousePickOptionsButton->Delete();
+      this->MousePickOptionsButton = NULL;
+      }
+    if ( this->MousePlaceOptionsButton )
+      {
+      this->MousePlaceOptionsButton->SetParent ( NULL );
+      this->MousePlaceOptionsButton->Delete();
+      this->MousePlaceOptionsButton = NULL;      
+      }
     if ( this->MousePickButton )
       {
       this->MousePickButton->SetParent ( NULL );
@@ -335,8 +349,6 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     }
 
   this->SetApplicationGUI ( NULL );
-  this->SetInteractionNodeID ( NULL );
-  vtkSetMRMLNodeMacro( this->InteractionNode, NULL);
 
 }
 
@@ -375,11 +387,21 @@ void vtkSlicerToolbarGUI::ReconfigureGUIFonts ( )
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::RemoveMRMLObservers()
 {
+  this->SetInteractionNode ( NULL );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::AddMRMLObservers()
 {
+  vtkMRMLInteractionNode *interactionNode = NULL;
+  if (this->ApplicationLogic != NULL)
+    {
+    interactionNode =  this->ApplicationLogic->GetInteractionNode();
+    if (interactionNode != NULL)
+      {
+      this->SetInteractionNode ( interactionNode );
+      }
+    }
 }
 
 
@@ -401,6 +423,8 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MousePickOptionsButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MousePlaceOptionsButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->MousePickButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MousePlaceButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -438,6 +462,8 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MousePickOptionsButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MousePlaceOptionsButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->MousePickButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MousePlaceButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -450,6 +476,29 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     {
     this->ModuleChooseGUI->AddGUIObservers();
     }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::SetInteractionNode ( vtkMRMLInteractionNode *node )
+{
+
+  vtkSetAndObserveMRMLObjectMacro ( this->InteractionNode, NULL);
+  if ( node )
+    {
+    vtkIntArray *events = vtkIntArray::New();
+    //TODO.
+    // should we also observe InteractionModeChangedEvents??
+    events->InsertNextValue ( vtkMRMLInteractionNode::TransientTimeoutEvent);
+    events->InsertNextValue ( vtkMRMLInteractionNode::InteractionModeChangedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro (this->InteractionNode, node, events );
+    events->Delete();
+    }
+  else
+    {
+    vtkErrorMacro ( "Unable to find the interaction node in the scene to observe!" );
+    }
+  return;
 }
 
 
@@ -483,23 +532,23 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     
     vtkMRMLInteractionNode *interactionNode = NULL;
-//    vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
-//    vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
-
     vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
     vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
     vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
-
     vtkMRMLLayoutNode *layout;    
 
+    //--- set interactionNode
     if ( this->ApplicationLogic != NULL )
       {
       interactionNode = this->GetApplicationLogic()->GetInteractionNode();
       }
-
     if (interactionNode == NULL)
       {
       vtkErrorMacro("ProcessGUIEvents: no interaction node in the scene, not updating the interaction mode!");
+      }
+    else
+      {
+      this->SetInteractionNode ( interactionNode );
       }
                                    
     // Process events from top row of buttons
@@ -513,36 +562,46 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkErrorMacro ( "ProcessGUIEvents: Got NULL ApplicationGUI" );
       return;
       }
-
-    
     // Mouse mode buttons:
     if ( radiob != NULL && event == vtkKWRadioButton::SelectedStateChangedEvent )
       {
       if ( radiob == this->MousePickButton)
         {
         val = radiob->GetSelectedState();
-        if ( val && interactionNode )
+        if ( val && interactionNode && 
+             interactionNode->GetCurrentInteractionMode() != vtkMRMLInteractionNode::PickManipulate )
           {
+          interactionNode->NormalizeAllMouseModes();
           interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
           interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOnIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
           }
         }
       else if ( radiob == this->MouseTransformViewButton )
         {
         val = radiob->GetSelectedState();
-        if ( val && interactionNode )
+        if ( val && interactionNode &&
+             interactionNode->GetCurrentInteractionMode() != vtkMRMLInteractionNode::ViewTransform )
           {
+          interactionNode->NormalizeAllMouseModes();
           interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
           interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
           }
         }
       else if ( radiob == this->MousePlaceButton )
         {
         val = radiob->GetSelectedState();
-        if ( val && interactionNode )
+        if ( val && interactionNode &&
+             interactionNode->GetCurrentInteractionMode() != vtkMRMLInteractionNode::Place )
           {
+          interactionNode->NormalizeAllMouseModes();
           interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
           interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::Place );
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOnIcon ( ) );          
           }
         }
       }
@@ -822,6 +881,46 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           this->SetLayoutMenubuttonValueToCurrentLayout();
           }
         }
+      else if ( this->MousePickOptionsButton != NULL &&
+                menu == this->MousePickOptionsButton->GetMenu()  &&
+                interactionNode != NULL )
+        {
+        if ( this->MousePickOptionsButton->GetMenu()->GetNumberOfItems() > 2 )
+          {
+          if ( this->MousePickOptionsButton->GetMenu()->GetItemSelectedState ( "Use mouse to Pick-and-Manipulate one time."))
+            {
+            this->MousePickButton->SelectedStateOn();
+            //--- ...and modify persistence
+            interactionNode->SetPickModePersistence (0);
+            }
+          else if ( this->MousePickOptionsButton->GetMenu()->GetItemSelectedState ( "Use mouse to Pick-and-Manipulate persistently." ))
+            {
+            this->MousePickButton->SelectedStateOn();
+            //--- ...and modify persistence
+            interactionNode->SetPickModePersistence (1);
+            }
+          }
+        }
+      else if ( this->MousePlaceOptionsButton != NULL &&
+                menu == this->MousePlaceOptionsButton->GetMenu() &&
+                interactionNode != NULL )
+        {
+        if ( this->MousePlaceOptionsButton->GetMenu()->GetNumberOfItems() > 2 )
+          {
+          if ( this->MousePlaceOptionsButton->GetMenu()->GetItemSelectedState ( "Use mouse to Create-and-Place one time."))
+            {
+            this->MousePlaceButton->SelectedStateOn();
+            //--- ...and modify persistence
+            interactionNode->SetPlaceModePersistence (0);
+            }
+          else if ( this->MousePlaceOptionsButton->GetMenu()->GetItemSelectedState ("Use mouse to Create-and-Place persistently." ))
+            {
+            this->MousePlaceButton->SelectedStateOn();
+            //--- ...and modify persistence
+            interactionNode->SetPlaceModePersistence (1);
+            }
+          }
+        }
       else if (this->LoadSceneIconButton!= NULL &&  menu == this->LoadSceneIconButton->GetMenu() )
         {
         const char *thingToDo = this->LoadSceneIconButton->GetValue();
@@ -1005,24 +1104,49 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
     std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: interaction node is null\n";
     return;
     }
-  if ( vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode && event == vtkCommand::ModifiedEvent)
+
+  if ( vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode &&
+       event == vtkMRMLInteractionNode::InteractionModeChangedEvent )
     {
     std::cout << "The selection node changed\n";
     int mode = interactionNode->GetCurrentInteractionMode();
+    int selected = 0;
     switch (mode)
       {
       case vtkMRMLInteractionNode::PickManipulate:
-        this->MousePickButton->SelectedStateOn();
+        selected = this->MousePickButton->GetSelectedState();
+        if ( !selected )
+          {
+          this->MousePickButton->SelectedStateOn();
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOnIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+          }
         break;
       case vtkMRMLInteractionNode::Place:
-        this->MousePlaceButton->SelectedStateOn();
+        selected = this->MousePlaceButton->GetSelectedState();
+        if ( !selected)
+          {
+          this->MousePlaceButton->SelectedStateOn();
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOnIcon ( ) );
+          }
         break;
       case vtkMRMLInteractionNode::ViewTransform:
-        this->MouseTransformViewButton->SelectedStateOn();
+        selected = this->MouseTransformViewButton->GetSelectedState();
+        if ( !selected)
+          {
+          this->MouseTransformViewButton->SelectedStateOn();
+          this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+          this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );                  
+          }
         break;
       default:
         break;
       }
+    }
+  else if ( vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode && event == vtkMRMLInteractionNode::TransientTimeoutEvent )
+    {
+    this->MouseTransformViewButton->SelectedStateOn();
     }
 }
 
@@ -1075,7 +1199,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mtb->SetWidgetsFlatAdditionalPadY ( 0 );
   mtb->ResizableOff ( );
   mtb->SetReliefToGroove ( );
-  mtb->SetWidgetsPadX ( 3 );
+  mtb->SetWidgetsPadX ( 2 );
   mtb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *ltb = this->GetLoadSaveToolbar ( );
@@ -1086,7 +1210,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   ltb->SetWidgetsFlatAdditionalPadY ( 0 );
   ltb->ResizableOff ( );
   ltb->SetReliefToGroove ( );
-  ltb->SetWidgetsPadX ( 3 );
+  ltb->SetWidgetsPadX ( 2 );
   ltb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *utb = this->GetUtilitiesToolbar ( );
@@ -1097,7 +1221,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   utb->SetWidgetsFlatAdditionalPadY ( 0 );
   utb->ResizableOff();
   utb->SetReliefToGroove();
-  utb->SetWidgetsPadX ( 3 );
+  utb->SetWidgetsPadX ( 2 );
   utb->SetWidgetsPadY ( 2 );  
 
   vtkKWToolbar *vtb = this->GetViewToolbar ( );
@@ -1108,7 +1232,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtb->SetWidgetsFlatAdditionalPadY ( 0 );
   vtb->ResizableOff ( );
   vtb->SetReliefToGroove ( );
-  vtb->SetWidgetsPadX ( 3 );
+  vtb->SetWidgetsPadX ( 2 );
   vtb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *urtb = this->GetUndoRedoToolbar ( );
@@ -1119,7 +1243,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   urtb->SetWidgetsFlatAdditionalPadY ( 0 );
   urtb->ResizableOff ( );
   urtb->SetReliefToGroove ( );
-  urtb->SetWidgetsPadX ( 3 );
+  urtb->SetWidgetsPadX ( 2 );
   urtb->SetWidgetsPadY ( 2 );
   
   vtkKWToolbar *mmtb = this->GetInteractionModeToolbar ( );
@@ -1130,7 +1254,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mmtb->SetWidgetsFlatAdditionalPadY ( 0 );
   mmtb->ResizableOff ( );
   mmtb->SetReliefToGroove ( );
-  mmtb->SetWidgetsPadX ( 3 );
+  mmtb->SetWidgetsPadX ( 0 );
   mmtb->SetWidgetsPadY ( 2 );
         
   //--- and add toolbars to the window's main toolbar set.        
@@ -1518,8 +1642,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //---
   //--- Mouse mode toolbar
   //---
-
-
   int mouseMode = vtkMRMLInteractionNode::ViewTransform;
 
   // try to get the mouse interaction mode from the mrml scene
@@ -1529,21 +1651,25 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     interactionNode =  this->ApplicationLogic->GetInteractionNode();
     if (interactionNode != NULL)
       {
+      this->SetInteractionNode ( interactionNode );
       mouseMode = interactionNode->GetCurrentInteractionMode();
       }
     }
   else 
     { 
+    this->SetInteractionNode ( NULL );
     vtkDebugMacro ("MRML Scene not set yet, not getting mouse interaction mode, using default of transform\n");
     mouseMode = vtkMRMLInteractionNode::ViewTransform;
     }
 
   this->MousePickButton->SetParent (mmtb->GetFrame() );
   this->MousePickButton->Create();
+  this->MousePickButton->SetBorderWidth (0);
+  this->MousePickButton->SetReliefToFlat();
   this->MousePickButton->SetValueAsInt ( vtkMRMLInteractionNode::PickManipulate );
   this->MousePickButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickOffIcon ( ) );
   this->MousePickButton->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePickOnIcon ( ) );
-  this->MousePickButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
+  this->MousePickButton->SetBalloonHelpString ( "Set the mouse mode to 'Pick-and-Manipulate' (to select and move a pickable object)." );
   if ( mouseMode == vtkMRMLInteractionNode::PickManipulate)
     {
     this->MousePickButton->SetSelectedState ( 1 );
@@ -1553,13 +1679,35 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     this->MousePickButton->SetSelectedState ( 0 );
     }
   mmtb->AddWidget ( this->MousePickButton );
+
+  this->MousePickOptionsButton->SetParent (mmtb->GetFrame() );
+  this->MousePickOptionsButton->Create();
+  this->MousePickOptionsButton->IndicatorVisibilityOff();
+  this->MousePickOptionsButton->SetReliefToFlat ( );
+  this->MousePickOptionsButton->SetBorderWidth ( 0 );
+  this->MousePickOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+  this->MousePickOptionsButton->GetMenu()->DeleteAllItems();
+  this->MousePickOptionsButton->GetMenu()->AddRadioButton ("Use mouse to Pick-and-Manipulate one time.");
+  index = this->MousePickOptionsButton->GetMenu()->GetIndexOfItem("Use mouse to Pick-and-Manipulate one time.");
+  this->MousePickOptionsButton->GetMenu()->SetItemIndicatorVisibility (index, 0);
+  this->MousePickOptionsButton->GetMenu()->SetItemMarginVisibility (index, 0);
+  this->MousePickOptionsButton->GetMenu()->AddRadioButton ("Use mouse to Pick-and-Manipulate persistently.");
+  index = this->MousePickOptionsButton->GetMenu()->GetIndexOfItem ("Use mouse to Pick-and-Manipulate persistently.");
+  this->MousePickOptionsButton->GetMenu()->SetItemIndicatorVisibility (index, 0);
+  this->MousePickOptionsButton->GetMenu()->SetItemMarginVisibility (index, 0);
+  this->MousePickOptionsButton->GetMenu()->SelectItem ( "Use mouse to Pick-and-Manipulate one time.");
+  this->MousePickOptionsButton->GetMenu()->AddSeparator();
+  this->MousePickOptionsButton->GetMenu()->AddCommand ( "close");
+  mmtb->AddWidget ( this->MousePickOptionsButton );
   
   this->MousePlaceButton->SetParent (mmtb->GetFrame() );
   this->MousePlaceButton->Create();
+  this->MousePlaceButton->SetBorderWidth ( 0 );
+  this->MousePlaceButton->SetReliefToFlat();
   this->MousePlaceButton->SetValueAsInt ( vtkMRMLInteractionNode::Place );
   this->MousePlaceButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceOffIcon ( ) );
   this->MousePlaceButton->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceOnIcon ( ) );
-  this->MousePlaceButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place a new object (like a fiducial point)'" );
+  this->MousePlaceButton->SetBalloonHelpString ( "Set the mouse mode to 'Create-and-Place' (to create and position a new object like a fiducial point)." );
   this->MousePlaceButton->SetVariableName ( this->MousePickButton->GetVariableName() );
   if ( mouseMode == vtkMRMLInteractionNode::Place)
     {
@@ -1571,8 +1719,30 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     }
   mmtb->AddWidget ( this->MousePlaceButton );
 
+  this->MousePlaceOptionsButton->SetParent (mmtb->GetFrame() );
+  this->MousePlaceOptionsButton->Create();
+  this->MousePlaceOptionsButton->IndicatorVisibilityOff();
+  this->MousePlaceOptionsButton->SetReliefToFlat ( );
+  this->MousePlaceOptionsButton->SetBorderWidth ( 0 );
+  this->MousePlaceOptionsButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSlicerOptionsOffIcon ( ) );
+  this->MousePlaceOptionsButton->GetMenu()->DeleteAllItems();
+  this->MousePlaceOptionsButton->GetMenu()->AddRadioButton ("Use mouse to Create-and-Place one time.");
+  index = this->MousePlaceOptionsButton->GetMenu()->GetIndexOfItem ("Use mouse to Create-and-Place one time.");
+  this->MousePlaceOptionsButton->GetMenu()->SetItemIndicatorVisibility (index, 0);
+  this->MousePlaceOptionsButton->GetMenu()->SetItemMarginVisibility (index, 0);
+  this->MousePlaceOptionsButton->GetMenu()->AddRadioButton ("Use mouse to Create-and-Place persistently.");
+  index = this->MousePlaceOptionsButton->GetMenu()->GetIndexOfItem ("Use mouse to Create-and-Place persistently.");
+  this->MousePlaceOptionsButton->GetMenu()->SetItemIndicatorVisibility (index, 0);
+  this->MousePlaceOptionsButton->GetMenu()->SetItemMarginVisibility (index, 0);
+  this->MousePlaceOptionsButton->GetMenu()->SelectItem ( "Use mouse to Create-and-Place one time.");
+  this->MousePlaceOptionsButton->GetMenu()->AddSeparator();
+  this->MousePlaceOptionsButton->GetMenu()->AddCommand ( "close");
+  mmtb->AddWidget ( this->MousePlaceOptionsButton );
+
   this->MouseTransformViewButton->SetParent (mmtb->GetFrame() );
   this->MouseTransformViewButton->Create();
+  this->MouseTransformViewButton->SetBorderWidth ( 0 );
+  this->MouseTransformViewButton->SetReliefToFlat();
   this->MouseTransformViewButton->SetValueAsInt ( vtkMRMLInteractionNode::ViewTransform );
   this->MouseTransformViewButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewOffIcon ( ) );
   this->MouseTransformViewButton->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewOnIcon ( ) );

@@ -197,7 +197,6 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   this->ViewerWidget = NULL;
   this->InteractorStyle = NULL;
   
-//  this->DebugOn();
 }
 
 //---------------------------------------------------------------------------
@@ -623,8 +622,16 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                   void *callData )
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::ProcessWidgetEvents: event = " << event);
+  if (event == vtkCommand::StartInteractionEvent)
+    {
+    this->UpdateInteractionModeAtStartInteraction();
+    }
+  else if (event == vtkCommand::EndInteractionEvent)
+    {
+    this->UpdateInteractionModeAtEndInteraction();
+    }
   // check for pick events
-  if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
+  else if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
       vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
       callData != NULL)
     {
@@ -664,6 +671,90 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
     this->UpdateFiducialsCamera();
     }
 } 
+
+//---------------------------------------------------------------------------
+// Description:
+// the Update InteractionModeAtStartInteraction is a function
+// that ensures that Slicer's mouse modes are in agreement
+// with direct manipulation-type interactions with widgets in
+// the scene.
+void vtkSlicerFiducialListWidget::UpdateInteractionModeAtStartInteraction()
+{
+  
+/*
+  //--- one way to get the interaction node...
+  vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
+  if ( fidLogic == NULL)
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: got NULL fiducialsLogic" );
+    return;
+    }
+    
+  vtkSlicerApplicationLogic *appLogic = fidLogic->GetApplicationLogic();
+  if (  appLogic == NULL )
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: got NULL applicationLogic" );
+    return;
+    }
+
+  vtkMRMLInteractionNode *interactionNode = appLogic->GetInteractionNode();
+*/
+
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
+    return;
+    }
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: No interaction node in the scene." );
+    return;
+    }
+
+  int pickPersistence = interactionNode->GetPickModePersistence();
+  int currentMode = interactionNode->GetCurrentInteractionMode();
+  if ( pickPersistence == 0 )
+    {
+    interactionNode->SetLastInteractionMode ( currentMode );
+    }
+  interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate);
+
+}
+
+
+
+//---------------------------------------------------------------------------
+// Description:
+// the Update InteractionModeAtEndInteraction is a function
+// that ensures that Slicer's mouse modes are in agreement
+// with direct manipulation-type interactions with widgets in
+// the scene.
+void vtkSlicerFiducialListWidget::UpdateInteractionModeAtEndInteraction()
+{
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
+    return;
+    }
+
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: No interaction node in the scene." );
+    return;
+    }
+
+  int pickPersistence = interactionNode->GetPickModePersistence();
+  int placePersistence = interactionNode->GetPlaceModePersistence ();
+  if ( pickPersistence == 0 && placePersistence == 0 )
+    {
+    interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+    }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
@@ -836,6 +927,9 @@ void vtkSlicerFiducialListWidget::CreateWidget ( )
   // Call the superclass to create the whole widget
   this->Superclass::CreateWidget();
 }
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::UpdateFromMRML()
@@ -1520,6 +1614,14 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       myCallback->FiducialList = flist;
       pointWidget->AddObserver(vtkCommand::EnableEvent, myCallback);
       pointWidget->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
+      //---
+      //--- TEST {
+      //---
+      pointWidget->AddObserver(vtkCommand::StartInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
+      pointWidget->AddObserver(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
+      //---
+      //--- } END TEST
+      //---
       pointWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
       // clean up callback to avoid leaks
       myCallback->Delete();

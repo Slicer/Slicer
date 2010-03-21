@@ -37,6 +37,10 @@ vtkSlicerViewerInteractorStyle::vtkSlicerViewerInteractorStyle()
   this->MotionFactor   = 10.0;
   this->CameraNode = NULL;
   this->ApplicationLogic = NULL;
+  this->NumberOfPicks = 0;
+  this->NumberOfPlaces= 0;
+  this->NumberOfTransientPicks = 1;
+  this->NumberOfTransientPlaces = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -44,6 +48,8 @@ vtkSlicerViewerInteractorStyle::~vtkSlicerViewerInteractorStyle()
 {
   this->SetCameraNode(NULL);
   this->ApplicationLogic = NULL;
+  this->NumberOfPicks = 0;
+  this->NumberOfPlaces= 0;
 }
 
 //----------------------------------------------------------------------------
@@ -130,10 +136,12 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
   
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-  
+  int pickModePersistence = 0;
+  int placeModePersistence = 0;
+  vtkMRMLInteractionNode *interactionNode = NULL;
+    
   if ( this->GetCameraNode() != NULL )
     {
-    vtkMRMLInteractionNode *interactionNode = NULL;
     if (this->GetApplicationLogic())
       {
       interactionNode = this->GetApplicationLogic()->GetInteractionNode();
@@ -145,13 +153,13 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
     if (interactionNode != NULL)
       {
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
-      vtkDebugMacro("OnLeftButton: mouse interaction mode = " << mouseInteractionMode);
-      // release the pointer
-      interactionNode = NULL;
+      pickModePersistence = interactionNode->GetPickModePersistence();
+      placeModePersistence = interactionNode->GetPlaceModePersistence();
+      vtkDebugMacro("OnLeftButtonDown: mouse interaction mode = " << mouseInteractionMode);
       }
     else
       {
-      vtkErrorMacro("OnLeftButton: no interaction node! Assuming ViewTransform");
+      vtkErrorMacro("OnLeftButtonDown: no interaction node! Assuming ViewTransform");
       }
     }
   
@@ -192,14 +200,16 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
         // now throw the events
         if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
           {
-          this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());       
+          this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
+          //--- increment the number of Places that have occured.
+          this->NumberOfPlaces++;
           }
         else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
           {
           // deal with select mode
           // throw a select region event
           this->InvokeEvent(vtkSlicerViewerInteractorStyle::SelectRegionEvent, this->Interactor->GetEventPosition());
-
+          this->NumberOfPicks++;
           // TODO: expand the mouse interaction modes and events to support
           // picking everything needed
 #ifndef QDEC_DEBUG
@@ -211,11 +221,83 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
         }
       }
     }
+
+  if ( interactionNode != NULL )
+    {
+      // release the pointer
+    interactionNode = NULL;
+    }
+  
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerViewerInteractorStyle::OnLeftButtonUp()
 {
+  // get the scene's mouse interaction mode
+  int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
+  int pickModePersistence = 0;
+  int placeModePersistence = 0;
+  vtkMRMLInteractionNode *interactionNode = NULL;
+    
+  if ( this->GetCameraNode() != NULL )
+    {
+    if (this->GetApplicationLogic())
+      {
+      interactionNode = this->GetApplicationLogic()->GetInteractionNode();
+      }
+    else
+      {
+      interactionNode = vtkMRMLInteractionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+      }
+    if (interactionNode != NULL)
+      {
+      mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
+      pickModePersistence = interactionNode->GetPickModePersistence();
+      placeModePersistence = interactionNode->GetPlaceModePersistence();
+      vtkDebugMacro("OnLeftButtonUp: mouse interaction mode = " << mouseInteractionMode);
+      }
+    else
+      {
+      vtkErrorMacro("OnLeftButtonUp: no interaction node! Assuming ViewTransform");
+      }
+    }
+
+  // now throw the events if mouse mode is transient.
+  if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
+    {
+    //--- count the number of picks and
+    //--- drop the interaction mode back to 
+    //--- the default (transform) if mouse mode
+    //--- is transient.
+    if ( (this->GetNumberOfPlaces() >= this->GetNumberOfTransientPlaces() ) &&
+         (placeModePersistence == 0 ) && (interactionNode != NULL) )
+      {
+      interactionNode->NormalizeAllMouseModes();
+      interactionNode->SetLastInteractionMode ( mouseInteractionMode );
+      interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+      // reset the number of place events.
+      this->NumberOfPlaces = 0;
+      interactionNode->InvokeEvent ( vtkMRMLInteractionNode::TransientTimeoutEvent);
+      }
+    }
+  else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
+    {
+    // deal with select mode
+    //--- count the number of picks and
+    //--- drop the interaction mode back to 
+    //--- the default (transform) if mousemode 
+    //--- is transient.
+    if ( (this->GetNumberOfPicks() >= this->GetNumberOfTransientPicks() ) &&
+         (pickModePersistence == 0  ) && (interactionNode != NULL) )
+      {
+      interactionNode->NormalizeAllMouseModes();
+      interactionNode->SetLastInteractionMode ( mouseInteractionMode );
+      interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+      // reset the number of pick events.
+      this->NumberOfPicks = 0;
+      interactionNode->InvokeEvent ( vtkMRMLInteractionNode::TransientTimeoutEvent);
+      }
+    }
   switch (this->State) 
     {
     case VTKIS_DOLLY:
@@ -234,6 +316,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonUp()
       this->EndRotate();
       break;
     }
+
 }
 
 //----------------------------------------------------------------------------
