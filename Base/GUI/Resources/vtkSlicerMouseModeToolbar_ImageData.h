@@ -8,133 +8,6 @@ static const unsigned int  image_MouseDefineROIDisabled_pixel_size     = 3;
 static const unsigned long image_MouseDefineROIDisabled_length         = 224;
 static const unsigned long image_MouseDefineROIDisabled_decoded_length = 1323;
 
-static const unsigned char image_MouseDefineROIDisabled[] = 
-  "eNrNlDEOxSAIhu8/ubg4aZw6sziYeAnv0EEPYckj78VXqqF26T8QRPEjBAWA1ho8sPuq6A"
-  "bJye1fFBTSf+dPjpA+Sh/RN4FGdNwqpUygc7oxptYqSef0GKNSCq2keE7XWjvn0C50HqHu"
-  "K/Tvdp7QJF4AH5ue3qN5AZfq6T36soDJzOec4SNrLXbee09LjAvppBACpqeU1l7crfS30R"
-  "d+myf2AFdeSr4=";
-
-/* 
- * Resource generated for file:
- *    MouseDefineROIOff.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseDefineROIOff_width          = 21;
-static const unsigned int  image_MouseDefineROIOff_height         = 21;
-static const unsigned int  image_MouseDefineROIOff_pixel_size     = 3;
-static const unsigned long image_MouseDefineROIOff_length         = 224;
-static const unsigned long image_MouseDefineROIOff_decoded_length = 1323;
-
-static const unsigned char image_MouseDefineROIOff[] = 
-  "eNrbtGnT////N1FAUgKINEF/iT4yIlXvqWdbgQiZQbwJuLTj0ovmVKwIl+1Y7SLedkvvaU"
-  "RqxzRh0tyjimadQJIYx2ParuMwwSJ+I5AkI+SBlgL1QhCQTWrIQ6yGIEwHYAY7sgnIVmM6"
-  "gGCKRbYaqwPwmHD20pOqth1A5Bk1DxjygUmLIVygOEn5pW3SfqD2WYtPkpfjSNI+2Gwnr7"
-  "QhmwQAuuI0Vw==";
-
-/* 
- * Resource generated for file:
- *    MouseDefineROIOn.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseDefineROIOn_width          = 21;
-static const unsigned int  image_MouseDefineROIOn_height         = 21;
-static const unsigned int  image_MouseDefineROIOn_pixel_size     = 3;
-static const unsigned long image_MouseDefineROIOn_length         = 200;
-static const unsigned long image_MouseDefineROIOn_decoded_length = 1323;
-
-static const unsigned char image_MouseDefineROIOn[] = 
-  "eNpjYmJgogz9JxcQr11/iT4yIkk7UP2pZ1uBCJlBO+1oTsWKcGnHahfxtlt6TyNb+6S5Rx"
-  "XNOoEkeY7XcZhgEb8RSJIRdEBLgXohCMgmVTvEagjCdAD+ZINsNaYDCCZaZKuxOgCP9rOX"
-  "nlS17QAiz6h5wJAPTFoM4QLFScoybZP2A7XPWnySvBw3pLWTUdpQggD7HGqQ";
-
-/* 
- * Resource generated for file:
- *    MouseDeselectDisabled.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseDeselectDisabled_width          = 21;
-static const unsigned int  image_MouseDeselectDisabled_height         = 21;
-static const unsigned int  image_MouseDeselectDisabled_pixel_size     = 3;
-static const unsigned long image_MouseDeselectDisabled_length         = 128;
-static const unsigned long image_MouseDeselectDisabled_decoded_length = 1323;
-
-static const unsigned char image_MouseDeselectDisabled[] = 
-  "eNrbtGnT////N1FAPiMXQEwgWzt1bV8AA8RwMW1HlsIFkNVg2k5QIx7bibSU1JDH5Spi/I"
-  "4mSJLf8Yvgt52gY/D4nZhIxBXyxOjF5XdiYp9GqY6SND8U8zslJAC50XaV";
-
-/* 
- * Resource generated for file:
- *    MouseDeselectOff.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseDeselectOff_width          = 21;
-static const unsigned int  image_MouseDeselectOff_height         = 21;
-static const unsigned int  image_MouseDeselectOff_pixel_size     = 3;
-static const unsigned long image_MouseDeselectOff_length         = 124;
-static const unsigned long image_MouseDeselectOff_decoded_length = 1323;
-
-static const unsigned char image_MouseDeselectOff[] = 
-  "eNrbtGnT////N1FAUgIoMYG6tp9mYIAgYriYtiNL4QJoatBsJ6gRj+3EW0qSCUTqxaoMTZ"
-  "Akv+MXwW87MY7B5XdiIpESvbj8Tkzs0yjVUZLmh2h+J5sEAJfWp/g=";
-
-/* 
- * Resource generated for file:
- *    MouseDeselectOn.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseDeselectOn_width          = 21;
-static const unsigned int  image_MouseDeselectOn_height         = 21;
-static const unsigned int  image_MouseDeselectOn_pixel_size     = 3;
-static const unsigned long image_MouseDeselectOn_length         = 132;
-static const unsigned long image_MouseDeselectOn_decoded_length = 1323;
-
-static const unsigned char image_MouseDeselectOn[] = 
-  "eNpjYmJgogz9JxcMKu2nGRggiBguVu0EbSRbO0QWj3YiLSVVOy5XAfUyMhJwPJogSX7HL4"
-  "JfO0HH4PE7MZGISzsxenE5npjYp1GqoyTN0z/DsrAwkq2dmZn8Ig6iFwDVKd44";
-
-/* 
- * Resource generated for file:
- *    MouseLassoDisabled.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseLassoDisabled_width          = 21;
-static const unsigned int  image_MouseLassoDisabled_height         = 21;
-static const unsigned int  image_MouseLassoDisabled_pixel_size     = 3;
-static const unsigned long image_MouseLassoDisabled_length         = 240;
-static const unsigned long image_MouseLassoDisabled_decoded_length = 1323;
-
-static const unsigned char image_MouseLassoDisabled[] = 
-  "eNqtVEEOBBEQ/P8fViaO4iZcJMQBD3HYoy/YykpEsmbWMH3odFpVF00TQpRSxIZ/r1qtsE"
-  "wfqjvnpJSMMUopIQQeMTLI55wv1FNK1lrv/VALeawCc6aulAohXOwWq1rroboxJsb497zA"
-  "APmrzjmf7FhD9urHcUzSG/JB9c2zw9DV5c5X27l3VH59beHVVW6NWzD/5iul93cnDqy6h7"
-  "4/dydukns27/P0R36bHf8B/qly5A==";
-
-/* 
- * Resource generated for file:
- *    MouseLassoOff.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseLassoOff_width          = 21;
-static const unsigned int  image_MouseLassoOff_height         = 21;
-static const unsigned int  image_MouseLassoOff_pixel_size     = 3;
-static const unsigned long image_MouseLassoOff_length         = 280;
-static const unsigned long image_MouseLassoOff_decoded_length = 1323;
-
-static const unsigned char image_MouseLassoOff[] = 
-  "eNrbtGnT////N1FAUgIoMQGr3jcLFz7IyLhuaXleTOw0ExOQBLKBIkDxn48f4zHh6/nzr6"
-  "ZNe79x478/f9CUAUWA4kBZoBqsev9+/fowP//Dtm14XAuUfdbWBlSJacLLKVM+bt9O0L9A"
-  "NUCVmLbfcHQkMsSQVcJNOMvJSaR2uEoq2k6h34HhCQxVskMeFLk/f5IX779//waSQJNPMz"
-  "AAEampDqgdohciCGcQmeaB2iFakEniTYA4HqgL4gYgSXaOI1IvLhOI106t0oZsEgCYBKyX";
-
-/* 
- * Resource generated for file:
- *    MouseLassoOn.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MouseLassoOn_width          = 21;
-static const unsigned int  image_MouseLassoOn_height         = 21;
-static const unsigned int  image_MouseLassoOn_pixel_size     = 3;
-static const unsigned long image_MouseLassoOn_length         = 264;
-static const unsigned long image_MouseLassoOn_decoded_length = 1323;
-
-static const unsigned char image_MouseLassoOn[] = 
-  "eNpjYKAU/CcX0EL7m4ULH2RkXLe0PC8mdpqJCUgC2UARoPjPx4/xaP96/vyradPeb9z478"
-  "8fNDOBIkBxoCxQDVbtf79+fZif/2HbNjyuBco+a2sDqsTU/nLKlI/btxP0L1ANUCWm9huO"
-  "jkSGGFwlsvaznJxEaoerpKLtFPodGJ7AUCU75EGR+/MnefH++/dvIAk0+TQDAxCRmuqA2i"
-  "F6IeKnicsIyNohWpBJkrRDdEHcACTJznFE6qWRdlKLC0oAAJvx4ZA=";
-
 /* 
  * Resource generated for file:
  *    MouseManipulateDisabled.png (zlib, base64) (image file)
@@ -185,195 +58,333 @@ static const unsigned char image_MouseManipulateOn[] =
 
 /* 
  * Resource generated for file:
- *    MousePanDisabled.png (zlib, base64) (image file)
+ *    MouseInformationDisabled.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePanDisabled_width          = 21;
-static const unsigned int  image_MousePanDisabled_height         = 21;
-static const unsigned int  image_MousePanDisabled_pixel_size     = 3;
-static const unsigned long image_MousePanDisabled_length         = 168;
-static const unsigned long image_MousePanDisabled_decoded_length = 1323;
+static const unsigned int  image_MouseInformationDisabled_width          = 21;
+static const unsigned int  image_MouseInformationDisabled_height         = 21;
+static const unsigned int  image_MouseInformationDisabled_pixel_size     = 3;
+static const unsigned long image_MouseInformationDisabled_length         = 424;
+static const unsigned long image_MouseInformationDisabled_decoded_length = 1323;
 
-static const unsigned char image_MousePanDisabled[] = 
-  "eNrbtGnT////N1FAPiMXQEzAo2Dq1Kl4ZPHbvgAGyLB9ASogyfap2AAZfm9rayPJ72i2oG"
-  "lHk0WzHehHgtqRwwHZdkgQEaMdbgLcdrg4kNGGGyAro6LtlPudmJCfPn06TeOdWqmOkjRP"
-  "eY6jPL8DwYMHDwiWNpSQAM3oTGs=";
+static const unsigned char image_MouseInformationDisabled[] = 
+  "eNrNk+1KwzAYhS/amxD8I2hlCG51o3P7oy5tlDFhFdZWWD/shPXD1Ta0ehv1jEAtdS1z/W"
+  "N4OYTkPXmSvAkhJM9z0kI/0/Sw4CvUzR7VN93QkdBAR85XfcPs2ls30Av74O6xotxuO3Yb"
+  "+tJctqHDvpMuDuXoIzqMPpvrl1djOlWRkGUZz6xoAx3o0/M+FAmMsT/RgRY60vVIgd5Opg"
+  "11V6jy++YB7UpkMH7oSTL6xosBBI/ytjVdMy2zUneO7o8o7FD075XZ6m0VhEH4HhZnh9ey"
+  "LT/w4yQu04FDwMsD2+gNZefVQRVYyvief7wsLr/5EppCEeLN9gYm9MnzvYQlm2jjui5WK7"
+  "zlN4+d4Cw440VHPD4RzoSu+qwutAVGMI5ZWLACovDu/HG8cLi6fT5sXd33tP8Hehv9BpCv"
+  "JKU=";
 
 /* 
  * Resource generated for file:
- *    MousePanOff.png (zlib, base64) (image file)
+ *    MouseInformationOff.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePanOff_width          = 21;
-static const unsigned int  image_MousePanOff_height         = 21;
-static const unsigned int  image_MousePanOff_pixel_size     = 3;
-static const unsigned long image_MousePanOff_length         = 160;
-static const unsigned long image_MousePanOff_decoded_length = 1323;
+static const unsigned int  image_MouseInformationOff_width          = 21;
+static const unsigned int  image_MouseInformationOff_height         = 21;
+static const unsigned int  image_MouseInformationOff_pixel_size     = 4;
+static const unsigned long image_MouseInformationOff_length         = 524;
+static const unsigned long image_MouseInformationOff_decoded_length = 1764;
 
-static const unsigned char image_MousePanOff[] = 
-  "eNrbtGnT////N1FAUgLwm2DoN5FsvRbxGyGIDBPgevGYgEsv0M2YiAz3Gxsbk+RyNFvQtG"
-  "O6AdkEoB8JakcOBzS9RGrHNAEuDmQY4wbIyqhoO+V+JybkTQIm0zTeqZXqKEnzlOc4yvM7"
-  "EHz69J2Y0oZsEgBdiGT7";
+static const unsigned char image_MouseInformationOff[] = 
+  "eNrVlE9LAlEUxfVbtG3Vpm1BZGhWFvUtUikSalHUslWLCMlF+A3auBFmGkckMEFMNIaEIE"
+  "QRy0hmIQoOJSGc5r544X8nnE0PLof35szhx537RhAE0BJMVrRa5hXPHeOzWCxjS76VmdcI"
+  "J/mNLPIVXgqGODszVy/jA5VnppW06ZyJ+4TpnJQ5itPhEaE2VNM4/dcKFraCOA3eMW+73W"
+  "Zeq9X6+36nGuF0ekVMz59j2SMwr6ZpE3ES46wjgJVdienBWdjQfAauAkO/O7HZ3CI296NY"
+  "0tWh72PxGGPgxXvA+aSYhGQmOXA+OePaXoRlktL+6EJC7jmH8nsZFbXS1VfKSz2kUHoroa"
+  "bV+jiJye69YXm8bNv6mX6ezWWh1lU0v5osszev/lHvu++c0aWzbfhkuHwRVss7P3099sso"
+  "vhbR+GygWqtCeVKQecx05/Xcd+LOl/OsX4vrJ5ia8WDOeYhQOAQxKrJzek4+yqBcqs68Uf"
+  "8lmneaJbtb+PO/bth8TpL57zhN1m8qcrfT";
 
 /* 
  * Resource generated for file:
- *    MousePanOn.png (zlib, base64) (image file)
+ *    MouseInformationOn.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePanOn_width          = 21;
-static const unsigned int  image_MousePanOn_height         = 21;
-static const unsigned int  image_MousePanOn_pixel_size     = 3;
-static const unsigned long image_MousePanOn_length         = 160;
-static const unsigned long image_MousePanOn_decoded_length = 1323;
+static const unsigned int  image_MouseInformationOn_width          = 21;
+static const unsigned int  image_MouseInformationOn_height         = 21;
+static const unsigned int  image_MouseInformationOn_pixel_size     = 4;
+static const unsigned long image_MouseInformationOn_length         = 508;
+static const unsigned long image_MouseInformationOn_decoded_length = 1764;
 
-static const unsigned char image_MousePanOn[] = 
-  "eNpjYGBkoAz9JxcQ1G7oN5Fs7RbxGyGIDO1wvXhMwKUd6GZMRIbfjY2NSfI7mi1o2tFk0b"
-  "QD/UhQO3I4IGuHBBEx2uEmwLXDxYEMY9wAWRkVbafc78SEvEnAZJrGO7VSHSVpnvIcR3l+"
-  "B4JPn74T1E4JAgAwFJpE";
+static const unsigned char image_MouseInformationOn[] = 
+  "eNpjYGD4z0AD/P/HD6phYs0kxl3b92wn2kywPBEApO72w9skm+nSvx8rDTPzxLkTVHfnwe"
+  "MHqe5OQmY6pGz+//LDS6q5s3fpuf+W3tP+1087AJb/8+cPWB8jIyNcPzJNjJlOqZv/K5p1"
+  "/ndM2QSW//LlC0XuBLlRx2HCf+eMrWA6v3U9UelzwpQJOOMd5Dab5M3/vfJ2/LcF0g5A/q"
+  "79u8BugGFYGMDct3XX1v9HTh3Bmj5hbnTN2gY2E0SD+CXdW/9fvH7x/4NnD/4/fvkYJVxB"
+  "5h07c+z/vSf3/r/98hbDTJCb7FO3gM2DYZskoBhQ/PTF0/9fvn/5//Ovz2Az0c17/+09Rt"
+  "6EudEN6DaP7O3/3bK3gbFjOiRcy3q3/7/z6M7/D98//H/+9vn/c1fO/T914RSKeehmgtx9"
+  "88FNcHhZu5f/l1BP+W/qVPx/1fpV/zfv2AwWB8mD1IHMAJkLwsjm4StDQOkdlJbskzdRra"
+  "wbSWZSGwMA6/fszA==";
+
+
+
+/* 
+ * Resource generated for file:
+ *    MouseWindowLevelDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MouseWindowLevelDisabled_width          = 21;
+static const unsigned int  image_MouseWindowLevelDisabled_height         = 21;
+static const unsigned int  image_MouseWindowLevelDisabled_pixel_size     = 3;
+static const unsigned long image_MouseWindowLevelDisabled_length         = 412;
+static const unsigned long image_MouseWindowLevelDisabled_decoded_length = 1323;
+
+static const unsigned char image_MouseWindowLevelDisabled[] = 
+  "eNqlk9tOhDAQhh/e8Axc6iKBWsuZCKsgNUEuDBd4AQm4HBbX58DBJs1mUWTZyZ9JG/jnm0"
+  "w6tm0Pw2BfkL8Oh3ViFfj16pxomuaEfvxVEARRFDHGjuNEUZQkSZZlZVnWdd11HfyQ5/kM"
+  "/V87XNfR27Zl9nV0bp/SXS9cOLopPU7eVGRCDl0ljFSLIkQJoj7aUmRRfPfiIhqoIUXkV7"
+  "pm+dcbpJmeb8lPgWJF6rz9mA7QW5lABchw9rey+awupwOUmJ7pPBLDg7P7IOmBsoTef/YM"
+  "rdtbsENmDQizwen7fg847QfNdG+MncSvcZqm2R/BXx1HG/aIBvEJFEVRfVS7ejfV9M3D2J"
+  "my97F4VVVt10JvCzeO2xcu7Al9I2HQjYTX7bskE6Z1dFnVmc6iX5K/Af9D9kk=";
+
+/* 
+ * Resource generated for file:
+ *    MouseWindowLevelOff.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MouseWindowLevelOff_width          = 21;
+static const unsigned int  image_MouseWindowLevelOff_height         = 21;
+static const unsigned int  image_MouseWindowLevelOff_pixel_size     = 4;
+static const unsigned long image_MouseWindowLevelOff_length         = 568;
+static const unsigned long image_MouseWindowLevelOff_decoded_length = 1764;
+
+static const unsigned char image_MouseWindowLevelOff[] = 
+  "eNqtlE1LAlEYhS/SCP0MoaCk2iRBZZRF0ccfKMIW1VAktE/8AQVJ0SL62OdmVmNZtKiFNB"
+  "QFYRLRQgdCyxRGMyKL6nTnkjaE08c0A4fDfXnn3Gfmcl9RFKE+osmOQsE8FXM1NYuFGFZK"
+  "SZXl1PYQQmC1cnA4GsHzPHxeL9bX1iAIAg4lCXIshtTNDfLZLOuPXER+5Px1pqKw/oPjA1"
+  "M4b2mmksmUMs3g/JpZjlPNGZzZM3RGepwLG6doHlhmfrdCcF0gGHmlzLBTCSBbbyBuoJID"
+  "fARIknuA2L/l7OSDsDXNwTUuQvYTxBQC9/PvM79yqmx1HYvomtxirq7PrgiGH2jmmzFOlc"
+  "05FkT/9A7aqHfQtXROMERZycvfOPNP+RJj91SIZapeZOW4Cnr+P0vLmXvMMaZ2fpPlFeUc"
+  "pTVaDwgB7O7vInwUZu/pSXuPiow9lK3Xs40eT4jJNfH5X6OXUchJGYl0Qld6993WNFuSdC"
+  "KxveOJONJ3afY9RuaSNtPIrCvHWd0yj6oWP6pa502bnzWuJdRSqW4WZ33fKho+9C9Ok/0d"
+  "20UVMA==";
+
+/* 
+ * Resource generated for file:
+ *    MouseWindowLevelOn.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MouseWindowLevelOn_width          = 21;
+static const unsigned int  image_MouseWindowLevelOn_height         = 21;
+static const unsigned int  image_MouseWindowLevelOn_pixel_size     = 4;
+static const unsigned long image_MouseWindowLevelOn_length         = 536;
+static const unsigned long image_MouseWindowLevelOn_decoded_length = 1764;
+
+static const unsigned char image_MouseWindowLevelOn[] = 
+  "eNq9lN0rQ2Ecx38tZ+XPWE0h3JDyFiPLyz9A4gInsnJv+QOoLXIhL/d2c67MRrvgYu1ElJ"
+  "DkYjulzWbq2CYZ4es5T8YuHHIcLj79ep7zez7ne87T8xAR6A9APm8anzktFjJMSk1969Se"
+  "Wa0C6upqIYoipt1urK6sQJIk7MoylGgUqWQSuZsb3n90dmSeU1V5f2Q/YorzijnV6+t/d2"
+  "rjvqltQ3uk55xbO0RD7yKv2SXCZZ4w9Mz6UMmQQIEX0CBQKgDTbGmCbgGq/NLZLvphq5+F"
+  "Y3QdipcQVQmDj8adWraqtnl0jAd41cbHF4SBO9b3YsypZWse8aNncgstrLaxsXxK6GdZ6e"
+  "lnztxD7j1j50SQO7VayCoIJWz/v6fYmbnP8Eyt4gb3FWgeZnNs3if5ENoJIbwX5uv0KD5H"
+  "hYxOlq3LtQmnK8hxjH3815PzEygJBfF0XBe9826rn3lHPpD5u2PxGNLZNP8eI/dSsdOsu6"
+  "6s0QN7oxf2Jo9pznLHAioYWjXLWd29jJo3fuM0m1ec2Uop";
+
 
 /* 
  * Resource generated for file:
  *    MousePickDisabled.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePickDisabled_width          = 21;
+static const unsigned int  image_MousePickDisabled_width          = 23;
 static const unsigned int  image_MousePickDisabled_height         = 21;
 static const unsigned int  image_MousePickDisabled_pixel_size     = 3;
-static const unsigned long image_MousePickDisabled_length         = 236;
-static const unsigned long image_MousePickDisabled_decoded_length = 1323;
+static const unsigned long image_MousePickDisabled_length         = 404;
+static const unsigned long image_MousePickDisabled_decoded_length = 1449;
 
 static const unsigned char image_MousePickDisabled[] = 
-  "eNrbtGnT////N1FAPiMXQEwgWzse2/s6O5ERqbYja8GlHb/tBLXjt/3Dp2+nztx8/foteb"
-  "Zfv3l35syZjx49IsN2INi9e3d/fz+QJCPkHzx4MGXKlAULFgBJIJtU24GWLoABXA7AZTvc"
-  "agjA5QBctiNbjccBWG1HsxqPA7Dafvny5U1gsGjRImDIz58/H8IFihMf8kCwb98+oPbt27"
-  "eTl+MIah/MthNZ2lBCAgBCLGNM";
+  "eNqlU8FOg0AU/HBjLyaN1TQWCxVrWVy6SyG94C7FqKQ0PdjYxNge9Fpi43fUaUg4VFQWNp"
+  "PJMMDbYYDdbr+EEDU5W1/bbTXkEzDt4NT12Cy85af/d5JwKZJVHC3l/csEDA1HKUkGZ0rm"
+  "i7v1+xwMXXjNb0mQGZu+fbxe+OfhVG+0G2BoOPAPnujfJG2nZfHWQzICQyslyTthkjaNk+"
+  "PmERhatZM8s+2xs0sNrPp20s801wahpx1dt2jh2TKdyMdYuyJ9NgZDV+gEIDwYsID6wuKB"
+  "xQLVL3aTbp6SZ910qTcZ+hEYGg58pSQ2l7YbYkIGgkMulZLEswW2dhDDi8DA7SiEA1+1E6"
+  "DTdTJU+IvLDymTRDOGmsHAdZJ0TRdVgOsk6d34vf4eZZLU4W9a8Mku";
 
 /* 
  * Resource generated for file:
  *    MousePickOff.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePickOff_width          = 21;
+static const unsigned int  image_MousePickOff_width          = 23;
 static const unsigned int  image_MousePickOff_height         = 21;
-static const unsigned int  image_MousePickOff_pixel_size     = 3;
-static const unsigned long image_MousePickOff_length         = 220;
-static const unsigned long image_MousePickOff_decoded_length = 1323;
+static const unsigned int  image_MousePickOff_pixel_size     = 4;
+static const unsigned long image_MousePickOff_length         = 476;
+static const unsigned long image_MousePickOff_decoded_length = 1932;
 
 static const unsigned char image_MousePickOff[] = 
-  "eNrbtGnT////N1FAUgIoMQGP3tMMDMiIVBOQteDSjt92gtrx2/756y9L72mfPn0nz/ZJc4"
-  "8qmnUCSTJsBwK4djL0At2s4zDBIn4jkASySTUBaClQLwThcgAuvXCrIQiPA7CagGw1Hgdg"
-  "1YtmNX4HYJpw9tKTqrYdQBSYtBgY8p5R8yBcoDhJ+WXW4pNA7W2T9pOXawhqH8y2E19ikE"
-  "0CACBbkIc=";
+  "eNr7/x8CNm3aRBMaDn78oB5GAmB7sKixmGeM1wxc8sS6O+dN8v/J75v+V71M+1//NA9Mg/"
+  "ggcUrcDcNO9zT+H36Q/P/R7wlgGsTHp56Qu0H+Bbnt8Ntd/yXXM/zf8Z7hP2MohAbxQeIg"
+  "eazhQoK7Zaay/y9eyPB/w0UfMA3iU+Ju5PCOXOvxXzST7T+nLQOYBvEpDW9k/4a25v1XC/"
+  "EF05Smkw8/36PwTTNr/8t6xALpGrzqSA3v+qWb/mv5V/23LZwBpkF8aoQ3CNtnrPxvnbXi"
+  "v0fZqv82QNoOyKc0X777+u5/75Kz/3UcJvx3zdr23ytvB5gG8UHiIHlK3O2Qsum/feoWsL"
+  "kwbJMEFEvZRJG7+5edB7vRDehWj+zt/92yt4GxY/pWsDhIntLwBmFFsw44pkY5SK7ZpLpb"
+  "1arnv4pV738V6x6qu1vDcdJ/TSAG0dR2t67nzP96UEyyu6lMAwAtu7TQ";
 
 /* 
  * Resource generated for file:
  *    MousePickOn.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePickOn_width          = 21;
+static const unsigned int  image_MousePickOn_width          = 23;
 static const unsigned int  image_MousePickOn_height         = 21;
-static const unsigned int  image_MousePickOn_pixel_size     = 3;
-static const unsigned long image_MousePickOn_length         = 200;
-static const unsigned long image_MousePickOn_decoded_length = 1323;
+static const unsigned int  image_MousePickOn_pixel_size     = 4;
+static const unsigned long image_MousePickOn_length         = 468;
+static const unsigned long image_MousePickOn_decoded_length = 1932;
 
 static const unsigned char image_MousePickOn[] = 
-  "eNpjYGBkoAz9JxfQTvtpBgZkRIZ2rGy6af/89Zel97RPn76Tp33S3KOKZp1AkgztQADXTk"
-  "bIA92s4zDBIn4jkASySdUOtBSoF4JwOQCXdrjVEITLAbi0I1uNxwFYtaNZjccBWLWfvfSk"
-  "qm0HEAUmLQaGvGfUPAgXKE5SxM1afBKovW3SfvJy3JDWTmRxQQkCAPLYxdA=";
+  "eNr7/x8CGBgYqI7/I5n9/8cPqmFizLaYZ4zXDFzyxLo7503y/8nvm/5XvUz7X/80D0yD+C"
+  "BxStwNw073NP4ffpD8/9HvCWAaxKckTED+Bbnt8Ntd/yXXM/zf8Z7hP2MohAbxQeIgeWzh"
+  "Qoq7Zaay/y9eyPB/w0UfMA3iUxqXsPCOXOvxXzST7T+nLQOYBvEpDW9k/4a25v1XC/EF05"
+  "Smkw8/36PwTTNr/8t6xALpGrzqSA3v+qWb/mv5V/23LZwBpkF8aoQ3CNtnrPxvnbXiv0fZ"
+  "qv82QNoOyKfU7Hdf3/3vXXL2v47DhP+uWdv+e+XtANMgPkgcJE+Jux1SNv23T90CNheGbZ"
+  "KAYimbKHJ3/7LzYDe6Ad3qkb39v1v2NjB2TN8KFgfJUxreIKxo1gHH1CgH6WW2qlXPfxWr"
+  "3v8q1j1UN1vDcdJ/TSAG0dQ2W9dz5n89KCbVbGpjAH4P6ck=";
 
 /* 
  * Resource generated for file:
  *    MousePlaceDisabled.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePlaceDisabled_width          = 21;
+static const unsigned int  image_MousePlaceDisabled_width          = 23;
 static const unsigned int  image_MousePlaceDisabled_height         = 21;
 static const unsigned int  image_MousePlaceDisabled_pixel_size     = 3;
-static const unsigned long image_MousePlaceDisabled_length         = 224;
-static const unsigned long image_MousePlaceDisabled_decoded_length = 1323;
+static const unsigned long image_MousePlaceDisabled_length         = 396;
+static const unsigned long image_MousePlaceDisabled_decoded_length = 1449;
 
 static const unsigned char image_MousePlaceDisabled[] = 
-  "eNrNlDEOhSAMhs/v8lhYmCAcoQsDCZfgAoTBa/Ca1zxj1FbBmPgPDWrr97cBAKC1BjfiPC"
-  "r6g5DwmSbhK0dfqvaLi/R1PufhtHfZ/EN0yi+lGGNqrQO9o2KMSimMvZMntNbaOYcR1729"
-  "I9T9xRng6AuaxBng6Gu0YOCQvkELBg7pOWf4yXuPk7fW0iO+79p1KSUsDyGMnbjT8jfTL9"
-  "42d+IXG5Nljw==";
+  "eNqlk/9LwkAYxv/4oF+yIGLNRop67UtFmKeLQSTZuQjrFwOD4cap1/+hzzoYopv6tuPh4d"
+  "l7714+3G7LZbo45yVdr1+l/qdsAqat1z9GAyj3le2tIpKsLU7iyc9k/D2GI2/s7iWBzxfz"
+  "z69RFEVKKTgyKttDdpPImez5XSnl8ekRPM0zSSVJksR/8oMgEELAkVGhkkzjqRgKz/PMqg"
+  "lHRoVKAoXvYYs5J5VzOHLuwe4gyTqtul05M6zaTdEnLiLJ9Nx/u6w2m/YDHDm3Z++NZW67"
+  "5bTd+y4cIt1YrZfXoWkx+7aDIXBkVKgkzH2EMEELJHgkkfQH4R8Gd+44HGJeCoM69UygC6"
+  "OuRf2LSUMOITHMhlYZEpyDVhmSq2vbqjnQISRlfAVgrtGB";
 
 /* 
  * Resource generated for file:
  *    MousePlaceOff.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePlaceOff_width          = 21;
+static const unsigned int  image_MousePlaceOff_width          = 23;
 static const unsigned int  image_MousePlaceOff_height         = 21;
 static const unsigned int  image_MousePlaceOff_pixel_size     = 3;
-static const unsigned long image_MousePlaceOff_length         = 212;
-static const unsigned long image_MousePlaceOff_decoded_length = 1323;
+static const unsigned long image_MousePlaceOff_length         = 444;
+static const unsigned long image_MousePlaceOff_decoded_length = 1449;
 
 static const unsigned char image_MousePlaceOff[] = 
-  "eNrbtGnT////N1FAUgLwm3CagYEMvXBdmAxSTSBDL5GOp5HtEPWfPn239J72+esv8tw/ae"
-  "5RRbNOIElGrAGt1nGYYBG/EUgC2aSaALQUqBeCcDkAl1641RCExwFYTUC2Go8DsOpFsxq/"
-  "AzBNOHvpSVXbDiAKTFoMDHnPqHkQLlCcpFQ3a/FJoPa2SfvJy3EEtQ9m24kvbcgmAdtJmR"
-  "o=";
+  "eNr7/x8ENm3aRCEJBT9+kIlgAGQakviJUweBCKsWTClcLoEre/7u2Y0H1y5cPwckgWw0WY"
+  "IuAZKffn46eHrv42cPfv/+BSSBbKAIpiH4XfLu67u+2R2fPn1UjGUAkkA2UIRUl7x8/3Li"
+  "rL6Zc6dv2rQRSALZQBFSXfLszbMN29eXVBcGhPsASSAbKEKqS4Bo666tkRmNSjqRQBLIxh"
+  "qweFwCV2kWNFFKK9s0cALO2MfhEjjqmn9Cy7bLPmk1kASysaohmGIdkjfYJG/2ytthm7zZ"
+  "PnkDSSkWgnqXnNVxmOCatQ1oCJAEsoEipLrEIWWTfeoWoAkQZJO0yT5lE0ku6V92Hmi1W9"
+  "Y2j+ztbtnbgMgxfStQBChOapgAkaJZBwSRmotJMoQYl6ha9ahY9apY91DiEg3HSZqOk4Ak"
+  "JS7R9ZypB0ZEuYQCEgAkQ+wt";
 
 /* 
  * Resource generated for file:
  *    MousePlaceOn.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePlaceOn_width          = 21;
+static const unsigned int  image_MousePlaceOn_width          = 23;
 static const unsigned int  image_MousePlaceOn_height         = 21;
 static const unsigned int  image_MousePlaceOn_pixel_size     = 3;
-static const unsigned long image_MousePlaceOn_length         = 208;
-static const unsigned long image_MousePlaceOn_decoded_length = 1323;
+static const unsigned long image_MousePlaceOn_length         = 420;
+static const unsigned long image_MousePlaceOn_decoded_length = 1449;
 
 static const unsigned char image_MousePlaceOn[] = 
-  "eNpjYGBkoAz9JxcQ1H6agYEM7XBdmAwibUdWj8sNNHI8hbZD1H/69N3Se9rnr7/I8DsQTJ"
-  "p7VNGsE0iS4Xig1ToOEyziNwJJIJtU7UBLgXohCJcDcGmHWw1BuByASzuy1XgcgFU7mtV4"
-  "HIBV+9lLT6radgBRYNJiYMh7Rs2DcIHiJEXcrMUngdrbJu0nL8cNae1EljaUIACt1c5j";
+  "eNr7/x8EGCgD/2GG/P/xgzyEy5ATpw4CEVYtmFJ4DIEwnr97duPBtQvXzwFJIBtNlhhDPv"
+  "38dPD03sfPHvz+/QtIAtlAEVINeff1Xd/sjk+fPirGMgBJIBsoQqohL9+/nDirb+bc6Zs2"
+  "bQSSQDZQhFRDnr15tmH7+pLqwoBwHyAJZANFSDUEiLbu2hqZ0aikEwkkgWxSAxau0ixoop"
+  "RWtmngBFKjGI665p/Qsu2yT1oNJIFskhIbHDkkb7BJ3uyVt8M2ebN98gYyDOldclbHYYJr"
+  "1jagIUASyAaKkGqIQ8om+9QtQBMgyCZpk33KJpIM6V92Hmi1W9Y2j+ztbtnbgMgxfStQBC"
+  "hOapgAkaJZBwSRmoupboiqVY+KVa+KdQ8lhmg4TtJ0nAQkKTFE13OmHhgRYwglAACTQCE1";
 
 /* 
  * Resource generated for file:
  *    MouseRotateDisabled.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MouseRotateDisabled_width          = 21;
+static const unsigned int  image_MouseRotateDisabled_width          = 25;
 static const unsigned int  image_MouseRotateDisabled_height         = 21;
 static const unsigned int  image_MouseRotateDisabled_pixel_size     = 3;
-static const unsigned long image_MouseRotateDisabled_length         = 340;
-static const unsigned long image_MouseRotateDisabled_decoded_length = 1323;
+static const unsigned long image_MouseRotateDisabled_length         = 348;
+static const unsigned long image_MouseRotateDisabled_decoded_length = 1575;
 
 static const unsigned char image_MouseRotateDisabled[] = 
-  "eNrVU7EKgzAU/P8xo+gQVEQdFDKJgiCIKDooiLgL/Q179EGwiUqrS3tDiDF39/JyEUKs6y"
-  "pujI+rIIXL9N90b9s2iiLOOWMMY5Ik4zjKv5jXdX3kXhRFEARYx7ZlWXzfJ5E8z4mLeZqm"
-  "u+5934NbVZVcgUIcx/yFLMtoQqa6Oz5Rtn4cqUAIw3DX3fO8six1+jRNW7pt24o7HVCiaZ"
-  "ptr/g7LMtS3Lf0cy7gOM6J+zAMks72ADpaqrsbhqErENBSpc+KO2qe59k0TV0BV4kLxbUe"
-  "pU7mqus6dIaKwX4kENvARZw+zDykEFQKreu6KBsi//LivnK/Mz4BOzRGqg==";
+  "eNrdlDELgzAUhP//mFF0CCqiDgpOoiAIIooOCiLuQv+GvfZBSLVEiVN7Q4iRfNxL7mXbXk"
+  "qS5OYo66GrHQdkbdTvuuq6LooizjljDGOaptM0ib+YN01zxVVZlkEQYB1b1nX1fZ+ARVEQ"
+  "B/Msy05dDcMATl3XYgW0OI75W3me04QMqF3hE6UdSxY0UhiGp648z6uq6oia51lG2batcE"
+  "UHItS2rXzO/FOWZSlcySg1B3Ic56KrcRwFin0TULgOtSvDMI40Eq5jd0cKV6hrWRbTNI80"
+  "xAMhQVSupF3kue97nCqZxF4kH1vAQXQ1ehBYNAs1juu6KA3Af3oZtF3df9ufrs1BvQ==";
 
 /* 
  * Resource generated for file:
  *    MouseRotateOff.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MouseRotateOff_width          = 21;
+static const unsigned int  image_MouseRotateOff_width          = 25;
 static const unsigned int  image_MouseRotateOff_height         = 21;
 static const unsigned int  image_MouseRotateOff_pixel_size     = 3;
-static const unsigned long image_MouseRotateOff_length         = 384;
-static const unsigned long image_MouseRotateOff_decoded_length = 1323;
+static const unsigned long image_MouseRotateOff_length         = 392;
+static const unsigned long image_MouseRotateOff_decoded_length = 1575;
 
 static const unsigned char image_MouseRotateOff[] = 
-  "eNrbtGnT////N1FAUgIoMWFw2n7o6KXW7vm+cQvUrLuBZOeUg5euP4fLAtmbdl3DZcKa9Q"
-  "drmqb0TFoGVPbj5++kwtVAQyziN85cdAKiF8jum3kIq96zF25V10/etvsUXOTnz99FDVuB"
-  "WoBo4pyjEEZV2w6stgMtBTob0ztwEyAotWgtVtvLa7o3bT+Gqf3a7VfI2gOTFqPZDvEgHG"
-  "3bdwM5rJClgMghaBaa7cja8esFopDUJXhsP3XuEbKxmAioHRikmLbb+U/ENAECgEEKDFhc"
-  "KQeoHejmO/ff2AfOxDQBGJXACAVGK65UB09Xew/fAYYMxDHHTj0ApkCgpcCEBExORKZboF"
-  "HAhApJtKVV7UBnAw0ZKjmOVBPIJgE6B1mh";
+  "eNr7/x8ENm3aRCFJC0CJyUPXVYeOXmrtnu8bt0DNuhtIdk45eOn6c7gskL1p1zViTF6z/m"
+  "BN05SeScuAWn78/J1UuBpooEX8xpmLTkDMAbL7Zh4i6KqzF25V10/etvsUXOTnz99FDVuB"
+  "2oFo4pyjEEZV2w6CrgI6Bug1TGVw0yAotWgtQVeV13Rv2n4MU/za7VfIRgUmLcbjKkiAwN"
+  "G2fTeQwxlZCogcgmbhcRWyUfjNAaKQ1CVEuurUuUfIVmAioFHA6MDvKjv/iZimQQAwOoCR"
+  "QkyKBRoF9Ned+2/sA2dimgZMHsBEAkwqxKR2eHree/gOMFQhjjx26gEw5QMdA0y0wKRLRj"
+  "4CGgvMLJCMU1rVDvQa0MDhVDJQYjKFZTsA8uNUtA==";
 
 /* 
  * Resource generated for file:
  *    MouseRotateOn.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MouseRotateOn_width          = 21;
+static const unsigned int  image_MouseRotateOn_width          = 25;
 static const unsigned int  image_MouseRotateOn_height         = 21;
 static const unsigned int  image_MouseRotateOn_pixel_size     = 3;
-static const unsigned long image_MouseRotateOn_length         = 372;
-static const unsigned long image_MouseRotateOn_decoded_length = 1323;
+static const unsigned long image_MouseRotateOn_length         = 388;
+static const unsigned long image_MouseRotateOn_decoded_length = 1575;
 
 static const unsigned char image_MouseRotateOn[] = 
-  "eNpjYGBkoAz9JxcMS+2Hjl5q7Z7vG7dAzbobSHZOOXjp+nO4LJC9adc1XNrXrD9Y0zSlZ9"
-  "IyoLIfP38nFa4GGmIRv3HmohMQvUB238xDWLWfvXCrun7ytt2n4CI/f/4uatgK1AJEE+cc"
-  "hTCq2nZg1Q60FOhsTO/ATYCg1KK1WLWX13Rv2n4MU/u126+QtQcmLUbTDvEgHG3bdwM5rJ"
-  "ClgMghaBYe7fj1AlFI6hI82k+dewTXDhTHREDtwCDF1G7nPxHTBAgABikwYHElG6B2oJvv"
-  "3H9jHzgT0wRgVAIjFBituLTD09Xew3eAIQNxzLFTD4ApEGgpMCEBkxORiRZoFDChQhJtaV"
-  "U70NlAQ4ZlhqUEAQAMk47q";
+  "eNr7/x8EGBgYKUH/kQAalyQwahQQHDp6qbV7vm/cAjXrbiDZOeXgpevP4bJA9qZd14gxas"
+  "36gzVNU3omLQNq+fHzd1LhaqCBFvEbZy46ATEHyO6beYigUWcv3Kqun7xt9ym4yM+fv4sa"
+  "tgK1A9HEOUchjKq2HQSNAjoG6DVML8NNg6DUorUEjSqv6d60/RimUdduv0I2KjBpMR6jIA"
+  "ECR9v23UAOZ2QpIHIImkWkUfjNAaKQ1CVEGnXq3CO4AqA4JgIaBYwO/EbZ+U/ENA0CgNEB"
+  "jBRikijQKKC/7tx/Yx84E9M0YPIAJhJgUiHGKHh63nv4DjBUIY48duoBMOUDHQNMtMCkS0"
+  "bGARoLzCyQjFNa1Q70GtDA0UKGKmU7AADyif0=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerOptions.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerOptions_width          = 11;
+static const unsigned int  image_SlicerOptions_height         = 21;
+static const unsigned int  image_SlicerOptions_pixel_size     = 3;
+static const unsigned long image_SlicerOptions_length         = 164;
+static const unsigned long image_SlicerOptions_decoded_length = 693;
+
+static const unsigned char image_SlicerOptions[] = 
+  "eNqTkJSQwIH+Q8C/f1jRcFOAA8AVPHz2MComCh44Lu4utx/eRlYABNfuXguLDAOKOLk4Xb"
+  "xxEc0EILj7+O7F6xdLyktOXzx95/EdTAUQNTcf3ITLYioAgqdvniL8hawAzMXjC6IUQBAc"
+  "4AlJJC4V40KCUJoEADh+NAA=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerOptionsDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerOptionsDisabled_width          = 11;
+static const unsigned int  image_SlicerOptionsDisabled_height         = 21;
+static const unsigned int  image_SlicerOptionsDisabled_pixel_size     = 3;
+static const unsigned long image_SlicerOptionsDisabled_length         = 140;
+static const unsigned long image_SlicerOptionsDisabled_decoded_length = 693;
+
+static const unsigned char image_SlicerOptionsDisabled[] = 
+  "eNrbtGnT////N+EggeAZDvAfBnApGGYm3Lh9Y87cOXUwMGnypGs3rqGZcOX6lVmzZwFlJ0"
+  "6aePHqRUw3XL95/eKViytWrjh/8TyQjdUNQPGrN67CZbH64ta9W8M4LjYRSpMAXStpLQ==";
+
+/* 
+ * Resource generated for file:
+ *    SlicerOptionsOff.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerOptionsOff_width          = 11;
+static const unsigned int  image_SlicerOptionsOff_height         = 21;
+static const unsigned int  image_SlicerOptionsOff_pixel_size     = 3;
+static const unsigned long image_SlicerOptionsOff_length         = 172;
+static const unsigned long image_SlicerOptionsOff_decoded_length = 693;
+
+static const unsigned char image_SlicerOptionsOff[] = 
+  "eNrbtGnT////N+EgQeDfP+wIDnAoGGIm4ABwEx4+exgVEyUhKQFBLu4utx/eRlN87e61sM"
+  "gwoKyTi9PFGxfRTACCu4/vXrx+saS85PTF03ce38FqI1DNzQc3kWWRTYCAp2+eIvyFDHD4"
+  "CCUc8AMcYYs9JHGrpyQuNhFKkwCFBYbf";
+
 
 /* 
  * Resource generated for file:
