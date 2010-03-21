@@ -47,6 +47,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (TabbedSliceViewIcon, vtkKWIcon);
     vtkGetObjectMacro (Tabbed3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (LightBoxViewIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerOptionsOnIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerOptionsOffIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerOptionsDisabledIcon, vtkKWIcon );
     vtkGetObjectMacro (MousePickOnIcon, vtkKWIcon );
     vtkGetObjectMacro (MousePickOffIcon, vtkKWIcon );
     vtkGetObjectMacro (MousePickDisabledIcon, vtkKWIcon );
@@ -94,6 +97,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *TabbedSliceViewIcon;
     vtkKWIcon *Tabbed3DViewIcon;
     vtkKWIcon *LightBoxViewIcon;
+    vtkKWIcon *SlicerOptionsOnIcon;
+    vtkKWIcon *SlicerOptionsOffIcon;
+    vtkKWIcon *SlicerOptionsDisabledIcon;
     vtkKWIcon *MousePickOnIcon;
     vtkKWIcon *MousePickOffIcon;
     vtkKWIcon *MousePickDisabledIcon;

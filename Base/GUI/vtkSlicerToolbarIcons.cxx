@@ -42,6 +42,9 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->MouseTransformViewOnIcon = vtkKWIcon::New();
     this->MouseTransformViewOffIcon = vtkKWIcon::New();
     this->MouseTransformViewDisabledIcon = vtkKWIcon::New();    
+    this->SlicerOptionsOnIcon = vtkKWIcon::New();
+    this->SlicerOptionsOffIcon = vtkKWIcon::New();
+    this->SlicerOptionsDisabledIcon = vtkKWIcon::New();
     this->MousePlaceOnIcon = vtkKWIcon::New ( );
     this->MousePlaceOffIcon = vtkKWIcon::New ( );
     this->MousePlaceDisabledIcon = vtkKWIcon::New ( );
@@ -201,6 +204,21 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     {
     this->MousePickDisabledIcon->Delete ( );
     this->MousePickDisabledIcon = NULL;
+    }
+  if ( this->SlicerOptionsOnIcon)
+    {
+    this->SlicerOptionsOnIcon->Delete();
+    this->SlicerOptionsOnIcon = NULL;
+    }
+  if ( this->SlicerOptionsOffIcon)
+    {
+    this->SlicerOptionsOffIcon->Delete();
+    this->SlicerOptionsOffIcon = NULL;
+    }
+  if ( this->SlicerOptionsDisabledIcon)
+    {
+    this->SlicerOptionsDisabledIcon->Delete();
+    this->SlicerOptionsDisabledIcon = NULL;
     }
   if ( this->MousePlaceOnIcon )
     {
@@ -451,7 +469,23 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_MouseRotateDisabled_height,
                                    image_MouseRotateDisabled_pixel_size,
                                             image_MouseRotateDisabled_length, 0);
-    
+
+    this->SlicerOptionsOnIcon->SetImage (image_SlicerOptions,
+                                         image_SlicerOptions_width,
+                                         image_SlicerOptions_height,
+                                         image_SlicerOptions_pixel_size,
+                                         image_SlicerOptions_length, 0);
+    this->SlicerOptionsOffIcon->SetImage (image_SlicerOptionsOff,
+                                 image_SlicerOptionsOff_width,
+                                 image_SlicerOptionsOff_height,
+                                 image_SlicerOptionsOff_pixel_size,
+                                 image_SlicerOptionsOff_length, 0);
+    this->SlicerOptionsDisabledIcon->SetImage (image_SlicerOptionsDisabled,
+                                               image_SlicerOptionsDisabled_width,
+                                               image_SlicerOptionsDisabled_height,
+                                               image_SlicerOptionsDisabled_pixel_size,
+                                               image_SlicerOptionsDisabled_length, 0);
+
     this->MousePlaceOnIcon->SetImage (image_MousePlaceOn,
                                    image_MousePlaceOn_width,
                                    image_MousePlaceOn_height,
@@ -534,7 +568,9 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TabbedSliceViewIcon" << this->GetTabbedSliceViewIcon ( ) << "\n";
     os << indent << "Tabbed3DViewIcon" << this->GetTabbed3DViewIcon ( ) << "\n";
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
-
+    os << indent << "SlicerOptionsOnIcon" << this->GetSlicerOptionsOnIcon() << "\n";
+    os << indent << "SlicerOptionsOffIcon" << this->GetSlicerOptionsOffIcon() << "\n";    
+    os << indent << "SlicerOptionsDisabledIcon" << this->GetSlicerOptionsDisabledIcon() << "\n";
     os << indent << "MousePickOnIcon" << this->GetMousePickOnIcon ( ) << "\n";
     os << indent << "MousePickOffIcon" << this->GetMousePickOffIcon ( ) << "\n";
     os << indent << "MousePickDisabledIcon" << this->GetMousePickDisabledIcon ( ) << "\n";
