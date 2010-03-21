@@ -11,6 +11,7 @@
 #include "vtkKWLabel.h"
 
 #include "vtkLiverAblationOptimizationStep.h"
+#include "vtkLiverAblationPlanningStep.h"
 #include "vtkLiverAblationLoadingPreoperativeDataStep.h"
 #include "vtkLiverAblationUserInputStep.h"
 
@@ -50,7 +51,8 @@ vtkLiverAblationGUI::vtkLiverAblationGUI()
 
   this->OptimizationStep = NULL;
   this->LoadingPreoperativeDataStep = NULL;
-  UserInputStep = NULL;
+  this->UserInputStep = NULL;
+  this->PlanningStep = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -77,10 +79,15 @@ vtkLiverAblationGUI::~vtkLiverAblationGUI()
     this->LoadingPreoperativeDataStep->Delete();
     this->LoadingPreoperativeDataStep = NULL;
     }
-  if (UserInputStep)
+  if (this->UserInputStep)
     {
-    UserInputStep->Delete();
-    UserInputStep = NULL;
+    this->UserInputStep->Delete();
+    this->UserInputStep = NULL;
+    }
+  if (this->PlanningStep)
+    {
+    this->PlanningStep->Delete();
+    this->PlanningStep = NULL;
     }
 }
 
@@ -110,12 +117,16 @@ void vtkLiverAblationGUI::RemoveLogicObservers()
     this->LoadingPreoperativeDataStep = NULL;
     }
 
-  if (UserInputStep)
+  if (this->UserInputStep)
     {
-    UserInputStep->Delete();
-    UserInputStep = NULL;
+    this->UserInputStep->Delete();
+    this->UserInputStep = NULL;
     }
-
+  if (this->PlanningStep)
+    {
+    this->PlanningStep->Delete();
+    this->PlanningStep = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -154,7 +165,7 @@ void vtkLiverAblationGUI::BuildGUI()
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   const char *help = 
-    "**IGT Module:** **This module provides a generic framework for a workflow-based IGT applications**"; 
+    "**IGT Module:** **This module provides a workflow-based guidance for RF liver ablation.**"; 
   
   this->UIPanel->AddPage("IGT", 
                          "IGT", NULL);
@@ -197,7 +208,7 @@ void vtkLiverAblationGUI::BuildGUI()
     vtkSlicerModuleCollapsibleFrame::New();
   wizard_frame->SetParent(module_page);
   wizard_frame->Create();
-  wizard_frame->SetLabelText("Wizard (Liver Ablation)");
+  wizard_frame->SetLabelText("Wizard");
   wizard_frame->ExpandFrame();
 
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
@@ -219,7 +230,7 @@ void vtkLiverAblationGUI::BuildGUI()
   vtkNotUsed(vtkKWWizardWidget *wizard_widget = this->WizardWidget;);
 
   // -----------------------------------------------------------------
-  // Load preoperative data step
+  // Load preoperative images step
 
   if (!this->LoadingPreoperativeDataStep)
     {
@@ -227,8 +238,18 @@ void vtkLiverAblationGUI::BuildGUI()
     this->LoadingPreoperativeDataStep->SetGUI(this);
     }
  
-  wizard_workflow->AddStep(this->LoadingPreoperativeDataStep);
+  wizard_workflow->AddNextStep(this->LoadingPreoperativeDataStep);
 
+  // -----------------------------------------------------------------
+  // Planning step
+  //
+  if (!this->PlanningStep)
+    {
+    this->PlanningStep = vtkLiverAblationPlanningStep::New();
+    this->PlanningStep->SetGUI(this);
+    }
+
+  wizard_workflow->AddNextStep(this->PlanningStep);
 
   // -----------------------------------------------------------------
   // Parameter Set step
@@ -261,6 +282,10 @@ void vtkLiverAblationGUI::BuildGUI()
   wizard_workflow->CreateGoToTransitionsToFinishStep();
   wizard_workflow->SetInitialStep(this->LoadingPreoperativeDataStep);
 
+  if (wizard_workflow->GetCurrentStep())
+    {
+    wizard_workflow->GetCurrentStep()->ShowUserInterface();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -270,16 +295,19 @@ void vtkLiverAblationGUI::TearDownGUI()
     {
     this->OptimizationStep->SetGUI(NULL);
     }
-
   if (this->LoadingPreoperativeDataStep)
     {
     this->LoadingPreoperativeDataStep->SetGUI(NULL);
     }
-
-  if (UserInputStep)
+  if (this->UserInputStep)
     {
-    UserInputStep->SetGUI(NULL);
+    this->UserInputStep->SetGUI(NULL);
     }
+  if (this->PlanningStep)
+    {
+    this->PlanningStep->SetGUI(NULL);
+    }
+
 }
 //---------------------------------------------------------------------------
 void vtkLiverAblationGUI::ProcessMRMLEvents(vtkObject *caller,

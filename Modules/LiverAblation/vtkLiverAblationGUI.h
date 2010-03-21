@@ -10,6 +10,7 @@ class vtkKWWizardWidget;
 class vtkLiverAblationOptimizationStep;
 class vtkLiverAblationLoadingPreoperativeDataStep;
 class vtkLiverAblationUserInputStep;
+class vtkLiverAblationPlanningStep;
 class vtkMRMLNode;
  
 class VTK_LIVERABLATION_EXPORT vtkLiverAblationGUI : public vtkSlicerModuleGUI
@@ -123,11 +124,11 @@ protected:
 
   // Description:
   // The wizard widget and steps
-  vtkKWWizardWidget                              *WizardWidget;
+  vtkKWWizardWidget                                *WizardWidget;
   vtkLiverAblationOptimizationStep                 *OptimizationStep;
   vtkLiverAblationLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
   vtkLiverAblationUserInputStep                    *UserInputStep; 
-
+  vtkLiverAblationPlanningStep                     *PlanningStep; 
 
 };
 
