@@ -544,7 +544,6 @@ proc FastMarchingSegmentationErrorDialog {this errorText} {
 proc FastMarchingSegmentationDisableIOFrameGUI {this} {
   $::FastMarchingSegmentation($this,initFrame) CollapseFrame
   $::FastMarchingSegmentation($this,initFrame) EnabledOff
-  return
 
   set widgets {
     outputSelector
