@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLNodeSelector" name="ActiveVolumeNodeSelector">
+      <widget class="qMRMLNodeComboBox" name="ActiveVolumeNodeSelector">
        <property name="nodeTypes">
         <stringlist>
          <string>vtkMRMLVolumeNode</string>
@@ -63,9 +63,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeSelector.h</header>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
