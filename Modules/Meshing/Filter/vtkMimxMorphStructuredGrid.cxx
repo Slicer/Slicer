@@ -408,6 +408,8 @@ int vtkMimxMorphStructuredGrid::RequestData(
     gencell->Delete();
     }
 
+  CellLocator->Delete();
+
   return 1;
 }
 
