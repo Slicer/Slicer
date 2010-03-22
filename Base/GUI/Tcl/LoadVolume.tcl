@@ -1338,6 +1338,10 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
   set totalFiles [llength $files]
   set fileCount 0
 
+  if { $totalFiles == 0 } {
+    $this errorDialog "No files found in directory\n$directoryName\n"
+  }
+
   set tree(patients) ""
   set tree(directoryName) $directoryName
   foreach f $files {
