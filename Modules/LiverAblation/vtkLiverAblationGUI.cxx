@@ -12,8 +12,10 @@
 
 #include "vtkLiverAblationOptimizationStep.h"
 #include "vtkLiverAblationPlanningStep.h"
+#include "vtkLiverAblationTrackingStep.h"
+#include "vtkLiverAblationNavigationStep.h"
 #include "vtkLiverAblationLoadingPreoperativeDataStep.h"
-#include "vtkLiverAblationUserInputStep.h"
+#include "vtkLiverAblationPreplanningStep.h"
 
 #include "vtkKWIcon.h"
 
@@ -51,8 +53,11 @@ vtkLiverAblationGUI::vtkLiverAblationGUI()
 
   this->OptimizationStep = NULL;
   this->LoadingPreoperativeDataStep = NULL;
-  this->UserInputStep = NULL;
+  this->PreplanningStep = NULL;
   this->PlanningStep = NULL;
+  this->TrackingStep = NULL;
+  this->NavigationStep = NULL;
+
 }
 
 //----------------------------------------------------------------------------
@@ -79,16 +84,28 @@ vtkLiverAblationGUI::~vtkLiverAblationGUI()
     this->LoadingPreoperativeDataStep->Delete();
     this->LoadingPreoperativeDataStep = NULL;
     }
-  if (this->UserInputStep)
+  if (this->PreplanningStep)
     {
-    this->UserInputStep->Delete();
-    this->UserInputStep = NULL;
+    this->PreplanningStep->Delete();
+    this->PreplanningStep = NULL;
     }
   if (this->PlanningStep)
     {
     this->PlanningStep->Delete();
     this->PlanningStep = NULL;
     }
+  if (this->TrackingStep)
+    {
+    this->TrackingStep->Delete();
+    this->TrackingStep = NULL;
+    }
+  if (this->NavigationStep)
+    {
+    this->NavigationStep->Delete();
+    this->NavigationStep = NULL;
+    }
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -117,15 +134,25 @@ void vtkLiverAblationGUI::RemoveLogicObservers()
     this->LoadingPreoperativeDataStep = NULL;
     }
 
-  if (this->UserInputStep)
+  if (this->PreplanningStep)
     {
-    this->UserInputStep->Delete();
-    this->UserInputStep = NULL;
+    this->PreplanningStep->Delete();
+    this->PreplanningStep = NULL;
     }
   if (this->PlanningStep)
     {
     this->PlanningStep->Delete();
     this->PlanningStep = NULL;
+    }
+  if (this->TrackingStep)
+    {
+    this->TrackingStep->Delete();
+    this->TrackingStep = NULL;
+    }
+  if (this->NavigationStep)
+    {
+    this->NavigationStep->Delete();
+    this->NavigationStep = NULL;
     }
 }
 
@@ -237,8 +264,17 @@ void vtkLiverAblationGUI::BuildGUI()
     this->LoadingPreoperativeDataStep = vtkLiverAblationLoadingPreoperativeDataStep::New();
     this->LoadingPreoperativeDataStep->SetGUI(this);
     }
- 
   wizard_workflow->AddNextStep(this->LoadingPreoperativeDataStep);
+
+  // -----------------------------------------------------------------
+  // Preplanning step
+  //
+  if (!this->PreplanningStep)
+    {
+    this->PreplanningStep = vtkLiverAblationPreplanningStep::New();
+    this->PreplanningStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->PreplanningStep);
 
   // -----------------------------------------------------------------
   // Planning step
@@ -248,19 +284,7 @@ void vtkLiverAblationGUI::BuildGUI()
     this->PlanningStep = vtkLiverAblationPlanningStep::New();
     this->PlanningStep->SetGUI(this);
     }
-
   wizard_workflow->AddNextStep(this->PlanningStep);
-
-  // -----------------------------------------------------------------
-  // Parameter Set step
-  //
-  if (!this->UserInputStep)
-    {
-    this->UserInputStep = vtkLiverAblationUserInputStep::New();
-    this->UserInputStep->SetGUI(this);
-    }
-
-  wizard_workflow->AddNextStep(this->UserInputStep);
 
 
   // -----------------------------------------------------------------
@@ -271,22 +295,44 @@ void vtkLiverAblationGUI::BuildGUI()
     this->OptimizationStep = vtkLiverAblationOptimizationStep::New();
     this->OptimizationStep->SetGUI(this);
     }
-
   wizard_workflow->AddNextStep(this->OptimizationStep);
 
+  // -----------------------------------------------------------------
+  // Tracking step
+  //
+  if (!this->TrackingStep)
+    {
+    this->TrackingStep = vtkLiverAblationTrackingStep::New();
+    this->TrackingStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->TrackingStep);
 
- // -----------------------------------------------------------------
+  // -----------------------------------------------------------------
+  // Navigation step
+  //
+  if (!this->NavigationStep)
+    {
+    this->NavigationStep = vtkLiverAblationNavigationStep::New();
+    this->NavigationStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->NavigationStep);
+
+
+  // -----------------------------------------------------------------
   // Initial and finish step
-
-  wizard_workflow->SetFinishStep(this->OptimizationStep);
+  //
+  wizard_workflow->SetFinishStep(this->NavigationStep);
   wizard_workflow->CreateGoToTransitionsToFinishStep();
   wizard_workflow->SetInitialStep(this->LoadingPreoperativeDataStep);
+
 
   if (wizard_workflow->GetCurrentStep())
     {
     wizard_workflow->GetCurrentStep()->ShowUserInterface();
     }
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkLiverAblationGUI::TearDownGUI() 
@@ -299,16 +345,22 @@ void vtkLiverAblationGUI::TearDownGUI()
     {
     this->LoadingPreoperativeDataStep->SetGUI(NULL);
     }
-  if (this->UserInputStep)
+  if (this->PreplanningStep)
     {
-    this->UserInputStep->SetGUI(NULL);
+    this->PreplanningStep->SetGUI(NULL);
     }
   if (this->PlanningStep)
     {
     this->PlanningStep->SetGUI(NULL);
     }
-
+  if (this->TrackingStep)
+    {
+    this->TrackingStep->SetGUI(NULL);
+    }
 }
+
+
+
 //---------------------------------------------------------------------------
 void vtkLiverAblationGUI::ProcessMRMLEvents(vtkObject *caller,
                                        unsigned long event,

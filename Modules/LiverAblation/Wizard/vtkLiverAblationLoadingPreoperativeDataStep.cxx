@@ -24,7 +24,7 @@ vtkCxxRevisionMacro(vtkLiverAblationLoadingPreoperativeDataStep, "$Revision: 1.8
 //----------------------------------------------------------------------------
 vtkLiverAblationLoadingPreoperativeDataStep::vtkLiverAblationLoadingPreoperativeDataStep()
 {
-  this->SetName("1/4. Load Preoperative Images");
+  this->SetName("1/6. Loading of Preoperative Images");
 //  this->SetDescription("Load required preoperative data.");
   this->SetDescription("");
 
@@ -33,7 +33,6 @@ vtkLiverAblationLoadingPreoperativeDataStep::vtkLiverAblationLoadingPreoperative
 
   this->AddVolumeButton = NULL; 
   this->GuideWidgetButton = NULL; 
-
   this->GuideWidget  = NULL;
 }
 

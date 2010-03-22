@@ -9,8 +9,10 @@ class vtkLiverAblationMRMLManager;
 class vtkKWWizardWidget;
 class vtkLiverAblationOptimizationStep;
 class vtkLiverAblationLoadingPreoperativeDataStep;
-class vtkLiverAblationUserInputStep;
+class vtkLiverAblationPreplanningStep;
 class vtkLiverAblationPlanningStep;
+class vtkLiverAblationTrackingStep;
+class vtkLiverAblationNavigationStep;
 class vtkMRMLNode;
  
 class VTK_LIVERABLATION_EXPORT vtkLiverAblationGUI : public vtkSlicerModuleGUI
@@ -127,8 +129,10 @@ protected:
   vtkKWWizardWidget                                *WizardWidget;
   vtkLiverAblationOptimizationStep                 *OptimizationStep;
   vtkLiverAblationLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
-  vtkLiverAblationUserInputStep                    *UserInputStep; 
+  vtkLiverAblationPreplanningStep                  *PreplanningStep; 
   vtkLiverAblationPlanningStep                     *PlanningStep; 
+  vtkLiverAblationTrackingStep                     *TrackingStep; 
+  vtkLiverAblationNavigationStep                   *NavigationStep; 
 
 };
 

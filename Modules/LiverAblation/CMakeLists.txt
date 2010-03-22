@@ -60,10 +60,11 @@ set(LiverAblation_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationOptimizationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationLoadingPreoperativeDataStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationCalibrationStep.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationUserInputStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationPreplanningStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationPlanningStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationTrackingStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkLiverAblationNavigationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkKWGuideWidget.cxx
-
 
   # MRML: Add MRML supporting programs herer
   # Algorithm  : Add  algorithm related programs here
