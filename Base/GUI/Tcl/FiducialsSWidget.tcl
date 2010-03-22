@@ -80,10 +80,11 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
 
 itcl::body FiducialsSWidget::destructor {} {
 
-  foreach seed $_seedSWidgets {
+  foreach seed [concat $_seedSWidgets $_storedSeedSWidgets] {
     ::SWidget::ProtectedDelete ::FiducialsSWidget::$seed
   }
   set _seedSWidgets ""
+  set _storedSeedSWidgets ""
 
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
@@ -228,6 +229,7 @@ itcl::body FiducialsSWidget::processUpdate {} {
     lappend _storedSeedSWidgets $seed
     $seed configure -visibility 0
   }
+  set _seedSWidgets ""
 
 
   #
@@ -294,8 +296,8 @@ itcl::body FiducialsSWidget::processUpdate {} {
             $seedSWidget configure -visibility 1
           } else {
             set seedSWidget [SeedSWidget #auto $sliceGUI]
-            lappend _seedSWidgets $seedSWidget
           }
+          lappend _seedSWidgets $seedSWidget
 
           $seedSWidget place $r $a $s
           $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
