@@ -3,10 +3,6 @@
 
 #include "vtkLiverAblationStep.h"
 
-class vtkKWFrameWithLabel;
-class vtkKWMenuButtonWithLabel;
-class vtkKWEntryWithLabel;
-class vtkKWLoadSaveButtonWithLabel;
 class vtkKWPushButton;
 
 class VTK_LIVERABLATION_EXPORT vtkLiverAblationOptimizationStep : public vtkLiverAblationStep
@@ -20,18 +16,15 @@ public:
   // Reimplement the superclass's method (see vtkKWWizardStep).
   virtual void ShowUserInterface();
 
-  virtual void RunButtonCallback();
-  virtual void GoToNavButtonCallback();
+  virtual void OptimizeButtonCallback();
+  virtual void LoadButtonCallback();
 
 protected:
   vtkLiverAblationOptimizationStep();
   ~vtkLiverAblationOptimizationStep();
 
-  vtkKWFrameWithLabel *RunFrame;
-
-  vtkKWPushButton              *RunButton;
-  vtkKWPushButton              *GoToNavButton;
-
+  vtkKWPushButton        *OptimizeButton;
+  vtkKWPushButton        *LoadButton;
 
 private:
   vtkLiverAblationOptimizationStep(const vtkLiverAblationOptimizationStep&);

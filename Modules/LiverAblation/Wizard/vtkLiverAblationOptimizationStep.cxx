@@ -25,10 +25,11 @@ vtkCxxRevisionMacro(vtkLiverAblationOptimizationStep, "$Revision: 1.4 $");
 //----------------------------------------------------------------------------
 vtkLiverAblationOptimizationStep::vtkLiverAblationOptimizationStep()
 {
-  this->SetName("4/4. Optimization");
-  this->SetDescription("Run the optimization program.");
+  this->SetName("4/6. Optimization and Plan Loading");
+  this->SetDescription("Run the optimization program and then load the surgical plan.");
 
-  this->RunFrame = NULL;
+  this->OptimizeButton = NULL;
+  this->LoadButton = NULL;
 
 }
 
@@ -37,23 +38,17 @@ vtkLiverAblationOptimizationStep::vtkLiverAblationOptimizationStep()
 //----------------------------------------------------------------------------
 vtkLiverAblationOptimizationStep::~vtkLiverAblationOptimizationStep()
 {
-  if(this->RunFrame)
+  if (this->OptimizeButton)
     {
-    this->RunFrame->Delete();
-    this->RunFrame = NULL;
+    this->OptimizeButton->SetParent(NULL);
+    this->OptimizeButton->Delete();
+    this->OptimizeButton = NULL;
     }
-
-  if (this->RunButton)
+  if (this->LoadButton)
     {
-    this->RunButton->SetParent(NULL);
-    this->RunButton->Delete();
-    this->RunButton = NULL;
-    }
-  if (this->GoToNavButton)
-    {
-    this->GoToNavButton->SetParent(NULL);
-    this->GoToNavButton->Delete();
-    this->GoToNavButton = NULL;
+    this->LoadButton->SetParent(NULL);
+    this->LoadButton->Delete();
+    this->LoadButton = NULL;
     }
 }
 
@@ -68,40 +63,30 @@ void vtkLiverAblationOptimizationStep::ShowUserInterface()
 
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
-  // Export and run frame
-  // ======================================================================
-  if (!this->RunFrame)
+  if (! this->OptimizeButton)
     {
-    this->RunFrame = vtkKWFrameWithLabel::New();
+    this->OptimizeButton = vtkKWPushButton::New();
+    this->OptimizeButton->SetParent(wizard_widget->GetClientArea());
+    this->OptimizeButton->Create();
+    this->OptimizeButton->SetText("Optimize");
+    this->OptimizeButton->SetCommand(this, "OptimizeButtonCallback");
+    this->OptimizeButton->SetWidth(25);
     }
-  if (!this->RunFrame->IsCreated())
+
+  if (! this->LoadButton)
     {
-    this->RunFrame->SetParent(
-      wizard_widget->GetClientArea());
-    this->RunFrame->Create();
-    this->RunFrame->SetLabelText("Run");
-//    this->RunFrame->SetHeight(50);
+    this->LoadButton = vtkKWPushButton::New();
+    this->LoadButton = vtkKWPushButton::New();
+    this->LoadButton->SetParent(wizard_widget->GetClientArea());
+    this->LoadButton->Create();
+    this->LoadButton->SetText("Load Plan");
+    this->LoadButton->SetCommand(this, "LoadButtonCallback");
+    this->LoadButton->SetWidth(25);
     }
-  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
-               this->RunFrame->GetWidgetName());
 
-  this->RunButton = vtkKWPushButton::New();
-  this->RunButton->SetParent (this->RunFrame->GetFrame());
-  this->RunButton->Create();
-  this->RunButton->SetText("Run");
-  this->RunButton->SetCommand(this, "RunButtonCallback");
-  this->RunButton->SetWidth(20);
-
-  this->GoToNavButton = vtkKWPushButton::New();
-  this->GoToNavButton->SetParent (this->RunFrame->GetFrame());
-  this->GoToNavButton->Create();
-  this->GoToNavButton->SetText("Go to Navigation");
-  this->GoToNavButton->SetCommand(this, "GoToNavButtonCallback");
-  this->GoToNavButton->SetWidth(20);
-
-  this->Script("pack %s %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-               this->RunButton->GetWidgetName(),
-               this->GoToNavButton->GetWidgetName()
+  this->Script("pack %s %s -side top -anchor center -expand n -padx 2 -pady 5", 
+               this->OptimizeButton->GetWidgetName(),
+               this->LoadButton->GetWidgetName()
                );
  
   //Add a help to the step
@@ -122,14 +107,14 @@ void vtkLiverAblationOptimizationStep::ShowUserInterface()
 }
 
 
-void vtkLiverAblationOptimizationStep::RunButtonCallback()
+void vtkLiverAblationOptimizationStep::OptimizeButtonCallback()
 {
 
 }
 
 
 
-void vtkLiverAblationOptimizationStep::GoToNavButtonCallback()
+void vtkLiverAblationOptimizationStep::LoadButtonCallback()
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
   std::string name = "IGT Navigation";

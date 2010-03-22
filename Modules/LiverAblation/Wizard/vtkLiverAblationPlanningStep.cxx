@@ -399,7 +399,7 @@ void vtkLiverAblationPlanningStep::ShowUserInterface()
   this->LabelmapSelector = vtkSlicerNodeSelectorWidget::New();
   this->LabelmapSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
   //this->LabelmapSelector->SetNewNodeEnabled(1); // don't want to create this here. Create in OpenIGTLink.
-  this->LabelmapSelector->SetParent(this->CustomizeFrame);
+  this->LabelmapSelector->SetParent(wizard_widget->GetClientArea());
   this->LabelmapSelector->Create();
   this->LabelmapSelector->SetMRMLScene(this->GetGUI()->GetMRMLManager()->GetMRMLScene());
   this->LabelmapSelector->UpdateMenu();
@@ -408,11 +408,11 @@ void vtkLiverAblationPlanningStep::ShowUserInterface()
   this->LabelmapSelector->SetBalloonHelpString("Choose one labelmap source.");
 
   this->CustomizeButton = vtkKWPushButton::New();
-  this->CustomizeButton->SetParent (this->CustomizeFrame);
+  this->CustomizeButton->SetParent(wizard_widget->GetClientArea());
   this->CustomizeButton->Create();
-  this->CustomizeButton->SetText("Customize");
+  this->CustomizeButton->SetText("Export and run Planning");
   this->CustomizeButton->SetCommand(this, "CustomizeButtonCallback");
-  this->CustomizeButton->SetWidth(20);
+  this->CustomizeButton->SetWidth(30);
 
   this->Script("pack %s %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->LabelmapSelector->GetWidgetName(),
@@ -471,12 +471,9 @@ void vtkLiverAblationPlanningStep::CustomizeButtonCallback()
 
   // check if the device name exists in the MRML tree
   vtkMRMLScalarVolumeNode *volNode = NULL;
-  vtkLiverAblationMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkCollection* collection = mrmlManager->GetMRMLScene()->GetNodesByName("Working");
-  int nItems = collection->GetNumberOfItems();
-  if (nItems > 0)
+  if (this->LabelmapSelector->GetSelected() != NULL)
     {
-    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(collection->GetItemAsObject(0));
+    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->LabelmapSelector->GetSelected());
     }
   if (! volNode)
     {
