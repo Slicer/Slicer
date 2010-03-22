@@ -142,7 +142,7 @@ qCTKRangeSlider::qCTKRangeSlider(QWidget* parent)
 {
   QCTK_INIT_PRIVATE(qCTKRangeSlider);
   connect(this, SIGNAL(rangeValuesChanged(int, int)), 
-          this, SLOT(updateRangeBounds(int, int)));
+          this, SLOT(updateRangeBounds()));
 }
 
 // --------------------------------------------------------------------------
