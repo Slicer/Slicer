@@ -850,10 +850,15 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
   // init to black and no name
   for (int i = 0; i < numberOfTableColours; i++)
     {
-    node->SetColor(i, "(none)", 0.0, 0.0, 0.0);
+    if (node->SetColor(i, "(none)", 0.0, 0.0, 0.0) == 0)
+      {
+      vtkWarningMacro("GenerateNewColorTableNode: unable to set color " << i << " when clearing out table, breaking loop");
+      break;
+      }
     }
 
   // populate the node
+  bool errorCondition = false;
   for (int row = 0; row < this->MultiColumnList->GetWidget()->GetNumberOfRows(); row++)
     {
     int label =  this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, this->EntryColumn);
@@ -866,26 +871,41 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
     ss >> g;
     ss >> b;
     vtkDebugMacro("row " << row << " label = " << label << ", colourName = " << colourName.c_str() << ", colour = " << colourStr << ", r = " << r << ", g = " << g << ", b = " << b);
-    node->SetColor(label, colourName.c_str(), r, g, b);
+    if (node->SetColor(label, colourName.c_str(), r, g, b) == 0)
+      {
+      vtkErrorMacro("Unable to set color " << label << " to name " << colourName.c_str() << ", r= " << r << ", g = " <<  g << ", b = " << b << ", breaking loop over the rows here (current row = " << row << ", total rows = " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << ")");
+      errorCondition = true;
+      break;
+      }
+    
     }
+  std::string msg;
+  if (!errorCondition)
+    {
+    // let the node know that the names are intialised
+    node->NamesInitialisedOn();
 
-  // let the node know that the names are intialised
-  node->NamesInitialisedOn();
+    // don't hide this node, so can save it in the save data widget
+    node->HideFromEditorsOff();
+    // set it as modified since read, since we need to save it still
+    node->ModifiedSinceReadOn();
 
-  // don't hide this node, so can save it in the save data widget
-  node->HideFromEditorsOff();
-  // set it as modified since read, since we need to save it still
-  node->ModifiedSinceReadOn();
+    this->MRMLScene->AddNode(node);
+    // set it to be active
+    this->SetColorNodeID(node->GetID());
 
-  this->MRMLScene->AddNode(node);
-  // set it to be active
-  this->SetColorNodeID(node->GetID());
-
+    msg = std::string("Created new colors node, ") + std::string(node->GetName()) + std::string(", category = ") + std::string(node->GetAttribute("Category"));
+    }
+  else
+    {
+    msg = std::string("Failed to create a new colors node, ") + std::string(node->GetName()) + std::string(", category = ") + std::string(node->GetAttribute("Category"));
+    }
+  
   // pop up some feedback
   vtkKWMessageDialog *message = vtkKWMessageDialog::New();
   message->SetParent ( this->GetParent() );
   message->SetStyleToMessage();
-  std::string msg = std::string("Created new colors node, ") + std::string(node->GetName()) + std::string(", category = ") + std::string(node->GetAttribute("Category"));
+  
   message->SetText(msg.c_str());
   message->Create();
   message->Invoke();
