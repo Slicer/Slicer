@@ -628,7 +628,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node)
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
-  std::cerr << "onMRMLSceneNodeRemoved: " << d->MRMLNodeToBe->GetName() << std::endl;
+  qDebug() << "onMRMLSceneNodeRemoved: " << d->MRMLNodeToBe->GetName();
   d->MRMLNodeToBe = 0;
   this->endRemoveRows();
 }
@@ -637,8 +637,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node)
 void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
 {
   Q_UNUSED(scene);
-  QCTK_D(qMRMLSceneModel);
-  Q_ASSERT(scene == d->MRMLScene);
+  Q_ASSERT(scene == qctk_d()->MRMLScene);
   qDebug() << "onMRMLSceneDeleted";
   this->setMRMLScene(0);
 }

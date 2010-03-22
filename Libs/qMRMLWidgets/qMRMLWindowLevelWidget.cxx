@@ -54,7 +54,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 {
-  QCTK_D(qMRMLWindowLevelWidget);
+  //QCTK_D(qMRMLWindowLevelWidget);
   
   if (this->VolumeDisplayNode)
   {
@@ -185,7 +185,7 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  QCTK_D(qMRMLWindowLevelWidget);
+  //QCTK_D(qMRMLWindowLevelWidget);
   
   if (volumeNode) 
   {
@@ -202,14 +202,14 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMinimum(double min)
 {
-  QCTK_D(qMRMLWindowLevelWidget);
+  //QCTK_D(qMRMLWindowLevelWidget);
   // TODO set min in the range widget d->WindowLevelRangeSlider
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMaximum(double max)
 {
-  QCTK_D(qMRMLWindowLevelWidget);
+  //QCTK_D(qMRMLWindowLevelWidget);
   // TODO set max in the range widget d->WindowLevelRangeSlider
 
 }

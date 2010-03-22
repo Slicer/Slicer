@@ -55,12 +55,12 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Super
 void qMRMLVolumeThresholdWidget::setAutoThreshold(int autoThreshold)
 {
   // 0-manual, 1-auto, 2-off
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  //QCTK_D(qMRMLVolumeThresholdWidget);
   
   if (this->VolumeDisplayNode)
   {
     int oldAuto = this->VolumeDisplayNode->GetAutoThreshold();
-    int oldApply = this->VolumeDisplayNode->GetApplyThreshold();
+    //int oldApply = this->VolumeDisplayNode->GetApplyThreshold();
 
     int disabledModify = this->VolumeDisplayNode->StartModify();
     if (autoThreshold != 2) 
@@ -202,14 +202,14 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volu
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMinimum(double min)
 {
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  //QCTK_D(qMRMLVolumeThresholdWidget);
   // TODO set min in the range widget d->VolumeThresholdRangeSlider
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMaximum(double max)
 {
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  //QCTK_D(qMRMLVolumeThresholdWidget);
   // TODO set max in the range widget d->VolumeThresholdRangeSlider
 
 }
