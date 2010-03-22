@@ -111,12 +111,12 @@ public:
   /// Add a color name to the vector
   void AddColorName(const char *name);
   /// 
-  /// Set the 0th based nth name of this colour
-  void SetColorName(int ind, const char *name);
+  /// Set the 0th based nth name of this colour. Returns 1 on success, 0 on failure.
+  int SetColorName(int ind, const char *name);
   /// 
   /// Set the 0th based nth name of this colour, replacing the subst character
-  /// with spaces
-  void SetColorNameWithSpaces(int ind, const char *name, const char *subst);
+  /// with spaces. Returns 1 on success, 0 on failure
+  int SetColorNameWithSpaces(int ind, const char *name, const char *subst);
   
   /// 
   /// Name of the file name from which to read color information

@@ -152,6 +152,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
       else if (!strcmp(attName, "colors")) 
         {
         std::stringstream ss;
+        bool errorCondition = false;
         for (int i = 0; i < this->LookupTable->GetNumberOfColors(); i++)
           {
           vtkDebugMacro("Reading colour " << i << " of " << this->LookupTable->GetNumberOfColors() << endl);
@@ -168,9 +169,17 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
           ss >> a;
 //        vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
 //        this->LookupTable->SetTableValue(index, r, g, b, a);
-          this->SetColorNameWithSpaces(index, name.c_str(), "_");
+          if (this->SetColorNameWithSpaces(index, name.c_str(), "_") == 0)
+            {
+                vtkErrorMacro("ReadXMLAttributes: error setting color " << index << " to name " << name.c_str());
+            errorCondition = true;
+            break;
+            }
           }
-        this->NamesInitialisedOn();
+        if (!errorCondition)
+          {
+          this->NamesInitialisedOn();
+          }
         }      
       else
         {
@@ -468,6 +477,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetNamesFromColors()
   // reset the names
   this->Names.clear();
   this->Names.resize(size);
+  bool errorCondition = false;
   for (int i = 0; i < size; i++)
     {
     this->GetFSLookupTable()->GetColor((double)index, rgb);
@@ -481,10 +491,18 @@ void vtkMRMLFreeSurferProceduralColorNode::SetNamesFromColors()
     ss << " A=";
     ss << 1.0;
     vtkDebugMacro("SetNamesFromColors: i = " << i << ", index = " << index << ", Name = " << ss.str().c_str());
-    this->SetColorName(i, ss.str().c_str());
+    if (this->SetColorName(i, ss.str().c_str()) == 0)
+      {
+      vtkWarningMacro("SetNamesFromColors: Error setting color i = " << i << ", index = " << index << ", Name = " << ss.str().c_str());
+      errorCondition = true;
+      break;
+      }
     index++;
     }
-  this->NamesInitialisedOn();
+  if (!errorCondition)
+    {
+    this->NamesInitialisedOn();
+    }
 }
 
 //---------------------------------------------------------------------------

@@ -146,8 +146,11 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         ss >> b;
         ss >> a;
         vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
-        this->LookupTable->SetTableValue(index, r, g, b, a);
-        this->SetColorNameWithSpaces(index, name.c_str(), "_");
+        
+        if (this->SetColorNameWithSpaces(index, name.c_str(), "_") != 0)
+          {
+          this->LookupTable->SetTableValue(index, r, g, b, a);
+          }
         }
       // set the table range
       this->LookupTable->SetRange(0,  this->LookupTable->GetNumberOfTableValues() - 1);
@@ -1294,73 +1297,97 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->Names.clear();
       this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
       
-      this->SetColorName(0, "Black");
-      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0.0);
+      if (this->SetColorName(0, "Black") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0.0);
+        }
 
-      this->SetColorName(1, "jake");
-      this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
+      if (this->SetColorName(1, "jake") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
+        }
+      if (this->SetColorName(2, "Peach") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
+        }
+      if (this->SetColorName(3, "Brain") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(3, 1.0, 1.0, 1.0, 1.0);
+        }
+      if (this->SetColorName(4, "Ventricles") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(4, 0.4, 0.7, 1.0, 1.0);
+        }
 
-      this->SetColorName(2, "Peach");
-      this->GetLookupTable()->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
-
-      this->SetColorName(3, "Brain");
-      this->GetLookupTable()->SetTableValue(3, 1.0, 1.0, 1.0, 1.0);
-
-      this->SetColorName(4, "Ventricles");
-      this->GetLookupTable()->SetTableValue(4, 0.4, 0.7, 1.0, 1.0);
-
-      this->SetColorName(5, "Vessels");
-      this->GetLookupTable()->SetTableValue(5, 0.9, 0.5, 0.5, 1.0);
-
-      this->SetColorName(6, "Tumor");
-      this->GetLookupTable()->SetTableValue(6, 0.5, 0.9, 0.5, 1.0);
-
-      this->SetColorName(7, "fMRI-high");
-      this->GetLookupTable()->SetTableValue(7, 0.5, 0.9, 0.9, 1.0);
-
-      this->SetColorName(8, "fMRI-low");
-      this->GetLookupTable()->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
-
-      this->SetColorName(9, "Pre-Gyrus");
-      this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
-
-      this->SetColorName(10, "Post-Gyrus");
-      this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
-
+      if (this->SetColorName(5, "Vessels") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(5, 0.9, 0.5, 0.5, 1.0);
+        }
+      if (this->SetColorName(6, "Tumor") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(6, 0.5, 0.9, 0.5, 1.0);
+        }
+      if (this->SetColorName(7, "fMRI-high") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(7, 0.5, 0.9, 0.9, 1.0);
+        }
+      if (this->SetColorName(8, "fMRI-low") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
+        }
+      if (this->SetColorName(9, "Pre-Gyrus") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
+        }
+        if (this->SetColorName(10, "Post-Gyrus") != 0)
+        {
+        this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
+        }
       for (int offset = 0; offset <= 240; offset += 10)
         {
-        this->SetColorName(offset + 11, "jake");
-        this->GetLookupTable()->SetTableValue(offset + 11, 0.2, 0.5, 0.8, 1.0);
-        
-        this->SetColorName(offset + 12, "elwood");
-        this->GetLookupTable()->SetTableValue(offset + 12, 0.2, 0.8, 0.5, 1.0);
-        
-        this->SetColorName(offset + 13, "gato");
-        this->GetLookupTable()->SetTableValue(offset + 13, 0.8, 0.5, 0.2, 1.0);
-        
-        this->SetColorName(offset + 14, "avery");
-        this->GetLookupTable()->SetTableValue(offset + 14, 0.8, 0.2, 0.5, 1.0);
-        
-        this->SetColorName(offset + 15, "mambazo");
-        this->GetLookupTable()->SetTableValue(offset + 15, 0.5, 0.2, 0.8, 1.0);
-        
-        this->SetColorName(offset + 16, "domino");
-        this->GetLookupTable()->SetTableValue(offset + 16, 0.5, 0.8, 0.2, 1.0);
-
+        if (this->SetColorName(offset + 11, "jake") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 11, 0.2, 0.5, 0.8, 1.0);
+          }        
+        if (this->SetColorName(offset + 12, "elwood") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 12, 0.2, 0.8, 0.5, 1.0);
+          }
+        if (this->SetColorName(offset + 13, "gato") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 13, 0.8, 0.5, 0.2, 1.0);
+          }
+        if (this->SetColorName(offset + 14, "avery") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 14, 0.8, 0.2, 0.5, 1.0);
+          }
+        if (this->SetColorName(offset + 15, "mambazo") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 15, 0.5, 0.2, 0.8, 1.0);
+          }
+        if (this->SetColorName(offset + 16, "domino") != 0)
+          {
+          this->GetLookupTable()->SetTableValue(offset + 16, 0.5, 0.8, 0.2, 1.0);
+          }
         if (offset <= 230)
           {
           // these ones don't go past 256
-          this->SetColorName(offset + 17, "monk");
-          this->GetLookupTable()->SetTableValue(offset + 17, 0.2, 0.2, 0.8, 1.0);
-          
-          this->SetColorName(offset + 18, "forest");
-          this->GetLookupTable()->SetTableValue(offset + 18, 0.8, 0.8, 0.2, 1.0);
-          
-          this->SetColorName(offset + 19, "dylan");
-          this->GetLookupTable()->SetTableValue(offset + 19, 0.2, 0.8, 0.8, 1.0);
-          
-          this->SetColorName(offset + 20, "kales");
-          this->GetLookupTable()->SetTableValue(offset + 20, 0.5, 0.5, 0.5, 1.0);
+          if (this->SetColorName(offset + 17, "monk") != 0)
+            {
+            this->GetLookupTable()->SetTableValue(offset + 17, 0.2, 0.2, 0.8, 1.0);
+            }
+          if (this->SetColorName(offset + 18, "forest") != 0)
+            {
+            this->GetLookupTable()->SetTableValue(offset + 18, 0.8, 0.8, 0.2, 1.0);
+            }
+          if (this->SetColorName(offset + 19, "dylan") != 0)
+            {
+            this->GetLookupTable()->SetTableValue(offset + 19, 0.2, 0.8, 0.8, 1.0);
+            }
+          if (this->SetColorName(offset + 20, "kales") != 0)
+            {
+            this->GetLookupTable()->SetTableValue(offset + 20, 0.5, 0.5, 0.5, 1.0);
+            }
           }
         }
       /*
@@ -1429,6 +1456,7 @@ void vtkMRMLColorTableNode::SetNamesFromColors()
   
   int size = this->GetLookupTable()->GetNumberOfColors();
   double *rgba;
+  bool errorCondition = false;
   // reset the names
   this->Names.clear();
   this->Names.resize(size);
@@ -1445,9 +1473,17 @@ void vtkMRMLColorTableNode::SetNamesFromColors()
     ss << " A=";
     ss << rgba[3];
     vtkDebugMacro("SetNamesFromColors: " << i << " Name = " << ss.str().c_str());
-    this->SetColorName(i, ss.str().c_str());
+    if (this->SetColorName(i, ss.str().c_str()) == 0)
+      {
+      vtkErrorMacro("SetNamesFromColors: Error setting color name " << i << " Name = " << ss.str().c_str());
+      errorCondition = true;
+      break;
+      }
     }
-  this->NamesInitialisedOn();
+  if (!errorCondition)
+    {
+    this->NamesInitialisedOn();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1503,28 +1539,33 @@ void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, doubl
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, double g, double b)
+int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, double g, double b)
 {
   if (this->GetType() != this->User)
     {
       vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
-      return;
+      return 0;
     }
   if (entry < 0 ||
       entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
     vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
-      return;
+      return 0;
     }
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, 1.0);
   if (strcmp(this->GetColorName(entry), name) != 0)
     {
-      this->SetColorName(entry, name);
+    if (this->SetColorName(entry, name) == 0)
+      {
+      vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << entry);
+      return 0;
+      }
     }
 
   // trigger a modified event
   this->InvokeEvent (vtkCommand::ModifiedEvent);
+  return 1;
 }
 
 

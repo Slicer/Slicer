@@ -339,20 +339,22 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::SetColorName(int ind, const char *name)
+int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
     if (ind < (int)this->Names.size() && ind >= 0)
     {
     this->Names[ind] = std::string(name);
+    return 1;
     }
   else
     {
     vtkErrorMacro("ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == NULL ? "null" : this->GetName()));
+    return 0;
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
+int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
 {
  
   std::string nameString = std::string(name);
@@ -360,12 +362,12 @@ void vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const c
    // does the input name have the subst character in it?
   if (strstr(name, substString.c_str()) != NULL)
     {
-    this->SetColorName(ind, nameString.c_str());
+    return this->SetColorName(ind, nameString.c_str());
     }
   else
     {
     // no substitutions necessary
-    this->SetColorName(ind, name);
+    return this->SetColorName(ind, name);
     }
 }
 

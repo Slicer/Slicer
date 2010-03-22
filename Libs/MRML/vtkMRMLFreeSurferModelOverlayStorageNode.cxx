@@ -602,12 +602,18 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           std::string::size_type endBracketIndex = colorString.find( "}", 0 );
           std::string colorIndexString = colorString.substr(0, startBracketIndex - 1);
           int numNames = 0;
+          bool errorCondition = false;
           while (endBracketIndex != std::string::npos && numNames < reader->GetNumColorTableEntries())
             {
             numNames++;
             std::string colorName = colorString.substr(startBracketIndex+1, endBracketIndex - startBracketIndex - 1);
             vtkDebugMacro("Adding color name = " << colorName.c_str() << " at index \"" << colorIndexString.c_str() << "\"" << ", as int: " << atoi(colorIndexString.c_str()) <<  endl);
-            lutNode->SetColorName(atoi(colorIndexString.c_str()), colorName.c_str());
+            if (lutNode->SetColorName(atoi(colorIndexString.c_str()), colorName.c_str()) == 0)
+              {
+              vtkErrorMacro("ReadData: error setting annotation color name " << colorName.c_str() << " at index \"" << colorIndexString.c_str() << "\"" << ", as int: " << atoi(colorIndexString.c_str()) <<", breaking the loop over " << reader->GetNumColorTableEntries() << " entries");
+              errorCondition = true;
+              break;
+              }
             startBracketIndex = colorString.find("{", endBracketIndex);
             if (startBracketIndex != std::string::npos)
               {
@@ -619,8 +625,11 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
               }
             endBracketIndex = colorString.find( "}", startBracketIndex);
             }
-          this->Scene->AddNode(lutNode);
-          modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(lutNode->GetID());
+          if (!errorCondition)
+            {
+            this->Scene->AddNode(lutNode);
+            modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(lutNode->GetID());
+            }
           }
         else if (retval == 6)
           {

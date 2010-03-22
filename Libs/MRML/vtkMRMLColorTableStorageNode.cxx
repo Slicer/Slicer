@@ -52,6 +52,7 @@ vtkMRMLNode* vtkMRMLColorTableStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
+  this->MaximumColorID = 1000000;
   this->InitializeSupportedWriteFileTypes();
 }
 
@@ -213,6 +214,11 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     fstr.close();
     // now parse out the valid lines and set up the colour lookup table
     vtkDebugMacro("The largest id is " << maxID);
+    if (maxID > this->MaximumColorID)
+      {
+      vtkErrorMacro("ReadData: maximum color id " << maxID << " is > " << this->MaximumColorID << ", invalid color file: " << this->GetFileName());
+      return 0;
+      }
     colorNode->SetNumberOfColors(maxID + 1); // extra one for zero, also
                                              // resizes the names array
     colorNode->GetLookupTable()->SetNumberOfColors(maxID + 1);
@@ -245,8 +251,15 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
         {
         vtkDebugMacro("(first ten) Adding colour at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
         }
-      colorNode->GetLookupTable()->SetTableValue(id, r, g, b, a);
-      colorNode->SetColorName(id, name.c_str());
+      if (colorNode->SetColorName(id, name.c_str()) != 0)
+        {
+        colorNode->GetLookupTable()->SetTableValue(id, r, g, b, a);
+        }
+      else
+        {
+        vtkWarningMacro("ReadData: unable to set color " << id << " with name " << name.c_str() << ", breaking the loop over " << lines.size() << " lines in the file " << this->FileName);
+        return 0;
+        }
       }
     colorNode->NamesInitialisedOn();
     }

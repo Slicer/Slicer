@@ -169,7 +169,8 @@ void vtkMRMLProceduralColorNode::SetNamesFromColors()
   // reset the names
   this->Names.clear();
   this->Names.resize(numPoints);
-  
+
+  bool errorCondition = false;
   for (int i = 0; i < numPoints; i++)
     {
     double colour[3];
@@ -185,8 +186,16 @@ void vtkMRMLProceduralColorNode::SetNamesFromColors()
     ss << g;
     ss << " B=";
     ss << b;
-    this->SetColorName(i, ss.str().c_str());
+    if (this->SetColorName(i, ss.str().c_str()) == 0)
+      {
+      vtkErrorMacro("SetNamesFromColors: error setting name " <<  ss.str().c_str() << " for color index " << i);
+      errorCondition = true;
+      break;
+      }
     index++;
     }
-   this->NamesInitialisedOn();
+  if (!errorCondition)
+    {
+    this->NamesInitialisedOn();
+    }
 }

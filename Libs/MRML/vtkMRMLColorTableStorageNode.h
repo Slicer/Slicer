@@ -83,6 +83,9 @@ class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
 
 protected:
 
+  ///
+  /// maximum valid number of colours to read in
+  int MaximumColorID;
 
   vtkMRMLColorTableStorageNode();
   ~vtkMRMLColorTableStorageNode();
