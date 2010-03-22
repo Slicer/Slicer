@@ -52,7 +52,8 @@ vtkMRMLNode* vtkMRMLColorTableStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
-  this->MaximumColorID = 1000000;
+  // use 32K as a maximum color id for now 
+  this->MaximumColorID = 32768;
   this->InitializeSupportedWriteFileTypes();
 }
 
