@@ -403,6 +403,10 @@ if(Slicer3_USE_KWWIDGETS)
 
   if(WIN32)
   elseif(APPLE)
+    set(blt_BUILD_IN_SOURCE 1)
+    set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(blt_BUILD make ${parallelism_level})
+    set(blt_INSTAL make install)
   #if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
   #              puts "Patching..." 
   #              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
