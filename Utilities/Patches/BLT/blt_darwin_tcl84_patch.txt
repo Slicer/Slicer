@@ -1,0 +1,77 @@
+diff -cr old/blt/library/pkgIndex.tcl.in new/blt/library/pkgIndex.tcl.in
+*** old/blt/library/pkgIndex.tcl.in Fri May  6 12:07:06 2005
+--- new/blt/library/pkgIndex.tcl.in Fri Jun 30 09:04:01 2006
+***************
+*** 4,9 ****
+--- 4,12 ----
+  
+      set prefix "%LIB_PREFIX%"
+      set suffix [info sharedlibextension]
++     if { $::tcl_platform(os) == "Darwin" && $::tcl_platform(machine) == "i386" } {
++       set suffix ".so"
++     }
+      regsub {\.} $version {} version_no_dots
+  
+      # Determine whether to load the full BLT library or
+diff -cr old/blt/src/Makefile.in new/blt/src/Makefile.in
+*** old/blt/src/Makefile.in Fri May  6 12:07:06 2005
+--- new/blt/src/Makefile.in Fri Jun 30 09:00:44 2006
+***************
+*** 170,176 ****
+    $(RM) $(bltsh)
+    $(CC) $(CC_SWITCHES) $(LDFLAGS) -DTCL_ONLY -o $(bltsh) \
+      -DTCLLIBPATH=\"$(TCLLIBPATH)\" \
+!     $(srcdir)/bltUnixMain.c $(tcl_only_lib_a) $(TCL_ONLY_LIBS) 
+  
+  $(lib_a): $(OBJS) $(srcdir)/bltInit.c
+    $(CC) -c $(CC_SWITCHES) -DBLT_LIBRARY=\"$(BLT_LIBRARY)\" \
+--- 170,176 ----
+    $(RM) $(bltsh)
+    $(CC) $(CC_SWITCHES) $(LDFLAGS) -DTCL_ONLY -o $(bltsh) \
+      -DTCLLIBPATH=\"$(TCLLIBPATH)\" \
+!     $(srcdir)/bltUnixMain.c $(tcl_only_lib_a) $(LIBS) 
+  
+  $(lib_a): $(OBJS) $(srcdir)/bltInit.c
+    $(CC) -c $(CC_SWITCHES) -DBLT_LIBRARY=\"$(BLT_LIBRARY)\" \
+diff -cr old/blt/src/shared/Makefile.in new/blt/src/shared/Makefile.in
+*** old/blt/src/shared/Makefile.in  Fri May  6 12:07:07 2005
+--- new/blt/src/shared/Makefile.in  Fri Jun 30 09:00:44 2006
+***************
+*** 145,162 ****
+      $(srcdir)/bltInit.c
+    $(RM) $@
+    $(SHLIB_LD) $(SHLIB_LD_FLAGS) -o $@ bltInit.o $(OBJS) \
+!     $(SHLIB_LIB_SPECS)
+  
+  $(tcl_only_lib_so): $(TCL_ONLY_OBJS)
+    $(CC) -c $(CC_SWITCHES) -DTCL_ONLY -DBLT_LIBRARY=\"$(scriptdir)\" \
+      $(srcdir)/bltInit.c
+    $(RM) $@
+    $(SHLIB_LD) $(SHLIB_LD_FLAGS) -o $@ bltInit.o $(TCL_ONLY_OBJS) \
+!     $(SHLIB_TCL_ONLY_LIB_SPECS)
+  
+  install: mkdirs install-lib install-demo
+  
+! install-demo: $(bltwish)
+    $(INSTALL) -m 0755 bltwish$(version) $(INSTALL_ROOT)$(bindir)
+    $(INSTALL) -m 0755 bltsh$(version) $(INSTALL_ROOT)$(bindir)
+  
+--- 145,162 ----
+      $(srcdir)/bltInit.c
+    $(RM) $@
+    $(SHLIB_LD) $(SHLIB_LD_FLAGS) -o $@ bltInit.o $(OBJS) \
+!     $(LIBS) $(SHLIB_LIB_SPECS)
+  
+  $(tcl_only_lib_so): $(TCL_ONLY_OBJS)
+    $(CC) -c $(CC_SWITCHES) -DTCL_ONLY -DBLT_LIBRARY=\"$(scriptdir)\" \
+      $(srcdir)/bltInit.c
+    $(RM) $@
+    $(SHLIB_LD) $(SHLIB_LD_FLAGS) -o $@ bltInit.o $(TCL_ONLY_OBJS) \
+!     $(LIBS) $(SHLIB_TCL_ONLY_LIB_SPECS)
+  
+  install: mkdirs install-lib install-demo
+  
+! install-demo: $(bltwish) $(bltsh)
+    $(INSTALL) -m 0755 bltwish$(version) $(INSTALL_ROOT)$(bindir)
+    $(INSTALL) -m 0755 bltsh$(version) $(INSTALL_ROOT)$(bindir)
+  
