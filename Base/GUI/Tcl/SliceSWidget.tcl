@@ -567,19 +567,19 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
             # SET MODE TO PLACE...
           if { $modeString == "Place" || $modifier } {
-               set placePersistence [ $interactionNode GetPlaceModePersistence]
-                if { $placePersistence == 0 } {
-                    $interactionNode SetLastInteractionMode $mode
-                }
-              # prevent VolumesSWidget.tcl from
-              # processing the entire LeftButtonPress callback.
-              # it should just reset the lock when it  catches event.
-              $interactionNode SetWindowLevelLock 1
-              $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
-              # AND PLACE FIDUCIAL.
-              $sliceGUI SetGrabID $this
-              $sliceGUI SetGUICommandAbortFlag 1
-              FiducialsSWidget::AddFiducial $r $a $s
+            set placePersistence [ $interactionNode GetPlaceModePersistence]
+            if { $placePersistence == 0 } {
+              $interactionNode SetLastInteractionMode $mode
+            }
+            # prevent VolumesSWidget.tcl from
+            # processing the entire LeftButtonPress callback.
+            # it should just reset the lock when it  catches event.
+            $interactionNode SetWindowLevelLock 1
+            $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
+            # AND PLACE FIDUCIAL.
+            $sliceGUI SetGrabID $this
+            $sliceGUI SetGUICommandAbortFlag 1
+            FiducialsSWidget::AddFiducial $r $a $s
           } 
         }
       }

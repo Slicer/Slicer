@@ -167,11 +167,12 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
               #
               # first check for key repeats (don't allow more than
-              # one fiducial per second)
+              # one fiducial per $fiducialDelay # of seconds)
               # also ignore control-p (brings up python interactor)
               #
+              set fiducialDelay 0
               set now [clock seconds]
-              if { [expr $now - $_timeOfLastKeyEvent] >= 1 && ![$_interactor GetControlKey] } {
+              if { [expr $now - $_timeOfLastKeyEvent] >= $fiducialDelay && ![$_interactor GetControlKey] } {
                 set _timeOfLastKeyEvent $now
                 #
                 # get the event position and make it relative to a renderer/viewport
@@ -180,16 +181,19 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
                 foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
                 foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
 
-                set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
-                set renderer0 [$_renderWidget GetRenderer]
+                if { $windowx < $windoww && $windowy < $windowh } {
+                  # only add fiducial if event came from inside render window
+                  set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
+                  set renderer0 [$_renderWidget GetRenderer]
 
-                foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
-                $this queryLayers $x $y $z
-                set xyToRAS [$_sliceNode GetXYToRAS]
-                set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+                  foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
+                  $this queryLayers $x $y $z
+                  set xyToRAS [$_sliceNode GetXYToRAS]
+                  set ras [$xyToRAS MultiplyPoint $x $y $z 1]
 
-                foreach {r a s t} $ras {}
-                FiducialsSWidget::AddFiducial $r $a $s
+                  foreach {r a s t} $ras {}
+                  FiducialsSWidget::AddFiducial $r $a $s
+                }
               }
             }
           }
