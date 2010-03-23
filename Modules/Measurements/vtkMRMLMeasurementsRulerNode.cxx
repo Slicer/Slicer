@@ -56,8 +56,8 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
   this->HideFromEditors = false;
   
   // default starting position
-  this->SetPosition1(-250.0, 50.0, 0.0);
-  this->SetPosition2(250.0,  50.0, 0.0);
+  this->SetPosition1(-100.0, 50.0, 0.0);
+  this->SetPosition2(100.0,  50.0, 0.0);
   
   // the annotation on the line
   this->DistanceAnnotationFormat = NULL;
@@ -65,9 +65,9 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
   this->SetDistanceAnnotationScale(10.0, 10.0, 10.0);
   this->DistanceAnnotationVisibilityOn();
 
-  // the end points of the line are blue and red
-  this->SetPointColour(0.0, 0.0, 1.0);
-  this->SetPoint2Colour(1.0, 0.0, 0.0);
+  // the end points of the line
+  this->SetPointColour(0.9, 0.5, 0.5);
+  this->SetPoint2Colour(0.9, 0.7, 0.9);
   // line colour
   this->SetLineColour(1.0, 1.0, 1.0);
 

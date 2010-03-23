@@ -2,6 +2,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkProperty.h"
 
+#include "vtkMath.h"
+
 #include "vtkMeasurementsRulerWidget.h"
 
 #include "vtkKWFrameWithLabel.h"
@@ -123,7 +125,9 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->PointColourButton = NULL;
   this->LineColourButton = NULL;
   this->TextColourButton = NULL;
- 
+
+  this->DistanceLabel = NULL;
+
   this->Position1Label = NULL;
   this->Position1XEntry = NULL;
   this->Position1YEntry = NULL;
@@ -216,6 +220,12 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     this->TextColourButton->SetParent(NULL);
     this->TextColourButton->Delete();
     this->TextColourButton= NULL;
+    }
+  if (this->DistanceLabel)
+    {
+    this->DistanceLabel->SetParent(NULL);
+    this->DistanceLabel->Delete();
+    this->DistanceLabel = NULL;
     }
   if (this->Position1Label)
     {
@@ -1051,8 +1061,46 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   // resolution
   this->ResolutionEntry->GetWidget()->SetValueAsInt(activeRulerNode->GetResolution());
 
+  // distance
+  this->UpdateDistanceLabel(activeRulerNode);
+  
   this->Update3DWidget(activeRulerNode);
    
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::UpdateDistanceLabel(vtkMRMLMeasurementsRulerNode *activeRulerNode)
+{
+  if (activeRulerNode == NULL || this->DistanceLabel == NULL)
+    {
+    vtkWarningMacro("UpdateDistanceLabel: no active ruler node or distance label");
+    return;
+    }
+
+  vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
+  if (distanceWidget &&
+      distanceWidget->GetRepresentation())
+    {
+    std::stringstream ss;
+    std::string distanceString = std::string("Distance: ");
+    double distanceValue = distanceWidget->GetRepresentation()->GetDistance();
+    vtkDebugMacro("UpdateDistanceLabel: distance = " << distanceValue);
+
+    double x1[3], x2[3];
+    distanceWidget->GetRepresentation()->GetPoint1WorldPosition(x1);
+    distanceWidget->GetRepresentation()->GetPoint2WorldPosition(x2);
+    distanceValue = sqrt(vtkMath::Distance2BetweenPoints( x1, x2 ));
+    vtkDebugMacro("Direct calc: distance = " << distanceValue);
+    
+    ss << distanceString;
+    ss << distanceValue;
+    distanceString = ss.str();
+    this->DistanceLabel->SetText(distanceString.c_str());
+    }
+  else
+    {
+    vtkWarningMacro("UpdateDistanceLabel: can't get distance widget or representation");
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1102,8 +1150,8 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
         this->GetViewerWidget())
       {
       distanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
-      double p1[3] = {-250.0, 50.0, 0.0};
-      double p2[3] = {250.0,  50.0, 0.0};
+      double p1[3] = {-100.0, 50.0, 0.0};
+      double p2[3] = {100.0,  50.0, 0.0};
       distanceWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
       distanceWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
       }
@@ -1337,6 +1385,9 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
   distanceWidget->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
   distanceWidget->GetWidget()->AddObserver(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
 
+
+  // update the distance label from the widget
+  this->UpdateDistanceLabel(activeRulerNode);
 
   // request a render
   if (this->ViewerWidget)
@@ -1668,18 +1719,85 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->RulerSelectorWidget->GetWidgetName());
 
+
+  /// distance frame
+  vtkKWFrame *distanceFrame = vtkKWFrame::New();
+  distanceFrame->SetParent(pickRulerNodeFrame->GetFrame());
+  distanceFrame->Create();
+  this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                distanceFrame->GetWidgetName());
+
+  this->DistanceLabel = vtkKWLabel::New();
+  this->DistanceLabel->SetParent(distanceFrame);
+  this->DistanceLabel->Create();
+  this->DistanceLabel->SetText("Distance: ");
+  this->Script( "pack %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
+                this->DistanceLabel->GetWidgetName());
   
-  this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( pickRulerNodeFrame->GetFrame() );
-  this->VisibilityButton->Create ( );
-  this->VisibilityButton->SetLabelText("Toggle Visibility");
-  this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->VisibilityButton->GetWidgetName() );
+  //
+  // Pick Models Frame
+  //
+  vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
+  modelFrame->SetParent( pickRulerNodeFrame->GetFrame() );
+  modelFrame->Create();
+  modelFrame->SetLabelText("Constrain Ruler to Models or Slices");
+  modelFrame->ExpandFrame();
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", modelFrame->GetWidgetName());
+  
+
+  this->RulerModel1SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->RulerModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->RulerModel1SelectorWidget->Create ( );
+  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel1SelectorWidget->SetChildClassesEnabled(1);
+  this->RulerModel1SelectorWidget->NoneEnabledOn();
+  this->RulerModel1SelectorWidget->SetShowHidden(1);
+  this->RulerModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->RulerModel1SelectorWidget->SetBorderWidth(2);
+  this->RulerModel1SelectorWidget->SetPadX(2);
+  this->RulerModel1SelectorWidget->SetPadY(2);
+  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->RulerModel1SelectorWidget->SetLabelText( "End 1: ");
+//  this->RulerModel1SelectorWidget->GetLabel()->SetForegroundColor(1, 0, 0);
+  this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the ruler.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->RulerModel1SelectorWidget->GetWidgetName());
+  
+  this->RulerModel2SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->RulerModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->RulerModel2SelectorWidget->Create ( );
+  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->RulerModel2SelectorWidget->SetChildClassesEnabled(1);
+  this->RulerModel2SelectorWidget->NoneEnabledOn();
+  this->RulerModel2SelectorWidget->SetShowHidden(1);
+  this->RulerModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->RulerModel2SelectorWidget->SetBorderWidth(2);
+  this->RulerModel2SelectorWidget->SetPadX(2);
+  this->RulerModel2SelectorWidget->SetPadY(2);
+  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->RulerModel2SelectorWidget->SetLabelText( "End 2: ");
+//  this->RulerModel2SelectorWidget->GetLabel()->SetForegroundColor(0, 0, 1);
+  this->RulerModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the ruler.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->RulerModel2SelectorWidget->GetWidgetName());
+
+  // ---
+  // DISPLAY FRAME            
+  vtkKWFrameWithLabel *rulerDisplayFrame = vtkKWFrameWithLabel::New ( );
+  rulerDisplayFrame->SetParent ( pickRulerNodeFrame->GetFrame() );
+  rulerDisplayFrame->SetLabelText("Display Options");
+  rulerDisplayFrame->Create ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 rulerDisplayFrame->GetWidgetName() );
+  rulerDisplayFrame->CollapseFrame ( );
 
     // position 1 frame
   vtkKWFrame *position1Frame = vtkKWFrame::New();
-  position1Frame->SetParent(pickRulerNodeFrame->GetFrame());
+  position1Frame->SetParent(rulerDisplayFrame->GetFrame());
   position1Frame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  position1Frame->GetWidgetName() );
@@ -1687,7 +1805,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Position1Label = vtkKWLabel::New();
   this->Position1Label->SetParent(position1Frame);
   this->Position1Label->Create();
-  this->Position1Label->SetText("Postion 1");
+  this->Position1Label->SetText("End 1");
 
   this->Position1XEntry = vtkKWEntry::New();
   this->Position1XEntry->SetParent(position1Frame);
@@ -1718,7 +1836,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
   // position 2 frame
   vtkKWFrame *position2Frame = vtkKWFrame::New();
-  position2Frame->SetParent(pickRulerNodeFrame->GetFrame());
+  position2Frame->SetParent(rulerDisplayFrame->GetFrame());
   position2Frame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  position2Frame->GetWidgetName() );
@@ -1726,7 +1844,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Position2Label = vtkKWLabel::New();
   this->Position2Label->SetParent(position2Frame);
   this->Position2Label->Create();
-  this->Position2Label->SetText("Postion 2");
+  this->Position2Label->SetText("End 2");
 
   this->Position2XEntry = vtkKWEntry::New();
   this->Position2XEntry->SetParent(position2Frame);
@@ -1754,68 +1872,14 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
                   this->Position2YEntry->GetWidgetName(),
                   this->Position2ZEntry->GetWidgetName());
   
-  //
-  // Pick Models Frame
-  //
-  vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
-  modelFrame->SetParent( pickRulerNodeFrame->GetFrame() );
-  modelFrame->Create();
-  modelFrame->SetLabelText("Constrain Ruler to Models");
-  modelFrame->ExpandFrame();
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", modelFrame->GetWidgetName());
-  modelFrame->CollapseFrame();
+  this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->VisibilityButton->SetParent ( rulerDisplayFrame->GetFrame() );
+  this->VisibilityButton->Create ( );
+  this->VisibilityButton->SetLabelText("Visibility");
+  this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->VisibilityButton->GetWidgetName() );
   
-
-  this->RulerModel1SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
-  this->RulerModel1SelectorWidget->Create ( );
-  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
-  this->RulerModel1SelectorWidget->SetChildClassesEnabled(1);
-  this->RulerModel1SelectorWidget->NoneEnabledOn();
-  this->RulerModel1SelectorWidget->SetShowHidden(1);
-  this->RulerModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->RulerModel1SelectorWidget->SetBorderWidth(2);
-  this->RulerModel1SelectorWidget->SetPadX(2);
-  this->RulerModel1SelectorWidget->SetPadY(2);
-  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->RulerModel1SelectorWidget->SetLabelText( "Select Ruler Model 1: ");
-//  this->RulerModel1SelectorWidget->GetLabel()->SetForegroundColor(1, 0, 0);
-  this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model on which to anchor the first end of the ruler.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->RulerModel1SelectorWidget->GetWidgetName());
-  
-  this->RulerModel2SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
-  this->RulerModel2SelectorWidget->Create ( );
-  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
-  this->RulerModel2SelectorWidget->SetChildClassesEnabled(1);
-  this->RulerModel2SelectorWidget->NoneEnabledOn();
-  this->RulerModel2SelectorWidget->SetShowHidden(1);
-  this->RulerModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->RulerModel2SelectorWidget->SetBorderWidth(2);
-  this->RulerModel2SelectorWidget->SetPadX(2);
-  this->RulerModel2SelectorWidget->SetPadY(2);
-  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->RulerModel2SelectorWidget->SetLabelText( "Select Ruler Model 2: ");
-//  this->RulerModel2SelectorWidget->GetLabel()->SetForegroundColor(0, 0, 1);
-  this->RulerModel2SelectorWidget->SetBalloonHelpString("Select a model on which to anchor the second end of the ruler.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->RulerModel2SelectorWidget->GetWidgetName());
-
-  // ---
-  // DISPLAY FRAME            
-  vtkKWFrameWithLabel *rulerDisplayFrame = vtkKWFrameWithLabel::New ( );
-  rulerDisplayFrame->SetParent ( pickRulerNodeFrame->GetFrame() );
-  rulerDisplayFrame->SetLabelText("Display Options");
-  rulerDisplayFrame->Create ( );
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 rulerDisplayFrame->GetWidgetName() );
-  rulerDisplayFrame->CollapseFrame ( );
-
   this->PointColourButton = vtkKWChangeColorButton::New();
   this->PointColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
   this->PointColourButton->Create ( );
@@ -1848,7 +1912,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->DistanceAnnotationVisibilityButton = vtkKWCheckButtonWithLabel::New();
   this->DistanceAnnotationVisibilityButton->SetParent ( annotationFrame );
   this->DistanceAnnotationVisibilityButton->Create ( );
-  this->DistanceAnnotationVisibilityButton->SetLabelText("Toggle Distance Annotation Visibility");
+  this->DistanceAnnotationVisibilityButton->SetLabelText("Distance Annotation Visibility");
   this->DistanceAnnotationVisibilityButton->SetBalloonHelpString("set distance annotation visibility.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->DistanceAnnotationVisibilityButton->GetWidgetName() );
@@ -1896,6 +1960,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
   modelFrame->Delete();
   rulerDisplayFrame->Delete();
+  distanceFrame->Delete();
   position1Frame->Delete();
   position2Frame->Delete();
   pickRulerNodeFrame->Delete();

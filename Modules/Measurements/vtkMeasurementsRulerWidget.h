@@ -120,7 +120,12 @@ protected:
   /// 
   /// update the widget GUI from the settings in the passed in rulerNode
   void UpdateWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
-  /// DescriptioN:
+
+  ///
+  /// update the distance label with the value from the ruler widget
+  void UpdateDistanceLabel(vtkMRMLMeasurementsRulerNode *activeRulerNode);
+
+  /// 
   /// update the 3d distance widget from the settings in teh passed in
   /// rulerNode
   void Update3DWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
@@ -165,6 +170,9 @@ protected:
   vtkKWEntry *Position2YEntry;
   vtkKWEntry *Position2ZEntry;
 
+  ///
+  /// distance label
+  vtkKWLabel *DistanceLabel;
 
   /// 
   /// distance annotation option entries
