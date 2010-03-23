@@ -1,9 +1,38 @@
 
 #set(ENV{PATH} "${CMAKE_BINARY_DIR}/python-build/lib")
-set(ENV{PATH} "@tcl_build@/bin")
+#set(ENV{PATH} "@tcl_build@../tcl/bin:$ENV{PATH}")
+#set(ENV{DYLD_LIBRARY_PATH} "/usr/X11/lib:$ENV{DYLD_LIBRARY_PATH}")
+
+
+#exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
+#exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
 
 execute_process(
-  COMMAND sh configure --with-tcl=@tcl_build@/lib --with-tk=@tcl_build@/lib --prefix=@tcl_build@)
-  
+  COMMAND ${CMAKE_COMMAND} -E copy configure configure.orig
+  WORKING_DIRECTORY @tcl_base@/incrTcl/itcl
+)
+
+execute_process(
+  COMMAND sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" configure.orig
+  OUTPUT_FILE @tcl_base@/incrTcl/itcl/configure
+  WORKING_DIRECTORY @tcl_base@/incrTcl/itcl
+)
+
+execute_process(
+  COMMAND ./configure --prefix=@tcl_build@ --with-tcl=@tcl_build@/lib --with-tk=@tcl_build@/lib  --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include
+  WORKING_DIRECTORY @tcl_base@/incrTcl
+)
+
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E copy configure.orig configure
+  WORKING_DIRECTORY @tcl_base@/incrTcl/itcl
+)
+
+
+# catch "eval runcmd $::MAKE all"
+#        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
+#          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+#        }  
 #message("LD_LIBRARY_PATH:=ENV{LD_LIBRARY_PATH}")
-#set(ENV{PYTHONHOME} ${python_home})
+#set(et(tk_CVS_REPOSITORY :pserver:anonymous@tktoolkit.cvs.sourceforge.net:/cvsroot/tktoolkit)
+

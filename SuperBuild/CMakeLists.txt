@@ -213,6 +213,7 @@ if(Slicer3_USE_KWWIDGETS)
     SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
     SOURCE_DIR ${tcl_SOURCE_DIR}
     BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
+    UPDATE_COMMAND ""
     CONFIGURE_COMMAND ${tcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${tcl_BUILD_COMMAND}
     INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
@@ -252,6 +253,7 @@ if(Slicer3_USE_KWWIDGETS)
     DEPENDS tcl
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
     SOURCE_DIR ${tk_SOURCE_DIR}
+    UPDATE_COMMAND ""
     BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
     CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
     BUILD_COMMAND ${tk_BUILD_COMMAND}
@@ -268,18 +270,25 @@ if(Slicer3_USE_KWWIDGETS)
   set(itcl_CONFIGURE_COMMAND "")
   set(itcl_BUILD_COMMAND "")
   set(itcl_INSTALL_COMMAND "")
+  set(itcl_PATCH_COMMAND "")
 
   #make build command call cmake -P on a cmake script that sets LD_LIBRARY_PATH
   if(WIN32)
   elseif(APPLE)
     set(itcl_BUILD_IN_SOURCE 1)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/itcl_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/itcl_configure_step.cmake )
+    set(itcl_configure ${tcl_base}/incrTcl/itcl/configure)
+    set(itcl_configure_find "*.c | *.o | *.obj) \;\;")
+    set(itcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
 
-    #set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-    set(itcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/itcl_configure_step.cmake)
-    set(itcl_BUILD_COMMAND make ${parallelism_level} all)
+    set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
+    set(in ${itcl_configure})
+    set(out ${itcl_configure})
+
+    set(itcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${itcl_configure_find} -Dreplace=${itcl_configure_replace} -P ${script})
+
+    set(itcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+    set(itcl_BUILD_COMMAND make)
     set(itcl_INSTALL_COMMAND make install)
     
   #  if { $isDarwin } {
@@ -307,16 +316,50 @@ if(Slicer3_USE_KWWIDGETS)
     SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
+    PATCH_COMMAND ${itcl_PATCH_COMMAND}
     CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${itcl_BUILD_COMMAND}
     INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
   )
 
-  ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
+
+#  ExternalProject_Add_Step(${proj} Restore_itcl_configure
+#    COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/incrTcl/itcl/configure.orig ${tcl_base}/incrTcl/itcl/configure
+#    DEPENDEES configure
+#    DEPENDERS build
+#    )
+
+#ExternalProject_Add_Step(${proj} Sed_itcl_configure
+#    COMMAND sed -f ${CMAKE_CURRENT_SOURCE_DIR}/itcl_sed.txt ${tcl_base}/incrTcl/itcl/configure.orig > ${tcl_base}/incrTcl/itcl/configure
+#    DEPENDEES Backup_itcl_configure
+#    DEPENDERS configure
+#    )
+
+#ExternalProject_Add_Step(${proj} Backup_itcl_configure
+#    COMMAND  ${CMAKE_COMMAND} -E copy ${tcl_base}/incrTcl/itcl/configure ${tcl_base}/incrTcl/itcl/configure.orig
+#    DEPENDEES CHMOD_incrTcl_configure
+#    DEPENDERS Sed_itcl_configure
+#    )
+
+#ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
+#    COMMAND chmod +x ${tcl_base}/incrTcl/configure
+#    DEPENDEES update
+#    DEPENDERS Backup_itcl_configure
+#    )
+
+ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
     COMMAND chmod +x ${tcl_base}/incrTcl/configure
     DEPENDEES update
     DEPENDERS configure
     )
+
+#ExternalProject_Add_Step(${proj} Patch_itcl_configure
+#  COMMAND ${itcl_PATCH_COMMAND}
+#  ALWAYS 1
+#  DEPENDEES CHMOD_incrTcl_configure
+#  DEPENDERS configure
+#  )
+
 endif(Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
