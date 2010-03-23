@@ -374,6 +374,78 @@ void vtkMeasurementsRulerWidget::SetRulerNodeID ( char *id )
     }
 }
 
+
+//---------------------------------------------------------------------------
+// Description:
+// the Update InteractionModeAtStartInteraction is a function
+// that ensures that Slicer's mouse modes are in agreement
+// with direct manipulation-type interactions with widgets in
+// the scene.
+void vtkMeasurementsRulerWidget::UpdateInteractionModeAtStartInteraction()
+{
+
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
+    return;
+    }
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: No interaction node in the scene." );
+    return;
+    }
+
+  //--- check to see if we're already in "place" mode, and
+  //--- if so, allow 1 click to create an angle widget with its
+  //--- angle vertex at the click-location.
+  //--- If we are not in place mode, then use the mouse-click
+  //--- to pick the widget.
+  //--- TODO: In the future, may want to modify for THREE 
+  //--- clicks to place individual vertices of an angle widget.
+  int currentMode = interactionNode->GetCurrentInteractionMode();
+  int pickPersistence = interactionNode->GetPickModePersistence();
+  if ( currentMode != vtkMRMLInteractionNode::Place && pickPersistence == 0 )
+    {
+    interactionNode->SetLastInteractionMode ( currentMode );
+    }
+  interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate);
+
+}
+
+
+
+//---------------------------------------------------------------------------
+// Description:
+// the Update InteractionModeAtEndInteraction is a function
+// that ensures that Slicer's mouse modes are in agreement
+// with direct manipulation-type interactions with widgets in
+// the scene.
+void vtkMeasurementsRulerWidget::UpdateInteractionModeAtEndInteraction()
+{
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
+    return;
+    }
+
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkDebugMacro ( "UpdateInteractionModeAtStartInteraction: No interaction node in the scene." );
+    return;
+    }
+
+  int pickPersistence = interactionNode->GetPickModePersistence();
+  int placePersistence = interactionNode->GetPlaceModePersistence ();
+  if ( pickPersistence == 0 && placePersistence == 0 )
+    {
+    interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+    }
+}
+
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
                                                      unsigned long event,
@@ -390,6 +462,16 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
     {
     vtkErrorMacro ( "ProcessWidgetEvents: got Null SlicerApplicationGUI" );
     return;
+    }
+
+ //---
+    if (event == vtkCommand::StartInteractionEvent)
+    {
+    this->UpdateInteractionModeAtStartInteraction();
+    }
+  else if (event == vtkCommand::EndInteractionEvent)
+    {
+    this->UpdateInteractionModeAtEndInteraction();
     }
 
   // process events that apply to all lists
@@ -1239,13 +1321,22 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
 
   // now add call back
   vtkMeasurementsRulerWidgetCallback *myCallback = vtkMeasurementsRulerWidgetCallback::New();
-//  std::string rulerID = std::string(activeRulerNode->GetID());
-//  myCallback->RulerID = rulerID;
+  //  std::string rulerID = std::string(activeRulerNode->GetID());
+  //  myCallback->RulerID = rulerID;
   myCallback->RulerNode = activeRulerNode;
-//  myCallback->Representation = distanceWidget->GetRepresentation();
+  //  myCallback->Representation = distanceWidget->GetRepresentation();
   distanceWidget->GetWidget()->AddObserver(vtkCommand::InteractionEvent,myCallback);
   distanceWidget->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
   myCallback->Delete();
+  //---
+  //--- add another observer that triggers the processWidgetEvents
+  //--- method as well, where we can update mouse mode changes.
+  //--- This pattern, and the methods called by processWidgetEvents
+  //--- can be used by other SlicerWidgets that are pickable or placeable.
+  //---
+  distanceWidget->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
+  distanceWidget->GetWidget()->AddObserver(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
+
 
   // request a render
   if (this->ViewerWidget)

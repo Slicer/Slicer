@@ -195,6 +195,15 @@ protected:
   /// pointer to the viewer widget so can add props, request renders 
   vtkSlicerViewerWidget *ViewerWidget;
   
+  ///
+  /// Sets Slicer's interaction mode to "pick and manipulate"
+  /// when a widget is being manipulated, and
+  void UpdateInteractionModeAtStartInteraction();
+  ///
+  /// Resets Slicer's interaction mode back to original
+  /// interaction mode when manipulation is finished.
+  void UpdateInteractionModeAtEndInteraction();
+
 private:
 
 
