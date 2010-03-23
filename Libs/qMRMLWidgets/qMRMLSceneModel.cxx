@@ -596,9 +596,12 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   
-  Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
-  d->MRMLNodeToBe = 0;
-  this->endInsertRows();
+  if (d->MRMLNodeToBe)
+    {
+    Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
+    d->MRMLNodeToBe = 0;
+    this->endInsertRows();
+    }
 
 }
 
