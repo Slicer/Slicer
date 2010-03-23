@@ -571,12 +571,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 if { $placePersistence == 0 } {
                     $interactionNode SetLastInteractionMode $mode
                 }
-                $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
+              # prevent VolumesSWidget.tcl from
+              # processing the entire LeftButtonPress callback.
+              # it should just reset the lock when it  catches event.
+              $interactionNode SetWindowLevelLock 1
+              $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
               # AND PLACE FIDUCIAL.
-            $sliceGUI SetGrabID $this
-            $sliceGUI SetGUICommandAbortFlag 1
-            FiducialsSWidget::AddFiducial $r $a $s
-          }
+              $sliceGUI SetGrabID $this
+              $sliceGUI SetGUICommandAbortFlag 1
+              FiducialsSWidget::AddFiducial $r $a $s
+          } 
         }
       }
     }
@@ -584,6 +588,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       if { [$sliceGUI GetGrabID] == $this } {
         $sliceGUI SetGrabID ""
       }
+
         # RESET MOUSE MODE BACK TO
         # TRANSFORM, UNLESS USER HAS
         # SELECTED A PERSISTENT PICK OR

@@ -630,8 +630,9 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
     {
     this->UpdateInteractionModeAtEndInteraction();
     }
+
   // check for pick events
-  else if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
+  if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
       vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
       callData != NULL)
     {
@@ -1614,15 +1615,18 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       myCallback->FiducialList = flist;
       pointWidget->AddObserver(vtkCommand::EnableEvent, myCallback);
       pointWidget->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
+      pointWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
+
       //---
-      //--- TEST {
+      //--- add another observer that triggers the processWidgetEvents
+      //--- method as well, where we can update mouse mode changes.
+      //--- This pattern, and the methods called by processWidgetEvents
+      //--- can be used by other SlicerWidgets that are pickable or placeable.
       //---
       pointWidget->AddObserver(vtkCommand::StartInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
       pointWidget->AddObserver(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
-      //---
-      //--- } END TEST
-      //---
-      pointWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
+      
+
       // clean up callback to avoid leaks
       myCallback->Delete();
       pointWidget->PlaceWidget(worldxyz[0]-1, worldxyz[0]+1, worldxyz[1]-1, worldxyz[1]+1, worldxyz[2]-1, worldxyz[2]+1);

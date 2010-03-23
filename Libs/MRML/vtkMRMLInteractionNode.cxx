@@ -46,6 +46,7 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->PickModePersistence = 0;
   this->PlaceModePersistence = 0;
   this->TransformModePersistence = 1;
+  this->WindowLevelLock = 0;
  }
 
 //----------------------------------------------------------------------------

@@ -42,6 +42,12 @@ public:
   vtkGetMacro (PickModePersistence, int );
   vtkGetMacro (PlaceModePersistence, int);
   vtkGetMacro (TransformModePersistence, int );
+
+  //--- workaround for mouse modes.
+  //--- put on when fiducials are placed.
+  //--- turned off by callback to window/level.
+  vtkGetMacro (WindowLevelLock, int );
+  vtkSetMacro (WindowLevelLock, int );
   
   // Description:
   // Convenience methods for setting modes
@@ -89,6 +95,8 @@ public:
   /// Return the mode given a text string.
   int GetInteractionModeByString ( const char * modeString );
 
+  int WindowLevelLock;
+  
 protected:
   vtkMRMLInteractionNode();
   ~vtkMRMLInteractionNode();

@@ -134,11 +134,34 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
       if { [$sliceGUI GetActiveLeftButtonTool] == "" } {
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
         if { $interactionNode != "" } {
-          set mode [$interactionNode GetCurrentInteractionMode]
-          set modeString [$interactionNode GetInteractionModeAsString $mode]
-          # TODO: there will be other modes besides place where the window/level
-          # should be turned off - for now check for Place mode to avoid changing
-          # window/level while placing fiducials
+            set mode [$interactionNode GetCurrentInteractionMode]
+            set modeString [$interactionNode GetInteractionModeAsString $mode]
+            # if fiducial was just placed with a left button press
+            # it will have locked window level for now. 
+            # want to reset lock and return without executing
+            # callback.
+            set lock [ $interactionNode GetWindowLevelLock ]
+            if { $lock } {
+                $interactionNode SetWindowLevelLock 0
+                return
+            }
+            # TODO: there will be other modes besides place where the window/level
+            # should be turned off - for now check for Place mode to avoid changing
+            # window/level while placing fiducials
+            if { $modeString == "PickManipulate" } {
+              # if we're not over a fiducial, but we ARE
+              # in pick mode, then we want to discharge
+              # pick mode first, before invoking future win/lev
+              # changes. So here, set MouseMode back to
+              # default ViewTransform and reset WindowLevelLock
+              set mode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
+              $interactionNode SetCurrentInteractionNode $mode
+              $interactionNode SetWindowLevelLock 0
+              # Note: this parallels the behavior in the
+              # 3D Viewer (tho the implementation is
+              # different.) 3DViewerInteractorStyle does
+              # the job for 3D Viewer.
+          }
           if { $modeString != "Place" } {
             set _actionState "dragging"
             $sliceGUI SetGrabID $this
