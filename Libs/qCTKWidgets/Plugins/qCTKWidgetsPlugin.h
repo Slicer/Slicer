@@ -6,6 +6,7 @@
 #include "qCTKCollapsibleGroupBoxPlugin.h"
 #include "qCTKColorPickerButtonPlugin.h"
 #include "qCTKCoordinatesWidgetPlugin.h"
+#include "qCTKDoubleRangeSliderPlugin.h"
 #include "qCTKDoubleSliderPlugin.h"
 #include "qCTKDynamicSpacerPlugin.h"
 #include "qCTKFittedTextBrowserPlugin.h"
@@ -32,6 +33,7 @@ public:
             << new qCTKCollapsibleGroupBoxPlugin
             << new qCTKColorPickerButtonPlugin
             << new qCTKCoordinatesWidgetPlugin
+            << new qCTKDoubleRangeSliderPlugin
             << new qCTKDoubleSliderPlugin
             << new qCTKDynamicSpacerPlugin
             << new qCTKFittedTextBrowserPlugin

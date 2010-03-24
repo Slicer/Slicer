@@ -17,6 +17,8 @@ SET(designer_plugin_SRCS
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.cxx
   qCTKCoordinatesWidgetPlugin.h
+  qCTKDoubleRangeSliderPlugin.cxx
+  qCTKDoubleRangeSliderPlugin.h
   qCTKDoubleSliderPlugin.cxx
   qCTKDoubleSliderPlugin.h
   qCTKDynamicSpacerPlugin.cxx
@@ -44,6 +46,7 @@ SET(designer_plugin_MOC_SRCS
   qCTKCollapsibleGroupBoxPlugin.h
   qCTKColorPickerButtonPlugin.h
   qCTKCoordinatesWidgetPlugin.h
+  qCTKDoubleRangeSliderPlugin.h
   qCTKDoubleSliderPlugin.h
   qCTKDynamicSpacerPlugin.h
   qCTKExtensionFactory.h
