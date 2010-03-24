@@ -430,13 +430,17 @@ QVariant qMRMLVariantArrayItemHelper::data(int role) const
     case Qt::EditRole:
       if (d->isSeparator())
         {
-        break;
+        return QString("");
         }
     case qMRML::UIDRole:
       if (this->column() == 0)
         {
         const vtkVariant v = d->VariantArray->GetValue(1);
         return QString(v.ToString());
+        }
+      else
+        {
+        return QString("");
         }
       break;
     case Qt::AccessibleDescriptionRole:
@@ -690,6 +694,10 @@ qMRMLAbstractItemHelper* qMRMLExtraItemsHelper::child(int row, int column) const
 int qMRMLExtraItemsHelper::childCount() const
 {
   QCTK_D(const qMRMLExtraItemsHelper);
+  if (this->column() != 0)
+    {
+    return 0;
+    }
   //Q_ASSERT(d->preItemsCount() == 1);
   return d->preItemsCount() + this->proxy()->childCount() + d->postItemsCount();
 }
@@ -698,6 +706,10 @@ int qMRMLExtraItemsHelper::childCount() const
 bool qMRMLExtraItemsHelper::hasChildren() const
 {
   QCTK_D(const qMRMLExtraItemsHelper);
+  if (this->column() != 0)
+    {
+    return false;
+    }
   return this->qMRMLProxyItemHelper::hasChildren() 
       || d->preItemsCount()
       || d->postItemsCount();
