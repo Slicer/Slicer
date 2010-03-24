@@ -2178,7 +2178,7 @@ ModuleFactory
       }
     else
       {
-      information << "New modules discovered, updating module cache."
+      information << "New modules discovered, updating module cache in directory " << this->CachePath
                   << std::endl;
 
       // put code here to write the cache
@@ -2288,8 +2288,17 @@ ModuleFactory
           {
           module.SetTarget( "Unknown" );
           }
-        module.SetLocation( commandName );
-
+        // does the command have a known extension?
+        std::string ext = itksys::SystemTools::GetFilenameExtension(commandName);
+        const char *executable = this->GetExecutableForFileExtension(ext);
+        if (executable == NULL)
+          {
+          module.SetLocation( commandName );
+          }
+        else
+          {
+          module.SetLocation( executable );
+          }
         if ((*cit).second.Logo != "None")
           {
           ModuleLogo logo;
