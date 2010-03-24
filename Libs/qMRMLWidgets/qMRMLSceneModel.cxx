@@ -387,10 +387,13 @@ void qMRMLSceneModel::setPostItems(vtkObject* itemParent, const QStringList& ext
     collection->AddItem(variantArray);
     variantArray->Delete();
     }
-  d->ItemFactory->setPostItems(collection);
-  collection->Delete();
+
   // FIXME should probably do a row insertion thingy
-  this->reset();
+  //this->reset();
+  this->beginResetModel();
+  d->ItemFactory->setPostItems(collection);
+  this->endResetModel();
+  collection->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -575,6 +578,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject*
 {
   Q_UNUSED(scene);
   QCTK_D(qMRMLSceneModel);
+  Q_ASSERT(scene != 0);
   Q_ASSERT(scene == d->MRMLScene);
   
   Q_ASSERT(d->MRMLNodeToBe == 0);
@@ -583,7 +587,9 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject*
   QSharedPointer<qMRMLAbstractItemHelper> sceneItem = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
   // vtkMRMLScene adds nodes at the end of its collection (but before the extra Items
-  // FIXME: handle cases where extraItems are not set to the mrmlscene
+  // FIXME: handle cases where extraItems are not set to the mrmlscene but to other items
+  // (root, mrmlnode?)
+  // Warning, if you change the next 2 lines, make sure you do it also in onMRMLSceneNodeAdded
   int insertLocation = sceneItem->childCount() - (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
   this->beginInsertRows(d->indexFromItem(sceneItem.data()), insertLocation, insertLocation);
 }
@@ -591,17 +597,28 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject*
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
 {
-  Q_UNUSED(scene);
-  Q_UNUSED(node);
   QCTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
-  
-  if (d->MRMLNodeToBe)
+  if (d->MRMLNodeToBe == 0)
     {
-    Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
-    d->MRMLNodeToBe = 0;
-    this->endInsertRows();
+    // it's kind of ugly to call just NodeAddedEvent without NodeAboutToBeAddedEvent, 
+    // but we can handle that case...
+    qDebug() << "Warning, vtkMRMLScene::NodeAddedEvent has been fired without"
+      " vtkMRMLScene::NodeAboutToBeAddedEvent.";
+    //this->onMRMLSceneNodeAboutToBeAdded(scene, node);
+    d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
+    Q_ASSERT(d->MRMLNodeToBe);
+    QSharedPointer<qMRMLAbstractItemHelper> sceneItem = 
+      QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
+    int insertLocation = sceneItem->childCount() -
+      (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
+    // the node has already been added, offset the position
+    insertLocation -= 1;
+    this->beginInsertRows(d->indexFromItem(sceneItem.data()), insertLocation , insertLocation);
     }
+  Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
+  d->MRMLNodeToBe = 0;
+  this->endInsertRows();
 
 }
 

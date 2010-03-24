@@ -71,6 +71,8 @@ void qMRMLNodeComboBoxPrivate::init()
   p->setModel(sortFilterModel);
 
   p->connect(p, SIGNAL(currentIndexChanged(int)), p, SLOT(emitCurrentNodeChanged(int)));
+
+  p->setEnabled(p->mrmlScene() != 0);
 }
 
 // --------------------------------------------------------------------------
@@ -104,6 +106,13 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
 {
   QCTK_P(qMRMLNodeComboBox);
   QStringList extraItems;
+
+  if (p->mrmlScene() == 0)
+    {
+    this->MRMLSceneModel->setPostItems(p->mrmlScene(), extraItems);
+    return;
+    }
+  
   if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
     {
     extraItems.append("separator");
@@ -263,6 +272,8 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
+  d->updateNoneItem();
+  d->updateActionItems();
   this->setRootModelIndex(this->model()->index(0, 0));
 
   this->setEnabled(scene != 0);
