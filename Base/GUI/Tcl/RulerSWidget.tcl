@@ -116,6 +116,14 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   set lineRep [$o(lineWidget) GetRepresentation]
   eval $lineRep SetPoint1DisplayPosition [$this rasToXYZ [$_rulerNode GetPosition1]]
   eval $lineRep SetPoint2DisplayPosition [$this rasToXYZ [$_rulerNode GetPosition2]]
+
+  #
+  # set up the colours
+  #
+  eval [[$lineRep GetPoint1Representation] GetProperty] SetColor [$_rulerNode GetPointColour]
+  # for now, both ends get coloured the same, so only set the first one as that's all that can be set via the gui, this will change with vtk 5.6
+#  eval [[$lineRep GetPoint2Representation] GetProperty] SetColor [$_rulerNode GetPoint2Colour]
+  eval [$lineRep GetLineProperty] SetColor [$_rulerNode GetLineColour]
 }
 
 
