@@ -196,24 +196,27 @@ void qCTKRangeSlider::setRangeBounds(int l, int u)
   QCTK_D(qCTKRangeSlider);
   const int rangeMinimum = qBound(minimum(), qMin(l, u), maximum());
   const int rangeMaximum = qBound(minimum(), qMax(l, u), maximum());
-
-  if (rangeMaximum != d->m_RangeMaximum)
-    {
-    d->m_RangeMaximum = d->m_RangeMaximumValue = rangeMaximum;
-
-    emit rangeMaximumChanged(rangeMaximum);
-    emit rangeValuesChanged(d->m_RangeMinimum, d->m_RangeMaximum);
-    this->update();
-    }
+  const int rangeMinimumValue = qBound(rangeMinimum, d->m_RangeMinimumValue, rangeMaximum);
+  const int rangeMaximumValue = qBound(rangeMinimum, d->m_RangeMaximumValue, rangeMaximum);
 
   if (rangeMinimum != d->m_RangeMinimum)
     {
-    d->m_RangeMinimum = d->m_RangeMinimumValue = rangeMinimum;
-    
+    d->m_RangeMinimum = rangeMinimum;    
     emit rangeMinimumChanged(rangeMinimum);
-    emit rangeValuesChanged(d->m_RangeMinimum, d->m_RangeMaximum);
-    this->update();
     }
+  if (rangeMaximum != d->m_RangeMaximum)
+    {
+    d->m_RangeMaximum = rangeMaximum;
+    emit rangeMaximumChanged(rangeMaximum);    
+    }
+  if (rangeMinimumValue != d->m_RangeMinimumValue || 
+      rangeMaximumValue != d->m_RangeMaximumValue)
+    {
+    d->m_RangeMinimumValue = rangeMinimumValue;
+    d->m_RangeMaximumValue = rangeMaximumValue;
+    emit rangeValuesChanged(d->m_RangeMinimumValue, d->m_RangeMaximumValue);
+    }
+  this->update();
 }
 
 // --------------------------------------------------------------------------

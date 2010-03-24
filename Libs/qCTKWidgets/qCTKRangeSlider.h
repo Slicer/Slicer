@@ -1,3 +1,17 @@
+/*=========================================================================
+
+  Library:   qCTK
+
+  Copyright (c) Kitware Inc. 
+  All rights reserved.
+  Distributed under a BSD License. See LICENSE.txt file.
+
+  This software is distributed "AS IS" WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the above copyright notice for more information.
+
+=========================================================================*/
+
 #ifndef __qCTKRangeSlider_h
 #define __qCTKRangeSlider_h
 
@@ -48,7 +62,6 @@ public slots:
     void setRangeMinimumPosition(int rangeMinimum);
     void setRangeMaximumPosition(int rangeMaximum);
 
-    
 protected:
 
     // Description:
