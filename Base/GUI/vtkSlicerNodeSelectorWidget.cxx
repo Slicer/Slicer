@@ -109,7 +109,6 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
     this->MRMLScene->Delete ( );
     this->MRMLScene = NULL;
-    //    this->MRMLScene->Delete();
     }
 
   this->MRMLScene = aMRMLScene;
