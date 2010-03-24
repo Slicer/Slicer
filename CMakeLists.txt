@@ -339,6 +339,7 @@ IF (Slicer3_USE_KWWIDGETS)
   set(extra_dirs
     "${Teem_DIR}/bin"
     "${BatchMake_DIR}/bin"
+    "${OpenIGTLink_DIR}/bin"
     "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
     "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
     "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}"
