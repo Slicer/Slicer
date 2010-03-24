@@ -70,6 +70,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   filter->SetRadius( indexRadius );
   filter->SetInput( reader->GetOutput() );
   writer->SetInput( filter->GetOutput() );
+  writer->SetUseCompression(1);
   writer->Update();
   return EXIT_SUCCESS;
 }

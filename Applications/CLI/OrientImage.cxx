@@ -160,6 +160,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                        CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
   writer->SetInput( change->GetOutput() );
+  writer->SetUseCompression(1);
   writer->Update();
   std::cout << "Input origin is: " << reader1->GetOutput()->GetOrigin() << std::endl;
   std::cout << "Output origin is: " << change->GetOutput()->GetOrigin() <<

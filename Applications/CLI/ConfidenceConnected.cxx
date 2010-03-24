@@ -86,6 +86,7 @@ int main( int argc, char *argv[] )
   confidenceConnected->SetInput( smoothing->GetOutput() );
   caster->SetInput( confidenceConnected->GetOutput() );
   writer->SetInput( caster->GetOutput() );
+  writer->SetUseCompression(1);
 
   smoothing->SetNumberOfIterations( smoothingIterations );
   smoothing->SetTimeStep( timestep );

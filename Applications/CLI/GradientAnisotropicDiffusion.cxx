@@ -80,6 +80,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                    CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
   writer->SetInput( cast->GetOutput() );
+  writer->SetUseCompression(1);
   writer->Update();
 
   return EXIT_SUCCESS;

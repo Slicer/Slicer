@@ -99,6 +99,7 @@ int main( int argc, char * argv[] ){
   }
 
   writer->SetInput(output);
+  writer->SetUseCompression(1);
   try{
     writer->Update();
   } catch (itk::ExceptionObject &e){

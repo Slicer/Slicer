@@ -450,6 +450,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     typename WriterType::Pointer      writer =  WriterType::New();
     writer->SetFileName( ResampledImageFileName.c_str() );
     writer->SetInput( resample->GetOutput()   );
+    writer->SetUseCompression(1);
 
     try
       {

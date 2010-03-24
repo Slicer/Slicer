@@ -73,6 +73,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // Setup the input and output files
   reader->SetFileName( inputVolume.c_str() );
   writer->SetFileName( outputVolume.c_str() );
+  writer->SetUseCompression(1);
   
   // Setup the grindpeak method
   grindpeak->SetInput(  reader->GetOutput() );

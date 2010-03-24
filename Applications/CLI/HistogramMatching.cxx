@@ -75,6 +75,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader1->SetFileName( inputVolume.c_str() );
   reader2->SetFileName( referenceVolume.c_str() );
   writer->SetFileName( outputVolume.c_str() );
+  writer->SetUseCompression(1);
   
   // Setup the filter
   filter->SetInput                    ( reader1->GetOutput() );

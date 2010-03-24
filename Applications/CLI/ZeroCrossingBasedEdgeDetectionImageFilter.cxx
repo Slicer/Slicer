@@ -71,6 +71,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   outputFilter->SetInput( zeroFilter->GetOutput() );
 
   writer->SetInput( outputFilter->GetOutput() );
+  writer->SetUseCompression(1);
   writer->Update();
   return EXIT_SUCCESS;    
 }

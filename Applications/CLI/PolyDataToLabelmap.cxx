@@ -227,6 +227,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                        CLPProcessInformation);
   writer->SetFileName( OutputVolume.c_str() );
   writer->SetInput(  label );
+  writer->SetUseCompression(1);
   writer->Update();
 
   pdReader->Delete();
