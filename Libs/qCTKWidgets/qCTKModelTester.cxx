@@ -49,6 +49,13 @@ qCTKModelTesterPrivate::qCTKModelTesterPrivate()
 }
 
 //-----------------------------------------------------------------------------
+qCTKModelTester::qCTKModelTester(QObject *_parent)
+  :QObject(_parent)
+{
+  QCTK_INIT_PRIVATE(qCTKModelTester);
+}
+
+//-----------------------------------------------------------------------------
 qCTKModelTester::qCTKModelTester(QAbstractItemModel *_model, QObject *_parent)
   :QObject(_parent)
 {
@@ -168,6 +175,10 @@ void qCTKModelTester::testData(const QModelIndex& index)const
     }
   else
     {
+    if ( index.data(Qt::DisplayRole).isValid() == false)
+      {
+      qDebug() << index; 
+      }
     this->test(index.data(Qt::DisplayRole).isValid(), 
                QString("A valid index can't have invalid data: %1, %2, %3")
                .arg(index.row()).arg(index.column()).arg(long(index.internalPointer())));
@@ -180,7 +191,7 @@ void qCTKModelTester::testParent(const QModelIndex& vparent)const
   QCTK_D(const qCTKModelTester);
   if (!d->Model->hasChildren(vparent))
     {
-    // it's asking a lot :-)
+    // Usually the columnCount returned by the models do not depend on the index(faster)
     //this->test(d->Model->columnCount(vparent) <= 0, "A parent with no children can't have a columnCount > 0.");
     this->test(d->Model->rowCount(vparent) <= 0, "A parent with no children can't have a rowCount > 0.");
     }
@@ -188,6 +199,9 @@ void qCTKModelTester::testParent(const QModelIndex& vparent)const
     {
     this->test(d->Model->columnCount(vparent) > 0, "A parent with children can't have a columnCount <= 0.");
     this->test(d->Model->rowCount(vparent) > 0, "A parent with children can't have a rowCount <= 0.");
+    // The following test is more of an advice than a mistake. 
+    // Could be a property of qCTKModelTester...
+    this->test(vparent.column() <= 0, "Parents must be in column 0 (or -1)");
     }
 
   if (!vparent.isValid())
@@ -210,7 +224,10 @@ void qCTKModelTester::testParent(const QModelIndex& vparent)const
 void qCTKModelTester::testPersistentModelIndex(const QPersistentModelIndex& index)const
 {
   QCTK_D(const qCTKModelTester);
-  //qDebug() << "Test persistent Index: " << index ;
+  if (!index.isValid())
+    {
+    qDebug() << "Test persistent Index: " << index ;
+    }
   this->test(index.isValid(), "Persistent model index can't be invalid");
   Q_ASSERT(d->Model->index(index.row(), index.column(), index.parent()) == index);
   this->test(d->Model->index(index.row(), index.column(), index.parent()) == index, 
@@ -326,6 +343,10 @@ void qCTKModelTester::onLayoutAboutToBeChanged()
   QCTK_D(qCTKModelTester);
 
   d->LayoutAboutToBeChanged = this->persistentModelIndexes(QModelIndex());
+  foreach (const QPersistentModelIndex& index, d->LayoutAboutToBeChanged)
+    {
+    this->testPersistentModelIndex(index);
+    }
   this->testModel();
 }
 
@@ -333,6 +354,10 @@ void qCTKModelTester::onLayoutAboutToBeChanged()
 void qCTKModelTester::onLayoutChanged()
 {
   QCTK_D(qCTKModelTester);
+  this->test( this->persistentModelIndexes(QModelIndex()).size() == d->LayoutAboutToBeChanged.size(), 
+              QString("When the layout change, the number of items can't be different: old:%1, new:%2")
+              .arg(d->LayoutAboutToBeChanged.size())
+              .arg(this->persistentModelIndexes(QModelIndex()).size()));
   foreach (const QPersistentModelIndex& index, d->LayoutAboutToBeChanged)
     {
     this->testPersistentModelIndex(index);
@@ -386,6 +411,8 @@ void qCTKModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::O
 {
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher than end");
+  this->test(start >= 0, "Start can't be <0");
+  this->test(start <= (orientation == Qt::Vertical ? d->Model->rowCount(vparent) : d->Model->columnCount(vparent)) , "Start can't be higher than {row/column}Count()");
   //Not sure about that
   this->test(d->AboutToBeInserted.size() == 0, "While inserting items, you can't insert other items.");
   //Not sure about that
@@ -408,6 +435,8 @@ void qCTKModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Or
 {
   QCTK_D(qCTKModelTester);
   this->test(start <= end, "Start can't be higher than end");
+  this->test(start >= 0, "Start can't be <0");
+  this->test(start <= (orientation == Qt::Vertical ? d->Model->rowCount(vparent) : d->Model->columnCount(vparent)) , "Start can't be higher than {row/column}Count()");
   //Not sure about that
   this->test(d->AboutToBeInserted.size() == 0, "While inserting items, you can't remove other items.");
   //Not sure about that

@@ -34,7 +34,8 @@ class QCTK_WIDGETS_EXPORT qCTKModelTester: public QObject
 {
   Q_OBJECT
 public:
-  qCTKModelTester(QAbstractItemModel *model, QObject *parent = 0);
+  explicit qCTKModelTester(QObject *parent = 0);
+  qCTKModelTester(QAbstractItemModel *model, QObject *parent);
 
   void setModel(QAbstractItemModel* model);
   QAbstractItemModel* model()const;
