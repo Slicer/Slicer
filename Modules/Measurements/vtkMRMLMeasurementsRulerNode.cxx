@@ -61,7 +61,7 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
   
   // the annotation on the line
   this->DistanceAnnotationFormat = NULL;
-  this->SetDistanceAnnotationFormat("%g mm");
+  this->SetDistanceAnnotationFormat("%.1f mm");
   this->SetDistanceAnnotationScale(10.0, 10.0, 10.0);
   this->DistanceAnnotationVisibilityOn();
 
