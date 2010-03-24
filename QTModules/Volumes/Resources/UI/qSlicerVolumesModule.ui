@@ -30,6 +30,9 @@
          <string>vtkMRMLVolumeNode</string>
         </stringlist>
        </property>
+       <property name="addEnabled">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
