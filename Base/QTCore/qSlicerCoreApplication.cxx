@@ -12,6 +12,7 @@
 
 // QT includes
 #include <QVector>
+#include <QSharedPointer>
 #include <QStringList>
 #include <QDir>
 #include <QTimer>
@@ -53,9 +54,6 @@
 
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
-
-// STL includes
-#include <memory> // auto_ptr
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreApplicationPrivate: public qCTKPrivate<qSlicerCoreApplication>
@@ -101,15 +99,15 @@ public:
 
   ///
   /// ModuleManager - It should exist only one instance of the factory
-  std::auto_ptr<qSlicerModuleManager>       ModuleManager;
+  QSharedPointer<qSlicerModuleManager>       ModuleManager;
 
   ///
   /// IOManager - It should exist only one instance of the factory
-  std::auto_ptr<qSlicerCoreIOManager>       CoreIOManager;
+  QSharedPointer<qSlicerCoreIOManager>       CoreIOManager;
 
   ///
   /// CoreOptions - It should exist only one instance of the coreOptions
-  std::auto_ptr<qSlicerCoreCommandOptions>  CoreCommandOptions;
+  QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
 
   /// ExitWhenDone flag
   bool                                 ExitWhenDone; 
@@ -274,7 +272,7 @@ bool qSlicerCoreApplicationPrivate::parseArguments(int _argc, char** _argv)
 {
   QCTK_P(qSlicerCoreApplication);
   
-  qSlicerCoreCommandOptions* options = this->CoreCommandOptions.get();
+  qSlicerCoreCommandOptions* options = this->CoreCommandOptions.data();
   if (!options)
     {
     qWarning() << "Failed to parse arguments - "
@@ -392,7 +390,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   d->Initialized = true;
 
   // Instanciate moduleManager
-  d->ModuleManager = std::auto_ptr<qSlicerModuleManager>(new qSlicerModuleManager);
+  d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
 
   // Parse command line arguments
   d->parseArguments(d->Argc, d->Argv);
@@ -515,7 +513,7 @@ QCTK_SET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, Ap
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
 {
-  qctk_d()->ModuleManager = std::auto_ptr<qSlicerModuleManager>(manager);
+  qctk_d()->ModuleManager = QSharedPointer<qSlicerModuleManager>(manager);
 }
 
 #endif //Slicer3_USE_KWWIDGETS
@@ -558,29 +556,29 @@ QCTK_GET_CXX(qSlicerCoreApplication, qSlicerPythonManager*, pythonManager, Pytho
 //-----------------------------------------------------------------------------
 qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
 {
-  return qctk_d()->ModuleManager.get();
+  return qctk_d()->ModuleManager.data();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setCoreIOManager(qSlicerCoreIOManager* manager)
 {
-  qctk_d()->CoreIOManager = std::auto_ptr<qSlicerCoreIOManager>(manager);
+  qctk_d()->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(manager);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager* qSlicerCoreApplication::coreIOManager()const
 {
-  return qctk_d()->CoreIOManager.get();
+  return qctk_d()->CoreIOManager.data();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setCoreCommandOptions(qSlicerCoreCommandOptions* options)
 {
-  qctk_d()->CoreCommandOptions = std::auto_ptr<qSlicerCoreCommandOptions>(options);
+  qctk_d()->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(options);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 {
-  return qctk_d()->CoreCommandOptions.get();
+  return qctk_d()->CoreCommandOptions.data();
 }
