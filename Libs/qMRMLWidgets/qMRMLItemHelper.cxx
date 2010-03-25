@@ -14,6 +14,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkVariantArray.h>
 #include <vtkStdString.h>
+#include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
 class qMRMLAbstractItemHelperPrivate: public qCTKPrivate<qMRMLAbstractItemHelper>
@@ -394,6 +395,26 @@ int qMRMLAbstractRootItemHelper::childIndex(const qMRMLAbstractItemHelper* _chil
 }
 
 //------------------------------------------------------------------------------
+// vtkWeakObject: utility object that wraps a vtkWeakPointerBase into a vtkObject
+class vtkWeakObject : public vtkObject
+{
+public: 
+  static vtkWeakObject *New();
+  vtkTypeMacro(vtkWeakObject, vtkObject);
+  vtkObject* GetPointer()const
+  { 
+    return this->WeakPointer.GetPointer();
+  }
+  vtkWeakPointerBase WeakPointer;
+protected:
+  vtkWeakObject(){}
+private:
+  vtkWeakObject(const vtkWeakObject&);  // Not implemented.
+  void operator=(const vtkWeakObject&);  // Not implemented.
+};
+vtkStandardNewMacro(vtkWeakObject);
+
+//------------------------------------------------------------------------------
 // qMRMLVariantArrayItemHelper
 
 //------------------------------------------------------------------------------
@@ -488,7 +509,9 @@ vtkMRMLScene* qMRMLVariantArrayItemHelper::mrmlScene()const
 {
   QCTK_D(const qMRMLVariantArrayItemHelper);
   const vtkVariant v = d->VariantArray->GetValue(0);
-  vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(v.ToVTKObject());
+  vtkWeakObject* weakParent = vtkWeakObject::SafeDownCast(v.ToVTKObject());
+  vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(weakParent->GetPointer());
+  //vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(v.ToVTKObject());
   Q_ASSERT(mrmlScene);
   return mrmlScene;
 }
@@ -508,7 +531,15 @@ void qMRMLVariantArrayItemHelper
     }
   else
     {// add itemParent as a void*
-    properties.SetValue(0, vtkVariant(itemParent));
+    // we don't want to increase the ref count of itemParent.
+    // the following is not possible 
+    // properties.SetValue(0, vtkVariant(itemParent));
+    // because vtkVariant adds a ref automatically to the holded object. 
+    // This is why we use a vtkWeakPointer wrapped into a vtkObject.
+    vtkWeakObject* weakParent = vtkWeakObject::New();
+    weakParent->WeakPointer = itemParent;
+    properties.SetValue(0, vtkVariant(weakParent));
+    weakParent->Delete();
     }
   properties.SetValue(1, vtkVariant(title));
   properties.SetValue(2, vtkVariant(static_cast<int>(flags)));

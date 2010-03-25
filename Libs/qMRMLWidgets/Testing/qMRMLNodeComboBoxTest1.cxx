@@ -79,42 +79,49 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.nodeCount() != 2)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.nodeCount() != 0)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   sceneFactory.deleteScene();
   if (nodeSelector.count() != 0)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: mrml scene events failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: mrml scene events failed." 
+              << std::endl;
     return EXIT_FAILURE;
     }
   if (nodeSelector.currentNode() != 0)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: currentNode failed." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: currentNode failed."
+              << std::endl;
     return EXIT_FAILURE;
     }
   // FIXME: add more basic tests here
