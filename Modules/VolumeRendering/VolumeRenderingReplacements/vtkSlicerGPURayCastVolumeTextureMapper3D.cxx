@@ -189,7 +189,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];
-  maxRaysteps *= 128.0f; //make sure we have enough sampling rate to recover details
+  maxRaysteps *= 3.0f; //make sure we have enough sampling rate to recover details
 
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   
