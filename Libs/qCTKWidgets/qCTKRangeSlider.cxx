@@ -1,19 +1,19 @@
 #include "qCTKRangeSlider.h"
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QStyleOptionSlider>
 #include <QApplication>
 #include <QStylePainter>
 #include <QStyle>
-//#include "rvCommon.h"
-
 
 class qCTKRangeSliderPrivate:public qCTKPrivate<qCTKRangeSlider>
 {
 public:
   qCTKRangeSliderPrivate();
-
+  void init();
+  
   // Description:
   // Copied verbatim from QSliderPrivate class (see QSlider.cpp)
   int pixelPosToRangeValue(int pos) const;
@@ -25,18 +25,18 @@ public:
     
   // Description:
   // End points of the range on the Model
-  int m_RangeMaximum;
-  int m_RangeMinimum;
+  int m_MaximumValue;
+  int m_MinimumValue;
 
   // Description:
   // End points of the range on the GUI. This is synced with the model.
-  int m_RangeMaximumValue;
-  int m_RangeMinimumValue;
+  int m_MaximumPosition;
+  int m_MinimumPosition;
 
   // Description:
   // Controls selected ?
-  QStyle::SubControl m_RangeMinimumSliderSelected;
-  QStyle::SubControl m_RangeMaximumSliderSelected;
+  QStyle::SubControl m_MinimumSliderSelected;
+  QStyle::SubControl m_MaximumSliderSelected;
 
   // Description:
   // See QSliderPrivate::clickOffset. 
@@ -57,14 +57,25 @@ public:
 // --------------------------------------------------------------------------
 qCTKRangeSliderPrivate::qCTKRangeSliderPrivate()
 {
-  this->m_RangeMinimum = 10;
-  this->m_RangeMaximum = 90;
-  this->m_RangeMinimumValue = 10;
-  this->m_RangeMaximumValue = 90;
-  this->m_RangeMinimumSliderSelected = QStyle::SC_None;
-  this->m_RangeMaximumSliderSelected = QStyle::SC_None;
+  this->m_MinimumValue = 0;
+  this->m_MaximumValue = 100;
+  this->m_MinimumPosition = 0;
+  this->m_MaximumPosition = 100;
+  this->m_MinimumSliderSelected = QStyle::SC_None;
+  this->m_MaximumSliderSelected = QStyle::SC_None;
   this->m_SubclassClickOffset = 0;
   this->m_SubclassPosition = 0;
+}
+
+// --------------------------------------------------------------------------
+void qCTKRangeSliderPrivate::init()
+{
+  QCTK_P(qCTKRangeSlider);
+  this->m_MinimumValue = p->minimum();
+  this->m_MaximumValue = p->maximum();
+  this->m_MinimumPosition = p->minimum();
+  this->m_MaximumPosition = p->maximum();
+  p->connect(p, SIGNAL(rangeChanged(int, int)), p, SLOT(onRangeChanged(int, int)));
 }
 
 // --------------------------------------------------------------------------
@@ -105,11 +116,11 @@ void qCTKRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
   p->initStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
-  option.sliderValue = m_RangeMinimum;
-  option.sliderPosition = m_RangeMinimumValue;
-  if (m_RangeMinimumSliderSelected == QStyle::SC_SliderHandle)
+  option.sliderValue = m_MinimumValue;
+  option.sliderPosition = m_MinimumPosition;
+  if (m_MinimumSliderSelected == QStyle::SC_SliderHandle)
     {
-    option.activeSubControls = m_RangeMinimumSliderSelected;
+    option.activeSubControls = m_MinimumSliderSelected;
     option.state |= QStyle::State_Sunken;
     }
 
@@ -125,11 +136,11 @@ void qCTKRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
   p->Superclass::initStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
-  option.sliderValue = m_RangeMaximum;
-  option.sliderPosition = m_RangeMaximumValue;
-  if (m_RangeMaximumSliderSelected == QStyle::SC_SliderHandle)
+  option.sliderValue = m_MaximumValue;
+  option.sliderPosition = m_MaximumPosition;
+  if (m_MaximumSliderSelected == QStyle::SC_SliderHandle)
     {
-    option.activeSubControls = m_RangeMaximumSliderSelected;
+    option.activeSubControls = m_MaximumSliderSelected;
     option.state |= QStyle::State_Sunken;
     }
 
@@ -141,8 +152,7 @@ qCTKRangeSlider::qCTKRangeSlider(QWidget* parent)
   : QSlider(parent)
 {
   QCTK_INIT_PRIVATE(qCTKRangeSlider);
-  connect(this, SIGNAL(rangeValuesChanged(int, int)), 
-          this, SLOT(updateRangeBounds()));
+  qctk_d()->init();
 }
 
 // --------------------------------------------------------------------------
@@ -151,122 +161,177 @@ qCTKRangeSlider::qCTKRangeSlider( Qt::Orientation o,
   :QSlider(o, parentObject)
 {
   QCTK_INIT_PRIVATE(qCTKRangeSlider);
-  connect(this, SIGNAL(rangeValuesChanged(int, int)), 
-          this, SLOT(updateRangeBounds()));
+  qctk_d()->init();
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::updateRangeBounds()
+qCTKRangeSlider::~qCTKRangeSlider()
+{
+}
+
+// --------------------------------------------------------------------------
+int qCTKRangeSlider::minimumValue() const
 {
   QCTK_D(const qCTKRangeSlider);
-  this->setRangeBounds(d->m_RangeMinimum, d->m_RangeMaximum);
+  return d->m_MinimumValue;
 }
 
 // --------------------------------------------------------------------------
-int qCTKRangeSlider::rangeMinimum() const
+void qCTKRangeSlider::setMinimumValue( int rm )
+{
+  QCTK_D(qCTKRangeSlider);
+  this->setValues( rm, d->m_MaximumValue );
+}
+
+// --------------------------------------------------------------------------
+int qCTKRangeSlider::maximumValue() const
 {
   QCTK_D(const qCTKRangeSlider);
-  return qMin( d->m_RangeMinimum, d->m_RangeMaximum );
+  return d->m_MaximumValue;
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::setRangeMinimum( int rm )
+void qCTKRangeSlider::setMaximumValue( int rm )
 {
   QCTK_D(qCTKRangeSlider);
-  this->setRangeBounds( rm, d->m_RangeMaximum );
+  this->setValues( d->m_MinimumValue, rm );
 }
 
 // --------------------------------------------------------------------------
-int qCTKRangeSlider::rangeMaximum() const
-{
-  QCTK_D(const qCTKRangeSlider);
-  return qMax( d->m_RangeMinimum, d->m_RangeMaximum );
-}
-
-// --------------------------------------------------------------------------
-void qCTKRangeSlider::setRangeMaximum( int rm )
+void qCTKRangeSlider::setValues(int l, int u)
 {
   QCTK_D(qCTKRangeSlider);
-  this->setRangeBounds( d->m_RangeMinimum, rm );
-}
-
-// --------------------------------------------------------------------------
-void qCTKRangeSlider::setRangeBounds(int l, int u)
-{
-  QCTK_D(qCTKRangeSlider);
-  const int rangeMinimum = qBound(minimum(), qMin(l, u), maximum());
-  const int rangeMaximum = qBound(minimum(), qMax(l, u), maximum());
-  const int rangeMinimumValue = qBound(rangeMinimum, d->m_RangeMinimumValue, rangeMaximum);
-  const int rangeMaximumValue = qBound(rangeMinimum, d->m_RangeMaximumValue, rangeMaximum);
-
-  if (rangeMinimum != d->m_RangeMinimum)
+  const int minimumValue = 
+    qBound(this->minimum(), qMin(l,u), this->maximum());
+  const int maximumValue = 
+    qBound(this->minimum(), qMax(l,u), this->maximum());
+  bool emitMinValChanged = (minimumValue != d->m_MinimumValue);
+  bool emitMaxValChanged = (maximumValue != d->m_MaximumValue);
+  
+  d->m_MinimumValue = minimumValue;
+  d->m_MaximumValue = maximumValue;
+  
+  bool emitMinPosChanged = 
+    (minimumValue == d->m_MinimumPosition);
+  bool emitMaxPosChanged = 
+    (maximumValue == d->m_MaximumPosition);
+  d->m_MinimumPosition = minimumValue;
+  d->m_MaximumPosition = maximumValue;
+  
+  if (isSliderDown())
     {
-    d->m_RangeMinimum = rangeMinimum;    
-    emit rangeMinimumChanged(rangeMinimum);
+    if (emitMinPosChanged)
+      {
+      emit minimumPositionChanged(minimumValue);
+      }
+    if (emitMaxPosChanged)
+      {
+      emit maximumPositionChanged(maximumValue);
+      }
+    if (emitMinPosChanged || emitMaxPosChanged)
+      {
+      emit positionsChanged(minimumValue, maximumValue);
+      }
     }
-  if (rangeMaximum != d->m_RangeMaximum)
+  if (emitMinValChanged)
     {
-    d->m_RangeMaximum = rangeMaximum;
-    emit rangeMaximumChanged(rangeMaximum);    
+    emit minimumValueChanged(minimumValue);
     }
-  if (rangeMinimumValue != d->m_RangeMinimumValue || 
-      rangeMaximumValue != d->m_RangeMaximumValue)
+  if (emitMaxValChanged)
     {
-    d->m_RangeMinimumValue = rangeMinimumValue;
-    d->m_RangeMaximumValue = rangeMaximumValue;
-    emit rangeValuesChanged(d->m_RangeMinimumValue, d->m_RangeMaximumValue);
+    emit maximumValueChanged(maximumValue);
     }
-  this->update();
+  if (emitMinValChanged || emitMaxValChanged)
+    {
+    emit valuesChanged(d->m_MinimumValue, 
+                       d->m_MaximumValue);
+    }
+  if (emitMinPosChanged || emitMaxPosChanged || 
+      emitMinValChanged || emitMaxValChanged)
+    {
+    this->update();
+    }
 }
 
 // --------------------------------------------------------------------------
-int qCTKRangeSlider::rangeMinimumValuePosition() const
+int qCTKRangeSlider::minimumPosition() const
 {
   QCTK_D(const qCTKRangeSlider);
-  return d->m_RangeMinimumValue;
+  return d->m_MinimumPosition;
 }
 
 // --------------------------------------------------------------------------
-int qCTKRangeSlider::rangeMaximumValuePosition() const
+int qCTKRangeSlider::maximumPosition() const
 {
   QCTK_D(const qCTKRangeSlider);
-  return d->m_RangeMaximumValue;
+  return d->m_MaximumPosition;
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::setRangeMinimumPosition(int l)
+void qCTKRangeSlider::setMinimumPosition(int l)
+{
+  QCTK_D(const qCTKRangeSlider);
+  this->setPositions(l, d->m_MaximumPosition);
+}
+
+// --------------------------------------------------------------------------
+void qCTKRangeSlider::setMaximumPosition(int u)
+{
+  QCTK_D(const qCTKRangeSlider);
+  this->setPositions(d->m_MinimumPosition, u);
+}
+
+// --------------------------------------------------------------------------
+void qCTKRangeSlider::setPositions(int min, int max)
 {
   QCTK_D(qCTKRangeSlider);
-  if (d->m_RangeMinimumValue == l)
+  const int minPosition = 
+    qBound(this->minimum(), qMin(min, max), this->maximum());
+  const int maxPosition = 
+    qBound(this->minimum(), qMax(min, max), this->maximum());
+
+  bool emitMinPosChanged = (minPosition == d->m_MinimumPosition);
+  bool emitMaxPosChanged = (maxPosition == d->m_MaximumPosition);
+
+  if (!emitMinPosChanged && !emitMaxPosChanged)
     {
     return;
     }
-  d->m_RangeMinimumValue = l;
 
-  if (this->isSliderDown())
+  d->m_MinimumPosition = minPosition;
+  d->m_MaximumPosition = maxPosition;
+
+  if (!this->hasTracking())
     {
-    emit rangeMinimumValuePositionChanged(l);
+    this->update();
     }
-
-  this->setRangeBounds(l, d->m_RangeMaximum);
+  if (isSliderDown())
+    {
+    if (emitMinPosChanged)
+      {
+      emit minimumPositionChanged(d->m_MinimumPosition);
+      }
+    if (emitMaxPosChanged)
+      {
+      emit maximumPositionChanged(d->m_MaximumPosition);
+      }
+    if (emitMinPosChanged || emitMaxPosChanged)
+      {
+      emit positionsChanged(d->m_MinimumPosition, d->m_MaximumPosition);
+      }
+    }
+  if (this->hasTracking())
+    {
+    this->triggerAction(SliderMove);
+    this->setValues(d->m_MinimumPosition, d->m_MaximumPosition);
+    }
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::setRangeMaximumPosition(int u)
+void qCTKRangeSlider::onRangeChanged(int minimum, int maximum)
 {
   QCTK_D(qCTKRangeSlider);
-  if (d->m_RangeMaximumValue == u)
-    {
-    return;
-    }
-  d->m_RangeMaximumValue = u;
-    
-  if (this->isSliderDown())
-    {
-    emit rangeMaximumValuePositionChanged(u);
-    }
-
-  this->setRangeBounds(d->m_RangeMinimum, u);
+  this->setValues(d->m_MinimumValue, d->m_MaximumValue);
 }
 
 // --------------------------------------------------------------------------
@@ -281,12 +346,13 @@ void qCTKRangeSlider::paintEvent( QPaintEvent* )
   option.subControls = QStyle::SC_SliderGroove;
   painter.drawComplexControl(QStyle::CC_Slider, option);
 
-  option.sliderPosition = d->m_RangeMinimumValue;
+  option.sliderPosition = d->m_MinimumPosition;
   const QRect lr = style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderHandle, 
                                             this);
-  option.sliderPosition = d->m_RangeMaximumValue;
+  option.sliderPosition = d->m_MaximumPosition;
+
   const QRect ur = style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderHandle, 
@@ -364,10 +430,10 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
   
   if (!this->isSliderDown())
     {
-    option.sliderPosition = d->m_RangeMinimumValue;
-    option.sliderValue    = d->m_RangeMinimum;
+    option.sliderPosition = d->m_MinimumPosition;
+    option.sliderValue    = d->m_MinimumValue;
 
-    QStyle::SubControl& control = d->m_RangeMinimumSliderSelected;
+    QStyle::SubControl& control = d->m_MinimumSliderSelected;
     
     control = this->style()->hitTestComplexControl( QStyle::CC_Slider, 
                                                     &option, 
@@ -377,7 +443,7 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     if (control == QStyle::SC_SliderHandle)
       {
       d->m_SelectedSlider = true;
-      d->m_SubclassPosition = d->m_RangeMinimum;
+      d->m_SubclassPosition = d->m_MinimumValue;
 
       const QRect sr = this->style()->subControlRect( QStyle::CC_Slider, 
                                                       &option, 
@@ -388,7 +454,7 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 
       this->setSliderDown(true);
 
-      if (control != d->m_RangeMinimumSliderSelected)
+      if (control != d->m_MinimumSliderSelected)
         {
         this->update(sr);
         }
@@ -400,10 +466,10 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 
   if (!this->isSliderDown())
     {
-    option.sliderPosition = d->m_RangeMaximumValue;
-    option.sliderValue    = d->m_RangeMaximum;
+    option.sliderPosition = d->m_MaximumPosition;
+    option.sliderValue    = d->m_MaximumValue;
 
-    QStyle::SubControl& control = d->m_RangeMaximumSliderSelected;
+    QStyle::SubControl& control = d->m_MaximumSliderSelected;
     
     control = this->style()->hitTestComplexControl( QStyle::CC_Slider, 
                                                     &option, 
@@ -413,7 +479,7 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     if (control == QStyle::SC_SliderHandle)
       {
       d->m_SelectedSlider = false;
-      d->m_SubclassPosition = d->m_RangeMaximum;
+      d->m_SubclassPosition = d->m_MaximumValue;
 
       const QRect sr = this->style()->subControlRect( QStyle::CC_Slider, 
                                                       &option, 
@@ -424,7 +490,7 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 
       this->setSliderDown(true);
 
-      if (d->m_RangeMaximumSliderSelected != control)
+      if (d->m_MaximumSliderSelected != control)
         {
         this->update(sr);
         }
@@ -441,8 +507,8 @@ void qCTKRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 void qCTKRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
   QCTK_D(qCTKRangeSlider);
-  if (d->m_RangeMinimumSliderSelected == QStyle::SC_SliderHandle ||
-      d->m_RangeMaximumSliderSelected == QStyle::SC_SliderHandle)
+  if (d->m_MinimumSliderSelected == QStyle::SC_SliderHandle ||
+      d->m_MaximumSliderSelected == QStyle::SC_SliderHandle)
     {
 
     QStyleOptionSlider option;
@@ -462,15 +528,13 @@ void qCTKRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
         }
       }
 
-    if (d->m_RangeMinimumSliderSelected == QStyle::SC_SliderHandle)
+    if (d->m_MinimumSliderSelected == QStyle::SC_SliderHandle)
       {
-      newPosition = qMin(newPosition, this->rangeMaximum());
-      this->setRangeMinimumPosition(newPosition);
+      this->setMinimumPosition(qMin(newPosition,d->m_MaximumPosition));
       }
-    else if (d->m_RangeMaximumSliderSelected == QStyle::SC_SliderHandle)
+    else if (d->m_MaximumSliderSelected == QStyle::SC_SliderHandle)
       {
-      newPosition = qMax(newPosition, this->rangeMinimum());
-      this->setRangeMaximumPosition(newPosition);
+      this->setMaximumPosition(qMax(d->m_MinimumPosition, newPosition));
       }
     mouseEvent->accept();
     }
@@ -486,8 +550,8 @@ void qCTKRangeSlider::mouseReleaseEvent(QMouseEvent* mouseEvent)
   QSlider::mouseReleaseEvent(mouseEvent);
   setSliderDown(false);
   
-  d->m_RangeMinimumSliderSelected = QStyle::SC_None;
-  d->m_RangeMaximumSliderSelected = QStyle::SC_None;
+  d->m_MinimumSliderSelected = QStyle::SC_None;
+  d->m_MaximumSliderSelected = QStyle::SC_None;
 
   this->update();
 }

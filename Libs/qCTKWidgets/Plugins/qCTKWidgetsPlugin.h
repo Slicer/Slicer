@@ -12,6 +12,7 @@
 #include "qCTKFittedTextBrowserPlugin.h"
 #include "qCTKMenuButtonPlugin.h"
 #include "qCTKRangeSliderPlugin.h"
+#include "qCTKRangeWidgetPlugin.h"
 #include "qCTKTitleComboBoxPlugin.h"
 #include "qCTKTreeComboBoxPlugin.h"
 #include "qCTKSliderSpinBoxWidgetPlugin.h"
@@ -39,6 +40,7 @@ public:
             << new qCTKFittedTextBrowserPlugin
             << new qCTKMenuButtonPlugin
             << new qCTKRangeSliderPlugin
+            << new qCTKRangeWidgetPlugin
             << new qCTKTitleComboBoxPlugin
             << new qCTKTreeComboBoxPlugin
             << new qCTKSliderSpinBoxWidgetPlugin;

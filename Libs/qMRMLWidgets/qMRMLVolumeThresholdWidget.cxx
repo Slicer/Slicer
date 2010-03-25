@@ -42,7 +42,7 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Super
   this->setAutoThreshold(2);
 
   // TODO replace with double window/level
-  this->connect(d->VolumeThresholdRangeSlider, SIGNAL(rangeValuesChanged(int,int)),
+  this->connect(d->VolumeThresholdRangeSlider, SIGNAL(valuesChanged(int,int)),
                 SLOT(setMinMaxRange(int, int)));
   this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 SLOT(setAutoThreshold(int)));
@@ -146,7 +146,7 @@ double qMRMLVolumeThresholdWidget::lowerThreshold() const
 {
   QCTK_D(const qMRMLVolumeThresholdWidget);
 
-  double min = d->VolumeThresholdRangeSlider->rangeMinimum();
+  double min = d->VolumeThresholdRangeSlider->minimumValue();
 
   return min;
 }
@@ -156,7 +156,7 @@ double qMRMLVolumeThresholdWidget::upperThreshold() const
 {
   QCTK_D(const qMRMLVolumeThresholdWidget);
 
-  double max = d->VolumeThresholdRangeSlider->rangeMaximum();
+  double max = d->VolumeThresholdRangeSlider->maximumValue();
 
   return max;
 }
@@ -185,7 +185,7 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  //QCTK_D(qMRMLVolumeThresholdWidget);
   
   if (volumeNode) 
   {
@@ -241,7 +241,7 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
     //TODO: set correct bounds of the range widget
     // clipping in the range widget causing multiple volume display node updates
     // also a problem if values get clipped, the mode switches from Auto to Manual
-    d->VolumeThresholdRangeSlider->setRangeBounds(min, max );
+    d->VolumeThresholdRangeSlider->setValues(min, max );
 
     //d->VolumeThresholdRangeSlider->setRangeMinimumPosition(upperThreshold - 0.5 * lowerThreshold);
     //d->VolumeThresholdRangeSlider->setRangeMaximumPosition(upperThreshold + 0.5 * lowerThreshold);

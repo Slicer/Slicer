@@ -42,7 +42,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
   this->setAutoWindowLevel(1);
 
   // TODO replace with double window/level
-  this->connect(d->WindowLevelRangeSlider, SIGNAL(rangeValuesChanged(int,int)),
+  this->connect(d->WindowLevelRangeSlider, SIGNAL(valuesChanged(int,int)),
                 SLOT(setMinMaxRange(int, int)));
   this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 SLOT(setAutoWindowLevel(int)));
@@ -144,8 +144,8 @@ double qMRMLWindowLevelWidget::window() const
 {
   QCTK_D(const qMRMLWindowLevelWidget);
 
-  double min = d->WindowLevelRangeSlider->rangeMinimum();
-  double max = d->WindowLevelRangeSlider->rangeMaximum();
+  double min = d->WindowLevelRangeSlider->minimumValue();
+  double max = d->WindowLevelRangeSlider->maximumValue();
 
   return max - min;
 }
@@ -155,8 +155,8 @@ double qMRMLWindowLevelWidget::level() const
 {
   QCTK_D(const qMRMLWindowLevelWidget);
 
-  double min = d->WindowLevelRangeSlider->rangeMinimum();
-  double max = d->WindowLevelRangeSlider->rangeMaximum();
+  double min = d->WindowLevelRangeSlider->minimumValue();
+  double max = d->WindowLevelRangeSlider->maximumValue();
 
   return 0.5*(max + min);
 }
@@ -232,7 +232,7 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     //TODO: set correct bounds of the range widget
     // clipping in the range widget causing multiple volume display node updates
     // also a problem if values get clipped, the mode switches from Auto to Manual
-    d->WindowLevelRangeSlider->setRangeBounds(min, max );
+    d->WindowLevelRangeSlider->setValues(min, max );
 
     //d->WindowLevelRangeSlider->setRangeMinimumPosition(level - 0.5 * window);
     //d->WindowLevelRangeSlider->setRangeMaximumPosition(level + 0.5 * window);
