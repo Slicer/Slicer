@@ -353,11 +353,11 @@ vtkMRMLModelNode* vtkIGTToolSelectorLogic::AddToolModel(const char* nodeName)
 
 void vtkIGTToolSelectorLogic::BuildToolPolyData(int tool)
 {
-   std::cout << "DEBUG: IGTToolSelectorLogic: BuildToolPolyData was called." << std::endl;
+   //std::cout << "DEBUG: IGTToolSelectorLogic: BuildToolPolyData was called." << std::endl;
   // check to see if the current tool type is already been built.
   if(this->ToolType == tool && this->CurrentShowAxesFlag == this->ShowAxesFlag && !this->NewParameters)
   {
-    std::cout << "DEBUG: IGTToolSelectorLogic: Tried to build the same tool, leave tool as is." << std::endl;
+    //std::cout << "DEBUG: IGTToolSelectorLogic: Tried to build the same tool, leave tool as is." << std::endl;
     return;
   }
   // either allocate the memory or remove all the existing inputs.

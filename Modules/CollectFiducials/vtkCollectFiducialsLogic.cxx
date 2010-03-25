@@ -78,7 +78,7 @@ void vtkCollectFiducialsLogic::UpdateAll()
 
 void vtkCollectFiducialsLogic::ResetAllFiducials(const char *ID)
 {
-  std::cerr << "DEBUG: Attempting to reset the fiducials." << std::endl;
+  //std::cerr << "DEBUG: Attempting to reset the fiducials." << std::endl;
   if (ID)
   {
     vtkMRMLFiducialListNode *flist =
@@ -89,13 +89,13 @@ void vtkCollectFiducialsLogic::ResetAllFiducials(const char *ID)
       return;
       }
     flist->RemoveAllFiducials();
-    std::cerr << "DEBUG: Fiducial removal successful." << std::endl;
+    //std::cerr << "DEBUG: Fiducial removal successful." << std::endl;
   }
 }
 
 void vtkCollectFiducialsLogic::AddFiducial(const char *ID, char* name, float x, float y, float z)
 {
-  std::cerr << "DEBUG: Attempting to add fiducial " << name << " to the list." << std::endl;
+  //std::cerr << "DEBUG: Attempting to add fiducial " << name << " to the list." << std::endl;
   if (ID)
   {
     vtkMRMLFiducialListNode *flist =
@@ -107,7 +107,7 @@ void vtkCollectFiducialsLogic::AddFiducial(const char *ID, char* name, float x, 
       }
     //flist->AddFiducialWithXYZ(x, y, z, 0);
     flist->AddFiducialWithLabelXYZSelectedVisibility(name, x, y, z, 0, 1);
-    std::cerr << "DEBUG: Fiducial addition successful." << std::endl;
+    //std::cerr << "DEBUG: Fiducial addition successful." << std::endl;
     //flist->PrintSelf(std::cout, vtkIndent(0));
   }
 }

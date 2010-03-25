@@ -321,14 +321,14 @@ void vtkCollectFiducialsGUI::ProcessGUIEvents(vtkObject *caller,
     this->FiducialListSelector->GetSelected() != NULL)
     {
     //TODO:this->UpdateMRML();
-    std::cerr << "DEBUG: FiducialListSelector is selected." << std::endl;
+    //std::cerr << "DEBUG: FiducialListSelector is selected." << std::endl;
     }
   else if (this->ProbeTransformSelector ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
     && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
     this->ProbeTransformSelector->GetSelected() != NULL)
     {
     //TODO:this->UpdateMRML();
-    std::cerr << "DEBUG: ProbeTransformSelector is selected." << std::endl;
+    //std::cerr << "DEBUG: ProbeTransformSelector is selected." << std::endl;
     }
   //***************************************
   // Buttons.
@@ -419,9 +419,9 @@ void vtkCollectFiducialsGUI::BuildGUIForHelpFrame()
 {
   // Define your help text here.
   const char *help = 
-    "This module is used to collect patient fiducial markers using a tracking system.";
+      "This module is used to collect patient fiducial markers using a tracking system. Details on the module can be found here: <a>http://www.slicer.org/slicerWiki/index.php/Modules:CollectFiducials-Documentation-3.6</a>";
   const char *about =
-    "This was developed at NDI.";
+    "This was developed by Andrew Wiles at NDI, <a>htt://www.ndigital.com</a>.";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "CollectFiducials" );
   this->BuildHelpAndAboutFrame (page, help, about);
@@ -447,7 +447,7 @@ void vtkCollectFiducialsGUI::BuildGUIForFiducialListNode()
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New();
   frame->SetParent(conBrowsFrame->GetFrame());
   frame->Create();
-  frame->SetLabelText ("Fiducial List Child Frame");
+  //frame->SetLabelText ("Fiducial List Child Frame");
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  frame->GetWidgetName() );
 
@@ -568,12 +568,12 @@ void vtkCollectFiducialsGUI::BuildGUIForTrackerInfo()
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New();
   frame->SetParent(conBrowsFrame->GetFrame());
   frame->Create();
-  frame->SetLabelText ("Tracker List Child Frame");
+  //frame->SetLabelText ("Tracker List Child Frame");
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  frame->GetWidgetName() );
 
   // -----------------------------------------
-  // Fiducials List Selector
+  // Probe Transform Selector
 
   this->ProbeTransformSelector = vtkSlicerNodeSelectorWidget::New();
   this->ProbeTransformSelector->SetNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, NULL);
@@ -601,7 +601,7 @@ void vtkCollectFiducialsGUI::UpdateAll()
 
 void vtkCollectFiducialsGUI::ResetFiducialList()
 {
-  std::cerr << "DEBUG: ResetFiducialsButton is pressed." << std::endl;
+  //std::cerr << "DEBUG: ResetFiducialsButton is pressed." << std::endl;
 
   this->FiducialListMultiColumnList->GetWidget()->DeleteAllRows();
   // note that the GetWidget() call returns the MultiColumnList object that contains all the data.
@@ -611,7 +611,7 @@ void vtkCollectFiducialsGUI::ResetFiducialList()
 
   for (int i = 0; i < nFids; i++)
   {
-    std::cerr << "DEBUG: Fiducial No. " << i << std::endl;
+    //std::cerr << "DEBUG: Fiducial No. " << i << std::endl;
     for (int j = 0; j < 3; j++)
     {
       this->FiducialListMultiColumnList->GetWidget()->SetCellTextAsDouble(i,j,0.0);
@@ -671,7 +671,7 @@ void vtkCollectFiducialsGUI::SaveFiducialList()
                                        //float(i));
                                        float(this->FiducialListMultiColumnList->GetWidget()->GetCellTextAsDouble(i,2)));
     }
-    std::cerr << "DEBUG: Finsihed updating the fiducials." << std::endl;
+    //std::cerr << "DEBUG: Finsihed updating the fiducials." << std::endl;
   }
   else
   {

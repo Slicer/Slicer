@@ -335,7 +335,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
       && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
           this->ProbeTransformSelector->GetSelected() != NULL)
     {
-    std::cerr << "DEBUG: ProbeTransformSelector is selected." << std::endl;
+    //std::cerr << "DEBUG: ProbeTransformSelector is selected." << std::endl;
     vtkMRMLLinearTransformNode* node =
       vtkMRMLLinearTransformNode::SafeDownCast(this->ProbeTransformSelector->GetSelected());
     this->GetLogic()->SetToolTransformNode(node->GetID());
@@ -346,7 +346,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ToolTypeListBox->GetWidget()->GetWidget() == vtkKWListBox::SafeDownCast(caller)
     && event == vtkKWListBox::ListBoxSelectionChangedEvent)
     {
-    std::cerr << "DEBUG: ToolTypeListBox: " << this->ToolTypeListBox->GetWidget()->GetWidget()->GetSelection() << std::endl;
+    //std::cerr << "DEBUG: ToolTypeListBox: " << this->ToolTypeListBox->GetWidget()->GetWidget()->GetSelection() << std::endl;
     if(this->EnableToolCheckButton->GetSelectedState())
     {
       this->GetLogic()->
@@ -360,7 +360,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->EnableToolCheckButton == vtkKWCheckButton::SafeDownCast(caller)
     && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
-    std::cerr << "DEBUG: EnableToolCheckButton checked." << std::endl;
+    //std::cerr << "DEBUG: EnableToolCheckButton checked." << std::endl;
     this->GetLogic()->
         EnableTool(this->ToolTypeListBox->GetWidget()->GetWidget()->GetSelectionIndex(),
                    this->EnableToolCheckButton->GetSelectedState());
@@ -368,7 +368,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ShowAxesCheckButton == vtkKWCheckButton::SafeDownCast(caller)
     && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
-    std::cerr << "DEBUG: ShowAxesCheckButton checked." << std::endl;
+    //std::cerr << "DEBUG: ShowAxesCheckButton checked." << std::endl;
     this->GetLogic()->SetShowAxes(this->ShowAxesCheckButton->GetSelectedState());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -380,7 +380,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ShowProjectionCheckButton == vtkKWCheckButton::SafeDownCast(caller)
     && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
-    std::cerr << "DEBUG: ShowProjectionCheckButton checked." << std::endl;
+    //std::cerr << "DEBUG: ShowProjectionCheckButton checked." << std::endl;
     this->GetLogic()->SetShowProjection(this->ShowProjectionCheckButton->GetSelectedState());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -392,7 +392,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ShowToolTipCheckButton == vtkKWCheckButton::SafeDownCast(caller)
     && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
-    std::cerr << "DEBUG: ShowToolTipCheckButton checked." << std::endl;
+    //std::cerr << "DEBUG: ShowToolTipCheckButton checked." << std::endl;
     this->GetLogic()->SetShowToolTip(this->ShowToolTipCheckButton->GetSelectedState());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -404,7 +404,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ProjectionLengthScale->GetWidget() == vtkKWScale::SafeDownCast(caller)
     && event == vtkKWScale::ScaleValueChangedEvent)
     {
-    std::cerr << "DEBUG: ProjectionLengthScale value changed." << std::endl;
+    //std::cerr << "DEBUG: ProjectionLengthScale value changed." << std::endl;
     this->GetLogic()->SetProjectionLength(this->ProjectionLengthScale->GetValue());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -416,7 +416,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ProjectionDiameterScale->GetWidget() == vtkKWScale::SafeDownCast(caller)
     && event == vtkKWScale::ScaleValueChangedEvent)
     {
-    std::cerr << "DEBUG: ProjectionDiameterScale value changed." << std::endl;
+    //std::cerr << "DEBUG: ProjectionDiameterScale value changed." << std::endl;
     this->GetLogic()->SetProjectionDiameter(this->ProjectionDiameterScale->GetValue());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -428,7 +428,7 @@ void vtkIGTToolSelectorGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ToolTipDiameterScale->GetWidget() == vtkKWScale::SafeDownCast(caller)
     && event == vtkKWScale::ScaleValueChangedEvent)
     {
-    std::cerr << "DEBUG: ToolTipDiameterScale value changed." << std::endl;
+    //std::cerr << "DEBUG: ToolTipDiameterScale value changed." << std::endl;
     this->GetLogic()->SetToolTipDiameter(this->ToolTipDiameterScale->GetValue());
     if(this->EnableToolCheckButton->GetSelectedState())
     {
@@ -507,9 +507,9 @@ void vtkIGTToolSelectorGUI::BuildGUIForHelpFrame ()
 {
   // Define your help text here.
   const char *help = 
-    "This module is used to select a virtual representation of a tool that is tracked via OpenIGTLink.";
+    "This module is used to select a virtual representation of a tool that is tracked via OpenIGTLink. Details can be found at <a>http://www.slicer.org/slicerWiki/index.php/Modules:IGTToolSelector-Documentation-3.6</a>.";
   const char *about =
-    "This was developed at NDI.";
+      "This was developed by Andrew Wiles at NDI, <a>htt://www.ndigital.com</a>.";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "IGTToolSelector" );
   this->BuildHelpAndAboutFrame (page, help, about);
@@ -648,7 +648,7 @@ void vtkIGTToolSelectorGUI::BuildGUIForToolPropertiesFrame()
   this->ToolTipDiameterScale->SetValue(0.25);
   this->ToolTipDiameterScale->SetRangeVisibility(1);
   this->ToolTipDiameterScale->SetResolution(0.5);
-  this->ToolTipDiameterScale->SetLabelText("Set Projection Length: ");
+  this->ToolTipDiameterScale->SetLabelText("Set Tool Tip Diameter: ");
   this->Script("pack %s -side top -anchor e -fill x -padx 20 -pady 4",
                 this->ToolTipDiameterScale->GetWidgetName());
 
