@@ -37,13 +37,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Directory holding Dicom series</description>
     </directory>
 
-    <directory>
+    <string>
       <name>outputVolume</name>
       <longflag>--outputVolume</longflag> 
       <label>Output Image Volume</label>
       <channel>output</channel>
       <description>Output Image in NRRD format (.nhdr)</description>
-    </directory>
+    </string>
 
   </parameters>
 
