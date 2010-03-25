@@ -12,11 +12,12 @@
 
 =========================================================================*/
 
+// QT includes
+#include <QApplication>
+#include <QString>
+
 // qCTK includes
 #include "qCTKDoubleSlider.h"
-
-// QT includes
-#include <QString>
 
 // STD includes
 #include <stdlib.h>
@@ -24,8 +25,7 @@
 
 int qCTKDoubleSliderTest1(int argc, char * argv [] )
 {
-  Q_UNUSED(argc);
-  Q_UNUSED(argv);
+  QApplication app(argc, argv);
 
   qCTKDoubleSlider slider;
   std::cout << "Test setValue(18.54)" << std::endl;
@@ -90,8 +90,8 @@ int qCTKDoubleSliderTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   std::cout << "Test setMaximum" << std::endl;
-  slider.setMaximum(51000000.333333);
-  if (!qFuzzyCompare(slider.maximum(), 51000000.333333) ||
+  slider.setMaximum(5100000.333333);
+  if (!qFuzzyCompare(slider.maximum(), 5100000.333333) ||
       !qFuzzyCompare(slider.value(), 15.08))
     {
     std::cerr << "qCTKDoubleSlider:: setMaximum failed" << slider.value() << std::endl;
@@ -103,7 +103,23 @@ int qCTKDoubleSliderTest1(int argc, char * argv [] )
     {
     std::cerr << "qCTKDoubleSlider:: setValue failed" << slider.value() << std::endl;
     return EXIT_FAILURE;
-    }    
+    }
+  std::cout << "Test setSingleStep" << std::endl;
+  slider.setSingleStep(1.);
+  if (!qFuzzyCompare(slider.value(),15.081) || 
+      !qFuzzyCompare(slider.sliderPosition(), 15.081))
+    {
+    std::cerr << "qCTKDoubleSlider:: setSingleStep failed: val" << slider.value() << " pos:" << slider.sliderPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "Test setSingleStep " << std::endl;
+  slider.setSingleStep(0.01);
+  if (!qFuzzyCompare(slider.value(),15.081) || 
+      !qFuzzyCompare(slider.sliderPosition(), 15.081))
+    {
+    std::cerr << "qCTKDoubleSlider:: setSingleStep failed: val" << slider.value() << " pos:" << slider.sliderPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }
 

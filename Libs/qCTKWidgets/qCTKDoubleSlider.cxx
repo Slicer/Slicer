@@ -28,10 +28,10 @@ class qCTKDoubleSliderPrivate: public qCTKPrivate<qCTKDoubleSlider>
   void init();
   void updateOffset(double value);
 
+  QSlider*    Slider;
   double      Minimum;
   double      Maximum;
   double      Offset;
-  QSlider*    Slider;
   double      SingleStep;
   double      Value;
 };
@@ -40,10 +40,11 @@ class qCTKDoubleSliderPrivate: public qCTKPrivate<qCTKDoubleSlider>
 qCTKDoubleSliderPrivate::qCTKDoubleSliderPrivate()
 {
   this->Slider = 0;
-  this->SingleStep = 1.;
   this->Minimum = 0.;
   this->Maximum = 100.;
   this->Offset = 0.;
+  this->SingleStep = 1.;
+  this->Value = 0.;
 }
 
 // --------------------------------------------------------------------------
@@ -71,7 +72,8 @@ int qCTKDoubleSliderPrivate::toInt(double doubleValue)const
 {
   double tmp = doubleValue / this->SingleStep;
   int intValue = qRound(tmp);
-  //qDebug() << __FUNCTION__ << doubleValue << intValue;
+  //qDebug() << __FUNCTION__ << doubleValue << tmp << intValue;
+  Q_ASSERT(qRound64(tmp) == intValue);
   return intValue;
 }
 
@@ -218,9 +220,11 @@ void qCTKDoubleSlider::setSingleStep(double newStep)
   d->updateOffset(d->Value);
   // update the new values of the QSlider
   double _value = d->Value;
-  this->setValue(_value);
-  this->setMinimum(d->Minimum);
-  this->setMaximum(d->Maximum);
+  bool oldBlockSignals = this->blockSignals(true);
+  this->setRange(d->Minimum, d->Maximum);
+  d->Slider->setValue(d->toInt(_value));
+  d->Value = _value;
+  this->blockSignals(oldBlockSignals);
 }
 
 // --------------------------------------------------------------------------
