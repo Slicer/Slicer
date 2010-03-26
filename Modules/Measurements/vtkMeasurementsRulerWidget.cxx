@@ -1073,7 +1073,7 @@ void vtkMeasurementsRulerWidget::UpdateDistanceLabel(vtkMRMLMeasurementsRulerNod
 {
   if (activeRulerNode == NULL || this->DistanceLabel == NULL)
     {
-    vtkWarningMacro("UpdateDistanceLabel: no active ruler node or distance label");
+    vtkDebugMacro("UpdateDistanceLabel: no active ruler node or distance label");
     return;
     }
 
@@ -1761,7 +1761,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->RulerModel1SelectorWidget->SetLabelText( "End 1: ");
 //  this->RulerModel1SelectorWidget->GetLabel()->SetForegroundColor(1, 0, 0);
-  this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the ruler.");
+  this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the ruler. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->RulerModel1SelectorWidget->GetWidgetName());
   
@@ -1781,7 +1781,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->RulerModel2SelectorWidget->SetLabelText( "End 2: ");
 //  this->RulerModel2SelectorWidget->GetLabel()->SetForegroundColor(0, 0, 1);
-  this->RulerModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the ruler.");
+  this->RulerModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the ruler. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->RulerModel2SelectorWidget->GetWidgetName());
 

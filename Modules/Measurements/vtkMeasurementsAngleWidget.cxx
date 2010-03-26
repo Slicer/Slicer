@@ -2110,7 +2110,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
   modelFrame->SetParent( pickAngleNodeFrame->GetFrame() );
   modelFrame->Create();
-  modelFrame->SetLabelText("Constrain Angle to Models");
+  modelFrame->SetLabelText("Constrain Angle to Models or Slices");
   modelFrame->ExpandFrame();
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", modelFrame->GetWidgetName());
   modelFrame->CollapseFrame();
@@ -2131,7 +2131,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   this->AngleModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->AngleModel1SelectorWidget->SetLabelText( "Select Angle Model 1: ");
-  this->AngleModel1SelectorWidget->SetBalloonHelpString("Select a model on which to anchor the first end of the angle.");
+  this->AngleModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->AngleModel1SelectorWidget->GetWidgetName());
   
@@ -2150,7 +2150,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->AngleModel2SelectorWidget->SetLabelText( "Select Angle Model 2: ");
-  this->AngleModel2SelectorWidget->SetBalloonHelpString("Select a model on which to anchor the second end of the angle.");
+  this->AngleModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->AngleModel2SelectorWidget->GetWidgetName());
 
@@ -2169,7 +2169,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleModelCenterSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   this->AngleModelCenterSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->AngleModelCenterSelectorWidget->SetLabelText( "Select Angle Model Center: ");
-  this->AngleModelCenterSelectorWidget->SetBalloonHelpString("Select a model on which to anchor the center  of the angle.");
+  this->AngleModelCenterSelectorWidget->SetBalloonHelpString("Select a model or slie on which to anchor the center  of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->AngleModelCenterSelectorWidget->GetWidgetName());
 
