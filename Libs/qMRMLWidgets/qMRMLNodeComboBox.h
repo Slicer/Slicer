@@ -154,12 +154,32 @@ signals:
   /// depending on the validity of the current node.
   void currentNodeChanged(bool validNode);
 
+  ///
+  /// TBD
+  /// void nodeAboutToBeAdded(vtkMRMLNode*);
+
+  ///
+  /// Signal emitted when a node is added to the comboBox
+  /// Only nodes with valid type emit the signal
+  void nodeAdded(vtkMRMLNode* node);
+
+  ///
+  /// Signal emitted when a node is about to be removed from
+  /// the comboBox. Only nodes with valid type emit the signal
+  void nodeAboutToBeRemoved(vtkMRMLNode* node);
+
+  ///
+  /// TBD: 
+  /// void nodeRemoved(vtkMRMLNode*);
+
 protected:
   virtual QAbstractItemModel* createSceneModel();
 
 protected slots:
   void activateExtraItem(const QModelIndex& index);
   void emitCurrentNodeChanged(int index);
+  void emitNodesAdded(const QModelIndex & parent, int start, int end);
+  void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
 
 private:
   QCTK_DECLARE_PRIVATE(qMRMLNodeComboBox);

@@ -24,6 +24,7 @@ public:
   qMRMLNodeComboBoxPrivate();
   void init();
   vtkMRMLNode* mrmlNode(int index)const;
+  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
   void updateNoneItem();
   void updateActionItems();
 
@@ -71,7 +72,10 @@ void qMRMLNodeComboBoxPrivate::init()
   p->setModel(sortFilterModel);
 
   p->connect(p, SIGNAL(currentIndexChanged(int)), p, SLOT(emitCurrentNodeChanged(int)));
-
+  p->connect(p->model(), SIGNAL(rowsInserted(const QModelIndex&, int,int)),
+             p, SLOT(emitNodesAdded(const QModelIndex&, int, int)));
+  p->connect(p->model(), SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int,int)),
+             p, SLOT(emitNodesAboutToBeRemoved(const QModelIndex&, int, int)));
   p->setEnabled(p->mrmlScene() != 0);
 }
 
@@ -81,6 +85,21 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
   QCTK_P(const qMRMLNodeComboBox);
   QString nodeId = 
     p->itemData(index, qMRML::UIDRole).toString();
+  if (nodeId.isEmpty())
+    {
+    return 0;
+    }
+  vtkMRMLScene* scene = p->mrmlScene();
+  return scene ? scene->GetNodeByID(nodeId.toLatin1().data()) : 0;
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& index)const
+{
+  QCTK_P(const qMRMLNodeComboBox);
+  Q_ASSERT(p->model());
+  QString nodeId = 
+    p->model()->data(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
     {
     return 0;
@@ -371,4 +390,30 @@ qMRMLSortFilterProxyModel* qMRMLNodeComboBox::sortFilterProxyModel()const
 {
   Q_ASSERT(qobject_cast<qMRMLSortFilterProxyModel*>(this->model()));
   return qobject_cast<qMRMLSortFilterProxyModel*>(this->model());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, int end)
+{
+  QCTK_D(qMRMLNodeComboBox);
+  Q_ASSERT(this->model());
+  for(int i = start; i <= end; ++i)
+    {
+    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
+    Q_ASSERT(node);
+    emit nodeAdded(node);
+    }
+}
+ 
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end)
+{
+  QCTK_D(qMRMLNodeComboBox);
+  Q_ASSERT(this->model());
+  for(int i = start; i <= end; ++i)
+    {
+    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
+    Q_ASSERT(node);
+    emit nodeAboutToBeRemoved(node);
+    }
 }
