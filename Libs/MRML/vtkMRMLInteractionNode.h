@@ -49,6 +49,14 @@ public:
   vtkGetMacro (WindowLevelLock, int );
   vtkSetMacro (WindowLevelLock, int );
   
+  //--- workaround for mouse modes.
+  //--- put on when an object is mid-place
+  //--- (between mouse-press and mouse-release)
+  //--- to prevent PickAndManipulate operations
+  //--- from being processed while placing.
+  vtkGetMacro (PlaceOperationLock, int );
+  vtkSetMacro (PlaceOperationLock, int );
+
   // Description:
   // Convenience methods for setting modes
   // without triggering events on the node.
@@ -96,6 +104,7 @@ public:
   int GetInteractionModeByString ( const char * modeString );
 
   int WindowLevelLock;
+  int PlaceOperationLock;
   
 protected:
   vtkMRMLInteractionNode();
