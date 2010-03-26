@@ -41,7 +41,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   target_link_libraries(itkImageToVtkUnstructuredGridTest mimxFilter 
     vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
     ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
-  add_test(itkImageToVtkUnstructuredGridTest ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
+  add_test(MimxitkImageToVtkUnstructuredGridTest ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
 
 
   add_executable(MainAddUnstructuredHexahedronGridCellTest MainAddUnstructuredHexahedronGridCellTest.cxx)
@@ -172,7 +172,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   target_link_libraries(MainMorphStructuredGridTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
-    MainMorphStructuredGridTest
+    MimxMorphStructuredGridTest
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainMorphStructuredGridTest
     ${MimxTesting_SOURCE_DIR}/Data/BoundingBox1.vtk
     ${MimxTesting_SOURCE_DIR}/Data/lumbar_smoothed_04075.stl
@@ -182,7 +182,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   target_link_libraries(MainUnstructuredToStructuredGridTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
-    MainUnstructuredToStructuredGridTest
+    MimxUnstructuredToStructuredGridTest
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainUnstructuredToStructuredGridTest
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_mesh.vtk
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
@@ -192,7 +192,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   target_link_libraries(MainMergePointsTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
-    MainMergePointsTest
+    MimxMergePointsTest
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainMergePointsTest
     ${MimxTesting_SOURCE_DIR}/Data/BBoxMerge.vtk
     )
@@ -201,7 +201,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   target_link_libraries(MainRecalculateInteriorNodesTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
-    MainRecalculateInteriorNodesTest
+    MimxRecalculateInteriorNodesTest
     ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainRecalculateInteriorNodesTest
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_mesh.vtk
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk

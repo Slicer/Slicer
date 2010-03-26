@@ -275,12 +275,12 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage,TMaskImage>
      }
 
    InputIndexType imageIndex = it.GetIndex( );
-   if ( ( imageIndex[0] % m_MeshResampleSize == offset ) &&
-        ( imageIndex[1] % m_MeshResampleSize == offset ) &&
-        ( imageIndex[2] % m_MeshResampleSize == offset ) &&
-        ( (unsigned long)(imageIndex[0]) < imageSize[0] - offset ) &&
-        ( (unsigned long)(imageIndex[1]) < imageSize[1] - offset ) &&
-        ( (unsigned long)(imageIndex[2]) < imageSize[2] - offset ))
+   if ( ( (int) (imageIndex[0]) % (int) (m_MeshResampleSize) == (int) (offset) ) &&
+        ( (int) (imageIndex[1]) % (int) (m_MeshResampleSize) == (int) (offset) ) &&
+        ( (int) (imageIndex[2]) % (int) (m_MeshResampleSize) == (int) (offset) ) &&
+        ( (int)(imageIndex[0]) < (int) (imageSize[0]) - (int) (offset) ) &&
+        ( (int)(imageIndex[1]) < (int) (imageSize[1]) - (int) (offset) ) &&
+        ( (int)(imageIndex[2]) < (int) (imageSize[2]) - (int) (offset) ))
      {
 
      /* A voxel count threshold could be applied here - 
