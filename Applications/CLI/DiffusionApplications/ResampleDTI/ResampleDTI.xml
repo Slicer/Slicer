@@ -14,10 +14,11 @@ one space to the other will often require evaluation of the intensity
 of the image at non-grid positions.
 </description>
   <version>0.1</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:ResampleDTIVolume-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Francois Budin</contributor>
 <acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on the National Centers for Biomedical Computing can be obtained from http://nihroadmap.nih.gov/bioinformatics
 </acknowledgements>
 <parameters>
   <label>Input/Ouput</label>
