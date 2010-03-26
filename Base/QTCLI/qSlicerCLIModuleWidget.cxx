@@ -42,8 +42,8 @@
 #include <QLineEdit>
 #include <QRadioButton>
 
-// ITK includes
-#include <itkNumericTraits.h>
+// std includes
+#include <limits>
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleWidgetPrivate::MapInitialized = false;
@@ -284,8 +284,8 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createIntegerTagWidget(const ModuleParam
 {
   int value = QString::fromStdString(moduleParameter.GetDefault()).toInt();
   int step = 1; 
-  int min = itk::NumericTraits<int>::NonpositiveMin();
-  int max = itk::NumericTraits<int>::max();
+  int min = std::numeric_limits<int>::min();
+  int max = std::numeric_limits<int>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
@@ -345,8 +345,8 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createFloatTagWidget(const ModuleParamet
 {
   float value = QString::fromStdString(moduleParameter.GetDefault()).toFloat();
   float step = 0.1;
-  int min = itk::NumericTraits<float>::NonpositiveMin();
-  int max = itk::NumericTraits<float>::max();
+  int min = -std::numeric_limits<float>::max();
+  int max = std::numeric_limits<float>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
@@ -383,8 +383,8 @@ QWidget* qSlicerCLIModuleWidgetPrivate::createDoubleTagWidget(const ModuleParame
 {
   double value = QString::fromStdString(moduleParameter.GetDefault()).toDouble();
   double step = 0.1;
-  double min = itk::NumericTraits<double>::NonpositiveMin();
-  double max = itk::NumericTraits<double>::max();
+  double min = -std::numeric_limits<double>::max();
+  double max = std::numeric_limits<double>::max();
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   
