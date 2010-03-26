@@ -18,6 +18,8 @@
 #include <QDebug>
 #include <QHBoxLayout>
 
+#include <limits>
+
 //-----------------------------------------------------------------------------
 class qCTKDoubleSliderPrivate: public qCTKPrivate<qCTKDoubleSlider>
 {
@@ -71,9 +73,17 @@ void qCTKDoubleSliderPrivate::init()
 int qCTKDoubleSliderPrivate::toInt(double doubleValue)const
 {
   double tmp = doubleValue / this->SingleStep;
+  static const double minInt = std::numeric_limits<int>::min();
+  static const double maxInt = std::numeric_limits<int>::max();
+#ifndef QT_NO_DEBUG
+  if (tmp < minInt || tmp > maxInt)
+    {
+    qWarning("qCTKDoubleSliderPrivate::toInt value out of bounds !");
+    }
+#endif
+  tmp = qBound(minInt, tmp, maxInt);
   int intValue = qRound(tmp);
   //qDebug() << __FUNCTION__ << doubleValue << tmp << intValue;
-  Q_ASSERT(qRound64(tmp) == intValue);
   return intValue;
 }
 
