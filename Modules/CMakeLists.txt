@@ -78,7 +78,6 @@ SET(modules
 #  FourDAnalysis
   ExtractSubvolumeROI
   CollectFiducials
-  IGTToolSelector 
   PETCTFusion
   IGTToolSelector
   )
