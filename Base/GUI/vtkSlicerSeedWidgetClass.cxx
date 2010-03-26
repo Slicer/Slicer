@@ -35,6 +35,9 @@ vtkCxxRevisionMacro ( vtkSlicerSeedWidgetClass, "$Revision$");
 //---------------------------------------------------------------------------
 vtkSlicerSeedWidgetClass::vtkSlicerSeedWidgetClass()
 {
+  this->GlyphScale = 1.0;
+  this->TextScale = 1.0;
+  
   this->ModelPointPlacer = vtkPolygonalSurfacePointPlacer::New();
 
   // make a starburst glyph
@@ -108,7 +111,7 @@ vtkSlicerSeedWidgetClass::vtkSlicerSeedWidgetClass()
   // the handle repersentation for 3d glyphs
   this->HandleRepresentation = vtkPolygonalHandleRepresentation3D::New();
   // init the text scale, otherwise it's scaled according to the handle scale.
-  double textscale[3] = {1.0, 1.0, 1.0};
+  double textscale[3] = {this->TextScale, this->TextScale, this->TextScale};
   this->HandleRepresentation->SetLabelTextScale(textscale);
   this->HandleRepresentation->SetHandle(this->SphereSource->GetOutput());
   this->HandleRepresentation->GetProperty()->SetColor(this->GetListColor());
@@ -233,27 +236,70 @@ void vtkSlicerSeedWidgetClass::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "Representation:\n";
     this->Representation->PrintSelf(os,indent.GetNextIndent());
     }
+
+  os << indent << "ID to index map:\n";
+  std::map<std::string, int>::iterator it;
+  for ( it = this->PointIDToWidgetIndex.begin();
+        it != this->PointIDToWidgetIndex.end();
+        it++ )
+    {
+    os << indent << ((*it).first).c_str() << " => " << (*it).second << endl;
+    }
+
+  os << indent << "GlyphType  = " << this->GlyphType << "\n";
+  os << indent << "GlyphScale = " << this->GlyphScale << "\n";
+  os << indent << "TextScale  = " << this->TextScale << "\n";
   
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSeedWidgetClass::AddSeed(double *position)
+void vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
 {
   if (this->GetWidget() == NULL)
     {
     return;
     }
-  vtkHandleWidget *handle = this->GetWidget()->CreateNewHandle();
-  // set the position if it was passed in
-  if (handle &&
-      position != NULL &&
-      handle->GetRepresentation())
+
+  if (this->GetWidget()->GetEnabled() == 0)
     {
-    vtkHandleRepresentation::SafeDownCast(handle->GetRepresentation())->SetWorldPosition(position);
+    vtkDebugMacro("AddSeed: enabling the widget now that have a seed");
+    this->GetWidget()->EnabledOn();
+    }
+  vtkHandleWidget *handle = this->GetWidget()->CreateNewHandle();
+  
+  // set the position if it was passed in
+  if (handle)
+    {
+    // save the id and index
+    vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
+    if (sr)
+      {
+      int index = sr->GetNumberOfSeeds() - 1;
+      this->PointIDToWidgetIndex[std::string(pointID)] = index;
+      vtkDebugMacro("AddSeed: saved mapping of point id " << pointID << " to index " << index);
+      }
+    else
+      {
+      vtkErrorMacro("AddSeed: unable to get seed representation");
+      }
+    if (handle->GetEnabled() == 0)
+      {
+      vtkDebugMacro("AddSeed: turning on the new handle");
+      handle->EnabledOn();
+      }
+    if (position != NULL &&
+        handle->GetRepresentation())
+      {
+      vtkHandleRepresentation::SafeDownCast(handle->GetRepresentation())->SetWorldPosition(position);
+      }
+    else
+      {
+      vtkWarningMacro("AddSeed: unable to set world position, hand rep is " << (handle->GetRepresentation() == NULL ? "null" : "not null"));
+      }
     }
   else
     {
-    vtkWarningMacro("AddSeed: unable to set world position, hand rep is " << (handle->GetRepresentation() == NULL ? "null" : "not null"));
+    vtkErrorMacro("AddSeed: unable to create a new handle.");
     }
 }
 
@@ -275,6 +321,45 @@ void vtkSlicerSeedWidgetClass::SetNthSeedPosition(int n, double *position)
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerSeedWidgetClass::RemoveSeedByID(const char *id)
+{
+  if (id == NULL)
+    {
+    vtkErrorMacro("RemoveSeedByText: id is null");
+    return;
+    }
+  // find the seed with this label text
+  std::map<std::string, int>::iterator it;
+  std::string idStr = std::string(id);
+  it = this->PointIDToWidgetIndex.find(idStr);
+
+  if (it != this->PointIDToWidgetIndex.end())
+    {
+    int index = it->second; // this->PointIDToWidgetIndex[id];
+    vtkWarningMacro("RemoveSeedByID: for id " << id << " got index " << index);
+    this->RemoveSeed(index);
+
+    // erase the entry from the map
+    this->PointIDToWidgetIndex.erase(it);
+    // decrement the other indices that are higher than index
+    std::map<std::string, int>::iterator itDecr;
+    for (itDecr = this->PointIDToWidgetIndex.begin();
+         itDecr != this->PointIDToWidgetIndex.end();
+         itDecr++)
+      {
+      if (itDecr->second > index)
+        {
+        (itDecr->second)--;
+        }
+      }
+    }
+  else
+    {
+    vtkErrorMacro("RemoveSeedByID: could not find index for id " << id);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::RemoveSeed(int index)
 {
   this->GetWidget()->DeleteSeed(index);
@@ -283,11 +368,25 @@ void vtkSlicerSeedWidgetClass::RemoveSeed(int index)
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::RemoveAllSeeds()
 {
-  int numSeeds = this->Representation->GetNumberOfSeeds();
+  if (this->Widget == NULL ||
+      this->Widget->GetRepresentation() == NULL)
+    {
+    return;
+    }
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (!sr)
+    {
+    return;
+    }
+  int numSeeds = sr->GetNumberOfSeeds(); // this->Representation->GetNumberOfSeeds();
   for (int n = 0; n < numSeeds; n++)
     {
-    this->GetWidget()->DeleteSeed(n);
+    // the number of seeds is reduced by one each time one is deleted
+    this->GetWidget()->DeleteSeed(0);
     }
+  vtkDebugMacro("RemoveAllSeeds: after removing " << numSeeds << " widget rep thinks it has " << sr->GetNumberOfSeeds());
+  // clear out the map
+  this->PointIDToWidgetIndex.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -387,22 +486,26 @@ void vtkSlicerSeedWidgetClass::SetNthSeedTextScale(int n, double scale)
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::SetTextScale(double scale)
 {
-  double s[3];
-  s[0] = s[1] = s[2] = scale;
-  if (this->HandleRepresentation)
+  this->TextScale = scale;
+ 
+  if (this->Widget &&
+      this->Widget->GetRepresentation())
     {
-    //this->HandleRepresentation->SetLabelTextScale(s);
-    }
-  // iterate through all seeds, they're not getting set
-  int numSeeds = this->Representation->GetNumberOfSeeds();
-  for (int n = 0; n < numSeeds; n++)
-    {
-    this->SetNthSeedTextScale(n, scale);
+    vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+    if (sr)
+      {
+      // iterate through all seeds
+      int numSeeds = sr->GetNumberOfSeeds();
+      for (int n = 0; n < numSeeds; n++)
+        {
+        this->SetNthSeedTextScale(n, scale);
+        }
+      }
     }
 }
 
 //---------------------------------------------------------------------------
-double *vtkSlicerSeedWidgetClass::GetTextScale()
+double *vtkSlicerSeedWidgetClass::GetTextScaleFromWidget()
 {
   //if (this->HandleRepresentation)
   if (this->Widget &&
@@ -424,7 +527,7 @@ double *vtkSlicerSeedWidgetClass::GetTextScale()
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::SetGlyphScale(double scale)
 {
-  // iterate through the handles
+  
   if (this->Widget == NULL || this->Widget->GetRepresentation() == NULL)
     {
     return;
@@ -435,30 +538,50 @@ void vtkSlicerSeedWidgetClass::SetGlyphScale(double scale)
     vtkWarningMacro("SetGlyphScale: no representation for this widget.");
     return;
     }
+  this->GlyphScale = scale;
   int numSeeds = sr->GetNumberOfSeeds();
+  // iterate through the handles
   for (int n = 0; n < numSeeds; n++)
     {
-    if (sr->GetHandleRepresentation(n) != NULL)
+    this->SetNthSeedGlyphScale(n, scale);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSeedWidgetClass::SetNthSeedGlyphScale(int n, double scale)
+{
+
+  if (this->Widget == NULL || this->Widget->GetRepresentation() == NULL)
+    {
+    return;
+    }
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (!sr)
+    {
+    vtkWarningMacro("SetNthSeedGlyphScale: no representation for this widget.");
+    return;
+    }
+  if (sr->GetHandleRepresentation(n) != NULL)
+    {
+    vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+    rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
+    if (rep)
       {
-      vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
-      rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
-      if (rep)
-        {
-        rep->SetUniformScale(scale);
-        // call modified so text location updates
-        rep->Modified();
-        }
-      else
-        {
-        vtkWarningMacro("SetGlyphScale: unable to get abstract polygonal handle representation 3d of handle representation for seed " << n);
-        }
+      rep->SetUniformScale(scale);
+      // call modified so text location updates
+      rep->Modified();
       }
     else
       {
-      vtkWarningMacro("SetGlyphScale: unable to get handle representation " << n);
+      vtkWarningMacro("SetNthSeedGlyphScale: unable to get abstract polygonal handle representation 3d of handle representation for seed " << n);
       }
     }
+  else
+    {
+    vtkWarningMacro("SetNthSeedGlyphScale: unable to get handle representation " << n);
+    }
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -473,19 +596,29 @@ void vtkSlicerSeedWidgetClass::SetNthSeedVisibility(int n, int flag)
     return;
     }
 
-  vtkWidgetRepresentation *rep = NULL;
-  rep = this->Widget->GetSeed(n)->GetRepresentation();
-  if (rep)
+  vtkWidgetRepresentation *widgetRep = NULL;
+  widgetRep = this->Widget->GetSeed(n)->GetRepresentation();
+  
+  if (widgetRep)
     {
-    if (flag)
+    vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+    rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(widgetRep);
+    if (rep)
       {
-      vtkDebugMacro("SetNthSeedVisibility: seed " << n << ", flag = " << flag << ", turning visib on");
-      rep->VisibilityOn();
-      }
-    else
-      {
-      vtkDebugMacro("SetNthSeedVisibility: seed " << n << ", flag = " << flag << ", turning visib off");
-      rep->VisibilityOff();
+      if (flag)
+        {
+        vtkDebugMacro("SetNthSeedVisibility: seed " << n << ", flag = " << flag << ", turning visib on");
+        rep->VisibilityOn();
+        rep->HandleVisibilityOn();
+        rep->LabelVisibilityOn();
+        }
+      else
+        {
+        vtkDebugMacro("SetNthSeedVisibility: seed " << n << ", flag = " << flag << ", turning visib off");
+        rep->VisibilityOff();
+        rep->HandleVisibilityOff();
+        rep->LabelVisibilityOff();
+        }
       }
     }
 }
@@ -532,15 +665,45 @@ void vtkSlicerSeedWidgetClass::SetNthLabelTextVisibility(int n, int flag)
 //---------------------------------------------------------------------------
 void vtkSlicerSeedWidgetClass::SetLabelTextVisibility(int flag)
 {
-  if (this->Representation == NULL)
+  if (this->Widget &&
+      this->Widget->GetRepresentation())
     {
-    return;
+    vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+    if (sr)
+      {
+      int numSeeds = sr->GetNumberOfSeeds();
+      for (int n = 0; n < numSeeds; n++)
+        {
+        this->SetNthLabelTextVisibility(n, flag);
+        }
+      }
     }
-  
-  int numSeeds = this->Representation->GetNumberOfSeeds();
-  for (int n = 0; n < numSeeds; n++)
+}
+
+//---------------------------------------------------------------------------
+char * vtkSlicerSeedWidgetClass::GetNthLabelText(int n)
+{
+  if (this->Widget == NULL)
     {
-    this->SetNthLabelTextVisibility(n, flag);
+    vtkErrorMacro("GetNthLabelText: the widget is null"); 
+    return NULL;
+    }
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("GetNthLabelText: unable to get the " << n << "th seed representation on the widget.");
+    return NULL;
+    }
+  vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+  rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
+  if (rep)
+    {
+    return rep->GetLabelText();
+    }
+  else
+    {
+    vtkErrorMacro("GetNthLabelText: unable to get the polygonal handle representation on the " << n << "th seed");
+    return NULL;
     }
 }
 
@@ -552,15 +715,6 @@ void vtkSlicerSeedWidgetClass::SetNthLabelText(int n, const char *txt)
     vtkErrorMacro("SetNthLabelText: either the widget is null, or txt = " << (txt == NULL ? "null" : txt)); 
     return;
     }
-  if (this->Widget->GetSeed(n) == NULL ||
-      this->Widget->GetSeed(n)->GetRepresentation() == NULL)
-    {
-    vtkErrorMacro("SetNthLabelText: unable to get seed " << n << " or it's representation");
-    return;
-    }
-  //vtkPolygonalHandleRepresentation3D *rep = NULL;
-  //rep =
-  //vtkPolygonalHandleRepresentation3D::SafeDownCast(this->Widget->GetSeed(n)->GetRepresentation());
   vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
   if (!sr)
     {
@@ -703,18 +857,20 @@ int vtkSlicerSeedWidgetClass::SetGlyphToStarburst()
       vtkErrorMacro("SetGlyphToStarburst: unable to get seed representation");
       return -1;
       }
-    int enabledState = this->Widget->GetEnabled();
-    this->Widget->EnabledOff();
+//    int enabledState = this->Widget->GetEnabled();
+//    this->Widget->EnabledOff();
     // this will make any new seeds be starbursts
     sr->SetHandleRepresentation(this->HandleRepresentation);
+    /*
     // now set the rest of them
     int numSeeds = sr->GetNumberOfSeeds();
     for (int n = 0; n < numSeeds; n++)
       {
       this->Widget->GetSeed(n)->SetRepresentation(this->HandleRepresentation);
       }
-    this->Widget->SetEnabled(enabledState);
-    this->Widget->CompleteInteraction();
+    */
+//    this->Widget->SetEnabled(enabledState);
+//    this->Widget->CompleteInteraction();
     }
   this->GlyphType = vtkSlicerSeedWidgetClass::Starburst;
   return 1;
@@ -729,38 +885,53 @@ int vtkSlicerSeedWidgetClass::SetGlyphToSphere()
     return 0;
     }
   
-  if (this->SphereSource &&
-      this->Widget)
+  if (this->SphereSource == NULL || 
+      this->Widget == NULL ||
+      this->HandleRepresentation == NULL)
     {
-    this->HandleRepresentation->SetHandle(this->SphereSource->GetOutput());
-    vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
-    if (!sr)
-      {
-      vtkErrorMacro("SetGlyphToSphere: unable to get seed representation");
-      return -1;
-      }
-    int enabledState = this->Widget->GetEnabled();
-    this->Widget->EnabledOff();
-    // this will make any new seeds be represented as spheres
-    sr->SetHandleRepresentation(this->HandleRepresentation);
-    // now change all the old ones
-    int numSeeds = sr->GetNumberOfSeeds();
-    double textscale[3] = {1.0, 1.0, 1.0};
-    for (int n = 0; n < numSeeds; n++)
-      {
-      vtkPolygonalHandleRepresentation3D *hr = vtkPolygonalHandleRepresentation3D::New();
-      hr->SetHandle(this->SphereSource->GetOutput());
-      hr->SetLabelTextScale(textscale);
-      hr->GetProperty()->SetColor(this->GetListColor());
-      this->Widget->GetSeed(n)->SetRepresentation(hr);
-      hr->Delete();
-      }
-    this->Widget->SetEnabled(enabledState);
-    this->Widget->CompleteInteraction();
+    vtkErrorMacro("SetGlyphToSphere: null sphere source or widget or handle rep\n");
+    return -1;
+    }
+  this->HandleRepresentation->SetHandle(this->SphereSource->GetOutput());
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("SetGlyphToSphere: unable to get seed representation");
+    return -1;
+    }
+//  int enabledState = this->Widget->GetEnabled();
+//  this->Widget->EnabledOff();
+  // this will make any new seeds be represented as spheres
+  sr->SetHandleRepresentation(this->HandleRepresentation);
+  /*
+  // now change all the old ones
+  int numSeeds = sr->GetNumberOfSeeds();
+  double currentTextScale =  this->GetTextScale();
+  double textscale[3] = {currentTextScale, currentTextScale, currentTextScale};
+  double currentGlyphScale = this->GetGlyphScale();
+  for (int n = 0; n < numSeeds; n++)
+    {
+    // first get the old handle representation's text, so can copy the text
+    // to the new handle
+    char *oldText = this->GetNthLabelText(n);
+  
+    vtkPolygonalHandleRepresentation3D *hr = vtkPolygonalHandleRepresentation3D::New();
+    hr->SetHandle(this->SphereSource->GetOutput());
+    hr->SetLabelText(oldText);
+    hr->SetLabelTextScale(textscale);
+    hr->SetUniformScale(currentGlyphScale);
+    hr->GetProperty()->SetColor(this->GetListColor());
+    // set the new one
+    this->Widget->GetSeed(n)->SetRepresentation(hr);
+    hr->Delete();
+    }
+  */
+//  this->Widget->SetEnabled(enabledState);
+//  this->Widget->CompleteInteraction();
 
-    this->GlyphType = vtkSlicerSeedWidgetClass::Sphere;
-    return 1;
-    /*
+  this->GlyphType = vtkSlicerSeedWidgetClass::Sphere;
+  return 1;
+  /*
     vtkSeedRepresentation *seedRep = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
     if (seedRep)
       {
@@ -771,13 +942,7 @@ int vtkSlicerSeedWidgetClass::SetGlyphToSphere()
         polyRep->SetHandle(pd);
         }
       }
-    */
-    }
-  else
-    {
-    vtkErrorMacro("SetGlyphToSphere: Unable to set the sphere source as the handle for the seed widget");
-    return -1;
-    }
+  */
 }
 
 //---------------------------------------------------------------------------
@@ -799,6 +964,7 @@ int vtkSlicerSeedWidgetClass::SetGlyphToDiamond3D()
       }
     // set for any new ones
     sr->SetHandleRepresentation(this->HandleRepresentation);
+    /*
     // now change all the old ones
     int enabledState = this->Widget->GetEnabled();
     this->Widget->EnabledOff();
@@ -809,6 +975,7 @@ int vtkSlicerSeedWidgetClass::SetGlyphToDiamond3D()
       }
     this->Widget->SetEnabled(enabledState);
     this->Widget->CompleteInteraction();
+    */
     this->GlyphType = vtkSlicerSeedWidgetClass::Diamond3D;
     return 1;
     }
@@ -924,15 +1091,343 @@ void vtkSlicerSeedWidgetClass::SetCamera(vtkCamera *cam)
     return;
     }
   if (this->Widget == NULL ||
-      this->Representation == NULL)
+      this->Widget->GetRepresentation() == NULL)
     {
     return;
     }
 
-  // iterate through actors and set their cameras
-  int numSeeds = this->Representation->GetNumberOfSeeds();
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (sr)
+    {
+    // iterate through actors and set their cameras
+    int numSeeds = sr->GetNumberOfSeeds();
+    for (int n = 0; n < numSeeds; n++)
+      {
+      this->SetNthSeedCamera(n, cam);
+      }
+    }
+}
+
+//--------------------------------------------------------------------------
+int vtkSlicerSeedWidgetClass::GetNthSeedExists(int n)
+{
+
+  if (this->Widget == NULL)
+    {
+    return 0;
+    }
+  if (this->Widget->GetSeed(n) == NULL)
+    {
+    return 0;
+    }
+  return 1;
+}
+
+//--------------------------------------------------------------------------
+void vtkSlicerSeedWidgetClass::SetOpacity(double opacity)
+{
+  if (!this->GetWidget() ||
+      !(this->GetWidget()->GetRepresentation()))
+    {
+    return;
+    }
+  // set it on the list property
+  this->GetProperty()->SetOpacity(opacity);
+
+  // and on all the current ones
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("SetOpacity: unable to get the seed representation on the widget.");
+    return;
+    }
+  int numSeeds = sr->GetNumberOfSeeds();
+
   for (int n = 0; n < numSeeds; n++)
     {
-    this->SetNthSeedCamera(n, cam);
+    vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+    rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
+    if (rep &&
+        rep->GetProperty())
+      {
+      rep->GetProperty()->SetOpacity(opacity);
+      }
+    else
+      {
+      vtkErrorMacro("SetOpacity: Unable to get rep or property for seed " << n);
+      }
     }
+}
+
+//--------------------------------------------------------------------------
+void  vtkSlicerSeedWidgetClass::SetMaterialProperties(double opacity, double ambient, double diffuse, double specular, double power)
+{
+  if (!this->GetWidget() ||
+      !(this->GetWidget()->GetRepresentation()))
+    {
+    return;
+    }
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("SetMaterialProperties: unable to get the seed representation on the widget.");
+    return;
+    }
+  int numSeeds = sr->GetNumberOfSeeds();
+  
+  for (int n = 0; n < numSeeds; n++)
+    {
+    this->SetNthSeedMaterialProperties(n, opacity, ambient, diffuse, specular, power);
+    }
+}
+
+//--------------------------------------------------------------------------
+void  vtkSlicerSeedWidgetClass::SetNthSeedMaterialProperties(int n,
+                                            double opacity, double ambient, double diffuse, double specular, double power)
+{
+ if (!this->GetWidget() ||
+      !this->GetWidget()->GetRepresentation())
+    {
+    return;
+    }
+
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("SetNthSeed: unable to get the seed representation on the widget.");
+    return;
+    }
+
+  vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+  rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
+  if (rep)
+    {
+    vtkProperty *prop = NULL;
+    prop = rep->GetProperty();
+    // update the properties
+    if (prop != NULL)
+      {
+      prop->SetOpacity(opacity);
+      prop->SetAmbient(ambient);
+      prop->SetDiffuse(diffuse);
+      prop->SetSpecular(specular);
+      prop->SetSpecularPower(power);
+      prop->Modified();
+      }
+    else
+      {
+      vtkWarningMacro("SetNthSeedMaterialProperties: could not get the property for " << n << "th seed");
+      }
+    // and the same for the text actor
+    vtkProperty *textProp = NULL;
+    if (rep->GetLabelTextActor())
+      {
+      textProp = rep->GetLabelTextActor()->GetProperty();
+      if (textProp)
+        {
+        textProp->SetOpacity(opacity);
+        textProp->SetAmbient(ambient);
+        textProp->SetDiffuse(diffuse);
+        textProp->SetSpecular(specular);
+        textProp->SetSpecularPower(power);
+        textProp->Modified();
+        }
+      }
+    }
+}
+
+//--------------------------------------------------------------------------
+void  vtkSlicerSeedWidgetClass::SetNthSeed(int n, vtkCamera *cam, double *position, const char *text,
+                                          int visibilityFlag, int lockedFlag, int selectedFlag,
+                                          double *listColour, double *listSelectedColour,
+                                          double textScale, double glyphScale,
+                                          int glyphType,
+                                          double opacity, double ambient, double diffuse, double specular, double power)
+{
+  if (!this->GetWidget() ||
+      !this->GetWidget()->GetRepresentation())
+    {
+    return;
+    }
+
+  vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
+  if (!sr)
+    {
+    vtkErrorMacro("SetNthSeed: unable to get the seed representation on the widget.");
+    return;
+    }
+
+  vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
+  rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
+  if (rep)
+    {
+    // update the camera
+    vtkPropCollection *pc = vtkPropCollection::New();
+    rep->GetActors(pc);
+    vtkCollectionSimpleIterator pit;
+    vtkProp *aProp;
+    for (pc->InitTraversal(pit);
+         (aProp = pc->GetNextProp(pit)); )
+      {
+      vtkFollower *a = vtkFollower::SafeDownCast(aProp);
+      if (a)
+        {
+        a->SetCamera(cam);
+        }
+      }
+    pc->Delete();
+    
+    // update the glyph type
+    vtkDebugMacro("Not updating the glyph type here");
+    
+    // update the position
+    rep->SetWorldPosition(position);
+    // update the text
+    rep->SetLabelText(text);
+    
+    // update the flags
+    if (visibilityFlag)
+      {
+      rep->VisibilityOn();
+      rep->HandleVisibilityOn();
+      rep->LabelVisibilityOn();
+      }
+    else
+      {
+      rep->VisibilityOff();
+      rep->HandleVisibilityOff();
+      rep->LabelVisibilityOff();
+      }
+    rep->SetPickable(!lockedFlag);
+    rep->SetDragable(!lockedFlag);
+    // update the colours
+    // check if there's a change first
+    double *widgetColour = this->GetListColor();
+    double *widgetSelectedColour = this->GetListSelectedColor();
+    if (widgetColour[0] != listColour[0] ||
+        widgetColour[1] != listColour[1] ||
+        widgetColour[2] != listColour[2])
+      {
+      this->SetListColor(listColour);
+      }
+    if (widgetSelectedColour[0] != listSelectedColour[0] ||
+        widgetSelectedColour[1] != listSelectedColour[1] ||
+        widgetSelectedColour[2] != listSelectedColour[2])
+      {
+      this->SetListSelectedColor(listSelectedColour);
+      }
+    // update the scales
+    double s[3];
+    s[0] = s[1] = s[2] = textScale;
+    rep->SetLabelTextScale(s);
+    rep->SetUniformScale(glyphScale);
+    
+    // update selected colour on text
+    vtkProperty *textProp = NULL;
+    if (rep->GetLabelTextActor())
+      {
+      textProp = rep->GetLabelTextActor()->GetProperty();
+      if (textProp)
+        {
+        if (selectedFlag)
+          {
+          textProp->SetColor(this->GetListSelectedColor());
+          }
+        else
+          {
+          textProp->SetColor(this->GetListColor()); 
+          }
+        }
+      }
+    else
+      {
+      vtkWarningMacro("SetNthSeed: could not get label text actor for seed " << n);
+      }
+
+    vtkProperty *prop = NULL;
+    prop = rep->GetProperty();
+    // update the colours properties
+    if (prop != NULL)
+      {
+      if (selectedFlag)
+        {
+        prop->SetColor(this->GetListSelectedColor());
+        }
+      else
+        {
+        prop->SetColor(this->GetListColor());
+        }
+      }
+    // set material properties
+    this->SetNthSeedMaterialProperties(n, opacity, ambient, diffuse, specular, power);
+   
+    // trigger a modified event
+    rep->Modified();
+    }
+  else
+    {
+    vtkErrorMacro("SetOpacity: Unable to get rep or property for seed " << n);
+    }
+}
+
+//--------------------------------------------------------------------------
+std::string vtkSlicerSeedWidgetClass::GetIDFromIndex(int index)
+{
+  std::string returnString = std::string("");
+  std::map<std::string, int>::iterator it;
+  for ( it = this->PointIDToWidgetIndex.begin();
+        it != this->PointIDToWidgetIndex.end();
+        it++ )
+    {
+    if (it->second == index)
+      {
+      vtkDebugMacro("GetIDFromIndex: found index " << index << ", id = " << it->first);
+      returnString = it->first;
+      return returnString;
+      }
+    }
+  return returnString;
+}
+
+//--------------------------------------------------------------------------
+int  vtkSlicerSeedWidgetClass::GetIndexFromID(const char *id)
+{
+  if (id == NULL)
+    {
+    vtkErrorMacro("GetIndexFromID: null input id!");
+    return -1;
+    }
+  std::string idStr = std::string(id);
+  if (this->PointIDToWidgetIndex.find(idStr) == this->PointIDToWidgetIndex.end())
+    {
+    vtkErrorMacro("GetIndexFromID: Unable to find id " << id);
+    return -1;
+    }
+  else
+    {
+    // if it's not already in the array, this would add an element
+    return this->PointIDToWidgetIndex[idStr];
+    }
+}
+
+//--------------------------------------------------------------------------
+void vtkSlicerSeedWidgetClass::SwapIndexIDs(int index1, int index2)
+{
+  std::string id1 = this->GetIDFromIndex(index1);
+  std::string id2 = this->GetIDFromIndex(index2);
+
+  if (id1.compare("") == 0)
+    {
+    vtkErrorMacro("SwapIndexIDs: could not get an id from index1 " << index1);
+    return;
+    }
+  if (id2.compare("") == 0)
+    {
+    vtkErrorMacro("SwapIndexIDs: could not get an id from index2 " << index2);
+    return;
+    }
+
+  // swap the seeds associated with the ids
+  this->PointIDToWidgetIndex[id1] = index2;
+  this->PointIDToWidgetIndex[id2] = index1;
 }

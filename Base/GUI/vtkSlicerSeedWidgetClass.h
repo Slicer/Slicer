@@ -7,6 +7,8 @@
 #include "vtkPolyData.h"
 #include "vtkSphereSource.h"
 
+#include <map>
+
 class vtkSlicerGlyphSource2D;
 class vtkSeedWidget;
 class vtkPolygonalHandleRepresentation3D;
@@ -32,7 +34,7 @@ public:
   /// accessor methods
   vtkGetObjectMacro(HandleRepresentation, vtkPolygonalHandleRepresentation3D);
   vtkGetObjectMacro(OrientedHandleRepresentation, vtkOrientedPolygonalHandleRepresentation3D);
-  vtkGetObjectMacro(Representation, vtkSeedRepresentation);
+//  vtkGetObjectMacro(Representation, vtkSeedRepresentation);
   vtkGetObjectMacro(Widget, vtkSeedWidget);
   vtkGetObjectMacro(ModelPointPlacer, vtkPolygonalSurfacePointPlacer);
 
@@ -49,11 +51,33 @@ public:
   /// Get/Set the sphere source for the 3d sphere glyph
   vtkGetObjectMacro(SphereSource, vtkSphereSource);
   vtkSetObjectMacro(SphereSource, vtkSphereSource);
+
+  /// 
+  /// get the current glyph type
+  vtkGetMacro(GlyphType, int);
+  ///
+  /// get the text scale stored in this class
+  vtkGetMacro(TextScale, double);
+  ///
+  /// get the glyph scale as stored in this class
+  vtkGetMacro(GlyphScale, double);
+  /// 
+  /// set/get colours that were set from the list this widget represents
+  vtkGetVectorMacro(ListColor, double, 3);
+  vtkSetVectorMacro(ListColor, double, 3);
+  vtkGetVectorMacro(ListSelectedColor, double, 3);
+  vtkSetVectorMacro(ListSelectedColor, double, 3);
+
   
   /// 
   /// add a seed at location passed in, or just add it if position is NULL
-  void AddSeed(double *position);
+  /// save the id for removing it later
+  void AddSeed(double *position, const char *id);
 
+  ///
+  /// remove a seed using it's id string
+  void RemoveSeedByID(const char *id);
+  
   /// 
   /// remove the nth seed
   void RemoveSeed(int index);
@@ -66,19 +90,7 @@ public:
   /// Return the representation property, useful for setting widget level
   /// colour, power, ambient, diffuse, etc.
   vtkProperty *GetProperty();
-
-  ///// 
-  ///// set the colour of the glyphs and text, saving the value in a local var ListColour
-  //void SetColor(double *col);
-  //void SetColor(double r, double g, double b);
-   
-  ///
-  /// set the selected colour of the glyphs and text, saving the value in a
-  /// local var ListSelectedColor
-  //void SetSelectedColor(double *col);
-///  void SetSelectedColor(double r, double g, double b);
  
-
   /// 
   /// set the label text scale on an individual seed
   void SetNthSeedTextScale(int n, double scale);
@@ -87,13 +99,13 @@ public:
   void SetTextScale(double scale);
   /// 
   /// returns the label text scale on the handle representation, null if not defined
-  double * GetTextScale();
-
+  double * GetTextScaleFromWidget();
+ 
   /// 
   /// set the scale on the glpyhs, iterates through all the handles in the
-  /// seed representation and sets uniform scale. Don't need to ever get the
-  /// scale, as it's stored in the mrml node
+  /// seed representation and sets uniform scale.
   void SetGlyphScale(double scale);
+  void SetNthSeedGlyphScale(int n, double scale);
 
   /// 
   /// set the glyphs to different poly datas. Return 1 if changed, 0 if not, -1
@@ -124,9 +136,10 @@ public:
   void SetNthLabelTextVisibility(int n, int flag);
   void SetLabelTextVisibility(int flag);
   /// 
-  /// Set the label text for the nth seed
+  /// Set/Get the label text for the nth seed. Get returns NULL on error.
   void SetNthLabelText(int n, const char *txt);
-
+  char *GetNthLabelText(int n);
+  
   /// 
   /// Modify a seed's position
   void SetNthSeedPosition(int n, double *position);
@@ -140,7 +153,7 @@ public:
   void SetNthSeedLocked(int n, int lockedFlag);
   void SetSeedsLocked(int lockedFlag);
 
-  /// Descripton:
+  ///
   /// update the camera for all the followers associated with this individual
   /// seed
   void SetNthSeedCamera(int n, vtkCamera *cam);
@@ -148,18 +161,52 @@ public:
   /// update the camera for all the followers associated with this seed widget
   void SetCamera(vtkCamera *cam);
 
-  /// 
-  /// set/get colours that were set from the list this widget represents
-  vtkGetVectorMacro(ListColor, double, 3);
-  vtkSetVectorMacro(ListColor, double, 3);
-  vtkGetVectorMacro(ListSelectedColor, double, 3);
-  vtkSetVectorMacro(ListSelectedColor, double, 3);
 
-  /// 
-  /// get the current glyph type
-  vtkGetMacro(GlyphType, int);
+  ///
+  /// Returns 1 if the nth seed in the list exists already, 0 otherwise. Will
+  /// return 0 if the whole seed widget doesn't exist
+  int GetNthSeedExists(int n);
+
+  ///
+  /// Set the opacity for all seed reps on the list
+  void SetOpacity(double opacity);
+
+  //
+  // set the material properties on all seeds
+  void  SetMaterialProperties(double opacity, double ambient, double diffuse, double specular, double power);
+  //
+  // set the material properties on the nth seed
+  void  SetNthSeedMaterialProperties(int n,
+                                     double opacity, double ambient, double diffuse, double specular, double power);
+  
+  ///
+  /// Set properties on a seed
+  void SetNthSeed(int n, vtkCamera *cam, double *position, const char *text,
+                  int visibilityFlag, int lockedFlag, int selectedFlag,
+                  double *colour, double *selectedColour,
+                  double textScale, double glyphScale,
+                  int glyphType,
+                  double opacity, double ambient, double diffuse, double specular, double power);
+
+  ///
+  /// Get the fiducial id that the nth seed is working from
+//BTX
+  std::string GetIDFromIndex(int index);
+//ETX
+  ///
+  /// Get the seed index used to represent the fiducial id 'id'. Returns -1
+  /// if not found.
+  int GetIndexFromID(const char *id);
+  
+  ///
+  /// Swap two indices, called when two fiducials swap places in the fid list
+  /// node. Each will need to be updated.
+  void SwapIndexIDs(int index1, int index2);
+  
 protected:
 
+  vtkGetObjectMacro(Representation, vtkSeedRepresentation);
+  
   /// 
   /// input to the handle representation
   vtkSlicerGlyphSource2D *Glyph;
@@ -198,9 +245,20 @@ protected:
   /// 
   /// the current glyph type
   int GlyphType;
-  
+
+  ///
+  /// the current glyph and text scale
+  double GlyphScale;
+  double TextScale;
+
+  ///
+  /// link the mrml point ids with the widget seed indices
+//BTX
+  std::map<std::string, int> PointIDToWidgetIndex;
+//ETX
+
 private:
-  vtkSlicerSeedWidgetClass ( const vtkSlicerSeedWidgetClass& ); /// Not implemented
+  vtkSlicerSeedWidgetClass (const vtkSlicerSeedWidgetClass& ); /// Not implemented
   void operator = ( const vtkSlicerSeedWidgetClass& ); /// Not implemented
 };
 
