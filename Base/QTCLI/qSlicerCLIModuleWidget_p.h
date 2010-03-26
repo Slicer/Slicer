@@ -157,7 +157,7 @@ public slots:
   void onCancelButtonPressed();
   void onDefaultButtonPressed();
 
-  void updateCommandButtonState();
+  void enableCommandButtonState(bool enable);
 
 public:
 

@@ -92,12 +92,8 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                 SLOT(onDefaultButtonPressed()));
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
-                SIGNAL(itemAdded(int)),
-                SLOT(updateCommandButtonState()));
-
-  this->connect(this->MRMLCommandLineModuleNodeSelector,
-                SIGNAL(itemRemoved(int)),
-                SLOT(updateCommandButtonState()));
+                SIGNAL(currentNodeChanged(bool)),
+                SLOT(enableCommandButtonState(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -124,9 +120,8 @@ void qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::updateCommandButtonState()
+void qSlicerCLIModuleWidgetPrivate::enableCommandButtonState(bool enable)
 {
-  bool enable = this->MRMLCommandLineModuleNodeSelector->count(); 
   this->ApplyPushButton->setEnabled(enable);
   this->CancelPushButton->setEnabled(enable);
 }
