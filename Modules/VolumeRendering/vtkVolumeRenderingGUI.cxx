@@ -733,7 +733,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       this->UpdatePipelineByVolumeProperty();
     }
 
-    this->NS_VolumePropertyPresets->SetSelected(NULL);
+    //this->NS_VolumePropertyPresets->SetSelected(NULL);
   }//-----------------------------------fg presets-------------------------------------
   else if(callerObjectNS == this->NS_VolumePropertyPresetsFg && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
   {
@@ -753,7 +753,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       this->UpdatePipelineByFgVolumeProperty();
     }
 
-    this->NS_VolumePropertyPresetsFg->SetSelected(NULL);
+    //this->NS_VolumePropertyPresetsFg->SetSelected(NULL);
   }
   //End Check NodeSelectors
 
