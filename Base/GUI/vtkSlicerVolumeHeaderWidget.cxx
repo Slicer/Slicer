@@ -347,6 +347,11 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
         int wasLabel = scalarNode->GetLabelMap();
         if ( !wasLabel && willBeLabel )
           {
+          vtkMRMLDisplayNode *oldDisplayNode = scalarNode->GetDisplayNode();
+          if (oldDisplayNode)
+            {
+            this->MRMLScene->RemoveNode(oldDisplayNode);
+            }
           vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode  = vtkMRMLLabelMapVolumeDisplayNode::New();
           this->MRMLScene->AddNodeNoNotify(labelDisplayNode);
           labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
@@ -356,9 +361,14 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
           }
         if ( wasLabel && !willBeLabel )
           {
+          vtkMRMLDisplayNode *oldDisplayNode = scalarNode->GetDisplayNode();
+          if (oldDisplayNode)
+            {
+            this->MRMLScene->RemoveNode(oldDisplayNode);
+            }
           vtkMRMLScalarVolumeDisplayNode *displayNode  = vtkMRMLScalarVolumeDisplayNode::New();
           this->MRMLScene->AddNodeNoNotify(displayNode);
-          displayNode->SetAndObserveColorNodeID ("vtkMRMLColorNodeGrey");
+          displayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeGrey");
           scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
           scalarNode->SetLabelMap( 0 );
           this->MRMLScene->Edited();

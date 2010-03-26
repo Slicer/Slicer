@@ -112,6 +112,8 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 {
   this->RemoveGUIObservers();
 
+  vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, NULL);
+
   if (this->SelectedVolumeID)
     {
     delete [] this->SelectedVolumeID;
@@ -693,6 +695,8 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     vtkMRMLVolumeNode *volume = 
       vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
 
+    vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, volume);
+
     if (volume != NULL)
       {
       // Deactivate GradientsEditor, as it should only enabled when activenode is a DWI
@@ -723,6 +727,12 @@ void vtkSlicerVolumesGUI::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
                                             unsigned long vtkNotUsed(event),
                                             void *vtkNotUsed(callData))
 {
+  this->GradientFrame->EnabledOff();
+  this->GradientFrame->SetAllowFrameToCollapse(0);
+  this->GradientFrame->CollapseFrame();
+
+  this->UpdateFramesFromMRML();
+
 }
 
 //---------------------------------------------------------------------------
