@@ -622,7 +622,7 @@ DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldIma
 )
 
 set ( ${CLP}_SOURCE ${CLP}.cxx ${TRANSFORM_SOURCE} )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
