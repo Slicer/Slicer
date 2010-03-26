@@ -59,6 +59,7 @@
 #include <itksys/SystemTools.hxx>
 
 #include "GenerateCLP.h"
+#include "ModuleDescriptionUtilities.h"
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 #include "ModuleParameterGroup.h"
@@ -67,22 +68,6 @@
 #if defined( WIN32 )
 #pragma warning ( disable : 4996 )
 #endif
-
-/* A useful string utility */
-void
-replaceSubWithSub(std::string& s, const char *o, const char  *n)
-{
-  if (s.size())
-    {
-    std::string from(o), to(n);
-    std::string::size_type start = 0;
-    while ((start = s.find(from, start)) != std::string::npos)
-      {
-      s.replace(start, from.size(), to);
-      start += to.size();
-      }
-    }
-}
 
 /* Comma separated arguments need a temporary variable to store the
  * string
