@@ -326,22 +326,49 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGUICommandAbortFlag 1
       switch $event {
         "LeftButtonPressEvent" {
-          if { $visibility } {
-            # only respond to mouse clicks if visible
-            set _actionState "dragging"
-            SeedSWidget::SetAllTextVisibility 0
-            # switch into pick mode when we mouse down
-            # on a seed widget -- this mirrors the
-            # behavior in the 3D viewer.
-            set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
-            if { $interactionNode != "" } {
-                set mode [$interactionNode GetCurrentInteractionMode]
-                set modeString [$interactionNode GetInteractionModeAsString $mode]
+            # only respond to seed picks if visible
+            if { $visibility } {
+                set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+                if { $interactionNode != "" } {
+                    set mode [$interactionNode GetCurrentInteractionMode]
+                    set modeString [$interactionNode GetInteractionModeAsString $mode]
+                    set lock [ $interactionNode GetPlaceOperationLock ]
+                    #---
+                    # SliceSWidget calls $sliceGUI SetGUICommandAbortFlag 1
+                    # when it processes a LeftButtonPress event, which I thought
+                    # swallowed that event -- however other SeedSWidget still
+                    # gets the event sometimes. So we filter out any "unintended"
+                    # picks when interaction mode is in persistent Place, or mid-place.
+                    # uses PlaceOperationLock on the InteractionNode. Better way?
+                    # These mechanisms can cause headaches, which is why the
+                    # copious amount of comment here.
+                    #---
+                    # only respond to mouse clicks if NOT in persistent
+                    # place mode. if the interaction mode is "place"
+                    # then we should just return without picking.
+                    if { $modeString == "Place" } {
+                        #puts "SeedSWidget: in place mode but hovering over a fiducial: not picking."
+                        return
+                    }
+                    # only respond to mouse clicks if NOT in 
+                    # mid-place, in transient place mode.
+                    # if mid-place, then return without picking.
+                    if { $lock } {
+                        $interactionNode SetPlaceOperationLock 0
+                        #puts "SeedSWidget: not finished with a place operation, but hovering over a fiducial. not picking."
+                        return
+                    }
+                set _actionState "dragging"
+                SeedSWidget::SetAllTextVisibility 0
+
+                # switch into pick mode when we mouse down
+                # on a seed widget -- this mirrors the
+                # behavior in the 3D viewer.
                 set pickPersistence [ $interactionNode GetPickModePersistence]
                 if { $pickPersistence == 0 } {
                     $interactionNode SetLastInteractionMode $mode
-                }
-                $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "PickManipulate" ]
+                } 
+                $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "PickManipulate" ]                    
             }
           }
         }
@@ -374,19 +401,19 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
             # This implementation of mouse modes turns on
             # 'pick' mode when a fiducial is highlighted.
             if { $interactionNode != "" } {
-                if { [$interactionNode GetCurrentInteractionMode] != [$interactionNode GetInteractionModeByString "ViewTransform"] } {
+                set mode [$interactionNode GetCurrentInteractionMode]
+                if { $mode != [$interactionNode GetInteractionModeByString "ViewTransform"] } {
                     set pickPersistence [ $interactionNode GetPickModePersistence]
                     set placePersistence [ $interactionNode GetPlaceModePersistence ]
                     if { $pickPersistence == 0 && $placePersistence == 0 } {
                         $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
-                        $interactionNode SetPickModePersistence 0
-                        $interactionNode SetPlaceModePersistence 0
+                        $interactionNode SetPlaceOperationLock 0
                     }
                 }
             }
         }
       }
-    }
+  }
   }
 
   $this highlight

@@ -560,8 +560,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
+            $sliceGUI SetGrabID $this
+            $sliceGUI SetGUICommandAbortFlag 1
+          
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
         if { $interactionNode != "" } {
+
           set mode [$interactionNode GetCurrentInteractionMode]
           set modeString [$interactionNode GetInteractionModeAsString $mode]
           set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
@@ -571,23 +575,27 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             if { $placePersistence == 0 } {
               $interactionNode SetLastInteractionMode $mode
             }
+            # prevent SeedSWidget.tcl from processing
+            # the LeftButtonPress callback.
+            # it should just reset the lock when it  catches event.
+            $interactionNode SetPlaceOperationLock 1 
             # prevent VolumesSWidget.tcl from
             # processing the entire LeftButtonPress callback.
-            # it should just reset the lock when it  catches event.
+            # it should just reset the lock when it  catches event,
+            # AFTER it resets the lock.
             $interactionNode SetWindowLevelLock 1
             $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
+
             # AND PLACE FIDUCIAL.
-            $sliceGUI SetGrabID $this
-            $sliceGUI SetGUICommandAbortFlag 1
             FiducialsSWidget::AddFiducial $r $a $s
           } 
         }
       }
     }
     "LeftButtonReleaseEvent" { 
-      if { [$sliceGUI GetGrabID] == $this } {
-        $sliceGUI SetGrabID ""
-      }
+        if { [$sliceGUI GetGrabID] == $this } {
+            $sliceGUI SetGrabID ""
+        }
 
         # RESET MOUSE MODE BACK TO
         # TRANSFORM, UNLESS USER HAS
@@ -600,11 +608,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             if { $pickPersistence == 0 && $placePersistence == 0 } {
                 set mode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
                 $interactionNode SetCurrentInteractionMode $mode
-                $interactionNode SetPickModePersistence 0
-                $interactionNode SetPlaceModePersistence 0
             }
         }
-        
     }
     "MiddleButtonPressEvent" {
       $_renderWidget CornerAnnotationVisibilityOff
