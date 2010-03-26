@@ -252,6 +252,26 @@ namespace {
 } // end of anonymous namespace
 
 
+int WriteVolume( VolumeType::Pointer img, std::string fname )
+{
+  itk::ImageFileWriter< VolumeType >::Pointer imgWriter = itk::ImageFileWriter< VolumeType >::New();
+
+  imgWriter->SetInput( img );
+  imgWriter->SetFileName( fname.c_str() );
+  try 
+    {
+      imgWriter->Update();
+    }
+  catch (itk::ExceptionObject &excp)
+    {
+      std::cerr << "Exception thrown while reading the series" << std::endl;
+      std::cerr << excp << std::endl;
+      return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
+}
+
+
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
@@ -659,8 +679,10 @@ int main(int argc, char* argv[])
   }
   else
     {
-    std::cout << " ERROR vendor type not valid" << std::endl;
-    exit(-1);
+    std::cout << " Warning: vendor type not valid" << std::endl;
+    // treate the dicom series as an ordinary image and write a straight nrrd file.
+    WriteVolume( reader->GetOutput(), nhdrname );
+    return EXIT_SUCCESS;
     }
 
   if ( SliceOrderIS )
@@ -1424,8 +1446,9 @@ int main(int argc, char* argv[])
     }
   else
     {
-    std::cout << "ERROR:  invalid vendor found." << std::endl;
-    exit(-1);
+    std::cout << "Warning:  invalid vendor found." << std::endl;
+    WriteVolume( reader->GetOutput(), nhdrname );
+    return EXIT_SUCCESS;
     }
 
 
