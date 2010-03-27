@@ -14,10 +14,12 @@
 
 #ifndef __ModuleDescriptionUtilities_h
 #define __ModuleDescriptionUtilities_h
+#include "ModuleDescriptionParserWin32Header.h"
 
-extern void replaceSubWithSub(std::string& s, const char *o, const char  *n);
-extern void trimLeading(std::string& s, const char* extraneousChars = " \t\n"); 
-extern void trimTrailing(std::string& s, const char* extraneousChars = " \t\n");
-extern void trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n");
+#include <string>
+ModuleDescriptionParser_EXPORT void replaceSubWithSub(std::string& s, const char *o, const char  *n);
+ModuleDescriptionParser_EXPORT void trimLeading(std::string& s, const char* extraneousChars = " \t\n"); 
+ModuleDescriptionParser_EXPORT void trimTrailing(std::string& s, const char* extraneousChars = " \t\n");
+ModuleDescriptionParser_EXPORT void trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n");
 
 #endif

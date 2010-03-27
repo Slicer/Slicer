@@ -1,3 +1,4 @@
+#include "ModuleDescriptionUtilities.h"
 #include <string>
 
 void
@@ -16,7 +17,7 @@ replaceSubWithSub(std::string& s, const char *o, const char  *n)
 }
 
 void
-trimLeading(std::string& s, const char* extraneousChars = " \t\n")
+trimLeading(std::string& s, const char* extraneousChars)
 {
   if (s.size())
     {
@@ -33,7 +34,7 @@ trimLeading(std::string& s, const char* extraneousChars = " \t\n")
 }
 
 void
-trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
+trimTrailing(std::string& s, const char* extraneousChars)
 {
   if (s.size())
     {
@@ -50,7 +51,7 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 }
 
 void
-trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n")
+trimLeadingAndTrailing(std::string& s, const char* extraneousChars)
 {
   trimLeading(s, extraneousChars);
   trimTrailing(s, extraneousChars);
