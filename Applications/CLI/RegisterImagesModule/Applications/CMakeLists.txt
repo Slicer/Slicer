@@ -43,7 +43,7 @@ PROJECT( RegisterImagesModuleApplications )
   SET( TransformFromFiducials_SOURCE TransformFromFiducials.cxx )
   GENERATECLP( TransformFromFiducials_SOURCE 
                TransformFromFiducials.xml
-               ${RegisterImagesModuleApplications_SOURCE_DIR}/logo.h )
+               ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h )
   INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
 
   # Build the library / plugin
