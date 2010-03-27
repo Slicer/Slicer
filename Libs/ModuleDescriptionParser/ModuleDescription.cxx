@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <string>
 
 //----------------------------------------------------------------------------
 ModuleDescription::ModuleDescription()
@@ -274,7 +275,7 @@ bool ModuleDescription ::ReadParameterFile(const std::string& filename)
     }
 
   std::string line;
-  while (getline(rtp, line))
+  while (std::getline(rtp, line))
     {
     // split the line into key: value
     std::string key, value;
