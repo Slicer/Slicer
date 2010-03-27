@@ -45,7 +45,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
 {
   itkRegionType itkRegion ;
   itkRegion = this->m_InputImage->GetLargestPossibleRegion() ;
-  SizeType m_Size = itkRegion.GetSize() ;
+  SizeType size = itkRegion.GetSize() ;
   typename DiffusionImageType::PointType origin = this->m_InputImage->GetOrigin() ;
   typename DiffusionImageType::DirectionType direction = this->m_InputImage->GetDirection() ;
   typename DiffusionImageType::SpacingType spacing = this->m_InputImage->GetSpacing() ; 
@@ -53,7 +53,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
   for( int i = 0 ; i < 6 ; i++ ) 
     {
     m_Image[ i ] = ImageType::New() ;
-    m_Image[ i ]->SetRegions( m_Size ) ;
+    m_Image[ i ]->SetRegions( size ) ;
     m_Image[ i ]->SetOrigin( origin ) ;
     m_Image[ i ]->SetDirection( direction ) ;
     m_Image[ i ]->SetSpacing( spacing ) ;
@@ -68,7 +68,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
   // Copied from itkImageSource.txx and adapted
   // split on the outermost dimension available
   m_SplitAxis = this->m_InputImage->GetImageDimension() - 1 ;
-  while( m_Size[ m_SplitAxis ] == 1)
+  while( size[ m_SplitAxis ] == 1)
     {
     --m_SplitAxis;
     if( m_SplitAxis < 0 )

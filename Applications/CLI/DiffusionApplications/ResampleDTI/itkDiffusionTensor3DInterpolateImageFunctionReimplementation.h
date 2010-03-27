@@ -82,7 +82,6 @@ protected:
   int m_NbThread ;
   MutexLock::Pointer m_CheckRegionsDone ;
   bool m_ExceptionThrown ;
-  SizeType m_Size ;
   bool m_AllocateInterpolatorsDone ;
 };
 
