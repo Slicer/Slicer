@@ -20,7 +20,8 @@ PROJECT( RegisterImagesMultiResApplications )
     ScalingHeuristics.cxx
     ConvertSlicerROIToRegion.cxx) 
   GENERATECLP( RegisterImagesMultiRes_SOURCE
-               RegisterImagesMultiRes.xml )
+               RegisterImagesMultiRes.xml 
+               ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
   INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_BINARY_DIR} )
 
   # Build the library / plugin
