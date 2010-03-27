@@ -647,6 +647,7 @@ int DoIt( int argc, char *argv[] )
     }
   */
 
+  /*
   if( baselineImage.size() > 1 )
     {
     try
@@ -692,6 +693,7 @@ int DoIt( int argc, char *argv[] )
       return EXIT_FAILURE;
       }
     }
+  */
   return EXIT_SUCCESS;
 }
 

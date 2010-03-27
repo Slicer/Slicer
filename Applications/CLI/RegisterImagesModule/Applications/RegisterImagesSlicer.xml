@@ -217,55 +217,6 @@
     </string-enumeration>
   </parameters>
   <parameters advanced="true">
-    <label>Registration Testing Parameters</label>
-    <description>Functions for comparing registration results with a baseline image</description>
-    <image>
-      <name>baselineImage</name>
-      <label>Baseline Image</label>
-      <longflag>baselineImage</longflag>
-      <channel>input</channel>
-      <description>Image against which the resampled moving image will be compared</description>
-      <default></default>
-    </image>
-    <integer>
-      <name>baselineNumberOfFailedPixelsTolerance</name>
-      <label>Number of Failed Pixels Tolerance</label>
-      <longflag>baselineNumberOfFailedPixelsTolerance</longflag>
-      <description>Maximum number of pixels that can differ and the test pass</description>
-      <default>1000</default>
-    </integer>
-    <double>
-      <name>baselineIntensityTolerance</name>
-      <label>Intensity Tolerance</label>
-      <longflag>baselineIntensityTolerance</longflag>
-      <description>Maximum intensity difference for pixels to be considered matching</description>
-      <default>10</default>
-    </double>
-    <integer>
-      <name>baselineRadiusTolerance</name>
-      <label>Radius Tolerance</label>
-      <longflag>baselineRadiusTolerance</longflag>
-      <description>Maximum neighborhood that will be searched to find a matching pixel</description>
-      <default>0</default>
-    </integer>
-    <image>
-      <name>baselineDifferenceImage</name>
-      <label>Baseline Difference Image</label>
-      <longflag>baselineDifferenceImage</longflag>
-      <channel>output</channel>
-      <description>Result from subtracting the registered moving image from the baseline image</description>
-      <default></default>
-    </image>
-    <image>
-      <name>baselineResampledMovingImage</name>
-      <label>Baseline Resampled Moving Image</label>
-      <longflag>baselineResampledMovingImage</longflag>
-      <channel>output</channel>
-      <description>Result resampling the moving image to the space of the baseline image</description>
-      <default></default>
-    </image>
-  </parameters>
-  <parameters advanced="true">
     <label>Advanced Initial Registration Parameters</label>
     <description>Parameters that determine how initial registration is performed</description>
     <point multiple="true">
