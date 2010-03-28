@@ -116,13 +116,16 @@ itcl::body ColorBox::create { } {
 #
 itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
 
+  set colorIndex 1
   if { $caller == $o(colors) } {
+    if { [$o(colors) GetClassName] != "vtkKWPushButton" } {
+      set colorIndex [$o(colors) GetSelectedColorIndex]
+    }
     if { $selectCommand != "" } {
-      eval $selectCommand
+      set cmd [format $selectCommand $colorIndex]
+      eval $cmd
     } else {
-      if { [$o(colors) GetClassName] != "vtkKWPushButton" } {
-        EditorSetPaintLabel [$o(colors) GetSelectedColorIndex]
-      }
+      EditorSetPaintLabel $colorIndex
     }
     $this hide
   }
@@ -132,6 +135,9 @@ itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
 # get the color node for the label map in the Red slice
 #
 itcl::body ColorBox::getColorNode {} {
+  if { $colorNode != "" } {
+    return $colorNode
+  }
   set logic [[$::slicer3::ApplicationLogic GetSliceLogic "Red"] GetLabelLayer]
   set volumeDisplayNode [$logic GetVolumeDisplayNode]
   if { $volumeDisplayNode == "" } {

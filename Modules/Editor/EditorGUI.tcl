@@ -461,7 +461,7 @@ proc EditorToggleErasePaintLabel {} {
 }
 
 
-proc EditorGetPaintColor {this} {
+proc EditorGetPaintColor { {this ""} } {
 
   set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
   if { $sliceLogic != "" } {
@@ -478,6 +478,24 @@ proc EditorGetPaintColor {this} {
     }
   }
   return "0 0 0 0"
+}
+
+proc EditorGetPaintName { {this ""} } {
+
+  set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
+  if { $sliceLogic != "" } {
+    set logic [$sliceLogic GetLabelLayer]
+    if { $logic != "" } {
+      set volumeDisplayNode [$logic GetVolumeDisplayNode]
+      if { $volumeDisplayNode != "" } {
+        set node [$volumeDisplayNode GetColorNode]
+        set index [EditorGetPaintLabel]
+        set index [expr int($index)]
+        return [$node GetColorName $index]
+      }
+    }
+  }
+  return "Unknown"
 }
 
 proc EditorGetPaintThreshold {} {

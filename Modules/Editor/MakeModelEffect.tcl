@@ -212,7 +212,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   $o(name) SetParent [$this getOptionsFrame]
   $o(name) Create
   $o(name) SetLabelText "Name: "
-  [$o(name) GetWidget] SetValue [$this getUniqueModelName]
+  [$o(name) GetWidget] SetValue [$this getUniqueModelName [EditorGetPaintName]]
   $o(name) SetBalloonHelpString "Select the name for the newly created model."
   pack [$o(name) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
