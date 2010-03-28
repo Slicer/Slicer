@@ -7,7 +7,6 @@ ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 
- 
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
   include(${GenerateCLP_USE_FILE})
@@ -31,7 +30,7 @@ endif(VTK_FOUND)
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
- 
+
 set(GENERATELM_SOURCE GenerateLM.cxx)
 generateclp(GENERATELM_SOURCE GenerateLM.xml)
 add_executable(GenerateLM ${GENERATELM_SOURCE})
@@ -47,7 +46,7 @@ endif(BUILD_TESTING)
 
 include(GenerateGenerateLMConfig.cmake)
 
-install(TARGETS GenerateLM RUNTIME 
+install(TARGETS GenerateLM RUNTIME
   DESTINATION bin COMPONENT Development
   )
 install(FILES ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake_install
@@ -70,11 +69,11 @@ install(FILES ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake_install
 set(GenerateLM_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(GenerateLM_FORWARD_DIR_INSTALL ".")
 if(WIN32)
-  set(GenerateLM_FORWARD_PATH_BUILD 
+  set(GenerateLM_FORWARD_PATH_BUILD
     "\"${GenerateLM_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
   set(GenerateLM_FORWARD_PATH_INSTALL "\"\"")
 else(WIN32)
-  set(GenerateLM_FORWARD_PATH_BUILD 
+  set(GenerateLM_FORWARD_PATH_BUILD
     "\"${GenerateLM_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${ITK_DIR}/bin\"")
   set(GenerateLM_FORWARD_PATH_INSTALL
     "\"../lib/GenerateLM\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/InsightToolkit\",\"../lib/LoadableModule\"")
@@ -89,8 +88,8 @@ if(NOT WIN32)
   add_executable(GenerateLMLauncher
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c)
   add_dependencies(GenerateLMLauncher GenerateLM)
-  
-  install(TARGETS GenerateLMLauncher RUNTIME 
+
+  install(TARGETS GenerateLMLauncher RUNTIME
     DESTINATION bin COMPONENT Development
     )
 endif(NOT WIN32)

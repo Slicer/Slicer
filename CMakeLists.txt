@@ -386,12 +386,12 @@ ENDIF (Slicer3_USE_KWWIDGETS)
 #-----------------------------------------------------------------------------
 # These packages may exist within the Slicer3 source tree
 #
-set(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
+set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+set(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+set(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
 set(GenerateLM_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateLM)
-set(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 set(LoadableModule_DIR ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
 set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
-set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules

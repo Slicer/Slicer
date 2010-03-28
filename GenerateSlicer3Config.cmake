@@ -18,11 +18,11 @@
 #
 #
 
+SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
 SET(Slicer3_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/UseSlicer3.cmake)
-SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/tclap)
-SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 SET(LoadableModule_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
-SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
 
 SET(Slicer3_Libs_INCLUDE_DIRS_CONFIG ${Slicer3_Libs_INCLUDE_DIRS})
 SET(Slicer3_Libs_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin ${Slicer3_BINARY_DIR}/lib)

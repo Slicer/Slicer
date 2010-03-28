@@ -142,13 +142,13 @@ ENDIF(Slicer3_USE_QT AND Slicer3_BUILD_QTLOADABLEMODULES)
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
+set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
+set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
 set(GenerateCLP_DIR "${Slicer3_HOME}/lib/GenerateCLP")
 set(GenerateLM_DIR "${Slicer3_HOME}/lib/GenerateLM")
 set(ITK_DIR "${Slicer3_HOME}/lib/InsightToolkit")
 set(KWWidgets_DIR "${Slicer3_HOME}/lib/KWWidgets")
 set(LoadableModule_DIR "${Slicer3_HOME}/lib/LoadableModule")
-set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
-set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
 set(Teem_DIR "${Slicer3_HOME}/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@.@Teem_VERSION_PATCH@")
 set(VTK_DIR "${Slicer3_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
 set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")

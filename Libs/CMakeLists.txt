@@ -1,9 +1,12 @@
 project(SlicerLibs)
 
+## Delegate the building of the SlicerExecutionModel to
+## a bundled subdirectory that can easily be included in
+## other packages.
+set(ModuleDescriptionParser_USE_PYTHON ${Slicer3_USE_PYTHON})
+ADD_SUBDIRECTORY(SlicerExecutionModel)
+
 set(dirs
-  tclap
-  ModuleDescriptionParser
-  GenerateCLP
 # FileWatcher
   )
 
@@ -78,7 +81,6 @@ ENDIF(CUDA_SUPPORT_ENABLED)
 set(include_dirs)
 set(libs)
 
-set(ModuleDescriptionParser_USE_PYTHON ${Slicer3_USE_PYTHON})
 set(LoadableModule_USE_PYTHON ${Slicer3_USE_PYTHON})
 
 set(IGT_USE_IGSTK ${Slicer3_USE_IGSTK})
@@ -113,7 +115,7 @@ string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 
 # Those are not libs
 
-list(REMOVE_ITEM libs tclap GenerateCLP GenerateLM slicerio)
+list(REMOVE_ITEM libs GenerateLM slicerio)
 
 slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${libs})

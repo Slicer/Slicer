@@ -663,6 +663,7 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 
+##BRAINSDemonWarp
 SET(cli_modules
   MRIBiasFieldCorrection
   SparseFieldLevelSetContour
