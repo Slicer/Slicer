@@ -23,14 +23,18 @@ int vtkMRMLChangeTrackerNodeTest(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  std::cout << "UpdateReferences" << std::endl;
   node1->UpdateReferences();
 
   vtkSmartPointer< vtkMRMLChangeTrackerNode > node2 = vtkSmartPointer< vtkMRMLChangeTrackerNode >::New();
 
+  std::cout << "Copy" << std::endl;
   node2->Copy( node1 );
 
+  std::cout << "Reset" << std::endl;
   node2->Reset();
 
+  std::cout << "StartModify" << std::endl;
   node2->StartModify();
 
   std::string nodeTagName = node1->GetNodeTagName();
