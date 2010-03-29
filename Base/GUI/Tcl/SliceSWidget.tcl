@@ -308,10 +308,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-#  if { $event == "LeftButtonPressEvent" || $event == "LeftButtonReleaseEvent"} {
-#      puts "Slice: $event "
-# }
-
   if { [info command $_sliceNode] == "" } {
     # somehow our slice node is corrupted - we need to bail out
     return
@@ -564,27 +560,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
-            $sliceGUI SetGrabID $this
-            $sliceGUI SetGUICommandAbortFlag 1
-#          puts ""
-#          puts "Slice: swallowing press"
-          
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
         if { $interactionNode != "" } {
 
           set mode [$interactionNode GetCurrentInteractionMode]
           set modeString [$interactionNode GetInteractionModeAsString $mode]
-          set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
-            # SET MODE TO PLACE...
-          if { $modeString == "Place" || $modifier } {
-            $interactionNode SetCurrentInteractionMode [ $interactionNode GetInteractionModeByString "Place" ]
-
-            # prevent VolumesSWidget.tcl from
-            # processing the entire LeftButtonPress callback.
-            # it should just reset the lock when it  catches event,
-            # AFTER it resets the lock.
-            $interactionNode SetWindowLevelLock 1
-
+          if { $modeString == "Place" } {
             # AND PLACE FIDUCIAL.
             FiducialsSWidget::AddFiducial $r $a $s
           } 
@@ -607,7 +588,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             set placePersistence [ $interactionNode GetPlaceModePersistence ]
             if { $pickPersistence == 0 && $placePersistence == 0 } {
                 set mode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
-#                puts "Slice: resetting mode"
                 $interactionNode SetCurrentInteractionMode $mode
             }
         }

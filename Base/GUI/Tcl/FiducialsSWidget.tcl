@@ -316,6 +316,7 @@ itcl::body FiducialsSWidget::processUpdate {} {
           $seedSWidget configure -inactive [$fidListNode GetLocked]
           $seedSWidget configure -selected [$fidListNode GetNthFiducialSelected $f]
           $seedSWidget configure -visibility [$fidListNode GetNthFiducialVisibility $f]
+          $seedSWidget processEvent
         }
       }
     }

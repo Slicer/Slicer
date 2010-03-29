@@ -309,10 +309,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
     return 
   }
 
-# if { $event == "LeftButtonPressEvent" || $event == "LeftButtonReleaseEvent"} {
-#     puts "Seed: $event $grabID"
-#  }
-
   if { $_actionState != "dragging" } {
     # only check pick if we haven't grabbed (avoid 'dropping' the widget
     # when the mouse moves quickly)
@@ -332,10 +328,8 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGUICommandAbortFlag 1
       switch $event {
         "LeftButtonPressEvent" {
-#            puts ""
-#            puts "Seed picked by $grabID!"
-            # only respond to seed picks if visible and $grabID is not NULL
-            if { $visibility && $grabID != "" } {
+            # only respond to seed picks if visible
+            if { $visibility } {
                 set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
                 if { $interactionNode != "" } {
                     set mode [$interactionNode GetCurrentInteractionMode]
@@ -344,7 +338,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
                     # place mode. if the interaction mode is "place"
                     # then we should just return without picking.
                     if { $modeString == "Place" } {
-                        #puts "SeedSWidget: in place mode but hovering over a fiducial: not picking."
                         return
                     }
                 set _actionState "dragging"
@@ -374,7 +367,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
         }
         "LeftButtonReleaseEvent" {
           set _actionState ""
-          $sliceGUI SetGrabID ""
           set _description ""
           $_renderWidget CornerAnnotationVisibilityOn
           SeedSWidget::SetAllTextVisibility 1

@@ -50,7 +50,6 @@ itcl::body RulerSWidget::constructor {sliceGUI} {
   $this configure -sliceGUI $sliceGUI
  
   set o(lineWidget) [vtkNew vtkLineWidget2]
-  $o(lineWidget) SetPriority 1.0
   $o(lineWidget) SetInteractor [$_renderWidget GetRenderWindowInteractor]
   [$o(lineWidget) GetRepresentation] PlaceWidget 0 1 0 1 0 1
   $o(lineWidget) On
