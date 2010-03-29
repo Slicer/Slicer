@@ -72,7 +72,7 @@ SET(modules
   ClipModel
   Measurements
   ModelIntoLabelVolume
-  ExtractSubvolume
+# ExtractSubvolume <- replaced by ExtractSubvolumeROI
   FastMarchingSegmentation
   FourDImage
 #  FourDAnalysis
