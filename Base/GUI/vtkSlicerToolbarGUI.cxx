@@ -1093,7 +1093,7 @@ void vtkSlicerToolbarGUI::UpdateLayoutMenu()
 void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, void * vtkNotUsed(callData) )
 {
-  std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: got event " << event << "(modified = " << vtkCommand::ModifiedEvent << ")" << endl;
+  vtkDebugMacro("ProcessMRMLEvents: got event " << event << "(modified = " << vtkCommand::ModifiedEvent << ")");
 
   // check for a change on the selection node regarding the mouse interaction mode
   vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
@@ -1101,14 +1101,14 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
   // has the interaction mode changed?
   if (interactionNode == NULL)
     {
-    std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: interaction node is null\n";
+    vtkWarningMacro("ProcessMRMLEvents: interaction node is null");
     return;
     }
 
   if ( vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode &&
        event == vtkMRMLInteractionNode::InteractionModeChangedEvent )
     {
-    std::cout << "The selection node changed\n";
+    vtkDebugMacro("ProcessMRMLEvents: The selection node changed");
     int mode = interactionNode->GetCurrentInteractionMode();
     int selected = 0;
     switch (mode)
