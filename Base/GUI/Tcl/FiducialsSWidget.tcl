@@ -314,9 +314,7 @@ itcl::body FiducialsSWidget::processUpdate {} {
           $seedSWidget configure -text [$fidListNode GetNthFiducialLabelText $f]
           $seedSWidget configure -textScale [$fidListNode GetTextScale]
           $seedSWidget configure -inactive [$fidListNode GetLocked]
-          if { [$fidListNode GetNthFiducialSelected $f] } {
-            $seedSWidget configure -selected 1
-          }
+          $seedSWidget configure -selected [$fidListNode GetNthFiducialSelected $f]
           $seedSWidget configure -visibility [$fidListNode GetNthFiducialVisibility $f]
         }
       }
