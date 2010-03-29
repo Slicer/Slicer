@@ -75,6 +75,7 @@ set(SlicerBaseLogic_SRCS
   vtkPichonFastMarching.cxx
   vtkPichonFastMarchingPDF.cxx
   vtkImageRectangularSource.cxx
+  vtkSystemInformation.cxx
   )
 
 SET_SOURCE_FILES_PROPERTIES(
