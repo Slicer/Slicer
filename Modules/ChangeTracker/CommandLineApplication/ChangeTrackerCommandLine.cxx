@@ -570,6 +570,8 @@ int main(int argc, char* argv[])
     if (Scan1PreSegmentImage) Scan1PreSegmentImage->Delete();
 
     supersampleMatrix->Delete();
+    scan1TfmMatrix->Delete();
+    scan2TfmMatrix->Delete();
     logic->Delete();
     app->Delete();
     
@@ -589,6 +591,9 @@ void InitializeThresholds(tgCMDLineStructure &tg, vtkImageData* image, vtkImageD
     vtkImageMathematics* mult = vtkImageMathematics::New();
     vtkImageThreshold* thresh = vtkImageThreshold::New();
     vtkImageThreshold* thresh1 = vtkImageThreshold::New();
+    vtkImageCast *cast1 = vtkImageCast::New();
+    vtkImageCast *cast = vtkImageCast::New();
+    vtkImageAccumulate* hist = vtkImageAccumulate::New();
     
     thresh->SetInput(segm);
     thresh->ThresholdBetween(1,100);
@@ -608,7 +613,6 @@ void InitializeThresholds(tgCMDLineStructure &tg, vtkImageData* image, vtkImageD
     thresh1->SetOutValue(0);
     thresh1->Update();
 
-    vtkImageCast *cast1 = vtkImageCast::New();
     cast1->SetInput(thresh1->GetOutput());
     cast1->SetOutputScalarTypeToShort();
     cast1->Update();
@@ -617,11 +621,9 @@ void InitializeThresholds(tgCMDLineStructure &tg, vtkImageData* image, vtkImageD
     mult->SetInput(1, cast1->GetOutput());
     mult->SetOperationToMultiply();
 
-    vtkImageCast *cast = vtkImageCast::New();
     cast->SetInput(mult->GetOutput());
     cast->SetOutputScalarTypeToShort();
   
-    vtkImageAccumulate* hist = vtkImageAccumulate::New();
     hist->SetInput(cast->GetOutput());
     hist->IgnoreZeroOn();
     hist->Update();
@@ -650,7 +652,15 @@ void InitializeThresholds(tgCMDLineStructure &tg, vtkImageData* image, vtkImageD
 
     stdev = sqrt(stdev/cnt);
     thrMin = mean;
-   
+
+    dist->Delete();
+    mult->Delete();
+    thresh->Delete();
+    thresh1->Delete();
+    cast->Delete();
+    cast1->Delete();
+    hist->Delete();
+ 
 //    std::cerr << "Histogram min: " << thrMin << std::endl;
 //    std::cerr << "Histogram max: " << thrMax << std::endl;
 //    std::cerr << "Histogram mean: " << mean << std::endl;
