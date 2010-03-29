@@ -109,6 +109,12 @@ public:
   /// check scene to make sure that have a widget for each ruler node, and no extra widgets...
   void Update3DWidgetsFromMRML();
 
+  // Description:
+  // when change the colours of the end points of the ruler, update the label
+  // colours as a hint. If the end point colours are white, use a very very
+  // light grey instead
+  void UpdateLabelsFromNode(vtkMRMLMeasurementsRulerNode *activeRulerNode);
+
 protected:
   vtkMeasurementsRulerWidget();
   virtual ~vtkMeasurementsRulerWidget();
@@ -149,11 +155,14 @@ protected:
   /// 
   /// visibility check button
   vtkKWCheckButtonWithLabel *VisibilityButton;
-  /// 
-  /// Change the colour of the end points
+  // Description:
+  // Change the colour of the end point
   vtkKWChangeColorButton *PointColourButton;
-  /// 
-  /// Change the colour of the line
+  // Description:
+  // Change the colour of the ohter end point
+  vtkKWChangeColorButton *Point2ColourButton;
+  // Description:
+  // Change the colour of the line
   vtkKWChangeColorButton *LineColourButton;
   /// 
   /// Change the colour of the distance annotation text

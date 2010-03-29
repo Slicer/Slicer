@@ -123,6 +123,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->RulerModel1SelectorWidget = NULL;
   this->RulerModel2SelectorWidget = NULL;
   this->PointColourButton = NULL;
+  this->Point2ColourButton = NULL;
   this->LineColourButton = NULL;
   this->TextColourButton = NULL;
 
@@ -208,6 +209,12 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     this->PointColourButton->SetParent(NULL);
     this->PointColourButton->Delete();
     this->PointColourButton= NULL;
+    }
+  if (this->Point2ColourButton)
+    {
+    this->Point2ColourButton->SetParent(NULL);
+    this->Point2ColourButton->Delete();
+    this->Point2ColourButton= NULL;
     }
   if (this->LineColourButton)
     {
@@ -663,6 +670,19 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
         activeRulerNode->SetPointColour(this->PointColourButton->GetColor());
         }
       }
+    else if (ccbutton == this->Point2ColourButton)
+      {
+      double *guiRGB = this->Point2ColourButton->GetColor();
+      double *nodeRGB = activeRulerNode->GetPoint2Colour();
+      if (nodeRGB == NULL ||
+          (fabs(guiRGB[0]-nodeRGB[0]) > 0.001 ||
+           fabs(guiRGB[1]-nodeRGB[1]) > 0.001 ||
+           fabs(guiRGB[2]-nodeRGB[2]) > 0.001))
+        {
+        if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
+        activeRulerNode->SetPoint2Colour(this->Point2ColourButton->GetColor());
+        }
+      }
     else if (ccbutton == this->LineColourButton)
       {
       double *guiRGB = this->LineColourButton->GetColor();
@@ -820,12 +840,14 @@ void vtkMeasurementsRulerWidget::UpdateMRMLFromWidget(vtkMRMLMeasurementsRulerNo
     p = distanceWidget->GetRepresentation()->GetPoint2WorldPosition();
     activeRulerNode->SetPosition2(p);
 
-    double *rgb = distanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->GetColor();
+    double *rgb = distanceWidget->GetRepresentation()->GetEndPointProperty()->GetColor();
     activeRulerNode->SetPointColour(rgb);
+    rgb = distanceWidget->GetRepresentation()->GetEndPoint2Property()->GetColor();
+    activeRulerNode->SetPoint2Colour(rgb);
     rgb = distanceWidget->GetRepresentation()->GetLineProperty()->GetColor();
     activeRulerNode->SetLineColour(rgb);
-//    rgb = distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->GetColor();
-//    activeRulerNode->SetDistanceAnnotationTextColour(rgb);
+    rgb = distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->GetColor();
+    activeRulerNode->SetDistanceAnnotationTextColour(rgb);
 
     activeRulerNode->SetDistanceAnnotationVisibility(distanceWidget->GetRepresentation()->GetDistanceAnnotationVisibility());
     activeRulerNode->SetDistanceAnnotationFormat(distanceWidget->GetRepresentation()->GetDistanceAnnotationFormat());
@@ -1028,6 +1050,14 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
     {
     this->PointColourButton->SetColor(activeRulerNode->GetPointColour());
     }
+  rgb = this->Point2ColourButton->GetColor();
+  rgb1 = activeRulerNode->GetPoint2Colour();
+  if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
+      fabs(rgb[1]-rgb1[1]) > 0.001 ||
+      fabs(rgb[2]-rgb1[2]) > 0.001)
+    {
+    this->Point2ColourButton->SetColor(activeRulerNode->GetPoint2Colour());
+    }
   
   // line colour
   rgb = this->LineColourButton->GetColor();
@@ -1061,6 +1091,9 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   // resolution
   this->ResolutionEntry->GetWidget()->SetValueAsInt(activeRulerNode->GetResolution());
 
+  // update the label colours to match the end point colours
+  this->UpdateLabelsFromNode(activeRulerNode);
+  
   // distance
   this->UpdateDistanceLabel(activeRulerNode);
   
@@ -1147,7 +1180,8 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
   if ( activeRulerNode->GetVisibility() )
     {
     if (distanceWidget->GetWidget()->GetInteractor() == NULL &&
-        this->GetViewerWidget())
+        this->GetViewerWidget() &&
+        this->GetViewerWidget()->GetMainViewer())
       {
       distanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
       double p1[3] = {-100.0, 50.0, 0.0};
@@ -1168,8 +1202,9 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
     {
     // end point colour
     double *rgb1 = activeRulerNode->GetPointColour();
-    distanceWidget->GetRepresentation()->GetPoint1Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
-    distanceWidget->GetRepresentation()->GetPoint2Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    distanceWidget->GetRepresentation()->GetEndPointProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    double *rgb2 = activeRulerNode->GetPoint2Colour();
+    distanceWidget->GetRepresentation()->GetEndPoint2Property()->SetColor(rgb2[0], rgb2[1], rgb2[2]);
 
     // line colour
     rgb1 = activeRulerNode->GetLineColour();
@@ -1177,7 +1212,7 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
 
     // text colour
     rgb1 = activeRulerNode->GetDistanceAnnotationTextColour();
-//    distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    distanceWidget->GetRepresentation()->GetDistanceAnnotationProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // position
     // get any transform on the node
@@ -1470,6 +1505,10 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     {
     this->PointColourButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if ( this->Point2ColourButton)
+    {
+    this->Point2ColourButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if ( this->LineColourButton)
     {
     this->LineColourButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1552,6 +1591,10 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
   if ( this->PointColourButton)
     {
     this->PointColourButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->Point2ColourButton)
+    {
+    this->Point2ColourButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->LineColourButton)
     {
@@ -1891,6 +1934,17 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->PointColourButton->GetWidgetName() );
 
+  this->Point2ColourButton = vtkKWChangeColorButton::New();
+  this->Point2ColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
+  this->Point2ColourButton->Create ( );
+  this->Point2ColourButton->SetColor(1.0, 0.0, 0.0);
+  this->Point2ColourButton->LabelOutsideButtonOn();
+  this->Point2ColourButton->SetLabelPositionToRight();
+  this->Point2ColourButton->SetLabelText("Set End Point 2 Color");
+  this->Point2ColourButton->SetBalloonHelpString("set point 2 color.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->Point2ColourButton->GetWidgetName() );
+
   this->LineColourButton = vtkKWChangeColorButton::New();
   this->LineColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
   this->LineColourButton->Create ( );
@@ -1925,8 +1979,8 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->TextColourButton->SetLabelPositionToRight();
   this->TextColourButton->SetLabelText("Set Text Color");
   this->TextColourButton->SetBalloonHelpString("set text color.");
-//  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-//                 this->TextColourButton->GetWidgetName() );
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->TextColourButton->GetWidgetName() );
   
   this->DistanceAnnotationFormatEntry = vtkKWEntryWithLabel::New();
   this->DistanceAnnotationFormatEntry->SetParent(annotationFrame);
@@ -2132,4 +2186,48 @@ void vtkMeasurementsRulerWidget::ModifyAllRulerVisibility( int visibilityState)
       rulerNode->SetVisibility ( visibilityState );
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::UpdateLabelsFromNode(vtkMRMLMeasurementsRulerNode *activeRulerNode)
+{
+  if (activeRulerNode == NULL)
+    {
+    vtkDebugMacro("UpdateLabelsFromNode: passed in ruler node is null, returning");
+    return;
+    }
+
+  double *rgb1 = activeRulerNode->GetPointColour();
+  double *rgb2 = activeRulerNode->GetPoint2Colour();
+
+  if (!rgb1 || !rgb2)
+    {
+    vtkErrorMacro("UpdateLabelsFromNode: null point colours in node, returning.");
+    return;
+    }
+
+  // check for white, set it a bit grey
+  if (rgb1[0] > 0.9 &&
+      rgb1[1] > 0.9 &&
+      rgb1[2] > 0.9)
+    {
+    rgb1[0] = 0.9;
+    rgb1[1] = 0.9;
+    rgb1[2] = 0.9;
+    }
+  if (rgb2[0] > 0.9 &&
+      rgb2[1] > 0.9 &&
+      rgb2[2] > 0.9)
+    {
+    rgb2[0] = 0.9;
+    rgb2[1] = 0.9;
+    rgb2[2] = 0.9;
+    }
+  // match the positions to the end points
+  this->Position1Label->SetForegroundColor(rgb1);
+  this->Position2Label->SetForegroundColor(rgb2);
+  
+  // match the models to the end points
+  this->RulerModel1SelectorWidget->GetLabel()->SetForegroundColor(rgb1);
+  this->RulerModel2SelectorWidget->GetLabel()->SetForegroundColor(rgb2);
 }
