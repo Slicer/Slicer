@@ -3,9 +3,11 @@
   <category> Filtering </category>
   <title>ChangeTracker Command-line </title>
   <description>
-  ChangeTracker command-line module description and help.
+  ChangeTracker command-line module description and help. This is the new
+  version of the command line module to reflect the changes that took place in
+  the workflow in Slicer 3.5
   </description>
-  <contributor>Kilian Pohl, Andriy Fedorov</contributor>
+  <contributor>Andriy Fedorov, Kilian Pohl</contributor>
   <acknowledgements>Brain Science Foundation</acknowledgements>
    <parameters>
     <label>Inputs and Outputs</label>
@@ -26,6 +28,32 @@
       <description>Second Scan</description> 
       <default>None</default>
     </image>
+
+    <transform>
+      <name>scan1tfm</name>
+      <label>Transform for Scan1</label>
+      <channel>input</channel>
+      <longflag>scan1tfm</longflag>
+      <description>Optional transform to be applied to scan1 before processing</description>
+    </transform>
+
+    <transform>
+      <name>scan2tfm</name>
+      <label>Transform aligning Scan2 with Scan1</label>
+      <channel>input</channel>
+      <longflag>scan2tfm</longflag>
+      <description>Transform that brings Scan2 in alignment with Scan1</description>
+    </transform>
+
+    <image type="label">
+      <name>tgScan1segmented</name>
+      <label>Scan 1 segmentation</label>
+      <channel>input</channel>
+      <longflag>scan1segmentation</longflag>
+      <description>Segmentation of the structure of interest in the First Scan</description> 
+      <default>None</default>
+    </image>
+
     <image>
       <name>tgOutput</name>
       <longflag>output</longflag>
@@ -33,6 +61,15 @@
       <label>Output image</label>
       <description>Result of the processing. The output depends on the selection of the termination step. If the complete workflow is run, the output will be the final analysis image. If both intensity- and deformation-based analyses are requested, only intensity-based results are saved.</description>
     </image>
+    
+    <directory>
+      <name>tmpDirName</name>
+      <longflag>--tmpdirname</longflag>
+      <description>Location of the directory on disk where temporary files
+      will be stored</description>
+      <label>Temporary directory</label>
+    </directory>
+
   </parameters> 
   <parameters> 
     <label>Parameters</label>
@@ -58,33 +95,33 @@
       <description>If set, the results of the analysis will be saved in the working directory in the file AnalysisOutcome.log</description>
       <default>false</default>
     </boolean>
-    <integer-vector>
-     <name>tgROIMin</name>
-     <longflag>roi_min</longflag>
-     <description>Lower extent of region of interest</description> 
-     <label>ROI Min</label>
-     <default>1,1,1</default>
-    </integer-vector> 
-    <integer-vector>
-     <name>tgROIMax</name>
-     <longflag>roi_max</longflag>
-     <description>Upper extent of region of interest</description> 
-     <label>ROI Max</label>
-     <default>256,256,100</default>
-   </integer-vector> 
+    <double-vector>
+     <name>tgROIXYZ</name>
+     <longflag>roi_xyz</longflag>
+     <description>Center of rectangular ROI in physical space</description> 
+     <label>ROI XYZ</label>
+     <default>0,0,0</default>
+    </double-vector> 
+    <double-vector>
+     <name>tgROIRadius</name>
+     <longflag>roi_radius</longflag>
+     <description>Radius of the rectangular ROI in physical space units</description> 
+     <label>ROI Radius</label>
+     <default>10,10,10</default>
+   </double-vector> 
    <integer-vector> 
      <name>tgThreshold</name>
      <longflag>threshold</longflag>
      <description>Intensity threshold defining tumor in scan 1</description> 
      <label>Threshold</label>
-     <default>100,200</default>
+     <default>0,200</default>
    </integer-vector> 
    <double>
      <name>tgSensitivity</name>
      <longflag>sensitivity</longflag>
      <description>Sensitivity Parameter (between 0 and 1) - only relevant for 'Analyze Intensity Pattern'</description>
      <label>Threshold</label>
-     <default>0.5</default>
+     <default>0.96</default>
    </double> 
     <boolean>
      <name>tgSaveFlag</name>
