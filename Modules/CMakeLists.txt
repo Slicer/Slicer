@@ -76,7 +76,8 @@ SET(modules
   FastMarchingSegmentation
   FourDImage
 #  FourDAnalysis
-  ExtractSubvolumeROI
+#  ExtractSubvolumeROI <- renamed to CropVolume
+  CropVolume
   CollectFiducials
   PETCTFusion
   IGTToolSelector
