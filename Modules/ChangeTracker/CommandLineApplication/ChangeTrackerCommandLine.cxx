@@ -62,6 +62,7 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
    } \
    this->name = NULL; \
    this->matrix = NULL; \
+   std::cout << "Here" << std::endl; \
    return 0; \
  }
 
@@ -119,6 +120,15 @@ class tgCMDLineStructure {
       this->Scan2Matrix = NULL;
     }
 
+    if ( this->Scan1SegmentedData ){
+      Scan1SegmentedData->Delete();
+      this->Scan1SegmentedData = NULL;
+    }
+
+    if ( this->Scan1SegmentedMatrix ){
+      Scan1SegmentedMatrix->Delete();
+      this->Scan1SegmentedMatrix = NULL;
+    }
 
     this->interp = NULL;
   } 
@@ -260,11 +270,12 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE; 
     }
     vtkKWApplication *app   = vtkKWApplication::New();
-
+    
     // This is necessary to load in ChangeTracker package in TCL interp.
     Changetracker_Init(interp);
     Vtkteem_Init(interp);
     Vtkitk_Init(interp);
+
 
     // SLICER_HOME
     cout << "Setting SLICER home: " << endl;
@@ -300,6 +311,11 @@ int main(int argc, char* argv[])
     tgVtkDefineMacro(Scan2SuperSample,vtkImageData); 
 
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
+
+    vtkMatrix4x4 *scan1TfmMatrix = vtkMatrix4x4::New();
+    vtkMatrix4x4 *scan2TfmMatrix = vtkMatrix4x4::New();
+    vtkMatrix4x4 *supersampleMatrix = vtkMatrix4x4::New(); 
+
 
     if (tg.SetScan1Data(tgScan1.c_str())) 
       {
@@ -341,8 +357,6 @@ int main(int argc, char* argv[])
     std::string Scan2LocalNormalizedFileName = tg.WorkingDir + "/TG_scan2_norm.nhdr";
     std::string Scan1SegmentFileName = tg.WorkingDir + "/TG_scan1_Segment.nhdr";
     
-    vtkMatrix4x4 *scan1TfmMatrix = vtkMatrix4x4::New();
-    vtkMatrix4x4 *scan2TfmMatrix = vtkMatrix4x4::New();
     scan1TfmMatrix->Identity();
     scan2TfmMatrix->Identity();
 
@@ -361,7 +375,6 @@ int main(int argc, char* argv[])
     double SuperSampleVol;     
     double Scan1Vol;     
     double SuperSampleRatio;
-    vtkMatrix4x4 *supersampleMatrix = vtkMatrix4x4::New(); 
     int ROIMin[3], ROIMax[3];
     double ROIXYZ[3], ROIRadius[3];
     ROIXYZ[0] = tgROIXYZ[0];

@@ -1795,6 +1795,7 @@ vtkImageData* vtkChangeTrackerLogic::GetConnectivityMask(vtkImageData* growthIma
 
   vtkImageData* result = vtkImageData::New();
   result->DeepCopy(cast->GetOutput());
+  cast->Delete();
 
   return result;
 }
