@@ -309,12 +309,14 @@ void vtkSlicerSeedWidgetClass::SetNthSeedPosition(int n, double *position)
   if (position == NULL ||
       this->GetWidget() == NULL)
     {
+    vtkWarningMacro("SetNthSeedPosition: position or widget is null, n = " << n);
     return;
     }
   vtkHandleWidget *handle = this->Widget->GetSeed(n);
   if (!handle ||
       handle->GetRepresentation() == NULL)
     {
+    vtkWarningMacro("SetNthSeedPosition: can't get handle or representation for seed " << n << ", total seeds = " <<  vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation())->GetNumberOfSeeds());
     return;
     }
   vtkHandleRepresentation::SafeDownCast(handle->GetRepresentation())->SetWorldPosition(position);
