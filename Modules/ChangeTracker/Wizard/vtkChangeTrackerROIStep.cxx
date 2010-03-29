@@ -717,7 +717,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
-  rwi0->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
+  rwi0->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand, 1);
   rwi0->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent, this->WizardGUICallbackCommand, 1);
 
   // Slice GUI 1
@@ -726,7 +726,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
-  rwi1->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent,this->WizardGUICallbackCommand);
+  rwi1->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent,this->WizardGUICallbackCommand, 1);
   rwi1->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent,this->WizardGUICallbackCommand, 1);
 
   // Slice GUI 2
@@ -735,7 +735,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
-  rwi2->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
+  rwi2->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand, 1);
   rwi2->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent, this->WizardGUICallbackCommand, 1);
 } 
 
