@@ -114,7 +114,7 @@
      <longflag>threshold</longflag>
      <description>Intensity threshold defining tumor in scan 1</description> 
      <label>Threshold</label>
-     <default>0,200</default>
+     <default>0,0</default>
    </integer-vector> 
    <double>
      <name>tgSensitivity</name>

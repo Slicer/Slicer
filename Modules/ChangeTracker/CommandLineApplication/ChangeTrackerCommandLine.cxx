@@ -391,6 +391,7 @@ int main(int argc, char* argv[])
       cerr << "ERROR: Could not super sample scan1 " << endl;
       return EXIT_FAILURE; 
     }
+    outputMatrix->Delete();
     if (logic->CreateSuperSampleRASFct(tg.Scan2Data,ROIXYZ, ROIRadius, SuperSampleSpacing,Scan2SuperSample, tg.Scan2Matrix,
                                        scan2TfmMatrix, supersampleMatrix)) {
       cerr << "ERROR: Could not super sample scan1 " << endl;
