@@ -1,4 +1,4 @@
-project(ExtractSubvolumeROI)
+project(CropVolume)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND CMAKE_POLICY)
