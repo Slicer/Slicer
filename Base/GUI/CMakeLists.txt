@@ -139,6 +139,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerTransformEditorWidget.cxx
   vtkSlicerMRMLTreeWidget.cxx
   vtkSlicerViewerWidget.cxx
+  vtkSlicerSeedWidgetClass.cxx
   vtkSlicerFiducialListWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
   vtkSlicerColorDisplayWidget.cxx
