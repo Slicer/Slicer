@@ -1,9 +1,9 @@
 project (DicomToNrrdConverter)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
-MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
+cmake_minimum_required(VERSION 2.6)
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND CMAKE_POLICY)
+mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
 
 set (CLP DicomToNrrdConverter)
@@ -30,7 +30,7 @@ if (Slicer3_SOURCE_DIR)
   slicer3_install_plugins(${TARGETS})
 else (Slicer3_SOURCE_DIR)
 
-INSTALL(TARGETS
+install(TARGETS
   DicomToNrrdConverter
                  RUNTIME DESTINATION bin
                  LIBRARY DESTINATION lib
