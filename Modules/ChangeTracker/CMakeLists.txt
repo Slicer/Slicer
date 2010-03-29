@@ -149,9 +149,9 @@ slicer3_install_modules(${lib_name})
 # --------------------------------------------------------------------------
 # Testing
 
-#if(BUILD_TESTING)
-#   ADD_SUBDIRECTORY(Testing)
-#endif(BUILD_TESTING)
+if(BUILD_TESTING)
+   ADD_SUBDIRECTORY(Testing)
+endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------
 # Install support files

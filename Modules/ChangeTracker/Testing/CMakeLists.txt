@@ -1,84 +1,36 @@
-project(ChangeTrackerTesting)
-#
-# Test CLI executables
-#
-include_regular_expression("^.*$")
+SET(KIT ChangeTrackerGUI)
+SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  vtkChangeTrackerGUITest.cxx
+  EXTRA_INCLUDE TestingMacros.h
+  )
 
-find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CxxTests.cxx)
 
-include_directories(${Slicer3_SOURCE_DIR}/Applications/CLI)
-include_directories(${Slicer3_BINARY_DIR}/Applications/CLI)
-include_directories(${ModuleDescriptionParser_SOURCE_DIR})
-include_directories (${TCLAP_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../CommandLineApplication
-                    ${ChangeTracker_BINARY_DIR}/CommandLineApplication  # CLP.h will be there
-                   )
+SET(LIBRARY_NAME ${PROJECT_NAME})
 
-#-----------------------------------------------------------------------------
-# Configure the default SLICER_BRAINWEB_DATA_ROOT for the location of BrainWeb Data.
-# When this data is available, additional 3D tests are enabled.
-find_path(SLICER_BRAINWEB_DATA_ROOT brainweb165a10f17.mha 
-  DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
-mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
+# --------------------------------------------------------------------------
+# Testing
 
+SET(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 
-#
-# Slicer3 is needed to resolve shared libraries
-#
-set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CxxTests 
+  ${lib_name} 
+#  ChangeTrackerGUI
+  )
 
-set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
-set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
-set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+SET( BaseGUI_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
 
-set(MRML_DATA "${Slicer3_HOME}/share/MRML/Testing/TestData")
+IF(WIN32)
+  SET(BaseGUI_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
+ENDIF(WIN32)
 
-add_executable(ChangeTrackerTest ChangeTrackerTest.cxx)
-add_dependencies(ChangeTrackerTest ChangeTrackerCommandLineLib)
-add_dependencies(ChangeTrackerTest ChangeTrackerCommandLine)
-target_link_libraries(ChangeTrackerTest 
-                      ChangeTracker
-                      ChangeTrackerCommandLineLib
-                     )
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${BaseGUI_TESTS} ${TESTNAME} 
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+ENDMACRO( SIMPLE_TEST  )
 
-add_test(ChangeTrackerCL_Help
-         ${Slicer3_BINARY_DIR}/Slicer3 --launch
-         ChangeTrackerTest 
-         ChangeTrackerTest --help
-        )
-
-add_test(ChangeTrackerCL_TestGlobalReg
-         ${Slicer3_BINARY_DIR}/Slicer3 --launch
-         ChangeTrackerTest
-#         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
-         ChangeTrackerTest
-         --sensitivity 0.96
-         --threshold 145,411
-         --roi_min 107,68,59
-         --roi_max 153,123,94
-         --intensity_analysis
-         --scan1 ${TEST_DATA}/MRMeningioma0.nrrd
-         --scan2 ${TEST_DATA}/MRMeningioma1.nrrd
-         --terminationstep 1
-         --output ${TEMP}/output.nrrd
-        )
-        
-add_test(ChangeTrackerCL_TestFull_Intensity
-         ${Slicer3_BINARY_DIR}/Slicer3 --launch
-         ChangeTrackerTest
-#         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
-         ChangeTrackerTest
-         --sensitivity 0.96
-         --threshold 145,411
-         --roi_min 107,68,59
-         --roi_max 153,123,94
-         --intensity_analysis
-         --scan1 ${TEST_DATA}/MRMeningioma0.nrrd
-         --scan2 ${TEST_DATA}/MRMeningioma1.nrrd
-         --terminationstep 0
-         --output ${TEMP}/output.nrrd
-        )
+SIMPLE_TEST( vtkChangeTrackerGUITest )
