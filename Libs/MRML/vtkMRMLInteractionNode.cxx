@@ -148,6 +148,10 @@ void vtkMRMLInteractionNode::SetLastInteractionMode ( int mode )
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
 {
+  if ( this->CurrentInteractionMode == mode )
+    {
+    return;
+    }
   switch (mode)
     {
     case vtkMRMLInteractionNode::PickManipulate:
