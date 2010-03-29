@@ -2,6 +2,7 @@ SET(KIT ChangeTrackerGUI)
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkChangeTrackerGUITest.cxx
+  vtkMRMLChangeTrackerNodeTest.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -18,7 +19,6 @@ SET(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit pr
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests 
   ${lib_name} 
-#  ChangeTrackerGUI
   )
 
 SET( BaseGUI_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
@@ -34,3 +34,4 @@ MACRO( SIMPLE_TEST  TESTNAME )
 ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( vtkChangeTrackerGUITest )
+SIMPLE_TEST( vtkMRMLChangeTrackerNodeTest )
