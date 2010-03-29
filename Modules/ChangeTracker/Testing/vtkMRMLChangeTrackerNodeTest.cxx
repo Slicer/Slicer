@@ -21,6 +21,7 @@ int vtkMRMLChangeTrackerNodeTest(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLChangeTrackerNode > node1 = vtkSmartPointer< vtkMRMLChangeTrackerNode >::New();
 
+  std::cout << "ExerciseBasicMethods" << std::endl;
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   std::cout << "UpdateReferences" << std::endl;
