@@ -38,7 +38,7 @@ class vtkKWMenuButtonWithLabel;
 class vtkKWLabel;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
- public:
+public:
     /// 
     /// Usual vtk class functions
     static vtkSlicerFiducialsGUI* New (  );
@@ -130,9 +130,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-    /// 
-    /// Class's mediator methods for processing events invoked by
-    /// either the Logic, MRML or GUI.
+    // Description:
+    // Add/Remove observers on the mrml scene
+    void AddMRMLObservers();
+    void RemoveMRMLObservers();
+
+    // Description:
+    // Class's mediator methods for processing events invoked by
+    // either the Logic, MRML or GUI.
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -176,12 +181,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     /// 
     /// Set the fid list id, and update the widgets
     void SetFiducialListNodeID(char *id);
-    
+
+    //BTX
     /// 
     /// Which fiducial list node are we displaying in this gui?
     vtkSlicerNodeSelectorWidget* FiducialListSelectorWidget;
-
-    //BTX
+    
     /// 
     /// FiducialListIDModifiedEvent is generated when the FiducialListNodeID is
     /// changed
@@ -255,11 +260,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
      /// modifies the Selected List's hide/expose button to
      /// show the selected list's exposure state.
      void ModifySelectedListExposureGUI();
-
+  
 protected:
     vtkSlicerFiducialsGUI ( );
     virtual ~vtkSlicerFiducialsGUI ( );
-    
+
     /// Module logic and mrml pointers
     vtkSlicerFiducialsLogic *Logic;
 

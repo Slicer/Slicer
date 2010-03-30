@@ -338,7 +338,7 @@ void vtkSlicerSeedWidgetClass::RemoveSeedByID(const char *id)
   if (it != this->PointIDToWidgetIndex.end())
     {
     int index = it->second; // this->PointIDToWidgetIndex[id];
-    vtkWarningMacro("RemoveSeedByID: for id " << id << " got index " << index);
+    vtkDebugMacro("RemoveSeedByID: for id " << id << " got index " << index);
     this->RemoveSeed(index);
 
     // erase the entry from the map

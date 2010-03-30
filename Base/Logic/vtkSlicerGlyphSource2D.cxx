@@ -23,6 +23,7 @@
 #include "vtkPolyData.h"
 #include "vtkUnsignedCharArray.h"
 
+#include "vtkSmartPointer.h"
 #include "vtkMRMLFiducialListNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerGlyphSource2D, "$Revision$");
@@ -505,7 +506,7 @@ void vtkSlicerGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *lines
   float TWOPI = PI * 2.0;
   float PIoverFOUR = PI / 4.0;
   float x, y;
-  float _glyphScale = scale;
+  float _glyphScale = 1.0; // scale;
   float angle = 0.0;
   vtkIdType ptIds[2];
 
@@ -627,8 +628,9 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
     return;
     }
   
-  vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::New();
-
+  //vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::New();
+  vtkSmartPointer<vtkMRMLFiducialListNode> listNode = vtkSmartPointer<vtkMRMLFiducialListNode>::New();
+  
   if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::StarBurst2D) ) )
     {
     this->SetGlyphTypeToStarBurst();
@@ -677,6 +679,6 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
     {
     this->SetGlyphTypeToHookedArrow();
     }
-  listNode->Delete();
-  listNode = NULL;
+//  listNode->Delete();
+//  listNode = NULL;
 }
