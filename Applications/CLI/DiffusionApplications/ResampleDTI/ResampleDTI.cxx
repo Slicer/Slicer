@@ -1046,30 +1046,6 @@ int main( int argc , char * argv[] )
   GetImageType( inputVolume , pixelType , componentType ) ;
   switch( componentType )
     {
-    case itk::ImageIOBase::UCHAR :
-      return Do< unsigned char > ( list ) ;
-      break ;
-    case itk::ImageIOBase::CHAR :
-      return Do< char > ( list ) ;
-      break ;
-    case itk::ImageIOBase::USHORT :
-      return Do< unsigned short >( list ) ;
-      break ;
-    case itk::ImageIOBase::SHORT :
-      return Do< short > ( list ) ;
-      break ;
-    case itk::ImageIOBase::UINT :
-      return Do< unsigned int > ( list ) ;
-      break ;
-    case itk::ImageIOBase::INT :
-      return Do< int > ( list ) ;
-      break ;
-    case itk::ImageIOBase::ULONG :
-      return Do< unsigned long > ( list ) ;
-      break ;
-    case itk::ImageIOBase::LONG :
-      return Do< long > ( list ) ;
-      break ;
     case itk::ImageIOBase::FLOAT :
       return Do< float > ( list ) ;
       break ;
