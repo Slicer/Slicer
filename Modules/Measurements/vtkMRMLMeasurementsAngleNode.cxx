@@ -62,7 +62,7 @@ vtkMRMLMeasurementsAngleNode::vtkMRMLMeasurementsAngleNode()
 
   // the annotation on the line
   this->LabelFormat = NULL;
-  this->SetLabelFormat("%-#6.3g");
+  this->SetLabelFormat("%.0f");
   this->SetLabelScale(10.0, 10.0, 10.0);
   this->LabelVisibilityOn();
 
