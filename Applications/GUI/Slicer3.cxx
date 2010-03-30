@@ -2102,7 +2102,7 @@ int Slicer3_main(int& argc, char *argv[])
   //
   res = slicerApp->StartApplication();
 
-  SlicerQDebug("Shuting down ...");
+  SlicerQDebug("Shutting down ...");
 
   appGUI->GetMainSlicerWindow()->PrepareForDelete();
   appGUI->GetMainSlicerWindow()->Close();
