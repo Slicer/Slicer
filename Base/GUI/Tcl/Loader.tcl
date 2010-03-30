@@ -124,6 +124,7 @@ if { [itcl::find class Loader] == "" } {
     variable _fiducialExtensions ".fcsv"
     variable _colorTableExtensions ".txt .ctbl"
     variable _transformExtensions ".tfm .mat"
+    variable _volumePropertyExtensions ".vp"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""
@@ -486,6 +487,9 @@ itcl::body Loader::add { paths } {
         } elseif { [lsearch $_transformExtensions $ext] != -1 } {
           $this addRow $path "Transform"
           $this status ""
+        } elseif { [lsearch $_volumePropertyExtensions $ext] != -1 } {
+          $this addRow $path "VolumeProperty"
+          $this status ""
         } else {
           $this status "Cannot read file $path\nFor DICOM use File->Add Volume..."
         }
@@ -603,6 +607,17 @@ itcl::body Loader::apply { } {
         "Transform" {
            set logic [vtkSlicerTransformLogic New]
            set ret [catch "set node [$logic AddTransform $path $::slicer3::MRMLScene]" res]
+           $logic Delete
+           if { $node == "" } {
+              $this errorDialog "Could not open $path"
+           } else {
+              $node SetName $name
+           }  
+        }
+        "VolumeProperty" {
+           set logic [vtkVolumeRenderingLogic New]
+           $logic SetMRMLScene $::slicer3::MRMLScene
+           set ret [catch "set node [$logic AddVolumePropertyFromFile $path]" res]
            $logic Delete
            if { $node == "" } {
               $this errorDialog "Could not open $path"
