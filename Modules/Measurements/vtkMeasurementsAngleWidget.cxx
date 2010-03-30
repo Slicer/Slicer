@@ -1229,38 +1229,52 @@ void vtkMeasurementsAngleWidget::Update3DWidget(vtkMRMLMeasurementsAngleNode *ac
   // visibility
   if ( activeAngleNode->GetVisibility() )
     {
-    if (angleWidget->GetWidget()->GetInteractor() == NULL &&
-        this->GetViewerWidget())
+    if (angleWidget->GetWidget()->GetInteractor() == NULL)
       {
-      angleWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+      if (this->GetViewerWidget() &&
+        this->GetViewerWidget()->GetMainViewer() &&
+        this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor())
+        {
+        angleWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+        }
       double *p1 = activeAngleNode->GetPosition1();
       double *p2 = activeAngleNode->GetPosition2();
       double *pCenter = activeAngleNode->GetPositionCenter();
       angleWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
       angleWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
       angleWidget->GetRepresentation()->SetCenterWorldPosition(pCenter);
-      // at this point the angle widget is still waiting for three clicks to
-      // start and define the angle, so fool it into thinking that the three
-      // clicks have happened
-      int *max;
-      max = angleWidget->GetWidget()->GetInteractor()->GetSize();
-      double x, y;
-      x = (double)max[0];
-      y = (double)max[1];
-      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.25,y*0.25);
-      angleWidget->GetWidget()->On();
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
-      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.5,y*0.5);
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
-      angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.75,y*0.25);
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
-      angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+      if (angleWidget->GetWidget()->GetInteractor() != NULL)
+        {
+        // at this point the angle widget is still waiting for three clicks to
+        // start and define the angle, so fool it into thinking that the three
+        // clicks have happened
+        int *max;
+        max = angleWidget->GetWidget()->GetInteractor()->GetSize();
+        double x, y;
+        x = (double)max[0];
+        y = (double)max[1];
+        angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.25,y*0.25);
+        angleWidget->GetWidget()->On();
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+        angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.5,y*0.5);
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+        angleWidget->GetWidget()->GetInteractor()->SetEventPositionFlipY(x*0.75,y*0.25);
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
+        angleWidget->GetWidget()->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
+        }
       
       }
-    vtkDebugMacro("UpdateWidget: angle widget on");
-    angleWidget->GetWidget()->On();
+    if (angleWidget->GetWidget()->GetInteractor() != NULL)
+      {
+      vtkDebugMacro("UpdateWidget: angle widget on");
+      angleWidget->GetWidget()->On();
+      }
+    else
+      {
+      vtkWarningMacro("UpdateWidget: can't set interactor on angle widget, not turning it on");
+      }
     }
   else
     {
@@ -2318,6 +2332,9 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
 void vtkMeasurementsAngleWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
 {
   this->ViewerWidget = viewerWidget;
+
+  // update any widgets with the new interactor
+  this->Update3DWidgetsFromMRML();
 }
 
 //---------------------------------------------------------------------------

@@ -504,8 +504,7 @@ void vtkMeasurementsGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
 {
   if (activeViewer == NULL)
     {
-    vtkWarningMacro("SetActiveViewer: active viewer is NULL, returning.");
-    return;
+    vtkDebugMacro("SetActiveViewer: active viewer is NULL, unsetting the viewer widget.");
     }
   else
     {
@@ -520,9 +519,16 @@ void vtkMeasurementsGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
     {
     this->AngleWidget->SetViewerWidget(activeViewer);
     }
-  if (this->TransformWidget &&
-      activeViewer->GetMainViewer())
+  if (this->TransformWidget)
     {
-    this->TransformWidget->SetInteractor(activeViewer->GetMainViewer()->GetRenderWindowInteractor());
+    if (activeViewer &&
+        activeViewer->GetMainViewer())
+      {
+      this->TransformWidget->SetInteractor(activeViewer->GetMainViewer()->GetRenderWindowInteractor());
+      }
+    else
+      {
+      this->TransformWidget->SetInteractor(NULL);
+      }
     }
 }

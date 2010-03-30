@@ -1179,18 +1179,27 @@ void vtkMeasurementsRulerWidget::Update3DWidget(vtkMRMLMeasurementsRulerNode *ac
   // visibility
   if ( activeRulerNode->GetVisibility() )
     {
-    if (distanceWidget->GetWidget()->GetInteractor() == NULL &&
-        this->GetViewerWidget() &&
-        this->GetViewerWidget()->GetMainViewer())
+    if (distanceWidget->GetWidget()->GetInteractor() == NULL)
       {
-      distanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+      if (this->GetViewerWidget() &&
+          this->GetViewerWidget()->GetMainViewer())
+        {
+        distanceWidget->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+        }
       double p1[3] = {-100.0, 50.0, 0.0};
       double p2[3] = {100.0,  50.0, 0.0};
       distanceWidget->GetRepresentation()->SetPoint1WorldPosition(p1);
       distanceWidget->GetRepresentation()->SetPoint2WorldPosition(p2);
       }
-    vtkDebugMacro("UpdateWidget: distance widget on");
-    distanceWidget->GetWidget()->On();
+    if (distanceWidget->GetWidget()->GetInteractor() != NULL)
+      {
+      vtkDebugMacro("UpdateWidget: distance widget on");
+      distanceWidget->GetWidget()->On();
+      }
+    else
+      {
+      vtkWarningMacro("UpdateWidget: no interactor set, viewer widget or main viewer are null");
+      }
     }
   else
     {
@@ -2035,6 +2044,8 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 void vtkMeasurementsRulerWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
 {
   this->ViewerWidget = viewerWidget;
+  // update any widgets with the new interactor
+  this->Update3DWidgetsFromMRML();
 }
 
 //---------------------------------------------------------------------------
