@@ -11,12 +11,10 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLFiducialListNode - MRML node to represent a 3D surface model.
-///
-/// Model nodes describe polygonal data.  They indicate where the model is
-/// stored on disk, and how to render it (color, opacity, etc).  Models
-/// are assumed to have been constructed with the orientation and voxel
-/// dimensions of the original segmented volume.
+///  vtkMRMLFiducialListNode - MRML node to represent a list of points in 3D
+/// 
+/// Fiducial list nodes describe a list of points in 3d space.  They indicate
+/// how to render it (color, opacity, etc). 
 
 #ifndef __vtkMRMLFiducialListNode_h
 #define __vtkMRMLFiducialListNode_h
@@ -31,6 +29,15 @@
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
+
+///
+/// a structure used when invoking an event to let others know that two
+/// fiducials have swapped indices
+typedef struct
+{
+    int first;
+    int second;
+} FiducialListSwappedIndices;
 
 class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLStorableNode
 {
@@ -58,7 +65,7 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiducialList";};
 
-  ///
+  /// 
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// update display node ids
@@ -70,7 +77,7 @@ public:
   vtkGetMacro(SymbolScale,double);
 
 
-  /// Get/Set for list visibility
+  /// Get/Set for list visibility 
   ///vtkSetMacro(Visibility,int);
   void SetVisibility(int visible);
   vtkGetMacro(Visibility,int);
@@ -125,6 +132,7 @@ public:
   /// Get the elements of the fiducial points
   /// Return a three element float holding the position
   float *GetNthFiducialXYZ(int n);
+
   /// Return a three element double giving the world position (any parent
   /// transform on the list applied to the return of GetNthFiducialXYZ.
   /// worldxyz is a 4 item array, xyzw
@@ -168,7 +176,8 @@ public:
     {
       DisplayModifiedEvent = 19000,
       PolyDataModifiedEvent = 19001,
-      FiducialModifiedEvent = 19002
+      FiducialModifiedEvent = 19002,
+      FiducialIndexModifiedEvent = 19003
     };
 //ETX
 
@@ -201,7 +210,7 @@ public:
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
   {
-    GlyphMin,
+    GlyphMin = 1,
     Vertex2D = GlyphMin,
     Dash2D,
     Cross2D,

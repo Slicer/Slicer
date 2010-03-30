@@ -24,9 +24,10 @@ Version:   $Revision: 1.3 $
 #include "vtkAbstractTransform.h"
 #include "vtkMath.h"
 
-
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+
+#include "vtkSmartPointer.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
@@ -372,13 +373,14 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       // will shrink as the iterator f reduces
       vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
       // can't just use AddFiducial, as it sets and increments a unique id
-      vtkMRMLFiducial *fidThis = vtkMRMLFiducial::New();
+//      vtkMRMLFiducial *fidThis = vtkMRMLFiducial::New();
+      vtkSmartPointer<vtkMRMLFiducial> fidThis = vtkSmartPointer<vtkMRMLFiducial>::New();
       fidThis->Copy(fid);
       // manual copy of id
       fidThis->SetID(fid->GetID());
       this->FiducialList->vtkCollection::AddItem(fidThis);
-      fidThis->Delete();
-      fidThis = NULL;
+//      fidThis->Delete();
+//     fidThis = NULL;
       }
     // turn on modified events
     this->Modified();
@@ -702,9 +704,9 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZ(int n, float x, float y, float z)
   // only set and call modified if it's different
   if (oldXYZ == NULL ||
       (oldXYZ != NULL &&
-       (oldXYZ[0] != x ||
-        oldXYZ[1] != y ||
-        oldXYZ[2] != z)))
+       ((fabs(oldXYZ[0] - x) > 0.001) ||
+        (fabs(oldXYZ[1] - y) > 0.001) ||
+        (fabs(oldXYZ[2] - z) > 0.001))))
     {
     node->SetXYZ(x,y,z);
     
@@ -1039,7 +1041,8 @@ int vtkMRMLFiducialListNode::AddFiducial()
 
   // create a vtkMRMLFiducial and return the fiducial number for later
   // access
-  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+//  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+  vtkSmartPointer<vtkMRMLFiducial> fiducial = vtkSmartPointer<vtkMRMLFiducial>::New();
 
   // give the point a unique name based on the list name
   std::stringstream ss;
@@ -1063,8 +1066,9 @@ int vtkMRMLFiducialListNode::AddFiducial()
 
   // then delete it, the collection has registered it and will keep track of
   // it
-  fiducial->Delete();
-  fiducial = NULL;
+  // with smart pointer, will go out of scope 
+//  fiducial->Delete();
+//  fiducial = NULL;
 
   if (!this->GetDisableModifiedEvent())
     {
@@ -1093,7 +1097,8 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 
   // create a vtkMRMLFiducial and return the fiducial number for later
   // access
-  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+//  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+  vtkSmartPointer<vtkMRMLFiducial> fiducial = vtkSmartPointer<vtkMRMLFiducial>::New();
 
   // give the point a unique name based on the list name
   std::stringstream ss;
@@ -1121,8 +1126,8 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 
   // then delete it, the collection has registered it and will keep track of
   // it
-  fiducial->Delete();
-  fiducial = NULL;
+//  fiducial->Delete();
+//  fiducial = NULL;
 
   if (!this->GetDisableModifiedEvent())
     {
@@ -1152,7 +1157,8 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
 
   // create a vtkMRMLFiducial and return the fiducial number for later
   // access
-  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+//  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+  vtkSmartPointer<vtkMRMLFiducial> fiducial = vtkSmartPointer<vtkMRMLFiducial>::New();
 
   fiducial->SetLabelText(label);
   fiducial->SetID(this->GetScene()->GetUniqueNameByString(label));
@@ -1172,8 +1178,8 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
 
   // then delete it, the collection has registered it and will keep track of
   // it
-  fiducial->Delete();
-  fiducial = NULL;
+//  fiducial->Delete();
+//  fiducial = NULL;
 
   if (!this->GetDisableModifiedEvent())
     {
@@ -1607,8 +1613,10 @@ void vtkMRMLFiducialListNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   float xyzOut[3];
   float orientationIn[4], quaternionIn[4];
   float orientationMatrix3x3[3][3];
-  vtkMatrix4x4* orientationMatrix = vtkMatrix4x4::New();
-  vtkMatrix4x4* newOrientationMatrix = vtkMatrix4x4::New();
+//  vtkMatrix4x4* orientationMatrix = vtkMatrix4x4::New();
+//  vtkMatrix4x4* newOrientationMatrix = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> orientationMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkSmartPointer<vtkMatrix4x4> newOrientationMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   for (int n=0; n<numPoints; n++)
     {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
@@ -1637,8 +1645,8 @@ void vtkMRMLFiducialListNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
     node->SetOrientationWXYZFromMatrix4x4(newOrientationMatrix);
     }
 
-  orientationMatrix->Delete();
-  newOrientationMatrix->Delete();
+//  orientationMatrix->Delete();
+//  newOrientationMatrix->Delete();
   this->ModifiedSinceReadOn();
 }
 
@@ -1728,7 +1736,8 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
     }
   newIndex = fidIndex - 1;
   // make a copy to avoid memory corruption
-  vtkMRMLFiducial *copyFidAbove = vtkMRMLFiducial::New();
+//  vtkMRMLFiducial *copyFidAbove = vtkMRMLFiducial::New();
+  vtkSmartPointer<vtkMRMLFiducial> copyFidAbove = vtkSmartPointer<vtkMRMLFiducial>::New();
   copyFidAbove->Copy(fidAbove);
   // id isn't copied
   copyFidAbove->SetID(fidAbove->GetID());
@@ -1738,11 +1747,16 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   this->FiducialList->ReplaceItem(fidIndex, copyFidAbove);
 
   // it's held onto by the collection now
-  copyFidAbove->Delete();
+//  copyFidAbove->Delete();
 
   this->ModifiedSinceReadOn();
   
-  this->Modified();
+  //this->Modified();
+  // let any interested parties know that two fiducials have swapped indices
+  FiducialListSwappedIndices swap;
+  swap.first = fidIndex;
+  swap.second = newIndex;
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap); 
 
   return newIndex;
 }
@@ -1774,7 +1788,8 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
     return newIndex;
     }
   // make copy to avoid memory corruption
-  vtkMRMLFiducial *copyFidBelow = vtkMRMLFiducial::New();
+//  vtkMRMLFiducial *copyFidBelow = vtkMRMLFiducial::New();
+  vtkSmartPointer<vtkMRMLFiducial> copyFidBelow = vtkSmartPointer<vtkMRMLFiducial>::New();
   copyFidBelow->Copy(fidBelow);
   // the id isn't copied
   copyFidBelow->SetID(fidBelow->GetID());
@@ -1786,9 +1801,16 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   this->FiducialList->ReplaceItem(fidIndex, copyFidBelow);
 
   // it's held onto by the collection now
-  copyFidBelow->Delete(); 
+//  copyFidBelow->Delete(); 
   
-  this->Modified();
+  //this->Modified();
+  // let any interested parties know that two fiducials have swapped indices
+  FiducialListSwappedIndices swap;
+  swap.first = fidIndex;
+  swap.second = newIndex;
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap); 
+
+
   this->ModifiedSinceReadOn();
   
   return newIndex;
