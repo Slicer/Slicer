@@ -917,6 +917,8 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
       } elseif { $isDarwin } {
+        ## Need to set the library path so that vtkhash is found while building the parellel libraries
+        set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
         set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
         runcmd $::CMAKE \
             -G$GENERATOR \
