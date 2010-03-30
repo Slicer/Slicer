@@ -47,3 +47,6 @@ if (Slicer3_SOURCE_DIR)
 
 endif (Slicer3_SOURCE_DIR)
 
+if(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+endif(BUILD_TESTING)
