@@ -395,8 +395,8 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   // vtkMRMLNode::PrintSelf(os,indent);
-  os << indent << "ID:                   " << this->ID   << "\n";
-  os << indent << "Name:                 " << this->Name << "\n";
+  os << indent << "ID:                   " << (this->ID ? this->ID:"(none)") << "\n";
+  os << indent << "Name:                 " << (this->Name ? this->Name:"(none)") << "\n";
   os << indent << "Scan1_Ref:            " << 
    (this->Scan1_Ref ? this->Scan1_Ref : "(none)") << "\n";
   os << indent << "Scan2_Ref:            " << 
