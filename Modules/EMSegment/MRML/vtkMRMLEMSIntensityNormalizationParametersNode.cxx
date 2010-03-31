@@ -1,77 +1,59 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLEMSIntensityNormalizationParametersNode.cxx,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
 
 #include <vtksys/ios/sstream>
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSIntensityNormalizationParametersNode*
-vtkMRMLEMSIntensityNormalizationParametersNode::New()
+//-----------------------------------------------------------------------------
+vtkMRMLEMSIntensityNormalizationParametersNode* 
+vtkMRMLEMSIntensityNormalizationParametersNode::
+New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLEMSIntensityNormalizationParametersNode");
-
-  if (ret)
+  vtkObject* ret = vtkObjectFactory::
+    CreateInstance("vtkMRMLEMSIntensityNormalizationParametersNode");
+  if(ret)
     {
     return (vtkMRMLEMSIntensityNormalizationParametersNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSIntensityNormalizationParametersNode;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLEMSIntensityNormalizationParametersNode::
+//-----------------------------------------------------------------------------
+vtkMRMLNode* 
+vtkMRMLEMSIntensityNormalizationParametersNode::
 CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::
     CreateInstance("vtkMRMLEMSIntensityNormalizationParametersNode");
-
-  if (ret)
+  if(ret)
     {
     return (vtkMRMLEMSIntensityNormalizationParametersNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSIntensityNormalizationParametersNode;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSIntensityNormalizationParametersNode::
-vtkMRMLEMSIntensityNormalizationParametersNode()
+//-----------------------------------------------------------------------------
+vtkMRMLEMSIntensityNormalizationParametersNode::vtkMRMLEMSIntensityNormalizationParametersNode()
 {
   this->SetToDefaultT1SPGR();
-  this->PrintInfo = 1;
-  this->Enabled   = 1;
+  this->PrintInfo                      = 1;
+  this->Enabled                        = 1;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSIntensityNormalizationParametersNode::
-~vtkMRMLEMSIntensityNormalizationParametersNode()
+//-----------------------------------------------------------------------------
+vtkMRMLEMSIntensityNormalizationParametersNode::~vtkMRMLEMSIntensityNormalizationParametersNode()
 {
   // nothing to do here
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT1SPGR()
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT1SPGR()
 {
   this->NormValue                      = 90;
   this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
@@ -80,8 +62,10 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT1SPGR()
   this->RelativeMaxVoxelNum            = 0.99;
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT2()
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT2()
 {
   this->NormValue                      = 310;
   this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
@@ -90,8 +74,10 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT2()
   this->RelativeMaxVoxelNum            = 0.99;
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT2_2()
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT2_2()
 {
   this->NormValue                      = 310;
   this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
@@ -100,65 +86,43 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::SetToDefaultT2_2()
   this->RelativeMaxVoxelNum            = 0.95;
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::WriteXML(ostream& of, int
-    nIndent)
+//-----------------------------------------------------------------------------
+void vtkMRMLEMSIntensityNormalizationParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
   vtkIndent indent(nIndent);
 
-  of << indent
-    << " NormValue=\""
-    << this->NormValue
-    << "\"";
-
-  of << indent
-    << " NormType=\""
-    << this->NormType
-    << "\"";
-
-  of << indent
-    << " InitialHistogramSmoothingWidth=\""
-    << this->InitialHistogramSmoothingWidth
-    << "\"";
-
-  of << indent
-    << " MaxHistogramSmoothingWidth=\""
-    << this->MaxHistogramSmoothingWidth
-    << "\"";
-
-  of << indent
-    << " RelativeMaxVoxelNum=\""
-    << this->RelativeMaxVoxelNum
-    << "\"";
-
-  of << indent
-    << " PrintInfo=\""
-    << this->PrintInfo << "\"";
-
-  of << indent
-    << " Enabled=\""
-    << this->Enabled
-    << "\"";
+  of << indent << " NormValue=\"" 
+     << this->NormValue << "\" ";
+  of << indent << "NormType=\"" 
+     << this->NormType << "\" ";
+  of << indent << "InitialHistogramSmoothingWidth=\"" 
+     << this->InitialHistogramSmoothingWidth << "\" ";
+  of << indent << "MaxHistogramSmoothingWidth=\"" 
+     << this->MaxHistogramSmoothingWidth << "\" ";
+  of << indent << "RelativeMaxVoxelNum=\"" 
+     << this->RelativeMaxVoxelNum << "\" ";
+  of << indent << "PrintInfo=\"" 
+     << this->PrintInfo << "\" ";
+  of << indent << "Enabled=\"" 
+     << this->Enabled << "\" ";
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::ReadXMLAttributes(const
-    char** attrs)
+//-----------------------------------------------------------------------------
+void vtkMRMLEMSIntensityNormalizationParametersNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
 
+  //
   // we assume an even number of elements
-
+  //
   const char* key;
   const char* val;
-
   while (*attrs != NULL)
     {
     key = *attrs++;
     val = *attrs++;
-
+    
     if (!strcmp(key, "NormValue"))
       {
       vtksys_stl::stringstream ss;
@@ -204,40 +168,41 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::ReadXMLAttributes(const
     }
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void vtkMRMLEMSIntensityNormalizationParametersNode::Copy(vtkMRMLNode *rhs)
 {
   Superclass::Copy(rhs);
-  vtkMRMLEMSIntensityNormalizationParametersNode* node =
+  vtkMRMLEMSIntensityNormalizationParametersNode* node = 
     (vtkMRMLEMSIntensityNormalizationParametersNode*) rhs;
 
   this->SetNormValue(node->NormValue);
   this->SetNormType(node->NormType);
-  this->SetInitialHistogramSmoothingWidth(node->
-      InitialHistogramSmoothingWidth);
+  this->
+    SetInitialHistogramSmoothingWidth(node->InitialHistogramSmoothingWidth);
   this->SetMaxHistogramSmoothingWidth(node->MaxHistogramSmoothingWidth);
   this->SetRelativeMaxVoxelNum(node->RelativeMaxVoxelNum);
   this->SetPrintInfo(node->PrintInfo);
   this->SetEnabled(node->Enabled);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSIntensityNormalizationParametersNode::PrintSelf(ostream& os,
-    vtkIndent indent)
+//-----------------------------------------------------------------------------
+void vtkMRMLEMSIntensityNormalizationParametersNode::PrintSelf(ostream& os, 
+                                                     vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
+  
   os << indent << "NormValue: " << this->NormValue << "\n";
   os << indent << "NormType: " << this->NormType << "\n";
-  os << indent << "InitialHistogramSmoothingWidth: "
+  os << indent << "InitialHistogramSmoothingWidth: " 
      << this->InitialHistogramSmoothingWidth << "\n";
-  os << indent << "MaxHistogramSmoothingWidth: "
+  os << indent << "MaxHistogramSmoothingWidth: " 
      << this->MaxHistogramSmoothingWidth << "\n";
-  os << indent << "RelativeMaxVoxelNum: "
+  os << indent << "RelativeMaxVoxelNum: " 
      << this->RelativeMaxVoxelNum << "\n";
-  os << indent << "PrintInfo: "
+  os << indent << "PrintInfo: " 
      << this->PrintInfo << "\n";
-  os << indent << "Enabled: "
+  os << indent << "Enabled: " 
      << this->Enabled << "\n";
 }
+
 

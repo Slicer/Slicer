@@ -1,19 +1,3 @@
-/*=auto==============================================================
-
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
-
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
-
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentAnatomicalStructureStep_h,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-==============================================================auto=*/
-
 #ifndef __vtkEMSegmentAnatomicalStructureStep_h
 #define __vtkEMSegmentAnatomicalStructureStep_h
 
@@ -21,6 +5,7 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
+//class vtkKWChangeColorButton;
 class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
 class vtkKWPushButtonSet;
@@ -30,8 +15,7 @@ class vtkKWCheckButton;
 class vtkKWFrame;
 class vtkKWLabelWithLabel;
 
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentAnatomicalStructureStep :
-  public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentAnatomicalStructureStep : public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentAnatomicalStructureStep *New();
@@ -68,8 +52,6 @@ public:
     vtkIdType, double r, double g, double b);
   virtual void OpenTreeCallback();
   virtual void CloseTreeCallback();
-  
-  int nbOfLeaf;
 
 protected:
   vtkEMSegmentAnatomicalStructureStep();

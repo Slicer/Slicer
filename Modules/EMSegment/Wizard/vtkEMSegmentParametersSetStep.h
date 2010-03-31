@@ -10,7 +10,6 @@ Program:   3D Slicer
 Module:    $RCSfile: vtkEMSegmentParametersSetStep.h,v$
 Date:      $Date: 2006/01/06 17:56:51 $
 Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
 
@@ -21,6 +20,9 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
+class vtkKWTopLevel;
+class vtkKWPushButton;
+class vtkKWEntryWithLabel;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentParametersSetStep : public vtkEMSegmentStep
 {
@@ -40,6 +42,13 @@ public:
   // Description:
   // Callbacks.
   virtual void SelectedParameterSetChangedCallback(int index);
+  virtual void SelectedDefaultTaskChangedCallback(int index);
+
+  void RenameApplyCallback(const char* newName);
+  void HideRenameEntry();
+
+  vtkGetObjectMacro(RenameEntry,vtkKWEntryWithLabel);
+  vtkGetObjectMacro(RenameApply, vtkKWPushButton);
 
 protected:
   vtkEMSegmentParametersSetStep();
@@ -48,13 +57,26 @@ protected:
   vtkKWFrameWithLabel      *ParameterSetFrame;
   vtkKWMenuButtonWithLabel *ParameterSetMenuButton;
 
+  int RenameIndex;
+  vtkKWTopLevel *RenameTopLevel;
+  vtkKWEntryWithLabel *RenameEntry;
+  vtkKWPushButton *RenameApply;
+  vtkKWPushButton *RenameCancel;
+
+
   // Description:
   // Populate the list of loaded parameter sets.
-  virtual void PopulateLoadedParameterSets(vtkObject *obj, const char *method);
+  virtual void PopulateLoadedParameterSets();
+
 
 private:
   vtkEMSegmentParametersSetStep(const vtkEMSegmentParametersSetStep&);
   void operator=(const vtkEMSegmentParametersSetStep&);
+
+  void PopUpRenameEntry(int index);
+  void UpdateTaskListIndex(int index);
+  int LoadDefaultData(const char *dataLink);
+
 };
 
 #endif

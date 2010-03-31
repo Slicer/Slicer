@@ -19,6 +19,9 @@
 #include "vtkObject.h"
 #include "assert.h"
 // #include "ostream.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+#include <iostream>
 
 /// ----------------------------------------------------
 /// Stucture and function needed for convolution

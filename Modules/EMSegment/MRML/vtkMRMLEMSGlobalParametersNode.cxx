@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLEMSGlobalParametersNode.h,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #include "vtkMRMLEMSGlobalParametersNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
@@ -22,39 +6,39 @@
 
 #include <vtksys/stl/string>
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSGlobalParametersNode* vtkMRMLEMSGlobalParametersNode::New()
+//-----------------------------------------------------------------------------
+vtkMRMLEMSGlobalParametersNode* 
+vtkMRMLEMSGlobalParametersNode::
+New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLEMSGlobalParametersNode");
-
-  if (ret)
-    {
-    return (vtkMRMLEMSGlobalParametersNode*)ret;
-    }
-
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLEMSGlobalParametersNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLEMSGlobalParametersNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
+  vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSGlobalParametersNode");
-
   if(ret)
     {
     return (vtkMRMLEMSGlobalParametersNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSGlobalParametersNode;
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+vtkMRMLNode* 
+vtkMRMLEMSGlobalParametersNode::
+CreateNodeInstance()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = 
+    vtkObjectFactory::CreateInstance("vtkMRMLEMSGlobalParametersNode");
+  if(ret)
+    {
+    return (vtkMRMLEMSGlobalParametersNode*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkMRMLEMSGlobalParametersNode;
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 {
   this->NumberOfTargetInputChannels   = 0;
@@ -77,16 +61,16 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 
   this->SegmentationBoundaryMin[0] = 0;
   this->SegmentationBoundaryMin[1] = 0;
-  this->SegmentationBoundaryMin[2] = 0;
+  this->SegmentationBoundaryMin[2] = 0;  
 
   this->SegmentationBoundaryMax[0] = 0;
   this->SegmentationBoundaryMax[1] = 0;
-  this->SegmentationBoundaryMax[2] = 0;
+  this->SegmentationBoundaryMax[2] = 0;  
 
-  this->Colormap = NULL;
+  this->Colormap = NULL;                   
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
 {
   this->SetWorkingDirectory(NULL);
@@ -95,13 +79,14 @@ vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
   this->SetColormap(NULL);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::UpdateReferenceID(const char* oldID,
-    const char* newID)
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSGlobalParametersNode::
+UpdateReferenceID(const char* oldID, const char* newID)
 {
-  for (IntensityNormalizationParameterListIterator i =
-      this->IntensityNormalizationParameterList.begin();
-      i != this->IntensityNormalizationParameterList.end(); ++i)
+  for (IntensityNormalizationParameterListIterator i = 
+         this->IntensityNormalizationParameterList.begin(); 
+       i != this->IntensityNormalizationParameterList.end(); ++i)
     {
     if (oldID && newID && *i == vtksys_stl::string(oldID))
       {
@@ -110,13 +95,15 @@ void vtkMRMLEMSGlobalParametersNode::UpdateReferenceID(const char* oldID,
     }
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::UpdateReferences()
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSGlobalParametersNode::
+UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  for (IntensityNormalizationParameterListIterator i =
-         this->IntensityNormalizationParameterList.begin();
+  for (IntensityNormalizationParameterListIterator i = 
+         this->IntensityNormalizationParameterList.begin(); 
        i != this->IntensityNormalizationParameterList.end(); ++i)
     {
     if (this->Scene->GetNodeByID((*i).c_str()) == NULL)
@@ -126,122 +113,85 @@ void vtkMRMLEMSGlobalParametersNode::UpdateReferences()
     }
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::
-WriteXML(ostream& of, int nIndent)
+//-----------------------------------------------------------------------------
+void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
   vtkIndent indent(nIndent);
 
-  of << indent
-    << " NumberOfTargetInputChannels=\""
-    << this->NumberOfTargetInputChannels
-    << "\"";
+  of << indent << " NumberOfTargetInputChannels=\"" 
+     << this->NumberOfTargetInputChannels << "\" ";
 
-  of << indent
-    << " WorkingDirectory=\""
-    << (this->WorkingDirectory ? this->WorkingDirectory : "NULL")
-    << "\"";
-
+  of << indent << " WorkingDirectory=\"" 
+     << (this->WorkingDirectory ? this->WorkingDirectory : "NULL") << "\" ";
+  
     {
     vtksys_stl::stringstream ss;
-    ss << this->SegmentationBoundaryMin[0] << " "
-       << this->SegmentationBoundaryMin[1] << " "
+    ss << this->SegmentationBoundaryMin[0] << " " 
+       << this->SegmentationBoundaryMin[1] << " " 
        << this->SegmentationBoundaryMin[2];
-    of << indent << " SegmentationBoundaryMin=\"" << ss.str() << "\"";
+    of << indent << " SegmentationBoundaryMin=\"" << ss.str() << "\" ";
     }
-
+  
     {
     vtksys_stl::stringstream ss;
-
-    ss << this->SegmentationBoundaryMax[0] << " "
-       << this->SegmentationBoundaryMax[1] << " "
+    ss << this->SegmentationBoundaryMax[0] << " " 
+       << this->SegmentationBoundaryMax[1] << " " 
        << this->SegmentationBoundaryMax[2];
-
-    of << indent
-      << " SegmentationBoundaryMax=\"" << ss.str() << "\"";
+    of << indent << " SegmentationBoundaryMax=\"" << ss.str() << "\" ";
     }
 
-    of << indent
-      << " RegistrationAffineType=\""
-      << this->RegistrationAffineType
-      << "\" ";
+    of << indent << " RegistrationAffineType=\"" 
+       << this->RegistrationAffineType << "\" ";
+    of << indent << " RegistrationDeformableType=\"" 
+       << this->RegistrationDeformableType << "\" ";
+    of << indent << " RegistrationInterpolationType=\"" 
+       << this->RegistrationInterpolationType << "\" ";
 
-    of << indent
-      << " RegistrationDeformableType=\""
-      << this->RegistrationDeformableType
-      << "\" ";
+    of << indent << " RegistrationAtlasVolumeKey=\"" 
+       << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey 
+           : "") << "\" ";
 
-    of << indent
-      << " RegistrationInterpolationType=\""
-      << this->RegistrationInterpolationType
-      << "\"";
+    of << indent << " RegistrationTargetVolumeKey=\"" 
+       << (this->RegistrationTargetVolumeKey
+           ? this->RegistrationTargetVolumeKey 
+           : "") << "\" ";
 
-    of << indent
-      << " RegistrationAtlasVolumeKey=\""
-      << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey
-          : "")
-      << "\"";
+    of << indent << " EnableTargetToTargetRegistration=\""
+       << this->EnableTargetToTargetRegistration << "\" ";
 
-    of << indent
-      << " RegistrationTargetVolumeKey=\""
-      << (this->RegistrationTargetVolumeKey ?
-          this->RegistrationTargetVolumeKey : "")
-      << "\"";
+    of << indent << " SaveIntermediateResults=\"" 
+       << this->SaveIntermediateResults << "\" ";
+    of << indent << " SaveSurfaceModels=\"" 
+       << this->SaveSurfaceModels << "\" ";
+    of << indent << " MultithreadingEnabled=\"" 
+       << this->MultithreadingEnabled << "\" ";
+    of << indent << " UpdateIntermediateData=\"" 
+       << this->UpdateIntermediateData << "\" ";
 
-    of << indent
-      << " EnableTargetToTargetRegistration=\""
-      << this->EnableTargetToTargetRegistration
-      << "\"";
-
-    of << indent
-      << " SaveIntermediateResults=\""
-      << this->SaveIntermediateResults
-      << "\"";
-
-    of << indent
-      << " SaveSurfaceModels=\""
-      << this->SaveSurfaceModels
-      << "\" ";
-
-    of << indent
-      << " MultithreadingEnabled=\""
-      << this->MultithreadingEnabled
-      << "\"";
-
-    of << indent
-      << " UpdateIntermediateData=\""
-      << this->UpdateIntermediateData
-      << "\"";
-
-    of << indent
-      << " IntensityNormalizationParameterNodeIDs=\"";
-
+    of << indent << " IntensityNormalizationParameterNodeIDs=\"";
     vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
-        this->IntensityNormalizationParameterList.end(),
-        vtksys_stl::ostream_iterator<vtksys_stl::string>(of,
-          " "));
-    of << "\"";
+                     this->IntensityNormalizationParameterList.end(),
+                     vtksys_stl::
+                     ostream_iterator<vtksys_stl::string>(of, " "));
+    of << "\" ";
 
-    of << indent
-      << " Colormap=\""
-      << (this->Colormap ? this->Colormap : "NULL")
-      << "\"";
+    of << indent << " Colormap=\"" 
+       << (this->Colormap ? this->Colormap : "NULL") << "\" ";
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
 
   const char* key;
   const char* val;
-
   while (*attrs != NULL)
     {
     key = *attrs++;
     val = *attrs++;
+    
 
     if (!strcmp(key, "NumberOfTargetInputChannels"))
       {
@@ -260,31 +210,31 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
       this->SetWorkingDirectory(val);
       }
     else if (!strcmp(key, "SegmentationBoundaryMin"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
-
-      int m;
-      if (ss >> m)
-      {
-        this->SegmentationBoundaryMin[0] = m;
-        this->SegmentationBoundaryMin[1] = m;
-        this->SegmentationBoundaryMin[2] = m;
+      for (unsigned int i = 0; i < 3; ++i)
+        {
+        int m;
+        if (ss >> m)
+          { 
+          this->SegmentationBoundaryMin[i] = m;
+          }
+        }
       }
-    }
     else if (!strcmp(key, "SegmentationBoundaryMax"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
-
-      int m;
-      if (ss >> m)
-      {
-        this->SegmentationBoundaryMax[0] = m;
-        this->SegmentationBoundaryMax[1] = m;
-        this->SegmentationBoundaryMax[2] = m;
+      for (unsigned int i = 0; i < 3; ++i)
+        {
+        int m;
+        if (ss >> m)
+          { 
+          this->SegmentationBoundaryMax[i] = m;
+          }
+        }
       }
-    }
     else if (!strcmp(key, "RegistrationAffineType"))
       {
       vtksys_stl::stringstream ss;
@@ -359,16 +309,15 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
    }
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
 {
   Superclass::Copy(rhs);
-  vtkMRMLEMSGlobalParametersNode* node =
+  vtkMRMLEMSGlobalParametersNode* node = 
     (vtkMRMLEMSGlobalParametersNode*) rhs;
 
   this->NumberOfTargetInputChannels = node->NumberOfTargetInputChannels;
-  this->SetEnableTargetToTargetRegistration(node->
-      EnableTargetToTargetRegistration);
+  this->SetEnableTargetToTargetRegistration(node->EnableTargetToTargetRegistration);
   this->SetWorkingDirectory(node->WorkingDirectory);
 
   this->SetSegmentationBoundaryMin(node->SegmentationBoundaryMin);
@@ -379,64 +328,65 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   this->SetRegistrationInterpolationType(node->RegistrationInterpolationType);
   this->SetRegistrationAtlasVolumeKey(node->RegistrationAtlasVolumeKey);
   this->SetRegistrationTargetVolumeKey(node->RegistrationTargetVolumeKey);
-
+  
   this->SetSaveIntermediateResults(node->SaveIntermediateResults);
   this->SetSaveSurfaceModels(node->SaveSurfaceModels);
   this->SetMultithreadingEnabled(node->MultithreadingEnabled);
   this->SetUpdateIntermediateData(node->UpdateIntermediateData);
 
-  this->IntensityNormalizationParameterList = node->
-    IntensityNormalizationParameterList;
-
+  this->IntensityNormalizationParameterList = 
+    node->IntensityNormalizationParameterList;
+  
   this->SetColormap(node->Colormap);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os, vtkIndent indent)
+//-----------------------------------------------------------------------------
+void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os, 
+                                               vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
+ 
   os << indent << "NumberOfTargetInputChannels: "
      << this->NumberOfTargetInputChannels << "\n";
 
   os << indent << "EnableTargetToTargetRegistration: "
      << (this->EnableTargetToTargetRegistration ? "true" : "false") << "\n";
 
-  os << indent << "WorkingDirectory: "
+  os << indent << "WorkingDirectory: " 
      << (this->WorkingDirectory ? this->WorkingDirectory : "(none)") << "\n";
 
-  os << indent << "SegmentationBoundaryMin: "
-     << this->SegmentationBoundaryMin[0]
-     << this->SegmentationBoundaryMin[1]
+  os << indent << "SegmentationBoundaryMin: " 
+     << this->SegmentationBoundaryMin[0] 
+     << this->SegmentationBoundaryMin[1] 
      << this->SegmentationBoundaryMin[2] << "\n";
 
-  os << indent << "SegmentationBoundaryMax: "
-     << this->SegmentationBoundaryMax[0]
-     << this->SegmentationBoundaryMax[1]
+  os << indent << "SegmentationBoundaryMax: " 
+     << this->SegmentationBoundaryMax[0] 
+     << this->SegmentationBoundaryMax[1] 
      << this->SegmentationBoundaryMax[2] << "\n";
 
-  os << indent << "RegistrationAffineType: "
+  os << indent << "RegistrationAffineType: " 
      << this->RegistrationAffineType << "\n";
-  os << indent << "RegistrationDeformableType: "
+  os << indent << "RegistrationDeformableType: " 
      << this->RegistrationDeformableType << "\n";
-  os << indent << "RegistrationInterpolationType: "
+  os << indent << "RegistrationInterpolationType: " 
      << this->RegistrationInterpolationType << "\n";
 
-  os << indent << "RegistrationAtlasVolumeKey: "
-     << (this->RegistrationAtlasVolumeKey ?
+  os << indent << "RegistrationAtlasVolumeKey: " 
+     << (this->RegistrationAtlasVolumeKey ? 
          this->RegistrationAtlasVolumeKey : "(none)") << "\n";
 
-  os << indent << "RegistrationTargetVolumeKey: "
-     << (this->RegistrationTargetVolumeKey ?
+  os << indent << "RegistrationTargetVolumeKey: " 
+     << (this->RegistrationTargetVolumeKey ? 
          this->RegistrationTargetVolumeKey : "(none)") << "\n";
 
-  os << indent << "SaveIntermediateResults: "
+  os << indent << "SaveIntermediateResults: " 
      << this->SaveIntermediateResults << "\n";
-  os << indent << "SaveSurfaceModels: "
+  os << indent << "SaveSurfaceModels: " 
      << this->SaveSurfaceModels << "\n";
-  os << indent << "MultithreadingEnabled: "
+  os << indent << "MultithreadingEnabled: " 
      << this->MultithreadingEnabled << "\n";
-  os << indent << "UpdateIntermediateData: "
+  os << indent << "UpdateIntermediateData: " 
      << this->UpdateIntermediateData << "\n";
 
   os << indent << "IntensityNormalizationParameterNodeIDs: ";
@@ -445,46 +395,47 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os, vtkIndent indent)
                    vtksys_stl::ostream_iterator<vtksys_stl::string>(os, " "));
   os << "\n";
 
-  os << indent << "Colormap: "
+  os << indent << "Colormap: " 
      << (this->Colormap ? this->Colormap : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
-const char* vtkMRMLEMSGlobalParametersNode::
+const char*
+vtkMRMLEMSGlobalParametersNode::
 GetNthIntensityNormalizationParametersNodeID(int n)
 {
   return this->IntensityNormalizationParameterList[n].c_str();
 }
 
-//----------------------------------------------------------------------------
+
 vtkMRMLEMSIntensityNormalizationParametersNode*
-vtkMRMLEMSGlobalParametersNode::GetNthIntensityNormalizationParametersNode(
-    int n)
+vtkMRMLEMSGlobalParametersNode::
+GetNthIntensityNormalizationParametersNode(int n)
 {
   vtkMRMLEMSIntensityNormalizationParametersNode* node = NULL;
-  if (this->GetScene() &&
+  if (this->GetScene() && 
       this->GetNthIntensityNormalizationParametersNodeID(n))
     {
       vtkMRMLNode* snode = this->GetScene()->
         GetNodeByID(this->GetNthIntensityNormalizationParametersNodeID(n));
-      node =
+      node = 
         vtkMRMLEMSIntensityNormalizationParametersNode::SafeDownCast(snode);
     }
-  return node;
+  return node;  
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::
+void
+vtkMRMLEMSGlobalParametersNode::
 SetNthIntensityNormalizationParametersNodeID(int n, const char* id)
 {
   this->IntensityNormalizationParameterList[n] = id;
-  this->Scene->AddReferencedNodeID(id,this);
+  this->Scene->AddReferencedNodeID(id, this);  
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::AddTargetInputChannel()
+void
+vtkMRMLEMSGlobalParametersNode::
+AddTargetInputChannel()
 {
-  this->NumberOfTargetInputChannels++;
+  ++this->NumberOfTargetInputChannels;
 
   // create intensity normalization parameter node
   vtkMRMLEMSIntensityNormalizationParametersNode* intensityNormalizationNode
@@ -496,36 +447,32 @@ void vtkMRMLEMSGlobalParametersNode::AddTargetInputChannel()
   this->IntensityNormalizationParameterList.
     push_back(intensityNormalizationNode->GetID());
   this->GetScene()->
-    AddReferencedNodeID(intensityNormalizationNode->GetID(),this);
+    AddReferencedNodeID(intensityNormalizationNode->GetID(), this);
 
   // clean up
   intensityNormalizationNode->Delete();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::RemoveNthTargetInputChannel(int n)
+void
+vtkMRMLEMSGlobalParametersNode::
+RemoveNthTargetInputChannel(int n)
 {
-  this->NumberOfTargetInputChannels--;
-
-  this->IntensityNormalizationParameterList.erase(this->
-      IntensityNormalizationParameterList.begin() + n);
+  --this->NumberOfTargetInputChannels;
+  this->IntensityNormalizationParameterList.
+    erase(this->IntensityNormalizationParameterList.begin() + n);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::MoveNthTargetInputChannel(int n, int
-    toIndex)
+void
+vtkMRMLEMSGlobalParametersNode::
+MoveNthTargetInputChannel(int n, int toIndex)
 {
   if (toIndex == n)
-  {
+    {
     return;
-  }
-
-  IntensityNormalizationParameterListIterator b = this->
-    IntensityNormalizationParameterList.begin();
-
+    }
+  IntensityNormalizationParameterListIterator b = 
+    this->IntensityNormalizationParameterList.begin();
   std::string movingParam = this->IntensityNormalizationParameterList[n];
-
   this->IntensityNormalizationParameterList.erase(b + n);
   this->IntensityNormalizationParameterList.insert(b + toIndex, movingParam);
 }
-

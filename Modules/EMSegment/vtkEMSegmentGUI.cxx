@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkEMSegmentGUI.cxx,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #include "vtkEMSegmentGUI.h"
 #include "vtkEMSegmentLogic.h"
 #include "vtkMRMLEMSNode.h"
@@ -58,13 +42,12 @@ vtkCxxSetObjectMacro(vtkEMSegmentGUI,MRMLManager,vtkEMSegmentMRMLManager);
 vtkEMSegmentGUI* vtkEMSegmentGUI::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkEMSegmentGUI");
-
+  vtkObject* ret = 
+    vtkObjectFactory::CreateInstance("vtkEMSegmentGUI");
   if (ret)
     {
     return (vtkEMSegmentGUI*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkEMSegmentGUI;
 }
@@ -109,72 +92,72 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
   this->SetNode(NULL);
 
   if (this->WizardWidget)
-  {
+    {
     this->WizardWidget->Delete();
     this->WizardWidget = NULL;
-  }
+    }
 
   if (this->ParametersSetStep)
-  {
+    {
     this->ParametersSetStep->Delete();
     this->ParametersSetStep = NULL;
-  }
+    }
 
   if (this->AnatomicalStructureStep)
-  {
+    {
     this->AnatomicalStructureStep->Delete();
     this->AnatomicalStructureStep = NULL;
-  }
+    }
 
   if (this->SpatialPriorsStep)
-  {
+    {
     this->SpatialPriorsStep->Delete();
     this->SpatialPriorsStep = NULL;
-  }
+    }
 
   if (this->IntensityImagesStep)
-  {
+    {
     this->IntensityImagesStep->Delete();
     this->IntensityImagesStep = NULL;
-  }
-
+    }
+  
   if (this->NormalizationStep)
-  {
+    {
     this->NormalizationStep->Delete();
     this->NormalizationStep = NULL;
-  }
+    }
 
   if (this->IntensityDistributionsStep)
-  {
+    {
     this->IntensityDistributionsStep->Delete();
     this->IntensityDistributionsStep = NULL;
-  }
+    }
 
   if (this->NodeParametersStep)
-  {
+    {
     this->NodeParametersStep->Delete();
     this->NodeParametersStep = NULL;
-  }
+    }
 
   if (this->RegistrationParametersStep)
-  {
+    {
     this->RegistrationParametersStep->Delete();
     this->RegistrationParametersStep = NULL;
-  }
+    }
 
   if (this->RunSegmentationStep)
-  {
+    {
     this->RunSegmentationStep->Delete();
     this->RunSegmentationStep = NULL;
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentGUI::SetModuleLogic(vtkSlicerLogic* logic)
 {
-  this->SetLogic(dynamic_cast<vtkEMSegmentLogic*>(logic));
-  this->GetLogic()->GetMRMLManager()->SetMRMLScene(this->GetMRMLScene());
-  this->SetMRMLManager(this->GetLogic()->GetMRMLManager());
+  this->SetLogic( dynamic_cast<vtkEMSegmentLogic*> (logic) );
+  this->GetLogic()->GetMRMLManager()->SetMRMLScene( this->GetMRMLScene() ); 
+  this->SetMRMLManager( this->GetLogic()->GetMRMLManager() );
 }
 
 //----------------------------------------------------------------------------
@@ -193,73 +176,55 @@ void vtkEMSegmentGUI::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentGUI::AddGUIObservers()
+//---------------------------------------------------------------------------
+void vtkEMSegmentGUI::AddGUIObservers() 
 {
   // observe when nodes are added or removed from the scene
   vtkIntArray* events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
   if (this->GetMRMLScene() != NULL)
     {
     this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     }
-
   events->Delete();
 }
 
-//----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkEMSegmentGUI::RemoveGUIObservers()
 {
 #if 0
-  this->ApplyButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
-      (vtkCommand *)this->GUICallbackCommand);
+  this->ApplyButton->RemoveObservers(vtkKWPushButton::InvokedEvent,  
+                                     (vtkCommand *)this->GUICallbackCommand);
 #endif
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event,
-    void *callData)
+//---------------------------------------------------------------------------
+void vtkEMSegmentGUI::ProcessGUIEvents(vtkObject *caller,
+                                                      unsigned long event,
+                       void *callData) 
 {
   this->IntensityDistributionsStep->ProcessManualIntensitySamplingGUIEvents(
     caller, event, callData);
   this->RunSegmentationStep->ProcessRunRegistrationOutputGUIEvents(
     caller, event, callData);
-  this->NormalizationStep->ProcessCursorMovingGUIEvents(
-    caller, event, callData);
-  this->IntensityDistributionsStep->ProcessLabelSelectorGUIEvents(
-    caller, event, callData);
-  this->IntensityDistributionsStep->ProcessLabelButtonGUIEvents(
-    caller, event, callData);
-  this->IntensityDistributionsStep->ProcessGaussian2DButtonGUIEvents(
-    caller, event, callData);
-  this->NodeParametersStep->ProcessPointMovingGUIEvents(
-    caller, event, callData);
-  this->NodeParametersStep->ProcessComputeWeightsButtonGUIEvents(
-    caller, event, callData);
-  this->NodeParametersStep->ProcessPreviewGUIEvents(
-    caller, event, callData);
-  this->NodeParametersStep->ProcessColumnListGUIEvents(
-    caller, event, callData);
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentGUI::
-ProcessLogicEvents(
-    vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
+//---------------------------------------------------------------------------
+void vtkEMSegmentGUI::ProcessLogicEvents (
+                      vtkObject *caller, unsigned long event, void *vtkNotUsed(callData) )
 {
-  if (!caller || !this->WizardWidget)
-  {
+  if ( !caller || !this->WizardWidget)
+    {
     return;
-  }
+    }
 
   // process Logic changes
-  vtkEMSegmentLogic *callbackLogic =
+  vtkEMSegmentLogic *callbackLogic = 
     vtkEMSegmentLogic::SafeDownCast(caller);
-
-  if ( callbackLogic == this->GetLogic ( ) &&
-    event == vtkCommand::ProgressEvent)
+  
+  if ( callbackLogic == this->GetLogic ( ) && 
+    event == vtkCommand::ProgressEvent) 
     {
     this->UpdateRegistrationProgress();
     }
@@ -269,7 +234,6 @@ ProcessLogicEvents(
 void vtkEMSegmentGUI::UpdateRegistrationProgress()
 {
   double progress = this->Logic->GetProgressGlobalFractionCompleted();
-
   if(progress>=0 && progress <=1)
     {
     this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->
@@ -288,116 +252,109 @@ void vtkEMSegmentGUI::UpdateGUI()
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentGUI::ProcessMRMLEvents(vtkObject *caller,unsigned long event,
-    void *callData)
+void vtkEMSegmentGUI::ProcessMRMLEvents(vtkObject *caller,
+                                       unsigned long event,
+                                       void *callData) 
 {
   // TODO: map the object and event to strings for tcl
-
+  
   //vtksys_stl::cout << "ProcessMRMLEvents()" << vtksys_stl::endl;
   // if parameter node has been changed externally, update GUI widgets
-  // with new values
+  // with new values 
   vtkMRMLEMSNode* node
     = vtkMRMLEMSNode::SafeDownCast(caller);
-  if (node != NULL && this->GetNode() == node)
+  if (node != NULL && this->GetNode() == node) 
     {
     this->UpdateGUI();
     }
 
   // If there is an EMS MRML node changed event, the wizard should
   // update right away on any step
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene
-    && (event == vtkMRMLScene::NodeAddedEvent
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && (event == vtkMRMLScene::NodeAddedEvent 
     || event == vtkMRMLScene::NodeRemovedEvent ) )
-  {
+    {
     vtkMRMLNode *mrmlNode = (vtkMRMLNode*)(callData);
     if (mrmlNode != NULL && mrmlNode->IsA("vtkMRMLEMSNode"))
-    {
-      // current node removed
-      if(mrmlNode == this->GetNode() && event ==
-          vtkMRMLScene::NodeRemovedEvent)
       {
-        vtkKWMessageDialog::PopupMessage(
-            this->GetApplication(),
-            this->GetApplicationGUI()->GetMainSlicerWindow(),
-            "EM Segment", "Current MRML node is removed!",
-            vtkKWMessageDialog::WarningIcon);
-      }
-
+      // current node removed
+      if(mrmlNode == this->GetNode() && event == vtkMRMLScene::NodeRemovedEvent)
+        {
+        vtkKWMessageDialog::PopupMessage( 
+          this->GetApplication(), 
+          this->GetApplicationGUI()->GetMainSlicerWindow(),
+          "EM Segment", "Current MRML node is removed!",
+          vtkKWMessageDialog::WarningIcon);
+        }
       this->ParametersSetStep->UpdateLoadedParameterSets();
       this->WizardWidget->GetWizardWorkflow()->
         GetCurrentStep()->ShowUserInterface();
+      }
     }
-  }
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentGUI::BuildGUI()
+//---------------------------------------------------------------------------
+void vtkEMSegmentGUI::BuildGUI() 
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
-  std::string help = "EMSegment Module: This module creates a segmentation ";
-  help += "using a set of target images and a statistical atlas.  The method";
-  help += " is based on the Expectation Maximization theory.\n";
-  help += "  1. Use the pull down menu to select a collection of ";
-  help += "     parameters to edit (or create a new collection).\n";
-  help += "  2. Use the 'Back' and 'Next' to navigate through the stages of ";
-  help += "     filling in the algorithm parameters.\n";
-  help += "  3. When the parameters are specified, use the button on the ";
-  help += "     last step to start the segmentation process.";
-
+  const char *help = 
+    "**EMSegment Module:** **Under Construction** Use this module to segment a set of set of images (target images) using the tree-based EM segmentation algorithm of K. Pohl et al.  First use the pull down menu to select a collection of parameters to edit (or create a new collection).  Use the 'Back' and 'Next' to navigate through the stages of filling in the algorithm parameters.  When the parameters are specified, use the button on the last step to start the segmentation process.  ";
+  
   this->Logic->RegisterMRMLNodesWithScene();
 
-  this->UIPanel->AddPage("EMSegment","EMSegment",NULL);
-
-  vtkKWWidget *modulePage = this->UIPanel->GetPageWidget("EMSegment");
+  this->UIPanel->AddPage("EMSegment", 
+                         "EMSegment", NULL);
+  vtkKWWidget *module_page = 
+    this->UIPanel->GetPageWidget("EMSegment");
 
   //this->PopulateTestingData();
 
   // -----------------------------------------------------------------------
   // Help
 
-  vtkSlicerModuleCollapsibleFrame *helpFrame =
+  vtkSlicerModuleCollapsibleFrame *help_frame = 
     vtkSlicerModuleCollapsibleFrame::New();
-  helpFrame->SetParent(modulePage);
-  helpFrame->Create();
-  helpFrame->CollapseFrame();
-  helpFrame->SetLabelText("Help");
-  helpFrame->Delete();
+  help_frame->SetParent(module_page);
+  help_frame->Create();
+  help_frame->CollapseFrame();
+  help_frame->SetLabelText("Help");
+  help_frame->Delete();
 
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-      helpFrame->GetWidgetName(),
-      modulePage->GetWidgetName());
-
+              help_frame->GetWidgetName(), 
+              module_page->GetWidgetName());
+  
   // configure the parent classes help text widget
 
-  this->HelpText->SetParent(helpFrame->GetFrame());
+  this->HelpText->SetParent(help_frame->GetFrame());
   this->HelpText->Create();
   this->HelpText->SetHorizontalScrollbarVisibility(0);
   this->HelpText->SetVerticalScrollbarVisibility(1);
-  this->HelpText->GetWidget()->SetText(help.c_str());
+  this->HelpText->GetWidget()->SetText(help);
   this->HelpText->GetWidget()->SetReliefToFlat();
   this->HelpText->GetWidget()->SetWrapToWord();
   this->HelpText->GetWidget()->ReadOnlyOn();
   this->HelpText->GetWidget()->QuickFormattingOn();
 
   app->Script("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-      this->HelpText->GetWidgetName());
+              this->HelpText->GetWidgetName());
 
   // -----------------------------------------------------------------------
   // Wizard
 
-  vtkSlicerModuleCollapsibleFrame *wizardFrame =
+  vtkSlicerModuleCollapsibleFrame *wizard_frame = 
     vtkSlicerModuleCollapsibleFrame::New();
-  wizardFrame->SetParent(modulePage);
-  wizardFrame->Create();
-  wizardFrame->SetLabelText("Wizard");
-  wizardFrame->ExpandFrame();
+  wizard_frame->SetParent(module_page);
+  wizard_frame->Create();
+  wizard_frame->SetLabelText("Wizard");
+  wizard_frame->ExpandFrame();
 
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-              wizardFrame->GetWidgetName(),
-              modulePage->GetWidgetName());
-
-  this->WizardWidget->SetParent(wizardFrame->GetFrame());
+              wizard_frame->GetWidgetName(), 
+              module_page->GetWidgetName());
+   
+  this->WizardWidget->SetParent(wizard_frame->GetFrame());
   this->WizardWidget->Create();
   this->WizardWidget->GetSubTitleLabel()->SetHeight(1);
   this->WizardWidget->SetClientAreaMinimumHeight(320);
@@ -405,39 +362,33 @@ void vtkEMSegmentGUI::BuildGUI()
   this->WizardWidget->HelpButtonVisibilityOn();
   app->Script("pack %s -side top -anchor nw -fill both -expand y",
               this->WizardWidget->GetWidgetName());
-  wizardFrame->Delete();
+  wizard_frame->Delete();
 
-  vtkKWWizardWorkflow *wizardWorkflow = this->WizardWidget->
-    GetWizardWorkflow();
-  vtkNotUsed(vtkKWWizardWidget *wizardWidget = this->WizardWidget;);
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->WizardWidget->GetWizardWorkflow();
+  vtkNotUsed(vtkKWWizardWidget *wizard_widget = this->WizardWidget;);
 
-  // -------------------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Parameter Set step
 
   if (!this->ParametersSetStep)
     {
-    this->ParametersSetStep =
-      vtkEMSegmentParametersSetStep::New();
-
+    this->ParametersSetStep = vtkEMSegmentParametersSetStep::New();
     this->ParametersSetStep->SetGUI(this);
     }
+  wizard_workflow->AddStep(this->ParametersSetStep);
 
-  wizardWorkflow->AddStep(this->ParametersSetStep);
-
-  // ------------------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Anatomical Structure step
 
   if (!this->AnatomicalStructureStep)
     {
-    this->AnatomicalStructureStep =
-      vtkEMSegmentAnatomicalStructureStep::New();
-
+    this->AnatomicalStructureStep = vtkEMSegmentAnatomicalStructureStep::New();
     this->AnatomicalStructureStep->SetGUI(this);
     }
+  wizard_workflow->AddNextStep(this->AnatomicalStructureStep);
 
-  wizardWorkflow->AddNextStep(this->AnatomicalStructureStep);
-
-  // -------------------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Spatial Priors step
 
   if (!this->SpatialPriorsStep)
@@ -445,10 +396,9 @@ void vtkEMSegmentGUI::BuildGUI()
     this->SpatialPriorsStep = vtkEMSegmentSpatialPriorsStep::New();
     this->SpatialPriorsStep->SetGUI(this);
     }
+  wizard_workflow->AddNextStep(this->SpatialPriorsStep);
 
-  wizardWorkflow->AddNextStep(this->SpatialPriorsStep);
-
-  // -------------------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Intensity Images step
 
   if (!this->IntensityImagesStep)
@@ -456,7 +406,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->IntensityImagesStep = vtkEMSegmentIntensityImagesStep::New();
     this->IntensityImagesStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->IntensityImagesStep);
+  wizard_workflow->AddNextStep(this->IntensityImagesStep);
 
   // -----------------------------------------------------------------
   // Intensity Normalization step
@@ -466,7 +416,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->NormalizationStep = vtkEMSegmentIntensityNormalizationStep::New();
     this->NormalizationStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->NormalizationStep);
+  wizard_workflow->AddNextStep(this->NormalizationStep);
 
   // -----------------------------------------------------------------
   // Intensity Distributions step
@@ -477,7 +427,7 @@ void vtkEMSegmentGUI::BuildGUI()
       vtkEMSegmentIntensityDistributionsStep::New();
     this->IntensityDistributionsStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->IntensityDistributionsStep);
+  wizard_workflow->AddNextStep(this->IntensityDistributionsStep);
 
   // -----------------------------------------------------------------
   // Node Parameters step
@@ -487,7 +437,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->NodeParametersStep = vtkEMSegmentNodeParametersStep::New();
     this->NodeParametersStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->NodeParametersStep);
+  wizard_workflow->AddNextStep(this->NodeParametersStep);
 
   // -----------------------------------------------------------------
   // Registration Parameters step
@@ -498,7 +448,7 @@ void vtkEMSegmentGUI::BuildGUI()
       vtkEMSegmentRegistrationParametersStep::New();
     this->RegistrationParametersStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->RegistrationParametersStep);
+  wizard_workflow->AddNextStep(this->RegistrationParametersStep);
 
   // -----------------------------------------------------------------
   // Run Segmentation step
@@ -508,93 +458,87 @@ void vtkEMSegmentGUI::BuildGUI()
     this->RunSegmentationStep = vtkEMSegmentRunSegmentationStep::New();
     this->RunSegmentationStep->SetGUI(this);
     }
-  wizardWorkflow->AddNextStep(this->RunSegmentationStep);
+  wizard_workflow->AddNextStep(this->RunSegmentationStep);
 
   // -----------------------------------------------------------------
   // Initial and finish step
 
-  wizardWorkflow->SetFinishStep(this->RunSegmentationStep);
-  wizardWorkflow->CreateGoToTransitionsToFinishStep();
-  wizardWorkflow->SetInitialStep(this->ParametersSetStep);
+  wizard_workflow->SetFinishStep(this->RunSegmentationStep);
+  wizard_workflow->CreateGoToTransitionsToFinishStep();
+  wizard_workflow->SetInitialStep(this->ParametersSetStep);
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentGUI::TearDownGUI()
+void vtkEMSegmentGUI::TearDownGUI() 
 {
   if (this->ParametersSetStep)
-  {
+    {
     this->ParametersSetStep->SetGUI(NULL);
-  }
+    }
 
   if (this->AnatomicalStructureStep)
-  {
+    {
     this->AnatomicalStructureStep->SetGUI(NULL);
-  }
+    }
 
   if (this->SpatialPriorsStep)
-  {
+    {
     this->SpatialPriorsStep->SetGUI(NULL);
-  }
+    }
 
   if (this->IntensityImagesStep)
-  {
+    {
     this->IntensityImagesStep->SetGUI(NULL);
-  }
+    }
 
   if (this->NormalizationStep)
-  {
+    {
     this->NormalizationStep->SetGUI(NULL);
-  }
+    }
 
   if (this->IntensityDistributionsStep)
-  {
+    {
     this->IntensityDistributionsStep->SetGUI(NULL);
-  }
+    }
 
   if (this->NodeParametersStep)
-  {
+    {
     this->NodeParametersStep->SetGUI(NULL);
-  }
+    }
 
   if (this->RegistrationParametersStep)
-  {
+    {
     this->RegistrationParametersStep->SetGUI(NULL);
-  }
+    }
 
   if (this->RunSegmentationStep)
-  {
+    {
     this->RunSegmentationStep->SetGUI(NULL);
-  }
+    }
 }
 
 //---------------------------------------------------------------------------
-unsigned long
-vtkEMSegmentGUI::
-AddObserverByNumber(
-    vtkObject *observee,
-    unsigned long event)
+unsigned long vtkEMSegmentGUI::
+AddObserverByNumber(vtkObject *observee, unsigned long event) 
 {
-  return observee->AddObserver(event,(vtkCommand*)this->GUICallbackCommand);
-}
+  return (observee->AddObserver(event, 
+                                (vtkCommand *)this->GUICallbackCommand));
+} 
 
 
 //---------------------------------------------------------------------------
-void
-vtkEMSegmentGUI::
-PopulateTestingData()
+void vtkEMSegmentGUI::PopulateTestingData() 
 {
   this->Logic->PopulateTestingData();
 
   vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(
-    this->GetApplication())->GetModuleGUIByName("Volumes");
+    this->GetApplication())->GetModuleGUIByName("Volumes"); 
 
-  if (m != NULL)
-  {
-    vtkSlicerVolumesLogic* volumeLogic =
+  if ( m != NULL ) 
+    {
+    vtkSlicerVolumesLogic* volume_logic = 
       vtkSlicerVolumesGUI::SafeDownCast(m)->GetLogic();
-
     vtksys_stl::string file_path = vtksys::SystemTools::GetEnv("HOME");
-
 #ifdef _WIN32
     file_path.append("\\tmp\\EMSegmentTestImages");
     if (!vtksys::SystemTools::FileIsDirectory(file_path.c_str()))
@@ -606,52 +550,49 @@ PopulateTestingData()
 #else
     file_path.append("/tmp/EMSegmentTestImages/");
 #endif
-
+    
     vtkDirectory *dir = vtkDirectory::New();
-
     if (!dir->Open(file_path.c_str()))
-    {
+      {
       dir->Delete();
       return;
-    }
-
-    for (int i=0; i < dir->GetNumberOfFiles(); i++)
-    {
+      }
+    
+    for (int i = 0; i < dir->GetNumberOfFiles(); i++)
+      {
       vtksys_stl::string filename = dir->GetFile(i);
       //skip . and ..
       if (strcmp(filename.c_str(), ".") == 0)
-      {
+        {
         continue;
-      }
+        }
       else if (strcmp(filename.c_str(), "..") == 0)
-      {
+        {
         continue;
-      }
+        }
 
       vtksys_stl::string fullName = file_path;
       fullName.append(filename.c_str());
-
-      if (strcmp(vtksys::SystemTools::GetFilenameExtension(
-              fullName.c_str()).c_str(), ".mhd") != 0)
-      {
+      if (strcmp(vtksys::SystemTools::
+                 GetFilenameExtension(fullName.c_str()).c_str(), ".mhd") != 0)
+        {
         continue;
-      }
+        }
 
       if (vtksys::SystemTools::FileExists(fullName.c_str()) &&
           !vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
-      {
-        //volumeLogic->AddArchetypeVolume((char*)(fullName.c_str()), 1, 0,
-        //                                 filename.c_str());
+        {
+        //volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), 1, 0, 
+        //                                 filename.c_str()); 
         int loadingOption = 2;
-        volumeLogic->AddArchetypeVolume(fullName.c_str(), filename.c_str(),
-            loadingOption);
+        volume_logic->AddArchetypeVolume(fullName.c_str(), filename.c_str(), loadingOption); 
+
         }
       }
-
     dir->Delete();
-
+       
     this->MRMLManager->SetTreeNodeSpatialPriorVolumeID(
-      this->MRMLManager->GetTreeRootNodeID(),
+      this->MRMLManager->GetTreeRootNodeID(), 
       this->MRMLManager->GetVolumeNthID(0));
 
     this->MRMLManager->SetRegistrationAtlasVolumeID(
@@ -660,12 +601,12 @@ PopulateTestingData()
       this->MRMLManager->GetVolumeNthID(1));
 
     this->MRMLManager->SetSaveWorkingDirectory(file_path.c_str());
-    this->MRMLManager->SetSaveTemplateFilename(file_path.append(
-          "EMSTemplate.mrml").c_str());
+    this->MRMLManager->
+      SetSaveTemplateFilename(file_path.append("EMSTemplate.mrml").c_str());
     }
-}
+} 
 
-//----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkEMSegmentGUI::Init()
 {
   vtkMRMLScene *scene = this->Logic->GetMRMLScene();
@@ -673,8 +614,6 @@ void vtkEMSegmentGUI::Init()
   vtkIntArray *emsEvents = vtkIntArray::New();
   emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
-  this->Logic->SetAndObserveMRMLSceneEvents(scene,emsEvents);
+  this->Logic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
   emsEvents->Delete();
 }
-

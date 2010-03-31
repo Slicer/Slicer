@@ -1,17 +1,3 @@
-#
-# Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-# Rights Reserved.
-#
-# See Doc/copyright/copyright.txt
-# or http://www.slicer.org/copyright/copyright.txt for details.
-#
-# Program:   3D Slicer
-# Module:    $RCSfile: CMakeLists.txt,v$
-# Date:      $Date: 2006/01/06 17:56:51 $
-# Version:   $Revision: 1.6 $
-# Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-#
-
 project(EMSegment)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
@@ -20,7 +6,6 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
- 
 # --------------------------------------------------------------------------
 # Find Slicer3
 
@@ -30,11 +15,6 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
-# Find VTK
-
- find_package(VTK REQUIRED)
- include(${VTK_USE_FILE})
-
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -42,7 +22,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration
@@ -55,36 +34,32 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
-  ${KWWidgets_TEMPLATES_DIR}/vtkKWWidgetsPaths.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkKWWidgetsPaths.h
   )
 
-file(GLOB headers
+file(GLOB headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/MRML/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
   "${CMAKE_CURRENT_SOURCE_DIR}/Registration/*.h"
   )
-
-install(FILES
-  ${headers}
+install(FILES 
+  ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT
-  Development)
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
 # Sources
 
-set(EMSegment_SRCS
+set(EMSegment_SRCS 
   # module
   vtkEMSegmentGUI.cxx
-  vtkEMSegmentLogic.cxx
-  vtkEMSegmentMRMLManager.cxx
+  vtkEMSegmentLogic.cxx 
+  vtkEMSegmentMRMLManager.cxx 
   # wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentParametersSetStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentIntensityImagesStep.cxx
@@ -96,7 +71,6 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRegistrationParametersStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRunSegmentationStep.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkGaussian2DWidget.cxx
   # MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSSegmenterNode.cxx
@@ -112,7 +86,7 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSWorkingDataNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSIntensityNormalizationParametersNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSClassInteractionMatrixNode.cxx
-  # Algorithm
+  # Algorithm 
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalInterface.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalRegistrationCostFunction.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
@@ -159,8 +133,6 @@ set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkDataDef.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkFileOps.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGeneral.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGenericClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalGenericClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSegmenter.cxx
@@ -178,11 +150,11 @@ set_source_files_properties(
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(EMSegment
-  EMSegment_TCL_SRCS
+vtk_wrap_tcl3(EMSegment 
+  EMSegment_TCL_SRCS 
   "${EMSegment_SRCS}" "")
 
-# ---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # Add Loadable Module support
 
 generatelm(EMSegment_SRCS EMSegment.txt)
@@ -191,23 +163,16 @@ generatelm(EMSegment_SRCS EMSegment.txt)
 # Build and install the library
 
 set(lib_name EMSegment)
-add_library(${lib_name}
-  ${EMSegment_SRCS}
+add_library(${lib_name} 
+  ${EMSegment_SRCS} 
   ${EMSegment_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
-  ${ModuleDescriptionParser}
-  ${LoadableModule}
-  ${vtkITK}
-  ${MRML}
-  ${slicerio}
-  ${CommandIO}
-  ${MRMLIDIO}
-  ${RemoteIO}
+  ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES}
+  ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
   vtkSlicerVolumesModuleLogic
   Volumes
@@ -216,7 +181,7 @@ target_link_libraries(${lib_name}
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+    ${Slicer3_LIBRARY_PROPERTIES}
   )
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
@@ -237,9 +202,8 @@ ADD_SUBDIRECTORY(CommandLineApplication)
 # --------------------------------------------------------------------------
 # Install the testing data
 
-install(DIRECTORY Testing/TestData
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing
-  COMPONENT Development
+install(DIRECTORY
+  Testing/TestData
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )
-

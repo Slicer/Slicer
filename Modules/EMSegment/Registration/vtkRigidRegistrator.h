@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkRigidRegistrator,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #ifndef __vtkRigidRegistrator_h
 #define __vtkRigidRegistrator_h
 
@@ -22,7 +6,7 @@
 #include "vtkTransform.h"
 #include "vtkEMSegmentWin32Header.h"
 
-class VTK_EMSEGMENT_EXPORT vtkRigidRegistrator :
+class VTK_EMSEGMENT_EXPORT vtkRigidRegistrator : 
   public vtkObject
 {
 public:
@@ -37,7 +21,7 @@ public:
   vtkGetObjectMacro(MovingImage, vtkImageData);
 
   //BTX
-  typedef enum
+  typedef enum 
   {
     MutualInformation,
     CrossCorrelation,
@@ -56,7 +40,7 @@ public:
   { this->SetImageToImageMetric(MeanSquaredError); }
 
   //BTX
-  typedef enum
+  typedef enum 
   {
     NearestNeighbor,
     Linear,
@@ -75,18 +59,18 @@ public:
   { this->SetIntensityInterpolationType(Cubic); }
 
   //BTX
-  typedef enum
+  typedef enum 
   {
     Identity,
     CentersOfMass,
     ImageCenters
   } InitializationType;
   //ETX
-  static const char*
+  static const char* 
   GetStringFromTransformInitializationType(InitializationType);
 
   vtkSetMacro(TransformInitializationType, InitializationType);
-  vtkGetMacro(TransformInitializationType, InitializationType);
+  vtkGetMacro(TransformInitializationType, InitializationType);  
   void SetTransformInitializationTypeToIdentity()
   { this->SetTransformInitializationType(Identity); }
   void SetTransformInitializationTypeToCentersOfMass()
@@ -134,10 +118,11 @@ private:
   // with only spacing and origin information (no need for direction
   // matrix or cosines).  This way ITK will do registration in XYZ
   // coordinates.
-  static void ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
-      int*    filteredAxesForPermuteFilter,
-      double* originForChangeInformationFilter,
-      double* spacingForChangeInformationFilter);
+  static void
+    ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
+                                    int*    filteredAxesForPermuteFilter,
+                                    double* originForChangeInformationFilter,
+                                    double* spacingForChangeInformationFilter);
 
   vtkImageData*                   FixedImage;
   vtkImageData*                   MovingImage;
@@ -155,4 +140,3 @@ private:
 };
 
 #endif // __vtkRigidRegistrator_h
-

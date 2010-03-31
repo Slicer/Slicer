@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLEMSegmentNode.cxx,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -24,38 +8,31 @@
 #include "vtkMRMLScene.h"
 
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSegmentNode*
-vtkMRMLEMSegmentNode::
-New()
+//------------------------------------------------------------------------------
+vtkMRMLEMSegmentNode* vtkMRMLEMSegmentNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
+  vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSegmentNode");
-
-  if (ret)
+  if(ret)
     {
     return (vtkMRMLEMSegmentNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSegmentNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLNode*
-vtkMRMLEMSegmentNode::
-CreateNodeInstance()
+
+vtkMRMLNode* vtkMRMLEMSegmentNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
+  vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSegmentNode");
-
-  if (ret)
-  {
+  if(ret)
+    {
     return (vtkMRMLEMSegmentNode*)ret;
-  }
-
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSegmentNode;
 }
@@ -75,13 +52,13 @@ vtkMRMLEMSegmentNode::~vtkMRMLEMSegmentNode()
     delete [] this->Value;
     this->Value = NULL;
     }
-
   if (this->ModuleName)
     {
     delete [] this->ModuleName;
     this->ModuleName = NULL;
     }
 }
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLEMSegmentNode::WriteXML(ostream& of, int nIndent)
@@ -94,14 +71,14 @@ void vtkMRMLEMSegmentNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ModuleName != NULL)
     {
-    of << " ModuleName = \"" << this->ModuleName << "\"";
+    of << " ModuleName = \"" << this->ModuleName << "\" ";
     }
 
   vtksys_stl::map<vtksys_stl::string, vtksys_stl::string>::iterator iter;
 
   for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
     {
-    of << iter->first << "= \"" << iter->second << "\"";
+      of << " " << iter->first << "= \"" << iter->second << "\" ";
     }
 }
 
@@ -112,10 +89,9 @@ void vtkMRMLEMSegmentNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-
-  while (*atts != NULL)
+  while (*atts != NULL) 
     {
-    attName  = *(atts++);
+    attName = *(atts++);
     attValue = *(atts++);
 
     if ( !strcmp(attName, "ModuleName") )
@@ -139,8 +115,7 @@ void vtkMRMLEMSegmentNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLEMSegmentNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-
-  vtkMRMLEMSegmentNode *node =
+  vtkMRMLEMSegmentNode *node = 
     (vtkMRMLEMSegmentNode *) anode;
 
   this->Parameters = node->Parameters;
@@ -153,7 +128,7 @@ void vtkMRMLEMSegmentNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "ModuleName: "
+  os << indent << "ModuleName: " 
      << (this->GetModuleName() ? this->GetModuleName() : "(none)") << "\n";
 
   vtksys_stl::map<vtksys_stl::string, vtksys_stl::string>::iterator iter;
@@ -167,20 +142,18 @@ void vtkMRMLEMSegmentNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void
 vtkMRMLEMSegmentNode
-::SetParameter(const vtksys_stl::string& name, const vtksys_stl::string&
-    value)
+::SetParameter(const vtksys_stl::string& name, const vtksys_stl::string& value)
 {
   // Set the default value of the named parameter with the value
   // specified
   const vtksys_stl::string *currentValue = this->GetParameter(name);
-
-  if (currentValue == NULL || (currentValue != NULL && value !=
-        *currentValue))
+  if (currentValue == NULL || (currentValue != NULL && value != *currentValue))
     {
     this->Parameters[name] = value;
     this->Modified();
     }
 }
+
 
 //----------------------------------------------------------------------------
 const vtksys_stl::string *
@@ -191,7 +164,6 @@ vtkMRMLEMSegmentNode
     {
     return (NULL);
     }
-
   return &(this->Parameters.find(name)->second);
 }
 
@@ -201,7 +173,6 @@ vtkMRMLEMSegmentNode
 ::GetParameter(const char *name)
 {
   this->RequestParameter(name);
-
   return (this->GetValue());
 }
 
@@ -212,7 +183,6 @@ vtkMRMLEMSegmentNode
 {
   vtksys_stl::string sname(name);
   vtksys_stl::string svalue(value);
-
   this->SetParameter(sname, svalue);
 }
 
@@ -223,7 +193,5 @@ vtkMRMLEMSegmentNode
 {
   vtksys_stl::string sname(name);
   const vtksys_stl::string *svaluep = this->GetParameter(sname);
-
   this->SetValue (svaluep->c_str());
 }
-

@@ -230,9 +230,11 @@ protected:
   // vtkImageData* GetOutput() {return NULL;}
 
   void DeleteVariables(); 
+  //BTX
   void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
                        vtkImageData *vtkNotUsed(outData),
                        int vtkNotUsed(outExt)[6], int vtkNotUsed(id)) {};
+  //ETX
   
  
   // Checks if all the parameters are setrectly

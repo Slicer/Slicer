@@ -58,17 +58,6 @@ if(NOT DISABLE_CXX_TESTING)
     )
 
   add_executable(
-    vtkEMSegmentBuildAndRunNewSegmentationParameters001
-    vtkEMSegmentBuildAndRunNewSegmentationParameters001.cxx
-    vtkEMSegmentTestUtilities.cxx
-    )
-  target_link_libraries(
-    vtkEMSegmentBuildAndRunNewSegmentationParameters001
-    EMSegment
-    vtkCommon
-    )
-
-  add_executable(
     vtkEMSegmentReadWriteMRMLTest
     vtkEMSegmentReadWriteMRMLTest.cxx
     )

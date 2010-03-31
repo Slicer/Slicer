@@ -59,6 +59,8 @@ public:
   //
   virtual int         GetNumberOfParameterSets();
   virtual const char* GetNthParameterSetName(int n);
+  virtual void SetNthParameterName(int n, const char* newName);
+
   // this functions creates a full set of MRML nodes for this module,
   // populates the nodes with default values, adds the nodes to the
   // MRML scene.
@@ -110,9 +112,7 @@ public:
     DistributionSpecificationManuallySample = 
     vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationManuallySample,
     DistributionSpecificationAutoSample =
-    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationAutoSample,
-    DistributionSpecificationLabelSample =
-    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationLabelSample
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationAutoSample
     };
   //ETX
   virtual int   GetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID);
@@ -125,25 +125,11 @@ public:
   virtual void     SetTreeNodeDistributionLogMean(vtkIdType nodeID, 
                                                   int volumeNumber, 
                                                   double value);
-                                                  
-  virtual double   GetTreeNodeDistributionMean(vtkIdType nodeID, 
-                                                  int volumeNumber);
-  virtual void     SetTreeNodeDistributionMean(vtkIdType nodeID, 
-                                                  int volumeNumber, 
-                                                  double value);
 
   virtual double   GetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
                                                         int rowIndex,
                                                         int columnIndex);
   virtual void     SetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
-                                                        int rowIndex, 
-                                                        int columnIndex,
-                                                        double value);
-                                                        
-  virtual double   GetTreeNodeDistributionCovariance(vtkIdType nodeID, 
-                                                        int rowIndex,
-                                                        int columnIndex);
-  virtual void     SetTreeNodeDistributionCovariance(vtkIdType nodeID, 
                                                         int rowIndex, 
                                                         int columnIndex,
                                                         double value);

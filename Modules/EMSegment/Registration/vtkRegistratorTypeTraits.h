@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkRegistratorTypeTraits.h,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #ifndef __vtkRegistratorTypeTraits_h
 #define __vtkRegistratorTypeTraits_h
 
@@ -75,4 +59,3 @@ public:
 //ETX
 
 #endif // __vtkRegistratorTypeTraits_h
-

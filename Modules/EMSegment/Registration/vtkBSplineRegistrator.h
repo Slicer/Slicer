@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkBSplineRegistrator.h,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #ifndef __vtkBSplineRegistrator_h
 #define __vtkBSplineRegistrator_h
 
@@ -25,7 +9,8 @@
 #include "vtkTransform.h"
 #include "vtkEMSegmentWin32Header.h"
 
-class VTK_EMSEGMENT_EXPORT vtkBSplineRegistrator : public vtkObject
+class VTK_EMSEGMENT_EXPORT vtkBSplineRegistrator : 
+  public vtkObject
 {
 public:
   static vtkBSplineRegistrator *New();
@@ -33,7 +18,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   //BTX
-  typedef enum
+  typedef enum 
   {
     MutualInformation,
     CrossCorrelation,
@@ -44,7 +29,7 @@ public:
 
   vtkSetObjectMacro(FixedImage, vtkImageData);
   vtkGetObjectMacro(FixedImage, vtkImageData);
-
+  
   vtkSetObjectMacro(MovingImage, vtkImageData);
   vtkGetObjectMacro(MovingImage, vtkImageData);
 
@@ -58,7 +43,7 @@ public:
   { this->SetImageToImageMetric(MeanSquaredError); }
 
   //BTX
-  typedef enum
+  typedef enum 
   {
     NearestNeighbor,
     Linear,
@@ -87,7 +72,7 @@ public:
 
   vtkSetObjectMacro(BulkTransform, vtkTransform);
   vtkGetObjectMacro(BulkTransform, vtkTransform);
-
+  
   vtkGetObjectMacro(Transform, vtkGridTransform);
 
   vtkSetObjectMacro(FixedIJKToXYZ, vtkMatrix4x4);
@@ -99,8 +84,9 @@ protected:
   vtkBSplineRegistrator();
   virtual ~vtkBSplineRegistrator();
 
+  //
   // these functions are used to deal with combining the voxel types
-  // of the fixed and moving images into a single type for registration
+  //of the fixed and moving images into a single type for registration
   //BTX
   template <class TFixedImageVoxel>
   void RegisterImagesInternal1();
@@ -114,32 +100,33 @@ private:
   vtkBSplineRegistrator(const vtkBSplineRegistrator&);  // not implemented
   void operator=(const vtkBSplineRegistrator&);        // not implemented
 
+  //
   // Deal with orientation.  Permute images and setup origin and
   // spacing so that both images are measured in XYZ basis vectors
   // with only spacing and origin information (no need for direction
   // matrix or cosines).  This way ITK will do registration in XYZ
   // coordinates.
-  static void ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
-      int *filteredAxesForPermuteFilter,
-      double* originForChangeInformationFilter,
-      double* spacingForChangeInformationFilter);
+  static void
+    ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
+                                    int*    filteredAxesForPermuteFilter,
+                                    double* originForChangeInformationFilter,
+                                    double* spacingForChangeInformationFilter);
 
-  vtkImageData*     FixedImage;
-  vtkImageData*     MovingImage;
+  vtkImageData*                   FixedImage;
+  vtkImageData*                   MovingImage;
 
-  vtkMatrix4x4*     FixedIJKToXYZ;
-  vtkMatrix4x4*     MovingIJKToXYZ;
+  vtkMatrix4x4*                   FixedIJKToXYZ;
+  vtkMatrix4x4*                   MovingIJKToXYZ;
 
-  vtkTransform*     BulkTransform;
-  vtkGridTransform* Transform;
+  vtkTransform*                   BulkTransform;
+  vtkGridTransform*               Transform;
 
-  int               NumberOfIterations;
-  MetricType        ImageToImageMetric;
-  InterpolationType IntensityInterpolationType;
-  double            MetricComputationSamplingRatio;
+  int                             NumberOfIterations;
+  MetricType                      ImageToImageMetric;
+  InterpolationType               IntensityInterpolationType;
+  double                          MetricComputationSamplingRatio;
 
-  int               NumberOfKnotPoints;
+  int                             NumberOfKnotPoints;
 };
 
 #endif // __vtkBSplineRegistrator_h
-

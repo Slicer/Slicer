@@ -20,7 +20,6 @@
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 #include "vtkMRMLEMSClassInteractionMatrixNode.h"
-//#include "vtkMRMLEMSClassProportionsNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
@@ -490,6 +489,7 @@ GetTreeNodeDistributionLogMean(vtkIdType nodeID,
     }
   return this->GetTreeParametersLeafNode(nodeID)->GetLogMean(volumeNumber);
 }
+
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
@@ -503,68 +503,6 @@ SetTreeNodeDistributionLogMean(vtkIdType nodeID,
     return;
     }
   this->GetTreeParametersLeafNode(nodeID)->SetLogMean(volumeNumber, value);
-}
-
-//----------------------------------------------------------------------------
-double
-vtkEMSegmentMRMLManager::   
-GetTreeNodeDistributionMean(vtkIdType nodeID, 
-                               int volumeNumber)
-{
-  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
-    {
-    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
-    return 0;
-    }
-  return this->GetTreeParametersLeafNode(nodeID)->GetMean(volumeNumber);
-}
-
-//----------------------------------------------------------------------------
-void
-vtkEMSegmentMRMLManager::
-SetTreeNodeDistributionMean(vtkIdType nodeID, 
-                               int volumeNumber, 
-                               double value)
-{
-  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
-    {
-    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
-    return;
-    }
-  this->GetTreeParametersLeafNode(nodeID)->SetMean(volumeNumber, value);
-}
-
-//----------------------------------------------------------------------------
-double   
-vtkEMSegmentMRMLManager::
-GetTreeNodeDistributionCovariance(vtkIdType nodeID, 
-                                     int rowIndex,
-                                     int columnIndex)
-{
-  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
-    {
-    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
-    return 0;
-    }
-  return this->GetTreeParametersLeafNode(nodeID)->
-    GetCovariance(rowIndex, columnIndex);
-}
-
-//----------------------------------------------------------------------------
-void
-vtkEMSegmentMRMLManager::
-SetTreeNodeDistributionCovariance(vtkIdType nodeID, 
-                                     int rowIndex, 
-                                     int columnIndex,
-                                     double value)
-{
-  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
-    {
-    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
-    return;
-    }
-  this->GetTreeParametersLeafNode(nodeID)->
-    SetCovariance(rowIndex, columnIndex, value);
 }
 
 //----------------------------------------------------------------------------
@@ -806,11 +744,8 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   // the default is mean 0, zero covariance
   //
   vtkstd::vector<double> logMean(numTargetImages, 0.0);
-  vtkstd::vector<double> Mean(numTargetImages, 0.0);
   vtkstd::vector<vtkstd::vector<double> > 
     logCov(numTargetImages, vtkstd::vector<double>(numTargetImages, 0.0));
-  vtkstd::vector<vtkstd::vector<double> > 
-    Cov(numTargetImages, vtkstd::vector<double>(numTargetImages, 0.0));
 
   if (numPoints > 0)
     {
@@ -819,8 +754,6 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     //
     vtkstd::vector<vtkstd::vector<double> > 
       logSamples(numTargetImages, vtkstd::vector<double>(numPoints, 0));
-    vtkstd::vector<vtkstd::vector<double> > 
-      Samples(numTargetImages, vtkstd::vector<double>(numPoints, 0));
     
     for (unsigned int imageIndex = 0; imageIndex < numTargetImages; 
          ++imageIndex)
@@ -831,25 +764,18 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
       for (unsigned int sampleIndex = 0; sampleIndex < numPoints; 
            ++sampleIndex)
         {
-        // we are interested in stats of log of intensities, use log(i + 1)
+        // we are interested in stats of log of intensities
+        // copy Kilian, use log(i + 1)
         double logIntensity = 
           log(this->
               GetTreeNodeDistributionSampleIntensityValue(nodeID,
                                                           sampleIndex,
-                                                          volumeID) + 1);
-        double Intensity = 
-          (this->
-              GetTreeNodeDistributionSampleIntensityValue(nodeID,
-                                                          sampleIndex,
-                                                          volumeID) );
+                                                          volumeID) + 1.0);
 
         logSamples[imageIndex][sampleIndex] = logIntensity;
         logMean[imageIndex] += logIntensity;
-        Samples[imageIndex][sampleIndex] = Intensity;
-        Mean[imageIndex] += Intensity;
         }
       logMean[imageIndex] /= numPoints;
-      Mean[imageIndex] /= numPoints;
       }
 
     //
@@ -866,13 +792,9 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
           logCov[r][c] += 
             (logSamples[r][p] - logMean[r]) * 
             (logSamples[c][p] - logMean[c]);
-          Cov[r][c] += 
-            (Samples[r][p] - Mean[r]) * 
-            (Samples[c][p] - Mean[c]);
           }
         // unbiased covariance
         logCov[r][c] /= numPoints - 1;
-        Cov[r][c] /= numPoints - 1;
         }
       }
     }
@@ -887,12 +809,10 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   for (r = 0; r < numTargetImages; ++r)
     {
     leafNode->SetLogMean(r, logMean[r]);
-    leafNode->SetMean(r, Mean[r]);
     
     for (c = 0; c < numTargetImages; ++c)
       {
       leafNode->SetLogCovariance(r, c, logCov[r][c]);
-      leafNode->SetCovariance(r, c, Cov[r][c]);
       }
     }
 }
@@ -3571,6 +3491,27 @@ GetNthParameterSetName(int n)
 }
 
 //----------------------------------------------------------------------------
+void  vtkEMSegmentMRMLManager::SetNthParameterName(int n, const char* newName)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("MRML scene is NULL.");
+    return;
+    }
+
+  vtkMRMLNode* node = 
+    this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLEMSNode");
+
+  if (node == NULL)
+    {
+    vtkErrorMacro("Did not find nth template builder node in scene: " << n);
+    return; 
+    }
+
+  node->SetName(newName);
+}
+
+//----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
 SetLoadedParameterSetIndex(int n)
@@ -4391,13 +4332,6 @@ PackageAndWriteData(const char* packageDirectory)
   vtkMRMLScene* newScene = vtkMRMLScene::New();
   std::string outputDirectory(packageDirectory);
 
-  if (!outputDirectory.empty() && 
-      outputDirectory[outputDirectory.size()-1] != '/')
-    {
-    // make sure directory ends in seperator
-    //outputDirectory = outputDirectory + "/";
-    }
-
   std::string mrmlURL(outputDirectory + "/EMSegmenterScene.mrml");
   newScene->SetRootDirectory(outputDirectory.c_str());
   newScene->SetURL(mrmlURL.c_str());
@@ -4529,18 +4463,17 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       }
     }
 
-  // get the full path to the scene
+   // get the full path to the scene
   std::vector<std::string> scenePathComponents;
   vtksys_stl::string rootDir = newSceneManager->GetMRMLScene()->GetRootDirectory();
   if (rootDir.find_last_of("/") == rootDir.length() - 1)
     {
-    vtkDebugMacro("em seg: found trailing slash in : " << rootDir);
-    rootDir = rootDir.substr(0, rootDir.length()-1);
+      vtkDebugMacro("em seg: found trailing slash in : " << rootDir);
+      rootDir = rootDir.substr(0, rootDir.length()-1);
     }
   vtkDebugMacro("em seg scene manager root dir = " << rootDir);
   vtksys::SystemTools::SplitPath(rootDir.c_str(), scenePathComponents);
-  
-  //
+
   // change the storage file for the segmentation result
     {
     vtkMRMLVolumeNode* volumeNode = newSceneManager->GetOutputVolumeNode();
@@ -4568,13 +4501,16 @@ CreatePackageFilenames(vtkMRMLScene* scene,
          "SegmentationResult.mhd");
       std::string oldFilenameNoPath = 
         vtksys::SystemTools::GetFilenameName(oldFilename);
+
       scenePathComponents.push_back("Segmentation");
       scenePathComponents.push_back(oldFilenameNoPath);
+
       std::string newFilename = 
         vtksys::SystemTools::JoinPath(scenePathComponents);
       storageNode->SetFileName(newFilename.c_str());
       scenePathComponents.pop_back();
       scenePathComponents.pop_back();
+
       }
     }
 
@@ -4622,9 +4558,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
         }
       }  
     }
@@ -4669,9 +4605,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
         }
       }  
     }
@@ -4716,9 +4652,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
         }
       }  
     }
@@ -4768,9 +4704,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
         }
       }  
     }
@@ -4815,9 +4751,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           vtksys::SystemTools::JoinPath(scenePathComponents);
         
         storageNode->SetFileName(newFilename.c_str());
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
-        scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
+    scenePathComponents.pop_back();
         }
       }  
     }

@@ -1,19 +1,3 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkRigidRegistrator.cxx,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #define ITK_LEAN_AND_MEAN
 #include "vtkRigidRegistrator.h"
 #include "vtkObjectFactory.h"
@@ -38,8 +22,6 @@
 #include "vtkImageChangeInformation.h"
 #include "vtkImagePermute.h"
 #include "itkImageFileWriter.h"
-#include "vtkCellArray.h"
-#include "vtkUnstructuredGrid.h"
 
 vtkCxxRevisionMacro(vtkRigidRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkRigidRegistrator);
@@ -61,8 +43,8 @@ public:
 protected:
   CommandIterationUpdate() {};
 public:
-  typedef TOptimizer             OptimizerType;
-  typedef const OptimizerType   *OptimizerPointer;
+  typedef TOptimizer                 OptimizerType;
+  typedef const OptimizerType   *    OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
@@ -78,20 +60,18 @@ public:
     {
       return;
     }
-    std::cerr << "   "
-      << std::setw(7) << std::right << std::setfill('.')
-      << optimizer->GetCurrentIteration();
+    std::cerr << "   " << std::setw(7) << std::right << std::setfill('.')
+              << optimizer->GetCurrentIteration();
     std::cerr << std::setw(20) << std::right << std::setfill('.')
-      << optimizer->GetValue();
+              << optimizer->GetValue();
     std::cerr << std::setw(17) << std::right << std::setfill('.')
-      << optimizer->GetCurrentStepLength();
+              << optimizer->GetCurrentStepLength();
     std::cerr << std::endl;
-    std::cerr << "   "
-      << optimizer->GetCurrentPosition() << std::endl;
+    std::cerr << "              " 
+              << optimizer->GetCurrentPosition() << std::endl;
   }
 };
 
-//----------------------------------------------------------------------------
 template <class TRegistration, class TMetric, class TOptimizer>
 class CommandStartLevelUpdate : public itk::Command
 {
@@ -101,20 +81,20 @@ public:
   typedef itk::SmartPointer<Self>    Pointer;
   itkNewMacro( Self );
 protected:
-  CommandStartLevelUpdate()
-  {
-    this->m_SamplingRatio      = 0.333;
+  CommandStartLevelUpdate() 
+  { 
+    this->m_SamplingRatio = 0.33; 
     this->m_NumberOfIterations = 10;
   }
   double m_SamplingRatio;
   int    m_NumberOfIterations;
 public:
-  typedef TRegistration         RegistrationType;
-  typedef RegistrationType   *  RegistrationPointer;
-  typedef TMetric               MetricType;
-  typedef MetricType*           MetricPointer;
-  typedef TOptimizer            OptimizerType;
-  typedef OptimizerType*        OptimizerPointer;
+  typedef TRegistration                 RegistrationType;
+  typedef RegistrationType   *          RegistrationPointer;
+  typedef TMetric                       MetricType;
+  typedef MetricType*                   MetricPointer;
+  typedef TOptimizer                    OptimizerType;
+  typedef OptimizerType*                OptimizerPointer;
 
   itkSetMacro(SamplingRatio, double);
   itkSetMacro(NumberOfIterations, int);
@@ -135,31 +115,36 @@ public:
       }
     int level       = registration->GetCurrentLevel();
     int totalLevels = registration->GetNumberOfLevels();
-    std::cerr << "\n   Starting registration level: "
-              <<  level+1 << " of " << totalLevels << "\n" << std::endl;
+    std::cerr << "   ### Starting registration level: " 
+              <<  level+1 << " of " << totalLevels << " ###" << std::endl;
 
-    std::cerr << "   "
-              << registration->GetOptimizer()->GetCurrentPosition()
+    std::cerr << "       " 
+              << registration->GetOptimizer()->GetCurrentPosition() 
               << std::endl;
-    MetricPointer metric =
+    MetricPointer metric = 
       dynamic_cast<MetricPointer>(registration->GetMetric());
     if (metric != NULL)
       {
-      int numVoxels =
+      int numVoxels = 
         registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetNumberOfPixels();
-
-      double samplingRatio = 1.0 - registration->GetCurrentLevel() *
+      
+      double samplingRatio = 
+        1.0 -
+        registration->GetCurrentLevel() *
         (1.0 - m_SamplingRatio) / (registration->GetNumberOfLevels() - 1.0);
 
-      metric->SetNumberOfSpatialSamples(static_cast<unsigned long>
-          (samplingRatio * numVoxels));
+      metric->
+        SetNumberOfSpatialSamples(static_cast<unsigned long>
+                                  (samplingRatio * numVoxels));
 
-      std::cerr << "  Image Size: " << registration->GetFixedImagePyramid()->
-        GetOutput(level)->GetLargestPossibleRegion().GetSize() << std::endl;
-      std::cerr << "  Number of spatial samples: " <<
-        metric->GetNumberOfSpatialSamples() << " (" <<
-        floor(100 * samplingRatio) << "%)" << std::endl;
+      std::cerr << "       Image Size: " << 
+        registration->GetFixedImagePyramid()->GetOutput(level)->
+        GetLargestPossibleRegion().GetSize() << std::endl;
+      std::cerr << "       Number of spatial samples: " 
+                << metric->GetNumberOfSpatialSamples() 
+                << " (" << floor(100 * samplingRatio) << "%)"
+                << std::endl;
       }
 
     OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>
@@ -174,28 +159,29 @@ public:
       else
         {
         optimizer->SetMaximumStepLength(optimizer->GetCurrentStepLength());
-        optimizer->SetMinimumStepLength(optimizer->GetMinimumStepLength()*
-            0.1);
+        optimizer->
+          SetMinimumStepLength(optimizer->GetMinimumStepLength() / 10.0);
         }
 
-      optimizer->SetNumberOfIterations(this->m_NumberOfIterations *
-          (registration->GetNumberOfLevels() -
-           registration->GetCurrentLevel()));
+      optimizer->SetNumberOfIterations
+        (this->m_NumberOfIterations * (registration->GetNumberOfLevels() - 
+                                       registration->GetCurrentLevel()));
 
-      std::cerr << " Max Iterations: "
-        << optimizer->GetNumberOfIterations()
-        << std::endl;
-      std::cerr << "  Min/Max Step Length: "
-        << optimizer->GetMinimumStepLength()
-        << " / "
-        << optimizer->GetMaximumStepLength()
-        << std::endl;
+      std::cerr << "       Max Iterations: " 
+                << optimizer->GetNumberOfIterations() 
+                << std::endl;
+      std::cerr << "       Min/Max Step Length: " 
+                << optimizer->GetMinimumStepLength() 
+                << " / "
+                << optimizer->GetMaximumStepLength()
+                << std::endl;
       }
   }
 };
 
 //----------------------------------------------------------------------------
-vtkRigidRegistrator::vtkRigidRegistrator()
+vtkRigidRegistrator::
+vtkRigidRegistrator()
 {
   this->FixedImage  = NULL;
   this->MovingImage = NULL;
@@ -216,7 +202,8 @@ vtkRigidRegistrator::vtkRigidRegistrator()
 }
 
 //----------------------------------------------------------------------------
-vtkRigidRegistrator::~vtkRigidRegistrator()
+vtkRigidRegistrator::
+~vtkRigidRegistrator()
 {
   this->SetFixedImage(NULL);
   this->SetMovingImage(NULL);
@@ -228,27 +215,28 @@ vtkRigidRegistrator::~vtkRigidRegistrator()
 
 //----------------------------------------------------------------------------
 void
-vtkRigidRegistrator::PrintSelf(ostream& os, vtkIndent indent)
+vtkRigidRegistrator::
+PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   this->Transform->PrintSelf(os, indent);
-  os << indent << "NumberOfIterations: " << this->NumberOfIterations
+  os << indent << "NumberOfIterations: " << this->NumberOfIterations 
      << std::endl;
-  os << indent << "MetricComputationSamplingRatio: "
+  os << indent << "MetricComputationSamplingRatio: " 
      << this->MetricComputationSamplingRatio << std::endl;
-  os << indent << "ImageToImageMetric: "
+  os << indent << "ImageToImageMetric: " 
      << GetStringFromMetricType(this->ImageToImageMetric);
-  os << indent << "InterpolationType: "
+  os << indent << "InterpolationType: " 
      << GetStringFromInterpolationType(this->IntensityInterpolationType);
-  os << indent << "InitializationType: "
-     << GetStringFromTransformInitializationType(
-         this->TransformInitializationType)
+  os << indent << "InitializationType: " 
+     << GetStringFromTransformInitializationType(this->TransformInitializationType)
      << std::endl;
 }
 
 //----------------------------------------------------------------------------
 const char*
-vtkRigidRegistrator::GetStringFromMetricType(MetricType id)
+vtkRigidRegistrator::
+GetStringFromMetricType(MetricType id)
 {
   switch (id)
     {
@@ -265,7 +253,8 @@ vtkRigidRegistrator::GetStringFromMetricType(MetricType id)
 
 //----------------------------------------------------------------------------
 const char*
-vtkRigidRegistrator::GetStringFromInterpolationType(InterpolationType id)
+vtkRigidRegistrator::
+GetStringFromInterpolationType(InterpolationType id)
 {
   switch (id)
     {
@@ -282,8 +271,8 @@ vtkRigidRegistrator::GetStringFromInterpolationType(InterpolationType id)
 
 //----------------------------------------------------------------------------
 const char*
-vtkRigidRegistrator::GetStringFromTransformInitializationType(
-    InitializationType id)
+vtkRigidRegistrator::
+GetStringFromTransformInitializationType(InitializationType id)
 {
   switch (id)
     {
@@ -300,18 +289,18 @@ vtkRigidRegistrator::GetStringFromTransformInitializationType(
 
 //----------------------------------------------------------------------------
 void
-vtkRigidRegistrator::ComputeReorientationInformation(
-    const vtkMatrix4x4* IJKToXYZ,
-    int*    filteredAxesForPermuteFilter,
-    double* originForChangeInformationFilter,
-    double* spacingForChangeInformationFilter)
+vtkRigidRegistrator::
+ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
+                                int*    filteredAxesForPermuteFilter,
+                                double* originForChangeInformationFilter,
+                                double* spacingForChangeInformationFilter)
 {
-  // set up the origin
+  // origin is easy...
   originForChangeInformationFilter[0] = (*IJKToXYZ)[0][3];
   originForChangeInformationFilter[1] = (*IJKToXYZ)[1][3];
   originForChangeInformationFilter[2] = (*IJKToXYZ)[2][3];
 
-  // compute spacing and permutation.  Assumes one non-zero entry
+  // figure out spacing and permutation.  Assumes one nonzero entry
   // per row/column of directions matrix.
   for (int c = 0; c < 3; ++c)
     {
@@ -330,132 +319,63 @@ vtkRigidRegistrator::ComputeReorientationInformation(
 
 //----------------------------------------------------------------------------
 template <class TVoxel>
-void
-vtkRigidRegistrator::RegisterImagesInternal3()
+void 
+vtkRigidRegistrator::
+RegisterImagesInternal3()
 {
-  // Compute the orientation.  Permute images and setup origin and
+  //
+  // Deal with orientation.  Permute images and setup origin and
   // spacing so that both images are measured in XYZ basis vectors
   // with only spacing and origin information.  This way ITK will do
   // registration in XYZ coordinates.
-
-  // compute the mesh for the moving image: start
-
-  double origin[3];
-  double spacing[3];
-  double bounds[6];
-  double pt[3];
-
-  this->MovingImage->GetOrigin(origin);
-  this->MovingImage->GetSpacing(spacing);
-  this->MovingImage->GetBounds(bounds);
-
-  vtkPoints *newPoints = vtkPoints::New();
-  newPoints->SetNumberOfPoints(8);
-
-  for(int k=0, m=0; k<2; k++)
-  {
-    pt[2] = bounds[4+k];
-
-    for(int j=0; j<2; j++)
-    {
-      pt[1] = bounds[2+j];
-
-      for(int i=0; i<2; i++,m++)
-      {
-        pt[0] = bounds[i];
-
-        newPoints->SetPoint(m,pt);
-      }
-    }
-  }
-
-  vtkCellArray *newCells = vtkCellArray::New();
-  newCells->Allocate(4*(4+1));
-
-  newCells->InsertNextCell(4);
-  newCells->InsertCellPoint(0);
-  newCells->InsertCellPoint(1);
-  newCells->InsertCellPoint(2);
-  newCells->InsertCellPoint(4);
-
-  newCells->InsertNextCell(4);
-  newCells->InsertCellPoint(1);
-  newCells->InsertCellPoint(2);
-  newCells->InsertCellPoint(3);
-  newCells->InsertCellPoint(7);
-
-  newCells->InsertNextCell(4);
-  newCells->InsertCellPoint(4);
-  newCells->InsertCellPoint(5);
-  newCells->InsertCellPoint(6);
-  newCells->InsertCellPoint(1);
-
-  newCells->InsertNextCell(4);
-  newCells->InsertCellPoint(5);
-  newCells->InsertCellPoint(6);
-  newCells->InsertCellPoint(7);
-  newCells->InsertCellPoint(2);
-
-  vtkUnstructuredGrid *mesh = vtkUnstructuredGrid::New();
-  mesh->SetPoints(newPoints);
-  newPoints->Delete();
-  mesh->SetCells(VTK_TETRA,newCells);
-  newCells->Delete();
-  mesh->Delete();
-
-  // compute the mesh for the moving image: end
-
+  //
   int     filteredAxesForPermuteFilter[3];
   double  originForChangeInformationFilter[3];
   double  spacingForChangeInformationFilter[3];
 
-  // fixed image
+  // fixed ------
   vtkMatrix4x4* IJKToXYZMatrixFixed = vtkMatrix4x4::New();
   IJKToXYZMatrixFixed->Identity();
-
   if (this->FixedIJKToXYZ != NULL)
     {
     IJKToXYZMatrixFixed->DeepCopy(this->FixedIJKToXYZ);
     }
-
-  vtkRigidRegistrator::ComputeReorientationInformation(
-      IJKToXYZMatrixFixed,
-      filteredAxesForPermuteFilter,
-      originForChangeInformationFilter,
-      spacingForChangeInformationFilter);
+  vtkRigidRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixFixed,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
 
   vtkImagePermute* permuteFixedImage = vtkImagePermute::New();
-  vtkImageChangeInformation* changeInformationFixedImage =
+  vtkImageChangeInformation* changeInformationFixedImage = 
     vtkImageChangeInformation::New();
-
+  
   permuteFixedImage->SetInput(this->FixedImage);
   permuteFixedImage->SetFilteredAxes(filteredAxesForPermuteFilter);
 
   changeInformationFixedImage->SetInput(permuteFixedImage->GetOutput());
-  changeInformationFixedImage->SetOutputSpacing(
-      spacingForChangeInformationFilter);
-  changeInformationFixedImage->SetOutputOrigin(
-      originForChangeInformationFilter);
+  changeInformationFixedImage->
+    SetOutputSpacing(spacingForChangeInformationFilter);
+  changeInformationFixedImage->
+    SetOutputOrigin(originForChangeInformationFilter);
 
-  // moving image
+  // moving ------
   vtkMatrix4x4* IJKToXYZMatrixMoving = vtkMatrix4x4::New();
   IJKToXYZMatrixMoving->Identity();
-
   if (this->MovingIJKToXYZ != NULL)
     {
     IJKToXYZMatrixMoving->DeepCopy(this->MovingIJKToXYZ);
     }
-
-  vtkRigidRegistrator::ComputeReorientationInformation(
-      IJKToXYZMatrixMoving,
-      filteredAxesForPermuteFilter,
-      originForChangeInformationFilter,
-      spacingForChangeInformationFilter);
+  vtkRigidRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixMoving,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
 
   vtkImagePermute* permuteMovingImage = vtkImagePermute::New();
-  vtkImageChangeInformation* changeInformationMovingImage =
+  vtkImageChangeInformation* changeInformationMovingImage = 
     vtkImageChangeInformation::New();
-
+  
   permuteMovingImage->SetInput(this->MovingImage);
   permuteMovingImage->SetFilteredAxes(filteredAxesForPermuteFilter);
 
@@ -466,34 +386,34 @@ vtkRigidRegistrator::RegisterImagesInternal3()
     SetOutputOrigin(originForChangeInformationFilter);
 
   //
-  // create vtk to itk pipelines
+  // create vtk --> itk pipelines
   //
 
   typedef itk::Image<TVoxel, 3>                 ITKImageType;
   typedef itk::VTKImageImport<ITKImageType>     ImageImportType;
 
-  // fixed image
-  vtkImageCast *fixedImageCaster = vtkImageCast::New();
+  // fixed image ------
+  vtkImageCast* fixedImageCaster              = vtkImageCast::New();
   fixedImageCaster->SetInput(changeInformationFixedImage->GetOutput());
-  fixedImageCaster->SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
-
+  fixedImageCaster->
+    SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* fixedImageVTKToITKExporter  = vtkImageExport::New();
   fixedImageVTKToITKExporter->SetInput(fixedImageCaster->GetOutput());
 
-  typename ImageImportType::Pointer fixedImageITKImporter =
+  typename ImageImportType::Pointer fixedImageITKImporter = 
     ImageImportType::New();
   ConnectPipelines(fixedImageVTKToITKExporter, fixedImageITKImporter);
   fixedImageITKImporter->Update();
 
-  // moving image
-  vtkImageCast *movingImageCaster = vtkImageCast::New();
+  // moving image ------
+  vtkImageCast*   movingImageCaster           = vtkImageCast::New();
   movingImageCaster->SetInput(changeInformationMovingImage->GetOutput());
-  movingImageCaster->SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
-
+  movingImageCaster->
+    SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* movingImageVTKToITKExporter = vtkImageExport::New();
   movingImageVTKToITKExporter->SetInput(movingImageCaster->GetOutput());
 
-  typename ImageImportType::Pointer movingImageITKImporter =
+  typename ImageImportType::Pointer movingImageITKImporter = 
     ImageImportType::New();
   ConnectPipelines(movingImageVTKToITKExporter, movingImageITKImporter);
   movingImageITKImporter->Update();
@@ -504,20 +424,21 @@ vtkRigidRegistrator::RegisterImagesInternal3()
 
   typedef typename itk::MultiResolutionPyramidImageFilter
     <ITKImageType, ITKImageType>   ImagePyramidType;
-  typename ImagePyramidType::Pointer fixedImagePyramid =
+  typename ImagePyramidType::Pointer fixedImagePyramid = 
     ImagePyramidType::New();
-  typename ImagePyramidType::Pointer movingImagePyramid =
+  typename ImagePyramidType::Pointer movingImagePyramid = 
     ImagePyramidType::New();
   typedef typename itk::MultiResolutionImageRegistrationMethod
     <ITKImageType, ITKImageType> MultiResolutionRegistrationType;
-  typename MultiResolutionRegistrationType::Pointer multiResRegistration =
+  typename MultiResolutionRegistrationType::Pointer multiResRegistration = 
     MultiResolutionRegistrationType::New();
 
   // set images
   multiResRegistration->SetFixedImage(fixedImageITKImporter->GetOutput());
   multiResRegistration->SetMovingImage(movingImageITKImporter->GetOutput());
-  multiResRegistration->SetFixedImageRegion(fixedImageITKImporter->GetOutput()
-      ->GetLargestPossibleRegion());
+  multiResRegistration->
+    SetFixedImageRegion(fixedImageITKImporter->GetOutput()->
+                        GetLargestPossibleRegion());  
 
   fixedImagePyramid->SetNumberOfLevels(3);
   fixedImagePyramid->SetStartingShrinkFactors(4);
@@ -527,6 +448,7 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   multiResRegistration->SetMovingImagePyramid(movingImagePyramid);
   multiResRegistration->SetNumberOfLevels(3);
 
+  //
   // set up metric
   switch (this->ImageToImageMetric)
     {
@@ -545,7 +467,7 @@ vtkRigidRegistrator::RegisterImagesInternal3()
       metric->ReinitializeSeed(0);
       multiResRegistration->SetMetric(metric);
       std::cerr << "   Metric: MMI" << std::endl;
-      std::cerr << "   Sampling Ratio: "
+      std::cerr << "   Sampling Ratio: " 
                 << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
@@ -555,8 +477,8 @@ vtkRigidRegistrator::RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MMetricType;
       typename MMetricType::Pointer    metric  = MMetricType::New();
       multiResRegistration->SetMetric(metric);
-      std::cerr << "   Metric: Normalized Cross Correlation" << std::endl;
-      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) "
+      std::cerr << "   Metric: NCC" << std::endl;
+      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) " 
                 << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
@@ -566,7 +488,7 @@ vtkRigidRegistrator::RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MMetricType;
       typename MMetricType::Pointer    metric  = MMetricType::New();
       multiResRegistration->SetMetric(metric);
-      std::cerr << "   Metric: Mean Square Error" << std::endl;
+      std::cerr << "   Metric: MSE" << std::endl;
 
       break;
       }
@@ -574,7 +496,8 @@ vtkRigidRegistrator::RegisterImagesInternal3()
       vtkErrorMacro("Unknown metric type: " << this->ImageToImageMetric);
       return;
     };
-
+    
+  //
   // set up interpolator
   switch (this->IntensityInterpolationType)
     {
@@ -583,7 +506,7 @@ vtkRigidRegistrator::RegisterImagesInternal3()
       typedef itk::NearestNeighborInterpolateImageFunction<
         ITKImageType,
         double          >    InterpolatorType;
-      typename InterpolatorType::Pointer interpolator  =
+      typename InterpolatorType::Pointer interpolator  = 
         InterpolatorType::New();
       multiResRegistration->SetInterpolator(interpolator);
       std::cerr << "   Interpolation: Nearest neighbor" << std::endl;
@@ -592,21 +515,23 @@ vtkRigidRegistrator::RegisterImagesInternal3()
 
     case vtkRigidRegistrator::Linear:
       {
-      typedef itk::LinearInterpolateImageFunction<ITKImageType, double>
-        InterpolatorType;
-      typename InterpolatorType::Pointer interpolator = InterpolatorType::
-        New();
+      typedef itk::LinearInterpolateImageFunction<
+        ITKImageType,
+        double          >    InterpolatorType;
+      typename InterpolatorType::Pointer   
+        interpolator  = InterpolatorType::New();
       multiResRegistration->SetInterpolator(interpolator);
       std::cerr << "   Interpolation: Linear" << std::endl;
       }
       break;
 
     default:
-      vtkErrorMacro(<< "Unknown interpolation type: "
-          << this->IntensityInterpolationType);
+      vtkErrorMacro(<< "Unknown interpolation type: " 
+                    << this->IntensityInterpolationType);
       return;
     };
 
+  //
   // setup transform
   typedef itk::VersorRigid3DTransform< double >        TransformType;
   TransformType::Pointer  transform =                  TransformType::New();
@@ -616,7 +541,7 @@ vtkRigidRegistrator::RegisterImagesInternal3()
     itk::CenteredVersorTransformInitializer<ITKImageType, ITKImageType>
     TransformInitializerType;
 
-  typename TransformInitializerType::Pointer transformInitializer =
+  typename TransformInitializerType::Pointer transformInitializer = 
     TransformInitializerType::New();
   transformInitializer->SetTransform(transform);
   transformInitializer->SetFixedImage(fixedImageITKImporter->GetOutput());
@@ -636,13 +561,13 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   transformInitializer->InitializeTransform();
 
   multiResRegistration->SetTransform(transform);
-  multiResRegistration->SetInitialTransformParameters(transform->
-      GetParameters());
+  multiResRegistration->SetInitialTransformParameters(transform->GetParameters());
 
   std::cerr << "     After Initializtation: " << std::endl;
   transform->Print(std::cerr, 5);
 
-  // setup optimizer
+  //
+  // setup optomizer
   typedef itk::VersorRigid3DTransformOptimizer       OptimizerType;
   OptimizerType::Pointer optimizer =                 OptimizerType::New();
   multiResRegistration->SetOptimizer(optimizer);
@@ -651,9 +576,9 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   OptimizerScalesType optimizerScales(6);
   const double translationScale = 1.0 / 1000.0;
 
-  double initialStepLength               = 1.0;
-  double relaxationFactor                = 0.6;
-  double minimumStepLength               = 0.001;
+  double               initialStepLength               = 1.0;
+  double               relaxationFactor                = 0.6;
+  double               minimumStepLength               = 0.001;
 
   // matrix
   optimizerScales[0]  = 1.0;
@@ -663,15 +588,16 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   optimizerScales[3] = translationScale;
   optimizerScales[4] = translationScale;
   optimizerScales[5] = translationScale;
-
+  
   optimizer->SetScales( optimizerScales );
   optimizer->SetRelaxationFactor( relaxationFactor );
   optimizer->SetMaximumStepLength( initialStepLength );
   optimizer->SetMinimumStepLength( minimumStepLength );
   optimizer->SetNumberOfIterations( this->NumberOfIterations );
-  std::cerr << "   Max Iterations: "
+  std::cerr << "   Max Iterations: " 
             << this->NumberOfIterations << std::endl;
 
+  //
   // set up command observer
   CommandIterationUpdate<OptimizerType>::Pointer observer =
     CommandIterationUpdate<OptimizerType>::New();
@@ -679,19 +605,19 @@ vtkRigidRegistrator::RegisterImagesInternal3()
 
   // this is hacked for now!!!
   typename CommandStartLevelUpdate
-    <MultiResolutionRegistrationType,
+    <MultiResolutionRegistrationType, 
     itk::MattesMutualInformationImageToImageMetric
     <ITKImageType, ITKImageType>, OptimizerType >::Pointer
-    startLevelCommand =
-    CommandStartLevelUpdate<MultiResolutionRegistrationType,
-    itk::MattesMutualInformationImageToImageMetric<ITKImageType,
-    ITKImageType>, OptimizerType >::New();
+    startLevelCommand = 
+    CommandStartLevelUpdate<MultiResolutionRegistrationType, 
+    itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>, OptimizerType >
+    ::New();
   startLevelCommand->SetSamplingRatio(this->MetricComputationSamplingRatio);
   startLevelCommand->SetNumberOfIterations(this->NumberOfIterations);
   multiResRegistration->AddObserver(itk::IterationEvent(), startLevelCommand);
 
   //
-  // everything is set up, run the registration
+  // everything should be set up, run the registration
   //
 
   //
@@ -708,16 +634,16 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   writerMoving->Update();
 #endif // NOT_EVER_DEFINED
 
-  try
+  try 
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
     //std::cerr << "  Starting registration..." << std::endl;
-    std::cerr << "   Iteration         Image Match        Step Size"
+    std::cerr << "   Iteration         Image Match        Step Size" 
               << std::endl;
     double timeStart = clock->GetTimeStamp();
-
+    
     multiResRegistration->StartRegistration();
-
+    
     double timeStop = clock->GetTimeStamp();
     double timeLength = (timeStop - timeStart);
     std::cerr << "  DONE, time = " << timeLength << std::endl;
@@ -734,20 +660,20 @@ vtkRigidRegistrator::RegisterImagesInternal3()
   //
   // copy transform from itk back to this vtk class
   //
+
   typename TransformType::MatrixType itkMatrix       = transform->GetMatrix();
   typename TransformType::OutputVectorType itkOffset = transform->GetOffset();
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
   vtkMatrix->Identity();
-
-  for (int i=0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
-    for (int j=0; j < 3; ++j)
+    for (int j = 0; j < 3; ++j)
     {
       vtkMatrix->SetElement(i, j, itkMatrix(i,j));
     }
     vtkMatrix->SetElement(i, 3, itkOffset[i]);
   }
-
+  
   this->Transform->SetMatrix(vtkMatrix);
 
   //
@@ -771,8 +697,9 @@ vtkRigidRegistrator::RegisterImagesInternal3()
 
 //----------------------------------------------------------------------------
 template <class TFixedImageVoxel, class TMovingImageVoxel>
-void
-vtkRigidRegistrator::RegisterImagesInternal2()
+void 
+vtkRigidRegistrator::
+RegisterImagesInternal2()
 {
   //
   // First, find the smallest voxel type that can represent both fixed
@@ -781,31 +708,34 @@ vtkRigidRegistrator::RegisterImagesInternal2()
   // double) in order to reduce code bloat.
   typedef itk::JoinTraits<TFixedImageVoxel, TMovingImageVoxel> TraitsType;
   typedef typename TraitsType::ValueType             CommonImageVoxelType;
-  typedef
+  typedef 
     typename RegistrationVoxelTypeTraits<CommonImageVoxelType>::
-    RegistrationVoxelType
+    RegistrationVoxelType 
     RegistrationVoxelType;
   this->RegisterImagesInternal3<RegistrationVoxelType>();
 }
 
 //----------------------------------------------------------------------------
 template <class TFixedImageVoxel>
-void
-vtkRigidRegistrator::RegisterImagesInternal1()
+void 
+vtkRigidRegistrator::
+RegisterImagesInternal1()
 {
   switch (this->MovingImage->GetScalarType())
-    {
+    {  
     vtkTemplateMacro((RegisterImagesInternal2<TFixedImageVoxel,VTK_TT>()));
     }
 }
 
 //----------------------------------------------------------------------------
-void
-vtkRigidRegistrator::RegisterImages()
+void 
+vtkRigidRegistrator::
+RegisterImages()
 {
   switch (this->FixedImage->GetScalarType())
-    {
+    {  
     vtkTemplateMacro((RegisterImagesInternal1<VTK_TT>()));
     }
 }
+
 

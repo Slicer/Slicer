@@ -1,195 +1,154 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLEMSVolumeCollectionNode.cxx,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #include "vtkMRMLEMSVolumeCollectionNode.h"
 #include "vtkSlicerVolumesLogic.h"
-
 #include <sstream>
 #include "vtkMRMLScene.h"
-
 #include <algorithm>
 #include "vtkMRMLScalarVolumeNode.h"
 
 #include <vtksys/stl/string>
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSVolumeCollectionNode* vtkMRMLEMSVolumeCollectionNode::New()
+vtkMRMLEMSVolumeCollectionNode* 
+vtkMRMLEMSVolumeCollectionNode::
+New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLEMSVolumeCollectionNode");
-
-  if (ret)
-  {
+  vtkObject* ret = 
+    vtkObjectFactory::CreateInstance("vtkMRMLEMSVolumeCollectionNode");
+  if(ret)
+    {
     return (vtkMRMLEMSVolumeCollectionNode*)ret;
-  }
-
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSVolumeCollectionNode;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLEMSVolumeCollectionNode::CreateNodeInstance()
+vtkMRMLNode* 
+vtkMRMLEMSVolumeCollectionNode::
+CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLEMSVolumeCollectionNode");
-
-  if (ret)
-  {
+  vtkObject* ret = 
+    vtkObjectFactory::CreateInstance("vtkMRMLEMSVolumeCollectionNode");
+  if(ret)
+    {
     return (vtkMRMLEMSVolumeCollectionNode*)ret;
-  }
-
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSVolumeCollectionNode;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSVolumeCollectionNode::
-vtkMRMLEMSVolumeCollectionNode()
+vtkMRMLEMSVolumeCollectionNode::vtkMRMLEMSVolumeCollectionNode()
 {
   // nothing to do here
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLEMSVolumeCollectionNode::
-~vtkMRMLEMSVolumeCollectionNode()
+vtkMRMLEMSVolumeCollectionNode::~vtkMRMLEMSVolumeCollectionNode()
 {
   // nothing to do here
 }
 
-//----------------------------------------------------------------------------
-void
-vtkMRMLEMSVolumeCollectionNode::
-WriteXML(ostream& of, int nIndent)
+void vtkMRMLEMSVolumeCollectionNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
   vtkIndent indent(nIndent);
 
   of << indent << " VolumeNodeIDs=\"";
-
-  for (KeyConstIterator i = this->KeyList.begin();
-      i != this->KeyList.end();
-      i++)
-  {
+  for (KeyConstIterator i = this->KeyList.begin(); i != this->KeyList.end(); 
+       ++i)
+    {
     std::string key   = *i;
     std::string value = this->KeyToVolumeNodeIDMap[*i];
 
     if (!key.empty() && !value.empty())
-    {
+      {
       of << "\n";
       of << "Key " << key << " VolumeNodeID " << value;
+      }
     }
-  }
-
-  of << "\"";
+  of << "\" ";
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   for (KeyIterator i = this->KeyList.begin(); i != this->KeyList.end(); ++i)
-  {
-    std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
-
-    if (oldID && newID && mrmlID == vtksys_stl::string(oldID))
     {
+    std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
+    if (oldID && newID && mrmlID == vtksys_stl::string(oldID))
+      {
       // update volID to name map
       this->VolumeNodeIDToKeyMap.erase(oldID);
-
       this->VolumeNodeIDToKeyMap[newID] = *i;
 
       // update name to volID map
       this->KeyToVolumeNodeIDMap[*i] = newID;
+      }
     }
-  }
 }
 
-//----------------------------------------------------------------------------
-void
+//-----------------------------------------------------------------------------
+void 
 vtkMRMLEMSVolumeCollectionNode::
 UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  for (KeyIterator i = this->KeyList.begin();
-      i != this->KeyList.end(); )
-  {
-    std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
-
-    if (!mrmlID.empty() &&
-        this->Scene->GetNodeByID(mrmlID.c_str()) == NULL)
+  for (KeyIterator i = this->KeyList.begin(); i != this->KeyList.end();)
     {
+    std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
+    if (!mrmlID.empty() && 
+        this->Scene->GetNodeByID(mrmlID.c_str()) == NULL)
+      {
       // remove key/value pair from mappings
       this->VolumeNodeIDToKeyMap.erase(mrmlID);
-
       this->KeyToVolumeNodeIDMap.erase(*i);
 
       // remove key/value pair from list
       this->KeyList.erase(i++);
-    }
+      }
     else
-    {
+      {
       ++i;
+      }
     }
-  }
 }
 
-//----------------------------------------------------------------------------
 void vtkMRMLEMSVolumeCollectionNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
 
   const char* key;
   const char* val;
-
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
-
+    
     if (!strcmp(key, "VolumeNodeIDs"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
-
       vtksys_stl::string k1;
       vtksys_stl::string k2;
       vtksys_stl::string v1;
       vtksys_stl::string v2;
-
+      
       while (ss >> k1 && ss >> v1 && ss >> k2 && ss >> v2)
-      {
+        {
         // moving to AddVolume
         //this->Scene->AddReferencedNodeID(v2.c_str(), this);
         this->AddVolume(v1.c_str(), v2.c_str());
+        }
       }
     }
-  }
 }
 
-//----------------------------------------------------------------------------
 void vtkMRMLEMSVolumeCollectionNode::Copy(vtkMRMLNode *rhs)
 {
   Superclass::Copy(rhs);
-
-  vtkMRMLEMSVolumeCollectionNode* node =
+  vtkMRMLEMSVolumeCollectionNode* node = 
     (vtkMRMLEMSVolumeCollectionNode*) rhs;
 
   this->KeyToVolumeNodeIDMap  = node->KeyToVolumeNodeIDMap;
@@ -197,10 +156,9 @@ void vtkMRMLEMSVolumeCollectionNode::Copy(vtkMRMLNode *rhs)
   this->KeyList               = node->KeyList;
 }
 
-//----------------------------------------------------------------------------
 void vtkMRMLEMSVolumeCollectionNode::CloneVolumes(const vtkMRMLNode *rhs)
 {
-  const vtkMRMLEMSVolumeCollectionNode* node =
+  const vtkMRMLEMSVolumeCollectionNode* node = 
     (const vtkMRMLEMSVolumeCollectionNode*) rhs;
 
   this->KeyToVolumeNodeIDMap  = node->KeyToVolumeNodeIDMap;
@@ -209,26 +167,24 @@ void vtkMRMLEMSVolumeCollectionNode::CloneVolumes(const vtkMRMLNode *rhs)
 
   // clone each image
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
-
   for (int i = 0; i < node->GetNumberOfVolumes(); ++i)
-  {
-    vtkMRMLScalarVolumeNode* clonedVolume =
+  {    
+    vtkMRMLScalarVolumeNode* clonedVolume = 
       volumeLogic->CloneVolume(this->GetScene(),
                                this->GetNthVolumeNode(i),
                                this->GetNthVolumeNode(i)->GetName());
     this->SetNthVolumeNodeID(i, clonedVolume->GetID());
   }
-
   volumeLogic->Delete();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLEMSVolumeCollectionNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLEMSVolumeCollectionNode::PrintSelf(ostream& os, 
+                                               vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "VolumeNodeIDs: " << "\n";
-  for (KeyConstIterator i = this->KeyList.begin(); i != this->KeyList.end();
+  for (KeyConstIterator i = this->KeyList.begin(); i != this->KeyList.end(); 
        ++i)
     {
     std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
@@ -236,7 +192,6 @@ void vtkMRMLEMSVolumeCollectionNode::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 AddVolume(const char* key, const char* volumeNodeID)
@@ -244,27 +199,21 @@ AddVolume(const char* key, const char* volumeNodeID)
   // enforce unique keys
   this->KeyList.remove(key);
   this->KeyList.push_back(key);
-
   this->KeyToVolumeNodeIDMap[key] = volumeNodeID;
   this->VolumeNodeIDToKeyMap[volumeNodeID] = key;
-
   this->Scene->AddReferencedNodeID(volumeNodeID, this);
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 SetNthVolumeNodeID(int n, const char* volumeNodeID)
 {
   KeyIterator i = this->KeyList.begin();
-
   vtksys_stl::advance(i, n);
-
   this->KeyToVolumeNodeIDMap[*i] = volumeNodeID;
   this->Scene->AddReferencedNodeID(volumeNodeID, this);
 }
 
-//----------------------------------------------------------------------------
 int
 vtkMRMLEMSVolumeCollectionNode::
 GetNumberOfVolumes() const
@@ -272,7 +221,6 @@ GetNumberOfVolumes() const
   return this->KeyList.size();
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 RemoveAllVolumes()
@@ -282,7 +230,6 @@ RemoveAllVolumes()
   this->VolumeNodeIDToKeyMap.clear();
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 RemoveVolumeByKey(const char* key)
@@ -296,7 +243,6 @@ RemoveVolumeByKey(const char* key)
     }
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 RemoveVolumeByNodeID(const char* nodeID)
@@ -310,7 +256,6 @@ RemoveVolumeByNodeID(const char* nodeID)
     }
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 RemoveNthVolume(int n)
@@ -325,7 +270,6 @@ RemoveNthVolume(int n)
   this->KeyList.remove(key);
 }
 
-//----------------------------------------------------------------------------
 const char*
 vtkMRMLEMSVolumeCollectionNode::
 GetVolumeNodeIDByKey(const char* key) const
@@ -333,7 +277,6 @@ GetVolumeNodeIDByKey(const char* key) const
   return this->KeyToVolumeNodeIDMap[key].c_str();
 }
 
-//----------------------------------------------------------------------------
 const char*
 vtkMRMLEMSVolumeCollectionNode::
 GetKeyByVolumeNodeID(const char* nodeID) const
@@ -341,7 +284,6 @@ GetKeyByVolumeNodeID(const char* nodeID) const
   return this->VolumeNodeIDToKeyMap[nodeID].c_str();
 }
 
-//----------------------------------------------------------------------------
 int
 vtkMRMLEMSVolumeCollectionNode::
 GetIndexByKey(const char* key) const
@@ -358,7 +300,6 @@ GetIndexByKey(const char* key) const
     }
 }
 
-//----------------------------------------------------------------------------
 int
 vtkMRMLEMSVolumeCollectionNode::
 GetIndexByVolumeNodeID(const char* nodeID) const
@@ -366,7 +307,6 @@ GetIndexByVolumeNodeID(const char* nodeID) const
   return this->GetIndexByKey(this->VolumeNodeIDToKeyMap[nodeID].c_str());
 }
 
-//----------------------------------------------------------------------------
 const char*
 vtkMRMLEMSVolumeCollectionNode::
 GetNthVolumeNodeID(int n) const
@@ -376,7 +316,6 @@ GetNthVolumeNodeID(int n) const
   return this->KeyToVolumeNodeIDMap[*i].c_str();
 }
 
-//----------------------------------------------------------------------------
 const char*
 vtkMRMLEMSVolumeCollectionNode::
 GetNthKey(int n) const
@@ -386,31 +325,29 @@ GetNthKey(int n) const
   return (*i).c_str();
 }
 
-//----------------------------------------------------------------------------
 vtkMRMLVolumeNode*
 vtkMRMLEMSVolumeCollectionNode::
 GetNthVolumeNode(int n) const
 {
   vtkMRMLVolumeNode* node = NULL;
-  if (const_cast<vtkMRMLEMSVolumeCollectionNode*>(this)->GetScene() &&
+  if (const_cast<vtkMRMLEMSVolumeCollectionNode*>(this)->GetScene() && 
       this->GetNthVolumeNodeID(n))
     {
     vtkMRMLNode* snode = const_cast<vtkMRMLEMSVolumeCollectionNode*>(this)->
       GetScene()->GetNodeByID(this->GetNthVolumeNodeID(n));
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
     }
-  return node;
+  return node;  
 }
 
-//----------------------------------------------------------------------------
 void
 vtkMRMLEMSVolumeCollectionNode::
 MoveNthVolume(int n, int toIndex)
-{
+{  
   if (toIndex == n)
-  {
+    {
     return;
-  }
+    }
 
   KeyIterator start    = this->KeyList.begin();
   KeyIterator iterFrom = start;
@@ -421,9 +358,8 @@ MoveNthVolume(int n, int toIndex)
   vtkstd::string keyFrom = *iterFrom;
 
   if (iterFrom != this->KeyList.end() && iterTo != this->KeyList.end())
-  {
+    {
     KeyList.erase(iterFrom);
     KeyList.insert(iterTo, keyFrom);
-  }
+    }
 }
-

@@ -262,11 +262,11 @@ protected:
   ~vtkImageEMGeneral() {};
 
   void DeleteVariables();
+//Kilian
+//BTX
   void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
                        vtkImageData *vtkNotUsed(outData),
                        int vtkNotUsed(outExt)[6], int vtkNotUsed(id)){};
-//Kilian
-//BTX
   // -------------------------------
   // Matrix Functions
   // -------------------------------

@@ -1,19 +1,3 @@
-/*=auto==============================================================
-
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
-
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
-
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentRegistrationParametersStep.h,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-==============================================================auto=*/
-
 #ifndef __vtkEMSegmentRegistrationParametersStep_h
 #define __vtkEMSegmentRegistrationParametersStep_h
 
@@ -22,8 +6,7 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentRegistrationParametersStep :
-  public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentRegistrationParametersStep : public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentRegistrationParametersStep *New();

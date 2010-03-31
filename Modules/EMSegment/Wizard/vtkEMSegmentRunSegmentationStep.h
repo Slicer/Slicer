@@ -1,37 +1,18 @@
-/*=auto=======================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkEMSegmentRunSegmentationStep.h,v$
-  Date:      $Date: 2006/01/06 17:56:51 $
-  Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
-
-=======================================================================auto=*/
-
 #ifndef __vtkEMSegmentRunSegmentationStep_h
 #define __vtkEMSegmentRunSegmentationStep_h
 
 #include "vtkEMSegmentStep.h"
 
-class vtkKWFrame;
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
+class vtkSlicerNodeSelectorWidget;
 class vtkKWLoadSaveButton;
 class vtkKWCheckButtonWithLabel;
 class vtkKWMatrixWidgetWithLabel;
 class vtkKWMatrixWidget;
-class vtkKWRenderWidget;
+class vtkKWFrame;
 
-class vtkSlicerNodeSelectorWidget;
-
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentRunSegmentationStep :
-  public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentRunSegmentationStep : public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentRunSegmentationStep *New();
@@ -84,10 +65,9 @@ protected:
   vtkKWMatrixWidgetWithLabel *RunSegmentationROIMaxMatrix;
   vtkKWFrameWithLabel        *RunSegmentationMiscFrame;
   vtkKWCheckButtonWithLabel  *RunSegmentationMultiThreadCheckButton;
-  vtkKWRenderWidget          *RunRenderWidget;
 
   // Description:
-  // Populate the run segmentation boundary matrix
+  // Populate the run segmentation boundary matrix 
   void PopulateSegmentationROIMatrix(
     vtkKWMatrixWidget* matrix, int ijk[3]);
 
@@ -97,4 +77,3 @@ private:
 };
 
 #endif
-
