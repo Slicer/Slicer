@@ -13,7 +13,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
-
+#include "vtkKWMenuButtonWithLabel.h"
 
 
 #include "vtkAngleWidget.h"
@@ -164,6 +164,7 @@ vtkMeasurementsAngleWidget::vtkMeasurementsAngleWidget ( )
   this->ResolutionEntry = NULL;
 
   this->AllVisibilityMenuButton = NULL;
+  this->AnnotationFormatMenuButton = NULL;
 
   // 3d elements
   this->ViewerWidget = NULL;
@@ -193,6 +194,12 @@ vtkMeasurementsAngleWidget::~vtkMeasurementsAngleWidget ( )
     this->AllVisibilityMenuButton->SetParent ( NULL );
     this->AllVisibilityMenuButton->Delete();
     this->AllVisibilityMenuButton = NULL;
+    }
+  if ( this->AnnotationFormatMenuButton )
+    {
+    this->AnnotationFormatMenuButton->SetParent ( NULL );
+    this->AnnotationFormatMenuButton->Delete();
+    this->AnnotationFormatMenuButton = NULL;
     }
   if (this->AngleSelectorWidget)
     {
@@ -810,6 +817,23 @@ void vtkMeasurementsAngleWidget::ProcessWidgetEvents(vtkObject *caller,
         }
       }
     this->Update3DWidget(activeAngleNode);
+    }
+  else if ( menu != NULL &&
+            menu == this->AnnotationFormatMenuButton->GetWidget()->GetMenu() )
+    {
+    // set visibility on all rulers
+    if ( menu->GetItemSelectedState ( "0 decimals" ) == 1 )
+      {
+      activeAngleNode->SetLabelFormat("%.0f mm");
+      }
+    else if ( menu->GetItemSelectedState ( "1 decimal" ) == 1 )
+      {
+      activeAngleNode->SetLabelFormat("%.1f mm");
+      }
+    else if ( menu->GetItemSelectedState ( "2 decimals" ) == 1 )
+      {
+      activeAngleNode->SetLabelFormat("%.2f mm");
+      }
     }
   else if (entry && event == vtkKWEntry::EntryValueChangedEvent)
     {
@@ -1680,6 +1704,10 @@ void vtkMeasurementsAngleWidget::AddWidgetObservers()
     {
     this->AllVisibilityMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->AnnotationFormatMenuButton)
+    {
+    this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1790,6 +1818,10 @@ void vtkMeasurementsAngleWidget::RemoveWidgetObservers ( )
   if (this->AllVisibilityMenuButton)
     {
     this->AllVisibilityMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->AnnotationFormatMenuButton)
+    {
+    this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->VisibilityButton)
     {
@@ -2277,13 +2309,37 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   // commented out until VTK supports getting the angle annotation text propery
   //this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
   //               this->TextColourButton->GetWidgetName() );
+
+  //---
+  //--- create distance annotation format menu button and set up menu
+  //---
+  this->AnnotationFormatMenuButton = vtkKWMenuButtonWithLabel::New();
+  this->AnnotationFormatMenuButton->SetParent ( annotationFrame );
+  this->AnnotationFormatMenuButton->Create();
+  this->AnnotationFormatMenuButton->SetLabelText("Standard Annotation Formats");
+  this->AnnotationFormatMenuButton->SetLabelWidth(29);
+  this->AnnotationFormatMenuButton->GetWidget()->IndicatorVisibilityOff();
+  this->AnnotationFormatMenuButton->SetBalloonHelpString ("Select a standard annotation format. Warning: will undo any custom text in the distance annotation entry box." );
+  
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("0 decimals");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("0 decimals");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("1 decimal");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("1 decimal");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("2 decimals");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("2 decimals");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->SetWidth(21);
+  this->AnnotationFormatMenuButton->GetWidget()->SetValue("0 decimals");
   
   this->LabelFormatEntry = vtkKWEntryWithLabel::New();
   this->LabelFormatEntry->SetParent(annotationFrame);
   this->LabelFormatEntry->Create();
   this->LabelFormatEntry->SetLabelText("Angle Annotation Format");
   this->LabelFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out angle in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->AnnotationFormatMenuButton->GetWidgetName(),
                  this->LabelFormatEntry->GetWidgetName());
 
   this->LabelScaleEntry =  vtkKWEntryWithLabel::New();

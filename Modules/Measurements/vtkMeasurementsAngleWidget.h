@@ -52,6 +52,7 @@ public:
   /// access methods
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
   vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
+  vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
 
   /// 
   /// Getting the mrml angle node id
@@ -190,6 +191,10 @@ protected:
   /// setting visibility of all angle nodes
   vtkKWMenuButton *AllVisibilityMenuButton;
 
+  ///
+  /// menu button to select different default annotation options
+  vtkKWMenuButtonWithLabel *AnnotationFormatMenuButton;
+  
   /// 
   /// flag set to 1 when updating a 3d widget (todo: set it to the index of the
   /// angle node / 3d widget once have more than one)
