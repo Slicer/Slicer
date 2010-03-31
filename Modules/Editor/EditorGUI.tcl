@@ -849,3 +849,18 @@ proc EditorErrorDialog {errorText} {
   $dialog Delete
 }
 
+#
+# helper to display confirmation
+#
+proc EditorConfirmDialog {confirmText} {
+  set dialog [vtkKWMessageDialog New]
+  $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetStyleToOkCancel
+  $dialog SetText $confirmText
+  $dialog Create
+  set returnValue [$dialog Invoke]
+  $dialog Delete
+  return $returnValue
+}
+
