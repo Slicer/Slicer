@@ -64,55 +64,66 @@ public:
   vtkTransform *Transform;
 };
 
-void vtkAffineCallback::Execute(vtkObject*, unsigned long, void*)
+void vtkAffineCallback::Execute(vtkObject* caller, unsigned long event, void*)
 {
-  if (this->AffineRep)
-   {
-    this->AffineRep->GetTransform(this->Transform);
-    if (this->TransformableNode)
+  // save node for undo if it's the start of an interaction event
+  if (event == vtkCommand::StartInteractionEvent)
+    {
+    if (this->TransformableNode && this->TransformableNode->GetScene())
       {
-      if (this->TransformableNode->GetTransformNodeID() == NULL &&
-          this->TransformableNode->GetScene() != NULL)
+      this->TransformableNode->GetScene()->SaveStateForUndo(this->TransformableNode);
+      }
+    }
+  else if (event == vtkCommand::InteractionEvent)
+    {
+    if (this->AffineRep)
+      {
+      this->AffineRep->GetTransform(this->Transform);
+      if (this->TransformableNode)
         {
-        vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::New();
-        vtkMRMLNode *newNode = this->TransformableNode->GetScene()->AddNode(t);
-        if (newNode->GetID() != NULL)
+        if (this->TransformableNode->GetTransformNodeID() == NULL &&
+            this->TransformableNode->GetScene() != NULL)
           {
-          this->TransformableNode->SetAndObserveTransformNodeID(newNode->GetID());
+          vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::New();
+          vtkMRMLNode *newNode = this->TransformableNode->GetScene()->AddNode(t);
+          if (newNode->GetID() != NULL)
+            {
+            this->TransformableNode->SetAndObserveTransformNodeID(newNode->GetID());
+            }
+          else
+            {
+            std::cerr << "Unable to add new transform node to the scene!\n";
+            }
+          t->Delete();
+          }
+        if (this->TransformableNode->GetTransformNodeID() == NULL)
+          {
+          std::cerr << "Unable to find or create a transform node for " << this->TransformableNode->GetName() << std::endl;
           }
         else
           {
-          std::cerr << "Unable to add new transform node to the scene!\n";
+          vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformableNode->GetScene()->GetNodeByID(this->TransformableNode->GetTransformNodeID()));
+          if (t)
+            {
+            // now we have the node's transform node, get at the matrix to update it
+            vtkMatrix4x4 *g = t->GetMatrixTransformToParent();
+            if (g && this->Transform)
+              {
+              g->DeepCopy(this->Transform->GetMatrix());
+              }
+            else 
+              {
+              std::cerr << "ERROR: unable to set the transformable node's matrix from the affine widget's transfrom matrix\n";
+              } 
+            }
           }
-        t->Delete();
         }
-    if (this->TransformableNode->GetTransformNodeID() == NULL)
-      {
-      std::cerr << "Unable to find or create a transform node for " << this->TransformableNode->GetName() << std::endl;
       }
     else
       {
-      vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformableNode->GetScene()->GetNodeByID(this->TransformableNode->GetTransformNodeID()));
-      if (t)
-        {
-        // now we have the node's transform node, get at the matrix to update it
-        vtkMatrix4x4 *g = t->GetMatrixTransformToParent();
-        if (g && this->Transform)
-          {
-          g->DeepCopy(this->Transform->GetMatrix());
-          }
-        else 
-          {
-          std::cerr << "ERROR: unable to set the transformable node's matrix from the affine widget's transfrom matrix\n";
-          } 
-        }
+      std::cerr << "Affine callback: affine representation is null\n";
       }
-    }
-  }
-  else
-    {
-    std::cerr << "Affine callback: affine representation is null\n";
-    }
+    } // end interaction event
 }
 
 
@@ -164,9 +175,8 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
 //----------------------------------------------------------------------------
 vtkMeasurementsGUI::~vtkMeasurementsGUI()
 {
-//    this->RemoveMRMLNodeObservers ( );
 //    this->RemoveLogicObservers ( );
-
+  this->RemoveMRMLObservers();
 
   if (this->RulerWidget)
     {
@@ -315,12 +325,19 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           this->TransformWidget->SetInteractor(appGUI->GetActiveViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
           }
+        else
+          {
+          this->TransformWidget->SetInteractor(NULL);
+          }
         double bounds[6] = {-50, 0, -50, 0, 0, 0};
         this->TransformRepresentation->PlaceWidget(bounds);
         }
         // reset the node if it's changed
       this->UpdateTransformableNode();
-      this->TransformWidget->On();
+      if (this->TransformWidget->GetInteractor())
+        {
+        this->TransformWidget->On();
+        }
       }
     else
       {
@@ -333,7 +350,34 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
       this->UpdateTransformableNode();
     }
 }
+//---------------------------------------------------------------------------
+void vtkMeasurementsGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                             unsigned long event, void *callData )
+{
+  // check for a transform modified event on the node the transform widget is
+  // attached to
+  if ( this->TransformableNodeSelectorWidget->GetSelected() == NULL)
+    {
+    return;
+    }
+  
+  vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(caller);
+  vtkMRMLTransformableNode *activeNode = 
+    vtkMRMLTransformableNode::SafeDownCast(this->TransformableNodeSelectorWidget->GetSelected());
 
+  if (activeNode == NULL)
+    {
+    return;
+    }
+  
+  if (node != NULL &&
+      node == activeNode &&
+      event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    vtkDebugMacro("ProcessMRMLEvents: Got transform modified event on node " << node->GetID());
+    this->Update3DWidget(node);
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::SetStatusText(const char *txt)
@@ -437,7 +481,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   transformFrame->Create();
   transformFrame->SetLabelText("Transform Widget");
   transformFrame->ExpandFrame();
-  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", transformFrame->GetWidgetName());
+//  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", transformFrame->GetWidgetName());
   
   // Transform
   this->TransformCheckButton = vtkKWCheckButton::New();
@@ -460,6 +504,8 @@ void vtkMeasurementsGUI::BuildGUI ( )
   this->TransformableNodeSelectorWidget->SetShowHidden(0);
   // and don't allow transform nodes themselves
   this->TransformableNodeSelectorWidget->AddExcludedChildClass("vtkMRMLLinearTransformNode");
+  // don't allow camera node, too confusing
+  this->TransformableNodeSelectorWidget->AddExcludedChildClass("vtkMRMLCameraNode");
   this->TransformableNodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->TransformableNodeSelectorWidget->SetBorderWidth(2);
   this->TransformableNodeSelectorWidget->SetPadX(2);
@@ -489,14 +535,93 @@ void vtkMeasurementsGUI::UpdateTransformableNode()
     if (transformableNode != NULL)
       {
       // remove current observers
+      this->TransformWidget->RemoveObservers(vtkCommand::StartInteractionEvent);
       this->TransformWidget->RemoveObservers(vtkCommand::InteractionEvent);
       // set up a call back and observer
       vtkAffineCallback *acbk = vtkAffineCallback::New();
       acbk->AffineRep = this->TransformRepresentation;
       acbk->TransformableNode = transformableNode;
+      this->TransformWidget->AddObserver(vtkCommand::StartInteractionEvent,acbk);
       this->TransformWidget->AddObserver(vtkCommand::InteractionEvent,acbk);
       acbk->Delete();
+
+      // remove transform modified event observer? do it on destruction
+      
+      // add a transform modified event observer
+      if (transformableNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+        {
+        vtkDebugMacro("UpdateTransformableNode: adding an observer on node " << transformableNode->GetID());
+        transformableNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+        }
       }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsGUI::Update3DWidget(vtkMRMLTransformableNode *node)
+{
+  if (node == NULL)
+    {
+    return;
+    }
+
+  if (!this->TransformRepresentation)
+    {
+    vtkErrorMacro("Update3DWidget: no affine widget to update");
+    return;
+    }
+
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();;
+  this->TransformRepresentation->GetTransform(transform);
+  vtkMatrix4x4 *widgetMatrix = transform->GetMatrix();
+  if (!widgetMatrix)
+    {
+    vtkErrorMacro("Update3DWidget: unable to get the matrix from the affine transform widget's transform");
+    return;
+    }
+  
+  // get the node's transform
+  vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetTransformNodeID()));
+
+  if (!t)
+    {
+    vtkErrorMacro("Update3DWidget: unable to get the transform node from  node " << node->GetID());
+    return;
+    }
+  // now we have the node's transform node, get at the matrix 
+  vtkMatrix4x4 *mat = t->GetMatrixTransformToParent();
+  if (!mat)
+    {
+    vtkErrorMacro("Update3DWidget: unable to get the matrix from transform node " << t->GetID());
+    return;
+    }
+
+  // has it changed?
+  bool changed = false;
+  for (unsigned int i = 0; i < 4 && changed == false; i++)
+    {
+    for (unsigned int j = 0; j < 4 && changed == false; j++)
+      {
+      if (fabs(mat->GetElement(i,j) - widgetMatrix->GetElement(i,j)) > 0.001)
+        {
+        changed = true;
+        }
+      }
+    }
+  if (changed == false)
+    {
+    return;
+    }
+  vtkDebugMacro("Update3DWidget: updating widget from node " << node->GetID());
+
+  //double *origin = this->TransformRepresentation->GetOrigin();
+  // place widget sets the origin from the bounds, and inits the internal transform
+  // to identity
+  double bounds[6] = {-50, 0, -50, 0, 0, 0};
+  this->TransformRepresentation->PlaceWidget(bounds);
+  // now apply the transform ... except you can't because there's no api for
+  // it. So this currently works when hit the Identity button in the
+  // transforms module but that's it
+
 }
 
 //---------------------------------------------------------------------------
@@ -529,6 +654,23 @@ void vtkMeasurementsGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
     else
       {
       this->TransformWidget->SetInteractor(NULL);
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsGUI::RemoveMRMLObservers ( )
+{
+  // remove observers on the transformable nodes
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLTransformableNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLTransformableNode"));
+    if (transformableNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand))
+      {
+      vtkDebugMacro("RemovemMRMLObservers: removing observer on " << n << "th transformable node of " << nnodes);
+      transformableNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
       }
     }
 }
