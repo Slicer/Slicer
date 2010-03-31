@@ -410,7 +410,7 @@ if(Slicer3_USE_KWWIDGETS)
       ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake )
 
     #set(blt_PATCH patch -p2 -t -N < ${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/BLT/blt_darwin_tcl84_patch.txt)
-    set(blt_PATCH path -p2 -t -N < ${tcl_base}/blt/bltpatch)
+    set(blt_PATCH patch -p2 -t -N < ${tcl_base}/blt/bltpatch)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
     set(blt_BUILD make)
     set(blt_INSTAL make install)
