@@ -918,7 +918,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             ../VTK
       } elseif { $isDarwin } {
         ## Need to set the library path so that vtkhash is found while building the parellel libraries
-        set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
+        set ::env(DYLD_LIBRARY_PATH) "$::Slicer3_LIB/VTK-build/bin"
         set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
         runcmd $::CMAKE \
             -G$GENERATOR \
@@ -1209,7 +1209,7 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
       }
       "Darwin" {
           ## Need to set the library path so that the tests pass
-          set ::env("DYLD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
+          set ::env(DYLD_LIBRARY_PATH) "$::Slicer3_LIB/VTK-build/bin"
           set zlib "libvtkzlib.dylib"
           set png "libvtkpng.dylib"
       }
