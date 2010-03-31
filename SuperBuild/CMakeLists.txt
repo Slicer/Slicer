@@ -409,9 +409,10 @@ if(Slicer3_USE_KWWIDGETS)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/blt_download_tcl84_patch.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake )
 
-    set(blt_PATCH patch -p2 -t -N < ${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/BLT/blt_darwin_tcl84_patch.txt)
+    #set(blt_PATCH patch -p2 -t -N < ${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/BLT/blt_darwin_tcl84_patch.txt)
+    set(blt_PATCH path -p2 -t -N < ${tcl_base}/blt/bltpatch)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
-    set(blt_BUILD make ${parallelism_level})
+    set(blt_BUILD make)
     set(blt_INSTAL make install)
 
   #if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
@@ -441,12 +442,14 @@ if(Slicer3_USE_KWWIDGETS)
     INSTALL_COMMAND ${btl_INSTALL}
   )
 
-  ExternalProject_Add_Step(${proj} Download_blt_patch
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake
-    WORKING_DIRECTORY ${tcl_base}/blt
-    DEPENDEES update
-    DEPENDERS patch
-  )
+  if(APPLE)
+    ExternalProject_Add_Step(${proj} Download_blt_patch
+      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake
+      WORKING_DIRECTORY ${tcl_base}/blt
+      DEPENDEES update
+      DEPENDERS patch
+    )
+  endif(APPLE)
 
 endif(Slicer3_USE_KWWIDGETS)
 
