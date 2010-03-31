@@ -113,6 +113,11 @@ public:
   int SetNthFiducialVisibilityNoModified(int n, int flag);
   int SetNthFiducialID(int n, const char *id);
 
+  /// Set the nth fiducial to xyz transformed by the inverse of the transform
+  /// to world for the list. Calls SetNthFiducialXYZ after transforming the
+  /// passed in coordinates and returns the result of that call.
+  int SetNthFiducialXYZWorld(int n, float x, float y, float z);
+  
   /// Restrict access to the fiducial points, access the fiducial by id (used
   /// by the vtkSlicerFiducialListWidget). Returns 0 on success.
   //BTX

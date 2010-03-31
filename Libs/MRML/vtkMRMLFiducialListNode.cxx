@@ -723,6 +723,35 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZ(int n, float x, float y, float z)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetNthFiducialXYZWorld(int n, float x, float y, float z)
+{
+  // first get the list's transform node
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  transformToWorld->Identity();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+  // convert by the inverted parent transform
+  transformToWorld->Invert();
+  double  xyzw[4];
+  xyzw[0] = x;
+  xyzw[1] = y;
+  xyzw[2] = z;
+  xyzw[3] = 1.0;
+  double worldxyz[4], *worldp = &worldxyz[0];
+  transformToWorld->MultiplyPoint(xyzw, worldp); 
+
+  transformToWorld->Delete();
+  transformToWorld = NULL;
+  tnode = NULL;
+
+  return this->SetNthFiducialXYZ(n, worldxyz[0], worldxyz[1], worldxyz[2]);
+}
+
+//----------------------------------------------------------------------------
 float * vtkMRMLFiducialListNode::GetNthFiducialXYZ(int n)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);

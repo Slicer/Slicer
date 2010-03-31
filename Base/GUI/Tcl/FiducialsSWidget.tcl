@@ -344,7 +344,7 @@ itcl::body FiducialsSWidget::seedMovedCallback {seed fidListNode fidIndex} {
 
   $::slicer3::MRMLScene SaveStateForUndo $fidListNode
   set ras [$seed getRASPosition]
-  eval after idle "$fidListNode SetNthFiducialXYZ $fidIndex $ras"
+  eval after idle "$fidListNode SetNthFiducialXYZWorld $fidIndex $ras"
 
   set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
   set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
