@@ -15,8 +15,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
-
-
+#include "vtkKWMenuButtonWithLabel.h"
 
 #include "vtkLineWidget2.h"
 #include "vtkPointHandleRepresentation3D.h"
@@ -146,6 +145,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->ResolutionEntry = NULL;
 
   this->AllVisibilityMenuButton = NULL;
+  this->AnnotationFormatMenuButton = NULL;
 
   // 3d elements
   this->ViewerWidget = NULL;
@@ -175,6 +175,12 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     this->AllVisibilityMenuButton->SetParent ( NULL );
     this->AllVisibilityMenuButton->Delete();
     this->AllVisibilityMenuButton = NULL;
+    }
+  if ( this->AnnotationFormatMenuButton )
+    {
+    this->AnnotationFormatMenuButton->SetParent ( NULL );
+    this->AnnotationFormatMenuButton->Delete();
+    this->AnnotationFormatMenuButton = NULL;
     }
   if (this->RulerSelectorWidget)
     {
@@ -710,6 +716,27 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
         }
       }
     this->Update3DWidget(activeRulerNode);
+    }
+  else if ( menu != NULL &&
+            menu == this->AnnotationFormatMenuButton->GetWidget()->GetMenu() )
+    {
+    // set visibility on all rulers
+    if ( menu->GetItemSelectedState ( "1 decimal" ) == 1 )
+      {
+      activeRulerNode->SetDistanceAnnotationFormat("%.1f mm");
+      }
+    else if ( menu->GetItemSelectedState ( "0 decimals" ) == 1 )
+      {
+      activeRulerNode->SetDistanceAnnotationFormat("%.0f mm");
+      }
+    else if ( menu->GetItemSelectedState ( "2 decimals" ) == 1 )
+      {
+      activeRulerNode->SetDistanceAnnotationFormat("%.2f mm");
+      }
+    else if ( menu->GetItemSelectedState ( "Scientific Notation" ) == 1 )
+      {
+      activeRulerNode->SetDistanceAnnotationFormat("%.2e mm");
+      }
     }
   else if (entry && event == vtkKWEntry::EntryValueChangedEvent)
     {
@@ -1506,6 +1533,10 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     {
     this->AllVisibilityMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->AnnotationFormatMenuButton)
+    {
+    this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1592,6 +1623,10 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
   if (this->AllVisibilityMenuButton)
     {
     this->AllVisibilityMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->AnnotationFormatMenuButton)
+    {
+    this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->VisibilityButton)
     {
@@ -1990,13 +2025,40 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->TextColourButton->SetBalloonHelpString("set text color.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->TextColourButton->GetWidgetName() );
+
+  //---
+  //--- create distance annotation format menu button and set up menu
+  //---
+  this->AnnotationFormatMenuButton = vtkKWMenuButtonWithLabel::New();
+  this->AnnotationFormatMenuButton->SetParent ( annotationFrame );
+  this->AnnotationFormatMenuButton->Create();
+  this->AnnotationFormatMenuButton->SetLabelText("Standard Annotation Formats");
+  this->AnnotationFormatMenuButton->SetLabelWidth(29);
+  this->AnnotationFormatMenuButton->GetWidget()->IndicatorVisibilityOff();
+  this->AnnotationFormatMenuButton->SetBalloonHelpString ("Select a standard annotation format. Warning: will undo any custom text in the distance annotation entry box." );
+  
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("1 decimal");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("1 decimal");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("0 decimals");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("0 decimals");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("2 decimals");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("2 decimals");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddRadioButton("Scientific Notation");
+  index = this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->GetIndexOfItem ("Scientific Notation");
+  this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->SetItemIndicatorVisibility ( index, 0);
+  this->AnnotationFormatMenuButton->GetWidget()->SetWidth(21);
+  this->AnnotationFormatMenuButton->GetWidget()->SetValue("1 decimal");
   
   this->DistanceAnnotationFormatEntry = vtkKWEntryWithLabel::New();
   this->DistanceAnnotationFormatEntry->SetParent(annotationFrame);
   this->DistanceAnnotationFormatEntry->Create();
   this->DistanceAnnotationFormatEntry->SetLabelText("Distance Annotation Format");
-  this->DistanceAnnotationFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out distance in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  this->DistanceAnnotationFormatEntry->SetBalloonHelpString("String formatting command, use the defaults from the menu or customise it in this entry. Use %g to print out distance in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
+  this->Script ( "pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->AnnotationFormatMenuButton->GetWidgetName(),
                  this->DistanceAnnotationFormatEntry->GetWidgetName());
 
   this->DistanceAnnotationScaleEntry =  vtkKWEntryWithLabel::New();

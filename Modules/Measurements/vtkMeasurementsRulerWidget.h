@@ -52,6 +52,7 @@ public:
   /// access methods
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
   vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
+  vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
 
   /// 
   /// Getting the mrml ruler node id
@@ -202,6 +203,10 @@ protected:
   /// menu button whose menu exposes options for
   /// setting visibility of all ruler nodes
   vtkKWMenuButton *AllVisibilityMenuButton;
+
+  ///
+  /// menu button to select different default annotation options
+  vtkKWMenuButtonWithLabel *AnnotationFormatMenuButton;
 
   /// 
   /// flag set to 1 when updating a 3d widget (todo: set it to the index of the
