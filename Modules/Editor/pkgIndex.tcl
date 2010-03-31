@@ -7,6 +7,7 @@ package ifneeded Editor 3.0 [list
   source [file join $dir Box.tcl]
   source [file join $dir EditBox.tcl]
   source [file join $dir EditColor.tcl]
+  source [file join $dir HelperBox.tcl]
   source [file join $dir ColorBox.tcl]
   source [file join $dir EffectSWidget.tcl]
   source [file join $dir Labeler.tcl]
