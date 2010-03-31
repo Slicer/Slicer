@@ -39,6 +39,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   vtkTypeRevisionMacro(vtkSlicerFiducialsLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  ///
+  /// Get the currently selected list from the scene. Returns NULL if no
+  /// selection node or no active fiducial list id is set on the selection
+  /// node.
+  vtkMRMLFiducialListNode *GetSelectedList();
+
   /// 
   /// Create new mrml node for a full list, make it the selected list, and clear up local pointers
   void AddFiducialListSelected();
@@ -52,10 +58,18 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   /// Add a fiducial to the currently selected list, as kept in the
   /// vtkMRMLSelectionNode
   /// Returns the index of the new fiducial in the list, -1 on failure
-  /// AddFiducialSelected includes a selected flag option
+  /// AddFiducialSelected includes a selected flag option, AddFiducial calls
+  /// AddFiducialSelected with selected set to false.
   int AddFiducial(float x, float y, float z);
   int AddFiducialSelected (float x, float y, float z, int selected);
 
+  ///
+  /// Add a fiducial, but transform it first by the inverse of any
+  /// transformation node on the list. Called by Pick methods. Calls
+  /// AddFiducialSelected with the transformed x,y,z and same selected flag
+  /// (defaults to 0).
+  int AddFiducialPicked(float x, float y, float z, int selected = 0);
+  
   /// 
   /// Load a fiducial list from file, returns NULL on failure
   vtkMRMLFiducialListNode *LoadFiducialList(const char *path);

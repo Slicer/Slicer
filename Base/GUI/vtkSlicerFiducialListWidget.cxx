@@ -299,47 +299,10 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
         if (fidGUI != NULL )
           {
           vtkSlicerFiducialsLogic *fidLogic  = fidGUI->GetLogic();
-          // check to see if there's a transform on the selected list that
-          // fidLogic will add this picked point to
-          // get the selection node
-          vtkMRMLSelectionNode *selnode;
-          selnode = vtkMRMLSelectionNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-          if (selnode)
-            {
-            if (selnode->GetActiveFiducialListID() != NULL)
-              {
-              vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
-              if (flist)
-                {
-                vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
-                vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-                transformToWorld->Identity();
-                if (tnode != NULL && tnode->IsLinear())
-                  {
-                  vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-                  lnode->GetMatrixTransformToWorld(transformToWorld);
-                  }
-                // will convert by the inverted parent transform
-                transformToWorld->Invert();
-                double xyzw[4];
-                xyzw[0] = rasPoint[0];
-                xyzw[1] = rasPoint[1];
-                xyzw[2] = rasPoint[2];
-                xyzw[3] = 1.0;
-                double worldxyz[4], *worldp = &worldxyz[0];
-              
-                transformToWorld->MultiplyPoint(xyzw, worldp);
-                rasPoint[0] = worldxyz[0];
-                rasPoint[1] = worldxyz[1];
-                rasPoint[2] = worldxyz[2];
-
-                transformToWorld->Delete();
-                transformToWorld = NULL;
-                tnode = NULL;
-                }
-              }
-            }
-          int fidIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
+           
+          // the fiducials logic will take care of applying any inverted
+          // transform on the list
+          int fidIndex = fidLogic->AddFiducialPicked(rasPoint[0], rasPoint[1], rasPoint[2], 1);
           if (fidIndex == -1)
             {
             vtkErrorMacro("Pick failed, could not add a fiducial at " << rasPoint[0] << "," << rasPoint[1] << "," << rasPoint[2]); 
