@@ -620,8 +620,8 @@ int vtkProstateNavLogic::UpdateCoverageVolumeImage()
 
 //  std::string needleType = this->NeedleTypeMenuList->GetWidget()->GetValue();
   
-  double *origin=coverageImage->GetOrigin();
-  double *spacing=coverageImage->GetSpacing();
+  //double *origin=coverageImage->GetOrigin();
+  //double *spacing=coverageImage->GetSpacing();
 
   double rasPoint[4]={0,0,0,1};
   double ijkPoint[4]={0,0,0,1};

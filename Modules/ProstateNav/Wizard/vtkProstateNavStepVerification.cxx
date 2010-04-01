@@ -522,7 +522,7 @@ void vtkProstateNavStepVerification::OnMultiColumnListSelectionChanged()
     
     int rowIndex = this->TargetList->GetWidget()->GetIndexOfFirstSelectedRow();    
     int targetIndex=this->TargetList->GetWidget()->GetRowAttributeAsInt(rowIndex, TARGET_INDEX_ATTR);
-    vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(targetIndex);    
+    //vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(targetIndex);    
           
     this->GetProstateNavManager()->SetCurrentTargetIndex(targetIndex);
     DisplayVerificationResultsForCurrentTarget();
