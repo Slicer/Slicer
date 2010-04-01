@@ -333,25 +333,12 @@ if(Slicer3_USE_KWWIDGETS)
     set(itcl_BUILD_COMMAND make)
     set(itcl_INSTALL_COMMAND make install)
     
-  #  if { $isDarwin } {
-  #          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
-  #          exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
-  #      }
-  #if { $isDarwin } {
-  #        # need to run ranlib separately on lib for Darwin
-  #        # file is created and ranlib is needed inside make all
-  #        catch "eval runcmd $::MAKE all"
-  #        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
-  #          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
-  #        }
   else()
     set(itcl_BUILD_IN_SOURCE 1)
     set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
     set(itcl_BUILD_COMMAND make ${parallelism_level} all)
     set(itcl_INSTALL_COMMAND make install)
   endif()
-
-  #exec chmod +x ../incrTcl/configure
 
   ExternalProject_Add(${proj}
     DEPENDS tk
@@ -364,31 +351,6 @@ if(Slicer3_USE_KWWIDGETS)
     INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
   )
 
-
-#  ExternalProject_Add_Step(${proj} Restore_itcl_configure
-#    COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/incrTcl/itcl/configure.orig ${tcl_base}/incrTcl/itcl/configure
-#    DEPENDEES configure
-#    DEPENDERS build
-#    )
-
-#ExternalProject_Add_Step(${proj} Sed_itcl_configure
-#    COMMAND sed -f ${CMAKE_CURRENT_SOURCE_DIR}/itcl_sed.txt ${tcl_base}/incrTcl/itcl/configure.orig > ${tcl_base}/incrTcl/itcl/configure
-#    DEPENDEES Backup_itcl_configure
-#    DEPENDERS configure
-#    )
-
-#ExternalProject_Add_Step(${proj} Backup_itcl_configure
-#    COMMAND  ${CMAKE_COMMAND} -E copy ${tcl_base}/incrTcl/itcl/configure ${tcl_base}/incrTcl/itcl/configure.orig
-#    DEPENDEES CHMOD_incrTcl_configure
-#    DEPENDERS Sed_itcl_configure
-#    )
-
-#ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
-#    COMMAND chmod +x ${tcl_base}/incrTcl/configure
-#    DEPENDEES update
-#    DEPENDERS Backup_itcl_configure
-#    )
-
   if(NOT WIN32)
     ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
       COMMAND chmod +x ${tcl_base}/incrTcl/configure
@@ -396,13 +358,6 @@ if(Slicer3_USE_KWWIDGETS)
       DEPENDERS configure
     )
   endif(NOT WIN32)
-
-#ExternalProject_Add_Step(${proj} Patch_itcl_configure
-#  COMMAND ${itcl_PATCH_COMMAND}
-#  ALWAYS 1
-#  DEPENDEES CHMOD_incrTcl_configure
-#  DEPENDERS configure
-#  )
 
 endif(Slicer3_USE_KWWIDGETS)
 
