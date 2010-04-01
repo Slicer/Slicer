@@ -790,10 +790,14 @@ bool Quaternion::ComputeFromRotationMatrix(Column3Vector C0, Column3Vector C1,
   if(tw<0.0) tw=0.0;
  
   // Set quaternion elements (magnitude only)
-  this->setX( sqrt((float)(tx))/2.0 );
-  this->setY( sqrt((float)(ty))/2.0 );
-  this->setZ( sqrt((float)(tz))/2.0 );
-  this->setW( sqrt((float)(tw))/2.0 );
+  float newVal = (float)sqrt(tx/2.0);
+  this->setX( newVal );
+  newVal = (float)sqrt(ty/2.0);
+  this->setY( newVal );
+  newVal = (float)sqrt(tz/2.0);
+  this->setZ( newVal );
+  newVal = (float)sqrt(tw/2.0);
+  this->setW( newVal );
 
   // Set sign.
   this->setX( this->getX() * (((C1.getZ()-C2.getY())<0)?-1:1) );
