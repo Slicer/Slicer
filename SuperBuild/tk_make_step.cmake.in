@@ -1,22 +1,5 @@
 
-
-# it seems that you need to run configure in the unix directory
-# and not from the parent directory relatively i.e. sh /unix/configure
-# use this step so we can set the WORKING_DIRECTORY appropriately
-
-if(APPLE)
-
-  execute_process(
-    COMMAND sh configure --with-tcl=@tcl_build@/lib --prefix=@tcl_build@ --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
-    WORKING_DIRECTORY @tcl_base@/tk/unix
-  )
-
-else(APPLE)
-
-  execute_process(
-    COMMAND sh configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=@tcl_build@ 
-    WORKING_DIRECTORY @tcl_base@/tk/unix
-  )
-
-endif(APPLE)
-
+execute_process(
+  COMMAND make
+  WORKING_DIRECTORY @tcl_base@/tk/unix
+)
