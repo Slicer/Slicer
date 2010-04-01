@@ -542,12 +542,14 @@ itcl::body HelperBox::create { } {
   #
   # Master Frame
   # 
-  set o(masterFrame) [vtkNew vtkKWFrameWithLabel]
+  #set o(masterFrame) [vtkNew vtkKWFrameWithLabel]
+  set o(masterFrame) [vtkNew vtkKWFrame]
   $o(masterFrame) SetParent $parent
   $o(masterFrame) Create
-  $o(masterFrame) SetLabelText "Master Volume Properties"
+  #$o(masterFrame) SetLabelText "Master Volume Properties"
   pack [$o(masterFrame) GetWidgetName] -side top -anchor nw -fill x -padx 2 -pady 2
-  set masterFrame [$o(masterFrame) GetFrame]
+  #set masterFrame [$o(masterFrame) GetFrame]
+  set masterFrame $o(masterFrame)
 
   # the master volume
 
@@ -579,12 +581,14 @@ itcl::body HelperBox::create { } {
   #
   # Structures Frame
   # 
-  set o(structuresFrame) [vtkNew vtkKWFrameWithLabel]
+  #set o(structuresFrame) [vtkNew vtkKWFrameWithLabel]
+  set o(structuresFrame) [vtkNew vtkKWFrame]
   $o(structuresFrame) SetParent $parent
   $o(structuresFrame) Create
-  $o(structuresFrame) SetLabelText "Structures"
+  #$o(structuresFrame) SetLabelText "Structures"
   pack [$o(structuresFrame) GetWidgetName] -side top -anchor nw -fill both -expand true -padx 2 -pady 2
-  set structuresFrame [$o(structuresFrame) GetFrame]
+  #set structuresFrame [$o(structuresFrame) GetFrame]
+  set structuresFrame $o(structuresFrame)
 
   # buttons frame 
 
@@ -614,7 +618,7 @@ itcl::body HelperBox::create { } {
   # structures listbox
 
   set o(structures) [vtkNew vtkKWMultiColumnListWithScrollbars]
-  $o(structures) SetParent [$o(structuresFrame) GetFrame]
+  $o(structures) SetParent $structuresFrame
   $o(structures) Create
   $o(structures) SetHeight 2
   $o(structures) SetHorizontalScrollbarVisibility 1
