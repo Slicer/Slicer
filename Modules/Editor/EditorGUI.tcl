@@ -12,10 +12,10 @@ proc EditorTearDownGUI {this} {
 
   # nodeSelector  ;# disabled for now
   set widgets {
-      volumesFrame 
       optionsSpacer optionsFrame
       toolsActiveTool toolsEditFrame toolsColorFrame
-      toolsFrame enableCheckPoint
+      enableCheckPoint
+      toolsFrame volumesFrame 
   }
 
   itcl::delete object $::Editor($this,editColor)
@@ -81,7 +81,7 @@ proc EditorBuildGUI {this} {
   #
   # Tool Frame
   #
-  set ::Editor($this,toolsFrame) [vtkKWFrameWithLabel New]
+  set ::Editor($this,toolsFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,toolsFrame) SetParent $pageWidget
   $::Editor($this,toolsFrame) Create
   $::Editor($this,toolsFrame) SetLabelText "Edit Selected Label Map"
@@ -154,7 +154,7 @@ proc EditorBuildGUI {this} {
   #
   # Editor Volumes
   #
-  set ::Editor($this,volumesFrame) [vtkKWFrameWithLabel New]
+  set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,volumesFrame) SetParent $pageWidget
   $::Editor($this,volumesFrame) Create
   $::Editor($this,volumesFrame) SetLabelText "Create & Select Label Maps"
