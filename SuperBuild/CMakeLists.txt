@@ -314,7 +314,6 @@ if(Slicer3_USE_KWWIDGETS)
   set(itcl_INSTALL_COMMAND "")
   set(itcl_PATCH_COMMAND "")
 
-  #make build command call cmake -P on a cmake script that sets LD_LIBRARY_PATH
   if(WIN32)
   elseif(APPLE)
     set(itcl_BUILD_IN_SOURCE 1)
