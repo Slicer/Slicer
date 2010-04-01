@@ -205,6 +205,10 @@ if(Slicer3_USE_KWWIDGETS)
     set(tcl_SOURCE_DIR tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
 
+    # configure, make and make install all need to be executed in tk/unix. External_Project
+    # doesn't provide any way to set the working directory for each step so we do so by
+    # configuring a script that has an execute_process command that has the correct working
+    # directory   
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_configure_step.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake
       @ONLY)
@@ -288,8 +292,6 @@ if(Slicer3_USE_KWWIDGETS)
     INSTALL_COMMAND ${tk_INSTALL_COMMAND}
   )
 
-  #file copy -force $Slicer3_LIB/tcl/tk/generic/default.h $Slicer3_LIB/tcl-build/include
-  #file copy -force $Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $Slicer3_LIB/tcl-build/include
   if(NOT WIN32)
     ExternalProject_Add_Step(${proj} Install_default.h
       COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/generic/default.h ${tcl_build}/include
@@ -429,16 +431,6 @@ if(Slicer3_USE_KWWIDGETS)
       @ONLY)
 
     set(blt_INSTALL ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/blt_install_step.cmake)
-    #set(blt_INSTALL make install)
-  #if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
-  #              puts "Patching..." 
-  #              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
-  #              cd $Slicer3_LIB/tcl/blt 
-  #              runcmd patch -p2 < ../bltpatch 
-
-                # create a file to make sure BLT isn't patched twice 
-  #              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
-  #              file delete $Slicer3_LIB/tcl/bltpatch 
   else()
     set(blt_BUILD_IN_SOURCE 1)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
