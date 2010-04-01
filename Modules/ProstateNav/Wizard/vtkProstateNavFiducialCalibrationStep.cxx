@@ -812,7 +812,7 @@ void vtkProstateNavFiducialCalibrationStep::Resegment()
   initialAngle = this->InitialAngleSpinBox->GetWidget()->GetValue();
 
   // start the segmentation/registration
-  bool found[CALIB_MARKER_COUNT]={false, false, false, false};
+//  bool found[CALIB_MARKER_COUNT]={false, false, false, false};
   std::string calibResultDetails;
 
   const char* calVolNodeID = mrmlNode->GetCalibrationVolumeNodeID();
@@ -1060,9 +1060,9 @@ void CalibPointRenderer::Update(vtkKWRenderWidget *renderer, vtkMRMLVolumeNode *
     if (renderer!=0)
     {
       // assigne to a different renderer
-      int rfbef=this->Render_Volume->GetReferenceCount();
+//      int rfbef=this->Render_Volume->GetReferenceCount();
       renderer->AddViewProp(this->Render_Volume);    
-      int rfaft=this->Render_Volume->GetReferenceCount();
+//      int rfaft=this->Render_Volume->GetReferenceCount();
       this->Renderer=renderer;
     }
   }
@@ -1271,13 +1271,13 @@ void vtkProstateNavFiducialCalibrationStep::UpdateCalibration()
 
 void vtkProstateNavFiducialCalibrationStep::JumpToFiducial(unsigned int fid1Index)
 {
-  if (fid1Index>=CALIB_MARKER_COUNT)
+    if ((int)(fid1Index) >= CALIB_MARKER_COUNT)
   {
     vtkErrorMacro("Invalid fiducial id "<<fid1Index);
     return;
   }
 
-  if (fid1Index>=this->CalibrationPointListNode->GetNumberOfFiducials())
+    if ((int)(fid1Index) >= this->CalibrationPointListNode->GetNumberOfFiducials())
   {
     vtkErrorMacro("Fiducial is not defined yet "<<fid1Index);
     return;

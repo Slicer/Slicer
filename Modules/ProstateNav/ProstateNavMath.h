@@ -185,11 +185,11 @@ public:
     double temp[3] = {0,1,0};
     vtkMath::Cross(temp,u,r);
     vtkMath::Normalize(r);
-    double cre = vtkMath::Dot(e,r);
+//    double cre = vtkMath::Dot(e,r);
 
     vtkMath::Cross(r,u,s);
     vtkMath::Normalize(s);
-    double cse = vtkMath::Dot(e,s);
+//    double cse = vtkMath::Dot(e,s);
 
     // additional code ends here
 

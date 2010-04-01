@@ -128,7 +128,7 @@ const char* vtkMRMLBrpRobotCommandNode::PopIncomingCommand()
 //----------------------------------------------------------------------------
 int vtkMRMLBrpRobotCommandNode::SwitchStep(const char* step)
 {
-  char* command = NULL;
+  const char* command = NULL;
 
   if (strcmp(step, "SetUp") == 0)
     {

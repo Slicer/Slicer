@@ -201,7 +201,7 @@ void vtkTransRectalFiducialCalibrationAlgo::SegmentAxis(const double initPos1Ras
     return;
   }
 
-  int vecSize = CoordinatesVectorAxis->size(); // :TODO: remove, for debugging only
+//  int vecSize = CoordinatesVectorAxis->size(); // :TODO: remove, for debugging only
 
   // Use CoordVector to find the line 
   for (int i=0; i<3; i++)
@@ -748,9 +748,10 @@ bool vtkTransRectalFiducialCalibrationAlgo::CalculateCircleCenter(vtkImageData *
         f << std::endl;
     } // debug
 */
-    if (max<nVotedNeeded) 
-        return false;
-
+    if ((int)max < nVotedNeeded)
+      {
+      return false;
+      }
     return true;
 }
 
@@ -768,7 +769,7 @@ bool vtkTransRectalFiducialCalibrationAlgo::CalculateCircleCenterMean(vtkImageDa
     
 
     // convert mm to pixel
-    double r = nRadiusMm/fabs(spacing[0]);
+//    double r = nRadiusMm/fabs(spacing[0]);
 
     // Calculate width & height
     int *extent = planeImageData->GetWholeExtent();
@@ -1059,7 +1060,7 @@ void vtkTransRectalFiducialCalibrationAlgo::Linefinder(double P_[3], double v_[3
     }
     */
     double curVal[3];
-    for (int k = 0; k<CoordVector.size(); k++)
+    for (unsigned int k = 0; k<CoordVector.size(); k++)
     {
       curVal[0] = CoordVector[k][0];
       curVal[1] = CoordVector[k][1];
@@ -1214,7 +1215,7 @@ bool vtkTransRectalFiducialCalibrationAlgo::FindTargetingParams(vtkProstateNavTa
     /// \todo Pipe from H_afterLps (along to v_needle traj.) ending "Overshoot" mm after the target
     // T[?]+overshoot*v_needle[?]
 
-    double mNorm = vtkMath::Normalize(v_needle);
+//    double mNorm = vtkMath::Normalize(v_needle);
 
     // Needle Angle: fix it!
     double needle_angle = acos( 1.0 * vtkMath::Dot(v_needle,v1) );

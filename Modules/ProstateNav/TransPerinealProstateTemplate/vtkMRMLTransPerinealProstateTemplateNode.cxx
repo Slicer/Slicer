@@ -298,7 +298,7 @@ void vtkMRMLTransPerinealProstateTemplateNode::Copy(vtkMRMLNode *anode)
   }
 
   this->StatusDescriptors.clear();
-  for (int i=0; i<node->StatusDescriptors.size(); i++)
+  for (unsigned int i=0; i<node->StatusDescriptors.size(); i++)
   {    
     this->StatusDescriptors.push_back(node->StatusDescriptors[i]);
   }
@@ -397,7 +397,7 @@ void vtkMRMLTransPerinealProstateTemplateNode::ProcessMRMLEvents( vtkObject *cal
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->StatusDescriptors.size()<=STATUS_SCANNER)
+  if (this->StatusDescriptors.size()<= (unsigned int)(STATUS_SCANNER))
   {
     vtkErrorMacro("StatusDescriptors does not contain scanner and robot status");
   }

@@ -693,7 +693,7 @@ void vtkProstateNavTargetingStep::AddMRMLObservers()
     events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
 
     // Set and observe target plan list
-    vtkObject *oldNode = this->TargetPlanListNode;
+//    vtkObject *oldNode = this->TargetPlanListNode;
     this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&(this->TargetPlanListNode)),(plan),(events));
   }
  
