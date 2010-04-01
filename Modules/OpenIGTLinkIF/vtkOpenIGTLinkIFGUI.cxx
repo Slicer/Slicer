@@ -1002,14 +1002,22 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     {
     vtkMRMLLinearTransformNode* node = 
       vtkMRMLLinearTransformNode::SafeDownCast(this->LocatorSourceSelectorWidget->GetSelected());
-    this->GetLogic()->SetLocatorDriver(node->GetID());
+    if (node)
+      {
+      this->GetLogic()->SetLocatorDriver(node->GetID());
+      }
+    UpdateDriverPanel();
     }
   else if (this->LocatorSourceSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
            && event == vtkSlicerNodeSelectorWidget::NewNodeEvent) 
     {
     vtkMRMLLinearTransformNode* node = 
       vtkMRMLLinearTransformNode::SafeDownCast(this->LocatorSourceSelectorWidget->GetSelected());
-    this->GetLogic()->SetLocatorDriver(node->GetID());
+    if (node)
+      {
+      this->GetLogic()->SetLocatorDriver(node->GetID());
+      }
+    UpdateDriverPanel();
     }
   //else if (this->RealTimeImageSourceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
   //         && event == vtkKWMenu::MenuItemInvokedEvent)
@@ -1022,14 +1030,22 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     {
     vtkMRMLScalarVolumeNode* node = 
       vtkMRMLScalarVolumeNode::SafeDownCast(this->ImageSourceSelectorWidget->GetSelected());
-    this->GetLogic()->SetRealTimeImageSource(node->GetID());
+    if (node)
+      {
+      this->GetLogic()->SetRealTimeImageSource(node->GetID());
+      }
+    UpdateDriverPanel();
     }
   else if (this->ImageSourceSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
            && event == vtkSlicerNodeSelectorWidget::NewNodeEvent) 
     {
     vtkMRMLScalarVolumeNode* node = 
       vtkMRMLScalarVolumeNode::SafeDownCast(this->ImageSourceSelectorWidget->GetSelected());
-    this->GetLogic()->SetRealTimeImageSource(node->GetID());
+    if (node)
+      {
+      this->GetLogic()->SetRealTimeImageSource(node->GetID());
+      }
+    UpdateDriverPanel();
     }
 
   else if (this->RedSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
@@ -1280,6 +1296,7 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
           }
         }
       }
+    UpdateDriverPanel();
     UpdateConnectorNodeList();
     UpdateConnectorList(UPDATE_ALL);
     }
@@ -1917,7 +1934,7 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   this->ImageSourceSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->ImageSourceSelectorWidget->SetNoneEnabled(1);
   this->ImageSourceSelectorWidget->SetNewNodeEnabled(0);
-  this->ImageSourceSelectorWidget->SetLabelText( "Locator source: ");
+  this->ImageSourceSelectorWidget->SetLabelText( "RT Image: ");
   this->ImageSourceSelectorWidget->SetBalloonHelpString("Select a volume from the current scene.");
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -2031,6 +2048,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   driverFrame->Delete();
   imageSourceFrame->Delete();
   displayFrame->Delete();
+
+  UpdateDriverPanel();
 
 }
 
@@ -2204,6 +2223,49 @@ void vtkOpenIGTLinkIFGUI::DeleteNodeCallback(const char* conID, int io, const ch
 
 
 //----------------------------------------------------------------------------
+void vtkOpenIGTLinkIFGUI::UpdateDriverPanel()
+{
+
+  int locatorButtonState = vtkKWOptions::StateDisabled;
+  int rtImageButtonState = vtkKWOptions::StateDisabled;
+
+  if (this->LocatorSourceSelectorWidget && this->LocatorSourceSelectorWidget->GetSelected())
+    {
+    locatorButtonState = vtkKWOptions::StateNormal;
+    }
+  if (this->ImageSourceSelectorWidget && this->ImageSourceSelectorWidget->GetSelected())
+    {
+    rtImageButtonState = vtkKWOptions::StateNormal;
+    }
+
+  vtkKWMenuButton* menuList[3];
+  menuList[0] = this->RedSliceMenu;
+  menuList[1] = this->YellowSliceMenu;
+  menuList[2] = this->GreenSliceMenu;
+
+  for (int i = 0; i < 3; i ++)
+    {
+    menuList[i]->GetMenu()->SetItemState("Locator", locatorButtonState);
+    menuList[i]->GetMenu()->SetItemState("RT Image", rtImageButtonState);
+
+    // Change driver selection, if the disabled item is selected
+    const char* selected = menuList[i]->GetValue();
+    if (strcmp(selected, "Locator") == 0 && locatorButtonState == vtkKWOptions::StateDisabled)
+      {
+      menuList[i]->SetValue("User");
+      }
+    else if (strcmp(selected, "RT Image") == 0 && rtImageButtonState == vtkKWOptions::StateDisabled)
+      {
+      menuList[i]->SetValue("User");
+      }
+    }
+
+  this->SetLocatorModeButton->SetEnabled(locatorButtonState);
+
+}
+
+
+//----------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
 {
 
@@ -2213,20 +2275,14 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
     if (strcmp(driver, "User") == 0)
       {
       this->SliceNode0->SetOrientationToAxial();
-      //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
-      //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
-      //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }
@@ -2236,20 +2292,14 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
     if (strcmp(driver, "User") == 0)
       {
       this->SliceNode1->SetOrientationToSagittal();
-      //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
-      //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
-      //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }
@@ -2259,20 +2309,14 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
     if (strcmp(driver, "User") == 0)
       {
       this->SliceNode2->SetOrientationToCoronal();
-      //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
-      //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
-      //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }

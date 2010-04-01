@@ -332,8 +332,8 @@ int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, int v)
       nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
       vtkSetAndObserveMRMLNodeEventsMacro(node,transNode,nodeEvents);
       nodeEvents->Delete();
+      transNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
       }
-    transNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
 
   return 1;

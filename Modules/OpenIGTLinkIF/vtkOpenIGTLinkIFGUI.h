@@ -204,6 +204,11 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* io, std::string& nodeID);
   //ETX
   void AddIOConfigContextMenuItem(int type, const char* conID, int io, const char* nodeID);
+
+  // Description:
+  //  Enable/disable menus in Driver panel based on Locator source data.
+  void UpdateDriverPanel();
+
   void ChangeSlicePlaneDriver(int slice, const char* driver);
   void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
