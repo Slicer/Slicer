@@ -97,6 +97,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default></default>
       <channel>input</channel>
     </transform>
+    <string-enumeration>
+      <name>transformsOrder</name>
+      <longflag>--transform_order</longflag>
+      <description>Select in what order the transforms are read</description>
+      <label>Transforms Order</label>
+      <element>input-to-output</element>
+      <element>output-to-input</element>
+      <default>input-to-output</default>
+    </string-enumeration>
   </parameters>
   <parameters advanced="true">
     <label>Manual Transform (Only used if no transform node set)</label>
