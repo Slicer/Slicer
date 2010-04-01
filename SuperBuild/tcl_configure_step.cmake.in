@@ -1,0 +1,5 @@
+
+execute_process(
+  COMMAND sh configure --prefix=@tcl_build@
+  WORKING_DIRECTORY @tcl_base@/tcl/unix
+)

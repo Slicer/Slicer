@@ -130,7 +130,7 @@ endif()
 #
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
-set_property(DIRECTORY PROPERTY EP_BASE ${base})
+#set_property(DIRECTORY PROPERTY EP_BASE ${base})
 
 set(prefix "${base}/Install")
 
@@ -204,9 +204,24 @@ if(Slicer3_USE_KWWIDGETS)
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
     set(tcl_SOURCE_DIR tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
-    set(tcl_CONFIGURE_COMMAND ./unix/configure --prefix=${tcl_build})
-    set(tcl_BUILD_COMMAND make ${parallelism_level})
-    set(tcl_INSTALL_COMMAND make install)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_configure_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake
+      @ONLY)
+
+    set(tcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_make_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake
+      @ONLY)
+
+    set(tcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_install_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tcl_install_step.cmake
+      @ONLY)
+
+    set(tcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_install_step.cmake)
   endif()
 
   ExternalProject_Add(${proj}
@@ -218,6 +233,7 @@ if(Slicer3_USE_KWWIDGETS)
     BUILD_COMMAND ${tcl_BUILD_COMMAND}
     INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
   )
+
 endif(Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
@@ -235,18 +251,30 @@ if(Slicer3_USE_KWWIDGETS)
   if(WIN32)
     set(tk_SOURCE_DIR tcl/tk)
   elseif(APPLE)
-  # uncmd ./configure --with-tcl=./tcl-build/lib --prefix=./tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
     set(tk_SOURCE_DIR tcl/tk)
     set(tk_BUILD_IN_SOURCE 1)
-    set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
-    set(tk_BUILD_COMMAND make ${parallelism_level})
-    set(tk_INSTALL_COMMAND make install)
-  else()
-    set(tk_SOURCE_DIR tcl/tk)
-    set(tk_BUILD_IN_SOURCE 1)
-    set(tk_CONFIGURE_COMMAND ./unix/configure --with-tcl=${tcl_build}/lib --prefix=${tcl_build})
-    set(tk_BUILD_COMMAND make ${parallelism_level})
-    set(tk_INSTALL_COMMAND make install)
+
+    # configure, make and make install all need to be executed in tk/unix. External_Project
+    # doesn't provide any way to set the working directory for each step so we do so by
+    # configuring a script that has an execute_process command that has the correct working
+    # directory
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_configure_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake
+      @ONLY)
+
+    set(tk_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_make_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake
+      @ONLY)
+
+    set(tk_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_install_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake
+      @ONLY)
+
+    set(tk_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake)
   endif()
 
   ExternalProject_Add(${proj}
@@ -259,6 +287,20 @@ if(Slicer3_USE_KWWIDGETS)
     BUILD_COMMAND ${tk_BUILD_COMMAND}
     INSTALL_COMMAND ${tk_INSTALL_COMMAND}
   )
+
+  #file copy -force $Slicer3_LIB/tcl/tk/generic/default.h $Slicer3_LIB/tcl-build/include
+  #file copy -force $Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $Slicer3_LIB/tcl-build/include
+  if(NOT WIN32)
+    ExternalProject_Add_Step(${proj} Install_default.h
+      COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/generic/default.h ${tcl_build}/include
+      DEPENDEES install
+    )
+
+    ExternalProject_Add_Step(${proj} Install_tkUnixDefault.h
+      COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/unix/tkUnixDefault.h ${tcl_build}/include
+      DEPENDEES install
+    )
+  endif(NOT WIN32)
 endif(Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
@@ -347,11 +389,13 @@ if(Slicer3_USE_KWWIDGETS)
 #    DEPENDERS Backup_itcl_configure
 #    )
 
-ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
-    COMMAND chmod +x ${tcl_base}/incrTcl/configure
-    DEPENDEES update
-    DEPENDERS configure
+  if(NOT WIN32)
+    ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
+      COMMAND chmod +x ${tcl_base}/incrTcl/configure
+      DEPENDEES update
+      DEPENDERS configure
     )
+  endif(NOT WIN32)
 
 #ExternalProject_Add_Step(${proj} Patch_itcl_configure
 #  COMMAND ${itcl_PATCH_COMMAND}
@@ -396,6 +440,8 @@ if(Slicer3_USE_KWWIDGETS)
   set(proj blt)
 
   set(blt_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt")
+  set(blt_CVS ":pserver:anonymous@blt.cvs.sourceforge.net:/cvsroot/blt")
+  #set(blt_CVS_TAG "
   set(blt_BUILD_IN_SOURCE 0)
   set(blt_CONFIGURE "")
   set(blt_BUILD "")
@@ -407,11 +453,21 @@ if(Slicer3_USE_KWWIDGETS)
     set(blt_BUILD_IN_SOURCE 1)
 
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/blt_download_tcl84_patch.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake )
+      ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake
+      @ONLY)
+
+#  --with-blt=DIR          Install BLT scripts in DIR
+#  --with-tcl=DIR          Find tclConfig.sh in DIR
+#  --with-tk=DIR           Find tkConfig.sh in DIR
+#  --with-tclincls=DIR     Find tcl.h in DIR
+#  --with-tkincls=DIR      Find tk.h in DIR
+#  --with-tcllibs=DIR      Find Tcl library in DIR
+#  --with-tklibs=DIR       Find Tk library in DIR
+
 
     #set(blt_PATCH patch -p2 -t -N < ${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/BLT/blt_darwin_tcl84_patch.txt)
     set(blt_PATCH patch -p2 -t -N < ${tcl_base}/blt/bltpatch)
-    set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
+    set(blt_CONFIGURE sh configure --with-tcl=${tcl_base}/tcl/unix --with-tk=${tcl_build} --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
     set(blt_BUILD make)
     set(blt_INSTAL make install)
 
