@@ -824,15 +824,15 @@ void vtkMeasurementsAngleWidget::ProcessWidgetEvents(vtkObject *caller,
     // set visibility on all rulers
     if ( menu->GetItemSelectedState ( "0 decimals" ) == 1 )
       {
-      activeAngleNode->SetLabelFormat("%.0f mm");
+      activeAngleNode->SetLabelFormat("%.0f");
       }
     else if ( menu->GetItemSelectedState ( "1 decimal" ) == 1 )
       {
-      activeAngleNode->SetLabelFormat("%.1f mm");
+      activeAngleNode->SetLabelFormat("%.1f");
       }
     else if ( menu->GetItemSelectedState ( "2 decimals" ) == 1 )
       {
-      activeAngleNode->SetLabelFormat("%.2f mm");
+      activeAngleNode->SetLabelFormat("%.2f");
       }
     }
   else if (entry && event == vtkKWEntry::EntryValueChangedEvent)
@@ -1334,7 +1334,7 @@ void vtkMeasurementsAngleWidget::Update3DWidget(vtkMRMLMeasurementsAngleNode *ac
 
     // text colour
     rgb1 = activeAngleNode->GetLabelTextColour();
-    //angleWidget->GetRepresentation()->GetTextActor()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+//    angleWidget->GetRepresentation()->GetTextActorProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // position
     // get any transform on the node
