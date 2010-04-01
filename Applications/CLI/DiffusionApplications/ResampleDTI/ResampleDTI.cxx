@@ -82,6 +82,7 @@ struct parameters
   std::string deffield ;
   std::string typeOfField ;
   double defaultPixelValue ;
+  std::string transformsOrder ;
 };
 
 
@@ -376,10 +377,11 @@ SetUpTransform( const parameters &list ,
 //Set the transformation
 template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
-SetTransform( parameters &list ,
+SetTransformAndOrder( parameters &list ,
               const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
                 ::Pointer &image ,
-              itk::TransformFileReader::Pointer &transformFile
+              typename itk::DiffusionTensor3DNonRigidTransform< PixelType >
+                                         ::TransformType::Pointer &transform
             )
 {
   typedef itk::DiffusionTensor3DTransform< PixelType > TransformType ;
@@ -405,7 +407,7 @@ SetTransform( parameters &list ,
     typename FSAffineTransformType::Superclass::AffineTransformType::Pointer
         doubleAffineTransform = dynamic_cast< 
         typename FSAffineTransformType::Superclass::AffineTransformType* >
-        ( transformFile->GetTransformList()->back().GetPointer() ) ;
+        ( transform.GetPointer() ) ;
     if( doubleAffineTransform )//if affine transform in double
     {
       list.transformType.assign( "a" ) ;
@@ -416,7 +418,7 @@ SetTransform( parameters &list ,
     {
       itk::AffineTransform< float , 3 >::Pointer
       floatAffineTransform = dynamic_cast< itk::AffineTransform< float , 3 >* >
-                   ( transformFile->GetTransformList()->back().GetPointer() ) ;
+                   ( transform.GetPointer() ) ;
       if( floatAffineTransform )//if affine transform in float
       {
         list.transformType.assign( "a" ) ;
@@ -428,7 +430,7 @@ SetTransform( parameters &list ,
         typename RigidTransformType::Rigid3DTransformType::Pointer
             doubleRigid3DTransform = dynamic_cast< 
             typename RigidTransformType::Rigid3DTransformType* >
-            ( transformFile->GetTransformList()->back().GetPointer() ) ;
+            ( transform.GetPointer() ) ;
         if( doubleRigid3DTransform )//if rigid3D transform in double
         {
           list.transformType.assign( "rt" ) ;
@@ -441,7 +443,7 @@ SetTransform( parameters &list ,
           itk::Rigid3DTransform< float >::Pointer
               floatRigid3DTransform = dynamic_cast< 
               itk::Rigid3DTransform< float >* >
-              ( transformFile->GetTransformList()->back().GetPointer() ) ;
+              ( transform.GetPointer() ) ;
           if( floatRigid3DTransform )//if rigid3D transform in float
           {
             list.transformType.assign( "rt" ) ;
@@ -453,7 +455,7 @@ SetTransform( parameters &list ,
           {
             nonRigidFile = dynamic_cast<
             typename NonRigidTransformType::TransformType* >
-                ( transformFile->GetTransformList()->back().GetPointer() ) ;
+                ( transform.GetPointer() ) ;
             if(nonRigidFile)//if non rigid Transform loaded
             {
               list.transformType.assign( "nr" ) ;
@@ -478,11 +480,51 @@ SetTransform( parameters &list ,
         return NULL ;
       }
     }
-    transformFile->GetTransformList()->pop_back();
   }
   return  SetUpTransform< PixelType >( list , image , nonRigidFile , precisionChecking ) ;
 }
 
+
+//Set the transformation
+template< class PixelType >
+typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
+SetTransform( parameters &list ,
+              const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+                ::Pointer &image ,
+              itk::TransformFileReader::Pointer &transformFile
+            )
+{
+  typedef typename itk::DiffusionTensor3DNonRigidTransform< PixelType >
+                                         ::TransformType TransformType ;
+  typename TransformType::Pointer transform ;
+  typename itk::DiffusionTensor3DTransform< PixelType >::Pointer tensorTransform ;
+  if( list.transformationFile.compare( "" ) )
+  {
+    if( !list.transformsOrder.compare( "input-to-output" ) )
+    {
+      transform = dynamic_cast< TransformType* >
+                    ( transformFile->GetTransformList()->back().GetPointer() ) ;
+    }
+    else
+    {
+      transform = dynamic_cast< TransformType* >
+                ( transformFile->GetTransformList()->front().GetPointer() ) ;
+    }
+  }
+  tensorTransform = SetTransformAndOrder< PixelType >( list , image , transform ) ;
+  if( list.transformationFile.compare( "" ) )
+  {
+    if( !list.transformsOrder.compare( "input-to-output" ) )
+    {
+      transformFile->GetTransformList()->pop_back();
+    }
+    else
+    {
+      transformFile->GetTransformList()->pop_front();
+    }
+  }
+  return tensorTransform ;
+}
 
 //Read the transform file and return the number of non-rigid transform.
 //If the transform file contain a transform that the program does not
@@ -1030,6 +1072,7 @@ int main( int argc , char * argv[] )
   list.deffield = deffield ;
   list.typeOfField = typeOfField ;
   list.defaultPixelValue = defaultPixelValue ;
+  list.transformsOrder = transformsOrder ;
   //verify if all the vector parameters have the good length
   if( list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
       || ( list.outputImageOrigin.size() != 3 
