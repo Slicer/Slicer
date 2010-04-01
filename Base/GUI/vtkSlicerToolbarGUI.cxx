@@ -494,10 +494,6 @@ void vtkSlicerToolbarGUI::SetInteractionNode ( vtkMRMLInteractionNode *node )
     vtkSetAndObserveMRMLNodeEventsMacro (this->InteractionNode, node, events );
     events->Delete();
     }
-  else
-    {
-    vtkErrorMacro ( "Unable to find the interaction node in the scene to observe!" );
-    }
   return;
 }
 
