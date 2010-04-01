@@ -469,8 +469,13 @@ if(Slicer3_USE_KWWIDGETS)
     set(blt_PATCH patch -p2 -t -N < ${tcl_base}/blt/bltpatch)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_base}/tcl/unix --with-tk=${tcl_build} --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
     set(blt_BUILD make)
-    set(blt_INSTAL make install)
 
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/blt_install_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/blt_install_step.cmake
+      @ONLY)
+
+    set(blt_INSTALL ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/blt_install_step.cmake)
+    #set(blt_INSTALL make install)
   #if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
   #              puts "Patching..." 
   #              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
@@ -484,7 +489,7 @@ if(Slicer3_USE_KWWIDGETS)
     set(blt_BUILD_IN_SOURCE 1)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
     set(blt_BUILD make)
-    set(blt_INSTAL make install)
+    set(blt_INSTALL make install)
   endif()
 
   ExternalProject_Add(${proj}
@@ -495,7 +500,7 @@ if(Slicer3_USE_KWWIDGETS)
     PATCH_COMMAND ${blt_PATCH}
     CONFIGURE_COMMAND ${blt_CONFIGURE}
     BUILD_COMMAND ${blt_BUILD}
-    INSTALL_COMMAND ${btl_INSTALL}
+    INSTALL_COMMAND ${blt_INSTALL}
   )
 
   if(APPLE)
