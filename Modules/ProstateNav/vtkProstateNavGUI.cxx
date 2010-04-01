@@ -956,6 +956,7 @@ void vtkProstateNavGUI::BuildGUIForConfigurationFrame ()
               this->DiscreteFactorsListBox->GetWidgetName(),
               designFrame->GetFrame()->GetWidgetName()); 
               */
+  configurationFrame->Delete();
 }
 
 //---------------------------------------------------------------------------
