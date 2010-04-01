@@ -205,7 +205,7 @@ if(Slicer3_USE_KWWIDGETS)
     set(tcl_SOURCE_DIR tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
 
-    # configure, make and make install all need to be executed in tk/unix. External_Project
+    # configure, make and make install all need to be executed in tcl/unix. External_Project
     # doesn't provide any way to set the working directory for each step so we do so by
     # configuring a script that has an execute_process command that has the correct working
     # directory   
