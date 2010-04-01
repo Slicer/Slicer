@@ -709,7 +709,7 @@ itcl::body HelperBox::colorSelectDialog { } {
     $o(colorSelectTopLevel) SetBorderWidth 2
     $o(colorSelectTopLevel) SetReliefToGroove
 
-    set topFrame [vtkKWFrame New]
+    set topFrame [vtkNew vtkKWFrame]
     $topFrame SetParent $o(colorSelectTopLevel)
     $topFrame Create
     pack [$topFrame GetWidgetName] -side top -anchor w -padx 2 -pady 2 -fill both -expand true
@@ -736,7 +736,7 @@ itcl::body HelperBox::colorSelectDialog { } {
     pack [$o(colorSelector) GetWidgetName] -side top -fill x -expand true
 
 
-    set buttonFrame [vtkKWFrame New]
+    set buttonFrame [vtkNew vtkKWFrame]
     $buttonFrame SetParent $topFrame
     $buttonFrame Create
     pack [$buttonFrame GetWidgetName] -side left -anchor w -padx 2 -pady 2 -fill both -expand true
@@ -745,12 +745,11 @@ itcl::body HelperBox::colorSelectDialog { } {
     $o(colorDialogApply) SetParent $buttonFrame
     $o(colorDialogApply) Create
     $o(colorDialogApply) SetText Apply
-    set o(colorDialogCancel) [vtkKWPushButton New]
+    set o(colorDialogCancel) [vtkNew vtkKWPushButton]
     $o(colorDialogCancel) SetParent $buttonFrame
     $o(colorDialogCancel) Create
     $o(colorDialogCancel) SetText Cancel
     pack [$o(colorDialogCancel) GetWidgetName] [$o(colorDialogApply) GetWidgetName] -side left -padx 4 -anchor c 
-    $topFrame Delete
 
     # invoked event
     set broker $::slicer3::Broker
