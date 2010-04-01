@@ -662,6 +662,10 @@ void vtkMeasurementsGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::RemoveMRMLObservers ( )
 {
+  if (this->MRMLScene == NULL)
+    {
+    return;
+    }
   // remove observers on the transformable nodes
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLTransformableNode");
   for (int n=0; n<nnodes; n++)
