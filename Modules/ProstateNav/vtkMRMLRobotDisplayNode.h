@@ -14,7 +14,6 @@
 #ifndef __vtkMRMLRobotDisplayNodee_h
 #define __vtkMRMLRobotDisplayNodee_h
 
-#include "vtkOpenIGTLinkIFWin32Header.h"
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -22,7 +21,7 @@
 #include "vtkObject.h"
 #include "vtkProstateNavWin32Header.h" 
 
-class VTK_OPENIGTLINKIF_EXPORT vtkMRMLRobotDisplayNode : public vtkMRMLNode
+class VTK_PROSTATENAV_EXPORT vtkMRMLRobotDisplayNode : public vtkMRMLNode
 {
 
  public:
@@ -71,7 +70,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLRobotDisplayNode : public vtkMRMLNode
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
-    {return "ProstateNavManager";};
+    {return "RobotDisplay";};
 
   // method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );

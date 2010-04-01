@@ -17,12 +17,24 @@
 
 #include "vtkProstateNavStep.h"
 
+class vtkKWEntry;
+class vtkKWEntrySet;
+class vtkKWEntryWithLabel;
 class vtkKWFrame;
-class vtkKWMultiColumnListWithScrollbars;
+class vtkKWLabel;
+class vtkSlicerNodeSelectorWidget;
 class vtkKWMatrixWidgetWithLabel;
+class vtkKWMenuButton;
+class vtkKWMenuButtonWithLabel;
+class vtkKWMultiColumnList;
+class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
+class vtkKWText;
+class vtkImageData;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLSelectionNode;
 class vtkMRMLFiducialListNode;
+class vtkKWCheckButton;
 
 class VTK_PROSTATENAV_EXPORT vtkProstateNavTargetingStep : public vtkProstateNavStep
 {
@@ -32,37 +44,89 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ShowUserInterface();
+  virtual void HideUserInterface();
   virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);  
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  void UpdateMRMLObserver();
+  virtual void UpdateGUI();
+
+  void AddMRMLObservers();
+  void RemoveMRMLObservers();
+
   void OnMultiColumnListUpdate(int row, int col, char * str);
   void OnMultiColumnListSelectionChanged();
-  void SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode);
+  void UpdateTargetListGUI();
+
+  void SetShowTargetOrientation(int show);
 
 protected:
   vtkProstateNavTargetingStep();
   ~vtkProstateNavTargetingStep();
 
-  // GUI Widgets
 
-  // Target lists
+  void ShowTargetPlanningFrame();
+  void ShowTargetListFrame();
+  void ShowTargetControlFrame();
+
+  void ShowCoverage(bool show);
+
+  void EnableAddTargetsOnClickButton(bool enable);
+
+  unsigned int PopulateListWithTargetDetails(unsigned int targetDescIndex);
+
+  void AddGUIObservers();
+  void RemoveGUIObservers();  
   
+  //BTX
+  // Description:
+  // The column orders in the list box
+  enum
+    {
+    TargetNumberColumn = 0,
+    NeedleTypeColumn = 1,
+    RASLocationColumn = 2,
+    ReachableColumn = 3,
+    RotationColumn = 4,
+    NeedleAngleColumn = 5,    
+    DepthColumn = 6,
+    NumberOfColumns = 7,
+    };
+    
+  //ETX
 
+  bool ProcessingCallback;
 
   vtkKWFrame *MainFrame;
-  vtkKWFrame *TargetListFrame;
-  vtkKWFrame *TargetControlFrame;
+  
+  // TargetPlanning
+  vtkKWFrame *TargetPlanningFrame;
+  vtkKWPushButton* LoadTargetingVolumeButton;
+  vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+  vtkKWFrame *LoadVolumeDialogFrame;
+  vtkKWCheckButton *ShowCoverageButton;  
+  vtkKWCheckButton *AddTargetsOnClickButton;
+  vtkKWMenuButtonWithLabel *NeedleTypeMenuList;  
+  vtkMRMLFiducialListNode *TargetPlanListNode;
 
-  vtkKWMultiColumnListWithScrollbars* MultiColumnList;
+  // TargetList frame
+  vtkKWFrame *TargetListFrame;
+  vtkKWMultiColumnListWithScrollbars* TargetList;
+  vtkKWPushButton *DeleteButton;
+
+  // TargetControl frame
+  vtkKWFrame *TargetControlFrame;
   vtkKWMatrixWidgetWithLabel* NeedlePositionMatrix;
   vtkKWMatrixWidgetWithLabel* NeedleOrientationMatrix;
   vtkKWPushButton *MoveButton;
   vtkKWPushButton *StopButton;
 
+  vtkKWText *Message;
+
+  int ShowTargetOrientation;
+
 private:
   vtkProstateNavTargetingStep(const vtkProstateNavTargetingStep&);
-  void operator=(const vtkProstateNavTargetingStep&);
+  void operator=(const vtkProstateNavTargetingStep&);  
 };
 
 #endif

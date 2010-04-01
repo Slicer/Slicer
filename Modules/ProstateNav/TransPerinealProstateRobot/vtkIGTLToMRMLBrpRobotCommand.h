@@ -33,7 +33,7 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLBrpRobotCommand : public vtkIGTLToMRML
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  //virtual int          GetConverterType() { return TYPE_MULTI_IGTL_NAMES; };
+  virtual int          GetConverterType() { return TYPE_MULTI_IGTL_NAMES; };
   virtual const char*  GetIGTLName() { return "RCOMMAND"; };
   virtual const char*  GetMRMLName() { return "BrpRobotCommand"; };
   virtual vtkIntArray* GetNodeEvents();

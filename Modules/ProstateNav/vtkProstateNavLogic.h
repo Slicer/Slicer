@@ -17,7 +17,6 @@
 // This class manages the logic associated with tracking device for
 // IGT. 
 
-
 #ifndef __vtkProstateNavLogic_h
 #define __vtkProstateNavLogic_h
 
@@ -30,60 +29,38 @@
 #include "vtkSlicerApplication.h"
 #include "vtkCallbackCommand.h"
 
-#include "vtkCylinderSource.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkAppendPolyData.h"
-
-
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceNode.h"
+
+#include "vtkMRMLProstateNavManagerNode.h"
 
 class vtkProstateNavGUI;
 
 class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic 
 {
-
- public:
-  //BTX
-  enum WorkPhase {
-    StartUp = 0,
-    Planning,
-    Calibration,
-    Targeting,
-    Manual,
-    Emergency,
-    NumPhases,
-  };
-  enum {  // Events
-    LocatorUpdateEvent      = 50000,
-    StatusUpdateEvent       = 50001,
-  };
-
-  //ETX
   
  public:
+
+   //BTX
+   enum 
+   {  // Events
+     LocatorUpdateEvent      = 50000,
+     StatusUpdateEvent       = 50001,
+   };
+   //ETX
+
   
   static vtkProstateNavLogic *New();
   
   vtkTypeRevisionMacro(vtkProstateNavLogic,vtkObject);
   
-  vtkGetMacro ( Connection,              bool );
-  vtkGetMacro ( RobotWorkPhase,           int );
-  vtkGetMacro ( ScannerWorkPhase,         int );
-
-
   void SetGUI(vtkProstateNavGUI* gui) { this->GUI = gui; };
   vtkProstateNavGUI* GetGUI()         { return this->GUI; };
 
-  void PrintSelf(ostream&, vtkIndent);
-  
+  void PrintSelf(ostream&, vtkIndent);  
   
   int  Enter();
   void TimerHandler();
-  
-  int  ConnectTracker(const char* filename);
-  int  DisconnectTracker();
   
   int  RobotStop();
   int  RobotMoveTo(float px, float py, float pz,
@@ -92,7 +69,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   int  RobotMoveTo(float position[3], float orientation[4]);
 
   int  RobotMoveTo();
-  int  SendZFrame();
   
   int  ScanStart();
   int  ScanPause();
@@ -101,15 +77,50 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   //BTX
   //Image* ReadCalibrationImage(const char* filename, int* width, int* height,
   //                            std::vector<float>& position, std::vector<float>& orientation);
-  //ETX
-  
-  const char* GetRobotCommandNodeID()    { return this->RobotCommandNodeID.c_str();   };
-  const char* GetRobotTargetNodeID()     { return this->RobotTargetNodeID.c_str();    };
-  const char* GetZFrameTransformNodeID() { return this->ZFrameTransformNodeID.c_str();};
-  const char* GetZFrameModelNodeID()     { return this->ZFrameModelNodeID.c_str();};
 
- protected:
+  bool AddTargetToNeedle(std::string needleType, float* rasLocation, unsigned int & targetDescIndex);
+
+  // Description:
+  // Add volume to MRML scene and return the MRML node.
+  // If volumeType is specified, then the volume is also selected as the current Calibration
+  // targeting or verification volume.
+  vtkMRMLScalarVolumeNode *AddVolumeToScene(const char *fileName, VolumeType volumeType=VOL_GENERIC);
+
+  // Description:
+  // Set a specific role for a loaded volume.
+  int SelectVolumeInScene(vtkMRMLScalarVolumeNode* volumeNode, VolumeType volumeType);
+
+  int ShowCoverage(bool show);
+
+  // Description:
+  // Switch mouse interaction mode to activate target placement
+  // by clicking on the image
+  // vtkMRMLInteractionNode::Place = place fiducials
+  // vtkMRMLInteractionNode::ViewTransform = rotate scene
+  // Return value: zero if an error occurred
+  int SetMouseInteractionMode(int mode);
+
+  // Description:
+  // Select the current fidicual list in the Fiducial module
+  // If the user clicks on the image in Place interaction mode, then fiducials will be added to the current fiducial list.
+  int SetCurrentFiducialList(vtkMRMLFiducialListNode* fidNode);
+
+  //ETX
+
+  void UpdateTargetListFromMRML();
   
+ protected:
+
+  //BTX
+  std::string GetFoRStrFromVolumeNodeID(const char* volNodeID);
+  //ETX
+
+  // Description:
+  // Helper method for loading a volume via the Volume module.
+  vtkMRMLScalarVolumeNode *AddArchetypeVolume(const char* fileName, const char *volumeName);  
+
+  void UpdateAll();
+
   vtkProstateNavLogic();
   ~vtkProstateNavLogic();
   vtkProstateNavLogic(const vtkProstateNavLogic&);
@@ -117,44 +128,36 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   
   static void DataCallback(vtkObject*, unsigned long, void *, void *);
 
+  /*
   void UpdateAll();
   void UpdateSliceDisplay();
   void UpdateLocator();
-
-
-  const char* AddZFrameModel(const char* nodeName);
+  */
 
   vtkCallbackCommand *DataCallbackCommand;
-
   
  private:
   
+  // Description:
+  // Set Slicers's 2D view orientations from the image orientation.
+  void SetSliceViewFromVolume(vtkMRMLVolumeNode *volumeNode);
+
+  int GetTargetIndexFromFiducialID(const char* fiducialID);
+
+  int CreateCoverageVolume();
+  void DeleteCoverageVolume();
+  int UpdateCoverageVolumeImage();
+
+  bool IsTargetReachable(int needleIndex, double rasLocation[3]);
+
   vtkProstateNavGUI* GUI;
 
+  /*
   bool  Connected;
   bool  RealtimeImageUpdate;
+  */
 
   int   TimerOn;
-
-  //BTX
-  std::string RobotCommandNodeID;   
-  std::string RobotTargetNodeID;    
-  std::string ZFrameTransformNodeID;
-  std::string ZFrameModelNodeID;
-  //ETX
-
-
-  //----------------------------------------------------------------
-  // Locator
-  //----------------------------------------------------------------
-
-  // Junichi Tokuda on 11/27/2007:
-  // What's a difference between LocatorMatrix and Locator Transform???
-
-  bool  Connection;  
-  int   RobotWorkPhase;
-  int   ScannerWorkPhase;
-
 
 };
 

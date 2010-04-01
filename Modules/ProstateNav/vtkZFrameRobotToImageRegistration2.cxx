@@ -19,7 +19,7 @@
 
 #include "vtkObjectFactory.h"
 
-#include "vtkZFrameRobotToImageRegistration.h"
+#include "vtkZFrameRobotToImageRegistration2.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -39,36 +39,46 @@
 #define FORCE_FOV       160.0
 #define MEPSILON        (1e-10)
 
-vtkStandardNewMacro(vtkZFrameRobotToImageRegistration);
-vtkCxxRevisionMacro(vtkZFrameRobotToImageRegistration, "$Revision: 8267 $");
+vtkStandardNewMacro(vtkZFrameRobotToImageRegistration2);
+vtkCxxRevisionMacro(vtkZFrameRobotToImageRegistration2, "$Revision: 8267 $");
 
 //---------------------------------------------------------------------------
-vtkZFrameRobotToImageRegistration::vtkZFrameRobotToImageRegistration()
+vtkZFrameRobotToImageRegistration2::vtkZFrameRobotToImageRegistration2()
+{
+  SliceRangeLow = -1;
+  SliceRangeHigh = -1;
+}
+
+
+//---------------------------------------------------------------------------
+vtkZFrameRobotToImageRegistration2::~vtkZFrameRobotToImageRegistration2()
 {
 }
 
 
 //---------------------------------------------------------------------------
-vtkZFrameRobotToImageRegistration::~vtkZFrameRobotToImageRegistration()
+void vtkZFrameRobotToImageRegistration2::PrintSelf(ostream& os, vtkIndent indent)
 {
 }
 
 
 //---------------------------------------------------------------------------
-void vtkZFrameRobotToImageRegistration::PrintSelf(ostream& os, vtkIndent indent)
+void vtkZFrameRobotToImageRegistration2::SetSliceRange(int param1, int param2)
 {
+  this->SliceRangeLow = param1;
+  this->SliceRangeHigh = param2;
 }
 
 
 //---------------------------------------------------------------------------
-int vtkZFrameRobotToImageRegistration::DoRegistration()
+int vtkZFrameRobotToImageRegistration2::DoRegistration()
 {
   
   if (this->FiducialVolume && this->RobotToImageTransform)
     {
     Init(256, 256);
     //ZFrameRegistration(this->FiducialVolume, this->RobotToImageTransform, 0);
-    if (ZFrameRegistration(this->FiducialVolume, this->RobotToImageTransform, 4, 12))
+    if (ZFrameRegistration(this->FiducialVolume, this->RobotToImageTransform, this->SliceRangeLow, this->SliceRangeHigh))
       {
       return 1;
       }
@@ -97,7 +107,7 @@ int vtkZFrameRobotToImageRegistration::DoRegistration()
 #endif
 
 //----------------------------------------------------------------------------
-void vtkZFrameRobotToImageRegistration::Init(int xsize, int ysize)
+void vtkZFrameRobotToImageRegistration2::Init(int xsize, int ysize)
 {
   int i,j,m,n;
 
@@ -108,17 +118,30 @@ void vtkZFrameRobotToImageRegistration::Init(int xsize, int ysize)
   imgysize = ysize = 256;
 
   // Define an 11x11 correlation kernel for fiducial detection.
-  Real kernel[11][11]={{0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
-                       {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
-                       {0,0,0.0,0,0.5,0.5,0.5,0.0,0,0,0},
-                       {0,0,0.0,1,1.0,1.0,1.0,1,0.0,0,0},
-                       {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
-                       {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
-                       {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
-                       {0,0,0.0,1,1.0,1.0,1.0,1,0.0,0,0},
-                       {0,0,0.0,0,0.5,0.5,0.5,0.0,0,0,0},
-                       {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
-                       {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0}};
+  //Real kernel[11][11]={{0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
+  //                     {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
+  //                     {0,0,0.0,0,0.5,0.5,0.5,0.0,0,0,0},
+  //                     {0,0,0.0,1,1.0,1.0,1.0,1,0.0,0,0},
+  //                     {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
+  //                     {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
+  //                     {0,0,0.5,1,1.0,1.0,1.0,1,0.5,0,0},
+  //                     {0,0,0.0,1,1.0,1.0,1.0,1,0.0,0,0},
+  //                     {0,0,0.0,0,0.5,0.5,0.5,0.0,0,0,0},
+  //                     {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0},
+  //                     {0,0,0.0,0,0.0,0,0.0,0.0,0.0,0,0}};
+
+  Real kernel[11][11]={{0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0},
+                       {0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 0.0},
+                       {0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0},
+                       {0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0},
+                       {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+                       {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+                       {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+                       {0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0},
+                       {0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0},
+                       {0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 0.0},
+                       {0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0}};
+
 
   // Create a mask image and initialize elements to zero.
   // The Matrix class is implemented in the newmat library:
@@ -179,6 +202,8 @@ void vtkZFrameRobotToImageRegistration::Init(int xsize, int ysize)
 
   // MFreal and MFimag now contain the real and imaginary matrix elements for
   // the frequency domain representation of the correlation mask.
+
+
 }
 
 /*----------------------------------------------------------------------------*/
@@ -188,7 +213,7 @@ void vtkZFrameRobotToImageRegistration::Init(int xsize, int ysize)
  * @param event The event value passed.
  * @param generator The node that generated the event.
  */
-int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNode* volumeNode,
+int vtkZFrameRobotToImageRegistration2::ZFrameRegistration(vtkMRMLScalarVolumeNode* volumeNode,
                                                           vtkMRMLLinearTransformNode* transformNode, int slindex_s, int slindex_e)
 {
   int           xsize;
@@ -285,12 +310,12 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
     float cy = nty * hfovi + nsy * hfovj + nny * offsetk;
     float cz = ntz * hfovi + nsz * hfovj + nnz * offsetk;
     
-    matrix[0][0] = ntx;
-    matrix[1][0] = nty;
-    matrix[2][0] = ntz;
-    matrix[0][1] = nsx;
-    matrix[1][1] = nsy;
-    matrix[2][1] = nsz;
+    matrix[0][0] = -ntx;
+    matrix[1][0] = -nty;
+    matrix[2][0] = -ntz;
+    matrix[0][1] = -nsx;
+    matrix[1][1] = -nsy;
+    matrix[2][1] = -nsz;
     matrix[0][2] = nnx;
     matrix[1][2] = nny;
     matrix[2][2] = nnz;
@@ -458,6 +483,7 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
 
   vtkMatrix4x4* zMatrix = vtkMatrix4x4::New();
   zMatrix->Identity();
+  /*
   zMatrix->SetElement(0, 0, -matrix[0][0]);
   zMatrix->SetElement(1, 0, -matrix[1][0]);
   zMatrix->SetElement(2, 0, -matrix[2][0]);
@@ -467,6 +493,19 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
   zMatrix->SetElement(0, 2, -matrix[0][2]);
   zMatrix->SetElement(1, 2, -matrix[1][2]);
   zMatrix->SetElement(2, 2, -matrix[2][2]);
+  zMatrix->SetElement(0, 3, matrix[0][3]);
+  zMatrix->SetElement(1, 3, matrix[1][3]);
+  zMatrix->SetElement(2, 3, matrix[2][3]);
+  */
+  zMatrix->SetElement(0, 0, matrix[0][0]);
+  zMatrix->SetElement(1, 0, matrix[1][0]);
+  zMatrix->SetElement(2, 0, matrix[2][0]);
+  zMatrix->SetElement(0, 1, matrix[0][1]);
+  zMatrix->SetElement(1, 1, matrix[1][1]);
+  zMatrix->SetElement(2, 1, matrix[2][1]);
+  zMatrix->SetElement(0, 2, matrix[0][2]);
+  zMatrix->SetElement(1, 2, matrix[1][2]);
+  zMatrix->SetElement(2, 2, matrix[2][2]);
   zMatrix->SetElement(0, 3, matrix[0][3]);
   zMatrix->SetElement(1, 3, matrix[1][3]);
   zMatrix->SetElement(2, 3, matrix[2][3]);
@@ -490,7 +529,7 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistration(vtkMRMLScalarVolumeNod
 }
 
 
-int vtkZFrameRobotToImageRegistration::ZFrameRegistrationQuaternion(float position[3], float quaternion[4],
+int vtkZFrameRobotToImageRegistration2::ZFrameRegistrationQuaternion(float position[3], float quaternion[4],
                                                                     Matrix& srcImage, int xsize, int ysize)
 {
 
@@ -562,8 +601,11 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistrationQuaternion(float positi
       tZcoordinates[i][1] = (float)(tZcoordinates[i][0]) - (float)(xsize/2);
       tZcoordinates[i][0] = tmpCoord - (float)(ysize/2);
 
+      // Flip the x-axis for IJK coordinates. 
+      tZcoordinates[i][0] *= -1.0;
+      
       // Flip the y-axis for IJK coordinates. 
-      //tZcoordinates[i][1] *= -1.0;
+      tZcoordinates[i][1] *= -1.0;
 
       // Scale coordinates by pixel size
       tZcoordinates[i][0] *= pixel_size;
@@ -636,7 +678,7 @@ int vtkZFrameRobotToImageRegistration::ZFrameRegistrationQuaternion(float positi
  * @param Zcoordinates[][] The resulting list of seven fiducial coordinates.
 
 */
-bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &SourceImage, int xsize, 
+bool vtkZFrameRobotToImageRegistration2::LocateFiducials(Matrix &SourceImage, int xsize, 
                   int ysize, int Zcoordinates[7][2], float tZcoordinates[7][2])
 {
   int    i,j;
@@ -747,7 +789,7 @@ bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &SourceImage, int
     // Check that this is a local maximum.
     if(peakval<MEPSILON)
     {
-    std::cerr << "vtkZFrameRobotToImageRegistration::OrderFidPoints - peak value is zero." << std::endl;
+    std::cerr << "vtkZFrameRobotToImageRegistration2::OrderFidPoints - peak value is zero." << std::endl;
       return(false);
     }
     else
@@ -760,7 +802,7 @@ bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &SourceImage, int
         {
            // Ignore coordinate if the offpeak value is within 30% of the peak.
            i--;
-           std::cerr << "vtkZFrameRobotToImageRegistration::LocateFiducials - Bad Peak." << std::endl;
+           std::cerr << "vtkZFrameRobotToImageRegistration2::LocateFiducials - Bad Peak." << std::endl;
            if(++peakcount > 10)
              return(false);
         }
@@ -814,7 +856,7 @@ bool vtkZFrameRobotToImageRegistration::LocateFiducials(Matrix &SourceImage, int
  * @param tZcoordinate[] A fiducial coordinate computed to sub-pixel accuracy. 
  */
 
-void vtkZFrameRobotToImageRegistration::FindSubPixelPeak(int Zcoordinate[2], 
+void vtkZFrameRobotToImageRegistration2::FindSubPixelPeak(int Zcoordinate[2], 
                                          float tZcoordinate[2],
                                          Real Y0, Real Yx1, Real Yx2, Real Yy1, Real Yy2)
 {
@@ -828,7 +870,7 @@ void vtkZFrameRobotToImageRegistration::FindSubPixelPeak(int Zcoordinate[2],
 
   if(fabs(Xshift)>1.0 || fabs(Yshift)>1.0)
   {
-  std::cerr << "vtkZFrameRobotToImageRegistration::FindSubPixelPeak - subpixel peak out of range." << std::endl;
+  std::cerr << "vtkZFrameRobotToImageRegistration2::FindSubPixelPeak - subpixel peak out of range." << std::endl;
     tZcoordinate[0] = (float)(Zcoordinate[0]);
     tZcoordinate[1] = (float)(Zcoordinate[1]);
   }
@@ -848,7 +890,7 @@ void vtkZFrameRobotToImageRegistration::FindSubPixelPeak(int Zcoordinate[2],
  * @param ysize The height of the image in pixels.
  * @return true if the point geometry is ok, else false.
  */
-bool vtkZFrameRobotToImageRegistration::CheckFiducialGeometry(int Zcoordinates[7][2], 
+bool vtkZFrameRobotToImageRegistration2::CheckFiducialGeometry(int Zcoordinates[7][2], 
                                               int xsize, int ysize)
 {
   Column2Vector  P1, P3, P5, P7;
@@ -862,7 +904,7 @@ bool vtkZFrameRobotToImageRegistration::CheckFiducialGeometry(int Zcoordinates[7
     if(Zcoordinates[i][0]<0 || Zcoordinates[i][0]>=ysize ||
        Zcoordinates[i][1]<0 || Zcoordinates[i][1]>=xsize)
     {
-    std::cerr << "vtkZFrameRobotToImageRegistration::onEventGenerated - fiducial coordinates out of range. No frame lock on this image." << std::endl;
+    std::cerr << "vtkZFrameRobotToImageRegistration2::onEventGenerated - fiducial coordinates out of range. No frame lock on this image." << std::endl;
       return(false);
     }
   }
@@ -903,7 +945,7 @@ bool vtkZFrameRobotToImageRegistration::CheckFiducialGeometry(int Zcoordinates[7
  * @param rmid Row coordinate at centre.
  * @param cmid Column coordinate at centre.
  */
-void vtkZFrameRobotToImageRegistration::FindFidCentre(float points[7][2], float &rmid, float &cmid)
+void vtkZFrameRobotToImageRegistration2::FindFidCentre(float points[7][2], float &rmid, float &cmid)
 {
   int    i;
   float  minrow=0.0, maxrow=0.0, mincol=0.0, maxcol=0.0;
@@ -942,7 +984,7 @@ void vtkZFrameRobotToImageRegistration::FindFidCentre(float points[7][2], float 
  * @param pmid The centre of the rectangular region bounded by the fiducial 
  *             points.
  */
-void vtkZFrameRobotToImageRegistration::FindFidCorners(float points[7][2], float *pmid)
+void vtkZFrameRobotToImageRegistration2::FindFidCorners(float points[7][2], float *pmid)
 {
   int    i;
   float  itemp[2];
@@ -1021,7 +1063,7 @@ void vtkZFrameRobotToImageRegistration::FindFidCorners(float points[7][2], float
  * @param p2 Second image point coordinates.
  * @return Distance between points.
  */
-float vtkZFrameRobotToImageRegistration::CoordDistance(float *p1, float *p2)
+float vtkZFrameRobotToImageRegistration2::CoordDistance(float *p1, float *p2)
 {
   float sqdist;
   
@@ -1030,7 +1072,7 @@ float vtkZFrameRobotToImageRegistration::CoordDistance(float *p1, float *p2)
   // RISK: Argument for SQRT may be negative. Overflow?
   if(sqdist<0)
   {
-  std::cerr << "vtkZFrameRobotToImageRegistration::CoordDistance - \
+  std::cerr << "vtkZFrameRobotToImageRegistration2::CoordDistance - \
                               negative SQRT argument.\n" << std::endl;
       return(0);
   } else
@@ -1049,7 +1091,7 @@ float vtkZFrameRobotToImageRegistration::CoordDistance(float *p1, float *p2)
  * @param rmid The centre of the fiducial pattern in the row coordinate.
  * @param cmid The centre of the fiducial pattern in the column coordinate.
  */
-void vtkZFrameRobotToImageRegistration::OrderFidPoints(float points[7][2], float rmid, float cmid)
+void vtkZFrameRobotToImageRegistration2::OrderFidPoints(float points[7][2], float rmid, float cmid)
 {
   int    pall[9]={0,-1,1,-1,2,-1,3,-1,0};  // prototype index list for all points
   int    pall2[7];
@@ -1074,7 +1116,7 @@ void vtkZFrameRobotToImageRegistration::OrderFidPoints(float points[7][2], float
       // RISK: divide by zero.
       if(cdist<MEPSILON)
       {
-      std::cerr <<  "vtkZFrameRobotToImageRegistration::OrderFidPoints - \
+      std::cerr <<  "vtkZFrameRobotToImageRegistration2::OrderFidPoints - \
                                 divide by zero." << std::endl;
         // TO DO: this should be detected in the first sanity check.
       } else
@@ -1141,7 +1183,7 @@ void vtkZFrameRobotToImageRegistration::OrderFidPoints(float points[7][2], float
  * @param Zorientation Estimated orientation of the Z-frame w.r.t. the image
  *        frame--expressed as a quaternion.
  */
-bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
+bool vtkZFrameRobotToImageRegistration2::LocalizeFrame(float Zcoordinates[7][2],
                                       Column3Vector &Zposition, 
                                       Quaternion &Zorientation)
 {
@@ -1167,9 +1209,14 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   Pz3.setvalues( Zcoordinates[2][0], Zcoordinates[2][1], 0.0 );
   
   // Origin and direction vector of diagonal fiducial.
-  Oz.setvalues( -30.0, -30.0, 30.0 );
-  Vz.setvalues( 0.0, 1.0, -1.0 );
-  
+  //Oz.setvalues( -30.0, -30.0, 30.0 );
+  //Vz.setvalues( 0.0, 1.0, -1.0 );
+  //Oz.setvalues( 30.0, 30.0, -30.0 );
+  //Vz.setvalues( 0.0,  -1.0, 1.0 );
+  Oz.setvalues( -30.0, 30.0, 30.0 );
+  Vz.setvalues( 0.0, -1.0, -1.0 );
+
+
   // Solve for the diagonal intercept in Z-frame coordinates.
   SolveZ(Pz1, Pz2, Pz3, Oz, Vz, P2f);
   
@@ -1180,7 +1227,11 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   Pz3.setvalues( Zcoordinates[4][0], Zcoordinates[4][1], 0.0 );
   
   // Origin and direction vector of diagonal fiducial.
-  Oz.setvalues( 30.0, -30.0, 30.0 );
+  //Oz.setvalues( 30.0, -30.0, 30.0 );
+  //Vz.setvalues( -1.0, 0.0, -1.0 );
+  //Oz.setvalues( -30.0, 30.0, -30.0 );
+  //Vz.setvalues( 1.0, 0.0, 1.0 );
+  Oz.setvalues( 30.0, 30.0, 30.0 );
   Vz.setvalues( -1.0, 0.0, -1.0 );
   
   // Solve for the diagonal intercept in Z-frame coordinates.
@@ -1193,9 +1244,13 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   Pz3.setvalues( Zcoordinates[6][0], Zcoordinates[6][1], 0.0 );
   
   // Origin and direction vector of diagonal fiducial.
-  Oz.setvalues( 30.0, 30.0, 30.0 );
-  Vz.setvalues( 0.0, -1.0, -1.0 );
-  
+  //Oz.setvalues( 30.0, 30.0, 30.0 );
+  //Vz.setvalues( 0.0, -1.0, -1.0 );
+  //Oz.setvalues( -30.0, -30.0, -30.0 );
+  //Vz.setvalues( 0.0, 1.0, 1.0 );
+  Oz.setvalues( 30.0, -30.0, 30.0 );
+  Vz.setvalues( 0.0,  1.0, -1.0 );
+
   // Solve for the diagonal intercept in Z-frame coordinates.
   SolveZ(Pz1, Pz2, Pz3, Oz, Vz, P6f);
   
@@ -1204,8 +1259,13 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   
   // Compute orientation component first.
   // Compute z-frame cross section coordinate frame 
+  //Vx = P4f - P2f;
+  //Vy = P6f - P2f;
+  //Vx = P4f - P6f;
+  //Vy = P2f - P6f;
   Vx = P4f - P2f;
   Vy = P6f - P2f;
+
   Vz = Vx * Vy;
   Vy = Vz * Vx;
   Vx.normalize();
@@ -1217,8 +1277,13 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   Pz2.setvalues( Zcoordinates[3][0], Zcoordinates[3][1], 0.0);
   Pz3.setvalues( Zcoordinates[5][0], Zcoordinates[5][1], 0.0);
   
+  //Vx = Pz2 - Pz1;
+  //Vy = Pz3 - Pz1;
+  //Vx = Pz2 - Pz3;
+  //Vy = Pz1 - Pz3;
   Vx = Pz2 - Pz1;
   Vy = Pz3 - Pz1;
+  
   Vz = Vx * Vy;
   Vy = Vz * Vx;
   Vx.normalize();
@@ -1232,7 +1297,7 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
   angle = 2*acos(Zorientation.getW());
   if(fabs(angle)>15.0)
   {
-  std::cerr << "vtkZFrameRobotToImageRegistration::LocalizeFrame - Rotation angle too large, something is wrong." << std::endl;
+  std::cerr << "vtkZFrameRobotToImageRegistration2::LocalizeFrame - Rotation angle too large, something is wrong." << std::endl;
      return(false);
   }
   if(angle==0.0)
@@ -1274,7 +1339,7 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
 
   if(fabs(Zposition.getZ())>20.0)
   {
-  std::cerr << "vtkZFrameRobotToImageRegistration::LocalizeFrame - Displacement too large, something is wrong." << std::endl;
+  std::cerr << "vtkZFrameRobotToImageRegistration2::LocalizeFrame - Displacement too large, something is wrong." << std::endl;
      return(false);
   }
   
@@ -1300,7 +1365,7 @@ bool vtkZFrameRobotToImageRegistration::LocalizeFrame(float Zcoordinates[7][2],
  *            in the Z-frame coordinates.
  * @param P2f Result: diagonal intercept in physical Z-frame coordinates. 
  */
-void vtkZFrameRobotToImageRegistration::SolveZ(Column3Vector P1, Column3Vector P2, 
+void vtkZFrameRobotToImageRegistration2::SolveZ(Column3Vector P1, Column3Vector P2, 
                                Column3Vector P3, Column3Vector Oz, 
                                Column3Vector Vz, Column3Vector &P2f)
 {
@@ -1332,7 +1397,7 @@ void vtkZFrameRobotToImageRegistration::SolveZ(Column3Vector P1, Column3Vector P
  * @param Zposition The position correction.
  * @param Zorientation The orientation correction
  */
-void vtkZFrameRobotToImageRegistration::Update_Scan_Plane(Column3Vector &pcurrent, 
+void vtkZFrameRobotToImageRegistration2::Update_Scan_Plane(Column3Vector &pcurrent, 
                                           Quaternion &ocurrent, 
                                           Column3Vector Zposition, 
                                           Quaternion Zorientation)
@@ -1344,7 +1409,9 @@ void vtkZFrameRobotToImageRegistration::Update_Scan_Plane(Column3Vector &pcurren
    double x = pcurrent.getX();
    double y = pcurrent.getY();
    double z = pcurrent.getZ();
-   pcurrent.setvalues(x - Zposition.getX(), y - Zposition.getY(), z + Zposition.getZ());
+   //pcurrent.setvalues(x - Zposition.getX(), y - Zposition.getY(), z + Zposition.getZ());
+   pcurrent.setvalues(x + Zposition.getX(), y + Zposition.getY(), z + Zposition.getZ());
+
 
    // Compute the new image orientation.
    //ocurrent = Zorientation * ocurrent;
@@ -1359,7 +1426,7 @@ void vtkZFrameRobotToImageRegistration::Update_Scan_Plane(Column3Vector &pcurren
  * @param imagmat The matrix of imaginary components.
  * @return The magnitude value of the largest k-space element.
  */
-Real vtkZFrameRobotToImageRegistration::ComplexMax(Matrix &realmat, Matrix &imagmat)
+Real vtkZFrameRobotToImageRegistration2::ComplexMax(Matrix &realmat, Matrix &imagmat)
 {
   Real maxabs=0, valabs, sqmag;
   
@@ -1373,7 +1440,7 @@ Real vtkZFrameRobotToImageRegistration::ComplexMax(Matrix &realmat, Matrix &imag
       // RISK: Argument for sqrt cannot be negative. Overflow?
     if(sqmag<0)
     {
-    std::cerr << "vtkZFrameRobotToImageRegistration::ComplexMax - \
+    std::cerr << "vtkZFrameRobotToImageRegistration2::ComplexMax - \
                                 negative sqrt argument." << std::endl;
     } else
       {
@@ -1398,7 +1465,7 @@ Real vtkZFrameRobotToImageRegistration::ComplexMax(Matrix &realmat, Matrix &imag
  * @param realmat A matrix.
  * @return The value of the largest matrix element.
  */
-Real vtkZFrameRobotToImageRegistration::RealMax(Matrix &realmat)
+Real vtkZFrameRobotToImageRegistration2::RealMax(Matrix &realmat)
 {
   Real maxabs=0;
   
@@ -1426,7 +1493,7 @@ Real vtkZFrameRobotToImageRegistration::RealMax(Matrix &realmat)
  * @param col The Resulting column index at which the max value occurs.
  * @return The value of the largest matrix element.
  */
-Real vtkZFrameRobotToImageRegistration::FindMax(Matrix &inmatrix, int &row, int &col)
+Real vtkZFrameRobotToImageRegistration2::FindMax(Matrix &inmatrix, int &row, int &col)
 {
   Real maxabs=0;
   row = col = 0;
@@ -1451,7 +1518,7 @@ Real vtkZFrameRobotToImageRegistration::FindMax(Matrix &inmatrix, int &row, int 
 /*= END METHODS ==============================================================*/
 
 
-void vtkZFrameRobotToImageRegistration::PrintMatrix(Matrix4x4 &matrix)
+void vtkZFrameRobotToImageRegistration2::PrintMatrix(Matrix4x4 &matrix)
 {
   std::cout << "=============" << std::endl;
   std::cout << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << ", " << matrix[0][3] << std::endl;
@@ -1461,7 +1528,7 @@ void vtkZFrameRobotToImageRegistration::PrintMatrix(Matrix4x4 &matrix)
   std::cout << "=============" << std::endl;
 }
 
-void vtkZFrameRobotToImageRegistration::QuaternionToMatrix(float* q, Matrix4x4& m)
+void vtkZFrameRobotToImageRegistration2::QuaternionToMatrix(float* q, Matrix4x4& m)
 {
 
   // normalize
@@ -1507,7 +1574,7 @@ void vtkZFrameRobotToImageRegistration::QuaternionToMatrix(float* q, Matrix4x4& 
 }
 
 
-void vtkZFrameRobotToImageRegistration::MatrixToQuaternion(Matrix4x4& m, float* q)
+void vtkZFrameRobotToImageRegistration2::MatrixToQuaternion(Matrix4x4& m, float* q)
 {
   float trace = m[0][0] + m[1][1] + m[2][2];
 
@@ -1555,7 +1622,7 @@ void vtkZFrameRobotToImageRegistration::MatrixToQuaternion(Matrix4x4& m, float* 
   
 
   
-void vtkZFrameRobotToImageRegistration::Cross(float *a, float *b, float *c)
+void vtkZFrameRobotToImageRegistration2::Cross(float *a, float *b, float *c)
 {
     a[0] = b[1]*c[2] - c[1]*b[2];
     a[1] = c[0]*b[2] - b[0]*c[2];
@@ -1563,7 +1630,7 @@ void vtkZFrameRobotToImageRegistration::Cross(float *a, float *b, float *c)
 }
 
 
-void vtkZFrameRobotToImageRegistration::IdentityMatrix(Matrix4x4 &matrix)
+void vtkZFrameRobotToImageRegistration2::IdentityMatrix(Matrix4x4 &matrix)
 {
   matrix[0][0] = 1.0;
   matrix[1][0] = 0.0;

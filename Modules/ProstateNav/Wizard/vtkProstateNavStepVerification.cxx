@@ -14,21 +14,83 @@
 
 #include "vtkProstateNavStepVerification.h"
 
+#include "vtkObject.h"
+
 #include "vtkProstateNavGUI.h"
 #include "vtkProstateNavLogic.h"
 
-#include "vtkKWFrame.h"
-#include "vtkKWFrameWithLabel.h"
-#include "vtkKWWizardWidget.h"
-#include "vtkKWWizardWorkflow.h"
-#include "vtkKWMultiColumnList.h"
-#include "vtkKWMultiColumnListWithScrollbars.h"
-#include "vtkKWPushButton.h"
+#include "vtkKWMatrixWidget.h"
+#include "vtkKWMatrixWidgetWithLabel.h"
 
-#include "vtkSlicerApplication.h"
 #include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkSlicerNodeSelectorWidget.h"
+
+#include "vtkMRMLLinearTransformNode.h"
+#include "igtlMath.h"
+
+#include "vtkMRMLRobotNode.h"
+
+#include "ProstateNavMath.h"
+
+////
+
+#include "vtkProstateNavTargetDescriptor.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationLogic.h"
+#include "vtkMRMLFiducialListNode.h"
+#include "vtkSlicerSliceLogic.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkSlicerVolumesGUI.h"
+#include "vtkMRMLInteractionNode.h"
+
+#include "vtkKWFrame.h"
+#include "vtkKWWizardWidget.h"
+#include "vtkKWWizardWorkflow.h"
+#include "vtkKWFrame.h"
+#include "vtkKWEntry.h"
+#include "vtkKWLabel.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWEntrySet.h"
+#include "vtkKWMessageDialog.h"
+#include "vtkKWText.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMultiColumnList.h"
+#include "vtkKWMultiColumnListWithScrollbars.h"
+#include "vtkKWCheckButton.h"
+
+const char TARGET_INDEX_ATTR[]="TARGET_IND";
+
+#define DELETE_IF_NULL_WITH_SETPARENT_NULL(obj) \
+  if (obj) \
+    { \
+    obj->SetParent(NULL); \
+    obj->Delete(); \
+    obj = NULL; \
+    };
+
+// Definition of target list columns
+enum
+{
+  COL_NAME = 0,
+  COL_X,
+  COL_Y,
+  COL_Z,
+  COL_NEEDLE,
+  COL_OVERALL_ERROR,
+  COL_LR_ERROR,
+  COL_AP_ERROR,
+  COL_IS_ERROR,
+  COL_COUNT // all valid columns should be inserted above this line
+};
+static const char* COL_LABELS[COL_COUNT] = { "Name", "X", "Y", "Z", "Needle", "Overall Error", "LR Error", "AP Error", "IS Error" };
+static const int COL_WIDTHS[COL_COUNT] =   { 8,      6,   6,   6,   6,        6,               6,          6,          6 };
+
+static const char NEEDLE_TIP_LABEL[]="V-Needle tip";
+static const char NEEDLE_BASE_LABEL[]="V-Needle base";
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkProstateNavStepVerification);
@@ -37,63 +99,100 @@ vtkCxxRevisionMacro(vtkProstateNavStepVerification, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkProstateNavStepVerification::vtkProstateNavStepVerification()
 {
-  //this->SetName("Set Scanner Parameters");
-  this->SetTitle("Set Scanner Parameters");
-  this->SetDescription("Operate the MRI scanner.");
+  this->SetTitle("Verification");
+  this->SetDescription("Measure needle distance from target.");
 
-  this->TargetListFrame  = NULL;
-  this->MultiColumnList = NULL;
-  this->TargetControlFrame = NULL; 
-  this->AddButton        = NULL;
-  this->RemoveButton     = NULL;
-  this->RemoveAllButton  = NULL;
+  this->MainFrame=NULL;
+  
+  // TargetPlanning frame
+  this->VolumeSelectionFrame=NULL;
+  this->LoadVerificationVolumeButton=NULL;
+  this->VolumeSelectorWidget=NULL;
 
-  /*
-  this->FiducialListNodeID = NULL;
-  this->FiducialListNode   = NULL;
-  */
+  // TargetList frame
+  this->TargetListFrame=NULL;
+  this->TargetList=NULL;
+  this->VerifyButton=NULL;
+  this->ClearButton=NULL;
 
+
+  // TargetControl frame
+  this->VerificationControlFrame=NULL;
+  this->Message=NULL;
+
+  this->TitleBackgroundColor[0] = 0.8;
+  this->TitleBackgroundColor[1] = 0.8;
+  this->TitleBackgroundColor[2] = 0.8;
+
+  this->ProcessingCallback = false;
+
+  this->VerificationPointListNode=NULL;
+
+  this->TargetIndexUnderVerification=-1;
 }
 
 //----------------------------------------------------------------------------
 vtkProstateNavStepVerification::~vtkProstateNavStepVerification()
 {
-  if (this->TargetListFrame)
+  RemoveGUIObservers();
+
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(MainFrame);
+  
+  // TargetPlanning
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(VolumeSelectionFrame);
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(LoadVerificationVolumeButton);  
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(VolumeSelectorWidget);
+
+  // TargetList frame
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(TargetListFrame);
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(TargetList);
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(VerifyButton);
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(ClearButton);
+
+  // TargetControl frame
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(VerificationControlFrame);
+
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(Message);
+
+  if (this->VerificationPointListNode!=NULL)
+  {
+    this->VerificationPointListNode->Delete();
+    this->VerificationPointListNode=NULL;
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::SetVerificationPointListNode(vtkMRMLFiducialListNode *node)
+{
+  vtkMRMLScene* scene=NULL;
+  if (this->GetLogic())
+  {
+    if (this->GetLogic()->GetApplicationLogic())
     {
-    this->TargetListFrame->SetParent(NULL);
-    this->TargetListFrame->Delete();
-    this->TargetListFrame = NULL;
+      if (this->GetLogic()->GetApplicationLogic()->GetMRMLScene())
+      {
+        scene=this->GetLogic()->GetApplicationLogic()->GetMRMLScene();
+      }
     }
-  if (this->MultiColumnList)
-    {
-    this->MultiColumnList->SetParent(NULL);
-    this->MultiColumnList->Delete();
-    this->MultiColumnList = NULL;
-    }
-  if (this->TargetControlFrame)
-    {
-    this->TargetControlFrame->SetParent(NULL);
-    this->TargetControlFrame->Delete();
-    this->TargetControlFrame = NULL;
-    }
-  if (this->AddButton)
-    {
-    this->AddButton->SetParent(NULL);
-    this->AddButton->Delete();
-    this->AddButton = NULL;
-    }
-  if (this->RemoveButton)
-    {
-    this->RemoveButton->SetParent(NULL);
-    this->RemoveButton->Delete();
-    this->RemoveButton = NULL;
-    }
-  if (this->RemoveAllButton)
-    {
-    this->RemoveAllButton->SetParent(NULL);
-    this->RemoveAllButton->Delete();
-    this->RemoveAllButton = NULL;
-    }
+  }
+
+  if (this->VerificationPointListNode!=NULL && scene!=NULL)
+  {
+    scene->RemoveNode(this->VerificationPointListNode);
+  }
+  vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+  events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
+  if (this->MRMLObserverManager)
+  {
+    this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&this->VerificationPointListNode),node,events);
+  }
+  if (this->VerificationPointListNode!=NULL && scene!=NULL)
+  {
+    scene->AddNode(this->VerificationPointListNode);
+  }  
 }
 
 //----------------------------------------------------------------------------
@@ -101,132 +200,188 @@ void vtkProstateNavStepVerification::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
-  vtkKWWidget *parent = wizardWidget->GetClientArea();
+  this->ShowVolumeSelectionFrame();
+  this->ShowTargetListFrame();
+  this->ShowVerificationControlFrame();
+
+  if (GetLogic()!=NULL)
+  {
+    GetLogic()->SetMouseInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+  }
+
+  vtkMRMLFiducialListNode* verifNode=vtkMRMLFiducialListNode::New();
+  verifNode->SetName("Verification");
+  SetVerificationPointListNode(verifNode);
+
+  this->AddGUIObservers();
+  this->AddMRMLObservers();
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::ShowVolumeSelectionFrame()
+{
+  vtkKWWidget *parent = this->GetGUI()->GetWizardWidget()->GetClientArea();
+
+  if (!this->VolumeSelectionFrame)
+    {
+    this->VolumeSelectionFrame = vtkKWFrame::New();
+    }
+  if (!this->VolumeSelectionFrame->IsCreated())
+    {
+    this->VolumeSelectionFrame->SetParent(parent);
+    this->VolumeSelectionFrame->Create();
+    }
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2",
+    this->VolumeSelectionFrame->GetWidgetName());
+
+  if (!this->LoadVerificationVolumeButton)
+    {
+    this->LoadVerificationVolumeButton = vtkKWPushButton::New();
+    }
+  if (!this->LoadVerificationVolumeButton->IsCreated())
+    {
+    this->LoadVerificationVolumeButton->SetParent(this->VolumeSelectionFrame);
+    this->LoadVerificationVolumeButton->Create();
+    this->LoadVerificationVolumeButton->SetBorderWidth(2);
+    this->LoadVerificationVolumeButton->SetReliefToRaised();       
+    this->LoadVerificationVolumeButton->SetHighlightThickness(2);
+    this->LoadVerificationVolumeButton->SetBackgroundColor(0.85,0.85,0.85);
+    this->LoadVerificationVolumeButton->SetActiveBackgroundColor(1,1,1);        
+    this->LoadVerificationVolumeButton->SetText( "Load volume");
+    this->LoadVerificationVolumeButton->SetBalloonHelpString("Click to load a volume. Need to additionally select the volume to make it the current verification volume.");
+    }  
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", this->LoadVerificationVolumeButton->GetWidgetName());
+
+  if (!this->VolumeSelectorWidget)
+    {
+     this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+    }
+  if (!this->VolumeSelectorWidget->IsCreated())
+    {
+    this->VolumeSelectorWidget->SetParent(this->VolumeSelectionFrame);
+    this->VolumeSelectorWidget->Create();
+    this->VolumeSelectorWidget->SetBorderWidth(2);  
+    this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->VolumeSelectorWidget->SetMRMLScene(this->GetLogic()->GetApplicationLogic()->GetMRMLScene());
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->VolumeSelectorWidget->SetLabelText( "Verification Volume: ");
+    this->VolumeSelectorWidget->SetBalloonHelpString("Select the targeting volume from the current scene.");
+    }
+  this->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", this->VolumeSelectorWidget->GetWidgetName());
+
+}
 
 
-  // -----------------------------------------------------------------
-  // Target List Frame
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::ShowTargetListFrame()
+{
+  vtkKWWidget *parent = this->GetGUI()->GetWizardWidget()->GetClientArea();
 
   if (!this->TargetListFrame)
     {
     this->TargetListFrame = vtkKWFrame::New();
+    }
+  if (!this->TargetListFrame->IsCreated())
+    {
     this->TargetListFrame->SetParent(parent);
     this->TargetListFrame->Create();
     }
-
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
-                this->TargetListFrame->GetWidgetName());
+               this->TargetListFrame->GetWidgetName());
 
-  if (!this->MultiColumnList)
+  if (!this->TargetList)
     {
-    // add the multicolumn list to show the points
-    this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New();
-    this->MultiColumnList->SetParent(TargetListFrame);
-    this->MultiColumnList->Create();
-    this->MultiColumnList->SetHeight(4);
-    //this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
-    this->MultiColumnList->GetWidget()->SetSelectionTypeToRow();
-    this->MultiColumnList->GetWidget()->MovableRowsOff();
-    this->MultiColumnList->GetWidget()->MovableColumnsOff();
+    this->TargetList = vtkKWMultiColumnListWithScrollbars::New();
+    this->TargetList->SetParent(this->TargetListFrame);
+    this->TargetList->Create();
+    this->TargetList->SetHeight(1);
+    this->TargetList->GetWidget()->SetSelectionTypeToRow();
+    this->TargetList->GetWidget()->SetSelectionBackgroundColor(1,0,0);
+    this->TargetList->GetWidget()->MovableRowsOff();
+    this->TargetList->GetWidget()->MovableColumnsOff();
 
-    const char* labels[] =
-      { "Name", "X", "Y", "Z", "OrW", "OrX", "OrY", "OrZ" };
-    const int widths[] = 
-      { 8, 6, 6, 6, 6, 6, 6, 6 };
-
-    for (int col = 0; col < 8; col ++)
+    for (int col = 0; col < COL_COUNT; col ++)
       {
-      this->MultiColumnList->GetWidget()->AddColumn(labels[col]);
-      this->MultiColumnList->GetWidget()->SetColumnWidth(col, widths[col]);
-      this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
-      //this->MultiColumnList->GetWidget()->ColumnEditableOff(col);
-      this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
-      this->MultiColumnList->GetWidget()->SetColumnEditWindowToSpinBox(col);
+      this->TargetList->GetWidget()->AddColumn(COL_LABELS[col]);
+      this->TargetList->GetWidget()->SetColumnWidth(col, COL_WIDTHS[col]);
+      this->TargetList->GetWidget()->SetColumnAlignmentToLeft(col);
+      this->TargetList->GetWidget()->ColumnEditableOff(col);
       }
-    // make the Name column editable by checkbutton
-    this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(0);
-    this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "OnMultiColumnListUpdate");
-    this->MultiColumnList->GetWidget()->SetSelectionChangedCommand(this, "OnMultiColumnListSelectionChanged");
-    }
 
+    this->TargetList->GetWidget()->SetColumnEditWindowToCheckButton(0);
+
+    }
   this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
-                this->MultiColumnList->GetWidgetName());
+                this->TargetList->GetWidgetName());
 
-
-  // -----------------------------------------------------------------
-  // Target Control Frame
-
-  if (!this->TargetControlFrame)
+  if (!this->VerifyButton)
     {
-    this->TargetControlFrame = vtkKWFrame::New();
-    this->TargetControlFrame->SetParent(TargetListFrame);
-    this->TargetControlFrame->Create();
+    this->VerifyButton = vtkKWPushButton::New();
+    this->VerifyButton->SetParent (this->TargetListFrame);
+    this->VerifyButton->Create();
+    this->VerifyButton->SetText("Verify target");
+    this->VerifyButton->SetBalloonHelpString("Move the robot to the position");
     }
 
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
-               this->TargetControlFrame->GetWidgetName());
-
-  if (!this->AddButton)
+  if (!this->ClearButton)
     {
-    this->AddButton = vtkKWPushButton::New();
-    this->AddButton->SetParent (this->TargetControlFrame);
-    this->AddButton->Create();
-    this->AddButton->SetText("Add Target");
-    this->AddButton->SetBalloonHelpString("Move the robot to the position");
-    this->AddButton->AddObserver(vtkKWPushButton::InvokedEvent,
-                                  (vtkCommand *)this->GUICallbackCommand);
+    this->ClearButton = vtkKWPushButton::New();
+    this->ClearButton->SetParent (this->TargetListFrame);
+    this->ClearButton->Create();
+    this->ClearButton->SetText("Clear target verification");
+    this->ClearButton->SetBalloonHelpString("Stop the robot");
     }
 
-  if (!this->RemoveButton)
-    {
-    this->RemoveButton = vtkKWPushButton::New();
-    this->RemoveButton->SetParent (this->TargetControlFrame);
-    this->RemoveButton->Create();
-    this->RemoveButton->SetText("Remove Target");
-    this->RemoveButton->SetBalloonHelpString("Move the robot to the position");
-    this->RemoveButton->AddObserver(vtkKWPushButton::InvokedEvent,
-                                  (vtkCommand *)this->GUICallbackCommand);
-    }
+  this->Script("pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2",
+               this->VerifyButton->GetWidgetName(),
+               this->ClearButton->GetWidgetName());
 
-  if (!this->RemoveAllButton)
-    {
-    this->RemoveAllButton = vtkKWPushButton::New();
-    this->RemoveAllButton->SetParent (this->TargetControlFrame);
-    this->RemoveAllButton->Create();
-    this->RemoveAllButton->SetText("Remove All");
-    this->RemoveAllButton->SetBalloonHelpString("Move the robot to the position");
-    this->RemoveAllButton->AddObserver(vtkKWPushButton::InvokedEvent,
-                                  (vtkCommand *)this->GUICallbackCommand);
-    }
-
-  this->Script("pack %s %s %s -side left -anchor nw -expand n -padx 2 -pady 2",
-               this->AddButton->GetWidgetName(),
-               this->RemoveButton->GetWidgetName(),
-               this->RemoveAllButton->GetWidgetName());
-
-
-  // -----------------------------------------------------------------
-  // MRML Event Observer
-
-  if (this->GetGUI()->GetFiducialListNodeID())
-    {
-    this->MRMLScene->SaveStateForUndo(this->GetGUI()->GetFiducialListNode());
-
-    vtkMRMLSelectionNode *selnode = NULL;
-    if (this->GetGUI()->GetApplicationLogic())
-      {
-      selnode = this->GetGUI()->GetApplicationLogic()->GetSelectionNode();
-      }
-    this->UpdateMRMLObserver(selnode);
-    this->SetGUIFromList(this->GetGUI()->GetFiducialListNode());
-    }
-  else
-    {
-    vtkErrorMacro ("ShowUserInterface(): Cannot find FiducialListNodeID for Prostate Module." );
-    }
 
 }
+
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::ShowVerificationControlFrame()
+{
+  vtkKWWidget *parent = this->GetGUI()->GetWizardWidget()->GetClientArea();
+
+  if (!this->VerificationControlFrame)
+    {
+    this->VerificationControlFrame = vtkKWFrame::New();
+    }
+  if (!this->VerificationControlFrame->IsCreated())
+    {
+    this->VerificationControlFrame->SetParent(parent);
+    this->VerificationControlFrame->Create();
+    }
+  this->Script("pack %s -side top -anchor nw -expand y -fill x -padx 0 -pady 2",
+               this->VerificationControlFrame->GetWidgetName());
+
+  if(!this->Message)
+    {
+    this->Message = vtkKWText::New();
+    }
+  if(!this->Message->IsCreated())
+    {
+    this->Message->SetParent(this->VerificationControlFrame);
+    this->Message->Create();
+    this->Message->SetText("Select needle type, then click on image to add a target");      
+    this->Message->SetBackgroundColor(0.7, 0.7, 0.95);
+    this->Message->SetHeight(6);
+    this->Message->SetWrapToWord();
+    this->Message->ReadOnlyOn();
+    this->Message->SetBorderWidth(2);
+    this->Message->SetReliefToGroove();
+    this->Message->SetFont("times 12 bold");
+    //this->Message->SetForegroundColor(0.0, 1.0, 0.0);
+    }
+  this->Script("pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 6", 
+                this->Message->GetWidgetName());
+
+}
+
 
 //----------------------------------------------------------------------------
 void vtkProstateNavStepVerification::PrintSelf(ostream& os, vtkIndent indent)
@@ -234,67 +389,50 @@ void vtkProstateNavStepVerification::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
+
 //----------------------------------------------------------------------------
 void vtkProstateNavStepVerification::ProcessGUIEvents(vtkObject *caller,
-                                         unsigned long event, void *callData)
+                                          unsigned long event, void *callData)
 {
 
-  /*
-  vtkMRMLFiducialListNode *activeFiducialListNode 
-    = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->FiducialListNodeID);
-  */
-  if (!this->GetGUI()->GetFiducialListNode())
+  // -----------------------------------------------------------------
+  // Verify Button Pressed
+
+  if (this->VerifyButton == vtkKWPushButton::SafeDownCast(caller)
+    && event == vtkKWPushButton::InvokedEvent)
+  {
+    StartVerification();
+  }
+
+  // -----------------------------------------------------------------
+  // Clear Button Pressed
+
+  else if (this->ClearButton == vtkKWPushButton::SafeDownCast(caller)
+    && event == vtkKWPushButton::InvokedEvent)
+  {
+
+  }
+
+  // -----------------------------------------------------------------
+  // Load volume button Pressed
+
+  if (this->LoadVerificationVolumeButton && this->LoadVerificationVolumeButton == vtkKWPushButton::SafeDownCast(caller) && (event == vtkKWPushButton::InvokedEvent))
     {
-    vtkDebugMacro("FiducialList is not exist\n");
-    return;
+    this->GetApplication()->Script("::LoadVolume::ShowDialog");
     }
 
   // -----------------------------------------------------------------
-  // Add Button Pressed
-
-  else if (this->AddButton == vtkKWPushButton::SafeDownCast(caller)
-      && event == vtkKWPushButton::InvokedEvent)
-    {
-    this->MRMLScene->SaveStateForUndo();
-    int modelIndex = this->GetGUI()->GetFiducialListNode()->AddFiducial();
-    if ( modelIndex < 0 ) 
-      {
-      vtkErrorMacro ("ERROR adding a new fiducial point\n");
-      }
-    }
-
-  // -----------------------------------------------------------------
-  // Remove Button Pressed
-
-  else if (this->RemoveButton == vtkKWPushButton::SafeDownCast(caller)
-      && event == vtkKWPushButton::InvokedEvent)
-    {
-    this->MRMLScene->SaveStateForUndo();    // save state for undo
-
-    // get the row that was last selected
-    int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-    std::cerr << "vtkProstateNavStepVerification::ProcessGUIEvent():  Remove fiducial " << numRows << std::endl;
-
-    if (numRows == 1)
-      {
-      int row[1];
-      this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-      std::cout << "Removing fiducial " << row[0] << endl;
-      this->GetGUI()->GetFiducialListNode()->RemoveFiducial(row[0]);
-      }
-    }
-
-
-  // -----------------------------------------------------------------
-  // Remove All Button Pressed
-
-  else if (this->RemoveAllButton == vtkKWPushButton::SafeDownCast(caller)
-           && event == vtkKWPushButton::InvokedEvent)
-    {
-    this->MRMLScene->SaveStateForUndo();
-    this->GetGUI()->GetFiducialListNode()->RemoveAllFiducials();
-    }
+  // Volume selector
   
+  if (this->VolumeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
+    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  {
+    vtkMRMLScalarVolumeNode *volume = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+    if (volume != NULL)
+    {
+      this->GetGUI()->GetLogic()->SelectVolumeInScene(volume, VOL_VERIFICATION);
+    }
+  }
 }
 
 
@@ -302,205 +440,71 @@ void vtkProstateNavStepVerification::ProcessGUIEvents(vtkObject *caller,
 void vtkProstateNavStepVerification::ProcessMRMLEvents(vtkObject *caller,
                                          unsigned long event, void *callData)
 {
-  if (!this->GetGUI())
+  if (caller == this->VerificationPointListNode)
+  {
+    switch (event)
     {
-    return;
+    case vtkCommand::ModifiedEvent: // Modified Event
+    case vtkMRMLScene::NodeAddedEvent: // when a fiducial is added to the list
+    case vtkMRMLFiducialListNode::FiducialModifiedEvent:
+    case vtkMRMLFiducialListNode::DisplayModifiedEvent:
+      UpdateVerificationResultsForCurrentTarget();
+      UpdateTargetListGUI();      
+      break;
     }
+  }
 
-  vtkMRMLSelectionNode *selnode = NULL;
-  if (this->GetGUI()->GetApplicationLogic())
+  vtkMRMLProstateNavManagerNode *managerNode = vtkMRMLProstateNavManagerNode::SafeDownCast(caller);
+  if (managerNode!=NULL && managerNode==GetProstateNavManager())
     {
-    selnode = this->GetGUI()->GetApplicationLogic()->GetSelectionNode();
-    }
-
-  // -----------------------------------------------------------------
-  // Update MRML Observer
-
-  if (selnode != NULL 
-      && vtkMRMLSelectionNode::SafeDownCast(caller) == selnode
-      && event == vtkCommand::ModifiedEvent)
-    {
-
-    if (selnode->GetActiveFiducialListID() != NULL &&
-        this->GetGUI()->GetFiducialListNodeID() != NULL)
+    switch (event)
       {
-      if (strcmp(selnode->GetActiveFiducialListID(),
-                 this->GetGUI()->GetFiducialListNodeID()) != 0)
-        {
-        if (!selnode->GetActiveFiducialListID())
-          {
-          this->UpdateMRMLObserver(selnode);
-          }
-        }
+      case vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent:
+        this->GUI->BringTargetToViewIn2DViews(vtkProstateNavGUI::BRING_MARKERS_TO_VIEW_ALIGN_TO_NEEDLE);
+        break;
       }
-    }
-
-  // -----------------------------------------------------------------
-  // Fiducial Modified
-
-  if (event == vtkCommand::WidgetValueChangedEvent)
-    {
-    vtkDebugMacro("got a widget value changed event... the list node was changed.\n");
-    }
-
-  vtkMRMLFiducialListNode *node = vtkMRMLFiducialListNode::SafeDownCast(caller);
-  if (!node)
-    {
-    return;
-    }
-  /*
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkSlicerFiducialsGUI *fidGUI
-    = (vtkSlicerFiducialsGUI*)app->GetModuleGUIByName("Fiducials");
-  vtkMRMLFiducialListNode *activeFiducialListNode 
-    = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(fidGUI->GetFiducialListNodeID());
-  */
-  
-  // -----------------------------------------------------------------
-  // Modified Event
-
-  if (node == this->GetGUI()->GetFiducialListNode() && event == vtkCommand::ModifiedEvent)
-    {
-    SetGUIFromList(this->GetGUI()->GetFiducialListNode());
-    }
-
-  // -----------------------------------------------------------------
-  // Fiducial Modified Event
-
-  else if (node == this->GetGUI()->GetFiducialListNode() 
-           && event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
-    {
-    SetGUIFromList(this->GetGUI()->GetFiducialListNode());
-    }
- 
-  // -----------------------------------------------------------------
-  // Display Modified Event
-
-  else if (node == this->GetGUI()->GetFiducialListNode()
-           && event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
-    {
-    SetGUIFromList(this->GetGUI()->GetFiducialListNode());
     }
 
 }
 
 //----------------------------------------------------------------------------
-void vtkProstateNavStepVerification::UpdateMRMLObserver(vtkMRMLSelectionNode* selnode)
+void vtkProstateNavStepVerification::AddMRMLObservers()
 {
-
-//  std::cerr << "vtkProstateNavStepVerification::UpdateMRMLObserver()" << std::endl;
-
-//  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-//  vtkSlicerFiducialsGUI *fidGUI
-//    = (vtkSlicerFiducialsGUI*) app->GetModuleGUIByName("Fiducials");
-
-  vtkMRMLFiducialListNode* fidlist = 
-    vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene
-                                          ->GetNodeByID(this->GetGUI()->GetFiducialListNodeID()));
-  if (selnode != NULL)
-    {
-//    std::cerr << "selnode != 0;" << std::endl;
-    // is the active fid list id out of synch with our selection?
-    vtkIntArray *events = vtkIntArray::New();
+  if (VerificationPointListNode!=NULL)
+  {
+    vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
     events->InsertNextValue(vtkCommand::ModifiedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
     events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
-
-    vtkObject *oldNode = (fidlist);
-//    vtkObject *pNode   = this->GetGUI()->GetFiducialListNode();
-    this->MRMLObserverManager
-      ->SetAndObserveObjectEvents(vtkObjectPointer(&(fidlist)),(fidlist),(events));
-    if ( oldNode != (fidlist) )
-      {
-      this->GetGUI()->SetFiducialListNode(fidlist);
-      this->InvokeEvent (vtkCommand::ModifiedEvent);
-      } 
-    events->Delete();
-    }
-
+    this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&VerificationPointListNode),VerificationPointListNode,events);
+  }
+  vtkMRMLProstateNavManagerNode* manager=this->GetProstateNavManager();
+  if (manager!=NULL)
+  {
+    manager->AddObserver(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);    
+  }
 }
 
-
-//---------------------------------------------------------------------------
-void vtkProstateNavStepVerification::OnMultiColumnListUpdate(int row, int col, char * str)
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::RemoveMRMLObservers()
 {
-
-  vtkMRMLFiducialListNode* fidList = this->GetGUI()->GetFiducialListNode();
-
-  if (fidList == NULL)
-    {
-    return;
-    }
-
-  // make sure that the row and column exists in the table
-  if ((row >= 0) && (row < this->MultiColumnList->GetWidget()->GetNumberOfRows()) &&
-      (col >= 0) && (col < this->MultiColumnList->GetWidget()->GetNumberOfColumns()))
-    {
-      
-    // now update the requested value
-    if (col == 0)
-      {
-      fidList->SetNthFiducialLabelText(row, str);
-      }
-    else if (col >= 1 && col <= 3)
-      {
-      // get the current xyz
-      float * xyz = fidList->GetNthFiducialXYZ(row);
-      // now set the new one
-      float newCoordinate = atof(str);
-      if ( xyz )
-        {
-        if (col == 1)
-          {
-          fidList->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]);
-          }
-        if (col == 2)
-          {
-          fidList->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]);
-          }
-        if (col == 3)
-          {
-          fidList->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate);
-          }
-        }            
-      }
-    else if (col >= 4  && col <= 7)
-      {
-      float * wxyz = fidList->GetNthFiducialOrientation(row);
-      float newCoordinate = atof(str);
-      if (col == 4)
-        {
-        fidList->SetNthFiducialOrientation(row, newCoordinate, wxyz[1], wxyz[2], wxyz[3]);
-        }
-      if (col == 5)
-        {
-        fidList->SetNthFiducialOrientation(row, wxyz[0], newCoordinate, wxyz[2], wxyz[3]);
-        }
-      if (col == 6)
-        {
-        fidList->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], newCoordinate, wxyz[3]);
-        }
-      if (col == 7)
-        {
-        fidList->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], wxyz[2], newCoordinate);
-        }
-      }
-    else
-      {
-      return;
-      }
-    }
-  else
-    {
-    }
+  if (VerificationPointListNode!=NULL)
+  {    
+    this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&VerificationPointListNode), NULL, NULL);
+  }
+  vtkMRMLProstateNavManagerNode* manager=this->GetProstateNavManager();
+  if (manager!=NULL)
+  {
+    manager->RemoveObservers(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);    
+  }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkProstateNavStepVerification::OnMultiColumnListSelectionChanged()
 {
 
-  vtkMRMLFiducialListNode* fidList = this->GetGUI()->GetFiducialListNode();
+  vtkMRMLFiducialListNode* fidList = this->GetProstateNavManager()->GetTargetPlanListNode();
 
   if (fidList == NULL)
     {
@@ -511,121 +515,438 @@ void vtkProstateNavStepVerification::OnMultiColumnListSelectionChanged()
     {
     this->MRMLScene->SaveStateForUndo();
     }
-  int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+
+  int numRows = this->TargetList->GetWidget()->GetNumberOfSelectedRows();
   if (numRows == 1)
-    {
-    for (int i = 0; i < fidList->GetNumberOfFiducials(); i ++)
-      {
-      fidList->SetNthFiducialSelected(i, false);
-      }
-    int row[1];
-    this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-    fidList->SetNthFiducialSelected(row[0], true);
+    {   
+    
+    int rowIndex = this->TargetList->GetWidget()->GetIndexOfFirstSelectedRow();    
+    int targetIndex=this->TargetList->GetWidget()->GetRowAttributeAsInt(rowIndex, TARGET_INDEX_ATTR);
+    vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(targetIndex);    
+          
+    this->GetProstateNavManager()->SetCurrentTargetIndex(targetIndex);
+    DisplayVerificationResultsForCurrentTarget();
     }
 }
 
-
 //----------------------------------------------------------------------------
-void vtkProstateNavStepVerification::SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
+void vtkProstateNavStepVerification::UpdateTargetListGUI()
 {
-
-  if (activeFiducialListNode == NULL)    //clear out the list box
+  if (this->TargetList==NULL || this->TargetList->GetWidget()==NULL)
     {
-    if (this->MultiColumnList)
+    // no widget, nothing to update
+    return;
+    }
+
+  vtkMRMLFiducialListNode* activeFiducialListNode=NULL;
+  if (this->GetProstateNavManager()!=NULL)
+    {
+    activeFiducialListNode=this->GetProstateNavManager()->GetTargetPlanListNode();
+    }
+
+  if (activeFiducialListNode == NULL)    //clear out the list box if no target list is available
+    {
+    if (this->TargetList->GetWidget()->GetNumberOfRows() != 0)
       {
-      if (this->MultiColumnList->GetWidget()->GetNumberOfRows() != 0)
-        {
-        this->MultiColumnList->GetWidget()->DeleteAllRows();
-        }
+      this->TargetList->GetWidget()->DeleteAllRows();
       }
     return;
     }
-    
-  int numPoints = activeFiducialListNode->GetNumberOfFiducials();
-  bool deleteFlag = true;
+  
+  // create new target points, if necessary
+  this->GetLogic()->UpdateTargetListFromMRML();
 
-  if (numPoints != this->MultiColumnList->GetWidget()->GetNumberOfRows())
+  vtkMRMLProstateNavManagerNode *manager = this->GetGUI()->GetProstateNavManager();
+  if (!manager)
+    {
+    return;
+    }
+
+  //int numPoints = activeFiducialListNode->GetNumberOfFiducials();
+  int numPoints = manager->GetTotalNumberOfTargets();
+
+  bool recreateRows = false;
+  if (numPoints != this->TargetList->GetWidget()->GetNumberOfRows())
     {
     // clear out the multi column list box and fill it in with the
     // new list
-    this->MultiColumnList->GetWidget()->DeleteAllRows();
-    }
-  else
-    {
-    deleteFlag = false;
+    this->TargetList->GetWidget()->DeleteAllRows();
+    recreateRows = true;
     }
         
-  float *xyz;
-  float *wxyz;
+  double *xyz;
 
   for (int row = 0; row < numPoints; row++)
-    {
-    if (deleteFlag)
+    {      
+    int targetIndex=row;
+    vtkProstateNavTargetDescriptor* target = manager->GetTargetDescriptorAtIndex(targetIndex);
+
+    vtkKWMultiColumnList* columnList = this->TargetList->GetWidget();
+
+    if (recreateRows)
       {
       // add a row for this point
-      this->MultiColumnList->GetWidget()->AddRow();
+      columnList->AddRow();
       }
 
-    xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
-    wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
+    columnList->SetRowAttributeAsInt(row, TARGET_INDEX_ATTR, targetIndex);
 
+    if (target->GetName().compare(columnList->GetCellText(row,COL_NAME)) != 0)
+      {
+      columnList->SetCellText(row,COL_NAME,target->GetName().c_str());
+      }               
+
+    xyz=target->GetRASLocation();
     if (xyz == NULL)
       {
-      vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
+      vtkErrorMacro ("UpdateTargetListGUI: ERROR: got null xyz for point " << row << endl);
       }
-
-    if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
-      {
-      if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,0),
-                 activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
-        {
-        this->MultiColumnList->GetWidget()
-          ->SetCellText(row,0,activeFiducialListNode->GetNthFiducialLabelText(row));
-        }               
-      }
-    else
-      {
-      if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row, 0), "(none)") != 0)
-        {
-        this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
-        }
-      }
-
     // selected
-    /*
-    if (deleteFlag ||
-        this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn)
-        != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
-      {
-      this->MultiColumnList->GetWidget()
-        ->SetCellTextAsInt(row,this->SelectedColumn,
-                           (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
-      this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
-      }
-    */
-    vtkKWMultiColumnList* columnList = this->MultiColumnList->GetWidget();
+    
     if (xyz != NULL)
       {
       for (int i = 0; i < 3; i ++) // for position (x, y, z)
         {
-        if (deleteFlag || columnList->GetCellTextAsDouble(row,1+i) != xyz[i])
+        if (recreateRows || columnList->GetCellTextAsDouble(row,COL_X+i) != xyz[i])
           {
-          columnList->SetCellTextAsDouble(row,1+i,xyz[i]);
+          columnList->SetCellTextAsDouble(row,COL_X+i,xyz[i]);
           }
         }
       }
-    if (wxyz != NULL)
-      {
-      for (int i = 0; i < 4; i ++) // for orientation (w, x, y, z)
-        {
-        if (deleteFlag || columnList->GetCellTextAsDouble(row, 4+i) != wxyz[i])
-          {
-          columnList->SetCellTextAsDouble(row,4+i,wxyz[i]);
-          }
-        }
-      }
+
+    if (target->GetNeedleTypeString().compare(columnList->GetCellText(row,COL_NEEDLE)) != 0)
+    {
+      columnList->SetCellText(row,COL_NEEDLE,target->GetNeedleTypeString().c_str());
     }
 
-  vtkDebugMacro("Now going to update GUI from the logic's active list");
+    if (target->GetTargetValidated())
+      {
+      if (recreateRows || columnList->GetCellTextAsDouble(row,COL_OVERALL_ERROR) != target->GetOverallError())
+        {
+        columnList->SetCellTextAsDouble(row,COL_OVERALL_ERROR,target->GetOverallError());
+        }
+      if (recreateRows || columnList->GetCellTextAsDouble(row,COL_LR_ERROR) != target->GetLRError())
+        {
+        columnList->SetCellTextAsDouble(row,COL_LR_ERROR,target->GetLRError());
+        }
+      if (recreateRows || columnList->GetCellTextAsDouble(row,COL_AP_ERROR) != target->GetAPError())
+        {
+        columnList->SetCellTextAsDouble(row,COL_AP_ERROR,target->GetAPError());
+        }
+      if (recreateRows || columnList->GetCellTextAsDouble(row,COL_IS_ERROR) != target->GetISError())
+        {
+        columnList->SetCellTextAsDouble(row,COL_IS_ERROR,target->GetISError());
+        }
+      }
+    else
+      {
+        std::string emptyString;
+        if (recreateRows || emptyString.compare(columnList->GetCellText(row,COL_OVERALL_ERROR))!=0)
+          {
+          columnList->SetCellText(row,COL_OVERALL_ERROR,emptyString.c_str());
+          }
+        if (recreateRows || emptyString.compare(columnList->GetCellText(row,COL_LR_ERROR))!=0)
+          {
+          columnList->SetCellText(row,COL_LR_ERROR,emptyString.c_str());
+          }
+        if (recreateRows || emptyString.compare(columnList->GetCellText(row,COL_AP_ERROR))!=0)
+          {
+          columnList->SetCellText(row,COL_AP_ERROR,emptyString.c_str());
+          }
+        if (recreateRows || emptyString.compare(columnList->GetCellText(row,COL_IS_ERROR))!=0)
+          {
+          columnList->SetCellText(row,COL_IS_ERROR,emptyString.c_str());
+          }
+      }
+    }
+}
+
+
+
+//-----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::AddGUIObservers()
+{
+  this->RemoveGUIObservers();
+
+  if (this->LoadVerificationVolumeButton)
+    {
+    this->LoadVerificationVolumeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand); 
+    }
+  if (this->VolumeSelectorWidget)
+    {
+    this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);  
+    }
+  if (this->VerifyButton)
+    {
+    this->VerifyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ClearButton)
+    {
+    this->ClearButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->TargetList)
+    {
+    this->TargetList->GetWidget()->SetCellUpdatedCommand(this, "OnMultiColumnListUpdate");
+    this->TargetList->GetWidget()->SetSelectionChangedCommand(this, "OnMultiColumnListSelectionChanged");
+    }
+}
+//-----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::RemoveGUIObservers()
+{
+  if (this->LoadVerificationVolumeButton)
+    {
+    this->LoadVerificationVolumeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand); 
+    }
+  if (this->VolumeSelectorWidget)
+    {
+    this->VolumeSelectorWidget->RemoveObserver ((vtkCommand *)this->GUICallbackCommand);  
+    }
+  if (this->VerifyButton)
+    {
+    this->VerifyButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ClearButton)
+    {
+    this->ClearButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->TargetList)
+    {
+    this->TargetList->GetWidget()->SetCellUpdatedCommand(this, "");
+    this->TargetList->GetWidget()->SetSelectionChangedCommand(this, "");
+    }
+}
+
+//--------------------------------------------------------------------------------
+void vtkProstateNavStepVerification::UpdateGUI()
+{
+  vtkMRMLProstateNavManagerNode *mrmlNode = this->GetGUI()->GetProstateNavManager();
+
+  if (!mrmlNode)
+  {
+    return;
+  }
+
+  // Display information about the currently selected target descriptor    
+  if (this->Message)
+  {    
+    vtkMRMLRobotNode* robot=NULL;
+    if (this->GetProstateNavManager()!=NULL)
+    {
+      robot=this->GetProstateNavManager()->GetRobotNode();
+    }
+    this->Message->SetText("Select a target, click on 'Verify target' button, then click on two points along the visible needle line.");
+  }
+  const char* volNodeID = mrmlNode->GetVerificationVolumeNodeID();
+  vtkMRMLScalarVolumeNode *volNode=vtkMRMLScalarVolumeNode::SafeDownCast(this->GetLogic()->GetApplicationLogic()->GetMRMLScene()->GetNodeByID(volNodeID));
+  if ( volNode )
+  {
+    this->VolumeSelectorWidget->UpdateMenu();
+    this->VolumeSelectorWidget->SetSelected( volNode );
+  }
+
+  UpdateTargetListGUI();
+
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::HideUserInterface()
+{
+  Superclass::HideUserInterface();
+
+  SetVerificationPointListNode(NULL);
+
+  RemoveGUIObservers();
+  RemoveMRMLObservers();
+
+  this->GetLogic()->GetApplicationLogic()->GetMRMLScene()->RemoveNode(this->VerificationPointListNode);
+  if (this->VerificationPointListNode)
+  {
+    this->VerificationPointListNode->Delete();
+    this->VerificationPointListNode=NULL;
+  }  
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::StartVerification()
+{
+  // Activate target fiducials in the Fiducial GUI
+  if (this->GetLogic()==NULL)
+  {
+    vtkErrorMacro("Logic is invalid");
+    return;
+  }    
+  if (this->GetProstateNavManager()==NULL)
+  {
+    vtkErrorMacro("Manager is invalid");
+    return;
+  }      
+  if (this->VerificationPointListNode==NULL)
+  {
+    vtkErrorMacro("VerificationPointListNode is invalid");
+    return;
+  }      
+  if (this->GetProstateNavManager()->GetCurrentTargetIndex()<0)
+  {
+    // no selected target
+    return;
+  }        
+
+  this->TargetIndexUnderVerification=-1; // updates may be called while modifying MRML nodes, make sure that no verification is attempted
+
+  // Clear previous verif points
+  int oldModify=this->VerificationPointListNode->StartModify();
+  this->VerificationPointListNode->SetLocked(false);
+  this->VerificationPointListNode->RemoveAllFiducials();
+  this->VerificationPointListNode->EndModify(oldModify); // triggers stop verification
+
+  // Lock GUI
+  this->TargetList->SetEnabled(false);
+  this->VerifyButton->SetEnabled(false);
+  this->ClearButton->SetEnabled(false);
+
+  // Set fiducial placement mode
+  GetLogic()->SetCurrentFiducialList(this->VerificationPointListNode);
+  GetLogic()->SetMouseInteractionMode(vtkMRMLInteractionNode::Place); 
+
+  this->TargetIndexUnderVerification=this->GetProstateNavManager()->GetCurrentTargetIndex();
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::StopVerification()
+{
+  // Deactivate target fiducials in the Fiducial GUI
+  if (this->GetLogic()==NULL)
+  {
+    vtkErrorMacro("Logic is invalid");
+    return;
+  }    
+  this->TargetIndexUnderVerification=-1;
+  // Exit from fiducial placement mode
+  GetLogic()->SetMouseInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+  // Unlock GUI
+  this->VerificationPointListNode->SetLocked(true);
+  this->TargetList->SetEnabled(true);
+  this->VerifyButton->SetEnabled(true);
+  this->ClearButton->SetEnabled(true);  
+}
+
+
+void vtkProstateNavStepVerification::UpdateVerificationResultsForCurrentTarget()
+{
+  if (this->VerificationPointListNode->GetNumberOfFiducials()>0)
+  {    
+    if (strcmp(this->VerificationPointListNode->GetNthFiducialLabelText(0),NEEDLE_TIP_LABEL)!=0)
+    {
+      this->VerificationPointListNode->SetNthFiducialLabelText(0,NEEDLE_TIP_LABEL);      
+    }
+  }
+  if (this->VerificationPointListNode->GetNumberOfFiducials()>1)
+  {  
+    if (strcmp(this->VerificationPointListNode->GetNthFiducialLabelText(1),NEEDLE_BASE_LABEL)!=0)
+    {
+      this->VerificationPointListNode->SetNthFiducialLabelText(1,NEEDLE_BASE_LABEL);      
+    }
+  }
+
+  if (this->TargetIndexUnderVerification<0)
+  {
+    // no current target under verification
+    this->VerificationPointListNode->RemoveAllFiducials();
+    StopVerification();
+    return;
+  }
+  if (this->GetProstateNavManager()==NULL)
+  {
+    vtkErrorMacro("Invalid manager");
+    return;
+  }
+  if (this->VerificationPointListNode->GetNumberOfFiducials()<2)
+  {
+    // not enough fiducials to compute result
+    return;
+  }
+
+  vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(this->TargetIndexUnderVerification);    
+
+  StopVerification();
+
+  float* needleTipPos=this->VerificationPointListNode->GetNthFiducialXYZ(0);
+  float* needleBasePos=this->VerificationPointListNode->GetNthFiducialXYZ(1);
+  targetDesc->SetNeedleTipValidationPosition(needleTipPos[0],needleTipPos[1],needleTipPos[2]);
+  targetDesc->SetNeedleBaseValidationPosition(needleBasePos[0],needleBasePos[1],needleBasePos[2]);
+
+  double overallErr = 0;
+  double apErr = 0; double lrErr = 0; double isErr = 0;
+  overallErr = ProstateNavMath::ComputeDistanceLinePoint(targetDesc->GetNeedleTipValidationPosition(), targetDesc->GetNeedleBaseValidationPosition(),
+    targetDesc->GetRASLocation(), apErr, lrErr, isErr);
+
+  // set the variable values in target descriptor
+  targetDesc->SetTargetValidated(true);
+  targetDesc->SetOverallError(overallErr);
+  targetDesc->SetAPError(apErr);
+  targetDesc->SetLRError(lrErr);
+  targetDesc->SetISError(isErr);
+
+  this->GetProstateNavManager()->Modified();
+}
+
+void vtkProstateNavStepVerification::DisplayVerificationResultsForCurrentTarget()
+{
+  if (this->TargetIndexUnderVerification>=0)
+  {
+    // verification is in progress, don't display verification results
+    return;
+  }
+  if (GetProstateNavManager()==NULL)
+  {
+    vtkErrorMacro("Invalid manager");
+    return;
+  }
+
+  int targetIndex=GetProstateNavManager()->GetCurrentTargetIndex(); 
+  vtkProstateNavTargetDescriptor* targetDesc=NULL;
+  if (targetIndex>=0)
+  {
+    targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(targetIndex);    
+  }
+  bool targetValidated=false;
+  if (targetDesc!=NULL)
+  {
+    targetValidated=targetDesc->GetTargetValidated();
+  }
+  if (!targetValidated)
+  {
+    // no target is selected
+    this->VerificationPointListNode->SetAllFiducialsVisibility(false);
+    return;
+  }
+
+  double* needlePos=targetDesc->GetNeedleTipValidationPosition();  
+  if (this->VerificationPointListNode->GetNumberOfFiducials()<1)
+  {    
+    this->VerificationPointListNode->AddFiducialWithLabelXYZSelectedVisibility(NEEDLE_TIP_LABEL,needlePos[0],needlePos[1],needlePos[2],true,true);
+  }
+  else
+  {
+    float* fidXYZ=this->VerificationPointListNode->GetNthFiducialXYZ(0);
+    if (fidXYZ[0]!=needlePos[0] || fidXYZ[1]!=needlePos[1] || fidXYZ[2]!=needlePos[2])
+    {
+      this->VerificationPointListNode->SetNthFiducialXYZ(0,needlePos[0],needlePos[1],needlePos[2]);
+    }
+  }
+
+  needlePos=targetDesc->GetNeedleBaseValidationPosition();  
+  if (this->VerificationPointListNode->GetNumberOfFiducials()<2)
+  {    
+    this->VerificationPointListNode->AddFiducialWithLabelXYZSelectedVisibility(NEEDLE_BASE_LABEL,needlePos[0],needlePos[1],needlePos[2],true,true);
+  }
+  else
+  {
+    float* fidXYZ=this->VerificationPointListNode->GetNthFiducialXYZ(1);
+    if (fidXYZ[0]!=needlePos[0] || fidXYZ[1]!=needlePos[1] || fidXYZ[2]!=needlePos[2])
+    {
+      this->VerificationPointListNode->SetNthFiducialXYZ(1,needlePos[0],needlePos[1],needlePos[2]);
+    }
+  }
 
 }

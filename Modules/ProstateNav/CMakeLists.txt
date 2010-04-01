@@ -1,12 +1,10 @@
 PROJECT(ProstateNav)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
-MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
+cmake_minimum_required(VERSION 2.6)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
- 
 # --------------------------------------------------------------------------
 # Find Slicer3
 
@@ -16,6 +14,15 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+find_package(Subversion)
+if (Subversion_FOUND)
+  Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
+  MESSAGE("Current ProstateNav revision is ${ProstateNav_WC_REVISION}")
+  set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
+endif (Subversion_FOUND)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -28,6 +35,9 @@ endif(NOT Slicer3_SOURCE_DIR)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateTemplate
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/newmat
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -53,6 +63,9 @@ configure_file(
 
 file(GLOB headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateTemplate/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/newmat/*.h"
   )
@@ -68,29 +81,42 @@ install(FILES
 # Sources
 
 set(ProstateNav_SRCS 
+  vtkMRMLProstateNavManagerNode.cxx
   vtkProstateNavLogic.cxx
   vtkProstateNavGUI.cxx
-  vtkIGTLToMRMLCoordinate.cxx
-  vtkIGTLToMRMLBrpRobotCommand.cxx
+  vtkSlicerSecondaryViewerWindow.cxx 
+  vtkMRMLRobotNode.cxx
+  vtkMRMLRobotDisplayNode.cxx
+  vtkProstateNavTargetDescriptor.cxx  
   vtkRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration.cxx
-  vtkMRMLBrpRobotCommandNode.cxx
-  #vtkMRMLRobotDisplayNode.cxx
-  #vtkMRMLRobotNode.cxx
-  vtkMRMLProstateNavManagerNode.cxx
+  vtkZFrameRobotToImageRegistration2.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkIGTLToMRMLCoordinate.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkIGTLToMRMLBrpRobotCommand.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkMRMLBrpRobotCommandNode.cxx  
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkMRMLTransPerinealProstateRobotNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateTemplate/vtkMRMLTransPerinealProstateTemplateNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkMRMLTransRectalProstateRobotNode.cxx  
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkTransRectalFiducialCalibrationAlgo.cxx  
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUp.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUpTemplate.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavCalibrationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavFiducialCalibrationStep.cxx   
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavTargetingStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavManualControlStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepVerification.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepTargetingTemplate.cxx
   )
 
+set(ProstateNavIGTL_SRCS
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/igtlCoordinateMessage.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/igtlHeaderMessage.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/igtlMoveToMessage.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/igtlSetZFrameMessage.cxx
+)
+
 set(ProstateNavNewmat_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/igtlCoordinateMessage.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/igtlHeaderMessage.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/igtlMoveToMessage.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/igtlSetZFrameMessage.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/newmat/newmat9.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/newmat/newmatrm.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/newmat/nm_misc.cpp
@@ -141,6 +167,7 @@ set(lib_name ProstateNav)
 
 add_library(${lib_name}
   ${ProstateNav_SRCS} 
+  ${ProstateNavIGTL_SRCS}
   ${ProstateNavNewmat_SRCS} 
   ${ProstateNav_TCL_SRCS}
   )

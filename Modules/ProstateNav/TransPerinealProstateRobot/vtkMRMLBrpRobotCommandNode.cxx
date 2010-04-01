@@ -125,3 +125,42 @@ const char* vtkMRMLBrpRobotCommandNode::PopIncomingCommand()
 }
 
 
+//----------------------------------------------------------------------------
+int vtkMRMLBrpRobotCommandNode::SwitchStep(const char* step)
+{
+  char* command = NULL;
+
+  if (strcmp(step, "SetUp") == 0)
+    {
+    command = "START_UP";
+    }
+  else if (strcmp(step, "ZFrameCalibration") == 0)
+    {
+    command = "CALIBRATION";
+    }
+  else if (strcmp(step, "PointTargeting") == 0)
+    {
+    command = "TARGETING";
+    }
+  else if (strcmp(step, "PointVerification") == 0)
+    {
+    command = "MANUAL";
+    }
+  else if (strcmp(step, "TransperinealProstateRobotManualControl") == 0)
+    {
+    command = "PLANNING";
+    }
+  else
+  {
+    vtkErrorMacro("Unknown step: "<<step);
+    return 0;
+  }
+
+  if (command)
+    {
+    this->PushOutgoingCommand(command);
+    this->Modified();
+    }
+
+  return 1;
+}

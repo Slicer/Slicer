@@ -26,10 +26,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-//#include "vtkMRMLBrpRobotCommandDisplayNode.h"
-//#include "vtkMRMLBrpRobotCommandLineDisplayNode.h"
-//#include "vtkMRMLBrpRobotCommandTubeDisplayNode.h"
-//#include "vtkMRMLBrpRobotCommandGlyphDisplayNode.h"
 
 #include <string>
 #include <queue>
@@ -72,7 +68,9 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
   const char* PopOutgoingCommand();
   void PushIncomingCommand(const char* name);
   const char* PopIncomingCommand();
-  
+
+  int SwitchStep(const char* step);
+
  protected:
   //BTX
   std::string ZFrameTransformNodeID;

@@ -26,6 +26,7 @@
 #include "vtkSlicerInteractorStyle.h"
 
 #include <string>
+#include <list>
 
 class vtkKWPushButton;
 class vtkKWPushButtonSet;
@@ -40,12 +41,10 @@ class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWWizardWidget;
+class vtkSlicerNodeSelectorWidget;
 
 class vtkProstateNavStep;
-
-class vtkTransform;
-class vtkIGTLToMRMLCoordinate;
-class vtkIGTLToMRMLBrpRobotCommand;
+class vtkSlicerSecondaryViewerWindow;
 
 class vtkMRMLProstateNavManagerNode;
  
@@ -56,8 +55,8 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
 {
  public:
   
-  virtual void Register(vtkObjectBase *o) { Superclass::Register(o); };
-  virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
 
   //BTX
   enum {
@@ -71,8 +70,11 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
     SLICE_RTIMAGE_INPLANE90 = 2,
     SLICE_RTIMAGE_INPLANE   = 3
   };
+  enum {
+    BRING_MARKERS_TO_VIEW_KEEP_CURRENT_ORIENTATION, // show slices in their original (acquisition) directions
+    BRING_MARKERS_TO_VIEW_ALIGN_TO_NEEDLE           // show needle aligned slices (parallel and perpendicular to the needle and robot main axis)
+  };
   
-  static const char* WorkPhaseStr[vtkProstateNavLogic::NumPhases];
   //ETX
   
  public:
@@ -98,17 +100,11 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   // Get wizard widget
   vtkGetObjectMacro(WizardWidget, vtkKWWizardWidget);
 
-  // Get Target Fiducials (used in the wizard steps)
-  vtkGetStringMacro ( FiducialListNodeID );
-  vtkSetStringMacro ( FiducialListNodeID );
-  vtkGetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
-  vtkSetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
+  vtkGetObjectMacro ( ProstateNavManager, vtkMRMLProstateNavManagerNode );
 
   // Description:    
   // This method builds the IGTDemo module GUI
-  virtual void BuildGUI ( void );
-  virtual void BuildGUI ( vtkKWFrame * f ) { this->Superclass::BuildGUI(f); }
-  virtual void BuildGUI ( vtkKWFrame * f, double * bgColor ) { this->Superclass::BuildGUI(f,bgColor); }
+  virtual void BuildGUI ( );
 
   // Description:    
   // This method builds the IGTDemo module GUI
@@ -122,6 +118,9 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   void AddLogicObservers ( );
   void RemoveLogicObservers ( );
 
+  void AddMRMLObservers();
+  void RemoveMRMLObservers();
+
   // Description: 
   // Get the categorization of the module.
   const char *GetCategory() const { return "IGT"; }
@@ -132,13 +131,13 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
+
   void HandleMouseEvent(vtkSlicerInteractorStyle *style);
   
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter ( );
-  virtual void Enter ( vtkMRMLNode* node ) { this->Superclass::Enter(node); }
+  virtual void Enter (vtkMRMLNode *node);
+  virtual void Enter ();
   virtual void Exit ( );
   
   void Init();
@@ -149,26 +148,53 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   
   //ETX
   
+  // Description:
+  // Bring a marker to view in all three slice views along its principal axes
+  // N - the direction vector of the locator,
+  // T - the transverse direction vector of the locator (optional)
+  // P - the tip location of the locator (optional)
+  // All the above values are in RAS space. 
+  void BringMarkerToViewIn2DViews(double* P, double* N=NULL, double* T=NULL);
+
+  // Description:
+  // Bring current target to view in all three slice views
+  void BringTargetToViewIn2DViews(int mode);
+
  protected:
   vtkProstateNavGUI ( );
   virtual ~vtkProstateNavGUI ( );
   
+  void SetProstateNavManager(vtkMRMLProstateNavManagerNode* node);
+  void SetRobot(vtkMRMLRobotNode* robot);
+  void SetTargetPlanList(vtkMRMLFiducialListNode* targetPlanList);
+
+  // Return i-th worfklow step page
+  vtkProstateNavStep* GetStepPage(int i);
+
   //----------------------------------------------------------------
   // GUI widgets
   //----------------------------------------------------------------
-  
+
+  vtkSlicerSecondaryViewerWindow* SecondaryWindow;
+
+  // Configuration Frame
+
+  vtkSlicerNodeSelectorWidget* ProstateNavManagerSelectorWidget;
+  vtkSlicerNodeSelectorWidget* RobotSelectorWidget;
+
   //----------------------------------------------------------------
   // Workphase Frame
   
-  vtkKWPushButtonSet *WorkPhaseButtonSet;
+  vtkKWFrame *StatusButtonFrame;
+  vtkKWPushButtonSet *StatusButtonSet;
 
-  vtkKWEntry *ScannerStatusLabelDisp;
-  vtkKWEntry *SoftwareStatusLabelDisp;
-  vtkKWEntry *RobotStatusLabelDisp;
+  vtkKWFrame *WorkphaseButtonFrame;
+  vtkKWPushButtonSet *WorkphaseButtonSet;
   
   //----------------------------------------------------------------
   // Wizard Frame
-  
+
+  vtkSlicerModuleCollapsibleFrame *WizardFrame;
   vtkKWWizardWidget *WizardWidget;
   
   //----------------------------------------------------------------
@@ -178,37 +204,43 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   vtkProstateNavLogic *Logic;
 
   vtkCallbackCommand *DataCallbackCommand;
-  vtkIGTLToMRMLCoordinate* CoordinateConverter;
-  vtkIGTLToMRMLBrpRobotCommand* CommandConverter;
- 
 
   //----------------------------------------------------------------
   // Target Fiducials
   //----------------------------------------------------------------
 
-  char *FiducialListNodeID;
-  vtkMRMLFiducialListNode *FiducialListNode;
+  void UpdateGUI();
 
-  void UpdateAll();
-  void UpdateDeviceStatus();
-  
  private:
 
   vtkProstateNavGUI ( const vtkProstateNavGUI& ); // Not implemented.
   void operator = ( const vtkProstateNavGUI& ); //Not implemented.
   
-  void BuildGUIForWorkPhaseFrame();
+  void BuildGUIForConfigurationFrame();
+  void BuildGUIForWorkphaseFrame();
   void BuildGUIForWizardFrame();
   void BuildGUIForHelpFrame();
-  void BuildGUIForDeviceFrame();
+
+  void UpdateStatusButtons();
+  void UpdateWorkflowSteps();
   
-  int  ChangeWorkPhase(int phase, int fChangeWizard=0);
+  int  ChangeWorkphase(int phase, int fChangeWizard=0);
+  const char* AddZFrameModel(const char* nodeName);
+
+  // Description:
+  // Display current target fiducial highlighted
+  void UpdateCurrentTargetDisplay();
+  void UpdateCurrentTargetDisplayInSecondaryWindow();
 
   int Entered;
 
+  // store the currently displayed workflow steps
+  // if the same steps requested to be displayed, then nothing will happen
+  vtkStringArray* DisplayedWorkflowSteps;
 
   vtkMRMLProstateNavManagerNode* ProstateNavManager;
-
+  vtkMRMLRobotNode* Robot;
+  vtkMRMLFiducialListNode* TargetPlanList;
   
 };
 

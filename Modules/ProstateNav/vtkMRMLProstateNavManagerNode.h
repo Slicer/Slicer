@@ -19,12 +19,25 @@
 #include "vtkMRMLStorageNode.h"
 
 #include "vtkObject.h"
+#include "vtkStdString.h"
 #include "vtkProstateNavWin32Header.h" 
 
 #include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLIGTLConnectorNode.h"
+
+#include "vtkProstateNavTargetDescriptor.h"
 
 class vtkProstateNavStep;
+class vtkStringArray;
+class vtkMRMLRobotNode;
+
+enum VolumeType
+{
+  VOL_GENERIC, // any other than the specific volumes 
+  VOL_CALIBRATION,
+  VOL_TARGETING,
+  VOL_VERIFICATION,
+  VOL_COVERAGE
+};
 
 class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 {
@@ -36,27 +49,36 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   //BTX
+
+  struct NeedleDescriptorStruct
+    {
+    std::string NeedleName;
+    // NeedleLength: maximum possible insertion depth, in mm
+    float NeedleLength;
+    // Overshoot: where is the target compared to the needle tip, in mm
+    // if positive, then target is towards the needle base (biopsy)
+    // if negative, then target is in front of the needle tip (seed placement)
+    float NeedleOvershoot; 
+    std::string Description;
+    // LastTargetId stores the last index that was used for adding a target for this needle.
+    // It is useful for generating unique target names.
+    int LastTargetId;
+    };
+
   // Events
   enum {
-    ConnectedEvent        = 118944,
-    DisconnectedEvent     = 118945,
-    ActivatedEvent        = 118946,
-    DeactivatedEvent      = 118947,
-    ReceiveEvent          = 118948,
-    NewDeviceEvent        = 118949,
+    CurrentTargetChangedEvent = 200900,
   };
+
   //ETX
+
 
  public:
 
   //----------------------------------------------------------------
   // Get and Set Macros
   //----------------------------------------------------------------
-  vtkGetObjectMacro ( TargetPlanList, vtkMRMLFiducialListNode );
-  vtkGetObjectMacro ( TargetCompletedList, vtkMRMLFiducialListNode );
 
-  vtkGetObjectMacro ( RobotConnector, vtkMRMLIGTLConnectorNode );
-  vtkGetObjectMacro ( ScannerConnector, vtkMRMLIGTLConnectorNode );
 
   //----------------------------------------------------------------
   // Standard methods for MRML nodes
@@ -69,6 +91,8 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
+  void Init();
+
   // Description:
   // Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
@@ -80,6 +104,20 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
+
+  // Description:
+  // Updates other nodes in the scene depending on this node
+  // or updates this node if it depends on other nodes
+  virtual void UpdateScene(vtkMRMLScene *);
+
+// Description:
+  // Update the stored reference to another node in the scene
+  void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  void UpdateReferences();
 
   // Description:
   // Get node XML tag name (like Volume, Model)
@@ -97,99 +135,120 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 
   // Description:
   // Get number of wizard steps
-  unsigned int GetNumberOfSteps();
+  int GetNumberOfSteps();
 
   // Description:
   // Get number of wizard steps
-  const char* GetStepName(unsigned int i);
-
-  // Description:
-  // Get page by vtkProstateNavStep* pointer
-  vtkProstateNavStep* GetStepPage(unsigned int i);
-
-  // Description:
-  // Add a new step. Please note that the transition matrix is resized
-  // each time the new step is added by AddNewStep() fucntion.
-  // The matrix should  be defined after all steps are added to the
-  // manager class.
-  void AddNewStep(const char* name, vtkProstateNavStep* page);
+  const char* GetStepName(int i);
   
   // Description:
-  // Clear the step
-  void ClearSteps();
+  // Switch step. Returns 0 if it is failed.
+  int SwitchStep(int newStep);
 
   // Description:
-  // Switch step. Returns 0 if it is not allowed.
-  int SwitchStep(unsigned int i);
+  // Get current workflow step.
+  int GetCurrentStep();
 
   // Description:
-  // Get current step.
-  unsigned int GetCurrentStep();
+  // Get previous workflow step.
+  int GetPreviousStep();
 
-  // Description:
-  // Get previous step.
-  unsigned int GetPreviousStep();
+  vtkSetReferenceStringMacro(CalibrationVolumeNodeID);
+  vtkGetStringMacro(CalibrationVolumeNodeID);
 
+  vtkSetReferenceStringMacro(TargetingVolumeNodeID);
+  vtkGetStringMacro(TargetingVolumeNodeID);
+
+  vtkSetReferenceStringMacro(VerificationVolumeNodeID);
+  vtkGetStringMacro(VerificationVolumeNodeID);
+
+  vtkSetReferenceStringMacro(CoverageVolumeNodeID);
+  vtkGetStringMacro(CoverageVolumeNodeID);
+
+  bool FindTargetingParams(vtkProstateNavTargetDescriptor *targetDesc);
 
   //----------------------------------------------------------------
-  // Phase transitions
+  // Needle Management
   //----------------------------------------------------------------
-  
+
+  //BTX
   // Description:
-  // Fill the transition matrix with 1 to allow all step transitions.
-  void AllowAllTransitions();
+  // Set/Get the number of needle types and TargetingFiducialsLists, because there could be more than one lists, depending on needle type
+  int GetNumberOfNeedles(){ return this->NeedlesVector.size();};
+  //ETX
 
   // Description:
-  // Fill the transition matrix with 0 to forbid all step transitions.
-  void ForbidAllTransitions();
+  // Set/Get the current needle index (if <0 then there is no active needle)
+  vtkGetMacro(CurrentNeedleIndex,int);
+  vtkSetMacro(CurrentNeedleIndex,int);
+
+  //BTX
+  bool SetNeedle(unsigned int needleIndex, NeedleDescriptorStruct needleDesc);
+  // returns false if needle info was not found
+  bool GetNeedle(unsigned int needleIndex, NeedleDescriptorStruct &needleDesc);
+  //ETX
+
+  //BTX
+  // Description:
+  // get/set methods for storing needle information
+  void SetNeedleType(unsigned int needleIndex, std::string type);
+  std::string GetNeedleType(unsigned int needleIndex);
+  //ETX
+
+  //BTX
+  // Description:
+  // get/set methods for storing needle information
+  void SetNeedleDescription(unsigned int needleIndex, std::string desc);
+  std::string GetNeedleDescription(unsigned int needleIndex);
+  //ETX
 
   // Description:
-  // Set phase transition by 2-D int array.
-  // The format of 'matrix' argument should be matrix[step_from][step_to].
-  int SetStepTransitionMatrix(const unsigned int** matrix);
-  
-  // Description:
-  // Allow trasition from 'step_from' to 'step_to'.
-  int SetAllowTransition(unsigned int step_from, unsigned int step_to);
-  
-  // Description:
-  // Forbid trasition from 'step_from' to 'step_to'.
-  int SetForbidTransition(unsigned int step_from, unsigned int step_to);
+  // get/set methods for storing needle information
+  void SetNeedleLength(unsigned int needleIndex, float length);
+  float GetNeedleLength(unsigned int needleIndex);
 
   // Description:
-  // Check if the step can transtion from 'step_from' to 'step_to'.
-  // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
-  int IsTransitionable(unsigned int step_from, unsigned int step_to);
-
-  // Description:
-  // Check if the step can transtion from current step to 'step_to'.
-  // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
-  int IsTransitionable(unsigned int step_to);
+  // get/set methods for storing needle information
+  void SetNeedleOvershoot(unsigned int needleIndex, float overshoot);
+  float GetNeedleOvershoot(unsigned int needleIndex);
 
   //----------------------------------------------------------------
   // Target Management
   //----------------------------------------------------------------
   
+  bool AddTargetToFiducialList(double targetRAS[3], unsigned int fiducialListIndex, unsigned int targetNr, int & fiducialIndex);  
+  bool GetTargetFromFiducialList(int fiducialListIndex, int fiducialIndex, double &r, double &a, double &s);  
+  void SetFiducialColor(int fiducialIndex, bool selected); // :TODO: rename it to SetFiducialSelected
+
+  //BTX
+  // Description:
+  // Get Targeting Fiducials Lists names(used in the wizard steps)
+  std::string GetTargetingFiducialsListName(unsigned int index)
+    {
+    if (index < this->NeedlesVector.size())
+      return this->NeedlesVector[index].NeedleName;
+    else
+      return NULL;
+    }; 
+  //ETX
+  
+  unsigned int AddTargetDescriptor(vtkProstateNavTargetDescriptor *target);
+  int RemoveTargetDescriptorAtIndex(unsigned int index); // return with 0 if failed
+  vtkProstateNavTargetDescriptor *GetTargetDescriptorAtIndex(unsigned int index);
+  int GetTotalNumberOfTargets() { return this->TargetDescriptorsVector.size();};
+  vtkGetMacro(CurrentTargetIndex, int);
+  int SetCurrentTargetIndex(int index);
+
   // Description:
   // Set and start observing target plan list
-  void SetAndObserveTargetPlanList(vtkMRMLFiducialListNode* ptr);
+  //void SetAndObserveTargetPlanList(vtkMRMLFiducialListNode* ptr);
+  vtkGetStringMacro(TargetPlanListNodeID);
+  vtkMRMLFiducialListNode* GetTargetPlanListNode();
+  void SetAndObserveTargetPlanListNodeID(const char *targetPlanListNodeID);
 
-  // Description:
-  // Set and start observing completed target list
-  void SetAndObserveTargetCompletedList(vtkMRMLFiducialListNode* ptr);
-
-  //----------------------------------------------------------------
-  // Connectors
-  //----------------------------------------------------------------
-
-  // Description:
-  // Set and start observing OpenIGTLink connector for robot
-  void SetAndObserveRobotConnector(vtkMRMLIGTLConnectorNode* ptr);
-
-  // Description:
-  // Set and start observing OpenIGTLink connector for scanner
-  void SetAndObserveScannerConnector(vtkMRMLIGTLConnectorNode* ptr);
-
+  vtkGetStringMacro(RobotNodeID);
+  vtkMRMLRobotNode* GetRobotNode();
+  void SetAndObserveRobotNodeID(const char *robotNodeID);
 
  protected:
   //----------------------------------------------------------------
@@ -207,26 +266,39 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Data
   //----------------------------------------------------------------
 
-  // List of wizard pages
+  vtkStdString GetWorkflowStepsString();
+  bool SetWorkflowStepsFromString(const vtkStdString& workflowStepsString);
+
+  // List of workflow steps (wizard pages)
+  vtkStringArray *StepList;
+  
+  int CurrentStep;
+  int PreviousStep;
+
   //BTX
-  typedef struct {
-    std::string         name;
-    vtkProstateNavStep* page;
-  } StepInfoType;
-  std::vector<StepInfoType>         StepList;
+  std::vector<NeedleDescriptorStruct> NeedlesVector;
+  int CurrentNeedleIndex;
 
-  std::vector< std::vector<unsigned int> >   StepTransitionMatrix;
+  std::vector<vtkProstateNavTargetDescriptor*> TargetDescriptorsVector;
+  int CurrentTargetIndex; // if <0 then no current target is selected
+
   //ETX
-  
-  unsigned int CurrentStep;
-  unsigned int PreviousStep;
-  
-  vtkMRMLFiducialListNode* TargetPlanList;
-  vtkMRMLFiducialListNode* TargetCompletedList;
 
-  vtkMRMLIGTLConnectorNode* RobotConnector;
-  vtkMRMLIGTLConnectorNode* ScannerConnector;
-  
+  vtkSetReferenceStringMacro(TargetPlanListNodeID);
+  char *TargetPlanListNodeID;
+  vtkMRMLFiducialListNode* TargetPlanListNode;
+
+  //vtkMRMLRobotNode* RobotNode;
+  vtkSetReferenceStringMacro(RobotNodeID);
+  char *RobotNodeID;
+  vtkMRMLRobotNode* RobotNode;
+
+  char *CalibrationVolumeNodeID;  
+  char *TargetingVolumeNodeID;
+  char *VerificationVolumeNodeID;
+  char *CoverageVolumeNodeID;  
+
+  bool Initialized;
 };
 
 #endif

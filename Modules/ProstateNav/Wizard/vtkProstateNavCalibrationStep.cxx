@@ -44,8 +44,11 @@
 
 #include "vtkSlicerColorLogic.h"
 
-#include "vtkZFrameRobotToImageRegistration.h"
+#include "vtkMRMLBrpRobotCommandNode.h"
 
+#include "vtkMRMLRobotNode.h"
+
+#include "vtkKWMatrixWidget.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkProstateNavCalibrationStep);
@@ -54,16 +57,18 @@ vtkCxxRevisionMacro(vtkProstateNavCalibrationStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkProstateNavCalibrationStep::vtkProstateNavCalibrationStep()
 {
-  //this->SetName("Calibration");
   this->SetTitle("Calibration");  
   this->SetDescription("Perform Z-frame calibration.");
 
   this->SelectImageFrame  = NULL;
-  this->SelectImageButton = NULL;
+  //this->SelectImageButton = NULL;
+  this->ZFrameImageSelectorWidget = NULL;
+  this->SliceRangeMatrix = NULL;
   this->CalibrateButton   = NULL;
 
-  this->ZFrameSettingFrame = NULL;
-  this->ShowZFrameCheckButton = NULL;
+  this->ZFrameSettingFrame       = NULL;
+  this->ShowZFrameCheckButton    = NULL;
+  this->ShowWorkspaceCheckButton = NULL;
 
 }
 
@@ -75,10 +80,20 @@ vtkProstateNavCalibrationStep::~vtkProstateNavCalibrationStep()
     this->SelectImageFrame->SetParent(NULL);
     this->SelectImageFrame->Delete();
     }
-  if (this->SelectImageButton)
+  //if (this->SelectImageButton)
+  //  {
+  //  this->SelectImageButton->SetParent(NULL);
+  //  this->SelectImageButton->Delete();
+  //  }
+  if (this->ZFrameImageSelectorWidget)
     {
-    this->SelectImageButton->SetParent(NULL);
-    this->SelectImageButton->Delete();
+    this->ZFrameImageSelectorWidget->SetParent(NULL);
+    this->ZFrameImageSelectorWidget->Delete();
+    }
+  if (this->SliceRangeMatrix)
+    {
+    this->SliceRangeMatrix->SetParent(NULL);
+    this->SliceRangeMatrix->Delete();
     }
   if (this->CalibrateButton)
     {
@@ -96,6 +111,13 @@ vtkProstateNavCalibrationStep::~vtkProstateNavCalibrationStep()
     this->ShowZFrameCheckButton->SetParent(NULL);
     this->ShowZFrameCheckButton->Delete();
     }
+  if (this->ShowWorkspaceCheckButton)
+    {
+    this->ShowWorkspaceCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    this->ShowWorkspaceCheckButton->SetParent(NULL);
+    this->ShowWorkspaceCheckButton->Delete();
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -118,23 +140,67 @@ void vtkProstateNavCalibrationStep::ShowUserInterface()
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                this->SelectImageFrame->GetWidgetName());
 
-  if (!this->SelectImageButton)
+  //if (!this->SelectImageButton)
+  //  {
+  //  this->SelectImageButton = vtkKWLoadSaveButtonWithLabel::New();
+  //  this->SelectImageButton->SetParent(this->SelectImageFrame);
+  //  this->SelectImageButton->Create();
+  //  this->SelectImageButton->SetWidth(50);
+  //  this->SelectImageButton->GetWidget()->SetText ("Browse Image File");
+  //  /*
+  //  this->SelectImageButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
+  //    "{ {ProstateNav} {*.dcm} }");
+  //  */
+  //  this->SelectImageButton->GetWidget()->GetLoadSaveDialog()
+  //    ->RetrieveLastPathFromRegistry("OpenPath");
+  //  }
+  //
+  //this->Script("pack %s -side left -anchor w -fill x -padx 2 -pady 2", 
+  //             this->SelectImageButton->GetWidgetName());
+
+  if (!this->ZFrameImageSelectorWidget)
     {
-    this->SelectImageButton = vtkKWLoadSaveButtonWithLabel::New();
-    this->SelectImageButton->SetParent(this->SelectImageFrame);
-    this->SelectImageButton->Create();
-    this->SelectImageButton->SetWidth(50);
-    this->SelectImageButton->GetWidget()->SetText ("Browse Image File");
-    /*
-    this->SelectImageButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-      "{ {ProstateNav} {*.dcm} }");
-    */
-    this->SelectImageButton->GetWidget()->GetLoadSaveDialog()
-      ->RetrieveLastPathFromRegistry("OpenPath");
+    this->ZFrameImageSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ZFrameImageSelectorWidget->SetParent(this->SelectImageFrame);
+    this->ZFrameImageSelectorWidget->Create(); 
+    this->ZFrameImageSelectorWidget->AddNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+    this->ZFrameImageSelectorWidget->SetMRMLScene(this->MRMLScene);
+    this->ZFrameImageSelectorWidget->SetBorderWidth(2);
+    this->ZFrameImageSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->ZFrameImageSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->ZFrameImageSelectorWidget->SetLabelText( "ZFrame Image: ");
+    this->ZFrameImageSelectorWidget->NewNodeEnabledOn();
+    this->ZFrameImageSelectorWidget->SetBalloonHelpString("Select Z-frame image node");
+    this->ZFrameImageSelectorWidget->SetEnabled(1);
     }
 
-  this->Script("pack %s -side left -anchor w -fill x -padx 2 -pady 2", 
-               this->SelectImageButton->GetWidgetName());
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+               this->ZFrameImageSelectorWidget->GetWidgetName());
+
+
+  if (!this->SliceRangeMatrix)
+    {
+    this->SliceRangeMatrix = vtkKWMatrixWidgetWithLabel::New();
+    this->SliceRangeMatrix->SetParent(this->SelectImageFrame);
+    this->SliceRangeMatrix->Create();
+    this->SliceRangeMatrix->SetLabelText("Slice range:");
+    this->SliceRangeMatrix->ExpandWidgetOff();
+    this->SliceRangeMatrix->GetLabel()->SetWidth(18);
+    this->SliceRangeMatrix->SetBalloonHelpString("Set the needle position");
+
+    vtkKWMatrixWidget *matrix =  this->SliceRangeMatrix->GetWidget();
+    matrix->SetNumberOfColumns(2);
+    matrix->SetNumberOfRows(1);
+    matrix->SetElementWidth(12);
+    matrix->SetRestrictElementValueToInteger();
+    matrix->SetElementChangedCommandTriggerToAnyChange();
+    matrix->SetElementValueAsInt(0, 0, 0);
+    matrix->SetElementValueAsInt(0, 1, 11);
+    }
+
+  this->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
+               this->SliceRangeMatrix->GetWidgetName());
+
 
   if (!this->CalibrateButton)
     {
@@ -143,8 +209,6 @@ void vtkProstateNavCalibrationStep::ShowUserInterface()
     this->CalibrateButton->Create ( );
     this->CalibrateButton->SetText ("Perform Calibration");
     this->CalibrateButton->SetBalloonHelpString("Send Calibration Data to the Robot");
-    this->CalibrateButton->AddObserver(vtkKWPushButton::InvokedEvent,
-                                       (vtkCommand *)this->GUICallbackCommand);
     }
 
   this->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
@@ -167,15 +231,32 @@ void vtkProstateNavCalibrationStep::ShowUserInterface()
     this->ShowZFrameCheckButton->SetParent(this->ZFrameSettingFrame);
     this->ShowZFrameCheckButton->Create();
     this->ShowZFrameCheckButton->SelectedStateOff();
-    this->ShowZFrameCheckButton->SetText("Show ZFrame");
-    this->ShowZFrameCheckButton
-      ->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    
+    this->ShowZFrameCheckButton->SetText("Show ZFrame");   
     }
 
   this->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
                this->ShowZFrameCheckButton->GetWidgetName());
 
+  if (!this->ShowWorkspaceCheckButton)
+    {
+    this->ShowWorkspaceCheckButton = vtkKWCheckButton::New();
+    this->ShowWorkspaceCheckButton->SetParent(this->ZFrameSettingFrame);
+    this->ShowWorkspaceCheckButton->Create();
+    this->ShowWorkspaceCheckButton->SelectedStateOff();
+    this->ShowWorkspaceCheckButton->SetText("Show Range of Motion");
+    }
+
+  this->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
+               this->ShowWorkspaceCheckButton->GetWidgetName());
+
+  this->AddGUIObservers();
+}
+
+//----------------------------------------------------------------------------
+void vtkProstateNavCalibrationStep::HideUserInterface()
+{
+  Superclass::HideUserInterface();
+  RemoveGUIObservers();
 }
 
 
@@ -188,264 +269,68 @@ void vtkProstateNavCalibrationStep::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 void vtkProstateNavCalibrationStep::ProcessGUIEvents(vtkObject *caller,
-                                           unsigned long event,
-                                           void *vtkNotUsed(callData))
+                                           unsigned long event, void *callData)
 {
 
   if (this->ShowZFrameCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
            && event == vtkKWCheckButton::SelectedStateChangedEvent )
     {
     int checked = this->ShowZFrameCheckButton->GetSelectedState(); 
-    if (checked)
-      {
-      ShowZFrameModel();
-      }
-    else
-      {
-      HideZFrameModel();
-      }
+    ShowZFrameModel(checked);
+    }
+  if (this->ShowWorkspaceCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
+           && event == vtkKWCheckButton::SelectedStateChangedEvent )
+    {
+    int checked = this->ShowWorkspaceCheckButton->GetSelectedState(); 
+    ShowWorkspaceModel(checked);
     }
   if (this->CalibrateButton == vtkKWPushButton::SafeDownCast(caller)
       && event == vtkKWPushButton::InvokedEvent)
     {
-    const char *filename = this->SelectImageButton->GetWidget()->GetFileName();
-    PerformZFrameCalibration(filename);
+    vtkKWMatrixWidget *matrix =  this->SliceRangeMatrix->GetWidget();
+    int s_index = matrix->GetElementValueAsInt(0, 0);
+    int e_index = matrix->GetElementValueAsInt(0, 1);
+
+    //const char *filename = this->SelectImageButton->GetWidget()->GetFileName();
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->ZFrameImageSelectorWidget->GetSelected());
+    //PerformZFrameCalibration(filename);
+    PerformZFrameCalibration(volumeNode, s_index, e_index);
     }
 }
 
 
 //----------------------------------------------------------------------------
-void vtkProstateNavCalibrationStep::ShowZFrameModel()
+void vtkProstateNavCalibrationStep::ShowZFrameModel(bool show)
 {
 
-  vtkMRMLModelNode*  modelNode =
-    //vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ZFrameModelNodeID.c_str()));
-    vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetLogic()->GetZFrameModelNodeID()));
+  //  vtkMRMLModelNode*  modelNode =
+  //  vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ZFrameModelNodeID.c_str()));
+  //  vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetLogic()->GetZFrameModelNodeID()));
 
+  vtkMRMLModelNode*  modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetProstateNavManager()->GetRobotNode()->GetCalibrationObjectModelId()));
   vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
-  displayNode->SetVisibility(1);
+  displayNode->SetVisibility(show);
   modelNode->Modified();
   this->MRMLScene->Modified();
-  
-
 }
 
 
 //----------------------------------------------------------------------------
-void vtkProstateNavCalibrationStep::HideZFrameModel()
+void vtkProstateNavCalibrationStep::ShowWorkspaceModel(bool show)
 {
 
-  vtkMRMLModelNode*  modelNode =
-    vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetLogic()->GetZFrameModelNodeID()));
-
+  vtkMRMLModelNode*   modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetProstateNavManager()->GetRobotNode()->GetWorkspaceObjectModelId()));
   if (modelNode)
     {
     vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
-    displayNode->SetVisibility(0);
+    displayNode->SetVisibility(show);
     modelNode->Modified();
     this->MRMLScene->Modified();
     }
 }
 
 
-//----------------------------------------------------------------------------
-const char* vtkProstateNavCalibrationStep::AddZFrameModel(const char* nodeName)
-{
-  std::string rstr;
-
-  vtkMRMLModelNode           *zframeModel;
-  vtkMRMLModelDisplayNode    *zframeDisp;
-
-  zframeModel = vtkMRMLModelNode::New();
-  zframeDisp = vtkMRMLModelDisplayNode::New();
-
-  this->MRMLScene->SaveStateForUndo();
-  this->MRMLScene->AddNode(zframeDisp);
-  this->MRMLScene->AddNode(zframeModel);  
-
-  zframeDisp->SetScene(this->MRMLScene);
-  zframeModel->SetName(nodeName);
-  zframeModel->SetScene(this->MRMLScene);
-  zframeModel->SetAndObserveDisplayNodeID(zframeDisp->GetID());
-  zframeModel->SetHideFromEditors(0);
-
-  // construct Z-frame model
-  const double length = 60; // mm
-
-  //----- cylinder 1 (R-A) -----
-  vtkCylinderSource *cylinder1 = vtkCylinderSource::New();
-  cylinder1->SetRadius(1.5);
-  cylinder1->SetHeight(length);
-  cylinder1->SetCenter(0, 0, 0);
-  cylinder1->Update();
-  
-  vtkTransformPolyDataFilter *tfilter1 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans1 =   vtkTransform::New();
-  trans1->Translate(length/2.0, length/2.0, 0.0);
-  trans1->RotateX(90.0);
-  trans1->Update();
-  tfilter1->SetInput(cylinder1->GetOutput());
-  tfilter1->SetTransform(trans1);
-  tfilter1->Update();
-
-
-  //----- cylinder 2 (R-center) -----
-  vtkCylinderSource *cylinder2 = vtkCylinderSource::New();
-  cylinder2->SetRadius(1.5);
-  cylinder2->SetHeight(length*1.4142135);
-  cylinder2->SetCenter(0, 0, 0);
-  cylinder2->Update();
-
-  vtkTransformPolyDataFilter *tfilter2 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans2 =   vtkTransform::New();
-  trans2->Translate(length/2.0, 0.0, 0.0);
-  trans2->RotateX(90.0);
-  trans2->RotateX(-45.0);
-  trans2->Update();
-  tfilter2->SetInput(cylinder2->GetOutput());
-  tfilter2->SetTransform(trans2);
-  tfilter2->Update();
-
-
-  //----- cylinder 3 (R-P) -----
-  vtkCylinderSource *cylinder3 = vtkCylinderSource::New();
-  cylinder3->SetRadius(1.5);
-  cylinder3->SetHeight(length);
-  cylinder3->SetCenter(0, 0, 0);
-  cylinder3->Update();
-
-  vtkTransformPolyDataFilter *tfilter3 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans3 =   vtkTransform::New();
-  trans3->Translate(length/2.0, -length/2.0, 0.0);
-  trans3->RotateX(90.0);
-  trans3->Update();
-  tfilter3->SetInput(cylinder3->GetOutput());
-  tfilter3->SetTransform(trans3);
-  tfilter3->Update();
-
-
-  //----- cylinder 4 (center-P) -----  
-  vtkCylinderSource *cylinder4 = vtkCylinderSource::New();
-  cylinder4->SetRadius(1.5);
-  cylinder4->SetHeight(length*1.4142135);
-  cylinder4->SetCenter(0, 0, 0);
-  cylinder4->Update();
-
-  vtkTransformPolyDataFilter *tfilter4 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans4 =   vtkTransform::New();
-  trans4->Translate(0.0, -length/2.0, 0.0);
-  trans4->RotateX(90.0);
-  trans4->RotateZ(-45.0);
-  trans4->Update();
-  tfilter4->SetInput(cylinder4->GetOutput());
-  tfilter4->SetTransform(trans4);
-  tfilter4->Update();
-
-
-  //----- cylinder 5 (L-P) -----  
-  vtkCylinderSource *cylinder5 = vtkCylinderSource::New();
-  cylinder5->SetRadius(1.5);
-  cylinder5->SetHeight(length);
-  cylinder5->SetCenter(0, 0, 0);
-  cylinder5->Update();
-
-  vtkTransformPolyDataFilter *tfilter5 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans5 =   vtkTransform::New();
-  trans5->Translate(-length/2.0, -length/2.0, 0.0);
-  trans5->RotateX(90.0);
-  trans5->Update();
-  tfilter5->SetInput(cylinder5->GetOutput());
-  tfilter5->SetTransform(trans5);
-  tfilter5->Update();
-
-
-  //----- cylinder 6 (L-center) -----  
-  vtkCylinderSource *cylinder6 = vtkCylinderSource::New();
-  cylinder6->SetRadius(1.5);
-  cylinder6->SetHeight(length*1.4142135);
-  cylinder6->SetCenter(0, 0, 0);
-  cylinder6->Update();
-
-  vtkTransformPolyDataFilter *tfilter6 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans6 =   vtkTransform::New();
-  trans6->Translate(-length/2.0, 0.0, 0.0);
-  trans6->RotateX(90.0);
-  trans6->RotateX(45.0);
-  trans6->Update();
-  tfilter6->SetInput(cylinder6->GetOutput());
-  tfilter6->SetTransform(trans6);
-  tfilter6->Update();
-
-
-  //----- cylinder 7 (L-A) -----  
-  vtkCylinderSource *cylinder7 = vtkCylinderSource::New();
-  cylinder7->SetRadius(1.5);
-  cylinder7->SetHeight(length);
-  cylinder7->SetCenter(0, 0, 0);
-  cylinder7->Update();
-
-  vtkTransformPolyDataFilter *tfilter7 = vtkTransformPolyDataFilter::New();
-  vtkTransform* trans7 =   vtkTransform::New();
-  trans7->Translate(-length/2.0, length/2.0, 0.0);
-  trans7->RotateX(90.0);
-  trans7->Update();
-  tfilter7->SetInput(cylinder7->GetOutput());
-  tfilter7->SetTransform(trans7);
-  tfilter7->Update();
-
-  vtkAppendPolyData *apd = vtkAppendPolyData::New();
-  apd->AddInput(tfilter1->GetOutput());
-  apd->AddInput(tfilter2->GetOutput());
-  apd->AddInput(tfilter3->GetOutput());
-  apd->AddInput(tfilter4->GetOutput());
-  apd->AddInput(tfilter5->GetOutput());
-  apd->AddInput(tfilter6->GetOutput());
-  apd->AddInput(tfilter7->GetOutput());
-  apd->Update();
-  
-  zframeModel->SetAndObservePolyData(apd->GetOutput());
-
-  double color[3];
-  color[0] = 1.0;
-  color[1] = 1.0;
-  color[2] = 0.0;
-  zframeDisp->SetPolyData(zframeModel->GetPolyData());
-  zframeDisp->SetColor(color);
-
-  rstr = zframeModel->GetID();
-  
-  trans1->Delete();
-  trans2->Delete();
-  trans3->Delete();
-  trans4->Delete();
-  trans5->Delete();
-  trans6->Delete();
-  trans7->Delete();
-  tfilter1->Delete();
-  tfilter2->Delete();
-  tfilter3->Delete();
-  tfilter4->Delete();
-  tfilter5->Delete();
-  tfilter6->Delete();
-  tfilter7->Delete();
-  cylinder1->Delete();
-  cylinder2->Delete();
-  cylinder3->Delete();
-  cylinder4->Delete();
-  cylinder5->Delete();
-  cylinder6->Delete();
-  cylinder7->Delete();
-
-  apd->Delete();
-
-  zframeDisp->Delete();
-  zframeModel->Delete();
-
-  return rstr.c_str();
-
-}
-
-
+/*
 //----------------------------------------------------------------------------
 const char* vtkProstateNavCalibrationStep::AddZFrameTransform(const char* nodeName)
 {
@@ -470,6 +355,7 @@ const char* vtkProstateNavCalibrationStep::AddZFrameTransform(const char* nodeNa
   return rstr.c_str();
 
 }
+*/
 
 //----------------------------------------------------------------------------
 void vtkProstateNavCalibrationStep::PerformZFrameCalibration(const char* filename)
@@ -478,7 +364,7 @@ void vtkProstateNavCalibrationStep::PerformZFrameCalibration(const char* filenam
 
   vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes"); 
   if ( m != NULL ) 
-    {
+  {
     vtkSlicerVolumesLogic* volume_logic = 
       vtkSlicerVolumesGUI::SafeDownCast(m)->GetLogic();
     volume_logic->AddArchetypeVolume(filename, "ZFrameImage", 0x0004);
@@ -487,40 +373,70 @@ void vtkProstateNavCalibrationStep::PerformZFrameCalibration(const char* filenam
     vtkCollection* collection = this->MRMLScene->GetNodesByName("ZFrameImage");
     int nItems = collection->GetNumberOfItems();
     for (int i = 0; i < nItems; i ++)
-      {
+    {
       vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(i));
       if (strcmp(node->GetNodeTagName(), "Volume") == 0)
-        {
+      {
         volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
         break;
-        }
       }
-
+    }
     if (volumeNode)
-      {
-      vtkZFrameRobotToImageRegistration* registration = vtkZFrameRobotToImageRegistration::New();
-      registration->SetFiducialVolume(volumeNode);
+    {
+      this->GetProstateNavManager()->GetRobotNode()->PerformRegistration(volumeNode);
+    }
+  }
+  else
+  {
+    std::cerr << "Couldn't find ZFrame image in the MRML scene." << std::endl;
+  }
+}
 
-      vtkMRMLNode* node = this->MRMLScene->GetNodeByID(this->GetLogic()->GetZFrameTransformNodeID());
-      vtkMRMLLinearTransformNode* transformNode;
-      if (node != NULL)
-        {
-        transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
-        registration->SetRobotToImageTransform(transformNode);
 
-        registration->DoRegistration();
+//----------------------------------------------------------------------------
+void vtkProstateNavCalibrationStep::PerformZFrameCalibration(vtkMRMLScalarVolumeNode* node, int s_index, int e_index)
+{
+  if (node)
+    {
+    this->GetProstateNavManager()->GetRobotNode()->PerformRegistration(node, s_index, e_index);
+    }
 
-        this->GetLogic()->SendZFrame();
-        }
-      else
-        {
-        std::cerr << "Couldn't find zframe transform node" << std::endl;
-        }
-      }
-    else
-      {
-      std::cerr << "Couldn't find ZFrame image in the MRML scene." << std::endl;
-      }
+}
+
+
+//-----------------------------------------------------------------------------
+void vtkProstateNavCalibrationStep::AddGUIObservers()
+{
+  this->RemoveGUIObservers();
+
+  if (this->CalibrateButton)
+    {
+    this->CalibrateButton->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ShowZFrameCheckButton)
+    {
+    this->ShowZFrameCheckButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ShowWorkspaceCheckButton)
+    {
+    this->ShowWorkspaceCheckButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void vtkProstateNavCalibrationStep::RemoveGUIObservers()
+{
+  if (this->CalibrateButton)
+    {
+    this->CalibrateButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ShowZFrameCheckButton)
+    {
+    this->ShowZFrameCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ShowWorkspaceCheckButton)
+    {
+    this->ShowWorkspaceCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 }
 

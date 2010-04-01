@@ -22,9 +22,10 @@ Version:   $Revision: 1.2 $
 vtkMRMLRobotDisplayNode* vtkMRMLRobotDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLRobotDisplayNode"); if(ret)
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLRobotDisplayNode");
+  if(ret)
     {
-      return (vtkMRMLRobotDisplayNode*)ret;
+    return (vtkMRMLRobotDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLRobotDisplayNode;
@@ -37,7 +38,7 @@ vtkMRMLNode* vtkMRMLRobotDisplayNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLRobotDisplayNode");
   if(ret)
     {
-      return (vtkMRMLRobotDisplayNode*)ret;
+    return (vtkMRMLRobotDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLRobotDisplayNode;

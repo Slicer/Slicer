@@ -26,3 +26,4 @@
   #define VTKSLICER_STATIC
 #endif
 
+#define ProstateNav_REVISION @ProstateNav_WC_REVISION@

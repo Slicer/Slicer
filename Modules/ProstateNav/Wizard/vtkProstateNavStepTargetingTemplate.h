@@ -12,8 +12,8 @@
 
 ==========================================================================*/
 
-#ifndef __vtkProstateNavStepVerification_h
-#define __vtkProstateNavStepVerification_h
+#ifndef __vtkProstateNavStepTargetingTemplate_h
+#define __vtkProstateNavStepTargetingTemplate_h
 
 #include "vtkProstateNavStep.h"
 
@@ -36,11 +36,11 @@ class vtkMRMLSelectionNode;
 class vtkMRMLFiducialListNode;
 class vtkKWCheckButton;
 
-class VTK_PROSTATENAV_EXPORT vtkProstateNavStepVerification : public vtkProstateNavStep
+class VTK_PROSTATENAV_EXPORT vtkProstateNavStepTargetingTemplate : public vtkProstateNavStep
 {
 public:
-  static vtkProstateNavStepVerification *New();
-  vtkTypeRevisionMacro(vtkProstateNavStepVerification,vtkProstateNavStep);
+  static vtkProstateNavStepTargetingTemplate *New();
+  vtkTypeRevisionMacro(vtkProstateNavStepTargetingTemplate,vtkProstateNavStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ShowUserInterface();
@@ -50,62 +50,85 @@ public:
 
   virtual void UpdateGUI();
 
+  void AddMRMLObservers();
+  void RemoveMRMLObservers();
+
+  void OnMultiColumnListUpdate(int row, int col, char * str);
   void OnMultiColumnListSelectionChanged();
   void UpdateTargetListGUI();
 
 protected:
-  vtkProstateNavStepVerification();
-  ~vtkProstateNavStepVerification();
+  vtkProstateNavStepTargetingTemplate();
+  ~vtkProstateNavStepTargetingTemplate();
 
-  void ShowVolumeSelectionFrame();
+
+  void ShowTargetPlanningFrame();
   void ShowTargetListFrame();
-  void ShowVerificationControlFrame();
+  void ShowTargetControlFrame();
+
+  void ShowCoverage(bool show);
+  void ShowNeedle(bool show);
+  void ShowTemplate(bool show);
+
+  void EnableAddTargetsOnClickButton(bool enable);
 
   unsigned int PopulateListWithTargetDetails(unsigned int targetDescIndex);
-  void UpdateVerificationResultsForCurrentTarget();
-  void DisplayVerificationResultsForCurrentTarget();
 
   void AddGUIObservers();
   void RemoveGUIObservers();  
-
-  void AddMRMLObservers();
-  void RemoveMRMLObservers();
-
-  void SetVerificationPointListNode(vtkMRMLFiducialListNode *node);
-
-  void StartVerification();
-  void StopVerification();  
+  
+  //BTX
+  // Description:
+  // The column orders in the list box
+  enum
+    {
+    TargetNumberColumn = 0,
+    NeedleTypeColumn = 1,
+    RASLocationColumn = 2,
+    ReachableColumn = 3,
+    RotationColumn = 4,
+    NeedleAngleColumn = 5,    
+    DepthColumn = 6,
+    NumberOfColumns = 7,
+    };
+    
+  //ETX
 
   bool ProcessingCallback;
 
   vtkKWFrame *MainFrame;
   
   // TargetPlanning
-  vtkKWFrame *VolumeSelectionFrame;
-  vtkKWPushButton *LoadVerificationVolumeButton;
+  vtkKWFrame *TargetPlanningFrame;
+  //vtkKWPushButton* LoadTargetingVolumeButton;
   vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+  vtkSlicerNodeSelectorWidget* TargetListSelectorWidget;
   vtkKWFrame *LoadVolumeDialogFrame;
+  vtkKWCheckButton *ShowCoverageButton;
+  vtkKWCheckButton *AddTargetsOnClickButton;
+  vtkKWCheckButton *ShowNeedleButton;
+  vtkKWCheckButton *ShowTemplateButton;
+  vtkKWMenuButtonWithLabel *NeedleTypeMenuList;
+  vtkMRMLFiducialListNode *TargetPlanListNode;
+  vtkKWFrame *OptionFrame;
 
   // TargetList frame
   vtkKWFrame *TargetListFrame;
   vtkKWMultiColumnListWithScrollbars* TargetList;
+  vtkKWPushButton *DeleteButton;
 
   // TargetControl frame
-  vtkKWFrame *VerificationControlFrame;
-  vtkKWPushButton *VerifyButton;
-  vtkKWPushButton *ClearButton;
+  vtkKWFrame *TargetControlFrame;
+  vtkKWMatrixWidgetWithLabel* NeedlePositionMatrix;
+  vtkKWMatrixWidgetWithLabel* NeedleOrientationMatrix;
+  vtkKWPushButton *MoveButton;
+  vtkKWPushButton *StopButton;
 
   vtkKWText *Message;
 
-  // Description:
-  // VerificationPointListNode is used for displaying two fiducial points that defines a needle trajectory
-  vtkMRMLFiducialListNode* VerificationPointListNode;
-
-  int TargetIndexUnderVerification; // if <0 it means that there no target is under verification
-
 private:
-  vtkProstateNavStepVerification(const vtkProstateNavStepVerification&);
-  void operator=(const vtkProstateNavStepVerification&);
+  vtkProstateNavStepTargetingTemplate(const vtkProstateNavStepTargetingTemplate&);
+  void operator=(const vtkProstateNavStepTargetingTemplate&);
 };
 
 #endif

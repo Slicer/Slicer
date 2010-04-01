@@ -33,7 +33,7 @@ public:
   vtkTypeRevisionMacro(vtkProstateNavStep,vtkKWWizardStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual void Register(vtkObjectBase *o) { Superclass::Register(o); };
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
   virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
 
   // Description: 
@@ -111,13 +111,10 @@ public:
   virtual void Validate();
   virtual int CanGoToSelf();
   virtual void ShowUserInterface();
-  virtual void ProcessGUIEvents(vtkObject *vtkNotUsed(caller),
-                                unsigned long vtkNotUsed(event),
-                                void *vtkNotUsed(callData)) {};
-  virtual void ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                unsigned long vtkNotUsed(event),
-                                void *vtkNotUsed(callData)) {};
+  virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {};
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) {};
 
+  virtual void UpdateGUI() {};
 
 protected:
   vtkProstateNavStep();

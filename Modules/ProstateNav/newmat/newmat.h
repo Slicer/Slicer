@@ -139,8 +139,8 @@ public:
                                                // this represents a destination
 public:
    MatrixType () : DataLossOK(false) {}
-   MatrixType (int ii) : attribute(ii), DataLossOK(false) {}
-   MatrixType (int ii, bool dlok) : attribute(ii), DataLossOK(dlok) {}
+   MatrixType (int i) : attribute(i), DataLossOK(false) {}
+   MatrixType (int i, bool dlok) : attribute(i), DataLossOK(dlok) {}
    MatrixType (const MatrixType& mt)
       : attribute(mt.attribute), DataLossOK(mt.DataLossOK) {}
    void operator=(const MatrixType& mt)
@@ -160,10 +160,10 @@ public:
       { return ( attribute & ~mt.attribute & Mask ) == 0; }
    bool operator<(MatrixType mt) const         // for MS Visual C++ 4
       { return ( attribute & ~mt.attribute & Mask ) != 0; }
-   bool operator==(MatrixType tt) const
-      { return (attribute == tt.attribute); }
-   bool operator!=(MatrixType tt) const
-      { return (attribute != tt.attribute); }
+   bool operator==(MatrixType t) const
+      { return (attribute == t.attribute); }
+   bool operator!=(MatrixType t) const
+      { return (attribute != t.attribute); }
    bool operator!() const { return (attribute & Valid) == 0; }
    MatrixType i() const;                       // type of inverse
    MatrixType t() const;                       // type of transpose
@@ -199,7 +199,7 @@ public:
    int lower_val;
    int upper_val;
    MatrixBandWidth(const int l, const int u) : lower_val(l), upper_val(u) {}
-   MatrixBandWidth(const int ii) : lower_val(ii), upper_val(ii) {}
+   MatrixBandWidth(const int i) : lower_val(i), upper_val(i) {}
    MatrixBandWidth operator+(const MatrixBandWidth&) const;
    MatrixBandWidth operator*(const MatrixBandWidth&) const;
    MatrixBandWidth minimum(const MatrixBandWidth&) const;
@@ -348,32 +348,32 @@ public:
    virtual Real Sum() const { return sum(); }
    virtual Real maximum_absolute_value() const;
    Real MaximumAbsoluteValue() const { return maximum_absolute_value(); }
-   virtual Real maximum_absolute_value1(int& ii) const;
-   Real MaximumAbsoluteValue1(int& ii) const
-      { return maximum_absolute_value1(ii); }
-   virtual Real maximum_absolute_value2(int& ii, int& jj) const;
-   Real MaximumAbsoluteValue2(int& ii, int& jj) const
-      { return maximum_absolute_value2(ii,jj); }
+   virtual Real maximum_absolute_value1(int& i) const;
+   Real MaximumAbsoluteValue1(int& i) const
+      { return maximum_absolute_value1(i); }
+   virtual Real maximum_absolute_value2(int& i, int& j) const;
+   Real MaximumAbsoluteValue2(int& i, int& j) const
+      { return maximum_absolute_value2(i,j); }
    virtual Real minimum_absolute_value() const;
    Real MinimumAbsoluteValue() const { return minimum_absolute_value(); }
-   virtual Real minimum_absolute_value1(int& ii) const;
-   Real MinimumAbsoluteValue1(int& ii) const
-      { return minimum_absolute_value1(ii); }
-   virtual Real minimum_absolute_value2(int& ii, int& jj) const;
-   Real MinimumAbsoluteValue2(int& ii, int& jj) const
-      { return minimum_absolute_value2(ii,jj); }
+   virtual Real minimum_absolute_value1(int& i) const;
+   Real MinimumAbsoluteValue1(int& i) const
+      { return minimum_absolute_value1(i); }
+   virtual Real minimum_absolute_value2(int& i, int& j) const;
+   Real MinimumAbsoluteValue2(int& i, int& j) const
+      { return minimum_absolute_value2(i,j); }
    virtual Real maximum() const;
    Real Maximum() const { return maximum(); }
-   virtual Real maximum1(int& ii) const;
-   Real Maximum1(int& ii) const { return maximum1(ii); }
-   virtual Real maximum2(int& ii, int& jj) const;
-   Real Maximum2(int& ii, int& jj) const { return maximum2(ii,jj); }
+   virtual Real maximum1(int& i) const;
+   Real Maximum1(int& i) const { return maximum1(i); }
+   virtual Real maximum2(int& i, int& j) const;
+   Real Maximum2(int& i, int& j) const { return maximum2(i,j); }
    virtual Real minimum() const;
    Real Minimum() const { return minimum(); }
-   virtual Real minimum1(int& ii) const;
-   Real Minimum1(int& ii) const { return minimum1(ii); }
-   virtual Real minimum2(int& ii, int& jj) const;
-   Real Minimum2(int& ii, int& jj) const { return minimum2(ii,jj); }
+   virtual Real minimum1(int& i) const;
+   Real Minimum1(int& i) const { return minimum1(i); }
+   virtual Real minimum2(int& i, int& j) const;
+   Real Minimum2(int& i, int& j) const { return minimum2(i,j); }
    virtual Real trace() const;
    Real Trace() const { return trace(); }
    Real norm1() const;
@@ -471,7 +471,7 @@ protected:
    virtual GeneralMatrix* Transpose(TransposedMatrix*, MatrixType);
    void CheckConversion(const BaseMatrix&);     // check conversion OK
    void resize(int, int, int);                  // change dimensions
-   virtual short SimpleAddOK(const GeneralMatrix* /*gm*/) { return 0; }
+   virtual short SimpleAddOK(const GeneralMatrix* gm) { return 0; }
              // see bandmat.cpp for explanation
    virtual void MiniCleanUp()
       { store = 0; storage = 0; nrows_val = 0; ncols_val = 0; tag_val = -1;}
@@ -506,10 +506,10 @@ public:
    bool is_zero() const;                        // test matrix has all zeros
    bool IsZero() const { return is_zero(); }    // test matrix has all zeros
    void Release() { tag_val=1; }                // del store after next use
-   void Release(int tt) { tag_val=tt; }           // del store after tt accesses
+   void Release(int t) { tag_val=t; }           // del store after t accesses
    void ReleaseAndDelete() { tag_val=0; }       // delete matrix after use
    void release() { tag_val=1; }                // del store after next use
-   void release(int tt) { tag_val=tt; }           // del store after t accesses
+   void release(int t) { tag_val=t; }           // del store after t accesses
    void release_and_delete() { tag_val=0; }     // delete matrix after use
    void operator<<(const double*);              // assignment from an array
    void operator<<(const float*);               // assignment from an array
@@ -541,18 +541,18 @@ public:
    Real sum_square() const;
    Real sum_absolute_value() const;
    Real sum() const;
-   Real maximum_absolute_value1(int& ii) const;
-   Real minimum_absolute_value1(int& ii) const;
-   Real maximum1(int& ii) const;
-   Real minimum1(int& ii) const;
+   Real maximum_absolute_value1(int& i) const;
+   Real minimum_absolute_value1(int& i) const;
+   Real maximum1(int& i) const;
+   Real minimum1(int& i) const;
    Real maximum_absolute_value() const;
-   Real maximum_absolute_value2(int& ii, int& jj) const;
+   Real maximum_absolute_value2(int& i, int& j) const;
    Real minimum_absolute_value() const;
-   Real minimum_absolute_value2(int& ii, int& jj) const;
+   Real minimum_absolute_value2(int& i, int& j) const;
    Real maximum() const;
-   Real maximum2(int& ii, int& jj) const;
+   Real maximum2(int& i, int& j) const;
    Real minimum() const;
-   Real minimum2(int& ii, int& jj) const;
+   Real minimum2(int& i, int& j) const;
    LogAndSign log_determinant() const;
    virtual bool IsEqual(const GeneralMatrix&) const;
                                                 // same type, same values
@@ -656,10 +656,10 @@ public:
    virtual void ReSize(int m, int n) { resize(m, n); }
    void resize(const GeneralMatrix& A);
    void ReSize(const GeneralMatrix& A) { resize(A); }
-   Real maximum_absolute_value2(int& ii, int& jj) const;
-   Real minimum_absolute_value2(int& ii, int& jj) const;
-   Real maximum2(int& ii, int& jj) const;
-   Real minimum2(int& ii, int& jj) const;
+   Real maximum_absolute_value2(int& i, int& j) const;
+   Real minimum_absolute_value2(int& i, int& j) const;
+   Real maximum2(int& i, int& j) const;
+   Real minimum2(int& i, int& j) const;
    void operator+=(const Matrix& M) { PlusEqual(M); }
    void operator-=(const Matrix& M) { MinusEqual(M); }
    void operator+=(Real f) { GeneralMatrix::Add(f); }
@@ -1110,9 +1110,9 @@ public:
    Real maximum_absolute_value() const
       { CornerClear(); return GeneralMatrix::maximum_absolute_value(); }
    Real minimum_absolute_value() const
-      { int ii, jj; return GeneralMatrix::minimum_absolute_value2(ii, jj); }  // FIXME: This can't possibly work right... ii and jj are not initialized.
-   Real maximum() const { int ii, jj; return GeneralMatrix::maximum2(ii, jj); }
-   Real minimum() const { int ii, jj; return GeneralMatrix::minimum2(ii, jj); }
+      { int i, j; return GeneralMatrix::minimum_absolute_value2(i, j); }
+   Real maximum() const { int i, j; return GeneralMatrix::maximum2(i, j); }
+   Real minimum() const { int i, j; return GeneralMatrix::minimum2(i, j); }
    void GetRow(MatrixRowCol&);
    void GetCol(MatrixRowCol&);
    void GetCol(MatrixColX&);
@@ -1248,9 +1248,9 @@ public:
    Real maximum_absolute_value() const
       { CornerClear(); return GeneralMatrix::maximum_absolute_value(); }
    Real minimum_absolute_value() const
-      { int ii, jj; return GeneralMatrix::minimum_absolute_value2(ii, jj); }
-   Real maximum() const { int ii, jj; return GeneralMatrix::maximum2(ii, jj); }
-   Real minimum() const { int ii, jj; return GeneralMatrix::minimum2(ii, jj); }
+      { int i, j; return GeneralMatrix::minimum_absolute_value2(i, j); }
+   Real maximum() const { int i, j; return GeneralMatrix::maximum2(i, j); }
+   Real minimum() const { int i, j; return GeneralMatrix::minimum2(i, j); }
    Real trace() const;
    LogAndSign log_determinant() const;
    void GetRow(MatrixRowCol&);
@@ -1616,7 +1616,7 @@ class InvertedMatrix : public NegatedMatrix
 public:
    ~InvertedMatrix() {}
    SolvedMatrix operator*(const BaseMatrix&) const;       // inverse(A) * B
-   ScaledMatrix operator*(Real tt) const { return BaseMatrix::operator*(tt); }
+   ScaledMatrix operator*(Real t) const { return BaseMatrix::operator*(t); }
    friend class BaseMatrix;
    GeneralMatrix* Evaluate(MatrixType mt=MatrixTypeUnSp);
    MatrixBandWidth bandwidth() const;
@@ -1779,8 +1779,8 @@ public:
    SimpleIntArray(int xn);    // build an array length xn
    SimpleIntArray() : a(0), n(0) {}  // build an array length 0
    ~SimpleIntArray();         // return the space to memory
-   int& operator[](int ii);    // access element of the array - start at 0
-   int operator[](int ii) const;
+   int& operator[](int i);    // access element of the array - start at 0
+   int operator[](int i) const;
                               // access element of constant array
    void operator=(int ai);    // set the array equal to a constant
    void operator=(const SimpleIntArray& b);
@@ -1796,11 +1796,11 @@ public:
    int* data() { return a; }  // pointer to the data
    const int* data() const { return a; }  // pointer to the data
    const int* const_data() const { return a; }  // pointer to the data
-   void resize(int ii, bool keep = false);
+   void resize(int i, bool keep = false);
                               // change length, keep data if keep = true
-   void ReSize(int ii, bool keep = false) { resize(ii, keep); }
+   void ReSize(int i, bool keep = false) { resize(i, keep); }
                               // change length, keep data if keep = true
-   void resize_keep(int ii) { resize(ii, true); }
+   void resize_keep(int i) { resize(i, true); }
                               // change length, keep data
    void cleanup() { resize(0); }
    void CleanUp() { resize(0); }
@@ -1874,11 +1874,11 @@ class IndexException : public Logic_error
 {
 public:
    static unsigned long Select;          // for identifying exception
-   IndexException(int ii, const GeneralMatrix& A);
-   IndexException(int ii, int jj, const GeneralMatrix& A);
+   IndexException(int i, const GeneralMatrix& A);
+   IndexException(int i, int j, const GeneralMatrix& A);
    // next two are for access via element function
-   IndexException(int ii, const GeneralMatrix& A, bool);
-   IndexException(int ii, int jj, const GeneralMatrix& A, bool);
+   IndexException(int i, const GeneralMatrix& A, bool);
+   IndexException(int i, int j, const GeneralMatrix& A, bool);
 };
 
 class VectorException : public Logic_error    // cannot convert to vector

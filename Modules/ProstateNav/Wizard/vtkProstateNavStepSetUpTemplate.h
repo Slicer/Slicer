@@ -12,8 +12,8 @@
 
 ==========================================================================*/
 
-#ifndef __vtkProstateNavStepSetUp_h
-#define __vtkProstateNavStepSetUp_h
+#ifndef __vtkProstateNavStepSetUpTemplate_h
+#define __vtkProstateNavStepSetUpTemplate_h
 
 #include "vtkProstateNavStep.h"
 #include "vtkCommand.h"
@@ -25,35 +25,31 @@ class vtkKWCheckButton;
 class vtkKWPushButton;
 class vtkKWLabel;
 class vtkSlicerNodeSelectorWidget;
-class vtkMRMLTransPerinealProstateRobotNode;
 
-class VTK_PROSTATENAV_EXPORT vtkProstateNavStepSetUp :
+class VTK_PROSTATENAV_EXPORT vtkProstateNavStepSetUpTemplate :
   public vtkProstateNavStep
 {
 public:
-  static vtkProstateNavStepSetUp *New();
-  vtkTypeRevisionMacro(vtkProstateNavStepSetUp,vtkProstateNavStep);
+  static vtkProstateNavStepSetUpTemplate *New();
+  vtkTypeRevisionMacro(vtkProstateNavStepSetUpTemplate,vtkProstateNavStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ShowUserInterface();
   virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);  
-
+  
 protected:
-  vtkProstateNavStepSetUp();
-  ~vtkProstateNavStepSetUp();
-
-  vtkMRMLTransPerinealProstateRobotNode* GetRobotNode();
+  vtkProstateNavStepSetUpTemplate();
+  ~vtkProstateNavStepSetUpTemplate();
 
   // GUI Widgets
  
-  vtkSlicerNodeSelectorWidget* RobotConnectorSelector;
   vtkSlicerNodeSelectorWidget* ScannerConnectorSelector;
 
   vtkKWFrame *ConnectorFrame;
 
 private:
-  vtkProstateNavStepSetUp(const vtkProstateNavStepSetUp&);
-  void operator=(const vtkProstateNavStepSetUp&);
+  vtkProstateNavStepSetUpTemplate(const vtkProstateNavStepSetUpTemplate&);
+  void operator=(const vtkProstateNavStepSetUpTemplate&);
 };
 
 #endif

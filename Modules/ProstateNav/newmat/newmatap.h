@@ -207,8 +207,6 @@ public:
    bool Finish() const { return finish; }
    int Reverse() const { return reverse; }
    int Counter() const { return counter; }
-private:
-  void operator=(const MultiRadixCounter&);// Not implemented
 };
 
 // multiplication by Helmert matrix
