@@ -1022,14 +1022,13 @@ void vtkSlicerFiducialListWidget::SetViewerWidget(
 {
   if (this->ViewerWidget != NULL)
     {
-    //this->RemoveFiducialProps();
     // TODO: figure out if this is necessary
     this->RemoveSeedWidgets();
     if (this->ViewerWidget->HasObserver(
           vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
           this->GUICallbackCommand) == 1)
       {
-      this->InteractorStyle->RemoveObservers(
+      this->ViewerWidget->RemoveObservers(
         vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
         (vtkCommand *)this->GUICallbackCommand);
       }
