@@ -177,10 +177,10 @@ int qCTKRangeSlider::minimumValue() const
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::setMinimumValue( int rm )
+void qCTKRangeSlider::setMinimumValue( int min )
 {
   QCTK_D(qCTKRangeSlider);
-  this->setValues( rm, d->m_MaximumValue );
+  this->setValues( min, qMax(d->m_MaximumValue,min) );
 }
 
 // --------------------------------------------------------------------------
@@ -191,10 +191,10 @@ int qCTKRangeSlider::maximumValue() const
 }
 
 // --------------------------------------------------------------------------
-void qCTKRangeSlider::setMaximumValue( int rm )
+void qCTKRangeSlider::setMaximumValue( int max )
 {
   QCTK_D(qCTKRangeSlider);
-  this->setValues( d->m_MinimumValue, rm );
+  this->setValues( qMin(d->m_MinimumValue, max), max );
 }
 
 // --------------------------------------------------------------------------

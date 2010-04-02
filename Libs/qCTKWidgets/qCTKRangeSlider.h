@@ -23,6 +23,14 @@
 class QStylePainter;
 class qCTKRangeSliderPrivate;
 
+///
+/// A qCTKRangeSlider is a slider that lets you input 2 values instead of one
+/// (see QSlider). These values are typically a lower and upper bound.
+/// Values are comprised between the range of the slider. (see setRange(), 
+/// minimum() and maximum()). The upper bound can't be smaller than the 
+/// lower bound and vice-versa.
+/// FIXME: support triggerAction(QAbstractSlider::SliderSingleStepSub) that
+/// moves both values at a time.
 class QCTK_WIDGETS_EXPORT qCTKRangeSlider : public QSlider
 {
   Q_OBJECT
@@ -39,7 +47,7 @@ public:
   explicit qCTKRangeSlider( QWidget* par = 0 );
   virtual ~qCTKRangeSlider();
 
-   /// 
+  /// 
   /// This property holds the slider's current minimum value.
   /// The slider forces the minimum value to be within the legal range: 
   /// minimum <= minvalue <= maxvalue <= maximum.
@@ -122,7 +130,7 @@ public slots:
   void setValues(int min, int max);
 
 protected slots:
-    void onRangeChanged(int minimum, int maximum);
+  void onRangeChanged(int minimum, int maximum);
 
 protected:
   // Description:
