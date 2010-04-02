@@ -21,11 +21,17 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   vtkGetVector3Macro(Position2, double);
   vtkSetVector3Macro(Position2, double);
 
+  // get/set the current distance between the two end points. GetDistance
+  // calculates it and sets the Distance class variable.
+  double GetDistance();
+  vtkSetMacro(Distance, double);
 
   //// get/set the distance annotation format, it's in standard sprintf notation
   vtkGetStringMacro(DistanceAnnotationFormat);
   vtkSetStringMacro(DistanceAnnotationFormat);
-  
+  ///  get/set the current distance annotation (used by the 2d versions)
+  vtkGetStringMacro(CurrentDistanceAnnotation);
+  vtkSetStringMacro(CurrentDistanceAnnotation);
 
   //// get/set the distance annotation scale
   vtkGetVector3Macro(DistanceAnnotationScale, double);
@@ -97,6 +103,9 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
+  /// update the current distance annotation from current distance and
+  /// annotation format
+  void UpdateCurrentDistanceAnnotation();
 protected:
   vtkMRMLMeasurementsRulerNode();
   ~vtkMRMLMeasurementsRulerNode();
@@ -111,12 +120,14 @@ protected:
   //// second point location
   double Position2[3];
 
+  /// current distance, updated externally
+  double Distance;
 
   //// the distance text properties
   char *DistanceAnnotationFormat;
   double DistanceAnnotationScale[3];
   int DistanceAnnotationVisibility;
-
+  char *CurrentDistanceAnnotation;
 
   //// colours of the actors representing the end points and the line and the text
   double PointColour[3];

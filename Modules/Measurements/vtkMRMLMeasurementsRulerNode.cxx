@@ -10,6 +10,8 @@
 #include "vtkMatrix4x4.h"
 #include "vtkAbstractTransform.h"
 
+#include "vtkMath.h"
+
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLMeasurementsRulerNode, "$Revision: 1.0 $");
 
@@ -62,6 +64,8 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
   // the annotation on the line
   this->DistanceAnnotationFormat = NULL;
   this->SetDistanceAnnotationFormat("%.1f mm");
+  this->CurrentDistanceAnnotation = NULL;
+  this->UpdateCurrentDistanceAnnotation();
   this->SetDistanceAnnotationScale(10.0, 10.0, 10.0);
   this->DistanceAnnotationVisibilityOn();
 
@@ -92,6 +96,11 @@ vtkMRMLMeasurementsRulerNode::~vtkMRMLMeasurementsRulerNode()
     delete [] this->DistanceAnnotationFormat;
     this->DistanceAnnotationFormat = NULL;
     }
+  if (this->CurrentDistanceAnnotation)
+    {
+    delete [] this->CurrentDistanceAnnotation;
+    this->CurrentDistanceAnnotation = NULL;
+    }
   if (this->ModelID1)
     {
     delete [] this->ModelID1;
@@ -115,6 +124,7 @@ void vtkMRMLMeasurementsRulerNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " position1=\"" << this->Position1[0] << " " << this->Position1[1] << " " << this->Position1[2] << "\"";
   of << indent << " position2=\"" << this->Position2[0] << " " << this->Position2[1] << " " << this->Position2[2] << "\"";
+  of << indent << " distance=\"" << this->Distance << "\"";
 
   of << indent << " distanceAnnotationFormat=\"" << this->DistanceAnnotationFormat << "\"";
   of << indent << " distanceAnnotationScale=\"" << this->DistanceAnnotationScale[0] << " " << this->DistanceAnnotationScale[1] << " " << this->DistanceAnnotationScale[2] << "\"";
@@ -170,6 +180,14 @@ void vtkMRMLMeasurementsRulerNode::ReadXMLAttributes(const char** atts)
         ss >> val;
         this->Position2[i] = val;
         }
+      }
+     else if (!strcmp(attName, "distance"))
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      ss >> val;
+      this->Distance = val;
       }
     else if (!strcmp(attName, "distanceAnnotationFormat"))
       {
@@ -258,6 +276,7 @@ void vtkMRMLMeasurementsRulerNode::ReadXMLAttributes(const char** atts)
       this->SetModelID2(attValue);
       }
     }
+  this->UpdateCurrentDistanceAnnotation();
 }
 
 
@@ -271,11 +290,11 @@ void vtkMRMLMeasurementsRulerNode::Copy(vtkMRMLNode *anode)
 
   this->SetPosition1 ( node->GetPosition1() );
   this->SetPosition2 ( node->GetPosition2() );
-
+  this->SetDistance  ( node->GetDistance()  );
   this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
   this->SetDistanceAnnotationScale(node->GetDistanceAnnotationScale());
   this->SetDistanceAnnotationVisibility(node->GetDistanceAnnotationVisibility());
-
+  this->SetCurrentDistanceAnnotation(node->GetCurrentDistanceAnnotation());
   this->SetPointColour(node->GetPointColour());
   this->SetPoint2Colour(node->GetPoint2Colour());
   this->SetLineColour(node->GetLineColour());
@@ -314,11 +333,12 @@ void vtkMRMLMeasurementsRulerNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << "NULL";
     }
-
+  os << indent << "Distance: " << this->Distance << "\n";
   os << indent << "Distance Annotation Format: " << this->DistanceAnnotationFormat << "\n";
   os << indent << "Distance Annotation Scale: " << this->DistanceAnnotationScale[0] << " " << this->DistanceAnnotationScale[1] << " " << this->DistanceAnnotationScale[2] << "\n";
   os << indent << "Distance Annotation Visibility: " << this->DistanceAnnotationVisibility << "\n";
-
+  os << indent << "Current Distance Annotation: " << this->CurrentDistanceAnnotation << "\n";
+  
   os << indent << "Point Colour: " << this->PointColour[0] << " " << this->PointColour[1] << " " << this->PointColour[2] << "\n";
   os << indent << "Point 2 Colour: " << this->Point2Colour[0] << " " << this->Point2Colour[1] << " " << this->Point2Colour[2] << "\n";
   os << indent << "Line Colour: " << this->LineColour[0] << " " << this->LineColour[1] << " " << this->LineColour[2] << "\n";
@@ -396,5 +416,31 @@ void vtkMRMLMeasurementsRulerNode::ApplyTransform(vtkAbstractTransform* transfor
     
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition2(xyzOut);
+    }
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMeasurementsRulerNode::GetDistance()
+{
+  double val = sqrt(vtkMath::Distance2BetweenPoints(this->Position1, this->Position2));
+  if (fabs(val - this->Distance) > 0.001)
+    {
+    this->SetDistance(val);
+    this->UpdateCurrentDistanceAnnotation();
+    }
+  return this->Distance;
+}
+//---------------------------------------------------------------------------
+void vtkMRMLMeasurementsRulerNode::UpdateCurrentDistanceAnnotation()
+{
+  if (this->GetDistanceAnnotationFormat())
+    {
+    char str[1024];
+    sprintf(str, this->DistanceAnnotationFormat, this->GetDistance());
+    this->SetCurrentDistanceAnnotation(str);
+    }
+  else
+    {
+    this->SetCurrentDistanceAnnotation(NULL);
     }
 }
