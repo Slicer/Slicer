@@ -147,7 +147,68 @@ int qCTKRangeSliderTest1(int argc, char * argv [] )
               << slider.maximum() << std::endl;
     return EXIT_FAILURE;
     }
-  
+  slider.setTracking(false);
+  slider.setPositions(-5, 30);
+  if (!checkSlider(slider, -15, -15, 40, 40) ||
+      slider.minimumPosition() != -5 || 
+      slider.maximumPosition() != 30)
+    {
+    std::cerr << "qCTKRangeSlider:: 10) "
+              << slider.minimum() << " " 
+              << slider.minimumValue() << " " 
+              << slider.maximumValue() << " " 
+              << slider.maximum() << std::endl;
+    std::cerr << "qCTKRangeSlider:: 10) "
+              << slider.minimumPosition() << " " 
+              << slider.maximumPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
+  slider.setValues(-10, 30);
+  if (!checkSlider(slider, -15, -10, 30, 40) ||
+      slider.minimumPosition() != -10 || 
+      slider.maximumPosition() != 30)
+    {
+    std::cerr << "qCTKRangeSlider:: 11) "
+              << slider.minimum() << " " 
+              << slider.minimumValue() << " " 
+              << slider.maximumValue() << " " 
+              << slider.maximum() << std::endl;
+    std::cerr << "qCTKRangeSlider:: 11) "
+              << slider.minimumPosition() << " " 
+              << slider.maximumPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
+  slider.setMaximumPosition(20);
+  if (!checkSlider(slider, -15, -10, 30, 40) ||
+      slider.minimumPosition() != -10 || 
+      slider.maximumPosition() != 20)
+    {
+    std::cerr << "qCTKRangeSlider:: 12) "
+              << slider.minimum() << " " 
+              << slider.minimumValue() << " " 
+              << slider.maximumValue() << " " 
+              << slider.maximum() << std::endl;
+    std::cerr << "qCTKRangeSlider:: 12) "
+              << slider.minimumPosition() << " " 
+              << slider.maximumPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
+  slider.setMinimumPosition(25);
+  if (!checkSlider(slider, -15, -10, 30, 40) ||
+       slider.minimumPosition() != 25 || 
+       slider.maximumPosition() != 25)
+    {
+    std::cerr << "qCTKRangeSlider:: 13) "
+              << slider.minimum() << " " 
+              << slider.minimumValue() << " " 
+              << slider.maximumValue() << " " 
+              << slider.maximum() << std::endl;
+    std::cerr << "qCTKRangeSlider:: 13) "
+              << slider.minimumPosition() << " " 
+              << slider.maximumPosition() << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }
 
