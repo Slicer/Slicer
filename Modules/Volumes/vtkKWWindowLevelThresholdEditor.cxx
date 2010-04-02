@@ -803,10 +803,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
   range[0] = min;
   range[1] = max;
   //this->UpdateTransferFunction();
-  if (this->GetThresholdType() == vtkKWWindowLevelThresholdEditor::ThresholdAuto)
-    {
-    this->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
-    }
+  //if (this->GetThresholdType() == vtkKWWindowLevelThresholdEditor::ThresholdAuto)
+  //  {
+  this->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
+  //  }
+
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }
 
