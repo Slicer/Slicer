@@ -114,6 +114,8 @@ http://en.wikipedia.org/wiki/Cubic_Hermite_spline
 execfile('../Slicer3/Modules/fly.py'); p = path(0.5); p.pathModel(); p.fly()
 
 execfile('../Slicer3/Modules/Endoscopy/EndoscopyGUI.py'); p = path(0.5); p.pathModel(); p.gui()
+
+import Endoscopy; p = Endoscopy.path(0.5); p.pathModel(); p.gui()
 """
 
 
@@ -178,12 +180,13 @@ class path (object):
     segment = 0 # which first point of current segment
     t = 0 # parametric current parametric increment
     remainder = 0 # how much of dl isn't included in current step
-    while segment < n-2:
+    while segment < n-1:
       t, p, remainder = self.step(segment, t, self.dl)
       if remainder != 0 or t == 1.:
         segment += 1
         t = 0
-        t, p, remainder = self.step(segment, t, remainder)
+        if segment < n-1:
+          t, p, remainder = self.step(segment, t, remainder)
       self.path.append(p)
 
   def point(self,segment,t):
@@ -234,6 +237,7 @@ class path (object):
     self.transform.GetMatrixTransformToParent().SetElement(0,3,p[0])
     self.transform.GetMatrixTransformToParent().SetElement(1,3,p[1])
     self.transform.GetMatrixTransformToParent().SetElement(2,3,p[2])
+    self.camera.SetViewAngle(self.fov.get())
 
   def fly(self):
     frames = self.path.__len__() - 1
@@ -346,7 +350,7 @@ class path (object):
     # toplevel window
     self.toplevel = Tkinter.Toplevel()
     self.toplevel.title("Flythrough")
-    self.toplevel.wm_geometry("400x200")
+    self.toplevel.wm_geometry("400x300")
     # frame slider
     self.frame = Tkinter.Scale(self.toplevel, 
                                 orient='horizontal', to=self.path.__len__() - 2, 
@@ -359,6 +363,9 @@ class path (object):
     # speed slider
     self.speed = Tkinter.Scale(self.toplevel, orient='horizontal', to=10, label="Speed")
     self.speed.pack(side='top', expand='true', fill='x')
+    # fov slider
+    self.fov = Tkinter.Scale(self.toplevel, orient='horizontal', from_=30, to=170, label="View Angle")
+    self.fov.pack(side='top', expand='true', fill='x')
     
 
 
