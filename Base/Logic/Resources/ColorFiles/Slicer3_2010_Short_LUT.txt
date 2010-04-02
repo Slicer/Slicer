@@ -7,7 +7,7 @@
 #Source: http://wiki.slicer.org/slicerWiki/index.php/Slicer3:2010_Short_LUT
 #
 #Begin table data:
-0 background 0 0 0 255
+0 background 0 0 0 0
 1 bone 240 255 240 255
 2 Skin 233 150 122 255
 3 Muscle 205 92 92 255
