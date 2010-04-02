@@ -10,10 +10,10 @@
   Run EMSegment Module as a batch process.
   </description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:EMSegmentBatch-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Julien Jomier, Stephen Aylward, and Brad Davis at Kitware Inc.</contributor>
-  <acknowledgements>http://www.batchmake.org </acknowledgements>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org </acknowledgements>
   <parameters advanced="true">
     <label>Parameters</label>
     <description>Algorithm Parameters</description>
