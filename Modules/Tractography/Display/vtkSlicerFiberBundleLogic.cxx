@@ -189,7 +189,8 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     {
     const itksys_stl::string fname(filename);
     itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
-    fiberBundleNode->SetName(name.c_str());
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    fiberBundleNode->SetName(uname.c_str());
     
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());

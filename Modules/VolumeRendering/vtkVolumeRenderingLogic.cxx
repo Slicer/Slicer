@@ -1180,7 +1180,9 @@ vtkMRMLVolumePropertyNode* vtkVolumeRenderingLogic::AddVolumePropertyFromFile (c
   */
   if (vpStorageNode != NULL)
     {
-    vpNode->SetName(name.c_str());
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+
+    vpNode->SetName(uname.c_str());
 
     this->GetMRMLScene()->SaveStateForUndo();
 

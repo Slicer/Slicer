@@ -393,7 +393,9 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     colorStorageNode2->Delete();
     ctnode->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
-    ctnode->SetName(vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str());
+    std::string name = vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str();
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    ctnode->SetName(uname.c_str());
     vtkDebugMacro("AddDefaultColorFiles: About to read file " << this->ColorFiles[i].c_str());
     if (ctnode->GetStorageNode()->ReadData(ctnode))
       {
@@ -811,11 +813,14 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName, cons
 
   if (nodeName == NULL)
     {
-    node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
+    std::string name = vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str();
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    node->SetName(uname.c_str());
     }
   else
     {
-    node->SetName(nodeName);
+    std::string uname( this->MRMLScene->GetUniqueNameByString(nodeName));
+    node->SetName(uname.c_str());
     }
   std::string id;
   if (colorStorageNode->ReadData(node)) // ReadFile())

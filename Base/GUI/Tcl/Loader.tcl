@@ -515,6 +515,7 @@ itcl::body Loader::apply { } {
 
       set path [$w GetCellText $row $col(File)]
       set name [$w GetCellText $row $col(Name)]
+      #set $name [$::slicer3::MRMLScene GetUniqueNameByString $name]
 
       set progress [expr $row / (1. * $rows)]
       $::slicer3::ApplicationGUI SetExternalProgress "Loading..." $progress
@@ -562,7 +563,7 @@ itcl::body Loader::apply { } {
                         if {$fiberBundleNode == "" } {
                             $this errorDialog "Unable to read DTI fiber bundle model file $path"
                         } else {
-                            $fiberBundleNode SetName $name
+                            #$fiberBundleNode SetName $name
                         }
                         set lastFiberBundleNode $fiberBundleNode
                     }
@@ -572,7 +573,7 @@ itcl::body Loader::apply { } {
                 if { $node == "" } {
                     $this errorDialog "Could not open $path"
                 } else {
-                    $node SetName $name
+                    #$node SetName $name
                 }
             }
         }
@@ -597,7 +598,7 @@ itcl::body Loader::apply { } {
            if { $node == "" } {
               $this errorDialog "Could not open $path"
            } else {
-              $node SetName $name
+              #$node SetName $name
            }  
         }
         "ColorTable" {
@@ -611,7 +612,7 @@ itcl::body Loader::apply { } {
            if { $node == "" } {
               $this errorDialog "Could not open $path"
            } else {
-              $node SetName $name
+              #$node SetName $name
            }  
         }
         "VolumeProperty" {
@@ -622,7 +623,7 @@ itcl::body Loader::apply { } {
            if { $node == "" } {
               $this errorDialog "Could not open $path"
            } else {
-              $node SetName $name
+              #$node SetName $name
            }  
         }
       }

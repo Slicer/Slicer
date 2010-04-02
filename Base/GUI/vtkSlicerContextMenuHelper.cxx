@@ -1,5 +1,7 @@
 
 #include "vtkObjectFactory.h"
+#include "vtkCollection.h"
+
 #include "vtkSlicerContextMenuHelper.h"
 
 #include "vtkKWTkUtilities.h"
@@ -207,8 +209,26 @@ void vtkSlicerContextMenuHelper::RenameApplyCallback()
   vtkMRMLNode *node = this->GetMRMLNode();
   if (node != NULL)
     {
+    if (this->MRMLScene->GetNodesByName(this->RenameEntry->GetWidget()->GetValue())->GetNumberOfItems() > 0) 
+      {
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent (  this->RenameTopLevel );
+      dialog->SetStyleToMessage();
+      std::string msg = std::string("Node with the name ") + 
+        std::string(this->RenameEntry->GetWidget()->GetValue()) + std::string(" already exists");
+      dialog->SetText(msg.c_str());
+      dialog->Create ( );
+
+      vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
+      dialog->SetMasterWindow( app->GetApplicationGUI()->GetMainSlicerWindow() );
+
+      dialog->ModalOn();
+      dialog->Invoke();
+      dialog->Delete();
+      }
     node->SetName( this->RenameEntry->GetWidget()->GetValue() );
     this->MRMLScene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
+    return;
     }
   this->HideRenameEntry();
 }

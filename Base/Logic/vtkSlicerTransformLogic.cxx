@@ -105,7 +105,8 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
 
     if (tnode)
       {
-      tnode->SetName(name.c_str());
+      std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+      tnode->SetName(uname.c_str());
       scene->AddNodeNoNotify(storageNode);
       scene->AddNode(tnode);
 

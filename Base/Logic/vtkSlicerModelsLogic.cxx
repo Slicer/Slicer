@@ -153,7 +153,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   */
   if (storageNode != NULL)
     {
-    modelNode->SetName(name.c_str());
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    modelNode->SetName(uname.c_str());
 
     this->GetMRMLScene()->SaveStateForUndo();
 

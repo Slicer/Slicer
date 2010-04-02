@@ -15,6 +15,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
 
 #include "vtkSlicerFiducialsLogic.h"
 
@@ -245,6 +246,10 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
 
   listNode->SetAndObserveStorageNodeID(snode->GetID());
   snode->ReadData(listNode);
+
+  std::string name = vtksys::SystemTools::GetFilenameName(path);
+  std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+  listNode->SetName(uname.c_str());
 
   snode->Delete();
   
