@@ -46,6 +46,7 @@ SET(modules
   AtlasCreator
   CommandLineModule
   Editor
+  Endoscopy
   GradientAnisotropicDiffusionFilter
   Meshing
   Python
