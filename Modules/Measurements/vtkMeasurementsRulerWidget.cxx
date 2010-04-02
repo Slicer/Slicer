@@ -1137,20 +1137,29 @@ void vtkMeasurementsRulerWidget::UpdateDistanceLabel(vtkMRMLMeasurementsRulerNod
     return;
     }
 
+  std::string distanceString = std::string("Distance: ");
+  double distanceValue = activeRulerNode->GetDistance();
+  vtkDebugMacro("UpdateDistanceLabel: node distance = " << distanceValue);
+  std::stringstream ss;
+  ss << distanceString;
+  ss << distanceValue;
+  distanceString = ss.str();
+  this->DistanceLabel->SetText(distanceString.c_str());
+/*  
   vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
   if (distanceWidget &&
       distanceWidget->GetRepresentation())
     {
     std::stringstream ss;
-    std::string distanceString = std::string("Distance: ");
-    double distanceValue = distanceWidget->GetRepresentation()->GetDistance();
-    vtkDebugMacro("UpdateDistanceLabel: distance = " << distanceValue);
+    distanceString = std::string("Distance: ");
+    distanceValue = distanceWidget->GetRepresentation()->GetDistance();
+    vtkWarningMacro("UpdateDistanceLabel: distance = " << distanceValue);
 
     double x1[3], x2[3];
     distanceWidget->GetRepresentation()->GetPoint1WorldPosition(x1);
     distanceWidget->GetRepresentation()->GetPoint2WorldPosition(x2);
     distanceValue = sqrt(vtkMath::Distance2BetweenPoints( x1, x2 ));
-    vtkDebugMacro("Direct calc: distance = " << distanceValue);
+    vtkWarningMacro("Direct calc: distance = " << distanceValue);
     
     ss << distanceString;
     ss << distanceValue;
@@ -1161,6 +1170,7 @@ void vtkMeasurementsRulerWidget::UpdateDistanceLabel(vtkMRMLMeasurementsRulerNod
     {
     vtkWarningMacro("UpdateDistanceLabel: can't get distance widget or representation");
     }
+*/
 }
 
 //---------------------------------------------------------------------------
