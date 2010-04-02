@@ -174,6 +174,7 @@ class path (object):
     #
     # calculate the actual path
     # - take steps of self.dl in world space
+    # -- if dl steps into next segment, take a step of size "remainder" in the new segment
     # - put resulting points into self.path
     #
     n = self.n
@@ -217,7 +218,7 @@ class path (object):
         return
       count += 1
       if count > 500:
-        return
+        return (t1, pguess, 0)
     if t1 > 1.:
       t1 = 1.
       p1 = self.point(segment, t1)
