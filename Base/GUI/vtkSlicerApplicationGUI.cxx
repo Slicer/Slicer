@@ -639,7 +639,7 @@ void vtkSlicerApplicationGUI::ProcessAddRulerCommand()
     const char* retval;
     if (str.compare("") == 0)
       {
-      retval = app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials 0");
+      retval = app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials \"\"");
       }
     else
       {

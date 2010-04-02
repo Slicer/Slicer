@@ -118,17 +118,21 @@ int vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   // okay, now can make a new ruler node
   vtkMRMLMeasurementsRulerNode *ruler = vtkMRMLMeasurementsRulerNode::New();
   std::string name;
-  if (rulerName != NULL)
+  if (rulerName == NULL)
     {
-    name = std::string(rulerName);
+    name = std::string("Ruler: ");
+    }
+  else if (strcmp(rulerName,"") == 0)
+    {
+    name = std::string("");
     }
   else
     {
-    name = std::string("Ruler");
-    }
-      
-  ruler->SetName(name.c_str());
-  std::string annotFormat = name + std::string(": %.1f mm");
+    name = std::string(rulerName) + std::string(": ");
+    ruler->SetName(rulerName);
+    }      
+  
+  std::string annotFormat = name + std::string("%.1f mm");
   ruler->SetDistanceAnnotationFormat(annotFormat.c_str());
   double pos1[3] = {p1[0], p1[1], p1[2]};
   double pos2[3] = {p2[0], p2[1], p2[2]};
