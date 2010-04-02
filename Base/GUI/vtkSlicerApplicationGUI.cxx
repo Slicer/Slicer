@@ -636,13 +636,27 @@ void vtkSlicerApplicationGUI::ProcessAddRulerCommand()
   if (dialog->Invoke())
     {
     std::string str = dialog->GetEntry()->GetWidget()->GetValue();
+    const char* retval;
     if (str.compare("") == 0)
       {
-      app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials 0");
+      retval = app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials 0");
       }
     else
       {
-      app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials %s", str.c_str());
+      retval = app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials %s", str.c_str());
+      }
+    if (strcmp(retval, "0") == 0)
+      {
+      // failed to make a ruler, give some feedback
+      vtkErrorMacro("Ruler making failed, need to have two fiducials in a list to base it on.");
+      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+      message->SetParent ( this->MainSlicerWindow );
+      message->SetStyleToMessage();
+      message->SetDialogName("WarningNoFiducials");
+      message->SetText ("This option can only make a ruler from 2 fiducials, please add a couple of fiducials and then try again");
+      message->Create();
+      message->Invoke();
+      message->Delete();
       }
     }
   dialog->Delete();
