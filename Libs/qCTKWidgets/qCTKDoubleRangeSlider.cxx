@@ -12,14 +12,19 @@ class qCTKDoubleRangeSliderPrivate: public qCTKPrivate<qCTKDoubleRangeSlider>
   public:
   qCTKDoubleRangeSliderPrivate();
   int toInt(double _value)const;
-  double fromInt(int _value)const;
+  double minFromInt(int _value)const;
+  double maxFromInt(int _value)const;
   void init();
-  void updateOffset(double value);
+  void updateMinOffset(double value);
+  void updateMaxOffset(double value);
 
   qCTKRangeSlider* Slider;
   double Minimum;
   double Maximum;
-  double Offset;
+  // we should have a MinValueOffset and MinPositionOffset (and MinimumOffset?)
+  double MinOffset;
+  // we should have a MaxValueOffset and MaxPositionOffset (and MaximumOffset?)
+  double MaxOffset;
   double SingleStep;
   double MinValue;
   double MaxValue;
@@ -31,7 +36,8 @@ qCTKDoubleRangeSliderPrivate::qCTKDoubleRangeSliderPrivate()
   this->Slider = 0;
   this->Minimum = 0.;
   this->Maximum = 99.;
-  this->Offset = 0.;
+  this->MinOffset = 0.;
+  this->MaxOffset = 0.;
   this->SingleStep = 1.;
   this->MinValue = 0.;
   this->MaxValue = 99.;
@@ -73,16 +79,29 @@ int qCTKDoubleRangeSliderPrivate::toInt(double doubleValue)const
 }
 
 // --------------------------------------------------------------------------
-double qCTKDoubleRangeSliderPrivate::fromInt(int intValue)const
+double qCTKDoubleRangeSliderPrivate::minFromInt(int intValue)const
 {
-  double doubleValue = this->SingleStep * (this->Offset + intValue) ;
+  double doubleValue = this->SingleStep * (this->MinOffset + intValue) ;
   return doubleValue;
 }
 
 // --------------------------------------------------------------------------
-void qCTKDoubleRangeSliderPrivate::updateOffset(double value)
+double qCTKDoubleRangeSliderPrivate::maxFromInt(int intValue)const
 {
-  this->Offset = (value / this->SingleStep) - this->toInt(value);
+  double doubleValue = this->SingleStep * (this->MaxOffset + intValue) ;
+  return doubleValue;
+}
+
+// --------------------------------------------------------------------------
+void qCTKDoubleRangeSliderPrivate::updateMinOffset(double value)
+{
+  this->MinOffset = (value / this->SingleStep) - this->toInt(value);
+}
+
+// --------------------------------------------------------------------------
+void qCTKDoubleRangeSliderPrivate::updateMaxOffset(double value)
+{
+  this->MaxOffset = (value / this->SingleStep) - this->toInt(value);
 }
 
 // --------------------------------------------------------------------------
@@ -108,7 +127,11 @@ void qCTKDoubleRangeSlider::setMinimum(double min)
   d->Minimum = min;
   if (d->Minimum >= d->MinValue)
     {// TBD: use same offset
-    d->updateOffset(d->Minimum);
+    d->updateMinOffset(d->Minimum);
+    }
+  if (d->Minimum >= d->MaxValue)
+    {// TBD: use same offset
+    d->updateMaxOffset(d->Minimum);
     }
   d->Slider->setMinimum(d->toInt(min));
 }
@@ -125,9 +148,13 @@ void qCTKDoubleRangeSlider::setMaximum(double max)
 {
   QCTK_D(qCTKDoubleRangeSlider);
   d->Maximum = max;
+  if (d->Maximum <= d->MinValue)
+    {// TBD: use same offset
+    d->updateMinOffset(d->Maximum);
+    }
   if (d->Maximum <= d->MaxValue)
     {// TBD: use same offset ?
-    d->updateOffset(d->Maximum);
+    d->updateMaxOffset(d->Maximum);
     }
   d->Slider->setMaximum(d->toInt(max));
 }
@@ -145,6 +172,22 @@ void qCTKDoubleRangeSlider::setRange(double min, double max)
   QCTK_D(qCTKDoubleRangeSlider);
   d->Minimum = min;
   d->Maximum = max;
+  if (d->Minimum >= d->MinValue)
+    {// TBD: use same offset
+    d->updateMinOffset(d->Minimum);
+    }
+  if (d->Minimum >= d->MaxValue)
+    {// TBD: use same offset
+    d->updateMaxOffset(d->Minimum);
+    }
+  if (d->Maximum <= d->MinValue)
+    {// TBD: use same offset
+    d->updateMinOffset(d->Maximum);
+    }
+  if (d->Maximum <= d->MaxValue)
+    {// TBD: use same offset ?
+    d->updateMaxOffset(d->Maximum);
+    }
   d->Slider->setRange(d->toInt(min), d->toInt(max));
 }
 
@@ -152,7 +195,7 @@ void qCTKDoubleRangeSlider::setRange(double min, double max)
 double qCTKDoubleRangeSlider::minimumPosition()const
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  return d->fromInt(d->Slider->minimumPosition());
+  return d->minFromInt(d->Slider->minimumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -166,7 +209,7 @@ void qCTKDoubleRangeSlider::setMinimumPosition(double minPos)
 double qCTKDoubleRangeSlider::maximumPosition()const
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  return d->fromInt(d->Slider->maximumPosition());
+  return d->maxFromInt(d->Slider->maximumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -194,7 +237,12 @@ double qCTKDoubleRangeSlider::minimumValue()const
 void qCTKDoubleRangeSlider::setMinimumValue(double newMinValue)
 {
   QCTK_D(qCTKDoubleRangeSlider);
-  d->updateOffset(newMinValue);
+  newMinValue = qBound(d->Minimum, newMinValue, d->Maximum);
+  d->updateMinOffset(newMinValue);  
+  if (newMinValue >= d->MaxValue)
+    {
+    d->updateMaxOffset(newMinValue);
+    }
   int newIntValue = d->toInt(newMinValue);
   if (newIntValue != d->Slider->minimumValue())
     {
@@ -226,7 +274,12 @@ double qCTKDoubleRangeSlider::maximumValue()const
 void qCTKDoubleRangeSlider::setMaximumValue(double newMaxValue)
 {
   QCTK_D(qCTKDoubleRangeSlider);
-  d->updateOffset(newMaxValue);
+  newMaxValue = qBound(d->Minimum, newMaxValue, d->Maximum);
+  d->updateMaxOffset(newMaxValue);
+  if (newMaxValue <= d->MinValue)
+    {
+    d->updateMinOffset(newMaxValue);
+    }
   int newIntValue = d->toInt(newMaxValue);
   if (newIntValue != d->Slider->maximumValue())
     {
@@ -250,8 +303,8 @@ void qCTKDoubleRangeSlider::setMaximumValue(double newMaxValue)
 // --------------------------------------------------------------------------
 void qCTKDoubleRangeSlider::setValues(double newMinValue, double newMaxValue)
 {
-  this->setMinimumValue(newMinValue);
-  this->setMaximumValue(newMaxValue);
+  this->setMinimumValue(qMin(newMinValue, newMaxValue));
+  this->setMaximumValue(qMax(newMinValue, newMaxValue));
 }
 
 // --------------------------------------------------------------------------
@@ -266,7 +319,8 @@ void qCTKDoubleRangeSlider::setSingleStep(double newStep)
 {
   QCTK_D(qCTKDoubleRangeSlider);
   d->SingleStep = newStep;
-  d->updateOffset(d->MinValue);
+  d->updateMinOffset(d->MinValue);
+  d->updateMaxOffset(d->MaxValue);
   // update the new values of the qCTKRangeSlider
   double _minvalue = d->MinValue;
   double _maxvalue = d->MaxValue;
@@ -282,7 +336,7 @@ void qCTKDoubleRangeSlider::setSingleStep(double newStep)
 double qCTKDoubleRangeSlider::tickInterval()const
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  return d->fromInt(d->Slider->tickInterval());
+  return d->minFromInt(d->Slider->tickInterval());
 }
 
 // --------------------------------------------------------------------------
@@ -331,7 +385,7 @@ Qt::Orientation qCTKDoubleRangeSlider::orientation()const
 void qCTKDoubleRangeSlider::onMinValueChanged(int newValue)
 {
   QCTK_D(qCTKDoubleRangeSlider);
-  double doubleNewValue = d->fromInt(newValue);
+  double doubleNewValue = d->minFromInt(newValue);
   if (d->MinValue == doubleNewValue)
     {
     return;
@@ -344,7 +398,7 @@ void qCTKDoubleRangeSlider::onMinValueChanged(int newValue)
 void qCTKDoubleRangeSlider::onMaxValueChanged(int newValue)
 {
   QCTK_D(qCTKDoubleRangeSlider);
-  double doubleNewValue = d->fromInt(newValue);
+  double doubleNewValue = d->maxFromInt(newValue);
   if (d->MaxValue == doubleNewValue)
     {
     return;
@@ -357,25 +411,25 @@ void qCTKDoubleRangeSlider::onMaxValueChanged(int newValue)
 void qCTKDoubleRangeSlider::onValuesChanged(int min, int max)
 {
   QCTK_D(qCTKDoubleRangeSlider);
-  emit this->valuesChanged(d->fromInt(min), d->fromInt(max));
+  emit this->valuesChanged(d->minFromInt(min), d->maxFromInt(max));
 }
 
 // --------------------------------------------------------------------------
 void qCTKDoubleRangeSlider::onMinPosChanged(int newPosition)
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  emit this->minimumPositionChanged(d->fromInt(newPosition));
+  emit this->minimumPositionChanged(d->minFromInt(newPosition));
 }
 
 // --------------------------------------------------------------------------
 void qCTKDoubleRangeSlider::onMaxPosChanged(int newPosition)
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  emit this->maximumPositionChanged(d->fromInt(newPosition));
+  emit this->maximumPositionChanged(d->maxFromInt(newPosition));
 }
 // --------------------------------------------------------------------------
 void qCTKDoubleRangeSlider::onPositionsChanged(int min, int max)
 {
   QCTK_D(const qCTKDoubleRangeSlider);
-  emit this->positionsChanged(d->fromInt(min), d->fromInt(max));
+  emit this->positionsChanged(d->minFromInt(min), d->maxFromInt(max));
 }

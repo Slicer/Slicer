@@ -11,6 +11,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qCTKCollapsibleGroupBoxTest1.cxx
   qCTKColorPickerButtonTest1.cxx
   qCTKCoordinatesWidgetTest1.cxx
+  qCTKDoubleRangeSliderTest1.cxx
   qCTKDoubleSliderTest1.cxx
   qCTKFittedTextBrowserTest1.cxx
   qCTKFlowLayoutTest1.cxx
@@ -55,6 +56,7 @@ SIMPLE_TEST( qCTKCollapsibleButtonTest1 )
 SIMPLE_TEST( qCTKCollapsibleGroupBoxTest1 )
 SIMPLE_TEST( qCTKColorPickerButtonTest1 )
 SIMPLE_TEST( qCTKCoordinatesWidgetTest1 )
+SIMPLE_TEST( qCTKDoubleRangeSliderTest1 )
 SIMPLE_TEST( qCTKDoubleSliderTest1 )
 SIMPLE_TEST( qCTKFittedTextBrowserTest1 )
 SIMPLE_TEST( qCTKFlowLayoutTest1 )
