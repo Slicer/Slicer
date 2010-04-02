@@ -277,17 +277,21 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
 }
 
 //----------------------------------------------------------------------------
-int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *dataLink)
+int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *dataLink, bool warningFlag)
 {
-  if (!vtkKWMessageDialog::PopupYesNo( 
-        this->GetApplication(), 
-        NULL, 
-        "Load Task Specific Data?",
-        "It might take some time to download the default setting. Do you want to proceed ?", 
-        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
+  if (warningFlag)
+    {
+      if (!vtkKWMessageDialog::PopupYesNo( 
+                      this->GetApplication(), 
+                      NULL, 
+                      "Load Task Specific Data?",
+                      "It might take some time to download the default setting. Do you want to proceed ?", 
+                      vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
     {
       return 1;
     }
+    }
+
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkMRMLScene *scene = mrmlManager->GetMRMLScene();
@@ -296,9 +300,9 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *dataLink)
   res = scene->Connect();
   if(scene->GetErrorCode())
     {
-    vtkErrorMacro("ERROR: Failed to connect to the data. Error code: " << scene->GetErrorCode() 
+      vtkErrorMacro("ERROR: Failed to connect to the data. Error code: " << scene->GetErrorCode() 
       << " Error message: " << scene->GetErrorMessage());
-    return 1;
+      return 1;
     }
   return 0;
 }
@@ -306,7 +310,7 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *dataLink)
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentParametersSetStep::
-SelectedDefaultTaskChangedCallback(int index)
+SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
 {
 
   if (index < 0 || index >  pssNumDefaultTasks -1) 
@@ -329,7 +333,7 @@ SelectedDefaultTaskChangedCallback(int index)
 
   // Load Task 
   // if (!this->LoadDefaultData("http://xnd.slicer.org:8000/data/20090803T130148Z/ChangetrackerTutorial2009.mrml"))
-  if (!this->LoadDefaultData(pssDefaultTasksFile[index]))
+  if (!this->LoadDefaultData(pssDefaultTasksFile[index],warningFlag))
     {
       // Remove the default selection entry from the menue, 
       this->PopulateLoadedParameterSets();

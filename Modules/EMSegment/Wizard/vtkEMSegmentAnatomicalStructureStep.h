@@ -29,7 +29,7 @@ public:
   // Description:
   // The anatomical tree is shared between several steps
   vtkGetObjectMacro(AnatomicalStructureTree, vtkKWTreeWithScrollbars);
-  virtual void ShowAnatomicalStructureTree();
+  virtual void ShowAnatomicalStructureTree(vtkKWFrame * parent = NULL);
   virtual void SetAnatomicalTreeNodesSelectableOn();
   virtual void SetAnatomicalTreeLeafNodeSelectableState(
     const char* parent, int state);
@@ -52,6 +52,9 @@ public:
     vtkIdType, double r, double g, double b);
   virtual void OpenTreeCallback();
   virtual void CloseTreeCallback();
+  void  RemoveAnatomicalStructureTree();
+
+
 
 protected:
   vtkEMSegmentAnatomicalStructureStep();

@@ -42,7 +42,7 @@ public:
   // Description:
   // Callbacks.
   virtual void SelectedParameterSetChangedCallback(int index);
-  virtual void SelectedDefaultTaskChangedCallback(int index);
+  virtual void SelectedDefaultTaskChangedCallback(int index, bool warningFlag = 1);
 
   void RenameApplyCallback(const char* newName);
   void HideRenameEntry();
@@ -75,7 +75,7 @@ private:
 
   void PopUpRenameEntry(int index);
   void UpdateTaskListIndex(int index);
-  int LoadDefaultData(const char *dataLink);
+  int LoadDefaultData(const char *dataLink, bool warningFlag);
 
 };
 

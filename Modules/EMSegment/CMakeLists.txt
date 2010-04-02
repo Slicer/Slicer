@@ -18,6 +18,13 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 # Include dirs
 
+set (IBM_FLAG 0)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
+  )
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -33,11 +40,6 @@ include_directories(
   ${Volumes_BINARY_DIR}
   )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
-  )
-
 file(GLOB headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
@@ -46,6 +48,18 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
   "${CMAKE_CURRENT_SOURCE_DIR}/Registration/*.h"
   )
+
+if (IBM_FLAG)
+MESSAGE(STATUS  "===========================================================")
+MESSAGE(STATUS  " Compiling with IBM Flag ")
+MESSAGE(STATUS  "===========================================================")
+file(GLOB headers
+   $headers 
+  "${CMAKE_CURRENT_SOURCE_DIR}/IBM/*.cxx"
+  )
+endif(IBM_FLAG)
+ 
+
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h"

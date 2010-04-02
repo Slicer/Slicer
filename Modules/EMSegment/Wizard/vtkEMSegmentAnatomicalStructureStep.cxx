@@ -86,24 +86,6 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
     this->ContextMenu = NULL;
     }
 
-  if (this->AnatomicalStructureTree)
-    {
-    this->AnatomicalStructureTree->Delete();
-    this->AnatomicalStructureTree = NULL;
-    }
-
-  if (this->AnatomicalStructureFrame)
-    {
-    this->AnatomicalStructureFrame->Delete();
-    this->AnatomicalStructureFrame = NULL;
-    }
-
-  if (this->AnatomicalStructureTreeButtonSet)
-    {
-    this->AnatomicalStructureTreeButtonSet->Delete();
-    this->AnatomicalStructureTreeButtonSet = NULL;
-    }
-
   if (this->AnatomicalNodeAttributesFrame)
     {
     this->AnatomicalNodeAttributesFrame->Delete();
@@ -170,15 +152,42 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
     this->SelectedColorChangedCallbackCommand->Delete();
     this->SelectedColorChangedCallbackCommand = NULL;
     }
+  this->RemoveAnatomicalStructureTree();
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree()
+void  vtkEMSegmentAnatomicalStructureStep::RemoveAnatomicalStructureTree()
 {
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  if (this->AnatomicalStructureTree)
+    {
+    this->AnatomicalStructureTree->Delete();
+    this->AnatomicalStructureTree = NULL;
+    }
+
+  if (this->AnatomicalStructureFrame)
+    {
+    this->AnatomicalStructureFrame->Delete();
+    this->AnatomicalStructureFrame = NULL;
+    }
+
+  if (this->AnatomicalStructureTreeButtonSet)
+    {
+    this->AnatomicalStructureTreeButtonSet->Delete();
+    this->AnatomicalStructureTreeButtonSet = NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree(vtkKWFrame * parent)
+{
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // Create the frame
+  if (!parent)
+    {
+      vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+      parent = wizard_widget->GetClientArea();
+    } 
 
   if (!this->AnatomicalStructureFrame)
     {
@@ -186,8 +195,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree()
     }
   if (!this->AnatomicalStructureFrame->IsCreated())
     {
-    this->AnatomicalStructureFrame->SetParent(
-      wizard_widget->GetClientArea());
+      this->AnatomicalStructureFrame->SetParent(parent);
     this->AnatomicalStructureFrame->Create();
     this->AnatomicalStructureFrame->SetLabelText("Anatomical Tree");
     }

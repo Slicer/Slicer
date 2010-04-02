@@ -26,6 +26,9 @@ protected:
   vtkEMSegmentSpatialPriorsStep();
   ~vtkEMSegmentSpatialPriorsStep();
 
+  vtkKWFrameWithLabel *ImageFrame;
+  vtkKWFrameWithLabel *SpatialPriorsFrame;
+
   vtkKWFrameWithLabel      *SpatialPriorsVolumeFrame;
   vtkKWMenuButtonWithLabel *SpatialPriorsVolumeMenuButton;
 

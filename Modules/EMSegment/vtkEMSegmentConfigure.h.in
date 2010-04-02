@@ -9,3 +9,6 @@
 #ifndef BUILD_SHARED_LIBS
   #define VTKSLICER_STATIC
 #endif
+
+#cmakedefine01 IBM_FLAG
+
