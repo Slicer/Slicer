@@ -56,7 +56,7 @@ void vtkMeasurementsLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
+int vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
 {
   /// Make a new ruler node, popping up a rename dialogue first, placing it
   /// between the last two fiducials added on the currently selected list,
@@ -65,7 +65,7 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: no mrml scene, no idea which fiduical list to use!");
-    return;
+    return 0;
     }
 
   // get the selection node
@@ -77,12 +77,12 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   if (selnode == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: no selection node in mrml scene, no idea which fiduical list to use!");
-    return;
+    return 0;
     }
   if (selnode->GetActiveFiducialListID() == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: no active fiducial list in the selection node, no idea which fiduical list to use!");
-    return;
+    return 0;
     }
 
   // get the active fiducial list
@@ -91,7 +91,7 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   if (activeFiducialList == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: no valid active fiducial list in the selection node, no idea which fiduical list to use!");
-    return;
+    return 0;
     }
 
   int numFids = activeFiducialList->GetNumberOfFiducials();
@@ -99,7 +99,7 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   if (numFids < 2)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: only have " << numFids << " fidicuals in list " << activeFiducialList->GetName() << ", need at least 2 to make a ruler from the last two in the list");
-    return;
+    return 0;
     }
   float *p1 = activeFiducialList->GetNthFiducialXYZ(numFids-1);
   float *p2 = activeFiducialList->GetNthFiducialXYZ(numFids-2);
@@ -107,12 +107,12 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   if (p1 == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: have an invalid point position for fid number " << numFids-1);
-    return;
+    return 0;
     }
   if (p2 == NULL)
     {
     vtkErrorMacro("NewRulerBetweenFiducials: have an invalid point position for fid number " << numFids-2);
-    return;
+    return 0;
     }
 
   // okay, now can make a new ruler node
@@ -140,4 +140,6 @@ void vtkMeasurementsLogic::NewRulerBetweenFiducials(const char *rulerName)
   // delete the two fids that were used
   activeFiducialList->RemoveFiducial(numFids-1);
   activeFiducialList->RemoveFiducial(numFids-2);
+
+  return 1;
 }

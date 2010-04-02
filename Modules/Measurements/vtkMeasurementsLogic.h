@@ -22,7 +22,8 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsLogic : public vtkSlicerModuleLogic
   /// to name the new node and in the list annotation string, otherwise use
   /// 'Ruler'. Fails if can't get at the mrml scene, the selection node, the
   /// active fid list, or there aren't two points in the active fid list.
-  void NewRulerBetweenFiducials(const char *rulerName = NULL);
+  /// Returns 1 on success, 0 on failure.
+  int NewRulerBetweenFiducials(const char *rulerName = NULL);
   
  protected:
   vtkMeasurementsLogic();
