@@ -181,6 +181,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessAddTransformCommand();
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
+    void ProcessAddRulerCommand();
     void UpdateLayout();
     void CustomizeStatusBarLayout();
     

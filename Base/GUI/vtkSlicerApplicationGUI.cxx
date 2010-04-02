@@ -66,6 +66,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWEvent.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWSimpleEntryDialog.h"
 
 // vtkSlicer includes
 #include "vtkSlicerWindow.h"
@@ -611,6 +612,37 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
       {
       this->MRMLScene->Clear(false);
       this->OnViewNodeNeeded();
+      }
+    }
+  dialog->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessAddRulerCommand()
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  if (!app ||
+      app->GetModuleGUIByName("Measurements") == NULL)
+    {
+    vtkErrorMacro("ProcessAddRulerCommand: no Measurements module, can't make a new ruler!");
+    return;
+    }
+  vtkKWSimpleEntryDialog *dialog = vtkKWSimpleEntryDialog::New();
+  dialog->SetParent ( this->MainSlicerWindow );
+  dialog->SetText("Name the new ruler:");
+  dialog->Create ( );
+  dialog->SetMasterWindow( this->MainSlicerWindow );
+  dialog->ModalOn();
+  if (dialog->Invoke())
+    {
+    std::string str = dialog->GetEntry()->GetWidget()->GetValue();
+    if (str.compare("") == 0)
+      {
+      app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials 0");
+      }
+    else
+      {
+      app->Script("[$::slicer3::MeasurementsGUI GetLogic] NewRulerBetweenFiducials %s", str.c_str());
       }
     }
   dialog->Delete();
@@ -1699,6 +1731,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 #endif
 
+  // make a new measurements ruler between the last two fiducials on the
+  // currently active list, only works if the measurements module is loaded.
+  i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "New Ruler Between Fiducials...", this, "ProcessAddRulerCommand");
+  this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+R");
+  this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+  
   //
   // View Menu
   //
