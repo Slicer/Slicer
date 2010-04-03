@@ -40,6 +40,7 @@ if { [itcl::find class RulerSWidget] == "" } {
     method processEvent {{caller ""} {event ""}} {}
     method updateMRMLFromWidget {} {}
     method updateWidgetFromMRML {} {}
+    method updateAnnotation {} {}
   }
 }
 
@@ -141,11 +142,13 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   eval $lineRep SetPoint2DisplayPosition $xyz2
 
   #
-  # set up the colours
+  # set up the colours and annotation
   #
   eval [[$lineRep GetPoint1Representation] GetProperty] SetColor [$_rulerNode GetPointColour]
   eval [[$lineRep GetPoint2Representation] GetProperty] SetColor [$_rulerNode GetPoint2Colour]
   eval [$lineRep GetLineProperty] SetColor [$_rulerNode GetLineColour]
+
+  $this updateAnnotation
 }
 
 
@@ -173,12 +176,19 @@ itcl::body RulerSWidget::updateMRMLFromWidget { } {
   eval $_rulerNode SetPosition2 $pos2
   $_rulerNode DisableModifiedEventOff
   $_rulerNode InvokePendingModifiedEvent
-
-  set ras1 [$_rulerNode GetPosition1]
-  set ras2 [$_rulerNode GetPosition2]
+  
+  $this updateAnnotation
   set _updating 0
 }
 
+itcl::body RulerSWidget::updateAnnotation {} {
+
+  set lineRep [$o(lineWidget) GetRepresentation]
+  $_rulerNode UpdateCurrentDistanceAnnotation
+  $lineRep SetDistanceAnnotationFormat [$_rulerNode GetCurrentDistanceAnnotation]
+  $lineRep SetDistanceAnnotationVisibility 1
+  $lineRep SetDistanceAnnotationScale .02 .02 .02
+}
 
 itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
 

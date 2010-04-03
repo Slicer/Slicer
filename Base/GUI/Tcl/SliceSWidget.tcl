@@ -206,7 +206,6 @@ itcl::body SliceSWidget::updateSWidgets {} {
           set swidget [$swidgetClass #auto $sliceGUI]
           $swidget configure $configVar $id
           lappend _swidgets $swidget
-puts "created $swidget for $id"
         } else {
           lappend usedSWidgets $sws($sliceGUI,$id)
         }
@@ -218,7 +217,6 @@ puts "created $swidget for $id"
     foreach sw $swidgets {
       if { [lsearch $usedSWidgets $sw] == -1 } {
         if { [$sw cget -sliceGUI] == $sliceGUI } {
-puts "deleting $swidget"
           set _swidgets [lremove -all $_swidgets $sw]
           itcl::delete object $sw
         }
