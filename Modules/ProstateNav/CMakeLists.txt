@@ -20,7 +20,6 @@ endif(NOT Slicer3_SOURCE_DIR)
 find_package(Subversion)
 if (Subversion_FOUND)
   Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
-  MESSAGE("Current ProstateNav revision is ${ProstateNav_WC_REVISION}")
   set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
 endif (Subversion_FOUND)
 
