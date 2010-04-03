@@ -229,8 +229,8 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
     vtkImageData* tempImageData = this->ImageData;
     if (this->ImageData == NULL)
       {
-      this->SetWindowLevel(0,0);
-      this->SetThreshold(0,0);
+      //this->SetWindowLevel(0,0);
+      //this->SetThreshold(0,0);
       }
     this->ImageData = imageData;
     if (this->ImageData != NULL)
