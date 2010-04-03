@@ -37,10 +37,12 @@ class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWLabel;
 class vtkKWEntry;
+class vtkKWPushButton;
 class vtkKWEntryWithLabel;
 class vtkMRMLMeasurementsAngleNode;
 class vtkSlicerViewerWidget;
 class vtkMeasurementsAngleWidgetClass;
+class vtkCamera;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsAngleWidget : public vtkSlicerWidget
 {
   
@@ -53,7 +55,7 @@ public:
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
   vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
   vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
-
+  vtkGetObjectMacro ( RemoveAllAnglesButton, vtkKWPushButton);
   /// 
   /// Getting the mrml angle node id
   vtkGetStringMacro(AngleNodeID);
@@ -91,25 +93,45 @@ public:
   /// Get/set the viewer widget so can add a the angle widget to it
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
+
+  ///
+  /// Update the camera
+  void UpdateCamera();
+
+  ///
+  /// get the currently active camera
+  vtkCamera *GetActiveCamera();
+  
+  ///
+  /// Update the interactors on all the angle widgets
+  void UpdateAngleWidgetInteractors();
 //BTX
   /// 
   /// encapsulated 3d widgets for each angle node
   std::map<std::string, vtkMeasurementsAngleWidgetClass *> AngleWidgets;
 //ETX
   /// 
-  /// get a distance widget by angle node id
+  /// get a angle widget by angle node id
   vtkMeasurementsAngleWidgetClass *GetAngleWidget(const char * nodeID);
 
   /// 
-  /// set up a new distance widget for this node
+  /// set up a new angle widget for this node
   void AddAngleWidget(vtkMRMLMeasurementsAngleNode *angleNode);
   /// 
-  /// remove distance widget for this node
+  /// remove angle widget for this node
   void RemoveAngleWidget(vtkMRMLMeasurementsAngleNode *angleNode);
+  ///
+  /// remove all angle widgets
+  void RemoveAngleWidgets();
+
+  ///
+  /// update the visibility of the 3d widget associated with the passed node
+  void Update3DWidgetVisibility(vtkMRMLMeasurementsAngleNode *angleNode);
+
   /// 
   /// check scene to make sure that have a widget for each angle node, and no extra widgets...
   void Update3DWidgetsFromMRML();
-
+  
 protected:
   vtkMeasurementsAngleWidget();
   virtual ~vtkMeasurementsAngleWidget();
@@ -122,7 +144,7 @@ protected:
   /// update the widget GUI from the settings in the passed in angleNode
   void UpdateWidget(vtkMRMLMeasurementsAngleNode *angleNode);
   /// DescriptioN:
-  /// update the 3d distance widget from the settings in teh passed in
+  /// update the 3d angle widget from the settings in teh passed in
   /// angleNode
   void Update3DWidget(vtkMRMLMeasurementsAngleNode *angleNode);
 
@@ -169,9 +191,12 @@ protected:
   vtkKWEntry *PositionCenterYEntry;
   vtkKWEntry *PositionCenterZEntry;
 
+  ///
+  /// remove all angle widgets
+  vtkKWPushButton *RemoveAllAnglesButton;
 
   /// 
-  /// distance annotation option entries
+  /// angle annotation option entries
   vtkKWEntryWithLabel *LabelFormatEntry;
   vtkKWEntryWithLabel *LabelScaleEntry;
   vtkKWCheckButtonWithLabel *LabelVisibilityButton;

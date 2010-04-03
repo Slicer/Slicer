@@ -10,6 +10,7 @@ class vtkPointHandleRepresentation3D;
 class vtkLineRepresentation;
 class vtkPolygonalSurfacePointPlacer;
 class vtkProperty;
+class vtkCamera;
 /// a custom class encapsulating the widget classes needed to display the
 /// ruler in 3D
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsDistanceWidgetClass : public vtkObject
@@ -25,11 +26,13 @@ public:
 
   /// 
   /// accessor methods
-  vtkGetObjectMacro(HandleRepresentation, vtkPointHandleRepresentation3D);
-  vtkGetObjectMacro(Representation, vtkLineRepresentation);
   vtkGetObjectMacro(Widget, vtkLineWidget2);
   vtkGetObjectMacro(Model1PointPlacer, vtkPolygonalSurfacePointPlacer);
   vtkGetObjectMacro(Model2PointPlacer, vtkPolygonalSurfacePointPlacer);
+
+  ///
+  /// set the camera on the widget's text actor
+  void SetCamera(vtkCamera *cam);
 protected:
   /// 
   /// the representation for the ruler end point handles

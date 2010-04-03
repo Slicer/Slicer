@@ -8,6 +8,11 @@
 #include "vtkPolygonalSurfacePointPlacer.h"
 
 #include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
+#include "vtkSphereHandleRepresentation.h"
+
+#include "vtkCamera.h"
+#include "vtkFollower.h"
 
 vtkStandardNewMacro (vtkMeasurementsAngleWidgetClass);
 vtkCxxRevisionMacro ( vtkMeasurementsAngleWidgetClass, "$Revision: 1.0 $");
@@ -20,14 +25,27 @@ vtkMeasurementsAngleWidgetClass::vtkMeasurementsAngleWidgetClass()
   this->ModelCenterPointPlacer = vtkPolygonalSurfacePointPlacer::New();
 
   // Angle Widget set up
-  this->HandleRepresentation = vtkPointHandleRepresentation3D::New();
+  this->HandleRepresentation = vtkSphereHandleRepresentation::New();
   this->HandleRepresentation->GetProperty()->SetColor(1, 0, 0);
-
-  this->Representation = vtkAngleRepresentation3D::New();
+  this->HandleRepresentation->SetSphereRadius(1.0);
+  this->HandleRepresentation->SetHandleSize(5);
+  
+  //this->Representation = vtkAngleRepresentation3D::New();
   // without calling InstantiateHandleRepresentation, was getting a crash when
   // creating a new angle node and widget, the point reps weren't instantiated
-  this->Representation->InstantiateHandleRepresentation();
+  //this->Representation->InstantiateHandleRepresentation();
+
+  // try a sphere handle representation instead - no way to turn off the
+  // scaling as zoom in and out
+  //vtkSmartPointer<vtkSphereHandleRepresentation> sphereHandle = vtkSmartPointer<vtkSphereHandleRepresentation>::New();
+  // if I don't set the colour here, the handles don't get updated to spheres
+  // sphereHandle->GetProperty()->SetColor(0, 1, 0);
+
+  
+  this->Representation = vtkAngleRepresentation3D::New();
   this->Representation->SetHandleRepresentation(this->HandleRepresentation);
+  //this->Representation->SetHandleRepresentation(sphereHandle);
+
   double textscale[3] = {10.0, 10.0, 10.0};
   this->Representation->SetTextActorScale(textscale);
 
@@ -71,8 +89,8 @@ vtkMeasurementsAngleWidgetClass::~vtkMeasurementsAngleWidgetClass()
  
  
   if (this->Model1PointPlacer)
-     {
-       this->Model1PointPlacer->RemoveAllProps();
+    {
+    this->Model1PointPlacer->RemoveAllProps();
     this->Model1PointPlacer->Delete();
     this->Model1PointPlacer = NULL;
     }
@@ -124,5 +142,28 @@ void vtkMeasurementsAngleWidgetClass::PrintSelf ( ostream& os, vtkIndent indent 
     {
     os << indent << "Widget:\n";
     this->Widget->PrintSelf(os,indent.GetNextIndent());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsAngleWidgetClass::SetCamera(vtkCamera *cam)
+{
+  if (!cam)
+    {
+    return;
+    }
+  if (this->Widget == NULL ||
+      this->Widget->GetRepresentation() == NULL)
+    {
+    return;
+    }
+
+  vtkAngleRepresentation3D *ar = vtkAngleRepresentation3D::SafeDownCast(this->Widget->GetRepresentation());
+  if (ar)
+    {
+    // iterate through actors and set their cameras
+    //GetPoint1HanldeRepresentation();
+    // get the text actor and set the camera on it
+    //ar->GetTextActor()->SetCamera(cam);
     }
 }

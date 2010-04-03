@@ -8,6 +8,8 @@
 #include "vtkPolygonalSurfacePointPlacer.h"
 
 #include "vtkObjectFactory.h"
+#include "vtkCamera.h"
+#include "vtkFollower.h"
 
 vtkStandardNewMacro (vtkMeasurementsDistanceWidgetClass);
 vtkCxxRevisionMacro ( vtkMeasurementsDistanceWidgetClass, "$Revision: 1.0 $");
@@ -115,5 +117,27 @@ void vtkMeasurementsDistanceWidgetClass::PrintSelf ( ostream& os, vtkIndent inde
     {
     os << indent << "Widget:\n";
     this->Widget->PrintSelf(os,indent.GetNextIndent());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsDistanceWidgetClass::SetCamera(vtkCamera *cam)
+{
+  if (!cam)
+    {
+    return;
+    }
+  if (this->Widget == NULL ||
+      this->Widget->GetRepresentation() == NULL)
+    {
+    return;
+    }
+
+  vtkLineRepresentation *ar = vtkLineRepresentation::SafeDownCast(this->Widget->GetRepresentation());
+  if (ar)
+    {
+    // iterate through actors and set their cameras
+    // get the text actor and set the camera on it
+    // ar->GetTextActor()->SetCamera(cam);
     }
 }

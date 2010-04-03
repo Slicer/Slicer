@@ -37,7 +37,10 @@ class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWLabel;
 class vtkKWEntry;
+class vtkKWPushButton;
 class vtkKWEntryWithLabel;
+class vtkKWLoadSaveButton;
+class vtkCamera;
 class vtkMRMLMeasurementsRulerNode;
 class vtkSlicerViewerWidget;
 class vtkMeasurementsDistanceWidgetClass;
@@ -53,6 +56,7 @@ public:
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
   vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
   vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
+  vtkGetObjectMacro (RemoveAllRulersButton, vtkKWPushButton);
 
   /// 
   /// Getting the mrml ruler node id
@@ -107,6 +111,9 @@ public:
   /// remove distance widget for this node
   void RemoveDistanceWidget(vtkMRMLMeasurementsRulerNode *rulerNode);
   /// 
+  /// remove all distance widgets
+  void RemoveDistanceWidgets();
+  /// 
   /// check scene to make sure that have a widget for each ruler node, and no extra widgets...
   void Update3DWidgetsFromMRML();
 
@@ -115,6 +122,23 @@ public:
   // colours as a hint. If the end point colours are white, use a very very
   // light grey instead
   void UpdateLabelsFromNode(vtkMRMLMeasurementsRulerNode *activeRulerNode);
+
+  ///
+  /// Update the camera
+  void UpdateCamera();
+
+  ///
+  /// get the currently active camera
+  vtkCamera *GetActiveCamera();
+  
+  ///
+  /// Update the interactors on all the widgets
+  void UpdateRulerWidgetInteractors();
+
+  ///
+  /// Generate a report from all rulers, and save to file, ask user for a file
+  /// name if filename is null.
+  void GenerateReport(const char *filename = NULL);
 
 protected:
   vtkMeasurementsRulerWidget();
@@ -153,6 +177,14 @@ protected:
   /// to select a measurements ruler node from the scene, and create new ones
   vtkSlicerNodeSelectorWidget* RulerSelectorWidget;
 
+  ///
+  /// remove all ruler widgets
+  vtkKWPushButton *RemoveAllRulersButton;
+
+  ///
+  /// generate a report about all rulers
+  vtkKWLoadSaveButton *ReportButton;
+  
   /// 
   /// visibility check button
   vtkKWCheckButtonWithLabel *VisibilityButton;
@@ -213,6 +245,9 @@ protected:
   /// ruler node / 3d widget once have more than one)
   int Updating3DWidget;
 
+  ///
+  ///  update the visibility of the 3d widget associated with the passed node
+  void Update3DWidgetVisibility(vtkMRMLMeasurementsRulerNode *activeRulerNode);
   /// 
   /// pointer to the viewer widget so can add props, request renders 
   vtkSlicerViewerWidget *ViewerWidget;

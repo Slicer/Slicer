@@ -6,10 +6,11 @@
 #include "vtkObject.h"
 
 class vtkAngleWidget;
-class vtkPointHandleRepresentation3D;
+class vtkSphereHandleRepresentation;
 class vtkAngleRepresentation3D;
 class vtkPolygonalSurfacePointPlacer;
 class vtkProperty;
+class vtkCamera;
 /// a custom class encapsulating the widget classes needed to display the
 /// angle in 3D
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsAngleWidgetClass : public vtkObject
@@ -25,17 +26,19 @@ public:
 
   /// 
   /// accessor methods
-  vtkGetObjectMacro(HandleRepresentation, vtkPointHandleRepresentation3D);
-  vtkGetObjectMacro(Representation, vtkAngleRepresentation3D);
   vtkGetObjectMacro(Widget, vtkAngleWidget);
   vtkGetObjectMacro(Model1PointPlacer, vtkPolygonalSurfacePointPlacer);
   vtkGetObjectMacro(Model2PointPlacer, vtkPolygonalSurfacePointPlacer);
   vtkGetObjectMacro(ModelCenterPointPlacer, vtkPolygonalSurfacePointPlacer);
 
+  ///
+  /// set the camera on the widget's text actor
+  void SetCamera(vtkCamera *cam);
+  
 protected:
   /// 
   /// the representation for the angle end point handles
-  vtkPointHandleRepresentation3D *HandleRepresentation;
+  vtkSphereHandleRepresentation *HandleRepresentation;
   /// 
   /// the representation for the line
   vtkAngleRepresentation3D *Representation;
