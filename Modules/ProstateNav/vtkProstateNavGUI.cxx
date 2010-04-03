@@ -706,9 +706,6 @@ void vtkProstateNavGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::Enter()
 {
-  // Fill in
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-  
   if (this->Entered == 0)
     {
     this->GetLogic()->SetGUI(this);

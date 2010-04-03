@@ -80,6 +80,9 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
   std::queue<std::string> OutCommandQueue;
   std::string InCommand;
   std::string OutCommand;
+
+  std::map<std::string,std::string> StepToCommandMap;
+
   //ETX
 
 };

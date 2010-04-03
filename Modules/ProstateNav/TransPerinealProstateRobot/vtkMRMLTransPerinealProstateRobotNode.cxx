@@ -33,8 +33,8 @@ Version:   $Revision: 1.2 $
 
 //-------------------------------------
 
-static const int STATUS_ROBOT=0;
-static const int STATUS_SCANNER=1;
+static const unsigned int STATUS_ROBOT=0;
+static const unsigned int STATUS_SCANNER=1;
 
 static const char STATUS_ROBOT_OFF[]="Robot: OFF";
 static const char STATUS_ROBOT_ON[]="Robot: ON";
@@ -315,7 +315,7 @@ void vtkMRMLTransPerinealProstateRobotNode::Copy(vtkMRMLNode *anode)
   }
 
   this->StatusDescriptors.clear();
-  for (int i=0; i<node->StatusDescriptors.size(); i++)
+  for (unsigned int i=0; i<node->StatusDescriptors.size(); i++)
   {    
     this->StatusDescriptors.push_back(node->StatusDescriptors[i]);
   }

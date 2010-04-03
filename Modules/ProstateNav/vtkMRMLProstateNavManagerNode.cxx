@@ -135,12 +135,6 @@ void vtkMRMLProstateNavManagerNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-
-  const char* serverHostname = "";
-  int port = 0;
-  int type = -1;
-  int restrictDeviceName = 0;
-
   
   while (*atts != NULL)
     {
@@ -455,7 +449,7 @@ int vtkMRMLProstateNavManagerNode::RemoveTargetDescriptorAtIndex(unsigned int in
 //-------------------------------------------------------------------------------
 int vtkMRMLProstateNavManagerNode::SetCurrentTargetIndex(int index)
 {
-  if (index >= this->TargetDescriptorsVector.size())
+  if (index >= (int)this->TargetDescriptorsVector.size())
     {
     // invalid index, do not change current
     return this->CurrentTargetIndex;
@@ -514,7 +508,7 @@ bool vtkMRMLProstateNavManagerNode::AddTargetToFiducialList(double targetRAS[3],
 //-------------------------------------------------------------------------------
 bool vtkMRMLProstateNavManagerNode::GetTargetFromFiducialList(int fiducialListIndex, int fiducialIndex, double &r, double &a, double &s)
 {
-    if (fiducialListIndex < this->NeedlesVector.size() && fiducialListIndex != -1)
+    if (fiducialListIndex < (int)this->NeedlesVector.size() && fiducialListIndex != -1)
       {
       vtkMRMLFiducialListNode* fidNode=NULL;
       fidNode=this->GetTargetPlanListNode();

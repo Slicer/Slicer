@@ -66,7 +66,7 @@ vtkCxxRevisionMacro(vtkTransRectalFiducialCalibrationAlgo, "$Revision: 1.0 $");
 vtkTransRectalFiducialCalibrationAlgo::vtkTransRectalFiducialCalibrationAlgo()
 {
   CalibMarkerPreProcOutput.resize(CALIB_MARKER_COUNT);
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
     {
     CalibMarkerPreProcOutput[i]=vtkImageData::New();
     }
@@ -76,7 +76,7 @@ vtkTransRectalFiducialCalibrationAlgo::vtkTransRectalFiducialCalibrationAlgo()
 
 vtkTransRectalFiducialCalibrationAlgo::~vtkTransRectalFiducialCalibrationAlgo()
 {
-    for (int i=0; i<CALIB_MARKER_COUNT; i++)
+    for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
     {
     if (CalibMarkerPreProcOutput[i]!=0)
       {
@@ -96,7 +96,7 @@ void vtkTransRectalFiducialCalibrationAlgo::PrintSelf(ostream& os, vtkIndent ind
 bool vtkTransRectalFiducialCalibrationAlgo::CalibrateFromImage(const TRProstateBiopsyCalibrationFromImageInput &input, TRProstateBiopsyCalibrationFromImageOutput &output)
 { 
   // segement the axis using initial guesses
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     output.MarkerFound[i]=false;
   }
@@ -109,7 +109,7 @@ bool vtkTransRectalFiducialCalibrationAlgo::CalibrateFromImage(const TRProstateB
     input.MarkerSegmentationThreshold[2], input.MarkerSegmentationThreshold[3], input.MarkerDimensionsMm, input.MarkerRadiusMm, input.RobotInitialAngle,
     P2, v2, output.MarkerPositions[2], output.MarkerPositions[3], output.MarkerFound[2], output.MarkerFound[3], CalibMarkerPreProcOutput[2], CalibMarkerPreProcOutput[3], &CoordinatesVectorAxis2);
 
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     if (!output.MarkerFound[i])
     {      

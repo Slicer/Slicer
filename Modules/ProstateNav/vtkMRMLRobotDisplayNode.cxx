@@ -161,9 +161,11 @@ void vtkMRMLRobotDisplayNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLRobotDisplayNode *node = (vtkMRMLRobotDisplayNode *) anode;
 
-  //int type = node->GetType();
+  /*
+  vtkMRMLRobotDisplayNode *node = (vtkMRMLRobotDisplayNode *) anode;
+  int type = node->GetType();
+  */
   
 }
 

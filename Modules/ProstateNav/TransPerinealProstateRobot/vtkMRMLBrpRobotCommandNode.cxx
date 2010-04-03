@@ -39,7 +39,7 @@ vtkMRMLBrpRobotCommandNode* vtkMRMLBrpRobotCommandNode::New()
     // If the factory was unable to create the object, then create it here.
     ret =  new vtkMRMLBrpRobotCommandNode;
     }
-
+  
   return ret;
 }
 
@@ -61,6 +61,12 @@ vtkMRMLNode* vtkMRMLBrpRobotCommandNode::CreateNodeInstance()
 vtkMRMLBrpRobotCommandNode::vtkMRMLBrpRobotCommandNode()
 {
   this->ZFrameTransformNodeID = "";
+
+  this->StepToCommandMap["SetUp"]="START_UP";
+  this->StepToCommandMap["ZFrameCalibration"]="CALIBRATION";
+  this->StepToCommandMap["PointTargeting"]="TARGETING";
+  this->StepToCommandMap["PointVerification"]="MANUAL";
+  this->StepToCommandMap["TransperinealProstateRobotManualControl"]="PLANNING";
 }
 
 
@@ -128,39 +134,18 @@ const char* vtkMRMLBrpRobotCommandNode::PopIncomingCommand()
 //----------------------------------------------------------------------------
 int vtkMRMLBrpRobotCommandNode::SwitchStep(const char* step)
 {
-  char* command = NULL;
 
-  if (strcmp(step, "SetUp") == 0)
-    {
-    command = "START_UP";
-    }
-  else if (strcmp(step, "ZFrameCalibration") == 0)
-    {
-    command = "CALIBRATION";
-    }
-  else if (strcmp(step, "PointTargeting") == 0)
-    {
-    command = "TARGETING";
-    }
-  else if (strcmp(step, "PointVerification") == 0)
-    {
-    command = "MANUAL";
-    }
-  else if (strcmp(step, "TransperinealProstateRobotManualControl") == 0)
-    {
-    command = "PLANNING";
-    }
-  else
+  std::map<std::string,std::string>::const_iterator stepToCommand;
+
+  stepToCommand = this->StepToCommandMap.find( step );
+  if (stepToCommand==this->StepToCommandMap.end())
   {
     vtkErrorMacro("Unknown step: "<<step);
     return 0;
   }
 
-  if (command)
-    {
-    this->PushOutgoingCommand(command);
-    this->Modified();
-    }
-
+  this->PushOutgoingCommand(stepToCommand->second.c_str());
+  this->Modified();
+    
   return 1;
 }

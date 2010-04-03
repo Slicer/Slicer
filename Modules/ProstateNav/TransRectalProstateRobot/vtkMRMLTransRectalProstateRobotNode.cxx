@@ -60,7 +60,7 @@ vtkMRMLTransRectalProstateRobotNode* vtkMRMLTransRectalProstateRobotNode::Create
 vtkMRMLTransRectalProstateRobotNode::vtkMRMLTransRectalProstateRobotNode()
 {
   this->CalibrationAlgo=vtkSmartPointer<vtkTransRectalFiducialCalibrationAlgo>::New();
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     this->CalibrationMarkerValid[i]=false;
   } 
@@ -264,7 +264,7 @@ void vtkMRMLTransRectalProstateRobotNode::GetCalibrationMarker(unsigned int mark
 //------------------------------------------------------------------------------
 void vtkMRMLTransRectalProstateRobotNode::RemoveAllCalibrationMarkers()
 {
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     this->CalibrationMarkerValid[i]=false;
   }
@@ -275,7 +275,7 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
 {
   TRProstateBiopsyCalibrationFromImageInput in;
 
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     bool valid=false;
     GetCalibrationMarker(i, in.MarkerInitialPositions[i][0], in.MarkerInitialPositions[i][1], in.MarkerInitialPositions[i][2], valid); 
@@ -324,7 +324,7 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
 
     std::ostrstream os;
     // if a marker not found, then make the error report more precise
-    for (int i=0; i<CALIB_MARKER_COUNT; i++)
+    for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
     {      
       if (!res.MarkerFound[i])
       {
@@ -343,7 +343,7 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
 
     /*commented out to keep the original marker guesses
     // update manually set marker positions with the result of the marker detection
-    for (int i=0; i<CALIB_MARKER_COUNT; i++)
+    for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
     {      
       SetCalibrationMarker(i, res.MarkerPositions[i]);
       in.MarkerSegmentationThreshold[i]=thresh[i];

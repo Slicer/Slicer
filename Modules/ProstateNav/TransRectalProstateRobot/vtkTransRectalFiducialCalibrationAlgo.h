@@ -30,7 +30,7 @@ class vtkPoints;
 #include <vector>
 #include "itkPoint.h"
 
-const int CALIB_MARKER_COUNT=4;
+const unsigned int CALIB_MARKER_COUNT=4;
 
 //BTX
 struct TRProstateBiopsyCalibrationFromImageInput
