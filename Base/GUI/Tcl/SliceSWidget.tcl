@@ -124,9 +124,11 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   # observe NodeAdded events from the MRML scene to create
   # model intersection displays as needed
   set NodeAddedEvent 66000
+  set NodeRemovedEvent 66001
   set SceneCloseEvent 66003
   set SceneClosingEvent 66004
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeAddedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeAddedEvent"
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeRemovedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeRemovedEvent"
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneCloseEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneCloseEvent"
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneClosingEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosingEvent"
 
@@ -204,6 +206,7 @@ itcl::body SliceSWidget::updateSWidgets {} {
           set swidget [$swidgetClass #auto $sliceGUI]
           $swidget configure $configVar $id
           lappend _swidgets $swidget
+puts "created $swidget for $id"
         } else {
           lappend usedSWidgets $sws($sliceGUI,$id)
         }
@@ -215,6 +218,7 @@ itcl::body SliceSWidget::updateSWidgets {} {
     foreach sw $swidgets {
       if { [lsearch $usedSWidgets $sw] == -1 } {
         if { [$sw cget -sliceGUI] == $sliceGUI } {
+puts "deleting $swidget"
           set _swidgets [lremove -all $_swidgets $sw]
           itcl::delete object $sw
         }
@@ -316,7 +320,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   
   # MRML Scene update probably means we need to create a new model intersection SWidget
   if { $caller == $::slicer3::MRMLScene && 
-       ($event == "NodeAddedEvent" || $event == "SceneCloseEvent" || $event == "SceneClosingEvent") } {
+       ($event == "NodeAddedEvent" || $event == "NodeRemovedEvent" || 
+         $event == "SceneCloseEvent" || $event == "SceneClosingEvent") } {
     $this updateSWidgets
   }
 
