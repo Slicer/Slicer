@@ -34,6 +34,7 @@ if { [itcl::find class RulerSWidget] == "" } {
 
     variable _rulerNode ""
     variable _rulerNodeObservation ""
+    variable _updating 0
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -111,6 +112,10 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
     return
   }
 
+  if { $_updating } {
+    return
+  }
+
   #
   # set the two endpoints in screen space
   #
@@ -122,11 +127,6 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   set xyz1 [$this rasToXYZ $ras1]
   set xyz2 [$this rasToXYZ $ras2]
 
-puts "updateMRMLFromWidget"
-puts "$this ras1 $ras1"
-puts "$this ras2 $ras2"
-puts "$this xyz1 $xyz1"
-puts "$this xyz2 $xyz2"
   # only show widget if on the correct slice
   $o(lineWidget) On
   foreach xyz [list $xyz1 $xyz2] {
@@ -155,6 +155,8 @@ itcl::body RulerSWidget::updateMRMLFromWidget { } {
     return
   }
 
+  set _updating 1
+
   #
   # set the two endpoints in screen space
   #
@@ -167,11 +169,6 @@ itcl::body RulerSWidget::updateMRMLFromWidget { } {
   set xyzpos2 [$lineRep GetPoint2DisplayPosition]
   set pos1 [$this xyzToRAS $xyzpos1]
   set pos2 [$this xyzToRAS $xyzpos2]
-puts "updateMRMLFromWidget"
-puts "$this xyzpos1 $xyzpos1"
-puts "$this xyzpos2 $xyzpos2"
-puts "$this raspos1 $pos1"
-puts "$this raspos2 $pos2"
   eval $_rulerNode SetPosition1 $pos1
   eval $_rulerNode SetPosition2 $pos2
   $_rulerNode DisableModifiedEventOff
@@ -179,9 +176,7 @@ puts "$this raspos2 $pos2"
 
   set ras1 [$_rulerNode GetPosition1]
   set ras2 [$_rulerNode GetPosition2]
-puts "after event"
-puts "$this ras1 $ras1"
-puts "$this ras2 $ras2"
+  set _updating 0
 }
 
 
