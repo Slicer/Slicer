@@ -164,6 +164,6 @@ void vtkMeasurementsAngleWidgetClass::SetCamera(vtkCamera *cam)
     // iterate through actors and set their cameras
     //GetPoint1HanldeRepresentation();
     // get the text actor and set the camera on it
-    //ar->GetTextActor()->SetCamera(cam);
+    ar->GetTextActor()->SetCamera(cam);
     }
 }

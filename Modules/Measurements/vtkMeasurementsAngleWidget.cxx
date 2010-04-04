@@ -1430,8 +1430,8 @@ void vtkMeasurementsAngleWidget::Update3DWidget(vtkMRMLMeasurementsAngleNode *ac
 
     // text colour, make arc match
     rgb1 = activeAngleNode->GetLabelTextColour();
-    //angleRepresentation->GetTextActor()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
-    //angleRepresentation->GetArc()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    angleRepresentation->GetTextActor()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+    angleRepresentation->GetArc()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
     
     // position
     // get any transform on the node
@@ -2421,9 +2421,8 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->TextColourButton->SetLabelPositionToRight();
   this->TextColourButton->SetLabelText("Set Text Color");
   this->TextColourButton->SetBalloonHelpString("set text color.");
-  // commented out until VTK supports getting the angle annotation text propery
-  //this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-  //               this->TextColourButton->GetWidgetName() );
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->TextColourButton->GetWidgetName() );
 
   //---
   //--- create distance annotation format menu button and set up menu
