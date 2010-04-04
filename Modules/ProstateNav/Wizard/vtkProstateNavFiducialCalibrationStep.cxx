@@ -80,7 +80,7 @@ vtkProstateNavFiducialCalibrationStep::vtkProstateNavFiducialCalibrationStep()
   this->FiducialWidthSpinBox=vtkSmartPointer<vtkKWSpinBoxWithLabel>::New();
   this->FiducialHeightSpinBox=vtkSmartPointer<vtkKWSpinBoxWithLabel>::New();
   this->FiducialDepthSpinBox=vtkSmartPointer<vtkKWSpinBoxWithLabel>::New();  
-  for (int i = 0; i < CALIB_MARKER_COUNT; i++)
+  for (unsigned int i = 0; i < CALIB_MARKER_COUNT; i++)
     {
     this->FiducialThresholdScale[i]=vtkSmartPointer<vtkKWScaleWithEntry>::New();
     this->JumpToFiducialButton[i]=vtkSmartPointer<vtkKWPushButton>::New();
@@ -267,7 +267,7 @@ void vtkProstateNavFiducialCalibrationStep::ShowFiducialSegmentParamsControls()
   //this->Script("pack %s -side top -anchor w -padx 2 -pady 2", this->RadiusSpinBox->GetWidgetName());
   this->Script("grid %s -row 1 -column 0 -columnspan 2 -padx 2 -pady 2", this->RadiusSpinBox->GetWidgetName());
 
-  for (int i = 0; i < CALIB_MARKER_COUNT; i++)
+  for (unsigned int i = 0; i < CALIB_MARKER_COUNT; i++)
     {
       {
         std::ostrstream ospack;
@@ -478,14 +478,14 @@ void vtkProstateNavFiducialCalibrationStep::ShowUserInterface()
   }
   else
   {
-    int fidCount=this->CalibrationPointListNode->GetNumberOfFiducials();
-    for (int i=0; i<CALIB_MARKER_COUNT && i<fidCount; i++)
+    unsigned int fidCount=this->CalibrationPointListNode->GetNumberOfFiducials();
+    for (unsigned int i=0; i<CALIB_MARKER_COUNT && i<fidCount; i++)
     {
       float* rasPoint=this->CalibrationPointListNode->GetNthFiducialXYZ(i);
       double rasPointDouble[3]={rasPoint[0], rasPoint[1], rasPoint[2]};
       robot->SetCalibrationMarker(i, rasPointDouble);
     }
-    if (this->CalibrationPointListNode->GetNumberOfFiducials()>=CALIB_MARKER_COUNT)
+    if (this->CalibrationPointListNode->GetNumberOfFiducials()>=(int)CALIB_MARKER_COUNT)
     {
       //Resegment(); no need to resegment, as the node modified event will trigger UpdateCalibration();
     }
@@ -550,7 +550,7 @@ void vtkProstateNavFiducialCalibrationStep::PopulateCalibrationResults()
     os << std::setiosflags(ios::fixed | ios::showpoint) << std::setprecision(2);
 
     int modifyOld=this->CalibrationPointListNode->StartModify();  
-    for (int i=0; i<CALIB_MARKER_COUNT; i++)
+    for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
     {
       double r, a, s;
       bool valid;
@@ -560,7 +560,7 @@ void vtkProstateNavFiducialCalibrationStep::PopulateCalibrationResults()
         os << std::endl << "  Marker "<<i+1<<": R="<<r<<" A="<<a<<" S="<<s;
       }
 
-      if (this->CalibrationPointListNode->GetNumberOfFiducials()<i+1)
+      if (this->CalibrationPointListNode->GetNumberOfFiducials()<(int)i+1)
       {    
         this->CalibrationPointListNode->AddFiducialWithLabelXYZSelectedVisibility(MARKER_LABEL_NAMES[i],r,a,s,true,true);
       }
@@ -598,7 +598,7 @@ void vtkProstateNavFiducialCalibrationStep::AddGUIObservers()
   this->ResegmentButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadCalibrationVolumeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     this->JumpToFiducialButton[i]->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
@@ -612,7 +612,7 @@ void vtkProstateNavFiducialCalibrationStep::RemoveGUIObservers()
   this->ResegmentButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadCalibrationVolumeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->VolumeSelectorWidget->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     this->JumpToFiducialButton[i]->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
@@ -711,7 +711,7 @@ void vtkProstateNavFiducialCalibrationStep::ProcessGUIEvents(vtkObject *caller,
     this->Resegment();
     }  
 
-  for (int i=0; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     if (this->JumpToFiducialButton[i] && this->JumpToFiducialButton[i] == vtkKWPushButton::SafeDownCast(caller) && (event == vtkKWPushButton::InvokedEvent))
     {
@@ -775,7 +775,7 @@ void vtkProstateNavFiducialCalibrationStep::Resegment()
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   std::ostrstream os;
 
-  if (this->CalibrationPointListNode->GetNumberOfFiducials()<CALIB_MARKER_COUNT)
+  if (this->CalibrationPointListNode->GetNumberOfFiducials()<(int)CALIB_MARKER_COUNT)
   {
     os << "Please define all calibration markers." << std::ends;
     wizard_widget->SetErrorText(os.str());
@@ -792,7 +792,7 @@ void vtkProstateNavFiducialCalibrationStep::Resegment()
   // gather information about thresholds
   double thresh[CALIB_MARKER_COUNT];
   int i=0;
-  for (i=0 ; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned i=0 ; i<CALIB_MARKER_COUNT; i++)
   {
     thresh[i] = this->FiducialThresholdScale[i]->GetValue();
   }
@@ -1208,7 +1208,7 @@ void vtkProstateNavFiducialCalibrationStep::EnableMarkerPositionEdit(bool enable
   {
     // Set fiducial placement mode
     GetLogic()->SetCurrentFiducialList(this->CalibrationPointListNode);
-    if (this->CalibrationPointListNode->GetNumberOfFiducials()<CALIB_MARKER_COUNT)
+    if (this->CalibrationPointListNode->GetNumberOfFiducials()<(int)CALIB_MARKER_COUNT)
     {
       GetLogic()->SetMouseInteractionMode(vtkMRMLInteractionNode::Place); 
     }
@@ -1260,7 +1260,7 @@ void vtkProstateNavFiducialCalibrationStep::UpdateCalibration()
   // Update marker positioning mode (as new points are added the mode should be changed from "place new points" to "edit points"
   EnableMarkerPositionEdit(this->EditMarkerPositionButton->GetSelectedState() == 1);
 
-  if (this->CalibrationPointListNode->GetNumberOfFiducials()<CALIB_MARKER_COUNT)
+  if (this->CalibrationPointListNode->GetNumberOfFiducials()<(int)CALIB_MARKER_COUNT)
   {
     // not enough fiducials to compute result
     return;
@@ -1271,7 +1271,7 @@ void vtkProstateNavFiducialCalibrationStep::UpdateCalibration()
 
 void vtkProstateNavFiducialCalibrationStep::JumpToFiducial(unsigned int fid1Index)
 {
-  if ((int)fid1Index>=CALIB_MARKER_COUNT)
+  if (fid1Index>=CALIB_MARKER_COUNT)
   {
     vtkErrorMacro("Invalid fiducial id "<<fid1Index);
     return;
