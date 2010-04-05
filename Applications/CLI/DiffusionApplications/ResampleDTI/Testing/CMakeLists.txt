@@ -14,9 +14,6 @@ set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 
 set (CLP ResampleDTI)
 add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
-  --compare 
-    ${MRML_TEST_DATA}/helix-DTI.nhdr
-    ${TEMP}/ResampleDTITest.nhdr
   ModuleEntryPoint
     --Reference ${MRML_TEST_DATA}/helix-DTI.nhdr
     --number_of_thread 0
