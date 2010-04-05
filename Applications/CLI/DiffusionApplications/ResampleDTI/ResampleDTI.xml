@@ -66,7 +66,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
         <channel>input</channel>
         <flag>-H</flag>
         <longflag>--defField</longflag>
-        <description>File containing the deformation field</description>
+        <description>File containing the deformation field (3D vector image containing vectors with 3 components)</description>
         <default></default>
      </image>
 </parameters>
@@ -97,7 +97,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>defaultPixelValue</name>
       <flag>-p</flag>
       <longflag>--default_pixel_value</longflag>
-      <description>Default pixel value for samples falling outside of the input region (log[value] is used if the Log-Euclidean Framework is used )</description>
+      <description>Default pixel value for samples falling outside of the input region</description>
       <label>Default Pixel Value</label>
       <default>1e-10</default>
     </double>
@@ -107,7 +107,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 <parameters>
   <label>Transform Parameters</label>
   <description>Parameters used to transform the input image into the output image</description>
-    <transform fileExtensions=".txt">
+    <transform>
       <name>transformationFile</name>
       <label>Transform Node</label>
       <flag>-f</flag>
@@ -161,7 +161,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>rotationPoint</name>
       <flag>-r</flag>
       <longflag>--rotation_point</longflag>
-      <description>Center of rotation</description>
+      <description>Center of rotation (only for rigid and affine transforms)</description>
       <label>Rotation Center</label>
       <default>0,0,0</default>
     </point>
@@ -169,7 +169,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>centeredTransform</name>
       <flag>-c</flag>
       <longflag>--centered_transform</longflag>
-      <description>Set the center of the transformation to the center of the input image</description>
+      <description>Set the center of the transformation to the center of the input image (only for rigid and affine transforms)</description>
       <label>Centered Transform</label>
       <default>false</default>
     </boolean>
