@@ -74,6 +74,7 @@ itcl::body RulerSWidget::constructor {sliceGUI} {
 
 itcl::body RulerSWidget::destructor {} {
   $o(lineWidget) Off
+  [$sliceGUI GetSliceViewer] RequestRender
 }
 
 #
