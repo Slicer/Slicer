@@ -188,7 +188,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <boolean>
       <name>ppd</name>
       <longflag>--ppd</longflag>
-      <description>Use the Preservation of the Principal Direction to compute the affine transform</description>
+      <description>Uses the Preservation of the Principal Direction to compute the affine transform</description>
       <label>Preservation of Principal Direction</label>
       <default>false</default>
     </boolean>
@@ -237,7 +237,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>splineOrder</name>
       <flag>-o</flag>
       <longflag>--spline_order</longflag>
-      <description>Spline Order</description>
+      <description>Spline Order (Spline order may be from 0 to 5)</description>
       <label>Spline Order</label>
       <default>3</default>
     </integer>
