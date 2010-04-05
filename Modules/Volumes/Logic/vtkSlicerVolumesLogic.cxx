@@ -883,7 +883,6 @@ CloneVolume (vtkMRMLScene *scene,
   // clone the display node
   vtkMRMLDisplayNode *clonedDisplayNode;
   vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  vtkMRMLScalarVolumeDisplayNode *scalarDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
   if ( labelDisplayNode )
     {
     clonedDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
