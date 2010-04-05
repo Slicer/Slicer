@@ -390,7 +390,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   foreach {w h} [$renderer0 GetSize] {}
   foreach {rox roy} [$pokedRenderer GetOrigin] {}
 
-#  $this queryLayers $x $y $z   # moved to inside updateAnnotation*
   set xyToRAS [$_sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y $z 1]
 
@@ -633,7 +632,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
 
-      #puts "EnterEvent."
       set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
@@ -653,7 +651,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeaveEvent" { 
-      #puts "LeaveEvent"
       set _inWidget 0
 
       set sliceGUIs [$this getLinkedSliceGUIs]
@@ -669,11 +666,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         if { [$this isCompareViewMode] == 1 } {
           $snode SetSliceSpacingModeToAutomatic
         }
-          
         [$gui GetSliceViewer] RequestRender
       }
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
-      #puts "EndLeaveEvent"
     }
     "TimerEvent" { }
     "KeyPressEvent" { 
@@ -806,7 +801,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "ExitEvent" { }
   }
 
-  if { $annotationsUpdated == false } {
+  if { $annotationsUpdated == false && [$this getInWidget] } {
       set xyToRAS [$_sliceNode GetXYToRAS]
       set ras [$xyToRAS MultiplyPoint $x $y $z 1]
       foreach {r a s t} $ras {}
@@ -816,7 +811,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
-#puts "updateAnnotations"
 
   $this updateStatusAnnotation $r $a $s
     
@@ -964,7 +958,7 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
 }
 
 itcl::body SliceSWidget::updateAnnotation {r a s} {
-#puts "--updateAnnotation--"
+
   $this updateStatusAnnotation $r $a $s
 
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
@@ -1088,7 +1082,6 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
 }
 
 itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
-#puts "updateStatusAnnotation"
 
   # display a subset of the annotation in the status bar because we may not
   # show the information while moving the mouse
@@ -1194,7 +1187,6 @@ itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
 
   set statusText "$backgroundname $rasText$ijkText$labelText$voxelText"
   [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $statusText
-
 }
 
 
@@ -1428,11 +1420,9 @@ itcl::body SliceSWidget::requestAnnotation { } {
                                 [$sliceGUI GetSliceViewer] RequestRender; \
                                 $this cancelAnnotation; \
                               } "]
-    #puts "requestAnnotation $_annotationTaskID"
 }
 
 itcl::body SliceSWidget::cancelAnnotation { } {
-    #puts "cancelAnnotation $_annotationTaskID"
     if {$_annotationTaskID != ""} {
         after cancel $_annotationTaskID
         set _annotationTaskID ""
