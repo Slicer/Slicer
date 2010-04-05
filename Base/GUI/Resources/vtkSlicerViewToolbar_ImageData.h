@@ -198,6 +198,22 @@ static const unsigned char image_ToolbarTabbedView[] =
 
 /* 
  * Resource generated for file:
+ *    ToolbarSideBySideComparisonView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarSideBySideComparisonView_width          = 21;
+static const unsigned int  image_ToolbarSideBySideComparisonView_height         = 21;
+static const unsigned int  image_ToolbarSideBySideComparisonView_pixel_size     = 3;
+static const unsigned long image_ToolbarSideBySideComparisonView_length         = 136;
+static const unsigned long image_ToolbarSideBySideComparisonView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarSideBySideComparisonView[] = 
+  "eNpjYmJgogz96GXChQjKUo7WIYHnT68gcwnKIitYv379OlRAUJaKtmMCgrJoCp4+voxHO6"
+  "bsUPc7xEysJEFZ6ob8wMY7SbYzMFBkO6Z2NPOZmRkpsR1NO6m2E+N3gggPAABTWZxx";
+
+
+
+/* 
+ * Resource generated for file:
  *    ToolbarComparisonView.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarCompareView_width          = 21;

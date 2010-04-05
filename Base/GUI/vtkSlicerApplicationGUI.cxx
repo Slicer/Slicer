@@ -675,6 +675,10 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
         {
         return ( "Conventional layout" );
         }
+      else if ( layout = vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView )
+        {
+        return ( "Side-by-side Compare layout" );
+        }
       else if ( layout == vtkMRMLLayoutNode::SlicerLayoutCompareView)
         {
         return ( "Compare layout" );
@@ -900,6 +904,15 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
 #endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );
+    }
+  else if ( (target == vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView ) )
+    {
+    // TO DO
+#ifndef TOOLBAR_DEBUG
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
+    this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView, NULL );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView);
     }
   else if ( (target == vtkMRMLLayoutNode::SlicerLayoutCompareView) )
     {
@@ -2620,6 +2633,9 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
         case vtkMRMLLayoutNode::SlicerLayoutLightboxView:
           this->PackLightboxView ( );
           break;
+        case vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView:
+          this->PackSideBySideCompareView();
+          break;
         case vtkMRMLLayoutNode::SlicerLayoutCompareView:
           this->PackCompareView();
           break;
@@ -2674,6 +2690,9 @@ void vtkSlicerApplicationGUI::UnpackMainViewer ( )
           break;
         case vtkMRMLLayoutNode::SlicerLayoutLightboxView:
           this->UnpackLightboxView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView:
+          this->UnpackSideBySideCompareView();
           break;
         case vtkMRMLLayoutNode::SlicerLayoutCompareView:
           this->UnpackCompareView();
@@ -3231,6 +3250,183 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
       }
     layout->DisableModifiedEventOff();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PackSideBySideCompareView()
+{
+    if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
+
+
+    // Hide the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(0);
+
+    // Show the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
+
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // insert a number of new main slice viewers according to user's input
+    char buf[20];
+    for ( int i = 0; i < layout->GetNumberOfCompareViewRows(); i++)
+      {
+      sprintf(buf, "Compare%d", i);
+      this->AddMainSliceGUI(buf);
+
+      //--- Configure the lightbox niside each viewer by
+      //--- and triggering the SliceControllerWidget's event path.
+      int numRows = layout->GetNumberOfCompareViewLightboxRows();
+      int numColumns = layout->GetNumberOfCompareViewLightboxColumns();
+      vtkSlicerSliceGUI *g0 = this->SlicesGUI->GetSliceGUI(buf);
+      if (g0 != NULL)
+        {
+        //--- go thru node to set lightbox rows and columns
+        if ( g0->GetLogic() != NULL )
+          {
+          if ( g0->GetLogic()->GetSliceNode() != NULL )
+            {
+            g0->GetLogic()->GetSliceNode()->SetLayoutGrid ( numRows, numColumns );
+            }
+          }
+        }
+      }
+
+    // configure the new layout
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
+    this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+    this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+
+    const char *layoutname = NULL;
+    int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
+    int ncount = 0;
+    vtkSlicerSliceGUI *g;
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        g = this->SlicesGUI->GetFirstSliceGUI();
+        layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        g = this->SlicesGUI->GetNextSliceGUI(layoutname);
+        layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
+        }
+
+      if ( strcmp(layoutname, "Red") == 0 ||
+           strcmp(layoutname, "Yellow") == 0 ||
+           strcmp(layoutname, "Green") == 0)
+        {
+        if (g->GetSliceNode())
+          {
+          g->GetSliceNode()->SetSliceVisible(0);
+          }
+        continue;
+        }
+      else
+        {
+        g->GridGUI( this->GetGridFrame2( ), 0, ncount );
+        g->GetSliceViewer()->SetWidth(geom->GetDefaultSliceGUIFrameWidth());
+        this->Script ("grid columnconfigure %s %d -weight 1", this->GridFrame2->GetWidgetName(), ncount );
+
+        vtkMRMLSliceCompositeNode *compNode = g->GetLogic()->GetSliceCompositeNode();
+        if (compNode && compNode->GetBackgroundVolumeID() == 0)
+          {
+          // no volume assigned. use the background of Red viewer for
+          // first compare viewer, the foreground of Red Viewer for
+          // bsecond compare viewer, and rest like the first
+          vtkSlicerSliceGUI *red = this->SlicesGUI->GetSliceGUI("Red");
+          if ((ncount == 0 || ncount > 2) && red && red->GetLogic() && red->GetLogic()->GetSliceCompositeNode() && red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID())
+            {
+            g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID());
+            }
+          else if (ncount == 1 && red && red->GetLogic() && red->GetLogic()->GetSliceCompositeNode() && red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID())
+            {
+            g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID());
+            }
+          }
+
+        ncount++;
+        //--- if more compare viewers were created previously,
+        //--- but fewer are requested in this layout change,
+        //--- then we display only a subset of those already created.
+        if ( ncount == layout->GetNumberOfCompareViewRows() )
+          {
+          break;
+          }
+        }
+      }
+
+#ifndef SLICESCONTROL_DEBUG
+    this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 1 );
+    int cur = layout->GetViewArrangement();
+    if ( cur != vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView )
+      {
+      layout->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView );
+      }
+    layout->DisableModifiedEventOff();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::UnpackSideBySideCompareView()
+{
+  // Unpack the 3D viewer widget
+  // (we don't know if it is the active widget or not)
+  if ( this->GridFrame1 )
+    {
+    this->GridFrame1->UnpackChildren();
+    }
+
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+
+    int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
+    const char *layoutname = NULL;
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        g = this->SlicesGUI->GetFirstSliceGUI();
+        layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        g = this->SlicesGUI->GetNextSliceGUI(layoutname);
+        layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
+        }
+
+      if ( strncmp(layoutname, "Compare", 7) == 0 )
+        {
+          g->UngridGUI();
+        }
+      }
+    }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
     }
 }
 
