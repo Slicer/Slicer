@@ -119,7 +119,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   // add the labels first
   vtkMRMLColorTableNode *labelsNode = vtkMRMLColorTableNode::New();
   labelsNode->SetTypeToLabels();
-  //labelsNode->SetAttribute("Category", "Discrete");
+  labelsNode->SetAttribute("Category", "Discrete");
   labelsNode->SaveWithSceneOff();
   labelsNode->SetName(labelsNode->GetTypeAsString());      
   std::string labelsID = std::string(this->GetDefaultColorTableNodeID(labelsNode->GetType()));
@@ -381,12 +381,13 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   //  file based labels
   // first check for any new ones
   this->FindColorFiles();
+
+  // load the one from the default resources directory
   vtkDebugMacro("AddDefaultColorNodes: found " <<  this->ColorFiles.size() << " default color files");
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
     vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
     ctnode->SetTypeToFile();
-    ctnode->SetAttribute("Category", "Default Labels from File");
     ctnode->SaveWithSceneOff();
     ctnode->SetScene(this->GetMRMLScene());
     // make a storage node
@@ -399,7 +400,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     colorStorageNode2->Delete();
     ctnode->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
-    std::string name = vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str();
+    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(ctnode->GetStorageNode()->GetFileName()).c_str();
     std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
     ctnode->SetName(uname.c_str());
     vtkDebugMacro("AddDefaultColorFiles: About to read file " << this->ColorFiles[i].c_str());
@@ -419,6 +420,20 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       else
         {
         vtkDebugMacro("AddDefaultColorFiles: node " << id << " already in scene");
+        }
+
+      // check if this is the new default one read in from
+      // Slicer3_2010_Default_Brain_Lut.txt
+      if (strcmp(ctnode->GetName(),"Slicer3_2010_Default_Brain_Lut") == 0)
+        {
+        vtkDebugMacro("Found default brain lut node");
+        // remove the category attribute so it floats to the top of the node
+        // selector
+        // can't unset an attribute, so just don't set it at all
+        }
+      else
+        {
+        ctnode->SetAttribute("Category", "Default Labels from File");
         }
       delete [] colorNodeID;
       }
@@ -450,7 +465,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     colorStorageNode2->Delete();
     ctnode->GetStorageNode()->SetFileName(this->UserColorFiles[i].c_str());
-    std::string name = vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str();
+    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(ctnode->GetStorageNode()->GetFileName()).c_str();
     std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
     ctnode->SetName(uname.c_str());
     vtkDebugMacro("AddDefaultColorFiles: About to read user file " << this->UserColorFiles[i].c_str());
