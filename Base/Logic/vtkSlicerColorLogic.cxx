@@ -55,8 +55,9 @@ vtkSlicerColorLogic::~vtkSlicerColorLogic()
   // remove the default color nodes
   this->RemoveDefaultColorNodes();
 
-  // clear out the list of files
+  // clear out the lists of files
   this->ColorFiles.clear();
+  this->UserColorFiles.clear();
 
   if (this->UserColorFilePaths)
     {
@@ -93,6 +94,11 @@ void vtkSlicerColorLogic::PrintSelf(ostream& os, vtkIndent indent)
   for (int i = 0; i << this->ColorFiles.size(); i++)
     {
     os << indent.GetNextIndent() << i << " " << this->ColorFiles[i].c_str() << "\n";
+    }
+  os << indent << "User Color Files:\n";
+  for (int i = 0; i << this->UserColorFiles.size(); i++)
+    {
+    os << indent.GetNextIndent() << i << " " << this->UserColorFiles[i].c_str() << "\n";
     }
 }
 
@@ -251,7 +257,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   // surface colours
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   node->SetTypeToFile();
-  node->SetAttribute("Category", "Labels from File");
+  node->SetAttribute("Category", "FreeSurfer");
   node->SaveWithSceneOff();
   node->SetScene(this->GetMRMLScene());
   // make a storage node
@@ -375,12 +381,12 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   //  file based labels
   // first check for any new ones
   this->FindColorFiles();
-  vtkDebugMacro("AddDefaultColorNodes: found " <<  this->ColorFiles.size() << " color files");
+  vtkDebugMacro("AddDefaultColorNodes: found " <<  this->ColorFiles.size() << " default color files");
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
     vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
     ctnode->SetTypeToFile();
-    ctnode->SetAttribute("Category", "Labels from File");
+    ctnode->SetAttribute("Category", "Default Labels from File");
     ctnode->SaveWithSceneOff();
     ctnode->SetScene(this->GetMRMLScene());
     // make a storage node
@@ -419,6 +425,57 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     else
       {
       vtkWarningMacro("Unable to read color file " << this->ColorFiles[i].c_str());
+      }
+    ctnode->Delete();
+    }
+
+  // now add ones in files that the user pointed to, these ones are not hidden
+  // from the editors
+  vtkDebugMacro("AddDefaultColorNodes: found " <<  this->UserColorFiles.size() << " user color files");
+   for (unsigned int i = 0; i < this->UserColorFiles.size(); i++)
+    {
+    vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
+    ctnode->SetTypeToFile();
+    ctnode->SetAttribute("Category", "Auto Loaded User Color Files");
+    ctnode->SaveWithSceneOn();
+    ctnode->HideFromEditorsOff();
+    ctnode->SetScene(this->GetMRMLScene());
+    // make a storage node
+    vtkMRMLColorTableStorageNode *colorStorageNode2 = vtkMRMLColorTableStorageNode::New();
+    colorStorageNode2->SaveWithSceneOff();
+    if (this->GetMRMLScene())
+      {
+      this->GetMRMLScene()->AddNode(colorStorageNode2);
+      ctnode->SetAndObserveStorageNodeID(colorStorageNode2->GetID());
+      }
+    colorStorageNode2->Delete();
+    ctnode->GetStorageNode()->SetFileName(this->UserColorFiles[i].c_str());
+    std::string name = vtksys::SystemTools::GetFilenameName(ctnode->GetStorageNode()->GetFileName()).c_str();
+    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    ctnode->SetName(uname.c_str());
+    vtkDebugMacro("AddDefaultColorFiles: About to read user file " << this->UserColorFiles[i].c_str());
+    if (ctnode->GetStorageNode()->ReadData(ctnode))
+      {
+      vtkDebugMacro("AddDefaultColorFiles: finished reading user file " << this->UserColorFiles[i].c_str());
+      const char* colorNodeID = this->GetDefaultFileColorNodeID(this->UserColorFiles[i].c_str());
+      std::string id =  std::string(colorNodeID);
+
+      ctnode->SetSingletonTag(id.c_str());
+      if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
+        {
+        this->GetMRMLScene()->RequestNodeID(ctnode, id.c_str());
+        this->GetMRMLScene()->AddNode(ctnode);
+        vtkDebugMacro("AddDefaultColorFiles: Read and added user file node: " <<  this->UserColorFiles[i].c_str());
+        }
+      else
+        {
+        vtkDebugMacro("AddDefaultColorFiles: node " << id << " already in scene");
+        }
+      delete [] colorNodeID;
+      }
+    else
+      {
+      vtkWarningMacro("Unable to read user color file " << this->UserColorFiles[i].c_str());
       }
     ctnode->Delete();
     }
@@ -529,6 +586,14 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
     node =  vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFileColorNodeID(this->ColorFiles[i].c_str())));
+    if (node != NULL)
+      {
+      this->GetMRMLScene()->RemoveNode(node);
+      }
+    }
+  for (unsigned int i = 0; i < this->UserColorFiles.size(); i++)
+    {
+    node =  vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFileColorNodeID(this->UserColorFiles[i].c_str())));
     if (node != NULL)
       {
       this->GetMRMLScene()->RemoveNode(node);
@@ -694,8 +759,17 @@ void vtkSlicerColorLogic::FindColorFiles()
   for (unsigned int d = 0; d < DirectoriesToCheck.size(); d++)
     {
     vtksys_stl::string dirString = DirectoriesToCheck[d];
-    vtkDebugMacro("\nFindColorFiles: checking for colour files in dir " << d << " = " << dirString.c_str());
-
+    vtkDebugMacro("FindColorFiles: checking for colour files in dir " << d << " = " << dirString.c_str());
+    bool userPath = false;
+    if (dirString.compare(resourcesDirString) == 0)
+      {
+      vtkDebugMacro("FindColorFiles: Checking resources dir " << dirString);
+      }
+    else
+      {
+      vtkDebugMacro("FindColorFiles: Checking user specified path: " << dirString);
+      userPath = true;
+      }
     filesVector.clear();
     filesVector.push_back(dirString);
     filesVector.push_back(vtksys_stl::string("/"));
@@ -739,7 +813,16 @@ void vtkSlicerColorLogic::FindColorFiles()
           if (colorStorageNode->SupportedFileType(fileToCheck.c_str()))
             {
             vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
-            this->AddColorFile(fileToCheck.c_str());
+            if (userPath)
+              {
+              // add it to the user list
+              this->AddColorFile(fileToCheck.c_str(), &(this->UserColorFiles));
+              }
+            else
+              {
+              // add it to the default list
+              this->AddColorFile(fileToCheck.c_str(), &(this->ColorFiles));
+              }
             }
           else
             {
@@ -767,25 +850,39 @@ void vtkSlicerColorLogic::FindColorFiles()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerColorLogic::AddColorFile(const char *fileName)
+void vtkSlicerColorLogic::AddColorFile(const char *fileName, std::vector<std::string> *Files)
 {
   if (fileName == NULL)
     {
     vtkErrorMacro("AddColorFile: can't add a null color file name");
     return;
     }
+  if (Files == NULL)
+    {
+    vtkErrorMacro("AddColorFile: no array to which to add color file to!");
+    return;
+    }
   // check if it's in the vector already
   std::string fileNameStr = std::string(fileName);
-  for (unsigned int i = 0; i <  this->ColorFiles.size(); i++)
+  for (unsigned int i = 0; i <  Files->size(); i++)
     {
-    if (this->ColorFiles[i] == fileNameStr)
+    std::string fileToCheck;
+    try
       {
-      vtkDebugMacro("\nAddColorFile: already have this file at index " << i << ", not adding it again: " << fileNameStr.c_str());
+      fileToCheck = Files->at(i);
+      }
+    catch (...)
+      {
+      // an out_of_range exception can be thrown.
+      }
+    if (fileToCheck.compare(fileNameStr) == 0)
+      {
+      vtkDebugMacro("AddColorFile: already have this file at index " << i << ", not adding it again: " << fileNameStr.c_str());
       return;
       }
     }
-  vtkDebugMacro("\nAddColorFile: adding file name to ColorFiles: " << fileNameStr.c_str());
-  this->ColorFiles.push_back(fileNameStr);
+  vtkDebugMacro("AddColorFile: adding file name to Files: " << fileNameStr.c_str());
+  Files->push_back(fileNameStr);
 }
 
 //----------------------------------------------------------------------------
