@@ -966,6 +966,7 @@ void vtkSlicerColorEditWidget::SaveColorTableNode()
       }
     this->MRMLScene->AddNode(snode);
     node->SetAndObserveStorageNodeID(snode->GetID());
+    snode->Delete();
     }
 
   // over ride the path with the table name
@@ -995,7 +996,7 @@ void vtkSlicerColorEditWidget::SaveColorTableNode()
   //this->SetColorNodeID(node->GetID());
   
   // clean up
-  snode->Delete();
+  //snode->Delete();
   node->Delete();
 }
 
