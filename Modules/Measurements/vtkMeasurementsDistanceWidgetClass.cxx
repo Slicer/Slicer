@@ -138,6 +138,6 @@ void vtkMeasurementsDistanceWidgetClass::SetCamera(vtkCamera *cam)
     {
     // iterate through actors and set their cameras
     // get the text actor and set the camera on it
-    // ar->GetTextActor()->SetCamera(cam);
+    ar->GetTextActor()->SetCamera(cam);
     }
 }
