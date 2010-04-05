@@ -1932,6 +1932,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->ReportButton->SetParent ( controlAllFrame->GetFrame() );
   this->ReportButton->Create ( );
   this->ReportButton->GetLoadSaveDialog()->SetFileTypes(" { {CSV} {.csv} } { {Text} {.txt} }");
+  this->ReportButton->GetLoadSaveDialog()->SaveDialogOn();
 
 //  this->ReportButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerSaveIcon() );
 //  this->ReportButton->SetReliefToFlat();
