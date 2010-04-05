@@ -25,9 +25,6 @@
 #include "vtkSlicerColorGUI.h"
 
 #include "vtkKWPushButton.h"
-#include "vtkKWLoadSaveButton.h"
-#include "vtkKWLoadSaveButtonWithLabel.h"
-#include "vtkKWLoadSaveDialog.h"
 
 #include "vtkKWColorPickerDialog.h"
 #include "vtkKWColorPickerWidget.h"
@@ -48,7 +45,6 @@ vtkSlicerColorGUI::vtkSlicerColorGUI ( )
   BIRNLabel = NULL;
   this->ColorDisplayWidget = NULL;
   this->ColorEditWidget = NULL;
-  this->LoadColorFileButton = NULL;
 }
 
 
@@ -94,11 +90,6 @@ vtkSlicerColorGUI::~vtkSlicerColorGUI ( )
     this->BIRNLabel->Delete();
     this->BIRNLabel = NULL;
     }
-  if (this->LoadColorFileButton )
-    {
-    this->LoadColorFileButton->SetParent(NULL );
-    this->LoadColorFileButton->Delete ( );
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -115,16 +106,6 @@ void vtkSlicerColorGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerColorGUI::RemoveGUIObservers ( )
 {
   vtkDebugMacro("vtkSlicerColorGUI: RemoveGUIObservers\n");
-  if (this->LoadColorFileButton)
-    {
-    this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent,  (vtkCommand *)this->GUICallbackCommand );
-    }
-  /*
-  if (this->GetApplication())
-    {
-    this->GetApplication()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  */
 }
 
 
@@ -132,16 +113,6 @@ void vtkSlicerColorGUI::RemoveGUIObservers ( )
 void vtkSlicerColorGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkSlicerColorGUI: AddGUIObservers\n");
-  this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent , (vtkCommand *)this->GUICallbackCommand );
-
-  /*
-  if (this->GetApplication() != NULL)
-    {
-    // watch the application for modified events as they may signal the user set
-    // color file paths changing
-    this->GetApplication()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  */
 }
 
 
@@ -150,26 +121,6 @@ void vtkSlicerColorGUI::AddGUIObservers ( )
 void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void * vtkNotUsed(callData) )
 {
-  if (this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event ==  vtkKWTopLevel::WithdrawEvent )
-    {
-    // If a file has been selected for loading...
-    const char *fileName = this->LoadColorFileButton->GetWidget()->GetFileName();
-    if ( fileName )
-      {
-      vtkMRMLColorNode *node = this->Logic->LoadColorFile(fileName);
-      if (!node)
-        {
-        vtkErrorMacro("ProcessGUIEvents: unable to read file " << fileName);
-        }
-      else
-        {
-        this->ColorDisplayWidget->SetColorNode(node);
-        node->Delete();
-        }
-      this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      }
-    return;
-    }
   vtkSlicerApplication *app  = vtkSlicerApplication::SafeDownCast(caller);
   if (this->GetApplication() == app && app != NULL &&
       event == vtkCommand::ModifiedEvent)
@@ -297,7 +248,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
         }
       }
     }
-  std::string helpString = std::string("The Color Module manages color look up tables.\n\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discrete tables, such as those read in from a file.\n\n\n**Load:**\nYou can specify a directory from which to read color files using the View -> Application Settings window, Module Settings frame, in teh User defined color file paths section. The color file format is a plain text file with the .txt or .ctbl extension. Each line in the file has:\nlabel\tname\tR\tG\tB\tA\nlabel is an integer, name a string, and RGBA are 0-255.\n\nUsers are only allowed to edit User type tables. Use the Edit frame to create a new color table, and save it to a file using the File, Save interface.\n\n") + nodeNamesDescriptions;
+  std::string helpString = std::string("The Color Module manages color look up tables.\n\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discrete tables, such as those read in from a file.\n\n\nYou can specify a directory from which to read color files using the View -> Application Settings window, Module Settings frame, in teh User defined color file paths section. The color file format is a plain text file with the .txt or .ctbl extension. Each line in the file has:\nlabel\tname\tR\tG\tB\tA\nlabel is an integer, name a string, and RGBA are 0-255.\n\nUsers are only allowed to edit User type tables. Use the Edit frame to create a new color table (you can copy from an existing one), and save it to a file using the File, Save interface.\n\n") + nodeNamesDescriptions;
   const char *help = helpString.c_str();
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Color" );
@@ -325,31 +276,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
   app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", this->NAMICLabel->GetWidgetName());
   app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w",  this->NACLabel->GetWidgetName());
   app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  this->BIRNLabel->GetWidgetName());
-  app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  this->NCIGTLabel->GetWidgetName());                  
-
-  // --
-  // LOAD FRAME
-  vtkSlicerModuleCollapsibleFrame *loadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  loadFrame->SetParent (page);
-  loadFrame->Create();
-  loadFrame->SetLabelText("Load");
-  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-              loadFrame->GetWidgetName(),
-              this->UIPanel->GetPageWidget("Color")->GetWidgetName());
-
-  // add a file browser 
-  this->LoadColorFileButton = vtkKWLoadSaveButtonWithLabel::New ( );
-  this->LoadColorFileButton->SetParent ( loadFrame->GetFrame() );
-  this->LoadColorFileButton->Create ( );
-  this->LoadColorFileButton->SetWidth(20);
-  this->LoadColorFileButton->GetWidget()->SetText ("Select Color File");
-  this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open Color File");
-  this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-                                                                         "{ {Color text} {*.txt} } { {Color table} {*.ctbl} }");
-  this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
-                                                                                         "OpenPath");
-  app->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-              this->LoadColorFileButton->GetWidgetName());
+  app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  this->NCIGTLabel->GetWidgetName());
   
   // ---
   // DISPLAY FRAME            
@@ -399,7 +326,6 @@ void vtkSlicerColorGUI::BuildGUI ( )
 
   editFrame->Delete();
   displayFrame->Delete ( );
-  loadFrame->Delete();
 }
 
 //---------------------------------------------------------------------------

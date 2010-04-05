@@ -21,8 +21,6 @@ class vtkSlicerColorDisplayWidget;
 class vtkSlicerColorEditWidget;
 class vtkKWMessage;
 class vtkKWPushButton;
-class vtkKWLoadSaveButtonWithLabel;
-class vtkKWLoadSaveButton;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
 {
 public:
@@ -83,10 +81,6 @@ public:
     virtual void Exit ( );
 
     /// 
-    /// Get methods on class members (no Set methods required)
-    vtkGetObjectMacro ( LoadColorFileButton, vtkKWLoadSaveButtonWithLabel );
-
-    /// 
     /// Add Slicer mrml colour table nodes to the application's color picker dialog as swatches. Returns 1 on failure, 0 on success.
     int AddLUTsToColorDialog();
 
@@ -115,10 +109,6 @@ protected:
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
-
-    /// 
-    /// Trigger loading a color file
-    vtkKWLoadSaveButtonWithLabel *LoadColorFileButton;
     
 private:
     vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); /// Not implemented.
