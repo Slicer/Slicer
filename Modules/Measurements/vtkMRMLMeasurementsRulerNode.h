@@ -21,8 +21,8 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsRulerNode : public vtkMRMLMeasu
   vtkGetVector3Macro(Position2, double);
   vtkSetVector3Macro(Position2, double);
 
-  // get/set the current distance between the two end points. GetDistance
-  // calculates it and sets the Distance class variable.
+  /// get/set the current distance between the two end points. GetDistance
+  /// calculates it and sets the Distance class variable.
   double GetDistance();
   vtkSetMacro(Distance, double);
 
