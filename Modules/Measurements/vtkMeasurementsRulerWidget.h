@@ -117,10 +117,10 @@ public:
   /// check scene to make sure that have a widget for each ruler node, and no extra widgets...
   void Update3DWidgetsFromMRML();
 
-  // Description:
-  // when change the colours of the end points of the ruler, update the label
-  // colours as a hint. If the end point colours are white, use a very very
-  // light grey instead
+
+  /// when change the colours of the end points of the ruler, update the label
+  /// colours as a hint. If the end point colours are white, use a very very
+  /// light grey instead
   void UpdateLabelsFromNode(vtkMRMLMeasurementsRulerNode *activeRulerNode);
 
   ///

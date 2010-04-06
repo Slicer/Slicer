@@ -83,6 +83,8 @@ vtkMRMLMeasurementsRulerNode::vtkMRMLMeasurementsRulerNode()
 
   this->ModelID1 = NULL;
   this->ModelID2 = NULL;
+
+  this->Distance = 0.0;
 }
 
 
@@ -181,7 +183,7 @@ void vtkMRMLMeasurementsRulerNode::ReadXMLAttributes(const char** atts)
         this->Position2[i] = val;
         }
       }
-     else if (!strcmp(attName, "distance"))
+    else if (!strcmp(attName, "distance"))
       {
       std::stringstream ss;
       double val;
@@ -337,7 +339,7 @@ void vtkMRMLMeasurementsRulerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Distance Annotation Format: " << this->DistanceAnnotationFormat << "\n";
   os << indent << "Distance Annotation Scale: " << this->DistanceAnnotationScale[0] << " " << this->DistanceAnnotationScale[1] << " " << this->DistanceAnnotationScale[2] << "\n";
   os << indent << "Distance Annotation Visibility: " << this->DistanceAnnotationVisibility << "\n";
-  os << indent << "Current Distance Annotation: " << this->CurrentDistanceAnnotation << "\n";
+  os << indent << "Current Distance Annotation: " << (this->CurrentDistanceAnnotation != NULL ? this->CurrentDistanceAnnotation : "NULL") << "\n";
   
   os << indent << "Point Colour: " << this->PointColour[0] << " " << this->PointColour[1] << " " << this->PointColour[2] << "\n";
   os << indent << "Point 2 Colour: " << this->Point2Colour[0] << " " << this->Point2Colour[1] << " " << this->Point2Colour[2] << "\n";
