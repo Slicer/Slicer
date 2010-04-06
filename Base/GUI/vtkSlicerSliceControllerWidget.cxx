@@ -2028,8 +2028,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   // Is the slice node a CompareView node?
   bool isCompareView = false;
-  if (this->SliceNode
-      && (strncmp(this->SliceNode->GetSingletonTag(), "Compare", 7) == 0))
+  if (this->SliceNode && (strncmp(this->SliceNode->GetSingletonTag(), "Compare", 7) == 0))
     {
     isCompareView = true;
     }
@@ -3029,7 +3028,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
  
     // if slice viewers are linked in CompareView layout mode,
     // modify all slice logic to synch all Compare Slice viewers
-    if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
+    if ( link && sgui0 &&
+         ((layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView) ||
+          (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView)) )
       {
       modified |= this->UpdateCompareView( offset );
       }
@@ -3063,7 +3064,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       // if slice viewers are linked in CompareView layout mode,
       // modify all slice logic to synch all Compare Slice viewers
-      if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
+      if ( link && sgui0 &&
+         ((layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView) ||
+          (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView)) )
         {
         modified |= this->UpdateCompareView( newValue );
         }
