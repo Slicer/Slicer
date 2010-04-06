@@ -89,3 +89,10 @@ target_link_libraries(${lib_name}
 
 slicer3_install_modules(${lib_name})
 
+# --------------------------------------------------------------------------
+# Testing 
+
+if(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+endif(BUILD_TESTING)
+
