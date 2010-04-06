@@ -479,9 +479,25 @@ void vtkSlicerMRMLTreeWidget::HardenTransformCallback(const char *id)
     return;
     }
 
-  if (!tnode->IsTransformToWorldLinear() && !tnode->CanApplyNonLinearTransforms())
+  if (!tnode->IsTransformToWorldLinear() && !tbnode->CanApplyNonLinearTransforms())
     {
-    vtkErrorMacro(<<"Can't apply non linear transform to this node.");
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  this->GetParent() );
+    dialog->SetStyleToMessage();
+    std::string msg = std::string("Can't apply non linear transform to the node: ") +
+      std::string(tbnode->GetName()) +
+      std::string(", of type: ") + 
+      std::string(tbnode->GetClassName());
+    dialog->SetText(msg.c_str());
+    dialog->Create( );
+    vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
+    dialog->SetMasterWindow( app->GetApplicationGUI()->GetMainSlicerWindow() );
+
+    dialog->ModalOn();
+    dialog->Invoke();
+    dialog->Delete();
+
+    //vtkErrorMacro(<<"Can't apply non linear transform to this node.");
     return;
     }
 
@@ -498,7 +514,7 @@ void vtkSlicerMRMLTreeWidget::HardenTransformCallback(const char *id)
     {
     vtkGeneralTransform* hardeningTransform = vtkGeneralTransform::New();
     tnode->GetTransformToWorld(hardeningTransform);
-    tnode->ApplyTransform(hardeningTransform);
+    tbnode->ApplyTransform(hardeningTransform);
     hardeningTransform->Delete();
     }
 
