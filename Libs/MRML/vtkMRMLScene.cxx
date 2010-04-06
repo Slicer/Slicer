@@ -1587,6 +1587,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
+  os << indent << "Version = " << (this->GetVersion() ? this->GetVersion() : "NULL") << "\n";
   os << indent << "ErrorCode = " << this->ErrorCode << "\n";
   os << indent << "URL = " << this->GetURL() << "\n";
   os << indent << "Root Directory = " << this->GetRootDirectory() << "\n";
@@ -2231,7 +2232,12 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
       return 0;
       }
     }
-  
+
+  // check for a symbolic link
+  if (vtksys::SystemTools::FileIsSymlink(filepath))
+    {
+    vtkDebugMacro("IsFilePathRelative: have a path with a symlink: " << filepath);
+    }
   vtksys_stl::vector<vtksys_stl::string> components;
   vtksys::SystemTools::SplitPath((const char*)filepath, components);
   if (components[0] == "") 
