@@ -31,10 +31,18 @@ public:
   vtkGetObjectMacro(Model2PointPlacer, vtkPolygonalSurfacePointPlacer);
   vtkGetObjectMacro(ModelCenterPointPlacer, vtkPolygonalSurfacePointPlacer);
 
+  vtkBooleanMacro( MadeNewHandleProperties, int);
+  vtkGetMacro ( MadeNewHandleProperties, int );
+  vtkSetMacro ( MadeNewHandleProperties, int );
+
   ///
   /// set the camera on the widget's text actor
   void SetCamera(vtkCamera *cam);
-  
+
+  ///
+  /// make new handle properties so can set them to different colours
+  void MakeNewHandleProperties();
+
 protected:
   /// 
   /// the representation for the angle end point handles
@@ -45,7 +53,7 @@ protected:
   /// 
   /// the top level widget used to bind together the end points and the line
   vtkAngleWidget *Widget;
-  /// Descriptinon:
+  ///
   /// point placers to constrain the angle end points to a model's polydata surface
   vtkPolygonalSurfacePointPlacer *Model1PointPlacer;
   vtkPolygonalSurfacePointPlacer *Model2PointPlacer;
@@ -53,7 +61,11 @@ protected:
   
 private:
   vtkMeasurementsAngleWidgetClass ( const vtkMeasurementsAngleWidgetClass& ); /// Not implemented
-  void operator = ( const vtkMeasurementsAngleWidgetClass& ); /// Not implemented
+  void operator = ( const vtkMeasurementsAngleWidgetClass& ); /// Not
+                                                              /// implemented
+
+  /// a flag set to 1 when this class has made new handle properties
+  int MadeNewHandleProperties;
 };
 
 #endif

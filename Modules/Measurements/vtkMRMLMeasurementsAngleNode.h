@@ -26,18 +26,26 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsAngleNode : public vtkMRMLMeasu
   vtkGetVector3Macro(PositionCenter, double);
   vtkSetVector3Macro(PositionCenter, double);
 
+  /// get/set the current angle between the two lines. GetAngle
+  /// calculates it and sets the Angle class variable.
+  double GetAngle();
+  vtkSetMacro(Angle, double);
   /// 
-  /// get/set the distance annotation format, it's in standard sprintf notation
+  /// get/set the angle annotation format, it's in standard sprintf notation
   vtkGetStringMacro(LabelFormat);
   vtkSetStringMacro(LabelFormat);
+
+  ///  get/set the current angle annotation (used by the 2d versions)
+  vtkGetStringMacro(CurrentAngleAnnotation);
+  vtkSetStringMacro(CurrentAngleAnnotation);
   
   /// 
-  /// get/set the distance annotation scale
+  /// get/set the angle annotation scale
   vtkGetVector3Macro(LabelScale, double);
   vtkSetVector3Macro(LabelScale, double);
   
   /// 
-  /// get/set the distance annotation visbility
+  /// get/set the angle annotation visbility
   vtkGetMacro(LabelVisibility, int);
   vtkSetMacro(LabelVisibility, int);
   vtkBooleanMacro(LabelVisibility, int);
@@ -60,17 +68,26 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsAngleNode : public vtkMRMLMeasu
   vtkSetMacro(Resolution, int);
   
   /// 
-  /// get/set the point representation colour
+  /// get/set the point representation colours
   vtkGetVector3Macro(PointColour, double);
   vtkSetVector3Macro(PointColour, double);
-
+  vtkGetVector3Macro(Point2Colour, double);
+  vtkSetVector3Macro(Point2Colour, double);
+  vtkGetVector3Macro(PointCentreColour, double);
+  vtkSetVector3Macro(PointCentreColour, double);
+  
   /// 
   /// get/set the line representation colour
   vtkGetVector3Macro(LineColour, double);
   vtkSetVector3Macro(LineColour, double);
 
+  ///
+  /// get/set the arc colour
+  vtkGetVector3Macro(ArcColour, double);
+  vtkSetVector3Macro(ArcColour, double);
+  
   /// 
-  /// get/set the distance annotation text colour
+  /// get/set the angle annotation text colour
   vtkGetVector3Macro(LabelTextColour, double);
   vtkSetVector3Macro(LabelTextColour, double);
 
@@ -112,6 +129,9 @@ class VTK_MEASUREMENTS_EXPORT vtkMRMLMeasurementsAngleNode : public vtkMRMLMeasu
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
+  /// update the current annotation from current angle and
+  /// annotation format
+  void UpdateCurrentAngleAnnotation();
 protected:
   vtkMRMLMeasurementsAngleNode();
   ~vtkMRMLMeasurementsAngleNode();
@@ -131,8 +151,9 @@ protected:
   double PositionCenter[3];
 
   /// 
-  /// the distance text properties
+  /// the angle text properties
   char *LabelFormat;
+  char *CurrentAngleAnnotation;
   double LabelScale[3];
   int LabelVisibility;
 
@@ -145,7 +166,10 @@ protected:
   /// 
   /// colours of the actors representing the end points and the line and the text
   double PointColour[3];
+  double Point2Colour[3];
+  double PointCentreColour[3];
   double LineColour[3];
+  double ArcColour[3];
   double LabelTextColour[3];
 
   /// 
@@ -158,6 +182,9 @@ protected:
   char *ModelID1;
   char *ModelID2;
   char *ModelIDCenter;
+
+  /// current angle, updated externally
+  double Angle;
 };
 
 #endif

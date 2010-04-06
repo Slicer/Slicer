@@ -125,12 +125,23 @@ public:
   void RemoveAngleWidgets();
 
   ///
-  /// update the visibility of the 3d widget associated with the passed node
-  void Update3DWidgetVisibility(vtkMRMLMeasurementsAngleNode *angleNode);
+  /// update the visibility of the 3d widget associated with the passed node.
+  /// if hte update clicks flag is true, fool the angle widget into thinking
+  /// it's been placed, but it's false by default.
+  void Update3DWidgetVisibility(vtkMRMLMeasurementsAngleNode *angleNode, bool updateClicks = false);
 
   /// 
   /// check scene to make sure that have a widget for each angle node, and no extra widgets...
   void Update3DWidgetsFromMRML();
+
+  /// when change the colours of the end points of the angle widget, update the label
+  /// colours as a hint. If the end point colours are white, use a very very
+  /// light grey instead
+  void UpdateLabelsFromNode(vtkMRMLMeasurementsAngleNode *activeAngleNode);
+  
+  /// 
+  /// Update the angle label with the value from the angle widget
+  void UpdateAngleLabel(vtkMRMLMeasurementsAngleNode *angleNode);
   
 protected:
   vtkMeasurementsAngleWidget();
@@ -169,13 +180,22 @@ protected:
   /// 
   /// Change the colour of the end points
   vtkKWChangeColorButton *PointColourButton;
+  vtkKWChangeColorButton *Point2ColourButton;
+  vtkKWChangeColorButton *PointCentreColourButton;
   /// 
   /// Change the colour of the line
   vtkKWChangeColorButton *LineColourButton;
+  ///
+  /// change the colour of the arc
+  vtkKWChangeColorButton *ArcColourButton;
   /// 
   /// Change the colour of the label text
   vtkKWChangeColorButton *TextColourButton;
-  
+
+  ///
+  /// angle label
+  vtkKWLabel *AngleLabel;
+
   /// 
   /// point position entry
   vtkKWLabel *Position1Label;
