@@ -204,6 +204,28 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
         std::stringstream ss;
         ss << attValue;
         ss >> this->GlyphType;
+        // at svn version 12553, the symbol type changed by one, check if
+        // this is an older file
+        /*
+        if (this->GetScene())
+          {
+          if (this->GetScene()->GetLastLoadedVersion())
+            {
+            const char *lastLoadedVersion = this->GetScene()->GetLastLoadedVersion();
+            int versionNumber = atoi(lastLoadedVersion);
+            if (versionNumber < 12553)
+              {
+              this->GlyphType = this->GlyphType + 1;
+              }
+            }
+          else
+            {
+            // older files don't have version numbers, so assume it's older
+            // than the change and increment
+            this->GlyphType = this->GlyphType + 1;
+            }
+          }
+        */
         }      
       else if (!strcmp(attName, "textScale")) 
       {
