@@ -1588,6 +1588,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "Version = " << (this->GetVersion() ? this->GetVersion() : "NULL") << "\n";
+  os << indent << "LastLoadedVersion = " << (this->GetLastLoadedVersion() ? this->GetLastLoadedVersion() : "NULL") << "\n";
   os << indent << "ErrorCode = " << this->ErrorCode << "\n";
   os << indent << "URL = " << this->GetURL() << "\n";
   os << indent << "Root Directory = " << this->GetRootDirectory() << "\n";
