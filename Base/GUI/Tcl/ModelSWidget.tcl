@@ -232,7 +232,6 @@ itcl::body ModelSWidget::highlight { } {
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
-
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -259,9 +258,7 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
         $tnode GetMatrixTransformToWorld $transformToWorld
     }
       
-    if { $caller == $displayNode } {
-      $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
-    }
+    $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
   }
 
 
@@ -365,3 +362,4 @@ namespace eval ModelSWidget {
     itcl::delete object $labeler
   }
 }
+
