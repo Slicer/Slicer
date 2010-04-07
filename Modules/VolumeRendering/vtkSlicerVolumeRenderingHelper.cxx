@@ -238,7 +238,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->MB_GPUMemorySize->SetLabelText("GPU Memory Size");
     this->MB_GPUMemorySize->Create();
     this->MB_GPUMemorySize->SetLabelWidth(labelWidth);
-    this->MB_GPUMemorySize->SetBalloonHelpString("Specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
+    this->MB_GPUMemorySize->SetBalloonHelpString("Please specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
     this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("128M");
     this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPUMemorySize 0");
     this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("256M");
