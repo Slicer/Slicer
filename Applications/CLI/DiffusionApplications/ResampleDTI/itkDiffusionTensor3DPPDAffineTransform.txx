@@ -27,6 +27,15 @@ DiffusionTensor3DPPDAffineTransform<TData>
 {
   this->ComputeOffset() ;
   this->latestTime = Object::GetMTime() ;
+  try
+  {
+    m_TransformMatrixInverse = this->m_TransformMatrix.GetInverse() ;
+  }
+  catch(...)
+  {
+      itkExceptionMacro(<< "Transform matrix is not invertible" ) ;
+  }
+
 }
 
 
@@ -35,15 +44,15 @@ typename DiffusionTensor3DPPDAffineTransform< TData >::TensorDataType
 DiffusionTensor3DPPDAffineTransform< TData >
 ::EvaluateTransformedTensor( TensorDataType &tensor )
 {
-InternalTensorDataType internalTensor = tensor ;
-if( this->latestTime < Object::GetMTime() )
-  {
-  this->P->Down() ;
+  InternalTensorDataType internalTensor = tensor ;
   if( this->latestTime < Object::GetMTime() )
     {
-    PreCompute() ;
+    this->P->Down() ;
+    if( this->latestTime < Object::GetMTime() )
+    {
+      PreCompute() ;
     }
-  this->P->Up() ;
+    this->P->Up() ;
   }
   EValuesType eigenValues ;
   EVectorsType eigenVectors ;
@@ -63,7 +72,11 @@ if( this->latestTime < Object::GetMTime() )
     e1[ i ] = eigenVectors[ 2 ][ i ] ;//eigen values sorted in ascending order, Vectors in line
     e2[ i ] = eigenVectors[ 1 ][ i ] ;     
     }
-  InternalMatrixTransformType transformMF=this->m_TransformMatrix * ( InternalMatrixTransformType ) this->m_MeasurementFrame;
+
+
+  InternalMatrixTransformType transformMF = m_TransformMatrixInverse * ( InternalMatrixTransformType ) this->m_MeasurementFrame ;
+
+//InternalMatrixTransformType transformMF=this->m_TransformMatrix * ( InternalMatrixTransformType ) this->m_MeasurementFrame;
   n1 = transformMF  * e1 ;
   n1 /= n1.GetVnlVector().two_norm() ;
   n2 = transformMF * e2 ;
@@ -102,10 +115,12 @@ if( this->latestTime < Object::GetMTime() )
   InternalMatrixDataType tensorMatrix = internalTensor.GetTensor2Matrix() ;
   InternalMatrixTransformType RTranspose = R.GetTranspose() ;
   InternalMatrixTransformType MFT = this->m_MeasurementFrame.GetTranspose() ;
-  InternalMatrixTransformType mat = RTranspose * ( InternalMatrixTransformType ) this->m_MeasurementFrame
-                                  * ( InternalMatrixTransformType )tensorMatrix * MFT * R ;
+  InternalMatrixTransformType mat = R * ( InternalMatrixTransformType )tensorMatrix * RTranspose ;
+//  InternalMatrixTransformType mat = RTranspose * ( InternalMatrixTransformType ) this->m_MeasurementFrame
+//                                * ( InternalMatrixTransformType )tensorMatrix * MFT * R ;
   tensorMatrix = ( InternalMatrixDataType ) mat ;
   internalTensor.SetTensorFromMatrix( static_cast< MatrixDataType > ( tensorMatrix ) ) ;
+
   return static_cast< TensorDataType >( internalTensor ) ;
 }
 

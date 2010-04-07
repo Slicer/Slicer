@@ -143,6 +143,7 @@ DiffusionTensor3DRigidTransform< TData >
   this->m_Transform = TransformMatrixTranspose * this->m_MeasurementFrame ;
   this->ComputeOffset() ;
   this->latestTime = Object::GetMTime() ;
+
 }
 
 

@@ -58,7 +58,7 @@ public:
 protected:
   void PreCompute() ;
   InternalMatrixTransformType ComputeMatrixFromAxisAndAngle( VectorType axis , double cosangle ) ;
-
+  InternalMatrixTransformType m_TransformMatrixInverse ;
 };
 
 }//end namespace itk

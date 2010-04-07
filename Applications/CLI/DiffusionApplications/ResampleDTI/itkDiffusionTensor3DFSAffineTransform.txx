@@ -56,9 +56,8 @@ DiffusionTensor3DFSAffineTransform< TData >
 ::PreCompute()
 {
   InternalMatrixTransformType m_RotationMatrix ;
-  InternalMatrixTransformType m_TransformMatrixInverse ;
+  this->latestTime = Object::GetMTime() ;
   m_RotationMatrix=ComputeRotationMatrixFromTransformationMatrix() ;
-  m_TransformMatrixInverse= this->m_TransformMatrix.GetInverse() ;
   InternalMatrixTransformType MeasurementFrameTranspose = this->m_MeasurementFrame.GetTranspose() ;
   InternalMatrixTransformType RotationMatrixTranspose = m_RotationMatrix.GetTranspose() ;
 
@@ -66,7 +65,6 @@ DiffusionTensor3DFSAffineTransform< TData >
   this->m_Transform = RotationMatrixTranspose * this->m_MeasurementFrame ;
 
   this->ComputeOffset() ;
-  this->latestTime = Object::GetMTime() ;
 }
 
 
@@ -77,8 +75,16 @@ DiffusionTensor3DFSAffineTransform< TData >
 {
   MatrixTransformType m_RotationMatrix ;
   InternalMatrixTransformType TransformMatrixTranspose = this->m_TransformMatrix.GetTranspose() ;
-  MatrixTransformType matrix( ComputeMatrixSquareRoot( 
-          this->m_TransformMatrix * TransformMatrixTranspose ).GetInverse() ) ;
+  MatrixTransformType matrix ;
+  try
+  {
+      matrix = ComputeMatrixSquareRoot( 
+          this->m_TransformMatrix * TransformMatrixTranspose ).GetInverse() ;
+  }
+  catch(...)
+  {
+      itkExceptionMacro(<< "Matrix is not invertible while computing rotation matrix" ) ;
+  }
   m_RotationMatrix = matrix * static_cast< MatrixTransformType > ( this->m_TransformMatrix ) ;
   return m_RotationMatrix ;
 }
