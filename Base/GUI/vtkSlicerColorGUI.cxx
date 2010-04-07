@@ -363,20 +363,29 @@ int vtkSlicerColorGUI::AddLUTsToColorDialog()
   int numNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
   for (int n = 0; n < numNodes; n++)
     {
-      vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode"));
-      if (colorNode)
+    vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode"));
+    if (colorNode)
       {
-      int collectionID = swatches->AddCollection(colorNode->GetName());
-      int numColours = colorNode->GetNumberOfColors();
-      double rgb[4];
-      for (int c = 0; c < numColours; c++)
-        {      
+      // check the names, don't want to add all of them
+      // this will add default labels, freesurfer labels, color files that
+      // have Color in the name and ones that start with Slicer3
+      std::string nodeName = colorNode->GetName();
+      if (nodeName.find("Labels") != std::string::npos ||
+          nodeName.find("Color") != std::string::npos ||
+          nodeName.find("Slicer3") != std::string::npos)
+        {
+        int collectionID = swatches->AddCollection(colorNode->GetName());
+        int numColours = colorNode->GetNumberOfColors();
+        double rgb[4];
+        for (int c = 0; c < numColours; c++)
+          {      
           const char *colorName = colorNode->GetColorName(c);
           if (strcmp(colorName, "(none)"))
             {
             colorNode->GetLookupTable()->GetColor(c, rgb);
             swatches->AddRGBSwatch(collectionID, colorName, rgb);
             }
+          }
         }
       }
       else
