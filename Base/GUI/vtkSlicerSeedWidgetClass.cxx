@@ -705,8 +705,8 @@ char * vtkSlicerSeedWidgetClass::GetNthLabelText(int n)
   else
     {
     vtkErrorMacro("GetNthLabelText: unable to get the polygonal handle representation on the " << n << "th seed");
-    return NULL;
     }
+  return NULL;
 }
 
 //---------------------------------------------------------------------------
