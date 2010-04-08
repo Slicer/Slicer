@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkTransform.h"
+#include "vtkSmartPointer.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLCameraNode::New()
@@ -298,7 +299,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
       this->Camera->SetUserViewTransform(user_transform);
       user_transform->Delete();
       }
-    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
     transformToWorld->Identity();
     tnode->GetMatrixTransformToWorld(transformToWorld);
     double temp = transformToWorld->GetElement(1, 3);
@@ -307,7 +308,6 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
     user_transform->SetMatrix(transformToWorld);
     user_transform->Modified(); // since, sadly, SetMatrix does not Modified()
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    transformToWorld->Delete();
     }
 }
 

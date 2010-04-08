@@ -317,8 +317,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
 {
     double spacing[3];
     unsigned int i;
-    vtkMatrix4x4 *xyToSlice = vtkMatrix4x4::New();
-    vtkMatrix4x4 *xyToRAS = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> xyToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> xyToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
 
     int modifiedWasDisabled = this->GetDisableModifiedEvent();
     this->SetDisableModifiedEvent(1);
@@ -364,9 +364,6 @@ void vtkMRMLSliceNode::UpdateMatrices()
                          // positions are modified to synchoronously
                          // update what the user sees ...
       }
-
-    xyToSlice->Delete();
-    xyToRAS->Delete();
 
     const char *orientationString = "Reformat";
     if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&

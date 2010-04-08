@@ -4,6 +4,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLScene.h"
@@ -499,10 +500,9 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
       {
       double rasPoint[4] = { x, y, z, 1.0 };
       double ijkPoint[4];
-      vtkMatrix4x4* rasToijk = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> rasToijk = vtkSmartPointer<vtkMatrix4x4>::New();
       VolumeNode->GetRASToIJKMatrix(rasToijk);
       rasToijk->MultiplyPoint(rasPoint, ijkPoint);
-      rasToijk->Delete();
       
       int* dims = new int[3];
       VolumeNode->GetImageData()->GetDimensions(dims);
@@ -559,10 +559,9 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
       //Update XYZ
       double rasPoint[4]; 
       double ijkPoint[4]= { i, j, k, 1.0 };
-      vtkMatrix4x4* ijkToras = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> ijkToras = vtkSmartPointer<vtkMatrix4x4>::New();
       VolumeNode->GetIJKToRASMatrix(ijkToras);
       ijkToras->MultiplyPoint(ijkPoint,rasPoint);
-      ijkToras->Delete();
       node->SetXYZ(rasPoint[0], rasPoint[1], rasPoint[2]);
       }
     else

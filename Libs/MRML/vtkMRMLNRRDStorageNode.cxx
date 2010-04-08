@@ -32,6 +32,8 @@ Version:   $Revision: 1.6 $
 #include "vtkDoubleArray.h"
 #include "vtkStringArray.h"
 
+#include "vtkSmartPointer.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode* vtkMRMLNRRDStorageNode::New()
 {
@@ -175,7 +177,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   
   vtkMRMLVolumeNode *volNode = NULL;
 
-  vtkNRRDReader* reader;
+  vtkSmartPointer<vtkNRRDReader> reader;
 
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
@@ -194,7 +196,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
     }
 
-  reader = vtkNRRDReader::New();
+  reader = vtkSmartPointer<vtkNRRDReader>::New();
 
   // Set Reader member variables
   if (this->CenterImage) 
@@ -216,7 +218,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("ReadData: File name not specified");
-    reader->Delete();
     return 0;
     }
 
@@ -226,7 +227,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   if (!reader->CanReadFile(fullName.c_str()))
     {
     vtkDebugMacro("vtkMRMLNRRDStorageNode: This is not a nrrd file");
-    reader->Delete();
     return 0;
     }
 
@@ -240,7 +240,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     if ( ! (reader->GetPointDataType() == TENSORS))
       {
       vtkDebugMacro("MRMLVolumeNode does not match file kind");
-      reader->Delete();
       return 0;
       }
     }
@@ -250,14 +249,12 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     const char *value = reader->GetHeaderValue("modality");
     if (value == NULL)
       {
-      reader->Delete();
       return 0;
       }
     if ( ! (reader->GetPointDataType() == SCALARS &&
             !strcmp(value,"DWMRI") ) )
       {
       vtkErrorMacro("MRMLVolumeNode does not match file kind");
-      reader->Delete();
       return 0;
       }
     }
@@ -266,7 +263,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     if (! (reader->GetPointDataType() == VECTORS || reader->GetPointDataType() == NORMALS))
       {
       vtkDebugMacro("MRMLVolumeNode does not match file kind");
-      reader->Delete();
       return 0;
       }
     }  
@@ -276,7 +272,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
         (reader->GetNumberOfComponents() == 1 || reader->GetNumberOfComponents()==3) ))
       {
       vtkErrorMacro("MRMLVolumeNode does not match file kind");
-      reader->Delete();
       return 0;
       }
     }
@@ -318,35 +313,27 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   // parse additional key-value pairs
   if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
     {
-    vtkDoubleArray *grad = vtkDoubleArray::New();
-    vtkDoubleArray *bvalue = vtkDoubleArray::New();
+    vtkSmartPointer<vtkDoubleArray> grad = vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> bvalue = vtkSmartPointer<vtkDoubleArray>::New();
     if (!this->ParseDiffusionInformation(reader,grad,bvalue))
       {
       vtkErrorMacro("vtkMRMLDiffusionWeightedVolumeNode: Cannot parse Diffusion Information");
-      grad->Delete();
-      bvalue->Delete();
-      reader->Delete();
       return 0;
       }
     dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (volNode)->SetDiffusionGradients(grad);
     dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (volNode)->SetBValues(bvalue);
-    grad->Delete();
-    bvalue->Delete();
     }
 
   volNode->SetAndObserveStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
  
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+  vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
   ici->SetInput (reader->GetOutput());
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
   volNode->SetAndObserveImageData (ici->GetOutput());
-
-  reader->Delete();
-  ici->Delete();
 
   this->SetReadStateIdle();
   
@@ -369,10 +356,10 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
   
   vtkMRMLVolumeNode *volNode = NULL;
   //Store volume nodes attributes.
-  vtkMatrix4x4 *mf = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> mf = vtkSmartPointer<vtkMatrix4x4>::New();
   vtkDoubleArray *grads = NULL;
   vtkDoubleArray *bValues = NULL;
-  vtkMatrix4x4* ijkToRas = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> ijkToRas = vtkSmartPointer<vtkMatrix4x4>::New();
   
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
@@ -420,7 +407,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   // Use here the NRRD Writer
-  vtkNRRDWriter *writer = vtkNRRDWriter::New();
+  vtkSmartPointer<vtkNRRDWriter>writer = vtkSmartPointer<vtkNRRDWriter>::New();
   writer->SetFileName(fullName.c_str());
   writer->SetInput(volNode->GetImageData() );
   writer->SetUseCompression(this->GetUseCompression());
@@ -444,11 +431,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == NULL ? "null" : writer->GetFileName()));    
     writeFlag = 0;
     }
-  writer->Delete();
   
-  ijkToRas->Delete();
-  mf->Delete();
-
   this->StageWriteData(refNode);
   
   return writeFlag;
@@ -462,7 +445,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   std::string key,value,num;
   std::string tag,tagnex;
   const char *tmp;
-  vtkDoubleArray *factor = vtkDoubleArray::New();
+  vtkSmartPointer<vtkDoubleArray> factor = vtkSmartPointer<vtkDoubleArray>::New();
   grad->SetNumberOfComponents(3);
   double g[3];
   int rep;
@@ -472,12 +455,10 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   tmp = reader->GetHeaderValue(key.c_str());
   if (tmp == NULL)
     {
-    factor->Delete();
     return 0;
     }
   if (strcmp(tmp,"DWMRI") != 0)
     {
-    factor->Delete();
     return 0;
     }
   // search for tag DWMRI_gradient_
@@ -545,7 +526,6 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   tmp = reader->GetHeaderValue(key.c_str());
   if (tmp == NULL)
     {
-    factor->Delete();
     return 0;
     }
   double bval = atof(tmp);
@@ -555,7 +535,6 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
     {
     bvalues->SetValue(i,bval*factor->GetValue(i)/range[1]);
     }
-  factor->Delete();
   return 1;
 }
 

@@ -749,7 +749,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZWorld(int n, float x, float y, flo
 {
   // first get the list's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -766,8 +766,6 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZWorld(int n, float x, float y, flo
   double worldxyz[4], *worldp = &worldxyz[0];
   transformToWorld->MultiplyPoint(xyzw, worldp); 
 
-  transformToWorld->Delete();
-  transformToWorld = NULL;
   tnode = NULL;
 
   return this->SetNthFiducialXYZ(n, worldxyz[0], worldxyz[1], worldxyz[2]);
@@ -803,7 +801,7 @@ int vtkMRMLFiducialListNode::GetNthFiducialXYZWorld(int n, double *worldxyz)
     }
   // first get the list's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -818,9 +816,6 @@ int vtkMRMLFiducialListNode::GetNthFiducialXYZWorld(int n, double *worldxyz)
   xyzw[3] = 1.0;
 
   transformToWorld->MultiplyPoint(xyzw, worldxyz); 
-
-  transformToWorld->Delete();
-  transformToWorld = NULL;
 
   return 1;
 }
