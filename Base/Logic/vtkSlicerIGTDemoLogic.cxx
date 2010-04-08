@@ -371,9 +371,9 @@ void vtkSlicerIGTDemoLogic::SetLocatorTransforms()
     #     where the locator's position is (x,y,z).
     # Then: M = T*R*C
     */
-    vtkMatrix4x4 *locator_matrix = vtkMatrix4x4::New();
-    vtkTransform *locator_transform = vtkTransform::New();
-
+    vtkSmartPointer<vtkMatrix4x4> locator_matrix  = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkTransform> locator_transform = vtkSmartPointer<vtkTransform>::New();
+    
     // Locator's offset: p[0], p[1], p[2]
     float x0 = p[0];
     float y0 = p[1];
@@ -434,10 +434,6 @@ void vtkSlicerIGTDemoLogic::SetLocatorTransforms()
     locator_transform->Translate(x0, y0, z0);
 
     this->LocatorNormalTransform->DeepCopy(locator_transform);
-
-    locator_matrix->Delete();
-    locator_transform->Delete();
-
 
     // save 
     for (int i = 0; i < 3; i++)

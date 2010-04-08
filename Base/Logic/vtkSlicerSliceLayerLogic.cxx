@@ -14,6 +14,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkSlicerSliceLayerLogic.h"
 
@@ -366,7 +367,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
   dimensions[1] = 100;
   dimensions[2] = 100;
 
-  vtkMatrix4x4 *xyToIJK = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> xyToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
   xyToIJK->Identity();
 
   if (this->SliceNode)
@@ -392,22 +393,19 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
         }
       else
         {
-        vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();
+        vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
         transformNode->GetMatrixTransformToWorld( rasToRAS );
         rasToRAS->Invert();
         vtkMatrix4x4::Multiply4x4(rasToRAS, xyToIJK, xyToIJK); 
-        rasToRAS->Delete();
         }
       }
 
-    vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> rasToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
     this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
     vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK); 
-    rasToIJK->Delete();    
   }
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
-  xyToIJK->Delete();
 
   this->Slice->SetOutputDimensions( dimensions[0], dimensions[1], dimensions[2]);
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
@@ -539,7 +537,7 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
           dnode->SetSliceImage(sliceImage);
 
           vtkMRMLTransformNode* tnode = volumeNode->GetParentTransformNode();
-          vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+          vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
           transformToWorld->Identity();
           if (tnode != NULL && tnode->IsLinear())
             {
@@ -555,7 +553,7 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
           dnode->SetSlicePositionMatrix(transformToWorld);
           double dirs[3][3];
           volumeNode->GetIJKToRASDirections(dirs);
-          vtkMatrix4x4 *trot = vtkMatrix4x4::New();
+          vtkSmartPointer<vtkMatrix4x4> trot = vtkSmartPointer<vtkMatrix4x4>::New();
           trot->Identity();
           for (int i=0; i<3; i++) 
             {
@@ -565,8 +563,6 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
               }
             }
           dnode->SetSliceGlyphRotationMatrix(trot);
-          trot->Delete();
-          transformToWorld->Delete();
           }
         }
       }

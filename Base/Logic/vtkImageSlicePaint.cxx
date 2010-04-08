@@ -16,6 +16,7 @@
 
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
 
 #include <math.h>
 
@@ -183,10 +184,10 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   //    
   vtkMatrix4x4 *workingIJKToWorld = self->GetWorkingIJKToWorld();
   vtkMatrix4x4 *backgroundIJKToWorld = self->GetBackgroundIJKToWorld();
-  vtkMatrix4x4 *backgroundWorldToIJK = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> backgroundWorldToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
   backgroundWorldToIJK->DeepCopy( backgroundIJKToWorld );
   backgroundWorldToIJK->Invert();
-  vtkMatrix4x4 *maskWorldToIJK = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> maskWorldToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
   if ( self->GetMaskIJKToWorld() )
     {
     maskWorldToIJK->DeepCopy( self->GetMaskIJKToWorld() );
@@ -380,9 +381,6 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
       rowEnd[i] += dIJKdREnd[i];
       }
     }
-
-  maskWorldToIJK->Delete();
-  backgroundWorldToIJK->Delete();
 
   self->GetWorkingImage()->Modified();
   if (self->GetExtractImage())

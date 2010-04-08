@@ -17,6 +17,8 @@
 #include <vtksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
+#include "vtkSmartPointer.h"
+
 #include "vtkSlicerFiducialsLogic.h"
 
 #include "vtkMRMLFiducial.h"
@@ -195,7 +197,7 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
   // otherwise, we have an exisiting list, check to see if there's a transform
   // on it
   vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -212,9 +214,7 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
   double worldxyz[4], *worldp = &worldxyz[0];
               
   transformToWorld->MultiplyPoint(xyzw, worldp);
-                
-  transformToWorld->Delete();
-  transformToWorld = NULL;
+
   tnode = NULL;
 
   vtkDebugMacro("AddFiducialPicked: transformed point " << x << ", " << y << ", " << z  << " to " << worldxyz[0] << ", " << worldxyz[1] << ", " << worldxyz[2] << ", calling AddFiducialSelected");

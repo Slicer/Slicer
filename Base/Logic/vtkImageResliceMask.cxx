@@ -23,6 +23,7 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTransform.h"
 #include "vtkDataSetAttributes.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkTemplateAliasMacro.h"
 // turn off 64-bit ints when templating over all types
@@ -631,7 +632,7 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
   inInfo->Get(vtkDataObject::SPACING(), inSpacing);
   inInfo->Get(vtkDataObject::ORIGIN(), inOrigin);
 
-  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
   if (this->ResliceAxes)
     {
     vtkMatrix4x4::Invert(this->ResliceAxes, matrix);
@@ -678,8 +679,6 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
         }
       }
     }
-
-  matrix->Delete();
 }
  
 vtkImageData *vtkImageResliceMask::GetBackgroundMask() 
@@ -3239,9 +3238,10 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
   outInfo->Get(vtkDataObject::SPACING(), outSpacing);
   outInfo->Get(vtkDataObject::ORIGIN(), outOrigin);
 
-  vtkTransform *transform = vtkTransform::New();
-  vtkMatrix4x4 *inMatrix = vtkMatrix4x4::New();
-  vtkMatrix4x4 *outMatrix = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkMatrix4x4> inMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkSmartPointer<vtkMatrix4x4> outMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  
 
   if (this->OptimizedTransform)
     {
@@ -3302,10 +3302,6 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
 
   transform->GetMatrix(this->IndexMatrix);
   
-  transform->Delete();
-  inMatrix->Delete();
-  outMatrix->Delete();
-
   return this->IndexMatrix;
 }
 
