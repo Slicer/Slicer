@@ -7,12 +7,13 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
 
 set (CLP DicomToNrrdConverter)
-
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 
 if (Slicer3_SOURCE_DIR)
   generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 else (Slicer3_SOURCE_DIR)
+  find_package(GenerateCLP NO_MODULE REQUIRED)
+  include(${GenerateCLP_USE_FILE})
   generateclp(${CLP}_SOURCE ${CLP}.xml)
 endif (Slicer3_SOURCE_DIR)
 add_executable(${CLP} ${${CLP}_SOURCE})
