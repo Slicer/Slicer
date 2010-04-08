@@ -89,6 +89,7 @@ const char *vtkFSLookupTable::GetLutTypeString ()
     default:
         return "Unknown";
     }
+    return "Unknown";
 }
 
 //------------------------------------------------------------------------------
