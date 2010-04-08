@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
 #include "vtkLinearTransform.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -346,7 +347,7 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
     {
     return;
     }
-  vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
   mat->DeepCopy(argMat);
 
   // normalize direction vectors
@@ -378,14 +379,13 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
     this->Spacing[row] = spacing[row];
     this->Origin[row] = mat->GetElement(row,3);
     }
-  mat->Delete();
 }
 
 //----------------------------------------------------------------------------
 
 void vtkMRMLVolumeNode::SetRASToIJKMatrix(vtkMatrix4x4* mat)
 {
-  vtkMatrix4x4 *m = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> m = vtkSmartPointer<vtkMatrix4x4>::New();
   m->Identity();
   if (mat) 
   {
@@ -393,7 +393,6 @@ void vtkMRMLVolumeNode::SetRASToIJKMatrix(vtkMatrix4x4* mat)
   }
   m->Invert();
   this->SetIJKToRASMatrix(m);
-  m->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -471,13 +470,13 @@ void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order,
     return;
     }
 
-  vtkMatrix4x4 *scaleMat = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> scaleMat = vtkSmartPointer<vtkMatrix4x4>::New();
   scaleMat->Identity();
   scaleMat->SetElement(0,0, spacing[0]);
   scaleMat->SetElement(1,1, spacing[1]);
   scaleMat->SetElement(2,2, spacing[2]);
 
-  vtkMatrix4x4 *orientMat = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> orientMat = vtkSmartPointer<vtkMatrix4x4>::New();
   orientMat->Identity();
 
   if (!strcmp(order,"IS") ||
@@ -551,8 +550,6 @@ void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order,
       IJKToRAS->SetElement(j, 3, pnt1[j]);
       }
     }
-  orientMat->Delete();
-  scaleMat->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -703,15 +700,14 @@ vtkMRMLVolumeNode::GetMetaDataDictionary() const
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
 {
-  vtkMatrix4x4* ijkToRASMatrix = vtkMatrix4x4::New();
-  vtkMatrix4x4* newIJKToRASMatrix = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> ijkToRASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkSmartPointer<vtkMatrix4x4> newIJKToRASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+
   this->GetIJKToRASMatrix(ijkToRASMatrix);
   vtkMatrix4x4::Multiply4x4(transformMatrix,ijkToRASMatrix,newIJKToRASMatrix);
   
   this->SetIJKToRASMatrix(newIJKToRASMatrix);
 
-  ijkToRASMatrix->Delete();
-  newIJKToRASMatrix->Delete();
 }
 
 //---------------------------------------------------------------------------

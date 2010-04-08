@@ -154,11 +154,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
 
   int result = 1;
 
-  vtkMatrix4x4 *lps2ras = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
   lps2ras->Identity();
   (*lps2ras)[0][0] = (*lps2ras)[1][1] = -1.0;
   
-  vtkMatrix4x4 *ras2lps = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> ras2lps = vtkSmartPointer<vtkMatrix4x4>::New();
   ras2lps->Identity();
   (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
 
@@ -292,7 +292,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       typedef itk::TranslationTransform<double, D> DoubleTranslateTransformType;
       typedef itk::TranslationTransform<float, D> FloatTranslateTransformType;
 
-      vtkMatrix4x4* vtkmat = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
       vtkmat->Identity();
 
       // Linear transform of doubles, dimension 3
@@ -407,7 +407,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       
       // Set the matrix on the node
       ltn->SetAndObserveMatrixTransformToParent( vtkmat );
-      vtkmat->Delete();
       }
     else if (refNode->IsA("vtkMRMLGridTransformNode"))
       {
@@ -638,9 +637,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   transformNode->SetModifiedSinceRead(0);
 
-  lps2ras->Delete();
-  ras2lps->Delete();
-
   this->SetReadStateIdle();
    
   return result;
@@ -680,11 +676,11 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
   if (ln != 0)
     {
     // Linear transform
-    vtkMatrix4x4 *lps2ras = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
     lps2ras->Identity();
     (*lps2ras)[0][0] = (*lps2ras)[1][1] = -1.0;
     
-    vtkMatrix4x4 *ras2lps = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> ras2lps = vtkSmartPointer<vtkMatrix4x4>::New();
     ras2lps->Identity();
     (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
 
@@ -697,7 +693,7 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
     //
     // Tlps = ras2lps * Tras * lps2ras
     //
-    vtkMatrix4x4 *vtkmat = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
     
     vtkMatrix4x4::Multiply4x4(ras2lps, mat2parent, vtkmat);
     vtkMatrix4x4::Multiply4x4(vtkmat, lps2ras, vtkmat);
@@ -724,8 +720,6 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
 
     affine->SetMatrix(itkmat);
     affine->SetOffset(itkoffset);
-
-    vtkmat->Delete();
     
     itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
     writer->SetInput( affine );
@@ -746,8 +740,6 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
                     << fullName.c_str());
       result = 0;
       }
-    lps2ras->Delete();
-    ras2lps->Delete();
     }
   else if (bs != 0)
     {
