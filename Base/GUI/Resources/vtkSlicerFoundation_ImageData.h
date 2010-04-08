@@ -2074,3 +2074,85 @@ static const unsigned char image_SlicerRotateToPixelSpace[] =
   "FAT3TSaK+Y/akn/RL8s8fIs=";
 
 
+/* 
+ * Resource generated for file:
+ *    AnnotationAngleCenterPoint.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_AnnotationAngleCenterPoint_width          = 14;
+static const unsigned int  image_AnnotationAngleCenterPoint_height         = 21;
+static const unsigned int  image_AnnotationAngleCenterPoint_pixel_size     = 4;
+static const unsigned long image_AnnotationAngleCenterPoint_length         = 368;
+static const unsigned long image_AnnotationAngleCenterPoint_decoded_length = 1176;
+
+static const unsigned char image_AnnotationAngleCenterPoint[] = 
+  "eNr7//8/w386YxggVm19fT0TDd3C6OHhwdrX1/cfhgnpcXBwYHZ2dhZwc3NzgqrHq6+hoY"
+  "HR29ubx9XVVReopwuINyDbB5TH8B9QDYeLi4sUUE8R0H0bgGFw68OHD/9x+cHT05MdxHZ3"
+  "d48A6l0G5C8EqQfKaQExF7oeJycncBTAMFD9aqDeVKC/JIBuYgBhIPBE16erqwuNOrDF/4"
+  "F22QHNEg4NDWVC0heMro+FhcUE2T6gXdjsC8biNxUgzgbifhANDAuw/4AY5j8TbP6DApBe"
+  "AxANCk9gWEoB7SwC4g3Nzc0PcYUnyC29vb0MMHc1NjaC4w9oBtb4w6UPhgmlF2S1uNIn0N"
+  "z/IExM+hwOGABsbrIf";
+
+/* 
+ * Resource generated for file:
+ *    AnnotationAngleEndpoint1.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_AnnotationAngleEndpoint1_width          = 14;
+static const unsigned int  image_AnnotationAngleEndpoint1_height         = 21;
+static const unsigned int  image_AnnotationAngleEndpoint1_pixel_size     = 4;
+static const unsigned long image_AnnotationAngleEndpoint1_length         = 420;
+static const unsigned long image_AnnotationAngleEndpoint1_decoded_length = 1176;
+
+static const unsigned char image_AnnotationAngleEndpoint1[] = 
+  "eNr7//8/w386YxggVm1DQwMTDd3CKCIiwgdyDhLmwqfHwcGBycXFhVdHR8cP4o3/MH3y2N"
+  "QD3c/o7e3N5erqqurm5lZoZma2CNk+FhYWbXQ9QHXsQPWiQDrWw8NjQn19/eYrV65cB6qP"
+  "BuIqKC0P84OXlxc7iO3u7u4B1NPh6enZ8vHjx4tAOSUgFgKpBWJNKA32X19f3//e3t7/IB"
+  "poRw9Qb7Czs7MIkM8AFAeZa8OABkD6QHpAAKQPaJcxUI9ASEgIE0gPSC8QuGALB5B6GAba"
+  "hc0+XPrgGOhOsP+AGOY/bSDmwKcPZDYsPIF2gsOzpaVlx4cPHy4Ssg+EYfEHNAMcf0BzJi"
+  "D7BZY+ke2D0SAMSi9Af/IC9ZqB1MPCDpd9yBgUt0D3siLbR638RywApj0mepcRAE5hbYs=";
+
+/* 
+ * Resource generated for file:
+ *    AnnotationAngleEndpoint2.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_AnnotationAngleEndpoint2_width          = 14;
+static const unsigned int  image_AnnotationAngleEndpoint2_height         = 21;
+static const unsigned int  image_AnnotationAngleEndpoint2_pixel_size     = 4;
+static const unsigned long image_AnnotationAngleEndpoint2_length         = 416;
+static const unsigned long image_AnnotationAngleEndpoint2_decoded_length = 1176;
+
+static const unsigned char image_AnnotationAngleEndpoint2[] = 
+  "eNr7//8/w386YxggVm19fT0TDd3C6OHhwdrX1/e/t7f3P4gmpMfBwYHZxcVFwM3NzQmkBw"
+  "Tw6WtoaGD09vbmAerRBerpAuINIPUwjM1/QDUcrq6uUkBcBHTfhrq6ulsfPnz4j8sPnp6e"
+  "7CC2u7t7BFDvMiB/IUg9UE4LiLmw6UN2A1D9aqDeVGdnZwkgHyQHMtcTmz5kPwPdZ+fk5C"
+  "QcGhrKhKQvmJB9QLvA9gHDRIKQPqB9DDA1wLAA+w+IYf4zweM/OAa6ExyeQDuLgHhDS0vL"
+  "w48fP/4npA9kd2NjIzj+gHaC4w/o3y2g5AvDoqKifMj6YO6F0aD0AgxXAV1d3VhIsv8P06"
+  "uCbh+2uGVmZjZBtg+IDYhM2ypAnA3E/VBaBTn/4cqDQMAD1WsAomH+oycGAEEZmew=";
+
+/* 
+ * Resource generated for file:
+ *    AnnotationRulerEndpoint1.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_AnnotationRulerEndpoint1_width          = 14;
+static const unsigned int  image_AnnotationRulerEndpoint1_height         = 21;
+static const unsigned int  image_AnnotationRulerEndpoint1_pixel_size     = 4;
+static const unsigned long image_AnnotationRulerEndpoint1_length         = 140;
+static const unsigned long image_AnnotationRulerEndpoint1_decoded_length = 1176;
+
+static const unsigned char image_AnnotationRulerEndpoint1[] = 
+  "eNr7//8/w/9RPOIwEPAA8X8kDOJjqOvr6/sPw1B9KhBlYM7/lpaWA52dnZt6e3s3gDBQHQ"
+  "yD1SDpM0CzLxCIBYi0LxuI+5mYmEqBtAkQc6Dra2hoYMLiPxWovSq4/DeKBycGAId5Iyc=";
+
+/* 
+ * Resource generated for file:
+ *    AnnotationRulerEndpoint2.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_AnnotationRulerEndpoint2_width          = 14;
+static const unsigned int  image_AnnotationRulerEndpoint2_height         = 21;
+static const unsigned int  image_AnnotationRulerEndpoint2_pixel_size     = 4;
+static const unsigned long image_AnnotationRulerEndpoint2_length         = 144;
+static const unsigned long image_AnnotationRulerEndpoint2_decoded_length = 1176;
+
+static const unsigned char image_AnnotationRulerEndpoint2[] = 
+  "eNr7//8/w/9RPCJxX1/ffxhGl4MCHiD+j4R5YPpAAKp3Awj39vaCcWdn56aWlpYDIPX/IQ"
+  "aBsAoR9gkAcSCafQbIahoaGpiw6OMAYhMmJqZSIN0PxNkw+/BhJP+pgOyB0jyj6WJwYADc"
+  "5SMn";
