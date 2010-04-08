@@ -218,3 +218,6 @@ ENDFOREACH( SceneToTest )
 
 # add a tcl test to check that colour files get loaded and saved properly to mrml files and loaded again
 ADD_TEST(Slicer3ColorStorageNodeSceneTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestColorStorageNodeInScene.tcl)
+
+# add a tcl test to check that scene clear is working okay
+ADD_TEST(Slicer3SceneClearTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestSceneClear.tcl)
