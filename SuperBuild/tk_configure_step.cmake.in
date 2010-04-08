@@ -14,7 +14,7 @@ if(APPLE)
 else(APPLE)
 
   execute_process(
-    COMMAND sh configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=@tcl_build@ 
+    COMMAND sh configure --with-tcl=@tcl_build@/lib --prefix=@tcl_build@ 
     WORKING_DIRECTORY @tcl_base@/tk/unix
   )
 
