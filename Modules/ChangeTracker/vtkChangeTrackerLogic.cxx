@@ -1685,7 +1685,7 @@ void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
   hist->IgnoreZeroOn();
   hist->Update();
   
-  int idx = hist->GetMin()[0];
+  int idx = (int)(hist->GetMin()[0]);
   float mean = 0, cnt = 0;
   for(;idx<hist->GetMax()[0];idx++){
     mean += hist->GetOutput()->GetScalarComponentAsFloat(idx,0,0,0)*float(idx);

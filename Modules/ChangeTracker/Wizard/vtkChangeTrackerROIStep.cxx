@@ -833,7 +833,7 @@ void vtkChangeTrackerROIStep::ROIUpdateWithNewSample(double rasSample[3]) {
   for(i=0;i<3;i++)
     {
     dXYZ[i] = fabs(roiXYZ[i]-rasSample[i]);
-    shiftXYZ[i] = abs(dXYZ[i]-roiRadius[i])/2.;
+    shiftXYZ[i] = fabs(dXYZ[i]-roiRadius[i])/2.;
     }
 
   if(dXYZ[0]>roiRadius[0] || dXYZ[1]>roiRadius[1] || dXYZ[2]>roiRadius[2])

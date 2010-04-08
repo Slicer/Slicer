@@ -266,7 +266,7 @@ int main( int argc, char * argv[] )
     }
   
   // compute number of samples per level
-  std::vector<unsigned long> numberOfVoxelsPerLevel(fnumberoflevels, 0.0);
+  std::vector<unsigned long> numberOfVoxelsPerLevel(fnumberoflevels, 0);
   for(unsigned int i = 0; i < fnumberoflevels; ++i)
     {
     numberOfVoxelsPerLevel[i] = countInsideVoxels(fpyramid->GetOutput(i), mask);

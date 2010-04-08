@@ -1117,7 +1117,7 @@ void vtkMimxCylindricalMesh::DivideCurve(int CurveNum, vtkPolyData *PolyData, vt
   vtkCellLocator *locator = vtkCellLocator::New();
   locator->SetDataSet(PolyData);
   locator->BuildLocator();
-  int startnodenum;
+  int startnodenum = 0;
   if(CurveNum == 0)       startnodenum = 16;
   if(CurveNum == 1)       startnodenum = 12;
   if(CurveNum == 2)       startnodenum = 4;

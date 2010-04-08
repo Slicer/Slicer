@@ -1842,7 +1842,7 @@ int vtkMimxViewMergePointsWidget::GetInputPickedCompleteFace(
     }
   vtkIdList *completecellidlist;
 
-  bool status;
+  bool status = false;
   for (i=0; i<compsurfpoly->GetNumberOfCells(); i++)
     {
     status = true;

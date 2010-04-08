@@ -1693,7 +1693,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
-  vspNode->SetExpectedFPS(this->SC_ExpectedFPS->GetValue());
+  vspNode->SetExpectedFPS((int)(this->SC_ExpectedFPS->GetValue()));
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
 

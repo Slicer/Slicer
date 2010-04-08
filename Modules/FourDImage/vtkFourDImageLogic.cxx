@@ -276,7 +276,7 @@ int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
           //--- to which volume does slice belong?
           tag.clear();
           itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|0100",  tag);
-          bundleIdentifier = atof( tag.c_str() );
+          bundleIdentifier = atoi( tag.c_str() );
         
           //--- this filenamelist for this volume isn't yet allocated.
           bundle = bundleIdentifier - 1;

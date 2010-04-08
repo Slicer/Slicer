@@ -1451,9 +1451,9 @@ void vtkMeasurementsAngleWidget::Update3DWidgetVisibility(vtkMRMLMeasurementsAng
         // clicks have happened
         int *max;
         max = angleWidget->GetInteractor()->GetSize();
-        double x, y;
-        x = (double)max[0];
-        y = (double)max[1];
+        int x, y;
+        x = max[0];
+        y = max[1];
         angleWidget->GetInteractor()->SetEventPositionFlipY(x*0.25,y*0.25);
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);

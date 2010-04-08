@@ -303,9 +303,9 @@ void vtkEMSegmentIntensityImagesStep::Validate()
         wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
         wizard_workflow->ProcessInputs();
       }
-      int min = volumeNode->GetImageData()->GetScalarRange()[0];
+      double min = volumeNode->GetImageData()->GetScalarRange()[0];
       // std::cerr << "blub " << i << " " << min << " ++++++++ " <<  volumeNode->GetImageData()->GetScalarRange()[1] << endl;
-      if (min < 0)
+      if (min < 0.0)
         {
           failedTestIDs.push_back(vol_id);
         } 

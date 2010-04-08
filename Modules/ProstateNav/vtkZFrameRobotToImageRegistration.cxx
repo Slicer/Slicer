@@ -1361,7 +1361,7 @@ void vtkZFrameRobotToImageRegistration::Update_Scan_Plane(Column3Vector &pcurren
  */
 Real vtkZFrameRobotToImageRegistration::ComplexMax(Matrix &realmat, Matrix &imagmat)
 {
-  Real maxabs=0, valabs, sqmag;
+  Real maxabs=0.0, valabs=0.0, sqmag=0.0;
   
   for(int i=0; i<realmat.nrows(); i++)
     for(int j=0; j<realmat.ncols(); j++)

@@ -374,7 +374,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   int ncps[3]; 
   int degree[3]; 
   for(int i=0; i < 3; i++){
-    ncps[i] = floor(((float)imageSize[i])/gridSize);
+    ncps[i] = (int)floor(((float)imageSize[i])/gridSize);
     degree[i] = 2;
 
     if(ncps[i] < degree[i] + 2){

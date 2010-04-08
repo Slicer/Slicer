@@ -61,8 +61,8 @@ vtkMRMLXYPlotManagerNode::vtkMRMLXYPlotManagerNode()
   this->YRange[0] = 0.0;
   this->YRange[1] = 0.0;
 
-  this->AutoXRange = 0.0;
-  this->AutoYRange = 0.0;
+  this->AutoXRange = 0;
+  this->AutoYRange = 0;
 
 }
 

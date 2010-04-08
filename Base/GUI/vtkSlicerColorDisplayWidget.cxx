@@ -541,7 +541,8 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         //colorNode->GetLookupTable()->GetColor((double)row, colour);
         // GetTableValue returns the alpha as well, use GetColor to just get rgb (except it returns the wrong black value on the first call if a user edited table starts from > 0)
         double tableValue[4];
-        colorNode->GetLookupTable()->GetTableValue((double)row, tableValue);
+        vtkIdType r = (vtkIdType)row;
+        colorNode->GetLookupTable()->GetTableValue(r, tableValue);
         colour[0] = tableValue[0];
         colour[1] = tableValue[1];
         colour[2] = tableValue[2];
