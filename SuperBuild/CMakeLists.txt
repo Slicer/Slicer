@@ -254,7 +254,7 @@ if(Slicer3_USE_KWWIDGETS)
 
   if(WIN32)
     set(tk_SOURCE_DIR tcl/tk)
-  elseif(APPLE)
+  else()
     set(tk_SOURCE_DIR tcl/tk)
     set(tk_BUILD_IN_SOURCE 1)
 
