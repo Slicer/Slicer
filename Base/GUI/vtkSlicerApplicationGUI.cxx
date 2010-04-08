@@ -675,7 +675,7 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
         {
         return ( "Conventional layout" );
         }
-      else if ( layout = vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView )
+      else if ( layout == vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView )
         {
         return ( "Side-by-side Compare layout" );
         }
