@@ -304,7 +304,7 @@ void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
 void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
 {
   vtkMRMLTransformNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::New();
+  vtkSmartPointer<vtkMRMLLinearTransformNode> node = vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
   this->GetMRMLScene()->AddNodeNoNotify(node);
   if (tnode != NULL)
     {
@@ -313,7 +313,6 @@ void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
   node->SetName(node->GetID());
   this->UpdateTreeFromMRML();
   this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
-  node->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -356,13 +355,13 @@ void vtkSlicerMRMLTreeWidget::PlotCallback(const char * vtkNotUsed(id))
       {
         vtkMRMLDoubleArrayNode *dnode = vtkMRMLDoubleArrayNode::SafeDownCast(node);
 
-        vtkMRMLArrayPlotNode *plot = vtkMRMLArrayPlotNode::New();
+        vtkSmartPointer<vtkMRMLArrayPlotNode> plot = vtkSmartPointer<vtkMRMLArrayPlotNode>::New();
         this->GetMRMLScene()->AddNode(plot);
         plot->SetAndObserveArray(dnode);
         plot->SetColor(1, 0, 0);
         
         
-        vtkMRMLXYPlotManagerNode *manager = vtkMRMLXYPlotManagerNode::New();
+        vtkSmartPointer<vtkMRMLXYPlotManagerNode> manager = vtkSmartPointer<vtkMRMLXYPlotManagerNode>::New();
         this->GetMRMLScene()->AddNode(manager);
         manager->AddPlotNode(plot);
         vtkMRMLDoubleArrayNode::LabelsVectorType labels = dnode->GetLabels();
@@ -375,7 +374,7 @@ void vtkSlicerMRMLTreeWidget::PlotCallback(const char * vtkNotUsed(id))
         top->SetApplication(this->GetApplication());
         top->Create();
         
-        vtkSlicerXYPlotWidget *widget = vtkSlicerXYPlotWidget::New();
+        vtkSmartPointer<vtkSlicerXYPlotWidget> widget = vtkSmartPointer<vtkSlicerXYPlotWidget>::New();
         widget->SetParent(top);
         widget->SetAndObservePlotManagerNode(manager);
         widget->Create();
@@ -388,8 +387,6 @@ void vtkSlicerMRMLTreeWidget::PlotCallback(const char * vtkNotUsed(id))
         top->SetSize(400, 200);
         top->Display();
 
-        plot->Delete();
-        manager->Delete();
         // top->Delete(); do I need to keep this around to have it display?
 
         // what about the widget? when do I delete that? Or will the toplevel delete it?
@@ -505,17 +502,15 @@ void vtkSlicerMRMLTreeWidget::HardenTransformCallback(const char *id)
 
   if (tnode->IsTransformToWorldLinear())
     {
-    vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> hardeningMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     tnode->GetMatrixTransformToWorld(hardeningMatrix);
     tbnode->ApplyTransform(hardeningMatrix);
-    hardeningMatrix->Delete();
     }
   else
     {
-    vtkGeneralTransform* hardeningTransform = vtkGeneralTransform::New();
+    vtkSmartPointer<vtkGeneralTransform> hardeningTransform = vtkSmartPointer<vtkGeneralTransform>::New();
     tnode->GetTransformToWorld(hardeningTransform);
     tbnode->ApplyTransform(hardeningTransform);
-    hardeningTransform->Delete();
     }
 
   tbnode->SetAndObserveTransformNodeID(NULL);

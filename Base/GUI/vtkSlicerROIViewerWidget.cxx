@@ -45,7 +45,7 @@ public:
         vtkMRMLTransformNode* tnode = this->ROINode->GetParentTransformNode();
         if (tnode != NULL && tnode->IsLinear())
           {
-          vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+          vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
           transformToWorld->Identity();
           vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
           lnode->GetMatrixTransformToWorld(transformToWorld);
@@ -418,18 +418,15 @@ void vtkSlicerROIViewerWidget::UpdateROITransform(vtkMRMLROINode *roi)
   vtkMRMLTransformNode* tnode = roi->GetParentTransformNode();
   if (tnode != NULL && tnode->IsLinear())
     {
-    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
     transformToWorld->Identity();
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
 
-    vtkTransform *xform = vtkTransform::New();
+    vtkSmartPointer<vtkTransform> xform =  vtkSmartPointer<vtkTransform>::New();
     xform->Identity();
     xform->SetMatrix(transformToWorld);
     rep->SetTransform(xform);
-
-    xform->Delete();
-    transformToWorld->Delete();
 
     boxWidget->InvokeEvent(vtkCommand::EndInteractionEvent);
     }

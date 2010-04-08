@@ -849,7 +849,7 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       int dimensions[3];
       double rasDimensions[4];
       double doubleDimensions[4];
-      vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
       
       // what are the actual dimensions of the imagedata?
       backgroundImage->GetDimensions(dimensions);
@@ -859,11 +859,9 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       doubleDimensions[3] = 0.0;
       backgroundNode->GetIJKToRASMatrix (ijkToRAS);
       ijkToRAS->MultiplyPoint (doubleDimensions, rasDimensions);
-      ijkToRAS->Delete();
-      ijkToRAS = NULL;
 
       // and what are their slice dimensions?
-      vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> rasToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
       double sliceDimensions[4];
       rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
       rasToSlice->SetElement(0, 3, 0.0);
@@ -871,8 +869,6 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       rasToSlice->SetElement(2, 3, 0.0);
       rasToSlice->Invert();
       rasToSlice->MultiplyPoint( rasDimensions, sliceDimensions );
-      rasToSlice->Delete();
-      rasToSlice = NULL;
       
       double fovh, fovv;
       // which is bigger, slice viewer width or height?
@@ -894,11 +890,9 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       // view is NOT changed)
       sliceNode->SetFieldOfView(fovh, fovv, sliceNode->GetFieldOfView()[2] );
 
-      vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
       sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
       sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
-      sliceToRAS->Delete();
-      sliceToRAS = NULL;
       sliceNode->UpdateMatrices( );
       }
     }

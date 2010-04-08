@@ -7,6 +7,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
@@ -307,7 +308,7 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
       vtkImageData *image = volumeNode->GetImageData();
       if (image) 
         {
-        vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+        vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
         volumeNode->GetIJKToRASMatrix(ijkToRAS);
 
         double dimsH[4];
@@ -330,7 +331,6 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
         volumeNode->SetDisableModifiedEvent(0);
         volumeNode->InvokePendingModifiedEvent();
 
-        ijkToRAS->Delete();
         }
       }
     }
@@ -358,6 +358,7 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
           scalarNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
           scalarNode->SetLabelMap( 1 );
           this->MRMLScene->Edited();
+          labelDisplayNode->Delete();
           }
         if ( wasLabel && !willBeLabel )
           {
@@ -372,6 +373,7 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents(vtkObject *caller,
           scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
           scalarNode->SetLabelMap( 0 );
           this->MRMLScene->Edited();
+          displayNode->Delete();
           }
         }
       }
@@ -411,10 +413,9 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
     this->OriginEntry1->SetValueAsDouble(vals[1]);
     this->OriginEntry2->SetValueAsDouble(vals[2]);
 
-    vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> mat  = vtkSmartPointer<vtkMatrix4x4>::New();
     volumeNode->GetIJKToRASMatrix(mat);
     this->ScanOrderEntry->GetWidget()->SetValue(vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(mat));
-    mat->Delete();
 
     vtkImageData *image = volumeNode->GetImageData();
     if (image) 

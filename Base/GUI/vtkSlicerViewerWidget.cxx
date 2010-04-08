@@ -1856,7 +1856,7 @@ void vtkSlicerViewerWidget::RemoveHierarchyObservers(int clearCache)
 void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -2030,7 +2030,6 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
         }
       }
     }
-  transformToWorld->Delete();
 
 }
 
@@ -2271,7 +2270,7 @@ vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplay
   clipper->SetValue( 0.0);
 
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -2309,7 +2308,7 @@ vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplay
       }
 
     vtkMatrix4x4 *sliceMatrix = NULL;
-    vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
     int planeDirection = 1;
     transformToWorld->Invert();
 
@@ -2337,14 +2336,11 @@ vtkClipPolyData* vtkSlicerViewerWidget::CreateTransformedClipper (vtkMRMLDisplay
     redSlicePlane->Delete();
     greenSlicePlane->Delete();
     yellowSlicePlane->Delete();
-    mat->Delete();
 
     }
   else 
     {
     clipper->SetClipFunction(this->SlicePlanes);
     }
-
-  transformToWorld->Delete();
   return clipper;
 }

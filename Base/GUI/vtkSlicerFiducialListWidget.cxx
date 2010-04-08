@@ -113,7 +113,7 @@ public:
         }
       // does the fiducial list node have a transform?
       vtkMRMLTransformNode* tnode = this->FiducialListNode->GetParentTransformNode();
-      vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+      vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
       transformToWorld->Identity();
       if (tnode != NULL && tnode->IsLinear())
         {
@@ -185,7 +185,6 @@ public:
           this->FiducialListNode->SetNthFiducialXYZ(n, worldxyz[0], worldxyz[1], worldxyz[2]);
           } // end for
         }
-      transformToWorld->Delete();
       transformToWorld = NULL;
       tnode = NULL;
       }
