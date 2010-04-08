@@ -114,6 +114,11 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerExtensionsIcon = vtkKWIcon::New();
   this->SlicerWWWIcon = vtkKWIcon::New();
   this->SlicerRotateToPixelSpaceIcon = vtkKWIcon::New();
+  this->SlicerAnnotationRulerEndpoint1Icon= vtkKWIcon::New();
+  this->SlicerAnnotationRulerEndpoint2Icon= vtkKWIcon::New();
+  this->SlicerAnnotationAngleEndpoint1Icon= vtkKWIcon::New();
+  this->SlicerAnnotationAngleEndpoint2Icon= vtkKWIcon::New();
+  this->SlicerAnnotationAngleCenterpointIcon= vtkKWIcon::New();
   
   this->AssignImageDataToIcons ( );
 }
@@ -638,6 +643,32 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     {
     this->SlicerWWWIcon->Delete();
     this->SlicerWWWIcon = NULL;
+    }
+
+  if ( this->SlicerAnnotationRulerEndpoint1Icon)
+    {
+    this->SlicerAnnotationRulerEndpoint1Icon->Delete();
+    this->SlicerAnnotationRulerEndpoint1Icon = NULL;    
+    }
+  if ( this->SlicerAnnotationRulerEndpoint2Icon)
+    {
+    this->SlicerAnnotationRulerEndpoint2Icon->Delete();
+    this->SlicerAnnotationRulerEndpoint2Icon = NULL;    
+    }
+  if ( this->SlicerAnnotationAngleEndpoint1Icon)
+    {
+    this->SlicerAnnotationAngleEndpoint1Icon->Delete();
+    this->SlicerAnnotationAngleEndpoint1Icon = NULL;    
+    }
+  if ( this->SlicerAnnotationAngleEndpoint2Icon)
+    {
+    this->SlicerAnnotationAngleEndpoint2Icon->Delete();
+    this->SlicerAnnotationAngleEndpoint2Icon = NULL;    
+    }
+  if ( this->SlicerAnnotationAngleCenterpointIcon)
+    { 
+    this->SlicerAnnotationAngleCenterpointIcon->Delete();
+    this->SlicerAnnotationAngleCenterpointIcon = NULL;    
     }
   if (this->SlicerRotateToPixelSpaceIcon )
     {
@@ -1167,6 +1198,32 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                  image_SlicerWWW_height,
                                  image_SlicerWWW_pixel_size,
                                  image_SlicerWWW_length, 0);
+  this->SlicerAnnotationRulerEndpoint1Icon->SetImage ( image_AnnotationRulerEndpoint1,
+                                                   image_AnnotationRulerEndpoint1_width,
+                                                   image_AnnotationRulerEndpoint1_height,
+                                                   image_AnnotationRulerEndpoint1_pixel_size,
+                                                   image_AnnotationRulerEndpoint1_length, 0);
+  this->SlicerAnnotationRulerEndpoint2Icon->SetImage ( image_AnnotationRulerEndpoint2,
+                                                   image_AnnotationRulerEndpoint2_width,
+                                                   image_AnnotationRulerEndpoint2_height,
+                                                   image_AnnotationRulerEndpoint2_pixel_size,
+                                                   image_AnnotationRulerEndpoint2_length, 0);
+  this->SlicerAnnotationAngleEndpoint1Icon->SetImage ( image_AnnotationAngleEndpoint1,
+                                                   image_AnnotationAngleEndpoint1_width,
+                                                   image_AnnotationAngleEndpoint1_height,
+                                                   image_AnnotationAngleEndpoint1_pixel_size,
+                                                   image_AnnotationAngleEndpoint1_length, 0);
+  this->SlicerAnnotationAngleEndpoint2Icon->SetImage (image_AnnotationAngleEndpoint2,
+                                                  image_AnnotationAngleEndpoint2_width,
+                                                  image_AnnotationAngleEndpoint2_height,
+                                                  image_AnnotationAngleEndpoint2_pixel_size,
+                                                  image_AnnotationAngleEndpoint2_length, 0);
+  this->SlicerAnnotationAngleCenterpointIcon->SetImage (image_AnnotationAngleCenterPoint,
+                                                    image_AnnotationAngleCenterPoint_width,
+                                                    image_AnnotationAngleCenterPoint_height,
+                                                    image_AnnotationAngleCenterPoint_pixel_size,
+                                                    image_AnnotationAngleCenterPoint_length, 0);
+
   this->SlicerRotateToPixelSpaceIcon->SetImage (image_SlicerRotateToPixelSpace,
                                             image_SlicerRotateToPixelSpace_width,
                                             image_SlicerRotateToPixelSpace_height,
@@ -1285,5 +1342,10 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerCloseIcon: " << this->GetSlicerCloseIcon() << "\n";
     os << indent << "SlicerExtensionsIcon: " << this->GetSlicerExtensionsIcon() << "\n";
     os << indent << "SlicerWWWIcon: " << this->GetSlicerWWWIcon() << "\n";
+    os << indent << "SlicerAnnotationRulerEndpoint1Icon: " << this->GetSlicerAnnotationRulerEndpoint1Icon() << "\n";
+    os << indent << "SlicerAnnotationRulerEndpoint2Icon: " << this->GetSlicerAnnotationRulerEndpoint2Icon() << "\n";
+    os << indent << "SlicerAnnotationAngleEndpoint1Icon: " << this->GetSlicerAnnotationAngleEndpoint1Icon() << "\n";
+    os << indent << "SlicerAnnotationAngleEndpoint2Icon: " << this->GetSlicerAnnotationAngleEndpoint2Icon() << "\n";
+    os << indent << "SlicerAnnotationAngleCenterpointIcon: " << this->GetSlicerAnnotationAngleCenterpointIcon() << "\n";
     os << indent << "SlicerRotateToPixelSpaceIcon: " << this->GetSlicerRotateToPixelSpaceIcon() << "\n";
 }

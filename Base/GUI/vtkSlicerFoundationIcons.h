@@ -118,7 +118,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerExtensionsIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerWWWIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerRotateToPixelSpaceIcon, vtkKWIcon );
-
+    vtkGetObjectMacro (SlicerAnnotationAngleEndpoint1Icon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerAnnotationAngleEndpoint2Icon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerAnnotationAngleCenterpointIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerAnnotationRulerEndpoint1Icon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerAnnotationRulerEndpoint2Icon, vtkKWIcon );
+    
     void AssignImageDataToIcons ( );
     
  protected:
@@ -228,6 +233,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerExtensionsIcon;
     vtkKWIcon *SlicerWWWIcon;
     vtkKWIcon *SlicerRotateToPixelSpaceIcon;
+    vtkKWIcon *SlicerAnnotationRulerEndpoint1Icon;
+    vtkKWIcon *SlicerAnnotationRulerEndpoint2Icon;
+    vtkKWIcon *SlicerAnnotationAngleEndpoint1Icon;
+    vtkKWIcon *SlicerAnnotationAngleEndpoint2Icon;
+    vtkKWIcon *SlicerAnnotationAngleCenterpointIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); /// Not implemented
