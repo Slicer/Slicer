@@ -29,7 +29,11 @@ vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentIntensityDistributionsStep::vtkEMSegmentIntensityDistributionsStep()
 {
+#if IBM_FLAG
+  this->SetName("7/9. Specify Intensity Distributions");
+#else
   this->SetName("6/9. Specify Intensity Distributions");
+#endif
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
 

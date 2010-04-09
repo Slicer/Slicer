@@ -17,6 +17,8 @@ class vtkEMSegmentNodeParametersStep;
 class vtkEMSegmentIntensityDistributionsStep;
 class vtkEMSegmentRegistrationParametersStep;
 class vtkEMSegmentRunSegmentationStep;
+class vtkEMSegmentInputChannelsStep;
+class vtkEMSegmentPreProcessingStep;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentGUI : 
   public vtkSlicerModuleGUI
@@ -155,6 +157,11 @@ private:
   vtkEMSegmentNodeParametersStep         *NodeParametersStep;
   vtkEMSegmentRegistrationParametersStep *RegistrationParametersStep;
   vtkEMSegmentRunSegmentationStep        *RunSegmentationStep;
+
+#if IBM_FLAG
+  vtkEMSegmentInputChannelsStep          *InputChannelStep;
+  vtkEMSegmentPreProcessingStep          *PreProcessingStep;
+#endif
 
   // Description:
   // Populate the logic with testing data, load some volumes

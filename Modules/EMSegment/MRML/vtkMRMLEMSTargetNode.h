@@ -34,11 +34,20 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTarget";}
 
+  virtual const char* GetNthInputChannelName(vtkIdType n);
+  virtual void SetNthInputChannelName(vtkIdType n, const char* targetName);
+  virtual int  GetNumberOfInputChannelNames();
+  virtual void SetNumberOfInputChannelName(vtkIdType newSize);
+  virtual int AddInputChannelName(const char* name);
+
+
 protected:
   vtkMRMLEMSTargetNode();
   ~vtkMRMLEMSTargetNode();
   vtkMRMLEMSTargetNode(const vtkMRMLEMSTargetNode&);
   void operator=(const vtkMRMLEMSTargetNode&);
+
+  std::vector<std::string>   InputChannelNames; 
 };
 
 #endif

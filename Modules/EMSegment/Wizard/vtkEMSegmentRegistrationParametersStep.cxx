@@ -20,7 +20,12 @@ vtkCxxRevisionMacro(vtkEMSegmentRegistrationParametersStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentRegistrationParametersStep::vtkEMSegmentRegistrationParametersStep()
 {
+#if IBM_FLAG
+  this->SetName("5/9. Edit Registration Parameters");
+#else
   this->SetName("8/9. Edit Registration Parameters");
+#endif
+
   this->SetDescription("Specify atlas-to-target registration parameters.");
 
   this->RegistrationParametersFrame                   = NULL;

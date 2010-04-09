@@ -38,7 +38,12 @@ vtkCxxRevisionMacro(vtkEMSegmentAnatomicalStructureStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentAnatomicalStructureStep::vtkEMSegmentAnatomicalStructureStep()
 {
+#if IBM_FLAG
+  this->SetName("3/9. Define Anatomical Tree");
+#else 
   this->SetName("2/9. Define Anatomical Tree");
+#endif
+
   this->SetDescription("Define a hierarchy of structures.");
 
   this->ContextMenu  = NULL;

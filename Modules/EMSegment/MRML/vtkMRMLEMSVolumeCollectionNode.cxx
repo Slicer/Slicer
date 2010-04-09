@@ -167,6 +167,8 @@ void vtkMRMLEMSVolumeCollectionNode::CloneVolumes(const vtkMRMLNode *rhs)
 
   // clone each image
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
+  volumeLogic->SetMRMLScene(this->GetScene());
+
   for (int i = 0; i < node->GetNumberOfVolumes(); ++i)
   {    
     vtkMRMLScalarVolumeNode* clonedVolume = 

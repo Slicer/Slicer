@@ -52,8 +52,8 @@ const char *pssDefaultTasksName[pssNumDefaultTasks] =
 
 const char *pssDefaultTasksFile[pssNumDefaultTasks-1] = 
 { 
-  "/share/data/EMSegmentTraining/MRIHumanBrain.mrml",
-  "/share/data/EMSegmentTraining/CTTorso.mrml",
+  "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml",
+  "/share/data/EMSegmentTrainingsm/CTTorso.mrml",
 };
 
 
@@ -213,7 +213,7 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
       
       if (index == numSets)
     {
-      sprintf(buffer, "SelectedDefaultTaskChangedCallback %d", i);
+      sprintf(buffer, "SelectedDefaultTaskChangedCallback %d 1", i);
       menu->AddRadioButton(pssDefaultTasksName[i], this, buffer);
     }
     }

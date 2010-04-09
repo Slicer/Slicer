@@ -28,6 +28,11 @@
 #include "vtkEMSegmentRegistrationParametersStep.h"
 #include "vtkEMSegmentRunSegmentationStep.h"
 
+#if IBM_FLAG
+#include "vtkEMSegmentInputChannelsStep.h"
+#include "vtkEMSegmentPreProcessingStep.h"
+#endif
+
 #include "CSAILLogo.h"
 #include "vtkKWIcon.h"
 
@@ -63,6 +68,10 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
   this->WizardWidget = vtkKWWizardWidget::New();
 
   this->ParametersSetStep          = NULL;
+#if IBM_FLAG
+  this->InputChannelStep           = NULL;
+  this->PreProcessingStep        = NULL;
+#endif 
   this->AnatomicalStructureStep    = NULL;
   this->SpatialPriorsStep          = NULL;
   this->IntensityImagesStep        = NULL;
@@ -102,6 +111,21 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
     this->ParametersSetStep->Delete();
     this->ParametersSetStep = NULL;
     }
+
+#if IBM_FLAG
+  if (!this->InputChannelStep)
+    {
+      this->InputChannelStep->Delete();
+      this->InputChannelStep = NULL;
+    }
+
+  if (!this->PreProcessingStep)
+    {
+      this->PreProcessingStep->Delete();
+      this->PreProcessingStep = NULL;
+    }
+
+#endif
 
   if (this->AnatomicalStructureStep)
     {
@@ -381,12 +405,24 @@ void vtkEMSegmentGUI::BuildGUI()
   // -----------------------------------------------------------------
   // Anatomical Structure step
 
+#if IBM_FLAG
+    if (!this->InputChannelStep)
+    {
+    this->InputChannelStep = vtkEMSegmentInputChannelsStep::New();
+    this->InputChannelStep->SetGUI(this);
+    }
+    cout << "========Add new Step" << endl;
+    wizard_workflow->AddNextStep(this->InputChannelStep);
+    cout << "========finished" << endl;
+#endif
+
   if (!this->AnatomicalStructureStep)
     {
     this->AnatomicalStructureStep = vtkEMSegmentAnatomicalStructureStep::New();
     this->AnatomicalStructureStep->SetGUI(this);
     }
   wizard_workflow->AddNextStep(this->AnatomicalStructureStep);
+
 
   // -----------------------------------------------------------------
   // Spatial Priors step
@@ -398,6 +434,26 @@ void vtkEMSegmentGUI::BuildGUI()
     }
   wizard_workflow->AddNextStep(this->SpatialPriorsStep);
 
+#if IBM_FLAG
+  // -----------------------------------------------------------------
+  // Registration Parameters step
+  if (!this->RegistrationParametersStep)
+    {
+    this->RegistrationParametersStep = 
+      vtkEMSegmentRegistrationParametersStep::New();
+    this->RegistrationParametersStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->RegistrationParametersStep);
+
+  // -----------------------------------------------------------------
+  // Prior Processing Step
+  if (!this->PreProcessingStep)
+    {
+    this->PreProcessingStep = vtkEMSegmentPreProcessingStep::New();
+    this->PreProcessingStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->PreProcessingStep);
+#else 
   // -----------------------------------------------------------------
   // Intensity Images step
 
@@ -420,6 +476,7 @@ void vtkEMSegmentGUI::BuildGUI()
 
   // -----------------------------------------------------------------
   // Intensity Distributions step
+#endif
 
   if (!this->IntensityDistributionsStep)
     {
@@ -441,7 +498,7 @@ void vtkEMSegmentGUI::BuildGUI()
 
   // -----------------------------------------------------------------
   // Registration Parameters step
-
+#if !IBM_FLAG
   if (!this->RegistrationParametersStep)
     {
     this->RegistrationParametersStep = 
@@ -449,7 +506,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->RegistrationParametersStep->SetGUI(this);
     }
   wizard_workflow->AddNextStep(this->RegistrationParametersStep);
-
+#endif
   // -----------------------------------------------------------------
   // Run Segmentation step
 
@@ -464,7 +521,9 @@ void vtkEMSegmentGUI::BuildGUI()
   // Initial and finish step
 
   wizard_workflow->SetFinishStep(this->RunSegmentationStep);
+    cout << "========Create Transition" << endl;
   wizard_workflow->CreateGoToTransitionsToFinishStep();
+    cout << "========End Transition" << endl;
   wizard_workflow->SetInitialStep(this->ParametersSetStep);
 }
 
@@ -475,6 +534,18 @@ void vtkEMSegmentGUI::TearDownGUI()
     {
     this->ParametersSetStep->SetGUI(NULL);
     }
+
+
+#if IBM_FLAG
+  if (this->InputChannelStep)
+    {
+    this->InputChannelStep->SetGUI(NULL);
+    }
+  if (this->PreProcessingStep)
+    {
+      this->PreProcessingStep->SetGUI(NULL);
+    }
+#endif
 
   if (this->AnatomicalStructureStep)
     {
