@@ -1214,7 +1214,7 @@ bool vtkTransRectalFiducialCalibrationAlgo::FindTargetingParams(vtkProstateNavTa
     /// \todo Pipe from H_afterLps (along to v_needle traj.) ending "Overshoot" mm after the target
     // T[?]+overshoot*v_needle[?]
 
-    //double mNorm = vtkMath::Normalize(v_needle);
+    vtkMath::Normalize(v_needle);
 
     // Needle Angle: fix it!
     double needle_angle = acos( 1.0 * vtkMath::Dot(v_needle,v1) );
