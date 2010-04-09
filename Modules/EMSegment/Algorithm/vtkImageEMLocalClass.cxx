@@ -101,9 +101,7 @@ void vtkImageEMLocalClass::PrintSelf(ostream& os,vtkIndent indent) {
   int x,y;
   os << indent << "------------------------------------------ CLASS ----------------------------------------------" << endl;
   this->vtkImageEMLocalGenericClass::PrintSelf(os,indent);  
-  os << indent << "ProbImageData:           "; 
-  if (this->ProbImageData) { std::cerr << endl; this->ProbImageData->PrintSelf(os,indent.GetNextIndent());}
-  else std::cerr << "(None)" << endl;
+
 
   os << indent << "LogMu:                   ";
   for (x= 0 ; x < this->NumInputImages; x ++) os << this->LogMu[x] << " ";
@@ -246,7 +244,7 @@ int vtkImageEMLocalClass::CheckAndAssignPCAImageData(vtkImageData *inData, int D
 // the datas data types.
 void vtkImageEMLocalClass::ExecuteData(vtkDataObject *)
 {
-  std::cerr << "Start vtkImageEMLocalClass::ExecuteData " << endl;
+  // std::cerr << "Start vtkImageEMLocalClass::ExecuteData " << endl;
   // std::cerr << "PCANumberOfEigenModes " << this->PCANumberOfEigenModes << endl;
 
    vtkDebugMacro(<<"ExecuteData()");
@@ -274,9 +272,11 @@ void vtkImageEMLocalClass::ExecuteData(vtkDataObject *)
      } 
      for (int k=j+1; k <   NumInputImages; k++) {
      if (fabs(this->LogCovariance[j][k] - this->LogCovariance[k][j]) > 0.000001) 
-         {
-         vtkEMAddErrorMessage("Covariance must be symetric for class with label " << this->Label);
-         return;
+         {   
+           vtkEMAddErrorMessage("Covariance must be symetric for class with label " << this->Label);
+           vtkIndent indent;
+           this->PrintSelf(cout,indent);
+           return;
          }
      }
    }

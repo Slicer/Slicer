@@ -63,8 +63,12 @@ void vtkImageEMLocalGenericClass::SetRegistrationCovariance(double Init[9]) {
 void vtkImageEMLocalGenericClass::PrintSelf(ostream& os,vtkIndent indent) {
   // this->vtkImageMultipleInputFilter::PrintSelf(os,indent);
   this->vtkImageEMGenericClass::PrintSelf(os,indent);
-  os << indent << "ProbImageData:           " << endl; 
-  if (this->ProbImageData) this->ProbImageData->PrintSelf(os,indent.GetNextIndent());
+  os << indent << "ProbImageData:           " ;
+  if (this->ProbImageData) { 
+    //   if (this->ProbImageData) this->ProbImageData->PrintSelf(os,indent.GetNextIndent());
+    os << this->ProbImageData << endl;
+  }
+  else os << "(None)" << endl;
 
   os << indent << "RegistrationTranslation:            " << this->RegistrationTranslation[0] << ", " << this->RegistrationTranslation[1] << ", " << this->RegistrationTranslation[2] << "\n" ;
   os << indent << "RegistrationRotation:               " << this->RegistrationRotation[0] << ", " << this->RegistrationRotation[1] << ", " << this->RegistrationRotation[2] << "\n" ;
