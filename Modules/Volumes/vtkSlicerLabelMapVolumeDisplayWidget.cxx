@@ -144,6 +144,8 @@ void vtkSlicerLabelMapVolumeDisplayWidget::ProcessMRMLEvents(vtkObject *vtkNotUs
     this->UpdatingMRML = 0;
     return;
     }
+  this->UpdatingMRML = 0;
+
 }
 
 //---------------------------------------------------------------------------
