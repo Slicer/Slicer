@@ -209,8 +209,10 @@ void vtkSlicerContextMenuHelper::RenameApplyCallback()
   vtkMRMLNode *node = this->GetMRMLNode();
   if (node != NULL)
     {
-    if (this->MRMLScene->GetNodesByName(this->RenameEntry->GetWidget()->GetValue())->GetNumberOfItems() > 0) 
+    std::string name(this->RenameEntry->GetWidget()->GetValue());
+    if (this->MRMLScene->GetNodesByName(name.c_str())->GetNumberOfItems() > 0) 
       {
+      /*** For some reason the dilog below doesn not dissapera or causes crash, removing for now
       vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
       dialog->SetParent (  this->RenameTopLevel );
       dialog->SetStyleToMessage();
@@ -225,10 +227,13 @@ void vtkSlicerContextMenuHelper::RenameApplyCallback()
       dialog->ModalOn();
       dialog->Invoke();
       dialog->Delete();
+      ****/
+      // make sure name is unique instead
+      //name = std::string(this->MRMLScene->GetUniqueNameByString(name.c_str()));
       }
-    node->SetName( this->RenameEntry->GetWidget()->GetValue() );
+    node->SetName( name.c_str());
     this->MRMLScene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
-    return;
+    //return;
     }
   this->HideRenameEntry();
 }
