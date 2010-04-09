@@ -57,7 +57,7 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
-  of << indent << " PrintQuality=\""
+  of << indent << "PrintQuality=\""
      << this->PrintQuality << "\" ";
 
   of << indent << "IntensityLabel=\""
@@ -140,7 +140,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       // update number of input channels
       if (this->GetNumberOfTargetInputChannels() != tmpVec.size())
         {
-      this->SetNumberOfTargetInputChannels((int)tmpVec.size());
+            this->SetNumberOfTargetInputChannels((int)tmpVec.size());
         }
       
       // copy data
@@ -148,7 +148,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "LogCovariance"))
       {
-      // remove visual row separators
+      // remove visual row seperators
       std::string valStr(val);
       for (i = 0; i < valStr.size(); ++i)
         {
@@ -170,9 +170,10 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
 
       // update number of input channels
       // assume square matrix
-      if (this->GetNumberOfTargetInputChannels() != tmpVec.size())
+      unsigned int side = (unsigned int) sqrt((double)tmpVec.size());
+      if (this->GetNumberOfTargetInputChannels() != side)
         {
-      this->SetNumberOfTargetInputChannels((int)tmpVec.size());
+        this->SetNumberOfTargetInputChannels(side);
         }
 
       // copy data
