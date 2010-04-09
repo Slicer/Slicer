@@ -1454,13 +1454,13 @@ void vtkMeasurementsAngleWidget::Update3DWidgetVisibility(vtkMRMLMeasurementsAng
         int x, y;
         x = max[0];
         y = max[1];
-        angleWidget->GetInteractor()->SetEventPositionFlipY(x*0.25,y*0.25);
+        angleWidget->GetInteractor()->SetEventPositionFlipY((int)(x*0.25),(int)(y*0.25));
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
-        angleWidget->GetInteractor()->SetEventPositionFlipY(x*0.5,y*0.5);
+        angleWidget->GetInteractor()->SetEventPositionFlipY((int)(x*0.5),(int)(y*0.5));
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
-        angleWidget->GetInteractor()->SetEventPositionFlipY(x*0.75,y*0.25);
+        angleWidget->GetInteractor()->SetEventPositionFlipY((int)(x*0.75),(int)(y*0.25));
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonPressEvent);
         angleWidget->GetInteractor()->InvokeEvent(vtkCommand::LeftButtonReleaseEvent);
         }

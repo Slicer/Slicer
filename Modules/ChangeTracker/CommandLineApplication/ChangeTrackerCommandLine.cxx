@@ -659,7 +659,9 @@ void InitializeThresholds(tgCMDLineStructure &tg, vtkImageData* image, vtkImageD
       }
     mean = mean/cnt;
 
-    for(idx=hist->GetMin()[0];idx<hist->GetMax()[0];idx++){
+    for(idx=(int)(hist->GetMin()[0]);
+        idx<(int)(hist->GetMax()[0]);
+        idx++){
       float d = mean - idx;
       stdev += d*d*hist->GetOutput()->GetScalarComponentAsFloat(idx,0,0,0);
     }
