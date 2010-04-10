@@ -37,25 +37,14 @@
 #include "vtkSlicerApplication.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkEMSegmentLogic.h"
+
+#if IBM_FLAG
+#include "IBM/vtkEMSegmentIBMParametersSetStep.cxx"
+#endif
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentParametersSetStep);
 vtkCxxRevisionMacro(vtkEMSegmentParametersSetStep, "$Revision: 1.2 $");
-
-
-const int pssNumDefaultTasks = 3;
-const char *pssDefaultTasksName[pssNumDefaultTasks] = 
-{ 
-  "MRI Human Brain",
-  "CT Torso",
-  "Create new task"
-};
-
-const char *pssDefaultTasksFile[pssNumDefaultTasks-1] = 
-{ 
-  "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml",
-  "/share/data/EMSegmentTrainingsm/CTTorso.mrml",
-};
-
 
 //----------------------------------------------------------------------------
 vtkEMSegmentParametersSetStep::vtkEMSegmentParametersSetStep()
@@ -71,7 +60,6 @@ vtkEMSegmentParametersSetStep::vtkEMSegmentParametersSetStep()
   this->RenameTopLevel = NULL;
   this->RenameApply = NULL;
   this->RenameCancel = NULL;
-
 }
 
 //----------------------------------------------------------------------------
@@ -121,6 +109,7 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
+
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
 
   wizardWidget->GetCancelButton()->SetEnabled(0);
@@ -169,6 +158,21 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
 }
 
 //----------------------------------------------------------------------------
+#if !IBM_FLAG
+void vtkEMSegmentParametersSetStep::DefineDefaultTasksList()
+{
+ // set define list of parameters 
+  this->pssDefaultTasksName.clear();
+  this->pssDefaultTasksFile.clear();
+
+  // The last one is always "Create New" 
+  this->pssDefaultTasksFile.push_back(vtksys_stl::string(""));
+  this->pssDefaultTasksName.push_back("Create new task");
+
+}
+#endif
+
+//----------------------------------------------------------------------------
 void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
 {
   if (!this->ParameterSetMenuButton ||
@@ -184,9 +188,11 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
       return;
     }
 
+  // Check on Parameter Files 
+  this->DefineDefaultTasksList();
 
-  vtkKWMenu *menu =
-    this->ParameterSetMenuButton->GetWidget()->GetMenu();
+  // Define Menue
+  vtkKWMenu *menu = this->ParameterSetMenuButton->GetWidget()->GetMenu();
   menu->DeleteAllItems();
 
   char buffer[256];
@@ -202,23 +208,21 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
       menu->AddRadioButton(name, this, buffer);
       }
     }
-
-  for (int i = 0 ; i <  pssNumDefaultTasks; i++)
+ 
+    for (int i = 0 ; i < (int)this->pssDefaultTasksName.size(); i++)
     {
       int index = 0; 
-      while ((index < numSets) && strcmp(mrmlManager->GetNthParameterSetName(index),pssDefaultTasksName[i] ))
-    {
+      while ((index < numSets) && strcmp(mrmlManager->GetNthParameterSetName(index),pssDefaultTasksName[i].c_str() ))
+      {
       index++;
-    }
+      }
       
       if (index == numSets)
-    {
+      {
       sprintf(buffer, "SelectedDefaultTaskChangedCallback %d 1", i);
-      menu->AddRadioButton(pssDefaultTasksName[i], this, buffer);
+      menu->AddRadioButton(pssDefaultTasksName[i].c_str(), this, buffer);
+      }
     }
-    }
-
- 
 }
 
 //----------------------------------------------------------------------------
@@ -276,44 +280,13 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
     }
 }
 
-//----------------------------------------------------------------------------
-int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *dataLink, bool warningFlag)
-{
-  if (warningFlag)
-    {
-      if (!vtkKWMessageDialog::PopupYesNo( 
-                      this->GetApplication(), 
-                      NULL, 
-                      "Load Task Specific Data?",
-                      "It might take some time to download the default setting. Do you want to proceed ?", 
-                      vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
-    {
-      return 1;
-    }
-    }
-
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkMRMLScene *scene = mrmlManager->GetMRMLScene();
-  int res;
-  scene->SetURL(dataLink);
-  res = scene->Connect();
-  if(scene->GetErrorCode())
-    {
-      vtkErrorMacro("ERROR: Failed to connect to the data. Error code: " << scene->GetErrorCode() 
-      << " Error message: " << scene->GetErrorMessage());
-      return 1;
-    }
-  return 0;
-}
-
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentParametersSetStep::
 SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
 {
 
-  if (index < 0 || index >  pssNumDefaultTasks -1) 
+  if (index < 0 || index >  int(this->pssDefaultTasksName.size() -1) )
     {
       vtkErrorMacro("Index is not defined");
       return;
@@ -322,7 +295,7 @@ SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // Create New task 
-  if (index ==  pssNumDefaultTasks -1)
+  if (index ==  int(this->pssDefaultTasksName.size() -1))
     {   
       vtkWarningMacro("\n===========\n====Ignore message: vtkEMSegmentMRMLManager: Output volume is NULL\n===========");
       mrmlManager->CreateAndObserveNewParameterSet();
@@ -331,30 +304,9 @@ SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
       return;
     }
 
-  // Load Task 
-  // if (!this->LoadDefaultData("http://xnd.slicer.org:8000/data/20090803T130148Z/ChangetrackerTutorial2009.mrml"))
-  if (!this->LoadDefaultData(pssDefaultTasksFile[index],warningFlag))
-    {
-      // Remove the default selection entry from the menue, 
-      this->PopulateLoadedParameterSets();
-
-      // Figure out the index number
-      int numSets = mrmlManager->GetNumberOfParameterSets();
-      for(int index = 0; index < numSets; index++)
-    {
-      const char *name = mrmlManager->GetNthParameterSetName(index);
-      if (name && !strcmp(name,pssDefaultTasksName[index]))
-        {
-          // Select the Node 
-          this->SelectedParameterSetChangedCallback(index);
-          index = numSets;
-        }
-    }
-      // Go to next step 
-      // Add that we transition to next stage 
-      vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-      wizard_widget->GetWizardWorkflow()->AttemptToGoToNextStep();
-    }
+#if IBM_FLAG 
+  this->LoadTask(index, warningFlag);
+#endif
 }
 
 void vtkEMSegmentParametersSetStep::UpdateTaskListIndex(int index) 
@@ -404,6 +356,9 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int inde
     {
     anat_step->GetAnatomicalStructureTree()->GetWidget()->DeleteAllNodes();
     }
+#if IBM_FLAG
+  this->SourceTclFile(this->DefineTclTaskFullPathName(mrmlManager->GetNode()->GetTclTaskFilename()));
+#endif
 }
 
 //----------------------------------------------------------------------------

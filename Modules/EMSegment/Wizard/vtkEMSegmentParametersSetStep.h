@@ -17,6 +17,7 @@ Version:   $Revision: 1.6 $
 #define __vtkEMSegmentParametersSetStep_h
 
 #include "vtkEMSegmentStep.h"
+#include "vector.h"
 
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
@@ -75,7 +76,18 @@ private:
 
   void PopUpRenameEntry(int index);
   void UpdateTaskListIndex(int index);
+#if IBM_FLAG
   int LoadDefaultData(const char *dataLink, bool warningFlag);
+  int SourceTclFile(const char *tclFile);
+  void LoadTask(int index, bool warningFlag);
+  const char*  DefineTclTaskFullPathName(const char* TclFileName);
+  const char*  GetTclTaskDirectory();
+#endif
+  void DefineDefaultTasksList();
+  //BTX:
+  vector<std::string> pssDefaultTasksName;
+  vector<std::string> pssDefaultTasksFile;
+ //ETX:
 
 };
 
