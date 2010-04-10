@@ -64,7 +64,6 @@ vtkEMSegmentAnatomicalStructureStep::vtkEMSegmentAnatomicalStructureStep()
   this->NumberOfColumns = 3;
   this->MultiSelectMode = false;
 
-  this->ColormapFrame        = NULL;
   this->ColorSelectorWidget  = NULL;
 
   this->SelectedColormapChangedCallbackCommand = vtkCallbackCommand::New();
@@ -132,12 +131,6 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
     {
       this->ColorMultiColumnList->Delete();
       this->ColorMultiColumnList = NULL;
-    }
-
-  if (this->ColormapFrame)
-    {
-    this->ColormapFrame->Delete();
-    this->ColormapFrame = NULL;
     }
 
   if (this->ColorSelectorWidget)
@@ -312,63 +305,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
   tree->EnableReparentingOn();
 
 
-  //create Colormap frame
-
-  if (!this->ColormapFrame)
-    {
-    this->ColormapFrame = vtkKWFrameWithLabel::New();
-    }
-  if (!this->ColormapFrame->IsCreated())
-    {
-    this->ColormapFrame->SetParent(wizard_widget->GetClientArea());
-    this->ColormapFrame->Create();
-    this->ColormapFrame->SetLabelText("Colormap");
-    }
-
-  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
-               this->ColormapFrame->GetWidgetName());
-
-  // Create a ColorSelectorWidget for the user to selecting a colormap
-  if (!this->ColorSelectorWidget)
-    {
-    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
-    }
-  if (!this->ColorSelectorWidget->IsCreated())
-    {
-    this->ColorSelectorWidget->SetParent(
-      this->ColormapFrame->GetFrame());
-    this->ColorSelectorWidget->Create();
-    this->ColorSelectorWidget
-        ->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
-    this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
-    // don't allow new nodes to be created until can edit them
-    // this->ColorSelectorWidget->NewNodeEnabledOn();
-    this->ColorSelectorWidget->ShowHiddenOn();
-    this->ColorSelectorWidget->SetMRMLScene(
-      this->GetGUI()->GetMRMLManager()->GetMRMLScene());
-    this->ColorSelectorWidget->SetBorderWidth(2);
-    this->ColorSelectorWidget->SetPadX(2);
-    this->ColorSelectorWidget->SetPadY(2);
-    //this->ColorSelectorWidget->GetWidget()->IndicatorVisibilityOff();
-    this->ColorSelectorWidget->GetWidget()->SetWidth(14);
-    this->ColorSelectorWidget->SetLabelText( "Select colormap: ");
-    this->ColorSelectorWidget
-        ->SetBalloonHelpString("Select a colormap from the current mrml scene.");
-    this->ColorSelectorWidget->SetLabelWidth(
-      EMSEG_WIDGETS_LABEL_WIDTH - 12);
-    }
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkMRMLScene            *mrmlScene   = this->ColorSelectorWidget->GetMRMLScene();
-  if (mrmlManager->GetColormap() && mrmlScene )
-    {
-    this->ColorSelectorWidget->SetSelected( 
-        mrmlScene->GetNodeByID( mrmlManager->GetColormap() ) );
-    }
-
-  this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ColorSelectorWidget->GetWidgetName(),
-                this->ColormapFrame->GetFrame()->GetWidgetName());
-  
+  //create Colormap frame 
   // Create NodeAttribute frame
 
   if (!this->AnatomicalNodeAttributesFrame)
@@ -524,7 +461,42 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     this->ShowOnlyNamedColorsCheckButton->SetText("Show Only Named Colors");
     }
 
+  // Create a ColorSelectorWidget for the user to selecting a colormap
+  if (!this->ColorSelectorWidget)
+    {
+    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+    }
+  if (!this->ColorSelectorWidget->IsCreated())
+    {
+      this->ColorSelectorWidget->SetParent( this->AnatomicalNodeAttributesFrame->GetFrame());
+      this->ColorSelectorWidget->Create();
+      this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+      this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
+    // don't allow new nodes to be created until can edit them
+    // this->ColorSelectorWidget->NewNodeEnabledOn();
+    this->ColorSelectorWidget->ShowHiddenOn();
+    this->ColorSelectorWidget->SetMRMLScene(
+      this->GetGUI()->GetMRMLManager()->GetMRMLScene());
+    this->ColorSelectorWidget->SetBorderWidth(2);
+    this->ColorSelectorWidget->SetPadX(2);
+    this->ColorSelectorWidget->SetPadY(2);
+    //this->ColorSelectorWidget->GetWidget()->IndicatorVisibilityOff();
+    this->ColorSelectorWidget->GetWidget()->SetWidth(14);
+    this->ColorSelectorWidget->SetLabelText( "Select colormap: ");
+    this->ColorSelectorWidget
+        ->SetBalloonHelpString("Select a colormap from the current mrml scene.");
+    this->ColorSelectorWidget->SetLabelWidth(
+      EMSEG_WIDGETS_LABEL_WIDTH - 12);
+    }
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkMRMLScene            *mrmlScene   = this->ColorSelectorWidget->GetMRMLScene();
+  if (mrmlManager->GetColormap() && mrmlScene )
+    {
+    this->ColorSelectorWidget->SetSelected( 
+        mrmlScene->GetNodeByID( mrmlManager->GetColormap() ) );
+    }
 
+ 
   this->AddSelectedColorChangedObserver();
 
   // Update the UI with the proper value, if there is a selection
@@ -647,25 +619,35 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
 
   // update the color selection 
 
+  
   if(this->ColorMultiColumnList && this->ShowOnlyNamedColorsCheckButton 
      && this->ColorSelectorWidget)
     {
     if (has_valid_selection && sel_is_leaf_node)
       {
+
+      this->ColorSelectorWidget->SetEnabled(enabled);
+      this->Script ("grid %s  -column 0 -columnspan 4 -row 2 -sticky nw -padx 2 -pady 2",
+            this->ColorSelectorWidget->GetWidgetName());
+
       vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(this, 0, this, NULL);  
 
       this->ColorMultiColumnList->SetEnabled(enabled);
-      this->Script ("grid %s -column 0 -columnspan 3 -row 2 -sticky nw -padx 2 -pady 2",  
+      this->Script ("grid %s -column 0 -columnspan 3 -row 3 -sticky nw -padx 2 -pady 2",  
                     this->ColorMultiColumnList->GetWidgetName(),
                     this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
 
       this->ShowOnlyNamedColorsCheckButton->SetEnabled(enabled);
-      this->Script("grid %s -column 0 -columnspan 2 -row 3 -sticky nw -padx 2 -pady 2", 
+      this->Script("grid %s -column 0 -columnspan 2 -row 4 -sticky nw -padx 2 -pady 2", 
                   this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
                   this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
       } 
     else
       {
+      this->ColorSelectorWidget->SetEnabled(0);
+      this->Script ("grid forget %s", 
+                    this->ColorSelectorWidget->GetWidgetName());
+
       this->ColorMultiColumnList->SetEnabled(0);
        this->Script ("grid forget %s", 
                     this->ColorMultiColumnList->GetWidgetName());
@@ -1383,3 +1365,4 @@ void vtkEMSegmentAnatomicalStructureStep::UpdateAnatomicalNodeAttributeColorFram
     this->AnatomicalNodeAttributeColorFrame->SetBackgroundColor(colour);
     }
 }
+

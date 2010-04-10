@@ -99,7 +99,7 @@ protected:
                      unsigned long eid, void *clientData, void *callData);
   static void SelectedColorChangedCallback(vtkObject *caller, 
                      unsigned long eid, void *clientData, void *callData);
-
+  
 private:
   vtkEMSegmentAnatomicalStructureStep(const vtkEMSegmentAnatomicalStructureStep&);
   void operator=(const vtkEMSegmentAnatomicalStructureStep&);
