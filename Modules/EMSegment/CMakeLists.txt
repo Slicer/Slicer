@@ -75,6 +75,22 @@ file(GLOB headers
    $headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/IBM/*.cxx"
   )
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "IBM/*.tcl")
+
+foreach(file ${TCLFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+MESSAGE(STATUS  "${TCLFILES} ${CMAKE_CURRENT_SOURCE_DIR}")
+
+install(
+  FILES ${TCLFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/IBM
+  )
+
 endif(IBM_FLAG)
  
 
