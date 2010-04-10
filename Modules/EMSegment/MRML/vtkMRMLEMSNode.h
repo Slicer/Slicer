@@ -57,12 +57,19 @@ public:
   vtkGetMacro(SaveTemplateAfterSegmentation, int);
   vtkSetMacro(SaveTemplateAfterSegmentation, int);
 
+  vtkGetStringMacro(TclTaskFilename);
+  vtkSetStringMacro(TclTaskFilename);
+
+  static const char* GetDefaultTclTaskFilename() { return "GenericTask.tcl"; }
+
 protected:
   char *SegmenterNodeID;
 
   int   SaveTemplateAfterSegmentation;
 
   char* TemplateFilename;
+
+  char* TclTaskFilename;
 
 private:
   vtkMRMLEMSNode();
