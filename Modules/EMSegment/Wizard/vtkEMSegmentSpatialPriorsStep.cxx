@@ -93,7 +93,6 @@ void vtkEMSegmentSpatialPriorsStep::ShowUserInterface()
   anat_step->GetAnatomicalStructureTree()->GetWidget()->SetSelectionChangedCommand(
       this, "DisplaySelectedNodeSpatialPriorsCallback");
 
-  
   // Create the frame
 
   if (!this->SpatialPriorsVolumeFrame)
@@ -108,7 +107,7 @@ void vtkEMSegmentSpatialPriorsStep::ShowUserInterface()
     }
 
   this->Script(
-    "pack %s -side bottom -anchor nw -fill x -padx 0 -pady 2", 
+    "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
     this->SpatialPriorsVolumeFrame->GetWidgetName());
 
   // Create the spatial prior volume selector
