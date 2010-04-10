@@ -280,7 +280,7 @@ int vtkMRMLRobotNode::Init(vtkSlicerApplication* app)
   {
     // Target node
     vtkSmartPointer<vtkMRMLLinearTransformNode> tnode = vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
-    tnode->SetName("BRPRobotTarget");
+    tnode->SetName("ProstateNavRobotTarget");
 
     vtkSmartPointer<vtkMatrix4x4> transform = vtkSmartPointer<vtkMatrix4x4>::New();
     transform->Identity();

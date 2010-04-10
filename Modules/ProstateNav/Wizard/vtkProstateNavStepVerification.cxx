@@ -159,6 +159,8 @@ vtkProstateNavStepVerification::~vtkProstateNavStepVerification()
     this->VerificationPointListNode->Delete();
     this->VerificationPointListNode=NULL;
   }
+
+  this->MonitorFiducialNodes=true;
 }
 
 //----------------------------------------------------------------------------
@@ -331,7 +333,7 @@ void vtkProstateNavStepVerification::ShowTargetListFrame()
     this->ClearButton->SetParent (this->TargetListFrame);
     this->ClearButton->Create();
     this->ClearButton->SetText("Clear target verification");
-    this->ClearButton->SetBalloonHelpString("Stop the robot");
+    this->ClearButton->SetBalloonHelpString("Clear verification data for the selected target");
     }
 
   this->Script("pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2",
@@ -409,8 +411,27 @@ void vtkProstateNavStepVerification::ProcessGUIEvents(vtkObject *caller,
 
   else if (this->ClearButton == vtkKWPushButton::SafeDownCast(caller)
     && event == vtkKWPushButton::InvokedEvent)
-  {
-
+  {    
+    this->VerificationPointListNode->RemoveAllFiducials();
+    vtkProstateNavTargetDescriptor* targetDesc=NULL;
+    if (this->TargetIndexUnderVerification>=0)
+    {
+      targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(this->TargetIndexUnderVerification);      
+    }
+    else
+    {
+      targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(this->GetProstateNavManager()->GetCurrentTargetIndex());
+    }
+    if (targetDesc!=NULL)
+    {
+      targetDesc->SetTargetValidated(false);
+      targetDesc->SetOverallError(0);
+      targetDesc->SetAPError(0);
+      targetDesc->SetLRError(0);
+      targetDesc->SetISError(0);
+      UpdateTargetListGUI();
+    }
+    StopVerification();
   }
 
   // -----------------------------------------------------------------
@@ -439,13 +460,20 @@ void vtkProstateNavStepVerification::ProcessGUIEvents(vtkObject *caller,
 //----------------------------------------------------------------------------
 void vtkProstateNavStepVerification::ProcessMRMLEvents(vtkObject *caller,
                                          unsigned long event, void *callData)
-{
-  if (caller == this->VerificationPointListNode)
+{  
+  if (MonitorFiducialNodes && caller == this->VerificationPointListNode)
   {
     switch (event)
     {
-    case vtkCommand::ModifiedEvent: // Modified Event
-    case vtkMRMLScene::NodeAddedEvent: // when a fiducial is added to the list
+    case vtkMRMLScene::NodeAddedEvent: // when a fiducial is added to the list      
+      UpdateVerificationResultsForCurrentTarget();
+      if (this->VerificationPointListNode->GetNumberOfFiducials()>=2)
+      {        
+        StopVerification();
+        UpdateTargetListGUI();
+      }      
+      break;
+    case vtkCommand::ModifiedEvent: // Modified Event    
     case vtkMRMLFiducialListNode::FiducialModifiedEvent:
     case vtkMRMLFiducialListNode::DisplayModifiedEvent:
       UpdateVerificationResultsForCurrentTarget();
@@ -453,6 +481,17 @@ void vtkProstateNavStepVerification::ProcessMRMLEvents(vtkObject *caller,
       break;
     }
   }
+
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && event == vtkMRMLScene::NodeAddedEvent )
+    {
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast((vtkMRMLNode*)(callData));
+    if (volumeNode!=NULL && this->VolumeSelectorWidget!=NULL && volumeNode!=this->VolumeSelectorWidget->GetSelected() )
+      {
+      // a new volume is loaded, set as the current verification volume
+      this->VolumeSelectorWidget->SetSelected(volumeNode);
+      }
+    }
 
   vtkMRMLProstateNavManagerNode *managerNode = vtkMRMLProstateNavManagerNode::SafeDownCast(caller);
   if (managerNode!=NULL && managerNode==GetProstateNavManager())
@@ -484,6 +523,10 @@ void vtkProstateNavStepVerification::AddMRMLObservers()
   {
     manager->AddObserver(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);    
   }
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -497,6 +540,10 @@ void vtkProstateNavStepVerification::RemoveMRMLObservers()
   if (manager!=NULL)
   {
     manager->RemoveObservers(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);    
+  }
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
   }
 }
 
@@ -802,7 +849,6 @@ void vtkProstateNavStepVerification::StartVerification()
   // Lock GUI
   this->TargetList->SetEnabled(false);
   this->VerifyButton->SetEnabled(false);
-  this->ClearButton->SetEnabled(false);
 
   // Set fiducial placement mode
   GetLogic()->SetCurrentFiducialList(this->VerificationPointListNode);
@@ -827,12 +873,18 @@ void vtkProstateNavStepVerification::StopVerification()
   this->VerificationPointListNode->SetLocked(true);
   this->TargetList->SetEnabled(true);
   this->VerifyButton->SetEnabled(true);
-  this->ClearButton->SetEnabled(true);  
 }
 
 
 void vtkProstateNavStepVerification::UpdateVerificationResultsForCurrentTarget()
 {
+  if (this->TargetIndexUnderVerification<0)
+  {
+    // no current target under verification
+    this->VerificationPointListNode->RemoveAllFiducials();
+    return;
+  }
+
   if (this->VerificationPointListNode->GetNumberOfFiducials()>0)
   {    
     if (strcmp(this->VerificationPointListNode->GetNthFiducialLabelText(0),NEEDLE_TIP_LABEL)!=0)
@@ -848,13 +900,6 @@ void vtkProstateNavStepVerification::UpdateVerificationResultsForCurrentTarget()
     }
   }
 
-  if (this->TargetIndexUnderVerification<0)
-  {
-    // no current target under verification
-    this->VerificationPointListNode->RemoveAllFiducials();
-    StopVerification();
-    return;
-  }
   if (this->GetProstateNavManager()==NULL)
   {
     vtkErrorMacro("Invalid manager");
@@ -866,9 +911,7 @@ void vtkProstateNavStepVerification::UpdateVerificationResultsForCurrentTarget()
     return;
   }
 
-  vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(this->TargetIndexUnderVerification);    
-
-  StopVerification();
+  vtkProstateNavTargetDescriptor* targetDesc=this->GetProstateNavManager()->GetTargetDescriptorAtIndex(this->TargetIndexUnderVerification);
 
   float* needleTipPos=this->VerificationPointListNode->GetNthFiducialXYZ(0);
   float* needleBasePos=this->VerificationPointListNode->GetNthFiducialXYZ(1);
@@ -921,6 +964,8 @@ void vtkProstateNavStepVerification::DisplayVerificationResultsForCurrentTarget(
     return;
   }
 
+  // Temporariy disable fiducial monitoring. This allows us to update the fiducials without triggering recomputation/validation of results
+  this->MonitorFiducialNodes=false;
   double* needlePos=targetDesc->GetNeedleTipValidationPosition();  
   if (this->VerificationPointListNode->GetNumberOfFiducials()<1)
   {    
@@ -934,7 +979,6 @@ void vtkProstateNavStepVerification::DisplayVerificationResultsForCurrentTarget(
       this->VerificationPointListNode->SetNthFiducialXYZ(0,needlePos[0],needlePos[1],needlePos[2]);
     }
   }
-
   needlePos=targetDesc->GetNeedleBaseValidationPosition();  
   if (this->VerificationPointListNode->GetNumberOfFiducials()<2)
   {    
@@ -948,5 +992,5 @@ void vtkProstateNavStepVerification::DisplayVerificationResultsForCurrentTarget(
       this->VerificationPointListNode->SetNthFiducialXYZ(1,needlePos[0],needlePos[1],needlePos[2]);
     }
   }
-
+  this->MonitorFiducialNodes=true;
 }

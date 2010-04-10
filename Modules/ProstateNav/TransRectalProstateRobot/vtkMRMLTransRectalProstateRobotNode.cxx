@@ -302,6 +302,14 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
   }
   vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New(); 
   calibVol->GetIJKToRASMatrix(ijkToRAS);
+  vtkMRMLTransformNode *transformNode = calibVol->GetParentTransformNode();
+  if ( transformNode )
+    {
+    vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformNode->GetMatrixTransformToWorld(rasToRAS);
+    vtkMatrix4x4::Multiply4x4 (rasToRAS, ijkToRAS, ijkToRAS);
+    }
+
   in.VolumeIJKToRASMatrix=ijkToRAS;
   in.VolumeImageData=calibVol->GetImageData();
 
@@ -400,6 +408,9 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
     return false;
   }
 
+// Merge all into a single polydata
+  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
+
   // get RAS points of start and end point of needle
   // for the 3D viewer, the RAS coodinates are the world coordinates!!
   // this makes things simpler
@@ -427,9 +438,9 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   needleEndRAS[2] = targetRAS[2] + overshoot*needleVector[2];
 
   double needleStartRAS[3];
-  needleStartRAS[0] = targetRAS[0] - (needleLength-overshoot)*needleVector[0];
-  needleStartRAS[1] = targetRAS[1] - (needleLength-overshoot)*needleVector[1];
-  needleStartRAS[2] = targetRAS[2] - (needleLength-overshoot)*needleVector[2];
+  needleStartRAS[0] = needleEndRAS[0] - needleLength*needleVector[0];
+  needleStartRAS[1] = needleEndRAS[1] - needleLength*needleVector[1];
+  needleStartRAS[2] = needleEndRAS[2] - needleLength*needleVector[2];
 
   vtkSmartPointer<vtkLineSource> NeedleTrajectoryLine=vtkSmartPointer<vtkLineSource>::New();
   NeedleTrajectoryLine->SetResolution(100); 
@@ -439,8 +450,37 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   vtkSmartPointer<vtkTubeFilter> NeedleTrajectoryTube=vtkSmartPointer<vtkTubeFilter>::New();
   NeedleTrajectoryTube->SetInputConnection(NeedleTrajectoryLine->GetOutputPort());
   NeedleTrajectoryTube->SetRadius(1.0);
-  NeedleTrajectoryTube->SetNumberOfSides(8);
+  NeedleTrajectoryTube->SetNumberOfSides(16);
   NeedleTrajectoryTube->CappingOn();
+
+  appender->AddInputConnection(NeedleTrajectoryTube->GetOutputPort());  
+
+  // a thinner
+  if (overshoot<0)
+  {
+    double needleEndRAS[3];
+    needleEndRAS[0] = targetRAS[0];
+    needleEndRAS[1] = targetRAS[1];
+    needleEndRAS[2] = targetRAS[2];
+
+    double needleStartRAS[3];
+    needleStartRAS[0] = targetRAS[0] + overshoot*needleVector[0];
+    needleStartRAS[1] = targetRAS[1] + overshoot*needleVector[1];
+    needleStartRAS[2] = targetRAS[2] + overshoot*needleVector[2];
+
+    vtkSmartPointer<vtkLineSource> needleOvershootLine=vtkSmartPointer<vtkLineSource>::New();
+    needleOvershootLine->SetResolution(100); 
+    needleOvershootLine->SetPoint1(needleEndRAS);
+    needleOvershootLine->SetPoint2(needleStartRAS);
+
+    vtkSmartPointer<vtkTubeFilter> needleOvershootTube=vtkSmartPointer<vtkTubeFilter>::New();
+    needleOvershootTube->SetInputConnection(needleOvershootLine->GetOutputPort());
+    needleOvershootTube->SetRadius(0.2);
+    needleOvershootTube->SetNumberOfSides(8);
+    needleOvershootTube->CappingOn();
+
+    appender->AddInputConnection(needleOvershootTube->GetOutputPort());
+  }
 
   // update robot base position
   vtkSmartPointer<vtkMatrix4x4> baseTransform=vtkSmartPointer<vtkMatrix4x4>::New();
@@ -470,23 +510,22 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   probeTube->SetRadius(13.0); // TODO: read this from a model descriptor
   probeTube->SetNumberOfSides(20);
   probeTube->CappingOn();
+  
+  appender->AddInputConnection(probeTube->GetOutputPort());  
 
   vtkSmartPointer<vtkTubeFilter> probeCenterlineTube=vtkSmartPointer<vtkTubeFilter>::New();
   probeCenterlineTube->SetInputConnection(probeLine->GetOutputPort());
   probeCenterlineTube->SetRadius(0.5);
   probeCenterlineTube->SetNumberOfSides(8);
   probeCenterlineTube->CappingOn();
-  
-  // Merge all into a single polydata
 
-  vtkSmartPointer<vtkAppendPolyData> apd = vtkSmartPointer<vtkAppendPolyData>::New();
-  apd->AddInputConnection(NeedleTrajectoryTube->GetOutputPort());
-  apd->AddInputConnection(probeTube->GetOutputPort());
-  apd->AddInputConnection(probeCenterlineTube->GetOutputPort());
-  apd->Update();
+  appender->AddInputConnection(probeCenterlineTube->GetOutputPort());
+  
+  // Appender
+  appender->Update();
 
   vtkSmartPointer<vtkTriangleFilter> cleaner=vtkSmartPointer<vtkTriangleFilter>::New();
-  cleaner->SetInputConnection(apd->GetOutputPort());
+  cleaner->SetInputConnection(appender->GetOutputPort());
   
   modelNode->SetAndObservePolyData(cleaner->GetOutput());
   displayNode->SetPolyData(modelNode->GetPolyData());

@@ -439,4 +439,3 @@ void vtkProstateNavCalibrationStep::RemoveGUIObservers()
     this->ShowWorkspaceCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 }
-

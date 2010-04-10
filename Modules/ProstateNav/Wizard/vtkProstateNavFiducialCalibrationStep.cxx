@@ -1088,6 +1088,14 @@ void CalibPointRenderer::Update(vtkKWRenderWidget *renderer, vtkMRMLVolumeNode *
    
     vtkSmartPointer<vtkMatrix4x4> orientationMatrix = vtkSmartPointer<vtkMatrix4x4>::New();  
     volumeNode->GetIJKToRASMatrix(orientationMatrix);
+    vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
+    if ( transformNode )
+      {
+      vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+      transformNode->GetMatrixTransformToWorld(rasToRAS);
+      vtkMatrix4x4::Multiply4x4 (rasToRAS, orientationMatrix, orientationMatrix);
+      }
+
     this->Render_Volume->PokeMatrix(orientationMatrix);
 
     this->Render_Image = imagedata;
@@ -1147,6 +1155,17 @@ void vtkProstateNavFiducialCalibrationStep::ProcessMRMLEvents(vtkObject *caller,
     }
   }
 
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && event == vtkMRMLScene::NodeAddedEvent )
+    {
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast((vtkMRMLNode*)(callData));
+    if (volumeNode!=NULL && this->VolumeSelectorWidget!=NULL && volumeNode!=this->VolumeSelectorWidget->GetSelected() )
+      {
+      // a new volume is loaded, set as the current calibration volume
+      this->VolumeSelectorWidget->SetSelected(volumeNode);
+      }
+    }
+
   vtkMRMLTransRectalProstateRobotNode *robot = vtkMRMLTransRectalProstateRobotNode::SafeDownCast(caller);
   if (robot!=NULL && robot == GetRobot() && event == vtkCommand::ModifiedEvent)
     {
@@ -1178,20 +1197,27 @@ void vtkProstateNavFiducialCalibrationStep::AddMRMLObservers()
       this->ObservedRobot = NULL;
     }    
   }
+
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkProstateNavFiducialCalibrationStep::RemoveMRMLObservers()
 {
   this->CalibrationPointListNode->RemoveObserver(this->MRMLCallbackCommand);
-
   if (this->ObservedRobot!=NULL)
   {       
     this->ObservedRobot->RemoveObserver(this->MRMLCallbackCommand);
     this->ObservedRobot->UnRegister(this);
     this->ObservedRobot = NULL;    
   }
-
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+  }
 }
 
 //----------------------------------------------------------------------------

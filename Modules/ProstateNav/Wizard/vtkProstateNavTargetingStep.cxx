@@ -660,6 +660,17 @@ void vtkProstateNavTargetingStep::ProcessMRMLEvents(vtkObject *caller,
     }
   }
 
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && event == vtkMRMLScene::NodeAddedEvent )
+    {
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast((vtkMRMLNode*)(callData));
+    if (volumeNode!=NULL && this->VolumeSelectorWidget!=NULL && volumeNode!=this->VolumeSelectorWidget->GetSelected() )
+      {
+      // a new volume is loaded, set as the current targeting volume
+      this->VolumeSelectorWidget->SetSelected(volumeNode);
+      }
+    }
+
   vtkMRMLProstateNavManagerNode *managerNode = vtkMRMLProstateNavManagerNode::SafeDownCast(caller);
   if (managerNode!=NULL && managerNode==GetProstateNavManager())
     {
@@ -698,6 +709,11 @@ void vtkProstateNavTargetingStep::AddMRMLObservers()
   }
  
   manager->AddObserver(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);
+
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -711,6 +727,11 @@ void vtkProstateNavTargetingStep::RemoveMRMLObservers()
   if (manager!=NULL)
   {
     manager->RemoveObservers(vtkMRMLProstateNavManagerNode::CurrentTargetChangedEvent, this->MRMLCallbackCommand);    
+    manager->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);    
+  }
+  if (this->MRMLScene!=NULL)
+  {
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
   }
 }
 
