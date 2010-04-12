@@ -1536,7 +1536,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         }
 
         if { $validGeometry == 0 } {
-          break
+          continue
         }
 
         set refOrientation $refHeader($ORIENTATION,value)
