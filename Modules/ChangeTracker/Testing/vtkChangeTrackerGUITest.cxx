@@ -32,13 +32,36 @@ int vtkChangeTrackerGUITest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [] )
   vtkChangeTrackerSegmentationStep* step4 = vtkChangeTrackerSegmentationStep::New();
   vtkChangeTrackerTypeStep* step5 = vtkChangeTrackerTypeStep::New();
 
-  EXERCISE_BASIC_OBJECT_METHODS( gui );
-  EXERCISE_BASIC_OBJECT_METHODS( step1 );
-  EXERCISE_BASIC_OBJECT_METHODS( step2 );
-  EXERCISE_BASIC_OBJECT_METHODS( step3 );
-  EXERCISE_BASIC_OBJECT_METHODS( step4 );
-  EXERCISE_BASIC_OBJECT_METHODS( step5 );
-  
+    {
+    typedef vtkChangeTrackerGUI Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( gui );
+    }
+
+    {
+    typedef vtkChangeTrackerAnalysisStep Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( step1 );
+    }
+
+    {
+    typedef vtkChangeTrackerFirstScanStep Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( step2 );
+    }
+
+    {
+    typedef vtkChangeTrackerROIStep Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( step3 );
+    }
+
+    {
+    typedef vtkChangeTrackerSegmentationStep Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( step4 );
+    }
+
+    {
+    typedef vtkChangeTrackerTypeStep Superclass, MySuperclass;
+    EXERCISE_BASIC_OBJECT_METHODS( step5 );
+    }
+
   gui->Delete();
   step1->Delete();
   step2->Delete();
