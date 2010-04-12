@@ -3256,12 +3256,13 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PackSideBySideCompareView()
 {
+
     if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
-
+    double x, y, z;
 
     // Hide the top panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(0);
@@ -3271,6 +3272,33 @@ void vtkSlicerApplicationGUI::PackSideBySideCompareView()
 
     // Don't use tabs
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+   // setup the layout for Frame1
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
+    this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 0 -weight 1 -uniform 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 1 -weight 1 -uniform 1", this->GridFrame1->GetWidgetName() );
+
+    //--- CompareView puts the Red Slice GUI and 3D Viewer widget side by
+    //--- side in a top row. Then, the requested compare view rows and cols
+    //--- are arrayed in a grid beneath these two.
+    vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
+    if (g->GetSliceNode())
+      {
+      x = g->GetSliceNode()->GetFieldOfView()[0];
+      y = g->GetSliceNode()->GetFieldOfView()[1];
+      z = g->GetSliceNode()->GetFieldOfView()[2];
+      g->GetSliceNode()->SetFieldOfView(x, y, z);
+      g->GetSliceNode()->UpdateMatrices();
+      }
+
+    //--TODO: when Compare view gets added into the vtkMRMLLayoutNode,
+    vtkSlicerViewerWidget *viewer_widget = this->GetActiveViewerWidget();
+    if (viewer_widget)
+      {
+      viewer_widget->GridWidget ( this->GridFrame1, 0, 1);
+      }
+    g->GridGUI ( this->GetGridFrame1( ), 0, 0 );
 
     // insert a number of new main slice viewers according to user's input
     char buf[20];
@@ -3305,7 +3333,6 @@ void vtkSlicerApplicationGUI::PackSideBySideCompareView()
     const char *layoutname = NULL;
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
     int ncount = 0;
-    vtkSlicerSliceGUI *g;
     for (int i = 0; i < nSliceGUI; i++)
       {
       if (i == 0)
