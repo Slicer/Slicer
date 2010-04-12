@@ -247,7 +247,8 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   set transformToWorld [vtkMatrix4x4 New]
   $transformToWorld Identity
 
-  # control visibility based on ModelDisplayNode
+  # control visibility based on ModelDisplayNode and 
+  # transform based on transform node
   if { $_modelNode != "" } { 
     $o(cutter) SetInput [$_modelNode GetPolyData]
     set displayNode [$_modelNode GetDisplayNode]
@@ -257,8 +258,10 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     if { $tnode != "" } {
         $tnode GetMatrixTransformToWorld $transformToWorld
     }
-      
-    $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
+
+    if { $displayNode != "" } {
+      $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
+    }
   }
 
 
