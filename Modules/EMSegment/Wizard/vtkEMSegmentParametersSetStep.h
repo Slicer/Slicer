@@ -17,7 +17,7 @@ Version:   $Revision: 1.6 $
 #define __vtkEMSegmentParametersSetStep_h
 
 #include "vtkEMSegmentStep.h"
-#include "vector.h"
+#include <vector>
 
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
@@ -85,8 +85,8 @@ private:
 #endif
   void DefineDefaultTasksList();
   //BTX:
-  vector<std::string> pssDefaultTasksName;
-  vector<std::string> pssDefaultTasksFile;
+  std::vector<std::string> pssDefaultTasksName;
+  std::vector<std::string> pssDefaultTasksFile;
  //ETX:
 
 };
