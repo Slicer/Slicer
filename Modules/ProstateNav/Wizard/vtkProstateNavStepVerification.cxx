@@ -182,6 +182,7 @@ void vtkProstateNavStepVerification::SetVerificationPointListNode(vtkMRMLFiducia
   {
     scene->RemoveNode(this->VerificationPointListNode);
   }
+
   vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -190,6 +191,10 @@ void vtkProstateNavStepVerification::SetVerificationPointListNode(vtkMRMLFiducia
   if (this->MRMLObserverManager)
   {
     this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&this->VerificationPointListNode),node,events);
+  }
+  else
+  {
+    vtkSetMRMLNodeMacro(this->VerificationPointListNode, node);
   }
   if (this->VerificationPointListNode!=NULL && scene!=NULL)
   {
@@ -211,7 +216,7 @@ void vtkProstateNavStepVerification::ShowUserInterface()
     GetLogic()->SetMouseInteractionMode(vtkMRMLInteractionNode::ViewTransform);
   }
 
-  vtkMRMLFiducialListNode* verifNode=vtkMRMLFiducialListNode::New();
+  vtkSmartPointer<vtkMRMLFiducialListNode> verifNode=vtkSmartPointer<vtkMRMLFiducialListNode>::New();
   verifNode->SetName("Verification");
   SetVerificationPointListNode(verifNode);
 
@@ -558,11 +563,6 @@ void vtkProstateNavStepVerification::OnMultiColumnListSelectionChanged()
     return;
     }
 
-  if (this->MRMLScene)
-    {
-    this->MRMLScene->SaveStateForUndo();
-    }
-
   int numRows = this->TargetList->GetWidget()->GetNumberOfSelectedRows();
   if (numRows == 1)
     {   
@@ -800,17 +800,16 @@ void vtkProstateNavStepVerification::HideUserInterface()
 {
   Superclass::HideUserInterface();
 
-  SetVerificationPointListNode(NULL);
+  TearDownGUI();  
+}
 
+//----------------------------------------------------------------------------
+void vtkProstateNavStepVerification::TearDownGUI()
+{  
   RemoveGUIObservers();
   RemoveMRMLObservers();
 
-  this->GetLogic()->GetApplicationLogic()->GetMRMLScene()->RemoveNode(this->VerificationPointListNode);
-  if (this->VerificationPointListNode)
-  {
-    this->VerificationPointListNode->Delete();
-    this->VerificationPointListNode=NULL;
-  }  
+  SetVerificationPointListNode(NULL);
 }
 
 //----------------------------------------------------------------------------

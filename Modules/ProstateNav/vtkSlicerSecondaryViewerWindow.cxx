@@ -225,7 +225,7 @@ void vtkSlicerSecondaryViewerWindow::DisplayOnSecondaryMonitor()
 
   if (this->MultipleMonitorsAvailable)
   {
-    this->HideDecorationOn();
+    // this->HideDecorationOn(); // always show decoration (window title bar), otherwise Slicer main window can become inaccessible
   }
 }
 

@@ -45,6 +45,7 @@ public:
 
   virtual void ShowUserInterface();
   virtual void HideUserInterface();
+  virtual void TearDownGUI();
   virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);  
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 

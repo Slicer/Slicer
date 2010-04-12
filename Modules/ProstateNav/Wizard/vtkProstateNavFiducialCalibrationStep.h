@@ -43,25 +43,6 @@ class vtkMRMLTransRectalProstateRobotNode;
 
 #include "vtkSmartPointer.h"
 
-//BTX
-class CalibPointRenderer
-  {
-  public:
-    CalibPointRenderer();
-    virtual ~CalibPointRenderer();
-    void Update(vtkKWRenderWidget* renderer, vtkMRMLVolumeNode *volumeNode, vtkImageData *imagedata);
-    void Reset();
-    vtkVolume* GetVolume();
-
-  protected:
-    vtkImageData* Render_Image;
-    vtkVolumeMapper* Render_Mapper;
-    vtkVolumeProperty* Render_VolumeProperty;
-    vtkVolume* Render_Volume;
-    vtkKWRenderWidget* Renderer;
-  };
-//ETX
-
 class VTK_PROSTATENAV_EXPORT vtkProstateNavFiducialCalibrationStep :
   public vtkProstateNavStep
 {
@@ -84,6 +65,7 @@ public:
   virtual void Enter();
   virtual void Exit();
 
+  virtual void TearDownGUI();
 
   // Description:
   // Process GUI events
@@ -119,12 +101,8 @@ protected:
   void SegmentAxis(int nAxis);
   void Resegment();
 
-  void UpdateAxesIn3DView();
   void ShowAxesIn3DView(bool show);
-  void ClearAxesIn3DView();
-
   void ShowMarkerVolumesIn3DView(bool show);
-  void ClearMarkerVolumesIn3DView();
 
   void EnableMarkerPositionEdit(bool enable);
 
@@ -172,10 +150,6 @@ protected:
   vtkSmartPointer<vtkKWFrameWithLabel> SegmentationResultsFrame;
   vtkSmartPointer<vtkKWTextWithScrollbars> CalibrationResultsBox;
 
-  vtkSmartPointer<vtkActor> Axes1Actor;
-  vtkSmartPointer<vtkActor> Axes2Actor;
-  vtkSmartPointer<vtkActor> AxesCenterPointsActor;  
-
   // Description:
   // CalibrationListNode is used for displaying 4 fiducial points that defines the calibration marker initial positions
   vtkSmartPointer<vtkMRMLFiducialListNode> CalibrationPointListNode;
@@ -183,10 +157,6 @@ protected:
   //ETX
 
   bool ProcessingCallback;
-
-  //BTX
-  std::vector<CalibPointRenderer> CalibPointPreProcRendererList;
-  //ETX
 
   vtkMRMLTransRectalProstateRobotNode* ObservedRobot;
   bool EnableAutomaticCenterpointAdjustment;

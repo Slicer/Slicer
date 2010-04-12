@@ -801,6 +801,7 @@ void vtkProstateNavGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::TearDownGUI ( )
 {
+  // REMOVE OBSERVERS and references to MRML and Logic
   // disconnect circular references so destructor can be called
 
   if (this->SecondaryWindow)
@@ -817,8 +818,11 @@ void vtkProstateNavGUI::TearDownGUI ( )
       vtkProstateNavStep *step=vtkProstateNavStep::SafeDownCast(this->WizardWidget->GetWizardWorkflow()->GetNthStep(i));
       if (step!=NULL)
         {
+        step->TearDownGUI();
         step->SetGUI(NULL);
         step->SetLogic(NULL);
+        step->SetAndObserveMRMLScene(NULL);
+        step->SetProstateNavManager(NULL);
         }
       else
         {

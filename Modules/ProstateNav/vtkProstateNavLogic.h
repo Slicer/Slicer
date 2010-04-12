@@ -34,6 +34,8 @@
 
 #include "vtkMRMLProstateNavManagerNode.h"
 
+#define ROBOT_COVERAGE_AREA_NODE_NAME "RobotCoverageArea"
+
 class vtkProstateNavGUI;
 
 class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic 

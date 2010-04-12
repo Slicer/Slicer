@@ -25,11 +25,10 @@
 #include "vtkProstateNavWin32Header.h" 
 #include "vtkTransRectalFiducialCalibrationAlgo.h"
 
+class vtkPolyData;
+
 class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRMLRobotNode
 {
-
- public:
-
  public:
 
   //----------------------------------------------------------------
@@ -83,17 +82,17 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
 
   void ResetCalibrationData();
   const TRProstateBiopsyCalibrationData& GetCalibrationData() { return this->CalibrationData; }
-  void SetCalibrationData(const TRProstateBiopsyCalibrationData& calibData) { this->CalibrationData=calibData; } 
+  void SetCalibrationData(const TRProstateBiopsyCalibrationData& calibData);
 
   //BTX
   bool SegmentRegisterMarkers(vtkMRMLScalarVolumeNode *calibVol, double thresh[4], double fidDimsMm[3], double radiusMm, bool bUseRadius, double initialAngle, std::string &resultDetails, bool enableAutomaticCenterpointAdjustment);
   //ETX
-
- vtkImageData* GetCalibMarkerPreProcOutput(int i);
- void GetCalibrationAxisCenterpoints(vtkPoints *points, int ii) { return this->CalibrationAlgo->GetAxisCenterpoints(points, ii); };
  
  virtual const char* GetRobotModelId() {return GetRobotModelNodeID(); };
  virtual bool GetRobotBaseTransform(vtkMatrix4x4* transform);
+
+ void SetModelAxesVisible(bool visible);
+ vtkGetMacro(ModelAxesVisible, bool);
 
  protected:
   //----------------------------------------------------------------
@@ -112,6 +111,14 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
   const char* AddRobotModel(const char* nodeName); 
 
  protected:
+
+  void UpdateModel();
+  void UpdateModelAxes();
+  void UpdateModelProbe();
+  void UpdateModelMarkers();
+  void UpdateModelNeedle(vtkProstateNavTargetDescriptor *targetDesc);
+
+
   TRProstateBiopsyCalibrationData CalibrationData;
 
   //BTX
@@ -120,6 +127,14 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
 
   double CalibrationMarkerPositions[CALIB_MARKER_COUNT][3];
   bool CalibrationMarkerValid[CALIB_MARKER_COUNT];
+
+  // Robot model components
+  vtkPolyData* ModelMarkers[CALIB_MARKER_COUNT];
+  vtkPolyData* ModelAxes;
+  vtkPolyData* ModelProbe;
+  vtkPolyData* ModelNeedle;
+
+  bool ModelAxesVisible;
 
   vtkSetReferenceStringMacro(RobotModelNodeID);
   char *RobotModelNodeID;

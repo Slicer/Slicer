@@ -86,6 +86,7 @@ public:
   bool FindTargetingParams(vtkProstateNavTargetDescriptor *target);
 
   vtkImageData *GetCalibMarkerPreProcOutput(int i);
+  vtkMatrix4x4* GetCalibMarkerPreProcOutputIJKToRAS();
   void GetAxisCenterpoints(vtkPoints *points, int i);
 
   const TRProstateBiopsyCalibrationData& GetCalibrationData() { return this->CalibrationData; }
@@ -130,6 +131,7 @@ protected:
   std::vector<PointType> CoordinatesVectorAxis1;
   std::vector<PointType> CoordinatesVectorAxis2;
   std::vector<vtkImageData*> CalibMarkerPreProcOutput;
+  vtkMatrix4x4* CalibMarkerPreProcOutputIJKToRAS;
   //ETX
 
   TRProstateBiopsyCalibrationData CalibrationData;

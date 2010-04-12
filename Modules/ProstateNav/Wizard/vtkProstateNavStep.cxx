@@ -179,3 +179,8 @@ void vtkProstateNavStep::UpdateName()
   this->SetName(ss.str().c_str());
   this->Modified();
 }
+
+void vtkProstateNavStep::TearDownGUI()
+{
+  // Override in child classes  
+}

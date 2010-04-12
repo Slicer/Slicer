@@ -72,6 +72,7 @@ vtkTransRectalFiducialCalibrationAlgo::vtkTransRectalFiducialCalibrationAlgo()
     }
   this->EnableMarkerCenterpointAdjustment=true;
   this->CalibrationData.CalibrationValid=false;
+  this->CalibMarkerPreProcOutputIJKToRAS=vtkMatrix4x4::New();
 }
 
 vtkTransRectalFiducialCalibrationAlgo::~vtkTransRectalFiducialCalibrationAlgo()
@@ -83,6 +84,11 @@ vtkTransRectalFiducialCalibrationAlgo::~vtkTransRectalFiducialCalibrationAlgo()
       CalibMarkerPreProcOutput[i]->Delete();
       CalibMarkerPreProcOutput[i]=0;
       }
+    }
+    if (this->CalibMarkerPreProcOutputIJKToRAS!=NULL)
+    {
+      this->CalibMarkerPreProcOutputIJKToRAS->Delete();
+      this->CalibMarkerPreProcOutputIJKToRAS=NULL;
     }
 }
 
@@ -108,6 +114,8 @@ bool vtkTransRectalFiducialCalibrationAlgo::CalibrateFromImage(const TRProstateB
   this->SegmentAxis(input.MarkerInitialPositions[2], input.MarkerInitialPositions[3], input.VolumeIJKToRASMatrix, input.VolumeImageData,
     input.MarkerSegmentationThreshold[2], input.MarkerSegmentationThreshold[3], input.MarkerDimensionsMm, input.MarkerRadiusMm, input.RobotInitialAngle,
     P2, v2, output.MarkerPositions[2], output.MarkerPositions[3], output.MarkerFound[2], output.MarkerFound[3], CalibMarkerPreProcOutput[2], CalibMarkerPreProcOutput[3], &CoordinatesVectorAxis2);
+
+  this->CalibMarkerPreProcOutputIJKToRAS->DeepCopy(input.VolumeIJKToRASMatrix);
 
   for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
@@ -1352,6 +1360,12 @@ bool vtkTransRectalFiducialCalibrationAlgo::DoubleEqual(double val1, double val2
 vtkImageData* vtkTransRectalFiducialCalibrationAlgo::GetCalibMarkerPreProcOutput(int i)
 {
   return this->CalibMarkerPreProcOutput[i];
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4* vtkTransRectalFiducialCalibrationAlgo::GetCalibMarkerPreProcOutputIJKToRAS()
+{
+  return this->CalibMarkerPreProcOutputIJKToRAS;
 }
 
 //----------------------------------------------------------------------------

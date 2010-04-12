@@ -411,7 +411,6 @@ vtkMRMLScalarVolumeNode *vtkProstateNavLogic::AddArchetypeVolume(const char* fil
   displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
   
   // Add nodes to scene
-  this->GetMRMLScene()->SaveStateForUndo();  
   vtkDebugMacro("LoadArchetypeVolume: adding storage node to the scene");
   storageNode->SetScene(this->GetMRMLScene());
   this->GetMRMLScene()->AddNode(storageNode);
@@ -546,7 +545,7 @@ int vtkProstateNavLogic::CreateCoverageVolume()
   vtkSmartPointer<vtkMRMLScalarVolumeNode> coverageVolumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();    
   int modifiedSinceRead = baseVolumeNode->GetModifiedSinceRead();
   coverageVolumeNode->CopyWithScene(baseVolumeNode);
-  coverageVolumeNode->SetName("RobotCoverageArea");
+  coverageVolumeNode->SetName(ROBOT_COVERAGE_AREA_NODE_NAME);
 
   // Create image data
   vtkSmartPointer<vtkImageData> coverageLabelMapImage=vtkSmartPointer<vtkImageData>::New();

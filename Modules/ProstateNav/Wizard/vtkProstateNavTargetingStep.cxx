@@ -664,7 +664,20 @@ void vtkProstateNavTargetingStep::ProcessMRMLEvents(vtkObject *caller,
     && event == vtkMRMLScene::NodeAddedEvent )
     {
     vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast((vtkMRMLNode*)(callData));
-    if (volumeNode!=NULL && this->VolumeSelectorWidget!=NULL && volumeNode!=this->VolumeSelectorWidget->GetSelected() )
+
+    // Check if the newly added volume is the coverage volume
+    // (that shouldn't be used as a targeting volume)
+    bool coverageVolumeWasAdded=false;
+    vtkMRMLProstateNavManagerNode *managerNode = GetProstateNavManager();
+    if (managerNode!=NULL && volumeNode!=NULL)
+    {
+      if (strcmp(volumeNode->GetName(), ROBOT_COVERAGE_AREA_NODE_NAME)==0 )
+      {
+        coverageVolumeWasAdded=true;
+      }
+    }
+
+    if (!coverageVolumeWasAdded && volumeNode!=NULL && this->VolumeSelectorWidget!=NULL && volumeNode!=this->VolumeSelectorWidget->GetSelected() )
       {
       // a new volume is loaded, set as the current targeting volume
       this->VolumeSelectorWidget->SetSelected(volumeNode);
@@ -833,11 +846,6 @@ void vtkProstateNavTargetingStep::OnMultiColumnListSelectionChanged()
   if (fidList == NULL)
     {
     return;
-    }
-
-  if (this->MRMLScene)
-    {
-    this->MRMLScene->SaveStateForUndo();
     }
 
   int numRows = this->TargetList->GetWidget()->GetNumberOfSelectedRows();
@@ -1162,6 +1170,12 @@ void vtkProstateNavTargetingStep::ShowCoverage(bool show)
 void vtkProstateNavTargetingStep::HideUserInterface()
 {
   Superclass::HideUserInterface();
+  TearDownGUI();
+}
+
+//----------------------------------------------------------------------------------------
+void vtkProstateNavTargetingStep::TearDownGUI()
+{
   RemoveMRMLObservers();
   RemoveGUIObservers();
 }

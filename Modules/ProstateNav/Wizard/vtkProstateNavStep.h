@@ -43,6 +43,7 @@ public:
 
   virtual void SetGUI(vtkProstateNavGUI*);
   virtual void SetLogic(vtkProstateNavLogic*);
+  virtual void TearDownGUI();
 
   vtkSetObjectMacro(ProstateNavManager, vtkMRMLProstateNavManagerNode);
   vtkGetObjectMacro(ProstateNavManager, vtkMRMLProstateNavManagerNode);

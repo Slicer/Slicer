@@ -12,9 +12,10 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLTransRectalProstateRobotNode.h"
+
 #include "vtkObjectFactory.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLTransRectalProstateRobotNode.h"
 #include "vtkMRMLScene.h"
 #include "itkMetaDataDictionary.h"
 #include "itkMetaDataObject.h"
@@ -26,7 +27,13 @@ Version:   $Revision: 1.2 $
 #include "vtkTriangleFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkMath.h"
-
+#include "vtkContourFilter.h"
+#include "vtkPointData.h"
+#include "vtkAppendPolyData.h"
+#include "vtkSphereSource.h"
+#include "vtkGlyph3D.h"
+#include "vtkPoints.h"
+#include "vtkPointSource.h"
 
 #include "vtkProstateNavTargetDescriptor.h"
 
@@ -63,7 +70,14 @@ vtkMRMLTransRectalProstateRobotNode::vtkMRMLTransRectalProstateRobotNode()
   for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
   {
     this->CalibrationMarkerValid[i]=false;
+    this->ModelMarkers[i]=vtkPolyData::New();
   } 
+  this->ModelAxes=vtkPolyData::New();
+  this->ModelProbe=vtkPolyData::New();
+  this->ModelNeedle=vtkPolyData::New();
+
+  this->ModelAxesVisible=false;
+  
   ResetCalibrationData();
   this->RobotModelNodeID=NULL;
   this->RobotModelNode=NULL;
@@ -72,6 +86,31 @@ vtkMRMLTransRectalProstateRobotNode::vtkMRMLTransRectalProstateRobotNode()
 //----------------------------------------------------------------------------
 vtkMRMLTransRectalProstateRobotNode::~vtkMRMLTransRectalProstateRobotNode()
 {
+  SetAndObserveRobotModelNodeID(NULL);
+
+  for (unsigned int i=0; i<CALIB_MARKER_COUNT; i++)
+  {
+    if (this->ModelMarkers[i]!=NULL)
+    {
+      this->ModelMarkers[i]->Delete();
+      this->ModelMarkers[i]=NULL;
+    }
+  }
+  if (this->ModelAxes!=NULL)
+  {
+    this->ModelAxes->Delete();
+    this->ModelAxes=NULL;
+  }
+  if (this->ModelProbe!=NULL)
+  {
+    this->ModelProbe->Delete();
+    this->ModelProbe=NULL;
+  }
+  if (this->ModelNeedle!=NULL)
+  {
+    this->ModelNeedle->Delete();
+    this->ModelNeedle=NULL;
+  }
 }
 
 
@@ -139,7 +178,6 @@ const char* vtkMRMLTransRectalProstateRobotNode::AddRobotModel(const char* nodeN
   vtkSmartPointer<vtkMRMLModelNode> robotModel = vtkSmartPointer<vtkMRMLModelNode>::New();
   vtkSmartPointer<vtkMRMLModelDisplayNode> robotDisp  = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
-  this->Scene->SaveStateForUndo();
   this->Scene->AddNode(robotDisp);
   this->Scene->AddNode(robotModel);
 
@@ -200,6 +238,7 @@ void vtkMRMLTransRectalProstateRobotNode::PrintSelf(ostream& os, vtkIndent inden
 bool vtkMRMLTransRectalProstateRobotNode::FindTargetingParams(vtkProstateNavTargetDescriptor *targetDesc)
 {
   // this is used for coverage area computation (IsOutsideReach means that the target is outside the robot's coverage area)
+  // :TODO: update this for arbitrary target and calib volume transform
   return this->CalibrationAlgo->FindTargetingParams(targetDesc);
 }
 
@@ -302,13 +341,6 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
   }
   vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New(); 
   calibVol->GetIJKToRASMatrix(ijkToRAS);
-  vtkMRMLTransformNode *transformNode = calibVol->GetParentTransformNode();
-  if ( transformNode )
-    {
-    vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-    transformNode->GetMatrixTransformToWorld(rasToRAS);
-    vtkMatrix4x4::Multiply4x4 (rasToRAS, ijkToRAS, ijkToRAS);
-    }
 
   in.VolumeIJKToRASMatrix=ijkToRAS;
   in.VolumeImageData=calibVol->GetImageData();
@@ -365,6 +397,13 @@ bool vtkMRMLTransRectalProstateRobotNode::SegmentRegisterMarkers(vtkMRMLScalarVo
     success=true;  
     this->Modified();
   }  
+
+  UpdateModelAxes();
+  UpdateModelProbe();
+  UpdateModelMarkers();
+  UpdateModelNeedle(NULL);
+  UpdateModel();
+
   return success;
 }
 
@@ -382,34 +421,112 @@ void vtkMRMLTransRectalProstateRobotNode::ResetCalibrationData()
     this->CalibrationData.v2[i]=0.0;
   }
   this->CalibrationData.CalibrationValid=false;
+
+  Modified();
 }
 
 //------------------------------------------------------------------------------
-vtkImageData* vtkMRMLTransRectalProstateRobotNode::GetCalibMarkerPreProcOutput(int i)
+void vtkMRMLTransRectalProstateRobotNode::UpdateModel()
 {
-  return this->CalibrationAlgo->GetCalibMarkerPreProcOutput(i);
+  vtkMRMLModelNode* modelNode=GetRobotModelNode();
+  if (modelNode==NULL)
+  {
+    return;
+  }
+  vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+  if (displayNode==NULL)
+  {
+    return;
+  }      
+
+  // Merge all into a single polydata
+  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
+
+  bool hasPoints=false;
+
+  // Probe
+  if (this->ModelProbe->GetNumberOfPoints()>0)
+  {
+    appender->AddInput(this->ModelProbe);
+    hasPoints=true;
+  }
+  for (int markerId=0; markerId<2 && markerId<CALIB_MARKER_COUNT; markerId++)
+  {
+    if (this->ModelMarkers[markerId]->GetNumberOfPoints()>0)
+    {
+      appender->AddInput(this->ModelMarkers[markerId]);
+      hasPoints=true;
+    }
+  }
+
+  // Calibration axes (and calibration needle)
+  if (this->ModelAxesVisible && this->ModelAxes->GetNumberOfPoints()>0)
+  {
+    if (this->ModelAxes->GetNumberOfPoints()>0)
+    {
+      appender->AddInput(this->ModelAxes);
+      hasPoints=true;
+    }
+    for (int markerId=2; markerId<CALIB_MARKER_COUNT; markerId++)
+    {
+      if (this->ModelMarkers[markerId]->GetNumberOfPoints()>0)
+      {
+        appender->AddInput(this->ModelMarkers[markerId]);
+        hasPoints=true;
+      }
+    }
+  }
+
+  // Targeting needle
+  if (this->ModelNeedle->GetNumberOfPoints()>0)
+  {
+    appender->AddInput(this->ModelNeedle);
+    hasPoints=true;
+  }
+
+  // if there were no points 
+  if (!hasPoints)
+  {
+    vtkSmartPointer<vtkPointSource> point=vtkSmartPointer<vtkPointSource>::New();
+    point->SetNumberOfPoints(1);
+    appender->AddInputConnection(point->GetOutputPort());
+  }
+
+  vtkSmartPointer<vtkTriangleFilter> cleaner=vtkSmartPointer<vtkTriangleFilter>::New();
+  cleaner->SetInputConnection(appender->GetOutputPort());
+  cleaner->Update();
+  
+  modelNode->SetAndObservePolyData(cleaner->GetOutput());
+  
+  displayNode->SetPolyData(modelNode->GetPolyData());
+
+  if (displayNode->GetPolyData() != NULL) 
+  {
+    displayNode->GetPolyData()->Modified();
+  }
+  displayNode->SetModifiedSinceRead(1); 
+  
+  displayNode->SetVisibility(1);
+
 }
+
 
 //------------------------------------------------------------------------------
 bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTargetDescriptor *targetDesc)
 {
-  vtkMRMLModelNode* modelNode=GetRobotModelNode();
-  vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
-  if (modelNode==NULL || displayNode==NULL)
-  {
-    vtkErrorMacro("ShowRobotAtTarget failed: model node or display node is invalid");
-    return false;
-  }      
+  UpdateModelNeedle(targetDesc);
+  UpdateModel();
+  return true;
+}
 
-  displayNode->SetVisibility(0);
-
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::UpdateModelNeedle(vtkProstateNavTargetDescriptor *targetDesc)
+{
   if (targetDesc==NULL)
   {
-    return false;
+    this->ModelNeedle->Reset();
+    return;
   }
-
-// Merge all into a single polydata
-  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
 
   // get RAS points of start and end point of needle
   // for the 3D viewer, the RAS coodinates are the world coordinates!!
@@ -442,6 +559,9 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   needleStartRAS[1] = needleEndRAS[1] - needleLength*needleVector[1];
   needleStartRAS[2] = needleEndRAS[2] - needleLength*needleVector[2];
 
+  // merge all polydata by this appender
+  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
+
   vtkSmartPointer<vtkLineSource> NeedleTrajectoryLine=vtkSmartPointer<vtkLineSource>::New();
   NeedleTrajectoryLine->SetResolution(100); 
   NeedleTrajectoryLine->SetPoint1(needleEndRAS);
@@ -455,7 +575,7 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
 
   appender->AddInputConnection(NeedleTrajectoryTube->GetOutputPort());  
 
-  // a thinner
+  // a thinner tube representing the needle overshoot (when the needle is triggered it extends to -overshoot distance from the needle tip)
   if (overshoot<0)
   {
     double needleEndRAS[3];
@@ -482,13 +602,32 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
     appender->AddInputConnection(needleOvershootTube->GetOutputPort());
   }
 
+  // Save result
+  appender->Update();
+  this->ModelNeedle->DeepCopy(appender->GetOutput());
+
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::UpdateModelProbe()
+{
+  this->ModelProbe->Reset();
+
+  if (!this->CalibrationData.CalibrationValid)
+  {
+    // if there is no calibration, we cannot show where is the probe
+    return;
+  }
   // update robot base position
   vtkSmartPointer<vtkMatrix4x4> baseTransform=vtkSmartPointer<vtkMatrix4x4>::New();
   if (!GetRobotBaseTransform(baseTransform))
   {
     // no calibration
-    return false;
+    return;
   }
+
+  // merge all polydata by this appender
+  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
 
   double point1Probe[4]={-100,0,0 ,1}; // probe tip point
   double point2Probe[4]={400,0,0 ,1}; // probe base point
@@ -513,6 +652,7 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   
   appender->AddInputConnection(probeTube->GetOutputPort());  
 
+  /*
   vtkSmartPointer<vtkTubeFilter> probeCenterlineTube=vtkSmartPointer<vtkTubeFilter>::New();
   probeCenterlineTube->SetInputConnection(probeLine->GetOutputPort());
   probeCenterlineTube->SetRadius(0.5);
@@ -520,20 +660,116 @@ bool vtkMRMLTransRectalProstateRobotNode::ShowRobotAtTarget(vtkProstateNavTarget
   probeCenterlineTube->CappingOn();
 
   appender->AddInputConnection(probeCenterlineTube->GetOutputPort());
-  
-  // Appender
+  */
+
   appender->Update();
-
-  vtkSmartPointer<vtkTriangleFilter> cleaner=vtkSmartPointer<vtkTriangleFilter>::New();
-  cleaner->SetInputConnection(appender->GetOutputPort());
-  
-  modelNode->SetAndObservePolyData(cleaner->GetOutput());
-  displayNode->SetPolyData(modelNode->GetPolyData());
-
-  displayNode->SetVisibility(1);
-
-  return true;
+  this->ModelProbe->DeepCopy(appender->GetOutput());
 }
+
+
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::UpdateModelAxes()
+{
+  this->ModelAxes->Reset();
+
+  if (!this->CalibrationData.CalibrationValid)
+  {
+    return;
+  }
+
+  // merge all polydata by this appender
+  vtkSmartPointer<vtkAppendPolyData> appender = vtkSmartPointer<vtkAppendPolyData>::New();
+
+  // form the axis 1 line
+  // set up the line actors
+  vtkSmartPointer<vtkLineSource> axis1Line = vtkSmartPointer<vtkLineSource>::New();  
+  axis1Line->SetResolution(100); 
+  
+  double needle1[3];
+  double needle2[3];
+  for (int i=0; i<3; i++)
+  {
+    needle1[i]=this->CalibrationData.I2[i]-100*this->CalibrationData.v2[i];
+    needle2[i]=this->CalibrationData.I2[i]+200*this->CalibrationData.v2[i];
+  }
+
+  axis1Line->SetPoint1(needle1);
+  axis1Line->SetPoint2(needle2);
+
+  appender->AddInputConnection(axis1Line->GetOutputPort());
+
+  // 2nd axis line
+
+  // form the axis 2 line
+  // set up the line actors
+  vtkSmartPointer<vtkLineSource> axis2Line = vtkSmartPointer<vtkLineSource>::New();  
+  axis2Line->SetResolution(100); 
+
+  double robotaxis1[3];
+  double robotaxis2[3];
+  for (int i=0; i<3; i++)
+  {
+    robotaxis1[i]=this->CalibrationData.I1[i]-100*this->CalibrationData.v1[i];
+    robotaxis2[i]=this->CalibrationData.I1[i]+200*this->CalibrationData.v1[i];
+  }
+
+  axis2Line->SetPoint1(robotaxis1);
+  axis2Line->SetPoint2(robotaxis2);
+
+  appender->AddInputConnection(axis2Line->GetOutputPort());
+
+  /*
+  // Detected marker centerpoints
+
+  vtkPoints *points = vtkPoints::New();
+   
+  this->CalibrationAlgo->GetAxisCenterpoints(points, 0);
+  this->CalibrationAlgo->GetAxisCenterpoints(points, 1);
+
+  vtkPolyData *pointspoly = vtkPolyData::New();
+  pointspoly->SetPoints(points);
+  
+  vtkSphereSource *glyph = vtkSphereSource::New();
+  vtkGlyph3D *glypher = vtkGlyph3D::New();
+  glypher->SetInput(pointspoly);
+  glypher->SetSourceConnection(glyph->GetOutputPort());
+  glypher->SetScaleFactor(0.25);
+
+  appender->AddInputConnection(glypher->GetOutputPort());
+  */
+
+  appender->Update();
+  this->ModelAxes->DeepCopy(appender->GetOutput());
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::UpdateModelMarkers()
+{
+  // Extract marker surfaces for display
+  for (unsigned int markerId=0; markerId<CALIB_MARKER_COUNT; markerId++)
+  {      
+    vtkImageData *imagedata=this->CalibrationAlgo->GetCalibMarkerPreProcOutput(markerId);
+    vtkSmartPointer<vtkContourFilter> objectSurfaceExtractor=vtkSmartPointer<vtkContourFilter>::New();
+    objectSurfaceExtractor->SetInput(imagedata);
+
+    double* imgIntensityRange = imagedata->GetPointData()->GetScalars()->GetRange();
+    double imgIntensityUnit = (imgIntensityRange[1]-imgIntensityRange[0])* 0.01; // 1 unit is 1 percent of the intensity range    
+    objectSurfaceExtractor->SetValue(0, imgIntensityUnit);
+
+    vtkTransformPolyDataFilter *polyTrans = vtkTransformPolyDataFilter::New();
+    polyTrans->SetInputConnection(objectSurfaceExtractor->GetOutputPort());
+    vtkSmartPointer<vtkTransform> ijkToRASTransform=vtkSmartPointer<vtkTransform>::New();
+
+    vtkMatrix4x4* ijkToRAS=this->CalibrationAlgo->GetCalibMarkerPreProcOutputIJKToRAS();
+
+    ijkToRASTransform->SetMatrix(ijkToRAS);
+    polyTrans->SetTransform(ijkToRASTransform);
+    polyTrans->Update();
+
+    this->ModelMarkers[markerId]->DeepCopy(polyTrans->GetOutput());
+  }
+}
+
 
 //------------------------------------------------------------------------------
 bool vtkMRMLTransRectalProstateRobotNode::GetRobotBaseTransform(vtkMatrix4x4* transform)
@@ -543,8 +779,6 @@ bool vtkMRMLTransRectalProstateRobotNode::GetRobotBaseTransform(vtkMatrix4x4* tr
     // no claibration robot position is unknown
     return false;
   }
-
-  transform->Identity();
 
   // TODO: fix this, this is just a dummy implementation, it does not take into account current encoder position
 
@@ -579,3 +813,26 @@ bool vtkMRMLTransRectalProstateRobotNode::GetRobotBaseTransform(vtkMatrix4x4* tr
   
   return true;
 } 
+
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::SetCalibrationData(const TRProstateBiopsyCalibrationData& calibData) 
+{ 
+  this->CalibrationData=calibData; 
+  UpdateModelAxes();
+  UpdateModelProbe();
+  UpdateModelMarkers();
+  UpdateModelNeedle(NULL);
+  UpdateModel();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLTransRectalProstateRobotNode::SetModelAxesVisible(bool visible)
+{ 
+  if (this->ModelAxesVisible==visible)
+  {
+    // no change
+    return;
+  }
+  this->ModelAxesVisible=visible;
+  UpdateModel(); // :TODO: use standard vtkSetMacro and update automatically when the update event is triggered
+}
