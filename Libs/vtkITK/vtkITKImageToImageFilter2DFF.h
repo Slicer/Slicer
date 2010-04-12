@@ -16,8 +16,8 @@
 /// 
 /// vtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilterFF_h
-#define __vtkITKImageToImageFilterFF_h
+#ifndef __vtkITKImageToImageFilter2DFF_h
+#define __vtkITKImageToImageFilter2DFF_h
 
 
 #include "vtkITKImageToImageFilter.h"
