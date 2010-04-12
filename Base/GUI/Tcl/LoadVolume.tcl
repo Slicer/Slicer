@@ -734,26 +734,28 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
   #
   # ignore events that occur while updating widgets that 
-  # have related values
+  # have related values unless it is a cancel event, in which
+  # case we quit so user can start over (unwedges the dialog)
   #
+
+  if { $caller == $o(cancel) } {
+    after idle "itcl::delete object $this"
+    set _processingEvents 0
+    return
+  }
+
   if { $_processingEvents } {
     return
   }
   set _processingEvents 1
 
   #
-  # handle cancel and apply buttons
+  # handle apply button
   #
   if { $caller == $o(apply) } {
     if { [$this apply] == 0 } {
       after idle "itcl::delete object $this"
     }
-    set _processingEvents 0
-    return
-  }
-
-  if { $caller == $o(cancel) } {
-    after idle "itcl::delete object $this"
     set _processingEvents 0
     return
   }
@@ -852,23 +854,20 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   set t [$o(dicomTree) GetWidget]
   if { $caller == $t } {
     set selection [$t GetSelection]
-    set name [$t GetNodeText $selection]
     switch -glob $selection {
       {[0-9]*-patient*} {
-        set patient $name
+        set patient $_dicomTree(subscriptName,$selection)
         set study [lindex $_dicomTree($patient,studies) 0]
         set series [lindex $_dicomTree($patient,$study,series) 0]
         set studyNode [lindex [$t GetNodeChildren $selection] 0]
         set seriesNode [lindex [$t GetNodeChildren $studyNode] 0]
-        #set seriesNode series-[$this safeNodeName $series]
       }
       {[0-9]*-study*} {
         set patientNode [$t GetNodeParent $selection]
-        set patient [$t GetNodeText $patientNode]
-        set study $name
+        set patient $_dicomTree(subscriptName,$patientNode)
+        set study $_dicomTree(subscriptName,$selection)
         set series [lindex $_dicomTree($patient,$study,series) 0]
         set seriesNode [lindex [$t GetNodeChildren $selection] 0]
-        ##set seriesNode series-[$this safeNodeName $series]
       }
       {[0-9]*-series-*-file*} {
         set seriesNode [$t GetNodeParent $selection]
@@ -900,6 +899,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       lappend fileList $fileName
     }
 
+    # use the first file in the list as the archetype, and use the series name as the default volume name
     set archetype [lindex $fileList 0]
 
     # - strip extra info from end of node text to get series name
@@ -1255,6 +1255,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
   set n 0 ;# serial number of node
   foreach patient $tree(patients) {
     set patientNode $n-patient-[$this safeNodeName $patient]
+    set tree(subscriptName,$patientNode) $patient
     incr n
     if { ![info exists tree(patients,displayName,$patient)] } {
       set tree(patients,displayName,$patient) $patient
@@ -1263,6 +1264,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
     $t OpenNode $patientNode
     foreach study $tree($patient,studies) {
       set studyNode $n-study-[$this safeNodeName $study]
+      set tree(subscriptName,$studyNode) $study
       incr n
       if { ![info exists tree($patient,studies,displayName,$study)] } {
         set tree($patient,studies,displayName,$study) $study
@@ -1271,6 +1273,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
       $t OpenNode $studyNode
       foreach series $tree($patient,$study,series) {
         set seriesNode $n-series-[$this safeNodeName $series]
+        set tree(subscriptName,$seriesNode) $series
         incr n
         set fileCount [llength $tree($patient,$study,$series,files)]
         if { $fileCount == 1 } {set countString "file" } else { set countString "files" }
@@ -1280,6 +1283,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
         $t AddNode $studyNode $seriesNode "$tree($patient,$study,series,displayName,$series) ($fileCount $countString)"
         foreach file $tree($patient,$study,$series,files) {
           set fileNode $n-$seriesNode-file-[$this safeNodeName $file]
+          set tree(subscriptName,$fileNode) $file
           incr n
           $t AddNode $seriesNode $fileNode "[file tail $file] ($file)"
           if { [expr $n % 200] == 0 } {
