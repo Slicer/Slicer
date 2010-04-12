@@ -12,6 +12,8 @@
 
 =========================================================================auto=*/
 
+#include "vtkSmartPointer.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkPlaneSource.h"
@@ -44,6 +46,10 @@ vtkStandardNewMacro(vtkSlicerSliceLogic);
 #ifndef min
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
+
+const int vtkSlicerSliceLogic::SLICE_INDEX_ROTATED=-1;
+const int vtkSlicerSliceLogic::SLICE_INDEX_OUT_OF_VOLUME=-2;
+const int vtkSlicerSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::vtkSlicerSliceLogic()
@@ -1635,3 +1641,123 @@ std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
   return nodes;
 }
 
+int vtkSlicerSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode)
+{
+  if ( !volumeNode )
+    {
+    return SLICE_INDEX_NO_VOLUME;
+    }
+  vtkImageData *volumeImage=NULL;
+  if ( !(volumeImage = volumeNode->GetImageData()) )
+    {
+    return SLICE_INDEX_NO_VOLUME;
+    }
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  if ( !sliceNode )
+    {
+    return SLICE_INDEX_NO_VOLUME;
+    }
+
+  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  volumeNode->GetIJKToRASMatrix (ijkToRAS);
+  vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
+  if ( transformNode )
+    {
+    vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformNode->GetMatrixTransformToWorld(rasToRAS);
+    vtkMatrix4x4::Multiply4x4 (rasToRAS, ijkToRAS, ijkToRAS);
+    }
+
+  // Get the slice normal in RAS
+
+  vtkSmartPointer<vtkMatrix4x4> rasToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
+  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
+  rasToSlice->Invert();
+
+  double sliceNormal_IJK[4]={0,0,1,0};  // slice normal vector in IJK coordinate system
+  double sliceNormal_RAS[4]={0,0,0,0};  // slice normal vector in RAS coordinate system
+  sliceNode->GetSliceToRAS()->MultiplyPoint(sliceNormal_IJK, sliceNormal_RAS);
+  
+  // Find an axis normal that has the same orientation as the slice normal
+  double axisDirection_RAS[3]={0,0,0};  
+  int axisIndex=0;  
+  double volumeSpacing=1.0; // spacing along axisIndex
+  for (axisIndex=0; axisIndex<3; axisIndex++)
+    {
+    axisDirection_RAS[0]=ijkToRAS->GetElement(0,axisIndex);
+    axisDirection_RAS[1]=ijkToRAS->GetElement(1,axisIndex);
+    axisDirection_RAS[2]=ijkToRAS->GetElement(2,axisIndex);
+    volumeSpacing=vtkMath::Norm(axisDirection_RAS); // spacing along axisIndex
+    vtkMath::Normalize(sliceNormal_RAS);
+    vtkMath::Normalize(axisDirection_RAS);
+    double dotProd=vtkMath::Dot(sliceNormal_RAS, axisDirection_RAS);
+    // Due to numerical inaccuracies the dot product of two normalized vectors
+    // can be slightly bigger than 1 (and acos cannot be computed) - fix that.
+    if (dotProd>1.0)
+      {
+      dotProd=1.0;
+      }
+    else if (dotProd<-1.0)
+      {
+      dotProd=-1.0;
+      }
+    double axisMisalignmentDegrees=acos(dotProd)*180.0/vtkMath::Pi();
+    if (fabs(axisMisalignmentDegrees)<0.1)
+      {
+      // found an axis that is aligned to the slice normal
+      break;
+      }
+    if (fabs(axisMisalignmentDegrees-180)<0.1 || fabs(axisMisalignmentDegrees+180)<0.1)
+      {
+      // found an axis that is aligned to the slice normal, just points to the opposite direction
+      volumeSpacing*=-1.0;
+      break;
+      }
+    }
+
+  if (axisIndex>=3)
+    {
+    // no aligned axis is found
+    return SLICE_INDEX_ROTATED;
+    }
+  
+  // Determine slice index
+  double originPos_RAS[4]={
+    ijkToRAS->GetElement( 0, 3 ),
+    ijkToRAS->GetElement( 1, 3 ),
+    ijkToRAS->GetElement( 2, 3 ),
+    0};
+  double originPos_Slice[4]={0,0,0,0};
+  rasToSlice->MultiplyPoint(originPos_RAS, originPos_Slice);
+  double volumeOriginOffset=originPos_Slice[2];
+  double sliceShift=sliceOffset-volumeOriginOffset;
+  double normalizedSliceShift=sliceShift/volumeSpacing;
+  int sliceIndex=vtkMath::Round(normalizedSliceShift)+1; // +0.5 because the slice plane is displayed in the center of the slice
+  
+  // Check if slice index is within the volume
+  int sliceCount=volumeImage->GetDimensions()[axisIndex];
+  if (sliceIndex<1 || sliceIndex>sliceCount)
+    {
+    sliceIndex=SLICE_INDEX_OUT_OF_VOLUME;
+    }
+
+  return sliceIndex;
+}
+
+// sliceIndex: DICOM slice index, 1-based
+int vtkSlicerSliceLogic::GetSliceIndexFromOffset(double sliceOffset)
+{
+  vtkMRMLVolumeNode *volumeNode;
+  for (int layer=0; layer < 3; layer++ )
+    {
+    volumeNode = this->GetLayerVolumeNode (layer);
+    if (volumeNode)
+      {
+      int sliceIndex=this->GetSliceIndexFromOffset( sliceOffset, volumeNode );
+      // return the result for the first available layer
+      return sliceIndex;
+      }
+    }
+  // slice is not aligned to any of the layers or out of the volume
+  return SLICE_INDEX_NO_VOLUME;
+}

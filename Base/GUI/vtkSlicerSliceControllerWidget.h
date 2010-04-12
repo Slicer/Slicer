@@ -42,6 +42,7 @@ public:
   vtkGetMacro (OffsetScaleResolution, double);
   vtkSetMacro (OffsetScaleResolution, double);
   vtkGetObjectMacro ( OffsetEntry, vtkKWEntry );
+  vtkGetObjectMacro ( SliceIndexEntry, vtkKWEntry );
   vtkGetObjectMacro ( OrientationSelector, vtkKWMenuButtonWithSpinButtonsWithLabel );
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
@@ -186,6 +187,14 @@ protected:
   /// Create the widget.
   virtual void CreateWidget( );
 
+  /// 
+  /// Update the displayed slice index (1-based DICOM slice index) value
+  /// from slice offset (distance from RAS origin)
+  /// Slice index value is a number if a valid slice index is available,
+  /// "O" if the slice is out of the volume, "R" if the displayed slice is 
+  /// rotated compared to the volume slice orientation.
+  void SetSliceIndexEntryValueFromOffset(double sliceOffset);
+
   /// TODO: hook this up
   int ControllerStyle;
 
@@ -201,6 +210,7 @@ protected:
   double OffsetScaleMin;
   double OffsetScaleResolution;
   vtkKWEntry *OffsetEntry;
+  vtkKWEntry *SliceIndexEntry;
   vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationSelector;
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;

@@ -43,6 +43,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->OffsetScaleMin = 0.;
   this->OffsetScaleResolution = 1.;
   this->OffsetEntry = NULL;
+  this->SliceIndexEntry = NULL;
   this->OrientationSelector = NULL;
   this->ForegroundSelector = NULL;
   this->BackgroundSelector = NULL;
@@ -116,6 +117,12 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->OffsetEntry->SetParent(NULL);
     this->OffsetEntry->Delete ( );
     this->OffsetEntry = NULL;
+    }
+  if ( this->SliceIndexEntry )
+    {
+    this->SliceIndexEntry->SetParent(NULL);
+    this->SliceIndexEntry->Delete ( );
+    this->SliceIndexEntry = NULL;
     }
   if ( this->OrientationSelector )
     {
@@ -1080,6 +1087,16 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   this->OffsetEntry->Create();
   this->OffsetEntry->SetRestrictValueToDouble();
   this->OffsetEntry->SetWidth(8);
+  this->OffsetEntry->SetBalloonHelpString ( "Slice distance from RAS origin" );
+
+  this->SliceIndexEntry = vtkKWEntry::New();
+  this->SliceIndexEntry->SetParent ( this->ScaleFrame );
+  this->SliceIndexEntry->Create();
+  this->SliceIndexEntry->SetWidth(0);
+  this->SliceIndexEntry->SetBalloonHelpString ( "Slice index (O: slice is out of volume, R: rotate to volume plane to see slice index)" );
+  this->SliceIndexEntry->SetReliefToFlat();
+  this->SliceIndexEntry->ReadOnlyOn();
+  this->SliceIndexEntry->SetConfigurationOption("-justify", "left");
             
   //
   // Pack everyone up
@@ -1129,8 +1146,11 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
       this->Script ( "pack %s -side left -expand n -padx 1 -in %s",
                      this->MoreMenuButton->GetWidgetName(),
                      this->IconFrame->GetWidgetName() );
-      this->Script("pack %s %s -side left -fill x -expand y -in %s", 
+      this->Script("pack %s -side left -fill x -expand y -in %s", 
                    this->OffsetScale->GetWidgetName(),
+                   this->ScaleFrame->GetWidgetName());
+      this->Script("pack %s %s -side left -expand n -in %s", 
+                   this->SliceIndexEntry->GetWidgetName(),
                    this->OffsetEntry->GetWidgetName(),
                    this->ScaleFrame->GetWidgetName());
       }
@@ -1145,9 +1165,12 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
                     this->ScaleFrame->GetWidgetName());
       this->Script ( "pack %s -side left -expand n -padx 1 -in %s",
                      this->MoreMenuButton->GetWidgetName(),
-                     this->ScaleFrame->GetWidgetName() );
-      this->Script("pack %s %s -side left -fill x -expand y -in %s", 
+                     this->ScaleFrame->GetWidgetName() );      
+      this->Script("pack %s -side left -fill x -expand y -in %s", 
                    this->OffsetScale->GetWidgetName(),
+                   this->ScaleFrame->GetWidgetName());
+      this->Script("pack %s %s -side left -expand n -in %s", 
+                   this->SliceIndexEntry->GetWidgetName(),
                    this->OffsetEntry->GetWidgetName(),
                    this->ScaleFrame->GetWidgetName());
       }
@@ -3019,6 +3042,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
     value = scale->GetValue();
     offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
 
+    // set the slice index entry to match the new offset
+    SetSliceIndexEntryValueFromOffset(offset);
+
     // set the entry to match
     if (fabs(offset - this->OffsetEntry->GetValueAsDouble()) > 1.0e-6)
       {
@@ -3637,6 +3663,8 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     }
   this->OffsetEntry->SetValueAsDouble(newOffset);
 
+  // set the slice index entry to match the new offset
+  SetSliceIndexEntryValueFromOffset(newOffset);
 
   //
   // when the composite node changes, update the menus to match
@@ -4082,3 +4110,33 @@ void vtkSlicerSliceControllerWidget::HidePrescribedSliceSpacingEntry()
   this->PrescribedSliceSpacingTopLevel->Withdraw();
 }
 
+void vtkSlicerSliceControllerWidget::SetSliceIndexEntryValueFromOffset(double sliceOffset)
+{
+  int sliceIndex=this->SliceLogic->GetSliceIndexFromOffset(sliceOffset);
+  if (sliceIndex>0)
+    {
+    this->SliceIndexEntry->SetWidth(4);
+    this->SliceIndexEntry->SetValueAsInt(sliceIndex);
+    }
+  else
+    {
+    if (sliceIndex==vtkSlicerSliceLogic::SLICE_INDEX_ROTATED)
+      {
+      // reformatted slice
+      this->SliceIndexEntry->SetWidth(4);
+      this->SliceIndexEntry->SetValue("R");
+      }
+    else if (sliceIndex==vtkSlicerSliceLogic::SLICE_INDEX_OUT_OF_VOLUME)
+      {
+      // out of volume
+      this->SliceIndexEntry->SetWidth(4);
+      this->SliceIndexEntry->SetValue("O");
+      }
+    else
+      {
+      // no volume or unknown status
+      this->SliceIndexEntry->SetValue("");
+      this->SliceIndexEntry->SetWidth(0);
+      }
+    }
+}

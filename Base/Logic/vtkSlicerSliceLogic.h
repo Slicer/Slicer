@@ -293,6 +293,29 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
+  static const int SLICE_INDEX_ROTATED;
+  static const int SLICE_INDEX_OUT_OF_VOLUME;
+  static const int SLICE_INDEX_NO_VOLUME;
+
+  ///
+  /// Get the DICOM slice index (1-based) from slice offset (distance from the origin to the slice plane).
+  /// If the return value is negative then then no slice index can be determined:
+  /// SLICE_INDEX_ROTATED=the slice is rotated compared to the volume planes,
+  /// SLICE_INDEX_OUT_OF_VOLUME=the slice plane is out of the volume
+  /// SLICE_INDEX_NO_VOLUME=the specified volume is not available
+  int GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode);
+
+  ///
+  /// Get the DICOM slice index (1-based) from slice offset (distance from the origin to the slice plane).
+  /// Slice index is computed for the first available volume (the search order is
+  /// background, foreground, label volume).
+  /// If the return value is negative then then no slice index can be determined for the
+  /// first available volume:
+  /// SLICE_INDEX_ROTATED=the slice is rotated compared to the volume planes,
+  /// SLICE_INDEX_OUT_OF_VOLUME=the slice plane is out of the volume
+  /// SLICE_INDEX_NO_VOLUME=no volume is available
+  int GetSliceIndexFromOffset(double sliceOffset);
+
   /// 
   /// Make a slice model with the current configuration
   void CreateSliceModel();
