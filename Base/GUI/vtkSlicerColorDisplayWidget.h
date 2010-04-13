@@ -34,6 +34,9 @@ class vtkScalarBarWidget;
 class vtkSlicerViewerWidget;
 class vtkKWScalarBarAnnotation;
 class vtkSlicerPopUpHelpWidget;
+
+class vtkSlicerColorLUTIcons;
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorDisplayWidget : public vtkSlicerWidget
 {
   
@@ -117,6 +120,9 @@ public:
   int GetSelectedColorIndex();
   void SetSelectedColorIndex(int index);
 
+  void AddColorIcons();
+  void AssignLUTImage ( vtkKWMenu *menu, int index, const char *name );
+  
   /// 
   /// API for setting ColorNode, and observing it
   /*
@@ -223,6 +229,8 @@ public:
   /// 
   /// a pointer back to the viewer widget, useful for displaying the scalar bar actor
   vtkSlicerViewerWidget *ViewerWidget;
+
+  vtkSlicerColorLUTIcons *ColorIcons;
 private:
 
   vtkSlicerColorDisplayWidget(const vtkSlicerColorDisplayWidget&); /// Not implemented
