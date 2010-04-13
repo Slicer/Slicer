@@ -105,6 +105,10 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
 
     if (tnode)
       {
+      if(this->MRMLScene == NULL){
+        vtkErrorMacro("MRMLScene pointer is NULL!");
+        return NULL;
+      }
       std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
       tnode->SetName(uname.c_str());
       scene->AddNodeNoNotify(storageNode);
