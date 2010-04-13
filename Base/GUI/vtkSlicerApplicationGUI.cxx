@@ -1760,8 +1760,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
   // make a new measurements ruler between the last two fiducials on the
   // currently active list, only works if the measurements module is loaded.
-  i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "New Ruler Between Fiducials...", this, "ProcessAddRulerCommand");
-  this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+R");
+  i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "New Measurement Between Fiducials...", this, "ProcessAddRulerCommand");
+  this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+M");
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
   
   //
