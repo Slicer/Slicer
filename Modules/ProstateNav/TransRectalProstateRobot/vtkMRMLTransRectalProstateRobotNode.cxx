@@ -450,7 +450,7 @@ void vtkMRMLTransRectalProstateRobotNode::UpdateModel()
     appender->AddInput(this->ModelProbe);
     hasPoints=true;
   }
-  for (int markerId=0; markerId<2 && markerId<CALIB_MARKER_COUNT; markerId++)
+  for (unsigned int markerId=0; markerId<2 && markerId<CALIB_MARKER_COUNT; markerId++)
   {
     if (this->ModelMarkers[markerId]->GetNumberOfPoints()>0)
     {
@@ -467,7 +467,7 @@ void vtkMRMLTransRectalProstateRobotNode::UpdateModel()
       appender->AddInput(this->ModelAxes);
       hasPoints=true;
     }
-    for (int markerId=2; markerId<CALIB_MARKER_COUNT; markerId++)
+    for (unsigned int markerId=2; markerId<CALIB_MARKER_COUNT; markerId++)
     {
       if (this->ModelMarkers[markerId]->GetNumberOfPoints()>0)
       {
@@ -484,7 +484,8 @@ void vtkMRMLTransRectalProstateRobotNode::UpdateModel()
     hasPoints=true;
   }
 
-  // if there were no points 
+  // If there were no points in the polydata at all, then we would get a VTK warning.
+  // Add a dummy point to avoid warning in this case.
   if (!hasPoints)
   {
     vtkSmartPointer<vtkPointSource> point=vtkSmartPointer<vtkPointSource>::New();

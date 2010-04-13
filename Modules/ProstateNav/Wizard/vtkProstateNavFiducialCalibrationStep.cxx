@@ -800,8 +800,7 @@ void vtkProstateNavFiducialCalibrationStep::Resegment()
 
   // gather information about thresholds
   double thresh[CALIB_MARKER_COUNT];
-  int i=0;
-  for (unsigned i=0 ; i<CALIB_MARKER_COUNT; i++)
+  for (unsigned int i=0 ; i<CALIB_MARKER_COUNT; i++)
   {
     thresh[i] = this->FiducialThresholdScale[i]->GetValue();
   }
