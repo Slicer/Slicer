@@ -115,6 +115,10 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->ViewArrangement;
+      if (this->ViewArrangement < vtkMRMLLayoutNode::SlicerLayoutInitialView)
+        {
+        this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutInitialView;
+        }
       }
     else if (!strcmp (attName, "guiPanelVisibility"))
       {
