@@ -46,6 +46,11 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
 {
   vtkMRMLTransformStorageNode *storageNode = vtkMRMLTransformStorageNode::New();
 
+  if(scene == NULL){
+    vtkErrorMacro("scene == NULL in vtkSlicerTransformLogic::AddTransform");
+    return NULL;
+  }
+
   // check for local or remote files
   int useURI = 0; // false;
   if (scene->GetCacheManager() != NULL)
@@ -105,11 +110,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
 
     if (tnode)
       {
-      if(this->MRMLScene == NULL){
-        vtkErrorMacro("MRMLScene pointer is NULL!");
-        return NULL;
-      }
-      std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+      std::string uname( scene->GetUniqueNameByString(name.c_str()));
       tnode->SetName(uname.c_str());
       scene->AddNodeNoNotify(storageNode);
       scene->AddNode(tnode);
