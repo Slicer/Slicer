@@ -5,7 +5,7 @@
 
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
-#include "vector.h"
+#include <vtkstd/vector>
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentRegistrationParametersStep : public vtkEMSegmentStep
 {
@@ -39,7 +39,7 @@ protected:
 #if IBM_FLAG 
   void AssignAtlasScansToInputChannels(int enabled); 
 //BTX
-  vector<vtkKWMenuButtonWithLabel*> RegistrationParametersAtlasImageMenuButton;
+  vtkstd::vector<vtkKWMenuButtonWithLabel*> RegistrationParametersAtlasImageMenuButton;
 //ETX
 #else 
   vtkKWMenuButtonWithLabel *RegistrationParametersAtlasImageMenuButton;
