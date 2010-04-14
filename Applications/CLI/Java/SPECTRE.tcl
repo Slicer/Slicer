@@ -5,11 +5,12 @@
 set CLP "SPECTRE"
 
 # set the path to the MIPAV install directory
-set pathToMipav "c:/Program Files/mipav"
-#set pathToMipav "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
+# set pathToMipav "c:/Program Files/mipav"
+set pathToMipav "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
 # set the full path to the SPECTRE plugins directory
+set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE_2010-04-01.jar"
 # set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/plugins"
-set pathToSPECTREPlugins {c:/Documents and Settings/nicole/mipav/plugins}
+# set pathToSPECTREPlugins {c:/Documents and Settings/nicole/mipav/plugins}
 proc glob-r {{dir .} args} {
      set res {}
      foreach i [lsort [glob -nocomplain -dir $dir *]] {
@@ -58,7 +59,7 @@ if {$argv != "--xml"} {
  puts "argv = \"$argv\""
 }
 
-set ret [catch "exec  \"${pathToMipav}/jre/bin/java\" -Xms400m -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE2009 $argv 2> fileError.txt" res]
+set ret [catch "exec  \"${pathToMipav}/jre/bin/java\" -Xms400m -Xmx700m -classpath \"$cpath\"  edu.jhu.ece.iacl.jist.cli.run edu.jhu.ece.iacl.plugins.segmentation.skull_strip.MedicAlgorithmSPECTRE $argv 2> fileError.txt" res]
 puts $res
 # exit $ret
 if {$argv != "--xml"} {
