@@ -222,6 +222,22 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
             std::string str = lineString.substr(15,std::string::npos);
             vtkDebugMacro("Getting symbolType, substr = " << str);
             int t = atoi(str.c_str());
+            // check on version number
+            // at svn version 12553, the symbol type changed by one
+            if (this->GetScene())
+              {
+              if (this->GetScene()->GetLastLoadedVersion())
+                {
+                if (atoi(this->GetScene()->GetLastLoadedVersion()) < 12553)
+                  {
+                  t++;
+                  }
+                }
+              else
+                {
+                t++;
+                }
+              }
             fiducialListNode->SetGlyphType(t);
             }
           else if (lineString.find("# visibility = ") != std::string::npos)

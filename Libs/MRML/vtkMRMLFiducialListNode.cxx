@@ -206,7 +206,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
         ss >> this->GlyphType;
         // at svn version 12553, the symbol type changed by one, check if
         // this is an older file
-        /*
+        int adjustment = 0;
         if (this->GetScene())
           {
           if (this->GetScene()->GetLastLoadedVersion())
@@ -215,17 +215,29 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
             int versionNumber = atoi(lastLoadedVersion);
             if (versionNumber < 12553)
               {
-              this->GlyphType = this->GlyphType + 1;
+              vtkDebugMacro("Older mrml file version " << versionNumber << ", increasing the glyph type by 1");
+              adjustment = 1;
+              }
+            else
+              {
+              vtkDebugMacro("Recent file, not incrementing glyph type number");
               }
             }
           else
             {
-            // older files don't have version numbers, so assume it's older
-            // than the change and increment
-            this->GlyphType = this->GlyphType + 1;
+            vtkDebugMacro("Not able to get a last loaded version from mrml scene, assuming older file, incrementing");
+            adjustment = 1;
+            }
+          if (adjustment)
+            {
+            vtkDebugMacro("Incrementing glyph type " << this->GlyphType << " by " << adjustment);
+            this->GlyphType = this->GlyphType + adjustment;
             }
           }
-        */
+        else
+          {
+          vtkWarningMacro("No scene to check version against, assuming correct glyph type.");
+          }
         }      
       else if (!strcmp(attName, "textScale")) 
       {
