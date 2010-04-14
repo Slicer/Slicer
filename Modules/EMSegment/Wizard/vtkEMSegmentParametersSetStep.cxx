@@ -357,7 +357,9 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int inde
     anat_step->GetAnatomicalStructureTree()->GetWidget()->DeleteAllNodes();
     }
 #if IBM_FLAG
-  this->SourceTclFile(this->DefineTclTaskFullPathName(mrmlManager->GetNode()->GetTclTaskFilename()));
+  std::string tclFileName = this->GetGUI()->GetLogic()->DefineTclTaskFullPathName(mrmlManager->GetNode()->GetTclTaskFilename());
+
+  this->SourceTclFile(tclFileName.c_str());
 #endif
 }
 

@@ -47,7 +47,7 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->RegistrationDeformableType    = 0;
   this->RegistrationInterpolationType = 0; // !!! this needs to be specified
 
-  this->RegistrationAtlasVolumeKey  = NULL;
+  this->RegistrationAtlasVolumeKey.clear(); 
   this->RegistrationTargetVolumeKey = NULL;
 
   this->EnableTargetToTargetRegistration = 0;
@@ -75,7 +75,7 @@ vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
 {
   this->SetWorkingDirectory(NULL);
   this->SetRegistrationTargetVolumeKey(NULL);
-  this->SetRegistrationAtlasVolumeKey(NULL);
+  this->RegistrationAtlasVolumeKey.clear(); 
   this->SetColormap(NULL);
 }
 
@@ -148,9 +148,12 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
     of << indent << " RegistrationInterpolationType=\"" 
        << this->RegistrationInterpolationType << "\" ";
 
-    of << indent << " RegistrationAtlasVolumeKey=\"" 
-       << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey 
-           : "") << "\" ";
+    of << indent << " RegistrationAtlasVolumeKey=\""; 
+    for (vtkIdType i =0 ; i < (vtkIdType) this->RegistrationAtlasVolumeKey.size(); i++)
+      {
+    of << (this->RegistrationAtlasVolumeKey[i].compare("") ? this->RegistrationAtlasVolumeKey[i].c_str() : "-") << " "; 
+      }
+    of << "\" ";
 
     of << indent << " RegistrationTargetVolumeKey=\"" 
        << (this->RegistrationTargetVolumeKey
@@ -255,7 +258,14 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "RegistrationAtlasVolumeKey"))
       {
-      this->SetRegistrationAtlasVolumeKey(val);
+    vtksys_stl::stringstream ss;
+    ss << val;
+    vtksys_stl::string s;
+
+    while (ss >> s)
+      {
+        this->RegistrationAtlasVolumeKey.push_back(s);
+      }
       }
     else if (!strcmp(key, "RegistrationTargetVolumeKey"))
       {
@@ -326,7 +336,8 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   this->SetRegistrationAffineType(node->RegistrationAffineType);
   this->SetRegistrationDeformableType(node->RegistrationDeformableType);
   this->SetRegistrationInterpolationType(node->RegistrationInterpolationType);
-  this->SetRegistrationAtlasVolumeKey(node->RegistrationAtlasVolumeKey);
+
+  this->RegistrationAtlasVolumeKey = node->RegistrationAtlasVolumeKey;
   this->SetRegistrationTargetVolumeKey(node->RegistrationTargetVolumeKey);
   
   this->SetSaveIntermediateResults(node->SaveIntermediateResults);
@@ -372,9 +383,11 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
   os << indent << "RegistrationInterpolationType: " 
      << this->RegistrationInterpolationType << "\n";
 
-  os << indent << "RegistrationAtlasVolumeKey: " 
-     << (this->RegistrationAtlasVolumeKey ? 
-         this->RegistrationAtlasVolumeKey : "(none)") << "\n";
+  os << indent << "RegistrationAtlasVolumeKey: " ;
+  for (vtkIdType i = 0 ; i < (vtkIdType) this->RegistrationAtlasVolumeKey.size(); i++ ) 
+    {
+      os << (this->RegistrationAtlasVolumeKey[i].compare("") ? this->RegistrationAtlasVolumeKey[i].c_str() : "(none)") << "\n";
+    }
 
   os << indent << "RegistrationTargetVolumeKey: " 
      << (this->RegistrationTargetVolumeKey ? 
@@ -476,3 +489,23 @@ MoveNthTargetInputChannel(int n, int toIndex)
   this->IntensityNormalizationParameterList.erase(b + n);
   this->IntensityNormalizationParameterList.insert(b + toIndex, movingParam);
 }
+
+void vtkMRMLEMSGlobalParametersNode::SetRegistrationAtlasVolumeKey(vtkIdType inputID, const char* key)
+{
+  if (inputID >= (vtkIdType) this->RegistrationAtlasVolumeKey.size())
+    {
+      RegistrationAtlasVolumeKey.resize(inputID +1);
+    }
+  RegistrationAtlasVolumeKey[inputID] = key;
+
+}
+
+const char* vtkMRMLEMSGlobalParametersNode::GetRegistrationAtlasVolumeKey(vtkIdType inputID)
+{
+  if (inputID >= (vtkIdType) this->RegistrationAtlasVolumeKey.size())
+    {
+      return NULL;
+    }
+  return RegistrationAtlasVolumeKey[inputID].c_str();
+}
+

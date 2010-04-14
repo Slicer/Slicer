@@ -85,6 +85,15 @@ public:
   // events to observe
   virtual vtkIntArray* NewObservableEvents();
 
+#if IBM_FLAG
+  //BTX
+  std::string DefineTclTaskFullPathName(const char* TclFileName);
+  std::string GetTclTaskDirectory();
+  std::string DefineTclTasksFileFromMRML();
+
+  //ETX
+#endif 
+
 private:
   vtkEMSegmentLogic();
   ~vtkEMSegmentLogic();

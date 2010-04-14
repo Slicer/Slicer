@@ -78,11 +78,9 @@ private:
   void UpdateTaskListIndex(int index);
 #if IBM_FLAG
   int LoadDefaultData(const char *dataLink, bool warningFlag);
-  int SourceTclFile(const char *tclFile);
   void LoadTask(int index, bool warningFlag);
-  const char*  DefineTclTaskFullPathName(const char* TclFileName);
-  const char*  GetTclTaskDirectory();
 #endif
+
   void DefineDefaultTasksList();
   //BTX:
   std::vector<std::string> pssDefaultTasksName;

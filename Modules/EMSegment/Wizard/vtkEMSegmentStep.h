@@ -28,6 +28,13 @@ public:
   virtual void Validate();
   virtual int CanGoToSelf();
 
+#if IBM_FLAG
+  // Have to do it bc for some reason TCL Wrapping ignores this flag !
+  //BTX
+  int SourceTclFile(const char *tclFile);
+  //ETX
+#endif 
+
 protected:
   vtkEMSegmentStep();
   ~vtkEMSegmentStep();

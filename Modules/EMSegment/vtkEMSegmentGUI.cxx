@@ -70,8 +70,9 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
   this->ParametersSetStep          = NULL;
 #if IBM_FLAG
   this->InputChannelStep           = NULL;
-  this->PreProcessingStep        = NULL;
 #endif 
+  this->PreProcessingStep        = NULL;
+
   this->AnatomicalStructureStep    = NULL;
   this->SpatialPriorsStep          = NULL;
   this->IntensityImagesStep        = NULL;
@@ -688,3 +689,5 @@ void vtkEMSegmentGUI::Init()
   this->Logic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
   emsEvents->Delete();
 }
+
+

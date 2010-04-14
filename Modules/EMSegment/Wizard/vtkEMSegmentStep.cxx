@@ -5,6 +5,10 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 
+#if IBM_FLAG
+#include "IBM/vtkEMSegmentIBMStep.cxx"
+#endif
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentStep);
 vtkCxxRevisionMacro(vtkEMSegmentStep, "$Revision: 1.2 $");

@@ -60,6 +60,9 @@ public:
   vtkGetStringMacro(TclTaskFilename);
   vtkSetStringMacro(TclTaskFilename);
 
+  vtkGetStringMacro(TaskPreprocessingSetting);
+  vtkSetStringMacro(TaskPreprocessingSetting);
+
   static const char* GetDefaultTclTaskFilename() { return "GenericTask.tcl"; }
 
 protected:
@@ -70,6 +73,10 @@ protected:
   char* TemplateFilename;
 
   char* TclTaskFilename;
+
+  char* TaskPreprocessingSetting; 
+
+
 
 private:
   vtkMRMLEMSNode();

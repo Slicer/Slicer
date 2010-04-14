@@ -12,7 +12,9 @@
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
-
+#if IBM_FLAG
+#include "IBM/vtkEMSegmentIBMRegistrationParametersStep.cxx"
+#endif
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentRegistrationParametersStep);
 vtkCxxRevisionMacro(vtkEMSegmentRegistrationParametersStep, "$Revision: 1.1 $");
@@ -22,14 +24,15 @@ vtkEMSegmentRegistrationParametersStep::vtkEMSegmentRegistrationParametersStep()
 {
 #if IBM_FLAG
   this->SetName("5/9. Edit Registration Parameters");
+  this->RegistrationParametersAtlasImageMenuButton.clear();
 #else
   this->SetName("8/9. Edit Registration Parameters");
+  this->RegistrationParametersAtlasImageMenuButton    = NULL;
 #endif
 
-  this->SetDescription("Specify atlas-to-target registration parameters.");
+  this->SetDescription("Specify atlas-to-input scans registration parameters.");
 
   this->RegistrationParametersFrame                   = NULL;
-  this->RegistrationParametersAtlasImageMenuButton    = NULL;
   this->RegistrationParametersAffineMenuButton        = NULL;
   this->RegistrationParametersDeformableMenuButton    = NULL;
   this->RegistrationParametersInterpolationMenuButton = NULL;
@@ -38,12 +41,24 @@ vtkEMSegmentRegistrationParametersStep::vtkEMSegmentRegistrationParametersStep()
 //----------------------------------------------------------------------------
 vtkEMSegmentRegistrationParametersStep::~vtkEMSegmentRegistrationParametersStep()
 {
+#if IBM_FLAG
+  for (int i = 0 ; i < (int) this->RegistrationParametersAtlasImageMenuButton.size(); i++)
+    {      
+      if (this->RegistrationParametersAtlasImageMenuButton[i])
+    {
+      this->RegistrationParametersAtlasImageMenuButton[i]->Delete();
+      this->RegistrationParametersAtlasImageMenuButton[i] = NULL;
+    }
+    }
+  this->RegistrationParametersAtlasImageMenuButton.clear();
+#else
   if (this->RegistrationParametersAtlasImageMenuButton)
     {
-    this->RegistrationParametersAtlasImageMenuButton->SetParent(NULL);
-    this->RegistrationParametersAtlasImageMenuButton->Delete();
-    this->RegistrationParametersAtlasImageMenuButton = NULL;
+      this->RegistrationParametersAtlasImageMenuButton->SetParent(NULL);
+      this->RegistrationParametersAtlasImageMenuButton->Delete();
+      this->RegistrationParametersAtlasImageMenuButton = NULL;
     }
+#endif
 
   if (this->RegistrationParametersAffineMenuButton)
     {
@@ -90,7 +105,6 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
   vtkKWWidget *parent = wizard_widget->GetClientArea();
 
   // Create the frame
-
   if (!this->RegistrationParametersFrame)
     {
     this->RegistrationParametersFrame = vtkKWFrameWithLabel::New();
@@ -100,7 +114,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     this->RegistrationParametersFrame->SetParent(parent);
     this->RegistrationParametersFrame->Create();
     this->RegistrationParametersFrame->SetLabelText(
-      "Atlas-to-target Registration Parameters");
+      "Atlas-to-Input Registration Parameters");
     }
   this->Script(
     "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
@@ -111,7 +125,9 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
   int enabled = parent->GetEnabled();
 
   // Create the atlas image volume selector
-
+#if IBM_FLAG
+  this->AssignAtlasScansToInputChannels( enabled);
+#else 
   if (!this->RegistrationParametersAtlasImageMenuButton)
     {
     this->RegistrationParametersAtlasImageMenuButton = 
@@ -127,11 +143,10 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     this->RegistrationParametersAtlasImageMenuButton->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
     this->RegistrationParametersAtlasImageMenuButton->
-      SetLabelText("Atlas (Moving) Image:");
+      SetLabelText("Atlas Scans:");
     this->RegistrationParametersAtlasImageMenuButton->
-      SetBalloonHelpString("Select volume for the atlas image.");
+      SetBalloonHelpString("Select atlas volume representing the input channel.");
     }
-
   this->Script(
     "pack %s -side top -anchor nw -padx 2 -pady 2", 
     this->RegistrationParametersAtlasImageMenuButton->GetWidgetName());
@@ -150,6 +165,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     }
   this->RegistrationParametersAtlasImageMenuButton->SetEnabled(
     mrmlManager->GetVolumeNumberOfChoices() ? enabled : 0);
+#endif
 
   // Create the affine registration menu button
 
@@ -444,6 +460,8 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
 void vtkEMSegmentRegistrationParametersStep::RegistrationAtlasImageCallback(
   vtkIdType volume_id)
 {
+
+  cout << "What RegistrationAtlasImageCallback " << endl; 
   // The atlas image has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();

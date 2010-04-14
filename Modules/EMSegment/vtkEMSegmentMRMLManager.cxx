@@ -38,6 +38,10 @@
 
 #define ERROR_NODE_VTKID 0
 
+#if IBM_FLAG
+#include "IBM/vtkEMSegmentIBMMRMLManager.cxx"
+#endif
+
 //----------------------------------------------------------------------------
 vtkEMSegmentMRMLManager* vtkEMSegmentMRMLManager::New()
 {
@@ -2548,8 +2552,7 @@ GetRegistrationAtlasVolumeID()
     }
 
   // the the name of the atlas image from the global parameters
-  char* volumeName = this->GetGlobalParametersNode()->
-    GetRegistrationAtlasVolumeKey();
+  const char* volumeName = this->GetGlobalParametersNode()->GetRegistrationAtlasVolumeKey();
 
   if (volumeName == NULL || strlen(volumeName) == 0)
     {
@@ -2575,6 +2578,8 @@ void
 vtkEMSegmentMRMLManager::
 SetRegistrationAtlasVolumeID(vtkIdType volumeID)
 {
+  cout << "SetRegistrationAtlasVolumeID " << volumeID << endl;
+
   // for now there can be only one atlas image for registration
   vtksys_stl::string registrationVolumeName = "atlas_registration_image";
 

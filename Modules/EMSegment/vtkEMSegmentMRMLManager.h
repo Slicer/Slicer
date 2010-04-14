@@ -451,6 +451,14 @@ public:
   virtual vtkIdType GetRegistrationAtlasVolumeID();
   virtual void      SetRegistrationAtlasVolumeID(vtkIdType volumeID);
 
+#if IBM_FLAG
+  // Need to do it that way bc otherwise TCL Wrapping does not work 
+  //BTX
+  virtual vtkIdType GetRegistrationAtlasVolumeID(vtkIdType inputID);
+  virtual void      SetRegistrationAtlasVolumeID(vtkIdType inputID, vtkIdType volumeID);
+  //ETX
+#endif
+
   //
   // save parameters
   //

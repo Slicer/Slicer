@@ -55,6 +55,11 @@ public:
   vtkGetObjectMacro(AnatomicalStructureStep, vtkEMSegmentAnatomicalStructureStep);
   vtkGetObjectMacro(ParametersSetStep,vtkEMSegmentParametersSetStep);
 
+  // Need to do it bc TCL Wrapping ignores IBM_FLAG !
+  // Need this function for Preprocessing tcl scripts !  
+  //#if IBM_FLAG
+   vtkGetObjectMacro(PreProcessingStep,vtkEMSegmentPreProcessingStep);
+   //#endif
 
   // Description:
   // Create widgets
@@ -160,8 +165,10 @@ private:
 
 #if IBM_FLAG
   vtkEMSegmentInputChannelsStep          *InputChannelStep;
-  vtkEMSegmentPreProcessingStep          *PreProcessingStep;
 #endif
+
+  // Need to do it bc TCL Wrapping ignores IBM_FLAG for functions and otherwise have problems with Get function ! 
+  vtkEMSegmentPreProcessingStep          *PreProcessingStep;
 
   // Description:
   // Populate the logic with testing data, load some volumes

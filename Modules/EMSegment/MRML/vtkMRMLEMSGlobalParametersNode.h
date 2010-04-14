@@ -67,8 +67,11 @@ public:
   vtkSetMacro(RegistrationInterpolationType, int);
   vtkGetMacro(RegistrationInterpolationType, int);
 
-  vtkSetStringMacro(RegistrationAtlasVolumeKey);
-  vtkGetStringMacro(RegistrationAtlasVolumeKey);
+  void SetRegistrationAtlasVolumeKey(const char* key) {this->SetRegistrationAtlasVolumeKey(0,key);}
+  void SetRegistrationAtlasVolumeKey(vtkIdType inputID, const char* key) ;
+
+  const char* GetRegistrationAtlasVolumeKey() {return this->GetRegistrationAtlasVolumeKey(0);}
+  const char* GetRegistrationAtlasVolumeKey(vtkIdType inputID);
 
   vtkSetStringMacro(RegistrationTargetVolumeKey);
   vtkGetStringMacro(RegistrationTargetVolumeKey);
@@ -120,7 +123,7 @@ protected:
   int                                 RegistrationDeformableType;
   int                                 RegistrationInterpolationType;
 
-  char*                               RegistrationAtlasVolumeKey;
+  vtkstd::vector<std::string>         RegistrationAtlasVolumeKey;
   char*                               RegistrationTargetVolumeKey;
 
   char*                               WorkingDirectory;

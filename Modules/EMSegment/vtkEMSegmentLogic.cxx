@@ -41,6 +41,9 @@
 
 #define ERROR_NODE_VTKID 0
 
+#if IBM_FLAG
+#include "IBM/vtkEMSegmentIBMLogic.cxx" 
+#endif 
 
 // A helper class to compare two maps
 template <class T>
@@ -2288,3 +2291,4 @@ ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue)
       return -1;
     }
 }
+
