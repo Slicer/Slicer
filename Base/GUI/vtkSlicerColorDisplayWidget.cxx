@@ -995,6 +995,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   else
     {
     vtkWarningMacro("No ViewerWidget set, scalar bar widget interactor not set");
+    this->ScalarBarWidget->SetInteractor(NULL);
     }
   this->ScalarBarAnnotation = vtkKWScalarBarAnnotation::New();
   this->ScalarBarAnnotation->SetParent ( scalarBarFrame );

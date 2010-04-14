@@ -2415,6 +2415,14 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies(
     {
     MeasurementsModule->SetActiveViewer(active_viewer);
     }
+
+  vtkSlicerModuleGUI *ColorModule = this->GetSlicerApplication()->GetModuleGUIByName("Color");
+  if (ColorModule)
+    {
+    ColorModule->SetActiveViewer(active_viewer);
+    }
+
+  
 #ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
   vcGUI->SetViewNode(active_viewer ? active_viewer->GetViewNode() : NULL);

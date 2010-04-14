@@ -293,11 +293,8 @@ void vtkSlicerColorGUI::BuildGUI ( )
   // color display widget
   this->ColorDisplayWidget = vtkSlicerColorDisplayWidget::New ( );
   this->ColorDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-  if (this->GetApplicationGUI()->GetActiveViewerWidget())
-    {
-  this->ColorDisplayWidget->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
-    }
-  else { vtkWarningMacro("Unable to pass the viewer widget to the col display widget"); }
+  // update the viewer widget
+  this->SetActiveViewer(this->GetApplicationGUI()->GetActiveViewerWidget());
   this->ColorDisplayWidget->SetParent ( displayFrame->GetFrame() );
   this->ColorDisplayWidget->Create ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
@@ -394,4 +391,13 @@ int vtkSlicerColorGUI::AddLUTsToColorDialog()
         }
     }
   return 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerColorGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer )
+{
+  if (this->ColorDisplayWidget)
+    {
+    this->ColorDisplayWidget->SetViewerWidget(activeViewer);
+    }
 }

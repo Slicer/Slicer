@@ -88,6 +88,10 @@ public:
     /// the widget that displays info about the colour node
     vtkGetObjectMacro(ColorDisplayWidget, vtkSlicerColorDisplayWidget);
 
+    ///
+    /// update the viewer widget on the sub widgets
+    void SetActiveViewer(vtkSlicerViewerWidget *activeViewer );
+
 protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
