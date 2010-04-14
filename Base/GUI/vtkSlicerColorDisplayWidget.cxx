@@ -67,7 +67,9 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     this->ViewerWidget = NULL;
 
-    this->ColorIcons = vtkSlicerColorLUTIcons::New();
+    // TODO: test this.
+    this->ColorIcons = NULL;
+//    this->ColorIcons = vtkSlicerColorLUTIcons::New();
 }
 
 
@@ -607,7 +609,9 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         }
       }
 
-    this->AddColorIcons();
+    // TODO: Test this approach
+    // and possibly move into nodeselector class.
+    // this->AddColorIcons();
   
     // update the range
     if (range)
@@ -1094,6 +1098,20 @@ void vtkSlicerColorDisplayWidget::AssignLUTImage ( vtkKWMenu *menu, int index, c
 
   //node selector has this: std::map<std::string, std::string> NodeID_to_EntryName;
   //is there any way to not hardcode the association between LUT name and icon???
+
+  if ( menu == NULL )
+    {
+    return;
+    }
+  if ( name == NULL )
+    {
+    return;
+    }
+  int num = menu->GetNumberOfItems();
+  if ( index < 0 || index > num )
+    {
+    return;
+    }
 
   if ( !strcmp ( name, "dGEMRIC-3T"))
     {
