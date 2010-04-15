@@ -24,6 +24,7 @@
 #include <itkRigid3DTransform.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
 #include <itkAffineTransform.h>
+#include <itkBSplineDeformableTransform.h>
 #include <string.h>
 #include <vector>
 #include <stdio.h>
@@ -80,6 +81,7 @@ struct parameters
   std::string typeOfField ;
   double defaultPixelValue;
   std::string transformsOrder ;
+  bool bulk ;
 } ;
 
 //To check the image voxel type
@@ -487,6 +489,27 @@ SetAllTransform( parameters &list ,
    spacingOutput = resampler->GetOutputSpacing() ;
    sizeOutput = resampler->GetSize() ;
    directionOutput = resampler->GetOutputDirection() ;
+   if( list.bulk )//Check if transform file contains a BSpline 
+   {
+     if( nonRigidTransforms > 0 && transformFile->GetTransformList()->size() == 2 )
+     {
+       transform = SetTransform< ImageType > ( list , image , transformFile ) ;
+       //order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools       
+       typedef itk::BSplineDeformableTransform< double , 3  , 3 > BSplineDeformableTransformType ;
+       BSplineDeformableTransformType::Pointer BSplineTransform ;
+       BSplineTransform = dynamic_cast< BSplineDeformableTransformType* > (transform.GetPointer() ) ;
+       if( BSplineTransform )
+       {
+         TransformType::Pointer bulkTransform ;
+         bulkTransform = SetTransform< ImageType > ( list , image , transformFile ) ;
+         BSplineTransform->SetBulkTransform ( bulkTransform ) ;
+         return transform ;
+       }
+     }
+     //if it comes here it means that there was an problem with loading and setting the bulk transform
+     std::cerr << "Bulk transform is only valid if the transform file contains only two transforms and the second one is a BSpline transform" << std::endl ;
+     return NULL ;
+   }
    //If more than one transform or if hfield, add all transforms and compute the deformation field
    if( ( list.transformationFile.compare( "" )
          && transformFile->GetTransformList()->size() > 1
@@ -590,7 +613,7 @@ SetAllTransform( parameters &list ,
       //only one transform, just load it
       transform = SetTransform< ImageType > ( list , image , transformFile ) ;
    }
-return transform ;
+  return transform ;
 }
 
 
@@ -1223,6 +1246,7 @@ int main( int argc , char * argv[] )
    list.typeOfField = typeOfField ;
    list.defaultPixelValue = defaultPixelValue ;
    list.transformsOrder = transformsOrder ;
+   list.bulk = bulk ;
    if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
    {
       std::cerr << "Argument(s) having wrong size" << std::endl ;
