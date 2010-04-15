@@ -1192,6 +1192,9 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
     set key [$o(reader) GetNthKey $n]
     set value [$o(reader) GetTagValue $key]
 
+    if { ![string is print $value] } {
+      set value "Not printable"
+    }
     if { [info exists _DICOM($key)] } {
       set description $_DICOM($key)
       set isDICOM 1
