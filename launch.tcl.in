@@ -723,13 +723,16 @@ proc launch_SetPaths {} {
       } else {
         set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib$SEP$::env(PYTHONPATH)"
       }
-      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/lib-tk$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages/numpy$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages/numpy/core$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/lib-tk$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages/numpy/core$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Python$SEP$::env(PYTHONPATH)"
     }
 }
