@@ -1296,8 +1296,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
         }
         if { [info exists tree($patient,$study,$series,warning)] } {
           set nodeText [$t GetNodeText $seriesNode]
-          $t SetNodeText $seriesNode "$nodeText -- $tree($patient,$study,$series,warning)"
-          $t SetNodeFontSlantToItalic $seriesNode
+          $t SetNodeText $seriesNode "$nodeText -- Warning! $tree($patient,$study,$series,warning)"
         }
       }
     }
@@ -1509,7 +1508,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
   #
   set POSITION "0020|0032"
   set ORIENTATION "0020|0037"
-
+  set NUMBER_OF_FRAMES "0028|0008"
   set spaceWarnings 0
   foreach patient $tree(patients) {
     foreach study $tree($patient,studies) {
@@ -1527,10 +1526,14 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         set refFile [lindex $tree($patient,$study,$series,files) 0]
         array set refHeader $tree($refFile,header)
 
+        if { [lsearch [array names refHeader] $NUMBER_OF_FRAMES,value] != -1 } {
+          set tree($patient,$study,$series,warning) "\"$series\" is a multi-frame DICOM which is not fully supported.  Please use caution."
+          continue
+        }
+
         set validGeometry 1
         foreach tag {POSITION ORIENTATION} {
           set key [set $tag],value
-          array set ::refheader [array get refHeader]
           if { [lsearch [array names refHeader] $key] == -1 } {
             set tree($patient,$study,$series,warning) "reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
             set validGeometry 0
