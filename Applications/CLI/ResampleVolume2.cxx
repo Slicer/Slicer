@@ -1247,6 +1247,12 @@ int main( int argc , char * argv[] )
    list.defaultPixelValue = defaultPixelValue ;
    list.transformsOrder = transformsOrder ;
    list.bulk = bulk ;
+   if( list.deffield.compare( "" ) && list.bulk )
+   {
+     std::cerr << "Cannot apply both a deformation field transform\
+ and a BSpline transform with a bulk transform at the same time" << std::endl ;
+     return EXIT_FAILURE ;
+   }
    if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
    {
       std::cerr << "Argument(s) having wrong size" << std::endl ;
