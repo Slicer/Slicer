@@ -530,6 +530,17 @@ int Slicer3_main(int& argc, char *argv[])
   init_slicer();
   PyObject* v;
 
+  std::vector<std::string> pythonInitStrings;
+
+  pythonInitStrings.push_back(std::string("import _tkinter;"));  
+  pythonInitStrings.push_back(std::string("import Tkinter;"));
+  pythonInitStrings.push_back(std::string("import sys;"));
+  pythonInitStrings.push_back(std::string("from os.path import join as j;"));
+  pythonInitStrings.push_back(std::string("tk = Tkinter.Tk();"));
+  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer3_INSTALL_LIB_DIR + "', 'SlicerBaseGUI', 'Python')" + " );"));
+  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "') );"));
+
+  /*
   std::string TkinitString = "import Tkinter, sys;"
     "from os.path import join as j;"
     "tk = Tkinter.Tk();"
@@ -539,20 +550,55 @@ int Slicer3_main(int& argc, char *argv[])
     "sys.path.append ( j('"
     + slicerHome + "','" + Slicer3_INSTALL_PLUGINS_BIN_DIR
     + "') );\n";
-
-  v = PyRun_String( TkinitString.c_str(),
-                    Py_file_input,
-                    PythonDictionary,
-                    PythonDictionary );
-  if (v == NULL)
+    */
+  
+  std::vector<std::string>::iterator strIt;
+  strIt = pythonInitStrings.begin();
+  for (; strIt != pythonInitStrings.end(); strIt++)
     {
-    PyErr_Print();
-    }
-  else
-    {
-    if (Py_FlushLine())
+    v = PyRun_String( (*strIt).c_str(),
+                      Py_file_input,
+                      PythonDictionary,
+                      PythonDictionary );
+    if (v == NULL)
       {
-      PyErr_Clear();
+      PyObject *exception, *v, *tb;
+      PyObject *exception_s, *v_s, *tb_s;
+
+      PyErr_Fetch(&exception, &v, &tb);
+      if (exception != NULL)
+        {
+        PyErr_NormalizeException(&exception, &v, &tb);
+        if (exception != NULL)
+          {
+          exception_s = PyObject_Str(exception);
+          v_s = PyObject_Str(v);
+          tb_s = PyObject_Str(tb);
+          const char *e_string, *v_string, *tb_string;
+          cout << "Running: " << (*strIt).c_str() << endl;
+          e_string = PyString_AS_STRING(exception_s);
+          cout << "Exception: " << e_string << endl;
+          v_string = PyString_AS_STRING(v_s);
+          cout << "V: " << v_string << endl;
+          tb_string = PyString_AS_STRING(PyObject_Str(tb_s));
+          cout << "TB: " << tb_string << endl;
+          Py_DECREF ( exception_s );
+          Py_DECREF ( v_s );
+          Py_DECREF ( tb_s );
+          Py_DECREF ( exception );
+          Py_DECREF ( v );
+          if ( tb ) Py_DECREF ( tb );
+          }
+        }
+
+      PyErr_Print();
+      }
+    else
+      {
+      if (Py_FlushLine())
+        {
+        PyErr_Clear();
+        }
       }
     }
 #endif
