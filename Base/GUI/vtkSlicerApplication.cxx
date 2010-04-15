@@ -229,6 +229,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ExtensionsInstallPathDefault, "");
     strcpy(this->HomeModule, "");
     strcpy(this->IgnoreModuleNames, "");
+    strcpy(this->RegistryHolder, "");
 
     strcpy(this->Platform, "");
     strcpy(this->BinDir, "");
