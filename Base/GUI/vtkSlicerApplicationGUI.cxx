@@ -1863,8 +1863,29 @@ void vtkSlicerApplicationGUI::PythonConsole (  )
 
   if (v == NULL)
     {
-    PyErr_Print();
+    PyObject *exception, *v, *tb;
+    PyObject *exception_s, *v_s, *tb_s;
+
+    PyErr_Fetch(&exception, &v, &tb);
+    if (exception == NULL)
+      return;
+    PyErr_NormalizeException(&exception, &v, &tb);
+    if (exception == NULL)
+      return;
+    
+    exception_s = PyObject_Str(exception);
+    v_s = PyObject_Str(v);
+    tb_s = PyObject_Str(tb);
     vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter" );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(exception_s) );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(v_s) );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", PyString_AS_STRING(tb_s) );
+    Py_DECREF ( exception_s );
+    Py_DECREF ( v_s );
+    Py_DECREF ( tb_s );
+    Py_DECREF ( exception );
+    Py_DECREF ( v );
+    if ( tb ) Py_DECREF ( tb );
     return;
     }
   Py_DECREF ( v );
@@ -1924,7 +1945,7 @@ void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
     Py_DECREF ( tb_s );
     Py_DECREF ( exception );
     Py_DECREF ( v );
-    Py_DECREF ( tb );
+    if ( tb ) Py_DECREF ( tb );
 
     return;
     }
