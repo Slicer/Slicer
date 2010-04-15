@@ -10,6 +10,7 @@ class EndoscopyGUI(ScriptedModuleGUI):
         ScriptedModuleGUI.__init__(self)
         self.vtkScriptedModuleGUI.SetCategory("Endoscopy")
         self.FiducialsNodeSelector = slicer.vtkSlicerNodeSelectorWidget()
+        self.CameraNodeSelector = slicer.vtkSlicerNodeSelectorWidget()
         self.ApplyButton = slicer.vtkKWPushButton()
     
     def Destructor(self):
@@ -47,14 +48,19 @@ class EndoscopyGUI(ScriptedModuleGUI):
 
     def Apply(self):
 
+        inputCamera = self.CameraNodeSelector .GetSelected()
+        if not inputCamera:
+          self.ErrorDialog("No camera selected")
+          return
+
         inputSeeds = self.FiducialsNodeSelector .GetSelected()
         if not inputSeeds:
-          self.ErrorDialog("No fiducials found")
+          self.ErrorDialog("No fiducials selected")
           return
 
         self.Status("Calculating Path...")
 
-        p = path(0.5, fidListName=inputSeeds.GetName())
+        p = path(0.5, fidListName=inputSeeds.GetName(), cameraName = inputCamera.GetName())
         p.pathModel()
         p.gui()
 
@@ -63,7 +69,7 @@ class EndoscopyGUI(ScriptedModuleGUI):
     def BuildGUI(self):
         self.GetUIPanel().AddPage("Endoscopy","Endoscopy","")
         pageWidget = self.GetUIPanel().GetPageWidget("Endoscopy")
-        helpText = "Create a path model as a spline interpolation of a set of fiducial points.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Endoscopy-Documentation-3.4</a> for more information."
+        helpText = "Create a path model as a spline interpolation of a set of fiducial points.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Endoscopy-Documentation-3.6</a> for more information.\n\nPick the Camera to be modified by the path and the Fiducial List defining the control points.  Clicking Apply will bring up the flythrough panel.\n\nYou can manually scroll though the path with the Frame slider.\n\nThe Play/Pause button toggles animated flythrough.\n\nThe Frame Skip slider speeds up the animation by skipping points on the path.\n\nThe Frame Delay slider slows down the animation by adding more time between frames.\n\nThe View Angle provides is used to approximate the optics of an endoscopy system.\n\nThe Close button dismisses the flyrhough panel and stops the animation."
         aboutText = "This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.  Module implemented by Steve Pieper."
         self.BuildHelpAndAboutFrame(pageWidget,helpText,aboutText)
     
@@ -75,6 +81,16 @@ class EndoscopyGUI(ScriptedModuleGUI):
         widgetName = moduleFrame.GetWidgetName()
         pageWidgetName = self.GetUIPanel().GetPageWidget("Endoscopy").GetWidgetName()
         slicer.TkCall("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s" % (widgetName,pageWidgetName))
+
+        self.CameraNodeSelector.SetNodeClass("vtkMRMLCameraNode","","","")
+        self.CameraNodeSelector.SetParent(moduleFrame.GetFrame())
+        self.CameraNodeSelector.Create()
+        self.CameraNodeSelector.SetMRMLScene(self.GetLogic().GetMRMLScene())
+        self.CameraNodeSelector.UpdateMenu()
+        self.CameraNodeSelector.SetBorderWidth(2)
+        self.CameraNodeSelector.SetLabelText("Camera: ")
+        self.CameraNodeSelector.SetBalloonHelpString("select a camera that will fly along this path.")
+        slicer.TkCall("pack %s -side top -anchor e -padx 20 -pady 4 -expand true -fill x" % self.CameraNodeSelector.GetWidgetName())
     
         self.FiducialsNodeSelector.SetNodeClass("vtkMRMLFiducialListNode","","","")
         self.FiducialsNodeSelector.SetParent(moduleFrame.GetFrame())
@@ -330,11 +346,11 @@ class path (object):
   def flyCB(self):
     if self.playing:
       f = self.frame.get()
-      f += 1 + self.speed.get()
+      f += 1 + self.skip.get()
       if f > self.frame['to']:
         f = 0
       self.frame.set(f)
-      Slicer.tk.after(10,self.flyCB)
+      self.afterID = Slicer.tk.after(self.delay.get(),self.flyCB)
 
 
   def playCB(self):
@@ -345,6 +361,10 @@ class path (object):
       self.play.configure(text="Pause", relief="sunken")
       self.playing = True
       self.flyCB()
+
+  def closeCB(self):
+    Slicer.tk.after_cancel(self.afterID)
+    self.toplevel.destroy()
 
   def gui(self):
     Tkinter = Slicer.Tkinter
@@ -361,12 +381,20 @@ class path (object):
     self.playing = False
     self.play = Tkinter.Button(self.toplevel, text="Play", command=self.playCB)
     self.play.pack(side='top')
-    # speed slider
-    self.speed = Tkinter.Scale(self.toplevel, orient='horizontal', to=10, label="Speed")
-    self.speed.pack(side='top', expand='true', fill='x')
+    # Skip slider
+    self.skip = Tkinter.Scale(self.toplevel, orient='horizontal', from_=0, to=10, label="Frame Skip")
+    self.skip.set(0)
+    self.skip.pack(side='top', expand='true', fill='x')
+    # Delay slider
+    self.delay = Tkinter.Scale(self.toplevel, orient='horizontal', from_=5, to=100, label="Frame Delay (milliseconds)")
+    self.delay.set(10)
+    self.delay.pack(side='top', expand='true', fill='x')
     # fov slider
     self.fov = Tkinter.Scale(self.toplevel, orient='horizontal', from_=30, to=170, label="View Angle")
     self.fov.pack(side='top', expand='true', fill='x')
     
+    # close
+    self.close = Tkinter.Button(self.toplevel, text="Close", command=self.closeCB)
+    self.close.pack(side='bottom')
 
 
