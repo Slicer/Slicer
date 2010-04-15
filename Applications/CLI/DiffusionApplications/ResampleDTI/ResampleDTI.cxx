@@ -44,6 +44,7 @@
 #include <itkVectorLinearInterpolateImageFunction.h>
 #include "itkTransformDeformationFieldFilter.h"
 #include <itkVectorResampleImageFilter.h>
+#include <itkBSplineDeformableTransform.h>
 
 
 // Use an anonymous namespace to keep class types and function names
@@ -83,6 +84,7 @@ struct parameters
   std::string typeOfField ;
   double defaultPixelValue ;
   std::string transformsOrder ;
+  bool bulk ;
 };
 
 
@@ -784,7 +786,7 @@ int Do( parameters list )
       std::cerr << "Reading input image: Exception caught!"
                 << std::endl ;
       std::cerr << Except << std::endl ;
-      return -1 ;
+      return EXIT_FAILURE ;
     }
     if( !list.space.compare( "RAS" ) &&  list.transformationFile.compare( "" ) )
     {
@@ -807,12 +809,14 @@ int Do( parameters list )
     nonRigidTransforms = ReadTransform< PixelType >( list , image , transformFile ) ;
     if( nonRigidTransforms < 0 )//The transform file contains a transform that is not handled by resampleDTI, it exits.
     {
-      return -1 ;
+      return EXIT_FAILURE ;
     }
     //if the transform is in RAS space coordinate, add a transform to transform the image into that space 
     typedef itk::DiffusionTensor3DTransform< PixelType > TransformType ;
     typedef typename TransformType::Pointer TransformTypePointer ;
     typedef itk::DiffusionTensor3DResample< PixelType , PixelType > ResamplerType ;
+    typedef itk::DiffusionTensor3DPPDAffineTransform< PixelType > PPDAffineTransformType ;
+    typedef itk::DiffusionTensor3DNonRigidTransform< PixelType > NonRigidTransformType ;
     typedef typename ResamplerType::Pointer ResamplerTypePointer ;
     typename InputImageType::PointType originOutput ;
     typename InputImageType::SpacingType spacingOutput ;
@@ -842,7 +846,38 @@ int Do( parameters list )
     }
     //If more than one transform or if hfield, add all transforms and compute the deformation field
     TransformTypePointer transform ;
-    if( (list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 && nonRigidTransforms > 0) || list.deffield.compare( "" ) )
+   if( list.bulk )//Check if transform file contains a BSpline 
+   {
+     bool error = true ;
+     if( nonRigidTransforms > 0 && transformFile->GetTransformList()->size() == 2 )
+     {
+       transform = SetTransform< PixelType > ( list , image , transformFile ) ;
+       //order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools       
+       typedef itk::BSplineDeformableTransform< double , 3  , 3 > BSplineDeformableTransformType ;
+       BSplineDeformableTransformType::Pointer BSplineTransform ;
+       BSplineTransform = dynamic_cast< BSplineDeformableTransformType* > (transform->GetTransform().GetPointer() ) ;
+       if( BSplineTransform )
+       {
+         typename TransformType::Pointer bulkTransform ;
+         bulkTransform = SetTransform< PixelType > ( list , image , transformFile ) ;
+         BSplineTransform->SetBulkTransform ( bulkTransform->GetTransform() ) ;
+         error = false ;
+         typename PPDAffineTransformType::Pointer affineppd = PPDAffineTransformType::New() ;
+         typename itk::DiffusionTensor3DAffineTransform< PixelType >::Pointer affine ;
+         affine = affineppd ;
+         typename NonRigidTransformType::Pointer nonRigid ;
+         nonRigid = dynamic_cast< NonRigidTransformType* > ( transform.GetPointer() ) ;
+         nonRigid->SetAffineTransformType( affine ) ;
+       }
+     }
+     if( error )
+     {
+       //if it comes here it means that there was an problem with loading and setting the bulk transform
+       std::cerr << "Bulk transform is only valid if the transform file contains only two transforms and the second one is a BSpline transform" << std::endl ;
+       return EXIT_FAILURE ;
+     }
+   }
+    else if( (list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 && nonRigidTransforms > 0) || list.deffield.compare( "" ) )
     {
       //Create warp transform
       typedef itk::WarpTransform3D< double > WarpTransformType ;
@@ -884,8 +919,7 @@ int Do( parameters list )
       }
       //Create the DTI transform
       warpTransform->SetDeformationField( field ) ;
-      typedef itk::DiffusionTensor3DNonRigidTransform< PixelType > NonRigidTransformType ;
-      typedef itk::DiffusionTensor3DPPDAffineTransform< PixelType > PPDAffineTransformType ;
+//      typedef itk::DiffusionTensor3DPPDAffineTransform< PixelType > PPDAffineTransformType ;
       typename NonRigidTransformType::TransformType::Pointer nonRigidFile ;
       typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New() ;
       nonRigid->SetTransform( dynamic_cast< typename NonRigidTransformType::TransformType* > (warpTransform.GetPointer() ) ) ;
@@ -913,7 +947,7 @@ int Do( parameters list )
         if( !localTransform )//should never happen, just for security
         {
            std::cerr << "An affine or rigid transform was not convertible to DiffusionTensor3DMatrix3x3Transform" << std::endl ;
-           return -1 ;
+           return EXIT_FAILURE ;
         }
         matrix = localTransform->GetMatrix3x3() ;
         vector = localTransform->GetTranslation() ;
@@ -1033,9 +1067,9 @@ int Do( parameters list )
       std::cerr << "Writing output image: Exception caught!"
                 << std::endl ;
       std::cerr << Except << std::endl ;
-      return -1 ;
+      return EXIT_FAILURE ;
     }
-    return 0 ;
+    return EXIT_SUCCESS ;
 }
 
 } // end of anonymous namespace
@@ -1073,6 +1107,13 @@ int main( int argc , char * argv[] )
   list.typeOfField = typeOfField ;
   list.defaultPixelValue = defaultPixelValue ;
   list.transformsOrder = transformsOrder ;
+  list.bulk = bulk ;
+  if( list.deffield.compare( "" ) && list.bulk )
+  {
+    std::cerr << "Cannot apply both a deformation field transform\
+ and a BSpline transform with a bulk transform at the same time" << std::endl ;
+    return EXIT_FAILURE ;
+  }
   //verify if all the vector parameters have the good length
   if( list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
       || ( list.outputImageOrigin.size() != 3 
@@ -1081,7 +1122,7 @@ int main( int argc , char * argv[] )
       || list.transformMatrix.size() != 12 )
     {
     std::cerr<< "Argument(s) having wrong size" << std::endl ;
-    return -1 ;
+    return EXIT_FAILURE ;
     }
   itk::ImageIOBase::IOPixelType pixelType ;
   itk::ImageIOBase::IOComponentType componentType ;

@@ -124,6 +124,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>output-to-input</element>
       <default>input-to-output</default>
     </string-enumeration>
+    <boolean>
+      <name>bulk</name>
+      <longflag>--bulk</longflag>
+      <description>If the transform file contains one affine and one BSpline transform, sets the affine transform as a bulk transform in the BSpline transform</description>
+      <label>Bulk Transform</label>
+      <default>false</default>
+    </boolean>
 </parameters>
 <parameters advanced="true">
     <label>Manual Transform (Used only if no transform node set)</label>
