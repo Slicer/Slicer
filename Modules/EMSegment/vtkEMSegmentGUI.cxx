@@ -522,9 +522,7 @@ void vtkEMSegmentGUI::BuildGUI()
   // Initial and finish step
 
   wizard_workflow->SetFinishStep(this->RunSegmentationStep);
-    cout << "========Create Transition" << endl;
   wizard_workflow->CreateGoToTransitionsToFinishStep();
-    cout << "========End Transition" << endl;
   wizard_workflow->SetInitialStep(this->ParametersSetStep);
 }
 
