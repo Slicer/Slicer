@@ -53,7 +53,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// access methods
-  vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
+  vtkGetObjectMacro(VisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(DistanceAnnotationVisibilityButton, vtkKWPushButton);
   vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
   vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
   vtkGetObjectMacro (RemoveAllRulersButton, vtkKWPushButton);
@@ -140,6 +141,10 @@ public:
   /// name if filename is null.
   void GenerateReport(const char *filename = NULL);
 
+  ///
+  /// Reset all the colour picker buttons white, clear
+  /// the distance label. Used when scene is cleared.
+  void ResetGUI();
 protected:
   vtkMeasurementsRulerWidget();
   virtual ~vtkMeasurementsRulerWidget();
@@ -186,8 +191,8 @@ protected:
   vtkKWLoadSaveButton *ReportButton;
   
   /// 
-  /// visibility check button
-  vtkKWCheckButtonWithLabel *VisibilityButton;
+  /// visibility button
+  vtkKWPushButton *VisibilityButton;
   // Description:
   // Change the colour of the end point
   vtkKWChangeColorButton *PointColourButton;
@@ -220,7 +225,7 @@ protected:
   /// distance annotation option entries
   vtkKWEntryWithLabel *DistanceAnnotationFormatEntry;
   vtkKWEntryWithLabel *DistanceAnnotationScaleEntry;
-  vtkKWCheckButtonWithLabel *DistanceAnnotationVisibilityButton;
+  vtkKWPushButton *DistanceAnnotationVisibilityButton;
 
   /// 
   /// number of subdivisions on the line

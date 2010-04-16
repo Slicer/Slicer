@@ -597,7 +597,7 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
       this->ReportButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       if ( this->ReportButton->GetText())
         {
-        this->ReportButton->SetText ("");
+        this->ReportButton->SetText ("Generate a Report");
         }
       }
     }
@@ -652,22 +652,22 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
     }
 
   // GUI elements
-  vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWChangeColorButton *ccbutton = vtkKWChangeColorButton::SafeDownCast(caller);
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
  
-  if (b && event == vtkKWCheckButton::SelectedStateChangedEvent)
+  if (b && event == vtkKWPushButton::InvokedEvent)
     {
-    if (b == this->VisibilityButton->GetWidget()) 
+    if (b == this->VisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
-      activeRulerNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+      activeRulerNode->SetVisibility(!(activeRulerNode->GetVisibility()));
       this->Update3DWidget(activeRulerNode);
       }
-    else if (b == this->DistanceAnnotationVisibilityButton->GetWidget() )
+    else if (b == this->DistanceAnnotationVisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeRulerNode); }
-      activeRulerNode->SetDistanceAnnotationVisibility(this->DistanceAnnotationVisibilityButton->GetWidget()->GetSelectedState());
+      activeRulerNode->SetDistanceAnnotationVisibility(!(activeRulerNode->GetDistanceAnnotationVisibility()));
       this->Update3DWidget(activeRulerNode);
       }
     }
@@ -992,6 +992,8 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
     // the lists are already gone from the scene, so need to clear out all the
     // widget properties, can't call remove with a node
     this->RemoveDistanceWidgets();
+    // set colour choosers to white, reset distance label
+    this->ResetGUI();
     return;
     }
 
@@ -1058,6 +1060,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
         if (this->GetRulerNodeID() != NULL)
           {
           this->SetRulerNodeID(NULL);
+          this->ResetGUI();
           }
         return;
         }
@@ -1088,12 +1091,27 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
 { 
 
   vtkDebugMacro("UpdateWidget: active ruler node is " << (activeRulerNode == NULL ? "null" : activeRulerNode->GetName()));
+
+  // to get at some top level icons
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkDebugMacro ( "UpdateWidget: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkDebugMacro ( "UpdateWidget: got Null SlicerApplicationGUI" );
+    return;
+    }
   
   // if the passed node is null, clear out the widget
   if (activeRulerNode == NULL)
     {
     // don't need to do anything yet, especially don't set the node selector to
     // null, as it causes a crash
+    this->ResetGUI();
     vtkDebugMacro("UpdateWidget: The passed in node is null, returning.");
     return;
     }
@@ -1118,8 +1136,16 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   vtkDebugMacro("UpdateWidget: updating the gui and 3d elements");
   // first update the GUI, then update the 3d elements
   // visibility
-  this->VisibilityButton->GetWidget()->SetSelectedState(activeRulerNode->GetVisibility());
-
+  if (activeRulerNode->GetVisibility())
+    {
+    this->GetVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->GetVisibilityButton()->SetBalloonHelpString ( "Hide the selected ruler." );
+    }
+  else
+    {
+    this->GetVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetVisibilityButton()->SetBalloonHelpString ( "Show the selected ruler." );
+    }
   // end point positions
   double *position = activeRulerNode->GetPosition1();
   if (position)
@@ -1197,7 +1223,16 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
     {
     this->TextColourButton->SetColor(activeRulerNode->GetDistanceAnnotationTextColour());
     }
-  this->DistanceAnnotationVisibilityButton->GetWidget()->SetSelectedState(activeRulerNode->GetDistanceAnnotationVisibility());
+  if (activeRulerNode->GetDistanceAnnotationVisibility())
+    {
+    this->DistanceAnnotationVisibilityButton->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->DistanceAnnotationVisibilityButton->SetBalloonHelpString ( "Don't show the selected ruler's annotation text." );
+    }
+  else
+    {
+    this->DistanceAnnotationVisibilityButton->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->DistanceAnnotationVisibilityButton->SetBalloonHelpString ( "Show the selected ruler's annotation text." );
+    }
   this->DistanceAnnotationFormatEntry->GetWidget()->SetValue(activeRulerNode->GetDistanceAnnotationFormat());
   double *scale = activeRulerNode->GetDistanceAnnotationScale();
   if (scale)
@@ -1228,39 +1263,17 @@ void vtkMeasurementsRulerWidget::UpdateDistanceLabel(vtkMRMLMeasurementsRulerNod
     }
 
   std::string distanceString = std::string("Distance: ");
-  double distanceValue = activeRulerNode->GetDistance();
-  vtkDebugMacro("UpdateDistanceLabel: node distance = " << distanceValue);
+  //double distanceValue = activeRulerNode->GetDistance();
+
+  activeRulerNode->UpdateCurrentDistanceAnnotation();
+  const char *distanceValue = activeRulerNode->GetCurrentDistanceAnnotation();
+  
+  vtkDebugMacro("UpdateDistanceLabel: distance = " << distanceValue);
   std::stringstream ss;
   ss << distanceString;
   ss << distanceValue;
   distanceString = ss.str();
   this->DistanceLabel->SetText(distanceString.c_str());
-/*  
-  vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(activeRulerNode->GetID());
-  if (distanceWidget &&
-      distanceWidget->GetRepresentation())
-    {
-    std::stringstream ss;
-    distanceString = std::string("Distance: ");
-    distanceValue = distanceWidget->GetRepresentation()->GetDistance();
-    vtkWarningMacro("UpdateDistanceLabel: distance = " << distanceValue);
-
-    double x1[3], x2[3];
-    distanceWidget->GetRepresentation()->GetPoint1WorldPosition(x1);
-    distanceWidget->GetRepresentation()->GetPoint2WorldPosition(x2);
-    distanceValue = sqrt(vtkMath::Distance2BetweenPoints( x1, x2 ));
-    vtkWarningMacro("Direct calc: distance = " << distanceValue);
-    
-    ss << distanceString;
-    ss << distanceValue;
-    distanceString = ss.str();
-    this->DistanceLabel->SetText(distanceString.c_str());
-    }
-  else
-    {
-    vtkWarningMacro("UpdateDistanceLabel: can't get distance widget or representation");
-    }
-*/
 }
 
 //---------------------------------------------------------------------------
@@ -1292,7 +1305,7 @@ void vtkMeasurementsRulerWidget::Update3DWidgetVisibility(vtkMRMLMeasurementsRul
       }
     else
       {
-      vtkWarningMacro("Update3DWidgetVisibility: no interactor found! Ruler widget won't work until this is set");
+      vtkDebugMacro("Update3DWidgetVisibility: no interactor found! Ruler widget won't work until this is set");
       distanceWidget->SetInteractor(NULL);
       }
     }
@@ -1302,10 +1315,11 @@ void vtkMeasurementsRulerWidget::Update3DWidgetVisibility(vtkMRMLMeasurementsRul
       {
       vtkDebugMacro("Update3DWidgetVisibility: distance widget on");
       distanceWidget->On();
+      distanceWidget->ProcessEventsOn();
       }
     else
       {
-      vtkWarningMacro("Update3DWidgetVisibility: no interactor set");
+      vtkDebugMacro("Update3DWidgetVisibility: no interactor set");
       }
     }
   else
@@ -1673,7 +1687,7 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     }
   if (this->VisibilityButton)
     {
-    this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->PointColourButton)
     {
@@ -1706,7 +1720,7 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
 
   if (this->DistanceAnnotationVisibilityButton)
     {
-    this->DistanceAnnotationVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DistanceAnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->Position1XEntry)
@@ -1772,7 +1786,7 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
     }
   if (this->VisibilityButton)
     {
-    this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->PointColourButton)
     {
@@ -1805,7 +1819,7 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
 
   if (this->DistanceAnnotationVisibilityButton)
     {
-    this->DistanceAnnotationVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DistanceAnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->Position1XEntry)
@@ -1927,21 +1941,21 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RemoveAllRulersButton->SetBorderWidth ( 0 );
   this->RemoveAllRulersButton->SetBalloonHelpString("Delete all rulers.");
 
+  
+  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2",
+               this->AllVisibilityMenuButton->GetWidgetName(),
+               this->RemoveAllRulersButton->GetWidgetName());
+
   // generate a report
   this->ReportButton =  vtkKWLoadSaveButton::New();
   this->ReportButton->SetParent ( controlAllFrame->GetFrame() );
   this->ReportButton->Create ( );
   this->ReportButton->GetLoadSaveDialog()->SetFileTypes(" { {CSV} {.csv} } { {Text} {.txt} }");
   this->ReportButton->GetLoadSaveDialog()->SaveDialogOn();
-
-//  this->ReportButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerSaveIcon() );
-//  this->ReportButton->SetReliefToFlat();
-//  this->ReportButton->SetBorderWidth ( 0 );
+  this->ReportButton->SetText("Generate Report");
   this->ReportButton->SetBalloonHelpString("Generate a report on disk about all rulers.");
   
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2",
-               this->AllVisibilityMenuButton->GetWidgetName(),
-               this->RemoveAllRulersButton->GetWidgetName(),
+  this->Script("pack %s -side right -anchor e -padx 2 -pady 2",
                this->ReportButton->GetWidgetName());
   
   // ---
@@ -1983,22 +1997,39 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->DistanceLabel->SetParent(distanceFrame);
   this->DistanceLabel->Create();
   this->DistanceLabel->SetText("Distance: ");
-  this->Script( "pack %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
+  this->DistanceLabel->SetForegroundColor(0.0, 0.0, 1.0);
+  this->Script( "pack %s -side left -anchor nw -expand false -fill none -padx 2 -pady 2",
                 this->DistanceLabel->GetWidgetName());
   
   //
   // Pick Models Frame
   //
-  vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
+  vtkKWFrame *modelFrame = vtkKWFrame::New();
   modelFrame->SetParent( pickRulerNodeFrame->GetFrame() );
   modelFrame->Create();
-  modelFrame->SetLabelText("Constrain Ruler to Models or Slices");
-  modelFrame->ExpandFrame();
+  //modelFrame->SetLabelText("Constrain Ruler to Models or Slices");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", modelFrame->GetWidgetName());
+
   
 
+  // end 1
+  vtkKWFrame *end1Frame = vtkKWFrame::New();
+  end1Frame->SetParent(modelFrame);
+  end1Frame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 end1Frame->GetWidgetName() );
+  
+  this->PointColourButton = vtkKWChangeColorButton::New();
+  this->PointColourButton->SetParent ( end1Frame );
+  this->PointColourButton->Create ( );
+  this->PointColourButton->LabelOutsideButtonOn();
+  this->PointColourButton->SetLabelPositionToRight();
+  this->PointColourButton->SetLabelText("");
+  this->PointColourButton->SetBalloonHelpString("set end point 1 color.");
+
+  
   this->RulerModel1SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->RulerModel1SelectorWidget->SetParent ( end1Frame );
   this->RulerModel1SelectorWidget->Create ( );
   this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
@@ -2006,19 +2037,63 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel1SelectorWidget->NoneEnabledOn();
   this->RulerModel1SelectorWidget->SetShowHidden(1);
   this->RulerModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->RulerModel1SelectorWidget->SetBorderWidth(2);
+  this->RulerModel1SelectorWidget->SetBorderWidth(0);
   this->RulerModel1SelectorWidget->SetPadX(2);
-  this->RulerModel1SelectorWidget->SetPadY(2);
+  this->RulerModel1SelectorWidget->SetPadY(0);
   this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->RulerModel1SelectorWidget->SetLabelText( "End 1: ");
+//  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->RulerModel1SelectorWidget->SetLabelText( "Constraint:");
+  this->RulerModel1SelectorWidget->SetLabelWidth(11);
 //  this->RulerModel1SelectorWidget->GetLabel()->SetForegroundColor(1, 0, 0);
   this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the ruler. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
+
+  
+  this->Position1XEntry = vtkKWEntry::New();
+  this->Position1XEntry->SetParent(end1Frame);
+  this->Position1XEntry->Create();
+  this->Position1XEntry->SetWidth(8);
+  this->Position1XEntry->SetRestrictValueToDouble();
+  this->Position1XEntry->SetBalloonHelpString("First end of the line, X position");
+
+  this->Position1YEntry = vtkKWEntry::New();
+  this->Position1YEntry->SetParent(end1Frame);
+  this->Position1YEntry->Create();
+  this->Position1YEntry->SetWidth(8);
+  this->Position1YEntry->SetRestrictValueToDouble();
+  this->Position1YEntry->SetBalloonHelpString("First end of the line, Y position");
+
+  this->Position1ZEntry = vtkKWEntry::New();
+  this->Position1ZEntry->SetParent(end1Frame);
+  this->Position1ZEntry->Create();
+  this->Position1ZEntry->SetWidth(8);
+  this->Position1ZEntry->SetRestrictValueToDouble();
+  this->Position1ZEntry->SetBalloonHelpString("First end of the line, Z position");
+  
+  this->Script ( "pack %s %s %s %s %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                 this->PointColourButton->GetWidgetName(),
+                 this->RulerModel1SelectorWidget->GetWidgetName(),
+                 this->Position1XEntry->GetWidgetName(),
+                 this->Position1YEntry->GetWidgetName(),
+                 this->Position1ZEntry->GetWidgetName());
+
+  // end 2
+
+  vtkKWFrame *end2Frame = vtkKWFrame::New();
+  end2Frame->SetParent(modelFrame);
+  end2Frame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->RulerModel1SelectorWidget->GetWidgetName());
+                 end2Frame->GetWidgetName() );
+  
+  this->Point2ColourButton = vtkKWChangeColorButton::New();
+  this->Point2ColourButton->SetParent ( end2Frame );
+  this->Point2ColourButton->Create ( );
+  this->Point2ColourButton->LabelOutsideButtonOn();
+  this->Point2ColourButton->SetLabelPositionToRight();
+  this->Point2ColourButton->SetLabelText("");
+  this->Point2ColourButton->SetBalloonHelpString("set point 2 color.");
   
   this->RulerModel2SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->RulerModel2SelectorWidget->SetParent ( end2Frame );
   this->RulerModel2SelectorWidget->Create ( );
   this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->RulerModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
@@ -2026,16 +2101,43 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerModel2SelectorWidget->NoneEnabledOn();
   this->RulerModel2SelectorWidget->SetShowHidden(1);
   this->RulerModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->RulerModel2SelectorWidget->SetBorderWidth(2);
+  this->RulerModel2SelectorWidget->SetBorderWidth(0);
   this->RulerModel2SelectorWidget->SetPadX(2);
-  this->RulerModel2SelectorWidget->SetPadY(2);
+  this->RulerModel2SelectorWidget->SetPadY(0);
   this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->RulerModel2SelectorWidget->SetLabelText( "End 2: ");
+//  this->RulerModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->RulerModel2SelectorWidget->SetLabelText( "Constraint: ");
+  this->RulerModel2SelectorWidget->SetLabelWidth(11);
 //  this->RulerModel2SelectorWidget->GetLabel()->SetForegroundColor(0, 0, 1);
   this->RulerModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the ruler. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->RulerModel2SelectorWidget->GetWidgetName());
+
+  this->Position2XEntry = vtkKWEntry::New();
+  this->Position2XEntry->SetParent(end2Frame);
+  this->Position2XEntry->Create();
+  this->Position2XEntry->SetWidth(8);
+  this->Position2XEntry->SetRestrictValueToDouble();
+  this->Position2XEntry->SetBalloonHelpString("Second end of the line, X position");
+
+  this->Position2YEntry = vtkKWEntry::New();
+  this->Position2YEntry->SetParent(end2Frame);
+  this->Position2YEntry->Create();
+  this->Position2YEntry->SetWidth(8);
+  this->Position2YEntry->SetRestrictValueToDouble();
+  this->Position2YEntry->SetBalloonHelpString("Second end of the line, Y position");
+
+  this->Position2ZEntry = vtkKWEntry::New();
+  this->Position2ZEntry->SetParent(end2Frame);
+  this->Position2ZEntry->Create();
+  this->Position2ZEntry->SetWidth(8);
+  this->Position2ZEntry->SetRestrictValueToDouble();
+  this->Position2ZEntry->SetBalloonHelpString("Second end of the line, Z position");
+  
+  this->Script ( "pack %s %s %s %s %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                 this->Point2ColourButton->GetWidgetName(),
+                 this->RulerModel2SelectorWidget->GetWidgetName(),
+                 this->Position2XEntry->GetWidgetName(),
+                 this->Position2YEntry->GetWidgetName(),
+                 this->Position2ZEntry->GetWidgetName());
 
   // ---
   // DISPLAY FRAME            
@@ -2045,157 +2147,62 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   rulerDisplayFrame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  rulerDisplayFrame->GetWidgetName() );
-  rulerDisplayFrame->CollapseFrame ( );
+  rulerDisplayFrame->ExpandFrame ( );
 
-    // position 1 frame
-  vtkKWFrame *position1Frame = vtkKWFrame::New();
-  position1Frame->SetParent(rulerDisplayFrame->GetFrame());
-  position1Frame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 position1Frame->GetWidgetName() );
   
-  this->Position1Label = vtkKWLabel::New();
-  this->Position1Label->SetParent(position1Frame);
-  this->Position1Label->Create();
-  this->Position1Label->SetText("End 1");
-
-  this->Position1XEntry = vtkKWEntry::New();
-  this->Position1XEntry->SetParent(position1Frame);
-  this->Position1XEntry->Create();
-  this->Position1XEntry->SetWidth(8);
-  this->Position1XEntry->SetRestrictValueToDouble();
-  this->Position1XEntry->SetBalloonHelpString("First end of the line, X position");
-
-  this->Position1YEntry = vtkKWEntry::New();
-  this->Position1YEntry->SetParent(position1Frame);
-  this->Position1YEntry->Create();
-  this->Position1YEntry->SetWidth(8);
-  this->Position1YEntry->SetRestrictValueToDouble();
-  this->Position1YEntry->SetBalloonHelpString("First end of the line, Y position");
-
-  this->Position1ZEntry = vtkKWEntry::New();
-  this->Position1ZEntry->SetParent(position1Frame);
-  this->Position1ZEntry->Create();
-  this->Position1ZEntry->SetWidth(8);
-  this->Position1ZEntry->SetRestrictValueToDouble();
-  this->Position1ZEntry->SetBalloonHelpString("First end of the line, Z position");
-
-  this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->Position1Label->GetWidgetName(),
-                  this->Position1XEntry->GetWidgetName(),
-                  this->Position1YEntry->GetWidgetName(),
-                  this->Position1ZEntry->GetWidgetName());
-
-  // position 2 frame
-  vtkKWFrame *position2Frame = vtkKWFrame::New();
-  position2Frame->SetParent(rulerDisplayFrame->GetFrame());
-  position2Frame->Create();
+  vtkKWFrame *visibColourFrame = vtkKWFrame::New();
+  visibColourFrame->SetParent(rulerDisplayFrame->GetFrame());
+  visibColourFrame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 position2Frame->GetWidgetName() );
+                 visibColourFrame->GetWidgetName() );
 
-  this->Position2Label = vtkKWLabel::New();
-  this->Position2Label->SetParent(position2Frame);
-  this->Position2Label->Create();
-  this->Position2Label->SetText("End 2");
-
-  this->Position2XEntry = vtkKWEntry::New();
-  this->Position2XEntry->SetParent(position2Frame);
-  this->Position2XEntry->Create();
-  this->Position2XEntry->SetWidth(8);
-  this->Position2XEntry->SetRestrictValueToDouble();
-  this->Position2XEntry->SetBalloonHelpString("Second end of the line, X position");
-
-  this->Position2YEntry = vtkKWEntry::New();
-  this->Position2YEntry->SetParent(position2Frame);
-  this->Position2YEntry->Create();
-  this->Position2YEntry->SetWidth(8);
-  this->Position2YEntry->SetRestrictValueToDouble();
-  this->Position2YEntry->SetBalloonHelpString("Second end of the line, Y position");
-
-  this->Position2ZEntry = vtkKWEntry::New();
-  this->Position2ZEntry->SetParent(position2Frame);
-  this->Position2ZEntry->Create();
-  this->Position2ZEntry->SetWidth(8);
-  this->Position2ZEntry->SetRestrictValueToDouble();
-  this->Position2ZEntry->SetBalloonHelpString("Second end of the line, Z position");
-  this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->Position2Label->GetWidgetName(),
-                  this->Position2XEntry->GetWidgetName(),
-                  this->Position2YEntry->GetWidgetName(),
-                  this->Position2ZEntry->GetWidgetName());
-  
-  this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( rulerDisplayFrame->GetFrame() );
+  this->VisibilityButton = vtkKWPushButton::New();
+  this->VisibilityButton->SetParent ( visibColourFrame );
   this->VisibilityButton->Create ( );
-  this->VisibilityButton->SetLabelText("Visibility");
+  this->VisibilityButton->SetOverReliefToNone();
+  this->VisibilityButton->SetBorderWidth(0);
+  this->VisibilityButton->SetReliefToFlat();
+  this->VisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
   this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->VisibilityButton->GetWidgetName() );
   
-  this->PointColourButton = vtkKWChangeColorButton::New();
-  this->PointColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
-  this->PointColourButton->Create ( );
-  this->PointColourButton->SetColor(0.0, 0.0, 1.0);
-  this->PointColourButton->LabelOutsideButtonOn();
-  this->PointColourButton->SetLabelPositionToRight();
-  this->PointColourButton->SetLabelText("Set End Point Color");
-  this->PointColourButton->SetBalloonHelpString("set point color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->PointColourButton->GetWidgetName() );
-
-  this->Point2ColourButton = vtkKWChangeColorButton::New();
-  this->Point2ColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
-  this->Point2ColourButton->Create ( );
-  this->Point2ColourButton->SetColor(1.0, 0.0, 0.0);
-  this->Point2ColourButton->LabelOutsideButtonOn();
-  this->Point2ColourButton->SetLabelPositionToRight();
-  this->Point2ColourButton->SetLabelText("Set End Point 2 Color");
-  this->Point2ColourButton->SetBalloonHelpString("set point 2 color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Point2ColourButton->GetWidgetName() );
-
+    
   this->LineColourButton = vtkKWChangeColorButton::New();
-  this->LineColourButton->SetParent ( rulerDisplayFrame->GetFrame() );
+  this->LineColourButton->SetParent ( visibColourFrame );
   this->LineColourButton->Create ( );
-  this->LineColourButton->SetColor(1.0, 1.0, 1.0);
   this->LineColourButton->LabelOutsideButtonOn();
-  this->LineColourButton->SetLabelPositionToRight();
-  this->LineColourButton->SetLabelText("Set Line Color");
+  this->LineColourButton->SetLabelPositionToLeft();
+  this->LineColourButton->SetLabelText("Line Color:");
   this->LineColourButton->SetBalloonHelpString("set line color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->LineColourButton->GetWidgetName() );
   
-  // distance annotation frame
-  vtkKWFrame *annotationFrame = vtkKWFrame::New();
-  annotationFrame->SetParent(rulerDisplayFrame->GetFrame());
-  annotationFrame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 annotationFrame->GetWidgetName() );
-
-  this->DistanceAnnotationVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->DistanceAnnotationVisibilityButton->SetParent ( annotationFrame );
-  this->DistanceAnnotationVisibilityButton->Create ( );
-  this->DistanceAnnotationVisibilityButton->SetLabelText("Distance Annotation Visibility");
-  this->DistanceAnnotationVisibilityButton->SetBalloonHelpString("set distance annotation visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->DistanceAnnotationVisibilityButton->GetWidgetName() );
-
   this->TextColourButton = vtkKWChangeColorButton::New();
-  this->TextColourButton->SetParent ( annotationFrame );
+  this->TextColourButton->SetParent ( visibColourFrame );
   this->TextColourButton->Create ( );
-  this->TextColourButton->SetColor(1.0, 1.0, 1.0);
   this->TextColourButton->LabelOutsideButtonOn();
-  this->TextColourButton->SetLabelPositionToRight();
-  this->TextColourButton->SetLabelText("Set Text Color");
-  this->TextColourButton->SetBalloonHelpString("set text color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->TextColourButton->GetWidgetName() );
+  this->TextColourButton->SetLabelPositionToLeft();
+  this->TextColourButton->SetLabelText("Annotation Color:");
+  this->TextColourButton->SetBalloonHelpString("set the color used to show the distance annotation text.");
+
+  this->DistanceAnnotationVisibilityButton = vtkKWPushButton::New();
+  this->DistanceAnnotationVisibilityButton->SetParent ( visibColourFrame );
+  this->DistanceAnnotationVisibilityButton->Create ( );
+  this->DistanceAnnotationVisibilityButton->SetOverReliefToNone();
+  this->DistanceAnnotationVisibilityButton->SetBorderWidth(0);
+  this->DistanceAnnotationVisibilityButton->SetReliefToFlat();
+  this->DistanceAnnotationVisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->DistanceAnnotationVisibilityButton->SetText("Annotation visibility:");
+  this->DistanceAnnotationVisibilityButton->SetBalloonHelpString("set distance annotation visibility.");
+  
+  this->Script ( "pack %s %s %s %s -side left -padx 2 -pady 2 -expand true",
+                 this->VisibilityButton->GetWidgetName(),
+                 this->LineColourButton->GetWidgetName(),
+                 this->TextColourButton->GetWidgetName(),
+                 this->DistanceAnnotationVisibilityButton->GetWidgetName());
 
   //---
   //--- create distance annotation format menu button and set up menu
   //---
   this->AnnotationFormatMenuButton = vtkKWMenuButtonWithLabel::New();
-  this->AnnotationFormatMenuButton->SetParent ( annotationFrame );
+  this->AnnotationFormatMenuButton->SetParent ( rulerDisplayFrame->GetFrame() );
   this->AnnotationFormatMenuButton->Create();
   this->AnnotationFormatMenuButton->SetLabelText("Standard Annotation Formats");
   this->AnnotationFormatMenuButton->SetLabelWidth(29);
@@ -2218,27 +2225,30 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->AnnotationFormatMenuButton->GetWidget()->SetValue("1 decimal");
   
   this->DistanceAnnotationFormatEntry = vtkKWEntryWithLabel::New();
-  this->DistanceAnnotationFormatEntry->SetParent(annotationFrame);
+  this->DistanceAnnotationFormatEntry->SetParent(rulerDisplayFrame->GetFrame());
   this->DistanceAnnotationFormatEntry->Create();
   this->DistanceAnnotationFormatEntry->SetLabelText("Distance Annotation Format");
+  this->DistanceAnnotationFormatEntry->SetLabelWidth(29);
   this->DistanceAnnotationFormatEntry->SetBalloonHelpString("String formatting command, use the defaults from the menu or customise it in this entry. Use %g to print out distance in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
   this->Script ( "pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->AnnotationFormatMenuButton->GetWidgetName(),
                  this->DistanceAnnotationFormatEntry->GetWidgetName());
 
   this->DistanceAnnotationScaleEntry =  vtkKWEntryWithLabel::New();
-  this->DistanceAnnotationScaleEntry->SetParent(annotationFrame);
+  this->DistanceAnnotationScaleEntry->SetParent(rulerDisplayFrame->GetFrame());
   this->DistanceAnnotationScaleEntry->Create();
   this->DistanceAnnotationScaleEntry->SetLabelText("Distance Annotation Scale");
+  this->DistanceAnnotationScaleEntry->SetLabelWidth(29);
   this->DistanceAnnotationScaleEntry->GetWidget()->SetRestrictValueToDouble();
   this->DistanceAnnotationScaleEntry->SetBalloonHelpString("Scale value applied to the distance annotation text");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->DistanceAnnotationScaleEntry->GetWidgetName());
 
   this->ResolutionEntry = vtkKWEntryWithLabel::New();
-  this->ResolutionEntry->SetParent(annotationFrame);
+  this->ResolutionEntry->SetParent(rulerDisplayFrame->GetFrame());
   this->ResolutionEntry->Create();
   this->ResolutionEntry->SetLabelText("Resolution");
+  this->ResolutionEntry->SetLabelWidth(29);
   this->ResolutionEntry->SetBalloonHelpString(" number of subdivisions on the line");
   this->ResolutionEntry->GetWidget()->SetRestrictValueToInteger();
   // this is not used with the current line widget
@@ -2250,12 +2260,12 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
 
   modelFrame->Delete();
   rulerDisplayFrame->Delete();
+  visibColourFrame->Delete();
   distanceFrame->Delete();
-  position1Frame->Delete();
-  position2Frame->Delete();
   pickRulerNodeFrame->Delete();
   controlAllFrame->Delete();
-  annotationFrame->Delete();
+  end1Frame->Delete();
+  end2Frame->Delete();
   
   // register node classes
   if (this->GetMRMLScene())
@@ -2503,6 +2513,8 @@ void vtkMeasurementsRulerWidget::UpdateLabelsFromNode(vtkMRMLMeasurementsRulerNo
     return;
     }
 
+  return;
+  
   double *rgb1 = activeRulerNode->GetPointColour();
   double *rgb2 = activeRulerNode->GetPoint2Colour();
 
@@ -2648,9 +2660,19 @@ void vtkMeasurementsRulerWidget::GenerateReport(const char *filename)
     vtkErrorMacro("GenerateReport: unable to open file " << filename << " for writing");
     return;
     }
+  const char *separator = ",";
+  std::string fileExt = vtksys::SystemTools::GetFilenameExtension(filename);
+  if (fileExt.compare(".txt") == 0 ||
+      fileExt.compare(".text") == 0)
+    {
+    separator = "\t";
+    }
   // write a header with info about the active volume?
 
-  fprintf(fp, "# distance,p1x,p1y,p1z,p2x,p2y,p2z,name\n");
+  fprintf(fp, "# distance%sp1x%sp1y%sp1z%sp2x%sp2y%sp2z%sname\n",
+          separator,
+          separator,separator,separator,
+          separator,separator,separator);
   // iterate over nodes
   for (int n=0; n<nnodes; n++)
     {
@@ -2664,12 +2686,66 @@ void vtkMeasurementsRulerWidget::GenerateReport(const char *filename)
     else
       {
       double distance = rulerNode->GetDistance();
-      fprintf(fp, "%g,%g,%g,%g,%g,%g,%g,\"%s\"\n",
-              distance,
-              p1[0], p1[1], p1[2],
-              p2[0], p2[1], p2[2],
-              rulerNode->GetName());
+      fprintf(fp, "%g%s%g%s%g%s%g%s%g%s%g%s%g%s\"%s\"\n",
+              distance, separator,
+              p1[0], separator,
+              p1[1], separator,
+              p1[2], separator,
+              p2[0], separator,
+              p2[1], separator,
+              p2[2], separator,
+              (rulerNode->GetName() == NULL ? "null" : rulerNode->GetName()));
       }
     }
   fclose(fp);
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget::ResetGUI()
+{
+  if (this->DistanceLabel)
+    {
+    this->DistanceLabel->SetText("Distance: ");
+    this->DistanceLabel->SetForegroundColor(0.0, 0.0, 1.0);
+    }
+  if ( this->Position1XEntry)
+    {
+    this->Position1XEntry->SetValue(0);
+    }
+  if ( this->Position1YEntry)
+    {
+    this->Position1YEntry->SetValue(0);
+    }
+  if ( this->Position1ZEntry)
+    {
+    this->Position1ZEntry->SetValue(0);
+    }
+  if ( this->Position2XEntry)
+    {
+    this->Position2XEntry->SetValue(0);
+    }
+  if ( this->Position2YEntry)
+    {
+    this->Position2YEntry->SetValue(0);
+    }
+  if ( this->Position2ZEntry)
+    {
+    this->Position2ZEntry->SetValue(0);
+    }
+  if (this->PointColourButton)
+    {
+    this->PointColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->Point2ColourButton)
+    {
+    this->Point2ColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->LineColourButton)
+    {
+    this->LineColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->TextColourButton)
+    {
+    this->TextColourButton->SetColor(1.0, 1.0, 1.0);
+    }
 }
