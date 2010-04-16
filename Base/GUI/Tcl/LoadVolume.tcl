@@ -1527,7 +1527,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         array set refHeader $tree($refFile,header)
 
         if { [lsearch [array names refHeader] $NUMBER_OF_FRAMES,value] != -1 } {
-          set tree($patient,$study,$series,warning) "\"$series\" is a multi-frame DICOM which is not fully supported.  Please use caution."
+          set tree($patient,$study,$series,warning) "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution."
           continue
         }
 
@@ -1535,7 +1535,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
         foreach tag {POSITION ORIENTATION} {
           set key [set $tag],value
           if { [lsearch [array names refHeader] $key] == -1 } {
-            set tree($patient,$study,$series,warning) "reference image in series \"$series\" does not contain a value for tag $tag Please use caution."
+            set tree($patient,$study,$series,warning) "reference image in series does not contain a value for tag $tag Please use caution."
             set validGeometry 0
             break
           }
