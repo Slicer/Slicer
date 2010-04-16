@@ -26,13 +26,11 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
+  # we do not differentiate 32 vs 64 for mac - all are 64 bit.
   IF(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
     SET(Slicer3_BUILD "darwin-ppc")
   ELSE(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
     SET(Slicer3_BUILD "darwin-x86")
-    IF (Slicer3_BUILD_BITS STREQUAL "64")
-      SET(Slicer3_BUILD "darwin-x86_64")
-    ENDIF()
   ENDIF()
   
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
