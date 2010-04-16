@@ -46,7 +46,7 @@ vtkChangeTrackerSegmentationStep::vtkChangeTrackerSegmentationStep()
   this->SegmentNode = NULL;
 
   this->Scan1_SegmSelector = NULL;
-  this->Scan2_SegmSelector = NULL;
+//  this->Scan2_SegmSelector = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -77,11 +77,11 @@ vtkChangeTrackerSegmentationStep::~vtkChangeTrackerSegmentationStep()
     this->Scan1_SegmSelector = NULL;
     }
 
-  if (this->Scan2_SegmSelector)
-    {
-    this->Scan2_SegmSelector->Delete();
-    this->Scan2_SegmSelector = NULL;
-    }
+//  if (this->Scan2_SegmSelector)
+//    {
+//    this->Scan2_SegmSelector->Delete();
+//    this->Scan2_SegmSelector = NULL;
+//    }
 
   this->PreSegmentScan1Remove();
   this->SegmentScan1Remove();
@@ -192,6 +192,7 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->Scan1_SegmSelector->GetWidgetName());
 
+#if 0 // no scan2 segmentation in 3.6
   if(!this->Scan2_SegmSelector)
     {
     this->Scan2_SegmSelector = vtkSlicerNodeSelectorWidget::New();
@@ -211,6 +212,8 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
   }
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->Scan2_SegmSelector->GetWidgetName());
+#endif 
+
   this->AdvancedFrame->CollapseFrame();
 
   this->CreateGridButton(); 
@@ -505,10 +508,12 @@ void vtkChangeTrackerSegmentationStep::AddGUIObservers()
     {
     this->Scan1_SegmSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
     }
+#if 0
   if(this->Scan2_SegmSelector && (!this->Scan2_SegmSelector->HasObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand)))
     {
     this->Scan2_SegmSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
     }
+#endif
 }
 
 void vtkChangeTrackerSegmentationStep::RemoveGUIObservers()
@@ -516,7 +521,7 @@ void vtkChangeTrackerSegmentationStep::RemoveGUIObservers()
   if (this->Scan1_SegmSelector && this->WizardGUICallbackCommand)
     {
     this->Scan1_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
-    this->Scan2_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+//    this->Scan2_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
     }
 }
 
@@ -600,12 +605,12 @@ void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller,
       }
     }
 
-  if(this->Scan2_SegmSelector && sel == this->Scan2_SegmSelector &&
-     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-     this->Scan2_SegmSelector->GetSelected() != NULL)
-    {
-    this->GetGUI()->GetNode()->SetScan2_InputSegmentRef(this->Scan2_SegmSelector->GetSelected()->GetID());
-    }
+//  if(this->Scan2_SegmSelector && sel == this->Scan2_SegmSelector &&
+//     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+//     this->Scan2_SegmSelector->GetSelected() != NULL)
+//    {
+//    this->GetGUI()->GetNode()->SetScan2_InputSegmentRef(this->Scan2_SegmSelector->GetSelected()->GetID());
+//    }
 }
 
 void vtkChangeTrackerSegmentationStep::ShowSegmentedVolume(vtkMRMLScalarVolumeNode *segVol)

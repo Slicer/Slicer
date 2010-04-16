@@ -43,7 +43,7 @@ protected:
   vtkKWLabel *ThresholdLabel;
 
   vtkSlicerNodeSelectorWidget *Scan1_SegmSelector;
-  vtkSlicerNodeSelectorWidget *Scan2_SegmSelector;
+//  vtkSlicerNodeSelectorWidget *Scan2_SegmSelector;
 
   void ShowSegmentedVolume(vtkMRMLScalarVolumeNode*);
   static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
