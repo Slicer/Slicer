@@ -129,13 +129,13 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   set xyz1 [$this rasToXYZ $ras1]
   set xyz2 [$this rasToXYZ $ras2]
 
-  set onSlice 0
+  set onSlice 1
   # only show widget if on the correct slice
   $o(lineWidget) On
   foreach xyz [list $xyz1 $xyz2] {
     foreach {x y z} $xyz {}
-    if { [expr abs($z)] < 0.5 } {
-      set onSlice 1
+    if { [expr abs($z)] > 0.5 } {
+      set onSlice 0
     }
   }
 
