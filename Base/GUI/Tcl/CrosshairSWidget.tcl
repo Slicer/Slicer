@@ -192,20 +192,23 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           }
       }
 
-      if { $drg == false } {
-          # puts "[clock seconds] Slice node change $_sliceNode"
+      if { $drg == "false" } {
+          eval $this setPosition [$_crosshairNode GetCrosshairRAS]
+          if {0} {
+            # puts "[clock seconds] Slice node change $_sliceNode"
 
-          # No crosshairs are being dragged. So the slice node is changing through some
-          # other mechanism. Move the crosshair RAS to keep it on the slice.
+            # No crosshairs are being dragged. So the slice node is changing through some
+            # other mechanism. Move the crosshair RAS to keep it on the slice.
 
-          # convert current (previous) RAS position to xyz
-          foreach {x y z} [$this rasToXYZ [$_crosshairNode GetCrosshairRAS]] {}
-      
-          # convert that xyz to an RAS (won't work for lightbox!!!)
-          foreach {r a s} [$this xyToRAS "$x $y"] {}
-          
-          # set the new crosshair position
-          $_crosshairNode SetCrosshairRAS $r $a $s
+            # convert current (previous) RAS position to xyz
+            foreach {x y z} [$this rasToXYZ [$_crosshairNode GetCrosshairRAS]] {}
+        
+            # convert that xyz to an RAS (won't work for lightbox!!!)
+            foreach {r a s} [$this xyToRAS "$x $y"] {}
+            
+            # set the new crosshair position
+            $_crosshairNode SetCrosshairRAS $r $a $s
+          }
       } else {
           # Some crosshair was being dragged and changed the slice node. Do nothing.
           return
@@ -577,7 +580,7 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
   $cidArray InsertNextTuple1 $cindex
   $o(crosshairHighlightVerts) SetNumberOfCells [expr $ccellCount + 1]
 
-#  [$sliceGUI GetSliceViewer] RequestRender
+  [$sliceGUI GetSliceViewer] RequestRender
 }
 
 
@@ -585,6 +588,7 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
 
   set changed 0
 
+  $this queryLayers 0 0
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
 
   # determine which renderer based on z position
