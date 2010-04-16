@@ -417,7 +417,7 @@ itcl::body Card::hitTest {hitx hity} {
   set width [winfo width $tkwindow]
   set height [winfo height $tkwindow]
 
-  set m [$_camera GetCompositePerspectiveTransformMatrix [expr (1. * $width) / $height] 0 1]
+  set m [$_camera GetCompositeProjectionTransformMatrix [expr (1. * $width) / $height] 0 1]
   set vport [eval $m MultiplyPoint $ras 1]
   set w [lindex $vport 3]
   set vx [expr [lindex $vport 0] / $w]

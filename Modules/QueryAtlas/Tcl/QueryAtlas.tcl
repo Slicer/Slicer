@@ -1207,7 +1207,7 @@ proc QueryAtlasWorldToScreen { r a s } {
   set width [winfo width $tkwindow]
   set height [winfo height $tkwindow]
 
-  set m [$camera GetCompositePerspectiveTransformMatrix [expr (1. * $width) / $height] 0 1]
+  set m [$camera GetCompositeProjectionTransformMatrix [expr (1. * $width) / $height] 0 1]
   set vport [eval $m MultiplyPoint $r $a $s 1]
   set w [lindex $vport 3]
   set vx [expr [lindex $vport 0] / $w]
@@ -1367,7 +1367,12 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
                 foreach var {i j k} val $ijk {
                     set $var [expr int(round($val))]
                 }
-                set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+                foreach {ilo ihi jlo jhi klo khi} [$imageData GetWholeExtent] {}
+                if { $i < $ilo || $i > $ihi || $j < $jlo || $j > $jhi || $k < $klo || $k > $khi } {
+                  set labelValue "Out of volume"
+                } else {
+                  set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+                }
                 scan $labelValue %d labelValue
                 if { [info exists ::QAFS($labelValue,name)] } {
                     if { $::QAFS($labelValue,name) == "Unknown" } {
