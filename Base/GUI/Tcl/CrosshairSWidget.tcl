@@ -318,22 +318,20 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               # when mouse is over us, we pay attention to the
               # event and tell others not to look at it
               $sliceGUI SetGUICommandAbortFlag 1
-
               $this highlight
+              $sliceGUI SetGrabID $this
 
               switch $event {
 
                   "LeftButtonPressEvent" {
                       set _actionState "dragging"
                       set state $_actionState
-                      #$sliceGUI SetGrabID $this
                       return
                   }
 
                   "LeftButtonReleaseEvent" {
                       set _actionState ""
                       set state $_actionState
-                      $sliceGUI SetGrabID ""
                       return
                   }
 
