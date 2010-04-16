@@ -1233,6 +1233,48 @@ void vtkSlicerGPURayCastVolumeMapper::LoadBgFgFragmentShader()
         case 1:
           break;
         case 2:
+          fp_oss <<
+            "{                                                                                           \n"
+            "  float maxScalarA = texture3D(TextureVol, nextRayOrigin).x;                                \n"
+            "  vec3 maxScalarCoordA = nextRayOrigin;                                                     \n"
+            "  while( t < rayLen )                                                                       \n"
+            "  {                                                                                         \n"
+            "    float scalar = texture3D(TextureVol, nextRayOrigin).x;                                  \n"
+            "    if (maxScalarA < scalar)                                                                \n"
+            "    {                                                                                       \n"
+            "       maxScalarA = scalar;                                                                 \n"
+            "       maxScalarCoordA = nextRayOrigin;                                                     \n"
+            "    }                                                                                       \n"
+            "                                                                                            \n"
+            "    t += ParaMatrix[0][3];                                                                  \n"
+            "    nextRayOrigin += rayStep;                                                               \n"
+            "  }                                                                                         \n"
+            "                                                                                            \n"
+            "  t = 0.0;//reset parameters for mip traversal                                              \n"
+            "  nextRayOrigin = rayOrigin.xyz;                                                            \n"
+            "                                                                                            \n"
+            "  float maxScalarB = texture3D(TextureVol, nextRayOrigin).y;                                \n"
+            "  vec3 maxScalarCoordB = nextRayOrigin;                                                     \n"
+            "                                                                                            \n"
+            "  while( t < rayLen )                                                                       \n"
+            "  {                                                                                         \n"
+            "    float scalar = texture3D(TextureVol, nextRayOrigin).y;                                  \n"
+            "    if (maxScalarB < scalar)                                                                \n"
+            "    {                                                                                       \n"
+            "       maxScalarB = scalar;                                                                 \n"
+            "       maxScalarCoordB = nextRayOrigin;                                                     \n"
+            "    }                                                                                       \n"
+            "                                                                                            \n"
+            "    t += ParaMatrix[0][3];                                                                  \n"
+            "    nextRayOrigin += rayStep;                                                               \n"
+            "  }                                                                                         \n"
+            "                                                                                            \n"
+            "  vec4 mipColorA = voxelColorA(maxScalarCoordA);                                            \n"
+            "  vec4 mipColorB = voxelColorB(maxScalarCoordB);                                            \n"
+            "  pixelColor = mipColorA * (1.0 - fgRatio) + mipColorB * fgRatio;                           \n"
+            "  alpha = mipColorA.w * (1.0 - fgRatio) +  mipColorB.w * fgRatio;                           \n"
+            "}                                                                                           \n"
+            "gl_FragColor = vec4(pixelColor.xyz, alpha);                                                 \n";
           break;
         case 3:
           break;
