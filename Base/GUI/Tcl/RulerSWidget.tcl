@@ -129,13 +129,13 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   set xyz1 [$this rasToXYZ $ras1]
   set xyz2 [$this rasToXYZ $ras2]
 
+  set onSlice 0
   # only show widget if on the correct slice
   $o(lineWidget) On
   foreach xyz [list $xyz1 $xyz2] {
-    foreach {x y z} $xyz {
-      if { [expr abs($z)] > 0.5 } {
-        $o(lineWidget) Off
-      }
+    foreach {x y z} $xyz {}
+    if { [expr abs($z)] < 0.5 } {
+      set onSlice 1
     }
   }
 
@@ -148,6 +148,13 @@ itcl::body RulerSWidget::updateWidgetFromMRML { } {
   eval [[$lineRep GetPoint1Representation] GetProperty] SetColor [$_rulerNode GetPointColour]
   eval [[$lineRep GetPoint2Representation] GetProperty] SetColor [$_rulerNode GetPoint2Colour]
   eval [$lineRep GetLineProperty] SetColor [$_rulerNode GetLineColour]
+  eval [[$lineRep GetTextActor] GetProperty] SetColor [$_rulerNode GetDistanceAnnotationTextColour]
+
+  if { [$_rulerNode GetVisibility] && $onSlice } {
+    $o(lineWidget) On
+  } else {
+    $o(lineWidget) Off
+  }
 
   $this updateAnnotation
 }
@@ -187,7 +194,7 @@ itcl::body RulerSWidget::updateAnnotation {} {
   set lineRep [$o(lineWidget) GetRepresentation]
   $_rulerNode UpdateCurrentDistanceAnnotation
   $lineRep SetDistanceAnnotationFormat [$_rulerNode GetCurrentDistanceAnnotation]
-  $lineRep SetDistanceAnnotationVisibility 1
+  $lineRep SetDistanceAnnotationVisibility [$_rulerNode GetDistanceAnnotationVisibility]
   $lineRep SetDistanceAnnotationScale .02 .02 .02
 }
 
@@ -198,6 +205,11 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
     # self destruct
     itcl::delete object $this
     return
+  }
+  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
+  if { $caller == $_rulerNode || $caller == $sliceNode } {
+    $this updateWidgetFromMRML
+    [$sliceGUI GetSliceViewer] RequestRender
   }
 
   set grabID [$sliceGUI GetGrabID]
@@ -210,12 +222,6 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   $sliceGUI SetGrabID ""
-
-  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
-  if { $caller == $_rulerNode || $caller == $sliceNode } {
-    $this updateWidgetFromMRML
-    [$sliceGUI GetSliceViewer] RequestRender
-  }
 
   if { $caller == $o(lineWidget) } {
 
