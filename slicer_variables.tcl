@@ -80,7 +80,7 @@ puts "Slicer3_HOME is $::Slicer3_HOME"
 set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-8-0"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/branches/Teem-1.11
-set ::KWWidgets_TAG "Slicer-3-4"
+set ::KWWidgets_TAG "Slicer-3-6"
 set ::VTK_TAG "VTK-5-6"
 set ::ITK_TAG ITK-3-16
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release26-maint"
@@ -164,7 +164,7 @@ set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 # getbuildtest Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
 # CMake option for Python, must be "OFF" on "ON", default is "ON"
-# - note: as of python 2.6 this can only be used on windows with VS 2008
+# - note: as of python 2.6 this can only be used on windows with VS 2008 professional
 #   (this variable is forced to off later in this file if non-VS 2008 compiler is selected)
 set ::USE_PYTHON "ON"
 
@@ -585,9 +585,9 @@ switch $::tcl_platform(os) {
         set ::COMPILER "cl"
         set ::SERIAL_MAKE $::MAKE
 
-        if { ![string match "Visual Studio 9*" $::GENERATOR] } {
+        if { ![string match "Visual Studio 9*" $::GENERATOR] || [string match "*Express*" $::MAKE] } {
           if { $::USE_PYTHON == "ON" }  {
-            puts "\n\n\nWarning: Python can only be built on Visual Studio 9 (2008) for windows.\n\n"
+            puts "\n\n\nWarning: Python can only be built on Visual Studio 9 (2008) Professional for windows.\n\nSlicer will be built with Python turned off\n\n"
             set ::USE_PYTHON "OFF"
           }
         }
