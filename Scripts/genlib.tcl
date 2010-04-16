@@ -842,11 +842,16 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
         cd $::Slicer3_LIB/python/numpy
         if {$::GENLIB(bitness) == "64"} {
           set ::env(CC) "$::GENLIB(compiler) -m64"
-          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         } else {
           set ::env(CC) "$::GENLIB(compiler)"
-          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         }
+
+
+        # for linux,
+        # explicitly disable the pfortran compiler to avoid issues with g77/gfortran incompatibilities
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py build --fcompiler=xxx
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+
         # do scipy
 
         if { $::USE_SCIPY } {
