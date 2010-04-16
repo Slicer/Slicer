@@ -53,6 +53,10 @@ public:
   void AddGUIObservers();
   void RemoveGUIObservers();
 
+  void AddROISamplingGUIObservers();
+  void RemoveROISamplingGUIObservers();
+ 
+
 protected:
   vtkChangeTrackerROIStep();
   ~vtkChangeTrackerROIStep();
@@ -104,9 +108,6 @@ private:
   void ROIMapUpdate();
 
 
-  void AddROISamplingGUIObservers();
-  void RemoveROISamplingGUIObservers();
- 
   void RetrieveInteractorCoordinates(vtkSlicerSliceGUI *sliceGUI, vtkRenderWindowInteractor *rwi,int coordsIJK[3], double coordsRAS[3]);
 
   void ROIChangedCallback(int axis, double min, double max); 

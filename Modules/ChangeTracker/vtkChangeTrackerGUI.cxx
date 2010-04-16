@@ -276,6 +276,14 @@ void vtkChangeTrackerGUI::Enter()
   if (this->SegmentationStep) this->SegmentationStep->RenderShow(); 
   if (this->TypeStep)   this->TypeStep->RenderShow(); 
   if (this->AnalysisStep)     this->AnalysisStep->RenderShow(); 
+
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->WizardWidget->GetWizardWorkflow();
+  if(wizard_workflow){
+    if(wizard_workflow->GetCurrentStep() == this->ROIStep){
+      this->ROIStep->AddROISamplingGUIObservers();
+    }
+  }
 }
 
 // according to vtkGradnientAnisotrpoicDiffusionoFilterGUI
@@ -288,6 +296,15 @@ void vtkChangeTrackerGUI::Exit()
   if (this->SegmentationStep) this->SegmentationStep->RenderHide(); 
   if (this->TypeStep)   this->TypeStep->RenderHide(); 
   if (this->AnalysisStep)     this->AnalysisStep->RenderHide(); 
+  
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->WizardWidget->GetWizardWorkflow();
+  if(wizard_workflow){
+    if(wizard_workflow->GetCurrentStep() == this->ROIStep){
+      this->ROIStep->RemoveROISamplingGUIObservers();
+    }
+  }
+
 }
 
 
