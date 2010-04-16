@@ -16,11 +16,11 @@
 #define ConvertSlicerROIToRegion_h_
 
 #include "vtkRegisterImagesModuleMultiResApplicationsWin32Header.h"
+#include "itkSlicerBoxSpatialObject.h"
 
 #include <itkRegion.h>
 #include <itkPoint.h>
 #include <itkImageBase.h>
-#include <itkBoxSpatialObject.h>
 
 #include <vector>
 
@@ -31,8 +31,8 @@ convertPointsToRegion(const itk::Point<double, 3>& p1,
                       const itk::ImageBase<3>* img);
 
 VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT 
-itk::BoxSpatialObject<3>::Pointer
+itk::SlicerBoxSpatialObject<3>::Pointer
 convertPointsToBoxSpatialObject(const itk::Point<double, 3>& p1,
-                                const itk::Point<double, 3>& p2);
+                                      const itk::Point<double, 3>& p2);
 
 #endif

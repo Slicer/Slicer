@@ -16,7 +16,7 @@
 #include <itkImageRegion.h>
 #include <itkPoint.h>
 #include <itkImageBase.h>
-#include <itkBoxSpatialObject.h>
+#include <itkSlicerBoxSpatialObject.h>
 
 #include <algorithm>
 
@@ -45,21 +45,21 @@ convertPointsToRegion(const itk::Point<double, 3>& p1,
     return itk::ImageRegion<3>(startind, size);   
 }
 
-itk::BoxSpatialObject<3>::Pointer
+itk::SlicerBoxSpatialObject<3>::Pointer
 convertPointsToBoxSpatialObject(const itk::Point<double, 3>& p1,
                                 const itk::Point<double, 3>& p2)
 {
-  itk::BoxSpatialObject<3>::SizeType size;
+  itk::SlicerBoxSpatialObject<3>::SizeType size;
   size[0] = std::fabs(p2[0] - p1[0]);
   size[1] = std::fabs(p2[1] - p1[1]);
   size[2] = std::fabs(p2[2] - p1[2]);
 
-  itk::BoxSpatialObject<3>::Pointer box = 
-    itk::BoxSpatialObject<3>::New();
+  itk::SlicerBoxSpatialObject<3>::Pointer box = 
+    itk::SlicerBoxSpatialObject<3>::New();
 
   box->SetSize(size);
 
-  itk::BoxSpatialObject<3>::TransformType::OffsetType off;
+  itk::SlicerBoxSpatialObject<3>::TransformType::OffsetType off;
   off[0] = std::min(p1[0], p2[0]);
   off[1] = std::min(p1[1], p2[1]);
   off[2] = std::min(p1[2], p2[2]);

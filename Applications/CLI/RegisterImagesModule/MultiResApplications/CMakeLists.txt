@@ -17,12 +17,17 @@ PROJECT( RegisterImagesMultiResApplications )
   # Setup the source and paths
   SET( RegisterImagesMultiRes_SOURCE 
     RegisterImagesMultiRes.cxx 
-    ScalingHeuristics.cxx
-    ConvertSlicerROIToRegion.cxx) 
+    ) 
   GENERATECLP( RegisterImagesMultiRes_SOURCE
                RegisterImagesMultiRes.xml 
                ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
   INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_BINARY_DIR} )
+  INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
+
+  SET( RegisterImagesMultiRes_SOURCE
+    ${RegisterImagesMultiRes_SOURCE}
+    ScalingHeuristics.cxx
+    ConvertSlicerROIToRegion.cxx)
 
   # Build the library / plugin
   ADD_LIBRARY( RegisterImagesMultiResModule

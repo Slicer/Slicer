@@ -96,7 +96,7 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   assign3(ponehalf, .5, 2.5, 1.0);
 
   // Testing spatial object
-  itk::BoxSpatialObject<3>::Pointer box1 =
+  itk::SlicerBoxSpatialObject<3>::Pointer box1 =
     convertPointsToBoxSpatialObject(p1, p2);
   TEST_ASSERT(box1->IsInside(p1));
   TEST_ASSERT(box1->IsInside(p2));
@@ -105,7 +105,7 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   TEST_ASSERT(!box1->IsInside(p4));
 
   // test point ordering doesnt matter
-  itk::BoxSpatialObject<3>::Pointer box2 =
+  itk::SlicerBoxSpatialObject<3>::Pointer box2 =
     convertPointsToBoxSpatialObject(p2, p1);
   TEST_ASSERT(box2->IsInside(p1));
   TEST_ASSERT(box2->IsInside(p2));
@@ -113,7 +113,7 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   TEST_ASSERT(!box2->IsInside(p3));
   TEST_ASSERT(!box2->IsInside(p4));
 
-  itk::BoxSpatialObject<3>::Pointer box3 =
+  itk::SlicerBoxSpatialObject<3>::Pointer box3 =
     convertPointsToBoxSpatialObject(p1, p4);
   TEST_ASSERT(box3->IsInside(p1));
   TEST_ASSERT(box3->IsInside(p2));

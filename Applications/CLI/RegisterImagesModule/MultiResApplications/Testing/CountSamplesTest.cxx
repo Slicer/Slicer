@@ -1,8 +1,8 @@
 #include "DownsampleHeuristics.h"
 #include "ConvertSlicerROIToRegion.h"
+#include "itkSlicerBoxSpatialObject.h"
 
 #include <itkImage.h>
-#include <itkBoxSpatialObject.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -90,7 +90,7 @@ int CountSamplesTest(int, char* [])
     itk::Point<double, 3> p2;
     assign3(p2, 1.0, 5.0, 2.0);
 
-    itk::BoxSpatialObject<3>::Pointer box1 =
+    itk::SlicerBoxSpatialObject<3>::Pointer box1 =
       convertPointsToBoxSpatialObject(p1, p2);
 
     unsigned long count = countInsideVoxels<ImageType>(image, box1);

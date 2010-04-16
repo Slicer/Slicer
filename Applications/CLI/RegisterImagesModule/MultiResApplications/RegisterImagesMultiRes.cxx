@@ -18,7 +18,7 @@
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 #include "itkImageMaskSpatialObject.h"
 #include "itkAffineTransform.h"
-#include "itkBoxSpatialObject.h"
+#include "itkSlicerBoxSpatialObject.h"
 
 // From Review
 #include "itkTransformFileWriter.h"
@@ -201,7 +201,7 @@ int main( int argc, char * argv[] )
       std::cout << "p2: " << p2 << std::endl;
       }
 
-    BoxSpatialObject<3>::Pointer bmask =
+    SlicerBoxSpatialObject<3>::Pointer bmask =
       convertPointsToBoxSpatialObject(p1, p2);
 
     mask = bmask;
