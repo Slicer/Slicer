@@ -324,12 +324,14 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               switch $event {
 
                   "LeftButtonPressEvent" {
+                      $_renderWidget CornerAnnotationVisibilityOff
                       set _actionState "dragging"
                       set state $_actionState
                       return
                   }
 
                   "LeftButtonReleaseEvent" {
+                      $_renderWidget CornerAnnotationVisibilityOn
                       set _actionState ""
                       set state $_actionState
                       return
