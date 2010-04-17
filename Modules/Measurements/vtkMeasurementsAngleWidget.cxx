@@ -6,9 +6,7 @@
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
-#include "vtkKWCheckButton.h"
 #include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWChangeColorButton.h"
 #include "vtkKWLabel.h"
 #include "vtkKWEntry.h"
@@ -144,17 +142,14 @@ vtkMeasurementsAngleWidget::vtkMeasurementsAngleWidget ( )
 
   this->AngleLabel = NULL;
 
-  this->Position1Label = NULL;
   this->Position1XEntry = NULL;
   this->Position1YEntry = NULL;
   this->Position1ZEntry = NULL;
 
-  this->Position2Label = NULL;
   this->Position2XEntry = NULL;
   this->Position2YEntry = NULL;
   this->Position2ZEntry = NULL;
 
-  this->PositionCenterLabel = NULL;
   this->PositionCenterXEntry = NULL;
   this->PositionCenterYEntry = NULL;
   this->PositionCenterZEntry = NULL;
@@ -308,12 +303,6 @@ vtkMeasurementsAngleWidget::~vtkMeasurementsAngleWidget ( )
     this->AngleLabel->Delete();
     this->AngleLabel = NULL;
     }
-  if (this->Position1Label)
-    {
-    this->Position1Label->SetParent(NULL);
-    this->Position1Label->Delete();
-    this->Position1Label = NULL;
-    }
   if (this->Position1XEntry)
     {
     this->Position1XEntry->SetParent(NULL);
@@ -333,13 +322,6 @@ vtkMeasurementsAngleWidget::~vtkMeasurementsAngleWidget ( )
     this->Position1ZEntry = NULL;
     }
 
-  if (this->Position2Label)
-    {
-    this->Position2Label->SetParent(NULL);
-    this->Position2Label->Delete();
-    this->Position2Label = NULL;
-    }
-
   if (this->Position2XEntry)
     {
     this->Position2XEntry->SetParent(NULL);
@@ -357,13 +339,6 @@ vtkMeasurementsAngleWidget::~vtkMeasurementsAngleWidget ( )
     this->Position2ZEntry->SetParent(NULL);
     this->Position2ZEntry->Delete();
     this->Position2ZEntry = NULL;
-    }
-
-  if (this->PositionCenterLabel)
-    {
-    this->PositionCenterLabel->SetParent(NULL);
-    this->PositionCenterLabel->Delete();
-    this->PositionCenterLabel = NULL;
     }
 
   if (this->PositionCenterXEntry)
@@ -713,40 +688,40 @@ void vtkMeasurementsAngleWidget::ProcessWidgetEvents(vtkObject *caller,
     }
 
   // GUI elements
-  vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWChangeColorButton *ccbutton = vtkKWChangeColorButton::SafeDownCast(caller);
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
  
-  if (b && event == vtkKWCheckButton::SelectedStateChangedEvent)
+  if (b && event == vtkKWPushButton::InvokedEvent)
     {
-    if (b == this->VisibilityButton->GetWidget()) 
+    if (b == this->VisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeAngleNode); }
-      activeAngleNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+      activeAngleNode->SetVisibility(!(activeAngleNode->GetVisibility()));
       this->Update3DWidget(activeAngleNode);
       }
-    if (b == this->Ray1VisibilityButton->GetWidget()) 
+    if (b == this->Ray1VisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeAngleNode); }
-      activeAngleNode->SetRay1Visibility(this->Ray1VisibilityButton->GetWidget()->GetSelectedState());
+      activeAngleNode->SetRay1Visibility(!(activeAngleNode->GetRay1Visibility()));
       this->Update3DWidget(activeAngleNode);
       }
-    if (b == this->Ray2VisibilityButton->GetWidget()) 
+    if (b == this->Ray2VisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeAngleNode); }
-      activeAngleNode->SetRay2Visibility(this->Ray2VisibilityButton->GetWidget()->GetSelectedState());
+      activeAngleNode->SetRay2Visibility(!(activeAngleNode->GetRay2Visibility()));
       this->Update3DWidget(activeAngleNode);
       }
-    if (b == this->ArcVisibilityButton->GetWidget()) 
+    if (b == this->ArcVisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeAngleNode); }
-      activeAngleNode->SetArcVisibility(this->ArcVisibilityButton->GetWidget()->GetSelectedState());
+      activeAngleNode->SetArcVisibility(!(activeAngleNode->GetArcVisibility()));
       this->Update3DWidget(activeAngleNode);
       }
-    else if (b == this->LabelVisibilityButton->GetWidget() )
+    else if (b == this->LabelVisibilityButton)
       {
       if (this->MRMLScene) { this->MRMLScene->SaveStateForUndo(activeAngleNode); }
-      activeAngleNode->SetLabelVisibility(this->LabelVisibilityButton->GetWidget()->GetSelectedState());
+      activeAngleNode->SetLabelVisibility(!(activeAngleNode->GetLabelVisibility()));
       this->Update3DWidget(activeAngleNode);
       }
     }
@@ -1101,6 +1076,8 @@ void vtkMeasurementsAngleWidget::ProcessMRMLEvents ( vtkObject *caller,
     // the lists are already gone from the scene, so need to clear out all the
     // widget properties, can't call remove with a node
     this->RemoveAngleWidgets();
+    // set colour choosers to white, reset angle label
+    this->ResetGUI();
     return;
     }
 
@@ -1167,6 +1144,7 @@ void vtkMeasurementsAngleWidget::ProcessMRMLEvents ( vtkObject *caller,
         if (this->GetAngleNodeID() != NULL)
           {
           this->SetAngleNodeID(NULL);
+          this->ResetGUI();
           }
         return;
         }
@@ -1197,6 +1175,19 @@ void vtkMeasurementsAngleWidget::UpdateWidget(vtkMRMLMeasurementsAngleNode *acti
 { 
 
   vtkDebugMacro("UpdateWidget: active angle node is " << (activeAngleNode == NULL ? "null" : activeAngleNode->GetName()));
+  // to get at some top level icons
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkDebugMacro ( "UpdateWidget: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkErrorMacro ( "UpdateWidget: got Null SlicerApplicationGUI" );
+    return;
+    }
   
   // if the passed node is null, clear out the widget
   if (activeAngleNode == NULL)
@@ -1227,11 +1218,51 @@ void vtkMeasurementsAngleWidget::UpdateWidget(vtkMRMLMeasurementsAngleNode *acti
   vtkDebugMacro("UpdateWidget: updating the gui and 3d elements");
   // first update the GUI, then update the 3d elements
   // visibility
-  this->VisibilityButton->GetWidget()->SetSelectedState(activeAngleNode->GetVisibility());
-  this->Ray1VisibilityButton->GetWidget()->SetSelectedState(activeAngleNode->GetRay1Visibility());
-  this->Ray2VisibilityButton->GetWidget()->SetSelectedState(activeAngleNode->GetRay2Visibility());
-  this->ArcVisibilityButton->GetWidget()->SetSelectedState(activeAngleNode->GetArcVisibility());
-
+  if (activeAngleNode->GetVisibility())
+    {
+    this->GetVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->GetVisibilityButton()->SetBalloonHelpString ( "Hide the selected angle." );
+    }
+  else
+    {
+    this->GetVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetVisibilityButton()->SetBalloonHelpString ( "Show the selected angle." );
+    }
+  if (activeAngleNode->GetRay1Visibility())
+    {
+    this->GetRay1VisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->GetRay1VisibilityButton()->SetBalloonHelpString ( "Hide the first ray on the active angle." );
+    }
+  else
+    {
+    this->GetRay1VisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetRay1VisibilityButton()->SetBalloonHelpString ( "Show the first ray on the selected angle." );
+    }
+  if (activeAngleNode->GetRay2Visibility())
+    {
+    this->GetRay2VisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->GetRay2VisibilityButton()->SetBalloonHelpString ( "Hide the second ray on the active angle." );
+    }
+  else
+    {
+    this->GetRay2VisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetRay2VisibilityButton()->SetBalloonHelpString ( "Show the second ray on the selected angle." );
+    }
+  if (activeAngleNode->GetArcVisibility())
+    {
+    this->GetArcVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+    this->GetArcVisibilityButton()->SetBalloonHelpString ( "Hide the arc on the active angle." );
+    }
+  else
+    {
+    this->GetArcVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetArcVisibilityButton()->SetBalloonHelpString ( "Show the arc on the selected angle." );
+    }
+  if ( activeAngleNode->GetLabelVisibility() )
+    {
+    this->GetLabelVisibilityButton()->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon());
+    this->GetLabelVisibilityButton()->SetBalloonHelpString ( "Show the label on the selected angle." );
+    }
   // end point positions
   double *position = activeAngleNode->GetPosition1();
   if (position)
@@ -1344,7 +1375,7 @@ void vtkMeasurementsAngleWidget::UpdateWidget(vtkMRMLMeasurementsAngleNode *acti
     {
     this->TextColourButton->SetColor(activeAngleNode->GetLabelTextColour());
     }
-  this->LabelVisibilityButton->GetWidget()->SetSelectedState(activeAngleNode->GetLabelVisibility());
+  
   this->LabelFormatEntry->GetWidget()->SetValue(activeAngleNode->GetLabelFormat());
   double *scale = activeAngleNode->GetLabelScale();
   if (scale)
@@ -1354,9 +1385,6 @@ void vtkMeasurementsAngleWidget::UpdateWidget(vtkMRMLMeasurementsAngleNode *acti
 
   // resolution
 //  this->ResolutionEntry->GetWidget()->SetValueAsInt(activeAngleNode->GetResolution());
-
-  // update the label colours to match the end point colours
-  this->UpdateLabelsFromNode(activeAngleNode);
   
   // angle
   this->UpdateAngleLabel(activeAngleNode);
@@ -1375,7 +1403,8 @@ void vtkMeasurementsAngleWidget::UpdateAngleLabel(vtkMRMLMeasurementsAngleNode *
     }
 
   std::string angleString = std::string("Angle: ");
-  double angleValue = activeAngleNode->GetAngle();
+  activeAngleNode->UpdateCurrentAngleAnnotation();
+  const char *angleValue = activeAngleNode->GetCurrentAngleAnnotation();
   vtkDebugMacro("UpdateAngleLabel: node angle = " << angleValue);
   std::stringstream ss;
   ss << angleString;
@@ -1429,7 +1458,7 @@ void vtkMeasurementsAngleWidget::Update3DWidgetVisibility(vtkMRMLMeasurementsAng
       }
     else
       {
-      vtkWarningMacro("Update3DWidgetVisibility: no interactor found! Angle widget won't work until this is set");
+      vtkDebugMacro("Update3DWidgetVisibility: no interactor found! Angle widget won't work until this is set");
       angleWidget->SetInteractor(NULL);
       }
     }
@@ -1947,19 +1976,19 @@ void vtkMeasurementsAngleWidget::AddWidgetObservers()
     }
   if (this->VisibilityButton)
     {
-    this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->Ray1VisibilityButton)
     {
-    this->Ray1VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Ray1VisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->Ray2VisibilityButton)
     {
-    this->Ray2VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Ray2VisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->ArcVisibilityButton)
     {
-    this->ArcVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ArcVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->PointColourButton)
     {
@@ -2004,7 +2033,7 @@ void vtkMeasurementsAngleWidget::AddWidgetObservers()
 
   if (this->LabelVisibilityButton)
     {
-    this->LabelVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LabelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->Position1XEntry)
@@ -2078,19 +2107,19 @@ void vtkMeasurementsAngleWidget::RemoveWidgetObservers ( )
     }
   if (this->VisibilityButton)
     {
-    this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->Ray1VisibilityButton)
     {
-    this->Ray1VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Ray1VisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->Ray2VisibilityButton)
     {
-    this->Ray2VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Ray2VisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->ArcVisibilityButton)
     {
-    this->ArcVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ArcVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->PointColourButton)
     {
@@ -2135,7 +2164,7 @@ void vtkMeasurementsAngleWidget::RemoveWidgetObservers ( )
 
   if (this->LabelVisibilityButton)
     {
-    this->LabelVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LabelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->Position1XEntry)
@@ -2313,7 +2342,8 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleLabel->SetParent(angleFrame);
   this->AngleLabel->Create();
   this->AngleLabel->SetText("Angle: ");
-  this->Script( "pack %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
+  this->AngleLabel->SetForegroundColor(0.0, 0.0, 1.0);
+  this->Script( "pack %s -side left -anchor nw -expand false -fill none -padx 2 -pady 2",
                 this->AngleLabel->GetWidgetName());
   
 
@@ -2321,17 +2351,28 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   //
   // Pick Models Frame
   //
-  vtkKWFrameWithLabel *modelFrame = vtkKWFrameWithLabel::New();
+  vtkKWFrame *modelFrame = vtkKWFrame::New();
   modelFrame->SetParent( pickAngleNodeFrame->GetFrame() );
   modelFrame->Create();
-  modelFrame->SetLabelText("Constrain Angle to Models or Slices");
-  modelFrame->ExpandFrame();
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", modelFrame->GetWidgetName());
-  modelFrame->ExpandFrame();
   
+  // end 1
+  vtkKWFrame *end1Frame = vtkKWFrame::New();
+  end1Frame->SetParent(modelFrame);
+  end1Frame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 end1Frame->GetWidgetName() );
 
+  this->PointColourButton = vtkKWChangeColorButton::New();
+  this->PointColourButton->SetParent ( end1Frame );
+  this->PointColourButton->Create ( );
+  this->PointColourButton->LabelOutsideButtonOn();
+  this->PointColourButton->SetLabelPositionToRight();
+  this->PointColourButton->SetLabelText("");
+  this->PointColourButton->SetBalloonHelpString("set point 1 color.");
+  
   this->AngleModel1SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->AngleModel1SelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->AngleModel1SelectorWidget->SetParent ( end1Frame );
   this->AngleModel1SelectorWidget->Create ( );
   this->AngleModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->AngleModel1SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
@@ -2339,37 +2380,61 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleModel1SelectorWidget->NoneEnabledOn();
   this->AngleModel1SelectorWidget->SetShowHidden(1);
   this->AngleModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->AngleModel1SelectorWidget->SetBorderWidth(2);
-  this->AngleModel1SelectorWidget->SetPadX(2);
-  this->AngleModel1SelectorWidget->SetPadY(2);
+  this->AngleModel1SelectorWidget->SetBorderWidth(0);
+  this->AngleModel1SelectorWidget->SetPadX(0);
+  this->AngleModel1SelectorWidget->SetPadY(0);
   this->AngleModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->AngleModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->AngleModel1SelectorWidget->SetLabelText( "End 1: ");
+//  this->AngleModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->AngleModel1SelectorWidget->SetLabelText( "Constraint: ");
+  this->AngleModel1SelectorWidget->SetLabelWidth(11);
   this->AngleModel1SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the first end of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->AngleModel1SelectorWidget->GetWidgetName());
-  
-  this->AngleModel2SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->AngleModel2SelectorWidget->SetParent ( modelFrame->GetFrame() );
-  this->AngleModel2SelectorWidget->Create ( );
-  this->AngleModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->AngleModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
-  this->AngleModel2SelectorWidget->SetChildClassesEnabled(1);
-  this->AngleModel2SelectorWidget->NoneEnabledOn();
-  this->AngleModel2SelectorWidget->SetShowHidden(1);
-  this->AngleModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->AngleModel2SelectorWidget->SetBorderWidth(2);
-  this->AngleModel2SelectorWidget->SetPadX(2);
-  this->AngleModel2SelectorWidget->SetPadY(2);
-  this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->AngleModel2SelectorWidget->SetLabelText( "End 2: ");
-  this->AngleModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->AngleModel2SelectorWidget->GetWidgetName());
 
+
+  this->Position1XEntry = vtkKWEntry::New();
+  this->Position1XEntry->SetParent(end1Frame);
+  this->Position1XEntry->Create();
+  this->Position1XEntry->SetWidth(8);
+  this->Position1XEntry->SetRestrictValueToDouble();
+  this->Position1XEntry->SetBalloonHelpString("First end of the angle, X position");
+
+  this->Position1YEntry = vtkKWEntry::New();
+  this->Position1YEntry->SetParent(end1Frame);
+  this->Position1YEntry->Create();
+  this->Position1YEntry->SetWidth(8);
+  this->Position1YEntry->SetRestrictValueToDouble();
+  this->Position1YEntry->SetBalloonHelpString("First end of the angle, Y position");
+
+  this->Position1ZEntry = vtkKWEntry::New();
+  this->Position1ZEntry->SetParent(end1Frame);
+  this->Position1ZEntry->Create();
+  this->Position1ZEntry->SetWidth(8);
+  this->Position1ZEntry->SetRestrictValueToDouble();
+  this->Position1ZEntry->SetBalloonHelpString("First end of the angle, Z position");
+
+  this->Script( "pack %s %s %s %s %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                this->PointColourButton->GetWidgetName(),
+                this->AngleModel1SelectorWidget->GetWidgetName(),
+                this->Position1XEntry->GetWidgetName(),
+                this->Position1YEntry->GetWidgetName(),
+                this->Position1ZEntry->GetWidgetName());
+
+  // center
+  vtkKWFrame *centerFrame = vtkKWFrame::New();
+  centerFrame->SetParent(modelFrame);
+  centerFrame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 centerFrame->GetWidgetName() );
+
+  this->PointCentreColourButton = vtkKWChangeColorButton::New();
+  this->PointCentreColourButton->SetParent ( centerFrame );
+  this->PointCentreColourButton->Create ( );
+  this->PointCentreColourButton->LabelOutsideButtonOn();
+  this->PointCentreColourButton->SetLabelPositionToRight();
+  this->PointCentreColourButton->SetLabelText("");
+  this->PointCentreColourButton->SetBalloonHelpString("set center point color.");
+  
   this->AngleModelCenterSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->AngleModelCenterSelectorWidget->SetParent ( modelFrame->GetFrame() );
+  this->AngleModelCenterSelectorWidget->SetParent ( centerFrame );
   this->AngleModelCenterSelectorWidget->Create ( );
   this->AngleModelCenterSelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->AngleModelCenterSelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
@@ -2377,16 +2442,103 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->AngleModelCenterSelectorWidget->NoneEnabledOn();
   this->AngleModelCenterSelectorWidget->SetShowHidden(1);
   this->AngleModelCenterSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->AngleModelCenterSelectorWidget->SetBorderWidth(2);
-  this->AngleModelCenterSelectorWidget->SetPadX(2);
-  this->AngleModelCenterSelectorWidget->SetPadY(2);
+  this->AngleModelCenterSelectorWidget->SetBorderWidth(0);
+  this->AngleModelCenterSelectorWidget->SetPadX(0);
+  this->AngleModelCenterSelectorWidget->SetPadY(0);
   this->AngleModelCenterSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->AngleModelCenterSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->AngleModelCenterSelectorWidget->SetLabelText( "Center: ");
+//  this->AngleModelCenterSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->AngleModelCenterSelectorWidget->SetLabelText( "Constraint: ");
+  this->AngleModelCenterSelectorWidget->SetLabelWidth(11);
   this->AngleModelCenterSelectorWidget->SetBalloonHelpString("Select a model or slie on which to anchor the center  of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->AngleModelCenterSelectorWidget->GetWidgetName());
 
+  this->PositionCenterXEntry = vtkKWEntry::New();
+  this->PositionCenterXEntry->SetParent(centerFrame);
+  this->PositionCenterXEntry->Create();
+  this->PositionCenterXEntry->SetWidth(8);
+  this->PositionCenterXEntry->SetRestrictValueToDouble();
+  this->PositionCenterXEntry->SetBalloonHelpString("Center of the angle, X position");
+
+  this->PositionCenterYEntry = vtkKWEntry::New();
+  this->PositionCenterYEntry->SetParent(centerFrame);
+  this->PositionCenterYEntry->Create();
+  this->PositionCenterYEntry->SetWidth(8);
+  this->PositionCenterYEntry->SetRestrictValueToDouble();
+  this->PositionCenterYEntry->SetBalloonHelpString("Center of the angle, Y position");
+
+  this->PositionCenterZEntry = vtkKWEntry::New();
+  this->PositionCenterZEntry->SetParent(centerFrame);
+  this->PositionCenterZEntry->Create();
+  this->PositionCenterZEntry->SetWidth(8);
+  this->PositionCenterZEntry->SetRestrictValueToDouble();
+  this->PositionCenterZEntry->SetBalloonHelpString("Center of the angle, Z position");
+  this->Script( "pack %s %s %s %s %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                this->PointCentreColourButton->GetWidgetName(),
+                this->AngleModelCenterSelectorWidget->GetWidgetName(),
+                this->PositionCenterXEntry->GetWidgetName(),
+                this->PositionCenterYEntry->GetWidgetName(),
+                this->PositionCenterZEntry->GetWidgetName());
+  
+  // end 2
+  vtkKWFrame *end2Frame = vtkKWFrame::New();
+  end2Frame->SetParent(modelFrame);
+  end2Frame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 end2Frame->GetWidgetName() );
+
+  this->Point2ColourButton = vtkKWChangeColorButton::New();
+  this->Point2ColourButton->SetParent ( end2Frame );
+  this->Point2ColourButton->Create ( );
+  this->Point2ColourButton->LabelOutsideButtonOn();
+  this->Point2ColourButton->SetLabelPositionToRight();
+  this->Point2ColourButton->SetLabelText("");
+  this->Point2ColourButton->SetBalloonHelpString("set second point color.");
+  
+  this->AngleModel2SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->AngleModel2SelectorWidget->SetParent ( end2Frame );
+  this->AngleModel2SelectorWidget->Create ( );
+  this->AngleModel2SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+  this->AngleModel2SelectorWidget->AddNodeClass("vtkMRMLSliceNode", NULL, NULL, NULL);
+  this->AngleModel2SelectorWidget->SetChildClassesEnabled(1);
+  this->AngleModel2SelectorWidget->NoneEnabledOn();
+  this->AngleModel2SelectorWidget->SetShowHidden(1);
+  this->AngleModel2SelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->AngleModel2SelectorWidget->SetBorderWidth(0);
+  this->AngleModel2SelectorWidget->SetPadX(0);
+  this->AngleModel2SelectorWidget->SetPadY(0);
+  this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+//  this->AngleModel2SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->AngleModel2SelectorWidget->SetLabelText( "Constraint: ");
+  this->AngleModel2SelectorWidget->SetLabelWidth(11);
+  this->AngleModel2SelectorWidget->SetBalloonHelpString("Select a model or slice on which to anchor the second end of the angle. Make sure that the handle is rendered on top of the model or slice before you select it from this menu.");
+
+  this->Position2XEntry = vtkKWEntry::New();
+  this->Position2XEntry->SetParent(end2Frame);
+  this->Position2XEntry->Create();
+  this->Position2XEntry->SetWidth(8);
+  this->Position2XEntry->SetRestrictValueToDouble();
+  this->Position2XEntry->SetBalloonHelpString("Second end of the angle, X position");
+
+  this->Position2YEntry = vtkKWEntry::New();
+  this->Position2YEntry->SetParent(end2Frame);
+  this->Position2YEntry->Create();
+  this->Position2YEntry->SetWidth(8);
+  this->Position2YEntry->SetRestrictValueToDouble();
+  this->Position2YEntry->SetBalloonHelpString("Second end of the angle, Y position");
+
+  this->Position2ZEntry = vtkKWEntry::New();
+  this->Position2ZEntry->SetParent(end2Frame);
+  this->Position2ZEntry->Create();
+  this->Position2ZEntry->SetWidth(8);
+  this->Position2ZEntry->SetRestrictValueToDouble();
+  this->Position2ZEntry->SetBalloonHelpString("Second end of the angle, Z position");
+  this->Script( "pack %s %s %s %s %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                this->Point2ColourButton->GetWidgetName(),
+                this->AngleModel2SelectorWidget->GetWidgetName(),
+                this->Position2XEntry->GetWidgetName(),
+                this->Position2YEntry->GetWidgetName(),
+                this->Position2ZEntry->GetWidgetName());
+  
+ 
   // ---
   // DISPLAY FRAME            
   vtkKWFrameWithLabel *angleDisplayFrame = vtkKWFrameWithLabel::New ( );
@@ -2397,183 +2549,122 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
                  angleDisplayFrame->GetWidgetName() );
   angleDisplayFrame->CollapseFrame ( );
 
-  // position 1 frame
-  vtkKWFrame *position1Frame = vtkKWFrame::New();
-  position1Frame->SetParent(angleDisplayFrame->GetFrame());
-  position1Frame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 position1Frame->GetWidgetName() );
   
-  this->Position1Label = vtkKWLabel::New();
-  this->Position1Label->SetParent(position1Frame);
-  this->Position1Label->Create();
-  this->Position1Label->SetText("Postion 1");
-
-  this->Position1XEntry = vtkKWEntry::New();
-  this->Position1XEntry->SetParent(position1Frame);
-  this->Position1XEntry->Create();
-  this->Position1XEntry->SetWidth(8);
-  this->Position1XEntry->SetRestrictValueToDouble();
-  this->Position1XEntry->SetBalloonHelpString("First end of the angle, X position");
-
-  this->Position1YEntry = vtkKWEntry::New();
-  this->Position1YEntry->SetParent(position1Frame);
-  this->Position1YEntry->Create();
-  this->Position1YEntry->SetWidth(8);
-  this->Position1YEntry->SetRestrictValueToDouble();
-  this->Position1YEntry->SetBalloonHelpString("First end of the angle, Y position");
-
-  this->Position1ZEntry = vtkKWEntry::New();
-  this->Position1ZEntry->SetParent(position1Frame);
-  this->Position1ZEntry->Create();
-  this->Position1ZEntry->SetWidth(8);
-  this->Position1ZEntry->SetRestrictValueToDouble();
-  this->Position1ZEntry->SetBalloonHelpString("First end of the angle, Z position");
-
-  this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->Position1Label->GetWidgetName(),
-                  this->Position1XEntry->GetWidgetName(),
-                  this->Position1YEntry->GetWidgetName(),
-                  this->Position1ZEntry->GetWidgetName());
-
-  // position 2 frame
-  vtkKWFrame *position2Frame = vtkKWFrame::New();
-  position2Frame->SetParent(angleDisplayFrame->GetFrame());
-  position2Frame->Create();
+  // line
+  vtkKWFrame *lineFrame = vtkKWFrame::New();
+  lineFrame->SetParent(angleDisplayFrame->GetFrame());
+  lineFrame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 position2Frame->GetWidgetName() );
+                 lineFrame->GetWidgetName() );
+  
+ 
 
-  this->Position2Label = vtkKWLabel::New();
-  this->Position2Label->SetParent(position2Frame);
-  this->Position2Label->Create();
-  this->Position2Label->SetText("Postion 2");
 
-  this->Position2XEntry = vtkKWEntry::New();
-  this->Position2XEntry->SetParent(position2Frame);
-  this->Position2XEntry->Create();
-  this->Position2XEntry->SetWidth(8);
-  this->Position2XEntry->SetRestrictValueToDouble();
-  this->Position2XEntry->SetBalloonHelpString("Second end of the angle, X position");
 
-  this->Position2YEntry = vtkKWEntry::New();
-  this->Position2YEntry->SetParent(position2Frame);
-  this->Position2YEntry->Create();
-  this->Position2YEntry->SetWidth(8);
-  this->Position2YEntry->SetRestrictValueToDouble();
-  this->Position2YEntry->SetBalloonHelpString("Second end of the angle, Y position");
-
-  this->Position2ZEntry = vtkKWEntry::New();
-  this->Position2ZEntry->SetParent(position2Frame);
-  this->Position2ZEntry->Create();
-  this->Position2ZEntry->SetWidth(8);
-  this->Position2ZEntry->SetRestrictValueToDouble();
-  this->Position2ZEntry->SetBalloonHelpString("Second end of the angle, Z position");
-  this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->Position2Label->GetWidgetName(),
-                  this->Position2XEntry->GetWidgetName(),
-                  this->Position2YEntry->GetWidgetName(),
-                  this->Position2ZEntry->GetWidgetName());
-
-  // position Center frame
-  vtkKWFrame *positionCenterFrame = vtkKWFrame::New();
-  positionCenterFrame->SetParent(angleDisplayFrame->GetFrame());
-  positionCenterFrame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 positionCenterFrame->GetWidgetName() );
-
-  this->PositionCenterLabel = vtkKWLabel::New();
-  this->PositionCenterLabel->SetParent(positionCenterFrame);
-  this->PositionCenterLabel->Create();
-  this->PositionCenterLabel->SetText("Center   ");
-
-  this->PositionCenterXEntry = vtkKWEntry::New();
-  this->PositionCenterXEntry->SetParent(positionCenterFrame);
-  this->PositionCenterXEntry->Create();
-  this->PositionCenterXEntry->SetWidth(8);
-  this->PositionCenterXEntry->SetRestrictValueToDouble();
-  this->PositionCenterXEntry->SetBalloonHelpString("Center of the angle, X position");
-
-  this->PositionCenterYEntry = vtkKWEntry::New();
-  this->PositionCenterYEntry->SetParent(positionCenterFrame);
-  this->PositionCenterYEntry->Create();
-  this->PositionCenterYEntry->SetWidth(8);
-  this->PositionCenterYEntry->SetRestrictValueToDouble();
-  this->PositionCenterYEntry->SetBalloonHelpString("Center of the angle, Y position");
-
-  this->PositionCenterZEntry = vtkKWEntry::New();
-  this->PositionCenterZEntry->SetParent(positionCenterFrame);
-  this->PositionCenterZEntry->Create();
-  this->PositionCenterZEntry->SetWidth(8);
-  this->PositionCenterZEntry->SetRestrictValueToDouble();
-  this->PositionCenterZEntry->SetBalloonHelpString("Center of the angle, Z position");
-  this->Script( "pack %s %s %s %s -side left -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->PositionCenterLabel->GetWidgetName(),
-                  this->PositionCenterXEntry->GetWidgetName(),
-                  this->PositionCenterYEntry->GetWidgetName(),
-                  this->PositionCenterZEntry->GetWidgetName());
-
-  this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( angleDisplayFrame->GetFrame() );
+  this->VisibilityButton = vtkKWPushButton::New();
+  this->VisibilityButton->SetParent ( lineFrame );
   this->VisibilityButton->Create ( );
-  this->VisibilityButton->SetLabelText("Toggle Visibility");
-  this->VisibilityButton->SetBalloonHelpString("set widget visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->VisibilityButton->GetWidgetName() );
-
-  // Colours
-  this->PointColourButton = vtkKWChangeColorButton::New();
-  this->PointColourButton->SetParent ( angleDisplayFrame->GetFrame() );
-  this->PointColourButton->Create ( );
-  this->PointColourButton->SetColor(0.0, 0.0, 1.0);
-  this->PointColourButton->LabelOutsideButtonOn();
-  this->PointColourButton->SetLabelPositionToRight();
-  this->PointColourButton->SetLabelText("Set End Point 1 Color");
-  this->PointColourButton->SetBalloonHelpString("set point color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->PointColourButton->GetWidgetName() );
-
-  this->Point2ColourButton = vtkKWChangeColorButton::New();
-  this->Point2ColourButton->SetParent ( angleDisplayFrame->GetFrame() );
-  this->Point2ColourButton->Create ( );
-  this->Point2ColourButton->SetColor(0.0, 0.0, 1.0);
-  this->Point2ColourButton->LabelOutsideButtonOn();
-  this->Point2ColourButton->SetLabelPositionToRight();
-  this->Point2ColourButton->SetLabelText("Set End Point 2 Color");
-  this->Point2ColourButton->SetBalloonHelpString("set second point color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Point2ColourButton->GetWidgetName() );
-
-  this->PointCentreColourButton = vtkKWChangeColorButton::New();
-  this->PointCentreColourButton->SetParent ( angleDisplayFrame->GetFrame() );
-  this->PointCentreColourButton->Create ( );
-  this->PointCentreColourButton->SetColor(0.0, 0.0, 1.0);
-  this->PointCentreColourButton->LabelOutsideButtonOn();
-  this->PointCentreColourButton->SetLabelPositionToRight();
-  this->PointCentreColourButton->SetLabelText("Set Center Point Color");
-  this->PointCentreColourButton->SetBalloonHelpString("set center point color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->PointCentreColourButton->GetWidgetName() );
+  this->VisibilityButton->SetOverReliefToNone();
+  this->VisibilityButton->SetBorderWidth(0);
+  this->VisibilityButton->SetReliefToFlat();
+  this->VisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->VisibilityButton->SetBalloonHelpString("Hide widget.");
   
   this->LineColourButton = vtkKWChangeColorButton::New();
-  this->LineColourButton->SetParent ( angleDisplayFrame->GetFrame() );
+  this->LineColourButton->SetParent ( lineFrame );
   this->LineColourButton->Create ( );
   this->LineColourButton->SetColor(1.0, 1.0, 1.0);
   this->LineColourButton->LabelOutsideButtonOn();
-  this->LineColourButton->SetLabelPositionToRight();
-  this->LineColourButton->SetLabelText("Set Line Color");
+  this->LineColourButton->SetLabelPositionToLeft();
+  this->LineColourButton->SetLabelText("Line Color:");
   this->LineColourButton->SetBalloonHelpString("set line color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->LineColourButton->GetWidgetName() );
+
+  this->TextColourButton = vtkKWChangeColorButton::New();
+  this->TextColourButton->SetParent ( lineFrame );
+  this->TextColourButton->Create ( );
+  this->TextColourButton->SetColor(1.0, 1.0, 1.0);
+  this->TextColourButton->LabelOutsideButtonOn();
+  this->TextColourButton->SetLabelPositionToLeft();
+  this->TextColourButton->SetLabelText("Text Color:");
+  this->TextColourButton->SetBalloonHelpString("set text color.");
+
+  this->LabelVisibilityButton = vtkKWPushButton::New();
+  this->LabelVisibilityButton->SetParent ( lineFrame );
+  this->LabelVisibilityButton->Create ( );
+  this->LabelVisibilityButton->SetOverReliefToNone();
+  this->LabelVisibilityButton->SetBorderWidth(0);
+  this->LabelVisibilityButton->SetReliefToFlat();
+  this->LabelVisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->LabelVisibilityButton->SetBalloonHelpString("Hide angle annotation.");
+
+  this->Script ( "pack %s %s %s -side left -anchor nw -expand true -padx 2 -pady 2",
+                 this->VisibilityButton->GetWidgetName(),
+                 this->LineColourButton->GetWidgetName(),
+                 this->TextColourButton->GetWidgetName());
+  // not packing the label visibility as it's not implemented on the widget
+
+  // ray
+  vtkKWFrame *rayFrame = vtkKWFrame::New();
+  rayFrame->SetParent(angleDisplayFrame->GetFrame());
+  rayFrame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 rayFrame->GetWidgetName() );
+
+  vtkKWLabel *rayLabel = vtkKWLabel::New();
+  rayLabel->SetParent(rayFrame);
+  rayLabel->Create();
+  rayLabel->SetText("Ray visibility:");
+  rayLabel->SetWidth(16);
+  
+  this->Ray1VisibilityButton = vtkKWPushButton::New();
+  this->Ray1VisibilityButton->SetParent ( rayFrame );
+  this->Ray1VisibilityButton->Create ( );
+  this->Ray1VisibilityButton->SetOverReliefToNone();
+  this->Ray1VisibilityButton->SetBorderWidth(0);
+  this->Ray1VisibilityButton->SetReliefToFlat();
+  this->Ray1VisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->Ray1VisibilityButton->SetBalloonHelpString("Hide ray 1.");
+
+  this->Ray2VisibilityButton = vtkKWPushButton::New();
+  this->Ray2VisibilityButton->SetParent ( rayFrame );
+  this->Ray2VisibilityButton->Create ( );
+  this->Ray2VisibilityButton->SetOverReliefToNone();
+  this->Ray2VisibilityButton->SetBorderWidth(0);
+  this->Ray2VisibilityButton->SetReliefToFlat();
+  this->Ray2VisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->Ray2VisibilityButton->SetBalloonHelpString("Hide ray 2.");
+
+  this->Script ( "pack %s %s %s -side left -anchor nw -expand false -padx 2 -pady 2",
+                 rayLabel->GetWidgetName(),
+                 this->Ray1VisibilityButton->GetWidgetName(),
+                 this->Ray2VisibilityButton->GetWidgetName());
+   
+  // arc
+  vtkKWFrame *arcFrame = vtkKWFrame::New();
+  arcFrame->SetParent(angleDisplayFrame->GetFrame());
+  arcFrame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 arcFrame->GetWidgetName() );
+
+  this->ArcVisibilityButton = vtkKWPushButton::New();
+  this->ArcVisibilityButton->SetParent ( arcFrame );
+  this->ArcVisibilityButton->Create ( );
+  this->ArcVisibilityButton->SetOverReliefToNone();
+  this->ArcVisibilityButton->SetBorderWidth(0);
+  this->ArcVisibilityButton->SetReliefToFlat();
+  this->ArcVisibilityButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerVisibleIcon());
+  this->ArcVisibilityButton->SetBalloonHelpString("Hide arc.");
 
   this->ArcColourButton = vtkKWChangeColorButton::New();
-  this->ArcColourButton->SetParent ( angleDisplayFrame->GetFrame() );
+  this->ArcColourButton->SetParent ( arcFrame );
   this->ArcColourButton->Create ( );
   this->ArcColourButton->SetColor(1.0, 1.0, 1.0);
   this->ArcColourButton->LabelOutsideButtonOn();
-  this->ArcColourButton->SetLabelPositionToRight();
-  this->ArcColourButton->SetLabelText("Set Arc Color");
+  this->ArcColourButton->SetLabelPositionToLeft();
+  this->ArcColourButton->SetLabelText("Arc Color:");
   this->ArcColourButton->SetBalloonHelpString("set line color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2",
+                 this->ArcVisibilityButton->GetWidgetName(),
                  this->ArcColourButton->GetWidgetName() );
   
   
@@ -2583,57 +2674,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   annotationFrame->Create();
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  annotationFrame->GetWidgetName() );
-
-  // sub component visibility
-  vtkKWFrame *visibilityFrame = vtkKWFrame::New();
-  visibilityFrame->SetParent(annotationFrame);
-  visibilityFrame->Create();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 visibilityFrame->GetWidgetName() );
-
-  this->LabelVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->LabelVisibilityButton->SetParent ( visibilityFrame );
-  this->LabelVisibilityButton->Create ( );
-  this->LabelVisibilityButton->SetLabelText("Toggle Angle Annotation Visibility");
-  this->LabelVisibilityButton->SetBalloonHelpString("set angle annotation visibility.");
-//  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-//                 this->LabelVisibilityButton->GetWidgetName() );
-  
-  this->Ray1VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->Ray1VisibilityButton->SetParent ( visibilityFrame );
-  this->Ray1VisibilityButton->Create ( );
-  this->Ray1VisibilityButton->SetLabelText("Ray 1 Visibility");
-  this->Ray1VisibilityButton->SetBalloonHelpString("set ray 1 visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Ray1VisibilityButton->GetWidgetName() );
-
-  this->Ray2VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->Ray2VisibilityButton->SetParent ( visibilityFrame );
-  this->Ray2VisibilityButton->Create ( );
-  this->Ray2VisibilityButton->SetLabelText("Ray 2 Visibility");
-  this->Ray2VisibilityButton->SetBalloonHelpString("set ray 2 visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->Ray2VisibilityButton->GetWidgetName() );
-
-  this->ArcVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->ArcVisibilityButton->SetParent ( visibilityFrame );
-  this->ArcVisibilityButton->Create ( );
-  this->ArcVisibilityButton->SetLabelText("Arc Visibility");
-  this->ArcVisibilityButton->SetBalloonHelpString("set arc visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->ArcVisibilityButton->GetWidgetName() );
-  
-
-  this->TextColourButton = vtkKWChangeColorButton::New();
-  this->TextColourButton->SetParent ( annotationFrame );
-  this->TextColourButton->Create ( );
-  this->TextColourButton->SetColor(1.0, 1.0, 1.0);
-  this->TextColourButton->LabelOutsideButtonOn();
-  this->TextColourButton->SetLabelPositionToRight();
-  this->TextColourButton->SetLabelText("Set Text Color");
-  this->TextColourButton->SetBalloonHelpString("set text color.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->TextColourButton->GetWidgetName() );
+ 
 
   //---
   //--- create annotation format menu button and set up menu
@@ -2662,6 +2703,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->LabelFormatEntry->SetParent(annotationFrame);
   this->LabelFormatEntry->Create();
   this->LabelFormatEntry->SetLabelText("Angle Annotation Format");
+  this->LabelFormatEntry->SetLabelWidth(29);
   this->LabelFormatEntry->SetBalloonHelpString("string formatting command, use %g to print out angle in a default floating point format, %.1f to print out only one digit after the decimal, plus any text you wish");
   this->Script ( "pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->AnnotationFormatMenuButton->GetWidgetName(),
@@ -2671,6 +2713,7 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   this->LabelScaleEntry->SetParent(annotationFrame);
   this->LabelScaleEntry->Create();
   this->LabelScaleEntry->SetLabelText("Angle Annotation Scale");
+  this->LabelScaleEntry->SetLabelWidth(29);
   this->LabelScaleEntry->GetWidget()->SetRestrictValueToDouble();
   this->LabelScaleEntry->SetBalloonHelpString("Scale value applied to the angle annotation text");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -2692,10 +2735,13 @@ void vtkMeasurementsAngleWidget::CreateWidget ( )
   modelFrame->Delete();
   angleFrame->Delete();
   angleDisplayFrame->Delete();
-  visibilityFrame->Delete();
-  position1Frame->Delete();
-  position2Frame->Delete();
-  positionCenterFrame->Delete();
+  arcFrame->Delete();
+  rayLabel->Delete();
+  rayFrame->Delete();
+  lineFrame->Delete();
+  end1Frame->Delete();
+  centerFrame->Delete();
+  end2Frame->Delete();
   pickAngleNodeFrame->Delete();
   controlAllFrame->Delete();
   annotationFrame->Delete();
@@ -2940,60 +2986,7 @@ void vtkMeasurementsAngleWidget::ModifyAllAngleVisibility( int visibilityState)
     }
 }
 
-//---------------------------------------------------------------------------
-void vtkMeasurementsAngleWidget::UpdateLabelsFromNode(vtkMRMLMeasurementsAngleNode *activeAngleNode)
-{
-  if (activeAngleNode == NULL)
-    {
-    vtkDebugMacro("UpdateLabelsFromNode: passed in ruler node is null, returning");
-    return;
-    }
 
-  double *rgb1 = activeAngleNode->GetPointColour();
-  double *rgb2 = activeAngleNode->GetPoint2Colour();
-  double *rgb3 = activeAngleNode->GetPointCentreColour();
-
-  if (!rgb1 || !rgb2 || !rgb3)
-    {
-    vtkErrorMacro("UpdateLabelsFromNode: null point colours in node, returning.");
-    return;
-    }
-
-  // check for white, set it a bit grey
-  if (rgb1[0] > 0.9 &&
-      rgb1[1] > 0.9 &&
-      rgb1[2] > 0.9)
-    {
-    rgb1[0] = 0.9;
-    rgb1[1] = 0.9;
-    rgb1[2] = 0.9;
-    }
-  if (rgb2[0] > 0.9 &&
-      rgb2[1] > 0.9 &&
-      rgb2[2] > 0.9)
-    {
-    rgb2[0] = 0.9;
-    rgb2[1] = 0.9;
-    rgb2[2] = 0.9;
-    }
-  if (rgb3[0] > 0.9 &&
-      rgb3[1] > 0.9 &&
-      rgb3[2] > 0.9)
-    {
-    rgb3[0] = 0.9;
-    rgb3[1] = 0.9;
-    rgb3[2] = 0.9;
-    }
-  // match the positions to the end points
-  this->Position1Label->SetForegroundColor(rgb1);
-  this->Position2Label->SetForegroundColor(rgb2);
-  this->PositionCenterLabel->SetForegroundColor(rgb3);
-  
-  // match the models to the end points
-  this->AngleModel1SelectorWidget->GetLabel()->SetForegroundColor(rgb1);
-  this->AngleModel2SelectorWidget->GetLabel()->SetForegroundColor(rgb2);
-  this->AngleModelCenterSelectorWidget->GetLabel()->SetForegroundColor(rgb3);
-}
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsAngleWidget::UpdateCamera()
@@ -3079,4 +3072,74 @@ vtkCamera *vtkMeasurementsAngleWidget::GetActiveCamera()
     return mainViewer->GetRenderer()->GetActiveCamera();
     }
   return NULL;
+}
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsAngleWidget::ResetGUI()
+{
+  if (this->AngleLabel)
+    {
+    this->AngleLabel->SetText("Angle: ");
+    this->AngleLabel->SetForegroundColor(0.0, 0.0, 1.0);
+    }
+  if ( this->Position1XEntry)
+    {
+    this->Position1XEntry->SetValue(0);
+    }
+  if ( this->Position1YEntry)
+    {
+    this->Position1YEntry->SetValue(0);
+    }
+  if ( this->Position1ZEntry)
+    {
+    this->Position1ZEntry->SetValue(0);
+    }
+  if ( this->PositionCenterXEntry)
+    {
+    this->PositionCenterXEntry->SetValue(0);
+    }
+  if ( this->PositionCenterYEntry)
+    {
+    this->PositionCenterYEntry->SetValue(0);
+    }
+  if ( this->PositionCenterZEntry)
+    {
+    this->PositionCenterZEntry->SetValue(0);
+    }
+  if ( this->Position2XEntry)
+    {
+    this->Position2XEntry->SetValue(0);
+    }
+  if ( this->Position2YEntry)
+    {
+    this->Position2YEntry->SetValue(0);
+    }
+  if ( this->Position2ZEntry)
+    {
+    this->Position2ZEntry->SetValue(0);
+    }
+  if (this->PointColourButton)
+    {
+    this->PointColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->Point2ColourButton)
+    {
+    this->Point2ColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->PointCentreColourButton)
+    {
+    this->PointCentreColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->LineColourButton)
+    {
+    this->LineColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->ArcColourButton)
+    {
+    this->ArcColourButton->SetColor(1.0, 1.0, 1.0);
+    }
+  if (this->TextColourButton)
+    {
+    this->TextColourButton->SetColor(1.0, 1.0, 1.0);
+    }
 }

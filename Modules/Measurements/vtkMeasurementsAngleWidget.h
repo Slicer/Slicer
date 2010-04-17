@@ -30,7 +30,6 @@
 
   
 class vtkSlicerNodeSelectorWidget;
-class vtkKWCheckButtonWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWChangeColorButton;
 class vtkKWMenuButton;
@@ -52,10 +51,14 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// access methods
-  vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
-  vtkGetObjectMacro (AllVisibilityMenuButton, vtkKWMenuButton);
-  vtkGetObjectMacro (AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
-  vtkGetObjectMacro ( RemoveAllAnglesButton, vtkKWPushButton);
+  vtkGetObjectMacro(VisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(Ray1VisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(Ray2VisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(ArcVisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(LabelVisibilityButton, vtkKWPushButton);
+  vtkGetObjectMacro(AllVisibilityMenuButton, vtkKWMenuButton);
+  vtkGetObjectMacro(AnnotationFormatMenuButton, vtkKWMenuButtonWithLabel);
+  vtkGetObjectMacro(RemoveAllAnglesButton, vtkKWPushButton);
   /// 
   /// Getting the mrml angle node id
   vtkGetStringMacro(AngleNodeID);
@@ -133,11 +136,6 @@ public:
   /// 
   /// check scene to make sure that have a widget for each angle node, and no extra widgets...
   void Update3DWidgetsFromMRML();
-
-  /// when change the colours of the end points of the angle widget, update the label
-  /// colours as a hint. If the end point colours are white, use a very very
-  /// light grey instead
-  void UpdateLabelsFromNode(vtkMRMLMeasurementsAngleNode *activeAngleNode);
   
   /// 
   /// Update the angle label with the value from the angle widget
@@ -172,10 +170,10 @@ protected:
 
   /// 
   /// visibility check buttons
-  vtkKWCheckButtonWithLabel *VisibilityButton;
-  vtkKWCheckButtonWithLabel *Ray1VisibilityButton;
-  vtkKWCheckButtonWithLabel *Ray2VisibilityButton;
-  vtkKWCheckButtonWithLabel *ArcVisibilityButton;
+  vtkKWPushButton *VisibilityButton;
+  vtkKWPushButton *Ray1VisibilityButton;
+  vtkKWPushButton *Ray2VisibilityButton;
+  vtkKWPushButton *ArcVisibilityButton;
 
   /// 
   /// Change the colour of the end points
@@ -198,15 +196,12 @@ protected:
 
   /// 
   /// point position entry
-  vtkKWLabel *Position1Label;
   vtkKWEntry *Position1XEntry;
   vtkKWEntry *Position1YEntry;
   vtkKWEntry *Position1ZEntry;
-  vtkKWLabel *Position2Label;
   vtkKWEntry *Position2XEntry;
   vtkKWEntry *Position2YEntry;
   vtkKWEntry *Position2ZEntry;
-  vtkKWLabel *PositionCenterLabel;
   vtkKWEntry *PositionCenterXEntry;
   vtkKWEntry *PositionCenterYEntry;
   vtkKWEntry *PositionCenterZEntry;
@@ -219,7 +214,7 @@ protected:
   /// angle annotation option entries
   vtkKWEntryWithLabel *LabelFormatEntry;
   vtkKWEntryWithLabel *LabelScaleEntry;
-  vtkKWCheckButtonWithLabel *LabelVisibilityButton;
+  vtkKWPushButton *LabelVisibilityButton;
 
   /// 
   /// number of subdivisions on the line
@@ -257,7 +252,10 @@ protected:
   /// Resets Slicer's interaction mode back to original
   /// interaction mode when manipulation is finished.
   void UpdateInteractionModeAtEndInteraction();
-  
+
+  ///
+  /// Resets the gui to neutral, when scene closes or nodes are all gone
+  void ResetGUI();
 
 
 private:
