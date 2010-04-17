@@ -183,6 +183,8 @@ protected:
   int UpdateTransferFunctionPeriod;
   int UpdateTransferFunctionCount;
 
+  unsigned long ImageModifiedTime;
+
   // Presets for Window/Level
   //BTX
   class Preset
