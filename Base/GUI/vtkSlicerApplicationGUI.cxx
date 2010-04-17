@@ -1885,7 +1885,10 @@ void vtkSlicerApplicationGUI::PythonConsole (  )
     Py_DECREF ( tb_s );
     Py_DECREF ( exception );
     Py_DECREF ( v );
-    if ( tb ) Py_DECREF ( tb );
+    if ( tb )
+      {
+      Py_DECREF ( tb );
+      }
     return;
     }
   Py_DECREF ( v );
@@ -1945,7 +1948,10 @@ void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
     Py_DECREF ( tb_s );
     Py_DECREF ( exception );
     Py_DECREF ( v );
-    if ( tb ) Py_DECREF ( tb );
+    if ( tb )
+      {
+      Py_DECREF ( tb );
+      }
 
     return;
     }
