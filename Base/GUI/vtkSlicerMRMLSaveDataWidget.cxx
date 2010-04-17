@@ -21,6 +21,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWCheckButton.h"
 
+#include "vtkMRMLLogic.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
@@ -483,6 +484,13 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
     this->MRMLScene->SetRootDirectory(directory.c_str());
     this->SetSnapshotsRootDirectory();
     
+    // remove unreferenced nodes
+    vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
+    mrmlLogic->SetScene(this->GetMRMLScene());
+    mrmlLogic->RemoveUnreferencedDisplayNodes();
+    mrmlLogic->RemoveUnreferencedStorageNodes();
+    mrmlLogic->Delete();
+
     this->GetMRMLScene()->SetURL(fileName.c_str());
     this->GetMRMLScene()->SetVersion(this->GetVersion());
     this->GetMRMLScene()->Commit();  
