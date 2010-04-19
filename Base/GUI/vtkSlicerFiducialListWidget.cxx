@@ -604,6 +604,20 @@ void vtkSlicerFiducialListWidget::CreateWidget ( )
   
   // Call the superclass to create the whole widget
   this->Superclass::CreateWidget();
+
+  // set up event observers
+  if (this->MRMLScene)
+    {
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
+    this->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
+    events->Delete();
+    }
 }
 
 
@@ -1517,6 +1531,11 @@ void vtkSlicerFiducialListWidget::RemoveSeedWidget(vtkMRMLFiducialListNode *fidu
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RemoveSeedWidgets()
 {
+  if (this->SeedWidgets.size() == 0)
+    {
+    // none to remove
+    return;
+    }
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
   vtkDebugMacro("RemoveSeedWidgets: have " << nnodes << " fiducial list nodes in the scene, " << this->SeedWidgets.size() << " widgets defined already");
 

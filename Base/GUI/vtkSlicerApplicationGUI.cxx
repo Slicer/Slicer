@@ -633,6 +633,7 @@ void vtkSlicerApplicationGUI::ProcessAddRulerCommand()
   dialog->Create ( );
   dialog->SetMasterWindow( this->MainSlicerWindow );
   dialog->ModalOn();
+  dialog->SetStyleToOkCancel();
   if (dialog->Invoke())
     {
     std::string str = dialog->GetEntry()->GetWidget()->GetValue();
@@ -2320,19 +2321,6 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
     this->FiducialListWidget->SetApplication( app );
     this->FiducialListWidget->Create();
-    // add events
-    // TODO: this is wrong, this should be in the FiducialListWidget, there is
-    // no reason the app should do that... Especially if somebody create
-    // his/her own FiducialListWidget instance...
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
-    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
-    this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
-    events->Delete();
     }
 
   // Add the roi widget
