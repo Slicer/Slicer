@@ -70,7 +70,6 @@ public:
   /// 
   /// Getting and setting the mrml color node id
   vtkGetStringMacro(ColorNodeID);
-  //vtkSetStringMacro(ColorlListNodeID);
   void SetColorNodeID(char *id);
 
   //BTX
