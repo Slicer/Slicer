@@ -2378,6 +2378,11 @@ void vtkMeasurementsRulerWidget::RemoveDistanceWidget(vtkMRMLMeasurementsRulerNo
       {
       this->DistanceWidgets.erase(iter);
       }
+    // request a render
+    if (this->ViewerWidget)
+      {
+      this->ViewerWidget->RequestRender();
+      }
     }
 }
 
