@@ -840,7 +840,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   volumeNode->SetModifiedSinceRead(modifiedSinceRead);
 
   // set the display node to have a label map lookup table
-  labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
+  labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeFileSlicer3_2010_Default_Brain_Lut.txt");
   std::string uname = this->MRMLScene->GetUniqueNameByString(name);
 
   labelNode->SetName(uname.c_str());
