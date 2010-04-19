@@ -80,7 +80,7 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 // evolution of existing curve or only pre-compute geometry!
 vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh )
 {  
-  vtkIntArray* emptyIntVec;
+  vtkIntArray* emptyIntVec = NULL;
   vtkPolyData* outputMesh = entry_main( inputMesh, emptyIntVec );
 
   return outputMesh;
