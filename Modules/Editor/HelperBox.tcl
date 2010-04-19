@@ -733,6 +733,12 @@ itcl::body HelperBox::colorSelectDialog { } {
     $o(colorSelector) SetBalloonHelpString "Pick the table of structures you wish to edit"
     pack [$o(colorSelector) GetWidgetName] -side top -fill x -expand true
 
+    # pick the brain LUT by default
+    set defaultID [[$::slicer3::ColorGUI GetLogic] GetDefaultLabelMapColorNodeID]
+    set defaultNode [$::slicer3::MRMLScene GetNodeByID $defaultID]
+    if {$defaultNode != ""} {
+      $o(colorSelector) SetSelected $defaultNode
+    }
 
     set buttonFrame [vtkNew vtkKWFrame]
     $buttonFrame SetParent $topFrame
@@ -755,7 +761,7 @@ itcl::body HelperBox::colorSelectDialog { } {
     $broker AddObservation $o(colorDialogCancel) 10000 "$o(colorSelectTopLevel) Withdraw"
   }
 
-  $o(promptLabel) SetText "Create a merge label map for selected master volume [$_master GetName].\nNew volume will be [$_master GetName]-label.\nSelected the color table node will be used for segmentation labels."
+  $o(promptLabel) SetText "Create a merge label map for selected master volume [$_master GetName].\nNew volume will be [$_master GetName]-label.\nSelect the color table node will be used for segmentation labels."
 
   $o(colorSelectTopLevel) DeIconify
   $o(colorSelectTopLevel) Raise

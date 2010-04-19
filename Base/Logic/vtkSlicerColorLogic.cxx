@@ -679,7 +679,9 @@ const char *vtkSlicerColorLogic::GetDefaultVolumeColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  return this->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels);
+  // return this->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels);
+  // return "vtkMRMLColorTableNodeFileSlicer3_2010_Default_Brain_Lut.txt";
+  return this->GetDefaultFileColorNodeID("Slicer3_2010_Default_Brain_Lut.txt");
 }
 
 //----------------------------------------------------------------------------
