@@ -519,17 +519,18 @@ void ComputeNormals( MeshData* meshdata )
       vertcount[pts[1]] += 1;
       vertcount[pts[2]] += 1;
       }
-    if (meshdata->nx.size() != 0 &&
-        meshdata->ny.size() != 0 &&
-        meshdata->nz.size() != 0)
-      {
+
+    if( ! bTextInputNormals ) {
+      meshdata->nx = valarray<double>(numverts);
+      meshdata->ny = valarray<double>(numverts);
+      meshdata->nz = valarray<double>(numverts);
       for( int i = 0;  i < numverts; i++ )
-        {
+      {
         meshdata->nx[i] = fnx[i] / vertcount[i] ;
         meshdata->ny[i] = fny[i] / vertcount[i] ;
         meshdata->nz[i] = fnz[i] / vertcount[i] ;
-        }
       }
+    }
     else
       {
       std::cerr << "Normals not computed for mesh data, numverts = " << numverts << ", normal array sizes were allocated to be x = " << meshdata->nx.size() << ", y = " << meshdata->ny.size() << ", z = " << meshdata->nz.size() << "\n";
@@ -651,4 +652,3 @@ int CountVertsOnMesh( vtkPolyData* poly )
   
   return num;
 }
-

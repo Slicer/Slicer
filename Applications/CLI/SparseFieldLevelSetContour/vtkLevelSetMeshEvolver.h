@@ -3,6 +3,7 @@
 #define __vtkLevelSetMeshEvolver_h
 
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkSmartPointer.h"
 
 class vtkLevelSetMeshEvolver : public vtkPolyDataAlgorithm
 {
@@ -39,6 +40,14 @@ public:
   // Specify the source object ... not needed ??
   void SetSource(vtkPolyData *source);
   vtkPolyData *GetSource();
+
+
+  void SetActiveContourInit( vtkIntArray* initContourVertIdx )
+        { this->activeContourInit->DeepCopy( initContourVertIdx ); }
+  vtkIntArray* GetActiveContourInit( ) 
+        { return this->activeContourInit;} 
+  vtkIntArray* GetActiveContourFinal( ) 
+        { return this->activeContourFinal;} // return list of vertex indices of the Final updated 'dense curve'
   
 protected:
   vtkLevelSetMeshEvolver();
@@ -48,9 +57,10 @@ protected:
   virtual int FillInputPortInformation(int port, vtkInformation *info);
 
 private:
+  vtkSmartPointer<vtkIntArray> activeContourInit;
+  vtkSmartPointer<vtkIntArray> activeContourFinal;
   vtkLevelSetMeshEvolver(const vtkLevelSetMeshEvolver&);  // Not implemented.
   void operator=(const vtkLevelSetMeshEvolver&);  // Not implemented.
 };
 
 #endif
-

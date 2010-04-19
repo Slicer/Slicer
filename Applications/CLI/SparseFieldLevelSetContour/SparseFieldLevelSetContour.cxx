@@ -16,6 +16,7 @@
 #include <vector>
 #include "vtkXMLPolyDataReader.h"
 #include "vtkXMLPolyDataWriter.h"
+#include "vtkPolyDataWriter.h"
 #include "vtkPolyData.h"
 #include "vtkPluginFilterWatcher.h"
 #include "ModuleEntry.h"
@@ -58,8 +59,11 @@ int main(int argc, char* argv[] )
   vtkPluginFilterWatcher watchWriter(writer,
                                      commentWrite.c_str(),
                                      CLPProcessInformation);
+  polyDataOutput->Update( );
   writer->SetInput( polyDataOutput );
   writer->SetFileName( OutputModel.c_str() );
+  
+  writer->Update( );
   writer->Write();
   // The result is contained in the scalar colormap of the output.
 

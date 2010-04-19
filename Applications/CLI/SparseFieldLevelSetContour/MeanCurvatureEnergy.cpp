@@ -13,7 +13,7 @@
 ==========================================================================*/
 #include "MeanCurvatureEnergy.h"
 
-double MeanCurvatureEnergy::eval_energy(const std::vector<int> &/*C*/)
+double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
 {
   double E = 0.0;
 
@@ -21,8 +21,7 @@ double MeanCurvatureEnergy::eval_energy(const std::vector<int> &/*C*/)
 }
 
 valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C, 
-                                                const vector<int>& /*L_p1*/,
-                                                const vector<int>& /*L_n1*/,
+                                                const vector<int>& L_p1, const vector<int>& L_n1,
                                                 const vector<double>& phi)
 {
 
@@ -64,7 +63,7 @@ valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C,
     }
 }
 
-valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& /*C*/)
+valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C)
 {
   std::cout<<"Error, TODO function being called!\n";
   return valarray<double>(0);

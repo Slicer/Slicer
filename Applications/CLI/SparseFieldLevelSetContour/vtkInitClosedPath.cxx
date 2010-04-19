@@ -13,17 +13,28 @@
 #include "vtkPolygon.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTriangleFilter.h"
+#include "vtkSmartPointer.h"
 
 vtkCxxRevisionMacro(vtkInitClosedPath, "$Revision: 1.00 $");
 vtkStandardNewMacro(vtkInitClosedPath);
 
 vtkInitClosedPath::vtkInitClosedPath()
 {
-  // assign values
-  // this->MemberVar = value
+  
+  //this->SetNumberOfInputPorts(2);
+  // port 0: polyData
+  
+  
+  // NO! use a SET method before calling
+      // (deprecated) port 1: array of vertex points (sparse, initialization)
 
-  // optional second input
-  this->SetNumberOfInputPorts(2);
+ // this->SetNumberOfOutputPorts(1);
+  // port 0: polyData
+  
+  // NO! need it ???
+    // (deprecated) port 1: vertex points (dense active contour)
+
+  this->activeContourVertIdx = vtkSmartPointer<vtkIntArray>::New();
 }
 
 void vtkInitClosedPath::SetSource(vtkPolyData *source)
@@ -49,7 +60,7 @@ int vtkInitClosedPath::RequestData(
 {
    // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *sourceInfo = inputVector[1]->GetInformationObject(0);
+ // vtkInformation *sourceInfo = inputVector[1]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   
   // update progress bar at some intervals
@@ -59,51 +70,56 @@ int vtkInitClosedPath::RequestData(
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPolyData *source = 0;
-  if (sourceInfo)
-    {
-    source = vtkPolyData::SafeDownCast(
-      sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
-    }
+  //if (sourceInfo) // This does nothing!
+  //  {
+  //  source = vtkPolyData::SafeDownCast(
+  //    sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
+  //  }
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
   
   
   // Check input
-  //
-  int numPts=input->GetNumberOfPoints();
+  int numVerts=input->GetNumberOfPoints();
   int numCells=input->GetNumberOfCells();
-  if (numPts < 1 || numCells < 1)
+  if (numVerts < 1 || numCells < 1)
     {
     vtkErrorMacro(<<"No data to smooth!");
     return 1;
     }
   
-  bool bDoNothing = true;
-    if ( bDoNothing ) 
-    { //don't do anything! pass data through
+  { // copy everything through first, before updating...
     output->CopyStructure(input);
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
-    return 1;
-    }
-  vtkDebugMacro(<<"Analyzing ____ ...");
-  
-  // update progress bar at some intervals
-  this->UpdateProgress(0.75);
-  
-  vtkPoints* newPts = vtkPoints::New();
-  output->SetPoints(newPts);
-  newPts->Delete();
+    vtkDebugMacro(<<"Analyzing ____ ...");
+  }
+ 
+ 
+  vtkDataArray* contourIdxArrayIn = input->GetPointData()->GetArray("ActiveContourVertexIndices");
+  if( NULL == contourIdxArrayIn )  { 
+    activeContourVertIdx->SetName("ActiveContourVertexIndices");
+    activeContourVertIdx->SetNumberOfComponents(1);
+    activeContourVertIdx->SetNumberOfTuples( numVerts ); 
+      // Strange: vtk assumes this has same size as mesh? 
+      // this should be arbitrary value in principle. 
+      // workaround: 'terminate' the list with "-1" index
+    output->GetPointData()->AddArray( activeContourVertIdx );
+  }
+  else { // if it already exists, verify that we point to it
+     activeContourVertIdx = vtkIntArray::SafeDownCast( contourIdxArrayIn );
+     std::string name( activeContourVertIdx->GetName( ) );
+     cout<<"re-using existing array named: "<<name<<"\n";
+  }
 
-  output->SetVerts(input->GetVerts());
-  output->SetLines(input->GetLines());
-  output->SetPolys(input->GetPolys());
-  output->SetStrips(input->GetStrips());
+
+
+  // update progress bar at some intervals
+  this->UpdateProgress(1.0);
  
   return 1;
  }
- 
- // what does this do, and is it necessary?
+  
 int vtkInitClosedPath::FillInputPortInformation(int port,
                                                       vtkInformation *info)
 {
@@ -133,4 +149,4 @@ void vtkInitClosedPath::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Source (none)\n";
     }
 }
-
+ 

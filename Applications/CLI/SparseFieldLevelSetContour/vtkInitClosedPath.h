@@ -3,6 +3,7 @@
 #define __vtkInitClosedPath_h
 
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkSmartPointer.h"
 
 class vtkInitClosedPath : public vtkPolyDataAlgorithm
 {
@@ -38,7 +39,14 @@ public:
   // Description:
   // Specify the source object ... not needed ??
   void SetSource(vtkPolyData *source);
+
+
+
+  void SetInitPointVertexIdx( vtkIntArray* initVertIdx )
+        { this->activeContourVertIdx->DeepCopy( initVertIdx ); }
   vtkPolyData *GetSource();
+  vtkIntArray* GetActiveContour( ) 
+        { return this->activeContourVertIdx;} // return list of vertex indices of the 'dense curve'
   
 protected:
   vtkInitClosedPath();
@@ -48,9 +56,9 @@ protected:
   virtual int FillInputPortInformation(int port, vtkInformation *info);
 
 private:
+  vtkSmartPointer<vtkIntArray> activeContourVertIdx; // vertex indices of resulting initial active contour
   vtkInitClosedPath(const vtkInitClosedPath&);  // Not implemented.
   void operator=(const vtkInitClosedPath&);  // Not implemented.
 };
 
 #endif
-
