@@ -69,7 +69,7 @@ int vtkInitClosedPath::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *source = 0;
+  //vtkPolyData *source = 0;
   //if (sourceInfo) // This does nothing!
   //  {
   //  source = vtkPolyData::SafeDownCast(

@@ -55,8 +55,8 @@ int vtkComputeLocalGeometry::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *source = 0;
- /* if (sourceInfo)
+  /* vtkPolyData *source = 0;
+  if (sourceInfo)
     {
     source = vtkPolyData::SafeDownCast(
       sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
