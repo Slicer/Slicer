@@ -74,7 +74,9 @@ itcl::body RulerSWidget::constructor {sliceGUI} {
 
 itcl::body RulerSWidget::destructor {} {
   $o(lineWidget) Off
-  [$sliceGUI GetSliceViewer] RequestRender
+  if {[info command $sliceGUI] != ""} {
+    [$sliceGUI GetSliceViewer] RequestRender
+  }
 }
 
 #
@@ -101,7 +103,9 @@ itcl::configbody RulerSWidget::rulerID {
   }
 
   $this updateWidgetFromMRML
-  [$sliceGUI GetSliceViewer] RequestRender
+  if {[info command $sliceGUI] != ""} {
+    [$sliceGUI GetSliceViewer] RequestRender
+  }
 }
 
 # ------------------------------------------------------------------
@@ -209,7 +213,9 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
   set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
   if { $caller == $_rulerNode || $caller == $sliceNode } {
     $this updateWidgetFromMRML
-    [$sliceGUI GetSliceViewer] RequestRender
+    if {[info command $sliceGUI] != ""} {
+      [$sliceGUI GetSliceViewer] RequestRender
+    }
   }
 
   set grabID [$sliceGUI GetGrabID]
@@ -217,7 +223,9 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
     # some other widget wants these events
     # -- we can position wrt the current slice node
     $this updateWidgetFromMRML
-    [$sliceGUI GetSliceViewer] RequestRender
+    if {[info command $sliceGUI] != ""} {
+      [$sliceGUI GetSliceViewer] RequestRender
+    }
     return 
   }
 
@@ -262,6 +270,8 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     $this updateMRMLFromWidget
-    [$sliceGUI GetSliceViewer] RequestRender
+    if {[info command $sliceGUI] != ""} {
+      [$sliceGUI GetSliceViewer] RequestRender
+    }
   }
 }
