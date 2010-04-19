@@ -136,6 +136,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransPerinealProstateRobotNode : public vtkM
   virtual const char* GetWorkspaceObjectModelId() { return GetWorkspaceModelNodeID(); };
 
   virtual int PerformRegistration(vtkMRMLScalarVolumeNode* volumeNode);
+  virtual int PerformRegistration(vtkMRMLScalarVolumeNode* volumeNode, int param1, int param2);
 
   virtual const char* GetWorkflowStepsString()
     {return "SetUp ZFrameCalibration PointTargeting PointVerification TransperinealProstateRobotManualControl"; };

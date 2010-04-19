@@ -25,7 +25,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLIGTLConnectorNode.h"
 #include "vtkMRMLBrpRobotCommandNode.h"
 
-#include "vtkZFrameRobotToImageRegistration.h"
+#include "vtkZFrameRobotToImageRegistration2.h"
 
 #include "vtkProstateNavTargetDescriptor.h"
 
@@ -842,28 +842,49 @@ const char* vtkMRMLTransPerinealProstateRobotNode::AddZFrameModel(const char* no
 //----------------------------------------------------------------------------
 int vtkMRMLTransPerinealProstateRobotNode::PerformRegistration(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  vtkZFrameRobotToImageRegistration* registration = vtkZFrameRobotToImageRegistration::New();
+  vtkZFrameRobotToImageRegistration2* registration = vtkZFrameRobotToImageRegistration2::New();
   registration->SetFiducialVolume(volumeNode);
 
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(this->Scene->GetNodeByID(this->GetZFrameTransformNodeID()));
   if (transformNode != NULL)
-  {
+    {
     registration->SetRobotToImageTransform(transformNode);
     registration->DoRegistration();
     //this->GetLogic()->SendZFrame();
 
     std::cerr << "Sending Z-frame Data" << std::endl;
     if (this->GetRobotCommandNode()==NULL)
-    {
+      {
       return 0;
-    }
+      }
     this->GetRobotCommandNode()->SetZFrameTransformNodeID(transformNode->GetID());
     this->GetRobotCommandNode()->PushOutgoingCommand("SET_Z_FRAME");
     this->GetRobotCommandNode()->InvokeEvent(vtkCommand::ModifiedEvent);
-  }
+    }
 
   return 1;
 }
+
+
+//----------------------------------------------------------------------------
+
+int vtkMRMLTransPerinealProstateRobotNode::PerformRegistration(vtkMRMLScalarVolumeNode* volumeNode, int param1, int param2)
+{
+  vtkZFrameRobotToImageRegistration2* registration = vtkZFrameRobotToImageRegistration2::New();
+  registration->SetFiducialVolume(volumeNode);
+
+  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(this->Scene->GetNodeByID(this->GetZFrameTransformNodeID()));
+  if (transformNode != NULL)
+    {
+    registration->SetRobotToImageTransform(transformNode);
+    registration->SetSliceRange(param1, param2);
+    registration->DoRegistration();
+    }
+
+  return 1;
+}
+
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransPerinealProstateRobotNode::SwitchStep(const char *stepName)
@@ -1064,6 +1085,9 @@ bool vtkMRMLTransPerinealProstateRobotNode::FindTargetingParams(vtkProstateNavTa
     );
   return true;
 }
+
+
+
 
 std::string vtkMRMLTransPerinealProstateRobotNode::GetTargetInfoText(vtkProstateNavTargetDescriptor *targetDesc)
 {
