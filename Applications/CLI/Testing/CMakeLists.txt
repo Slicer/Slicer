@@ -78,6 +78,8 @@ add_module_test( SHORT )
 add_module_test( USHORT )
 add_module_test( INT )
 add_module_test( UINT )
+add_module_test( LONG )
+add_module_test( ULONG )
 add_module_test( FLOAT )
 add_module_test( DOUBLE )
 
