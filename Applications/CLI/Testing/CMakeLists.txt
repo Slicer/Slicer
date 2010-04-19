@@ -64,6 +64,22 @@ add_test(AddTest ${Slicer3_EXE} --launch AddTest
   ModuleEntryPoint
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/AddTest.nhdr
   )
+function(add_module_test pixeltype)
+add_test(AddTest_${pixeltype} ${Slicer3_EXE} --launch AddTest
+  --compare ${BASELINE}/AddTest_${pixeltype}.mha
+  ${TEMP}/AddTest_${pixeltype}.mha
+  ModuleEntryPoint
+  ${TEST_DATA}/brainSlice${pixeltype}.mha ${TEST_DATA}/brainSlice${pixeltype}.mha ${TEMP}/AddTest_${pixeltype}.mha
+  )
+endfunction()
+add_module_test( CHAR )
+add_module_test( UCHAR )
+add_module_test( SHORT )
+add_module_test( USHORT )
+add_module_test( INT )
+add_module_test( UINT )
+add_module_test( FLOAT )
+add_module_test( DOUBLE )
 
 set (CLP Add)
 add_executable(${CLP}Test ${CLP}Test.cxx)
