@@ -24,6 +24,7 @@
 #include "vtkPointHandleRepresentation3D.h"
 #include "vtkLineRepresentation.h"
 #include "vtkPolygonalSurfacePointPlacer.h"
+#include "vtkBoundingBox.h"
 
 #include "vtkMeasurementsDistanceWidgetClass.h"
 
@@ -2336,6 +2337,51 @@ void vtkMeasurementsRulerWidget::AddDistanceWidget(vtkMRMLMeasurementsRulerNode 
     return;
     }
 
+  // reset the ruler node's position according to the viewer widget bounding
+  // box, but only if the ruler node is at default location
+  if (this->ViewerWidget)
+    {
+    vtkBoundingBox *box = this->ViewerWidget->GetBoxAxisBoundingBox();
+    if (box)
+      {
+      // check if the ruler node has been init
+      vtkMRMLMeasurementsRulerNode *rnode = vtkMRMLMeasurementsRulerNode::New();
+      double *defaultP1 = rnode->GetPosition1();
+      double *defaultP2 = rnode->GetPosition2();
+      double *p1 = rulerNode->GetPosition1();
+      double *p2 = rulerNode->GetPosition2();
+      if (defaultP1 && defaultP2 && p1 && p2 &&
+          p1[0] == defaultP1[0] && p1[1] == defaultP1[1] && p1[2] == defaultP1[2] &&
+          p2[0] == defaultP2[0] && p2[1] == defaultP2[1] && p2[2] == defaultP2[2])
+        {
+        double maxLength = box->GetMaxLength();
+        double minPoint[3], maxPoint[3];
+        box->GetMinPoint(minPoint[0], minPoint[1], minPoint[2]);
+        box->GetMaxPoint(maxPoint[0], maxPoint[1], maxPoint[2]);
+        for (unsigned int i = 0; i < 3; i++)
+          {
+          if (box->GetLength(i) == 0.0)
+            {
+            minPoint[i] = minPoint[i] - maxLength * .05;
+            maxPoint[i] = maxPoint[i] + maxLength * .05;
+            }
+          }
+       
+        double newP1[3] = {0.0, 0.0, 0.0};
+        double newP2[3] = {0.0, 0.0, 0.0};
+        // make a new pair of points on either side of the bounding box
+        newP1[0] = minPoint[0];
+        newP1[1] = minPoint[1] + (maxPoint[1] - minPoint[1])/ 2.0;
+        newP1[2] = minPoint[2] + (maxPoint[2] - minPoint[2])/ 2.0;
+        newP2[0] = maxPoint[0];
+        newP2[1] = newP1[1];
+        newP2[2] = newP1[2];
+        rulerNode->SetPosition1(newP1);
+        rulerNode->SetPosition2(newP2);
+        }
+       rnode->Delete();
+      }
+    }
   vtkMeasurementsDistanceWidgetClass *c = vtkMeasurementsDistanceWidgetClass::New();
   this->DistanceWidgets[rulerNode->GetID()] = c;
   // make sure we're observing the node for transform changes

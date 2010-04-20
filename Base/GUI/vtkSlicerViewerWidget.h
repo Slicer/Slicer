@@ -36,6 +36,8 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 
+//#include "vtkBoundingBox.h"
+
 class vtkMRMLDisplayableNode;
 class vtkMRMLDisplayNode;
 class vtkMRMLModelHierarchyNode;
@@ -58,7 +60,6 @@ class vtkPMatrix4x4;
 class vtkSlicerBoxWidget2;
 class vtkSlicerBoxRepresentation;
 class vtkBoundingBox;
-
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
 
@@ -105,15 +106,15 @@ public:
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   /// 
-  /// Get/Set the CamerNode
+  /// Get/Set the CameraNode
   vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
   void SetAndObserveCameraNode (vtkMRMLCameraNode *snode)
     {
     vtkSetAndObserveMRMLNodeMacro( this->CameraNode, snode );
     };
 
- /// Description:
-  /// Get/Set the CamerNode
+  /// Description:
+  /// Get/Set the ViewNode
   vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
   void SetAndObserveViewNode (vtkMRMLViewNode *snode)
     {
@@ -222,6 +223,9 @@ public:
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
                              int planeDirection,
                              vtkPlane *plane);
+  ///
+  /// get at the bounding box, to allow the default placement of widgets
+  vtkGetObjectMacro(BoxAxisBoundingBox, vtkBoundingBox);
   
 protected:
   vtkSlicerViewerWidget();
