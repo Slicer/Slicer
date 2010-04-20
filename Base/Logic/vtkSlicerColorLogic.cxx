@@ -685,6 +685,12 @@ const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 }
 
 //----------------------------------------------------------------------------
+const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
+{
+  return this->GetDefaultFileColorNodeID("Slicer3_2010_Short_LUT.txt");
+}
+
+//----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultModelColorNodeID()
 {
   return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Heat);

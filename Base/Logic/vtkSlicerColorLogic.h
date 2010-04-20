@@ -82,6 +82,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   const char * GetDefaultLabelMapColorNodeID();
 
   /// 
+  /// Return a default color node id for the editor
+  const char * GetDefaultEditorColorNodeID();
+
+  /// 
   /// Return a default color node id for a model
   const char * GetDefaultModelColorNodeID();
 

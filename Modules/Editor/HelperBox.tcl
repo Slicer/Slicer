@@ -733,8 +733,8 @@ itcl::body HelperBox::colorSelectDialog { } {
     $o(colorSelector) SetBalloonHelpString "Pick the table of structures you wish to edit"
     pack [$o(colorSelector) GetWidgetName] -side top -fill x -expand true
 
-    # pick the brain LUT by default
-    set defaultID [[$::slicer3::ColorGUI GetLogic] GetDefaultLabelMapColorNodeID]
+    # pick the default editor LUT for the user
+    set defaultID [[$::slicer3::ColorGUI GetLogic] GetDefaultEditorColorNodeID]
     set defaultNode [$::slicer3::MRMLScene GetNodeByID $defaultID]
     if {$defaultNode != ""} {
       $o(colorSelector) SetSelected $defaultNode
