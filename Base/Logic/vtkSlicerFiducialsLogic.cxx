@@ -235,7 +235,8 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
 
   // the name is set after reading the file
 
-  this->GetMRMLScene()->AddNode(node); 
+  this->GetMRMLScene()->AddNode(node);
+  node->Delete();
 
   vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::SafeDownCast(node);
 
