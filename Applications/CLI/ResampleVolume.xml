@@ -19,7 +19,7 @@ interpolator. To resample label volumnes, nearest neighbor
 interpolation should be used exclusively.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ResampleVolume-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ResampleVolume-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>
