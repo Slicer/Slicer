@@ -20,8 +20,15 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerVolumesGUI.h"
+#include "vtkSlicerVolumesLogic.h"
+ 
 
 #include <vtksys/SystemTools.hxx>
+
+#if IBM_FLAG 
+#include "vtkEMSegmentIBMRunSegmentationStep.cxx"
+#endif 
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentRunSegmentationStep);
@@ -48,6 +55,9 @@ vtkEMSegmentRunSegmentationStep::vtkEMSegmentRunSegmentationStep()
   this->RunSegmentationROIMinMatrix                = NULL;
   this->RunSegmentationMiscFrame                   = NULL;
   this->RunSegmentationMultiThreadCheckButton      = NULL;
+#if IBM_FLAG
+  this->InitialROIWidget() ;
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -142,6 +152,11 @@ vtkEMSegmentRunSegmentationStep::~vtkEMSegmentRunSegmentationStep()
     this->RunSegmentationMiscFrame->Delete();
     this->RunSegmentationMiscFrame = NULL;
     }
+
+#if IBM_FLAG
+  this->ResetROIWidget() ;
+#endif
+
 }
 
 //----------------------------------------------------------------------------
@@ -433,12 +448,14 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       "select an output labelmap from the current mrml scene.");
     }
   this->RunSegmentationOutVolumeSelector->UpdateMenu();
-  if(mrmlManager->GetOutputVolumeMRMLID())
+  if(!mrmlManager->GetOutputVolumeMRMLID())
     {
-    this->RunSegmentationOutVolumeSelector->SetSelected(
-      this->RunSegmentationOutVolumeSelector->GetMRMLScene()->
-      GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
+      // Create a volume - otherwise you will have bug with a new IBM code       
+      this->RunSegmentationOutVolumeSelector->ProcessNewNodeCommand("vtkMRMLScalarVolumeNode", "LabelMap");
+
     }
+  
+  this->RunSegmentationOutVolumeSelector->SetSelected(this->RunSegmentationOutVolumeSelector->GetMRMLScene()->GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
 
   this->RunSegmentationOutVolumeSelector->SetEnabled(
     mrmlManager->HasGlobalParametersNode() ? enabled : 0);
@@ -450,7 +467,9 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   this->AddRunRegistrationOutputGUIObservers();
   
   // Create the boundary frame
-
+#if IBM_FLAG
+  this->ShowROIGUI(parent); 
+#else 
   if (!this->RunSegmentationROIFrame)
     {
       this->RunSegmentationROIFrame = vtkKWFrameWithLabel::New();
@@ -546,6 +565,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
                this->RunSegmentationROIMaxMatrix->GetWidgetName());
   this->RunSegmentationROIMaxMatrix->SetEnabled(
     mrmlManager->HasGlobalParametersNode() ? enabled : 0);
+#endif
 
   // Create the run frame
 
@@ -563,7 +583,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   this->Script(
     "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
     this->RunSegmentationMiscFrame->GetWidgetName());
-  
+
   // Create the multithread button
 
   if (!this->RunSegmentationMultiThreadCheckButton)
@@ -598,7 +618,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 
   if (wizard_widget->GetOKButton())
     {
-    wizard_widget->GetOKButton()->SetText("Run");
+    wizard_widget->GetOKButton()->SetText("Segment");
     wizard_widget->GetOKButton()->SetCommand(
       this, "StartSegmentationCallback");
     wizard_widget->GetOKButton()->SetBalloonHelpString(

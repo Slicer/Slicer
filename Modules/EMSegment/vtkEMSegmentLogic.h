@@ -85,11 +85,16 @@ public:
   // events to observe
   virtual vtkIntArray* NewObservableEvents();
 
+  void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode, vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* outputVolumeNode);
+
 #if IBM_FLAG
   //BTX
   std::string DefineTclTaskFullPathName(const char* TclFileName);
   std::string GetTclTaskDirectory();
   std::string DefineTclTasksFileFromMRML();
+  
+  static void TransferIJKToRAS(vtkMRMLVolumeNode* volumeNode, int ijk[3], double ras[3]);
+  static void TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double ras[3], int ijk[3]);
 
   //ETX
 #endif 

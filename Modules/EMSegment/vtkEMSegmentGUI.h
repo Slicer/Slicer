@@ -19,6 +19,7 @@ class vtkEMSegmentRegistrationParametersStep;
 class vtkEMSegmentRunSegmentationStep;
 class vtkEMSegmentInputChannelsStep;
 class vtkEMSegmentPreProcessingStep;
+class vtkKWWizardStep;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentGUI : 
   public vtkSlicerModuleGUI
@@ -124,6 +125,11 @@ public:
   // limitation in kwwidgets tcl wrapping)
   unsigned long AddObserverByNumber(vtkObject *observee, unsigned long event);
 
+  //BTX
+#if IBM_FLAG
+  void StartSegmentation(); 
+#endif 
+  //ETX
 protected:
 
 private:
@@ -164,8 +170,9 @@ private:
   vtkEMSegmentRunSegmentationStep        *RunSegmentationStep;
 
 #if IBM_FLAG
-  vtkEMSegmentInputChannelsStep          *InputChannelStep;
+  vtkEMSegmentInputChannelsStep          *InputChannelStep;  
 #endif
+  vtkKWWizardStep *StartSegmentStep;
 
   // Need to do it bc TCL Wrapping ignores IBM_FLAG for functions and otherwise have problems with Get function ! 
   vtkEMSegmentPreProcessingStep          *PreProcessingStep;

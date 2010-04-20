@@ -158,10 +158,11 @@ protected:
   void operator=(const vtkImageEMLocalClass&);
   void DeleteClassVariables();
   void DeletePCAParameters(); 
-
+  //BTX
   void ThreadedExecute(vtkImageData **vtkNotUsed(inData),
                        vtkImageData *vtkNotUsed(outData),
                        int vtkNotUsed(outExt)[6], int vtkNotUsed(id)) {};
+  //ETX
   void ExecuteData(vtkDataObject *);   
 
   double *LogMu;                 // Intensity distribution of the classes (changed for Multi Dim Version)

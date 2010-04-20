@@ -31,6 +31,7 @@
 #if IBM_FLAG
 #include "vtkEMSegmentInputChannelsStep.h"
 #include "vtkEMSegmentPreProcessingStep.h"
+#include "vtkEMSegmentIBMGUI.cxx"
 #endif
 
 #include "CSAILLogo.h"
@@ -89,6 +90,8 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
                  0);
   this->Logo = logo;
   logo->Delete();
+
+  this->StartSegmentStep= NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -316,6 +319,12 @@ void vtkEMSegmentGUI::ProcessMRMLEvents(vtkObject *caller,
         GetCurrentStep()->ShowUserInterface();
       }
     }
+#if IBM_FLAG
+  if (this->RunSegmentationStep)
+    {
+      this->RunSegmentationStep->ProcessMRMLEvents(caller, event, callData);  
+    }
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -389,9 +398,14 @@ void vtkEMSegmentGUI::BuildGUI()
               this->WizardWidget->GetWidgetName());
   wizard_frame->Delete();
 
-  vtkKWWizardWorkflow *wizard_workflow = 
-    this->WizardWidget->GetWizardWorkflow();
-  vtkNotUsed(vtkKWWizardWidget *wizard_widget = this->WizardWidget;);
+#if IBM_FLAG
+  // Waiting for Karthik's feedback 
+  this->WizardWidget->GetFinishButton()->SetCommand(this, "StartSegmentation");
+  this->WizardWidget->GetFinishButton()->SetText("Segment");
+  this->WizardWidget->GetFinishButton()->SetBalloonHelpString("Start Segmentation");
+#endif 
+
+  vtkKWWizardWorkflow *wizard_workflow =  this->WizardWidget->GetWizardWorkflow();
 
   // -----------------------------------------------------------------
   // Parameter Set step
@@ -412,9 +426,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->InputChannelStep = vtkEMSegmentInputChannelsStep::New();
     this->InputChannelStep->SetGUI(this);
     }
-    cout << "========Add new Step" << endl;
     wizard_workflow->AddNextStep(this->InputChannelStep);
-    cout << "========finished" << endl;
 #endif
 
   if (!this->AnatomicalStructureStep)
@@ -522,7 +534,9 @@ void vtkEMSegmentGUI::BuildGUI()
   // Initial and finish step
 
   wizard_workflow->SetFinishStep(this->RunSegmentationStep);
+#if !IBM_FLAG
   wizard_workflow->CreateGoToTransitionsToFinishStep();
+#endif
   wizard_workflow->SetInitialStep(this->ParametersSetStep);
 }
 
@@ -687,5 +701,3 @@ void vtkEMSegmentGUI::Init()
   this->Logic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
   emsEvents->Delete();
 }
-
-
