@@ -49,9 +49,9 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
 // Image Types
-  typedef  unsigned long  InputPixelType;
-  typedef  unsigned long  InternalPixelType;
-  typedef  short  OutputPixelType;
+  typedef  long  InputPixelType;
+  typedef  long  InternalPixelType;
+  typedef  long  OutputPixelType;
 
   typedef itk::Image< InputPixelType,  3 >   InputImageType;
   typedef itk::Image< InternalPixelType, 3 >   InternalImageType;
