@@ -587,7 +587,10 @@ int Slicer3_main(int& argc, char *argv[])
           Py_DECREF ( tb_s );
           Py_DECREF ( exception );
           Py_DECREF ( v );
-          if ( tb ) Py_DECREF ( tb );
+          if ( tb )
+            {
+            Py_DECREF ( tb );
+            }
           }
         }
 
