@@ -667,8 +667,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           sout << "Temp";
           }
         
-        if (!HasDefault(*pit))
-          {    
+        if (!HasDefault(*pit) &&
+            (*pit).GetCPPType() != "bool")
+          {
           sout << ";"
                << EOL << std::endl;
           }

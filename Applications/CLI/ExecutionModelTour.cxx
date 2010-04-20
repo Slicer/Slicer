@@ -14,6 +14,11 @@ int main (int argc, char *argv[])
 
   // files
   std::cout << "Files size = " << files.size() << std::endl;
+
+  // booleans
+  std::cout << "Boolean 1 = " << boolean1 << std::endl;
+  std::cout << "Boolean 2 = " << boolean2 << std::endl;
+  std::cout << "Boolean 3 = " << boolean3 << std::endl;
   
   // tease apart the scene files and the nodes
   std::string::size_type loc;

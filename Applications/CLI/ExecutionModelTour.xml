@@ -87,10 +87,16 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     </boolean>
     <boolean>
       <name>boolean2</name>
-      <longflag>boolean3</longflag>
+      <longflag>boolean2</longflag>
       <description>A boolean default false</description>
       <label>Boolean Default false</label>
       <default>false</default>
+    </boolean>
+    <boolean>
+      <name>boolean3</name>
+      <longflag>boolean3</longflag>
+      <description>A boolean with no default, should be defaulting to false</description>
+      <label>Boolean No Default</label>
     </boolean>
   </parameters>
 
