@@ -12,6 +12,9 @@ int main (int argc, char *argv[])
 {
   PARSE_ARGS;
 
+  // files
+  std::cout << "Files size = " << files.size() << std::endl;
+  
   // tease apart the scene files and the nodes
   std::string::size_type loc;
   std::string transform1Filename, transform2Filename;

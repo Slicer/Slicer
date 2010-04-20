@@ -103,6 +103,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Input file</label>
       <channel>input</channel>
     </file>
+    <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html"  multiple="true">
+      <longflag>files</longflag>
+      <description>Multiple input files</description>
+      <label>Input Files</label>
+      <channel>input</channel>
+    </file>
     <directory>
       <longflag>directory1</longflag>
       <description>An input directory. If no default is specified, the current directory is used,</description>
