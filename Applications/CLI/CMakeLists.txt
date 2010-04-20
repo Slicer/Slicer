@@ -179,6 +179,10 @@ slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
 
+add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP} ${CLP}Lib)
+
 #####################
 set (CLP ResampleVolume)
 
