@@ -46,8 +46,9 @@ protected:
   ~vtkMRMLEMSTargetNode();
   vtkMRMLEMSTargetNode(const vtkMRMLEMSTargetNode&);
   void operator=(const vtkMRMLEMSTargetNode&);
-
+  //BTX
   std::vector<std::string>   InputChannelNames; 
+  //ETX
 };
 
 #endif

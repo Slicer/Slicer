@@ -122,8 +122,9 @@ protected:
   int                                 RegistrationAffineType;
   int                                 RegistrationDeformableType;
   int                                 RegistrationInterpolationType;
-
+  //BTX
   vtkstd::vector<std::string>         RegistrationAtlasVolumeKey;
+  //ETX
   char*                               RegistrationTargetVolumeKey;
 
   char*                               WorkingDirectory;

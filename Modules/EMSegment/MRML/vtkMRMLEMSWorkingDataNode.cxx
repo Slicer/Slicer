@@ -4,6 +4,44 @@
 #include "vtkMRMLEMSTargetNode.h"
 #include "vtkMRMLEMSAtlasNode.h"
 
+// for some reason it was otherwise not wrapping it in tcl
+// maybe take it out later 
+#define vtkSetReferenceStringMacroWDN(name) \
+void vtkMRMLEMSWorkingDataNode::Set##name (const char* _arg) \
+  { \
+  if ( this->name == NULL && _arg == NULL) { return;} \
+  if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
+  std::string oldValue; \
+  if (this->name) { oldValue = this->name; delete [] this->name;  } \
+  if (_arg) \
+    { \
+    size_t n = strlen(_arg) + 1; \
+    char *cp1 =  new char[n]; \
+    const char *cp2 = (_arg); \
+    this->name = cp1; \
+    do { *cp1++ = *cp2++; } while ( --n ); \
+    } \
+   else \
+    { \
+    this->name = NULL; \
+    } \
+  this->Modified(); \
+  if (this->Scene && this->name) \
+    { \
+    if (oldValue.size() > 0) \
+      { \
+      this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this); \
+      } \
+    this->Scene->AddReferencedNodeID(this->name, this); \
+    } \
+  } 
+
+vtkSetReferenceStringMacroWDN(InputTargetNodeID)
+vtkSetReferenceStringMacroWDN(NormalizedTargetNodeID)
+vtkSetReferenceStringMacroWDN(AlignedTargetNodeID);
+vtkSetReferenceStringMacroWDN(InputAtlasNodeID);
+vtkSetReferenceStringMacroWDN(AlignedAtlasNodeID);
+
 //-----------------------------------------------------------------------------
 vtkMRMLEMSWorkingDataNode* 
 vtkMRMLEMSWorkingDataNode::

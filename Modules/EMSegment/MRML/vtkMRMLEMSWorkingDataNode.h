@@ -45,23 +45,23 @@ public:
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   vtkGetStringMacro(InputTargetNodeID);
-  vtkSetReferenceStringMacro(InputTargetNodeID);
+  void SetInputTargetNodeID(const char *input);
   vtkMRMLEMSTargetNode* GetInputTargetNode();
 
   vtkGetStringMacro(NormalizedTargetNodeID);
-  vtkSetReferenceStringMacro(NormalizedTargetNodeID);
+  void SetNormalizedTargetNodeID(const char *input);
   vtkMRMLEMSTargetNode* GetNormalizedTargetNode();
 
   vtkGetStringMacro(AlignedTargetNodeID);
-  vtkSetReferenceStringMacro(AlignedTargetNodeID);
+  void SetAlignedTargetNodeID(const char *input);
   vtkMRMLEMSTargetNode* GetAlignedTargetNode();
   
   vtkGetStringMacro(InputAtlasNodeID);
-  vtkSetReferenceStringMacro(InputAtlasNodeID);
+  void SetInputAtlasNodeID(const char *input);
   vtkMRMLEMSAtlasNode* GetInputAtlasNode();
 
   vtkGetStringMacro(AlignedAtlasNodeID);
-  vtkSetReferenceStringMacro(AlignedAtlasNodeID);
+  void SetAlignedAtlasNodeID(const char *input);
   vtkMRMLEMSAtlasNode* GetAlignedAtlasNode();
 
   //  vtkMRMLEMSAtlasNode*  GetWorkingAtlasNode();
