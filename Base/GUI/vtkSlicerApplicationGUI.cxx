@@ -2320,7 +2320,8 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     {
     this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
     this->FiducialListWidget->SetApplication( app );
-    this->FiducialListWidget->Create();
+    this->FiducialListWidget->SetMRMLScene(this->MRMLScene);
+    this->FiducialListWidget->Create();    
     }
 
   // Add the roi widget
