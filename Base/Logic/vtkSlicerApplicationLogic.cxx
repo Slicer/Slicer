@@ -1482,6 +1482,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
                     << req.GetFilename() << std::endl;
         vtkWarningMacro( << information.str().c_str() );
         }
+      else
+        {
+        // since we deleted the file on disk, or it was never on disk, mark
+        // the node as modified since read so it can be saved easily
+        nd->ModifiedSinceReadOn();
+        }
       }
 
 
