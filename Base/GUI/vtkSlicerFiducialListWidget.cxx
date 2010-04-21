@@ -207,6 +207,8 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   this->ProcessingMRMLEvent = 0;
   this->RenderPending = 0;
 
+  this->ViewNode = NULL;
+   
   // for picking
   this->ViewerWidget = NULL;
   this->InteractorStyle = NULL;
@@ -219,6 +221,8 @@ void vtkSlicerFiducialListWidget::RemoveMRMLObservers()
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::RemoveMRMLObservers\n");
   this->RemoveFiducialObservers();
+
+  this->SetAndObserveViewNode (NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -238,8 +242,13 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
     }
   this->SeedWidgets.clear();
   
-  
+  vtkSetMRMLNodeMacro(this->ViewNode, NULL);
+
+  // this call was triggering an inf loop of observers when deleting the
+  // second fid list widget
   this->SetViewerWidget(NULL);
+  //this->ViewerWidget = NULL;
+  
   this->SetInteractorStyle(NULL);
 }
 //---------------------------------------------------------------------------
@@ -586,6 +595,14 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("Got transform modified event, calling update positions on list " << callerList->GetID());
     this->Update3DWidgetPositions(callerList);
     }
+
+  else if (vtkMRMLViewNode::SafeDownCast(caller) != NULL &&
+           event == vtkCommand::ModifiedEvent)
+    {
+    vtkDebugMacro("ProcessingMRMLEvents: got a view node modified event");
+    this->UpdateViewNode();
+    this->RequestRender();
+    }
   
   this->ProcessingMRMLEvent = 0;
 
@@ -630,6 +647,8 @@ void vtkSlicerFiducialListWidget::UpdateFromMRML()
     {
     return;
     }
+  this->UpdateViewNode();
+  
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
   vtkDebugMacro("UpdateFromMRML: nnodes = " << nnodes);
   for (int n=0; n<nnodes; n++)
@@ -1038,8 +1057,8 @@ void vtkSlicerFiducialListWidget::SetViewerWidget(
     // TODO: figure out if this is necessary
     this->RemoveSeedWidgets();
     if (this->ViewerWidget->HasObserver(
-          vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
-          this->GUICallbackCommand) == 1)
+            vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
+             this->GUICallbackCommand) == 1)
       {
       this->ViewerWidget->RemoveObservers(
         vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
@@ -2085,4 +2104,10 @@ void vtkSlicerFiducialListWidget::Swap(vtkMRMLFiducialListNode *flist, int first
   
   return;
   
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::UpdateViewNode()
+{
+  // obsolete as per comment in vtkSlicerViewerWidget::UpdateViewNode
 }

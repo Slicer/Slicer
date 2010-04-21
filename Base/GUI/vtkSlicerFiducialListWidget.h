@@ -23,20 +23,17 @@
 #define __vtkSlicerFiducialListWidget_h
 
 #include "vtkSlicerWidget.h"
-#include "vtkKWRenderWidget.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkMapper.h"
-#include "vtkGlyph3D.h"
-#include "vtkSphereSource.h"
+
+#include "vtkMRMLViewNode.h"
 
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiducial;
 class vtkPolyData;
 class vtkCellArray;
 class vtkActor;
+class vtkCamera;
 class vtkFollower;
 class vtkImplicitBoolean;
-class vtkKWRenderWidget;
 class vtkTransform;
 class vtkSlicerViewerWidget;
 class vtkSlicerViewerInteractorStyle;
@@ -124,6 +121,13 @@ public:
   /// check scene to make sure that have a widget for each list node, and no extra widgets...
   void Update3DWidgetsFromMRML();
 
+  /// Description:
+  /// Get/Set the ViewNode
+  vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
+  void SetAndObserveViewNode (vtkMRMLViewNode *snode)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->ViewNode, snode );
+    };
 protected:
   vtkSlicerFiducialListWidget();
   virtual ~vtkSlicerFiducialListWidget();
@@ -132,6 +136,10 @@ protected:
   /// Create the widget.
   virtual void CreateWidget();
 
+  ///
+  /// Update things that depend on the view node
+  void UpdateViewNode();
+  
   ///
   /// Update the properties of the seed for this fiducial
   void UpdateSeed(vtkMRMLFiducialListNode *flist, const char *fidID); /// int f);
@@ -265,6 +273,9 @@ protected:
   void UpdateInteractionModeAtEndInteraction();
   
 
+  ///
+  /// pointer to a view node
+  vtkMRMLViewNode *ViewNode;
 private:
   
   vtkSlicerFiducialListWidget(const vtkSlicerFiducialListWidget&); /// Not implemented
