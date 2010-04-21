@@ -27,6 +27,8 @@
 #include <vtksys/ios/sstream>
 #include <vtksys/stl/list>
 #include "vtkSlicerVolumesIcons.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerVolumesGUI.h"
 
 #include <vtkMRMLNode.h>
 #include <vtkMRMLColorTableNode.h>
@@ -1109,11 +1111,27 @@ void vtkKWWindowLevelThresholdEditor::PresetWindowLevelCallback(int rank)
 //    this->Update();
     if (prop_has_changed)
       {
+      //--- TEST
+      //--- make sure Volumes GUI tracks changes to MRML node.
+      //--- widget doesn't observe MRML, so as a quick yucky
+      //--- workaround we decided to just call the Volumes GUI to update
+      //---
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+      if ( app == NULL )
+        {
+        return;
+        }
+      vtkSlicerVolumesGUI *vgui = vtkSlicerVolumesGUI::SafeDownCast (app->GetModuleGUIByName ( "Volumes"));
+      if ( vgui == NULL )
+        {
+        return;
+        }
+      vgui->UpdateFramesFromMRML();
+      //--- END TEST
 //      this->InvokePropertyChangedCommand();
 //      this->SendStateEvent(this->PropertyChangedEvent);
       }
     }
-
 }
 
 //----------------------------------------------------------------------------
