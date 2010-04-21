@@ -422,9 +422,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         vtkDebugMacro("AddDefaultColorFiles: node " << id << " already in scene");
         }
 
-      // check if this is the new default one read in from
-      // Slicer3_2010_Default_Brain_Lut.txt
-      if (strcmp(ctnode->GetName(),"Slicer3_2010_Default_Brain_Lut") == 0)
+      // check if this is the new default one read in from file
+      if (strcmp(ctnode->GetName(),"Slicer3_2010_Label_Colors") == 0)
         {
         vtkDebugMacro("Found default brain lut node");
         // remove the category attribute so it floats to the top of the node
@@ -679,15 +678,13 @@ const char *vtkSlicerColorLogic::GetDefaultVolumeColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  // return this->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels);
-  // return "vtkMRMLColorTableNodeFileSlicer3_2010_Default_Brain_Lut.txt";
-  return this->GetDefaultFileColorNodeID("Slicer3_2010_Default_Brain_Lut.txt");
+  return this->GetDefaultFileColorNodeID("Slicer3_2010_Label_Colors.txt");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 {
-  return this->GetDefaultFileColorNodeID("Slicer3_2010_Short_LUT.txt");
+  return this->GetDefaultFileColorNodeID("Slicer3_2010_Brain_Labels.txt");
 }
 
 //----------------------------------------------------------------------------
