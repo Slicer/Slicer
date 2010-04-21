@@ -33,7 +33,6 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
     variable _swidgets ""
-    variable _annotationTaskID ""
     variable _inWidget 0
 
     # methods
@@ -54,10 +53,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     method isCompareViewer {} {}
     method isCompareViewMode {} {}
     method getSliceSWidgetForGUI { gui } {}
-    method requestAnnotation {} {}
-    method cancelAnnotation {} {}
     method getInWidget {} {}
-    method getInAnyWidget {} {}
   }
 }
 
@@ -506,8 +502,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             set rx [expr $dx * $dazimuth * 10.0]
             set ry [expr $dy * $delevation * 10.0]
 
-            # puts "rx = $rx"
-
             set tfm [$this vtkNew vtkTransform]
             $tfm PreMultiply
             $tfm Identity
@@ -538,7 +532,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
-      $_renderWidget CornerAnnotationVisibilityOff
+      $this requestDelayedAnnotation
       if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
         set _actionState "Rotate"
       } else {
@@ -555,7 +549,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "RightButtonReleaseEvent" { 
-      $_renderWidget CornerAnnotationVisibilityOn
+      $this requestDelayedAnnotation
       set _actionState ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
@@ -595,7 +589,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         }
     }
     "MiddleButtonPressEvent" {
-      $_renderWidget CornerAnnotationVisibilityOff
+      $this requestDelayedAnnotation
       set _actionState "Translate"
       set _actionStartXY "$x $y"
       set _actionStartWindowXY "$windowx $windowy"
@@ -608,7 +602,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "MiddleButtonReleaseEvent" { 
-      $_renderWidget CornerAnnotationVisibilityOn
       set _actionState ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
@@ -635,7 +628,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
-          #[[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
               # prescribe spacing for all other guis
@@ -657,7 +649,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # cancel annotation requests before doing anything else
       foreach gui $sliceGUIs {
         set sw [$this getSliceSWidgetForGUI $gui]
-        $sw cancelAnnotation
+        $sw cancelDelayedAnnotation
       }
       # now turn do whatever else is needed
       foreach gui $sliceGUIs {
@@ -946,9 +938,9 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
     }
     
     # jvm - request a render so the annotations on other viewers update
-    $sw cancelAnnotation
+    $sw cancelDelayedAnnotation
     [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
-    $sw requestAnnotation
+    $sw requestDelayedAnnotation
     # this render only seems to be needed to get the cornerannotations
     # to turn off in the other compare views when there is no
     # crosshair or the crosshair is in navigation mode but not being
@@ -1075,10 +1067,10 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
   }
 
   # jvm - request a render so the annotations on other viewers update
-  $this cancelAnnotation
+  $this cancelDelayedAnnotation
   [[$sliceGUI GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
-  $this requestAnnotation
-  # no longer needed?   [$sgui GetSliceViewer] RequestRender
+  [$sliceGUI GetSliceViewer] RequestRender
+  $this requestDelayedAnnotation
 }
 
 itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
@@ -1413,36 +1405,8 @@ itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
     }
 }
 
-itcl::body SliceSWidget::requestAnnotation { } {
-    set _annotationTaskID [after 500 "\
-                              if { [$this getInAnyWidget] == 1 } { \
-                                $_renderWidget CornerAnnotationVisibilityOn; \
-                                [$sliceGUI GetSliceViewer] RequestRender; \
-                                $this cancelAnnotation; \
-                              } "]
-}
-
-itcl::body SliceSWidget::cancelAnnotation { } {
-    if {$_annotationTaskID != ""} {
-        after cancel $_annotationTaskID
-        set _annotationTaskID ""
-    }
-}
-
 itcl::body SliceSWidget::getInWidget { } {
     return $_inWidget
 }
 
-itcl::body SliceSWidget::getInAnyWidget { } {
-    set in 0
-
-    set swidgets [itcl::find objects -class SliceSWidget]
-    foreach sw $swidgets {
-        if { [$sw getInWidget] == 1} {
-            set in 1
-            break
-        }
-    }
-    return $in
-}
 

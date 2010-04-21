@@ -187,7 +187,6 @@ itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
 
   switch $event {
     "LeftButtonPressEvent" {
-      $_renderWidget CornerAnnotationVisibilityOff
       set _actionState "dragging"
       set _startXYPosition [$_interactor GetEventPosition]
       set _currentXYPosition $_startXYPosition
@@ -213,7 +212,6 @@ itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeftButtonReleaseEvent" {
-      $_renderWidget CornerAnnotationVisibilityOn
       [$_renderWidget GetRenderWindow] ShowCursor
       $this applyPolyMask $o(rectangle)
       set _actionState ""

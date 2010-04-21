@@ -24,6 +24,8 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
 
     inherit SWidget
 
+    variable _observations ""
+
     constructor {args} {}
     destructor {}
     
@@ -99,21 +101,21 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   # - track them so they can be removed in the destructor
   #
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
-  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+  lappend _observations [$::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _observations [$::slicer3::Broker AddObservation $node ModifiedEvent "::SWidget::ProtectedCallback $this processEvent $node ModifiedEvent"]
 
 
   set scene [$sliceGUI GetMRMLScene]
-  $::slicer3::Broker AddObservation $scene DeleteEvent "::SWidget::ProtectedDelete $this"
-  $::slicer3::Broker AddObservation $scene AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene AnyEvent"
+  lappend _observations [$::slicer3::Broker AddObservation $scene DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _observations [$::slicer3::Broker AddObservation $scene ModifiedEvent "::SWidget::ProtectedCallback $this processEvent $scene ModifiedEvent"]
 
 
-  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
+  lappend _observations [$::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"]
   set events {  
     "KeyPressEvent" 
     }
   foreach event $events {
-    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
+    lappend _observations [$::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"]
   }
 
   set o(planeWidget) [vtkNew vtkImplicitPlaneWidget2]
@@ -130,6 +132,11 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
 
 
 itcl::body SlicePlaneSWidget::destructor {} {
+  foreach obs $_observations {
+    if { [info command $obs] != "" } {
+      $::slicer3::Broker RemoveObservation $obs
+    }
+  }
 }
 
 

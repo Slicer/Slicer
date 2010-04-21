@@ -129,7 +129,6 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
   if { $caller == $sliceGUI } {
     switch $event {
       "LeftButtonPressEvent" {
-        $_renderWidget CornerAnnotationVisibilityOff
         set _actionState "drawing"
         $o(cursorActor) VisibilityOff
         $sliceGUI SetGrabID $this
@@ -137,7 +136,6 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
         $sliceGUI SetGUICommandAbortFlag 1
       }
       "RightButtonReleaseEvent" {
-        $_renderWidget CornerAnnotationVisibilityOn
         # if the slice node hasn't changed since the last point was added,
         # then we apply.  Otherwise it was a slice zoom action with the right mouse.
         # - update the record so the next right click will work
@@ -159,7 +157,6 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
         }
       }
       "LeftButtonReleaseEvent" {
-        $_renderWidget CornerAnnotationVisibilityOn
         $o(cursorActor) VisibilityOn
         set _actionState ""
         $sliceGUI SetGrabID ""
@@ -287,8 +284,6 @@ itcl::body DrawEffect::addPoint {r a s} {
   # don't allow adding points on except on the active slice (where
   # first point was laid down)
   if { $_activeSlice != $currentSlice } {
-  puts skipping
-  puts "$_activeSlice != $currentSlice"
     return
   }
 

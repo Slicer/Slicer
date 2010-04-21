@@ -362,7 +362,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           switch $_actionState {
             "dragging" {
               if { !$inactive } {
-                $_renderWidget CornerAnnotationVisibilityOff
+                $this requestDelayedAnnotation 
                 foreach {wx wy} [$_interactor GetEventPosition] {}
                 foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
                 foreach {dx dy dz} $_startOffset {}
@@ -376,7 +376,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
         "LeftButtonReleaseEvent" {
           set _actionState ""
           set _description ""
-          $_renderWidget CornerAnnotationVisibilityOn
           SeedSWidget::SetAllTextVisibility 1
             eval $movedCommand
             

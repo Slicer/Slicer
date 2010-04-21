@@ -233,8 +233,10 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(lineWidget) } {
 
+    $this requestDelayedAnnotation 
+
     if { $event == "StartInteractionEvent" } {
-      $_renderWidget CornerAnnotationVisibilityOff
+      $this requestDelayedAnnotation 
       #--- now adjust the interactionMode.
       #--- This implementation of mouse modes turns on
       #--- 'pick' mode when a ruler endpoint is picked.
@@ -251,7 +253,6 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     if { $event == "EndInteractionEvent" } {
-      $_renderWidget CornerAnnotationVisibilityOn
       #--- now adjust the interactionMode.        
       set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
       # Reset interaction mode to default viewtransform

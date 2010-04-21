@@ -164,7 +164,6 @@ itcl::configbody CrosshairSWidget::rgba {
 # handle interactor events
 #
 itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
-  # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
       # the sliceGUI was deleted behind our back, so we need to 
@@ -195,6 +194,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       if { $drg == "false" } {
           eval $this setPosition [$_crosshairNode GetCrosshairRAS]
           if {0} {
+            # SP - don't think this code is needed
             # puts "[clock seconds] Slice node change $_sliceNode"
 
             # No crosshairs are being dragged. So the slice node is changing through some
@@ -216,7 +216,6 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $_crosshairNode } {
-      # puts "[clock seconds] Crosshair node change $_sliceNode"
 
       # update the design and properties of the crosshair
       $this updateCrosshair
@@ -225,8 +224,6 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       foreach {r a s} [$_crosshairNode GetCrosshairRAS] {}
       $this setPosition $r $a $s
       
-      # jvm - Don't like having to request a render but it may be
-      # needed for "cursor" (as opposed to "navigator") mode
       if { [$_crosshairNode GetNavigation] == 0 } {
           [$sliceGUI GetSliceViewer] RequestRender
       }
@@ -327,23 +324,22 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               switch $event {
 
                   "LeftButtonPressEvent" {
-                      $_renderWidget CornerAnnotationVisibilityOff
+                      $this requestDelayedAnnotation 
                       set _actionState "dragging"
                       set state $_actionState
                       return
                   }
 
                   "LeftButtonReleaseEvent" {
-                      $_renderWidget CornerAnnotationVisibilityOn
                       set _actionState ""
                       set state $_actionState
                       return
                   }
 
                   "MouseMoveEvent" {
+                      $this requestDelayedAnnotation 
                       if { $_pickState == "over" } {
                           if { $_actionState == "dragging" } {
-                              #puts "MoveEvent ($_sliceNode)"
                               # get the event position and convert to RAS
                               foreach {windowx windowy} [$_interactor GetEventPosition] {}
                               set xyz [$this dcToXYZ $windowx $windowy]
@@ -630,7 +626,6 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
     }
   } else {
     # cursor is not visible on any currently displayed slice, check if this is a state change
-    #puts "Crosshair not visibile: $k"
     if { [$o(crosshairActor) GetVisibility] == 1} {
       $o(crosshairActor) VisibilityOff
       $o(crosshairHighlightActor) VisibilityOff

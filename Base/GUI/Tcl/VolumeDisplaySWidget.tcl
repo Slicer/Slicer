@@ -155,7 +155,7 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
     "MouseMoveEvent" {
       switch $_actionState {
         "dragging" {
-          $_renderWidget CornerAnnotationVisibilityOff
+          $this requestDelayedAnnotation 
           set _currentPosition [$_interactor GetEventPosition]
           foreach {startx starty} $_startPosition {currx curry} $_currentPosition {}
           set offx [expr $currx - $startx]
@@ -191,7 +191,6 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
       set _actionState ""
       $sliceGUI SetGrabID ""
       set _description ""
-      $_renderWidget CornerAnnotationVisibilityOn
       $this statusText ""
     }
   }

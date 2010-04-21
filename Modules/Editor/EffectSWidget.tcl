@@ -561,6 +561,7 @@ itcl::body EffectSWidget::processEvent { {caller ""} {event ""} } {
     }
     "LeaveEvent" {
       $o(cursorActor) VisibilityOff
+      $this cancelDelayedAnnotation
     }
   }
 

@@ -19,7 +19,7 @@ namespace eval SWidget {
 # utility to run method only if instance hasn't already been deleted
 # (this is useful in event handling)
 #
-namespace eval SWidget set DEBUG_CALLBACKS 0
+namespace eval SWidget set DEBUG_CALLBACKS 1
 namespace eval SWidget {
   proc ProtectedCallback {instance args} {
     if { [info command $instance] != "" } {
@@ -92,6 +92,8 @@ if { [itcl::find class SWidget] == "" } {
 
     # flag to indicate that there is an update pending (in after idle)
     variable _updatePending 0
+    # annotation update requested
+    variable _annotationTaskID ""
 
     # methods
     method rasToXY {rasPoint} {}
@@ -112,6 +114,10 @@ if { [itcl::find class SWidget] == "" } {
     method setPixelBlock {image i j k size value} {}
     method requestUpdate {} {}
     method processUpdate {} {}
+    method requestDelayedAnnotation {} {}
+    method processDelayedAnnotation {} {}
+    method cancelDelayedAnnotation {} {}
+    method getInAnySliceSWidget {} {}
 
     # make a new instance of a class and add it to the list for cleanup
     method vtkNew {class} {
@@ -387,6 +393,43 @@ itcl::body SWidget::requestUpdate {} {
 
 itcl::body SWidget::processUpdate {} {
   set _updatePending 0
+}
+
+itcl::body SWidget::requestDelayedAnnotation { } {
+    $this cancelDelayedAnnotation
+    $_renderWidget CornerAnnotationVisibilityOff
+    set _annotationTaskID [after 300 $this processDelayedAnnotation]
+}
+
+itcl::body SWidget::processDelayedAnnotation { } {
+    if { [$this getInAnySliceSWidget] } {
+      $_renderWidget CornerAnnotationVisibilityOn
+      [$sliceGUI GetSliceViewer] RequestRender
+    } else {
+      $_renderWidget CornerAnnotationVisibilityOff
+      [$sliceGUI GetSliceViewer] RequestRender
+    }
+}
+
+itcl::body SWidget::cancelDelayedAnnotation { } {
+    if {$_annotationTaskID != ""} {
+        after cancel $_annotationTaskID
+        set _annotationTaskID ""
+    }
+    $_renderWidget CornerAnnotationVisibilityOff
+    [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::body SWidget::getInAnySliceSWidget { } {
+    if { [itcl::find class ::SliceSWidget] == "::SliceSWidget"} {
+      set swidgets [itcl::find objects -class ::SliceSWidget]
+      foreach sw $swidgets {
+          if { [$sw getInWidget] } {
+            return 1
+          }
+      }
+    }
+    return 0
 }
 
 #

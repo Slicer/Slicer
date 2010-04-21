@@ -91,6 +91,14 @@ itcl::body Labeler::processEvent { {caller ""} {event ""} } {
   
   # don't chain this method - superclass method is meant 
   # to be overridden and not chained.
+  set event [$sliceGUI GetCurrentGUIEvent] 
+  if { $event == "MouseMoveEvent" && [$this getInAnySliceSWidget] } {
+      $this requestDelayedAnnotation 
+  }
+  
+  if { $event == "LeaveEvent" } {
+      $this cancelDelayedAnnotation 
+  }
 
   if { $caller != "" && [$caller IsA "vtkKWWidget"] } {
     $this updateMRMLFromGUI
