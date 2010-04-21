@@ -125,7 +125,15 @@ itcl::configbody SeedSWidget::glyph {
     Square Circle Diamond Arrow ThickArrow HookedArrow StarBurst}
 
   if { [lsearch $validGlyphTypes $glyph] == -1 } {
-    set glyph "StarBurst"
+    if { $glyph == "Sphere3D" } {
+      # use a circle for the sphere
+      set glyph "Circle"
+    } elseif { $glyph == "Diamond3D" } {
+      # use a diamond for the 3d diamond
+      set glyph "Diamond"
+    } else {
+      set glyph "StarBurst"
+    }
   }
 
   $o(glyph) Delete
