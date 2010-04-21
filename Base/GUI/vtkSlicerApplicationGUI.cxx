@@ -1455,12 +1455,10 @@ void vtkSlicerApplicationGUI::UpdateLoadStatusText()
       {
       txt.append ( "..." );
       win->SetStatusText ( txt.c_str() );
-      this->Script ( "update idletasks" );
       }
     else
       {
       win->SetStatusText ( upText );
-      this->Script ( "update idletasks" );
       }
     }
 }
