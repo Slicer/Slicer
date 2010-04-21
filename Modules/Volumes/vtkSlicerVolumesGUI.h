@@ -141,6 +141,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     const char* GetNthValue( unsigned int n );
     const char* GetTagValue( char* tag );
 
+    virtual void UpdateFramesFromMRML();
 protected:
     vtkSlicerVolumesGUI ( );
     virtual ~vtkSlicerVolumesGUI ( );
@@ -151,7 +152,6 @@ protected:
     vtkSlicerVolumesLogic *Logic;
     vtkMRMLVolumeNode *VolumeNode;
 
-    virtual void UpdateFramesFromMRML();
 
 
     // Widgets for the Volumes module
