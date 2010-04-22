@@ -51,7 +51,7 @@ int main( int argc, char * argv[] )
 // Image Types
   typedef  long  InputPixelType;
   typedef  long  InternalPixelType;
-  typedef  long  OutputPixelType;
+  typedef  int   OutputPixelType;
 
   typedef itk::Image< InputPixelType,  3 >   InputImageType;
   typedef itk::Image< InternalPixelType, 3 >   InternalImageType;
