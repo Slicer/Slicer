@@ -139,7 +139,7 @@ if { [itcl::find class Loader] == "" } {
     method errorDialog {errorText} {}
     method status {message} {}
     method chooseDirectory {} {}
-    method getOpenFile {} {}
+    method getOpenFile { {path ""} } {}
     method setState { state } {}
 
     method objects {} {return [array get o]}
@@ -266,11 +266,20 @@ itcl::body Loader::constructor { } {
   $o(buttonFrame) Create
   pack [$o(buttonFrame) GetWidgetName] -side top -anchor nw -fill x
 
+  set o(addCWD) [vtkNew vtkKWPushButton]
+  $o(addCWD) SetParent $o(buttonFrame)
+  $o(addCWD) Create
+  $o(addCWD) SetText "Add from Current Directory"
+  $o(addCWD) SetBalloonHelpString "Add to list of files to load by selecting from current working directory"
+  set tag [$o(addCWD) AddObserver ModifiedEvent "$this processEvent $o(addCWD)"]
+  lappend _observerRecords [list $o(addCWD) $tag]
+  $o(addCWD) SetCommand $o(addCWD) Modified
+
   set o(addDir) [vtkNew vtkKWPushButton]
   $o(addDir) SetParent $o(buttonFrame)
   $o(addDir) Create
   $o(addDir) SetText "Add Directory"
-  $o(addDir) SetBalloonHelpString "Add all contents of a directory to the list of files to load"
+  $o(addDir) SetBalloonHelpString "Add all contents of a directory to the list of files to load.  Start in last selected directory."
   set tag [$o(addDir) AddObserver ModifiedEvent "$this processEvent $o(addDir)"]
   lappend _observerRecords [list $o(addDir) $tag]
   $o(addDir) SetCommand $o(addDir) Modified
@@ -279,7 +288,7 @@ itcl::body Loader::constructor { } {
   $o(addFile) SetParent $o(buttonFrame)
   $o(addFile) Create
   $o(addFile) SetText "Add File(s)"
-  $o(addFile) SetBalloonHelpString "Add a file or multiple files to the list of files to load"
+  $o(addFile) SetBalloonHelpString "Add a file or multiple files to the list of files to load from last selected directory"
   set tag [$o(addFile) AddObserver ModifiedEvent "$this processEvent $o(addFile)"]
   lappend _observerRecords [list $o(addFile) $tag]
   $o(addFile) SetCommand $o(addFile) Modified
@@ -307,6 +316,7 @@ itcl::body Loader::constructor { } {
     [$o(apply) GetWidgetName] \
     [$o(addFile) GetWidgetName] \
     [$o(addDir) GetWidgetName] \
+    [$o(addCWD) GetWidgetName] \
     -side right -anchor w -padx 4 -pady 2
 
 
@@ -645,15 +655,18 @@ itcl::body Loader::apply { } {
 itcl::body Loader::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(addDir) } {
-    # TODO: switch to kwwidgets directory browser
     set paths [$this chooseDirectory]
     $this add $paths
     return
   }
 
   if { $caller == $o(addFile) } {
-    # TODO: switch to kwwidgets directory browser
     $this add [$this getOpenFile]
+    return
+  }
+
+  if { $caller == $o(addCWD) } {
+    $this add [$this getOpenFile [pwd]]
     return
   }
 
@@ -790,14 +803,18 @@ itcl::body Loader::chooseDirectory {} {
   
 }
 
-itcl::body Loader::getOpenFile {} {
+itcl::body Loader::getOpenFile { {path ""} } {
 
 
   set dialog [vtkKWFileBrowserDialog New]
   $dialog MultipleSelectionOn
   $dialog SetParent $o(toplevel)
   $dialog Create
-  $dialog RetrieveLastPathFromRegistry "OpenPath"
+  if { $path == "" } {
+    $dialog RetrieveLastPathFromRegistry "OpenPath"
+  } else {
+    $dialog SetLastPath $path
+  }
   $dialog Invoke
 
   set files ""
