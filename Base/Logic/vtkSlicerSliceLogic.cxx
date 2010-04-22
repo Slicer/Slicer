@@ -1284,6 +1284,20 @@ double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode
   vtkSmartPointer<vtkMatrix4x4> ijkToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
 
   volumeNode->GetIJKToRASMatrix(ijkToRAS);
+
+  // Apply the transform, if it exists
+  vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
+  if ( transformNode != NULL ) 
+    {
+    if ( transformNode->IsTransformToWorldLinear() )
+      {
+      vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+      transformNode->GetMatrixTransformToWorld( rasToRAS );
+      rasToRAS->Invert();
+      vtkMatrix4x4::Multiply4x4(rasToRAS, ijkToRAS, ijkToRAS); 
+      }
+    }
+
   rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
   rasToSlice->Invert();
 
