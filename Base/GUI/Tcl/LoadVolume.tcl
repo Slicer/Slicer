@@ -366,6 +366,17 @@ itcl::body LoadVolume::constructor {} {
 
   pack [$o(recentMenu) GetWidgetName] -side left -anchor w -padx 4 -pady 2
 
+  set o(cwd) [vtkNew vtkKWPushButton]
+  $o(cwd) SetParent $o(buttonFrame)
+  $o(cwd) Create
+  $o(cwd) SetText "Browse to CWD"
+  $o(cwd) SetBalloonHelpString "Move the directory explorer to the current working directory (where slicer was started)."
+  set tag [$o(cwd) AddObserver ModifiedEvent "$this processEvent $o(cwd)"]
+  lappend _observerRecords [list $o(cwd) $tag]
+  $o(cwd) SetCommand $o(cwd) Modified
+
+  pack [$o(cwd) GetWidgetName] -side left -anchor w -padx 4 -pady 2
+
   set o(apply) [vtkNew vtkKWPushButton]
   $o(apply) SetParent $o(buttonFrame)
   $o(apply) Create
@@ -757,6 +768,14 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       after idle "itcl::delete object $this"
     }
     set _processingEvents 0
+    return
+  }
+
+  #
+  # handle browse to cwd button
+  #
+  if { $caller == $o(cwd) } {
+    $this selectArchetype [pwd] ""
     return
   }
 
