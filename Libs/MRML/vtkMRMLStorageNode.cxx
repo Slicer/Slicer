@@ -166,8 +166,12 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
         }
       
       name += filename;
+      // use collapse full path, since if there's a sym link somewhere in the
+      // relative path, the readers will fail
+      std::string collapsedFullPath = vtksys::SystemTools::CollapseFullPath(name.c_str());
+      vtkDebugMacro("ReadXMLAttributes: collapsed path = " << collapsedFullPath.c_str());
       
-      this->SetFileName(name.c_str());
+      this->SetFileName(collapsedFullPath.c_str());
       }
     if (!strncmp(attName, "fileListMember", 14))
       {
