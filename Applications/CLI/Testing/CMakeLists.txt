@@ -956,6 +956,25 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 
 ##################################
+# SparseFieldLevelSetContour tests
+
+add_test(SparseFieldLevelSetContourTest ${Slicer3_EXE} --launch SparseFieldLevelSetContourTest
+  --compare ${BASELINE}/SparseFieldLevelSetContourTest.vtp
+  ${TEMP}/SparseFieldLevelSetContourTest.vtp
+  ModuleEntryPoint 
+  --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp 
+  -c "1.5,1.5,0" 
+  -c "-1.5,1.5,0" 
+  -c "-1.5,-1.5,0" 
+  -c "1.5,-1.5,0" 
+  --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
+  )
+
+set (CLP SparseFieldLevelSetContour)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib) 
+
+
 # MergeModels tests
 
 add_test(MergeModelsTest ${Slicer3_EXE} --launch MergeModelsTest
