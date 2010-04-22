@@ -2234,11 +2234,6 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
       }
     }
 
-  // check for a symbolic link
-  if (vtksys::SystemTools::FileIsSymlink(filepath))
-    {
-    vtkDebugMacro("IsFilePathRelative: have a path with a symlink: " << filepath);
-    }
   vtksys_stl::vector<vtksys_stl::string> components;
   vtksys::SystemTools::SplitPath((const char*)filepath, components);
   if (components[0] == "") 
