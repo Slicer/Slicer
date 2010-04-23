@@ -29,6 +29,16 @@ namespace eval HelperBox {
   proc ShowDialog {} {
     ::Box::ShowDialog HelperBox
   }
+
+  proc Recreate {} {
+    foreach helper [itcl::find objects -class HelperBox] {
+      set f [$helper cget -frame]
+      itcl::delete object $helper
+      set helper [HelperBox #auto]
+      $helper configure -frame $f
+      $helper create
+    }
+  }
 }
 
 
@@ -57,13 +67,13 @@ if { [itcl::find class HelperBox] == "" } {
     method structureVolume { structureName } {} ;# get the volume for a given structure name
 
     method promptStructure {} {} ;# ask which label value to use
-    method addStructure { {label ""} } {} ;# add a new dependent volume
+    method addStructure { {label ""} {options ""} } {} ;# add a new dependent volume
     method deleteStructures {} {} ;# delete all the structures
     method updateStructures {} {} ;# refresh the structure frame with currently loaded data
     method merge { {label all} } {} ;# merge the named or all structure labels into the master label
+    method split {} {} ;# extract a label volume for each distinct label in the merge volume
     method edit { {label ""} } {} ;# select structure 'label' for editing
-    method roi {label} {} ;# create a subvolume ROI for 'label'
-    method build { {label all} } {} ;# build a model for one or all labels
+    method build {} {} ;# build merged model for all labels
     method colorSelectDialog {} {} ;# pop up a dialog with color table selection
 
     method processEvent { caller event } {}
@@ -115,7 +125,7 @@ itcl::body HelperBox::select { } {
       # make the source node the active background, and the label node the active label
       set selectionNode [$::slicer3::ApplicationLogic  GetSelectionNode]
       $selectionNode SetReferenceActiveVolumeID [$_master GetID]
-      $selectionNode SetReferenceSecondaryVolumeID [$merge GetID]
+      $selectionNode SetReferenceActiveLabelVolumeID [$merge GetID]
       $::slicer3::ApplicationLogic  PropagateVolumeSelection 0
       set mergeText [$merge GetName]
     }
@@ -183,7 +193,7 @@ itcl::body HelperBox::promptStructure {} {
 
 
 # create the segmentation helper box
-itcl::body HelperBox::addStructure { {label ""} } {
+itcl::body HelperBox::addStructure { {label ""} {options ""} } {
 
   set merge [$this mergeVolume]
   if { $merge == "" } {
@@ -204,7 +214,9 @@ itcl::body HelperBox::addStructure { {label ""} } {
   [$struct GetDisplayNode] SetAndObserveColorNodeID [$colorNode GetID]
 
   $this updateStructures
-  $this edit $label
+  if { [lsearch $options "noEdit"] != -1 } {
+    $this edit $label
+  }
 }
 
 # delete all the structures
@@ -328,18 +340,64 @@ itcl::body HelperBox::merge { {label all} } {
 
 }
 
-itcl::body HelperBox::build { {label all} } {
+# split the merge volume into individual strutures
+itcl::body HelperBox::split {} {
+
+  $this statusText "Splitting..."
+  set merge [$this mergeVolume]
+  if { $merge == "" } {
+    return
+  } 
+  set colorNode [[$merge GetDisplayNode] GetColorNode]
+
+  set w [$o(structures) GetWidget]
+
+  set accum [vtkImageAccumulate New]
+  $accum SetInput [$merge GetImageData]
+  $accum Update
+  set lo [expr int([lindex [$accum GetMin] 0])]
+  set hi [expr int([lindex [$accum GetMax] 0])]
+  $accum Delete
+
+  set thresholder [vtkImageThreshold New]
+  for {set i $lo} {$i <= $hi} {incr i} {
+    $this statusText "Splitting label $i..."
+    $thresholder SetInput [$merge GetImageData]
+    $thresholder SetInValue $i
+    $thresholder SetOutValue 0
+    $thresholder ReplaceInOn
+    $thresholder ReplaceOutOn
+    $thresholder ThresholdBetween $i $i
+    $thresholder SetOutputScalarType [[$merge GetImageData] GetScalarType]
+    $thresholder Update
+    if { [[$thresholder GetOutput] GetScalarRange] != " 0.0 0.0" } {
+      set labelName [$colorNode GetColorName [expr int($i)]]
+      $this statusText "Creating structure volume $labelName..."
+      set structureVolume [$this structureVolume $labelName]
+      if { $structureVolume == "" } {
+        addStructure $i "noEdit"
+      }
+      set structureVolume [$this structureVolume $labelName]
+      [$structureVolume GetImageData] DeepCopy [$thresholder GetOutput]
+      $structureVolume Modified
+    }
+  }
+  $thresholder Delete
+
+  $this statusText "Finished splitting."
+}
+
+itcl::body HelperBox::build {} {
 
   #
   # get the image data for the label layer
   #
-  set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
-  set layerLogic [$sliceLogic GetLabelLayer]
-  set volumeNode [$layerLogic GetVolumeNode]
-  if { $volumeNode == "" } {
-    errorDialog "Cannot make model - no volume node for $layerLogic in $sliceLogic."
+
+  $this statusText "Building..."
+  set merge [$this mergeVolume]
+  if { $merge == "" } {
     return
-  }
+  } 
 
   #
   # find the Model Maker
@@ -366,30 +424,18 @@ itcl::body HelperBox::build { {label all} } {
   $moduleNode SetName "Editor Make Model"
   $moduleNode SetModuleDescription "Model Maker"
 
-  set name [[$o(name) GetWidget] GetValue]
-  if { $name == "" } {
-    $moduleNode SetParameterAsString "Name" "Quick Model"
-  } else {
-    $moduleNode SetParameterAsString "Name" $name
-  }
   $moduleNode SetParameterAsString "FilterType" "Sinc"
-  $moduleNode SetParameterAsBool "GenerateAll" "0"
-  $moduleNode SetParameterAsString "Labels" [EditorGetPaintLabel]
+  $moduleNode SetParameterAsBool "GenerateAll" "1"
   $moduleNode SetParameterAsBool "JointSmooth" 1
   $moduleNode SetParameterAsBool "SplitNormals" 1
   $moduleNode SetParameterAsBool "PointNormals" 1
   $moduleNode SetParameterAsBool "SkipUnNamed" 1
   $moduleNode SetParameterAsInt "Start" -1
   $moduleNode SetParameterAsInt "End" -1
-  if { [[$o(smooth) GetWidget] GetSelectedState] } {
-    $moduleNode SetParameterAsDouble "Decimate" 0.25
-    $moduleNode SetParameterAsDouble "Smooth" 10
-  } else {
-    $moduleNode SetParameterAsDouble "Decimate" 0
-    $moduleNode SetParameterAsDouble "Smooth" 0
-  }
+  $moduleNode SetParameterAsDouble "Decimate" 0.25
+  $moduleNode SetParameterAsDouble "Smooth" 10
 
-  $moduleNode SetParameterAsString "InputVolume" [$volumeNode GetID]
+  $moduleNode SetParameterAsString "InputVolume" [$merge GetID]
 
   #
   # output 
@@ -482,6 +528,7 @@ itcl::body HelperBox::updateStructures {} {
     $o(addStructureButton) SetStateToDisabled
     $o(deleteStructuresButton) SetStateToDisabled
     $o(mergeButton) SetStateToDisabled
+    $o(splitButton) SetStateToDisabled
     $o(mergeAndBuildbutton) SetStateToDisabled
     return
   }
@@ -490,6 +537,7 @@ itcl::body HelperBox::updateStructures {} {
   $o(addStructureButton) SetStateToNormal
   $o(deleteStructuresButton) SetStateToNormal
   $o(mergeButton) SetStateToNormal
+  $o(splitButton) SetStateToNormal
   $o(mergeAndBuildbutton) SetStateToNormal
 
   set colorNode [[$merge GetDisplayNode] GetColorNode]
@@ -535,9 +583,7 @@ itcl::body HelperBox::create { } {
     $o(toplevel) Create
 
     set parent $o(toplevel)
-
   }
-
 
   #
   # Master Frame
@@ -581,7 +627,7 @@ itcl::body HelperBox::create { } {
   set o(structuresFrame) [vtkNew vtkKWFrame]
   $o(structuresFrame) SetParent $parent
   $o(structuresFrame) Create
-  pack [$o(structuresFrame) GetWidgetName] -side top -anchor nw -fill both -expand true -padx 2 -pady 2
+  pack [$o(structuresFrame) GetWidgetName] -side top -anchor nw -fill both -expand false -padx 2 -pady 2
   set structuresFrame $o(structuresFrame)
 
   # buttons frame 
@@ -614,7 +660,7 @@ itcl::body HelperBox::create { } {
   set o(structures) [vtkNew vtkKWMultiColumnListWithScrollbars]
   $o(structures) SetParent $structuresFrame
   $o(structures) Create
-  $o(structures) SetHeight 2
+  $o(structures) SetHeight 4
   $o(structures) SetHorizontalScrollbarVisibility 1
   set w [$o(structures) GetWidget]
   $w SetSelectionTypeToCell
@@ -628,7 +674,7 @@ itcl::body HelperBox::create { } {
     $w ColumnEditableOff $col($column)
     $w SetColumnWidth $col($column) $width
   }
-  pack [$o(structures) GetWidgetName] -side top -anchor ne -padx 2 -pady 2 -expand true -fill both
+  pack [$o(structures) GetWidgetName] -side top -anchor ne -padx 2 -pady 2 -expand false -fill x
 
   # all buttons frame 
 
@@ -636,6 +682,15 @@ itcl::body HelperBox::create { } {
   $o(allButtonsFrame) SetParent $structuresFrame
   $o(allButtonsFrame) Create
   pack [$o(allButtonsFrame) GetWidgetName] -side bottom -anchor sw -fill x -padx 2 -pady 2
+
+  # split button
+
+  set o(splitButton) [vtkNew vtkKWPushButton]
+  $o(splitButton) SetParent $o(allButtonsFrame)
+  $o(splitButton) Create
+  $o(splitButton) SetText "Split"
+  $o(splitButton) SetBalloonHelpString "Split distinct labels from merge volume into new volumes"
+  pack [$o(splitButton) GetWidgetName] -side left
 
   # merge button
 
@@ -673,6 +728,7 @@ itcl::body HelperBox::create { } {
   # selection changed event
   $broker AddObservation [$o(structures) GetWidget] 10000 "$this edit"
   # invoked event
+  $broker AddObservation $o(splitButton) 10000 "$this split"
   $broker AddObservation $o(mergeButton) 10000 "$this merge"
   $broker AddObservation $o(mergeAndBuildbutton) 10000 "$this merge; $this build"
 

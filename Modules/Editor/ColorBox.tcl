@@ -95,6 +95,7 @@ itcl::body ColorBox::create { } {
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetMRMLScene $::slicer3::MRMLScene
     $o(colors) Create
+    pack forget [[$o(colors) GetScalarBarAnnotation] GetWidgetName]
     $o(colors) SetColorNode $colorNode 
 
     set tag [$o(colors) AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
@@ -102,7 +103,6 @@ itcl::body ColorBox::create { } {
   }
   pack [$o(colors) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
-
 
   $this setMode $mode
 

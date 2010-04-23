@@ -77,7 +77,6 @@ proc EditorBuildGUI {this} {
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
-
   #
   # Tool Frame
   #
@@ -151,6 +150,7 @@ proc EditorBuildGUI {this} {
     -side left
   set ::Editor(checkPointsEnabled) 0
 
+
   #
   # Editor Volumes
   #
@@ -159,13 +159,15 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesFrame) Create
   $::Editor($this,volumesFrame) SetLabelText "Create & Select Label Maps"
   pack [$::Editor($this,volumesFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -expand true -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -expand false -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   # create the helper box - note this isn't a  kwwidget
   #  but a helper class that creates kwwidgets in the given frame
   set ::Editor($this,editHelper) [::HelperBox #auto]
   $::Editor($this,editHelper) configure -frame [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,editHelper) create
+
+
 }
 
 proc EditorAddGUIObservers {this} {
