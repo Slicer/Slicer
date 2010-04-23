@@ -28,7 +28,7 @@ type and that the input and output image type have the same number of
 dimension and have scalar pixel types.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:histogramMatching-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:histogramMatching-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>
