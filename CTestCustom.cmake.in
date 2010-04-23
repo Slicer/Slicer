@@ -25,6 +25,15 @@ SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
  # Exclude files from the Testing directories
  ".*/Testing/.*"
 
+ # Exclude files that manage GUI 
+ ".*GUI.cxx"
+ ".*Widgets.cxx"
+ "vtkKW.*"
+ "vtkSlicerApplication.h"
+ "vtkSlicerApplication.cxx"
+ "vtkSlicerApplicationSettingsInterface.h"
+ "vtkSlicerApplicationSettingsInterface.h"
+
  # Exclude Qt source files from coverage results:
  "[A-Za-z]./[Qq]t/qt-.+-opensource-src"
  )
