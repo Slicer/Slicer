@@ -381,7 +381,7 @@ double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3]
       std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
     }
 
-    std::cerr << "ChangeTracker will use spacing value " << SuperSampleSpacing << " for ROI resampling" << std::endl;
+//    std::cerr << "ChangeTracker will use spacing value " << SuperSampleSpacing << " for ROI resampling" << std::endl;
     
     return SuperSampleSpacing;
 }
