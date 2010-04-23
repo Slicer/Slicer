@@ -14,11 +14,10 @@ so that their intra-class variance is minimal (see
 http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a
 connected component algorithm to generate unique labels for each
 connected region of the foreground. Finally, the resulting image is
-relabeled to provide consequetive numbering.This filter creates a
-labelled image from a grayscale image.
+relabeled to provide consecutive numbering.
   </description>
   <version>1.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:OtsuThresholdSegmentation-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>
@@ -61,7 +60,7 @@ varying this parameter.
     <boolean>
       <name>faceConnected</name>
       <longflag>--faceConnected</longflag>
-      <description>This is an advanced parameter. Adjacent voxels are face connected. This affects the connected component algorithm. If this parameter is flase, more regions are likely to be identified.</description>
+      <description>This is an advanced parameter. Adjacent voxels are face connected. This affects the connected component algorithm. If this parameter is false, more regions are likely to be identified.</description>
       <label>Face Connected</label>
       <default>true</default>
     </boolean>
