@@ -398,8 +398,8 @@ void vtkChangeTrackerGUI::BuildGUI()
   // -----------------------------------------------------------------------
   // Help
  
-  const char* help_text = "ChangeTracker allows to detect subtle changes in pathology. The change is quantified in mm^3 for growth/shrinkage, and is also visualized with tumor changes color-coded. The module documentation can be found at <a>http://www.slicer.org/slicerWiki/index.php/Modules:ChangeTracker-Documentation-3.4</a>.";
-  const char* ack_text = "ChangTracker has been developed and supported by Kilian Pohl, Ender Konukoglu, Andriy Fedorov and Slicer community. Development of this module was supported through the funding from Brain Science Foundation <a>http://www.brainsciencefoundation.org/</a>";
+  const char* help_text = "ChangeTracker allows to detect subtle changes in pathology. The change is quantified in mm^3 for growth/shrinkage, and is also visualized with tumor changes color-coded. The module documentation can be found at <a>http://www.slicer.org/slicerWiki/index.php/Modules:ChangeTracker-Documentation-3.6</a>.";
+  const char* ack_text = "ChangTracker has been developed and supported by Kilian Pohl, Ender Konukoglu, Andriy Fedorov and Slicer community. PI: Ron Kikinis. Development of this module was supported through the funding from Brain Science Foundation <a>http://www.brainsciencefoundation.org/</a>";
   this->BuildHelpAndAboutFrame(module_page, help_text, ack_text);
 
   // Show the logo
