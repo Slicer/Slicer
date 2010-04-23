@@ -3043,7 +3043,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
     offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
 
     // set the slice index entry to match the new offset
-    SetSliceIndexEntryValueFromOffset(offset);
+    this->SetSliceIndexEntryValueFromOffset(offset);
 
     // set the entry to match
     if (fabs(offset - this->OffsetEntry->GetValueAsDouble()) > 1.0e-6)
