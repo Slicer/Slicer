@@ -253,11 +253,12 @@ void vtkSlicerSeedWidgetClass::PrintSelf ( ostream& os, vtkIndent indent )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
+int vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
 {
+  int seedIndex = -1;
   if (this->GetWidget() == NULL)
     {
-    return;
+    return seedIndex;
     }
 
   if (this->GetWidget()->GetEnabled() == 0)
@@ -274,9 +275,9 @@ void vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
     vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
     if (sr)
       {
-      int index = sr->GetNumberOfSeeds() - 1;
-      this->PointIDToWidgetIndex[std::string(pointID)] = index;
-      vtkDebugMacro("AddSeed: saved mapping of point id " << pointID << " to index " << index);
+      seedIndex = sr->GetNumberOfSeeds() - 1;
+      this->PointIDToWidgetIndex[std::string(pointID)] = seedIndex;
+      vtkDebugMacro("AddSeed: saved mapping of point id " << pointID << " to index " << seedIndex);
       }
     else
       {
@@ -301,6 +302,7 @@ void vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
     {
     vtkErrorMacro("AddSeed: unable to create a new handle.");
     }
+  return seedIndex;
 }
 
 //---------------------------------------------------------------------------
@@ -1261,116 +1263,116 @@ void  vtkSlicerSeedWidgetClass::SetNthSeed(int n, vtkCamera *cam, double *positi
 
   vtkAbstractPolygonalHandleRepresentation3D *rep = NULL;
   rep = vtkAbstractPolygonalHandleRepresentation3D::SafeDownCast(sr->GetHandleRepresentation(n));
-  if (rep)
+  if (!rep)
     {
-    // update the camera
-    vtkPropCollection *pc = vtkPropCollection::New();
-    rep->GetActors(pc);
-    vtkCollectionSimpleIterator pit;
-    vtkProp *aProp;
-    for (pc->InitTraversal(pit);
-         (aProp = pc->GetNextProp(pit)); )
+    vtkErrorMacro("SetNthSeed: Unable to get rep for seed " << n);
+    return;
+    }
+  
+  // update the camera
+  vtkPropCollection *pc = vtkPropCollection::New();
+  rep->GetActors(pc);
+  vtkCollectionSimpleIterator pit;
+  vtkProp *aProp;
+  for (pc->InitTraversal(pit);
+       (aProp = pc->GetNextProp(pit)); )
+    {
+    vtkFollower *a = vtkFollower::SafeDownCast(aProp);
+    if (a)
       {
-      vtkFollower *a = vtkFollower::SafeDownCast(aProp);
-      if (a)
-        {
-        a->SetCamera(cam);
-        }
+      a->SetCamera(cam);
       }
-    pc->Delete();
-    
-    // update the glyph type
-    vtkDebugMacro("Not updating the glyph type here");
-    
-    // update the position
-    rep->SetWorldPosition(position);
-    // update the text
-    rep->SetLabelText(text);
-    
-    // update the flags
-    if (visibilityFlag)
-      {
-      rep->VisibilityOn();
-      rep->HandleVisibilityOn();
-      rep->LabelVisibilityOn();
-      }
-    else
-      {
-      rep->VisibilityOff();
-      rep->HandleVisibilityOff();
-      rep->LabelVisibilityOff();
-      }
-    rep->SetPickable(!lockedFlag);
-    rep->SetDragable(!lockedFlag);
-    // update the colours
-    // check if there's a change first
-    double *widgetColour = this->GetListColor();
-    double *widgetSelectedColour = this->GetListSelectedColor();
-    if (widgetColour[0] != listColour[0] ||
-        widgetColour[1] != listColour[1] ||
-        widgetColour[2] != listColour[2])
-      {
-      this->SetListColor(listColour);
-      }
-    if (widgetSelectedColour[0] != listSelectedColour[0] ||
-        widgetSelectedColour[1] != listSelectedColour[1] ||
-        widgetSelectedColour[2] != listSelectedColour[2])
-      {
-      this->SetListSelectedColor(listSelectedColour);
-      }
-    // update the scales
-    double s[3];
-    s[0] = s[1] = s[2] = textScale;
-    rep->SetLabelTextScale(s);
-    rep->SetUniformScale(glyphScale);
-    
-    // update selected colour on text
-    vtkProperty *textProp = NULL;
-    if (rep->GetLabelTextActor())
-      {
-      textProp = rep->GetLabelTextActor()->GetProperty();
-      if (textProp)
-        {
-        if (selectedFlag)
-          {
-          textProp->SetColor(this->GetListSelectedColor());
-          }
-        else
-          {
-          textProp->SetColor(this->GetListColor()); 
-          }
-        }
-      }
-    else
-      {
-      vtkWarningMacro("SetNthSeed: could not get label text actor for seed " << n);
-      }
-
-    vtkProperty *prop = NULL;
-    prop = rep->GetProperty();
-    // update the colours properties
-    if (prop != NULL)
-      {
-      if (selectedFlag)
-        {
-        prop->SetColor(this->GetListSelectedColor());
-        }
-      else
-        {
-        prop->SetColor(this->GetListColor());
-        }
-      }
-    // set material properties
-    this->SetNthSeedMaterialProperties(n, opacity, ambient, diffuse, specular, power);
-   
-    // trigger a modified event
-    rep->Modified();
+    }
+  pc->Delete();
+  
+  // update the glyph type
+  vtkDebugMacro("Not updating the glyph type here");
+  
+  // update the position
+  rep->SetWorldPosition(position);
+  // update the text
+  rep->SetLabelText(text);
+  
+  // update the flags
+  if (visibilityFlag)
+    {
+    rep->VisibilityOn();
+    rep->HandleVisibilityOn();
+    rep->LabelVisibilityOn();
     }
   else
     {
-    vtkErrorMacro("SetOpacity: Unable to get rep or property for seed " << n);
+    rep->VisibilityOff();
+    rep->HandleVisibilityOff();
+    rep->LabelVisibilityOff();
     }
+  rep->SetPickable(!lockedFlag);
+  rep->SetDragable(!lockedFlag);
+  // update the colours
+  // check if there's a change first
+  double *widgetColour = this->GetListColor();
+  double *widgetSelectedColour = this->GetListSelectedColor();
+  if (widgetColour[0] != listColour[0] ||
+      widgetColour[1] != listColour[1] ||
+      widgetColour[2] != listColour[2])
+    {
+    this->SetListColor(listColour);
+    }
+  if (widgetSelectedColour[0] != listSelectedColour[0] ||
+      widgetSelectedColour[1] != listSelectedColour[1] ||
+      widgetSelectedColour[2] != listSelectedColour[2])
+    {
+    this->SetListSelectedColor(listSelectedColour);
+    }
+  // update the scales
+  double s[3];
+  s[0] = s[1] = s[2] = textScale;
+  rep->SetLabelTextScale(s);
+  rep->SetUniformScale(glyphScale);
+  
+  // update selected colour on text
+  vtkProperty *textProp = NULL;
+  if (rep->GetLabelTextActor())
+    {
+    textProp = rep->GetLabelTextActor()->GetProperty();
+    if (textProp)
+      {
+      if (selectedFlag)
+        {
+        textProp->SetColor(this->GetListSelectedColor());
+        }
+      else
+        {
+        textProp->SetColor(this->GetListColor()); 
+        }
+      }
+    }
+  else
+    {
+    vtkWarningMacro("SetNthSeed: could not get label text actor for seed " << n);
+    }
+  
+  vtkProperty *prop = NULL;
+  prop = rep->GetProperty();
+  // update the colours properties
+  if (prop != NULL)
+    {
+    if (selectedFlag)
+      {
+      prop->SetColor(this->GetListSelectedColor());
+      }
+    else
+      {
+      prop->SetColor(this->GetListColor());
+      }
+    }
+  // set material properties
+  this->SetNthSeedMaterialProperties(n, opacity, ambient, diffuse, specular, power);
+  
+  // trigger a modified event
+  rep->Modified();
 }
+
 
 //--------------------------------------------------------------------------
 std::string vtkSlicerSeedWidgetClass::GetIDFromIndex(int index)

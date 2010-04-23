@@ -71,8 +71,8 @@ public:
   
   /// 
   /// add a seed at location passed in, or just add it if position is NULL
-  /// save the id for removing it later
-  void AddSeed(double *position, const char *id);
+  /// save the id for removing it later. Returns the index of the added seed.
+  int AddSeed(double *position, const char *id);
 
   ///
   /// remove a seed using it's id string

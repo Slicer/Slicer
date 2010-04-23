@@ -750,26 +750,28 @@ void vtkSlicerFiducialListWidget::UpdateSeed(vtkMRMLFiducialListNode *flist, con
     return;
     }
 
+  double worldxyz[4];
+  flist->GetNthFiducialXYZWorld(f, worldxyz);
+  
   // get the index of the seed representing this fiducial
   int seedIndex = seedWidget->GetIndexFromID(fidID);
   if (seedIndex == -1)
     {
-    vtkErrorMacro("UpdateSeed: couldn't get the seed widget index from id " << fidID << ", using fiducial index of " << f);
-    seedIndex = f;
+    vtkErrorMacro("UpdateSeed: couldn't get the seed widget index from id " << fidID << ", adding a new seed for fiducial index of " << f);
+    seedIndex = seedWidget->AddSeed(worldxyz, fidID);;
     }
   else
     {
-    vtkDebugMacro("UpdateSeed: fiducial index = " << f << ", seed index = " << seedIndex);
+    vtkDebugMacro("UpdateSeed: fiducial index = " << f << ", seed index = " << seedIndex << ", from fid id " << fidID);
     }
   
-  double worldxyz[4];
-  flist->GetNthFiducialXYZWorld(f, worldxyz);
+  
 
   // does this seed exist already?
-  if (seedWidget->GetNthSeedExists(f) == 0)
+  if (seedWidget->GetNthSeedExists(seedIndex) == 0)
     {
-    vtkDebugMacro("Seed " << f << " does not exist, adding it");
-    seedWidget->AddSeed(worldxyz, fidID);
+    vtkDebugMacro("UpdateSeed: Seed index " << seedIndex << " for fid index " << f << " does not exist, adding it with ID " << fidID);
+    seedIndex = seedWidget->AddSeed(worldxyz, fidID);
     }
 
   int visib = 1;
@@ -790,67 +792,6 @@ void vtkSlicerFiducialListWidget::UpdateSeed(vtkMRMLFiducialListNode *flist, con
                          flist->GetGlyphType(),
                          flist->GetOpacity(), flist->GetAmbient(), flist->GetDiffuse(), flist->GetSpecular(), flist->GetPower());
 
-  
-  /*
-  // make sure the camera is up to date
-  vtkCamera *cam = this->GetActiveCamera();
-  if (cam)
-    {
-    vtkDebugMacro("Setting " << f << "th seed camera");
-    seedWidget->SetNthSeedCamera(f, cam);
-    }
-  
-  double worldxyz[4];
-  if (flist->GetNthFiducialXYZWorld(f, worldxyz))
-    {
-    // does this seed exist already?
-    if (seedWidget->GetNthSeedExists(f) == 0)
-      {
-      vtkWarningMacro("Seed " << f << " does not exist, adding it");
-      seedWidget->AddSeed(worldxyz);
-      }
-    else
-      {
-      vtkDebugMacro("UpdateSeed: setting position for fid #" << f << ", id " << fidID << " to " << worldxyz[0] << ", " << worldxyz[1] << ", " << worldxyz[2]);
-      seedWidget->SetNthSeedPosition(f, worldxyz);
-      }
-    }
-  else { vtkDebugMacro("UpdateSeed: null world xyz"); }
-
-  // label text
-  const char *txt =  flist->GetNthFiducialLabelText(f);
-  vtkDebugMacro("UpdateSeed: Setting point " << f << " label text to " << (txt == NULL ? "null" : txt) );
-  seedWidget->SetNthLabelText(f,txt);
-                         */
-  /*
-  // only lock the seed if the whole list is locked
-  vtkDebugMacro("UpdateSeed: Setting point " << f << " locked to list lock value " <<  flist->GetLocked());
-  if ( flist->GetLocked())
-    {
-    seedWidget->SetNthSeedLocked(f, 1);
-    }
-  else
-    {
-    seedWidget->SetNthSeedLocked(f, 0);
-    }
-  */
-                         /*
-  int visib = 1;
-  if (flist->GetVisibility() == 0 || flist->GetNthFiducialVisibility(f) == 0)
-    {
-    // Point is not visible
-    visib = 0;
-    }
-  vtkDebugMacro("UpdateSeed: Point " << f << " visible = " << visib);
-  // nth seed visib sets the text visib
-  seedWidget->SetNthSeedVisibility(f, visib);
-  // scales
-  seedWidget->SetNthSeedTextScale(f, flist->GetTextScale());
-  seedWidget->SetNthSeedGlyphScale(f, flist->GetSymbolScale());
-  // selected
-  vtkDebugMacro("UpdateSeed: Point " << f << " selected = " <<  flist->GetNthFiducialSelected(f));
-  seedWidget->SetNthSeedSelected(f, flist->GetNthFiducialSelected(f));
-                         */
   this->RequestRender();
 }
 
