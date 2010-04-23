@@ -465,6 +465,15 @@ proc EditorExit {this} {
   after idle ::EffectSWidget::RemoveAll
 }
 
+proc EditorShowHideTools {showhide} {
+  set this $::Editor(singleton)
+  if { $showhide == "show" } {
+    $::Editor($this,toolsFrame) ExpandFrame
+  } else {
+    $::Editor($this,toolsFrame) CollapseFrame
+  }
+}
+
 # TODO: there might be a better place to put this for general use...  
 proc EditorCreateLabelVolume {this} {
 

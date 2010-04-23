@@ -530,6 +530,7 @@ itcl::body HelperBox::updateStructures {} {
     $o(mergeButton) SetStateToDisabled
     $o(splitButton) SetStateToDisabled
     $o(mergeAndBuildbutton) SetStateToDisabled
+    EditorShowHideTools "hide"
     return
   }
 
@@ -565,6 +566,9 @@ itcl::body HelperBox::updateStructures {} {
     }
     set vNode [$::slicer3::MRMLScene GetNextNodeByClass "vtkMRMLScalarVolumeNode"]
   }
+  
+  # show the tools if a structure has been selected
+  EditorShowHideTools "show"
 }
 
 # create the segmentation helper box
