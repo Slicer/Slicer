@@ -24,6 +24,7 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerColorLogic.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerSegmentationStep);
@@ -319,6 +320,12 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   char segmNodeName[255];
   sprintf(segmNodeName, "%s_VOI_PreSegmented", this->GetGUI()->GetLogic()->GetInputScanName(0));
   this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, segmNodeName);
+  
+  vtkSmartPointer<vtkSlicerColorLogic> colorLogic =
+    vtkSmartPointer<vtkSlicerColorLogic>::New();
+  this->PreSegmentNode->GetDisplayNode()->SetAndObserveColorNodeID
+      (colorLogic->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels));
+
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
   
   this->CreateRender(volumeNode, 0);
@@ -363,6 +370,11 @@ int vtkChangeTrackerSegmentationStep::SegmentScan1Define() {
   sprintf(segmNodeName, "%s_VOI_Segmented", this->GetGUI()->GetLogic()->GetInputScanName(0));
 
   this->SegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(), this->PreSegmentNode, segmNodeName);
+
+  vtkSmartPointer<vtkSlicerColorLogic> colorLogic =
+    vtkSmartPointer<vtkSlicerColorLogic>::New();
+  this->SegmentNode->GetDisplayNode()->SetAndObserveColorNodeID
+      (colorLogic->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels));
 
   //return 1;
 

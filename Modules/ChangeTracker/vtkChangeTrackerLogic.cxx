@@ -20,6 +20,7 @@
 #include "vtkImageMedian3D.h"
 #include "vtkImageAccumulate.h"
 #include "vtkImageShiftScale.h"
+#include "vtkSlicerColorLogic.h"
 //#include "vtkSlicerApplication.h"
 
 // CommandLineModule support
@@ -737,6 +738,12 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
       = (vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::GetInstance()->GetModuleGUIByName("Volumes")))->GetLogic();
     vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
     VolumeOutputNode = volumesLogic->CreateLabelVolume(scene, volumeNode, VolumeOutputName);
+    
+    vtkSmartPointer<vtkSlicerColorLogic> colorLogic =
+    vtkSmartPointer<vtkSlicerColorLogic>::New();
+    VolumeOutputNode->GetDisplayNode()->SetAndObserveColorNodeID
+      (colorLogic->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels));
+    std::cerr << "Setting the label map!" << std::endl;
     }
 
   VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);

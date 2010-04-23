@@ -32,6 +32,7 @@
 #include "vtkKWSpinBox.h"
 #include "vtkKWRadioButton.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkSlicerColorLogic.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -966,6 +967,12 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   vtkSlicerVolumesLogic *volumesLogic = volumesGUI->GetLogic();
   // set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
   this->ROILabelMapNode = volumesLogic->CreateLabelVolume(mrmlScene,volumeNode, "TG_ROI");
+
+  vtkSmartPointer<vtkSlicerColorLogic> colorLogic =
+    vtkSmartPointer<vtkSlicerColorLogic>::New();
+  this->ROILabelMapNode->GetDisplayNode()->SetAndObserveColorNodeID
+    (colorLogic->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Labels));
+
   this->ROILabelMapNode->SetAndObserveImageData(this->ROILabelMap->GetOutput());
 
   // Now show in foreground 

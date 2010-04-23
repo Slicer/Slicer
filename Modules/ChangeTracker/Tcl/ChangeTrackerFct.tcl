@@ -545,6 +545,12 @@ namespace eval ChangeTrackerTcl {
         # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
         set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "ChTracker_Analysis_IntensityDisplay"]
+        
+        set COLOR_LOGIC [vtkSlicerColorLogic New]
+        set colorNodeID [$COLOR_LOGIC GetDefaultColorTableNodeID 10]
+        [$OUTPUT_NODE GetDisplayNode] SetAndObserveColorNodeID $colorNodeID
+        $COLOR_LOGIC Delete
+
         $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinDisplay]
         # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
@@ -1321,7 +1327,7 @@ namespace eval ChangeTrackerTcl {
       # Ignore error messages 
       set SCAN2_NAME [$LOGIC GetInputScanName 1]
       set SCAN2_SEGM_NODE [$LOGIC LoadVolume $::slicer3::Application $SCAN1_TO_SCAN2_SEGM_NAME 1 "${SCAN2_NAME}_VOI_Segmented"]
-
+      
       # load in the Jacobian image, to visualize the deformation
       set JACOBIAN_ANALYSIS_NODE [$LOGIC LoadVolume $::slicer3::Application $ANALYSIS_JACOBIAN_IMAGE 0 "ChTracker_Analysis_Jacobian"]
 
@@ -1330,6 +1336,12 @@ namespace eval ChangeTrackerTcl {
         Print "ERROR: Analysis_Deformable_GUI: Could not load $SCAN2_SEGM_NODE"  
         return 0
       }
+
+      set COLOR_LOGIC [vtkSlicerColorLogic New]
+      set colorNodeID [$COLOR_LOGIC GetDefaultColorTableNodeID 10]
+      [$SCAN2_SEGM_NODE GetDisplayNode] SetAndObserveColorNodeID $colorNodeID
+      $COLOR_LOGIC Delete
+
 
       set BIN [vtkImageThreshold New] 
         $BIN SetOutputScalarTypeToShort 
@@ -1367,6 +1379,11 @@ namespace eval ChangeTrackerTcl {
 
       set VOLUMES_LOGIC [[$::slicer3::Application GetModuleGUIByName "Volumes"] GetLogic]
       set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SCAN1_SEGM_NODE "ChTracker_Analysis_DeformableMap"]
+      set COLOR_LOGIC [vtkSlicerColorLogic New]
+      set colorNodeID [$COLOR_LOGIC GetDefaultColorTableNodeID 10]
+      [$OUTPUT_NODE GetDisplayNode] SetAndObserveColorNodeID $colorNodeID
+      $COLOR_LOGIC Delete
+
       $OUTPUT_NODE SetAndObserveImageData [$THR GetOutput]
       $NODE SetAnalysis_Deformable_Ref [$OUTPUT_NODE GetID]
       $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
