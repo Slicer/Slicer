@@ -422,10 +422,33 @@ void vtkMeasurementsGUI::BuildGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Measurements" );    
 
   // HELP
-  const char* help_text = "The Measurements module allows you to add 3d rulers, 3d angle widgets, or a 2d affine transform editor widget to the 3D window.\nThe first time you toggle on the angle or affine transform widget, you have to click once to render the transform widget, and three times to place the angle widget end points. After that, you can move the widgets around by dragging the handles.\nIn order to get the end points of the ruler or the angle to move along a selected model surface, you currently need to rotate the view so that the handle is rendered on top of the model, the next click will snap it to the model surface. If you move the model or slice plane, the measurement point won't move with it, the constraint only works when moving the end point handle. If you make the model or slice invisible, the end point cannot be moved, as the constraint will always be false.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\nFor more information, see <a>http://www.slicer.org/slicerWiki/index.php/Modules:Measurements-Documentation-3.5</a>\n\n\nUNDER CONSTRUCTION";
-  const char* ack_text = "Measurements was developed by Nicole Aucoin with help from Kitware, Inc.";
+  const char* help_text = "The Measurements module allows you to add rulers in 3D and 3D, and 3D angle widgets.\nYou can move the widgets around by dragging the handles.\nIn order to get the end points of the ruler or the angle to move along a selected model surface, you currently need to rotate the view so that the handle is rendered on top of the model before you set the constraint, the next click on the handle will snap it to the model surface. If you move the model or slice plane, the measurement point won't move with it, the constraint only works when moving the end point handle. If you make the model or slice invisible, the end point cannot be moved, as the constraint will always be false.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\nFor more information, see <a>http://www.slicer.org/slicerWiki/index.php/Modules:Measurements-Documentation-3.6</a>";
+  const char* ack_text = "Measurements was developed by Nicole Aucoin, SPL, BWH (Ron Kikinis) with help from Kitware, Inc., especially Karthik Krishnan. This work was supported by NA-MIC, NAC, BIRN, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
   this->BuildHelpAndAboutFrame(page, help_text, ack_text);
 
+  // logos
+  vtkKWLabel *NACLabel = vtkKWLabel::New();
+  NACLabel->SetParent ( this->GetLogoFrame() );
+  NACLabel->Create();
+  NACLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNACLogo() );
+
+  vtkKWLabel *NAMICLabel = vtkKWLabel::New();
+  NAMICLabel->SetParent ( this->GetLogoFrame() );
+  NAMICLabel->Create();
+  NAMICLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );    
+
+  vtkKWLabel *BIRNLabel = vtkKWLabel::New();
+  BIRNLabel->SetParent ( this->GetLogoFrame() );
+  BIRNLabel->Create();
+  BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
+  app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", NAMICLabel->GetWidgetName());
+  app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w",  NACLabel->GetWidgetName());
+  app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  BIRNLabel->GetWidgetName());
+
+  NACLabel->Delete();
+  NAMICLabel->Delete();
+  BIRNLabel->Delete();
+  
  
   //
   // Ruler
