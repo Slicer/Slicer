@@ -77,6 +77,24 @@ proc EditorBuildGUI {this} {
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
+
+  #
+  # Editor Volumes
+  #
+  set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
+  $::Editor($this,volumesFrame) SetParent $pageWidget
+  $::Editor($this,volumesFrame) Create
+  $::Editor($this,volumesFrame) SetLabelText "Create & Select Label Maps"
+  pack [$::Editor($this,volumesFrame) GetWidgetName] \
+    -side top -anchor nw -fill x -expand false -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  # create the helper box - note this isn't a  kwwidget
+  #  but a helper class that creates kwwidgets in the given frame
+  set ::Editor($this,editHelper) [::HelperBox #auto]
+  $::Editor($this,editHelper) configure -frame [$::Editor($this,volumesFrame) GetFrame]
+  $::Editor($this,editHelper) create
+
+
   #
   # Tool Frame
   #
@@ -141,39 +159,19 @@ proc EditorBuildGUI {this} {
 
   # Enable check point check button
   set ::Editor($this,enableCheckPoint) [vtkKWCheckButton New]
-  $::Editor($this,enableCheckPoint) SetParent $::Editor($this,toolsFrame)
+  $::Editor($this,enableCheckPoint) SetParent $::Editor($this,toolsEditFrame)
   $::Editor($this,enableCheckPoint) Create
   $::Editor($this,enableCheckPoint) SetText "Enable Volume Check Points"
   $::Editor($this,enableCheckPoint) SetBalloonHelpString "Volume Check Points allow you to move back and forth through recent edits.\n\nNote: for large volumes, you may run out of system memory when this is enabled."
   $::Editor($this,enableCheckPoint) SetSelectedState 0
-  pack [$::Editor($this,enableCheckPoint) GetWidgetName] \
-    -side left
+  pack [$::Editor($this,enableCheckPoint) GetWidgetName] -side bottom
   set ::Editor(checkPointsEnabled) 0
-
-
-  #
-  # Editor Volumes
-  #
-  set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
-  $::Editor($this,volumesFrame) SetParent $pageWidget
-  $::Editor($this,volumesFrame) Create
-  $::Editor($this,volumesFrame) SetLabelText "Create & Select Label Maps"
-  pack [$::Editor($this,volumesFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -expand false -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
-
-  # create the helper box - note this isn't a  kwwidget
-  #  but a helper class that creates kwwidgets in the given frame
-  set ::Editor($this,editHelper) [::HelperBox #auto]
-  $::Editor($this,editHelper) configure -frame [$::Editor($this,volumesFrame) GetFrame]
-  $::Editor($this,editHelper) create
-
 
 }
 
 proc EditorAddGUIObservers {this} {
     $this AddObserverByNumber $::Editor($this,enableCheckPoint) 10000 
 
-# $this DebugOn
     if {[$this GetDebug]} {
         puts "Adding mrml observer to selection node, modified event"
     }
@@ -467,6 +465,9 @@ proc EditorExit {this} {
 
 proc EditorShowHideTools {showhide} {
   set this $::Editor(singleton)
+  if { ![info exists ::Editor($this,toolsFrame)] } {
+    return
+  } 
   if { $showhide == "show" } {
     $::Editor($this,toolsFrame) ExpandFrame
   } else {
@@ -541,15 +542,19 @@ proc EditorFreeCheckPointVolumes {} {
 }
 
 proc EditorUpdateCheckPointButtons {} {
-  if { $::Editor(previousCheckPointImages) != "" } {
-    EditBox::SetButtonState PreviousCheckPoint ""
-  } else {
-    EditBox::SetButtonState PreviousCheckPoint Disabled
+  if { [info exists ::Editor(previousCheckPointImages)] } {
+    if { $::Editor(previousCheckPointImages) != "" } {
+      EditBox::SetButtonState PreviousCheckPoint ""
+    } else {
+      EditBox::SetButtonState PreviousCheckPoint Disabled
+    }
   }
-  if { $::Editor(nextCheckPointImages) != "" } {
-    EditBox::SetButtonState NextCheckPoint ""
-  } else {
-    EditBox::SetButtonState NextCheckPoint Disabled
+  if { [info exists ::Editor(nextCheckPointImages)] } {
+    if { $::Editor(nextCheckPointImages) != "" } {
+      EditBox::SetButtonState NextCheckPoint ""
+    } else {
+      EditBox::SetButtonState NextCheckPoint Disabled
+    }
   }
 }
 

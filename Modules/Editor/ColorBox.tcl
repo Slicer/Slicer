@@ -41,6 +41,8 @@ if { [itcl::find class ColorBox] == "" } {
     public variable selectCommand ""
     public variable colorNode ""
 
+    variable col ;# array of column indices (for easy access)
+
     # methods
     method create {} {}
     method update {} {}
@@ -90,15 +92,35 @@ itcl::body ColorBox::create { } {
 
   } else {
 
-    # pay attention to the color node
-    set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
+    # pay attention to the color node - fill a list box with entries
+    set o(colors) [vtkNew vtkKWMultiColumnListWithScrollbars]
     $o(colors) SetParent $o(toplevel)
-    $o(colors) SetMRMLScene $::slicer3::MRMLScene
     $o(colors) Create
-    pack forget [[$o(colors) GetScalarBarAnnotation] GetWidgetName]
-    $o(colors) SetColorNode $colorNode 
+    set w [$o(colors) GetWidget]
+    $w SetSelectionTypeToRow
+    $w MovableRowsOff
+    $w MovableColumnsOn
+    $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+    $w SetColumnSortedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
-    set tag [$o(colors) AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
+    foreach column {Number Color Name} text {Number Color Name} width {7 6 15} {
+      set col($column) [$w AddColumn $column]
+      $w ColumnEditableOff $col($column)
+      $w SetColumnWidth $col($column) $width
+    }
+
+    # fill in colors to pick from
+    set numberOfColors [$colorNode GetNumberOfColors]
+    set lut [$colorNode GetLookupTable]
+    for {set c 0} {$c < $numberOfColors} {incr c} {
+      # add it to the listbox
+      set row [$w GetNumberOfRows]
+      $w InsertCellText $row $col(Number) "$c"
+      eval $w SetCellBackgroundColor $row $col(Color) [lrange [$lut GetTableValue $c] 0 2]
+      $w InsertCellText $row $col(Name) [$colorNode GetColorName $c]
+    }
+
+    set tag [[$o(colors) GetWidget] AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
   }
   pack [$o(colors) GetWidgetName] \
@@ -119,7 +141,8 @@ itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
   set colorIndex 1
   if { $caller == $o(colors) } {
     if { [$o(colors) GetClassName] != "vtkKWPushButton" } {
-      set colorIndex [$o(colors) GetSelectedColorIndex]
+      set row [[$o(colors) GetWidget] GetIndexOfFirstSelectedRow]
+      set colorIndex [[$o(colors) GetWidget] GetCellText $row $col(Number)]
     }
     if { $selectCommand != "" } {
       set cmd [format $selectCommand $colorIndex]

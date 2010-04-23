@@ -172,6 +172,7 @@ itcl::body EditColor::updateGUI {label} {
   if { $colorNode != "" } {
     set lut [$colorNode GetLookupTable]
     eval $o(colorPatch) SetBackgroundColor [lrange [$lut GetTableValue $label] 0 2]
+    [$o(colorSpin) GetWidget] SetRange 0 [expr [$colorNode GetNumberOfColors] - 1]
   }
 }
 
