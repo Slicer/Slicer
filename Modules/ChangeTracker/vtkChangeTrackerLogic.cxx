@@ -1241,8 +1241,9 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
   this->Analysis_Intensity_ROINegativeBinReal->Update();
 
   if(segment != NULL){
-    connectivityMask = GetConnectivityMask(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput(),
-      this->Analysis_Intensity_ROINegativeBinReal->GetOutput(), segment);
+    connectivityMask = vtkImageData::New();
+    GetConnectivityMask(this->Analysis_Intensity_ROIPositiveBinReal->GetOutput(),
+      this->Analysis_Intensity_ROINegativeBinReal->GetOutput(), segment, connectivityMask);
 
     if(connectivityMask){
       // include only those pixels in the growth/shrink map that are connected
@@ -1717,8 +1718,8 @@ void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
 
 // return the mask that will be applied to the growth/shrinkage analysis
 // results
-vtkImageData* vtkChangeTrackerLogic::GetConnectivityMask(vtkImageData* growthImage, 
-  vtkImageData* shrinkImage, vtkImageData *segImage){
+void vtkChangeTrackerLogic::GetConnectivityMask(vtkImageData* growthImage, 
+  vtkImageData* shrinkImage, vtkImageData *segImage, vtkImageData *connMask){
 
   typedef itk::Image<short, 3> ImageType;
   typedef itk::Image<float, 3> DTImageType;
@@ -1793,16 +1794,12 @@ vtkImageData* vtkChangeTrackerLogic::GetConnectivityMask(vtkImageData* growthIma
     itk2vtk->GetImporter()->Update();
   } catch(itk::ExceptionObject &e){
     std::cerr << "Exception: " << e << std::endl;
-    return NULL;
+    return;
   }
   vtkImageCast *cast = vtkImageCast::New();
   cast->SetInput(itk2vtk->GetOutput());
   cast->SetOutputScalarTypeToUnsignedChar();
   cast->Update();
-
-  vtkImageData* result = vtkImageData::New();
-  result->DeepCopy(cast->GetOutput());
+  connMask->DeepCopy(cast->GetOutput());
   cast->Delete();
-
-  return result;
 }
