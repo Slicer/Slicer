@@ -6,6 +6,7 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelTransformNode.h"
+#include "vtkModelTransformLogic.h"
 
 
 // Had to add this to force loading of these support libraries
@@ -33,7 +34,20 @@ class VTK_MODELTRANSFORM_EXPORT vtkModelTransformGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro ( ModelSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( TransformSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( ModelOutSelector, vtkSlicerNodeSelectorWidget );
-  
+
+  // Description:
+  // Set the logic pointer from parent class pointer.
+  // Overloads implementation in vtkSlicerModulesGUI
+  // to allow loadable modules.
+  virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+  {
+  this->SetLogic(reinterpret_cast<vtkModelTransformLogic*> (logic)); 
+  }
+
+   // Description: Get/Set MRML node
+  vtkGetObjectMacro (Logic, vtkModelTransformLogic);
+  vtkSetObjectMacro (Logic, vtkModelTransformLogic);
+
   virtual void BuildGUI ( );
   //BTX
   using vtkSlicerComponentGUI::BuildGUI; 
@@ -84,6 +98,8 @@ protected:
   vtkMRMLModelTransformNode   *ModelTransformNode;
   vtkMRMLModelNode            *ModelNode;
   vtkMRMLTransformNode        *TransformNode;
+
+  vtkModelTransformLogic  *Logic;
 
 
   // Description:

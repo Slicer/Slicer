@@ -55,6 +55,8 @@ vtkModelTransformGUI::vtkModelTransformGUI()
 {
   this->UpdatingMRML = 0;
   this->UpdatingGUI = 0;
+
+  this->Logic = NULL;
     
   this->ModelTransformNode = NULL;
   this->ModelNode = NULL;
@@ -709,6 +711,7 @@ void vtkModelTransformGUI::CreateParameterNode ( )
     {
     param = vtkMRMLModelTransformNode::New();
     this->GetMRMLScene()->AddNodeNoNotify(param);
+    param->Delete();
     }
   vtkSetAndObserveMRMLNodeMacro(this->ModelTransformNode, param);
 
