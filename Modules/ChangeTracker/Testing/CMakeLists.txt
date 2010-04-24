@@ -69,9 +69,9 @@ add_executable(ChangeTrackerTest ChangeTrackerTest.cxx)
 add_dependencies(ChangeTrackerTest ChangeTrackerCommandLine)
 target_link_libraries(ChangeTrackerTest 
                       ChangeTracker
-                      ITKIO 
-                      ITKCommon 
-                      vtkTeem
+#                      ITKIO 
+#                      ITKCommon 
+#                      vtkTeem
 )
 
 add_test(ChangeTrackerCL_Help 
