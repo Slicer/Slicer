@@ -77,8 +77,8 @@ proc CropVolumeBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "This module extracts subvolume of the image described by Region of Interest widget.\n\nTo use:\n(1) specify input volume\n(2) specify ROI\n(3) adjust ROI\n(4) specify output volume\n(5) choose interpolation method\n(6) choose resampling scale\nNote: 0.5 as resampling scale will multiply spacing in each dimension by 0.5 to get new spacing (resampled image will have twice as many pixels in each dimension), 2 as resampling scale will result in the new image with two times *less* pixels in each dimension.\n\nUse mouse in slice views to adjust ROI: Left click -- resize, Right click -- re-center\nDocumentation:<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:CropVolume-Documentation-3.5</a>"
-  set abouttext "This module was developed by Andriy Fedorov and Ron Kikinis.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set helptext "This module extracts subvolume of the image described by Region of Interest widget.\n\nTo use:\n(1) specify input volume\n(2) specify ROI\n(3) adjust ROI\n(4) specify output volume\n(5) choose interpolation method\n(6) choose resampling scale\nNote: 0.5 as resampling scale will multiply spacing in each dimension by 0.5 to get new spacing (resampled image will have twice as many pixels in each dimension), 2 as resampling scale will result in the new image with two times *less* pixels in each dimension.\n\nUse mouse in slice views to adjust ROI: Left click -- resize, Right click -- re-center\nDocumentation:<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:CropVolume-Documentation-3.6</a>"
+  set abouttext "This module was developed by Andriy Fedorov and Ron Kikinis. PI: Ron Kikinis. \nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
   set slicerBaseIcons [vtkSlicerBaseAcknowledgementLogoIcons New]
