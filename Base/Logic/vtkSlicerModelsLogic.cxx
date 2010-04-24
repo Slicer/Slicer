@@ -14,6 +14,10 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkSmartPointer.h"
+#include "vtkGeneralTransform.h"
+#include "vtkPolyDataNormals.h"
+
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
@@ -26,6 +30,7 @@
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLTransformNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
@@ -360,4 +365,57 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
   return 1;
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode, 
+                                          vtkMRMLModelNode *modelNode,
+                                          int transformNormals,
+                                          vtkMRMLModelNode *modelOut)
+{
+  if (!modelNode || !modelOut || !tnode)
+    {
+    return;
+    }
+
+  vtkPolyData *poly = vtkPolyData::New();
+  modelOut->SetAndObservePolyData(poly);
+  poly->Delete();
+
+  poly->DeepCopy(modelNode->GetPolyData());
+
+  vtkMRMLTransformNode *mtnode = modelNode->GetParentTransformNode();
+
+  vtkGeneralTransform *transform = tnode->GetTransformToParent();
+  modelOut->ApplyTransform(transform);
+
+  if (transformNormals)
+    {
+    // fix normals
+    //--- NOTE: This filter recomputes normals for polygons and
+    //--- triangle strips only. Normals are not computed for lines or vertices.
+    //--- Triangle strips are broken up into triangle polygons.
+    //--- Polygons are not automatically re-stripped.
+    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+    normals->SetInput ( poly );
+    //--- NOTE: This assumes a completely closed surface
+    //---(i.e. no boundary edges) and no non-manifold edges.
+    //--- If these constraints do not hold, the AutoOrientNormals
+    //--- is not guaranteed to work.
+    normals->AutoOrientNormalsOn();
+    //--- Flipping modifies both the normal direction
+    //--- and the order of a cell's points.
+    normals->FlipNormalsOn();
+    normals->SplittingOff();
+    //--- enforce consistent polygon ordering.
+    normals->ConsistencyOn();
+
+    normals->Update();
+    modelOut->SetAndObservePolyData(normals->GetOutput());
+
+    normals->Delete();
+   }
+
+  modelOut->SetAndObserveTransformNodeID(mtnode == NULL ? NULL : mtnode->GetID());
+
+  return;
+}
 

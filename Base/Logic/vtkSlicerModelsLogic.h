@@ -62,6 +62,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   /// Read in a scalar overlay and add it to the model node
   int AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
+  ///
+  /// Transfor models's polydata
+  static void TransformModel(vtkMRMLTransformNode *tnode, 
+                              vtkMRMLModelNode *modelNode, 
+                              int transformNormals,
+                              vtkMRMLModelNode *modelOut);
+
   /// 
   /// Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
