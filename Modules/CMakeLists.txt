@@ -68,6 +68,7 @@ SET(modules
 # WFEngineModule  <- can't work with 2.6 and Win32??
 # MRAblation <- not working either
   ModelMirror
+  ModelTransform
   EMSegment
   DistanceTransformModel
   ClipModel
