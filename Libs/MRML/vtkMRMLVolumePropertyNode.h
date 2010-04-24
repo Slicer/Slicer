@@ -102,6 +102,19 @@ public:
     /// Create default storage node or NULL if does not have one
     virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+    /// 
+    /// Put parameters described in a String into an existing vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
+    void GetPiecewiseFunctionFromString(char *str,vtkPiecewiseFunction* result) 
+    {
+      this->GetPiecewiseFunctionFromString(std::string (str), result);
+    };
+
+    /// 
+    /// Put parameters described in a String into an existing vtkColorTransferFunction, use together with getColorTransferFunctionString
+    void GetColorTransferFunctionFromString(char *str, vtkColorTransferFunction* result)
+    {
+      GetColorTransferFunctionFromString(std::string (str), result);
+    };
 
 protected:
     /// 
