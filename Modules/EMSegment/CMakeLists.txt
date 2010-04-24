@@ -76,7 +76,7 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/IBM/*.cxx"
   )
 
-file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "IBM/*.tcl")
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "IBM/*.tcl" "Tcl/*.tcl" )
 
 foreach(file ${TCLFILES})
   configure_file(
@@ -164,6 +164,10 @@ if (IBM_FLAG)
   set(EMSegment_SRCS ${EMSegment_SRCS}
    ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkEMSegmentInputChannelsStep.cxx
    ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkEMSegmentPreProcessingStep.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageGraph.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkIndirectLookupTable.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageDrawObjects.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageCurveRegion.cxx
   )
 endif(IBM_FLAG)
 

@@ -22,6 +22,11 @@
 
 #include "vtkSlicerInteractorStyle.h"
 
+#if IBM_FLAG
+#include "vtkKWPushButton.h"
+#include "vtkEMSegmentIBMIntensityDistributionsStep.cxx"
+#endif
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityDistributionsStep);
 vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep, "$Revision: 1.2 $");
@@ -43,6 +48,9 @@ vtkEMSegmentIntensityDistributionsStep::vtkEMSegmentIntensityDistributionsStep()
   this->IntensityDistributionCovarianceMatrix        = NULL;
   this->IntensityDistributionManualSamplingList      = NULL;
   this->ContextMenu  = NULL;
+#if IBM_FLAG
+  this->ShowGraphButton = NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -83,6 +91,15 @@ vtkEMSegmentIntensityDistributionsStep::~vtkEMSegmentIntensityDistributionsStep(
     this->ContextMenu->Delete();
     this->ContextMenu = NULL;
     }
+
+#if IBM_FLAG
+  if (this->ShowGraphButton) {
+    this->ShowGraphButton->Delete();
+    this->ShowGraphButton = NULL;     
+  }
+  this->RemovePlot();
+#endif
+
 }
 
 //----------------------------------------------------------------------------
@@ -263,6 +280,10 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   // Update the UI with the proper value, if there is a selection
 
   this->DisplaySelectedNodeIntensityDistributionsCallback();
+
+#if IBM_FLAG
+  this->ShowIBMUserInterface(parent);
+#endif 
 }
 
 //----------------------------------------------------------------------------
@@ -272,6 +293,10 @@ void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
   this->RemoveManualIntensitySamplingGUIObservers();
 }
 
+#if !IBM_FLAG
+void vtkEMSegmentIntensityDistributionsStep::PlotDistributionCallback() {
+}
+#endif
 //----------------------------------------------------------------------------
 void 
 vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistributionsCallback()

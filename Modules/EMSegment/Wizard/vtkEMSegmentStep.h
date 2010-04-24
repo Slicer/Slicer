@@ -32,6 +32,10 @@ public:
   // Have to do it bc for some reason TCL Wrapping ignores this flag !
   //BTX
   int SourceTclFile(const char *tclFile);
+  void SetNextStep(vtkEMSegmentStep *init); 
+  vtkEMSegmentStep *NextStep;
+  virtual void RemoveResults() { } 
+  virtual void ShowUserInterface();
   //ETX
 #endif 
 

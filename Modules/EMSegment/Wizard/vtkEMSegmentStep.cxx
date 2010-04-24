@@ -18,6 +18,9 @@ vtkCxxSetObjectMacro(vtkEMSegmentStep,GUI,vtkEMSegmentGUI);
 vtkEMSegmentStep::vtkEMSegmentStep()
 {
   this->GUI = NULL;
+#if IBM_FLAG
+  this->NextStep = NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -27,6 +30,7 @@ vtkEMSegmentStep::~vtkEMSegmentStep()
 }
 
 //----------------------------------------------------------------------------
+
 void vtkEMSegmentStep::HideUserInterface()
 {
   this->Superclass::HideUserInterface();

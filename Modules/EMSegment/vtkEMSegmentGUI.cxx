@@ -498,6 +498,9 @@ void vtkEMSegmentGUI::BuildGUI()
     this->IntensityDistributionsStep->SetGUI(this);
     }
   wizard_workflow->AddNextStep(this->IntensityDistributionsStep);
+#if IBM_FLAG
+  this->PreProcessingStep->SetNextStep(this->IntensityDistributionsStep);
+#endif 
 
   // -----------------------------------------------------------------
   // Node Parameters step

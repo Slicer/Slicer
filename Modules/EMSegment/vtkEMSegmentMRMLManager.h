@@ -302,6 +302,7 @@ public:
   // index in [0, #selected volumes)
   virtual vtkIdType   GetTargetSelectedVolumeNthID(int n); 
   virtual const char* GetTargetSelectedVolumeNthMRMLID(int n); 
+
   //BTX
   virtual void
     ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeID);
@@ -456,6 +457,10 @@ public:
   //BTX
   virtual vtkIdType GetRegistrationAtlasVolumeID(vtkIdType inputID);
   virtual void      SetRegistrationAtlasVolumeID(vtkIdType inputID, vtkIdType volumeID);
+
+  virtual void   SetTargetSelectedVolumeNthID(int n, vtkIdType newVolumeID); 
+  virtual void SetTargetSelectedVolumeNthMRMLID(int n, const char* mrmlID); 
+
   //ETX
 #endif
 

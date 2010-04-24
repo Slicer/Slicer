@@ -8,6 +8,8 @@ class vtkKWMatrixWidgetWithLabel;
 class vtkKWNotebook;
 class vtkKWMultiColumnListWithScrollbarsWithLabel;
 class vtkKWMenuButtonWithLabel;
+class vtkKWPushButton;
+class vtkKWWidget;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityDistributionsStep : public vtkEMSegmentStep
 {
@@ -41,6 +43,8 @@ public:
   virtual void RemoveManualIntensitySamplingGUIObservers();
   virtual void ProcessManualIntensitySamplingGUIEvents(
     vtkObject *caller, unsigned long event, void *callData);
+  
+  virtual void PlotDistributionCallback(); 
 
 protected:
   vtkEMSegmentIntensityDistributionsStep();
@@ -55,6 +59,13 @@ protected:
   vtkKWMenu                  *ContextMenu;
 
   virtual void AddIntensityDistributionSamplePoint(double ras[3]);
+#if IBM_FLAG
+  vtkKWPushButton           *ShowGraphButton;
+  void ShowIBMUserInterface(vtkKWWidget *parent);
+  void RemovePlot();
+  void RemoveResults() { this->RemovePlot(); }
+
+#endif
 
 private:
   vtkEMSegmentIntensityDistributionsStep(const vtkEMSegmentIntensityDistributionsStep&);
