@@ -150,7 +150,7 @@ public:
   char* GetInputScanName(int);
 
   void SetThresholdsFromSegmentation();
-  vtkImageData* GetConnectivityMask(vtkImageData*,vtkImageData*,vtkImageData*);
+  void GetConnectivityMask(vtkImageData*,vtkImageData*,vtkImageData*,vtkImageData*);
 
 private:
   vtkChangeTrackerLogic();
