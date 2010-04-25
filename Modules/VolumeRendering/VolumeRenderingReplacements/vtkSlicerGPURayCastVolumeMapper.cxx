@@ -187,7 +187,7 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
   if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
     return;
     
-  this->RaySteps *= targetTime/(this->TimeToDraw*1.33);
+  this->RaySteps *= targetTime/(this->TimeToDraw*1.5);
 
   int dim[3];
   this->GetVolumeDimensions(dim);
@@ -195,7 +195,7 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];
-  maxRaysteps *= 128.0f; //make sure we have enough sampling rate to recover details
+  maxRaysteps *= 8.0f; //make sure we have enough sampling rate to recover details
 
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
 
@@ -1290,6 +1290,51 @@ void vtkSlicerGPURayCastVolumeMapper::LoadBgFgFragmentShader()
         case 2:
           break;
         case 3:
+          break;
+      }
+      break;
+    case 4:
+      switch(this->TechniqueFg)
+      {
+        case 4:
+          switch(this->ColorOpacityFusion)
+          {
+            case 0://alpha blending or
+              fp_oss <<
+                "{                                                                                           \n"
+                "  while( (t < rayLen) && (alpha < 0.975) )                                                  \n"
+                "  {                                                                                         \n"
+                "    vec4 nextColorA = voxelColorA(nextRayOrigin);                                           \n"
+                "    vec4 nextColorB = voxelColorB(nextRayOrigin);                                           \n"
+                "    float tempAlphaA = nextColorA.w;                                                        \n"
+                "    float tempAlphaB = nextColorB.w;                                                        \n"
+                "                                                                                            \n"
+                "    if (tempAlphaA > 0.0)                                                                   \n"
+                "    {                                                                                       \n"
+                "      nextColorA = directionalLightA(nextRayOrigin, lightDir, nextColorA);                  \n"
+                "                                                                                            \n"
+                "      tempAlphaA *= (1.0 - alpha)*texture3D(TextureNormalA, nextRayOrigin).w;               \n"
+                "      pixelColor += nextColorA * tempAlphaA * (1.0 - fgRatio);                              \n"
+                "      alphaA += tempAlphaA;                                                                 \n"
+                "    }                                                                                       \n"
+                "    alpha = alphaA * (1.0 - fgRatio) + alphaB * fgRatio;                                    \n"
+                "    if (tempAlphaB > 0.0)                                                                   \n"
+                "    {                                                                                       \n"
+                "      nextColorB = directionalLightB(nextRayOrigin, lightDir, nextColorB);                  \n"
+                "                                                                                            \n"
+                "      tempAlphaB *= (1.0 - alpha)*texture3D(TextureNormalB, nextRayOrigin).w;               \n"
+                "      pixelColor += nextColorB * tempAlphaB * fgRatio;                                      \n"
+                "      alphaB += tempAlphaB;                                                                 \n"
+                "    }                                                                                       \n"
+                "                                                                                            \n"
+                "    alpha = alphaA * (1.0 - fgRatio) + alphaB * fgRatio;                                    \n"
+                "    t += ParaMatrix[0][3];                                                                  \n"
+                "    nextRayOrigin += rayStep;                                                               \n"
+                "  }                                                                                         \n"
+                "}                                                                                           \n"
+                "gl_FragColor = vec4(pixelColor.xyz, alpha);                                                 \n";
+              break;
+          }
           break;
       }
       break;

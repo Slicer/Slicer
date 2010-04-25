@@ -223,11 +223,11 @@ protected:
    * because different machines may or maybe not support the same mapper
    * values of CurrentVolumeMapper
    *-1: not initialized (default)
-   * 0: CPU ray cast
-   * 1: GPU ray cast
-   * 2: GPU ray cast II
-   * 3: GPU texture mapping
-   * 4: VTK GPU ray cast
+   * 0: VTK CPU ray cast
+   * 1: VTK GPU ray cast
+   * 2: VTK GPU texture mapping
+   * 3: NCI GPU ray cast
+   * 4: NCI GPU ray cast (multi-volume)
    */
   int CurrentVolumeMapper;
 
@@ -240,6 +240,8 @@ protected:
    * 3: 1.0G
    * 4: 1.5G
    * 5: 2.0G
+   * 6: 3.0G
+   * 7: 4.0G
    */
   int GPUMemorySize;
 

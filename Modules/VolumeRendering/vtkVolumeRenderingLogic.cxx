@@ -709,6 +709,18 @@ void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
     break;
+  case 6://3.0G
+    this->MapperGPURaycast->SetInternalVolumeSize(700);
+    this->MapperGPURaycastII->SetInternalVolumeSize(700);
+    this->MapperGPURaycast3->SetMaxMemoryInBytes(3071*1024*1024);
+    this->MapperTexture->SetInternalVolumeSize(512);
+    break;
+  case 7://4.0G
+    this->MapperGPURaycast->SetInternalVolumeSize(800);
+    this->MapperGPURaycastII->SetInternalVolumeSize(800);
+    this->MapperGPURaycast3->SetMaxMemoryInBytes(4095*1024*1024);
+    this->MapperTexture->SetInternalVolumeSize(512);
+    break;
   }
 }
 
@@ -840,7 +852,7 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
     this->Volume->SetMapper(this->MapperRaycast);
     this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
     break;
-  case 1:
+  case 3:
     this->MapperGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
     this->MapperGPURaycast->SetFramerate(vspNode->GetExpectedFPS());
     if (this->MapperGPURaycast->IsRenderSupported(vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
@@ -851,7 +863,7 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
     else
       return -1;
     break;
-  case 2:
+  case 4:
     this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
     if (vspNode->GetFgVolumeNode())
       this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
@@ -865,7 +877,7 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
     else
       return -1;
     break;
-  case 3:
+  case 2:
     this->MapperTexture->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
     this->MapperTexture->SetSampleDistance(vspNode->GetEstimatedSampleDistance());
     this->MapperTexture->SetFramerate(vspNode->GetExpectedFPS());
@@ -877,7 +889,7 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
     else
       return -1;
     break;
-  case 4:
+  case 1:
     this->MapperGPURaycast3->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
     
     //this->MapperGPURaycast3->SetFramerate(vspNode->GetExpectedFPS());
@@ -1008,7 +1020,7 @@ void vtkVolumeRenderingLogic::TransformModified(vtkMRMLVolumeRenderingParameters
 
 void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  if (vspNode->GetCurrentVolumeMapper() == 2)
+  if (vspNode->GetCurrentVolumeMapper() == 4)
   {
     this->CreateVolumePropertyGPURaycastII(vspNode);
     this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
@@ -1017,7 +1029,7 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
 
 void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  if (vspNode->GetCurrentVolumeMapper() != 2)
+  if (vspNode->GetCurrentVolumeMapper() != 4)
     return;
 
   if (this->VolumePropertyGPURaycastII != NULL)
