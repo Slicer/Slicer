@@ -2,6 +2,10 @@ include_directories( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 
 link_directories( ${RegisterImagesMultiResApplications_BUILD_DIR} )
 
+set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+
 set(RegisterImagesMultiResApplicationsTests_SOURCE
     FixedRotationSimilarity3DTransformTest.cxx
     EulerSimilarity3DTransformTest.cxx
@@ -56,3 +60,15 @@ add_test(ConvertSlicerROIToRegionTest
 add_test(CountSamplesTest
          ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
          CountSamplesTest)
+
+add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
+target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
+
+add_test(RegisterImagesMultiResTest ${Slicer3_EXE} --launch RegisterImagesMultiResTest
+  --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
+  ${TEMP}/RegisterImagesMultiResResult.nrrd
+  ModuleEntryPoint
+  ${MRML_TEST_DATA}/fixed.nrrd
+  ${MRML_TEST_DATA}/moving.nrrd
+  --resampledImage   ${TEMP}/RegisterImagesMultiResResult.nrrd
+  )
