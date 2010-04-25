@@ -12,6 +12,7 @@ void writeimage(const T* image,
   typename itk::ImageFileWriter<T>::Pointer writer = 
     itk::ImageFileWriter<T>::New();
   writer->SetFileName(filename);
+  writer->UseCompressionOn();
   writer->SetInput(image);
   writer->Update();
 }
@@ -44,6 +45,7 @@ void writeimage(const T* image,
   typename itk::ImageFileWriter<itk::Image<short, 3> >::Pointer writer = 
     itk::ImageFileWriter<itk::Image<short, 3> >::New();
   writer->SetFileName(filename);
+  writer->UseCompressionOn();
   writer->SetInput(resampler->GetOutput());
   writer->Update();
 }
