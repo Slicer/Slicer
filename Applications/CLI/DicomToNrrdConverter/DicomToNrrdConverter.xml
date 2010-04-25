@@ -19,7 +19,7 @@
   </description>
   <version>0.2.0.$Revision: 916 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DicomToNRRD-3.4</documentation-url>
-  <license>http://www.slicer.org/copyright/copyright.txt</license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>Xiaodong Tao</contributor>
 <acknowledgements>
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.
