@@ -126,6 +126,13 @@ vtkModelTransformGUI::~vtkModelTransformGUI()
       }
 
     this->Raised = false;
+
+    if ( this->Logic )
+      {
+      this->Logic->Delete();
+      this->Logic = NULL;
+      }
+
 //    this->SetAndObserveMRMLScene ( NULL );    
 }
 
