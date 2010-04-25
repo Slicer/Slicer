@@ -9,7 +9,10 @@ proc ImportVvt {file out} {
   set root [$parser GetRootElement]
 
   set sc [vtkMRMLScene New]
-  
+  set vp [vtkMRMLVolumePropertyNode New]
+
+  set ::vp $vp
+
   set ::so(values) ""
   set ::so(inside) ""
   set ::so(count) 0
@@ -27,35 +30,45 @@ proc ImportVvt {file out} {
 
   ImportElement $root
 
-  puts "ScalarOpacity parsed"
-  puts $::so(count)
-  puts $::so(values)
-
-  puts "GradientOpacity parsed"
-  puts $::go(count)
-  puts $::go(values)
-
-  puts "ColorTransferFunction parsed"
-  puts $::ct(count)
-  puts $::ct(values)
-
   set so $::so(count)
-
+  append so " "
   append so $::so(values)
-
   puts "ScalarOpacity"
   puts $so
 
-  set vp [vtkMRMLVolumePropertyNode New]
+  set go $::go(count)
+  append go " "
+  append go $::go(values)
+  puts "GradientOpacity"
+  puts $go
+
+  set ct $::ct(count)
+  append ct " "
+  append ct $::ct(values)
+  puts "ColorTransferFunction"
+  puts $ct
+
   set pfs [vtkPiecewiseFunction New]
+  set pfg [vtkPiecewiseFunction New]
+
   $vp GetPiecewiseFunctionFromString $so $pfs
   [$vp GetVolumeProperty] SetScalarOpacity $pfs
+
+  $vp GetPiecewiseFunctionFromString $go $pfg
+  [$vp GetVolumeProperty] SetGradientOpacity $pfg
+
+  set ctf [vtkColorTransferFunction New]
+  $vp GetColorTransferFunctionFromString $ct $ctf
+  [$vp GetVolumeProperty] SetColor $ctf
+
+  $ctf Delete
   $pfs Delete
 
   $sc AddNode $vp
   $sc SetURL $out
   $sc Commit $out
-
+  
+  $vp Delete
   $sc Delete
   $parser Delete
 }
@@ -116,7 +129,16 @@ proc ImportNodeVolumeProperty {node} {
 
 
 proc ImportNodeComponent {node} {
-
+    upvar $node n
+    if {$n(Index) == 0} {
+        puts "Component 0"
+        [$::vp GetVolumeProperty] SetShade $n(Shade)
+        [$::vp GetVolumeProperty] SetAmbient $n(Ambient)
+        [$::vp GetVolumeProperty] SetDiffuse $n(Diffuse)
+        [$::vp GetVolumeProperty] SetSpecular $n(Specular)
+        [$::vp GetVolumeProperty] SetSpecularPower $n(SpecularPower)
+        [$::vp GetVolumeProperty] SetDisableGradientOpacity $n(DisableGradientOpacity)
+    }
 }
 
 proc ImportNodeRGBTransferFunction {node} {
@@ -167,9 +189,10 @@ proc ImportNodePoint {node} {
     
 
     if {$::ct(inside) != ""} {
-#        lappend ::ct(values) " "
-        lappend ::ct(values) $n(X)
-        lappend ::ct(values) $n(Value)
+        append ::ct(values) " "
+        append ::ct(values) $n(X)
+        append ::ct(values) " "
+        append ::ct(values) $n(Value)
         set ::ct(count) [expr $::ct(count) + $::ct(incrm) + 1]
     }
 
