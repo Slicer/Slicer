@@ -115,7 +115,7 @@ unsigned long countInsideVoxels(const ImageType* img, const itk::SpatialObject<3
     PointType pt;
     img->TransformIndexToPhysicalPoint(ind, pt);
     
-    if(so->IsInside(pt))
+    if(!so || so->IsInside(pt))
       {
       ++count;
       }
