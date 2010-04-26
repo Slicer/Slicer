@@ -77,6 +77,7 @@ vtkEMSegmentNodeParametersStep::vtkEMSegmentNodeParametersStep()
   this->NodeParametersExcludeIncompleteEStepCheckButton = NULL;
   this->NodeParametersGenerateBackgroundProbabilityCheckButton = NULL;
   this->NodeParametersInhomogeneityFrame       = NULL;
+  this->ClassOverviewWeightList                = NULL;
 #if IBM_FLAG
   this->ClassOverviewWeightAutomaticRecalculateFlag = 0;
 #endif
