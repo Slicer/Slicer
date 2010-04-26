@@ -69,7 +69,7 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     // TODO: test this.
     this->ColorIcons = NULL;
-//    this->ColorIcons = vtkSlicerColorLUTIcons::New();
+    this->ColorIcons = vtkSlicerColorLUTIcons::New();
 }
 
 
@@ -611,7 +611,7 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
 
     // TODO: Test this approach
     // and possibly move into nodeselector class.
-    // this->AddColorIcons();
+     this->AddColorIcons();
   
     // update the range
     if (range)
@@ -1044,6 +1044,11 @@ void vtkSlicerColorDisplayWidget::AddColorIcons()
     return;
     }
 
+  if ( this->ColorIcons == NULL )
+    {
+    return;
+    }
+
   //---
   //--- This processes only one level of menu cascade.
   //--- assume nodes or node categories are in the main
@@ -1075,7 +1080,8 @@ void vtkSlicerColorDisplayWidget::AddColorIcons()
 
           // insert icon in cascade menu
           // TODO: get nodeid for this menu item and pass that as well.
-          this->AssignLUTImage ( c, j, subs.c_str() );
+          c->SetItemImageToIcon ( j, this->ColorIcons->GetIconByName ( subs.c_str() ));
+          c->SetItemCompoundModeToLeft ( j );
           }
         }
       continue;
@@ -1086,300 +1092,12 @@ void vtkSlicerColorDisplayWidget::AddColorIcons()
     if ( m->GetItemLabel ( i) != NULL )
       {
       s = m->GetItemLabel( i );
-      this->AssignLUTImage ( m, i, s.c_str() );
+      m->SetItemImageToIcon ( i, this->ColorIcons->GetIconByName ( s.c_str() ));
+      m->SetItemCompoundModeToLeft ( i );
       }
     }  
 }
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerColorDisplayWidget::AssignLUTImage ( vtkKWMenu *menu, int index, const char *name )
-{
-
-
-  //node selector has this: std::map<std::string, std::string> NodeID_to_EntryName;
-  //is there any way to not hardcode the association between LUT name and icon???
-
-  if ( menu == NULL )
-    {
-    return;
-    }
-  if ( name == NULL )
-    {
-    return;
-    }
-  int num = menu->GetNumberOfItems();
-  if ( index < 0 || index > num )
-    {
-    return;
-    }
-
-  if ( !strcmp ( name, "dGEMRIC-3T"))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetCartilegeMIdGEMIC3TIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "dGEMRIC-1.5T" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetCartilegeMIdGEMIC15TIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Blue" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteBlueIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Cool1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteCool1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Cool2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteCool2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Cool3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteCool3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Cyan" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteCyanIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Desert" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteDesertIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "fMRI" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscretefMRIIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "fMRIPA" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscretefMRIPAIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "FullRainbow" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteFullRainbowIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Green" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteGreenIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Grey" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteGreyIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "InvertedGrey" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteInvertedGreyIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Iron" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteIronIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Labels" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteLabelsIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Magenta" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteMagentaIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Ocean" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteOceanIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Rainbow" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteRainbowIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Random" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteRandomIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "RandomIntegers" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteRandomIntegersIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Red" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteRedIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "ReverseRainbow" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteReverseRainbowIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Warm1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteWarm1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Warm2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteWarm2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Warm3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteWarm3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Yellow" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetDiscreteYellowIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "BlueRed" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetFreeSurferBlueRedIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-    else if ( !strcmp ( name, "GreenRed" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetFreeSurferGreenRedIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Heat" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetFreeSurferHeatIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "RedBlue" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetFreeSurferRedBlueIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "RedGreen" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetFreeSurferRedGreenIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Custom" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetLabelsCustomIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "64Color-NonSemantic" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetLabelsNonSemanticIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "PelvisColor" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetLabelsPelvisIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "PET-Heat" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetPETHeatIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "PET-MaximumIntensityProjection" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetPETMIPIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "PET-Rainbow" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetPETRainbowIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolShade1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeCoolShade1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolShade2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeCoolShade2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolShade3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeCoolShade3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmShade1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeWarmShade1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmShade2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeWarmShade2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmShade3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetShadeWarmShade3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-    else if ( !strcmp ( name, "Slicer3_2010_Default_Brain_Lut" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetSlicerBrainLUT2010Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "Slicer3_2010_Short_LUT" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetSlicerShortLUTIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolTint1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintCoolTint1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolTint2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintCoolTint2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "CoolTint3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintCoolTint3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmTint1" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintWarmTint1Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmTint2" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintWarmTint2Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else if ( !strcmp ( name, "WarmTint3" ))
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetTintWarmTint3Icon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-  else
-    {
-    menu->SetItemImageToIcon ( index, this->ColorIcons->GetBlankLUTIcon() );
-    menu->SetItemCompoundModeToLeft ( index) ;
-    }
-}
 
 
 

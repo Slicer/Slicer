@@ -121,7 +121,6 @@ public:
   void SetSelectedColorIndex(int index);
 
   void AddColorIcons();
-  void AssignLUTImage ( vtkKWMenu *menu, int index, const char *name );
   
   /// 
   /// API for setting ColorNode, and observing it
