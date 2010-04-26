@@ -18,7 +18,7 @@
   series and writes out a single dicom volume in a .nhdr/.raw pair.
   </description>
   <version>0.2.0.$Revision: 916 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DicomToNRRD-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DicomToNRRD-3.6</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>Xiaodong Tao</contributor>
 <acknowledgements>
