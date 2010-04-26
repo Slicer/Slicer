@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Experimental</category>
+  <title>N4ITK MRI Bias correction</title>
+  <index>3</index>
+  <description>Performs MRI bias correction using N4 algorithm.</description>
+  <version>9</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Nick Tustison (algorithm and ITK implementation), Andrey Fedorov (Slicer wrapping)</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <longflag>inputimage</longflag>
+      <name>inputImageName</name>
+      <label>Input Image</label>
+      <channel>input</channel>
+      <description>Input image with MRI field inhomegeneity</description>
+    </image>
+    
+    <image>
+      <longflag>maskimage</longflag>
+      <name>maskImageName</name>
+      <label>Mask Image</label>
+      <channel>input</channel>
+      <description>Mask of the structure of interest in the input image</description>
+    </image>
+
+    <image>
+      <longflag>weightimage</longflag>
+      <name>weightImageName</name>
+      <label>Weight Image</label>
+      <channel>input</channel>
+      <description>Weight Image</description>
+    </image>
+
+    <image>
+      <name>outputImageName</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>0</index>
+      <description>Result of processing</description>
+    </image>
+
+    <image>
+      <name>outputBiasFieldName</name>
+      <label>Output bias field image</label>
+      <channel>output</channel>
+      <description>Recovered bias field</description>
+      <index>1</index>
+    </image>
+
+    <integer-vector>
+      <name>numberOfIterations</name>
+      <longflag>iterations</longflag>
+      <description></description>
+      <label>Number of iterations</label>
+      <default>50,40,30</default>
+    </integer-vector>
+
+    <float>
+      <name>convergenceThreshold</name>
+      <longflag>convergencethreshold</longflag>
+      <description></description>
+      <label>Convergence threshold</label>
+      <default>0.0001</default>
+    </float>
+
+    <boolean>
+      <name>bsplineOption</name>
+      <longflag>bsplineoption</longflag>
+      <description>Configure BSpline fitting</description>
+      <label>Use BSpline fitting options</label>
+      <default>0</default>
+    </boolean>
+
+    <float>
+      <name>bsplineOrder</name>
+      <longflag>bsplineorder</longflag>
+      <description>Order of BSpline fitting</description>
+      <label>BSpline order</label>
+      <default>3</default>
+    </float>
+
+    <float>
+      <name>alpha</name>
+      <longflag>bsplinealpha</longflag>
+      <description>Sigmoid normalized alpha</description>
+      <label>BSpline alpha</label>
+      <default>0</default>
+    </float>
+   
+    <float>
+      <name>beta</name>
+      <longflag>bsplinebeta</longflag>
+      <description>Sigmoid normalized beta</description>
+      <label>BSpline beta</label>
+      <default>0.5</default>
+    </float>
+
+    <float-vector>
+      <name>initialMeshResolution</name>
+      <longflag>meshresolution</longflag>
+      <label>Initial mesh resolution</label>
+      <default>0</default>
+    </float-vector>
+
+    <float>
+      <name>splineDistance</name>
+      <longflag>splinedistance</longflag>
+      <description>Spline distance</description>
+      <label>Spline distance</label>
+      <default>100</default>
+    </float>
+
+ 
+     <integer>
+      <name>shrinkFactor</name>
+      <longflag>shrinkfactor</longflag>
+      <description></description>
+      <label>Shrink factor</label>
+      <default>4</default>
+    </integer>
+
+    <float-vector>
+      <name>histogramSharpening</name>
+      <longflag>histogramsharpening</longflag>
+      <label>Histogram sharpening</label>
+      <default>0</default>
+    </float-vector>
+
+  </parameters>
+
+</executable>

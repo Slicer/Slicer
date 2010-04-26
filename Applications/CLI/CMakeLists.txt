@@ -675,6 +675,7 @@ SET(cli_modules
   #EndoNavTracking
   ExtractSkeleton
   #Java
+  N4ITKBiasFieldCorrection
   )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
