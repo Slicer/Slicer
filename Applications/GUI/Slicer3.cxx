@@ -1839,7 +1839,7 @@ int Slicer3_main(int& argc, char *argv[])
       if (*module_path.c_str() &&
           vtksys::SystemTools::FileExists(module_path.c_str()))
         {
-        tclCommand += "set dirs [glob \"" + module_path + "/*\"]; ";
+        tclCommand += "set dirs [glob -nocomplain \"" + module_path + "/*\"]; ";
         tclCommand += "foreach d $dirs { ";
         tclCommand += "  foreach subdir {\".\" \"Tcl\"} {";
         tclCommand += "    set location [file join [file join $d $subdir] pkgIndex.tcl];";
