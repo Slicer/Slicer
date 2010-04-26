@@ -757,7 +757,7 @@ void vtkSlicerFiducialListWidget::UpdateSeed(vtkMRMLFiducialListNode *flist, con
   int seedIndex = seedWidget->GetIndexFromID(fidID);
   if (seedIndex == -1)
     {
-    vtkErrorMacro("UpdateSeed: couldn't get the seed widget index from id " << fidID << ", adding a new seed for fiducial index of " << f);
+    vtkDebugMacro("UpdateSeed: couldn't get the seed widget index from id " << fidID << ", adding a new seed for fiducial index of " << f);
     seedIndex = seedWidget->AddSeed(worldxyz, fidID);;
     }
   else
@@ -1091,7 +1091,7 @@ void vtkSlicerFiducialListWidget::RemovePointWidget(const char *pointID)
     }
   else
     {
-    vtkWarningMacro("RemovePointWidget: couldn't find point widget for id " << pointID);
+    vtkDebugMacro("RemovePointWidget: couldn't find point widget for id " << pointID);
     }
 }
 
@@ -1475,7 +1475,7 @@ void vtkSlicerFiducialListWidget::RemoveSeedWidget(vtkMRMLFiducialListNode *fidu
       }
     else
       {
-      vtkWarningMacro("RemoveSeedWidget: unable to find the seed widget class for list " << fiducialListNode->GetID());
+      vtkDebugMacro("RemoveSeedWidget: unable to find the seed widget class for list " << fiducialListNode->GetID());
       }
     vtkDebugMacro("RemoveSeedWidget: removed seed widget for list " << fiducialListNode->GetID());
     }

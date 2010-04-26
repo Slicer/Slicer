@@ -1404,7 +1404,8 @@ int  vtkSlicerSeedWidgetClass::GetIndexFromID(const char *id)
   std::string idStr = std::string(id);
   if (this->PointIDToWidgetIndex.find(idStr) == this->PointIDToWidgetIndex.end())
     {
-    vtkErrorMacro("GetIndexFromID: Unable to find id " << id);
+    // returning -1 lets the caller know it needs to add a seed
+    vtkDebugMacro("GetIndexFromID: Unable to find id " << id);
     return -1;
     }
   else
