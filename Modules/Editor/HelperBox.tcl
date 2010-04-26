@@ -696,9 +696,18 @@ itcl::body HelperBox::create { } {
   set o(splitButton) [vtkNew vtkKWPushButton]
   $o(splitButton) SetParent $o(structureButtonsFrame)
   $o(splitButton) Create
-  $o(splitButton) SetText "Split"
+  $o(splitButton) SetText "Split Merge Volume"
   $o(splitButton) SetBalloonHelpString "Split distinct labels from merge volume into new volumes"
   pack [$o(splitButton) GetWidgetName] -side left
+
+  # add button
+
+  set o(addStructureButton) [vtkNew vtkKWPushButton]
+  $o(addStructureButton) SetParent $o(structureButtonsFrame)
+  $o(addStructureButton) Create
+  $o(addStructureButton) SetText "Add Structure"
+  $o(addStructureButton) SetBalloonHelpString "Add a label volume for a structure to edit"
+  pack [$o(addStructureButton) GetWidgetName] -side left
 
   # structures listbox
 
@@ -728,14 +737,6 @@ itcl::body HelperBox::create { } {
   $o(allButtonsFrame) Create
   pack [$o(allButtonsFrame) GetWidgetName] -side bottom -anchor sw -fill x -padx 2 -pady 2
 
-  # add button
-
-  set o(addStructureButton) [vtkNew vtkKWPushButton]
-  $o(addStructureButton) SetParent $o(allButtonsFrame)
-  $o(addStructureButton) Create
-  $o(addStructureButton) SetText "Add Structure"
-  $o(addStructureButton) SetBalloonHelpString "Add a label volume for a structure to edit"
-  pack [$o(addStructureButton) GetWidgetName] -side left
 
   # delete structures button
 
