@@ -190,26 +190,20 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
         set activeKeys "o"
-        # puts "got key press event key = $key, active keys = $activeKeys"
         if { [lsearch $activeKeys $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           $sliceGUI SetGUICommandAbortFlag 1
           switch [$_interactor GetKeySym] {
             "o" {
-              # puts "Processing o key"
               # toggle widget on off
               $this updateWidgetFromNode $sliceNode $o(planeRepresentation)
               set visible [$sliceNode GetWidgetVisible]
-              # puts "Got the o key, visible is currently $visible, toggling"
               $sliceNode SetWidgetVisible [expr !$visible]
-              # puts "After toggled widget visible on sliceNode"
-              # $this updateWidgetFromNode $sliceNode $o(planeRepresentation)
               if { [expr !$visible] } {
                   set rwi [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindowInteractor]
                   # Update the size of the render window interactor to match that of the render window
                   set rw [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindow]
                   if {[$rw GetSize] != [$rwi GetSize]} { 
-                      # puts "Updating interactor size after making [$sliceNode GetName] plane widget visible, rw size = [$rw GetSize], rwi size is currently = [$rwi GetSize]"
                       $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
                   }
               }
@@ -234,16 +228,13 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
   # widget manipulated, so update the slice node to match
   #
   if { $caller == $o(planeWidget) } {
-  # puts "Caller was plane widget,  calling update node from widget"
     $this updateNodeFromWidget $sliceNode $o(planeRepresentation)
-    # puts "\tdone update node from widget....."
   }
 
   #
   # slice node modified, so update the widget to match
   #
   if { $caller == $sliceNode } {
-  # puts "Processing slice node, is it visible? [$sliceNode GetWidgetVisible]"
     if { [$sliceNode GetWidgetVisible] } {
       $o(planeWidget) On
     } else {
@@ -259,7 +250,6 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 
 itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentation} {
 
-  #puts "$this: updateNodeFromWidget, plane normal = [$planeRepresentation GetNormal]"
   set sliceToRAS [$sliceNode GetSliceToRAS]
 
   # zero out current translation
@@ -280,9 +270,7 @@ itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentatio
   set xyz [SlicePlaneSWidget::Cross $sliceNormal $widgetNormal]
   
   set dotproduct [SlicePlaneSWidget::Dot $sliceNormal $widgetNormal]
-  # puts "slice normal = $sliceNormal, widget normal = $widgetNormal, dotproduct = $dotproduct"
   if { $dotproduct < -1.0 || $dotproduct > 1.0 } {
-     # puts "Dot product $dotproduct out of range -1,1, clamping"
      if { $dotproduct < -1.0 } {
        set dotproduct -1.0
      } else {
@@ -365,6 +353,7 @@ itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeRepresentatio
     [$sliceToRAS GetElement 0 2] \
     [$sliceToRAS GetElement 1 2] \
     [$sliceToRAS GetElement 2 2]
+  [$::slicer3::ApplicationGUI GetActiveViewerWidget ] RequestRender
 }
 
 
@@ -383,7 +372,6 @@ itcl::body SlicePlaneSWidget::getLinkedSliceLogics { } {
   set logics ""
   set link [$_sliceCompositeNode GetLinkedControl]
   if { [$this isCompareView] == 1 && $link == 1 } {
-    puts "compare 1, link 1"
     set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
     set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
     set viewArrangement [$layout GetViewArrangement]

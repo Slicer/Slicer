@@ -291,6 +291,8 @@ itcl::body SliceSWidget::resizeSliceNode {} {
     $_sliceNode SetFieldOfView $fovx $fovy $fovz
     $_sliceNode DisableModifiedEventOff
     $_sliceNode InvokePendingModifiedEvent
+
+    [$sliceGUI GetSliceViewer] RequestRender
   }
 }
 
