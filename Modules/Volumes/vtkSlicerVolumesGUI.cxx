@@ -762,6 +762,12 @@ void vtkSlicerVolumesGUI::Enter ( vtkMRMLNode *node )
     this->VolumeSelectorWidget->SetSelected( volumeNode );
     }
 
+  // Populates menu and adds color icons that match existing LUTS.
+  if ( this->VolumeDisplayWidget )
+    {
+    this->VolumeDisplayWidget->UpdateWidgetFromMRML();
+    }
+
   this->CreateModuleEventBindings();
   this->UpdateFramesFromMRML();
 }

@@ -390,6 +390,13 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
       vtkDebugMacro("UpdateWidgetFromMRML: resetting the color selector's mrml scene");
       this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
       }
+
+    if ( this->ColorSelectorWidget )
+      {
+      this->ColorSelectorWidget->UpdateMenu();
+      this->AddColorIcons ( this->ColorSelectorWidget );
+      }
+
     }  
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
   

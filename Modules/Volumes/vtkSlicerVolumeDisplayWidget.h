@@ -26,10 +26,12 @@
 
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
+#include "vtkSlicerColorLUTIcons.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWWindowLevelThresholdEditor.h"
 #include "vtkKWCheckButton.h"
+#include "vtkKWMenu.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -46,6 +48,10 @@ public:
   // Description:
   // get current volume node
   vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
+
+  // Description:
+  // get icons for luts; used in derived classes.
+  vtkGetObjectMacro ( ColorIcons, vtkSlicerColorLUTIcons );
 
   // Description:
   // Keep track of changes in the volume node
@@ -96,7 +102,13 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
+  // Description:
+  // Methods for adding LUT icons in node selectors
+  // for vtkMRMLColorNodes in derived classes.
+  virtual void  AddColorIcons(vtkSlicerNodeSelectorWidget *selector );
+  
   vtkMRMLVolumeNode *VolumeNode;
+  vtkSlicerColorLUTIcons *ColorIcons;
  
 private:
 
