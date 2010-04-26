@@ -75,6 +75,11 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro (WeightUnitsMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( ColorSet, vtkKWRadioButtonSetWithLabel );
 
+  vtkGetObjectMacro ( ClearPlotArrayButton, vtkKWPushButton );
+  vtkGetObjectMacro ( AddToPlotArrayButton, vtkKWPushButton );
+  vtkGetObjectMacro ( ShowPlotButton, vtkKWPushButton );
+  vtkGetObjectMacro ( SavePlotArrayButton, vtkKWPushButton );
+
   // Description:
   // Methods for building the module GUI (main BuildGUI method
   // and methods it calls for building each GUI sub-panel.
@@ -218,7 +223,9 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   // stored in PETCTFusionNode.
   virtual void UpdateResultsTableFromMRML();
   
-
+  // Description:
+  // Show plot of timeseries SUV measurements
+  virtual void RaisePlot();
 
   // Description:
   // Convenience method that returns a 
@@ -322,6 +329,15 @@ protected:
   vtkKWRange *PETRange;
   vtkKWRange *CTRange;
   vtkKWRadioButtonSetWithLabel *ColorSet;
+  vtkSlicerNodeSelectorWidget *PlotSelector;
+
+  vtkKWPushButton *AddToPlotArrayButton;
+  vtkKWPushButton *ShowPlotButton;
+  vtkKWPushButton *SavePlotArrayButton;
+  vtkKWPushButton *ClearPlotArrayButton;
+
+  vtkMRMLDoubleArrayNode *SUVmaxArray;
+  vtkMRMLDoubleArrayNode *SUVmeanArray;
 
   bool Raised;
   
