@@ -41,6 +41,16 @@ set(${CLP}_SOURCE BRAINSROIAuto.cxx )
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    BRAINSROIAuto
+    )
+  slicer3_install_plugins(${TARGETS})
+endif (Slicer3_SOURCE_DIR)
+
 if(BRAINS_BUILD)
   set(TESTING_BINARY_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 else(BRAINS_BUILD)

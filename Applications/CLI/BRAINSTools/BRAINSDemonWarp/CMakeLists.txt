@@ -60,3 +60,14 @@ endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONM
 
 ### Add the Testing Subdirectory.
 #add_subdirectory(TestingBRAINSDemonWarp)
+
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    VBRAINSDemonWarp
+    BRAINSDemonWarp
+    )
+  slicer3_install_plugins(${TARGETS})
+endif (Slicer3_SOURCE_DIR)

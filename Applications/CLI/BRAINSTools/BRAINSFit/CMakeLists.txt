@@ -50,6 +50,18 @@ target_link_libraries( ${CLP} BRAINSFITCOMMONLIB BRAINSCommonLib ITKIO ITKAlgori
   #  add_subdirectory(TestData)
 #endif()
 
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    BRAINSFit
+    BRAINSFITCOMMONLIB 
+    )
+  slicer3_install_plugins(${TARGETS})
+
+endif (Slicer3_SOURCE_DIR)
+
 include(InstallRequiredSystemLibraries)
 
 set(CPACK_PACKAGE_VERSION_MAJOR "3")

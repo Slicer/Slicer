@@ -45,17 +45,31 @@ set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx)
 add_library(BRAINSCommonLib ${BRAINSCommonLib_SRCS})
 target_link_libraries(BRAINSCommonLib ITKAlgorithms ITKIO)
 
-INSTALL(TARGETS BRAINSCommonLib
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+
+if (Slicer3_SOURCE_DIR)
+
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    BRAINSCommonLib
     )
+  slicer3_install_plugins(${TARGETS})
 
-IF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
-  FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  FILE(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-  INSTALL(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/BRAINSCommonLib
-    COMPONENT Development)
-ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
+else (Slicer3_SOURCE_DIR)
 
+  INSTALL(TARGETS BRAINSCommonLib
+      RUNTIME DESTINATION bin
+      LIBRARY DESTINATION lib
+      ARCHIVE DESTINATION lib
+      )
+
+  IF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
+    FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    FILE(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+    INSTALL(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/include/BRAINSCommonLib
+      COMPONENT Development)
+  ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
+
+endif (Slicer3_SOURCE_DIR)

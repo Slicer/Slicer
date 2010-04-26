@@ -47,6 +47,16 @@ set(CLP BRAINSResample)
 set(${CLP}_SOURCE BRAINSResample.cxx BRAINSResamplePrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
 
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    BRAINSResample
+    )
+  slicer3_install_plugins(${TARGETS})
+endif (Slicer3_SOURCE_DIR)
+
 if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
   set(CLP BRAINSResampleCLP) ## NOTE: This is completely redundant, but is needed to support all the old scripts that use the original name
   set( ${CLP}_SOURCE BRAINSResampleCLP.cxx BRAINSResamplePrimary.cxx)
