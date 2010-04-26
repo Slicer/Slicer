@@ -27,6 +27,11 @@
 
 #define EMSEG_PRINT_FREQUENCY_MAX 20
 
+#if IBM_FLAG
+#include "vtkMRMLEMSWorkingDataNode.h"
+#include "vtkMRMLEMSTargetNode.h"
+#include "vtkEMSegmentIBMNodeParametersStep.cxx"
+#endif 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentNodeParametersStep);
 vtkCxxRevisionMacro(vtkEMSegmentNodeParametersStep, "$Revision: 1.2 $");
@@ -72,6 +77,10 @@ vtkEMSegmentNodeParametersStep::vtkEMSegmentNodeParametersStep()
   this->NodeParametersExcludeIncompleteEStepCheckButton = NULL;
   this->NodeParametersGenerateBackgroundProbabilityCheckButton = NULL;
   this->NodeParametersInhomogeneityFrame       = NULL;
+#if IBM_FLAG
+  this->ClassOverviewWeightAutomaticRecalculateFlag = 0;
+#endif
+
 }
 
 //----------------------------------------------------------------------------
@@ -256,6 +265,12 @@ vtkEMSegmentNodeParametersStep::~vtkEMSegmentNodeParametersStep()
     this->NodeParametersInhomogeneityFrame->Delete();
     this->NodeParametersInhomogeneityFrame = NULL;
     }
+
+  if (this->ClassOverviewWeightList )
+    {
+      this->ClassOverviewWeightList->Delete();
+      this->ClassOverviewWeightList = NULL;    
+    } 
 }
 
 //----------------------------------------------------------------------------
@@ -318,14 +333,14 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->NodeParametersGlobalPriorScale->PopupModeOn();
     this->NodeParametersGlobalPriorScale->Create();
     this->NodeParametersGlobalPriorScale->SetEntryWidth(4);
-    this->NodeParametersGlobalPriorScale->SetLabelText("Global Prior:");
+    this->NodeParametersGlobalPriorScale->SetLabelText("Class Weight:");
     this->NodeParametersGlobalPriorScale->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH - 9);
     this->NodeParametersGlobalPriorScale->SetRange(0.0, 1.0);
     this->NodeParametersGlobalPriorScale->SetResolution(0.01);
     this->NodeParametersGlobalPriorScale->GetEntry()->
       SetCommandTriggerToAnyChange();
-    this->NodeParametersGlobalPriorScale->SetBalloonHelpString("Probability that a voxel belonging to the parent structure will also belong to this structure.  The value must be in the range [0,1].  Global priors for each set of siblings must sum to 1."); 
+    this->NodeParametersGlobalPriorScale->SetBalloonHelpString("Probability that a voxel belonging to the parent structure will also belong to this structure.  The value must be in the range [0,1].  Class weights across siblings must sum to 1."); 
     }
 
   this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2", 
@@ -383,11 +398,13 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     list->ResizableColumnsOff();
 
     int col_id = list->AddColumn("Volume");
-    list->SetColumnWidth(col_id, 15);
+    list->SetColumnWidth(col_id, 10);
     list->SetColumnEditable(col_id, 0);
     col_id = list->AddColumn("Weight");
     list->SetColumnEditable(col_id, 1);
-
+#if IBM_FLAG
+    list->SetColumnFormatCommand(col_id,this,"WeightFormatCallback");
+#endif
     list->SetRightClickCommand
       (this, "RightClickOnInputChannelWeightsListCallback");
     list->SetBalloonHelpString
@@ -906,7 +923,12 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
       SetText("Generate Background Probability:");
     }
 
+#if IBM_FLAG
+  this->ShowIBMUserInterface(parent);
+#endif 
+
   this->DisplaySelectedNodeParametersCallback();
+
 }
 
 //----------------------------------------------------------------------------
@@ -1001,11 +1023,17 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
               "NodeParametersInputChannelWeightChangedCallback %d",
               static_cast<int>(sel_vol_id));
       list->SetCellUpdatedCommand(this, buffer);
+
       for (row = 0; row < nb_of_target_volumes; row++)
         {
         list->AddRow();
+#if IBM_FLAG
+    vtkMRMLEMSTargetNode* targetNode = mrmlManager->GetWorkingDataNode()->GetInputTargetNode();
+        list->SetCellText(row, 0,  targetNode->GetNthInputChannelName(row));
+#else
         int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(row);
-        list->SetCellText(row, 0, mrmlManager->GetVolumeName(vol_id));
+    mrmlManager->GetVolumeName(vol_id);
+#endif 
         list->SetCellTextAsDouble(
           row, 1, 
           mrmlManager->GetTreeNodeInputChannelWeight(sel_vol_id, row));
@@ -1625,19 +1653,39 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
         this->NodeParametersGenerateBackgroundProbabilityCheckButton->GetWidgetName());
       }
     }
+
+#if IBM_FLAG
+  this->DisplayIBMSelectedNodeParametersCallback(sel_vol_id, has_valid_selection, enabled);
+#endif 
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::NodeParametersGlobalPriorChangedCallback(
-  vtkIdType sel_vol_id, double value)
+#if !IBM_FLAG
+void vtkEMSegmentNodeParametersStep::RightClickOnClassOverviewWeightListCallback(int vtkNotUsed(row), int vtkNotUsed(col), int vtkNotUsed(x), int vtkNotUsed(y))
 {
-  // The class probability has changed because of user interaction
+}
+void vtkEMSegmentNodeParametersStep::ClassOverviewWeightChangedCallback(vtkIdType vtkNotUsed(sel_vol_id), int vtkNotUsed(row), int vtkNotUsed(col), const char *vtkNotUsed(value))
+{
+}
 
+const char* vtkEMSegmentNodeParametersStep::WeightFormatCallback(const char* ) { return NULL;}
+
+#endif
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentNodeParametersStep::NodeParametersGlobalPriorChangedCallback(vtkIdType sel_class_id, double value)
+{
+
+#if IBM_FLAG
+  this->ClassWeightChangedCallback(sel_class_id,sel_class_id,value);
+#else
+  // The class probability has changed because of user interaction
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (mrmlManager)
     {
-    mrmlManager->SetTreeNodeClassProbability(sel_vol_id, value);
+    mrmlManager->SetTreeNodeClassProbability(sel_class_id, value);
     }
+#endif
+
 }
 
 //----------------------------------------------------------------------------

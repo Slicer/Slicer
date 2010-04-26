@@ -55,6 +55,7 @@ public:
   vtkGetObjectMacro(WizardWidget, vtkKWWizardWidget);
   vtkGetObjectMacro(AnatomicalStructureStep, vtkEMSegmentAnatomicalStructureStep);
   vtkGetObjectMacro(ParametersSetStep,vtkEMSegmentParametersSetStep);
+  vtkGetObjectMacro(NodeParametersStep,vtkEMSegmentNodeParametersStep);
 
   // Need to do it bc TCL Wrapping ignores IBM_FLAG !
   // Need this function for Preprocessing tcl scripts !  

@@ -408,8 +408,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     }
   if(!this->ColorMultiColumnList->IsCreated())
     {
-    this->ColorMultiColumnList->SetParent ( 
-      this->AnatomicalNodeAttributesFrame->GetFrame() );
+     this->ColorMultiColumnList->SetParent ( wizard_widget->GetClientArea());
     this->ColorMultiColumnList->Create ( );
     this->ColorMultiColumnList->SetHeight(4);
     this->ColorMultiColumnList->GetWidget()->SetSelectionTypeToRow();
@@ -431,6 +430,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
       this->ColorMultiColumnList->GetWidget()->SetSelectionModeToSingle();
       }
     
+
     // now set attribs that are equal across the columns
     int col;
     for (col = 0; col < this->NumberOfColumns; col++)
@@ -454,8 +454,8 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     }
   if (!this->ShowOnlyNamedColorsCheckButton->IsCreated())
     {
-    this->ShowOnlyNamedColorsCheckButton->SetParent ( 
-          this->AnatomicalNodeAttributesFrame->GetFrame() );
+      this->ShowOnlyNamedColorsCheckButton->SetParent( wizard_widget->GetClientArea());
+      //      this->AnatomicalNodeAttributesFrame->GetFrame() );
     this->ShowOnlyNamedColorsCheckButton->Create();
     this->ShowOnlyNamedColorsCheckButton->SelectedStateOff();
     this->ShowOnlyNamedColorsCheckButton->SetText("Show Only Named Colors");
@@ -468,7 +468,8 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     }
   if (!this->ColorSelectorWidget->IsCreated())
     {
-      this->ColorSelectorWidget->SetParent( this->AnatomicalNodeAttributesFrame->GetFrame());
+      // this->ColorSelectorWidget->SetParent( this->AnatomicalNodeAttributesFrame->GetFrame());
+      this->ColorSelectorWidget->SetParent( wizard_widget->GetClientArea() );
       this->ColorSelectorWidget->Create();
       this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
       this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
@@ -481,23 +482,29 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     this->ColorSelectorWidget->SetPadX(2);
     this->ColorSelectorWidget->SetPadY(2);
     //this->ColorSelectorWidget->GetWidget()->IndicatorVisibilityOff();
-    this->ColorSelectorWidget->GetWidget()->SetWidth(14);
+    this->ColorSelectorWidget->GetWidget()->SetWidth(20);
     this->ColorSelectorWidget->SetLabelText( "Select colormap: ");
     this->ColorSelectorWidget
         ->SetBalloonHelpString("Select a colormap from the current mrml scene.");
     this->ColorSelectorWidget->SetLabelWidth(
       EMSEG_WIDGETS_LABEL_WIDTH - 12);
     }
+
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkMRMLScene            *mrmlScene   = this->ColorSelectorWidget->GetMRMLScene();
   if (mrmlManager->GetColormap() && mrmlScene )
     {
-    this->ColorSelectorWidget->SetSelected( 
-        mrmlScene->GetNodeByID( mrmlManager->GetColormap() ) );
+    this->ColorSelectorWidget->SetSelected( mrmlScene->GetNodeByID( mrmlManager->GetColormap() ) );
     }
 
- 
+  this->ColorSelectorWidget->SetEnabled(1);
+  this->ShowOnlyNamedColorsCheckButton->SetEnabled(1);
+  this->ColorMultiColumnList->SetEnabled(1);
+  this->Script ("pack %s %s %s -side top -padx 0 -pady 2", this->ColorSelectorWidget->GetWidgetName(), this->ColorMultiColumnList->GetWidgetName(), this->ShowOnlyNamedColorsCheckButton->GetWidgetName());
+
   this->AddSelectedColorChangedObserver();
+  vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(this, 0, this, NULL);  
 
   // Update the UI with the proper value, if there is a selection
 
@@ -623,37 +630,21 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
   if(this->ColorMultiColumnList && this->ShowOnlyNamedColorsCheckButton 
      && this->ColorSelectorWidget)
     {
-    if (has_valid_selection && sel_is_leaf_node)
+    if (has_valid_selection  && sel_is_leaf_node)
       {
-
-      this->ColorSelectorWidget->SetEnabled(enabled);
-      this->Script ("grid %s  -column 0 -columnspan 4 -row 2 -sticky nw -padx 2 -pady 2",
-            this->ColorSelectorWidget->GetWidgetName());
-
-      vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(this, 0, this, NULL);  
-
-      this->ColorMultiColumnList->SetEnabled(enabled);
-      this->Script ("grid %s -column 0 -columnspan 3 -row 3 -sticky nw -padx 2 -pady 2",  
-                    this->ColorMultiColumnList->GetWidgetName(),
-                    this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
-
-      this->ShowOnlyNamedColorsCheckButton->SetEnabled(enabled);
-      this->Script("grid %s -column 0 -columnspan 2 -row 4 -sticky nw -padx 2 -pady 2", 
-                  this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
-                  this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
+    // this->Script ("grid %s -column 0 -columnspan 3 -row 3 -sticky nw -padx 2 -pady 2",  this->ColorMultiColumnList->GetWidgetName(),this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
+    //    this->Script("grid %s -column 0 -columnspan 2 -row 4 -sticky nw -padx 2 -pady 2", this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
+    // this->Script ("grid %s  -column 0 -columnspan 4 -row 2 -sticky nw -padx 2 -pady 2", this->ColorSelectorWidget->GetWidgetName());
+    //this->ColorMultiColumnList->SetEnabled(enabled);      
       } 
     else
       {
-      this->ColorSelectorWidget->SetEnabled(0);
-      this->Script ("grid forget %s", 
-                    this->ColorSelectorWidget->GetWidgetName());
-
-      this->ColorMultiColumnList->SetEnabled(0);
-       this->Script ("grid forget %s", 
-                    this->ColorMultiColumnList->GetWidgetName());
-      this->ShowOnlyNamedColorsCheckButton->SetEnabled(0);
-      this->Script("grid forget %s",
-                  this->ShowOnlyNamedColorsCheckButton->GetWidgetName());
+    //this->ColorSelectorWidget->SetEnabled(0);
+    //this->Script ("grid forget %s", this->ColorSelectorWidget->GetWidgetName());
+    // this->ColorMultiColumnList->SetEnabled(0);
+    //this->Script ("grid forget %s", this->ColorMultiColumnList->GetWidgetName());
+    //this->ShowOnlyNamedColorsCheckButton->SetEnabled(0);
+        //this->Script("grid forget %s", this->ShowOnlyNamedColorsCheckButton->GetWidgetName());
       }
     }
 }

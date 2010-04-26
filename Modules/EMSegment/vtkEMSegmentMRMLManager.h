@@ -126,6 +126,8 @@ public:
                                                   int volumeNumber, 
                                                   double value);
 
+
+
   virtual double   GetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
                                                         int rowIndex,
                                                         int columnIndex);
@@ -461,6 +463,11 @@ public:
   virtual void   SetTargetSelectedVolumeNthID(int n, vtkIdType newVolumeID); 
   virtual void SetTargetSelectedVolumeNthMRMLID(int n, const char* mrmlID); 
 
+  virtual double   GetTreeNodeDistributionMean(vtkIdType nodeID, int volumeNumber);
+  virtual void     SetTreeNodeDistributionMean(vtkIdType nodeID, int volumeNumber, double value);
+
+  virtual double   GetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex);
+  virtual void     SetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex, double value);
   //ETX
 #endif
 
@@ -553,6 +560,8 @@ public:
                                     vtkMRMLEMSAtlasNode* changingNode,
                                     const char* name);
 
+  virtual vtkIdType    MapMRMLNodeIDToVTKNodeID(const char* MRMLNodeID);
+
 private:
   vtkEMSegmentMRMLManager();
   ~vtkEMSegmentMRMLManager();
@@ -588,7 +597,6 @@ private:
   //
   // convienience functions for managing ID mapping (mrml id <-> vtkIdType)
   //
-  virtual vtkIdType    MapMRMLNodeIDToVTKNodeID(const char* MRMLNodeID);
   virtual const char*  MapVTKNodeIDToMRMLNodeID(vtkIdType vtkID);
 
   virtual void         IDMapInsertPair(vtkIdType vtkID, 

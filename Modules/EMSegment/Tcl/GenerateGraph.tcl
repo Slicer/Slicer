@@ -986,9 +986,9 @@ itcl::body EMSegmenterGraph::GetGUICallbackCommand { ID event } {
     $Volume($vol,node) GetRASToIJKMatrix $RASToIJK
     set IJK [eval $RASToIJK MultiplyPoint $RAS] 
     $RASToIJK Delete
-    set xIJK [expr int([lindex $IJK 0])]
-    set yIJK [expr int([lindex $IJK 1])]
-    set zIJK [expr int([lindex $IJK 2])]
+    set xIJK [expr round([lindex $IJK 0])]
+    set yIJK [expr round([lindex $IJK 1])]
+    set zIJK [expr round([lindex $IJK 2])]
 
     scan [$Volume($vol,data) GetExtent]  "%d %d %d %d %d %d" Xmin Xmax Ymin Ymax Zmin Zmax
     if {[expr (($Xmin > $xIJK) || ($Xmax < $xIJK) || ($Ymin > $yIJK) || ($Ymax < $yIJK) || ($Zmin > $zIJK) || ($Zmax < $zIJK))]} {

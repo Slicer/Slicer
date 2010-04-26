@@ -62,6 +62,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration
   ${CMAKE_CURRENT_SOURCE_DIR}/IBM
+  ${CMAKE_CURRENT_SOURCE_DIR}/Graph
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
@@ -84,7 +85,7 @@ foreach(file ${TCLFILES})
     ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
 endforeach(file)
-MESSAGE(STATUS  "${TCLFILES} ${CMAKE_CURRENT_SOURCE_DIR}")
+# MESSAGE(STATUS  "${TCLFILES} ${CMAKE_CURRENT_SOURCE_DIR}")
 
 install(
   FILES ${TCLFILES}
@@ -164,10 +165,10 @@ if (IBM_FLAG)
   set(EMSegment_SRCS ${EMSegment_SRCS}
    ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkEMSegmentInputChannelsStep.cxx
    ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkEMSegmentPreProcessingStep.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageGraph.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkIndirectLookupTable.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageDrawObjects.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/IBM/vtkImageCurveRegion.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageGraph.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkIndirectLookupTable.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageDrawObjects.cxx
+   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageCurveRegion.cxx
   )
 endif(IBM_FLAG)
 

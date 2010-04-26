@@ -197,7 +197,11 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     this->IntensityDistributionMeanMatrix->SetParent(intensity_page);
     this->IntensityDistributionMeanMatrix->Create();
+#if IBM_FLAG
+    this->IntensityDistributionMeanMatrix->SetLabelText("Mean:");
+#else
     this->IntensityDistributionMeanMatrix->SetLabelText("Log Mean:");
+#endif
     this->IntensityDistributionMeanMatrix->ExpandWidgetOff();
     this->IntensityDistributionMeanMatrix->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
@@ -226,8 +230,12 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     this->IntensityDistributionCovarianceMatrix->SetParent(intensity_page);
     this->IntensityDistributionCovarianceMatrix->Create();
-    this->IntensityDistributionCovarianceMatrix->SetLabelText(
-      "Log Covariance:");
+#if IBM_FLAG
+    this->IntensityDistributionCovarianceMatrix->SetLabelText("Covariance:");
+#else
+    this->IntensityDistributionCovarianceMatrix->SetLabelText("Log Covariance:");
+#endif
+
     this->IntensityDistributionCovarianceMatrix->ExpandWidgetOff();
     this->IntensityDistributionCovarianceMatrix->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
@@ -413,9 +421,11 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
 
       for(col = 0; col < nb_of_target_volumes; col++)
         {
-        matrix->SetElementValueAsDouble(
-          0, col, 
-          mrmlManager->GetTreeNodeDistributionLogMean(sel_vol_id, col));
+#if IBM_FLAG
+        matrix->SetElementValueAsDouble(0, col, mrmlManager->GetTreeNodeDistributionMean(sel_vol_id, col));
+#else 
+        matrix->SetElementValueAsDouble(0, col, mrmlManager->GetTreeNodeDistributionLogMean(sel_vol_id, col));
+#endif 
         }
       }
     else
@@ -450,10 +460,11 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         {
         for (col = 0; col < nb_of_target_volumes; col++)
           {
-          matrix->SetElementValueAsDouble(
-            row, col, 
-            mrmlManager->GetTreeNodeDistributionLogCovariance(
-              sel_vol_id, row, col));
+#if IBM_FLAG
+          matrix->SetElementValueAsDouble(row, col, mrmlManager->GetTreeNodeDistributionCovariance(sel_vol_id, row, col));
+#else
+          matrix->SetElementValueAsDouble(row, col, mrmlManager->GetTreeNodeDistributionLogCovariance(sel_vol_id, row, col));
+#endif
           }
         }
       }
@@ -551,7 +562,11 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionMeanChangedCal
     {
     return;
     }
+#if IBM_FLAG
+  mrmlManager->SetTreeNodeDistributionMean(sel_vol_id, col, atof(value));
+#else 
   mrmlManager->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -566,7 +581,12 @@ vtkEMSegmentIntensityDistributionsStep::IntensityDistributionCovarianceChangedCa
     {
     return;
     }
+#if IBM_FLAG
+  mrmlManager->SetTreeNodeDistributionCovariance(sel_vol_id, row,col,atof(value));
+#else
   mrmlManager->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,col,atof(value));
+#endif
+
 }
 
 //----------------------------------------------------------------------------
