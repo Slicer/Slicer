@@ -65,9 +65,11 @@ add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
 target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
 
 add_test(RegisterImagesMultiResTest ${Slicer3_EXE} --launch RegisterImagesMultiResTest
-  --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
+  --compare   ${BASELINE}/RegisterImagesMultiResApplicationsTests.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
-  --compareNumberOfPixelsTolerance 1
+  --compareIntensityTolerance 20
+  --compareRadiusTolerance 2
+  #--compareNumberOfPixelsTolerance 2
   ModuleEntryPoint
   ${MRML_TEST_DATA}/fixed.nrrd
   ${MRML_TEST_DATA}/moving.nrrd
