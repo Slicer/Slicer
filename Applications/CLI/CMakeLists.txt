@@ -667,7 +667,6 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 
-##BRAINSDemonWarp
 SET(cli_modules
   MRIBiasFieldCorrection
   SparseFieldLevelSetContour
@@ -799,6 +798,11 @@ if (Slicer3_SOURCE_DIR)
 endif (Slicer3_SOURCE_DIR)
 
 #
+
+option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registraiton and segmentation tools" OFF)
+if(BUILD_BRAINSTOOLS)
+  add_subdirectory(BRAINSTools)
+endif(BUILD_BRAINSTOOLS)
 
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)

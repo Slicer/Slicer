@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Registration</category>
+  <title>BRAINSResample</title>
+
+  <description>
+This program resamples an image image using a deformation field or a linear transform.
+  </description>
+  <version>0.1</version>
+  <documentation-url>http://www.nitrc.org/projects/brainsdemonwarp/</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This tool was developed by Vincent Magnotta, Greg Harris, and Hans Johnson.</contributor>
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the deformation field, image to warp and resulting image space</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <description>Image To Warp</description>
+      <label>Image To Warp</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>referenceVolume</name>
+      <longflag>--referenceVolume</longflag>
+      <description>Reference image defining the output space</description>
+      <label>Reference Image</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>deformationVolume</name>
+      <longflag>--deformationVolume</longflag>
+      <description>Deformation Field</description>
+      <label>Deformation Field</label>
+      <channel>input</channel>
+      <default></default>
+    </image>
+
+  </parameters>
+
+  <parameters>
+    <label>Warping Parameters</label>
+    <description>Parameters used to define home the image is warped</description>
+
+    <file>
+      <name>warpTransform</name>
+      <longflag>--warpTransform</longflag>
+      <label>Warp By Transform</label>
+      <description>Filename for the BRAINSFit transform used in place of the deformation field</description>
+      <channel>input</channel>
+      <default></default>
+    </file>
+
+    <string-enumeration>
+      <name>pixelType</name>
+      <longflag>--pixelType</longflag>
+      <label>Pixel Type</label>
+      <description>Specifies the pixel type for the input/output images.  The "binary" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk.</description>
+      <default>uchar</default>
+      <element>uchar</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uint</element>
+      <element>float</element>
+      <element>binary</element>
+    </string-enumeration>
+
+    <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation used</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
+
+    <boolean>
+      <name>invertTransform</name>
+      <longflag>--invertTransform</longflag>
+      <label>Invert Linear Transform flag</label>
+      <description>Perform transform inversion in itk physical space before applying the linear transform to the image.</description>
+      <default>false</default>
+    </boolean>
+
+    <float>
+      <name>defaultValue</name>
+      <longflag>defaultValue</longflag>
+      <label>Default Value</label>
+      <description>Default voxel value</description>
+      <default>0.0</default>
+    </float>
+  </parameters>
+
+
+  <parameters advanced="true">
+    <label>Invalid Parameters</label>
+    <description>These parameters just give an innocuous warning.</description>
+
+    <string>
+      <name>useTransformMode</name>
+      <longflag>useTransformMode</longflag>
+      <label>Explicit Transform Kind in Use</label>
+      <description>This defunct parameter is no longer in service.  Now ApplyWarp infers the transform type from the contents of the .mat file.</description>
+      <default></default>
+    </string>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Result File</label>
+    <description>Resulting deformed image</description>
+
+    <file>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Resulting deformed image</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+</executable>

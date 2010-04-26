@@ -1,0 +1,73 @@
+#Macro to find a package and load it
+#(you shouldn't need to modify this code)
+MACRO(LOADPACKAGE Package)
+  SET(Included FALSE)
+  IF(EXISTS "/home/tester/XMLTestParser.py")
+    #If we're in the test environment, check and see if we're being asked for
+    #a specific version of some package.  If so, we'll provide a direct path
+    #instead of counting on CMake to choose the right version.
+    IF(${Package} MATCHES "^ITK.*2[.]2[.]1$")
+      SET(ITK_DIR "/home/tester/ITK2.2.1/bin")
+      INCLUDE("/usr/local/share/CMake/Modules/FindITK.cmake")
+      INCLUDE(${ITK_USE_FILE})
+      SET(Included TRUE)
+    ENDIF(${Package} MATCHES "^ITK.*2[.]2[.]1$")
+    IF(NOT Included AND ${Package} MATCHES "^ITK.*1[.]8[.]1$")
+      SET(ITK_DIR "/home/tester/ITK1.8.1/bin")
+      INCLUDE("/usr/local/share/CMake/Modules/FindITK.cmake")
+      INCLUDE(${ITK_USE_FILE})
+      SET(Included TRUE)
+    ENDIF(NOT Included AND ${Package} MATCHES "^ITK.*1[.]8[.]1$")
+    IF(NOT Included AND ${Package} MATCHES "^VTK.*4[.]4$")
+      SET(VTK_DIR "/home/tester/VTK4.4/bin")
+      INCLUDE("/usr/local/share/CMake/Modules/FindVTK.cmake")
+      INCLUDE(${VTK_USE_FILE})
+      SET(Included TRUE)
+    ENDIF(NOT Included AND ${Package} MATCHES "^VTK.*4[.]4$")
+    IF(NOT Included AND ${Package} MATCHES "^VTK.*5[.]0$")
+      SET(VTK_DIR "/home/tester/VTK5.0/bin")
+      INCLUDE("/usr/local/share/CMake/Modules/FindVTK.cmake")
+      INCLUDE(${VTK_USE_FILE})
+      SET(Included TRUE)
+    ENDIF(NOT Included AND ${Package} MATCHES "^VTK.*5[.]0$")
+    #If we get this far and we still haven't found a match, set it up so the
+    #next block of code has a chance at finding the package.
+    IF(NOT Included AND ${Package} MATCHES "^VTK")
+      SET(Package "VTK")
+    ENDIF(NOT Included AND ${Package} MATCHES "^VTK")
+    IF(NOT Included AND ${Package} MATCHES "^ITK")
+      SET(Package "ITK")
+    ENDIF(NOT Included AND ${Package} MATCHES "^ITK")
+  ENDIF(EXISTS "/home/tester/XMLTestParser.py")
+  
+  #no point in executing the code below if we already found the package we're
+  #looking for.
+  IF(NOT Included)
+    FIND_PACKAGE(${Package})
+    IF(${Package}_FOUND)
+      #most packages define a Package_INCLUDE_DIR variable, so we'll check for
+      #that first
+      IF(${Package}_INCLUDE_DIR)
+  INCLUDE(${${Package}_INCLUDE_DIR})
+  SET(Included TRUE)
+      ELSE(${Package}_INCLUDE_DIR)
+  #VTK and ITK prefer to define a Package_USE_FILE, so we need to look for
+  #that too
+  IF(${Package}_USE_FILE)
+    INCLUDE(${${Package}_USE_FILE})
+    SET(Included TRUE)
+  ENDIF(${Package}_USE_FILE)
+      ENDIF(${Package}_INCLUDE_DIR)
+      #then there's some other pesky packages that don't like to define standard
+      #variables at all.  If you're trying to include one of those you might have
+      #to do a little bit of investigating on your own.
+      IF(NOT Included)
+  MESSAGE(FATAL_ERROR "${Package} was found, but couldn't be included.\n
+    Try including it manually out of the FOREACH in the CMakeLists file.\n
+    Look at Find${Package}.cmake in the CMake module directory for clues
+    on what you're supposed to include.  Good luck.")
+      ENDIF(NOT Included)
+    ENDIF(${Package}_FOUND)
+  ENDIF(NOT Included)
+ENDMACRO(LOADPACKAGE)
+

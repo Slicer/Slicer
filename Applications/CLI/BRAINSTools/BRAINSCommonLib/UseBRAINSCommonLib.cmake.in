@@ -1,0 +1,10 @@
+find_package(ITK REQUIRED)
+if(ITK_FOUND)
+  include(${ITK_USE_FILE})
+else(ITK_FOUND)
+  message(FATAL_ERROR "Cannot build without ITK. Please set ITK_DIR.")
+endif(ITK_FOUND)
+
+include_directories(${BRAINSCommonLib_INCLUDE_DIRS})
+link_directories(${BRAINSCommonLib_LIBRARY_DIRS})
+
