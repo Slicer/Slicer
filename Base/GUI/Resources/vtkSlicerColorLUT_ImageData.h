@@ -1,5 +1,37 @@
 /* 
  * Resource generated for file:
+ *    SPL-BrainAtlas-ColorFile.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SPL_BrainAtlas_ColorFile_width          = 52;
+static const unsigned int  image_SPL_BrainAtlas_ColorFile_height         = 21;
+static const unsigned int  image_SPL_BrainAtlas_ColorFile_pixel_size     = 3;
+static const unsigned long image_SPL_BrainAtlas_ColorFile_length         = 268;
+static const unsigned long image_SPL_BrainAtlas_ColorFile_decoded_length = 3276;
+
+static const unsigned char image_SPL_BrainAtlas_ColorFile[] = 
+  "eNrLykqsask6VmX4dKL9opKiqa4l8eXrtsT2OOYenBWlFxukV2zsb2hiwxWt5+zol6rsJM"
+  "zAGNAVKdxdpO1ov1pZQNOcV77RM2vRrpMf300MN5k7ueHzgR0VieZ1ftJJvnKO4ck+blwZ"
+  "iS7mVtLqaszd3aH//9tLSLDY2TlJyckl+HjbqijXNTWZGJv5R9mWHKyLc5/TtdG1bnnUvi"
+  "nLM7W0s0bdNuq2UbeNum3UbaNuG3XbqNtG3TbqtlG3jboNh9sALnbFWw==";
+
+/* 
+ * Resource generated for file:
+ *    abdomenColors.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_abdomenColors_width          = 52;
+static const unsigned int  image_abdomenColors_height         = 21;
+static const unsigned int  image_abdomenColors_pixel_size     = 3;
+static const unsigned long image_abdomenColors_length         = 260;
+static const unsigned long image_abdomenColors_decoded_length = 3276;
+
+static const unsigned char image_abdomenColors[] = 
+  "eNrjERA+u3l5bwJXgC3fTMOaFZtfyhdbe/af1jTQC5cV+p/p/TfZHYL+Z3j7yokxMjAstN"
+  "M2lpZu8/RkYGCYVR6S6mupJM/++LgrAzODpyjP//baSYsvJpiYrI2NjTQ0PJSZ+bqh4Vl1"
+  "w5OO9I8zEkI0tCQUtC7f/p9ZNiNMijtXW46BgclbU7PVw2NzYuL7pqZntbVfWluBXKDhPK"
+  "NuG3XbqNtG3TbqtlG3jbpt1G2jbht126jbRt2Gw20A3OLnZg==";
+
+/* 
+ * Resource generated for file:
  *    blankLUT.png (zlib, base64) (image file)
  */
 static const unsigned int  image_blankLUT_width          = 52;
@@ -10,6 +42,7 @@ static const unsigned long image_blankLUT_decoded_length = 3276;
 
 static const unsigned char image_blankLUT[] = 
   "eNrtwQENAAAAwqD+qW8ON6AAAAD+DJskv+k=";
+
 
 /* 
  * Resource generated for file:

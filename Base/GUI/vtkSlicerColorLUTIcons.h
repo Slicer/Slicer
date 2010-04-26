@@ -58,6 +58,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
     vtkGetObjectMacro (ShadeWarmShade1Icon, vtkKWIcon );
     vtkGetObjectMacro (ShadeWarmShade2Icon, vtkKWIcon );
     vtkGetObjectMacro (ShadeWarmShade3Icon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerLabels2010Icon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerDefaultBrainLUTIcon, vtkKWIcon);
     vtkGetObjectMacro (SlicerBrainLUT2010Icon, vtkKWIcon );
     vtkGetObjectMacro (SlicerShortLUTIcon, vtkKWIcon );
     vtkGetObjectMacro (TintCoolTint1Icon, vtkKWIcon );
@@ -66,8 +68,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
     vtkGetObjectMacro (TintWarmTint1Icon, vtkKWIcon );
     vtkGetObjectMacro (TintWarmTint2Icon, vtkKWIcon );
     vtkGetObjectMacro (TintWarmTint3Icon, vtkKWIcon );    
+    vtkGetObjectMacro (AbdomenIcon, vtkKWIcon );
+    vtkGetObjectMacro (SPLBrainAtlasIcon, vtkKWIcon );
 
+    virtual void SetIconName ( vtkKWIcon *icon, const char *name );
+    virtual vtkKWIcon *GetIconByName ( const char *name );
     void AssignImageDataToIcons ( );
+    void AssignNamesToIcons ( );
     
  protected:
     vtkSlicerColorLUTIcons ( );
@@ -117,6 +124,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
     vtkKWIcon *ShadeWarmShade2Icon;
     vtkKWIcon *ShadeWarmShade3Icon;
     vtkKWIcon *SlicerBrainLUT2010Icon;
+    vtkKWIcon *SlicerDefaultBrainLUTIcon;
+    vtkKWIcon *SlicerLabels2010Icon;
     vtkKWIcon *SlicerShortLUTIcon;
     vtkKWIcon *TintCoolTint1Icon;
     vtkKWIcon *TintCoolTint2Icon;
@@ -125,7 +134,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
     vtkKWIcon *TintWarmTint2Icon;
     vtkKWIcon *TintWarmTint3Icon;    
     vtkKWIcon *BlankLUTIcon;
-
+    vtkKWIcon *AbdomenIcon;
+    vtkKWIcon *SPLBrainAtlasIcon;
+    
  private:
     vtkSlicerColorLUTIcons (const vtkSlicerColorLUTIcons&); /// Not implemented
     void operator = ( const vtkSlicerColorLUTIcons& ); /// Not implemented

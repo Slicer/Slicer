@@ -5,6 +5,9 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 
+#include <map>
+#include <string>
+
 #include "vtkSlicerBaseGUI.h"
 
 /// Description:
@@ -17,8 +20,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerIcons : public vtkKWObject
     static vtkSlicerIcons* New ( );
     vtkTypeMacro ( vtkSlicerIcons, vtkKWObject);
     void PrintSelf ( ostream& os, vtkIndent indent );
+    virtual vtkKWIcon *GetIconByName( const char *name) { return NULL; };
+    virtual void SetIconName ( vtkKWIcon *icon, const char *name ) { };
 
  protected:
+//BTX
+    std::map<std::string, vtkKWIcon*> NamedIcons;
+//ETX
     vtkSlicerIcons ( );
     virtual ~vtkSlicerIcons ( );
     vtkSlicerIcons (const vtkSlicerIcons& ); /// Not implemented

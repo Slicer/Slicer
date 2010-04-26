@@ -1,7 +1,8 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSlicerColorLUTIcons.h"
-
+#include <map>
+#include <string>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerColorLUTIcons );
@@ -10,6 +11,8 @@ vtkCxxRevisionMacro ( vtkSlicerColorLUTIcons, "$Revision: 12141 $");
 //---------------------------------------------------------------------------
 vtkSlicerColorLUTIcons::vtkSlicerColorLUTIcons ( )
 {
+  this->AbdomenIcon = vtkKWIcon::New();
+  this->SPLBrainAtlasIcon = vtkKWIcon::New();
   this->BlankLUTIcon = vtkKWIcon::New();
   this->CartilegeMIdGEMIC3TIcon = vtkKWIcon::New();
   this->CartilegeMIdGEMIC15TIcon = vtkKWIcon::New();
@@ -55,15 +58,19 @@ vtkSlicerColorLUTIcons::vtkSlicerColorLUTIcons ( )
   this->ShadeWarmShade1Icon = vtkKWIcon::New();
   this->ShadeWarmShade2Icon = vtkKWIcon::New();
   this->ShadeWarmShade3Icon = vtkKWIcon::New();
+  this->SlicerLabels2010Icon = vtkKWIcon::New();
   this->SlicerBrainLUT2010Icon = vtkKWIcon::New();
+  this->SlicerDefaultBrainLUTIcon = vtkKWIcon::New();
   this->SlicerShortLUTIcon = vtkKWIcon::New();
   this->TintCoolTint1Icon = vtkKWIcon::New();
   this->TintCoolTint2Icon = vtkKWIcon::New();
   this->TintCoolTint3Icon = vtkKWIcon::New();
   this->TintWarmTint1Icon = vtkKWIcon::New();
   this->TintWarmTint2Icon = vtkKWIcon::New();
-  this->TintWarmTint3Icon = vtkKWIcon::New();    
+  this->TintWarmTint3Icon = vtkKWIcon::New();
   this->AssignImageDataToIcons ( );
+  this->NamedIcons.clear();
+  this->AssignNamesToIcons ();
 }
 
 
@@ -71,6 +78,18 @@ vtkSlicerColorLUTIcons::vtkSlicerColorLUTIcons ( )
 vtkSlicerColorLUTIcons::~vtkSlicerColorLUTIcons ( )
 {
 
+  this->NamedIcons.clear();
+  
+  if ( this->AbdomenIcon )
+    {
+    this->AbdomenIcon->Delete();
+    this->AbdomenIcon = NULL;
+    }
+  if ( this->SPLBrainAtlasIcon )
+    {
+    this->SPLBrainAtlasIcon->Delete();
+    this->SPLBrainAtlasIcon = NULL;
+    }
   if ( this->BlankLUTIcon)
     {
     this->BlankLUTIcon->Delete();
@@ -296,10 +315,20 @@ vtkSlicerColorLUTIcons::~vtkSlicerColorLUTIcons ( )
     this->ShadeWarmShade3Icon->Delete();
     this->ShadeWarmShade3Icon = NULL;      
     }
+  if ( this->SlicerLabels2010Icon )
+    {
+    this->SlicerLabels2010Icon->Delete();
+    this->SlicerLabels2010Icon = NULL;
+    }
   if ( this->SlicerBrainLUT2010Icon)
     {
     this->SlicerBrainLUT2010Icon->Delete();
     this->SlicerBrainLUT2010Icon = NULL;      
+    }
+  if ( this->SlicerDefaultBrainLUTIcon )
+    {
+    this->SlicerDefaultBrainLUTIcon->Delete();
+    this->SlicerDefaultBrainLUTIcon = NULL;
     }
   if ( this->SlicerShortLUTIcon)
     {
@@ -338,11 +367,96 @@ vtkSlicerColorLUTIcons::~vtkSlicerColorLUTIcons ( )
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerColorLUTIcons::SetIconName ( vtkKWIcon *icon, const char *name )
+{
+
+  if ( icon == NULL )
+    {
+    vtkErrorMacro ( "Got NULL Icon." );
+    return;
+    }
+  if ( name == NULL )
+    {
+    vtkErrorMacro ( "Got NULL Icon name." );
+    return;
+    }
+
+  std::map < std::string, vtkKWIcon *>::iterator iter;
+
+  // Is icon already in the map?
+  for ( iter = this->NamedIcons.begin(); iter != this->NamedIcons.end(); iter++ )
+    {
+    if ( iter->second == icon )
+      {
+      //--- already here; erase it temporarily
+      this->NamedIcons.erase(iter);
+      break;
+      }
+    }
+  //--- and add new name/icon pair.
+  std::string namestr = name;
+  this->NamedIcons.insert ( std::make_pair(namestr, icon) );
+
+}
+
+
+
+//--------------------------------------------------------------------------
+vtkKWIcon* vtkSlicerColorLUTIcons::GetIconByName ( const char *name )
+{
+
+  if (name == NULL )
+    {
+    vtkErrorMacro ( "Got NULL Icon name." );
+    if ( this->BlankLUTIcon )
+      {
+      return ( this->BlankLUTIcon );
+      }
+    else
+      {
+      return NULL;
+      }
+    }
+
+  std::map <std::string, vtkKWIcon *>::iterator iter;
+  std::string namestring;
+  // Find name in map and pop out
+  for ( iter = this->NamedIcons.begin(); iter != this->NamedIcons.end(); iter++ )
+    {
+    namestring.clear();
+    namestring = iter->first;
+    if ( !strcmp(namestring.c_str(), name ))
+      {
+      return ( iter->second );
+      }
+    }
+  if ( this->BlankLUTIcon )
+    {
+    return (this->BlankLUTIcon);
+    }
+  else
+    {
+    vtkErrorMacro ("Got NULL Blank Icon." );
+    return ( NULL );
+    }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorLUTIcons::AssignImageDataToIcons ( )
 {
 
+  this->AbdomenIcon->SetImage ( image_abdomenColors,
+                                image_abdomenColors_width,
+                                image_abdomenColors_height,
+                                image_abdomenColors_pixel_size,
+                                image_abdomenColors_length, 0);
+  this->SPLBrainAtlasIcon->SetImage ( image_SPL_BrainAtlas_ColorFile,
+                                      image_SPL_BrainAtlas_ColorFile_width,
+                                      image_SPL_BrainAtlas_ColorFile_height,
+                                      image_SPL_BrainAtlas_ColorFile_pixel_size,
+                                      image_SPL_BrainAtlas_ColorFile_length, 0);
   this->BlankLUTIcon->SetImage ( image_blankLUT,
                                  image_blankLUT_width,
                                  image_blankLUT_height,
@@ -573,6 +687,16 @@ void vtkSlicerColorLUTIcons::AssignImageDataToIcons ( )
                                              image_slicerBrainLUT2010_height,
                                              image_slicerBrainLUT2010_pixel_size,
                                              image_slicerBrainLUT2010_length, 0);
+    this->SlicerDefaultBrainLUTIcon->SetImage ( image_slicerBrainLUT2010,
+                                             image_slicerBrainLUT2010_width,
+                                             image_slicerBrainLUT2010_height,
+                                             image_slicerBrainLUT2010_pixel_size,
+                                             image_slicerBrainLUT2010_length, 0);
+    this->SlicerLabels2010Icon->SetImage ( image_slicerShortLUT,
+                                         image_slicerShortLUT_width,
+                                         image_slicerShortLUT_height,
+                                         image_slicerShortLUT_pixel_size,
+                                         image_slicerShortLUT_length, 0);
     this->SlicerShortLUTIcon->SetImage ( image_slicerShortLUT,
                                          image_slicerShortLUT_width,
                                          image_slicerShortLUT_height,
@@ -611,6 +735,77 @@ void vtkSlicerColorLUTIcons::AssignImageDataToIcons ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerColorLUTIcons::AssignNamesToIcons ()
+{
+  
+  //---
+  // In this icon set, icons are given a name
+  // that corresponds to what a vtkSlicerNodeSelectorWidget
+  // for color nodes displays as menuitems.
+  // these menuitems are generated in the
+  // widget's MakeEntryName method, and
+  // stored in its NodeID_to_EntryName map.
+  //---
+  this->SetIconName ( this->AbdomenIcon, "AbdomenColors");
+  this->SetIconName ( this->SPLBrainAtlasIcon, "SPL-BrainAtlas-ColorFile");
+  this->SetIconName ( this->BlankLUTIcon, "Blank" );
+  this->SetIconName ( this->CartilegeMIdGEMIC3TIcon, "dGEMRIC-3T" );
+  this->SetIconName ( this->CartilegeMIdGEMIC15TIcon, "dGEMRIC-1.5T");
+  this->SetIconName ( this->DiscreteBlueIcon, "Blue");
+  this->SetIconName ( this->DiscreteCool1Icon, "Cool1");
+  this->SetIconName ( this->DiscreteCool2Icon, "Cool2");
+  this->SetIconName ( this->DiscreteCool3Icon, "Cool3");
+  this->SetIconName ( this->DiscreteCyanIcon, "Cyan");
+  this->SetIconName ( this->DiscreteDesertIcon, "Desert");
+  this->SetIconName ( this->DiscretefMRIIcon, "fMRI");
+  this->SetIconName ( this->DiscretefMRIPAIcon, "fMRIPA");
+  this->SetIconName ( this->DiscreteFullRainbowIcon, "FullRainbow");
+  this->SetIconName ( this->DiscreteGreenIcon, "Green");
+  this->SetIconName ( this->DiscreteGreyIcon, "Grey");
+  this->SetIconName ( this->DiscreteInvertedGreyIcon, "InvertedGrey");
+  this->SetIconName ( this->DiscreteIronIcon, "Iron");
+  this->SetIconName ( this->DiscreteLabelsIcon, "Labels");
+  this->SetIconName ( this->DiscreteMagentaIcon, "Magenta");
+  this->SetIconName ( this->DiscreteOceanIcon, "Ocean");
+  this->SetIconName ( this->DiscreteRainbowIcon, "Rainbow");
+  this->SetIconName ( this->DiscreteRandomIcon, "Random");
+  this->SetIconName ( this->DiscreteRandomIntegersIcon, "RandomIntegers");
+  this->SetIconName ( this->DiscreteRedIcon, "Red");
+  this->SetIconName ( this->DiscreteReverseRainbowIcon, "ReverseRainbow");
+  this->SetIconName ( this->DiscreteWarm1Icon, "Warm1");
+  this->SetIconName ( this->DiscreteWarm2Icon, "Warm2");
+  this->SetIconName ( this->DiscreteWarm3Icon, "Warm3");
+  this->SetIconName ( this->DiscreteYellowIcon, "Yellow");
+  this->SetIconName ( this->FreeSurferBlueRedIcon, "BlueRed");
+  this->SetIconName ( this->FreeSurferGreenRedIcon, "GreenRed");
+  this->SetIconName ( this->FreeSurferHeatIcon, "Heat");
+  this->SetIconName ( this->FreeSurferRedBlueIcon, "RedBlue");
+  this->SetIconName ( this->FreeSurferRedGreenIcon, "RedGreen");
+  this->SetIconName ( this->LabelsCustomIcon, "Custom");
+  this->SetIconName ( this->LabelsNonSemanticIcon, "64Color-Nonsemantic");
+  this->SetIconName ( this->LabelsPelvisIcon, "PelvisColor");
+  this->SetIconName ( this->PETHeatIcon, "PET-Heat");
+  this->SetIconName ( this->PETMIPIcon, "PET-MaximumIntensityProjection");
+  this->SetIconName ( this->PETRainbowIcon, "PET-Rainbow");
+  this->SetIconName ( this->ShadeCoolShade1Icon, "CoolShade1");
+  this->SetIconName ( this->ShadeCoolShade2Icon, "CoolShade2");
+  this->SetIconName ( this->ShadeCoolShade3Icon, "CoolShade3");
+  this->SetIconName ( this->ShadeWarmShade1Icon, "WarmShade1");
+  this->SetIconName ( this->ShadeWarmShade2Icon, "WarmShade2");
+  this->SetIconName ( this->ShadeWarmShade3Icon, "WarmShade3");
+  this->SetIconName ( this->SlicerLabels2010Icon, "Slicer3_2010_Label_Colors");
+  this->SetIconName ( this->SlicerBrainLUT2010Icon, "Slicer3_2010_Brain_Labels");
+  this->SetIconName ( this->SlicerDefaultBrainLUTIcon, "Slicer3_2010_Default_Brain_Lut");
+  this->SetIconName ( this->SlicerShortLUTIcon, "Slicer3_2010_Short_LUT");
+  this->SetIconName ( this->TintCoolTint1Icon, "CoolTint1");
+  this->SetIconName ( this->TintCoolTint2Icon, "CoolTint2");
+  this->SetIconName ( this->TintCoolTint3Icon, "CoolTint3");
+  this->SetIconName ( this->TintWarmTint1Icon, "WarmTint1");
+  this->SetIconName ( this->TintWarmTint2Icon, "WarmTint2");
+  this->SetIconName ( this->TintWarmTint3Icon, "WarmTint3");
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorLUTIcons::PrintSelf ( ostream& os, vtkIndent indent )
@@ -619,6 +814,8 @@ void vtkSlicerColorLUTIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "SlicerColorLUTIcons: " << this->GetClassName ( ) << "\n";
 
+    os << indent << "AbdomenIcon: " << this->GetAbdomenIcon() << "\n";
+    os << indent << "SPLBrainAtlasIcon: " << this->GetSPLBrainAtlasIcon() << "\n";
     os << indent << "BlankLUTIcon: " << this->GetBlankLUTIcon() << "\n";
     os << indent << "CartilegeMIdGEMIC3TIcon: " << this->GetCartilegeMIdGEMIC3TIcon() << "\n";
     os << indent << "CartilegeMIdGEMIC15TIcon: " << this->GetCartilegeMIdGEMIC15TIcon() << "\n";
@@ -664,7 +861,9 @@ void vtkSlicerColorLUTIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ShadeWarmShade1Icon: " << this->GetShadeWarmShade1Icon() << "\n";
     os << indent << "ShadeWarmShade2Icon: " << this->GetShadeWarmShade2Icon() << "\n";
     os << indent << "ShadeWarmShade3Icon: " << this->GetShadeWarmShade3Icon() << "\n";
+    os << indent << "SlicerLabels2010Icon: " << this->GetSlicerBrainLUT2010Icon() << "\n";
     os << indent << "SlicerBrainLUT2010Icon: " << this->GetSlicerBrainLUT2010Icon() << "\n";
+    os << indent << "SlicerDefaultBrainLUTIcon: " << this->GetSlicerDefaultBrainLUTIcon() << "\n";
     os << indent << "SlicerShortLUTIcon: " << this->GetSlicerShortLUTIcon() << "\n";
     os << indent << "TintCoolTint1Icon: " << this->GetTintCoolTint1Icon() << "\n";
     os << indent << "TintCoolTint2Icon: " << this->GetTintCoolTint2Icon() << "\n";
