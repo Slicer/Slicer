@@ -1,6 +1,8 @@
 #ifndef _GenericTransformImage_H_
 #define _GenericTransformImage_H_
 
+#include "BRAINSCommonLibWin32Header.h"
+
 #include <iostream>
 #include "itkImage.h"
 #include "itkCastImageFilter.h"
@@ -55,7 +57,7 @@ AffineTransformType::Pointer
 ReadLinearTransform(const std::string & filename);
 
 
-void ReadDotMatTransformFile(std::string RegistrationFilename,
+BRAINSCommonLib_EXPORT  void ReadDotMatTransformFile(std::string RegistrationFilename,
   BSplineTransformType::Pointer &itkBSplineTransform,
   AffineTransformType::Pointer &ITKAffineTransform,
   bool invertTransform);

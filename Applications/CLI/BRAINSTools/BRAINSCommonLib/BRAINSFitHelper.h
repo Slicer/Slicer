@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 
+#include "BRAINSCommonLibWin32Header.h"
 
 // TODO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
@@ -70,18 +71,18 @@ typedef itk::Transform<double,3,3> GenericTransformType;
 
 namespace itk {
   //Functions for writing out transforms to disk
-  extern int WriteBothTransformsToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform);
-  extern int WriteStrippedRigidTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & strippedOutputTransform);
-  extern int WriteTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform);
-  extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
+  BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform);
+  BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & strippedOutputTransform);
+  BRAINSCommonLib_EXPORT extern int WriteTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform);
+  BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
 
   /** Method for verifying that the ordering of the transformTypes is consistent with converting routines. */
-  extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
+  BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
 }
 
 namespace itk
 {
-class ITK_EXPORT BRAINSFitHelper : public Object
+class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
   {
 public:
   /** Standard class typedefs. */

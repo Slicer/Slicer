@@ -29,6 +29,17 @@ endif(NOT ITK_FOUND)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
+  )
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
 set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx)
 
 add_library(BRAINSCommonLib ${BRAINSCommonLib_SRCS})
@@ -43,7 +54,7 @@ INSTALL(TARGETS BRAINSCommonLib
 IF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
   FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   FILE(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-  INSTALL(FILES ${__files1} ${__files2}
+  INSTALL(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
     DESTINATION ${CMAKE_INSTALL_PREFIX}/include/BRAINSCommonLib
     COMPONENT Development)
 ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
