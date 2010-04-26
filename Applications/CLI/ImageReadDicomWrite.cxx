@@ -73,14 +73,14 @@ int main( int argc, char* argv[] )
 
   // Shift scale the data if necessary based on the rescale slope and
   // rescale interscept prescribed.
-  if (fabs(rescaleInterscept) > itk::NumericTraits<double>::epsilon()
+  if (fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
       || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon())
     {
     reader->ReleaseDataFlagOn();
     
     ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
     shiftScale->SetInput( reader->GetOutput() );
-    shiftScale->SetShift( -rescaleInterscept );
+    shiftScale->SetShift( -rescaleIntercept );
 
     if (fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon())
       {
@@ -216,7 +216,7 @@ int main( int argc, char* argv[] )
     // Always set the rescale interscept and rescale slope (even if
     // they are at their defaults of 0 and 1 respectively).
     //value.str("");
-    //value << rescaleInterscept;
+    //value << rescaleIntercept;
     //itk::EncapsulateMetaData<std::string>(dictionary, "0028|1052", value.str());
     //value.str("");
     //value << rescaleSlope;

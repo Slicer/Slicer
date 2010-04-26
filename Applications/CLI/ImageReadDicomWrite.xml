@@ -4,7 +4,7 @@
   <title>Create a DICOM Series</title>
   <description>Create a DICOM Series</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:imageReadDicomWrite-Documentation-3.4</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:CreateaDicomSeries-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
@@ -71,7 +71,7 @@
       <name>studyDescription</name>
       <longflag>--studyDescription</longflag>
       <description>Study description[0008-1030]</description>
-      <label>Study Comments</label>
+      <label>Study Descriptions</label>
       <default>None</default>
     </string>
 
@@ -87,7 +87,7 @@
       <name>manufacturer</name>
       <longflag>--manufacturer</longflag>
       <description>Manufacturer [0008-0070]</description>
-      <label>Manufacturere</label>
+      <label>Manufacturer</label>
       <default>GE Medical Systems</default>
     </string>
 
@@ -128,10 +128,10 @@
     <description>Parameters that apply to the images and data in each image</description>
 
     <double>
-       <label>Rescale interscept</label>
-       <name>rescaleInterscept</name>
-       <longflag>--rescaleInterscept</longflag>
-       <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
+       <label>Rescale intercept</label>
+       <name>rescaleIntercept</name>
+       <longflag>--rescaleIntercept</longflag>
+       <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
        <default>0.0</default>
     </double>
 
