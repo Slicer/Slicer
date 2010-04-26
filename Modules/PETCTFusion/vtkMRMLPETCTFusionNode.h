@@ -204,6 +204,7 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
       NonDICOMEvent,
       WaitEvent,
       StatusEvent,
+      PlotReadyEvent,
   };
 //ETX
 

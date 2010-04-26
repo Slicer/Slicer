@@ -51,6 +51,7 @@ set(PETCTFusion_SRCS
   vtkMRMLPETCTFusionNode.cxx        
   vtkPETCTFusionLogic.cxx
   vtkPETCTFusionGUI.cxx
+  vtkPETCTFusionPlots.cxx
   )
 
 # --------------------------------------------------------------------------

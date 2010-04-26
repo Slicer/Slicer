@@ -13,7 +13,15 @@
 #include "vtkImageThreshold.h"
 #include "vtkImageToImageStencil.h"
 #include "vtkImageMathematics.h"
+#include "vtkLookupTable.h"
+#include "vtkColorTransferFunction.h"
 
+#include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLPETProceduralColorNode.h"
 
 #include "itkImageSeriesReader.h"
 #include "itkOrientedImage.h"
@@ -101,6 +109,12 @@ vtkPETCTFusionLogic::vtkPETCTFusionLogic()
   //--- make SURE that the radioactivity units in the image are cancelled out in the SUV calculation!
   //--- if necessary convert the image units, or the units in injected dose.
   this->PETCTFusionNode = NULL;
+  this->Plots = NULL;
+//  this->Plots = vtkPETCTFusionPlots::New();
+  this->NumberOfVOIs = 0;
+  this->Year = 0;
+  this->Month = 0;
+  this->Day = 0;
 }
 
 
@@ -108,13 +122,29 @@ vtkPETCTFusionLogic::vtkPETCTFusionLogic()
 //----------------------------------------------------------------------------
 vtkPETCTFusionLogic::~vtkPETCTFusionLogic()
 { 
+  this->ClearStudyDate();
   this->SetAndObserveMRMLScene ( NULL );
+  if ( this->Plots )
+    {
+    this->Plots->Delete();
+    this->Plots = NULL;
+    }
   if ( this->PETCTFusionNode )
     {
     this->SetPETCTFusionNode ( NULL );
     }
 }
 
+
+
+
+//----------------------------------------------------------------------------
+void vtkPETCTFusionLogic::ClearStudyDate()
+{
+  this->Year = 0;
+  this->Month = 0;
+  this->Day = 0;
+}
 
 //----------------------------------------------------------------------------
 void vtkPETCTFusionLogic::Enter()
@@ -165,13 +195,13 @@ void vtkPETCTFusionLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
+int vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
 {
 
   if ( this->PETCTFusionNode == NULL )
     {
     vtkErrorMacro ( "GetParametersFromDICOMHeader: Got NULL PETCTFusionNode." );
-    return;
+    return 0;
     }
 
 
@@ -187,12 +217,12 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
   if ( path == NULL || !(strcmp(path, "" )) )
     {
     vtkErrorMacro ( "GetParametersFromDicomHeader:Got NULL path." );
-    return;
+    return 0;
     }
   if ( this->PETCTFusionNode == NULL )
     {
     vtkErrorMacro ( "GetParametersFromDICOMHeader: Got NULL PETCTFusionNode." );
-    return;
+    return 0;
     }
 
   //--- catch non-dicom data
@@ -232,7 +262,7 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
     //--- Tell the user they will have to enter
     //--- parameters for computing SUV manually.
     this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::NonDICOMEvent );
-    return;
+    return 0;
     }
 
   this->PETCTFusionNode->SetMessageText ( "Getting number of series UIDs...." );
@@ -259,12 +289,13 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
     
 // Nuclear Medicine DICOM info:
 /*
-  0054,0016  Radiopharmaceutical Information Sequence:
+    0054,0016  Radiopharmaceutical Information Sequence:
     0018,1072  Radionuclide Start Time: 090748.000000
     0018,1074  Radionuclide Total Dose: 370500000
     0018,1075  Radionuclide Half Life: 6586.2
     0018,1076  Radionuclide Positron Fraction: 0
 */
+    int parsingDICOM = 0;
     gdcm::File *f = new gdcm::File();
     if ( f != NULL )
       {
@@ -274,40 +305,356 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
       f->Load();   // FIXME: handle res
 
       gdcm::SeqEntry *seq = f->GetSeqEntry(0x0054,0x0016);
-      gdcm::SQItem *sqItem = seq->GetFirstSQItem();
-      while ( sqItem )
+      if ( seq != NULL )
         {
-        //---
-        //--- Radiopharmaceutical Start Time
-        tag.clear();
-        tag = sqItem->GetEntryValue(0x0018,0x1072);
-        //--- expect A string of characters of the format hhmmss.frac;
-        //---where hh contains hours (range "00" - "23"), mm contains minutes
-        //---(range "00" - "59"), ss contains seconds (range "00" - "59"), and frac
-        //---contains a fractional part of a second as small as 1 millionth of a
-        //---second (range "000000" - "999999"). A 24 hour clock is assumed.
-        //---Midnight can be represented by only "0000" since "2400" would
-        //---violate the hour range. The string may be padded with trailing
-        //---spaces. Leading and embedded spaces are not allowed. One
-        //---or more of the components mm, ss, or frac may be unspecified
-        //---as long as every component to the right of an unspecified
-        //---component is also unspecified. If frac is unspecified the preceding "."
-        //---may not be included. Frac shall be held to six decimal places or
-        //---less to ensure its format conforms to the ANSI 
-        //---Examples -
-        //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
-        //---2. "1010" represents a time of 10 hours, and 10 minutes.
-        //---3. "021" is an invalid value. 
-        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+        parsingDICOM = 1;
+        gdcm::SQItem *sqItem = seq->GetFirstSQItem();
+        while ( sqItem )
           {
-          this->PETCTFusionNode->SetRadiopharmaceuticalStartTime ("no value found");
+          //---
+          //--- Radiopharmaceutical Start Time
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1072);
+          //--- expect A string of characters of the format hhmmss.frac;
+          //---where hh contains hours (range "00" - "23"), mm contains minutes
+          //---(range "00" - "59"), ss contains seconds (range "00" - "59"), and frac
+          //---contains a fractional part of a second as small as 1 millionth of a
+          //---second (range "000000" - "999999"). A 24 hour clock is assumed.
+          //---Midnight can be represented by only "0000" since "2400" would
+          //---violate the hour range. The string may be padded with trailing
+          //---spaces. Leading and embedded spaces are not allowed. One
+          //---or more of the components mm, ss, or frac may be unspecified
+          //---as long as every component to the right of an unspecified
+          //---component is also unspecified. If frac is unspecified the preceding "."
+          //---may not be included. Frac shall be held to six decimal places or
+          //---less to ensure its format conforms to the ANSI 
+          //---Examples -
+          //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
+          //---2. "1010" represents a time of 10 hours, and 10 minutes.
+          //---3. "021" is an invalid value. 
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            this->PETCTFusionNode->SetRadiopharmaceuticalStartTime ("no value found");
+            }
+          else
+            {
+            len = tag.length();
+            hourstr.clear();
+            minutestr.clear();
+            secondstr.clear();
+            if ( len >= 2 )
+              {
+              hourstr = tag.substr(0, 2);
+              }
+            else
+              {
+              hourstr = "00";
+              }
+            if ( len >= 4 )
+              {
+              minutestr = tag.substr(2, 2);
+              }
+            else
+              {
+              minutestr = "00";
+              }
+            if ( len >= 6 )
+              {
+              secondstr = tag.substr(4);
+              }
+            else
+              {
+              secondstr = "00";
+              }
+            tag.clear();
+            tag = hourstr.c_str();
+            tag += ":";
+            tag += minutestr.c_str();
+            tag += ":";
+            tag += secondstr.c_str();
+            this->PETCTFusionNode->SetRadiopharmaceuticalStartTime( tag.c_str() );
+            }
+
+          //---
+          //--- Radionuclide Total Dose 
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1074);
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            this->PETCTFusionNode->SetInjectedDose( 0.0 );
+            }
+          else
+            {
+            this->PETCTFusionNode->SetInjectedDose( atof ( tag.c_str() ) );
+            }
+
+
+          //---
+          //--- RadionuclideHalfLife
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1075);
+          //--- Expect a Decimal String
+          //--- A string of characters representing either
+          //--- a fixed point number or a floating point number.
+          //--- A fixed point number shall contain only the characters 0-9
+          //--- with an optional leading "+" or "-" and an optional "." to mark
+          //--- the decimal point. A floating point number shall be conveyed
+          //--- as defined in ANSI X3.9, with an "E" or "e" to indicate the start
+          //--- of the exponent. Decimal Strings may be padded with leading
+          //--- or trailing spaces. Embedded spaces are not allowed. 
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            this->PETCTFusionNode->SetRadionuclideHalfLife( "no value found" );
+            }
+          else
+            {
+            this->PETCTFusionNode->SetRadionuclideHalfLife(  tag.c_str() );
+            }
+
+          //---
+          //---Radionuclide Positron Fraction
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1076);
+          //--- not currently using this one?
+
+          sqItem = seq->GetNextSQItem();
+          }
+
+        //--
+        //--- UNITS: something like BQML:
+        //--- CNTS, NONE, CM2, PCNT, CPS, BQML,
+        //--- MGMINML, UMOLMINML, MLMING, MLG,
+        //--- 1CM, UMOLML, PROPCNTS, PROPCPS,
+        //--- MLMINML, MLML, GML, STDDEV      
+        //---
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1001);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- I think these are piled together. MBq ml... search for all.
+          std::string units = tag.c_str();
+          if ( ( units.find ("BQML") != std::string::npos) ||
+               ( units.find ("BQML") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("Bq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("Bq");
+            }
+          else if ( ( units.find ("MBq") != std::string::npos) ||
+                    ( units.find ("MBQ") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("MBq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("MBq");
+            }
+          else if ( (units.find ("kBq") != std::string::npos) ||
+                    (units.find ("kBQ") != std::string::npos) ||
+                    (units.find ("KBQ") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("kBq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("kBq");
+            }
+          else if ( (units.find ("mBq") != std::string::npos) ||
+                    (units.find ("mBQ") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("mBq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("mBq");
+            }
+          else if ( (units.find ("uBq") != std::string::npos) ||
+                    (units.find ("uBQ") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("uBq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("uBq");
+            }
+          else if ( (units.find ("Bq") != std::string::npos) ||
+                    (units.find ("BQ") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("Bq");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("Bq");
+            }
+          else if ( (units.find ("MCi") != std::string::npos) ||
+                    ( units.find ("MCI") != std::string::npos) )
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("MCi");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("MCi");
+
+            }
+          else if ( (units.find ("kCi") != std::string::npos) ||
+                    (units.find ("kCI") != std::string::npos)  ||
+                    (units.find ("KCI") != std::string::npos) )                
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("kCi");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("kCi");
+            }
+          else if ( (units.find ("mCi") != std::string::npos) ||
+                    (units.find ("mCI") != std::string::npos) )                
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("mCi");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("mCi");
+            }
+          else if ( (units.find ("uCi") != std::string::npos) ||
+                    (units.find ("uCI") != std::string::npos) )                
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("uCi");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("uCi");
+            }
+          else if ( (units.find ("Ci") != std::string::npos) ||
+                    (units.find ("CI") != std::string::npos) )                
+            {
+            this->PETCTFusionNode->SetDoseRadioactivityUnits ("Ci");
+            this->PETCTFusionNode->SetTissueRadioactivityUnits ("Ci");
+            }
+          this->PETCTFusionNode->SetVolumeUnits ( "ml" );
           }
         else
           {
+          //--- default values.
+          this->PETCTFusionNode->SetDoseRadioactivityUnits( "MBq" );
+          this->PETCTFusionNode->SetTissueRadioactivityUnits( "MBq" );
+          this->PETCTFusionNode->SetVolumeUnits ( "ml");        
+          }
+
+    
+        //---
+        //--- DecayCorrection
+        //--- Possible values are:
+        //--- NONE = no decay correction
+        //--- START= acquisition start time
+        //--- ADMIN = radiopharmaceutical administration time
+        //--- Frame Reference Time  is the time that the pixel values in the Image occurred. 
+        //--- It's defined as the time offset, in msec, from the Series Reference Time.
+        //--- Series Reference Time is defined by the combination of:
+        //--- Series Date (0008,0021) and
+        //--- Series Time (0008,0031).      
+        //--- We don't pull these out now, but can if we have to.
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1102);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //---A string of characters with leading or trailing spaces (20H) being non-significant. 
+          this->PETCTFusionNode->SetDecayCorrection( tag.c_str() );
+          }
+        else
+          {
+          this->PETCTFusionNode->SetDecayCorrection( "no value found" );
+          }
+
+        //---
+        //--- StudyDate
+        this->ClearStudyDate();
+        tag.clear();
+        tag = f->GetEntryValue (0x0008,0x0021);
+        if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
+          {
+          //--- YYYYMMDD
+          yearstr.clear();
+          daystr.clear();
+          monthstr.clear();
           len = tag.length();
+          if ( len >= 4 )
+            {
+            yearstr = tag.substr(0, 4);
+            this->Year = atoi(yearstr.c_str() );
+            }
+          else
+            {
+            yearstr = "????";
+            this->Year = 0;
+            }
+          if ( len >= 6 )
+            {
+            monthstr = tag.substr(4, 2);
+            this->Month = atoi ( monthstr.c_str() );
+            }
+          else
+            {
+            monthstr = "??";
+            this->Month = 0;
+            }
+          if ( len >= 8 )
+            {
+            daystr = tag.substr (6, 2);
+            this->Day = atoi ( daystr.c_str() );
+            }
+          else
+            {
+            daystr = "??";
+            this->Day = 0;
+            }
+          tag.clear();
+          tag = yearstr.c_str();
+          tag += "/";
+          tag += monthstr.c_str();
+          tag += "/";
+          tag += daystr.c_str();
+          this->PETCTFusionNode->SetStudyDate ( tag.c_str() );
+          }
+        else
+          {
+          this->PETCTFusionNode->SetStudyDate ( "no value found" );
+          }
+
+        //---
+        //--- PatientName
+        tag.clear();
+        tag = f->GetEntryValue (0x0010,0x0010);
+        if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
+          {
+          this->PETCTFusionNode->SetPatientName ( tag.c_str() );
+          }
+        else
+          {
+          this->PETCTFusionNode->SetPatientName ( "no value found");
+          }
+
+        //---
+        //--- DecayFactor
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1321);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- have to parse this out. what we have is
+          //---A string of characters representing either a fixed point number or a
+          //--- floating point number. A fixed point number shall contain only the
+          //---characters 0-9 with an optional leading "+" or "-" and an optional "."
+          //---to mark the decimal point. A floating point number shall be conveyed
+          //---as defined in ANSI X3.9, with an "E" or "e" to indicate the start of the
+          //---exponent. Decimal Strings may be padded with leading or trailing spaces.
+          //---Embedded spaces are not allowed. or maybe atof does it already...
+          this->PETCTFusionNode->SetDecayFactor(  tag.c_str()  );
+          }
+        else
+          {
+          this->PETCTFusionNode->SetDecayFactor( "no value found" );
+          }
+
+    
+        //---
+        //--- FrameReferenceTime
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1300);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- The time that the pixel values in the image
+          //--- occurred. Frame Reference Time is the
+          //--- offset, in msec, from the Series reference
+          //--- time.
+          this->PETCTFusionNode->SetFrameReferenceTime( tag.c_str() );
+          }
+        else
+          {
+          this->PETCTFusionNode->SetFrameReferenceTime( "no value found" );
+          }
+
+  
+        //---
+        //--- SeriesTime
+        tag.clear();
+        tag = f->GetEntryValue (0x0008,0x0031);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
           hourstr.clear();
           minutestr.clear();
           secondstr.clear();
+          len = tag.length();
           if ( len >= 2 )
             {
             hourstr = tag.substr(0, 2);
@@ -338,381 +685,94 @@ void vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
           tag += minutestr.c_str();
           tag += ":";
           tag += secondstr.c_str();
-          this->PETCTFusionNode->SetRadiopharmaceuticalStartTime( tag.c_str() );
-          }
-
-        //---
-        //--- Radionuclide Total Dose 
-        tag.clear();
-        tag = sqItem->GetEntryValue(0x0018,0x1074);
-        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
-          {
-          this->PETCTFusionNode->SetInjectedDose( 0.0 );
+          this->PETCTFusionNode->SetSeriesTime( tag.c_str() );
           }
         else
           {
-          this->PETCTFusionNode->SetInjectedDose( atof ( tag.c_str() ) );
+          this->PETCTFusionNode->SetSeriesTime( "no value found");
           }
 
 
         //---
-        //--- RadionuclideHalfLife
+        //--- PatientWeight
         tag.clear();
-        tag = sqItem->GetEntryValue(0x0018,0x1075);
-        //--- Expect a Decimal String
-        //--- A string of characters representing either
-        //--- a fixed point number or a floating point number.
-        //--- A fixed point number shall contain only the characters 0-9
-        //--- with an optional leading "+" or "-" and an optional "." to mark
-        //--- the decimal point. A floating point number shall be conveyed
-        //--- as defined in ANSI X3.9, with an "E" or "e" to indicate the start
-        //--- of the exponent. Decimal Strings may be padded with leading
-        //--- or trailing spaces. Embedded spaces are not allowed. 
-        if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+        tag = f->GetEntryValue (0x0010,0x1030);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
           {
-          this->PETCTFusionNode->SetRadionuclideHalfLife( "no value found" );
+          //--- Expect same format as RadionuclideHalfLife
+          this->PETCTFusionNode->SetPatientWeight( atof ( tag.c_str() ) );
+          this->PETCTFusionNode->SetWeightUnits ( "kg" );
           }
         else
           {
-          this->PETCTFusionNode->SetRadionuclideHalfLife(  tag.c_str() );
+          this->PETCTFusionNode->SetPatientWeight( 0.0 );
+          this->PETCTFusionNode->SetWeightUnits ( "" );
           }
+
 
         //---
-        //---Radionuclide Positron Fraction
+        //--- CalibrationFactor
         tag.clear();
-        tag = sqItem->GetEntryValue(0x0018,0x1076);
-        //--- not currently using this one?
-
-        sqItem = seq->GetNextSQItem();
-        }
-
-      //--
-      //--- UNITS: something like BQML:
-      //--- CNTS, NONE, CM2, PCNT, CPS, BQML,
-      //--- MGMINML, UMOLMINML, MLMING, MLG,
-      //--- 1CM, UMOLML, PROPCNTS, PROPCPS,
-      //--- MLMINML, MLML, GML, STDDEV      
-      //---
-      tag.clear();
-      tag = f->GetEntryValue (0x0054,0x1001);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- I think these are piled together. MBq ml... search for all.
-        std::string units = tag.c_str();
-        if ( ( units.find ("BQML") != std::string::npos) ||
-             ( units.find ("BQML") != std::string::npos) )
+        tag = f->GetEntryValue (0x7053,0x1009);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
           {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("Bq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("Bq");
-          }
-        else if ( ( units.find ("MBq") != std::string::npos) ||
-             ( units.find ("MBQ") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("MBq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("MBq");
-          }
-        else if ( (units.find ("kBq") != std::string::npos) ||
-                  (units.find ("kBQ") != std::string::npos) ||
-                  (units.find ("KBQ") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("kBq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("kBq");
-          }
-        else if ( (units.find ("mBq") != std::string::npos) ||
-                  (units.find ("mBQ") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("mBq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("mBq");
-          }
-        else if ( (units.find ("uBq") != std::string::npos) ||
-                  (units.find ("uBQ") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("uBq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("uBq");
-          }
-        else if ( (units.find ("Bq") != std::string::npos) ||
-                  (units.find ("BQ") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("Bq");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("Bq");
-          }
-        else if ( (units.find ("MCi") != std::string::npos) ||
-                  ( units.find ("MCI") != std::string::npos) )
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("MCi");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("MCi");
-
-          }
-        else if ( (units.find ("kCi") != std::string::npos) ||
-                  (units.find ("kCI") != std::string::npos)  ||
-                  (units.find ("KCI") != std::string::npos) )                
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("kCi");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("kCi");
-          }
-        else if ( (units.find ("mCi") != std::string::npos) ||
-                  (units.find ("mCI") != std::string::npos) )                
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("mCi");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("mCi");
-          }
-        else if ( (units.find ("uCi") != std::string::npos) ||
-                  (units.find ("uCI") != std::string::npos) )                
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("uCi");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("uCi");
-          }
-        else if ( (units.find ("Ci") != std::string::npos) ||
-                  (units.find ("CI") != std::string::npos) )                
-          {
-          this->PETCTFusionNode->SetDoseRadioactivityUnits ("Ci");
-          this->PETCTFusionNode->SetTissueRadioactivityUnits ("Ci");
-          }
-        this->PETCTFusionNode->SetVolumeUnits ( "ml" );
-        }
-      else
-        {
-        //--- default values.
-        this->PETCTFusionNode->SetDoseRadioactivityUnits( "MBq" );
-        this->PETCTFusionNode->SetTissueRadioactivityUnits( "MBq" );
-        this->PETCTFusionNode->SetVolumeUnits ( "ml");        
-        }
-
-    
-      //---
-      //--- DecayCorrection
-      //--- Possible values are:
-      //--- NONE = no decay correction
-      //--- START= acquisition start time
-      //--- ADMIN = radiopharmaceutical administration time
-      //--- Frame Reference Time  is the time that the pixel values in the Image occurred. 
-      //--- It's defined as the time offset, in msec, from the Series Reference Time.
-      //--- Series Reference Time is defined by the combination of:
-      //--- Series Date (0008,0021) and
-      //--- Series Time (0008,0031).      
-      //--- We don't pull these out now, but can if we have to.
-      tag.clear();
-      tag = f->GetEntryValue (0x0054,0x1102);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //---A string of characters with leading or trailing spaces (20H) being non-significant. 
-        this->PETCTFusionNode->SetDecayCorrection( tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetDecayCorrection( "no value found" );
-        }
-
-      //---
-      //--- StudyDate
-      tag.clear();
-      tag = f->GetEntryValue (0x0008,0x0021);
-      if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
-        {
-        //--- YYYYMMDD
-        yearstr.clear();
-        daystr.clear();
-        monthstr.clear();
-        len = tag.length();
-        if ( len >= 4 )
-          {
-          yearstr = tag.substr(0, 4);
+          //--- converts counts to Bq/cc. If Units = BQML then CalibrationFactor =1 
+          //--- I think we expect the same format as RadiopharmaceuticalStartTime
+          this->PETCTFusionNode->SetCalibrationFactor(  tag.c_str() );
           }
         else
           {
-          yearstr = "????";
+          this->PETCTFusionNode->SetCalibrationFactor( "no value found" );
           }
-        if ( len >= 6 )
-          {
-          monthstr = tag.substr(4, 2);
-          }
-        else
-          {
-          monthstr = "??";
-          }
-        if ( len >= 8 )
-          {
-          daystr = tag.substr (6, 2);
-          }
-        else
-          {
-          daystr = "??";
-          }
+
+
+        //---
+        //--- PhilipsSUVFactor
         tag.clear();
-        tag = yearstr.c_str();
-        tag += "/";
-        tag += monthstr.c_str();
-        tag += "/";
-        tag += daystr.c_str();
-        this->PETCTFusionNode->SetStudyDate ( tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetStudyDate ( "no value found" );
-        }
-
-      //---
-      //--- PatientName
-      tag.clear();
-      tag = f->GetEntryValue (0x0010,0x0010);
-      if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
-        {
-        this->PETCTFusionNode->SetPatientName ( tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetPatientName ( "no value found");
-        }
-
-      //---
-      //--- DecayFactor
-      tag.clear();
-      tag = f->GetEntryValue (0x0054,0x1321);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- have to parse this out. what we have is
-        //---A string of characters representing either a fixed point number or a
-        //--- floating point number. A fixed point number shall contain only the
-        //---characters 0-9 with an optional leading "+" or "-" and an optional "."
-        //---to mark the decimal point. A floating point number shall be conveyed
-        //---as defined in ANSI X3.9, with an "E" or "e" to indicate the start of the
-        //---exponent. Decimal Strings may be padded with leading or trailing spaces.
-        //---Embedded spaces are not allowed. or maybe atof does it already...
-        this->PETCTFusionNode->SetDecayFactor(  tag.c_str()  );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetDecayFactor( "no value found" );
-        }
-
-    
-      //---
-      //--- FrameReferenceTime
-      tag.clear();
-      tag = f->GetEntryValue (0x0054,0x1300);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- The time that the pixel values in the image
-        //--- occurred. Frame Reference Time is the
-        //--- offset, in msec, from the Series reference
-        //--- time.
-        this->PETCTFusionNode->SetFrameReferenceTime( tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetFrameReferenceTime( "no value found" );
-        }
-
-  
-      //---
-      //--- SeriesTime
-      tag.clear();
-      tag = f->GetEntryValue (0x0008,0x0031);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        hourstr.clear();
-        minutestr.clear();
-        secondstr.clear();
-        len = tag.length();
-        if ( len >= 2 )
+        tag = f->GetEntryValue (0x7053,0x1000);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
           {
-          hourstr = tag.substr(0, 2);
+          //--- I think we expect the same format as RadiopharmaceuticalStartTime
+          this->PETCTFusionNode->SetPhilipsSUVFactor(  tag.c_str() );
           }
         else
           {
-          hourstr = "00";
+          this->PETCTFusionNode->SetPhilipsSUVFactor( "no value found" );
           }
-        if ( len >= 4 )
-          {
-          minutestr = tag.substr(2, 2);
-          }
-        else
-          {
-          minutestr = "00";
-          }
-        if ( len >= 6 )
-          {
-          secondstr = tag.substr(4);
-          }
-        else
-          {
-          secondstr = "00";
-          }
-        tag.clear();
-        tag = hourstr.c_str();
-        tag += ":";
-        tag += minutestr.c_str();
-        tag += ":";
-        tag += secondstr.c_str();
-        this->PETCTFusionNode->SetSeriesTime( tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetSeriesTime( "no value found");
-        }
-
-
-      //---
-      //--- PatientWeight
-      tag.clear();
-      tag = f->GetEntryValue (0x0010,0x1030);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- Expect same format as RadionuclideHalfLife
-        this->PETCTFusionNode->SetPatientWeight( atof ( tag.c_str() ) );
-        this->PETCTFusionNode->SetWeightUnits ( "kg" );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetPatientWeight( 0.0 );
-        this->PETCTFusionNode->SetWeightUnits ( "" );
-        }
-
-
-      //---
-      //--- CalibrationFactor
-      tag.clear();
-      tag = f->GetEntryValue (0x7053,0x1009);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- converts counts to Bq/cc. If Units = BQML then CalibrationFactor =1 
-        //--- I think we expect the same format as RadiopharmaceuticalStartTime
-        this->PETCTFusionNode->SetCalibrationFactor(  tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetCalibrationFactor( "no value found" );
-        }
-
-
-      //---
-      //--- PhilipsSUVFactor
-      tag.clear();
-      tag = f->GetEntryValue (0x7053,0x1000);
-      if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
-        {
-        //--- I think we expect the same format as RadiopharmaceuticalStartTime
-        this->PETCTFusionNode->SetPhilipsSUVFactor(  tag.c_str() );
-        }
-      else
-        {
-        this->PETCTFusionNode->SetPhilipsSUVFactor( "no value found" );
         }
       }
     //END TEST
     delete f;
 
 
-    this->PETCTFusionNode->SetMessageText ( "...Done" );
-    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
+    // check.... did we get all params we need for computation?
+    if ( (parsingDICOM) &&
+         (this->PETCTFusionNode->GetInjectedDose() != 0.0) &&
+         (this->PETCTFusionNode->GetPatientWeight() != 0.0) &&
+         (this->PETCTFusionNode->GetSeriesTime() != NULL) &&
+         (this->PETCTFusionNode->GetRadiopharmaceuticalStartTime() != NULL) &&
+         (this->PETCTFusionNode->GetRadionuclideHalfLife() != NULL) )
+      {
+      this->PETCTFusionNode->SetMessageText ( "...Done" );
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
 
-    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::DICOMUpdateEvent );
-//  inputNames->Delete();
-//  gdcmIO->Delete();
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::DICOMUpdateEvent );
 
-    this->PETCTFusionNode->SetMessageText ( "" );
-    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
+      this->PETCTFusionNode->SetMessageText ( "" );
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
+      return 1;
+      }
+    else
+      {
+      this->PETCTFusionNode->SetMessageText ( "...no PET-related metadata found." );
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
 
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::DICOMUpdateEvent );
+
+      this->PETCTFusionNode->SetMessageText ( "" );
+      this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
+      return 0;
+      }
 }
 
 
@@ -951,8 +1011,6 @@ void vtkPETCTFusionLogic::ComputeSUV()
     }
   
 
-  //const double *spacing = maskVolume->GetSpacing(); FIXME: unused variable
-  //double cubicMMPerVoxel = spacing[0] * spacing[1] * spacing[2]; FIXME: unused variable
   this->PETCTFusionNode->SetMessageText ( "Starting SUV calculation...." );
   this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::StatusEvent );
 
@@ -965,7 +1023,7 @@ void vtkPETCTFusionLogic::ComputeSUV()
   int hi = static_cast<int>(stataccum->GetMax()[0]);
   stataccum->Delete();
 
-
+  this->NumberOfVOIs = 0;
   std::stringstream ss;
 
   for(int i = lo; i <= hi; i++ ) 
@@ -975,6 +1033,8 @@ void vtkPETCTFusionLogic::ComputeSUV()
       //--- eliminate 0 (nolabel) label.
       continue;
       }
+
+
     //--- Provide some feedback
     ss.str("");
     ss << "Processing label ";
@@ -1005,14 +1065,16 @@ void vtkPETCTFusionLogic::ComputeSUV()
    
     stencil->Delete();
 
+    //--- For how many labels was SUV computed?
+    this->NumberOfVOIs++;
+
     int voxNumber = labelstat->GetVoxelCount();
+    double suvmax, suvmin, suvmean;
     if ( voxNumber > 0 )
       {
-      //double Volume = voxNumber * cubicMMPerVoxel; FIXME: unused variable warning
       double CPETmin = (labelstat->GetMin())[0];
       double CPETmax = (labelstat->GetMax())[0];
       double CPETmean = (labelstat->GetMean())[0];
-      double suvmax, suvmin, suvmean;
 
       //--- we want to use the following units as noted at file top:
       //--- CPET(t) -- tissue radioactivity in pixels-- kBq/mlunits
@@ -1061,20 +1123,168 @@ void vtkPETCTFusionLogic::ComputeSUV()
         suvmean = 99999999999999999.;
         vtkErrorMacro ( "Warning: got an injected dose of 0.0; results of SUV computation are not valid." );
         }
-
-      // add an entry to the SUVEntry
-      vtkMRMLPETCTFusionNode::SUVEntry entry;
-      entry.Label = i;
-      entry.Max = suvmax;
-      entry.Mean = suvmean;
-      this->PETCTFusionNode->LabelResults.push_back(entry);
       }
+    else
+      {
+      //--- if there were no voxels in VOI:
+      suvmax = 0.0;
+      suvmin = 0.0;
+      suvmean = 0.0;
+      }
+
+    // add an entry to the SUVEntry
+    vtkMRMLPETCTFusionNode::SUVEntry entry;
+    entry.Label = i;
+    entry.Max = suvmax;
+    entry.Mean = suvmean;
+    if ( this->Plots )
+      {
+      //--- if we have plottable information, add a sample  to the plot.
+      //--- (each label gets its own plot)
+      if ( this->Plots->GetMRMLScene() == NULL )
+        {
+        this->Plots->SetMRMLScene ( this->GetMRMLScene() );
+        }
+      this->Plots->AddSUV ( i, this->Year, this->Month, this->Day, suvmax, suvmean );
+      }
+    this->PETCTFusionNode->LabelResults.push_back(entry);
+    
     thresholder->Delete();
     labelstat->Delete();
-    }
 
+    }
+  
   this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ComputeDoneEvent );
 
+}
+
+
+//----------------------------------------------------------------------------
+/*
+  double *vtkPETCTFusionLogic::GetColorForLabel ( int label )
+{
+  //---
+  //--- find the color (rgb) for a given label in label map.
+  //--- first, find the number of colors and the color range.
+  //--- which will depend on what kind of color node is selected.
+  bool isFSProcedural = false;
+  bool isProcedural = false;
+  int numColors = 0;
+  double *range = NULL;
+
+  if ( this->PETCTFusionNode->GetInputMask()==NULL )
+    {
+    return NULL;
+    }
+  vtkMRMLVolumeNode *vn = vtkMRMLVolumeNode::SafeDownCast (
+                                                           this->MRMLScene->GetNodeByID(
+                                                                                        this->PETCTFusionNode->GetInputMask() ));
+  if ( vn == NULL )
+    {
+    return NULL;
+    }
+  vtkMRMLDisplayNode *dn = vn->GetDisplayNode();
+  if ( dn == NULL )
+    {
+    return NULL;
+    }
+  vtkMRMLColorNode *colorNode = dn->GetColorNode();
+      
+  if ( colorNode == NULL )
+    {
+    return NULL;
+    }
+
+  if ( vtkMRMLColorTableNode::SafeDownCast (colorNode) != NULL )
+    {
+    //---
+    //--- color table node.
+    //---
+    numColors = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+    range = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetLookupTable()->GetRange();
+    }
+  else if ( vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+            vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL )
+    {
+    //---
+    //--- freesurfer procedural node
+    //---
+    isFSProcedural = true;
+    range = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast (colorNode)->GetLookupTable()->GetRange();
+    if ( range )
+      {
+      numColors = (int)floor(range[1]-range[0]);
+      if ( range[0] < 0 && range[1] >= 0)
+        {
+        numColors++;
+        }
+      }
+    }
+  else if ( vtkMRMLProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+            vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction() != NULL )
+    {
+    //---
+    //--- procedural node
+    //---
+    isProcedural = true;
+    range = vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetRange();
+    if ( range )
+      {
+      numColors = (int)floor(range[1]-range[0]);
+      if ( range[0] < 0 && range[1] >=0)
+        {
+        numColors++;
+        }
+      }
+    }
+      
+  //---
+  double color[3];
+  if (isFSProcedural)
+    {
+    if ( label <= range[1] )
+      {
+      vtkMRMLFreeSurferProceduralColorNode::SafeDownCast ( colorNode)->GetLookupTable()->GetColor(label, color);
+      }
+    }
+  else if ( isProcedural)
+    {
+    vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetColor(label, color);
+    }
+  else if ( colorNode->GetLookupTable() != NULL )
+    {
+    colorNode->GetLookupTable()->GetColor((double)label, color);
+    }
+
+  return ( color );
+}
+*/
+
+
+
+
+//----------------------------------------------------------------------------
+void vtkPETCTFusionLogic::ShowLongitudinalPlot ( )
+{
+
+  // TODO -- add plot functionality
+  if ( this->Plots && this->PETCTFusionNode )
+    {
+    this->Plots->Update();
+    this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::PlotReadyEvent );
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkPETCTFusionLogic::ClearLongitudinalPlot ( )
+{
+
+  // TODO -- add plot functionality
+  if ( this->Plots )
+    {
+    this->Plots->ClearPlots();
+    }
 }
 
 

@@ -4,7 +4,9 @@
 #include "vtkObject.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkPETCTFusionWin32Header.h"
+#include "vtkPETCTFusionPlots.h"
 #include "vtkMRMLPETCTFusionNode.h"
+
 
 #include <string>
 #include <vector>
@@ -18,6 +20,8 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
 
   vtkGetObjectMacro (PETCTFusionNode, vtkMRMLPETCTFusionNode);
   vtkSetObjectMacro (PETCTFusionNode, vtkMRMLPETCTFusionNode);
+  vtkGetMacro (NumberOfVOIs, int );
+  vtkGetObjectMacro ( Plots, vtkPETCTFusionPlots );
 
   // Description:
   // These methods are used to turn observers on/off when module is entered/exited.
@@ -33,8 +37,10 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
 
   virtual vtkIntArray* NewObservableEvents();
 
-  
-  virtual void GetParametersFromDICOMHeader( const char *path);
+  //--- takes an integer label id and a double[3]
+//  virtual double *GetColorForLabel ( int label );
+
+  virtual int GetParametersFromDICOMHeader( const char *path);
 
   virtual void ComputeSUVmax();
   virtual void ComputeSUV();
@@ -47,12 +53,16 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
   double UndoDecayCorrection ( double inval );
 
   virtual void SetAndScaleLUT();
+  void ClearStudyDate();
+  void ShowLongitudinalPlot();
+  void ClearLongitudinalPlot();
 
   // Description:
   // Provides radioactivity (radiation activity) unit conversion:
   virtual double ConvertRadioactivityUnits( double count, const char *fromunits, const char *tounits);
   virtual double ConvertWeightUnits( double count, const char *fromunits, const char *tounits);
     
+
  protected:
   vtkPETCTFusionLogic();
   ~vtkPETCTFusionLogic();
@@ -61,6 +71,13 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionLogic : public vtkSlicerModuleLogic
   vtkMRMLPETCTFusionNode* PETCTFusionNode;
   bool Visited;
   bool Raised;
+  int NumberOfVOIs;
+  int Year;
+  int Month;
+  int Day;
+  vtkPETCTFusionPlots *Plots;
+  
+  
 };
 
 #endif
