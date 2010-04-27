@@ -83,6 +83,7 @@ if { [itcl::find class HelperBox] == "" } {
     method labelSelectDialog {} {} ;# pop up a dialog to select a label map
 
     method processEvent { caller event } {}
+    method getNodeByName { nodeName } {}
   }
 }
 
@@ -175,14 +176,7 @@ itcl::body HelperBox::mergeVolume {} {
   }
   set masterName [$_master GetName]
   set mergeName $masterName-label
-  set mergeCandidates [$::slicer3::MRMLScene GetNodesByName $mergeName]
-  
-  if { [$mergeCandidates GetNumberOfItems] > 1 } {
-    EditorErrorDialog "Warning: more than one merge label volume for master $masterName.\n\nRename or delete one from scene to avoid this dialog."
-  }
-
-  set _merge [$mergeCandidates GetItemAsObject 0]
-  $mergeCandidates Delete
+  set _merge [$this getNodeByName $mergeName]
   return $_merge
 }
 
@@ -193,15 +187,7 @@ itcl::body HelperBox::structureVolume { structureName } {
   }
   set masterName [$_master GetName]
   set structureVolumeName $masterName-$structureName-label
-  set structureVolumeCandidates [$::slicer3::MRMLScene GetNodesByName $structureVolumeName]
-  
-  if { [$structureVolumeCandidates GetNumberOfItems] > 1 } {
-    EditorErrorDialog "Warning: more than one structure label volume for master $masterName structure $structureName"
-  }
-
-  set volumeNode [$structureVolumeCandidates GetItemAsObject 0]
-  $structureVolumeCandidates Delete
-  return $volumeNode
+  return [$this getNodeByName $structureVolumeName]
 }
 
 # ask user which label to create
@@ -958,4 +944,14 @@ itcl::body HelperBox::labelSelectDialog { } {
   $o(labelSelectTopLevel) Raise
 }
 
+# get the first MRML node that has the given name
+itcl::body HelperBox::getNodeByName { name } {
 
+  $::slicer3::MRMLScene InitTraversal
+  while { [set node [$::slicer3::MRMLScene GetNextNode]] != "" } {
+    if { [$node GetName] == $name } {
+      return $node
+    }
+  }
+  return ""
+}

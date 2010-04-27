@@ -43,9 +43,7 @@ proc EditorTestStructures { backgroundFile } {
     # reresh object array to get newly created dialog
     array unset o
     array set o [$::Editor($singleton,editHelper) objects]
-    #$o(colorDialogCancel) InvokeEvent 10000
-    # $o(colorDialogApply) InvokeEvent 10000
-    
+    $o(colorDialogApply) InvokeEvent 10000
 
     return 0
 }
