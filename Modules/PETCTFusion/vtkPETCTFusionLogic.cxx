@@ -29,10 +29,14 @@
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkNumericSeriesFileNames.h"
-#include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 #include "vtkGlobFileNames.h"
+
 #include "gdcmFile.h"
+#include "gdcmGlobal.h"
+#include "gdcmUtil.h"
+#include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 
@@ -1132,11 +1136,16 @@ void vtkPETCTFusionLogic::ComputeSUV()
       suvmean = 0.0;
       }
 
-    // add an entry to the SUVEntry
-    vtkMRMLPETCTFusionNode::SUVEntry entry;
-    entry.Label = i;
-    entry.Max = suvmax;
-    entry.Mean = suvmean;
+    // add an entry to the SUVEntry if there were voxels in VOI
+    if ( voxNumber > 0 )
+      {
+      vtkMRMLPETCTFusionNode::SUVEntry entry;
+      entry.Label = i;
+      entry.Max = suvmax;
+      entry.Mean = suvmean;
+      this->PETCTFusionNode->LabelResults.push_back(entry);
+      }
+    
     if ( this->Plots )
       {
       //--- if we have plottable information, add a sample  to the plot.
@@ -1147,11 +1156,9 @@ void vtkPETCTFusionLogic::ComputeSUV()
         }
       this->Plots->AddSUV ( i, this->Year, this->Month, this->Day, suvmax, suvmean );
       }
-    this->PETCTFusionNode->LabelResults.push_back(entry);
     
     thresholder->Delete();
     labelstat->Delete();
-
     }
   
   this->PETCTFusionNode->InvokeEvent ( vtkMRMLPETCTFusionNode::ComputeDoneEvent );
