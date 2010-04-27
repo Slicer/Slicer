@@ -10,6 +10,7 @@ proc ImportVvt {file out} {
 
   set sc [vtkMRMLScene New]
   set vp [vtkMRMLVolumePropertyNode New]
+  $vp SetName [file rootname [file tail $file]]
 
   set ::vp $vp
 
