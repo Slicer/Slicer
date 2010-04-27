@@ -214,9 +214,12 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     }
   else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && 
-    event ==  vtkKWPushButton::InvokedEvent)
-    { 
-    this->SaveDialog->Cancel();
+           event ==  vtkKWPushButton::InvokedEvent)
+    {
+    if (this->SaveDialog)
+      {
+      this->SaveDialog->Cancel();
+      }
     }
   else if(event == vtkKWMultiColumnList::CellUpdatedEvent && 
     this->MultiColumnList->GetWidget() == vtkKWMultiColumnList::SafeDownCast(caller))
@@ -241,7 +244,10 @@ void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
     {
     vtkKWMessageDialog *message = vtkKWMessageDialog::New();
     message->SetParent ( this->GetParent() );
-    message->SetMasterWindow ( this->SaveDialog );
+    if (this->SaveDialog)
+      {
+      message->SetMasterWindow ( this->SaveDialog );
+      }
     message->SetStyleToMessage ();
     message->SetText("No scene file selected. Scene is not saved");
     message->Create();
@@ -256,7 +262,10 @@ void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
     {
     vtkKWMessageDialog *message = vtkKWMessageDialog::New();
     message->SetParent ( this->GetParent() );
-    message->SetMasterWindow ( this->SaveDialog );
+    if (this->SaveDialog)
+      {
+      message->SetMasterWindow ( this->SaveDialog );
+      }
     message->SetStyleToYesNo();
     std::string msg = "File " + sceneFileName + " exists. Do you want to replace it?";
     message->SetText(msg.c_str());
@@ -279,7 +288,10 @@ void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
     {
     if(this->SaveScene(sceneRow))
       {
-      this->SaveDialog->OK();
+      if (this->SaveDialog)
+        {
+        this->SaveDialog->OK();
+        }
       this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
       }
     }
@@ -613,6 +625,11 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       node->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
+      }
+    else
+      {
+      // we don't need a new default storage node
+      storageNode->Delete();
       }
     
     if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) 
