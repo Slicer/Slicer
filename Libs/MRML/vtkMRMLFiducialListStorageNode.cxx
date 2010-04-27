@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLFiducialListStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()
 {
+  // version 2 has the new glyph symbol numbering, which starts at 1
+  this->Version = 2;
 }
 
 //----------------------------------------------------------------------------
@@ -167,10 +169,22 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
 
   fstr.open(fullName.c_str(), fstream::in);
 
+  bool glyphTypeChanged = false;
+
   if (fstr.is_open())
     {
-    // clear out the list
-    fiducialListNode->RemoveAllFiducials();
+    // with the change to VTK 5.6, the glyph type is off by one for old files,
+    // make sure that we don't have a new MRML scene with and old .fcsv file.
+    int mrmlGlyphType = -1;
+    // set the version number to undefined
+    this->SetVersion(-1);
+    if (fiducialListNode->GetNumberOfFiducials() > 0)
+      {
+      mrmlGlyphType = fiducialListNode->GetGlyphType();
+      // clear out the list
+      fiducialListNode->RemoveAllFiducials();
+      }
+    
     // turn off modified events
 //    int modFlag = fiducialListNode->GetDisableModifiedEvent();
 //    fiducialListNode->DisableModifiedEventOn();
@@ -217,27 +231,18 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
             float scale = atof(str.c_str());
             fiducialListNode->SetSymbolScale(scale);
             }
+          else if (lineString.find("# version = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12,std::string::npos);
+            vtkWarningMacro("Getting version, substr = " << str);
+            int ver = atoi(str.c_str());
+            this->SetVersion(ver);
+            }
           else if (lineString.find("# symbolType = ") != std::string::npos)
             {
             std::string str = lineString.substr(15,std::string::npos);
             vtkDebugMacro("Getting symbolType, substr = " << str);
             int t = atoi(str.c_str());
-            // check on version number
-            // at svn version 12553, the symbol type changed by one
-            if (this->GetScene())
-              {
-              if (this->GetScene()->GetLastLoadedVersion())
-                {
-                if (atoi(this->GetScene()->GetLastLoadedVersion()) < 12553)
-                  {
-                  t++;
-                  }
-                }
-              else
-                {
-                t++;
-                }
-              }
             fiducialListNode->SetGlyphType(t);
             }
           else if (lineString.find("# visibility = ") != std::string::npos)
@@ -475,21 +480,75 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
 //    fiducialListNode->SetDisableModifiedEvent(modFlag);
 //    fiducialListNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, fiducialListNode);//vtkMRMLFiducialListNode::DisplayModifiedEvent);
     fstr.close();
+
+    // check on version number
+    // at svn version 12553, the symbol type changed by one. There was a bit of
+    // a time gap and then added a fcsv file version to also check against
+    int glyphType = fiducialListNode->GetGlyphType();
+    if (this->GetScene())
+      {
+      if (this->GetScene()->GetLastLoadedVersion() != std::string(""))
+        {
+        if (atoi(this->GetScene()->GetLastLoadedVersion()) < 12553)
+          {
+          vtkDebugMacro("ReadData: last loaded version '" << this->GetScene()->GetLastLoadedVersion() << "' is less than 12553, incrementing glyph type from " << glyphType);
+          glyphType++;
+          }
+        else
+          {
+          // could also be off by one if it's an old .fcsv file in a new
+          // mrml scene
+          if (mrmlGlyphType != -1 &&
+              mrmlGlyphType - glyphType == 1 &&
+              this->GetVersion() == -1)
+            {
+            vtkDebugMacro("ReadData: the glyph type in the mrml version is " << mrmlGlyphType << ", but in the file it's " << glyphType << ", using the mrml version");
+            glyphType = mrmlGlyphType;
+            }
+          }
+        }
+      else
+        {        
+        vtkDebugMacro("ReadData: no last loaded version number on scene, glyph type = " << glyphType);
+        if (this->GetVersion() == -1)
+          {
+          vtkDebugMacro("ReadData: no storage node version found in the file, assuming it's an old one and incrementing the glyph type");
+          glyphType++;
+          }
+        }
+      }
+    if (glyphType != fiducialListNode->GetGlyphType())
+      {
+      // glyphTypeChanged will flag that need to set the node modified since read
+      glyphTypeChanged = true;
+      vtkWarningMacro("ReadData: updating glyph type from " <<  fiducialListNode->GetGlyphType() << " to " << glyphType << " for Slicer3.6");
+      fiducialListNode->SetGlyphType(glyphType);
+      // now it's set to be the current version
+      this->SetVersion(2);
+      }
     }
   else
     {
     vtkErrorMacro("ERROR opening fiducials file " << this->FileName << endl);
     return 0;
     }
+
+ 
   
   this->SetReadStateIdle();
   
   // make sure that the list node points to this storage node
   fiducialListNode->SetAndObserveStorageNodeID(this->GetID());
 
-  // mark it unmodified since read
-  fiducialListNode->ModifiedSinceReadOff();
-  
+  if (glyphTypeChanged)
+    {
+    fiducialListNode->ModifiedSinceReadOn();
+    }
+  else
+    {
+    // mark it unmodified since read
+    fiducialListNode->ModifiedSinceReadOff();
+    }
   return 1;
 }
 
@@ -543,6 +602,7 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
 
   // put down a header
   of << "# Fiducial List file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+  of << "# version = " << this->GetVersion() << endl;
   of << "# name = " << fiducialListNode->GetName() << endl;
   of << "# numPoints = " << fiducialListNode->GetNumberOfFiducials() << endl;
   of << "# symbolScale = " << fiducialListNode->GetSymbolScale() << endl;
