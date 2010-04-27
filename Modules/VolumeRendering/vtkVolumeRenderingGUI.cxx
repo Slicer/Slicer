@@ -575,6 +575,19 @@ void vtkVolumeRenderingGUI::CheckAbort(void)
   }
 }
 
+void vtkVolumeRenderingGUI::DispalyMessageDialog(char *message)
+{
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+    dialog->SetStyleToMessage();
+    dialog->SetText(message);
+    dialog->Create ( );
+    dialog->SetMasterWindow( this->GetApplicationGUI()->GetMainSlicerWindow() );
+    dialog->ModalOn();
+    dialog->Invoke();
+    dialog->Delete();
+}
+
 void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
 {
   if (this->ProcessingGUIEvents || this->ProcessingMRMLEvents)
@@ -645,6 +658,18 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   {
     if (this->NS_ImageData->GetSelected())
     {
+      int dim[3];
+      vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
+      vnode->GetImageData()->GetDimensions();
+      for (int ii=0; ii<3; ii)
+        {
+        if (dim[ii] < 2) 
+          {
+          this->DispalyMessageDialog("Invalid volume dimension, at least 2 is required");
+          this->NS_ImageData->SetSelected(NULL);
+          return;
+          }
+        }
       //user selected one node, init pipeline based on it
       this->InitializePipelineFromImageData();
     }
@@ -653,6 +678,19 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   {
     if (this->NS_ImageDataFg->GetSelected())
     {
+      int dim[3];
+      vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(this->NS_ImageDataFg->GetSelected());
+      vnode->GetImageData()->GetDimensions();
+      for (int ii=0; ii<3; ii)
+        {
+        if (dim[ii] < 2) 
+          {
+          this->DispalyMessageDialog("Invalid volume dimension, at least 2 is required");
+          this->NS_ImageData->SetSelected(NULL);
+          return;
+          }
+        }
+
       //user selected one node, init pipeline based on it
       this->InitializePipelineFromImageDataFg();
     }
