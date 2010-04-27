@@ -800,7 +800,7 @@ endif (Slicer3_SOURCE_DIR)
 
 #
 
-option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registraiton and segmentation tools" OFF)
+option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registraiton and segmentation tools" ON)
 if(BUILD_BRAINSTOOLS)
   add_subdirectory(BRAINSTools)
 endif(BUILD_BRAINSTOOLS)
