@@ -57,18 +57,27 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   // Sub type of loading an archetype volume that is known to be a scalar
   vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname, int loadingOptions);
 
+  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname) 
+    {
+    return this->AddArchetypeScalarVolume( filename, volname, 0);
+    };
+
   // Description:
   // Overloaded function of AddArchetypeVolume to provide more 
   // loading options, where variable loadingOptions is bit-coded as following:
   // bit 0: label map
   // bit 1: centered
-  // bit 2: loading signal file
+  // bit 2: loading single file
   // higher bits are reserved for future use
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
     {
     return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
     };
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname) 
+    {
+    return this->AddArchetypeVolume( filename, volname, 0, NULL);
+    };
 
   // Description:
   // Create new mrml node and associated storage node.
