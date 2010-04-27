@@ -58,9 +58,6 @@ proc EditorAddQuickModel { sliceLogic } {
 }
 
 #
-# TODO: flesh this out...
-# - copy works, but image data is not correct somehow.
-# - also need a GUI to access this function
 #
 proc EditorLabelCheckPoint {} {
 
@@ -81,7 +78,9 @@ proc EditorLabelCheckPoint {} {
   while {1} {
     set targetName $sourceName-$id
     set nodes [$::slicer3::MRMLScene GetNodesByName $targetName]
-    if { [$nodes GetNumberOfItems] == 0 } {
+    set numberOfItems [$nodes GetNumberOfItems]
+    $nodes Delete
+    if { $numberOfItems == 0 } {
       break
     }
     incr id

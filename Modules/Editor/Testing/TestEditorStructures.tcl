@@ -36,7 +36,7 @@ proc EditorTestStructures { backgroundFile } {
     array set o [$::Editor($singleton,editHelper) objects]
 
     puts "Select volume..."
-    #$o(masterSelector) SetSelected $volumeNode
+    $o(masterSelector) SetSelected $volumeNode
     update
 
     puts "Select color node..."

@@ -182,6 +182,7 @@ itcl::body HelperBox::mergeVolume {} {
   }
 
   set _merge [$mergeCandidates GetItemAsObject 0]
+  $mergeCandidates Delete
   return $_merge
 }
 
@@ -198,7 +199,9 @@ itcl::body HelperBox::structureVolume { structureName } {
     EditorErrorDialog "Warning: more than one structure label volume for master $masterName structure $structureName"
   }
 
-  return [$structureVolumeCandidates GetItemAsObject 0]
+  set volumeNode [$structureVolumeCandidates GetItemAsObject 0]
+  $structureVolumeCandidates Delete
+  return $volumeNode
 }
 
 # ask user which label to create
