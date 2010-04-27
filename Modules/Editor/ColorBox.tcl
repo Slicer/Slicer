@@ -120,8 +120,8 @@ itcl::body ColorBox::create { } {
       $w InsertCellText $row $col(Name) [$colorNode GetColorName $c]
     }
 
-    set tag [[$o(colors) GetWidget] AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
-    lappend _observerRecords [list $o(colors) $tag]
+    set SelectionChangedEvent 10000
+    $::slicer3::Broker AddObservation [$o(colors) GetWidget] $SelectionChangedEvent "::Box::ProtectedCallback $this processEvent $o(colors)"
   }
   pack [$o(colors) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 

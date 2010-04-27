@@ -58,6 +58,7 @@ if { [itcl::find class HelperBox] == "" } {
     variable _master "" ;# current master volume node 
     variable _merge "" ;# the current merge volume
     variable _masterWhenMergeWasSet "" ;# value of the master volume last time merge was selected (to detect changes)
+    variable _colorBox ""
 
     variable _observations
 
@@ -95,6 +96,10 @@ itcl::body HelperBox::destructor {} {
   set broker $::slicer3::Broker
   foreach ob $_observations {
     $broker RemoveObservation $ob
+  }
+
+  if { $_colorBox != "" } {
+    itcl::delete object $_colorBox
   }
 }
 
@@ -210,10 +215,14 @@ itcl::body HelperBox::promptStructure {} {
     return
   }
 
-  set _colorBox [ColorBox #auto]
-  $_colorBox configure -colorNode $colorNode
-  $_colorBox configure -selectCommand "$this addStructure %d; after idle itcl::delete object [namespace current]::$_colorBox"
-  $_colorBox create
+  if { $_colorBox == "" } {
+    set _colorBox [ColorBox #auto]
+    $_colorBox configure -colorNode $colorNode
+    $_colorBox configure -selectCommand "$this addStructure %d"
+    $_colorBox create
+  } else {
+    $_colorBox show
+  }
 }
 
 
