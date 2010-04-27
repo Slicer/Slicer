@@ -46,79 +46,6 @@ if { [catch \"close \$fp\" res] } {
     DESTINATION bin/Modules PERMISSIONS WORLD_EXECUTE)
 endmacro(BRAINSGENERATEMODULESCRIPT)
 
-## A macro to create executables for Slicer or BRAINS3
-if(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
-macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
-
-  find_package(GenerateCLP NO_MODULE REQUIRED)
-  include(${GenerateCLP_USE_FILE})
-
-get_filename_component(TMP_FILENAME ${PROGCLI} NAME_WE)
-set(PROGCLI_HEADER "${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h")
-
-
-set(CLP_SOURCES ${PROGSOURCES})
-if(EXISTS  ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
-  GENERATECLP(CLP_SOURCES ${PROGCLI} ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
-else()
-  GENERATECLP(CLP_SOURCES ${PROGCLI} )
-endif()
-ADD_EXECUTABLE( ${PROGNAME} ${CLP_SOURCES} ${PROGCLI_HEADER})
-target_link_libraries (${PROGNAME} BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
-
-
-if (Slicer3_SOURCE_DIR)
-  slicer3_set_plugins_output_path(${PROGNAME})
-  add_library(${PROGNAME}Lib SHARED ${CLP_SOURCES} ${PROGCLI_HEADER})
-  slicer3_set_plugins_output_path(${PROGNAME}Lib)
-  set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-  target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
-  set(TARGETS ${PROGNAME}Lib ${PROGNAME})
-  slicer3_install_plugins(${TARGETS})
-else (Slicer3_SOURCE_DIR)
-  IF(BRAINS_BUILD)
-    BRAINSGENERATEMODULESCRIPT(${PROGNAME})
-  ENDIF(BRAINS_BUILD)
-  INSTALL(TARGETS ${PROGNAME}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif (Slicer3_SOURCE_DIR)
-
-endmacro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES)
-endif(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
-
-if(0)
-#-----------------------------------------------------------------------------
-# Get and build BRAINSCommonLib
-if(NOT FINDORBUILD_COMMON_BRAINSCOMMONLIB)
-macro(FINDORBUILD_COMMON_BRAINSCOMMONLIB)
-IF(NOT COMMON_BRAINSCOMMONLIB_BINARY_DIR)
-set(proj BRAINSCommonLibExternal)
-ExternalProject_Add(${proj}
-  SVN_REPOSITORY "https://www.nitrc.org/svn/brains/BRAINSCommonLib/trunk"
-  SOURCE_DIR BRAINSCommonLib
-  BINARY_DIR BRAINSCommonLib-build
-  CMAKE_GENERATOR ${gen}
-  CMAKE_ARGS
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DBUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-    -DBUILD_TESTING:BOOL=${BUILD_TESTING}
-    -DCMAKE_SKIP_RPATH:BOOL=ON
-    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-    -DITK_DIR:PATH=${ITK_DIR}
-  INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
-)
-SET(COMMON_BRAINSCOMMONLIB_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
-SET(COMMON_BRAINSCOMMONLIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib-build)
-ENDIF(NOT COMMON_BRAINSCOMMONLIB_BINARY_DIR)
-endmacro(FINDORBUILD_COMMON_BRAINSCOMMONLIB)
-endif(NOT FINDORBUILD_COMMON_BRAINSCOMMONLIB)
-endif(0)
-
 
 #-----------------------------------------------------------------------------
 # Build the optional DEBUGIMAGEVIEWER
@@ -144,4 +71,59 @@ if( USE_DEBUG_IMAGE_VIEWER )
 endif( USE_DEBUG_IMAGE_VIEWER )
 endmacro(SETOPTIONALDEBUGIMAGEVIEWER)
 endif(NOT SETOPTIONALDEBUGIMAGEVIEWER)
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+## A macro to create executables for Slicer or BRAINS3
+if(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
+macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
+
+  find_package(GenerateCLP NO_MODULE REQUIRED)
+  include(${GenerateCLP_USE_FILE})
+
+  get_filename_component(TMP_FILENAME ${PROGCLI} NAME_WE)
+  set(PROGCLI_HEADER "${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h")
+
+  set(CLP_SOURCES ${PROGSOURCES})
+  if(EXISTS  ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
+    GENERATECLP(CLP_SOURCES ${PROGCLI} ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
+  else()
+    GENERATECLP(CLP_SOURCES ${PROGCLI} )
+  endif()
+  add_executable( ${PROGNAME} ${CLP_SOURCES} ${PROGCLI_HEADER})
+  target_link_libraries (${PROGNAME} BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
+
+  if (Slicer3_SOURCE_DIR)
+    ### If building as part of the Slicer3_SOURCE_DIR, then only build the shared object, and not the command line program.
+
+    add_library(${PROGNAME}Lib SHARED ${CLP_SOURCES} ${PROGCLI_HEADER})
+    set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+    slicer3_set_plugins_output_path(${PROGNAME}Lib)
+    target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
+
+    # install each target in the production area (where it would appear in an 
+    # installation) and install each target in the developer area (for running 
+    # from a build)
+    slicer3_set_plugins_output_path(${PROGNAME})
+    set(TARGETS ${PROGNAME}Lib ${PROGNAME})
+    slicer3_install_plugins(${TARGETS})
+  else (Slicer3_SOURCE_DIR)
+    ### If building outside of Slicer3, then only build the command line executable.
+    IF(BRAINS_BUILD)
+      BRAINSGENERATEMODULESCRIPT(${PROGNAME})
+    ENDIF(BRAINS_BUILD)
+    INSTALL(TARGETS ${PROGNAME}
+      RUNTIME DESTINATION bin
+      LIBRARY DESTINATION lib
+      ARCHIVE DESTINATION lib)
+  endif (Slicer3_SOURCE_DIR)
+
+endmacro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES)
+endif(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
+
 

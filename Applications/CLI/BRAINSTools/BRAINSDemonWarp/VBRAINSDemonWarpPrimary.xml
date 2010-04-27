@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <executable>
   <category>Registration</category>
-  <title>VectorBRAINSDemonWarpn</title>
+  <title>BRAINSVectorDemonWarping</title>
 
   <description>
     This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.
   </description>
-  <version>0.1.0.$Revision: 1.4 $(alpha)</version>
+  <version>1.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>This tool was developed by Hans Johnson and Greg Harris.</contributor>
+  <contributor>This tool was developed by Hans Johnson, Greg Harris, and YongQaing Zhao.</contributor>
 
   <parameters>
     <label>Input Image Files</label>

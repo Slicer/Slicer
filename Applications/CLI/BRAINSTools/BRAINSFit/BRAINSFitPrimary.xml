@@ -170,21 +170,6 @@
       <default></default>
     </image>
 
-    <image type="label">
-      <name>outputFixedVolumeROI</name>
-      <longflag>--outputFixedVolumeROI</longflag>
-      <label>Fixed Image Volume automatically found ROI</label>
-      <description>The ROI automatically found in fixed image.</description>
-      <channel>output</channel>
-    </image>
-
-    <image type="label">
-      <name>outputMovingVolumeROI</name>
-      <longflag>--outputMovingVolumeROI</longflag>
-      <label>Moving Image Volume automatically found ROI</label>
-      <description>The ROI automatically found in moving image.</description>
-      <channel>output</channel>
-    </image>
 
     <string-enumeration>
       <name>outputVolumePixelType</name>
@@ -241,9 +226,25 @@
     </string-enumeration>
 
     <image type="label">
+      <name>outputFixedVolumeROI</name>
+      <longflag>--outputFixedVolumeROI</longflag>
+      <label>Output Fixed Mask (ROIAUTO only)</label>
+      <description>The ROI automatically found in fixed image.</description>
+      <channel>output</channel>
+    </image>
+
+    <image type="label">
+      <name>outputMovingVolumeROI</name>
+      <longflag>--outputMovingVolumeROI</longflag>
+      <label>Output Moving Mask (ROIAUTO only)</label>
+      <description>The ROI automatically found in moving image.</description>
+      <channel>output</channel>
+    </image>
+
+    <image type="label">
       <name>fixedBinaryVolume</name>
       <longflag>--fixedBinaryVolume</longflag>
-      <label>Fixed Mask</label>
+      <label>Input Fixed Mask (ROI only)</label>
       <description>Fixed Image binary mask volume.</description>
       <default></default>
       <channel>input</channel>
@@ -252,7 +253,7 @@
     <image type="label">
       <name>movingBinaryVolume</name>
       <longflag>--movingBinaryVolume</longflag>
-      <label>Moving Mask</label>
+      <label>Input Moving Mask (ROI only)</label>
       <description>Moving Image binary mask volume.</description>
       <default></default>
       <channel>input</channel>

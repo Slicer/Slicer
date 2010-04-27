@@ -22,14 +22,14 @@
     <image type="label">
       <name>outputROIMaskVolume</name>
       <longflag>--outputROIMaskVolume</longflag>
-      <label>Output Volume</label>
-      <description>The ROI automatically found in the input image.</description>
+      <label>Output Mask</label>
+      <description>The ROI automatically found from the input image.</description>
       <channel>output</channel>
     </image>
     <image>
       <name>outputClippedVolumeROI</name>
       <longflag>--outputClippedVolumeROI</longflag>
-      <label>Moving Image Volume automatically found ROI</label>
+      <label>Output Image Clipped by ROI</label>
       <description>The inputVolume clipped to the region of the brain mask.</description>
       <channel>output</channel>
     </image>

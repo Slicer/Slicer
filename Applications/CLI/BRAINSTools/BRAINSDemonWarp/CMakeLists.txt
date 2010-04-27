@@ -38,7 +38,6 @@ include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
 
 ###
 configure_file(${BRAINSDemonWarp_SOURCE_DIR}/CTestCustom.ctest ${BRAINSDemonWarp_BINARY_DIR}/CTestCustom.ctest COPYONLY)
-#add_subdirectory(Example)
 
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 ###
@@ -59,15 +58,7 @@ if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 
 ### Add the Testing Subdirectory.
-#add_subdirectory(TestingBRAINSDemonWarp)
-
-if (Slicer3_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
-  # from a build)
-  set(TARGETS        
-    VBRAINSDemonWarp
-    BRAINSDemonWarp
-    )
-  slicer3_install_plugins(${TARGETS})
-endif (Slicer3_SOURCE_DIR)
+if(NOT Slicer3_SOURCE_DIR)
+  add_subdirectory(TestingBRAINSDemonWarp)
+  add_subdirectory(Example)
+endif(NOT Slicer3_SOURCE_DIR)

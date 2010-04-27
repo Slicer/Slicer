@@ -32,35 +32,20 @@ include(${BRAINSCommonLib_USE_FILE})
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 #SETOPTIONALDEBUGIMAGEVIEWER()
 
-
 # No need to add with nothing to compile. add_subdirectory(BRAINSFit_Common)
 include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
 
 ###
-set(ALLBRAINSFIT_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSFitPrimary.cxx)
-add_library(BRAINSFITCOMMONLIB ${ALLBRAINSFIT_SOURCE} BRAINSFitPrimaryCLP.h)
-target_link_libraries(BRAINSFITCOMMONLIB BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
-
 set(CLP BRAINSFit)
-set(${CLP}_SOURCE BRAINSFit.cxx )
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" BRAINSFITCOMMONLIB)
-target_link_libraries( ${CLP} BRAINSFITCOMMONLIB BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+set(${CLP}_SOURCE BRAINSFit.cxx BRAINSFitPrimary.cxx)
+CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "")
+target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
-#if(BUILD_TESTING)
-  #  add_subdirectory(TestData)
-#endif()
-
-if (Slicer3_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
-  # from a build)
-  set(TARGETS        
-    BRAINSFit
-    BRAINSFITCOMMONLIB 
-    )
-  slicer3_install_plugins(${TARGETS})
-
-endif (Slicer3_SOURCE_DIR)
+if(NOT Slicer3_SOURCE_DIR)
+if(BUILD_TESTING)
+  add_subdirectory(TestData)
+endif(BUILD_TESTING)
+endif(NOT Slicer3_SOURCE_DIR)
 
 include(InstallRequiredSystemLibraries)
 
