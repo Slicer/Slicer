@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Experimental</category>
+  <category>Experimental.Filtering</category>
   <title>N4ITK MRI Bias correction</title>
   <index>3</index>
   <description>Performs MRI bias correction using N4 algorithm. This module is based on the ITK filters contributed in the following publication:  Tustison N, Gee J "N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction", The Insight Journal 2009 January-June, http://hdl.handle.net/10380/3053</description>
@@ -52,8 +52,8 @@
     <integer-vector>
       <name>numberOfIterations</name>
       <longflag>iterations</longflag>
-      <description></description>
-      <label>Number of iterations at each level, separated by comma</label>
+      <label>Number of iterations</label>
+      <description>Number of iterations at each level, separated by comma</description>
       <default>50,40,30</default>
     </integer-vector>
 
@@ -70,7 +70,7 @@
       <longflag>meshresolution</longflag>
       <label>BSpline grid resolution</label>
       <description>Initial resolution of the bspline grid: resolution in each of the 3 dimensions separated by comma</description>
-      <default>0</default>
+      <default>1,1,1</default>
     </float-vector>
 
     <float>
