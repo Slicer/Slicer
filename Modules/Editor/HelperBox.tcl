@@ -949,7 +949,9 @@ itcl::body HelperBox::getNodeByName { name } {
 
   $::slicer3::MRMLScene InitTraversal
   while { [set node [$::slicer3::MRMLScene GetNextNode]] != "" } {
-    if { [$node GetName] == $name } {
+    puts "checking $node"
+    set ret [catch "$node GetName" res]
+    if { !$ret && [$node GetName] == $name } {
       return $node
     }
   }
