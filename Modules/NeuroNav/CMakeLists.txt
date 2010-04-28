@@ -38,9 +38,8 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/vtkNeuroNavConfigure.h
   )
 
-file(GLOB headers 
-  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-  )
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkNeuroNavConfigure.h"
@@ -62,6 +61,10 @@ set(NeuroNav_SRCS
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(NeuroNav NeuroNav_TCL_SRCS "${NeuroNav_SRCS}" "")
 
+# --------------------------------------------------------------------------
+if(Slicer3_BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+endif(Slicer3_BUILD_TESTING)
 
 
 #---------------------------------------------------------------------------
