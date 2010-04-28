@@ -1499,13 +1499,14 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForHelpFrame ()
 
   // Define your help text here.
   const char *help = 
-    "**The OpenIGTLink Interface Module** helps you to manage OpenIGTLink connections:"
-    "OpenIGTLink is an open network protocol for communication among software / hardware "
-    "for image-guided therapy. See "
-    "<a>http://www.slicer.org/slicerWiki/index.php/Modules:OpenIGTLinkIF</a> for details.";
+    "**The OpenIGTLink Interface Module** allows you to transfer images, positions and other "
+    "types of data between 3D Slicer and external software through a network using OpenIGTLink. "
+    "OpenIGTLink is an open network protocol for device communication for image-guided therapy. "
+    " See <a>http://www.slicer.org/slicerWiki/index.php/Modules:OpenIGTLinkIF-Documentation-3.6</a> for details about the module."
+    " Information about OpenIGTLink is also availble at <a>http://www.na-mic.org/Wiki/index.php/OpenIGTLink</a>";
   const char *about =
-    "The module is designed and implemented by Junichi Tokuda for Brigham and Women's Hospital."
-    "This work is supported by NCIGT, NA-MIC and BRP \"Enabling Technologies for MRI-Guided Prostate Intervention\" project.";
+    "The module is designed and implemented by Junichi Tokuda from Brigham and Women's Hospital."
+    "This work is supported by NCIGT, NA-MIC and BRP \"Enabling Technologies for MRI-Guided Prostate Intervention\" project, funded by NIH.";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "OpenIGTLinkIF" );
   this->BuildHelpAndAboutFrame (page, help, about);
