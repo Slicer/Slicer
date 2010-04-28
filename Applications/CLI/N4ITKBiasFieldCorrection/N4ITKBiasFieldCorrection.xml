@@ -26,7 +26,7 @@
       <name>maskImageName</name>
       <label>Mask Image</label>
       <channel>input</channel>
-      <description>Mask of the structure of interest in the input image</description>
+      <description>Mask of the structure of interest in the input image. Optional, but highly recommended.</description>
     </image>
 
     <image>
@@ -53,7 +53,7 @@
       <name>numberOfIterations</name>
       <longflag>iterations</longflag>
       <description></description>
-      <label>Number of iterations</label>
+      <label>Number of iterations at each level, separated by comma</label>
       <default>50,40,30</default>
     </integer-vector>
 
@@ -65,42 +65,27 @@
       <default>0.0001</default>
     </float>
 
-    <boolean>
-      <name>bsplineOption</name>
-      <longflag>bsplineoption</longflag>
-      <description>Configure BSpline fitting</description>
-      <label>Use BSpline fitting options</label>
-      <default>0</default>
-    </boolean>
-
-    <float>
-      <name>bsplineOrder</name>
-      <longflag>bsplineorder</longflag>
-      <description>Order of BSpline fitting</description>
-      <label>BSpline order</label>
-      <default>3</default>
-    </float>
-
     <float-vector>
       <name>initialMeshResolution</name>
       <longflag>meshresolution</longflag>
-      <label>Initial mesh resolution</label>
+      <label>BSpline grid resolution</label>
+      <description>Initial resolution of the bspline grid: resolution in each of the 3 dimensions separated by comma</description>
       <default>0</default>
     </float-vector>
 
     <float>
       <name>splineDistance</name>
       <longflag>splinedistance</longflag>
-      <description>Spline distance</description>
       <label>Spline distance</label>
+      <description>Distance between spline points; valid only if mesh resolution is not specified</description>
       <default>0</default>
     </float>
  
     <integer>
       <name>shrinkFactor</name>
       <longflag>shrinkfactor</longflag>
-      <description></description>
       <label>Shrink factor</label>
+      <description>Specifies upsampling scale for the input image. Should be defined as a non-zero number. 1 corresponds to no upsampling, and will result in the slowest execution.</description>
       <default>4</default>
     </integer>
 
@@ -109,7 +94,15 @@
   <parameters advanced="true">
   <label>Advanced N4 Parameters</label>
   <description>Advanced parameters of the algorithm</description>
-  
+
+     <int>
+      <name>bsplineOrder</name>
+      <longflag>bsplineorder</longflag>
+      <label>BSpline order</label>
+      <description>Order of the BSpline used for fitting</description>
+      <default>3</default>
+    </int>
+ 
     <image>
       <longflag>weightimage</longflag>
       <name>weightImageName</name>
