@@ -82,6 +82,11 @@ if {$argc == 0} {
     # for now assume that it's run just through the testing framework with 
     # ./Slicer3 --test-mode --script ../Slicer3/Modules/Editor/Testing/TestEditorStructures.tcl ../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd
     set backgroundFile [lindex $argv 4]
+    if { $backgroundFile == "" } {
+      # account for the difference between ctest invocation and command line invocation
+      set backgroundFile [lindex $argv 3]
+    }
 }
-# puts "Using background file = $backgroundFile"
+puts $argv
+puts "Using background file = $backgroundFile"
 after idle runtest $backgroundFile
