@@ -98,6 +98,7 @@ itcl::body ColorBox::create { } {
     $o(colors) Create
     set w [$o(colors) GetWidget]
     $w SetSelectionTypeToRow
+    $w SetSelectionModeToSingle
     $w MovableRowsOff
     $w MovableColumnsOn
     $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
@@ -142,6 +143,10 @@ itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
   if { $caller == $o(colors) } {
     if { [$o(colors) GetClassName] != "vtkKWPushButton" } {
       set row [[$o(colors) GetWidget] GetIndexOfFirstSelectedRow]
+      if { $row == -1 } {
+        # no valid row is selected, so ignore event
+        return
+      }
       set colorIndex [[$o(colors) GetWidget] GetCellText $row $col(Number)]
     }
     if { $selectCommand != "" } {

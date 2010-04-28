@@ -73,7 +73,7 @@ if { [itcl::find class HelperBox] == "" } {
 
     method promptStructure {} {} ;# ask which label value to use
     method addStructure { {label ""} {options ""} } {} ;# add a new dependent volume
-    method deleteStructures {} {} ;# delete all the structures
+    method deleteStructures { {options "confirm"} } {} ;# delete all the structures
     method updateStructures {} {} ;# refresh the structure frame with currently loaded data
     method merge { {label all} } {} ;# merge the named or all structure labels into the master label
     method split {} {} ;# extract a label volume for each distinct label in the merge volume
@@ -84,6 +84,15 @@ if { [itcl::find class HelperBox] == "" } {
 
     method processEvent { caller event } {}
     method getNodeByName { nodeName } {}
+
+    # to support testing, accessor to instance variables
+    method variables {} {
+      set v(_master) $_master
+      set v(_merge) $_merge
+      set v(_masterWhenMergeWasSet) $_masterWhenMergeWasSet
+      set v(_colorBox) $_colorBox
+      return [array get v]
+    }
   }
 }
 
@@ -243,7 +252,7 @@ itcl::body HelperBox::addStructure { {label ""} {options ""} } {
 }
 
 # delete all the structures
-itcl::body HelperBox::deleteStructures {} {
+itcl::body HelperBox::deleteStructures { {options "confirm"} } {
 
   #
   # iterate through structures and delete them
@@ -256,7 +265,7 @@ itcl::body HelperBox::deleteStructures {} {
 
   set rows [$w GetNumberOfRows]
 
-  if { ![EditorConfirmDialog "Delete $rows structure volume(s)?"] } {
+  if { [lsearch $options "yes"] != -1 && ![EditorConfirmDialog "Delete $rows structure volume(s)?"] } {
     return
   }
 
@@ -949,7 +958,6 @@ itcl::body HelperBox::getNodeByName { name } {
 
   $::slicer3::MRMLScene InitTraversal
   while { [set node [$::slicer3::MRMLScene GetNextNode]] != "" } {
-    puts "checking $node"
     set ret [catch "$node GetName" res]
     if { !$ret && [$node GetName] == $name } {
       return $node
