@@ -9,3 +9,7 @@ TARGET_LINK_LIBRARIES(${CLP}Lib ITKIO ITKStatistics ITKNumerics)
 ADD_EXECUTABLE(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
 slicer3_set_plugins_output_path(${CLP})
 TARGET_LINK_LIBRARIES(${CLP} ${CLP}Lib)
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(BUILD_TESTING)
