@@ -353,7 +353,10 @@ itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeRepresentatio
     [$sliceToRAS GetElement 0 2] \
     [$sliceToRAS GetElement 1 2] \
     [$sliceToRAS GetElement 2 2]
-  [$::slicer3::ApplicationGUI GetActiveViewerWidget ] RequestRender
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
+  if { $viewer != "" } {
+    $viewer RequestRender
+  }
 }
 
 
