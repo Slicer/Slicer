@@ -30,7 +30,7 @@
     </image>
 
     <image>
-      <longflag>output</longflag>
+      <longflag>outputimage</longflag>
       <name>outputImageName</name>
       <label>Output Volume</label>
       <channel>output</channel>

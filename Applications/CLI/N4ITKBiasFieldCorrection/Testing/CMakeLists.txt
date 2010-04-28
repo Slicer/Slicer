@@ -37,7 +37,7 @@ add_test(N4ITKBiasFieldCorrection ${Slicer3_EXE} --launch N4ITKBiasFieldCorrecti
   --compare ${BASELINE}/he3corrected.nii.gz ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
   --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz 
-  --output ${TEMP}/he3corrected.nii.gz --outputbiasfield ${TEMP}/he3biasfield.nii.gz
+  --outputimage ${TEMP}/he3corrected.nii.gz --outputbiasfield ${TEMP}/he3biasfield.nii.gz
   )
 
 set (CLP N4ITKBiasFieldCorrection)
