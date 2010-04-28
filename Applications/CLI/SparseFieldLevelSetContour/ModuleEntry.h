@@ -29,12 +29,12 @@ using std::vector;
 namespace MeshContourEvolver {
 
 // Input: mesh and indices of vertices for initialization
-vtkPolyData* entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx );
+vtkPolyData* entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, bool bForceRecompute = false);
 
 // Input: mesh and 3D points for initialization. This is what you get
 // when inputting 'fiducials' in Slicer GUI. The 3D points
 // are not on the mesh, you need to first find closest points on the mesh.
-vtkPolyData* entry_main( vtkPolyData* inputMesh, const vector< vector<float> >& initPoints3D);
+vtkPolyData* entry_main( vtkPolyData* inputMesh, vector< vector<float> >& initPoints3D, bool bForceRecompute = false);
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!

@@ -14,6 +14,8 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTriangleFilter.h"
 
+#include "LSops.h"
+
 vtkCxxRevisionMacro(vtkLevelSetMeshEvolver, "$Revision: 1.00 $");
 vtkStandardNewMacro(vtkLevelSetMeshEvolver);
 
@@ -54,8 +56,8 @@ int vtkLevelSetMeshEvolver::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  /* vtkPolyData *source = 0;
-  if (sourceInfo)    {
+  vtkPolyData *source = 0;
+ /* if (sourceInfo)    {
     source = vtkPolyData::SafeDownCast(
       sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
     }*/
@@ -78,6 +80,37 @@ int vtkLevelSetMeshEvolver::RequestData(
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
     vtkDebugMacro(<<"Analyzing ____ ...");
+  }
+
+  
+
+  // Perform LS-Sparse on Mesh 
+  // Create New Scalar Array called "ActiveContourFunctionValues"
+  // Update the vtkIntArray called "ActiveContourVertexIndices"
+  {
+    int EVOLVE_ITER = 50;
+    SparseFieldLS* sfls = new SparseFieldLS( this->myMeshData,   L_z, L_p1,   L_n1,   L_p2, L_n2, map );
+    std::vector<int> NewLZ    = sfls->Evolve( EVOLVE_ITER );
+    std::vector<double>* vals = sfls->GetPhi( );
+    // Update the array!
+    vtkDataArray* contourIdxArrayIn = input->GetPointData()->GetArray("ActiveContourVertexIndices");
+     vtkSmartPointer<vtkIntArray>  activeContourVertIdx = vtkSmartPointer<vtkIntArray>::New();
+     activeContourVertIdx = vtkIntArray::SafeDownCast( contourIdxArrayIn );
+     for( ::size_t i = 0; i < map.size(); i++ ) {
+        int val = vtkMath::Round( float( (*vals)[i] ) );
+        if( val >= 0 ) {
+          val = 255;
+        }
+        else{
+          val = 0;
+        } 
+        activeContourVertIdx->SetValue( i, val);
+     }
+     for( ::size_t i = 0; i < NewLZ.size(); i++ ) {
+        //int idx = NewLZ[i];
+        //activeContourVertIdx->SetValue( idx, 1 );
+     }
+     output->GetPointData()->AddArray( activeContourVertIdx );
   }
 
   // update progress bar at some intervals

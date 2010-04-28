@@ -2,8 +2,10 @@
 
 // Input: mesh and indices of vertices for initialization
 vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
-                                            vtkIntArray* initVertIdx )
+                                            vtkIntArray* initVertIdx, bool bForceRecompute )
 {
+  
+
   // instantiate output mesh
   vtkPolyData* outputMesh = vtkPolyData::New();
 
@@ -16,6 +18,7 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   // algorithm #1: initialization of path
   vtkSmartPointer<vtkInitClosedPath> initPath = vtkSmartPointer<vtkInitClosedPath>::New();
   initPath->SetInitPointVertexIdx( initVertIdx );
+  initPath->SetForceRecompute( bForceRecompute );
   initPath->SetInput( triangle_filter->GetOutput() );
   initPath->Update();
   
@@ -23,9 +26,16 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   // does NOT already have a scalar data set containing it)
   vtkSmartPointer<vtkComputeLocalGeometry> computeGeometry = vtkSmartPointer<vtkComputeLocalGeometry>::New();
   computeGeometry->SetInputConnection( initPath->GetOutputPort() );
-    
+  computeGeometry->Update();  
+
   // algorithm #3: run curve evolution and update the scalar dataset for display
   vtkSmartPointer<vtkLevelSetMeshEvolver> evolver = vtkSmartPointer<vtkLevelSetMeshEvolver>::New();
+  MeshData* data = computeGeometry->GetMeshData( );
+  evolver->SetMeshData( data );
+  vector<int> L_z;  vector<int> L_n1;  vector<int> L_p1;  vector<int> L_n2;  vector<int> L_p2; vector<int> map;
+  computeGeometry->GetLists( L_z, L_p1, L_n1, L_p2, L_n2, map );
+  evolver->SetLists( L_z, L_p1, L_n1, L_p2, L_n2, map );
+        
   evolver->SetInputConnection( computeGeometry->GetOutputPort() );
  // evolver->SetInputConnection( 1, initPath->GetOutputPort(1) );
 
@@ -41,8 +51,15 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 }
 
 vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
-                                            const vector< vector<float> >& initPoints3D )
+                                            vector< vector<float> >& initPoints3D, bool bForceRecompute )
 { 
+
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangle_filter->SetInput(inputMesh);
+  triangle_filter->Update();
+  vtkSmartPointer<vtkPolyData> tri_result = triangle_filter->GetOutput();
+  inputMesh->DeepCopy(tri_result);
+
   vtkSmartPointer<vtkPoints>    verts = inputMesh->GetPoints();
   double thispt[3];
   vtkSmartPointer<vtkIntArray> initialPoints = vtkSmartPointer<vtkIntArray>::New();
@@ -50,8 +67,18 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   unsigned int iNumSeedPoints = initPoints3D.size();
   std::cout<<"appending "<<iNumSeedPoints<<" points to list. \n";
 
+  if( iNumSeedPoints < 2 ) { 
+    std::cout<<"Error, no fiducial points were read...check your input format\n";
+    vector<float> X(3); X[0] = 20; X[1] = 0; X[2] = 0;
+    vector<float> Y(3); Y[0] = 0; X[1] = 20; Y[2] = 0;
+    vector<float> Z(3); Z[0] = 0; Z[1] = 0; Z[2] = 20;
+    initPoints3D.push_back( X );
+    initPoints3D.push_back( Y );
+    initPoints3D.push_back( Z );
+  }
+
   /* Find closest vertex to each input 3D point */
-  for( unsigned int k = 0; k < iNumSeedPoints; k++ ) {
+  for( unsigned int k = 0; k < initPoints3D.size(); k++ ) {
     float xcur = (initPoints3D[k])[0];
     float ycur = (initPoints3D[k])[1];
     float zcur = (initPoints3D[k])[2];
@@ -66,11 +93,11 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
       }
     }
     std::cout<<" "<<iMinIdx<<" ...";
-    //initialPoints->
-    //initialPoints.push_back(iMinIdx);
+    initialPoints->InsertNextValue( iMinIdx );
   }
   std::cout<<"\n";
-  vtkPolyData* outputMesh = entry_main( inputMesh, initialPoints );
+  
+  vtkPolyData* outputMesh = entry_main( inputMesh, initialPoints, bForceRecompute );
 
   return outputMesh;
 }
@@ -80,7 +107,7 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 // evolution of existing curve or only pre-compute geometry!
 vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh )
 {  
-  vtkIntArray* emptyIntVec = NULL;
+  vtkIntArray* emptyIntVec;
   vtkPolyData* outputMesh = entry_main( inputMesh, emptyIntVec );
 
   return outputMesh;
