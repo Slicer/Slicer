@@ -319,8 +319,8 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
-  const char *help = "**Cameras Module:** Create new views and cameras. The view pulldown menu below can be used to create new views and select the active view. Switch the layout to \"Tabbed 3D Layout\" from the layout icon in the toolbar to access multiple views. The view selected in \"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in all other layouts. The camera pulldown menu below can be used to set the active camera for the selected view. WARNING: this is rather experimental at the moment (fiducials, IO/data, closing the scene are probably broken for new views). ";
-  
+  const char *help = "**Cameras Module:** Create new views and cameras. The view pulldown menu below can be used to create new views and select the active view. Switch the layout to \"Tabbed 3D Layout\" from the layout icon in the toolbar to access multiple views. The view selected in \"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in all other layouts. The camera pulldown menu below can be used to set the active camera for the selected view.\nWARNING: this is rather experimental at the moment (fiducials, IO/data, closing the scene are probably broken for new views).\nHelp for Cameras module: <a>http://www.slicer.org/slicerWiki/index.php/Slicer3:Multiple_Cameras</a> ";
+  const char *about = "This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. See <a>http://www.slicer.org</a> for details.\nThe Cameras module was contributed by Sebastien Barre, Kitware Inc.";
   // ---
   // MODULE GUI FRAME 
   // configure a page for a camera 
@@ -332,6 +332,7 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Cameras" );
   
   // HELP FRAME
+  /*
   vtkSlicerModuleCollapsibleFrame *cameraHelpFrame = 
     vtkSlicerModuleCollapsibleFrame::New();
   cameraHelpFrame->SetParent ( page );
@@ -354,6 +355,16 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
   this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
   app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
                 this->HelpText->GetWidgetName ( ) );
+  */
+  this->BuildHelpAndAboutFrame ( page, help, about );
+
+  vtkKWLabel* NAMICLabel = vtkKWLabel::New();
+  NAMICLabel->SetParent ( this->GetLogoFrame() );
+  NAMICLabel->Create();
+  NAMICLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );
+  app->Script ( "pack %s -side top -anchor n -padx 2 -pady 2",  NAMICLabel->GetWidgetName());
+  NAMICLabel->Delete();
+  
 
   // ---
   // camera FRAME            
@@ -408,7 +419,7 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
                   this->CameraSelectorWidget->GetWidgetName());
 
   cameraFrame->Delete();
-  cameraHelpFrame->Delete();
+  //cameraHelpFrame->Delete();
 
   this->UpdateViewSelector();
   this->UpdateCameraSelector();
