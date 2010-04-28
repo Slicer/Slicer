@@ -543,19 +543,19 @@ int main(int argc, char* argv[])
   OrientationMatrix.SetIdentity();
 
   itk::Matrix<double,3,3> NRRDSpaceDirection;
-  std::string nrrdSpaceDefinition("");
+  std::string nrrdSpaceDefinition="left-posterior-superior";;
   if ( vendor.find("SIEMENS") != std::string::npos || vendor.find("PHILIPS") != std::string::npos )
     {
     nrrdSpaceDefinition="left-posterior-superior";
     }
-  else if ( vendor.find("GE") != std::string::npos && !useLPS )
-    {
-    nrrdSpaceDefinition="right-anterior-superior";
-    OrientationMatrix[0][0]=-1;
-    OrientationMatrix[1][1]=-1;
-    OrientationMatrix[2][2]=1;
-    ImageOrigin=OrientationMatrix*ImageOrigin;
-    }
+//   else if ( vendor.find("GE") != std::string::npos && !useLPS )
+//     {
+//     nrrdSpaceDefinition="right-anterior-superior";
+//     OrientationMatrix[0][0]=-1;
+//     OrientationMatrix[1][1]=-1;
+//     OrientationMatrix[2][2]=1;
+//     ImageOrigin=OrientationMatrix*ImageOrigin;
+//     }
   else // for all other vendors assume LPS convention
        // for GE, we may force LPS by using "useLPS"
   {
