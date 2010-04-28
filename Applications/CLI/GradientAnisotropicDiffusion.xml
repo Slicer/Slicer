@@ -22,7 +22,7 @@ N-dimensions.
 
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GradientAnisotropicFilter-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GradientAnisotropicFilter-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
@@ -65,7 +65,7 @@ N-dimensions.
       <default>0.0625</default>
       <constraints>
         <minimum>.001</minimum>
-        <maximum>1</maximum>
+        <maximum>.0625</maximum>
         <step>.001</step>
       </constraints>
     </double>
