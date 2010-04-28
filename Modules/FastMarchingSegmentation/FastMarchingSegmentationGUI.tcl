@@ -201,7 +201,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $segvolume SetClampMinimumValue 0
   $segvolume SetValue 0
   [$segvolume GetLabel] SetText "Target segmented volume (mL):"
-  $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume"
+  $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume. Hint: human mandible is about 30 mL, human head is approximately 5000 mL"
   pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   set ::FastMarchingSegmentation($this,labelColorSpin) [vtkKWScaleWithEntry New]
