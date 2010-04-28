@@ -1,10 +1,14 @@
 project (DicomToNrrdConverter)
 cmake_minimum_required(VERSION 2.6)
+
+enable_testing()
+
 if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND CMAKE_POLICY)
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
+ADD_SUBDIRECTORY(Testing)
 
 set (CLP DicomToNrrdConverter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
