@@ -114,7 +114,7 @@
       <longflag>splinedistance</longflag>
       <description>Spline distance</description>
       <label>Spline distance</label>
-      <default>100</default>
+      <default>0</default>
     </float>
 
  
