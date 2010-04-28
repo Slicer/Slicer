@@ -1426,11 +1426,10 @@ void vtkFourDImageGUI::BuildGUIForHelpFrame ()
   const char *help = 
     "**The 4D Analysis Module** helps you to load, view and analyze a series of 3D images (4D image),"
     "such as perfusion MRI, DCE MRI, and fMRI. "
-    "<a>http://www.slicer.org/slicerWiki/index.php/Modules:FourDImage</a> for details.";
+    "See <a>http://www.slicer.org/slicerWiki/index.php/Modules:FourDImage-Documentation-3.6</a> for more details.";
   const char *about =
-    "This project is directed by Hiroto Hatabu, MD, PhD (BWH)."
     "The module is designed and implemented by Junichi Tokuda, PhD (BWH), under supports from"
-    "Center for Pulmonary Functional Imaging at BWH, NCIGT and NA-MIC.";
+    "Center for Pulmonary Functional Imaging at BWH, NCIGT, NA-MIC, and NAC.";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "FourDImage" );
   this->BuildHelpAndAboutFrame (page, help, about);
 
