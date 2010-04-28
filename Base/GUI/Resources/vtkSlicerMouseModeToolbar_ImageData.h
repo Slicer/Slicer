@@ -184,10 +184,69 @@ static const unsigned char image_MouseWindowLevelOn[] =
 static const unsigned int  image_MousePickDisabled_width          = 23;
 static const unsigned int  image_MousePickDisabled_height         = 21;
 static const unsigned int  image_MousePickDisabled_pixel_size     = 3;
-static const unsigned long image_MousePickDisabled_length         = 404;
+static const unsigned long image_MousePickDisabled_length         = 464;
 static const unsigned long image_MousePickDisabled_decoded_length = 1449;
 
 static const unsigned char image_MousePickDisabled[] = 
+  "eNqlkmFPgzAQhv//r2j45JYlmpFpYgzExWwmOueHOedAnBLgoC2/YR6UkaMUHJG8uVxK++"
+  "TpwfFYPLZt/7OqRwqhkmeZlrvNdXuxTk1AmgaZrq+0zbJMe73fZJ44L7BcxO5jdL+I3FWy"
+  "nMeOQp1pojILJ37oRPwJ6+xnIk8+8gwTdEYNP9mN3tgHMOuW7RI22jAvfkcZfCuHmIxX1s"
+  "Mr2wY3WMfP1iCTeib4XSzGMBeuhX09Eznk6+DxHFeEwEamKWa6viwawukySTmoDRTC07RI"
+  "lgkklJx+k7qnkBQAkwEgShAINaFnq3BOITQcQJwuRU0aP6cJQhuFEgB4L82kTrWnF1INCs"
+  "Bool1B9cYUg4oiowk9+CckDkOjiWzK5OQz0aqa8HBom8jyH8CJUYceyHcQtE0UhDchuQmC"
+  "Ndjvv3y/ywQhWRy3h6PVT4R4HjXpqsaRant+AXM/6N0=";
+
+/* 
+ * Resource generated for file:
+ *    MousePickOff.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MousePickOff_width          = 23;
+static const unsigned int  image_MousePickOff_height         = 21;
+static const unsigned int  image_MousePickOff_pixel_size     = 3;
+static const unsigned long image_MousePickOff_length         = 540;
+static const unsigned long image_MousePickOff_decoded_length = 1449;
+
+static const unsigned char image_MousePickOff[] = 
+  "eNqllD1Lw0AYx8/FfgKHQj9AZx3sqosOroKuBopgcenWRfQLCL5sKrqrhSy+bDFQKEh1kE"
+  "5F66DEVpuYNk0aU+PTPjS93uVF8c/DcSR3P373XIjr9iKK4j9HTHcQ17KYWj6b5x8OaxCg"
+  "MZDU0RSz+Ns0oVKH7PNwk8y7sKtu5d7SGy/rOSW909jM1AVE/dIEa/YxKVeFZ3v75kmYqS"
+  "S77TYUwwkygbOAhvxxHc+TS5WMLZKLBomfE6l+tVZbgRONyESZJPZj2ROSv1/IHpPEXuxP"
+  "Jl5P4F5IPxOr40unc6DBQyJvB7bjAph8tVpQ0weTjmEgKtxE66i4gIYY/ZimaVkWcIYyAS"
+  "benIZo/ei6Dii72QQZ3oTei3Ech4bQaasqcno+lAl9Kb4QeoKojq5DlxgTr3CNbdshEBxB"
+  "ydeEOYIbHHirKoqvCb0xEvJarfqaQLsYee+a6BEnlXKZN4FuwzcAHaMdQiAPpRJvghBT05"
+  "iD8BAYi7J8VywGmQDks1bjm8OMBUm6LRRGTKL+n3SYNT+FapZl";
+
+/* 
+ * Resource generated for file:
+ *    MousePickOn.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MousePickOn_width          = 23;
+static const unsigned int  image_MousePickOn_height         = 21;
+static const unsigned int  image_MousePickOn_pixel_size     = 3;
+static const unsigned long image_MousePickOn_length         = 516;
+static const unsigned long image_MousePickOn_decoded_length = 1449;
+
+static const unsigned char image_MousePickOn[] = 
+  "eNqllD1Lw0AYx8/FfgKHQj9AZzvYVRcdXAVdDRTB4tKti+gXEHzZVHRXO/qyxUAgINVBOh"
+  "UbByWm2otp89KYGh97NBx3SUzxz5/jSJ78+D/PHQmCX6H/KRhBBiMFrst45XyBfxg6AVI8"
+  "LjDF344DLh4V0kPA5XdhD29X30qbLxtVrbTb2Sq3BYJKDwHPPeUlVXj2dm5bwmwzP7BtMM"
+  "OJg0AvEEP6uMnW0BVGE0vosoOyF0hsX6/rq9BRGkjo3EGmcopqD4uVE5Tbz4yVJJwJnAs5"
+  "xKm1yeWzeYgxFoScDl3w1euBZw6nfcsiqGSI0cd8gTWU4ziu6wLnT0i4pwuMoUzTBJTX7U"
+  "IYHkJ/S+T7Pl1Ay8aYcCAPAwkdCaE3BNU3TZhSHITUeJ6XACErRIqEMC0E8YK3WNOSIXSA"
+  "OMirqkZCYFxM+PCY6JVsmo0GD4Fpwx2AidEZEiCP9XocxDEMphEeAqsiSfeKkgD51HV+OM"
+  "wqi+KdLMfdJf7/yY+U1g/OAd2U";
+
+/* 
+ * Resource generated for file:
+ *    MousePlaceDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_MousePlaceDisabled_width          = 23;
+static const unsigned int  image_MousePlaceDisabled_height         = 21;
+static const unsigned int  image_MousePlaceDisabled_pixel_size     = 3;
+static const unsigned long image_MousePlaceDisabled_length         = 404;
+static const unsigned long image_MousePlaceDisabled_decoded_length = 1449;
+
+static const unsigned char image_MousePlaceDisabled[] = 
   "eNqlU8FOg0AU/HBjLyaN1TQWCxVrWVy6SyG94C7FqKQ0PdjYxNge9Fpi43fUaUg4VFQWNp"
   "PJMMDbYYDdbr+EEDU5W1/bbTXkEzDt4NT12Cy85af/d5JwKZJVHC3l/csEDA1HKUkGZ0rm"
   "i7v1+xwMXXjNb0mQGZu+fbxe+OfhVG+0G2BoOPAPnujfJG2nZfHWQzICQyslyTthkjaNk+"
@@ -197,15 +256,15 @@ static const unsigned char image_MousePickDisabled[] =
 
 /* 
  * Resource generated for file:
- *    MousePickOff.png (zlib, base64) (image file)
+ *    MousePlaceOff.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePickOff_width          = 23;
-static const unsigned int  image_MousePickOff_height         = 21;
-static const unsigned int  image_MousePickOff_pixel_size     = 4;
-static const unsigned long image_MousePickOff_length         = 476;
-static const unsigned long image_MousePickOff_decoded_length = 1932;
+static const unsigned int  image_MousePlaceOff_width          = 23;
+static const unsigned int  image_MousePlaceOff_height         = 21;
+static const unsigned int  image_MousePlaceOff_pixel_size     = 4;
+static const unsigned long image_MousePlaceOff_length         = 476;
+static const unsigned long image_MousePlaceOff_decoded_length = 1932;
 
-static const unsigned char image_MousePickOff[] = 
+static const unsigned char image_MousePlaceOff[] = 
   "eNr7/x8CNm3aRBMaDn78oB5GAmB7sKixmGeM1wxc8sS6O+dN8v/J75v+V71M+1//NA9Mg/"
   "ggcUrcDcNO9zT+H36Q/P/R7wlgGsTHp56Qu0H+Bbnt8Ntd/yXXM/zf8Z7hP2MohAbxQeIg"
   "eazhQoK7Zaay/y9eyPB/w0UfMA3iU+Ju5PCOXOvxXzST7T+nLQOYBvEpDW9k/4a25v1XC/"
@@ -216,15 +275,15 @@ static const unsigned char image_MousePickOff[] =
 
 /* 
  * Resource generated for file:
- *    MousePickOn.png (zlib, base64) (image file)
+ *    MousePlaceOn.png (zlib, base64) (image file)
  */
-static const unsigned int  image_MousePickOn_width          = 23;
-static const unsigned int  image_MousePickOn_height         = 21;
-static const unsigned int  image_MousePickOn_pixel_size     = 4;
-static const unsigned long image_MousePickOn_length         = 468;
-static const unsigned long image_MousePickOn_decoded_length = 1932;
+static const unsigned int  image_MousePlaceOn_width          = 23;
+static const unsigned int  image_MousePlaceOn_height         = 21;
+static const unsigned int  image_MousePlaceOn_pixel_size     = 4;
+static const unsigned long image_MousePlaceOn_length         = 468;
+static const unsigned long image_MousePlaceOn_decoded_length = 1932;
 
-static const unsigned char image_MousePickOn[] = 
+static const unsigned char image_MousePlaceOn[] = 
   "eNr7/x8CGBgYqI7/I5n9/8cPqmFizLaYZ4zXDFzyxLo7503y/8nvm/5XvUz7X/80D0yD+C"
   "BxStwNw073NP4ffpD8/9HvCWAaxKckTED+Bbnt8Ntd/yXXM/zf8Z7hP2MohAbxQeIgeWzh"
   "Qoq7Zaay/y9eyPB/w0UfMA3iUxqXsPCOXOvxXzST7T+nLQOYBvEpDW9k/4a25v1XC/EF05"
@@ -232,61 +291,6 @@ static const unsigned char image_MousePickOn[] =
   "qv82QNoOyKfU7Hdf3/3vXXL2v47DhP+uWdv+e+XtANMgPkgcJE+Jux1SNv23T90CNheGbZ"
   "KAYimbKHJ3/7LzYDe6Ad3qkb39v1v2NjB2TN8KFgfJUxreIKxo1gHH1CgH6WW2qlXPfxWr"
   "3v8q1j1UN1vDcdJ/TSAG0dQ2W9dz5n89KCbVbGpjAH4P6ck=";
-
-/* 
- * Resource generated for file:
- *    MousePlaceDisabled.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MousePlaceDisabled_width          = 23;
-static const unsigned int  image_MousePlaceDisabled_height         = 21;
-static const unsigned int  image_MousePlaceDisabled_pixel_size     = 3;
-static const unsigned long image_MousePlaceDisabled_length         = 396;
-static const unsigned long image_MousePlaceDisabled_decoded_length = 1449;
-
-static const unsigned char image_MousePlaceDisabled[] = 
-  "eNqlk/9LwkAYxv/4oF+yIGLNRop67UtFmKeLQSTZuQjrFwOD4cap1/+hzzoYopv6tuPh4d"
-  "l7714+3G7LZbo45yVdr1+l/qdsAqat1z9GAyj3le2tIpKsLU7iyc9k/D2GI2/s7iWBzxfz"
-  "z69RFEVKKTgyKttDdpPImez5XSnl8ekRPM0zSSVJksR/8oMgEELAkVGhkkzjqRgKz/PMqg"
-  "lHRoVKAoXvYYs5J5VzOHLuwe4gyTqtul05M6zaTdEnLiLJ9Nx/u6w2m/YDHDm3Z++NZW67"
-  "5bTd+y4cIt1YrZfXoWkx+7aDIXBkVKgkzH2EMEELJHgkkfQH4R8Gd+44HGJeCoM69UygC6"
-  "OuRf2LSUMOITHMhlYZEpyDVhmSq2vbqjnQISRlfAVgrtGB";
-
-/* 
- * Resource generated for file:
- *    MousePlaceOff.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MousePlaceOff_width          = 23;
-static const unsigned int  image_MousePlaceOff_height         = 21;
-static const unsigned int  image_MousePlaceOff_pixel_size     = 3;
-static const unsigned long image_MousePlaceOff_length         = 444;
-static const unsigned long image_MousePlaceOff_decoded_length = 1449;
-
-static const unsigned char image_MousePlaceOff[] = 
-  "eNr7/x8ENm3aRCEJBT9+kIlgAGQakviJUweBCKsWTClcLoEre/7u2Y0H1y5cPwckgWw0WY"
-  "IuAZKffn46eHrv42cPfv/+BSSBbKAIpiH4XfLu67u+2R2fPn1UjGUAkkA2UIRUl7x8/3Li"
-  "rL6Zc6dv2rQRSALZQBFSXfLszbMN29eXVBcGhPsASSAbKEKqS4Bo666tkRmNSjqRQBLIxh"
-  "qweFwCV2kWNFFKK9s0cALO2MfhEjjqmn9Cy7bLPmk1kASysaohmGIdkjfYJG/2ytthm7zZ"
-  "PnkDSSkWgnqXnNVxmOCatQ1oCJAEsoEipLrEIWWTfeoWoAkQZJO0yT5lE0ku6V92Hmi1W9"
-  "Y2j+ztbtnbgMgxfStQBChOapgAkaJZBwSRmotJMoQYl6ha9ahY9apY91DiEg3HSZqOk4Ak"
-  "JS7R9ZypB0ZEuYQCEgAkQ+wt";
-
-/* 
- * Resource generated for file:
- *    MousePlaceOn.png (zlib, base64) (image file)
- */
-static const unsigned int  image_MousePlaceOn_width          = 23;
-static const unsigned int  image_MousePlaceOn_height         = 21;
-static const unsigned int  image_MousePlaceOn_pixel_size     = 3;
-static const unsigned long image_MousePlaceOn_length         = 420;
-static const unsigned long image_MousePlaceOn_decoded_length = 1449;
-
-static const unsigned char image_MousePlaceOn[] = 
-  "eNr7/x8EGCgD/2GG/P/xgzyEy5ATpw4CEVYtmFJ4DIEwnr97duPBtQvXzwFJIBtNlhhDPv"
-  "38dPD03sfPHvz+/QtIAtlAEVINeff1Xd/sjk+fPirGMgBJIBsoQqohL9+/nDirb+bc6Zs2"
-  "bQSSQDZQhFRDnr15tmH7+pLqwoBwHyAJZANFSDUEiLbu2hqZ0aikEwkkgWxSAxau0ixoop"
-  "RWtmngBFKjGI665p/Qsu2yT1oNJIFskhIbHDkkb7BJ3uyVt8M2ebN98gYyDOldclbHYYJr"
-  "1jagIUASyAaKkGqIQ8om+9QtQBMgyCZpk33KJpIM6V92Hmi1W9Y2j+ztbtnbgMgxfStQBC"
-  "hOapgAkaJZBwSRmoupboiqVY+KVa+KdQ8lhmg4TtJ0nAQkKTFE13OmHhgRYwglAACTQCE1";
 
 /* 
  * Resource generated for file:
