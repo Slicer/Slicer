@@ -1,0 +1,141 @@
+// .NAME vtkMRMLAnnotationNode - MRML node to represent a fiber bundle from tractography in DTI data.
+// .SECTION Description
+// Annotation nodes contains control points, internally represented as vtkPolyData.
+// A Annotation node contains many control points  and forms the smallest logical unit of tractography 
+// that MRML will manage/read/write. Each control point has accompanying data.  
+// Visualization parameters for these nodes are controlled by the vtkMRMLAnnotationTextDisplayNode class.
+//
+
+#ifndef __vtkMRMLAnnotationNode_h
+#define __vtkMRMLAnnotationNode_h
+
+#include "qSlicermiAnnotationModuleExport.h"
+#include "vtkMRMLModelNode.h" 
+
+class vtkStringArray;
+class vtkMRMLStorageNode;
+class vtkMRMLAnnotationTextDisplayNode;
+
+class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
+{
+public:
+  static vtkMRMLAnnotationNode *New();
+  vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
+  void PrintSelf(ostream& os, vtkIndent indent);
+  // Description:
+  // Just prints short summary 
+  virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
+
+  //--------------------------------------------------------------------------
+  // MRMLNode methods
+  //--------------------------------------------------------------------------
+
+  virtual vtkMRMLNode* CreateNodeInstance();
+  // Description:
+  // Get node XML tag name (like Volume, Model)
+  virtual const char* GetNodeTagName() {return "Annotation";};
+
+  // Description:
+  // Read node attributes from XML file
+  virtual void ReadXMLAttributes( const char** atts);
+  
+  // Description:
+  // Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent);
+
+
+  // Description:
+  // Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
+
+  void UpdateScene(vtkMRMLScene *scene);
+
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
+
+  int AddText(const char *newText,int selectedFlag, int visibleFlag); 
+  void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
+  vtkStdString GetText(int id); 
+  int DeleteText(int id); 
+
+  int GetNumberOfTexts(); 
+
+  //BTX
+  enum 
+  {
+    TEXT_SELECTED = 0,
+    TEXT_VISIBLE,
+    NUM_TEXT_ATTRIBUTE_TYPES
+  };
+
+  virtual const char *GetAttributeTypesEnumAsString(int val);
+  vtkDataArray* GetAnnotationAttributes(int att); 
+  int GetAnnotationAttribute(vtkIdType id, int att);
+  void SetAnnotationAttribute(vtkIdType id, int att, double value);
+  int DeleteAttribute(vtkIdType idAttEntry,  vtkIdType idAttType);
+
+  // Description:
+  // Initializes all variables associated with annotations
+  virtual void ResetAnnotations();
+
+  // Description:
+  // add display node if not already present
+  void CreateAnnotationTextDisplayNode();
+
+  vtkMRMLAnnotationTextDisplayNode* GetAnnotationTextDisplayNode();
+ 
+  // Description:
+  // Reference of this annotation - can be an image, model, scene ,  ... 
+  vtkGetStringMacro (ReferenceNodeID);
+  vtkSetStringMacro (ReferenceNodeID);
+
+  // Description:
+  // Select all elements defining an annotation 
+  // overwrites *_SELECTED and *_VISIBLE when set to 0
+  // do not have to define for Selected as already defined by Superclass 
+  vtkGetMacro(Visible, int);
+  vtkSetMacro(Visible, int);
+  vtkBooleanMacro(Visible, int);
+
+  // Description:
+  // If set to 1 then parameters should not be changed 
+  vtkGetMacro(Locked, int);
+  void SetLocked(int init);
+
+protected:
+  vtkMRMLAnnotationNode();
+  ~vtkMRMLAnnotationNode();
+  vtkMRMLAnnotationNode(const vtkMRMLAnnotationNode&);
+  void operator=(const vtkMRMLAnnotationNode&);
+
+  // Description:
+  // Initializes Text as  well as attributes
+  // void ResetAnnotations(); 
+
+  // Description:
+  // Only initializes attributes with ID
+  void ResetAttributes(int id);
+  // Description:
+  // Initializes all attributes 
+  void ResetTextAttributesAll(); 
+  void SetAttributeSize(vtkIdType  id, vtkIdType n);
+
+  vtkStringArray *TextList;
+  char *ReferenceNodeID; 
+
+  void CreatePolyData();
+
+  int Visible;
+  int Locked;
+
+};
+
+#endif
