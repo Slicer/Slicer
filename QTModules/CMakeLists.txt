@@ -21,6 +21,7 @@ SET(qtmodules
   Volumes
   Measurements
   TractographyFiducialSeeding
+  miAnnotation
   )
 
 FOREACH(module ${qtmodules})
