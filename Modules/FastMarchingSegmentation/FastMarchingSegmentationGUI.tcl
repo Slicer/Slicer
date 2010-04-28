@@ -280,6 +280,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
 
   # disable results adjustment frame to reduce confusion
   FastMarchingSegmentationDisableAdjustFrameGUI $this
+
+  set ::FastMarchingSegmentation($this,userWarnedFlag) 0
+  set ::FastMarchingSegmentation($this,newFiducialListFlag) 0
 }
 
 proc FastMarchingSegmentationAddGUIObservers {this} {
@@ -287,6 +290,9 @@ proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,acceptButton) 10000 
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
+  # fiducial list selector: listen to new node to change the glyph, and to node
+  # selection to change the active fiducial list
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timescrollRange) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
@@ -332,10 +338,14 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
       return
     }
 
-    FastMarchingSegmentationErrorDialog $this "WARNING: The segmentation \
-    produced by this method cannot approach closer than 3 pixels to the \
-    boundary of the image.\n\nPlease make sure there is sufficient pixel margin \
-    around the structure you are trying to segment!"
+    if { $::FastMarchingSegmentation($this,userWarnedFlag) == 0 } {
+      FastMarchingSegmentationErrorDialog $this "WARNING: The segmentation \
+      produced by this method cannot approach closer than 3 pixels to the \
+      boundary of the image.\n\nPlease make sure there is sufficient pixel margin \
+      around the structure you are trying to segment!"
+      set ::FastMarchingSegmentation($this,userWarnedFlag) 1
+    }
+
     # try to prevent user from messing up the module
     FastMarchingSegmentationDisableIOFrameGUI $this
 
@@ -397,11 +407,23 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     set selectionNode [[[$this GetLogic] GetApplicationLogic] GetSelectionNode]
     set fmFiducialListID [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
     set fmFiducialList [$::slicer3::MRMLScene GetNodeByID $fmFiducialListID]
-    puts "Setting props for $fmFiducialList"
-    $selectionNode SetReferenceActiveFiducialListID $fmFiducialListID
-    $fmFiducialList SetGlyphTypeFromString "Sphere3D"
-    $fmFiducialList SetSymbolScale 2
-    $fmFiducialList SetTextScale 3
+
+    if { $event == 11001 } {
+      set ::FastMarchingSegmentation($this,newFiducialListFlag) 1
+    }
+
+    if { $event == 11000 } {
+      $selectionNode SetReferenceActiveFiducialListID $fmFiducialListID
+      if { $::FastMarchingSegmentation($this,newFiducialListFlag) == 1 } {
+        set ::FastMarchingSegmentation($this,newFiducialListFlag) 0
+        puts "Setting props for $fmFiducialList"
+        puts "New node event"
+        $fmFiducialList SetGlyphTypeFromString "Sphere3D"
+        $fmFiducialList SetSymbolScale 2
+        $fmFiducialList SetTextScale 3
+      }
+    }
+
   }
 
   if {$caller == $::FastMarchingSegmentation($this,timescrollRange) } {
