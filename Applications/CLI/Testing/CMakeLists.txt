@@ -409,7 +409,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # AffineRegistration tests
-add_test(AffineRegistrationTest ${Slicer3_EXE} --launch AffineRegistrationTest
+add_test(AffineRegistrationTest000 ${Slicer3_EXE} --launch AffineRegistrationTest
   ModuleEntryPoint  --help
   )
 add_test(AffineRegistrationTest00 ${Slicer3_EXE} --launch AffineRegistrationTest
@@ -876,8 +876,69 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # RigidRegistration tests
-add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest000 ${Slicer3_EXE} --launch RigidRegistrationTest
   ModuleEntryPoint --help
+  )
+add_test(RigidRegistrationTest00 ${Slicer3_EXE} --launch RigidRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest00.nhdr
+  --outputtransform ${TEMP}/RigidRegistrationTest00Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform00.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest01.nhdr
+  --outputtransform ${TEMP}/RigidRegistrationTest01Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 100
+  --iterations 50
+  --learningrate 0.001
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nhdr
+  --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(RigidRegistrationTest03 ${Slicer3_EXE} --launch RigidRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest03.nhdr
+  --outputtransform ${TEMP}/RigidRegistrationTest03Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(RigidRegistrationTest04 ${Slicer3_EXE} --launch RigidRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest04.nhdr
+  --outputtransform ${TEMP}/RigidRegistrationTest04Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
   )
 
 # This test reproduces exactly the registration step on
