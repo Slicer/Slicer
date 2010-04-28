@@ -1715,6 +1715,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
                                                               this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                               "Import sample data", cm );
+  cm->Delete();
 
 
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
