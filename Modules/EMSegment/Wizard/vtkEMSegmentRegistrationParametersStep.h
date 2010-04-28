@@ -24,26 +24,19 @@ public:
   virtual void RegistrationInterpolationCallback(int type);
   virtual void RegistrationDeformableCallback(int type);
   virtual void RegistrationAffineCallback(int type);
-#if IBM_FLAG 
-  // Have to do it that way bc TCL ignores IBM_Flag
-  //BTX
   virtual void RegistrationAtlasImageCallback(vtkIdType input_id,  vtkIdType volume_id);
-  //ETX
-#endif 
 
 protected:
   vtkEMSegmentRegistrationParametersStep();
   ~vtkEMSegmentRegistrationParametersStep();
 
   vtkKWFrameWithLabel      *RegistrationParametersFrame;
-#if IBM_FLAG 
+
   void AssignAtlasScansToInputChannels(int enabled); 
 //BTX
   vtkstd::vector<vtkKWMenuButtonWithLabel*> RegistrationParametersAtlasImageMenuButton;
 //ETX
-#else 
-  vtkKWMenuButtonWithLabel *RegistrationParametersAtlasImageMenuButton;
-#endif 
+
   vtkKWMenuButtonWithLabel *RegistrationParametersAffineMenuButton;
   vtkKWMenuButtonWithLabel *RegistrationParametersDeformableMenuButton;
   vtkKWMenuButtonWithLabel *RegistrationParametersInterpolationMenuButton;

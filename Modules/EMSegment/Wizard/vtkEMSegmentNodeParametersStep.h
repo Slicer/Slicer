@@ -64,14 +64,9 @@ public:
   // Reimplement the superclass's method.
   virtual void Validate();
 
-#if IBM_FLAG
-  //BTX
-  virtual void ShowIBMUserInterface(vtkKWWidget *parent);
-  virtual void DisplayIBMSelectedNodeParametersCallback( vtkIdType sel_vol_id, int has_valid_selection,int enabled) ;
   int ClassOverviewWeightAutomaticRecalculateFlag;
   void ClassWeightChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, double value);
-  //ETX
-#endif
+
   vtkKWMultiColumnListWithScrollbarsWithLabel *ClassOverviewWeightList;
   virtual void RightClickOnClassOverviewWeightListCallback(int row, int col, int x, int y);
   virtual void ClassOverviewWeightChangedCallback(vtkIdType sel_vol_id, int row, int col, const char *value);

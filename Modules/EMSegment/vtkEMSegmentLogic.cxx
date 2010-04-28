@@ -38,12 +38,10 @@
 #include <exception>
 
 #include <vtksys/SystemTools.hxx>
+#include "vtkDirectory.h"
+#include "vtkMatrix4x4.h"
 
 #define ERROR_NODE_VTKID 0
-
-#if IBM_FLAG
-#include "IBM/vtkEMSegmentIBMLogic.cxx" 
-#endif 
 
 // A helper class to compare two maps
 template <class T>
@@ -1153,6 +1151,25 @@ void vtkEMSegmentLogic::StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* mo
 }
 
 //----------------------------------------------------------------------------
+double vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkMRMLVolumeNode* volumeNode)
+{
+  if (!volumeNode ||  !volumeNode->GetImageData())  
+    {
+      vtkWarningMacro(" volumeNode or volumeNode->GetImageData is null");
+      return -1;
+    }
+
+  // guess background level    
+  double backgroundLevel = 0;
+  switch (volumeNode->GetImageData()->GetScalarType())
+      {  
+        vtkTemplateMacro(backgroundLevel = (GuessRegistrationBackgroundLevel<VTK_TT>(volumeNode->GetImageData())););
+      }
+  std::cerr << "   Guessed background level: " << backgroundLevel << std::endl;
+  return backgroundLevel;
+}
+
+//----------------------------------------------------------------------------
 bool
 vtkEMSegmentLogic::
 StartPreprocessingTargetToTargetRegistration()
@@ -1267,17 +1284,9 @@ StartPreprocessingTargetToTargetRegistration()
     // apply rigid registration
     if (this->MRMLManager->GetEnableTargetToTargetRegistration())
       {
-    //
-    // guess background level    
-    double backgroundLevel = 0;
-    switch (movingVolumeNode->GetImageData()->GetScalarType())
-      {  
-        vtkTemplateMacro(backgroundLevel = (GuessRegistrationBackgroundLevel<VTK_TT>(movingVolumeNode->GetImageData())););
-      }
-    std::cerr << "   Guessed background level: " << backgroundLevel << std::endl;
-      vtkTransform* fixedRASToMovingRASTransform = vtkTransform::New();
-      vtkEMSegmentLogic::
-        SlicerRigidRegister
+    double backgroundLevel = this->GuessRegistrationBackgroundLevel(movingVolumeNode);
+    vtkTransform* fixedRASToMovingRASTransform = vtkTransform::New();
+    vtkEMSegmentLogic::SlicerRigidRegister
         (fixedVolumeNode,
          movingVolumeNode,
          outputVolumeNode,
@@ -1300,6 +1309,7 @@ StartPreprocessingTargetToTargetRegistration()
         std::cerr << std::endl;
         }
       fixedRASToMovingRASTransform->Delete();
+
       }
     else
       {
@@ -2301,5 +2311,81 @@ ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue)
       vtkErrorMacro("Unknown interpolation type: " << guiEnumValue);
       return -1;
     }
+}
+
+//----------------------------------------------------------------------------
+vtksys_stl::string  vtkEMSegmentLogic::GetTclTaskDirectory()
+{
+  // Later do automatically
+   vtksys_stl::string file_path = this->GetModuleShareDirectory();
+#ifdef _WIN32
+  file_path.append("\\Tasks\\");
+#else
+  file_path.append("/Tasks/");
+#endif
+  return file_path;
+}
+
+
+//----------------------------------------------------------------------------
+vtksys_stl::string vtkEMSegmentLogic::DefineTclTaskFullPathName(const char* TclFileName)
+{
+  vtksys_stl::string full_file_path(this->GetTclTaskDirectory());
+  full_file_path.append(TclFileName);
+  return  full_file_path;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkEMSegmentLogic::DefineTclTasksFileFromMRML()
+{
+  //  cout << "-------- DefineDefaultTasksList Start" << endl;
+  // set define list of parameters 
+  std::string tclFile;
+  vtkDirectory *dir = vtkDirectory::New();
+  vtksys_stl::string FilePath =  this->GetTclTaskDirectory();
+  
+  if (!dir->Open(FilePath.c_str()))
+      {
+    vtkErrorMacro("Cannot open " << this->GetTclTaskDirectory());
+    // No special files 
+    dir->Delete();
+    return tclFile;
+      }
+  vtksys_stl::string tmpFile = this->MRMLManager->GetNode()->GetTclTaskFilename();
+  tclFile = FilePath + tmpFile; 
+
+  if (vtksys::SystemTools::FileExists(tclFile.c_str()) && (!vtksys::SystemTools::FileIsDirectory(tclFile.c_str())) )
+    {
+      return tclFile;
+    }
+   cout << "vtkEMSegmentLogic::DefineTclTasksFileFromMRML: " << tclFile.c_str() << " does not exist - using default file" << endl;
+  // If the file does not exists then just take the default ! 
+  tclFile = FilePath +  vtksys_stl::string(vtkMRMLEMSNode::GetDefaultTclTaskFilename());
+  return tclFile;
+  
+}
+
+void vtkEMSegmentLogic::TransferIJKToRAS(vtkMRMLVolumeNode* volumeNode, int ijk[3], double ras[3])
+{
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  volumeNode->GetIJKToRASMatrix(matrix);
+  float input[4] = {ijk[0],ijk[1],ijk[2],1};
+  float output[4];
+  matrix->MultiplyPoint(input, output);
+  ras[0]= output[0];
+  ras[1]= output[1];
+  ras[2]= output[2];
+}
+
+void vtkEMSegmentLogic::TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double ras[3], int ijk[3])
+{
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+  volumeNode->GetRASToIJKMatrix(matrix);
+  double input[4] = {ras[0],ras[1],ras[2],1};
+  double output[4];
+  matrix->MultiplyPoint(input, output);
+  ijk[0]= int(output[0]);
+  ijk[1]= int(output[1]);
+  ijk[2]= int(output[2]);
 }
 

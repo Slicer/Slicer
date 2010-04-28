@@ -430,6 +430,8 @@ public:
     AtlasToTargetDeformableRegistrationBSplineNCCSlow = 6
     };
   //ETX
+  int GetRegistrationTypeFromString(const char* type);
+
   virtual int       GetRegistrationDeformableType();
   virtual void      SetRegistrationDeformableType(int deformableType);
 
@@ -450,13 +452,11 @@ public:
   //ETX
   virtual int       GetRegistrationInterpolationType();
   virtual void      SetRegistrationInterpolationType(int interpolationType);
+  int GetInterpolationTypeFromString(const char* type);
 
   virtual vtkIdType GetRegistrationAtlasVolumeID();
   virtual void      SetRegistrationAtlasVolumeID(vtkIdType volumeID);
 
-#if IBM_FLAG
-  // Need to do it that way bc otherwise TCL Wrapping does not work 
-  //BTX
   virtual vtkIdType GetRegistrationAtlasVolumeID(vtkIdType inputID);
   virtual void      SetRegistrationAtlasVolumeID(vtkIdType inputID, vtkIdType volumeID);
 
@@ -468,8 +468,6 @@ public:
 
   virtual double   GetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex);
   virtual void     SetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex, double value);
-  //ETX
-#endif
 
   //
   // save parameters

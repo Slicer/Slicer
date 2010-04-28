@@ -76,10 +76,9 @@ private:
 
   void PopUpRenameEntry(int index);
   void UpdateTaskListIndex(int index);
-#if IBM_FLAG
+
   int LoadDefaultData(const char *dataLink, bool warningFlag);
   void LoadTask(int index, bool warningFlag);
-#endif
 
   void DefineDefaultTasksList();
   //BTX:

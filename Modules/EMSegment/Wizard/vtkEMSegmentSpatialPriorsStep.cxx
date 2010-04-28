@@ -23,11 +23,7 @@ vtkCxxRevisionMacro(vtkEMSegmentSpatialPriorsStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentSpatialPriorsStep::vtkEMSegmentSpatialPriorsStep()
 {
-#if IBM_FLAG
   this->SetName("4/9. Define Atlas");
-#else
-  this->SetName("3/9. Define Atlas");
-#endif
   this->SetDescription("Define probability maps and image scans of atlas.");
 
   this->ImageFrame      = NULL;

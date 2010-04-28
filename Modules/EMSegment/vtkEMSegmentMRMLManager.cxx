@@ -38,10 +38,6 @@
 
 #define ERROR_NODE_VTKID 0
 
-#if IBM_FLAG
-#include "IBM/vtkEMSegmentIBMMRMLManager.cxx"
-#endif
-
 //----------------------------------------------------------------------------
 vtkEMSegmentMRMLManager* vtkEMSegmentMRMLManager::New()
 {
@@ -4883,4 +4879,205 @@ WritePackagedScene(vtkMRMLScene* scene)
     }  
 
   return allOK;
+}
+//----------------------------------------------------------------------------
+vtkIdType vtkEMSegmentMRMLManager::GetRegistrationAtlasVolumeID(vtkIdType inputID)
+{
+  if (!this->GetGlobalParametersNode())
+    {
+    vtkErrorMacro("GlobalParametersNode is NULL.");
+    return ERROR_NODE_VTKID;
+    }
+
+  // the the name of the atlas image from the global parameters
+  const char* volumeName = this->GetGlobalParametersNode()->GetRegistrationAtlasVolumeKey(inputID);
+  if (volumeName == NULL || strlen(volumeName) == 0)
+    {
+    vtkWarningMacro("AtlasVolumeName is NULL/blank.");
+    return ERROR_NODE_VTKID;
+    }
+
+  // get MRML ID of atlas from it's name
+  const char* mrmlID = this->GetAtlasInputNode()->GetVolumeNodeIDByKey(volumeName);
+  if (mrmlID == NULL || strlen(mrmlID) == 0)
+    {
+      // This means it was not set 
+      return ERROR_NODE_VTKID;
+      //    vtkErrorMacro("Could not find mrml ID for registration atlas volume.");
+    }
+  
+  // convert mrml id to vtk id
+  return this->MapMRMLNodeIDToVTKNodeID(mrmlID);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetRegistrationAtlasVolumeID(vtkIdType inputID, vtkIdType volumeID)
+{
+  // for now there can be only one atlas image for registration
+  std::stringstream registrationVolumeName;
+  registrationVolumeName << "atlas_registration_image" << inputID;
+
+  // map to MRML ID
+  const char* mrmlID = this->MapVTKNodeIDToMRMLNodeID(volumeID);
+  // if it is null then this means that the channel is not set 
+  if (mrmlID && strlen(mrmlID))
+    {
+      this->GetAtlasInputNode()->AddVolume(registrationVolumeName.str().c_str(), mrmlID);
+    }
+
+  // set volume name and ID in map
+  this->GetGlobalParametersNode()->SetRegistrationAtlasVolumeKey(inputID,registrationVolumeName.str().c_str());
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::SetTargetSelectedVolumeNthID(int n, vtkIdType newVolumeID)
+{  
+  vtkIdType oldVolumeID  = this->GetTargetSelectedVolumeNthID(n);
+  if (oldVolumeID ==  ERROR_NODE_VTKID) 
+    {
+      vtkErrorMacro("Did not find nth target volume; n = " << n);
+      return;
+    }
+
+  if (oldVolumeID == newVolumeID) 
+    {
+      return ;
+    }
+
+ vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode(newVolumeID);
+  if (volumeNode == NULL)
+    {
+    vtkErrorMacro("Invalid volume ID: " << newVolumeID);
+    return;
+    }
+
+  // map to MRML ID
+  const char* mrmlID = this->MapVTKNodeIDToMRMLNodeID(newVolumeID);
+  if (mrmlID == NULL || strlen(mrmlID) == 0)
+    {
+    vtkErrorMacro("Could not map volume ID: " << newVolumeID);
+    return;
+    }
+ 
+  // set volume name and ID in map
+  this->GetTargetInputNode()->SetNthVolumeNodeID(n, mrmlID);
+
+  // normalized and aligned targets are no longer valid
+  this->GetWorkingDataNode()->SetNormalizedTargetNodeIsValid(0);
+  this->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
+
+  // propogate change to parameters nodes
+  this->PropogateAdditionOfSelectedTargetImage();
+  this->UpdateIntensityDistributions();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetSelectedVolumeNthMRMLID(int n, const char* mrmlID)
+{
+  vtkIdType volumeID = this->MapMRMLNodeIDToVTKNodeID(mrmlID);
+  this->SetTargetSelectedVolumeNthID(n,volumeID);
+}
+
+//----------------------------------------------------------------------------
+double LogToNormalIntensities(double val) 
+{
+  return exp(val) -1.0;
+}
+
+// make sure the value is greater -1 - we are not checking here 
+double NormalToLogIntensities(double val) 
+{
+  return log(val + 1.0);
+}
+
+//----------------------------------------------------------------------------
+double vtkEMSegmentMRMLManager:: GetTreeNodeDistributionMean(vtkIdType nodeID, int volumeNumber) {  
+  return LogToNormalIntensities(this->GetTreeNodeDistributionLogMean(nodeID, volumeNumber));
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentMRMLManager:: SetTreeNodeDistributionMean(vtkIdType nodeID, int volumeNumber,double value) {
+  if (value <= -1) {
+    vtkErrorMacro("Value of Mean has to be greater -1 !" ); 
+    return;
+  }
+  this->SetTreeNodeDistributionLogMean(nodeID,volumeNumber, NormalToLogIntensities(value));
+}
+
+//----------------------------------------------------------------------------
+double vtkEMSegmentMRMLManager::GetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex) {  
+  return LogToNormalIntensities(this->GetTreeNodeDistributionLogCovariance(nodeID, rowIndex, columnIndex));
+}
+//----------------------------------------------------------------------------
+void vtkEMSegmentMRMLManager::SetTreeNodeDistributionCovariance(vtkIdType nodeID, int rowIndex, int columnIndex,double value) {
+  if (value <= -1) {
+    vtkErrorMacro("Value of Covariance entry has to be greater -1 !" ); 
+    return;
+  }
+  this->SetTreeNodeDistributionLogCovariance(nodeID,rowIndex, columnIndex, NormalToLogIntensities(value));
+}
+
+//----------------------------------------------------------------------------
+int  vtkEMSegmentMRMLManager::GetInterpolationTypeFromString(const char* type)
+{
+  if (!strcmp(type,"InterpolationLinear")) 
+    {
+      return vtkEMSegmentMRMLManager::InterpolationLinear; 
+    }
+
+  if (!strcmp(type,"InterpolationNearestNeighbor")) 
+    {
+      return vtkEMSegmentMRMLManager::InterpolationNearestNeighbor; 
+    }
+
+  if (!strcmp(type,"InterpolationCubic")) 
+    {
+      return vtkEMSegmentMRMLManager::InterpolationCubic; 
+    }
+  return -1;
+}
+
+
+//----------------------------------------------------------------------------
+int  vtkEMSegmentMRMLManager::GetRegistrationTypeFromString(const char* type)
+{
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationOff")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff;
+    }
+
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationCenters")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationCenters;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidMMI")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidNCC")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidMMIFast")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidNCCFast")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidMMISlow")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMISlow;
+    }
+  if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidNCCSlow")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCSlow;
+    }
+  return -1;
 }

@@ -17,15 +17,15 @@
 #include "vtkKWMatrixWidget.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
+#include "vtkEMSegmentLogic.h" 
 
 #include "vtkEMSegmentAnatomicalStructureStep.h"
 
 #include "vtkSlicerInteractorStyle.h"
 
-#if IBM_FLAG
 #include "vtkKWPushButton.h"
-#include "vtkEMSegmentIBMIntensityDistributionsStep.cxx"
-#endif
+
+const char* PLOT = "PlotIntensityDistribution";
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityDistributionsStep);
@@ -34,11 +34,8 @@ vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentIntensityDistributionsStep::vtkEMSegmentIntensityDistributionsStep()
 {
-#if IBM_FLAG
   this->SetName("7/9. Specify Intensity Distributions");
-#else
-  this->SetName("6/9. Specify Intensity Distributions");
-#endif
+
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
 
@@ -48,9 +45,9 @@ vtkEMSegmentIntensityDistributionsStep::vtkEMSegmentIntensityDistributionsStep()
   this->IntensityDistributionCovarianceMatrix        = NULL;
   this->IntensityDistributionManualSamplingList      = NULL;
   this->ContextMenu  = NULL;
-#if IBM_FLAG
+
   this->ShowGraphButton = NULL;
-#endif
+
 }
 
 //----------------------------------------------------------------------------
@@ -92,14 +89,11 @@ vtkEMSegmentIntensityDistributionsStep::~vtkEMSegmentIntensityDistributionsStep(
     this->ContextMenu = NULL;
     }
 
-#if IBM_FLAG
   if (this->ShowGraphButton) {
     this->ShowGraphButton->Delete();
     this->ShowGraphButton = NULL;     
   }
   this->RemovePlot();
-#endif
-
 }
 
 //----------------------------------------------------------------------------
@@ -197,11 +191,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     this->IntensityDistributionMeanMatrix->SetParent(intensity_page);
     this->IntensityDistributionMeanMatrix->Create();
-#if IBM_FLAG
     this->IntensityDistributionMeanMatrix->SetLabelText("Mean:");
-#else
-    this->IntensityDistributionMeanMatrix->SetLabelText("Log Mean:");
-#endif
     this->IntensityDistributionMeanMatrix->ExpandWidgetOff();
     this->IntensityDistributionMeanMatrix->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
@@ -230,11 +220,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     this->IntensityDistributionCovarianceMatrix->SetParent(intensity_page);
     this->IntensityDistributionCovarianceMatrix->Create();
-#if IBM_FLAG
     this->IntensityDistributionCovarianceMatrix->SetLabelText("Covariance:");
-#else
-    this->IntensityDistributionCovarianceMatrix->SetLabelText("Log Covariance:");
-#endif
 
     this->IntensityDistributionCovarianceMatrix->ExpandWidgetOff();
     this->IntensityDistributionCovarianceMatrix->GetLabel()->
@@ -289,9 +275,20 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->DisplaySelectedNodeIntensityDistributionsCallback();
 
-#if IBM_FLAG
-  this->ShowIBMUserInterface(parent);
-#endif 
+if (!this->ShowGraphButton ) 
+    {
+      this->ShowGraphButton = vtkKWPushButton::New ();
+    } 
+  if (!this->ShowGraphButton->IsCreated()) 
+    {
+      this->ShowGraphButton->SetParent(parent);
+      this->ShowGraphButton->Create();
+      this->ShowGraphButton->SetWidth(25);
+      this->ShowGraphButton->SetText ("Plot Distributions");
+      this->ShowGraphButton->SetCommand(this, "PlotDistributionCallback");
+    }
+  this->Script("pack %s -side top -padx 0 -pady 2", this->ShowGraphButton->GetWidgetName());
+
 }
 
 //----------------------------------------------------------------------------
@@ -301,10 +298,6 @@ void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
   this->RemoveManualIntensitySamplingGUIObservers();
 }
 
-#if !IBM_FLAG
-void vtkEMSegmentIntensityDistributionsStep::PlotDistributionCallback() {
-}
-#endif
 //----------------------------------------------------------------------------
 void 
 vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistributionsCallback()
@@ -421,11 +414,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
 
       for(col = 0; col < nb_of_target_volumes; col++)
         {
-#if IBM_FLAG
         matrix->SetElementValueAsDouble(0, col, mrmlManager->GetTreeNodeDistributionMean(sel_vol_id, col));
-#else 
-        matrix->SetElementValueAsDouble(0, col, mrmlManager->GetTreeNodeDistributionLogMean(sel_vol_id, col));
-#endif 
         }
       }
     else
@@ -460,11 +449,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         {
         for (col = 0; col < nb_of_target_volumes; col++)
           {
-#if IBM_FLAG
           matrix->SetElementValueAsDouble(row, col, mrmlManager->GetTreeNodeDistributionCovariance(sel_vol_id, row, col));
-#else
-          matrix->SetElementValueAsDouble(row, col, mrmlManager->GetTreeNodeDistributionLogCovariance(sel_vol_id, row, col));
-#endif
           }
         }
       }
@@ -562,11 +547,7 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionMeanChangedCal
     {
     return;
     }
-#if IBM_FLAG
   mrmlManager->SetTreeNodeDistributionMean(sel_vol_id, col, atof(value));
-#else 
-  mrmlManager->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -581,12 +562,7 @@ vtkEMSegmentIntensityDistributionsStep::IntensityDistributionCovarianceChangedCa
     {
     return;
     }
-#if IBM_FLAG
   mrmlManager->SetTreeNodeDistributionCovariance(sel_vol_id, row,col,atof(value));
-#else
-  mrmlManager->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,col,atof(value));
-#endif
-
 }
 
 //----------------------------------------------------------------------------
@@ -865,4 +841,35 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
 void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+}
+void vtkEMSegmentIntensityDistributionsStep::RemovePlot() 
+{
+ this->Script("catch { itcl::delete object %s }", PLOT);
+}
+
+//---------------------------------------------------------------------------- 
+void vtkEMSegmentIntensityDistributionsStep::PlotDistributionCallback() 
+{
+
+  const char* result = this->Script("info command %s", PLOT);
+  if (result == NULL || !strcmp(result,"")) {
+      vtksys_stl::string tcl_dir = this->GetGUI()->GetLogic()->GetModuleShareDirectory();
+#ifdef _WIN32
+      tcl_dir.append("\\Tcl\\");
+#else
+      tcl_dir.append("/Tcl/");
+#endif
+      const char* sourceFiles[] = {"GenerateGraph.tcl", "Gui.tcl", "Graph.tcl", "Tooltips.tcl", "setget.tcl" };
+      for (int i = 0 ; i < 5 ; i++ ) { 
+    vtksys_stl::string file = tcl_dir + vtksys_stl::string(sourceFiles[i]);
+    if (this->SourceTclFile(file.c_str()))
+      {
+        return;
+      }
+      }
+    }
+  this->RemovePlot();
+  this->Script("EMSegmenterGraph %s", PLOT);
+  this->Script("%s CreateWindow",PLOT);
+  this->Script("%s AssignDefaultVolumes",PLOT);
 }

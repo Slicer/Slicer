@@ -59,13 +59,10 @@ protected:
   vtkKWMenu                  *ContextMenu;
 
   virtual void AddIntensityDistributionSamplePoint(double ras[3]);
-#if IBM_FLAG
+
   vtkKWPushButton           *ShowGraphButton;
-  void ShowIBMUserInterface(vtkKWWidget *parent);
   void RemovePlot();
   void RemoveResults() { this->RemovePlot(); }
-
-#endif
 
 private:
   vtkEMSegmentIntensityDistributionsStep(const vtkEMSegmentIntensityDistributionsStep&);

@@ -5,9 +5,9 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 
-#if IBM_FLAG
-#include "IBM/vtkEMSegmentIBMStep.cxx"
-#endif
+#include "vtkKWMessageDialog.h" 
+#include "vtkSlicerApplication.h"
+
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentStep);
@@ -18,9 +18,7 @@ vtkCxxSetObjectMacro(vtkEMSegmentStep,GUI,vtkEMSegmentGUI);
 vtkEMSegmentStep::vtkEMSegmentStep()
 {
   this->GUI = NULL;
-#if IBM_FLAG
   this->NextStep = NULL;
-#endif
 }
 
 //----------------------------------------------------------------------------
@@ -152,3 +150,38 @@ void vtkEMSegmentStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentStep::SourceTclFile(const char *tclFile)
+{
+  // Load Tcl File defining the setting
+  
+  if (!vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->LoadScript(tclFile))
+    {
+      std::string  errMSG =std::string("Could not load in data for task. The following file does not exist: ") +  std::string(tclFile);
+      vtkKWMessageDialog::PopupMessage(this->GetApplication(),
+                                     NULL,
+                                     "Load Task Data",
+                       errMSG.c_str(),
+                                     vtkKWMessageDialog::ErrorIcon | 
+                                     vtkKWMessageDialog::InvokeAtPointer);
+      return 1;
+    }
+  return 0 ;
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentStep::ShowUserInterface()
+{
+  this->Superclass::ShowUserInterface();
+  if (this->NextStep) 
+    {
+      this->NextStep->RemoveResults();
+    } else {
+  }
+}
+
+void vtkEMSegmentStep::SetNextStep(vtkEMSegmentStep *init) { 
+  this->NextStep = init;
+}
+

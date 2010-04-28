@@ -10,7 +10,6 @@ class vtkMRMLEMSNode;
 class vtkKWWizardWidget;
 class vtkEMSegmentParametersSetStep;
 class vtkEMSegmentIntensityImagesStep;
-class vtkEMSegmentIntensityNormalizationStep;
 class vtkEMSegmentAnatomicalStructureStep;
 class vtkEMSegmentSpatialPriorsStep;
 class vtkEMSegmentNodeParametersStep;
@@ -57,11 +56,7 @@ public:
   vtkGetObjectMacro(ParametersSetStep,vtkEMSegmentParametersSetStep);
   vtkGetObjectMacro(NodeParametersStep,vtkEMSegmentNodeParametersStep);
 
-  // Need to do it bc TCL Wrapping ignores IBM_FLAG !
-  // Need this function for Preprocessing tcl scripts !  
-  //#if IBM_FLAG
-   vtkGetObjectMacro(PreProcessingStep,vtkEMSegmentPreProcessingStep);
-   //#endif
+  vtkGetObjectMacro(PreProcessingStep,vtkEMSegmentPreProcessingStep);
 
   // Description:
   // Create widgets
@@ -126,11 +121,8 @@ public:
   // limitation in kwwidgets tcl wrapping)
   unsigned long AddObserverByNumber(vtkObject *observee, unsigned long event);
 
-  //BTX
-#if IBM_FLAG
   void StartSegmentation(); 
-#endif 
-  //ETX
+
 protected:
 
 private:
@@ -164,19 +156,14 @@ private:
   vtkEMSegmentAnatomicalStructureStep    *AnatomicalStructureStep;
   vtkEMSegmentSpatialPriorsStep          *SpatialPriorsStep;
   vtkEMSegmentIntensityImagesStep        *IntensityImagesStep;
-  vtkEMSegmentIntensityNormalizationStep *NormalizationStep;
   vtkEMSegmentIntensityDistributionsStep *IntensityDistributionsStep;
   vtkEMSegmentNodeParametersStep         *NodeParametersStep;
   vtkEMSegmentRegistrationParametersStep *RegistrationParametersStep;
   vtkEMSegmentRunSegmentationStep        *RunSegmentationStep;
-
-#if IBM_FLAG
   vtkEMSegmentInputChannelsStep          *InputChannelStep;  
-#endif
-  vtkKWWizardStep *StartSegmentStep;
-
-  // Need to do it bc TCL Wrapping ignores IBM_FLAG for functions and otherwise have problems with Get function ! 
   vtkEMSegmentPreProcessingStep          *PreProcessingStep;
+
+  vtkKWWizardStep *StartSegmentStep;
 
   // Description:
   // Populate the logic with testing data, load some volumes

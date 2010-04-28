@@ -61,14 +61,10 @@ public:
   virtual void ProcessRunRegistrationOutputGUIEvents(
     vtkObject *caller, unsigned long event, void *callData);
 
-#if IBM_FLAG
-  //BTX
   static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
   static void ROIMRMLCallback(vtkObject*, unsigned long, void*, void*);
   static void SetRedGreenYellowAllVolumes(vtkSlicerApplicationGUI *applicationGUI, const char* VolID);
   virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData);
-  //ETX
-#endif
 
 protected:
   vtkEMSegmentRunSegmentationStep();
@@ -100,7 +96,6 @@ private:
   void operator=(const vtkEMSegmentRunSegmentationStep&);
 
 
-#if IBM_FLAG
   vtkKWFrameWithLabel               *DefineVOIFrame;
   vtkKWFrame                        *FrameButtons;
   vtkKWFrame    *FrameROI;
@@ -151,9 +146,6 @@ private:
 
   void CenterRYGSliceViews(double pointX, double pointY, double pointZ);
   int ROICheck(int minPoint[3], int maxPoint[3]) ;
-
-#endif 
-
 };
 
 #endif
