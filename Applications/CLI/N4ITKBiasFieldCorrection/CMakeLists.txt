@@ -1,6 +1,6 @@
 SET(CLP N4ITKBiasFieldCorrection)
 SET(${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml) # N4ITKBiasFieldCorrection N4ITKBiasFieldCorrection.xml)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
 SET_TARGET_PROPERTIES(${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)

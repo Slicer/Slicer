@@ -3,13 +3,12 @@
   <category>Experimental</category>
   <title>N4ITK MRI Bias correction</title>
   <index>3</index>
-  <description>Performs MRI bias correction using N4 algorithm.</description>
+  <description>Performs MRI bias correction using N4 algorithm. This module is based on the ITK filters contributed in the following publication:  Tustison N, Gee J "N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction", The Insight Journal 2009 January-June, http://hdl.handle.net/10380/3053</description>
   <version>9</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:N4ITKBiasFieldCorrection-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Nick Tustison (algorithm and ITK implementation), Andrey Fedorov (Slicer wrapping)</contributor>
-<acknowledgements>
-</acknowledgements>
+<acknowledgements>The development of this module was partially supported by NIH grants R01 AA016748-01 and R01 CA111288, as well as by NA-MIC, NAC, NCIGT and the Slicer community.</acknowledgements>
 
   <parameters>
     <label>IO</label>
@@ -31,29 +30,25 @@
     </image>
 
     <image>
-      <longflag>weightimage</longflag>
-      <name>weightImageName</name>
-      <label>Weight Image</label>
-      <channel>input</channel>
-      <description>Weight Image</description>
-    </image>
-
-    <image>
+      <longflag>output</longflag>
       <name>outputImageName</name>
       <label>Output Volume</label>
       <channel>output</channel>
-      <index>0</index>
       <description>Result of processing</description>
     </image>
 
     <image>
+      <longflag>outputbiasfield</longflag>
       <name>outputBiasFieldName</name>
       <label>Output bias field image</label>
       <channel>output</channel>
       <description>Recovered bias field</description>
-      <index>1</index>
     </image>
 
+  </parameters>
+
+  <parameters>
+  <label>N4 Parameters</label>
     <integer-vector>
       <name>numberOfIterations</name>
       <longflag>iterations</longflag>
@@ -86,6 +81,43 @@
       <default>3</default>
     </float>
 
+    <float-vector>
+      <name>initialMeshResolution</name>
+      <longflag>meshresolution</longflag>
+      <label>Initial mesh resolution</label>
+      <default>0</default>
+    </float-vector>
+
+    <float>
+      <name>splineDistance</name>
+      <longflag>splinedistance</longflag>
+      <description>Spline distance</description>
+      <label>Spline distance</label>
+      <default>0</default>
+    </float>
+ 
+    <integer>
+      <name>shrinkFactor</name>
+      <longflag>shrinkfactor</longflag>
+      <description></description>
+      <label>Shrink factor</label>
+      <default>4</default>
+    </integer>
+
+  </parameters>
+
+  <parameters advanced="true">
+  <label>Advanced N4 Parameters</label>
+  <description>Advanced parameters of the algorithm</description>
+  
+    <image>
+      <longflag>weightimage</longflag>
+      <name>weightImageName</name>
+      <label>Weight Image</label>
+      <channel>input</channel>
+      <description>Weight Image</description>
+    </image>
+
     <float>
       <name>alpha</name>
       <longflag>bsplinealpha</longflag>
@@ -101,31 +133,7 @@
       <label>BSpline beta</label>
       <default>0.5</default>
     </float>
-
-    <float-vector>
-      <name>initialMeshResolution</name>
-      <longflag>meshresolution</longflag>
-      <label>Initial mesh resolution</label>
-      <default>0</default>
-    </float-vector>
-
-    <float>
-      <name>splineDistance</name>
-      <longflag>splinedistance</longflag>
-      <description>Spline distance</description>
-      <label>Spline distance</label>
-      <default>0</default>
-    </float>
-
- 
-     <integer>
-      <name>shrinkFactor</name>
-      <longflag>shrinkfactor</longflag>
-      <description></description>
-      <label>Shrink factor</label>
-      <default>4</default>
-    </integer>
-
+    
     <float-vector>
       <name>histogramSharpening</name>
       <longflag>histogramsharpening</longflag>
