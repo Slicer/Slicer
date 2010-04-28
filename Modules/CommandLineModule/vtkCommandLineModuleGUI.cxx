@@ -991,7 +991,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   std::string moduleHelp = this->ModuleDescriptionObject.GetDescription();
   if (this-ModuleDescriptionObject.GetDocumentationURL().size() >0)
     {
-    moduleHelp += "\n For more detailed documentation see: ";
+    moduleHelp += "\n\n For more detailed documentation see: ";
     moduleHelp += "<a>";
     moduleHelp += this->ModuleDescriptionObject.GetDocumentationURL();
     moduleHelp += "</a>";
