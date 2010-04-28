@@ -661,7 +661,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       int dim[3];
       vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
       vnode->GetImageData()->GetDimensions();
-      for (int ii=0; ii<3; ii)
+      for (int ii=0; ii<3; ii++)
         {
         if (dim[ii] < 2) 
           {
@@ -681,7 +681,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       int dim[3];
       vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(this->NS_ImageDataFg->GetSelected());
       vnode->GetImageData()->GetDimensions();
-      for (int ii=0; ii<3; ii)
+      for (int ii=0; ii<3; ii++)
         {
         if (dim[ii] < 2) 
           {
