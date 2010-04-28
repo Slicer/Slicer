@@ -3,13 +3,13 @@
   <category>Registration</category>
   <title>Affine registration</title>
   <index>3</index>
-  <description>Registers two images together using an affine transform and mutual information.</description>
+  <description>Registers two images together using an affine transform and mutual information. This module is often used to align images of different subjects or images of the same subject from different modalities.\n\nThis module can smooth images prior to registration to mitigate noise and improve convergence. Many of the registration parameters require a working knowledge of the algorith although the default parameters are sufficient for many registration tasks.\n\n</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:AffineRegistration-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Daniel Blezek</contributor>
 <acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+This module was developed by Daniel Blezek while at GE Research with contributions from Jim Miller.\n\nThis work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
 
  <parameters advanced="true">
