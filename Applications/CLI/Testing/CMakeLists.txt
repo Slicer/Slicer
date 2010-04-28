@@ -412,7 +412,40 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 add_test(AffineRegistrationTest ${Slicer3_EXE} --launch AffineRegistrationTest
   ModuleEntryPoint  --help
   )
-
+add_test(AffineRegistrationTest00 ${Slicer3_EXE} --launch AffineRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/AffineRegistrationTest00.nhdr
+  --outputtransform ${TEMP}/AffineRegistrationTest00Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform00.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+ --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(AffineRegistrationTest01 ${Slicer3_EXE} --launch AffineRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/AffineRegistrationTest01.nhdr
+  --outputtransform ${TEMP}/AffineRegistrationTest01Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 100
+  --iterations 50
+ --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(AffineRegistrationTest02 ${Slicer3_EXE} --launch AffineRegistrationTest
+  ModuleEntryPoint
+  --resampledmovingfilename  ${TEMP}/AffineRegistrationTest02.nhdr
+  --outputtransform ${TEMP}/AffineRegistrationTest02Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+ --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
 set (CLP AffineRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
