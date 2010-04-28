@@ -114,6 +114,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   //ETX
   vtkMRMLSliceNode *SliceNode;
 
+  vtkKWLabel *NACLabel;
+  vtkKWLabel *NAMICLabel;
+  vtkKWLabel *NCIGTLabel;
+  vtkKWLabel *BIRNLabel;
+  
   vtkSlicerVisibilityIcons *VisibilityIcons;
   
   vtkSlicerSlicesGUI ( const vtkSlicerSlicesGUI& ); /// Not implemented.

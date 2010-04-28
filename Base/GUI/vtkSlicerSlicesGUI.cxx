@@ -55,6 +55,11 @@ vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
 
   this->VisibilityIcons = 0;
   this->SliceNode = 0;
+
+  this->NACLabel = NULL;
+  this->NAMICLabel =NULL;
+  this->NCIGTLabel = NULL;
+  this->BIRNLabel = NULL;
 }
 
 
@@ -69,7 +74,30 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
     {
     delete this->InternalParameterWidgetMap;
     }
-
+  if ( this->NACLabel )
+    {
+    this->NACLabel->SetParent ( NULL );
+    this->NACLabel->Delete();
+    this->NACLabel = NULL;
+    }
+  if ( this->NAMICLabel )
+    {
+    this->NAMICLabel->SetParent ( NULL );
+    this->NAMICLabel->Delete();
+    this->NAMICLabel = NULL;
+    }
+  if ( this->NCIGTLabel )
+    {
+    this->NCIGTLabel->SetParent ( NULL );
+    this->NCIGTLabel->Delete();
+    this->NCIGTLabel = NULL;
+    }
+  if ( this->BIRNLabel )
+    {
+    this->BIRNLabel->SetParent ( NULL );
+    this->BIRNLabel->Delete();
+    this->BIRNLabel = NULL;
+    }
   if (this->VisibilityIcons)
     {
     this->VisibilityIcons->Delete();
@@ -881,10 +909,34 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
   this->UIPanel->AddPage ( "Slices", "Slices", NULL );
     
   // Define your help text and build the help frame here.
-  const char *help = "The Slices Module manages the display of the Slice Viewers.";
-  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
+  const char *help = "The Slices module provides access to all Slice nodes in a single panel. The Slices module can be used to control Slice Viewers whenever the SliceController is collapsed on a Slice Viewer or whenever a Slice Viewer is not visible in a particular layout.\n\nThe panel provides two frames. The first is the \"Slice Controllers\" pane which contains a SliceControllerWidget for each slice node. These SliceControllerWidgets are identical to the SliceControllerWidgets atop each Slice Viewer. The lower pane is the \"Slice Information\" pane which provides an alternative method to access the parameters of a particular Slice node.\n\nAdditional documentation available at <a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Slices-Documentation-3.6</a>.";
+  const char *about = "This module was developed by Wendy Plesniak (SPL) with contributions from Steve Pieper (Isomics) and Jim Miller (GE Research) and guidance from Ron Kikinis (SPL). This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Slices" );
   this->BuildHelpAndAboutFrame ( page, help, about );
+
+    this->NACLabel = vtkKWLabel::New();
+    this->NACLabel->SetParent ( this->GetLogoFrame() );
+    this->NACLabel->Create();
+    this->NACLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNACLogo() );
+
+    this->NAMICLabel = vtkKWLabel::New();
+    this->NAMICLabel->SetParent ( this->GetLogoFrame() );
+    this->NAMICLabel->Create();
+    this->NAMICLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );    
+
+    this->NCIGTLabel = vtkKWLabel::New();
+    this->NCIGTLabel->SetParent ( this->GetLogoFrame() );
+    this->NCIGTLabel->Create();
+    this->NCIGTLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNCIGTLogo() );
+    
+    this->BIRNLabel = vtkKWLabel::New();
+    this->BIRNLabel->SetParent ( this->GetLogoFrame() );
+    this->BIRNLabel->Create();
+    this->BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
+    app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", this->NAMICLabel->GetWidgetName());
+    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w",  this->NACLabel->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  this->BIRNLabel->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  this->NCIGTLabel->GetWidgetName());                  
 
   // ---
   // Controller Frame
