@@ -1705,6 +1705,18 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                                                              this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                              "Import Scene...", this, "ProcessImportSceneCommand");
 
+  //---
+  //--- Load sample data
+  //---
+  vtkKWMenu *cm = vtkKWMenu::New();
+  cm->SetParent ( this->GetMainSlicerWindow()->GetFileMenu() );
+  cm->Create();
+  cm->AddRadioButton ( "MRI head" );
+  i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
+                                                              this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+                                                              "Import sample data", cm );
+
+
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                                                                  this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                                  "Add Data...", this, "ProcessAddDataCommand");
