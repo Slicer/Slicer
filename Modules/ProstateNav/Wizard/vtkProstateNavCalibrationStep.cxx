@@ -194,8 +194,8 @@ void vtkProstateNavCalibrationStep::ShowUserInterface()
     matrix->SetElementWidth(12);
     matrix->SetRestrictElementValueToInteger();
     matrix->SetElementChangedCommandTriggerToAnyChange();
-    matrix->SetElementValueAsInt(0, 0, 0);
-    matrix->SetElementValueAsInt(0, 1, 11);
+    matrix->SetElementValueAsInt(0, 0, 1);
+    matrix->SetElementValueAsInt(0, 1, 12);
     }
 
   this->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
@@ -293,6 +293,12 @@ void vtkProstateNavCalibrationStep::ProcessGUIEvents(vtkObject *caller,
 
     //const char *filename = this->SelectImageButton->GetWidget()->GetFileName();
     vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->ZFrameImageSelectorWidget->GetSelected());
+
+    // shift the index (on GUI, the index starts at 1)
+    s_index --;
+    e_index --;
+    if (s_index < 1) s_index = 1;
+
     //PerformZFrameCalibration(filename);
     PerformZFrameCalibration(volumeNode, s_index, e_index);
     }
