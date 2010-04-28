@@ -95,13 +95,13 @@
   <label>Advanced N4 Parameters</label>
   <description>Advanced parameters of the algorithm</description>
 
-     <int>
+     <integer>
       <name>bsplineOrder</name>
       <longflag>bsplineorder</longflag>
       <label>BSpline order</label>
       <description>Order of the BSpline used for fitting</description>
       <default>3</default>
-    </int>
+    </integer>
  
     <image>
       <longflag>weightimage</longflag>
