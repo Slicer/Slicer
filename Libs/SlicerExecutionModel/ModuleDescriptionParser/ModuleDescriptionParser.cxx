@@ -1748,7 +1748,7 @@ endElement(void *userData, const char *element)
     {
     std::string temp = ps->LastData[ps->Depth];
     replaceSubWithSub(temp, "\"", "'");
-    replaceSubWithSub(temp, "\n", " ");
+    //replaceSubWithSub(temp, "\n", " ");
     trimLeadingAndTrailing(temp);
     if (!group && !parameter)
       {
