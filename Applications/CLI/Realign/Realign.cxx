@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
 
     
     // fill in this transform with either the output or input matrix
-    vtkTransform *transformToApply = vtkTransform::New();
+    vtkSmartPointer<vtkTransform> transformToApply = vtkSmartPointer<vtkTransform>::New();
     transformToApply->Identity();
     transformToApply->PostMultiply();
     
@@ -128,10 +128,10 @@ int main(int argc, char * argv[])
           {
           std::cout << "Doing Midline..." << std::endl;
           }
-        vtkMath *math = vtkMath::New();
-        vtkPolyData *polydata = vtkPolyData::New();
-        vtkPolyData *output = vtkPolyData::New();
-        vtkPoints *points = vtkPoints::New();
+        vtkSmartPointer<vtkMath> math = vtkSmartPointer<vtkMath>::New();
+        vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+        vtkSmartPointer<vtkPolyData> output = vtkSmartPointer<vtkPolyData>::New();
+        vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
         points->SetDataTypeToDouble();
         int x = Midline.size();
         if (debugSwitch)
@@ -152,7 +152,7 @@ int main(int argc, char * argv[])
           }
         polydata->SetPoints(points);
         
-        vtkPrincipalAxesAlign *pa = vtkPrincipalAxesAlign::New();
+        vtkSmartPointer<vtkPrincipalAxesAlign> pa = vtkSmartPointer<vtkPrincipalAxesAlign>::New();
         if (debugSwitch)
           {        
           std::cout << "Set Input to PrincipalAxesAlign\n";
@@ -195,7 +195,7 @@ int main(int argc, char * argv[])
           }
         
         // prepare the rotation matrix
-        vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+        vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
         mat->Identity();
         i = 0;
         for (int p = 0; p < 4; p++)
@@ -218,19 +218,10 @@ int main(int argc, char * argv[])
           {
           std::cout << "Determinant " << det << endl;
           }
-        vtkMatrix4x4 *matInverse = vtkMatrix4x4::New();
+        vtkSmartPointer<vtkMatrix4x4> matInverse = vtkSmartPointer<vtkMatrix4x4>::New();
         matInverse->DeepCopy(mat);
         matInverse->Invert();
         transformToApply->SetMatrix(matInverse);
-        
-        // clean up
-        mat->Delete();
-        matInverse->Delete();
-        pa->Delete();
-        points->Delete();
-        polydata->Delete();
-        output->Delete();
-        math->Delete();
         }        
 
       // need at least two points
@@ -259,23 +250,6 @@ int main(int argc, char * argv[])
         }
       outNode->SetAndObserveMatrixTransformToParent(transformToApply->GetMatrix());
       scene->Commit( OutputTransformFilename.c_str() );
-      }
-    if (transformToApply)
-      {
-      if (debugSwitch)
-        {
-        //std::cout << "Deleting transform to apply" << std::endl;
-        }
-      //transformToApply->Delete();
-      }
-    if (scene)
-      {
-      if (debugSwitch)
-        {
-        //std::cout << "Clearing scene and not deleting it because used a smart pointer" << std::endl;
-        }
-      //scene->Clear(1);
-      //scene->Delete();
       }
     return EXIT_SUCCESS;
 }
