@@ -19,16 +19,16 @@
 namespace itk
 {
     
-template< class TData >
-DiffusionTensor3DBSplineInterpolateImageFunction< TData >
+template< class TData , class TCoordRep >
+DiffusionTensor3DBSplineInterpolateImageFunction< TData , TCoordRep >
 ::DiffusionTensor3DBSplineInterpolateImageFunction()
 {
   m_SplineOrder = 1 ;
 }    
     
-template< class TData >
+template< class TData , class TCoordRep >
 void
-DiffusionTensor3DBSplineInterpolateImageFunction< TData >
+DiffusionTensor3DBSplineInterpolateImageFunction< TData , TCoordRep >
 ::AllocateInterpolator()
 {
   for( int i = 0 ; i < 6 ; i++ )

@@ -40,7 +40,7 @@ public :
   ///Get a Symmetric matrix representing the tensor
   MatrixType GetTensor2Matrix() ;
   ///Set the Tensor from a symmetric matrix
-  void SetTensorFromMatrix( MatrixType matrix ) ;
+  template< class C > void SetTensorFromMatrix( Matrix< C , 3 , 3 > matrix ) ;
   ///Cast the component values of the tensor
   template< class C > operator DiffusionTensor3DExtended< C > const() ;
 

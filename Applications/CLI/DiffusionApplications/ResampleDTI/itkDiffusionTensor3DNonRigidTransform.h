@@ -53,6 +53,7 @@ public:
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 
 protected:
+  DiffusionTensor3DNonRigidTransform() ;
   MutexLock::Pointer m_LockGetJacobian ;
   unsigned long latestTime ;
   typename TransformType::Pointer m_Transform ;

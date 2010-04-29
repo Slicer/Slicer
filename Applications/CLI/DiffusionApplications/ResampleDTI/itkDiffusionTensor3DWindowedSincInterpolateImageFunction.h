@@ -28,20 +28,22 @@ namespace itk
 template< class TData,
          unsigned int VRadius ,
          class TWindowFunction = Function::HammingWindowFunction< VRadius > ,
-         class TBoundaryCondition = ConstantBoundaryCondition< OrientedImage< TData , 3 > > >
+         class TBoundaryCondition = ConstantBoundaryCondition< OrientedImage< TData , 3 > >  ,
+         class TCoordRep = double
+        >
 class DiffusionTensor3DWindowedSincInterpolateImageFunction
- : public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
+ : public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData , TCoordRep >
 {
 public:
   typedef TData DataType ;
   typedef DiffusionTensor3DWindowedSincInterpolateImageFunction Self ;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType > Superclass ;
+  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType , TCoordRep > Superclass ;
   typedef typename Superclass::ImageType ImageType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
   typedef WindowedSincInterpolateImageFunction< ImageType ,
                                     VRadius , TWindowFunction,
-                                    TBoundaryCondition , double > WindowedSincInterpolateImageFunctionType ;
+                                    TBoundaryCondition , TCoordRep > WindowedSincInterpolateImageFunctionType ;
   
   itkNewMacro(Self);
 

@@ -47,15 +47,16 @@ DiffusionTensor3DExtended< T >
 }
 
 template< class T >
+template< class C >
 void
 DiffusionTensor3DExtended< T >
-::SetTensorFromMatrix( MatrixType matrix )
+::SetTensorFromMatrix( Matrix< C , 3 , 3 > matrix )
 {
   for( int i = 0 ; i < 3 ; i++ )
     {
     for( int j = i ; j < 3 ; j++ )
       {
-      ( *this )( i , j ) = matrix[ i ][ j ] ;
+      ( *this )( i , j ) = static_cast< T >( matrix[ i ][ j ] ) ;
       }
     }
 }

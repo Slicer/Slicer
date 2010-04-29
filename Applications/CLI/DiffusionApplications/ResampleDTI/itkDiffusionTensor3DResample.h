@@ -58,7 +58,7 @@ typedef typename InputImageType::Pointer InputImagePointerType ;
 typedef typename OutputImageType::Pointer OutputImagePointerType ;
 typedef itk::ImageRegionIterator< OutputImageType > IteratorType ;
 typedef typename OutputImageType::RegionType OutputImageRegionType ;
-typedef typename OutputTensorDataType::RealValueType TensorRealType ;
+//typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
 itkNewMacro( Self ) ;
 ///Set the transform
@@ -71,8 +71,8 @@ void SetInput( InputImagePointerType inputImage ) ;
 void SetOutputParametersFromImage( InputImagePointerType Image ) ;
 ///Get the time of the last modification of the object
 unsigned long GetMTime() const ;
-itkSetMacro( DefaultPixelValue , TensorRealType ) ;
-itkGetMacro( DefaultPixelValue , TensorRealType ) ;
+itkSetMacro( DefaultPixelValue , OutputDataType ) ;
+itkGetMacro( DefaultPixelValue , OutputDataType ) ;
 
 itkSetMacro( OutputOrigin , typename OutputImageType::PointType ) ;
 itkSetMacro( OutputSpacing , typename OutputImageType::SpacingType ) ;
@@ -101,7 +101,8 @@ typename OutputImageType::PointType m_OutputOrigin ;
 typename OutputImageType::SpacingType m_OutputSpacing ;
 typename OutputImageType::SizeType m_OutputSize ;
 typename OutputImageType::DirectionType m_OutputDirection ;
-TensorRealType m_DefaultPixelValue ;
+OutputDataType m_DefaultPixelValue ;
+OutputTensorDataType m_DefaultTensor ;
 };
 
 }//end namespace itk

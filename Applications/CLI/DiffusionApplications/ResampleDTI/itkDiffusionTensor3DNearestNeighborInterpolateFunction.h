@@ -16,7 +16,8 @@
 
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
-#include <itkMutexLock.h>
+
+
 
 namespace itk
 {
@@ -26,9 +27,9 @@ namespace itk
  * Implementation of the nearest neighborhood interpolation for diffusion tensor images
  */
 
-template< class TData >
+template< class TData , class TCoordRep = double >
 class DiffusionTensor3DNearestNeighborInterpolateFunction :
-  public DiffusionTensor3DInterpolateImageFunction< TData >
+  public DiffusionTensor3DInterpolateImageFunction< TData , TCoordRep >
 {
 public:
   typedef TData DataType ;
@@ -39,18 +40,13 @@ public:
   typedef typename Superclass::PointType PointType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-
+  typedef ImageFunction< DiffusionImageType , DataType , double > ImageFunctionType ;
+  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
   itkNewMacro( Self ) ;
   ///Evaluate the value of a tensor at a given position
-  TensorDataType Evaluate( const PointType &point ) ;
+//  TensorDataType Evaluate( const PointType &point ) ;
+  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const ;
 protected:
-  MutexLock::Pointer lock ;
-  DiffusionTensor3DNearestNeighborInterpolateFunction() ;
-  void PreComputeCorners() ;
-  PointType m_Origin ;
-  PointType m_End ;
-
-
 };
 
 }//end namespace itk

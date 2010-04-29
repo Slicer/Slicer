@@ -19,9 +19,9 @@
 #include <itkOrientedImage.h>
 #include <itkPoint.h>
 //#include <itkSemaphore.h>
-#include <itkNumericTraits.h>
-#include "define.h"
-
+//#include <itkNumericTraits.h>
+//#include "define.h"
+#include <itkImageFunction.h>
 
 namespace itk
 {
@@ -31,8 +31,12 @@ namespace itk
  * Virtual class to implement diffusion tensor interpolation classes 
  * 
  */
-template< class TData >
-class DiffusionTensor3DInterpolateImageFunction : public Object
+template< class TData , class TCoordRep = double >
+class DiffusionTensor3DInterpolateImageFunction :
+   public ImageFunction< OrientedImage< DiffusionTensor3D < TData > , 3 > ,
+                         DiffusionTensor3D < TData > ,
+                         TCoordRep
+                       >
 {
 public :
   typedef TData TensorType ;
@@ -44,19 +48,60 @@ public :
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
   typedef typename TensorDataType::RealValueType TensorRealType ;
-  ///Set the input image
-  itkSetObjectMacro( InputImage , DiffusionImageType ) ;
-  ///Evaluate the tensor value at a given position
-  virtual TensorDataType Evaluate( const PointType &point ) = 0 ;
-  void SetDefaultPixelValue( TensorRealType defaultPixelValue ) ;
-  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
+  typedef ImageFunction< OrientedImage< DiffusionTensor3D < TData > , 3 > ,
+                         DiffusionTensor3D < TData > ,
+                         TCoordRep
+                       > Superclass ;
+  typedef typename Superclass::ContinuousIndexType ContinuousIndexType ;
+  typedef typename Superclass::IndexType IndexType ;
 
+/////Copied from itkInterpolateImageFunction.h
+
+  /** Interpolate the image at a point position
+   *
+   * Returns the interpolated image intensity at a 
+   * specified point position. No bounds checking is done.
+   * The point is assume to lie within the image buffer.
+   *
+   * ImageFunction::IsInsideBuffer() can be used to check bounds before
+   * calling the method. */
+virtual TensorDataType Evaluate( const PointType& point ) const
+{
+  ContinuousIndexType index;
+  this->GetInputImage()->TransformPhysicalPointToContinuousIndex( point, index ) ;
+  return ( this->EvaluateAtContinuousIndex( index ) ) ;
+}
+  /** Interpolate the image at a continuous index position
+   *
+   * Returns the interpolated image intensity at a 
+   * specified index position. No bounds checking is done.
+   * The point is assume to lie within the image buffer.
+   *
+   * Subclasses must override this method.
+   *
+   * ImageFunction::IsInsideBuffer() can be used to check bounds before
+   * calling the method. */
+  virtual TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const = 0 ;
+  /** Interpolate the image at an index position.
+   *
+   * Simply returns the image value at the
+   * specified index position. No bounds checking is done.
+   * The point is assume to lie within the image buffer.
+   *
+   * ImageFunction::IsInsideBuffer() can be used to check bounds before
+   * calling the method. */
+
+virtual TensorDataType EvaluateAtIndex( const IndexType & index ) const
+{
+  return this->GetInputImage()->GetPixel( index ) ;
+}
+//  void SetDefaultPixelValue( TensorRealType defaultPixelValue ) ;
+//  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
 protected:
   DiffusionTensor3DInterpolateImageFunction() ;
-  DiffusionImageTypePointer m_InputImage ;
   unsigned long latestTime ;
-  TensorRealType m_DefaultPixelValue ;
-  TensorDataType m_DefaultPixel ;
+//  TensorRealType m_DefaultPixelValue ;
+//  TensorDataType m_DefaultPixel ;
 };
 
 }//end namespace itk

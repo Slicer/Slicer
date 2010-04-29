@@ -25,18 +25,18 @@ namespace itk
  * 
  * Implementation of blockwise spline interpolation for diffusion tensor images
  */
-template< class TData >
+template< class TData , class TCoordRep = double >
 class DiffusionTensor3DBSplineInterpolateImageFunction :
-  public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
+  public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData , TCoordRep >
 {
 public:
   typedef TData DataType ;
   typedef DiffusionTensor3DBSplineInterpolateImageFunction Self ;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType > Superclass ;
+  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType , TCoordRep > Superclass ;
   typedef typename Superclass::ImageType ImageType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-  typedef BSplineInterpolateImageFunction< ImageType , double , double >
+  typedef BSplineInterpolateImageFunction< ImageType , TCoordRep , double >
                                                  BSplineInterpolateFunction ;
   
   itkNewMacro( Self ) ;

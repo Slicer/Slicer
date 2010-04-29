@@ -20,12 +20,20 @@ namespace itk
 {
 
 template< class TData >
+DiffusionTensor3DNonRigidTransform< TData >
+::DiffusionTensor3DNonRigidTransform()
+{
+  m_LockGetJacobian = MutexLock::New() ;
+}
+
+
+template< class TData >
 void 
 DiffusionTensor3DNonRigidTransform< TData >
 ::SetAffineTransformType(typename AffineTransform::Pointer transform)
 {
   m_Affine=transform;
-  m_LockGetJacobian = MutexLock::New() ;
+//  m_LockGetJacobian = MutexLock::New() ;
 }
 
 
@@ -72,8 +80,13 @@ DiffusionTensor3DNonRigidTransform< TData >
         }
       }
     m_LockGetJacobian->Unlock() ;
-    m_Affine->SetMatrix3x3( matrix ) ;
-    return m_Affine->EvaluateTransformedTensor( tensor ) ;
+    LightObject::Pointer newTransform = m_Affine->CreateAnother() ;
+    typename AffineTransform::Pointer newAffine = dynamic_cast< AffineTransform* >( newTransform.GetPointer() ) ;
+    /*m_Affine->SetMatrix3x3( matrix ) ;
+    return m_Affine->EvaluateTransformedTensor( tensor ) ;*/
+    newAffine->SetMeasurementFrame( this->m_MeasurementFrame ) ;
+    newAffine->SetMatrix3x3( matrix ) ;
+    return newAffine->EvaluateTransformedTensor( tensor ) ;
     }
   else
     {

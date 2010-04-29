@@ -21,14 +21,18 @@ namespace itk
     
     
 template< class TData ,
-         unsigned int VRadius ,
-         class TWindowFunction ,
-         class TBoundaryCondition >
+          unsigned int VRadius ,
+          class TWindowFunction ,
+          class TBoundaryCondition ,
+          class TCoordRep
+        >
 void
 DiffusionTensor3DWindowedSincInterpolateImageFunction< TData ,
-                                                      VRadius ,
-                                                      TWindowFunction ,
-                                                      TBoundaryCondition >
+                                                       VRadius ,
+                                                       TWindowFunction ,
+                                                       TBoundaryCondition ,
+                                                       TCoordRep
+                                                     >
 ::AllocateInterpolator()
 {
   for( int i = 0 ; i < 6 ; i++ )

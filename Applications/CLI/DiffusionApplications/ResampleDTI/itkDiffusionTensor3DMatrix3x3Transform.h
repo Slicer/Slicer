@@ -16,9 +16,9 @@
 
 
 #include "itkDiffusionTensor3DTransform.h"
-#include <itkSemaphore.h>
 #include <itkVector.h>
 #include <itkMatrixOffsetTransformBase.h>
+#include <itkMutexLock.h>
 
 namespace itk
 {
@@ -75,9 +75,8 @@ protected:
   unsigned long latestTime ;
   VectorType m_Translation ;
   VectorType m_Offset ;
-  Semaphore::Pointer P ;
   PointType m_Center ;
-
+  MutexLock::Pointer m_Lock ;
 };
 
 }//end namespace itk

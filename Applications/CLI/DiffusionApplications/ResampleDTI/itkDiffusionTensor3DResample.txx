@@ -28,7 +28,7 @@ DiffusionTensor3DResample< TInput,TOutput >
   m_OutputOrigin.Fill( 0.0 ) ;
   m_OutputDirection.SetIdentity() ;
   m_OutputSize.Fill( 0 ) ;
-  m_DefaultPixelValue = static_cast< TensorRealType >( ZERO ) ;
+  m_DefaultPixelValue = static_cast< OutputDataType >( ZERO ) ;
 }
 
 
@@ -69,9 +69,16 @@ DiffusionTensor3DResample< TInput ,TOutput >
     {
     itkExceptionMacro( << "Transform not set" ) ;
     }
+  //m_Interpolator->SetNumberOfThreads( this->GetNumberOfThreads() ) ;
   m_Interpolator->SetInputImage( const_cast< InputImageType* >
                                            ( this->GetInput() )  ) ;
-  m_Interpolator->SetDefaultPixelValue( m_DefaultPixelValue ) ;
+  //m_Interpolator->SetDefaultPixelValue( m_DefaultPixelValue ) ;
+  m_DefaultTensor.SetIdentity() ;
+  m_DefaultTensor *= this->m_DefaultPixelValue ;
+/*  for( unsigned int i = 0 ; i < 3 ; i++ ) 
+    {
+    m_DefaultTensor( i , i ) *= this->m_DefaultPixelValue ;
+    }*/
 }
 
 
@@ -101,11 +108,18 @@ DiffusionTensor3DResample< TInput , TOutput >
     outputImagePtr->TransformIndexToPhysicalPoint( index , point ) ;
     const Point< double , 3 > pointTransform
                                 = m_Transform->EvaluateTensorPosition( point );
-    inputTensor = m_Interpolator->Evaluate( pointTransform ) ;
-    outputTensor = m_Transform->EvaluateTransformedTensor( inputTensor ,
-                                                           point ) ;
-    it.Set( OutputTensorDataType( outputTensor ) ) ;
+    if( m_Interpolator->IsInsideBuffer( pointTransform ) )
+    {
+      inputTensor = m_Interpolator->Evaluate( pointTransform ) ;
+      outputTensor = m_Transform->EvaluateTransformedTensor( inputTensor ,
+                                                             point ) ;
+      it.Set( OutputTensorDataType( outputTensor ) ) ;
     }
+    else
+    {
+      it.Set( m_DefaultTensor ) ;
+    }
+  }
 } 
 
 

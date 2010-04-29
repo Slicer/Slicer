@@ -27,8 +27,7 @@ DiffusionTensor3DMatrix3x3Transform< TData >
   m_TransformMatrix.SetIdentity() ;
   m_Transform.SetIdentity() ;
   m_TransformT.SetIdentity() ;
-  P = Semaphore::New() ;
-  P->Initialize( 1 ) ;
+  m_Lock = MutexLock::New() ;
   latestTime = 0 ;
   m_Translation.Fill( NumericTraits< DataType >::Zero ) ;
   m_Offset.Fill( NumericTraits< DataType >::Zero ) ;
@@ -41,6 +40,7 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 ::SetTranslation( VectorType translation )
 {
   m_Translation = translation ;
+  this->Modified() ;
 }
 
 template< class TData >
@@ -49,6 +49,7 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 ::SetCenter( PointType center )
 {
   m_Center = center ;
+  this->Modified() ;
 }
 
 template< class TData >
@@ -74,6 +75,7 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 ::SetMatrix3x3( MatrixTransformType &matrix )
 {
   m_TransformMatrix = matrix ;
+  this->Modified() ;
 }
 
 
@@ -86,12 +88,12 @@ DiffusionTensor3DMatrix3x3Transform< TData >
 {
   if( latestTime < Object::GetMTime() )
     {
-    P->Down() ;
+    m_Lock->Lock() ;
     if( latestTime < Object::GetMTime() )
       {
       PreCompute() ;
       }
-    P->Up() ;
+    m_Lock->Unlock() ;
     }
   return m_TransformMatrix * point + m_Offset ;
 }
@@ -115,12 +117,12 @@ DiffusionTensor3DMatrix3x3Transform< TData >
   InternalTensorDataType internalTensor = tensor ;
   if( latestTime < Object::GetMTime() )
     {
-    P->Down() ;
+    m_Lock->Lock() ;
     if( latestTime < Object::GetMTime() )
       {
       PreCompute() ;
       }
-    P->Up() ;
+    m_Lock->Unlock() ;
     }
   InternalMatrixDataType tensorMatrix = internalTensor.GetTensor2Matrix() ;
   InternalMatrixTransformType mat = this->m_Transform
@@ -139,12 +141,12 @@ DiffusionTensor3DMatrix3x3Transform< TData >::GetMatrix3x3( )
 {
   if( latestTime < Object::GetMTime() )
     {
-    P->Down() ;
+    m_Lock->Lock() ;
     if( latestTime < Object::GetMTime() )
       {
       PreCompute() ;
       }
-    P->Up() ;
+    m_Lock->Unlock() ;
     }
   return m_TransformMatrix ;
 }
@@ -156,12 +158,12 @@ DiffusionTensor3DMatrix3x3Transform< TData >::GetTranslation( )
 {
   if( latestTime < Object::GetMTime() )
     {
-    P->Down() ;
+    m_Lock->Lock() ;
     if( latestTime < Object::GetMTime() )
       {
       PreCompute() ;
       }
-    P->Up() ;
+    m_Lock->Unlock() ;
     }
 return m_Translation ;
 }

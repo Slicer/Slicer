@@ -25,18 +25,18 @@ namespace itk
  * 
  * Blockwise linear interpolation for diffusion tensor images 
  */
-template<class TData>
+template<class TData , class TCoordRep = double >
 class DiffusionTensor3DLinearInterpolateFunction :
-  public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
+  public DiffusionTensor3DInterpolateImageFunctionReimplementation< TData , TCoordRep >
 {
 public:
   typedef TData DataType ;
   typedef DiffusionTensor3DLinearInterpolateFunction Self ;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType > Superclass ;
+  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation< DataType , TCoordRep > Superclass ;
   typedef typename Superclass::ImageType ImageType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-  typedef LinearInterpolateImageFunction< ImageType , double > LinearInterpolateImageFunctionType ;
+  typedef LinearInterpolateImageFunction< ImageType , TCoordRep > LinearInterpolateImageFunctionType ;
   
   itkNewMacro(Self) ;
 

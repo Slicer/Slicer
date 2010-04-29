@@ -144,15 +144,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>a</element>
       <default>a</default>
     </string-enumeration>
-    <string-enumeration>
+    <boolean>
       <name>space</name>
-      <longflag>--space</longflag>
-      <description>Space Orientation: RAS/LPS (warning: if the transform is a Transform Node in Slicer3, use LPS)</description>
-      <label>Transform Space Orientation</label>
-      <element>RAS</element>
-      <element>LPS</element>
-      <default>LPS</default>
-    </string-enumeration>
+      <longflag>--spaceChange</longflag>
+      <description>Space Orientation between transform and image is different (RAS/LPS) (warning: if the transform is a Transform Node in Slicer3, do not select)</description>
+      <label>Space Orientation inconsistency (between transform and image)</label>
+      <default>false</default>
+    </boolean>
 </parameters>
 <parameters advanced="true">
     <label>Rigid/Affine Parameters</label>
@@ -172,6 +170,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Centered Transform</label>
       <default>false</default>
     </boolean>
+    <string-enumeration>
+      <name>imageCenter</name>
+      <longflag>--image_center</longflag>
+      <description>Image to use to center the transform (used only if "Centered Transform" is selected)</description>
+      <label>Image Center</label>
+      <element>input</element>
+      <element>output</element>
+      <default>input</default>
+     </string-enumeration>
     <boolean>
       <name>inverseITKTransformation</name>
       <flag>-b</flag>
@@ -183,14 +190,17 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 </parameters>
 
 <parameters advanced="true">
-  <label>Affine Transform Parameters</label>
-    <boolean>
+  <label>Tensor Transform Type</label>
+    <string-enumeration>
       <name>ppd</name>
-      <longflag>--ppd</longflag>
-      <description>Uses the Preservation of the Principal Direction to compute the affine transform</description>
-      <label>Preservation of Principal Direction</label>
-      <default>false</default>
-    </boolean>
+      <longflag>--transform_tensor_method</longflag>
+      <flag>-T</flag>
+      <description>Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)</description>
+      <label>Finite Strain (FS) or \nPreservation of the Principal Direction (PPD)</label>
+      <element>PPD</element>
+      <element>FS</element>
+      <default>PPD</default>
+    </string-enumeration>
 </parameters>
 
 

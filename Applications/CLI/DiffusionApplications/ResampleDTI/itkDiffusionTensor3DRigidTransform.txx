@@ -41,6 +41,7 @@ DiffusionTensor3DRigidTransform< TData >
     this->m_Translation[ i ] = transform->GetFixedParameters().GetElement( i ) ;
     }
   SetMatrix3x3( matrix3x3 ) ;
+  this->Modified() ;
 }
 
 template< class TData >
@@ -66,9 +67,13 @@ DiffusionTensor3DRigidTransform< TData >
       {
       matrix3x3[ i ][ j ] = matrix[ i ][ j ] ;
       }
-    this->m_Translation[ i ] = matrix[ i ][ 3 ] ;
     }
   SetMatrix3x3(matrix3x3);
+  //We set the translation after SetMatrix3x3 in case it throws an exception and in that case we do not want to set the new translation
+  for( int i = 0 ; i < 3 ; i++ )
+    {
+    this->m_Translation[ i ] = matrix[ i ][ 3 ] ;
+    }
 }
 
 template< class TData >
@@ -115,6 +120,7 @@ DiffusionTensor3DRigidTransform< TData >
     {
     itkExceptionMacro( << " Matrix is not a rotation matrix" ) ;
     }
+  this->Modified() ;
 }
 
 template< class TData >
