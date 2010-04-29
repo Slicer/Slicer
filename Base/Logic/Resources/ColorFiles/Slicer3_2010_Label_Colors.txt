@@ -8,8 +8,8 @@
 #
 #Begin table data:
 0 Background 0 0 0 0
-1 Bone 240 255 240 255
-2 Skin 233 150 122 255
+1 Bone 231 197 108 255
+2 Skin 177 122 101 255
 3 Muscle 205 92 92 255
 4 Fat 238 232 170 255
 7 Arteries 250 128 114 255
