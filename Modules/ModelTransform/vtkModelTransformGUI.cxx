@@ -74,7 +74,7 @@ vtkModelTransformGUI::vtkModelTransformGUI()
   Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
   if (interp)
     {
-    //VtkslicerModelTransformmodulelogic_Init(interp);
+    //Vtkslicermodeltransformmodulelogic_Init(interp);
     }
   else
     {
