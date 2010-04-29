@@ -139,7 +139,7 @@ int vtkComputeLocalGeometry::RequestData(
     std::list<int> interior_init = std::list<int>(0);
     std::list<int> exterior_init = std::list<int>(0);
     std::vector<int> visited = std::vector<int>(numVerts);
-    for( int i = 0; i < numVerts; i++ ) {
+    for(unsigned int i = 0; i < numVerts; i++ ) {
       int val = activeContourVertIdx->GetValue( i );
       if( 1 == val ) {
          point_type[i] = 2;
