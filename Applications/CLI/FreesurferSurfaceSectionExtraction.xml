@@ -2,8 +2,7 @@
 <executable>
   <category>Surface Models</category>
   <title>FreesurferSurfaceSectionExtraction</title>
-  <description>This module creates gray matter models based on
-  fiducials on a freesurfer generated white matter surface.</description>
+  <description>This module creates gray matter models based on fiducials on a freesurfer generated white matter surface.</description>
   <version>
            1.0</version>
   <documentation-url></documentation-url>
