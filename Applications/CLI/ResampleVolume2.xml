@@ -3,16 +3,7 @@
   <category>Filtering</category>
   <title>Resample Scalar/Vector/DWI Volume</title>
   <description>
-   This module implements image and vector-image resampling through
- the use of itk Transforms.It can also handle diffusion weighted
- MRI image resampling. "Resampling" is performed in space coordinates,
- not pixel/grid coordinates. It is quite important to ensure that
- image spacing is properly set on the images involved. The interpolator
- is required since the mapping from one space to the other will often
- require evaluation of the intensity of the image at non-grid positions.
- Warning: To resample DWMR Images, use nrrd input and output files.
- Warning: Do not use to resample Diffusion Tensor Images, tensors would
- not be reoriented
+This module implements image and vector-image resampling through  the use of itk Transforms.It can also handle diffusion weighted MRI image resampling. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. \n\nWarning: To resample DWMR Images, use nrrd input and output files. \n\nWarning: Do not use to resample Diffusion Tensor Images, tensors would  not be reoriented
   </description>
   <version>0.1</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:ResampleScalarVectorDWIVolume-Documentation-3.6</documentation-url>
