@@ -16,16 +16,7 @@ set (CLP ResampleDTI)
 add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
   ModuleEntryPoint
     --Reference ${MRML_TEST_DATA}/helix-DTI.nhdr
-    --number_of_thread 0
-    --transform_matrix 1,0,0,0,1,0,0,0,1,0,0,0
-    --transform rt
-    --space LPS
     --interpolation nn
-    --window_function c
-    --spline_order 3
-    --spacing 0,0,0
-    --size 0,0,0
-    --direction_matrix 0,0,0,0,0,0,0,0,0
     ${MRML_TEST_DATA}/helix-DTI.nhdr
     ${TEMP}/ResampleDTITest.nhdr
   )
