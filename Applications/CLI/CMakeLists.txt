@@ -638,32 +638,35 @@ slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ${CLP}Lib)
 
 #####################
-set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
+# culled from Slicer 3.6 release
+#set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
+#
+#set ( ${CLP}_SOURCE ${CLP}.cxx)
+#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+#
+#add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+#slicer3_set_plugins_output_path(${CLP}Lib)
+#set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+#target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+#
+#add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+#slicer3_set_plugins_output_path(${CLP})
+#target_link_libraries (${CLP} ${CLP}Lib)
 
 #####################
 
 
-set (CLP FreesurferSurfaceSectionExtraction)
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml)
-
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters)
-
-set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+# culled from Slicer 3.6 release
+#set (CLP FreesurferSurfaceSectionExtraction)
+#set ( ${CLP}_SOURCE ${CLP}.cxx)
+#generateclp(${CLP}_SOURCE ${CLP}.xml)
+#
+#add_executable(${CLP} ${${CLP}_SOURCE})
+#slicer3_set_plugins_output_path(${CLP})
+#target_link_libraries (${CLP} ITKIO ITKBasicFilters)
+#
+#set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 
@@ -704,10 +707,11 @@ else ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
 endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
-SET(cli_modules ${cli_modules}
-  UtahBSpline
-  DiffeomorphicDemonsRegistration
-  )
+# culled from Slicer 3.6 release
+#SET(cli_modules ${cli_modules}
+  # UtahBSpline
+  # DiffeomorphicDemonsRegistration
+#  )
 
 if(Slicer3_USE_MIDAS)
   SET(cli_modules ${cli_modules} MIDASApplications)
@@ -787,9 +791,9 @@ if (Slicer3_SOURCE_DIR)
     GaussianBlurImageFilterLib
 #    DWIDicomLoad
 #    DWIDicomLoadLib
-    FreesurferSurfaceSectionExtraction
-    ZeroCrossingBasedEdgeDetectionImageFilter
-    ZeroCrossingBasedEdgeDetectionImageFilterLib
+    #FreesurferSurfaceSectionExtraction
+    #ZeroCrossingBasedEdgeDetectionImageFilter
+    #ZeroCrossingBasedEdgeDetectionImageFilterLib
     DiffusionTensorMathematics
     DiffusionTensorEstimation
     )

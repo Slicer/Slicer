@@ -1061,18 +1061,19 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
+# culled from Slicer 3.6
 # ZeroCrossingBasedEdgeDetectionImageFilter tests
-add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
-  --compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
-            ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
-  ModuleEntryPoint
-    ${TEST_DATA}/CTHeadResampled.nhdr
-    ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
-  )
-
-set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
+#add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
+#--compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
+#${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
+#ModuleEntryPoint
+#${TEST_DATA}/CTHeadResampled.nhdr
+#${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
+#)
+#
+#set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # PolyDataToLabelmap tests
