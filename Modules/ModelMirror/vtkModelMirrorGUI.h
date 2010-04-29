@@ -98,7 +98,7 @@ class VTK_MODELMIRROR_EXPORT vtkModelMirrorGUI : public vtkSlicerModuleGUI
   // Description:
   // Get the categorization of the module.  The category is used for
   // grouping modules together into menus.
-  const char *GetCategory() const {return "Registration";}
+  const char *GetCategory() const {return "Surface Models";}
 
   void SetMirrorPlaneToAxial();
   void SetMirrorPlaneToSaggital();
