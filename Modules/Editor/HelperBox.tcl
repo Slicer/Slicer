@@ -69,6 +69,8 @@ if { [itcl::find class HelperBox] == "" } {
     method select {} {} ;# select the master volume node
     method mergeVolume {} {} ;# helper to get the merge volume for the current selected master
     method setMergeVolume { {mergeVolume ""} } {} ;# let the user explicitly set merge volume or with dialog
+    method setMasterVolume { masterVolume } {} ;# programmatically set the master (invokes the gui callback indirectly
+    method setVolumes { masterVolume mergeVolumes } {} ;# programmatically set the master and merge (invokes the gui callback indirectly
     method structureVolume { structureName } {} ;# get the volume for a given structure name
 
     method promptStructure {} {} ;# ask which label value to use
@@ -160,6 +162,20 @@ itcl::body HelperBox::select { } {
   $this updateStructures
 }
 
+itcl::body HelperBox::setVolumes { masterVolume mergeVolume } {
+  # set both volumes at the same time - trick the callback into 
+  # thinking that the merge volume is already set so it won't prompt for a new one
+  set _merge $mergeVolume
+  set _masterWhenMergeWasSet $masterVolume
+  $this setMasterVolume $masterVolume
+}
+
+# select merge volume 
+itcl::body HelperBox::setMasterVolume { masterVolume } {
+  $o(masterSelector) SetSelected $masterVolume
+  $this select
+}
+
 # select merge volume 
 itcl::body HelperBox::setMergeVolume { {mergeVolume ""} } {
   if { $_master == "" } {
@@ -167,9 +183,13 @@ itcl::body HelperBox::setMergeVolume { {mergeVolume ""} } {
   }
   if { $mergeVolume != "" } {
     set _merge $mergeVolume
-  }
-  if { [info exists o(labelMapSelector)] } {
-    set _merge [$o(labelMapSelector) GetSelected]
+    if { [info exists o(labelMapSelector)] } {
+      $o(labelMapSelector) SetSelected $_merge
+    }
+  } else {
+    if { [info exists o(labelMapSelector)] } {
+      set _merge [$o(labelMapSelector) GetSelected]
+    }
   }
   set _masterWhenMergeWasSet $_master
   $this select

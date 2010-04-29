@@ -446,7 +446,19 @@ proc EditorEnter {this} {
   $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] \
     [$this GetNumberForVTKEvent ModifiedEvent]
 
-  $::Editor($this,editHelper) updateStructures
+  
+  set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
+  set layerLogic [$sliceLogic GetBackgroundLayer]
+  set masterNode [$layerLogic GetVolumeNode]
+  set layerLogic [$sliceLogic GetLabelLayer]
+  set mergeNode [$layerLogic GetVolumeNode]
+  if { $masterNode != "" } {
+    if { $mergeNode != "" } {
+      $::Editor($this,editHelper) setVolumes $masterNode $mergeNode
+    } else {
+      $::Editor($this,editHelper) setMasterVolume $masterNode
+    }
+  }
 }
 
 proc EditorExit {this} {
