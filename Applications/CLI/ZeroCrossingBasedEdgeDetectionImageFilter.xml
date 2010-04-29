@@ -7,11 +7,7 @@
   Zero Crossing Based Edge Detection Filter
   </title>
   <description>
-  The Zero Crossing Based Edge Detection Filter detects edges on an image by first applying 
-  the Discrete Gaussian Image Filter to smooth out the image. Then it applies the Laplacian 
-  Image Filter to find the edges (ie pixels with value zero). Finally, it uses the Zero 
-  Crossing Image Filter to map the edges detected by the Laplacian Image Filter to one and 
-  the rest of the image to zero and produces a binary image.
+The Zero Crossing Based Edge Detection Filter detects edges on an image by first applying  the Discrete Gaussian Image Filter to smooth out the image. Then it applies the Laplacian Image Filter to find the edges (ie pixels with value zero). Finally, it uses the Zero Crossing Image Filter to map the edges detected by the Laplacian Image Filter to one and the rest of the image to zero and produces a binary image.
   </description>
   <version>0.1.0.$Revision: 2085 $(alpha)</version>
   <documentation-url></documentation-url>
@@ -32,8 +28,7 @@
         <float>
                 <name>maximumError</name>
                 <longflag>--maximumError</longflag>
-                <description>The maximum error used by the Discrete Gaussian Image Filter. 
-                Value must be between 0 and 1. 
+                <description>The maximum error used by the Discrete Gaussian Image Filter. Value must be between 0 and 1. 
                 </description>
                 <label>Maximum Error</label>
                 <default>.001</default>
