@@ -367,6 +367,12 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     set tsRange $::FastMarchingSegmentation($this,timescrollRange)
     set segmentedVolume [$::FastMarchingSegmentation($this,segVolumeThumbWheel) GetValue]
     set knownpoints [$::FastMarchingSegmentation($this,fastMarchingFilter) nKnownPoints]
+    if { $knownpoints == 0 } {
+      FastMarchingSegmentationErrorDialog "Unknown error occured. Please save \
+      the scene and submit a bug report with the data to reproduce this error \
+      to the developer."
+      return
+    }
     $tsRange SetWholeRange 0.0 $segmentedVolume
     $tsRange SetRange [expr 0.05*$segmentedVolume] [expr 0.95*$segmentedVolume]
     set range [$tsRange GetRange]
