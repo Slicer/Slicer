@@ -1411,7 +1411,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorIconButton->SetBorderWidth ( 0 );
   this->EditorIconButton->SetOverReliefToNone ( );
   this->EditorIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorIcon ( ) );
-  this->EditorIconButton->SetBalloonHelpString ( "Editor");        
+  this->EditorIconButton->SetBalloonHelpString ( "Label Map Editor");        
   mtb->AddWidget ( this->EditorIconButton );
 
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )

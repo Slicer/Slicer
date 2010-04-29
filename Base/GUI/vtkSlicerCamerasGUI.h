@@ -62,6 +62,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCamerasGUI : public vtkSlicerModuleGUI
     /// Callbacks
     virtual void UpdateCameraSelectorCallback();
 
+    // Description:
+    // Get the categorization of the module.  The category is used for
+    // grouping modules together into menus.
+    const char *GetCategory() const {return "Developer Tools";}
+
  protected:
     vtkSlicerCamerasGUI ( );
     virtual ~vtkSlicerCamerasGUI ( );

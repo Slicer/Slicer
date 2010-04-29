@@ -1402,7 +1402,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Data", "Data", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Data Module displays and permits operations on the MRML tree, and creates and edits transformation hierarchies.\n The Load panels exposes options for loading data. Helpful comments can be opened by clicking on the \"information\" icons in each load panel. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Data-Documentation-3.4</a>\n";
+    const char *help = "The Data Module displays and permits operations on the MRML tree, and creates and edits transformation hierarchies.\n The Load panels exposes options for loading data. Helpful comments can be opened by clicking on the \"information\" icons in each load panel. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Data-Documentation-3.6</a>\n";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Data module was contributed by Alex Yarmarkovich, Isomics Inc. with help from others at SPL, BWH (Ron Kikinis, Wendy Plesniak)";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Data" );
     this->BuildHelpAndAboutFrame ( page, help, about );
