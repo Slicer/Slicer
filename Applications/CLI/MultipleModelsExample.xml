@@ -3,11 +3,7 @@
   <category>Developer Tools</category>
   <title>Multiple models example</title>
   <description>
-Create 3D surface models from segmented data.
-
-This example exports colors and imports a set of models automatically.
-
-If specify a list of Labels, it will over ride any start/end label settings.
+Create 3D surface models from segmented data.\n\nThis example exports colors and imports a set of models automatically.\n\nIf specify a list of Labels, it will over ride any start/end label settings.
 </description>
   <version>3.0</version>
   <documentation-url>http://www.slicer.org</documentation-url>
