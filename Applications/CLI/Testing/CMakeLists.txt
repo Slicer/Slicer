@@ -118,7 +118,48 @@ add_test(CastTest ${Slicer3_EXE} --launch CastTest
   ModuleEntryPoint --type UnsignedChar
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTest.nrrd
   )
-
+add_test(CastTestChar ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestChar.nrrd
+  ${TEMP}/CastTestChar.nrrd
+  ModuleEntryPoint --type Char
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestChar.nrrd
+  )
+add_test(CastTestShort ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestShort.nrrd
+  ${TEMP}/CastTestShort.nrrd
+  ModuleEntryPoint --type Short
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestShort.nrrd
+  )
+add_test(CastTestUnsignedShort ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestUnsignedShort.nrrd
+  ${TEMP}/CastTestUnsignedShort.nrrd
+  ModuleEntryPoint --type UnsignedShort
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestUnsignedShort.nrrd
+  )
+add_test(CastTestInt ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestInt.nrrd
+  ${TEMP}/CastTestInt.nrrd
+  ModuleEntryPoint --type Int
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestInt.nrrd
+  )
+add_test(CastTestUnsignedInt ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestUnsignedInt.nrrd
+  ${TEMP}/CastTestUnsignedInt.nrrd
+  ModuleEntryPoint --type UnsignedInt
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestUnsignedInt.nrrd
+  )
+add_test(CastTestFloat ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestFloat.nrrd
+  ${TEMP}/CastTestFloat.nrrd
+  ModuleEntryPoint --type Float
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestFloat.nrrd
+  )
+add_test(CastTestDouble ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTestDouble.nrrd
+  ${TEMP}/CastTestDouble.nrrd
+  ModuleEntryPoint --type Double
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestDouble.nrrd
+  )
 set (CLP Cast)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)

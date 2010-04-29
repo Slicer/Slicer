@@ -45,8 +45,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>UnsignedShort</element>
       <element>Int</element>
       <element>UnsignedInt</element>
-      <element>Long</element>
-      <element>UnsignedLong</element>
       <element>Float</element>
       <element>Double</element>
     </string-enumeration>  
