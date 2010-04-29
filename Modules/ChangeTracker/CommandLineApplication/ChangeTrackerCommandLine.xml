@@ -3,8 +3,7 @@
   <category> Filtering </category>
   <title>ChangeTracker Command-line </title>
   <description>
-ChangeTracker command-line module description and help. This is the new version of the command line module to reflect the changes that took place in the workflow in Slicer 3.5
-  </description>
+ChangeTracker command-line module description and help. This is the new version of the command line module to reflect the changes that took place in the workflow in Slicer 3.5</description>
   <contributor>Andriy Fedorov, Kilian Pohl</contributor>
   <acknowledgements>Brain Science Foundation</acknowledgements>
    <parameters>
