@@ -1052,17 +1052,17 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 ##################################
 # SparseFieldLevelSetContour tests
 
-add_test(SparseFieldLevelSetContourTest ${Slicer3_EXE} --launch SparseFieldLevelSetContourTest
-  --compare ${BASELINE}/SparseFieldLevelSetContourTest.vtp
-  ${TEMP}/SparseFieldLevelSetContourTest.vtp
-  ModuleEntryPoint 
-  --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp 
-  -c "1.5,1.5,0" 
-  -c "-1.5,1.5,0" 
-  -c "-1.5,-1.5,0" 
-  -c "1.5,-1.5,0" 
-  --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
-  )
+add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
+
+# need to use a helper cmake file to compare the vtp output to baseline
+#add_test(SparseFieldLevelSetContourTest ${CMAKE_COMMAND}
+#  -Dtest_cmd=${Slicer3_EXE}
+#  -Dtest_args=--launch\ SparseFieldLevelSetContourTest\ ModuleEntryPoint\ --inputScene\ ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp\ -c\ 1.5,1.5,0\ -c\ -1.5,1.5,0\ -c\ -1.5,-1.5,0\ -c\ 1.5,-1.5,0\ --outputModel\ ${TEMP}/SparseFieldLevelSetContourTest.vtp
+#  -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
+#  -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
+#  -P ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
+#  )
+
 
 set (CLP SparseFieldLevelSetContour)
 add_executable(${CLP}Test ${CLP}Test.cxx)
