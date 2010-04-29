@@ -452,7 +452,7 @@ proc EditorEnter {this} {
   set masterNode [$layerLogic GetVolumeNode]
   set layerLogic [$sliceLogic GetLabelLayer]
   set mergeNode [$layerLogic GetVolumeNode]
-  if { $masterNode != "" && [$masterNode GetClassName] == "vtkMRMLScalarVolumeNode" } {
+  if { $masterNode != "" } {
     if { $mergeNode != "" } {
       $::Editor($this,editHelper) setVolumes $masterNode $mergeNode
     } else {
