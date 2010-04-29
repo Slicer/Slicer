@@ -8,7 +8,11 @@ if(COMMAND CMAKE_POLICY)
 endif(COMMAND CMAKE_POLICY)
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
-ADD_SUBDIRECTORY(Testing)
+if (Slicer3_SOURCE_DIR)
+  ##The current testing suite only works from within Slicer3.  Other packages
+  ##that use this tool will not properly run the test
+  ADD_SUBDIRECTORY(Testing)
+endif (Slicer3_SOURCE_DIR)
 
 set (CLP DicomToNrrdConverter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
