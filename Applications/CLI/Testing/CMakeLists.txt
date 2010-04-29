@@ -1134,6 +1134,12 @@ add_test(MergeModelsTest ${Slicer3_EXE} --launch MergeModelsTest
     ${MRML_TEST_DATA}/cube.vtk
     ${TEMP}/sphereCube.vtk
   )
+add_test(MergeModelsTestVtp ${Slicer3_EXE} --launch MergeModelsTest
+  MergeModelsTest
+    ${MRML_TEST_DATA}/sphere.vtp
+    ${MRML_TEST_DATA}/cube.vtp
+    ${TEMP}/sphereCube.vtp
+  )
 
 set (CLP MergeModels)
 add_executable(${CLP}Test ${CLP}Test.cxx)
