@@ -764,6 +764,11 @@ itcl::body Loader::chooseDirectory {} {
     $dialog SetParent $o(toplevel)
     $dialog Create
     $dialog RetrieveLastPathFromRegistry "OpenPath"
+
+    # scroll-to-selection
+    set fileprefix [[[$dialog GetFileBrowserWidget] GetDirectoryExplorer] GetSelectedDirectory]
+    [[$dialog GetFileBrowserWidget] GetDirectoryExplorer] ScrollToDirectory $fileprefix
+
     $dialog Invoke
     set dir ""
     if { [[$dialog GetFileNames] GetNumberOfValues] } {
