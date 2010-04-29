@@ -1093,21 +1093,37 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 ##################################
 # SparseFieldLevelSetContour tests
 
-add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
+# leaks from tcl file
+# add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
 
-# need to use a helper cmake file to compare the vtp output to baseline
-#add_test(SparseFieldLevelSetContourTest ${CMAKE_COMMAND}
-#  -Dtest_cmd=${Slicer3_EXE}
-#  -Dtest_args=--launch\ SparseFieldLevelSetContourTest\ ModuleEntryPoint\ --inputScene\ ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp\ -c\ 1.5,1.5,0\ -c\ -1.5,1.5,0\ -c\ -1.5,-1.5,0\ -c\ 1.5,-1.5,0\ --outputModel\ ${TEMP}/SparseFieldLevelSetContourTest.vtp
-#  -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
-#  -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
-#  -P ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
-#  )
+# use a helper to compare the baseline and output
+add_test(SparseFieldLevelSetContourTest1  ${CMAKE_COMMAND}
+  -Dtest_cmd=${Slicer3_BINARY_DIR}/bin/SparseFieldLevelSetContour1Test
+  -Dtest_name=SparseFieldLevelSetContour1Test
+  -Dinput_scene=${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
+  -Dc1=1.5,1.5,0
+  -Dc2=-1.5,1.5,0
+  -Dc3=-1.5,-1.5,0
+  -Dc4=1.5,-1.5,0
+  -Doutput_model=${TEMP}/SparseFieldLevelSetContourTest.vtp
+  -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
+  -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
+  -P ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
+)
 
-
-set (CLP SparseFieldLevelSetContour)
+set (CLP SparseFieldLevelSetContour1)
+include_directories( ${SlicerBaseCLI_BINARY_DIR} 
+                     ${CMAKE_CURRENT_BINARY_DIR}/../SparseFieldLevelSetContour  
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../SparseFieldLevelSetContour 
+                     ${vtkTeem_SOURCE_DIR}  
+                     ${vtkTeem_BINARY_DIR} 
+                     ) 
 add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib) 
+add_dependencies(${CLP}Test SparseFieldLevelSetContour)
+target_link_libraries(${CLP}Test SparseFieldLevelSetContourLib
+  vtkITK  vtkIO SlicerBaseCLI
+  ModuleDescriptionParser
+  )
 
 
 # MergeModels tests
