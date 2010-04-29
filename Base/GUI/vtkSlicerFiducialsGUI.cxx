@@ -3019,7 +3019,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListNumberingSchemeMenu->SetLabelWidth ( 18 );
     this->ListNumberingSchemeMenu->GetLabel()->SetAnchorToEast();    
     this->ListNumberingSchemeMenu->GetWidget()->SetWidth ( 13 );
-    this->ListNumberingSchemeMenu->SetBalloonHelpString("Set the numbering scheme used to assign integers to the next added fiducial in the list.. UseID uses the point ID, UseIndex uses the list index of the point, UsePrevious increments the number at the end of the previous point. ");
+    this->ListNumberingSchemeMenu->SetBalloonHelpString("Set the numbering scheme used to assign integers to the next added fiducial in the list. UseID uses the point ID, UseIndex uses the list index of the point, UsePrevious increments the number at the end of the previous point. ");
     this->ListNumberingSchemeMenu->SetLabelText("Numbering Scheme: ");
     // add the valid schemes
     for (int s = vtkMRMLFiducialListNode::SchemeMin;
