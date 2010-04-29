@@ -783,8 +783,8 @@ void vtkNeuroNavGUI::BuildGUIForHelpFrame()
 
   // Define your help text here.
 
-  const char *help = "NeuroNav is a navigation system for neurosurgery. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:NeuroNav-Documentation-3.4</a>";
-  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The Volumes module was contributed by Haiying Liu and Noby Hata at SPL, BWH (Ron Kikinis).";
+  const char *help = "NeuroNav is an intraoperative navigation system for neurosurgery. Please check this link for details: \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:NeuroNav-Documentation-3.6</a>";
+  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The NeuroNav module was contributed by Haiying Liu and Noby Hata at SPL, BWH (Ron Kikinis).";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "NeuroNav" );
   this->BuildHelpAndAboutFrame (page, help, about);
