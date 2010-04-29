@@ -1,13 +1,19 @@
 #include "ModuleEntry.h"
 
 // Input: mesh and indices of vertices for initialization
-vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
-                                            vtkIntArray* initVertIdx, bool bForceRecompute )
+void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
+                                     vtkIntArray* initVertIdx,
+                                     vtkPolyData* outputMesh,
+                                     bool bForceRecompute)
 {
   
 
   // instantiate output mesh
-  vtkPolyData* outputMesh = vtkPolyData::New();
+  // vtkPolyData * outputMesh = vtkPolyData::New();
+  if (outputMesh == NULL)
+    {
+    return;
+    }
 
   // put through triangle filter: ensure that we have a "polys" field
   vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
@@ -47,11 +53,13 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   outputMesh->DeepCopy( result );
 
   
-  return outputMesh;
+  return; //  outputMesh;
 }
 
-vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
-                                            vector< vector<float> >& initPoints3D, bool bForceRecompute )
+void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
+                                            vector< vector<float> >& initPoints3D,
+                                             vtkPolyData* outputMesh,
+                                             bool bForceRecompute )
 { 
 
   vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
@@ -97,18 +105,18 @@ vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   }
   std::cout<<"\n";
   
-  vtkPolyData* outputMesh = entry_main( inputMesh, initialPoints, bForceRecompute );
+  entry_main( inputMesh, initialPoints, outputMesh, bForceRecompute );
 
-  return outputMesh;
+  return;
 }
 
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-vtkPolyData* MeshContourEvolver::entry_main( vtkPolyData* inputMesh )
+void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh )
 {  
   vtkIntArray* emptyIntVec;
-  vtkPolyData* outputMesh = entry_main( inputMesh, emptyIntVec );
+  entry_main( inputMesh, emptyIntVec, outputMesh );
 
-  return outputMesh;
+  return;
 }

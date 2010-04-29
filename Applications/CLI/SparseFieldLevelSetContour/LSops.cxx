@@ -13,16 +13,17 @@
 ==========================================================================*/
 #include "LSops.h"
 #include <list>
+#include "vtkSmartPointer.h"
 
 void SparseFieldLS::SelfUnion( vector<int>& vec )
 {
   sort( vec.begin(), vec.end() );
   vec.erase( unique(vec.begin(), vec.end()),vec.end() );
-  int breakhere = 1;
+//  int breakhere = 1;
 }
 
 void SparseFieldLS::AppendIdx( const vector<int>& src, vector<int>& dst ) {
-  for( int i = 0; i < src.size(); i++ )
+  for( unsigned int i = 0; i < src.size(); i++ )
     dst.push_back( src[i] );
   SelfUnion( dst );
 }
@@ -30,7 +31,7 @@ void SparseFieldLS::AppendIdx( const vector<int>& src, vector<int>& dst ) {
 void SparseFieldLS::DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z )
 {
   vector<int> L_z_(0);
-  for( int i = 0; i < L_z.size(); i++ ) {
+  for( unsigned int i = 0; i < L_z.size(); i++ ) {
     int num1 = count( L_zp.begin(), L_zp.end(), L_z[i] );
     int num2 = count( L_zn.begin(), L_zn.end(), L_z[i] );
     if( num1 + num2 == 0 )
@@ -213,14 +214,13 @@ bool SparseFieldLS::InitSphere()
 
 
 // assign some data from curvature computation to be the new colormap
-  vtkFloatArray* scalars2 = vtkFloatArray::New();
+  vtkSmartPointer<vtkFloatArray> scalars2 = vtkSmartPointer<vtkFloatArray>::New();
   scalars2->SetName("InitSphere");
   for( int i = 0; i < numverts; i++ )
     {
     scalars2->InsertTuple1(i, double(point_type[i] != 0) );
     }
   meshdata->polydata->GetPointData()->AddArray(scalars2); //SetScalars(scalars2);
-  scalars2->Delete();
   meshdata->polydata->Update();
 
 
@@ -264,7 +264,7 @@ vector<int> SparseFieldLS::EvolveRecalc( ) {
       for(int i=0; i<numVerts; i++){
         vector<int> neigh = meshdata->adjimm[i].myNeighbs;
         if (class_of_blob[i] == 0) {
-          for (int n=0; n<neigh.size(); n++){
+          for (unsigned int n=0; n<neigh.size(); n++){
             if (class_of_blob[neigh[n]] == 1 ){
               if( 0 == count(L__z.begin(),L__z.end(), i) ) {
                 L__z.push_back(i);
@@ -283,7 +283,7 @@ vector<int> SparseFieldLS::EvolveRecalc( ) {
       for(int i=0; i<numVerts; i++){
         vector<int> neigh = meshdata->adjimm[i].myNeighbs;
         if (edgeVisited[i] == 0) {  // On L__z
-          for (int n=0; n<neigh.size(); n++){
+          for (unsigned int n=0; n<neigh.size(); n++){
             if (edgeVisited[neigh[n]] == INIT_VAL__EDGE && class_of_blob[neigh[n]] == 0 ){
               if (0 == count(L__p1.begin(), L__p1.end(), neigh[n])){
                 L__p1.push_back(neigh[n]);
@@ -306,7 +306,7 @@ vector<int> SparseFieldLS::EvolveRecalc( ) {
       for(int i=0; i<numVerts; i++){
         vector<int> neigh = meshdata->adjimm[i].myNeighbs;
         if (edgeVisited[i] == 1) {  // On L__p1
-          for (int n=0; n<neigh.size(); n++){
+          for (unsigned int n=0; n<neigh.size(); n++){
             if (edgeVisited[neigh[n]] == INIT_VAL__EDGE && class_of_blob[neigh[n]] == 0 ){
               if (0 == count(L__p2.begin(), L__p2.end(), neigh[n])){
                 L__p2.push_back(neigh[n]);
@@ -317,7 +317,7 @@ vector<int> SparseFieldLS::EvolveRecalc( ) {
           }
         }
         else if(edgeVisited[i] == -1) {  // On L__n1
-          for (int n=0; n<neigh.size(); n++){
+          for (unsigned int n=0; n<neigh.size(); n++){
             if (edgeVisited[neigh[n]] == INIT_VAL__EDGE && class_of_blob[neigh[n]] == 1 ){
               if (0 == count(L__n2.begin(), L__n2.end(), neigh[n])){
                 L__n2.push_back(neigh[n]);
@@ -343,14 +343,14 @@ vector<int> SparseFieldLS::EvolveRecalc( ) {
 vector<int> SparseFieldLS::Evolve(int its )
 {
     double cfl = 0.15;
-    int smooth_its = 1;
+//    int smooth_its = 1;
     for( int its_ = 0; its_ < its; its_++ ) {
 
 
 
 
     valarray<double> F = energy->getforce( L_z, L_p1, L_n1, phi );
-    for( int i = 0; i < F.size(); i++ ) phi[ L_z[i] ] += dDirection*cfl * F[i];
+    for(unsigned int i = 0; i < F.size(); i++ ) phi[ L_z[i] ] += dDirection*cfl * F[i];
     if( (its % 5 == 0) || (its_ % (its-1) == 0) ) {
     EvolveRecalc( ); // brute force update...
         continue;
@@ -369,7 +369,7 @@ vector<int> SparseFieldLS::Evolve(int its )
 
     // 2. find where zero layer exceeds [-0.5,0.5]
     
-    for( int i = 0; i < L_z.size(); i++ ) {
+    for(unsigned int i = 0; i < L_z.size(); i++ ) {
       int idx = L_z[i];
       if( phi[idx] >= 0.5 )
         Sp.push_back( idx );
@@ -385,15 +385,15 @@ vector<int> SparseFieldLS::Evolve(int its )
     
     
 
-    for( int i = 0; i < L_p1.size(); i++ ) {
+    for(unsigned int i = 0; i < L_p1.size(); i++ ) {
       int idx = L_p1[i];
       vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
       valarray<double> vals(neigh->size()); // get neighbors of this point in L_p1
-      for( int k = 0; k < vals.size(); k++ ) { 
+      for(unsigned int k = 0; k < vals.size(); k++ ) { 
         vals[k] = phi[ (*neigh)[k] ];
       }
       bool bHasL_zneigh = false;
-      for( int k = 0; k < vals.size(); k++ ) {
+      for(unsigned int k = 0; k < vals.size(); k++ ) {
         int neighidx = (*neigh)[k]; // if this is not in L_z don't use it for the max()
         if( point_type[neighidx] == 0 ) // found it in L_z
           bHasL_zneigh = true;
@@ -402,12 +402,12 @@ vector<int> SparseFieldLS::Evolve(int its )
         Sp1.push_back( idx );
       }
       else {
-        for( int k = 0; k < vals.size(); k++ ) {
+        for(unsigned int k = 0; k < vals.size(); k++ ) {
           int neighidx = (*neigh)[k]; // if this is not in L_z don't use it for the max()
           if( point_type[neighidx] != 0 )
             vals[k] = 1.0;
         }
-        double oldval = phi[idx];
+        //double oldval = phi[idx];
         double newval = vals.min() + 1.0;
         phi[idx] = newval;
         // if this new value is outside allowed range, move it to appropriate S layer
@@ -417,15 +417,15 @@ vector<int> SparseFieldLS::Evolve(int its )
           Sp1.push_back(idx);
       }    
     }
-    for( int i = 0; i < L_n1.size(); i++ ) {
+    for(unsigned int i = 0; i < L_n1.size(); i++ ) {
       int idx = L_n1[i];
       vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
       valarray<double> vals(neigh->size());
-      for( int k = 0; k < vals.size(); k++ ) { 
+      for(unsigned int k = 0; k < vals.size(); k++ ) { 
         vals[k] = phi[ (*neigh)[k] ];
       }
       bool bHasL_zneigh = false;
-      for( int k = 0; k < vals.size(); k++ ) {
+      for (unsigned int k = 0; k < vals.size(); k++ ) {
         int neighidx = (*neigh)[k]; // if this is not in L_z don't use it for the max()
         if( point_type[neighidx] == 0 ) // found it in L_z
           bHasL_zneigh = true;
@@ -435,12 +435,12 @@ vector<int> SparseFieldLS::Evolve(int its )
         Sn1.push_back( idx );
       }
       else {
-        for( int k = 0; k < vals.size(); k++ ) {
+        for (unsigned int k = 0; k < vals.size(); k++ ) {
           int neighidx = (*neigh)[k]; // if this is not in L_z don't use it for the max()
           if( point_type[neighidx] != 0 ) // found it in L_z
             vals[k] = -1.0;
         }
-        double oldval = phi[idx];
+//        double oldval = phi[idx];
         double newval = vals.max() - 1.0;
         phi[idx] = newval;
         // if this new value is outside allowed range, move it to appropriate S layer
@@ -453,15 +453,15 @@ vector<int> SparseFieldLS::Evolve(int its )
     }
 
     
-    for( int i = 0; i < L_p2.size(); i++ ) {
+    for (unsigned int i = 0; i < L_p2.size(); i++ ) {
       int idx = L_p2[i];
       vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
       valarray<double> vals(neigh->size()); // get neighbors of this point in L_p1
-      for( int k = 0; k < vals.size(); k++ ) { 
+      for (unsigned int k = 0; k < vals.size(); k++ ) { 
         vals[k] = phi[ (*neigh)[k] ];
       }
       bool bHasL_p1neigh = false;
-      for( int k = 0; k < vals.size(); k++ ) {
+      for (unsigned int k = 0; k < vals.size(); k++ ) {
         int neighidx = (*neigh)[k]; // if this is not in L_z don't use it for the max()
         if( point_type[neighidx] == 1 ) // found it in L_z
           bHasL_p1neigh = true;
@@ -470,12 +470,12 @@ vector<int> SparseFieldLS::Evolve(int its )
         Sp2.push_back( idx );
       }
       else {
-        for( int k = 0; k < vals.size(); k++ ) {
+        for (unsigned int k = 0; k < vals.size(); k++ ) {
           int neighidx = (*neigh)[k]; // 
           if( point_type[neighidx] != 1 ) 
             vals[k] = 5.0;
         }
-        double oldval = phi[idx];
+//        double oldval = phi[idx];
         double newval = vals.min() + 1.0;
         phi[idx] = newval;
         // if this new value is outside allowed range, move it to appropriate S layer
@@ -485,15 +485,15 @@ vector<int> SparseFieldLS::Evolve(int its )
           Sp2.push_back(idx);
       }    
     }
-    for( int i = 0; i < L_n2.size(); i++ ) {
+    for (unsigned int i = 0; i < L_n2.size(); i++ ) {
       int idx = L_n2[i];
       vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
       valarray<double> vals(neigh->size());
-      for( int k = 0; k < vals.size(); k++ ) { 
+      for (unsigned int k = 0; k < vals.size(); k++ ) { 
         vals[k] = phi[ (*neigh)[k] ];
       }
       bool bHasL_n1neigh = false;
-      for( int k = 0; k < vals.size(); k++ ) {
+      for (unsigned int k = 0; k < vals.size(); k++ ) {
         int neighidx = (*neigh)[k]; // if this is not in L_n1 don't use it for the max()
         if( point_type[neighidx] == -1 ) 
           bHasL_n1neigh = true; // found it in L_n1
@@ -503,12 +503,12 @@ vector<int> SparseFieldLS::Evolve(int its )
         Sn2.push_back( idx );
       }
       else {
-        for( int k = 0; k < vals.size(); k++ ) {
+        for (unsigned int k = 0; k < vals.size(); k++ ) {
           int neighidx = (*neigh)[k]; // if this is not in L_n1 don't use it for the max()
           if( point_type[neighidx] != -1 ) // did not find it in L_n1
             vals[k] = -5.0;
         }
-        double oldval = phi[idx];
+//        double oldval = phi[idx];
         double newval = vals.max() - 1.0;
         phi[idx] = newval;
         if( newval >= -1.5 )
@@ -534,30 +534,30 @@ vector<int> SparseFieldLS::Evolve(int its )
     AppendIdx( Sn, L_n1 );
 
       // update point_type
-    for( int i = 0; i < L_z.size(); i++ ) {
+    for(unsigned int i = 0; i < L_z.size(); i++ ) {
       point_type[ L_z[i] ] = 0;
     }
-    for( int i = 0; i < L_p1.size(); i++ ) {
+    for (unsigned int i = 0; i < L_p1.size(); i++ ) {
       point_type[ L_p1[i] ] = 1;
     }
-    for( int i = 0; i < L_n1.size(); i++ ) {
+    for (unsigned int i = 0; i < L_n1.size(); i++ ) {
       point_type[ L_n1[i] ] = -1;
     }
-    for( int i = 0; i < L_p2.size(); i++ ) {
+    for (unsigned int i = 0; i < L_p2.size(); i++ ) {
       point_type[ L_p2[i] ] = 2;
     }
-    for( int i = 0; i < L_n2.size(); i++ ) {
+    for (unsigned int i = 0; i < L_n2.size(); i++ ) {
       point_type[ L_n2[i] ] = -2;
     }
-    for( int i = 0; i < Sp2.size(); i++ ) {
+    for (unsigned int i = 0; i < Sp2.size(); i++ ) {
       point_type[ Sp2[i] ] = 3;
     }
-    for( int i = 0; i < Sn2.size(); i++ ) {
+    for (unsigned int i = 0; i < Sn2.size(); i++ ) {
       point_type[ Sn2[i] ] = -3;
     }
 
     // grab new points for outermost layers from neighbors of L_p1, L_n1
-    for( int i = 0; i < L_p1.size(); i++ ) {
+    for (unsigned int i = 0; i < L_p1.size(); i++ ) {
       int idx = L_p1[i];
       vector<int>* neigh = &(meshdata->adjimm[idx].myNeighbs);
       int numneigh = neigh->size();
@@ -571,7 +571,7 @@ vector<int> SparseFieldLS::Evolve(int its )
         }
       }
     }
-    for( int i = 0; i < L_n1.size(); i++ ) {
+    for (unsigned int i = 0; i < L_n1.size(); i++ ) {
       int idx = L_n1[i];
       vector<int>* neigh = &(meshdata->adjimm[idx].myNeighbs);
       int numneigh = neigh->size();

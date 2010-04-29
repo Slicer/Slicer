@@ -52,9 +52,12 @@ int main(int argc, char* argv[] )
     }
   vtkSmartPointer<vtkPolyData> polyDataInput  = reader->GetOutput();
 
-  vtkSmartPointer<vtkPolyData> polyDataOutput = entry_main( polyDataInput, ContourSeedPts );
+  vtkSmartPointer<vtkPolyData> polyDataOutput = vtkSmartPointer<vtkPolyData>::New();
+  
+  //vtkPolyData * polyDataOutput =
+  entry_main( polyDataInput, ContourSeedPts, polyDataOutput );
 
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkXMLPolyDataWriter::New();
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   std::string commentWrite = "Writing output model " + OutputModel;
   vtkPluginFilterWatcher watchWriter(writer,
                                      commentWrite.c_str(),
@@ -65,6 +68,7 @@ int main(int argc, char* argv[] )
   
   writer->Update( );
   writer->Write();
+
   // The result is contained in the scalar colormap of the output.
 
   return EXIT_SUCCESS;

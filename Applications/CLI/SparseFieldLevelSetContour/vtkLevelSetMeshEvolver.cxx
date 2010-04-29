@@ -56,11 +56,12 @@ int vtkLevelSetMeshEvolver::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  /*
   vtkPolyData *source = 0;
- /* if (sourceInfo)    {
+  if (sourceInfo)    {
     source = vtkPolyData::SafeDownCast(
-      sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
-    }*/
+      sourceInfo->Get(vtkDataObject::DATA_OBJECT
+    ()));}*/
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
   

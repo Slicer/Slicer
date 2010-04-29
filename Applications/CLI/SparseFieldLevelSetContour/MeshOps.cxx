@@ -12,6 +12,7 @@
 
 ==========================================================================*/
 #include "MeshOps.h"
+#include "vtkSmartPointer.h"
 
 void ComputeCurvatureData( MeshData* meshdata )
 {
@@ -442,14 +443,13 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
     }
 
   // assign some data from curvature computation to be the new colormap
-  vtkFloatArray* scalars2 = vtkFloatArray::New(); // colormap
+  vtkSmartPointer<vtkFloatArray> scalars2 = vtkSmartPointer<vtkFloatArray>::New(); // colormap
   scalars2->SetName("InitialCurvature");
   for( int i = 0; i < numverts; i++ )
     {
     scalars2->InsertTuple1(i, meshdata->cmap0[i] );
     }
   meshdata->polydata->GetPointData()->SetScalars(scalars2);
-  scalars2->Delete();
   meshdata->polydata->Update();
 
   return C;
@@ -550,7 +550,7 @@ void ComputeAdjacency( MeshData* meshdata )
     std::cerr << "No cells on the poly data polys\n";
     return;
     }
-  vtkIdList* cellIds = vtkIdList::New();
+  vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
 
   for( int i = 0; i < numverts; i++ )
     {
@@ -585,7 +585,6 @@ void ComputeAdjacency( MeshData* meshdata )
         }
       }
     }
-  cellIds->Delete();
   meshdata->adjimm = meshdata->adj;
 
   // every neigbhor array appends the neigbhor arrays of its neighbors to itself
