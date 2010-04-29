@@ -45,6 +45,11 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkPETCTFusionLogic*> (logic)); 
   };
 
+  // Description: 
+  // Get the categorization of the module.
+  const char *GetCategory() const
+  { return "Quantification"; }
+
   // Description:
   // Get/Set on Module Logic
   vtkGetObjectMacro (Logic, vtkPETCTFusionLogic);

@@ -44,7 +44,7 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsGUI : public vtkSlicerModuleG
   // Description: 
   // Get the categorization of the module.
   const char *GetCategory() const
-  { return "Statistics"; }
+  { return "Quantification"; }
   
    // Description: Get/Set MRML node
   vtkGetObjectMacro (Logic, vtkLabelStatisticsLogic);
