@@ -7,14 +7,7 @@
   Otsu Threshold Segmentation
   </title>
   <description>
-This filter creates a labeled image from a grayscale image. First, it
-calculates an optimal threshold that separates the image into
-foreground and background. This threshold separates those two classes
-so that their intra-class variance is minimal (see
-http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a
-connected component algorithm to generate unique labels for each
-connected region of the foreground. Finally, the resulting image is
-relabeled to provide consecutive numbering.
+This filter creates a labeled image from a grayscale image. First, it calculates an optimal threshold that separates the image into foreground and background. This threshold separates those two classes so that their intra-class variance is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a connected component algorithm to generate unique labels for each connected region of the foreground. Finally, the resulting image is relabeled to provide consecutive numbering.
   </description>
   <version>1.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:OtsuThresholdSegmentation-Documentation-3.6</documentation-url>
@@ -40,12 +33,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>numberOfBins</name>
       <longflag>--numberOfBins</longflag>
       <description>
-This is an advanced parameter. The number of bins in the histogram
-used to model the probability mass function of the two intensity
-distributions. Small numbers of bins may result in a more conservative
-threshold. The default should suffice for most
-applications. Experimentation is the only way to see the effect of
-varying this parameter.
+This is an advanced parameter. The number of bins in the histogram used to model the probability mass function of the two intensity distributions. Small numbers of bins may result in a more conservative threshold. The default should suffice for most applications. Experimentation is the only way to see the effect of varying this parameter.
       </description>
       <label>Number of Histogram Bins</label>
       <default>128</default>
