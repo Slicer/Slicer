@@ -64,6 +64,7 @@ vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
   this->Bimodal = vtkImageBimodalAnalysis::New();
   this->Accumulate = vtkImageAccumulateDiscrete::New();
   this->CalculatingAutoLevels = 0;
+  this->SetAttribute("LabelMap", "0"); // not label by default; avoid set method in constructor
 }
 
 //----------------------------------------------------------------------------
