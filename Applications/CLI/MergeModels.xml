@@ -4,11 +4,11 @@
   <title>Merge Models</title>
   <description>Merge the polydata from two input models and output a new model with the added polydata. Uses the vtkAppendPolyData filter. Works on .vtp and .vtk surface files.</description>
   <version>$Revision$</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:MergeModels-Documentation-3.5</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:MergeModels-Documentation-3.6</documentation-url>
   <license></license>
-  <contributor>Nicole Aucoin BWH, Daniel Haehn</contributor>
+  <contributor>Nicole Aucoin BWH (Ron Kikinis, BWH), Daniel Haehn</contributor>
 <acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. 
 </acknowledgements>
 
 
