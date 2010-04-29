@@ -293,19 +293,36 @@ int main(int argc, char* argv[])
   bool SliceOrderIS = true;
   bool SliceMosaic = false;
   bool SingleSeries = true;
+  bool NrrdFormat = false;
 
   // check if the file name is valid
-  std::string nhdrname = outputVolume;
+
+  std::string nhdrname = outputDirectory + "/" + outputVolume;
+  std::cout << nhdrname << std::endl;
+
   std::string dataname;
     {
     ::size_t i = nhdrname.find(".nhdr");
-    if (i == std::string::npos)
+    ::size_t j = nhdrname.find(".nrrd");
+    if (i == std::string::npos && j == std::string::npos)
       {
-      std::cerr << "Output file must be a nrrd header file.\n";
-      std::cerr << "Version:   $Revision: 1.2 $" << std::endl;
-      return EXIT_FAILURE;
+        // not a valid nrrd extension
+        std::cerr << "Warning: Output file does not have extension .nhdr or .nrrd.\n";
+        std::cerr << "         Extension .nrrd added." << std::endl;
+        nhdrname = nhdrname + ".nrrd";
+        NrrdFormat = true;
       }
-    dataname = nhdrname.substr(0, i) + ".raw";
+    else if( i != std::string::npos )
+      {
+        // user specified .nhdr
+        dataname = nhdrname.substr(0, i) + ".raw";
+        NrrdFormat = false;
+      }
+    else
+      {
+        // user specified .nrrd
+        NrrdFormat = true;
+      }
     }
 
   //////////////////////////////////////////////////
@@ -544,23 +561,6 @@ int main(int argc, char* argv[])
 
   itk::Matrix<double,3,3> NRRDSpaceDirection;
   std::string nrrdSpaceDefinition="left-posterior-superior";;
-  if ( vendor.find("SIEMENS") != std::string::npos || vendor.find("PHILIPS") != std::string::npos )
-    {
-    nrrdSpaceDefinition="left-posterior-superior";
-    }
-//   else if ( vendor.find("GE") != std::string::npos && !useLPS )
-//     {
-//     nrrdSpaceDefinition="right-anterior-superior";
-//     OrientationMatrix[0][0]=-1;
-//     OrientationMatrix[1][1]=-1;
-//     OrientationMatrix[2][2]=1;
-//     ImageOrigin=OrientationMatrix*ImageOrigin;
-//     }
-  else // for all other vendors assume LPS convention
-       // for GE, we may force LPS by using "useLPS"
-  {
-    nrrdSpaceDefinition="left-posterior-superior";
-  }
   NRRDSpaceDirection=LPSDirCos*OrientationMatrix*SpacingMatrix;
 
   std::cout << "NRRDSpaceDirection" << std::endl;
@@ -1208,10 +1208,14 @@ int main(int argc, char* argv[])
   itk::ImageFileWriter< VolumeType >::Pointer rawWriter = itk::ImageFileWriter< VolumeType >::New();
   itk::RawImageIO<PixelValueType, 3>::Pointer rawIO = itk::RawImageIO<PixelValueType, 3>::New();
   //std::string rawFileName = outputDir + "/" + dataname;
-  rawWriter->SetFileName( dataname.c_str() );
-  rawWriter->SetImageIO( rawIO );
-  rawIO->SetByteOrderToLittleEndian();
+  if ( !NrrdFormat )
+    { 
+      rawWriter->SetFileName( dataname.c_str() );
+      rawWriter->SetImageIO( rawIO );
+      rawIO->SetByteOrderToLittleEndian();
+    }
 
+  // imgWriter is used to write out image in case it is not a dicom DWI image
   itk::ImageFileWriter< VolumeType >::Pointer imgWriter = itk::ImageFileWriter< VolumeType >::New();
   
   ///////////////////////////////////////////////
@@ -1241,17 +1245,20 @@ int main(int argc, char* argv[])
       }
     else
       {
-      rawWriter->SetInput( reader->GetOutput() );
-      try
-        {
-        rawWriter->Update();
-        }
-      catch (itk::ExceptionObject &excp)
-        {
-        std::cerr << "Exception thrown while reading the series" << std::endl;
-        std::cerr << excp << std::endl;
-        return EXIT_FAILURE;
-        }
+        if ( !NrrdFormat )
+          { 
+            rawWriter->SetInput( reader->GetOutput() );
+            try
+              {
+                rawWriter->Update();
+              }
+            catch (itk::ExceptionObject &excp)
+              {
+                std::cerr << "Exception thrown while reading the series" << std::endl;
+                std::cerr << excp << std::endl;
+                return EXIT_FAILURE;
+              }
+          }
       }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic)
@@ -1334,17 +1341,20 @@ int main(int argc, char* argv[])
       }
     else
       {
-      rawWriter->SetInput( dmImage );
-      try
-        {
-        rawWriter->Update();
-        }
-      catch (itk::ExceptionObject &excp)
-        {
-        std::cerr << "Exception thrown while writing the series" << std::endl;
-        std::cerr << excp << std::endl;
-        return EXIT_FAILURE;
-        }
+        if ( !NrrdFormat )
+          { 
+            rawWriter->SetInput( reader->GetOutput() );
+            try
+              {
+                rawWriter->Update();
+              }
+            catch (itk::ExceptionObject &excp)
+              {
+                std::cerr << "Exception thrown while reading the series" << std::endl;
+                std::cerr << excp << std::endl;
+                return EXIT_FAILURE;
+              }
+          }
       }
     }
   else if (vendor.find("PHILIPS") != std::string::npos)
@@ -1415,17 +1425,20 @@ int main(int argc, char* argv[])
       }
     else
       {
-      rawWriter->SetInput( dmImage );
-      try
-        {
-        rawWriter->Update();
-        }
-      catch (itk::ExceptionObject &excp)
-        {
-        std::cerr << "Exception thrown while writing the series" << std::endl;
-        std::cerr << excp << std::endl;
-        return EXIT_FAILURE;
-        }
+        if ( !NrrdFormat )
+          { 
+            rawWriter->SetInput( reader->GetOutput() );
+            try
+              {
+                rawWriter->Update();
+              }
+            catch (itk::ExceptionObject &excp)
+              {
+                std::cerr << "Exception thrown while reading the series" << std::endl;
+                std::cerr << excp << std::endl;
+                return EXIT_FAILURE;
+              }
+          }
       }
     //Verify sizes
     if( count != bValues.size() )
@@ -1452,8 +1465,8 @@ int main(int argc, char* argv[])
     }
 
 
-    const vnl_matrix_fixed<double,3,3> InverseMeasurementFrame= MeasurementFrame.GetInverse();
-    {
+  const vnl_matrix_fixed<double,3,3> InverseMeasurementFrame= MeasurementFrame.GetInverse();
+  {
     //////////////////////////////////////////////
     // write header file
     // This part follows a DWI NRRD file in NRRD format 5.
@@ -1462,10 +1475,13 @@ int main(int argc, char* argv[])
     std::ofstream header;
     //std::string headerFileName = outputDir + "/" + outputFileName;
 
-    header.open (nhdrname.c_str());
+    header.open (nhdrname.c_str(), std::ios::out | std::ios::binary);
     header << "NRRD0005" << std::endl;
-
-    header << "content: exists(" << itksys::SystemTools::GetFilenameName(dataname) << ",0)" << std::endl;
+    
+    if (!NrrdFormat)
+      {
+        header << "content: exists(" << itksys::SystemTools::GetFilenameName(dataname) << ",0)" << std::endl;
+      }
     header << "type: short" << std::endl;
     header << "dimension: 4" << std::endl;
 
@@ -1489,7 +1505,10 @@ int main(int argc, char* argv[])
     header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
     header << "space origin: "
       <<"(" << ImageOrigin[0] << ","<< ImageOrigin[1] << ","<< ImageOrigin[2] << ") " << std::endl;
-    header << "data file: " << itksys::SystemTools::GetFilenameName(dataname) << std::endl;
+    if (!NrrdFormat)
+      {
+        header << "data file: " << itksys::SystemTools::GetFilenameName(dataname) << std::endl;
+      }
 
     // For scanners, the measurement frame for the gradient directions is the same as the 
     // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
@@ -1569,6 +1588,16 @@ int main(int argc, char* argv[])
       //std::cout << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
       //  << LPSDirCos.GetInverse()*DiffusionVectors[k-nBaseline] << std::endl;
       }
+
+    // write data in the same file is .nrrd was chosen
+    header << std::endl;;
+    if (NrrdFormat)
+      {
+        unsigned long nVoxels = reader->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
+        header.write( reinterpret_cast<char *>(reader->GetOutput()->GetBufferPointer()),
+                      nVoxels*sizeof(short) );
+      }
+
     header.close();
     }
 

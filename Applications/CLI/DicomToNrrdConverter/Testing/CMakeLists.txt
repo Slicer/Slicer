@@ -30,7 +30,8 @@ set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 add_test(DicomToNrrdConverterTest ${Slicer3_EXE} --launch DicomToNrrdConverterTest
     ModuleEntryPoint
     --inputDicomDirectory ${TEST_DATA}/DWIDicom
-    --outputVolume ${TEMP}/DWIDicom.nhdr
+    --outputDirectory ${TEMP}
+    --outputVolume DWIDicom.nhdr
   )
 
 set (CLP DicomToNrrdConverter)

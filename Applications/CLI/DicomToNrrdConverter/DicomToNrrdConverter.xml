@@ -24,17 +24,25 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <directory>
       <name>inputDicomDirectory</name>
       <longflag>--inputDicomDirectory</longflag> 
-      <label>Dicom Directory</label>
+      <label>Input Dicom Data</label>
       <channel>input</channel>
       <description>Directory holding Dicom series</description>
+    </directory>
+
+    <directory>
+      <name>outputDirectory</name>
+      <longflag>--outputDirectory</longflag> 
+      <label>Output Directtory</label>
+      <channel>output</channel>
+      <description>Directory holding the output NRRD format</description>
     </directory>
 
     <string>
       <name>outputVolume</name>
       <longflag>--outputVolume</longflag> 
-      <label>Output Image Volume</label>
+      <label>Output Filename</label>
       <channel>output</channel>
-      <description>Output Image in NRRD format (.nhdr)</description>
+      <description>Output filename (.nhdr)</description>
     </string>
 
   </parameters>
@@ -42,12 +50,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameters advanced="true">
     <label>Output Options</label>
     <description> Options to control the output. </description>
-    <boolean>
-      <name>useLPS</name>
-      <longflag>--useLPS</longflag>
-      <description> For GE data only.  Specifies that the output should be in LPS space like the original DICOM data.  The default is to use Slicer3 consistent RAS space. </description>
-      <default>false</default>
-    </boolean>
 
     <boolean>
       <name>writeProtocolGradientsFile</name>
