@@ -61,8 +61,8 @@ proc ModelIntoLabelVolumeBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "The ModelIntoLabelVolume is a scripted module in Tcl. It intersects a model with a reference volume and creates an output label map volume with the model vertices labelled with the given label value. This is useful once tracts have been generated to turn them into a label volume. If the intensity option is checked, it will use the voxel values from the reference volume (you can change the output label volume to use the grey colour node). If the subdivide option is  set to 1, subdivide the input model into a new one with more vertices to get a more detailed output label map.<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Model_Into_Label_Volume-Documentation-3.4</a>"
-  set abouttext "Contributed by Nicole Aucoin, SPL, BWH (Ron Kikinis). This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set helptext "The ModelIntoLabelVolume is a scripted module in Tcl. It intersects a model with a reference volume and creates an output label map volume with the model vertices labelled with the given label value. This is useful once tracts have been generated to turn them into a label volume. If the intensity option is checked, it will use the voxel values from the reference volume (you can change the output label volume to use the grey colour node). If the subdivide option is  set to 1, subdivide the input model into a new one with more vertices to get a more detailed output label map.<a>http://www.slicer.org/slicerWiki/index.php/Modules:Model_Into_Label_Volume_Documentation-3.6</a>"
+  set abouttext "Contributed by Nicole Aucoin, SPL, BWH (Ron Kikinis, SPL, BWH). This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
 
