@@ -3,10 +3,7 @@
   <category>Filtering.Arithmetic</category>
   <title>Cast Image</title>
   <description>
-Cast a volume to a given data type.\n
-Use at your own risk when casting an input volume into a lower precision type!\n
-Allows casting to the same type as the input volume.
-</description>
+Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
