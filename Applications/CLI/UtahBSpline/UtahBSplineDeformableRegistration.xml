@@ -3,9 +3,7 @@
   <category>Registration</category>
   <title>(Utah) Deformable BSpline registration (alpha)</title>
   <index>5</index>
-  <description>Registers two images together using a normalized correlation
-  metric and a multiresolution BSpline transform. 
-  This is an experimental module using a specialized BSpline method.</description>
+  <description>Registers two images together using a normalized correlation metric and a multiresolution BSpline transform. This is an experimental module using a specialized BSpline method.</description>
   <version>(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
