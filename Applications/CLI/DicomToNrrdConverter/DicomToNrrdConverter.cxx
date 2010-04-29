@@ -738,10 +738,10 @@ int main(int argc, char* argv[])
       b = atof( tag.c_str() );
 
       ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bb, tag );
-      vect3d[0] = atof( tag.c_str() );
+      vect3d[0] = -atof( tag.c_str() );
 
       ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bc, tag );
-      vect3d[1] = atof( tag.c_str() );
+      vect3d[1] = -atof( tag.c_str() );
 
       ExtractBinValEntry( allHeaders[k], 0x0019, 0x10bd, tag );
       vect3d[2] = atof( tag.c_str() );
