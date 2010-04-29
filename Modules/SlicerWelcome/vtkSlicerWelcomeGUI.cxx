@@ -1550,7 +1550,7 @@ void vtkSlicerWelcomeGUI::BuildMouseModePanel ( vtkKWFrame *parent )
   txt->GetWidget()->SetWrapToWord();
   txt->GetWidget()->QuickFormattingOn();
   txt->GetWidget()->SetHeight (7);
-  const char *t1 = "**Mouse Modes:** Slicer has three main mouse modes that apply to the 3D viewer:  **Pick** (which allows \"pickable\" objects to be selected), **Place** (which permits objects to be interactively placed and positioned), and **Transform** (rotate, pan and zoom). The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. \n\n**Hint:** these modes are persistent when selected; when you are done \"picking\" or \"placing\", make sure to select the **Transform** mode again. \n\n";
+  const char *t1 = "**Mouse Modes:** Slicer has three main mouse modes that apply to the 3D viewer:  **Pick** (which allows \"pickable\" objects to be selected and manipulated), **Place** (which permits objects to be interactively created and placed), and **Transform** (rotate, pan and zoom). The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. \n\n**Hint:** Transform mode is the default mouse mode. Selecting the Pick or Place icon changes the mode for **one mouse-click only**, and then the mode reverts back to \"Transform\". The \"option arrows\" beside each icon provide a way  to \"pick\" or \"place\" persistently, until another mode is manually selected. \n\n";
   txt->SetText ( t1 );
   //Important that Read only after SetText otherwise it doesn't work  
   txt->GetWidget()->ReadOnlyOn();
