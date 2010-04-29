@@ -71,6 +71,13 @@ public:
     vtkGetMacro(FMid,float);
     vtkSetMacro(FMid,float);
 
+    /// Alpha value to use for entries below and above LowThresh
+    // (default is 1.0 for both)
+    vtkGetMacro(BelowThreshAlpha,float);
+    vtkSetMacro(BelowThreshAlpha,float);
+    vtkGetMacro(AboveThreshAlpha,float);
+    vtkSetMacro(AboveThreshAlpha,float);
+
     /// 
     /// from vtkScalarsToColors
     double *GetRange();
@@ -152,7 +159,9 @@ protected:
     /// FS fmid and cmid
     float FMid;
 
-    /// 
+    float BelowThreshAlpha;
+    float AboveThreshAlpha;
+
     /// output of colour computation
     unsigned char RGBA[4];
 };
