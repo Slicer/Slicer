@@ -977,7 +977,7 @@ void vtkSlicerWelcomeGUI::BuildWelcomeAndAboutPanel( vtkKWFrame *parent )
   welcome->GetWidget()->SetWrapToWord();
   welcome->GetWidget()->QuickFormattingOn();
   welcome->GetWidget()->SetHeight ( 5 );
-  const char *about = "**3D Slicer** is a free open source software platform for medical image processing and 3D visualization of image data. This module contains some basic information and useful links to get you started using Slicer. Please see our website <a>http://www.slicer.org</a> and the documentation on our wiki for more information: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.4</a>.";
+  const char *about = "**3D Slicer** is a free open source software platform for medical image processing and 3D visualization of image data. This module contains some basic information and useful links to get you started using Slicer. Please see our website <a>http://www.slicer.org</a> and the documentation on our wiki for more information: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.6</a>.";
   welcome->SetText ( about );
   //Important that Read only after SetText otherwise it doesn't work
   welcome->GetWidget()->ReadOnlyOn();
