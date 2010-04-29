@@ -131,7 +131,9 @@ itcl::body FilteredDirectoryDialog::constructor {} {
 
   # scroll-to-selection
   set fileprefix [$o(browser) GetSelectedDirectory]
-  $o(browser) ScrollToDirectory $fileprefix
+  if {$fileprefix != "" } {
+      $o(browser) ScrollToDirectory $fileprefix
+  }
 
   #
   # the options frame
