@@ -1025,7 +1025,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
 
   // Define your help text and build the help frame here.
-  const char *help = "The Volumes Module loads and adjusts display parameters of volume data. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Volumes-Documentation-3.4</a>\n\nThe Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) of DWI data and provides a quick way to interpret them. For that it estimates a tensor and shows glyphs and tracts for visual exploration. Help for Diffusion Editor: <a>http://www.slicer.org/slicerWiki/index.php/Modules:Volumes:Diffusion_Editor-Documentation</a>";
+  const char *help = "The Volumes Module loads and adjusts display parameters of volume data. \n<a>http://slicer.org/slicerWiki/index.php/Documentation-3.6</a>\n\nThe Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) of DWI data and provides a quick way to interpret them. For that it estimates a tensor and shows glyphs and tracts for visual exploration. Help for Diffusion Editor: <a>http://www.slicer.org/slicerWiki/index.php/Modules:Volumes:Diffusion_Editor-Documentation</a>";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. (Steve Pieper) with help from others at SPL, BWH (Ron Kikinis). \n\nThe Diffusion Editor was developed by Kerstin Kessel.";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
   this->BuildHelpAndAboutFrame ( page, help, about );
