@@ -42,7 +42,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>--outputVolume</longflag> 
       <label>Output Filename</label>
       <channel>output</channel>
-      <description>Output filename (.nhdr)</description>
+      <description>Output filename (.nhdr or .nrrd)</description>
     </string>
 
   </parameters>
