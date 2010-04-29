@@ -3,12 +3,7 @@
   <category>Filtering</category>
   <title>Threshold Image</title>
   <description>
-Threshold an image.\n
-Set image values to a user-specified outside value if they are below, above, or between simple threshold values.\n
-ThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.\n
-ThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.\n
-ThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.\n
-Although all image types are supported on input, only signed types are produced.\n
+Threshold an image.\n\nSet image values to a user-specified outside value if they are below, above, or between simple threshold values.\n\nThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.\n\nThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.\n\nThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.\n\nAlthough all image types are supported on input, only signed types are produced.\n\n
 </description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url></documentation-url>
@@ -73,8 +68,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <string-enumeration>
       <name>ThresholdType</name>
       <label>Threshold Type</label>
-      <description>What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the
-    ThresholdValue.</description>
+      <description>What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the ThresholdValue.</description>
       <longflag>--thresholdtype</longflag>
       <default>Outside</default>
       <element>Below</element>
