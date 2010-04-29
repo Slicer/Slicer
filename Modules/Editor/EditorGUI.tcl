@@ -456,7 +456,9 @@ proc EditorEnter {this} {
     if { $mergeNode != "" } {
       $::Editor($this,editHelper) setVolumes $masterNode $mergeNode
     } else {
-      $::Editor($this,editHelper) setMasterVolume $masterNode
+      if { [$masterNode GetClassName] == "vtkMRMLScalarVolumeNode" } {
+        $::Editor($this,editHelper) setMasterVolume $masterNode
+      }
     }
   }
 }
