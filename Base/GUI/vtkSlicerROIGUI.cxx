@@ -948,7 +948,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "ROI", "ROI", NULL );
 
   // Define your help text and build the help frame here.
-  const char *help = "The ROI Module creates and manages ROI. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ROIModule-Documentation-3.4</a>\n";
+  const char *help = "The ROI Module creates and manages ROI. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ROIModule-Documentation-3.6</a>\n";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. with help from others at SPL, BWH (Ron Kikinis)";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "ROI" );
   this->BuildHelpAndAboutFrame ( page, help, about );
