@@ -30,8 +30,6 @@ vtkFSLookupTable* vtkFSLookupTable::New()
 //------------------------------------------------------------------------------
 vtkFSLookupTable::vtkFSLookupTable()
 {
-    this->BelowThreshAlpha = 1.0;
-    this->AboveThreshAlpha = 1.0;
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
     this->LutType = this->FSLUTHEAT;
@@ -274,15 +272,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
         this->RGBA[0] = (unsigned char)(r * 255.0);
         this->RGBA[1] = (unsigned char)(g * 255.0);
         this->RGBA[2] = (unsigned char)(b * 255.0);
-        //this->RGBA[3] = (unsigned char)(a * 255.0);
-        if (f < this->LowThresh)
-          {
-          this->RGBA[3] = this->BelowThreshAlpha * 255.0;
-          }
-        else
-          {
-          this->RGBA[3] = this->AboveThreshAlpha * 255.0;
-          }
+        this->RGBA[3] = (unsigned char)(a * 255.0);
 
         break;
     case FSLUTGREENRED:
@@ -315,8 +305,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
         this->RGBA[0] = (unsigned char)(r);
         this->RGBA[1] = (unsigned char)(g);
         this->RGBA[2] = (unsigned char)(b);
-        //this->RGBA[3] = (unsigned char)(a);
-        this->RGBA[3] = 255.;
+        this->RGBA[3] = (unsigned char)(a);
 
         break;
     case FSLUTREDGREEN:
@@ -350,8 +339,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
         this->RGBA[0] = (unsigned char)(r);
         this->RGBA[1] = (unsigned char)(g);
         this->RGBA[2] = (unsigned char)(b);
-        //this->RGBA[3] = (unsigned char)(a);
-        this->RGBA[3] = 255.;
+        this->RGBA[3] = (unsigned char)(a);
 
         break;
         /*
