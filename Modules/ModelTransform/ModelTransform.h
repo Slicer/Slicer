@@ -6,4 +6,4 @@
 #define Slicer3_VTK5
 #endif
 
-#include "vtkModelMirrorWin32Header.h"
+#include "vtkModelTransformWin32Header.h"
