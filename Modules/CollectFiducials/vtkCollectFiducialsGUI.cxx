@@ -627,6 +627,11 @@ void vtkCollectFiducialsGUI::GetNewFiducialMeasure()
 
   std::cerr << "GetNewMeasureButton is pressed." << std::endl;
 
+  if(this->ProbeTransformSelector->GetSelected() == NULL )
+    {
+    return;
+    }
+
   if(this->ProbeTransformSelector->GetSelected()->GetID())
   {
     this->GetLogic()->GetNewFiducialMeasure(this->ProbeTransformSelector->GetSelected()->GetID(), &x, &y, &z);
