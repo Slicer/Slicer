@@ -493,7 +493,6 @@ void vtkEMSegmentGUI::TearDownGUI()
     }
 
 
-#if IBM_FLAG
   if (this->InputChannelStep)
     {
     this->InputChannelStep->SetGUI(NULL);
@@ -502,7 +501,6 @@ void vtkEMSegmentGUI::TearDownGUI()
     {
       this->PreProcessingStep->SetGUI(NULL);
     }
-#endif
 
   if (this->AnatomicalStructureStep)
     {
