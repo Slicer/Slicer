@@ -1151,6 +1151,7 @@ add_test(MergeModelsTestVtp ${Slicer3_EXE} --launch MergeModelsTest
   )
 
 # add a test that compares the outline to a baseline .vtp
+if (NOT WIN32)
 add_test(MergeModelsTestCompare ${CMAKE_COMMAND}
   -Dtest_cmd="${Slicer3_BINARY_DIR}/bin/MergeModelsTest"
   -Dtest_name=MergeModelsTest
@@ -1161,7 +1162,7 @@ add_test(MergeModelsTestCompare ${CMAKE_COMMAND}
   -Doutput_test=${TEMP}/sphereCube.vtp
   -P  ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_MergeModelsTest.cmake
 )
-
+endif (NOT WIN32)
 
 set (CLP MergeModels)
 add_executable(${CLP}Test ${CLP}Test.cxx)
