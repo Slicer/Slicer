@@ -234,96 +234,82 @@ int vtkComputeLocalGeometry::RequestData(
         }
     }
     
-    
-    // now compute the different layers.
-    // L_z can contribute one or no plus/minus pts
-    // this is the closest neighbor not having yet been assigned.
-    // 1. compute first layers
+    std::vector<int> label = std::vector<int>(numVerts);
+    for( ::size_t i = 0; i < numVerts; i++ ) {
+      if( class_of_blob[i] == 0 )
+        label[i] = 3;
+      else
+        label[i] = -3;
+    }
+
+    std::list<int> Lz = std::list<int>(0);
+    for( ::size_t i = 0; i < numVerts; i++ ) {
+      for( ::size_t k = 0; k < myMeshData->adjimm[i].myNeighbs.size(); k++ ) {
+        if( label[i] == 3 &&     
+          0 > label[myMeshData->adjimm[i].myNeighbs[k] ] ) {
+            Lz.push_back( i );
+            label[i] = 0;
+        }
+      }
+    }
+
+    std::list<int> Lp1 = std::list<int>(0);
+    std::list<int> Ln1 = std::list<int>(0);
+    for( ::size_t idx = 0; idx < Lz.size(); idx++ ) {
+      ::size_t i = Lz.front();
+      Lz.pop_front();
+      for( ::size_t k = 0; k < myMeshData->adjimm[i].myNeighbs.size(); k++ ) {
+        int idx = myMeshData->adjimm[i].myNeighbs[k];
+        if( -3 == label[idx] ) {
+            Ln1.push_back( idx );
+            label[idx] = -1;
+        }
+        else if( 3 == label[idx] ) {
+            Lp1.push_back( idx );
+            label[idx] = 1;
+        }
+      }
+      Lz.push_back(i);
+    }
+
+    std::list<int> Ln2 = std::list<int>(0);
+    for( ::size_t idx = 0; idx < Ln1.size(); idx++ ) {
+      ::size_t i = Ln1.front();
+      Ln1.pop_front();
+      for( ::size_t k = 0; k < myMeshData->adjimm[i].myNeighbs.size(); k++ ) {
+        int idx = myMeshData->adjimm[i].myNeighbs[k];
+        if( -3 == label[idx] ) {
+            Ln2.push_back( idx );
+            label[idx] = -2;
+        }
+      }
+      Ln1.push_back(i);
+    }
+
+    std::list<int> Lp2 = std::list<int>(0);
+    for( ::size_t idx = 0; idx < Lp1.size(); idx++ ) {
+      ::size_t i = Lp1.front();
+      Lp1.pop_front();
+      for( ::size_t k = 0; k < myMeshData->adjimm[i].myNeighbs.size(); k++ ) {
+        int idx = myMeshData->adjimm[i].myNeighbs[k];
+        if( 3 == label[idx] ) {
+            Lp2.push_back( idx );
+            label[idx] = 2;
+        }
+      }
+      Lp1.push_back(i);
+    }
 
    // L_z: the array of vertex indices that have both neighbor INSIDE and OUTSIDE
-      std::vector<int> edgeVisited = std::vector<int>(numVerts);
-#define INIT_VAL_EDGE -3
-      for( int i = 0; i < numVerts; i++ ) {
-          edgeVisited[i] = INIT_VAL_EDGE;
-      }
-      std::list<int> L_z = std::list<int>(0);
-      for(int i=0; i<numVerts; i++){
-        vector<int> neigh = myMeshData->adjimm[i].myNeighbs;
-        if (class_of_blob[i] == 0) {
-          for (int n=0; n<neigh.size(); n++){
-            if (class_of_blob[neigh[n]] == 1 ){
-              if( 0 == count(L_z.begin(),L_z.end(), i ) ) {
-                L_z.push_back(i);
-                this->Lz.push_back( i );
-                edgeVisited[i] = 0;
-              }
-              //if (0 == count(L_z.begin(), L_z.end(), neigh[n])){
-                //L_z.push_back(neigh[n]);
-                //this->Lz.push_back( neigh[n] );
-                //edgeVisited[neigh[n]] = 0;
-              //}
-            }
-          }
-        }
-      }
 
-    
-
-      //std::vector<int> edgeVisited = std::vector<int>(numVerts);
-      std::list<int> L_p1 = std::list<int>(0);
-      std::list<int> L_n1 = std::list<int>(0);
-      for(int i=0; i<numVerts; i++){
-        vector<int> neigh = myMeshData->adjimm[i].myNeighbs;
-        if (edgeVisited[i] == 0) {  // On L_z
-          for (int n=0; n<neigh.size(); n++){
-            if (edgeVisited[neigh[n]] == INIT_VAL_EDGE && class_of_blob[neigh[n]] == 0 ){
-              if (0 == count(L_p1.begin(), L_p1.end(), neigh[n])){
-                L_p1.push_back(neigh[n]);
-                this->Lp1.push_back( neigh[n] );
-                edgeVisited[neigh[n]] = 1;
-              }
-            }
-            else if (edgeVisited[neigh[n]] == INIT_VAL_EDGE && class_of_blob[neigh[n]] == 1 ){
-              if (0 == count(L_n1.begin(), L_n1.end(), neigh[n])){
-                L_n1.push_back(neigh[n]);
-                this->Ln1.push_back( neigh[n] );
-                edgeVisited[neigh[n]] = -1;
-              }
-            }
-          }
-        }
-      }
-      std::list<int> L_p2 = std::list<int>(0);
-      std::list<int> L_n2 = std::list<int>(0);
-      for(int i=0; i<numVerts; i++){
-        vector<int> neigh = myMeshData->adjimm[i].myNeighbs;
-        if (edgeVisited[i] == 1) {  // On L_p1
-          for (int n=0; n<neigh.size(); n++){
-            if (edgeVisited[neigh[n]] == INIT_VAL_EDGE && class_of_blob[neigh[n]] == 0 ){
-              if (0 == count(L_p2.begin(), L_p2.end(), neigh[n])){
-                L_p2.push_back(neigh[n]);
-                this->Lp2.push_back( neigh[n] );
-                edgeVisited[neigh[n]] = 2;
-              }
-            }
-          }
-        }
-        else if(edgeVisited[i] == -1) {  // On L_n1
-          for (int n=0; n<neigh.size(); n++){
-            if (edgeVisited[neigh[n]] == INIT_VAL_EDGE && class_of_blob[neigh[n]] == 1 ){
-              if (0 == count(L_n2.begin(), L_n2.end(), neigh[n])){
-                L_n2.push_back(neigh[n]);
-                this->Ln2.push_back( neigh[n] );
-                edgeVisited[neigh[n]] = -2;
-              }
-            }
-          }
-        }
-      }
-  
-  Debug_Display( activeContourVertIdx, edgeVisited) ;
+  Debug_Display( activeContourVertIdx,  label) ;
   output->GetPointData()->AddArray( activeContourVertIdx );
-  this->map = edgeVisited;
+  this->map = label;
+  this->Lp1 = Lp1;
+  this->Ln1 = Ln1;
+  this->Lp2 = Lp2;
+  this->Ln2 = Ln2;
+  this->Lz  = Lz;
   // ok now all points are either "interior" or "exterior".
 
   }

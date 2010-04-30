@@ -17,10 +17,12 @@
 #include "MeshOps.h"
 #include "MeanCurvatureEnergy.h"
 
+#include <list>
+
 class SparseFieldLS
 {
 public:
-SparseFieldLS( MeshData* data, const vector<int>& C, MeshEnergy* mergy )
+  SparseFieldLS( MeshData* data, const std::list<int>& C, MeshEnergy* mergy )
 {
 L_z = C;
 meshdata = data;
@@ -30,9 +32,9 @@ CleanLZ();
 InitSphere();
 dDirection = -1.0;
 }
-SparseFieldLS( MeshData* data, const vector<int>& C, 
-const vector<int>& Lp1, const vector<int>& Ln1, const vector<int>& Lp2,
-const vector<int>& Ln2, const vector<int>& map )
+SparseFieldLS( MeshData* data, const std::list<int>& C, 
+const std::list<int>& Lp1, const std::list<int>& Ln1, const std::list<int>& Lp2,
+const std::list<int>& Ln2, const std::vector<int>& map )
 {
 L_z = C;
 meshdata = data;
@@ -47,30 +49,32 @@ for( unsigned int i = 0; i < map.size(); i++ ) {
 energy = new MeanCurvatureEnergy( data );
 dDirection = 1.0;
 }
-vector<int> Evolve( int iterations = 1 );
+std::vector<int> Evolve( int iterations = 1 );
 
 
 private:
 // the different layers for sparse-field method
 MeshEnergy* energy;
 MeshData* meshdata;
-vector<int> L_z;
-vector<int> L_n1;
-vector<int> L_p1;
-vector<int> L_n2;
-vector<int> L_p2;
+std::list<int> L_z;
+std::list<int> L_n1;
+std::list<int> L_p1;
+std::list<int> L_n2;
+std::list<int> L_p2;
 double dDirection;
 
 vector<int> point_type;
 vector<double> phi;
 void SelfUnion( vector<int>& vec );
+void SelfUnion( list<int>& vec );
 void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z );
+void DropIdx( const list<int>& L_zp, const list<int>& L_zn, list<int>& L_z );
 void AppendIdx( const vector<int>& src, vector<int>& dst );
 
 public:
 void SwitchDirection()    { dDirection *= -1.0; }
-vector<double>* GetPhi()  { return &phi; };
-vector<int>*  GetPtrLZ()  { return &L_z; };
+std::vector<double>* GetPhi()  { return &phi; };
+std::list<int>*  GetPtrLZ()  { return &L_z; };
 
 vector<int> EvolveRecalc( );
 // "sphere": assume that the mesh is homeomorphic to a sphere

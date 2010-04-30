@@ -1,5 +1,7 @@
 #include "ModuleEntry.h"
 
+#include <list>
+
 // Input: mesh and indices of vertices for initialization
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
                                      vtkIntArray* initVertIdx,
@@ -38,7 +40,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   vtkSmartPointer<vtkLevelSetMeshEvolver> evolver = vtkSmartPointer<vtkLevelSetMeshEvolver>::New();
   MeshData* data = computeGeometry->GetMeshData( );
   evolver->SetMeshData( data );
-  vector<int> L_z;  vector<int> L_n1;  vector<int> L_p1;  vector<int> L_n2;  vector<int> L_p2; vector<int> map;
+  std::list<int> L_z;  std::list<int> L_n1;  std::list<int> L_p1;  std::list<int> L_n2;  std::list<int> L_p2; std::vector<int> map;
   computeGeometry->GetLists( L_z, L_p1, L_n1, L_p2, L_n2, map );
   evolver->SetLists( L_z, L_p1, L_n1, L_p2, L_n2, map );
         

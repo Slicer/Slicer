@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <list>
 
 #ifndef M_PI_2
 #define M_PI_2     1.57079632679489661923
@@ -39,3 +40,6 @@ void SelfUnion( vector<int>& vec );
 void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z );
 
 void Crash();
+
+
+std::vector<int> ListToSTDVector( const std::list<int>& ListIn );

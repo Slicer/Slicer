@@ -45,6 +45,19 @@ void SelfUnion( vector<int>& vec )
   vec.erase( unique(vec.begin(), vec.end()),vec.end() );
 }
 
+std::vector<int> ListToSTDVector( const std::list<int>& ListIn_ )
+{
+  std::list<int> ListIn = ListIn_;
+  int Len = ListIn.size();
+  std::vector<int> res = std::vector<int>(Len);
+  for( int i = 0; i < Len; i++ ) {
+    int val = ListIn.front();
+    ListIn.pop_front();
+    res[i] = val;
+  }
+  return res;
+}
+
 void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z )
 {
   vector<int> L_z_(0);

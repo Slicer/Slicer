@@ -5,6 +5,8 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "MeshOps.h"
 
+#include <list>
+
 class vtkComputeLocalGeometry : public vtkPolyDataAlgorithm
 {
 public:
@@ -43,8 +45,8 @@ public:
   
   MeshData* GetMeshData() { return myMeshData; }
   void SetMeshData(MeshData* data) { myMeshData = data; }
-  void GetLists(   vector<int>& C, vector<int>& L_p1,   vector<int>& L_n1,   vector<int>& L_p2,
-    vector<int>& L_n2,   vector<int>& map_ ) {
+  void GetLists(   list<int>& C, list<int>& L_p1,   list<int>& L_n1,   list<int>& L_p2,
+    list<int>& L_n2,   vector<int>& map_ ) {
       C = Lz;  L_n1=Ln1 ;   L_p1=Lp1; L_n2 = Ln2; L_p2 = Lp2; map_ = map;
   }
 
@@ -59,11 +61,11 @@ private:
   vtkComputeLocalGeometry(const vtkComputeLocalGeometry&);  // Not implemented.
   void operator=(const vtkComputeLocalGeometry&);  // Not implemented.
   MeshData* myMeshData;
-  vector<int> Lz;
-  vector<int> Ln1;
-  vector<int> Lp1;
-  vector<int> Ln2;
-  vector<int> Lp2;
+  list<int> Lz;
+  list<int> Ln1;
+  list<int> Lp1;
+  list<int> Ln2;
+  list<int> Lp2;
   vector<int> map;
 };
 

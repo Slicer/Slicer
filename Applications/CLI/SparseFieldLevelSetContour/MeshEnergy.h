@@ -15,6 +15,7 @@
 #define ENERGY
 
 #include "MeshOps.h"
+#include <list>
 
 class MeshEnergy
 {
@@ -26,10 +27,10 @@ virtual ~MeshEnergy() { }
 virtual double eval_energy( const vector<int>& C ) = 0;
 
 // get the force F at the vertices for sparse field method
-virtual valarray<double> getforce( const vector<int>& C ) = 0;
-virtual valarray<double> getforce( const vector<int>& C, 
-const vector<int>& L_p1, const vector<int>& L_n1,
-const vector<double>& phi) = 0;
+virtual valarray<double> getforce( const std::list<int>& C ) = 0;
+virtual valarray<double> getforce( const std::list<int>& C, 
+const std::list<int>& L_p1, const std::list<int>& L_n1,
+const std::vector<double>& phi) = 0;
 
 public:
 MeshData* meshdata;

@@ -37,6 +37,7 @@ void ComputeCurvatureData( MeshData* meshdata )
   meshdata->nz.resize(numverts);
   //std::cout << "After allocation, nx = " << meshdata->nx.size() << "\n";
   meshdata->adj = vector<AdjData>( numverts );
+  meshdata->adjimm = vector<AdjData>( numverts );
 
   ComputeAdjacency( meshdata );
   ComputeNormals( meshdata );
@@ -552,6 +553,34 @@ void ComputeAdjacency( MeshData* meshdata )
     }
   vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
 
+  //meshdata->adjimm = meshdata->adj;
+
+  // for every face, make all vertices on the face store in the adjimm list
+  for( int i = 0; i < numverts; i++ ) {
+    meshdata->adj[i].myNeighbs    = vector<int>(1);
+    meshdata->adj[i].myNeighbs[0] = i;
+    meshdata->adj[i].myIdx = i;
+  }
+
+  int numfaces = faces->GetNumberOfCells();
+  for( int i = 0; i < numfaces; i++ ) {
+    vtkIdType npts;
+    vtkIdType* pts;
+    faces->GetCell(i*4,npts, pts );
+   // meshdata->polydata->GetCell( i );
+  //  meshdata->polydata->GetPointCells( i, cellIds );
+    int vert0 = pts[0];
+    int vert1 = pts[1];
+    int vert2 = pts[2];
+    for( int k = 0 ; k < 3; k++ ) {
+      for( int kk = 0; kk < 3; kk++ ) {
+        if( 0 == count( meshdata->adjimm[pts[kk]].myNeighbs.begin(), meshdata->adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
+          meshdata->adjimm[pts[kk]].myNeighbs.push_back( pts[k] );
+      }
+      }
+    }
+  }
+
   for( int i = 0; i < numverts; i++ )
     {
     meshdata->polydata->GetPointCells( i, cellIds );
@@ -585,7 +614,7 @@ void ComputeAdjacency( MeshData* meshdata )
         }
       }
     }
-  meshdata->adjimm = meshdata->adj;
+  
 
   // every neigbhor array appends the neigbhor arrays of its neighbors to itself
   MeshData* tempdata = new MeshData();

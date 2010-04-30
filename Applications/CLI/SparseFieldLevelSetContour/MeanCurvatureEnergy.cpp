@@ -20,34 +20,28 @@ double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
   return E;
 }
 
-valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C, 
-                                                const vector<int>& L_p1, const vector<int>& L_n1,
+valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_, 
+                                                const std::list<int>& L_p1, const std::list<int>& L_n1,
                                                 const vector<double>& phi)
 {
 
-  valarray<double> force( C.size() );
+  valarray<double> force( C_.size() );
 // exp( -lambda * H ) * ( nhat dot gradH + kappa )
 
-  valarray<double> ne1(C.size());
-  valarray<double> ne2(C.size());
-//valarray<double> nz(C.size());
-  valarray<double> kappa(C.size());
-//GetNormals2( C, phi, nx, ny, nz );
+  valarray<double> ne1(C_.size());
+  valarray<double> ne2(C_.size());
+  valarray<double> kappa(C_.size());
+  
+  std::vector<int> C = ListToSTDVector( C_ );
+
   GetNormalsTangentPlane( C, phi, ne1, ne2, this->meshdata );
   GetKappa( C, phi, kappa );
-//kappa = ne1 * 0.0;
-//double lambda = 1;
-  for( ::size_t i = 0; i < C.size(); i++ )
+  ::size_t CN = C.size();
+  for( ::size_t i = 0; i < CN; i++ )
     {
     int idx = C[i];
     double val = meshdata->dkde1[idx] * ne1[i] + meshdata->dkde2[idx] * ne2[i];
     force[i] = -val;
-//force[i] = nx[i];
-//force[i] = meshdata->dkdx[idx];
-//force[i] = -exp( -lambda * meshdata->MeanCurv[idx] ) * val;
-//force[i] = -meshdata->MeanCurv[idx];
-//force[i] = sqrt( nx[i] * nx[i] + ny[i]*ny[i] + nz[i]*nz[i] );
-//force[i] = exp( meshdata->MeanCurv[idx] ) * sqrt( nx[i] * nx[i] + ny[i]*ny[i] + nz[i]*nz[i] );
     }
   meshdata->kappa = kappa;
 
@@ -55,7 +49,9 @@ valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C,
   double skap = abs(kappa).max();
   if( skap > 1e-6 )
     {
-    return (1-alpha)*force / (abs(force)).max() + alpha*kappa / (abs(kappa)).max();
+      force = ((1-alpha)*force / (1e-9+abs(force).max()) + alpha*kappa / (1e-2+abs(kappa).max()));
+      force = tanh(force);
+      return force;
     }
   else
     {
@@ -63,8 +59,8 @@ valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C,
     }
 }
 
-valarray<double> MeanCurvatureEnergy::getforce( const vector<int>& C)
+valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C)
 {
-  std::cout<<"Error, TODO function being called!\n";
+  std::cout<<"Err!\n";
   return valarray<double>(0);
 }

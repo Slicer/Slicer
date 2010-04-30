@@ -94,10 +94,15 @@ int UpdateInitLists( const std::vector< std::vector<int> > LstarIJidx,
 // DEBUG_DISPLAY_0:
 void Debug_Display_Path_Vals( vtkIntArray* activeContourVertIdx,  
                         const std::vector< std::vector<int> > &neigh_idx,
-                        const std::vector< int > &seedIdx ) 
+                        const std::vector< int > &seedIdx_ ) 
 {
-  int numVerts = neigh_idx.size();
-  int numInit  = neigh_idx[0].size();
+  ::size_t numVerts = neigh_idx.size();
+  ::size_t numInit  = neigh_idx[0].size();
+  
+  std::vector<int> seedIdx = seedIdx_;
+  std::sort( seedIdx.begin(), seedIdx.end() );
+  seedIdx.erase( unique(seedIdx.begin(), seedIdx.end()),seedIdx.end() );
+
   for( ::size_t i = 0; i < numVerts; i++ ) {
       int val = 0;
       for( ::size_t m = 0; m < numInit; m++ ) {
@@ -147,7 +152,7 @@ void Debug_Display_L_Vals( vtkIntArray* activeContourVertIdx,
                           const std::vector<double>& Lstar, const std::vector<int>& seedIdx,
                           const std::vector<int>& seedIdxPrv) 
 {
-      int numVerts = Lstar.size();
+      ::size_t numVerts = Lstar.size();
       for( ::size_t i = 0; i < numVerts; i++ ) {
         int val = ceil( Lstar[i] );
         activeContourVertIdx->SetTupleValue(i, &val);
@@ -166,7 +171,7 @@ void Debug_Display_L_Blob( vtkIntArray* activeContourVertIdx,
                           const std::vector<double>& Lstar, const std::vector<int>& seedIdx,
                           const std::vector<int>& seedIdxPrv) 
 {
-      int numVerts = Lstar.size();
+      ::size_t numVerts = Lstar.size();
       double sum = 0.0;
       double Lmin = 1e12;
       double Lmax = -1.0;
@@ -193,7 +198,7 @@ void Debug_Display_L_Blob( vtkIntArray* activeContourVertIdx,
 // DEBUG_DISPLAY_2:
 void Debug_Display_Connected_Vals( vtkIntArray* activeContourVertIdx, 
                              const std::vector<double>& Lstar, const std::vector<int>& seedIdx ) {
-  int numVerts = Lstar.size();
+  ::size_t numVerts = Lstar.size();
       for( ::size_t i = 0; i < numVerts; i++ ) {
         int val = 0;
         activeContourVertIdx->SetTupleValue(i, &val);
@@ -273,8 +278,8 @@ int vtkInitClosedPath::RequestData(
   
   
   // Check input
-  int numVerts=input->GetNumberOfPoints();
-  int numCells=input->GetNumberOfCells();
+  ::size_t numVerts=input->GetNumberOfPoints();
+  ::size_t numCells=input->GetNumberOfCells();
   if (numVerts < 1 || numCells < 1)
     {
     vtkErrorMacro(<<"No data to smooth!");
@@ -333,7 +338,7 @@ int vtkInitClosedPath::RequestData(
     
     vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
     
-    int numInit0 = numInit;
+    ::size_t numInit0 = numInit;
     std::vector< std::vector<int> > accessible_init_indices(numVerts);
     for( ::size_t i = 0; i < numVerts; i++ ) {
       accessible_init_indices[i] = std::vector<int>(numInit); // FIXED SIZE!
@@ -405,24 +410,19 @@ BUILD_DISTANCE_TO_INIT:
     //for( size_t i = 0; i < numInit; i++ ) {
    //LOOP_BUILD_S_FUNC:
    // int idx_init_prev = nextVerts.fr
-    while( (0 < nextVerts.size()) &&  // to-do list is not empty
-        (!IsSquare( accessible_init_indices ) ) ) { // path not yet established between all pairs
+    while( (0 < nextVerts.size() ) )  // to-do list is not empty
+                { // path not yet established between all pairs
       int idx = nextVerts.front( ); 
       int idx_end = nextVerts.back( );
-       int idx_init = firstHitInitIdx[idx];
-      while( (idx_end != idx) && IsMaxByOne( accessible_init_indices, idx) ) {
-        nextVerts.push_back( idx );
-        nextVerts.pop_front( );
-        idx = nextVerts.front( );
-      }
-          
+      int idx_init = firstHitInitIdx[idx];
+ 
       output->GetPointCells( idx, cellIds ); // get cells with this index
-      int iAdjCellCount = cellIds->GetNumberOfIds(); // how many cells are there with this idx?
+      ::size_t iAdjCellCount = cellIds->GetNumberOfIds(); // how many cells are there with this idx?
       std::list<int> tmpNextVerts; tmpNextVerts.resize(0);
       for( ::size_t k = 0; k < iAdjCellCount; k++ )    {
         int id = cellIds->GetId( k ); // get the cell ID for k-th neighboring cell
         faces->GetCell(id*4,npts, pts ); // get "pts",  vertex indices ot neighbor cell
-        for( ::size_t j = 0; j < npts; j++ ) {
+        for( int j = 0; j < npts; j++ ) {
           size_t pt = pts[j];
           if( 0 == count( tmpNextVerts.begin(), tmpNextVerts.end(), pt ) ) { 
           int idxFirstHit = LstarIdx[pt]; //firstHitInitIdx[ pt ];
@@ -466,32 +466,18 @@ BUILD_DISTANCE_TO_INIT:
                   LstarIdx[pt] = LstarIdx[idx];
                   Lstar[pt]    = Lstar_;
                   nextVerts.push_back( pt );
-                  bDidUpdate = true;
-              /*    std::vector<int> cur_idx   = accessible_init_indices[idx];
-                  std::vector<int> pt_idx    = accessible_init_indices[pt];
-                  for( ::size_t m = 0; m < cur_idx.size(); m++ ) {
-                    int mval = accessible_init_indices[idx][m];
-                    if( 0 == count( pt_idx.begin(), pt_idx.end(), mval ) )
-                      accessible_init_indices[pt].push_back( mval );
-                  }*/
+            
                 }
                 else if( Lstar[idx]<0 || Lstar_rev < Lstar[idx] ) {
                   // re-assign index idx to class at index pt
                   LstarIdx[idx] = LstarIdx[pt];
                   Lstar[idx]    = Lstar_rev;
                   nextVerts.push_back( idx );
-                  bDidUpdate = true;
-                 /* std::vector<int> cur_idx   = accessible_init_indices[idx];
-                  std::vector<int> pt_idx    = accessible_init_indices[pt];
-                  for( ::size_t m = 0; m < cur_idx.size(); m++ ) {
-                    int mval = accessible_init_indices[idx][m];
-                    if( 0 == count( pt_idx.begin(), pt_idx.end(), mval ) )
-                      accessible_init_indices[pt].push_back( mval );
-                  }*/
+  
                 }
                 else // the neighbor has different class, and closer to someone else -> so we are at boundary!
                 {
-                  bDidUpdate = true;
+                 
                   // LstarIdx: list of assignments of each mesh vertex to
                   // the index of the seed point to which it is closest in
                   // terms of distance Lstar
@@ -503,14 +489,14 @@ BUILD_DISTANCE_TO_INIT:
                   double Lstar_ii_jj_rev = Lstar_rev;
                   // This part is where confusion creeps in ...
                   {
-           if( LstarIJval[ii][jj] > Lstar_ii_jj || LstarIJval[ii][jj] < 0 ) 
+                    if( LstarIJval[ii][jj] > Lstar_ii_jj || LstarIJval[ii][jj] < 0 ) 
                     {
                       // Assign idx's neighbor to be pt (mesh indices)
                       // where pt is a mesh index that is closest to init point jj
                       LstarIJval[ii][jj]        = Lstar_ii_jj;
                       (LstarIJidx[ii])[jj]      = pt;
                     }
-           if( LstarIJval[jj][ii] > Lstar_ii_jj_rev || LstarIJval[jj][ii] < 0 ) 
+                    if( LstarIJval[jj][ii] > Lstar_ii_jj_rev || LstarIJval[jj][ii] < 0 ) 
                     {
                       // Assign pt's neighbor to be idx (mesh indices)
                       // where idx is a mesh index that is closest to init point ii
@@ -522,36 +508,60 @@ BUILD_DISTANCE_TO_INIT:
                 }
 
             }
-                if( bDidUpdate ) {
+                if( 1 ) {
                   for( ::size_t m = 0; m < numInit0; m++ ) {
                     int mval = accessible_init_indices[idx][m];
-                    if( mval > 0 ) { //&& 0 == count( pt_idx.begin(), pt_idx.end(), mval ) )
+                    if( mval > 0 ) { 
                       accessible_init_indices[pt][m] = idx;
-                      //idxContactedInit[mval][ 
+                      for( ::size_t ck = 0; ck < numInit0; ck++ ) {
+                        int idxRev = accessible_init_indices[mval][ck];
+                        if( idxRev >= 0 ) {
+                          idxContactedInit[m][ck] = 1;
+                        }
+                      }
                     }
                   }
                   for( ::size_t m = 0; m < numInit0; m++ ) {
                     int mval = accessible_init_indices[pt][m];
-                    if( mval > 0 ) { //&& 0 == count( pt_idx.begin(), pt_idx.end(), mval ) )
+                    if( mval > 0 ) { 
                       accessible_init_indices[idx][m] = pt;
-                      //idxContactedInit[mval][ 
+                      for( ::size_t ck = 0; ck < numInit0; ck++ ) {
+                        int idxRev = accessible_init_indices[mval][ck];
+                        if( idxRev >= 0 ) {
+                          idxContactedInit[m][ck] = 1;
+                        }
+                      } 
                     }
                   }
-                }
-
-            
+                }         
           }   
 
         } 
       }
-      nextVerts.pop_front();
+      
+      /* If all init points have come into contact, then stop and continue... */
+      bool bAllConnected = true;
+      for( ::size_t m = 0; m < numInit0; m++ ) {
+        for( ::size_t n = 0; n < numInit0; n++ ) {
+          if( idxContactedInit[m][n] == 0 ) {
+            bAllConnected = false;
+            //recursions = 2048;
+          }
+        }
+      }
+      if( 0 ) { // bAllConnected ) {
+        //nextVerts.clear();
+      }
+      else {
+        nextVerts.pop_front();
+      }
     }
 
   //  UpdateInitLists( LstarIJidx, accessible_init_indices );
   
     // now append to the initializers...
     for( ::size_t i = 0; i < LstarIJidx.size(); i++ ) {
-      int NUM_KEEP = 2;
+      ::size_t NUM_KEEP = 2;
       for( ::size_t k = 0; k < NUM_KEEP; k++ ) {
         int idxAdd = i;
         double Lbest = 1e9;
@@ -565,8 +575,8 @@ BUILD_DISTANCE_TO_INIT:
             jBest  = j;
           }  
         }
-  #define NUM_INIT_RECURSIONS 15
-        if( recursions < NUM_INIT_RECURSIONS ) {
+  #define NUM_INIT_RECURSIONS 2
+        if( 1 ) {
           if( idxAdd >= 0 && (0== count( seedIdx.begin(), seedIdx.end(), idxAdd ) ) )
               seedIdx.push_back(idxAdd);
         }
@@ -612,6 +622,8 @@ BUILD_DISTANCE_TO_INIT:
     else {
       std::cout<<"Num Seeds Generated: "<<seedIdx.size()<<"\n";
     }
+
+    //std::vector< std::list<int> > back_trace( numVerts );
      
 // Temp Debug Display: contour idx as color map
     //Debug_Display_L_Vals( activeContourVertIdx, Lstar, seedIdx, seedIdxPrv );
