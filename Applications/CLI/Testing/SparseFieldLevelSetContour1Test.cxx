@@ -6,6 +6,12 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
+#ifdef WIN32
+#define MODULE_IMPORT __declspec(dllimport)
+#else
+#define MODULE_IMPORT
+#endif
+
 #include <iostream>
 #include "itkTestMain.h"
 
