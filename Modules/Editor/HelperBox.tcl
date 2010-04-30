@@ -239,6 +239,7 @@ itcl::body HelperBox::promptStructure {} {
     $_colorBox configure -selectCommand "$this addStructure %d"
     $_colorBox create
   } else {
+    $_colorBox configure -colorNode $colorNode
     $_colorBox show
   }
 }
@@ -547,6 +548,7 @@ itcl::body HelperBox::edit { {label ""} } {
     set row [[$o(structures) GetWidget] GetIndexOfFirstSelectedRow]
     set label [[$o(structures) GetWidget] GetCellText $row $col(Number)]
   }
+
   if { $label == "" } {
     # still no label means listbox is not correctly configured, must quit
     return
@@ -555,14 +557,12 @@ itcl::body HelperBox::edit { {label ""} } {
   set structureName [$colorNode GetColorName $label]
   set structureVolume [$this structureVolume $structureName]
 
-  if { $structureVolume == "" } {
-    puts "no volume for $structureName"
-  }
-
   # make the master node the active background, and the structure label node the active label
   set selectionNode [$::slicer3::ApplicationLogic  GetSelectionNode]
   $selectionNode SetReferenceActiveVolumeID [$_master GetID]
-  $selectionNode SetReferenceActiveLabelVolumeID [$structureVolume GetID]
+  if { $structureVolume != "" } {
+    $selectionNode SetReferenceActiveLabelVolumeID [$structureVolume GetID]
+  }
   $::slicer3::ApplicationLogic  PropagateVolumeSelection 0
 
   EditorSetPaintLabel $label
@@ -841,6 +841,7 @@ itcl::body HelperBox::colorSelectDialog { } {
     $o(colorSelectTopLevel) ModalOn
     $o(colorSelectTopLevel) Create
     $o(colorSelectTopLevel) SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $o(colorSelectTopLevel) SetDisplayPositionToPointer
     $o(colorSelectTopLevel) HideDecorationOff
     $o(colorSelectTopLevel) Withdraw
     $o(colorSelectTopLevel) SetBorderWidth 2
@@ -916,6 +917,7 @@ itcl::body HelperBox::labelSelectDialog { } {
     $o(labelSelectTopLevel) ModalOn
     $o(labelSelectTopLevel) Create
     $o(labelSelectTopLevel) SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $o(labelSelectTopLevel) SetDisplayPositionToPointer
     $o(labelSelectTopLevel) HideDecorationOff
     $o(labelSelectTopLevel) Withdraw
     $o(labelSelectTopLevel) SetBorderWidth 2
