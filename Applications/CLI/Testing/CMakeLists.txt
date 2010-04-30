@@ -1150,6 +1150,19 @@ add_test(MergeModelsTestVtp ${Slicer3_EXE} --launch MergeModelsTest
     ${TEMP}/sphereCube.vtp
   )
 
+# add a test that compares the outline to a baseline .vtp
+add_test(MergeModelsTestCompare ${CMAKE_COMMAND}
+  -Dtest_cmd="${Slicer3_BINARY_DIR}/bin/MergeModelsTest"
+  -Dtest_name=MergeModelsTest
+  -Dmodel1=${MRML_TEST_DATA}/sphere.vtp
+  -Dmodel2=${MRML_TEST_DATA}/cube.vtp
+  -Doutput_model=${TEMP}/sphereCube.vtp
+  -Doutput_baseline=${BASELINE}/sphereCube.vtp
+  -Doutput_test=${TEMP}/sphereCube.vtp
+  -P  ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_MergeModelsTest.cmake
+)
+
+
 set (CLP MergeModels)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
