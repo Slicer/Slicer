@@ -29,7 +29,6 @@
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
-
 #include <math.h>
 #include <exception>
 
@@ -506,6 +505,33 @@ SetTreeNodeDistributionLogMean(vtkIdType nodeID,
 }
 
 //----------------------------------------------------------------------------
+double
+vtkEMSegmentMRMLManager::GetTreeNodeDistributionAutoLogMean(vtkIdType nodeID, int volumeNumber)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return 0;
+    }
+  return this->GetTreeParametersLeafNode(nodeID)->GetAutoLogMean(volumeNumber);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTreeNodeDistributionAutoLogMean(vtkIdType nodeID, 
+                               int volumeNumber, 
+                               double value)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return;
+    }
+  this->GetTreeParametersLeafNode(nodeID)->SetAutoLogMean(volumeNumber, value);
+}
+
+//----------------------------------------------------------------------------
 double   
 vtkEMSegmentMRMLManager::
 GetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
@@ -537,6 +563,60 @@ SetTreeNodeDistributionLogCovariance(vtkIdType nodeID,
   this->GetTreeParametersLeafNode(nodeID)->
     SetLogCovariance(rowIndex, columnIndex, value);
 }
+
+
+//----------------------------------------------------------------------------
+double   
+vtkEMSegmentMRMLManager::
+GetTreeNodeDistributionAutoLogCovariance(vtkIdType nodeID, 
+                                     int rowIndex,
+                                     int columnIndex)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return 0;
+    }
+  return this->GetTreeParametersLeafNode(nodeID)->
+    GetAutoLogCovariance(rowIndex, columnIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTreeNodeDistributionAutoLogCovariance(vtkIdType nodeID, 
+                                     int rowIndex, 
+                                     int columnIndex,
+                                     double value)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return;
+    }
+  this->GetTreeParametersLeafNode(nodeID)->
+    SetAutoLogCovariance(rowIndex, columnIndex, value);
+}
+
+void vtkEMSegmentMRMLManager::CopyTreeNodeAutoLogDistToLogDist()
+{
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+
+  this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+      if (this->GetTreeNodeIsLeaf(*i)) 
+    {      
+      vtkMRMLEMSTreeParametersLeafNode* leafNode = this->GetTreeNode(*i)->GetParametersNode()->GetLeafParametersNode();  
+      leafNode->CopyAutoLogMeanToLogMean();
+      leafNode->CopyAutoLogCovarianceToLogCovariance();
+    }
+    }
+}
+
 
 //----------------------------------------------------------------------------
 int
@@ -682,13 +762,10 @@ UpdateIntensityDistributions()
   this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
   for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
     {
-    if (this->GetTreeParametersLeafNode(*i)->
-        GetDistributionSpecificationMethod() == 
-        vtkMRMLEMSTreeParametersLeafNode::
-        DistributionSpecificationManuallySample)
-      {
+      if (this->GetTreeParametersLeafNode(*i)->GetDistributionSpecificationMethod() == vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationManuallySample) 
+    {
       this->UpdateIntensityDistributionFromSample(*i);
-      }
+    }
     }
 }
 
@@ -816,6 +893,7 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
       }
     }
 }
+
 
 //----------------------------------------------------------------------------
 int
@@ -1754,7 +1832,16 @@ SetTreeNodeSpatialPriorVolumeID(vtkIdType nodeID,
 
   if (volumeID == -1)
     {
-    n->GetParametersNode()->SetSpatialPriorVolumeName(NULL);
+      if (n->GetParametersNode()->GetSpatialPriorVolumeName())
+    {
+      n->GetParametersNode()->SetSpatialPriorVolumeName(NULL);
+      // do not return here bc we have to set   this->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
+    }
+      else 
+    {
+      // Did not change anything
+      return;
+    }
     }
   else
     {
@@ -1771,14 +1858,20 @@ SetTreeNodeSpatialPriorVolumeID(vtkIdType nodeID,
     priorVolumeName = n->GetID();
     
     // add key value pair to atlas
-    this->GetAtlasInputNode()->AddVolume(priorVolumeName.c_str(), volumeMRMLID);
-
+    int modifiedFlag = this->GetAtlasInputNode()->AddVolume(priorVolumeName.c_str(), volumeMRMLID);
+    if (strcmp(n->GetParametersNode()->GetSpatialPriorVolumeName(),priorVolumeName.c_str()))
+      {
     // set name of atlas volume in tree node
     n->GetParametersNode()->SetSpatialPriorVolumeName(priorVolumeName.c_str());
+    modifiedFlag = 1;
+      }
+    // Nothing has changed so do not change status of ValidFlag 
+    if (!modifiedFlag) {return;} 
     }
 
   // aligned atlas is no longer valid
-  this->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
+  // 
+ this->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
 }
 
 //----------------------------------------------------------------------------
@@ -5078,6 +5171,35 @@ int  vtkEMSegmentMRMLManager::GetRegistrationTypeFromString(const char* type)
   if (!strcmp(type,"AtlasToTargetAffineRegistrationRigidNCCSlow")) 
     {
       return vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCSlow;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationOff")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationOff;
+    }
+
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineMMI")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMI;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineNCC")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC ;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineMMIFast")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMIFast;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineNCCFast")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCCFast;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineMMISlow")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMISlow;
+    }
+  if (!strcmp(type,"AtlasToTargetDeformableRegistrationBSplineNCCSlow")) 
+    {
+      return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCCSlow ;
     }
   return -1;
 }

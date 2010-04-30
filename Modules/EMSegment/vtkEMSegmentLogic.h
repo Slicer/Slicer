@@ -38,6 +38,7 @@ public:
   virtual bool      StartPreprocessingAtlasToTargetRegistration();
 
   virtual void      StartSegmentation();
+  virtual void      StartSegmentationWithoutPreprocessing();
 
   // Used within StartSegmentation to copy data from the MRMLManager
   // to the segmenter algorithm.  Possibly useful for research
@@ -90,6 +91,8 @@ public:
   //BTX
   std::string DefineTclTaskFullPathName(const char* TclFileName);
   std::string GetTclTaskDirectory();
+  std::string GetTclGeneralDirectory();
+
   std::string DefineTclTasksFileFromMRML();
   //ETX
   
@@ -98,41 +101,6 @@ public:
 
 
   double GuessRegistrationBackgroundLevel(vtkMRMLVolumeNode* volumeNode);
-
-private:
-  vtkEMSegmentLogic();
-  ~vtkEMSegmentLogic();
-  vtkEMSegmentLogic(const vtkEMSegmentLogic&);
-  void operator=(const vtkEMSegmentLogic&);
-
-  // the mrml manager is created in the constructor
-  vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
-
-  // utility---should probably go to general slicer lib at some point
-  static void SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
-                                 vtkMRMLVolumeNode* outputVolumeNode,
-                                 vtkMRMLVolumeNode* outputVolumeGeometryNode,
-                                 vtkTransform* outputRASToInputRASTransform,
-                                  int iterpolationType,
-                                 double backgroundLevel);
-  //BTX
-  template <class T>
-  static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
-  //ETX
-
-  static void
-  ComposeGridTransform(vtkGridTransform* inGrid,
-                       vtkMatrix4x4*     preMultiply,
-                       vtkMatrix4x4*     postMultiply,
-                       vtkGridTransform* outGrid);
-
-  static void 
-  SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
-                             vtkMRMLVolumeNode* outputVolumeNode,
-                             vtkMRMLVolumeNode* outputVolumeGeometryNode,
-                             vtkGridTransform* outputRASToInputRASTransform,
-                             int iterpolationType,
-                             double backgroundLevel);
 
   static void SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
                                   vtkMRMLVolumeNode* movingVolumeNode,
@@ -151,6 +119,44 @@ private:
                         int imageMatchType,
                         int iterpolationType,
                         double backgroundLevel);
+
+  static void 
+  SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                             vtkGridTransform* outputRASToInputRASTransform,
+                             int iterpolationType,
+                             double backgroundLevel);
+
+
+  // utility---should probably go to general slicer lib at some point
+  static void SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                                 vtkTransform* outputRASToInputRASTransform,
+                                  int iterpolationType,
+                                 double backgroundLevel);
+
+
+private:
+  vtkEMSegmentLogic();
+  ~vtkEMSegmentLogic();
+  vtkEMSegmentLogic(const vtkEMSegmentLogic&);
+  void operator=(const vtkEMSegmentLogic&);
+
+  // the mrml manager is created in the constructor
+  vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
+
+  //BTX
+  template <class T>
+  static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
+  //ETX
+
+  static void
+  ComposeGridTransform(vtkGridTransform* inGrid,
+                       vtkMatrix4x4*     preMultiply,
+                       vtkMatrix4x4*     postMultiply,
+                       vtkGridTransform* outGrid);
 
   // Description:
   // Convenience method for determining if two volumes have same geometry

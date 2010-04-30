@@ -106,21 +106,29 @@ void vtkMRMLEMSWorkingDataNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
- of << indent << " InputTargetNodeID=\"" 
+  of << indent << " InputTargetNodeID=\"" 
      << (this->InputTargetNodeID ? this->InputTargetNodeID : "NULL")
      << "\" ";
+  of << indent << " InputTargetNodeIsValid=\""   << this->InputTargetNodeIsValid << "\" ";
+
   of << indent << "NormalizedTargetNodeID=\"" 
      << (this->NormalizedTargetNodeID ? this->NormalizedTargetNodeID : "NULL")
      << "\" ";
   of << indent << "AlignedTargetNodeID=\"" 
      << (this->AlignedTargetNodeID ? this->AlignedTargetNodeID : "NULL")
      << "\" ";
- of << indent << "InputAtlasNodeID=\"" 
+  of << indent << " AlignedTargetNodeIsValid=\"" << this->AlignedTargetNodeIsValid  << "\" ";
+
+  of << indent << "InputAtlasNodeID=\"" 
      << (this->InputAtlasNodeID ? this->InputAtlasNodeID : "NULL")
      << "\" ";
+  of << indent << " InputAtlasNodeIsValid=\""    << this->InputAtlasNodeIsValid  << "\" ";
+
   of << indent << "AlignedAtlasNodeID=\"" 
      << (this->AlignedAtlasNodeID ? this->AlignedAtlasNodeID : "NULL")
      << "\" ";
+  of << indent << " AlignedAtlasNodeIsValid=\"" <<  this->AlignedAtlasNodeIsValid  << "\" ";
+
 }
 
 //-----------------------------------------------------------------------------
@@ -209,6 +217,12 @@ void vtkMRMLEMSWorkingDataNode::ReadXMLAttributes(const char** attrs)
       this->SetInputTargetNodeID(val);
       //this->Scene->AddReferencedNodeID(this->InputTargetNodeID, this);
       }
+    else if (!strcmp(key, "InputTargetNodeIsValid"))
+      {
+    vtksys_stl::stringstream ss;
+    ss << val;
+    ss >> this->InputTargetNodeIsValid;
+      }
     else if (!strcmp(key, "NormalizedTargetNodeID"))
       {
       this->SetNormalizedTargetNodeID(val);
@@ -219,15 +233,33 @@ void vtkMRMLEMSWorkingDataNode::ReadXMLAttributes(const char** attrs)
       this->SetAlignedTargetNodeID(val);
       //this->Scene->AddReferencedNodeID(this->AlignedTargetNodeID, this);
       }
+    else if (!strcmp(key, "AlignedTargetNodeIsValid"))
+      {
+    vtksys_stl::stringstream ss;
+    ss << val;
+    ss >> this->AlignedTargetNodeIsValid;
+      }
     else if (!strcmp(key, "InputAtlasNodeID"))
       {
       this->SetInputAtlasNodeID(val);
       //this->Scene->AddReferencedNodeID(this->InputAtlasNodeID, this);
       }
+    else if (!strcmp(key, "InputAtlasNodeIsValid"))
+      {
+    vtksys_stl::stringstream ss;
+    ss << val;
+    ss >> this->InputAtlasNodeIsValid;
+      }
     else if (!strcmp(key, "AlignedAtlasNodeID"))
       {
       this->SetAlignedAtlasNodeID(val);
       //this->Scene->AddReferencedNodeID(this->AlignedAtlasNodeID, this);
+      }
+    else if (!strcmp(key, "AlignedAtlasNodeIsValid"))
+      {
+    vtksys_stl::stringstream ss;
+    ss << val;
+    ss >> this->AlignedAtlasNodeIsValid;
       }
     }
 }
@@ -243,6 +275,10 @@ void vtkMRMLEMSWorkingDataNode::Copy(vtkMRMLNode *rhs)
   this->SetAlignedTargetNodeID(node->AlignedTargetNodeID);
   this->SetInputAtlasNodeID(node->InputAtlasNodeID);
   this->SetAlignedAtlasNodeID(node->AlignedAtlasNodeID);
+  this->InputTargetNodeIsValid           = node->InputTargetNodeIsValid;
+  this->AlignedTargetNodeIsValid         = node->AlignedTargetNodeIsValid;  
+  this->InputAtlasNodeIsValid            = node->InputAtlasNodeIsValid;  
+  this->AlignedAtlasNodeIsValid          = node->AlignedAtlasNodeIsValid;  
 }
 
 //-----------------------------------------------------------------------------
@@ -253,18 +289,26 @@ void vtkMRMLEMSWorkingDataNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "InputTargetNodeID: " <<
     (this->InputTargetNodeID ? this->InputTargetNodeID : "(none)") 
      << "\n";
+  os << indent << "InputTargetNodeIsValid: " << this->InputTargetNodeIsValid << "\n";
+
   os << indent << "NormalizedTargetNodeID: " <<
     (this->NormalizedTargetNodeID ? this->NormalizedTargetNodeID : "(none)") 
      << "\n";
   os << indent << "AlignedTargetNodeID: " <<
     (this->AlignedTargetNodeID ? this->AlignedTargetNodeID : "(none)") 
      << "\n";
+  os << indent << "AlignedTargetNodeIsValid: " << this->AlignedTargetNodeIsValid << "\n";
+
   os << indent << "InputAtlasNodeID: " <<
     (this->InputAtlasNodeID ? this->InputAtlasNodeID : "(none)") 
      << "\n";
+  os << indent << "InputAtlasNodeIsValid: " << this->InputAtlasNodeIsValid  << "\n";
+
   os << indent << "AlignedAtlasNodeID: " <<
     (this->AlignedAtlasNodeID ? this->AlignedAtlasNodeID : "(none)") 
      << "\n";
+  os << indent << "AlignedAtlasNodeIsValid: " << this->AlignedAtlasNodeIsValid << "\n";
+
 }
 
 //-----------------------------------------------------------------------------

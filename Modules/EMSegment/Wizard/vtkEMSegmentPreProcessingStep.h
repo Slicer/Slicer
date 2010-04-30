@@ -36,6 +36,9 @@ public:
   void SetButtonsFromMRML();
   void SetTaskPreprocessingSetting();
 
+  int ComputeIntensityDistributionsFromSpatialPrior();
+  void UpdateIntensityDistributionAuto(vtkIdType nodeID);
+
 protected:
   vtkEMSegmentPreProcessingStep();
   ~vtkEMSegmentPreProcessingStep();

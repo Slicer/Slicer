@@ -51,7 +51,7 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/Graph/*.h"
   )
 
-file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tasks/*.tcl" )
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tasks/*.tcl" "Tcl/*.tcl" )
 
 foreach(file ${TCLFILES})
   configure_file(

@@ -58,6 +58,16 @@ public:
   virtual double GetLogCovariance(int row, int column) const;
   virtual void SetLogCovariance(int row, int column, double value);
 
+  virtual double GetAutoLogMean(int index) const;
+  virtual void SetAutoLogMean(int index, double value);
+
+  virtual void CopyAutoLogMeanToLogMean();
+
+  virtual double GetAutoLogCovariance(int row, int column) const;
+  virtual void SetAutoLogCovariance(int row, int column, double value);
+
+  virtual void CopyAutoLogCovarianceToLogCovariance();
+
   //BTX
   enum
     {
@@ -94,6 +104,12 @@ protected:
   SamplePointListType                           DistributionSamplePointsRAS;
   vtkstd::vector<double>                        LogMean;
   vtkstd::vector<vtkstd::vector<double> >       LogCovariance;
+
+  // Automatically Generated Intensity distribution from Template
+  // This can be used in order to interpret the difference between LogX and AutoLogX 
+  // where LogX is the distribution defined by the user 
+  vtkstd::vector<double>                        AutoLogMean;
+  vtkstd::vector<vtkstd::vector<double> >       AutoLogCovariance;
   //ETX
 
   unsigned int                        NumberOfTargetInputChannels;

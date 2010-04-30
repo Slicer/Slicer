@@ -18,7 +18,6 @@ class vtkMRMLEMSTreeParametersParentNode;
 class vtkMRMLEMSWorkingDataNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLVolumeNode;
-
 // need enum values
 #include "MRML/vtkMRMLEMSTreeParametersLeafNode.h"
 #include "MRML/vtkMRMLEMSClassInteractionMatrixNode.h"
@@ -126,6 +125,12 @@ public:
                                                   int volumeNumber, 
                                                   double value);
 
+  virtual double   GetTreeNodeDistributionAutoLogMean(vtkIdType nodeID, 
+                                                  int volumeNumber);
+  virtual void     SetTreeNodeDistributionAutoLogMean(vtkIdType nodeID, 
+                                                  int volumeNumber, 
+                                                  double value);
+
 
 
   virtual double   GetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
@@ -135,6 +140,16 @@ public:
                                                         int rowIndex, 
                                                         int columnIndex,
                                                         double value);
+
+  virtual double   GetTreeNodeDistributionAutoLogCovariance(vtkIdType nodeID, 
+                                                        int rowIndex,
+                                                        int columnIndex);
+  virtual void     SetTreeNodeDistributionAutoLogCovariance(vtkIdType nodeID, 
+                                                        int rowIndex, 
+                                                        int columnIndex,
+                                                        double value);
+  virtual void CopyTreeNodeAutoLogDistToLogDist();
+
 
   virtual int      GetTreeNodeDistributionNumberOfSamples(vtkIdType nodeID);
 
@@ -560,6 +575,11 @@ public:
 
   virtual vtkIdType    MapMRMLNodeIDToVTKNodeID(const char* MRMLNodeID);
 
+  //BTX
+  virtual void           GetListOfTreeNodeIDs(vtkIdType rootNodeID, 
+                                              vtkstd::vector<vtkIdType>& list);
+  //ETX
+
 private:
   vtkEMSegmentMRMLManager();
   ~vtkEMSegmentMRMLManager();
@@ -587,10 +607,6 @@ private:
   // Update intensity statistics for a particular tissue type.
   virtual void      UpdateIntensityDistributionFromSample(vtkIdType nodeID);
 
-  //BTX
-  virtual void           GetListOfTreeNodeIDs(vtkIdType rootNodeID, 
-                                              vtkstd::vector<vtkIdType>& list);
-  //ETX
 
   //
   // convienience functions for managing ID mapping (mrml id <-> vtkIdType)

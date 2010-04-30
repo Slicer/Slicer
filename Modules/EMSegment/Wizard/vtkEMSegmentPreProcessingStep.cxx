@@ -125,6 +125,17 @@ vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     this->SourceTclFile(specificFile.c_str()); 
     }
   this->Script("::EMSegmenterPreProcessingTcl::ShowUserInterface");
+
+  // Source all files here as we otherwise sometimes do not find the function as Tcl did not finish sourcing but our cxx file is already trying to call the function 
+  vtksys_stl::string tclFile =  this->GetGUI()->GetLogic()->GetModuleShareDirectory();
+#ifdef _WIN32
+  tclFile.append("\\Tcl\\EMSegmentAutoSample.tcl");
+#else
+  tclFile.append("/Tcl/EMSegmentAutoSample.tcl");
+#endif
+  this->SourceTclFile(tclFile.c_str());
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -314,8 +325,7 @@ void vtkEMSegmentPreProcessingStep::Validate()
   vtkKWWizardWorkflow *wizard_workflow = this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
 
   // for debugging disabled
-  if (0 ) {
-    if (!vtkKWMessageDialog::PopupYesNo(this->GetApplication(), NULL, "Start Preprocessing of images?",
+  if (!vtkKWMessageDialog::PopupYesNo(this->GetApplication(), NULL, "Start Preprocessing of images?",
                        "Preprocessing of images might take a while. Do you want to proceed ?", 
                        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
     {
@@ -323,7 +333,7 @@ void vtkEMSegmentPreProcessingStep::Validate()
       wizard_workflow->ProcessInputs();
       return;
     }
-  }
+
   this->SetTaskPreprocessingSetting();
 
   int flag = atoi(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterPreProcessingTcl::Run"));
@@ -338,9 +348,6 @@ void vtkEMSegmentPreProcessingStep::Validate()
     // Set it to valid so next time we do not have to recompute it 
     mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
     mrmlManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
-
-  // Update intensity distribution based on aligned images 
-  mrmlManager->UpdateIntensityDistributions();
 
   // Everything went smoothly
   this->Superclass::Validate();
@@ -519,3 +526,78 @@ void  vtkEMSegmentPreProcessingStep::PreProcessingVolumeMenuButtonCallback(vtkId
       volumeMenuButtonID[buttonID] = volID;
     }
 }
+
+//-----------------------------------------------------------------------------
+int vtkEMSegmentPreProcessingStep::ComputeIntensityDistributionsFromSpatialPrior()
+{
+  // iterate over tree nodes
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+
+  mrmlManager->GetListOfTreeNodeIDs(mrmlManager->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+      if (mrmlManager->GetTreeNodeIsLeaf(*i)) 
+    {      
+      this->UpdateIntensityDistributionAuto(*i);
+    }
+    }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+void  vtkEMSegmentPreProcessingStep::UpdateIntensityDistributionAuto(vtkIdType nodeID)
+{
+ vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager->GetTreeNodeSpatialPriorVolumeID(nodeID)) {
+    vtkWarningMacro("Nothing to update for " << nodeID << " as atlas is not defined");
+    return ;
+  }
+  // get working node 
+  vtkMRMLEMSTargetNode* workingTarget = NULL;
+  if (mrmlManager->GetWorkingDataNode()->GetAlignedTargetNode() &&
+      mrmlManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid())
+    {
+    workingTarget = mrmlManager->GetWorkingDataNode()->GetAlignedTargetNode();
+    }
+  else 
+    {
+       vtkErrorMacro("Cannot update intensity distribution bc Aligned Target is not correctly defined for node " << nodeID);
+       return ;
+    }
+
+  int numTargetImages = workingTarget->GetNumberOfVolumes();
+
+   // Sample
+  {
+    vtksys_stl::stringstream CMD ;
+    CMD <<  "::EMSegmenterAutoSampleTcl::EMSegmentGaussCurveCalculationFromID 0.95 1 { " ;
+    for (int i = 0 ; i < numTargetImages; i++) {
+      CMD << workingTarget->GetNthVolumeNodeID(i) << " " ;
+    }
+    CMD << " } " << mrmlManager->GetVolumeNode(mrmlManager->GetTreeNodeSpatialPriorVolumeID(nodeID))->GetID() << " {" <<  mrmlManager->GetTreeNodeName(nodeID) << "} \n";
+    // cout << CMD.str().c_str() << endl;
+    if (atoi(this->Script(CMD.str().c_str()))) { return; }
+  }
+
+  //
+  // propogate data to mrml node
+  //
+
+  vtkMRMLEMSTreeParametersLeafNode* leafNode = mrmlManager->GetTreeNode(nodeID)->GetParametersNode()->GetLeafParametersNode();  
+  for (int r = 0; r < numTargetImages; ++r)
+    {
+      {
+    double value = atof(this->Script("expr $::EMSegment(GaussCurveCalc,Mean,%d)",r));
+    leafNode->SetAutoLogMean(r, value);
+      }
+      for (int c = 0; c < numTargetImages; ++c)
+      {
+    double value = atof(this->Script("expr $::EMSegment(GaussCurveCalc,Covariance,%d,%d)",r,c));
+    leafNode->SetAutoLogCovariance(r, c, value);
+      }
+    }
+}
+

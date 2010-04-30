@@ -1616,6 +1616,12 @@ StartSegmentation()
     return;
     }
   std::cerr << "EMSEG: Preprocessing complete." << std::endl;
+  this->StartSegmentationWithoutPreprocessing();
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentLogic::StartSegmentationWithoutPreprocessing()
+{
   if (!this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid() ||
       !this->MRMLManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
     {
@@ -2325,6 +2331,20 @@ vtksys_stl::string  vtkEMSegmentLogic::GetTclTaskDirectory()
 #endif
   return file_path;
 }
+
+//----------------------------------------------------------------------------
+vtksys_stl::string  vtkEMSegmentLogic::GetTclGeneralDirectory()
+{
+  // Later do automatically
+   vtksys_stl::string file_path = this->GetModuleShareDirectory();
+#ifdef _WIN32
+  file_path.append("\\Tcl\\");
+#else
+  file_path.append("/Tcl/");
+#endif
+  return file_path;
+}
+
 
 
 //----------------------------------------------------------------------------

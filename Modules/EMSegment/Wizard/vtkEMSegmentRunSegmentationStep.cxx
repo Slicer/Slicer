@@ -778,7 +778,7 @@ void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
     }
 
   // start the segmentation
-  logic->StartSegmentation();
+  logic->StartSegmentationWithoutPreprocessing();
 }
 
 //----------------------------------------------------------------------------

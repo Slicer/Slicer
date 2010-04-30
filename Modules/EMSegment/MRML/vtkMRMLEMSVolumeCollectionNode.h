@@ -47,7 +47,8 @@ public:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  virtual void   AddVolume(const char* key, const char* volumeNodeID);
+  // Returns 1 if volume was added or 0 if the mapping between key and volumeNodeID existed 
+  virtual int   AddVolume(const char* key, const char* volumeNodeID);
   virtual int    GetNumberOfVolumes() const;
 
   virtual void   RemoveAllVolumes();

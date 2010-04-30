@@ -29,87 +29,169 @@ namespace eval EMSegmenterParametersStepTcl {
 
 
 namespace eval EMSegmenterPreProcessingTcl {
-    # For return value
-    # variable newIntensityAnalysis 1
 
+    #
+    # Variables
+    #
     variable GUI 
     variable LOGIC
+    variable SCENE
     variable preGUI
     variable mrmlManager
     variable workingDN
-    variable inputTarget 
-    variable inputAtlas
+    variable inputAtlasNode
+    # Variables used for segmentation 
+    # Input/Output subject specific scans  - by default this is defined by the input scans which are aligned with each other
+    variable subjectNode
+    # spatial priors aligned to subject node 
+    variable outputAtlasNode
 
-    proc InitVariables { } {
-    variable GUI 
-    variable preGUI
-    variable LOGIC
-    variable mrmlManager
-    variable workingDN
-    variable inputTarget
-    variable inputAtlas
-
-    set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegment Template Builder"]
-    if { $GUI == "" } { 
-        PrintError "InitVariables: GUI not defined"
-        return 1 
-    }
-    set LOGIC  [$GUI GetLogic]
-    if { $LOGIC == "" } { 
-        PrintError "InitVariables: LOGIC not defined"
-        return 1 
-    }
-    set mrmlManager   [$GUI GetMRMLManager]
-    if { $mrmlManager  == "" } { 
-        PrintError "InitVariables: mrmManager not defined"
-        return 1 
-    }
-    set workingDN [$mrmlManager GetWorkingDataNode] 
-    if { $workingDN  == "" } { 
-        PrintError "InitVariables: WorkingData not defined"
-        return 1 
-    }
-    set preGUI [$GUI GetPreProcessingStep]
-    if { $preGUI  == "" } { 
-        PrintError "InitVariables: PreProcessingStep not defined"
-        return 1 
-    }
-
-    set inputTarget  [$workingDN GetInputTargetNode]    
-    if {$inputTarget == "" } { 
-        PrintError "InitVariables: InputTarget not defined"
-        return 1 
+    #
+    # General Utility Functions 
+    #
+    proc DeleteNode  { NODE } {
+       variable SCENE
+    $SCENE RemoveNode $NODE 
+    # Note: 
+    #Do not need to do it as the destructor does it automatically
+    #set displayNode [$NODE GetDisplayNode]
+    #[$NODE GetDisplayNode]
+    # if {$displayNode} { $SCENE RemoveNode $displayNode }
     }
     
-    set inputAtlas  [$workingDN GetInputAtlasNode]    
-    if {$inputAtlas == "" } { 
-        PrintError "InitVariables: InputAtlas not defined"
-        return 1 
+    #  vtkMRMLVolumeNode *volumeNode, const char *name) 
+    proc CreateVolumeNode { volumeNode name } {
+    variable SCENE
+    if {$volumeNode == ""} { return "" }  
+    # clone the display node
+    set clonedDisplayNode [ vtkMRMLScalarVolumeDisplayNode New]
+    $clonedDisplayNode CopyWithScene [$volumeNode GetDisplayNode]
+    $SCENE AddNode $clonedDisplayNode
+    set dispID [$clonedDisplayNode GetID]
+    $clonedDisplayNode Delete 
+
+    set clonedVolumeNode [vtkMRMLScalarVolumeNode New]
+        $clonedVolumeNode CopyWithScene $volumeNode
+    $clonedVolumeNode SetAndObserveStorageNodeID "" 
+    $clonedVolumeNode SetName "$name"
+    $clonedVolumeNode SetAndObserveDisplayNodeID $dispID
+
+    if {0} {
+        # copy over the volume's data
+        $clonedVolumeData [vtkImageData New] 
+        $clonedVolumeData DeepCopy [volumeNode GetImageData]
+        $clonedVolumeNode SetAndObserveImageData $clonedVolumeData 
+        $clonedVolumeNode SetModifiedSinceRead 1
+        $clonedVolumeData Delete
+    } else {
+        $clonedVolumeNode SetAndObserveImageData "" 
+    }
+
+    # add the cloned volume to the scene
+    $SCENE AddNode $clonedVolumeNode
+    set volID  [$clonedVolumeNode GetID]
+    $clonedVolumeNode Delete 
+    # Have to do it this way bc unlike in c++ the link to $clonedVolumeNode gets deleted
+    return [$SCENE GetNodeByID $volID]
+    }
+
+    proc PrintError { TEXT } {
+       puts stderr "ERROR: EMSegmenterPreProcessingTcl::${TEXT}"
+    }
+
+    # update subjectNode with new volumes - and delete the old ones 
+    proc UpdateSubjectNode { newSubjectVolumeNodeList } {
+    variable subjectNode
+    # Update Aligned Target Nodes 
+    set inputNum [$subjectNode GetNumberOfVolumes]
+    for { set i  0 } {$i <  $inputNum } { incr i } {
+        set newVolNode  [lindex $newSubjectVolumeNodeList $i]
+        if {$newVolNode  == "" } {
+        PrintError "Run: Intensity corrected target node is incomplete !" 
+        return  1
+        }
+        set oldSubjectNode [$subjectNode GetNthVolumeNode $i] 
+        # Set up the new ones 
+        $subjectNode SetNthVolumeNodeID $i [$newVolNode  GetID]
+        # Remove old volumes associated with subjectNode  - if you delete right away then subjectNode is decrease 
+        DeleteNode $oldSubjectNode
     }
     return 0
     }
+    
+    #
+    # Preprocessing Functions
+    #
+    proc InitVariables { } {
+       variable GUI 
+       variable preGUI
+       variable LOGIC
+       variable SCENE
+       variable mrmlManager
+       variable workingDN
+       variable subjectNode
+       variable inputAtlasNode
+       variable outputAtlasNode
 
-    proc DeleteNodes { nodeList } {
-    variable SCENE
-    foreach NODE $nodeList {
-          $SCENE RemoveNode $NODE
-    }
+    puts "=========================================="
+    puts "== Init Variables"
+    puts "=========================================="
+       set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegment Template Builder"]
+       if { $GUI == "" } { 
+          PrintError "InitVariables: GUI not defined"
+          return 1 
+       }
+       set LOGIC  [$GUI GetLogic]
+       if { $LOGIC == "" } { 
+          PrintError "InitVariables: LOGIC not defined"
+          return 1 
+       }
+       set mrmlManager   [$GUI GetMRMLManager]
+       if { $mrmlManager  == "" } { 
+          PrintError "InitVariables: mrmManager not defined"
+          return 1 
+       }
+    set SCENE [$mrmlManager GetMRMLScene ]
+       if { $SCENE  == "" } { 
+          PrintError "InitVariables: SCENE not defined"
+          return 1 
+       }
+
+       set workingDN [$mrmlManager GetWorkingDataNode] 
+       if { $workingDN  == "" } { 
+          PrintError "InitVariables: WorkingData not defined"
+          return 1 
+       }
+       set preGUI [$GUI GetPreProcessingStep]
+       if { $preGUI  == "" } { 
+          PrintError "InitVariables: PreProcessingStep not defined"
+          return 1 
+       }
+       # All other Variables are defined when running the pipeline as they are the volumes 
+       # Define subjectNode when initializing pipeline 
+        set subjectNode "" 
+        set inputAtlasNode ""
+        set outputAtlasNode ""
+
+       return 0
     }
 
+
+ 
     #------------------------------------------------------
     # return 0 when no error occurs 
     proc ShowUserInterface { } {
-    variable preGUI 
+      variable preGUI 
 
-    puts "PreProcessing GenericTask"
-    if { [InitVariables] } {
+      puts "Preprocessing GenericTask"
+      if { [InitVariables] } {
         PrintError "ShowUserInterface: Not all variables are correctly defined!" 
         return 1
-    }
+      }
 
-    # -------------------------------------
-    # Define Interface Parameters 
-    # -------------------------------------
+      # -------------------------------------
+      # Define Interface Parameters 
+      # -------------------------------------
       $preGUI CreateTextLabel "No preprocessing defined for this task!" 0 
     }
 
@@ -117,165 +199,220 @@ namespace eval EMSegmenterPreProcessingTcl {
     # Make Sure that input volumes all have the same resolution 
     # from  StartPreprocessingTargetToTargetRegistration
     # ----------------------------------------------------------------
-    proc RegisterInputImages { inputTarget } {
-    variable workingDN
-    variable mrmlManager
-    variable LOGIC
+    proc RegisterInputImages { inputTargetNode fixedTargetImageIndex } {
+       variable workingDN
+       variable mrmlManager
+       variable LOGIC
 
-    # ----------------------------------------------------------------
-    # set up rigid registration
-    set alignedTarget [ $workingDN GetAlignedTargetNode]
-    if { $alignedTarget == "" } {
-        set alignedTarget [ $mrmlManager CloneTargetNode $inputTarget "AlignedTarget"]
-        $workingDN SetAlignedTargetNodeID [$alignedTarget GetID]
-    } else  {
-        $mrmlManager SynchronizeTargetNode $inputTarget $alignedTarget "AlignedTarget"
+    puts "=========================================="
+    puts "== Register Input Images"
+    puts "=========================================="
+       # ----------------------------------------------------------------
+       # set up rigid registration
+       set alignedTarget [ $workingDN GetAlignedTargetNode]
+       if { $alignedTarget == "" } {
+          set alignedTarget [ $mrmlManager CloneTargetNode $inputTargetNode "Aligned"]
+          $workingDN SetAlignedTargetNodeID [$alignedTarget GetID]
+       } else  {
+          $mrmlManager SynchronizeTargetNode $inputTargetNode $alignedTarget "Aligned"
+       }
+
+       for  { set i  0 } { $i < [$alignedTarget GetNumberOfVolumes] } {incr i} {
+         set intputVolumeNode($i) [$inputTargetNode GetNthVolumeNode $i]
+         if { $intputVolumeNode($i) == "" } {
+            PrintError "RegisterInputImages: the ${i}th input node is not defined!"
+            return 1
+          }
+
+          set intputVolumeData($i) [$intputVolumeNode($i) GetImageData ] 
+          if { $intputVolumeData($i) == "" } {
+            PrintError "RegisterInputImages: the ${i}the  input node has no image data defined !"
+            return 1
+          }
+
+          set outputVolumeNode($i) [$alignedTarget GetNthVolumeNode $i]
+          if { $outputVolumeNode($i) == "" } {
+             PrintError "RegisterInputImages: the ${i}th aligned input node is not defined!"
+             return 1
+          }
+
+          set outputVolumeData($i) [$outputVolumeNode($i) GetImageData ] 
+          if { $outputVolumeData($i) == "" } {
+            PrintError "RegisterInputImages: the ${i}the  output node has no image data defined !"
+            return 1
+          }
+       }
+
+       set fixedVolumeNode  $outputVolumeNode($fixedTargetImageIndex)
+       set fixedImageData   $outputVolumeData($fixedTargetImageIndex)
+       set alignType [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationRigidMMI]  
+       set interType [$mrmlManager GetInterpolationTypeFromString InterpolationLinear]
+
+ 
+       # ----------------------------------------------------------------
+       # perfom rigid registration
+    if {[$mrmlManager GetEnableTargetToTargetRegistration] } { 
+        puts "===> Register Target To Target "
+    } else {
+        puts "===> Skipping Registration of Target To Target "
     }
 
-    for  { set i  0 } { $i < [$alignedTarget GetNumberOfVolumes] } {incr i} {
-        set intputVolumeNode($i) [$inputTarget GetNthVolumeNode $i]
-        if { $intputVolumeNode($i) == "" } {
-        PrintError "RegisterInputImages: the ${i}th input node is not defined!"
-        return 1
-        }
+       for { set i  0 } {$i < [$alignedTarget GetNumberOfVolumes] } { incr i } {
+          if  { $i == $fixedTargetImageIndex } {
+            continue;
+          }
 
-        set intputVolumeData($i) [$intputVolumeNode($i) GetImageData ] 
-        if { $intputVolumeData($i) == "" } {
-        PrintError "RegisterInputImages: the ${i}the  input node has no image data defined !"
-        return 1
-        }
+          set movingVolumeNode $intputVolumeNode($i) 
+          set outVolumeNode $outputVolumeNode($i) 
 
-
-        set outputVolumeNode($i) [$alignedTarget GetNthVolumeNode $i]
-        if { $outputVolumeNode($i) == "" } {
-        PrintError "RegisterInputImages: the ${i}th aligned input node is not defined!"
-        return 1
-        }
-
-        set outputVolumeData($i) [$outputVolumeNode($i) GetImageData ] 
-        if { $outputVolumeData($i) == "" } {
-        PrintError "RegisterInputImages: the ${i}the  output node has no image data defined !"
-        return 1
-        }
-    }
-
-    set fixedTargetImageIndex  0
-    set fixedVolumeNode  $outputVolumeNode($fixedTargetImageIndex)
-    set fixedImageData   $outputVolumeData($fixedTargetImageIndex)
-  
-    # ----------------------------------------------------------------
-    # perfom rigid registration
-    for { set i  0 } {$i < [$alignedTarget GetNumberOfVolumes] } { incr i } {
-        if  { $i == $fixedTargetImageIndex } {
-        continue;
-        }
-
-        set movingVolumeNode $intputVolumeNode($i) 
-        set outVolumeNode $outputVolumeNode($i) 
-
-        if {[$mrmlManager GetEnableTargetToTargetRegistration] } { 
-        # ------------------------------------------------------------
-        # Perform Rigid Registration - old style 
-        set backgroundLevel  [$LOGIC GuessRegistrationBackgroundLevel $movingVolumeNode]
-        set fixedRASToMovingRASTransform  [vtkTransform New]
-        $LOGIC SlicerRigidRegister $fixedVolumeNode $movingVolumeNode $outVolumeNode $fixedRASToMovingRASTransform [$mrmlManagerMRMLManager GetRegistrationTypeFromString "AtlasToTargetAffineRegistrationRigidMMI"]  [$mrmlManagerMRMLManager GetInterpolationTypeFromString "InterpolationLinear"] $backgroundLevel
-        $fixedRASToMovingRASTransform Delete;
-        # ------------------------------------------------------------
-        # Here comes new rigid registration later 
-        } else {
-        # Just creates output with same dimension as fixed volume 
-        $LOGIC StartPreprocessingResampleToTarget $movingVolumeNode $fixedVolumeNode $outVolumeNode
-        }
-    }
-    # ----------------------------------------------------------------
-    # Clean up 
-    $workingDN SetAlignedTargetNodeIsValid 1
-    return 0
+          if {[$mrmlManager GetEnableTargetToTargetRegistration] } { 
+             # ------------------------------------------------------------
+             # Perform Rigid Registration - old style 
+             set backgroundLevel  [$LOGIC GuessRegistrationBackgroundLevel $movingVolumeNode]
+             set fixedRASToMovingRASTransform  [vtkTransform New]
+             $LOGIC SlicerRigidRegister $fixedVolumeNode $movingVolumeNode $outVolumeNode $fixedRASToMovingRASTransform $alignType $interType $backgroundLevel
+             $fixedRASToMovingRASTransform Delete;
+             # ------------------------------------------------------------
+             # Here comes new rigid registration later 
+           } else {
+             # Just creates output with same dimension as fixed volume 
+             $LOGIC StartPreprocessingResampleToTarget $movingVolumeNode $fixedVolumeNode $outVolumeNode
+           }
+       }
+       # ----------------------------------------------------------------
+       # Clean up 
+       $workingDN SetAlignedTargetNodeIsValid 1
+       return 0
     }
 
     #------------------------------------------------------
     # from  StartPreprocessingTargetToTargetRegistration
-    proc RegisterAtlas { alignedTarget } {
+    # if alignFlag = 0 then it simply writes over the results 
+    proc SkipAtlasRegistration { } {
+        variable workingDN
+        variable mrmlManager
+        variable LOGIC
+        variable subjectNode 
+        variable inputAtlasNode 
+        variable outputAtlasNode 
+    puts "=========================================="
+    puts "== Skip Atlas Registration"
+    puts "=========================================="
+
+        # ----------------------------------------------------------------
+        # Setup (General)
+        # ----------------------------------------------------------------
+        if { $outputAtlasNode == "" } {
+        puts "Atlas was empty"
+        # puts "set outputAtlasNode \[ $mrmlManager CloneAtlasNode $inputAtlasNode \"AlignedAtlas\"\] "
+           set outputAtlasNode [ $mrmlManager CloneAtlasNode $inputAtlasNode "Aligned"]
+           $workingDN SetAlignedAtlasNodeID [$outputAtlasNode GetID]
+        } else {
+        puts "Atlas was just synchronized"
+            $mrmlManager SynchronizeAtlasNode $inputAtlasNode $outputAtlasNode AlignedAtlas
+        }
+
+        set fixedTargetChannel 0
+    set fixedTargetVolumeNode [$subjectNode GetNthVolumeNode $fixedTargetChannel]
+        if { [$fixedTargetVolumeNode GetImageData] == "" } {
+        PrintError "RegisterAtlas: Fixed image is null, skipping registration"
+        return 1;
+    }
+
+
+       # ----------------------------------------------------------------
+       # Make Sure that atlas volumes all have the same resolution as input
+       # ----------------------------------------------------------------    
+       for { set i  0 } {$i < [$outputAtlasNode GetNumberOfVolumes] } { incr i } {
+         set movingVolumeNode [$inputAtlasNode GetNthVolumeNode $i]
+         set outputVolumeNode [$outputAtlasNode GetNthVolumeNode $i ]
+         $LOGIC StartPreprocessingResampleToTarget $movingVolumeNode $fixedTargetVolumeNode $outputVolumeNode
+       } 
+       puts "EMSEG: Atlas-to-target registration complete." 
+       $workingDN SetAlignedAtlasNodeIsValid 1
+       return 0
+    }
+
+    # -----------------------------------------------------------
+    # sets up all variables
+    # Define the three volume relates Input nodes to the pipeline 
+    # - subjectNode 
+    # - inputAtlasNode 
+    # - outputAtasNode
+    # -----------------------------------------------------------
+    proc InitPreProcessing { } {
+    variable mrmlManager
+    variable LOGIC
     variable workingDN
-    variable mrmlManager
-    variable LOGIC
+    variable subjectNode
+    variable inputAtlasNode
+    variable outputAtlasNode
+    puts "=========================================="
+    puts "== InitPreprocessing"
+    puts "=========================================="
 
-    # ----------------------------------------------------------------
-    # Make Sure that atlas volumes all have the same resolution as input vp;imes 
-    # ----------------------------------------------------------------
-    set inputAtlas  [$workingDN GetInputAtlasNode]
-    if { $inputAtlas == "" } {
-        PrintError "RegisterAtlas: Input atlas node is null, aborting!"
-        return 1
-    }
-
-    set alignedAtlas [ $workingDN GetAlignedAtlasNode]
-    if { $alignedAtlas == "" } {
-        set alignedAtlas [ $mrmlManager CloneAtlasNode $inputAtlas AlignedAtlas]
-        $workingDN SetAlignedAtlasNodeID [$alignedAtlas GetID]
-    } else {
-        $mrmlManager SynchronizeAtlasNode $inputAtlas $alignedAtlas AlignedAtlas
-    }
-
-    $workingDN SetAlignedAtlasNodeID [$alignedAtlas GetID]
-
-    # Not needed as we here just do resampleing
-    # set atlasRegistrationVolumeIndex -1;
-        # if [[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey] != ""  
-    #    # Kilian this does not work 
-    #    set atlasRegistrationVolumeKey [[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey]
-    #    set atlasRegistrationVolumeIndex [$inputAtlas GetIndexByKey $atlasRegistrationVolumeKey]
-    # 
-
-    set fixedTargetImageIndex 0
-    set fixedTargetVolumeNode [$alignedTarget GetNthVolumeNode $fixedTargetImageIndex]
-
-    for { set i  0 } {$i < [$alignedAtlas GetNumberOfVolumes] } { incr i } {
-        set movingVolumeNode [$inputAtlas GetNthVolumeNode $i]
-        set outputVolumeNode [$alignedAtlas GetNthVolumeNode $i ]
-        # puts "$LOGIC StartPreprocessingResampleToTarget $movingVolumeNode $fixedTargetVolumeNode $outputVolumeNode"
-        $LOGIC StartPreprocessingResampleToTarget $movingVolumeNode $fixedTargetVolumeNode $outputVolumeNode
-        } 
-    puts "EMSEG: Atlas-to-target registration complete." 
-    $workingDN SetAlignedAtlasNodeIsValid 1
-    return 0
-    }
-
-   proc InitializeRun { } {
-    variable mrmlManager
-    variable LOGIC
-
+    # -----------------------------------------------------------
+    # Check and set valid variables
     if { [ $mrmlManager GetGlobalParametersNode ] == 0 } {
-        PrintError   "InitializeRun: Global parameters node is null, aborting!"
+        PrintError   "InitPreProcessing: Global parameters node is null, aborting!"
         return 1
-    }
-       
-       # Sets Valid Variables  
-       $LOGIC StartPreprocessingInitializeInputData
+        }
+
+    $LOGIC StartPreprocessingInitializeInputData
+
+
+        # -----------------------------------------------------------
+        # Define subject Node  
+        # this should be the first step for any preprocessing  
+        # from  StartPreprocessingTargetToTargetRegistration
+    # -----------------------------------------------------------
+
+        set inputTarget  [$workingDN GetInputTargetNode]    
+        if {$inputTarget == "" } { 
+           PrintError "InitPreProcessing: InputTarget not defined"
+           return 1 
+        }
+
+        if {[RegisterInputImages $inputTarget 0] } {
+            PrintError "InitPreProcessing: Target-to-Target failed!" 
+            return 1
+        }
+
+        set subjectNode [$workingDN GetAlignedTargetNode]
+        if {$subjectNode  == "" } {
+            PrintError "InitPreProcessing: cannot retrieve Aligned Target Node !" 
+            return 1
+        }
+
+    # -----------------------------------------------------------
+    # Define Atlas 
+    # -----------------------------------------------------------
+        set inputAtlasNode  [$workingDN GetInputAtlasNode]    
+        if {$inputAtlasNode == "" } { 
+          PrintError "InitPreProcessing: InputAtlas not defined"
+          return 1 
+       }
+
+       set outputAtlasNode [ $workingDN GetAlignedAtlasNode]
+
 
     return 0
     }
 
     #------------------------------------------------------
     # return 0 when no error occurs 
+
     proc Run { } {
-    variable inputTarget
-    
-    if {[InitializeRun]} { return 1 } 
+    puts "=========================================="
+    puts "== Preprocess Data"
+    puts "=========================================="
+    if {[InitPreProcessing]} { return 1}
 
-    # -----------------------------------------------------------
-    # from  StartPreprocessingTargetToTargetRegistration
-    RegisterInputImages $inputTarget 
+        # Simply sets the given atlas (inputAtlasNode) to the output atlas (outputAtlasNode) 
+    SkipAtlasRegistration
 
-    # from StartPreprocessingAtlasToTargetRegistration
-    RegisterAtlas $inputTarget 
-
-    return 0
+        return 0
     }
 
-    proc PrintError { TEXT } {
-    puts stderr "ERROR: EMSegmenterPreProcessingTcl::${TEXT}"
-    }
-    
 }
  

@@ -194,16 +194,23 @@ void vtkMRMLEMSVolumeCollectionNode::PrintSelf(ostream& os,
     }
 }
 
-void
+int
 vtkMRMLEMSVolumeCollectionNode::
 AddVolume(const char* key, const char* volumeNodeID)
 {
-  // enforce unique keys
-  this->KeyList.remove(key);
-  this->KeyList.push_back(key);
-  this->KeyToVolumeNodeIDMap[key] = volumeNodeID;
-  this->VolumeNodeIDToKeyMap[volumeNodeID] = key;
-  this->Scene->AddReferencedNodeID(volumeNodeID, this);
+  // check if already in list - if so do not do anyything
+  if ((this->GetIndexByKey(key) > -1) && ( !strcmp(this->GetVolumeNodeIDByKey(key),volumeNodeID)))
+    {
+      return 0;
+    }
+
+    // enforce unique keys
+    this->KeyList.remove(key);
+    this->KeyList.push_back(key);
+    this->KeyToVolumeNodeIDMap[key] = volumeNodeID;
+    this->VolumeNodeIDToKeyMap[volumeNodeID] = key;
+    this->Scene->AddReferencedNodeID(volumeNodeID, this);
+    return 1;
 }
 
 void
