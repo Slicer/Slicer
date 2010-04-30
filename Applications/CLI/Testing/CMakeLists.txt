@@ -626,14 +626,14 @@ target_link_libraries(${CLP}Test MRML)
 
 ##################################
 # FreesurferSurfaceSectionExtraction tests
-add_test(FreesurferSurfaceSectionExtractionTest ${Slicer3_EXE} --launch FreesurferSurfaceSectionExtractionTest
-  FreesurferSurfaceSectionExtractionTest --help
-  )
+#add_test(FreesurferSurfaceSectionExtractionTest ${Slicer3_EXE} --launch FreesurferSurfaceSectionExtractionTest
+#FreesurferSurfaceSectionExtractionTest --help
+#)
 
-set (CLP FreesurferSurfaceSectionExtraction)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO)
+#set (CLP FreesurferSurfaceSectionExtraction)
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#add_dependencies(${CLP}Test ${CLP})
+#target_link_libraries(${CLP}Test ITKIO)
 
 ##################################
 # GradientAnisotropicDiffusion tests
