@@ -509,7 +509,7 @@ void vtkIGTToolSelectorGUI::BuildGUIForHelpFrame ()
   const char *help = 
     "This module is used to select a virtual representation of a tool that is tracked via OpenIGTLink. Details can be found at <a>http://www.slicer.org/slicerWiki/index.php/Modules:IGTToolSelector-Documentation-3.6</a>.";
   const char *about =
-      "This was developed by Andrew Wiles at NDI, <a>htt://www.ndigital.com</a>.";
+      "This was developed by Andrew Wiles at NDI, <a>http://www.ndigital.com</a>.";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "IGTToolSelector" );
   this->BuildHelpAndAboutFrame (page, help, about);
