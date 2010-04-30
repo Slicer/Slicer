@@ -23,6 +23,8 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkEMSegmentAnatomicalStructureStep.h"
+#include "vtkMath.h"
+
 #include <vector>
 
 #define EMSEG_PRINT_FREQUENCY_MAX 20
@@ -2112,7 +2114,7 @@ void vtkEMSegmentNodeParametersStep::RightClickOnClassOverviewWeightListCallback
 const char* vtkEMSegmentNodeParametersStep::WeightFormatCallback(const char *text)
 {
   std::stringstream s;
-  s << round(atof(text)*1000)/1000.0;
+  s << vtkMath::Round(atof(text)*1000)/1000.0;
   return s.str().c_str();
 }
 
