@@ -6,7 +6,7 @@
 Intersects an input model with an reference volume and produces an output label map.
 </description>
   <version>0.1.0.$Revision: 8643 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PolyDataToFilledLabelMap-Documentation-3.4</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:PolyDatToLabelMap-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Nicole Aucoin BWH, Xiaodong Tao, GE</contributor>
 <acknowledgements>
