@@ -58,7 +58,9 @@ if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 
 ### Add the Testing Subdirectory.
+if(BUILD_TESTING)
+  add_subdirectory(TestSuite)
+endif(BUILD_TESTING)
 if(NOT Slicer3_SOURCE_DIR)
-  add_subdirectory(TestingBRAINSDemonWarp)
   add_subdirectory(Example)
 endif(NOT Slicer3_SOURCE_DIR)

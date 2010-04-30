@@ -57,7 +57,5 @@ endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONM
 
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)
-if(NOT Slicer3_SOURCE_DIR)
-  add_subdirectory(TestingBRAINSResample)
-endif(NOT Slicer3_SOURCE_DIR)
+  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)

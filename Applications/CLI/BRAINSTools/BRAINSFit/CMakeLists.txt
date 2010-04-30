@@ -41,11 +41,9 @@ set(${CLP}_SOURCE BRAINSFit.cxx BRAINSFitPrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
-if(NOT Slicer3_SOURCE_DIR)
 if(BUILD_TESTING)
-  add_subdirectory(TestData)
+  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
-endif(NOT Slicer3_SOURCE_DIR)
 
 include(InstallRequiredSystemLibraries)
 

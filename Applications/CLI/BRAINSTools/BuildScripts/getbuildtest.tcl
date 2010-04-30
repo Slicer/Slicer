@@ -39,7 +39,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   h --help : prints this message and exits"
     set msg "$msg\n   -f --clean : delete lib and build directories first"
     set msg "$msg\n   -t --test-type : CTest test target (default: Experimental)"
-    set msg "$msg\n   -a --abi : Build Parameter Name (default: DEBUG)"
+    set msg "$msg\n   -a --abi : Build Parameter Name (default: DEBUG or DEBUG_64 on the mac)"
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     set msg "$msg\n   --version-patch : set the patch string for the build (used by installer)"
@@ -66,7 +66,13 @@ set ::GETBUILDTEST(upload) "false"
 set ::GETBUILDTEST(uploadFlag) "nightly"
 set ::GETBUILDTEST(doxy) "false"
 set ::GETBUILDTEST(verbose) "false"
-set ::GETBUILDTEST(abi) "DEBUG"
+###VAM
+if { $::tcl_platform(os) == "Darwin" } {
+  set ::GETBUILDTEST(abi) "DEBUG_64"
+} else {
+  set ::GETBUILDTEST(abi) "DEBUG"
+}
+
 set ::GETBUILDTEST(buildList) ""
 set ::GETBUILDTEST(cpack-generator) ""
 set ::GETBUILDTEST(installPrefix) ""
@@ -342,6 +348,7 @@ if { $isWindows } {
 
 puts "$::PACKAGE_HOME $::PACKAGE_NAME"
 set ::PACKAGE_BUILD_TYPE $::GETBUILDTEST(abi)
+puts "Using --abi $::GETBUILDTEST(abi)"
 set env(PACKAGE_BUILD_TYPE) $::PACKAGE_BUILD_TYPE
 
 if { [string match $tcl_platform(os) "Windows NT"] } {

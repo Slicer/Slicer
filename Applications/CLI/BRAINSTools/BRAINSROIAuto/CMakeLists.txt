@@ -42,7 +42,5 @@ CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" ""
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 if(BUILD_TESTING)
-if(NOT Slicer3_SOURCE_DIR)
-  add_subdirectory(Testing)
-endif(NOT Slicer3_SOURCE_DIR)
+  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
