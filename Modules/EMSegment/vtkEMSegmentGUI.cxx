@@ -109,16 +109,16 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
     this->ParametersSetStep = NULL;
     }
 
-  if (!this->InputChannelStep)
+  if (this->InputChannelStep)
     {
-      this->InputChannelStep->Delete();
-      this->InputChannelStep = NULL;
+    this->InputChannelStep->Delete();
+    this->InputChannelStep = NULL;
     }
 
-  if (!this->PreProcessingStep)
+  if (this->PreProcessingStep)
     {
-      this->PreProcessingStep->Delete();
-      this->PreProcessingStep = NULL;
+    this->PreProcessingStep->Delete();
+    this->PreProcessingStep = NULL;
     }
 
   if (this->AnatomicalStructureStep)
