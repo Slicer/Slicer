@@ -42,5 +42,5 @@ CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" ""
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 if(BUILD_TESTING)
-  add_subdirectory(TestSuite)
+  #  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
