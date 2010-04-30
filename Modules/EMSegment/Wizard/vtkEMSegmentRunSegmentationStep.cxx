@@ -815,7 +815,7 @@ void vtkEMSegmentRunSegmentationStep::InitialROIWidget()
   this->ButtonsReset    = NULL;
   this->ROILabelMapNode = NULL;
   this->ROILabelMap     = NULL;
-  this->ROIHideFlag     = 0; 
+  // this->ROIHideFlag     = 0; 
 
   this->roiNode = NULL;
   this->roiWidget = NULL;
@@ -950,7 +950,7 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
   // Here SegmentationBoundary* sets roiNode
   this->MRMLUpdateROINodeFromROI();
 
-  this->roiNode->SetVisibility(this->ROIHideFlag);
+  // this->roiNode->SetVisibility(this->ROIHideFlag);
   this->roiNode->AddObserver(vtkCommand::ModifiedEvent, this->ROIMRMLCallbackCommand);
 
   // put 
@@ -1012,8 +1012,10 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     this->ButtonsShow = vtkKWPushButton::New();
   }
 
-  if(!this->VisibilityIcons)
-    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+  if(!this->VisibilityIcons) 
+    {
+      this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+    }
 
   if (!this->ButtonsShow->IsCreated()) {
     this->ButtonsShow->SetParent(this->FrameButtons);
@@ -1022,9 +1024,17 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     this->ButtonsShow->SetReliefToFlat ( );
     this->ButtonsShow->SetOverReliefToNone ( );
     this->ButtonsShow->SetBorderWidth ( 0 );
-    this->ButtonsShow->SetBalloonHelpString("Show/hide label overlay in image viewer"); 
-    this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
+    this->ButtonsShow->SetBalloonHelpString("Show/hide ROI overlay in image viewer"); 
+    if (this->ROILabelMapNode) 
+      {
+      this->ROIMapShow();
+      } 
+    else 
+     { 
+      this->ROIMapRemove();
+    }
   }
+
   if(!this->VisibilityLabel){
     this->VisibilityLabel = vtkKWLabel::New();
   }
@@ -1058,7 +1068,7 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
   this->AddGUIObservers();
   // Keep seperate bc GUIObserver is also called from vtkEMSegmentRunSegmentationStepGUI ! 
   // You only want to add the observers below when the step is active 
-  this->AddROISamplingGUIObservers();
+  // this->AddROISamplingGUIObservers();
   cout << "vtkEMSegmentRunSegmentationStep::ShowUserInterface() end " << endl;
 }
 
@@ -1462,8 +1472,16 @@ int vtkEMSegmentRunSegmentationStep::ROIMapShow() {
   applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->SetSliceOffset(oldSliceSetting[1]);
   applicationGUI->GetMainSliceGUI("Green")->GetLogic()->SetSliceOffset(oldSliceSetting[2]);
 
-  this->ROIMapUpdate();
 
+  if (this->ButtonsShow && this->ButtonsShow->IsCreated())  {
+    this->ButtonsShow->SetText("Hide render");
+    if (this->VisibilityIcons) {
+      this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
+    }
+  }
+  this->AddROISamplingGUIObservers();
+  
+  this->ROIMapUpdate();
   return 1;
 }
 
@@ -1483,7 +1501,12 @@ void vtkEMSegmentRunSegmentationStep::ROIMapRemove() {
   // Needs to be done otherwise when going backwards field is not correctly defined   
   if (this->ButtonsShow && this->ButtonsShow->IsCreated())  {
     this->ButtonsShow->SetText("Show render");
+    if (this->VisibilityIcons) {
+      this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetInvisibleIcon());
+    }
   }
+  this->RemoveROISamplingGUIObservers();
+  
 }
 
 //----------------------------------------------------------------------------
@@ -1558,16 +1581,10 @@ void vtkEMSegmentRunSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsign
     if (this->ButtonsShow && (button == this->ButtonsShow)) 
     { 
       if (this->ROILabelMapNode) {
-        this->ButtonsShow->SetText("Show render");
         this->ROIMapRemove();
-        // this->ResetROIRender();
-        this->ROIHideFlag = 1;
-        this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetInvisibleIcon());
       } else { 
         if (this->ROIMapShow()) { 
           //this->UpdateROIRender();
-          this->ButtonsShow->SetText("Hide render");
-          this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
         }
 // FIXME: when feature complete
 //        if (roiNode)  
@@ -1590,7 +1607,7 @@ void vtkEMSegmentRunSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsign
   }
 
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
-  if (s)
+  if (s &&  this->ROILabelMapNode)
   {
     // Retrieve Coordinates and update ROI
     int index = 0; 
@@ -1619,18 +1636,8 @@ void vtkEMSegmentRunSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsign
       {
       this->roiNode->SetXYZ(rasCoords);
       }
-
-    if (!this->ROILabelMapNode && !this->ROIHideFlag && this->ROICheck()) {
-      if (this->ROIMapShow()) 
-        {
-        MRMLUpdateROINodeFromROI();
-        roiNode->SetVisibility(1);
-        this->ButtonsShow->SetText("Hide render");
-        }
-    }
-    // this->UpdateROIRender();
-  }  
-  // Define SHOW Button 
+    MRMLUpdateROINodeFromROI();
+  }
 }
 
 //----------------------------------------------------------------------------

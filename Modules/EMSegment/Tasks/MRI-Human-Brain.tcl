@@ -23,7 +23,7 @@ namespace eval EMSegmenterParametersStepTcl {
         # EMS id="vtkMRMLEMSNode1"  name="MRI Human Brain"
         # the name is the same as this tcl file name where the spaces are replaced with empty spaces  
     puts "Debugging right now" 
-    return "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml"
+    # return "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml"
     return http://xnd.slicer.org:8000/data/20100427T164324Z/MRIHumanBrain.mrml
     }
 }
@@ -292,149 +292,154 @@ namespace eval EMSegmenterPreProcessingTcl {
         variable inputAtlasNode 
         variable outputAtlasNode 
 
-    if {($alignFlag == 0) || (([$mrmlManager GetRegistrationAffineType] == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationOff])  && ([$mrmlManager GetRegistrationDeformableType ]  == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff])) } {
-        return [SkipAtlasRegistration]
-    }
+        if {($alignFlag == 0) || (([$mrmlManager GetRegistrationAffineType] == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationOff])  && ([$mrmlManager GetRegistrationDeformableType ]  == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff])) } {
+          return [SkipAtlasRegistration]
+        }
 
 
-    puts "=========================================="
-    puts "== Register Atlas "
-    puts "=========================================="
+        puts "=========================================="
+        puts "== Register Atlas "
+        puts "=========================================="
 
 
         # ----------------------------------------------------------------
         # Setup 
         # ----------------------------------------------------------------
         if { $outputAtlasNode == "" } {
-        puts "Atlas was empty"
-        # puts "set outputAtlasNode \[ $mrmlManager CloneAtlasNode $inputAtlasNode \"AlignedAtlas\"\] "
+           puts "Atlas was empty"
+           # puts "set outputAtlasNode \[ $mrmlManager CloneAtlasNode $inputAtlasNode \"AlignedAtlas\"\] "
            set outputAtlasNode [ $mrmlManager CloneAtlasNode $inputAtlasNode "Aligned"]
            $workingDN SetAlignedAtlasNodeID [$outputAtlasNode GetID]
         } else {
-        puts "Atlas was just synchronized"
+            puts "Atlas was just synchronized"
             $mrmlManager SynchronizeAtlasNode $inputAtlasNode $outputAtlasNode "Aligned"
         }
 
         set fixedTargetChannel 0
-    set fixedTargetVolumeNode [$subjectNode GetNthVolumeNode $fixedTargetChannel]
+        set fixedTargetVolumeNode [$subjectNode GetNthVolumeNode $fixedTargetChannel]
         if { [$fixedTargetVolumeNode GetImageData] == "" } {
-        PrintError "RegisterAtlas: Fixed image is null, skipping registration"
-        return 1;
-    }
+           PrintError "RegisterAtlas: Fixed image is null, skipping registration"
+           return 1;
+        }
 
-    set atlasRegistrationVolumeIndex -1;
-    if {[[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey] != "" }  {
-        set atlasRegistrationVolumeKey [[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey]
-        set atlasRegistrationVolumeIndex [$inputAtlasNode GetIndexByKey $atlasRegistrationVolumeKey]
-    }
+        set atlasRegistrationVolumeIndex -1;
+        if {[[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey] != "" }  {
+          set atlasRegistrationVolumeKey [[$mrmlManager GetGlobalParametersNode] GetRegistrationAtlasVolumeKey]
+          set atlasRegistrationVolumeIndex [$inputAtlasNode GetIndexByKey $atlasRegistrationVolumeKey]
+        }
 
-    if {$atlasRegistrationVolumeIndex < 0 } { 
-        PrintError "RegisterAtlas: Attempt to register atlas image but no atlas image selected!"
-        return 1
-    }
+        if {$atlasRegistrationVolumeIndex < 0 } { 
+          PrintError "RegisterAtlas: Attempt to register atlas image but no atlas image selected!"
+          return 1
+        }
 
-    set movingAtlasVolumeNode [$inputAtlasNode GetNthVolumeNode $atlasRegistrationVolumeIndex]
-    set movingAtlasImageData  [$movingAtlasVolumeNode GetImageData]
+        set movingAtlasVolumeNode [$inputAtlasNode GetNthVolumeNode $atlasRegistrationVolumeIndex]
+        set movingAtlasImageData  [$movingAtlasVolumeNode GetImageData]
+
+        set outputAtlasVolumeNode [$outputAtlasNode GetNthVolumeNode $atlasRegistrationVolumeIndex]
+        set outAtlasImageData     [$outputAtlasVolumeNode GetImageData] 
         
-    set outputAtlasVolumeNode [$outputAtlasNode GetNthVolumeNode $atlasRegistrationVolumeIndex]
-    set outAtlasImageData     [$outputAtlasVolumeNode GetImageData] 
-        
-    if  { $movingAtlasImageData == "" } {
-        PrintError "RegisterAtlas: Moving image is null, skipping"
-        return 1
-    }
+        if  { $movingAtlasImageData == "" } {
+           PrintError "RegisterAtlas: Moving image is null, skipping"
+           return 1
+        }
 
-    if  {$outAtlasImageData == "" } { 
-        PrintError "RegisterAtlas: Registration output is null, skipping"
-        return 1
-    }
+        if  {$outAtlasImageData == "" } { 
+           PrintError "RegisterAtlas: Registration output is null, skipping"
+           return 1
+        }
 
-    set affineType [ $mrmlManager GetRegistrationAffineType ]
-    set deformableType [ $mrmlManager GetRegistrationDeformableType ]
-    set interpolationType [ $mrmlManager GetRegistrationInterpolationType ] 
+        set affineType [ $mrmlManager GetRegistrationAffineType ]
+        set deformableType [ $mrmlManager GetRegistrationDeformableType ]
+        set interpolationType [ $mrmlManager GetRegistrationInterpolationType ] 
     
-    set fixedRASToMovingRASTransformAffine [ vtkTransform New]
-    set fixedRASToMovingRASTransformDeformable ""
+        set fixedRASToMovingRASTransformAffine [ vtkTransform New]
+        set fixedRASToMovingRASTransformDeformable ""
+
+    puts "========== Info ========="
+        puts "= Fixed:   [$fixedTargetVolumeNode GetName] "
+        puts "= Moving:  [$movingAtlasVolumeNode GetName] "
+        puts "= Affine:  $affineType"
+        puts "= BSpline: $deformableType"
+    puts "= Interp:  $interpolationType"
+    puts "========================="
+
+        
+
     
 
         # ----------------------------------------------------------------
         # affine registration
         # ----------------------------------------------------------------
 
-    switch { $affineType  } {
-        case [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationOff ] {
-        puts "Skipping affine registration of atlas image." 
-        }
-        default {
-        puts  "  Registering atlas image rigid..."
-        $LOGIC SlicerRigidRegister $fixedTargetVolumeNode $movingAtlasVolumeNode "" $fixedRASToMovingRASTransformAffine $affineType $interpolationType 0
-        }    
-    }
-    puts "Atlas-to-target transform (fixedRAS -->> movingRAS): " 
-    for { set  r 0 } { $r < 4 } { incr r } {
-        puts -nonewline "    "
-        for { set  c 0 } { $c < 4 } { incr c } {
-        puts -nonewline "[[$fixedRASToMovingRASTransformAffine GetMatrix] GetElement $r $c]   " 
-        }
-        puts " " 
+        if { $affineType == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationOff ] } {
+           puts "Skipping affine registration of atlas image." 
+        } else {
+           puts  "Registering atlas image rigid..."
+           $LOGIC SlicerRigidRegister $fixedTargetVolumeNode $movingAtlasVolumeNode "" $fixedRASToMovingRASTransformAffine $affineType $interpolationType 0 
+           puts "Atlas-to-target transform (fixedRAS -->> movingRAS): " 
+           for { set  r 0 } { $r < 4 } { incr r } {
+              puts -nonewline "    "
+              for { set  c 0 } { $c < 4 } { incr c } {
+                 puts -nonewline "[[$fixedRASToMovingRASTransformAffine GetMatrix] GetElement $r $c]   " 
+              }
+              puts " " 
+           }
     }
 
         # ----------------------------------------------------------------
         # deformable registration
         # ----------------------------------------------------------------
 
-    switch { $deformableType } { 
-        case [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff ]  {
-        puts "Skipping deformable registration of atlas image" 
-        }
-        default {
-        puts "Registering atlas image B-Spline..." 
-        set fixedRASToMovingRASTransformDeformable [vtkGridTransform New]
-        $fixedRASToMovingRASTransformDeformable SetInterpolationModeToCubic
-        $LOGIC SlicerBSplineRegister $fixedTargetVolumeNode $movingAtlasVolumeNode "" $fixedRASToMovingRASTransformDeformable $fixedRASToMovingRASTransformAffine $deformableType $interpolationType 0
-        }
-    }
+    set OffType [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff ]
+    puts "Deformable registration $deformableType Off: $OffType" 
 
-    # still have to find out which one is the right input channel - Assignment is done in earlier step
-    puts "Perform Registration - currently not implemented " 
+        if { $deformableType == $OffType } {
+             puts "Skipping deformable registration of atlas image" 
+        } else {
+            puts "Registering atlas image B-Spline..." 
+            set fixedRASToMovingRASTransformDeformable [vtkGridTransform New]
+            $fixedRASToMovingRASTransformDeformable SetInterpolationModeToCubic
+            $LOGIC SlicerBSplineRegister $fixedTargetVolumeNode $movingAtlasVolumeNode "" $fixedRASToMovingRASTransformDeformable $fixedRASToMovingRASTransformAffine $deformableType $interpolationType 0
+        }
 
         # ----------------------------------------------------------------
         # resample
         # ----------------------------------------------------------------
  
-    for { set i  0 } {$i < [$outputAtlasNode GetNumberOfVolumes] } { incr i } {
-        set movingVolumeNode [$inputAtlasNode GetNthVolumeNode $i]
-        set outputVolumeNode  [$outputAtlasNode GetNthVolumeNode $i ]
+        for { set i  0 } {$i < [$outputAtlasNode GetNumberOfVolumes] } { incr i } {
+           set movingVolumeNode [$inputAtlasNode GetNthVolumeNode $i]
+           set outputVolumeNode  [$outputAtlasNode GetNthVolumeNode $i ]
 
-        if {[$movingVolumeNode GetImageData] == ""} {
-        PrintError "RegisterAtlas: Moving image is null, skipping: $i"
-        return 1
-        }    
-        if { [$outputVolumeNode GetImageData]  == ""} {
-        PrintError "RegisterAtlas: Registration output is null, skipping: $i" 
-        return 1
-        }
-        puts "Resampling atlas image $i ..." 
+           if {[$movingVolumeNode GetImageData] == ""} {
+             PrintError "RegisterAtlas: Moving image is null, skipping: $i"
+             return 1
+           }    
+           if { [$outputVolumeNode GetImageData]  == ""} {
+             PrintError "RegisterAtlas: Registration output is null, skipping: $i" 
+             return 1
+           }
+           puts "Resampling atlas image $i ..." 
 
-        set backgroundLevel  [$LOGIC GuessRegistrationBackgroundLevel $movingVolumeNode]
-        puts "Guessed background level: $backgroundLevel"
+           set backgroundLevel  [$LOGIC GuessRegistrationBackgroundLevel $movingVolumeNode]
+           puts "Guessed background level: $backgroundLevel"
 
-        # resample moving image
-        if {$fixedRASToMovingRASTransformDeformable != "" } {
-        $LOGIC SlicerImageResliceWithGrid $movingVolumeNode $outputVolumeNode $fixedTargetVolumeNode $fixedRASToMovingRASTransformDeformable $interpolationType $backgroundLevel
-        } else {
-        $LOGIC SlicerImageReslice $movingVolumeNode $outputVolumeNode $fixedTargetVolumeNode $fixedRASToMovingRASTransformAffine $interpolationType $backgroundLevel
-        }
-
+           # resample moving image
+           if {$fixedRASToMovingRASTransformDeformable != "" } {
+               $LOGIC SlicerImageResliceWithGrid $movingVolumeNode $outputVolumeNode $fixedTargetVolumeNode $fixedRASToMovingRASTransformDeformable $interpolationType $backgroundLevel
+           } else {
+             $LOGIC SlicerImageReslice $movingVolumeNode $outputVolumeNode $fixedTargetVolumeNode $fixedRASToMovingRASTransformAffine $interpolationType $backgroundLevel
+           }
     } 
-    $fixedRASToMovingRASTransformAffine Delete
-    if { $fixedRASToMovingRASTransformDeformable != "" } { 
-        $fixedRASToMovingRASTransformDeformable Delete
-    }
+
+        $fixedRASToMovingRASTransformAffine Delete
+        if { $fixedRASToMovingRASTransformDeformable != "" } { 
+          $fixedRASToMovingRASTransformDeformable Delete
+        }
 
         puts "Atlas-to-target registration complete." 
-    $workingDN SetAlignedAtlasNodeIsValid 1
-    return 0
+        $workingDN SetAlignedAtlasNodeIsValid 1
+        return 0
     }
 }
  

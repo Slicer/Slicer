@@ -305,6 +305,7 @@ void vtkEMSegmentPreProcessingStep::Validate()
 {
   
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkKWWizardWorkflow *wizard_workflow = this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
 
   // If they are still valid do not repeat preprocessing unless otherwhise wanted 
   // Kilian - still to do - save intermediate results 
@@ -315,24 +316,21 @@ void vtkEMSegmentPreProcessingStep::Validate()
       if (!vtkKWMessageDialog::PopupYesNo(this->GetApplication(), NULL, "Redo Preprocessing of images?",
                       "Do you want to redo preprocessing of input images ?", 
                        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
-    {
-      // If not just proceed
-      this->Superclass::Validate();
-      return;
-    }
-    }
-
-  vtkKWWizardWorkflow *wizard_workflow = this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
-
-  // for debugging disabled
-  if (!vtkKWMessageDialog::PopupYesNo(this->GetApplication(), NULL, "Start Preprocessing of images?",
+      {
+        // If not just proceed
+        this->Superclass::Validate();
+        return;
+      }
+    } else {
+      if (!vtkKWMessageDialog::PopupYesNo(this->GetApplication(), NULL, "Start Preprocessing of images?",
                        "Preprocessing of images might take a while. Do you want to proceed ?", 
                        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
-    {
-      wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
-      wizard_workflow->ProcessInputs();
-      return;
-    }
+      {
+        wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+        wizard_workflow->ProcessInputs();
+        return;
+      }
+   }
 
   this->SetTaskPreprocessingSetting();
 
