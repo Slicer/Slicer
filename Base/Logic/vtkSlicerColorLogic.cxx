@@ -815,7 +815,7 @@ void vtkSlicerColorLogic::FindColorFiles()
     struct dirent *dirp;
     if ((dp  = opendir(dirString.c_str())) == NULL)
       {
-      vtkErrorMacro("Error(" << errno << ") opening " << dirString.c_str());
+      vtkErrorMacro("\nError(" << errno << ") opening user specified color path: " << dirString.c_str() << ", no color files will be loaded from that directory\n(check View -> Application Settings -> Module Settings to adjust your User defined color file paths)");
       }
     else
       {
