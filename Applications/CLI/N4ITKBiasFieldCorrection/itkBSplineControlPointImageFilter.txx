@@ -161,6 +161,9 @@ BSplineControlPointImageFilter<InputImage, TOutputImage>
 
   this->m_Spacing.Fill(1.0);
   this->m_Size.Fill(1);
+  this->m_Origin.Fill(0.);
+  this->m_Direction.SetIdentity();
+  this->m_DoMultilevel = false;
 }
 
 template <class InputImage, class TOutputImage>
