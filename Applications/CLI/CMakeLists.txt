@@ -679,6 +679,7 @@ SET(cli_modules
   ExtractSkeleton
   #Java
   N4ITKBiasFieldCorrection
+  RobustStatisticsSegmenter
   )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
