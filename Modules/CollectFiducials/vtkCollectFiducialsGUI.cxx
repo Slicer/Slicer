@@ -421,7 +421,7 @@ void vtkCollectFiducialsGUI::BuildGUIForHelpFrame()
   const char *help = 
       "This module is used to collect patient fiducial markers using a tracking system. Details on the module can be found here: <a>http://www.slicer.org/slicerWiki/index.php/Modules:CollectFiducials-Documentation-3.6</a>";
   const char *about =
-    "This was developed by Andrew Wiles at NDI, <a>htt://www.ndigital.com</a>.";
+    "This was developed by Andrew Wiles at NDI, <a>http://www.ndigital.com</a>.";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "CollectFiducials" );
   this->BuildHelpAndAboutFrame (page, help, about);
