@@ -158,6 +158,9 @@ BSplineControlPointImageFilter<InputImage, TOutputImage>
   this->m_CloseDimension.Fill( 0 );
 
   this->m_BSplineEpsilon = vcl_numeric_limits<RealType>::epsilon();
+
+  this->m_Spacing.Fill(1.0);
+  this->m_Size.Fill(1);
 }
 
 template <class InputImage, class TOutputImage>
