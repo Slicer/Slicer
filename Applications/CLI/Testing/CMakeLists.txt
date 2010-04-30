@@ -1103,6 +1103,9 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
 
 # use a helper to compare the baseline and output
+
+# this doesn't compile on windows
+if (NOT WIN32)
 add_test(SparseFieldLevelSetContourTest1  ${CMAKE_COMMAND}
   -Dtest_cmd=${Slicer3_BINARY_DIR}/bin/SparseFieldLevelSetContour1Test
   -Dtest_name=SparseFieldLevelSetContour1Test
@@ -1130,7 +1133,7 @@ target_link_libraries(${CLP}Test SparseFieldLevelSetContourLib
   vtkITK  vtkIO SlicerBaseCLI
   ModuleDescriptionParser
   )
-
+endif (NOT WIN32)
 
 # MergeModels tests
 
