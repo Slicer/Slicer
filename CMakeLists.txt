@@ -426,8 +426,18 @@ CONFIGURE_FILE(
   )
 
 CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrindForOneModule.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrindForOneModule.sh
+  )
+
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageLocally.sh.in 
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
+  )
+
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageForOneTest.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageForOneTest.sh
   )
 
 CONFIGURE_FILE(
