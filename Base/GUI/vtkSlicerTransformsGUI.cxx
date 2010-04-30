@@ -205,7 +205,7 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "Transforms", "Transforms", NULL );
     
   // Define your help text and build the help frame here.
-  const char *help = "The Transforms Module creates and edits transforms. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Transforms-Documentation-3.6</a>\n";
+  const char *help = "The Transformations module creates and edits slicer Transformation nodes. Transformation nodes are used in Slicer to define spacial relationships between different nodes (such as volumes, models, fiducials, ROI's, or other Transform nodes) or between the nodes and the global RAS space. You can establish these relations by dragging the nodes under the Transformation nodes in the Data module.\n The Transforms module is used for interactive editing of Transformation nodes. Transformation nodes can be both linear (expressed as 4 by 4 matrix) or non-linear warp transformations. The transformation module allow you to edit only linear Transformation nodes. The module can e used for example for manual registering of two images of the same subject accrued at different times or using different modalities. Automatic registration modules are also available in Slicer under the Registration category.  \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Transforms-Documentation-3.6</a>\n";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. with help from others at SPL, BWH (Ron Kikinis)";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Transforms" );
   this->BuildHelpAndAboutFrame ( page, help, about );

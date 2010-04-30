@@ -12,13 +12,10 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerROILogic.h"
 #include "vtkMRMLROINode.h"
-#include "vtkMRMLROIListNode.h"
 
 
 #include "vtkKWFrame.h"
-#include "vtkKWPushButton.h"
 #include "vtkSlicerVisibilityIcons.h"
-#include "vtkKWChangeColorButton.h"
 
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWScale.h"
@@ -26,13 +23,6 @@
 #include "vtkKWRange.h"
 #include "vtkKWExtent.h"
 
-class vtkKWMultiColumnListWithScrollbars;
-class vtkKWPushButton;
-class vtkKWMessage;
-class vtkSlicerVisibilityIcons;
-class vtkKWChangeColorButton;
-class vtkKWScaleWithEntry;
-class vtkKWMenuButtonWithLabel;
 class vtkSlicerROIDisplayWidget;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerROIGUI : public vtkSlicerModuleGUI
@@ -43,19 +33,6 @@ public:
   static vtkSlicerROIGUI* New (  );
   vtkTypeRevisionMacro ( vtkSlicerROIGUI, vtkSlicerModuleGUI );
   void PrintSelf ( ostream& os, vtkIndent indent );
-
-  /// 
-  /// Get methods on class members ( no Set methods required. )
-  vtkGetObjectMacro ( AddROIButton, vtkKWPushButton);
-  vtkGetObjectMacro ( RemoveROIButton, vtkKWPushButton);
-  vtkGetObjectMacro ( RemoveROIListButton, vtkKWPushButton);
-  vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
-  vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
-  vtkGetObjectMacro ( ROIColorButton, vtkKWChangeColorButton);
-  vtkGetObjectMacro ( ROISelectedColorButton, vtkKWChangeColorButton);
-  vtkGetObjectMacro ( ROITextScale, vtkKWScaleWithEntry);
-  vtkGetObjectMacro ( ROIOpacity, vtkKWScaleWithEntry);
-  vtkGetObjectMacro ( Logic, vtkSlicerROILogic);
 
   void SetModuleLogic ( vtkSlicerROILogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
@@ -95,28 +72,12 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   /// 
-  /// Once know that the GUI has to be cleared and updated to show elements
-  /// from a new list, use this call
-  virtual void SetGUIFromList(vtkMRMLROIListNode * activeROIListNode);
-
-  /// 
   /// Methods describe behavior at module enter and exit.
   virtual void Enter ( );
   //BTX
   using vtkSlicerComponentGUI::Enter;
   //ETX
   virtual void Exit ( );
-
-  virtual void UpdateElement(int row, int col, char * str);
-
-  /// 
-  /// Getting and setting the mrml ROI list node id
-  vtkGetStringMacro(ROIListNodeID);
-  void SetROIListNodeID(char *id);
-
-  /// 
-  /// Set the selected node, the ROI list id, and update the widgets
-  void SetROIListNode(vtkMRMLROIListNode *ROIListNode);
 
   /// 
   /// Update the gui from the currently selected ROI node, called on Enter
@@ -131,80 +92,13 @@ protected:
   /// Which ROI  node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROISelectorWidget;
 
-  /// 
-  /// Which ROI list node are we displaying in this gui 
-  vtkSlicerNodeSelectorWidget* ROIListSelectorWidget;
-
-  /// 
-  /// Which voliume node is associated with the ROI 
-  vtkSlicerNodeSelectorWidget* VolumeNodeSelectorWidget;
-
  /// Description:
   /// Module logic and mrml pointers
   vtkSlicerROILogic *Logic;
 
-  /// 
-  /// The ID of the ROI node that is currently displayed in the GUI
-  char *ROIListNodeID;
-
-  /// 
-  /// The ROI  node that is currently displayed in the GUI
-  vtkMRMLROIListNode *ROINode;
-
-  /// 
-  /// The ROI list node that is currently displayed in the GUI
-  vtkMRMLROIListNode *ROIListNode;
-
-  /// Widgets for the ROI module
-  /// add a point
-  vtkKWPushButton *AddROIButton;
-  /// remove the last selected (multi column list definition of selected)
-  /// point
-  vtkKWPushButton *RemoveROIButton;
-  /// remove all the ROI boxes on this list
-  vtkKWPushButton *RemoveROIListButton;
 
   /// ROI position and Raidus scale
   vtkSlicerROIDisplayWidget *ROIDisplayWidget;
-
-  /// ROI visibility
-  vtkKWPushButton *VisibilityToggle;
-  vtkSlicerVisibilityIcons *VisibilityIcons;
-
-  /// ROI colour
-  vtkKWChangeColorButton *ROIColorButton;
-
-  /// ROI selected ROI colour
-  vtkKWChangeColorButton *ROISelectedColorButton;
-
-  /// text scale
-  vtkKWScaleWithEntry *ROITextScale;
-
-  /// opacity
-  vtkKWScaleWithEntry *ROIOpacity;
-
-  /// display the points on the list
-  vtkKWMultiColumnListWithScrollbars *MultiColumnList;
-
-  /// the columns that hold the
-  /// name, x, y, z, selected
-  int NumberOfColumns;
-
-  //BTX
-  /// 
-  /// The column orders in the list box
-  enum
-    {
-    NameColumn = 0,
-    SelectedColumn = 1,
-    XColumn = 2,
-    YColumn = 3,
-    ZColumn = 4,
-    RadiusXColumn = 5,
-    RadiusYColumn = 6,
-    RadiusZColumn = 7,
-    };
-  //ETX
 
 
 private:
