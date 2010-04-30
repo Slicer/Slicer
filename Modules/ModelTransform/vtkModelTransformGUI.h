@@ -12,7 +12,7 @@
 // Had to add this to force loading of these support libraries
 // Only libraries with entries that will be dynamically called from TCL need to be instantiated
 #include "vtkTcl.h"
-//extern "C" int VtkslicerModelTransformmodulelogic_Init(Tcl_Interp *interp);
+extern "C" int Vtkslicermodeltransformmodulelogic_Init(Tcl_Interp *interp);
 
 class vtkKWFrame;
 class vtkSlicerNodeSelectorWidget;
