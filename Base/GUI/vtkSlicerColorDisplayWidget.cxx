@@ -1028,8 +1028,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
 
   // clean up
   displayFrame->Delete();
-
-  // TODO: somehow trigger the filling in of the table
   
 }
 
@@ -1175,7 +1173,7 @@ int vtkSlicerColorDisplayWidget::GetSelectedColorIndex()
 
   if (numRows != 1)
     {
-    vtkWarningMacro("Error in selection: " << numRows << " selected, select just one and try again.");
+    vtkDebugMacro("Error in selection: " << numRows << " selected, select just one and try again.");
     } 
   // the table index may not match the colour index, return the value
   row = this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();

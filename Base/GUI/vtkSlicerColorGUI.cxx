@@ -185,6 +185,8 @@ void vtkSlicerColorGUI::Enter ( vtkMRMLNode *node )
 
     this->ColorDisplayWidget->GetColorSelectorWidget()->UpdateMenu();
     this->ColorDisplayWidget->GetColorSelectorWidget()->SetSelected(colorNode);
+    this->ColorDisplayWidget->SetColorNodeID(colorNode->GetID());
+    
     this->ColorEditWidget->GetCopyNodeSelectorWidget()->UpdateMenu();
     this->ColorEditWidget->GetCopyNodeSelectorWidget()->SetSelected(colorNode);
     }
@@ -323,6 +325,36 @@ void vtkSlicerColorGUI::BuildGUI ( )
 
   editFrame->Delete();
   displayFrame->Delete ( );
+
+  // select the default label map by default
+  if (this->MRMLScene)
+    {
+    vtkSmartPointer<vtkSlicerColorLogic> colorLogic = vtkSmartPointer<vtkSlicerColorLogic>::New();
+    char *defaultID = const_cast<char *>(colorLogic->GetDefaultLabelMapColorNodeID());
+    vtkMRMLColorNode *defaultNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(defaultID));
+    if (defaultNode)
+      {
+      if (this->ColorDisplayWidget->GetColorSelectorWidget())
+        {
+        this->ColorDisplayWidget->GetColorSelectorWidget()->UpdateMenu();
+        this->ColorDisplayWidget->GetColorSelectorWidget()->SetSelected(defaultNode);
+        }
+      this->ColorDisplayWidget->SetColorNodeID(defaultID);
+      if (this->ColorEditWidget->GetCopyNodeSelectorWidget())
+        {
+        this->ColorEditWidget->GetCopyNodeSelectorWidget()->UpdateMenu();
+        this->ColorEditWidget->GetCopyNodeSelectorWidget()->SetSelected(defaultNode);
+        }
+      }
+    else
+      {
+      vtkDebugMacro("CreateWidget: no default node, skipping prefilling the table");
+      }
+    }
+  else
+    {
+    vtkDebugMacro("CreateWidget: no mrml scene, can't set the default label map color node");
+    }
 }
 
 //---------------------------------------------------------------------------
