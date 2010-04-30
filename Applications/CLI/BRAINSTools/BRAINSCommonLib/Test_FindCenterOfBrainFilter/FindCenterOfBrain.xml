@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utility</category>
+  <title>FindCenterOfBrain</title>
+  <description>Finds the center point of a brain</description>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://wwww.psychiatry.uiowa.edu</contributor>
+  <acknowledgements>Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5), fedorov -at- bwh.harvard.edu (Slicer integration); (1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard)  </acknowledgements>
+  <version>3.0.0</version>
+  <parameters advanced="false">
+    <label>Required Input Parameters</label>
+    <image>
+      <name>InputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <label>Input Image Volume</label>
+      <description>The image in which to find the center.</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>ImageMask</name>
+      <longflag>--imageMask</longflag>
+      <label>Image Mask</label>
+      <description></description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>ClippedImageMask</name>
+      <longflag>--clippedImageMask</longflag>
+      <label>Clipped Image Mask</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+  </parameters>
+  <!-- -->
+  <parameters advanced="false">
+    <label>Algorith Configuration Parameters</label>
+    <boolean>
+      <name>Maximize</name>
+      <longflag>--maximize</longflag>
+      <label>Maximize</label>
+      <description></description>
+      <default>true</default>
+    </boolean>
+    <integer>
+      <name>Axis</name>
+      <longflag>--axis</longflag>
+      <label>Axis</label>
+      <description></description>
+      <default>2</default>
+    </integer>
+    <double>
+      <name>OtsuPercentileThreshold</name>
+      <longflag>--otsuPercentileThreshold</longflag>
+      <label>Otsu Percentile Threshold</label>
+      <description></description>
+      <default>0.001</default>
+    </double>
+    <integer>
+      <name>ClosingSize</name>
+      <longflag>--closingSize</longflag>
+      <label>Closing Size</label>
+      <description></description>
+      <default>7</default>
+    </integer>
+    <double>
+      <name>HeadSizeLimit</name>
+      <longflag>--headSizeLimit</longflag>
+      <label>Head Size Limit</label>
+      <description></description>
+      <default>1000</default>
+    </double>
+
+    <double>
+      <name>HeadSizeEstimate</name>
+      <longflag>--headSizeEstimate</longflag>
+      <label>Head Size Estimate</label>
+      <description></description>
+      <default>0</default>
+    </double>
+    <integer>
+      <name>BackgroundValue</name>
+      <longflag>--backgroundValue</longflag>
+      <label>Background Value</label>
+      <description></description>
+      <default>0</default>
+    </integer>
+  </parameters>
+  <parameters advanced="false">
+    <label>Debug Parameters</label>
+    <boolean>
+      <name>GenerateDebugImages</name>
+      <longflag>--generateDebugImages</longflag>
+      <label>GenerateDebugImages</label>
+      <description></description>
+      <default>false</default>
+    </boolean>
+    <image>
+      <name>DebugDistanceImage</name>
+      <longflag>--debugDistanceImage</longflag>
+      <label>Debug Distance Image</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>DebugGridImage</name>
+      <longflag>--debugGridImage</longflag>
+      <label>Debug Grid Image</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>DebugAfterGridComputationsForegroundImage</name>
+      <longflag>--debugAfterGridComputationsForegroundImage</longflag>
+      <label>Foreground Image After Grid Computations</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>DebugClippedImageMask</name>
+      <longflag>--debugClippedImageMask</longflag>
+      <label>Clipped Image Mask</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>DebugTrimmedImage</name>
+      <longflag>--debugTrimmedImage</longflag>
+      <label>Trimmed Image</label>
+      <description></description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+    
+  </parameters>
+</executable>

@@ -73,3 +73,7 @@ else (Slicer3_SOURCE_DIR)
   ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
 
 endif (Slicer3_SOURCE_DIR)
+
+##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
+##HACK NEED BETTER TESTSadd_directory( Test_FindCenterOfBrainFilter )
+
