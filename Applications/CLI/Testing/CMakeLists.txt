@@ -185,6 +185,11 @@ add_test(MedianImageFilterTest ${Slicer3_EXE} --launch MedianImageFilterTest
   --neighborhood 1,2,3 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/MedianImageFilterTest.nhdr
   )
 
+add_test(MedianImageFilterTest2 ${Slicer3_EXE} --launch MedianImageFilterTest
+  ModuleEntryPoint
+  --help
+  )
+
 set (CLP MedianImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
