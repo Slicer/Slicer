@@ -558,7 +558,7 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   this->NumberOfColorsEntry->SetParent( editFrame );
   this->NumberOfColorsEntry->Create();
   this->NumberOfColorsEntry->GetLabel()->SetText("Number of Colors:");
-  this->NumberOfColorsEntry->GetWidget()->SetBalloonHelpString ( "Set the number of colors in the new color node.");
+  this->NumberOfColorsEntry->GetWidget()->SetBalloonHelpString ( "Set the number of colors in the new color node (0 to clear out the table).");
   this->NumberOfColorsEntry->SetLabelWidth(17);
   this->NumberOfColorsEntry->GetWidget()->SetWidth(4);
   this->NumberOfColorsEntry->SetLabelPositionToLeft();
@@ -889,8 +889,44 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
     node->HideFromEditorsOff();
     // set it as modified since read, since we need to save it still
     node->ModifiedSinceReadOn();
-
+    
+    // add it to the scene
     this->MRMLScene->AddNode(node);
+
+    // make a storage node for it
+    vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode =  vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
+    colorStorageNode->SaveWithSceneOn();
+    // set up the path
+    // is there a user defined colour file path?
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    if (app && app->GetColorFilePaths())
+      {
+      std::string appPaths = app->GetColorFilePaths();
+      if (appPaths.compare("") != 0)
+        {
+        // take the first one
+#ifdef WIN32
+        const char *delim = ";";
+#else
+        const char *delim = ":";
+#endif
+        std::string::size_type pos = appPaths.find_first_of(delim);
+        std::string pathString = std::string("");
+        // there may not be a delimiter, in that case just go to the end of the string
+        pathString = appPaths.substr(0, pos);
+        vtkDebugMacro("Got first color path " << pathString);
+        vtksys_stl::string dir = vtksys_stl::string(pathString);
+        vtksys_stl::vector<vtksys_stl::string> filesVector;
+        vtksys::SystemTools::SplitPath(dir.c_str(), filesVector);
+        filesVector.push_back(vtksys_stl::string(tableName) + vtksys_stl::string(".ctbl"));
+        std::string fname = vtksys::SystemTools::JoinPath(filesVector);
+        vtkWarningMacro("Setting default file name to " << fname);
+        colorStorageNode->SetFileName(fname.c_str());
+        }
+      }
+    this->MRMLScene->AddNode(colorStorageNode);
+    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
+    
     // set it to be active
     this->SetColorNodeID(node->GetID());
 
