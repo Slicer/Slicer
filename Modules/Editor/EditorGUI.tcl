@@ -73,7 +73,8 @@ proc EditorBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Editor-Documentation</a>."
+  set helptext "The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Editor-Documentation-3.6</a>.\n\nThe Master Volume refers to the background grayscale volume to be edited (used, for example, when thresholding).  The Merge Volume refers to a volume that contains several different label values corresponding to different structures.\n\nBasic usage: selecting the Master and Merge Volume give access to the editor tools.  Each tool has a help icon to bring up a dialog with additional information.  Hover your mouse pointer over buttons and options to view Balloon Help (tool tips).  Use these to define the Label Map.\n\nAdvanced usage: open the Per-Structure Volumes tab to create independent Label Maps for each color you wish to edit.  Since many editor tools (such as threshold) will operate on the entire volume, you can use the Per-Structure Volumes feature to isolate these operations on a structure-by-structure basis.  Use the Split Merge Volume button to create a set of volumes with independent labels.  Use the Add Structure button to add a new volume.  Delete Structures will remove all the independent structure volumes.  Merge All will assemble the current structures into the Merge Volume.  Merge And Build will invoke the Model Maker module on the Merge Volume."
+
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
@@ -395,15 +396,6 @@ proc EditorProcessMRMLEvents {this callerID event} {
 
         # is it the one we're showing?
         if { $displayNode != "" } {
-            if {0} {
-                # deprecated, Editor(x,colorsColor) no longer used
-                if { [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
-                    if { [$this GetDebug] } {
-                        puts "Resetting the color node"
-                    }
-                    $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
-                }
-            }
             # add an observer on the volume node for display modified events
             if { [$this GetDebug] } {
                 puts "Adding display node observer on label volume [$labelVolume GetID]"
@@ -424,15 +416,6 @@ proc EditorProcessMRMLEvents {this callerID event} {
     if { $caller == $labelVolume && $event == 18000 } {
         if { [$this GetDebug] } {
             puts "... caller is label volume, got a display modified event, display node = $displayNode"
-        }
-        if {0} {
-            # deprecated, not using colorsColor
-            if { $displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
-                if { [$this GetDebug] } {
-                    puts "...resetting the color node"
-                }
-                $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
-            }
         }
         return
     }
@@ -483,6 +466,7 @@ proc EditorShowHideTools {showhide} {
     return
   } 
   if { $showhide == "show" } {
+    $::Editor($this,editColor) updateGUI [EditorGetPaintLabel]
     $::Editor($this,toolsFrame) ExpandFrame
   } else {
     $::Editor($this,toolsFrame) CollapseFrame

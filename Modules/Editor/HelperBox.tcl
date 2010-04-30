@@ -60,12 +60,15 @@ if { [itcl::find class HelperBox] == "" } {
     variable _masterWhenMergeWasSet "" ;# value of the master volume last time merge was selected (to detect changes)
     variable _colorBox ""
 
+    variable _createMergeOptions ""
+
     variable _observations
 
     # methods
     method create {} {} ;# create the widget
 
-    method createMerge {} {} ;# make a merge volume for the current selection
+    method createMerge { } {} ;# make a merge volume for the current selection
+    method newMerge { } {} ;# prompt for a merge volume even if one exists
     method select {} {} ;# select the master volume node
     method mergeVolume {} {} ;# helper to get the merge volume for the current selected master
     method setMergeVolume { {mergeVolume ""} } {} ;# let the user explicitly set merge volume or with dialog
@@ -115,8 +118,14 @@ itcl::body HelperBox::destructor {} {
   }
 }
 
+# create a merge volume for the current master even if one exists
+itcl::body HelperBox::newMerge {} {
+  set _createMergeOptions "new"
+  $this colorSelectDialog  
+}
+
 # create a merge volume for the current master
-itcl::body HelperBox::createMerge { } {
+itcl::body HelperBox::createMerge {} {
   if { $_master == "" } {
     # should never happen
     EditorErrorDialog "Cannot create merge volume without master"
@@ -125,11 +134,17 @@ itcl::body HelperBox::createMerge { } {
 
   set masterName [$_master GetName]
   set mergeName $masterName-label
-  set merge [$this mergeVolume]
+  if { [lsearch $_createMergeOptions "new"] == -1 } {
+    set merge [$this mergeVolume]
+  } else {
+    set merge ""
+  }
+  set _createMergeOptions ""
   if { $merge == "" } {
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
     set merge [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $_master $mergeName]
     [$merge GetDisplayNode] SetAndObserveColorNodeID [[$o(colorSelector) GetSelected] GetID]
+    $this setMergeVolume $merge
   }
   after idle $this select
 }
@@ -153,7 +168,8 @@ itcl::body HelperBox::select { } {
       set _merge $merge
     }
   } else {
-    # bring up dialog if picked a new master
+    # the master exists, but there is no merge volume yet 
+    # bring up dialog to create a merge with a user-selected color node
     if { $_master != "" } {
       $this colorSelectDialog
     }
@@ -197,11 +213,15 @@ itcl::body HelperBox::setMergeVolume { {mergeVolume ""} } {
 
 # select merge volume 
 itcl::body HelperBox::mergeVolume {} {
-  if { $_master == "" } {
+  if { $_master == "" || [info command $_master] == "" } {
     return ""
   }
   if { $_merge != "" && $_master == $_masterWhenMergeWasSet } {
-    return $_merge
+    if { [$::slicer3::MRMLScene GetNodeByID [$_merge GetID]] != "" } {
+      return $_merge
+    } else {
+      set _merge ""
+    }
   }
   set masterName [$_master GetName]
   set mergeName $masterName-label
@@ -689,7 +709,7 @@ itcl::body HelperBox::create { } {
   $o(mergeName) SetLabelText "Merge Volume:"
   $o(mergeName) SetBalloonHelpString "Composite label map containing the merged structures (be aware that merge operations will overwrite any edits applied to this volume)"
   [$o(mergeName) GetWidget] SetText "None"
-  pack [$o(mergeName) GetWidgetName] -side left -fill x
+  pack [$o(mergeName) GetWidgetName] -side left -fill x -expand false
 
   set o(setMergeButton) [vtkNew vtkKWPushButton]
   $o(setMergeButton) SetParent $o(mergeFrame)
@@ -937,7 +957,7 @@ itcl::body HelperBox::labelSelectDialog { } {
     $o(labelMapSelector) SetParent $topFrame
     $o(labelMapSelector) Create
     $o(labelMapSelector) SetNodeClass "vtkMRMLScalarVolumeNode" "LabelMap" "1" ""
-    $o(labelMapSelector) NewNodeEnabledOn
+    $o(labelMapSelector) NewNodeEnabledOff
     $o(labelMapSelector) NoneEnabledOff
     $o(labelMapSelector) DefaultEnabledOn
     $o(labelMapSelector) ShowHiddenOn
@@ -953,6 +973,10 @@ itcl::body HelperBox::labelSelectDialog { } {
     $buttonFrame Create
     pack [$buttonFrame GetWidgetName] -side left -anchor w -padx 2 -pady 2 -fill both -expand true
 
+    set o(labelDialogNew) [vtkNew vtkKWPushButton]
+    $o(labelDialogNew) SetParent $buttonFrame
+    $o(labelDialogNew) Create
+    $o(labelDialogNew) SetText "Create New..."
     set o(labelDialogApply) [vtkNew vtkKWPushButton]
     $o(labelDialogApply) SetParent $buttonFrame
     $o(labelDialogApply) Create
@@ -962,9 +986,11 @@ itcl::body HelperBox::labelSelectDialog { } {
     $o(labelDialogCancel) Create
     $o(labelDialogCancel) SetText Cancel
     pack [$o(labelDialogCancel) GetWidgetName] [$o(labelDialogApply) GetWidgetName] -side left -padx 4 -anchor c 
+    pack [$o(labelDialogNew) GetWidgetName] -side right -padx 4 -anchor c 
 
     # invoked event
     set broker $::slicer3::Broker
+    $broker AddObservation $o(labelDialogNew) 10000 "$this newMerge; $o(labelSelectTopLevel) Withdraw"
     $broker AddObservation $o(labelDialogApply) 10000 "$this setMergeVolume; $o(labelSelectTopLevel) Withdraw"
     $broker AddObservation $o(labelDialogCancel) 10000 "$o(labelSelectTopLevel) Withdraw"
   }
@@ -976,12 +1002,13 @@ itcl::body HelperBox::labelSelectDialog { } {
 }
 
 # get the first MRML node that has the given name
+# - use a regular expression to match names post-pended with numbers
 itcl::body HelperBox::getNodeByName { name } {
 
   $::slicer3::MRMLScene InitTraversal
   while { [set node [$::slicer3::MRMLScene GetNextNode]] != "" } {
-    set ret [catch "$node GetName" res]
-    if { !$ret && [$node GetName] == $name } {
+    set ret [catch "$node GetName" nodeName]
+    if { !$ret && ($name == $nodeName || [string match $name\[0-9\]* $nodeName]) } {
       return $node
     }
   }

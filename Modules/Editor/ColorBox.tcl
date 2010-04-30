@@ -115,10 +115,13 @@ itcl::body ColorBox::create { } {
     set lut [$colorNode GetLookupTable]
     for {set c 0} {$c < $numberOfColors} {incr c} {
       # add it to the listbox
-      set row [$w GetNumberOfRows]
-      $w InsertCellText $row $col(Number) "$c"
-      eval $w SetCellBackgroundColor $row $col(Color) [lrange [$lut GetTableValue $c] 0 2]
-      $w InsertCellText $row $col(Name) [$colorNode GetColorName $c]
+      set name [$colorNode GetColorName $c]
+      if { $name != "(none)" } {
+        set row [$w GetNumberOfRows]
+        $w InsertCellText $row $col(Number) "$c"
+        eval $w SetCellBackgroundColor $row $col(Color) [lrange [$lut GetTableValue $c] 0 2]
+        $w InsertCellText $row $col(Name) [$colorNode GetColorName $c]
+      }
     }
 
     set SelectionChangedEvent 10000
