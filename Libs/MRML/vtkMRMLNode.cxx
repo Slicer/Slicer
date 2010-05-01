@@ -333,6 +333,10 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 //----------------------------------------------------------------------------
 const char* vtkMRMLNode::GetAttribute(const char* name)
 {
+  if ( name == NULL )
+    {
+    return NULL;
+    }
   std::map< std::string, std::string >::iterator iter = Attributes.find(std::string(name));
   if (iter == Attributes.end()) 
     {
