@@ -9,7 +9,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 Explode the ijkToRASTransform from volume, generating a parent transform and a child volume node with IJK orientation.
 </description>
   <version>1.0</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonExplodeVolumeTransform-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonExplodeVolumeTransform-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Luca Antiga and Daniel Blezek</contributor>
   <acknowledgements>

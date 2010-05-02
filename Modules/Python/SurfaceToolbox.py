@@ -9,7 +9,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 Process a surface using several filters.
 </description>
   <version>1.0</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonSurfaceToolbox-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonSurfaceToolbox-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Luca Antiga and Daniel Blezek</contributor>
 <acknowledgements>

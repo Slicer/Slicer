@@ -9,7 +9,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 Performs registration of the input surface onto a target surface using on the Iterative Closest Point algorithm. It can output the registered surface or the transform itself, which can then be applied to other MRML nodes.
 </description>
   <version>1.0</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonSurfaceICPRegistration-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonSurfaceICPRegistration-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Luca Antiga and Daniel Blezek</contributor>
 <acknowledgements>
