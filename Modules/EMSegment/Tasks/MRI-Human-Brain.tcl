@@ -22,7 +22,7 @@ namespace eval EMSegmenterParametersStepTcl {
         # Make sure that in the MRML file 
         # EMS id="vtkMRMLEMSNode1"  name="MRI Human Brain"
         # the name is the same as this tcl file name where the spaces are replaced with empty spaces  
-    puts "Debugging right now" 
+    # puts "DefineMRMLFile Debugging right now" 
     # return "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml"
     return http://xnd.slicer.org:8000/data/20100427T164324Z/MRIHumanBrain.mrml
     }
@@ -36,11 +36,19 @@ namespace eval EMSegmenterPreProcessingTcl {
     #
     # Variables Specific to this Preprocessing 
     #
+    variable TextLabelSize 0 
+    variable CheckButtonSize 3 
+    variable VolumeMenuButtonSize 1 
+    variable TextEntrySize 0 
 
+    # Check Button 
     variable atlasAlignedFlagID 0 
     variable skullStrippedFlagID 1 
-    variable iccMaskSelectID 0 
     variable inhomogeneityCorrectionFlagID 2 
+    # Volume Selection Button
+    variable iccMaskSelectID 0 
+    # Text Entry 
+    # not defined for this task 
 
     #
     # OVERWRITE DEFAULT 
@@ -57,17 +65,17 @@ namespace eval EMSegmenterPreProcessingTcl {
        variable iccMaskSelectID 
        variable inhomogeneityCorrectionFlagID  
 
-    puts "Preprocessing MRI Human Brain - ShowUserInterface"
+        puts "Preprocessing MRI Human Brain - ShowUserInterface"
         # Always has to be done initially so that variables are correctly defined 
         if { [InitVariables] } {
            PrintError "ShowUserInterface: Not all variables are correctly defined!" 
             return 1
         }
 
-        $preGUI CreateCheckButton "Is the Atlas aligned to the image ?" 0 $atlasAlignedFlagID 
-        $preGUI CreateCheckButton "Are the input scans skull stripped ?" 0 $skullStrippedFlagID  
-        $preGUI CreateVolumeMenuButton "Define ICC mask of the atlas ?" 0 $iccMaskSelectID
-        $preGUI CreateCheckButton "Are the input scans image inhomogeneity corrected ?" 0 $inhomogeneityCorrectionFlagID
+        $preGUI DefineCheckButton "Is the Atlas aligned to the image ?" 0 $atlasAlignedFlagID 
+        $preGUI DefineCheckButton "Are the input scans skull stripped ?" 0 $skullStrippedFlagID  
+        $preGUI DefineVolumeMenuButton "Define ICC mask of the atlas ?" 0 $iccMaskSelectID
+        $preGUI DefineCheckButton "Are the input scans image inhomogeneity corrected ?" 0 $inhomogeneityCorrectionFlagID
    
         # Define this at the end of the function so that values are set by corresponding MRML node
         $preGUI SetButtonsFromMRML
@@ -79,9 +87,10 @@ namespace eval EMSegmenterPreProcessingTcl {
       # -------------------------------------
       proc Run { } {
         variable preGUI
-    variable workingDN 
+        variable workingDN 
         variable subjectNode
         variable inputAtlasNode
+    variable mrmlManager
 
         variable atlasAlignedFlagID 
         variable skullStrippedFlagID 
@@ -442,4 +451,36 @@ namespace eval EMSegmenterPreProcessingTcl {
         return 0
     }
 }
- 
+
+
+namespace eval EMSegmenterSimpleTcl {
+    # 0 = Do not create a check list for the simple user interface 
+    # simply remove 
+    # 1 = Create one - then also define ShowCheckList and 
+    #     ValidateCheckList where results of checklist are transfered to Preprocessing  
+
+    proc CreateCheckList { } {    
+       return 1
+    }
+
+    proc ShowCheckList { } {
+    variable inputChannelGUI
+    # Always has to be done initially so that variables are correctly defined 
+        if { [InitVariables] } {
+        PrintError "ShowCheckList: Not all variables are correctly defined!" 
+            return 1
+        }
+
+        $inputChannelGUI DefineCheckButton "Are the input scans skull stripped ?" 0 $EMSegmenterPreProcessingTcl::skullStrippedFlagID
+        $inputChannelGUI DefineCheckButton "Are the input scans image inhomogeneity corrected ?" 0 $EMSegmenterPreProcessingTcl::inhomogeneityCorrectionFlagID
+   
+        # Define this at the end of the function so that values are set by corresponding MRML node
+        $inputChannelGUI SetButtonsFromMRML
+    return 0 
+    
+    }
+
+    proc ValidateCheckList { } {
+        return 0
+    }
+}

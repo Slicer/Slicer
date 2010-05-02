@@ -437,29 +437,25 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     }
   if (!this->RunSegmentationOutVolumeSelector->IsCreated())
     {
-    this->RunSegmentationOutVolumeSelector->SetNodeClass(
-      "vtkMRMLScalarVolumeNode", 
-      "LabelMap", "1", 
-      "EM Segmentation");
+    this->RunSegmentationOutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",  "LabelMap", "1",  "EMSegment");
     this->RunSegmentationOutVolumeSelector->SetNewNodeEnabled(1);
-    this->RunSegmentationOutVolumeSelector->SetParent(
-      this->RunSegmentationOutputFrame->GetFrame());
+    this->RunSegmentationOutVolumeSelector->SetParent(this->RunSegmentationOutputFrame->GetFrame());
     this->RunSegmentationOutVolumeSelector->Create();
-    this->RunSegmentationOutVolumeSelector->
-      SetMRMLScene(mrmlManager->GetMRMLScene());
+    this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
 
     this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
-    this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Labelmap: ");
-    this->RunSegmentationOutVolumeSelector->SetBalloonHelpString(
-      "select an output labelmap from the current mrml scene.");
+    this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Label Map: ");
+    this->RunSegmentationOutVolumeSelector->SetBalloonHelpString("select an output label map from the current mrml scene.");
     }
+
   this->RunSegmentationOutVolumeSelector->UpdateMenu();
   if(!mrmlManager->GetOutputVolumeMRMLID())
     {
-      this->RunSegmentationOutVolumeSelector->ProcessNewNodeCommand("vtkMRMLScalarVolumeNode", "LabelMap");
+      this->RunSegmentationOutVolumeSelector->ProcessNewNodeCommand("vtkMRMLScalarVolumeNode", "Label Map");
     }
   
-  this->RunSegmentationOutVolumeSelector->SetSelected(this->RunSegmentationOutVolumeSelector->GetMRMLScene()->GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
+  // cout << "Trying to set selcted mrmlManager->GetOutputVolumeMRMLID())
+  this->RunSegmentationOutVolumeSelector->SetSelected(mrmlManager->GetMRMLScene()->GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
 
   this->RunSegmentationOutVolumeSelector->SetEnabled(
     mrmlManager->HasGlobalParametersNode() ? enabled : 0);
@@ -898,7 +894,7 @@ void vtkEMSegmentRunSegmentationStep::ResetROIWidget()
 //----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
 {
-  cout << "vtkEMSegmentRunSegmentationStep::ShowUserInterface() Start " << endl;
+  // cout << "vtkEMSegmentRunSegmentationStep::ShowUserInterface() Start " << endl;
   // ----------------------------------------
   // Display Scan1, Delete Super Sampled and Grid  
   // ----------------------------------------
@@ -938,8 +934,8 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
       vtkMRMLScene *scene = this->GetGUI()->GetLogic()->GetMRMLScene();
     this->roiNode = static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
-    scene->AddNode(this->roiNode);
     this->roiNode->SetName("SegmentationROI");
+    scene->AddNode(this->roiNode);
     this->roiNode->SetVisibility(0);
     // mrmlManger->SetROI_Ref(this->roiNode->GetID());
     }
@@ -1069,7 +1065,7 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
   // Keep seperate bc GUIObserver is also called from vtkEMSegmentRunSegmentationStepGUI ! 
   // You only want to add the observers below when the step is active 
   // this->AddROISamplingGUIObservers();
-  cout << "vtkEMSegmentRunSegmentationStep::ShowUserInterface() end " << endl;
+  // cout << "vtkEMSegmentRunSegmentationStep::ShowUserInterface() end " << endl;
 }
 
 // //----------------------------------------------------------------------------

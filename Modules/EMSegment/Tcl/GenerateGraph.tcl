@@ -63,7 +63,7 @@ if { [itcl::find class EMSegmenterGraph ] == "" }  {
 itcl::body EMSegmenterGraph::constructor { } {
     global EMSegment Volume Gui
     # Make sure you have sourced the following files before executing script Gui.tcl Graph.tcl Tooltips.tcl VTK/Wrapping/Tcl/vtkinteraction/setget.tcl
-    set _modGui             [ $::slicer3::Application GetModuleGUIByName "EMSegment Template Builder" ]
+    set _modGui             [ $::slicer3::Application GetModuleGUIByName "EMSegmenter" ]
     set _modLogic           [ $_modGui GetLogic ]
     set _mrmlManager        [ $_modGui GetMRMLManager ]
     set _workingDN          [ $_mrmlManager GetWorkingDataNode]

@@ -55,8 +55,21 @@ public:
   vtkGetObjectMacro(AnatomicalStructureStep, vtkEMSegmentAnatomicalStructureStep);
   vtkGetObjectMacro(ParametersSetStep,vtkEMSegmentParametersSetStep);
   vtkGetObjectMacro(NodeParametersStep,vtkEMSegmentNodeParametersStep);
-
   vtkGetObjectMacro(PreProcessingStep,vtkEMSegmentPreProcessingStep);
+  vtkGetObjectMacro(InputChannelStep,vtkEMSegmentInputChannelsStep);
+
+
+  //BTX
+  enum {
+    SegmentationModeSimple = 1,
+    SegmentationModeAdvanced 
+  };
+  //ETX
+
+  void SetSegmentationModeToAdvanced() {this->SegmentationMode =  SegmentationModeAdvanced; }
+  void SetSegmentationModeToSimple() {this->SegmentationMode =  SegmentationModeSimple; }
+  vtkGetMacro(SegmentationMode,int);
+  int IsSegmentationModeAdvanced() {return (this->SegmentationMode ==  SegmentationModeAdvanced); }
 
   // Description:
   // Create widgets
@@ -168,6 +181,9 @@ private:
   // Description:
   // Populate the logic with testing data, load some volumes
   virtual void PopulateTestingData();
+
+  int SegmentationMode;
+
 };
 
 #endif

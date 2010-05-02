@@ -115,6 +115,8 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
 
   wizardWidget->GetCancelButton()->SetEnabled(0);
+  wizardWidget->SetNextButtonVisibility(0);
+
 
   // Create the Parameters set frame
 
@@ -263,7 +265,6 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
      menuButton->GetMenu()->GetNumberOfItems() > 1)
     {
     this->ParameterSetMenuButton->GetWidget()->GetMenu()->SelectItem(1);
-    this->SelectedParameterSetChangedCallback(0);
     }
 }
 
@@ -318,7 +319,7 @@ void vtkEMSegmentParametersSetStep::UpdateTaskListIndex(int index)
 }
 
 
-void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int index)
+void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int index, int flag)
 {
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
@@ -345,6 +346,50 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int inde
   std::string tclFileName = this->GetGUI()->GetLogic()->DefineTclTaskFullPathName(mrmlManager->GetNode()->GetTclTaskFilename());
 
   this->SourceTclFile(tclFileName.c_str());
+  if (flag && (!this->SettingSegmentationMode(0)))
+      {
+    return ;
+      }
+  this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep(); 
+}
+
+
+int vtkEMSegmentParametersSetStep::SettingSegmentationMode(int flag) 
+{
+  vtkKWMessageDialog *dlg2 = vtkKWMessageDialog::New();
+  dlg2->SetApplication( this->GetApplication());
+  dlg2->SetMasterWindow(NULL);
+  dlg2->SetOptions(vtkKWMessageDialog::InvokeAtPointer | vtkKWMessageDialog::Beep | vtkKWMessageDialog::YesDefault);
+  dlg2->SetTitle("What Segmentation Mode To Proceed?");
+  dlg2->SetStyleToOkOtherCancel();
+  dlg2->SetOKButtonText("Advanced");
+  dlg2->SetOtherButtonText("Simple");
+
+  if (flag)
+    {
+      dlg2->SetText("In which mode do you want to proceed segmenting your data?\n Note, downloading the default setting might take a while!");
+    }
+  else
+    {
+      dlg2->SetText("In which mode do you want to proceed segmenting your data?");
+    }
+
+  dlg2->Invoke();
+  int status = dlg2->GetStatus();
+  dlg2->Delete();
+
+  switch  (status)
+    {
+    case vtkKWMessageDialog::StatusOther : 
+      this->GetGUI()->SetSegmentationModeToSimple();
+      return 1;
+      
+    case vtkKWMessageDialog::StatusOK :
+      this->GetGUI()->SetSegmentationModeToAdvanced();
+      return 1;
+    }
+
+  return 0;       
 }
 
 //----------------------------------------------------------------------------
@@ -365,6 +410,7 @@ void vtkEMSegmentParametersSetStep::RenameApplyCallback(const char* newName)
   mrmlManager->SetNthParameterName(this->RenameIndex,this->RenameEntry->GetWidget()->GetValue());
   this->HideRenameEntry();
   this->UpdateTaskListIndex(this->RenameIndex);
+  this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
 }
 
 //---------------------------------------------------------------------------
@@ -457,6 +503,8 @@ void vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
       vtkErrorMacro("Index is not defined");
       return;
     }
+
+
   // Load Task 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!this->LoadDefaultData(pssDefaultTasksFile[index].c_str(),warningFlag))
@@ -467,19 +515,15 @@ void vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
       // Figure out the index number
       int numSets = mrmlManager->GetNumberOfParameterSets();
       for(int index = 0; index < numSets; index++)
-    {
-      const char *name = mrmlManager->GetNthParameterSetName(index);
-      if (name && !strcmp(name,pssDefaultTasksName[index].c_str()))
+      {
+        const char *name = mrmlManager->GetNthParameterSetName(index);
+        if (name && !strcmp(name,pssDefaultTasksName[index].c_str()))
         {
           // Select the Node 
-          this->SelectedParameterSetChangedCallback(index);
-          index = numSets;
+          this->SelectedParameterSetChangedCallback(index,0);
+      break;
         }
-    }
-      // Go to next step 
-      // Add that we transition to next stage 
-      vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-      wizard_widget->GetWizardWorkflow()->AttemptToGoToNextStep();
+      }
     }
 }
 
@@ -489,18 +533,15 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
   
   // Load Tcl File defining the setting
   this->SourceTclFile(tclFile);
- 
+
+  this->GetGUI()->SetSegmentationModeToAdvanced();
   if (warningFlag)
     {
-      if (!vtkKWMessageDialog::PopupYesNo( 
-                      this->GetApplication(), 
-                      NULL, 
-                      "Load Task Specific Data?",
-                      "It might take some time to download the default setting. Do you want to proceed ?", 
-                      vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
-      {
-        return 1;
-      }
+      // do not want to proceed
+      if (!this->SettingSegmentationMode(1))
+    {
+      return 1;
+    }
     }
 
   // Load MRML File whose location is defined in the tcl file 
@@ -509,7 +550,7 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
   const char* mrmlFile = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterParametersStepTcl::DefineMRMLFile");
   scene->SetURL(mrmlFile);
   scene->Import();
-  this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegment Template Builder");
+  this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegmenter");
 
   if(scene->GetErrorCode())
     {
@@ -586,6 +627,15 @@ void vtkEMSegmentParametersSetStep::DefineDefaultTasksList()
 
 }
 
-
-
-
+void vtkEMSegmentParametersSetStep::_Validate(int flag)
+{
+  if (flag) {
+    if (this->SettingSegmentationMode(0))
+    {
+      vtkKWWizardWorkflow *wizard_workflow = this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
+      wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+      wizard_workflow->ProcessInputs();
+      return;
+    }
+  } 
+}

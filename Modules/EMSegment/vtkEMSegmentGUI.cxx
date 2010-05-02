@@ -85,6 +85,7 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
   logo->Delete();
 
   this->StartSegmentStep= NULL;
+  this->SegmentationMode = SegmentationModeAdvanced;
 }
 
 //----------------------------------------------------------------------------
@@ -407,6 +408,7 @@ void vtkEMSegmentGUI::BuildGUI()
     this->InputChannelStep->SetGUI(this);
     }
     wizard_workflow->AddNextStep(this->InputChannelStep);
+  this->ParametersSetStep->SetNextStep(this->InputChannelStep);
 
   if (!this->AnatomicalStructureStep)
     {

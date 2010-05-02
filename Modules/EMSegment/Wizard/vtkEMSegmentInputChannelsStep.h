@@ -68,6 +68,7 @@ private:
   void UpdateInputChannelsfromMRML();
   void ChangeNumberOfInputChannel(int newLines) ;
   void CreateInputChannelFrame(int i, const char* newName, vtkMRMLVolumeNode* newVolumeNode); 
+  void UpdateTaskPreprocessingSetting();
 };
 
 #endif

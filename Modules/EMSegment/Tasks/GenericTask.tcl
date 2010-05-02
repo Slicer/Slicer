@@ -33,18 +33,30 @@ namespace eval EMSegmenterPreProcessingTcl {
     #
     # Variables
     #
+
+    ## Slicer 
     variable GUI 
     variable LOGIC
     variable SCENE
+
+    ## EM GUI/MRML 
     variable preGUI
     variable mrmlManager
     variable workingDN
+
+    ## Input/Output 
     variable inputAtlasNode
     # Variables used for segmentation 
     # Input/Output subject specific scans  - by default this is defined by the input scans which are aligned with each other
     variable subjectNode
     # spatial priors aligned to subject node 
     variable outputAtlasNode
+    
+    ## Task Specific GUI variables
+    variable TextLabelSize 1 
+    variable CheckButtonSize 0 
+    variable VolumeMenuButtonSize 0 
+    variable TextEntrySize 0
 
     #
     # General Utility Functions 
@@ -133,10 +145,10 @@ namespace eval EMSegmenterPreProcessingTcl {
        variable inputAtlasNode
        variable outputAtlasNode
 
-    puts "=========================================="
-    puts "== Init Variables"
-    puts "=========================================="
-       set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegment Template Builder"]
+       puts "=========================================="
+       puts "== Init Variables"
+       puts "=========================================="
+       set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
        if { $GUI == "" } { 
           PrintError "InitVariables: GUI not defined"
           return 1 
@@ -151,7 +163,7 @@ namespace eval EMSegmenterPreProcessingTcl {
           PrintError "InitVariables: mrmManager not defined"
           return 1 
        }
-    set SCENE [$mrmlManager GetMRMLScene ]
+       set SCENE [$mrmlManager GetMRMLScene ]
        if { $SCENE  == "" } { 
           PrintError "InitVariables: SCENE not defined"
           return 1 
@@ -192,7 +204,7 @@ namespace eval EMSegmenterPreProcessingTcl {
       # -------------------------------------
       # Define Interface Parameters 
       # -------------------------------------
-      $preGUI CreateTextLabel "No preprocessing defined for this task!" 0 
+      $preGUI DefineTextLabel "No preprocessing defined for this task!" 0 
     }
 
     # ----------------------------------------------------------------
@@ -416,3 +428,41 @@ namespace eval EMSegmenterPreProcessingTcl {
 
 }
  
+namespace eval EMSegmenterSimpleTcl {
+
+    variable inputChannelGUI
+    variable mrmlManager
+
+    proc InitVariables { } {
+    variable inputChannelGUI
+    variable mrmlManager
+        set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
+        if { $GUI == "" } { 
+          PrintError "InitVariables: GUI not defined"
+          return 1 
+        }
+       set mrmlManager   [$GUI GetMRMLManager]
+       if { $mrmlManager  == "" } { 
+          PrintError "InitVariables: mrmManager not defined"
+          return 1 
+       }
+       set inputChannelGUI [$GUI GetInputChannelStep]
+       if { $inputChannelGUI  == "" } { 
+          PrintError "InitVariables: InputChannelStep not defined"
+          return 1 
+       }
+       return 0
+    }
+
+    proc PrintError { TEXT } {
+       puts stderr "ERROR:EMSegmenterSimpleTcl::${TEXT}"
+    }
+
+    # 0 = Do not create a check list for the simple user interface 
+    # simply remove 
+    # 1 = Create one - then also define ShowCheckList and 
+    #     ValidateCheckList where results of checklist are transfered to Preprocessing  
+    proc CreateChecList { } { return 0 }
+    proc ShowCheckList { } { return 0}
+    proc ValidateCheckList { } { return 0 }
+}

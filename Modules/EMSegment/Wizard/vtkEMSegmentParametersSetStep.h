@@ -42,7 +42,8 @@ public:
 
   // Description:
   // Callbacks.
-  virtual void SelectedParameterSetChangedCallback(int index);
+  virtual void SelectedParameterSetChangedCallback(int index) { this->SelectedParameterSetChangedCallback(index,1);}
+  virtual void SelectedParameterSetChangedCallback(int index, int flag);
   virtual void SelectedDefaultTaskChangedCallback(int index, bool warningFlag = 1);
 
   void RenameApplyCallback(const char* newName);
@@ -50,6 +51,8 @@ public:
 
   vtkGetObjectMacro(RenameEntry,vtkKWEntryWithLabel);
   vtkGetObjectMacro(RenameApply, vtkKWPushButton);
+
+  // void Validate() {this->Validate(1);}
 
 protected:
   vtkEMSegmentParametersSetStep();
@@ -69,7 +72,6 @@ protected:
   // Populate the list of loaded parameter sets.
   virtual void PopulateLoadedParameterSets();
 
-
 private:
   vtkEMSegmentParametersSetStep(const vtkEMSegmentParametersSetStep&);
   void operator=(const vtkEMSegmentParametersSetStep&);
@@ -85,6 +87,11 @@ private:
   std::vector<std::string> pssDefaultTasksName;
   std::vector<std::string> pssDefaultTasksFile;
  //ETX:
+
+  int SettingSegmentationMode(int flag);
+
+  void _Validate(int flag);
+
 
 };
 

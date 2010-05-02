@@ -15,7 +15,8 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkMRMLEMSTargetNode.h"
-
+#include "vtkMRMLEMSNode.h"
+#include "vtkEMSegmentPreProcessingStep.h"
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentInputChannelsStep);
 vtkCxxRevisionMacro(vtkEMSegmentInputChannelsStep, "$Revision: 1.1 $");
@@ -23,9 +24,6 @@ vtkCxxRevisionMacro(vtkEMSegmentInputChannelsStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentInputChannelsStep::vtkEMSegmentInputChannelsStep()
 {
-  this->SetName("2/9. Define Input Channels");
-  this->SetDescription("Name the input channels and choose the set of scans for segmentation.");
-
   this->InputChannelDefineFrame   = NULL;
 
   this->InputChannelDefineLineFrame.clear();
@@ -88,7 +86,21 @@ vtkEMSegmentInputChannelsStep::~vtkEMSegmentInputChannelsStep()
 void vtkEMSegmentInputChannelsStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
+  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
+  if (this->GetGUI()->IsSegmentationModeAdvanced())
+    {
+       wizardWidget->SetTitle("2/9. Define Input Channels");
+       wizardWidget->SetSubTitle("Name the input channels and choose the set of scans for segmentation.");
+       wizardWidget->SetNextButtonVisibility(1);
+    } 
+  else 
+    {
+       wizardWidget->SetTitle("2/2. Define Input Channels");
+       wizardWidget->SetSubTitle("Choose the set of scans for segmentation.");
+       wizardWidget->SetNextButtonVisibility(0);
+    }
 
+  
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   if (!mrmlManager || !wizard_widget)
@@ -119,45 +131,70 @@ void vtkEMSegmentInputChannelsStep::ShowUserInterface()
 
   this->UpdateInputChannelsfromMRML();
 
-  if (!this->InputAddRemoveChannelFrame)
+  if (this->GetGUI()->IsSegmentationModeAdvanced()) 
     {
+    if (!this->InputAddRemoveChannelFrame)
+      {
     this->InputAddRemoveChannelFrame = vtkKWFrame::New();
-    }
-  if (!this->InputAddRemoveChannelFrame->IsCreated())
-    {
+      }
+    if (!this->InputAddRemoveChannelFrame->IsCreated())
+      {
     this->InputAddRemoveChannelFrame->SetParent(this->InputChannelDefineFrame->GetFrame());
     this->InputAddRemoveChannelFrame->Create();
+      }
+
+    if (this->GetGUI()->IsSegmentationModeAdvanced())
+      {
+    this->Script("pack %s -side bottom -anchor nw -fill x -padx 0 -pady 2", this->InputAddRemoveChannelFrame->GetWidgetName());
+      }
+
+    if (!this->AddInputChannelButton) 
+      {
+    this->AddInputChannelButton = vtkKWPushButton::New ();
+      }
+    if (!this->AddInputChannelButton->IsCreated())  
+      {
+    this->AddInputChannelButton->SetParent(this->InputAddRemoveChannelFrame);
+    this->AddInputChannelButton->Create ( );
+    this->AddInputChannelButton->SetText ("Add Channel");
+    this->AddInputChannelButton->SetCommand (this, "AddInputChannel");
+      }
+
+    this->Script("pack %s -side left -padx 4 -anchor c",  this->AddInputChannelButton->GetWidgetName());
+  
+    if (!this->RemoveInputChannelButton)
+      {
+    this->RemoveInputChannelButton = vtkKWPushButton::New();
+      }
+    if (!this->RemoveInputChannelButton->IsCreated())
+      {
+    this->RemoveInputChannelButton->SetParent(this->InputAddRemoveChannelFrame);
+    this->RemoveInputChannelButton->Create ( );
+    this->RemoveInputChannelButton->SetText ("Remove Channel");
+    this->RemoveInputChannelButton->SetCommand (this, "RemoveInputChannel");
+      }
+    this->Script("pack %s -side left -padx 4 -anchor c",  this->RemoveInputChannelButton->GetWidgetName());
+    } else {
+      // To remove it from GUI when switching between advanced and simple mode 
+      if (this->InputAddRemoveChannelFrame )
+    {
+      this->InputAddRemoveChannelFrame->Unpack();
+      this->InputAddRemoveChannelFrame->Delete();
+      this->InputAddRemoveChannelFrame = NULL;
+    }
+      if (this->AddInputChannelButton )
+    {
+      this->AddInputChannelButton->Delete(); 
+      this->AddInputChannelButton= NULL;
+    } 
+      if (this->RemoveInputChannelButton )
+    {
+      this->RemoveInputChannelButton->Delete(); 
+      this->RemoveInputChannelButton= NULL;
+    } 
     }
 
-  this->Script(
-    "pack %s -side bottom -anchor nw -fill x -padx 0 -pady 2", 
-    this->InputAddRemoveChannelFrame->GetWidgetName());
 
-  if (!this->AddInputChannelButton) 
-    {
-      this->AddInputChannelButton = vtkKWPushButton::New ();
-    }
-  if (!this->AddInputChannelButton->IsCreated())  
-  {
-      this->AddInputChannelButton->SetParent(this->InputAddRemoveChannelFrame);
-      this->AddInputChannelButton->Create ( );
-      this->AddInputChannelButton->SetText ("Add Channel");
-      this->AddInputChannelButton->SetCommand (this, "AddInputChannel");
-  }
-  this->Script("pack %s -side left -padx 4 -anchor c",  this->AddInputChannelButton->GetWidgetName());
-
-  if (!this->RemoveInputChannelButton)
-    {
-      this->RemoveInputChannelButton = vtkKWPushButton::New();
-    }
-  if (!this->RemoveInputChannelButton->IsCreated())
-    {
-      this->RemoveInputChannelButton->SetParent(this->InputAddRemoveChannelFrame);
-      this->RemoveInputChannelButton->Create ( );
-      this->RemoveInputChannelButton->SetText ("Remove Channel");
-      this->RemoveInputChannelButton->SetCommand (this, "RemoveInputChannel");
-    }
-  this->Script("pack %s -side left -padx 4 -anchor c",  this->RemoveInputChannelButton->GetWidgetName());
 
   // Update the UI with the proper value
   //this->PopulateIntensityImagesTargetVolumeSelector();
@@ -207,6 +244,32 @@ void vtkEMSegmentInputChannelsStep::ShowUserInterface()
 
   // wizard_widget->SetErrorText("Please note that the order of the images is important.");
 
+  // -----------------------------------------
+  //
+
+  if (!this->GetGUI()->IsSegmentationModeAdvanced()) 
+    {
+      this->SourceTaskFiles();
+      
+      int showCheckList = atoi(this->Script("::EMSegmenterSimpleTcl::CreateCheckList"));
+      if (showCheckList) 
+    {
+          if (!this->CheckListFrame)
+      {
+         this->CheckListFrame = vtkKWFrameWithLabel::New();
+          }
+          if (!this->CheckListFrame->IsCreated())
+      {
+         this->CheckListFrame->SetParent(parent);
+         this->CheckListFrame->Create();
+         this->CheckListFrame->SetLabelText("Check List");
+      }
+          this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2", this->CheckListFrame->GetWidgetName());
+
+      this->CreateEntryLists();
+      this->Script("::EMSegmenterSimpleTcl::ShowCheckList");
+    }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -340,6 +403,46 @@ void vtkEMSegmentInputChannelsStep::Validate()
        inputNodes->SetNthInputChannelName(i,this->InputChannelDefineLineName[i]->GetWidget()->GetValue());
      }
      
+
+   //
+   if (!this->GetGUI()->IsSegmentationModeAdvanced()) 
+     {
+       if (atoi(this->Script("::EMSegmenterSimpleTcl::ValidateCheckList")) )
+     {
+       return;
+     }
+       
+       this->UpdateTaskPreprocessingSetting();
+       mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
+       mrmlManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
+       if (this->GetGUI()->GetPreProcessingStep()) 
+     {
+       this->GetGUI()->GetPreProcessingStep()->askQuestionsBeforeRunningPreprocessingFlagOff();
+     }
+     } 
+   else 
+     {
+       if (this->GetGUI()->GetPreProcessingStep()) 
+     {
+       this->GetGUI()->GetPreProcessingStep()->askQuestionsBeforeRunningPreprocessingFlagOn();
+     }
+     }
+
+   // Make sure output volume is defined 
+   if(!mrmlManager->GetOutputVolumeMRMLID())
+    {
+      // Create New Volume Output Node 
+      // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
+      vtkMRMLScene *scene = this->GetGUI()->GetLogic()->GetMRMLScene();
+      vtkMRMLScalarVolumeNode* node = static_cast<vtkMRMLScalarVolumeNode*>(scene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+      node->SetName("EMSegment1");
+      node->LabelMapOn();
+      scene->AddNode(node);
+      mrmlManager->SetOutputVolumeMRMLID(node->GetID());
+      node->Delete();      
+    }
+
+   // Check Values for 
    this->Superclass::Validate();
 }
 
@@ -432,6 +535,15 @@ void vtkEMSegmentInputChannelsStep::CreateInputChannelFrame(int i, const char* n
   vtkKWEntry *entry =  this->InputChannelDefineLineName[i]->GetWidget();
   entry->SetWidth(10);
   entry->SetValue (newName);
+  if (this->GetGUI()->IsSegmentationModeAdvanced())
+    {
+      entry->ReadOnlyOff();
+    } 
+  else
+    {
+      entry->ReadOnlyOn();
+    } 
+
   this->Script("pack %s -side left -anchor nw -fill x -padx 0 -pady 2",this->InputChannelDefineLineName[i]->GetWidgetName());
     
   if (!this->InputChannelDefineLineVolume[i])
@@ -528,4 +640,110 @@ void vtkEMSegmentInputChannelsStep::UpdateInputChannelsfromMRML()
 int vtkEMSegmentInputChannelsStep::GetNumberOfInputChannels()
 {
   return InputChannelDefineLineFrame.size();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentInputChannelsStep::UpdateTaskPreprocessingSetting()
+{
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+      return;
+    }
+
+
+  std::string oldText = mrmlManager->GetNode()->GetTaskPreprocessingSetting();
+
+  vtksys_stl::stringstream defText;
+  size_t  startPos =0;
+  size_t  endPos   =0;
+
+  if (oldText.size())
+    {
+      endPos =oldText.find("|",1);
+    }
+  else {
+    // Nothing to update
+    return;
+  } 
+
+  for (int i =0 ; i < (int)  this->checkButton.size(); i++)
+    {
+      // assumes that the entry with index 0 is used during processin otherwise have problems
+      if (this->checkButton[i]) {
+    defText << "|C";
+    defText << this->checkButton[i]->GetWidget()->GetSelectedState();
+      } else {
+    defText << oldText.substr(startPos,endPos-startPos).c_str();
+      }
+
+      if (endPos == std::string::npos)
+    {
+      startPos = std::string::npos;
+      break;
+    } 
+      else {
+    startPos = endPos;
+    endPos ++;
+    endPos =oldText.find("|",startPos); 
+      }
+    }
+
+  for (int i =0 ; i < (int) this->volumeMenuButton.size(); i++)
+    {
+      // assumes that the entry with index 0 is used during processin otherwise have problems
+      if (this->volumeMenuButton.size()) 
+    {
+      defText << "|V";
+      vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(this->volumeMenuButtonID[i]);
+      if (!volumeNode) 
+        {
+          vtkErrorMacro("Volume Node for ID " << this->volumeMenuButtonID[i] << " does not exists" );
+          defText << "NULL";
+        } 
+      else 
+        {
+          defText << volumeNode->GetID();
+        }
+    }
+      else 
+    {
+      defText << oldText.substr(startPos,endPos-startPos).c_str();
+    }
+      if (endPos == std::string::npos)
+    {
+      startPos = std::string::npos;
+      break;
+    } 
+      else {
+    startPos = endPos;
+    endPos ++;
+    endPos =oldText.find("|",startPos); 
+      }
+    }
+
+
+  for (int i =0 ; i < (int) this->textEntry.size(); i++)
+    {
+      // assumes that the entry with index 0 is used during processin otherwise have problems
+      if (this->textEntry[i] && this->textEntry[i]->GetWidget()) {
+    defText << "|E";
+    defText <<  this->textEntry[i]->GetWidget()->GetValue();
+      } else {
+    defText << oldText.substr(startPos,endPos-startPos).c_str();
+      }
+
+      if (endPos == std::string::npos)
+    {
+      startPos = std::string::npos;
+      break;
+    } 
+      else {
+    startPos = endPos;
+    endPos ++;
+    endPos =oldText.find("|",startPos); 
+      }
+    }
+  mrmlManager->GetNode()->SetTaskPreprocessingSetting(defText.str().c_str());
 }

@@ -134,36 +134,12 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
             vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff);
     this->RegistrationParametersAffineMenuButton->GetWidget()->
       GetMenu()->AddRadioButton("None", this, buffer);
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationCenters);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Align Image Centers", this, buffer);
 
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, MI Fast", this, buffer);
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, MI", this, buffer);
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMISlow);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, MI Slow", this, buffer);
-
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, NCC Fast", this, buffer);
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, NCC", this, buffer);
-    sprintf(buffer, "RegistrationAffineCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCSlow);
-    this->RegistrationParametersAffineMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("Rigid, NCC Slow", this, buffer);
+    sprintf(buffer, "RegistrationAffineCallback %d", vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast);
+    this->RegistrationParametersAffineMenuButton->GetWidget()->GetMenu()->AddRadioButton("Fast", this, buffer);
+ 
+    sprintf(buffer, "RegistrationAffineCallback %d", vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMISlow);
+    this->RegistrationParametersAffineMenuButton->GetWidget()->GetMenu()->AddRadioButton("Accurate", this, buffer);
 
     this->RegistrationParametersAffineMenuButton->SetBalloonHelpString(
       "Select affine registration.");
@@ -194,47 +170,17 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
       SetWidth(EMSEG_MENU_BUTTON_WIDTH);
     this->RegistrationParametersDeformableMenuButton->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
-    this->RegistrationParametersDeformableMenuButton->
-      SetLabelText("Deformable Registration:");
-    this->RegistrationParametersDeformableMenuButton->SetBalloonHelpString(
-      "Select deformable registration.");
+    this->RegistrationParametersDeformableMenuButton->SetLabelText("Deformable Registration:");
 
-    sprintf(buffer, "RegistrationDeformableCallback %d", 
-            vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationOff);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("None", this, buffer);
+    sprintf(buffer, "RegistrationDeformableCallback %d", vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationOff);
+    this->RegistrationParametersDeformableMenuButton->GetWidget()->GetMenu()->AddRadioButton("None", this, buffer);
+    sprintf(buffer, "RegistrationDeformableCallback %d", vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMIFast);
+    this->RegistrationParametersDeformableMenuButton->GetWidget()->GetMenu()->AddRadioButton("Fast", this, buffer);
+    sprintf(buffer, "RegistrationDeformableCallback %d",vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMISlow);
+    this->RegistrationParametersDeformableMenuButton->GetWidget()->GetMenu()->AddRadioButton("Accurate", this, buffer);
 
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineMMIFast);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, MI Fast", this, buffer);
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineMMI);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, MI", this, buffer);
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineMMISlow);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, MI Slow", this, buffer);
+    this->RegistrationParametersDeformableMenuButton->SetBalloonHelpString("Select deformable registration.");
 
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineNCCFast);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, NCC Fast", this, buffer);
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineNCC);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, NCC", this, buffer);
-    sprintf(buffer, "RegistrationDeformableCallback %d",
-            vtkEMSegmentMRMLManager::
-            AtlasToTargetDeformableRegistrationBSplineNCCSlow);
-    this->RegistrationParametersDeformableMenuButton->GetWidget()->
-      GetMenu()->AddRadioButton("B-Spline, NCC Slow", this, buffer);
     }
 
   sprintf(buffer, "%d", mrmlManager->GetRegistrationDeformableType());

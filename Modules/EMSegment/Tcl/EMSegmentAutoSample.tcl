@@ -59,7 +59,7 @@ proc EMSegmentCutOutRegion {ThreshInstance MathInstance ResultVolume ProbVolume 
 #-------------------------------------------------------------------------------
 proc EMSegmentGaussCurveCalculationFromID {CutOffProbability LogGaussFlag MRIVolumeIDList ProbVolumeID ClassName} {
     global EMSegment
-    set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegment Template Builder"]
+    set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegmenter"]
     set mrmlManager   [$GUI GetMRMLManager]
     set SCENE [$mrmlManager GetMRMLScene ]
 

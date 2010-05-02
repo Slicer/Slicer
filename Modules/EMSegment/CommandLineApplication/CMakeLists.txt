@@ -55,7 +55,7 @@ slicer3_install_plugins(${CLP_MODULE})
 # --------------------------------------------------------------------------
 # CLGUI
 
-set(EMSEG_GENERATE_CLGUI 1)
+set(EMSEG_GENERATE_CLGUI 0)
 
 if(EMSEG_GENERATE_CLGUI)
   set(CLP_MODULE_GUI EMSegmentCommandLine_GUIVersion)
