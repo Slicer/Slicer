@@ -72,7 +72,7 @@ bool SparseFieldLS::InitSphere()
 
 vector<int> SparseFieldLS::Evolve(int its )
 {
-    double cfl = 0.35;
+    double cfl = 0.2;
     
     std::vector<int> Lz  ;
     std::vector<int> Lp1 ;
@@ -261,7 +261,8 @@ vector<int> SparseFieldLS::Evolve(int its )
       for( int k = 0; k < Lz.size(); k++ )
         point_type[Lz[k]] = 0;
      
-      //cout<<Sz.size()<<","<<L_z.size()<<"\n";
+      if( its_%50 == 0 )
+        cout<<"LZ state: "<<Sz.size()<<","<<L_z.size()<<"\n";
       while( Sz.size() > 0 ) {
         int idx = Sz.front();
         L_z.push_back( idx );

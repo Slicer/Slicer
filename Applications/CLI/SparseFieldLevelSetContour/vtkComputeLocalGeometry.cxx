@@ -96,7 +96,7 @@ int vtkComputeLocalGeometry::RequestData(
 // assign some data from curvature computation 
 // check for the prescence of this named array!
   vtkDataArray* surfaceCurvature = input->GetPointData()->GetArray("SurfaceMeanCurvature");
-  if( NULL == surfaceCurvature ) {
+  if( 1 /*NULL == surfaceCurvature*/ ) {
     vtkSmartPointer<vtkFloatArray> surfaceCurvature = vtkSmartPointer<vtkFloatArray>::New();
     surfaceCurvature->SetName("SurfaceMeanCurvature");
     surfaceCurvature->SetNumberOfComponents(1);
@@ -108,10 +108,10 @@ int vtkComputeLocalGeometry::RequestData(
 
       // do the curvature computations / pre-processing
       myMeshData->polydata = output;
-      myMeshData->smoothH_its = 10;
-      myMeshData->adj_levels = 1;
+      myMeshData->smoothH_its = H_smooth_its;
+      myMeshData->adj_levels = adj_levels;
       myMeshData->showLS = 0;
-      myMeshData->rightHandMesh = 1;
+      myMeshData->rightHandMesh = rightHandMesh;
       ComputeCurvatureData( myMeshData );
       surfH = myMeshData->MeanCurv;
     }
@@ -302,7 +302,7 @@ int vtkComputeLocalGeometry::RequestData(
 
    // L_z: the array of vertex indices that have both neighbor INSIDE and OUTSIDE
 
-  Debug_Display( activeContourVertIdx,  label) ;
+  Debug_Display( activeContourVertIdx,  class_of_blob) ;
   output->GetPointData()->AddArray( activeContourVertIdx );
   this->map = label;
   this->Lp1 = Lp1;

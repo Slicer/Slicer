@@ -6,6 +6,7 @@
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
                                      vtkIntArray* initVertIdx,
                                      vtkPolyData* outputMesh,
+                                     InitParam init,
                                      bool bForceRecompute)
 {
   
@@ -33,6 +34,14 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   // algorithm #2: computing the geometry (if the input data 
   // does NOT already have a scalar data set containing it)
   vtkSmartPointer<vtkComputeLocalGeometry> computeGeometry = vtkSmartPointer<vtkComputeLocalGeometry>::New();
+
+  // Pass in Initialization Parameters
+  computeGeometry->Set_evolve_its(init.evolve_its);
+  computeGeometry->Set_mesh_smooth_its(init.mesh_smooth_its);
+  computeGeometry->Set_H_smooth_its(init.H_smooth_its);
+  computeGeometry->Set_adj_levels(init.adj_levels);
+  computeGeometry->Set_rightHandMesh(init.rightHandMesh);
+
   computeGeometry->SetInputConnection( initPath->GetOutputPort() );
   computeGeometry->Update();  
 
@@ -61,6 +70,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
                                             vector< vector<float> >& initPoints3D,
                                              vtkPolyData* outputMesh,
+                                             InitParam init,
                                              bool bForceRecompute )
 { 
 
@@ -107,7 +117,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   }
   std::cout<<"\n";
   
-  entry_main( inputMesh, initialPoints, outputMesh, bForceRecompute );
+  entry_main( inputMesh, initialPoints, outputMesh, init, bForceRecompute );
 
   return;
 }
@@ -115,10 +125,10 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh )
+void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init )
 {  
   vtkIntArray* emptyIntVec;
-  entry_main( inputMesh, emptyIntVec, outputMesh );
+  entry_main( inputMesh, emptyIntVec, outputMesh, init );
 
   return;
 }

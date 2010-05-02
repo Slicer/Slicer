@@ -28,19 +28,27 @@ using std::vector;
 
 namespace MeshContourEvolver {
 
+struct InitParam {
+int evolve_its;
+int mesh_smooth_its;
+int H_smooth_its;
+int adj_levels;
+int rightHandMesh;
+};
+
 // Input: mesh and indices of vertices for initialization
 //vtkPolyData* entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, bool bForceRecompute = false);
-void entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, vtkPolyData *outputMesh, bool bForceRecompute = false);
+void entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, vtkPolyData *outputMesh, InitParam init, bool bForceRecompute = false );
 
 
 // Input: mesh and 3D points for initialization. This is what you get
 // when inputting 'fiducials' in Slicer GUI. The 3D points
 // are not on the mesh, you need to first find closest points on the mesh.
-void entry_main( vtkPolyData* inputMesh, vector< vector<float> >& initPoints3D, vtkPolyData* outputMesh, bool bForceRecompute = false);
+void entry_main( vtkPolyData* inputMesh, std::vector< std::vector<float> >& initPoints3D, vtkPolyData* outputMesh, InitParam init, bool bForceRecompute = false);
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-void entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh );
+void entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init);
 
 
 

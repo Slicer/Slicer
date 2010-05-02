@@ -89,7 +89,7 @@ int vtkLevelSetMeshEvolver::RequestData(
   // Create New Scalar Array called "ActiveContourFunctionValues"
   // Update the vtkIntArray called "ActiveContourVertexIndices"
   {
-    int EVOLVE_ITER = 100;
+    int EVOLVE_ITER = 300;
     SparseFieldLS* sfls = new SparseFieldLS( this->myMeshData,   L_z, L_p1,   L_n1,   L_p2, L_n2, map );
     std::vector<int> NewLZ    = sfls->Evolve( EVOLVE_ITER );
     std::vector<double>* vals = sfls->GetPhi( );
@@ -99,7 +99,7 @@ int vtkLevelSetMeshEvolver::RequestData(
      activeContourVertIdx = vtkIntArray::SafeDownCast( contourIdxArrayIn );
      for( ::size_t i = 0; i < map.size(); i++ ) {
         int val = vtkMath::Round( float( (*vals)[i] ) );
-        activeContourVertIdx->SetValue( i, val );
+       activeContourVertIdx->SetValue( i, val );
      }
      for( ::size_t i = 0; i < NewLZ.size(); i++ ) {
         int idx = NewLZ[i];

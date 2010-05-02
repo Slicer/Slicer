@@ -43,6 +43,19 @@ public:
   void SetSource(vtkPolyData *source);
   vtkPolyData *GetSource();
   
+  int Get_evolve_its() { return evolve_its; }
+  int Get_mesh_smooth_its() { return mesh_smooth_its; }
+  int Get_H_smooth_its() { return H_smooth_its; }
+  int Get_adj_levels() { return adj_levels; }
+  int Get_rightHandMesh() { return rightHandMesh; }
+
+  void Set_evolve_its(int param) { evolve_its = param; }
+  void Set_mesh_smooth_its(int param) {mesh_smooth_its = param; }
+  void Set_H_smooth_its(int param) {H_smooth_its = param; }
+  void Set_adj_levels(int param) {adj_levels = param; }
+  void Set_rightHandMesh(int param) {rightHandMesh = param; }
+  
+
   MeshData* GetMeshData() { return myMeshData; }
   void SetMeshData(MeshData* data) { myMeshData = data; }
   void GetLists(   list<int>& C, list<int>& L_p1,   list<int>& L_n1,   list<int>& L_p2,
@@ -67,6 +80,13 @@ private:
   list<int> Ln2;
   list<int> Lp2;
   vector<int> map;
+
+  int evolve_its;
+  int mesh_smooth_its;
+  int H_smooth_its;
+  int adj_levels;
+  int rightHandMesh;
+
 };
 
 #endif

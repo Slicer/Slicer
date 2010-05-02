@@ -1,4 +1,5 @@
 #include "vtkInitClosedPath.h"
+#include "MeshOps.h"
 
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -187,8 +188,8 @@ void Debug_Display_L_Blob( vtkIntArray* activeContourVertIdx,
 
       for( ::size_t i = 0; i < numVerts; i++ ) {
         int val = 0;
-        double Lval = Lstar[i];
-        double dThresh = 0.2 * (Lmax-Lmean);
+        double Lval = abs(Lstar[i]);
+        double dThresh = 1e-3;
         if( Lval < dThresh )
           val = 1; // if we're 'close to the contour'     
         activeContourVertIdx->SetTupleValue(i, &val);
@@ -301,7 +302,7 @@ int vtkInitClosedPath::RequestData(
     size_t numInit ;
     std::vector<int> seedIdx; 
 
-    if( NULL == contourIdxArrayIn ) {
+    if( 1 ) { // NULL == contourIdxArrayIn ) {
       activeContourVertIdx->SetName("ActiveContourVertexIndices");
       activeContourVertIdx->SetNumberOfComponents(1);
       activeContourVertIdx->SetNumberOfTuples( numVerts );
@@ -316,9 +317,11 @@ int vtkInitClosedPath::RequestData(
       seedIdx = std::vector<int>(0);
       for( ::size_t i = 0; i < numVerts; i++ ) {
         int val = activeContourVertIdx->GetValue(i);
-#define INIT_FLAG_VAL -1
-        if( val < INIT_FLAG_VAL ) {
+#define INIT_FLAG_VAL 0
+        /*if( (val) == INIT_FLAG_VAL ) {
           seedIdx.push_back(i);
+        } else */{
+          activeContourVertIdx->SetValue( i, -1 );
         }
       }
       numInit = seedIdx.size();
@@ -494,14 +497,14 @@ BUILD_DISTANCE_TO_INIT:
                       // Assign idx's neighbor to be pt (mesh indices)
                       // where pt is a mesh index that is closest to init point jj
                       LstarIJval[ii][jj]        = Lstar_ii_jj;
-                      (LstarIJidx[ii])[jj]      = pt;
+                      (LstarIJidx[ii])[jj]      = idx;
                     }
                     if( LstarIJval[jj][ii] > Lstar_ii_jj_rev || LstarIJval[jj][ii] < 0 ) 
                     {
                       // Assign pt's neighbor to be idx (mesh indices)
                       // where idx is a mesh index that is closest to init point ii
                       LstarIJval[jj][ii]        = Lstar_ii_jj_rev;
-                      (LstarIJidx[jj])[ii]      = idx;
+                      (LstarIJidx[jj])[ii]      = pt;
                     }
                     // presumably, if we did the above, pt and idx are neighbors...
                   }
@@ -545,23 +548,50 @@ BUILD_DISTANCE_TO_INIT:
         for( ::size_t n = 0; n < numInit0; n++ ) {
           if( idxContactedInit[m][n] == 0 ) {
             bAllConnected = false;
-            //recursions = 2048;
           }
         }
       }
-      if( 0 ) { // bAllConnected ) {
-        //nextVerts.clear();
+      if( bAllConnected ) {
+        nextVerts.clear();
+        recursions = 1024;
       }
       else {
         nextVerts.pop_front();
       }
     }
 
-  //  UpdateInitLists( LstarIJidx, accessible_init_indices );
-  
+     output->BuildLinks();  
+     std::vector<AdjData> adjimm = std::vector<AdjData>(numVerts); 
+     
+     // for every face, make all vertices on the face store in the adjimm list
+      for( int i = 0; i < numVerts; i++ ) {
+        adjimm[i].myNeighbs    = vector<int>(1);
+        adjimm[i].myNeighbs[0] = i;
+        adjimm[i].myIdx = i;
+      }
+
+      int numfaces = faces->GetNumberOfCells();
+      for( int i = 0; i < numfaces; i++ ) {
+        vtkIdType npts;
+        vtkIdType* pts;
+        faces->GetCell(i*4,npts, pts );
+        int vert0 = pts[0];
+        int vert1 = pts[1];
+        int vert2 = pts[2];
+        for( int k = 0 ; k < 3; k++ ) {
+          for( int kk = 0; kk < 3; kk++ ) {
+            if( 0 == count( adjimm[pts[kk]].myNeighbs.begin(), adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
+              adjimm[pts[kk]].myNeighbs.push_back( pts[k] );
+          }
+          }
+        }
+      }
+
+    std::vector<int> C = seedIdx;
+
     // now append to the initializers...
     for( ::size_t i = 0; i < LstarIJidx.size(); i++ ) {
-      ::size_t NUM_KEEP = 2;
+      ::size_t NUM_KEEP = LstarIJidx.size();
       for( ::size_t k = 0; k < NUM_KEEP; k++ ) {
         int idxAdd = i;
         double Lbest = 1e9;
@@ -580,10 +610,69 @@ BUILD_DISTANCE_TO_INIT:
           if( idxAdd >= 0 && (0== count( seedIdx.begin(), seedIdx.end(), idxAdd ) ) )
               seedIdx.push_back(idxAdd);
         }
-        LstarIJval[i][jBest] = -1.0; // remove the min, look for 2nd min
+
+        // path from... i to idxAdd ?
+        int idxSource =  LstarIJidx[k][k];
+        int idxSink   =  LstarIJidx[i][i];
+        double thispt[3];
+        double thatpt[3];
+
+        int nextPt = idxSink;
+        int Cpt    = idxSource;
+        unsigned short ncells;
+        output->GetPoint( nextPt, thatpt ); // point where we're path finding towards
+
+        while( Cpt != nextPt )
+        { // path-find until you get to the nextPt
+
+
+          ///////////// build adjacency list at current point
+        
+            //////////////// Get cloeset next point to go to
+
+            std::vector<int> neigh_pts = adjimm[Cpt].myNeighbs;
+            double minDist = 1e9;
+            int minIdx = Cpt;
+            for( ::size_t k = 0; k < neigh_pts.size(); k++ )
+            {
+              int idx = neigh_pts[k];
+              int idx_count = 0;
+              if( idx != nextPt )
+              {
+                idx_count = count( C.begin(), C.end(), idx );
+              }
+              // for each neighbor, measure the distance to the nextPt
+              // keep the index of least distance
+              output->GetPoint( idx, thispt ); // current neighbor candidate
+              double dist = pow(thatpt[0]-thispt[0],2.0)+pow(thatpt[1]-thispt[1],2.0)+pow(thatpt[2]-thispt[2],2.0);
+              if( (idx_count == 0 ) && (idx != Cpt) && dist < minDist )
+              {
+                minDist = dist;
+                minIdx = idx;
+              }
+            }
+            // ok now we know the index of the best neighbor.
+            // push it onto the path stack and make it the new current point
+            Cpt = minIdx;
+            if( (minIdx != nextPt) && count( C.begin(), C.end(), Cpt ) != 0 )
+            {
+             // std::cerr<<"Error, path finder stuck in a loop. Try another initialization. \n";
+              break;
+              //return vector<int>(0);
+            }
+            //if( Cpt != nextPt ) // later debug: make sure the nextPt later gets put on the stack
+            C.push_back( Cpt );
+        }
+        int brekhere = 1;
+        //LstarIJval[i][jBest] = -1.0; // remove the min, look for 2nd min
       }
     }
     
+    seedIdx = C;
+    for( ::size_t m = 0; m < C.size(); m++ ) {
+      int idx = C[m];
+      Lstar[idx] = 0.0;
+    }
 
     for( ::size_t m = 0; m < numVerts; m++ ) {
     //  accessible_init_indices[m][k] = idx;
@@ -622,20 +711,23 @@ BUILD_DISTANCE_TO_INIT:
     else {
       std::cout<<"Num Seeds Generated: "<<seedIdx.size()<<"\n";
     }
+    
+    for( int n = 0; n < 0; n++ ) {
+      vector<double> Lstar_ = Lstar;
+      for( ::size_t k = 0; k < numVerts; k++ ) {
+        vector<int>* neigh = &(adjimm[k].myNeighbs);
+        double sumLstar = 0.0;
+        for( ::size_t m = 0 ; m < neigh->size(); m++ ) {
+          Lstar[k] = Lstar[k] * Lstar_[ (*neigh)[m] ]; 
+                // goes to zero if neighbor was zero
+        }
+      }
+    }
 
-    //std::vector< std::list<int> > back_trace( numVerts );
      
-// Temp Debug Display: contour idx as color map
+    // Temp Debug Display: contour idx as color map
     //Debug_Display_L_Vals( activeContourVertIdx, Lstar, seedIdx, seedIdxPrv );
     Debug_Display_L_Blob( activeContourVertIdx, Lstar, seedIdx, seedIdxPrv );
-    //Debug_Display_Path_Vals2( activeContourVertIdx, accessible_init_indices, seedIdxPrv );
-    //Debug_Display_Connected_Vals( activeContourVertIdx, Lstar, seedIdx );
-
-    /* Signature to match:
-    vector<int> InitPath( MeshData* meshdata, vector<int> pts)
-        // given several seed points, form a contour via
-        // some shortest straight euclidean path
-        // return a vector containing all indices of the initalized contour */
 
     output->GetPointData()->AddArray( activeContourVertIdx );
   }

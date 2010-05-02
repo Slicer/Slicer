@@ -44,6 +44,9 @@ int main(int argc, char* argv[] )
   reader->SetFileName(InputSurface.c_str());
   reader->Update();
 
+  InitParam init = {evolve_its, mesh_smooth_its, H_smooth_its, adj_levels, rightHandMesh };
+
+
   if (reader->GetOutput() == NULL)
     {
     std::cerr << "ERROR reading input surface file " << InputSurface.c_str();
@@ -55,7 +58,7 @@ int main(int argc, char* argv[] )
   vtkSmartPointer<vtkPolyData> polyDataOutput = vtkSmartPointer<vtkPolyData>::New();
   
   //vtkPolyData * polyDataOutput =
-  entry_main( polyDataInput, ContourSeedPts, polyDataOutput );
+  entry_main( polyDataInput, ContourSeedPts, polyDataOutput, init );
 
   vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   std::string commentWrite = "Writing output model " + OutputModel;
