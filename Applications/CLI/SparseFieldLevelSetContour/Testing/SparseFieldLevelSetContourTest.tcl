@@ -23,10 +23,12 @@ proc SparseFieldLevelSetContourTest { {modelFile ""} {outputModelFile ""} {basel
     # set up some contour points
     set fidLogic [$::slicer3::FiducialsGUI GetLogic]
     # set contourList [$fidLogic AddFiducialList]
-    $fidLogic AddFiducialSelected 1.5 1.5 0 1
-    $fidLogic AddFiducialSelected -1.5 1.5 0 1
-    $fidLogic AddFiducialSelected -1.5 -1.5 0 1 
-    $fidLogic AddFiducialSelected 1.5 -1.5 0 1
+    $fidLogic AddFiducialSelected 132.059 -3.68759 -378.683 1
+    $fidLogic AddFiducialSelected 127.652 -16.0285 -381.549 1
+    $fidLogic AddFiducialSelected 120.15 -27.4267 -382.79 1 
+    $fidLogic AddFiducialSelected 117.438 -26.4077 -394.14 1
+    $fidLogic AddFiducialSelected 128.782 -14.2639 -389.404 1 
+    $fidLogic AddFiducialSelected 134.297 1.63338 -387.623 1
     set contourListID [[$::slicer3::MRMLScene GetNodeByID vtkMRMLSelectionNode1] GetActiveFiducialListID]
     
     # set up the CLI
