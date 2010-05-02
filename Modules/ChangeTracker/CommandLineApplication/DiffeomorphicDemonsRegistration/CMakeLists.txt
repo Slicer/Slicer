@@ -22,25 +22,10 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
 target_link_libraries (${CLP}Lib ITKIO ITKStatistics)
 
 add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ${CLP}Lib)
-
-
-if (Slicer3_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
-  # from a build)
-  set(TARGETS        
-    DemonsRegistration
-    DemonsRegistrationLib
-    )
-  slicer3_install_plugins(${TARGETS})
-
-endif (Slicer3_SOURCE_DIR)
 
 #the following line is an example of how to add a test to your project.
 #Testname is the title for this particular test.  ExecutableToRun is the

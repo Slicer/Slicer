@@ -70,3 +70,5 @@ target_link_libraries(
   vtkTeem
   )
 #slicer3_install_plugins(${CLP_MODULE}Lib)
+
+ADD_SUBDIRECTORY(DiffeomorphicDemonsRegistration)
