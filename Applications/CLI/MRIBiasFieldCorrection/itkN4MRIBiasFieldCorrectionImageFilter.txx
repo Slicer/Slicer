@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkN3MRIBiasFieldCorrectionImageFilter.txx,v $
+  Module:    $RCSfile: itkN4MRIBiasFieldCorrectionImageFilter.txx,v $
   Language:  C++
   Date:      $Date: 2009/06/09 16:22:05 $
   Version:   $Revision: 1.6 $
@@ -14,17 +14,18 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkN3MRIBiasFieldCorrectionImageFilter_txx
-#define __itkN3MRIBiasFieldCorrectionImageFilter_txx
+#ifndef __itkN4MRIBiasFieldCorrectionImageFilter_txx
+#define __itkN4MRIBiasFieldCorrectionImageFilter_txx
 
-#include "itkN3MRIBiasFieldCorrectionImageFilter.h"
+#include "itkN4MRIBiasFieldCorrectionImageFilter.h"
 
+#include "itkAddImageFilter.h"
+#include "itkBSplineControlPointImageFilter.h"
 #include "itkDivideImageFilter.h"
 #include "itkExpImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkIterationReporter.h"
-#include "itkLBFGSBOptimizer.h"
 #include "itkLogImageFilter.h"
 #include "itkSubtractImageFilter.h"
 
@@ -34,192 +35,54 @@
 
 namespace itk {
 
-/**
- * N3BiasFieldScaleCostFunction class definitions
- */
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>
-::N3BiasFieldScaleCostFunction()
-{
-  this->m_InputImage = NULL;
-  this->m_BiasFieldImage = NULL;
-  this->m_MaskImage = NULL;
-  this->m_ConfidenceImage = NULL;
-
-  this->m_MaskLabel = NumericTraits<typename TMaskImage::PixelType>::One;
-}
-
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>
-::~N3BiasFieldScaleCostFunction()
-{
-}
-
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-typename N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>::MeasureType
-N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>
-::GetValue( const ParametersType & parameters ) const
-{
-  ImageRegionConstIterator<TInputImage> ItI( this->m_InputImage,
-    this->m_InputImage->GetRequestedRegion() );
-  ImageRegionConstIterator<TBiasFieldImage> ItB( this->m_BiasFieldImage,
-    this->m_BiasFieldImage->GetRequestedRegion() );
-
-  MeasureType mu = 0.0;
-  MeasureType N = 0.0;
-  for( ItI.GoToBegin(), ItB.GoToBegin(); !ItI.IsAtEnd(); ++ItI, ++ItB )
-    {
-    if( ( !this->m_MaskImage ||
-      this->m_MaskImage->GetPixel( ItI.GetIndex() ) == this->m_MaskLabel )
-      && ( !this->m_ConfidenceImage ||
-      this->m_ConfidenceImage->GetPixel( ItI.GetIndex() ) > 0.0 ) )
-      {
-      mu += static_cast<MeasureType>( ItI.Get() ) / ( parameters[0] *
-        ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) + 1.0 );
-      N += 1.0;
-      }
-    }
-  mu /= N;
-
-  MeasureType value = 0.0;
-  for( ItI.GoToBegin(), ItB.GoToBegin(); !ItI.IsAtEnd(); ++ItI, ++ItB )
-    {
-    if( ( !this->m_MaskImage ||
-      this->m_MaskImage->GetPixel( ItI.GetIndex() ) == this->m_MaskLabel )
-      && ( !this->m_ConfidenceImage ||
-      this->m_ConfidenceImage->GetPixel( ItI.GetIndex() ) > 0.0 ) )
-      {
-      value += vnl_math_sqr( ( ItI.Get() / ( parameters[0] *
-        ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) + 1.0 ) ) / mu - 1.0 );
-      }
-    }
-  value /= ( N - 1.0 );
-
-  return value;
-}
-
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-void
-N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>
-::GetDerivative( const ParametersType & parameters,
-  DerivativeType & derivative ) const
-{
-  ImageRegionConstIterator<TInputImage> ItI( this->m_InputImage,
-    this->m_InputImage->GetRequestedRegion() );
-  ImageRegionConstIterator<TBiasFieldImage> ItB( this->m_BiasFieldImage,
-    this->m_BiasFieldImage->GetRequestedRegion() );
-
-  MeasureType mu = 0.0;
-  MeasureType dmu = 0.0;
-  MeasureType N = 0.0;
-  for( ItI.GoToBegin(), ItB.GoToBegin(); !ItI.IsAtEnd(); ++ItI, ++ItB )
-    {
-    if( ( !this->m_MaskImage ||
-      this->m_MaskImage->GetPixel( ItI.GetIndex() ) == this->m_MaskLabel )
-      && ( !this->m_ConfidenceImage ||
-      this->m_ConfidenceImage->GetPixel( ItI.GetIndex() ) > 0.0 ) )
-      {
-      MeasureType d = parameters[0] *
-        ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) + 1.0;
-      mu += ( static_cast<MeasureType>( ItI.Get() ) / d );
-      dmu += -static_cast<MeasureType>( ItI.Get() ) *
-        ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) / vnl_math_sqr( d );
-      N += 1.0;
-      }
-    }
-  mu /= N;
-  dmu /= N;
-
-  MeasureType value = 0.0;
-  for( ItI.GoToBegin(), ItB.GoToBegin(); !ItI.IsAtEnd(); ++ItI, ++ItB )
-    {
-    if( ( !this->m_MaskImage ||
-      this->m_MaskImage->GetPixel( ItI.GetIndex() ) == this->m_MaskLabel )
-      && ( !this->m_ConfidenceImage ||
-      this->m_ConfidenceImage->GetPixel( ItI.GetIndex() ) > 0.0 ) )
-      {
-      MeasureType d = parameters[0] *
-        ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) + 1.0;
-      MeasureType t = static_cast<MeasureType>( ItI.Get() ) / d;
-      MeasureType dt = -t * ( static_cast<MeasureType>( ItB.Get() ) - 1.0 ) / d;
-      value += ( ( t / mu - 1.0 ) *
-        ( dt / mu - dmu * t / ( vnl_math_sqr( mu ) ) ) );
-      }
-    }
-  derivative.SetSize( 1 );
-  derivative( 0 ) = 2.0 * value / ( N - 1 );
-}
-
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-unsigned int
-N3BiasFieldScaleCostFunction<TInputImage, TBiasFieldImage, TMaskImage,
-  TConfidenceImage>
-::GetNumberOfParameters() const
-{
-  return NumericTraits<unsigned int>::One;
-}
-
-
-/**
- * N3MRIBiasFieldCorrectionImageFilter class definitions
- */
-
 template <class TInputImage, class TMaskImage, class TOutputImage>
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
-::N3MRIBiasFieldCorrectionImageFilter()
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+::N4MRIBiasFieldCorrectionImageFilter()
 {
   this->SetNumberOfRequiredInputs( 1 );
 
   this->m_MaskLabel = NumericTraits<MaskPixelType>::One;
+  this->m_LogBiasFieldControlPointLattice = NULL;
 
   this->m_NumberOfHistogramBins = 200;
   this->m_WeinerFilterNoise = 0.01;
   this->m_BiasFieldFullWidthAtHalfMaximum = 0.15;
 
-  this->m_MaximumNumberOfIterations = 50;
-  this->m_ConvergenceThreshold = 0.001;
-
   this->m_SplineOrder = 3;
-  this->m_NumberOfFittingLevels.Fill( 4 );
+  this->m_NumberOfFittingLevels.Fill( 1 );
   this->m_NumberOfControlPoints.Fill( 4 );
+  this->m_SigmoidNormalizedAlpha = 0.0;
+  this->m_SigmoidNormalizedBeta = 0.5;
 
-  this->m_UseOptimalBiasFieldScaling = true;
-  this->m_BiasFieldScaling = 1.0;
+  this->m_MaximumNumberOfIterations.SetSize( 1 );
+  this->m_MaximumNumberOfIterations.Fill( 50 );
+  this->m_ConvergenceThreshold = 0.001;
 }
 
 template<class TInputImage, class TMaskImage, class TOutputImage>
 void
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 ::GenerateData()
 {
   /**
    * Calculate the log of the input image.
    */
-  typename RealImageType::Pointer logInputImage = RealImageType::New();
+
+  typename RealImageType::Pointer logUncorrectedImage = RealImageType::New();
 
   typedef ExpImageFilter<RealImageType, RealImageType> ExpImageFilterType;
   typedef LogImageFilter<InputImageType, RealImageType> LogFilterType;
 
-  typename LogFilterType::Pointer logFilter1 = LogFilterType::New();
-  logFilter1->SetInput( this->GetInput() );
-  logFilter1->Update();
-  logInputImage = logFilter1->GetOutput();
+  typename LogFilterType::Pointer logFilter = LogFilterType::New();
+  logFilter->SetInput( this->GetInput() );
+  logFilter->Update();
+  logUncorrectedImage = logFilter->GetOutput();
 
   /**
    * Remove possible nans/infs from the log input image.
    */
-  ImageRegionIteratorWithIndex<RealImageType> It( logInputImage,
-    logInputImage->GetRequestedRegion() );
+  ImageRegionIteratorWithIndex<RealImageType> It( logUncorrectedImage,
+    logUncorrectedImage->GetRequestedRegion() );
   for( It.GoToBegin(); !It.IsAtEnd(); ++It )
     {
     if( ( !this->GetMaskImage() ||
@@ -249,62 +112,95 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   /**
    * Iterate until convergence or iterative exhaustion.
    */
-  IterationReporter reporter( this, 0, 1 );
-
-  bool isConverged = false;
-  this->m_ElapsedIterations = 0;
-  while( !isConverged &&
-    this->m_ElapsedIterations++ < this->m_MaximumNumberOfIterations )
+  unsigned int maximumNumberOfLevels = 1;
+  for( unsigned int d = 0; d < this->m_NumberOfFittingLevels.Size(); d++ )
     {
-    typedef SubtractImageFilter<RealImageType, RealImageType, RealImageType>
-      SubtracterType;
+    if( this->m_NumberOfFittingLevels[d] > maximumNumberOfLevels )
+      {
+      maximumNumberOfLevels = this->m_NumberOfFittingLevels[d];
+      }
+    }
+  if( this->m_MaximumNumberOfIterations.Size() != maximumNumberOfLevels )
+    {
+    itkExceptionMacro(
+        "Number of iteration levels is not equal to the max number of levels. "
+        << " MaximumNumberOfIterations "
+        << this->m_MaximumNumberOfIterations.Size()
+        << " maximumNumberOfLevels " << maximumNumberOfLevels );
+    }
 
-    typename SubtracterType::Pointer subtracter1 = SubtracterType::New();
-    subtracter1->SetInput1( logInputImage );
-    subtracter1->SetInput2( logBiasField );
-    subtracter1->Update();
+  for( this->m_CurrentLevel = 0; this->m_CurrentLevel < maximumNumberOfLevels;
+    this->m_CurrentLevel++ )
+    {
+    IterationReporter reporter( this, 0, 1 );
+    this->m_ElapsedIterations = 0;
+    this->m_CurrentConvergenceMeasurement = NumericTraits<RealType>::max();
+    while( this->m_ElapsedIterations++ <
+      this->m_MaximumNumberOfIterations[this->m_CurrentLevel] &&
+      this->m_CurrentConvergenceMeasurement > this->m_ConvergenceThreshold )
+      {
+      /**
+       * Sharpen the current estimate of the uncorrected image.
+       */
+      typename RealImageType::Pointer logSharpenedImage =
+        this->SharpenImage( logUncorrectedImage );
 
-    typename RealImageType::Pointer logSharpenedImage
-      = this->SharpenImage( subtracter1->GetOutput() );
+      typedef SubtractImageFilter<RealImageType, RealImageType, RealImageType>
+        SubtracterType;
+      typename SubtracterType::Pointer subtracter1 = SubtracterType::New();
+      subtracter1->SetInput1( logUncorrectedImage );
+      subtracter1->SetInput2( logSharpenedImage );
+      subtracter1->Update();
 
-    typename SubtracterType::Pointer subtracter2 = SubtracterType::New();
-    subtracter2->SetInput1( logInputImage );
-    subtracter2->SetInput2( logSharpenedImage );
-    subtracter2->Update();
+      /**
+       * Smooth the residual bias field estimate and add the resulting
+       * control point grid to get the new total bias field estimate.
+       */
+      typename RealImageType::Pointer newLogBiasField
+        = this->UpdateBiasFieldEstimate( subtracter1->GetOutput() );
 
-    typename RealImageType::Pointer newLogBiasField
-      = this->SmoothField( subtracter2->GetOutput() );
+      this->m_CurrentConvergenceMeasurement =
+        this->CalculateConvergenceMeasurement( logBiasField, newLogBiasField );
+      logBiasField = newLogBiasField;
 
-    this->m_CurrentConvergenceMeasurement
-      = this->CalculateConvergenceMeasurement( logBiasField, newLogBiasField );
-    isConverged = ( this->m_CurrentConvergenceMeasurement <
-      this->m_ConvergenceThreshold );
+      typename SubtracterType::Pointer subtracter2 = SubtracterType::New();
+      subtracter2->SetInput1( logFilter->GetOutput() );
+      subtracter2->SetInput2( logBiasField );
+      subtracter2->Update();
+      logUncorrectedImage = subtracter2->GetOutput();
 
-    logBiasField = newLogBiasField;
+      reporter.CompletedStep();
+      }
 
-    reporter.CompletedStep();
+    typedef BSplineControlPointImageFilter<BiasFieldControlPointLatticeType,
+      ScalarImageType> BSplineReconstructerType;
+    typename BSplineReconstructerType::Pointer reconstructer =
+      BSplineReconstructerType::New();
+    reconstructer->SetInput( this->m_LogBiasFieldControlPointLattice );
+    reconstructer->SetOrigin( logBiasField->GetOrigin() );
+    reconstructer->SetSpacing( logBiasField->GetSpacing() );
+    reconstructer->SetDirection( logBiasField->GetDirection() );
+    reconstructer->SetSize( logBiasField->GetLargestPossibleRegion().GetSize() );
+    reconstructer->Update();
+
+    typename BSplineReconstructerType::ArrayType numberOfLevels;
+    numberOfLevels.Fill( 1 );
+    for( unsigned int d = 0; d < ImageDimension; d++ )
+      {
+      if( this->m_NumberOfFittingLevels[d] + 1 >= this->m_CurrentLevel &&
+        this->m_CurrentLevel != maximumNumberOfLevels-1 )
+        {
+        numberOfLevels[d] = 2;
+        }
+      }
+    this->m_LogBiasFieldControlPointLattice = reconstructer->
+      RefineControlPointLattice( numberOfLevels );
     }
 
   typedef ExpImageFilter<RealImageType, RealImageType> ExpImageFilterType;
   typename ExpImageFilterType::Pointer expFilter = ExpImageFilterType::New();
   expFilter->SetInput( logBiasField );
   expFilter->Update();
-
-  /**
-   * Calculate the optimal scaling
-   */
-  if( this->m_UseOptimalBiasFieldScaling )
-    {
-    this->m_BiasFieldScaling =
-      this->CalculateOptimalBiasFieldScaling( expFilter->GetOutput() );
-
-    ImageRegionIterator<RealImageType> ItE( expFilter->GetOutput(),
-      expFilter->GetOutput()->GetRequestedRegion() );
-    for( ItE.GoToBegin(); !ItE.IsAtEnd(); ++ItE )
-      {
-      ItE.Set( this->m_BiasFieldScaling * ( ItE.Get() - 1.0 ) + 1.0 );
-      }
-    }
 
   /**
    * Divide the input image by the bias field to get the final image.
@@ -320,9 +216,9 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 }
 
 template<class TInputImage, class TMaskImage, class TOutputImage>
-typename N3MRIBiasFieldCorrectionImageFilter
+typename N4MRIBiasFieldCorrectionImageFilter
   <TInputImage, TMaskImage, TOutputImage>::RealImageType::Pointer
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 ::SharpenImage( typename RealImageType::Pointer unsharpenedImage )
 {
   /**
@@ -522,7 +418,6 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
   ImageRegionIterator<RealImageType> ItC( sharpenedImage,
     sharpenedImage->GetLargestPossibleRegion() );
-
   for( ItU.GoToBegin(), ItC.GoToBegin(); !ItU.IsAtEnd(); ++ItU, ++ItC )
     {
     if( ( !this->GetMaskImage() ||
@@ -543,7 +438,6 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
         {
         correctedPixel = E[E.size() - 1];
         }
-
       ItC.Set( correctedPixel );
       }
     }
@@ -552,11 +446,42 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 }
 
 template<class TInputImage, class TMaskImage, class TOutputImage>
-typename N3MRIBiasFieldCorrectionImageFilter
+typename N4MRIBiasFieldCorrectionImageFilter
   <TInputImage, TMaskImage, TOutputImage>::RealImageType::Pointer
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
-::SmoothField( typename RealImageType::Pointer fieldEstimate )
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+::UpdateBiasFieldEstimate( typename RealImageType::Pointer fieldEstimate )
 {
+  /**
+   * Calculate min/max for sigmoid weighting.  Calculate mean for offseting
+   * bias field calculations since B-spline algorithm biases the result
+   * to zero.
+   */
+  RealType maxAbsValue = NumericTraits<RealType>::NonpositiveMin();
+  RealType minAbsValue = NumericTraits<RealType>::max();
+  if( this->m_SigmoidNormalizedAlpha > 0.0 )
+    {
+    ImageRegionConstIteratorWithIndex<RealImageType>
+      It( fieldEstimate, fieldEstimate->GetRequestedRegion() );
+    for( It.GoToBegin(); !It.IsAtEnd(); ++It )
+      {
+      if( ( !this->GetMaskImage() ||
+        this->GetMaskImage()->GetPixel( It.GetIndex() ) == this->m_MaskLabel )
+        && ( !this->GetConfidenceImage() ||
+        this->GetConfidenceImage()->GetPixel( It.GetIndex() ) > 0.0 ) )
+        {
+        RealType pixel = vnl_math_abs( It.Get() );
+        if( pixel > maxAbsValue )
+          {
+          maxAbsValue = pixel;
+          }
+        else if( pixel < minAbsValue )
+          {
+          minAbsValue = pixel;
+          }
+        }
+      }
+    }
+
   /**
    * Get original direction and change to identity temporarily for the
    * b-spline fitting.
@@ -573,10 +498,9 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   typename BSplineFilterType::WeightsContainerType::Pointer weights =
     BSplineFilterType::WeightsContainerType::New();
   weights->Initialize();
-
   ImageRegionConstIteratorWithIndex<RealImageType>
     It( fieldEstimate, fieldEstimate->GetRequestedRegion() );
-  unsigned int N = 0;
+  unsigned int index = 0;
   for ( It.GoToBegin(); !It.IsAtEnd(); ++It )
     {
     if( ( !this->GetMaskImage() ||
@@ -590,65 +514,122 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
       ScalarType scalar;
       scalar[0] = It.Get();
 
-      fieldPoints->SetPointData( N, scalar );
-      fieldPoints->SetPoint( N, point );
+      fieldPoints->SetPointData( index, scalar );
+      fieldPoints->SetPoint( index, point );
+
+      RealType confidenceWeight = 1.0;
       if( this->GetConfidenceImage() )
         {
-        weights->InsertElement( N,
-          this->GetConfidenceImage()->GetPixel( It.GetIndex() ) );
+        confidenceWeight =
+          this->GetConfidenceImage()->GetPixel( It.GetIndex() );
         }
-      else
+      RealType sigmoidWeight = 1.0;
+      if( this->m_SigmoidNormalizedAlpha > 0.0 )
         {
-        weights->InsertElement( N, 1.0 );
+        RealType alpha = ( maxAbsValue - minAbsValue ) /
+          ( 12.0 * this->m_SigmoidNormalizedAlpha );
+        RealType beta = minAbsValue + ( maxAbsValue - minAbsValue ) *
+          this->m_SigmoidNormalizedBeta;
+
+        sigmoidWeight = 1.0 / ( 1.0 + vcl_exp(
+          -( scalar[0] - beta ) / alpha ) );
         }
-      N++;
+      weights->InsertElement( index, sigmoidWeight * confidenceWeight );
+      index++;
       }
     }
   fieldEstimate->SetDirection( direction );
 
   typename BSplineFilterType::Pointer bspliner = BSplineFilterType::New();
-  bspliner->SetOrigin( fieldEstimate->GetOrigin() );
+
+  typename BSplineFilterType::ArrayType numberOfControlPoints;
+  typename BSplineFilterType::ArrayType numberOfFittingLevels;
+  numberOfFittingLevels.Fill( 1 );
+  for( unsigned int d = 0; d < ImageDimension; d++ )
+    {
+    if( !this->m_LogBiasFieldControlPointLattice )
+      {
+      numberOfControlPoints[d] = this->m_NumberOfControlPoints[d];
+      }
+    else
+      {
+      numberOfControlPoints[d] = this->m_LogBiasFieldControlPointLattice->
+        GetLargestPossibleRegion().GetSize()[d];
+      }
+    }
+
+  typename ScalarImageType::PointType parametricOrigin =
+    fieldEstimate->GetOrigin();
+  for( unsigned int d = 0; d < ImageDimension; d++ )
+    {
+    parametricOrigin[d] += ( fieldEstimate->GetSpacing()[d] *
+      fieldEstimate->GetLargestPossibleRegion().GetIndex()[d] );
+    }
+  bspliner->SetOrigin( parametricOrigin );
   bspliner->SetSpacing( fieldEstimate->GetSpacing() );
   bspliner->SetSize( fieldEstimate->GetLargestPossibleRegion().GetSize() );
   bspliner->SetDirection( fieldEstimate->GetDirection() );
-  bspliner->SetGenerateOutputImage( true );
-  bspliner->SetNumberOfLevels( this->m_NumberOfFittingLevels );
+  bspliner->SetGenerateOutputImage( false );
+  bspliner->SetNumberOfLevels( numberOfFittingLevels );
   bspliner->SetSplineOrder( this->m_SplineOrder );
-  bspliner->SetNumberOfControlPoints( this->m_NumberOfControlPoints );
+  bspliner->SetNumberOfControlPoints( numberOfControlPoints );
   bspliner->SetInput( fieldPoints );
   bspliner->SetPointWeights( weights );
   bspliner->Update();
 
   /**
-   * Save the bias field control points in case the user wants to
-   * reconstruct the bias field.
+   * Add the bias field control points to the current estimate.
    */
-  this->m_LogBiasFieldControlPointLattice = bspliner->GetPhiLattice();
+  if( !this->m_LogBiasFieldControlPointLattice )
+    {
+    this->m_LogBiasFieldControlPointLattice = bspliner->GetPhiLattice();
+    }
+  else
+    {
+    typedef AddImageFilter<BiasFieldControlPointLatticeType,
+      BiasFieldControlPointLatticeType, BiasFieldControlPointLatticeType> AdderType;
+    typename AdderType::Pointer adder = AdderType::New();
+    adder->SetInput1( this->m_LogBiasFieldControlPointLattice );
+    adder->SetInput2( bspliner->GetPhiLattice() );
+    adder->Update();
+
+    this->m_LogBiasFieldControlPointLattice = adder->GetOutput();
+    }
+
+  typedef BSplineControlPointImageFilter<BiasFieldControlPointLatticeType,
+    ScalarImageType> BSplineReconstructerType;
+  typename BSplineReconstructerType::Pointer reconstructer =
+    BSplineReconstructerType::New();
+  reconstructer->SetInput( this->m_LogBiasFieldControlPointLattice );
+  reconstructer->SetOrigin( fieldEstimate->GetOrigin() );
+  reconstructer->SetSpacing( fieldEstimate->GetSpacing() );
+  reconstructer->SetDirection( direction );
+  reconstructer->SetSize( fieldEstimate->GetLargestPossibleRegion().GetSize() );
+  reconstructer->Update();
 
   typename RealImageType::Pointer smoothField = RealImageType::New();
   smoothField->SetOrigin( fieldEstimate->GetOrigin() );
   smoothField->SetSpacing( fieldEstimate->GetSpacing() );
-  smoothField->SetRegions(
-    fieldEstimate->GetLargestPossibleRegion().GetSize() );
+  smoothField->SetRegions( fieldEstimate->GetLargestPossibleRegion() );
   smoothField->SetDirection( direction );
   smoothField->Allocate();
 
-  ImageRegionIterator<ScalarImageType> ItB( bspliner->GetOutput(),
-    bspliner->GetOutput()->GetLargestPossibleRegion() );
+  ImageRegionIterator<ScalarImageType> ItR( reconstructer->GetOutput(),
+    reconstructer->GetOutput()->GetLargestPossibleRegion() );
   ImageRegionIterator<RealImageType> ItF( smoothField,
     smoothField->GetLargestPossibleRegion() );
-  for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
+  for( ItR.GoToBegin(), ItF.GoToBegin(); !ItR.IsAtEnd(); ++ItR, ++ItF )
     {
-    ItF.Set( ItB.Get()[0] );
+    ItF.Set( ItR.Get()[0] );
     }
 
   return smoothField;
 }
 
 template<class TInputImage, class TMaskImage, class TOutputImage>
-typename N3MRIBiasFieldCorrectionImageFilter
+typename N4MRIBiasFieldCorrectionImageFilter
   <TInputImage, TMaskImage, TOutputImage>::RealType
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 ::CalculateConvergenceMeasurement( typename RealImageType::Pointer
   fieldEstimate1, typename RealImageType::Pointer fieldEstimate2 )
 {
@@ -691,68 +672,8 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 }
 
 template<class TInputImage, class TMaskImage, class TOutputImage>
-typename N3MRIBiasFieldCorrectionImageFilter
-  <TInputImage, TMaskImage, TOutputImage>::RealType
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
-::CalculateOptimalBiasFieldScaling( typename RealImageType::Pointer biasField )
-{
-  /**
-   * This section is not described in Sled's paper but rather stems from
-   * our own experience with N4ITK and the resulting innovation.  For an initial
-   * B-spline mesh of large resolution and a low number of fitting levels,
-   * although the shape of of the bias field appears correect, the scale is too
-   * small. This section finds an optimal scaling by minimizing the coefficient
-   * of variation over masked region.
-   */
-
-  typedef N3BiasFieldScaleCostFunction<InputImageType,
-    RealImageType, MaskImageType, RealImageType> ScaleCostFunctionType;
-  typename ScaleCostFunctionType::Pointer scaleCostFunction =
-    ScaleCostFunctionType::New();
-
-  scaleCostFunction->SetInputImage(
-    const_cast<InputImageType *>( this->GetInput() ) );
-  scaleCostFunction->SetBiasFieldImage( biasField );
-  scaleCostFunction->SetMaskImage(
-    const_cast<MaskImageType *>( this->GetMaskImage() ) );
-  scaleCostFunction->SetConfidenceImage(
-    const_cast<RealImageType *>( this->GetConfidenceImage() ) );
-
-  typename LBFGSBOptimizer::BoundSelectionType boundSelection;
-  boundSelection.SetSize( 1 );
-  boundSelection.Fill( 1 );  // only set a lower bound on the scale factor
-  typename LBFGSBOptimizer::BoundValueType lowerBound;
-  lowerBound.SetSize( 1 );
-  lowerBound.Fill( 1.0 );
-  typename LBFGSBOptimizer::BoundValueType upperBound;
-  upperBound.SetSize( 1 );
-  upperBound.Fill(
-    NumericTraits<typename LBFGSBOptimizer::BoundValueType::ValueType>::max() );
-  typename LBFGSBOptimizer::ParametersType initialParameters;
-  initialParameters.SetSize( 1 );
-  initialParameters.Fill( 1.0 );
-
-  typename LBFGSBOptimizer::Pointer optimizer = LBFGSBOptimizer::New();
-  optimizer->SetMinimize( true );
-  optimizer->SetCostFunction( scaleCostFunction );
-  optimizer->SetInitialPosition( initialParameters );
-  optimizer->SetCostFunctionConvergenceFactor( 1e1 );
-  optimizer->SetLowerBound( lowerBound );
-  optimizer->SetUpperBound( upperBound );
-  optimizer->SetBoundSelection( boundSelection );
-  optimizer->SetProjectedGradientTolerance( 1e-10 );
-
-  optimizer->StartOptimization();
-
-  typename LBFGSBOptimizer::ParametersType finalParameters =
-    optimizer->GetCurrentPosition();
-
-  return finalParameters[0];
-}
-
-template<class TInputImage, class TMaskImage, class TOutputImage>
 void
-N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+N4MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 ::PrintSelf(std::ostream &os, Indent indent) const
 {
   Superclass::PrintSelf( os, indent );
@@ -775,11 +696,10 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
      << this->m_NumberOfFittingLevels << std::endl;
   os << indent << "Number of control points: "
      << this->m_NumberOfControlPoints << std::endl;
-  if( this->m_UseOptimalBiasFieldScaling )
-    {
-    os << indent << "Optimal bias field scaling: "
-       << this->m_BiasFieldScaling << std::endl;
-    }
+  os << indent << "Sigmoid normalized alpha: "
+     << this->m_SigmoidNormalizedAlpha << std::endl;
+  os << indent << "Sigmoid normalized beta: "
+     << this->m_SigmoidNormalizedBeta << std::endl;
 }
 
 }// end namespace itk

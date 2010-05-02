@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkN3MRIBiasFieldCorrectionImageFilter.h,v $
+  Module:    $RCSfile: itkN4MRIBiasFieldCorrectionImageFilter.h,v $
   Language:  C++
   Date:      $Date: 2009/06/09 16:22:05 $
   Version:   $Revision: 1.6 $
@@ -14,11 +14,12 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkN3MRIBiasFieldCorrectionImageFilter_h
-#define __itkN3MRIBiasFieldCorrectionImageFilter_h
+#ifndef __itkN4MRIBiasFieldCorrectionImageFilter_h
+#define __itkN4MRIBiasFieldCorrectionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
+#include "itkArray.h"
 #include "itkBSplineScatteredDataPointSetToImageFilter.h"
 #include "itkPointSet.h"
 #include "itkSingleValuedCostFunction.h"
@@ -28,18 +29,18 @@
 
 namespace itk {
 
-/** \class N3MRIBiasFieldCorrectionImageFilter.h
- * \brief Implementation of the N3 MRI bias field correction algorithm.
+/** \class N4MRIBiasFieldCorrectionImageFilter.h
+ * \brief Implementation of the N4 MRI bias field correction algorithm.
  *
- * The nonparametric nonuniform intensity normalization (N3) algorithm
+ * The nonparametric nonuniform intensity normalization (N4) algorithm
  * is a method for correcting nonuniformity associated with MR images.
  * The algorithm assumes a simple parametric model (Gaussian) for the bias field
  * but does not require tissue class segmentation.  In addition, there are
  * only a couple of parameters to tune with the default values performing
  * quite well.
  *
- * N3 has been publicly available as a set of perl scripts
- * (http://www.bic.mni.mcgill.ca/software/N3/) but, with this class, has been
+ * N4 has been publicly available as a set of perl scripts
+ * (http://www.bic.mni.mcgill.ca/software/N4/) but, with this class, has been
  * reimplemented for the ITK library with only one minor variation involving
  * the b-spline fitting routine.  We replaced the original fitting approach
  * with the itkBSplineScatteredDataPointSetToImageFilter which is not
@@ -47,12 +48,6 @@ namespace itk {
  * fitting component.
  *
  * Notes for the user:
- *  0. Based on our experience with the filter, sometimes the scale of the bias
- *     field is too small particularly for large mesh element sizes.  Therefore,
- *     we added an option (which is true by default) for finding the optimal
- *     scaling of the bias field which is based on minimizing the coefficient
- *     of variation of the corrected image.  This cost function is given below
- *     in N3BiasFieldScaleCostFunction.
  *  1. Since much of the image manipulation is done in the log space of the
  *     intensities, input images with negative and small values (< 1) are
  *     discouraged.
@@ -82,80 +77,21 @@ namespace itk {
  *
  */
 
-
-/**
- * Class definition for N3BiasFieldScaleCostFunction
- */
-
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
-class ITK_EXPORT N3BiasFieldScaleCostFunction
-  : public SingleValuedCostFunction
-{
-public:
-  typedef N3BiasFieldScaleCostFunction   Self;
-  typedef SingleValuedCostFunction       Superclass;
-  typedef SmartPointer<Self>             Pointer;
-  typedef SmartPointer<const Self>       ConstPointer;
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( N3BiasFieldScaleCostFunction, SingleValuedCostFunction );
-
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  typedef Superclass::MeasureType        MeasureType;
-  typedef Superclass::DerivativeType     DerivativeType;
-  typedef Superclass::ParametersType     ParametersType;
-
-  itkSetObjectMacro( InputImage, TInputImage );
-  itkSetObjectMacro( BiasFieldImage, TBiasFieldImage );
-  itkSetObjectMacro( MaskImage, TMaskImage );
-  itkSetObjectMacro( ConfidenceImage, TConfidenceImage );
-
-  itkSetMacro( MaskLabel, typename TMaskImage::PixelType );
-  itkGetConstMacro( MaskLabel, typename TMaskImage::PixelType );
-
-  virtual MeasureType GetValue( const ParametersType & parameters ) const;
-  virtual void GetDerivative( const ParametersType & parameters,
-                              DerivativeType & derivative ) const;
-  virtual unsigned int GetNumberOfParameters() const;
-
-protected:
-  N3BiasFieldScaleCostFunction();
-  virtual ~N3BiasFieldScaleCostFunction();
-
-private:
-  N3BiasFieldScaleCostFunction(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
-
-  typename TInputImage::Pointer                  m_InputImage;
-  typename TBiasFieldImage::Pointer              m_BiasFieldImage;
-  typename TMaskImage::Pointer                   m_MaskImage;
-  typename TConfidenceImage::Pointer             m_ConfidenceImage;
-
-  typename TMaskImage::PixelType                 m_MaskLabel;
-};
-
-
-/**
- * Class definition for N3MRIBiasFieldCorrectionImageFilter
- */
 template<class TInputImage, class TMaskImage = Image<unsigned char,
   ::itk::GetImageDimension<TInputImage>::ImageDimension>,
   class TOutputImage = TInputImage>
-class ITK_EXPORT N3MRIBiasFieldCorrectionImageFilter :
+class ITK_EXPORT N4MRIBiasFieldCorrectionImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef N3MRIBiasFieldCorrectionImageFilter             Self;
+  typedef N4MRIBiasFieldCorrectionImageFilter             Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage>   Superclass;
   typedef SmartPointer<Self>                              Pointer;
   typedef SmartPointer<const Self>                        ConstPointer;
 
   /** Runtime information support. */
-  itkTypeMacro( N3MRIBiasFieldCorrectionImageFilter, ImageToImageFilter );
+  itkTypeMacro( N4MRIBiasFieldCorrectionImageFilter, ImageToImageFilter );
 
   /** Standard New method. */
   itkNewMacro( Self );
@@ -184,6 +120,7 @@ public:
   typedef typename
     BSplineFilterType::PointDataImageType            BiasFieldControlPointLatticeType;
   typedef typename BSplineFilterType::ArrayType      ArrayType;
+  typedef Array<unsigned int>                        VariableSizeArrayType;
 
   void SetMaskImage( const MaskImageType *mask )
     {
@@ -229,8 +166,8 @@ public:
   itkSetMacro( BiasFieldFullWidthAtHalfMaximum, RealType );
   itkGetConstMacro( BiasFieldFullWidthAtHalfMaximum, RealType );
 
-  itkSetMacro( MaximumNumberOfIterations, unsigned int );
-  itkGetConstMacro( MaximumNumberOfIterations, unsigned int );
+  itkSetMacro( MaximumNumberOfIterations, VariableSizeArrayType );
+  itkGetConstMacro( MaximumNumberOfIterations, VariableSizeArrayType );
 
   itkSetMacro( ConvergenceThreshold, RealType );
   itkGetConstMacro( ConvergenceThreshold, RealType );
@@ -253,34 +190,34 @@ public:
   itkGetConstMacro( LogBiasFieldControlPointLattice,
     typename BiasFieldControlPointLatticeType::Pointer );
 
-  itkSetMacro( UseOptimalBiasFieldScaling, bool );
-  itkGetConstMacro( UseOptimalBiasFieldScaling, bool );
-  itkBooleanMacro( UseOptimalBiasFieldScaling );
+  itkSetClampMacro( SigmoidNormalizedAlpha, RealType, 0.0,
+    NumericTraits<RealType>::max() );
+  itkGetConstMacro( SigmoidNormalizedAlpha, RealType );
 
-  itkGetConstMacro( BiasFieldScaling, RealType );
+  itkSetClampMacro( SigmoidNormalizedBeta, RealType, 0.0, 1.0 );
+  itkGetConstMacro( SigmoidNormalizedBeta, RealType );
 
   itkGetConstMacro( ElapsedIterations, unsigned int );
   itkGetConstMacro( CurrentConvergenceMeasurement, RealType );
+  itkGetConstMacro( CurrentLevel, unsigned int );
 
 protected:
-  N3MRIBiasFieldCorrectionImageFilter();
-  ~N3MRIBiasFieldCorrectionImageFilter() {};
+  N4MRIBiasFieldCorrectionImageFilter();
+  ~N4MRIBiasFieldCorrectionImageFilter() {};
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
   void GenerateData();
 
 private:
-  N3MRIBiasFieldCorrectionImageFilter( const Self& ); //purposely not implemented
+  N4MRIBiasFieldCorrectionImageFilter( const Self& ); //purposely not implemented
   void operator=( const Self& ); //purposely not implemented
 
   typename RealImageType::Pointer SharpenImage(
     typename RealImageType::Pointer );
-  typename RealImageType::Pointer SmoothField(
+  typename RealImageType::Pointer UpdateBiasFieldEstimate(
     typename RealImageType::Pointer );
   RealType CalculateConvergenceMeasurement(
     typename RealImageType::Pointer,
-    typename RealImageType::Pointer );
-  RealType CalculateOptimalBiasFieldScaling(
     typename RealImageType::Pointer );
 
   MaskPixelType                               m_MaskLabel;
@@ -295,10 +232,11 @@ private:
   /**
    * Convergence parameters
    */
-  unsigned int                                m_MaximumNumberOfIterations;
+  VariableSizeArrayType                       m_MaximumNumberOfIterations;
   unsigned int                                m_ElapsedIterations;
   RealType                                    m_ConvergenceThreshold;
   RealType                                    m_CurrentConvergenceMeasurement;
+  unsigned int                                m_CurrentLevel;
 
   /**
    * B-spline fitting parameters
@@ -308,19 +246,16 @@ private:
   unsigned int                                m_SplineOrder;
   ArrayType                                   m_NumberOfControlPoints;
   ArrayType                                   m_NumberOfFittingLevels;
+  RealType                                    m_SigmoidNormalizedAlpha;
+  RealType                                    m_SigmoidNormalizedBeta;
 
-  /**
-   * other parameters
-   */
-  RealType                                    m_BiasFieldScaling;
-  bool                                        m_UseOptimalBiasFieldScaling;
 
 }; // end of class
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkN3MRIBiasFieldCorrectionImageFilter.txx"
+#include "itkN4MRIBiasFieldCorrectionImageFilter.txx"
 #endif
 
 #endif
