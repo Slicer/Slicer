@@ -569,9 +569,9 @@ void ComputeAdjacency( MeshData* meshdata )
     faces->GetCell(i*4,npts, pts );
    // meshdata->polydata->GetCell( i );
   //  meshdata->polydata->GetPointCells( i, cellIds );
-    int vert0 = pts[0];
-    int vert1 = pts[1];
-    int vert2 = pts[2];
+//    int vert0 = pts[0];
+//    int vert1 = pts[1];
+//    int vert2 = pts[2];
     for( int k = 0 ; k < 3; k++ ) {
       for( int kk = 0; kk < 3; kk++ ) {
         if( 0 == count( meshdata->adjimm[pts[kk]].myNeighbs.begin(), meshdata->adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
@@ -619,10 +619,10 @@ void ComputeAdjacency( MeshData* meshdata )
   // every neigbhor array appends the neigbhor arrays of its neighbors to itself
   MeshData* tempdata = new MeshData();
   tempdata->adj = meshdata->adj;
-  for( ::size_t its = 0; its < NUMADJ; its++ )
+  for( ::size_t its = 0; its < (unsigned int)NUMADJ; its++ )
     { // how many levels deep to append
     std::cout<<" adding level "<<its<<" to adjacency...\n";
-    for( ::size_t i = 0; i < numverts; i++ )
+    for( ::size_t i = 0; i < (unsigned int)numverts; i++ )
       { // for every vertex
       if( 0 == (i % 10000 ) )
         {
@@ -660,13 +660,13 @@ int CountVertsOnMesh( vtkPolyData* poly )
   vtkPoints* verts = poly->GetPoints();
   vector<bool> alreadyFound( verts->GetNumberOfPoints() );
   faces->SetTraversalLocation(0);
-  for( ::size_t i = 0; i < faces->GetNumberOfCells(); i++ )
+  for( ::size_t i = 0; i < (unsigned int)(faces->GetNumberOfCells()); i++ )
     {
     vtkIdType numpts = 0;
     vtkIdType* ptsIds = NULL;
     //faces->GetCell(i, numpts, ptsIds );
     faces->GetNextCell(numpts, ptsIds );
-    for( ::size_t k = 0; k < numpts; k++ )
+    for( ::size_t k = 0; k < (::size_t)numpts; k++ )
       {
       int pt = ptsIds[k];
       if( alreadyFound[pt] )

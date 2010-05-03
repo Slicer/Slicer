@@ -33,18 +33,21 @@ bool IsAllInitConnected( const std::vector< std::vector<int> > &LstarIJidx ) {
 
 bool IsSquare( const std::vector< std::vector<int> >  &idxContactedInit ) {
   size_t M = idxContactedInit.size(); 
-  for( size_t i = 0; i < M; i++ ) {
-    int N = (idxContactedInit[i]).size();
+  for( size_t i = 0; i < M; i++ )
+    {
+    size_t N = (idxContactedInit[i]).size();
     if( N != M )
+      {
       return false;
-  }
+      }
+    }
   return true;
 }
 
 bool IsMaxByOne( const std::vector< std::vector<int> > &idxContactedInit, int idx ) {
   size_t iMin = idxContactedInit.size();
-  size_t iMax = 0;
-  for( size_t i = 0; i < idxContactedInit.size(); i++ ) {
+//  size_t iMax = 0;
+  for( size_t i = 0; i < iMin; i++ ) {
     if( (idxContactedInit[idx]).size( ) >=  ( 1+(idxContactedInit[i]).size() ) )
       return true;
   }
@@ -125,7 +128,7 @@ void Debug_Display_Path_Vals2( vtkIntArray* activeContourVertIdx,
                         const std::vector< int > &seedIdx ) 
 {
   int numVerts = neigh_idx.size();
-  int numInit  = neigh_idx[0].size();
+//  int numInit  = neigh_idx[0].size();
   
   
   for( ::size_t m = 0; m < 1; m++ ) {
@@ -184,7 +187,7 @@ void Debug_Display_L_Blob( vtkIntArray* activeContourVertIdx,
         if( val > Lmax )
           Lmax = val;
       }
-      double Lmean = sum / numVerts;
+//      double Lmean = sum / numVerts;
 
       for( ::size_t i = 0; i < numVerts; i++ ) {
         int val = 0;
@@ -268,7 +271,7 @@ int vtkInitClosedPath::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *source = 0;
+//  vtkPolyData *source = 0;
   //if (sourceInfo) // This does nothing!
   //  {
   //  source = vtkPolyData::SafeDownCast(
@@ -316,7 +319,7 @@ int vtkInitClosedPath::RequestData(
       activeContourVertIdx->DeepCopy( contourIdxArrayIn );
       seedIdx = std::vector<int>(0);
       for( ::size_t i = 0; i < numVerts; i++ ) {
-        int val = activeContourVertIdx->GetValue(i);
+//        int val = activeContourVertIdx->GetValue(i);
 #define INIT_FLAG_VAL 0
         /*if( (val) == INIT_FLAG_VAL ) {
           seedIdx.push_back(i);
@@ -416,8 +419,8 @@ BUILD_DISTANCE_TO_INIT:
     while( (0 < nextVerts.size() ) )  // to-do list is not empty
                 { // path not yet established between all pairs
       int idx = nextVerts.front( ); 
-      int idx_end = nextVerts.back( );
-      int idx_init = firstHitInitIdx[idx];
+//      int idx_end = nextVerts.back( );
+//      int idx_init = firstHitInitIdx[idx];
  
       output->GetPointCells( idx, cellIds ); // get cells with this index
       ::size_t iAdjCellCount = cellIds->GetNumberOfIds(); // how many cells are there with this idx?
@@ -429,7 +432,7 @@ BUILD_DISTANCE_TO_INIT:
           size_t pt = pts[j];
           if( 0 == count( tmpNextVerts.begin(), tmpNextVerts.end(), pt ) ) { 
           int idxFirstHit = LstarIdx[pt]; //firstHitInitIdx[ pt ];
-          int idxSpawn    = LstarIdx[idx]; //firstHitInitIdx[ idx ];
+//          int idxSpawn    = LstarIdx[idx]; //firstHitInitIdx[ idx ];
           bool bDidUpdate = false;
           if( -1 == idxFirstHit ) { // have not yet assigned it a first init point
             
@@ -564,7 +567,7 @@ BUILD_DISTANCE_TO_INIT:
      std::vector<AdjData> adjimm = std::vector<AdjData>(numVerts); 
      
      // for every face, make all vertices on the face store in the adjimm list
-      for( int i = 0; i < numVerts; i++ ) {
+      for(unsigned int i = 0; i < numVerts; i++ ) {
         adjimm[i].myNeighbs    = vector<int>(1);
         adjimm[i].myNeighbs[0] = i;
         adjimm[i].myIdx = i;
@@ -575,9 +578,9 @@ BUILD_DISTANCE_TO_INIT:
         vtkIdType npts;
         vtkIdType* pts;
         faces->GetCell(i*4,npts, pts );
-        int vert0 = pts[0];
-        int vert1 = pts[1];
-        int vert2 = pts[2];
+//        int vert0 = pts[0];
+//        int vert1 = pts[1];
+//        int vert2 = pts[2];
         for( int k = 0 ; k < 3; k++ ) {
           for( int kk = 0; kk < 3; kk++ ) {
             if( 0 == count( adjimm[pts[kk]].myNeighbs.begin(), adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
@@ -619,7 +622,7 @@ BUILD_DISTANCE_TO_INIT:
 
         int nextPt = idxSink;
         int Cpt    = idxSource;
-        unsigned short ncells;
+//        unsigned short ncells;
         output->GetPoint( nextPt, thatpt ); // point where we're path finding towards
 
         while( Cpt != nextPt )
@@ -663,7 +666,7 @@ BUILD_DISTANCE_TO_INIT:
             //if( Cpt != nextPt ) // later debug: make sure the nextPt later gets put on the stack
             C.push_back( Cpt );
         }
-        int brekhere = 1;
+//        int brekhere = 1;
         //LstarIJval[i][jBest] = -1.0; // remove the min, look for 2nd min
       }
     }
@@ -694,15 +697,15 @@ BUILD_DISTANCE_TO_INIT:
           int idxRev = accessible_init_indices[m][ck];
           if( idx >= 0 && idxRev >= 0 ) {
             idxContactedInit[n][ck] = 1;
-            int breakhere = 1;
+//            int breakhere = 1;
           }
         }
       }
     }
 
 
-    int numInitNew = seedIdx.size();
-    bool bDoneSquare = 0; //IsSquare( idxContactedInit );
+//    int numInitNew = seedIdx.size();
+//    bool bDoneSquare = 0; //IsSquare( idxContactedInit );
     if( seedIdx.size() != numInit && 
               recursions < NUM_INIT_RECURSIONS ) {
       recursions++;
@@ -716,7 +719,7 @@ BUILD_DISTANCE_TO_INIT:
       vector<double> Lstar_ = Lstar;
       for( ::size_t k = 0; k < numVerts; k++ ) {
         vector<int>* neigh = &(adjimm[k].myNeighbs);
-        double sumLstar = 0.0;
+//        double sumLstar = 0.0;
         for( ::size_t m = 0 ; m < neigh->size(); m++ ) {
           Lstar[k] = Lstar[k] * Lstar_[ (*neigh)[m] ]; 
                 // goes to zero if neighbor was zero
