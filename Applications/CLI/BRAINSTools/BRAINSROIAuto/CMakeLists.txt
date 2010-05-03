@@ -33,8 +33,14 @@ include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 #SETOPTIONALDEBUGIMAGEVIEWER()
 
 
-# No need to add with nothing to compile. add_subdirectory(BRAINSFit_Common)
+# No need to add with nothing to compile. add_subdirectory(BRAINSROIAuto_Common)
 include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSROIAutoCommonLib.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSROIAutoCommonLib.h
+  )
+
 
 set(CLP BRAINSROIAuto)
 set(${CLP}_SOURCE BRAINSROIAuto.cxx )

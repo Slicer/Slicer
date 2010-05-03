@@ -33,8 +33,13 @@ include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 #SETOPTIONALDEBUGIMAGEVIEWER()
 
 
-# No need to add with nothing to compile. add_subdirectory(BRAINSFit_Common)
+# No need to add with nothing to compile. add_subdirectory(BRAINSResample_Common)
 include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSResampleCommonLib.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSResampleCommonLib.h
+  )
 
 ###
 configure_file(${BRAINSResample_SOURCE_DIR}/CTestCustom.ctest ${BRAINSResample_BINARY_DIR}/CTestCustom.ctest COPYONLY)

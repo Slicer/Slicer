@@ -5,6 +5,7 @@ HACK:  Need to update documentation and licensing.
 
 ==================================================================*/
 
+#include "BRAINSResamplePrimary.h"
 #include <iostream>
 #include "itkVector.h"
 #include "itkImage.h"

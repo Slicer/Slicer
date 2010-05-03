@@ -1,4 +1,4 @@
-extern int BRAINSResamplePrimary(int argc, char *argv[]);
+#include "BRAINSResamplePrimary.h"
 
 // main function built in BRAINSDemonWarpPrimary.cxx so that testing only builds
 // templates once.
