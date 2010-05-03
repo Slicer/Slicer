@@ -595,26 +595,26 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessDownloadDTIBrain()
 {
-  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:DTI-Brain.nrrd";
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd";
   this->DownloadSampleVolume (uri_String.c_str() );
 }
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessDownloadCTChest()
 {
-  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:CT-chest.nrrd";
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd";
   this->DownloadSampleVolume (uri_String.c_str() );
 }
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessDownloadCTACardio()
 {
-  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:CTA-cardio.nrrd";
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd";
   this->DownloadSampleVolume (uri_String.c_str() );
 }
  
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessDownloadMRIHead()
 {
-  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:MR-head.nrrd";
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd";
   this->DownloadSampleVolume (uri_String.c_str() );
 }
 
@@ -1896,10 +1896,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   cm->SetParent ( this->GetMainSlicerWindow()->GetFileMenu() );
   cm->Create();
   //--- add all instances of sample data here
-  cm->AddCommand ( "MRI head", this, "ProcessDownloadMRIHead" );
-  cm->AddCommand ( "DTI brain", this, "ProcessDownloadDTIBrain" );
-  cm->AddCommand ( "CT chest", this, "ProcessDownloadCTChest" );
-  cm->AddCommand ( "CTA Cardio", this, "ProcessDownloadCTACardio" );
+  cm->AddCommand ( "MRI Head", this, "ProcessDownloadMRIHead" );
+  cm->AddCommand ( "DTI Brain", this, "ProcessDownloadDTIBrain" );
+  cm->AddCommand ( "CT Chest", this, "ProcessDownloadCTChest" );
+  cm->AddCommand ( "CT Angiogram (Cardio)", this, "ProcessDownloadCTACardio" );
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
                                                               this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                               "Download Sample Data", cm );

@@ -19,7 +19,6 @@ proc XcedeCatalogImport { xcedeFile } {
     #--- the MRML scene is cleared, and the node->Reset() call
     #--- has been made (which sets all orientations to Axial).
 
-    
     #--- create a parser and parse the file
     set parser [vtkXMLDataParser New]
     $parser SetFileName $xcedeFile
@@ -104,6 +103,7 @@ proc XcedeCatalogImport { xcedeFile } {
         $parser Delete
         $::slicer3::MRMLScene SetErrorCode 0
         puts "...done reading $xcedeFile."
+        puts [parray ::XcedeCatalog]
         return $retval
     }
 }
@@ -199,84 +199,59 @@ proc XcedeCatalogImportGetElement { element } {
 #------------------------------------------------------------------------------
 proc XcedeCatalogImportGetEntry {element } {
 
+  puts stderr "Importing $element [$element GetName]"
+  puts [$element GetCharacterData]
     #--- is this a catalog entry that contains a file or reference?
-    set elementType [$element GetName]
-    if { $elementType != "entry" && $elementType != "Entry" } {
+    set elementType [string tolower [$element GetName]]
+    if { [lsearch "entry cat:entry" $elementType] == -1 } {
         #--- only process catalog entry tags
         return 
     }
     
     #--- get attributes
+    # - make them all lower case for easier handling (e.g. map URI to uri)
     set nAtts [$element GetNumberOfAttributes]
     for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
+        set attName [string tolower [$element GetAttributeName $i]]
         set node($attName) [$element GetAttributeValue $i]
     } 
 
     
-    #--- make sure the entry has a "uri" attribute by searching
-    #--- all attributes to find one with a name that matches "uri"
-    set hasuri 0
-    set uriAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "uri" || $attName == "URI" } {
-            #--- mark as found and capture its case (upper or lower)
-            set hasuri 1
-            set uriAttName $attName
-        }
-    }
-    
-    if { $hasuri == 0 } {
-        puts "can't find an attribute called URI in $element"
+    if { [lsearch [array names node] "uri"] == -1 || [lsearch [array names node] "cachepath"] == -1 } {
+        puts "can't find a uri or cachepath attribute"
         return
     }
     
-    $::XcedeCatalog_mainWindow SetStatusText "Loading $node(uri)..."
+    $::XcedeCatalog_mainWindow SetStatusText "Loading $node(uri) as $node(cachepath)..."
     
-    #--- strip off the entry's relative path, and add the 
-    #--- absolute path of the Xcede file to it.
-    set fname [ file normalize $node($uriAttName) ]
-    set plist [ file split $fname ]
-    set len [ llength $plist ]
-    set fname [ lindex $plist [ expr $len - 1 ] ]
+    # make sure intermediate directories exist
+    set path $::XcedeCatalog_Dir
+    foreach dirPart [file split [file dirname $node(cachepath)]] {
+      set path $path/$dirPart
+      if { ![file exists $path] } {
+        # make the directory
+        file mkdir $path
+      } else {
+        if { ![file isdirectory $path] } {
+          puts "cache path exists but it not directory: $path"
+        }
+      }
+    }
 
-    #set node($uriAttName) $::XcedeCatalog_Dir/$fname
-    set node(localFileName)  $::XcedeCatalog_Dir/$fname
+    set node(localFileName)  $::XcedeCatalog_Dir/$node(cachepath)
 
     #--- check to see if it's a remote file
     set cacheManager [$::slicer3::MRMLScene GetCacheManager]
 
-    #--- get the file format
-    set gotformat 0
-    set formatAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "format" || $attName == "Format" } {
-            #--- mark as found and capture its case (upper or lower)
-            set gotformat 1    
-            set formatAttName $attName
-        }
-    }
-    if { $gotformat == 0 } {
-        puts "description for entry contains no format information. Cannot import entry."
-        return
-    }
     #--- what kind of node is it?
-    set nodeType [ XcedeCatalogImportGetNodeType $node($formatAttName) ]
-    if { $nodeType == "Unknown" } {
-        puts "$node($formatAttName) is an unsupported format. Cannot import entry."
-        return
-    }
+    set nodeType [ XcedeCatalogImportGetNodeType $node(cachepath) ]
+
     #--- make sure the file is a supported format
-    set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
-    if { $fileformat == 0 } {
-        puts "$node($formatAttName) is an unsupported format. Cannot import entry."
-        return
-    } elseif { $fileformat == 1 } {
-#        puts "$node($formatAttName) can handle downloads automatically"
+    set fileformat [ XcedeCatalogImportFormatCheck $node(cachepath) ]
+    if { $fileformat == 1 } {
+#        puts "$nodeType can handle downloads automatically"
         if {$cacheManager != ""} {
-            set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
+            set isRemote [$cacheManager IsRemoteReference $node(uri)]
             if {$isRemote == 0} {
                 #--- make sure the local file exists
                 set node(localFileName) [ file normalize $node(localFileName) ]
@@ -291,44 +266,49 @@ proc XcedeCatalogImportGetEntry {element } {
                     return
                 }
                 # it's a local file, so reset the uri
-                set node($uriAttName) $node(localFileName)
+                set node(uri) $node(localFileName)
             }
         }
     } elseif { $fileformat == 2 } {
-#        puts "$node($formatAttName) is something we have to download manually if it has a remote uri"
+#        puts "$nodeType is something we have to download manually if it has a remote uri"
         if {$cacheManager != ""} {
 #            puts "Asynch Enabled = [[$::slicer3::MRMLScene GetDataIOManager] GetEnableAsynchronousIO]"
-            set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
+            set isRemote [$cacheManager IsRemoteReference $node(uri)]
             if {$isRemote == 1} {
-                $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node($uriAttName)..."
-#                puts "Trying to find URI handler for $node($uriAttName)"
-                set uriHandler [$::slicer3::MRMLScene FindURIHandler $node($uriAttName)]
+                $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node(uri)..."
+#                puts "Trying to find URI handler for $node(uri)"
+                set uriHandler [$::slicer3::MRMLScene FindURIHandler $node(uri)]
                 if {$uriHandler != ""} {
                     # for now, do a synchronous download
-                    # puts "Found a file handler, doing a synchronous download from $node($uriAttName) to $node(localFileName)"
-                    $uriHandler StageFileRead $node($uriAttName) $node(localFileName)
+                    # puts "Found a file handler, doing a synchronous download from $node(uri) to $node(localFileName)"
+                    $uriHandler StageFileRead $node(uri) $node(localFileName)
                 } else {
-                    puts "Unable to find a file handler for $node($uriAttName)"
+                    puts "Unable to find a file handler for $node(uri)"
                 }
             }
         }
-        # puts "\tNow resetting uri $node($uriAttName) to local file name $node(localFileName) so can read from disk"
-        set node($uriAttName) $node(localFileName)
+        # puts "\tNow resetting uri $node(uri) to local file name $node(localFileName) so can read from disk"
+        set node(uri) $node(localFileName)
     }
     
 
     #--- finally, create the node
-    set handler XcedeCatalogImportEntry$nodeType
+    set handler ""
+    if { $nodeType != "Unknown" } {
+      set handler XcedeCatalogImportEntry$nodeType
+    }
     
-    if { [info command $handler] == "" } {
+    if { $handler == "" || [info command $handler] == "" } {
         set err [$::slicer3::MRMLScene GetErrorMessagePointer]
         $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
         $::slicer3::MRMLScene SetErrorCode 1
-    }
+        puts "downloaded but not creating node for $node(cachepath)"
+    } else {
 
-    # call the handler for this element
-    puts "Importing $nodeType"
-    $handler node
+      # call the handler for this element
+      puts "Importing $nodeType"
+      $handler node
+    }
 }
 
 
@@ -581,9 +561,8 @@ proc XcedeCatalogImportSetMatrixFromURI { id filename }    {
             set col 0
         }
     }
-
-
 }
+
 #------------------------------------------------------------------------------
 #-- TODO: something in this proc is causing debug leaks. WHAT?
 #------------------------------------------------------------------------------
@@ -735,47 +714,26 @@ proc XcedeCatalogImportEntryOverlay {node} {
 #------------------------------------------------------------------------------
 # and returns the nodeType associated with that format
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportGetNodeType { format } {
-    if {$format == "FreeSurfer:mgz-1" } {
-        return "Volume"
-    } elseif {$format == "nrrd:nrrd-1" } {
-        return "Volume"
-    } elseif {$format == "nifti:nii-1" } {
-        return "Volume"
-    } elseif { $format == "FreeSurfer:w-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:thickness-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:curv-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:avg_curv-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:sulc-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:area-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:annot-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:mgh-1" } {
-        return "Volume"
-    } elseif { $format == "FreeSufer:mat-1" } {
-        return "Transform"
-    } elseif { $format == "FreeSurfer:surface-1" } {
-        return "Model"
-    } elseif { $format == "FreeSurfer:overlay-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:matrix-1" } {
-        return "Transform"
-    }  else {
-        return "Unknown"
+proc XcedeCatalogImportGetNodeType { fileName } {
+
+  set Volume {.mgz .hdr .nii .gz .nrrd .nhdr .mha .mhd}
+  set Overlay {.w .thickness .curv .ave_curv .sulc .area .annot .overlay}
+  set Transform {.mat .matrix}
+  set Model {.surface .pial}
+  set ext [file extension $fileName]
+  foreach type {Volume Overlay Transform Model} {
+    if { [lsearch [set $type] $ext] != -1 } { 
+      return $type
     }
+  }
+  return "Unknown"
 }
 
 
 #------------------------------------------------------------------------------
 # checking to see if Slicer can read this file format
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportFormatCheck { format } {
+proc XcedeCatalogImportFormatCheck { fileName } {
 
     #--- check format against known formats
     #--- TODO: Once these values are formally defined for
@@ -784,39 +742,12 @@ proc XcedeCatalogImportFormatCheck { format } {
     #--- TODO: Add more as we know what their
     #--- XCEDE definitions are (analyze, etc.)
     
-# return 1 if have a valid storage node that can deal with remote uri's, return 2 if need to synch download
-    if {$format == "FreeSurfer:mgz-1" } {
-        return 1
-    } elseif {$format == "nifti:nii-1" } {
-        return 1
-    } elseif {$format == "nrrd:nrrd-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:w-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:thickness-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:curv-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:avg_curv-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:sulc-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:area-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:annot-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:mgh-1" } {
-        return 2
-    } elseif { $format == "FreeSurfer:surface-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:overlay-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:matrix-1" } {
-        return 2
-    }  else {
-        return 0
+    # return 1 if have a valid storage node that can deal with remote uri's, return 2 if need to synch download
+    set type [XcedeCatalogImportGetNodeType $fileName]
+    if { [lsearch {Volume Overlay Model} $type] } {
+      return 1
     }
-
+    return 2
 }
 
 
