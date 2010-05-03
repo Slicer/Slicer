@@ -26,7 +26,7 @@
 
       <description>Active MRML scene that contains EMSegment algorithm parameters.</description>
 
-      <label>MRML Scene</label>
+      <label>MRML Scene definning the Task</label>
     </file>    
 
     <file fileExtensions=".mhd">

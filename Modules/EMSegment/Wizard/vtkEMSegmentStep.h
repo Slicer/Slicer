@@ -38,7 +38,9 @@ public:
 
   // Have to do it bc for some reason TCL Wrapping ignores this flag !
   int SourceTclFile(const char *tclFile);
-  void SourceTaskFiles(); 
+  int SourceTaskFiles(); 
+  int SourcePreprocessingTclFiles();
+
   void SetNextStep(vtkEMSegmentStep *init); 
   virtual void RemoveResults() { } 
   virtual void ShowUserInterface();

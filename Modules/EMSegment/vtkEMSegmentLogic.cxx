@@ -30,6 +30,7 @@
 #include "vtkBSplineRegistrator.h"
 #include "vtkTransformToGrid.h"
 #include "vtkIdentityTransform.h"
+#include "vtkKWApplication.h"
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -148,6 +149,59 @@ SaveIntermediateResults()
 
   return writeSuccessful;
 }
+
+//----------------------------------------------------------------------------
+// New Task Specific Pipeline
+//----------------------------------------------------------------------------
+
+int vtkEMSegmentLogic::SourceTclFile(vtkKWApplication*app,const char *tclFile)
+{
+  // Load Tcl File defining the setting
+  if (!app->LoadScript(tclFile))
+    {
+      vtkErrorMacro("Could not load in data for task. The following file does not exist: " << tclFile);
+      return 1;
+    }
+  return 0 ;
+}
+
+//----------------------------------------------------------------------------
+
+int vtkEMSegmentLogic::SourceTaskFiles(vtkKWApplication* app) { 
+  vtksys_stl::string generalFile = this->DefineTclTaskFullPathName(vtkMRMLEMSNode::GetDefaultTclTaskFilename());
+  vtksys_stl::string specificFile = this->DefineTclTasksFileFromMRML();
+  cout << "Sourcing general Task file : " << generalFile.c_str() << endl;
+  // Have to first source the default file to set up the basic structure"
+  if (this->SourceTclFile(app,generalFile.c_str()))
+    {
+      return 1;
+    }
+  // Now we overwrite anything from the default
+  if (specificFile.compare(generalFile))
+    {
+      cout << "Sourcing task specific file: " <<   specificFile << endl;
+      return this->SourceTclFile(app,specificFile.c_str()); 
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------  
+int vtkEMSegmentLogic::SourcePreprocessingTclFiles(vtkKWApplication* app) 
+{
+  if (this->SourceTaskFiles(app))
+    {
+      return 1;
+    }
+   // Source all files here as we otherwise sometimes do not find the function as Tcl did not finish sourcing but our cxx file is already trying to call the function 
+   vtksys_stl::string tclFile =  this->GetModuleShareDirectory();
+#ifdef _WIN32
+   tclFile.append("\\Tcl\\EMSegmentAutoSample.tcl");
+#else
+   tclFile.append("/Tcl/EMSegmentAutoSample.tcl");
+#endif
+   return this->SourceTclFile(app,tclFile.c_str());
+}
+
 
 //----------------------------------------------------------------------------
 bool
@@ -1609,12 +1663,22 @@ StartSegmentation()
   //
   // make sure preprocessing is up to date
   //
-  std::cerr << "EMSEG: Start preprocessing..." << std::endl;
+  std::cerr << "EMSEG: Start preprocessing..." << std::endl; 
+
+  vtkMRMLEMSTargetNode *inputNodes = this->MRMLManager->GetTargetInputNode();
+  if (!inputNodes)
+    {
+      vtkErrorMacro("EMSEG: No Input defined");
+      return ;
+    } 
+
+
   if (! this->StartPreprocessing())
     {
-    vtkErrorMacro("Preprocessing Failed!  Aborting Segmentation.");
-    return;
+      vtkErrorMacro("Preprocessing Failed!  Aborting Segmentation.");
+      return;
     }
+  
   std::cerr << "EMSEG: Preprocessing complete." << std::endl;
   this->StartSegmentationWithoutPreprocessing();
 }
@@ -2409,3 +2473,7 @@ void vtkEMSegmentLogic::TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double r
   ijk[2]= int(output[2]);
 }
 
+// works for running stuff in TCL so that you do not need to look in two windows 
+void vtkEMSegmentLogic::PrintText(char *TEXT) {
+  cout << TEXT << endl;
+} 

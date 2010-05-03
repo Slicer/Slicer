@@ -39,18 +39,11 @@ void vtkEMSegmentPreProcessingStep::ShowUserInterface()
   //
   // Source TCL Files 
   //
-  this->SourceTaskFiles();
-
-  // Source all files here as we otherwise sometimes do not find the function as Tcl did not finish sourcing but our cxx file is already trying to call the function 
-  vtksys_stl::string tclFile =  this->GetGUI()->GetLogic()->GetModuleShareDirectory();
-#ifdef _WIN32
-  tclFile.append("\\Tcl\\EMSegmentAutoSample.tcl");
-#else
-  tclFile.append("/Tcl/EMSegmentAutoSample.tcl");
-#endif
-  this->SourceTclFile(tclFile.c_str());
-
-
+  if (this->SourcePreprocessingTclFiles())
+    {
+      return;
+    }
+ 
   //
   // Define General Framework For GUI 
   //
@@ -131,7 +124,7 @@ void vtkEMSegmentPreProcessingStep::Validate()
     }
   this->SetTaskPreprocessingSetting();
 
-  int flag = atoi(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterPreProcessingTcl::Run"));
+  int flag = atoi(this->Script("::EMSegmenterPreProcessingTcl::Run"));
   if (flag)
     {
       cout << "Pre-processing did not execute correctly" << endl;

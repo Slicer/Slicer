@@ -9,6 +9,7 @@ class vtkImageEMLocalSegmenter;
 class vtkImageEMLocalGenericClass;
 class vtkImageEMLocalSuperClass;
 class vtkImageEMLocalClass;
+class vtkKWApplication;
 
 class vtkGridTransform;
 
@@ -31,14 +32,30 @@ public:
   virtual void      SaveTemplateNow();
   virtual bool      SaveIntermediateResults();
 
+  // Old Pipeline
   virtual bool      StartPreprocessing();
   virtual bool      StartPreprocessingInitializeInputData();
   virtual bool      StartPreprocessingTargetIntensityNormalization();
   virtual bool      StartPreprocessingTargetToTargetRegistration();
   virtual bool      StartPreprocessingAtlasToTargetRegistration();
-
   virtual void      StartSegmentation();
+
+  // New Pipeline
+  virtual int       SourceTclFile(vtkKWApplication*app,const char *tclFile);
+  virtual int       SourceTaskFiles(vtkKWApplication* app);
+  virtual int       SourcePreprocessingTclFiles(vtkKWApplication* app); 
   virtual void      StartSegmentationWithoutPreprocessing();
+
+
+  //BTX
+  std::string DefineTclTaskFullPathName(const char* TclFileName);
+  std::string GetTclTaskDirectory();
+  std::string GetTclGeneralDirectory();
+  std::string DefineTclTasksFileFromMRML();
+  //ETX
+  
+
+
 
   // Used within StartSegmentation to copy data from the MRMLManager
   // to the segmenter algorithm.  Possibly useful for research
@@ -88,14 +105,6 @@ public:
 
   void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode, vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* outputVolumeNode);
 
-  //BTX
-  std::string DefineTclTaskFullPathName(const char* TclFileName);
-  std::string GetTclTaskDirectory();
-  std::string GetTclGeneralDirectory();
-
-  std::string DefineTclTasksFileFromMRML();
-  //ETX
-  
   static void TransferIJKToRAS(vtkMRMLVolumeNode* volumeNode, int ijk[3], double ras[3]);
   static void TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double ras[3], int ijk[3]);
 
@@ -136,6 +145,8 @@ public:
                                  vtkTransform* outputRASToInputRASTransform,
                                   int iterpolationType,
                                  double backgroundLevel);
+
+  void PrintText(char *TEXT);
 
 
 private:

@@ -216,25 +216,6 @@ void vtkEMSegmentStep::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkEMSegmentStep::SourceTclFile(const char *tclFile)
-{
-  // Load Tcl File defining the setting
-  
-  if (!vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->LoadScript(tclFile))
-    {
-      std::string  errMSG =std::string("Could not load in data for task. The following file does not exist: ") +  std::string(tclFile);
-      vtkKWMessageDialog::PopupMessage(this->GetApplication(),
-                                     NULL,
-                                     "Load Task Data",
-                       errMSG.c_str(),
-                                     vtkKWMessageDialog::ErrorIcon | 
-                                     vtkKWMessageDialog::InvokeAtPointer);
-      return 1;
-    }
-  return 0 ;
-}
-
-//----------------------------------------------------------------------------
 void vtkEMSegmentStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
@@ -245,25 +226,13 @@ void vtkEMSegmentStep::ShowUserInterface()
   }
 }
 
+
+//----------------------------------------------------------------------------
+
 void vtkEMSegmentStep::SetNextStep(vtkEMSegmentStep *init) { 
   this->NextStep = init;
 }
 
-//----------------------------------------------------------------------------
-void vtkEMSegmentStep::SourceTaskFiles() { 
-  vtksys_stl::string generalFile = this->GUI->GetLogic()->DefineTclTaskFullPathName(vtkMRMLEMSNode::GetDefaultTclTaskFilename());
-  vtksys_stl::string specificFile = this->GUI->GetLogic()->DefineTclTasksFileFromMRML();
-  cout << "Sourcing general Task file : " << generalFile.c_str() << endl;
-  // Have to first source the default file to set up the basic structure"
-  this->SourceTclFile(generalFile.c_str());
-  // Now we overwrite anything from the default
-  if (specificFile.compare(generalFile))
-    {
-      cout << "Sourcing task specific file: " <<   specificFile << endl;
-      this->SourceTclFile(specificFile.c_str()); 
-    }
-}
-  
 //----------------------------------------------------------------------------
 void vtkEMSegmentStep::CreateEntryLists() 
 {
@@ -614,4 +583,23 @@ void  vtkEMSegmentStep::VolumeMenuButtonCallback(vtkIdType buttonID, vtkIdType v
     {
       this->volumeMenuButtonID[buttonID] = volID;
     }
+}
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentStep::SourceTclFile(const char *tclFile)
+{
+  //vtkSlicerApplication::SafeDownCast(this->GetApplication()),tclFile);
+  return this->GUI->GetLogic()->SourceTclFile(this->GetApplication(),tclFile);
+}
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentStep::SourceTaskFiles() 
+{
+  return this->GUI->GetLogic()->SourceTaskFiles(this->GetApplication());
+}
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentStep::SourcePreprocessingTclFiles() 
+{
+  return this->GUI->GetLogic()->SourcePreprocessingTclFiles(this->GetApplication());
 }

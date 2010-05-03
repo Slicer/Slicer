@@ -134,7 +134,7 @@ namespace eval EMSegmenterPreProcessingTcl {
     #
     # Preprocessing Functions
     #
-    proc InitVariables { } {
+    proc InitVariables { {initGUI ""}  {initLOGIC ""}  {initManager ""}  {initPreGUI  "" } } {
        variable GUI 
        variable preGUI
        variable LOGIC
@@ -148,21 +148,37 @@ namespace eval EMSegmenterPreProcessingTcl {
        puts "=========================================="
        puts "== Init Variables"
        puts "=========================================="
-       set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
-       if { $GUI == "" } { 
-          PrintError "InitVariables: GUI not defined"
-          return 1 
-       }
-       set LOGIC  [$GUI GetLogic]
-       if { $LOGIC == "" } { 
-          PrintError "InitVariables: LOGIC not defined"
-          return 1 
-       }
-       set mrmlManager   [$GUI GetMRMLManager]
-       if { $mrmlManager  == "" } { 
-          PrintError "InitVariables: mrmManager not defined"
-          return 1 
-       }
+    if {$initGUI == "" } {
+        set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
+        if { $GUI == "" } { 
+        PrintError "InitVariables: GUI not defined"
+        return 1 
+        }
+    } else {
+        set GUI $initGUI
+    }
+
+    if { $initLOGIC == "" } {
+        set LOGIC  [$GUI GetLogic]
+        if { $LOGIC == "" } { 
+        PrintError "InitVariables: LOGIC not defined"
+        return 1 
+        }
+    } else {
+        set LOGIC $initLOGIC
+    }
+
+    if { $initManager == "" } { 
+            set mrmlManager   [$GUI GetMRMLManager]
+            if { $mrmlManager  == "" } { 
+               PrintError "InitVariables: mrmManager not defined"
+               return 1 
+            }
+    } else {
+            set mrmlManager $initManager
+       
+    }
+
        set SCENE [$mrmlManager GetMRMLScene ]
        if { $SCENE  == "" } { 
           PrintError "InitVariables: SCENE not defined"
@@ -174,11 +190,17 @@ namespace eval EMSegmenterPreProcessingTcl {
           PrintError "InitVariables: WorkingData not defined"
           return 1 
        }
-       set preGUI [$GUI GetPreProcessingStep]
-       if { $preGUI  == "" } { 
-          PrintError "InitVariables: PreProcessingStep not defined"
-          return 1 
-       }
+    
+    if {$initPreGUI == "" } {
+        set preGUI [$GUI GetPreProcessingStep]
+            if { $preGUI  == "" } { 
+              PrintError "InitVariables: PreProcessingStep not defined"
+              return 1 
+            }
+    } else {
+            set preGUI $initPreGUI
+    }
+
        # All other Variables are defined when running the pipeline as they are the volumes 
        # Define subjectNode when initializing pipeline 
         set subjectNode "" 
@@ -216,9 +238,9 @@ namespace eval EMSegmenterPreProcessingTcl {
        variable mrmlManager
        variable LOGIC
 
-    puts "=========================================="
-    puts "== Register Input Images"
-    puts "=========================================="
+       puts "=========================================="
+       puts "== Register Input Images"
+       puts "=========================================="
        # ----------------------------------------------------------------
        # set up rigid registration
        set alignedTarget [ $workingDN GetAlignedTargetNode]
@@ -229,30 +251,30 @@ namespace eval EMSegmenterPreProcessingTcl {
           $mrmlManager SynchronizeTargetNode $inputTargetNode $alignedTarget "Aligned"
        }
 
-       for  { set i  0 } { $i < [$alignedTarget GetNumberOfVolumes] } {incr i} {
-         set intputVolumeNode($i) [$inputTargetNode GetNthVolumeNode $i]
-         if { $intputVolumeNode($i) == "" } {
-            PrintError "RegisterInputImages: the ${i}th input node is not defined!"
-            return 1
-          }
-
-          set intputVolumeData($i) [$intputVolumeNode($i) GetImageData ] 
-          if { $intputVolumeData($i) == "" } {
-            PrintError "RegisterInputImages: the ${i}the  input node has no image data defined !"
-            return 1
-          }
-
-          set outputVolumeNode($i) [$alignedTarget GetNthVolumeNode $i]
-          if { $outputVolumeNode($i) == "" } {
-             PrintError "RegisterInputImages: the ${i}th aligned input node is not defined!"
-             return 1
-          }
-
-          set outputVolumeData($i) [$outputVolumeNode($i) GetImageData ] 
-          if { $outputVolumeData($i) == "" } {
-            PrintError "RegisterInputImages: the ${i}the  output node has no image data defined !"
-            return 1
-          }
+    for  { set i  0 } { $i < [$alignedTarget GetNumberOfVolumes] } {incr i} {    
+           set intputVolumeNode($i) [$inputTargetNode GetNthVolumeNode $i]
+       if { $intputVolumeNode($i) == "" } {
+              PrintError "RegisterInputImages: the ${i}th input node is not defined!"
+              return 1
+            }
+       
+            set intputVolumeData($i) [$intputVolumeNode($i) GetImageData ] 
+            if { $intputVolumeData($i) == "" } {
+              PrintError "RegisterInputImages: the ${i}the  input node has no image data defined !"
+              return 1
+            }
+      
+            set outputVolumeNode($i) [$alignedTarget GetNthVolumeNode $i]
+            if { $outputVolumeNode($i) == "" } {
+               PrintError "RegisterInputImages: the ${i}th aligned input node is not defined!"
+               return 1
+            }
+      
+            set outputVolumeData($i) [$outputVolumeNode($i) GetImageData ] 
+            if { $outputVolumeData($i) == "" } {
+              PrintError "RegisterInputImages: the ${i}the  output node has no image data defined !"
+              return 1
+            }
        }
 
        set fixedVolumeNode  $outputVolumeNode($fixedTargetImageIndex)
@@ -370,14 +392,14 @@ namespace eval EMSegmenterPreProcessingTcl {
         return 1
         }
 
-    $LOGIC StartPreprocessingInitializeInputData
+        $LOGIC StartPreprocessingInitializeInputData
 
 
         # -----------------------------------------------------------
         # Define subject Node  
         # this should be the first step for any preprocessing  
         # from  StartPreprocessingTargetToTargetRegistration
-    # -----------------------------------------------------------
+        # -----------------------------------------------------------
 
         set inputTarget  [$workingDN GetInputTargetNode]    
         if {$inputTarget == "" } { 
@@ -433,10 +455,12 @@ namespace eval EMSegmenterSimpleTcl {
     variable inputChannelGUI
     variable mrmlManager
 
-    proc InitVariables { } {
-    variable inputChannelGUI
-    variable mrmlManager
+    proc InitVariables { {GUI ""} } {
+       variable inputChannelGUI
+       variable mrmlManager
+    if {$GUI == "" } {
         set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
+    }
         if { $GUI == "" } { 
           PrintError "InitVariables: GUI not defined"
           return 1 
