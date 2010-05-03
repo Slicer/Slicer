@@ -35,6 +35,12 @@ include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 # No need to add with nothing to compile. add_subdirectory(BRAINSFit_Common)
 include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSFitCommonLib.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSFitCommonLib.h
+  )
+
+
 ###
 set(CLP BRAINSFit)
 set(${CLP}_SOURCE BRAINSFit.cxx BRAINSFitPrimary.cxx)

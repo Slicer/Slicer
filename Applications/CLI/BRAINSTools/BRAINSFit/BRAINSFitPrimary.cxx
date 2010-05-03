@@ -27,6 +27,8 @@
 //  MattesMutualInformationImageToImageMetric is the logical
 //  thing to insist on (with ITK) when seeking rigid 3D registrations.
 
+#include "BRAINSFitPrimary.h"
+
 #ifdef USE_DEBUG_IMAGE_VIEWER
 #include "DebugImageViewerClient.h"
 #endif

@@ -13,8 +13,7 @@
   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
   PURPOSE.  See the above copyright notices for more information.
   =========================================================================*/
-
-extern int BRAINSFitPrimary(int argc, char *argv[]);
+#include "BRAINSFitPrimary.h"
 
 // main function built in BRAINSFitPrimary.cxx so that testing only builds
 // templates once.
