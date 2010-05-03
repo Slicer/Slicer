@@ -3163,7 +3163,7 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
   this->GeneralButton->SetWidth ( 12) ;
   this->GeneralButton->SetText ( "Basic" );
   this->GeneralButton->SetBalloonHelpString ( "Annotate models and/or label maps" );
-  this->Script ( "pack %s %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
+  this->Script ( "pack %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
                  this->GeneralButton->GetWidgetName(),
                  this->FIPSFSButton->GetWidgetName());
   f->Delete();
