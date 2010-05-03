@@ -41,10 +41,6 @@
 #include "vtkSlicerPopUpHelpWidget.h"
 #include "vtkSlicerWindow.h"
 
-#include "vtkQdecModuleGUI.h"
-#include "vtkQdecModuleLogic.h"
-
-
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLColorNode.h"
@@ -222,16 +218,11 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->BasicAnnotateButton = NULL;
     this->GeneralFrame = NULL;
     this->GeneralButton = NULL;
-    this->QdecButton = NULL;
-    this->QdecFrame = NULL;
     this->FSasegSelector = NULL;
     this->FSbrainSelector = NULL;
     this->FSstatsSelector = NULL;
     this->FSgoButton = NULL;
-    this->QdecGetResultsButton = NULL;
     this->LoadFIPSFSCatalogButton = NULL;
-    this->QdecScalarSelector = NULL;
-    this->QdecGoButton = NULL;
 #endif
 }
 
@@ -291,29 +282,11 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->GeneralButton->Delete();
       this->GeneralButton = NULL;
       }
-    if ( this->QdecButton )
-      {
-      this->QdecButton->SetParent ( NULL );
-      this->QdecButton->Delete();      
-      this->QdecButton = NULL;      
-      }
-    if ( this->QdecFrame )
-      {
-      this->QdecFrame->SetParent ( NULL );
-      this->QdecFrame->Delete();
-      this->QdecFrame = NULL;      
-      }
     if ( this->FSgoButton )
       {
       this->FSgoButton->SetParent ( NULL );
       this->FSgoButton->Delete();
       this->FSgoButton = NULL;
-      }
-    if ( this->QdecGoButton )
-      {
-      this->QdecGoButton->SetParent ( NULL );
-      this->QdecGoButton->Delete();
-      this->QdecGoButton = NULL;
       }
     if ( this->FSstatsSelector )
       {
@@ -338,18 +311,6 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->LoadFIPSFSCatalogButton->SetParent ( NULL );
       this->LoadFIPSFSCatalogButton->Delete();
       this->LoadFIPSFSCatalogButton = NULL;      
-      }
-    if ( this->QdecGetResultsButton )
-      {
-      this->QdecGetResultsButton->SetParent ( NULL );
-      this->QdecGetResultsButton->Delete();
-      this->QdecGetResultsButton = NULL;
-      }
-    if ( this->QdecScalarSelector )
-      {
-      this->QdecScalarSelector->SetParent ( NULL );
-      this->QdecScalarSelector->Delete();
-      this->QdecScalarSelector = NULL;
       }
 #endif
 
@@ -874,10 +835,7 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
     os << indent << "FSstatsSelector: " << this->GetFSstatsSelector ( ) << "\n";    
     os << indent << "FSgoButton: " << this->GetFSgoButton() << "\n";
-    os << indent << "QdecGoButton: " << this->GetQdecGoButton() << "\n";
-    os << indent << "QdecGetResultsButton: " << this->GetQdecGetResultsButton ( ) << "\n";    
     os << indent << "LoadFIPSFSCatalogButton: " << this->GetLoadFIPSFSCatalogButton ( ) << "\n";    
-    os << indent << "QdecScalarSelector: " << this->GetQdecScalarSelector ( ) << "\n";    
 #endif
     
     //---
@@ -924,20 +882,16 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 
   //--- all the KWLoadSaveDialogs
   this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadURIsButton->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->BasicAnnotateButton->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeneralButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
-  this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSstatsSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSgoButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->QdecGoButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->QdecScalarSelector->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->AddLocalTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddSynonymButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -998,20 +952,16 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
   //--- all the KWLoadSaveDialogs
   this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadURIsButton->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
     
   this->BasicAnnotateButton->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeneralButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSstatsSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSgoButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->QdecGoButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->QdecScalarSelector->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->AddLocalTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddSynonymButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -1103,10 +1053,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents(vtkObject *caller,
       {
       this->LoadXcedeCatalogCallback();
       }
-    else if  ( (lsdialog == this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog() ) && (event == vtkKWTopLevel::WithdrawEvent ) )
-      {
-      this->LoadQdecResultsCallback();
-      }    
     }
 
   if ( (stw = this->SavedTerms) && (event == vtkQueryAtlasSearchTermWidget::ReservedTermsEvent ))
@@ -1257,30 +1203,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents(vtkObject *caller,
         this->UpdateAnnoVisibilityMenu();
         }
       }
-    if ( this->QdecGoButton )
-      {
-      if ( (b == this->QdecGoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
-        {
-        vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-        if ( qLogic != NULL )
-          {
-          std::vector<std::string> pathcomponents;
-          std::string subjDir = qLogic->GetSubjectsDirectory();
-          itksys::SystemTools::SplitPath(subjDir.c_str(), pathcomponents);
-          std::string avgDir = qLogic->GetAverageSubject ( );
-          pathcomponents.push_back(avgDir.c_str() );
-          pathcomponents.push_back("label" );
-          std::string labelDir = "";
-          labelDir = itksys::SystemTools::JoinPath(pathcomponents);
-          this->Script ( "QueryAtlasInitialize Qdec \"%s\"", labelDir.c_str() );
-          // do this here again in case node added events haven't triggered
-          // the update of this menu, which they seem not to do for command
-          // line loading
-          this->Script ( "QueryAtlasAnnotationVisibility on");
-          this->UpdateAnnoVisibilityMenu();
-          }
-        }
-      }
     if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       //--- get last clicked (or typed) structure from the LocalSearchTermEntry
@@ -1356,12 +1278,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents(vtkObject *caller,
       this->UnpackLoaderContextFrames();
       this->PackLoaderContextFrame ( this->GeneralFrame );
       this->ColorCodeLoaderContextButtons ( this->GeneralButton );
-      }
-    else if ( (b == this->QdecButton) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      this->UnpackLoaderContextFrames();
-      this->PackLoaderContextFrame ( this->QdecFrame );
-      this->ColorCodeLoaderContextButtons ( this->QdecButton );
       }
     else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -1497,13 +1413,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents(vtkObject *caller,
           }
         }
       }
-    if ( this->QdecScalarSelector )
-      {
-      if (( m == this->QdecScalarSelector->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ))
-        {
-        this->DisplayScalarOverlay();
-        }
-      }
     }
 
   //---
@@ -1605,7 +1514,7 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
     if ( nname != "" )
       {
       i=nname.find ( "stat", 0 );
-      if ( i != string::npos )
+      if ( i != std::string::npos )
         {
         vtkMRMLScalarVolumeDisplayNode *dnode = vnode->GetScalarVolumeDisplayNode();
         if ( dnode != NULL ) 
@@ -1636,56 +1545,6 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
 }
 
 
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
-{
-  
-  int retval = -1;
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-
-  if ( app == NULL )
-    {
-    return;
-    }
-  const char *filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
-  if ( filen != NULL )
-    {
-    itksys::SystemTools::ConvertToUnixOutputPath( filen );
-
-    //--- and load results thru qdecModule Logic, which we get thru the GUI.
-    //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
-    vtkQdecModuleGUI *qGUI = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"));
-    if ( qGUI != NULL )
-      {
-      retval = qGUI->LoadProjectFile ( filen );
-      }
-
-    //--- if results appear to have loaded...
-    //--- make sure scene agrees with that.
-
-    if ( retval >= 0 )
-      {
-      this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
-        {
-        if ( app->GetApplicationGUI() != NULL )
-          {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          std::string msg = this->GetMRMLScene()->GetErrorMessage();
-          dialog->SetText(msg.c_str());
-          dialog->Create ( );
-          dialog->Invoke();
-          dialog->Delete();
-          }
-        }
-      }
-    // update Scalar overlay menu
-    this->UpdateScalarOverlayMenu();
-    }
-}
 
 
 
@@ -1813,159 +1672,6 @@ void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
 }
 
 
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic = NULL;
-  if ( app )
-    {
-    if ( vtkQdecModuleGUI::SafeDownCast ( app->GetModuleGUIByName("QdecModule")) != NULL )
-      {
-      qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-      }
-
-    if ( (this->QdecScalarSelector != NULL) && (qLogic != NULL) )
-      {
-      this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
-      int numQuestions = qLogic->GetNumberOfQuestions();
-      for ( int i=0; i<numQuestions; i++ )
-        {
-        this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
-        }
-
-      //--- if the labels are now on the model, add the menuitem
-      vtkMRMLModelNode *mnode = qLogic->GetModelNode();
-      if ( mnode != NULL )
-        {
-        std::string lutName ("QueryLUT_" );
-        lutName = lutName + mnode->GetID();
-        // find the query lut by name
-        int n= this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorNode");
-        for ( int j=0; j< n; j++ )
-          {
-          vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast( this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLColorNode"));
-          if ( cnode != NULL )
-            {
-            if ( !(strcmp(cnode->GetName(), lutName.c_str() )) )
-              {
-              // looks like the node is in the scene; so add the menuitem.
-              this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton("labels");
-              }
-            }
-          }
-        }
-      }
-    }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic = NULL;
-  vtkSlicerModelsLogic *mLogic = NULL;
-  if ( app )
-    {
-    if ( vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule")) != NULL )
-      {
-      qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-      }
-    if ( vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models")) != NULL )
-      {
-      mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-      }
-    if ( (this->QdecScalarSelector->IsCreated()) && (qLogic != NULL) && (mLogic != NULL) )
-      {
-      if ( (strcmp(this->QdecScalarSelector->GetWidget()->GetValue(), "None") != 0)  && (qLogic != NULL ) )
-        {
-        const char *cselection = this->QdecScalarSelector->GetWidget()->GetValue();
-        // trigger display change on the model
-        vtkMRMLModelNode *mnode = qLogic->GetModelNode();
-        if ( mnode != NULL)
-          {
-          if ( !(strcmp( cselection,"labels" )) )
-            {
-            // find the query lut by name
-            std::string lutName ("QueryLUT_" );
-            lutName = lutName + mnode->GetID();
-            int n= this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorNode");
-            for ( int j=0; j< n; j++ )
-              {
-              // get the color node that goes with that name
-              vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast( this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLColorNode"));
-              if ( cnode != NULL )
-                {
-                if ( !(strcmp(cnode->GetName(), lutName.c_str() )) )
-                  {
-                  vtkDebugMacro("Setting the active scalars on " << mnode->GetName() << " to " << cselection );
-                  qLogic->GetModelNode()->SetActiveScalars(cselection, NULL);
-                  qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName( cselection );
-                  qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(cnode->GetID() );
-                  }
-                }
-              }
-            }
-          else
-            {
-            std::string scalarName = qLogic->GetQuestionScalarName( cselection );
-            vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
-            vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
-            qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
-            qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
-            // the color node has the same name as the scalar array name to facilitate
-            // this pairing, find the ID by querying the mrml scene
-            std::string colorID = "none";
-            if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
-              {
-              vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
-              if (colorNodes)
-                {
-                int numberOfNodes = colorNodes->GetNumberOfItems();
-                if (numberOfNodes > 0)
-                  {
-                  // take the first one
-                  colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
-                  }
-                else
-                  {
-                  vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
-                  }
-                colorNodes->RemoveAllItems();
-                colorNodes->Delete();
-                }
-              else
-                {
-                vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
-                }         
-              } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
-            if (strcmp(colorID.c_str(), "none") != 0)
-              {
-              // use this node id
-              if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
-                {
-                vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
-                qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
-                }
-              else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
-              }
-            else
-              {
-              vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
-              }
-            }
-          }
-        else
-          {
-          vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
-          }
-        }
-      }
-    }
-}
-
 
 
 
@@ -2055,7 +1761,6 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     */
     this->Script ( "QueryAtlasNodeAddedUpdate" );
-    this->UpdateScalarOverlayMenu();
     vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast((vtkObjectBase *)callData );
     if ( mnode != NULL )
       {
@@ -2068,7 +1773,6 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
        && (event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     this->Script ( "QueryAtlasNodeRemovedUpdate");
-    this->UpdateScalarOverlayMenu();
     this->UpdateAnnoVisibilityMenu();
     }
   
@@ -2081,7 +1785,6 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     this->ClearOntologyGUI();
     this->Script("QueryAtlasInitializeGlobals");
     // empty menus.
-    this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
     this->UpdateAnnoVisibilityMenu();
     }
   else 
@@ -2130,7 +1833,6 @@ void vtkQueryAtlasGUI::Enter ( )
     this->Script ( "QueryAtlasCullOldModelAnnotations");
     this->Script ( "QueryAtlasCullOldLabelMapAnnotations");
     this->Script ( "QueryAtlasAddInteractorObservers" );
-    this->UpdateScalarOverlayMenu();
     this->UpdateAnnoVisibilityMenu();
 }
 
@@ -2268,7 +1970,6 @@ void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
     
     this->BuildLoaderContextFrames ( switcher );
     this->BuildFreeSurferFIPSFrame ( );
-    this->BuildQdecFrame ( );
     this->BuildGeneralAnnotateFrame ( );
     this->PackLoaderContextFrame ( this->GeneralFrame );
     app->Script ( "pack %s -side top -fill x -expand 1 -pady 0", switcher->GetWidgetName() );
@@ -2382,58 +2083,6 @@ void vtkQueryAtlasGUI::BuildGeneralAnnotateFrame ( )
                  this->BasicAnnotateButton->GetWidgetName());
 }
 
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildQdecFrame ( )
-{
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
-    this->QdecGetResultsButton = vtkKWLoadSaveButtonWithLabel::New() ;
-    this->QdecGetResultsButton->SetParent ( this->QdecFrame );
-    this->QdecGetResultsButton->Create();
-    this->QdecGetResultsButton->GetWidget()->SetImageToIcon ( app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetLoadSceneIcon() );   
-    this->QdecGetResultsButton->GetWidget()->SetBorderWidth(0);
-    this->QdecGetResultsButton->GetWidget()->SetReliefToFlat ( );
-    this->QdecGetResultsButton->SetBalloonHelpString ( "Load Qdec results" );
-    //this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "" );
-    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Load Qdec results");
-    this->QdecGetResultsButton->GetLabel()->SetText( "Load Qdec results: ");
-    this->QdecGetResultsButton->GetLabel()->SetWidth ( 18 );
-    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
-    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
-    //this->QdecGetResultsButton->GetLoadSaveDialog()->SetFileTypes ( "");
-    this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis (select a qdec directory).");
-    this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
-                  this->QdecGetResultsButton->GetWidgetName());
-
-    this->QdecGoButton = vtkKWPushButtonWithLabel::New();
-    this->QdecGoButton->SetParent ( this->QdecFrame );
-    this->QdecGoButton->Create();
-    this->QdecGoButton->GetWidget()->SetImageToIcon ( this->QueryAtlasIcons->GetSetUpIcon() );
-    this->QdecGoButton->GetWidget()->SetBorderWidth(0);
-    this->QdecGoButton->GetWidget()->SetReliefToFlat();
-    this->QdecGoButton->GetLabel()->SetText("Set up annotations: ");
-    this->QdecGoButton->GetLabel()->SetWidth ( 18 );
-    this->QdecGoButton->SetBalloonHelpString ("Create interactive annotations for models");
-    this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
-                   this->QdecGoButton->GetWidgetName());
-
-    this->QdecScalarSelector = vtkKWMenuButtonWithLabel::New();
-    this->QdecScalarSelector->SetParent ( this->QdecFrame );
-    this->QdecScalarSelector->Create ( );
-    this->QdecScalarSelector->SetBorderWidth(2);
-    this->QdecScalarSelector->SetPadX(2);
-    this->QdecScalarSelector->SetPadY(2);
-    this->QdecScalarSelector->GetWidget()->SetImageToIcon ( this->QueryAtlasIcons->GetSelectOverlayIcon() );
-    this->QdecScalarSelector->GetWidget()->SetBorderWidth ( 0 );
-    this->QdecScalarSelector->GetWidget()->SetReliefToFlat();
-    this->QdecScalarSelector->GetWidget()->IndicatorVisibilityOff();
-    this->QdecScalarSelector->GetLabel()->SetWidth(18);
-    this->QdecScalarSelector->GetLabel()->SetText( "Select overlay: ");
-    this->QdecScalarSelector->SetBalloonHelpString("select a scalar overlay for this model.");
-    this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2",
-                  this->QdecScalarSelector->GetWidgetName());
-
-}
 
 
 //---------------------------------------------------------------------------
@@ -3483,7 +3132,6 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
 void vtkQueryAtlasGUI::UnpackLoaderContextFrames ( )
 {
     this->Script ( "pack forget %s", this->FIPSFSFrame->GetWidgetName() );
-    this->Script ( "pack forget %s", this->QdecFrame->GetWidgetName() );
     this->Script ( "pack forget %s", this->GeneralFrame->GetWidgetName() );
 }
 
@@ -3509,13 +3157,6 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
   this->FIPSFSButton->SetText ( "FIPS+FreeSurfer" );
   this->FIPSFSButton->SetBalloonHelpString ( "Load, annotate and display FIPS+FreeSurfer datasets" );
 
-  this->QdecButton = vtkKWPushButton::New();
-  this->QdecButton->SetParent ( f );
-  this->QdecButton->Create();
-  this->QdecButton->SetWidth ( 12 );
-  this->QdecButton->SetText ( "Qdec");
-  this->QdecButton->SetBalloonHelpString ( "Load, annotate and display a Qdec dataset" );
-
   this->GeneralButton = vtkKWPushButton::New();
   this->GeneralButton->SetParent ( f );
   this->GeneralButton->Create();
@@ -3524,8 +3165,7 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
   this->GeneralButton->SetBalloonHelpString ( "Annotate models and/or label maps" );
   this->Script ( "pack %s %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
                  this->GeneralButton->GetWidgetName(),
-                 this->FIPSFSButton->GetWidgetName(),
-                 this->QdecButton->GetWidgetName() );
+                 this->FIPSFSButton->GetWidgetName());
   f->Delete();
 }
 
@@ -3539,12 +3179,6 @@ void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
     this->FIPSFSFrame->SetReliefToGroove();
     this->FIPSFSFrame->SetBorderWidth ( 1 );
     
-    this->QdecFrame = vtkKWFrame::New();
-    this->QdecFrame->SetParent ( parent );
-    this->QdecFrame->Create();
-    this->QdecFrame->SetReliefToGroove();
-    this->QdecFrame->SetBorderWidth ( 1 );
-
     this->GeneralFrame = vtkKWFrame::New();
     this->GeneralFrame->SetParent ( parent );
     this->GeneralFrame->Create();
@@ -3558,11 +3192,9 @@ void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
 void vtkQueryAtlasGUI::ColorCodeLoaderContextButtons ( vtkKWPushButton *b )
 {
   this->FIPSFSButton->SetBackgroundColor ( _br, _bg, _bb );
-  this->QdecButton->SetBackgroundColor ( _br, _bg, _bb );
   this->GeneralButton->SetBackgroundColor (_br, _bg, _bb );
                                            
   this->FIPSFSButton->SetForegroundColor ( _fr, _fg, _fb );
-  this->QdecButton->SetForegroundColor ( _fr, _fg, _fb );
   this->GeneralButton->SetForegroundColor( _fr, _fg, _fb );
 
   b->SetBackgroundColor (1.0, 1.0, 1.0);

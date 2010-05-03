@@ -28,7 +28,6 @@ endif(GenerateLM_FOUND)
 #   - Volumes
 #   - CommandLineModule (at run-time for its CLP Plugins: EMSegmentCommandLine*)
 # QueryAtlas:
-#   - QdecModule
 # MRAblation (if it wasn't broken):
 #   - Volumes
 # Editor:
@@ -51,7 +50,6 @@ SET(modules
   Meshing
   Python
 # PythonGADScriptedModule
-  QdecModule
   QueryAtlas
   FetchMI
   SlicerWelcome
@@ -114,7 +112,6 @@ ENDFOREACH(module)
 ## REALTIMEIMAGING_DEBUG
 ## MRABLATION_DEBUG
 ## TRACTOGRAPHY_DEBUG
-## QDEC_DEBUG
 ## COMMANDLINE_DEBUG
 ## DEAMON_DEBUG
 

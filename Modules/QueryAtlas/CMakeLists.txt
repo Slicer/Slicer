@@ -23,8 +23,6 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
-  ${QdecModule_SOURCE_DIR}
-  ${QdecModule_BINARY_DIR}
   )
 
 # This module use's FreeType, which is not quite exported correctly by an
@@ -110,7 +108,6 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
-  QdecModule
   )
 
 slicer3_install_modules(${lib_name})

@@ -157,17 +157,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (FSstatsSelector, vtkSlicerNodeSelectorWidget );    
     vtkGetObjectMacro (FSgoButton, vtkKWPushButtonWithLabel );
     vtkGetObjectMacro (LoadFIPSFSCatalogButton, vtkKWLoadSaveButtonWithLabel );
-    vtkGetObjectMacro (QdecGetResultsButton, vtkKWLoadSaveButtonWithLabel );
-    vtkGetObjectMacro (QdecScalarSelector, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro (QdecGoButton, vtkKWPushButtonWithLabel);
 
     vtkGetObjectMacro ( BasicAnnotateButton, vtkKWPushButtonWithLabel );
     vtkGetObjectMacro (GeneralButton, vtkKWPushButton);
     vtkGetObjectMacro (GeneralFrame, vtkKWFrame);
     vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
-    vtkGetObjectMacro (QdecButton, vtkKWPushButton );
     vtkGetObjectMacro (FIPSFSFrame, vtkKWFrame );
-    vtkGetObjectMacro (QdecFrame, vtkKWFrame );
 
     vtkGetMacro (ProcessingMRMLEvent, int);
     
@@ -212,7 +207,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildLoaderContextFrames ( vtkKWFrame *parent );
 
     virtual void BuildFreeSurferFIPSFrame( );
-    virtual void BuildQdecFrame();
     virtual void BuildGeneralAnnotateFrame ( );
 
     virtual void UnpackQueryBuilderContextFrames ( );
@@ -296,19 +290,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void LoadBookmarksCallback();
 
     // Description:
-    // method to load precomputed Qdec results
-    // thru the QdecModule Logic
-    void LoadQdecResultsCallback();
-
-    // Description:
     // method to load an xcede catalog
     // containing FIPS and FreeSurfer results
     void LoadXcedeCatalogCallback();
     
-    // Description:
-    // populates the menu with loaded qdec scalar overlays
-    void UpdateScalarOverlayMenu ( );
-
     // Description:
     // populates the model/annotation visibility menu with query models
     void UpdateAnnoVisibilityMenu ( );
@@ -318,9 +303,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // useful in case you want to peek under a model to see a slice plane.
     void ModifyQuerySceneVisibility();
     
-    // Description:
-    // Displays a selected scalar overlay on a loaded Qdec scene.
-    void DisplayScalarOverlay();
     
     // Description:
     // Apply some conditioning to a volume that
@@ -353,18 +335,13 @@ protected:
     vtkKWPushButtonWithLabel *FSgoButton;
 
     vtkKWLoadSaveButtonWithLabel *LoadFIPSFSCatalogButton;
-    vtkKWLoadSaveButtonWithLabel *QdecGetResultsButton;
-    vtkKWMenuButtonWithLabel *QdecScalarSelector;
-    vtkKWPushButtonWithLabel *QdecGoButton;
     
     vtkKWPushButtonWithLabel *BasicAnnotateButton;
     
     vtkKWPushButton *GeneralButton;
     vtkKWPushButton *FIPSFSButton;
-    vtkKWPushButton *QdecButton;
     vtkKWFrame *GeneralFrame;
     vtkKWFrame *FIPSFSFrame;
-    vtkKWFrame *QdecFrame;
 
     // Annotation Options frame and widgets
     vtkKWMenuButton *AnnotationTermSetMenuButton;

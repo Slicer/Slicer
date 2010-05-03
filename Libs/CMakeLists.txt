@@ -26,7 +26,6 @@ endif(Teem_FOUND)
 SET(dirs ${dirs}
   vtkITK
   FreeSurfer
-  Qdec
   MRML
   MRMLCLI
   )
