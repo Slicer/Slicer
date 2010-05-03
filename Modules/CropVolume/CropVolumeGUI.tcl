@@ -330,6 +330,12 @@ proc CropVolumeProcessGUIEvents {this caller event} {
     if { $::CropVolume($this,roilabelNode) == "" } {
       set ::CropVolume($this,roilabelNode) [$volumesLogic \
         CreateLabelVolume $scene $inputVolume "Subvolume_ROI_Label"]
+        
+      set colorLogic [vtkSlicerColorLogic New]
+      set colorNodeID [$colorLogic GetDefaultColorTableNodeID 10]
+      [$::CropVolume($this,roilabelNode) GetDisplayNode] SetAndObserveColorNodeID $colorNodeID
+      $colorLogic Delete
+
       $::CropVolume($this,roilabelNode) SetAndObserveTransformNodeID 0
 
       set roilabelImage [vtkImageData New]
