@@ -682,7 +682,7 @@ void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());  
   std::string uri_String = uri;
 
-  int slash = uri_String.find_last_of ( "/");
+  size_t slash = uri_String.find_last_of ( "/");
   if ( slash == std::string::npos )
     {
     vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
@@ -1897,9 +1897,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   cm->Create();
   //--- add all instances of sample data here
   cm->AddCommand ( "MRI head", this, "ProcessDownloadMRIHead" );
-  cm->AddCommand ( "MRI head", this, "ProcessDownloadDTIBrain" );
-  cm->AddCommand ( "MRI head", this, "ProcessDownloadCTChest" );
-  cm->AddCommand ( "MRI head", this, "ProcessDownloadCTACardio" );
+  cm->AddCommand ( "DTI brain", this, "ProcessDownloadDTIBrain" );
+  cm->AddCommand ( "CT chest", this, "ProcessDownloadCTChest" );
+  cm->AddCommand ( "CTA Cardio", this, "ProcessDownloadCTACardio" );
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
                                                               this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                               "Download Sample Data", cm );
