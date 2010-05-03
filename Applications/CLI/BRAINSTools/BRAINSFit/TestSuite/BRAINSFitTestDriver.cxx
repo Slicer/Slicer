@@ -493,7 +493,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
     // just test last two transform types
     for ( unsigned int i = 0; i < 4; i++ )
       {
-      if ( i & 1 == 0 )
+      if ( (i & 1) == 0 )
         {
         std::cerr << "Initializing Transform with "
                   << InitializerTransformName << std::endl;
@@ -515,7 +515,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
         CenterOfRotation,
         CenterOfRotation,
         false,
-        ( ( i & 1 == 0 ) ? InitializerTransformName : blank ) );
+                ( ( (i & 1) == 0 ) ? InitializerTransformName : blank ) );
 
       errors += LocalCompareImages(startImageName, registeredImageName);
       if ( !keepOutputs )
