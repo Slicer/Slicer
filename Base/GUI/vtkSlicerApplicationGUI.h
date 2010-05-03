@@ -178,6 +178,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ProcessMRMLEvents (
       vtkObject *caller, unsigned long event, void *callData );
 
+    ///
+    /// Download sample data: general method
+    /// and specific methods that map to specific
+    /// file menu commands. GOTO: make this
+    /// more general.
+    ///
+    //void ProcessDownloadSampleLabelMap (const char *uri );
+    //void ProcessDownloadSampleModel( const char *uri);
+    void DownloadSampleVolume( const char *uri);
+    void ProcessDownloadDTIBrain();
+    void ProcessDownloadCTChest();
+    void ProcessDownloadCTACardio();
+    void ProcessDownloadMRIHead();
+    
     void ProcessLoadSceneCommand();
     void ProcessImportSceneCommand();
     void ProcessPublishToXnatCommand();
@@ -189,6 +203,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessAddRulerCommand();
     void UpdateLayout();
     void CustomizeStatusBarLayout();
+
     
     /// 
     /// Methods describe behavior on startup and exit.

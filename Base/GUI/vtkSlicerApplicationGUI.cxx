@@ -85,13 +85,22 @@
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerModulesWizardDialog.h"
+#include "vtkCacheManager.h"
 
 #include "vtkSlicerFiducialListWidget.h"
 #include "vtkSlicerROIViewerWidget.h"
 
+#include "vtkHTTPHandler.h"
+#include "vtkURIHandler.h"
+
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkURIHandler.h"
+#include "vtkHTTPHandler.h"
 
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"
@@ -103,6 +112,7 @@
 
 // VTKSYS includes
 #include <vtksys/stl/vector>
+#include <vtksys/stl/string>
 #include <vtksys/stl/map>
 #include <vtksys/ios/fstream>
 
@@ -579,6 +589,180 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
   progressDialog->Delete();
   return;
 }
+
+
+//--- Note: add new methods for new sample data
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadDTIBrain()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:DTI-Brain.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadCTChest()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:CT-chest.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadCTACardio()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:CTA-cardio.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+ 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadMRIHead()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/index.php/File:MR-head.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
+{
+  
+  if ( uri == NULL )
+    {
+    vtkErrorMacro ( "Got NULL uri." );
+    return;
+    }
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "Got NULL MRML scene." );
+    return;
+    }
+  if (this->GetSlicerApplication() == NULL )
+    {
+    vtkErrorMacro ( "Got NULL Slicer Application." );
+    return;
+    }
+  if ( this->GetApplicationLogic() == NULL )
+    {
+    vtkErrorMacro ( "Got NULL Slicer Application Logic." );
+    return;
+    }
+  if ( this->GetMRMLScene()->GetCacheManager()==NULL )
+    {
+    vtkErrorMacro ( "Got NULL CacheManager." );
+      return;
+    }
+  if ( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory() == NULL )
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  this->MainSlicerWindow );
+    dialog->SetStyleToMessage();
+    std::string msg = "Please set your Cache Directory to enable data download. This may be done through Slicer's application settings interface.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->SetMasterWindow( this->MainSlicerWindow );
+    dialog->ModalOn();
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+  std::string cacheDir = this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory();
+  if ( cacheDir.empty() )
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  this->MainSlicerWindow );
+    dialog->SetStyleToMessage();
+    std::string msg = "Please set your Cache Directory to enable data download. This may be done through Slicer's application settings interface.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->SetMasterWindow( this->MainSlicerWindow );
+    dialog->ModalOn();
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());  
+  std::string uri_String = uri;
+
+  int slash = uri_String.find_last_of ( "/");
+  if ( slash == std::string::npos )
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  this->MainSlicerWindow );
+    dialog->SetStyleToMessage();
+    std::string msg = "The uri string was poorly formed. Not able to download dataset.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->SetMasterWindow( this->MainSlicerWindow );
+    dialog->ModalOn();
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+
+
+  vtkSlicerModuleGUI *vgui = this->GetSlicerApplication()->GetModuleGUIByName("Volumes");
+  if ( vgui )
+    {
+    const char *retval = this->GetSlicerApplication()->Script("set vlogic [$::slicer3::VolumesGUI GetLogic]");
+    if (strcmp(retval, "0") != 0)
+      {
+      //--- Raise CacheAndRemoteDataIOGUI
+      this->GetSlicerApplication()->Script ("$::slicer3::RemoteIOGUI DisplayManagerWindow");
+
+      //---
+      //--- Start volume download.
+      //---
+      std::string filename = vtksys::SystemTools::GetFilenameWithoutExtension ( uri_String );
+      const char *retval2 = app->Script("[$::slicer3::VolumesGUI GetLogic] AddArchetypeVolume %s %s %d", uri_String.c_str(), filename.c_str(), 10 );
+      if ( strcmp (retval2, "0") != 0)
+        {
+        //---
+        //--- don't think we can
+        //--- get the node back from tcl,
+        //--- so find it by name
+        //---
+        int num = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLScalarVolumeNode");
+        for ( int n=0; n <num; n++ )
+          {
+          vtkMRMLScalarVolumeNode *vnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass (n,  "vtkMRMLScalarVolumeNode"));
+          if ( vnode && vnode->GetName() != NULL )
+            {
+            if ( !(strcmp(vnode->GetName(), filename.c_str())) )
+              {
+              vtkMRMLScalarVolumeDisplayNode *dnode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vnode->GetDisplayNode());
+              if ( dnode )
+                {
+                dnode->SetAndObserveColorNodeID ( "vtkMRMLColorTableNodeGrey" );
+                dnode->SetAutoWindowLevel ( 1 );
+                dnode->SetAutoThreshold ( 1 );
+                }
+              if (this->GetApplicationLogic()->GetSelectionNode() != NULL )
+                {
+                this->GetApplicationLogic()->GetSelectionNode()->SetReferenceActiveVolumeID ( vnode->GetID() );
+                }
+              this->GetApplicationLogic()->PropagateVolumeSelection();
+              break;
+              }
+            }
+          }
+        }
+      else
+        {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  this->MainSlicerWindow );
+        dialog->SetStyleToMessage();
+        std::string msg = "Unable to access Volumes Logic to download dataset. No data downloaded.";
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->SetMasterWindow( this->MainSlicerWindow );
+        dialog->ModalOn();
+        dialog->Invoke();
+        dialog->Delete();
+        return;
+        }
+      }
+    }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddDataCommand()
@@ -1711,10 +1895,14 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   vtkKWMenu *cm = vtkKWMenu::New();
   cm->SetParent ( this->GetMainSlicerWindow()->GetFileMenu() );
   cm->Create();
-  cm->AddRadioButton ( "MRI head" );
+  //--- add all instances of sample data here
+  cm->AddCommand ( "MRI head", this, "ProcessDownloadMRIHead" );
+  cm->AddCommand ( "MRI head", this, "ProcessDownloadDTIBrain" );
+  cm->AddCommand ( "MRI head", this, "ProcessDownloadCTChest" );
+  cm->AddCommand ( "MRI head", this, "ProcessDownloadCTACardio" );
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
                                                               this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
-                                                              "Import sample data", cm );
+                                                              "Download Sample Data", cm );
   cm->Delete();
 
 
@@ -4642,3 +4830,5 @@ int vtkSlicerApplicationGUI::GetNumberOfVisibleViewNodes()
     }
   return numberOfVisibleNodes;
 }
+
+
