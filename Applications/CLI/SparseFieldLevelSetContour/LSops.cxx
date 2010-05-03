@@ -18,26 +18,26 @@ void SparseFieldLS::SelfUnion( list<int>& vec )
 {
   vec.sort();
   vec.erase( unique(vec.begin(), vec.end()),vec.end() );
-  int breakhere = 1;
 }
 
 void SparseFieldLS::SelfUnion( vector<int>& vec )
 { 
   sort( vec.begin(), vec.end() );
   vec.erase( unique(vec.begin(), vec.end()),vec.end() );
-  int breakhere = 1;
 }
 
 void SparseFieldLS::AppendIdx( const vector<int>& src, vector<int>& dst ) {
-  for( int i = 0; i < src.size(); i++ )
+  for(unsigned int i = 0; i < src.size(); i++ )
+    {
     dst.push_back( src[i] );
+    }
   SelfUnion( dst );
 }
 
 void SparseFieldLS::DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z )
 {
   vector<int> L_z_(0);
-  for( int i = 0; i < L_z.size(); i++ ) {
+  for(unsigned int i = 0; i < L_z.size(); i++ ) {
     int num1 = count( L_zp.begin(), L_zp.end(), L_z[i] );
     int num2 = count( L_zn.begin(), L_zn.end(), L_z[i] );
     if( num1 + num2 == 0 )
@@ -258,8 +258,10 @@ vector<int> SparseFieldLS::Evolve(int its )
       Lp2 = ListToSTDVector( L_p2 );
       Ln2 = ListToSTDVector( L_n2 );
 
-      for( int k = 0; k < Lz.size(); k++ )
+      for( unsigned int k = 0; k < Lz.size(); k++ )
+        {
         point_type[Lz[k]] = 0;
+        }
      
       if( its_%50 == 0 )
         cout<<"LZ state: "<<Sz.size()<<","<<L_z.size()<<"\n";
@@ -276,7 +278,7 @@ vector<int> SparseFieldLS::Evolve(int its )
         int idx = Sn1.front();
         Sn1.pop_front( );
         std::vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
-        for( int i = 0; i < neigh->size(); i++ ) {
+        for(unsigned int i = 0; i < neigh->size(); i++ ) {
           if( point_type[(*neigh)[i]] == -3 ) {
             phi[ (*neigh)[i] ] =  phi[idx] - 1.0;
             Sn2.push_back( (*neigh)[i] );
@@ -289,7 +291,7 @@ vector<int> SparseFieldLS::Evolve(int its )
         int idx = Sp1.front();
         Sp1.pop_front( );
         std::vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
-        for( int i = 0; i < neigh->size(); i++ ) {
+        for(unsigned int i = 0; i < neigh->size(); i++ ) {
           if( point_type[(*neigh)[i]] == 3 ) {
             phi[ (*neigh)[i] ] =  phi[idx] + 1.0;
             Sp2.push_back( (*neigh)[i] );

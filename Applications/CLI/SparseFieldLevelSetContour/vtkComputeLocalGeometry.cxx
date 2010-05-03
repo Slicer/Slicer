@@ -68,7 +68,7 @@ int vtkComputeLocalGeometry::RequestData(
     // get the input and ouptut
   vtkPolyData *input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *source = 0;
+//  vtkPolyData *source = 0;
  /* if (sourceInfo)
     {
     source = vtkPolyData::SafeDownCast(
@@ -95,7 +95,7 @@ int vtkComputeLocalGeometry::RequestData(
 
 // assign some data from curvature computation 
 // check for the prescence of this named array!
-  vtkDataArray* surfaceCurvature = input->GetPointData()->GetArray("SurfaceMeanCurvature");
+//  vtkDataArray* surfaceCurvature = input->GetPointData()->GetArray("SurfaceMeanCurvature");
   if( 1 /*NULL == surfaceCurvature*/ ) {
     vtkSmartPointer<vtkFloatArray> surfaceCurvature = vtkSmartPointer<vtkFloatArray>::New();
     surfaceCurvature->SetName("SurfaceMeanCurvature");
@@ -116,7 +116,7 @@ int vtkComputeLocalGeometry::RequestData(
       surfH = myMeshData->MeanCurv;
     }
 
-    double Hmin = abs(surfH).min();
+//    double Hmin = abs(surfH).min();
     double Hmax = abs(surfH).max();
     double scale = 256 / (Hmax);
     { // perform the assignment to scalar array attached to vtkPolyData
@@ -169,9 +169,9 @@ int vtkComputeLocalGeometry::RequestData(
     bool bFoundUnclassified = true;
     while( bFoundUnclassified ) {
         int j = 0;
-        bool bFoundUnvisited = true;
+//        bool bFoundUnvisited = true;
         while( visited_idx.size() > 0) { 
-        ::size_t len_vis = visited.size();
+//        ::size_t len_vis = visited.size();
             // look at all neigbhors of all 
             // indices in the visited list
             
@@ -190,7 +190,7 @@ int vtkComputeLocalGeometry::RequestData(
         }
         // everything part of that first 'blob' is in visited...
         int num_ones = count( visited.begin(), visited.end(), 1 );
-        int numel = visited.size();
+//        int numel = visited.size();
         int num_ones_delta = num_ones - num_ones_prev;
         Ak.push_back(num_ones_delta); // area of this blob....
         num_ones_prev = num_ones;
@@ -200,7 +200,7 @@ int vtkComputeLocalGeometry::RequestData(
         // ie go thru 'exterior' list
         Ck++;
         bFoundUnclassified = false;
-        for( int k = 0; k < exterior_init.size(); k++ ) {
+        for(unsigned int k = 0; k < exterior_init.size(); k++ ) {
           int idx = exterior_init.front();
           exterior_init.pop_front();
           exterior_init.push_back(idx);
@@ -215,13 +215,13 @@ int vtkComputeLocalGeometry::RequestData(
   // Now: take everything smaller than some percent of the largest Ak and move it to interior
     int CkMax = 0;
     int AkMax = 0;
-    for( int k =0; k < Ak.size(); k++ ) {
+    for(unsigned int k =0; k < Ak.size(); k++ ) {
       if( Ak[k] > AkMax ) {
         AkMax = Ak[k];
         CkMax = k;
       }
     }
-    for( int k = 0; k < numVerts; k++ ) {
+    for(unsigned int k = 0; k < numVerts; k++ ) {
         int Ck = class_of_blob[k]; // Ck=0 if this is interior point
         if( Ck > 0 ) {
           if( Ak[Ck-1] < AkMax/4 ) {
