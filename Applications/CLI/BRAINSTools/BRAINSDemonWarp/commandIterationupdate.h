@@ -28,51 +28,7 @@
 //#include <getopt.h>
 #include <iostream>
 
-#if defined( USE_DEBUG_IMAGE_VIEWER )
-#include <DebugImageViewerClient.h>
-extern DebugImageViewerClient DebugImageDisplaySender;
-#include <itkWarpImageFilter.h>
-#endif
-/*
-class CommandIterationUpdate : public itk::Command
-{
-public:
-typedef  CommandIterationUpdate   Self;
-typedef  itk::Command             Superclass;
-typedef  itk::SmartPointer<CommandIterationUpdate>  Pointer;
-itkNewMacro( CommandIterationUpdate );
-protected:
-CommandIterationUpdate() {};
-
-typedef itk::Image< float, 3 > InternalImageType;
-typedef itk::Vector< float, 3 >    VectorPixelType;
-typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
-
-typedef itk::PDEDeformableRegistrationFilter<
-InternalImageType,
-InternalImageType,
-DeformationFieldType>   RegistrationFilterType;
-
-public:
-
-void Execute(itk::Object *caller, const itk::EventObject & event)
-{
-Execute( (const itk::Object *)caller, event);
-}
-
-void Execute(const itk::Object * object, const itk::EventObject & event)
-{
-const RegistrationFilterType * filter =
-dynamic_cast< const RegistrationFilterType * >( object );
-
-if( !(itk::IterationEvent().CheckEvent( &event )) )
-{
-return;
-}
-std::cout <<   filter->GetMetric() << std::endl;
-}
-};
-*/
+#include "BRAINSDemonWarpTemplates.h"
 
 template <class TPixel = float, unsigned int VImageDimension = 3>
 class CommandIterationUpdate : public itk::Command

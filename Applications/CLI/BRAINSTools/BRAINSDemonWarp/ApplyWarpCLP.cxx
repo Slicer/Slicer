@@ -1,5 +1,4 @@
 #include <iostream>
-extern int BRAINSResamplePrimary(int argc, char *argv[]);
 
 // main function built in BRAINSResamplePrimary.cxx so that testing only builds
 // templates once.

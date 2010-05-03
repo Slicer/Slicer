@@ -6,16 +6,13 @@
 
 ### All test have been pushed to this sub-directory to keep the primary build clean.
 
-add_executable( BRAINSDemonWarpCLPTests
-    ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx BRAINSDemonWarpCLPTests.cxx )
-target_link_libraries(BRAINSDemonWarpCLPTests ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+add_executable( BRAINSDemonWarpCLPTests BRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx)
+target_link_libraries(BRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(BRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
 set(BRAINS_Demon_Warp_TESTS ${BRAINSDemonWarp_BINARY_DIR}/BRAINSDemonWarpCLPTests )
 
-
-add_executable( VBRAINSDemonWarpCLPTests
-    ${BRAINSDemonWarp_SOURCE_DIR}/VBRAINSDemonWarpPrimary.cxx VBRAINSDemonWarpCLPTests.cxx )
-target_link_libraries(VBRAINSDemonWarpCLPTests ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+add_executable( VBRAINSDemonWarpCLPTests VBRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/VBRAINSDemonWarpPrimary.cxx)
+target_link_libraries(VBRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(VBRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
 set(VBRAINS_Demon_Warp_TESTS ${BRAINSDemonWarp_BINARY_DIR}/VBRAINSDemonWarpCLPTests )
 

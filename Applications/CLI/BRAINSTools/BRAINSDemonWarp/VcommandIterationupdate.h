@@ -25,10 +25,8 @@
 //#include <getopt.h>
 #include <iostream>
 
-#if defined( USE_DEBUG_IMAGE_VIEWER )
-#include "DebugImageViewerClient.h"
-extern DebugImageViewerClient DebugImageDisplaySender;
-#endif
+#include "BRAINSDemonWarpTemplates.h"
+
 /*
 class VCommandIterationUpdate : public itk::Command
 {
