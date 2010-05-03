@@ -1093,7 +1093,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   this->SliceIndexEntry->SetParent ( this->ScaleFrame );
   this->SliceIndexEntry->Create();
   this->SliceIndexEntry->SetWidth(0);
-  this->SliceIndexEntry->SetBalloonHelpString ( "Slice index (O: slice is out of volume, R: rotate to volume plane to see slice index)" );
+  this->SliceIndexEntry->SetBalloonHelpString ( "Slice number display\nInteger: slice number starting from 1 (not 0)\nLetter 'O': slice is out of volume\nLetter 'R': use Rotate to Volume Plane to see slice index\n\nUse this display to cross-reference to filmed images or other displays." );
   this->SliceIndexEntry->SetReliefToFlat();
   this->SliceIndexEntry->ReadOnlyOn();
   this->SliceIndexEntry->SetConfigurationOption("-justify", "left");
