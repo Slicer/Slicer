@@ -156,7 +156,7 @@ protected:
     // Updates GUI widgets based on parameters values in MRML node
     void UpdateGUI();
 
-    void DispalyMessageDialog(char *message);
+    void DisplayMessageDialog(const char *message);
 
     // Description:
     // Updates parameters values in MRML node based on GUI widgets

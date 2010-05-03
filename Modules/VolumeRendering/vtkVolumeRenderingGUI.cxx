@@ -575,7 +575,7 @@ void vtkVolumeRenderingGUI::CheckAbort(void)
   }
 }
 
-void vtkVolumeRenderingGUI::DispalyMessageDialog(char *message)
+void vtkVolumeRenderingGUI::DisplayMessageDialog(const char *message)
 {
     vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
     dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
@@ -665,7 +665,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         {
         if (dim[ii] < 2) 
           {
-          this->DispalyMessageDialog("Invalid volume dimension, at least 2 is required");
+          this->DisplayMessageDialog("Invalid volume dimension, at least 2 is required");
           this->NS_ImageData->SetSelected(NULL);
           return;
           }
@@ -685,7 +685,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         {
         if (dim[ii] < 2) 
           {
-          this->DispalyMessageDialog("Invalid volume dimension, at least 2 is required");
+          this->DisplayMessageDialog("Invalid volume dimension, at least 2 is required");
           this->NS_ImageData->SetSelected(NULL);
           return;
           }
