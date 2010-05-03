@@ -754,6 +754,20 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // now get ready to join the relative path to thisFile
   vtksys_stl::vector<vtksys_stl::string> relativePathComponents;
   vtksys::SystemTools::SplitPath(relativePath.c_str(), relativePathComponents);
+
+  // make sure that the archetype is added first! AddFile when it gets to it
+  // in the dir will not add a duplicate
+  vtksys_stl::string newArchetype = vtksys::SystemTools::GetFilenameName(tempName.c_str());
+  vtkDebugMacro("Stripped archetype = " << newArchetype.c_str());
+  relativePathComponents.push_back(newArchetype);
+  vtksys_stl::string relativeArchetypeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+  vtkDebugMacro("Relative archetype = " << relativeArchetypeFile.c_str());
+  relativePathComponents.pop_back();
+  this->AddFileName(relativeArchetypeFile.c_str());
+
+  bool addedArchetype = false;
+
+  // now iterate through the directory files
   for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
     // skip the dirs
@@ -762,6 +776,10 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
         strcmp(thisFile,".."))
       {
       vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << thisFile);
+      if (newArchetype.compare(thisFile) == 0)
+        {
+        addedArchetype = true;
+        }
       // at this point, the file name is bare of a directory, turn it into a
       // relative path from the original archetype
       relativePathComponents.push_back(thisFile);
@@ -770,6 +788,10 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
       vtkDebugMacro("UpdateFileList: " << fileNum << ", using relative file name " << relativeFile.c_str());
       this->AddFileName(relativeFile.c_str());
       }
+    }
+  if (!addedArchetype)
+    {
+    vtkErrorMacro("UpdateFileList: the archetype file wasn't written out! The updated file list does contain " << newArchetype.c_str() << ", but an error has occurred");
     }
   // restore the old file name
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
