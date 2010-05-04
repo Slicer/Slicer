@@ -33,7 +33,7 @@ if(USE_VALGRIND)
   set(TestLocation "${Slicer3_BINARY_DIR}/bin/")
 else(USE_VALGRIND)
   set(Launcher_Command ${Slicer3_EXE} --launch)
-  set(TestLocation " ")
+  set(TestLocation "")
 endif(USE_VALGRIND)
 
 set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
