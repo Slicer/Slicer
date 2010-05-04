@@ -57,10 +57,8 @@ proc EMSegmentCutOutRegion {ThreshInstance MathInstance ResultVolume ProbVolume 
 # string VolDataType is the type of the volumes in MRIVolumeList
 # .END
 #-------------------------------------------------------------------------------
-proc EMSegmentGaussCurveCalculationFromID {CutOffProbability LogGaussFlag MRIVolumeIDList ProbVolumeID ClassName} {
+proc EMSegmentGaussCurveCalculationFromID {mrmlManager CutOffProbability LogGaussFlag MRIVolumeIDList ProbVolumeID ClassName} {
     global EMSegment
-    set GUI  [$::slicer3::Application GetModuleGUIByName "EMSegmenter"]
-    set mrmlManager   [$GUI GetMRMLManager]
     set SCENE [$mrmlManager GetMRMLScene ]
 
     set ProbNode  [$SCENE GetNodeByID $ProbVolumeID]

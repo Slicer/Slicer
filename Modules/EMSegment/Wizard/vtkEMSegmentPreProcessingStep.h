@@ -15,9 +15,6 @@ public:
   virtual void ShowUserInterface();
   void Validate();
   
-  int ComputeIntensityDistributionsFromSpatialPrior();
-  void UpdateIntensityDistributionAuto(vtkIdType nodeID);
-
   void SetTaskPreprocessingSetting();
   vtkSetMacro(askQuestionsBeforeRunningPreprocessingFlag,int);
   vtkBooleanMacro(askQuestionsBeforeRunningPreprocessingFlag,int);

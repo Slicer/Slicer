@@ -130,11 +130,50 @@ namespace eval EMSegmenterPreProcessingTcl {
     }
     return 0
     }
-    
+
+
+    # ----------------------------------------------------------------------------
+    # We have to create this function so that we can run it in command line mode 
+    #
+    proc GetCheckButtonValueFromMRML { ID } {
+    return [GetEntryValueFromMRML "C" $ID ]
+    }
+
+    proc GetVolumeMenuButtonValueFromMRML { ID } {
+    variable mrmlManager 
+    set MRMLID [GetEntryValueFromMRML "V" $ID ]
+    if { ("$MRMLID" != "") &&  ("$MRMLID" != "NULL") } {
+        return [$mrmlManager MapMRMLNodeIDToVTKNodeID $MRMLID ]
+    } 
+    return 0
+    }
+
+    proc GetTextEntryValueFromMRML { ID } {
+    return [GetEntryValueFromMRML "E" $ID ]
+    }
+
+
+    proc GetEntryValueFromMRML { Type ID } {
+    variable mrmlManager 
+    set TEXT  [string range [string map { "|" "\} \{" } "[[$mrmlManager GetNode] GetTaskPreprocessingSetting]"] 1 end] 
+    set TEXT "${TEXT}\}"
+    set index 0
+    foreach ARG $TEXT {
+        if {"[string index $ARG 0]" == "$Type" } {
+        if { $index == $ID } {
+            return "[string range $ARG 1 end]"
+        }
+        incr index 
+        }
+    }
+    return "" 
+    }
+
+
     #
     # Preprocessing Functions
     #
-    proc InitVariables { {initGUI ""}  {initLOGIC ""}  {initManager ""}  {initPreGUI  "" } } {
+    proc InitVariables { {initLOGIC ""}  {initManager ""}  {initPreGUI  "" } } {
        variable GUI 
        variable preGUI
        variable LOGIC
@@ -148,37 +187,44 @@ namespace eval EMSegmenterPreProcessingTcl {
        puts "=========================================="
        puts "== Init Variables"
        puts "=========================================="
-    if {$initGUI == "" } {
-        set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
-        if { $GUI == "" } { 
-        PrintError "InitVariables: GUI not defined"
-        return 1 
-        }
-    } else {
-        set GUI $initGUI
-    }
+       set GUI  $::slicer3::Application 
+       if { $GUI == "" } { 
+         PrintError "InitVariables: GUI not defined"
+         return 1 
+       }
 
-    if { $initLOGIC == "" } {
-        set LOGIC  [$GUI GetLogic]
-        if { $LOGIC == "" } { 
-        PrintError "InitVariables: LOGIC not defined"
-        return 1 
+       if { $initLOGIC == "" } {
+       set MOD [$::slicer3::Application GetModuleGUIByName "EMSegmenter"]
+       if {$MOD == ""} {
+           PrintError "InitVariables: EMSegmenter not defined"
+               return 1 
+       }
+          set LOGIC  [$MOD GetLogic]
+          if { $LOGIC == "" } { 
+          PrintError "InitVariables: LOGIC not defined"
+          return 1 
         }
-    } else {
-        set LOGIC $initLOGIC
-    }
+      } else {
+         set LOGIC $initLOGIC
+      }
 
-    if { $initManager == "" } { 
-            set mrmlManager   [$GUI GetMRMLManager]
-            if { $mrmlManager  == "" } { 
+       if { $initManager == "" } { 
+       set MOD [$::slicer3::Application GetModuleGUIByName "EMSegmenter"]
+       if {$MOD == ""} {
+           PrintError "InitVariables: EMSegmenter not defined"
+               return 1 
+       }
+
+           set mrmlManager   [$MOD GetMRMLManager]
+           if { $mrmlManager  == "" } { 
                PrintError "InitVariables: mrmManager not defined"
                return 1 
-            }
-    } else {
+           }
+        } else {
             set mrmlManager $initManager
        
-    }
-
+        }
+    
        set SCENE [$mrmlManager GetMRMLScene ]
        if { $SCENE  == "" } { 
           PrintError "InitVariables: SCENE not defined"
@@ -191,15 +237,21 @@ namespace eval EMSegmenterPreProcessingTcl {
           return 1 
        }
     
-    if {$initPreGUI == "" } {
-        set preGUI [$GUI GetPreProcessingStep]
+       if {$initPreGUI == "" } {
+       set MOD [$::slicer3::Application GetModuleGUIByName "EMSegmenter"]
+       if {$MOD == ""} {
+           PrintError "InitVariables: EMSegmenter not defined"
+               return 1 
+       }
+
+            set preGUI [$MOD GetPreProcessingStep]
             if { $preGUI  == "" } { 
               PrintError "InitVariables: PreProcessingStep not defined"
               return 1 
             }
-    } else {
-            set preGUI $initPreGUI
-    }
+         } else {
+             set preGUI $initPreGUI
+         }
 
        # All other Variables are defined when running the pipeline as they are the volumes 
        # Define subjectNode when initializing pipeline 
@@ -490,3 +542,4 @@ namespace eval EMSegmenterSimpleTcl {
     proc ShowCheckList { } { return 0}
     proc ValidateCheckList { } { return 0 }
 }
+

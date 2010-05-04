@@ -31,6 +31,7 @@
 #include "vtkTransformToGrid.h"
 #include "vtkIdentityTransform.h"
 #include "vtkKWApplication.h"
+#include "vtkKWTkUtilities.h"
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -2425,14 +2426,15 @@ std::string vtkEMSegmentLogic::DefineTclTasksFileFromMRML()
   //  cout << "-------- DefineDefaultTasksList Start" << endl;
   // set define list of parameters 
   std::string tclFile;
-  vtkDirectory *dir = vtkDirectory::New();
   vtksys_stl::string FilePath =  this->GetTclTaskDirectory();
-  
-  if (!dir->Open(FilePath.c_str()))
+  vtkDirectory *dir = vtkDirectory::New();
+  int flag = dir->Open(FilePath.c_str());
+  dir->Delete();
+
+  if (!flag)
       {
     vtkErrorMacro("Cannot open " << this->GetTclTaskDirectory());
     // No special files 
-    dir->Delete();
     return tclFile;
       }
   vtksys_stl::string tmpFile = this->MRMLManager->GetNode()->GetTclTaskFilename();
@@ -2477,3 +2479,78 @@ void vtkEMSegmentLogic::TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double r
 void vtkEMSegmentLogic::PrintText(char *TEXT) {
   cout << TEXT << endl;
 } 
+
+//-----------------------------------------------------------------------------
+// Make sure you source EMSegmentAutoSample.tcl
+
+int vtkEMSegmentLogic::ComputeIntensityDistributionsFromSpatialPrior(vtkKWApplication* app)
+{
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+
+  this->MRMLManager->GetListOfTreeNodeIDs(this->MRMLManager->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+      if (this->MRMLManager->GetTreeNodeIsLeaf(*i)) 
+        {      
+      this->UpdateIntensityDistributionAuto(app,*i);
+        }
+    }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+void vtkEMSegmentLogic::UpdateIntensityDistributionAuto(vtkKWApplication* app, vtkIdType nodeID)
+{
+  if (!this->MRMLManager->GetTreeNodeSpatialPriorVolumeID(nodeID)) {
+    vtkWarningMacro("Nothing to update for " << nodeID << " as atlas is not defined");
+    return ;
+  }
+  // get working node 
+  vtkMRMLEMSTargetNode* workingTarget = NULL;
+  if (this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNode() &&
+      this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid())
+    {
+    workingTarget = this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNode();
+    }
+  else 
+    {
+       vtkErrorMacro("Cannot update intensity distribution bc Aligned Target is not correctly defined for node " << nodeID);
+       return ;
+    }
+
+  int numTargetImages = workingTarget->GetNumberOfVolumes();
+
+   // Sample
+  {
+    vtksys_stl::stringstream CMD ;
+    CMD <<  "::EMSegmenterAutoSampleTcl::EMSegmentGaussCurveCalculationFromID " << vtkKWTkUtilities::GetTclNameFromPointer(app->GetMainInterp(), this->MRMLManager) << " 0.95 1 { " ;
+    for (int i = 0 ; i < numTargetImages; i++) {
+      CMD << workingTarget->GetNthVolumeNodeID(i) << " " ;
+    }
+    CMD << " } " << this->MRMLManager->GetVolumeNode(this->MRMLManager->GetTreeNodeSpatialPriorVolumeID(nodeID))->GetID() << " {" <<  this->MRMLManager->GetTreeNodeName(nodeID) << "} \n";
+    // cout << CMD.str().c_str() << endl;
+    if (atoi(app->Script(CMD.str().c_str()))) { return; }
+  }
+
+  //
+  // propogate data to mrml node
+  //
+
+  vtkMRMLEMSTreeParametersLeafNode* leafNode = this->MRMLManager->GetTreeNode(nodeID)->GetParametersNode()->GetLeafParametersNode();  
+  for (int r = 0; r < numTargetImages; ++r)
+    {
+      {
+    double value = atof(app->Script("expr $::EMSegment(GaussCurveCalc,Mean,%d)",r));
+    leafNode->SetAutoLogMean(r, value);
+      }
+      for (int c = 0; c < numTargetImages; ++c)
+      {
+    double value = atof(app->Script("expr $::EMSegment(GaussCurveCalc,Covariance,%d,%d)",r,c));
+    leafNode->SetAutoLogCovariance(r, c, value);
+      }
+    }
+}
+

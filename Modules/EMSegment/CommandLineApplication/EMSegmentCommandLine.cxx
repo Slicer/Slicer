@@ -39,7 +39,9 @@ extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Emsegment_Init(Tcl_Interp *interp);
 extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
-
+extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
+extern "C" int Mrml_Init(Tcl_Interp *interp);
+extern "C" int Mrmlcli_Init(Tcl_Interp *interp); 
 
 #define tgVtkCreateMacro(name,type) \
   name  = type::New(); \
@@ -431,6 +433,9 @@ int main(int argc, char** argv)
       }
     Emsegment_Init(interp);
     Slicerbasegui_Init(interp);
+    Slicerbaselogic_Init(interp);
+     Mrml_Init(interp);
+     Mrmlcli_Init(interp); 
     Vtkteem_Init(interp);
     Vtkitk_Init(interp);
 
@@ -1101,71 +1106,70 @@ int main(int argc, char** argv)
     int newVersionFlag =  inputNodes->GetNumberOfInputChannelNames() ;
     if (  newVersionFlag  ) 
        {
-     // =======================================================================
-     //
-     //  NEW VERSION
-         // 
-     // =======================================================================
+       // =======================================================================
+       //
+       //  NEW VERSION
+       // 
+       // =======================================================================
 
-     cout << "===== New Version =======" << endl;
-     Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
-     if (!interp)
-      {
+       cout << "===== New Version =======" << endl;
+       Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
+       if (!interp)
+       {
         cout << "Error: InitializeTcl failed" << endl;
         return EXIT_FAILURE; 
-      }
+       }
 
-     // This is necessary to load in EMSEgmenter package in TCL interp.
-     Emsegment_Init(interp);
-     Slicerbasegui_Init(interp);
-     Vtkteem_Init(interp);
-     Vtkitk_Init(interp);
+       // This is necessary to load in EMSEgmenter package in TCL interp.
+       Emsegment_Init(interp);
+       Slicerbasegui_Init(interp);
+       Slicerbaselogic_Init(interp);
+       Mrml_Init(interp);
+       Mrmlcli_Init(interp); 
+       Vtkteem_Init(interp);
+       Vtkitk_Init(interp);
 
-     // SLICER_HOME
-     cout << "Setting SLICER home: " << endl;
-     vtksys_stl::string slicerHome = tgGetSLICER_HOME(argv);
-     if(!slicerHome.size())
+       // SLICER_HOME
+       cout << "Setting SLICER home: " << endl;
+       vtksys_stl::string slicerHome = tgGetSLICER_HOME(argv);
+       if(!slicerHome.size())
        {
          cout << "Error: Cannot find executable" << endl;
          return EXIT_FAILURE; 
        }
-     cout << "Slicer home is " << slicerHome << endl;
+       cout << "Slicer home is " << slicerHome << endl;
 
-     tgVtkDefineMacro(app,vtkSlicerApplication);
 
-     // Get An error right here 
-     app->Script("set d [vtkMRMLScalarVolumeNode New]");
-
-     exit(0);
-
-     std::string emLogicTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emLogic));
-     std::string emMRMLManagerTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emMRMLManager));
+       tgVtkDefineMacro(app,vtkKWApplication);
+       app->Script ("namespace eval slicer3 set Application %s", appTcl.c_str());
+       std::string emLogicTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emLogic));
+       std::string emMRMLManagerTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emMRMLManager));
      
-
-     try
+       try
        {
          if (verbose) std::cerr << "Starting preprocessing ..." << std::endl;
 
          emMRMLManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
          emMRMLManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
-
-        
+    
          if (emLogic->SourcePreprocessingTclFiles(app))
            {
-         throw std::runtime_error("ERROR: could not source tcl files. "); 
+             throw std::runtime_error("ERROR: could not source tcl files. "); 
            } 
+    
+         std::string CMD = "::EMSegmenterPreProcessingTcl::InitVariables " + emLogicTcl + " " + emMRMLManagerTcl + " NULL";
 
-         std::string CMD = "::EMSegmenterPreProcessingTcl::InitVariables " + appTcl + " " + emLogicTcl + " " + emMRMLManagerTcl + " NULL";
 
          if (atoi(app->Script(CMD.c_str())))
            {
-         throw std::runtime_error("ERROR: could not init files. "); 
+             throw std::runtime_error("ERROR: could not init files. "); 
            }
 
          if (atoi(app->Script("::EMSegmenterPreProcessingTcl::Run")))
            {
-         throw std::runtime_error("ERROR: Pre-processing did not execute correctly");
+             throw std::runtime_error("ERROR: Pre-processing did not execute correctly");
            }
+     
       
          emMRMLManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
          emMRMLManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
@@ -1184,8 +1188,10 @@ int main(int argc, char** argv)
        {
          throw std::runtime_error("ERROR: failed to run segmentation.");
        }
+       
      app->Delete();
      app = NULL;
+       
        }
     else 
       {

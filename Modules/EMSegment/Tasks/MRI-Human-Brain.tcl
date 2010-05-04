@@ -24,7 +24,9 @@ namespace eval EMSegmenterParametersStepTcl {
         # the name is the same as this tcl file name where the spaces are replaced with empty spaces  
     # puts "DefineMRMLFile Debugging right now" 
     # return "/share/data/EMSegmentTrainingsm/MRIHumanBrain.mrml"
-    return http://xnd.slicer.org:8000/data/20100427T164324Z/MRIHumanBrain.mrml
+    return "http://xnd.slicer.org:8000/data/20100504T005942Z/MRIHumanBrain.mrml"
+    # old one - did not work
+    # return http://xnd.slicer.org:8000/data/20100427T164324Z/MRIHumanBrain.mrml
     }
 }
 
@@ -86,28 +88,33 @@ namespace eval EMSegmenterPreProcessingTcl {
       # return 1 when error occurs 
       # -------------------------------------
       proc Run { } {
-        variable preGUI
-        variable workingDN 
-        variable subjectNode
-        variable inputAtlasNode
-    variable mrmlManager
+          variable preGUI
+      variable workingDN 
+          variable subjectNode
+          variable inputAtlasNode
+          variable mrmlManager
 
-        variable atlasAlignedFlagID 
-        variable skullStrippedFlagID 
-        variable iccMaskSelectID 
-        variable inhomogeneityCorrectionFlagID 
+          variable atlasAlignedFlagID 
+          variable skullStrippedFlagID 
+          variable iccMaskSelectID 
+          variable inhomogeneityCorrectionFlagID 
 
-    puts "=========================================="
-    puts "== Preprocress Data"
-    puts "=========================================="
+          puts "=========================================="
+          puts "== Preprocress Data"
+          puts "=========================================="
           # ---------------------------------------
-      # Step 1 : Initialize/Check Input 
-      if {[InitPreProcessing]} { return 1}
+          # Step 1 : Initialize/Check Input 
+          if {[InitPreProcessing]} { return 1}
 
-          set atlasAlignedFlag [$preGUI GetCheckButtonValue $atlasAlignedFlagID ]
-          set skullStrippedFlag [$preGUI GetCheckButtonValue $skullStrippedFlagID]
-          set iccMaskVTKID [$preGUI GetVolumeMenuButtonValue $iccMaskSelectID ] 
-          set inhomogeneityCorrectionFlag [$preGUI GetCheckButtonValue $inhomogeneityCorrectionFlagID]
+      # ----------------------------------------------------------------------------
+          # We have to create this function so that we can run it in command line mode 
+          #
+      set atlasAlignedFlag [ GetCheckButtonValueFromMRML $atlasAlignedFlagID ]
+          set skullStrippedFlag [ GetCheckButtonValueFromMRML  $skullStrippedFlagID ]
+          set iccMaskVTKID [GetVolumeMenuButtonValueFromMRML $iccMaskSelectID ] 
+          set inhomogeneityCorrectionFlag [GetCheckButtonValueFromMRML $inhomogeneityCorrectionFlagID ]
+
+      puts "==>Setting $atlasAlignedFlag $skullStrippedFlag $iccMaskVTKID $inhomogeneityCorrectionFlag"
 
           if { ($atlasAlignedFlag == 0) && ($skullStrippedFlag == 1) } {
              PrintError "Run: We currently cannot align the atlas to skull stripped image" 
@@ -150,10 +157,10 @@ namespace eval EMSegmenterPreProcessingTcl {
               PrintError "Run: Intensity Correction failed !" 
               return 1
             } 
-        if { [UpdateSubjectNode "$subjectIntensityCorrectedNodeList" ] } {return 1} 
+            if { [UpdateSubjectNode "$subjectIntensityCorrectedNodeList" ] } {return 1} 
          } else {
-            puts "Skipping intensity correction"
-     } 
+               puts "Skipping intensity correction"
+         } 
 
      # write results over to subjectNode 
 
@@ -208,9 +215,9 @@ namespace eval EMSegmenterPreProcessingTcl {
     proc PerformIntensityCorrection { subjectICCMaskNode } {
        variable LOGIC
        variable subjectNode
-    puts "=========================================="
-    puts "== Intensity Correction "
-    puts "=========================================="
+       puts "=========================================="
+       puts "== Intensity Correction "
+       puts "=========================================="
        set n4Module ""
        foreach gui [vtkCommandLineModuleGUI ListInstances] {
           if { [$gui GetGUIName] == "N4ITK MRI Bias correction" } {
@@ -239,12 +246,19 @@ namespace eval EMSegmenterPreProcessingTcl {
         # Run the algorithm on each subject image
         for { set i  0 } {$i < [$subjectNode GetNumberOfVolumes] } { incr i } {
             # Define input
-           set inputNode [$subjectNode GetNthVolumeNode $i]
-           if { $inputNode == "" } {
-             PrintError "PerformIntensityCorrection: the ${i}th subject node is not defined!"
-           foreach NODE $result { DeleteNode $NODE }
-             return ""
-           }
+        set inputNode [$subjectNode GetNthVolumeNode $i]
+            if { $inputNode == "" } {
+              PrintError "PerformIntensityCorrection: the ${i}th subject node is not defined!"
+              foreach NODE $result { DeleteNode $NODE }
+              return ""
+            }
+
+        set inputVolume [$inputNode GetImageData] 
+            if { $inputVolume == "" } {
+              PrintError "PerformIntensityCorrection: the ${i}th subject node has not input data defined!"
+              foreach NODE $result { DeleteNode $NODE }
+              return ""
+            }
 
            # Define output
            set outputVolume [ vtkImageData New]
@@ -258,7 +272,17 @@ namespace eval EMSegmenterPreProcessingTcl {
            # $n4Node SetParameterAsString "outputBiasFieldName" [$outputBiasVolume GetID]      
            [$n4Module GetLogic] LazyEvaluateModuleTarget $n4Node 
            [$n4Module GetLogic] ApplyAndWait $n4Node
+        set outputVolume  [$outputNode GetImageData]
 
+       # Make sure that input and output are of the same type !
+       if {[$inputVolume GetScalarType] != [$outputVolume GetScalarType] } {
+           set cast [vtkImageCast New]
+           $cast SetInput $outputVolume
+           $cast SetOutputScalarType  [$inputVolume GetScalarType]
+           $cast Update
+           $outputVolume DeepCopy [$cast GetOutput]
+           $cast Delete
+       }
            set result "${result}$outputNode " 
        }
 
@@ -274,18 +298,19 @@ namespace eval EMSegmenterPreProcessingTcl {
     # otherwise returns 1 
     # -------------------------------------
     proc ComputeIntensityDistributions { }  {
-    variable preGUI
-    variable mrmlManager
-    puts "=========================================="
-    puts "== Update Intensity Distribution "
-    puts "=========================================="
+      variable LOGIC
+      variable GUI
+      variable mrmlManager
+      puts "=========================================="
+      puts "== Update Intensity Distribution "
+      puts "=========================================="
     
-    # return [$mrmlManager ComputeIntensityDistributionsFromSpatialPrior [$LOGIC GetModuleShareDirectory]  [$preGUI GetApplication]]
-    if { [$preGUI ComputeIntensityDistributionsFromSpatialPrior] } {
+      # return [$mrmlManager ComputeIntensityDistributionsFromSpatialPrior [$LOGIC GetModuleShareDirectory]  [$preGUI GetApplication]]
+      if { [$LOGIC ComputeIntensityDistributionsFromSpatialPrior $GUI] } {
         return 1
-    }
-    $mrmlManager CopyTreeNodeAutoLogDistToLogDist
-    return 0
+      }
+      $mrmlManager CopyTreeNodeAutoLogDistToLogDist
+      return 0
     } 
 
     # -------------------------------------
@@ -328,7 +353,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         set fixedTargetVolumeNode [$subjectNode GetNthVolumeNode $fixedTargetChannel]
         if { [$fixedTargetVolumeNode GetImageData] == "" } {
            PrintError "RegisterAtlas: Fixed image is null, skipping registration"
-           return 1;
+           return 1;blubber
         }
 
         set atlasRegistrationVolumeIndex -1;

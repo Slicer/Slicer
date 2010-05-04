@@ -45,6 +45,7 @@ public:
   virtual int       SourceTaskFiles(vtkKWApplication* app);
   virtual int       SourcePreprocessingTclFiles(vtkKWApplication* app); 
   virtual void      StartSegmentationWithoutPreprocessing();
+  int               ComputeIntensityDistributionsFromSpatialPrior(vtkKWApplication* app);
 
 
   //BTX
@@ -203,6 +204,8 @@ private:
   vtkSetStringMacro(ProgressCurrentAction);
   vtkSetMacro(ProgressGlobalFractionCompleted, double);
   vtkSetMacro(ProgressCurrentFractionCompleted, double);
+
+  void UpdateIntensityDistributionAuto(vtkKWApplication* app, vtkIdType nodeID);
 
   //
   // because the mrml nodes are very complicated for this module, we
