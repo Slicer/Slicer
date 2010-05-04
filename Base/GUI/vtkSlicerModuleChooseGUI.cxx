@@ -1045,15 +1045,25 @@ void vtkSlicerModuleChooseGUI::Populate( )
           vtkKWMenu *menu = pos;
 
           // add the items to the submenu
+          // - put Welcome modules at top
           ModuleSet::iterator mit;
           mit = (*cit).second.begin();
           while (mit != (*cit).second.end())
             {
             std::stringstream methodString;
             methodString << "SelectModule \"" << (*mit).second.c_str() << "\"";
-            index = menu->AddRadioButton( (*mit).second.c_str(), this,
-                                      methodString.str().c_str());
-
+            if ( (*mit).second.compare((*mit).second.size()-7,7,"Welcome") == 0 )
+              {
+              // module name ends in "Welcome" so put it first
+              index = menu->InsertRadioButton( 0, (*mit).second.c_str(), this,
+                                        methodString.str().c_str());
+              }
+            else
+              {
+              // ordinary module, put it last
+              index = menu->AddRadioButton( (*mit).second.c_str(), this,
+                                        methodString.str().c_str());
+              }
             allMap[(*mit).second.c_str()] = methodString.str();
             ++mit;
             }
