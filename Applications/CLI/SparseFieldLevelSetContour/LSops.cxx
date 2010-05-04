@@ -309,14 +309,12 @@ vector<int> SparseFieldLS::Evolve(int its )
       while( Sn2.size() > 0 ) {
         int idx = Sn2.front();
         Sn2.pop_front( );
-        std::vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
         L_n2.push_back(idx);
         point_type[idx] = -2;
       }
       while( Sp2.size() > 0 ) {
         int idx = Sp2.front();
         Sp2.pop_front( );
-        std::vector<int>* neigh = &(meshdata->adjimm[ idx ].myNeighbs);
         L_p2.push_back(idx);
         point_type[idx] = 2;
       }
