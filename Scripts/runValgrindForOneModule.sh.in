@@ -13,4 +13,4 @@ valgrind \
  --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
  --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
  --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
- $* |& tee /tmp/$1_valgrind.txt
+ $* |& tee $1_valgrind.txt
