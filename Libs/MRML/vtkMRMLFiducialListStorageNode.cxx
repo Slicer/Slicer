@@ -234,7 +234,7 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
           else if (lineString.find("# version = ") != std::string::npos)
             {
             std::string str = lineString.substr(12,std::string::npos);
-            vtkWarningMacro("Getting version, substr = " << str);
+            vtkDebugMacro("Getting version, substr = " << str);
             int ver = atoi(str.c_str());
             this->SetVersion(ver);
             }
