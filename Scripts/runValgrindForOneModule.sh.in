@@ -3,13 +3,14 @@ valgrind \
  --sim-hints=lax-ioctls \
  --trace-children=yes \
  --tool=memcheck \
+ -v \
  --leak-check=yes \
  --show-reachable=yes \
  --gen-suppressions=all \
- --suppressions=../Slicer3/CMake/Slicer3ValgrindSuppressions.supp                   \
- --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp               \
- --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp   \
- --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
- --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
- --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
- $* |& tee /tmp/slicerval
+ --suppressions=@PROJECT_SOURCE_DIR@/CMake/Slicer3ValgrindSuppressions.supp                   \
+ --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp               \
+ --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp   \
+ --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
+ --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
+ --suppressions=@PROJECT_BINARY_DIR@/../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
+ $* |& tee /tmp/$1_valgrind.txt

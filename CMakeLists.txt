@@ -168,6 +168,12 @@ IF(Slicer3_BUILD_TESTING)
   INCLUDE(CTest)
   SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
+
+#-----------------------------------------------------------------------------
+# Run test through valgrind: particularly useful for testing modules.
+#
+option(USE_VALGRIND "Run tests through valgrind." OFF)
+
 ENDIF(Slicer3_BUILD_TESTING)
 
 #-----------------------------------------------------------------------------

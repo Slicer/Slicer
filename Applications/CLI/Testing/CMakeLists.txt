@@ -26,6 +26,16 @@ mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 #
 set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
+set(ValgrindScript "${Slicer3_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+
+if(USE_VALGRIND)
+  set(Launcher_Command ${ValgrindScript})
+  set(TestLocation "${Slicer3_BINARY_DIR}/bin/")
+else(USE_VALGRIND)
+  set(Launcher_Command ${Slicer3_EXE} --launch)
+  set(TestLocation " ")
+endif(USE_VALGRIND)
+
 set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
 set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
@@ -40,13 +50,13 @@ add_test(OrientImageTest1 ${Slicer3_EXE} --launch OrientImageTest
   ModuleEntryPoint
   --orientation Axial ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
   )
-add_test(OrientImageTest2 ${Slicer3_EXE} --launch OrientImageTest
+add_test(OrientImageTest2 ${Launcher_Command} ${TestLocation}OrientImageTest
   --compare ${BASELINE}/OrientImageTestCoronal.nrrd
   ${TEMP}/OrientImageTestCoronal.nrrd
   ModuleEntryPoint
   --orientation Coronal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
   )
-add_test(OrientImageTest3 ${Slicer3_EXE} --launch OrientImageTest
+add_test(OrientImageTest3 ${Launcher_Command} OrientImageTest
   --compare ${BASELINE}/OrientImageTestSagittal.nrrd
   ${TEMP}/OrientImageTestSagittal.nrrd
   ModuleEntryPoint
@@ -58,14 +68,14 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Add tests
-add_test(AddTest ${Slicer3_EXE} --launch AddTest
+add_test(AddTest ${Launcher_Command} AddTest
   --compare ${BASELINE}/AddTest.nhdr
   ${TEMP}/AddTest.nhdr
   ModuleEntryPoint
   ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/AddTest.nhdr
   )
 function(add_module_test pixeltype)
-add_test(AddTest_${pixeltype} ${Slicer3_EXE} --launch AddTest
+add_test(AddTest_${pixeltype} ${Launcher_Command} AddTest
   --compare ${BASELINE}/AddTest_${pixeltype}.mha
   ${TEMP}/AddTest_${pixeltype}.mha
   ModuleEntryPoint
@@ -88,7 +98,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Mask tests
-add_test(MaskTest ${Slicer3_EXE} --launch MaskTest
+add_test(MaskTest ${Launcher_Command} MaskTest
   --compare ${BASELINE}/MaskedVolume.nrrd
   ${TEMP}/MaskedVolume.nrrd
   ModuleEntryPoint --label 1
@@ -100,7 +110,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Threshold tests
-add_test(ThresholdTest ${Slicer3_EXE} --launch ThresholdTest
+add_test(ThresholdTest ${Launcher_Command} ThresholdTest
   --compare ${BASELINE}/ThresholdTest.nhdr
   ${TEMP}/ThresholdTest.nhdr
   ModuleEntryPoint --upper 3800 --lower 1400 --outsidevalue 0 --thresholdtype Outside
@@ -112,49 +122,49 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Cast tests
-add_test(CastTest ${Slicer3_EXE} --launch CastTest
+add_test(CastTest ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTest.nrrd
   ${TEMP}/CastTest.nrrd
   ModuleEntryPoint --type UnsignedChar
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTest.nrrd
   )
-add_test(CastTestChar ${Slicer3_EXE} --launch CastTest
+add_test(CastTestChar ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestChar.nrrd
   ${TEMP}/CastTestChar.nrrd
   ModuleEntryPoint --type Char
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestChar.nrrd
   )
-add_test(CastTestShort ${Slicer3_EXE} --launch CastTest
+add_test(CastTestShort ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestShort.nrrd
   ${TEMP}/CastTestShort.nrrd
   ModuleEntryPoint --type Short
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestShort.nrrd
   )
-add_test(CastTestUnsignedShort ${Slicer3_EXE} --launch CastTest
+add_test(CastTestUnsignedShort ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestUnsignedShort.nrrd
   ${TEMP}/CastTestUnsignedShort.nrrd
   ModuleEntryPoint --type UnsignedShort
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestUnsignedShort.nrrd
   )
-add_test(CastTestInt ${Slicer3_EXE} --launch CastTest
+add_test(CastTestInt ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestInt.nrrd
   ${TEMP}/CastTestInt.nrrd
   ModuleEntryPoint --type Int
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestInt.nrrd
   )
-add_test(CastTestUnsignedInt ${Slicer3_EXE} --launch CastTest
+add_test(CastTestUnsignedInt ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestUnsignedInt.nrrd
   ${TEMP}/CastTestUnsignedInt.nrrd
   ModuleEntryPoint --type UnsignedInt
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestUnsignedInt.nrrd
   )
-add_test(CastTestFloat ${Slicer3_EXE} --launch CastTest
+add_test(CastTestFloat ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestFloat.nrrd
   ${TEMP}/CastTestFloat.nrrd
   ModuleEntryPoint --type Float
   ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTestFloat.nrrd
   )
-add_test(CastTestDouble ${Slicer3_EXE} --launch CastTest
+add_test(CastTestDouble ${Launcher_Command} CastTest
   --compare ${BASELINE}/CastTestDouble.nrrd
   ${TEMP}/CastTestDouble.nrrd
   ModuleEntryPoint --type Double
@@ -166,7 +176,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 
 # CheckerBoard tests
-add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
+add_test(CheckerBoardTest ${Launcher_Command} CheckerBoardTest
   --compare ${BASELINE}/CheckerBoardTest.nhdr
   ${TEMP}/CheckerBoardTest.nhdr
   ModuleEntryPoint --checkerPattern 5,3,2
@@ -178,14 +188,14 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # Median tests
-add_test(MedianImageFilterTest ${Slicer3_EXE} --launch MedianImageFilterTest
+add_test(MedianImageFilterTest ${Launcher_Command} MedianImageFilterTest
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
   ${TEMP}/MedianImageFilterTest.nhdr
   ModuleEntryPoint
   --neighborhood 1,2,3 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/MedianImageFilterTest.nhdr
   )
 
-add_test(MedianImageFilterTest2 ${Slicer3_EXE} --launch MedianImageFilterTest
+add_test(MedianImageFilterTest2 ${Launcher_Command} MedianImageFilterTest
   ModuleEntryPoint
   --help
   )
@@ -195,7 +205,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 # GaussianBlur tests
-add_test(GaussianBlurImageFilterTest ${Slicer3_EXE} --launch GaussianBlurImageFilterTest
+add_test(GaussianBlurImageFilterTest ${Launcher_Command} GaussianBlurImageFilterTest
   --compare ${BASELINE}/GaussianBlurImageFilterTest.nhdr
   ${TEMP}/GaussianBlurImageFilterTest.nhdr
   ModuleEntryPoint
@@ -208,7 +218,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 #
 # LinearRegistration tests
 #
-add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest00 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
@@ -221,7 +231,7 @@ add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest01 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
@@ -233,7 +243,7 @@ add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest02 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
@@ -245,7 +255,7 @@ add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest03 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest03.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest03Transform.txt 
@@ -257,7 +267,7 @@ add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(LinearRegistrationTest04 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest04 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest04.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest04Transform.txt 
@@ -274,7 +284,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 if(SLICER_BRAINWEB_DATA_ROOT)
-add_test(LinearRegistrationTest05 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest05 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest05.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest05Transform.txt 
@@ -287,7 +297,7 @@ add_test(LinearRegistrationTest05 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
   )
 
-add_test(LinearRegistrationTest06 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest06 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest06.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest06Transform.txt 
@@ -300,7 +310,7 @@ add_test(LinearRegistrationTest06 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
   )
 
-add_test(LinearRegistrationTest07 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest07 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest07.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest07Transform.txt 
@@ -314,7 +324,7 @@ add_test(LinearRegistrationTest07 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
   )
 
-add_test(LinearRegistrationTest08 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest08 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest08.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest08Transform.txt 
@@ -328,7 +338,7 @@ add_test(LinearRegistrationTest08 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
   )
 
-add_test(LinearRegistrationTest09 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest09 ${Launcher_Command} LinearRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest09.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest09Transform.txt 
@@ -347,7 +357,7 @@ endif(SLICER_BRAINWEB_DATA_ROOT)
 #
 # BSplineDeformableRegistration tests
 #
-add_test(BSplineRegistrationTest00 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
+add_test(BSplineRegistrationTest00 ${Launcher_Command} BSplineDeformableRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest00.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest00Transform.txt 
@@ -378,7 +388,7 @@ add_test(BSplineWarping3DTest00
   ${TEMP}/BSplineWarping3DTest00.mhd
 )
 
-add_test(BSplineRegistrationTest01 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
+add_test(BSplineRegistrationTest01 ${Launcher_Command} BSplineDeformableRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest01.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest01Transform.txt 
@@ -393,7 +403,7 @@ add_test(BSplineRegistrationTest01 ${Slicer3_EXE} --launch BSplineDeformableRegi
   ${TEMP}/BSplineWarping3DTest00.mhd
   )
 
-add_test(BSplineRegistrationTest02 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
+add_test(BSplineRegistrationTest02 ${Launcher_Command} BSplineDeformableRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest02.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest02Transform.txt 
@@ -408,7 +418,7 @@ add_test(BSplineRegistrationTest02 ${Slicer3_EXE} --launch BSplineDeformableRegi
   ${TEMP}/BSplineWarping3DTest00.mhd
   )
 
-add_test(BSplineRegistrationTest03 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
+add_test(BSplineRegistrationTest03 ${Launcher_Command} BSplineDeformableRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest03.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest03Transform.txt 
@@ -423,7 +433,7 @@ add_test(BSplineRegistrationTest03 ${Slicer3_EXE} --launch BSplineDeformableRegi
   ${TEMP}/BSplineWarping3DTest00.mhd
   )
 
-add_test(BSplineRegistrationTest04 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
+add_test(BSplineRegistrationTest04 ${Launcher_Command} BSplineDeformableRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest04.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest04Transform.txt 
@@ -442,7 +452,7 @@ add_test(BSplineRegistrationTest04 ${Slicer3_EXE} --launch BSplineDeformableRegi
 endif(SLICER_BRAINWEB_DATA_ROOT)
 
 # TestGridTransformRegistration tests
-add_test(TestGridTransformRegistrationTest00 ${Slicer3_EXE} --launch TestGridTransformRegistrationTest
+add_test(TestGridTransformRegistrationTest00 ${Launcher_Command} TestGridTransformRegistrationTest
   ModuleEntryPoint
   --gridSize 5 
   --outputtransform ${TEMP}/TestGridTransformRegistrationTest00Transform.txt 
@@ -455,10 +465,10 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # AffineRegistration tests
-add_test(AffineRegistrationTest000 ${Slicer3_EXE} --launch AffineRegistrationTest
+add_test(AffineRegistrationTest000 ${Launcher_Command} AffineRegistrationTest
   ModuleEntryPoint  --help
   )
-add_test(AffineRegistrationTest00 ${Slicer3_EXE} --launch AffineRegistrationTest
+add_test(AffineRegistrationTest00 ${Launcher_Command} AffineRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest00.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest00Transform.txt 
@@ -470,7 +480,7 @@ add_test(AffineRegistrationTest00 ${Slicer3_EXE} --launch AffineRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(AffineRegistrationTest01 ${Slicer3_EXE} --launch AffineRegistrationTest
+add_test(AffineRegistrationTest01 ${Launcher_Command} AffineRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest01.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest01Transform.txt 
@@ -481,7 +491,7 @@ add_test(AffineRegistrationTest01 ${Slicer3_EXE} --launch AffineRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(AffineRegistrationTest02 ${Slicer3_EXE} --launch AffineRegistrationTest
+add_test(AffineRegistrationTest02 ${Launcher_Command} AffineRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest02.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest02Transform.txt 
@@ -498,7 +508,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ConfidenceConnected tests
-add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
+add_test(ConfidenceConnectedTest ${Launcher_Command} ConfidenceConnectedTest
   --compare ${BASELINE}/ConfidenceConnectedTest.nhdr
             ${TEMP}/ConfidenceConnectedTest.nhdr
     ModuleEntryPoint
@@ -523,7 +533,7 @@ set (CLP CurvatureAnisotropicDiffusion)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
-add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
+add_test(${CLP}Test ${Launcher_Command} ${CLP}Test
   --compare ${BASELINE}/${CLP}Test.nhdr
             ${TEMP}/${CLP}Test.nhdr
     ModuleEntryPoint
@@ -536,7 +546,7 @@ add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
 
 ##################################
 # DiffusionTensorEstimation tests
-add_test(DiffusionTensorEstimationTest ${Slicer3_EXE} --launch DiffusionTensorEstimationTest
+add_test(DiffusionTensorEstimationTest ${Launcher_Command} DiffusionTensorEstimationTest
   DiffusionTensorEstimationTest
     --otsuomegathreshold 0.5
     ${MRML_TEST_DATA}/helix-DWI.nhdr
@@ -556,7 +566,7 @@ include_directories(
 
 ##################################
 # DiffusionTensorMathematics tests
-add_test(DiffusionTensorMathematicsTest ${Slicer3_EXE} --launch DiffusionTensorMathematicsTest
+add_test(DiffusionTensorMathematicsTest ${Launcher_Command} DiffusionTensorMathematicsTest
   DiffusionTensorMathematicsTest
     --enumeration FractionalAnisotropy
     ${MRML_TEST_DATA}/helix-DTI.nhdr
@@ -571,7 +581,7 @@ target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
 ##################################
 # DiffusionTensorTest tests
 set (CLP DiffusionTensorTest)
-add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
+add_test(${CLP}Test ${Launcher_Command} ${CLP}Test
   ModuleEntryPoint
     ${MRML_TEST_DATA}/helix-DTI.nhdr
     ${TEMP}/DiffusionTensorTestTest.nhdr
@@ -582,7 +592,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DiffusionWeightedTest tests
-add_test(DiffusionWeightedTestTest ${Slicer3_EXE} --launch DiffusionWeightedTestTest
+add_test(DiffusionWeightedTestTest ${Launcher_Command} DiffusionWeightedTestTest
   ModuleEntryPoint
     ${MRML_TEST_DATA}/helix-DWI.nhdr
     ${TEMP}/DiffusionWeightedTestTest.nhdr
@@ -594,7 +604,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DWIDicomLoad tests
-# add_test(DWIDicomLoadTest ${Slicer3_EXE} --launch DWIDicomLoadTest
+# add_test(DWIDicomLoadTest ${Launcher_Command} DWIDicomLoadTest
 #  DWIDicomLoadTest --help
 #  )
 
@@ -605,7 +615,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ExecutionModelTour tests
-add_test(ExecutionModelTourTest ${Slicer3_EXE} --launch ExecutionModelTourTest
+add_test(ExecutionModelTourTest ${Launcher_Command} ExecutionModelTourTest
   ExecutionModelTourTest
     --integer 30
     --double 30
@@ -626,7 +636,7 @@ target_link_libraries(${CLP}Test MRML)
 
 ##################################
 # FreesurferSurfaceSectionExtraction tests
-#add_test(FreesurferSurfaceSectionExtractionTest ${Slicer3_EXE} --launch FreesurferSurfaceSectionExtractionTest
+#add_test(FreesurferSurfaceSectionExtractionTest ${Launcher_Command} FreesurferSurfaceSectionExtractionTest
 #FreesurferSurfaceSectionExtractionTest --help
 #)
 
@@ -637,7 +647,7 @@ target_link_libraries(${CLP}Test MRML)
 
 ##################################
 # GradientAnisotropicDiffusion tests
-add_test(GradientAnisotropicDiffusionTest ${Slicer3_EXE} --launch GradientAnisotropicDiffusionTest
+add_test(GradientAnisotropicDiffusionTest ${Launcher_Command} GradientAnisotropicDiffusionTest
   --compare ${BASELINE}/GradientAnisotropicDiffusionTest.nhdr
             ${TEMP}/GradientAnisotropicDiffusionTest.nhdr
   ModuleEntryPoint
@@ -654,7 +664,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleFillHoleImageFilter tests
-add_test(GrayscaleFillHoleImageFilterTest ${Slicer3_EXE} --launch GrayscaleFillHoleImageFilterTest
+add_test(GrayscaleFillHoleImageFilterTest ${Launcher_Command} GrayscaleFillHoleImageFilterTest
   --compare ${BASELINE}/GrayscaleFillHoleTest.nhdr
             ${TEMP}/GrayscaleFillHoleTest.nhdr
   ModuleEntryPoint
@@ -668,7 +678,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleGrindPeakImageFilter tests
-add_test(GrayscaleGrindPeakImageFilterTest ${Slicer3_EXE} --launch GrayscaleGrindPeakImageFilterTest
+add_test(GrayscaleGrindPeakImageFilterTest ${Launcher_Command} GrayscaleGrindPeakImageFilterTest
   --compare ${BASELINE}/GrayscaleGrindPeakTest.nhdr
             ${TEMP}/GrayscaleGrindPeakTest.nhdr
   ModuleEntryPoint
@@ -682,7 +692,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # GrayscaleModelMaker tests
-add_test(GrayscaleModelMakerTest ${Slicer3_EXE} --launch GrayscaleModelMakerTest
+add_test(GrayscaleModelMakerTest ${Launcher_Command} GrayscaleModelMakerTest
   GrayscaleModelMakerTest
     --threshold 300
     --name CTFace
@@ -707,7 +717,7 @@ target_link_libraries(${CLP}Test
 
 ##################################
 # HistogramMatching tests
-add_test(HistogramMatchingTest ${Slicer3_EXE} --launch HistogramMatchingTest
+add_test(HistogramMatchingTest ${Launcher_Command} HistogramMatchingTest
   --compare ${BASELINE}/HistogramMatchingTest.nhdr
             ${TEMP}/HistogramMatchingTest.nhdr
   ModuleEntryPoint
@@ -724,7 +734,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ImageLabelCombine tests
-add_test(ImageLabelCombineTest ${Slicer3_EXE} --launch ImageLabelCombineTest
+add_test(ImageLabelCombineTest ${Launcher_Command} ImageLabelCombineTest
   ImageLabelCombineTest --help
   )
 
@@ -735,7 +745,7 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 
 ##################################
 # ImageReadDicomWrite tests
-add_test(ImageReadDicomWriteTest ${Slicer3_EXE} --launch ImageReadDicomWriteTest
+add_test(ImageReadDicomWriteTest ${Launcher_Command} ImageReadDicomWriteTest
   --compare ${BASELINE}/ImageReadDicomWriteTest.dcm
             ${TEMP}/CTHeadAxialDicom40.dcm
   ModuleEntryPoint
@@ -762,7 +772,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # LabelMapSmoothing tests
-add_test(LabelMapSmoothingTest ${Slicer3_EXE} --launch LabelMapSmoothingTest
+add_test(LabelMapSmoothingTest ${Launcher_Command} LabelMapSmoothingTest
   --compare ${BASELINE}/LabelMapSmoothingTest.nhdr
             ${TEMP}/LabelMapSmoothingTest.nhdr
   ModuleEntryPoint
@@ -783,31 +793,31 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 CONFIGURE_FILE(${TEST_DATA}/ModelMakerTest.mrml
     ${TEMP}/ModelMakerTest.mrml IMMEDIATE) 
-add_test(ModelMakerTest ${Slicer3_EXE} --launch ModelMakerTest
+add_test(ModelMakerTest ${Launcher_Command} ModelMakerTest
   ModelMakerTest
     --labels 2
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
   )
-add_test(ModelMakerGenerateAllOneLabelTest ${Slicer3_EXE} --launch ModelMakerTest
+add_test(ModelMakerGenerateAllOneLabelTest ${Launcher_Command} ModelMakerTest
   ModelMakerTest
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
   )
-add_test(ModelMakerGenerateAllThreeLabelsTest ${Slicer3_EXE} --launch ModelMakerTest
+add_test(ModelMakerGenerateAllThreeLabelsTest ${Launcher_Command} ModelMakerTest
   ModelMakerTest
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helixMask3Labels.nrrd
   )
-add_test(ModelMakerStartEndTest ${Slicer3_EXE} --launch ModelMakerTest
+add_test(ModelMakerStartEndTest ${Launcher_Command} ModelMakerTest
   ModelMakerTest
     --start 1 --end 5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helixMask3Labels.nrrd
   )
-add_test(ModelMakerLabelsTest ${Slicer3_EXE} --launch ModelMakerTest
+add_test(ModelMakerLabelsTest ${Launcher_Command} ModelMakerTest
   ModelMakerTest
     --labels 3,1,5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -826,7 +836,7 @@ target_link_libraries(${CLP}Test
 
 ##################################
 # MultipleModelsExample tests
-add_test(MultipleModelsExampleTest ${Slicer3_EXE} --launch MultipleModelsExampleTest
+add_test(MultipleModelsExampleTest ${Launcher_Command} MultipleModelsExampleTest
   MultipleModelsExampleTest --help
   )
 
@@ -843,7 +853,7 @@ target_link_libraries(${CLP}Test
 
 ##################################
 # OtsuThresholdImageFilter tests
-add_test(OtsuThresholdImageFilterTest ${Slicer3_EXE} --launch OtsuThresholdImageFilterTest
+add_test(OtsuThresholdImageFilterTest ${Launcher_Command} OtsuThresholdImageFilterTest
   --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
             ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
    ModuleEntryPoint
@@ -861,7 +871,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # OtsuThresholdSegmentation tests
-add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
+add_test(OtsuThresholdSegmentationTest ${Launcher_Command} OtsuThresholdSegmentationTest
   --compare ${BASELINE}/OtsuThresholdSegmentationTest.nhdr 
             ${TEMP}/OtsuThresholdSegmentationTest.nhdr 
   ModuleEntryPoint
@@ -880,7 +890,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ResampleVolume2 tests
-add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
+add_test(ResampleVolume2Test ${Launcher_Command} ResampleVolume2Test
   --compare 
     ${TEST_DATA}/MRHeadResampled.nhdr
     ${TEMP}/ResampleVolume2Test.nhdr
@@ -906,7 +916,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # ResampleVolume tests
-add_test(ResampleVolumeTest ${Slicer3_EXE} --launch ResampleVolumeTest
+add_test(ResampleVolumeTest ${Launcher_Command} ResampleVolumeTest
   --compare ${BASELINE}/ResampleVolumeTest.nhdr
             ${TEMP}/ResampleVolumeTest.nhdr
   ModuleEntryPoint
@@ -922,10 +932,10 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # RigidRegistration tests
-add_test(RigidRegistrationTest000 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest000 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint --help
   )
-add_test(RigidRegistrationTest00 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest00 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest00.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest00Transform.txt 
@@ -938,7 +948,7 @@ add_test(RigidRegistrationTest00 ${Slicer3_EXE} --launch RigidRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest01 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest01.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest01Transform.txt 
@@ -950,7 +960,7 @@ add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest02 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt 
@@ -962,7 +972,7 @@ add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(RigidRegistrationTest03 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest03 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest03.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest03Transform.txt 
@@ -974,7 +984,7 @@ add_test(RigidRegistrationTest03 ${Slicer3_EXE} --launch RigidRegistrationTest
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
-add_test(RigidRegistrationTest04 ${Slicer3_EXE} --launch RigidRegistrationTest
+add_test(RigidRegistrationTest04 ${Launcher_Command} RigidRegistrationTest
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest04.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest04Transform.txt 
@@ -993,7 +1003,7 @@ add_test(RigidRegistrationTest04 ${Slicer3_EXE} --launch RigidRegistrationTest
 # In testing mode, this test is supposed to fail if the error at the image
 # corner (as compared to the transform passed with --initialtransform) exceeds
 # 0.1
-#add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
+#add_test(RigidRegistrationTest02 ${Launcher_Command} RigidRegistrationTest
 #  --compare ${BASELINE}/RigidRegistrationTest02.nrrd
 #   ${TEMP}/RigidRegistrationTest02.nrrd
 #  RigidRegistrationTest
@@ -1017,7 +1027,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # Subtract tests
-add_test(SubtractTest ${Slicer3_EXE} --launch SubtractTest
+add_test(SubtractTest ${Launcher_Command} SubtractTest
   --compare ${BASELINE}/SubtractTest.nhdr
             ${TEMP}/SubtractTest.nhdr
   ModuleEntryPoint
@@ -1032,7 +1042,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # Multiply tests
-add_test(MultiplyTest ${Slicer3_EXE} --launch MultiplyTest
+add_test(MultiplyTest ${Launcher_Command} MultiplyTest
   --compare ${BASELINE}/MultiplyTest.nrrd
             ${TEMP}/MultiplyTest.nrrd
   ModuleEntryPoint
@@ -1048,7 +1058,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # VotingBinaryHoleFillingImageFilter tests
-add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
+add_test(VotingBinaryHoleFillingImageFilterTest ${Launcher_Command} VotingBinaryHoleFillingImageFilterTest
   --compare ${BASELINE}/VotingBinaryHoleFillingImageFilterTest.nhdr
             ${TEMP}/VotingBinaryHoleFillingImageFilterTest.nhdr
   ModuleEntryPoint
@@ -1068,7 +1078,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 ##################################
 # culled from Slicer 3.6
 # ZeroCrossingBasedEdgeDetectionImageFilter tests
-#add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
+#add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Launcher_Command} ZeroCrossingBasedEdgeDetectionImageFilterTest
 #--compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
 #${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
 #ModuleEntryPoint
@@ -1082,7 +1092,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # PolyDataToLabelmap tests
-add_test(PolyDataToLabelmapTest ${Slicer3_EXE} --launch PolyDataToLabelmapTest
+add_test(PolyDataToLabelmapTest ${Launcher_Command} PolyDataToLabelmapTest
   --compare ${BASELINE}/OAS10001.mha
             ${TEMP}/PolyDataToLabelmapTestOutput.mha
   ModuleEntryPoint
@@ -1137,13 +1147,13 @@ endif (NOT WIN32)
 
 # MergeModels tests
 
-add_test(MergeModelsTest ${Slicer3_EXE} --launch MergeModelsTest
+add_test(MergeModelsTest ${Launcher_Command} MergeModelsTest
   MergeModelsTest
     ${MRML_TEST_DATA}/sphere.vtk
     ${MRML_TEST_DATA}/cube.vtk
     ${TEMP}/sphereCube.vtk
   )
-add_test(MergeModelsTestVtp ${Slicer3_EXE} --launch MergeModelsTest
+add_test(MergeModelsTestVtp ${Launcher_Command} MergeModelsTest
   MergeModelsTest
     ${MRML_TEST_DATA}/sphere.vtp
     ${MRML_TEST_DATA}/cube.vtp
@@ -1185,7 +1195,7 @@ configure_file(
   )
 
 # now add the test
-add_test(ACPCTest ${Slicer3_EXE} --launch ACPCTest
+add_test(ACPCTest ${Launcher_Command} ${TestLocation}ACPCTest
   ModuleEntryPoint
 #  --acpc ${TEST_DATA}/ACPC.fcsv --midline ${TEST_DATA}/midsag.fcsv 
   --acpc 0.5,-21.5,-9.5 --acpc -2.5,4.5,-16.5 --midline 12.5,-93.5,7.5 --midline 12.5,-93.5,-12.5 --midline 5.5,-93.5,-25.5 --midline 9.5,-83.5,-22.5 --midline 9.5,-83.5,-12.5 --midline 10.5,-83.5,10.5 --midline 10.5,-83.5,26.5 --midline 7.5,-68.5,38.5 --midline 7.5,-68.5,13.5 --midline 6.5,-68.5,-9.5 --midline 5.5,-68.5,-30.5 --midline 5.5,-68.5,-48.5 --midline 3.5,-49.5,50.5 --midline 4.5,-49.5,25.5 --midline 3.5,-49.5,5.5 --midline 4.5,-49.5,-32.5 --midline 3.5,-34.5,54.5 --midline 1.5,-34.5,30.5 --midline 1.5,-34.5,17.5 --midline 3.5,-34.5,-22.5 --midline 1.5,-19.5,58.5 --midline 0.5,-19.5,34.5 --midline 0.5,-19.5,18.5 --midline 0.5,-19.5,-13.5 --midline 1.5,-19.5,-25.5 --midline -1.5,-4.5,62.5 --midline -2.5,-4.5,36.5 --midline -1.5,-4.5,19.5 --midline -1.5,-4.5,0.5 --midline -1.5,-4.5,-12.5 --midline -1.5,-4.5,-24.5 --midline -1.5,-4.5,-39.5 --midline -3.5,10.5,49.5 --midline -1.5,10.5,28.5 --midline -3.5,10.5,14.5 --midline -2.5,10.5,5.5 --midline -3.5,10.5,-15.5 --midline -1.5,10.5,-33.5 --midline -5.5,26.5,44.5 --midline -6.5,26.5,25.5 --midline -5.5,26.5,3.5 --midline -5.5,26.5,-11.5 --midline -5.5,26.5,-21.5 --midline -5.5,26.5,-35.5 --midline -5.5,41.5,35.5 --midline -7.5,41.5,12.5 --midline -6.5,41.5,-4.5 --midline -7.5,41.5,-27.5 --midline -7.5,41.5,-41.5 --midline -7.5,56.5,24.5 --midline -9.5,56.5,-0.5 --midline -9.5,56.5,-12.5 --midline -9.5,56.5,-29.5 --midline -10.5,71.5,3.5 --midline -10.5,71.5,-12.5 --midline -11.5,71.5,-26.5 --outputTransform ${TEMP}/ACPCTest.mrml\#vtkMRMLLinearTransformNode1
