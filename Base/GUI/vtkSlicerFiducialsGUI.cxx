@@ -1737,7 +1737,10 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       } // end of events on the active fiducial list node
 
-    if (node == vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()) && event == vtkCommand::ModifiedEvent)
+    if (node != NULL &&
+        this->FiducialListSelectorWidget->GetSelected() != NULL &&
+        node == vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()) &&
+        event == vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("\tmodified event on the fiducial list selected node.\n");
       if (activeFiducialListNode !=  vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()))
