@@ -9,20 +9,10 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplication.h"
 
-#include "vtkActor.h"
-#include "vtkFollower.h"
-#include "vtkProperty.h"
-#include "vtkTexture.h"
-#include "vtkTransform.h"
-#include "vtkPolyData.h"
-#include "vtkLookupTable.h"
-#include "vtkFloatArray.h"
-#include "vtkCellArray.h"
-#include "vtkPointData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkMapper.h"
-#include "vtkVectorText.h"
 #include "vtkRenderer.h"
+#include "vtkProperty.h"
+
+#include "vtkHandleWidget.h"
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -32,8 +22,6 @@
 
 #include "vtkKWWidget.h"
 #include "vtkKWRenderWidget.h"
-
-#include "vtkTransformPolyDataFilter.h"
 
 // for pick events
 #include "vtkSlicerViewerWidget.h"
@@ -232,6 +220,13 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
 
   this->RemoveMRMLObservers();
 
+  // this call was triggering an inf loop of observers when deleting the
+  // second fid list widget
+  this->SetViewerWidget(NULL);
+  //this->ViewerWidget = NULL;
+  
+  this->SetInteractorStyle(NULL);
+  
   // 3d widgets
   std::map<std::string, vtkSlicerSeedWidgetClass *>::iterator iter;
   for (iter = this->SeedWidgets.begin();
@@ -241,15 +236,11 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
     iter->second->Delete();
     }
   this->SeedWidgets.clear();
-  
+
+  // already done in remove mrml observers
   vtkSetMRMLNodeMacro(this->ViewNode, NULL);
 
-  // this call was triggering an inf loop of observers when deleting the
-  // second fid list widget
-  this->SetViewerWidget(NULL);
-  //this->ViewerWidget = NULL;
   
-  this->SetInteractorStyle(NULL);
 }
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::PrintSelf ( ostream& os, vtkIndent indent )
@@ -580,7 +571,18 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
            event ==  vtkMRMLScene::NodeAddedEvent && 
            callDataList != NULL)
     {
-    vtkDebugMacro("ProcessMRMLEvents: got a node added event " << event << ", a fiducial was added to " << callDataList->GetID() << ", calling AddSeed and then UpdateSeed (list has " << callDataList->GetNumberOfFiducials() << " fids)");  
+    vtkDebugMacro("ProcessMRMLEvents: got a node added event " << event << ", a fiducial was added to " << callDataList->GetID() << ", calling AddSeed and then UpdateSeed (list has " << callDataList->GetNumberOfFiducials() << " fids)");
+    // is the list being read in via a storage node?
+    int enabledFlag = 1;
+    if (callDataList->GetStorageNode())
+      {
+      if (callDataList->GetStorageNode()->GetReadState() == vtkMRMLStorageNode::TransferDone)
+        {
+        // it's reading it in, don't enable it just yet
+        enabledFlag = 0;
+        //vtkWarningMacro("The storage node's read state is transfer done, so not enabling the new seed yet");
+        }
+      }
     this->AddSeed(callDataList, NULL);
     // need to update it, get the id of the last one we just added
     const char *addedPointID = callDataList->GetNthFiducialID(callDataList->GetNumberOfFiducials() - 1);
@@ -792,7 +794,15 @@ void vtkSlicerFiducialListWidget::UpdateSeed(vtkMRMLFiducialListNode *flist, con
                          flist->GetGlyphType(),
                          flist->GetOpacity(), flist->GetAmbient(), flist->GetDiffuse(), flist->GetSpecular(), flist->GetPower());
 
-  this->RequestRender();
+  // only request a render if the seed is enabled
+  if (seedWidget->GetWidget()->GetSeed(seedIndex)->GetEnabled())
+    {
+    this->RequestRender();
+    }
+  else
+    {
+    //vtkWarningMacro("UpdateSeed: seed " << seedIndex << " is not enabled, skipping render request");
+    }
 }
 
 
