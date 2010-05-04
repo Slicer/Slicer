@@ -96,7 +96,12 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
     GENERATECLP(CLP_SOURCES ${PROGCLI} )
   endif()
   add_executable( ${PROGNAME} ${CLP_SOURCES} ${PROGCLI_HEADER})
-  target_link_libraries (${PROGNAME} BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
+  if(WIN32)
+    set(BRAINS_ITK_LIBS "")
+  else(WIN32)
+    set(BRAINS_ITK_LIBS ITKAlgorithms ITKIO ITKBasicFilters)
+  endif(WIN32)
+  target_link_libraries (${PROGNAME} BRAINSCommonLib ${BRAINS_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
   if (Slicer3_SOURCE_DIR)
     ### If building as part of the Slicer3_SOURCE_DIR, then only build the shared object, and not the command line program.
@@ -104,7 +109,7 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
     add_library(${PROGNAME}Lib SHARED ${CLP_SOURCES} ${PROGCLI_HEADER})
     set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
     slicer3_set_plugins_output_path(${PROGNAME}Lib)
-    target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
+    target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ${BRAINS_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
     # install each target in the production area (where it would appear in an 
     # installation) and install each target in the developer area (for running 
