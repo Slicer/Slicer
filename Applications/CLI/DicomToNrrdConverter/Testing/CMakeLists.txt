@@ -23,7 +23,7 @@ include_directories (${TCLAP_SOURCE_DIR}/include)
 #
 # Slicer3 is needed to resolve shared libraries
 #
-set(Slicer3_EXE ${Slicer3_DIR}/Slicer3 )
+set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
 set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 
