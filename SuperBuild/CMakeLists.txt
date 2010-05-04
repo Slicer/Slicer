@@ -853,7 +853,16 @@ if(Slicer3_USE_QT)
     )
 endif(Slicer3_USE_QT)
 
-
+set(vtk_MAC_ARGS)
+if(APPLE)
+  set(vtk_MAC_ARGS
+    -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+    -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+    -DOPENGL_gl_LIBRARY:STRING="-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
+    -DVTK_USE_CARBON:BOOL=OFF
+    -DVTK_USE_COCOA:BOOL=OFF
+    -DVTK_USE_X:BOOL=ON
+  )
 
 set(slicer_TCL_LIB)
 set(slicer_TK_LIB)
@@ -893,29 +902,15 @@ endif(vtk_WRAP_TCL)
 #        set ::env(DYLD_LIBRARY_PATH) "$::Slicer3_LIB/VTK-build/bin"
 #        set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
 #        runcmd $::CMAKE \
-#            -G$GENERATOR \
-#            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-#            -DBUILD_SHARED_LIBS:BOOL=ON \
 #            -DCMAKE_SKIP_RPATH:BOOL=OFF \
 #            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
 #            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
 #            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
 #            -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
-#            -DBUILD_TESTING:BOOL=OFF \
 #            -DVTK_USE_CARBON:BOOL=OFF \
 #            -DVTK_USE_COCOA:BOOL=OFF \
 #            -DVTK_USE_X:BOOL=ON \
-#            -DVTK_WRAP_TCL:BOOL=ON \
-#            -DVTK_USE_HYBRID:BOOL=ON \
-#            -DVTK_USE_PATENTED:BOOL=ON \
-#            -DVTK_USE_PARALLEL:BOOL=ON \
-#            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
 #            -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
-#            -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
-#            -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
-#            -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
-#            -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
-#            -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
 #            -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
 
 ExternalProject_Add(vtk
@@ -940,6 +935,7 @@ ExternalProject_Add(vtk
     -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
     ${vtk_PYTHON_ARGS}
     ${vtk_QT_ARGS}
+    ${vtk_MAC_ARGS}
   INSTALL_COMMAND ""
 )
 
