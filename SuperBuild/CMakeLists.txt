@@ -858,7 +858,7 @@ if(APPLE)
   set(vtk_MAC_ARGS
     -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
     -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
-    -DOPENGL_gl_LIBRARY:STRING="-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
+    -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include
     -DVTK_USE_CARBON:BOOL=OFF
     -DVTK_USE_COCOA:BOOL=OFF
     -DVTK_USE_X:BOOL=ON
