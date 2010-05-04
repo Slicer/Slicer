@@ -1117,7 +1117,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # this doesn't compile on windows
 if (NOT WIN32)
 add_test(SparseFieldLevelSetContourTest1  ${CMAKE_COMMAND}
-  -Dtest_cmd=${Slicer3_BINARY_DIR}/bin/SparseFieldLevelSetContour1Test
+  -Dtest_cmd=${Launcher_Command} ${Slicer3_BINARY_DIR}/bin/SparseFieldLevelSetContour1Test
   -Dtest_name=SparseFieldLevelSetContour1Test
   -Dinput_scene=${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
   -Dc1=1.5,1.5,0
