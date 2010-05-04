@@ -863,6 +863,7 @@ if(APPLE)
     -DVTK_USE_COCOA:BOOL=OFF
     -DVTK_USE_X:BOOL=ON
   )
+endif()
 
 set(slicer_TCL_LIB)
 set(slicer_TK_LIB)
