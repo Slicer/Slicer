@@ -16,7 +16,7 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 #####################
 
 set(CLP SFLSRobustStat3DTest)
-set(RSS_SOURCE SFLSRobustStat3DTest.cxx labelMapPreprocessor.h SFLS.h SFLSRobustStatSegmentor3D.h SFLSRobustStatSegmentor3DLabelMap.h SFLSRobustStatSegmentor3DLabelMap_single.h SFLSSegmentor3D.h SFLSRobustStatSegmentor3DLabelMap_single.txx SFLSRobustStatSegmentor3DLabelMap.txx SFLSRobustStatSegmentor3D.txx SFLSSegmentor3D.txx SFLSRobustStat3DTestConsole.cxx SFLSRobustStat3DTest.cxx)
+set(RSS_SOURCE SFLSRobustStat3DTest.cxx labelMapPreprocessor.h SFLS.h SFLSRobustStatSegmentor3D.h SFLSRobustStatSegmentor3DLabelMap_single.h SFLSSegmentor3D.h SFLSRobustStatSegmentor3DLabelMap_single.txx SFLSRobustStatSegmentor3D.txx SFLSSegmentor3D.txx SFLSRobustStat3DTestConsole.cxx)
 
 generateclp(RSS_SOURCE SFLSRobustStat3DTest.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 
