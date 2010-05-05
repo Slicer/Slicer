@@ -4,7 +4,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
   <category>Surface Models</category>
-  <title>Python Surface Toolbox</title>
+  <title>Surface Toolbox</title>
   <description>
 Process a surface using several filters.
 </description>

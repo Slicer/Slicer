@@ -4,7 +4,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
   <category>Converters</category>
-  <title>Python Explode Volume Transform</title>
+  <title>Explode Volume Transform</title>
   <description>
 Explode the ijkToRASTransform from volume, generating a parent transform and a child volume node with IJK orientation.
 </description>

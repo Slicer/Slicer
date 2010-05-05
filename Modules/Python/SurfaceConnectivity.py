@@ -4,7 +4,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
   <category>Surface Models</category>
-  <title>Python Surface Connectivity</title>
+  <title>Surface Connectivity</title>
   <description>
 Identify connected regions of a surface.
 </description>

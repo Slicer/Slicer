@@ -4,7 +4,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
   <category>Surface Models</category>
-  <title>Python Surface ICP Registration</title>
+  <title>Surface ICP Registration</title>
   <description>
 Performs registration of the input surface onto a target surface using on the Iterative Closest Point algorithm. It can output the registered surface or the transform itself, which can then be applied to other MRML nodes.
 </description>
