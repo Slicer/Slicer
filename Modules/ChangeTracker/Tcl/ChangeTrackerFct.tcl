@@ -1431,10 +1431,10 @@ namespace eval ChangeTrackerTcl {
 
     # set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
-      set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+      set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
       eval exec $CMD
 
-      set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan1Image --moving_image $Scan2Image --output_image $Scan2ToScan1Image --output_field $Scan1ToScan2DeformationInverse --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+      set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan1Image --moving_image $Scan2Image --output_image $Scan2ToScan1Image --output_field $Scan1ToScan2DeformationInverse --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
       eval exec $CMD
 
     # Print "=== Deformable Registration ==" 
