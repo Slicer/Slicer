@@ -729,7 +729,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   // MODULE GUI FRAME 
   // ---
   // Define your help text and build the help frame here.
-  const char *help = "**FiducialSeeding Module:** Generate fiber tracts seeded at selected fiducal or model points \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:FiducialSeeding-Documentation-3.4</a>\n";
+  const char *help = "**FiducialSeeding Module:** Generate fiber tracts seeded at selected fiducal or model points \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:FiducialSeeding-Documentation-3.6</a>\n";
   const char *about = "This module was contributed by Alex Yarmarkovich, and Steve Pieper Isomics Inc., SPL/BWH.\nThis work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Tractography" );

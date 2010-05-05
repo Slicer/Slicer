@@ -269,7 +269,7 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Tractography", "Tractography", NULL );
     
     // HELP FRAME
-    const char *help = "**Tractography Module:** Load, save and adjust display parameters of fiber bundles. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:DTIDisplay-Documentation-3.4</a>\n";
+    const char *help = "**Tractography Module:** Load, save and adjust display parameters of fiber bundles. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:DTIDisplay-Documentation-3.6</a>\n";
     const char *about = "This module was contributed by Alex Yarmarkovich, Isomics Inc., SPL/BWH.\nThis work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
       
     this->BuildHelpAndAboutFrame ( this->UIPanel->GetPageWidget ( "Tractography" ), help, about);

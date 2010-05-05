@@ -70,7 +70,7 @@ proc ClipModelBuildGUI {this} {
     #
     # help frame
     #
-    set helptext "The ClipModel clips model by an ROI using a box widget.\n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ClipModel-Documentation-3.4</a>\n"
+    set helptext "The ClipModel clips model by an ROI using a box widget.\n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ClipModel-Documentation-3.6</a>\n"
     set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Volumes module was contributed by Alex Yarmarkovich, Isomics Inc."
     $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
     
