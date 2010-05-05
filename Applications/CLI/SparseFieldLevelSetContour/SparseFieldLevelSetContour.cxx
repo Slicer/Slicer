@@ -66,6 +66,7 @@ int main(int argc, char* argv[] )
                                      commentWrite.c_str(),
                                      CLPProcessInformation);
   polyDataOutput->Update( );
+  writer->SetIdTypeToInt32();
   writer->SetInput( polyDataOutput );
   writer->SetFileName( OutputModel.c_str() );
   
