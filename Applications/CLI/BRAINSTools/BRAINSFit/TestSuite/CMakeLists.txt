@@ -3,8 +3,9 @@ configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}
 
 add_executable(BRAINSFitTest BRAINSFitTest.cxx ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
 target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES})
-
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
+add_dependencies(BRAINSFitTest BRAINSFit)
+
 set(BRAINSFitTest_EXEC ${BRAINSFit_BINARY_DIR}/BRAINSFitTest)
 
 if(0)  ## These were programs needed to create the test suite, but are not needed for actual testing!

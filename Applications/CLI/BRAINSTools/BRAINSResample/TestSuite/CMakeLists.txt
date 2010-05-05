@@ -9,6 +9,8 @@
 add_executable( BRAINSResampleTest  ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx BRAINSResampleTest.cxx  )
 target_link_libraries(BRAINSResampleTest BRAINSCommonLib ITKAlgorithms ITKIO)
 set_target_properties(BRAINSResampleTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(BRAINSResampleTest BRAINSResample)
+
 set(BRAINSResample_TESTS ${CMAKE_CURRENT_BINARY_DIR}/BRAINSResampleTest )
 
 
