@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>Register Images</title>
+  <title>Expert Automated Registration</title>
   <index>7</index>
   <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
