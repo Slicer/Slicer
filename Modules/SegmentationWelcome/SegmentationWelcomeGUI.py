@@ -51,7 +51,7 @@ class SegmentationWelcomeGUI(ScriptedModuleGUI):
         text.GetWidget().SetReliefToFlat()
         text.GetWidget().SetWrapToWord()
         text.GetWidget().QuickFormattingOn()
-        text.GetWidget().SetHeight(5)
+        text.GetWidget().SetHeight(35)
         text.SetText("This module provides a quick guide for choosing the segmentation options most appropriate for your task. More detailed information can be found on Slicer's wiki: <a>http://www.slicer.org/slicerWiki/index.php/Modules:SegmentationOverview3.6</a>.\n\nThe following provides a brief overview of the main and auxiliary  modules Slicer has to offer for image segmentation. Selecting the best module will depend on your input data and the underlying questions you are asking. The spectrum of approaches ranges from fully automated to manual segmentation; most modules are generic and can handle any image content, but a few are designed specifically for brain images.")
         # Important that Read only after SetText otherwise it doesn't work
         text.GetWidget().ReadOnlyOn()
