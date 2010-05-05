@@ -424,9 +424,23 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 void vtkVolumeRenderingGUI::TearDownGUI(void)
 {
   this->Exit();
+  
   if ( this->Built )
   {
     this->RemoveGUIObservers();
+
+    this->DeleteRenderingFrame();
+
+    int numViewer = this->GetApplicationGUI()->GetNumberOfViewerWidgets();
+  
+    for (int i = 0; i < numViewer; i++)
+    {
+      vtkSlicerViewerWidget *slicer_viewer_widget = this->GetApplicationGUI()->GetNthViewerWidget(i);
+      if (slicer_viewer_widget)
+      {
+        slicer_viewer_widget->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
+      }
+    }
   }
 }
 
