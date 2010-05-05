@@ -1001,11 +1001,17 @@ void vtkSlicerModuleChooseGUI::Populate( )
         vtkKWMenu *menu, *submenu;
         menu = this->GetModulesMenuButton()->GetMenu();
         index = this->GetModulesMenuButton()->GetMenu()->GetIndexOfItem( "Registration" );
-        submenu = menu->GetItemCascade(index);
-        submenu->AddRadioButton( "Transforms", this, "SelectModule Transforms" );
+        if ( index != -1 )
+          {
+          submenu = menu->GetItemCascade(index);
+          submenu->AddRadioButton( "Transforms", this, "SelectModule Transforms" );
+          }
         index = menu->GetIndexOfItem( "Segmentation" );
-        submenu = menu->GetItemCascade(index);
-        submenu->AddRadioButton( "Editor", this, "SelectModule Editor" );
+        if ( index != -1 )
+          {
+          submenu = menu->GetItemCascade(index);
+          submenu->AddRadioButton( "Editor", this, "SelectModule Editor" );
+          }
       }
 
 
