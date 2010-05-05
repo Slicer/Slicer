@@ -928,7 +928,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsCamera()
   
   if (cam == NULL)
     {
-    vtkErrorMacro("UpdateFiducialsCamera: unable to get active camera");
+    vtkDebugMacro("UpdateFiducialsCamera: unable to get active camera");
     return;
     }
 
