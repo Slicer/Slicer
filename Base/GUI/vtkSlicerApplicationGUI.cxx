@@ -620,6 +620,20 @@ void vtkSlicerApplicationGUI::ProcessDownloadMRIHead()
   this->DownloadSampleVolume (uri_String.c_str() );
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadRegistration1()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessDownloadRegistration2()
+{
+  std::string uri_String = "http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd";
+  this->DownloadSampleVolume (uri_String.c_str() );
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
@@ -1902,6 +1916,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   cm->AddCommand ( "DTI Brain", this, "ProcessDownloadDTIBrain" );
   cm->AddCommand ( "CT Chest", this, "ProcessDownloadCTChest" );
   cm->AddCommand ( "CT Angiogram (Cardio)", this, "ProcessDownloadCTACardio" );
+  cm->AddCommand ( "MRI Brain (Meningioma) Time 1", this, "ProcessDownloadRegistration1" );
+  cm->AddCommand ( "MRI Brain (Meningioma) Time 2", this, "ProcessDownloadRegistration2" );
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCascade (
                                                               this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                               "Download Sample Data", cm );

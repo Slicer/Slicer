@@ -191,7 +191,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessDownloadCTChest();
     void ProcessDownloadCTACardio();
     void ProcessDownloadMRIHead();
-    
+    void ProcessDownloadRegistration1();
+    void ProcessDownloadRegistration2();
+
     void ProcessLoadSceneCommand();
     void ProcessImportSceneCommand();
     void ProcessPublishToXnatCommand();
