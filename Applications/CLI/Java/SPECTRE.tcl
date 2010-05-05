@@ -5,12 +5,14 @@
 set CLP "SPECTRE"
 
 # set the path to the MIPAV install directory
-# set pathToMipav "c:/Program Files/mipav"
-set pathToMipav "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
 # set the full path to the SPECTRE plugins directory
-set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE_2010-04-01.jar"
-# set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE/plugins"
-# set pathToSPECTREPlugins {c:/Documents and Settings/nicole/mipav/plugins}
+if {[info exists ::env(Slicer3_HOME)] == 1} {
+    set pathToMipav "$::env(Slicer3_HOME)/../Slicer3/Applications/CLI/Java/SPECTRE/mipav"
+    set pathToSPECTREPlugins "$::env(Slicer3_HOME)/lib/Slicer3/Plugins/SPECTRE_2010-04-01.jar"
+} else {
+    set pathToMipav "/projects/birn/nicole/Slicer3VTKHead/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
+    set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE_2010-04-01.jar"
+}
 proc glob-r {{dir .} args} {
      set res {}
      foreach i [lsort [glob -nocomplain -dir $dir *]] {
