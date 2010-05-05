@@ -27,7 +27,12 @@ endif (NOT c3)
 if (NOT c4)
    message ( FATAL_ERROR "Variable c4 not defined" )
 endif (NOT c4)
-
+if (NOT c5)
+   message ( FATAL_ERROR "Variable c5 not defined" )
+endif (NOT c5)
+if (NOT c6)
+   message ( FATAL_ERROR "Variable c6 not defined" )
+endif (NOT c6)
 
 if (NOT output_model)
    message ( FATAL_ERROR "Variable output_model not defined" )
@@ -48,13 +53,13 @@ message (STATUS "right before running ${test_cmd}")
 # need two execute process calls since chaining them fails (broken pipe?) and the comparison is run w/o the test having completed
 
 execute_process(
- COMMAND ${test_cmd} ${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} --outputModel ${output_model}
+ COMMAND ${test_cmd} ${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} -c ${c5} -c ${c6} --outputModel ${output_model}
  RESULT_VARIABLE exec_not_successful
  OUTPUT_QUIET
 )
 
 if ( exec_not_successful )
- message (SEND_ERROR "${test_cmd} failed to run properly with args:\n${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} --outputModel ${output_model}")
+ message (SEND_ERROR "${test_cmd} failed to run properly with args:\n${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} -c ${c5} -c ${c6} --outputModel ${output_model}")
 endif ( exec_not_successful )
 
 execute_process(

@@ -1120,10 +1120,12 @@ add_test(SparseFieldLevelSetContourTest1 ${Launcher_Command}  ${CMAKE_COMMAND}
   -Dtest_cmd=SparseFieldLevelSetContour1Test
   -Dtest_name=SparseFieldLevelSetContour1Test
   -Dinput_scene=${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
-  -Dc1=1.5,1.5,0
-  -Dc2=-1.5,1.5,0
-  -Dc3=-1.5,-1.5,0
-  -Dc4=1.5,-1.5,0
+  -Dc1=132.059,-3.68759,-378.683
+  -Dc2=127.652,-16.0285,-381.549
+  -Dc3=120.15,-27.4267,-382.79
+  -Dc4=117.438,-26.4077,-394.14
+  -Dc5=128.782,-14.2639,-389.404
+  -Dc6=134.297,1.63338,-387.623
   -Doutput_model=${TEMP}/SparseFieldLevelSetContourTest.vtp
   -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
   -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
