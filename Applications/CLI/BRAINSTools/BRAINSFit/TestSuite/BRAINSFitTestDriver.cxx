@@ -218,11 +218,6 @@ Scale(const double xScale, const double yScale, const double zScale)
   return transform;
 }
 
-void RegisterTests()
-{
-  REGISTER_TEST(BRAINSFitTestDriver);
-}
-
 int BRAINSFitTestDriver(int argc, char **argv)
 {
   RegisterBrains2MaskFactory();
@@ -535,3 +530,9 @@ int BRAINSFitTestDriver(int argc, char **argv)
     }
   exit(errors);
 }
+
+void RegisterTests()
+{
+  REGISTER_TEST(BRAINSFitTestDriver);
+}
+

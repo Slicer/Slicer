@@ -7,17 +7,21 @@ target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasic
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 set(BRAINSFitTest_EXEC ${BRAINSFit_BINARY_DIR}/BRAINSFitTest)
 
-# The following program was used to generate TestData/test2.nii.gz
-# from test.nii.gz
-if(MakeMakeXfrmImage)
-  add_executable(makexfrmedImage makexfrmedImage.cxx)
-  target_link_libraries(makexfrmedImage ITKIO)
-endif(MakeMakeXfrmImage)
+if(0)  ## These were programs needed to create the test suite, but are not needed for actual testing!
+  # The following program was used to generate TestData/test2.nii.gz
+  # from test.nii.gz
+  if(MakeMakeXfrmImage)
+    add_executable(makexfrmedImage makexfrmedImage.cxx)
+    target_link_libraries(makexfrmedImage ITKIO)
+  endif(MakeMakeXfrmImage)
 
-# The test driver is only needed to help generate new testcases
-add_executable(BRAINSFitTestDriver BRAINSFitTestDriver.cxx)
-target_link_libraries(BRAINSFitTestDriver ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
-set_target_properties(BRAINSFitTestDriver PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
+  if(BRAINSFitTestDriver)
+    # The test driver is only needed to help generate new testcases
+    add_executable(BRAINSFitTestDriver BRAINSFitTestDriver.cxx)
+    target_link_libraries(BRAINSFitTestDriver ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+    set_target_properties(BRAINSFitTestDriver PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
+  endif()
+endif()
 
 #  if(NOT XXXNO_BRAINSFIT_TESTING)  #When BRAINSFit is a sub project, it should not be tested.
   set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
