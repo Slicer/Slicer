@@ -49,8 +49,13 @@ message (STATUS "right before running ${test_cmd}")
 
 execute_process(
  COMMAND ${test_cmd} ${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} --outputModel ${output_model}
+ RESULT_VARIABLE exec_not_successful
  OUTPUT_QUIET
 )
+
+if ( exec_not_successful )
+ message (SEND_ERROR "${test_cmd} failed to run properly with args:\n${test_name} --inputScene ${input_scene} -c ${c1}  -c ${c2}  -c ${c3}  -c ${c4} --outputModel ${output_model}")
+endif ( exec_not_successful )
 
 execute_process(
  COMMAND ${CMAKE_COMMAND} -E compare_files ${output_baseline} ${output_test}

@@ -1112,12 +1112,12 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # leaks from tcl file
 # add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
 
-# use a helper to compare the baseline and output
+# use a helper to compare the baseline and output, running it from the launcher to set up the paths
 
-# this doesn't compile on windows
+# the test code doesn't link on windows
 if (NOT WIN32)
-add_test(SparseFieldLevelSetContourTest1  ${CMAKE_COMMAND}
-  -Dtest_cmd=${Slicer3_BINARY_DIR}/bin/SparseFieldLevelSetContour1Test
+add_test(SparseFieldLevelSetContourTest1 ${Launcher_Command}  ${CMAKE_COMMAND}
+  -Dtest_cmd=SparseFieldLevelSetContour1Test
   -Dtest_name=SparseFieldLevelSetContour1Test
   -Dinput_scene=${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
   -Dc1=1.5,1.5,0
