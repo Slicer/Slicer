@@ -82,6 +82,7 @@ set(ChangeTracker_SRCS
 SET(changetracker_libs
   DeformableMetric
   CommandLineApplication
+  DiffeomorphicDemonsRegistration
   )
 FOREACH(lib ${changetracker_libs})
   ADD_SUBDIRECTORY(${lib})
