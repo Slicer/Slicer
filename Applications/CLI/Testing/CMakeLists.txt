@@ -1162,8 +1162,8 @@ add_test(MergeModelsTestVtp ${Launcher_Command} ${TestLocation}MergeModelsTest
 
 # add a test that compares the outline to a baseline .vtp
 if (NOT WIN32)
-add_test(MergeModelsTestCompare ${CMAKE_COMMAND}
-  -Dtest_cmd="${Slicer3_BINARY_DIR}/bin/MergeModelsTest"
+add_test(MergeModelsTestCompare  ${Launcher_Command} ${CMAKE_COMMAND}
+  -Dtest_cmd=MergeModelsTest
   -Dtest_name=MergeModelsTest
   -Dmodel1=${MRML_TEST_DATA}/sphere.vtp
   -Dmodel2=${MRML_TEST_DATA}/cube.vtp

@@ -35,7 +35,12 @@ endif( NOT output_test )
 # now run the test
 execute_process(
  COMMAND ${test_cmd} ${test_name} ${model1} ${model2} ${output_model}
+ RESULT_VARIABLE exec_not_successful
 )
+
+if (exec_not_successful)
+ message( SEND_ERROR "${test_cmd} failed with args ${test_name} ${model1} ${model2} ${output_model}" )
+endif( exec_not_successful )
 
 execute_process(
  COMMAND ${CMAKE_COMMAND} -E compare_files ${output_baseline} ${output_test}
