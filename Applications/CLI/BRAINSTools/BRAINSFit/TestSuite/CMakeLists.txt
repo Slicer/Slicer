@@ -1,7 +1,7 @@
 
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
-add_executable(BRAINSFitTest BRAINSFitTest.cxx ../BRAINSFitPrimary.cxx)
+add_executable(BRAINSFitTest BRAINSFitTest.cxx ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
 target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})

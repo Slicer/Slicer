@@ -49,13 +49,13 @@ include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 
 
 set(CLP BRAINSResample)
-set(${CLP}_SOURCE BRAINSResample.cxx BRAINSResamplePrimary.cxx)
+set(${CLP}_SOURCE BRAINSResample.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
 
 
 if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
   set(CLP BRAINSResampleCLP) ## NOTE: This is completely redundant, but is needed to support all the old scripts that use the original name
-  set( ${CLP}_SOURCE BRAINSResampleCLP.cxx BRAINSResamplePrimary.cxx)
+  set( ${CLP}_SOURCE BRAINSResampleCLP.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
   CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
 ## HACK -- Need to write other backwards compatibility wrappers for the old names of BRAINSResampleCLP
 endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
