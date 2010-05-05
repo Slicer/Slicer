@@ -121,6 +121,7 @@ int main( int argc, char * argv[] )
   else if (extension == std::string(".vtp"))
     {
     vtkXMLPolyDataWriter *pdWriter = vtkXMLPolyDataWriter::New();
+    pdWriter->SetIdTypeToInt32();
     pdWriter->SetFileName(ModelOutput.c_str());
     pdWriter->SetInput(add->GetOutput());
     pdWriter->Write();
