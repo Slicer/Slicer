@@ -435,6 +435,8 @@ protected:
     /// Used for user feedback during loading of datasets
     int DataCount;
 
+    int UpdatingMain3DViewers;
+
     /// 
     /// If the active viewer widget has changed, update the dependencies
     void UpdateActiveViewerWidgetDependencies(vtkSlicerViewerWidget*);

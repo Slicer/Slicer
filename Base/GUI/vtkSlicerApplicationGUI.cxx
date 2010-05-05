@@ -154,6 +154,8 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   this->Built = false;
   this->DataCount = 0;
 
+  this->UpdatingMain3DViewers = 0;
+
   //---
   // widgets used in the Slice module
   //---
@@ -2456,10 +2458,11 @@ void vtkSlicerApplicationGUI::CreateMainSliceViewers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::UpdateMain3DViewers()
 {
-  if (this->GetApplication() == NULL || !this->MRMLScene)
+  if (this->GetApplication() == NULL || !this->MRMLScene || this->UpdatingMain3DViewers)
     {
     return;
     }
+  this->UpdatingMain3DViewers = 1;
 
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   //vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
@@ -2615,7 +2618,8 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     viewer_widget->Delete();
     }
 
-  
+ this->UpdatingMain3DViewers = 0;
+
 }
 
 //---------------------------------------------------------------------------
