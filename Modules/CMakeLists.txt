@@ -53,6 +53,8 @@ SET(modules
   QueryAtlas
   FetchMI
   SlicerWelcome
+  RegistrationWelcome
+  SegmentationWelcome
   ScriptedModule
   ScriptedModuleExample
   SlicerDaemon
