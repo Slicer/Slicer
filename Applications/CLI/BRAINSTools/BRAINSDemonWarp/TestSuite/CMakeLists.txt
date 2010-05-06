@@ -8,6 +8,7 @@
 
 if(WIN32)
   set(BRAINSWARP_ITK_LIBS "")
+  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
 else(WIN32)
   set(BRAINSWARP_ITK_LIBS ITKAlgorithms ITKIO)
 endif(WIN32)
@@ -20,7 +21,7 @@ set(BRAINS_Demon_Warp_TESTS ${BRAINSDemonWarp_BINARY_DIR}/BRAINSDemonWarpCLPTest
 add_executable( VBRAINSDemonWarpCLPTests VBRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/VBRAINSDemonWarpPrimary.cxx)
 target_link_libraries(VBRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINSWARP_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(VBRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
-set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${CMAKE_BUILD_TYPE}/VBRAINSDemonWarpCLPTests )
+set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${BUILD_SUBDIR}VBRAINSDemonWarpCLPTests )
 
 #1
 add_test(ValidateThirionDemonsTest_nii ${BRAINS_Demon_Warp_TESTS}

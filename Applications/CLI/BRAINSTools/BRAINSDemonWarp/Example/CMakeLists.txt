@@ -1,6 +1,10 @@
 project(SimpleDiffeomorphicRegistration)
 cmake_minimum_required(VERSION 2.6)
 
+if (WIN32)
+  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
+endif (WIN32)
+
 if(0)
 if(BUILD_SHARED_LIBS)
 ## The dynamicly loadable slicer module can be built
@@ -24,7 +28,7 @@ set(SimpleDiffeomorphicRegistration_SOURCE lib_test.cxx)
 add_executable( SimpleDiffeomorphicRegistrationCLP ${SimpleDiffeomorphicRegistration_SOURCE} )
 target_link_libraries(SimpleDiffeomorphicRegistrationCLP BRAINSDemonWarpLIB)
 
-set(LIB_TEST ${LAUNCH_EXE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/SimpleDiffeomorphicRegistrationCLP)
+set(LIB_TEST ${LAUNCH_EXE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BUILD_SUBDIR}SimpleDiffeomorphicRegistrationCLP)
 
 add_test(ValidateLIB ${LIB_TEST}
    ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_dbg_splayed.nii.gz

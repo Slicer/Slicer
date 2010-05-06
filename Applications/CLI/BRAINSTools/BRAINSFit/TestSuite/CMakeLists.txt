@@ -1,4 +1,8 @@
 
+if (WIN32)
+  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
+endif (WIN32)
+
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
 add_executable(BRAINSFitTest BRAINSFitTest.cxx ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
@@ -6,7 +10,7 @@ target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasic
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 add_dependencies(BRAINSFitTest BRAINSFit)
 
-set(BRAINSFitTest_EXEC ${LAUNCH_EXE} ${BRAINSFit_BINARY_DIR}/${CMAKE_BUILD_TYPE}/BRAINSFitTest)
+set(BRAINSFitTest_EXEC ${LAUNCH_EXE} ${BRAINSFit_BINARY_DIR}/${BUILD_SUBDIR}BRAINSFitTest)
 
 if(0)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
