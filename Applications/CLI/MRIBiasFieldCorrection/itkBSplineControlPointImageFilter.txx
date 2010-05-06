@@ -405,7 +405,7 @@ BSplineControlPointImageFilter<TInputPointImage, TOutputImage>
           idx_Psi[i] = static_cast<unsigned int>( idx[i] );
           }
         }
-      for( unsigned int i = 0; i < ( 2 << ImageDimension - 1 ); i++ )
+      for( unsigned int i = 0; i < ( 2 << (ImageDimension - 1) ); i++ )
         {
         PixelType sum( 0.0 );
         PixelType val;
