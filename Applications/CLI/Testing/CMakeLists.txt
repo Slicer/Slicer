@@ -1115,7 +1115,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # use a helper to compare the baseline and output, running it from the launcher to set up the paths
 
 # the test code doesn't link on windows
-if (NOT WIN32)
+if (NOT WIN32 AND NOT APPLE)
 add_test(SparseFieldLevelSetContourTest1 ${Launcher_Command}  ${CMAKE_COMMAND}
   -Dtest_cmd=SparseFieldLevelSetContour1Test
   -Dtest_name=SparseFieldLevelSetContour1Test
@@ -1145,7 +1145,7 @@ target_link_libraries(${CLP}Test SparseFieldLevelSetContourLib
   vtkITK  vtkIO SlicerBaseCLI
   ModuleDescriptionParser
   )
-endif (NOT WIN32)
+endif (NOT WIN32 AND NOT APPLE)
 
 # MergeModels tests
 
