@@ -11,7 +11,7 @@ target_link_libraries(BRAINSResampleTest BRAINSCommonLib ITKAlgorithms ITKIO)
 set_target_properties(BRAINSResampleTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(BRAINSResampleTest BRAINSResample)
 
-set(BRAINSResample_TESTS ${CMAKE_CURRENT_BINARY_DIR}/BRAINSResampleTest )
+set(BRAINSResample_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/BRAINSResampleTest )
 
 
 add_test(ValidateBRAINSResampleTest4_nii ${BRAINSResample_TESTS}

@@ -6,7 +6,7 @@ target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasic
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 add_dependencies(BRAINSFitTest BRAINSFit)
 
-set(BRAINSFitTest_EXEC ${BRAINSFit_BINARY_DIR}/BRAINSFitTest)
+set(BRAINSFitTest_EXEC ${LAUNCH_EXE} ${BRAINSFit_BINARY_DIR}/${CMAKE_BUILD_TYPE}/BRAINSFitTest)
 
 if(0)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz

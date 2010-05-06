@@ -24,7 +24,7 @@ set(SimpleDiffeomorphicRegistration_SOURCE lib_test.cxx)
 add_executable( SimpleDiffeomorphicRegistrationCLP ${SimpleDiffeomorphicRegistration_SOURCE} )
 target_link_libraries(SimpleDiffeomorphicRegistrationCLP BRAINSDemonWarpLIB)
 
-set(LIB_TEST ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SimpleDiffeomorphicRegistrationCLP)
+set(LIB_TEST ${LAUNCH_EXE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/SimpleDiffeomorphicRegistrationCLP)
 
 add_test(ValidateLIB ${LIB_TEST}
    ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_dbg_splayed.nii.gz
