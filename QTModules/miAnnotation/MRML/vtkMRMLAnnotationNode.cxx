@@ -588,12 +588,12 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Locked to " << locked);
     this->Locked = locked;
+     if(!this->GetDisableModifiedEvent())
+     {
+          // invoke a display modified event
+          this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
+     }
+     this->ModifiedSinceReadOn();
 
-    if (!this->GetDisableModifiedEvent())
-      {
-      // invoke a display modified event
-      // this->InvokeEvent(vtkMRMLAnnotationTextDisplayNode::DisplayModifiedEvent);
-      }
-    this->ModifiedSinceReadOn();
 }
    

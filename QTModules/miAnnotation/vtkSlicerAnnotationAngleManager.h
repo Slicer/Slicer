@@ -100,6 +100,8 @@ public:
     void SetWidgetColor(vtkMRMLAnnotationAngleNode* node, int type, double* color);
     void UpdateAngleMeasurement(vtkMRMLAnnotationAngleNode *angleNode);
 
+     void UpdateLockUnlock(vtkMRMLAnnotationAngleNode* angleNode);
+
 protected:
     vtkSlicerAnnotationAngleManager();
     virtual ~vtkSlicerAnnotationAngleManager();

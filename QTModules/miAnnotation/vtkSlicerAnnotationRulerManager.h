@@ -109,6 +109,8 @@ public:
     void AddSeedWidget(vtkMRMLAnnotationRulerNode* rulerNode);
     void RemoveSeedWidget(vtkMRMLAnnotationRulerNode* rulerNode);
 
+     void UpdateLockUnlock(vtkMRMLAnnotationRulerNode* rulerNode);
+
 protected:
     vtkSlicerAnnotationRulerManager();
     virtual ~vtkSlicerAnnotationRulerManager();

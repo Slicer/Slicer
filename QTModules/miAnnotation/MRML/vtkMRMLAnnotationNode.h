@@ -73,7 +73,8 @@ public:
   {
     TEXT_SELECTED = 0,
     TEXT_VISIBLE,
-    NUM_TEXT_ATTRIBUTE_TYPES
+    NUM_TEXT_ATTRIBUTE_TYPES,
+     LockModifiedEvent,
   };
 
   virtual const char *GetAttributeTypesEnumAsString(int val);

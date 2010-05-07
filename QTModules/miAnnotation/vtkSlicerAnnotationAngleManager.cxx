@@ -408,6 +408,10 @@ void vtkSlicerAnnotationAngleManager::ProcessMRMLEvents ( vtkObject *caller, uns
         vtkDebugMacro("Got transform modified event on node " << node->GetID());
         this->Update3DWidget(node);
     }
+     else if (node != NULL && event == vtkMRMLAnnotationNode::LockModifiedEvent)
+     {
+          this->UpdateLockUnlock(node);
+     }
 
 }
 
@@ -434,8 +438,6 @@ void vtkSlicerAnnotationAngleManager::UpdateWidget(vtkMRMLAnnotationAngleNode *a
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationAngleManager::Update3DWidget(vtkMRMLAnnotationAngleNode *activeAngleNode)
 {
-    cout << "vtkSlicerAnnotationAngleManager::Update3DAngle Start" << endl;
-
     if (activeAngleNode == NULL)
     {
         vtkDebugMacro("Update3DWidget: passed in Angle node is null, returning");
@@ -822,39 +824,20 @@ void vtkSlicerAnnotationAngleManager::UpdateTextDisplayProperty(vtkMRMLAnnotatio
     }
 
     std::string AngleNodeID = this->GetAngleNodeIDFromTextDisplayNode(node->GetID());
-    /*
-    if (AngleNodeID.empty())
-    {
-        cout << "No Angle found" << endl;
-        return;
-    }
-
-    vtkMeasurementsAngleWidgetClass *angleWidgetClass = this->GetAngleWidget(AngleNodeID.c_str());
-    if (!angleWidgetClass)
-    {
-        vtkErrorMacro("Error adding a new angle widget for Angle node " << AngleNodeID);
-        return;
-    }
-    vtkAngleWidget *angleWidget = angleWidgetClass->GetWidget();
-    if (angleWidget == NULL)
-    {
-        vtkWarningMacro("Update3D widget: angle widget is null");
-        return;
-    }
-    vtkAngleRepresentation3D *angleRepresentation = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
-    if (angleRepresentation == NULL)
-    {
-        vtkWarningMacro("Update3D widget: angle representation is null");
-        return;
-    }
-    */
-
 
     vtkMeasurementsAngleWidgetClass *angleWidgetClass = this->GetAngleWidget(AngleNodeID.c_str());
     vtkAngleRepresentation3D *angleRepresentation  = vtkAngleRepresentation3D::SafeDownCast(angleWidgetClass->GetWidget()->GetRepresentation());
 
     // text color
-    double* color = node->GetColor();
+    double* color;
+     if (this->GetMRMLScene()->GetNodeByID(AngleNodeID)->GetSelected())
+     {
+          color = node->GetColor();
+     }
+     else
+     {
+          color = node->GetSelectedColor();
+     }
     angleRepresentation->GetTextActor()->GetProperty()->SetColor(color[0], color[1], color[2]);
 
     // Text Scale
@@ -920,7 +903,16 @@ void vtkSlicerAnnotationAngleManager::UpdatePointDisplayProperty(vtkMRMLAnnotati
     }
 
     // end point color
-    double *color = node->GetColor();
+    double *color;
+     if (this->GetMRMLScene()->GetNodeByID(AngleNodeID)->GetSelected())
+     {
+          color = node->GetColor();
+     }
+     else
+     {
+          color = node->GetSelectedColor();
+     }
+
     rep1->GetProperty()->SetColor(color[0], color[1], color[2]);
     rep2->GetProperty()->SetColor(color[0], color[1], color[2]);
     rep3->GetProperty()->SetColor(color[0], color[1], color[2]);
@@ -1007,27 +999,33 @@ void vtkSlicerAnnotationAngleManager::UpdateLineDisplayProperty(vtkMRMLAnnotatio
         color = node->GetSelectedColor();
     }
     angleRepresentation->GetRay1()->GetProperty()->SetColor(color[0], color[1], color[2]);
-    angleRepresentation->GetRay1()->GetProperty()->SetColor(color[0], color[1], color[2]);
+    angleRepresentation->GetRay2()->GetProperty()->SetColor(color[0], color[1], color[2]);
+     angleRepresentation->GetArc()->GetProperty()->SetColor(color[0], color[1], color[2]);
 
     // Line Width
     angleRepresentation->GetRay1()->GetProperty()->SetLineWidth(node->GetLineThickness());
     angleRepresentation->GetRay2()->GetProperty()->SetLineWidth(node->GetLineThickness());
+     angleRepresentation->GetArc()->GetProperty()->SetLineWidth(node->GetLineThickness());
 
     // Line Opacity
     angleRepresentation->GetRay1()->GetProperty()->SetOpacity(node->GetOpacity());
     angleRepresentation->GetRay2()->GetProperty()->SetOpacity(node->GetOpacity());
+     angleRepresentation->GetArc()->GetProperty()->SetOpacity(node->GetOpacity());
 
     // Line Ambient
     angleRepresentation->GetRay1()->GetProperty()->SetAmbient(node->GetAmbient());
     angleRepresentation->GetRay2()->GetProperty()->SetAmbient(node->GetAmbient());
+     angleRepresentation->GetArc()->GetProperty()->SetAmbient(node->GetAmbient());
 
     // Line Diffuse
     angleRepresentation->GetRay1()->GetProperty()->SetDiffuse(node->GetDiffuse());
     angleRepresentation->GetRay2()->GetProperty()->SetDiffuse(node->GetDiffuse());
+     angleRepresentation->GetArc()->GetProperty()->SetDiffuse(node->GetDiffuse());
 
     // Line Specular
     angleRepresentation->GetRay1()->GetProperty()->SetSpecular(node->GetSpecular());
     angleRepresentation->GetRay2()->GetProperty()->SetSpecular(node->GetSpecular());
+     angleRepresentation->GetArc()->GetProperty()->SetSpecular(node->GetSpecular());
 
     // request a render
     if (this->GetViewerWidget())
@@ -1162,6 +1160,10 @@ void vtkSlicerAnnotationAngleManager::AddAngleWidget(vtkMRMLAnnotationAngleNode 
     {
         AngleNode->AddObserver(vtkMRMLAnnotationAngleNode::AngleNodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
+     if (AngleNode->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+     {
+          AngleNode->AddObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+     }
 }
 
 //---------------------------------------------------------------------------
@@ -1685,4 +1687,40 @@ void vtkSlicerAnnotationAngleManager::UpdateAngleMeasurement(vtkMRMLAnnotationAn
     {
         angleNode->SetAngleMeasurement(angleRepresentation->GetAngle() / 3.14159265 * 180.0);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationAngleManager::UpdateLockUnlock(vtkMRMLAnnotationAngleNode* angleNode)
+{
+     if (angleNode == NULL)
+     {
+          return;
+     }
+
+     vtkMeasurementsAngleWidgetClass *angleWidgetClass = this->GetAngleWidget(angleNode->GetID());
+     if (!angleWidgetClass)
+     {
+          cout << "No distance widget found, adding a distance widget for this one" << endl;
+          this->AddAngleWidget(angleNode);
+          angleWidgetClass = this->GetAngleWidget(angleNode->GetID());
+          if (!angleWidgetClass)
+          {
+               return;
+          }
+     }
+
+     vtkAngleWidget *angleWidget = angleWidgetClass->GetWidget();
+     if (angleWidget == NULL)
+     {
+          return;
+     }
+
+     if ( angleNode->GetLocked() )
+     {
+          angleWidget->ProcessEventsOff();
+     } 
+     else
+     {
+          angleWidget->ProcessEventsOn();
+     }
 }

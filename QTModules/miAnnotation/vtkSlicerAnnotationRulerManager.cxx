@@ -402,7 +402,10 @@ void vtkSlicerAnnotationRulerManager::ProcessMRMLEvents ( vtkObject *caller, uns
         vtkDebugMacro("Got transform modified event on node " << node->GetID());
         this->Update3DWidget(node);
     }
-
+     else if (node != NULL && event == vtkMRMLAnnotationNode::LockModifiedEvent)
+     {
+          this->UpdateLockUnlock(node);
+     }
 }
 
 
@@ -763,13 +766,18 @@ void vtkSlicerAnnotationRulerManager::UpdateTextDisplayProperty(vtkMRMLAnnotatio
     }
 
     // text color
-    double* rgb1 = node->GetColor();
+    double* rgb1 = node->GetSelectedColor();
     if (!rgb1)
     {
         vtkErrorMacro("active ruler node has no text color defined!"); 
         return;
     }
-    lineRep->GetDistanceAnnotationProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
+     if (this->GetMRMLScene()->GetNodeByID(rulerNodeID)->GetSelected())
+     {
+          rgb1 = node->GetColor();
+     } 
+
+     lineRep->GetDistanceAnnotationProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
 
     // Text Scale
     double scale = node->GetTextScale();
@@ -830,12 +838,16 @@ void vtkSlicerAnnotationRulerManager::UpdatePointDisplayProperty(vtkMRMLAnnotati
     }
 
     // end point color
-    double *rgb1 = node->GetColor();
+    double *rgb1 = node->GetSelectedColor();
     if (!rgb1)
     {
         vtkErrorMacro("active ruler node has no text color defined!"); 
         return;
     }
+     if (this->GetMRMLScene()->GetNodeByID(rulerNodeID)->GetSelected())
+     {
+          rgb1 = node->GetColor();
+     } 
 
     lineRep->GetPoint1Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
     lineRep->GetPoint2Representation()->GetProperty()->SetColor(rgb1[0], rgb1[1], rgb1[2]);
@@ -1074,7 +1086,10 @@ void vtkSlicerAnnotationRulerManager::AddDistanceWidget(vtkMRMLAnnotationRulerNo
     {
         rulerNode->AddObserver(vtkMRMLAnnotationRulerNode::RulerNodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
-
+     if (rulerNode->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+     {
+          rulerNode->AddObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+     }
 }
 
 //---------------------------------------------------------------------------
@@ -1595,3 +1610,37 @@ void vtkSlicerAnnotationRulerManager::RemoveSeedWidget(vtkMRMLAnnotationRulerNod
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationRulerManager::UpdateLockUnlock(vtkMRMLAnnotationRulerNode* rulerNode)
+{
+     if (rulerNode == NULL)
+     {
+          return;
+     }
+
+     vtkMeasurementsDistanceWidgetClass *distanceWidget = this->GetDistanceWidget(rulerNode->GetID());
+     if (!distanceWidget)
+     {
+          cout << "No distance widget found, adding a distance widget for this one" << endl;
+          this->AddDistanceWidget(rulerNode);
+          distanceWidget = this->GetDistanceWidget(rulerNode->GetID());
+          if (!distanceWidget)
+          {
+               return;
+          }
+     }
+
+     if (distanceWidget->GetWidget() == NULL)
+     {
+          return;
+     }
+
+     if ( rulerNode->GetLocked() )
+     {
+          distanceWidget->GetWidget()->ProcessEventsOff();
+     } 
+     else
+     {
+          distanceWidget->GetWidget()->ProcessEventsOn();
+     }
+}
