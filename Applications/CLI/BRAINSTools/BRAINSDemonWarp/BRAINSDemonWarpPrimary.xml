@@ -344,7 +344,7 @@
      <double>
        <name>smoothingUp</name>
        <flag>g</flag>
-       <longflag>up_field_sigma</longflag>
+       <longflag alias="up_field_sigma">upFieldSmoothing</longflag>
        <description>Smoothing sigma for the update field at each iteration</description>
        <label>Update field smoothing</label>
        <default>0.0</default>
@@ -360,7 +360,7 @@
     <boolean>
        <name>histogramMatch</name>
        <flag>e</flag>
-       <longflag alias="use_histogram_matching">--histogramMatch</longflag>
+       <longflag alias="use_histogram_matching">histogramMatch</longflag>
        <description>Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile.</description>
        <label>Histogram Match</label>
        <default>false</default>
@@ -376,14 +376,14 @@
     <boolean>
       <name>UseDebugImageViewer</name>
       <flag>G</flag>
-      <longflag>--gui</longflag>
+      <longflag>gui</longflag>
       <description>Display intermediate image volumes for debugging</description>
       <default>false</default>
     </boolean>
     <boolean>
       <name>PromptAfterImageSend</name>
       <flag>p</flag>
-      <longflag>--promptUser</longflag>
+      <longflag>promptUser</longflag>
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
     </boolean>

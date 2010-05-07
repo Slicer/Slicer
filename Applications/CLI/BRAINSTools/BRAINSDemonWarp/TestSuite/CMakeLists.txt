@@ -31,13 +31,13 @@ add_test(ValidateBRAINSDemonsWarpTest_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
 #    --inputPixelType short
 #    --outputPixelType short
-    -v
-    -n 3
+    --outputDebug
+    --numberOfPyramidLevels 3
     --arrayOfPyramidLevelIterations 100,100,100
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
@@ -52,13 +52,13 @@ add_test(ValidateFastSymmetricForcesTest_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 450
     --compareIntensityTolerance 10
      BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
     --inputPixelType uchar
     --medianFilterSize 1,1,1
-    -v
-    -s 1.0
+    --outputDebug
+    --smoothDeformationFieldSigma 1.0
     --numberOfPyramidLevels 3
     --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
@@ -74,20 +74,20 @@ add_test(ValidateDiffeomorphicTest1_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 220
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
-    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
+    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
-    -v
-    -e
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -101,21 +101,21 @@ add_test(ValidateDiffeomorphicTest2_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 200
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
     --inputPixelType ushort
     --outputPixelType uchar
     --outputNormalized
-    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz 
+    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
     --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
     --maskProcessingMode BOBF
-    -e
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.0
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.0
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -128,24 +128,24 @@ add_test(ValidateDiffeomorphicTest3_nii ${BRAINS_Demon_Warp_TESTS}
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
-    BRAINSDemonWarpTest            
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-#    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
+    BRAINSDemonWarpTest
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+#    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
     --outputNormalized
-    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz 
+    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
     --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
     --maskProcessingMode BOBF
-    -s 0.01
-    -g 1.0
-    -e
+    --smoothDeformationFieldSigma 0.01
+    --upFieldSmoothing 1.0
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -n 3
-    -i 100,50,5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -159,17 +159,17 @@ add_test(ValidateDiffeomorphicTest4_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 340
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
 #    --outputNormalized
     --outputCheckerboardVolume ${BRAINSDemonWarp_BINARY_DIR}/output_Checkborad.nii.gz
     --initializeWithDeformationField ${BRAINSCommonLib_DATA_DIRS}/InitialDeformationField.nii.gz
-    -s 1.5
-    -n 3
-    -i 10,5,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 10,5,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -184,32 +184,32 @@ add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 49800
     --compareIntensityTolerance 25
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_test.nii.gz
-    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField_orientedImage.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_test.nii.gz
+    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField_orientedImage.nii.gz
     --inputPixelType uchar
-    -s 1.5
-    -v
-    -n 3
-    -i 1000,100,25
+    --smoothDeformationFieldSigma 1.5
+    --outputDebug
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 1000,100,25
     --registrationFilterType Diffeomorphic
 )
 
 add_test(ValidateVectorBRAINSDemonWarpTest_nii ${VBRAINS_Demon_Warp_TESTS}
- --compare   
+ --compare
     ${BRAINSCommonLib_DATA_DIRS}/thirionDemons.nii.gz
-    ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz  
+    ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
 #    --inputPixelType short
 #    --outputPixelType short
-    -v
-    -n 3
+    --outputDebug
+    --numberOfPyramidLevels 3
     --arrayOfPyramidLevelIterations 100,100,100
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
@@ -222,14 +222,14 @@ add_test(ValidateVectorFastSymmetricForcesTest_nii ${VBRAINS_Demon_Warp_TESTS}
     ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
     --compareNumberOfPixelsTolerance 450
     --compareIntensityTolerance 10
-    VBRAINSDemonWarpTest    
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    VBRAINSDemonWarpTest
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
     --inputPixelType uchar
     --medianFilterSize 1,1,1
-    -v
-    -s 1.0
+    --outputDebug
+    --smoothDeformationFieldSigma 1.0
     --numberOfPyramidLevels 3
     --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
@@ -244,20 +244,20 @@ add_test(ValidateVectorDiffeomorphicTest1_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 220
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
-    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
+    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
-    -v
-    -e
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -271,19 +271,19 @@ add_test(ValidateVectorDiffeomorphicTest2_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 200
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
     --inputPixelType ushort
     --outputPixelType uchar
     --outputNormalized
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
-    --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz    
+    --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
     --makeBOBF
-    -e
+    --histogramMatch
     --numberOfHistogramBins 1024    --numberOfMatchPoints 7
-    -s 1.0    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.0    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -296,22 +296,22 @@ add_test(ValidateVectorDiffeomorphicTest3_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-#    -O ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+#    --outputDeformationFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
     --inputPixelType int    --outputPixelType uchar
-    --outputNormalized    
+    --outputNormalized
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
     --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
     --makeBOBF
-    -s 0.01
-    -g 1.0
-    -e
+    --smoothDeformationFieldSigma 0.01
+    --upFieldSmoothing 1.0
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -n 3
-    -i 100,50,5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -325,18 +325,18 @@ add_test(ValidateVectorDiffeomorphicTest4_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 340
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
-    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
+    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType int
     --outputPixelType uchar
 #    --outputNormalized
     --outputCheckerboardVolume ${BRAINSDemonWarp_BINARY_DIR}/output_Checkborad.nii.gz
-    --initializeWithDeformationField ${BRAINSCommonLib_DATA_DIRS}/InitialDeformationField.nii.gz   
-     -s 1.5
-    -n 3
-    -i 10,5,5
+    --initializeWithDeformationField ${BRAINSCommonLib_DATA_DIRS}/InitialDeformationField.nii.gz
+     --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 10,5,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -350,20 +350,20 @@ add_test(ValidateVectorDiffeomorphicTest5_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 75
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --medianFilterSize 1,1,1
-    -v
-    -e
-    -w 0.5,0.5,0.0
+    --outputDebug
+    --histogramMatch
+    --weightFactors 0.5,0.5,0.0
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -376,23 +376,23 @@ add_test(ValidateVectorDiffeomorphicTest6_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-#    -O ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+#    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
-    --outputNormalized   
-    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz   
+    --outputNormalized
+    --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
     --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
     --makeBOBF
-    -s 0.01
-    -g 1.0
-    -e
+    --smoothDeformationFieldSigma 0.01
+    --upFieldSmoothing 1.0
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -n 3
-    -i 100,50,5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -407,14 +407,14 @@ add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 50000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons_test.nii.gz
     --inputPixelType uchar
-    -s 1.5
-    -v
-    -n 5
-    -i 100,30,20,0,0
+    --smoothDeformationFieldSigma 1.5
+    --outputDebug
+    --numberOfPyramidLevels 5
+    --arrayOfPyramidLevelIterations 100,30,20,0,0
     --registrationFilterType Diffeomorphic
 )
 
@@ -425,15 +425,15 @@ add_test(ValidateVectorOrientedImagesTest7_nii ${VBRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 51000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons1_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons1_test.nii.gz
     --inputPixelType uchar
-    -s 1.5
-    -v
-    -w 0.8,0.2
-    -n 5
-    -i 100,30,20,0,0
+    --smoothDeformationFieldSigma 1.5
+    --outputDebug
+    --weightFactors 0.8,0.2
+    --numberOfPyramidLevels 5
+    --arrayOfPyramidLevelIterations 100,30,20,0,0
     --registrationFilterType Diffeomorphic
 )
 
@@ -444,23 +444,23 @@ add_test(ValidateDiffeomorphicWithAUTOMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T2.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T2.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T2.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T2.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
-    -v
-    -e
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
-    --maskProcessingMode ROIAUTO 
+    --maskProcessingMode ROIAUTO
 )
 
 add_test(ValidateDiffeomorphicWithMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
@@ -470,19 +470,19 @@ add_test(ValidateDiffeomorphicWithMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T2.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T2.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T2.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T2.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
-    -v
-    -e
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
@@ -499,15 +499,15 @@ add_test(ValidateInitialTransform_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 20
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_rotation.input.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationMasks.output.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithTransform_test.nii.gz
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_rotation.input.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationMasks.output.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithTransform_test.nii.gz
     --outputPixelType uchar
-    -v
+    --outputDebug
     --initializeWithTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationMasks.mat
-    -s 0.0
-    -n 1
-    -i 1
+    --smoothDeformationFieldSigma 0.0
+    --numberOfPyramidLevels 1
+    --arrayOfPyramidLevelIterations 1
     --minimumFixedPyramid 1,1,1
     --minimumMovingPyramid 1,1,1
     --registrationFilterType Diffeomorphic
@@ -521,16 +521,16 @@ add_test(ValidateLogDemons_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
-    -v
-    -e
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType LogDemons
@@ -543,16 +543,16 @@ add_test(ValidateSymmetricLogDemons_Test1_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
-    -v
-    -e
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType SymmetricLogDemons
@@ -565,16 +565,16 @@ add_test(ValidateSymmetricLogDemons_Test2_nii ${BRAINS_Demon_Warp_TESTS}
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
-    -m ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    -f ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
-    -o ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
-    -v
-    -e
+    --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
+    --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
+    --outputDebug
+    --histogramMatch
     --numberOfHistogramBins 1024
     --numberOfMatchPoints 7
-    -s 1.5
-    -n 3
-    -i 100,50,5
+    --smoothDeformationFieldSigma 1.5
+    --numberOfPyramidLevels 3
+    --arrayOfPyramidLevelIterations 100,50,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType SymmetricLogDemons
