@@ -16,7 +16,7 @@ endif(WIN32)
 add_executable( BRAINSDemonWarpCLPTests BRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx)
 target_link_libraries(BRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINSWARP_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(BRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
-set(BRAINS_Demon_Warp_TESTS ${BRAINSDemonWarp_BINARY_DIR}/BRAINSDemonWarpCLPTests )
+set(BRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${BUILD_SUBDIR}BRAINSDemonWarpCLPTests )
 
 add_executable( VBRAINSDemonWarpCLPTests VBRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/VBRAINSDemonWarpPrimary.cxx)
 target_link_libraries(VBRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINSWARP_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
