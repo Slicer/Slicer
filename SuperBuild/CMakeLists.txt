@@ -913,7 +913,9 @@ endif(vtk_WRAP_TCL)
 
 ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDS}
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
+  CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
+  CVS_MODULE ${vtk_module}
+  CVS_TAG ${vtk_tag}
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
   CMAKE_GENERATOR ${gen}
