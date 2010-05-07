@@ -903,9 +903,6 @@ endif(vtk_WRAP_TCL)
 #        set ::env(DYLD_LIBRARY_PATH) "$::Slicer3_LIB/VTK-build/bin"
 #        set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
 #        runcmd $::CMAKE \
-#            -DCMAKE_SKIP_RPATH:BOOL=OFF \
-#            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-#            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
 #            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
 #            -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
 #            -DVTK_USE_CARBON:BOOL=OFF \
@@ -916,9 +913,7 @@ endif(vtk_WRAP_TCL)
 
 ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDS}
-  CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
-  CVS_MODULE ${vtk_module}
-  CVS_TAG ${vtk_tag}
+  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
   CMAKE_GENERATOR ${gen}
