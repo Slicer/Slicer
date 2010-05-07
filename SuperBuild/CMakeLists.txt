@@ -892,32 +892,12 @@ if(vtk_WRAP_TCL)
     )
 endif(vtk_WRAP_TCL)
 
-#set ::TCL_BIN_DIR $::Slicer3_LIB/tcl-build/bin
-#set ::TCL_LIB_DIR $::Slicer3_LIB/tcl-build/lib
-#set ::TCL_INCLUDE_DIR $::Slicer3_LIB/tcl-build/include
-#set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib
-#set ::VTK_TK_LIB $::TCL_LIB_DIR/tk84.lib
-#set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
-
-## Need to set the library path so that vtkhash is found while building the parellel libraries
-#        set ::env(DYLD_LIBRARY_PATH) "$::Slicer3_LIB/VTK-build/bin"
-#        set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
-#        runcmd $::CMAKE \
-#            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
-#            -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
-#            -DVTK_USE_CARBON:BOOL=OFF \
-#            -DVTK_USE_COCOA:BOOL=OFF \
-#            -DVTK_USE_X:BOOL=ON \
-#            -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
-#            -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
-
 ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDS}
-  CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
-  CVS_MODULE ${vtk_module}
-  CVS_TAG ${vtk_tag}
+  
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
+  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
