@@ -64,7 +64,8 @@
       <longflag>registrationFilterType</longflag>
       <description>Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic|LogDemons|SymmetricLogDemons</description>
       <label>Registration Filter Type</label>
-      <default>Demons</default>
+      <default>Diffeomorphic</default>
+      <element>Demons</element>
       <element>FastSymmetricForces</element>
       <element>Diffeomorphic</element>
       <element>LogDemons</element>

@@ -24,7 +24,7 @@ set_target_properties(VBRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTO
 set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${BUILD_SUBDIR}VBRAINSDemonWarpCLPTests )
 
 #1
-add_test(ValidateThirionDemonsTest_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(ValidateBRAINSDemonsWarpTest_nii ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/thirionDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
@@ -41,6 +41,7 @@ add_test(ValidateThirionDemonsTest_nii ${BRAINS_Demon_Warp_TESTS}
     --arrayOfPyramidLevelIterations 100,100,100
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
+    --registrationFilterType Demons
 )
 
 #2
@@ -195,7 +196,7 @@ add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateVectorThirionDemonsTest_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(ValidateVectorBRAINSDemonWarpTest_nii ${VBRAINS_Demon_Warp_TESTS}
  --compare   
     ${BRAINSCommonLib_DATA_DIRS}/thirionDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz  
