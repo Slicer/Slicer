@@ -49,7 +49,7 @@
     <double>
       <name>thresholdCorrectionFactor</name>
       <longflag>--thresholdCorrectionFactor</longflag>
-      <label>Otsu Percentile Threshold</label>
+      <label>Otsu Correction Factor</label>
       <description>A factor to scale the Otsu algorithm's result threshold, in case clipping mangles the image.</description>
       <default>1.0</default>
     </double>
