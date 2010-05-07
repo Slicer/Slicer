@@ -138,8 +138,10 @@ set(prefix "${base}/Install")
 set(BUILD_SHARED_LIBS ON)
 #option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 
-# By default, let's build as Debug
-set(CMAKE_BUILD_TYPE "Release")
+# By default, let's build as Release
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 # let a dashboard override the default.
 if(CTEST_BUILD_CONFIGURATION)
@@ -152,14 +154,6 @@ if(CMAKE_EXTRA_GENERATOR)
   set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
 else()
   set(gen "${CMAKE_GENERATOR}")
-endif()
-
-# Set the default build type---this will affect all libraries and
-# applications
-#
-set(build_type "")
-if(CMAKE_BUILD_TYPE)
-  set(build_type "${CMAKE_BUILD_TYPE}")
 endif()
 
 set(parallelism_level)
@@ -662,16 +656,20 @@ endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 set(vtk_PYTHON_ARGS)
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
+set(slicer_PYTHON_EXECUTABLE)
 
 if(WIN32)
   set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/Python-build/Include)
   set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/Python-build/PCbuild/python26.lib)
+  set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/Python-build/PCbuild/python.exe)
 elseif(APPLE)
   set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
   set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.dylib)
+  set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python)
 else()
   set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
   set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.so)
+  set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python)
 endif()
 
 if(Slicer3_USE_PYTHON)
@@ -1164,21 +1162,22 @@ ExternalProject_Add(${proj}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=ON
-    -DITK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/Insight-build
-    -DTeem_DIR:FILEPATH=${CMAKE_BINARY_DIR}/teem-build
-    -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
-    -DBatchMake_DIR:FILEPATH=${CMAKE_BINARY_DIR}/BatchMake-build
-    -DVTK_DIR:FILEPATH=${CMAKE_BINARY_DIR}/VTK-build
+    -DITK_DIR:PATH=${CMAKE_BINARY_DIR}/Insight-build
+    -DTeem_DIR:PATH=${CMAKE_BINARY_DIR}/teem-build
+    -DOpenIGTLink_DIR:PATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
+    -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
+    -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
-    -DSlicer3_TCL_DIR:FILEPATH=${tcl_build}
+    -DSlicer3_TCL_DIR:PATH=${tcl_build}
     -DSlicer3_USE_OPENIGTLINK:BOOL=ON
-    -DSLICERLIBCURL_DIR:FILEPATH=${CMAKE_BINARY_DIR}/cmcurl-build
+    -DSLICERLIBCURL_DIR:PATH=${CMAKE_BINARY_DIR}/cmcurl-build
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
     ${vtk_PYTHON_ARGS}
+    -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
     ${slicer_QT_ARGS}
     -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
