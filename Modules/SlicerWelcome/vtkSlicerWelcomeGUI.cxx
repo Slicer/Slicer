@@ -1116,7 +1116,7 @@ void vtkSlicerWelcomeGUI::BuildModulesPanel( vtkKWFrame *parent )
   basictxt->GetWidget()->SetWrapToWord();
   basictxt->GetWidget()->QuickFormattingOn();
   basictxt->GetWidget()->SetHeight (10);
-  const char *t1 = "**Basic Modules:** You can navigate among Slicer's basic (core) modules using the toolbar icons (shown above) or by choosing them by name from the \"Module Menu\" (shown below and also found in the toolbar). The icons above, from left to right, navigate to the following basic modules: **Home**, **Data**, **Volumes**, **Models**, **Transforms**, **Fiducials**, **EditBox**, **Editor**, and **Colors**.\n\nAny Slicer module can be set to your \"Home Module\" by typing **Ctrl-h** while that module is raised; you can subsequently visit your \"Home Module\" by clicking the **Home** icon, and that module will automatically be selected each time Slicer starts up. \n\n";
+  const char *t1 = "**Basic Modules:** You can navigate among Slicer's basic (core) modules using the toolbar icons (shown above) or by choosing them by name from the \"Module Menu\" (shown below and also found in the toolbar). The icons above, from left to right, navigate to the following basic modules: **Home**, **Data**, **Volumes**, **Models**, **Transforms**, **Fiducials**, **EditBox**, **Editor**, **Measurements**, and **Colors**.\n\nAny Slicer module can be set to your \"Home Module\" by typing **Ctrl-h** while that module is raised; you can subsequently visit your \"Home Module\" by clicking the **Home** icon, and that module will automatically be selected each time Slicer starts up. \n\n";
   basictxt->SetText ( t1 );
   //Important that Read only after SetText otherwise it doesn't work  
   basictxt->GetWidget()->ReadOnlyOn();
