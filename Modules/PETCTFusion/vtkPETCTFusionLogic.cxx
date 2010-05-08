@@ -6,8 +6,8 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Directory.hxx>
 
-// To avoid link errors/warnings gdcmCommon.h shall be included before any other gdcm headers
-#include "gdcmCommon.h" 
+// To avoid link errors/warnings gdcm.h shall be included before any other gdcm headers
+#include "gdcm.h" 
 
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
