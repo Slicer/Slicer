@@ -6,6 +6,9 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Directory.hxx>
 
+// To avoid link errors/warnings gdcmCommon.h shall be included before any other gdcm headers
+#include "gdcmCommon.h" 
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkIntArray.h"
@@ -31,6 +34,7 @@
 #include "itkNumericSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 #include "vtkGlobFileNames.h"
+
 
 #include "gdcmFile.h"
 #include "gdcmGlobal.h"
