@@ -1,3 +1,4 @@
+#include "BRAINSDemonWarpPrimary.h"
 #include "BRAINSDemonWarpTemplates.h"
 
 // main function built in BRAINSDemonWarpPrimary.cxx so that testing only builds

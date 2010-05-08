@@ -3,6 +3,6 @@
 
 #include "BRAINSFitCommonLibWin32Header.h"
 
-BRAINSFitCommonLib_EXPORT extern int BRAINSFitPrimary(int argc, char *argv[]);
+int BRAINSFitPrimary(int argc, char *argv[]);
 
 #endif // __BRAINSFITPRIMARY_H__

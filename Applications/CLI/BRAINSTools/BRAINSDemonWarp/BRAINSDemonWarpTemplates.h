@@ -47,8 +47,6 @@ BRAINSDemonWarpCommonLib_EXPORT extern DebugImageViewerClient DebugImageDisplayS
 BRAINSDemonWarpCommonLib_EXPORT extern void PrintDataTypeStrings(void);
 BRAINSDemonWarpCommonLib_EXPORT extern int CompareNoCase( const std::string & s, const std::string & s2 );
 BRAINSDemonWarpCommonLib_EXPORT extern int BRAINSResamplePrimary(int argc, char *argv[]);
-BRAINSDemonWarpCommonLib_EXPORT extern int BRAINSDemonWarpPrimary(int argc, char *argv[]);
-BRAINSDemonWarpCommonLib_EXPORT extern int VBRAINSDemonWarpPrimary(int argc, char *argv[]);
 BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
 BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
@@ -63,7 +61,6 @@ BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_int(struct B
 BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
 BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
 BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
-
 
 struct BRAINSDemonWarpAppParameters {
 

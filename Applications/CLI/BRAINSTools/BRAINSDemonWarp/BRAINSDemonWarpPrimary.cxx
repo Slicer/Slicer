@@ -1,3 +1,6 @@
+#include "BRAINSDemonWarpCommonLibWin32Header.h"
+#include "BRAINSCommonLibWin32Header.h"
+
 #include "BRAINSDemonWarpPrimaryCLP.h"
 
 #include "BRAINSDemonWarpTemplates.h"
