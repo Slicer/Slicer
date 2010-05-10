@@ -390,8 +390,6 @@ if(Slicer3_USE_KWWIDGETS)
   set(proj blt)
 
   set(blt_SVN "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt")
-  set(blt_CVS ":pserver:anonymous@blt.cvs.sourceforge.net:/cvsroot/blt")
-  #set(blt_CVS_TAG "
   set(blt_BUILD_IN_SOURCE 0)
   set(blt_CONFIGURE "")
   set(blt_BUILD "")
@@ -406,16 +404,6 @@ if(Slicer3_USE_KWWIDGETS)
       ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake
       @ONLY)
 
-#  --with-blt=DIR          Install BLT scripts in DIR
-#  --with-tcl=DIR          Find tclConfig.sh in DIR
-#  --with-tk=DIR           Find tkConfig.sh in DIR
-#  --with-tclincls=DIR     Find tcl.h in DIR
-#  --with-tkincls=DIR      Find tk.h in DIR
-#  --with-tcllibs=DIR      Find Tcl library in DIR
-#  --with-tklibs=DIR       Find Tk library in DIR
-
-
-    #set(blt_PATCH patch -p2 -t -N < ${CMAKE_CURRENT_SOURCE_DIR}/../Utilities/Patches/BLT/blt_darwin_tcl84_patch.txt)
     set(blt_PATCH patch -p2 -t -N < ${tcl_base}/blt/bltpatch)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_base}/tcl/unix --with-tk=${tcl_build} --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common)
     set(blt_BUILD make)
@@ -767,24 +755,8 @@ if(WIN32)
 else()
   set(slicer_PYTHON_INTERPRETER ${CMAKE_BINARY_DIR}/python-build/bin/python)
   set(ENV{LD_LIBRARY_PATH} "${CMAKE_BINARY_DIR}/python-build/lib")
-  #message("LD_LIBRARY_PATH:=ENV{LD_LIBRARY_PATH}")
-  #set(ENV{PYTHONHOME} ${python_home})
 endif()
 
-#} else {
-#          # Jim's way - cygwin does mount c:/ as /c and doesn't use cygdrive
-#          set devenvdir [file dirname $::MAKE]
-#          set vcbindir $::COMPILER_PATH
-#          set ::env(PATH) $devenvdir\;$vcbindir\;$::env(PATH)
-#          set ::env(PATH) $::env(PATH)\;$::Slicer3_LIB/python-build/PCbuild
-#        }
-#        set ::env(INCLUDE) [file dirname $::COMPILER_PATH]/include
-#        set ::env(INCLUDE) $::MSSDK_PATH/Include\;$::env(INCLUDE)
-#        set ::env(INCLUDE) [file normalize $::Slicer3_LIB/python-build/Include]\;$::env(INCLUDE)
-#        set ::env(LIB) $::MSSDK_PATH/Lib\;[file dirname $::COMPILER_PATH]/lib
-#        set ::env(LIBPATH) $devenvdir
-
-#make build command call cmake -P on a cmake script that sets LD_LIBRARY_PATH
 ExternalProject_Add(${proj}
   DEPENDS blas lapack python
   SVN_REPOSITORY "http://svn.scipy.org/svn/numpy/branches/1.3.x"
@@ -893,7 +865,6 @@ endif(vtk_WRAP_TCL)
 
 ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDS}
-  
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
@@ -983,9 +954,6 @@ ExternalProject_Add(${proj}
 
 set(proj teem)
 
-#http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
-#set zlib "vtkzlib.lib"
-#set png "vtkpng.lib"
 set(zlib "vtkzlib.lib")
 set(png "vtkpng.lib")
 
@@ -1033,12 +1001,6 @@ ExternalProject_Add(${proj}
 #-----------------------------------------------------------------------------
 # Get and build OpenIGTLink 
 
-#set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
-#runcmd $::SVN co $::OpenIGTLink_TAG OpenIGTLink
-#
-#      file mkdir $Slicer3_LIB/OpenIGTLink-build
-#      cd $Slicer3_LIB/OpenIGTLink-build
-
 set(proj OpenIGTLink)
 
 ExternalProject_Add(${proj}
@@ -1058,9 +1020,6 @@ ExternalProject_Add(${proj}
 
 #-----------------------------------------------------------------------------
 # Get and build BatchMake
-
-#set ::BatchMake_TAG "HEAD"
-#runcmd $::CVS -d :pserver:anoncvs:@batchmake.org:/cvsroot/BatchMake co -r $::BatchMake_TAG BatchMake
 
 set(proj BatchMake)
 
@@ -1086,11 +1045,7 @@ ExternalProject_Add(${proj}
 #-----------------------------------------------------------------------------
 # Get and build SLICERLIBCURL (slicerlibcurl)
 
-#set ::SLICERLIBCURL_TAG "HEAD"
-
 set(proj cmcurl)
-
-#runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"
