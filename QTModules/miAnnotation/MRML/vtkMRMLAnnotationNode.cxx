@@ -594,6 +594,5 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
           this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
      }
      this->ModifiedSinceReadOn();
-
 }
    

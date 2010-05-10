@@ -35,6 +35,7 @@ class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationStickyNode;
 class vtkSlicerAnnotationRulerManager;
 class vtkSlicerAnnotationAngleManager;
+class vtkSlicerAnnotationFiducialManager;
 
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicermiAnnotationModuleLogic :
@@ -77,6 +78,7 @@ public:
 
   // Fiducial Related Public Functions
   const char* AddFiducial();
+  const char* AddFiducialPicked();
   double GetFiducialValue(const char* cpID);
   std::vector<double> GetFiducialPositionsByNodeID(const char* cpID);
   void SetFiducialPositionsByNodeID(const char* cpID, std::vector<double> positions);
@@ -146,6 +148,8 @@ public:
 
   void AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode) ;
 
+  vtkSlicerAnnotationFiducialManager* GetFiducialManager(){ return m_FiducialManager; }
+
   int TestReceivedMessage; 
 
 protected:
@@ -166,6 +170,7 @@ private:
 
   vtkSlicerAnnotationRulerManager *m_RulerManager;
   vtkSlicerAnnotationAngleManager *m_AngleManager;
+  vtkSlicerAnnotationFiducialManager *m_FiducialManager;
 
 };
 

@@ -104,4 +104,21 @@ void vtkMRMLAnnotationFiducialNode::SetTextFromID()
   this->SetFiducialLabel(textLabel.c_str());
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationFiducialNode::Initialize(vtkMRMLScene* mrmlScene)
+{
+  if (!mrmlScene)
+  {
+    vtkErrorMacro("Scene was null!");
+    return;
+  }
+
+  mrmlScene->AddNode(this);
+  this->CreateAnnotationTextDisplayNode();
+  this->CreateAnnotationPointDisplayNode();
+
+  this->AddText(" ",1,1);
+
+  this->InvokeEvent(vtkMRMLAnnotationFiducialNode::FiducialNodeAddedEvent);
+}
 

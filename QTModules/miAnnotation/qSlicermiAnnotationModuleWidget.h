@@ -58,6 +58,7 @@ protected slots:
     void onFiducialNodeModified(vtkObject* fiducialList, void* call_data);
     void updateFiducialTable(int index = -1);
     void onFiducialNodeRemoved(vtkObject* fiducialList);
+  void AddFiducialCompleted(vtkObject* object, void* call_data);
 
     // Ruler
     void onCreateMeasurementRulerButtonClicked();

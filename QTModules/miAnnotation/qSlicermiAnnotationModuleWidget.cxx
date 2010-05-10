@@ -49,6 +49,7 @@
 #include "vtkSeedRepresentation.h"
 
 #include "vtkSlicerAnnotationRulerManager.h"
+#include "vtkSlicerAnnotationFiducialManager.h"
 
 //-----------------------------------------------------------------------------
 class qSlicermiAnnotationModuleWidgetPrivate: public qCTKPrivate<qSlicermiAnnotationModuleWidget>,
@@ -534,40 +535,22 @@ void qSlicermiAnnotationModuleWidget::moveUpSelected()
 //-----------------------------------------------------------------------------
 void qSlicermiAnnotationModuleWidget::StartAddingFiducials()
 {
-    QCTK_D(qSlicermiAnnotationModuleWidget);
+  QCTK_D(qSlicermiAnnotationModuleWidget);
 
-    d->logic()->StartAddingFiducials();
+  d->logic()->StartAddingFiducials();
 
-    const char *newFiducialNodeID =  d->logic()->AddFiducial();
-    if (!newFiducialNodeID)
-    {
-        std::cerr << "Could not add Fiducial" << std::endl;
-        return;
-    }
+  const char *newFiducialNodeID =  d->logic()->AddFiducial();
+  if (!newFiducialNodeID)
+  {
+    std::cerr << "Could not add Fiducial" << std::endl;
+    return;
+  }
 
-    double thevalue;
-    thevalue = d->logic()->GetFiducialValue( newFiducialNodeID );
+  m_IDs.push_back( newFiducialNodeID );
+  m_index++;
 
-    m_IDs.push_back( newFiducialNodeID );
-    m_index++;
-
-    char format[4] = " ";
-
-    QString valueString;
-    qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
-    this->updateAnnotationTable( m_index, thevalue, format );
-    this->GetPropertyDialog(newFiducialNodeID)->updateValue(valueString);
-    this->selectRowByIndex( m_index );
-
-    // watch for the control points being modified
-    qvtkConnect((vtkObject*)d->logic()->GetFiducialNodeByID( newFiducialNodeID),  vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent,
-        this, SLOT(updateFiducialValue(vtkObject*, void*)) );
-    // watch for transform modified events
-    qvtkConnect((vtkObject*)d->logic()->GetFiducialNodeByID( newFiducialNodeID),  vtkMRMLTransformableNode::TransformModifiedEvent,
-        this, SLOT(updateFiducialValue(vtkObject*, void*)) );
-    // watch for general modified events
-    qvtkConnect((vtkObject*)d->logic()->GetFiducialNodeByID( newFiducialNodeID),  vtkCommand::ModifiedEvent,
-        this, SLOT(updateFiducialValue(vtkObject*, void*)) );
+  qvtkConnect(d->logic()->GetFiducialManager(),  vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent,
+    this, SLOT(AddFiducialCompleted(vtkObject*, void*)) );
 
 }
 
@@ -589,6 +572,23 @@ void qSlicermiAnnotationModuleWidget::onAddFiducialsButtonToggled(bool toggle)
     {
     this->StopAddingFiducials();
     }
+}
+
+void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, void* call_data)
+{
+  QCTK_D(qSlicermiAnnotationModuleWidget);
+
+  d->fiducialTypeButton->setChecked(false);
+  vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(
+    d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
+
+  const char* newFiducialNodeID = node->GetID();
+
+  double thevalue = 0.0;
+  QString valueString = "";
+  char format[4] = " ";
+  this->updateAnnotationTable( m_index, thevalue, format );
+  this->selectRowByIndex( m_index );
 }
 
 void qSlicermiAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()

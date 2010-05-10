@@ -66,6 +66,7 @@ protected slots:
     void onLineAmbientChanged(double value);
     void onLineDiffuseChanged(double value);
     void onLineSpecularChanged(double value);
+  void onCollapsibleGroupBoxClicked();
 
 
 signals:

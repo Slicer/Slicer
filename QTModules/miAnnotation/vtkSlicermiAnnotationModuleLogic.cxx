@@ -45,6 +45,9 @@
 
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationAngleManager.h"
+#include "vtkSlicerAnnotationFiducialManager.h"
+#include "vtkSlicerSeedWidgetClass.h"
+#include "vtkSeedWidget.h"
 
 #include <string>
 #include <iostream>
@@ -110,6 +113,7 @@ vtkSlicermiAnnotationModuleLogic::vtkSlicermiAnnotationModuleLogic()
   QCTK_INIT_PRIVATE(vtkSlicermiAnnotationModuleLogic);  
   this->m_RulerManager = NULL;
   this->m_AngleManager = NULL;
+  this->m_FiducialManager = NULL;
 
 }
 
@@ -128,6 +132,12 @@ vtkSlicermiAnnotationModuleLogic::~vtkSlicermiAnnotationModuleLogic()
         this->m_AngleManager->Delete();
         this->m_AngleManager = NULL;
     }
+  if (this->m_FiducialManager)
+  {
+    this->m_FiducialManager->SetParent(NULL);
+    this->m_FiducialManager->Delete();
+    this->m_FiducialManager = NULL;
+  }
 
 }
 
@@ -588,6 +598,25 @@ vtkMRMLAnnotationRulerNode* vtkSlicermiAnnotationModuleLogic::GetRulerNodeByID(c
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+class vtkAnnotationFiducialWidgetCallback : public vtkCommand
+{
+public:
+  static vtkAnnotationFiducialWidgetCallback *New()
+  { return new vtkAnnotationFiducialWidgetCallback; }
+
+  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  {
+    if (event == vtkCommand::PlacePointEvent)
+    {
+      cout << "Fiducial point placed\n";
+      LogicPointer->AddFiducialPicked();
+    }
+  }
+  vtkAnnotationFiducialWidgetCallback(){}
+  vtkSlicermiAnnotationModuleLogic* LogicPointer;
+};
+
+//-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::StartAddingFiducials()
 {
   vtkMRMLInteractionNode *interactionNode = this->GetApplicationLogic()->GetInteractionNode();
@@ -624,24 +653,77 @@ vtkMRMLAnnotationFiducialNode* vtkSlicermiAnnotationModuleLogic::GetFiducialNode
 //-----------------------------------------------------------------------------
 const char* vtkSlicermiAnnotationModuleLogic::AddFiducial()
 {    
-    vtkMRMLAnnotationFiducialNode *cpNode = vtkMRMLAnnotationFiducialNode::New();
-    cout << "Created  vtkMRMLAnnotationFiducialNode " << cpNode << endl;
-    // need a unique name since the storage node will be named from it
-    if (cpNode->GetScene())
+  if (m_FiducialManager == NULL)
+  {
+    this->m_FiducialManager = vtkSlicerAnnotationFiducialManager::New();
+    this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
+    if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {
-        cpNode->SetName(cpNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
+      this->m_FiducialManager->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
     }
-    else
-    {
-        cpNode->SetName("AnnotationFiducial");
-    }
-    this->GetMRMLScene()->AddNode(cpNode);
-    this->GetMRMLScene()->RegisterNodeClass(cpNode);
+    this->m_FiducialManager->AddMRMLObservers();
+    this->m_FiducialManager->SetParent ( this->GetApplicationGUI()->GetActiveViewerWidget()->GetParent() );
+    this->m_FiducialManager->Create();
+  }
 
-    cpNode->AddText(" ",1,1);
-    cpNode->Delete();
-    return cpNode->GetID();
+  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+  fiducialNode->Initialize(this->GetMRMLScene());
+
+  // need a unique name since the storage node will be named from it
+  if (fiducialNode->GetScene())
+  {
+    fiducialNode->SetName(fiducialNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
+  }
+  else
+  {
+    fiducialNode->SetName("AnnotationFiducial");
+  }
+  fiducialNode->Delete();
+
+  //  this->m_FiducialManager->GetSeedWidget( fiducialNode->GetID() )->GetWidget()->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+  //  this->m_FiducialManager->GetSeedWidget( fiducialNode->GetID() )->GetWidget()->On();
+
+  vtkAnnotationFiducialWidgetCallback *myCallback = vtkAnnotationFiducialWidgetCallback::New();
+  myCallback->LogicPointer = this;
+  this->m_FiducialManager->GetSeedWidget(fiducialNode->GetID() )->GetWidget()->AddObserver(vtkCommand::PlacePointEvent, myCallback);
+  myCallback->Delete();
+
+  return fiducialNode->GetID();
 }
+
+//-----------------------------------------------------------------------------
+const char* vtkSlicermiAnnotationModuleLogic::AddFiducialPicked()
+{    
+  if (m_FiducialManager == NULL)
+  {
+    this->m_FiducialManager = vtkSlicerAnnotationFiducialManager::New();
+    this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
+    if (this->GetApplicationGUI()->GetActiveViewerWidget())
+    {
+      this->m_FiducialManager->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
+    }
+    this->m_FiducialManager->AddMRMLObservers();
+    this->m_FiducialManager->SetParent ( this->GetApplicationGUI()->GetActiveViewerWidget()->GetParent() );
+    this->m_FiducialManager->Create();
+  }
+
+  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+  fiducialNode->Initialize(this->GetMRMLScene());
+
+  // need a unique name since the storage node will be named from it
+  if (fiducialNode->GetScene())
+  {
+    fiducialNode->SetName(fiducialNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
+  }
+  else
+  {
+    fiducialNode->SetName("AnnotationFiducial");
+  }
+  fiducialNode->Delete();
+
+  return fiducialNode->GetID();
+}
+
 
 //-----------------------------------------------------------------------------
 double vtkSlicermiAnnotationModuleLogic::GetFiducialValue(const char* cpID)
@@ -1120,7 +1202,7 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
 {
     if (node->IsA("vtkMRMLAnnotationFiducialNode"))
     {
-        //ToDo
+    return " ";
     }
     else if (node->IsA("vtkMRMLAnnotationRulerNode"))
     {
@@ -1143,7 +1225,7 @@ double vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* n
 {
     if (node->IsA("vtkMRMLAnnotationFiducialNode"))
     {
-        //ToDo
+    return 0;
     }
     else if (node->IsA("vtkMRMLAnnotationRulerNode"))
     {

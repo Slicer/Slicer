@@ -15,6 +15,7 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/../../Modules/Measurements/
   )
 #   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+# MESSAGE(STATUS  "=========>What ${CMAKE_CURRENT_BINARY_DIR}/../../Modules/Measurements/")  
 
 # Source files
 SET(qt_module_SRCS
@@ -72,6 +73,8 @@ SET(qt_module_SRCS
   vtkSlicerAnnotationRulerManager.h
   vtkSlicerAnnotationAngleManager.cxx
   vtkSlicerAnnotationAngleManager.h
+  vtkSlicerAnnotationFiducialManager.cxx
+  vtkSlicerAnnotationFiducialManager.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.cxx
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidgetClass.cxx

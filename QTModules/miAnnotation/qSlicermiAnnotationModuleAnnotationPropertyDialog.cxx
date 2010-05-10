@@ -176,7 +176,7 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
     ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(true);
     ui.displayPropertiesCTKCollapsibleGroupBox->setChecked(false);
 
-    if ( node->IsA("vtkMRMLAnnotationStickyNode"))
+    if ( node->IsA("vtkMRMLAnnotationStickyNode") || node->IsA("vtkMRMLAnnotationFiducialNode") )
     {
         ui.coordinatesLabel->setVisible(false);
         ui.annotationValueBrowser->setVisible(false);
@@ -268,6 +268,9 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::createConnection()
     this->connect(ui.lineAmbientSliderSpinBoxWidget, SIGNAL(valueChanged(double)), this, SLOT(onLineAmbientChanged(double)));
     this->connect(ui.lineDiffuseSliderSpinBoxWidget, SIGNAL(valueChanged(double)), this, SLOT(onLineDiffuseChanged(double)));
     this->connect(ui.lineSpecularSliderSpinBoxWidget, SIGNAL(valueChanged(double)), this, SLOT(onLineSpecularChanged(double)));
+
+  this->connect(ui.CTKCollapsibleGroupBox_4, SIGNAL(clicked()), this, SLOT(onCollapsibleGroupBoxClicked()));
+
 
 }
 
@@ -675,4 +678,16 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::TurnQColorToColorArray(d
     color[0] = qcolor.red() / 255.0;
     color[1] = qcolor.green() / 255.0;
     color[2] = qcolor.blue() / 255.0;
+}
+
+void qSlicermiAnnotationModuleAnnotationPropertyDialog::onCollapsibleGroupBoxClicked()
+{
+  vtkMRMLNode * node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_nodeId);
+  if ( node->IsA("vtkMRMLAnnotationStickyNode") || node->IsA("vtkMRMLAnnotationFiducialNode") )
+  {
+    ui.coordinatesLabel->setVisible(false);
+    ui.annotationValueBrowser->setVisible(false);
+    ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(false);
+    ui.displayPropertiesCTKCollapsibleGroupBox->setVisible(false);
+  }
 }
