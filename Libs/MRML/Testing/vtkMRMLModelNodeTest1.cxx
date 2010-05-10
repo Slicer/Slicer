@@ -15,7 +15,11 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "vtkMRMLStorageNode.h"
+
 #include "TestingMacros.h"
+
+#include "vtkIntArray.h"
 
 int vtkMRMLModelNodeTest1(int , char * [] )
 {
@@ -23,66 +27,31 @@ int vtkMRMLModelNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
-  node1->UpdateReferences();
-
-  vtkSmartPointer< vtkMRMLModelNode > node2 = vtkSmartPointer< vtkMRMLModelNode >::New();
-
-  node2->Copy( node1 );
-
-  node2->Reset();
-
-  node2->StartModify();
-
-  std::string nodeTagName = node1->GetNodeTagName();
-
-  std::cout << "Node Tag Name = " << nodeTagName << std::endl;
-
-  std::string attributeName;
-  std::string attributeValue;
-
-  node1->SetAttribute( attributeName.c_str(), attributeValue.c_str() );
-
-  std::string attributeValue2 = node1->GetAttribute( attributeName.c_str() );
-
-  if( attributeValue != attributeValue2 )
-    {
-    std::cerr << "Error in Set/GetAttribute() " << std::endl;
-    return EXIT_FAILURE;
-    }
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLModelNode, node1);
   
-  TEST_SET_GET_BOOLEAN( node1, HideFromEditors );
-  TEST_SET_GET_BOOLEAN( node1, Selectable );
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(node1);
 
-  TEST_SET_GET_STRING( node1, Description );
-  TEST_SET_GET_STRING( node1, SceneRootDir );
-  TEST_SET_GET_STRING( node1, Name );
-  TEST_SET_GET_STRING( node1, SingletonTag );
+  EXERCISE_BASIC_STORABLE_MRML_METHODS(node1);
+  
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(node1);
 
-  TEST_SET_GET_BOOLEAN( node1, ModifiedSinceRead );
-  TEST_SET_GET_BOOLEAN( node1, SaveWithScene );
-  TEST_SET_GET_BOOLEAN( node1, AddToScene );
-  TEST_SET_GET_BOOLEAN( node1, Selected );
 
-  node1->Modified();
+  vtkSmartPointer <vtkIntArray> darray = vtkSmartPointer <vtkIntArray>::New();
+  darray->SetName("testingArray");
+  node1->AddPointScalars(darray);
+  darray->SetName("testingArray2");
+  node1->AddCellScalars(darray);
+  node1->SetActiveScalars("testingArray", "Scalars");
+  int attribute =  0; // vtkDataSetAttributes::SCALARS;
+  node1->SetActivePointScalars("testingArray", attribute);
+  node1->SetActiveCellScalars("testingArray2", attribute);
+  const char *name = node1->GetActivePointScalarName("scalars");
+  std::cout << "Active point scalars name = " << (name  == NULL ? "null" : name) << std::endl;
+  name = node1->GetActiveCellScalarName("scalars");
+  std::cout << "Active cell scalars name = " << (name == NULL ? "null" : name) << std::endl;
+  node1->RemoveScalars("testingArray");
 
-  vtkMRMLScene * scene = node1->GetScene();
-
-  if( scene != NULL )
-    {
-    std::cerr << "Error in GetScene() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  std::string stringToEncode = "Thou Shall Test !";
-  std::string stringURLEncoded = node1->URLEncodeString( stringToEncode.c_str() );
-
-  std::string stringDecoded = node1->URLDecodeString( stringURLEncoded.c_str() );
-
-  if( stringDecoded != stringToEncode )
-    {
-    std::cerr << "Error in URLEncodeString/URLDecodeString() " << std::endl;
-    return EXIT_FAILURE;
-    }
+  std::cout << "Model node default write ext = " << node1->GetDefaultWriteFileExtension() << std::endl;
 
   return EXIT_SUCCESS;
 }
