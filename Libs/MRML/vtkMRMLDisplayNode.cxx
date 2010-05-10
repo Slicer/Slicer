@@ -421,6 +421,10 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
 {
+    if (this->Scene == NULL)
+      {
+      return NULL;
+      }
     int numNodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
     for (int i=0; i<numNodes; i++)
       {
