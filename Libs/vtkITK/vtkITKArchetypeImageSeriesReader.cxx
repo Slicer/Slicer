@@ -1128,12 +1128,13 @@ void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
 int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 {
   this->FileNames.resize(0);
+  unsigned int uidsize = this->IndexSeriesInstanceUIDs.size();
 
   // Note: Since IndexArchetype is unsigned int, it's always postive 
-  if (this->IndexArchetype > this->IndexSeriesInstanceUIDs.size()
-      || this->IndexArchetype > this->IndexTriggerTime.size()
-      || this->IndexArchetype > this->IndexDiffusionGradientOrientation.size()
-      || this->IndexArchetype > this->IndexImageOrientationPatient.size())
+  if (this->IndexArchetype >= this->IndexSeriesInstanceUIDs.size()
+      || this->IndexArchetype >= this->IndexTriggerTime.size()
+      || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()
+      || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
     {
       vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
       return 0;
