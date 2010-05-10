@@ -47,7 +47,10 @@ void vtkMRMLStorableNode::SetSlicerDataType ( const char *type )
 {
   this->SlicerDataType.clear();
   this->SlicerDataType = type;
-  this->Scene->InvokeEvent ( vtkMRMLScene::MetadataAddedEvent );
+  if (this->Scene)
+    {
+    this->Scene->InvokeEvent ( vtkMRMLScene::MetadataAddedEvent );
+    }
 }
 
 
