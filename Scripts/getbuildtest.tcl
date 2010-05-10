@@ -431,7 +431,7 @@ if { $::GETBUILDTEST(version-patch) == "" } {
 }
 
 # set the binary filename root
-set ::GETBUILDTEST(binary-filename) "Slicer3-3.5-alpha-$::GETBUILDTEST(version-patch)-$::env(BUILD)"
+set ::GETBUILDTEST(binary-filename) "Slicer3-3.7-alpha-$::GETBUILDTEST(version-patch)-$::env(BUILD)"
 if {$::GETBUILDTEST(verbose)} {
     puts "CPack will use $::::GETBUILDTEST(binary-filename)"
 }
