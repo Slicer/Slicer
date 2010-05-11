@@ -30,7 +30,7 @@ int vtkMRMLMeasurementsRulerNodeTest1(int , char * [] )
 
 //  TEST_SET_GET_DOUBLE(node1, Distance);
   std::cout << "Distance = " << node1->GetDistance() << std::endl;
-  TEST_SET_GET_DOUBLE(node1, Resolution);
+  TEST_SET_GET_INT(node1, Resolution);
 
   // all have to be the same
   node1->SetDistanceAnnotationScale(1.2, 1.2, 1.2);
