@@ -1239,6 +1239,8 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
       this->Gui->GetLogic()->FitROIToVolume(vspNode);
       this->Gui->GetLogic()->SetROI(vspNode);
       this->SetROIRange(vspNode);
+      // for the case when volume extents were outside the range
+      this->ROIWidget->UpdateWidget();
 
       this->Gui->RequestRender();
       return;

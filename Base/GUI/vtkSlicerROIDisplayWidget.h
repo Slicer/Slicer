@@ -94,6 +94,10 @@ public:
   void SetXResolution(double r);
   void SetYResolution(double r);
   void SetZResolution(double r);
+
+  ///
+  /// Update Widget from the ROI MRML node
+  void UpdateWidget();
   
 protected:
   vtkSlicerROIDisplayWidget ( );
@@ -102,7 +106,6 @@ protected:
    /// Create the widget.
   virtual void CreateWidget();
 
-  void UpdateWidget();
   //void UpdateMRML();
   
   vtkMRMLROINode *ROINode;
