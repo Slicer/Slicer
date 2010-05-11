@@ -569,7 +569,7 @@ int vtkMRMLNRRDStorageNode::SupportedFileType(const char *fileName)
     }
   std::string extension = name.substr(loc);
 
-  vtkWarningMacro("SupportedFileType: extension = " << extension.c_str());
+  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
   if (extension.compare(".nrrd") == 0 ||
       extension.compare(".nhdr") == 0)
     {
