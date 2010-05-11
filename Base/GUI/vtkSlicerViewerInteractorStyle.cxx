@@ -463,7 +463,7 @@ void vtkSlicerViewerInteractorStyle::Rotate()
 
   // release the camera
   camera = NULL;
-  rwi->Render();
+  //rwi->Render();
 }
 
 //----------------------------------------------------------------------------

@@ -320,8 +320,6 @@ void vtkSlicerViewerWidget::CreateAxis()
     axisActor->GetProperty()->SetAmbient (1.0);
     axisActor->GetProperty()->SetSpecular (0.0);
     }
-
-  this->UpdateAxis();
 }
 
 //---------------------------------------------------------------------------
@@ -704,10 +702,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->RemoveCameraObservers();
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
-    this->UpdateFromMRML();
-    //this->MainViewer->RemoveAllViewProps();
-
-    this->RequestRender();
     }
   else if (event == vtkMRMLScene::SceneLoadStartEvent)
     {
@@ -746,7 +740,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         camera_node->SetActiveTag(this->ViewNode->GetID());
         }
       }
-    this->UpdateFromMRML();
+    this->UpdateFromMRMLRequested = 1;
     }
 
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
@@ -760,13 +754,9 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       if (event == vtkMRMLScene::NodeRemovedEvent)
         {
         this->RemoveDisplayable(dnode);
-        this->UpdateFromMRML();
         }
-      else
-        {
-        this->UpdateFromMRMLRequested = 1;
-        this->RequestRender();
-        }
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
       }
     else if (node != NULL && node->IsA("vtkMRMLDisplayNode") )
       {
@@ -778,7 +768,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateModelHierarchies();
       this->UpdateFromMRMLRequested = 1;
       this->RequestRender();
-      //this->UpdateFromMRML();
       }
     else if (node != NULL && node->IsA("vtkMRMLClipModelsNode") )
       {
@@ -792,7 +781,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         }
       this->UpdateFromMRMLRequested = 1;
       this->RequestRender();
-      //this->UpdateFromMRML();
       }
     else if (node != NULL && node->IsA("vtkMRMLCameraNode") )
       {
@@ -860,7 +848,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         this->UpdateClipSlicesFromMRML();
         this->UpdateModifiedModel(modelNode);
-        //this->UpdateAxis();
         this->RequestRender( );
         }
       if (updateMRML)
@@ -880,14 +867,12 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
-    //this->UpdateFromMRML();
     }
   else if (vtkMRMLSliceNode::SafeDownCast(caller) != NULL &&
            event == vtkCommand::ModifiedEvent && (this->UpdateClipSlicesFromMRML() || this->ClippingOn))
     {
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
-    //this->UpdateFromMRML();
     }
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
            event == vtkCommand::ModifiedEvent)
@@ -895,7 +880,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->UpdateModelHierarchies();
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
-    //this->UpdateFromMRML();
     }
   else
     {
@@ -1230,7 +1214,6 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   
   this->UpdateModelsFromMRML();
 
-  this->UpdateAxis();
   this->RequestRender ( );
 
   this->UpdateFromMRMLRequested = 0;
@@ -1668,6 +1651,7 @@ void vtkSlicerViewerWidget::Render()
   if (this->UpdateFromMRMLRequested)
     {
     this->UpdateFromMRML();
+    this->UpdateAxis();
     }
   // *** added code to check the RenderState and restore to whatever it
   // was before the specific request to render, instead of just setting
@@ -1683,7 +1667,6 @@ void vtkSlicerViewerWidget::Render()
       this->IsRendering = 0;
       }
     vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
-    //this->MainViewer->RenderStateOff();
     this->MainViewer->SetRenderState(currentRenderState);
     this->SetRenderPending(0);
     } 
