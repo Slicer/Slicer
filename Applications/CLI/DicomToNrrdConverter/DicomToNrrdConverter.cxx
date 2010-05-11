@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-#if 1 //Defined in gdcm dicomV3.dic
+#if 0 //Defined in gdcm dicomV3.dic
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionDirection);
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionGradientDirectionSequence);
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionBValue);
