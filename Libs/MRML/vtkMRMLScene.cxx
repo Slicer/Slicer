@@ -385,7 +385,6 @@ vtkMRMLScene::vtkMRMLScene()
 //------------------------------------------------------------------------------
 vtkMRMLScene::~vtkMRMLScene() 
 {
-  std::cerr << "vtkMRMLScene::~vtkMRMLScene" << std::endl;
   if (this->ClassNameList) 
     {
     delete this->ClassNameList;
