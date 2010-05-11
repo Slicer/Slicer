@@ -938,6 +938,8 @@ if (Slicer3_USE_QT)
       -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
       -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer3_USE_PYTHONQT}
     INSTALL_COMMAND ""
+    DEPENDS 
+      vtk
     )
 endif()
 
