@@ -265,7 +265,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 
   for (int i = 0; i < this->GetNumberOfFileNames(); i++)
     {
-    os << indent << "FileListMember: " << this->GetNthFileName(i) << "\n";
+    os << indent << "FileListMember: " << (this->GetNthFileName(i) == NULL ? "NULL" : this->GetNthFileName(i)) << "\n";
     }
   os << indent << "URI: " <<
     (this->URI ? this->URI : "(none)") << "\n";
@@ -529,6 +529,12 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
     fileName = this->GetNthFileName(n);
     }
 
+  if (fileName == NULL)
+    {
+    vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << " have a null filename, returning empty string");
+    return fullName;
+    }
+  
   vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", using file name '" << fileName << "'");
   
   if (this->Scene != NULL &&
@@ -653,7 +659,7 @@ void vtkMRMLStorageNode::ResetFileNameList( )
 //----------------------------------------------------------------------------
 const char * vtkMRMLStorageNode::GetNthFileName(int n) const
 {
-  if (this->GetNumberOfFileNames() < n)
+  if ((this->GetNumberOfFileNames()-1) < n)
     {
     return NULL;
     }
@@ -736,6 +742,11 @@ void vtkMRMLStorageNode::SetDataDirectory(const char *dataDirName)
     vtkErrorMacro("SetDataDirectory: input directory name is null, returning.");
     return;
     }
+  if (this->GetFileName() == NULL)
+    {
+    vtkWarningMacro("SetDataDirectory: file name is null, no reason to reset data directory.");
+    return;
+    }
   // reset the filename
   vtksys_stl::string filePath = vtksys::SystemTools::GetFilenamePath(this->GetFileName());
   vtksys_stl::vector<vtksys_stl::string> pathComponents;
@@ -796,7 +807,11 @@ void vtkMRMLStorageNode::InitializeSupportedWriteFileTypes()
 //------------------------------------------------------------------------------
 int vtkMRMLStorageNode::IsFilePathRelative(const char * filepath)
 {
-
+  if (filepath == NULL)
+    {
+    vtkErrorMacro("IsFilePathRelative: input file path is null! Returning 0");
+    return 0;
+    }
   if ( this->Scene )
     {
     return this->Scene->IsFilePathRelative(filepath);

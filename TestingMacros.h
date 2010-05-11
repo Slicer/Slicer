@@ -15,6 +15,7 @@
 
 #include "vtkDebugLeaks.h"
 #include "vtkSmartPointer.h"
+#include "vtkMath.h"
 
 #define DEBUG_LEAKS_ENABLE_EXIT_ERROR() \
   vtkDebugLeaks::SetExitError(true);
@@ -105,33 +106,44 @@
     return EXIT_FAILURE; \
     }
 
-#define TEST_SET_GET_INT( object, variable ) \
-  object->Set##variable( 2 ); \
-  object->Set##variable( -2 ); \
-  if( object->Get##variable() != -2 ) \
-    {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
-    return EXIT_FAILURE; \
-    } 
+#define TEST_SET_GET_INT( object, variable )    \
+  {                                             \
+    int pos = (int)(vtkMath::Random() * 100.0); \
+    object->Set##variable( pos );               \
+    int neg = (int)(vtkMath::Random() * -100.0);    \
+    object->Set##variable( neg );                   \
+    if( object->Get##variable() != neg )            \
+      {                                                    \
+      std::cerr << "Error in Set/Get"#variable << std::endl;    \
+      return EXIT_FAILURE;                                      \
+      }                                                         \
+  }
 
 #define TEST_SET_GET_DOUBLE( object, variable ) \
-  object->Set##variable( 2.0l ); \
-  object->Set##variable( -2.0l ); \
-  if( object->Get##variable() != -2.0l ) \
-    {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
-    return EXIT_FAILURE; \
-    }
+  {                                             \
+    double pos = vtkMath::Random() * 100.0;     \
+    object->Set##variable( pos );               \
+    double neg = vtkMath::Random() * -100.0;    \
+    object->Set##variable( neg );               \
+    if( object->Get##variable() != neg )        \
+      {                                         \
+      std::cerr << "Error in Set/Get"#variable << std::endl;    \
+      return EXIT_FAILURE;                                      \
+      }                                                         \
+  }
 
 #define TEST_SET_GET_VECTOR3_DOUBLE( object, variable ) \
   {                                                     \
-  object->Set##variable( 1.0, 2.0, 3.0 );               \
-  double *val = object->Get##variable();                \
-  if( val == NULL || val[0] != 1.0 || val[1] != 2.0 || val[2] != 3.0 ) \
-    {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
-    return EXIT_FAILURE; \
-    } \
+    double x = vtkMath::Random();                       \
+    double y = vtkMath::Random();                       \
+    double z = vtkMath::Random();                       \
+    object->Set##variable( x, y, z );                   \
+    double *val = object->Get##variable();                       \
+    if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
+      {                                                             \
+      std::cerr << "Error in Set/Get"#variable << std::endl;        \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
   }
 
 #define TEST_SET_GET_STRING( object, variable ) \
@@ -417,4 +429,149 @@
       return EXIT_FAILURE;                                              \
       }                                                                 \
   }
+
+#include <vtkStringArray.h>
+
+#define EXERCISE_BASIC_STORAGE_MRML_METHODS( node ) \
+  {                                                 \
+    node->ReadData(NULL);                           \
+    node->WriteData(NULL);                          \
+    node->StageReadData(NULL);                      \
+    node->StageWriteData(NULL);                     \
+    TEST_SET_GET_STRING(node, FileName);            \
+    const char *f0 = node->GetNthFileName(0);       \
+    std::cout << "Filename 0 = " << (f0 == NULL ? "NULL" : f0) << std::endl; \
+    TEST_SET_GET_BOOLEAN(node, UseCompression);         \
+    TEST_SET_GET_STRING(node, URI);                     \
+    vtkURIHandler *handler = vtkURIHandler::New();      \
+    node->SetURIHandler(NULL);                          \
+    if (node->GetURIHandler() != NULL)                  \
+      {                                                 \
+      std::cerr << "ERROR getting null uri handler" << std::endl;   \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
+    node->SetURIHandler(handler);                       \
+    if (node->GetURIHandler() == NULL)                  \
+      {                                                 \
+      std::cerr << "ERROR getting not null uri handler" << std::endl;   \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
+    node->SetURIHandler(NULL);                                      \
+    handler->Delete();                                              \
+    TEST_SET_GET_INT(node, ReadState);                              \
+    const char *rstate = node->GetReadStateAsString();              \
+    std::cout << "Read state, after int test = " << rstate << std::endl; \
+    node->SetReadStatePending();                                    \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, Pending = " << rstate << std::endl;   \
+    node->SetReadStateIdle();                                       \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, Idle = " << rstate << std::endl;      \
+    node->SetReadStateScheduled();                                  \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, Scheduled = " << rstate << std::endl; \
+    node->SetReadStateTransferring();                               \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, Transferring = " << rstate << std::endl;   \
+    node->SetReadStateTransferDone();                               \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, TransfrerDone = " << rstate << std::endl;   \
+    node->SetReadStateCancelled();                                  \
+    rstate = node->GetReadStateAsString();                          \
+    std::cout << "Read state, Cancelled = " << rstate << std::endl; \
+                                                                    \
+    TEST_SET_GET_INT(node, WriteState);                             \
+    const char *wstate = node->GetWriteStateAsString();              \
+    std::cout << "Write state, after int test = " << wstate << std::endl; \
+    node->SetWriteStatePending();                                    \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, Pending = " << wstate << std::endl;   \
+    node->SetWriteStateIdle();                                       \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, Idle = " << wstate << std::endl;      \
+    node->SetWriteStateScheduled();                                  \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, Scheduled = " << wstate << std::endl; \
+    node->SetWriteStateTransferring();                               \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, Transferring = " << wstate << std::endl;   \
+    node->SetWriteStateTransferDone();                               \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, TransfrerDone = " << wstate << std::endl;   \
+    node->SetWriteStateCancelled();                                  \
+    wstate = node->GetWriteStateAsString();                          \
+    std::cout << "Write state, Cancelled = " << wstate << std::endl; \
+                                                                     \
+    std::string fullName = node->GetFullNameFromFileName();          \
+    std::cout << "fullName = " << fullName.c_str() << std::endl; \
+    std::string fullName0 = node->GetFullNameFromNthFileName(0);     \
+    std::cout << "fullName0 = " << fullName0.c_str() << std::endl; \
+                                                                        \
+    vtkStringArray *types = node->GetSupportedWriteFileTypes();         \
+    std::cout << "Supported write types:" << std::endl;                 \
+    types->Print(std::cout);                                            \
+    int sup = node->SupportedFileType(NULL);                            \
+    std::cout << "Filename or uri supported? " << sup << std::endl;     \
+    sup = node->SupportedFileType("testing.vtk");                       \
+    std::cout << ".vtk supported?  " << sup << std::endl;     \
+    sup = node->SupportedFileType("testing.nrrd");            \
+    std::cout << ".nrrd supported?  " << sup << std::endl;     \
+                                                               \
+    TEST_SET_GET_STRING(node, WriteFileFormat);                \
+    node->AddFileName("testing.txt");                          \
+    std::cout << "Number of file names = " << node->GetNumberOfFileNames() << std::endl; \
+    int check = node->FileNameIsInList("testing.txt");\
+    if (check != 1)                                                     \
+      {                                                                 \
+      std::cerr << "ERROR: file name not in list!" << std::endl;        \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node->ResetNthFileName(0, "moretesting.txt");                       \
+    node->ResetNthFileName(100, "notinlist.txt");                       \
+    node->ResetNthFileName(0, NULL);                                    \
+    check = node->FileNameIsInList("notinlist");                        \
+    if (check != 0)                                                     \
+      {                                                                 \
+      std::cerr << "ERROR: bad file is in list!" << std::endl;          \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node->ResetFileNameList();                                          \
+    if (node->GetNumberOfFileNames() != 0)                              \
+      {                                                                 \
+      std::cerr << "ERROR: " << node->GetNumberOfFileNames() << " files left in list after reset!" << std::endl;          \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+                                                                        \
+    node->ResetURIList();                                                            \
+    std::cout << "Number of uri's after resetting list = " << node->GetNumberOfURIs() << std::endl; \
+    node->AddURI("http://www.nowhere.com/filename.txt");                \
+    if ( node->GetNumberOfURIs()  != 1)                                 \
+      {                                                                 \
+      std::cerr << "Error adding one uri, number of uris is incorrect: " <<  node->GetNumberOfURIs()<< std::endl;                \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    const char *uri = node->GetNthURI(0);                               \
+    if (uri == NULL || strcmp(uri, "http://www.nowhere.com/filename.txt") != 0)        \
+      {                                                                 \
+      std::cerr << "0th URI " << uri << " is incorrect." << std::endl;                \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node->ResetNthURI(0, "http://www.nowhere.com/newfilename.txt");     \
+    node->ResetNthURI(100, "ftp://not.in.list");                        \
+    node->ResetNthURI(100, NULL);                                       \
+    const char *dataDirName = "/testing/a/directory";                   \
+    node->SetDataDirectory(dataDirName);                                \
+    node->SetFileName("/tmp/file.txt");                                 \
+    node->SetDataDirectory(dataDirName);                                \
+    const char *uriPrefix = "http://www.somewhere.com/";                \
+    node->SetURIPrefix(uriPrefix);                                      \
+                                                                        \
+    const char *defaultExt = node->GetDefaultWriteFileExtension();      \
+    std::cout << "Default write extension = " << (defaultExt == NULL ? "null" : defaultExt) << std::endl; \
+                                                                        \
+    std::cout << "Is null file path relative? " << node->IsFilePathRelative(NULL) << std::endl; \
+    std::cout << "Is absolute file path relative? " << node->IsFilePathRelative("/spl/tmp/file.txt") << std::endl; \
+    std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl; \
+  }
+
 #endif
