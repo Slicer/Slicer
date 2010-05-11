@@ -124,6 +124,9 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
   
   this->EnableRender = 1;
+  this->UpdatingAxis = 0;
+  this->IsRendering = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -359,6 +362,12 @@ void vtkSlicerViewerWidget::UpdateAxis()
     return;
     }
 
+  if (this->UpdatingAxis || this->IsRendering)
+    {
+    return;
+    }
+  this->UpdatingAxis = 1;
+
   // Turn off box and axis labels to compute bounds
   this->BoxAxisActor->VisibilityOff();
   for (unsigned int i=0; i < AxisLabelActors.size(); i++)
@@ -484,6 +493,9 @@ void vtkSlicerViewerWidget::UpdateAxis()
     this->MainViewer->GetRenderer()->ResetCameraClippingRange();
     }
 #endif
+
+  this->UpdatingAxis = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -848,7 +860,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         this->UpdateClipSlicesFromMRML();
         this->UpdateModifiedModel(modelNode);
-        this->UpdateAxis();
+        //this->UpdateAxis();
         this->RequestRender( );
         }
       if (updateMRML)
@@ -1666,7 +1678,9 @@ void vtkSlicerViewerWidget::Render()
     this->MainViewer->RenderStateOn();
     if (this->MainViewer->GetRenderer()->IsActiveCameraCreated())
       {
+      this->IsRendering = 1;
       this->MainViewer->Render();
+      this->IsRendering = 0;
       }
     vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
     //this->MainViewer->RenderStateOff();

@@ -359,6 +359,10 @@ protected:
   vtkSlicerBoxRepresentation  *BoxWidgetRepresentation;
 
   int EnableRender;
+
+  int UpdatingAxis;
+
+  int IsRendering;
   
 private:
   
