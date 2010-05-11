@@ -79,6 +79,10 @@ itcl::body ThresholdEffect::apply {} {
     return
   }
 
+  foreach b {apply useForPainting cancel} {
+    $o($b) SetStateToDisabled
+  }
+
   set thresh [vtkImageThreshold New]
   $thresh SetInput [$this getInputBackground]
   eval $thresh ThresholdBetween $range
