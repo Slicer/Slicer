@@ -326,7 +326,7 @@ proc ClipModelApply {this} {
     
     set clip [$::ClipModel($this,clip) GetSelectedState]
     if { $clip == 0} {
-        $::slicer3::ViewerWidget Render
+#        $::slicer3::ViewerWidget Render
         return
     }
     
@@ -335,7 +335,7 @@ proc ClipModelApply {this} {
     #puts "here"
     #puts $mod
     if { $mod == ""} {
-        $::slicer3::ViewerWidget Render
+#        $::slicer3::ViewerWidget Render
         return
     }
     if { $modOut == ""} {
@@ -375,11 +375,11 @@ proc ClipModelClipModel {this} {
 
     $roi GetTransformedPlanes $::ClipModel($this,planes)
 
-    ClipModelRender
+#    ClipModelRender
 }
 
 proc ClipModelRender {} {
     #puts "in ClipModelRender"
-    $::slicer3::ViewerWidget Render
-    [[[$::slicer3::ViewerWidget GetMainViewer] GetRenderWindow] GetInteractor] ReInitialize
+    #$::slicer3::ViewerWidget Render
+    #[[[$::slicer3::ViewerWidget GetMainViewer] GetRenderWindow] GetInteractor] ReInitialize
 }
