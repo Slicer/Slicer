@@ -1,12 +1,12 @@
 #ifndef __qMRMLNodeFactory_h
 #define __qMRMLNodeFactory_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QObject>
 #include <QHash>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
  
@@ -32,12 +32,12 @@ public:
   vtkMRMLScene* mrmlScene()const;
 
   /// 
-  /// Create and add a node given its classname to the scene associated with the factory
+  /// Create and add a node given its \a className to the scene associated with the factory
   /// Note: The scene has the ownership of the node and is responsible to delete it.
   vtkMRMLNode* createNode(const QString& className);
 
   /// 
-  /// Convenient method allowing to create a new node and add it to the scene
+  /// Convenient method allowing to create a new node and add it to the \a scene
   static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
     const AttributeType& attributes = AttributeType());
 
@@ -51,7 +51,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* mrmlScene);
   
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeFactory);
+  CTK_DECLARE_PRIVATE(qMRMLNodeFactory);
 }; 
 
 #endif

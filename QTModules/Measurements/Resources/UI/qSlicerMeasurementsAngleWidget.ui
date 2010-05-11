@@ -18,7 +18,7 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="qCTKCollapsibleButton" name="ModifyAllAngleGroupBox">
+    <widget class="ctkCollapsibleButton" name="ModifyAllAngleGroupBox">
      <property name="text">
       <string>Modify All Angle Nodes</string>
      </property>
@@ -27,7 +27,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="qCTKTitleComboBox" name="AllAnglesVisibilityComboBox">
+       <widget class="ctkTitleComboBox" name="AllAnglesVisibilityComboBox">
         <property name="title">
          <string/>
         </property>
@@ -72,7 +72,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="ModifySelectedAngleNodeGroupBox">
+    <widget class="ctkCollapsibleButton" name="ModifySelectedAngleNodeGroupBox">
      <property name="text">
       <string>Modify Selected Angle Node</string>
      </property>
@@ -120,7 +120,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="qCTKCoordinatesWidget" name="AnglePosition1CoordinatesWidget">
+         <widget class="ctkCoordinatesWidget" name="AnglePosition1CoordinatesWidget">
           <property name="Dimension">
            <number>3</number>
           </property>
@@ -134,7 +134,7 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="qCTKCoordinatesWidget" name="AnglePosition2CoordinatesWidget"/>
+         <widget class="ctkCoordinatesWidget" name="AnglePosition2CoordinatesWidget"/>
         </item>
         <item row="4" column="0">
          <widget class="QLabel" name="AnglePositionCenterLabel">
@@ -144,12 +144,12 @@
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="qCTKCoordinatesWidget" name="AnglePositionCenterCoordinatesWidget"/>
+         <widget class="ctkCoordinatesWidget" name="AnglePositionCenterCoordinatesWidget"/>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="qCTKCollapsibleGroupBox" name="ConstrainAngleToModelsGroupBox">
+       <widget class="ctkCollapsibleGroupBox" name="ConstrainAngleToModelsGroupBox">
         <property name="title">
          <string>Constrain Angle To Models</string>
         </property>
@@ -191,7 +191,7 @@
        </widget>
       </item>
       <item>
-       <widget class="qCTKCollapsibleGroupBox" name="DisplayOptionsGroupBox">
+       <widget class="ctkCollapsibleGroupBox" name="DisplayOptionsGroupBox">
         <property name="title">
          <string>Display Options</string>
         </property>
@@ -212,7 +212,7 @@
             </widget>
            </item>
            <item>
-            <widget class="qCTKColorPickerButton" name="AngleEndPointsColorPicker"/>
+            <widget class="ctkColorPickerButton" name="AngleEndPointsColorPicker"/>
            </item>
            <item>
             <widget class="QLabel" name="AngleLineColorLabel">
@@ -225,7 +225,7 @@
             </widget>
            </item>
            <item>
-            <widget class="qCTKColorPickerButton" name="AngleLineColorPicker"/>
+            <widget class="ctkColorPickerButton" name="AngleLineColorPicker"/>
            </item>
           </layout>
          </item>
@@ -315,31 +315,31 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKColorPickerButton</class>
+   <class>ctkColorPickerButton</class>
    <extends>QPushButton</extends>
-   <header>qCTKColorPickerButton.h</header>
+   <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKCoordinatesWidget</class>
+   <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKCoordinatesWidget.h</header>
+   <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKTitleComboBox</class>
+   <class>ctkTitleComboBox</class>
    <extends>QComboBox</extends>
-   <header>qCTKTitleComboBox.h</header>
+   <header>ctkTitleComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>

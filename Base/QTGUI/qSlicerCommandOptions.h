@@ -13,10 +13,10 @@
 #ifndef __qSlicerCommandOptions_h
 #define __qSlicerCommandOptions_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-/// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"
 
 #include "qSlicerBaseQTGUIExport.h"
@@ -38,7 +38,7 @@ protected:
   virtual void initialize();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCommandOptions);
+  CTK_DECLARE_PRIVATE(qSlicerCommandOptions);
 
 };
 

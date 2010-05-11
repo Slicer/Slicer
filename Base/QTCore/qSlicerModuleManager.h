@@ -13,10 +13,10 @@
 #ifndef __qSlicerModuleManager_h
 #define __qSlicerModuleManager_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-/// QT includes
+// Qt includes
 #include <QObject>
 
 #include "qSlicerBaseQTCoreExport.h"
@@ -70,7 +70,7 @@ private:
   qSlicerModuleManager(const qSlicerModuleManager&);  /// Not implemented.
   void operator=(const qSlicerModuleManager&);  /// Not implemented.
 
-  QCTK_DECLARE_PRIVATE(qSlicerModuleManager);
+  CTK_DECLARE_PRIVATE(qSlicerModuleManager);
 };
 
 #endif

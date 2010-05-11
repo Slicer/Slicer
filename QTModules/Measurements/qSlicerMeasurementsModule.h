@@ -1,11 +1,11 @@
 #ifndef __qSlicerMeasurementsModule_h
 #define __qSlicerMeasurementsModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractLoadableModule.h"
 
 #include "qSlicerMeasurementsModuleExport.h"
 
@@ -35,7 +35,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsModule); 
+  CTK_DECLARE_PRIVATE(qSlicerMeasurementsModule);
 };
 
 #endif

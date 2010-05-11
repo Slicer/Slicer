@@ -501,7 +501,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     commandType = PythonModule;
     }
   // vtkSlicerApplication::GetInstance()->InformationMessage
-  qDebug() << node0->GetModuleDescription().GetType().c_str(); 
+  qDebug() << "ModuleType:" << node0->GetModuleDescription().GetType().c_str(); 
 
   
   // map to keep track of MRML Ids and filenames

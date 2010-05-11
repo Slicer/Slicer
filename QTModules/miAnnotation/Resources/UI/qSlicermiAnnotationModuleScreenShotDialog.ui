@@ -58,7 +58,7 @@
     <string>TextLabel</string>
    </property>
   </widget>
-  <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox">
+  <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -100,7 +100,7 @@
       <widget class="QLineEdit" name="versionNumberLineEdit"/>
      </item>
      <item row="0" column="2">
-      <widget class="qCTKMenuButton" name="CTKMenuButton">
+      <widget class="ctkMenuButton" name="CTKMenuButton">
        <property name="text">
         <string>Choose Format</string>
        </property>
@@ -129,15 +129,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKMenuButton</class>
+   <class>ctkMenuButton</class>
    <extends>QPushButton</extends>
-   <header>qCTKMenuButton.h</header>
+   <header>ctkMenuButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

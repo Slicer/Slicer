@@ -2,6 +2,10 @@
 #include "qMRMLTransformSliders.h"
 #include "ui_qMRMLTransformSliders.h"
 
+// Qt includes
+#include <QDebug>
+#include <QStack>
+
 // qMRML includes
 #include "qMRMLUtils.h"
 #include "qMRMLLinearTransformSlider.h"
@@ -14,14 +18,10 @@
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 
-// QT includes
-#include <QDebug>
-#include <QStack>
-
 
 //-----------------------------------------------------------------------------
-class qMRMLTransformSlidersPrivate: public qCTKPrivate<qMRMLTransformSliders>,
-                                     public Ui_qMRMLTransformSliders
+class qMRMLTransformSlidersPrivate: public ctkPrivate<qMRMLTransformSliders>,
+                                    public Ui_qMRMLTransformSliders
 {
 public:
   qMRMLTransformSlidersPrivate()
@@ -37,8 +37,8 @@ public:
 // --------------------------------------------------------------------------
 qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLTransformSliders);
-  QCTK_D(qMRMLTransformSliders);
+  CTK_INIT_PRIVATE(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->setupUi(this);
 
@@ -68,7 +68,7 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   qMRMLLinearTransformSlider::CoordinateReferenceType ref = qMRMLLinearTransformSlider::GLOBAL;
   if (_coordinateReference == LOCAL)
@@ -83,7 +83,7 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
 // --------------------------------------------------------------------------
 qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinateReference() const
 {
-  QCTK_D(const qMRMLTransformSliders);
+  CTK_D(const qMRMLTransformSliders);
   
   // Assumes settings of the sliders are all the same
   qMRMLLinearTransformSlider::CoordinateReferenceType ref =
@@ -94,7 +94,7 @@ qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinate
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   if (d->TypeOfTransform == _typeOfTransform) { return; }
   if (_typeOfTransform == Self::TRANSLATION)
@@ -115,7 +115,7 @@ void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 // --------------------------------------------------------------------------
 qMRMLTransformSliders::TransformType qMRMLTransformSliders::typeOfTransform() const
 {
-  return qctk_d()->TypeOfTransform;
+  return ctk_d()->TypeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->LRSlider->setMRMLTransformNode(transformNode);
   d->PASlider->setMRMLTransformNode(transformNode);
@@ -137,48 +137,48 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 }
 
 // --------------------------------------------------------------------------
-QCTK_GET_CXX(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
+CTK_GET_CXX(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setTitle(const QString& _title)
 {
-  qctk_d()->SlidersGroupBox->setTitle(_title);
+  ctk_d()->SlidersGroupBox->setTitle(_title);
 }
 
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::title()const
 {
-  return qctk_d()->SlidersGroupBox->title();
+  return ctk_d()->SlidersGroupBox->title();
 }
 
 // --------------------------------------------------------------------------
 double qMRMLTransformSliders::minimum()const
 {
-  return qctk_d()->MinValueSpinBox->value();
+  return ctk_d()->MinValueSpinBox->value();
 }
 
 // --------------------------------------------------------------------------
 double qMRMLTransformSliders::maximum()const
 {
-  return qctk_d()->MaxValueSpinBox->value();
+  return ctk_d()->MaxValueSpinBox->value();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setMinimum(double min)
 {
-  qctk_d()->MinValueSpinBox->setValue(min);
+  ctk_d()->MinValueSpinBox->setValue(min);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setMaximum(double max)
 {
-  qctk_d()->MaxValueSpinBox->setValue(max);
+  ctk_d()->MaxValueSpinBox->setValue(max);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setRange(double min, double max)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   // Could be optimized here by blocking signals on spinboxes and manually
   // call the setRange method on the sliders. Does it really worth it ?
@@ -189,7 +189,7 @@ void qMRMLTransformSliders::setRange(double min, double max)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onMinimumChanged(double min)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->LRSlider->setMinimum(min);
   d->PASlider->setMinimum(min);
@@ -199,7 +199,7 @@ void qMRMLTransformSliders::onMinimumChanged(double min)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onMaximumChanged(double max)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->LRSlider->setMaximum(max);
   d->PASlider->setMaximum(max);
@@ -209,13 +209,13 @@ void qMRMLTransformSliders::onMaximumChanged(double max)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setMinMaxVisible(bool visible)
 {
-  qctk_d()->MinMaxWidget->setVisible(visible);
+  ctk_d()->MinMaxWidget->setVisible(visible);
 }
 
 // --------------------------------------------------------------------------
 bool qMRMLTransformSliders::isMinMaxVisible()const
 {
-  return qctk_d()->MinMaxWidget->isVisibleTo(
+  return ctk_d()->MinMaxWidget->isVisibleTo(
     const_cast<qMRMLTransformSliders*>(this));
 }
 
@@ -223,13 +223,13 @@ bool qMRMLTransformSliders::isMinMaxVisible()const
 double qMRMLTransformSliders::singleStep()const
 {
   // Assumes settings of the sliders are all the same
-  return qctk_d()->PASlider->singleStep();
+  return ctk_d()->PASlider->singleStep();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setSingleStep(double step)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->LRSlider->setSingleStep(step);
   d->PASlider->setSingleStep(step);
@@ -239,43 +239,43 @@ void qMRMLTransformSliders::setSingleStep(double step)
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::lrLabel()const
 {
-  return qctk_d()->LRLabel->text();
+  return ctk_d()->LRLabel->text();
 }
 
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::paLabel()const
 {
-  return qctk_d()->PALabel->text();
+  return ctk_d()->PALabel->text();
 }
 
 // --------------------------------------------------------------------------
 QString qMRMLTransformSliders::isLabel()const
 {
-  return qctk_d()->ISLabel->text();
+  return ctk_d()->ISLabel->text();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setLRLabel(const QString& label)
 {
-  qctk_d()->LRLabel->setText(label);
+  ctk_d()->LRLabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setPALabel(const QString& label)
 {
-  qctk_d()->PALabel->setText(label);
+  ctk_d()->PALabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setISLabel(const QString& label)
 {
-  qctk_d()->ISLabel->setText(label);
+  ctk_d()->ISLabel->setText(label);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::reset()
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   d->LRSlider->reset();
   d->PASlider->reset();
@@ -285,7 +285,7 @@ void qMRMLTransformSliders::reset()
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::resetUnactiveSliders()
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   
   if (!d->ActiveSliders.contains(d->LRSlider))
     {
@@ -310,7 +310,7 @@ void qMRMLTransformSliders::resetUnactiveSliders()
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   d->ActiveSliders.push(d->LRSlider);
 
   if (this->typeOfTransform() == Self::ROTATION)
@@ -333,7 +333,7 @@ void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onPASliderPositionChanged(double position)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
   d->ActiveSliders.push(d->PASlider);
 
   if (this->typeOfTransform() == Self::ROTATION)
@@ -355,7 +355,7 @@ void qMRMLTransformSliders::onPASliderPositionChanged(double position)
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onISSliderPositionChanged(double position)
 {
-  QCTK_D(qMRMLTransformSliders);
+  CTK_D(qMRMLTransformSliders);
    d->ActiveSliders.push(d->ISSlider);
   if (this->typeOfTransform() == Self::ROTATION)
     {

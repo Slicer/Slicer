@@ -10,18 +10,17 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerCoreCommandOptions.h"
-
-// SlicerQT includes
-#include "qSlicerCoreApplication.h" // For disableCurrentSettings()
-
-// QT includes
+// Qt includes
 #include <QSettings>
 #include <QDir>
 #include <QDebug>
 
+// SlicerQt includes
+#include "qSlicerCoreCommandOptions.h"
+#include "qSlicerCoreApplication.h" // For disableCurrentSettings()
+
 //-----------------------------------------------------------------------------
-class qSlicerCoreCommandOptionsPrivate: public qCTKPrivate<qSlicerCoreCommandOptions>
+class qSlicerCoreCommandOptionsPrivate: public ctkPrivate<qSlicerCoreCommandOptions>
 {
 public:
   qSlicerCoreCommandOptionsPrivate();
@@ -52,7 +51,7 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* _settings):Superclass(_settings)
 {
-  QCTK_INIT_PRIVATE(qSlicerCoreCommandOptions);
+  CTK_INIT_PRIVATE(qSlicerCoreCommandOptions);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,11 +60,11 @@ qSlicerCoreCommandOptions::~qSlicerCoreCommandOptions()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableCLIModule, DisableCLIModule);
-QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoadableModule);
-QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
-QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
-QCTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableCLIModule, DisableCLIModule);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoadableModule);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::tempDirectory()const
@@ -76,7 +75,7 @@ QString qSlicerCoreCommandOptions::tempDirectory()const
 //-----------------------------------------------------------------------------
 void qSlicerCoreCommandOptions::initialize()
 {
-  QCTK_D(qSlicerCoreCommandOptions);
+  CTK_D(qSlicerCoreCommandOptions);
   
   this->Superclass::initialize();
 

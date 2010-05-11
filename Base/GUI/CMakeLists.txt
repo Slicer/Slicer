@@ -21,10 +21,6 @@ set(include_dirs
   ${qSlicerBaseQTCore_BINARY_DIR}
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
-  ${qCTKWidgets_SOURCE_DIR}
-  ${qCTKWidgets_BINARY_DIR}
-  ${qVTKWidgets_SOURCE_DIR}
-  ${qVTKWidgets_BINARY_DIR}
   ${qMRMLWidgets_SOURCE_DIR}
   ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
@@ -165,7 +161,7 @@ set(SlicerBaseGUI_SRCS
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
-  vtkSlicerRenderWidget.cxx
+  #vtkSlicerRenderWidget.cxx - Not used
   vtkSlicerBoxRepresentation.cxx
   vtkSlicerBoxWidget2.cxx
   vtkSlicerWaitMessageWidget.cxx

@@ -96,7 +96,7 @@ protected:
   virtual void childEvent(QChildEvent* c);
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKCollapsibleWidget2);
+  CTK_DECLARE_PRIVATE(qCTKCollapsibleWidget2);
   //struct qInternal;
   //qInternal* Internal;
 };

@@ -1,7 +1,12 @@
-#include "qMRMLNodeFactory.h"
+
+// Qt includes
+#include <QHash>
+#include <QSharedPointer>
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
+#include "qMRMLNodeFactory.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -9,13 +14,8 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-// QT includes
-#include <QHash>
-#include <QSharedPointer>
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qMRMLNodeFactoryPrivate: public qCTKPrivate<qMRMLNodeFactory>
+class qMRMLNodeFactoryPrivate: public ctkPrivate<qMRMLNodeFactory>
 {
 public:
   qMRMLNodeFactoryPrivate()
@@ -27,16 +27,16 @@ public:
 };
 
 // --------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qMRMLNodeFactory, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qMRMLNodeFactory, QObject*);
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
-QCTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
+CTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
-  QCTK_D(qMRMLNodeFactory);
+  CTK_D(qMRMLNodeFactory);
   
   Q_ASSERT(d->MRMLScene);
   Q_ASSERT(!className.isEmpty());
@@ -99,5 +99,5 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
 //------------------------------------------------------------------------------
 void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
 {
-  qctk_d()->Attributes.insert(name, value);
+  ctk_d()->Attributes.insert(name, value);
 }

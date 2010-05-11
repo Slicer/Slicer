@@ -14,11 +14,11 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractCoreModule.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -59,7 +59,7 @@ protected:
 private:
   /// 
   /// Pimpl declaration
-  QCTK_DECLARE_PRIVATE(qSlicerTransformsModule);
+  CTK_DECLARE_PRIVATE(qSlicerTransformsModule);
 };
 
 #endif

@@ -420,6 +420,11 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNthSliceGUI(int n)
 
 void vtkSlicerSlicesGUI::UpdateGUI()
 {
+  if (this->GetMRMLScene() == NULL ||
+      this->GetMRMLScene()->GetIsClosed())
+    {
+    return;
+    }
   vtkSlicerNodeSelectorWidget *sliceNodeSelector = vtkSlicerNodeSelectorWidget::SafeDownCast( (*this->InternalParameterWidgetMap)["SliceNodeSelector"].GetPointer() );
 
   

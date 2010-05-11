@@ -29,6 +29,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLModelNode.h"
 
+class vtkMRMLStorageNode;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic 
 {
@@ -60,7 +61,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
 
   /// 
   /// Read in a scalar overlay and add it to the model node
-  int AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
+  vtkMRMLStorageNode* AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
   ///
   /// Transfor models's polydata

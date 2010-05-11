@@ -1,17 +1,18 @@
 
-// QT includes
+// Qt includes
 #include <QSignalMapper>
 #include <QToolBar>
 #include <QAction>
 #include <QDebug>
 
-// qCTK includes
-#include <qCTKPythonShell.h>
+#include "vtkSlicerConfigure.h" // For Slicer3_USE_PYTHONQT
 
-// MRML includes
-#include <vtkMRMLScene.h>
+// CTK includes
+#ifdef Slicer3_USE_PYTHONQT
+#include <ctkPythonShell.h>
+#endif
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerMainWindowCore.h" 
 #include "qSlicerMainWindowCore_p.h"
 #include "qSlicerApplication.h"
@@ -19,9 +20,13 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerIOManager.h"
+#ifdef Slicer3_USE_PYTHONQT
 #include "qSlicerPythonManager.h"
+#endif
 
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_PYTHONQT
+// MRML includes
+#include <vtkMRMLScene.h>
 
 //---------------------------------------------------------------------------
 // qSlicerMainWindowCorePrivate methods
@@ -32,14 +37,14 @@ qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   this->PythonShell = 0; 
   this->ShowModuleActionMapper = new QSignalMapper(this);
 
-  this->ToolBarModuleList << "Measurements" << "Transforms" << "Volumes";
+  this->ToolBarModuleList << "Measurements" << "MRMLTree" << "Transforms" << "Volumes";
   }
     
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
 {
   Q_ASSERT(module);
-  QCTK_P(qSlicerMainWindowCore);
+  CTK_P(qSlicerMainWindowCore);
 
   qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
@@ -65,7 +70,7 @@ void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
 void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModule* module)
 {
   Q_ASSERT(module);
-  QCTK_P(qSlicerMainWindowCore);
+  CTK_P(qSlicerMainWindowCore);
 
   qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
@@ -83,8 +88,8 @@ void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModu
 //-----------------------------------------------------------------------------
 qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerMainWindowCore);
-  QCTK_D(qSlicerMainWindowCore);
+  CTK_INIT_PRIVATE(qSlicerMainWindowCore);
+  CTK_D(qSlicerMainWindowCore);
   
   d->ParentWidget = _parent;
 
@@ -106,7 +111,26 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Supercl
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+CTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileAddDataActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openLoadDataDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileImportSceneActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openImportSceneDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileLoadSceneActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
+}
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onEditUndoActionTriggered()
@@ -124,11 +148,11 @@ void qSlicerMainWindowCore::onEditRedoActionTriggered()
 void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
 #ifdef Slicer3_USE_PYTHONQT
-  QCTK_D(qSlicerMainWindowCore);
+  CTK_D(qSlicerMainWindowCore);
   if (!d->PythonShell)
     {
     Q_ASSERT(qSlicerApplication::application()->pythonManager());
-    d->PythonShell = new qCTKPythonShell(qSlicerApplication::application()->pythonManager()/*, d->ParentWidget*/);
+    d->PythonShell = new ctkPythonShell(qSlicerApplication::application()->pythonManager()/*, d->ParentWidget*/);
     d->PythonShell->setAttribute(Qt::WA_QuitOnClose, false);
     d->PythonShell->resize(600, 280);
     }

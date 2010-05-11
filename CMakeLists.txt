@@ -30,6 +30,18 @@ set(Slicer3_INSTALL_MODULES_SHARE_DIR "${Slicer3_INSTALL_SHARE_DIR}/Modules")
 set(Slicer3_HOME "${Slicer3_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
+# Convenient macro allowing to download a file
+#
+MACRO(downloadFile url dest)
+  FILE(DOWNLOAD ${url} ${dest} STATUS status)
+  LIST(GET status 0 error_code)
+  LIST(GET status 1 error_msg)
+  IF(error_code)
+    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  ENDIF()
+ENDMACRO()
+
+#-----------------------------------------------------------------------------
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 #
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
@@ -106,7 +118,12 @@ set(Slicer3_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 add_subdirectory(CMake)
 # Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
 # used before CMake's FindTCL.
-set(CMAKE_MODULE_PATH "${VTK_CMAKE_DIR}" ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_DIR}")
+set(CMAKE_MODULE_PATH
+  "${VTK_CMAKE_DIR}"
+  "${Slicer3_CMAKE_DIR}"
+  ${Slicer3_BINARY_DIR}/CMake
+  ${CMAKE_MODULE_PATH}
+  )
 
 include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 
@@ -225,6 +242,21 @@ endif(NOT ITK_FOUND)
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
+# FindCTK
+#
+SET(git_repo http://github.com/pieper/CTK/raw/master/)
+
+if (Slicer3_USE_QT)
+  SET(file Utilities/CMake/FindCTK.cmake)
+  downloadFile(${git_repo}/${file} ${Slicer3_BINARY_DIR}/CMake/FindCTK.cmake)
+
+  FIND_PACKAGE(CTK REQUIRED)
+  IF(CTK_FOUND)
+    INCLUDE(${CTK_USE_FILE})
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
 IF (Slicer3_USE_KWWIDGETS)
   ## KWWidgets
   FIND_PACKAGE(KWWidgets REQUIRED)
@@ -232,16 +264,20 @@ IF (Slicer3_USE_KWWIDGETS)
     MESSAGE(FATAL_ERROR "Need KWWidgets to build")
   ENDIF(NOT KWWidgets_FOUND)
   INCLUDE(${KWWidgets_USE_FILE})
+  
 ELSE(Slicer3_USE_KWWIDGETS)
+
+  # VTK
   FIND_PACKAGE(VTK REQUIRED)
   IF(NOT VTK_FOUND)
-    MESSAGE(FATAL_ERROR "Need VTK to build with ")
+    MESSAGE(FATAL_ERROR "Need VTK to build")
   ELSE(NOT VTK_FOUND)
     IF(NOT VTK_USE_QVTK)
       MESSAGE("Please make sure VTK is build with VTK_USE_GUISUPPORT and VTK_USE_QVTK enabled")
     ENDIF(NOT VTK_USE_QVTK)
   ENDIF(NOT VTK_FOUND)
   INCLUDE(${VTK_USE_FILE})
+  
 ENDIF (Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
@@ -279,9 +315,8 @@ IF(Slicer3_USE_QT)
     IF(NOT VTK_WRAP_PYTHON)
       MESSAGE(FATAL_ERROR "Since both Slicer3_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF(NOT VTK_WRAP_PYTHON)
-    # Enable qCTKWidgets python wrapping
-    # Note that qVTKWidgets and qMRMLWidgets python wrapping will be automatically enabled
-    SET(qCTKWidgets_WRAP_PYTHON ON)
+    # Enable qMRMLWidgets python wrapping
+    SET(qMRMLWidgets_WRAP_PYTHON ON)
   ENDIF(Slicer3_USE_PYTHONQT)
 ENDIF(Slicer3_USE_QT)  
 

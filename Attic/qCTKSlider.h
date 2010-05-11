@@ -90,7 +90,7 @@ signals:
   void valueChanged(double value);
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKSlider);
+  CTK_DECLARE_PRIVATE(qCTKSlider);
 };
 
 #endif

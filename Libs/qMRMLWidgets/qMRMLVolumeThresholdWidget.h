@@ -1,15 +1,12 @@
 #ifndef __qMRMLVolumeThresholdWidget_h
 #define __qMRMLVolumeThresholdWidget_h
 
-
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+/// Qt includes
 #include <QWidget>
+
+/// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -104,7 +101,7 @@ protected:
 
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);
+  CTK_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);
 
   vtkMRMLScalarVolumeNode* VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;

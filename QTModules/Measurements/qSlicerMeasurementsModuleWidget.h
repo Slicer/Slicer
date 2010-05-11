@@ -1,11 +1,11 @@
 #ifndef __qSlicerMeasurementsModuleWidget_h
 #define __qSlicerMeasurementsModuleWidget_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerMeasurementsModuleExport.h"
 
@@ -27,7 +27,7 @@ protected:
   virtual void setup();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerMeasurementsModuleWidget);
 };
 
 #endif

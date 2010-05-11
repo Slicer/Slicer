@@ -3,7 +3,7 @@
 #ifndef H_ITK_IMAGE_IO_H
 #define H_ITK_IMAGE_IO_H
 
-/// STL includes
+/// STD includes
 
 /// ITK includes
 #include "itkImageIOBase.h"

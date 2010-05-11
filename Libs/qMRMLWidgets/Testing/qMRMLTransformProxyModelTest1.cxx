@@ -9,6 +9,14 @@
 
 =========================================================================auto=*/
 
+// QT includes
+#include <QApplication>
+#include <QString>
+#include <QStringList>
+
+// CTK includes
+#include <ctkModelTester.h>
+
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneModel.h"
@@ -17,14 +25,6 @@
 
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
-
-// qCTK includes
-#include <qCTKModelTester.h>
-
-// QT includes
-#include <QApplication>
-#include <QString>
-#include <QStringList>
 
 // STD includes
 #include <stdlib.h>
@@ -37,7 +37,7 @@ int qMRMLTransformProxyModelTest1(int argc, char * argv [] )
   try
     {
     qMRMLSceneModel model(0);
-    qCTKModelTester tester(&model);
+    ctkModelTester tester(&model);
 
     qMRMLSceneFactoryWidget sceneFactory(0);
     sceneFactory.generateScene();
@@ -64,7 +64,7 @@ int qMRMLTransformProxyModelTest1(int argc, char * argv [] )
     sceneFactory.deleteNode();
   
     qMRMLTransformProxyModel transformModel(0);
-    qCTKModelTester transformTester(&transformModel);
+    ctkModelTester transformTester(&transformModel);
   
     transformModel.setSourceModel(&model);
   

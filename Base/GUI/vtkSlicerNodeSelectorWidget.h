@@ -197,6 +197,14 @@ public:
     this->InMRMLCallbackFlag = flag;
   }
 
+  /// 
+  /// Flags to avoid too many refreshes when the scene is loading
+  /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  vtkGetMacro(IgnoreNodeAddedEvents, int);
+  void SetIgnoreNodeAddedEvents (int flag) {
+    this->IgnoreNodeAddedEvents = flag;
+  }
+
 protected:
   vtkSlicerNodeSelectorWidget();
   virtual ~vtkSlicerNodeSelectorWidget();
@@ -243,6 +251,10 @@ private:
   /// 
   /// Flag to avoid event loops
   int InMRMLCallbackFlag;
+
+  /// 
+  /// Flag to avoid refresh when loading the scene
+  int IgnoreNodeAddedEvents;
 
   /// 
   /// Check for additional conditions to filter the NodeSelector. node is the current node to be checked.

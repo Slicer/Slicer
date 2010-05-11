@@ -1,11 +1,11 @@
 #ifndef __qMRMLTreeWidget_h
 #define __qMRMLTreeWidget_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QTreeView>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -25,7 +25,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* scene);
  
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLTreeWidget);
+  CTK_DECLARE_PRIVATE(qMRMLTreeWidget);
 };
 
 #endif

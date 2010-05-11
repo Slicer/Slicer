@@ -10,50 +10,93 @@
 
 =========================================================================auto=*/
 
-// QT includes
-#include <QString>
-#include <QSettings>
-#include <QStringList>
-#include <QFileInfo>
+// Qt includes
 #include <QDebug>
+#include <QFileInfo>
+#include <QSettings>
+#include <QString>
+#include <QStringList>
 
-// VTK includes
-#include <vtkSmartPointer.h>
+// SlicerQt includes
+#include "qSlicerAbstractModule.h"
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreIOManager.h"
+#include "qSlicerIO.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerSceneIO.h"
+#include "qSlicerSlicer2SceneReader.h"
+#include "qSlicerXcedeCatalogIO.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 
-// VolumeLogic
-//#include "vtkSlicerVolumesLogic.h"
-//#include "vtkMRMLVolumeNode.h"
-
-// SlicerQT includes
-#include "qSlicerCoreIOManager.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerAbstractModule.h"
+// VTK includes
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCoreIOManagerPrivate: public qCTKPrivate<qSlicerCoreIOManager>
+class qSlicerCoreIOManagerPrivate: public ctkPrivate<qSlicerCoreIOManager>
 {
 public:
-  qSlicerCoreIOManagerPrivate()
-    {
-    this->ExtensionFileType = new QSettings(":/default-extension-filetype",
-                                            QSettings::IniFormat);
-    }
-  ~qSlicerCoreIOManagerPrivate()
-    {
-    delete this->ExtensionFileType; 
-    }
+  qSlicerCoreIOManagerPrivate();
+  ~qSlicerCoreIOManagerPrivate();
+  vtkMRMLScene* currentScene()const;
   
-  QSettings*                     ExtensionFileType;
+  qSlicerIO* reader(const QString& fileName)const;
+
+  QSettings*        ExtensionFileType;
+  QList<qSlicerIO*> Readers;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCoreIOManager::qSlicerCoreIOManager()
+qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate()
 {
-  QCTK_INIT_PRIVATE(qSlicerCoreIOManager);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreIOManagerPrivate::~qSlicerCoreIOManagerPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene()const
+{
+  return qSlicerCoreApplication::application()->mrmlScene();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIO* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)const
+{
+  QList<qSlicerIO*> genericReaders;
+  foreach(qSlicerIO* reader, this->Readers)
+    {
+    if (!reader->canLoadFile(fileName))
+      {
+      continue;
+      }
+    if (reader->extensions() == "*.*")
+      {
+      genericReaders << reader;
+      continue;
+      }
+    return reader;
+    }
+  foreach(qSlicerIO* reader, genericReaders)
+    {
+    return reader;
+    }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
+  :QObject(_parent)
+{
+  CTK_INIT_PRIVATE(qSlicerCoreIOManager);
+  // FIXME move to the application level
+  this->registerIO(new qSlicerSceneIO(this));
+  this->registerIO(new qSlicerSlicer2SceneReader(this));
+  this->registerIO(new qSlicerXcedeCatalogIO(this));
+  // end FIXME
 }
 
 //-----------------------------------------------------------------------------
@@ -62,131 +105,174 @@ qSlicerCoreIOManager::~qSlicerCoreIOManager()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::printAdditionalInfo()
+qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)const
 {
-  QCTK_D(qSlicerCoreIOManager);
-  qDebug() << "ExtensionFileType:";
-  d->ExtensionFileType->beginGroup("ExtensionFileType");
-  QStringList keys = d->ExtensionFileType->childKeys();
-  foreach(const QString& key, keys)
+  CTK_D(const qSlicerCoreIOManager);
+  qSlicerIO* reader = d->reader(fileName);
+  if (!reader)
     {
-    qDebug() << key << " = " << d->ExtensionFileType->value(key);
+    return  qSlicerIO::NoFile;
     }
+  return reader->fileType();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::loadScene(vtkMRMLScene* mrmlScene, const QString& filename)
+QString qSlicerCoreIOManager::fileDescription(const QString& fileName)const
 {
-  Q_ASSERT(mrmlScene);
+  CTK_D(const qSlicerCoreIOManager);
+  qSlicerIO* reader = d->reader(fileName);
+  if (!reader)
+    {
+    return tr("Unknown");
+    }
+  return reader->description();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& fileName)const
+{
+  CTK_D(const qSlicerCoreIOManager);
+  qSlicerIO* reader = d->reader(fileName);
+  if (!reader)
+    {
+    return 0;
+    }
+  return reader->options();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
+{
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = fileName;
+  properties["clear"] = clear;
+  return this->loadNodes(qSlicerIO::SceneFile, properties);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::loadNodes(qSlicerIO::IOFileType fileType,
+                                     const qSlicerIO::IOProperties& parameters,
+                                     vtkCollection* loadedNodes)
+{ 
+  CTK_D(qSlicerCoreIOManager);
+
+  Q_ASSERT(parameters.contains("fileName"));
+  Q_ASSERT(!parameters["fileName"].toString().isEmpty());
+
+  const QList<qSlicerIO*>& readers = this->ios(fileType);
+
+  // If no readers were able to read and load the file(s), success will remain false
+  bool success = false;
   
-  // Convert to lowercase
-  QString filenameLc = filename.toLower();
+  QStringList nodes;
+  foreach (qSlicerIO* reader, readers)
+    {
+    reader->setMRMLScene(d->currentScene());
+    if (!reader->load(parameters))
+      {
+      continue;
+      }
+    qDebug() << "reader has read the file" << parameters["fileName"].toString();
+    nodes << reader->loadedNodes();
+    success = true;
+    break;
+    }
+
+  if (loadedNodes)
+    {
+    foreach(const QString& node, nodes)
+      {
+      loadedNodes->AddItem(
+        d->currentScene()->GetNodeByID(node.toLatin1().data()));
+      }
+    }
     
-  if (filenameLc.endsWith(".mrml"))
-    {
-    mrmlScene->SetURL(filenameLc.toLatin1());
-    mrmlScene->Connect();
-    }
-  else if (filenameLc.endsWith(".xml"))
-    {
-    qDebug() << "Loading Slicer2Scene... NOT implemented";
-    // TODO See ImportSlicer2Scene script
-    }
-  else if (filenameLc.endsWith(".xcat"))
-    {
-    qDebug() << "Loading Catalog... NOT implemented";
-    // TODO See XcatalogImport script
-    }
-  else
-    {
-    qWarning() << "Unknown type of scene file:" << filenameLc; 
-    }
-  // TODO save last open path
-  //this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
-
-  if (mrmlScene->GetErrorCode() != 0 )
-    {
-    qDebug() << "Failed to load scene:" << QString::fromStdString(mrmlScene->GetErrorMessage());
-    }
+  return success;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::importScene(vtkMRMLScene* mrmlScene, const QString& filename)
-{
-  Q_ASSERT(mrmlScene);
+vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
+  qSlicerIO::IOFileType fileType,
+  const qSlicerIO::IOProperties& parameters)
+{ 
+  vtkSmartPointer<vtkCollection> loadedNodes = vtkSmartPointer<vtkCollection>::New();
+  this->loadNodes(fileType, parameters, loadedNodes);
   
-  // Convert to lowercase
-  QString filenameLc = filename.toLower();
-
-  if (filenameLc.endsWith(".mrml"))
-    {
-    mrmlScene->SetURL(filenameLc.toLatin1());
-    mrmlScene->Import();
-    }
-  else if (filenameLc.endsWith(".xml"))
-    {
-    qDebug() << "Importing Slicer2Scene... NOT implemented";
-    // TODO See ImportSlicer2Scene script
-    }
-  else if (filenameLc.endsWith(".xcat"))
-    {
-    qDebug() << "Importing Catalog... NOT implemented";
-    // TODO See XcatalogImport script
-    }
-  else
-    {
-    qWarning() << "Unknown type of scene file:" << filenameLc; 
-    }
-  // TODO save last open path
-  //this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
-
-  if (mrmlScene->GetErrorCode() != 0 )
-    {
-    qDebug() << "Failed to load scene:" << QString::fromStdString(mrmlScene->GetErrorMessage());
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::closeScene(vtkMRMLScene* mrmlScene)
-{
-  Q_ASSERT(mrmlScene);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(0));
+  Q_ASSERT(node);
   
-  mrmlScene->Clear(false);
+  return node;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::fileTypeFromExtension(const QString& extension)
-{
-  QCTK_D(qSlicerCoreIOManager);
-  d->ExtensionFileType->beginGroup("ExtensionFileType");
-  return d->ExtensionFileType->value(extension.toLower(), "Unknown").toString();
-}
+bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType, 
+                                     const qSlicerIO::IOProperties& parameters)
+{ 
+  CTK_D(qSlicerCoreIOManager);
 
-//-----------------------------------------------------------------------------
-void qSlicerCoreIOManager::loadArchetypeVolume(const QString& filename)
-{
-  QFileInfo fileInfo(filename);
-  if (!fileInfo.exists())
+  Q_ASSERT(parameters.contains("fileName"));
+
+  const QList<qSlicerIO*>& writers = this->ios(fileType);
+
+  QStringList nodes;
+  foreach (qSlicerIO* writer, writers)
     {
-    return;
+    writer->setMRMLScene(d->currentScene());
+    if (!writer->save(parameters))
+      {
+      continue;
+      }
+    qDebug() << "reader has read the file" << parameters["fileName"].toString();
+    nodes << writer->savedNodes();
+    break;
     }
 
-//   // HACK Get a reference to the volumes module
-//   // For now, let's link against the VolumesLogic
-//   qSlicerModuleManager* moduleManager = qSlicerCoreApplication::application()->moduleManager();
-//   Q_ASSERT(moduleManager);
-//   qSlicerAbstractModule* volumesModule =  moduleManager->module(moduleManager->moduleName("Volumes"));
-//   Q_ASSERT(volumesModule);
-//   vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
-//   Q_ASSERT(volumesLogic);
-// 
-//   bool labelMap = false;
-//   bool centered = true;
-//   int loadingOptions = labelMap * 1 + centered * 2; 
-//   
-//   vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(filename.toLatin1(),
-//                                                              fileInfo.baseName().toLatin1(),
-//                                                              loadingOptions);
-//   Q_ASSERT(node);
+  if (nodes.count())
+    {
+    return false;
+    }
   
+  //if (savedNodes)
+  //{
+  //foreach(const QString& node, nodes)
+  //{
+  //loadedNodes->AddItem(
+  //d->currentScene()->GetNodeByID(node.toLatin1().data()));
+  //}
+  //}
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+const QList<qSlicerIO*>& qSlicerCoreIOManager::ios()const
+{
+  CTK_D(const qSlicerCoreIOManager);
+  return d->Readers;
+}
+
+//-----------------------------------------------------------------------------
+QList<qSlicerIO*> qSlicerCoreIOManager::ios(qSlicerIO::IOFileType fileType)const
+{
+  CTK_D(const qSlicerCoreIOManager);
+  QList<qSlicerIO*> res;
+  foreach(qSlicerIO* io, d->Readers)
+    {
+    if (io->fileType() == fileType)
+      {
+      res << io;
+      }
+    }
+  return res;
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
+{
+  Q_ASSERT(io);
+  CTK_D(qSlicerCoreIOManager);
+  d->Readers << io;
+
+  // Reparent - this will make sure the object is destroyed properly
+  io->setParent(this);
 }

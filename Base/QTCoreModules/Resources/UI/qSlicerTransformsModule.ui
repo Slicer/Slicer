@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
-    <height>756</height>
+    <width>513</width>
+    <height>759</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,7 +25,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qCTKCollapsibleButton" name="LoadCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="LoadCollapsibleWidget">
      <property name="text">
       <string>Load</string>
      </property>
@@ -57,7 +57,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="DisplayEditCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -91,20 +91,20 @@
         </item>
         <item>
          <widget class="qMRMLNodeComboBox" name="TransformNodeSelector">
-          <property name="editEnabled">
-           <bool>false</bool>
-          </property>
           <property name="nodeTypes">
            <stringlist>
             <string>vtkMRMLLinearTransformNode</string>
            </stringlist>
+          </property>
+          <property name="editEnabled">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="qCTKCollapsibleGroupBox" name="MatrixViewGroupBox">
+       <widget class="ctkCollapsibleGroupBox" name="MatrixViewGroupBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -327,20 +327,25 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMatrixWidget</class>
+   <extends>QTableWidget</extends>
+   <header>ctkMatrixWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLMatrixWidget</class>
-   <extends>QTableWidget</extends>
+   <extends>ctkMatrixWidget</extends>
    <header>qMRMLMatrixWidget.h</header>
   </customwidget>
   <customwidget>

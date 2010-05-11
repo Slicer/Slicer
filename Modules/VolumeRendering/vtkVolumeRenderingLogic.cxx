@@ -303,6 +303,10 @@ vtkMRMLVolumeRenderingScenarioNode* vtkVolumeRenderingLogic::CreateScenarioNode(
 void vtkVolumeRenderingLogic::SetupHistograms(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
+  if (input == NULL)
+    {
+    return;
+    }
 
   //-----------------------------------------
   //  remove old histogram
@@ -366,6 +370,10 @@ void vtkVolumeRenderingLogic::UpdateVolumePropertyScalarRange(vtkMRMLVolumeRende
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  if (input == NULL || prop == NULL)
+    {
+    return;
+    }
 
   //update scalar range
   vtkColorTransferFunction *functionColor = prop->GetRGBTransferFunction();

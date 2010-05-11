@@ -1,3 +1,8 @@
+
+// Qt includes
+#include <QDebug>
+
+// qMRML includes
 #include "qMRMLUtils.h"
 
 // MRML includes
@@ -8,9 +13,6 @@
 #include <vtkTransform.h>
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
-
-// QT includes
-#include <QDebug>
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)

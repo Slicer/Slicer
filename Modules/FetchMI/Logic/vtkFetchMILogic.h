@@ -21,7 +21,7 @@
 #include "vtkXMLDataElement.h"
 #include "vtkXMLDataParser.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <vector>
 #include <map>

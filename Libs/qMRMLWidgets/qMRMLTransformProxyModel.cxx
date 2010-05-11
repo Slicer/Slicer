@@ -1,10 +1,4 @@
-#include "qMRMLItemHelper.h"
-#include "qMRMLTransformProxyModel.h"
-#include "qMRMLSceneModel.h"
-#include "qMRMLUtils.h"
-
-#include <vtkMRMLScene.h>
-
+// Qt includes
 #include <QDebug>
 #include <QMap>
 #include <QMimeData>
@@ -12,6 +6,15 @@
 #include <QStack>
 #include <QStringList>
 #include <QVector>
+
+// qMRML includes
+#include "qMRMLItemHelper.h"
+#include "qMRMLTransformProxyModel.h"
+#include "qMRMLSceneModel.h"
+#include "qMRMLUtils.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
 
 class qMRMLNodeItemHelperPrivate;
 
@@ -58,7 +61,7 @@ protected:
   // here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLNodeItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -165,17 +168,17 @@ qMRMLAbstractItemHelper* qMRMLSceneItemHelper::parent() const
 
 // qMRMLNodeItemHelper
 //------------------------------------------------------------------------------
-class qMRMLNodeItemHelperPrivate: public qCTKPrivate<qMRMLNodeItemHelper>
+class qMRMLNodeItemHelperPrivate: public ctkPrivate<qMRMLNodeItemHelper>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLNodeItemHelper);
+  CTK_DECLARE_PUBLIC(qMRMLNodeItemHelper);
 };
 
 //------------------------------------------------------------------------------
 qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int _column, const qMRMLAbstractItemHelperFactory* _factory)
   :qMRMLAbstractNodeItemHelper(node, _column, _factory)
 {
-  QCTK_INIT_PRIVATE(qMRMLNodeItemHelper);
+  CTK_INIT_PRIVATE(qMRMLNodeItemHelper);
   Q_ASSERT(node);
 }
 
@@ -305,10 +308,10 @@ qMRMLAbstractItemHelper* qMRMLRootItemHelper::child(int _row, int _column) const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class qMRMLTransformProxyModelPrivate: public qCTKPrivate<qMRMLTransformProxyModel>
+class qMRMLTransformProxyModelPrivate: public ctkPrivate<qMRMLTransformProxyModel>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLTransformProxyModel);
+  CTK_DECLARE_PUBLIC(qMRMLTransformProxyModel);
   qMRMLTransformProxyModelPrivate();
   qMRMLTransformItemHelperFactory* ItemFactory;
 };
@@ -328,7 +331,7 @@ qMRMLTransformProxyModelPrivate::qMRMLTransformProxyModelPrivate()
 qMRMLTransformProxyModel::qMRMLTransformProxyModel(QObject *vparent)
   :qMRMLTreeProxyModel(vparent)
 {
-  QCTK_INIT_PRIVATE(qMRMLTransformProxyModel);
+  CTK_INIT_PRIVATE(qMRMLTransformProxyModel);
 }
 
 //------------------------------------------------------------------------------
@@ -339,7 +342,7 @@ qMRMLTransformProxyModel::~qMRMLTransformProxyModel()
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelperFactory* qMRMLTransformProxyModel::itemFactory()const
 {
-  QCTK_D(const qMRMLTransformProxyModel);
+  CTK_D(const qMRMLTransformProxyModel);
   return d->ItemFactory;
 }
 /*

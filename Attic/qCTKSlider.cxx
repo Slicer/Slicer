@@ -18,7 +18,7 @@
 // QT includes
 #include <QDebug>
 
-// STL includes
+// STD includes
 #include <math.h>
 
 // Helper Macro

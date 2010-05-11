@@ -1,12 +1,18 @@
 
-#include "qMRMLNodeTreeSelector.h"
-#include <qCTKTreeComboBox.h>
-
-#include <vtkMRMLNode.h>
+// Qt includes
 #include <QStandardItemModel>
 
+// CTK includes
+#include <ctkTreeComboBox.h>
+
+// qMRML includes
+#include "qMRMLNodeTreeSelector.h"
+
+// MRML includes
+#include <vtkMRMLNode.h>
+
 //-----------------------------------------------------------------------------
-class qMRMLNodeTreeSelectorPrivate: public qCTKPrivate<qMRMLNodeTreeSelector>
+class qMRMLNodeTreeSelectorPrivate: public ctkPrivate<qMRMLNodeTreeSelector>
 {
 public:
   void addItemInternal(int index, const QIcon &icon, 
@@ -16,16 +22,16 @@ public:
 // --------------------------------------------------------------------------
 qMRMLNodeTreeSelector::qMRMLNodeTreeSelector(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLNodeTreeSelector);
+  CTK_INIT_PRIVATE(qMRMLNodeTreeSelector);
   
-  qCTKTreeComboBox* comboBox = new qCTKTreeComboBox;
+  ctkTreeComboBox* comboBox = new ctkTreeComboBox;
   this->setComboBox(comboBox);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
 {
-  QCTK_D(qMRMLNodeTreeSelector);
+  CTK_D(qMRMLNodeTreeSelector);
 
   QString categoryName = QString::fromAscii(mrmlNode->GetAttribute("Category"));
   if (categoryName.isEmpty())
@@ -74,7 +80,7 @@ void qMRMLNodeTreeSelector::addNodeInternal(vtkMRMLNode* mrmlNode)
 void qMRMLNodeTreeSelectorPrivate::addItemInternal(int index, const QIcon &icon, 
                                                    const QString &text, const QVariant &userData)
 {
-  QCTK_P(qMRMLNodeTreeSelector);
+  CTK_P(qMRMLNodeTreeSelector);
   
   int itemCount = p->count();
   index = qBound(0, index, itemCount);

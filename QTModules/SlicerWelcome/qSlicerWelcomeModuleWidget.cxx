@@ -1,31 +1,31 @@
 #include "qSlicerWelcomeModuleWidget.h"
 #include "ui_qSlicerWelcomeModule.h"
 
-// qCTK includes
-#include "qCTKCollapsibleButton.h"
-#include "qCTKButtonGroup.h"
-
-// QT includes
+// Qt includes
 #include <QButtonGroup>
 #include <QList>
 #include <QFontMetrics>
 #include <QDebug>
 
+// CTK includes
+#include "ctkCollapsibleButton.h"
+#include "ctkButtonGroup.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerWelcomeModuleWidgetPrivate: public qCTKPrivate<qSlicerWelcomeModuleWidget>,
-                                          public Ui_qSlicerWelcomeModule
+class qSlicerWelcomeModuleWidgetPrivate: public ctkPrivate<qSlicerWelcomeModuleWidget>,
+                                         public Ui_qSlicerWelcomeModule
 {
 public:
   void setupUi(qSlicerWidget* widget);
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerWelcomeModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerWelcomeModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidget::setup()
 {
-  QCTK_D(qSlicerWelcomeModuleWidget);
+  CTK_D(qSlicerWelcomeModuleWidget);
   d->setupUi(this);
 }
 
@@ -38,12 +38,11 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerWelcomeModule::setupUi(widget);
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
-  //QButtonGroup * group = new QButtonGroup(widget);
-  qCTKButtonGroup * group = new qCTKButtonGroup(widget);
+  ctkButtonGroup * group = new ctkButtonGroup(widget);
   
   // Add all collabsibleWidgetButton to a button group
-  QList<qCTKCollapsibleButton*> collapsibles = widget->findChildren<qCTKCollapsibleButton*>();
-  foreach(qCTKCollapsibleButton* collapsible, collapsibles)
+  QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
+  foreach(ctkCollapsibleButton* collapsible, collapsibles)
     {
     group->addButton(collapsible);
     }

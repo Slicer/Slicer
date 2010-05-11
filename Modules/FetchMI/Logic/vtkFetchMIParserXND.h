@@ -9,7 +9,7 @@
 #include "vtkXMLDataParser.h"
 #include "vtkXMLDataElement.h"
 
-// STL includes
+// STD includes
 #include <string>
 
 #include "vtkSlicerFetchMIModuleLogicExport.h"

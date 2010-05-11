@@ -1,15 +1,12 @@
 #ifndef __qMRMLWindowLevelWidget_h
 #define __qMRMLWindowLevelWidget_h
 
-
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
+
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -107,7 +104,7 @@ protected:
 
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
+  CTK_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
 
   vtkMRMLScalarVolumeNode* VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;

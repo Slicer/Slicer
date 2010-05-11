@@ -35,7 +35,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   
   /// The Usual vtk class functions
   static vtkSlicerColorLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerColorLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerColorLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -55,31 +55,31 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
 
   /// 
   /// Return the default color table node id for a given type
-  const char * GetDefaultColorTableNodeID(int type);
+  static const char * GetDefaultColorTableNodeID(int type);
 
   /// 
   /// Return the default freesurfer color node id for a given type
-  const char * GetDefaultFreeSurferColorNodeID(int type);
+  static const char * GetDefaultFreeSurferColorNodeID(int type);
 
   /// 
   /// Return the default dGEMRIC color node id for a given type
-  const char * GetDefaultdGEMRICColorNodeID(int type);
+  static const char * GetDefaultdGEMRICColorNodeID(int type);
 
   /// 
   /// Return the default PET color node id for a given type
-  const char * GetDefaultPETColorNodeID(int type);
+  static const char * GetDefaultPETColorNodeID(int type);
 
   /// 
   /// Return a default color node id for a freesurfer label map volume
-  const char * GetDefaultFreeSurferLabelMapColorNodeID();
+  static const char * GetDefaultFreeSurferLabelMapColorNodeID();
   
   /// 
   /// Return a default color node id for a volume
-  const char * GetDefaultVolumeColorNodeID();
+  static const char * GetDefaultVolumeColorNodeID();
 
   /// 
   /// Return a default color node id for a label map
-  const char * GetDefaultLabelMapColorNodeID();
+  static const char * GetDefaultLabelMapColorNodeID();
 
   /// 
   /// Return a default color node id for the editor
@@ -87,15 +87,17 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
 
   /// 
   /// Return a default color node id for a model
-  const char * GetDefaultModelColorNodeID();
+  static const char * GetDefaultModelColorNodeID();
 
   /// 
   /// return a default color node id for a procedural color node
-  char * GetDefaultProceduralColorNodeID(const char *name);
+  /// Delete the returned char* to avoid memory leak
+  static char * GetDefaultProceduralColorNodeID(const char *name);
 
   /// 
   /// return a default color node id for a file based node, based on the file name
-  char * GetDefaultFileColorNodeID(const char *fileName);
+  /// Delete the returned char* to avoid memory leak
+  static char * GetDefaultFileColorNodeID(const char *fileName);
 
   /// 
   /// look for color files in the Base/Logic/Resources/ColorFiles directory and

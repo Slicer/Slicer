@@ -1,17 +1,4 @@
-#include "qSlicerModulePanel.h"
-#include "ui_qSlicerModulePanel.h"
-
-// SlicerQT includes
-#include "qSlicerApplication.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
-
-// qCTK includes
-#include <qCTKCollapsibleButton.h>
-#include <qCTKFittedTextBrowser.h>
-
-// QT includes
+// Qt includes
 #include <QDebug>
 #include <QLabel>
 #include <QResizeEvent>
@@ -22,8 +9,20 @@
 #include <QVBoxLayout>
 #include <QWebView>
 
+// CTK includes
+#include <ctkCollapsibleButton.h>
+#include <ctkFittedTextBrowser.h>
+
+// SlicerQt includes
+#include "qSlicerModulePanel.h"
+#include "ui_qSlicerModulePanel.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
+
 //---------------------------------------------------------------------------
-class qSlicerModulePanelPrivate: public qCTKPrivate<qSlicerModulePanel>
+class qSlicerModulePanelPrivate: public ctkPrivate<qSlicerModulePanel>
                                , public Ui_qSlicerModulePanel
 {
 public:
@@ -34,7 +33,7 @@ public:
   //QWebView*              HelpLabel;
   QBoxLayout*            Layout;
   QScrollArea*           ScrollArea;
-  qCTKCollapsibleButton* HelpCollapsibleButton;
+  ctkCollapsibleButton* HelpCollapsibleButton;
   */
 };
 
@@ -42,15 +41,15 @@ public:
 qSlicerModulePanel::qSlicerModulePanel(QWidget* _parent, Qt::WindowFlags f)
   :qSlicerAbstractModulePanel(_parent, f)
 {
-  QCTK_INIT_PRIVATE(qSlicerModulePanel);
-  QCTK_D(qSlicerModulePanel);
+  CTK_INIT_PRIVATE(qSlicerModulePanel);
+  CTK_D(qSlicerModulePanel);
   d->setupUi(this);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::setModule(const QString& moduleName)
 {
-  QCTK_D(qSlicerModulePanel);
+  CTK_D(qSlicerModulePanel);
 
   qSlicerAbstractModule * module = 0;
   
@@ -102,7 +101,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
   qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
   
-  QCTK_D(qSlicerModulePanel);
+  CTK_D(qSlicerModulePanel);
   
   // Update module layout
   if (moduleWidget->layout())
@@ -141,7 +140,7 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
   qSlicerAbstractModuleWidget * moduleWidget = module->widgetRepresentation();
   Q_ASSERT(moduleWidget);
   
-  QCTK_D(qSlicerModulePanel);
+  CTK_D(qSlicerModulePanel);
 
   QBoxLayout* scrollAreaLayout = 
     qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
@@ -184,14 +183,14 @@ void qSlicerModulePanel::removeAllModule()
 void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
 {
   QWidget* panel = new QWidget;
-  this->HelpCollapsibleButton = new qCTKCollapsibleButton("Help");
+  this->HelpCollapsibleButton = new ctkCollapsibleButton("Help");
   this->HelpCollapsibleButton->setCollapsed(true);
   this->HelpCollapsibleButton->setSizePolicy(
     QSizePolicy::Ignored, QSizePolicy::Minimum);
     
-  // Note: QWebView could be used as an alternative to qCTKFittedTextBrowser ?
+  // Note: QWebView could be used as an alternative to ctkFittedTextBrowser ?
   //this->HelpLabel = new QWebView;
-  this->HelpLabel = static_cast<QTextBrowser*>(new qCTKFittedTextBrowser);
+  this->HelpLabel = static_cast<QTextBrowser*>(new ctkFittedTextBrowser);
   this->HelpLabel->setOpenExternalLinks(true);
   this->HelpLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->HelpLabel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

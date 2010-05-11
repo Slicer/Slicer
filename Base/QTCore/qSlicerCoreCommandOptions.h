@@ -13,21 +13,19 @@
 #ifndef __qSlicerCoreCommandOptions_h
 #define __qSlicerCoreCommandOptions_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// qVTK includes
-#include <qVTKCommandOptions.h>
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKCommandOptions.h>
 
 #include "qSlicerBaseQTCoreExport.h"
 
 class QSettings;
 class qSlicerCoreCommandOptionsPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public qVTKCommandOptions
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkVTKCommandOptions
 {
 public:
-  typedef qVTKCommandOptions Superclass;
+  typedef ctkVTKCommandOptions Superclass;
   qSlicerCoreCommandOptions(QSettings* _settings);
   virtual ~qSlicerCoreCommandOptions();
 
@@ -64,7 +62,7 @@ protected:
   virtual bool wrongArgument(const char* argument);
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
+  CTK_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
 
 };
 

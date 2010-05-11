@@ -29,26 +29,24 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [] )
 
   qSlicerCoreIOManager manager;
 
-  manager.printAdditionalInfo();
-
   vtkSmartPointer< vtkMRMLScene > scene1 = vtkSmartPointer< vtkMRMLScene >::New();
 
   QString filename = argv[1];
 
-  manager.loadScene( scene1, filename );
+  //manager.loadScene( scene1, filename );
 
   vtkSmartPointer< vtkMRMLScene > scene2 = vtkSmartPointer< vtkMRMLScene >::New();
 
-  manager.loadScene( scene2, filename );
+  //manager.loadScene( scene2, filename );
 
-  manager.closeScene( scene1 );
+  //manager.closeScene( scene1 );
 
   QString extension = "mrml";
 
-  QString fileType = manager.fileTypeFromExtension( extension );
+  //QString fileType = manager.fileTypeFromExtension( extension );
 
   std::cout << "File Type from extension " << qPrintable(extension);
-  std::cout << " is " << qPrintable(fileType) << std::endl;
+  //std::cout << " is " << qPrintable(fileType) << std::endl;
 
   return EXIT_SUCCESS;
 }

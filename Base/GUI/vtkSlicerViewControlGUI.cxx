@@ -60,7 +60,6 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->NavigationRenderPending = 0;
   this->ZoomRenderPending = 0;
   this->EntryUpdatePending = 0;
-  this->SceneClosing = false;
   this->ProcessingMRMLEvent = 0;
   this->RockCount = 0;
   this->NavigationZoomWidgetWid = 150;
@@ -173,7 +172,6 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
   this->NavigationRenderPending = 0;
   this->ZoomRenderPending = 0;
   this->EntryUpdatePending = 0;
-  this->SceneClosing = false;
   this->RockCount = 0;  
   this->SliceInteracting = 0;
 
@@ -616,7 +614,7 @@ void vtkSlicerViewControlGUI::UpdateSliceGUIInteractorStyles ( )
 {
   // get all views from the scene
   // and observe active view.
-  if (this->SceneClosing)
+  if (this->MRMLScene && this->MRMLScene->GetIsClosed())
     {
     return;
     }
@@ -679,7 +677,7 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 {
   
-  if (this->MRMLScene == NULL)
+  if (this->MRMLScene == NULL || this->MRMLScene->GetIsClosed())
     {
     return;
     }
@@ -783,7 +781,7 @@ void vtkSlicerViewControlGUI::DeleteSceneSnapshot(const char *nom )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::SetViewNode(vtkMRMLViewNode *node)
 {
-  if (this->SceneClosing || this->ViewNode == node)
+  if ((this->MRMLScene && this->MRMLScene->GetIsClosed()) || this->ViewNode == node)
     {
     return;
     }
@@ -815,7 +813,7 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateSlicesFromMRML()
 {
-  if (this->SceneClosing)
+  if (this->MRMLScene && this->MRMLScene->GetIsClosed())
     {
     return;
     }
@@ -872,7 +870,10 @@ void vtkSlicerViewControlGUI::UpdateSlicesFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::RequestNavigationRender()
 {
-
+  if (this->MRMLScene == NULL || this->MRMLScene->GetIsClosed())
+    {
+    return;
+    }
 
 #ifndef NAVZOOMWIDGET_DEBUG
   if(!this->EnableDisableNavButton->GetSelectedState())
@@ -3038,22 +3039,9 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = event;
 
   vtkDebugMacro("processing event " << event);
-   
-  if (event == vtkMRMLScene::SceneCloseEvent )
-    {
-    this->SceneClosing = true;
-    }
-  else 
-    {
-    this->SceneClosing = false;
-    }
-
 
   vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast ( caller );
   vtkMRMLSelectionNode *snode = vtkMRMLSelectionNode::SafeDownCast ( caller );
-  
-
-
 
   if ( this->GetMRMLScene() == NULL )
     {
@@ -3063,8 +3051,10 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
-           || (event == vtkMRMLScene::SceneCloseEvent) || (event == vtkMRMLScene::NewSceneEvent ) ) )
+       && (event == vtkMRMLScene::NodeAddedEvent || 
+           event == vtkMRMLScene::NodeRemovedEvent ||
+           event == vtkMRMLScene::SceneCloseEvent || 
+           event == vtkMRMLScene::SceneLoadEndEvent ) )
     {
     this->UpdateFromMRML();
     this->UpdateNavigationWidgetViewActors ( );
@@ -3988,7 +3978,7 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
 {
   // get all views from the scene
   // and observe active view.
-  if (this->SceneClosing)
+  if (this->MRMLScene && this->MRMLScene->GetIsClosed())
     {
     return;
     }

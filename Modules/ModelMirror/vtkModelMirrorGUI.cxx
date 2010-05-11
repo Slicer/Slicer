@@ -18,7 +18,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>

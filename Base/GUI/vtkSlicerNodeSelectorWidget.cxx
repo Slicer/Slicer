@@ -31,11 +31,29 @@ vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision$");
 // observed mrml scene back into the logic layer for further processing
 // - this can also end up calling observers of the logic (i.e. in the GUI)
 //
-static void MRMLCallback(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eid),
+static void MRMLCallback(vtkObject *vtkNotUsed(caller), unsigned long eid,
                          void *__clientData, void *callData)
 {
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
-
+  
+  if (eid == vtkMRMLScene::SceneLoadStartEvent)
+    {
+    self->SetIgnoreNodeAddedEvents(1);
+    return;
+    }
+  else if (eid == vtkMRMLScene::SceneLoadEndEvent)
+    {
+    self->SetIgnoreNodeAddedEvents(0);
+    }
+  else if (self->GetIgnoreNodeAddedEvents())
+    {
+#ifdef _DEBUG
+    vtkDebugWithObjectMacro(self, "In vtkSlicerNodeSelectorWidget"
+                            " *********Scene is loading, don't refresh menu");
+#endif
+    return;
+    }
+  
   if (self->GetInMRMLCallbackFlag())
     {
 #ifdef _DEBUG
@@ -74,6 +92,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
   this->InMRMLCallbackFlag = 0;
+  this->IgnoreNodeAddedEvents = 0;
   this->SetBalloonHelpString("Select a node");
 }
 
@@ -121,6 +140,8 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand );
     this->SetBinding ( "<Map>", this, "UpdateMenu");
     }
 

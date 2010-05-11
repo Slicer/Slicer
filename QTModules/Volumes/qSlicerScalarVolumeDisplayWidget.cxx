@@ -1,12 +1,13 @@
 #include "qSlicerScalarVolumeDisplayWidget.h"
 #include "ui_qSlicerScalarVolumeDisplayWidget.h"
 
-#include "vtkMRMLScalarVolumeNode.h"
-// QT includes
+// Qt includes
 #include <QDebug>
 
+#include "vtkMRMLScalarVolumeNode.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerScalarVolumeDisplayWidgetPrivate: public qCTKPrivate<qSlicerScalarVolumeDisplayWidget>,
+class qSlicerScalarVolumeDisplayWidgetPrivate: public ctkPrivate<qSlicerScalarVolumeDisplayWidget>,
                                           public Ui_qSlicerScalarVolumeDisplayWidget
 {
 public:
@@ -15,8 +16,8 @@ public:
 // --------------------------------------------------------------------------
 qSlicerScalarVolumeDisplayWidget::qSlicerScalarVolumeDisplayWidget(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerScalarVolumeDisplayWidget);
-  QCTK_D(qSlicerScalarVolumeDisplayWidget);
+  CTK_INIT_PRIVATE(qSlicerScalarVolumeDisplayWidget);
+  CTK_D(qSlicerScalarVolumeDisplayWidget);
   
   d->setupUi(this);
 
@@ -33,7 +34,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  QCTK_D(qSlicerScalarVolumeDisplayWidget);
+  CTK_D(qSlicerScalarVolumeDisplayWidget);
   
   if (volumeNode) 
   {

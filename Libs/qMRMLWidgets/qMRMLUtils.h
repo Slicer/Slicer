@@ -1,7 +1,7 @@
 #ifndef __qMRMLUtils_h
 #define __qMRMLUtils_h
 
-/// QT includes
+/// Qt includes
 #include <QString>
 #include <QVector>
 

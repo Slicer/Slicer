@@ -10,24 +10,25 @@
 
 =========================================================================auto=*/
 
-
-#include "qSlicerAbstractLoadableModule.h"
-
+// Qt includes
 #include <QDebug>
 
+// SlicerQt includes
+#include "qSlicerAbstractLoadableModule.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerAbstractLoadableModulePrivate: public qCTKPrivate<qSlicerAbstractLoadableModule>
+class qSlicerAbstractLoadableModulePrivate: public ctkPrivate<qSlicerAbstractLoadableModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractLoadableModule::setup()
 {
-  Q_ASSERT(qctk_d() != 0);
+  Q_ASSERT(ctk_d() != 0);
 }
 
 //-----------------------------------------------------------------------------

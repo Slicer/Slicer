@@ -36,7 +36,7 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLCommandLineModuleNode *New();
-  vtkTypeMacro(vtkMRMLCommandLineModuleNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLCommandLineModuleNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

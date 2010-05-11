@@ -5,6 +5,7 @@
 // Implementation for Linux, Mac, etc. to allow us to peek into an
 // executable file and determine whether it contains global symbols.
 
+// --------------------------------------------------------------------------
 BinaryFileDescriptor::~BinaryFileDescriptor() 
 {
   // clean up - need to delete the blocks of memory that we
@@ -16,9 +17,8 @@ BinaryFileDescriptor::~BinaryFileDescriptor()
     }
 }
 
-bool
-BinaryFileDescriptor
-::Open(const char *filename)
+// --------------------------------------------------------------------------
+bool BinaryFileDescriptor::Open(const char *filename)
 {
   bfd *abfd;
   
@@ -40,9 +40,8 @@ BinaryFileDescriptor
   return true;
 }
 
-void
-BinaryFileDescriptor
-::Close()
+// --------------------------------------------------------------------------
+void BinaryFileDescriptor::Close()
 {
   if (this->BFD)
     {
@@ -50,9 +49,8 @@ BinaryFileDescriptor
     }
 }
 
-void *
-BinaryFileDescriptor
-::GetSymbolAddress(const char *name)
+// --------------------------------------------------------------------------
+void * BinaryFileDescriptor::GetSymbolAddress(const char *name)
 {
   long storageNeeded, numberOfSymbols;
   asymbol **symbolTable;

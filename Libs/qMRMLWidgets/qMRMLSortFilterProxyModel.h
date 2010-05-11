@@ -5,11 +5,12 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 
-// qCTKWidgets includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-// qMRMLWidgets includes
+// qMRML includes
 #include "qMRMLWidgetsExport.h"
+
 class qMRMLSortFilterProxyModelPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
@@ -62,8 +63,9 @@ protected:
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
   virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
+  
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
+  CTK_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
 };
 
 #endif

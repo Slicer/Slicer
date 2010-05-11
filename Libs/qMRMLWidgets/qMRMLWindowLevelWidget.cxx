@@ -1,9 +1,12 @@
 
-#include "qMRMLWindowLevelWidget.h"
-#include "ui_qMRMLWindowLevelWidget.h"
+// Qt includes
+#include <QDebug>
+#include <QStack>
 
 // qMRML includes
 #include "qMRMLUtils.h"
+#include "qMRMLWindowLevelWidget.h"
+#include "ui_qMRMLWindowLevelWidget.h"
 
 // MRML includes
 #include "vtkMRMLScalarVolumeNode.h"
@@ -12,13 +15,9 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-// QT includes
-#include <QDebug>
-#include <QStack>
-
 
 //-----------------------------------------------------------------------------
-class qMRMLWindowLevelWidgetPrivate: public qCTKPrivate<qMRMLWindowLevelWidget>,
+class qMRMLWindowLevelWidgetPrivate: public ctkPrivate<qMRMLWindowLevelWidget>,
                                      public Ui_qMRMLWindowLevelWidget
 {
 public:
@@ -31,8 +30,8 @@ public:
 // --------------------------------------------------------------------------
 qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLWindowLevelWidget);
-  QCTK_D(qMRMLWindowLevelWidget);
+  CTK_INIT_PRIVATE(qMRMLWindowLevelWidget);
+  CTK_D(qMRMLWindowLevelWidget);
   
   d->setupUi(this);
 
@@ -54,7 +53,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 {
-  //QCTK_D(qMRMLWindowLevelWidget);
+  //CTK_D(qMRMLWindowLevelWidget);
   
   if (this->VolumeDisplayNode)
   {
@@ -75,7 +74,7 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 // --------------------------------------------------------------------------
 int qMRMLWindowLevelWidget::autoWindowLevel() const
 {
-  QCTK_D(const qMRMLWindowLevelWidget);
+  CTK_D(const qMRMLWindowLevelWidget);
   
   // Assumes settings of the sliders are all the same
   return d->AutoManualComboBox->currentIndex();
@@ -142,7 +141,7 @@ void qMRMLWindowLevelWidget::setLevel(double level)
 // --------------------------------------------------------------------------
 double qMRMLWindowLevelWidget::window() const
 {
-  QCTK_D(const qMRMLWindowLevelWidget);
+  CTK_D(const qMRMLWindowLevelWidget);
 
   double min = d->WindowLevelRangeSlider->minimumValue();
   double max = d->WindowLevelRangeSlider->maximumValue();
@@ -153,7 +152,7 @@ double qMRMLWindowLevelWidget::window() const
 // --------------------------------------------------------------------------
 double qMRMLWindowLevelWidget::level() const
 {
-  QCTK_D(const qMRMLWindowLevelWidget);
+  CTK_D(const qMRMLWindowLevelWidget);
 
   double min = d->WindowLevelRangeSlider->minimumValue();
   double max = d->WindowLevelRangeSlider->maximumValue();
@@ -185,7 +184,7 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  //QCTK_D(qMRMLWindowLevelWidget);
+  //CTK_D(qMRMLWindowLevelWidget);
   
   if (volumeNode) 
   {
@@ -202,14 +201,14 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMinimum(double min)
 {
-  //QCTK_D(qMRMLWindowLevelWidget);
+  //CTK_D(qMRMLWindowLevelWidget);
   // TODO set min in the range widget d->WindowLevelRangeSlider
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMaximum(double max)
 {
-  //QCTK_D(qMRMLWindowLevelWidget);
+  //CTK_D(qMRMLWindowLevelWidget);
   // TODO set max in the range widget d->WindowLevelRangeSlider
 
 }
@@ -218,7 +217,7 @@ void qMRMLWindowLevelWidget::setMaximum(double max)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::updateWidgetFromMRML()
 {
-  QCTK_D(qMRMLWindowLevelWidget);
+  CTK_D(qMRMLWindowLevelWidget);
   
   if (this->VolumeDisplayNode) 
   {

@@ -25,7 +25,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="qCTKCollapsibleButton" name="CameraCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="CameraCollapsibleWidget">
      <property name="text">
       <string>Camera</string>
      </property>
@@ -85,9 +85,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

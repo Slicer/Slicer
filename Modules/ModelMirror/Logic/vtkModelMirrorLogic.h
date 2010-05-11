@@ -18,7 +18,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelMirrorNode.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <vector>
 #include <map>

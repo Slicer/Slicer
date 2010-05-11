@@ -1,11 +1,11 @@
 #ifndef __qSlicerMeasurementsAngleWidget_h
 #define __qSlicerMeasurementsAngleWidget_h 
 
-/// SlicerQT includes
-#include "qSlicerWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerWidget.h"
 
 #include "qSlicerMeasurementsModuleExport.h"
 
@@ -23,7 +23,7 @@ public:
   virtual void printAdditionalInfo();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsAngleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerMeasurementsAngleWidget);
 };
 
 #endif

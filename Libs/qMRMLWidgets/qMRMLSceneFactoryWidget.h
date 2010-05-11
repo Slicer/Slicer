@@ -1,12 +1,12 @@
 #ifndef __qMRMLSceneFactoryWidget_h
 #define __qMRMLSceneFactoryWidget_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QPushButton>
 #include <QString>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -41,7 +41,7 @@ signals:
   void mrmlNodeRemoved(vtkMRMLNode* node);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLSceneFactoryWidget);
+  CTK_DECLARE_PRIVATE(qMRMLSceneFactoryWidget);
 };
 
 #endif

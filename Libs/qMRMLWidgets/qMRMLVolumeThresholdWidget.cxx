@@ -1,9 +1,12 @@
 
-#include "qMRMLVolumeThresholdWidget.h"
-#include "ui_qMRMLVolumeThresholdWidget.h"
+// Qt includes
+#include <QDebug>
+#include <QStack>
 
 // qMRML includes
 #include "qMRMLUtils.h"
+#include "qMRMLVolumeThresholdWidget.h"
+#include "ui_qMRMLVolumeThresholdWidget.h"
 
 // MRML includes
 #include "vtkMRMLScalarVolumeNode.h"
@@ -12,14 +15,10 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-// QT includes
-#include <QDebug>
-#include <QStack>
-
 
 //-----------------------------------------------------------------------------
-class qMRMLVolumeThresholdWidgetPrivate: public qCTKPrivate<qMRMLVolumeThresholdWidget>,
-                                     public Ui_qMRMLVolumeThresholdWidget
+class qMRMLVolumeThresholdWidgetPrivate: public ctkPrivate<qMRMLVolumeThresholdWidget>,
+                                         public Ui_qMRMLVolumeThresholdWidget
 {
 public:
   qMRMLVolumeThresholdWidgetPrivate()
@@ -31,8 +30,8 @@ public:
 // --------------------------------------------------------------------------
 qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLVolumeThresholdWidget);
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  CTK_INIT_PRIVATE(qMRMLVolumeThresholdWidget);
+  CTK_D(qMRMLVolumeThresholdWidget);
   
   d->setupUi(this);
 
@@ -55,7 +54,7 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Super
 void qMRMLVolumeThresholdWidget::setAutoThreshold(int autoThreshold)
 {
   // 0-manual, 1-auto, 2-off
-  //QCTK_D(qMRMLVolumeThresholdWidget);
+  //CTK_D(qMRMLVolumeThresholdWidget);
   
   if (this->VolumeDisplayNode)
   {
@@ -85,7 +84,7 @@ void qMRMLVolumeThresholdWidget::setAutoThreshold(int autoThreshold)
 // --------------------------------------------------------------------------
 int qMRMLVolumeThresholdWidget::autoThreshold() const
 {
-  QCTK_D(const qMRMLVolumeThresholdWidget);
+  CTK_D(const qMRMLVolumeThresholdWidget);
   
   // Assumes settings of the sliders are all the same
   return d->AutoManualComboBox->currentIndex();
@@ -144,7 +143,7 @@ void qMRMLVolumeThresholdWidget::setUpperThreshold(double upperThreshold)
 // --------------------------------------------------------------------------
 double qMRMLVolumeThresholdWidget::lowerThreshold() const
 {
-  QCTK_D(const qMRMLVolumeThresholdWidget);
+  CTK_D(const qMRMLVolumeThresholdWidget);
 
   double min = d->VolumeThresholdRangeSlider->minimumValue();
 
@@ -154,7 +153,7 @@ double qMRMLVolumeThresholdWidget::lowerThreshold() const
 // --------------------------------------------------------------------------
 double qMRMLVolumeThresholdWidget::upperThreshold() const
 {
-  QCTK_D(const qMRMLVolumeThresholdWidget);
+  CTK_D(const qMRMLVolumeThresholdWidget);
 
   double max = d->VolumeThresholdRangeSlider->maximumValue();
 
@@ -185,7 +184,7 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  //QCTK_D(qMRMLVolumeThresholdWidget);
+  //CTK_D(qMRMLVolumeThresholdWidget);
   
   if (volumeNode) 
   {
@@ -202,14 +201,14 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volu
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMinimum(double min)
 {
-  //QCTK_D(qMRMLVolumeThresholdWidget);
+  //CTK_D(qMRMLVolumeThresholdWidget);
   // TODO set min in the range widget d->VolumeThresholdRangeSlider
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMaximum(double max)
 {
-  //QCTK_D(qMRMLVolumeThresholdWidget);
+  //CTK_D(qMRMLVolumeThresholdWidget);
   // TODO set max in the range widget d->VolumeThresholdRangeSlider
 
 }
@@ -218,7 +217,7 @@ void qMRMLVolumeThresholdWidget::setMaximum(double max)
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
 {
-  QCTK_D(qMRMLVolumeThresholdWidget);
+  CTK_D(qMRMLVolumeThresholdWidget);
   
   if (this->VolumeDisplayNode) 
   {

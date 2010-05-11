@@ -13,11 +13,11 @@
 #ifndef __qSlicerCoreApplication_h
 #define __qSlicerCoreApplication_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QApplication>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS, Slicer3_USE_PYTHONQT
 
@@ -29,7 +29,7 @@ class qSlicerModuleManager;
 class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions; 
 class qSlicerCoreApplicationPrivate;
-class qCTKSettings;
+class ctkSettings;
 #ifdef Slicer3_USE_PYTHONQT
 class qSlicerPythonManager;
 #endif
@@ -150,12 +150,12 @@ public:
 
   ///
   /// Get application settings
-  /// Note that his method will also instanciate a qCTKSettings object if required.
-  qCTKSettings* settings();
+  /// Note that his method will also instanciate a ctkSettings object if required.
+  ctkSettings* settings();
 
   ///
   /// Disable application settings
-  /// Instanciate a new empty qCTKSettings object and associate it with this instance.
+  /// Instanciate a new empty ctkSettings object and associate it with this instance.
   /// Note that the original settings won't deleted.
   void disableSettings();
 
@@ -176,7 +176,7 @@ signals:
   void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCoreApplication);
+  CTK_DECLARE_PRIVATE(qSlicerCoreApplication);
 };
 
 #endif

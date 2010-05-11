@@ -1,11 +1,11 @@
 #ifndef __qSlicerMainWindow_h
 #define __qSlicerMainWindow_h 
 
-// QT includes
+// Qt includes
 #include <QMainWindow>
 
-// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qSlicerQTExport.h"
 
@@ -46,7 +46,7 @@ protected:
   void setupMenuActions();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMainWindow);
+  CTK_DECLARE_PRIVATE(qSlicerMainWindow);
 };
 
 #endif

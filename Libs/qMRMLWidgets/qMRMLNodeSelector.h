@@ -1,15 +1,13 @@
 #ifndef __qMRMLNodeSelector_h
 #define __qMRMLNodeSelector_h
 
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKAddRemoveComboBox.h>
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QString>
+
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
+#include <ctkAddRemoveComboBox.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -18,7 +16,7 @@ class vtkMRMLScene;
 class vtkMRMLNode;
 class qMRMLNodeSelectorPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
+class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public ctkAddRemoveComboBox
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -31,7 +29,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeSelector : public qCTKAddRemoveComboBox
 
 public:
   /// Superclass typedef
-  typedef qCTKAddRemoveComboBox Superclass;
+  typedef ctkAddRemoveComboBox Superclass;
   
   /// Constructors
   explicit qMRMLNodeSelector(QWidget* parent = 0);
@@ -109,9 +107,14 @@ public slots:
   /// Set the selected node.
   void setCurrentNode(vtkMRMLNode* node);
 
+  ///
+  /// Convenient function allowing to set the selected node using the Node Id
+  inline void setCurrentNode(const QString& nodeId)
+    { this->setCurrentIndex(this->findData(nodeId)); }
+
 signals:
   /// 
-  /// emit the current displayed node. NULL if
+  /// Emitted when the current displayed \a node changed. NULL if
   /// the list is empty.
   void currentNodeChanged(vtkMRMLNode* node);
 
@@ -125,16 +128,20 @@ signals:
   void currentNodeChanged(bool);
 
   /// 
-  /// Emit when a node has been added to the list
+  /// Emitted when \a node has been added to the list
   void nodeAdded(vtkMRMLNode* node);
 
+  ///
+  /// Signal emitted when \a node is added by the user
+  void nodeAddedByUser(vtkMRMLNode* node);
+
   /// 
-  /// Emit when a node is about to be removed from a scene.
+  /// Emitted when a node is about to be removed from a scene.
   /// The node can still be found in the mrml scene.
   void nodeAboutToBeRemoved(vtkMRMLNode* node);
 
   /// 
-  /// Emit when a node has been removed from the scene and
+  /// Emitted when a node has been removed from the scene and
   /// the list. Warning, the node can't be found in the mrml
   /// scene anymore.
   void nodeRemoved(vtkMRMLNode* node);
@@ -164,7 +171,7 @@ protected:
 
   void populateItems();
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeSelector);
+  CTK_DECLARE_PRIVATE(qMRMLNodeSelector);
 };
 
 #endif

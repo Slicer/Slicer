@@ -14,20 +14,23 @@
 #ifndef __qSlicerCLIModuleWidget_h
 #define __qSlicerCLIModuleWidget_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTCLIExport.h"
 
-class ModuleDescription; 
+class ModuleDescription;
+class vtkMRMLNode; 
 class qSlicerCLIModuleWidgetPrivate;
 
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
@@ -35,16 +38,21 @@ public:
   virtual ~qSlicerCLIModuleWidget(){}
 
   ///
-  /// Set the module entry point associated with the module
+  /// Set the \a entryPoint associated with the module
   void setModuleEntryPoint(const QString& entryPoint);
 
+public slots:
+  ///
+  /// Set the current \a commandLineModuleNode
+  void setCurrentCommandLineModuleNode(vtkMRMLNode* commandLineModuleNode);
+  
 protected:
   /// 
-  /// Overloaded
+  /// \Overload
   virtual void setup();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCLIModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerCLIModuleWidget);
 };
 
 #endif

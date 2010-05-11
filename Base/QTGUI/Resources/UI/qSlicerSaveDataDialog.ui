@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSaveDataDialog</class>
+ <widget class="QDialog" name="qSlicerSaveDataDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>657</width>
+    <height>298</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Save Scene and Unsaved Data</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerBaseQTGUI.qrc">
+    <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0,0">
+   <item row="0" column="0">
+    <widget class="QToolButton" name="SelectSceneDataButton">
+     <property name="toolTip">
+      <string>Select scene &amp; modified data only</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerBaseQTGUI.qrc">
+       <normaloff>:/Icons/CheckModified.png</normaloff>:/Icons/CheckModified.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="6">
+    <widget class="QTableWidget" name="FileWidget">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Node Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Node Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Node Status</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>File Format</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>File Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Data Directory</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="QLabel" name="DirectoryLabel">
+     <property name="text">
+      <string>Destination for all selected:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="6">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QToolButton" name="SelectDataButton">
+     <property name="toolTip">
+      <string>select modified data only</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerBaseQTGUI.qrc">
+       <normaloff>:/Icons/CheckModifiedData.png</normaloff>:/Icons/CheckModifiedData.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="ctkDirectoryButton" name="DirectoryButton"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerBaseQTGUI.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>qSlicerSaveDataDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>qSlicerSaveDataDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

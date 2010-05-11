@@ -13,11 +13,11 @@
 #ifndef __qSlicerBaseQTBasePythonQtDecorators_h
 #define __qSlicerBaseQTBasePythonQtDecorators_h
 
-// QT includes
+// Qt includes
 #include <QObject>
 
-// qCTK includes
-#include <qCTKAbstractPythonManager.h>
+// CTK includes
+#include <ctkAbstractPythonManager.h>
 
 // VTK includes
 #include <vtkInstantiator.h>
@@ -49,7 +49,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerBaseQTBasePythonQtDecorators : public Q
 
 public:
 
-  qSlicerBaseQTBasePythonQtDecorators(qCTKAbstractPythonManager* pythonManager)
+  qSlicerBaseQTBasePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
     {
     Q_ASSERT(pythonManager);
     pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);

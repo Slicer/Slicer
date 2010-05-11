@@ -13,7 +13,7 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
-  public qCTKPrivate<qSlicerTractographyFiducialSeedingModuleWidget>,
+  public ctkPrivate<qSlicerTractographyFiducialSeedingModuleWidget>,
   public Ui_qSlicerTractographyFiducialSeedingModule
 {
 };
@@ -50,7 +50,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  CTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
 
 
@@ -225,7 +225,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLN
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetFromMRML()
 {
-  QCTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  CTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
   
   vtkMRMLTractographyFiducialSeedingNode *paramNode = this->TractographyFiducialSeedingNode;
 

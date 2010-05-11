@@ -1,22 +1,20 @@
+// Qt includes
+#include <QDebug>
+
+// SlicerQt includes
 #include "qSlicerMainWindow.h" 
-
 #include "ui_qSlicerMainWindow.h" 
-
-// SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorWidget.h"
 
-// QT includes
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qSlicerMainWindowPrivate: public qCTKPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
+class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
 {
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerMainWindow);
+  CTK_DECLARE_PUBLIC(qSlicerMainWindow);
   qSlicerMainWindowPrivate()
     {
     this->Core = 0;
@@ -30,8 +28,8 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerMainWindow);
-  QCTK_D(qSlicerMainWindow);
+  CTK_INIT_PRIVATE(qSlicerMainWindow);
+  CTK_D(qSlicerMainWindow);
   d->setupUi(this);
   
   // Main window core helps to coordinate various widgets and panels
@@ -41,16 +39,16 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
+CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
+CTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
+CTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, ModuleSelector);
+CTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, ModuleSelector);
 
 //-----------------------------------------------------------------------------
 // Helper macro allowing to connect the MainWindow action with the corresponding
@@ -64,12 +62,15 @@ QCTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, Mo
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
 {
-  QCTK_D(qSlicerMainWindow);
+  CTK_D(qSlicerMainWindow);
   
   this->connect(
     d->actionFileExit, SIGNAL(triggered()),
     qSlicerApplication::instance(), SLOT(quit()));
 
+  qSlicerMainWindow_connect(FileAddData);
+  qSlicerMainWindow_connect(FileImportScene);
+  qSlicerMainWindow_connect(FileLoadScene);
   qSlicerMainWindow_connect(EditRedo);
   qSlicerMainWindow_connect(EditUndo);
   qSlicerMainWindow_connect(WindowPythonInteractor);
@@ -84,7 +85,7 @@ void qSlicerMainWindow::setupMenuActions()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 {
-  QCTK_P(qSlicerMainWindow);
+  CTK_P(qSlicerMainWindow);
   
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 

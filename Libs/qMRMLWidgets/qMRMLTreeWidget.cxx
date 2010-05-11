@@ -1,42 +1,44 @@
+
+// Qt includes
+#include <QDebug>
+
+// CTK includes
+#include "ctkModelTester.h"
+
+// qMRML includes
 #include "qMRMLTreeWidget.h"
 //#include "qMRMLItemModel.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLTransformProxyModel.h"
-#include <QDebug>
-#include "qCTKModelTester.h"
 
 //------------------------------------------------------------------------------
-class qMRMLTreeWidgetPrivate: public qCTKPrivate<qMRMLTreeWidget>
+class qMRMLTreeWidgetPrivate: public ctkPrivate<qMRMLTreeWidget>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLTreeWidget);
+  CTK_DECLARE_PUBLIC(qMRMLTreeWidget);
   void init();
 };
 
 //------------------------------------------------------------------------------
 void qMRMLTreeWidgetPrivate::init()
 {
-  QCTK_P(qMRMLTreeWidget);
+  CTK_P(qMRMLTreeWidget);
   //p->QTreeView::setModel(new qMRMLItemModel(p));
   qMRMLSceneModel* sceneModel = new qMRMLSceneModel(p);
   qMRMLTransformProxyModel* transformModel = new qMRMLTransformProxyModel(p);
   transformModel->setSourceModel(sceneModel);
   p->QTreeView::setModel(transformModel);
   
-  //qCTKModelTester* modelTester = new qCTKModelTester(0, p);
-  //modelTester->setModel(sceneModel);
-  //new qCTKModelTester(sceneModel, p);
-  //modelTester->setModel(transformModel);
-  new qCTKModelTester(transformModel, p);
-  
+  ctkModelTester * tester = new ctkModelTester(p);
+  tester->setModel(transformModel);
 }
 
 //------------------------------------------------------------------------------
 qMRMLTreeWidget::qMRMLTreeWidget(QWidget *_parent)
   :QTreeView(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLTreeWidget);
-  qctk_d()->init();
+  CTK_INIT_PRIVATE(qMRMLTreeWidget);
+  ctk_d()->init();
 }
 
 //------------------------------------------------------------------------------

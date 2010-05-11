@@ -1,12 +1,12 @@
 #ifndef __qMRMLItemHelper_h
 #define __qMRMLItemHelper_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <Qt>
 #include <QVariant>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -66,7 +66,7 @@ protected:
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLAbstractItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLAbstractItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ public:
 protected: 
   qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory);
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ protected:
   qMRMLAbstractNodeItemHelper(vtkMRMLNode* node, int column, const qMRMLAbstractItemHelperFactory* factory);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLAbstractNodeItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLAbstractNodeItemHelper);
 };
 
 
@@ -127,7 +127,7 @@ protected:
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeCategoryItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLNodeCategoryItemHelper);
 };
 */
 
@@ -153,7 +153,7 @@ protected:
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   vtkMRMLScene* mrmlScene()const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLAbstractRootItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLAbstractRootItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ protected:
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   qMRMLAbstractItemHelper* proxy()const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLProxyItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLProxyItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ protected:
   vtkMRMLScene* mrmlScene()const;
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLVariantArrayItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLVariantArrayItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ public:
 protected:
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLExtraItemsHelper);
+  CTK_DECLARE_PRIVATE(qMRMLExtraItemsHelper);
 };
 
 #endif

@@ -1,11 +1,11 @@
 #ifndef __qSlicerWelcomeModule_h
 #define __qSlicerWelcomeModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractLoadableModule.h"
 
 #include "qSlicerWelcomeModuleExport.h"
 
@@ -36,7 +36,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerWelcomeModule);
+  CTK_DECLARE_PRIVATE(qSlicerWelcomeModule);
 };
 
 #endif

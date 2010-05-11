@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_12">
    <item>
-    <widget class="qCTKCollapsibleButton" name="WelcomeAndAboutCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="WelcomeAndAboutCollapsibleWidget">
      <property name="text">
       <string>Welcome &amp;&amp; About</string>
      </property>
@@ -30,7 +30,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowse">
+       <widget class="ctkFittedTextBrowser" name="textBrowse">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -54,7 +54,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="OverviewCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="OverviewCollapsibleWidget">
      <property name="text">
       <string>Overview</string>
      </property>
@@ -72,7 +72,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_2">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_2">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -96,7 +96,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="BasicAndExtendedModulesCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="BasicAndExtendedModulesCollapsibleWidget">
      <property name="text">
       <string>Basic &amp;&amp; Extended Modules</string>
      </property>
@@ -114,7 +114,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_3">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_3">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -138,7 +138,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="LoadingScenesAndDataCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="LoadingScenesAndDataCollapsibleWidget">
      <property name="text">
       <string>Loading Scenes &amp;&amp; Data</string>
      </property>
@@ -156,7 +156,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_4">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_4">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -180,7 +180,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="SavingScenesAndDataCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="SavingScenesAndDataCollapsibleWidget">
      <property name="text">
       <string>Saving Scenes &amp;&amp; Data</string>
      </property>
@@ -198,7 +198,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="CTKFittedTextBrowser">
+       <widget class="ctkFittedTextBrowser" name="CTKFittedTextBrowser">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -219,7 +219,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="AdjustingDataDisplayCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="AdjustingDataDisplayCollapsibleWidget">
      <property name="text">
       <string>Adjusting Data Display</string>
      </property>
@@ -237,7 +237,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_5">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_5">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -261,7 +261,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="ConfiguringViewersAndLayoutCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="ConfiguringViewersAndLayoutCollapsibleWidget">
      <property name="text">
       <string>Configuring Viewers &amp;&amp; Layout</string>
      </property>
@@ -279,7 +279,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_6">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_6">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -303,7 +303,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="MouseModesCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="MouseModesCollapsibleWidget">
      <property name="text">
       <string>Mouse Modes</string>
      </property>
@@ -321,7 +321,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_7">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_7">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -345,7 +345,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="CustomizingSlicerCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="CustomizingSlicerCollapsibleWidget">
      <property name="text">
       <string>Customizing Slicer</string>
      </property>
@@ -363,7 +363,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_8">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_8">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -387,7 +387,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="OtherUsefulHintsCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="OtherUsefulHintsCollapsibleWidget">
      <property name="text">
       <string>Other Useful Hints</string>
      </property>
@@ -405,7 +405,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_9">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_9">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -429,7 +429,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="CommunityCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="CommunityCollapsibleWidget">
      <property name="text">
       <string>Community</string>
      </property>
@@ -447,7 +447,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_10">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_10">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -471,7 +471,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="AcknowledgmentCollapsibleWidget">
+    <widget class="ctkCollapsibleButton" name="AcknowledgmentCollapsibleWidget">
      <property name="text">
       <string>Acknowledgment</string>
      </property>
@@ -489,7 +489,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="qCTKFittedTextBrowser" name="textBrowser_11">
+       <widget class="ctkFittedTextBrowser" name="textBrowser_11">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -533,15 +533,15 @@
  <layoutdefault spacing="0" margin="0"/>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKFittedTextBrowser</class>
+   <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
-   <header>qCTKFittedTextBrowser.h</header>
+   <header>ctkFittedTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

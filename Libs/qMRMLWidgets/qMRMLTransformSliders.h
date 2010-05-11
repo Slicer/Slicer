@@ -1,15 +1,12 @@
 #ifndef __qMRMLTransformSliders_h
 #define __qMRMLTransformSliders_h
 
-
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
+
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -127,7 +124,7 @@ protected slots:
   void onMaximumChanged(double max);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLTransformSliders);
+  CTK_DECLARE_PRIVATE(qMRMLTransformSliders);
 };
 
 #endif

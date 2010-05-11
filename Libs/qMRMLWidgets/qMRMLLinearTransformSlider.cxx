@@ -1,7 +1,10 @@
-#include "qMRMLLinearTransformSlider.h"
+
+// Qt includes
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
+#include "qMRMLLinearTransformSlider.h"
 
 // MRML includes
 #include "vtkMRMLLinearTransformNode.h"
@@ -11,11 +14,8 @@
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 
-// QT includes
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qMRMLLinearTransformSliderPrivate: public qCTKPrivate<qMRMLLinearTransformSlider>
+class qMRMLLinearTransformSliderPrivate: public ctkPrivate<qMRMLLinearTransformSlider>
 {
 public:
   qMRMLLinearTransformSliderPrivate();
@@ -37,13 +37,13 @@ qMRMLLinearTransformSliderPrivate::qMRMLLinearTransformSliderPrivate()
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLLinearTransformSlider);
+  CTK_INIT_PRIVATE(qMRMLLinearTransformSlider);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransform)
 {
-  QCTK_D(qMRMLLinearTransformSlider);
+  CTK_D(qMRMLLinearTransformSlider);
   d->TypeOfTransform = _typeOfTransform;
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
@@ -51,7 +51,7 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::TransformType qMRMLLinearTransformSlider::typeOfTransform() const
 {
-  return qctk_d()->TypeOfTransform;
+  return ctk_d()->TypeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -74,7 +74,7 @@ bool qMRMLLinearTransformSlider::isTranslation()const
 void qMRMLLinearTransformSlider::
 setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
-  QCTK_D(qMRMLLinearTransformSlider);
+  CTK_D(qMRMLLinearTransformSlider);
   d->CoordinateReference = _coordinateReference;
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
@@ -82,13 +82,13 @@ setCoordinateReference(CoordinateReferenceType _coordinateReference)
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::CoordinateReferenceType qMRMLLinearTransformSlider::coordinateReference() const
 {
-  return qctk_d()->CoordinateReference;
+  return ctk_d()->CoordinateReference;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
-  QCTK_D(qMRMLLinearTransformSlider);
+  CTK_D(qMRMLLinearTransformSlider);
   
   if (d->MRMLTransformNode == transformNode) { return; }
 
@@ -106,13 +106,13 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
 // --------------------------------------------------------------------------
 vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
 {
-  return qctk_d()->MRMLTransformNode;
+  return ctk_d()->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 {
-  QCTK_D(qMRMLLinearTransformSlider);
+  CTK_D(qMRMLLinearTransformSlider);
   
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
@@ -155,7 +155,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
-  QCTK_D(qMRMLLinearTransformSlider);
+  CTK_D(qMRMLLinearTransformSlider);
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
     d->CoordinateReference == Self::GLOBAL, transform);

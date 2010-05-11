@@ -4,8 +4,8 @@
 // SlicerQT includes
 #include "qSlicerAbstractLoadableModule.h"
 
-// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qSlicermiAnnotationModuleExport.h"
 
@@ -36,7 +36,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicermiAnnotationModule);
+  CTK_DECLARE_PRIVATE(qSlicermiAnnotationModule);
 };
 
 #endif

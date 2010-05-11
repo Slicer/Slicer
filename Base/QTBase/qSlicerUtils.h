@@ -42,7 +42,14 @@ public:
   static QString executableExtension();
 
   /// This function returns ".dll. on windows, ".so" on linux and ".dylib" on Mac
-  //static QString libraryExtension(); 
+  //static QString libraryExtension();
+
+  /// Extract module name given a library name
+  /// For example:
+  ///  on linux, libThresholdLib.so -> threshold
+  ///  on mac, libThresholdLib.{dylib, bundle, so} -> threshold
+  ///  on windows, ThresholdLib.dll -> threshold
+  static QString extractModuleNameFromLibraryName(const QString& libraryName);
   
   
 private:

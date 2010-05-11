@@ -11,10 +11,15 @@
 =========================================================================auto=*/
 
 
+// Qt includes
+#include <QButtonGroup>
+#include <QFileDialog>
+#include <QVector>
+#include <QDebug>
+
+// SlicerQt includes
 #include "qSlicerTransformsModuleWidget.h"
 #include "ui_qSlicerTransformsModule.h"
-
-// SlicerQT includes
 //#include "qSlicerApplication.h"
 //#include "qSlicerIOManager.h"
 
@@ -32,14 +37,8 @@
 #include <vtkTransform.h>
 #include <vtkMatrix4x4.h>
 
-// QT includes
-#include <QButtonGroup>
-#include <QFileDialog>
-#include <QVector>
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qSlicerTransformsModuleWidgetPrivate: public qCTKPrivate<qSlicerTransformsModuleWidget>,
+class qSlicerTransformsModuleWidgetPrivate: public ctkPrivate<qSlicerTransformsModuleWidget>,
                                             public Ui_qSlicerTransformsModule
 {
 public:
@@ -56,17 +55,17 @@ public:
 //-----------------------------------------------------------------------------
 vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
 {
-  QCTK_P(const qSlicerTransformsModuleWidget);
+  CTK_P(const qSlicerTransformsModuleWidget);
   return vtkSlicerTransformLogic::SafeDownCast(p->logic());
 }
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::setup()
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   d->setupUi(this);
 
   // Add coordinate reference button to a button group
@@ -113,7 +112,7 @@ QAction* qSlicerTransformsModuleWidget::showModuleAction()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   
   qMRMLTransformSliders::CoordinateReferenceType ref =
     (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL;
@@ -124,7 +123,7 @@ void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
 
@@ -146,7 +145,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onIdentityButtonPressed()
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   
   if (!d->MRMLTransformNode) { return; }
 
@@ -157,7 +156,7 @@ void qSlicerTransformsModuleWidget::onIdentityButtonPressed()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onInvertButtonPressed()
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   
   if (!d->MRMLTransformNode) { return; }
 
@@ -168,7 +167,7 @@ void qSlicerTransformsModuleWidget::onInvertButtonPressed()
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* caller)
 {
-  QCTK_D(qSlicerTransformsModuleWidget);
+  CTK_D(qSlicerTransformsModuleWidget);
   
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode) { return; }
@@ -214,7 +213,7 @@ void qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
 //-----------------------------------------------------------------------------
 int qSlicerTransformsModuleWidget::coordinateReference()
 {
-  return qctk_d()->CoordinateReferenceButtonGroup->checkedId();
+  return ctk_d()->CoordinateReferenceButtonGroup->checkedId();
 }
 
 //-----------------------------------------------------------------------------
@@ -224,6 +223,6 @@ void qSlicerTransformsModuleWidget::loadTransform()
   QString fileName = QFileDialog::getOpenFileName(this);
   if (!fileName.isEmpty())
     {
-    qctk_d()->logic()->AddTransform(fileName.toLatin1(), this->mrmlScene());
+    ctk_d()->logic()->AddTransform(fileName.toLatin1(), this->mrmlScene());
     }
 }

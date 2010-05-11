@@ -10,17 +10,22 @@
 
 =========================================================================auto=*/
 
+// SlicerQt/CoreModules
 #include "qSlicerCoreModuleFactory.h"
-
-// SlicerQT/CoreModules
-#include "qSlicerTransformsModule.h"
 #include "qSlicerCamerasModule.h"
+#include "qSlicerMRMLTreeModule.h"
+#include "qSlicerTransformsModule.h"
+// FIXME:Move the following to the Models module (when it will be ready in Qt.)
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreIOManager.h"
+#include "qSlicerModelsIO.h"
+// endofFIXME
   
 //-----------------------------------------------------------------------------
-class qSlicerCoreModuleFactoryPrivate:public qCTKPrivate<qSlicerCoreModuleFactory>
+class qSlicerCoreModuleFactoryPrivate: public ctkPrivate<qSlicerCoreModuleFactory>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
+  CTK_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
   qSlicerCoreModuleFactoryPrivate(){}
 
   ///
@@ -30,27 +35,13 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCoreModuleFactory::qSlicerCoreModuleFactory():Superclass()
-{
-  QCTK_INIT_PRIVATE(qSlicerCoreModuleFactory);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreModuleFactory::registerItems()
-{
-  QCTK_D(qSlicerCoreModuleFactory);
-  d->registerCoreModule<qSlicerTransformsModule>();
-  d->registerCoreModule<qSlicerCamerasModule>();
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerModuleFactoryPrivate methods
 
 //-----------------------------------------------------------------------------
 template<typename ClassType>
 void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 {
-  QCTK_P(qSlicerCoreModuleFactory);
+  CTK_P(qSlicerCoreModuleFactory);
   
   QString _moduleName;
   if (!p->registerQObject<ClassType>(_moduleName))
@@ -58,4 +49,56 @@ void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
     qDebug() << "Failed to register module: " << _moduleName; 
     return;
     }
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerCoreModuleFactory methods
+
+//-----------------------------------------------------------------------------
+qSlicerCoreModuleFactory::qSlicerCoreModuleFactory():Superclass()
+{
+  CTK_INIT_PRIVATE(qSlicerCoreModuleFactory);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreModuleFactory::registerItems()
+{
+  CTK_D(qSlicerCoreModuleFactory);
+  d->registerCoreModule<qSlicerCamerasModule>();
+  d->registerCoreModule<qSlicerMRMLTreeModule>();
+  d->registerCoreModule<qSlicerTransformsModule>();
+  
+  // FIXME: Move the following to the Models module (when it will be ready in Qt.)
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->registerIO(new qSlicerModelsIO());
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->registerIO(new qSlicerScalarOverlayIO());
+  // endofFIXME
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreModuleFactory::objectNameToKey(const QString& objectName)
+{
+  return Self::extractModuleName(objectName);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreModuleFactory::extractModuleName(const QString& className)
+{
+  QString moduleName = className;
+  
+  // Remove prefix 'qSlicer' if needed
+  if (moduleName.indexOf("qSlicer") == 0)
+    {
+    moduleName.remove(0, 7);
+    }
+
+  // Remove suffix 'Module' if needed
+  int index = moduleName.lastIndexOf("Module");
+  if (index == (moduleName.size() - 6))
+    {
+    moduleName.remove(index, 6);
+    }
+
+  return moduleName.toLower();
 }

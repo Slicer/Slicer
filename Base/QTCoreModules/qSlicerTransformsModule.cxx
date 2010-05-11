@@ -12,18 +12,18 @@
 
 #include "qSlicerTransformsModule.h"
 
-// SlicerQT includes
+// SlicerQt includes
 #include "vtkSlicerTransformLogic.h"
 #include "qSlicerTransformsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsModulePrivate: public qCTKPrivate<qSlicerTransformsModule>
+class qSlicerTransformsModulePrivate: public ctkPrivate<qSlicerTransformsModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QObject*);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget * qSlicerTransformsModule::createWidgetRepresentation()

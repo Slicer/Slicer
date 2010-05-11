@@ -18,7 +18,7 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="qCTKCollapsibleButton" name="RulerWidgetGroupBox">
+    <widget class="ctkCollapsibleButton" name="RulerWidgetGroupBox">
      <property name="text">
       <string>Ruler Widget</string>
      </property>
@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="AngleWidgetGroupBox">
+    <widget class="ctkCollapsibleButton" name="AngleWidgetGroupBox">
      <property name="text">
       <string>Angle Widget</string>
      </property>
@@ -66,7 +66,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="TransformWidgetGroupBox">
+    <widget class="ctkCollapsibleButton" name="TransformWidgetGroupBox">
      <property name="text">
       <string>Transform Widget</string>
      </property>
@@ -124,9 +124,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

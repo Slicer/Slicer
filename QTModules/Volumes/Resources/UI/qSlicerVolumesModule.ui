@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLNodeSelector" name="ActiveVolumeNodeSelector">
+      <widget class="qMRMLNodeComboBox" name="ActiveVolumeNodeSelector">
        <property name="nodeTypes">
         <stringlist>
          <string>vtkMRMLVolumeNode</string>
@@ -38,7 +38,7 @@
     </layout>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="CTKCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
      <property name="text">
       <string>Display</string>
      </property>
@@ -60,15 +60,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
+   <class>qMRMLNodeComboBox</class>
    <extends>QComboBox</extends>
-   <header>qMRMLNodeSelector.h</header>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

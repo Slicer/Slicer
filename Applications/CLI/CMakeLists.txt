@@ -20,6 +20,23 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 link_directories(${SlicerBaseCLI_BINARY_DIR})
 
 #####################
+if(BUILD_TESTING)
+  set (CLP CLIModule4Test)
+
+  set ( ${CLP}_SOURCE ${CLP}.cxx)
+  generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+
+  add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+  set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+  slicer3_set_plugins_output_path(${CLP}Lib)
+  target_link_libraries (${CLP}Lib)
+
+  add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+  slicer3_set_plugins_output_path(${CLP})
+  target_link_libraries (${CLP} ${CLP}Lib)
+endif()
+
+#####################
 set (CLP DiffusionTensorTest)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)

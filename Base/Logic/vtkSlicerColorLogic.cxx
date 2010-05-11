@@ -672,31 +672,31 @@ const char * vtkSlicerColorLogic::GetDefaultdGEMRICColorNodeID(int type)
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultVolumeColorNodeID()
 {
-  return this->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Grey);
+  return vtkSlicerColorLogic::GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Grey);
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  return this->GetDefaultFileColorNodeID("Slicer3_2010_Label_Colors.txt");
+  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("Slicer3_2010_Label_Colors.txt");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 {
-  return this->GetDefaultFileColorNodeID("Slicer3_2010_Brain_Labels.txt");
+  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("Slicer3_2010_Brain_Labels.txt");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultModelColorNodeID()
 {
-  return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Heat);
+  return vtkSlicerColorLogic::GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Heat);
 }
 
 //----------------------------------------------------------------------------
 const char * vtkSlicerColorLogic::GetDefaultFreeSurferLabelMapColorNodeID()
 {
-  return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
+  return vtkSlicerColorLogic::GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
 }
 
 //----------------------------------------------------------------------------

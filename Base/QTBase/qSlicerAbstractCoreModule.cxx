@@ -10,19 +10,20 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerAbstractCoreModule.h"
-
-// QT includes
+// Qt includes
 #include <QDebug>
 
+// SlicerQt includes
+#include "qSlicerAbstractCoreModule.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerAbstractCoreModulePrivate: public qCTKPrivate<qSlicerAbstractCoreModule>
+class qSlicerAbstractCoreModulePrivate: public ctkPrivate<qSlicerAbstractCoreModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractCoreModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractCoreModule, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractCoreModule::setup()

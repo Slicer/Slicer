@@ -40,7 +40,7 @@ Version:   $Revision: 1.2 $
 #include "vtkCommand.h"
 #include "vtkRenderWindowInteractor.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>

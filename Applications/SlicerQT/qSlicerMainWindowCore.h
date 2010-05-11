@@ -1,11 +1,11 @@
 #ifndef __qSlicerMainWindowCore_h
 #define __qSlicerMainWindowCore_h 
 
-// QT includes
+// Qt includes
 #include <QObject>
 
-// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qSlicerQTExport.h"
 
@@ -21,8 +21,11 @@ public:
   qSlicerMainWindowCore(qSlicerMainWindow *parent);
 
 public slots: 
-  // Description:
-  // Handle actions
+  /// 
+  /// Handle actions - See qSlicerMainWindow::setupMenuActions
+  void onFileAddDataActionTriggered();
+  void onFileImportSceneActionTriggered();
+  void onFileLoadSceneActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();
   void onWindowPythonInteractorActionTriggered();
@@ -31,7 +34,7 @@ protected:
   qSlicerMainWindow* widget() const;
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMainWindowCore);
+  CTK_DECLARE_PRIVATE(qSlicerMainWindowCore);
 };
 
 #endif

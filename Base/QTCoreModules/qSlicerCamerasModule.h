@@ -14,11 +14,11 @@
 #ifndef __qSlicerCamerasModule_h
 #define __qSlicerCamerasModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractCoreModule.h"
+/// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+/// SlicerQt includes
+#include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -50,7 +50,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
   
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCamerasModule);
+  CTK_DECLARE_PRIVATE(qSlicerCamerasModule);
 };
 
 #endif

@@ -1,11 +1,11 @@
 #ifndef __qSlicerTractographyFiducialSeedingModuleWidget_h
 #define __qSlicerTractographyFiducialSeedingModuleWidget_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerTractographyFiducialSeedingModuleExport.h"
 
@@ -98,7 +98,7 @@ protected:
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
 };
 
 #endif

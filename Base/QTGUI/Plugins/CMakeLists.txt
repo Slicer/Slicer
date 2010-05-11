@@ -1,7 +1,7 @@
 PROJECT(qSlicerBaseQTGUIPlugin)
 
 #
-# See qCTKWidgets/CMake/qCTKDesignerPluginMacros.cmake for details
+# See CMake/qCTKDesignerPluginMacros.cmake for details
 #
   
 # Source files

@@ -14,9 +14,12 @@
 #ifndef __qSlicerCLIModule_h
 #define __qSlicerCLIModule_h
 
+// CTK includes
+#include <ctkPimpl.h>
+
+// SlicerQt includes
 #include "qSlicerAbstractModule.h"
 
-#include <qCTKPimpl.h>
 #include "qSlicerBaseQTCLIExport.h"
 
 class qSlicerCLIModulePrivate;
@@ -32,7 +35,7 @@ public:
   /// Assign the module XML description.
   /// Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const char* xmlModuleDescription);
-  
+
   virtual QString title()const;
   virtual QString category()const;
   virtual QString contributor()const;
@@ -48,11 +51,15 @@ public:
 
   ///
   /// Get entry point as string
-  virtual QString entryPoint() = 0;
+  virtual QString entryPoint()const = 0;
+
+  ///
+  /// Get module type
+  virtual QString moduleType()const = 0;
 
 protected:
   /// 
-  /// Overloaded
+  /// \Overload
   virtual void setup();
 
   /// 
@@ -64,7 +71,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCLIModule);
+  CTK_DECLARE_PRIVATE(qSlicerCLIModule);
 };
 
 #endif

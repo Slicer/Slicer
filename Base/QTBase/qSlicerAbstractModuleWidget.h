@@ -14,9 +14,11 @@
 #ifndef __qSlicerAbstractModuleWidget_h
 #define __qSlicerAbstractModuleWidget_h
 
-#include "qSlicerWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerWidget.h"
 
 #include "qSlicerBaseQTBaseExport.h"
 
@@ -54,7 +56,7 @@ protected:
   vtkSlicerLogic* logic() const; 
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);
 
   /// Give access to qSlicerAbstractModule to the method qSlicerAbstractModuleWidget::setLogic
   friend class qSlicerAbstractModule;

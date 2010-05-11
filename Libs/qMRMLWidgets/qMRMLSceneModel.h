@@ -4,13 +4,11 @@
 // Qt includes
 #include <QAbstractListModel>
 
-// qCTKWidgets includes 
-#include <qCTKPimpl.h>
+// CTK includes 
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
-// qVTKWidgets includes 
-#include "qVTKObject.h"
-
-// qMRMLWidgets Includes
+// qMRML includes
 #include "qMRMLWidgetsExport.h"
 #include "qMRMLItemHelper.h"
 
@@ -74,7 +72,7 @@ protected:
   qMRMLAbstractItemHelperFactory* itemFactory()const;
   qMRMLAbstractItemHelper* item(const QModelIndex &modelIndex)const;
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLSceneModel);
+  CTK_DECLARE_PRIVATE(qMRMLSceneModel);
 };
 
 #endif

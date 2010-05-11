@@ -37,10 +37,6 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${SlicerBaseLogic_SOURCE_DIR}
     ${SlicerBaseLogic_BINARY_DIR}
-    ${qCTKWidgets_SOURCE_DIR}
-    ${qCTKWidgets_BINARY_DIR}
-    ${qVTKWidgets_SOURCE_DIR}
-    ${qVTKWidgets_BINARY_DIR}
     ${qMRMLWidgets_SOURCE_DIR}
     ${qMRMLWidgets_BINARY_DIR}
     ${MRML_SOURCE_DIR}

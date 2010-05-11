@@ -12,13 +12,13 @@
 #ifndef __qSlicerAbstractModule_h
 #define __qSlicerAbstractModule_h
 
-/// QT includes
+// Qt includes
 #include <QObject>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-/// QTBase includes
+// QTBase includes
 #include "qSlicerBaseQTBaseExport.h"
 
 class qSlicerAbstractModuleWidget;
@@ -60,6 +60,9 @@ public:
   typedef QObject Superclass;
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
+  /// The modules can typically be instanciated before the application
+  /// is initialized (module manager, iomanager...). Most of the 
+  /// initialization must be done in qSlicerAbstractModule::setup()
   qSlicerAbstractModule(QObject *parent=0);
 
   virtual void printAdditionalInfo();
@@ -144,7 +147,7 @@ protected:
   
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerAbstractModule);
+  CTK_DECLARE_PRIVATE(qSlicerAbstractModule);
 
   /// 
   /// Indicate if the module has already been initialized

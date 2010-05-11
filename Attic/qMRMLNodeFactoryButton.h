@@ -58,7 +58,7 @@ protected slots:
   void onMRMLSceneChanged();
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeFactoryButton);
+  CTK_DECLARE_PRIVATE(qMRMLNodeFactoryButton);
 }; 
 
 #endif

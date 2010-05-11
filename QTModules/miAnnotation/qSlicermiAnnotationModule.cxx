@@ -11,13 +11,13 @@
 Q_EXPORT_PLUGIN2(qSlicermiAnnotationModule, qSlicermiAnnotationModule);
 
 //-----------------------------------------------------------------------------
-class qSlicermiAnnotationModulePrivate: public qCTKPrivate<qSlicermiAnnotationModule>
+class qSlicermiAnnotationModulePrivate: public ctkPrivate<qSlicermiAnnotationModule>
 {
   public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicermiAnnotationModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicermiAnnotationModule, QObject*);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget * qSlicermiAnnotationModule::createWidgetRepresentation()

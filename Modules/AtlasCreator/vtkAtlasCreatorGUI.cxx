@@ -42,7 +42,7 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>

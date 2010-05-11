@@ -1,22 +1,21 @@
-#include "qSlicerMeasurementsModule.h"
-
-// SlicerQT includes
-#include "qSlicerMeasurementsModuleWidget.h"
-
-// QT includes
+// Qt includes
 #include <QtPlugin>
+
+// SlicerQt includes
+#include "qSlicerMeasurementsModule.h"
+#include "qSlicerMeasurementsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsModulePrivate: public qCTKPrivate<qSlicerMeasurementsModule>
+class qSlicerMeasurementsModulePrivate: public ctkPrivate<qSlicerMeasurementsModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QObject*);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget * qSlicerMeasurementsModule::createWidgetRepresentation()

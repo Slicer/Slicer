@@ -120,7 +120,7 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="StoppingValueSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="StoppingValueSpinBoxLabel">
      <property name="maximum">
       <double>1.000000000000000</double>
      </property>
@@ -144,7 +144,7 @@
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="StoppingCurvatureSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="StoppingCurvatureSpinBoxLabel">
      <property name="minimum">
       <double>0.100000000000000</double>
      </property>
@@ -167,7 +167,7 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="IntegrationStepSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="IntegrationStepSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -187,7 +187,7 @@
     </widget>
    </item>
    <item row="8" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="MinimumPathSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="MinimumPathSpinBoxLabel">
      <property name="maximum">
       <double>200.000000000000000</double>
      </property>
@@ -207,7 +207,7 @@
     </widget>
    </item>
    <item row="9" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="FiducialRegionSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="FiducialRegionSpinBoxLabel">
      <property name="maximum">
       <double>10.000000000000000</double>
      </property>
@@ -227,7 +227,7 @@
     </widget>
    </item>
    <item row="10" column="1">
-    <widget class="qCTKSliderSpinBoxWidget" name="FiducialStepSpinBoxLabel">
+    <widget class="ctkSliderSpinBoxWidget" name="FiducialStepSpinBoxLabel">
      <property name="minimum">
       <double>1.000000000000000</double>
      </property>
@@ -301,14 +301,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKAddRemoveComboBox</class>
+   <class>ctkAddRemoveComboBox</class>
    <extends>QWidget</extends>
-   <header>qCTKAddRemoveComboBox.h</header>
+   <header>ctkAddRemoveComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKSliderSpinBoxWidget</class>
+   <class>ctkSliderSpinBoxWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKSliderSpinBoxWidget.h</header>
+   <header>ctkSliderSpinBoxWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>

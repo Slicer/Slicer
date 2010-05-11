@@ -17,11 +17,12 @@
 
 #ifdef Slicer3_USE_QT
 
-#include "qSlicerApplication.h"
-#include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModulePanel.h"
+#include "qSlicerApplication.h"
+#include "qSlicerIOManager.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerModulePanel.h"
 
 // Qt includes
 #include <QDebug>
@@ -106,7 +107,7 @@
 #include "slicerPython.h"
 #endif
 
-// STL includes
+// STD includes
 #include <sstream>
 #include <string>
 
@@ -386,17 +387,19 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
     vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL MRMLScene." );
     return;
     }
-  if ( this->LoadSceneDialog == NULL )
-    {
-    vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL LoadSceneDialog." );
-    return;
-    }
   if ( this->MainSlicerWindow == NULL )
     {
     vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL SlicerWindow." );
     return;
     }
-
+  if ( this->LoadSceneDialog == NULL )
+    {
+    vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL LoadSceneDialog." );
+    return;
+    }
+#ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
+#else
   if ( !this->LoadSceneDialog->IsCreated() )
     {
     this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
@@ -503,6 +506,8 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
     }
   progressDialog->SetParent(NULL);
   progressDialog->Delete();
+#endif
+
   return;
 }
 
@@ -532,7 +537,10 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     vtkErrorMacro ( "ProcessImportSceneCommand: Got NULL SlicerWindow." );
     return;
     }
-
+#ifdef Slicer3_USE_QT
+  //qSlicerApplication::application()->ioManager()->loadScene();
+  qSlicerApplication::application()->ioManager()->openImportSceneDialog();
+#else
   if ( !this->LoadSceneDialog->IsCreated() )
     {
     this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
@@ -586,9 +594,9 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
       dialog->Delete();
       }
     }
-
   progressDialog->SetParent(NULL);
   progressDialog->Delete();
+#endif
   return;
 }
 
@@ -783,7 +791,11 @@ void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddDataCommand()
 {
+#ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->ioManager()->openLoadDataDialog();
+#else
   this->GetApplication()->Script("::Loader::ShowDialog");
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1214,6 +1226,9 @@ vtkMRMLLayoutNode *vtkSlicerApplicationGUI::GetGUILayoutNode()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
+#ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->ioManager()->openSaveDataDialog();
+#else
   this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
   this->SaveDataWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveDataWidget->SetVersion(this->GetSlicerApplication()->GetSvnRevision());
@@ -1221,6 +1236,7 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 
   this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
   return;
+#endif
 }
 
 //---------------------------------------------------------------------------

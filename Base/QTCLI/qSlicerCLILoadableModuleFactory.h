@@ -14,20 +14,20 @@
 #ifndef __qSlicerCLILoadableModuleFactory_h
 #define __qSlicerCLILoadableModuleFactory_h
 
-/// SlicerQT includes
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkAbstractLibraryFactory.h>
+
+// SlicerQt includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-#include <qCTKAbstractLibraryFactory.h>
-
 //-----------------------------------------------------------------------------
-class qSlicerCLILoadableModuleFactoryItem : public qCTKFactoryLibraryItem<qSlicerAbstractModule>
+class qSlicerCLILoadableModuleFactoryItem : public ctkFactoryLibraryItem<qSlicerAbstractModule>
 {
 public:
   // Convenient typedef
-  typedef qCTKFactoryLibraryItem<qSlicerAbstractModule> Superclass;
+  typedef ctkFactoryLibraryItem<qSlicerAbstractModule> Superclass;
   
   explicit qSlicerCLILoadableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
   virtual ~qSlicerCLILoadableModuleFactoryItem(){}
@@ -45,19 +45,30 @@ class qSlicerCLILoadableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
-  public qCTKAbstractLibraryFactory<qSlicerAbstractModule,qSlicerCLILoadableModuleFactoryItem>
+  public ctkAbstractLibraryFactory<qSlicerAbstractModule,qSlicerCLILoadableModuleFactoryItem>
 {
 public:
 
-  typedef qCTKAbstractLibraryFactory<qSlicerAbstractModule,
+  typedef ctkAbstractLibraryFactory<qSlicerAbstractModule,
                                      qSlicerCLILoadableModuleFactoryItem> Superclass;
   qSlicerCLILoadableModuleFactory();
   virtual ~qSlicerCLILoadableModuleFactory(){}
 
+  ///
+  /// \overload
   virtual void registerItems();
 
+  ///
+  /// \overload
+  virtual QString fileNameToKey(const QString& fileName);
+
+  ///
+  /// Extract module name given \a libraryName
+  /// See qSlicerUtils::extractModuleNameFromLibraryName
+  static QString extractModuleName(const QString& libraryName);
+
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCLILoadableModuleFactory);
+  CTK_DECLARE_PRIVATE(qSlicerCLILoadableModuleFactory);
 };
 
 #endif

@@ -36,7 +36,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKRangeSlider" name="WindowLevelRangeSlider">
+    <widget class="ctkRangeSlider" name="WindowLevelRangeSlider">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -46,9 +46,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKRangeSlider</class>
+   <class>ctkRangeSlider</class>
    <extends>QSlider</extends>
-   <header>qCTKRangeSlider.h</header>
+   <header>ctkRangeSlider.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -14,11 +14,11 @@
 #ifndef __qSlicerAbstractCoreModule_h
 #define __qSlicerAbstractCoreModule_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModule.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModule.h"
 
 #include "qSlicerBaseQTBaseExport.h"
 
@@ -37,7 +37,7 @@ protected:
   virtual void setup();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
+  CTK_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
 };
 
 #endif

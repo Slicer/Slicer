@@ -11,10 +11,19 @@ IF(NOT DEFINED BUILD_SHARED_LIBS)
   OPTION(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
 
+# CMake Macros
+INCLUDE(CMake/qCTKParseArgumentsMacro.cmake)
+INCLUDE(CMake/qCTKDesignerPluginMacros.cmake)
+
+# CMake module
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
+
 #-----------------------------------------------------------------------------
 # Sources
 #
 SET(qMRMLWidgets_SRCS
+  qCTKFlowLayout.cxx
+  qCTKFlowLayout.h
   qMRMLEventLogger.cxx
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
@@ -111,8 +120,6 @@ SET(QT_INCLUDE_DIRS
   )
 
 FOREACH(package 
-    qCTKWidgets
-    qVTKWidgets
     MRML
     )
   # This is mostly to test building this lib as standalone outside Slicer3
@@ -155,8 +162,7 @@ ADD_LIBRARY(${lib_name}
 SET(qMRMLWidgets_LIBRARIES 
   ${QT_LIBRARIES}
   MRML
-  qCTKWidgets
-  qVTKWidgets
+  CTKVisualizationVTKWidgets
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})

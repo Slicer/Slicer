@@ -10,21 +10,20 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerModuleFactoryManager.h"
-
-// SlicerQT includes
-#include "qSlicerAbstractModule.h"
-
-// QT includes
+// Qt includes
 #include <QHash>
 
+// SlicerQt includes
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerAbstractModule.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerModuleFactoryManagerPrivate : public qCTKPrivate<qSlicerModuleFactoryManager>
+class qSlicerModuleFactoryManagerPrivate : public ctkPrivate<qSlicerModuleFactoryManager>
 {
 public:
   // Convenient typedefs
   typedef qSlicerModuleFactoryManagerPrivate Self; 
-  typedef qCTKAbstractFactory<qSlicerAbstractModule> qSlicerAbstractModuleFactory;
+  typedef ctkAbstractFactory<qSlicerAbstractModule> qSlicerAbstractModuleFactory;
 
   // Instantiate a module
   qSlicerAbstractModule* instantiateModule(qSlicerAbstractModuleFactory* factory,
@@ -53,7 +52,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerModuleFactoryManager::qSlicerModuleFactoryManager()
 {
-  QCTK_INIT_PRIVATE(qSlicerModuleFactoryManager);
+  CTK_INIT_PRIVATE(qSlicerModuleFactoryManager);
 }
 
 //-----------------------------------------------------------------------------
@@ -65,7 +64,7 @@ qSlicerModuleFactoryManager::~qSlicerModuleFactoryManager()
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::printAdditionalInfo()
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   
   qDebug() << "qSlicerModuleFactoryManager (" << this << ")";
   d->printAdditionalInfo();
@@ -75,7 +74,7 @@ void qSlicerModuleFactoryManager::printAdditionalInfo()
 void qSlicerModuleFactoryManager::registerFactory(const QString& factoryName,
                                                   qSlicerAbstractModuleFactory* factory)
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   Q_ASSERT(!d->RegisteredFactories.contains(factoryName));
   d->RegisteredFactories[factoryName] = factory;
 }
@@ -83,7 +82,7 @@ void qSlicerModuleFactoryManager::registerFactory(const QString& factoryName,
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::registerAllModules()
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   foreach (const QString& factoryName, d->RegisteredFactories.keys())
     {
     this->registerModules(factoryName);
@@ -93,7 +92,7 @@ void qSlicerModuleFactoryManager::registerAllModules()
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::registerModules(const QString& factoryName)
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   Q_ASSERT(d->RegisteredFactories.contains(factoryName));
   qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
 
@@ -109,7 +108,7 @@ void qSlicerModuleFactoryManager::registerModules(const QString& factoryName)
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::instantiateAllModules()
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   foreach (const QString& factoryName, d->RegisteredFactories.keys())
     {
     this->instantiateModules(factoryName);
@@ -119,7 +118,7 @@ void qSlicerModuleFactoryManager::instantiateAllModules()
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::instantiateModules(const QString& factoryName)
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   Q_ASSERT(d->RegisteredFactories.contains(factoryName));
   qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
 
@@ -132,7 +131,7 @@ void qSlicerModuleFactoryManager::instantiateModules(const QString& factoryName)
 //-----------------------------------------------------------------------------
 QString qSlicerModuleFactoryManager::moduleName(const QString & title) const
 {
-  QCTK_D(const qSlicerModuleFactoryManager);
+  CTK_D(const qSlicerModuleFactoryManager);
   // Lookup module name
   qSlicerModuleFactoryManagerPrivate::MapConstIterator iter = d->MapTitleToName.constFind(title);
 
@@ -147,7 +146,7 @@ QString qSlicerModuleFactoryManager::moduleName(const QString & title) const
 //-----------------------------------------------------------------------------
 QString qSlicerModuleFactoryManager::moduleTitle(const QString & name) const
 {
-  QCTK_D(const qSlicerModuleFactoryManager);
+  CTK_D(const qSlicerModuleFactoryManager);
   // Lookup module name
   qSlicerModuleFactoryManagerPrivate::MapConstIterator iter = d->MapNameToTitle.constFind(name);
 
@@ -162,7 +161,7 @@ QString qSlicerModuleFactoryManager::moduleTitle(const QString & name) const
 //-----------------------------------------------------------------------------
 QStringList qSlicerModuleFactoryManager::moduleNames() const
 {
-  QCTK_D(const qSlicerModuleFactoryManager);
+  CTK_D(const qSlicerModuleFactoryManager);
   QStringList names;
   foreach (const QString& factoryName, d->RegisteredFactories.keys())
     {
@@ -174,7 +173,7 @@ QStringList qSlicerModuleFactoryManager::moduleNames() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerModuleFactoryManager::moduleNames(const QString& factoryName) const
 {
-  QCTK_D(const qSlicerModuleFactoryManager);
+  CTK_D(const qSlicerModuleFactoryManager);
   Q_ASSERT(d->RegisteredFactories.contains(factoryName));
   qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
   return factory->names();
@@ -183,7 +182,7 @@ QStringList qSlicerModuleFactoryManager::moduleNames(const QString& factoryName)
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule* qSlicerModuleFactoryManager::instantiateModule(const QString& name)
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   
   // Retrieve the factory name associated with the module
   qSlicerModuleFactoryManagerPrivate::Map2ConstIterator iter =
@@ -205,7 +204,7 @@ qSlicerAbstractModule* qSlicerModuleFactoryManager::instantiateModule(const QStr
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::uninstantiateModule(const QString& name)
 {
-  QCTK_D(qSlicerModuleFactoryManager);
+  CTK_D(qSlicerModuleFactoryManager);
   qDebug() << "Uninstantiating:" << name;
   d->uninstantiateModule(name);
 }
@@ -222,7 +221,7 @@ void qSlicerModuleFactoryManager::uninstantiateAll()
 //-----------------------------------------------------------------------------
 bool qSlicerModuleFactoryManager::isRegistered(const QString& name)const
 {
-  QCTK_D(const qSlicerModuleFactoryManager);
+  CTK_D(const qSlicerModuleFactoryManager);
   return d->MapNameToTitle.contains(name);
 }
 
@@ -287,7 +286,7 @@ qSlicerAbstractModule* qSlicerModuleFactoryManagerPrivate::instantiateModule(
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManagerPrivate::uninstantiateModule(const QString& name)
 {
-  QCTK_P(qSlicerModuleFactoryManager);
+  CTK_P(qSlicerModuleFactoryManager);
   
   // Retrieve the factoryType associated with the module
   Self::Map2ConstIterator iter = this->ModuleNameToFactoryCache.constFind(name);

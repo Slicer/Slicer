@@ -19,7 +19,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="qCTKCollapsibleButton" name="ModifyAllRulerNodesGroupBox">
+    <widget class="ctkCollapsibleButton" name="ModifyAllRulerNodesGroupBox">
      <property name="text">
       <string>Modify All Ruler Nodes</string>
      </property>
@@ -28,7 +28,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="qCTKTitleComboBox" name="AllRulersVisibilityComboBox">
+       <widget class="ctkTitleComboBox" name="AllRulersVisibilityComboBox">
         <property name="title">
          <string/>
         </property>
@@ -73,7 +73,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qCTKCollapsibleButton" name="ModifySelectedRulerNodesGroupBox">
+    <widget class="ctkCollapsibleButton" name="ModifySelectedRulerNodesGroupBox">
      <property name="text">
       <string>Modify Selected Ruler Nodes</string>
      </property>
@@ -121,7 +121,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="qCTKCoordinatesWidget" name="RulerPosition1CoordinatesWidget">
+         <widget class="ctkCoordinatesWidget" name="RulerPosition1CoordinatesWidget">
           <property name="Dimension">
            <number>3</number>
           </property>
@@ -135,12 +135,12 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="qCTKCoordinatesWidget" name="RulerPosition2CoordinatesWidget"/>
+         <widget class="ctkCoordinatesWidget" name="RulerPosition2CoordinatesWidget"/>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="qCTKCollapsibleGroupBox" name="ConstrainRulerToModelsGroupBox">
+       <widget class="ctkCollapsibleGroupBox" name="ConstrainRulerToModelsGroupBox">
         <property name="title">
          <string>Constrain Ruler To Models</string>
         </property>
@@ -172,7 +172,7 @@
        </widget>
       </item>
       <item>
-       <widget class="qCTKCollapsibleGroupBox" name="RulerDisplayOptionsGroupBox">
+       <widget class="ctkCollapsibleGroupBox" name="RulerDisplayOptionsGroupBox">
         <property name="title">
          <string>Display Options</string>
         </property>
@@ -191,7 +191,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="qCTKColorPickerButton" name="RulerEndPointsColorPicker"/>
+          <widget class="ctkColorPickerButton" name="RulerEndPointsColorPicker"/>
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="RulerLineColorLabel">
@@ -204,7 +204,7 @@
           </widget>
          </item>
          <item row="0" column="3">
-          <widget class="qCTKColorPickerButton" name="CTKColorPickerButton_2"/>
+          <widget class="ctkColorPickerButton" name="CTKColorPickerButton_2"/>
          </item>
          <item row="1" column="0" colspan="4">
           <widget class="QGroupBox" name="RulerDistanceAnnotationGroupBox">
@@ -267,31 +267,31 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKColorPickerButton</class>
+   <class>ctkColorPickerButton</class>
    <extends>QPushButton</extends>
-   <header>qCTKColorPickerButton.h</header>
+   <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKCoordinatesWidget</class>
+   <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKCoordinatesWidget.h</header>
+   <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKTitleComboBox</class>
+   <class>ctkTitleComboBox</class>
    <extends>QComboBox</extends>
-   <header>qCTKTitleComboBox.h</header>
+   <header>ctkTitleComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>

@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>429</width>
-        <height>101</height>
+        <width>431</width>
+        <height>108</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -48,7 +48,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="qCTKCollapsibleButton" name="MainCollapsibleWidget">
+        <widget class="ctkCollapsibleButton" name="MainCollapsibleWidget">
          <property name="text">
           <string>Module Title</string>
          </property>
@@ -245,14 +245,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
+   <extends>QComboBox</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>

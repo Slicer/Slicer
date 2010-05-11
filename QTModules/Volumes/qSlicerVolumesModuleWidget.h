@@ -2,10 +2,10 @@
 #define __qSlicerVolumesModuleWidget_h
 
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-/// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerVolumesModuleExport.h"
@@ -33,7 +33,7 @@ protected:
   virtual void setup();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerVolumesModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerVolumesModuleWidget);
 };
 
 #endif

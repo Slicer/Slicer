@@ -53,8 +53,6 @@ SET(dirs ${dirs}
 #
 IF(Slicer3_USE_QT)
 set(dirs ${dirs}
-  qCTKWidgets
-  qVTKWidgets
   qMRMLWidgets
   )
 ENDIF(Slicer3_USE_QT)

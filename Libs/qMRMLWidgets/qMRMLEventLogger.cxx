@@ -1,8 +1,10 @@
+
+// Qt includes
+#include <QDebug>
+
+// qMRML includes
 #include "qMRMLEventLogger.h"
 #include "qMRMLEventLogger_p.h"
-
-// QT includes
-#include <QDebug>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -13,8 +15,8 @@
 //------------------------------------------------------------------------------
 qMRMLEventLogger::qMRMLEventLogger(QObject* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLEventLogger);
-  QCTK_D(qMRMLEventLogger);
+  CTK_INIT_PRIVATE(qMRMLEventLogger);
+  CTK_D(qMRMLEventLogger);
   d->init();
 }
 
@@ -26,7 +28,7 @@ qMRMLEventLogger::~qMRMLEventLogger()
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::setMRMLScene(vtkMRMLScene* scene)
 {
-  qctk_d()->setMRMLScene(scene);
+  ctk_d()->setMRMLScene(scene);
 }
 
 //------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ void qMRMLEventLogger::setMRMLScene(vtkMRMLScene* scene)
 #define QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(_EVENT_NAME)   \
 bool qMRMLEventLogger::listening##_EVENT_NAME##Event()        \
 {                                                             \
-  QCTK_D(qMRMLEventLogger);                                   \
+  CTK_D(qMRMLEventLogger);                                   \
   return d->EventToListen.contains(#_EVENT_NAME);             \
 }
 
@@ -65,7 +67,7 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneRestored);
 #define QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(_EVENT_NAME)            \
 void qMRMLEventLogger::listen##_EVENT_NAME##Event(bool listen)      \
 {                                                                   \
-  QCTK_D(qMRMLEventLogger);                                         \
+  CTK_D(qMRMLEventLogger);                                         \
                                                                     \
   Q_ASSERT(!d->EventNameToConnectionIdMap.contains(#_EVENT_NAME));  \
   QString cid = d->EventNameToConnectionIdMap[#_EVENT_NAME];        \
@@ -148,7 +150,7 @@ QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneRestored);
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerPrivate::init()
 {
-  QCTK_P(qMRMLEventLogger);
+  CTK_P(qMRMLEventLogger);
   p->listenNodeAddedEvent(true);
   p->listenNodeRemovedEvent(true);
   p->listenNewSceneEvent(true);
@@ -173,7 +175,7 @@ qMRMLEventLoggerPrivate::qMRMLEventLoggerPrivate():Superclass()
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
-  QCTK_P(qMRMLEventLogger);
+  CTK_P(qMRMLEventLogger);
   
   if (scene == this->MRMLScene)
     {

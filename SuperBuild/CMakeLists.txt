@@ -45,6 +45,35 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 # 
 
 #-----------------------------------------------------------------------------
+# Update CMake module path
+#
+set(CMAKE_MODULE_PATH
+  ${CMAKE_SOURCE_DIR}/CMake
+  ${CMAKE_BINARY_DIR}/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+  
+#-----------------------------------------------------------------------------
+# Convenient macro allowing to download a file
+#
+MACRO(downloadFile url dest)
+  FILE(DOWNLOAD ${url} ${dest} STATUS status)
+  LIST(GET status 0 error_code)
+  LIST(GET status 1 error_msg)
+  IF(error_code)
+    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  ENDIF()
+ENDMACRO()
+
+#-----------------------------------------------------------------------------
+# Prerequisites
+#
+set(git_repo http://github.com/pieper/CTK/raw/master/)
+
+set(file CMake/ExternalProject.cmake)
+downloadFile(${git_repo}/${file} ${CMAKE_BINARY_DIR}/${file})
+
+#-----------------------------------------------------------------------------
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 #
 if(CMAKE_COMPILER_2005)
@@ -888,6 +917,31 @@ ExternalProject_Add(vtk
 )
 
 #-----------------------------------------------------------------------------
+# Get and build CTK
+set(ctk_source ${CMAKE_BINARY_DIR}/CTK)
+if (Slicer3_USE_QT)
+  ExternalProject_Add(CTK
+    GIT_REPOSITORY "git://github.com/pieper/CTK.git"
+    SOURCE_DIR ${ctk_source}
+    BINARY_DIR CTK-build
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      -DBUILD_TESTING:BOOL=OFF
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+      -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+      -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
+      -DCTK_LIB_Widgets:BOOL=ON
+      -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
+      -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer3_USE_PYTHONQT}
+    INSTALL_COMMAND ""
+    )
+endif()
+
+#-----------------------------------------------------------------------------
 # Get and build kwwidgets
 
 if(Slicer3_USE_KWWIDGETS)
@@ -1122,6 +1176,7 @@ ExternalProject_Add(${proj}
     -DOpenIGTLink_DIR:PATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
     -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
     -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
     -DSlicer3_USE_BatchMake=ON
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}

@@ -11,6 +11,12 @@
 =========================================================================auto=*/
 
 
+// Qt includes
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QPointer>
+#include <QDebug>
+
 #include "qSlicerWidget.h"
 
 // SlicerLogic includes
@@ -19,14 +25,8 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-// QT includes
-#include <QScrollArea>
-#include <QVBoxLayout>
-#include <QPointer>
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qSlicerWidgetPrivate: public qCTKPrivate<qSlicerWidget>
+class qSlicerWidgetPrivate: public ctkPrivate<qSlicerWidget>
 {
 public:
   QPointer<QWidget>                          ParentContainer;
@@ -37,7 +37,7 @@ public:
 qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
   :Superclass(_parent, f)
 {
-  QCTK_INIT_PRIVATE(qSlicerWidget);
+  CTK_INIT_PRIVATE(qSlicerWidget);
 }
 
 //-----------------------------------------------------------------------------
@@ -53,19 +53,19 @@ QWidget* qSlicerWidget::parentWidget()
 //-----------------------------------------------------------------------------
 bool qSlicerWidget::isParentContainerScrollArea()
 {
-  return (qobject_cast<QScrollArea*>(qctk_d()->ParentContainer)!=0);
+  return (qobject_cast<QScrollArea*>(ctk_d()->ParentContainer)!=0);
 }
 
 //-----------------------------------------------------------------------------
 QScrollArea* qSlicerWidget::getScrollAreaParentContainer()
 {
-  return qobject_cast<QScrollArea*>(qctk_d()->ParentContainer);
+  return qobject_cast<QScrollArea*>(ctk_d()->ParentContainer);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
 {
-  QCTK_D(qSlicerWidget);
+  CTK_D(qSlicerWidget);
   if (enable)
     {
     if (this->getScrollAreaParentContainer())
@@ -117,7 +117,7 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setWindowFlags(Qt::WindowFlags type)
 {
-  QCTK_D(qSlicerWidget);
+  CTK_D(qSlicerWidget);
   if (d->ParentContainer)
     {
     d->ParentContainer->setWindowFlags(type);
@@ -155,17 +155,17 @@ void qSlicerWidget::setParentVisible(bool visible)
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  if (scene == qctk_d()->MRMLScene)
+  if (scene == ctk_d()->MRMLScene)
     {
     return ;
     }
-  qctk_d()->MRMLScene = scene;
+  ctk_d()->MRMLScene = scene;
   emit mrmlSceneChanged(scene);
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_GET_CXX(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-//QCTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-//QCTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+//CTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+//CTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);

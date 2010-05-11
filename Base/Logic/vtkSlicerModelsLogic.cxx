@@ -94,8 +94,6 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
   return res;
 }
 
-
-
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 {
@@ -262,7 +260,7 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
+vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
 {
   if (modelNode == NULL ||
       filename == NULL)
@@ -323,7 +321,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     {
     this->GetMRMLScene()->SaveStateForUndo();
     storageNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNodeNoNotify(storageNode);
+    this->GetMRMLScene()->AddNode(storageNode);
     // now add this as another storage node on the model
     modelNode->AddAndObserveStorageNodeID(storageNode->GetID());
     
@@ -336,7 +334,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
       vtkErrorMacro("AddScalar: error adding scalar " << filename);
       this->GetMRMLScene()->RemoveNode(storageNode);
       fsmoStorageNode->Delete();
-      return 0;
+      return storageNode;
       }
 
     //--- informatics
@@ -362,7 +360,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     }
   fsmoStorageNode->Delete();
   
-  return 1;
+  return storageNode;
 }
 
 //----------------------------------------------------------------------------

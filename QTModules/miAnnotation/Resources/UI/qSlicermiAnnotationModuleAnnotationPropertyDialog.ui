@@ -22,7 +22,7 @@
   <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>
-  <widget class="qCTKCollapsibleGroupBox" name="displayPropertiesCTKCollapsibleGroupBox">
+  <widget class="ctkCollapsibleGroupBox" name="displayPropertiesCTKCollapsibleGroupBox">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -81,14 +81,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="qCTKColorPickerButton" name="textUnselectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
            <property name="text">
             <string>Selected Text Color</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="qCTKColorPickerButton" name="textSelectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
            <property name="text">
             <string>Unselected Text Color</string>
            </property>
@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item>
-          <widget class="qCTKSliderSpinBoxWidget" name="textScaleSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="textScaleSliderSpinBoxWidget">
            <property name="maximum">
             <double>40.000000000000000</double>
            </property>
@@ -134,14 +134,14 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="qCTKColorPickerButton" name="pointUnselectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="pointUnselectedColorPickerButton">
            <property name="text">
             <string>Selected Point Color</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="qCTKColorPickerButton" name="pointSelectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
            <property name="text">
             <string>Unselected Line Color</string>
            </property>
@@ -187,7 +187,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="pointOpacitySliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="pointOpacitySliderSpinBoxWidget">
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -197,24 +197,24 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="pointAmbientSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="pointAmbientSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="pointDiffuseSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="pointDiffuseSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="pointSpecularSliderSpinBoxWidget"/>
+          <widget class="ctkSliderSpinBoxWidget" name="pointSpecularSliderSpinBoxWidget"/>
          </item>
          <item row="0" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="pointSizeSliderSpinBoxWidget"/>
+          <widget class="ctkSliderSpinBoxWidget" name="pointSizeSliderSpinBoxWidget"/>
          </item>
         </layout>
        </item>
@@ -240,14 +240,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="qCTKColorPickerButton" name="lineUnselectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="lineUnselectedColorPickerButton">
            <property name="text">
             <string>Selected Line Color</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="qCTKColorPickerButton" name="lineSelectedColorPickerButton">
+          <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
            <property name="text">
             <string>Unselected Line Color</string>
            </property>
@@ -265,7 +265,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="lineWidthSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="lineWidthSliderSpinBoxWidget">
            <property name="singleStep">
             <double>0.100000000000000</double>
            </property>
@@ -279,7 +279,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="lineOpacitySliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="lineOpacitySliderSpinBoxWidget">
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -296,7 +296,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="lineAmbientSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="lineAmbientSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -310,7 +310,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="lineDiffuseSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="lineDiffuseSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -324,7 +324,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="qCTKSliderSpinBoxWidget" name="lineSpecularSliderSpinBoxWidget">
+          <widget class="ctkSliderSpinBoxWidget" name="lineSpecularSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -372,7 +372,7 @@
     <string>Modify Annotation Properties</string>
    </property>
   </widget>
-  <widget class="qCTKCollapsibleGroupBox" name="CTKCollapsibleGroupBox_4">
+  <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_4">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -482,20 +482,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleGroupBox</class>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qCTKCollapsibleGroupBox.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKColorPickerButton</class>
+   <class>ctkColorPickerButton</class>
    <extends>QPushButton</extends>
-   <header>qCTKColorPickerButton.h</header>
+   <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
-   <class>qCTKSliderSpinBoxWidget</class>
+   <class>ctkSliderSpinBoxWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKSliderSpinBoxWidget.h</header>
+   <header>ctkSliderSpinBoxWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

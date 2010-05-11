@@ -1,7 +1,7 @@
 PROJECT(qMRMLWidgetsPlugin)
 
 #
-# See qCTKWidgets/CMake/qCTKDesignerPluginMacros.cmake for details
+# See CMake/qCTKDesignerPluginMacros.cmake for details
 #
   
 # Source files
@@ -52,8 +52,6 @@ SET(designer_plugin_MOC_SRCS
 
 SET(designer_plugin_TARGET_LIBRARIES
   qMRMLWidgets
-  qVTKWidgets
-  qCTKWidgets
   )
 
 qctk_build_designer_plugin( 

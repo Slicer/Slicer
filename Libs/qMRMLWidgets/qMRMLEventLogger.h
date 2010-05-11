@@ -1,11 +1,11 @@
 #ifndef __qMRMLEventLogger_h
 #define __qMRMLEventLogger_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QObject>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -90,7 +90,7 @@ signals:
   void signalSceneRestoredEvent();
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLEventLogger);
+  CTK_DECLARE_PRIVATE(qMRMLEventLogger);
 };
 
 #endif

@@ -23,7 +23,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 
-// STL includes
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>

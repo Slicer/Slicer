@@ -4,10 +4,10 @@
 // Qt includes
 #include <QComboBox>
 
-/// qCTKWidgets includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-// qMRMLWidgets includes
+// qMRML includes
 #include "qMRMLWidgetsExport.h"
 #include "qMRMLSortFilterProxyModel.h"
 
@@ -146,10 +146,9 @@ signals:
   void currentNodeChanged(vtkMRMLNode* node);
 
   /// 
-  /// Utility function emitted at the same time(right after)
-  /// then currentNodeChanged(vtkMRMLNode*) signal is emitted
-  /// emit true when the current node is changed.
-  /// false when the list is empty. Useful to 
+  /// Signal emitted just after currentNodeChanged(vtkMRMLNode*) is.
+  /// \a validNode set to True when the current node is changed.
+  /// Set to False when the list is empty. Useful to
   /// enable/disable/show/hide other widgets
   /// depending on the validity of the current node.
   void currentNodeChanged(bool validNode);
@@ -159,12 +158,16 @@ signals:
   /// void nodeAboutToBeAdded(vtkMRMLNode*);
 
   ///
-  /// Signal emitted when a node is added to the comboBox
+  /// Signal emitted when \a node is added to the comboBox
   /// Only nodes with valid type emit the signal
   void nodeAdded(vtkMRMLNode* node);
 
   ///
-  /// Signal emitted when a node is about to be removed from
+  /// Signal emitted when \a node is added by the user
+  void nodeAddedByUser(vtkMRMLNode* node);
+
+  ///
+  /// Signal emitted when \a node is about to be removed from
   /// the comboBox. Only nodes with valid type emit the signal
   void nodeAboutToBeRemoved(vtkMRMLNode* node);
 
@@ -182,7 +185,7 @@ protected slots:
   void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeComboBox);
+  CTK_DECLARE_PRIVATE(qMRMLNodeComboBox);
 };
 
 // --------------------------------------------------------------------------

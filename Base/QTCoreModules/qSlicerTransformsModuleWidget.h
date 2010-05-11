@@ -14,11 +14,11 @@
 #ifndef __qSlicerTransformsModuleWidget_h
 #define __qSlicerTransformsModuleWidget_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -67,7 +67,7 @@ protected:
   int coordinateReference();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerTransformsModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerTransformsModuleWidget);
 };
 
 #endif

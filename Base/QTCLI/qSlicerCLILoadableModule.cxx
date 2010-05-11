@@ -10,16 +10,17 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerCLILoadableModule.h"
-
-// QT includes
+// Qt includes
 #include <QTextStream>
 
+// SlicerQt includes
+#include "qSlicerCLILoadableModule.h"
+
 //-----------------------------------------------------------------------------
-class qSlicerCLILoadableModulePrivate: public qCTKPrivate<qSlicerCLILoadableModule>
+class qSlicerCLILoadableModulePrivate: public ctkPrivate<qSlicerCLILoadableModule>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerCLILoadableModule);
+  CTK_DECLARE_PUBLIC(qSlicerCLILoadableModule);
   typedef qSlicerCLILoadableModulePrivate Self;
   qSlicerCLILoadableModulePrivate();
 
@@ -41,7 +42,7 @@ qSlicerCLILoadableModulePrivate::qSlicerCLILoadableModulePrivate()
 //-----------------------------------------------------------------------------
 qSlicerCLILoadableModule::qSlicerCLILoadableModule(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerCLILoadableModule);
+  CTK_INIT_PRIVATE(qSlicerCLILoadableModule);
 }
 
 //-----------------------------------------------------------------------------
@@ -51,13 +52,19 @@ void qSlicerCLILoadableModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModule::entryPoint()
+QString qSlicerCLILoadableModule::entryPoint()const
 {
-  QCTK_D(qSlicerCLILoadableModule);
+  CTK_D(const qSlicerCLILoadableModule);
   QString str;
   QTextStream(&str) << "slicer:" << (void*)(d->EntryPoint);
   return str; 
 }
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerCLILoadableModule, ModuleEntryPointType, setEntryPoint, EntryPoint);
+CTK_SET_CXX(qSlicerCLILoadableModule, ModuleEntryPointType, setEntryPoint, EntryPoint);
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLILoadableModule::moduleType()const
+{
+  return QLatin1String("SharedObjectModule");
+}

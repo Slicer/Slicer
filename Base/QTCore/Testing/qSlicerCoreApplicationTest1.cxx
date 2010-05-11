@@ -9,6 +9,9 @@
 
 =========================================================================auto=*/
 
+// CTK includes
+#include <ctkSettings.h>
+
 // SlicerQT includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h" 
@@ -19,16 +22,13 @@
 #include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS
 #include "vtkSlicerApplicationLogic.h"
 
-// qCTK includes
-#include <qCTKSettings.h>
-
 // MRML includes
 #include "vtkMRMLScene.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
 
-// STL includes
+// STD includes
 #include <stdlib.h>
 
 #include "TestingMacros.h"
@@ -74,7 +74,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qCTKSettings * settings = app.settings();
+  ctkSettings * settings = app.settings();
   if( settings == 0 )
     {
     std::cerr << "Problem with settings()" << std::endl;

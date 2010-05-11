@@ -13,19 +13,19 @@
 #ifndef __qSlicerPythonManager_h
 #define __qSlicerPythonManager_h
 
-// qVTK includes
-# include <qVTKAbstractPythonManager.h>
+// CTK includes
+# include <ctkAbstractPythonManager.h>
 
 #include "qSlicerBaseQTCoreExport.h"
 
 class PythonQtObjectPtr;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonManager : public qVTKAbstractPythonManager
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonManager : public ctkAbstractPythonManager
 {
   Q_OBJECT
 
 public:
-  typedef qVTKAbstractPythonManager Superclass;
+  typedef ctkAbstractPythonManager Superclass;
   qSlicerPythonManager(QObject* parent=NULL);
   ~qSlicerPythonManager();
   

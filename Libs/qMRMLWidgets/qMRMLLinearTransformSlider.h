@@ -1,12 +1,10 @@
 #ifndef __qMRMLLinearTransformSlider_h
 #define __qMRMLLinearTransformSlider_h
 
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKSliderSpinBoxWidget.h>
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkSliderSpinBoxWidget.h>
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -14,7 +12,7 @@ class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;
 class qMRMLLinearTransformSliderPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBoxWidget
+class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public ctkSliderSpinBoxWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -25,7 +23,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qCTKSliderSpinBox
 
 public:
   /// Constructors
-  typedef qCTKSliderSpinBoxWidget Superclass;
+  typedef ctkSliderSpinBoxWidget Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
   virtual ~qMRMLLinearTransformSlider(){}
 
@@ -72,7 +70,7 @@ protected slots:
   void onMRMLTransformNodeModified(vtkObject* caller);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
+  CTK_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
 
 };
 

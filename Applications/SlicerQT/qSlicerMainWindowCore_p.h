@@ -1,28 +1,28 @@
 #ifndef __qSlicerMainWindowCorePrivate_p_h
 #define __qSlicerMainWindowCorePrivate_p_h
 
-// QT includes
+// Qt includes
 #include <QObject>
 #include <QStringList>
 #include <QPointer>
 
-// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerMainWindow.h"
 
 class qSlicerAbstractModule; 
 class QSignalMapper;
-class qCTKPythonShell; 
+class ctkPythonShell;
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowCorePrivate: public QObject,
-                                    public qCTKPrivate<qSlicerMainWindowCore>
+                                    public ctkPrivate<qSlicerMainWindowCore>
 {
   Q_OBJECT
-  QCTK_DECLARE_PUBLIC(qSlicerMainWindowCore);
+  CTK_DECLARE_PUBLIC(qSlicerMainWindowCore);
   
 public:
   explicit qSlicerMainWindowCorePrivate();
@@ -40,7 +40,7 @@ public slots:
 public:
   QPointer<qSlicerMainWindow> ParentWidget;
   QSignalMapper*              ShowModuleActionMapper;
-  qCTKPythonShell*            PythonShell;
+  ctkPythonShell*             PythonShell;
   
   // For now, contains the list of module (title) we want to display in the ModuleToolbar
   QStringList ToolBarModuleList;

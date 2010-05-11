@@ -1,28 +1,28 @@
 #ifndef __qMRMLTreeProxyModel_p_h
 #define __qMRMLTreeProxyModel_p_h
 
-/// qCTK includes 
-#include <qCTKPimpl.h>
-
-/// qMRML includes
-#include "qMRMLTreeProxyModel.h"
-#include "qMRMLItemHelper.h"
-
-/// QT includes
+/// Qt includes
 #include <QObject>
 #include <QVector>
 #include <QStack>
 #include <QSharedPointer>
 
+/// CTK includes
+#include <ctkPimpl.h>
+
+/// qMRML includes
+#include "qMRMLTreeProxyModel.h"
+#include "qMRMLItemHelper.h"
+
 class qMRMLAbstractItemHelper;
 class vtkObject;
 
 //------------------------------------------------------------------------------
-class qMRMLTreeProxyModelPrivate: public QObject, public qCTKPrivate<qMRMLTreeProxyModel>
+class qMRMLTreeProxyModelPrivate: public QObject, public ctkPrivate<qMRMLTreeProxyModel>
 {
   Q_OBJECT
 public:
-  QCTK_DECLARE_PUBLIC(qMRMLTreeProxyModel);
+  CTK_DECLARE_PUBLIC(qMRMLTreeProxyModel);
   qMRMLTreeProxyModelPrivate(QObject* parent = 0);
 
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;

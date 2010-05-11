@@ -1,11 +1,11 @@
 #ifndef __qMRMLListWidget_h
 #define __qMRMLListWidget_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QListView>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -25,7 +25,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLListWidget);
+  CTK_DECLARE_PRIVATE(qMRMLListWidget);
 };
 
 #endif

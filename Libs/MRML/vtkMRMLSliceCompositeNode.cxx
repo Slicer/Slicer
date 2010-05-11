@@ -391,7 +391,8 @@ void vtkMRMLSliceCompositeNode::UpdateScene(vtkMRMLScene* scene)
     }
   if (node != NULL)
     {
-    scene->RemoveNodeNoNotify(node);
+    //scene->RemoveNodeNoNotify(node);
+    scene->RemoveNode(node);
     }
 }
 // End

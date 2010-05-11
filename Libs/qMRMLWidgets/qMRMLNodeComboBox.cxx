@@ -18,7 +18,7 @@
 #include <vtkMRMLScene.h>
 
 // -----------------------------------------------------------------------------
-class qMRMLNodeComboBoxPrivate: public qCTKPrivate<qMRMLNodeComboBox>
+class qMRMLNodeComboBoxPrivate: public ctkPrivate<qMRMLNodeComboBox>
 {
 public:
   qMRMLNodeComboBoxPrivate();
@@ -52,7 +52,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate()
 // -----------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init()
 {
-  QCTK_P(qMRMLNodeComboBox);
+  CTK_P(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
   this->MRMLNodeFactory = new qMRMLNodeFactory(p);
 
@@ -82,7 +82,7 @@ void qMRMLNodeComboBoxPrivate::init()
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
 {
-  QCTK_P(const qMRMLNodeComboBox);
+  CTK_P(const qMRMLNodeComboBox);
   QString nodeId = 
     p->itemData(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
@@ -96,7 +96,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& index)const
 {
-  QCTK_P(const qMRMLNodeComboBox);
+  CTK_P(const qMRMLNodeComboBox);
   Q_ASSERT(p->model());
   QString nodeId = 
     p->model()->data(index, qMRML::UIDRole).toString();
@@ -111,7 +111,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateNoneItem()
 {
-  QCTK_P(qMRMLNodeComboBox);
+  CTK_P(qMRMLNodeComboBox);
   QStringList noneItem;
   if (this->NoneEnabled)
     {
@@ -123,7 +123,7 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem()
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateActionItems()
 {
-  QCTK_P(qMRMLNodeComboBox);
+  CTK_P(qMRMLNodeComboBox);
   QStringList extraItems;
 
   if (p->mrmlScene() == 0)
@@ -161,8 +161,8 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
 // --------------------------------------------------------------------------
 qMRMLNodeComboBox::qMRMLNodeComboBox(QWidget* _parent) : Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLNodeComboBox);
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_INIT_PRIVATE(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   d->init();
 }
 
@@ -193,7 +193,7 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
                                      const QString& attributeName,
                                      const QVariant& attributeValue)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   d->MRMLNodeFactory->addAttribute(attributeName, attributeValue.toString());
   this->sortFilterProxyModel()->addAttribute(nodeType, attributeName, attributeValue);
 }
@@ -201,7 +201,7 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::addNode()
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   // Create the MRML node via the MRML Scene
   // FIXME, for the moment we create only nodes of the first type, but we should
   // be able to add a node of any type in NodeTypes
@@ -213,6 +213,7 @@ void qMRMLNodeComboBox::addNode()
     {// select the created node.
     this->setCurrentNode(_node);
     }
+  emit this->nodeAddedByUser(_node);
 }
 
 // --------------------------------------------------------------------------
@@ -224,7 +225,7 @@ QAbstractItemModel* qMRMLNodeComboBox::createSceneModel()
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBox::currentNode()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->mrmlNode(this->currentIndex());
 }
 
@@ -238,14 +239,14 @@ QString qMRMLNodeComboBox::currentNodeId()const
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::editCurrentNode()
 {
-  //QCTK_D(const qMRMLNodeComboBox);
+  //CTK_D(const qMRMLNodeComboBox);
   //FIXME
 }
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   vtkMRMLNode* node = d->mrmlNode(currentIndex);
   emit currentNodeChanged(node);
   emit currentNodeChanged(node != 0);
@@ -254,14 +255,14 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 // --------------------------------------------------------------------------
 vtkMRMLScene* qMRMLNodeComboBox::mrmlScene()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->MRMLSceneModel->mrmlScene();
 }
 
 // --------------------------------------------------------------------------
 int qMRMLNodeComboBox::nodeCount()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   int extraItemsCount =
       d->MRMLSceneModel->preItems(this->mrmlScene()).count()
     + (d->MRMLSceneModel->postItems(this->mrmlScene()).count() ? d->MRMLSceneModel->postItems(this->mrmlScene()).count(): 0);
@@ -278,7 +279,7 @@ void qMRMLNodeComboBox::removeCurrentNode()
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   
   //if (d->MRMLSceneModel->mrmlScene() == scene)
   //  { 
@@ -306,13 +307,13 @@ void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* _node)
 }
 
 //--------------------------------------------------------------------------
-QCTK_SET_CXX(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
-QCTK_GET_CXX(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
+CTK_SET_CXX(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
+CTK_GET_CXX(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setNoneEnabled(bool enable)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   if (d->NoneEnabled == enable)
     {
     return;
@@ -324,14 +325,14 @@ void qMRMLNodeComboBox::setNoneEnabled(bool enable)
 //--------------------------------------------------------------------------
 bool qMRMLNodeComboBox::noneEnabled()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->NoneEnabled;
 }
 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setAddEnabled(bool enable)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   if (d->AddEnabled == enable)
     {
     return;
@@ -343,14 +344,14 @@ void qMRMLNodeComboBox::setAddEnabled(bool enable)
 //--------------------------------------------------------------------------
 bool qMRMLNodeComboBox::addEnabled()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->AddEnabled;
 }
 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setRemoveEnabled(bool enable)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   if (d->RemoveEnabled == enable)
     {
     return;
@@ -362,14 +363,14 @@ void qMRMLNodeComboBox::setRemoveEnabled(bool enable)
 //--------------------------------------------------------------------------
 bool qMRMLNodeComboBox::removeEnabled()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->RemoveEnabled;
 }
 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setEditEnabled(bool enable)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   if (d->EditEnabled == enable)
     {
     return;
@@ -381,7 +382,7 @@ void qMRMLNodeComboBox::setEditEnabled(bool enable)
 //--------------------------------------------------------------------------
 bool qMRMLNodeComboBox::editEnabled()const
 {
-  QCTK_D(const qMRMLNodeComboBox);
+  CTK_D(const qMRMLNodeComboBox);
   return d->EditEnabled;
 }
 
@@ -395,7 +396,7 @@ qMRMLSortFilterProxyModel* qMRMLNodeComboBox::sortFilterProxyModel()const
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, int end)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
   for(int i = start; i <= end; ++i)
     {
@@ -408,7 +409,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, in
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end)
 {
-  QCTK_D(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
   for(int i = start; i <= end; ++i)
     {

@@ -15,7 +15,7 @@
 #include "vtkSlicerGUILayout.h"
 
 #include "vtkKWWidget.h"
-#include "vtkSlicerRenderWidget.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
 
 #include "vtkImageMapper.h"

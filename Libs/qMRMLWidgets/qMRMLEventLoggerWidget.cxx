@@ -1,10 +1,12 @@
+
+
+// Qt includes
+#include <QLatin1String>
+
+// qMRML includes
 #include "qMRMLEventLoggerWidget.h"
 #include "ui_qMRMLEventLoggerWidget.h"
-
 #include "qMRMLEventLogger.h"
-
-// QT includes
-#include <QLatin1String>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -13,7 +15,7 @@
 #include <vtkObject.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLEventLoggerWidgetPrivate: public qCTKPrivate<qMRMLEventLoggerWidget>,
+class qMRMLEventLoggerWidgetPrivate: public ctkPrivate<qMRMLEventLoggerWidget>,
                                      public Ui_qMRMLEventLoggerWidget
 {
 public:
@@ -34,8 +36,8 @@ public:
 //------------------------------------------------------------------------------
 qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qMRMLEventLoggerWidget);
-  QCTK_D(qMRMLEventLoggerWidget);
+  CTK_INIT_PRIVATE(qMRMLEventLoggerWidget);
+  CTK_D(qMRMLEventLoggerWidget);
   d->setupUi(this);
   d->MRMLEventLogger = new qMRMLEventLogger(this);
 
@@ -72,7 +74,7 @@ qMRMLEventLoggerWidget::~qMRMLEventLoggerWidget()
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  QCTK_D(qMRMLEventLoggerWidget);
+  CTK_D(qMRMLEventLoggerWidget);
   d->MRMLEventLogger->setMRMLScene(scene);
 }
 
@@ -81,7 +83,7 @@ void qMRMLEventLoggerWidget::onNodeAddedEvent(vtkObject* caller,
                                               vtkObject* call_data)
 {
   Q_UNUSED(caller);
-  QCTK_D(qMRMLEventLoggerWidget);
+  CTK_D(qMRMLEventLoggerWidget);
   vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeAdded: %1").arg(node->GetClassName()));
@@ -92,7 +94,7 @@ void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller,
                                                 vtkObject* call_data)
 {
   Q_UNUSED(caller);
-  QCTK_D(qMRMLEventLoggerWidget);
+  CTK_D(qMRMLEventLoggerWidget);
   vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeRemoved: %1").arg(node->GetClassName()));
@@ -105,7 +107,7 @@ void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller,
 #define QMRMLEVENTLOGGERWIDGET_ONEVENT_SLOT_MACRO(_EVENT_NAME) \
 void qMRMLEventLoggerWidget::on##_EVENT_NAME##Event()          \
 {                                                              \
-  QCTK_D(qMRMLEventLoggerWidget);                              \
+  CTK_D(qMRMLEventLoggerWidget);                              \
   d->log(#_EVENT_NAME);                                        \
 }
 

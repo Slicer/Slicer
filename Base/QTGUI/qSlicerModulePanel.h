@@ -1,11 +1,11 @@
 #ifndef __qSlicerModulePanel_h
 #define __qSlicerModulePanel_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModulePanel.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModulePanel.h"
 
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -29,7 +29,7 @@ protected slots:
   virtual void removeAllModule();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerModulePanel);
+  CTK_DECLARE_PRIVATE(qSlicerModulePanel);
 };
 
 #endif

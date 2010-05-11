@@ -1,11 +1,4 @@
-#include "qMRMLItemHelper.h"
-#include "qMRMLTreeProxyModel.h"
-#include "qMRMLTreeProxyModel_p.h"
-#include "qMRMLSceneModel.h"
-#include "qMRMLUtils.h"
-
-#include <vtkMRMLScene.h>
-
+// Qt includes
 #include <QDebug>
 #include <QMap>
 #include <QMimeData>
@@ -13,6 +6,16 @@
 #include <QStack>
 #include <QStringList>
 #include <QVector>
+
+// qMRML includes
+#include "qMRMLItemHelper.h"
+#include "qMRMLTreeProxyModel.h"
+#include "qMRMLTreeProxyModel_p.h"
+#include "qMRMLSceneModel.h"
+#include "qMRMLUtils.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
 qMRMLTreeProxyModelPrivate::qMRMLTreeProxyModelPrivate(QObject* vparent)
@@ -82,7 +85,7 @@ int qMRMLTreeProxyModelPrivate::rowCountWithHiddenItemsRemoved(const qMRMLAbstra
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeProxyModelPrivate::indexFromItem(const qMRMLAbstractItemHelper* item)const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   if (item == 0 || item->object() == 0)
     {
     return QModelIndex();
@@ -98,7 +101,7 @@ QModelIndex qMRMLTreeProxyModelPrivate::indexFromItem(const qMRMLAbstractItemHel
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromUID(QVariant uid, int column)
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   Q_ASSERT(p->mrmlScene());
   if (uid.toString().isNull())
     {
@@ -112,7 +115,7 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromUID(QVariant uid, i
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromIndex(const QModelIndex &modelIndex)const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   if (modelIndex.model() == 0)
     {
     Q_ASSERT(modelIndex.model());
@@ -133,7 +136,7 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromIndex(const QModelI
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::proxyItemFromIndex(const QModelIndex &modelIndex)const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   if ((modelIndex.row() < 0) || (modelIndex.column() < 0) || (modelIndex.model() != p))
     {
     return p->itemFactory()->createRootItem(p->mrmlScene());
@@ -168,7 +171,7 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::proxyItemFromIndex(const QM
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromIndex(const QModelIndex & modelIndex)const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   if (( modelIndex.row() < 0) || ( modelIndex.column() < 0) || ( modelIndex.model() != p->sourceModel()))
     {
     if (p->sourceModel() == 0)
@@ -210,7 +213,7 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromIndex(const Q
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromObject(vtkObject* object, int column)const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   
   if (!object)
     {
@@ -238,7 +241,7 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::sourceItemFromObject(vtkObj
 QVector<QSharedPointer<qMRMLAbstractItemHelper> > 
 qMRMLTreeProxyModelPrivate::proxyItemsFromSourceIndexes(const QModelIndex &vparent, int start, int end) const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > childrenVector;
 
   QSharedPointer<qMRMLAbstractItemHelper> parentSourceItem = 
@@ -271,7 +274,7 @@ QVector<QSharedPointer<qMRMLAbstractItemHelper> >
 qMRMLTreeProxyModelPrivate::proxyItemsFromProxyIndexes(const QModelIndex &_parent,
                                                        int start, int end) const
 {
-  QCTK_P(const qMRMLTreeProxyModel);
+  CTK_P(const qMRMLTreeProxyModel);
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > _children;
 
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
@@ -369,7 +372,7 @@ void qMRMLTreeProxyModelPrivate::onSourceColumnsRemoved(const QModelIndex & vpar
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight)
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   QSharedPointer<qMRMLAbstractItemHelper> topLeftItem = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->proxyItemFromIndex(topLeft));
   QSharedPointer<qMRMLAbstractItemHelper> bottomRightItem = 
@@ -381,7 +384,7 @@ void qMRMLTreeProxyModelPrivate::onSourceDataChanged(const QModelIndex & topLeft
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceHeaderDataChanged(Qt::Orientation orientation, int first, int last)
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   //todo: probably should convert the indexes...
   emit p->headerDataChanged(orientation, first, last);
 }
@@ -389,28 +392,28 @@ void qMRMLTreeProxyModelPrivate::onSourceHeaderDataChanged(Qt::Orientation orien
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceLayoutAboutToBeChanged()
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   emit p->layoutAboutToBeChanged();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceLayoutChanged()
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   emit p->layoutChanged();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceModelAboutToBeReset()
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   p->beginResetModel();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceModelReset()
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   p->endResetModel();
 }
 
@@ -429,7 +432,7 @@ void qMRMLTreeProxyModelPrivate::onSourceRowsAboutToBeInserted(const QModelIndex
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceRowsAboutToBeRemoved(const QModelIndex & vparent, int start, int end)
 { 
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
   Q_ASSERT(this->HiddenItems.empty());
@@ -481,7 +484,7 @@ void qMRMLTreeProxyModelPrivate::onSourceRowsAboutToBeRemoved(const QModelIndex 
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModelPrivate::onSourceRowsInserted(const QModelIndex & vparent, int start, int end)
 {
-  QCTK_P(qMRMLTreeProxyModel);
+  CTK_P(qMRMLTreeProxyModel);
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
   Q_ASSERT(this->HiddenItems.empty());
@@ -523,7 +526,7 @@ void qMRMLTreeProxyModelPrivate::onSourceRowsRemoved(const QModelIndex & vparent
   Q_UNUSED(vparent);
   Q_UNUSED(start);
   Q_UNUSED(end);
-  //QCTK_P(qMRMLTreeProxyModel);
+  //CTK_P(qMRMLTreeProxyModel);
 #ifndef QT_NO_DEBUG
   this->HiddenVTKObject = 0;
 #endif
@@ -538,7 +541,7 @@ void qMRMLTreeProxyModelPrivate::onSourceRowsRemoved(const QModelIndex & vparent
 qMRMLTreeProxyModel::qMRMLTreeProxyModel(QObject *vparent)
   :QAbstractProxyModel(vparent)
 {
-  QCTK_INIT_PRIVATE(qMRMLTreeProxyModel);
+  CTK_INIT_PRIVATE(qMRMLTreeProxyModel);
 }
 
 //------------------------------------------------------------------------------
@@ -565,7 +568,7 @@ vtkMRMLScene* qMRMLTreeProxyModel::mrmlScene()const
 //------------------------------------------------------------------------------
 void qMRMLTreeProxyModel::setSourceModel(QAbstractItemModel * sourceModelItem)
 {
-  QCTK_D(qMRMLTreeProxyModel);
+  CTK_D(qMRMLTreeProxyModel);
   Q_ASSERT_X(qobject_cast<qMRMLSceneModel*>(sourceModelItem), __FUNCTION__, "Only qMRMLSceneModels are supported");
   this->QAbstractProxyModel::setSourceModel(sourceModelItem);
 
@@ -608,7 +611,7 @@ int qMRMLTreeProxyModel::columnCount(const QModelIndex &) const
 //------------------------------------------------------------------------------
 QVariant qMRMLTreeProxyModel::data(const QModelIndex & modelIndex, int role)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   if (! modelIndex.isValid())
     {
     return QVariant();
@@ -627,7 +630,7 @@ QVariant qMRMLTreeProxyModel::data(const QModelIndex & modelIndex, int role)cons
 bool qMRMLTreeProxyModel::dropMimeData(const QMimeData *dataValue, Qt::DropAction action, 
                                   int row, int column, const QModelIndex &vparent)
 {
-  QCTK_D(qMRMLTreeProxyModel);
+  CTK_D(qMRMLTreeProxyModel);
   // check if the action is supported
   if (!dataValue || !(action == Qt::MoveAction))
     {
@@ -735,7 +738,7 @@ bool qMRMLTreeProxyModel::dropMimeData(const QMimeData *dataValue, Qt::DropActio
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLTreeProxyModel::flags(const QModelIndex &proxyIndex)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   if (!proxyIndex.isValid())
     {
     return Qt::NoItemFlags;
@@ -752,7 +755,7 @@ Qt::ItemFlags qMRMLTreeProxyModel::flags(const QModelIndex &proxyIndex)const
 //------------------------------------------------------------------------------
 bool qMRMLTreeProxyModel::hasChildren(const QModelIndex &vparent)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->proxyItemFromIndex(vparent));
@@ -764,7 +767,7 @@ bool qMRMLTreeProxyModel::hasChildren(const QModelIndex &vparent)const
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeProxyModel::index(int row, int column, const QModelIndex &vparent)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   // sanity check before going any further.
   if (this->mrmlScene() == 0 || row < 0 || column < 0)
     {
@@ -802,7 +805,7 @@ QModelIndex qMRMLTreeProxyModel::index(int row, int column, const QModelIndex &v
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLTreeProxyModel::item(const QModelIndex &modelIndex)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   return d->itemFromIndex(modelIndex);
 }
 
@@ -824,14 +827,14 @@ QMap<int, QVariant> qMRMLTreeProxyModel::itemData(const QModelIndex & modelIndex
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeProxyModel::mapFromSource(const QModelIndex &sourceIndex)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   return d->indexFromItem(d->proxyItemFromIndex(sourceIndex));
 }
 
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeProxyModel::mapToSource(const QModelIndex &proxyIndex)const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   return d->indexFromItem(d->sourceItemFromIndex(proxyIndex));
 }
 
@@ -851,7 +854,7 @@ QModelIndex qMRMLTreeProxyModel::parent(const QModelIndex & modelIndex)const
 {
   //std::ofstream toto ("parent.txt", std::ios_base::app);
   //toto<<"begin"<<std::endl;
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   if (! modelIndex.isValid())
     {
     return QModelIndex();
@@ -888,7 +891,7 @@ QModelIndex qMRMLTreeProxyModel::parent(const QModelIndex & modelIndex)const
 //------------------------------------------------------------------------------
 int qMRMLTreeProxyModel::rowCount(const QModelIndex &vparent) const
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->proxyItemFromIndex(vparent));
   Q_ASSERT(!item.isNull());
@@ -898,7 +901,7 @@ int qMRMLTreeProxyModel::rowCount(const QModelIndex &vparent) const
 //------------------------------------------------------------------------------
 bool qMRMLTreeProxyModel::setData(const QModelIndex & modelIndex, const QVariant &value, int role)
 {
-  QCTK_D(const qMRMLTreeProxyModel);
+  CTK_D(const qMRMLTreeProxyModel);
   if (! modelIndex.isValid())
     {
     return false;

@@ -10,14 +10,17 @@
 
 =========================================================================auto=*/
 
+// SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-// SlicerQT includes
+// Slicer includes
 #include "vtkSlicerLogic.h"
+
+// VTK includes
 #include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractModuleWidgetPrivate: public qCTKPrivate<qSlicerAbstractModuleWidget>
+class qSlicerAbstractModuleWidgetPrivate: public ctkPrivate<qSlicerAbstractModuleWidget>
 {
 public:
   QString Name;
@@ -25,16 +28,16 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
-QCTK_SET_CXX(qSlicerAbstractModuleWidget, const QString&, setName, Name);
-QCTK_GET_CXX(qSlicerAbstractModuleWidget, QString, name, Name);
+CTK_SET_CXX(qSlicerAbstractModuleWidget, const QString&, setName, Name);
+CTK_GET_CXX(qSlicerAbstractModuleWidget, QString, name, Name);
 
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAbstractModuleWidget::logic()const
 {
-  QCTK_D(const qSlicerAbstractModuleWidget);
+  CTK_D(const qSlicerAbstractModuleWidget);
   return d->Logic.GetPointer();
 }
 
@@ -43,6 +46,6 @@ void qSlicerAbstractModuleWidget::setLogic(vtkSlicerLogic* _logic)
 {
   // setLogic should be called only one time with valid object...
   Q_ASSERT(_logic);
-  QCTK_D(qSlicerAbstractModuleWidget);
+  CTK_D(qSlicerAbstractModuleWidget);
   d->Logic = _logic; 
 }

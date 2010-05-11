@@ -3,6 +3,8 @@
 #          ParaView/VTK/Wrapping/Python/CMakeLists.txt
 #
 
+FIND_PACKAGE(PythonInterp REQUIRED)
+
 SET(Slicer_PYTHON_FILES
   slicer/__init__
   slicer/logic
@@ -31,7 +33,6 @@ ENDFOREACH(file)
 ADD_CUSTOM_TARGET(CopyPythonFiles
                   ALL
                   DEPENDS ${copied_python_files})
-
 
 
 # Byte compile the Python files.

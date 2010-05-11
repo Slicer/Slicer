@@ -1,11 +1,11 @@
 #ifndef __qMRMLNodeTreeSelector_h
 #define __qMRMLNodeTreeSelector_h
 
+// CTK includes
+#include <ctkPimpl.h>
+
 /// qMRML includes
 #include "qMRMLNodeSelector.h"
-
-/// qCTK includes
-#include <qCTKPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -26,7 +26,7 @@ protected:
   virtual void addNodeInternal(vtkMRMLNode* mrmlNode);
   
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLNodeTreeSelector);
+  CTK_DECLARE_PRIVATE(qMRMLNodeTreeSelector);
 };
 
 #endif

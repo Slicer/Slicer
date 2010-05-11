@@ -14,14 +14,12 @@
 #ifndef __qSlicerWidget_h
 #define __qSlicerWidget_h
 
-/// qMRML includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
+
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qSlicerBaseQTBaseExport.h"
 
@@ -75,7 +73,7 @@ public:
 public slots:
 
   /// 
-  /// Overloaded method from QWidget
+  /// \Overload
   virtual void setParentVisible(bool visible);
 
   /// 
@@ -86,7 +84,7 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerWidget);
+  CTK_DECLARE_PRIVATE(qSlicerWidget);
 };
 
 #endif

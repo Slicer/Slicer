@@ -22,7 +22,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="qVTKRenderView" name="VTKRenderView"/>
+     <widget class="ctkVTKRenderView" name="VTKRenderView"/>
     </item>
    </layout>
   </widget>
@@ -152,7 +152,7 @@
       <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
-      <widget class="qCTKCollapsibleButton" name="SliceControlsCollapsibleWidget">
+      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget">
        <property name="text">
         <string>Manipulate Slice Views</string>
        </property>
@@ -163,7 +163,7 @@
       </widget>
      </item>
      <item>
-      <widget class="qCTKCollapsibleButton" name="View3DControlsCollapsibleWidget">
+      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget">
        <property name="text">
         <string>Manipulate 3D View</string>
        </property>
@@ -470,9 +470,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKCollapsibleButton</class>
+   <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>qCTKCollapsibleButton.h</header>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -487,9 +487,9 @@
    <header>qSlicerModulePanel.h</header>
   </customwidget>
   <customwidget>
-   <class>qVTKRenderView</class>
+   <class>ctkVTKRenderView</class>
    <extends>QWidget</extends>
-   <header>qVTKRenderView.h</header>
+   <header>ctkVTKRenderView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

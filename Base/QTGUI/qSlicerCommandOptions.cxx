@@ -13,7 +13,7 @@
 #include "qSlicerCommandOptions.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCommandOptionsPrivate: public qCTKPrivate<qSlicerCommandOptions>
+class qSlicerCommandOptionsPrivate: public ctkPrivate<qSlicerCommandOptions>
 {
 public:
   qSlicerCommandOptionsPrivate();
@@ -37,7 +37,7 @@ qSlicerCommandOptionsPrivate::qSlicerCommandOptionsPrivate()
 //-----------------------------------------------------------------------------
 qSlicerCommandOptions::qSlicerCommandOptions(QSettings* _settings):Superclass(_settings)
 {
-  QCTK_INIT_PRIVATE(qSlicerCommandOptions);
+  CTK_INIT_PRIVATE(qSlicerCommandOptions);
 }
 
 //-----------------------------------------------------------------------------
@@ -46,12 +46,12 @@ qSlicerCommandOptions::~qSlicerCommandOptions()
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerCommandOptions, bool, noSplash, NoSplash);
+CTK_GET_CXX(qSlicerCommandOptions, bool, noSplash, NoSplash);
 
 //-----------------------------------------------------------------------------
 void qSlicerCommandOptions::initialize()
 {
-  QCTK_D(qSlicerCommandOptions);
+  CTK_D(qSlicerCommandOptions);
   
   this->Superclass::initialize();
 

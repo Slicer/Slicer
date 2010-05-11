@@ -1,12 +1,10 @@
 #ifndef __qMRMLMatrixWidget_h
 #define __qMRMLMatrixWidget_h
 
-/// qVTK includes
-#include <qVTKObject.h>
-#include <qVTKAbstractMatrixWidget.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
+#include <ctkVTKAbstractMatrixWidget.h>
 
 #include "qMRMLWidgetsExport.h"
  
@@ -15,7 +13,7 @@ class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;
 class qMRMLMatrixWidgetPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public qVTKAbstractMatrixWidget
+class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public ctkVTKAbstractMatrixWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -25,7 +23,7 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public qVTKAbstractMatrixWidget
 public:
   
   /// Constructors
-  typedef qVTKAbstractMatrixWidget Superclass;
+  typedef ctkVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
   virtual ~qMRMLMatrixWidget(){}
   
@@ -49,7 +47,7 @@ protected slots:
   void updateMatrix();
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLMatrixWidget);
+  CTK_DECLARE_PRIVATE(qMRMLMatrixWidget);
 }; 
 
 #endif

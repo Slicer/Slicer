@@ -1,8 +1,12 @@
 #ifndef __qMRMLTreeProxyModel_h
 #define __qMRMLTreeProxyModel_h
 
+// Qt includes
 #include <QAbstractProxyModel>
-#include "qCTKPimpl.h"
+
+// CTK includes
+#include "ctkPimpl.h"
+
 #include "qMRMLWidgetsExport.h"
 //#include "qMRMLItemModel.h"
 
@@ -57,7 +61,7 @@ protected:
   
 private:
   qMRMLAbstractItemHelperFactory* sourceItemFactory()const;
-  QCTK_DECLARE_PRIVATE(qMRMLTreeProxyModel);
+  CTK_DECLARE_PRIVATE(qMRMLTreeProxyModel);
 };
 
 #endif

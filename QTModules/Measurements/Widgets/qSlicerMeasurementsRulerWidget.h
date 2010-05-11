@@ -1,11 +1,11 @@
 #ifndef __qSlicerMeasurementsRulerWidget_h
 #define __qSlicerMeasurementsRulerWidget_h 
 
-/// SlicerQT includes
-#include "qSlicerWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerWidget.h"
 
 #include "qSlicerMeasurementsModuleExport.h"
 
@@ -23,7 +23,7 @@ public:
   virtual void printAdditionalInfo();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerMeasurementsRulerWidget);
+  CTK_DECLARE_PRIVATE(qSlicerMeasurementsRulerWidget);
 };
 
 #endif

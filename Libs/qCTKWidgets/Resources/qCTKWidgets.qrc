@@ -1,9 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-  <qresource>
-    <file>Icons/edit.png</file>
-    <file>Icons/minus-16.png</file>
-    <file>Icons/plus-16.png</file>
-    <file>Icons/expand-down.png</file>
-    <file>Icons/expand-up.png</file>
-  </qresource>
-</RCC>

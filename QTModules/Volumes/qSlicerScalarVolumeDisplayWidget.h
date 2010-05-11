@@ -1,16 +1,14 @@
 #ifndef __qSlicerScalarVolumeDisplayWidget_h
 #define __qSlicerScalarVolumeDisplayWidget_h
 
-
-/// qVTK includes
-#include <qVTKObject.h>
-
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
 
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
+
+// SlicerQt includes
 #include <qSlicerWidget.h>
 
 #include "qSlicerVolumesModuleExport.h"
@@ -43,7 +41,7 @@ protected slots:
 protected:
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerScalarVolumeDisplayWidget);
+  CTK_DECLARE_PRIVATE(qSlicerScalarVolumeDisplayWidget);
 };
 
 #endif

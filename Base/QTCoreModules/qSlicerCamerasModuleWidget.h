@@ -14,11 +14,11 @@
 #ifndef __qSlicerCamerasModuleWidget_h
 #define __qSlicerCamerasModuleWidget_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
+// CTK includes
+#include <ctkPimpl.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -54,7 +54,7 @@ protected slots:
   void synchronizeCameraWithView();
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCamerasModuleWidget);
+  CTK_DECLARE_PRIVATE(qSlicerCamerasModuleWidget);
 };
 
 #endif

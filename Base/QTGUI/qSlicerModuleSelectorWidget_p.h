@@ -1,23 +1,24 @@
 #ifndef __qSlicerModuleSelectorWidget_p_h
 #define __qSlicerModuleSelectorWidget_p_h
 
+// Qt includes
+#include <QObject>
+
+// CTK includes
+#include <ctkPimpl.h>
+
+// SlicerQt includes
 #include "ui_qSlicerModuleSelectorWidget.h"
 #include "qSlicerModuleSelectorWidget.h"
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
-#include <QObject>
-
 //---------------------------------------------------------------------------
 class qSlicerModuleSelectorWidgetPrivate: public QObject,
-                                          public qCTKPrivate<qSlicerModuleSelectorWidget>,
+                                          public ctkPrivate<qSlicerModuleSelectorWidget>,
                                           public Ui_qSlicerModuleSelectorWidget
 {
   Q_OBJECT
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerModuleSelectorWidget);
+  CTK_DECLARE_PUBLIC(qSlicerModuleSelectorWidget);
   
   explicit qSlicerModuleSelectorWidgetPrivate(){}
   virtual ~qSlicerModuleSelectorWidgetPrivate(){}

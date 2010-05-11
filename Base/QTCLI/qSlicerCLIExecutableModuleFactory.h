@@ -14,23 +14,28 @@
 #ifndef __qSlicerCLIExecutableModuleFactory_h
 #define __qSlicerCLIExecutableModuleFactory_h
 
-/// SlicerQT includes
+// SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-#include <qCTKAbstractPluginFactory.h>
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkAbstractPluginFactory.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryItem : public qCTKAbstractFactoryItem<qSlicerAbstractModule>
+class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryItem<qSlicerAbstractModule>
 {
 public:
-  typedef qCTKAbstractFactoryItem<qSlicerAbstractModule> Superclass; 
+  typedef ctkAbstractFactoryItem<qSlicerAbstractModule> Superclass;
   explicit qSlicerCLIExecutableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
   virtual ~qSlicerCLIExecutableModuleFactoryItem(){}
 
+  ///
+  /// \overload
   virtual bool load();
+
+  ///
+  /// Return path associated with the executable module
   QString path();
 
 protected:
@@ -46,20 +51,31 @@ class qSlicerCLIExecutableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
-  public qCTKAbstractPluginFactory<qSlicerAbstractModule,qSlicerCLIExecutableModuleFactoryItem>
+  public ctkAbstractPluginFactory<qSlicerAbstractModule,qSlicerCLIExecutableModuleFactoryItem>
 {
 public:
 
-  typedef qCTKAbstractPluginFactory<qSlicerAbstractModule,
+  typedef ctkAbstractPluginFactory<qSlicerAbstractModule,
                                     qSlicerCLIExecutableModuleFactoryItem> Superclass;
   qSlicerCLIExecutableModuleFactory();
   virtual ~qSlicerCLIExecutableModuleFactory(){}
 
+  ///
+  /// \overload
   virtual void registerItems();
 
+  ///
+  /// \overload
+//   virtual QString fileNameToKey(const QString& fileName);
+
+  /// Extract module name given \a executableName
+  /// For example: 
+  ///  Threshold.exe -> threshold
+  ///  Threshold -> threshold
+  static QString extractModuleName(const QString& executableName);
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
+  CTK_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
 };
 
 #endif

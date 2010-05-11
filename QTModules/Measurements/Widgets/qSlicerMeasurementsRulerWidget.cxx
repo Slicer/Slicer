@@ -1,12 +1,13 @@
+// Qt includes
+#include <QDebug>
+
+// SlicerQt includes
 #include "qSlicerMeasurementsRulerWidget.h" 
 #include "ui_qSlicerMeasurementsRulerWidget.h"
 
-// QT includes
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsRulerWidgetPrivate : public qCTKPrivate<qSlicerMeasurementsRulerWidget>,
-                                               public Ui_qSlicerMeasurementsRulerWidget
+class qSlicerMeasurementsRulerWidgetPrivate : public ctkPrivate<qSlicerMeasurementsRulerWidget>,
+                                              public Ui_qSlicerMeasurementsRulerWidget
 {
 public:
   qSlicerMeasurementsRulerWidgetPrivate()
@@ -18,8 +19,8 @@ public:
 qSlicerMeasurementsRulerWidget::qSlicerMeasurementsRulerWidget(QWidget *_parent):
 Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerMeasurementsRulerWidget);
-  QCTK_D(qSlicerMeasurementsRulerWidget);
+  CTK_INIT_PRIVATE(qSlicerMeasurementsRulerWidget);
+  CTK_D(qSlicerMeasurementsRulerWidget);
   d->setupUi(this);
 }
 

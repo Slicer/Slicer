@@ -1,11 +1,11 @@
 #ifndef __qMRMLEventLoggerWidget_h
 #define __qMRMLEventLoggerWidget_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -44,7 +44,7 @@ protected slots:
   virtual void onSceneRestoredEvent();
 
 private:
-  QCTK_DECLARE_PRIVATE(qMRMLEventLoggerWidget);
+  CTK_DECLARE_PRIVATE(qMRMLEventLoggerWidget);
 };
 
 #endif

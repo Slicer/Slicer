@@ -9,6 +9,14 @@
 #   include "PythonQt_QtAll.h"
 # endif
 
+// Qt includes
+#include <QHash>
+#include <QDebug>
+#include <QStringList>
+
+// CTK includes
+#include <ctkSettings.h>
+
 // SlicerQT includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
@@ -16,14 +24,6 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerCommandOptions.h"
-
-// qCTK includes
-#include <qCTKSettings.h>
-
-// QT includes
-#include <QHash>
-#include <QDebug>
-#include <QStringList>
 
 #endif
 
@@ -71,7 +71,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLayoutNode.h"
 
-// STL includes
+// STD includes
 #include <sstream>
 #include <queue>
 #include <algorithm>

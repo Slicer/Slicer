@@ -14,31 +14,42 @@
 #ifndef __qSlicerLoadableModuleFactory_h
 #define __qSlicerLoadableModuleFactory_h
 
-/// SlicerQT includes
-#include "qSlicerAbstractModule.h"
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkAbstractPluginFactory.h>
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-#include <qCTKAbstractPluginFactory.h>
+// SlicerQt includes
+#include "qSlicerAbstractModule.h"
 
 #include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerLoadableModuleFactoryPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory :
-  public qCTKAbstractPluginFactory<qSlicerAbstractModule>
+  public ctkAbstractPluginFactory<qSlicerAbstractModule>
 {
 public:
 
-  typedef qCTKAbstractPluginFactory<qSlicerAbstractModule> Superclass;
+  typedef ctkAbstractPluginFactory<qSlicerAbstractModule> Superclass;
   qSlicerLoadableModuleFactory();
   virtual ~qSlicerLoadableModuleFactory(){}
 
+  ///
+  /// \overload
   virtual void registerItems();
+
+  ///
+  /// \overload
+  virtual QString fileNameToKey(const QString& fileName);
+
+  ///
+  /// Extract module name given \a libraryName
+  /// \sa qSlicerUtils::extractModuleNameFromLibraryName
+  static QString extractModuleName(const QString& libraryName);
 
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerLoadableModuleFactory);
+  CTK_DECLARE_PRIVATE(qSlicerLoadableModuleFactory);
 };
 
 #endif

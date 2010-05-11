@@ -1,20 +1,21 @@
+// SlicerQt includes
 #include "qSlicerMeasurementsModuleWidget.h"
 #include "ui_qSlicerMeasurementsModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsModuleWidgetPrivate: public qCTKPrivate<qSlicerMeasurementsModuleWidget>,
-                                               public Ui_qSlicerMeasurementsModule
+class qSlicerMeasurementsModuleWidgetPrivate: public ctkPrivate<qSlicerMeasurementsModuleWidget>,
+                                              public Ui_qSlicerMeasurementsModule
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
 void qSlicerMeasurementsModuleWidget::setup()
 {
-  QCTK_D(qSlicerMeasurementsModuleWidget);
+  CTK_D(qSlicerMeasurementsModuleWidget);
   d->setupUi(this);
 }
 

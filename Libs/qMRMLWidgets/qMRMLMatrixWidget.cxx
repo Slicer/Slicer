@@ -1,7 +1,10 @@
-#include "qMRMLMatrixWidget.h"
+
+// Qt includes
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
+#include "qMRMLMatrixWidget.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -13,11 +16,8 @@
 #include <vtkTransform.h>
 #include <vtkWeakPointer.h>
 
-// QT includes
-#include <QDebug>
-
 //-----------------------------------------------------------------------------
-class qMRMLMatrixWidgetPrivate: public qCTKPrivate<qMRMLMatrixWidget>
+class qMRMLMatrixWidgetPrivate: public ctkPrivate<qMRMLMatrixWidget>
 {
 public:
   qMRMLMatrixWidgetPrivate()
@@ -34,12 +34,12 @@ public:
 };
 
 // --------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qMRMLMatrixWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qMRMLMatrixWidget, QWidget*);
 
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
-  QCTK_D(qMRMLMatrixWidget);
+  CTK_D(qMRMLMatrixWidget);
   if (d->CoordinateReference == _coordinateReference)
     {
     return;
@@ -53,7 +53,7 @@ void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordina
 // --------------------------------------------------------------------------
 qMRMLMatrixWidget::CoordinateReferenceType qMRMLMatrixWidget::coordinateReference() const
 {
-  return qctk_d()->CoordinateReference;
+  return ctk_d()->CoordinateReference;
 }
 
 // --------------------------------------------------------------------------
@@ -65,7 +65,7 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
-  QCTK_D(qMRMLMatrixWidget);
+  CTK_D(qMRMLMatrixWidget);
   
   if (d->MRMLTransformNode == transformNode) 
     { 
@@ -84,13 +84,13 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 // --------------------------------------------------------------------------
 vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
 {
-  return qctk_d()->MRMLTransformNode;
+  return ctk_d()->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::updateMatrix()
 {
-  QCTK_D(qMRMLMatrixWidget);
+  CTK_D(qMRMLMatrixWidget);
 
   if (d->MRMLTransformNode == 0)
     {

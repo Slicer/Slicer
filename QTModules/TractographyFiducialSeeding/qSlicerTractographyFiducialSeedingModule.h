@@ -35,7 +35,7 @@ protected:
   virtual vtkSlicerLogic* createLogic();
 
 private:
-  //QCTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModule);
+  //CTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModule);
 
 };
 #endif

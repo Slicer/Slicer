@@ -11,9 +11,11 @@
 =========================================================================auto=*/
 
 
-#include "qSlicerAbstractModule.h"
+// Qt includes
+#include <QPointer>
 
-// SlicerQT includes
+// SlicerQt includes
+#include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
 // SlicerLogic includes
@@ -27,14 +29,11 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-// QT includes
-#include <QPointer>
-
 //-----------------------------------------------------------------------------
-class qSlicerAbstractModulePrivate: public qCTKPrivate<qSlicerAbstractModule>
+class qSlicerAbstractModulePrivate: public ctkPrivate<qSlicerAbstractModule>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerAbstractModule);
+  CTK_DECLARE_PUBLIC(qSlicerAbstractModule);
   qSlicerAbstractModulePrivate()
     {
     this->Enabled = false;
@@ -68,7 +67,7 @@ qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
 // qSlicerAbstractModule methods
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractModule, QObject*);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::initialize(vtkSlicerApplicationLogic* _appLogic)
@@ -86,13 +85,13 @@ void qSlicerAbstractModule::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractModule::name()const
 {
-  return qctk_d()->Name;
+  return ctk_d()->Name;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::setName(const QString& _name)
 {
-  qctk_d()->Name = _name;
+  ctk_d()->Name = _name;
 }
 
 //-----------------------------------------------------------------------------
@@ -120,12 +119,12 @@ QString qSlicerAbstractModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerAbstractModule, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_GET_CXX(qSlicerAbstractModule, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
-  QCTK_D(qSlicerAbstractModule);
+  CTK_D(qSlicerAbstractModule);
   if (d->MRMLScene == _mrmlScene)
     {
     return; 
@@ -146,7 +145,7 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModule::setAppLogic(vtkSlicerApplicationLogic* newAppLogic)
 {
-  QCTK_D(qSlicerAbstractModule);
+  CTK_D(qSlicerAbstractModule);
   vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(this->logic());
   if (moduleLogic)
     {
@@ -156,16 +155,16 @@ void qSlicerAbstractModule::setAppLogic(vtkSlicerApplicationLogic* newAppLogic)
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerAbstractModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+CTK_GET_CXX(qSlicerAbstractModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qSlicerAbstractModule, bool, isEnabled, Enabled);
-QCTK_SET_CXX(qSlicerAbstractModule, bool, setEnabled, Enabled);
+CTK_GET_CXX(qSlicerAbstractModule, bool, isEnabled, Enabled);
+CTK_SET_CXX(qSlicerAbstractModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 {
-  QCTK_D(qSlicerAbstractModule);
+  CTK_D(qSlicerAbstractModule);
 
   // Since 'logic()' should have been called in 'initialize(), let's make
   // sure the 'logic()' method call is consistent and won't create a
@@ -200,7 +199,7 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAbstractModule::logic()
 {
-  QCTK_D(qSlicerAbstractModule);
+  CTK_D(qSlicerAbstractModule);
   
   // Return a logic object is one already exists
   if (d->Logic)

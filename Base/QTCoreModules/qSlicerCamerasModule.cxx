@@ -11,20 +11,19 @@
 =========================================================================auto=*/
 
 
+// SlicerQt includes
 #include "qSlicerCamerasModule.h"
-
-// SlicerQT includes
 #include "qSlicerCamerasModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModulePrivate: public qCTKPrivate<qSlicerCamerasModule>
+class qSlicerCamerasModulePrivate: public ctkPrivate<qSlicerCamerasModule>
 {
 public:
-  QCTK_DECLARE_PUBLIC(qSlicerCamerasModule);
+  CTK_DECLARE_PUBLIC(qSlicerCamerasModule);
 };
 
 //-----------------------------------------------------------------------------
-QCTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleWidget * qSlicerCamerasModule::createWidgetRepresentation()

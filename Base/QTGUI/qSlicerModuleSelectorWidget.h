@@ -1,11 +1,11 @@
 #ifndef __qSlicerModuleSelectorWidget_h
 #define __qSlicerModuleSelectorWidget_h
 
-/// qCTK includes
-#include <qCTKPimpl.h>
-
-/// QT includes
+// Qt includes
 #include <QWidget>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -30,7 +30,7 @@ signals:
   void moduleSelected(const QString& name);
   
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerModuleSelectorWidget);
+  CTK_DECLARE_PRIVATE(qSlicerModuleSelectorWidget);
 };
 
 #endif

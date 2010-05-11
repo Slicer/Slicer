@@ -14,9 +14,12 @@
 #ifndef __qSlicerCLILoadableModule_h
 #define __qSlicerCLILoadableModule_h
 
+// CTK includes
+#include <ctkPimpl.h>
+
+// SlicerQt includes
 #include "qSlicerCLIModule.h"
 
-#include <qCTKPimpl.h>
 #include "qSlicerBaseQTCLIExport.h"
 
 class qSlicerCLILoadableModulePrivate;
@@ -37,16 +40,20 @@ public:
 
   ///
   /// Get entry point as string
-  virtual QString entryPoint(); 
+  virtual QString entryPoint()const;
+
+  ///
+  /// Get module type
+  virtual QString moduleType()const;
 
 protected:
   /// 
-  /// Overloaded
+  /// \Overload
   virtual void setup();
 
 
 private:
-  QCTK_DECLARE_PRIVATE(qSlicerCLILoadableModule);
+  CTK_DECLARE_PRIVATE(qSlicerCLILoadableModule);
 };
 
 #endif

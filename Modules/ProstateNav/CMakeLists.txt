@@ -15,13 +15,28 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
-# Find Slicer3
+# ProstateNav_REVISION
 
-find_package(Subversion)
-if (Subversion_FOUND)
-  Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
-  set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
-endif (Subversion_FOUND)
+set(ProstateNav_REVISION "")
+
+# Case where Slicer is checkout using SVN
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
+  FIND_PACKAGE(Subversion)
+  if (Subversion_FOUND)
+    Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
+    set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
+  endif (Subversion_FOUND)
+endif()
+
+# TODO Make sure Slicer3/CMake/FindGit.cmake is in CMAKE_MODULE_PATH
+# Case where Slicer is checkout using Git-SVN
+#IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+#  FIND_PACKAGE(Git)
+#  IF(Git_FOUND)
+#    Git_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
+#    set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
+#  endif()
+#endif()
 
 # --------------------------------------------------------------------------
 # Include dirs

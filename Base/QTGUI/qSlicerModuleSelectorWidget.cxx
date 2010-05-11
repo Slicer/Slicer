@@ -1,33 +1,34 @@
-#include "qSlicerModuleSelectorWidget.h"
 
-#include "qSlicerModuleSelectorWidget_p.h"
+// Qt includes
+#include <QDebug>
 
-// qCTK includes
+// CTK includes
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
 
-// QT includes
-#include <QDebug>
+// SlicerQt
+#include "qSlicerModuleSelectorWidget.h"
+#include "qSlicerModuleSelectorWidget_p.h"
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorWidget::qSlicerModuleSelectorWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qSlicerModuleSelectorWidget);
-  QCTK_D(qSlicerModuleSelectorWidget);
+  CTK_INIT_PRIVATE(qSlicerModuleSelectorWidget);
+  CTK_D(qSlicerModuleSelectorWidget);
   d->setupUi(this);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidget::addModules(const QStringList& moduleNames)
 {
-  QCTK_D(qSlicerModuleSelectorWidget);
+  CTK_D(qSlicerModuleSelectorWidget);
   d->addModules(moduleNames);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidget::removeModule(const QString& name)
 {
-  QCTK_D(qSlicerModuleSelectorWidget);
+  CTK_D(qSlicerModuleSelectorWidget);
   d->removeModule(name);
 }
 
@@ -72,11 +73,10 @@ void qSlicerModuleSelectorWidgetPrivate::removeModule(const QString& name)
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorWidgetPrivate::onComboBoxActivated(const QString& title)
 {
-  QCTK_P(qSlicerModuleSelectorWidget);
+  CTK_P(qSlicerModuleSelectorWidget);
   
   // Retrieve module name given its title
   QString name = qSlicerApplication::application()->moduleManager()->moduleName(title);
-  
   emit p->moduleSelected(name);
 }
 

@@ -23,7 +23,7 @@ Version:   $Revision: 979 $
 // VTK includes
 #include <vtkObjectFactory.h>
 
-// STL includes
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
