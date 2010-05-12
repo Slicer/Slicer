@@ -251,8 +251,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
 {
   int value = QString::fromStdString(moduleParameter.GetDefault()).toInt();
   int step = 1; 
-  int min = itk::NumericTraits<int>::NonpositiveMin();
-  int max = itk::NumericTraits<int>::max();
+  int min = itk::NumericTraits<int>::NonpositiveMin() / 100;
+  int max = itk::NumericTraits<int>::max() / 100;
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
@@ -314,8 +314,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
 {
   float value = QString::fromStdString(moduleParameter.GetDefault()).toFloat();
   float step = 0.1;
-  int min = itk::NumericTraits<float>::NonpositiveMin();
-  int max = itk::NumericTraits<float>::max();
+  float min = itk::NumericTraits<int>::NonpositiveMin() / 100;
+  float max = itk::NumericTraits<int>::max() / 100;
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
@@ -353,8 +353,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
 {
   double value = QString::fromStdString(moduleParameter.GetDefault()).toDouble();
   double step = 0.1;
-  double min = itk::NumericTraits<double>::NonpositiveMin();
-  double max = itk::NumericTraits<double>::max();
+  double min = itk::NumericTraits<int>::NonpositiveMin() / 100;
+  double max = itk::NumericTraits<int>::max() / 100;
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
