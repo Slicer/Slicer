@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 //   logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
 //   
 //   QObject::connect(qSlicerApplication::application(),
-//                    SIGNAL(currentMRMLSceneChanged(vtkMRMLScene*)),
+//                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
 //                    &logger,
 //                    SLOT(setMRMLScene(vtkMRMLScene*)));
 // 

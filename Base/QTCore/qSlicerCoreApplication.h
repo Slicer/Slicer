@@ -173,7 +173,7 @@ protected slots:
   virtual void handleCommandLineArguments();
 
 signals:
-  void currentMRMLSceneChanged(vtkMRMLScene* mrmlScene);
+  void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerCoreApplication);

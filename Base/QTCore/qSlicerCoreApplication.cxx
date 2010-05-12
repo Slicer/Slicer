@@ -534,7 +534,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
 
   d->MRMLScene = _mrmlScene;
   
-  emit this->currentMRMLSceneChanged(_mrmlScene);
+  emit this->mrmlSceneChanged(_mrmlScene);
 }
 
 //-----------------------------------------------------------------------------

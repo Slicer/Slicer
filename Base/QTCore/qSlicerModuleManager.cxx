@@ -144,7 +144,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
 
   // Module should also be aware if current MRML scene has changed
   this->connect(qSlicerCoreApplication::application(),
-                SIGNAL(currentMRMLSceneChanged(vtkMRMLScene*)),
+                SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                 _module,
                 SLOT(setMRMLScene(vtkMRMLScene*)));
 
