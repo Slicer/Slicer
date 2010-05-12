@@ -124,13 +124,19 @@ void qSlicerLoadableModuleFactory::registerItems()
       // Skip if current file isn't a library
       if (!QLibrary::isLibrary(fileInfo.fileName())) { continue; }
 
-      qDebug() << "Attempt to register loadable module:" << fileInfo.fileName();
+      if (this->verbose())
+        {
+        qDebug() << "Attempt to register loadable module:" << fileInfo.fileName();
+        }
 
       QString libraryName;
       if (!this->registerLibrary(fileInfo, libraryName))
         {
-        qDebug() << "Failed to register module: " << libraryName; 
-        return;
+        if (this->verbose())
+          {
+          qDebug() << "Failed to register module: " << libraryName;
+          }
+        continue;
         }
       }
     }

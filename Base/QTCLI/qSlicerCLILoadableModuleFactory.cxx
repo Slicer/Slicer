@@ -39,7 +39,10 @@ qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   if (!xmlDescription)
     {
-    qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+    if (this->verbose())
+      {
+      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+      }
     delete module; // Clean memory
     return 0;
     }
@@ -50,7 +53,10 @@ qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   if (!moduleEntryPoint)
     {
-    qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+    if (this->verbose())
+      {
+      qWarning() << "Failed to retrieve Module Entry Point - Path:" << this->path();
+      }
     delete module; // Clean memory
     return 0;
     }
@@ -117,14 +123,20 @@ void qSlicerCLILoadableModuleFactory::registerItems()
         }
       // Skip if current file isn't a library
       if (!QLibrary::isLibrary(fileInfo.fileName())) { continue; }
-      
-      qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
+
+      if (this->verbose())
+        {
+        qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
+        }
 
       QString libraryName;
       if (!this->registerLibrary(fileInfo, libraryName))
         {
-        qWarning() << "Failed to register module: " << libraryName;
-        return;
+        if (this->verbose())
+          {
+          qWarning() << "Failed to register module: " << libraryName;
+          }
+        continue;
         }
       }
     }

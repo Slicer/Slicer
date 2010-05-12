@@ -50,6 +50,89 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// qSlicerModuleFactoryManagerPrivate methods
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactoryManagerPrivate::printAdditionalInfo()
+{
+  qDebug() << "RegisteredFactories:" << this->RegisteredFactories.keys();
+  qDebug() << "ModuleNameToFactoryCache:" << this->ModuleNameToFactoryCache.keys();
+  qDebug() << "[MapTitleToName]";
+  Self::MapConstIterator iter = this->MapTitleToName.constBegin();
+  while(iter != this->MapTitleToName.constEnd())
+    {
+    qDebug() << "\tTitle:" << iter.key() << "-> Name:" << iter.value();
+    ++iter;
+    }
+  qDebug() << "[MapNameToTitle]";
+  iter = this->MapNameToTitle.constBegin();
+  while(iter != this->MapNameToTitle.constEnd())
+    {
+    qDebug() << "\tName:" << iter.key() << "-> Title:" << iter.value();
+    ++iter;
+    }
+  qDebug() << "[RegisteredFactories]";
+  Self::Map2ConstIterator iter2 = this->RegisteredFactories.constBegin();
+  while(iter2 != this->RegisteredFactories.constEnd())
+    {
+    iter2.value()->printAdditionalInfo();
+    ++iter2;
+    }
+  qDebug() << "[ModuleNameToFactoryCache]";
+  iter2 = this->ModuleNameToFactoryCache.constBegin();
+  while(iter2 != this->ModuleNameToFactoryCache.constEnd())
+    {
+    qDebug() << "ModuleName:" << iter2.key() << "-> Factory:" << iter2.value();
+    ++iter2;
+    }
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModule* qSlicerModuleFactoryManagerPrivate::instantiateModule(
+  qSlicerAbstractModuleFactory* factory, const QString& name)
+{
+  qSlicerAbstractModule* module = 0;
+  // Try to instantiate a module
+  module = factory->instantiate(name);
+  Q_ASSERT(module);
+  module->setName(name);
+  
+  QString title = module->title();
+  // Keep track of the relation Title -> name
+  this->MapTitleToName[title] = name;
+
+  // Keep track of the relation name -> Title
+  this->MapNameToTitle[name] = title;
+  
+  return module;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactoryManagerPrivate::uninstantiateModule(const QString& name)
+{
+  CTK_P(qSlicerModuleFactoryManager);
+  
+  // Retrieve the factoryType associated with the module
+  Self::Map2ConstIterator iter = this->ModuleNameToFactoryCache.constFind(name);
+
+  Q_ASSERT(iter != this->ModuleNameToFactoryCache.constEnd());
+  if (iter == this->ModuleNameToFactoryCache.constEnd())
+    {
+    qWarning() << "Failed to retrieve factory name for module:" << name;
+    return;
+    }
+  QString title = p->moduleTitle(name);
+  
+  iter.value()->uninstantiate(name);
+  
+  this->MapTitleToName.remove(title);
+  this->MapNameToTitle.remove(name);
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerModuleFactoryManager methods
+
+//-----------------------------------------------------------------------------
 qSlicerModuleFactoryManager::qSlicerModuleFactoryManager()
 {
   CTK_INIT_PRIVATE(qSlicerModuleFactoryManager);
@@ -226,81 +309,12 @@ bool qSlicerModuleFactoryManager::isRegistered(const QString& name)const
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerModuleFactoryManagerPrivate methods
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManagerPrivate::printAdditionalInfo()
+void qSlicerModuleFactoryManager::setVerboseModuleDiscovery(bool value)
 {
-  qDebug() << "RegisteredFactories:" << this->RegisteredFactories.keys();
-  qDebug() << "ModuleNameToFactoryCache:" << this->ModuleNameToFactoryCache.keys();
-  qDebug() << "[MapTitleToName]";
-  Self::MapConstIterator iter = this->MapTitleToName.constBegin();
-  while(iter != this->MapTitleToName.constEnd())
-    {
-    qDebug() << "\tTitle:" << iter.key() << "-> Name:" << iter.value();
-    ++iter;
-    }
-  qDebug() << "[MapNameToTitle]";
-  iter = this->MapNameToTitle.constBegin();
-  while(iter != this->MapNameToTitle.constEnd())
-    {
-    qDebug() << "\tName:" << iter.key() << "-> Title:" << iter.value();
-    ++iter;
-    }
-  qDebug() << "[RegisteredFactories]";
-  Self::Map2ConstIterator iter2 = this->RegisteredFactories.constBegin();
-  while(iter2 != this->RegisteredFactories.constEnd())
-    {
-    iter2.value()->printAdditionalInfo();
-    ++iter2;
-    }
-  qDebug() << "[ModuleNameToFactoryCache]";
-  iter2 = this->ModuleNameToFactoryCache.constBegin();
-  while(iter2 != this->ModuleNameToFactoryCache.constEnd())
-    {
-    qDebug() << "ModuleName:" << iter2.key() << "-> Factory:" << iter2.value();
-    ++iter2;
-    }
-}
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleFactoryManagerPrivate::instantiateModule(
-  qSlicerAbstractModuleFactory* factory, const QString& name)
-{
-  qSlicerAbstractModule* module = 0;
-  // Try to instantiate a module
-  module = factory->instantiate(name);
-  Q_ASSERT(module);
-  module->setName(name);
+  CTK_D(qSlicerModuleFactoryManager);
   
-  QString title = module->title();
-  // Keep track of the relation Title -> name
-  this->MapTitleToName[title] = name;
-
-  // Keep track of the relation name -> Title
-  this->MapNameToTitle[name] = title;
-  
-  return module;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManagerPrivate::uninstantiateModule(const QString& name)
-{
-  CTK_P(qSlicerModuleFactoryManager);
-  
-  // Retrieve the factoryType associated with the module
-  Self::Map2ConstIterator iter = this->ModuleNameToFactoryCache.constFind(name);
-
-  Q_ASSERT(iter != this->ModuleNameToFactoryCache.constEnd());
-  if (iter == this->ModuleNameToFactoryCache.constEnd())
+  foreach (const QString& factoryName, d->RegisteredFactories.keys())
     {
-    qWarning() << "Failed to retrieve factory name for module:" << name;
-    return;
+    d->RegisteredFactories[factoryName]->setVerbose(value);
     }
-  QString title = p->moduleTitle(name);
-  
-  iter.value()->uninstantiate(name);
-  
-  this->MapTitleToName.remove(title);
-  this->MapNameToTitle.remove(name);
 }

@@ -30,6 +30,7 @@ public:
   bool DisplayVersionAndExit;
   bool DisplayProgramPathAndExit;
   bool DisplayHomePathAndExit;
+  bool VerboseModuleDiscovery;
 };
 
 //-----------------------------------------------------------------------------
@@ -43,6 +44,7 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
   this->DisplayVersionAndExit = false;
   this->DisplayProgramPathAndExit = false;
   this->DisplayHomePathAndExit = false;
+  this->VerboseModuleDiscovery = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -65,6 +67,7 @@ CTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoada
 CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
 CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
 CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
+CTK_GET_CXX(qSlicerCoreCommandOptions, bool, verboseModuleDiscovery, VerboseModuleDiscovery);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::tempDirectory()const
@@ -93,6 +96,9 @@ void qSlicerCoreCommandOptions::initialize()
 
   this->addBooleanArgument("--home", 0, &d->DisplayHomePathAndExit,
                            "Displays home path and exits.");
+
+  this->addBooleanArgument("--verbose-module-discovery", 0, &d->VerboseModuleDiscovery,
+                           "Enable verbose output during module discovery process.");
 }
 
 //-----------------------------------------------------------------------------

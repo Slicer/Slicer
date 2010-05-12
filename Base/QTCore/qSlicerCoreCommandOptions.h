@@ -44,6 +44,9 @@ public:
   /// Return True if slicer should display home path and exit
   bool displayHomePathAndExit()const;
 
+  /// Return True if slicer should display details regarding the module discovery process
+  bool verboseModuleDiscovery()const;
+
   /// Return temp directory
   /// Try to read the value from the setting, if no value is found it defaults to
   /// the value returned by QDir::tempPath()

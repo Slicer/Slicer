@@ -74,6 +74,8 @@ int main(int argc, char* argv[])
                                           new qSlicerCLIExecutableModuleFactory());
     }
 
+  moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
+  
   // Register and instanciate modules
   moduleFactoryManager->registerAllModules();
   moduleFactoryManager->instantiateAllModules();

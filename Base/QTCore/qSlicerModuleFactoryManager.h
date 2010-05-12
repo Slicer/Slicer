@@ -88,6 +88,10 @@ public:
   /// Indicate if a module has been registered
   bool isRegistered(const QString& name)const;
 
+  ///
+  /// Enable/Disable verbose output during module discovery process
+  void setVerboseModuleDiscovery(bool value);
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
 };
