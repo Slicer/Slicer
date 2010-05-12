@@ -4,7 +4,11 @@ set(proj python)
 set(python_DEPENDS )
 
 if(Slicer3_USE_PYTHON)
-  list(APPEND python_DEPENDS tcl tk)
+  if(WIN32)
+    list(APPEND python_DEPENDS tcl)
+  else(WIN32)
+    list(APPEND python_DEPENDS tcl tk)
+  endif(WIN32)
 endif(Slicer3_USE_PYTHON)
 
   if(WIN32)
@@ -20,7 +24,7 @@ endif(Slicer3_USE_PYTHON)
     set(python_tkinter ${python_base}/pyproject.vsprops)
     string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
-    set(script ${CMAKE_CURRENT_SOURCE_DIR}/StringFindReplace.cmake)
+    set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
     set(out ${python_tkinter})
     set(in ${python_tkinter})
 
