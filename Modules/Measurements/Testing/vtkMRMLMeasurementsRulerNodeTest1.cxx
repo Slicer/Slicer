@@ -21,16 +21,19 @@ int vtkMRMLMeasurementsRulerNodeTest1(int , char * [] )
   TEST_SET_GET_STRING(node1, ModelID1);
   TEST_SET_GET_STRING(node1, ModelID2);
 
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Position1);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Position2);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, PointColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Point2Colour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, LineColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, DistanceAnnotationTextColour);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position1, 100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position1, -100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position2, 100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position2, -100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, PointColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Point2Colour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, LineColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, DistanceAnnotationTextColour, 1.0);
 
 //  TEST_SET_GET_DOUBLE(node1, Distance);
   std::cout << "Distance = " << node1->GetDistance() << std::endl;
-  TEST_SET_GET_INT(node1, Resolution);
+  TEST_SET_GET_INT(node1, Resolution, 10);
+  TEST_SET_GET_INT(node1, Resolution, -10);
 
   // all have to be the same
   node1->SetDistanceAnnotationScale(1.2, 1.2, 1.2);

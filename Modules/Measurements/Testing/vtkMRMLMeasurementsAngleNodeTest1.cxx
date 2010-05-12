@@ -30,23 +30,27 @@ int vtkMRMLMeasurementsAngleNodeTest1(int , char * [] )
   TEST_SET_GET_STRING(node1, ModelID2);
   TEST_SET_GET_STRING(node1, ModelIDCenter);
 
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Position1);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Position2);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, PositionCenter);
-
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position1, 100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position1, -100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position2, 100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Position2, -100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, PositionCenter, 100.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, PositionCenter, -100.0);
+ 
   //TEST_SET_GET_DOUBLE(node1, Angle);
   std::cout << "Angle = " << node1->GetAngle() << std::endl;
   node1->UpdateCurrentAngleAnnotation();
   std::cout << "Angle annotation = " << node1->GetCurrentAngleAnnotation() << std::endl;
   
-  TEST_SET_GET_INT(node1, Resolution);
+  TEST_SET_GET_INT(node1, Resolution, 10);
+  TEST_SET_GET_INT_RANDOM(node1, Resolution, 100);
 
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, PointColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, Point2Colour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, PointCentreColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, LineColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, ArcColour);
-  TEST_SET_GET_VECTOR3_DOUBLE(node1, LabelTextColour);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, PointColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, Point2Colour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, PointCentreColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, LineColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, ArcColour, 1.0);
+  TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, LabelTextColour, 1.0);
   
 
   // all have to be the same

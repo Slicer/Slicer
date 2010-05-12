@@ -106,39 +106,66 @@
     return EXIT_FAILURE; \
     }
 
-#define TEST_SET_GET_INT( object, variable )    \
-  {                                             \
-    int pos = (int)(vtkMath::Random() * 100.0); \
-    object->Set##variable( pos );               \
-    int neg = (int)(vtkMath::Random() * -100.0);    \
-    object->Set##variable( neg );                   \
-    if( object->Get##variable() != neg )            \
+#define TEST_SET_GET_INT( object, variable, value )        \
+  {                                                        \
+    object->Set##variable( value );                        \
+    if( object->Get##variable() != value )                 \
       {                                                    \
-      std::cerr << "Error in Set/Get"#variable << std::endl;    \
-      return EXIT_FAILURE;                                      \
-      }                                                         \
+      std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
   }
 
-#define TEST_SET_GET_DOUBLE( object, variable ) \
+#define TEST_SET_GET_INT_RANDOM( object, variable, max )    \
+  {                                                         \
+    int val = (int)(vtkMath::Random() * max);               \
+    object->Set##variable( val );                           \
+    if( object->Get##variable() != val )                    \
+      {                                                     \
+      std::cerr << "Error in Set/Get"#variable << " using random value " << val << std::endl; \
+      return EXIT_FAILURE;                                  \
+      }                                                     \
+  }
+
+#define TEST_SET_GET_DOUBLE_RANDOM( object, variable, max ) \
   {                                             \
-    double pos = vtkMath::Random() * 100.0;     \
-    object->Set##variable( pos );               \
-    double neg = vtkMath::Random() * -100.0;    \
-    object->Set##variable( neg );               \
-    if( object->Get##variable() != neg )        \
+    double val = vtkMath::Random() * max;     \
+    object->Set##variable( val );               \
+    if( object->Get##variable() != val )        \
       {                                         \
-      std::cerr << "Error in Set/Get"#variable << std::endl;    \
+      std::cerr << "Error in  Set/Get"#variable << ", using random value " << val << std::endl; \
       return EXIT_FAILURE;                                      \
       }                                                         \
   }
 
-#define TEST_SET_GET_VECTOR3_DOUBLE( object, variable ) \
-  {                                                     \
-    double x = vtkMath::Random();                       \
-    double y = vtkMath::Random();                       \
-    double z = vtkMath::Random();                       \
-    object->Set##variable( x, y, z );                   \
-    double *val = object->Get##variable();                       \
+#define TEST_SET_GET_DOUBLE( object, variable, value )    \
+  {                                             \
+    object->Set##variable( value );               \
+    if( object->Get##variable() != value )        \
+      {                                         \
+      std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
+      return EXIT_FAILURE;                                      \
+      }                                                         \
+  }
+
+#define TEST_SET_GET_VECTOR3_DOUBLE_RANDOM( object, variable, max )  \
+  {                                                                  \
+    double x = vtkMath::Random() * max;                              \
+    double y = vtkMath::Random() * max;                              \
+    double z = vtkMath::Random() * max;                              \
+    object->Set##variable( x, y, z );                                \
+    double *val = object->Get##variable();                           \
+    if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
+      {                                                             \
+      std::cerr << "Error in Set/Get"#variable << " with " << x << ", " << y << ", " << z << std::endl; \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
+  }
+
+#define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \
+  {                                                                 \
+    object->Set##variable( x, y, z );                               \
+    double *val = object->Get##variable();                          \
     if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
       {                                                             \
       std::cerr << "Error in Set/Get"#variable << std::endl;        \
@@ -249,19 +276,19 @@
       return EXIT_FAILURE;                                              \
       }                                                                 \
                                                                         \
-    const char *atts[] = {"id", "vtkMRMLMeasurementsNodeTest1", "name", "MyName", "description", "Testing a mrml node", "hideFromEditors", "false", "selectable", "true", "selected", "true", NULL}; \
+    const char *atts[] = {"id", "vtkMRMLNodeTest1", "name", "MyName", "description", "Testing a mrml node", "hideFromEditors", "false", "selectable", "true", "selected", "true", NULL}; \
     node->ReadXMLAttributes(atts);                                      \
-    if (strcmp(node->GetID(), "vtkMRMLMeasurementsNodeTest1") != 0)     \
+    if (strcmp(node->GetID(), "vtkMRMLNodeTest1") != 0)     \
       {                                                                 \
-      std::cerr << "Error in ReadXMLAttributes! id should be vtkMRMLMeasurementsNodeTest1, but is " << node->GetID() << std::endl; \
+      std::cerr << "Error in ReadXMLAttributes! id should be vtkMRMLNodeTest1, but is " << node->GetID() << std::endl; \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     node->WriteXML(std::cout, 0);                                       \
     std::cout << std::endl;                                             \
   }
 
-#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( node ) \
-  {\
+#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( node )   \
+  {                                                                 \
     vtkMRMLTransformNode *tnode2 = node->GetParentTransformNode();\
     if (tnode2 != NULL)\
       {\
@@ -389,29 +416,29 @@
     node->SetAndObserveColorNodeID(NULL);                               \
     if (node->GetColorNodeID() != NULL)                                 \
       {                                                                 \
-      std::cerr << "Error getting null color node id " << std::endl; \
+      std::cerr << "Error getting null color node id " << std::endl;    \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     if (node->GetColorNode() != NULL)                                   \
       {                                                                 \
-      std::cerr << "Error getting null color node " << std::endl;    \
+      std::cerr << "Error getting null color node " << std::endl;       \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     node->SetActiveScalarName("testingScalar");                         \
     if (strcmp(node->GetActiveScalarName(), "testingScalar") != 0)      \
       {                                                                 \
-      std::cerr << "Error getting active scalar name" << std::endl;      \
+      std::cerr << "Error getting active scalar name" << std::endl;     \
       return EXIT_FAILURE;                                              \
       }                                                                 \
-    TEST_SET_GET_VECTOR3_DOUBLE(node, Color);                            \
-    TEST_SET_GET_VECTOR3_DOUBLE(node, SelectedColor);                   \
-    TEST_SET_GET_DOUBLE(node, SelectedAmbient);                         \
-    TEST_SET_GET_DOUBLE(node, SelectedSpecular);                        \
-    TEST_SET_GET_DOUBLE(node, Opacity);                                 \
-    TEST_SET_GET_DOUBLE(node, Ambient);                                 \
-    TEST_SET_GET_DOUBLE(node, Diffuse);                                 \
-    TEST_SET_GET_DOUBLE(node, Specular);                                \
-    TEST_SET_GET_DOUBLE(node, Power);                                   \
+    TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node, Color, 1.0);               \
+    TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node, SelectedColor, 1.0);       \
+    TEST_SET_GET_DOUBLE_RANDOM(node, SelectedAmbient, 1.0);             \
+    TEST_SET_GET_DOUBLE_RANDOM(node, SelectedSpecular, 1.0);            \
+    TEST_SET_GET_DOUBLE_RANDOM(node, Opacity, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANDOM(node, Ambient, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANDOM(node, Diffuse, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANDOM(node, Specular, 1.0);                    \
+    TEST_SET_GET_DOUBLE_RANDOM(node, Power, 1.0);                       \
     TEST_SET_GET_BOOLEAN(node, Visibility);                             \
     TEST_SET_GET_BOOLEAN(node, Clipping);                               \
     TEST_SET_GET_BOOLEAN(node, SliceIntersectionVisibility);            \
@@ -458,7 +485,7 @@
       }                                                             \
     node->SetURIHandler(NULL);                                      \
     handler->Delete();                                              \
-    TEST_SET_GET_INT(node, ReadState);                              \
+    TEST_SET_GET_INT_RANDOM(node, ReadState, 5);                      \
     const char *rstate = node->GetReadStateAsString();              \
     std::cout << "Read state, after int test = " << rstate << std::endl; \
     node->SetReadStatePending();                                    \
@@ -480,7 +507,7 @@
     rstate = node->GetReadStateAsString();                          \
     std::cout << "Read state, Cancelled = " << rstate << std::endl; \
                                                                     \
-    TEST_SET_GET_INT(node, WriteState);                             \
+    TEST_SET_GET_INT_RANDOM(node, WriteState, 5);                    \
     const char *wstate = node->GetWriteStateAsString();              \
     std::cout << "Write state, after int test = " << wstate << std::endl; \
     node->SetWriteStatePending();                                    \
