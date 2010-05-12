@@ -728,6 +728,12 @@ void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::Enter ( )
 {
+  // Call Exit() to remove any previous widgets. Sometimes Enter() is
+  // called multiple times without an intervening call to Exit()
+  this->Exit();
+
+  //std::cout << "Enter()" << std::endl;
+
   // Need to pack a set of controllers for the SliceGUIs
   //
 
@@ -872,6 +878,8 @@ vtkSlicerSlicesGUI::BuildSliceController(vtkSlicerSliceGUI *g)
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::Exit ( )
 {
+  // std::cout << "Exit()" << std::endl;
+
   // Destroy all SliceControllers and make a new list of the remainders
   ParameterWidgetMap *newMap = new ParameterWidgetMap;
   ParameterWidgetMap::iterator wit;
