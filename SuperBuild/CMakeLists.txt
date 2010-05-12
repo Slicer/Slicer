@@ -200,7 +200,10 @@ set(lapack_DEPENDENCIES)
 set(vtk_DEPENDENCIES)
 set(KWWidgets_DEPENDENCIES vtk)
 set(Insight_DEPENDENCIES)
-
+set(BatchMake_DEPENDENCIES Insight)
+set(OpenIGTLink_DEPENDENCIES)
+set(teem_DEPENDENCIES vtk)
+set(slicer_DEPENDENCIES vtk Insight BatchMake OpenIGTLink teem cmcurl)
 
 #------------------------------------------------------------------------------
 # Include Each Target
@@ -241,7 +244,6 @@ include(External_Insight)
 include(External_teem)
 include(External_OpenIGTLink)
 include(External_BatchMake)
-list (APPEND slicer_DEPENDENCIES BatchMake)
 include(External_cmcurl)
 
 #-----------------------------------------------------------------------------
