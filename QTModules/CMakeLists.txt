@@ -21,8 +21,12 @@ SET(qtmodules
   Volumes
   Measurements
   TractographyFiducialSeeding
-  # miAnnotation
   )
+
+# NOTE miAnnotation depends on KWWidget and Qt
+IF(Slicer3_USE_KWWIDGETS)
+  LIST(APPEND qtmodules miAnnotation)
+ENDIF()
 
 FOREACH(module ${qtmodules})
   ADD_SUBDIRECTORY(${module})
