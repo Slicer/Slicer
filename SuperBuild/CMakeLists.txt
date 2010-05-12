@@ -241,6 +241,7 @@ include(External_Insight)
 include(External_teem)
 include(External_OpenIGTLink)
 include(External_BatchMake)
+list (APPEND slicer_DEPENDENCIES BatchMake)
 include(External_cmcurl)
 
 #-----------------------------------------------------------------------------
@@ -270,6 +271,7 @@ if(Slicer3_USE_QT)
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
     )
+  list(APPEND slicer_DEPENDENCIES CTK)
 endif(Slicer3_USE_QT)
 
 if(Slicer3_USE_PYTHON)
