@@ -22,7 +22,7 @@ public:
   virtual ~qMRMLEventLogger();
 
   /// 
-  /// Set the MRML scene that should be listened for events
+  /// Set the MRML \a scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
   /// 

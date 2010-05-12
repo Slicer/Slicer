@@ -121,11 +121,11 @@ void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_dat
 // Helper macro allowing to define function of the
 // form void onEVENT_NAMEEvent()'
 //
-#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)   \
-void qMRMLEventLogger::on##_EVENT_NAME##Event()            \
-{                                                          \
-  qDebug() << "qMRMLEventLogger::on##_EVENT_NAME##Event";  \
-  emit signal##_EVENT_NAME##Event();                       \
+#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)  \
+void qMRMLEventLogger::on##_EVENT_NAME##Event()           \
+{                                                         \
+  qDebug("qMRMLEventLogger::on%sEvent",#_EVENT_NAME);      \
+  emit signal##_EVENT_NAME##Event();                      \
 }
 
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
