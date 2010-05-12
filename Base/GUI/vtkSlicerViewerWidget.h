@@ -136,12 +136,9 @@ public:
 
   ///  
   /// Actually do a render (don't wait for idle)
+  //  Avoid using this method - use RequestRender to automatically compress
+  //  multiple renders for better interactive performance
   void Render();
-
-  ///  
-  /// Used to track the fact that there is a idle task pending requesting a render
-  vtkSetMacro (RenderPending, int);
-  vtkGetMacro (RenderPending, int);
 
   /// 
   /// Show and hide widget

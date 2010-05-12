@@ -80,7 +80,6 @@ vtkCxxRevisionMacro ( vtkSlicerViewerWidget, "$Revision$");
 vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 {
   this->MainViewer = NULL;  
-  this->RenderPending = 0;  
   this->ViewerFrame = NULL;
   this->ProcessingMRMLEvent = 0;
   this->UpdateFromMRMLRequested = 0;
@@ -230,7 +229,6 @@ void vtkSlicerViewerWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
   os << indent << "vtkSlicerViewerWidget: " << this->GetClassName ( ) << "\n";
 
-  os << indent << "RenderPending = " << this->RenderPending << "\n";
   os << indent << "ProcessingMRMLEvent = " << this->ProcessingMRMLEvent << "\n";
     
   os << indent << "ClipType = " << this->ClipType << "\n";
@@ -1634,13 +1632,7 @@ vtkMRMLDisplayNode*  vtkSlicerViewerWidget::GetHierarchyDisplayNode(vtkMRMLDispl
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RequestRender()
 {
-  if (this->GetRenderPending())
-    {
-    return;
-    }
-
   // move the render to the last thing on the idle processing queue
-  this->SetRenderPending(1);
   this->Script("after cancel \"%s Render\"", this->GetTclName());
   this->Script("after idle \"%s Render\"", this->GetTclName());
 }
@@ -1668,7 +1660,6 @@ void vtkSlicerViewerWidget::Render()
       }
     vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
     this->MainViewer->SetRenderState(currentRenderState);
-    this->SetRenderPending(0);
     } 
 }
 
