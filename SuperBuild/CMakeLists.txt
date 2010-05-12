@@ -269,7 +269,7 @@ set(slicer_QT_ARGS)
 if(Slicer3_USE_QT)
   set(slicer_QT_ARGS
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
-    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
+    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build/CTK-build
     )
   list(APPEND slicer_DEPENDENCIES CTK)
 endif(Slicer3_USE_QT)

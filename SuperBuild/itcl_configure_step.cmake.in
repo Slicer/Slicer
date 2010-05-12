@@ -1,12 +1,4 @@
 
-#set(ENV{PATH} "${CMAKE_BINARY_DIR}/python-build/lib")
-#set(ENV{PATH} "@tcl_build@../tcl/bin:$ENV{PATH}")
-#set(ENV{DYLD_LIBRARY_PATH} "/usr/X11/lib:$ENV{DYLD_LIBRARY_PATH}")
-
-
-#exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
-#exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
-
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E copy configure configure.orig
   WORKING_DIRECTORY @tcl_base@/incrTcl/itcl
@@ -27,12 +19,3 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E copy configure.orig configure
   WORKING_DIRECTORY @tcl_base@/incrTcl/itcl
 )
-
-
-# catch "eval runcmd $::MAKE all"
-#        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
-#          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
-#        }  
-#message("LD_LIBRARY_PATH:=ENV{LD_LIBRARY_PATH}")
-#set(et(tk_CVS_REPOSITORY :pserver:anonymous@tktoolkit.cvs.sourceforge.net:/cvsroot/tktoolkit)
-
