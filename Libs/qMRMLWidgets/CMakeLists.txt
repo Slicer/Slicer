@@ -161,8 +161,8 @@ ADD_LIBRARY(${lib_name}
 
 SET(qMRMLWidgets_LIBRARIES 
   ${QT_LIBRARIES}
+  ${CTK_LIBRARIES}
   MRML
-  CTKVisualizationVTKWidgets
   )
   
 TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
