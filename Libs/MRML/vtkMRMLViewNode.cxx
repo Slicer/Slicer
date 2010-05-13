@@ -35,7 +35,6 @@ vtkMRMLViewNode* vtkMRMLViewNode::New()
 }
 
 //-----------------------------------------------------------------------------
-
 vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
