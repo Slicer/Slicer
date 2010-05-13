@@ -193,10 +193,16 @@ DebugImageViewerClient DebugImageDisplaySender;
 int BRAINSFitPrimary( int argc, char *argv[] )
 {
   PARSE_ARGS;
+
+  //This is needed in order to read and write ScaleVersor3D TransformTypes.
+  //Hopefully in ITK-3-19 this will become part of the non-review transform types.
+  itk::TransformFactory<itk::ScaleVersor3DTransform<double> >::RegisterTransform ();
+  itk::TransformFactory<itk::ScaleVersor3DTransform<float> >::RegisterTransform ();
+
   RegisterBrains2MaskFactory();
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
-  if(UseDebugImageViewer) 
+  if(UseDebugImageViewer)
     {
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
     }
