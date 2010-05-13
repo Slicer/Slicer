@@ -70,9 +70,9 @@ void vtkMRMLTimeSeriesVolumeNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  while (*atts != NULL)
-    {
-    }
+//  while (*atts != NULL)
+//    {
+//    }
 
 } 
 
