@@ -659,7 +659,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node)
   CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
-  qDebug() << "onMRMLSceneNodeRemoved: " << d->MRMLNodeToBe->GetName();
+  //qDebug() << "onMRMLSceneNodeRemoved: " << d->MRMLNodeToBe->GetName();
   d->MRMLNodeToBe = 0;
   this->endRemoveRows();
 }

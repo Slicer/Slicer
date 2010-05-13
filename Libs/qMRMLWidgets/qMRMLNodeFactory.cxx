@@ -14,7 +14,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class qMRMLNodeFactoryPrivate: public ctkPrivate<qMRMLNodeFactory>
 {
 public:
@@ -26,10 +26,10 @@ public:
   QHash<QString, QString> Attributes;
 };
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 CTK_CONSTRUCTOR_1_ARG_CXX(qMRMLNodeFactory, QObject*);
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 CTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
 CTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
