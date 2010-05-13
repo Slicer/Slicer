@@ -295,6 +295,13 @@
 /// Slicer Libs/MRML/vtkMRMLNode exercises
 #define EXERCISE_BASIC_MRML_METHODS( className, node )   \
   {\
+    vtkMRMLNode * newNode = node1->CreateNodeInstance();    \
+    if( newNode == NULL )                                   \
+      {                                                         \
+      std::cerr << "Error in CreateNodeInstance()" << std::endl;    \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
+    newNode->Delete();                                                  \
     vtkSmartPointer < className > node1 = vtkSmartPointer < className >::New(); \
     node1->Copy(node);                                                 \
     node->Reset();                                                      \
@@ -399,6 +406,7 @@
 
 /// For testing nodes in Libs/MRML that are storable. Calls the basic
 /// transformable mrml methods macro first.
+#include "vtkMRMLStorageNode.h"
 #define EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node )  \
   {                                                  \
     EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(className, node );    \
@@ -644,6 +652,8 @@
     std::cout << ".vtk supported?  " << sup << std::endl;     \
     sup = node->SupportedFileType("testing.nrrd");            \
     std::cout << ".nrrd supported?  " << sup << std::endl;     \
+    sup = node->SupportedFileType("testing.mgz");            \
+    std::cout << ".mgz supported?  " << sup << std::endl;     \
                                                                \
     TEST_SET_GET_STRING(node, WriteFileFormat);                \
     node->AddFileName("testing.txt");                          \
