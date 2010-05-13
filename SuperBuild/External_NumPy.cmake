@@ -18,7 +18,7 @@ else()
 endif()
 
 ExternalProject_Add(${proj}
-  DEPENDS blas lapack python
+  DEPENDS ${numpy_DEPENDENCIES}
   SVN_REPOSITORY "http://svn.scipy.org/svn/numpy/branches/1.3.x"
   SOURCE_DIR python/numpy
   CONFIGURE_COMMAND ""

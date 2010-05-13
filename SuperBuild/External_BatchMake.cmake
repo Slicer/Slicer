@@ -5,14 +5,14 @@
 set(proj BatchMake)
 
 ExternalProject_Add(${proj}
-  DEPENDS Insight
+  DEPENDS ${BatchMake_DEPENDENCIES}
   CVS_REPOSITORY ":pserver:anoncvs:@batchmake.org:/cvsroot/BatchMake"
   CVS_MODULE "BatchMake"
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    -DBUILD_SHARED_LIBS:BOOL=ON
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_TESTING:BOOL=OFF
     -DUSE_FLTK:BOOL=OFF

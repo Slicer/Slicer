@@ -19,13 +19,12 @@ set(pythonqt_patch_script "${CMAKE_CURRENT_BINARY_DIR}/Slicer3-build/CMake/Slice
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../CMake/Slicer3PatchPythonQt.cmake.in ${pythonqt_patch_script} @ONLY)
 
 ExternalProject_Add(${proj}
-  DEPENDS python
+  DEPENDS ${PythonQt_DEPENDENCIES}
   SVN_REPOSITORY "https://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
   SOURCE_DIR PythonQt
   PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patch_script}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    #-DCMAKE_INSTALL_PREFIX:PATH=${prefix}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     ${vtk_PYTHON_ARGS}

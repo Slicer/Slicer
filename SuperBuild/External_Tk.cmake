@@ -40,7 +40,7 @@ endif()
 if(NOT WIN32)
 
   ExternalProject_Add(${proj}
-    DEPENDS tcl
+    DEPENDS ${tk_DEPENDENCIES}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
     SOURCE_DIR ${tk_SOURCE_DIR}
     UPDATE_COMMAND ""

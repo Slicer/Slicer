@@ -35,7 +35,7 @@ endif()
 
 if(NOT WIN32)
   ExternalProject_Add(${proj}
-    DEPENDS tcl tk
+    DEPENDS ${blt_DEPENDENCIES}
     SVN_REPOSITORY ${blt_SVN}
     SOURCE_DIR tcl/blt
     BUILD_IN_SOURCE ${blt_BUILD_IN_SOURCE}

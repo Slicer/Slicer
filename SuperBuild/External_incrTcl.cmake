@@ -35,7 +35,7 @@ endif()
 
 if(NOT WIN32)
   ExternalProject_Add(${proj}
-    DEPENDS tk
+    DEPENDS ${incrTcl_DEPENDENCIES}
     SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}

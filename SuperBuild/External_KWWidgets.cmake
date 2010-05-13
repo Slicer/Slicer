@@ -6,7 +6,7 @@ set(proj KWWidgets)
 set(kwwidgets_tag Slicer-3-6)
 
 ExternalProject_Add(${proj}
-  DEPENDS vtk
+  DEPENDS ${KWWidgets_DEPENDENCIES}
   CVS_REPOSITORY ":pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets"
   CVS_MODULE "KWWidgets"
   CVS_TAG -r ${kwwidgets_tag}

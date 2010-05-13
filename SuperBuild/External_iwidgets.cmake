@@ -15,7 +15,7 @@ if(NOT WIN32)
   set(iwidgets_INSTALL make install)
   
   ExternalProject_Add(${proj}
-    DEPENDS tcl itcl
+    DEPENDS ${iwidgets_DEPENDENCIES}
     SVN_REPOSITORY ${iwidgets_SVN}
     SOURCE_DIR tcl/iwidgets
     BUILD_IN_SOURCE ${iwidgets_BUILD_IN_SOURCE}

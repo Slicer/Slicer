@@ -5,19 +5,17 @@
 set(proj VTK)
 
 set(vtk_source ${CMAKE_BINARY_DIR}/VTK)
-
-set(vtk_DEPENDS)
 set(vtk_WRAP_TCL OFF)
 set(vtk_WRAP_PYTHON OFF)
 
 if(Slicer3_USE_KWWIDGETS)
-  list(APPEND vtk_DEPENDS tcl)
+  list(APPEND vtk_DEPENDENCIES tcl)
   set(vtk_WRAP_TCL ON)
 endif(Slicer3_USE_KWWIDGETS)
 
 if (Slicer3_USE_PYTHONQT)
   set(vtk_WRAP_PYTHON ON)
-  list(APPEND vtk_DEPENDS python)
+  list(APPEND vtk_DEPENDENCIES python)
 endif(Slicer3_USE_PYTHONQT)
 
 set(vtk_QT_ARGS)
@@ -72,7 +70,7 @@ if(vtk_WRAP_TCL)
 endif(vtk_WRAP_TCL)
 
 ExternalProject_Add(vtk
-  DEPENDS ${vtk_DEPENDS}
+  DEPENDS ${vtk_DEPENDENCIES}
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
