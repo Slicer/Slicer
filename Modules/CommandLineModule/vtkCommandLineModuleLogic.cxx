@@ -633,7 +633,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
 
     
-    vtkMRMLStorageNode *out = 0;
+    vtkSmartPointer<vtkMRMLStorageNode> out = 0;
 
     // Determine if and how a node is to be written.  If we update the
     // MRMLIDImageIO, then we can change these conditions for the
@@ -648,21 +648,21 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     if ((commandType == CommandLineModule) && (svnd || vvnd))
       {
       // only write out scalar & vector image nodes if running an executable
-      out = vtkMRMLVolumeArchetypeStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
       }
     else if ((commandType == CommandLineModule) && (dtvnd || dwvnd))
       {
       // only write out diffusion image & tensor nodes if running an executable
-      out = vtkMRMLNRRDStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
       }
     else if (fbnd)
       {
-      out = vtkMRMLFiberBundleStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLFiberBundleStorageNode>::New();
       }
     else if (mnd)
       {
       // always write out model nodes
-      out = vtkMRMLModelStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
       }
     else if (tnd)
       {
@@ -690,19 +690,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         else
           {
           // use a storage node
-          out = vtkMRMLTransformStorageNode::New();
+          out = vtkSmartPointer<vtkMRMLTransformStorageNode>::New();
           }
         }
       }
     else if (ctnd)
       {
       // always write out color table nodes
-      out = vtkMRMLColorTableStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
       }
     else if (dand)
       {
       // always write out double array nodes
-      out = vtkMRMLDoubleArrayStorageNode::New();
+      out = vtkSmartPointer<vtkMRMLDoubleArrayStorageNode>::New();
       }
     else if (mhnd)
       {
@@ -735,7 +735,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         vtkErrorMacro("ERROR writing file " << out->GetFileName());
         }
-      out->Delete();
+      //out->Delete();
       }
     }
 
