@@ -570,7 +570,6 @@ void qSlicerCoreApplication::setCoreIOManager(qSlicerCoreIOManager* manager)
   ctk_d()->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(manager);
 }
 
-
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager* qSlicerCoreApplication::coreIOManager()const
 {
