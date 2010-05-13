@@ -1,9 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/Invisible.png</file>
-    <file>Icons/Visible.png</file>
-    <file>Icons/VisibleOrInvisible.png</file>
-
     <file>Icons/SaveScene.png</file>
     <file>Icons/LoadScene.png</file>
     <file>Icons/LoadVolume.png</file>

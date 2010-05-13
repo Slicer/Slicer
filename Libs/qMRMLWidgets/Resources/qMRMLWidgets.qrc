@@ -1,4 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
+    <file>Icons/VisibleOff.png</file>
+    <file>Icons/VisibleOn.png</file>
+    <file>Icons/VisibleOrInvisible.png</file>
   </qresource>
 </RCC>

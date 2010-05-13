@@ -42,7 +42,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-           <normaloff>:/Icons/Visible.png</normaloff>:/Icons/Visible.png</iconset>
+           <normaloff>:/Icons/VisibleOn.png</normaloff>:/Icons/VisibleOn.png</iconset>
          </property>
         </item>
         <item>
@@ -51,7 +51,7 @@
          </property>
          <property name="icon">
           <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-           <normaloff>:/Icons/Invisible.png</normaloff>:/Icons/Invisible.png</iconset>
+           <normaloff>:/Icons/VisibleOff.png</normaloff>:/Icons/VisibleOff.png</iconset>
          </property>
         </item>
        </widget>
