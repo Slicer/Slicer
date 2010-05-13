@@ -538,7 +538,6 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     return;
     }
 #ifdef Slicer3_USE_QT
-  //qSlicerApplication::application()->ioManager()->loadScene();
   qSlicerApplication::application()->ioManager()->openImportSceneDialog();
 #else
   if ( !this->LoadSceneDialog->IsCreated() )
