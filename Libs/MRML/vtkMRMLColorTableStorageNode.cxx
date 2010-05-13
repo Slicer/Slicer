@@ -117,6 +117,11 @@ void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadData: can't read into a null node");
+    return 0;
+    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if ( !refNode->GetAddToScene() )
     {
@@ -281,7 +286,11 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: can't write, input node is null");
+    return 0;
+    }
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLColorTableNode") ) )
     {

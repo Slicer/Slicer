@@ -118,6 +118,11 @@ void vtkMRMLModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadData: can't read into a null node");
+    return 0;
+    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if ( !refNode->GetAddToScene() )
   {
@@ -289,6 +294,11 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: can't write, input node is null");
+    return 0;
+    }
   // test whether refNode is a valid node to hold a model
   if (!refNode->IsA("vtkMRMLModelNode") ) 
   {

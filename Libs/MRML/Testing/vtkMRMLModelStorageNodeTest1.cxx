@@ -23,5 +23,7 @@ int vtkMRMLModelStorageNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLModelStorageNode, node1);
+  
   return EXIT_SUCCESS;
 }

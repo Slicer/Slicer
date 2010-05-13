@@ -142,6 +142,11 @@ void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 
 int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadData: can't read into a null node");
+    return 0;
+    }
   if ( !refNode->GetAddToScene() )
   {
     return 1;
@@ -343,7 +348,11 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: can't write, input node is null");
+    return 0;
+    }
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
           refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||

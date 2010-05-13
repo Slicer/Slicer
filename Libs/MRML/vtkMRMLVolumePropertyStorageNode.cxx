@@ -99,6 +99,11 @@ void vtkMRMLVolumePropertyStorageNode::ProcessParentNode(vtkMRMLNode *parentNode
 //----------------------------------------------------------------------------
 int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadData: can't read into a null node");
+    return 0;
+    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if (  !refNode->GetAddToScene() )
     {
@@ -243,6 +248,11 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: can't write, input node is null");
+    return 0;
+    }
   if (!refNode->IsA("vtkMRMLVolumePropertyNode") ) 
     {
     //vtkErrorMacro("Reference node is not a vtkMRMLVolumePropertyNode");

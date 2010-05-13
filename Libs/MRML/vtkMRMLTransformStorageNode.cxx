@@ -124,6 +124,11 @@ void vtkMRMLTransformStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadData: can't read into a null node");
+    return 0;
+    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if (  !refNode->GetAddToScene() )
     {
@@ -645,6 +650,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: can't write, input node is null");
+    return 0;
+    }
   // test whether refNode is a valid node to hold a transform
   if (!refNode->IsA("vtkMRMLTransformNode") ) 
     {
