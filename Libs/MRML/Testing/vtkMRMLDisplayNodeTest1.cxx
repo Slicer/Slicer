@@ -64,9 +64,9 @@ int vtkMRMLDisplayNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLModelNode, node1);
+  // EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
   
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
    
 
   return EXIT_SUCCESS;

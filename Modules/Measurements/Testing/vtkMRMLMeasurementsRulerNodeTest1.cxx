@@ -10,8 +10,7 @@ int vtkMRMLMeasurementsRulerNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLMeasurementsRulerNode > node1 = vtkSmartPointer< vtkMRMLMeasurementsRulerNode >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLMeasurementsRulerNode, node1);
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(node1);
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLMeasurementsRulerNode, node1);
 
   TEST_SET_GET_STRING(node1, DistanceAnnotationFormat);
   TEST_SET_GET_STRING(node1, CurrentDistanceAnnotation);

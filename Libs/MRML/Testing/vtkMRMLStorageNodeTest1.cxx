@@ -56,6 +56,8 @@ int vtkMRMLStorageNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLStorageNodeTestHelper1, node1);
+  
   newNode->Delete();
 
   return EXIT_SUCCESS;

@@ -10,8 +10,7 @@ int vtkMRMLMeasurementsAngleNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLMeasurementsAngleNode > node1 = vtkSmartPointer< vtkMRMLMeasurementsAngleNode >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLMeasurementsAngleNode, node1);
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(node1);
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLMeasurementsAngleNode, node1);
   
   
 

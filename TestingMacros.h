@@ -84,25 +84,25 @@
   object->Set##variable( true ); \
   if( object->Get##variable() != 1 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 1" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->Set##variable( false ); \
   if( object->Get##variable() != 0 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 0" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##On(); \
   if( object->Get##variable() != 1 ) \
     {   \
-    std::cerr << "Error in On/Get"#variable << std::endl; \
+    std::cerr << "Error in On/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 1" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##Off(); \
   if( object->Get##variable() != 0 ) \
     {   \
-    std::cerr << "Error in Off/Get"#variable << std::endl; \
+    std::cerr << "Error in Off/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 0" << std::endl; \
     return EXIT_FAILURE; \
     }
 
@@ -116,6 +116,25 @@
       }                                                                 \
   }
 
+#define TEST_SET_GET_INT_RANGE( object, variable, min, max ) \
+  {                                                         \
+    int epsilon = 1;                                        \
+    int val = min - epsilon;                                \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = min;                                              \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = min + epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = (min + max) / 2;                                  \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max - epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max;                                              \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max + epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+  }
+
 #define TEST_SET_GET_INT_RANDOM( object, variable, max )    \
   {                                                         \
     int val = (int)(vtkMath::Random() * max);               \
@@ -125,6 +144,35 @@
       std::cerr << "Error in Set/Get"#variable << " using random value " << val << std::endl; \
       return EXIT_FAILURE;                                  \
       }                                                     \
+  }
+
+#define TEST_SET_GET_DOUBLE( object, variable, value )    \
+  {                                             \
+    object->Set##variable( value );               \
+    if( object->Get##variable() != value )        \
+      {                                         \
+      std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
+      return EXIT_FAILURE;                                      \
+      }                                                         \
+  }
+
+#define TEST_SET_GET_DOUBLE_RANGE( object, variable, min, max )         \
+  {                                                                     \
+    double epsilon = 1.0;                                               \
+    double val = min - epsilon;                                         \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = min;                                                          \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = min + epsilon;                                                \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = (min + max) / 2.0;                                            \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = max - epsilon;                                                \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = max;                                                          \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
+    val = max + epsilon;                                                \
+    TEST_SET_GET_DOUBLE( object, variable, val);                        \
   }
 
 #define TEST_SET_GET_DOUBLE_RANDOM( object, variable, max ) \
@@ -138,14 +186,28 @@
       }                                                         \
   }
 
-#define TEST_SET_GET_DOUBLE( object, variable, value )    \
-  {                                             \
-    object->Set##variable( value );               \
-    if( object->Get##variable() != value )        \
-      {                                         \
-      std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
-      return EXIT_FAILURE;                                      \
-      }                                                         \
+#define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \
+  {                                                                 \
+    object->Set##variable( x, y, z );                               \
+    double *val = object->Get##variable();                          \
+    if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
+      {                                                             \
+      std::cerr << "Error in Set/Get"#variable << std::endl;        \
+      return EXIT_FAILURE;                                          \
+      }                                                             \
+  }
+
+#define TEST_SET_GET_VECTOR3_DOUBLE_RANGE( object, variable, min, max )  \
+  {                                                                     \
+    double epsilon = 1.0;                                               \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, min - epsilon, min - epsilon, min - epsilon); \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, min, min, min);       \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, min + epsilon, min + epsilon, min + epsilon); \
+    double half = (min+max/2.0);                                        \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, half, half, half);    \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, max - epsilon, max - epsilon, max - epsilon); \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, max, max, max);       \
+    TEST_SET_GET_VECTOR3_DOUBLE(object, variable, max + epsilon, max + epsilon, max + epsilon); \
   }
 
 #define TEST_SET_GET_VECTOR3_DOUBLE_RANDOM( object, variable, max )  \
@@ -158,17 +220,6 @@
     if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
       {                                                             \
       std::cerr << "Error in Set/Get"#variable << " with " << x << ", " << y << ", " << z << std::endl; \
-      return EXIT_FAILURE;                                          \
-      }                                                             \
-  }
-
-#define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \
-  {                                                                 \
-    object->Set##variable( x, y, z );                               \
-    double *val = object->Get##variable();                          \
-    if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
-      {                                                             \
-      std::cerr << "Error in Set/Get"#variable << std::endl;        \
       return EXIT_FAILURE;                                          \
       }                                                             \
   }
@@ -205,10 +256,10 @@
     } \
   }
 
-#define EXERCISE_BASIC_MRML_METHODS( className, node ) \
+#define EXERCISE_BASIC_MRML_METHODS( className, node )   \
   {\
     vtkSmartPointer < className > node1 = vtkSmartPointer < className >::New(); \
-    node1->Copy(node);                                                  \
+    node1->Copy(node);                                                 \
     node->Reset();                                                      \
     int mod = node->StartModify();                                      \
     std::string nodeTagName = node->GetNodeTagName();                   \
@@ -287,9 +338,10 @@
     std::cout << std::endl;                                             \
   }
 
-#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( node )   \
+#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( className, node )    \
   {                                                                 \
-    vtkMRMLTransformNode *tnode2 = node->GetParentTransformNode();\
+    EXERCISE_BASIC_MRML_METHODS(className, node);                    \
+    vtkMRMLTransformNode *tnode2 = node->GetParentTransformNode();  \
     if (tnode2 != NULL)\
       {\
       std::cerr << "ERROR: parent transform node is not null" << std::endl;\
@@ -306,8 +358,9 @@
     std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl;\
   }
 
-#define EXERCISE_BASIC_STORABLE_MRML_METHODS( node ) \
+#define EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node )  \
   {                                                  \
+    EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(className, node );    \
     if (node->GetNumberOfStorageNodes() != 0)        \
       {                                              \
       std::cerr << "Error in getting number of storage nodes." << std::endl; \
@@ -349,8 +402,9 @@
       }                                                                 \
   }
 
-#define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( node ) \
+#define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( className, node )   \
   {                                                  \
+    EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node ); \
     if (node->GetNumberOfDisplayNodes() != 0)        \
       {                                              \
       std::cerr << "Error in getting number of display nodes." << std::endl; \
@@ -387,17 +441,16 @@
     pdata->Delete();                                                    \
   }
 
-#define EXERCISE_BASIC_DISPLAY_MRML_METHODS( node ) \
+#define EXERCISE_BASIC_DISPLAY_MRML_METHODS( className, node )   \
   {                                                     \
+    EXERCISE_BASIC_MRML_METHODS( className, node);   \
     if (node->GetPolyData() != NULL)                    \
       {                                                 \
-      std::cerr << "Error getting null polydata" << std::endl;  \
-      return EXIT_FAILURE;                                      \
+      std::cout << "Warning: After "#className << " node created, polydata is not null" << std::endl;  \
       }                                                         \
     if (node->GetImageData() != NULL)                    \
       {                                                 \
-      std::cerr << "Error getting null image" << std::endl;  \
-      return EXIT_FAILURE;                                      \
+      std::cout << "Warning: After "#className << " node create, image data is not null" << std::endl;  \
       }                                                         \
     vtkMRMLDisplayableNode *dnode = node->GetDisplayableNode(); \
     if (dnode != NULL)                                          \
@@ -430,15 +483,15 @@
       std::cerr << "Error getting active scalar name" << std::endl;     \
       return EXIT_FAILURE;                                              \
       }                                                                 \
-    TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node, Color, 1.0);               \
-    TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node, SelectedColor, 1.0);       \
-    TEST_SET_GET_DOUBLE_RANDOM(node, SelectedAmbient, 1.0);             \
-    TEST_SET_GET_DOUBLE_RANDOM(node, SelectedSpecular, 1.0);            \
-    TEST_SET_GET_DOUBLE_RANDOM(node, Opacity, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANDOM(node, Ambient, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANDOM(node, Diffuse, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANDOM(node, Specular, 1.0);                    \
-    TEST_SET_GET_DOUBLE_RANDOM(node, Power, 1.0);                       \
+    TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node, Color, 0.0, 1.0);           \
+    TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node, SelectedColor, 0.0, 1.0);   \
+    TEST_SET_GET_DOUBLE_RANGE(node, SelectedAmbient, 0.0, 1.0);             \
+    TEST_SET_GET_DOUBLE_RANGE(node, SelectedSpecular, 0.0, 1.0);            \
+    TEST_SET_GET_DOUBLE_RANGE(node, Opacity, 0.0, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANGE(node, Ambient, 0.0, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANGE(node, Diffuse, 0.0, 1.0);                     \
+    TEST_SET_GET_DOUBLE_RANGE(node, Specular, 0.0, 1.0);                    \
+    TEST_SET_GET_DOUBLE_RANGE(node, Power, 0.0, 1.0);                       \
     TEST_SET_GET_BOOLEAN(node, Visibility);                             \
     TEST_SET_GET_BOOLEAN(node, Clipping);                               \
     TEST_SET_GET_BOOLEAN(node, SliceIntersectionVisibility);            \
@@ -459,8 +512,9 @@
 
 #include <vtkStringArray.h>
 
-#define EXERCISE_BASIC_STORAGE_MRML_METHODS( node ) \
+#define EXERCISE_BASIC_STORAGE_MRML_METHODS( className, node )   \
   {                                                 \
+    EXERCISE_BASIC_MRML_METHODS(className, node);    \
     node->ReadData(NULL);                           \
     node->WriteData(NULL);                          \
     node->StageReadData(NULL);                      \
@@ -485,7 +539,7 @@
       }                                                             \
     node->SetURIHandler(NULL);                                      \
     handler->Delete();                                              \
-    TEST_SET_GET_INT_RANDOM(node, ReadState, 5);                      \
+    TEST_SET_GET_INT_RANGE(node, ReadState, 0, 5);                  \
     const char *rstate = node->GetReadStateAsString();              \
     std::cout << "Read state, after int test = " << rstate << std::endl; \
     node->SetReadStatePending();                                    \
@@ -507,7 +561,7 @@
     rstate = node->GetReadStateAsString();                          \
     std::cout << "Read state, Cancelled = " << rstate << std::endl; \
                                                                     \
-    TEST_SET_GET_INT_RANDOM(node, WriteState, 5);                    \
+    TEST_SET_GET_INT_RANGE(node, WriteState, 0, 5);                  \
     const char *wstate = node->GetWriteStateAsString();              \
     std::cout << "Write state, after int test = " << wstate << std::endl; \
     node->SetWriteStatePending();                                    \

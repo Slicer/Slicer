@@ -22,8 +22,8 @@ int vtkMRMLFreeSurferModelStorageNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLFreeSurferModelStorageNode > node1 = vtkSmartPointer< vtkMRMLFreeSurferModelStorageNode >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLFreeSurferModelStorageNode, node1);
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(node1);
+//  EXERCISE_BASIC_MRML_METHODS(vtkMRMLFreeSurferModelStorageNode, node1);
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLFreeSurferModelStorageNode, node1);
 
   return EXIT_SUCCESS;
 }
