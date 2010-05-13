@@ -59,7 +59,7 @@ if(BatchMake_DIR)
 endif( BatchMake_DIR)
 
 SET(batchmake_modules
-  EMSegmentBatchMakeModule
+#  EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
   RegisterImagesBatchMakeModule
   ResampleVolumeBatchMakeModule
