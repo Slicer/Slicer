@@ -2,6 +2,7 @@
 
 // SlicerQT includes
 #include "qSlicerCommandOptions.h"
+#include "qSlicerLayoutManager.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleSelectorWidget.h"
@@ -23,15 +24,6 @@
 int main(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
-
-  // Only need to call Q_INIT_RESOURCE with static libs
-#if defined(WIN32) && defined(VTKSLICER_STATIC)
-  //Q_INIT_RESOURCE(qSlicerQT);
-  //Q_INIT_RESOURCE(qSlicerBaseGUIQT);
-  //Q_INIT_RESOURCE(qCTKWidgets);
-  //Q_INIT_RESOURCE(qMRMLWidgets);
-#endif
-
   app.setApplicationName("Slicer");
   //app.setApplicationVersion();
   //app.setWindowIcon(QIcon(":Icons/..."));
