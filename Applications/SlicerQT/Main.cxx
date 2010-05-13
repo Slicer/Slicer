@@ -2,7 +2,6 @@
 
 // SlicerQT includes
 #include "qSlicerCommandOptions.h"
-#include "qSlicerLayoutManager.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleSelectorWidget.h"
