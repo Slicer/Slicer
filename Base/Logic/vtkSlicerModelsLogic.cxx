@@ -98,11 +98,11 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
-  vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
-  vtkMRMLModelStorageNode *mStorageNode = vtkMRMLModelStorageNode::New();
-  vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkSmartPointer<vtkMRMLModelStorageNode> mStorageNode = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
+  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fsmStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
   fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
-  vtkMRMLStorageNode *storageNode = NULL;
+  vtkSmartPointer<vtkMRMLStorageNode> storageNode = NULL;
 
   // check for local or remote files
   int useURI = 0; // false;
@@ -196,9 +196,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     modelNode->Delete();
     modelNode = NULL;
     }
-  mStorageNode->Delete();
-  fsmStorageNode->Delete();
-  displayNode->Delete();
 
   return modelNode;  
 }
