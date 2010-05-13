@@ -520,13 +520,74 @@ int main(int argc, char* argv[])
 
   //Make a hash of the sliceLocations in order to get the correct count.  This is more reliable since SliceLocation may not be available.
   std::map<std::string,int> sliceLocations;
+  std::vector<int> sliceLocationIndicator;
+  std::vector<std::string> sliceLocationStrings;
+  sliceLocationIndicator.resize( nSlice );
   for (unsigned int k = 0; k < nSlice; k++)
     {
       ExtractBinValEntry( allHeaders[k], 0x0020, 0x0032, tag );
+      sliceLocationStrings.push_back( tag );
       sliceLocations[tag]++;
     }
+
+  for (unsigned int k = 0; k < nSlice; k++)
+    {
+      std::map<std::string,int>::iterator it = sliceLocations.find( sliceLocationStrings[k] );
+      sliceLocationIndicator[k] = distance( sliceLocations.begin(), it );
+      // std::cout << k << ": " << filenames[k] << " -- " << sliceLocationStrings[k] << " -- " << sliceLocationIndicator[k] << std::endl;
+    }
+
   unsigned int numberOfSlicesPerVolume=sliceLocations.size();
   std::cout << "=================== numberOfSlicesPerVolume:" << numberOfSlicesPerVolume << std::endl;
+
+  if ( nSlice >= 2)
+    {
+      if (sliceLocationIndicator[0] == sliceLocationIndicator[1])
+        {
+          std::cout << "Dicom images are ordered in a slice interleaving way.\n";
+          // reorder slices into a volume interleaving manner
+          int Ns = numberOfSlicesPerVolume;
+          int Nv = nSlice / Ns; // do we need to do error check here
+
+          VolumeType::RegionType R = reader->GetOutput()->GetLargestPossibleRegion();
+          R.SetSize(2,1);
+          std::vector<VolumeType::PixelType> v(nSlice);
+          std::vector<VolumeType::PixelType> w(nSlice);
+          
+          itk::ImageRegionIteratorWithIndex<VolumeType> I( reader->GetOutput(), R );
+          for (I.GoToBegin(); !I.IsAtEnd(); ++I)
+            {
+              VolumeType::IndexType idx = I.GetIndex();
+              
+              // extract all values in one "column"
+              for (unsigned int k = 0; k < nSlice; k++)
+                {
+                  idx[2] = k;
+                  v[k] = reader->GetOutput()->GetPixel( idx );
+                }
+
+              // permute
+              for (int k = 0; k < Nv; k++)
+                {
+                  for (int m = 0; m < Ns; m++)
+                    {
+                      w[k*Ns+m] = v[m*Nv+k];
+                    }
+                }
+
+              // put things back in order
+              for (unsigned int k = 0; k < nSlice; k++)
+                {
+                  idx[2] = k;
+                  reader->GetOutput()->SetPixel( idx, w[k] );
+                }              
+            }
+        }
+      else
+        {
+          std::cout << "Dicom images are ordered in a volume interleaving way.\n";
+        }
+    }
 
   itk::Matrix<double,3,3> MeasurementFrame;
   MeasurementFrame.SetIdentity();
