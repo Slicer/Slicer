@@ -453,8 +453,14 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
-  of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
-  of << indent << " orientation=\"" << this->OrientationString << "\"";
+  if (this->GetLayoutName())
+    {
+    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
+    }
+  if (this->OrientationString)
+    {
+    of << indent << " orientation=\"" << this->OrientationString << "\"";
+    }
   of << indent << " jumpMode=\"" << this->JumpMode << "\"";
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
   of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
@@ -723,6 +729,11 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::UpdateScene(vtkMRMLScene* scene)
 {
+  if (scene == NULL)
+    {
+    vtkErrorMacro("UpdateScene: input scene is null!");
+    return;
+    }
   vtkMRMLSliceNode *node= NULL;
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
   for (int n=0; n<nnodes; n++)

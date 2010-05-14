@@ -44,5 +44,7 @@ int vtkMRMLTransformableNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLTransformableNodeTestHelper1, node1);
+  
   return EXIT_SUCCESS;
 }

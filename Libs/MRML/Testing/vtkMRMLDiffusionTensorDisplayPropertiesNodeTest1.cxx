@@ -49,5 +49,7 @@ int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1, node1);
+  
   return EXIT_SUCCESS;
 }

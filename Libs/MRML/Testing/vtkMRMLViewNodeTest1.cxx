@@ -22,12 +22,8 @@ int vtkMRMLViewNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLViewNode > node1 = vtkSmartPointer< vtkMRMLViewNode >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  node1->UpdateReferences();
-
-  vtkSmartPointer< vtkMRMLViewNode > node2 = vtkSmartPointer< vtkMRMLViewNode >::New();
-
-  node2->Copy( node1 );
+  
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLViewNode, node1); 
 
   return EXIT_SUCCESS;
 }
