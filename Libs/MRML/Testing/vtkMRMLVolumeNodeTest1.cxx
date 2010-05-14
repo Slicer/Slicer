@@ -17,6 +17,9 @@
 
 #include "TestingMacros.h"
 
+// return a concrete storage node, vtkMRMLStorageNode::New returns null
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+
 class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
 {
 public:
@@ -36,7 +39,9 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
-  using vtkMRMLVolumeNode::ApplyTransform; 
+  using vtkMRMLVolumeNode::ApplyTransform;
+
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLVolumeArchetypeStorageNode::New(); }
 };
  
 int vtkMRMLVolumeNodeTest1(int , char * [] )
