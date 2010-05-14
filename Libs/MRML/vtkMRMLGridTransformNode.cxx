@@ -25,6 +25,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkSmartPointer.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLGridTransformNode* vtkMRMLGridTransformNode::New()
@@ -109,8 +110,8 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  vtkGridTransform* vtkgrid = vtkGridTransform::New();
-  vtkImageData *image = vtkImageData::New();
+  vtkSmartPointer<vtkGridTransform> vtkgrid = vtkSmartPointer<vtkGridTransform>::New();
+  vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
   image->Initialize();
   image->SetNumberOfScalarComponents( 3 );
   image->SetScalarTypeToDouble();
@@ -254,7 +255,6 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
     }
   vtkgrid->SetDisplacementGrid( image );
   this->SetAndObserveWarpTransformToParent( vtkgrid );
-  vtkgrid->Delete();
 }
 
 //----------------------------------------------------------------------------
