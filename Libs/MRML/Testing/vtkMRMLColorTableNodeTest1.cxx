@@ -48,5 +48,7 @@ int vtkMRMLColorTableNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLColorTableNodeTestHelper1, node1);
+  
   return EXIT_SUCCESS;
 }

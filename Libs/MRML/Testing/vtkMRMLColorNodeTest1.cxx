@@ -50,42 +50,7 @@ int vtkMRMLColorNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
-  vtkMRMLNode * newNode = node1->CreateNodeInstance();
-
-  if( newNode == NULL )
-    {
-    std::cerr << "Error in CreateNodeInstance()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  newNode->DebugOn();
-
-  std::cout << "node 1 = " << node1.GetPointer() << std::endl;
-  std::cout << "newNode = " << newNode << std::endl;
-
-  vtkMRMLColorNode * newColorNode = dynamic_cast< vtkMRMLColorNode * >( newNode );
-
-  newColorNode->Delete();
-
-  node1->ReadFile();
-
-  std::string nodeTagName = node1->GetNodeTagName();
-
-  if( nodeTagName != "Color" )
-    {
-    std::cerr << "Error in GetNodeTagName()" << std::endl;
-    return EXIT_FAILURE;
-    }
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( vtkMRMLColorNodeTestHelper1, node1);
   
-  node1->Reset();
-
-  vtkMRMLStorageNode * storageNode = node1->CreateDefaultStorageNode();
-
-  if( storageNode != NULL )
-    {
-    std::cerr << "Error in CreateDefaultStorageNode() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
   return EXIT_SUCCESS;
 }

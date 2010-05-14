@@ -302,6 +302,7 @@
       return EXIT_FAILURE;                                          \
       }                                                             \
     newNode->Delete();                                                  \
+    node->UpdateScene(NULL);                                                \
     vtkSmartPointer < className > node1 = vtkSmartPointer < className >::New(); \
     node1->Copy(node);                                                 \
     node->Reset();                                                      \
@@ -710,6 +711,39 @@
     std::cout << "Is null file path relative? " << node->IsFilePathRelative(NULL) << std::endl; \
     std::cout << "Is absolute file path relative? " << node->IsFilePathRelative("/spl/tmp/file.txt") << std::endl; \
     std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl; \
+  }
+
+#include "vtkMatrix4x4.h"
+/// For testing nodes in Libs/MRML that are transform nodes. Calls the basic
+/// storable mrml methods macro first.
+#define EXERCISE_BASIC_TRANSFORM_MRML_METHODS( className, node )    \
+  {                                                                  \
+    EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node );         \
+    std::cout << "IsLinear = " << node->IsLinear()<< std:: endl;        \
+    vtkSmartPointer<vtkGeneralTransform> g =  vtkSmartPointer<vtkGeneralTransform>::New(); \
+    g = node->GetTransformToParent();                                   \
+    if (g == NULL)                                                     \
+      {                                                                 \
+      std::cout << "Warning: transform node has a null transform to parent" << std::endl; \
+      }                                                                 \
+    std::cout << "IsTransformToWorldLinear = " << node->IsTransformToWorldLinear() << std::endl; \
+    vtkSmartPointer < className > t = vtkSmartPointer < className >::New(); \
+    std::cout << "IsTransformToNodeLinear = " << node->IsTransformToNodeLinear(t) << std::endl; \
+    node->GetTransformToWorld(g);                                    \
+    node->GetTransformToNode(t, g);                                     \
+    vtkSmartPointer<vtkMatrix4x4> m =  vtkSmartPointer<vtkMatrix4x4>::New(); \
+    int retval = node->GetMatrixTransformToWorld(m);                    \
+    if (retval == 0)                                                    \
+      {                                                                 \
+      std::cout << "Warning: can't get matrix transform to world." << std::endl; \
+      }                                                                 \
+    retval = node->GetMatrixTransformToNode(t, m);                      \
+    if (retval == 0)                                                    \
+      {                                                                 \
+      std::cout << "Warning: can't get matrix transform to node." << std::endl; \
+      }                                                                 \
+    std::cout << "IsTransformNodeMyParent = " << node->IsTransformNodeMyParent(t) << std::endl; \
+    std::cout << "IsTransformNodeMyChild = " << node->IsTransformNodeMyChild(t) << std::endl; \
   }
 
 #endif
