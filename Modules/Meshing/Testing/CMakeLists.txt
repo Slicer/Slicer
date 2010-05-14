@@ -63,7 +63,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
     )
 
   add_executable(MainMirrorUnstructuredHexahedronGridCellTest MainMirrorUnstructuredHexahedronGridCellTest.cxx)
-  target_link_libraries(MainDeleteUnstructuredHexahedronGridCellTest mimxFilter mimxCommon 
+  target_link_libraries(MainMirrorUnstructuredHexahedronGridCellTest mimxFilter mimxCommon 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxMirrorUnstructuredHexahedronGridCellTest
