@@ -290,8 +290,8 @@
     { \
     object->Set##variable( NULL ); \
     } \
-  }
-
+  }                                                                  \
+  
 /// Slicer Libs/MRML/vtkMRMLNode exercises
 #define EXERCISE_BASIC_MRML_METHODS( className, node )   \
   {\
@@ -646,7 +646,10 @@
                                                                         \
     vtkStringArray *types = node->GetSupportedWriteFileTypes();         \
     std::cout << "Supported write types:" << std::endl;                 \
-    types->Print(std::cout);                                            \
+    for (unsigned int i = 0; i < types->GetNumberOfValues(); i++)                 \
+      {                                                                 \
+      std::cout << "\t" << types->GetValue(i).c_str() << std::endl;      \
+      }                                                                 \
     int sup = node->SupportedFileType(NULL);                            \
     std::cout << "Filename or uri supported? " << sup << std::endl;     \
     sup = node->SupportedFileType("testing.vtk");                       \
