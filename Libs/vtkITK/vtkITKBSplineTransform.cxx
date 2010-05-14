@@ -582,7 +582,10 @@ void
 vtkITKBSplineTransform
 ::SetSwitchCoordinateSystem( bool v )
 {
-  Helper->SetSwitchCoordinateSystem( v );
+  if (Helper)
+    {
+    Helper->SetSwitchCoordinateSystem( v );
+    }
 }
 
 
@@ -590,7 +593,14 @@ bool
 vtkITKBSplineTransform
 ::GetSwitchCoordinateSystem() const
 {
-  return Helper->GetSwitchCoordinateSystem();
+  if (Helper)
+    {
+    return Helper->GetSwitchCoordinateSystem();
+    }
+  else
+    {
+    return false;
+    }
 }
 
 
