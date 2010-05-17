@@ -132,7 +132,7 @@ if(WIN32)
     )
     
   ExternalProject_Add_Step(${proj} CopyPythonDll
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_BUILD_TYPE}/python26.dll
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_CFG_INTDIR}/python26.dll
     DEPENDEES install
     )
 elseif(APPLE)
@@ -187,7 +187,6 @@ else()
     INSTALL_COMMAND ${python_INSTALL}
     )
 endif()
-
 
 #-----------------------------------------------------------------------------
 # Set vtk_PYTHON_ARGS, slicer_PYTHON_INCLUDE and slicer_PYTHON_LIBRARY variables
