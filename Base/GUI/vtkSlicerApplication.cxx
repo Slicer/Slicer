@@ -270,7 +270,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     // configure the application before creating
     // TODO: set name automatically from VERSION_PATCH or info in Version.txt
-    this->SetName ( "3D Slicer Version 3.5 Alpha" );
+    this->SetName ( "3D Slicer Version 3.7 Alpha" );
 
 #ifdef _WIN32
     vtkKWWin32RegistryHelper *regHelper =
