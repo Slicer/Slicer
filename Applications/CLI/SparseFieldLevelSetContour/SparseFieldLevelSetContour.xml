@@ -82,5 +82,11 @@
       <default>true</default>
       <label>Right Handed mesh</label>
     </boolean>
+    <integer>
+      <name>is_test</name>
+      <longflag>--is_test</longflag>
+      <description>Confirms whether module is being run as a test to confirm it's working properly</description>
+      <default>0</default>
+    </integer>
   </parameters>
 </executable>

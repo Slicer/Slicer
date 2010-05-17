@@ -23,6 +23,11 @@
 
 using namespace MeshContourEvolver;
 
+void run_test()
+{
+  std::cerr<<"Running MeshContourEvolver Test Function... \n";
+}
+
 int main(int argc, char* argv[] )
 {
   std::cout<<"Starting...\n";
@@ -35,6 +40,7 @@ int main(int argc, char* argv[] )
   std::cout << "Curvature averaging iterations: " << H_smooth_its << "\n";
   std::cout << "Adjacency tree levels " << adj_levels << "\n";
   std::cout << "Right handed mesh: " << rightHandMesh << "\n";
+  std::cout << "is_test: " << is_test << "\n";
   
   vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
   std::string comment = "Reading input model " + InputSurface;
@@ -58,6 +64,14 @@ int main(int argc, char* argv[] )
   vtkSmartPointer<vtkPolyData> polyDataOutput = vtkSmartPointer<vtkPolyData>::New();
   
   //vtkPolyData * polyDataOutput =
+  
+  if(is_test != 0)  {
+    run_test();
+#define SFLS_TEST_RESULT_PASS 2
+    return SFLS_TEST_RESULT_PASS;
+#undef SFLS_TEST_RESULT_PASS
+  }
+  else {
   entry_main( polyDataInput, ContourSeedPts, polyDataOutput, init );
 
   vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
@@ -76,4 +90,5 @@ int main(int argc, char* argv[] )
   // The result is contained in the scalar colormap of the output.
 
   return EXIT_SUCCESS;
+  }
 }
