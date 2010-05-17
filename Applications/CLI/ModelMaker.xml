@@ -6,7 +6,7 @@
 Create 3D surface models from segmented data. \n\nModels are imported into Slicer under a model hierarchy node in a MRML scene. The model colors are set by the color table associated with the input volume (these colours will only be visible if you load the model scene file). \n\n**Create Multiple:** \n\nIf you specify a list of Labels, it will over ride any start/end label settings. \n\nIf you click ~~Generate All~~ it will over ride the list of lables and any start/end label settings. \n\n**Model Maker Settings:**\n\nYou can set the number of smoothing iterations, target reduction in number of polygons (decimal percentage). Use 0 and 1 if you wish no smoothing nor decimation.\n\nYou can set the flags to split normals or generate point normals in this pane as well.\n\nYou can save a copy of the models after intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation); these models are not saved in the mrml file, turn off deleting temporary files first in the tcl window:\n\n~~[$::slicer3::CommandLineModuleGUI_Model_Maker GetLogic] DeleteTemporaryFilesOff~~\n\n
 </description>
   <version>3.2</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Model_Maker-Documentation-3.6</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ModelMaker-Documentation-3.6</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
 <acknowledgements>
