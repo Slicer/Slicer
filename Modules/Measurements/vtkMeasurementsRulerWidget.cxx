@@ -126,6 +126,7 @@ vtkMeasurementsRulerWidget::vtkMeasurementsRulerWidget ( )
   this->RulerNodeID = NULL;
   this->RulerSelectorWidget = NULL;
   this->VisibilityButton = NULL;
+  this->RulerFromFiducialsButton = NULL;
   this->RulerModel1SelectorWidget = NULL;
   this->RulerModel2SelectorWidget = NULL;
   this->PointColourButton = NULL;
@@ -211,7 +212,13 @@ vtkMeasurementsRulerWidget::~vtkMeasurementsRulerWidget ( )
     this->RulerSelectorWidget->Delete();
     this->RulerSelectorWidget = NULL;
     }
-
+  if (this->RulerFromFiducialsButton)
+    {
+    this->RulerFromFiducialsButton->SetParent(NULL);
+    this->RulerFromFiducialsButton->Delete();
+    this->RulerFromFiducialsButton = NULL;
+    }
+ 
   if (this->VisibilityButton)
     {
     this->VisibilityButton->SetParent(NULL);
@@ -602,7 +609,23 @@ void vtkMeasurementsRulerWidget::ProcessWidgetEvents(vtkObject *caller,
         }
       }
     }
-
+  
+  vtkKWPushButton *fromFids = vtkKWPushButton::SafeDownCast ( caller );
+  if (fromFids && event == vtkKWPushButton::InvokedEvent)
+    {
+    if (fromFids == this->RulerFromFiducialsButton)
+      {
+      if (appGUI)
+        {
+        appGUI->ProcessAddRulerCommand();
+        }
+      else
+        {
+        vtkWarningMacro("Can't get at the application gui to make a ruler from fiducials");
+        }
+      }
+    }
+  
   // process ruler node selector events
   if (this->RulerSelectorWidget ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
@@ -1686,6 +1709,10 @@ void vtkMeasurementsRulerWidget::AddWidgetObservers()
     {
     this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->RulerFromFiducialsButton)
+    {
+    this->RulerFromFiducialsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1784,6 +1811,10 @@ void vtkMeasurementsRulerWidget::RemoveWidgetObservers ( )
   if (this->AnnotationFormatMenuButton)
     {
     this->AnnotationFormatMenuButton->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->RulerFromFiducialsButton)
+    {
+    this->RulerFromFiducialsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->VisibilityButton)
     {
@@ -1958,6 +1989,23 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   
   this->Script("pack %s -side right -anchor e -padx 2 -pady 2",
                this->ReportButton->GetWidgetName());
+
+  /// create ruler from fids frame
+  vtkKWFrame *fromFidsFrame = vtkKWFrame::New();
+  fromFidsFrame->SetParent(controlAllFrame->GetFrame());
+  fromFidsFrame->Create();
+  this->Script ("pack %s -side bottom -anchor nw -fill x -padx 2 -pady 2",
+                fromFidsFrame->GetWidgetName());
+
+  /// create ruler from fids button
+  this->RulerFromFiducialsButton = vtkKWPushButton::New();
+  this->RulerFromFiducialsButton->SetParent ( fromFidsFrame );
+  this->RulerFromFiducialsButton->Create ( );
+  this->RulerFromFiducialsButton->SetText("Create Ruler from Fiducials");
+  this->RulerFromFiducialsButton->SetWidth(27);
+  this->RulerFromFiducialsButton->SetBalloonHelpString("Create a new ruler from the last two selected fiducials on the currently active fiducial list. The fiducials will be deleted once the ruler is made.");
+  this->Script( "pack %s -side left -anchor nw -expand false -fill none -padx 2 -pady 2",
+                this->RulerFromFiducialsButton->GetWidgetName());
   
   // ---
   // CHOOSE Ruler Node FRAME
@@ -1986,7 +2034,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->RulerSelectorWidget->GetWidgetName());
 
-
+   
   /// distance frame
   vtkKWFrame *distanceFrame = vtkKWFrame::New();
   distanceFrame->SetParent(pickRulerNodeFrame->GetFrame());
@@ -2262,6 +2310,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   modelFrame->Delete();
   rulerDisplayFrame->Delete();
   visibColourFrame->Delete();
+  fromFidsFrame->Delete();
   distanceFrame->Delete();
   pickRulerNodeFrame->Delete();
   controlAllFrame->Delete();
