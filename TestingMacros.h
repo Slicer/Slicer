@@ -646,7 +646,7 @@
                                                                         \
     vtkStringArray *types = node->GetSupportedWriteFileTypes();         \
     std::cout << "Supported write types:" << std::endl;                 \
-    for (unsigned int i = 0; i < types->GetNumberOfValues(); i++)                 \
+    for (vtkIdType i = 0; i < types->GetNumberOfValues(); i++)                 \
       {                                                                 \
       std::cout << "\t" << types->GetValue(i).c_str() << std::endl;      \
       }                                                                 \
