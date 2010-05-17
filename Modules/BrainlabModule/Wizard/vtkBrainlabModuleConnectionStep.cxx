@@ -64,7 +64,6 @@ vtkBrainlabModuleConnectionStep::vtkBrainlabModuleConnectionStep()
   this->TrackingDataFrame = NULL;
   this->OpenIGTLinkFrame = NULL;
   this->ConnectFrame = NULL;
-  this->FrequencyFrame = NULL;
 
   this->ServerStopFlag = false;
   this->ThreadID = -1;
@@ -174,11 +173,6 @@ vtkBrainlabModuleConnectionStep::~vtkBrainlabModuleConnectionStep()
     {
     this->ConnectFrame->Delete();
     this->ConnectFrame = NULL;
-    }
-  if(this->FrequencyFrame)
-    {
-    this->FrequencyFrame->Delete();
-    this->FrequencyFrame = NULL;
     }
 
   if(this->IGTLConnector)
@@ -363,33 +357,18 @@ void vtkBrainlabModuleConnectionStep::ShowUserInterface()
                  this->PortEntry->GetWidgetName(),
                  this->ServerEntry->GetWidgetName());
 
-  // Frequency frame
-  // ======================================================================
-  if (! this->FrequencyFrame)
-    {
-    this->FrequencyFrame = vtkKWFrameWithLabel::New();
-    }
-  if (!this->FrequencyFrame->IsCreated())
-    { 
-    this->FrequencyFrame->SetParent(wizard_widget->GetClientArea());
-    this->FrequencyFrame->Create();
-    this->FrequencyFrame->SetLabelText("Status"); 
-    }
-  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 4", 
-               this->FrequencyFrame->GetWidgetName());
   if (! this->FrequencyEntry)
     {
     this->FrequencyEntry = vtkKWEntryWithLabel::New();
     this->FrequencyEntry->SetParent (NetworkFrame);
     this->FrequencyEntry->Create ( );
-    this->FrequencyEntry->SetLabelText("Streaming frequency (frames per second: ");
+    this->FrequencyEntry->SetLabelText("Frequency: ");
     this->FrequencyEntry->SetWidth(80);
-    this->FrequencyEntry->SetLabelWidth(15);
-    this->FrequencyEntry->GetWidget()->SetValue("1.0");
+    this->FrequencyEntry->SetLabelWidth(8);
+    this->FrequencyEntry->GetWidget()->SetValue("10");
     }
   this->Script ( "pack %s -side top -anchor center -expand n -padx 2 -pady 4",
                  this->FrequencyEntry->GetWidgetName());
-
 
   // Status frame
   // ======================================================================
@@ -417,7 +396,6 @@ void vtkBrainlabModuleConnectionStep::ShowUserInterface()
     }
   this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 4", 
                this->ConnectionStatus->GetWidgetName());
-
 
   // Connect frame
   // ======================================================================
