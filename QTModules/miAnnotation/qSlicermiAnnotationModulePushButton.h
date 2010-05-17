@@ -1,7 +1,6 @@
 #ifndef __qSlicermiAnnotationModulePushButton_h
 #define __qSlicermiAnnotationModulePushButton_h
 
-// QT includes
 #include <QPushButton>
 #include <QString>
 

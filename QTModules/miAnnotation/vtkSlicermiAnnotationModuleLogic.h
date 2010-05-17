@@ -1,11 +1,11 @@
 #ifndef __vtkSlicermiAnnotationModuleLogic_h
 #define __vtkSlicermiAnnotationModuleLogic_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // Slicer Logic includes
 #include "vtkSlicerModuleLogic.h"
+
+// qCTK includes
+#include <ctkPimpl.h>
 
 #include "qSlicermiAnnotationModuleExport.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -36,7 +36,10 @@ class vtkMRMLAnnotationStickyNode;
 class vtkSlicerAnnotationRulerManager;
 class vtkSlicerAnnotationAngleManager;
 class vtkSlicerAnnotationFiducialManager;
-
+class vtkMRMLAnnotationTextNode;
+class vtkSlicerSeedWidgetClass;
+class vtkTextWidget;
+class vtkSlicerROIDisplayWidget;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicermiAnnotationModuleLogic :
   public vtkSlicerModuleLogic
@@ -70,6 +73,7 @@ public:
   enum
   {
       AddAngleCompletedEvent = 19020,
+      AddTextNodeCompletedEvent,
   };
 
   static vtkSlicermiAnnotationModuleLogic *New();
@@ -101,6 +105,23 @@ public:
 
   // Sticky Node
   const char* AddStickyNode();
+
+  // Text Node
+  const char* AddTextNode();
+  void AddTextNodeCompleted();
+  vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
+  void AddTextWidget(vtkMRMLAnnotationTextNode* node);
+  vtkTextWidget* GetTextWidget(const char* nodeID);
+  void RemoveTextWidget(vtkMRMLAnnotationTextNode* node);
+  
+  // ROI Node
+  const char* AddROINode();
+
+  // BiDimentional Line Node
+  const char* AddBidLineNode();
+
+  // SplineNode
+  const char* AddSplineNode();
 
   // Common Widget Public Function
   void ModifyPropertiesAndWidget(vtkMRMLNode* node, int type, void*data);
@@ -172,6 +193,9 @@ private:
   vtkSlicerAnnotationAngleManager *m_AngleManager;
   vtkSlicerAnnotationFiducialManager *m_FiducialManager;
 
+  std::map<std::string, vtkTextWidget*> TextWidgets;
+
 };
 
 #endif
+

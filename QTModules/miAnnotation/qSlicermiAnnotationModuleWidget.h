@@ -8,7 +8,6 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// qSlicermiAnnotation
 #include "qSlicermiAnnotationModuleExport.h"
 #include "qSlicermiAnnotationModuleAnnotationPropertyDialog.h"
 
@@ -70,6 +69,18 @@ protected slots:
     // Sticky Node
     void onStickyNodeButtonClicked();
 
+  // Text Node
+  void onTextNodeButtonClicked();
+  void AddTextNodeCompleted(vtkObject* object, void* call_data);
+
+  // ROI Node
+  void onROINodeButtonClicked();
+
+  // Polyline
+  void onPolylineButtonClicked();
+
+  // Spline
+  void onSplineButtonClicked();
 
     // Table and Property Modify
     void moveDownSelected();

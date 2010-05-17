@@ -53,6 +53,8 @@ SET(qt_module_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationFiducialsStorageNode.h
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationStickyNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationStickyNode.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationTextNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationTextNode.h
   qSlicermiAnnotationModule.cxx
   qSlicermiAnnotationModule.h
   vtkSlicermiAnnotationModuleLogic.cxx

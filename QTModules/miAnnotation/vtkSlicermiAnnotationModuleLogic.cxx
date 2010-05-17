@@ -43,6 +43,25 @@
 
 #include "vtkMRMLAnnotationStickyNode.h"
 
+#include "vtkMRMLAnnotationTextNode.h"
+#include "vtkTextWidget.h"
+#include "vtkTextRepresentation.h"
+
+#include "vtkMRMLROINode.h"
+#include "vtkSlicerROIDisplayWidget.h"
+#include "vtkSlicerROIGUI.h"
+
+#include "vtkMRMLOrthogonalLinePlotNode.h"
+#include "vtkBiDimensionalWidget.h"
+#include "vtkBiDimensionalRepresentation2D.h"
+
+#include "vtkSplineWidget.h"
+#include "vtkSplineRepresentation.h"
+#include "vtkMRMLBSplineTransformNode.h"
+
+#include "vtkSeedRepresentation.h"
+#include "vtkMRMLFiducial.h"
+
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationAngleManager.h"
 #include "vtkSlicerAnnotationFiducialManager.h"
@@ -280,12 +299,19 @@ void vtkSlicermiAnnotationModuleLogic::RemoveAnnotationByID(const char* id)
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::ModifyPropertiesAndWidget(vtkMRMLNode* node, int type, void* data)
 {
-    if (!node)
+  if (!node)
     {
-        return;
+    return;
     }
-    this->SetAnnotationLinesProperties(vtkMRMLAnnotationLinesNode::SafeDownCast(node), type, data);
+  if ( node->IsA("vtkMRMLAnnotationTextNode") )
+    {
+    vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
+    vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
     this->GetViewerWidget()->Render();
+    return;
+    }
+  this->SetAnnotationLinesProperties(vtkMRMLAnnotationLinesNode::SafeDownCast(node), type, data);
+  this->GetViewerWidget()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -556,6 +582,7 @@ const char* vtkSlicermiAnnotationModuleLogic::AddRuler()
     
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
     rulerNode->Initialize(this->GetMRMLScene());
+
     // need a unique name since the storage node will be named from it
     if (rulerNode->GetScene())
     {
@@ -860,15 +887,15 @@ void vtkSlicermiAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducia
 //---------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::AddFiducialWidget(vtkMRMLAnnotationFiducialNode *cpNode)
 {
-    CTK_D(vtkSlicermiAnnotationModuleLogic);
-    if (!cpNode)
+  CTK_D(vtkSlicermiAnnotationModuleLogic);
+  if (!cpNode)
     {
-        return;
+    return;
     }
-    if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
+  if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
     {
-        vtkDebugMacro("Already have widgets for ruler node " << cpNode->GetID());
-        return;
+    vtkDebugMacro("Already have widgets for ruler node " << cpNode->GetID());
+    return;
     }
 
     // Just do this as a hack right now - should be the widget class 
@@ -1183,7 +1210,53 @@ const char* vtkSlicermiAnnotationModuleLogic::GetIconName(vtkMRMLNode* node, boo
             return ":/Icons/AnnotationNote.png";
         }
     }
+  else if (node->IsA("vtkMRMLAnnotationTextNode"))
+    {
+    if (isEdit)
+      {
+      return ":/Icons/AnnotationEditText.png";
+      } 
+    else
+      {
+      return ":/Icons/AnnotationText.png";
+      }
+    }
+  else if (node->IsA("vtkMRMLROINode"))
+    {
+    if (isEdit)
+      {
+      return ":/Icons/AnnotationEditROI.png";
+      } 
+    else
+      {
+      return ":/Icons/AnnotationROI.png";
+      }
+    }
+  else if (node->IsA("vtkMRMLOrthogonalLinePlotNode"))
+    {
+    if (isEdit)
+      {
+      return ":/Icons/AnnotationEditPolyline.png";
+      } 
+    else
+      {
+      return ":/Icons/AnnotationPolyline.png";
+      }
+    }
+  else if (node->IsA("vtkMRMLBSplineTransformNode"))
+    {
+    if (isEdit)
+      {
+      return ":/Icons/AnnotationEditSpline.png";
+      } 
+    else
+      {
+      return ":/Icons/AnnotationSpline.png";
+      }
+    }
+  
 
+  
     return NULL;
 } 
 
@@ -1193,7 +1266,7 @@ vtkStdString vtkSlicermiAnnotationModuleLogic::GetAnnotationTextProperty(vtkMRML
     vtkMRMLAnnotationNode *aNode = vtkMRMLAnnotationNode::SafeDownCast(node);
     if (!aNode)
     {
-        return NULL;
+        return "";
     } 
     return aNode->GetText(0);
 }
@@ -1213,6 +1286,22 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
         return vtkMRMLAnnotationAngleNode::SafeDownCast(node)->GetLabelFormat();
     }
     else if (node->IsA("vtkMRMLAnnotationStickyNode"))
+    {
+        return " ";
+    }
+    else if (node->IsA("vtkMRMLAnnotationTextNode"))
+    {
+        return " ";
+    }
+    else if (node->IsA("vtkMRMLROINode"))
+    {
+        return " ";
+    }
+    else if (node->IsA("vtkMRMLOrthogonalLinePlotNode"))
+      {
+        return " ";
+    }
+    else if (node->IsA("vtkMRMLBSplineTransformNode"))
     {
         return " ";
     }
@@ -1239,6 +1328,23 @@ double vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* n
     {
         return 0;
     }
+  else if (node->IsA("vtkMRMLAnnotationTextNode"))
+  {
+        return 0;
+  }
+  else if (node->IsA("vtkMRMLROINode"))
+  {
+        return 0;
+  }
+  else if (node->IsA("vtkMRMLOrthogonalLinePlotNode"))
+  {
+        return 0;
+  }
+  else if (node->IsA("vtkMRMLBSplineTransformNode"))
+  {
+        return 0;
+  }
+
     return NULL;
 }
 
@@ -1595,6 +1701,217 @@ const char* vtkSlicermiAnnotationModuleLogic::AddStickyNode()
 }
 
 //-----------------------------------------------------------------------------
+// Text Node
+//-----------------------------------------------------------------------------
+class vtkAnnotationTextWidgetCallback : public vtkCommand
+{
+public:
+  static vtkAnnotationTextWidgetCallback *New()
+  { return new vtkAnnotationTextWidgetCallback; }
+
+  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  {
+    // save node for undo if it's the start of an interaction event
+
+    if (event == vtkCommand::PlacePointEvent)
+    {
+    cout << "Text Node Point Placed\n";
+    LogicPointer->AddTextNodeCompleted();
+    }
+  }
+  //,DistanceRepresentation(0)
+  vtkAnnotationTextWidgetCallback():textNode(0), textWidget(0) {}
+  vtkMRMLAnnotationTextNode *textNode;
+  vtkTextWidget* textWidget;
+  vtkSlicermiAnnotationModuleLogic* LogicPointer;
+};
+
+const char* vtkSlicermiAnnotationModuleLogic::AddTextNode()
+{    
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+
+  textNode->Initialize(this->GetMRMLScene());
+
+  this->AddTextWidget(textNode);
+  // need a unique name since the storage node will be named from it
+  if (textNode->GetScene())
+  {
+    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationTextNode"));
+  }
+  else
+  {
+    textNode->SetName("AnnotationRuler");
+  }
+  textNode->Delete();
+
+  vtkTextRepresentation* textRep = vtkTextRepresentation::New();
+  textRep->SetMoving(1);
+  textRep->SetText(textNode->GetText(0));
+  this->GetTextWidget(textNode->GetID())->SetRepresentation(textRep);
+  this->GetTextWidget(textNode->GetID())->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+  this->GetTextWidget(textNode->GetID())->On();
+
+  /*
+  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
+  myCallback->textNode = textNode;
+  myCallback->textWidget = textWidget;
+  myCallback->LogicPointer = this;
+  textWidget->AddObserver(vtkCommand::PlacePointEvent, myCallback);
+  myCallback->Delete();
+  */
+  return textNode->GetID();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicermiAnnotationModuleLogic::AddTextNodeCompleted()
+{
+  cout << "text node is created!" << endl;
+  this->InvokeEvent(vtkSlicermiAnnotationModuleLogic::AddTextNodeCompletedEvent, NULL);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLAnnotationTextNode* vtkSlicermiAnnotationModuleLogic::GetTextNodeByID(const char* id)
+{
+  vtkMRMLAnnotationTextNode* textNode = 0;
+  textNode = vtkMRMLAnnotationTextNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( id ));
+  return textNode;
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicermiAnnotationModuleLogic::AddTextWidget(vtkMRMLAnnotationTextNode* node)
+{
+  if (!node)
+  {
+    return;
+  }
+  if (this->GetTextWidget(node->GetID()) != NULL)
+    {
+    vtkDebugMacro("Already have widgets for text node " << node->GetID());
+    return;
+  }
+
+  vtkTextWidget *c = vtkTextWidget::New();
+  this->TextWidgets[node->GetID()] = c;
+}
+
+//-----------------------------------------------------------------------------
+vtkTextWidget* vtkSlicermiAnnotationModuleLogic::GetTextWidget(const char* nodeID)
+{
+  std::map<std::string, vtkTextWidget*>::iterator iter;
+  for (iter = this->TextWidgets.begin(); iter != this->TextWidgets.end(); iter++)
+    {
+    if (iter->first.c_str() && !strcmp(iter->first.c_str(), nodeID))
+      {
+      return iter->second;
+      }
+    }
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicermiAnnotationModuleLogic::RemoveTextWidget(vtkMRMLAnnotationTextNode* node)
+{
+  if (!node)
+    {
+    return;
+    }
+  if (this->GetTextWidget(node->GetID()) != NULL)
+    {
+    this->TextWidgets[node->GetID()]->Delete();
+    this->TextWidgets.erase(node->GetID());
+    }
+}
+
+//-----------------------------------------------------------------------------
+// ROI Node
+//-----------------------------------------------------------------------------
+const char* vtkSlicermiAnnotationModuleLogic::AddROINode()
+{   
+  //vtkSlicerROIGUI* roi = vtkSlicerROIGUI::SafeDownCast(vtkSlicerApplication::GetInstance()->GetModuleGUIByName("ROI"));
+  //vtkSlicerROIDisplayWidget* roiWidget = vtkSlicerROIDisplayWidget::SafeDownCast(roi->GetApplicationGUI()->GetActiveViewerWidget());
+  vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
+  this->GetMRMLScene()->AddNode(roiNode);
+
+  // need a unique name since the storage node will be named from it
+  if (roiNode->GetScene())
+    {
+    roiNode->SetName(roiNode->GetScene()->GetUniqueNameByString("AnnotationROINode"));
+  }
+  else
+    {
+    roiNode->SetName("AnnotationROI");
+    }
+  roiNode->SetLabelText("");
+  roiNode->Delete();
+  //roiWidget->SetROINode(roiNode);
+
+  //vtkSlicerROIDisplayWidget* ROIWidget = vtkSlicerROIDisplayWidget::New();
+  //ROIWidget->SetROINode(roiNode);
+  //roiWidget->SetParent(this->GetApplicationGUI()->GetActiveViewerWidget()->GetParent());
+  //roiWidget->Create();
+
+  return roiNode->GetID();
+}
+
+//-----------------------------------------------------------------------------
+// BiDimentional Line Node
+//-----------------------------------------------------------------------------
+const char* vtkSlicermiAnnotationModuleLogic::AddBidLineNode()
+{   
+  vtkBiDimensionalRepresentation2D* bidRep = vtkBiDimensionalRepresentation2D::New();
+  vtkBiDimensionalWidget* bidWidget = vtkBiDimensionalWidget::New();
+  bidWidget->SetRepresentation(bidRep);
+  bidWidget->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+  bidWidget->On();
+
+  vtkMRMLOrthogonalLinePlotNode *node = vtkMRMLOrthogonalLinePlotNode::New();
+  this->GetMRMLScene()->AddNode(node);
+
+  // need a unique name since the storage node will be named from it
+  if (node->GetScene())
+    {
+    node->SetName(node->GetScene()->GetUniqueNameByString("AnnotationPolylineNode"));
+    }
+  else
+    {
+    node->SetName("AnnotationROI");
+    }
+  node->Delete();
+
+  return node->GetID();
+}
+
+//-----------------------------------------------------------------------------
+// Spline Node
+//-----------------------------------------------------------------------------
+const char* vtkSlicermiAnnotationModuleLogic::AddSplineNode()
+{   
+  vtkSplineRepresentation* sRep = vtkSplineRepresentation::New();
+  vtkSplineWidget* sWidget = vtkSplineWidget::New();
+  sWidget->PlaceWidget();
+  sWidget->ProjectToPlaneOn();
+  sWidget->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+  sWidget->On();
+
+  vtkMRMLBSplineTransformNode *node = vtkMRMLBSplineTransformNode::New();
+  this->GetMRMLScene()->AddNode(node);
+
+  // need a unique name since the storage node will be named from it
+  if (node->GetScene())
+    {
+    node->SetName(node->GetScene()->GetUniqueNameByString("AnnotationPolylineNode"));
+    }
+  else
+    {
+    node->SetName("AnnotationROI");
+    }
+  node->Delete();
+
+  return node->GetID();
+}
+
+
+//-----------------------------------------------------------------------------
 // This is for testing right now 
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode) 
@@ -1612,3 +1929,4 @@ void vtkSlicermiAnnotationModuleLogic::AddRulerNodeObserver(vtkMRMLAnnotationRul
         rnode->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
     }
 }
+

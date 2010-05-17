@@ -36,7 +36,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QPushButton" name="typeButton1">
+          <widget class="QPushButton" name="roiTypeButton">
            <property name="toolTip">
             <string>Lists the annotation types associated with the application. 
 The list is defined via a different module called Annotation Application.
@@ -52,7 +52,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QPushButton" name="typeButton2">
+          <widget class="QPushButton" name="textTypeButton">
            <property name="toolTip">
             <string>Lists the annotation types associated with the application. 
 The list is defined via a different module called Annotation Application.
@@ -64,6 +64,9 @@ The buttons are therefore dynamically loaded into the GUI.</string>
            <property name="icon">
             <iconset resource="../qSlicermiAnnotationModule.qrc">
              <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -103,7 +106,7 @@ When pressed, user can pick a point from the viewer to create a fiducial.</strin
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPushButton" name="typeButton6">
+          <widget class="QPushButton" name="polylineTypeButton">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -128,7 +131,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QPushButton" name="typeButton6_2">
+          <widget class="QPushButton" name="splineTypeButton">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -632,6 +635,8 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qSlicermiAnnotationModule.qrc"/>
+  <include location="../qSlicermiAnnotationModule.qrc"/>
   <include location="../qSlicermiAnnotationModule.qrc"/>
   <include location="../qSlicermiAnnotationModule.qrc"/>
   <include location="../qSlicermiAnnotationModule.qrc"/>
