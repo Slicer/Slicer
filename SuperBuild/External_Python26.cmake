@@ -7,36 +7,44 @@ if(WIN32)
   set(python_sln ${CMAKE_BINARY_DIR}/${proj}-build/PCbuild/pcbuild.sln)
   string(REPLACE "/" "\\" python_sln ${python_sln})
 
-  # point the tkinter build file to the slicer tcl-build 
-
   get_filename_component(python_base ${python_sln} PATH)
   get_filename_component(python_home ${python_base} PATH)
 
-  set(python_tkinter ${python_base}/pyproject.vsprops)
-  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+  # point the tkinter build file to the slicer tcl-build 
+  set(python_PATCH_COMMAND)
+  if(Slicer3_USE_KWWIDGETS)
+    list(APPEND python_DEPENDENCIES tcl)
+    
+    set(python_tkinter ${python_base}/pyproject.vsprops)
+    string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
-  set(out ${python_tkinter})
-  set(in ${python_tkinter})
-
+    set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
+    set(out ${python_tkinter})
+    set(in ${python_tkinter})
+    
+    set(python_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script})
+  endif()
+  
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
     SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
     SOURCE_DIR python-build
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script}
+    PATCH_COMMAND ${python_PATCH_COMMAND}
     CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
     BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
   )
-
-  # this must match the version of tcl we are building for slicer.
-  ExternalProject_Add_Step(${proj} Patch_tcltk_version
-    COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
-    DEPENDEES configure
-    DEPENDERS build
-    )
+  
+  if(Slicer3_USE_KWWIDGETS)
+    # this must match the version of tcl we are building for slicer.
+    ExternalProject_Add_Step(${proj} Patch_tcltk_version
+      COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
+      DEPENDEES configure
+      DEPENDERS build
+      )
+  endif()
 
   ExternalProject_Add_Step(${proj} Build_make_versioninfo
     COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
@@ -67,15 +75,17 @@ if(WIN32)
     COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
     DEPENDEES Build_pythoncore
     )
-    
-  ExternalProject_Add_Step(${proj} Build__tkinter
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
-    DEPENDEES Build__socket
-    )
+
+  if(Slicer3_USE_KWWIDGETS)
+    ExternalProject_Add_Step(${proj} Build__tkinter
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
+      DEPENDEES Build__socket
+      )
+  endif()
     
   ExternalProject_Add_Step(${proj} Build__testcapi
     COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
-    DEPENDEES Build__tkinter
+    DEPENDEES Build_pythoncore
     )
     
   ExternalProject_Add_Step(${proj} Build__msi
@@ -138,11 +148,17 @@ if(WIN32)
 elseif(APPLE)
   set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
   set(python_BUILD_IN_SOURCE 1)
-  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build --with-tcl=${tcl_build} --enable-shared)
+  
+  # if building tcl then be sure to have python use the tk that we built.
+  set(python_TCL_ARG "")
+  if(Slicer3_USE_KWWIDGETS)
+    set(python_TCL_ARG "--with-tcl=${tcl_build}")
+    list(APPEND python_DEPENDENCIES tk)
+  endif()
+  
+  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
   set(python_BUILD make)
   set(python_INSTALL make install)
-  
-  list(APPEND python_DEPENDENCIES tk)
 
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
@@ -171,11 +187,17 @@ elseif(APPLE)
 else()
   set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
   set(python_BUILD_IN_SOURCE 1)
-  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build --with-tcl=${tcl_build} --enable-shared)
+  
+  # if building tcl then be sure to have python use the tk that we built.
+  set(python_TCL_ARG "")
+  if(Slicer3_USE_KWWIDGETS)
+    set(python_TCL_ARG "--with-tcl=${tcl_build}")
+    list(APPEND python_DEPENDENCIES tk)
+  endif()
+  
+  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
   set(python_BUILD make)
   set(python_INSTALL make install)
-  
-  list(APPEND python_DEPENDENCIES tk)
 
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
