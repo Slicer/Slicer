@@ -2003,7 +2003,7 @@ void vtkMeasurementsRulerWidget::CreateWidget ( )
   this->RulerFromFiducialsButton->Create ( );
   this->RulerFromFiducialsButton->SetText("Create Ruler from Fiducials");
   this->RulerFromFiducialsButton->SetWidth(27);
-  this->RulerFromFiducialsButton->SetBalloonHelpString("Create a new ruler from the last two selected fiducials on the currently active fiducial list. The fiducials will be deleted once the ruler is made.");
+  this->RulerFromFiducialsButton->SetBalloonHelpString("Create a new ruler from the last two selected fiducials on the currently active fiducial list (or type Ctrl-m). The fiducials will be deleted once the ruler is made.");
   this->Script( "pack %s -side left -anchor nw -expand false -fill none -padx 2 -pady 2",
                 this->RulerFromFiducialsButton->GetWidgetName());
   
