@@ -106,7 +106,8 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
-  find_package(Qt4 REQUIRED)
+  find_package(Qt4 4.6 REQUIRED)
+  
   # Enable modules
   SET(QT_USE_QTNETWORK ON)
   # Includes Qt headers
