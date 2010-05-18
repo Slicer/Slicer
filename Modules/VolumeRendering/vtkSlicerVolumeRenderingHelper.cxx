@@ -287,7 +287,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->FrameCPURayCasting->SetParent(this->FrameTechniques->GetFrame());
     this->FrameCPURayCasting->Create();
     this->FrameCPURayCasting->AllowFrameToCollapseOff();
-    this->FrameCPURayCasting->SetLabelText("Software Ray Casting");
+    this->FrameCPURayCasting->SetLabelText("VTK CPU Ray Casting");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameCPURayCasting->GetWidgetName() );
 
     //enable/disable cpu ray casting MIP rendering
@@ -303,13 +303,51 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
   }
 
   labelWidth = 16;
+  //VTK GPU ray casting
+  {
+    this->FrameGPURayCasting3 = vtkKWFrameWithLabel::New();
+    this->FrameGPURayCasting3->SetParent(this->FrameTechniques->GetFrame());
+    this->FrameGPURayCasting3->Create();
+    this->FrameGPURayCasting3->AllowFrameToCollapseOff();
+    this->FrameGPURayCasting3->SetLabelText("VTK GPU Ray Casting");
+    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCasting3->GetWidgetName() );
+
+    //set technique
+    this->MB_GPURayCastTechnique3 = vtkKWMenuButtonWithLabel::New();
+    this->MB_GPURayCastTechnique3->SetParent(this->FrameGPURayCasting3->GetFrame());
+    this->MB_GPURayCastTechnique3->SetLabelText("Technique (bg):");
+    this->MB_GPURayCastTechnique3->Create();
+    this->MB_GPURayCastTechnique3->SetLabelWidth(labelWidth);
+    this->MB_GPURayCastTechnique3->SetBalloonHelpString("Select GPU ray casting technique for bg volume");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Composite");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique3 0");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique3 1");
+    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique3 2");
+
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique3->GetWidgetName() );
+  }
+  
+  //opengl 2D Polygon Texture 3D
+  {
+    this->FramePolygonBlending = vtkKWFrameWithLabel::New();
+    this->FramePolygonBlending->SetParent(this->FrameTechniques->GetFrame());
+    this->FramePolygonBlending->Create();
+    this->FramePolygonBlending->AllowFrameToCollapseOff();
+    this->FramePolygonBlending->SetLabelText("VTK OpenGL 3D Texture Mapping");
+    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePolygonBlending->GetWidgetName() );
+
+    //currently no parameters
+  }
+  
   //GPU ray casting
   {
     this->FrameGPURayCasting = vtkKWFrameWithLabel::New();
     this->FrameGPURayCasting->SetParent(this->FrameTechniques->GetFrame());
     this->FrameGPURayCasting->Create();
     this->FrameGPURayCasting->AllowFrameToCollapseOff();
-    this->FrameGPURayCasting->SetLabelText("GPU Ray Casting");
+    this->FrameGPURayCasting->SetLabelText("NCI GPU Ray Casting");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCasting->GetWidgetName() );
 
     //set technique
@@ -374,7 +412,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->FrameGPURayCastingII->SetParent(this->FrameTechniques->GetFrame());
     this->FrameGPURayCastingII->Create();
     this->FrameGPURayCastingII->AllowFrameToCollapseOff();
-    this->FrameGPURayCastingII->SetLabelText("GPU Ray Casting II");
+    this->FrameGPURayCastingII->SetLabelText("NCI GPU Ray Casting (Multi-Volume)");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCastingII->GetWidgetName() );
 
     //set technique
@@ -440,45 +478,6 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastIIFgBgRatio->GetWidgetName() );
   }
-  
-  //VTK GPU ray casting
-  {
-    this->FrameGPURayCasting3 = vtkKWFrameWithLabel::New();
-    this->FrameGPURayCasting3->SetParent(this->FrameTechniques->GetFrame());
-    this->FrameGPURayCasting3->Create();
-    this->FrameGPURayCasting3->AllowFrameToCollapseOff();
-    this->FrameGPURayCasting3->SetLabelText("VTK GPU Ray Casting");
-    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCasting3->GetWidgetName() );
-
-    //set technique
-    this->MB_GPURayCastTechnique3 = vtkKWMenuButtonWithLabel::New();
-    this->MB_GPURayCastTechnique3->SetParent(this->FrameGPURayCasting3->GetFrame());
-    this->MB_GPURayCastTechnique3->SetLabelText("Technique (bg):");
-    this->MB_GPURayCastTechnique3->Create();
-    this->MB_GPURayCastTechnique3->SetLabelWidth(labelWidth);
-    this->MB_GPURayCastTechnique3->SetBalloonHelpString("Select GPU ray casting technique for bg volume");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Composite");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique3 0");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
-    this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique3 1");
-    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
-    //this->MB_GPURayCastTechnique3->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique3 2");
-
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique3->GetWidgetName() );
-  }
-  
-  //opengl 2D Polygon Texture 3D
-  {
-    this->FramePolygonBlending = vtkKWFrameWithLabel::New();
-    this->FramePolygonBlending->SetParent(this->FrameTechniques->GetFrame());
-    this->FramePolygonBlending->Create();
-    this->FramePolygonBlending->AllowFrameToCollapseOff();
-    this->FramePolygonBlending->SetLabelText("OpenGL Polygon Texture 3D");
-    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePolygonBlending->GetWidgetName() );
-
-    //currently no parameters
-  }
-
 }
 
 void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
@@ -1576,43 +1575,43 @@ void vtkSlicerVolumeRenderingHelper::ProcessRenderingMethodEvents(int id)
   {
   case 0://softwrae ray casting
     this->FrameCPURayCasting->ExpandFrame();
-    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting");
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using VTK CPU Raycasting");
     break;
   case 3://gpu ray casting
     if (success)
     {
       this->FrameGPURayCasting->ExpandFrame();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using NCI GPU Raycasting");
     }
     else
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting is not supported by your computer.");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("NCI GPU ray casting is not supported by your computer.");
     break;
   case 4://gpu ray casting II
     if (success)
     {
       this->FrameGPURayCastingII->ExpandFrame();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II (Experimental)");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using NCI GPU Raycasting (Multi-Volume). Experimental.");
     }
     else
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting II is not supported by your computer.");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("NCI GPU ray casting (Multi-Volume) is not supported by your computer.");
     break;
   case 2://old school opengl 2D Polygon Texture 3D
     if (success)
     {
       this->FramePolygonBlending->ExpandFrame();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using OpenGL Polygon Texture 3D");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using VTK OpenGL 3D Texture Mapping");
     }
     else//seldom should we see this error message unless really low end graphics card...
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D is not supported by your computer.");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("VTK OpenGL 3D Texture Mapping is not supported by your computer.");
     break;
   case 1://vtk edge gpu ray casting
     if (success)
       {
       this->FrameGPURayCasting3->ExpandFrame();
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting 3");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using VTK GPU Raycasting");
       }
     else
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting 3 is not supported by your computer.");
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("VTK GPU ray casting is not supported by your computer.");
     break;
   }
 
