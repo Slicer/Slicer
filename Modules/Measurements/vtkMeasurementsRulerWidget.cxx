@@ -1059,10 +1059,19 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
       // is it currently the active one?
       if (addNode == activeRulerNode)
         {
-        vtkDebugMacro("Calling Update widget to set up the ui since this is the active one");
+        // update the GUI 
+        vtkDebugMacro("Calling Update widget to set up the ui");
         this->UpdateWidget(addNode);
         }
-      // if it's not the current one, just update the 3d widget
+      else
+        {
+        // make it active
+        this->RulerSelectorWidget->SetSelected(addNode);
+        vtkDebugMacro("Set added node to be selected, now setting the ruler node id");
+        // this calls UpdateWidget to update the gui
+        this->SetRulerNodeID(addNode->GetID());
+        }
+      // update the 3d widget
       vtkDebugMacro("Calling Update 3D widget to set up a new distance widget");
       this->Update3DWidget(addNode);
       // for now, since missing some of the add calls when open a scene, make sure we're current with the scene
@@ -1112,7 +1121,7 @@ void vtkMeasurementsRulerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *activeRulerNode)
-{ 
+{
 
   vtkDebugMacro("UpdateWidget: active ruler node is " << (activeRulerNode == NULL ? "null" : activeRulerNode->GetName()));
 
@@ -1143,7 +1152,7 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   if ( this->RulerSelectorWidget->GetSelected() == NULL )
     {
     vtkDebugMacro("Null selected ruler, selecting it and returning");
-    this->RulerSelectorWidget->SetSelected(activeRulerNode);    
+    this->RulerSelectorWidget->SetSelected(activeRulerNode);
     return;
     }
 
@@ -1274,7 +1283,6 @@ void vtkMeasurementsRulerWidget::UpdateWidget(vtkMRMLMeasurementsRulerNode *acti
   this->UpdateDistanceLabel(activeRulerNode);
   
   this->Update3DWidget(activeRulerNode);
-   
 }
 
 //---------------------------------------------------------------------------
