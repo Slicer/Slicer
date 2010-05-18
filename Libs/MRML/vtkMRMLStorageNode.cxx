@@ -576,14 +576,17 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
 //----------------------------------------------------------------------------
 int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
 {
-  vtkErrorMacro("SupportedFileType: sub class didn't define this method! (fileName = '" << fileName << "')");
+  vtkErrorMacro("SupportedFileType: sub class didn't define this method! (fileName = '" << (fileName == NULL ? "NULL" : fileName) << "')");
   return 0;
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
 {
-  
+  if (fileName == NULL)
+    {
+    return 0;
+    }
   std::string fname = std::string(fileName);
   int fileNameIsRelative =  this->IsFilePathRelative(fileName);
   for (unsigned int i = 0; i < this->FileNameList.size(); i++)
@@ -641,6 +644,11 @@ int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
 //----------------------------------------------------------------------------
 unsigned int vtkMRMLStorageNode::AddFileName( const char* filename )
 {
+  if (!filename)
+    {
+    vtkErrorMacro("AddFileName: can't add a null file name");
+    return 0;
+    }
   std::string filenamestr (filename);
   if (!this->FileNameIsInList(filename))
     {
@@ -689,10 +697,15 @@ void vtkMRMLStorageNode::ResetNthFileName(int n, const char* fileName)
 }
 
 //----------------------------------------------------------------------------
-unsigned int vtkMRMLStorageNode::AddURI( const char* filename )
+unsigned int vtkMRMLStorageNode::AddURI( const char* uri )
 {
-  std::string filenamestr (filename);
-  this->URIList.push_back( filenamestr );
+  if (uri == NULL)
+    {
+    vtkErrorMacro("AddURI: can't add a null URI");
+    return 0;
+    }
+  std::string uristr (uri);
+  this->URIList.push_back( uristr );
   return (unsigned int)this->URIList.size();
 }
 
@@ -716,16 +729,16 @@ const char * vtkMRMLStorageNode::GetNthURI(int n)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::ResetNthURI(int n, const char* fileName)
+void vtkMRMLStorageNode::ResetNthURI(int n, const char* uri)
 {
-  if (fileName == NULL)
+  if (uri == NULL)
     {
     vtkErrorMacro("ResetNthURI: given URI is null (n = " << n << ")");
     return;
     }
   if (n >= 0 && this->GetNumberOfURIs() >= n)
     {
-    this->URIList[n] = std::string(fileName);
+    this->URIList[n] = std::string(uri);
     }
   else
     {
