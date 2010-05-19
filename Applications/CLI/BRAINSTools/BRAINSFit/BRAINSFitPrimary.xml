@@ -13,7 +13,7 @@
 
     <image>
       <name>fixedVolume</name>
-      <longflag>--fixedVolume</longflag>
+      <longflag>fixedVolume</longflag>
       <label>Fixed Image Volume</label>
       <description>The fixed image for registration by mutual information optimization.</description>
       <channel>input</channel>
@@ -22,50 +22,66 @@
 
     <image>
       <name>movingVolume</name>
-      <longflag>--movingVolume</longflag>
+      <longflag>movingVolume</longflag>
       <label>Moving Image Volume</label>
       <description>The moving image for registration by mutual information optimization.</description>
       <default></default>
       <channel>input</channel>
     </image>
 
-    <string-vector>
-      <name>transformType</name>
-      <longflag>--transformType</longflag>
-      <label>Transform Type</label>
-      <description>Specifies one of the four rigid ITK 3D transform types -- or BSpline -- to use in parameter optimization descent.  BRAINSFit always optimizes mutual information, but the kind of descent varies with the transform type.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Specifiying more than one in a comma separated list will initialize the next stage with the previous results. </description>
-      <default>Rigid</default>
-    </string-vector>
-
+    <string-enumeration>
+      <name>registrationClass</name>
+      <longflag>registrationClass</longflag>
+      <label>Class of Registration</label>
+      <description>Specifies one of the five supported transform types.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Note that registration proceeds from the lowest parameter dimension upto the parameter type choosen.  Selecting BSpline for registrationClass has the same effect as setting transformType to "Rigid,ScaleVersor3D,ScaleSkewVersor3D,Affine,BSpline".</description>
+      <default></default>
+      <element>Rigid</element>
+      <element>ScaleVersor3D</element>
+      <element>ScaleSkewVersor3D</element>
+      <element>Affine</element>
+      <element>BSpline</element>
+    </string-enumeration>
   </parameters>
-  <!-- -->
+
   <parameters advanced="false">
-    <label>Transform Configuration Parameters</label>
+    <label>Output Settings</label>
+
+    <transform fileExtensions=".mat">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <label>Output Transform</label>
+      <description>Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+    </transform>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <label>Output Image Volume</label>
+      <description>The (optional) output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+ </parameters>
+  <!-- -->
+  <parameters advanced="true">
+    <label>Transform Initialization Parameters</label>
 
     <string-enumeration>
       <name>initializeTransformMode</name>
-      <longflag>--initializeTransformMode</longflag>
+      <longflag>initializeTransformMode</longflag>
       <label>Intitialze Transform Mode</label>
       <description>Determine how to initialize the transform center.  GeometryOn on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsOn assumes that the center of mass of the images represent similar structures.  CenterOfHead attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
-      <default>Off</default>
+      <default>GeometryOn</default>
       <element>Off</element>
       <element>MomentsOn</element>
       <element>CenterOfHead</element>
       <element>GeometryOn</element>
     </string-enumeration>
 
-    <double>
-      <name>maskInferiorCutOffFromCenter</name>
-      <longflag>--maskInferiorCutOffFromCenter</longflag>
-      <label>Inferior Cut Off From Center</label>
-      <description>For use with --initializeTransformMode CenterOfHead (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
-      <default>1000.0</default>
-    </double>
-
-
     <transform fileExtensions=".mat">
       <name>initialTransform</name>
-      <longflag>--initialTransform</longflag>
+      <longflag>initialTransform</longflag>
       <label>Initial Transform</label>
       <description>Filename of transform used to initialize the registration.</description>
       <channel>input</channel>
@@ -73,12 +89,21 @@
 
   </parameters>
   <!-- -->
-  <parameters advanced="false">
-    <label>Important Registration Parameters</label>
+  <parameters advanced="true">
+    <label>Registration Parameters</label>
+
+    <string-vector>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <label>Transform Type</label>
+      <description>Specifies a list of registration types to be used.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Specifiying more than one in a comma separated list will initialize the next stage with the previous results. If registrationClass flag is used, it overrides this parameter setting.</description>
+      <default>Rigid</default>
+    </string-vector>
+
 
     <integer-vector>
       <name>numberOfIterations</name>
-      <longflag>--numberOfIterations</longflag>
+      <longflag>numberOfIterations</longflag>
       <label>Number Of Iterations</label>
       <description>The maximum number of iterations to try before failing to converge.  Use an explicit limit like 500 or 1000 to manage risk of divergence</description>
       <default>1500</default>
@@ -86,7 +111,7 @@
 
     <integer>
       <name>numberOfSamples</name>
-      <longflag>--numberOfSamples</longflag>
+      <longflag>numberOfSamples</longflag>
       <label>Number Of Samples</label>
       <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit.  You can also limit the sampling focus with ROI masks and ROIAUTO mask generation.</description>
       <default>100000</default>
@@ -94,7 +119,7 @@
 
     <double-vector>
       <name>minimumStepSize</name>
-      <longflag>--minimumStepSize</longflag>
+      <longflag>minimumStepSize</longflag>
       <label>Minimum Step Size</label>
       <description>Each step in the optimization takes steps at least this big.  When none are possible, registration is complete.</description>
       <default>0.005</default>
@@ -102,7 +127,7 @@
 
     <double>
       <name>translationScale</name>
-      <longflag deprecatedalias="spatialScale,transformScale">--translationScale</longflag>
+      <longflag deprecatedalias="spatialScale,transformScale">translationScale</longflag>
       <label>Transform Scale</label>
       <description>How much to scale up changes in position compared to unit rotational changes in radians -- decrease this to put more rotation in the search pattern.</description>
       <default>1000.0</default>
@@ -110,7 +135,7 @@
 
     <double>
       <name>reproportionScale</name>
-      <longflag>--reproportionScale</longflag>
+      <longflag>reproportionScale</longflag>
       <label>Reproportion Scale</label>
       <description>ScaleVersor3D 'Scale' compensation factor.  Increase this to put more rescaling in a ScaleVersor3D or ScaleSkewVersor3D search pattern.  1.0 works well with a translationScale of 1000.0</description>
       <default>1.0</default>
@@ -118,7 +143,7 @@
 
     <double>
       <name>skewScale</name>
-      <longflag>--skewScale</longflag>
+      <longflag>skewScale</longflag>
       <label>Skew Scale</label>
       <description>ScaleSkewVersor3D Skew compensation factor.  Increase this to put more skew in a ScaleSkewVersor3D search pattern.  1.0 works well with a translationScale of 1000.0</description>
       <default>1.0</default>
@@ -126,7 +151,7 @@
 
     <integer-vector>
       <name>splineGridSize</name>
-      <longflag>--splineGridSize</longflag>
+      <longflag>splineGridSize</longflag>
       <label>Number Of Grid Subdivisions</label>
       <description>The number of subdivisions of the BSpline Grid to be centered on the image space.  Each dimension must have at least 3 subdivisions for the BSpline to be correctly computed. </description>
       <default>14,10,12</default>
@@ -134,7 +159,7 @@
 
     <double>
       <name>maxBSplineDisplacement</name>
-      <longflag>--maxBSplineDisplacement</longflag>
+      <longflag>maxBSplineDisplacement</longflag>
       <label>Maximum B-Spline Displacement</label>
       <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
       </description>
@@ -143,38 +168,22 @@
 
   </parameters>
   <!-- -->
-  <parameters advanced="false">
-    <label>Result Configuration Parameters</label>
 
-    <transform fileExtensions=".mat">
-      <name>outputTransform</name>
-      <longflag>--outputTransform</longflag>
-      <label>Output Transform</label>
-      <description>Filename to which save the estimated transform.</description>
-      <channel>output</channel>
-    </transform>
+  <parameters advanced="true">
+    <label>Advanced Output Settings</label>
 
     <transform fileExtensions=".mat">
       <name>strippedOutputTransform</name>
-      <longflag>--strippedOutputTransform</longflag>
+      <longflag>strippedOutputTransform</longflag>
       <label>Stripped Output Transform</label>
-      <description>File name for the estimated transform, stripped of scaling, to register the moving image to the fixed image.</description>
+      <description>File name for the rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image.</description>
       <channel>output</channel>
     </transform>
-
-    <image>
-      <name>outputVolume</name>
-      <longflag>--outputVolume</longflag>
-      <label>Output Image Volume</label>
-      <description>The (optional) output image for registration.</description>
-      <channel>output</channel>
-      <default></default>
-    </image>
 
 
     <string-enumeration>
       <name>outputVolumePixelType</name>
-      <longflag>--outputVolumePixelType</longflag>
+      <longflag>outputVolumePixelType</longflag>
       <label>Output Image Pixel Type</label>
       <description>The output image Pixel Type is the scalar datatype for representation of the Output Volume.</description>
       <default>float</default>
@@ -188,15 +197,23 @@
 
     <double>
       <name>backgroundFillValue</name>
-      <longflag>--backgroundFillValue</longflag>
+      <longflag>backgroundFillValue</longflag>
       <label>Background Fill Value</label>
       <description>Background fill value for output image.</description>
       <default>0.0</default>
     </double>
 
+    <double>
+      <name>maskInferiorCutOffFromCenter</name>
+      <longflag>maskInferiorCutOffFromCenter</longflag>
+      <label>Inferior Cut Off From Center</label>
+      <description>For use with --initializeTransformMode CenterOfHead (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
+      <default>1000.0</default>
+    </double>
+
     <boolean>
       <name>scaleOutputValues</name>
-      <longflag>--scaleOutputValues</longflag>
+      <longflag>scaleOutputValues</longflag>
       <label>Scale Output Values</label>
       <description>If true, and the voxel values do not fit within the minimum and maximum values of the desired outputVolumePixelType, then linearly scale the min/max output image voxel values to fit within the min/max range of the outputVolumePixelType.</description>
       <default>false</default>
@@ -212,8 +229,8 @@
 
   </parameters>
   <!-- -->
-  <parameters advanced="false">
-    <label>Control of Masked Processing</label>
+  <parameters advanced="true">
+    <label>Control of Mask Processing</label>
 
     <string-enumeration>
       <name>maskProcessingMode</name>
@@ -228,7 +245,7 @@
 
     <image type="label">
       <name>outputFixedVolumeROI</name>
-      <longflag>--outputFixedVolumeROI</longflag>
+      <longflag>outputFixedVolumeROI</longflag>
       <label>Output Fixed Mask (ROIAUTO only)</label>
       <description>The ROI automatically found in fixed image.</description>
       <channel>output</channel>
@@ -236,7 +253,7 @@
 
     <image type="label">
       <name>outputMovingVolumeROI</name>
-      <longflag>--outputMovingVolumeROI</longflag>
+      <longflag>outputMovingVolumeROI</longflag>
       <label>Output Moving Mask (ROIAUTO only)</label>
       <description>The ROI automatically found in moving image.</description>
       <channel>output</channel>
@@ -244,7 +261,7 @@
 
     <image type="label">
       <name>fixedBinaryVolume</name>
-      <longflag>--fixedBinaryVolume</longflag>
+      <longflag>fixedBinaryVolume</longflag>
       <label>Input Fixed Mask (ROI only)</label>
       <description>Fixed Image binary mask volume.</description>
       <default></default>
@@ -253,7 +270,7 @@
 
     <image type="label">
       <name>movingBinaryVolume</name>
-      <longflag>--movingBinaryVolume</longflag>
+      <longflag>movingBinaryVolume</longflag>
       <label>Input Moving Mask (ROI only)</label>
       <description>Moving Image binary mask volume.</description>
       <default></default>
@@ -266,7 +283,7 @@
 
     <integer>
       <name>fixedVolumeTimeIndex</name>
-      <longflag>--fixedVolumeTimeIndex</longflag>
+      <longflag>fixedVolumeTimeIndex</longflag>
       <label>Fixed Image Time Index</label>
       <description>The index in the time series for the 3D fixed image to fit, if 4-dimensional.</description>
       <default>0</default>
@@ -274,7 +291,7 @@
 
     <integer>
       <name>movingVolumeTimeIndex</name>
-      <longflag>--movingVolumeTimeIndex</longflag>
+      <longflag>movingVolumeTimeIndex</longflag>
       <label>Moving Image Time Index</label>
       <description>The index in the time series for the 3D moving image to fit, if 4-dimensional.</description>
       <default>0</default>
@@ -282,7 +299,7 @@
 
     <integer-vector>
       <name>medianFilterSize</name>
-      <longflag>--medianFilterSize</longflag>
+      <longflag>medianFilterSize</longflag>
       <label>Median Filter Size</label>
       <description>The radius for the optional MedianImageFilter preprocessing in all 3 directions.</description>
       <default>0,0,0</default>
@@ -291,7 +308,7 @@
     <boolean>
        <name>histogramMatch</name>
        <flag>e</flag>
-       <longflag alias="use_histogram_matching">--histogramMatch</longflag>
+       <longflag alias="use_histogram_matching">histogramMatch</longflag>
        <description>Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile.</description>
        <label>Histogram Match</label>
        <default>false</default>
@@ -311,55 +328,8 @@
       <label>Number of Match Points</label>
       <default>10</default>
     </integer>
-
-
-    <string>
-      <name>patientID</name>
-      <longflag>--patientID</longflag>
-      <label>Patient ID</label>
-      <description>Identifier for the research subject, This will eventually be removed.</description>
-      <default>ANON</default>
-    </string>
-
-    <string>
-      <name>studyID</name>
-      <longflag>--studyID</longflag>
-      <label>Study ID</label>
-      <description>Identifier for the scanner encounter (MRQID), This will eventually be removed.</description>
-      <default>ANON</default>
-    </string>
-
   </parameters>
   <!-- -->
-  <parameters advanced="true">
-    <label>Risky Expert-only Parameters</label>
-
-    <integer-vector>
-      <name>permitParameterVariation</name>
-      <longflag>--permitParameterVariation</longflag>
-      <label>Selective Permission for Transform Parameters to Vary</label>
-      <description>A bit vector to permit linear transform parameters to vary under optimization.  The vector order corresponds with transform parameters, and beyond the end ones fill in as a default.  For instance, you can choose to rotate only in x (pitch) with 1,0,0;  this is mostly for expert use in turning on and off individual degrees of freedom in rotation, translation or scaling without multiplying the number of transform representations; this trick is probably meaningless when tried with the general affine transform.</description>
-      <default></default>
-    </integer-vector>
-
-    <integer-vector>
-      <name>fixedVolumeOrigin</name>
-      <longflag>--fixedVolumeOrigin</longflag>
-      <label>Fixed Image Origin</label>
-      <description>The coordinates of the origin of the fixed image.  This will over-ride the information read from disk and is VERY DANGEROUS.</description>
-      <default>0,0,0</default>
-    </integer-vector>
-
-    <integer-vector>
-      <name>movingVolumeOrigin</name>
-      <longflag>--movingVolumeOrigin</longflag>
-      <label>Moving Image Origin</label>
-      <description>The coordinates of the origin of the moving image.  This will over-ride the information read from disk and is VERY DANGEROUS.</description>
-      <default>0,0,0</default>
-    </integer-vector>
-
-  </parameters>
-
   <!-- -->
   <parameters advanced="true">
     <label>Registration Debugging Parameters</label>
@@ -387,7 +357,7 @@
 
     <double>
       <name>relaxationFactor</name>
-      <longflag>--relaxationFactor</longflag>
+      <longflag>relaxationFactor</longflag>
       <label>Relaxation Factor</label>
       <description>Internal debugging parameter, and should probably never be used from the command line.  This will be removed in the future.</description>
       <default>0.5</default>
@@ -395,20 +365,15 @@
 
     <double>
       <name>maximumStepSize</name>
-      <longflag>--maximumStepSize</longflag>
+      <longflag>maximumStepSize</longflag>
       <label>Maximum Step Size</label>
       <description>Internal debugging parameter, and should probably never be used from the command line.  This will be removed in the future.</description>
       <default>0.2</default>
     </double>
 
-  </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>System Debugging Parameters</label>
-
     <integer>
       <name>failureExitCode</name>
-      <longflag>--failureExitCode</longflag>
+      <longflag>failureExitCode</longflag>
       <label>Failure Exit Code</label>
       <description>If the fit fails, exit with this status code.  (It can be used to force a successfult exit status of (0) if the registration fails due to reaching the maximum number of iterations.</description>
       <default>-1</default>
@@ -416,7 +381,7 @@
 
     <boolean>
       <name>writeTransformOnFailure</name>
-      <longflag>--writeTransformOnFailure</longflag>
+      <longflag>writeTransformOnFailure</longflag>
       <label>Write Transform On Failure</label>
       <description>Flag to save the final transform even if the numberOfIterations are reached without convergence. (Intended for use when --failureExitCode 0 )</description>
       <default>0</default>
@@ -424,38 +389,29 @@
 
     <integer>
       <name>debugNumberOfThreads</name>
-      <longflag>--debugNumberOfThreads</longflag>
+      <longflag>debugNumberOfThreads</longflag>
       <label>debugNumberOfThreads</label>
       <description>Explicitly specify the maximum number of threads to use.</description>
       <default>-1</default>
     </integer>
 
-   <!--
-   <boolean>
-     <name>initialTransformPassThru</name>
-     <longflag>initialTransformPassThru</longflag>
-     <label>Initial Transform Pass Thru</label>
-     <description>Internal debugging parameter</description>
-     <default>false</default>
-   </boolean>
-   -->
     <integer>
       <name>debugLevel</name>
       <label>Debug option</label>
       <description>Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.</description>
-      <longflag deprecatedalias="debuglevel">--debugLevel</longflag>
+      <longflag deprecatedalias="debuglevel">debugLevel</longflag>
       <default>0</default>
     </integer>
     <double>
       <name>costFunctionConvergenceFactor</name>
-      <longflag>--costFunctionConvergenceFactor</longflag>
+      <longflag>costFunctionConvergenceFactor</longflag>
       <description> From itkLBFGSBOptimizer.h: Set/Get the CostFunctionConvergenceFactor. Algorithm terminates when the reduction in cost function is less than (factor * epsmcj) where epsmch is the machine precision. Typical values for factor: 1e+12 for low accuracy; 1e+7 for moderate accuracy and 1e+1 for extremely high accuracy.  1e+9 seems to work well.
       </description>
       <default>1e+9</default>
     </double>
     <double>
       <name>projectedGradientTolerance</name>
-      <longflag>--projectedGradientTolerance</longflag>
+      <longflag>projectedGradientTolerance</longflag>
       <description> From itkLBFGSBOptimizer.h: Set/Get the ProjectedGradientTolerance. Algorithm terminates when the project gradient is below the tolerance. Default lbfgsb value is 1e-5, but 1e-4 seems to work well.
       </description>
       <default>1e-4</default>
@@ -465,16 +421,45 @@
     <boolean>
       <name>UseDebugImageViewer</name>
       <flag>G</flag>
-      <longflag>--gui</longflag>
+      <longflag>gui</longflag>
       <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build sytem, and probably does nothing on your installation.</description>
       <default>false</default>
     </boolean>
     <boolean>
       <name>PromptAfterImageSend</name>
       <flag>p</flag>
-      <longflag>--promptUser</longflag>
+      <longflag>promptUser</longflag>
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
     </boolean>
   </parameters>
+  <parameters advanced="true">
+    <label>Risky Expert-only Parameters</label>
+
+    <integer-vector>
+      <name>permitParameterVariation</name>
+      <longflag>permitParameterVariation</longflag>
+      <label>Selective Permission for Transform Parameters to Vary</label>
+      <description>A bit vector to permit linear transform parameters to vary under optimization.  The vector order corresponds with transform parameters, and beyond the end ones fill in as a default.  For instance, you can choose to rotate only in x (pitch) with 1,0,0;  this is mostly for expert use in turning on and off individual degrees of freedom in rotation, translation or scaling without multiplying the number of transform representations; this trick is probably meaningless when tried with the general affine transform.</description>
+      <default></default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>fixedVolumeOrigin</name>
+      <longflag>fixedVolumeOrigin</longflag>
+      <label>Fixed Image Origin</label>
+      <description>The coordinates of the origin of the fixed image.  This will over-ride the information read from disk and is VERY DANGEROUS.</description>
+      <default>0,0,0</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>movingVolumeOrigin</name>
+      <longflag>movingVolumeOrigin</longflag>
+      <label>Moving Image Origin</label>
+      <description>The coordinates of the origin of the moving image.  This will over-ride the information read from disk and is VERY DANGEROUS.</description>
+      <default>0,0,0</default>
+    </integer-vector>
+
+  </parameters>
+
 </executable>

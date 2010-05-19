@@ -197,12 +197,6 @@
                         <input id="BRAINSFit_1.numberofHistogramBins" name="numberofHistogramBins" description="The number of histogram levels. " enabled="false" required="false" order="14" switch="--numberOfHistogramBins" switchSpaced="true">
                                 <format type="Number" cardinality="1" />
                         </input>
-                        <input id="BRAINSFit_1.studyID" name="studyID" description="Identifier for the scanner encounter (MRQID). (default: ANON) " enabled="false" required="false" order="3" switch="--studyID" switchSpaced="true">
-                                <format type="String" cardinality="1" />
-                        </input>
-                        <input id="BRAINSFit_1.patientID" name="patientID" description=" Identifier for the research subject. (default: ANON) " enabled="false" required="false" order="4" switch="--patientID" switchSpaced="true">
-                                <format type="String" cardinality="1" />
-                        </input>
                         <input id="BRAINSFit_1.outputVolumePixelType" name="outputVolumePixelType" description="The output image Pixel Type is the scalar datatype for representation of the Output Volume. One of float, short, ushort, int, uint, char, uchar (default: float)" enabled="false" required="false" order="23" switch="--outputVolumePixelType" switchSpaced="true">
                                 <format type="Enumerated" cardinality="1">
                                         <enumeration>float</enumeration>

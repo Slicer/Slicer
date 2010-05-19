@@ -495,7 +495,7 @@ endif()
     --outputVolumePixelType uchar
     --maskProcessingMode ROIAUTO
     --initializeTransformMode CenterOfHead
-    --transformType Rigid,ScaleVersor3D
+    --registrationClass ScaleVersor3D
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.test.nii.gz
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
