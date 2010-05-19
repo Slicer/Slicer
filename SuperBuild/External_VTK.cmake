@@ -73,7 +73,7 @@ ExternalProject_Add(vtk
   DEPENDS ${vtk_DEPENDENCIES}
   SOURCE_DIR ${vtk_source}
   BINARY_DIR VTK-build
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/VTK/"
+  GIT_REPOSITORY "git://github.com/pieper/SlicerVTK.git"
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
