@@ -54,6 +54,7 @@ if(CMAKE_COMPILER_2005)
 endif(CMAKE_COMPILER_2005)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
+set(Slicer3_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
 
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
@@ -185,6 +186,13 @@ endif()
 # Enable VTK Debug Leaks
 option(Slicer3_USE_VTK_DEBUG_LEAKS 
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
+  
+  
+# Configure the CTest custom file for excluding warnings fromexternal projects.
+configure_file(
+  ${Slicer3_CMAKE_DIR}/CTestCustom.cmake.in
+  ${Slicer3_BINARY_DIR}/CTestCustom.cmake
+  @ONLY IMMEDIATE)
 
 #------------------------------------------------------------------------------
 # Establish Target Dependencies based on Selected Options

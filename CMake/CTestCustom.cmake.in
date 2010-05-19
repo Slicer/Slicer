@@ -1,0 +1,8 @@
+SET(CTEST_CUSTOM_WARNING_EXCEPTION
+  ${CTEST_CUSTOM_WARNING_EXCEPTION}
+  "tcl.tcl."
+  "cmcurl.."
+  "Insight."
+  "VTK."
+  "include.qtcore."
+  )
