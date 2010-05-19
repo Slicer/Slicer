@@ -156,6 +156,12 @@ vtkMRMLScalarVolumeNode* vtkFourDAnalysisLogic::AddMapVolumeNode(vtkMRMLTimeSeri
     imageData->SetNumberOfScalarComponents(1);
     imageData->SetScalarTypeToFloat();  // Set to float to store parameters
     imageData->AllocateScalars();
+
+    // initialize the scalar array
+    int size[3];
+    imageData->GetDimensions(size);
+    memset(imageData->GetScalarPointer(), 0x00,
+           size[0]*size[1]*size[2]*sizeof(float));
     }
 
   volumeNode->SetAndObserveImageData(imageData);

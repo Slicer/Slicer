@@ -40,8 +40,8 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         self.ParameterNameList  = ['Sp', 'alpha', 'beta', 'Ta']
         self.InitialParameter   = [200.0, 3.0,    1.0,    0.0] 
 
-        self.ConstantNameList   = []
-        self.Constant           = []
+        self.ConstantNameList   = ['TpcMax']
+        self.Constant           = [0.0]
 
         self.FunctionVectorInput = 1
 
@@ -49,6 +49,8 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         self.MethodDescription   = '...'
 
         self.TargetCurve         = numpy.array([[0, 0]])
+
+        self.TpcMax              = 0.0
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve
@@ -66,6 +68,9 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
     # ------------------------------
     # Set Constants
     def SetConstant(self, name, param):
+        if name == 'TpcMax':
+            # precontrast duration
+            self.TpcMax = param
         return
 
     def CalcS0(self, Ta):
@@ -73,13 +78,19 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         signal = self.TargetCurve[:, 1]
         S0 = 0.0
 
+        Ta1 = 0.0
+        if self.TpcMax > 0.0:
+            Ta1 = self.TpcMax
+        else:
+            Ta1 = Ta
+        
         ### following code assumes that the time interval is constant
         #mrange = numpy.floor(Ta / (tarray[1]-tarray[0]))
 
         ### following code can handle variable interval
         mrange = 0
         for t in tarray:
-            if t < Ta:
+            if t < Ta1:
                 mrange = mrange + 1
             else:
                 break
@@ -97,8 +108,20 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         Sp, alpha, beta, Ta  = param
         S0 = self.CalcS0(Ta)
         x2 = (scipy.greater_equal(x, Ta) * (x - Ta))
-        y = Sp * numpy.abs(scipy.power((scipy.e / (alpha*beta)), alpha)) * numpy.abs(scipy.power(x2, alpha)) * scipy.exp(-x2/beta) + S0
+        #y  = Sp * numpy.abs(scipy.power((scipy.e / (alpha*beta)), alpha)) * numpy.abs(scipy.power(x2, alpha)) * scipy.exp(-x2/beta) + S0
+        y  = Sp * numpy.abs(scipy.power((scipy.e / (alpha*beta)), alpha) * scipy.power(x2, alpha) * scipy.exp(-x2/beta)) + S0
         return y
+
+    # ------------------------------
+    # Calculate the output parameters (called by GetOutputParam())
+    def DiffFunction(self, x, param):
+        Sp, alpha, beta, Ta  = param
+        if x < Ta:
+            return 0
+        x2 = x - Ta
+        y = Sp * scipy.power((scipy.e / (alpha*beta)), alpha) * (alpha * scipy.power(x2, alpha - 1) * scipy.exp(-x2/beta) - scipy.power(x2, alpha) * scipy.exp(-x2/beta) / beta)
+        return y
+        
     
     # ------------------------------
     # Calculate the output parameters (called by GetOutputParam())
@@ -108,7 +131,7 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
 
         sts = quad(lambda x: x*(self.Function(x, param) - S0), 0.0, 1000.0)
         ss  = quad(lambda x: self.Function(x, param) - S0, 0.0, 1000.0)
-        if ss <> 0.0:
+        if ss[0] <> 0.0:
             MTT = sts[0] / ss[0]
         else:
             MTT = 0.0
@@ -121,6 +144,32 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         dict['Ta']    = Ta
         dict['S0']    = S0
         dict['TTP']   = alpha*beta + Ta
+        dict['S240']    = self.Function(240.0+Ta, param)
+        dict['S480']    = self.Function(480.0+Ta, param)
+
+        # Calculate initial slope defined by the sloat at t, where
+        #    f''(t) = 0
+        
+        # point of contact
+        pcx = beta * (alpha - scipy.sqrt(alpha)) + Ta
+        if pcx < Ta:
+            pcx = Ta
+        pcy = self.Function(pcx, param)
+        dict['MaxSlope']  = self.DiffFunction(pcx, param)
+        dict['TMaxSlope'] = pcx
+
+        # Calculate standard deviation of residual error
+        if S0 == 0.0:
+            dict['SDRE'] = 0.0
+        else:
+            x = self.TargetCurve[:, 0]
+            y = self.SignalToConcent(self.TargetCurve[:, 1])
+            err = 0.0
+            if self.FunctionVectorInput == 0:
+                err = self.ResidualError(param, y, x) / S0
+            else:
+                err = self.ResidualErrorVec(param, y, x) / S0
+            dict['SDRE'] = numpy.std(err)
 
         return dict
 

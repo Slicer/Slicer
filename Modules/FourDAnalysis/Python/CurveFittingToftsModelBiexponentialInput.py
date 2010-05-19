@@ -43,29 +43,35 @@ class CurveFittingToftsModelBiexponentialInput(CurveAnalysisBase):
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        #self.ParameterNameList     = ['Ktrans', 've', 'Dose', 'delay']
-        #self.InitialParameter      = [0.1, 0.1, 4.0, 0.0]
-        #self.Constraints = [(0.0001, 0.7), (0.0001, 0.7), (1, 10), (1, 100)]
+        self.ParameterNameList     = ['Ktrans', 've', 'Dose', 'delay']
+        self.InitialParameter      = [0.1, 0.1, 0.1, 0.0]
+        self.Constraints = [(0.0001, 0.7), (0.0001, 0.7), (1, 10), (1, 100)]
 
-        #self.ParameterNameList     = ['Ktrans', 've', 'delay']
+        #self.ParameterNameList     = ['Ktrans', 've', 'delay', ]
         #self.InitialParameter      = [0.1, 0.1, 0.0]
         #self.Constraints = [(0.0001, 0.7), (0.0001, 0.7), (1, 100)]
 
-        self.ParameterNameList     = ['Ktrans', 've']
-        self.InitialParameter      = [0.1, 0.1]
-        self.Constraints = [(0.0001, 0.7), (0.0001, 0.7)]
+        #self.ParameterNameList     = ['Ktrans', 've']
+        #self.InitialParameter      = [0.1, 0.1]
+        #self.Constraints = [(0.0001, 0.7), (0.0001, 0.7)]
+
+        #self.ParameterNameList     = ['Ktrans', 've', 'Dose']
+        #self.InitialParameter      = [0.1, 0.1, 0.1]
+        #self.Constraints = [(0.0001, 0.7), (0.0001, 0.7), (0.0001, 0.5)]
         
         # The following default constant values ecept vp are from the paper: Tofts PS,
         # "Modeling Tracer Kinetics in Dynamic Dg-DTPA MR Imaging, JMRI, 1997; 7(1):91-101
         # Delay parameter is in seconds.
-        self.ConstantNameList   = ['a1', 'a2', 'm1', 'm2', 'vp', 'delay', 'Dose']
-        self.Constant           = [3.99, 4.78, 0.144, 0.0111, 0.03, 0.0, 0.0]
+        self.ConstantNameList   = ['a1', 'a2', 'm1', 'm2', 'vp', 'delay', 'Dose', 'dpc']
+        self.Constant           = [3.99, 4.78, 0.144, 0.0111, 0.00, 0.0, 0.20, 30.0]
 
         #self.InputCurveNameList = ['AIF']
         self.FunctionVectorInput = 1
 
         self.MethodName          = 'Tofts Model, Biexponential Decay Plasma Concentration '
         self.MethodDescription   = ''
+
+        self.signal0 = 0.0
         
     # ------------------------------
     # Convert signal intensity curve to signal enhancement curve
@@ -105,36 +111,40 @@ class CurveFittingToftsModelBiexponentialInput(CurveAnalysisBase):
             self.m2 = param
         if name == 'vp':
             self.vp = param
-        if name == 'delay':
-            self.delay = param
+        if name == 'dpc':
+            #duration of precontrast
+            self.dpc = param
             ## Note: TargetCurve has already been set 
             tarray = self.TargetCurve[:, 0]
             mrange = 0
             for t in tarray:
-                if t < self.delay:
+                if t < self.dpc:
                     mrange = mrange + 1
                 else:
                     break
             self.mrange = mrange
+        if name == 'delay':
+            self.delay = param
         if name == 'Dose':
             self.Dose = param
 
     # ------------------------------
     # Definition of the function
     def Function(self, x, param):
-        #Ktrans, ve, D, delay = param
+        Ktrans, ve, D, delay = param
         #Ktrans, ve, delay = param
-        Ktrans, ve  = param
+        #Ktrans, ve  = param
         #Ktrans, kep = param
+        #Ktrans, ve, D = param
         
         a1 = self.a1
         a2 = self.a2
         m1 = self.m1
         m2 = self.m2
         vp = self.vp
-        delay = self.delay
+        #delay = self.delay
         kep = Ktrans / ve
-        D  = self.Dose
+        #D  = self.Dose
         
         # Calculate shifted time and convert to minutes
         # if x < delay:  x_min = 0
@@ -153,22 +163,49 @@ class CurveFittingToftsModelBiexponentialInput(CurveAnalysisBase):
             y  = (D*Ktrans)*(term1+term2)
 
         
-        return y * scipy.greater_equal(x, delay)
+        #return y * scipy.greater_equal(x, delay)
+        return y 
 
 
     # ------------------------------
     # Calculate the output parameters (called by GetOutputParam())
     def CalcOutputParamDict(self, param):
-        Ktrans, ve  = param
-        #Ktrans, ve, D, delay = param
+        #Ktrans, ve  = param
+        #Ktrans, ve, Dose  = param
+        Ktrans, ve, D, delay = param
         #Ktrans, ve, delay = param
 
         dict = {}
         dict['Ktrans'] = Ktrans
         dict['ve']     = ve
         dict['kep']    = Ktrans / ve
-        #dict['delay']  = delay
-        
+        #dict['Dose']   = self.Dose
+        dict['Dose']   = D
+        dict['delay']  = delay
+
+       
+        # Calculate standard deviation of residual error,
+        # root mean square error (RMSE) and normalized RMSE
+        if self.signal0 == 0.0:
+            dict['SDRE'] = 0.0
+            dict['RMSE']  = 0.0
+            dict['NRMSE']  = 0.0
+        else:
+            x = self.TargetCurve[:, 0]
+            y = self.SignalToConcent(self.TargetCurve[:, 1])
+            err = 0.0
+            if self.FunctionVectorInput == 0:
+                err = self.ResidualError(param, y, x)
+            else:
+                err = self.ResidualErrorVec(param, y, x)
+            dict['SDRE'] = numpy.std(err)
+
+            err = self.TargetCurve[:, 0] - self.GetFitCurve(self.TargetCurve[:, 0])
+            rmse = numpy.sqrt(numpy.mean(err*err))
+            dict['RMSE']  = rmse
+            dict['NRMSE']  = rmse / self.signal0
+            
+
         return dict
 
 
