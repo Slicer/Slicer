@@ -284,24 +284,26 @@ void vtkFetchMIGUI::Enter()
         {
         if ( appGUI->GetMainSlicerWindow() )
           {
-//          this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
           appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( (int)(floor(geom->GetDefaultGUIPanelWidth() * 1.75)) );
-
-          vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
-          if ( wm )
+          this->Logic->ApplySlicerDataTypeTag();
+          //--- if there is a selected server... update the metadata query
+          if ( this->FetchMINode->GetSelectedServer() )
             {
-            wm->SetParent ( appGUI->GetMainSlicerWindow() );
-            wm->Create();
-            wm->SetText ("Checking and updating all metadata (may take a little while)...");
-            wm->DisplayWindow();
-            this->SetStatusText ("Checking and updating all metadata ( may take a little while).");
-            this->Script ("update idletasks");  
-            this->Logic->ApplySlicerDataTypeTag();
-            wm->WithdrawWindow();
-            wm->Delete();
+            vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+            if ( wm )
+              {
+              wm->SetParent ( appGUI->GetMainSlicerWindow() );
+              wm->Create();
+              wm->SetText ("Checking and updating all metadata (may take a little while)...");
+              wm->DisplayWindow();
+              this->SetStatusText ("Checking and updating all metadata ( may take a little while).");
+              this->Script ("update idletasks");  
+              wm->WithdrawWindow();
+              wm->Delete();
+              }
             }
-          this->SetStatusText ("");
-          this->Script ("update idletasks");
+            this->SetStatusText ("");
+            this->Script ("update idletasks");
           }
         }
       }

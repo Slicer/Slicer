@@ -31,6 +31,7 @@ SET(module_logic_SRCS
 # Additional Target libraries
 SET(module_logic_target_libraries
   ${ITK_LIBRARIES}
+  RemoteIO
   )
 
 

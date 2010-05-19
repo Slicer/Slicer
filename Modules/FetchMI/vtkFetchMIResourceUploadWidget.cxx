@@ -338,13 +338,14 @@ void vtkFetchMIResourceUploadWidget::RaiseNewTagWindow(const char *att)
     l1->Delete();
     l3->Delete();
 
+    }
+  
     //--- initialize entry
     if ( att != NULL && (strcmp(att, "" )) )
       {
       this->AddNewTagEntry->SetValue ( att );
       }
-    }
-  
+
   //-- display
   this->NewTagWindow->DeIconify();
   this->NewTagWindow->Raise();
@@ -527,12 +528,14 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents(vtkObject *caller,
       }
     else if ( b == this->AddNewValueButton && this->AddNewValueButton != NULL )
       {
+      int hideWinFlag = 0;
       if ( this->AddNewValueEntry != NULL && this->AddNewTagEntry != NULL )
         {
         //--- make sure they're up and contain info
         if ( ( this->AddNewTagEntry->GetValue() != NULL) && (this->AddNewValueEntry->GetValue() != NULL ) &&
              ( strcmp ("", this->AddNewTagEntry->GetValue() )) && ( strcmp ( "", this->AddNewValueEntry->GetValue() ) ) )
           {
+          hideWinFlag = 1;
           this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
           if ( this->AddNewTagLabel )
             {
@@ -547,16 +550,22 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents(vtkObject *caller,
           }
         this->AddNewValueEntry->SetValue ("");
         this->AddNewTagEntry->SetValue ("");
-       }
+        }
+      if ( hideWinFlag )
+        {
+        this->WithdrawNewTagWindow();
+        }
       }
     if ( e == this->AddNewValueEntry && event == vtkKWEntry::EntryValueChangedEvent )
       {
       //--- make sure they're up and contain info
+      int hideWinFlag = 0;
       if ( this->AddNewValueEntry && this->AddNewTagEntry )
         {
         if ( ( this->AddNewTagEntry->GetValue() != NULL) && (this->AddNewValueEntry->GetValue() != NULL ) &&
              ( strcmp ("", this->AddNewTagEntry->GetValue() )) && ( strcmp ( "", this->AddNewValueEntry->GetValue() ) ) )
           {
+          hideWinFlag = 1;
           this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
           if ( this->AddNewTagLabel )
             {
@@ -570,6 +579,10 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents(vtkObject *caller,
             }
           }
         this->AddNewValueEntry->SetValue ( "" );
+        }
+      if ( hideWinFlag )
+        {
+        this->WithdrawNewTagWindow();
         }
       }
     }

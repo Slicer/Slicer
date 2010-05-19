@@ -3792,7 +3792,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   // now override the mrml scene's url to point to file on disk
   this->GetMRMLScene()->SetURL(localURL.c_str());
   //--- load the remote scene
-  this->MRMLScene->Import();
+  this->MRMLScene->Connect();
 
   if (  this->MRMLScene->GetErrorCode() != 0 ) 
     {
