@@ -57,7 +57,6 @@ vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
   this->SearchLocationLabel = NULL;
   this->SearchLocationBox = NULL;
 
-std::cout << "AZUCAR  this->RepositoryValidationFailed = vtkKWStateMachineInput::New();" << std::endl;
   this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
   this->RepositoryValidationFailed->SetName("failed");
 }
@@ -111,7 +110,7 @@ vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
     }
 
   this->SetWizardDialog(NULL);
-std::cout << "AZUCAR: this->RepositoryValidationFailed->Delete();" << std::endl;
+
   this->RepositoryValidationFailed->Delete();
 }
 
