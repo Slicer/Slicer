@@ -346,34 +346,35 @@ void vtkMRMLCameraNode::SetActiveTag(const char *_arg)
     return;
     }
 
+  // If any camera is already using that new tag, let's find them and set
+  // their tags to null
+  if (this->Scene != NULL && _arg != NULL)
+    {
+    vtkMRMLCameraNode *node = NULL;
+    int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      node = vtkMRMLCameraNode::SafeDownCast (
+                this->Scene->GetNthNodeByClass(n, "vtkMRMLCameraNode"));
+      if (node &&
+          node != this && 
+          node->GetActiveTag() && 
+          !strcmp(node->GetActiveTag(), _arg))
+        {
+        vtkDebugMacro("SetActiveTag: found another node " << node->GetID() << " with the tag " << _arg);
+        node->SetActiveTag(NULL);
+        }
+      }
+    }
+  
   if (this->GetActiveTag() && _arg && 
       (!strcmp(this->GetActiveTag(), _arg)))
     {
     return;
     }
-
-  // If a camera is already using that new tag, let's find it and assign it our
-  // old tag later on if it's not ourself (thus performing a swap).
-
-  vtkMRMLCameraNode *previous_owner = this->FindActiveTagInScene(_arg);
-  if (previous_owner && previous_owner != this)
-    {
-    previous_owner->SetActiveTag(NULL);
-    }
-  std::string previous_active_tag(
-    this->GetActiveTag() ? this->GetActiveTag() : "");
-
   this->SetInternalActiveTag(_arg);
 
   this->InvokeEvent(vtkMRMLCameraNode::ActiveTagModifiedEvent, NULL);
-
-  // Swap with previous owner
-
-  if (previous_owner && previous_owner != this)
-    {
-    previous_owner->SetActiveTag(
-      previous_active_tag.size() ? previous_active_tag.c_str() : NULL);
-    }
 }
 
 //----------------------------------------------------------------------------
