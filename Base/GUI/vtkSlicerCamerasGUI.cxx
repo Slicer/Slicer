@@ -31,7 +31,10 @@ vtkSlicerCamerasGUI::vtkSlicerCamerasGUI ( )
   this->Internals = new vtkSlicerCamerasGUIInternals;
 
   this->ViewSelectorWidget = NULL;
-    this->CameraSelectorWidget = NULL;
+  this->CameraSelectorWidget = NULL;
+  this->PositionLabel = NULL;
+  this->FocalPointLabel = NULL;
+  this->ViewUpLabel = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -51,9 +54,28 @@ vtkSlicerCamerasGUI::~vtkSlicerCamerasGUI ( )
     this->CameraSelectorWidget->Delete ( );
     }
 
+  if (this->PositionLabel)
+    {
+    this->PositionLabel->SetParent(NULL);
+    this->PositionLabel->Delete();
+    this->PositionLabel = NULL;
+    }
+  if (this->FocalPointLabel)
+    {
+    this->FocalPointLabel->SetParent(NULL);
+    this->FocalPointLabel->Delete();
+    this->FocalPointLabel = NULL;
+    }
+  if (this->ViewUpLabel)
+    {
+    this->ViewUpLabel->SetParent(NULL);
+    this->ViewUpLabel->Delete();
+    this->ViewUpLabel = NULL;
+    }
+
   delete this->Internals;
   this->Internals = NULL;
-    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerCamerasGUI::PrintSelf ( ostream& os, vtkIndent indent )
@@ -98,6 +120,8 @@ void vtkSlicerCamerasGUI::RemoveGUIObservers ( )
     vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(snodes[n]);
     node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
                           this->GUICallbackCommand);
+    node->RemoveObservers(vtkCommand::ModifiedEvent, 
+                          this->GUICallbackCommand);
     }
 }
 
@@ -140,6 +164,8 @@ void vtkSlicerCamerasGUI::AddGUIObservers ( )
     {
     vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(snodes[n]);
     node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                      this->GUICallbackCommand);
+    node->AddObserver(vtkCommand::ModifiedEvent, 
                       this->GUICallbackCommand);
     }
 }
@@ -186,7 +212,7 @@ void vtkSlicerCamerasGUI::ProcessGUIEvents(
           vtkMRMLViewNode::SafeDownCast(
             this->ViewSelectorWidget->GetSelected());
         if (selected_view_node)
-    {
+          {
           selected_camera_node->SetActiveTag(selected_view_node->GetID());
           }
         }
@@ -205,10 +231,14 @@ void vtkSlicerCamerasGUI::ProcessGUIEvents(
       {
         node->AddObserver(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
                           this->GUICallbackCommand);
+        node->AddObserver(vtkCommand::ModifiedEvent, 
+                          this->GUICallbackCommand);
         }
       else if (event == vtkMRMLScene::NodeRemovedEvent)
         {
         node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
+                              this->GUICallbackCommand);
+        node->RemoveObservers(vtkCommand::ModifiedEvent, 
                               this->GUICallbackCommand);
         }
       }
@@ -217,13 +247,21 @@ void vtkSlicerCamerasGUI::ProcessGUIEvents(
   // ActiveTag modified, update the menus...
 
   vtkMRMLCameraNode *cam_node = vtkMRMLCameraNode::SafeDownCast(caller);
-  if (cam_node && event == vtkMRMLCameraNode::ActiveTagModifiedEvent)
+  if (cam_node)
     {
-    // Call UpdateCameraSelector asynchronously. We do not want to do that
-    // while ActiveTag are being reshuffled, since we may call
-    // this->CameraSelectorWidget->SetSelected and there is no way to prevent
-    // it from invoking an event and changing an ActiveTag... 
-    this->ScheduleUpdateCameraSelector();
+    if (event == vtkMRMLCameraNode::ActiveTagModifiedEvent)
+      {
+      // Call UpdateCameraSelector asynchronously. We do not want to do that
+      // while ActiveTag are being reshuffled, since we may call
+      // this->CameraSelectorWidget->SetSelected and there is no way to prevent
+      // it from invoking an event and changing an ActiveTag... 
+      this->ScheduleUpdateCameraSelector();
+      }
+    else if (event == vtkCommand::ModifiedEvent)
+      {
+      // update the labels
+      this->UpdateCameraLabels();
+      }
     }
 } 
 
@@ -258,6 +296,7 @@ void vtkSlicerCamerasGUI::UpdateCameraSelector()
           }
         }
       this->CameraSelectorWidget->SetSelected(found_camera_node);
+      this->UpdateCameraLabels();
       }
     }
 }
@@ -418,14 +457,91 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->CameraSelectorWidget->GetWidgetName());
 
+  this->PositionLabel = vtkKWLabel::New();
+  this->PositionLabel->SetParent ( cameraFrame );
+  this->PositionLabel->Create();
+  this->PositionLabel->SetWidth(30);
+  this->PositionLabel->SetText("Position: ");
+
+  this->FocalPointLabel = vtkKWLabel::New();
+  this->FocalPointLabel->SetParent ( cameraFrame );
+  this->FocalPointLabel->Create();
+  this->FocalPointLabel->SetWidth(30);
+  this->FocalPointLabel->SetText("Focal Point: ");
+
+  this->ViewUpLabel = vtkKWLabel::New();
+  this->ViewUpLabel->SetParent ( cameraFrame );
+  this->ViewUpLabel->Create();
+  this->ViewUpLabel->SetWidth(30);
+  this->ViewUpLabel->SetText("View Up: ");
+
+  this->Script("pack %s %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
+               this->PositionLabel->GetWidgetName(),
+               this->FocalPointLabel->GetWidgetName(),
+               this->ViewUpLabel->GetWidgetName());
+  
   cameraFrame->Delete();
   //cameraHelpFrame->Delete();
+
 
   this->UpdateViewSelector();
   this->UpdateCameraSelector();
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerCamerasGUI::UpdateCameraLabels()
+{
+  // get the currently selected camera
 
+  vtkMRMLCameraNode *camera = vtkMRMLCameraNode::SafeDownCast(this->CameraSelectorWidget->GetSelected());
+
+  if (!camera)
+    {
+    // reset labels
+    this->PositionLabel->SetText("Position: ");
+    this->FocalPointLabel->SetText("Focal Point: ");
+    this->ViewUpLabel->SetText("View Up: ");
+    }
+  else
+    {
+    double *val = camera->GetPosition();
+    if (val)
+      {
+      std::stringstream ss;
+      ss << "Position: ";
+      ss << val[0];
+      ss << ", ";
+      ss << val[1];
+      ss << ", ";
+      ss << val[2];
+      this->PositionLabel->SetText(ss.str().c_str());
+      }
+    val = camera->GetFocalPoint();
+    if (val)
+      {
+      std::stringstream ss;
+      ss << "Focal Point: ";
+      ss << val[0];
+      ss << ", ";
+      ss << val[1];
+      ss << ", ";
+      ss << val[2];
+      this->FocalPointLabel->SetText(ss.str().c_str());
+      }
+    val = camera->GetViewUp();
+     if (val)
+      {
+      std::stringstream ss;
+      ss << "View Up: ";
+      ss << val[0];
+      ss << ", ";
+      ss << val[1];
+      ss << ", ";
+      ss << val[2];
+      this->ViewUpLabel->SetText(ss.str().c_str());
+      }
+    }
+}
 
 

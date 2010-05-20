@@ -67,6 +67,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCamerasGUI : public vtkSlicerModuleGUI
     // grouping modules together into menus.
     const char *GetCategory() const {return "Developer Tools";}
 
+    ///
+    /// Update the labels from the currently selected camera node
+    void UpdateCameraLabels();
+    
  protected:
     vtkSlicerCamerasGUI ( );
     virtual ~vtkSlicerCamerasGUI ( );
@@ -74,6 +78,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCamerasGUI : public vtkSlicerModuleGUI
     vtkSlicerNodeSelectorWidget *CameraSelectorWidget;
     vtkSlicerNodeSelectorWidget *ViewSelectorWidget;
 
+    /// labels to show the current camera's information
+    vtkKWLabel *PositionLabel;
+    vtkKWLabel *FocalPointLabel;
+    vtkKWLabel *ViewUpLabel;
+    
   /// PIMPL Encapsulation for STL containers
   //BTX
   vtkSlicerCamerasGUIInternals *Internals;
