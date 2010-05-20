@@ -280,6 +280,7 @@ proc FastMarchingSegmentationPrepareInput {this} {
 
 proc FastMarchingSegmentationFinalize {this} {
   # deallocate the filter
+  $::FastMarchingSegmentation($this,fastMarchingFilter) unInit
   $::FastMarchingSegmentation($this,fastMarchingFilter) Delete
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
   # disable the segmentation adjustment controls
