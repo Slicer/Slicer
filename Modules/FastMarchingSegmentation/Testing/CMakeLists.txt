@@ -23,18 +23,14 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests
   )
 
 SET( BaseGUI_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+SET(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
+SET(TEMP_DIR "${Slicer3_BINARY_DIR}/Testing/Temporary")
 
 IF(WIN32)
   SET(BaseGUI_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${BaseGUI_TESTS} ${TESTNAME} 
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    )
-ENDMACRO( SIMPLE_TEST  )
+ADD_TEST(FastMarchingTest1 ${Slicer3_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest)
+ADD_TEST(FastMarchingTest2 ${Slicer3_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest
+  ${TEST_DATA}/MRMeningioma0.nrrd 132 101 72 10 ${TEMP_DIR}/FastMarchingTest2Output.nrrd)
 
-#ADD_EXECUTABLE(vtkPichonFastMarchingTest vtkPichonFastMarchingTest.cxx)
-#TARGET_LINK_LIBRARIES(vtkPichonFastMarchingTest vtkIO vtkGraphics SlicerBaseLogic)
-
-SIMPLE_TEST(vtkPichonFastMarchingTest)
