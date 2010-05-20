@@ -99,7 +99,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 <parameters>
   <label>Transform Parameters</label>
   <description>Parameters used to transform the input image into the output image</description>
-    <transform>
+    <transform fileExtensions=".txt">
       <name>transformationFile</name>
       <label>Transform Node</label>
       <flag>-f</flag>
