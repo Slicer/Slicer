@@ -2,7 +2,11 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   "tcl.tcl."
   "cmcurl.."
-  "Insight."
+  "[Ii]nsight."
   "VTK."
+  "y.tab.c."
+  "getdate.y."
   "include.qtcore."
+  "OpenIGTLink."
+  "Microsoft SDKs."
   )
