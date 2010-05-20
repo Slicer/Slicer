@@ -437,7 +437,8 @@ void vtkSlicerViewerWidget::UpdateAxis()
       vtkCamera *camera =
         this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
         this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
-      this->AxisLabelActors[i]->SetCamera(camera);
+      //WJPTEST
+//      this->AxisLabelActors[i]->SetCamera(camera);
       }
 
     // Position the axis labels
@@ -477,6 +478,17 @@ void vtkSlicerViewerWidget::UpdateAxis()
   this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
   for (unsigned int i=0; i<AxisLabelActors.size(); i++)
     {
+    //WJPTEST
+    if (this->MainViewer != NULL && this->MainViewer->GetRenderer() != NULL )
+      {
+      this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+      }
+    else
+      {
+      this->AxisLabelActors[i]->SetCamera(NULL );
+      }
+  
+    //WJPTEST
     this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
     }
   // Until we come up with a solution for all use cases, the resetting
@@ -710,6 +722,12 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->SetEnableRender(1);
     this->MainViewer->SetRenderModeToInteractive();
+    ///WJPTEST
+    ///Scene has loaded, nodes have been added.
+    ///Since node added events occurred before the observers
+    ///were put on camera nodes, so camera setup may not have
+    //been completed when it got added.
+    ///this->UpdateCameraNode();
     this->RequestRender();
     } 
   else 
