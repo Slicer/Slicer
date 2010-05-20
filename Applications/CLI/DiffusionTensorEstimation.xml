@@ -54,12 +54,11 @@
       <name>estimationMethod</name>
       <flag>e</flag>
       <longflag>enumeration</longflag>
-      <description>LS: Least Squares, WLS: Weighted Least Squares; NL: Nonlinear  Control the accuracy of the tensor estimation (at the expense of computation time)</description>
+      <description>LS: Least Squares, WLS: Weighted Least Squares</description>
       <label>Estimation Parameters</label>
       <default>LS</default>
       <element>LS</element>
       <element>WLS</element>
-      <element>NL</element>
     </string-enumeration>
     <boolean>
       <name>ShiftNegativeEigenvalues</name>
