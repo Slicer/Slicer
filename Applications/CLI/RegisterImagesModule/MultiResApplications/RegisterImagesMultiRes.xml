@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>Robust Miltiresolution Affine Registration</title>
+  <title>Robust Multiresolution Affine Registration</title>
   <description>Provides affine registration using multiple resolution levels and decomposed affine transforms.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesMultiRes-Documentation-3.6</documentation-url>
