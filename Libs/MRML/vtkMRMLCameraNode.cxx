@@ -346,6 +346,18 @@ void vtkMRMLCameraNode::SetActiveTag(const char *_arg)
     return;
     }
 
+  if (this->GetActiveTag() && _arg && 
+      (!strcmp(this->GetActiveTag(), _arg)))
+    {
+    return;
+    }
+  // set this node's active tag first, then loop through and unset anyone
+  // else's
+  // do this first because the viewer widget will get an event when we set
+  // other node's active tags to null and it will regrab an unassigned camera
+  // node so as not to be without one.
+  this->SetInternalActiveTag(_arg);
+  
   // If any camera is already using that new tag, let's find them and set
   // their tags to null
   if (this->Scene != NULL && _arg != NULL)
@@ -361,19 +373,16 @@ void vtkMRMLCameraNode::SetActiveTag(const char *_arg)
           node->GetActiveTag() && 
           !strcmp(node->GetActiveTag(), _arg))
         {
-        vtkDebugMacro("SetActiveTag: found another node " << node->GetID() << " with the tag " << _arg);
+        vtkWarningMacro("SetActiveTag: " << (this->GetID() ? this->GetID() : "NULL ID") << " found another node " << node->GetID() << " with the tag " << _arg);
         node->SetActiveTag(NULL);
         }
       }
     }
-  
-  if (this->GetActiveTag() && _arg && 
-      (!strcmp(this->GetActiveTag(), _arg)))
+  else
     {
-    return;
-    }
-  this->SetInternalActiveTag(_arg);
-
+    vtkDebugMacro("SetActiveTag: null scene or tag, not checking for duplicates on camera " << (this->GetName() ? this->GetName() : "no name")
+                    << ", input arg = " << (_arg == NULL ? "NULL" : _arg));
+    }  
   this->InvokeEvent(vtkMRMLCameraNode::ActiveTagModifiedEvent, NULL);
 }
 
