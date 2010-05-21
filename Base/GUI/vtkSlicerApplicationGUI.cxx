@@ -1733,7 +1733,9 @@ void vtkSlicerApplicationGUI::SelectModuleForNode ( vtkMRMLNode *node )
     }
   else if (node->IsA("vtkMRMLCameraNode"))
     {
-    moduleName = "Cameras";
+    // disable this for now, as swapping views when select a new view from the
+    //View drop down in the Cameras gui isn't working
+    //moduleName = "Cameras";
     }
   if (moduleName)
     {
