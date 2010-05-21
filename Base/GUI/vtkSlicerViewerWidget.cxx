@@ -434,10 +434,12 @@ void vtkSlicerViewerWidget::UpdateAxis()
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize);
       this->AxisLabelActors[i]->SetOrigin(.5, .5,.5);
-      vtkCamera *camera =
-        this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
-        this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
-      //WJPTEST
+// Removing this from inside bbox-changed logic.
+// if camera is changed, the axis label actors have to
+// pay attention to new camera regardless of bbox changes...
+//      vtkCamera *camera =
+//        this->MainViewer->GetRenderer()->IsActiveCameraCreated() ? 
+//        this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
 //      this->AxisLabelActors[i]->SetCamera(camera);
       }
 
