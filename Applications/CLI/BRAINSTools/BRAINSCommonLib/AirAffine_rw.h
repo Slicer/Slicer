@@ -212,8 +212,8 @@ template <typename TImageType>
 int
 AirAffineTransform<TImageType>::
   Write (const std::string & AirFile,
-  const std::string & PatientId,
-  const std::string & StudyId)
+  const std::string & /* PatientId */,
+  const std::string & /* StudyId */)
 {
   FILE *fp = fopen (AirFile.c_str(), "wb");
 

@@ -31,7 +31,7 @@ endif(NOT ITK_FOUND)
 #
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
   )
 
@@ -48,10 +48,10 @@ target_link_libraries(BRAINSCommonLib ITKAlgorithms ITKIO)
 
 if (Slicer3_SOURCE_DIR)
 
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
+  # install each target in the production area (where it would appear in an
+  # installation) and install each target in the developer area (for running
   # from a build)
-  set(TARGETS        
+  set(TARGETS
     BRAINSCommonLib
     )
   slicer3_install_plugins(${TARGETS})
@@ -76,4 +76,10 @@ endif (Slicer3_SOURCE_DIR)
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTSadd_directory( Test_FindCenterOfBrainFilter )
+
+add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
+set_target_properties(PrettyPrintTableTest
+  PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+  ${BRAINSCommonLibProject_BINARY_DIR})
+target_link_libraries(PrettyPrintTableTest m)
 

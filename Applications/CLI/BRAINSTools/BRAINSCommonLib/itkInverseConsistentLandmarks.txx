@@ -835,7 +835,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     return false;
     }
 
-  int count = 1;
+  int mycount = 1;
   while ( fgets(buffer, FILE_BUFFER_SIZE, tempfile) != NULL )
     {
     int       grayvalue;
@@ -892,7 +892,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     if ( CurrentName.size() == 0 )
       {
       char numberbuffer[16];
-      sprintf( numberbuffer, "%d", count );
+      sprintf( numberbuffer, "%d", mycount );
       CurrentName = "Landmark_" + std::string( numberbuffer );
       }
 
@@ -912,7 +912,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
       }
     TempPnt.SetWeighting(1.0F);
     ( *this )[CurrentName] = TempPnt;
-    count++;
+    mycount++;
     }
   fclose( tempfile );
   if ( this->size(  ) > 0 )
@@ -1694,7 +1694,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
   ::process_bnd_point(const std::string & CurrentLandmarkName,
   const char *buffer,
   const unsigned short local_ImageDims[4],
-  const float local_ImageRes[4],
+  const float /*local_ImageRes */[4],
   PointType & ModifiedPoint)
 {
   PointStorageType tmp[3];

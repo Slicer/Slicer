@@ -16,6 +16,10 @@
 #include "itkResampleImageFilter.h"
 #include "itkImageDuplicator.h"
 #include "Imgmath.h"
+#include "itkGDCMSeriesFileNames.h"
+#include "itkImageSeriesReader.h"
+#include "itkGDCMImageIO.h"
+
 
 namespace itkUtil
 {
@@ -31,9 +35,47 @@ typedef SOAdapterType::DirectionType   DirectionType;
 template <typename TImage>
 typename TImage::Pointer ReadImage( const std::string fileName)
 {
-  typedef itk::ImageFileReader<TImage> ReaderType;
-  typename ReaderType::Pointer reader = ReaderType::New();
+
+  typename TImage::Pointer image;
+  std::string extension = itksys::SystemTools::GetFilenameLastExtension(fileName);
+  itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
+  if ( dicomIO->CanReadFile(fileName.c_str()) || (itksys::SystemTools::LowerCase(extension) == ".dcm"))
     {
+    std::string dicomDir = itksys::SystemTools::GetParentDirectory(fileName.c_str());
+
+    itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
+    FileNameGenerator->SetUseSeriesDetails( true );
+    FileNameGenerator->SetDirectory( dicomDir );
+    typedef const std::vector<std::string>      ContainerType;
+    const ContainerType & seriesUIDs = FileNameGenerator->GetSeriesUIDs();
+     
+    typedef typename itk::ImageSeriesReader< TImage >     ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileNames( FileNameGenerator->GetFileNames( seriesUIDs[0] ) );
+    reader->SetImageIO( dicomIO );
+    try
+      {
+      reader->Update();
+      }
+    catch( itk::ExceptionObject & err )
+      {
+      std::cout << "Caught an exception: " << std::endl;
+      std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
+      throw err;
+      }
+    catch(...)
+      {
+      std::cout << "Error while reading in image for patient " << fileName << std::endl;
+      throw;
+      }
+    image = reader->GetOutput();
+    image->DisconnectPipeline();
+    reader->ReleaseDataFlagOn();
+    }
+  else
+    {
+    typedef itk::ImageFileReader<TImage> ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( fileName.c_str() );
     try
       {
@@ -50,10 +92,10 @@ typename TImage::Pointer ReadImage( const std::string fileName)
       std::cout << "Error while reading in image" << fileName << std::endl;
       throw;
       }
+    image = reader->GetOutput();
+    image->DisconnectPipeline();
+    reader->ReleaseDataFlagOn();
     }
-  typename TImage::Pointer image = reader->GetOutput();
-  image->DisconnectPipeline();
-  reader->ReleaseDataFlagOn();
   return image;
 }
 

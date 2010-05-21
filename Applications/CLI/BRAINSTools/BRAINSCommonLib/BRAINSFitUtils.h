@@ -1,9 +1,6 @@
 #ifndef __BRAINSFITUTILS_H__
 #define __BRAINSFITUTILS_H__
 
-//#include "FindLargestForgroundFilledMask.h"
-#include "itkLargestForegroundFilledMaskImageFilter.h"
-#include "itkCastImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 
 
@@ -11,10 +8,10 @@
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
 #include "itkVersorRigid3DTransform.h"
+#include "itkBSplineDeformableTransform.h"
 
-#include "itkImageMaskSpatialObject.h"
-typedef itk::SpatialObject<3>  SpatialObjectType;
-typedef SpatialObjectType::Pointer ImageMaskPointer;
+#include "BRAINSROIAutoUtils.h"
+
 /**
  * This file contains utility functions that are common to a few of the BRAINSFit Programs.
  */
@@ -32,46 +29,6 @@ typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
 typedef itk::ScaleVersor3DTransform<double> ScaleVersor3DTransformType;
 typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
 typedef itk::AffineTransform<double, BFNSSpaceDimension>  AffineTransformType;
-
-template <class InputVolumeType, class OutputVolumeType>
-typename OutputVolumeType::Pointer DoROIAUTOImage(typename InputVolumeType::Pointer & extractedVolume,
-    const double otsuPercentileThreshold, const int closingSize, const double thresholdCorrectionFactor = 1.0)
-{
-  typedef itk::LargestForegroundFilledMaskImageFilter<InputVolumeType> LFFMaskFilterType;
-  typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
-  LFF->SetInput(extractedVolume);
-  LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
-  LFF->SetClosingSize(closingSize);
-  LFF->SetThresholdCorrectionFactor(thresholdCorrectionFactor);
-  //  LFF->Update();
-
-  typedef itk::CastImageFilter<InputVolumeType, OutputVolumeType> CastImageFilter;
-  typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
-  castFilter->SetInput( LFF->GetOutput() );
-  castFilter->Update( );
-  return castFilter->GetOutput();
-}
-
-
-
-template <class InputVolumeType>
-ImageMaskPointer DoROIAUTO(typename InputVolumeType::Pointer & extractedVolume,
-  const double otsuPercentileThreshold, const int closingSize, const double thresholdCorrectionFactor = 1.0)
-{
-  typedef unsigned char                     NewPixelType;
-  typedef itk::Image<NewPixelType, InputVolumeType::ImageDimension> NewImageType;
-  typename NewImageType::Pointer ucharImage=DoROIAUTOImage<InputVolumeType,NewImageType>(extractedVolume,otsuPercentileThreshold,closingSize,thresholdCorrectionFactor);
-
-  // convert mask image to mask
-  typedef itk::ImageMaskSpatialObject<InputVolumeType::ImageDimension> ImageMaskSpatialObjectType;
-  typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
-  mask->SetImage( ucharImage );
-  mask->ComputeObjectToWorldTransform();
-
-  ImageMaskPointer resultMaskPointer = dynamic_cast< ImageMaskSpatialObjectType * >( mask.GetPointer() );
-  return resultMaskPointer;
-}
-
 
 
 template <class TransformType, unsigned int ImageDimension>

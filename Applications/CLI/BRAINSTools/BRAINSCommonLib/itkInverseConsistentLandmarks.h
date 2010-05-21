@@ -111,14 +111,14 @@ public:
   {
     typedef typename PointSetType::PointIdentifier PointIdentifierType;
     typedef typename PointSetType::PointType       PointSetPointType;
-    typedef typename Self::const_iterator          const_iterator;
+    typedef typename Self::const_iterator          local_const_iterator;
 
     PointSetTypePointer pointSet = PointSetType::New();
     PointIdentifierType PointID
       = itk::NumericTraits<PointIdentifierType>::Zero;
 
-    const_iterator it = this->begin();
-    const_iterator itend = this->end();
+    local_const_iterator it = this->begin();
+    local_const_iterator itend = this->end();
     while ( it != itend )
       {
       const PointType   cur = ( *it ).second;
