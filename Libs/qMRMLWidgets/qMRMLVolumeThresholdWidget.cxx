@@ -41,8 +41,11 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Super
   this->setAutoThreshold(2);
 
   // TODO replace with double window/level
-  this->connect(d->VolumeThresholdRangeSlider, SIGNAL(valuesChanged(int,int)),
-                SLOT(setMinMaxRange(int, int)));
+  this->connect(d->VolumeThresholdRangeWidget, SIGNAL(minimumValueIsChanging(double)),
+                SLOT(setLowerThreshold(double)));
+  this->connect(d->VolumeThresholdRangeWidget, SIGNAL(maximumValueIsChanging(double)),
+                SLOT(setUpperThreshold(double)));
+
   this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 SLOT(setAutoThreshold(int)));
 
@@ -113,13 +116,6 @@ void qMRMLVolumeThresholdWidget::setThreshold(double lowerThreshold, double uppe
   }
 }
 
-// TODO remove when range becomes double
-// --------------------------------------------------------------------------
-void qMRMLVolumeThresholdWidget::setMinMaxRange(int min, int max)
-{
-  this->setThreshold((double)min, (double)max);
-}
-
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setLowerThreshold(double lowerThreshold)
 {
@@ -145,7 +141,7 @@ double qMRMLVolumeThresholdWidget::lowerThreshold() const
 {
   CTK_D(const qMRMLVolumeThresholdWidget);
 
-  double min = d->VolumeThresholdRangeSlider->minimumValue();
+  double min = d->VolumeThresholdRangeWidget->minimumValue();
 
   return min;
 }
@@ -155,7 +151,7 @@ double qMRMLVolumeThresholdWidget::upperThreshold() const
 {
   CTK_D(const qMRMLVolumeThresholdWidget);
 
-  double max = d->VolumeThresholdRangeSlider->maximumValue();
+  double max = d->VolumeThresholdRangeWidget->maximumValue();
 
   return max;
 }
@@ -184,12 +180,14 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  //CTK_D(qMRMLVolumeThresholdWidget);
+  CTK_D(qMRMLVolumeThresholdWidget);
   
   if (volumeNode) 
   {
-    // TODO: set image data range in the range widget
-    // d->VolumeThresholdRangeSlider  volumeNode->GetImageData()->GetScalarRange()
+    double range[2];
+    volumeNode->GetImageData()->GetScalarRange(range);
+    d->VolumeThresholdRangeWidget->setMinimum(range[0]);
+    d->VolumeThresholdRangeWidget->setMaximum(range[1]);
     this->setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
               volumeNode->GetVolumeDisplayNode()));
   }
@@ -201,15 +199,15 @@ void qMRMLVolumeThresholdWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volu
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMinimum(double min)
 {
-  //CTK_D(qMRMLVolumeThresholdWidget);
-  // TODO set min in the range widget d->VolumeThresholdRangeSlider
+  CTK_D(qMRMLVolumeThresholdWidget);
+  d->VolumeThresholdRangeWidget->setMinimum(min);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setMaximum(double max)
 {
-  //CTK_D(qMRMLVolumeThresholdWidget);
-  // TODO set max in the range widget d->VolumeThresholdRangeSlider
+  CTK_D(qMRMLVolumeThresholdWidget);
+  d->VolumeThresholdRangeWidget->setMaximum(max);
 
 }
 
@@ -237,13 +235,14 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
     double min = this->VolumeDisplayNode->GetLowerThreshold();
     double max = this->VolumeDisplayNode->GetUpperThreshold();
 
-    //TODO: set correct bounds of the range widget
-    // clipping in the range widget causing multiple volume display node updates
-    // also a problem if values get clipped, the mode switches from Auto to Manual
-    d->VolumeThresholdRangeSlider->setValues(min, max );
-
-    //d->VolumeThresholdRangeSlider->setRangeMinimumPosition(upperThreshold - 0.5 * lowerThreshold);
-    //d->VolumeThresholdRangeSlider->setRangeMaximumPosition(upperThreshold + 0.5 * lowerThreshold);
+    if (this->VolumeNode) 
+    {
+      double range[2];
+      this->VolumeNode->GetImageData()->GetScalarRange(range);
+      d->VolumeThresholdRangeWidget->setMinimum(range[0]);
+      d->VolumeThresholdRangeWidget->setMaximum(range[1]);
+    }
+    d->VolumeThresholdRangeWidget->setValues(min, max );
   }
 
 }

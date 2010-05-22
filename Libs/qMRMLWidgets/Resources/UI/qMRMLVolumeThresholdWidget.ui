@@ -41,19 +41,15 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkRangeSlider" name="VolumeThresholdRangeSlider">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
+    <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkRangeSlider</class>
-   <extends>QSlider</extends>
-   <header>ctkRangeSlider.h</header>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

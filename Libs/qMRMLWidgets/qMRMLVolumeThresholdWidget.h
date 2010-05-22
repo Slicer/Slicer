@@ -70,9 +70,6 @@ public slots:
   /// Set lowerThreshold/upperThreshold in once
   void setThreshold(double lowerThreshold, double upperThreshold);
 
-  // TODO remove when range becomes double
-  void setMinMaxRange(int min, int max);
-
   /// 
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* displayNode);
