@@ -41,8 +41,11 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
   this->setAutoWindowLevel(1);
 
   // TODO replace with double window/level
-  this->connect(d->WindowLevelRangeSlider, SIGNAL(valuesChanged(int,int)),
-                SLOT(setMinMaxRange(int, int)));
+  this->connect(d->WindowLevelRangeWidget, SIGNAL(minimumValueIsChanging(double)),
+                SLOT(setMinimumValue(double)));
+  this->connect(d->WindowLevelRangeWidget, SIGNAL(maximumValueIsChanging(double)),
+                SLOT(setMaximumValue(double)));
+
   this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 SLOT(setAutoWindowLevel(int)));
 
@@ -103,7 +106,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setMinMaxRange(double min, double max)
+void qMRMLWindowLevelWidget::setMinMaxRangeValue(double min, double max)
 {
   double window = max - min;
   double level = 0.5*(min+max);
@@ -111,12 +114,6 @@ void qMRMLWindowLevelWidget::setMinMaxRange(double min, double max)
   this->setWindowLevel(window, level);
 }
 
-// TODO remove when range becomes double
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setMinMaxRange(int min, int max)
-{
-  this->setMinMaxRange((double)min, (double)max);
-}
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setWindow(double window)
@@ -143,10 +140,28 @@ double qMRMLWindowLevelWidget::window() const
 {
   CTK_D(const qMRMLWindowLevelWidget);
 
-  double min = d->WindowLevelRangeSlider->minimumValue();
-  double max = d->WindowLevelRangeSlider->maximumValue();
+  double min = d->WindowLevelRangeWidget->minimumValue();
+  double max = d->WindowLevelRangeWidget->maximumValue();
 
   return max - min;
+}
+
+// --------------------------------------------------------------------------
+double qMRMLWindowLevelWidget::minimumValue() const
+{
+  CTK_D(const qMRMLWindowLevelWidget);
+
+  double min = d->WindowLevelRangeWidget->minimumValue();
+  return min;
+}
+
+// --------------------------------------------------------------------------
+double qMRMLWindowLevelWidget::maximumValue() const
+{
+  CTK_D(const qMRMLWindowLevelWidget);
+
+  double max = d->WindowLevelRangeWidget->maximumValue();
+  return max;
 }
 
 // --------------------------------------------------------------------------
@@ -154,8 +169,8 @@ double qMRMLWindowLevelWidget::level() const
 {
   CTK_D(const qMRMLWindowLevelWidget);
 
-  double min = d->WindowLevelRangeSlider->minimumValue();
-  double max = d->WindowLevelRangeSlider->maximumValue();
+  double min = d->WindowLevelRangeWidget->minimumValue();
+  double max = d->WindowLevelRangeWidget->maximumValue();
 
   return 0.5*(max + min);
 }
@@ -184,12 +199,14 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  //CTK_D(qMRMLWindowLevelWidget);
+  CTK_D(qMRMLWindowLevelWidget);
   
   if (volumeNode) 
   {
-    // TODO: set image data range in the range widget
-    // d->WindowLevelRangeSlider  volumeNode->GetImageData()->GetScalarRange()
+    double range[2];
+    volumeNode->GetImageData()->GetScalarRange(range);
+    d->WindowLevelRangeWidget->setMinimum(range[0]);
+    d->WindowLevelRangeWidget->setMaximum(range[1]);
     this->setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
               volumeNode->GetVolumeDisplayNode()));
   }
@@ -199,19 +216,31 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
 
 
 // --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::setMinimumValue(double min)
+{
+  this->setMinMaxRangeValue(min, this->maximumValue());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::setMaximumValue(double max)
+{
+  this->setMinMaxRangeValue(this->minimumValue(), max);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMinimum(double min)
 {
-  //CTK_D(qMRMLWindowLevelWidget);
-  // TODO set min in the range widget d->WindowLevelRangeSlider
+  CTK_D(qMRMLWindowLevelWidget);
+  d->WindowLevelRangeWidget->setMinimum(min);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMaximum(double max)
 {
-  //CTK_D(qMRMLWindowLevelWidget);
-  // TODO set max in the range widget d->WindowLevelRangeSlider
-
+  CTK_D(qMRMLWindowLevelWidget);
+  d->WindowLevelRangeWidget->setMaximum(max);
 }
+
 
 
 // --------------------------------------------------------------------------
@@ -228,13 +257,13 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     double min = level - 0.5 * window;
     double max = level + 0.5 * window;
 
-    //TODO: set correct bounds of the range widget
-    // clipping in the range widget causing multiple volume display node updates
-    // also a problem if values get clipped, the mode switches from Auto to Manual
-    d->WindowLevelRangeSlider->setValues(min, max );
-
-    //d->WindowLevelRangeSlider->setRangeMinimumPosition(level - 0.5 * window);
-    //d->WindowLevelRangeSlider->setRangeMaximumPosition(level + 0.5 * window);
+    if (this->VolumeNode) 
+    {
+      double range[2];
+      this->VolumeNode->GetImageData()->GetScalarRange(range);
+      d->WindowLevelRangeWidget->setMinimum(range[0]);
+      d->WindowLevelRangeWidget->setMaximum(range[1]);
+    }
+    d->WindowLevelRangeWidget->setValues(min, max );
   }
-
 }

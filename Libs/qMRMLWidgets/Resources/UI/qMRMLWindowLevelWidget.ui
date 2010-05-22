@@ -15,40 +15,44 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Window/Level: </string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="AutoManualComboBox">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <property name="text">
-       <string>Manual</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Window/Level: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="AutoManualComboBox">
+         <item>
+          <property name="text">
+           <string>Manual</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Auto</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <property name="text">
-       <string>Auto</string>
-      </property>
+      <widget class="ctkRangeWidget" name="WindowLevelRangeWidget"/>
      </item>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkRangeSlider" name="WindowLevelRangeSlider">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
+    </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkRangeSlider</class>
-   <extends>QSlider</extends>
-   <header>ctkRangeSlider.h</header>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

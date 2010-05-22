@@ -23,6 +23,8 @@ class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget : public QWidget
   Q_PROPERTY(int autoWindowLevel READ autoWindowLevel WRITE setAutoWindowLevel)
   Q_PROPERTY(double window READ window WRITE setWindow)
   Q_PROPERTY(double level READ level WRITE setLevel)
+  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
+  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
 
 public:
   /// Constructors
@@ -39,6 +41,14 @@ public:
   /// 
   /// Get level
   double level()const;
+
+  /// 
+  /// Get minimum of the range
+  double minimumValue()const;
+
+  /// 
+  /// Get maximum of the range
+  double maximumValue()const;
 
   /// 
   /// Return the current MRML node of interest
@@ -72,9 +82,14 @@ public slots:
 
   /// 
   /// Set min/max range
-  void setMinMaxRange(double min, double max);
-  // TODO remove when range becomes double
-  void setMinMaxRange(int min, int max);
+  void setMinMaxRangeValue(double min, double max);
+  void setMinimumValue(double min);
+  void setMaximumValue(double max);
+
+  /// 
+  /// Set min/max limits of the sliders
+  void setMinimum(double min);
+  void setMaximum(double max);
 
   /// 
   /// Set the MRML node of interest
@@ -96,11 +111,6 @@ protected:
   /// 
   /// Set current MRML display node
   void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
-
-  /// 
-  /// Set sliders range
-  void setMinimum(double min);
-  void setMaximum(double max);
 
 
 private:

@@ -15,33 +15,41 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Threshold: </string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="AutoManualComboBox">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <property name="text">
-       <string>Manual</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Threshold: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="AutoManualComboBox">
+         <item>
+          <property name="text">
+           <string>Manual</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Auto</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Off</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <property name="text">
-       <string>Auto</string>
-      </property>
+      <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
      </item>
-     <item>
-      <property name="text">
-       <string>Off</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
+    </layout>
    </item>
   </layout>
  </widget>

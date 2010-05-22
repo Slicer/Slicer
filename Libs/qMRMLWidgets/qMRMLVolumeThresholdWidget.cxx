@@ -40,7 +40,6 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent) : Super
 
   this->setAutoThreshold(2);
 
-  // TODO replace with double window/level
   this->connect(d->VolumeThresholdRangeWidget, SIGNAL(minimumValueIsChanging(double)),
                 SLOT(setLowerThreshold(double)));
   this->connect(d->VolumeThresholdRangeWidget, SIGNAL(maximumValueIsChanging(double)),
