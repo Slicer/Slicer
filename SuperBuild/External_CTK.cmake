@@ -21,7 +21,7 @@ if (Slicer3_USE_QT)
       -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
       -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer3_USE_PYTHONQT}
       -DCTK_LIB_PluginFramework:BOOL=OFF
-      -DCTK_LIB_org.commontk.eventbus:BOOL=OFF
+      -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
     INSTALL_COMMAND ""
     
     )
