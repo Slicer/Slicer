@@ -4,6 +4,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "tcl.tk."
   "generic.itcl_."
   "generic.itk_."
+  "blt."
   "cmcurl."
   "[Ii]nsight."
   "VTK."
