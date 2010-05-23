@@ -2,6 +2,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   "tcl.tcl."
   "tcl.tk."
+  "generic.itcl_."
+  "generic.itk_."
   "cmcurl."
   "[Ii]nsight."
   "VTK."
