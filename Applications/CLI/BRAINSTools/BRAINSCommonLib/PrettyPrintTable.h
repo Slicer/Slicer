@@ -4,6 +4,14 @@
 #include <vector>
 #include <string>
 #include <ostream>
+
+#if defined(_WIN32) || defined(_WIN64)
+//Windows uses a different function name for this behavior.
+#  define SNPRINTF_FUNC _snprintf
+#else
+#  define SNPRINTF_FUNC snprintf
+#endif
+
 class PrettyPrintTable
 {
 public:
@@ -55,21 +63,21 @@ public:
     {
     const char *format(printf_format == 0 ? "%d" : printf_format);
     char buf[4096];
-    snprintf(buf,4096,format,x);
+    SNPRINTF_FUNC(buf,4096,format,x);
     this->add(row,column,buf);
     }
   void add(const unsigned int row,const unsigned int column, const unsigned int x, const char *printf_format=0)
     {
     const char *format(printf_format == 0 ? "%d" : printf_format);
     char buf[4096];
-    snprintf(buf,4096,format,x);
+    SNPRINTF_FUNC(buf,4096,format,x);
     this->add(row,column,buf);
     }
   void add(const unsigned int row,const unsigned int column, const double x,const char *printf_format=0)
     {
     const char *format(printf_format == 0 ? "%lf" : printf_format);
     char buf[4096];
-    snprintf(buf,4096,format,x);
+    SNPRINTF_FUNC(buf,4096,format,x);
     this->add(row,column,buf);
     }
   void Print(std::ostream &output)
