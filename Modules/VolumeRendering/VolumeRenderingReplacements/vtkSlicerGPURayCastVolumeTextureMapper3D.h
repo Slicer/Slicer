@@ -47,11 +47,10 @@ public:
   static vtkSlicerGPURayCastVolumeTextureMapper3D *New();
 
   // Description:
-  // Overall alpha for volume rendering result
-  // Used for blending volume rendering with polygons
-  // Default value: 1.0
-  vtkSetMacro(GlobalAlpha, float);
-  vtkGetMacro(GlobalAlpha, float);
+  // Distance color blending (closer voxels brighter, more far voxels darker)
+  // Default value: 0.0, no blending
+  vtkSetMacro(DistanceColorBlending, float);
+  vtkGetMacro(DistanceColorBlending, float);
 
   // Description:
   // Depth peeling threshold
@@ -135,7 +134,7 @@ protected:
   GLfloat          ParaMatrix[16];//4x4 matrix uniform for ray casting parameters
 
   float            RaySteps;
-  float            GlobalAlpha;
+  float            DistanceColorBlending;
   float            DepthPeelingThreshold;
 
   float            ICPEScale;

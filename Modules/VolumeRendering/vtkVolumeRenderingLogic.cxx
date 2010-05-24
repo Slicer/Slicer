@@ -788,6 +788,7 @@ void vtkVolumeRenderingLogic::SetCPURaycastParameters(vtkMRMLVolumeRenderingPara
 void vtkVolumeRenderingLogic::SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   this->MapperGPURaycast->SetDepthPeelingThreshold(vspNode->GetDepthPeelingThreshold());
+  this->MapperGPURaycast->SetDistanceColorBlending(vspNode->GetDistanceColorBlending());
   this->MapperGPURaycast->SetICPEScale(vspNode->GetICPEScale());
   this->MapperGPURaycast->SetICPESmoothness(vspNode->GetICPESmoothness());
   this->MapperGPURaycast->SetTechnique(vspNode->GetGPURaycastTechnique());

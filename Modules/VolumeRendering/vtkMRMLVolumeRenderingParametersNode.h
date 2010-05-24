@@ -152,6 +152,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro (DepthPeelingThreshold, float);
   vtkSetMacro (DepthPeelingThreshold, float);
 
+  vtkGetMacro (DistanceColorBlending, float);
+  vtkSetMacro (DistanceColorBlending, float);
+
   vtkGetMacro (ICPEScale, float);
   vtkSetMacro (ICPEScale, float);
 
@@ -252,6 +255,7 @@ protected:
   int CPURaycastMode;
 
   float DepthPeelingThreshold;
+  float DistanceColorBlending;
 
   float ICPEScale;
   float ICPESmoothness;

@@ -70,7 +70,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->ICPEScale            = 1.0f;
   this->ICPESmoothness       = 0.5f;
 
-  this->GlobalAlpha          = 1.0f;
+  this->DistanceColorBlending   = 0.0f;
 }
 
 vtkSlicerGPURayCastVolumeTextureMapper3D::~vtkSlicerGPURayCastVolumeTextureMapper3D()
@@ -471,7 +471,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
   this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale )/255.0f;
   this->ParaMatrix[12] = this->ICPESmoothness;
 
-  this->ParaMatrix[13] = GlobalAlpha;
+  this->ParaMatrix[13] = DistanceColorBlending;
 
   this->ParaMatrix[14] = maxDist - minDist;
 
@@ -907,12 +907,12 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadVertexShader()
     std::ostringstream vp_oss;
     vp_oss <<
         "varying vec3 ViewDir;                                                                     \n"
-        "void main()                                                                            \n"
-        "{                                                                                          \n"
-        "    gl_Position = ftransform();                                                             \n"
-        "    gl_TexCoord[0] = gl_Color;                                                              \n"
-        "    ViewDir = vec3(gl_ModelViewMatrix * gl_Vertex);                                         \n"
-        "}                                                                                          \n";
+        "void main()                                                                               \n"
+        "{                                                                                         \n"
+        "    gl_Position = ftransform();                                                           \n"
+        "    gl_TexCoord[0] = gl_Color;                                                            \n"
+        "    ViewDir = vec3(gl_ModelViewMatrix * gl_Vertex);                                       \n"
+        "}                                                                                         \n";
 
 
     std::string source = vp_oss.str();
@@ -1141,6 +1141,22 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
     "  vec3 rayStep = rayDir*ParaMatrix[0][3];                                              \n"
     "  vec3 nextRayOrigin = rayOrigin.xyz;                                                  \n"
     "                                                                                       \n"
+    "  float fading = 1.0;                                                                  \n"
+    "  if (ParaMatrix[3][1] > 0.0001)                                                       \n"
+    "  {                                                                                    \n"
+    "    vec3 eyePos = vec3(ParaMatrix[0][0], ParaMatrix[0][1], ParaMatrix[0][2]);          \n"
+    "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);             \n"
+    "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);             \n"
+    "    mmn = clamp(mmn, 0.0, 1.0);                                                        \n"
+    "    mmx = clamp(mmx, 0.0, 1.0);                                                        \n"
+    "                                                                                       \n"
+    "    if ( any(lessThanEqual(eyePos, mmn)) || any(greaterThanEqual(eyePos, mmx)) )       \n"
+    "    {                                                                                  \n"
+    "      float toEyeDist = length(nextRayOrigin - eyePos);                                \n"
+    "      fading = 1.1 - (toEyeDist - ParaMatrix[2][2])/ParaMatrix[3][2];                  \n"
+    "    }                                                                                  \n"
+    "  }                                                                                    \n"
+    "                                                                                       \n"
     "  vec4 pixelColor = vec4(0);                                                           \n"
     "  float alpha = 0.0;                                                                   \n"
     "  float t = 0.0;                                                                       \n"
@@ -1153,16 +1169,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
     "      break;                                                                           \n"
     "    t += ParaMatrix[0][3];                                                             \n"
     "    nextRayOrigin += rayStep;                                                          \n"
+    "    fading -= ParaMatrix[3][1]*ParaMatrix[0][3];                                       \n"
     "  }                                                                                    \n";
 
   switch(this->Technique)
   {
     case 0:
       fp_oss <<
-        "  while( (t < rayLen) && (alpha < 0.975) )                                          \n"
+        "  while( (t < rayLen) && (alpha < 0.985) )                                          \n"
         "  {                                                                                 \n"
         "    vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "    float tempAlpha = nextColor.w;                                                  \n"
+        "    nextColor *= vec4(fading, fading, fading, 1.0);                                 \n"
         "                                                                                    \n"
         "    if (tempAlpha > 0.0)                                                            \n"
         "    {                                                                               \n"
@@ -1175,16 +1193,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "                                                                                    \n"
         "    t += ParaMatrix[0][3];                                                          \n"
         "    nextRayOrigin += rayStep;                                                       \n"
+        "    fading -= ParaMatrix[3][1]*ParaMatrix[0][3];                                    \n"
         "  }                                                                                 \n"
-        "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                    \n"
+        "    gl_FragColor = vec4(pixelColor.xyz, alpha);                                     \n"
         "}                                                                                   \n";
       break;
     case 1:
       fp_oss <<
-        "  while( (t < rayLen) && (alpha < 0.975) )                                          \n"
+        "  while( (t < rayLen) && (alpha < 0.985) )                                          \n"
         "  {                                                                                 \n"
         "    vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "    float tempAlpha = nextColor.w;                                                  \n"
+        "    nextColor *= vec4(fading, fading, fading, 1.0);                                 \n"
         "                                                                                    \n"
         "    if (tempAlpha > 0.0)                                                            \n"
         "    {                                                                               \n"
@@ -1196,8 +1216,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "                                                                                    \n"
         "    t += ParaMatrix[0][3];                                                          \n"
         "    nextRayOrigin += rayStep;                                                       \n"
+        "    fading -= ParaMatrix[3][1]*ParaMatrix[0][3];                                    \n"
         "  }                                                                                 \n"
-        "  gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                      \n"
+        "  gl_FragColor = vec4(pixelColor.xyz, alpha);                                       \n"
         "}                                                                                   \n";
       break;
     case 2:
@@ -1219,7 +1240,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "                                                                                    \n"
         "  pixelColor = voxelColor(maxScalarCoord);                                          \n"
         "  alpha = pixelColor.w;                                                             \n"
-        "  gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                      \n"
+        "  gl_FragColor = vec4(pixelColor.xyz, alpha);                                       \n"
         "}                                                                                   \n";
       break;
     case 3:
@@ -1241,15 +1262,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "                                                                                    \n"
         "  pixelColor = voxelColor(minScalarCoord);                                          \n"
         "  alpha = pixelColor.w;                                                             \n"
-        "  gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                      \n"
+        "  gl_FragColor = vec4(pixelColor.xyz, alpha);                                       \n"
         "}                                                                                   \n";
       break;
     case 4:
       fp_oss <<
-        "  while( (t < rayLen) && (alpha < 0.975) )                                          \n"
+        "  while( (t < rayLen) && (alpha < 0.985) )                                          \n"
         "  {                                                                                 \n"
         "    vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "    float tempAlpha = nextColor.w;                                                  \n"
+        "    nextColor *= vec4(fading, fading, fading, 1.0);                                 \n"
         "                                                                                    \n"
         "    if (tempAlpha > 0.0)                                                            \n"
         "    {                                                                               \n"
@@ -1262,13 +1284,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "                                                                                    \n"
         "    t += ParaMatrix[0][3];                                                          \n"
         "    nextRayOrigin += rayStep;                                                       \n"
+        "    fading -= ParaMatrix[3][1]*ParaMatrix[0][3];                                    \n"
         "  }                                                                                 \n"
-        "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                    \n"
+        "    gl_FragColor = vec4(pixelColor.xyz, alpha);                                     \n"
         "}                                                                                   \n";
       break;
     case 5:
       fp_oss <<
-        "  while( (t < rayLen) && (alpha < 0.975) )                                          \n"
+        "  while( (t < rayLen) && (alpha < 0.985) )                                          \n"
         "  {                                                                                 \n"
         "    vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "    float tempAlpha = nextColor.w;                                                  \n"
@@ -1286,7 +1309,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "    t += ParaMatrix[0][3];                                                          \n"
         "    nextRayOrigin += rayStep;                                                       \n"
         "  }                                                                                 \n"
-        "  gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                      \n"
+        "  gl_FragColor = vec4(pixelColor.xyz, alpha);                                       \n"
         "}                                                                                   \n";
       break;
   }

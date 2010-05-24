@@ -212,6 +212,10 @@ protected:
     vtkKWScaleWithEntry *SC_GPURayCastICPEkt;//depth
     vtkKWScaleWithEntry *SC_GPURayCastICPEks;//smoothness
 
+    // Description:
+    // Distance Color Blending for GPU ray casting
+    vtkKWScaleWithEntry *SC_GPURayCastDistanceColorBlending;
+
     //--------------------------------------------------------------------------
     // Volume Property
     //--------------------------------------------------------------------------

@@ -81,6 +81,7 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
 
   this->MB_GPURayCastTechnique3 = NULL;
 
+  this->SC_GPURayCastDistanceColorBlending = NULL;
   this->SC_GPURayCastDepthPeelingThreshold = NULL;
   this->SC_GPURayCastICPEkt = NULL;
   this->SC_GPURayCastICPEks = NULL;
@@ -372,6 +373,17 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
 
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
 
+    this->SC_GPURayCastDistanceColorBlending=vtkKWScaleWithEntry::New();
+    this->SC_GPURayCastDistanceColorBlending->SetParent(this->FrameGPURayCasting->GetFrame());
+    this->SC_GPURayCastDistanceColorBlending->Create();
+    this->SC_GPURayCastDistanceColorBlending->SetLabelText("Dist. Color Blending:");
+    this->SC_GPURayCastDistanceColorBlending->SetLabelWidth(labelWidth);
+    this->SC_GPURayCastDistanceColorBlending->SetBalloonHelpString("Distance Color Blending. Voxels with longer distance to eye/camera would be more darker to reveal depth information in volume. Higher value indicates stronger darking effect. Setting the value to 0 will turn off the effect.");
+    this->SC_GPURayCastDistanceColorBlending->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_GPURayCastDistanceColorBlending->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_GPURayCastDistanceColorBlending->SetEntryWidth(5);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDistanceColorBlending->GetWidgetName() );
+    
     this->SC_GPURayCastICPEkt = vtkKWScaleWithEntry::New();
     this->SC_GPURayCastICPEkt->SetParent(this->FrameGPURayCasting->GetFrame());
     this->SC_GPURayCastICPEkt->Create();
@@ -549,6 +561,15 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->SC_GPURayCastDepthPeelingThreshold=NULL;
   }
 
+  if(this->SC_GPURayCastDistanceColorBlending != NULL)
+  {
+    this->SC_GPURayCastDistanceColorBlending->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_GPURayCastDistanceColorBlending->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->GUICallbackCommand);
+    this->SC_GPURayCastDistanceColorBlending->SetParent(NULL);
+    this->SC_GPURayCastDistanceColorBlending->Delete();
+    this->SC_GPURayCastDistanceColorBlending=NULL;
+  }
+  
   if(this->SC_GPURayCastICPEkt != NULL)
   {
     this->SC_GPURayCastICPEkt->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
@@ -1089,6 +1110,16 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
       this->ProcessExpectedFPS();
       return;
     }
+
+    if(callerObjectSC == this->SC_GPURayCastDistanceColorBlending->GetWidget())
+    {
+      vspNode->SetDistanceColorBlending(this->SC_GPURayCastDistanceColorBlending->GetWidget()->GetValue());
+
+      this->Gui->GetLogic()->SetGPURaycastParameters(vspNode);
+      this->Gui->RequestRender();
+      return;
+    }
+    
     if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold->GetWidget())
     {
       vspNode->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->GetValue());
@@ -1387,7 +1418,11 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
       break;
   }
 
-  this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10);
+  this->SC_GPURayCastDistanceColorBlending->GetWidget()->SetRange(0, 1);
+  this->SC_GPURayCastDistanceColorBlending->GetWidget()->SetResolution(0.01);
+  this->SC_GPURayCastDistanceColorBlending->SetValue(vspNode->GetDistanceColorBlending());
+  
+  this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 20);
   this->SC_GPURayCastICPEkt->GetWidget()->SetResolution(0.01);
   this->SC_GPURayCastICPEkt->SetValue(vspNode->GetICPEScale());
 
@@ -1423,7 +1458,7 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
 
   this->SC_ThresholdOpacity->GetWidget()->SetRange(0, 1);
   this->SC_ThresholdOpacity->GetWidget()->SetResolution(.001);
-  this->SC_ThresholdOpacity->SetValue(0.95);
+  this->SC_ThresholdOpacity->SetValue(1.0);
 
   if (vspNode->GetFollowVolumeDisplayNode())
   {

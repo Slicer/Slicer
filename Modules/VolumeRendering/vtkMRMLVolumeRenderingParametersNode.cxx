@@ -77,6 +77,7 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->CPURaycastMode = 0;
 
   this->DepthPeelingThreshold = 0.0f;
+  this->DistanceColorBlending = 0.0f;
 
   this->ICPEScale = 1.0f;
   this->ICPESmoothness = 0.5f;
@@ -217,6 +218,13 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->DepthPeelingThreshold;
       continue;
     }
+    if (!strcmp(attName,"distanceColorBlending"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->DistanceColorBlending;
+      continue;
+    }
     if (!strcmp(attName,"icpeScale"))
     {
       std::stringstream ss;
@@ -323,6 +331,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
   of << indent << " cpuRaycastMode=\"" << this->CPURaycastMode << "\"";
   of << indent << " depthPeelingThreshold=\"" << this->DepthPeelingThreshold << "\"";
+  of << indent << " distanceColorBlending=\"" << this->DistanceColorBlending << "\"";
   of << indent << " icpeScale=\"" << this->ICPEScale << "\"";
   of << indent << " icpeSmoothness=\"" << this->ICPESmoothness << "\"";
   of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
@@ -410,6 +419,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetGPUMemorySize(node->GetGPUMemorySize());
   this->SetEstimatedSampleDistance(node->GetEstimatedSampleDistance());
   this->SetDepthPeelingThreshold(node->GetDepthPeelingThreshold());
+  this->SetDistanceColorBlending(node->GetDistanceColorBlending());
   this->SetICPEScale(node->GetICPEScale());
   this->SetICPESmoothness(node->GetICPESmoothness());
   this->SetCPURaycastMode(node->GetCPURaycastMode());
