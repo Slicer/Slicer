@@ -47,7 +47,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   // Description: 
   // Get the categorization of the module.
   const char *GetCategory() const
-      { return "Tractography"; }
+      { return "Diffusion.Tractography"; }
 
   // Description:
   // Events that this module GUI will observe. CLIENT MUST DELETE!

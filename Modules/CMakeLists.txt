@@ -53,6 +53,7 @@ SET(modules
   QueryAtlas
   FetchMI
   SlicerWelcome
+  DiffusionWelcome
   RegistrationWelcome
   SegmentationWelcome
   ScriptedModule

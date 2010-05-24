@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>
-  Tractography
+  Diffusion.Tractography
   </category>
   <title>
   Labelmap Seeding

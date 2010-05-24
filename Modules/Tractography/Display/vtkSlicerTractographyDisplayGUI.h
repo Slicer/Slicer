@@ -34,7 +34,7 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     // Description: 
     // Get the categorization of the module.
     const char *GetCategory() const
-        { return "Tractography"; }
+        { return "Diffusion.Tractography"; }
     
     // Description:
     // Get methods on class members ( no Set methods required. )

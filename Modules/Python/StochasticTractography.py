@@ -2,14 +2,12 @@
 
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion</category>
-  <title>Python Stochastic Tractography</title>
-  <description> This module implements stochastic tractography. For more information please refer to the following link 
-
-www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
+  <category>Diffusion.Tractography</category>
+  <title>Stochastic Tractography</title>
+  <description>This module implements stochastic tractography.
   </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial</documentation-url>
   <contributor> Developer: Julien de Siebenthal (PNL) (jvs@bwh.harvard.edu)
 Supervisors: Marek Kubicki (PNL), Carl-Fredrik Westin (LMI) and Sylvain Bouix (PNL)
  </contributor>
