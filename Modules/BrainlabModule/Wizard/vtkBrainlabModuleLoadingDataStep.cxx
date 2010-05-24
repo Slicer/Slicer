@@ -93,11 +93,9 @@ void vtkBrainlabModuleLoadingDataStep::ShowUserInterface()
   msg_dlg1->SetParent(wizard_widget->GetClientArea());
   msg_dlg1->SetStyleToOkCancel();
   msg_dlg1->Create();
-  msg_dlg1->SetTitle("Loading Preoperative Data Step");
-  msg_dlg1->SetText( "This is the first step in IGT applications. In this step, the user loads "
-                     "preoperative data required for IGT application. This includes images "
-                     "(CT, MRI data), surgical tool/endoscope probe models, and surgical planning "
-                     "information");
+  msg_dlg1->SetTitle("Load an MRML Scene");
+  msg_dlg1->SetText( "This is the first step in BrainlabModule. In this step, the user loads "
+                     "an MRML scene, which usually includes a tensor image and a fiducial.");
 
   helpButton->SetCommand(msg_dlg1, "Invoke");
 

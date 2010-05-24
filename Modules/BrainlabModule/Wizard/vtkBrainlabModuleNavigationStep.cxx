@@ -269,10 +269,8 @@ void vtkBrainlabModuleNavigationStep::ShowUserInterface()
   msg_dlg1->SetStyleToOkCancel();
   msg_dlg1->Create();
   msg_dlg1->SetTitle("Navigate Step");
-  msg_dlg1->SetText( "This is the first step in IGT applications. In this step, the user loads "
-                     "preoperative data required for IGT application. This includes images "
-                     "(CT, MRI data), surgical tool/endoscope probe models, and surgical planning "
-                     "information");
+  msg_dlg1->SetText("This is the third step in BrainlabModule. In this step, the user navigates with DTI visualization."
+                   );
 
   helpButton->SetCommand(msg_dlg1, "Invoke");
 

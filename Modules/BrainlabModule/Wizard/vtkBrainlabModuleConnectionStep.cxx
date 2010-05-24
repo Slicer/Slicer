@@ -442,11 +442,13 @@ void vtkBrainlabModuleConnectionStep::ShowUserInterface()
   msg_dlg1->SetParent(wizard_widget->GetClientArea());
   msg_dlg1->SetStyleToOkCancel();
   msg_dlg1->Create();
-  msg_dlg1->SetTitle("Connect Step");
-  msg_dlg1->SetText( "This is the first step in IGT applications. In this step, the user loads "
-                     "preoperative data required for IGT application. This includes images "
-                     "(CT, MRI data), surgical tool/endoscope probe models, and surgical planning "
-                     "information");
+  msg_dlg1->SetTitle("Connect with Tracking Source");
+  msg_dlg1->SetText( "This is the second step in BrainlabModule. In this step, the user connects Slicer with "
+                     "a simulator or a real Brainlab system. For simulation, the tracking data points can be "
+                     "either loaded from a file or generated in the memory. To connect with a real Brainlab system, "
+                     "the user needs to specify the server name, port number and data streaming frequency (frames per second)."
+                     "The Status section displays the connection status. Press Connect button to start connection."
+                     "Press Disconnect button to terminate the connection.");
 
   helpButton->SetCommand(msg_dlg1, "Invoke");
 
