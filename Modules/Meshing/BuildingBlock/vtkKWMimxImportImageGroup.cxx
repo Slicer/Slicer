@@ -181,7 +181,7 @@ int vtkKWMimxImportImageGroup::SelectVolumeToImportToImageCallback()
     }
     vtkKWComboBox *combobox = this->ImageListComboBox->GetWidget();
     const char *name = combobox->GetValue();
-    int num = combobox->GetValueIndex(name);
+//    int num = combobox->GetValueIndex(name);
 
     // get the model polys here by retrieving from the MRML scene. Then add the polydata as a new
     // entry in the SurfaceList so processing of the model can continue through the IA-FEMesh pipeline
@@ -234,6 +234,7 @@ int vtkKWMimxImportImageGroup::ImportToImageCancelCallback()
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName() );
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
+  return VTK_OK;
 }
 
 //----------------------------------------------------------------------------

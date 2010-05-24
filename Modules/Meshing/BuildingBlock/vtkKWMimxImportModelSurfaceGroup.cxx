@@ -188,7 +188,7 @@ int vtkKWMimxImportModelSurfaceGroup::SelectModelToImportToSurfaceCallback()
     }
     vtkKWComboBox *combobox = this->ModelListComboBox->GetWidget();
     const char *name = combobox->GetValue();
-    int num = combobox->GetValueIndex(name);
+//    int num = combobox->GetValueIndex(name);
 
     // get the model polys here by retrieving from the MRML scene. Then add the polydata as a new
     // entry in the SurfaceList so processing of the model can continue through the IA-FEMesh pipeline
@@ -222,7 +222,7 @@ int vtkKWMimxImportModelSurfaceGroup::SelectModelToImportToSurfaceCallback()
             }
       }
       // restore interface now that the model has been added
-      this->ImportToSurfaceCancelCallback();
+      return this->ImportToSurfaceCancelCallback();
 }
 
 
@@ -233,6 +233,7 @@ int vtkKWMimxImportModelSurfaceGroup::ImportToSurfaceCancelCallback()
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName() );
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
+  return VTK_OK;
 }
 
 //----------------------------------------------------------------------------
