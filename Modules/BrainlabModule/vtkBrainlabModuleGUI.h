@@ -106,6 +106,7 @@ protected:
   ~vtkBrainlabModuleGUI();
   vtkBrainlabModuleGUI(const vtkBrainlabModuleGUI&);
   void operator=(const vtkBrainlabModuleGUI&);
+  void BuildGUIForHelpFrame();
 
   // Description:
   // Updates GUI widgets based on parameters values in MRML node
@@ -115,9 +116,9 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
   
-  vtkBrainlabModuleLogic       *Logic;
-  vtkBrainlabModuleMRMLManager *MRMLManager;
-  vtkMRMLNode       *Node;
+  vtkBrainlabModuleLogic                *Logic;
+  vtkBrainlabModuleMRMLManager          *MRMLManager;
+  vtkMRMLNode                           *Node;
   
   char *ModuleName;
 

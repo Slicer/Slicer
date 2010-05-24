@@ -131,6 +131,7 @@ void vtkBrainlabModuleGUI::UpdateGUI()
 {
 }
 
+
 //---------------------------------------------------------------------------
 void vtkBrainlabModuleGUI::AddGUIObservers() 
 {
@@ -145,47 +146,29 @@ void vtkBrainlabModuleGUI::AddGUIObservers()
   events->Delete();
 }
 
+
+
+void vtkBrainlabModuleGUI::BuildGUIForHelpFrame()
+{
+  const char *help = "BrainlabModule is an intraoperative navigation systme with simplified steps for neurosurgeons to use Slicer to perform some research in DTI visualization in OR while Brainlab is used as the primary navigation tool.";
+  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The BrainlabModule module was contributed by Haiying Liu, Noby Hata and Ron Kininis at SPL, BWH (Ron Kikinis).";
+
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "BrainlabModule" );
+  this->BuildHelpAndAboutFrame (page, help, about);
+}
+
+ 
+
 //---------------------------------------------------------------------------
 void vtkBrainlabModuleGUI::BuildGUI() 
 {
+  this->UIPanel->AddPage( "BrainlabModule", "BrainlabModule", NULL );
+
+  // The help frame
+  BuildGUIForHelpFrame();
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
-  const char *help = 
-    "**IGT Module:** **This module provides a generic framework for a workflow-based IGT applications**"; 
-  
-  this->UIPanel->AddPage("IGT", 
-                         "IGT", NULL);
-  vtkKWWidget *module_page = 
-    this->UIPanel->GetPageWidget("IGT");
-
-  // Help
-
-  vtkSlicerModuleCollapsibleFrame *help_frame = 
-    vtkSlicerModuleCollapsibleFrame::New();
-  help_frame->SetParent(module_page);
-  help_frame->Create();
-  help_frame->CollapseFrame();
-  help_frame->SetLabelText("Help");
-  help_frame->Delete();
-
-  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-              help_frame->GetWidgetName(), 
-              module_page->GetWidgetName());
-  
-  // configure the parent classes help text widget
-
-  this->HelpText->SetParent(help_frame->GetFrame());
-  this->HelpText->Create();
-  this->HelpText->SetHorizontalScrollbarVisibility(0);
-  this->HelpText->SetVerticalScrollbarVisibility(1);
-  this->HelpText->GetWidget()->SetText(help);
-  this->HelpText->GetWidget()->SetReliefToFlat();
-  this->HelpText->GetWidget()->SetWrapToWord();
-  this->HelpText->GetWidget()->ReadOnlyOn();
-  this->HelpText->GetWidget()->QuickFormattingOn();
-
-  app->Script("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-              this->HelpText->GetWidgetName());
+  vtkKWWidget *module_page = this->UIPanel->GetPageWidget("BrainlabModule");
 
   // -----------------------------------------------------------------------
   // Wizard
