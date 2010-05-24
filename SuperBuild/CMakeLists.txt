@@ -121,8 +121,8 @@ if(Slicer3_USE_QT)
   
 endif()
 
-# Python
-option(Slicer3_USE_PYTHON "Build Slicer with Python support" OFF)
+# Python - Enabled by default
+option(Slicer3_USE_PYTHON "Build Slicer with Python support" ON)
 
 if(Slicer3_USE_PYTHON)
 
