@@ -10,6 +10,9 @@ set(vtk_WRAP_PYTHON OFF)
 
 if(Slicer3_USE_KWWIDGETS)
   list(APPEND vtk_DEPENDENCIES tcl)
+  if (NOT WIN32)
+    list(APPEND vtk_DEPENDENCIES tk)
+  endif(NOT WIN32)
   set(vtk_WRAP_TCL ON)
 endif(Slicer3_USE_KWWIDGETS)
 
