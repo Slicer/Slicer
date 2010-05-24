@@ -195,6 +195,9 @@ proc launch_SetEnvironment {} {
     
       set ::env(VTK_DIR)            $::env(Slicer3_HOME)/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@
       set ::env(VTK_BIN_DIR)        $::env(Slicer3_HOME)/bin
+      
+      set ::env(CTK_DIR)            $::env(Slicer3_HOME)/lib/ctk-@CTK_MAJOR_VERSION@.@CTK_MINOR_VERSION@
+      set ::env(CTK_BIN_DIR)        $::env(Slicer3_HOME)/bin
     
       set ::env(KWWidgets_DIR)      $::env(Slicer3_HOME)/lib/KWWidgets
       set ::env(KWWidgets_LIB_DIR)  $::env(Slicer3_HOME)/lib/KWWidgets
@@ -273,6 +276,7 @@ proc launch_SetEnvironment {} {
     
       set ::BUILD_SUBDIR  ""
       set ::VTK_BUILD_SUBDIR  ""
+      set ::CTK_BUILD_SUBDIR  ""
       set ::KWWidgets_BUILD_SUBDIR  ""
       set ::ITK_BUILD_SUBDIR  ""
       set ::Teem_BUILD_SUBDIR  ""
@@ -289,6 +293,9 @@ proc launch_SetEnvironment {} {
           }
           if { [file exists "@VTK_DIR@/bin/$buildType/vtk.exe"] } {
             set ::VTK_BUILD_SUBDIR $buildType
+          }
+          if { [file exists "@CTK_DIR@/bin/$buildType/CTKCore.dll"] } {
+            set ::CTK_BUILD_SUBDIR $buildType
           }
           if { [file exists "@KWWidgets_DIR@/bin/$buildType/KWWidgets.dll"] } {
             set ::KWWidgets_BUILD_SUBDIR $buildType
@@ -338,6 +345,9 @@ proc launch_SetEnvironment {} {
     
       set ::env(VTK_DIR)            [file normalize "@VTK_DIR@"]
       set ::env(VTK_BIN_DIR)        [file normalize "@VTK_DIR@/bin/$::VTK_BUILD_SUBDIR"]
+      
+      set ::env(CTK_DIR)            [file normalize "@CTK_DIR@"]
+      set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
     
       set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
       set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
@@ -545,6 +555,7 @@ proc launch_SetPaths {} {
         $::env(BUILD) == $::LINUX} {
         # add vtk, slicer, and tcl bins
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(LD_LIBRARY_PATH)
@@ -595,6 +606,7 @@ proc launch_SetPaths {} {
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -642,6 +654,7 @@ proc launch_SetPaths {} {
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(CTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(QT_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
