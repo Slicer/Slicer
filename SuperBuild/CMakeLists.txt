@@ -188,9 +188,9 @@ option(Slicer3_USE_VTK_DEBUG_LEAKS
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
   
   
-# Configure the CTest custom file for excluding warnings fromexternal projects.
+# Configure the CTest custom file for excluding warnings from external projects.
 configure_file(
-  ${Slicer3_CMAKE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/../SuperBuild/CTestCustom.cmake.in
   ${Slicer3_BINARY_DIR}/CTestCustom.cmake
   @ONLY IMMEDIATE)
 
