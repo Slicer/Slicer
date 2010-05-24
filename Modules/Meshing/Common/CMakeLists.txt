@@ -52,6 +52,9 @@ SET ( LIB_SRCS
     vtkLocalLinkedListWrapper.cxx
     vtkLinkedListWrapper.cxx
     vtkLinkedListWrapperTree.cxx
+    # added images to be handled like surfaces, & meshes
+    vtkMRMLFiniteElementImageNode.cxx
+    vtkFiniteElementImageList.cxx
     vtkMRMLFESurfaceNode.cxx
     vtkFESurfaceList.cxx
     # removed because it can't wrap

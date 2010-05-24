@@ -52,6 +52,9 @@ public:
   void LoadImageCallback();
   void ImportImageCallback();
   
+  // added for MRML import from Slicer
+  void ImportMRMLVolumeCallback();
+
   void DeleteImageCallback();
   vtkSetObjectMacro(FEMeshList, vtkLinkedListWrapper);
   

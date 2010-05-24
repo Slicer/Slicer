@@ -38,8 +38,11 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkImageData.h"
 #include "vtkMimxCommonWin32Header.h"
 
+
+class vtkImageFlip;
 class vtkImagePlaneWidget;
 class vtkRenderWindowInteractor;
+class vtkMatrix4x4;
 
 typedef itk::Image<signed short, 3>  ImageType;
 
@@ -53,15 +56,24 @@ public:
   //void SetDataType(int){};
   ImageType* GetITKImage();
   void SetITKImageFilePath(const char* FPath);
+
+  // added so we can initialize from Slicer volume
+  void SetImageDataSet(vtkImageData* image);
+  void SetImageDataSet(vtkImageData* image, vtkMatrix4x4* matrix, double origin[3]);
+  void InitializePlaneWidgets();
+  void InitializePlaneWidgets(vtkMatrix4x4* matrix, double origin[3]);
+
   void SetInteractor(vtkRenderWindowInteractor *Int)
   {
          this->Interactor = Int;
   }
   void DisplayActor(int Display);
   int GetActorVisibility();
-protected:
+
   vtkMimxImageActor();
   ~vtkMimxImageActor();
+
+protected:
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typedef itk::ImageToVTKImageFilter<ImageType> FilterType;
   ReaderType::Pointer Reader;
@@ -70,6 +82,12 @@ protected:
   vtkImagePlaneWidget *PlaneY;
   vtkImagePlaneWidget *PlaneZ;
   vtkRenderWindowInteractor *Interactor;
+  vtkImageFlip* FlipFilter;
+
+  // this is a pointer to the current VTK form of the dataset.  All methods are
+  // required to update this so it is always current.
+
+  vtkImageData* SavedImage;
 
 private:
   vtkMimxImageActor(const vtkMimxImageActor&);  // Not implemented.

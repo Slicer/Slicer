@@ -63,6 +63,9 @@ public:
   
   void UpdateObjectLists();
   
+  // slicer integration - add callback for model import
+  void ImportModelSurfaceCallback();
+
 protected:
         vtkKWMimxSurfaceMenuGroup();
         ~vtkKWMimxSurfaceMenuGroup();
@@ -70,6 +73,8 @@ protected:
         virtual void CreateWidget();
         vtkKWMimxSaveSTLSurfaceGroup *SaveSTLGroup;
         vtkKWMimxDeleteObjectGroup *DeleteObjectGroup;
+
+
 
 private:
   vtkKWMimxSurfaceMenuGroup(const vtkKWMimxSurfaceMenuGroup&); // Not implemented

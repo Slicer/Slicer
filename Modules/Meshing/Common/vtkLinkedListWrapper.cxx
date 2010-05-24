@@ -18,6 +18,7 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkFiniteElementImageList.h"
 #include "vtkFESurfaceList.h"
 #include "vtkFiniteElementBuildingBlockList.h"
 #include "vtkFiniteElementMeshList.h"
@@ -32,7 +33,7 @@ vtkStandardNewMacro(vtkLinkedListWrapper);
 
 vtkLinkedListWrapper::vtkLinkedListWrapper() 
 { 
-        List = vtkLinkedList<vtkMimxActorBase*>::New();
+        this->MRMLImageList = vtkFiniteElementImageList::New();
         this->MRMLSurfaceList = vtkFESurfaceList::New();
         this->MRMLBBlockList = vtkFiniteElementBuildingBlockList::New();
         this->MRMLMeshList = vtkFiniteElementMeshList::New();
@@ -42,7 +43,7 @@ vtkLinkedListWrapper::vtkLinkedListWrapper()
 
 vtkLinkedListWrapper::~vtkLinkedListWrapper() 
 {
-        this->List->Delete();
+        this->MRMLImageList ->Delete();
         this->MRMLSurfaceList->Delete();
         this->MRMLBBlockList->Delete();
         this->MRMLMeshList->Delete();
@@ -78,11 +79,11 @@ int vtkLinkedListWrapper::AppendItem(vtkMimxImageActor* actor)
     case ACTOR_NONE: {
       // this is the first append to the list, so set the type and do the operation
       this->ListDatatype=ACTOR_IMAGE;
-      return this->List->AppendItem(actor);
+      return this->MRMLImageList->AppendItem(vtkMimxImageActor::SafeDownCast(actor));
       break;
     }
     case ACTOR_IMAGE: {
-      return this->List->AppendItem(actor); 
+      return this->MRMLImageList->AppendItem(vtkMimxImageActor::SafeDownCast(actor));
       break;
     }
     default:
@@ -165,7 +166,7 @@ vtkMimxActorBase* vtkLinkedListWrapper::GetItem(vtkIdType id)
            case ACTOR_POLYDATA_SURFACE: {return this->MRMLSurfaceList->GetItem(id); break;}
            case ACTOR_BUILDING_BLOCK: {return this->MRMLBBlockList->GetItem(id); break;}
            case ACTOR_FE_MESH: {return this->MRMLMeshList->GetItem(id); break;}
-           case ACTOR_IMAGE: {return this->List->GetItem(id); break; }
+           case ACTOR_IMAGE: {return this->MRMLImageList->GetItem(id); break; }
            default: {vtkErrorMacro("attempted retrieval of uninitialized MimxActor list");
                cout << "tried retrieval from uninitialized list instance" << endl;
                return NULL;
@@ -182,7 +183,7 @@ int vtkLinkedListWrapper::GetNumberOfItems()
            case ACTOR_POLYDATA_SURFACE: {return this->MRMLSurfaceList->GetNumberOfItems(); break;}
            case ACTOR_BUILDING_BLOCK: {return this->MRMLBBlockList->GetNumberOfItems(); break;}
            case ACTOR_FE_MESH: {return this->MRMLMeshList->GetNumberOfItems(); break;}
-           case ACTOR_IMAGE: {return this->List->GetNumberOfItems(); break; }
+           case ACTOR_IMAGE: {return this->MRMLImageList->GetNumberOfItems(); break; }
            // check before list has had an append shouldn't cause an error or warning, just return empty
            case ACTOR_NONE: {return 0; break;} 
            default: {vtkErrorMacro("attempted request of unsupported Mimx Actor Datatype");
@@ -202,7 +203,7 @@ int vtkLinkedListWrapper::RemoveItem(int Num)
       case ACTOR_POLYDATA_SURFACE: {return this->MRMLSurfaceList->RemoveItem(Num); break;}
       case ACTOR_BUILDING_BLOCK: {return this->MRMLBBlockList->RemoveItem(Num); break;}
       case ACTOR_FE_MESH: {return this->MRMLMeshList->RemoveItem(Num); break;}
-      case ACTOR_IMAGE: {return this->List->RemoveItem(Num); break; }
+      case ACTOR_IMAGE: {return this->MRMLImageList->RemoveItem(Num); break; }
       default: {vtkErrorMacro("attempted request of unsupported Mimx Actor Datatype");
             cout << "tried retrieval for unsupported type" << endl;
             return VTK_ERROR;
@@ -213,6 +214,8 @@ int vtkLinkedListWrapper::RemoveItem(int Num)
 // initialize the MRML lists for the scene to use for interaction and storage
 void vtkLinkedListWrapper::SetMRMLSceneForStorage(vtkMRMLScene* scene)
 {
+  this->MRMLImageList->SetMRMLSceneForStorage(scene);
   this->MRMLSurfaceList->SetMRMLSceneForStorage(scene);
   this->MRMLBBlockList->SetMRMLSceneForStorage(scene);
+  this->MRMLMeshList->SetMRMLSceneForStorage(scene);
 }

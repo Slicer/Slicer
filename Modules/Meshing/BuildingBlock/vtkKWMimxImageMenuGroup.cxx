@@ -29,6 +29,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkMimxActorBase.h"
 #include "vtkKWMimxDeleteObjectGroup.h"
 #include "vtkMimxImageActor.h"
+#include "vtkKWMimxImportImageGroup.h"
 
 #include "vtkActor.h"
 #include "vtkMath.h"
@@ -132,8 +133,8 @@ void vtkKWMimxImageMenuGroup::CreateWidget()
         this->OperationMenuButton->SetEnabled(1);
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Load",this, "LoadImageCallback");
-        //this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-        //      "Import",this, "ImportImageCallback");
+        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+                "Import",this, "ImportMRMLVolumeCallback");
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Delete",this, "DeleteImageCallback");
         
@@ -240,6 +241,20 @@ void vtkKWMimxImageMenuGroup::ImportImageCallback()
 //                      this->UpdateObjectLists();
         }
 }
+
+
+//----------------------------------------------------------------------------
+void vtkKWMimxImageMenuGroup::ImportMRMLVolumeCallback()
+{
+    vtkKWMimxImportImageGroup *importImageGroup = vtkKWMimxImportImageGroup::New();
+    importImageGroup->SetParent( this->GetParent() );
+    importImageGroup->SetImageList(this->ImageList);
+    importImageGroup->SetMenuGroup(this);
+    importImageGroup->SetMimxMainWindow(this->GetMimxMainWindow());
+    importImageGroup->Create();
+    importImageGroup->Delete();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkKWMimxImageMenuGroup::DeleteImageCallback()

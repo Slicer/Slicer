@@ -59,7 +59,9 @@
 
 #include "vtkLinkedList.txx"
 
-// store using the MRML-backed lists, do declare it here
+// store using the MRML-backed lists, do declare them here
+
+class vtkFiniteElementImageList;
 class vtkFESurfaceList;
 class vtkFiniteElementBuildingBlockList;
 class vtkFiniteElementMeshList;
@@ -100,10 +102,9 @@ public:
 protected:
   vtkLinkedListWrapper();
   virtual ~vtkLinkedListWrapper();
-  
  
-  
-  // keep a copy of MRML lists and make duplicate entries into these lists.
+  // store objects in MRML-backed lists, instance these lists here.
+  vtkFiniteElementImageList *MRMLImageList;
   vtkFESurfaceList *MRMLSurfaceList;
   vtkFiniteElementBuildingBlockList *MRMLBBlockList;
   vtkFiniteElementMeshList *MRMLMeshList;

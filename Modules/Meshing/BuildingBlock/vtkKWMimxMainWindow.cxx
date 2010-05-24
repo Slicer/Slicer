@@ -525,24 +525,28 @@ void updateAxis(vtkObject* vtkNotUsed(caller), unsigned long , void* arg, void* 
 
         // set the axis camera according to the main renderer.
         vtkKWMimxMainWindow *MimxMainWindow = (vtkKWMimxMainWindow *)arg;
-        vtkRenderer *ren = MimxMainWindow->RenderWidget->GetRenderer();
-        vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
-        if (cam)
+        vtkKWRenderWidget *renderWidget = MimxMainWindow->RenderWidget;
+        if (renderWidget)
+        {
+          vtkRenderer *ren = MimxMainWindow->RenderWidget->GetRenderer();
+          vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
+          if (cam)
           {
-          cam->GetPosition(cPos);
-          cam->GetFocalPoint(cFoc);
-          vtkCamera *axes_cam = MimxMainWindow->AxesRenderer->IsActiveCameraCreated() ? MimxMainWindow->AxesRenderer->GetActiveCamera() : NULL;
-          if (axes_cam)
+            cam->GetPosition(cPos);
+            cam->GetFocalPoint(cFoc);
+            vtkCamera *axes_cam = MimxMainWindow->AxesRenderer->IsActiveCameraCreated() ? MimxMainWindow->AxesRenderer->GetActiveCamera() : NULL;
+            if (axes_cam)
             {
-            axes_cam->GetFocalPoint(aFoc);
-            axes_cam->SetViewUp(cam->GetViewUp());
-            axes_cam->SetPosition(cPos[0] - cFoc[0] +
+              axes_cam->GetFocalPoint(aFoc);
+              axes_cam->SetViewUp(cam->GetViewUp());
+              axes_cam->SetPosition(cPos[0] - cFoc[0] +
                 aFoc[0],\
                 cPos[1] - cFoc[1] + aFoc[1],\
                 cPos[2] - cFoc[2] + aFoc[2]);
-        MimxMainWindow->AxesRenderer->ResetCamera();
-}
+          MimxMainWindow->AxesRenderer->ResetCamera();
+            }
           }
+        }
 }
 //----------------------------------------------------------------------------------------------
 void vtkKWMimxMainWindow::DisplayPropertyCallback()

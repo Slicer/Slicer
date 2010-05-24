@@ -35,6 +35,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkUnstructuredGrid.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
 //#include "vtkKWMimxViewProperties.h"
 #include "vtkObjectFactory.h"
 
@@ -347,6 +348,61 @@ void vtkKWMimxGroupBase::AddSurfaceToDisplay(vtkPolyData *surface,
   this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
   this->GetMimxMainWindow()->GetViewProperties()->AddObjectList( this->SurfaceList->GetItem(item) );
 }
+
+
+
+//----------------------------------------------------------------------------
+void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
+          const char *namePrefix, const char *foundationName, vtkMatrix4x4 *matrix, double origin[3])
+{
+
+  // initialize an image actor to hold the reference to the stored image in the MRML scene
+  vtkMimxImageActor *actor = vtkMimxImageActor::New();
+  actor->SetInteractor(this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindow()->GetInteractor());
+
+  // copy the image referenced elsewhere in the MRML scene so we will have our own copy for the rest of
+  // the processing workflow
+  vtkImageData *imageToAdd = vtkImageData::New();
+  imageToAdd->DeepCopy(surface);
+  actor->SetImageDataSet( imageToAdd, matrix, origin );
+  cout << "MimxGroupBase: imageToAdd->Delete();" << endl;
+  actor->SetDataType(ACTOR_IMAGE);
+  actor->SetFoundationName( foundationName );
+
+  // add this image actor into the list of actors maintained by the module
+  this->ImageList->AppendItem(actor);
+
+  // add an entry in the view properties so we can enable/disable the image planes; then force a re-render
+  this->GetMimxMainWindow()->GetViewProperties()->AddObjectList( actor );
+  this->GetMimxMainWindow()->GetRenderWidget()->Render();
+  this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
+          const char *namePrefix, const char *foundationName)
+{
+  // *** not used anymore because we needed to transform data and pass the transform down through for
+  // integration with Slicer.
+  this->ImageList->AppendItem(vtkMimxImageActor::New());
+  int item = this->ImageList->GetNumberOfItems()-1;
+  this->ImageList->GetItem(item)->SetDataType(ACTOR_IMAGE);
+  this->ImageList->GetItem(item)->SetFoundationName( foundationName );
+  vtkMimxImageActor *actor = vtkMimxImageActor::SafeDownCast(this->ImageList->GetItem(item));
+  actor->SetInteractor(this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindow()->GetInteractor());
+  actor->SetImageDataSet( surface );
+
+  // add an entry in the view properties so we can enable/disable the image planes; then force a re-render
+  this->GetMimxMainWindow()->GetViewProperties()->AddObjectList( this->ImageList->GetItem(item) );
+  this->GetMimxMainWindow()->GetRenderWidget()->Render();
+  this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
+}
+
+
+
+
 //----------------------------------------------------------------------------
 int vtkKWMimxGroupBase::UpdateSurfaceComboBox(vtkKWComboBox *combobox)
 {

@@ -136,6 +136,8 @@ void vtkIA_FEMeshGUI::AddGUIObservers ( )
 {
 
   //this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+      //vtkError("IA-FEMesh: couldn't register events on MRML scene.");
 }
 
 
@@ -166,17 +168,22 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *vtkNotUsed(caller),
 
 
 //---------------------------------------------------------------------------
-void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *vtkNotUsed(caller),
-                                          unsigned long vtkNotUsed(event),
-                                          void *vtkNotUsed(callData) )
+void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
+                                          unsigned long event,
+                                          void *callData )
 {
-  /**
-  vtkMRMLIA_FEMeshNode* node = dynamic_cast<vtkMRMLIA_FEMeshNode *> (this->ApplicationLogic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLIA_FEMeshNode"));
+      // If there is a scene close or open event, the wizard should
+      // keep the lists and viewProperties in sync
+      std::cout << "IA_FEMesh: MRML callback command received" << std::endl;
 
-  if (node) {
-    this->SetIA_FEMeshNode(node);
-  }
-  **/
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneCloseEvent ))
+        {
+            std::cout << "IA-FEMesh: got MRML scene close event.  Do housekeeping here to clear out lists and view properties. " << endl;
+        }
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::NewSceneEvent ))
+        {
+            std::cout << "IA-FEMesh: got MRML new scene event. " << endl;
+        }
 }
 
 
@@ -280,25 +287,39 @@ void vtkIA_FEMeshGUI::Enter ( )
   //vtkMRMLScene *SlicerScene = vtkMRMLScene::GetActiveScene();
   vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
   vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
-  this->SavedBoxState = viewnode->GetBoxVisible();
-  this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
-  this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
-  viewnode->GetBackgroundColor(this->SavedBackgroundColor);
+  if (this->SavedBoxState) this->SavedBoxState = viewnode->GetBoxVisible();
+  if (this->SavedAxisLabelState) this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
+  if (this->SavedLayoutEnumeration) this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
+  if (viewnode) {
+      viewnode->GetBackgroundColor(this->SavedBackgroundColor);
+      viewnode->SetBoxVisible(0);
+      viewnode->SetAxisLabelsVisible(0);
+      double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
+      viewnode->SetBackgroundColor(blackBackground);
+  }
   // add the specific application settings for this module here
-  viewnode->SetBoxVisible(0);
-  viewnode->SetAxisLabelsVisible(0);
-  double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
-  viewnode->SetBackgroundColor(blackBackground);
-  layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);    
-  this->MeshingUI->AddOrientationAxis();
+
+  if (layoutnode) layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
+  //this->MeshingUI->AddOrientationAxis();
   this->MeshingUI->CustomApplicationSettingsModuleEntry();
   
+
+  // register with the MRML scene to receive callbacks when the scene is closed or opened.
+  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
+
+
   // restore the state of object visibility depending on how they were when exiting the module
   // This is gated to happen only after returning to the module.  Not the first time, when the 
   // lists aren't initialized yet. 
   
   if (this->FirstEntryToModule)
-    this->FirstEntryToModule=false;  
+  {
+    std::cout << "IA_FEMesh: First entry received" << std::endl;
+    this->FirstEntryToModule=false;
+  }
   else
     this->MeshingUI->RestoreVisibilityStateOfObjectLists(); 
 }
@@ -311,12 +332,21 @@ void vtkIA_FEMeshGUI::Exit ( )
   vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
   vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
   // remove the specific application settings for this module here
-  layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
-  viewnode->SetBoxVisible(this->SavedBoxState);
-  viewnode->SetAxisLabelsVisible(this->SavedAxisLabelState);
-  viewnode->SetBackgroundColor(this->SavedBackgroundColor);
-  this->MeshingUI->RemoveOrientationAxis();    
+  if (layoutnode) layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
+  if (viewnode) {
+    viewnode->SetBoxVisible(this->SavedBoxState);
+    viewnode->SetAxisLabelsVisible(this->SavedAxisLabelState);
+    viewnode->SetBackgroundColor(this->SavedBackgroundColor);
+  }
+  //this->MeshingUI->RemoveOrientationAxis();
   this->MeshingUI->CustomApplicationSettingsModuleExit();
   // save the state of object visibility so we can restore later
   this->MeshingUI->SaveVisibilityStateOfObjectLists();
+
+  // release callbacks so nothing is called while module is not active
+  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+
 }

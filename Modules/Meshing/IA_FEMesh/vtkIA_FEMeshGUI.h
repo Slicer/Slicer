@@ -78,7 +78,6 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   virtual void TearDownGUI ( );
 
   virtual void AddGUIObservers ( );
-
   virtual void RemoveGUIObservers ( );
 
   virtual void ProcessLogicEvents(vtkObject *vtkNotUsed(caller),

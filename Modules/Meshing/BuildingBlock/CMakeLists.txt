@@ -133,6 +133,8 @@ SET(LIB_SRCS
   vtkKWMimxLoadSurfaceGroup.cxx
   vtkKWMimxLoadMeshGroup.cxx
   vtkKWMimxDisplayMatPropGroup.cxx
+  vtkKWMimxImportModelSurfaceGroup.cxx
+  vtkKWMimxImportImageGroup.cxx
   )
 
 #SET_SOURCE_FILES_PROPERTIES(
