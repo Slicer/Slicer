@@ -6,7 +6,7 @@
 #include "itkEuler3DTransform.h"
 #include "itkCheckerBoardImageFilter.h"
 #include "itkOtsuHistogramMatchingImageFilter.h"
-
+#include <fstream>
 #include "BRAINSFitHelper.h"
 
 namespace itk
@@ -165,7 +165,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     mask->SetImage(movingFindCenter->GetClippedImageMask());
 
     typename MaskImageType::Pointer ClippedMask=movingFindCenter->GetClippedImageMask();
-    itkUtil::WriteImage<MaskImageType>( ClippedMask , std::string("MOVING_MASK.nii.gz"));
+    //itkUtil::WriteImage<MaskImageType>( ClippedMask , std::string("MOVING_MASK.nii.gz"));
 
     mask->ComputeObjectToWorldTransform();
     typename SpatialObjectType::Pointer p= dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
@@ -205,12 +205,12 @@ typename TransformType::Pointer DoCenteredInitialization(
     mask->SetImage(fixedFindCenter->GetClippedImageMask());
 
     typename MaskImageType::Pointer ClippedMask=fixedFindCenter->GetClippedImageMask();
-    itkUtil::WriteImage<MaskImageType>(ClippedMask,std::string("FIXED_MASK.nii.gz"));
+    //itkUtil::WriteImage<MaskImageType>(ClippedMask,std::string("FIXED_MASK.nii.gz"));
 
     mask->ComputeObjectToWorldTransform();
     typename SpatialObjectType::Pointer p= dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
     if ( p.IsNull() )
-      { 
+      {
       std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
       exit(-1);
       }
@@ -1287,11 +1287,13 @@ BRAINSFitHelper::
 {
   std::cout << "The equivalent command line to the current run would be:" <<std::endl;
 
-  std::cout << "BRAINSFit \\" << std::endl;
   const std::string fixedVolumeString("DEBUGFixedVolume_"+ suffix+".nii.gz");
   const std::string movingVolumeString("DEBUGMovingVolume_"+suffix+".nii.gz");
   const std::string fixedBinaryVolumeString("DEBUGFixedBinaryVolume_"+suffix+".nii.gz");
   const std::string movingBinaryVolumeString("DEBUGMovingBinaryVolume_"+suffix+".nii.gz");
+
+  std::ostringstream oss;
+  oss << "BRAINSFit \\" << std::endl;
   if(dumpTempVolumes == true)
     {
       {
@@ -1305,8 +1307,8 @@ BRAINSFitHelper::
         }
       catch ( itk::ExceptionObject & err )
         {
-        std::cout << "Exception Object caught: " << std::endl;
-        std::cout << err << std::endl;
+        oss << "Exception Object caught: " << std::endl;
+        oss << err << std::endl;
         throw;
         }
       }
@@ -1321,20 +1323,23 @@ BRAINSFitHelper::
         }
       catch ( itk::ExceptionObject & err )
         {
-        std::cout << "Exception Object caught: " << std::endl;
-        std::cout << err << std::endl;
+        oss << "Exception Object caught: " << std::endl;
+        oss << err << std::endl;
         throw;
         }
       }
     }
-  std::cout  << "--fixedVolume "  <<  fixedVolumeString   << "  \\" << std::endl;
-  std::cout  << "--movingVolume " <<  movingVolumeString  << "  \\" << std::endl;
-  std::cout  << "--histogramMatch " <<  "  \\" << std::endl;
+  oss  << "--fixedVolume "  <<  fixedVolumeString   << "  \\" << std::endl;
+  oss  << "--movingVolume " <<  movingVolumeString  << "  \\" << std::endl;
+  if(this->m_HistogramMatch)
+    {
+    oss  << "--histogramMatch " <<  "  \\" << std::endl;
+    }
 
     {
     if (this->m_FixedBinaryVolume.IsNotNull() )
       {
-      std::cout  << "--fixedBinaryVolume " << fixedBinaryVolumeString  << "  \\" << std::endl;
+      oss  << "--fixedBinaryVolume " << fixedBinaryVolumeString  << "  \\" << std::endl;
         {
         typedef itk::Image<unsigned char, 3> MaskImageType;
         typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
@@ -1348,7 +1353,7 @@ BRAINSFitHelper::
       }
     if (this->m_MovingBinaryVolume.IsNotNull() )
       {
-      std::cout  << "--movingBinaryVolume " << movingBinaryVolumeString  << "  \\" << std::endl;
+      oss  << "--movingBinaryVolume " << movingBinaryVolumeString  << "  \\" << std::endl;
         {
         typedef itk::Image<unsigned char, 3> MaskImageType;
         typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
@@ -1362,87 +1367,106 @@ BRAINSFitHelper::
       }
     if( this->m_FixedBinaryVolume.IsNotNull()  || this->m_MovingBinaryVolume.IsNotNull() )
       {
-      std::cout  << "--maskProcessingMode ROI "   << "  \\" << std::endl ;
+      oss  << "--maskProcessingMode ROI "   << "  \\" << std::endl ;
       }
     }
-  std::cout  << "--numberOfSamples " << this->m_NumberOfSamples  << "  \\" << std::endl ;
+  oss  << "--numberOfSamples " << this->m_NumberOfSamples  << "  \\" << std::endl ;
 
-  std::cout  << "--numberOfIterations " ;
+  oss  << "--numberOfIterations " ;
   for(unsigned int q=0; q< this->m_NumberOfIterations.size(); q++)
     {
-     std::cout << this->m_NumberOfIterations[q] ;
+     oss << this->m_NumberOfIterations[q] ;
      if(q < this->m_NumberOfIterations.size() -1 )
        {
-       std::cout << ",";
+       oss << ",";
        }
     }
-  std::cout << " \\" << std::endl;
-  std::cout  << "--numberOfHistogramBins " << this->m_NumberOfHistogramBins  << "  \\" << std::endl;
-  std::cout  << "--maximumStepSize " << this->m_MaximumStepLength  << "  \\" << std::endl;
-  std::cout  << "--minimumStepSize " ;
+  oss << " \\" << std::endl;
+  oss  << "--numberOfHistogramBins " << this->m_NumberOfHistogramBins  << "  \\" << std::endl;
+  oss  << "--maximumStepSize " << this->m_MaximumStepLength  << "  \\" << std::endl;
+  oss  << "--minimumStepSize " ;
   for(unsigned int q=0; q< this->m_MinimumStepLength.size(); q++)
     {
-    std::cout << this->m_MinimumStepLength[q];
+    oss << this->m_MinimumStepLength[q];
     if(q < this->m_MinimumStepLength.size() -1)
       {
-      std::cout << ",";
+      oss << ",";
       }
     }
-  std::cout << " \\" << std::endl;
-  std::cout  << "--transformType " ;
+  oss << " \\" << std::endl;
+  oss  << "--transformType " ;
   for(unsigned int q=0; q< this->m_TransformType.size(); q++)
     {
-    std::cout << this->m_TransformType[q] ;
+    oss << this->m_TransformType[q] ;
     if(q < this->m_TransformType.size() -1)
       {
-      std::cout << ",";
+      oss << ",";
       }
     }
-  std::cout << " \\" << std::endl;
+  oss << " \\" << std::endl;
 
-  std::cout  << "--relaxationFactor " << this->m_RelaxationFactor  << "  \\" << std::endl;
-  std::cout  << "--translationScale " << this->m_TranslationScale  << "  \\" << std::endl;
-  std::cout  << "--reproportionScale " << this->m_ReproportionScale  << "  \\" << std::endl;
-  std::cout  << "--skewScale " << this->m_SkewScale  << "  \\" << std::endl;
-  std::cout  << "--useExplicitPDFDerivativesMode " << this->m_UseExplicitPDFDerivativesMode  << "  \\" << std::endl;
-  std::cout  << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
-  std::cout  << "--backgroundFillValue " << this->m_BackgroundFillValue  << "  \\" << std::endl;
-  std::cout  << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;
-  std::cout  << "--maskInferiorCutOffFromCenter " << this->m_MaskInferiorCutOffFromCenter  << "  \\" << std::endl;
+  oss  << "--relaxationFactor " << this->m_RelaxationFactor  << "  \\" << std::endl;
+  oss  << "--translationScale " << this->m_TranslationScale  << "  \\" << std::endl;
+  oss  << "--reproportionScale " << this->m_ReproportionScale  << "  \\" << std::endl;
+  oss  << "--skewScale " << this->m_SkewScale  << "  \\" << std::endl;
+  oss  << "--useExplicitPDFDerivativesMode " << this->m_UseExplicitPDFDerivativesMode  << "  \\" << std::endl;
+  oss  << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
+  oss  << "--maxBSplineDisplacement " << this->m_MaxBSplineDisplacement << " \\" << std::endl;
+  oss  << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;
+  oss  << "--costFunctionConvergenceFactor " << this->m_CostFunctionConvergenceFactor << " \\" << std::endl;
+  oss  << "--backgroundFillValue " << this->m_BackgroundFillValue  << "  \\" << std::endl;
+  oss  << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;
+  oss  << "--maskInferiorCutOffFromCenter " << this->m_MaskInferiorCutOffFromCenter  << "  \\" << std::endl;
    if( this->m_UseWindowedSinc == true )
      {
-     std::cout  << "--useWindowedSinc " ;
+     oss  << "--useWindowedSinc " ;
      }
 
-  std::cout  << "--splineGridSize " ;
+  oss  << "--splineGridSize " ;
   for(unsigned int q=0; q< this->m_SplineGridSize.size(); q++)
     {
-    std::cout << this->m_SplineGridSize[q] ;
+    oss << this->m_SplineGridSize[q] ;
     if (q < this->m_SplineGridSize.size() -1)
       {
-      std::cout << ",";
+      oss << ",";
       }
     }
-  std::cout << " \\" << std::endl;
+  oss << " \\" << std::endl;
 
   if(this->m_PermitParameterVariation.size() > 0)
     {
-    std::cout  << "--permitParameterVariation " ;
+    oss  << "--permitParameterVariation " ;
     for(unsigned int q=0; q< this->m_PermitParameterVariation.size(); q++)
       {
-      std::cout << this->m_PermitParameterVariation[q] ;
+      oss << this->m_PermitParameterVariation[q] ;
       if ( q< this->m_PermitParameterVariation.size() -1)
         {
-        std::cout << ",";
+        oss << ",";
         }
       }
-    std::cout << " \\" << std::endl;
+    oss << " \\" << std::endl;
     }
-
   if(m_CurrentGenericTransform.IsNotNull())
     {
-    std::cout  << "--currentGenericTransform " << "<INITIAL TRANSFORM>"  << "  \\" << std::endl;
+    const std::string initialTransformString("DEBUGInitialTransform_"+suffix+".mat");
+    WriteBothTransformsToDisk(this->m_CurrentGenericTransform, initialTransformString, "");
+    oss  << "--initialTransform " << initialTransformString  << "  \\" << std::endl;
     }
+    {
+    const std::string outputVolume("DEBUGOutputVolume_"+suffix+".nii.gz");
+    oss  << "--outputVolume " << outputVolume  << "  \\" << std::endl;
+    std::cout << oss.str() << std::endl;
+    }
+    {
+    const std::string outputTransform("DEBUGOutputTransform"+suffix+".mat");
+    oss  << "--outputTransform " << outputTransform  << "  \\" << std::endl;
+    std::cout << oss.str() << std::endl;
+    }
+  const std::string TesterScript("DEBUGScript"+suffix+".sh");
+  std::ofstream myScript;
+  myScript.open(TesterScript.c_str());
+  myScript << oss.str() << std::endl;
+  myScript.close();
 }
 
 void
@@ -1452,7 +1476,7 @@ BRAINSFitHelper::
   this->StartRegistration();
 }
 
-VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(GenericTransformType::Pointer & genericTransformToWrite)
+VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::Pointer & genericTransformToWrite)
 {
   typedef VersorRigid3DTransformType VersorRigidTransformType;
   VersorRigidTransformType::Pointer versorRigid = VersorRigidTransformType::New();
@@ -1523,7 +1547,7 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(GenericTran
   return versorRigid;
 }
 
-int WriteBothTransformsToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform)
+int WriteBothTransformsToDisk(const GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform)
 {
   ////////////////////////////////////////////////////////////////////////////
   // Write out tranfoms.

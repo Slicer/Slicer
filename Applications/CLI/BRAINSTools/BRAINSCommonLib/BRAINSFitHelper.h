@@ -71,8 +71,8 @@ typedef itk::Transform<double,3,3> GenericTransformType;
 
 namespace itk {
   //Functions for writing out transforms to disk
-  BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(GenericTransformType::Pointer & genericTransformToWrite);
-  BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform);
+  BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::Pointer & genericTransformToWrite);
+  BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(const GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform);
   BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & strippedOutputTransform);
   BRAINSCommonLib_EXPORT extern int WriteTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform);
   BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
