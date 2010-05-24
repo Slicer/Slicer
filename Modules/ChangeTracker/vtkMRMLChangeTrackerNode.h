@@ -70,8 +70,8 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   
   // Description:
   // Get/Set for SegmenterClass
-  void SetROIMin(int index, int val) {this->ROIMin[index] = val ; }
-  int GetROIMin(int index) {return this->ROIMin[index]; } 
+  void SetROIMin(int index, int val) { this->ROIMin[index] = val;  }
+  int GetROIMin(int index) { return this->ROIMin[index]; } 
 
   void SetROIMax(int index, int val) {this->ROIMax[index] = val ; }
   int GetROIMax(int index) {return this->ROIMax[index]; } 
@@ -161,18 +161,21 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkSetStringMacro(Analysis_Deformable_Ref);
   vtkGetStringMacro(Analysis_Deformable_Ref);
 
+  vtkBooleanMacro(UseITK, bool);
   vtkGetMacro(UseITK, bool);
   vtkSetMacro(UseITK, bool);
 
   vtkGetStringMacro(Scan2_RegisteredRef);
   vtkSetStringMacro(Scan2_RegisteredRef);
 
+  vtkBooleanMacro(Scan2_RegisteredReady, bool);
   vtkSetMacro(Scan2_RegisteredReady, bool);
   vtkGetMacro(Scan2_RegisteredReady, bool);
 
   vtkSetMacro(RegistrationChoice, int);
   vtkGetMacro(RegistrationChoice, int);
 
+  vtkBooleanMacro(ROIRegistration, bool);
   vtkSetMacro(ROIRegistration, bool);
   vtkGetMacro(ROIRegistration, bool);
 
