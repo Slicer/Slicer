@@ -81,5 +81,4 @@ add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
 set_target_properties(PrettyPrintTableTest
   PROPERTIES RUNTIME_OUTPUT_DIRECTORY
   ${BRAINSCommonLibProject_BINARY_DIR})
-target_link_libraries(PrettyPrintTableTest m)
 
