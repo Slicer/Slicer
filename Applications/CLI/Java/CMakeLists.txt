@@ -1,8 +1,11 @@
-project(JavaExamples Java )
-
 FIND_PACKAGE ( Java )
 
+IF(NOT Java_JAVAC_EXECUTABLE)
+  MESSAGE(WARNING "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
+  RETURN()
+ENDIF()
 
+project(JavaExamples Java )
 
 
 slicer3_set_plugins_output_path()
@@ -21,8 +24,8 @@ endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
 set (CLP HelloWorld)
 
 # If have the java compiler, try to compile the .java files
-IF ( JAVA_COMPILE )
-# message (STATUS "Java run time = ${JAVA_RUNTIME}, compiler = ${JAVA_COMPILE}, jar = ${JAVA_ARCHIVE}")
+IF ( Java_JAVAC_EXECUTABLE )
+# message (STATUS "Java run time = ${Java_JAVA_EXECUTABLE}, compiler = ${Java_JAVAC_EXECUTABLE}, jar = ${Java_JAR_EXECUTABLE}")
 
   # source files
   SET ( ${CLP}_JAR_SRCS               Examples/${CLP}App.java)
@@ -36,14 +39,14 @@ IF ( JAVA_COMPILE )
       ".:../Examples:${CMAKE_CURRENT_BINARY_DIR}" )
   ENDIF ( WIN32 )
 
-# message (STATUS "Adding custom java compile target: ${JAVA_COMPILE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}")
+# message (STATUS "Adding custom java compile target: ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}")
   ADD_CUSTOM_TARGET ( ${CLP}.jar.classes ALL
-     ${JAVA_COMPILE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}
+     ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
 
 # message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}")
   ADD_CUSTOM_TARGET ( ${CLP}.jar ALL
-      ${JAVA_ARCHIVE} cvf  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar Examples
+      ${Java_JAR_EXECUTABLE} cvf  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar Examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 
   ADD_DEPENDENCIES ( ${CLP}.jar ${CLP}.jar.classes )
@@ -84,9 +87,9 @@ IF ( JAVA_COMPILE )
      )
   endif (Slicer3_SOURCE_DIR)
 
-ELSE ( JAVA_COMPILE)
+ELSE ( Java_JAVAC_EXECUTABLE)
    message (STATUS "Unable to compile java code, skipping installation of ${CLP}.jar and .tcl")
-ENDIF ( JAVA_COMPILE )
+ENDIF ( Java_JAVAC_EXECUTABLE )
 
 ##############
 
