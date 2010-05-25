@@ -1,5 +1,12 @@
 FIND_PACKAGE ( Java )
 
+# Since not all dashboard are running cmake 2.8.1, let's set the legacy variable
+IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.8.1")
+  SET(Java_JAVA_EXECUTABLE ${JAVA_RUNTIME})
+  SET(Java_JAVAC_EXECUTABLE ${JAVA_COMPILE})
+  SET(Java_JAR_EXECUTABLE ${JAVA_ARCHIVE})
+ENDIF()
+
 IF(NOT Java_JAVAC_EXECUTABLE)
   MESSAGE(STATUS "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
   RETURN()
