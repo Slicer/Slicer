@@ -25,6 +25,9 @@ configure_file(${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake.in
 set(GenerateLM_INCLUDE_DIRS_CONFIG ${GenerateLM_BINARY_DIR} ${GenerateLM_SOURCE_DIR})
 set(GenerateLM_LIBRARY_DIRS_CONFIG ${GenerateLM_BINARY_DIR})
 set(GENERATELM_EXE_CONFIG "${GENERATELM_EXE}")
+if(NOT WIN32)
+  set(GENERATELM_EXE_CONFIG "${GENERATELM_EXE}Launcher")
+endif(NOT WIN32)
 set(ITK_DIR_CONFIG ${ITK_DIR})
 configure_file(${GenerateLM_SOURCE_DIR}/GenerateLMConfig.cmake.in
   ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake @ONLY IMMEDIATE)
