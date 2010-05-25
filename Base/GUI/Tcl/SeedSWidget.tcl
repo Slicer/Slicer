@@ -359,10 +359,10 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           }
         }
         "MouseMoveEvent" {
+          $this requestDelayedAnnotation 
           switch $_actionState {
             "dragging" {
               if { !$inactive } {
-                $this requestDelayedAnnotation 
                 foreach {wx wy} [$_interactor GetEventPosition] {}
                 foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
                 foreach {dx dy dz} $_startOffset {}
