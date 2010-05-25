@@ -165,8 +165,6 @@ elseif(APPLE)
   set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake)
   set(python_INSTALL_COMMAND make install)
   
-  MESSAGE("----------- python ---------")
-  
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
     SVN_REPOSITORY ${python_SVN}
