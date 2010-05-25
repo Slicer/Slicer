@@ -35,6 +35,20 @@ set ::EXIT_CODE_GENERIC_ERROR -1
 set ::EXIT_CODE_VTK_ERROR -2
 set ::EXIT_CODE_LAUNCHING_ERROR -3
 
+
+#-------------------------------------------------------------------------------
+# .PROC LogToFile
+# Helper function.
+# Use this function to write a string to launcher-log.txt
+# .ARGS
+# message to be logged
+# .END
+#-------------------------------------------------------------------------------
+proc LogToFile { msg } {
+  set fd [open "launcher-log.txt" "w"]
+  puts $fd $msg
+}
+
 #-------------------------------------------------------------------------------
 # .PROC ShowAndLogError
 # Helper function.
