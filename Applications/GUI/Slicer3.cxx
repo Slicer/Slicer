@@ -2229,8 +2229,10 @@ int Slicer3_main(int& argc, char *argv[])
     // remove the observers from the scripted modules
     tclCommand = "";
     tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-    tclCommand += "  $::Slicer3_PACKAGES($package,gui) RemoveGUIObservers;";
-    tclCommand += "  $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
+    tclCommand += "  if {[info exists ::Slicer3_PACKAGES($package,gui)] == 1} { ";
+    tclCommand += "    $::Slicer3_PACKAGES($package,gui) RemoveGUIObservers;";
+    tclCommand += "    $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
+    tclCommand += "  } ";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
@@ -2344,7 +2346,9 @@ int Slicer3_main(int& argc, char *argv[])
     {
     tclCommand = "";
     tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-    tclCommand += "  $::Slicer3_PACKAGES($package,gui) Delete;";
+    tclCommand += "  if {[info exists ::Slicer3_PACKAGES($package,gui)] == 1} { ";
+    tclCommand += "    $::Slicer3_PACKAGES($package,gui) Delete;";
+    tclCommand += "  }";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
@@ -2456,8 +2460,10 @@ int Slicer3_main(int& argc, char *argv[])
     // delete the scripted logics
     tclCommand = "";
     tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-    tclCommand += "  $::Slicer3_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
-    tclCommand += "  $::Slicer3_PACKAGES($package,logic) Delete;";
+    tclCommand += "  if {[info exists ::Slicer3_PACKAGES($package,logic)] == 1} { ";
+    tclCommand += "    $::Slicer3_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
+    tclCommand += "    $::Slicer3_PACKAGES($package,logic) Delete;";
+    tclCommand += "  }";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
