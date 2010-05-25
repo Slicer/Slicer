@@ -32,9 +32,6 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
 SET( Annotation_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
 
-# added by Yong
-SET(CMAKE_BUILD_TYPE debug)
-
 IF(WIN32)
   SET(Annotation_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
