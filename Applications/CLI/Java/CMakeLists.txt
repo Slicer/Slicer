@@ -1,7 +1,7 @@
 FIND_PACKAGE ( Java )
 
 IF(NOT Java_JAVAC_EXECUTABLE)
-  MESSAGE(WARNING "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
+  MESSAGE(STATUS "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
   RETURN()
 ENDIF()
 
@@ -108,7 +108,8 @@ if (Slicer3_SOURCE_DIR)
   # from a build)
   set(TARGETS 
      ${CLP}.tcl
-     SPECTRE_2010-04-01.jar
+#     SPECTRE_2010-04-01.jar
+     SPECTRElite_2010-05-15.jar
     )
 
 foreach(file ${TARGETS})
