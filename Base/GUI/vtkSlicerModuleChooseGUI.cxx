@@ -1067,7 +1067,8 @@ void vtkSlicerModuleChooseGUI::Populate( )
             {
             std::stringstream methodString;
             methodString << "SelectModule \"" << (*mit).second.c_str() << "\"";
-            if ( (*mit).second.compare((*mit).second.size()-7,7,"Welcome") == 0 )
+            if ( (*mit).second.size() >= 7 &&
+                 (*mit).second.compare((*mit).second.size()-7,7,"Welcome") == 0 )
               {
               // module name ends in "Welcome" so put it first
               index = menu->InsertRadioButton( 0, (*mit).second.c_str(), this,
