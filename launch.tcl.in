@@ -308,7 +308,7 @@ proc launch_SetEnvironment {} {
           if { [file exists "@VTK_DIR@/bin/$buildType/vtk.exe"] } {
             set ::VTK_BUILD_SUBDIR $buildType
           }
-          if { [file exists "@CTK_DIR@/bin/$buildType/CTKCore.dll"] } {
+          if { [file exists "@CTK_DIR@/CTK-build/bin/$buildType/CTKCore.dll"] } {
             set ::CTK_BUILD_SUBDIR $buildType
           }
           if { [file exists "@KWWidgets_DIR@/bin/$buildType/KWWidgets.dll"] } {
