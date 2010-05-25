@@ -2741,7 +2741,17 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies(
   
 #ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
-  vcGUI->SetViewNode(active_viewer ? active_viewer->GetViewNode() : NULL);
+  if (vcGUI != NULL)
+    {
+    if (active_viewer != NULL)
+      {
+      vcGUI->SetViewNode( active_viewer->GetViewNode());
+      }
+    else
+      {
+      vcGUI->SetViewNode(NULL);
+      }
+    }
   //this->InitializeViewControlGUI();
 #endif
 
