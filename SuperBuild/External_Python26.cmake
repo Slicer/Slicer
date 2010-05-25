@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------
 set(proj python)
-
+set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
 
 if(WIN32)
 
@@ -156,18 +157,24 @@ elseif(APPLE)
     list(APPEND python_DEPENDENCIES tk)
   endif()
   
-  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
-  set(python_BUILD make)
-  set(python_INSTALL make install)
-
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_make_step_apple.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake
+    @ONLY)
+  
+  set(python_CONFIGURE_COMMAND sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
+  set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake)
+  set(python_INSTALL_COMMAND make install)
+  
+  MESSAGE("----------- python ---------")
+  
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
     SVN_REPOSITORY ${python_SVN}
     SOURCE_DIR python
     BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
-    CONFIGURE_COMMAND ${python_CONFIGURE}
-    BUILD_COMMAND ${python_BUILD}
-    INSTALL_COMMAND ${python_INSTALL}
+    CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${python_BUILD_COMMAND}
+    INSTALL_COMMAND ${python_INSTALL_COMMAND}
     )
 #  if { $isDarwin } {
 #            # Special Slicer hack to build and install the .dylib
@@ -195,18 +202,18 @@ else()
     list(APPEND python_DEPENDENCIES tk)
   endif()
   
-  set(python_CONFIGURE sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
-  set(python_BUILD make)
-  set(python_INSTALL make install)
+  set(python_CONFIGURE_COMMAND sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
+  set(python_BUILD_COMMAND make)
+  set(python_INSTALL_COMMAND make install)
 
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
     SVN_REPOSITORY ${python_SVN}
     SOURCE_DIR python
     BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
-    CONFIGURE_COMMAND ${python_CONFIGURE}
-    BUILD_COMMAND ${python_BUILD}
-    INSTALL_COMMAND ${python_INSTALL}
+    CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${python_BUILD_COMMAND}
+    INSTALL_COMMAND ${python_INSTALL_COMMAND}
     )
 endif()
 
