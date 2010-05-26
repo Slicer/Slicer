@@ -290,8 +290,17 @@ itcl::body SWidget::getTensorPixel { node i j k } {
   }
 
   set tensorImage [$node GetImageData]
+  if { $tensorImage == "" } {
+    return "No Image Data"
+  }
   set tensors [[$tensorImage GetPointData] GetTensors]
+  if { $tensors == "" } {
+    return "No Tensors"
+  }
   set displayNode [$node GetDisplayNode]
+  if { $displayNode == "" } {
+    return "No Display Node"
+  }
 
   foreach "w h d" [$tensorImage GetDimensions] {}
   set sliceSize [expr $w * $h]
