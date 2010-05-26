@@ -339,24 +339,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   }
 
 
-  #
-  # if another widget has the grab, let this go unless
-  # it is a focus event, in which case we want to update
-  # our display icon
-  #
-  set grabID [$sliceGUI GetGrabID]
-  if { ($grabID != "" && $grabID != $this) } {
-    if { ![string match "Focus*Event" $event] } {
-      if { [info command $grabID] != $grabID } {
-        # the widget with the grab doesn't exist any more (probably deleted while grabbing)
-        # reset the grabID and continue
-        $sliceGUI SetGrabID ""
-      } else {
-        return ;# some other widget wants these events
-      }
-    }
-  }
-
   # To support the LightBox, the event locations sometimes need to be
   # relative to a renderer (or viewport or pane of the lightbox).
   # Currently, these are relative to the viewport of the "start" action. 
@@ -403,24 +385,49 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this resizeSliceNode
   }
 
+
+  #
+  # update the annotations even if they aren't currently visible
+  # - this way the values will be correct when the corner annotation
+  #   are eventually made visible
+  #
   set annotationsUpdated false
+  set link [$_sliceCompositeNode GetLinkedControl]
+  if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
+    $this updateAnnotations $r $a $s
+    set annotationsUpdated true
+  } else {
+    $this updateAnnotation $r $a $s
+    set annotationsUpdated true
+  }
+
+
+  #
+  # if another widget has the grab, let this go unless
+  # it is a focus event, in which case we want to update
+  # our display icon
+  #
+  set grabID [$sliceGUI GetGrabID]
+  if { ($grabID != "" && $grabID != $this) } {
+    if { ![string match "Focus*Event" $event] } {
+      if { [info command $grabID] != $grabID } {
+        # the widget with the grab doesn't exist any more (probably deleted while grabbing)
+        # reset the grabID and continue
+        $sliceGUI SetGrabID ""
+      } else {
+        return ;# some other widget wants these events
+      }
+    }
+  }
+
+
   switch $event {
 
     "MouseMoveEvent" {
       #
       # Mouse move behavior governed by _actionState mode
-      # - first update the annotation
-      # - then handle modifying the view
+      # - handle modifying the view
       #
-      set link [$_sliceCompositeNode GetLinkedControl]
-      if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
-        $this updateAnnotations $r $a $s
-        set annotationsUpdated true
-      } else {
-        $this updateAnnotation $r $a $s
-        set annotationsUpdated true
-      }
-
       if { [$_interactor GetShiftKey] } {
         $this jumpOtherSlices $r $a $s
         # need to render to show the annotation
@@ -1006,16 +1013,27 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
 
   set labelText "Lb: $_layers(label,pixel) $colorName"
 
-  if { [string is double $_layers(foreground,pixel)] } {
-      set fgvoxelText [format "Fg: %.1f" $_layers(foreground,pixel)]
+  set pixelValue $_layers(foreground,pixel)
+  if { $pixelValue != "" && [string is double $pixelValue] } {
+      set fgvoxelText [format " Fg: %.1f" $pixelValue]
   } else {
-      set fgvoxelText "Fg: $_layers(foreground,pixel)"
+      if { $pixelValue == "None"} {
+          set fgvoxelText ""
+      } else {
+          set fgvoxelText " Fg: $pixelValue,"
+      }
   }
-  if { [string is double $_layers(background,pixel)] } {
-      set bgvoxelText [format "Bg: %.1f" $_layers(background,pixel)]
+  set pixelValue $_layers(background,pixel)
+  if { $pixelValue != "" && [string is double $pixelValue] } {
+      set bgvoxelText [format " Bg: %.1f" $pixelValue]
   } else {
-      set bgvoxelText "Bg: $_layers(background,pixel)"
+      if { $pixelValue == "None"} {
+          set bgvoxelText ""
+      } else {
+          set bgvoxelText " Bg: $pixelValue,"
+      }
   }
+
   set voxelText "$fgvoxelText\n$bgvoxelText"
 
 
@@ -1116,19 +1134,16 @@ itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
 
   if {[info command $_layers(label,node)] != ""
       && $_layers(label,node) != ""} {
-      #set labelname "Lb: [$_layers(label,node) GetName]"
       set labelname "[$_layers(label,node) GetName]"
   }
 
   if {[info command $_layers(foreground,node)] != ""
       && $_layers(foreground,node) != ""} {
-      #set foregroundname "Fg: [$_layers(foreground,node) GetName]"
       set foregroundname "[$_layers(foreground,node) GetName]"
   }
 
   if {[info command $_layers(background,node)] != ""
       && $_layers(background,node) != ""} {
-      #set backgroundname "Bg: [$_layers(background,node) GetName]"
       set backgroundname "[$_layers(background,node) GetName]"
   } 
 
