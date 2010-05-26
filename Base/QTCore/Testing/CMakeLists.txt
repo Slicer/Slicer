@@ -32,12 +32,12 @@ ENDMACRO( SIMPLE_TEST  )
 
 ADD_TEST( qSlicerCoreApplicationTest1 
   ${LAUNCH_EXE}
-  ${QTCore_TESTS} qSlicerCoreApplicationTest1 
+  ${KIT_TESTS} qSlicerCoreApplicationTest1 
   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SlicerQT )
 
 ADD_TEST( qSlicerCoreIOManagerTest1 
   ${LAUNCH_EXE}
-  ${QTCore_TESTS} qSlicerCoreIOManagerTest1 
+  ${KIT_TESTS} qSlicerCoreIOManagerTest1 
   ${CMAKE_SOURCE_DIR}/Libs/MRML/Testing/name.mrml)
 
 SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )
