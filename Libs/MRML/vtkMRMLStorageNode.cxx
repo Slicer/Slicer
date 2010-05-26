@@ -189,8 +189,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
         }
       
       name += filename;
-      
-      this->AddFileName(filename.c_str());
+      std::string collapsedFullPath = vtksys::SystemTools::CollapseFullPath(name.c_str());
+      vtkDebugMacro("ReadXMLAttributes: collapsed path for " << attName << " = " << collapsedFullPath.c_str());
+      this->AddFileName(collapsedFullPath.c_str());
       }
     else if (!strcmp(attName, "uri"))
       {
