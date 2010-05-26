@@ -80,6 +80,8 @@ include(ExternalProject)
 # | Slicer3_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
 # |---------------------------------------------------
 #
+# !!!!!!!!! Case2 -> NOT supported on MAC !!!!!!!!!!
+#
 # Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: OFF, VTK_WRAP_TCL:ON]
 #   a) KwwOnly-NoPython  
 #   b) KwwOnly-Python    
@@ -87,8 +89,8 @@ include(ExternalProject)
 # Case 2: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: ON, VTK_WRAP_TCL:ON]
 #   a) KwwAndQt-NoPython-NoPythonQt
 #   b) KwwAndQt-Python
-#   c) KwwAndQt-PythonQt          [VTK_WRAP_PYTHON: ON]  -> TODO
-#   d) KwwAndQt-Python-PythonQt   [VTK_WRAP_PYTHON: ON]  -> TODO
+#   c) KwwAndQt-PythonQt          [VTK_WRAP_PYTHON: ON]  -> NOT SUPPORTED
+#   d) KwwAndQt-Python-PythonQt                          -> NOT SUPPORTED
 #
 # Case 3: [Slicer3_USE_KWWIDGETS: OFF, Slicer3_USE_QT: ON,  VTK_WRAP_TCL:OFF]
 #   a) QtOnly-NoPythonQt
@@ -147,7 +149,7 @@ Slicer3_USE_KWWIDGETS = ON
  -> Means Slicer will be built only with KWWidgets support.
  
 Slicer3_USE_KWWIDGETS = ON and Slicer3_USE_QT = ON
- -> Means Slicer will be built with both KWWidgets and QT support.
+ -> Means Slicer will be built with both KWWidgets and QT support. Note: NOT supported on Mac
  
 Slicer3_USE_QT = ON
  -> Means Slicer will be build only with QT support.
@@ -158,7 +160,16 @@ endif()
 
 if (Slicer3_USE_PYTHON AND Slicer3_USE_PYTHONQT)
   set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_PYTHON and Slicer3_USE_PYTHONQT ON.")
+  message(FATAL_ERROR "${err}")
+endif()
 
+if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_KWWIDGETS and Slicer3_USE_PYTHONQT ON.")
+  message(FATAL_ERROR "${err}")
+endif()
+
+if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT AND APPLE)
+  set(err "error: Slicer SuperBuild on Mac doesn't support Slicer3_USE_KWWIDGETS and Slicer3_USE_QT ON")
   message(FATAL_ERROR "${err}")
 endif()
 

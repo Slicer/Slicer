@@ -21,28 +21,52 @@ if (Slicer3_USE_PYTHONQT)
   list(APPEND vtk_DEPENDENCIES python)
 endif(Slicer3_USE_PYTHONQT)
 
-set(vtk_QT_ARGS)
-if(Slicer3_USE_QT)
-  set(vtk_QT_ARGS
-    -DDESIRED_QT_VERSION:STRING=4
-    -DVTK_USE_GUISUPPORT:BOOL=ON
-    -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-    -DVTK_USE_QT:BOOL=ON
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    )
-endif(Slicer3_USE_QT)
+# On Mac, since:
+#    - Qt can't be build with X11 support
+#    - KWWidgets only support X11
+# the case where both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are ON is *NOT* supported
 
-set(vtk_MAC_ARGS)
-if(APPLE)
-  set(vtk_MAC_ARGS
-    -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
-    -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
-    -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include
-    -DVTK_USE_CARBON:BOOL=OFF
-    -DVTK_USE_COCOA:BOOL=OFF
-    -DVTK_USE_X:BOOL=ON
-    -DVTK_USE_RPATH:BOOL=ON
-  )
+set(vtk_QT_ARGS)
+if(NOT APPLE)
+  if(Slicer3_USE_QT)
+    set(vtk_QT_ARGS
+      -DDESIRED_QT_VERSION:STRING=4
+      -DVTK_USE_GUISUPPORT:BOOL=ON
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+      -DVTK_USE_QT:BOOL=ON
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      )
+  endif(Slicer3_USE_QT)
+else()
+  if(Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
+    set(vtk_QT_ARGS
+      -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+      -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+      -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include
+      -DVTK_USE_CARBON:BOOL=OFF
+      -DVTK_USE_COCOA:BOOL=OFF
+      -DVTK_USE_X:BOOL=ON
+      -DVTK_USE_RPATH:BOOL=ON
+      -DVTK_USE_GUISUPPORT:BOOL=OFF
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=OFF
+      -DVTK_USE_QT:BOOL=OFF
+      )
+  elseif(NOT Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
+    # VTK, QT, Cocoa
+    set(vtk_QT_ARGS
+      -DVTK_USE_CARBON:BOOL=OFF
+      -DVTK_USE_COCOA:BOOL=ON
+      -DVTK_USE_X:BOOL=OFF
+      -DVTK_USE_RPATH:BOOL=ON
+      -DDESIRED_QT_VERSION:STRING=4
+      -DVTK_USE_GUISUPPORT:BOOL=ON
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+      -DVTK_USE_QT:BOOL=ON
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      )
+  elseif(Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
+    MESSAGE(FATAL_ERROR "Case where Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are ON is not supported on MAC")
+  endif()
 endif()
 
 set(slicer_TCL_LIB)
