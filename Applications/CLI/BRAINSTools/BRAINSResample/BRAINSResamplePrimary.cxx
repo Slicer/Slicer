@@ -23,43 +23,23 @@ HACK:  Need to update documentation and licensing.
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkStatisticsImageFilter.h"
-
+#include "itkMaximumImageFilter.h"
 #include "GenericTransformImage.h"
-#if 0
-static const unsigned int SpaceDimension = 3;
-static const unsigned int SplineOrder = 3;
-typedef double CoordinateRepType;
-typedef itk::BSplineDeformableTransform<
-  CoordinateRepType,
-  SpaceDimension,
-  SplineOrder > BSplineTransformType;
 
-typedef itk::AffineTransform<double, 3> AffineTransformType;
-typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
-typedef itk::ScaleVersor3DTransform<double> ScaleVersor3DTransformType;
-typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
+#include "itkTransformToDeformationFieldSource.h"
+#include "itkGridForwardWarpImageFilterNew.h"
+#include "itkBSplineKernelFunction.h"
 
-  //  These were hoisted from the ResampleTransformOrDeformationField main executable.
-  //  REFACTOR:  It turned out to be very inconvenient to let RefImage differ from Image.
-  const unsigned int GenericTransformImageNS::SpaceDimension = 3;
-  typedef float                              PixelType;
-  typedef itk::Image<PixelType, GenericTransformImageNS::SpaceDimension>    ImageType;
-  typedef float                              RefPixelType;
-  typedef itk::Image<RefPixelType, GenericTransformImageNS::SpaceDimension> RefImageType;
-#endif
+#include "itkGridImageSource.h"
 
 //A filter to debug the min/max values
 template <class TImage>
 void PrintImageMinAndMax(TImage * inputImage)
 {
-//  typename TImage::PixelType resultMaximum:
-//  typename TImage::PixelType resultMinimum;
   typedef typename itk::StatisticsImageFilter<TImage> StatisticsFilterType;
   typename StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
   statsFilter->SetInput( inputImage );
   statsFilter->Update();
-//  resultMaximum = statsFilter->GetMaximum();
-//  resultMinimum = statsFilter->GetMinimum();
   std::cerr << "StatisticsFilter gave Minimum of " << statsFilter->GetMinimum()
             << " and Maximum of " << statsFilter->GetMaximum() << std::endl;
 }
@@ -69,8 +49,8 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  const bool         debug = true;
 
+  const bool         debug = true;
   const bool useTransform = (warpTransform.size() > 0);
     {
     const bool useDeformationField = (deformationVolume.size() > 0);
@@ -89,19 +69,26 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
       std::cout << "=====================================================" << std::endl;
       }
 
-    if (useTransformMode.size() > 0) 
+    if (useTransformMode.size() > 0)
       {
-      std::cout << "Scripting 'code rot' note:  The useTransformMode parameter will be ignored.  Now ResampleTransformOrDeformationField infers the warpTransform type from the contents of the .mat file." << std::endl;
+      std::cout
+  << "Scripting 'code rot' note:  "
+  "The useTransformMode parameter will be ignored.  "
+  "Now ResampleTransformOrDeformationField infers the "
+  "warpTransform type from the contents of the .mat file."
+  << std::endl;
       }
 
-    if (useTransform == useDeformationField) 
+    if (useTransform == useDeformationField)
       {
-      std::cout << "Choose one of the two possibilities, a BRAINSFit transform --or-- a high-dimensional deformation field." << std::endl;
+      std::cout
+  << "Choose one of the two possibilities, "
+  "a BRAINSFit transform --or-- a high-dimensional"
+  "deformation field."
+  << std::endl;
       exit(1);
       }
     }
-
-
 
   ImageType::Pointer PrincipalOperandImage;  // One name for the image to be warped.
     {
@@ -111,14 +98,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     imageReader->Update( );
 
     PrincipalOperandImage = imageReader->GetOutput();
-    //PrincipalOperandImage->DisconnectPipeline();
     }
 
-
-
-
   // Read ReferenceVolume and DeformationVolume
-
   typedef float                                      VectorComponentType;
   typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
   typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DeformationFieldType;
@@ -135,7 +117,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
       {
       refImageReader->SetFileName( referenceVolume );
       }
-    else 
+    else
       {
       std::cout << "Alert:  missing Reference Volume defaulted to: " <<  inputVolume << std::endl;
       refImageReader->SetFileName( inputVolume );
@@ -165,83 +147,20 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
 
   // Read optional transform:
-  
+
   // An empty SmartPointer constructor sets up someTransform.IsNull() to represent a not-supplied state:
   BSplineTransformType::Pointer itkBSplineTransform;
   AffineTransformType::Pointer ITKAffineTransform;
 
   if ( useTransform )
     {
-#if 0
-    bool definitelyBSpline = false;
-    
-    itk::TransformFileReader::Pointer transformReader
-      = itk::TransformFileReader::New();
-
-    transformReader->SetFileName( warpTransform.c_str() );
-    transformReader->Update();
-
-    typedef itk::TransformFileReader::TransformListType *TransformListType;
-    TransformListType transforms = transformReader->GetTransformList();
-    std::cout << "Number of transforms = " << transforms->size() << std::endl;
-
-    itk::TransformFileReader::TransformListType::const_iterator it
-      = transforms->begin();
-
-    if (transforms->size() == 1) // There is no bulk transform.
-      {
-      BulkTransform = AffineTransformType::New();
-      BulkTransform->SetIdentity();
-      const std::string firstNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "FIRST (and only) NameOfClass = " << firstNameOfClass << std::endl;
-      definitelyBSpline = (firstNameOfClass == "BSplineDeformableTransform");
-      }
-    else // Pick up what we presume was the bulk transform.
-      {
-      BulkTransform = static_cast<AffineTransformType *>( ( *it ).GetPointer() );
-      const std::string firstNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "First (Bulk) NameOfClass = " << firstNameOfClass << std::endl;
-      it++;
-      const std::string secondNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "SECOND NameOfClass = " << secondNameOfClass << std::endl;
-      definitelyBSpline = (secondNameOfClass == "BSplineDeformableTransform");
-      }
-
-    if (definitelyBSpline)
-      {
-      itkBSplineTransform = static_cast<BSplineTransformType *>( ( *it ).GetPointer() );
-      itkBSplineTransform->SetBulkTransform( BulkTransform );
-      std::cout << "warpTransform recognized as a BSpline." << std::endl;
-      }
-    else
-      {
-      ITKAffineTransform = ReadTransform( warpTransform.c_str() );
-      std::cout << "warpTransform recognized as one of the linear transforms." << std::endl;
-
-      if ( invertTransform )
-        {
-        AffineTransformType::Pointer ITKAffineTempTransform
-          = AffineTransformType::New( );
-        ITKAffineTempTransform->SetIdentity();
-
-        ITKAffineTempTransform->SetFixedParameters(
-          ITKAffineTransform->GetFixedParameters() );
-        ITKAffineTempTransform->SetParameters( 
-          ITKAffineTransform->GetParameters() );
-        ITKAffineTempTransform->GetInverse( ITKAffineTransform );
-        }
-      }
-#else
     ReadDotMatTransformFile(warpTransform,
         itkBSplineTransform,
         ITKAffineTransform,
         invertTransform);
-#endif
     }
 
-  
-
-  ImageType::Pointer TransformedImage 
+  ImageType::Pointer TransformedImage
     = GenericTransformImage<ImageType,
         RefImageType,
         DeformationFieldType>(
@@ -253,11 +172,75 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     ITKAffineTransform,
     interpolationMode,
     pixelType == "binary");
-  
+  if(addGrids)
+    {
+    // find min/max pixels for image
+    //
+    typedef itk::StatisticsImageFilter<ImageType> StatisticsFilterType;
+    typedef itk::MaximumImageFilter<ImageType> MaxFilterType;
+    typedef itk::GridForwardWarpImageFilterNew
+      <DeformationFieldType,ImageType> GFType;
 
+    StatisticsFilterType::Pointer statsFilter =
+      StatisticsFilterType::New();
+    statsFilter->SetInput( TransformedImage );
+    statsFilter->Update();
+    ImageType::PixelType minPixel(statsFilter->GetMinimum());
+    ImageType::PixelType maxPixel(statsFilter->GetMaximum());
+
+    itk::GridImageSource<ImageType>::Pointer myGrid=itk::GridImageSource<ImageType>::New();
+    myGrid->SetSize(PrincipalOperandImage->GetLargestPossibleRegion().GetSize() );
+    myGrid->SetSpacing(PrincipalOperandImage->GetSpacing() );
+    myGrid->SetDirection(PrincipalOperandImage->GetDirection() );
+    myGrid->SetOrigin(PrincipalOperandImage->GetOrigin() );
+    itk::GridImageSource<ImageType>::BoolArrayType WhichDirections;
+    WhichDirections[0]=true;
+    WhichDirections[1]=true;
+    WhichDirections[2]=false;
+    myGrid->SetWhichDimensions(WhichDirections);
+    itk::GridImageSource<ImageType>::ArrayType GridArray;
+    GridArray[0]=15;
+    GridArray[1]=15;
+    GridArray[2]=0;
+    myGrid->SetGridSpacing(GridArray);
+      {
+      // Specify 0th order B-spline function (Box function)
+      typedef itk::BSplineKernelFunction <0> KernelType;
+      KernelType::Pointer kernel = KernelType :: New ();
+      myGrid->SetKernelFunction(kernel);
+      }
+    myGrid->SetScale(maxPixel);
+    myGrid->Update();
+
+    itk::BinaryThresholdImageFilter<ImageType,ImageType>::Pointer myThresholder=itk::BinaryThresholdImageFilter<ImageType,ImageType>::New();
+    myThresholder->SetInput(myGrid->GetOutput());
+    myThresholder->SetInsideValue(maxPixel);
+    myThresholder->SetOutsideValue(minPixel);
+    myThresholder->SetLowerThreshold(0.0);
+    myThresholder->SetUpperThreshold(maxPixel-1);
+    myThresholder->Update();
+
+    // merge grid with warped image
+    MaxFilterType::Pointer MFilter = MaxFilterType::New();
+    MFilter->SetInput1(myThresholder->GetOutput() );
+    MFilter->SetInput2(PrincipalOperandImage);
+    MFilter->Update();
+    PrincipalOperandImage = MFilter->GetOutput();
+
+      TransformedImage= GenericTransformImage<ImageType,
+      RefImageType,
+      DeformationFieldType>(
+        PrincipalOperandImage,
+        ReferenceImage,
+        DeformationField,
+        defaultValue,
+        itkBSplineTransform,
+        ITKAffineTransform,
+        "Linear",
+        pixelType == "binary");
+    }
 
   // Write out the output image;  threshold it if necessary.
-      
   if ( pixelType == "binary" )
     {
     // A special case for dealing with binary images
@@ -364,7 +347,6 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     std::cout << "ERROR:  Invalid pixelType" << std::endl;
     exit (-1);
     }
-
   return EXIT_SUCCESS;
 }
 
@@ -372,7 +354,6 @@ int BRAINSResamplePrimary( int argc, char *argv[] )
 {
   //HACK:  BRAINS2 Masks are currently broken
   //The direction cosines are and the direction labels are not consistently being set.
-
   itk::Brains2MaskImageIOFactory::RegisterOneFactory();
 
   // Apparently when you register one transform, you need to register all your

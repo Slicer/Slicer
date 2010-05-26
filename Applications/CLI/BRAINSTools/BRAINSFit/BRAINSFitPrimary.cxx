@@ -402,17 +402,21 @@ int BRAINSFitPrimary( int argc, char *argv[] )
           << std::endl;
         exit(-1);
         }
-      const double otsuPercentileThreshold = 0.01;
-      const int    closingSize = 9;
         {
-        fixedMask = DoROIAUTO<FixedVolumeType>(extractFixedVolume,
-          otsuPercentileThreshold,
-          closingSize);
+        typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType,itk::Image<unsigned char, 3> > ROIAutoType;
+        ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
+        ROIFilter->SetInput(extractFixedVolume);
+        ROIFilter->SetDilateSize(ROIAutoDilateSize);
+        ROIFilter->Update();
+        fixedMask= ROIFilter->GetSpatialObjectROI();
         }
         {
-        movingMask = DoROIAUTO<MovingVolumeType>(extractMovingVolume,
-          otsuPercentileThreshold,
-          closingSize);
+        typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType,itk::Image<unsigned char, 3> > ROIAutoType;
+        ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
+        ROIFilter->SetInput(extractMovingVolume);
+        ROIFilter->SetDilateSize(ROIAutoDilateSize);
+        ROIFilter->Update();
+        movingMask = ROIFilter->GetSpatialObjectROI();
         }
       }
     else if ( maskProcessingMode == "ROI" )
@@ -685,7 +689,8 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     }
 
   /*const int write_status=*/
-  WriteBothTransformsToDisk(currentGenericTransform,outputTransform,strippedOutputTransform);
+  itk::WriteBothTransformsToDisk(currentGenericTransform,
+          outputTransform,strippedOutputTransform);
 
   if ( actualIterations + 1 >= permittedIterations )
     {

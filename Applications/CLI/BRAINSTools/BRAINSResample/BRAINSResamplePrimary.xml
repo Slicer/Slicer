@@ -90,6 +90,14 @@ This program resamples an image image using a deformation field or a linear tran
       <default>false</default>
     </boolean>
 
+    <boolean>
+      <name>addGrids</name>
+      <longflag>--addGrids</longflag>
+      <label>Add warped grid to output image</label>
+      <description>Add warped grid to output image.</description>
+      <default>false</default>
+    </boolean>
+
     <float>
       <name>defaultValue</name>
       <longflag>defaultValue</longflag>

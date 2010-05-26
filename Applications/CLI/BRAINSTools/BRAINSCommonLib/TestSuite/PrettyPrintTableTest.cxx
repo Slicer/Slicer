@@ -1,7 +1,7 @@
 #include <iostream>
 #include "PrettyPrintTable.h"
 
-int main(int argc, char **argv)
+int main(int , char **)
 {
   PrettyPrintTable p;
   p.setTablePad(5);
@@ -31,11 +31,11 @@ int main(int argc, char **argv)
 
   p.add(2,0,"FloatingPoint");
 
-  p.add(2,1,1,"%+5.2f"); //Similar to %5.2f in printf
+  p.add(2,1,1.0F,"%+5.2f"); //Similar to %5.2f in printf
 
-  p.add(2,2,2,"%+5.2f");
+  p.add(2,2,2.0F,"%+5.2f");
 
-  p.add(2,3,3,"%+5.2f");
+  p.add(2,3,3.0F,"%+5.2f");
 
   p.Print(std::cout);
 

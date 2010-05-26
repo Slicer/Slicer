@@ -15,12 +15,14 @@ macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
       CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
       CVS_MODULE "Insight"
       CVS_TAG -r ITK-3-18
+      UPDATE_COMMAND ""
       SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${LOCAL_CMAKE_BUILD_OPTIONS}
         -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DBUILD_TESTING:BOOL=OFF
         -DITK_USE_REVIEW:BOOL=ON
         -DITK_USE_REVIEW_STATISTICS:BOOL=ON
         -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON
@@ -124,6 +126,7 @@ macro(PACKAGE_NEEDS_SlicerExecutionModel LOCAL_CMAKE_BUILD_OPTIONS gen)
     find_package(GenerateCLP NO_MODULE REQUIRED)
     include(${GenerateCLP_USE_FILE})
     set(GenerateCLP_DEPEND "")
+    set(SlicerExecutionModel_DEPEND "")
   else()
     #### ALWAYS BUILD WITH STATIC LIBS
     set(proj SlicerExecutionModel)
@@ -142,6 +145,7 @@ macro(PACKAGE_NEEDS_SlicerExecutionModel LOCAL_CMAKE_BUILD_OPTIONS gen)
     )
     set(GenerateCLP_DIR ${CMAKE_CURRENT_BINARY_DIR}/SlicerExecutionModel-build/GenerateCLP)
     set(GenerateCLP_DEPEND "${proj}")
+    set(SlicerExecutionModel_DEPEND "${proj}")
   endif()
 endmacro()
 

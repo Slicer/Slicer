@@ -453,7 +453,7 @@ switch $::tcl_platform(os) {
         } else {
           set ::OPENGL_INCLUDE_DIR "/usr/X11R6/include"
           set ::OPENGL_gl_LIBRARY  "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
-          set ::OPENGL_glu_LIBRARY "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
+          set ::OPENGL_glu_LIBRARY "-framework OpenGL;/usr/X11R6/lib/libGLU.dylib"
         #   puts "OPENGL SETTINGS $::OPENGL_INCLUDE_DIR $::OPENGL_gl_LIBRARY $::OPENGL_glu_LIBRARY"
         }
         switch $env(PACKAGE_BUILD_TYPE) {

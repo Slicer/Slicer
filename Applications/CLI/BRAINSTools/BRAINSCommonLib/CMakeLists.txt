@@ -76,9 +76,7 @@ endif (Slicer3_SOURCE_DIR)
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTSadd_directory( Test_FindCenterOfBrainFilter )
-
-add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
-set_target_properties(PrettyPrintTableTest
-  PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-  ${BRAINSCommonLibProject_BINARY_DIR})
+if(BUILD_TESTING)
+  add_subdirectory(TestSuite)
+endif(BUILD_TESTING)
 

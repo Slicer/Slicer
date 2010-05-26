@@ -12,7 +12,6 @@
 #include <itkBinaryErodeImageFilter.h>
 #include <vnl/vnl_sample.h>
 #include <vnl/vnl_math.h>
-#include <itkBrains2MaskImageIOFactory.h>
 #include <itkConnectedThresholdImageFilter.h>
 
 #include <itkNumericTraits.h>
@@ -30,7 +29,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage,TOutputImage>
   m_OtsuPercentileLowerThreshold(0.01),
   m_OtsuPercentileUpperThreshold(1.0-0.01),
   m_ThresholdCorrectionFactor(1.0),
-  m_ClosingSize(9),
+  m_ClosingSize(9.0),
+  m_DilateSize(0.0),
   m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::One),
   m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::Zero)
 {
@@ -212,8 +212,9 @@ LargestForegroundFilledMaskImageFilter<TInputImage,TOutputImage>
   typename myKernelType::SizeType erodeBallSize;
   for ( unsigned int d = 0; d < 3; d++ )
     {
-    dilateBallSize[d] = m_ClosingSize;
-    erodeBallSize[d] = m_ClosingSize;
+    const unsigned int ClosingVoxels=vnl_math_ceil( m_ClosingSize/ ( relabel->GetOutput()->GetSpacing()[d] ) );
+    dilateBallSize[d] = ClosingVoxels;
+    erodeBallSize[d]  = ClosingVoxels;
     }
   dilateBall.SetRadius(dilateBallSize);
   dilateBall.CreateStructuringElement();
@@ -298,17 +299,51 @@ LargestForegroundFilledMaskImageFilter<TInputImage,TOutputImage>
   seededConnectedThresholdFilter->SetInput( ErodeFilter->GetOutput() );
   seededConnectedThresholdFilter->Update();
 
-  typename ThresholdFilterType::Pointer FinalThreshold
-    = ThresholdFilterType::New();
-  FinalThreshold->SetInput ( seededConnectedThresholdFilter->GetOutput() );
-  FinalThreshold->SetInsideValue(this->m_OutsideValue);
-  FinalThreshold->SetOutsideValue(this->m_InsideValue);
-  FinalThreshold->SetLowerThreshold(100);
-  FinalThreshold->SetUpperThreshold(100);
-  FinalThreshold->Update();
+  typename IntegerImageType::Pointer dilateMask=NULL;
+    {
+    typename ThresholdFilterType::Pointer FinalThreshold
+      = ThresholdFilterType::New();
+    FinalThreshold->SetInput ( seededConnectedThresholdFilter->GetOutput() );
+    FinalThreshold->SetInsideValue(this->m_OutsideValue);
+    FinalThreshold->SetOutsideValue(this->m_InsideValue);
+    FinalThreshold->SetLowerThreshold(100);
+    FinalThreshold->SetUpperThreshold(100);
+    FinalThreshold->Update();
+
+    if(m_DilateSize > 0.0 )
+      {
+      //Dilate to get some background to better drive BSplineRegistration
+      typedef itk::BinaryBallStructuringElement<typename IntegerImageType::PixelType, IntegerImageType::ImageDimension > myKernelType;
+      typedef itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
+              myKernelType> DilateType;
+
+      myKernelType dilateBall;
+      typename myKernelType::SizeType dilateBallSize;
+      for ( unsigned int d = 0; d < 3; d++ )
+        {
+        const unsigned int DilateVoxels=vnl_math_ceil( m_DilateSize/ ( FinalThreshold->GetOutput()->GetSpacing()[d] ) );
+        dilateBallSize[d] = DilateVoxels;
+        }
+      dilateBall.SetRadius(dilateBallSize);
+      dilateBall.CreateStructuringElement();
+
+      typename DilateType::Pointer dil = DilateType::New();
+      dil->SetDilateValue(this->m_InsideValue);
+      dil->SetKernel(dilateBall);
+      dil->SetInput(FinalThreshold->GetOutput());
+      dil->Update();
+      dilateMask=dil->GetOutput();
+      }
+    else
+      {
+      dilateMask=FinalThreshold->GetOutput();
+      }
+    }
+
+
   typedef CastImageFilter<IntegerImageType, OutputImageType> outputCasterType;
   typename outputCasterType::Pointer outputCaster = outputCasterType::New();
-  outputCaster->SetInput( FinalThreshold->GetOutput() );
+  outputCaster->SetInput( dilateMask );
 
   outputCaster->GraftOutput(this->GetOutput());
   outputCaster->Update();

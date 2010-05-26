@@ -356,6 +356,14 @@
     </string-enumeration>
 
     <double>
+      <name>ROIAutoDilateSize</name>
+      <longflag>ROIAutoDilateSize</longflag>
+      <label> ROIAuto Dilate Size</label>
+      <description>This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
+      <default>0.0</default>
+    </double>
+
+    <double>
       <name>relaxationFactor</name>
       <longflag>relaxationFactor</longflag>
       <label>Relaxation Factor</label>

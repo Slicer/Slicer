@@ -10,7 +10,8 @@
 #include "itkVersorRigid3DTransform.h"
 #include "itkBSplineDeformableTransform.h"
 
-#include "BRAINSROIAutoUtils.h"
+#include "itkBRAINSROIAutoImageFilter.h"
+
 
 /**
  * This file contains utility functions that are common to a few of the BRAINSFit Programs.
@@ -21,9 +22,9 @@ static const unsigned int BFNSSpaceDimension = 3;
 static const unsigned int BFNSplineOrder = 3;
 typedef double CoordinateRepType;
 typedef itk::BSplineDeformableTransform<
-    CoordinateRepType,
-    BFNSSpaceDimension,
-    BFNSplineOrder > BSplineTransformType;
+CoordinateRepType,
+  BFNSSpaceDimension,
+  BFNSplineOrder > BSplineTransformType;
 
 typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
 typedef itk::ScaleVersor3DTransform<double> ScaleVersor3DTransformType;
@@ -33,10 +34,10 @@ typedef itk::AffineTransform<double, BFNSSpaceDimension>  AffineTransformType;
 
 template <class TransformType, unsigned int ImageDimension>
 void DoCenteredTransformMaskClipping(
-        ImageMaskPointer &fixedMask, 
-        ImageMaskPointer &movingMask,
-        typename TransformType::Pointer transform, 
-        double maskInferiorCutOffFromCenter)
+  ImageMaskPointer &fixedMask,
+  ImageMaskPointer &movingMask,
+  typename TransformType::Pointer transform,
+  double maskInferiorCutOffFromCenter)
 {
   if ( fixedMask.IsNull()  ||  movingMask.IsNull() )
     {
@@ -46,13 +47,13 @@ void DoCenteredTransformMaskClipping(
     {
     return;
     }
-std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter << std::endl;
+  std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter << std::endl;
 
   typedef itk::ImageMaskSpatialObject<ImageDimension> ImageMaskSpatialObjectType;
 
   typedef unsigned char PixelType;
   typedef itk::Image<PixelType, ImageDimension> MaskImageType;
-  
+
   typename TransformType::InputPointType rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();
 
@@ -65,17 +66,17 @@ std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter 
     movingCenter[i] = translationVector[i] - rotationCenter[i];
     }
 
-  typename ImageMaskSpatialObjectType::Pointer fixedImageMask( 
-                                 dynamic_cast< ImageMaskSpatialObjectType * >( fixedMask.GetPointer() ));
-  typename ImageMaskSpatialObjectType::Pointer movingImageMask( 
-                                 dynamic_cast< ImageMaskSpatialObjectType * >( movingMask.GetPointer() ));
+  typename ImageMaskSpatialObjectType::Pointer fixedImageMask(
+    dynamic_cast< ImageMaskSpatialObjectType * >( fixedMask.GetPointer() ));
+  typename ImageMaskSpatialObjectType::Pointer movingImageMask(
+    dynamic_cast< ImageMaskSpatialObjectType * >( movingMask.GetPointer() ));
 
   typename MaskImageType::Pointer fixedMaskImage  = const_cast<MaskImageType *>( fixedImageMask->GetImage() );
   typename MaskImageType::Pointer movingMaskImage = const_cast<MaskImageType *>( movingImageMask->GetImage() );
 
   typename MaskImageType::PointType fixedInferior  = fixedCenter;
   typename MaskImageType::PointType movingInferior = movingCenter;
-  
+
   fixedInferior[2]  -= maskInferiorCutOffFromCenter;  // negative because Superior is large in magnitude.
   movingInferior[2] -= maskInferiorCutOffFromCenter;  // ITK works in an LPS system.
 
@@ -107,10 +108,10 @@ std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter 
       }
     ++movingIter;
     }
-  
+
   fixedImageMask->SetImage(  fixedMaskImage );
   movingImageMask->SetImage( movingMaskImage );
-  
+
   fixedImageMask->ComputeObjectToWorldTransform();
   movingImageMask->ComputeObjectToWorldTransform();
 

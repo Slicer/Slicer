@@ -2,17 +2,51 @@
 #define TransformToDeformationField_h
 #include "itkIO.h"
 #include "CrossOverAffineSystem.h"
-#include "itkImageRegionIteratorWithIndex.h"
+//#include "itkImageRegionIteratorWithIndex.h"
+#include <itkTransformToDeformationFieldSource.h>
 
 /**
  * Go from any subclass of Transform, to the corresponding deformation field
  */
 template <typename DeformationFieldPointerType, typename TransformPointerType>
-void
-TransformToDeformationField (
-  DeformationFieldPointerType deformation,
-  TransformPointerType xfrm)
+DeformationFieldPointerType 
+TransformToDeformationField 
+(itk::ImageBase<DeformationFieldPointerType::ObjectType::ImageDimension> *templateImage,
+ TransformPointerType xfrm)
 {
+
+#if 1
+  typedef typename DeformationFieldPointerType::ObjectType OutputType;
+  typedef typename 
+    itk::TransformToDeformationFieldSource<OutputType,double>
+    TodefType;
+  typename TodefType::Pointer todef =
+    TodefType::New();
+  todef->SetOutputSize(templateImage->GetLargestPossibleRegion().Getsize());
+  todef->SetOutputSpacing(templateImage->GetSpacing());
+  todef->SetOutputOrigin(templateImage->GetOrigin());
+  todef->SetOutputIndex(templateImage->GetLargestPossibleRegion().GetIndex());
+  todef->SetOutputDirection(templateImage->GetDirection());
+  todef->SetTransform(xfrm);
+  try
+    {
+    todef->Update();
+    }
+  catch ( itk::ExceptionObject & err )
+    {
+    throw err; // pass the buck up.
+    }
+// copy image  
+  // itk::ImageRegionIterator<OutputType> 
+  //   from(todef->GetOutput(),todef->GetOutput()->GetLargestPossibleRegion()),
+  //   to(deformation,deformation->GetLargestPossibleRegion());
+  // for(from.GoToBegin(),to.GoToBegin();
+  //     from != from.End() && to != to.End(); from++,to++)
+  //   {
+  //   to.Value() = from.Value();
+  //   }
+  return todef->GetOutput();
+#else
   typedef typename TransformPointerType::ObjectType TransformType;
   typedef typename DeformationFieldPointerType::ObjectType
   TDeformationField;
@@ -54,6 +88,7 @@ TransformToDeformationField (
     it.Set(DisplacementInPhysicalSpace);
     ++it;
     }
+#endif
 }
 
 #if 0

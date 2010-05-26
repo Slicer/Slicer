@@ -19,27 +19,27 @@ macro(BRAINSGENERATEMODULESCRIPT progname)
     SET(OS_VARNAME_FOR_LIBRARY_PATH "LD_LIBRARY_PATH")
   ENDIF(APPLE)
 
-  #  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/BuildScripts/Module_Dummy.in ${BGCbin_dir}/Modules/${progname} )
+  CONFIGURE_FILE(${BRAINS_CMAKE_HELPER_DIR}/Module_Dummy.in ${BGCbin_dir}/Modules/${progname} )
 
-FILE(WRITE ${BGCbin_dir}/Modules/${progname}
-"#!/usr/bin/tclsh
-catch {set script [info script]}
-catch {set script [file normalize \$script]}
-catch {set execdir [file dirname [file dirname \$script ]]}
-set env(${OS_VARNAME_FOR_LIBRARY_PATH}) [ exec \$execdir/brains3_setup.sh ${OS_VARNAME_FOR_LIBRARY_PATH} ]
-set command \"\$execdir/${BGCbin_name} \$argv\"
-set fp [ open \"| \$command |& cat\" \"r\"]
-while { ![eof \$fp ] } {
-    gets \$fp line
-    puts \$line
-}
-if { [catch \"close \$fp\" res] } {
-    exit [ lindex \$errorCode 2 ]
-} else {
-    exit 0
-}
-"
-)
+# FILE(WRITE ${BGCbin_dir}/Modules/${progname}
+# "#!/usr/bin/tclsh
+# catch {set script [info script]}
+# catch {set script [file normalize \$script]}
+# catch {set execdir [file dirname [file dirname \$script ]]}
+# set env(${OS_VARNAME_FOR_LIBRARY_PATH}) [ exec \$execdir/brains3_setup.sh ${OS_VARNAME_FOR_LIBRARY_PATH} ]
+# set command \"\$execdir/${BGCbin_name} \$argv\"
+# set fp [ open \"| \$command |& cat\" \"r\"]
+# while { ![eof \$fp ] } {
+#     gets \$fp line
+#     puts \$line
+# }
+# if { [catch \"close \$fp\" res] } {
+#     exit [ lindex \$errorCode 2 ]
+# } else {
+#     exit 0
+# }
+# "
+# )
 
 
   install(PROGRAMS ${BGCbin_dir}/Modules/${progname}

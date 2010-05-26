@@ -214,7 +214,7 @@ typename ImageType::Pointer GenericTransformImage(
       }
     else if ( ITKAffineTransform.IsNotNull() )// definitely Linear, and already converted to Affine in ITKAffineTransform:
       {
-      std::cout<<"itk Affine Transform is not Nulli, Affine Trasnform applied..." << std::endl;
+      std::cout<<"itk Affine Transform is not Null, Affine Trasnform applied..." << std::endl;
       if ( interpolationMode == "NearestNeighbor" )
         {
         typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double> 

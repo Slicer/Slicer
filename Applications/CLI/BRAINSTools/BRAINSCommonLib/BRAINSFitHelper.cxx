@@ -170,7 +170,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     mask->ComputeObjectToWorldTransform();
     typename SpatialObjectType::Pointer p= dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
     if ( p.IsNull() )
-      { 
+      {
       std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
       exit(-1);
       }
@@ -503,7 +503,7 @@ BRAINSFitHelper::BRAINSFitHelper()
   m_SplineGridSize[2]=12;
   m_MaxBSplineDisplacement=0.0,
   m_CostFunctionConvergenceFactor = 1e+9,
-  m_ProjectedGradientTolerance = 1e-4,
+  m_ProjectedGradientTolerance = 1e-5,
   m_ActualNumberOfIterations=0;
   m_PermittedNumberOfIterations=0;
   //m_AccumulatedNumberOfIterationsForAllLevels=0;
@@ -1552,91 +1552,92 @@ int WriteBothTransformsToDisk(const GenericTransformType::Pointer & genericTrans
   ////////////////////////////////////////////////////////////////////////////
   // Write out tranfoms.
   //
-  if ( genericTransformToWrite.IsNotNull() )
+  if ( genericTransformToWrite.IsNull() )
     {
-    try
+    return 0;
+    }
+  try
+    {
+    const std::string transformFileType = genericTransformToWrite->GetNameOfClass();
+    if ( transformFileType == "VersorRigid3DTransform" )
       {
-      const std::string transformFileType = genericTransformToWrite->GetNameOfClass();
-      if ( transformFileType == "VersorRigid3DTransform" )
-        {
-        VersorRigid3DTransformType::Pointer tempInitializerITKTransform
-          = dynamic_cast<VersorRigid3DTransformType *>( genericTransformToWrite.GetPointer() );
-        if (outputTransform.size() > 0) // Write out the transform
-          {
-          WriteTransform<VersorRigid3DTransformType>(tempInitializerITKTransform,outputTransform);
-          }
-        }
-      else if ( transformFileType == "ScaleVersor3DTransform" )
-        {
-        ScaleVersor3DTransformType::Pointer tempInitializerITKTransform
-          = dynamic_cast<ScaleVersor3DTransformType *>( genericTransformToWrite.GetPointer() );
-        if (outputTransform.size() > 0) // Write out the transform
-          {
-          WriteTransform<ScaleVersor3DTransformType>(tempInitializerITKTransform,outputTransform);
-          }
-        }
-      else if ( transformFileType == "ScaleSkewVersor3DTransform" )
-        {
-        ScaleSkewVersor3DTransformType::Pointer tempInitializerITKTransform
-          = dynamic_cast<ScaleSkewVersor3DTransformType *>( genericTransformToWrite.GetPointer() );
-        if (outputTransform.size() > 0) // Write out the transform
-          {
-          WriteTransform<ScaleSkewVersor3DTransformType>(tempInitializerITKTransform,outputTransform);
-          }
-        }
-      else if ( transformFileType == "AffineTransform" )
-        {
-        AffineTransformType::Pointer tempInitializerITKTransform
-          = dynamic_cast<AffineTransformType *>( genericTransformToWrite.GetPointer() );
-        if (outputTransform.size() > 0) // Write out the transform
-          {
-          WriteTransform<AffineTransformType>(tempInitializerITKTransform,outputTransform);
-          }
-        }
-      else if(transformFileType == "BSplineDeformableTransform")
-        {
-        BSplineTransformType::Pointer tempInitializerITKTransform
-          = dynamic_cast<BSplineTransformType *>( genericTransformToWrite.GetPointer() );
-        if (strippedOutputTransform.size() > 0)
-          {
-          std::cout << "ERROR:  The rigid component of a BSpline transform is not supported." << std::endl;
-          }
-        if ( outputTransform.size() > 0 )
-          {
-          WriteTransformWithBulk<BSplineTransformType>(tempInitializerITKTransform,
-            outputTransform);
-          }
-        }
-      else      //  NO SUCH CASE!!
-        {
-        std::cout
-          <<
-          "Unsupported initial transform file -- TransformBase first transform typestring, "
-          << transformFileType
-          <<
-          " not equal to any recognized type VersorRigid3DTransform OR ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
-          << std::endl;
-        return -1;
-        }
+      VersorRigid3DTransformType::Pointer tempInitializerITKTransform
+  = dynamic_cast<VersorRigid3DTransformType *>( genericTransformToWrite.GetPointer() );
+      if (outputTransform.size() > 0) // Write out the transform
+  {
+  WriteTransform<VersorRigid3DTransformType>(tempInitializerITKTransform,outputTransform);
+  }
       }
-    catch ( itk::ExceptionObject & excp )
+    else if ( transformFileType == "ScaleVersor3DTransform" )
       {
-      std::cout << "[FAILED]" << std::endl;
-      std::cerr
-        << "Error while reading the genericTransformToWrite"
-        << std::endl;
-      std::cerr << excp << std::endl;
+      ScaleVersor3DTransformType::Pointer tempInitializerITKTransform
+  = dynamic_cast<ScaleVersor3DTransformType *>( genericTransformToWrite.GetPointer() );
+      if (outputTransform.size() > 0) // Write out the transform
+  {
+  WriteTransform<ScaleVersor3DTransformType>(tempInitializerITKTransform,outputTransform);
+  }
+      }
+    else if ( transformFileType == "ScaleSkewVersor3DTransform" )
+      {
+      ScaleSkewVersor3DTransformType::Pointer tempInitializerITKTransform
+  = dynamic_cast<ScaleSkewVersor3DTransformType *>( genericTransformToWrite.GetPointer() );
+      if (outputTransform.size() > 0) // Write out the transform
+  {
+  WriteTransform<ScaleSkewVersor3DTransformType>(tempInitializerITKTransform,outputTransform);
+  }
+      }
+    else if ( transformFileType == "AffineTransform" )
+      {
+      AffineTransformType::Pointer tempInitializerITKTransform
+  = dynamic_cast<AffineTransformType *>( genericTransformToWrite.GetPointer() );
+      if (outputTransform.size() > 0) // Write out the transform
+  {
+  WriteTransform<AffineTransformType>(tempInitializerITKTransform,outputTransform);
+  }
+      }
+    else if(transformFileType == "BSplineDeformableTransform")
+      {
+      BSplineTransformType::Pointer tempInitializerITKTransform
+  = dynamic_cast<BSplineTransformType *>( genericTransformToWrite.GetPointer() );
+      if (strippedOutputTransform.size() > 0)
+  {
+  std::cout << "ERROR:  The rigid component of a BSpline transform is not supported." << std::endl;
+  }
+      if ( outputTransform.size() > 0 )
+  {
+  WriteTransformWithBulk<BSplineTransformType>(tempInitializerITKTransform,
+                 outputTransform);
+  }
+      }
+    else      //  NO SUCH CASE!!
+      {
+      std::cout
+  <<
+  "Unsupported initial transform file -- TransformBase first transform typestring, "
+  << transformFileType
+  <<
+  " not equal to any recognized type VersorRigid3DTransform OR ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
+  << std::endl;
       return -1;
       }
-    //Should just write out the rigid transform here.
-    if (strippedOutputTransform.size() > 0  )
+    }
+  catch ( itk::ExceptionObject & excp )
+    {
+    std::cout << "[FAILED]" << std::endl;
+    std::cerr
+      << "Error while reading the genericTransformToWrite"
+      << std::endl;
+    std::cerr << excp << std::endl;
+    return -1;
+    }
+  //Should just write out the rigid transform here.
+  if (strippedOutputTransform.size() > 0  )
+    {
+    typedef VersorRigid3DTransformType VersorRigidTransformType;
+    VersorRigidTransformType::Pointer versorRigid = ComputeRigidTransformFromGeneric(genericTransformToWrite);
+    if(versorRigid.IsNotNull() )
       {
-      typedef VersorRigid3DTransformType VersorRigidTransformType;
-      VersorRigidTransformType::Pointer versorRigid = ComputeRigidTransformFromGeneric(genericTransformToWrite);
-      if(versorRigid.IsNotNull() )
-        {
-        WriteTransform<VersorRigidTransformType>(versorRigid,strippedOutputTransform);
-        }
+      WriteTransform<VersorRigidTransformType>(versorRigid,strippedOutputTransform);
       }
     }
   return 0;

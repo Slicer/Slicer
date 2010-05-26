@@ -146,28 +146,45 @@ public:
 
 
 
-  itkSetMacro( NumberOfSamples,        unsigned int  );
-  itkSetMacro( NumberOfHistogramBins,         unsigned int  );
-  itkSetMacro( NumberOfMatchPoints,           unsigned int  );
+  itkSetMacro(      NumberOfSamples,        unsigned int  );
+  itkGetConstMacro( NumberOfSamples,        unsigned int  );
+  itkSetMacro(      NumberOfHistogramBins,         unsigned int  );
+  itkGetConstMacro( NumberOfHistogramBins,         unsigned int  );
+  itkSetMacro(      NumberOfMatchPoints,           unsigned int  );
+  itkGetConstMacro( NumberOfMatchPoints,           unsigned int  );
   VECTORitkSetMacro( NumberOfIterations,   std::vector<int>/**/ );
-  itkSetMacro( MaximumStepLength,             double        );
   VECTORitkSetMacro( MinimumStepLength, std::vector<double> );
-  itkSetMacro( RelaxationFactor,              double        );
-  itkSetMacro( TranslationScale,              double        );
-  itkSetMacro( ReproportionScale,             double        );
-  itkSetMacro( SkewScale,                     double        );
-  itkSetMacro( UseExplicitPDFDerivativesMode, std::string   );
-  itkSetMacro( UseCachingOfBSplineWeightsMode,std::string   );
-  itkSetMacro( CostFunctionConvergenceFactor, double        );
-  itkSetMacro( ProjectedGradientTolerance,    double        );
-  itkSetMacro( MaxBSplineDisplacement,        double        );
-  itkSetMacro( BackgroundFillValue,           double        );
+  itkSetMacro(      MaximumStepLength,             double        );
+  itkGetConstMacro( MaximumStepLength,             double        );
+  itkSetMacro(      RelaxationFactor,              double        );
+  itkGetConstMacro( RelaxationFactor,              double        );
+  itkSetMacro(      TranslationScale,              double        );
+  itkGetConstMacro( TranslationScale,              double        );
+  itkSetMacro(      ReproportionScale,             double        );
+  itkGetConstMacro( ReproportionScale,             double        );
+  itkSetMacro(      SkewScale,                     double        );
+  itkGetConstMacro( SkewScale,                     double        );
+  itkSetMacro(      UseExplicitPDFDerivativesMode, std::string   );
+  itkGetConstMacro( UseExplicitPDFDerivativesMode, std::string   );
+  itkSetMacro(      UseCachingOfBSplineWeightsMode,std::string   );
+  itkGetConstMacro( UseCachingOfBSplineWeightsMode,std::string   );
+  itkSetMacro(      CostFunctionConvergenceFactor, double        );
+  itkGetConstMacro( CostFunctionConvergenceFactor, double        );
+  itkSetMacro(      ProjectedGradientTolerance,    double        );
+  itkGetConstMacro( ProjectedGradientTolerance,    double        );
+  itkSetMacro(      MaxBSplineDisplacement,        double        );
+  itkGetConstMacro( MaxBSplineDisplacement,        double        );
+  itkSetMacro(      BackgroundFillValue,           double        );
+  itkGetConstMacro( BackgroundFillValue,           double        );
   VECTORitkSetMacro( TransformType, std::vector<std::string>);
-  itkSetMacro( InitializeTransformMode, std::string         );
-  itkSetMacro( MaskInferiorCutOffFromCenter, double         );
-  itkSetMacro( CurrentGenericTransform,  GenericTransformType::Pointer );
+  itkSetMacro(      InitializeTransformMode, std::string         );
+  itkGetConstMacro( InitializeTransformMode, std::string         );
+  itkSetMacro(      MaskInferiorCutOffFromCenter, double         );
+  itkGetConstMacro( MaskInferiorCutOffFromCenter, double         );
+  itkSetMacro(      CurrentGenericTransform,  GenericTransformType::Pointer );
   itkGetConstMacro( CurrentGenericTransform,  GenericTransformType::Pointer );
-  itkSetMacro( UseWindowedSinc, bool                        );
+  itkSetMacro(      UseWindowedSinc, bool                        );
+  itkGetConstMacro( UseWindowedSinc, bool                        );
   VECTORitkSetMacro( SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro( ActualNumberOfIterations,      unsigned int  );
@@ -176,10 +193,12 @@ public:
   itkGetConstMacro( FinalMetricValue,         double        );
   //
   // Set/Get the Debugging level for filter verboseness
-  itkSetMacro(DebugLevel, unsigned int);
+  itkSetMacro(     DebugLevel, unsigned int);
   itkGetConstMacro(DebugLevel, unsigned int);
-  itkSetMacro(DisplayDeformedImage,bool);
-  itkSetMacro(PromptUserAfterDisplay,bool);
+  itkSetMacro(     DisplayDeformedImage,bool);
+  itkGetConstMacro(DisplayDeformedImage,bool);
+  itkSetMacro(     PromptUserAfterDisplay,bool);
+  itkGetConstMacro(PromptUserAfterDisplay,bool);
   itkSetMacro(      ObserveIterations,        bool          );
   itkGetConstMacro( ObserveIterations,        bool          );
   /** Method to set the Permission to vary by level  */
@@ -192,7 +211,7 @@ public:
       }
   }
 
-  itkSetMacro(HistogramMatch, bool);
+  itkSetMacro(     HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
   /** Method that initiates the registration. */

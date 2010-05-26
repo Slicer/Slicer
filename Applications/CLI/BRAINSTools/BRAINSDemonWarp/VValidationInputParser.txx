@@ -190,18 +190,17 @@ VValidationInputParser<TImage>
     InitialITKAffineTransform->Compose(
       crossOverAffineSystem->GetInhaleDecodeConversion(),
       ApplyUpstream );
-    // Initialize the deformation field in the space of the fixed image.
-    m_InitialDeformationField = itkUtil::AllocateSimilarImage<TDeformationField>(
-      m_TheFixedImage);
 #ifdef USE_TRANSFORM_INVERSE_FOR_INIT_FROM_AFFINE_TRANSFORM
     ITKAffineTransformType::Pointer InitialITKAffineTransformInverse
       = ITKAffineTransformType::New();
     InitialITKAffineTransform->GetInverse(InitialITKAffineTransformInverse);
-    TransformToDeformationField(m_InitialDeformationField,
-      InitialITKAffineTransformInverse);
+    m_InitialDeformationField =
+      TransformToDeformationField(m_TheFixedImage,
+          InitialITKAffineTransformInverse);
 #else
-    TransformToDeformationField(m_InitialDeformationField,
-      InitialITKAffineTransform);
+    m_InitialDeformationField =
+      TransformToDeformationField(m_TheFixedImage,
+          InitialITKAffineTransform);
 #endif
     }
 #endif

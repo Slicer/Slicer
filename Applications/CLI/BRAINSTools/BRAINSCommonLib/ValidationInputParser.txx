@@ -192,7 +192,8 @@ ValidationInputParser<TImage>
     initialITKTransform->SetIdentity();
 */
     //  ####### Now use TransformToDeformationFieldSource
-    typedef itk::TransformToDeformationFieldSource<TDeformationField, double > DeformationFieldGeneratorType;
+    typedef itk::TransformToDeformationFieldSource<TDeformationField, double > 
+      DeformationFieldGeneratorType;
     typedef typename DeformationFieldGeneratorType::TransformType TransformType; // Only a templated base class.
 
     std::cout << "Number of transforms = " << transforms->size() << std::endl;

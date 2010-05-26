@@ -215,9 +215,10 @@ RegisterLandmarksToDeformationField(typename ImageType::Pointer & InputImage,
         InputImage->GetOrigin() ) );
     ThinPlateSplineTransformITK->ComputeWMatrix();
       {
-      typename TDeformationField::Pointer tmpdef
-        = itkUtil::AllocateSimilarImage<TDeformationField>( TemplateImage);
-      TransformToDeformationField(tmpdef, ThinPlateSplineTransformITK);
+      typename TDeformationField::Pointer tmpdef =
+        TransformToDeformationField
+        <TDeformationField::Pointer,ThinPlateSplineTransformPointer>
+        (TemplateImage,ThinPlateSplineTransformITK);
       return tmpdef;
       }
     }

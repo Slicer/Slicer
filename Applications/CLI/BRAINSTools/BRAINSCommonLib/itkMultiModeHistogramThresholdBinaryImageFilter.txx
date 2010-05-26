@@ -98,8 +98,6 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,TOutputImage>
       thresholdLowerLinearRegion_foreground=thresholdLowerLinearRegion;
       }
 
-    // C'mon, guys.  I need to know what's going on.  Leave this output visible for me.  Please?
-    //
     std::cout << "LowHigh Thresholds: [ " << thresholdLowerLinearRegion << ", "
       << thresholdLowerLinearRegion_foreground << ", " << thresholdUpperLinearRegion << " ]"
       << std::endl;
@@ -114,39 +112,43 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,TOutputImage>
     threshold->SetInsideValue(this->m_InsideValue);
     threshold->SetOutsideValue(this->m_OutsideValue);
     typename InputImageType::PixelType intensity_thresholdLowerLinearRegion;
-    typename InputImageType::PixelType intensity_thresholdUpperLinearRegiongh;
+    typename InputImageType::PixelType intensity_thresholdUpperLinearRegion;
     if( m_QuantileLowerThreshold.GetElement(j) < m_LinearQuantileThreshold )
       {
       const double range=(m_LinearQuantileThreshold - 0.0);
       const double percentValue=(m_QuantileLowerThreshold.GetElement(j) - 0.0)/range;
-      intensity_thresholdLowerLinearRegion=imageMinValue+(thresholdLowerLinearRegion_foreground-imageMinValue)*percentValue;
+      intensity_thresholdLowerLinearRegion=
+        static_cast<typename InputImageType::PixelType>(
+          imageMinValue+(thresholdLowerLinearRegion_foreground-imageMinValue)*percentValue );
       }
     else
       {
       const double range=(1.0-m_LinearQuantileThreshold)-m_LinearQuantileThreshold;
       const double percentValue=(m_QuantileLowerThreshold.GetElement(j)-m_LinearQuantileThreshold)/range;
-      intensity_thresholdLowerLinearRegion=thresholdLowerLinearRegion_foreground+(thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue;
+      intensity_thresholdLowerLinearRegion=
+        static_cast<typename InputImageType::PixelType>(
+          thresholdLowerLinearRegion_foreground+(thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue );
       }
     if( m_QuantileUpperThreshold.GetElement(j) > (1.0-m_LinearQuantileThreshold) )
       {
       const double range=1.0-m_LinearQuantileThreshold;
       const double percentValue=(m_QuantileUpperThreshold.GetElement(j)-m_LinearQuantileThreshold)/range;
-      intensity_thresholdUpperLinearRegiongh=thresholdUpperLinearRegion+(imageMaxValue-thresholdUpperLinearRegion)*percentValue;
+      intensity_thresholdUpperLinearRegion=thresholdUpperLinearRegion+(imageMaxValue-thresholdUpperLinearRegion)*percentValue;
       }
     else
       {
       const double range=(1.0-m_LinearQuantileThreshold)-m_LinearQuantileThreshold;
       const double percentValue=(m_QuantileUpperThreshold.GetElement(j)-m_LinearQuantileThreshold)/range;
-      intensity_thresholdUpperLinearRegiongh=thresholdLowerLinearRegion_foreground+(thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue;
+      intensity_thresholdUpperLinearRegion=thresholdLowerLinearRegion_foreground+(thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue;
       }
     std::cout << "DEBUG:MINMAX:DEBUG: ["
       << imageMinValue << "," << imageMaxValue << "]" << std::endl;
     std::cout << "DEBUG:LINLOWHIGH:DEBUG: ["
       << thresholdLowerLinearRegion << "," << thresholdUpperLinearRegion << "]" << std::endl;
     std::cout << "DEBUG:RANGE:DEBUG:  [" 
-      << intensity_thresholdLowerLinearRegion << "," << intensity_thresholdUpperLinearRegiongh << "]" << std::endl;
+      << intensity_thresholdLowerLinearRegion << "," << intensity_thresholdUpperLinearRegion << "]" << std::endl;
     threshold->SetLowerThreshold(intensity_thresholdLowerLinearRegion);
-    threshold->SetUpperThreshold(intensity_thresholdUpperLinearRegiongh);
+    threshold->SetUpperThreshold(intensity_thresholdUpperLinearRegion);
     // threshold->SetUpperThreshold( NumericTraits<typename InputImageType::PixelType>::max() );
     threshold->Update();
 

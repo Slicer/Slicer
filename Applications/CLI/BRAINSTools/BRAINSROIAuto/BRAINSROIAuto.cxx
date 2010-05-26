@@ -25,14 +25,15 @@
 #  pragma warning ( disable : 4786 )
 #endif
 #include "itkIO.h"
+
 #include "itkMultiplyImageFilter.h"
-#include "BRAINSROIAutoCLP.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
-#include "itkCastImageFilter.h"
+
 #include "itkImageMaskSpatialObject.h"
 #include "itkImageRegionIteratorWithIndex.h"
 
-#include "BRAINSROIAutoUtils.h"
+#include "itkBRAINSROIAutoImageFilter.h"
+#include "BRAINSROIAutoCLP.h"
 
 typedef itk::Image<signed short, 3> VolumeImageType;
 typedef itk::Image<unsigned char, 3> VolumeMaskType;
@@ -74,15 +75,16 @@ int main( int argc, char *argv[] )
   VolumeImageType::Pointer ImageInput=
     itkUtil::ReadImage<VolumeImageType>(inputVolume);
 
-  SOImageMaskType::Pointer maskWrapper = DoROIAUTO<VolumeImageType>(ImageInput,
-                                                      otsuPercentileThreshold,
-                                                      closingSize,
-                                                      thresholdCorrectionFactor);
-  // The reference ImageMask is not getting set properly, so:
-  typedef itk::ImageMaskSpatialObject<VolumeMaskType::ImageDimension> ImageMaskSpatialObjectType;
-  ImageMaskSpatialObjectType::Pointer fixedImageMask( 
-                                                     dynamic_cast< ImageMaskSpatialObjectType * >( maskWrapper.GetPointer() ));
-  VolumeMaskType::Pointer MaskImage = const_cast<VolumeMaskType *>( fixedImageMask->GetImage() );
+  typedef itk::BRAINSROIAutoImageFilter<VolumeImageType,VolumeMaskType > ROIAutoType;
+  ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
+  ROIFilter->SetInput(ImageInput);
+  ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
+  ROIFilter->SetClosingSize(closingSize);
+  ROIFilter->SetThresholdCorrectionFactor(thresholdCorrectionFactor);
+  ROIFilter->SetDilateSize(ROIAutoDilateSize);
+  ROIFilter->Update();
+  SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
+  VolumeMaskType::Pointer MaskImage = ROIFilter->GetOutput();
 
   if(outputROIMaskVolume != "" )
     {

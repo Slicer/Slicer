@@ -24,6 +24,10 @@ namespace itk
  * The ClosingSize specifies how many mm to dilate followed by
  * erode to fill holes that be present in the image.
  *
+ * The DilateSize specifies how many mm to dilate
+ * as a final step to include a small amount of surface background in addition to the
+ * tissue region present in the image.
+ *
  * The image that is returned will be a binary image with foreground and background
  * values specified by the user (defaults to 1 and 0 respectively).
  *
@@ -81,8 +85,14 @@ public:
     return this->GetOtsuPercentileLowerThreshold();
     }
 
-  itkSetMacro(ClosingSize,unsigned int);
-  itkGetConstMacro(ClosingSize,unsigned int);
+  /** The closing size in mm, this is rounded up to the next closest number of voxel
+   * by taking Spacing into account */
+  itkSetMacro(ClosingSize,double);
+  itkGetConstMacro(ClosingSize,double);
+  /** The dilation size in mm, this is rounded up to the next closest number of voxel
+   * by taking Spacing into account */
+  itkSetMacro(DilateSize,double);
+  itkGetConstMacro(DilateSize,double);
   itkSetMacro(InsideValue,IntegerPixelType);
   itkGetMacro(InsideValue,IntegerPixelType);
   itkSetMacro(OutsideValue,IntegerPixelType);
@@ -106,7 +116,8 @@ private:
   double m_OtsuPercentileLowerThreshold;
   double m_OtsuPercentileUpperThreshold;
   double m_ThresholdCorrectionFactor;
-  unsigned int m_ClosingSize;
+  double m_ClosingSize;
+  double m_DilateSize;
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
 };

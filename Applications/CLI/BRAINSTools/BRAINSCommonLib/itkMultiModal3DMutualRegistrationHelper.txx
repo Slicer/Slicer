@@ -112,10 +112,19 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                          // minimized.
 
   metric->SetNumberOfHistogramBins( m_NumberOfHistogramBins );
-  metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-  // metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
-  // metric->SetUseExplicitPDFDerivatives(true);  //DEBUG -- Just test set to
-  // false saves memory at expense of runtime
+#if 0 //This would be nice to dynamically use a percentage of samples based on the mask or image size.
+  //It will need quite a bit of testing to make sure that backwards compatibility is maintained.
+  if(m_NumberOfSamples <= 0 )
+    {
+    m_NumberOfSamples=256*256*256;
+    metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+    metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
+    }
+  else
+#endif
+    {
+    metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+    }
 
   //
   // set the masks on the metric
@@ -136,6 +145,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   else
     {
     metric->SetUseExplicitPDFDerivatives( true ); // the default
+    // metric->SetUseExplicitPDFDerivatives(true);  //DEBUG -- Just test set to
+    // false saves memory at expense of runtime
     }
 
 

@@ -5,7 +5,6 @@ cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
-include(CPack)
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBuildMacros.cmake)
 
 ###
@@ -47,7 +46,24 @@ set(${CLP}_SOURCE BRAINSFit.cxx  ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
+INSTALL(TARGETS BRAINSFit DESTINATION bin)
+
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
 
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BRAINSFit Image Registration")
+set(CPACK_PACKAGE_VENDOR "University of Iowa Dept. of Psychiatry")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt" )
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_EXECUTABLES "BRAINSFit")
+if(APPLE)
+set(CPACK_GENERATOR "TGZ;PackageMaker")
+elseif(LINUX)
+set(CPACK_GENERATOR "TGZ;RPM")
+endif()
+
+include(CPack)

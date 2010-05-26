@@ -1,8 +1,3 @@
-
-
-THIS IS COMMENTED OUT, AND SHOULD NOT BE USED!
-
-
 #!/usr/bin/tclsh
 catch {set script [info script]}
 catch {set script [file normalize $script]}
