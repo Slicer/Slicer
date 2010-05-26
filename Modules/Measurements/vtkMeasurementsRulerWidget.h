@@ -146,6 +146,12 @@ public:
   /// Reset all the colour picker buttons white, clear
   /// the distance label. Used when scene is cleared.
   void ResetGUI();
+
+  ///
+  /// set the process events flag on all rulers. If lockFlag is 0, turn
+  /// process events off, if lock flag is 1, turn process events on.
+  void ModifyAllLock(int lockFlag);
+
 protected:
   vtkMeasurementsRulerWidget();
   virtual ~vtkMeasurementsRulerWidget();

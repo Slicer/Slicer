@@ -2857,3 +2857,17 @@ void vtkMeasurementsRulerWidget::ResetGUI()
     this->TextColourButton->SetColor(1.0, 1.0, 1.0);
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsRulerWidget:: ModifyAllLock(int lockFlag)
+{
+  std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+  for (iter = this->DistanceWidgets.begin(); iter !=  this->DistanceWidgets.end(); iter++)
+    {
+    if (iter->second &&
+        iter->second->GetWidget())
+      {
+      iter->second->GetWidget()->SetProcessEvents(!lockFlag);
+      }
+    }
+}

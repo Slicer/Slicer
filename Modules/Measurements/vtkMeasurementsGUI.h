@@ -97,6 +97,10 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
   /// make sure that remove any observes on transformable nodes in the scene
   void RemoveMRMLObservers ( );
 
+  ///
+  /// modify locks on all 3d widgets for which this module is responsible
+  void ModifyAllLock(int lockFlag);
+  
 protected:
   vtkMeasurementsGUI();
   ~vtkMeasurementsGUI();

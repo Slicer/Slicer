@@ -3143,3 +3143,16 @@ void vtkMeasurementsAngleWidget::ResetGUI()
     this->TextColourButton->SetColor(1.0, 1.0, 1.0);
     }
 }
+//---------------------------------------------------------------------------
+void vtkMeasurementsAngleWidget::ModifyAllLock(int lockFlag)
+{
+  std::map<std::string, vtkMeasurementsAngleWidgetClass *>::iterator iter;
+  for (iter = this->AngleWidgets.begin(); iter !=  this->AngleWidgets.end(); iter++)
+    {
+    if (iter->second &&
+        iter->second->GetWidget())
+      {
+      iter->second->GetWidget()->SetProcessEvents(!lockFlag);
+      }
+    }
+}

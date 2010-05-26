@@ -140,7 +140,11 @@ public:
   /// 
   /// Update the angle label with the value from the angle widget
   void UpdateAngleLabel(vtkMRMLMeasurementsAngleNode *angleNode);
-  
+
+  ///
+  /// Update the lock state for all angle widgets. If lockFlag is 0, turn
+  /// process events off, if lock flag is 1, turn process events on.
+  void ModifyAllLock(int lockFlag);
 protected:
   vtkMeasurementsAngleWidget();
   virtual ~vtkMeasurementsAngleWidget();

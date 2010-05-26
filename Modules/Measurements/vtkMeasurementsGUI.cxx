@@ -701,3 +701,16 @@ void vtkMeasurementsGUI::RemoveMRMLObservers ( )
       }
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkMeasurementsGUI::ModifyAllLock(int lockFlag)
+{
+  if (this->AngleWidget)
+    {
+    this->AngleWidget->ModifyAllLock(lockFlag);
+    }
+  if (this->RulerWidget)
+    {
+    this->RulerWidget->ModifyAllLock(lockFlag);
+    }
+}
