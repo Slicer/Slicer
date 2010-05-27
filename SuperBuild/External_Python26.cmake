@@ -216,10 +216,9 @@ else()
 endif()
 
 #-----------------------------------------------------------------------------
-# Set vtk_PYTHON_ARGS, slicer_PYTHON_INCLUDE and slicer_PYTHON_LIBRARY variables
+# Set slicer_PYTHON_INCLUDE and slicer_PYTHON_LIBRARY variables
 #
 
-set(vtk_PYTHON_ARGS)
 set(slicer_PYTHON_INCLUDE)
 set(slicer_PYTHON_LIBRARY)
 set(slicer_PYTHON_EXECUTABLE)
@@ -238,9 +237,3 @@ else()
   set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python)
 endif()
 
-if(Slicer3_USE_PYTHON)
-  set(vtk_PYTHON_ARGS
-    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
-    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
-    )
-endif(Slicer3_USE_PYTHON)

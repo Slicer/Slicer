@@ -21,6 +21,14 @@ if (Slicer3_USE_PYTHONQT)
   list(APPEND vtk_DEPENDENCIES python)
 endif(Slicer3_USE_PYTHONQT)
 
+set(vtk_PYTHON_ARGS)
+if(Slicer3_USE_PYTHON)
+  set(vtk_PYTHON_ARGS
+    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    )
+endif(Slicer3_USE_PYTHON)
+
 # On Mac, since:
 #    - Qt can't be build with X11 support
 #    - KWWidgets only support X11
