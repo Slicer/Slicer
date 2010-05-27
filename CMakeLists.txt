@@ -356,6 +356,33 @@ if(Slicer3_USE_OPENIGTLINK)
 endif(Slicer3_USE_OPENIGTLINK)
 
 #-----------------------------------------------------------------------------
+## OpenCV (Built in Slicer3-lib)
+option(Slicer3_USE_OPENCV "Build Slicer3 with OpenCV support." OFF)
+if(Slicer3_USE_OPENCV)
+  find_package(OpenCV REQUIRED)
+
+  IF(OPENCV_BUILD_SETTINGS_FILE AND NOT SKIP_OPENCV_BUILD_SETTINGS_FILE)
+    INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
+    CMAKE_IMPORT_BUILD_SETTINGS(${OPENCV_BUILD_SETTINGS_FILE})
+  ENDIF(OPENCV_BUILD_SETTINGS_FILE AND NOT SKIP_OPENCV_BUILD_SETTINGS_FILE)
+  
+  # Add compiler flags needed to use OPENCV.
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPENCV_REQUIRED_C_FLAGS}")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPENCV_REQUIRED_CXX_FLAGS}")
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
+  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
+  SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
+  
+  # Add include directories needed to use OPENCV.
+  INCLUDE_DIRECTORIES(BEFORE ${OPENCV_INCLUDE_DIRS})
+  
+  # Add link directories needed to use OPENCV.
+  LINK_DIRECTORIES(${OPENCV_LIBRARY_DIRS})
+  #include(${OPENCV_USE_FILE})
+endif(Slicer3_USE_OPENCV)
+
+
+#-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
