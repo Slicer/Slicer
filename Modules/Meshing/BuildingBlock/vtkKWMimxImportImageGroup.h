@@ -46,7 +46,7 @@ public:
   virtual void Update();
   virtual void UpdateEnableState();
   void UpdateObjectLists();
-  int ImportToImageCancelCallback();
+  void ImportToImageCancelCallback();
   int SelectVolumeToImportToImageCallback();
   
 protected:

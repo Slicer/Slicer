@@ -222,18 +222,18 @@ int vtkKWMimxImportModelSurfaceGroup::SelectModelToImportToSurfaceCallback()
             }
       }
       // restore interface now that the model has been added
-      return this->ImportToSurfaceCancelCallback();
+      this->ImportToSurfaceCancelCallback();
+      return 1;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkKWMimxImportModelSurfaceGroup::ImportToSurfaceCancelCallback()
+void vtkKWMimxImportModelSurfaceGroup::ImportToSurfaceCancelCallback()
 {
 
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName() );
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
-  return VTK_OK;
 }
 
 //----------------------------------------------------------------------------

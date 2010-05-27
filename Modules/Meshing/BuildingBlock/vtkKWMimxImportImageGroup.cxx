@@ -228,13 +228,12 @@ int vtkKWMimxImportImageGroup::SelectVolumeToImportToImageCallback()
 
 
 //----------------------------------------------------------------------------
-int vtkKWMimxImportImageGroup::ImportToImageCancelCallback()
+void vtkKWMimxImportImageGroup::ImportToImageCancelCallback()
 {
 
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName() );
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
-  return VTK_OK;
 }
 
 //----------------------------------------------------------------------------

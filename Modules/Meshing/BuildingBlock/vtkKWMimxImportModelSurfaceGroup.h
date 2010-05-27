@@ -47,7 +47,7 @@ public:
   virtual void Update();
   virtual void UpdateEnableState();
   void UpdateObjectLists();
-  int ImportToSurfaceCancelCallback();
+  void ImportToSurfaceCancelCallback();
   int SelectModelToImportToSurfaceCallback();
   
 protected:
