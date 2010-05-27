@@ -7,7 +7,7 @@
 This program resamples an image image using a deformation field or a linear transform.
   </description>
   <version>0.1</version>
-  <documentation-url>http://www.nitrc.org/projects/brainsdemonwarp/</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:BRAINSResample</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>This tool was developed by Vincent Magnotta, Greg Harris, and Hans Johnson.</contributor>
 
