@@ -1,14 +1,19 @@
 
+#-----------------------------------------------------------------------------
 project(Slicer3)
+#-----------------------------------------------------------------------------
 
 enable_language(C)
 enable_language(CXX)
 
+#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
-#
+#-----------------------------------------------------------------------------
+
 SET(project_policies
   #CMP0001 # NEW: CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.
   #CMP0002 # NEW: Logical target names must be globally unique.
@@ -115,10 +120,16 @@ endif()
 # Slicer Options
 #-----------------------------------------------------------------------------
 
-
 #
 #                         ----------------------------
 #                         | Case 1 | Case 2 | Case 3 |
+# ----------------------------------------------------
+# | MAC{32,64}{Tiger,Leo} |  ON    |   -    |  OK    |
+# ----------------------------------------------------
+# | WIN{32,64} VS2008     |  OK    |  OK    |  OK    |
+# ----------------------------------------------------
+# | Linux{32,64}          |  OK    |  OK    |  OK    |
+# ----------------------------------------------------
 # ----------------------------------------------------
 # | Slicer3_USE_KWWIDGETS |  ON    |  ON    |  OFF   |
 # |---------------------------------------------------
@@ -128,8 +139,7 @@ endif()
 # |--------------------------------------------------|
 # | Slicer3_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
 # |---------------------------------------------------
-#
-# !!!!!!!!! Case2 -> NOT supported on MAC !!!!!!!!!!
+
 #
 # Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: OFF, VTK_WRAP_TCL:ON]
 #   a) KwwOnly-NoPython  
@@ -151,10 +161,18 @@ endif()
 #   Python is build if either Slicer3_USE_PYTHON or Slicer3_USE_PYTHONQT are ON
 # 
 
+#------------------------------------------------------------------------------
+# KWWidgets option
+#------------------------------------------------------------------------------  
+
 # KWWidgets on by default.
 option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 
-# QT
+
+#------------------------------------------------------------------------------
+# Qt option
+#------------------------------------------------------------------------------  
+
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
@@ -183,8 +201,11 @@ if(Slicer3_USE_QT)
   endif()
   
 endif()
+  
+#------------------------------------------------------------------------------
+# Python option
+#------------------------------------------------------------------------------  
 
-# Python - Enabled by default
 option(Slicer3_USE_PYTHON "Build Slicer with Python support" ON)
 
 if(Slicer3_USE_PYTHON)
@@ -202,7 +223,18 @@ if(Slicer3_USE_PYTHON)
   endif(CMAKE_Fortran_COMPILER)
 endif() # Slicer3_USE_PYTHON
 
-# Check options
+#------------------------------------------------------------------------------
+# Additional options
+#------------------------------------------------------------------------------  
+
+# Enable VTK Debug Leaks
+option(Slicer3_USE_VTK_DEBUG_LEAKS 
+  "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
+  
+#------------------------------------------------------------------------------
+# Validate options
+#------------------------------------------------------------------------------  
+
 if (NOT Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
   set(err "error: Slicer SuperBuild requires at least Slicer3_USE_KWWIDGETS or Slicer3_USE_QT to be ON.
 
@@ -233,13 +265,11 @@ if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT AND APPLE)
   set(err "error: Slicer SuperBuild on Mac doesn't support Slicer3_USE_KWWIDGETS and Slicer3_USE_QT ON")
   message(FATAL_ERROR "${err}")
 endif()
+  
 
-# Enable VTK Debug Leaks
-option(Slicer3_USE_VTK_DEBUG_LEAKS 
-  "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
-  
-  
-# Configure the CTest custom file for excluding warnings from external projects.
+#------------------------------------------------------------------------------
+# Configure the CTest custom file - Used to suppress external project configure/build warnings
+#------------------------------------------------------------------------------  
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/../SuperBuild/CTestCustom.cmake.in
   ${Slicer3_BINARY_DIR}/CTestCustom.cmake
