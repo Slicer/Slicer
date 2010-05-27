@@ -158,16 +158,28 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
-  find_package(Qt4 4.6 REQUIRED)
+  SET(minimum_required_qt_version "4.6.2")
   
-  # Enable modules
-  SET(QT_USE_QTNETWORK ON)
-  # Includes Qt headers
-  INCLUDE(${QT_USE_FILE})
+  find_package(Qt4)
+  
+  if(QT4_FOUND)
+    
+    set(current_qt_version "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
+  
+    if("${current_qt_version}" VERSION_LESS "${minimum_required_qt_version}")
+      message(FATAL_ERROR "error: Slicer requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${current_qt_version}.")
+    endif()
+  
+    # Enable modules
+    SET(QT_USE_QTNETWORK ON)
+    
+    # Includes Qt headers
+    INCLUDE(${QT_USE_FILE})
 
-  option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
-  if (Slicer3_USE_PYTHONQT)
+    option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
   
+  else()
+    MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
   endif()
   
 endif()

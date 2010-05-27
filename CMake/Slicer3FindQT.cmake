@@ -8,7 +8,7 @@ OPTION(Slicer3_USE_QT  "Use Qt as an extra GUI library" OFF)
 MACRO(Slicer3_SETUP_QT)
 
 IF(Slicer3_USE_QT)
-  SET(minimum_required_qt_version "4.6")
+  SET(minimum_required_qt_version "4.6.2")
   IF(VTK_USE_QVTK)
 
     # Check if QT_QMAKE_EXECUTABLE is set
@@ -24,7 +24,7 @@ IF(Slicer3_USE_QT)
     
     IF(QT4_FOUND AND QT_QMAKE_EXECUTABLE)
       # Check version, note that ${QT_VERSION_PATCH} could also be used
-      IF(NOT "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" STREQUAL "${minimum_required_qt_version}")
+      IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_LESS "${minimum_required_qt_version}")
         MESSAGE(FATAL_ERROR "error: Slicer requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}. You should probably reconfigure VTK.")
       ENDIF()
       # Enable modules
