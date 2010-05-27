@@ -236,8 +236,8 @@ void vtkSlicerROIViewerWidget::RequestRender()
 {
   if (this->MainViewerWidget)
     {
-  this->MainViewerWidget->RequestRender();
-}
+    this->MainViewerWidget->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -245,8 +245,8 @@ void vtkSlicerROIViewerWidget::Render()
 {
   if (this->MainViewerWidget)
     {
-  this->MainViewerWidget->Render();
-}
+    this->MainViewerWidget->Render();
+    }
 }
 
 //---------------------------------------------------------------------------
