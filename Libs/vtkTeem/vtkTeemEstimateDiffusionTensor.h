@@ -22,6 +22,11 @@
 #include "vtkDoubleArray.h"
 #include "vtkTransform.h"
 #include "teem/nrrd.h"
+
+/* avoid name conflicts with symbols from python */
+#undef ECHO 
+#undef B0
+
 #include "teem/ten.h"
 
 class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFilter

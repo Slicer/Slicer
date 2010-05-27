@@ -8,6 +8,10 @@
 #include "vtkDiffusionTensorMathematics.h"
 #include "vtkFloatArray.h"
 
+/* avoid name conflicts with symbols from python */
+#undef ECHO 
+#undef B0
+
 #include "teem/ten.h"
 #include "teem/nrrd.h"
 
