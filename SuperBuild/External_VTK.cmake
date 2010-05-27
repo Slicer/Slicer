@@ -22,12 +22,12 @@ if (Slicer3_USE_PYTHONQT)
 endif(Slicer3_USE_PYTHONQT)
 
 set(vtk_PYTHON_ARGS)
-if(Slicer3_USE_PYTHON)
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
   set(vtk_PYTHON_ARGS
-    -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
+    -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
     )
-endif(Slicer3_USE_PYTHON)
+endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 
 # On Mac, since:
 #    - Qt can't be build with X11 support
@@ -60,10 +60,9 @@ else()
       -DVTK_USE_QT:BOOL=OFF
       )
   elseif(NOT Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
-    # VTK, QT, Cocoa
     set(vtk_QT_ARGS
       -DVTK_USE_CARBON:BOOL=OFF
-      -DVTK_USE_COCOA:BOOL=ON
+      -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
       -DVTK_USE_X:BOOL=OFF
       -DVTK_USE_RPATH:BOOL=ON
       -DDESIRED_QT_VERSION:STRING=4
@@ -75,6 +74,11 @@ else()
   elseif(Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
     MESSAGE(FATAL_ERROR "Case where Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are ON is not supported on MAC")
   endif()
+endif()
+
+# Disable Tk when Python wrapping is enabled
+if (Slicer3_USE_PYTHONQT)
+  list(APPEND vtk_QT_ARGS -DVTK_USE_TK:BOOL=OFF)
 endif()
 
 set(slicer_TCL_LIB)
