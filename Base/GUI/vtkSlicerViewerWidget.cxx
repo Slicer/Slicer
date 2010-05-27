@@ -1817,8 +1817,8 @@ vtkMRMLDisplayNode*  vtkSlicerViewerWidget::GetHierarchyDisplayNode(vtkMRMLDispl
 void vtkSlicerViewerWidget::RequestRender()
 {
   // move the render to the last thing on the idle processing queue
-  this->Script("after cancel \"%s Render\"", this->GetTclName());
-  this->Script("after idle \"%s Render\"", this->GetTclName());
+  this->Script("after cancel { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
+  this->Script("after idle { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
 }
 
 //---------------------------------------------------------------------------

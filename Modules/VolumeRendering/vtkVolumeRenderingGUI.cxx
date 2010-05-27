@@ -869,7 +869,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       if (slicer_viewer_widget)
       {
         slicer_viewer_widget->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolumeActor() );
-        slicer_viewer_widget->Render();
+        slicer_viewer_widget->RequestRender();
       }
     }
 

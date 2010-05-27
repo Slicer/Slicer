@@ -665,13 +665,7 @@ void vtkSlicerFiducialListWidget::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RequestRender()
 {
-    if (this->GetRenderPending())
-    {
-    return;
-    }
-
-  this->SetRenderPending(1);
-  this->Script("after idle \"%s Render\"", this->GetTclName());
+  this->Render(); /* requests render from viewer widget */
 }
 
 //---------------------------------------------------------------------------

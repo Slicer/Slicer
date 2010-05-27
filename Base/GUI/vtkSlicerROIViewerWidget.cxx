@@ -245,7 +245,7 @@ void vtkSlicerROIViewerWidget::Render()
 {
   if (this->MainViewerWidget)
     {
-    this->MainViewerWidget->Render();
+    this->MainViewerWidget->RequestRender(); /* let the viewer manage actual render time*/
     }
 }
 

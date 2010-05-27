@@ -234,7 +234,8 @@ void vtkSlicerSliceViewer::RequestRender()
     }
 
   this->SetRenderPending(1);
-  this->Script("after idle \"%s Render\"", this->GetTclName());
+  this->Script("after cancel { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
+  this->Script("after idle { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
