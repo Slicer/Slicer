@@ -450,11 +450,20 @@ void vtkSlicerMRMLTreeWidget::VisibilityCallback(const char *id, int vis)
 {
   vtkMRMLDisplayableNode *dnode = 
     vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  vtkMRMLDisplayNode *displayNode;
   if (dnode)
     {
     for (int i = 0; i < dnode->GetNumberOfDisplayNodes(); i++)
       {
-      dnode->GetNthDisplayNode(i)->SetVisibility(vis);
+      displayNode = dnode->GetNthDisplayNode(i);
+      if ( displayNode )
+        {
+        dnode->GetNthDisplayNode(i)->SetVisibility(vis);
+        }
+      else
+        {
+        vtkErrorMacro("GetNthDisplayNode returns NULL, even for value of i less than GetNumberOfDisplayNodes");
+        }
       }
     }
 }
