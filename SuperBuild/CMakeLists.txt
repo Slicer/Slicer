@@ -329,6 +329,15 @@ if(Slicer3_USE_PYTHON)
   list(APPEND slicer_DEPENDENCIES python)
 endif(Slicer3_USE_PYTHON)
 
+#-----------------------------------------------------------------------------
+# Dump external project dependencies
+#------------------------------------------------------------------------------
+
+set(ep_dependency_graph "# External project dependencies")
+foreach(ep tk incrTcl iwidgets blt python blas lapack numpy scipy vtk CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
+  set(ep_dependency_graph "${ep_dependency_graph}\n${ep}:${${ep}_DEPENDENCIES}")
+endforeach()
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ExternalProjectDependencies.txt "${ep_dependency_graph}\n")
 
 #-----------------------------------------------------------------------------
 # Configure and build Slicer
