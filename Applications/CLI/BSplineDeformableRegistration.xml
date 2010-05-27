@@ -124,6 +124,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
+    <transform fileExtensions=".nrrd" type="nonlinear" reference="MovingImageFileName">
+      <name>OutputWarp</name>
+      <longflag>outputwarp</longflag>
+      <description>Vector field that applies an equivalent warp as the BSpline. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional.</description>
+      <label>Output warp</label>
+      <channel>output</channel>
+    </transform>
     <image>
       <name>ResampledImageFileName</name>
       <longflag>resampledmovingfilename</longflag>

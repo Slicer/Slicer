@@ -466,6 +466,65 @@ template<class T> int DoIt( int argc, char * argv[], T )
       }
     }
 
+  // Write out an equivalent warp field
+  //
+  //
+  if (OutputWarp != "")
+    {
+    typedef itk::Vector<CoordinateRepType, ImageDimension> VectorType;
+    typedef itk::Image<VectorType, ImageDimension> VectorImageType;
+
+    typename VectorImageType::Pointer warp = VectorImageType::New();
+    warp->CopyInformation(fixedImageReader->GetOutput());
+    warp->SetRegions(fixedImageReader->GetOutput()->GetBufferedRegion());
+    warp->Allocate();
+    
+    itk::ImageRegionIteratorWithIndex<InputImageType> it(fixedImageReader->GetOutput(), warp->GetBufferedRegion());
+    itk::ImageRegionIteratorWithIndex<VectorImageType> oit(warp, warp->GetBufferedRegion());
+    
+    typename InputImageType::IndexType index1;
+    typename InputImageType::PointType p1, p2;
+    VectorType v1;
+
+    while (!it.IsAtEnd())
+      {
+      // get the position of this pixel
+      index1 = it.GetIndex();
+      fixedImageReader->GetOutput()->TransformIndexToPhysicalPoint(index1, p1);
+
+      // transform the position
+      p2 = transform->TransformPoint(p1);
+
+      // calculate the displacement
+      v1 = p2 - p1;
+
+      // set the vector
+      oit.Set(v1);
+
+      ++it;
+      ++oit;
+      }
+
+    typedef itk::ImageFileWriter<VectorImageType> VectorWriterType;
+    typename VectorWriterType::Pointer vwriter = VectorWriterType::New();
+
+    vwriter->SetInput( warp );
+    vwriter->SetFileName( OutputWarp );
+
+    try
+      {
+      collector.Start( "Write warp" );
+      vwriter->Update();
+      collector.Stop( "Write warp" );
+      }
+    catch( itk::ExceptionObject & err ) 
+      { 
+      std::cerr << "ExceptionObject caught !" << std::endl; 
+      std::cerr << err << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
+
   // Report the time taken by the registration
   collector.Report();
 
