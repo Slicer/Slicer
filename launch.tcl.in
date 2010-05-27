@@ -1058,6 +1058,11 @@ proc launch_ImportModulePaths {} {
 
     set ::globallines ""  ; # reset buffer for global lines
 
+    if { ![info exists ::Slicer3_REAL] || ![file exists $::Slicer3_REAL] } {
+      puts "No Slicer3-real executable, so not adding module paths"
+      return
+    }
+
     # run the program with argument --print-module-paths
     if {$::env(BUILD) == $::WINDOWS} {
         set fp [open "| \"$::Slicer3_REAL\" --print-module-paths" r]
