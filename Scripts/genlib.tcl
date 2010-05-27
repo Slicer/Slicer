@@ -875,8 +875,7 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
 if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
     cd $Slicer3_LIB
 
-    runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout -r $::VTK_TAG VTK"
+    runcmd $::SVN co $::VTK_TAG VTK
 
     # Andy's temporary hack to get around wrong permissions in VTK cvs repository
     # catch statement is to make file attributes work with RH 7.3
