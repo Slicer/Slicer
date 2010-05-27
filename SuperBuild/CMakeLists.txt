@@ -31,24 +31,23 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
-# Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
-if(CMAKE_COMPILER_2005)
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif(CMAKE_COMPILER_2005)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
-#
+#------------------------------------------------------------------------------
+
 set(CMAKE_MODULE_PATH
   ${CMAKE_SOURCE_DIR}/CMake
   ${CMAKE_BINARY_DIR}/CMake
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../CMake # Slicer3 CMake directory
   ${CMAKE_MODULE_PATH}
   )
-  
+
 #-----------------------------------------------------------------------------
 # Convenient macro allowing to download a file
-#
+#------------------------------------------------------------------------------
+
 MACRO(downloadFile url dest)
   FILE(DOWNLOAD ${url} ${dest} STATUS status)
   LIST(GET status 0 error_code)
@@ -60,32 +59,62 @@ ENDMACRO()
 
 #-----------------------------------------------------------------------------
 # Prerequisites
-#
+#------------------------------------------------------------------------------
+
 set(git_repo http://github.com/pieper/CTK/raw/master/)
 
 set(file CMake/ExternalProject.cmake)
 downloadFile(${git_repo}/${file} ${CMAKE_BINARY_DIR}/${file})
 
 #-----------------------------------------------------------------------------
-# Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
-#
-if(CMAKE_COMPILER_2005)
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif(CMAKE_COMPILER_2005)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
-set(Slicer3_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../CMake)
-
+# Include External project module
+#------------------------------------------------------------------------------
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
 set(prefix "${base}/Install")
 
 include(ExternalProject)
 
+# Compute -G arg for configuring external projects with the same CMake generator:
+if(CMAKE_EXTRA_GENERATOR)
+  set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
+else()
+  set(gen "${CMAKE_GENERATOR}")
+endif()
+
+#-----------------------------------------------------------------------------
+# Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
+#------------------------------------------------------------------------------
+
+if(CMAKE_COMPILER_2005)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+endif(CMAKE_COMPILER_2005)
+
+#-----------------------------------------------------------------------------
+# Always build Shared library
+#------------------------------------------------------------------------------
+
+set(BUILD_SHARED_LIBS ON)
+
+#-----------------------------------------------------------------------------
+# Setup build type
+#------------------------------------------------------------------------------
+
+# By default, let's build as Debug
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+# let a dashboard override the default.
+if(CTEST_BUILD_CONFIGURATION)
+  set(CMAKE_BUILD_TYPE "${CTEST_BUILD_CONFIGURATION}")
+endif()
+
 
 #-----------------------------------------------------------------------------
 # Slicer Options
 #-----------------------------------------------------------------------------
+
 
 #
 #                         ----------------------------
@@ -193,27 +222,6 @@ if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT AND APPLE)
   message(FATAL_ERROR "${err}")
 endif()
 
-# Always build Shared
-set(BUILD_SHARED_LIBS ON)
-
-# By default, let's build as Debug
-if(NOT DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
-
-# let a dashboard override the default.
-if(CTEST_BUILD_CONFIGURATION)
-  set(CMAKE_BUILD_TYPE "${CTEST_BUILD_CONFIGURATION}")
-endif()
-
-# Compute -G arg for configuring external projects with the same CMake generator:
-#
-if(CMAKE_EXTRA_GENERATOR)
-  set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
-else()
-  set(gen "${CMAKE_GENERATOR}")
-endif()
-
 # Enable VTK Debug Leaks
 option(Slicer3_USE_VTK_DEBUG_LEAKS 
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
@@ -255,8 +263,9 @@ set(cmcurl_DEPENDENCIES)
 set(slicer_DEPENDENCIES vtk Insight BatchMake OpenIGTLink teem cmcurl)
 
 #------------------------------------------------------------------------------
-# Include Each Target
+# Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
+
 if(Slicer3_USE_KWWIDGETS)
   include(External_Tcl)
   include(External_Tk)
@@ -296,12 +305,8 @@ include(External_BatchMake)
 include(External_cmcurl)
 
 #-----------------------------------------------------------------------------
-# build the slicer
-# - first run cmake
-# - create the Slicer3Version.txt file
-# - then run plaftorm specific build command
-
-set(proj Slicer3)
+# Update external project dependencies
+#------------------------------------------------------------------------------
 
 # For now, tk and itcl are used only when Slicer3_USE_KWWIDGETS is ON
 if(Slicer3_USE_KWWIDGETS)
@@ -316,12 +321,7 @@ if(CMAKE_Fortran_COMPILER)
   list(APPEND slicer_DEPENDENCIES numpy blas lapack)
 endif(CMAKE_Fortran_COMPILER)
 
-set(slicer_QT_ARGS)
 if(Slicer3_USE_QT)
-  set(slicer_QT_ARGS
-    -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
-    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
-    )
   list(APPEND slicer_DEPENDENCIES CTK)
 endif(Slicer3_USE_QT)
 
@@ -329,13 +329,13 @@ if(Slicer3_USE_PYTHON)
   list(APPEND slicer_DEPENDENCIES python)
 endif(Slicer3_USE_PYTHON)
 
-set(slicer_KWWIDGETS_ARGS)
-if(Slicer3_USE_KWWIDGETS)
-  set(slicer_KWWIDGETS_ARGS
-    -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build
-    )
-endif(Slicer3_USE_KWWIDGETS)
 
+#-----------------------------------------------------------------------------
+# Configure and build Slicer
+# Note that the Slicer3Version.txt file will be created at configuration time
+#------------------------------------------------------------------------------
+
+set(proj Slicer3)
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
@@ -347,29 +347,39 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=ON
+    # External project options
     -DITK_DIR:PATH=${CMAKE_BINARY_DIR}/Insight-build
     -DTeem_DIR:PATH=${CMAKE_BINARY_DIR}/teem-build
+    # OpenIGTLink
+    -DSlicer3_USE_OPENIGTLINK:BOOL=ON
     -DOpenIGTLink_DIR:PATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
-    -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
-    -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+    # BatchMake
     -DSlicer3_USE_BatchMake=ON
+    -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
+    # VTK
+    -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+    -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
+    # TCL/Tk
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
     -DSlicer3_TCL_DIR:PATH=${tcl_build}
-    -DSlicer3_USE_OPENIGTLINK:BOOL=ON
+    # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${CMAKE_BINARY_DIR}/cmcurl-build
+    # Python
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DPYTHON_INCLUDE_PATH:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    # Qt
     -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
-    ${slicer_QT_ARGS}
+    -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
+    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
+    # KWWidgets
     -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
-    ${slicer_KWWIDGETS_ARGS}
+    -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build
   INSTALL_COMMAND ""
 )
