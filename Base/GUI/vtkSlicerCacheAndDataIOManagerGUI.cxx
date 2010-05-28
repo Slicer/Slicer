@@ -954,6 +954,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->ForceReloadCheckButton->SetParent ( this->ControlFrame );
     this->ForceReloadCheckButton->Create();
     this->ForceReloadCheckButton->SetText ( "Always re-download");
+    this->ForceReloadCheckButton->SetBalloonHelpString ("When selected, a resource will always be re-downloaded, even if it already exists in Slicer's cache. In this case, you may observe data being downloaded multiple times as Slicer tries to determine what kind of volume the dataset is.");
     if ( this->CacheManager != NULL )
       {
       this->ForceReloadCheckButton->SetSelectedState(this->CacheManager->GetEnableForceRedownload() );
@@ -967,6 +968,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->OverwriteCacheCheckButton->SetParent ( this->ControlFrame );
     this->OverwriteCacheCheckButton->Create();
     this->OverwriteCacheCheckButton->SetText ("Overwrite cached files");
+    this->OverwriteCacheCheckButton->SetBalloonHelpString ( "When selected, Slicer will overwrite pre-existing files of the same name in the Cache Directory." );
 /*
   if ( this->CacheManager != NULL )
   {
