@@ -151,6 +151,11 @@ void vtkBrainlabModuleLoadingDataStep::UserSceneButtonCallback()
   if (this->UserSceneButton)
     {
     this->GetGUI()->GetApplicationGUI()->ProcessLoadSceneCommand();
+    vtkBrainlabModuleGUI *gui = this->GetGUI();
+    if (gui)
+      {
+      gui->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
+      }
     }
 }
 
