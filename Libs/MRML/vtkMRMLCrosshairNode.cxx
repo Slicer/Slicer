@@ -175,7 +175,7 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
         this->SetCrosshairMode (vtkMRMLCrosshairNode::ShowSmallIntersection);
         }
       }
-    else if (!strcmp (attName, "navigaation" ))
+    else if (!strcmp (attName, "navigation" ))
       {
       if ( !strcmp (attValue, "true"))
         {
