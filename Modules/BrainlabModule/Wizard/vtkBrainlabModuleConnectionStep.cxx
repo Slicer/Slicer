@@ -447,8 +447,8 @@ void vtkBrainlabModuleConnectionStep::ShowUserInterface()
                      "a simulator or a real Brainlab system. For simulation, the tracking data points can be "
                      "either loaded from a file or generated in the memory. To connect with a real Brainlab system, "
                      "the user needs to specify the server name, port number and data streaming frequency (frames per second)."
-                     "The Status section displays the connection status. Press Connect button to start connection."
-                     "Press Disconnect button to terminate the connection.");
+                     "The Status section displays the connection status: Disconnected or Connected."
+                     "Press Connect button to initiate a connection. Press Disconnect button to terminate the connection.");
 
   helpButton->SetCommand(msg_dlg1, "Invoke");
 

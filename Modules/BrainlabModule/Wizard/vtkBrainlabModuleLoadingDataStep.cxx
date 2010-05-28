@@ -95,7 +95,8 @@ void vtkBrainlabModuleLoadingDataStep::ShowUserInterface()
   msg_dlg1->Create();
   msg_dlg1->SetTitle("Load an MRML Scene");
   msg_dlg1->SetText( "This is the first step in BrainlabModule. In this step, the user loads "
-                     "an MRML scene, which usually includes a tensor image and a fiducial.");
+                     "an MRML scene, which usually includes a tensor image and a fiducial."
+                     "The fiducial is a seed for DTI tractography visualization.");
 
   helpButton->SetCommand(msg_dlg1, "Invoke");
 
