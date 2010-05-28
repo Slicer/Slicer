@@ -616,7 +616,7 @@ int vtkBrainlabModuleConnectionStep::Start()
 //---------------------------------------------------------------------------
 int vtkBrainlabModuleConnectionStep::Stop()
 {
-  this->ConnectionStatus->SetText("Disconnected.");
+  if (this->ConnectionStatus) this->ConnectionStatus->SetText("Disconnected.");
 //  this->ConnectionStatus->SetForegroundColor(255, 99, 71);
  
   // Check if thread exists
@@ -647,70 +647,73 @@ void* vtkBrainlabModuleConnectionStep::ThreadFunction(void* ptr)
     static_cast<vtkMultiThreader::ThreadInfo*>(ptr);
   vtkBrainlabModuleConnectionStep* conStep = static_cast<vtkBrainlabModuleConnectionStep*>(vinfo->UserData);
   
-  double fps      = 3; 
-  int    interval = (int) (1000.0 / fps);
-
-  //------------------------------------------------------------
-  // Establish Connection
-  int r = conStep->Socket->ConnectToServer(conStep->ServerHostname.c_str(), conStep->ServerPort);
-  if (r != 0)
+  if (conStep)
     {
-    std::string msg = "Cannot connect to the server."; 
-    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ("Error", msg.c_str());
-    conStep->ConnectionStatus->SetText("Disconnected.");
-//    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
-    exit(0);
-    }
+    double fps      = 3; 
+    int    interval = (int) (1000.0 / fps);
 
-  conStep->ConnectionStatus->SetText("Connected.");
-//  conStep->ConnectionStatus->SetForegroundColor(0, 255, 0);
-//  conStep->ConnectionStatus->SetBackgroundColor(0, 255, 0);
- 
-  //------------------------------------------------------------
-  // Allocate Transform Message Class
-
-  igtl::TransformMessage::Pointer transMsg;
-  transMsg = igtl::TransformMessage::New();
-  transMsg->SetDeviceName("brainlab_tracker");
-
-  //------------------------------------------------------------
-  // loop
-  unsigned int index = 0;
-  while (conStep->GetStreamingOn())
-    {
-    // streaming tracking points of simulation
-    igtl::Matrix4x4 matrix;
-    if (conStep->SimulatorButton->GetSelectedState())
+    //------------------------------------------------------------
+    // Establish Connection
+    int r = conStep->Socket->ConnectToServer(conStep->ServerHostname.c_str(), conStep->ServerPort);
+    if (r != 0)
       {
-      if (conStep->RandomDataButton->GetSelectedState())
-        {
-        conStep->GetRandomTestMatrix(matrix);
-        }
-      else
-        {
-        std::vector<double> *values = conStep->SimulatorTrackingData[index];
-        conStep->GenerateTrackingMatrix(values, matrix);
-        }
+      std::string msg = "Cannot connect to the server."; 
+      vtkSlicerApplication::GetInstance()->RequestDisplayMessage ("Error", msg.c_str());
+      if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Disconnected.");
+      //    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
       }
+    else
+      {
+      if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Connected.");
+      //  conStep->ConnectionStatus->SetForegroundColor(0, 255, 0);
+      //  conStep->ConnectionStatus->SetBackgroundColor(0, 255, 0);
+ 
+      //------------------------------------------------------------
+      // Allocate Transform Message Class
 
-    transMsg->SetMatrix(matrix);
-    transMsg->Pack();
-    conStep->Socket->Send(transMsg->GetPackPointer(), transMsg->GetPackSize());
-    igtl::Sleep(interval); // wait
+      igtl::TransformMessage::Pointer transMsg;
+      transMsg = igtl::TransformMessage::New();
+      transMsg->SetDeviceName("brainlab_tracker");
 
-    index++;
-    if (index == conStep->SimulatorTrackingData.size()) index = 0;
-    }
+      //------------------------------------------------------------
+      // loop
+      unsigned int index = 0;
+      while (conStep->GetStreamingOn())
+        {
+        // streaming tracking points of simulation
+        igtl::Matrix4x4 matrix;
+        if (conStep->SimulatorButton->GetSelectedState())
+          {
+          if (conStep->RandomDataButton->GetSelectedState())
+            {
+            conStep->GetRandomTestMatrix(matrix);
+            }
+          else
+            {
+            std::vector<double> *values = conStep->SimulatorTrackingData[index];
+            conStep->GenerateTrackingMatrix(values, matrix);
+            }
+          }
+
+        transMsg->SetMatrix(matrix);
+        transMsg->Pack();
+        conStep->Socket->Send(transMsg->GetPackPointer(), transMsg->GetPackSize());
+        igtl::Sleep(interval); // wait
+
+        index++;
+        if (index == conStep->SimulatorTrackingData.size()) index = 0;
+        } 
+      } 
 
   if (conStep->Socket.IsNotNull())
     {
     conStep->Socket->CloseSocket();
-    conStep->ConnectionStatus->SetText("Disconnected.");
-//    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
-//    conStep->ConnectionStatus->SetBackgroundColor(255, 99, 71);
+    if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Disconnected.");
+    //    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
+    //    conStep->ConnectionStatus->SetBackgroundColor(255, 99, 71);
     }
-
   conStep->ThreadID = -1;
+  }
 
   return NULL;
 }
