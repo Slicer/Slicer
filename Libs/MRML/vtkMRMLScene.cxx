@@ -1204,12 +1204,14 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   
   n->UnRegister(this);
 
-  vtkMRMLNode *node = NULL;
-  vtkCollectionSimpleIterator it;
-  for (this->CurrentScene->InitTraversal(it); 
-       (node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject(it)) ;) 
+  if (!this->GetIsClosed())
     {
-    node->UpdateReferences();
+    vtkMRMLNode *node = NULL;
+    for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
+      {
+      node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(i);
+      node->UpdateReferences();
+      }
     }
   this->RemoveUnusedNodeReferences();
 
