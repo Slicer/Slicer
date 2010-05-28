@@ -1,0 +1,11 @@
+message("Building numpy:\n@numpy_binary@")
+set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+execute_process(
+  COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py install
+  WORKING_DIRECTORY "@numpy_binary@"
+  RESULT_VARIABLE res)
+
+if(NOT ${res} EQUAL 0)
+  message(FATAL_ERROR "Error in config of numpy")
+endif()
+message("Numpy config worked.")

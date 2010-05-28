@@ -8,4 +8,5 @@ ExternalProject_Add(${proj}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
+  DEPENDS ${scipy_DEPENDENCIES}
 )

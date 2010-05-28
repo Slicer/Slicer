@@ -208,20 +208,16 @@ endif()
 
 option(Slicer3_USE_PYTHON "Build Slicer with Python support" ON)
 
-if(Slicer3_USE_PYTHON)
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 
-  # Attempt to detect if we have a Fortran Compiler available.
-  include(CheckFortran)
+  option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds CLapack)." ON)
 
-  if(CMAKE_Fortran_COMPILER)
-    option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds Blas and Lapack)." ON)
-
-    if(Slicer3_BUILD_NUMPY)
-      option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
-    endif()
-
-  endif(CMAKE_Fortran_COMPILER)
-endif() # Slicer3_USE_PYTHON
+  # Work in progress ...
+  #if(Slicer3_BUILD_NUMPY)
+  #  option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
+  #endif()
+  
+endif()
 
 #------------------------------------------------------------------------------
 # Additional options
@@ -271,7 +267,7 @@ endif()
 # List of external projects
 #------------------------------------------------------------------------------  
 
-set(external_project_list tk incrTcl iwidgets blt python blas lapack numpy scipy vtk CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
+set(external_project_list tk incrTcl iwidgets blt python clapack numpy scipy vtk CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
 
 #------------------------------------------------------------------------------
 # Configure the CTest custom file - Used to suppress external project configure/build warnings
@@ -310,10 +306,14 @@ if(Slicer3_USE_KWWIDGETS)
     set(python_DEPENDENCIES tk)
   endif()
 endif()
+set(clapack_DEPENDENCIES)
 set(blas_DEPENDENCIES)
-set(lapack_DEPENDENCIES)
-set(numpy_DEPENDENCIES blas lapack python)
-set(scipy_DEPENDENCIES numpy)
+set(numpy_DEPENDENCIES CLAPACK python)
+set(scipy_DEPENDENCIES NUMPY)
+
+#set(lapack_DEPENDENCIES)
+#set(numpy_DEPENDENCIES blas lapack python)
+
 set(vtk_DEPENDENCIES)
 set(CTK_DEPENDENCIES vtk)
 if(Slicer3_USE_PYTHONQT)
@@ -337,31 +337,29 @@ if(Slicer3_USE_KWWIDGETS)
   include(External_incrTcl)
   include(External_iwidgets)
   include(External_blt)
-endif(Slicer3_USE_KWWIDGETS)
+endif()
 
 if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
   include(External_Python26)
-endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
-
-if(CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY)
-  include(External_BLAS)
-  include(External_LAPACK)
-  include(External_NumPy)
-
-  if(Slicer3_BUILD_SCIPY)
-    include(External_SciPy)
-  endif(Slicer3_BUILD_SCIPY)
-endif(CMAKE_Fortran_COMPILER AND Slicer3_BUILD_NUMPY)
+  if(Slicer3_BUILD_NUMPY)
+    #include(External_BLAS)
+    include(External_CLAPACK)
+    include(External_NUMPY)
+    if(Slicer3_BUILD_SCIPY)
+      include(External_SciPy)
+    endif(Slicer3_BUILD_SCIPY)
+  endif()
+endif()
 
 include(External_VTK)
 
 if(Slicer3_USE_QT)
   include(External_CTK)
-endif(Slicer3_USE_QT)
+endif()
 
 if(Slicer3_USE_KWWIDGETS)
   include(External_KWWidgets)
-endif(Slicer3_USE_KWWIDGETS)
+endif()
 
 include(External_Insight)
 include(External_teem)
@@ -380,19 +378,21 @@ if(Slicer3_USE_KWWIDGETS)
   else()
     list(APPEND slicer_DEPENDENCIES tcl tk itcl KWWidgets)
   endif()
-endif(Slicer3_USE_KWWIDGETS)
-
-if(CMAKE_Fortran_COMPILER)
-  list(APPEND slicer_DEPENDENCIES numpy blas lapack)
-endif(CMAKE_Fortran_COMPILER)
+endif()
 
 if(Slicer3_USE_QT)
   list(APPEND slicer_DEPENDENCIES CTK)
-endif(Slicer3_USE_QT)
+endif()
 
-if(Slicer3_USE_PYTHON)
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
-endif(Slicer3_USE_PYTHON)
+  if(Slicer3_BUILD_NUMPY)
+    list(APPEND slicer_DEPENDENCIES NUMPY)
+    if(Slicer3_BUILD_SCIPY)
+      list(APPEND slicer_DEPENDENCIES scipy)
+    endif()
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # Dump external project dependencies
