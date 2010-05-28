@@ -153,7 +153,10 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
           }
         }
       // set the table range
-      this->LookupTable->SetRange(0,  this->LookupTable->GetNumberOfTableValues() - 1);
+      if ( this->LookupTable->GetNumberOfTableValues() > 0 )
+        {
+        this->LookupTable->SetRange(0,  this->LookupTable->GetNumberOfTableValues() - 1);
+        }
       this->NamesInitialisedOn();
       }
       else if (!strcmp(attName, "type")) 
