@@ -66,7 +66,7 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
     int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
     if (nnodes > 0)
       {
-      vtkWarningMacro("New scene event, processing " << nnodes << " fibre bundles");
+      vtkDebugMacro("New scene event, processing " << nnodes << " fibre bundles");
       }
     for (int n=0; n<nnodes; n++)
       {
