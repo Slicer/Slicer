@@ -14,8 +14,6 @@ if(WIN32)
   # point the tkinter build file to the slicer tcl-build
   set(python_PATCH_COMMAND)
   if(Slicer3_USE_KWWIDGETS)
-    list(APPEND python_DEPENDENCIES tcl)
-    
     set(python_tkinter ${python_base}/pyproject.vsprops)
     string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
@@ -155,7 +153,6 @@ elseif(APPLE)
   set(python_TCL_ARG "")
   if(Slicer3_USE_KWWIDGETS)
     set(python_TCL_ARG "--with-tcl=${tcl_build}")
-    list(APPEND python_DEPENDENCIES tk)
   endif()
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_make_step_apple.cmake.in
@@ -198,7 +195,6 @@ else()
   set(python_TCL_ARG "")
   if(Slicer3_USE_KWWIDGETS)
     set(python_TCL_ARG "--with-tcl=${tcl_build}")
-    list(APPEND python_DEPENDENCIES tk)
   endif()
 
   set(python_CONFIGURE_COMMAND sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
