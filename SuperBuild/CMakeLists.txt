@@ -53,14 +53,14 @@ set(CMAKE_MODULE_PATH
 # Convenient macro allowing to download a file
 #------------------------------------------------------------------------------
 
-MACRO(downloadFile url dest)
+FUNCTION(downloadFile url dest)
   FILE(DOWNLOAD ${url} ${dest} STATUS status)
   LIST(GET status 0 error_code)
   LIST(GET status 1 error_msg)
-  IF(error_code)
-    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  IF(error_code OR NOT EXISTS ${dest})
+    MESSAGE(FATAL_ERROR "error: Failed to download ${url}")
   ENDIF()
-ENDMACRO()
+ENDFUNCTION()
 
 #-----------------------------------------------------------------------------
 # Prerequisites
