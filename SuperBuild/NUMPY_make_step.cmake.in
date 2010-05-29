@@ -8,4 +8,4 @@ execute_process(
 if(NOT ${res} EQUAL 0)
   message(FATAL_ERROR "Error in config of numpy")
 endif()
-message("Numpy config worked.")
+message("Numpy build worked.")

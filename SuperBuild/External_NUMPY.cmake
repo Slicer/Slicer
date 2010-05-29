@@ -1,7 +1,6 @@
 # The Numpy external project 
 
-set(numpy_source "${CMAKE_CURRENT_BINARY_DIR}/NUMPY")
-set(numpy_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY")
+set(numpy_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
 
 # to configure numpy we run a cmake -P script
 # the script will create a site.cfg file
@@ -20,13 +19,14 @@ configure_file(
 # and configure and build it
 ExternalProject_Add(NUMPY
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
-  SOURCE_DIR ${numpy_source}
-  BINARY_DIR ${numpy_binary}
+  #URL "http://iweb.dl.sourceforge.net/project/numpy/NumPy/1.4.1/numpy-1.4.1.tar.gz"
+  SVN_REPOSITORY http://svn.scipy.org/svn/numpy/trunk
+  SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
+  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_configure_step.cmake
   BUILD_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake
-  SVN_REPOSITORY http://svn.scipy.org/svn/numpy/trunk
   INSTALL_COMMAND ""
   DEPENDS ${numpy_DEPENDENCIES}
   )
