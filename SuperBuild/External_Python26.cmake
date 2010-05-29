@@ -127,6 +127,11 @@ if(WIN32)
     COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
     DEPENDEES Build_pythonw
     )
+    
+  ExternalProject_Add_Step(${proj} Build_python
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project python
+    DEPENDEES _multiprocessing
+    )
 
   ExternalProject_Add_Step(${proj} CopyPythonLib
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib
